@@ -1103,10 +1103,10 @@ macro_rules! datetime_marker_helper {
 /// Generates the options argument passed into the docs test constructor
 macro_rules! length_option_helper {
     (yes) => {
-        stringify!(NeoSkeletonLength::Medium)
+        stringify!(NeoSkeletonLength::Medium.into())
     };
     (no) => {
-        stringify!(())
+        stringify!(().into())
     };
 }
 
@@ -1142,7 +1142,7 @@ macro_rules! impl_date_marker {
         /// use writeable::assert_try_writeable_eq;
         #[doc = concat!("let fmt = NeoFormatter::<", stringify!($type), ">::try_new(")]
         ///     &locale!("en").into(),
-        ///     NeoSkeletonLength::Medium,
+        ///     NeoSkeletonLength::Medium.into(),
         /// )
         /// .unwrap();
         /// let dt = Date::try_new_iso_date(2024, 5, 17).unwrap();
@@ -1166,7 +1166,7 @@ macro_rules! impl_date_marker {
         ///
         #[doc = concat!("let fmt = TypedNeoFormatter::<Gregorian, ", stringify!($type), ">::try_new(")]
         ///     &locale!("en").into(),
-        ///     NeoSkeletonLength::Medium,
+        ///     NeoSkeletonLength::Medium.into(),
         /// )
         /// .unwrap();
         /// let dt = Date::try_new_gregorian_date(2024, 5, 17).unwrap();
@@ -1296,7 +1296,7 @@ macro_rules! impl_time_marker {
         ///
         #[doc = concat!("let fmt = NeoFormatter::<", stringify!($type), ">::try_new(")]
         ///     &locale!("en").into(),
-        ///     NeoSkeletonLength::Medium,
+        ///     NeoSkeletonLength::Medium.into(),
         /// )
         /// .unwrap();
         /// let dt = DateTime::try_new_iso_datetime(2024, 5, 17, 15, 47, 50).unwrap();
@@ -1320,7 +1320,7 @@ macro_rules! impl_time_marker {
         ///
         #[doc = concat!("let fmt = TypedNeoFormatter::<Gregorian, ", stringify!($type), ">::try_new(")]
         ///     &locale!("en").into(),
-        ///     NeoSkeletonLength::Medium,
+        ///     NeoSkeletonLength::Medium.into(),
         /// )
         /// .unwrap();
         /// let dt = Time::try_new(15, 47, 50, 0).unwrap();
@@ -1518,7 +1518,7 @@ macro_rules! impl_datetime_marker {
         ///
         #[doc = concat!("let fmt = NeoFormatter::<", stringify!($type), ">::try_new(")]
         ///     &locale!("en").into(),
-        ///     NeoSkeletonLength::Medium,
+        ///     NeoSkeletonLength::Medium.into(),
         /// )
         /// .unwrap();
         /// let dt = DateTime::try_new_iso_datetime(2024, 5, 17, 15, 47, 50).unwrap();
@@ -1542,7 +1542,7 @@ macro_rules! impl_datetime_marker {
         ///
         #[doc = concat!("let fmt = TypedNeoFormatter::<Gregorian, ", stringify!($type), ">::try_new(")]
         ///     &locale!("en").into(),
-        ///     NeoSkeletonLength::Medium,
+        ///     NeoSkeletonLength::Medium.into(),
         /// )
         /// .unwrap();
         /// let dt = DateTime::try_new_gregorian_datetime(2024, 5, 17, 15, 47, 50).unwrap();
@@ -1582,7 +1582,7 @@ macro_rules! impl_zoneddatetime_marker {
         ///
         #[doc = concat!("let fmt = NeoFormatter::<", stringify!($type), ">::try_new(")]
         ///     &locale!("en").into(),
-        ///     NeoSkeletonLength::Medium,
+        ///     NeoSkeletonLength::Medium.into(),
         /// )
         /// .unwrap();
         /// let dtz = CustomZonedDateTime {
@@ -1611,7 +1611,7 @@ macro_rules! impl_zoneddatetime_marker {
         ///
         #[doc = concat!("let fmt = TypedNeoFormatter::<Gregorian, ", stringify!($type), ">::try_new(")]
         ///     &locale!("en").into(),
-        ///     NeoSkeletonLength::Medium,
+        ///     NeoSkeletonLength::Medium.into(),
         /// )
         /// .unwrap();
         /// let dtz = CustomZonedDateTime {
@@ -1750,7 +1750,7 @@ impl_zone_marker!(
     ///
     /// let fmt = TypedNeoFormatter::<Gregorian, NeoTimeZoneSpecificShortMarker>::try_new(
     ///     &locale!("en").into(),
-    ///     (),
+    ///     ().into(),
     /// )
     /// .unwrap();
     ///
@@ -1866,7 +1866,7 @@ impl_zone_marker!(
     ///
     /// let fmt = TypedNeoFormatter::<Gregorian, NeoTimeZoneGenericShortMarker>::try_new(
     ///     &locale!("en").into(),
-    ///     (),
+    ///     ().into(),
     /// )
     /// .unwrap();
     ///
