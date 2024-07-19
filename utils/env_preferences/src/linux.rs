@@ -53,6 +53,8 @@ pub mod linux_locales_prefs {
             if !locale_ptr.is_null() {
                 let c_str = CStr::from_ptr(locale_ptr);
                 if let Ok(str_slice) = c_str.to_str() {
+                    // `gnome-calendar` is the default calendar and it only supports `Gregorian`. 
+                    // Related issue: https://gitlab.gnome.org/GNOME/gnome-calendar/-/issues/998
                     return Box::new(
                         Some((
                             Cow::Owned(str_slice.to_string()),
