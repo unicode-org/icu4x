@@ -108,7 +108,7 @@ fn main() {
                 "Cargo.toml",
                 include_str!("../template/Cargo.toml.template"),
             ),
-            ("LICENSE", include_str!("../LICENSE")),
+            ("LICENSE", include_str!("../templaet/LICENSE.template")),
             ("README.md", include_str!("../template/README.md.template")),
             (
                 "src/lib.rs",

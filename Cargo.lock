@@ -219,19 +219,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "bench-binsize"
-version = "0.0.0"
-
-[[package]]
-name = "bench-memory"
-version = "0.0.0"
-dependencies = [
- "clap",
- "libc",
- "serde_json",
-]
-
-[[package]]
 name = "bies"
 version = "0.2.2"
 dependencies = [
@@ -973,11 +960,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_benchmark_binsize"
+version = "0.0.0"
+
+[[package]]
 name = "icu_benchmark_macros"
 version = "0.0.0"
 dependencies = [
  "dhat",
  "dlmalloc",
+]
+
+[[package]]
+name = "icu_benchmark_memory"
+version = "0.0.0"
+dependencies = [
+ "clap",
+ "libc",
+ "serde_json",
 ]
 
 [[package]]
