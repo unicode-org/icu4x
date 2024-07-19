@@ -11,7 +11,7 @@ pub mod ffi {
 
     use crate::calendar::ffi::Calendar;
     use crate::date::ffi::{Date, IsoDate, IsoWeekday};
-    use crate::errors::ffi::{CalendarError, FromIxdtfError};
+    use crate::errors::ffi::{CalendarError, CalendarFromStrError};
     use crate::time::ffi::Time;
 
     use tinystr::TinyAsciiStr;
@@ -57,7 +57,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::DateTime::try_iso_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::calendar::DateTime::from_str, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_string")]
-        pub fn create_from_string(v: &DiplomatStr) -> Result<Box<IsoDateTime>, FromIxdtfError> {
+        pub fn create_from_string(v: &DiplomatStr) -> Result<Box<IsoDateTime>, CalendarFromStrError> {
             Ok(Box::new(IsoDateTime(
                 icu_calendar::DateTime::try_iso_from_utf8(v)?,
             )))
@@ -311,7 +311,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::DateTime::from_str, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_string")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_from_string(v: &DiplomatStr) -> Result<Box<DateTime>, FromIxdtfError> {
+        pub fn create_from_string(v: &DiplomatStr) -> Result<Box<DateTime>, CalendarFromStrError> {
             Ok(Box::new(DateTime(
                 icu_calendar::DateTime::try_from_utf8(v)?.wrap_calendar_in_arc(),
             )))

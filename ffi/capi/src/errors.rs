@@ -75,7 +75,7 @@ pub mod ffi {
         feature = "icu_timezone",
         feature = "icu_calendar"
     ))]
-    pub enum FromIxdtfError {
+    pub enum CalendarFromStrError {
         Unknown = 0x00,
         InvalidSyntax = 0x01,
         OutOfRange = 0x02,
@@ -221,7 +221,7 @@ impl From<icu_calendar::DateError> for CalendarError {
     feature = "icu_timezone",
     feature = "icu_calendar"
 ))]
-impl From<icu_calendar::FromStrError> for FromIxdtfError {
+impl From<icu_calendar::FromStrError> for CalendarFromStrError {
     fn from(e: icu_calendar::FromStrError) -> Self {
         match e {
             icu_calendar::FromStrError::Syntax(_) => Self::InvalidSyntax,
