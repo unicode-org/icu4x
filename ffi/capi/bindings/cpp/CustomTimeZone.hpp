@@ -21,7 +21,7 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    typedef struct icu4x_CustomTimeZone_from_string_mv1_result {union {diplomat::capi::CustomTimeZone* ok; diplomat::capi::TimeZoneInvalidOffsetError err;}; bool is_ok;} icu4x_CustomTimeZone_from_string_mv1_result;
+    typedef struct icu4x_CustomTimeZone_from_string_mv1_result {union {diplomat::capi::CustomTimeZone* ok; }; bool is_ok;} icu4x_CustomTimeZone_from_string_mv1_result;
     icu4x_CustomTimeZone_from_string_mv1_result icu4x_CustomTimeZone_from_string_mv1(const char* s_data, size_t s_len);
     
     diplomat::capi::CustomTimeZone* icu4x_CustomTimeZone_empty_mv1();
@@ -32,7 +32,7 @@ namespace capi {
     
     diplomat::capi::CustomTimeZone* icu4x_CustomTimeZone_bst_mv1();
     
-    typedef struct icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1_result {union { diplomat::capi::TimeZoneInvalidOffsetError err;}; bool is_ok;} icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1_result;
+    typedef struct icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1_result { bool is_ok;} icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1_result;
     icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1_result icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1(diplomat::capi::CustomTimeZone* self, int32_t offset_seconds);
     
     void icu4x_CustomTimeZone_set_gmt_offset_eighths_of_hour_mv1(diplomat::capi::CustomTimeZone* self, int8_t offset_eighths_of_hour);
@@ -54,10 +54,10 @@ namespace capi {
     typedef struct icu4x_CustomTimeZone_gmt_offset_has_seconds_mv1_result {union {bool ok; }; bool is_ok;} icu4x_CustomTimeZone_gmt_offset_has_seconds_mv1_result;
     icu4x_CustomTimeZone_gmt_offset_has_seconds_mv1_result icu4x_CustomTimeZone_gmt_offset_has_seconds_mv1(const diplomat::capi::CustomTimeZone* self);
     
-    typedef struct icu4x_CustomTimeZone_try_set_time_zone_id_mv1_result {union { diplomat::capi::TimeZoneInvalidIdError err;}; bool is_ok;} icu4x_CustomTimeZone_try_set_time_zone_id_mv1_result;
+    typedef struct icu4x_CustomTimeZone_try_set_time_zone_id_mv1_result { bool is_ok;} icu4x_CustomTimeZone_try_set_time_zone_id_mv1_result;
     icu4x_CustomTimeZone_try_set_time_zone_id_mv1_result icu4x_CustomTimeZone_try_set_time_zone_id_mv1(diplomat::capi::CustomTimeZone* self, const char* id_data, size_t id_len);
     
-    typedef struct icu4x_CustomTimeZone_try_set_iana_time_zone_id_mv1_result {union { diplomat::capi::TimeZoneInvalidIdError err;}; bool is_ok;} icu4x_CustomTimeZone_try_set_iana_time_zone_id_mv1_result;
+    typedef struct icu4x_CustomTimeZone_try_set_iana_time_zone_id_mv1_result { bool is_ok;} icu4x_CustomTimeZone_try_set_iana_time_zone_id_mv1_result;
     icu4x_CustomTimeZone_try_set_iana_time_zone_id_mv1_result icu4x_CustomTimeZone_try_set_iana_time_zone_id_mv1(diplomat::capi::CustomTimeZone* self, const diplomat::capi::TimeZoneIdMapper* mapper, const char* id_data, size_t id_len);
     
     void icu4x_CustomTimeZone_clear_time_zone_id_mv1(diplomat::capi::CustomTimeZone* self);
@@ -65,7 +65,7 @@ namespace capi {
     typedef struct icu4x_CustomTimeZone_time_zone_id_mv1_result { bool is_ok;} icu4x_CustomTimeZone_time_zone_id_mv1_result;
     icu4x_CustomTimeZone_time_zone_id_mv1_result icu4x_CustomTimeZone_time_zone_id_mv1(const diplomat::capi::CustomTimeZone* self, diplomat::capi::DiplomatWrite* write);
     
-    typedef struct icu4x_CustomTimeZone_try_set_metazone_id_mv1_result {union { diplomat::capi::TimeZoneInvalidIdError err;}; bool is_ok;} icu4x_CustomTimeZone_try_set_metazone_id_mv1_result;
+    typedef struct icu4x_CustomTimeZone_try_set_metazone_id_mv1_result { bool is_ok;} icu4x_CustomTimeZone_try_set_metazone_id_mv1_result;
     icu4x_CustomTimeZone_try_set_metazone_id_mv1_result icu4x_CustomTimeZone_try_set_metazone_id_mv1(diplomat::capi::CustomTimeZone* self, const char* id_data, size_t id_len);
     
     void icu4x_CustomTimeZone_clear_metazone_id_mv1(diplomat::capi::CustomTimeZone* self);
@@ -103,7 +103,7 @@ namespace capi {
 inline diplomat::result<std::unique_ptr<CustomTimeZone>, TimeZoneInvalidOffsetError> CustomTimeZone::from_string(std::string_view s) {
   auto result = diplomat::capi::icu4x_CustomTimeZone_from_string_mv1(s.data(),
     s.size());
-  return result.is_ok ? diplomat::result<std::unique_ptr<CustomTimeZone>, TimeZoneInvalidOffsetError>(diplomat::Ok<std::unique_ptr<CustomTimeZone>>(std::unique_ptr<CustomTimeZone>(CustomTimeZone::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<CustomTimeZone>, TimeZoneInvalidOffsetError>(diplomat::Err<TimeZoneInvalidOffsetError>(TimeZoneInvalidOffsetError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<CustomTimeZone>, TimeZoneInvalidOffsetError>(diplomat::Ok<std::unique_ptr<CustomTimeZone>>(std::unique_ptr<CustomTimeZone>(CustomTimeZone::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<CustomTimeZone>, TimeZoneInvalidOffsetError>(diplomat::Err<TimeZoneInvalidOffsetError>(TimeZoneInvalidOffsetError {}));
 }
 
 inline std::unique_ptr<CustomTimeZone> CustomTimeZone::empty() {
@@ -129,7 +129,7 @@ inline std::unique_ptr<CustomTimeZone> CustomTimeZone::bst() {
 inline diplomat::result<std::monostate, TimeZoneInvalidOffsetError> CustomTimeZone::try_set_gmt_offset_seconds(int32_t offset_seconds) {
   auto result = diplomat::capi::icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1(this->AsFFI(),
     offset_seconds);
-  return result.is_ok ? diplomat::result<std::monostate, TimeZoneInvalidOffsetError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, TimeZoneInvalidOffsetError>(diplomat::Err<TimeZoneInvalidOffsetError>(TimeZoneInvalidOffsetError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::monostate, TimeZoneInvalidOffsetError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, TimeZoneInvalidOffsetError>(diplomat::Err<TimeZoneInvalidOffsetError>(TimeZoneInvalidOffsetError {}));
 }
 
 inline void CustomTimeZone::set_gmt_offset_eighths_of_hour(int8_t offset_eighths_of_hour) {
@@ -170,7 +170,7 @@ inline diplomat::result<std::monostate, TimeZoneInvalidIdError> CustomTimeZone::
   auto result = diplomat::capi::icu4x_CustomTimeZone_try_set_time_zone_id_mv1(this->AsFFI(),
     id.data(),
     id.size());
-  return result.is_ok ? diplomat::result<std::monostate, TimeZoneInvalidIdError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, TimeZoneInvalidIdError>(diplomat::Err<TimeZoneInvalidIdError>(TimeZoneInvalidIdError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::monostate, TimeZoneInvalidIdError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, TimeZoneInvalidIdError>(diplomat::Err<TimeZoneInvalidIdError>(TimeZoneInvalidIdError {}));
 }
 
 inline diplomat::result<std::monostate, TimeZoneInvalidIdError> CustomTimeZone::try_set_iana_time_zone_id(const TimeZoneIdMapper& mapper, std::string_view id) {
@@ -178,7 +178,7 @@ inline diplomat::result<std::monostate, TimeZoneInvalidIdError> CustomTimeZone::
     mapper.AsFFI(),
     id.data(),
     id.size());
-  return result.is_ok ? diplomat::result<std::monostate, TimeZoneInvalidIdError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, TimeZoneInvalidIdError>(diplomat::Err<TimeZoneInvalidIdError>(TimeZoneInvalidIdError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::monostate, TimeZoneInvalidIdError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, TimeZoneInvalidIdError>(diplomat::Err<TimeZoneInvalidIdError>(TimeZoneInvalidIdError {}));
 }
 
 inline void CustomTimeZone::clear_time_zone_id() {
@@ -197,7 +197,7 @@ inline diplomat::result<std::monostate, TimeZoneInvalidIdError> CustomTimeZone::
   auto result = diplomat::capi::icu4x_CustomTimeZone_try_set_metazone_id_mv1(this->AsFFI(),
     id.data(),
     id.size());
-  return result.is_ok ? diplomat::result<std::monostate, TimeZoneInvalidIdError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, TimeZoneInvalidIdError>(diplomat::Err<TimeZoneInvalidIdError>(TimeZoneInvalidIdError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::monostate, TimeZoneInvalidIdError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, TimeZoneInvalidIdError>(diplomat::Err<TimeZoneInvalidIdError>(TimeZoneInvalidIdError {}));
 }
 
 inline void CustomTimeZone::clear_metazone_id() {

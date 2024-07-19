@@ -88,7 +88,7 @@ fn neo_datetime_lengths() {
                 let formatter = TypedNeoFormatter::try_new_with_components(
                     &locale,
                     NeoDateTimeComponents::DateTime(day_components, time_components),
-                    length,
+                    length.into(),
                 )
                 .unwrap();
                 let formatted = formatter.format(&datetime);
@@ -124,7 +124,7 @@ fn neo_date_lengths() {
             let formatter = TypedNeoFormatter::try_new_with_components(
                 &locale,
                 NeoDateComponents::Day(day_components),
-                length,
+                length.into(),
             )
             .unwrap();
             let formatted = formatter.format(&datetime);

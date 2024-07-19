@@ -182,8 +182,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "bakeddata-scripts"
-version = "1.5.0"
+name = "bakeddata"
+version = "0.0.0"
 dependencies = [
  "crlify",
  "icu",
@@ -567,6 +567,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "depcheck"
+version = "0.0.0"
+
+[[package]]
 name = "deranged"
 version = "0.3.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -600,12 +604,24 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=6468fa9b17287be0c047592d4a9f5305222b000b#6468fa9b17287be0c047592d4a9f5305222b000b"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=67386539b41bf82b1863a83272a8abec7360375b#67386539b41bf82b1863a83272a8abec7360375b"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
  "quote",
  "syn 2.0.66",
+]
+
+[[package]]
+name = "diplomat-coverage"
+version = "0.0.0"
+dependencies = [
+ "diplomat_core",
+ "elsa",
+ "lazy_static",
+ "rustdoc-types",
+ "serde_json",
+ "syn-inline-mod",
 ]
 
 [[package]]
@@ -618,7 +634,7 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.8.1"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=6468fa9b17287be0c047592d4a9f5305222b000b#6468fa9b17287be0c047592d4a9f5305222b000b"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=67386539b41bf82b1863a83272a8abec7360375b#67386539b41bf82b1863a83272a8abec7360375b"
 dependencies = [
  "log",
 ]
@@ -626,7 +642,7 @@ dependencies = [
 [[package]]
 name = "diplomat-tool"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=6468fa9b17287be0c047592d4a9f5305222b000b#6468fa9b17287be0c047592d4a9f5305222b000b"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=67386539b41bf82b1863a83272a8abec7360375b#67386539b41bf82b1863a83272a8abec7360375b"
 dependencies = [
  "askama",
  "clap",
@@ -646,7 +662,7 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=6468fa9b17287be0c047592d4a9f5305222b000b#6468fa9b17287be0c047592d4a9f5305222b000b"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=67386539b41bf82b1863a83272a8abec7360375b#67386539b41bf82b1863a83272a8abec7360375b"
 dependencies = [
  "displaydoc",
  "either",
@@ -686,6 +702,22 @@ name = "downcast-rs"
 version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "75b325c5dbd37f80359721ad39aca5a29fb04c89279657cffdda8736d0c0b9d2"
+
+[[package]]
+name = "download-repo-sources"
+version = "0.0.0"
+dependencies = [
+ "clap",
+ "crlify",
+ "eyre",
+ "icu_locale_core",
+ "icu_provider",
+ "icu_provider_source",
+ "log",
+ "simple_logger",
+ "ureq",
+ "zip",
+]
 
 [[package]]
 name = "ecma402_traits"
@@ -1174,10 +1206,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_depcheck"
-version = "0.0.0"
-
-[[package]]
 name = "icu_experimental"
 version = "0.1.0"
 dependencies = [
@@ -1219,18 +1247,6 @@ version = "0.1.0"
 dependencies = [
  "icu_locale",
  "icu_provider_baked",
-]
-
-[[package]]
-name = "icu_ffi_coverage"
-version = "0.0.0"
-dependencies = [
- "diplomat_core",
- "elsa",
- "lazy_static",
- "rustdoc-types",
- "serde_json",
- "syn-inline-mod",
 ]
 
 [[package]]
@@ -1633,22 +1649,6 @@ version = "1.5.0"
 dependencies = [
  "icu_locale",
  "icu_provider_baked",
-]
-
-[[package]]
-name = "icu_testdata_scripts"
-version = "0.0.0"
-dependencies = [
- "clap",
- "crlify",
- "eyre",
- "icu_locale_core",
- "icu_provider",
- "icu_provider_source",
- "log",
- "simple_logger",
- "ureq",
- "zip",
 ]
 
 [[package]]

@@ -67,8 +67,8 @@ export class FixedDecimal {
         try {
     
             if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = FixedDecimalLimitError[Array.from(FixedDecimalLimitError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('FixedDecimalLimitError: ' + cause.value, { cause });
+                const cause = new FixedDecimalLimitError();
+                throw new Error('FixedDecimalLimitError', { cause });
             }
             return new FixedDecimal(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
         } finally {
@@ -86,8 +86,8 @@ export class FixedDecimal {
         try {
     
             if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = FixedDecimalLimitError[Array.from(FixedDecimalLimitError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('FixedDecimalLimitError: ' + cause.value, { cause });
+                const cause = new FixedDecimalLimitError();
+                throw new Error('FixedDecimalLimitError', { cause });
             }
             return new FixedDecimal(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
         } finally {
@@ -105,8 +105,8 @@ export class FixedDecimal {
         try {
     
             if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = FixedDecimalLimitError[Array.from(FixedDecimalLimitError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('FixedDecimalLimitError: ' + cause.value, { cause });
+                const cause = new FixedDecimalLimitError();
+                throw new Error('FixedDecimalLimitError', { cause });
             }
             return new FixedDecimal(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
         } finally {

@@ -15,8 +15,8 @@ namespace diplomat::capi { struct MetazoneCalculator; }
 class MetazoneCalculator;
 namespace diplomat::capi { struct TimeZoneIdMapper; }
 class TimeZoneIdMapper;
-class TimeZoneInvalidIdError;
-class TimeZoneInvalidOffsetError;
+struct TimeZoneInvalidIdError;
+struct TimeZoneInvalidOffsetError;
 
 
 namespace diplomat {

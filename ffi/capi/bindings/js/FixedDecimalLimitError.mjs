@@ -2,39 +2,10 @@
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-// Base enumerator definition
+
 /** Additional information: [1](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.LimitError.html)
 */
 export class FixedDecimalLimitError {
-    #value = undefined;
-
-    static values = new Map([
-        ["TodoZst", 0]
-    ]);
-    constructor(value) {
-        if (value instanceof FixedDecimalLimitError) {
-            this.#value = value.value;
-            return;
-        }
-
-        if (FixedDecimalLimitError.values.has(value)) {
-            this.#value = value;
-            return;
-        }
-
-        throw TypeError(value + " is not a FixedDecimalLimitError and does not correspond to any of its enumerator values.");
-    }
-
-    get value() {
-        return this.#value;
-    }
-
-    get ffiValue() {
-        return FixedDecimalLimitError.values.get(this.#value);
-    }
-
-    static TodoZst = new FixedDecimalLimitError("TodoZst");
-
 
     
 

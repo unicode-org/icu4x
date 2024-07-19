@@ -3,20 +3,17 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 [package]
-name = "icu_testdata_scripts"
-publish = false
+name = "bakeddata"
 version = "0.0.0"
+publish = false
 edition = "2021"
 
 [dependencies]
-crlify = { workspace = true }
-icu_provider_source = { workspace = true }
-icu_locale_core = { workspace = true, features = ["databake"] }
+icu = { workspace = true, features = ["experimental"] }
 icu_provider = { workspace = true }
+icu_provider_export = { workspace = true, features = ["baked_exporter", "rayon"] }
+icu_provider_source = { workspace = true, features = ["networking", "experimental", "use_wasm"] }
 
-clap = { workspace = true, features = ["derive"] }
-eyre = { workspace = true }
 log = { workspace = true }
 simple_logger = { workspace = true }
-ureq = { workspace = true }
-zip = { workspace = true, features = ["deflate"] }
+crlify = { workspace = true }

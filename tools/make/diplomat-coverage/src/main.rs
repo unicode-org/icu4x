@@ -62,7 +62,7 @@ fn main() {
 
     let capi_crate = PathBuf::from(concat!(
         std::env!("CARGO_MANIFEST_DIR"),
-        "/../../ffi/capi/src/lib.rs"
+        "/../../../ffi/capi/src/lib.rs"
     ));
     eprintln!("Loading icu_capi crate from {capi_crate:?}");
     let capi_types = ast::File::from(&syn_inline_mod::parse_and_inline_modules(&capi_crate))
@@ -123,7 +123,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                 panic!("Rustdoc build failed with {output:?}");
             }
             let path = PathBuf::from(std::env!("CARGO_MANIFEST_DIR"))
-                .join("../../target/doc")
+                .join("../../../target/doc")
                 .join(krate)
                 .with_extension("json");
             eprintln!("Attempting to load {path:?}");

@@ -15,8 +15,8 @@ use std::io::Write;
 use std::path::Path;
 use std::sync::Mutex;
 
-const REPO_VERSION: &str = env!("CARGO_PKG_VERSION");
-const EXPERIMENTAL_VERSION: &str = "0.1.0";
+const REPO_VERSION: &str = "version.workspace = true";
+
 const COMPONENTS: &[(&str, &[DataMarkerInfo], &str)] = &[
     ("calendar", icu::calendar::provider::MARKERS, REPO_VERSION),
     ("casemap", icu::casemap::provider::MARKERS, REPO_VERSION),
@@ -41,7 +41,7 @@ const COMPONENTS: &[(&str, &[DataMarkerInfo], &str)] = &[
     (
         "experimental",
         icu::experimental::provider::MARKERS,
-        EXPERIMENTAL_VERSION,
+        r#"version = "0.1.0""#,
     ),
 ];
 
@@ -108,7 +108,7 @@ fn main() {
                 "Cargo.toml",
                 include_str!("../template/Cargo.toml.template"),
             ),
-            ("LICENSE", include_str!("../LICENSE")),
+            ("LICENSE", include_str!("../template/LICENSE.template")),
             ("README.md", include_str!("../template/README.md.template")),
             (
                 "src/lib.rs",

@@ -163,8 +163,7 @@ pub mod ffi {
             id: &DiplomatStr,
         ) -> Result<(), TimeZoneInvalidIdError> {
             self.0.time_zone_id = Some(icu_timezone::TimeZoneBcp47Id(
-                tinystr::TinyAsciiStr::try_from_utf8(id)
-                    .map_err(|_| TimeZoneInvalidIdError::TodoZst)?,
+                tinystr::TinyAsciiStr::try_from_utf8(id).map_err(|_| TimeZoneInvalidIdError)?,
             ));
             Ok(())
         }
@@ -183,7 +182,7 @@ pub mod ffi {
                     .0
                     .as_borrowed()
                     .iana_bytes_to_bcp47(id)
-                    .ok_or(TimeZoneInvalidIdError::TodoZst)?,
+                    .ok_or(TimeZoneInvalidIdError)?,
             );
             Ok(())
         }
@@ -217,8 +216,7 @@ pub mod ffi {
             id: &DiplomatStr,
         ) -> Result<(), TimeZoneInvalidIdError> {
             self.0.metazone_id = Some(icu_timezone::MetazoneId(
-                tinystr::TinyAsciiStr::try_from_utf8(id)
-                    .map_err(|_| TimeZoneInvalidIdError::TodoZst)?,
+                tinystr::TinyAsciiStr::try_from_utf8(id).map_err(|_| TimeZoneInvalidIdError)?,
             ));
             Ok(())
         }

@@ -7,7 +7,6 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-#include "FixedDecimalLimitError.d.h"
 #include "FixedDecimalParseError.d.h"
 #include "FixedDecimalRoundingIncrement.d.h"
 #include "FixedDecimalRoundingMode.d.h"
@@ -29,16 +28,16 @@ FixedDecimal* icu4x_FixedDecimal_from_int64_mv1(int64_t v);
 
 FixedDecimal* icu4x_FixedDecimal_from_uint64_mv1(uint64_t v);
 
-typedef struct icu4x_FixedDecimal_from_double_with_integer_precision_mv1_result {union {FixedDecimal* ok; FixedDecimalLimitError err;}; bool is_ok;} icu4x_FixedDecimal_from_double_with_integer_precision_mv1_result;
+typedef struct icu4x_FixedDecimal_from_double_with_integer_precision_mv1_result {union {FixedDecimal* ok; }; bool is_ok;} icu4x_FixedDecimal_from_double_with_integer_precision_mv1_result;
 icu4x_FixedDecimal_from_double_with_integer_precision_mv1_result icu4x_FixedDecimal_from_double_with_integer_precision_mv1(double f);
 
-typedef struct icu4x_FixedDecimal_from_double_with_lower_magnitude_mv1_result {union {FixedDecimal* ok; FixedDecimalLimitError err;}; bool is_ok;} icu4x_FixedDecimal_from_double_with_lower_magnitude_mv1_result;
+typedef struct icu4x_FixedDecimal_from_double_with_lower_magnitude_mv1_result {union {FixedDecimal* ok; }; bool is_ok;} icu4x_FixedDecimal_from_double_with_lower_magnitude_mv1_result;
 icu4x_FixedDecimal_from_double_with_lower_magnitude_mv1_result icu4x_FixedDecimal_from_double_with_lower_magnitude_mv1(double f, int16_t magnitude);
 
-typedef struct icu4x_FixedDecimal_from_double_with_significant_digits_mv1_result {union {FixedDecimal* ok; FixedDecimalLimitError err;}; bool is_ok;} icu4x_FixedDecimal_from_double_with_significant_digits_mv1_result;
+typedef struct icu4x_FixedDecimal_from_double_with_significant_digits_mv1_result {union {FixedDecimal* ok; }; bool is_ok;} icu4x_FixedDecimal_from_double_with_significant_digits_mv1_result;
 icu4x_FixedDecimal_from_double_with_significant_digits_mv1_result icu4x_FixedDecimal_from_double_with_significant_digits_mv1(double f, uint8_t digits);
 
-typedef struct icu4x_FixedDecimal_from_double_with_floating_precision_mv1_result {union {FixedDecimal* ok; FixedDecimalLimitError err;}; bool is_ok;} icu4x_FixedDecimal_from_double_with_floating_precision_mv1_result;
+typedef struct icu4x_FixedDecimal_from_double_with_floating_precision_mv1_result {union {FixedDecimal* ok; }; bool is_ok;} icu4x_FixedDecimal_from_double_with_floating_precision_mv1_result;
 icu4x_FixedDecimal_from_double_with_floating_precision_mv1_result icu4x_FixedDecimal_from_double_with_floating_precision_mv1(double f);
 
 typedef struct icu4x_FixedDecimal_from_string_mv1_result {union {FixedDecimal* ok; FixedDecimalParseError err;}; bool is_ok;} icu4x_FixedDecimal_from_string_mv1_result;

@@ -8,6 +8,12 @@ export { CollatorOptions } from "./CollatorOptions"
 
 export { DisplayNamesOptions } from "./DisplayNamesOptions"
 
+export { FixedDecimalLimitError } from "./FixedDecimalLimitError"
+
+export { TimeZoneInvalidIdError } from "./TimeZoneInvalidIdError"
+
+export { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError"
+
 export { LocaleFallbackConfig } from "./LocaleFallbackConfig"
 
 export { LineBreakOptions } from "./LineBreakOptions"
@@ -228,15 +234,9 @@ export { DataError } from "./DataError"
 
 export { Error } from "./Error"
 
-export { FixedDecimalLimitError } from "./FixedDecimalLimitError"
-
 export { FixedDecimalParseError } from "./FixedDecimalParseError"
 
 export { LocaleParseError } from "./LocaleParseError"
-
-export { TimeZoneInvalidIdError } from "./TimeZoneInvalidIdError"
-
-export { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError"
 
 export { LocaleFallbackPriority } from "./LocaleFallbackPriority"
 
