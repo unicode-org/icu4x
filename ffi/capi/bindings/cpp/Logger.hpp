@@ -16,7 +16,7 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    bool icu4x_Logger_init_simple_logger_mv1();
+    bool icu4x_Logger_init_simple_logger_mv1(void);
     
     
     void icu4x_Logger_destroy_mv1(Logger* self);

@@ -9,12 +9,12 @@ delete globalThis.fetch;
 
 import {Locale, DataProvider, FixedDecimalFormatter, FixedDecimal, FixedDecimalGroupingStrategy } from './lib/index.mjs';
 
-const locale = Locale.createFromString("bn");
-const provider = DataProvider.createCompiled();
+const locale = Locale.fromString("bn");
+const provider = DataProvider.compiled();
 
 const format = FixedDecimalFormatter.createWithGroupingStrategy(provider, locale, FixedDecimalGroupingStrategy.Auto);
 
-const decimal = FixedDecimal.fromInteger(1000007);
+const decimal = FixedDecimal.fromNumber(1000007);
 decimal.multiplyPow10(-2);
 
 const result = format.format(decimal);

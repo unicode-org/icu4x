@@ -15,8 +15,8 @@ namespace diplomat::capi { struct MetazoneCalculator; }
 class MetazoneCalculator;
 namespace diplomat::capi { struct TimeZoneIdMapper; }
 class TimeZoneIdMapper;
-class TimeZoneInvalidIdError;
-class TimeZoneInvalidOffsetError;
+struct TimeZoneInvalidIdError;
+struct TimeZoneInvalidOffsetError;
 
 
 namespace diplomat {
@@ -28,15 +28,15 @@ namespace capi {
 class CustomTimeZone {
 public:
 
-  inline static diplomat::result<std::unique_ptr<CustomTimeZone>, TimeZoneInvalidOffsetError> create_from_string(std::string_view s);
+  inline static diplomat::result<std::unique_ptr<CustomTimeZone>, TimeZoneInvalidOffsetError> from_string(std::string_view s);
 
-  inline static std::unique_ptr<CustomTimeZone> create_empty();
+  inline static std::unique_ptr<CustomTimeZone> empty();
 
-  inline static std::unique_ptr<CustomTimeZone> create_utc();
+  inline static std::unique_ptr<CustomTimeZone> utc();
 
-  inline static std::unique_ptr<CustomTimeZone> create_gmt();
+  inline static std::unique_ptr<CustomTimeZone> gmt();
 
-  inline static std::unique_ptr<CustomTimeZone> create_bst();
+  inline static std::unique_ptr<CustomTimeZone> bst();
 
   inline diplomat::result<std::monostate, TimeZoneInvalidOffsetError> try_set_gmt_offset_seconds(int32_t offset_seconds);
 

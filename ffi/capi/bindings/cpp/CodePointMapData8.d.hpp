@@ -29,8 +29,6 @@ public:
 
   inline uint8_t get(char32_t cp) const;
 
-  inline uint8_t get32(uint32_t cp) const;
-
   inline static uint32_t general_category_to_mask(uint8_t gc);
 
   inline std::unique_ptr<CodePointRangeIterator> iter_ranges_for_value(uint8_t value) const;

@@ -36,7 +36,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
   factory Locale.fromString(String name) {
     final temp = ffi2.Arena();
     final nameView = name.utf8View;
-    final result = _icu4x_Locale_create_from_string_mv1(nameView.allocIn(temp), nameView.length);
+    final result = _icu4x_Locale_from_string_mv1(nameView.allocIn(temp), nameView.length);
     temp.releaseAll();
     if (!result.isOk) {
       throw LocaleParseError.values[result.union.err];
@@ -48,7 +48,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
   ///
   /// See the [Rust documentation for `UND`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#associatedconstant.UND) for more information.
   factory Locale.und() {
-    final result = _icu4x_Locale_create_und_mv1();
+    final result = _icu4x_Locale_und_mv1();
     return Locale._fromFfi(result, []);
   }
 
@@ -230,15 +230,15 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
 // ignore: non_constant_identifier_names
 external void _icu4x_Locale_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('icu4x_Locale_create_from_string_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_Locale_create_from_string_mv1')
+@meta.ResourceIdentifier('icu4x_Locale_from_string_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_Locale_from_string_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_Locale_create_from_string_mv1(ffi.Pointer<ffi.Uint8> nameData, int nameLength);
+external _ResultOpaqueInt32 _icu4x_Locale_from_string_mv1(ffi.Pointer<ffi.Uint8> nameData, int nameLength);
 
-@meta.ResourceIdentifier('icu4x_Locale_create_und_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_Locale_create_und_mv1')
+@meta.ResourceIdentifier('icu4x_Locale_und_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_Locale_und_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_Locale_create_und_mv1();
+external ffi.Pointer<ffi.Opaque> _icu4x_Locale_und_mv1();
 
 @meta.ResourceIdentifier('icu4x_Locale_clone_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Locale_clone_mv1')

@@ -35,8 +35,8 @@ export class UnitsConverter {
     }
 
 
-    convert(value) {
-        const result = wasm.icu4x_UnitsConverter_convert_f64_mv1(this.ffiValue, value);
+    convertNumber(value) {
+        const result = wasm.icu4x_UnitsConverter_convert_double_mv1(this.ffiValue, value);
     
         try {
     

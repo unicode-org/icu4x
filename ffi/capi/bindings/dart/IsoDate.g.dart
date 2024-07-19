@@ -37,11 +37,27 @@ final class IsoDate implements ffi.Finalizable {
     return IsoDate._fromFfi(result.union.ok, []);
   }
 
+  /// Creates a new [`IsoDate`] from an IXDTF string.
+  ///
+  /// See the [Rust documentation for `try_iso_from_str`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_iso_from_str) for more information.
+  ///
+  /// Throws [CalendarParseError] on failure.
+  factory IsoDate.fromString(String v) {
+    final temp = ffi2.Arena();
+    final vView = v.utf8View;
+    final result = _icu4x_IsoDate_from_string_mv1(vView.allocIn(temp), vView.length);
+    temp.releaseAll();
+    if (!result.isOk) {
+      throw CalendarParseError.values[result.union.err];
+    }
+    return IsoDate._fromFfi(result.union.ok, []);
+  }
+
   /// Creates a new [`IsoDate`] representing January 1, 1970.
   ///
   /// See the [Rust documentation for `unix_epoch`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.unix_epoch) for more information.
-  factory IsoDate.forUnixEpoch() {
-    final result = _icu4x_IsoDate_create_for_unix_epoch_mv1();
+  factory IsoDate.unixEpoch() {
+    final result = _icu4x_IsoDate_unix_epoch_mv1();
     return IsoDate._fromFfi(result, []);
   }
 
@@ -161,10 +177,15 @@ external void _icu4x_IsoDate_destroy_mv1(ffi.Pointer<ffi.Void> self);
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_IsoDate_create_mv1(int year, int month, int day);
 
-@meta.ResourceIdentifier('icu4x_IsoDate_create_for_unix_epoch_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_IsoDate_create_for_unix_epoch_mv1')
+@meta.ResourceIdentifier('icu4x_IsoDate_from_string_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_IsoDate_from_string_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_IsoDate_create_for_unix_epoch_mv1();
+external _ResultOpaqueInt32 _icu4x_IsoDate_from_string_mv1(ffi.Pointer<ffi.Uint8> vData, int vLength);
+
+@meta.ResourceIdentifier('icu4x_IsoDate_unix_epoch_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_IsoDate_unix_epoch_mv1')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _icu4x_IsoDate_unix_epoch_mv1();
 
 @meta.ResourceIdentifier('icu4x_IsoDate_to_calendar_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDate_to_calendar_mv1')

@@ -9,12 +9,12 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
 #include "IsoWeekday.hpp"
 #include "Locale.hpp"
 #include "WeekendContainsDay.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace diplomat {
@@ -24,7 +24,7 @@ namespace capi {
     typedef struct icu4x_WeekCalculator_create_mv1_result {union {diplomat::capi::WeekCalculator* ok; diplomat::capi::DataError err;}; bool is_ok;} icu4x_WeekCalculator_create_mv1_result;
     icu4x_WeekCalculator_create_mv1_result icu4x_WeekCalculator_create_mv1(const diplomat::capi::DataProvider* provider, const diplomat::capi::Locale* locale);
     
-    diplomat::capi::WeekCalculator* icu4x_WeekCalculator_create_from_first_day_of_week_and_min_week_days_mv1(diplomat::capi::IsoWeekday first_weekday, uint8_t min_week_days);
+    diplomat::capi::WeekCalculator* icu4x_WeekCalculator_from_first_day_of_week_and_min_week_days_mv1(diplomat::capi::IsoWeekday first_weekday, uint8_t min_week_days);
     
     diplomat::capi::IsoWeekday icu4x_WeekCalculator_first_weekday_mv1(const diplomat::capi::WeekCalculator* self);
     
@@ -45,8 +45,8 @@ inline diplomat::result<std::unique_ptr<WeekCalculator>, DataError> WeekCalculat
   return result.is_ok ? diplomat::result<std::unique_ptr<WeekCalculator>, DataError>(diplomat::Ok<std::unique_ptr<WeekCalculator>>(std::unique_ptr<WeekCalculator>(WeekCalculator::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<WeekCalculator>, DataError>(diplomat::Err<DataError>(DataError::FromFFI(result.err)));
 }
 
-inline std::unique_ptr<WeekCalculator> WeekCalculator::create_from_first_day_of_week_and_min_week_days(IsoWeekday first_weekday, uint8_t min_week_days) {
-  auto result = diplomat::capi::icu4x_WeekCalculator_create_from_first_day_of_week_and_min_week_days_mv1(first_weekday.AsFFI(),
+inline std::unique_ptr<WeekCalculator> WeekCalculator::from_first_day_of_week_and_min_week_days(IsoWeekday first_weekday, uint8_t min_week_days) {
+  auto result = diplomat::capi::icu4x_WeekCalculator_from_first_day_of_week_and_min_week_days_mv1(first_weekday.AsFFI(),
     min_week_days);
   return std::unique_ptr<WeekCalculator>(WeekCalculator::FromFFI(result));
 }

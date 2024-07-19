@@ -9,8 +9,8 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "MeasureUnit.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace diplomat {

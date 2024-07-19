@@ -8,6 +8,12 @@ export { CollatorOptions } from "./CollatorOptions"
 
 export { DisplayNamesOptions } from "./DisplayNamesOptions"
 
+export { FixedDecimalLimitError } from "./FixedDecimalLimitError"
+
+export { TimeZoneInvalidIdError } from "./TimeZoneInvalidIdError"
+
+export { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError"
+
 export { LocaleFallbackConfig } from "./LocaleFallbackConfig"
 
 export { LineBreakOptions } from "./LineBreakOptions"
@@ -16,7 +22,7 @@ export { IsoTimeZoneOptions } from "./IsoTimeZoneOptions"
 
 export { WeekendContainsDay } from "./WeekendContainsDay"
 
-export { ResolvedCollatorOptions } from "./ResolvedCollatorOptions"
+export { CollatorResolvedOptions } from "./CollatorResolvedOptions"
 
 export { Decomposed } from "./Decomposed"
 
@@ -222,19 +228,15 @@ export { LanguageDisplay } from "./LanguageDisplay"
 
 export { CalendarError } from "./CalendarError"
 
+export { CalendarParseError } from "./CalendarParseError"
+
 export { DataError } from "./DataError"
 
 export { Error } from "./Error"
 
-export { FixedDecimalLimitError } from "./FixedDecimalLimitError"
-
 export { FixedDecimalParseError } from "./FixedDecimalParseError"
 
 export { LocaleParseError } from "./LocaleParseError"
-
-export { TimeZoneInvalidIdError } from "./TimeZoneInvalidIdError"
-
-export { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError"
 
 export { LocaleFallbackPriority } from "./LocaleFallbackPriority"
 

@@ -14,7 +14,7 @@ export class FixedDecimal {
     get ffiValue(): pointer;
 
 
-    static fromInteger(v: number): FixedDecimal;
+    static fromNumber(v: number): FixedDecimal;
 
     static fromBigInt(v: bigint): FixedDecimal;
 

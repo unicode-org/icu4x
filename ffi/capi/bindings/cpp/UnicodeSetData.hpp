@@ -9,10 +9,10 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
 #include "Locale.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace diplomat {
@@ -22,8 +22,6 @@ namespace capi {
     bool icu4x_UnicodeSetData_contains_mv1(const diplomat::capi::UnicodeSetData* self, const char* s_data, size_t s_len);
     
     bool icu4x_UnicodeSetData_contains_char_mv1(const diplomat::capi::UnicodeSetData* self, char32_t cp);
-    
-    bool icu4x_UnicodeSetData_contains32_mv1(const diplomat::capi::UnicodeSetData* self, uint32_t cp);
     
     typedef struct icu4x_UnicodeSetData_load_basic_emoji_mv1_result {union {diplomat::capi::UnicodeSetData* ok; diplomat::capi::DataError err;}; bool is_ok;} icu4x_UnicodeSetData_load_basic_emoji_mv1_result;
     icu4x_UnicodeSetData_load_basic_emoji_mv1_result icu4x_UnicodeSetData_load_basic_emoji_mv1(const diplomat::capi::DataProvider* provider);
@@ -59,12 +57,6 @@ inline bool UnicodeSetData::contains(std::string_view s) const {
 
 inline bool UnicodeSetData::contains_char(char32_t cp) const {
   auto result = diplomat::capi::icu4x_UnicodeSetData_contains_char_mv1(this->AsFFI(),
-    cp);
-  return result;
-}
-
-inline bool UnicodeSetData::contains32(uint32_t cp) const {
-  auto result = diplomat::capi::icu4x_UnicodeSetData_contains32_mv1(this->AsFFI(),
     cp);
   return result;
 }

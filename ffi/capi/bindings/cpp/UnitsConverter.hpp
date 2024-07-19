@@ -16,7 +16,7 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    double icu4x_UnitsConverter_convert_f64_mv1(const diplomat::capi::UnitsConverter* self, double value);
+    double icu4x_UnitsConverter_convert_double_mv1(const diplomat::capi::UnitsConverter* self, double value);
     
     diplomat::capi::UnitsConverter* icu4x_UnitsConverter_clone_mv1(const diplomat::capi::UnitsConverter* self);
     
@@ -27,8 +27,8 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline double UnitsConverter::convert_double(double value) const {
-  auto result = diplomat::capi::icu4x_UnitsConverter_convert_f64_mv1(this->AsFFI(),
+inline double UnitsConverter::convert(double value) const {
+  auto result = diplomat::capi::icu4x_UnitsConverter_convert_double_mv1(this->AsFFI(),
     value);
   return result;
 }

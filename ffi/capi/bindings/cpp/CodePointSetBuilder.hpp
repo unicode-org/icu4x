@@ -9,15 +9,15 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "CodePointSetData.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace diplomat {
 namespace capi {
     extern "C" {
     
-    diplomat::capi::CodePointSetBuilder* icu4x_CodePointSetBuilder_create_mv1();
+    diplomat::capi::CodePointSetBuilder* icu4x_CodePointSetBuilder_create_mv1(void);
     
     diplomat::capi::CodePointSetData* icu4x_CodePointSetBuilder_build_mv1(diplomat::capi::CodePointSetBuilder* self);
     

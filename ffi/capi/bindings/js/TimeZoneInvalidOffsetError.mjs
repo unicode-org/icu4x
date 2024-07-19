@@ -2,39 +2,10 @@
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-// Base enumerator definition
+
 /** Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.InvalidOffsetError.html)
 */
 export class TimeZoneInvalidOffsetError {
-    #value = undefined;
-
-    static values = new Map([
-        ["TodoZst", 0]
-    ]);
-    constructor(value) {
-        if (value instanceof TimeZoneInvalidOffsetError) {
-            this.#value = value.value;
-            return;
-        }
-
-        if (TimeZoneInvalidOffsetError.values.has(value)) {
-            this.#value = value;
-            return;
-        }
-
-        throw TypeError(value + " is not a TimeZoneInvalidOffsetError and does not correspond to any of its enumerator values.");
-    }
-
-    get value() {
-        return this.#value;
-    }
-
-    get ffiValue() {
-        return TimeZoneInvalidOffsetError.values.get(this.#value);
-    }
-
-    static TodoZst = new TimeZoneInvalidOffsetError("TodoZst");
-
 
     
 

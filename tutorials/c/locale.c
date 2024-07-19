@@ -31,7 +31,7 @@ bool test_locale(Locale* locale, const char* message, const char* expected) {
 }
 
 Locale* get_locale(const char* localeText) {
-    icu4x_Locale_create_from_string_mv1_result locale_result = icu4x_Locale_create_from_string_mv1(localeText, strlen(localeText));
+    icu4x_Locale_from_string_mv1_result locale_result = icu4x_Locale_from_string_mv1(localeText, strlen(localeText));
     if (!locale_result.is_ok) {
         printf("Could not create locale from: %s", localeText);
     }
@@ -43,11 +43,11 @@ int main() {
     icu4x_Logger_init_simple_logger_mv1();
     char output[40];
 
-    icu4x_Locale_create_from_string_mv1_result locale_result;
+    icu4x_Locale_from_string_mv1_result locale_result;
 
     // Test creating a locale.
     DiplomatWrite write = diplomat_simple_write(output, 40);
-    locale_result = icu4x_Locale_create_from_string_mv1("ar", 2);
+    locale_result = icu4x_Locale_from_string_mv1("ar", 2);
     if (!locale_result.is_ok) {
         return 1;
     }
@@ -66,7 +66,7 @@ int main() {
 
     // Test some accessors.
     write = diplomat_simple_write(output, 40);
-    locale_result = icu4x_Locale_create_from_string_mv1("fr-FR-u-hc-h23", 14);
+    locale_result = icu4x_Locale_from_string_mv1("fr-FR-u-hc-h23", 14);
     if (!locale_result.is_ok) {
         return 1;
     }
@@ -115,7 +115,7 @@ int main() {
     // Test setting the language
     write = diplomat_simple_write(output, 40);
     const char* str = "fr-FR-u-hc-h23";
-    locale_result = icu4x_Locale_create_from_string_mv1(str, strlen(str));
+    locale_result = icu4x_Locale_from_string_mv1(str, strlen(str));
     if (!locale_result.is_ok) {
         printf("Could not create the locale.");
         return 1;
@@ -135,7 +135,7 @@ int main() {
     // Test setting the region
     write = diplomat_simple_write(output, 40);
     str = "es-ES-u-hc-h23";
-    locale_result = icu4x_Locale_create_from_string_mv1(str, strlen(str));
+    locale_result = icu4x_Locale_from_string_mv1(str, strlen(str));
     if (!locale_result.is_ok) {
         printf("Could not create the locale.");
         return 1;
@@ -158,7 +158,7 @@ int main() {
      // Test setting the script
     write = diplomat_simple_write(output, 40);
     str = "en-US";
-    locale_result = icu4x_Locale_create_from_string_mv1(str, strlen(str));
+    locale_result = icu4x_Locale_from_string_mv1(str, strlen(str));
     if (!locale_result.is_ok) {
         printf("Could not create the locale.");
         return 1;
@@ -188,7 +188,7 @@ int main() {
     icu4x_Locale_destroy_mv1(locale);
 
     // Create a LocaleCanonicalizer and LocaleExpander.
-    DataProvider* provider = icu4x_DataProvider_create_compiled_mv1();
+    DataProvider* provider = icu4x_DataProvider_compiled_mv1();
     icu4x_LocaleCanonicalizer_create_mv1_result result2 = icu4x_LocaleCanonicalizer_create_mv1(provider);
     if (!result2.is_ok) {
         printf("Could not construct Locale Canonicalizer");
@@ -204,7 +204,7 @@ int main() {
 
     // Test maximize.
     write = diplomat_simple_write(output, 40);
-    locale_result = icu4x_Locale_create_from_string_mv1("und", 3);
+    locale_result = icu4x_Locale_from_string_mv1("und", 3);
     if (!locale_result.is_ok) {
         printf("Could not create the locale.");
         return 1;
@@ -225,7 +225,7 @@ int main() {
 
     // Test minimize.
     write = diplomat_simple_write(output, 40);
-    locale_result = icu4x_Locale_create_from_string_mv1("zh-Hant", 7);
+    locale_result = icu4x_Locale_from_string_mv1("zh-Hant", 7);
     if (!locale_result.is_ok) {
         printf("Could not create the locale.");
         return 1;
@@ -246,7 +246,7 @@ int main() {
 
     // Test canonicalize.
     write = diplomat_simple_write(output, 40);
-    locale_result = icu4x_Locale_create_from_string_mv1("no-nynorsk", 10);
+    locale_result = icu4x_Locale_from_string_mv1("no-nynorsk", 10);
     if (!locale_result.is_ok) {
         printf("Could not create the locale.");
         return 1;

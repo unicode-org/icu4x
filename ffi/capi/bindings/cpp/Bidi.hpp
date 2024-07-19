@@ -9,11 +9,11 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "BidiInfo.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
 #include "ReorderedIndexMap.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace diplomat {
@@ -23,7 +23,7 @@ namespace capi {
     typedef struct icu4x_Bidi_create_mv1_result {union {diplomat::capi::Bidi* ok; diplomat::capi::DataError err;}; bool is_ok;} icu4x_Bidi_create_mv1_result;
     icu4x_Bidi_create_mv1_result icu4x_Bidi_create_mv1(const diplomat::capi::DataProvider* provider);
     
-    diplomat::capi::BidiInfo* icu4x_Bidi_for_text_mv1(const diplomat::capi::Bidi* self, const char* text_data, size_t text_len, uint8_t default_level);
+    diplomat::capi::BidiInfo* icu4x_Bidi_for_text_utf8_mv1(const diplomat::capi::Bidi* self, const char* text_data, size_t text_len, uint8_t default_level);
     
     diplomat::capi::ReorderedIndexMap* icu4x_Bidi_reorder_visual_mv1(const diplomat::capi::Bidi* self, const uint8_t* levels_data, size_t levels_len);
     
@@ -31,9 +31,9 @@ namespace capi {
     
     bool icu4x_Bidi_level_is_ltr_mv1(uint8_t level);
     
-    uint8_t icu4x_Bidi_level_rtl_mv1();
+    uint8_t icu4x_Bidi_level_rtl_mv1(void);
     
-    uint8_t icu4x_Bidi_level_ltr_mv1();
+    uint8_t icu4x_Bidi_level_ltr_mv1(void);
     
     
     void icu4x_Bidi_destroy_mv1(Bidi* self);
@@ -48,7 +48,7 @@ inline diplomat::result<std::unique_ptr<Bidi>, DataError> Bidi::create(const Dat
 }
 
 inline std::unique_ptr<BidiInfo> Bidi::for_text(std::string_view text, uint8_t default_level) const {
-  auto result = diplomat::capi::icu4x_Bidi_for_text_mv1(this->AsFFI(),
+  auto result = diplomat::capi::icu4x_Bidi_for_text_utf8_mv1(this->AsFFI(),
     text.data(),
     text.size(),
     default_level);

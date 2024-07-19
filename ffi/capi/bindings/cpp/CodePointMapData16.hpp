@@ -9,11 +9,11 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "CodePointRangeIterator.hpp"
 #include "CodePointSetData.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace diplomat {
@@ -21,8 +21,6 @@ namespace capi {
     extern "C" {
     
     uint16_t icu4x_CodePointMapData16_get_mv1(const diplomat::capi::CodePointMapData16* self, char32_t cp);
-    
-    uint16_t icu4x_CodePointMapData16_get32_mv1(const diplomat::capi::CodePointMapData16* self, uint32_t cp);
     
     diplomat::capi::CodePointRangeIterator* icu4x_CodePointMapData16_iter_ranges_for_value_mv1(const diplomat::capi::CodePointMapData16* self, uint16_t value);
     
@@ -42,12 +40,6 @@ namespace capi {
 
 inline uint16_t CodePointMapData16::get(char32_t cp) const {
   auto result = diplomat::capi::icu4x_CodePointMapData16_get_mv1(this->AsFFI(),
-    cp);
-  return result;
-}
-
-inline uint16_t CodePointMapData16::get32(uint32_t cp) const {
-  auto result = diplomat::capi::icu4x_CodePointMapData16_get32_mv1(this->AsFFI(),
     cp);
   return result;
 }

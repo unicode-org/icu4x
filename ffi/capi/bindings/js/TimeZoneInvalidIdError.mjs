@@ -2,37 +2,7 @@
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-// Base enumerator definition
 export class TimeZoneInvalidIdError {
-    #value = undefined;
-
-    static values = new Map([
-        ["TodoZst", 0]
-    ]);
-    constructor(value) {
-        if (value instanceof TimeZoneInvalidIdError) {
-            this.#value = value.value;
-            return;
-        }
-
-        if (TimeZoneInvalidIdError.values.has(value)) {
-            this.#value = value;
-            return;
-        }
-
-        throw TypeError(value + " is not a TimeZoneInvalidIdError and does not correspond to any of its enumerator values.");
-    }
-
-    get value() {
-        return this.#value;
-    }
-
-    get ffiValue() {
-        return TimeZoneInvalidIdError.values.get(this.#value);
-    }
-
-    static TodoZst = new TimeZoneInvalidIdError("TodoZst");
-
 
     
 

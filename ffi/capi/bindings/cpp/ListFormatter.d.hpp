@@ -32,11 +32,9 @@ public:
 
   inline static diplomat::result<std::unique_ptr<ListFormatter>, DataError> create_unit_with_length(const DataProvider& provider, const Locale& locale, ListLength length);
 
-  inline std::string format_valid_utf8(diplomat::span<const std::string_view> list) const;
+  inline std::string format(diplomat::span<const std::string_view> list) const;
 
-  inline std::string format_utf8(diplomat::span<const std::string_view> list) const;
-
-  inline std::string format_utf16(diplomat::span<const std::u16string_view> list) const;
+  inline std::string format16(diplomat::span<const std::u16string_view> list) const;
 
   inline const diplomat::capi::ListFormatter* AsFFI() const;
   inline diplomat::capi::ListFormatter* AsFFI();

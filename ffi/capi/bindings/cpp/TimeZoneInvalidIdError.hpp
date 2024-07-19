@@ -21,16 +21,7 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline diplomat::capi::TimeZoneInvalidIdError TimeZoneInvalidIdError::AsFFI() const {
-  return static_cast<diplomat::capi::TimeZoneInvalidIdError>(value);
-}
 
-inline TimeZoneInvalidIdError TimeZoneInvalidIdError::FromFFI(diplomat::capi::TimeZoneInvalidIdError c_enum) {
-  switch (c_enum) {
-    case diplomat::capi::TimeZoneInvalidIdError_TodoZst:
-      return static_cast<TimeZoneInvalidIdError::Value>(c_enum);
-    default:
-      abort();
-  }
-}
+
+
 #endif // TimeZoneInvalidIdError_HPP

@@ -39,7 +39,7 @@ export class LocaleFallbackIterator {
     }
 
 
-    next() {
+    #iteratorNext() {
         const result = wasm.icu4x_LocaleFallbackIterator_next_mv1(this.ffiValue);
     
         try {
@@ -51,5 +51,24 @@ export class LocaleFallbackIterator {
     }
 
     
+    
+    #value = null;
+    #done = false;
+    get value() {
+    	return this.#value;
+    }
+    
+    get done() {
+    	return this.#done;
+    }
+    
+    next() {
+    	const out = this.#iteratorNext();
+    
+    	this.#value = out;
+    	this.#done = out === null;
+    
+    	return out;
+    }
 
 }

@@ -7,8 +7,8 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "WeekRelativeUnit.d.hpp"
+#include "diplomat_runtime.hpp"
 
 class WeekRelativeUnit;
 

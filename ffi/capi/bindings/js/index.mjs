@@ -6,6 +6,12 @@ export { CollatorOptions } from "./CollatorOptions.mjs"
 
 export { DisplayNamesOptions } from "./DisplayNamesOptions.mjs"
 
+export { FixedDecimalLimitError } from "./FixedDecimalLimitError.mjs"
+
+export { TimeZoneInvalidIdError } from "./TimeZoneInvalidIdError.mjs"
+
+export { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError.mjs"
+
 export { LocaleFallbackConfig } from "./LocaleFallbackConfig.mjs"
 
 export { LineBreakOptions } from "./LineBreakOptions.mjs"
@@ -14,7 +20,7 @@ export { IsoTimeZoneOptions } from "./IsoTimeZoneOptions.mjs"
 
 export { WeekendContainsDay } from "./WeekendContainsDay.mjs"
 
-export { ResolvedCollatorOptions } from "./ResolvedCollatorOptions.mjs"
+export { CollatorResolvedOptions } from "./CollatorResolvedOptions.mjs"
 
 export { Decomposed } from "./Decomposed.mjs"
 
@@ -220,19 +226,15 @@ export { LanguageDisplay } from "./LanguageDisplay.mjs"
 
 export { CalendarError } from "./CalendarError.mjs"
 
+export { CalendarParseError } from "./CalendarParseError.mjs"
+
 export { DataError } from "./DataError.mjs"
 
 export { Error } from "./Error.mjs"
 
-export { FixedDecimalLimitError } from "./FixedDecimalLimitError.mjs"
-
 export { FixedDecimalParseError } from "./FixedDecimalParseError.mjs"
 
 export { LocaleParseError } from "./LocaleParseError.mjs"
-
-export { TimeZoneInvalidIdError } from "./TimeZoneInvalidIdError.mjs"
-
-export { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError.mjs"
 
 export { LocaleFallbackPriority } from "./LocaleFallbackPriority.mjs"
 

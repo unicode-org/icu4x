@@ -9,12 +9,12 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
 #include "LocaleFallbackConfig.hpp"
 #include "LocaleFallbackerWithConfig.hpp"
 #include "LocaleParseError.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace diplomat {
@@ -24,7 +24,7 @@ namespace capi {
     typedef struct icu4x_LocaleFallbacker_create_mv1_result {union {diplomat::capi::LocaleFallbacker* ok; diplomat::capi::DataError err;}; bool is_ok;} icu4x_LocaleFallbacker_create_mv1_result;
     icu4x_LocaleFallbacker_create_mv1_result icu4x_LocaleFallbacker_create_mv1(const diplomat::capi::DataProvider* provider);
     
-    diplomat::capi::LocaleFallbacker* icu4x_LocaleFallbacker_create_without_data_mv1();
+    diplomat::capi::LocaleFallbacker* icu4x_LocaleFallbacker_without_data_mv1(void);
     
     typedef struct icu4x_LocaleFallbacker_for_config_mv1_result {union {diplomat::capi::LocaleFallbackerWithConfig* ok; diplomat::capi::LocaleParseError err;}; bool is_ok;} icu4x_LocaleFallbacker_for_config_mv1_result;
     icu4x_LocaleFallbacker_for_config_mv1_result icu4x_LocaleFallbacker_for_config_mv1(const diplomat::capi::LocaleFallbacker* self, diplomat::capi::LocaleFallbackConfig config);
@@ -41,8 +41,8 @@ inline diplomat::result<std::unique_ptr<LocaleFallbacker>, DataError> LocaleFall
   return result.is_ok ? diplomat::result<std::unique_ptr<LocaleFallbacker>, DataError>(diplomat::Ok<std::unique_ptr<LocaleFallbacker>>(std::unique_ptr<LocaleFallbacker>(LocaleFallbacker::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<LocaleFallbacker>, DataError>(diplomat::Err<DataError>(DataError::FromFFI(result.err)));
 }
 
-inline std::unique_ptr<LocaleFallbacker> LocaleFallbacker::create_without_data() {
-  auto result = diplomat::capi::icu4x_LocaleFallbacker_create_without_data_mv1();
+inline std::unique_ptr<LocaleFallbacker> LocaleFallbacker::without_data() {
+  auto result = diplomat::capi::icu4x_LocaleFallbacker_without_data_mv1();
   return std::unique_ptr<LocaleFallbacker>(LocaleFallbacker::FromFFI(result));
 }
 

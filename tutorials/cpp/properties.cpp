@@ -51,7 +51,7 @@ int test_map_8_property(CodePointMapData8* data, char32_t sample, uint32_t expec
 
 int main() {
     Logger::init_simple_logger();
-    std::unique_ptr<DataProvider> dp = DataProvider::create_compiled();
+    std::unique_ptr<DataProvider> dp = DataProvider::compiled();
     int result;
 
     result = test_set_property(
@@ -117,7 +117,7 @@ int main() {
     } else {
         std::cout << "Basic_Emoji set contains appropriate characters" << std::endl;
     }
-    std::unique_ptr<Locale> locale = Locale::create_from_string("bn").ok().value();
+    std::unique_ptr<Locale> locale = Locale::from_string("bn").ok().value();
     std::unique_ptr<UnicodeSetData> exemplars = UnicodeSetData::load_exemplars_main(*dp.get(), *locale.get()).ok().value();
     if (!exemplars->contains_char(U'ব')) {
         std::cout << "Character 'ব' not found in Bangla exemplar chars set" << std::endl;

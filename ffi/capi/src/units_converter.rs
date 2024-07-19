@@ -24,7 +24,7 @@ pub mod ffi {
             icu::experimental::units::converter_factory::ConverterFactory::new,
             FnInStruct
         )]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
+        #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn create(provider: &DataProvider) -> Result<Box<UnitsConverterFactory>, DataError> {
             Ok(Box::new(UnitsConverterFactory(call_constructor!(
                 icu_experimental::units::converter_factory::ConverterFactory::new [r => Ok(r)],
@@ -108,9 +108,9 @@ pub mod ffi {
             icu::experimental::units::converter::UnitsConverter::convert,
             FnInStruct
         )]
-        #[diplomat::attr(any(dart, cpp, c), rename = "convert_double")]
-        #[diplomat::attr(js, rename = "convert")]
-        pub fn convert_f64(&self, value: f64) -> f64 {
+        #[diplomat::attr(supports = method_overloading, rename = "convert")]
+        #[diplomat::attr(js, rename = "convert_number")]
+        pub fn convert_double(&self, value: f64) -> f64 {
             self.0.convert(&value)
         }
 

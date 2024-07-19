@@ -9,9 +9,9 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace diplomat {
@@ -26,11 +26,11 @@ namespace capi {
     
     void icu4x_ComposingNormalizer_normalize_mv1(const diplomat::capi::ComposingNormalizer* self, const char* s_data, size_t s_len, diplomat::capi::DiplomatWrite* write);
     
-    bool icu4x_ComposingNormalizer_is_normalized_mv1(const diplomat::capi::ComposingNormalizer* self, const char* s_data, size_t s_len);
+    bool icu4x_ComposingNormalizer_is_normalized_utf8_mv1(const diplomat::capi::ComposingNormalizer* self, const char* s_data, size_t s_len);
     
     bool icu4x_ComposingNormalizer_is_normalized_utf16_mv1(const diplomat::capi::ComposingNormalizer* self, const char16_t* s_data, size_t s_len);
     
-    size_t icu4x_ComposingNormalizer_is_normalized_up_to_mv1(const diplomat::capi::ComposingNormalizer* self, const char* s_data, size_t s_len);
+    size_t icu4x_ComposingNormalizer_is_normalized_utf8_up_to_mv1(const diplomat::capi::ComposingNormalizer* self, const char* s_data, size_t s_len);
     
     size_t icu4x_ComposingNormalizer_is_normalized_utf16_up_to_mv1(const diplomat::capi::ComposingNormalizer* self, const char16_t* s_data, size_t s_len);
     
@@ -62,13 +62,13 @@ inline std::string ComposingNormalizer::normalize(std::string_view s) const {
 }
 
 inline bool ComposingNormalizer::is_normalized(std::string_view s) const {
-  auto result = diplomat::capi::icu4x_ComposingNormalizer_is_normalized_mv1(this->AsFFI(),
+  auto result = diplomat::capi::icu4x_ComposingNormalizer_is_normalized_utf8_mv1(this->AsFFI(),
     s.data(),
     s.size());
   return result;
 }
 
-inline bool ComposingNormalizer::is_normalized_utf16(std::u16string_view s) const {
+inline bool ComposingNormalizer::is_normalized16(std::u16string_view s) const {
   auto result = diplomat::capi::icu4x_ComposingNormalizer_is_normalized_utf16_mv1(this->AsFFI(),
     s.data(),
     s.size());
@@ -76,13 +76,13 @@ inline bool ComposingNormalizer::is_normalized_utf16(std::u16string_view s) cons
 }
 
 inline size_t ComposingNormalizer::is_normalized_up_to(std::string_view s) const {
-  auto result = diplomat::capi::icu4x_ComposingNormalizer_is_normalized_up_to_mv1(this->AsFFI(),
+  auto result = diplomat::capi::icu4x_ComposingNormalizer_is_normalized_utf8_up_to_mv1(this->AsFFI(),
     s.data(),
     s.size());
   return result;
 }
 
-inline size_t ComposingNormalizer::is_normalized_utf16_up_to(std::u16string_view s) const {
+inline size_t ComposingNormalizer::is_normalized16_up_to(std::u16string_view s) const {
   auto result = diplomat::capi::icu4x_ComposingNormalizer_is_normalized_utf16_up_to_mv1(this->AsFFI(),
     s.data(),
     s.size());

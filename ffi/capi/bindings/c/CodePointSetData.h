@@ -21,8 +21,6 @@
 
 bool icu4x_CodePointSetData_contains_mv1(const CodePointSetData* self, char32_t cp);
 
-bool icu4x_CodePointSetData_contains32_mv1(const CodePointSetData* self, uint32_t cp);
-
 CodePointRangeIterator* icu4x_CodePointSetData_iter_ranges_mv1(const CodePointSetData* self);
 
 CodePointRangeIterator* icu4x_CodePointSetData_iter_ranges_complemented_mv1(const CodePointSetData* self);

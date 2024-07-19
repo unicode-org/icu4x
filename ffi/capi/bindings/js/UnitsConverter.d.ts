@@ -14,7 +14,7 @@ export class UnitsConverter {
     get ffiValue(): pointer;
 
 
-    convert(value: number): number;
+    convertNumber(value: number): number;
 
     clone(): UnitsConverter;
 

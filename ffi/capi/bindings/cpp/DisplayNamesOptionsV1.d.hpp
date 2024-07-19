@@ -7,10 +7,10 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "DisplayNamesFallback.d.hpp"
 #include "DisplayNamesStyle.d.hpp"
 #include "LanguageDisplay.d.hpp"
+#include "diplomat_runtime.hpp"
 
 class DisplayNamesFallback;
 class DisplayNamesStyle;

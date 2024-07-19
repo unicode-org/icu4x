@@ -18,6 +18,25 @@ use marker_attrs::GlueType;
 use zerovec::ule::AsULE;
 use zerovec::ZeroSlice;
 
+#[derive(Debug, Copy, Clone)]
+pub(crate) struct MaybeLength(Option<NeoSkeletonLength>);
+
+impl MaybeLength {
+    pub(crate) fn get<TypeForError>(self) -> NeoSkeletonLength {
+        match self.0 {
+            Some(length) => length,
+            None => {
+                debug_assert!(
+                    false,
+                    "expected length: in {}",
+                    core::any::type_name::<TypeForError>()
+                );
+                NeoSkeletonLength::Long
+            }
+        }
+    }
+}
+
 #[derive(Debug)]
 pub(crate) enum DatePatternSelectionData {
     SkeletonDate {
@@ -117,7 +136,7 @@ impl DatePatternSelectionData {
     pub(crate) fn try_new_with_skeleton(
         provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
         locale: &DataLocale,
-        length: NeoSkeletonLength,
+        length: MaybeLength,
         components: NeoDateComponents,
     ) -> Result<Self, DataError> {
         let payload = provider
@@ -131,7 +150,10 @@ impl DatePatternSelectionData {
             .payload
             .cast();
         Ok(Self::SkeletonDate {
-            skeleton: NeoDateSkeleton { length, components },
+            skeleton: NeoDateSkeleton {
+                length: length.get::<Self>(),
+                components,
+            },
             payload,
         })
     }
@@ -165,7 +187,7 @@ impl TimePatternSelectionData {
     pub(crate) fn try_new_with_skeleton(
         provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
         locale: &DataLocale,
-        length: NeoSkeletonLength,
+        length: MaybeLength,
         components: NeoTimeComponents,
     ) -> Result<Self, DataError> {
         let payload = provider
@@ -179,7 +201,10 @@ impl TimePatternSelectionData {
             .payload
             .cast();
         Ok(Self::SkeletonTime {
-            skeleton: NeoTimeSkeleton { length, components },
+            skeleton: NeoTimeSkeleton {
+                length: length.get::<Self>(),
+                components,
+            },
             payload,
         })
     }
@@ -210,10 +235,7 @@ impl TimePatternSelectionData {
 }
 
 impl ZonePatternSelectionData {
-    pub(crate) fn new_with_skeleton(
-        length: NeoSkeletonLength,
-        components: NeoTimeZoneSkeleton,
-    ) -> Self {
+    pub(crate) fn new_with_skeleton(length: MaybeLength, components: NeoTimeZoneSkeleton) -> Self {
         let time_zone = components.resolve(length);
         let pattern_item = PatternItem::Field(time_zone.to_field());
         Self::SinglePatternItem(time_zone, pattern_item.to_unaligned())
@@ -241,9 +263,10 @@ impl DateTimeZonePatternSelectionData {
         time_provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
         glue_provider: &(impl BoundDataProvider<GluePatternV1Marker> + ?Sized),
         locale: &DataLocale,
-        length: NeoSkeletonLength,
+        length: Option<NeoSkeletonLength>,
         components: NeoComponents,
     ) -> Result<Self, DataError> {
+        let length = MaybeLength(length);
         match components {
             NeoComponents::Date(components) => {
                 let selection = DatePatternSelectionData::try_new_with_skeleton(
@@ -342,7 +365,7 @@ impl DateTimeZonePatternSelectionData {
     fn load_glue(
         glue_provider: &(impl BoundDataProvider<GluePatternV1Marker> + ?Sized),
         locale: &DataLocale,
-        length: NeoSkeletonLength,
+        length: MaybeLength,
         glue_type: GlueType,
     ) -> Result<DataPayload<GluePatternV1Marker>, DataError> {
         glue_provider
@@ -351,7 +374,7 @@ impl DateTimeZonePatternSelectionData {
                     marker_attrs::pattern_marker_attr_for_glue(
                         // According to UTS 35, use the date length here: use the glue
                         // pattern "whose type matches the type of the date pattern"
-                        match length {
+                        match length.get::<Self>() {
                             NeoSkeletonLength::Long => marker_attrs::PatternLength::Long,
                             NeoSkeletonLength::Medium => marker_attrs::PatternLength::Medium,
                             NeoSkeletonLength::Short => marker_attrs::PatternLength::Short,

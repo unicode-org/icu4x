@@ -34,7 +34,7 @@ pub mod ffi {
     impl WeekCalculator {
         /// Creates a new [`WeekCalculator`] from locale data.
         #[diplomat::rust_link(icu::calendar::week::WeekCalculator::try_new, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
+        #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn create(
             provider: &DataProvider,
             locale: &Locale,
@@ -60,8 +60,8 @@ pub mod ffi {
             StructField,
             compact
         )]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_first_day_of_week_and_min_week_days")]
-        pub fn create_from_first_day_of_week_and_min_week_days(
+        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        pub fn from_first_day_of_week_and_min_week_days(
             first_weekday: IsoWeekday,
             min_week_days: u8,
         ) -> Box<WeekCalculator> {
@@ -73,20 +73,20 @@ pub mod ffi {
 
         /// Returns the weekday that starts the week for this object's locale
         #[diplomat::rust_link(icu::calendar::week::WeekCalculator::first_weekday, StructField)]
-        #[diplomat::attr(supports = accessors, getter)]
+        #[diplomat::attr(*, getter)]
         pub fn first_weekday(&self) -> IsoWeekday {
             self.0.first_weekday.into()
         }
         /// The minimum number of days overlapping a year required for a week to be
         /// considered part of that year
         #[diplomat::rust_link(icu::calendar::week::WeekCalculator::min_week_days, StructField)]
-        #[diplomat::attr(supports = accessors, getter)]
+        #[diplomat::attr(*, getter)]
         pub fn min_week_days(&self) -> u8 {
             self.0.min_week_days
         }
 
         #[diplomat::rust_link(icu::calendar::week::WeekCalculator::weekend, FnInStruct)]
-        #[diplomat::attr(supports = accessors, getter)]
+        #[diplomat::attr(*, getter)]
         pub fn weekend(&self) -> WeekendContainsDay {
             let mut contains = WeekendContainsDay::default();
             for day in self.0.weekend() {

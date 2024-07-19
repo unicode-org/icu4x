@@ -9,41 +9,41 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "FixedDecimalLimitError.hpp"
 #include "FixedDecimalParseError.hpp"
 #include "FixedDecimalRoundingIncrement.hpp"
 #include "FixedDecimalRoundingMode.hpp"
 #include "FixedDecimalSign.hpp"
 #include "FixedDecimalSignDisplay.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace diplomat {
 namespace capi {
     extern "C" {
     
-    diplomat::capi::FixedDecimal* icu4x_FixedDecimal_create_from_i32_mv1(int32_t v);
+    diplomat::capi::FixedDecimal* icu4x_FixedDecimal_from_int32_mv1(int32_t v);
     
-    diplomat::capi::FixedDecimal* icu4x_FixedDecimal_create_from_u32_mv1(uint32_t v);
+    diplomat::capi::FixedDecimal* icu4x_FixedDecimal_from_uint32_mv1(uint32_t v);
     
-    diplomat::capi::FixedDecimal* icu4x_FixedDecimal_create_from_i64_mv1(int64_t v);
+    diplomat::capi::FixedDecimal* icu4x_FixedDecimal_from_int64_mv1(int64_t v);
     
-    diplomat::capi::FixedDecimal* icu4x_FixedDecimal_create_from_u64_mv1(uint64_t v);
+    diplomat::capi::FixedDecimal* icu4x_FixedDecimal_from_uint64_mv1(uint64_t v);
     
-    typedef struct icu4x_FixedDecimal_create_from_f64_with_integer_precision_mv1_result {union {diplomat::capi::FixedDecimal* ok; diplomat::capi::FixedDecimalLimitError err;}; bool is_ok;} icu4x_FixedDecimal_create_from_f64_with_integer_precision_mv1_result;
-    icu4x_FixedDecimal_create_from_f64_with_integer_precision_mv1_result icu4x_FixedDecimal_create_from_f64_with_integer_precision_mv1(double f);
+    typedef struct icu4x_FixedDecimal_from_double_with_integer_precision_mv1_result {union {diplomat::capi::FixedDecimal* ok; }; bool is_ok;} icu4x_FixedDecimal_from_double_with_integer_precision_mv1_result;
+    icu4x_FixedDecimal_from_double_with_integer_precision_mv1_result icu4x_FixedDecimal_from_double_with_integer_precision_mv1(double f);
     
-    typedef struct icu4x_FixedDecimal_create_from_f64_with_lower_magnitude_mv1_result {union {diplomat::capi::FixedDecimal* ok; diplomat::capi::FixedDecimalLimitError err;}; bool is_ok;} icu4x_FixedDecimal_create_from_f64_with_lower_magnitude_mv1_result;
-    icu4x_FixedDecimal_create_from_f64_with_lower_magnitude_mv1_result icu4x_FixedDecimal_create_from_f64_with_lower_magnitude_mv1(double f, int16_t magnitude);
+    typedef struct icu4x_FixedDecimal_from_double_with_lower_magnitude_mv1_result {union {diplomat::capi::FixedDecimal* ok; }; bool is_ok;} icu4x_FixedDecimal_from_double_with_lower_magnitude_mv1_result;
+    icu4x_FixedDecimal_from_double_with_lower_magnitude_mv1_result icu4x_FixedDecimal_from_double_with_lower_magnitude_mv1(double f, int16_t magnitude);
     
-    typedef struct icu4x_FixedDecimal_create_from_f64_with_significant_digits_mv1_result {union {diplomat::capi::FixedDecimal* ok; diplomat::capi::FixedDecimalLimitError err;}; bool is_ok;} icu4x_FixedDecimal_create_from_f64_with_significant_digits_mv1_result;
-    icu4x_FixedDecimal_create_from_f64_with_significant_digits_mv1_result icu4x_FixedDecimal_create_from_f64_with_significant_digits_mv1(double f, uint8_t digits);
+    typedef struct icu4x_FixedDecimal_from_double_with_significant_digits_mv1_result {union {diplomat::capi::FixedDecimal* ok; }; bool is_ok;} icu4x_FixedDecimal_from_double_with_significant_digits_mv1_result;
+    icu4x_FixedDecimal_from_double_with_significant_digits_mv1_result icu4x_FixedDecimal_from_double_with_significant_digits_mv1(double f, uint8_t digits);
     
-    typedef struct icu4x_FixedDecimal_create_from_f64_with_floating_precision_mv1_result {union {diplomat::capi::FixedDecimal* ok; diplomat::capi::FixedDecimalLimitError err;}; bool is_ok;} icu4x_FixedDecimal_create_from_f64_with_floating_precision_mv1_result;
-    icu4x_FixedDecimal_create_from_f64_with_floating_precision_mv1_result icu4x_FixedDecimal_create_from_f64_with_floating_precision_mv1(double f);
+    typedef struct icu4x_FixedDecimal_from_double_with_floating_precision_mv1_result {union {diplomat::capi::FixedDecimal* ok; }; bool is_ok;} icu4x_FixedDecimal_from_double_with_floating_precision_mv1_result;
+    icu4x_FixedDecimal_from_double_with_floating_precision_mv1_result icu4x_FixedDecimal_from_double_with_floating_precision_mv1(double f);
     
-    typedef struct icu4x_FixedDecimal_create_from_string_mv1_result {union {diplomat::capi::FixedDecimal* ok; diplomat::capi::FixedDecimalParseError err;}; bool is_ok;} icu4x_FixedDecimal_create_from_string_mv1_result;
-    icu4x_FixedDecimal_create_from_string_mv1_result icu4x_FixedDecimal_create_from_string_mv1(const char* v_data, size_t v_len);
+    typedef struct icu4x_FixedDecimal_from_string_mv1_result {union {diplomat::capi::FixedDecimal* ok; diplomat::capi::FixedDecimalParseError err;}; bool is_ok;} icu4x_FixedDecimal_from_string_mv1_result;
+    icu4x_FixedDecimal_from_string_mv1_result icu4x_FixedDecimal_from_string_mv1(const char* v_data, size_t v_len);
     
     uint8_t icu4x_FixedDecimal_digit_at_mv1(const diplomat::capi::FixedDecimal* self, int16_t magnitude);
     
@@ -101,50 +101,50 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline std::unique_ptr<FixedDecimal> FixedDecimal::create_from_i32(int32_t v) {
-  auto result = diplomat::capi::icu4x_FixedDecimal_create_from_i32_mv1(v);
+inline std::unique_ptr<FixedDecimal> FixedDecimal::from(int32_t v) {
+  auto result = diplomat::capi::icu4x_FixedDecimal_from_int32_mv1(v);
   return std::unique_ptr<FixedDecimal>(FixedDecimal::FromFFI(result));
 }
 
-inline std::unique_ptr<FixedDecimal> FixedDecimal::create_from_u32(uint32_t v) {
-  auto result = diplomat::capi::icu4x_FixedDecimal_create_from_u32_mv1(v);
+inline std::unique_ptr<FixedDecimal> FixedDecimal::from(uint32_t v) {
+  auto result = diplomat::capi::icu4x_FixedDecimal_from_uint32_mv1(v);
   return std::unique_ptr<FixedDecimal>(FixedDecimal::FromFFI(result));
 }
 
-inline std::unique_ptr<FixedDecimal> FixedDecimal::create_from_i64(int64_t v) {
-  auto result = diplomat::capi::icu4x_FixedDecimal_create_from_i64_mv1(v);
+inline std::unique_ptr<FixedDecimal> FixedDecimal::from(int64_t v) {
+  auto result = diplomat::capi::icu4x_FixedDecimal_from_int64_mv1(v);
   return std::unique_ptr<FixedDecimal>(FixedDecimal::FromFFI(result));
 }
 
-inline std::unique_ptr<FixedDecimal> FixedDecimal::create_from_u64(uint64_t v) {
-  auto result = diplomat::capi::icu4x_FixedDecimal_create_from_u64_mv1(v);
+inline std::unique_ptr<FixedDecimal> FixedDecimal::from(uint64_t v) {
+  auto result = diplomat::capi::icu4x_FixedDecimal_from_uint64_mv1(v);
   return std::unique_ptr<FixedDecimal>(FixedDecimal::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError> FixedDecimal::create_from_f64_with_integer_precision(double f) {
-  auto result = diplomat::capi::icu4x_FixedDecimal_create_from_f64_with_integer_precision_mv1(f);
-  return result.is_ok ? diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError>(diplomat::Ok<std::unique_ptr<FixedDecimal>>(std::unique_ptr<FixedDecimal>(FixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError>(diplomat::Err<FixedDecimalLimitError>(FixedDecimalLimitError::FromFFI(result.err)));
+inline diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError> FixedDecimal::from_double_with_integer_precision(double f) {
+  auto result = diplomat::capi::icu4x_FixedDecimal_from_double_with_integer_precision_mv1(f);
+  return result.is_ok ? diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError>(diplomat::Ok<std::unique_ptr<FixedDecimal>>(std::unique_ptr<FixedDecimal>(FixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError>(diplomat::Err<FixedDecimalLimitError>(FixedDecimalLimitError {}));
 }
 
-inline diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError> FixedDecimal::create_from_f64_with_lower_magnitude(double f, int16_t magnitude) {
-  auto result = diplomat::capi::icu4x_FixedDecimal_create_from_f64_with_lower_magnitude_mv1(f,
+inline diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError> FixedDecimal::from_double_with_lower_magnitude(double f, int16_t magnitude) {
+  auto result = diplomat::capi::icu4x_FixedDecimal_from_double_with_lower_magnitude_mv1(f,
     magnitude);
-  return result.is_ok ? diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError>(diplomat::Ok<std::unique_ptr<FixedDecimal>>(std::unique_ptr<FixedDecimal>(FixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError>(diplomat::Err<FixedDecimalLimitError>(FixedDecimalLimitError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError>(diplomat::Ok<std::unique_ptr<FixedDecimal>>(std::unique_ptr<FixedDecimal>(FixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError>(diplomat::Err<FixedDecimalLimitError>(FixedDecimalLimitError {}));
 }
 
-inline diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError> FixedDecimal::create_from_f64_with_significant_digits(double f, uint8_t digits) {
-  auto result = diplomat::capi::icu4x_FixedDecimal_create_from_f64_with_significant_digits_mv1(f,
+inline diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError> FixedDecimal::from_double_with_significant_digits(double f, uint8_t digits) {
+  auto result = diplomat::capi::icu4x_FixedDecimal_from_double_with_significant_digits_mv1(f,
     digits);
-  return result.is_ok ? diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError>(diplomat::Ok<std::unique_ptr<FixedDecimal>>(std::unique_ptr<FixedDecimal>(FixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError>(diplomat::Err<FixedDecimalLimitError>(FixedDecimalLimitError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError>(diplomat::Ok<std::unique_ptr<FixedDecimal>>(std::unique_ptr<FixedDecimal>(FixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError>(diplomat::Err<FixedDecimalLimitError>(FixedDecimalLimitError {}));
 }
 
-inline diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError> FixedDecimal::create_from_f64_with_floating_precision(double f) {
-  auto result = diplomat::capi::icu4x_FixedDecimal_create_from_f64_with_floating_precision_mv1(f);
-  return result.is_ok ? diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError>(diplomat::Ok<std::unique_ptr<FixedDecimal>>(std::unique_ptr<FixedDecimal>(FixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError>(diplomat::Err<FixedDecimalLimitError>(FixedDecimalLimitError::FromFFI(result.err)));
+inline diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError> FixedDecimal::from_double_with_floating_precision(double f) {
+  auto result = diplomat::capi::icu4x_FixedDecimal_from_double_with_floating_precision_mv1(f);
+  return result.is_ok ? diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError>(diplomat::Ok<std::unique_ptr<FixedDecimal>>(std::unique_ptr<FixedDecimal>(FixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError>(diplomat::Err<FixedDecimalLimitError>(FixedDecimalLimitError {}));
 }
 
-inline diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalParseError> FixedDecimal::create_from_string(std::string_view v) {
-  auto result = diplomat::capi::icu4x_FixedDecimal_create_from_string_mv1(v.data(),
+inline diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalParseError> FixedDecimal::from_string(std::string_view v) {
+  auto result = diplomat::capi::icu4x_FixedDecimal_from_string_mv1(v.data(),
     v.size());
   return result.is_ok ? diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalParseError>(diplomat::Ok<std::unique_ptr<FixedDecimal>>(std::unique_ptr<FixedDecimal>(FixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalParseError>(diplomat::Err<FixedDecimalParseError>(FixedDecimalParseError::FromFFI(result.err)));
 }

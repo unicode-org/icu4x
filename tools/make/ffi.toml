@@ -105,25 +105,25 @@ end
 description = "Generate C headers for the FFI with Diplomat"
 category = "ICU4X Development"
 command = "cargo"
-args = ["run", "-p", "diplomat-gen", "c"]
+args = ["run", "--manifest-path", "tools/make/diplomat-gen/Cargo.toml", "c"]
 
 [tasks.diplomat-gen-cpp]
 description = "Generate C++ headers for the FFI with Diplomat"
 category = "ICU4X Development"
 command = "cargo"
-args = ["run", "-p", "diplomat-gen", "cpp"]
+args = ["run", "--manifest-path", "tools/make/diplomat-gen/Cargo.toml", "cpp"]
 
 [tasks.diplomat-gen-js]
 description = "Generate JS bindings for the FFI with Diplomat"
 category = "ICU4X Development"
 command = "cargo"
-args = ["run", "-p", "diplomat-gen", "js"]
+args = ["run", "--manifest-path", "tools/make/diplomat-gen/Cargo.toml", "js"]
 
 [tasks.diplomat-gen-dart]
 description = "Generate Dart bindings for the FFI with Diplomat"
 category = "ICU4X Development"
 command = "cargo"
-args = ["run", "-p", "diplomat-gen", "dart"]
+args = ["run", "--manifest-path", "tools/make/diplomat-gen/Cargo.toml", "dart"]
 
 # Diplomat coverage
 
@@ -132,7 +132,7 @@ description = "Produces the list of ICU APIs that are not exported through Diplo
 category = "ICU4X Development"
 command = "cargo"
 env = { ICU4X_DATA_DIR = "../stubdata" }
-args = ["run", "-p=icu_ffi_coverage", "--", "ffi/capi/tests/missing_apis.txt"]
+args = ["run", "--manifest-path=tools/make/diplomat-coverage/Cargo.toml", "--", "ffi/capi/tests/missing_apis.txt"]
 
 [tasks.verify-diplomat-coverage]
 description = "Verify that checked-in Diplomat coverage is up to date"

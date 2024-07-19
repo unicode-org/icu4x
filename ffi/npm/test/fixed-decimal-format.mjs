@@ -6,25 +6,25 @@ import test from 'ava';
 
 import { FixedDecimal, Locale, DataProvider, FixedDecimalFormatter, FixedDecimalSign, FixedDecimalGroupingStrategy } from 'icu4x';
 
-const locale = Locale.createFromString('bn');
-const provider = DataProvider.createCompiled();
+const locale = Locale.fromString('bn');
+const provider = DataProvider.compiled();
 const format = FixedDecimalFormatter.createWithGroupingStrategy(provider, locale, FixedDecimalGroupingStrategy.Auto);
 
 test('format a simple decimal', t => {
-  const decimal = FixedDecimal.fromInteger(1234);
+  const decimal = FixedDecimal.fromNumber(1234);
   decimal.multiplyPow10(-2);
 
   t.is(format.format(decimal), '১২.৩৪');
 });
 
 test('format a long decimal', t => {
-  const decimal = FixedDecimal.fromInteger(1000007);
+  const decimal = FixedDecimal.fromNumber(1000007);
 
   t.is(format.format(decimal), '১০,০০,০০৭');
 });
 
 test('format a negated, scaled decimal', t => {
-  const decimal = FixedDecimal.fromInteger(1000007);
+  const decimal = FixedDecimal.fromNumber(1000007);
   decimal.multiplyPow10(2);
   decimal.sign = FixedDecimalSign.Negative;
 

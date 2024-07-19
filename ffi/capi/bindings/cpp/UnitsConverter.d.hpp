@@ -19,7 +19,7 @@ namespace capi {
 class UnitsConverter {
 public:
 
-  inline double convert_double(double value) const;
+  inline double convert(double value) const;
 
   inline std::unique_ptr<UnitsConverter> clone() const;
 

@@ -37,8 +37,8 @@ export class FixedDecimal {
     }
 
 
-    static fromInteger(v) {
-        const result = wasm.icu4x_FixedDecimal_create_from_i32_mv1(v);
+    static fromNumber(v) {
+        const result = wasm.icu4x_FixedDecimal_from_int32_mv1(v);
     
         try {
     
@@ -49,7 +49,7 @@ export class FixedDecimal {
     }
 
     static fromBigInt(v) {
-        const result = wasm.icu4x_FixedDecimal_create_from_i64_mv1(v);
+        const result = wasm.icu4x_FixedDecimal_from_int64_mv1(v);
     
         try {
     
@@ -62,13 +62,13 @@ export class FixedDecimal {
     static fromNumberWithLowerMagnitude(f, magnitude) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_FixedDecimal_create_from_f64_with_lower_magnitude_mv1(diplomat_receive_buffer, f, magnitude);
+        const result = wasm.icu4x_FixedDecimal_from_double_with_lower_magnitude_mv1(diplomat_receive_buffer, f, magnitude);
     
         try {
     
             if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = FixedDecimalLimitError[Array.from(FixedDecimalLimitError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('FixedDecimalLimitError: ' + cause.value, { cause });
+                const cause = new FixedDecimalLimitError();
+                throw new Error('FixedDecimalLimitError', { cause });
             }
             return new FixedDecimal(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
         } finally {
@@ -81,13 +81,13 @@ export class FixedDecimal {
     static fromNumberWithSignificantDigits(f, digits) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_FixedDecimal_create_from_f64_with_significant_digits_mv1(diplomat_receive_buffer, f, digits);
+        const result = wasm.icu4x_FixedDecimal_from_double_with_significant_digits_mv1(diplomat_receive_buffer, f, digits);
     
         try {
     
             if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = FixedDecimalLimitError[Array.from(FixedDecimalLimitError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('FixedDecimalLimitError: ' + cause.value, { cause });
+                const cause = new FixedDecimalLimitError();
+                throw new Error('FixedDecimalLimitError', { cause });
             }
             return new FixedDecimal(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
         } finally {
@@ -100,13 +100,13 @@ export class FixedDecimal {
     static fromNumberWithFloatingPrecision(f) {
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_FixedDecimal_create_from_f64_with_floating_precision_mv1(diplomat_receive_buffer, f);
+        const result = wasm.icu4x_FixedDecimal_from_double_with_floating_precision_mv1(diplomat_receive_buffer, f);
     
         try {
     
             if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = FixedDecimalLimitError[Array.from(FixedDecimalLimitError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('FixedDecimalLimitError: ' + cause.value, { cause });
+                const cause = new FixedDecimalLimitError();
+                throw new Error('FixedDecimalLimitError', { cause });
             }
             return new FixedDecimal(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
         } finally {
@@ -121,7 +121,7 @@ export class FixedDecimal {
         const vSlice = diplomatRuntime.DiplomatBuf.str8(wasm, v);
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_FixedDecimal_create_from_string_mv1(diplomat_receive_buffer, vSlice.ptr, vSlice.size);
+        const result = wasm.icu4x_FixedDecimal_from_string_mv1(diplomat_receive_buffer, vSlice.ptr, vSlice.size);
     
         try {
     

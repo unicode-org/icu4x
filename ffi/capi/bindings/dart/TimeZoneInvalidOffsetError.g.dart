@@ -3,6 +3,14 @@
 part of 'lib.g.dart';
 
 /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.InvalidOffsetError.html)
-enum TimeZoneInvalidOffsetError {
-  todoZst;
+final class TimeZoneInvalidOffsetError {
+
+  TimeZoneInvalidOffsetError();
+
+  @override
+  bool operator ==(Object other) =>
+      other is TimeZoneInvalidOffsetError;
+
+  @override
+  int get hashCode => 0;
 }

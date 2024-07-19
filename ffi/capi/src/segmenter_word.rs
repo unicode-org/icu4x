@@ -47,7 +47,7 @@ pub mod ffi {
 
     impl SegmenterWordType {
         #[diplomat::rust_link(icu::segmenter::WordType::is_word_like, FnInEnum)]
-        #[diplomat::attr(supports = accessors, getter)]
+        #[diplomat::attr(*, getter)]
         pub fn is_word_like(self) -> bool {
             icu_segmenter::WordType::from(self).is_word_like()
         }
@@ -60,7 +60,7 @@ pub mod ffi {
         /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
         /// Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::new_auto, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "auto")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "auto")]
         pub fn create_auto(provider: &DataProvider) -> Result<Box<WordSegmenter>, DataError> {
             Ok(Box::new(WordSegmenter(call_constructor!(
                 icu_segmenter::WordSegmenter::new_auto [r => Ok(r)],
@@ -76,7 +76,7 @@ pub mod ffi {
         /// Warning: [`WordSegmenter`] created by this function doesn't handle Chinese or
         /// Japanese.
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::new_lstm, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "lstm")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "lstm")]
         pub fn create_lstm(provider: &DataProvider) -> Result<Box<WordSegmenter>, DataError> {
             Ok(Box::new(WordSegmenter(call_constructor!(
                 icu_segmenter::WordSegmenter::new_lstm [r => Ok(r)],
@@ -89,7 +89,7 @@ pub mod ffi {
         /// Construct an [`WordSegmenter`] with dictionary payload data for Chinese, Japanese,
         /// Burmese, Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::new_dictionary, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "dictionary")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "dictionary")]
         pub fn create_dictionary(provider: &DataProvider) -> Result<Box<WordSegmenter>, DataError> {
             Ok(Box::new(WordSegmenter(call_constructor!(
                 icu_segmenter::WordSegmenter::new_dictionary [r => Ok(r)],
@@ -105,7 +105,8 @@ pub mod ffi {
         /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::segment_utf8, FnInStruct)]
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::segment_str, FnInStruct, hidden)]
-        #[diplomat::attr(any(dart, js), disable)]
+        #[diplomat::attr(not(supports = utf8_strings), disable)]
+        #[diplomat::attr(*, rename = "segment")]
         pub fn segment_utf8<'a>(
             &'a self,
             input: &'a DiplomatStr,
@@ -118,7 +119,8 @@ pub mod ffi {
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::segment_utf16, FnInStruct)]
-        #[diplomat::attr(any(dart, js), rename = "segment")]
+        #[diplomat::attr(not(supports = utf8_strings), rename = "segment")]
+        #[diplomat::attr(supports = utf8_strings, rename = "segment16")]
         pub fn segment_utf16<'a>(
             &'a self,
             input: &'a DiplomatStr16,
@@ -128,7 +130,7 @@ pub mod ffi {
 
         /// Segments a Latin-1 string.
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::segment_latin1, FnInStruct)]
-        #[diplomat::attr(any(dart, js), disable)]
+        #[diplomat::attr(not(supports = utf8_strings), disable)]
         pub fn segment_latin1<'a>(&'a self, input: &'a [u8]) -> Box<WordBreakIteratorLatin1<'a>> {
             Box::new(WordBreakIteratorLatin1(self.0.segment_latin1(input)))
         }
@@ -152,14 +154,14 @@ pub mod ffi {
 
         /// Return the status value of break boundary.
         #[diplomat::rust_link(icu::segmenter::WordBreakIterator::word_type, FnInStruct)]
-        #[diplomat::attr(supports = accessors, getter)]
+        #[diplomat::attr(*, getter)]
         pub fn word_type(&self) -> SegmenterWordType {
             self.0.word_type().into()
         }
 
         /// Return true when break boundary is word-like such as letter/number/CJK
         #[diplomat::rust_link(icu::segmenter::WordBreakIterator::is_word_like, FnInStruct)]
-        #[diplomat::attr(supports = accessors, getter)]
+        #[diplomat::attr(*, getter)]
         pub fn is_word_like(&self) -> bool {
             self.0.is_word_like()
         }
@@ -188,14 +190,14 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(supports = accessors, getter)]
+        #[diplomat::attr(*, getter)]
         pub fn word_type(&self) -> SegmenterWordType {
             self.0.word_type().into()
         }
 
         /// Return true when break boundary is word-like such as letter/number/CJK
         #[diplomat::rust_link(icu::segmenter::WordBreakIterator::is_word_like, FnInStruct)]
-        #[diplomat::attr(supports = accessors, getter)]
+        #[diplomat::attr(*, getter)]
         pub fn is_word_like(&self) -> bool {
             self.0.is_word_like()
         }
@@ -219,14 +221,14 @@ pub mod ffi {
 
         /// Return the status value of break boundary.
         #[diplomat::rust_link(icu::segmenter::WordBreakIterator::word_type, FnInStruct)]
-        #[diplomat::attr(supports = accessors, getter)]
+        #[diplomat::attr(*, getter)]
         pub fn word_type(&self) -> SegmenterWordType {
             self.0.word_type().into()
         }
 
         /// Return true when break boundary is word-like such as letter/number/CJK
         #[diplomat::rust_link(icu::segmenter::WordBreakIterator::is_word_like, FnInStruct)]
-        #[diplomat::attr(supports = accessors, getter)]
+        #[diplomat::attr(*, getter)]
         pub fn is_word_like(&self) -> bool {
             self.0.is_word_like()
         }

@@ -30,10 +30,10 @@ final class CustomTimeZone implements ffi.Finalizable {
   factory CustomTimeZone.fromString(String s) {
     final temp = ffi2.Arena();
     final sView = s.utf8View;
-    final result = _icu4x_CustomTimeZone_create_from_string_mv1(sView.allocIn(temp), sView.length);
+    final result = _icu4x_CustomTimeZone_from_string_mv1(sView.allocIn(temp), sView.length);
     temp.releaseAll();
     if (!result.isOk) {
-      throw TimeZoneInvalidOffsetError.values[result.union.err];
+      throw TimeZoneInvalidOffsetError();
     }
     return CustomTimeZone._fromFfi(result.union.ok, []);
   }
@@ -42,7 +42,7 @@ final class CustomTimeZone implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new_empty`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.new_empty) for more information.
   factory CustomTimeZone.empty() {
-    final result = _icu4x_CustomTimeZone_create_empty_mv1();
+    final result = _icu4x_CustomTimeZone_empty_mv1();
     return CustomTimeZone._fromFfi(result, []);
   }
 
@@ -50,7 +50,7 @@ final class CustomTimeZone implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `utc`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.utc) for more information.
   factory CustomTimeZone.utc() {
-    final result = _icu4x_CustomTimeZone_create_utc_mv1();
+    final result = _icu4x_CustomTimeZone_utc_mv1();
     return CustomTimeZone._fromFfi(result, []);
   }
 
@@ -58,7 +58,7 @@ final class CustomTimeZone implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `gmt`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.gmt) for more information.
   factory CustomTimeZone.gmt() {
-    final result = _icu4x_CustomTimeZone_create_gmt_mv1();
+    final result = _icu4x_CustomTimeZone_gmt_mv1();
     return CustomTimeZone._fromFfi(result, []);
   }
 
@@ -66,7 +66,7 @@ final class CustomTimeZone implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `bst`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.bst) for more information.
   factory CustomTimeZone.bst() {
-    final result = _icu4x_CustomTimeZone_create_bst_mv1();
+    final result = _icu4x_CustomTimeZone_bst_mv1();
     return CustomTimeZone._fromFfi(result, []);
   }
 
@@ -82,7 +82,7 @@ final class CustomTimeZone implements ffi.Finalizable {
   void trySetGmtOffsetSeconds(int offsetSeconds) {
     final result = _icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1(_ffi, offsetSeconds);
     if (!result.isOk) {
-      throw TimeZoneInvalidOffsetError.values[result.union.err];
+      throw TimeZoneInvalidOffsetError();
     }
     
   }
@@ -185,7 +185,7 @@ final class CustomTimeZone implements ffi.Finalizable {
     final result = _icu4x_CustomTimeZone_try_set_time_zone_id_mv1(_ffi, idView.allocIn(temp), idView.length);
     temp.releaseAll();
     if (!result.isOk) {
-      throw TimeZoneInvalidIdError.values[result.union.err];
+      throw TimeZoneInvalidIdError();
     }
     
   }
@@ -202,7 +202,7 @@ final class CustomTimeZone implements ffi.Finalizable {
     final result = _icu4x_CustomTimeZone_try_set_iana_time_zone_id_mv1(_ffi, mapper._ffi, idView.allocIn(temp), idView.length);
     temp.releaseAll();
     if (!result.isOk) {
-      throw TimeZoneInvalidIdError.values[result.union.err];
+      throw TimeZoneInvalidIdError();
     }
     
   }
@@ -247,7 +247,7 @@ final class CustomTimeZone implements ffi.Finalizable {
     final result = _icu4x_CustomTimeZone_try_set_metazone_id_mv1(_ffi, idView.allocIn(temp), idView.length);
     temp.releaseAll();
     if (!result.isOk) {
-      throw TimeZoneInvalidIdError.values[result.union.err];
+      throw TimeZoneInvalidIdError();
     }
     
   }
@@ -382,35 +382,35 @@ final class CustomTimeZone implements ffi.Finalizable {
 // ignore: non_constant_identifier_names
 external void _icu4x_CustomTimeZone_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_create_from_string_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_create_from_string_mv1')
+@meta.ResourceIdentifier('icu4x_CustomTimeZone_from_string_mv1')
+@ffi.Native<_ResultOpaqueTimeZoneInvalidOffsetErrorFfi Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_from_string_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_CustomTimeZone_create_from_string_mv1(ffi.Pointer<ffi.Uint8> sData, int sLength);
+external _ResultOpaqueTimeZoneInvalidOffsetErrorFfi _icu4x_CustomTimeZone_from_string_mv1(ffi.Pointer<ffi.Uint8> sData, int sLength);
 
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_create_empty_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_create_empty_mv1')
+@meta.ResourceIdentifier('icu4x_CustomTimeZone_empty_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_empty_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_CustomTimeZone_create_empty_mv1();
+external ffi.Pointer<ffi.Opaque> _icu4x_CustomTimeZone_empty_mv1();
 
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_create_utc_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_create_utc_mv1')
+@meta.ResourceIdentifier('icu4x_CustomTimeZone_utc_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_utc_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_CustomTimeZone_create_utc_mv1();
+external ffi.Pointer<ffi.Opaque> _icu4x_CustomTimeZone_utc_mv1();
 
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_create_gmt_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_create_gmt_mv1')
+@meta.ResourceIdentifier('icu4x_CustomTimeZone_gmt_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_gmt_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_CustomTimeZone_create_gmt_mv1();
+external ffi.Pointer<ffi.Opaque> _icu4x_CustomTimeZone_gmt_mv1();
 
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_create_bst_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_create_bst_mv1')
+@meta.ResourceIdentifier('icu4x_CustomTimeZone_bst_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_bst_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_CustomTimeZone_create_bst_mv1();
+external ffi.Pointer<ffi.Opaque> _icu4x_CustomTimeZone_bst_mv1();
 
 @meta.ResourceIdentifier('icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1')
+@ffi.Native<_ResultVoidTimeZoneInvalidOffsetErrorFfi Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1(ffi.Pointer<ffi.Opaque> self, int offsetSeconds);
+external _ResultVoidTimeZoneInvalidOffsetErrorFfi _icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1(ffi.Pointer<ffi.Opaque> self, int offsetSeconds);
 
 @meta.ResourceIdentifier('icu4x_CustomTimeZone_set_gmt_offset_eighths_of_hour_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int8)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_set_gmt_offset_eighths_of_hour_mv1')
@@ -448,14 +448,14 @@ external _ResultBoolVoid _icu4x_CustomTimeZone_gmt_offset_has_minutes_mv1(ffi.Po
 external _ResultBoolVoid _icu4x_CustomTimeZone_gmt_offset_has_seconds_mv1(ffi.Pointer<ffi.Opaque> self);
 
 @meta.ResourceIdentifier('icu4x_CustomTimeZone_try_set_time_zone_id_mv1')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_try_set_time_zone_id_mv1')
+@ffi.Native<_ResultVoidTimeZoneInvalidIdErrorFfi Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_try_set_time_zone_id_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_CustomTimeZone_try_set_time_zone_id_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> idData, int idLength);
+external _ResultVoidTimeZoneInvalidIdErrorFfi _icu4x_CustomTimeZone_try_set_time_zone_id_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> idData, int idLength);
 
 @meta.ResourceIdentifier('icu4x_CustomTimeZone_try_set_iana_time_zone_id_mv1')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_try_set_iana_time_zone_id_mv1')
+@ffi.Native<_ResultVoidTimeZoneInvalidIdErrorFfi Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_try_set_iana_time_zone_id_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_CustomTimeZone_try_set_iana_time_zone_id_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> mapper, ffi.Pointer<ffi.Uint8> idData, int idLength);
+external _ResultVoidTimeZoneInvalidIdErrorFfi _icu4x_CustomTimeZone_try_set_iana_time_zone_id_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> mapper, ffi.Pointer<ffi.Uint8> idData, int idLength);
 
 @meta.ResourceIdentifier('icu4x_CustomTimeZone_clear_time_zone_id_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_clear_time_zone_id_mv1')
@@ -468,9 +468,9 @@ external void _icu4x_CustomTimeZone_clear_time_zone_id_mv1(ffi.Pointer<ffi.Opaqu
 external _ResultVoidVoid _icu4x_CustomTimeZone_time_zone_id_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);
 
 @meta.ResourceIdentifier('icu4x_CustomTimeZone_try_set_metazone_id_mv1')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_try_set_metazone_id_mv1')
+@ffi.Native<_ResultVoidTimeZoneInvalidIdErrorFfi Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_try_set_metazone_id_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_CustomTimeZone_try_set_metazone_id_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> idData, int idLength);
+external _ResultVoidTimeZoneInvalidIdErrorFfi _icu4x_CustomTimeZone_try_set_metazone_id_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> idData, int idLength);
 
 @meta.ResourceIdentifier('icu4x_CustomTimeZone_clear_metazone_id_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_clear_metazone_id_mv1')

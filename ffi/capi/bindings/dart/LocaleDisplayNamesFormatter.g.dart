@@ -29,7 +29,7 @@ final class LocaleDisplayNamesFormatter implements ffi.Finalizable {
   /// Throws [DataError] on failure.
   factory LocaleDisplayNamesFormatter(DataProvider provider, Locale locale, DisplayNamesOptions options) {
     final temp = ffi2.Arena();
-    final result = _icu4x_LocaleDisplayNamesFormatter_create_mv1(provider._ffi, locale._ffi, options._toFfi(temp));
+    final result = _icu4x_LocaleDisplayNamesFormatter_create_v1_mv1(provider._ffi, locale._ffi, options._toFfi(temp));
     temp.releaseAll();
     if (!result.isOk) {
       throw DataError.values[result.union.err];
@@ -52,10 +52,10 @@ final class LocaleDisplayNamesFormatter implements ffi.Finalizable {
 // ignore: non_constant_identifier_names
 external void _icu4x_LocaleDisplayNamesFormatter_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('icu4x_LocaleDisplayNamesFormatter_create_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _DisplayNamesOptionsFfi)>(isLeaf: true, symbol: 'icu4x_LocaleDisplayNamesFormatter_create_mv1')
+@meta.ResourceIdentifier('icu4x_LocaleDisplayNamesFormatter_create_v1_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _DisplayNamesOptionsFfi)>(isLeaf: true, symbol: 'icu4x_LocaleDisplayNamesFormatter_create_v1_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_LocaleDisplayNamesFormatter_create_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _DisplayNamesOptionsFfi options);
+external _ResultOpaqueInt32 _icu4x_LocaleDisplayNamesFormatter_create_v1_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _DisplayNamesOptionsFfi options);
 
 @meta.ResourceIdentifier('icu4x_LocaleDisplayNamesFormatter_of_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleDisplayNamesFormatter_of_mv1')

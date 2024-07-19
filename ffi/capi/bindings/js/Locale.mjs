@@ -34,12 +34,12 @@ export class Locale {
     }
 
 
-    static createFromString(name) {
+    static fromString(name) {
         
         const nameSlice = diplomatRuntime.DiplomatBuf.str8(wasm, name);
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_Locale_create_from_string_mv1(diplomat_receive_buffer, nameSlice.ptr, nameSlice.size);
+        const result = wasm.icu4x_Locale_from_string_mv1(diplomat_receive_buffer, nameSlice.ptr, nameSlice.size);
     
         try {
     
@@ -57,8 +57,8 @@ export class Locale {
         }
     }
 
-    static createUnd() {
-        const result = wasm.icu4x_Locale_create_und_mv1();
+    static und() {
+        const result = wasm.icu4x_Locale_und_mv1();
     
         try {
     

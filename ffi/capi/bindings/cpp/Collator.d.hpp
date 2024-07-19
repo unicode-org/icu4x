@@ -29,11 +29,11 @@ public:
 
   inline static diplomat::result<std::unique_ptr<Collator>, DataError> create_v1(const DataProvider& provider, const Locale& locale, CollatorOptionsV1 options);
 
-  inline int8_t compare16(std::u16string_view left, std::u16string_view right) const;
-
   inline int8_t compare(std::string_view left, std::string_view right) const;
 
-  inline CollatorResolvedOptionsV1 resolved_options() const;
+  inline int8_t compare16(std::u16string_view left, std::u16string_view right) const;
+
+  inline CollatorResolvedOptionsV1 resolved_options_v1() const;
 
   inline const diplomat::capi::Collator* AsFFI() const;
   inline diplomat::capi::Collator* AsFFI();
