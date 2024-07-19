@@ -56,7 +56,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::DateTime::try_iso_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::calendar::DateTime::try_iso_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::calendar::DateTime::from_str, FnInStruct, hidden)]
-        #[diplomat::attr(all(supports = fallible_constructors), named_constructor)]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
         pub fn from_string(v: &DiplomatStr) -> Result<Box<IsoDateTime>, CalendarParseError> {
             Ok(Box::new(IsoDateTime(
                 icu_calendar::DateTime::try_iso_from_utf8(v)?,
@@ -309,7 +309,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::DateTime::try_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::calendar::DateTime::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::calendar::DateTime::from_str, FnInStruct, hidden)]
-        #[diplomat::attr(all(supports = fallible_constructors), named_constructor)]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn from_string(v: &DiplomatStr) -> Result<Box<DateTime>, CalendarParseError> {
             Ok(Box::new(DateTime(

@@ -42,7 +42,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::Time::try_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::calendar::Time::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::calendar::Time::from_str, FnInStruct, hidden)]
-        #[diplomat::attr(all(supports = fallible_constructors), named_constructor)]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
         pub fn from_string(v: &DiplomatStr) -> Result<Box<Time>, CalendarParseError> {
             Ok(Box::new(Time(icu_calendar::Time::try_from_utf8(v)?)))
         }
