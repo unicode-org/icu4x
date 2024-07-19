@@ -25,7 +25,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::locale::Locale::try_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::locale::Locale::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::locale::Locale::from_str, FnInStruct, hidden)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
         pub fn from_string(name: &DiplomatStr) -> Result<Box<Locale>, LocaleParseError> {
             Ok(Box::new(Locale(icu_locale_core::Locale::try_from_utf8(
                 name,
@@ -34,7 +34,7 @@ pub mod ffi {
 
         /// Construct a default undefined [`Locale`] "und".
         #[diplomat::rust_link(icu::locale::Locale::UND, AssociatedConstantInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
         pub fn und() -> Box<Locale> {
             Box::new(Locale(icu_locale_core::Locale::UND))
         }
@@ -48,7 +48,7 @@ pub mod ffi {
         /// Returns a string representation of the `LanguageIdentifier` part of
         /// [`Locale`].
         #[diplomat::rust_link(icu::locale::Locale::id, StructField)]
-        #[diplomat::attr(supports = accessors, getter)]
+        #[diplomat::attr(*, getter)]
         pub fn basename(&self, write: &mut diplomat_runtime::DiplomatWrite) {
             let _infallible = self.0.id.write_to(write);
         }
@@ -70,7 +70,7 @@ pub mod ffi {
 
         /// Returns a string representation of [`Locale`] language.
         #[diplomat::rust_link(icu::locale::Locale::id, StructField)]
-        #[diplomat::attr(supports = accessors, getter)]
+        #[diplomat::attr(*, getter)]
         pub fn language(&self, write: &mut diplomat_runtime::DiplomatWrite) {
             let _infallible = self.0.id.language.write_to(write);
         }
@@ -78,7 +78,7 @@ pub mod ffi {
         /// Set the language part of the [`Locale`].
         #[diplomat::rust_link(icu::locale::Locale::try_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::locale::Locale::try_from_utf8, FnInStruct, hidden)]
-        #[diplomat::attr(supports = accessors, setter = "language")]
+        #[diplomat::attr(*, setter = "language")]
         pub fn set_language(&mut self, s: &DiplomatStr) -> Result<(), LocaleParseError> {
             self.0.id.language = if s.is_empty() {
                 icu_locale_core::subtags::Language::UND
@@ -90,7 +90,7 @@ pub mod ffi {
 
         /// Returns a string representation of [`Locale`] region.
         #[diplomat::rust_link(icu::locale::Locale::id, StructField)]
-        #[diplomat::attr(supports = accessors, getter)]
+        #[diplomat::attr(*, getter)]
         pub fn region(&self, write: &mut diplomat_runtime::DiplomatWrite) -> Option<()> {
             self.0.id.region.map(|region| {
                 let _infallible = region.write_to(write);
@@ -100,7 +100,7 @@ pub mod ffi {
         /// Set the region part of the [`Locale`].
         #[diplomat::rust_link(icu::locale::Locale::try_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::locale::Locale::try_from_utf8, FnInStruct, hidden)]
-        #[diplomat::attr(all(supports = accessors, not(dart)), setter = "region")]
+        #[diplomat::attr(all(*, not(dart)), setter = "region")]
         pub fn set_region(&mut self, s: &DiplomatStr) -> Result<(), LocaleParseError> {
             self.0.id.region = if s.is_empty() {
                 None
@@ -112,7 +112,7 @@ pub mod ffi {
 
         /// Returns a string representation of [`Locale`] script.
         #[diplomat::rust_link(icu::locale::Locale::id, StructField)]
-        #[diplomat::attr(supports = accessors, getter)]
+        #[diplomat::attr(*, getter)]
         pub fn script(&self, write: &mut diplomat_runtime::DiplomatWrite) -> Option<()> {
             self.0.id.script.map(|script| {
                 let _infallible = script.write_to(write);
@@ -122,7 +122,7 @@ pub mod ffi {
         /// Set the script part of the [`Locale`]. Pass an empty string to remove the script.
         #[diplomat::rust_link(icu::locale::Locale::try_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::locale::Locale::try_from_utf8, FnInStruct, hidden)]
-        #[diplomat::attr(all(supports = accessors, not(dart)), setter = "script")]
+        #[diplomat::attr(all(*, not(dart)), setter = "script")]
         pub fn set_script(&mut self, s: &DiplomatStr) -> Result<(), LocaleParseError> {
             self.0.id.script = if s.is_empty() {
                 None
@@ -145,7 +145,7 @@ pub mod ffi {
         }
         /// Returns a string representation of [`Locale`].
         #[diplomat::rust_link(icu::locale::Locale::write_to, FnInStruct)]
-        #[diplomat::attr(supports = stringifiers, stringifier)]
+        #[diplomat::attr(*, stringifier)]
         pub fn to_string(&self, write: &mut diplomat_runtime::DiplomatWrite) {
             let _infallible = self.0.write_to(write);
         }
@@ -166,7 +166,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::locale::Locale::total_cmp, FnInStruct)]
-        #[diplomat::attr(supports = comparators, comparison)]
+        #[diplomat::attr(*, comparison)]
         pub fn compare_to(&self, other: &Self) -> core::cmp::Ordering {
             self.0.total_cmp(&other.0)
         }

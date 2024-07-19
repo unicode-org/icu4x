@@ -1,23 +1,25 @@
 #ifndef DIPLOMAT_RUNTIME_C_H
 #define DIPLOMAT_RUNTIME_C_H
 
-#include <stdint.h>
-#include <stddef.h>
+#include <assert.h>
 #include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 #include <sys/types.h>
 
-// uchar.h doesn't always exist, but char32_t is always available
-// in C++ anyway
-#ifndef __cplusplus
-#ifdef __APPLE__
-#include <stdint.h>
-typedef uint16_t char16_t;
-typedef uint32_t char32_t;
-#else
-#include <uchar.h>
-#endif
+// These come from `uchar.h`, which is not available on all platforms.
+// Redefining them in C is no problem, however in >C++11 they are fundamental
+// types, which don't like being redefined. 
+#if !(__cplusplus >= 201100) 
+// https://en.cppreference.com/w/c/string/multibyte/char16_t
+typedef uint_least16_t char16_t;
+// https://en.cppreference.com/w/c/string/multibyte/char32_t
+typedef uint_least32_t char32_t;
 #endif
 
+static_assert(sizeof(char) == sizeof(uint8_t), "your architecture's `char` is not 8 bits");
+static_assert(sizeof(char16_t) == sizeof(uint16_t), "your architecture's `char16_t` is not 16 bits");
+static_assert(sizeof(char32_t) == sizeof(uint32_t), "your architecture's `char32_t` is not 32 bits");
 
 
 

@@ -69,7 +69,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "general_category")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "general_category")]
         pub fn load_general_category(
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
@@ -89,7 +89,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "hangul_syllable_type")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "hangul_syllable_type")]
         pub fn load_hangul_syllable_type(
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
@@ -109,7 +109,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "east_asian_width")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "east_asian_width")]
         pub fn load_east_asian_width(
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
@@ -129,7 +129,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "bidi_class")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "bidi_class")]
         pub fn load_bidi_class(
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
@@ -152,7 +152,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "indic_syllabic_category")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "indic_syllabic_category")]
         pub fn load_indic_syllabic_category(
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
@@ -172,7 +172,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "line_break")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "line_break")]
         pub fn load_line_break(
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
@@ -195,7 +195,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "grapheme_cluster_break")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "grapheme_cluster_break")]
         pub fn load_grapheme_cluster_break(
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
@@ -215,7 +215,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "word_break")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "word_break")]
         pub fn load_word_break(
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
@@ -235,7 +235,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "sentence_break")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "sentence_break")]
         pub fn load_sentence_break(
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
@@ -251,7 +251,7 @@ pub mod ffi {
 
         #[diplomat::rust_link(icu::properties::Script::name_to_enum_mapper, FnInStruct)]
         #[diplomat::rust_link(icu::properties::Script::get_name_to_enum_mapper, FnInStruct, hidden)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "script")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "script")]
         pub fn load_script(
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
@@ -319,7 +319,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
+        #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn load(
             provider: &DataProvider,
         ) -> Result<Box<GeneralCategoryNameToMaskMapper>, DataError> {

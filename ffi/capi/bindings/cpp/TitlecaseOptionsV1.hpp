@@ -18,7 +18,7 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    diplomat::capi::TitlecaseOptionsV1 icu4x_TitlecaseOptionsV1_default_mv1();
+    diplomat::capi::TitlecaseOptionsV1 icu4x_TitlecaseOptionsV1_default_mv1(void);
     
     
     } // extern "C"

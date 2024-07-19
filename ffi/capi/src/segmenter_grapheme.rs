@@ -45,7 +45,7 @@ pub mod ffi {
     impl GraphemeClusterSegmenter {
         /// Construct an [`GraphemeClusterSegmenter`].
         #[diplomat::rust_link(icu::segmenter::GraphemeClusterSegmenter::new, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
+        #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn create(provider: &DataProvider) -> Result<Box<GraphemeClusterSegmenter>, DataError> {
             Ok(Box::new(GraphemeClusterSegmenter(call_constructor!(
                 icu_segmenter::GraphemeClusterSegmenter::new [r => Ok(r)],

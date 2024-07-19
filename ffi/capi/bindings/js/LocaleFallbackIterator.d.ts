@@ -13,8 +13,13 @@ export class LocaleFallbackIterator {
     get ffiValue(): pointer;
 
 
-    next(): Locale | null;
+    #iteratorNext(): Locale | null;
 
     
+    get value(): Locale;
+    
+    get done(): bool;
+    
+    next() : Locale;
 
 }

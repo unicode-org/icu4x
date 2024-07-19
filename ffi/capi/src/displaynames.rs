@@ -61,7 +61,7 @@ pub mod ffi {
     impl LocaleDisplayNamesFormatter {
         /// Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag.
         #[diplomat::rust_link(icu::displaynames::LocaleDisplayNamesFormatter::try_new, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
+        #[diplomat::attr(supports = fallible_constructors, constructor)]
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "create")]
         pub fn create_v1(
             provider: &DataProvider,
@@ -93,7 +93,7 @@ pub mod ffi {
     impl RegionDisplayNames {
         /// Creates a new `RegionDisplayNames` from locale data and an options bag.
         #[diplomat::rust_link(icu::displaynames::RegionDisplayNames::try_new, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
+        #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn create(
             provider: &DataProvider,
             locale: &Locale,

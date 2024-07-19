@@ -18,7 +18,7 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    diplomat::capi::DataProvider* icu4x_DataProvider_compiled_mv1();
+    diplomat::capi::DataProvider* icu4x_DataProvider_compiled_mv1(void);
     
     typedef struct icu4x_DataProvider_from_fs_mv1_result {union {diplomat::capi::DataProvider* ok; diplomat::capi::DataError err;}; bool is_ok;} icu4x_DataProvider_from_fs_mv1_result;
     icu4x_DataProvider_from_fs_mv1_result icu4x_DataProvider_from_fs_mv1(const char* path_data, size_t path_len);
@@ -26,7 +26,7 @@ namespace capi {
     typedef struct icu4x_DataProvider_from_byte_slice_mv1_result {union {diplomat::capi::DataProvider* ok; diplomat::capi::DataError err;}; bool is_ok;} icu4x_DataProvider_from_byte_slice_mv1_result;
     icu4x_DataProvider_from_byte_slice_mv1_result icu4x_DataProvider_from_byte_slice_mv1(const uint8_t* blob_data, size_t blob_len);
     
-    diplomat::capi::DataProvider* icu4x_DataProvider_empty_mv1();
+    diplomat::capi::DataProvider* icu4x_DataProvider_empty_mv1(void);
     
     typedef struct icu4x_DataProvider_fork_by_key_mv1_result {union { diplomat::capi::DataError err;}; bool is_ok;} icu4x_DataProvider_fork_by_key_mv1_result;
     icu4x_DataProvider_fork_by_key_mv1_result icu4x_DataProvider_fork_by_key_mv1(diplomat::capi::DataProvider* self, diplomat::capi::DataProvider* other);

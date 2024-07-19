@@ -26,7 +26,7 @@ pub mod ffi {
 
     impl TimeZoneIdMapper {
         #[diplomat::rust_link(icu::timezone::TimeZoneIdMapper::new, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
+        #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn create(provider: &DataProvider) -> Result<Box<TimeZoneIdMapper>, DataError> {
             Ok(Box::new(TimeZoneIdMapper(call_constructor!(
                 icu_timezone::TimeZoneIdMapper::new [r => Ok(r)],
@@ -140,7 +140,7 @@ pub mod ffi {
             icu::timezone::TimeZoneIdMapperWithFastCanonicalization::new,
             FnInStruct
         )]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
+        #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn create(
             provider: &DataProvider,
         ) -> Result<Box<TimeZoneIdMapperWithFastCanonicalization>, DataError> {

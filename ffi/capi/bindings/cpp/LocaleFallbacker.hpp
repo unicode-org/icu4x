@@ -24,7 +24,7 @@ namespace capi {
     typedef struct icu4x_LocaleFallbacker_create_mv1_result {union {diplomat::capi::LocaleFallbacker* ok; diplomat::capi::DataError err;}; bool is_ok;} icu4x_LocaleFallbacker_create_mv1_result;
     icu4x_LocaleFallbacker_create_mv1_result icu4x_LocaleFallbacker_create_mv1(const diplomat::capi::DataProvider* provider);
     
-    diplomat::capi::LocaleFallbacker* icu4x_LocaleFallbacker_without_data_mv1();
+    diplomat::capi::LocaleFallbacker* icu4x_LocaleFallbacker_without_data_mv1(void);
     
     typedef struct icu4x_LocaleFallbacker_for_config_mv1_result {union {diplomat::capi::LocaleFallbackerWithConfig* ok; diplomat::capi::LocaleParseError err;}; bool is_ok;} icu4x_LocaleFallbacker_for_config_mv1_result;
     icu4x_LocaleFallbacker_for_config_mv1_result icu4x_LocaleFallbacker_for_config_mv1(const diplomat::capi::LocaleFallbacker* self, diplomat::capi::LocaleFallbackConfig config);

@@ -64,7 +64,7 @@ pub mod ffi {
         /// Construct a [`LineSegmenter`] with default options. It automatically loads the best
         /// available payload data for Burmese, Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_auto, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "auto")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "auto")]
         pub fn create_auto(provider: &DataProvider) -> Result<Box<LineSegmenter>, DataError> {
             Ok(Box::new(LineSegmenter(call_constructor!(
                 icu_segmenter::LineSegmenter::new_auto [r => Ok(r)],
@@ -77,7 +77,7 @@ pub mod ffi {
         /// Construct a [`LineSegmenter`] with default options and LSTM payload data for
         /// Burmese, Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_lstm, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "lstm")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "lstm")]
         pub fn create_lstm(provider: &DataProvider) -> Result<Box<LineSegmenter>, DataError> {
             Ok(Box::new(LineSegmenter(call_constructor!(
                 icu_segmenter::LineSegmenter::new_lstm [r => Ok(r)],
@@ -90,7 +90,7 @@ pub mod ffi {
         /// Construct a [`LineSegmenter`] with default options and dictionary payload data for
         /// Burmese, Khmer, Lao, and Thai..
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_dictionary, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "dictionary")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "dictionary")]
         pub fn create_dictionary(provider: &DataProvider) -> Result<Box<LineSegmenter>, DataError> {
             Ok(Box::new(LineSegmenter(call_constructor!(
                 icu_segmenter::LineSegmenter::new_dictionary [r => Ok(r)],
@@ -104,7 +104,7 @@ pub mod ffi {
         /// available payload data for Burmese, Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_auto_with_options, FnInStruct)]
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "auto_with_options")]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "auto_with_options_v1")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "auto_with_options_v1")]
         pub fn create_auto_with_options_v1(
             provider: &DataProvider,
             options: LineBreakOptionsV1,
@@ -122,7 +122,7 @@ pub mod ffi {
         /// Burmese, Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_lstm_with_options, FnInStruct)]
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "lstm_with_options")]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "lstm_with_options_v1")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "lstm_with_options_v1")]
         pub fn create_lstm_with_options_v1(
             provider: &DataProvider,
             options: LineBreakOptionsV1,
@@ -143,7 +143,7 @@ pub mod ffi {
             FnInStruct
         )]
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "dictionary_with_options")]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "dictionary_with_options_v1")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "dictionary_with_options_v1")]
         pub fn create_dictionary_with_options_v1(
             provider: &DataProvider,
             options: LineBreakOptionsV1,

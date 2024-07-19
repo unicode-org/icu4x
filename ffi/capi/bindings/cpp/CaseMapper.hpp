@@ -69,7 +69,7 @@ inline diplomat::result<std::string, diplomat::Utf8Error> CaseMapper::lowercase(
     s.size(),
     locale.AsFFI(),
     &write);
-  return diplomat::Ok<std::string>(std::move(output));
+  return diplomat::Ok<std::string>(output);
 }
 
 inline diplomat::result<std::string, diplomat::Utf8Error> CaseMapper::uppercase(std::string_view s, const Locale& locale) const {
@@ -83,7 +83,7 @@ inline diplomat::result<std::string, diplomat::Utf8Error> CaseMapper::uppercase(
     s.size(),
     locale.AsFFI(),
     &write);
-  return diplomat::Ok<std::string>(std::move(output));
+  return diplomat::Ok<std::string>(output);
 }
 
 inline diplomat::result<std::string, diplomat::Utf8Error> CaseMapper::titlecase_segment_with_only_case_data_v1(std::string_view s, const Locale& locale, TitlecaseOptionsV1 options) const {
@@ -98,7 +98,7 @@ inline diplomat::result<std::string, diplomat::Utf8Error> CaseMapper::titlecase_
     locale.AsFFI(),
     options.AsFFI(),
     &write);
-  return diplomat::Ok<std::string>(std::move(output));
+  return diplomat::Ok<std::string>(output);
 }
 
 inline diplomat::result<std::string, diplomat::Utf8Error> CaseMapper::fold(std::string_view s) const {
@@ -111,7 +111,7 @@ inline diplomat::result<std::string, diplomat::Utf8Error> CaseMapper::fold(std::
     s.data(),
     s.size(),
     &write);
-  return diplomat::Ok<std::string>(std::move(output));
+  return diplomat::Ok<std::string>(output);
 }
 
 inline diplomat::result<std::string, diplomat::Utf8Error> CaseMapper::fold_turkic(std::string_view s) const {
@@ -124,7 +124,7 @@ inline diplomat::result<std::string, diplomat::Utf8Error> CaseMapper::fold_turki
     s.data(),
     s.size(),
     &write);
-  return diplomat::Ok<std::string>(std::move(output));
+  return diplomat::Ok<std::string>(output);
 }
 
 inline void CaseMapper::add_case_closure_to(char32_t c, CodePointSetBuilder& builder) const {

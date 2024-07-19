@@ -49,7 +49,7 @@ inline diplomat::result<std::string, diplomat::Utf8Error> TitlecaseMapper::title
     locale.AsFFI(),
     options.AsFFI(),
     &write);
-  return diplomat::Ok<std::string>(std::move(output));
+  return diplomat::Ok<std::string>(output);
 }
 
 inline const diplomat::capi::TitlecaseMapper* TitlecaseMapper::AsFFI() const {
