@@ -3,7 +3,16 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 [package]
-name = "icu_depcheck"
+name = "ffi-coverage"
 version = "0.0.0"
-edition = "2021"
 publish = false
+edition = "2021"
+
+[dependencies]
+diplomat_core = { workspace = true }
+elsa = { workspace = true }
+lazy_static = "1"
+rustdoc-types = "0.22"
+serde_json = { workspace = true }
+syn-inline-mod = "0.6.0"
+

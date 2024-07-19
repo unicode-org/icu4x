@@ -13,7 +13,7 @@ use std::io::{self, BufWriter, Cursor, Write};
 use std::path::PathBuf;
 use zip::ZipArchive;
 
-include!("../../globs.rs.data");
+include!("../globs.rs.data");
 include!("../../../../provider/source/tests/locales.rs.data");
 
 #[derive(Parser)]

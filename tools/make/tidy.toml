@@ -208,7 +208,7 @@ exit_on_error true
 
 glob_pattern = set "./**/Cargo.toml"
 license = canonicalize LICENSE
-skip_path_prefixes = array "tutorials/gn/vendor/" "tutorials/gn/third_party_tools/" "ffi/capi/tests/c/" "docs/" "utils/calendrical_calculations"
+skip_path_prefixes = array "tutorials/gn/vendor/" "tutorials/gn/third_party_tools/" "tutorials/" "utils/calendrical_calculations" "tools/make"
 
 handle = glob_array ${glob_pattern}
 for path in ${handle}
@@ -236,7 +236,7 @@ exit_on_error true
 glob_pattern = set "./**/Cargo.toml"
 license = canonicalize LICENSE
 license_text = readfile ${license}
-skip_path_prefixes = array "tutorials/gn/vendor/" "tutorials/gn/third_party_tools/" "ffi/capi/tests/" "tutorials/" "utils/calendrical_calculations"
+skip_path_prefixes = array "tutorials/gn/vendor/" "tutorials/gn/third_party_tools/" "tutorials/" "utils/calendrical_calculations" "tools/make"
 
 handle = glob_array ${glob_pattern}
 for path in ${handle}

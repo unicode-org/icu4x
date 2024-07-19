@@ -182,8 +182,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "bakeddata-scripts"
-version = "1.5.0"
+name = "bakeddata"
+version = "0.0.0"
 dependencies = [
  "crlify",
  "icu",
@@ -216,6 +216,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "823388e228f614e9558c6804262db37960ec8821856535f5c3f59913140558f8"
 dependencies = [
  "serde",
+]
+
+[[package]]
+name = "bench-binsize"
+version = "0.0.0"
+
+[[package]]
+name = "bench-memory"
+version = "0.0.0"
+dependencies = [
+ "clap",
+ "libc",
+ "serde_json",
 ]
 
 [[package]]
@@ -688,6 +701,22 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "75b325c5dbd37f80359721ad39aca5a29fb04c89279657cffdda8736d0c0b9d2"
 
 [[package]]
+name = "download-repo-sources"
+version = "0.0.0"
+dependencies = [
+ "clap",
+ "crlify",
+ "eyre",
+ "icu_locale_core",
+ "icu_provider",
+ "icu_provider_source",
+ "log",
+ "simple_logger",
+ "ureq",
+ "zip",
+]
+
+[[package]]
 name = "ecma402_traits"
 version = "4.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -735,6 +764,18 @@ checksum = "7cd915d99f24784cdc19fd37ef22b97e3ff0ae756c7e492e9fbfe897d61e2aec"
 dependencies = [
  "indenter",
  "once_cell",
+]
+
+[[package]]
+name = "ffi-coverage"
+version = "0.0.0"
+dependencies = [
+ "diplomat_core",
+ "elsa",
+ "lazy_static",
+ "rustdoc-types",
+ "serde_json",
+ "syn-inline-mod",
 ]
 
 [[package]]
@@ -932,24 +973,11 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_benchmark_binsize"
-version = "0.0.0"
-
-[[package]]
 name = "icu_benchmark_macros"
 version = "0.0.0"
 dependencies = [
  "dhat",
  "dlmalloc",
-]
-
-[[package]]
-name = "icu_benchmark_memory"
-version = "0.0.0"
-dependencies = [
- "clap",
- "libc",
- "serde_json",
 ]
 
 [[package]]
@@ -1218,18 +1246,6 @@ version = "0.1.0"
 dependencies = [
  "icu_locale",
  "icu_provider_baked",
-]
-
-[[package]]
-name = "icu_ffi_coverage"
-version = "0.0.0"
-dependencies = [
- "diplomat_core",
- "elsa",
- "lazy_static",
- "rustdoc-types",
- "serde_json",
- "syn-inline-mod",
 ]
 
 [[package]]
@@ -1632,22 +1648,6 @@ version = "1.5.0"
 dependencies = [
  "icu_locale",
  "icu_provider_baked",
-]
-
-[[package]]
-name = "icu_testdata_scripts"
-version = "0.0.0"
-dependencies = [
- "clap",
- "crlify",
- "eyre",
- "icu_locale_core",
- "icu_provider",
- "icu_provider_source",
- "log",
- "simple_logger",
- "ureq",
- "zip",
 ]
 
 [[package]]

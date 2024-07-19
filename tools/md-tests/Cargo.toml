@@ -4,8 +4,8 @@
 
 [package]
 name = "md-tests"
-publish = false
 version = "0.0.0"
+publish = false
 edition = "2021"
 
 [dev-dependencies]
