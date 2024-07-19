@@ -22,7 +22,7 @@ pub mod ffi {
             icu::normalizer::properties::CanonicalCombiningClassMap::new,
             FnInStruct
         )]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
+        #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn create(
             provider: &DataProvider,
         ) -> Result<Box<CanonicalCombiningClassMap>, DataError> {
@@ -39,25 +39,17 @@ pub mod ffi {
             FnInStruct
         )]
         #[diplomat::rust_link(
-            icu::properties::properties::CanonicalCombiningClass,
-            Struct,
-            compact
-        )]
-        #[diplomat::attr(supports = indexing, indexer)]
-        pub fn get(&self, ch: DiplomatChar) -> u8 {
-            self.0.get32(ch).0
-        }
-        #[diplomat::rust_link(
             icu::normalizer::properties::CanonicalCombiningClassMap::get32,
-            FnInStruct
+            FnInStruct,
+            hidden
         )]
         #[diplomat::rust_link(
             icu::properties::properties::CanonicalCombiningClass,
             Struct,
             compact
         )]
-        #[diplomat::attr(any(dart, js), disable)]
-        pub fn get32(&self, ch: u32) -> u8 {
+        #[diplomat::attr(*, indexer)]
+        pub fn get(&self, ch: DiplomatChar) -> u8 {
             self.0.get32(ch).0
         }
     }
@@ -72,7 +64,7 @@ pub mod ffi {
     impl CanonicalComposition {
         /// Construct a new CanonicalComposition instance for NFC
         #[diplomat::rust_link(icu::normalizer::properties::CanonicalComposition::new, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
+        #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn create(provider: &DataProvider) -> Result<Box<CanonicalComposition>, DataError> {
             Ok(Box::new(CanonicalComposition(call_constructor!(
                 icu_normalizer::properties::CanonicalComposition::new [r => Ok(r)],
@@ -117,7 +109,7 @@ pub mod ffi {
     impl CanonicalDecomposition {
         /// Construct a new CanonicalDecomposition instance for NFC
         #[diplomat::rust_link(icu::normalizer::properties::CanonicalDecomposition::new, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
+        #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn create(provider: &DataProvider) -> Result<Box<CanonicalDecomposition>, DataError> {
             Ok(Box::new(CanonicalDecomposition(call_constructor!(
                 icu_normalizer::properties::CanonicalDecomposition::new [r => Ok(r)],

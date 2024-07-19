@@ -24,17 +24,17 @@ namespace capi {
 
 inline diplomat::capi::CodePointRangeIteratorResult CodePointRangeIteratorResult::AsFFI() const {
   return diplomat::capi::CodePointRangeIteratorResult {
-    .start = start,
-    .end = end,
-    .done = done,
+    /* .start = */ start,
+    /* .end = */ end,
+    /* .done = */ done,
   };
 }
 
 inline CodePointRangeIteratorResult CodePointRangeIteratorResult::FromFFI(diplomat::capi::CodePointRangeIteratorResult c_struct) {
   return CodePointRangeIteratorResult {
-    .start = c_struct.start,
-    .end = c_struct.end,
-    .done = c_struct.done,
+    /* .start = */ c_struct.start,
+    /* .end = */ c_struct.end,
+    /* .done = */ c_struct.done,
   };
 }
 

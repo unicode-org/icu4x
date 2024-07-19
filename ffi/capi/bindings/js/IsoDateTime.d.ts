@@ -21,11 +21,13 @@ export class IsoDateTime {
 
     static create(year: number, month: number, day: number, hour: number, minute: number, second: number, nanosecond: number): IsoDateTime;
 
-    static crateFromDateAndTime(date: IsoDate, time: Time): IsoDateTime;
+    static fromDateAndTime(date: IsoDate, time: Time): IsoDateTime;
+
+    static fromString(v: string): IsoDateTime;
 
     static localUnixEpoch(): IsoDateTime;
 
-    static createFromMinutesSinceLocalUnixEpoch(minutes: number): IsoDateTime;
+    static fromMinutesSinceLocalUnixEpoch(minutes: number): IsoDateTime;
 
     get date(): IsoDate;
 

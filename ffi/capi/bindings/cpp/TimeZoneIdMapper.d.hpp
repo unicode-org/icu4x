@@ -11,8 +11,8 @@
 
 namespace diplomat::capi { struct DataProvider; }
 class DataProvider;
+struct TimeZoneInvalidIdError;
 class DataError;
-class TimeZoneInvalidIdError;
 
 
 namespace diplomat {

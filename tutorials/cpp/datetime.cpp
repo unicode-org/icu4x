@@ -19,9 +19,9 @@
 
 int main() {
     Logger::init_simple_logger();
-    std::unique_ptr<Locale> locale = Locale::create_from_string("es").ok().value();
+    std::unique_ptr<Locale> locale = Locale::from_string("es").ok().value();
     std::cout << "Running test for locale " << locale->to_string() << std::endl;
-    std::unique_ptr<DataProvider> dp = DataProvider::create_compiled();
+    std::unique_ptr<DataProvider> dp = DataProvider::compiled();
 
     std::unique_ptr<IsoDateTime> date = IsoDateTime::create(2022, 07, 11, 13, 06, 42, 0).ok().value();
 
@@ -49,9 +49,9 @@ int main() {
         return 1;
     }
 
-    locale = Locale::create_from_string("en-u-ca-japanese").ok().value();
+    locale = Locale::from_string("en-u-ca-japanese").ok().value();
     std::unique_ptr<Calendar> cal = Calendar::create_for_locale(*dp.get(), *locale.get()).ok().value();
-    std::unique_ptr<DateTime> any_date = DateTime::create_from_iso_in_calendar(2020, 10, 5, 13, 33, 15, 0, *cal.get()).ok().value();
+    std::unique_ptr<DateTime> any_date = DateTime::from_iso_in_calendar(2020, 10, 5, 13, 33, 15, 0, *cal.get()).ok().value();
     std::unique_ptr<DateTimeFormatter> any_dtf = DateTimeFormatter::create_with_lengths(*dp.get(), *locale.get(), DateLength::Medium, TimeLength::Short).ok().value();
     out = any_dtf->format_datetime(*any_date.get()).ok().value();
     std::cout << "Formatted value is " << out << std::endl;
@@ -60,7 +60,7 @@ int main() {
         return 1;
     }
 
-    std::unique_ptr<CustomTimeZone> time_zone = CustomTimeZone::create_from_string("-06:00").ok().value();
+    std::unique_ptr<CustomTimeZone> time_zone = CustomTimeZone::from_string("-06:00").ok().value();
     int32_t offset = time_zone->gmt_offset_seconds().value();
     if (offset != -21600) {
         std::cout << "GMT offset doesn't parse" << std::endl;

@@ -16,7 +16,7 @@ pub mod ffi {
     impl ComposingNormalizer {
         /// Construct a new ComposingNormalizer instance for NFC
         #[diplomat::rust_link(icu::normalizer::ComposingNormalizer::new_nfc, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "nfc")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "nfc")]
         pub fn create_nfc(provider: &DataProvider) -> Result<Box<ComposingNormalizer>, DataError> {
             Ok(Box::new(ComposingNormalizer(call_constructor!(
                 icu_normalizer::ComposingNormalizer::new_nfc [r => Ok(r)],
@@ -28,7 +28,7 @@ pub mod ffi {
 
         /// Construct a new ComposingNormalizer instance for NFKC
         #[diplomat::rust_link(icu::normalizer::ComposingNormalizer::new_nfkc, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "nfkc")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "nfkc")]
         pub fn create_nfkc(provider: &DataProvider) -> Result<Box<ComposingNormalizer>, DataError> {
             Ok(Box::new(ComposingNormalizer(call_constructor!(
                 icu_normalizer::ComposingNormalizer::new_nfkc [r => Ok(r)],
@@ -68,7 +68,9 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn is_normalized(&self, s: &DiplomatStr) -> bool {
+        #[diplomat::attr(not(supports = utf8_strings), disable)]
+        #[diplomat::attr(*, rename = "is_normalized")]
+        pub fn is_normalized_utf8(&self, s: &DiplomatStr) -> bool {
             self.0.is_normalized_utf8(s)
         }
 
@@ -80,6 +82,8 @@ pub mod ffi {
             icu::normalizer::ComposingNormalizer::is_normalized_utf16,
             FnInStruct
         )]
+        #[diplomat::attr(not(supports = utf8_strings), rename = "is_normalized")]
+        #[diplomat::attr(supports = utf8_strings, rename = "is_normalized16")]
         pub fn is_normalized_utf16(&self, s: &DiplomatStr16) -> bool {
             self.0.is_normalized_utf16(s)
         }
@@ -94,7 +98,9 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn is_normalized_up_to(&self, s: &DiplomatStr) -> usize {
+        #[diplomat::attr(not(supports = utf8_strings), disable)]
+        #[diplomat::attr(*, rename = "is_normalized_up_to")]
+        pub fn is_normalized_utf8_up_to(&self, s: &DiplomatStr) -> usize {
             self.0.is_normalized_utf8_up_to(s)
         }
 
@@ -103,6 +109,8 @@ pub mod ffi {
             icu::normalizer::ComposingNormalizer::is_normalized_utf16_up_to,
             FnInStruct
         )]
+        #[diplomat::attr(not(supports = utf8_strings), rename = "is_normalized_up_to")]
+        #[diplomat::attr(supports = utf8_strings, rename = "is_normalized16_up_to")]
         pub fn is_normalized_utf16_up_to(&self, s: &DiplomatStr16) -> usize {
             self.0.is_normalized_utf16_up_to(s)
         }
@@ -115,7 +123,7 @@ pub mod ffi {
     impl DecomposingNormalizer {
         /// Construct a new DecomposingNormalizer instance for NFC
         #[diplomat::rust_link(icu::normalizer::DecomposingNormalizer::new_nfd, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "nfd")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "nfd")]
         pub fn create_nfd(
             provider: &DataProvider,
         ) -> Result<Box<DecomposingNormalizer>, DataError> {
@@ -129,7 +137,7 @@ pub mod ffi {
 
         /// Construct a new DecomposingNormalizer instance for NFKC
         #[diplomat::rust_link(icu::normalizer::DecomposingNormalizer::new_nfkd, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "nfkd")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "nfkd")]
         pub fn create_nfkd(
             provider: &DataProvider,
         ) -> Result<Box<DecomposingNormalizer>, DataError> {

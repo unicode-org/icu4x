@@ -11,9 +11,7 @@
 
 
 
-typedef enum FixedDecimalLimitError {
-  FixedDecimalLimitError_TodoZst = 0,
-} FixedDecimalLimitError;
+
 
 
 

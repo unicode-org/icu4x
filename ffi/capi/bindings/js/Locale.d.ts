@@ -12,9 +12,9 @@ export class Locale {
     get ffiValue(): pointer;
 
 
-    static createFromString(name: string): Locale;
+    static fromString(name: string): Locale;
 
-    static createUnd(): Locale;
+    static und(): Locale;
 
     clone(): Locale;
 

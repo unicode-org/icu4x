@@ -9,7 +9,6 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "CustomTimeZone.hpp"
 #include "DataProvider.hpp"
 #include "DateLength.hpp"
@@ -18,6 +17,7 @@
 #include "IsoTimeZoneOptions.hpp"
 #include "Locale.hpp"
 #include "TimeLength.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace diplomat {

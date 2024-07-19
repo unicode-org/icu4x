@@ -9,9 +9,9 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace diplomat {
@@ -22,8 +22,6 @@ namespace capi {
     icu4x_CanonicalCombiningClassMap_create_mv1_result icu4x_CanonicalCombiningClassMap_create_mv1(const diplomat::capi::DataProvider* provider);
     
     uint8_t icu4x_CanonicalCombiningClassMap_get_mv1(const diplomat::capi::CanonicalCombiningClassMap* self, char32_t ch);
-    
-    uint8_t icu4x_CanonicalCombiningClassMap_get32_mv1(const diplomat::capi::CanonicalCombiningClassMap* self, uint32_t ch);
     
     
     void icu4x_CanonicalCombiningClassMap_destroy_mv1(CanonicalCombiningClassMap* self);
@@ -39,12 +37,6 @@ inline diplomat::result<std::unique_ptr<CanonicalCombiningClassMap>, DataError> 
 
 inline uint8_t CanonicalCombiningClassMap::get(char32_t ch) const {
   auto result = diplomat::capi::icu4x_CanonicalCombiningClassMap_get_mv1(this->AsFFI(),
-    ch);
-  return result;
-}
-
-inline uint8_t CanonicalCombiningClassMap::get32(uint32_t ch) const {
-  auto result = diplomat::capi::icu4x_CanonicalCombiningClassMap_get32_mv1(this->AsFFI(),
     ch);
   return result;
 }

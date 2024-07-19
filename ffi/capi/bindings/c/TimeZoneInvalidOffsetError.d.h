@@ -11,9 +11,7 @@
 
 
 
-typedef enum TimeZoneInvalidOffsetError {
-  TimeZoneInvalidOffsetError_TodoZst = 0,
-} TimeZoneInvalidOffsetError;
+
 
 
 

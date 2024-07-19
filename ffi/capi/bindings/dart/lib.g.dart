@@ -15,6 +15,7 @@ part 'BidiInfo.g.dart';
 part 'BidiParagraph.g.dart';
 part 'Calendar.g.dart';
 part 'CalendarError.g.dart';
+part 'CalendarParseError.g.dart';
 part 'CanonicalCombiningClassMap.g.dart';
 part 'CanonicalComposition.g.dart';
 part 'CanonicalDecomposition.g.dart';
@@ -34,6 +35,7 @@ part 'CollatorCaseLevel.g.dart';
 part 'CollatorMaxVariable.g.dart';
 part 'CollatorNumeric.g.dart';
 part 'CollatorOptions.g.dart';
+part 'CollatorResolvedOptions.g.dart';
 part 'CollatorStrength.g.dart';
 part 'ComposingNormalizer.g.dart';
 part 'CustomTimeZone.g.dart';
@@ -109,7 +111,6 @@ part 'PluralRules.g.dart';
 part 'PropertyValueNameToEnumMapper.g.dart';
 part 'RegionDisplayNames.g.dart';
 part 'ReorderedIndexMap.g.dart';
-part 'ResolvedCollatorOptions.g.dart';
 part 'ScriptExtensionsSet.g.dart';
 part 'ScriptWithExtensions.g.dart';
 part 'ScriptWithExtensionsBorrowed.g.dart';
@@ -560,6 +561,17 @@ final class _ResultInt32Void extends ffi.Struct {
   external bool isOk;
 }
 
+final class _ResultOpaqueFixedDecimalLimitErrorFfiUnion extends ffi.Union {
+  external ffi.Pointer<ffi.Opaque> ok;
+}
+
+final class _ResultOpaqueFixedDecimalLimitErrorFfi extends ffi.Struct {
+  external _ResultOpaqueFixedDecimalLimitErrorFfiUnion union;
+
+  @ffi.Bool()
+  external bool isOk;
+}
+
 final class _ResultOpaqueInt32Union extends ffi.Union {
   external ffi.Pointer<ffi.Opaque> ok;
 
@@ -569,6 +581,17 @@ final class _ResultOpaqueInt32Union extends ffi.Union {
 
 final class _ResultOpaqueInt32 extends ffi.Struct {
   external _ResultOpaqueInt32Union union;
+
+  @ffi.Bool()
+  external bool isOk;
+}
+
+final class _ResultOpaqueTimeZoneInvalidOffsetErrorFfiUnion extends ffi.Union {
+  external ffi.Pointer<ffi.Opaque> ok;
+}
+
+final class _ResultOpaqueTimeZoneInvalidOffsetErrorFfi extends ffi.Struct {
+  external _ResultOpaqueTimeZoneInvalidOffsetErrorFfiUnion union;
 
   @ffi.Bool()
   external bool isOk;
@@ -593,6 +616,20 @@ final class _ResultVoidInt32Union extends ffi.Union {
 
 final class _ResultVoidInt32 extends ffi.Struct {
   external _ResultVoidInt32Union union;
+
+  @ffi.Bool()
+  external bool isOk;
+}
+
+final class _ResultVoidTimeZoneInvalidIdErrorFfi extends ffi.Struct {
+  
+
+  @ffi.Bool()
+  external bool isOk;
+}
+
+final class _ResultVoidTimeZoneInvalidOffsetErrorFfi extends ffi.Struct {
+  
 
   @ffi.Bool()
   external bool isOk;

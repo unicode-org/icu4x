@@ -9,12 +9,12 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
 #include "SentenceBreakIteratorLatin1.hpp"
 #include "SentenceBreakIteratorUtf16.hpp"
 #include "SentenceBreakIteratorUtf8.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace diplomat {
@@ -42,14 +42,14 @@ inline diplomat::result<std::unique_ptr<SentenceSegmenter>, DataError> SentenceS
   return result.is_ok ? diplomat::result<std::unique_ptr<SentenceSegmenter>, DataError>(diplomat::Ok<std::unique_ptr<SentenceSegmenter>>(std::unique_ptr<SentenceSegmenter>(SentenceSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<SentenceSegmenter>, DataError>(diplomat::Err<DataError>(DataError::FromFFI(result.err)));
 }
 
-inline std::unique_ptr<SentenceBreakIteratorUtf8> SentenceSegmenter::segment_utf8(std::string_view input) const {
+inline std::unique_ptr<SentenceBreakIteratorUtf8> SentenceSegmenter::segment(std::string_view input) const {
   auto result = diplomat::capi::icu4x_SentenceSegmenter_segment_utf8_mv1(this->AsFFI(),
     input.data(),
     input.size());
   return std::unique_ptr<SentenceBreakIteratorUtf8>(SentenceBreakIteratorUtf8::FromFFI(result));
 }
 
-inline std::unique_ptr<SentenceBreakIteratorUtf16> SentenceSegmenter::segment_utf16(std::u16string_view input) const {
+inline std::unique_ptr<SentenceBreakIteratorUtf16> SentenceSegmenter::segment16(std::u16string_view input) const {
   auto result = diplomat::capi::icu4x_SentenceSegmenter_segment_utf16_mv1(this->AsFFI(),
     input.data(),
     input.size());

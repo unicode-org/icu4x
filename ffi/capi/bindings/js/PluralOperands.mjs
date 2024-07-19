@@ -33,12 +33,12 @@ export class PluralOperands {
     }
 
 
-    static createFromString(s) {
+    static fromString(s) {
         
         const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
         
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_PluralOperands_create_from_string_mv1(diplomat_receive_buffer, sSlice.ptr, sSlice.size);
+        const result = wasm.icu4x_PluralOperands_from_string_mv1(diplomat_receive_buffer, sSlice.ptr, sSlice.size);
     
         try {
     
@@ -56,8 +56,8 @@ export class PluralOperands {
         }
     }
 
-    static createFromFixedDecimal(x) {
-        const result = wasm.icu4x_PluralOperands_create_from_fixed_decimal_mv1(x.ffiValue);
+    static fromFixedDecimal(x) {
+        const result = wasm.icu4x_PluralOperands_from_fixed_decimal_mv1(x.ffiValue);
     
         try {
     

@@ -9,19 +9,19 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "FixedDecimal.hpp"
 #include "FixedDecimalParseError.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace diplomat {
 namespace capi {
     extern "C" {
     
-    typedef struct icu4x_PluralOperands_create_from_string_mv1_result {union {diplomat::capi::PluralOperands* ok; diplomat::capi::FixedDecimalParseError err;}; bool is_ok;} icu4x_PluralOperands_create_from_string_mv1_result;
-    icu4x_PluralOperands_create_from_string_mv1_result icu4x_PluralOperands_create_from_string_mv1(const char* s_data, size_t s_len);
+    typedef struct icu4x_PluralOperands_from_string_mv1_result {union {diplomat::capi::PluralOperands* ok; diplomat::capi::FixedDecimalParseError err;}; bool is_ok;} icu4x_PluralOperands_from_string_mv1_result;
+    icu4x_PluralOperands_from_string_mv1_result icu4x_PluralOperands_from_string_mv1(const char* s_data, size_t s_len);
     
-    diplomat::capi::PluralOperands* icu4x_PluralOperands_create_from_fixed_decimal_mv1(const diplomat::capi::FixedDecimal* x);
+    diplomat::capi::PluralOperands* icu4x_PluralOperands_from_fixed_decimal_mv1(const diplomat::capi::FixedDecimal* x);
     
     
     void icu4x_PluralOperands_destroy_mv1(PluralOperands* self);
@@ -30,14 +30,14 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline diplomat::result<std::unique_ptr<PluralOperands>, FixedDecimalParseError> PluralOperands::create_from_string(std::string_view s) {
-  auto result = diplomat::capi::icu4x_PluralOperands_create_from_string_mv1(s.data(),
+inline diplomat::result<std::unique_ptr<PluralOperands>, FixedDecimalParseError> PluralOperands::from_string(std::string_view s) {
+  auto result = diplomat::capi::icu4x_PluralOperands_from_string_mv1(s.data(),
     s.size());
   return result.is_ok ? diplomat::result<std::unique_ptr<PluralOperands>, FixedDecimalParseError>(diplomat::Ok<std::unique_ptr<PluralOperands>>(std::unique_ptr<PluralOperands>(PluralOperands::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<PluralOperands>, FixedDecimalParseError>(diplomat::Err<FixedDecimalParseError>(FixedDecimalParseError::FromFFI(result.err)));
 }
 
-inline std::unique_ptr<PluralOperands> PluralOperands::create_from_fixed_decimal(const FixedDecimal& x) {
-  auto result = diplomat::capi::icu4x_PluralOperands_create_from_fixed_decimal_mv1(x.AsFFI());
+inline std::unique_ptr<PluralOperands> PluralOperands::from_fixed_decimal(const FixedDecimal& x) {
+  auto result = diplomat::capi::icu4x_PluralOperands_from_fixed_decimal_mv1(x.AsFFI());
   return std::unique_ptr<PluralOperands>(PluralOperands::FromFFI(result));
 }
 

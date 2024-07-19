@@ -7,9 +7,9 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "LocaleFallbackPriority.d.hpp"
 #include "LocaleFallbackSupplement.d.hpp"
+#include "diplomat_runtime.hpp"
 
 class LocaleFallbackPriority;
 class LocaleFallbackSupplement;
@@ -19,7 +19,7 @@ namespace diplomat {
 namespace capi {
     struct LocaleFallbackConfig {
       diplomat::capi::LocaleFallbackPriority priority;
-      DiplomatStringView extension_key;
+      diplomat::capi::DiplomatStringView extension_key;
       diplomat::capi::LocaleFallbackSupplement fallback_supplement;
     };
 } // namespace capi

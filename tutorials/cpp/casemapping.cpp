@@ -12,10 +12,10 @@
 
 int main() {
     Logger::init_simple_logger();
-    std::unique_ptr<Locale> und = Locale::create_from_string("und").ok().value();
-    std::unique_ptr<Locale> greek = Locale::create_from_string("el").ok().value();
-    std::unique_ptr<Locale> turkish = Locale::create_from_string("tr").ok().value();
-    std::unique_ptr<DataProvider> dp = DataProvider::create_compiled();
+    std::unique_ptr<Locale> und = Locale::from_string("und").ok().value();
+    std::unique_ptr<Locale> greek = Locale::from_string("el").ok().value();
+    std::unique_ptr<Locale> turkish = Locale::from_string("tr").ok().value();
+    std::unique_ptr<DataProvider> dp = DataProvider::compiled();
 
     std::unique_ptr<CaseMapper> cm = CaseMapper::create(*dp.get()).ok().value();
 

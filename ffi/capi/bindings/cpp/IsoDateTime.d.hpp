@@ -21,6 +21,7 @@ namespace diplomat::capi { struct WeekCalculator; }
 class WeekCalculator;
 struct WeekOf;
 class CalendarError;
+class CalendarParseError;
 class IsoWeekday;
 
 
@@ -35,11 +36,13 @@ public:
 
   inline static diplomat::result<std::unique_ptr<IsoDateTime>, CalendarError> create(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
 
-  inline static std::unique_ptr<IsoDateTime> crate_from_date_and_time(const IsoDate& date, const Time& time);
+  inline static std::unique_ptr<IsoDateTime> from_date_and_time(const IsoDate& date, const Time& time);
+
+  inline static diplomat::result<std::unique_ptr<IsoDateTime>, CalendarParseError> from_string(std::string_view v);
 
   inline static std::unique_ptr<IsoDateTime> local_unix_epoch();
 
-  inline static std::unique_ptr<IsoDateTime> create_from_minutes_since_local_unix_epoch(int32_t minutes);
+  inline static std::unique_ptr<IsoDateTime> from_minutes_since_local_unix_epoch(int32_t minutes);
 
   inline std::unique_ptr<IsoDate> date() const;
 

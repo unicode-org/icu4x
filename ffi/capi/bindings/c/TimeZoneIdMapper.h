@@ -9,7 +9,6 @@
 
 #include "DataError.d.h"
 #include "DataProvider.d.h"
-#include "TimeZoneInvalidIdError.d.h"
 
 #include "TimeZoneIdMapper.d.h"
 
@@ -21,16 +20,16 @@
 typedef struct icu4x_TimeZoneIdMapper_create_mv1_result {union {TimeZoneIdMapper* ok; DataError err;}; bool is_ok;} icu4x_TimeZoneIdMapper_create_mv1_result;
 icu4x_TimeZoneIdMapper_create_mv1_result icu4x_TimeZoneIdMapper_create_mv1(const DataProvider* provider);
 
-typedef struct icu4x_TimeZoneIdMapper_iana_to_bcp47_mv1_result {union { TimeZoneInvalidIdError err;}; bool is_ok;} icu4x_TimeZoneIdMapper_iana_to_bcp47_mv1_result;
+typedef struct icu4x_TimeZoneIdMapper_iana_to_bcp47_mv1_result { bool is_ok;} icu4x_TimeZoneIdMapper_iana_to_bcp47_mv1_result;
 icu4x_TimeZoneIdMapper_iana_to_bcp47_mv1_result icu4x_TimeZoneIdMapper_iana_to_bcp47_mv1(const TimeZoneIdMapper* self, const char* value_data, size_t value_len, DiplomatWrite* write);
 
-typedef struct icu4x_TimeZoneIdMapper_normalize_iana_mv1_result {union { TimeZoneInvalidIdError err;}; bool is_ok;} icu4x_TimeZoneIdMapper_normalize_iana_mv1_result;
+typedef struct icu4x_TimeZoneIdMapper_normalize_iana_mv1_result { bool is_ok;} icu4x_TimeZoneIdMapper_normalize_iana_mv1_result;
 icu4x_TimeZoneIdMapper_normalize_iana_mv1_result icu4x_TimeZoneIdMapper_normalize_iana_mv1(const TimeZoneIdMapper* self, const char* value_data, size_t value_len, DiplomatWrite* write);
 
-typedef struct icu4x_TimeZoneIdMapper_canonicalize_iana_mv1_result {union { TimeZoneInvalidIdError err;}; bool is_ok;} icu4x_TimeZoneIdMapper_canonicalize_iana_mv1_result;
+typedef struct icu4x_TimeZoneIdMapper_canonicalize_iana_mv1_result { bool is_ok;} icu4x_TimeZoneIdMapper_canonicalize_iana_mv1_result;
 icu4x_TimeZoneIdMapper_canonicalize_iana_mv1_result icu4x_TimeZoneIdMapper_canonicalize_iana_mv1(const TimeZoneIdMapper* self, const char* value_data, size_t value_len, DiplomatWrite* write);
 
-typedef struct icu4x_TimeZoneIdMapper_find_canonical_iana_from_bcp47_mv1_result {union { TimeZoneInvalidIdError err;}; bool is_ok;} icu4x_TimeZoneIdMapper_find_canonical_iana_from_bcp47_mv1_result;
+typedef struct icu4x_TimeZoneIdMapper_find_canonical_iana_from_bcp47_mv1_result { bool is_ok;} icu4x_TimeZoneIdMapper_find_canonical_iana_from_bcp47_mv1_result;
 icu4x_TimeZoneIdMapper_find_canonical_iana_from_bcp47_mv1_result icu4x_TimeZoneIdMapper_find_canonical_iana_from_bcp47_mv1(const TimeZoneIdMapper* self, const char* value_data, size_t value_len, DiplomatWrite* write);
 
 

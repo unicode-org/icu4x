@@ -31,7 +31,7 @@ final class DataProvider implements ffi.Finalizable {
   /// This provider cannot be modified or combined with other providers, so `enable_fallback`,
   /// `enabled_fallback_with`, `fork_by_locale`, and `fork_by_key` will return `Err`s.
   factory DataProvider.compiled() {
-    final result = _icu4x_DataProvider_create_compiled_mv1();
+    final result = _icu4x_DataProvider_compiled_mv1();
     return DataProvider._fromFfi(result, []);
   }
 
@@ -43,7 +43,7 @@ final class DataProvider implements ffi.Finalizable {
   factory DataProvider.fromByteSlice(ByteBuffer blob) {
     final temp = ffi2.Arena();
     final blobView = blob;
-    final result = _icu4x_DataProvider_create_from_byte_slice_mv1(blobView.allocIn(temp), blobView.length);
+    final result = _icu4x_DataProvider_from_byte_slice_mv1(blobView.allocIn(temp), blobView.length);
     temp.releaseAll();
     if (!result.isOk) {
       throw DataError.values[result.union.err];
@@ -55,7 +55,7 @@ final class DataProvider implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `EmptyDataProvider`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/empty/struct.EmptyDataProvider.html) for more information.
   factory DataProvider.empty() {
-    final result = _icu4x_DataProvider_create_empty_mv1();
+    final result = _icu4x_DataProvider_empty_mv1();
     return DataProvider._fromFfi(result, []);
   }
 
@@ -111,20 +111,20 @@ final class DataProvider implements ffi.Finalizable {
 // ignore: non_constant_identifier_names
 external void _icu4x_DataProvider_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('icu4x_DataProvider_create_compiled_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_DataProvider_create_compiled_mv1')
+@meta.ResourceIdentifier('icu4x_DataProvider_compiled_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_DataProvider_compiled_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_DataProvider_create_compiled_mv1();
+external ffi.Pointer<ffi.Opaque> _icu4x_DataProvider_compiled_mv1();
 
-@meta.ResourceIdentifier('icu4x_DataProvider_create_from_byte_slice_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_DataProvider_create_from_byte_slice_mv1')
+@meta.ResourceIdentifier('icu4x_DataProvider_from_byte_slice_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_DataProvider_from_byte_slice_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_DataProvider_create_from_byte_slice_mv1(ffi.Pointer<ffi.Uint8> blobData, int blobLength);
+external _ResultOpaqueInt32 _icu4x_DataProvider_from_byte_slice_mv1(ffi.Pointer<ffi.Uint8> blobData, int blobLength);
 
-@meta.ResourceIdentifier('icu4x_DataProvider_create_empty_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_DataProvider_create_empty_mv1')
+@meta.ResourceIdentifier('icu4x_DataProvider_empty_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_DataProvider_empty_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_DataProvider_create_empty_mv1();
+external ffi.Pointer<ffi.Opaque> _icu4x_DataProvider_empty_mv1();
 
 @meta.ResourceIdentifier('icu4x_DataProvider_fork_by_key_mv1')
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DataProvider_fork_by_key_mv1')

@@ -9,11 +9,11 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "CodePointRangeIterator.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
 #include "Error.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace diplomat {
@@ -21,8 +21,6 @@ namespace capi {
     extern "C" {
     
     bool icu4x_CodePointSetData_contains_mv1(const diplomat::capi::CodePointSetData* self, char32_t cp);
-    
-    bool icu4x_CodePointSetData_contains32_mv1(const diplomat::capi::CodePointSetData* self, uint32_t cp);
     
     diplomat::capi::CodePointRangeIterator* icu4x_CodePointSetData_iter_ranges_mv1(const diplomat::capi::CodePointSetData* self);
     
@@ -238,12 +236,6 @@ namespace capi {
 
 inline bool CodePointSetData::contains(char32_t cp) const {
   auto result = diplomat::capi::icu4x_CodePointSetData_contains_mv1(this->AsFFI(),
-    cp);
-  return result;
-}
-
-inline bool CodePointSetData::contains32(uint32_t cp) const {
-  auto result = diplomat::capi::icu4x_CodePointSetData_contains32_mv1(this->AsFFI(),
     cp);
   return result;
 }
@@ -596,7 +588,7 @@ inline diplomat::result<diplomat::result<std::unique_ptr<CodePointSetData>, Erro
   auto result = diplomat::capi::icu4x_CodePointSetData_load_for_ecma262_mv1(provider.AsFFI(),
     property_name.data(),
     property_name.size());
-  return diplomat::Ok<diplomat::result<std::unique_ptr<CodePointSetData>, Error>>(std::move(result.is_ok ? diplomat::result<std::unique_ptr<CodePointSetData>, Error>(diplomat::Ok<std::unique_ptr<CodePointSetData>>(std::unique_ptr<CodePointSetData>(CodePointSetData::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<CodePointSetData>, Error>(diplomat::Err<Error>(Error::FromFFI(result.err)))));
+  return diplomat::Ok<diplomat::result<std::unique_ptr<CodePointSetData>, Error>>(result.is_ok ? diplomat::result<std::unique_ptr<CodePointSetData>, Error>(diplomat::Ok<std::unique_ptr<CodePointSetData>>(std::unique_ptr<CodePointSetData>(CodePointSetData::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<CodePointSetData>, Error>(diplomat::Err<Error>(Error::FromFFI(result.err))));
 }
 
 inline const diplomat::capi::CodePointSetData* CodePointSetData::AsFFI() const {

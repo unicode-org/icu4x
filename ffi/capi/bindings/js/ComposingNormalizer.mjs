@@ -92,21 +92,6 @@ export class ComposingNormalizer {
 
     isNormalized(s) {
         
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
-        const result = wasm.icu4x_ComposingNormalizer_is_normalized_mv1(this.ffiValue, sSlice.ptr, sSlice.size);
-    
-        try {
-    
-            return result;
-        } finally {
-        
-            sSlice.free();
-        
-        }
-    }
-
-    isNormalizedUtf16(s) {
-        
         const sSlice = diplomatRuntime.DiplomatBuf.str16(wasm, s);
         const result = wasm.icu4x_ComposingNormalizer_is_normalized_utf16_mv1(this.ffiValue, sSlice.ptr, sSlice.size);
     
@@ -121,21 +106,6 @@ export class ComposingNormalizer {
     }
 
     isNormalizedUpTo(s) {
-        
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
-        const result = wasm.icu4x_ComposingNormalizer_is_normalized_up_to_mv1(this.ffiValue, sSlice.ptr, sSlice.size);
-    
-        try {
-    
-            return result;
-        } finally {
-        
-            sSlice.free();
-        
-        }
-    }
-
-    isNormalizedUtf16UpTo(s) {
         
         const sSlice = diplomatRuntime.DiplomatBuf.str16(wasm, s);
         const result = wasm.icu4x_ComposingNormalizer_is_normalized_utf16_up_to_mv1(this.ffiValue, sSlice.ptr, sSlice.size);

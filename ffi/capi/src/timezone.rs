@@ -24,8 +24,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::GmtOffset::try_from_str, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::timezone::GmtOffset::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::timezone::GmtOffset::from_str, FnInStruct, hidden)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_string")]
-        pub fn create_from_string(
+        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        pub fn from_string(
             s: &DiplomatStr,
         ) -> Result<Box<CustomTimeZone>, TimeZoneInvalidOffsetError> {
             Ok(Box::new(CustomTimeZone::from(
@@ -35,30 +35,30 @@ pub mod ffi {
 
         /// Creates a time zone with no information.
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::new_empty, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "empty")]
-        pub fn create_empty() -> Box<CustomTimeZone> {
+        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        pub fn empty() -> Box<CustomTimeZone> {
             Box::new(icu_timezone::CustomTimeZone::new_empty().into())
         }
 
         /// Creates a time zone for UTC (Coordinated Universal Time).
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::utc, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::GmtOffset::utc, FnInStruct, hidden)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "utc")]
-        pub fn create_utc() -> Box<CustomTimeZone> {
+        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        pub fn utc() -> Box<CustomTimeZone> {
             Box::new(icu_timezone::CustomTimeZone::utc().into())
         }
 
         /// Creates a time zone for GMT (London winter time).
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::gmt, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "gmt")]
-        pub fn create_gmt() -> Box<CustomTimeZone> {
+        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        pub fn gmt() -> Box<CustomTimeZone> {
             Box::new(icu_timezone::CustomTimeZone::gmt().into())
         }
 
         /// Creates a time zone for BST (London summer time).
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::bst, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "bst")]
-        pub fn create_bst() -> Box<CustomTimeZone> {
+        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        pub fn bst() -> Box<CustomTimeZone> {
             Box::new(icu_timezone::CustomTimeZone::bst().into())
         }
 
@@ -103,7 +103,7 @@ pub mod ffi {
         /// Returns null if the `gmt_offset` field is empty.
         #[diplomat::rust_link(icu::timezone::GmtOffset::offset_seconds, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::GmtOffset, Struct, compact)]
-        #[diplomat::attr(supports = accessors, getter)]
+        #[diplomat::attr(*, getter)]
         pub fn gmt_offset_seconds(&self) -> Option<i32> {
             self.0
                 .gmt_offset
@@ -114,7 +114,7 @@ pub mod ffi {
         ///
         /// Returns null if the `gmt_offset` field is empty.
         #[diplomat::rust_link(icu::timezone::GmtOffset::is_positive, FnInStruct)]
-        #[diplomat::attr(supports = accessors, getter)]
+        #[diplomat::attr(*, getter)]
         pub fn is_gmt_offset_positive(&self) -> Option<bool> {
             self.0.gmt_offset.map(icu_timezone::GmtOffset::is_positive)
         }
@@ -123,7 +123,7 @@ pub mod ffi {
         ///
         /// Returns null if the `gmt_offset` field is empty (which is not the same as zero).
         #[diplomat::rust_link(icu::timezone::GmtOffset::is_zero, FnInStruct)]
-        #[diplomat::attr(supports = accessors, getter)]
+        #[diplomat::attr(*, getter)]
         pub fn is_gmt_offset_zero(&self) -> Option<bool> {
             self.0.gmt_offset.map(icu_timezone::GmtOffset::is_zero)
         }
@@ -132,7 +132,7 @@ pub mod ffi {
         ///
         /// Returns null if the `gmt_offset` field is empty.
         #[diplomat::rust_link(icu::timezone::GmtOffset::has_minutes, FnInStruct)]
-        #[diplomat::attr(supports = accessors, getter)]
+        #[diplomat::attr(*, getter)]
         pub fn gmt_offset_has_minutes(&self) -> Option<bool> {
             self.0.gmt_offset.map(icu_timezone::GmtOffset::has_minutes)
         }
@@ -141,7 +141,7 @@ pub mod ffi {
         ///
         /// Returns null if the `gmt_offset` field is empty.
         #[diplomat::rust_link(icu::timezone::GmtOffset::has_seconds, FnInStruct)]
-        #[diplomat::attr(supports = accessors, getter)]
+        #[diplomat::attr(*, getter)]
         pub fn gmt_offset_has_seconds(&self) -> Option<bool> {
             self.0.gmt_offset.map(icu_timezone::GmtOffset::has_seconds)
         }
@@ -163,8 +163,7 @@ pub mod ffi {
             id: &DiplomatStr,
         ) -> Result<(), TimeZoneInvalidIdError> {
             self.0.time_zone_id = Some(icu_timezone::TimeZoneBcp47Id(
-                tinystr::TinyAsciiStr::try_from_utf8(id)
-                    .map_err(|_| TimeZoneInvalidIdError::TodoZst)?,
+                tinystr::TinyAsciiStr::try_from_utf8(id).map_err(|_| TimeZoneInvalidIdError)?,
             ));
             Ok(())
         }
@@ -183,7 +182,7 @@ pub mod ffi {
                     .0
                     .as_borrowed()
                     .iana_bytes_to_bcp47(id)
-                    .ok_or(TimeZoneInvalidIdError::TodoZst)?,
+                    .ok_or(TimeZoneInvalidIdError)?,
             );
             Ok(())
         }
@@ -200,7 +199,7 @@ pub mod ffi {
         /// Returns null if the `time_zone_id` field is empty.
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::time_zone_id, StructField)]
         #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id, Struct, compact)]
-        #[diplomat::attr(supports = accessors, getter)]
+        #[diplomat::attr(*, getter)]
         pub fn time_zone_id(&self, write: &mut diplomat_runtime::DiplomatWrite) -> Option<()> {
             let _infallible = write.write_str(self.0.time_zone_id?.0.as_str());
             Some(())
@@ -217,8 +216,7 @@ pub mod ffi {
             id: &DiplomatStr,
         ) -> Result<(), TimeZoneInvalidIdError> {
             self.0.metazone_id = Some(icu_timezone::MetazoneId(
-                tinystr::TinyAsciiStr::try_from_utf8(id)
-                    .map_err(|_| TimeZoneInvalidIdError::TodoZst)?,
+                tinystr::TinyAsciiStr::try_from_utf8(id).map_err(|_| TimeZoneInvalidIdError)?,
             ));
             Ok(())
         }
@@ -235,7 +233,7 @@ pub mod ffi {
         /// Returns null if the `metazone_id` field is empty.
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::metazone_id, StructField)]
         #[diplomat::rust_link(icu::timezone::MetazoneId, Struct, compact)]
-        #[diplomat::attr(supports = accessors, getter)]
+        #[diplomat::attr(*, getter)]
         pub fn metazone_id(&self, write: &mut diplomat_runtime::DiplomatWrite) -> Option<()> {
             let _infallible = write.write_str(self.0.metazone_id?.0.as_str());
             Some(())
@@ -266,7 +264,7 @@ pub mod ffi {
         /// Returns null if the `zone_variant` field is empty.
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::zone_variant, StructField)]
         #[diplomat::rust_link(icu::timezone::ZoneVariant, Struct, compact)]
-        #[diplomat::attr(supports = accessors, getter)]
+        #[diplomat::attr(*, getter)]
         pub fn zone_variant(&self, write: &mut diplomat_runtime::DiplomatWrite) -> Option<()> {
             let _infallible = write.write_str(self.0.zone_variant?.0.as_str());
             Some(())
@@ -293,7 +291,7 @@ pub mod ffi {
         /// Returns null if the `zone_variant` field is empty.
         #[diplomat::rust_link(icu::timezone::ZoneVariant::standard, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::zone_variant, StructField, compact)]
-        #[diplomat::attr(supports = accessors, getter)]
+        #[diplomat::attr(*, getter)]
         pub fn is_standard_time(&self) -> Option<bool> {
             Some(self.0.zone_variant? == icu_timezone::ZoneVariant::standard())
         }
@@ -303,7 +301,7 @@ pub mod ffi {
         /// Returns null if the `zone_variant` field is empty.
         #[diplomat::rust_link(icu::timezone::ZoneVariant::daylight, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::zone_variant, StructField, compact)]
-        #[diplomat::attr(supports = accessors, getter)]
+        #[diplomat::attr(*, getter)]
         pub fn is_daylight_time(&self) -> Option<bool> {
             Some(self.0.zone_variant? == icu_timezone::ZoneVariant::daylight())
         }

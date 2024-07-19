@@ -30,7 +30,7 @@ pub mod ffi {
 
     impl ScriptWithExtensions {
         #[diplomat::rust_link(icu::properties::script::script_with_extensions, Fn)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
+        #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn create(provider: &DataProvider) -> Result<Box<ScriptWithExtensions>, DataError> {
             Ok(Box::new(ScriptWithExtensions(call_constructor!(
                 icu_properties::script::script_with_extensions [r => Ok(r.static_to_owned())],
@@ -65,7 +65,7 @@ pub mod ffi {
             icu::properties::script::ScriptWithExtensions::as_borrowed,
             FnInStruct
         )]
-        #[diplomat::attr(supports = accessors, getter)]
+        #[diplomat::attr(*, getter)]
         pub fn as_borrowed<'a>(&'a self) -> Box<ScriptWithExtensionsBorrowed<'a>> {
             Box::new(ScriptWithExtensionsBorrowed(self.0.as_borrowed()))
         }
@@ -140,7 +140,7 @@ pub mod ffi {
 
         /// Get the number of scripts contained in here
         #[diplomat::rust_link(icu::properties::script::ScriptExtensionsSet::iter, FnInStruct)]
-        #[diplomat::attr(supports = accessors, getter)]
+        #[diplomat::attr(*, getter)]
         pub fn count(&self) -> usize {
             self.0.array_len()
         }

@@ -20,10 +20,7 @@ macro_rules! time_zone_style_registry {
                 (gmt_long, Offset, Long, GmtLong, UpperO, Wide), // 'OOOO'
                 (generic_short, NonLocation, Short, GenericShort, LowerV, One), // 'v'
                 (generic_long, NonLocation, Long, GenericLong, LowerV, Wide), // 'vvvv'
-            ],
-            // Styles with None-length, functions, and matchers
-            [
-                (location, Location, Location, UpperV, Wide), // 'VVVV'
+                (location, Location, Long, Location, UpperV, Wide), // 'VVVV'
             ],
             // Styles with function only for None-length
             [
@@ -38,7 +35,6 @@ macro_rules! time_zone_style_registry {
                 (NonLocation, Medium, GenericShort),
                 (Location, Short, Location),
                 (Location, Medium, Location),
-                (Location, Long, Location),
                 // See comments above about Default behavior
                 (Default, Short, SpecificShort),
                 (Default, Medium, SpecificShort),
@@ -67,7 +63,6 @@ macro_rules! time_zone_style_registry {
 macro_rules! make_constructors {
     (
         [$(($fn:ident, $style:ident, $length:ident, $resolved:ident, $field_symbol:ident, $field_length:ident)),+,],
-        [$(($fn0:ident, $style0:ident, $resolved0:ident, $field_symbol0:ident, $field_length0:ident)),+,],
         [$(($fn1:ident, $style1:ident)),+,],
         [$(($style2:ident, $length2:ident, $resolved2:ident)),+,],
         [$(($resolved3:ident, $field_symbol3:ident, $field_length3:ident)),+,],
@@ -79,16 +74,6 @@ macro_rules! make_constructors {
                     Self {
                         length: Some(NeoSkeletonLength::$length),
                         style: NeoTimeZoneStyle::$style,
-                    }
-                }
-            }
-        )+
-        $(
-            impl NeoTimeZoneSkeleton {
-                pub(crate) const fn $fn0() -> Self {
-                    Self {
-                        length: None,
-                        style: NeoTimeZoneStyle::$style0,
                     }
                 }
             }
@@ -113,7 +98,6 @@ time_zone_style_registry!(make_constructors);
 macro_rules! make_resolved_to_field_match {
     (
         [$(($fn:ident, $style:ident, $length:ident, $resolved:ident, $field_symbol:ident, $field_length:ident)),+,],
-        [$(($fn0:ident, $style0:ident, $resolved0:ident, $field_symbol0:ident, $field_length0:ident)),+,],
         [$(($fn1:ident, $resolved1:ident)),+,],
         [$(($style2:ident, $length2:ident, $resolved2:ident)),+,],
         [$(($resolved3:ident, $field_symbol3:ident, $field_length3:ident)),+,],
@@ -125,12 +109,6 @@ macro_rules! make_resolved_to_field_match {
                     ResolvedNeoTimeZoneSkeleton::$resolved => Field {
                         symbol: FieldSymbol::TimeZone(fields::TimeZone::$field_symbol),
                         length: FieldLength::$field_length,
-                    },
-                )+
-                $(
-                    ResolvedNeoTimeZoneSkeleton::$resolved0 => Field {
-                        symbol: FieldSymbol::TimeZone(fields::TimeZone::$field_symbol0),
-                        length: FieldLength::$field_length0,
                     },
                 )+
                 $(
@@ -151,7 +129,6 @@ time_zone_style_registry!(make_resolved_to_field_match);
 macro_rules! make_skeleton_to_resolved_match {
     (
         [$(($fn:ident, $style:ident, $length:ident, $resolved:ident, $field_symbol:ident, $field_length:ident)),+,],
-        [$(($fn0:ident, $style0:ident, $resolved0:ident, $field_symbol0:ident, $field_length0:ident)),+,],
         [$(($fn1:ident, $resolved1:ident)),+,],
         [$(($style2:ident, $length2:ident, $resolved2:ident)),+,],
         [$(($resolved3:ident, $field_symbol3:ident, $field_length3:ident)),+,],
@@ -176,7 +153,6 @@ time_zone_style_registry!(make_skeleton_to_resolved_match);
 macro_rules! make_field_to_skeleton_match {
     (
         [$(($fn:ident, $style:ident, $length:ident, $resolved:ident, $field_symbol:ident, $field_length:ident)),+,],
-        [$(($fn0:ident, $style0:ident, $resolved0:ident, $field_symbol0:ident, $field_length0:ident)),+,],
         [$(($fn1:ident, $resolved1:ident)),+,],
         [$(($style2:ident, $length2:ident, $resolved2:ident)),+,],
         [$(($resolved3:ident, $field_symbol3:ident, $field_length3:ident)),+,],
@@ -186,9 +162,6 @@ macro_rules! make_field_to_skeleton_match {
             match (field_symbol, field_length) {
                 $(
                     (fields::TimeZone::$field_symbol, FieldLength::$field_length) => Some(ResolvedNeoTimeZoneSkeleton::$resolved),
-                )+
-                $(
-                    (fields::TimeZone::$field_symbol0, FieldLength::$field_length0) => Some(ResolvedNeoTimeZoneSkeleton::$resolved0),
                 )+
                 $(
                     (fields::TimeZone::$field_symbol3, FieldLength::$field_length3) => Some(ResolvedNeoTimeZoneSkeleton::$resolved3),

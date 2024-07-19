@@ -7,7 +7,6 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "CollatorAlternateHandling.d.hpp"
 #include "CollatorBackwardSecondLevel.d.hpp"
 #include "CollatorCaseFirst.d.hpp"
@@ -15,6 +14,7 @@
 #include "CollatorMaxVariable.d.hpp"
 #include "CollatorNumeric.d.hpp"
 #include "CollatorStrength.d.hpp"
+#include "diplomat_runtime.hpp"
 
 class CollatorAlternateHandling;
 class CollatorBackwardSecondLevel;

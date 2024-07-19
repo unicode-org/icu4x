@@ -25,7 +25,7 @@ pub mod ffi {
     impl ListFormatter {
         /// Construct a new ListFormatter instance for And patterns
         #[diplomat::rust_link(icu::list::ListFormatter::try_new_and_with_length, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "and_with_length")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "and_with_length")]
         pub fn create_and_with_length(
             provider: &DataProvider,
             locale: &Locale,
@@ -43,7 +43,7 @@ pub mod ffi {
         }
         /// Construct a new ListFormatter instance for And patterns
         #[diplomat::rust_link(icu::list::ListFormatter::try_new_or_with_length, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "or_with_length")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "or_with_length")]
         pub fn create_or_with_length(
             provider: &DataProvider,
             locale: &Locale,
@@ -61,7 +61,7 @@ pub mod ffi {
         }
         /// Construct a new ListFormatter instance for And patterns
         #[diplomat::rust_link(icu::list::ListFormatter::try_new_unit_with_length, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "unit_with_length")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "unit_with_length")]
         pub fn create_unit_with_length(
             provider: &DataProvider,
             locale: &Locale,
@@ -81,15 +81,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::list::ListFormatter::format, FnInStruct)]
         #[diplomat::rust_link(icu::list::ListFormatter::format_to_string, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::list::FormattedList, Struct, hidden)]
-        #[diplomat::attr(any(dart, js), disable)]
-        pub fn format_valid_utf8(&self, list: &[&str], write: &mut DiplomatWrite) {
-            let _infallible = self.0.format(list.iter()).write_to(write);
-        }
-
-        #[diplomat::rust_link(icu::list::ListFormatter::format, FnInStruct)]
-        #[diplomat::rust_link(icu::list::ListFormatter::format_to_string, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::list::FormattedList, Struct, hidden)]
-        #[diplomat::attr(any(dart, js), disable)]
+        #[diplomat::attr(not(supports = utf8_strings), disable)]
+        #[diplomat::attr(*, rename = "format")]
         pub fn format_utf8(&self, list: &[&DiplomatStr], write: &mut DiplomatWrite) {
             let _infallible = self
                 .0
@@ -105,7 +98,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::list::ListFormatter::format, FnInStruct)]
         #[diplomat::rust_link(icu::list::ListFormatter::format_to_string, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::list::FormattedList, Struct, hidden)]
-        #[diplomat::attr(any(dart, js), rename = "format")]
+        #[diplomat::attr(not(supports = utf8_strings), rename = "format")]
+        #[diplomat::attr(supports = utf8_strings, rename = "format16")]
         pub fn format_utf16(&self, list: &[&DiplomatStr16], write: &mut DiplomatWrite) {
             let _infallible = self
                 .0

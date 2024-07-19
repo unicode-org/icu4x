@@ -15,7 +15,7 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::collator::CollatorOptions, Struct)]
     #[diplomat::rust_link(icu::collator::CollatorOptions::new, FnInStruct, hidden)]
-    #[diplomat::attr(any(dart, js), rename = "CollatorOptions")]
+    #[diplomat::attr(supports = non_exhaustive_structs, rename = "CollatorOptions")]
     pub struct CollatorOptionsV1 {
         pub strength: CollatorStrength,
         pub alternate_handling: CollatorAlternateHandling,
@@ -31,7 +31,7 @@ pub mod ffi {
     // `ResolvedCollatorOptions` makes more sense as English.
     #[diplomat::rust_link(icu::collator::ResolvedCollatorOptions, Struct)]
     #[diplomat::out]
-    #[diplomat::attr(any(dart, js), rename = "ResolvedCollatorOptions")]
+    #[diplomat::attr(supports = non_exhaustive_structs, rename = "CollatorResolvedOptions")]
     pub struct CollatorResolvedOptionsV1 {
         pub strength: CollatorStrength,
         pub alternate_handling: CollatorAlternateHandling,
@@ -107,8 +107,8 @@ pub mod ffi {
     impl Collator {
         /// Construct a new Collator instance.
         #[diplomat::rust_link(icu::collator::Collator::try_new, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
-        #[diplomat::attr(js, rename = "create")]
+        #[diplomat::attr(supports = fallible_constructors, constructor)]
+        #[diplomat::attr(supports = non_exhaustive_structs, rename = "create")]
         pub fn create_v1(
             provider: &DataProvider,
             locale: &Locale,
@@ -131,9 +131,21 @@ pub mod ffi {
         ///
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
+        #[diplomat::rust_link(icu::collator::Collator::compare_utf8, FnInStruct)]
+        #[diplomat::rust_link(icu::collator::Collator::compare, FnInStruct, hidden)]
+        #[diplomat::attr(not(supports = utf8_strings), disable)]
+        #[diplomat::attr(supports = utf8_strings, rename = "compare")]
+        pub fn compare_utf8(&self, left: &DiplomatStr, right: &DiplomatStr) -> core::cmp::Ordering {
+            self.0.compare_utf8(left, right)
+        }
+
+        /// Compare two strings.
+        ///
+        /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+        /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(icu::collator::Collator::compare_utf16, FnInStruct)]
-        #[diplomat::attr(any(dart, js), rename = "compare")]
-        #[diplomat::attr(cpp, rename = "compare16")]
+        #[diplomat::attr(not(supports = utf8_strings), rename = "compare")]
+        #[diplomat::attr(supports = utf8_strings, rename = "compare16")]
         pub fn compare_utf16(
             &self,
             left: &DiplomatStr16,
@@ -142,23 +154,13 @@ pub mod ffi {
             self.0.compare_utf16(left, right)
         }
 
-        /// Compare two strings.
-        ///
-        /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
-        /// to the WHATWG Encoding Standard.
-        #[diplomat::rust_link(icu::collator::Collator::compare_utf8, FnInStruct)]
-        #[diplomat::rust_link(icu::collator::Collator::compare, FnInStruct, hidden)]
-        #[diplomat::attr(any(dart, js), disable)]
-        pub fn compare(&self, left: &DiplomatStr, right: &DiplomatStr) -> core::cmp::Ordering {
-            self.0.compare_utf8(left, right)
-        }
-
         /// The resolved options showing how the default options, the requested options,
         /// and the options from locale data were combined. None of the struct fields
         /// will have `Auto` as the value.
         #[diplomat::rust_link(icu::collator::Collator::resolved_options, FnInStruct)]
-        #[diplomat::attr(supports = accessors, getter)]
-        pub fn resolved_options(&self) -> CollatorResolvedOptionsV1 {
+        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(supports = non_exhaustive_structs, rename = "resolved_options")]
+        pub fn resolved_options_v1(&self) -> CollatorResolvedOptionsV1 {
             self.0.resolved_options().into()
         }
     }

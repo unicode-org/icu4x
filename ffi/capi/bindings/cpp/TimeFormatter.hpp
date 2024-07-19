@@ -9,7 +9,6 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "DataProvider.hpp"
 #include "DateTime.hpp"
 #include "Error.hpp"
@@ -17,6 +16,7 @@
 #include "Locale.hpp"
 #include "Time.hpp"
 #include "TimeLength.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace diplomat {

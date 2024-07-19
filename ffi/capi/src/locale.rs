@@ -26,7 +26,7 @@ pub mod ffi {
     impl LocaleCanonicalizer {
         /// Create a new [`LocaleCanonicalizer`].
         #[diplomat::rust_link(icu::locale::LocaleCanonicalizer::new, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
+        #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn create(provider: &DataProvider) -> Result<Box<LocaleCanonicalizer>, Error> {
             Ok(Box::new(LocaleCanonicalizer(call_constructor!(
                 icu_locale::LocaleCanonicalizer::new [r => Ok(r)],
@@ -38,7 +38,7 @@ pub mod ffi {
 
         /// Create a new [`LocaleCanonicalizer`] with extended data.
         #[diplomat::rust_link(icu::locale::LocaleCanonicalizer::new_with_expander, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "extended")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "extended")]
         pub fn create_extended(provider: &DataProvider) -> Result<Box<LocaleCanonicalizer>, Error> {
             let expander = call_constructor!(
                 icu_locale::LocaleExpander::new_extended [r => Ok(r)],
@@ -69,7 +69,7 @@ pub mod ffi {
     impl LocaleExpander {
         /// Create a new [`LocaleExpander`].
         #[diplomat::rust_link(icu::locale::LocaleExpander::new, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
+        #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn create(provider: &DataProvider) -> Result<Box<LocaleExpander>, Error> {
             Ok(Box::new(LocaleExpander(call_constructor!(
                 icu_locale::LocaleExpander::new [r => Ok(r)],
@@ -81,7 +81,7 @@ pub mod ffi {
 
         /// Create a new [`LocaleExpander`] with extended data.
         #[diplomat::rust_link(icu::locale::LocaleExpander::new_extended, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "extended")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "extended")]
         pub fn create_extended(provider: &DataProvider) -> Result<Box<LocaleExpander>, Error> {
             Ok(Box::new(LocaleExpander(call_constructor!(
                 icu_locale::LocaleExpander::new_extended [r => Ok(r)],

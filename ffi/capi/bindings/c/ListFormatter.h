@@ -28,8 +28,6 @@ icu4x_ListFormatter_create_or_with_length_mv1_result icu4x_ListFormatter_create_
 typedef struct icu4x_ListFormatter_create_unit_with_length_mv1_result {union {ListFormatter* ok; DataError err;}; bool is_ok;} icu4x_ListFormatter_create_unit_with_length_mv1_result;
 icu4x_ListFormatter_create_unit_with_length_mv1_result icu4x_ListFormatter_create_unit_with_length_mv1(const DataProvider* provider, const Locale* locale, ListLength length);
 
-void icu4x_ListFormatter_format_valid_utf8_mv1(const ListFormatter* self, DiplomatStringsView* list_data, size_t list_len, DiplomatWrite* write);
-
 void icu4x_ListFormatter_format_utf8_mv1(const ListFormatter* self, DiplomatStringsView* list_data, size_t list_len, DiplomatWrite* write);
 
 void icu4x_ListFormatter_format_utf16_mv1(const ListFormatter* self, DiplomatStrings16View* list_data, size_t list_len, DiplomatWrite* write);
