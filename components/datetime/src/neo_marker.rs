@@ -1649,7 +1649,7 @@ impl_date_marker!(
 impl_zone_marker!(
     NeoTimeZoneSpecificMarker,
     NeoTimeZoneSkeleton::specific(),
-    description = "specific time zone with length provided at runtime, or GMT offset if unavailable",
+    description = "specific time zone with inherited length, or GMT offset if unavailable",
     expectation = "CDT",
     zone_essentials = yes,
     zone_exemplar_cities = no,
@@ -1720,7 +1720,7 @@ impl_zone_marker!(
 impl_zone_marker!(
     NeoTimeZoneGmtMarker,
     NeoTimeZoneSkeleton::gmt(),
-    description = "GMT offset with length provided at runtime",
+    description = "GMT offset with inherited length",
     expectation = "GMT-05:00", // TODO: Implement short localized GMT
     zone_essentials = yes,
     zone_exemplar_cities = no,
@@ -1759,7 +1759,7 @@ impl_zone_marker!(
 impl_zone_marker!(
     NeoTimeZoneGenericMarker,
     NeoTimeZoneSkeleton::generic(),
-    description = "generic time zone with length provided at runtime, or location if unavailable",
+    description = "generic time zone with inherited length, or location if unavailable",
     expectation = "CT",
     zone_essentials = yes,
     zone_exemplar_cities = yes,
