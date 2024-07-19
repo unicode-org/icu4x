@@ -10,7 +10,7 @@ pub mod ffi {
     use core::fmt::Write;
 
     use crate::calendar::ffi::Calendar;
-    use crate::errors::ffi::CalendarError;
+    use crate::errors::ffi::{CalendarError, CalendarParseError};
 
     use tinystr::TinyAsciiStr;
 
@@ -41,6 +41,15 @@ pub mod ffi {
             Ok(Box::new(IsoDate(icu_calendar::Date::try_new_iso_date(
                 year, month, day,
             )?)))
+        }
+
+        /// Creates a new [`IsoDate`] from an IXDTF string.
+        #[diplomat::rust_link(icu::calendar::Date::try_iso_from_str, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::Date::try_iso_from_utf8, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::calendar::Date::from_str, FnInStruct, hidden)]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        pub fn from_string(v: &DiplomatStr) -> Result<Box<IsoDate>, CalendarParseError> {
+            Ok(Box::new(IsoDate(icu_calendar::Date::try_iso_from_utf8(v)?)))
         }
 
         /// Creates a new [`IsoDate`] representing January 1, 1970.
@@ -194,6 +203,18 @@ pub mod ffi {
             Ok(Box::new(Date(icu_calendar::Date::try_new_from_codes(
                 era, year, month, day, cal,
             )?)))
+        }
+
+        /// Creates a new [`Date`] from an IXDTF string.
+        #[diplomat::rust_link(icu::calendar::Date::try_from_str, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::Date::try_from_utf8, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::calendar::Date::from_str, FnInStruct, hidden)]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[cfg(feature = "compiled_data")]
+        pub fn from_string(v: &DiplomatStr) -> Result<Box<Date>, CalendarParseError> {
+            Ok(Box::new(Date(
+                icu_calendar::Date::try_from_utf8(v)?.wrap_calendar_in_arc(),
+            )))
         }
 
         /// Convert this date to one in a different calendar

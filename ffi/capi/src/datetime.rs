@@ -11,7 +11,7 @@ pub mod ffi {
 
     use crate::calendar::ffi::Calendar;
     use crate::date::ffi::{Date, IsoDate, IsoWeekday};
-    use crate::errors::ffi::CalendarError;
+    use crate::errors::ffi::{CalendarError, CalendarParseError};
     use crate::time::ffi::Time;
 
     use tinystr::TinyAsciiStr;
@@ -50,6 +50,17 @@ pub mod ffi {
         pub fn from_date_and_time(date: &IsoDate, time: &Time) -> Box<IsoDateTime> {
             let dt = icu_calendar::DateTime::new(date.0, time.0);
             Box::new(IsoDateTime(dt))
+        }
+
+        /// Creates a new [`IsoDateTime`] from an IXDTF string.
+        #[diplomat::rust_link(icu::calendar::DateTime::try_iso_from_str, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::DateTime::try_iso_from_utf8, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::calendar::DateTime::from_str, FnInStruct, hidden)]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        pub fn from_string(v: &DiplomatStr) -> Result<Box<IsoDateTime>, CalendarParseError> {
+            Ok(Box::new(IsoDateTime(
+                icu_calendar::DateTime::try_iso_from_utf8(v)?,
+            )))
         }
 
         /// Creates a new [`IsoDateTime`] of midnight on January 1, 1970
@@ -292,6 +303,18 @@ pub mod ffi {
         pub fn from_date_and_time(date: &Date, time: &Time) -> Box<DateTime> {
             let dt = icu_calendar::DateTime::new(date.0.clone(), time.0);
             Box::new(DateTime(dt))
+        }
+
+        /// Creates a new [`DateTime`] from an IXDTF string.
+        #[diplomat::rust_link(icu::calendar::DateTime::try_from_str, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::DateTime::try_from_utf8, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::calendar::DateTime::from_str, FnInStruct, hidden)]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[cfg(feature = "compiled_data")]
+        pub fn from_string(v: &DiplomatStr) -> Result<Box<DateTime>, CalendarParseError> {
+            Ok(Box::new(DateTime(
+                icu_calendar::DateTime::try_from_utf8(v)?.wrap_calendar_in_arc(),
+            )))
         }
 
         /// Gets a copy of the date contained in this object

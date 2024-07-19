@@ -15,6 +15,7 @@ part 'BidiInfo.g.dart';
 part 'BidiParagraph.g.dart';
 part 'Calendar.g.dart';
 part 'CalendarError.g.dart';
+part 'CalendarParseError.g.dart';
 part 'CanonicalCombiningClassMap.g.dart';
 part 'CanonicalComposition.g.dart';
 part 'CanonicalDecomposition.g.dart';

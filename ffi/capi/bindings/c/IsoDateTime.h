@@ -9,6 +9,7 @@
 
 #include "Calendar.d.h"
 #include "CalendarError.d.h"
+#include "CalendarParseError.d.h"
 #include "DateTime.d.h"
 #include "IsoDate.d.h"
 #include "IsoWeekday.d.h"
@@ -27,6 +28,9 @@ typedef struct icu4x_IsoDateTime_create_mv1_result {union {IsoDateTime* ok; Cale
 icu4x_IsoDateTime_create_mv1_result icu4x_IsoDateTime_create_mv1(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
 
 IsoDateTime* icu4x_IsoDateTime_from_date_and_time_mv1(const IsoDate* date, const Time* time);
+
+typedef struct icu4x_IsoDateTime_from_string_mv1_result {union {IsoDateTime* ok; CalendarParseError err;}; bool is_ok;} icu4x_IsoDateTime_from_string_mv1_result;
+icu4x_IsoDateTime_from_string_mv1_result icu4x_IsoDateTime_from_string_mv1(const char* v_data, size_t v_len);
 
 IsoDateTime* icu4x_IsoDateTime_local_unix_epoch_mv1(void);
 

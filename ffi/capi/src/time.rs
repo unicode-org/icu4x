@@ -7,7 +7,7 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::errors::ffi::CalendarError;
+    use crate::errors::ffi::{CalendarError, CalendarParseError};
 
     #[diplomat::opaque]
     /// An ICU4X Time object representing a time in terms of hour, minute, second, nanosecond
@@ -36,6 +36,15 @@ pub mod ffi {
                 nanosecond,
             };
             Ok(Box::new(Time(time)))
+        }
+
+        /// Creates a new [`Time`] from an IXDTF string.
+        #[diplomat::rust_link(icu::calendar::Time::try_from_str, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::Time::try_from_utf8, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::calendar::Time::from_str, FnInStruct, hidden)]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        pub fn from_string(v: &DiplomatStr) -> Result<Box<Time>, CalendarParseError> {
+            Ok(Box::new(Time(icu_calendar::Time::try_from_utf8(v)?)))
         }
 
         /// Creates a new [`Time`] representing midnight (00:00.000).
