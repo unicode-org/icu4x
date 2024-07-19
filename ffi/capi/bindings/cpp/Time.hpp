@@ -10,11 +10,8 @@
 #include <memory>
 #include <optional>
 #include "CalendarError.hpp"
-<<<<<<< HEAD
 #include "CalendarParseError.hpp"
-=======
 #include "diplomat_runtime.hpp"
->>>>>>> upstream/main
 
 
 namespace diplomat {

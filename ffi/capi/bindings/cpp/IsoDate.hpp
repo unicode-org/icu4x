@@ -26,14 +26,10 @@ namespace capi {
     typedef struct icu4x_IsoDate_create_mv1_result {union {diplomat::capi::IsoDate* ok; diplomat::capi::CalendarError err;}; bool is_ok;} icu4x_IsoDate_create_mv1_result;
     icu4x_IsoDate_create_mv1_result icu4x_IsoDate_create_mv1(int32_t year, uint8_t month, uint8_t day);
     
-<<<<<<< HEAD
     typedef struct icu4x_IsoDate_from_string_mv1_result {union {diplomat::capi::IsoDate* ok; diplomat::capi::CalendarParseError err;}; bool is_ok;} icu4x_IsoDate_from_string_mv1_result;
     icu4x_IsoDate_from_string_mv1_result icu4x_IsoDate_from_string_mv1(const char* v_data, size_t v_len);
     
-    diplomat::capi::IsoDate* icu4x_IsoDate_unix_epoch_mv1();
-=======
     diplomat::capi::IsoDate* icu4x_IsoDate_unix_epoch_mv1(void);
->>>>>>> upstream/main
     
     diplomat::capi::Date* icu4x_IsoDate_to_calendar_mv1(const diplomat::capi::IsoDate* self, const diplomat::capi::Calendar* calendar);
     
