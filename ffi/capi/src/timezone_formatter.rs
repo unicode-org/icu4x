@@ -77,7 +77,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::time_zone::TimeZoneFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::time_zone::FallbackFormat, Enum, compact)]
         #[diplomat::rust_link(icu::datetime::time_zone::TimeZoneFormatterOptions, Struct, hidden)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "with_localized_gmt_fallback")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_localized_gmt_fallback")]
         pub fn create_with_localized_gmt_fallback(
             provider: &DataProvider,
             locale: &Locale,
@@ -100,7 +100,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::time_zone::TimeZoneFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::time_zone::FallbackFormat, Enum, compact)]
         #[diplomat::rust_link(icu::datetime::time_zone::TimeZoneFormatterOptions, Struct, hidden)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "with_iso_8601_fallback")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_iso_8601_fallback")]
         pub fn create_with_iso_8601_fallback(
             provider: &DataProvider,
             locale: &Locale,

@@ -107,7 +107,7 @@ pub mod ffi {
     impl Collator {
         /// Construct a new Collator instance.
         #[diplomat::rust_link(icu::collator::Collator::try_new, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
+        #[diplomat::attr(supports = fallible_constructors, constructor)]
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "create")]
         pub fn create_v1(
             provider: &DataProvider,
@@ -158,7 +158,7 @@ pub mod ffi {
         /// and the options from locale data were combined. None of the struct fields
         /// will have `Auto` as the value.
         #[diplomat::rust_link(icu::collator::Collator::resolved_options, FnInStruct)]
-        #[diplomat::attr(supports = accessors, getter)]
+        #[diplomat::attr(*, getter)]
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "resolved_options")]
         pub fn resolved_options_v1(&self) -> CollatorResolvedOptionsV1 {
             self.0.resolved_options().into()

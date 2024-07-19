@@ -19,7 +19,7 @@
 typedef struct icu4x_Locale_from_string_mv1_result {union {Locale* ok; LocaleParseError err;}; bool is_ok;} icu4x_Locale_from_string_mv1_result;
 icu4x_Locale_from_string_mv1_result icu4x_Locale_from_string_mv1(const char* name_data, size_t name_len);
 
-Locale* icu4x_Locale_und_mv1();
+Locale* icu4x_Locale_und_mv1(void);
 
 Locale* icu4x_Locale_clone_mv1(const Locale* self);
 

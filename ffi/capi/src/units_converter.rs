@@ -24,7 +24,7 @@ pub mod ffi {
             icu::experimental::units::converter_factory::ConverterFactory::new,
             FnInStruct
         )]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
+        #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn create(provider: &DataProvider) -> Result<Box<UnitsConverterFactory>, DataError> {
             Ok(Box::new(UnitsConverterFactory(call_constructor!(
                 icu_experimental::units::converter_factory::ConverterFactory::new [r => Ok(r)],

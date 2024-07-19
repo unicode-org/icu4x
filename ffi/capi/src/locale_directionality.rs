@@ -28,7 +28,7 @@ pub mod ffi {
     impl LocaleDirectionality {
         /// Construct a new LocaleDirectionality instance
         #[diplomat::rust_link(icu::locale::LocaleDirectionality::new, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
+        #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn create(provider: &DataProvider) -> Result<Box<LocaleDirectionality>, DataError> {
             Ok(Box::new(LocaleDirectionality(call_constructor!(
                 icu_locale::LocaleDirectionality::new [r => Ok(r)],
@@ -40,7 +40,7 @@ pub mod ffi {
 
         /// Construct a new LocaleDirectionality instance with a custom expander
         #[diplomat::rust_link(icu::locale::LocaleDirectionality::new_with_expander, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "with_expander")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_expander")]
         pub fn create_with_expander(
             provider: &DataProvider,
             expander: &LocaleExpander,
@@ -72,7 +72,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::locale::LocaleDirectionality::get, FnInStruct)]
-        #[diplomat::attr(supports = indexing, indexer)]
+        #[diplomat::attr(*, indexer)]
         pub fn get(&self, locale: &Locale) -> LocaleDirection {
             match self.0.get(&locale.0) {
                 Some(icu_locale::Direction::LeftToRight) => LocaleDirection::LeftToRight,

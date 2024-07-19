@@ -25,7 +25,7 @@ pub mod ffi {
     impl ListFormatter {
         /// Construct a new ListFormatter instance for And patterns
         #[diplomat::rust_link(icu::list::ListFormatter::try_new_and_with_length, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "and_with_length")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "and_with_length")]
         pub fn create_and_with_length(
             provider: &DataProvider,
             locale: &Locale,
@@ -43,7 +43,7 @@ pub mod ffi {
         }
         /// Construct a new ListFormatter instance for And patterns
         #[diplomat::rust_link(icu::list::ListFormatter::try_new_or_with_length, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "or_with_length")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "or_with_length")]
         pub fn create_or_with_length(
             provider: &DataProvider,
             locale: &Locale,
@@ -61,7 +61,7 @@ pub mod ffi {
         }
         /// Construct a new ListFormatter instance for And patterns
         #[diplomat::rust_link(icu::list::ListFormatter::try_new_unit_with_length, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "unit_with_length")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "unit_with_length")]
         pub fn create_unit_with_length(
             provider: &DataProvider,
             locale: &Locale,

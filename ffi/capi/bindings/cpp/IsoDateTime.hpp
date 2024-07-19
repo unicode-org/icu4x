@@ -9,7 +9,6 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "Calendar.hpp"
 #include "CalendarError.hpp"
 #include "CalendarParseError.hpp"
@@ -19,6 +18,7 @@
 #include "Time.hpp"
 #include "WeekCalculator.hpp"
 #include "WeekOf.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace diplomat {
@@ -30,10 +30,14 @@ namespace capi {
     
     diplomat::capi::IsoDateTime* icu4x_IsoDateTime_from_date_and_time_mv1(const diplomat::capi::IsoDate* date, const diplomat::capi::Time* time);
     
+<<<<<<< HEAD
     typedef struct icu4x_IsoDateTime_from_string_mv1_result {union {diplomat::capi::IsoDateTime* ok; diplomat::capi::CalendarParseError err;}; bool is_ok;} icu4x_IsoDateTime_from_string_mv1_result;
     icu4x_IsoDateTime_from_string_mv1_result icu4x_IsoDateTime_from_string_mv1(const char* v_data, size_t v_len);
     
     diplomat::capi::IsoDateTime* icu4x_IsoDateTime_local_unix_epoch_mv1();
+=======
+    diplomat::capi::IsoDateTime* icu4x_IsoDateTime_local_unix_epoch_mv1(void);
+>>>>>>> upstream/main
     
     diplomat::capi::IsoDateTime* icu4x_IsoDateTime_from_minutes_since_local_unix_epoch_mv1(int32_t minutes);
     

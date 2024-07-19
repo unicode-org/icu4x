@@ -9,9 +9,12 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "CalendarError.hpp"
+<<<<<<< HEAD
 #include "CalendarParseError.hpp"
+=======
+#include "diplomat_runtime.hpp"
+>>>>>>> upstream/main
 
 
 namespace diplomat {
@@ -25,7 +28,7 @@ namespace capi {
     icu4x_Time_from_string_mv1_result icu4x_Time_from_string_mv1(const char* v_data, size_t v_len);
     
     typedef struct icu4x_Time_midnight_mv1_result {union {diplomat::capi::Time* ok; diplomat::capi::CalendarError err;}; bool is_ok;} icu4x_Time_midnight_mv1_result;
-    icu4x_Time_midnight_mv1_result icu4x_Time_midnight_mv1();
+    icu4x_Time_midnight_mv1_result icu4x_Time_midnight_mv1(void);
     
     uint8_t icu4x_Time_hour_mv1(const diplomat::capi::Time* self);
     

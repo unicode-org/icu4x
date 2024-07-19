@@ -24,23 +24,23 @@ namespace capi {
 
 inline diplomat::capi::PluralCategories PluralCategories::AsFFI() const {
   return diplomat::capi::PluralCategories {
-    .zero = zero,
-    .one = one,
-    .two = two,
-    .few = few,
-    .many = many,
-    .other = other,
+    /* .zero = */ zero,
+    /* .one = */ one,
+    /* .two = */ two,
+    /* .few = */ few,
+    /* .many = */ many,
+    /* .other = */ other,
   };
 }
 
 inline PluralCategories PluralCategories::FromFFI(diplomat::capi::PluralCategories c_struct) {
   return PluralCategories {
-    .zero = c_struct.zero,
-    .one = c_struct.one,
-    .two = c_struct.two,
-    .few = c_struct.few,
-    .many = c_struct.many,
-    .other = c_struct.other,
+    /* .zero = */ c_struct.zero,
+    /* .one = */ c_struct.one,
+    /* .two = */ c_struct.two,
+    /* .few = */ c_struct.few,
+    /* .many = */ c_struct.many,
+    /* .other = */ c_struct.other,
   };
 }
 

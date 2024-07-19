@@ -9,8 +9,8 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "LocaleParseError.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace diplomat {
@@ -20,7 +20,7 @@ namespace capi {
     typedef struct icu4x_Locale_from_string_mv1_result {union {diplomat::capi::Locale* ok; diplomat::capi::LocaleParseError err;}; bool is_ok;} icu4x_Locale_from_string_mv1_result;
     icu4x_Locale_from_string_mv1_result icu4x_Locale_from_string_mv1(const char* name_data, size_t name_len);
     
-    diplomat::capi::Locale* icu4x_Locale_und_mv1();
+    diplomat::capi::Locale* icu4x_Locale_und_mv1(void);
     
     diplomat::capi::Locale* icu4x_Locale_clone_mv1(const diplomat::capi::Locale* self);
     
