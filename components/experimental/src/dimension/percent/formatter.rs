@@ -9,6 +9,7 @@ use icu_provider::prelude::*;
 
 use super::super::provider::percent::PercentEssentialsV1Marker;
 use super::format::FormattedPercent;
+use super::options::PercentFormatterOptions;
 
 extern crate alloc;
 
@@ -19,11 +20,14 @@ extern crate alloc;
 pub struct PercentFormatter {
     /// Essential data for the percent formatter.
     essential: DataPayload<PercentEssentialsV1Marker>,
+
+    /// Options bag for the percent formatter to determine the behavior of the formatter.
+    options: PercentFormatterOptions,
 }
 
 impl PercentFormatter {
     icu_provider::gen_any_buffer_data_constructors!(
-        (locale) -> error: DataError,
+        (locale, options: PercentFormatterOptions) -> error: DataError,
         functions: [
             try_new: skip,
             try_new_with_any_provider,
@@ -39,7 +43,10 @@ impl PercentFormatter {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn try_new(locale: &DataLocale) -> Result<Self, DataError> {
+    pub fn try_new(
+        locale: &DataLocale,
+        options: PercentFormatterOptions,
+    ) -> Result<Self, DataError> {
         let essential = crate::provider::Baked
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(locale),
@@ -47,11 +54,15 @@ impl PercentFormatter {
             })?
             .payload;
 
-        Ok(Self { essential })
+        Ok(Self { essential, options })
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_unstable<D>(provider: &D, locale: &DataLocale) -> Result<Self, DataError>
+    pub fn try_new_unstable<D>(
+        provider: &D,
+        locale: &DataLocale,
+        options: PercentFormatterOptions,
+    ) -> Result<Self, DataError>
     where
         D: ?Sized + DataProvider<super::super::provider::percent::PercentEssentialsV1Marker>,
     {
@@ -62,7 +73,7 @@ impl PercentFormatter {
             })?
             .payload;
 
-        Ok(Self { essential })
+        Ok(Self { essential, options })
     }
 
     /// Formats a [`FixedDecimal`] value for the given percent code.
@@ -87,6 +98,7 @@ impl PercentFormatter {
         FormattedPercent {
             value,
             essential: self.essential.get(),
+            options: &self.options,
         }
     }
 }
