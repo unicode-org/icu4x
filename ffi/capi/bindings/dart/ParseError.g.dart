@@ -2,8 +2,8 @@
 
 part of 'lib.g.dart';
 
-/// Additional information: [1](https://docs.rs/icu/latest/icu/calendar/enum.FromStrError.html)
-enum CalendarFromStrError {
+/// Additional information: [1](https://docs.rs/icu/latest/icu/calendar/enum.ParseError.html)
+enum ParseError {
   unknown,
 
   invalidSyntax,
