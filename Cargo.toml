@@ -88,8 +88,8 @@ members = [
     "tools/benchmark/memory",
     "tools/make/bakeddata",
     "tools/make/depcheck",
+    "tools/make/diplomat-coverage",
     "tools/make/diplomat-gen",
-    "tools/make/ffi-coverage",
     "tools/make/download-repo-sources",
     "tools/md-tests",
 ]

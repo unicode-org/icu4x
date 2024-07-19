@@ -3,7 +3,7 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 [package]
-name = "ffi-coverage"
+name = "diplomat-coverage"
 version = "0.0.0"
 publish = false
 edition = "2021"

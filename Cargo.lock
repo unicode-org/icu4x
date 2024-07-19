@@ -567,6 +567,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "depcheck"
+version = "0.0.0"
+
+[[package]]
 name = "deranged"
 version = "0.3.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -606,6 +610,18 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.66",
+]
+
+[[package]]
+name = "diplomat-coverage"
+version = "0.0.0"
+dependencies = [
+ "diplomat_core",
+ "elsa",
+ "lazy_static",
+ "rustdoc-types",
+ "serde_json",
+ "syn-inline-mod",
 ]
 
 [[package]]
@@ -751,18 +767,6 @@ checksum = "7cd915d99f24784cdc19fd37ef22b97e3ff0ae756c7e492e9fbfe897d61e2aec"
 dependencies = [
  "indenter",
  "once_cell",
-]
-
-[[package]]
-name = "ffi-coverage"
-version = "0.0.0"
-dependencies = [
- "diplomat_core",
- "elsa",
- "lazy_static",
- "rustdoc-types",
- "serde_json",
- "syn-inline-mod",
 ]
 
 [[package]]
@@ -1199,10 +1203,6 @@ dependencies = [
  "icu_locale",
  "icu_provider_baked",
 ]
-
-[[package]]
-name = "icu_depcheck"
-version = "0.0.0"
 
 [[package]]
 name = "icu_experimental"
