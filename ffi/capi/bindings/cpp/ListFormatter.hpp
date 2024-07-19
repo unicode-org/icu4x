@@ -29,8 +29,6 @@ namespace capi {
     typedef struct icu4x_ListFormatter_create_unit_with_length_mv1_result {union {diplomat::capi::ListFormatter* ok; diplomat::capi::DataError err;}; bool is_ok;} icu4x_ListFormatter_create_unit_with_length_mv1_result;
     icu4x_ListFormatter_create_unit_with_length_mv1_result icu4x_ListFormatter_create_unit_with_length_mv1(const diplomat::capi::DataProvider* provider, const diplomat::capi::Locale* locale, diplomat::capi::ListLength length);
     
-    void icu4x_ListFormatter_format_valid_utf8_mv1(const diplomat::capi::ListFormatter* self, DiplomatStringsView* list_data, size_t list_len, diplomat::capi::DiplomatWrite* write);
-    
     void icu4x_ListFormatter_format_utf8_mv1(const diplomat::capi::ListFormatter* self, DiplomatStringsView* list_data, size_t list_len, diplomat::capi::DiplomatWrite* write);
     
     void icu4x_ListFormatter_format_utf16_mv1(const diplomat::capi::ListFormatter* self, DiplomatStrings16View* list_data, size_t list_len, diplomat::capi::DiplomatWrite* write);
@@ -63,17 +61,7 @@ inline diplomat::result<std::unique_ptr<ListFormatter>, DataError> ListFormatter
   return result.is_ok ? diplomat::result<std::unique_ptr<ListFormatter>, DataError>(diplomat::Ok<std::unique_ptr<ListFormatter>>(std::unique_ptr<ListFormatter>(ListFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<ListFormatter>, DataError>(diplomat::Err<DataError>(DataError::FromFFI(result.err)));
 }
 
-inline std::string ListFormatter::format_valid_utf8(diplomat::span<const std::string_view> list) const {
-  std::string output;
-  diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
-  diplomat::capi::icu4x_ListFormatter_format_valid_utf8_mv1(this->AsFFI(),
-    list.data(),
-    list.size(),
-    &write);
-  return output;
-}
-
-inline std::string ListFormatter::format_utf8(diplomat::span<const std::string_view> list) const {
+inline std::string ListFormatter::format(diplomat::span<const std::string_view> list) const {
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
   diplomat::capi::icu4x_ListFormatter_format_utf8_mv1(this->AsFFI(),
@@ -83,7 +71,7 @@ inline std::string ListFormatter::format_utf8(diplomat::span<const std::string_v
   return output;
 }
 
-inline std::string ListFormatter::format_utf16(diplomat::span<const std::u16string_view> list) const {
+inline std::string ListFormatter::format16(diplomat::span<const std::u16string_view> list) const {
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
   diplomat::capi::icu4x_ListFormatter_format_utf16_mv1(this->AsFFI(),

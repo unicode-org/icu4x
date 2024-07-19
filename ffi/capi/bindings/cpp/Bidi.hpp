@@ -23,7 +23,7 @@ namespace capi {
     typedef struct icu4x_Bidi_create_mv1_result {union {diplomat::capi::Bidi* ok; diplomat::capi::DataError err;}; bool is_ok;} icu4x_Bidi_create_mv1_result;
     icu4x_Bidi_create_mv1_result icu4x_Bidi_create_mv1(const diplomat::capi::DataProvider* provider);
     
-    diplomat::capi::BidiInfo* icu4x_Bidi_for_text_mv1(const diplomat::capi::Bidi* self, const char* text_data, size_t text_len, uint8_t default_level);
+    diplomat::capi::BidiInfo* icu4x_Bidi_for_text_utf8_mv1(const diplomat::capi::Bidi* self, const char* text_data, size_t text_len, uint8_t default_level);
     
     diplomat::capi::ReorderedIndexMap* icu4x_Bidi_reorder_visual_mv1(const diplomat::capi::Bidi* self, const uint8_t* levels_data, size_t levels_len);
     
@@ -48,7 +48,7 @@ inline diplomat::result<std::unique_ptr<Bidi>, DataError> Bidi::create(const Dat
 }
 
 inline std::unique_ptr<BidiInfo> Bidi::for_text(std::string_view text, uint8_t default_level) const {
-  auto result = diplomat::capi::icu4x_Bidi_for_text_mv1(this->AsFFI(),
+  auto result = diplomat::capi::icu4x_Bidi_for_text_utf8_mv1(this->AsFFI(),
     text.data(),
     text.size(),
     default_level);

@@ -21,8 +21,6 @@
 
 uint16_t icu4x_CodePointMapData16_get_mv1(const CodePointMapData16* self, char32_t cp);
 
-uint16_t icu4x_CodePointMapData16_get32_mv1(const CodePointMapData16* self, uint32_t cp);
-
 CodePointRangeIterator* icu4x_CodePointMapData16_iter_ranges_for_value_mv1(const CodePointMapData16* self, uint16_t value);
 
 CodePointRangeIterator* icu4x_CodePointMapData16_iter_ranges_for_value_complemented_mv1(const CodePointMapData16* self, uint16_t value);

@@ -19,11 +19,7 @@ export class ComposingNormalizer {
 
     isNormalized(s: string): boolean;
 
-    isNormalizedUtf16(s: string): boolean;
-
     isNormalizedUpTo(s: string): number;
-
-    isNormalizedUtf16UpTo(s: string): number;
 
     
 

@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #include "FixedDecimalFormatter.hpp"
-#include "DataStruct.hpp"
 #include "Logger.hpp"
 
 #include <iostream>
@@ -84,9 +83,7 @@ int main() {
 
     std::array<char32_t, 10> digits = {U'a', U'b', U'c', U'd', U'e', U'f', U'g', U'h', U'i', U'j'};
 
-    auto data = DataStruct::create_decimal_symbols_v1("+", "", "-", "", "/", "_", 4, 2, 4, digits);
-
-    fdf = FixedDecimalFormatter::create_with_decimal_symbols_v1(*data.get(), FixedDecimalGroupingStrategy::Auto).ok().value();
+    fdf = FixedDecimalFormatter::create_with_manual_data("+", "", "-", "", "/", "_", 4, 2, 4, digits, FixedDecimalGroupingStrategy::Auto).ok().value();
 
     decimal = FixedDecimal::from_double_with_floating_precision(123456.8901).ok().value();
     out = fdf->format(*decimal.get());

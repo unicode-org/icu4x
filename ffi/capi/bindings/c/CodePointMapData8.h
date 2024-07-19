@@ -21,8 +21,6 @@
 
 uint8_t icu4x_CodePointMapData8_get_mv1(const CodePointMapData8* self, char32_t cp);
 
-uint8_t icu4x_CodePointMapData8_get32_mv1(const CodePointMapData8* self, uint32_t cp);
-
 uint32_t icu4x_CodePointMapData8_general_category_to_mask_mv1(uint8_t gc);
 
 CodePointRangeIterator* icu4x_CodePointMapData8_iter_ranges_for_value_mv1(const CodePointMapData8* self, uint8_t value);

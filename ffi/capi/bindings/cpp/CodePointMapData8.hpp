@@ -22,8 +22,6 @@ namespace capi {
     
     uint8_t icu4x_CodePointMapData8_get_mv1(const diplomat::capi::CodePointMapData8* self, char32_t cp);
     
-    uint8_t icu4x_CodePointMapData8_get32_mv1(const diplomat::capi::CodePointMapData8* self, uint32_t cp);
-    
     uint32_t icu4x_CodePointMapData8_general_category_to_mask_mv1(uint8_t gc);
     
     diplomat::capi::CodePointRangeIterator* icu4x_CodePointMapData8_iter_ranges_for_value_mv1(const diplomat::capi::CodePointMapData8* self, uint8_t value);
@@ -73,12 +71,6 @@ namespace capi {
 
 inline uint8_t CodePointMapData8::get(char32_t cp) const {
   auto result = diplomat::capi::icu4x_CodePointMapData8_get_mv1(this->AsFFI(),
-    cp);
-  return result;
-}
-
-inline uint8_t CodePointMapData8::get32(uint32_t cp) const {
-  auto result = diplomat::capi::icu4x_CodePointMapData8_get32_mv1(this->AsFFI(),
     cp);
   return result;
 }

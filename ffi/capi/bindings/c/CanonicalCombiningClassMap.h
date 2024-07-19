@@ -22,8 +22,6 @@ icu4x_CanonicalCombiningClassMap_create_mv1_result icu4x_CanonicalCombiningClass
 
 uint8_t icu4x_CanonicalCombiningClassMap_get_mv1(const CanonicalCombiningClassMap* self, char32_t ch);
 
-uint8_t icu4x_CanonicalCombiningClassMap_get32_mv1(const CanonicalCombiningClassMap* self, uint32_t ch);
-
 
 void icu4x_CanonicalCombiningClassMap_destroy_mv1(CanonicalCombiningClassMap* self);
 
