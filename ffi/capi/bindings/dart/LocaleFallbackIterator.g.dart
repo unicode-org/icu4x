@@ -24,7 +24,7 @@ final class LocaleFallbackIterator implements ffi.Finalizable, core.Iterator<Loc
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XLocaleFallbackIterator_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_LocaleFallbackIterator_destroy_mv1));
 
   Locale? _current;
 
@@ -35,20 +35,18 @@ final class LocaleFallbackIterator implements ffi.Finalizable, core.Iterator<Loc
     return _current != null;
   }
 
-  /// A combination of `get` and `step`. Returns the value that `get` would return
-  /// and advances the iterator until hitting `und`.
   Locale? _iteratorNext() {
-    final result = _ICU4XLocaleFallbackIterator_next(_ffi);
+    final result = _icu4x_LocaleFallbackIterator_next_mv1(_ffi);
     return result.address == 0 ? null : Locale._fromFfi(result, []);
   }
 }
 
-@meta.ResourceIdentifier('ICU4XLocaleFallbackIterator_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XLocaleFallbackIterator_destroy')
+@meta.ResourceIdentifier('icu4x_LocaleFallbackIterator_destroy_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_LocaleFallbackIterator_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XLocaleFallbackIterator_destroy(ffi.Pointer<ffi.Void> self);
+external void _icu4x_LocaleFallbackIterator_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XLocaleFallbackIterator_next')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleFallbackIterator_next')
+@meta.ResourceIdentifier('icu4x_LocaleFallbackIterator_next_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleFallbackIterator_next_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _ICU4XLocaleFallbackIterator_next(ffi.Pointer<ffi.Opaque> self);
+external ffi.Pointer<ffi.Opaque> _icu4x_LocaleFallbackIterator_next_mv1(ffi.Pointer<ffi.Opaque> self);

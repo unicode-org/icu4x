@@ -21,9 +21,9 @@ namespace capi {
 class Locale {
 public:
 
-  inline static diplomat::result<std::unique_ptr<Locale>, LocaleParseError> create_from_string(std::string_view name);
+  inline static diplomat::result<std::unique_ptr<Locale>, LocaleParseError> from_string(std::string_view name);
 
-  inline static std::unique_ptr<Locale> create_und();
+  inline static std::unique_ptr<Locale> und();
 
   inline std::unique_ptr<Locale> clone() const;
 
@@ -49,9 +49,9 @@ public:
 
   inline bool normalizing_eq(std::string_view other) const;
 
-  inline int8_t strict_cmp_(std::string_view other) const;
+  inline int8_t compare_to_string(std::string_view other) const;
 
-  inline int8_t total_cmp_(const Locale& other) const;
+  inline int8_t compare_to(const Locale& other) const;
 
   inline const diplomat::capi::Locale* AsFFI() const;
   inline diplomat::capi::Locale* AsFFI();

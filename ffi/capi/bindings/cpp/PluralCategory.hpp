@@ -16,8 +16,8 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    typedef struct ICU4XPluralCategory_get_for_cldr_string_result {union {diplomat::capi::PluralCategory ok; }; bool is_ok;} ICU4XPluralCategory_get_for_cldr_string_result;
-    ICU4XPluralCategory_get_for_cldr_string_result ICU4XPluralCategory_get_for_cldr_string(const char* s_data, size_t s_len);
+    typedef struct icu4x_PluralCategory_get_for_cldr_string_mv1_result {union {diplomat::capi::PluralCategory ok; }; bool is_ok;} icu4x_PluralCategory_get_for_cldr_string_mv1_result;
+    icu4x_PluralCategory_get_for_cldr_string_mv1_result icu4x_PluralCategory_get_for_cldr_string_mv1(const char* s_data, size_t s_len);
     
     
     } // extern "C"
@@ -43,7 +43,7 @@ inline PluralCategory PluralCategory::FromFFI(diplomat::capi::PluralCategory c_e
 }
 
 inline std::optional<PluralCategory> PluralCategory::get_for_cldr_string(std::string_view s) {
-  auto result = diplomat::capi::ICU4XPluralCategory_get_for_cldr_string(s.data(),
+  auto result = diplomat::capi::icu4x_PluralCategory_get_for_cldr_string_mv1(s.data(),
     s.size());
   return result.is_ok ? std::optional<PluralCategory>(PluralCategory::FromFFI(result.ok)) : std::nullopt;
 }

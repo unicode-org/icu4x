@@ -22,7 +22,7 @@ final class CanonicalCombiningClassMap implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XCanonicalCombiningClassMap_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_CanonicalCombiningClassMap_destroy_mv1));
 
   /// Construct a new CanonicalCombiningClassMap instance for NFC
   ///
@@ -30,7 +30,7 @@ final class CanonicalCombiningClassMap implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CanonicalCombiningClassMap(DataProvider provider) {
-    final result = _ICU4XCanonicalCombiningClassMap_create(provider._ffi);
+    final result = _icu4x_CanonicalCombiningClassMap_create_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -41,22 +41,22 @@ final class CanonicalCombiningClassMap implements ffi.Finalizable {
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/properties/properties/struct.CanonicalCombiningClass.html)
   int operator [](Rune ch) {
-    final result = _ICU4XCanonicalCombiningClassMap_get(_ffi, ch);
+    final result = _icu4x_CanonicalCombiningClassMap_get_mv1(_ffi, ch);
     return result;
   }
 }
 
-@meta.ResourceIdentifier('ICU4XCanonicalCombiningClassMap_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XCanonicalCombiningClassMap_destroy')
+@meta.ResourceIdentifier('icu4x_CanonicalCombiningClassMap_destroy_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_CanonicalCombiningClassMap_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XCanonicalCombiningClassMap_destroy(ffi.Pointer<ffi.Void> self);
+external void _icu4x_CanonicalCombiningClassMap_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XCanonicalCombiningClassMap_create')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCanonicalCombiningClassMap_create')
+@meta.ResourceIdentifier('icu4x_CanonicalCombiningClassMap_create_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CanonicalCombiningClassMap_create_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCanonicalCombiningClassMap_create(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CanonicalCombiningClassMap_create_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCanonicalCombiningClassMap_get')
-@ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'ICU4XCanonicalCombiningClassMap_get')
+@meta.ResourceIdentifier('icu4x_CanonicalCombiningClassMap_get_mv1')
+@ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CanonicalCombiningClassMap_get_mv1')
 // ignore: non_constant_identifier_names
-external int _ICU4XCanonicalCombiningClassMap_get(ffi.Pointer<ffi.Opaque> self, Rune ch);
+external int _icu4x_CanonicalCombiningClassMap_get_mv1(ffi.Pointer<ffi.Opaque> self, Rune ch);

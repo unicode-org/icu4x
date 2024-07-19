@@ -16,7 +16,7 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    bool ICU4XSegmenterWordType_is_word_like(diplomat::capi::SegmenterWordType self);
+    bool icu4x_SegmenterWordType_is_word_like_mv1(diplomat::capi::SegmenterWordType self);
     
     
     } // extern "C"
@@ -39,7 +39,7 @@ inline SegmenterWordType SegmenterWordType::FromFFI(diplomat::capi::SegmenterWor
 }
 
 inline bool SegmenterWordType::is_word_like() {
-  auto result = diplomat::capi::ICU4XSegmenterWordType_is_word_like(this->AsFFI());
+  auto result = diplomat::capi::icu4x_SegmenterWordType_is_word_like_mv1(this->AsFFI());
   return result;
 }
 #endif // SegmenterWordType_HPP

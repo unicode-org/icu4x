@@ -16,38 +16,38 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    DiplomatUsizeView ICU4XReorderedIndexMap_as_slice(const diplomat::capi::ReorderedIndexMap* self);
+    diplomat::capi::DiplomatUsizeView icu4x_ReorderedIndexMap_as_slice_mv1(const diplomat::capi::ReorderedIndexMap* self);
     
-    size_t ICU4XReorderedIndexMap_len(const diplomat::capi::ReorderedIndexMap* self);
+    size_t icu4x_ReorderedIndexMap_len_mv1(const diplomat::capi::ReorderedIndexMap* self);
     
-    bool ICU4XReorderedIndexMap_is_empty(const diplomat::capi::ReorderedIndexMap* self);
+    bool icu4x_ReorderedIndexMap_is_empty_mv1(const diplomat::capi::ReorderedIndexMap* self);
     
-    size_t ICU4XReorderedIndexMap_get(const diplomat::capi::ReorderedIndexMap* self, size_t index);
+    size_t icu4x_ReorderedIndexMap_get_mv1(const diplomat::capi::ReorderedIndexMap* self, size_t index);
     
     
-    void ICU4XReorderedIndexMap_destroy(ReorderedIndexMap* self);
+    void icu4x_ReorderedIndexMap_destroy_mv1(ReorderedIndexMap* self);
     
     } // extern "C"
 } // namespace capi
 } // namespace
 
 inline diplomat::span<const size_t> ReorderedIndexMap::as_slice() const {
-  auto result = diplomat::capi::ICU4XReorderedIndexMap_as_slice(this->AsFFI());
+  auto result = diplomat::capi::icu4x_ReorderedIndexMap_as_slice_mv1(this->AsFFI());
   return diplomat::span<const size_t>(result.data, result.len);
 }
 
 inline size_t ReorderedIndexMap::len() const {
-  auto result = diplomat::capi::ICU4XReorderedIndexMap_len(this->AsFFI());
+  auto result = diplomat::capi::icu4x_ReorderedIndexMap_len_mv1(this->AsFFI());
   return result;
 }
 
 inline bool ReorderedIndexMap::is_empty() const {
-  auto result = diplomat::capi::ICU4XReorderedIndexMap_is_empty(this->AsFFI());
+  auto result = diplomat::capi::icu4x_ReorderedIndexMap_is_empty_mv1(this->AsFFI());
   return result;
 }
 
 inline size_t ReorderedIndexMap::get(size_t index) const {
-  auto result = diplomat::capi::ICU4XReorderedIndexMap_get(this->AsFFI(),
+  auto result = diplomat::capi::icu4x_ReorderedIndexMap_get_mv1(this->AsFFI(),
     index);
   return result;
 }
@@ -69,7 +69,7 @@ inline ReorderedIndexMap* ReorderedIndexMap::FromFFI(diplomat::capi::ReorderedIn
 }
 
 inline void ReorderedIndexMap::operator delete(void* ptr) {
-  diplomat::capi::ICU4XReorderedIndexMap_destroy(reinterpret_cast<diplomat::capi::ReorderedIndexMap*>(ptr));
+  diplomat::capi::icu4x_ReorderedIndexMap_destroy_mv1(reinterpret_cast<diplomat::capi::ReorderedIndexMap*>(ptr));
 }
 
 

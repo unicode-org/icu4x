@@ -16,25 +16,25 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    double ICU4XUnitsConverter_convert_f64(const diplomat::capi::UnitsConverter* self, double value);
+    double icu4x_UnitsConverter_convert_double_mv1(const diplomat::capi::UnitsConverter* self, double value);
     
-    diplomat::capi::UnitsConverter* ICU4XUnitsConverter_clone(const diplomat::capi::UnitsConverter* self);
+    diplomat::capi::UnitsConverter* icu4x_UnitsConverter_clone_mv1(const diplomat::capi::UnitsConverter* self);
     
     
-    void ICU4XUnitsConverter_destroy(UnitsConverter* self);
+    void icu4x_UnitsConverter_destroy_mv1(UnitsConverter* self);
     
     } // extern "C"
 } // namespace capi
 } // namespace
 
-inline double UnitsConverter::convert_f64(double value) const {
-  auto result = diplomat::capi::ICU4XUnitsConverter_convert_f64(this->AsFFI(),
+inline double UnitsConverter::convert(double value) const {
+  auto result = diplomat::capi::icu4x_UnitsConverter_convert_double_mv1(this->AsFFI(),
     value);
   return result;
 }
 
 inline std::unique_ptr<UnitsConverter> UnitsConverter::clone() const {
-  auto result = diplomat::capi::ICU4XUnitsConverter_clone(this->AsFFI());
+  auto result = diplomat::capi::icu4x_UnitsConverter_clone_mv1(this->AsFFI());
   return std::unique_ptr<UnitsConverter>(UnitsConverter::FromFFI(result));
 }
 
@@ -55,7 +55,7 @@ inline UnitsConverter* UnitsConverter::FromFFI(diplomat::capi::UnitsConverter* p
 }
 
 inline void UnitsConverter::operator delete(void* ptr) {
-  diplomat::capi::ICU4XUnitsConverter_destroy(reinterpret_cast<diplomat::capi::UnitsConverter*>(ptr));
+  diplomat::capi::icu4x_UnitsConverter_destroy_mv1(reinterpret_cast<diplomat::capi::UnitsConverter*>(ptr));
 }
 
 

@@ -22,7 +22,7 @@ final class Date implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XDate_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_Date_destroy_mv1));
 
   /// Creates a new [`Date`] representing the ISO date and time
   /// given but in a given calendar
@@ -31,7 +31,7 @@ final class Date implements ffi.Finalizable {
   ///
   /// Throws [CalendarError] on failure.
   factory Date.fromIsoInCalendar(int year, int month, int day, Calendar calendar) {
-    final result = _ICU4XDate_create_from_iso_in_calendar(year, month, day, calendar._ffi);
+    final result = _icu4x_Date_from_iso_in_calendar_mv1(year, month, day, calendar._ffi);
     if (!result.isOk) {
       throw CalendarError.values[result.union.err];
     }
@@ -47,7 +47,7 @@ final class Date implements ffi.Finalizable {
     final temp = ffi2.Arena();
     final eraCodeView = eraCode.utf8View;
     final monthCodeView = monthCode.utf8View;
-    final result = _ICU4XDate_create_from_codes_in_calendar(eraCodeView.allocIn(temp), eraCodeView.length, year, monthCodeView.allocIn(temp), monthCodeView.length, day, calendar._ffi);
+    final result = _icu4x_Date_from_codes_in_calendar_mv1(eraCodeView.allocIn(temp), eraCodeView.length, year, monthCodeView.allocIn(temp), monthCodeView.length, day, calendar._ffi);
     temp.releaseAll();
     if (!result.isOk) {
       throw CalendarError.values[result.union.err];
@@ -59,7 +59,7 @@ final class Date implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `to_calendar`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_calendar) for more information.
   Date toCalendar(Calendar calendar) {
-    final result = _ICU4XDate_to_calendar(_ffi, calendar._ffi);
+    final result = _icu4x_Date_to_calendar_mv1(_ffi, calendar._ffi);
     return Date._fromFfi(result, []);
   }
 
@@ -67,7 +67,7 @@ final class Date implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `to_iso`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_iso) for more information.
   IsoDate toIso() {
-    final result = _ICU4XDate_to_iso(_ffi);
+    final result = _icu4x_Date_to_iso_mv1(_ffi);
     return IsoDate._fromFfi(result, []);
   }
 
@@ -75,7 +75,7 @@ final class Date implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `day_of_year_info`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_year_info) for more information.
   int get dayOfYear {
-    final result = _ICU4XDate_day_of_year(_ffi);
+    final result = _icu4x_Date_day_of_year_mv1(_ffi);
     return result;
   }
 
@@ -83,7 +83,7 @@ final class Date implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `day_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_month) for more information.
   int get dayOfMonth {
-    final result = _ICU4XDate_day_of_month(_ffi);
+    final result = _icu4x_Date_day_of_month_mv1(_ffi);
     return result;
   }
 
@@ -91,7 +91,7 @@ final class Date implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `day_of_week`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_week) for more information.
   IsoWeekday get dayOfWeek {
-    final result = _ICU4XDate_day_of_week(_ffi);
+    final result = _icu4x_Date_day_of_week_mv1(_ffi);
     return IsoWeekday.values.firstWhere((v) => v._ffi == result);
   }
 
@@ -102,7 +102,7 @@ final class Date implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `week_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_month) for more information.
   int weekOfMonth(IsoWeekday firstWeekday) {
-    final result = _ICU4XDate_week_of_month(_ffi, firstWeekday._ffi);
+    final result = _icu4x_Date_week_of_month_mv1(_ffi, firstWeekday._ffi);
     return result;
   }
 
@@ -110,7 +110,7 @@ final class Date implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `week_of_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_year) for more information.
   WeekOf weekOfYear(WeekCalculator calculator) {
-    final result = _ICU4XDate_week_of_year(_ffi, calculator._ffi);
+    final result = _icu4x_Date_week_of_year_mv1(_ffi, calculator._ffi);
     return WeekOf._fromFfi(result);
   }
 
@@ -122,7 +122,7 @@ final class Date implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month) for more information.
   int get ordinalMonth {
-    final result = _ICU4XDate_ordinal_month(_ffi);
+    final result = _icu4x_Date_ordinal_month_mv1(_ffi);
     return result;
   }
 
@@ -132,7 +132,7 @@ final class Date implements ffi.Finalizable {
   /// See the [Rust documentation for `month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month) for more information.
   String get monthCode {
     final write = _Write();
-    _ICU4XDate_month_code(_ffi, write._ffi);
+    _icu4x_Date_month_code_mv1(_ffi, write._ffi);
     return write.finalize();
   }
 
@@ -140,7 +140,7 @@ final class Date implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year) for more information.
   int get yearInEra {
-    final result = _ICU4XDate_year_in_era(_ffi);
+    final result = _icu4x_Date_year_in_era_mv1(_ffi);
     return result;
   }
 
@@ -151,7 +151,7 @@ final class Date implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/latest/icu/types/struct.Era.html)
   String get era {
     final write = _Write();
-    _ICU4XDate_era(_ffi, write._ffi);
+    _icu4x_Date_era_mv1(_ffi, write._ffi);
     return write.finalize();
   }
 
@@ -159,7 +159,7 @@ final class Date implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `months_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.months_in_year) for more information.
   int get monthsInYear {
-    final result = _ICU4XDate_months_in_year(_ffi);
+    final result = _icu4x_Date_months_in_year_mv1(_ffi);
     return result;
   }
 
@@ -167,7 +167,7 @@ final class Date implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `days_in_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_month) for more information.
   int get daysInMonth {
-    final result = _ICU4XDate_days_in_month(_ffi);
+    final result = _icu4x_Date_days_in_month_mv1(_ffi);
     return result;
   }
 
@@ -175,7 +175,7 @@ final class Date implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `days_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_year) for more information.
   int get daysInYear {
-    final result = _ICU4XDate_days_in_year(_ffi);
+    final result = _icu4x_Date_days_in_year_mv1(_ffi);
     return result;
   }
 
@@ -183,97 +183,97 @@ final class Date implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `calendar`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.calendar) for more information.
   Calendar get calendar {
-    final result = _ICU4XDate_calendar(_ffi);
+    final result = _icu4x_Date_calendar_mv1(_ffi);
     return Calendar._fromFfi(result, []);
   }
 }
 
-@meta.ResourceIdentifier('ICU4XDate_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XDate_destroy')
+@meta.ResourceIdentifier('icu4x_Date_destroy_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_Date_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XDate_destroy(ffi.Pointer<ffi.Void> self);
+external void _icu4x_Date_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XDate_create_from_iso_in_calendar')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Int32, ffi.Uint8, ffi.Uint8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_create_from_iso_in_calendar')
+@meta.ResourceIdentifier('icu4x_Date_from_iso_in_calendar_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Int32, ffi.Uint8, ffi.Uint8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_from_iso_in_calendar_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XDate_create_from_iso_in_calendar(int year, int month, int day, ffi.Pointer<ffi.Opaque> calendar);
+external _ResultOpaqueInt32 _icu4x_Date_from_iso_in_calendar_mv1(int year, int month, int day, ffi.Pointer<ffi.Opaque> calendar);
 
-@meta.ResourceIdentifier('ICU4XDate_create_from_codes_in_calendar')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Int32, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Uint8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_create_from_codes_in_calendar')
+@meta.ResourceIdentifier('icu4x_Date_from_codes_in_calendar_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Int32, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Uint8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_from_codes_in_calendar_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XDate_create_from_codes_in_calendar(ffi.Pointer<ffi.Uint8> eraCodeData, int eraCodeLength, int year, ffi.Pointer<ffi.Uint8> monthCodeData, int monthCodeLength, int day, ffi.Pointer<ffi.Opaque> calendar);
+external _ResultOpaqueInt32 _icu4x_Date_from_codes_in_calendar_mv1(ffi.Pointer<ffi.Uint8> eraCodeData, int eraCodeLength, int year, ffi.Pointer<ffi.Uint8> monthCodeData, int monthCodeLength, int day, ffi.Pointer<ffi.Opaque> calendar);
 
-@meta.ResourceIdentifier('ICU4XDate_to_calendar')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_to_calendar')
+@meta.ResourceIdentifier('icu4x_Date_to_calendar_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_to_calendar_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _ICU4XDate_to_calendar(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> calendar);
+external ffi.Pointer<ffi.Opaque> _icu4x_Date_to_calendar_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> calendar);
 
-@meta.ResourceIdentifier('ICU4XDate_to_iso')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_to_iso')
+@meta.ResourceIdentifier('icu4x_Date_to_iso_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_to_iso_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _ICU4XDate_to_iso(ffi.Pointer<ffi.Opaque> self);
+external ffi.Pointer<ffi.Opaque> _icu4x_Date_to_iso_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('ICU4XDate_day_of_year')
-@ffi.Native<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_day_of_year')
+@meta.ResourceIdentifier('icu4x_Date_day_of_year_mv1')
+@ffi.Native<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_day_of_year_mv1')
 // ignore: non_constant_identifier_names
-external int _ICU4XDate_day_of_year(ffi.Pointer<ffi.Opaque> self);
+external int _icu4x_Date_day_of_year_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('ICU4XDate_day_of_month')
-@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_day_of_month')
+@meta.ResourceIdentifier('icu4x_Date_day_of_month_mv1')
+@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_day_of_month_mv1')
 // ignore: non_constant_identifier_names
-external int _ICU4XDate_day_of_month(ffi.Pointer<ffi.Opaque> self);
+external int _icu4x_Date_day_of_month_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('ICU4XDate_day_of_week')
-@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_day_of_week')
+@meta.ResourceIdentifier('icu4x_Date_day_of_week_mv1')
+@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_day_of_week_mv1')
 // ignore: non_constant_identifier_names
-external int _ICU4XDate_day_of_week(ffi.Pointer<ffi.Opaque> self);
+external int _icu4x_Date_day_of_week_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('ICU4XDate_week_of_month')
-@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XDate_week_of_month')
+@meta.ResourceIdentifier('icu4x_Date_week_of_month_mv1')
+@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_Date_week_of_month_mv1')
 // ignore: non_constant_identifier_names
-external int _ICU4XDate_week_of_month(ffi.Pointer<ffi.Opaque> self, int firstWeekday);
+external int _icu4x_Date_week_of_month_mv1(ffi.Pointer<ffi.Opaque> self, int firstWeekday);
 
-@meta.ResourceIdentifier('ICU4XDate_week_of_year')
-@ffi.Native<_WeekOfFfi Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_week_of_year')
+@meta.ResourceIdentifier('icu4x_Date_week_of_year_mv1')
+@ffi.Native<_WeekOfFfi Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_week_of_year_mv1')
 // ignore: non_constant_identifier_names
-external _WeekOfFfi _ICU4XDate_week_of_year(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> calculator);
+external _WeekOfFfi _icu4x_Date_week_of_year_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> calculator);
 
-@meta.ResourceIdentifier('ICU4XDate_ordinal_month')
-@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_ordinal_month')
+@meta.ResourceIdentifier('icu4x_Date_ordinal_month_mv1')
+@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_ordinal_month_mv1')
 // ignore: non_constant_identifier_names
-external int _ICU4XDate_ordinal_month(ffi.Pointer<ffi.Opaque> self);
+external int _icu4x_Date_ordinal_month_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('ICU4XDate_month_code')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_month_code')
+@meta.ResourceIdentifier('icu4x_Date_month_code_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_month_code_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XDate_month_code(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);
+external void _icu4x_Date_month_code_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);
 
-@meta.ResourceIdentifier('ICU4XDate_year_in_era')
-@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_year_in_era')
+@meta.ResourceIdentifier('icu4x_Date_year_in_era_mv1')
+@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_year_in_era_mv1')
 // ignore: non_constant_identifier_names
-external int _ICU4XDate_year_in_era(ffi.Pointer<ffi.Opaque> self);
+external int _icu4x_Date_year_in_era_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('ICU4XDate_era')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_era')
+@meta.ResourceIdentifier('icu4x_Date_era_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_era_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XDate_era(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);
+external void _icu4x_Date_era_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);
 
-@meta.ResourceIdentifier('ICU4XDate_months_in_year')
-@ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_months_in_year')
+@meta.ResourceIdentifier('icu4x_Date_months_in_year_mv1')
+@ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_months_in_year_mv1')
 // ignore: non_constant_identifier_names
-external int _ICU4XDate_months_in_year(ffi.Pointer<ffi.Opaque> self);
+external int _icu4x_Date_months_in_year_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('ICU4XDate_days_in_month')
-@ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_days_in_month')
+@meta.ResourceIdentifier('icu4x_Date_days_in_month_mv1')
+@ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_days_in_month_mv1')
 // ignore: non_constant_identifier_names
-external int _ICU4XDate_days_in_month(ffi.Pointer<ffi.Opaque> self);
+external int _icu4x_Date_days_in_month_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('ICU4XDate_days_in_year')
-@ffi.Native<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_days_in_year')
+@meta.ResourceIdentifier('icu4x_Date_days_in_year_mv1')
+@ffi.Native<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_days_in_year_mv1')
 // ignore: non_constant_identifier_names
-external int _ICU4XDate_days_in_year(ffi.Pointer<ffi.Opaque> self);
+external int _icu4x_Date_days_in_year_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('ICU4XDate_calendar')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_calendar')
+@meta.ResourceIdentifier('icu4x_Date_calendar_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_calendar_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _ICU4XDate_calendar(ffi.Pointer<ffi.Opaque> self);
+external ffi.Pointer<ffi.Opaque> _icu4x_Date_calendar_mv1(ffi.Pointer<ffi.Opaque> self);

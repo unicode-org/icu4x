@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[diplomat::bridge]
-#[diplomat::abi_rename = "ICU4X{0}"]
+#[diplomat::abi_rename = "icu4x_{0}_mv1"]
 pub mod ffi {
     use alloc::boxed::Box;
 
@@ -101,15 +101,16 @@ pub mod ffi {
     #[diplomat::rust_link(icu::experimental::units::converter::UnitsConverter, Struct)]
     pub struct UnitsConverter(pub icu_experimental::units::converter::UnitsConverter<f64>);
     impl UnitsConverter {
-        /// Converts the input value in float from the input unit to the output unit (that have been used to create this converter).
+        /// Converts the input value from the input unit to the output unit (that have been used to create this converter).
         /// NOTE:
         ///   The conversion using floating-point operations is not as accurate as the conversion using ratios.
         #[diplomat::rust_link(
             icu::experimental::units::converter::UnitsConverter::convert,
             FnInStruct
         )]
-        #[diplomat::attr(dart, rename = "convert_double")]
-        pub fn convert_f64(&self, value: f64) -> f64 {
+        #[diplomat::attr(supports = method_overloading, rename = "convert")]
+        #[diplomat::attr(js, rename = "convert_number")]
+        pub fn convert_double(&self, value: f64) -> f64 {
             self.0.convert(&value)
         }
 

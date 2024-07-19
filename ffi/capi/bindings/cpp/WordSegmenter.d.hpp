@@ -35,9 +35,9 @@ public:
 
   inline static diplomat::result<std::unique_ptr<WordSegmenter>, DataError> create_dictionary(const DataProvider& provider);
 
-  inline std::unique_ptr<WordBreakIteratorUtf8> segment_utf8(std::string_view input) const;
+  inline std::unique_ptr<WordBreakIteratorUtf8> segment(std::string_view input) const;
 
-  inline std::unique_ptr<WordBreakIteratorUtf16> segment_utf16(std::u16string_view input) const;
+  inline std::unique_ptr<WordBreakIteratorUtf16> segment16(std::u16string_view input) const;
 
   inline std::unique_ptr<WordBreakIteratorLatin1> segment_latin1(diplomat::span<const uint8_t> input) const;
 

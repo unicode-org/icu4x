@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[diplomat::bridge]
-#[diplomat::abi_rename = "ICU4X{0}"]
+#[diplomat::abi_rename = "icu4x_{0}_mv1"]
 pub mod ffi {
     use alloc::boxed::Box;
 
@@ -24,7 +24,7 @@ pub mod ffi {
     pub struct RegionDisplayNames(pub icu_experimental::displaynames::RegionDisplayNames);
 
     #[diplomat::rust_link(icu::displaynames::options::DisplayNamesOptions, Struct)]
-    #[diplomat::attr(dart, rename = "DisplayNamesOptions")]
+    #[diplomat::attr(supports = non_exhaustive_structs, rename = "DisplayNamesOptions")]
     pub struct DisplayNamesOptionsV1 {
         /// The optional formatting style to use for display name.
         pub style: DisplayNamesStyle,
@@ -62,7 +62,8 @@ pub mod ffi {
         /// Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag.
         #[diplomat::rust_link(icu::displaynames::LocaleDisplayNamesFormatter::try_new, FnInStruct)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
-        pub fn create(
+        #[diplomat::attr(supports = non_exhaustive_structs, rename = "create")]
+        pub fn create_v1(
             provider: &DataProvider,
             locale: &Locale,
             options: DisplayNamesOptionsV1,

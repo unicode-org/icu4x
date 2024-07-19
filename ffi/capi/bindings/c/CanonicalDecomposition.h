@@ -18,13 +18,13 @@
 
 
 
-typedef struct ICU4XCanonicalDecomposition_create_result {union {CanonicalDecomposition* ok; DataError err;}; bool is_ok;} ICU4XCanonicalDecomposition_create_result;
-ICU4XCanonicalDecomposition_create_result ICU4XCanonicalDecomposition_create(const DataProvider* provider);
+typedef struct icu4x_CanonicalDecomposition_create_mv1_result {union {CanonicalDecomposition* ok; DataError err;}; bool is_ok;} icu4x_CanonicalDecomposition_create_mv1_result;
+icu4x_CanonicalDecomposition_create_mv1_result icu4x_CanonicalDecomposition_create_mv1(const DataProvider* provider);
 
-Decomposed ICU4XCanonicalDecomposition_decompose(const CanonicalDecomposition* self, char32_t c);
+Decomposed icu4x_CanonicalDecomposition_decompose_mv1(const CanonicalDecomposition* self, char32_t c);
 
 
-void ICU4XCanonicalDecomposition_destroy(CanonicalDecomposition* self);
+void icu4x_CanonicalDecomposition_destroy_mv1(CanonicalDecomposition* self);
 
 
 

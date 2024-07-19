@@ -3,11 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[diplomat::bridge]
-#[diplomat::abi_rename = "ICU4X{0}"]
+#[diplomat::abi_rename = "icu4x_{0}_mv1"]
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::common::ffi::Ordering;
     use crate::errors::ffi::LocaleParseError;
 
     use writeable::Writeable;
@@ -26,8 +25,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::locale::Locale::try_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::locale::Locale::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::locale::Locale::from_str, FnInStruct, hidden)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_string")]
-        pub fn create_from_string(name: &DiplomatStr) -> Result<Box<Locale>, LocaleParseError> {
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn from_string(name: &DiplomatStr) -> Result<Box<Locale>, LocaleParseError> {
             Ok(Box::new(Locale(icu_locale_core::Locale::try_from_utf8(
                 name,
             )?)))
@@ -35,8 +34,8 @@ pub mod ffi {
 
         /// Construct a default undefined [`Locale`] "und".
         #[diplomat::rust_link(icu::locale::Locale::UND, AssociatedConstantInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "und")]
-        pub fn create_und() -> Box<Locale> {
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn und() -> Box<Locale> {
             Box::new(Locale(icu_locale_core::Locale::UND))
         }
 
@@ -162,28 +161,13 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::locale::Locale::strict_cmp, FnInStruct)]
-        #[diplomat::attr(*, disable)]
-        pub fn strict_cmp(&self, other: &DiplomatStr) -> Ordering {
-            self.0.strict_cmp(other).into()
-        }
-
-        #[diplomat::rust_link(icu::locale::Locale::strict_cmp, FnInStruct)]
-        #[diplomat::skip_if_ast]
-        #[diplomat::attr(dart, rename = "compareToString")]
-        pub fn strict_cmp_(&self, other: &DiplomatStr) -> core::cmp::Ordering {
+        pub fn compare_to_string(&self, other: &DiplomatStr) -> core::cmp::Ordering {
             self.0.strict_cmp(other)
         }
 
         #[diplomat::rust_link(icu::locale::Locale::total_cmp, FnInStruct)]
-        #[diplomat::attr(*, disable)]
-        pub fn total_cmp(&self, other: &Self) -> Ordering {
-            self.0.total_cmp(&other.0).into()
-        }
-
-        #[diplomat::rust_link(icu::locale::Locale::total_cmp, FnInStruct)]
-        #[diplomat::skip_if_ast]
         #[diplomat::attr(supports = comparators, comparison)]
-        pub fn total_cmp_(&self, other: &Self) -> core::cmp::Ordering {
+        pub fn compare_to(&self, other: &Self) -> core::cmp::Ordering {
             self.0.total_cmp(&other.0)
         }
     }

@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[diplomat::bridge]
-#[diplomat::abi_rename = "ICU4X{0}"]
+#[diplomat::abi_rename = "icu4x_{0}_mv1"]
 pub mod ffi {
     use alloc::boxed::Box;
 
@@ -97,10 +97,8 @@ pub mod ffi {
     impl PluralOperands {
         /// Construct for a given string representing a number
         #[diplomat::rust_link(icu::plurals::PluralOperands::from_str, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_string")]
-        pub fn create_from_string(
-            s: &DiplomatStr,
-        ) -> Result<Box<PluralOperands>, FixedDecimalParseError> {
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn from_string(s: &DiplomatStr) -> Result<Box<PluralOperands>, FixedDecimalParseError> {
             Ok(Box::new(PluralOperands(icu_plurals::PluralOperands::from(
                 &fixed_decimal::FixedDecimal::try_from(s)?,
             ))))
@@ -110,8 +108,8 @@ pub mod ffi {
         ///
         /// Retains at most 18 digits each from the integer and fraction parts.
         #[cfg(feature = "icu_decimal")]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_fixed_decimal")]
-        pub fn create_from_fixed_decimal(x: &crate::fixed_decimal::ffi::FixedDecimal) -> Box<Self> {
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn from_fixed_decimal(x: &crate::fixed_decimal::ffi::FixedDecimal) -> Box<Self> {
             Box::new(Self((&x.0).into()))
         }
     }

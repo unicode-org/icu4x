@@ -31,9 +31,9 @@ public:
 
   inline static diplomat::result<std::unique_ptr<GraphemeClusterSegmenter>, DataError> create(const DataProvider& provider);
 
-  inline std::unique_ptr<GraphemeClusterBreakIteratorUtf8> segment_utf8(std::string_view input) const;
+  inline std::unique_ptr<GraphemeClusterBreakIteratorUtf8> segment(std::string_view input) const;
 
-  inline std::unique_ptr<GraphemeClusterBreakIteratorUtf16> segment_utf16(std::u16string_view input) const;
+  inline std::unique_ptr<GraphemeClusterBreakIteratorUtf16> segment16(std::u16string_view input) const;
 
   inline std::unique_ptr<GraphemeClusterBreakIteratorLatin1> segment_latin1(diplomat::span<const uint8_t> input) const;
 

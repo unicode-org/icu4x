@@ -26,7 +26,7 @@ namespace capi {
 class LocaleDisplayNamesFormatter {
 public:
 
-  inline static diplomat::result<std::unique_ptr<LocaleDisplayNamesFormatter>, DataError> create(const DataProvider& provider, const Locale& locale, DisplayNamesOptionsV1 options);
+  inline static diplomat::result<std::unique_ptr<LocaleDisplayNamesFormatter>, DataError> create_v1(const DataProvider& provider, const Locale& locale, DisplayNamesOptionsV1 options);
 
   inline std::string of(const Locale& locale) const;
 

@@ -23,13 +23,13 @@ namespace capi {
 class DataProvider {
 public:
 
-  inline static std::unique_ptr<DataProvider> create_compiled();
+  inline static std::unique_ptr<DataProvider> compiled();
 
-  inline static diplomat::result<std::unique_ptr<DataProvider>, DataError> create_fs(std::string_view path);
+  inline static diplomat::result<std::unique_ptr<DataProvider>, DataError> from_fs(std::string_view path);
 
-  inline static diplomat::result<std::unique_ptr<DataProvider>, DataError> create_from_byte_slice(diplomat::span<const uint8_t> blob);
+  inline static diplomat::result<std::unique_ptr<DataProvider>, DataError> from_byte_slice(diplomat::span<const uint8_t> blob);
 
-  inline static std::unique_ptr<DataProvider> create_empty();
+  inline static std::unique_ptr<DataProvider> empty();
 
   inline diplomat::result<std::monostate, DataError> fork_by_key(DataProvider& other);
 

@@ -19,23 +19,21 @@
 
 
 
-typedef struct ICU4XListFormatter_create_and_with_length_result {union {ListFormatter* ok; DataError err;}; bool is_ok;} ICU4XListFormatter_create_and_with_length_result;
-ICU4XListFormatter_create_and_with_length_result ICU4XListFormatter_create_and_with_length(const DataProvider* provider, const Locale* locale, ListLength length);
+typedef struct icu4x_ListFormatter_create_and_with_length_mv1_result {union {ListFormatter* ok; DataError err;}; bool is_ok;} icu4x_ListFormatter_create_and_with_length_mv1_result;
+icu4x_ListFormatter_create_and_with_length_mv1_result icu4x_ListFormatter_create_and_with_length_mv1(const DataProvider* provider, const Locale* locale, ListLength length);
 
-typedef struct ICU4XListFormatter_create_or_with_length_result {union {ListFormatter* ok; DataError err;}; bool is_ok;} ICU4XListFormatter_create_or_with_length_result;
-ICU4XListFormatter_create_or_with_length_result ICU4XListFormatter_create_or_with_length(const DataProvider* provider, const Locale* locale, ListLength length);
+typedef struct icu4x_ListFormatter_create_or_with_length_mv1_result {union {ListFormatter* ok; DataError err;}; bool is_ok;} icu4x_ListFormatter_create_or_with_length_mv1_result;
+icu4x_ListFormatter_create_or_with_length_mv1_result icu4x_ListFormatter_create_or_with_length_mv1(const DataProvider* provider, const Locale* locale, ListLength length);
 
-typedef struct ICU4XListFormatter_create_unit_with_length_result {union {ListFormatter* ok; DataError err;}; bool is_ok;} ICU4XListFormatter_create_unit_with_length_result;
-ICU4XListFormatter_create_unit_with_length_result ICU4XListFormatter_create_unit_with_length(const DataProvider* provider, const Locale* locale, ListLength length);
+typedef struct icu4x_ListFormatter_create_unit_with_length_mv1_result {union {ListFormatter* ok; DataError err;}; bool is_ok;} icu4x_ListFormatter_create_unit_with_length_mv1_result;
+icu4x_ListFormatter_create_unit_with_length_mv1_result icu4x_ListFormatter_create_unit_with_length_mv1(const DataProvider* provider, const Locale* locale, ListLength length);
 
-void ICU4XListFormatter_format_valid_utf8(const ListFormatter* self, DiplomatStringsView* list_data, size_t list_len, DiplomatWrite* write);
+void icu4x_ListFormatter_format_utf8_mv1(const ListFormatter* self, DiplomatStringsView* list_data, size_t list_len, DiplomatWrite* write);
 
-void ICU4XListFormatter_format_utf8(const ListFormatter* self, DiplomatStringsView* list_data, size_t list_len, DiplomatWrite* write);
-
-void ICU4XListFormatter_format_utf16(const ListFormatter* self, DiplomatStrings16View* list_data, size_t list_len, DiplomatWrite* write);
+void icu4x_ListFormatter_format_utf16_mv1(const ListFormatter* self, DiplomatStrings16View* list_data, size_t list_len, DiplomatWrite* write);
 
 
-void ICU4XListFormatter_destroy(ListFormatter* self);
+void icu4x_ListFormatter_destroy_mv1(ListFormatter* self);
 
 
 

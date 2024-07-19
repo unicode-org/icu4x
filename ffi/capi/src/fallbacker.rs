@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[diplomat::bridge]
-#[diplomat::abi_rename = "ICU4X{0}"]
+#[diplomat::abi_rename = "icu4x_{0}_mv1"]
 pub mod ffi {
     use alloc::boxed::Box;
 
@@ -89,8 +89,8 @@ pub mod ffi {
             icu::locale::fallback::LocaleFallbacker::new_without_data,
             FnInStruct
         )]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "without_data")]
-        pub fn create_without_data() -> Box<LocaleFallbacker> {
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn without_data() -> Box<LocaleFallbacker> {
             Box::new(LocaleFallbacker(
                 icu_locale::LocaleFallbacker::new_without_data(),
             ))
@@ -137,36 +137,30 @@ pub mod ffi {
     }
 
     impl<'a> LocaleFallbackIterator<'a> {
-        /// Gets a snapshot of the current state of the locale.
-        #[diplomat::rust_link(icu::locale::fallback::LocaleFallbackIterator::get, FnInStruct)]
+        #[diplomat::attr(supports = iterators, iterator)]
+        #[diplomat::rust_link(
+            icu::locale::fallback::LocaleFallbackIterator::get,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::rust_link(
+            icu::locale::fallback::LocaleFallbackIterator::step,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::rust_link(
             icu::locale::fallback::LocaleFallbackIterator::take,
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(*, disable)]
-        pub fn get(&self) -> Box<Locale> {
-            Box::new(Locale(self.0.get().clone().into_locale()))
-        }
-
-        /// Performs one step of the fallback algorithm, mutating the locale.
-        #[diplomat::rust_link(icu::locale::fallback::LocaleFallbackIterator::step, FnInStruct)]
-        #[diplomat::attr(*, disable)]
-        pub fn step(&mut self) {
-            self.0.step();
-        }
-
-        /// A combination of `get` and `step`. Returns the value that `get` would return
-        /// and advances the iterator until hitting `und`.
-        #[diplomat::attr(supports = iterators, iterator)]
-        #[diplomat::skip_if_ast]
         pub fn next(&mut self) -> Option<Box<Locale>> {
-            let current = self.get();
-            if current.0 == icu_locale_core::Locale::UND {
+            let current = self.0.get();
+            if current.is_und() {
                 None
             } else {
-                self.step();
-                Some(current)
+                let current = current.clone().into_locale();
+                self.0.step();
+                Some(Box::new(Locale(current)))
             }
         }
     }

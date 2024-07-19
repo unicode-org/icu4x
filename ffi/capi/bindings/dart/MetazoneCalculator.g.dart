@@ -26,13 +26,13 @@ final class MetazoneCalculator implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XMetazoneCalculator_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_MetazoneCalculator_destroy_mv1));
 
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneCalculator.html#method.new) for more information.
   ///
   /// Throws [DataError] on failure.
   factory MetazoneCalculator(DataProvider provider) {
-    final result = _ICU4XMetazoneCalculator_create(provider._ffi);
+    final result = _icu4x_MetazoneCalculator_create_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -40,12 +40,12 @@ final class MetazoneCalculator implements ffi.Finalizable {
   }
 }
 
-@meta.ResourceIdentifier('ICU4XMetazoneCalculator_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XMetazoneCalculator_destroy')
+@meta.ResourceIdentifier('icu4x_MetazoneCalculator_destroy_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_MetazoneCalculator_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XMetazoneCalculator_destroy(ffi.Pointer<ffi.Void> self);
+external void _icu4x_MetazoneCalculator_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XMetazoneCalculator_create')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XMetazoneCalculator_create')
+@meta.ResourceIdentifier('icu4x_MetazoneCalculator_create_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_MetazoneCalculator_create_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XMetazoneCalculator_create(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_MetazoneCalculator_create_mv1(ffi.Pointer<ffi.Opaque> provider);

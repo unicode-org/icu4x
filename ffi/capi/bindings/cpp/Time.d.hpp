@@ -23,7 +23,7 @@ public:
 
   inline static diplomat::result<std::unique_ptr<Time>, CalendarError> create(uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
 
-  inline static diplomat::result<std::unique_ptr<Time>, CalendarError> create_midnight();
+  inline static diplomat::result<std::unique_ptr<Time>, CalendarError> midnight();
 
   inline uint8_t hour() const;
 

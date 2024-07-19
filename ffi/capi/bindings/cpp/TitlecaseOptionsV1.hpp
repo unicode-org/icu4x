@@ -18,7 +18,7 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    diplomat::capi::TitlecaseOptionsV1 ICU4XTitlecaseOptionsV1_default_options();
+    diplomat::capi::TitlecaseOptionsV1 icu4x_TitlecaseOptionsV1_default_mv1();
     
     
     } // extern "C"
@@ -26,7 +26,7 @@ namespace capi {
 } // namespace
 
 inline TitlecaseOptionsV1 TitlecaseOptionsV1::default_options() {
-  auto result = diplomat::capi::ICU4XTitlecaseOptionsV1_default_options();
+  auto result = diplomat::capi::icu4x_TitlecaseOptionsV1_default_mv1();
   return TitlecaseOptionsV1::FromFFI(result);
 }
 

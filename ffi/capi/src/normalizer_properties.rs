@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[diplomat::bridge]
-#[diplomat::abi_rename = "ICU4X{0}"]
+#[diplomat::abi_rename = "icu4x_{0}_mv1"]
 pub mod ffi {
     use alloc::boxed::Box;
 
@@ -39,25 +39,17 @@ pub mod ffi {
             FnInStruct
         )]
         #[diplomat::rust_link(
+            icu::normalizer::properties::CanonicalCombiningClassMap::get32,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::rust_link(
             icu::properties::properties::CanonicalCombiningClass,
             Struct,
             compact
         )]
         #[diplomat::attr(supports = indexing, indexer)]
         pub fn get(&self, ch: DiplomatChar) -> u8 {
-            self.0.get32(ch).0
-        }
-        #[diplomat::rust_link(
-            icu::normalizer::properties::CanonicalCombiningClassMap::get32,
-            FnInStruct
-        )]
-        #[diplomat::rust_link(
-            icu::properties::properties::CanonicalCombiningClass,
-            Struct,
-            compact
-        )]
-        #[diplomat::attr(dart, disable)]
-        pub fn get32(&self, ch: u32) -> u8 {
             self.0.get32(ch).0
         }
     }

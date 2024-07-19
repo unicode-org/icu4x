@@ -20,7 +20,7 @@ final class Logger implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XLogger_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_Logger_destroy_mv1));
 
   /// Initialize the logger using `simple_logger`
   ///
@@ -28,17 +28,17 @@ final class Logger implements ffi.Finalizable {
   ///
   /// Returns `false` if there was already a logger set.
   static bool initSimpleLogger() {
-    final result = _ICU4XLogger_init_simple_logger();
+    final result = _icu4x_Logger_init_simple_logger_mv1();
     return result;
   }
 }
 
-@meta.ResourceIdentifier('ICU4XLogger_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XLogger_destroy')
+@meta.ResourceIdentifier('icu4x_Logger_destroy_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_Logger_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XLogger_destroy(ffi.Pointer<ffi.Void> self);
+external void _icu4x_Logger_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XLogger_init_simple_logger')
-@ffi.Native<ffi.Bool Function()>(isLeaf: true, symbol: 'ICU4XLogger_init_simple_logger')
+@meta.ResourceIdentifier('icu4x_Logger_init_simple_logger_mv1')
+@ffi.Native<ffi.Bool Function()>(isLeaf: true, symbol: 'icu4x_Logger_init_simple_logger_mv1')
 // ignore: non_constant_identifier_names
-external bool _ICU4XLogger_init_simple_logger();
+external bool _icu4x_Logger_init_simple_logger_mv1();

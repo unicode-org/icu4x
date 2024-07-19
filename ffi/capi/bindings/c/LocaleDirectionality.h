@@ -20,20 +20,20 @@
 
 
 
-typedef struct ICU4XLocaleDirectionality_create_result {union {LocaleDirectionality* ok; DataError err;}; bool is_ok;} ICU4XLocaleDirectionality_create_result;
-ICU4XLocaleDirectionality_create_result ICU4XLocaleDirectionality_create(const DataProvider* provider);
+typedef struct icu4x_LocaleDirectionality_create_mv1_result {union {LocaleDirectionality* ok; DataError err;}; bool is_ok;} icu4x_LocaleDirectionality_create_mv1_result;
+icu4x_LocaleDirectionality_create_mv1_result icu4x_LocaleDirectionality_create_mv1(const DataProvider* provider);
 
-typedef struct ICU4XLocaleDirectionality_create_with_expander_result {union {LocaleDirectionality* ok; DataError err;}; bool is_ok;} ICU4XLocaleDirectionality_create_with_expander_result;
-ICU4XLocaleDirectionality_create_with_expander_result ICU4XLocaleDirectionality_create_with_expander(const DataProvider* provider, const LocaleExpander* expander);
+typedef struct icu4x_LocaleDirectionality_create_with_expander_mv1_result {union {LocaleDirectionality* ok; DataError err;}; bool is_ok;} icu4x_LocaleDirectionality_create_with_expander_mv1_result;
+icu4x_LocaleDirectionality_create_with_expander_mv1_result icu4x_LocaleDirectionality_create_with_expander_mv1(const DataProvider* provider, const LocaleExpander* expander);
 
-LocaleDirection ICU4XLocaleDirectionality_get(const LocaleDirectionality* self, const Locale* locale);
+LocaleDirection icu4x_LocaleDirectionality_get_mv1(const LocaleDirectionality* self, const Locale* locale);
 
-bool ICU4XLocaleDirectionality_is_left_to_right(const LocaleDirectionality* self, const Locale* locale);
+bool icu4x_LocaleDirectionality_is_left_to_right_mv1(const LocaleDirectionality* self, const Locale* locale);
 
-bool ICU4XLocaleDirectionality_is_right_to_left(const LocaleDirectionality* self, const Locale* locale);
+bool icu4x_LocaleDirectionality_is_right_to_left_mv1(const LocaleDirectionality* self, const Locale* locale);
 
 
-void ICU4XLocaleDirectionality_destroy(LocaleDirectionality* self);
+void icu4x_LocaleDirectionality_destroy_mv1(LocaleDirectionality* self);
 
 
 

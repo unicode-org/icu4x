@@ -5,7 +5,7 @@
 use icu_casemap::titlecase::TitlecaseOptions;
 
 #[diplomat::bridge]
-#[diplomat::abi_rename = "ICU4X{0}"]
+#[diplomat::abi_rename = "icu4x_{0}_mv1"]
 pub mod ffi {
     use alloc::boxed::Box;
 
@@ -29,7 +29,7 @@ pub mod ffi {
     }
 
     #[diplomat::rust_link(icu::casemap::titlecase::TitlecaseOptions, Struct)]
-    #[diplomat::attr(dart, rename = "TitlecaseOptions")]
+    #[diplomat::attr(supports = non_exhaustive_structs, rename = "TitlecaseOptions")]
     pub struct TitlecaseOptionsV1 {
         pub leading_adjustment: LeadingAdjustment,
         pub trailing_case: TrailingCase,
@@ -38,8 +38,8 @@ pub mod ffi {
     impl TitlecaseOptionsV1 {
         #[diplomat::rust_link(icu::casemap::titlecase::TitlecaseOptions::default, FnInStruct)]
         #[diplomat::attr(supports = constructors, constructor)]
-        pub fn default_options() -> TitlecaseOptionsV1 {
-            // named default_options to avoid keyword clashes
+        #[diplomat::attr(any(cpp, js), rename = "default_options")]
+        pub fn default() -> TitlecaseOptionsV1 {
             Self {
                 leading_adjustment: LeadingAdjustment::Auto,
                 trailing_case: TrailingCase::Lower,
@@ -92,7 +92,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(dart, rename = "titlecaseSegmentWithOnlyCaseData")]
+        #[diplomat::attr(supports = non_exhaustive_structs, rename = "titlecase_segment_with_only_case_data")]
         pub fn titlecase_segment_with_only_case_data_v1(
             &self,
             s: &str,
@@ -279,7 +279,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(dart, rename = "titlecaseSegment")]
+        #[diplomat::attr(supports = non_exhaustive_structs, rename = "titlecase_segment")]
         pub fn titlecase_segment_v1(
             &self,
             s: &str,

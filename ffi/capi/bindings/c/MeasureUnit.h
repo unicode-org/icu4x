@@ -16,7 +16,7 @@
 
 
 
-void ICU4XMeasureUnit_destroy(MeasureUnit* self);
+void icu4x_MeasureUnit_destroy_mv1(MeasureUnit* self);
 
 
 

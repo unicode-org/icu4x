@@ -29,8 +29,6 @@ public:
 
   inline bool contains_char(char32_t cp) const;
 
-  inline bool contains32(uint32_t cp) const;
-
   inline static diplomat::result<std::unique_ptr<UnicodeSetData>, DataError> load_basic_emoji(const DataProvider& provider);
 
   inline static diplomat::result<std::unique_ptr<UnicodeSetData>, DataError> load_exemplars_main(const DataProvider& provider, const Locale& locale);

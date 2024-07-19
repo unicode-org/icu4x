@@ -19,21 +19,19 @@
 
 
 
-uint16_t ICU4XCodePointMapData16_get(const CodePointMapData16* self, char32_t cp);
+uint16_t icu4x_CodePointMapData16_get_mv1(const CodePointMapData16* self, char32_t cp);
 
-uint16_t ICU4XCodePointMapData16_get32(const CodePointMapData16* self, uint32_t cp);
+CodePointRangeIterator* icu4x_CodePointMapData16_iter_ranges_for_value_mv1(const CodePointMapData16* self, uint16_t value);
 
-CodePointRangeIterator* ICU4XCodePointMapData16_iter_ranges_for_value(const CodePointMapData16* self, uint16_t value);
+CodePointRangeIterator* icu4x_CodePointMapData16_iter_ranges_for_value_complemented_mv1(const CodePointMapData16* self, uint16_t value);
 
-CodePointRangeIterator* ICU4XCodePointMapData16_iter_ranges_for_value_complemented(const CodePointMapData16* self, uint16_t value);
+CodePointSetData* icu4x_CodePointMapData16_get_set_for_value_mv1(const CodePointMapData16* self, uint16_t value);
 
-CodePointSetData* ICU4XCodePointMapData16_get_set_for_value(const CodePointMapData16* self, uint16_t value);
-
-typedef struct ICU4XCodePointMapData16_load_script_result {union {CodePointMapData16* ok; DataError err;}; bool is_ok;} ICU4XCodePointMapData16_load_script_result;
-ICU4XCodePointMapData16_load_script_result ICU4XCodePointMapData16_load_script(const DataProvider* provider);
+typedef struct icu4x_CodePointMapData16_load_script_mv1_result {union {CodePointMapData16* ok; DataError err;}; bool is_ok;} icu4x_CodePointMapData16_load_script_mv1_result;
+icu4x_CodePointMapData16_load_script_mv1_result icu4x_CodePointMapData16_load_script_mv1(const DataProvider* provider);
 
 
-void ICU4XCodePointMapData16_destroy(CodePointMapData16* self);
+void icu4x_CodePointMapData16_destroy_mv1(CodePointMapData16* self);
 
 
 

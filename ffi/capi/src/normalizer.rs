@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[diplomat::bridge]
-#[diplomat::abi_rename = "ICU4X{0}"]
+#[diplomat::abi_rename = "icu4x_{0}_mv1"]
 pub mod ffi {
     use alloc::boxed::Box;
 
@@ -68,7 +68,9 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn is_normalized(&self, s: &DiplomatStr) -> bool {
+        #[diplomat::attr(not(supports = utf8_strings), disable)]
+        #[diplomat::attr(*, rename = "is_normalized")]
+        pub fn is_normalized_utf8(&self, s: &DiplomatStr) -> bool {
             self.0.is_normalized_utf8(s)
         }
 
@@ -80,6 +82,8 @@ pub mod ffi {
             icu::normalizer::ComposingNormalizer::is_normalized_utf16,
             FnInStruct
         )]
+        #[diplomat::attr(not(supports = utf8_strings), rename = "is_normalized")]
+        #[diplomat::attr(supports = utf8_strings, rename = "is_normalized16")]
         pub fn is_normalized_utf16(&self, s: &DiplomatStr16) -> bool {
             self.0.is_normalized_utf16(s)
         }
@@ -94,7 +98,9 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn is_normalized_up_to(&self, s: &DiplomatStr) -> usize {
+        #[diplomat::attr(not(supports = utf8_strings), disable)]
+        #[diplomat::attr(*, rename = "is_normalized_up_to")]
+        pub fn is_normalized_utf8_up_to(&self, s: &DiplomatStr) -> usize {
             self.0.is_normalized_utf8_up_to(s)
         }
 
@@ -103,6 +109,8 @@ pub mod ffi {
             icu::normalizer::ComposingNormalizer::is_normalized_utf16_up_to,
             FnInStruct
         )]
+        #[diplomat::attr(not(supports = utf8_strings), rename = "is_normalized_up_to")]
+        #[diplomat::attr(supports = utf8_strings, rename = "is_normalized16_up_to")]
         pub fn is_normalized_utf16_up_to(&self, s: &DiplomatStr16) -> usize {
             self.0.is_normalized_utf16_up_to(s)
         }

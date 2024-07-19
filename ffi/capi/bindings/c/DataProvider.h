@@ -17,27 +17,27 @@
 
 
 
-DataProvider* ICU4XDataProvider_create_compiled();
+DataProvider* icu4x_DataProvider_compiled_mv1();
 
-typedef struct ICU4XDataProvider_create_fs_result {union {DataProvider* ok; DataError err;}; bool is_ok;} ICU4XDataProvider_create_fs_result;
-ICU4XDataProvider_create_fs_result ICU4XDataProvider_create_fs(const char* path_data, size_t path_len);
+typedef struct icu4x_DataProvider_from_fs_mv1_result {union {DataProvider* ok; DataError err;}; bool is_ok;} icu4x_DataProvider_from_fs_mv1_result;
+icu4x_DataProvider_from_fs_mv1_result icu4x_DataProvider_from_fs_mv1(const char* path_data, size_t path_len);
 
-typedef struct ICU4XDataProvider_create_from_byte_slice_result {union {DataProvider* ok; DataError err;}; bool is_ok;} ICU4XDataProvider_create_from_byte_slice_result;
-ICU4XDataProvider_create_from_byte_slice_result ICU4XDataProvider_create_from_byte_slice(const uint8_t* blob_data, size_t blob_len);
+typedef struct icu4x_DataProvider_from_byte_slice_mv1_result {union {DataProvider* ok; DataError err;}; bool is_ok;} icu4x_DataProvider_from_byte_slice_mv1_result;
+icu4x_DataProvider_from_byte_slice_mv1_result icu4x_DataProvider_from_byte_slice_mv1(const uint8_t* blob_data, size_t blob_len);
 
-DataProvider* ICU4XDataProvider_create_empty();
+DataProvider* icu4x_DataProvider_empty_mv1();
 
-typedef struct ICU4XDataProvider_fork_by_key_result {union { DataError err;}; bool is_ok;} ICU4XDataProvider_fork_by_key_result;
-ICU4XDataProvider_fork_by_key_result ICU4XDataProvider_fork_by_key(DataProvider* self, DataProvider* other);
+typedef struct icu4x_DataProvider_fork_by_key_mv1_result {union { DataError err;}; bool is_ok;} icu4x_DataProvider_fork_by_key_mv1_result;
+icu4x_DataProvider_fork_by_key_mv1_result icu4x_DataProvider_fork_by_key_mv1(DataProvider* self, DataProvider* other);
 
-typedef struct ICU4XDataProvider_fork_by_locale_result {union { DataError err;}; bool is_ok;} ICU4XDataProvider_fork_by_locale_result;
-ICU4XDataProvider_fork_by_locale_result ICU4XDataProvider_fork_by_locale(DataProvider* self, DataProvider* other);
+typedef struct icu4x_DataProvider_fork_by_locale_mv1_result {union { DataError err;}; bool is_ok;} icu4x_DataProvider_fork_by_locale_mv1_result;
+icu4x_DataProvider_fork_by_locale_mv1_result icu4x_DataProvider_fork_by_locale_mv1(DataProvider* self, DataProvider* other);
 
-typedef struct ICU4XDataProvider_enable_locale_fallback_with_result {union { DataError err;}; bool is_ok;} ICU4XDataProvider_enable_locale_fallback_with_result;
-ICU4XDataProvider_enable_locale_fallback_with_result ICU4XDataProvider_enable_locale_fallback_with(DataProvider* self, const LocaleFallbacker* fallbacker);
+typedef struct icu4x_DataProvider_enable_locale_fallback_with_mv1_result {union { DataError err;}; bool is_ok;} icu4x_DataProvider_enable_locale_fallback_with_mv1_result;
+icu4x_DataProvider_enable_locale_fallback_with_mv1_result icu4x_DataProvider_enable_locale_fallback_with_mv1(DataProvider* self, const LocaleFallbacker* fallbacker);
 
 
-void ICU4XDataProvider_destroy(DataProvider* self);
+void icu4x_DataProvider_destroy_mv1(DataProvider* self);
 
 
 

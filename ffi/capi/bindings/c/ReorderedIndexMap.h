@@ -15,16 +15,16 @@
 
 
 
-diplomat::capi::DiplomatUsizeView ICU4XReorderedIndexMap_as_slice(const ReorderedIndexMap* self);
+DiplomatUsizeView icu4x_ReorderedIndexMap_as_slice_mv1(const ReorderedIndexMap* self);
 
-size_t ICU4XReorderedIndexMap_len(const ReorderedIndexMap* self);
+size_t icu4x_ReorderedIndexMap_len_mv1(const ReorderedIndexMap* self);
 
-bool ICU4XReorderedIndexMap_is_empty(const ReorderedIndexMap* self);
+bool icu4x_ReorderedIndexMap_is_empty_mv1(const ReorderedIndexMap* self);
 
-size_t ICU4XReorderedIndexMap_get(const ReorderedIndexMap* self, size_t index);
+size_t icu4x_ReorderedIndexMap_get_mv1(const ReorderedIndexMap* self, size_t index);
 
 
-void ICU4XReorderedIndexMap_destroy(ReorderedIndexMap* self);
+void icu4x_ReorderedIndexMap_destroy_mv1(ReorderedIndexMap* self);
 
 
 

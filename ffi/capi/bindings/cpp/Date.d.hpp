@@ -29,9 +29,9 @@ namespace capi {
 class Date {
 public:
 
-  inline static diplomat::result<std::unique_ptr<Date>, CalendarError> create_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, const Calendar& calendar);
+  inline static diplomat::result<std::unique_ptr<Date>, CalendarError> from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, const Calendar& calendar);
 
-  inline static diplomat::result<std::unique_ptr<Date>, CalendarError> create_from_codes_in_calendar(std::string_view era_code, int32_t year, std::string_view month_code, uint8_t day, const Calendar& calendar);
+  inline static diplomat::result<std::unique_ptr<Date>, CalendarError> from_codes_in_calendar(std::string_view era_code, int32_t year, std::string_view month_code, uint8_t day, const Calendar& calendar);
 
   inline std::unique_ptr<Date> to_calendar(const Calendar& calendar) const;
 

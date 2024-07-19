@@ -1,6 +1,5 @@
 {
   "patterns": {
-    "One": "{0} m",
     "Other": "{0} m"
   }
 }

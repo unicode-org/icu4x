@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[diplomat::bridge]
-#[diplomat::abi_rename = "ICU4X{0}"]
+#[diplomat::abi_rename = "icu4x_{0}_mv1"]
 pub mod ffi {
     use alloc::boxed::Box;
 
@@ -32,18 +32,13 @@ pub mod ffi {
             icu::properties::sets::UnicodeSetDataBorrowed::contains_char,
             FnInStruct
         )]
-        pub fn contains_char(&self, cp: DiplomatChar) -> bool {
-            self.0.as_borrowed().contains32(cp)
-        }
-        /// Checks whether the code point (specified as a 32 bit integer, in UTF-32) is in the set.
         #[diplomat::rust_link(
             icu::properties::sets::UnicodeSetDataBorrowed::contains32,
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(dart, disable)]
-        pub fn contains32(&self, cp: u32) -> bool {
-            self.contains_char(cp)
+        pub fn contains_char(&self, cp: DiplomatChar) -> bool {
+            self.0.as_borrowed().contains32(cp)
         }
 
         #[diplomat::rust_link(icu::properties::sets::basic_emoji, Fn)]

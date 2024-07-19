@@ -15,10 +15,10 @@
 
 
 
-int32_t ICU4XGraphemeClusterBreakIteratorUtf16_next(GraphemeClusterBreakIteratorUtf16* self);
+int32_t icu4x_GraphemeClusterBreakIteratorUtf16_next_mv1(GraphemeClusterBreakIteratorUtf16* self);
 
 
-void ICU4XGraphemeClusterBreakIteratorUtf16_destroy(GraphemeClusterBreakIteratorUtf16* self);
+void icu4x_GraphemeClusterBreakIteratorUtf16_destroy_mv1(GraphemeClusterBreakIteratorUtf16* self);
 
 
 

@@ -9,7 +9,7 @@
 #include <iostream>
 
 int main() {
-    std::unique_ptr<DataProvider> dp = DataProvider::create_compiled();
+    std::unique_ptr<DataProvider> dp = DataProvider::compiled();
     std::unique_ptr<Bidi> bidi = Bidi::create(*dp.get()).ok().value();
 
     // Written char-by-char to avoid messing up certain text editors.

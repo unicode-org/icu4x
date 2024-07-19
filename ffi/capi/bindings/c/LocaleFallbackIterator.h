@@ -16,10 +16,10 @@
 
 
 
-Locale* ICU4XLocaleFallbackIterator_next(LocaleFallbackIterator* self);
+Locale* icu4x_LocaleFallbackIterator_next_mv1(LocaleFallbackIterator* self);
 
 
-void ICU4XLocaleFallbackIterator_destroy(LocaleFallbackIterator* self);
+void icu4x_LocaleFallbackIterator_destroy_mv1(LocaleFallbackIterator* self);
 
 
 

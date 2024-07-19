@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[diplomat::bridge]
-#[diplomat::abi_rename = "ICU4X{0}"]
+#[diplomat::abi_rename = "icu4x_{0}_mv1"]
 pub mod ffi {
     use alloc::boxed::Box;
 
@@ -31,7 +31,7 @@ pub mod ffi {
     }
 
     #[diplomat::rust_link(icu::segmenter::LineBreakOptions, Struct)]
-    #[diplomat::attr(dart, rename = "LineBreakOptions")]
+    #[diplomat::attr(supports = non_exhaustive_structs, rename = "LineBreakOptions")]
     pub struct LineBreakOptionsV1 {
         pub strictness: LineBreakStrictness,
         pub word_option: LineBreakWordOption,
@@ -103,7 +103,7 @@ pub mod ffi {
         /// Construct a [`LineSegmenter`] with custom options. It automatically loads the best
         /// available payload data for Burmese, Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_auto_with_options, FnInStruct)]
-        #[diplomat::attr(dart, rename = "auto_with_options")]
+        #[diplomat::attr(supports = non_exhaustive_structs, rename = "auto_with_options")]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "auto_with_options_v1")]
         pub fn create_auto_with_options_v1(
             provider: &DataProvider,
@@ -121,7 +121,7 @@ pub mod ffi {
         /// Construct a [`LineSegmenter`] with custom options and LSTM payload data for
         /// Burmese, Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_lstm_with_options, FnInStruct)]
-        #[diplomat::attr(dart, rename = "lstm_with_options")]
+        #[diplomat::attr(supports = non_exhaustive_structs, rename = "lstm_with_options")]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "lstm_with_options_v1")]
         pub fn create_lstm_with_options_v1(
             provider: &DataProvider,
@@ -142,7 +142,7 @@ pub mod ffi {
             icu::segmenter::LineSegmenter::new_dictionary_with_options,
             FnInStruct
         )]
-        #[diplomat::attr(dart, rename = "dictionary_with_options")]
+        #[diplomat::attr(supports = non_exhaustive_structs, rename = "dictionary_with_options")]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "dictionary_with_options_v1")]
         pub fn create_dictionary_with_options_v1(
             provider: &DataProvider,
@@ -163,7 +163,8 @@ pub mod ffi {
         /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::segment_utf8, FnInStruct)]
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::segment_str, FnInStruct, hidden)]
-        #[diplomat::attr(dart, disable)]
+        #[diplomat::attr(not(supports = utf8_strings), disable)]
+        #[diplomat::attr(*, rename = "segment")]
         pub fn segment_utf8<'a>(
             &'a self,
             input: &'a DiplomatStr,
@@ -176,7 +177,8 @@ pub mod ffi {
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::segment_utf16, FnInStruct)]
-        #[diplomat::attr(dart, rename = "segment")]
+        #[diplomat::attr(not(supports = utf8_strings), rename = "segment")]
+        #[diplomat::attr(supports = utf8_strings, rename = "segment16")]
         pub fn segment_utf16<'a>(
             &'a self,
             input: &'a DiplomatStr16,
@@ -186,7 +188,7 @@ pub mod ffi {
 
         /// Segments a Latin-1 string.
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::segment_latin1, FnInStruct)]
-        #[diplomat::attr(dart, disable)]
+        #[diplomat::attr(not(supports = utf8_strings), disable)]
         pub fn segment_latin1<'a>(&'a self, input: &'a [u8]) -> Box<LineBreakIteratorLatin1<'a>> {
             Box::new(LineBreakIteratorLatin1(self.0.segment_latin1(input)))
         }

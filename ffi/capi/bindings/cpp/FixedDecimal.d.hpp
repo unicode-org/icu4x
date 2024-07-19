@@ -26,23 +26,23 @@ namespace capi {
 class FixedDecimal {
 public:
 
-  inline static std::unique_ptr<FixedDecimal> create_from_i32(int32_t v);
+  inline static std::unique_ptr<FixedDecimal> from(int32_t v);
 
-  inline static std::unique_ptr<FixedDecimal> create_from_u32(uint32_t v);
+  inline static std::unique_ptr<FixedDecimal> from(uint32_t v);
 
-  inline static std::unique_ptr<FixedDecimal> create_from_i64(int64_t v);
+  inline static std::unique_ptr<FixedDecimal> from(int64_t v);
 
-  inline static std::unique_ptr<FixedDecimal> create_from_u64(uint64_t v);
+  inline static std::unique_ptr<FixedDecimal> from(uint64_t v);
 
-  inline static diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError> create_from_f64_with_integer_precision(double f);
+  inline static diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError> from_double_with_integer_precision(double f);
 
-  inline static diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError> create_from_f64_with_lower_magnitude(double f, int16_t magnitude);
+  inline static diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError> from_double_with_lower_magnitude(double f, int16_t magnitude);
 
-  inline static diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError> create_from_f64_with_significant_digits(double f, uint8_t digits);
+  inline static diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError> from_double_with_significant_digits(double f, uint8_t digits);
 
-  inline static diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError> create_from_f64_with_floating_precision(double f);
+  inline static diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError> from_double_with_floating_precision(double f);
 
-  inline static diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalParseError> create_from_string(std::string_view v);
+  inline static diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalParseError> from_string(std::string_view v);
 
   inline uint8_t digit_at(int16_t magnitude) const;
 

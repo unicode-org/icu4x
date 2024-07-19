@@ -17,15 +17,13 @@
 
 
 
-typedef struct ICU4XCanonicalCombiningClassMap_create_result {union {CanonicalCombiningClassMap* ok; DataError err;}; bool is_ok;} ICU4XCanonicalCombiningClassMap_create_result;
-ICU4XCanonicalCombiningClassMap_create_result ICU4XCanonicalCombiningClassMap_create(const DataProvider* provider);
+typedef struct icu4x_CanonicalCombiningClassMap_create_mv1_result {union {CanonicalCombiningClassMap* ok; DataError err;}; bool is_ok;} icu4x_CanonicalCombiningClassMap_create_mv1_result;
+icu4x_CanonicalCombiningClassMap_create_mv1_result icu4x_CanonicalCombiningClassMap_create_mv1(const DataProvider* provider);
 
-uint8_t ICU4XCanonicalCombiningClassMap_get(const CanonicalCombiningClassMap* self, char32_t ch);
-
-uint8_t ICU4XCanonicalCombiningClassMap_get32(const CanonicalCombiningClassMap* self, uint32_t ch);
+uint8_t icu4x_CanonicalCombiningClassMap_get_mv1(const CanonicalCombiningClassMap* self, char32_t ch);
 
 
-void ICU4XCanonicalCombiningClassMap_destroy(CanonicalCombiningClassMap* self);
+void icu4x_CanonicalCombiningClassMap_destroy_mv1(CanonicalCombiningClassMap* self);
 
 
 

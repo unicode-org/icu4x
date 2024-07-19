@@ -7,16 +7,16 @@ import sys
 import subprocess
 
 SYMBOLS = [
-    "ICU4XDataProvider_create_compiled",
-    "ICU4XDataProvider_destroy",
-    "ICU4XFixedDecimal_create_from_i32",
-    "ICU4XFixedDecimal_destroy",
-    "ICU4XFixedDecimal_multiply_pow10",
-    "ICU4XFixedDecimalFormatter_create_with_grouping_strategy",
-    "ICU4XFixedDecimalFormatter_destroy",
-    "ICU4XFixedDecimalFormatter_format",
-    "ICU4XLocale_create_from_string",
-    "ICU4XLocale_destroy",
+    "icu4x_DataProvider_compiled_mv1",
+    "icu4x_DataProvider_destroy_mv1",
+    "icu4x_FixedDecimal_from_int32_mv1",
+    "icu4x_FixedDecimal_destroy_mv1",
+    "icu4x_FixedDecimal_multiply_pow10_mv1",
+    "icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1",
+    "icu4x_FixedDecimalFormatter_destroy_mv1",
+    "icu4x_FixedDecimalFormatter_format_mv1",
+    "icu4x_Locale_from_string_mv1",
+    "icu4x_Locale_destroy_mv1",
 ]
 
 def main():
@@ -24,7 +24,7 @@ def main():
     is_export = False
     for arg in sys.argv[1:]:
         if is_export:
-            if not arg.startswith("ICU4X") or arg in SYMBOLS:
+            if not arg.startswith("icu4x_") or arg in SYMBOLS:
                 new_argv += ["--export", arg]
             is_export = False
         elif arg == "--export":

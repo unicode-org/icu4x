@@ -4,24 +4,24 @@
 
 import test from 'ava';
 
-import { FixedDecimal } from "icu4x"
+import { FixedDecimal, FixedDecimalSign } from 'icu4x';
 
-test("convert a simple decimal to a string", t => {
-  const decimal = FixedDecimal.create_from_i64(1234n);
+test('convert a simple decimal to a string', t => {
+  const decimal = FixedDecimal.fromBigInt(1234n);
 
-  t.is(decimal.to_string(), "1234");
+  t.is(decimal.toString(), '1234');
 });
 
-test("multiply a decimal by a power of 10", t => {
-  const decimal = FixedDecimal.create_from_i32(1234);
-  decimal.multiply_pow10(-2);
+test('multiply a decimal by a power of 10', t => {
+  const decimal = FixedDecimal.fromNumber(1234);
+  decimal.multiplyPow10(-2);
 
-  t.is(decimal.to_string(), "12.34");
+  t.is(decimal.toString(), '12.34');
 });
 
-test("negate a decimal", t => {
-  const decimal = FixedDecimal.create_from_i32(1234);
-  decimal.set_sign("Negative");
+test('negate a decimal', t => {
+  const decimal = FixedDecimal.fromNumber(1234);
+  decimal.sign = FixedDecimalSign.Negative;
 
-  t.is(decimal.to_string(), "-1234");
+  t.is(decimal.toString(), '-1234');
 });

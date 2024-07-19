@@ -1,7 +1,6 @@
 {
   "patterns": {
     "One": "{0} kilogram",
-    "Few": "{0} kilograma",
     "Other": "{0} kilograma"
   }
 }

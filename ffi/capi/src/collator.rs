@@ -3,14 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[diplomat::bridge]
-#[diplomat::abi_rename = "ICU4X{0}"]
+#[diplomat::abi_rename = "icu4x_{0}_mv1"]
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::{
-        common::ffi::Ordering, errors::ffi::DataError, locale_core::ffi::Locale,
-        provider::ffi::DataProvider,
-    };
+    use crate::{errors::ffi::DataError, locale_core::ffi::Locale, provider::ffi::DataProvider};
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::collator::Collator, Struct)]
@@ -18,7 +15,7 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::collator::CollatorOptions, Struct)]
     #[diplomat::rust_link(icu::collator::CollatorOptions::new, FnInStruct, hidden)]
-    #[diplomat::attr(dart, rename = "CollatorOptions")]
+    #[diplomat::attr(supports = non_exhaustive_structs, rename = "CollatorOptions")]
     pub struct CollatorOptionsV1 {
         pub strength: CollatorStrength,
         pub alternate_handling: CollatorAlternateHandling,
@@ -34,7 +31,7 @@ pub mod ffi {
     // `ResolvedCollatorOptions` makes more sense as English.
     #[diplomat::rust_link(icu::collator::ResolvedCollatorOptions, Struct)]
     #[diplomat::out]
-    #[diplomat::attr(dart, rename = "ResolvedCollatorOptions")]
+    #[diplomat::attr(supports = non_exhaustive_structs, rename = "CollatorResolvedOptions")]
     pub struct CollatorResolvedOptionsV1 {
         pub strength: CollatorStrength,
         pub alternate_handling: CollatorAlternateHandling,
@@ -111,6 +108,7 @@ pub mod ffi {
         /// Construct a new Collator instance.
         #[diplomat::rust_link(icu::collator::Collator::try_new, FnInStruct)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
+        #[diplomat::attr(supports = non_exhaustive_structs, rename = "create")]
         pub fn create_v1(
             provider: &DataProvider,
             locale: &Locale,
@@ -134,16 +132,11 @@ pub mod ffi {
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(icu::collator::Collator::compare_utf8, FnInStruct)]
-        #[diplomat::attr(*, disable)]
-        pub fn compare(&self, left: &DiplomatStr, right: &DiplomatStr) -> Ordering {
-            self.0.compare_utf8(left, right).into()
-        }
-
-        /// Compare two strings.
-        #[diplomat::rust_link(icu::collator::Collator::compare, FnInStruct)]
-        #[diplomat::attr(*, disable)]
-        pub fn compare_valid_utf8(&self, left: &str, right: &str) -> Ordering {
-            self.0.compare(left, right).into()
+        #[diplomat::rust_link(icu::collator::Collator::compare, FnInStruct, hidden)]
+        #[diplomat::attr(not(supports = utf8_strings), disable)]
+        #[diplomat::attr(supports = utf8_strings, rename = "compare")]
+        pub fn compare_utf8(&self, left: &DiplomatStr, right: &DiplomatStr) -> core::cmp::Ordering {
+            self.0.compare_utf8(left, right)
         }
 
         /// Compare two strings.
@@ -151,20 +144,9 @@ pub mod ffi {
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(icu::collator::Collator::compare_utf16, FnInStruct)]
-        #[diplomat::attr(*, disable)]
-        pub fn compare_utf16(&self, left: &DiplomatStr16, right: &DiplomatStr16) -> Ordering {
-            self.0.compare_utf16(left, right).into()
-        }
-
-        /// Compare two strings.
-        ///
-        /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
-        /// to the WHATWG Encoding Standard.
-        #[diplomat::rust_link(icu::collator::Collator::compare_utf16, FnInStruct)]
-        #[diplomat::skip_if_ast]
-        #[diplomat::attr(dart, rename = "compare")]
-        #[diplomat::attr(cpp, rename = "compare16")]
-        pub fn compare_utf16_(
+        #[diplomat::attr(not(supports = utf8_strings), rename = "compare")]
+        #[diplomat::attr(supports = utf8_strings, rename = "compare16")]
+        pub fn compare_utf16(
             &self,
             left: &DiplomatStr16,
             right: &DiplomatStr16,
@@ -172,24 +154,13 @@ pub mod ffi {
             self.0.compare_utf16(left, right)
         }
 
-        /// Compare two strings.
-        ///
-        /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
-        /// to the WHATWG Encoding Standard.
-        #[diplomat::rust_link(icu::collator::Collator::compare_utf16, FnInStruct)]
-        #[diplomat::skip_if_ast]
-        #[diplomat::attr(dart, disable)]
-        #[diplomat::attr(cpp, rename = "compare")]
-        pub fn compare_(&self, left: &DiplomatStr, right: &DiplomatStr) -> core::cmp::Ordering {
-            self.0.compare_utf8(left, right)
-        }
-
         /// The resolved options showing how the default options, the requested options,
         /// and the options from locale data were combined. None of the struct fields
         /// will have `Auto` as the value.
         #[diplomat::rust_link(icu::collator::Collator::resolved_options, FnInStruct)]
         #[diplomat::attr(supports = accessors, getter)]
-        pub fn resolved_options(&self) -> CollatorResolvedOptionsV1 {
+        #[diplomat::attr(supports = non_exhaustive_structs, rename = "resolved_options")]
+        pub fn resolved_options_v1(&self) -> CollatorResolvedOptionsV1 {
             self.0.resolved_options().into()
         }
     }

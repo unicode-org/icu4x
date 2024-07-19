@@ -17,57 +17,57 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    typedef struct ICU4XTime_create_result {union {diplomat::capi::Time* ok; diplomat::capi::CalendarError err;}; bool is_ok;} ICU4XTime_create_result;
-    ICU4XTime_create_result ICU4XTime_create(uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
+    typedef struct icu4x_Time_create_mv1_result {union {diplomat::capi::Time* ok; diplomat::capi::CalendarError err;}; bool is_ok;} icu4x_Time_create_mv1_result;
+    icu4x_Time_create_mv1_result icu4x_Time_create_mv1(uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
     
-    typedef struct ICU4XTime_create_midnight_result {union {diplomat::capi::Time* ok; diplomat::capi::CalendarError err;}; bool is_ok;} ICU4XTime_create_midnight_result;
-    ICU4XTime_create_midnight_result ICU4XTime_create_midnight();
+    typedef struct icu4x_Time_midnight_mv1_result {union {diplomat::capi::Time* ok; diplomat::capi::CalendarError err;}; bool is_ok;} icu4x_Time_midnight_mv1_result;
+    icu4x_Time_midnight_mv1_result icu4x_Time_midnight_mv1();
     
-    uint8_t ICU4XTime_hour(const diplomat::capi::Time* self);
+    uint8_t icu4x_Time_hour_mv1(const diplomat::capi::Time* self);
     
-    uint8_t ICU4XTime_minute(const diplomat::capi::Time* self);
+    uint8_t icu4x_Time_minute_mv1(const diplomat::capi::Time* self);
     
-    uint8_t ICU4XTime_second(const diplomat::capi::Time* self);
+    uint8_t icu4x_Time_second_mv1(const diplomat::capi::Time* self);
     
-    uint32_t ICU4XTime_nanosecond(const diplomat::capi::Time* self);
+    uint32_t icu4x_Time_nanosecond_mv1(const diplomat::capi::Time* self);
     
     
-    void ICU4XTime_destroy(Time* self);
+    void icu4x_Time_destroy_mv1(Time* self);
     
     } // extern "C"
 } // namespace capi
 } // namespace
 
 inline diplomat::result<std::unique_ptr<Time>, CalendarError> Time::create(uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond) {
-  auto result = diplomat::capi::ICU4XTime_create(hour,
+  auto result = diplomat::capi::icu4x_Time_create_mv1(hour,
     minute,
     second,
     nanosecond);
   return result.is_ok ? diplomat::result<std::unique_ptr<Time>, CalendarError>(diplomat::Ok<std::unique_ptr<Time>>(std::unique_ptr<Time>(Time::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<Time>, CalendarError>(diplomat::Err<CalendarError>(CalendarError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<Time>, CalendarError> Time::create_midnight() {
-  auto result = diplomat::capi::ICU4XTime_create_midnight();
+inline diplomat::result<std::unique_ptr<Time>, CalendarError> Time::midnight() {
+  auto result = diplomat::capi::icu4x_Time_midnight_mv1();
   return result.is_ok ? diplomat::result<std::unique_ptr<Time>, CalendarError>(diplomat::Ok<std::unique_ptr<Time>>(std::unique_ptr<Time>(Time::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<Time>, CalendarError>(diplomat::Err<CalendarError>(CalendarError::FromFFI(result.err)));
 }
 
 inline uint8_t Time::hour() const {
-  auto result = diplomat::capi::ICU4XTime_hour(this->AsFFI());
+  auto result = diplomat::capi::icu4x_Time_hour_mv1(this->AsFFI());
   return result;
 }
 
 inline uint8_t Time::minute() const {
-  auto result = diplomat::capi::ICU4XTime_minute(this->AsFFI());
+  auto result = diplomat::capi::icu4x_Time_minute_mv1(this->AsFFI());
   return result;
 }
 
 inline uint8_t Time::second() const {
-  auto result = diplomat::capi::ICU4XTime_second(this->AsFFI());
+  auto result = diplomat::capi::icu4x_Time_second_mv1(this->AsFFI());
   return result;
 }
 
 inline uint32_t Time::nanosecond() const {
-  auto result = diplomat::capi::ICU4XTime_nanosecond(this->AsFFI());
+  auto result = diplomat::capi::icu4x_Time_nanosecond_mv1(this->AsFFI());
   return result;
 }
 
@@ -88,7 +88,7 @@ inline Time* Time::FromFFI(diplomat::capi::Time* ptr) {
 }
 
 inline void Time::operator delete(void* ptr) {
-  diplomat::capi::ICU4XTime_destroy(reinterpret_cast<diplomat::capi::Time*>(ptr));
+  diplomat::capi::icu4x_Time_destroy_mv1(reinterpret_cast<diplomat::capi::Time*>(ptr));
 }
 
 

@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[diplomat::bridge]
-#[diplomat::abi_rename = "ICU4X{0}"]
+#[diplomat::abi_rename = "icu4x_{0}_mv1"]
 pub mod ffi {
     use alloc::boxed::Box;
 
@@ -67,32 +67,39 @@ pub mod ffi {
         /// Construct an [`FixedDecimal`] from an integer.
         #[diplomat::rust_link(fixed_decimal::FixedDecimal, Struct)]
         #[diplomat::attr(dart, disable)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_i32")]
-        pub fn create_from_i32(v: i32) -> Box<FixedDecimal> {
+        #[diplomat::attr(js, rename = "from_number")]
+        #[diplomat::attr(supports = method_overloading, rename = "from")]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn from_int32(v: i32) -> Box<FixedDecimal> {
             Box::new(FixedDecimal(fixed_decimal::FixedDecimal::from(v)))
         }
 
         /// Construct an [`FixedDecimal`] from an integer.
         #[diplomat::rust_link(fixed_decimal::FixedDecimal, Struct)]
         #[diplomat::attr(dart, disable)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_u32")]
-        pub fn create_from_u32(v: u32) -> Box<FixedDecimal> {
+        #[diplomat::attr(js, disable)]
+        #[diplomat::attr(supports = method_overloading, rename = "from")]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn from_uint32(v: u32) -> Box<FixedDecimal> {
             Box::new(FixedDecimal(fixed_decimal::FixedDecimal::from(v)))
         }
 
         /// Construct an [`FixedDecimal`] from an integer.
         #[diplomat::rust_link(fixed_decimal::FixedDecimal, Struct)]
         #[diplomat::attr(dart, rename = "from_int")]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_i64")]
-        pub fn create_from_i64(v: i64) -> Box<FixedDecimal> {
+        #[diplomat::attr(js, rename = "from_big_int")]
+        #[diplomat::attr(supports = method_overloading, rename = "from")]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn from_int64(v: i64) -> Box<FixedDecimal> {
             Box::new(FixedDecimal(fixed_decimal::FixedDecimal::from(v)))
         }
 
         /// Construct an [`FixedDecimal`] from an integer.
         #[diplomat::rust_link(fixed_decimal::FixedDecimal, Struct)]
-        #[diplomat::attr(dart, disable)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_u64")]
-        pub fn create_from_u64(v: u64) -> Box<FixedDecimal> {
+        #[diplomat::attr(any(dart, js), disable)]
+        #[diplomat::attr(supports = method_overloading, rename = "from")]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn from_uint64(v: u64) -> Box<FixedDecimal> {
             Box::new(FixedDecimal(fixed_decimal::FixedDecimal::from(v)))
         }
 
@@ -100,10 +107,9 @@ pub mod ffi {
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::try_from_f64, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::FloatPrecision, Enum)]
         #[diplomat::rust_link(fixed_decimal::DoublePrecision, Enum, hidden)]
-        #[diplomat::attr(dart, disable)]
-        #[diplomat::attr(dart, rename = "from_double_with_integer_precision")]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_f64_with_integer_precision")]
-        pub fn create_from_f64_with_integer_precision(
+        #[diplomat::attr(any(dart, js), disable)]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn from_double_with_integer_precision(
             f: f64,
         ) -> Result<Box<FixedDecimal>, FixedDecimalLimitError> {
             let precision = fixed_decimal::DoublePrecision::Integer;
@@ -116,9 +122,9 @@ pub mod ffi {
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::try_from_f64, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::FloatPrecision, Enum)]
         #[diplomat::rust_link(fixed_decimal::DoublePrecision, Enum, hidden)]
-        #[diplomat::attr(dart, rename = "from_double_with_lower_magnitude")]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_f64_with_lower_magnitude")]
-        pub fn create_from_f64_with_lower_magnitude(
+        #[diplomat::attr(js, rename = "from_number_with_lower_magnitude")]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn from_double_with_lower_magnitude(
             f: f64,
             magnitude: i16,
         ) -> Result<Box<FixedDecimal>, FixedDecimalLimitError> {
@@ -132,9 +138,9 @@ pub mod ffi {
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::try_from_f64, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::FloatPrecision, Enum)]
         #[diplomat::rust_link(fixed_decimal::DoublePrecision, Enum, hidden)]
-        #[diplomat::attr(dart, rename = "from_double_with_significant_digits")]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_f64_with_significant_digits")]
-        pub fn create_from_f64_with_significant_digits(
+        #[diplomat::attr(js, rename = "from_number_with_significant_digits")]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn from_double_with_significant_digits(
             f: f64,
             digits: u8,
         ) -> Result<Box<FixedDecimal>, FixedDecimalLimitError> {
@@ -149,9 +155,9 @@ pub mod ffi {
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::try_from_f64, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::FloatPrecision, Enum)]
         #[diplomat::rust_link(fixed_decimal::DoublePrecision, Enum, hidden)]
-        #[diplomat::attr(dart, rename = "from_double_with_double_precision")]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_f64_with_floating_precision")]
-        pub fn create_from_f64_with_floating_precision(
+        #[diplomat::attr(js, rename = "from_number_with_floating_precision")]
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn from_double_with_floating_precision(
             f: f64,
         ) -> Result<Box<FixedDecimal>, FixedDecimalLimitError> {
             let precision = fixed_decimal::DoublePrecision::Floating;
@@ -162,10 +168,8 @@ pub mod ffi {
 
         /// Construct an [`FixedDecimal`] from a string.
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::from_str, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_string")]
-        pub fn create_from_string(
-            v: &DiplomatStr,
-        ) -> Result<Box<FixedDecimal>, FixedDecimalParseError> {
+        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn from_string(v: &DiplomatStr) -> Result<Box<FixedDecimal>, FixedDecimalParseError> {
             Ok(Box::new(FixedDecimal(
                 fixed_decimal::FixedDecimal::try_from(v)?,
             )))

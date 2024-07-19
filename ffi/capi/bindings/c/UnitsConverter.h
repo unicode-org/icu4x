@@ -15,12 +15,12 @@
 
 
 
-double ICU4XUnitsConverter_convert_f64(const UnitsConverter* self, double value);
+double icu4x_UnitsConverter_convert_double_mv1(const UnitsConverter* self, double value);
 
-UnitsConverter* ICU4XUnitsConverter_clone(const UnitsConverter* self);
+UnitsConverter* icu4x_UnitsConverter_clone_mv1(const UnitsConverter* self);
 
 
-void ICU4XUnitsConverter_destroy(UnitsConverter* self);
+void icu4x_UnitsConverter_destroy_mv1(UnitsConverter* self);
 
 
 

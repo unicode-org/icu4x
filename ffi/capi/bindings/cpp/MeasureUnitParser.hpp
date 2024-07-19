@@ -17,17 +17,17 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    diplomat::capi::MeasureUnit* ICU4XMeasureUnitParser_parse(const diplomat::capi::MeasureUnitParser* self, const char* unit_id_data, size_t unit_id_len);
+    diplomat::capi::MeasureUnit* icu4x_MeasureUnitParser_parse_mv1(const diplomat::capi::MeasureUnitParser* self, const char* unit_id_data, size_t unit_id_len);
     
     
-    void ICU4XMeasureUnitParser_destroy(MeasureUnitParser* self);
+    void icu4x_MeasureUnitParser_destroy_mv1(MeasureUnitParser* self);
     
     } // extern "C"
 } // namespace capi
 } // namespace
 
 inline std::unique_ptr<MeasureUnit> MeasureUnitParser::parse(std::string_view unit_id) const {
-  auto result = diplomat::capi::ICU4XMeasureUnitParser_parse(this->AsFFI(),
+  auto result = diplomat::capi::icu4x_MeasureUnitParser_parse_mv1(this->AsFFI(),
     unit_id.data(),
     unit_id.size());
   return std::unique_ptr<MeasureUnit>(MeasureUnit::FromFFI(result));
@@ -50,7 +50,7 @@ inline MeasureUnitParser* MeasureUnitParser::FromFFI(diplomat::capi::MeasureUnit
 }
 
 inline void MeasureUnitParser::operator delete(void* ptr) {
-  diplomat::capi::ICU4XMeasureUnitParser_destroy(reinterpret_cast<diplomat::capi::MeasureUnitParser*>(ptr));
+  diplomat::capi::icu4x_MeasureUnitParser_destroy_mv1(reinterpret_cast<diplomat::capi::MeasureUnitParser*>(ptr));
 }
 
 

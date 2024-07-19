@@ -21,43 +21,43 @@ namespace diplomat {
 namespace capi {
     extern "C" {
     
-    typedef struct ICU4XGraphemeClusterSegmenter_create_result {union {diplomat::capi::GraphemeClusterSegmenter* ok; diplomat::capi::DataError err;}; bool is_ok;} ICU4XGraphemeClusterSegmenter_create_result;
-    ICU4XGraphemeClusterSegmenter_create_result ICU4XGraphemeClusterSegmenter_create(const diplomat::capi::DataProvider* provider);
+    typedef struct icu4x_GraphemeClusterSegmenter_create_mv1_result {union {diplomat::capi::GraphemeClusterSegmenter* ok; diplomat::capi::DataError err;}; bool is_ok;} icu4x_GraphemeClusterSegmenter_create_mv1_result;
+    icu4x_GraphemeClusterSegmenter_create_mv1_result icu4x_GraphemeClusterSegmenter_create_mv1(const diplomat::capi::DataProvider* provider);
     
-    diplomat::capi::GraphemeClusterBreakIteratorUtf8* ICU4XGraphemeClusterSegmenter_segment_utf8(const diplomat::capi::GraphemeClusterSegmenter* self, const char* input_data, size_t input_len);
+    diplomat::capi::GraphemeClusterBreakIteratorUtf8* icu4x_GraphemeClusterSegmenter_segment_utf8_mv1(const diplomat::capi::GraphemeClusterSegmenter* self, const char* input_data, size_t input_len);
     
-    diplomat::capi::GraphemeClusterBreakIteratorUtf16* ICU4XGraphemeClusterSegmenter_segment_utf16(const diplomat::capi::GraphemeClusterSegmenter* self, const char16_t* input_data, size_t input_len);
+    diplomat::capi::GraphemeClusterBreakIteratorUtf16* icu4x_GraphemeClusterSegmenter_segment_utf16_mv1(const diplomat::capi::GraphemeClusterSegmenter* self, const char16_t* input_data, size_t input_len);
     
-    diplomat::capi::GraphemeClusterBreakIteratorLatin1* ICU4XGraphemeClusterSegmenter_segment_latin1(const diplomat::capi::GraphemeClusterSegmenter* self, const uint8_t* input_data, size_t input_len);
+    diplomat::capi::GraphemeClusterBreakIteratorLatin1* icu4x_GraphemeClusterSegmenter_segment_latin1_mv1(const diplomat::capi::GraphemeClusterSegmenter* self, const uint8_t* input_data, size_t input_len);
     
     
-    void ICU4XGraphemeClusterSegmenter_destroy(GraphemeClusterSegmenter* self);
+    void icu4x_GraphemeClusterSegmenter_destroy_mv1(GraphemeClusterSegmenter* self);
     
     } // extern "C"
 } // namespace capi
 } // namespace
 
 inline diplomat::result<std::unique_ptr<GraphemeClusterSegmenter>, DataError> GraphemeClusterSegmenter::create(const DataProvider& provider) {
-  auto result = diplomat::capi::ICU4XGraphemeClusterSegmenter_create(provider.AsFFI());
+  auto result = diplomat::capi::icu4x_GraphemeClusterSegmenter_create_mv1(provider.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<GraphemeClusterSegmenter>, DataError>(diplomat::Ok<std::unique_ptr<GraphemeClusterSegmenter>>(std::unique_ptr<GraphemeClusterSegmenter>(GraphemeClusterSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<GraphemeClusterSegmenter>, DataError>(diplomat::Err<DataError>(DataError::FromFFI(result.err)));
 }
 
-inline std::unique_ptr<GraphemeClusterBreakIteratorUtf8> GraphemeClusterSegmenter::segment_utf8(std::string_view input) const {
-  auto result = diplomat::capi::ICU4XGraphemeClusterSegmenter_segment_utf8(this->AsFFI(),
+inline std::unique_ptr<GraphemeClusterBreakIteratorUtf8> GraphemeClusterSegmenter::segment(std::string_view input) const {
+  auto result = diplomat::capi::icu4x_GraphemeClusterSegmenter_segment_utf8_mv1(this->AsFFI(),
     input.data(),
     input.size());
   return std::unique_ptr<GraphemeClusterBreakIteratorUtf8>(GraphemeClusterBreakIteratorUtf8::FromFFI(result));
 }
 
-inline std::unique_ptr<GraphemeClusterBreakIteratorUtf16> GraphemeClusterSegmenter::segment_utf16(std::u16string_view input) const {
-  auto result = diplomat::capi::ICU4XGraphemeClusterSegmenter_segment_utf16(this->AsFFI(),
+inline std::unique_ptr<GraphemeClusterBreakIteratorUtf16> GraphemeClusterSegmenter::segment16(std::u16string_view input) const {
+  auto result = diplomat::capi::icu4x_GraphemeClusterSegmenter_segment_utf16_mv1(this->AsFFI(),
     input.data(),
     input.size());
   return std::unique_ptr<GraphemeClusterBreakIteratorUtf16>(GraphemeClusterBreakIteratorUtf16::FromFFI(result));
 }
 
 inline std::unique_ptr<GraphemeClusterBreakIteratorLatin1> GraphemeClusterSegmenter::segment_latin1(diplomat::span<const uint8_t> input) const {
-  auto result = diplomat::capi::ICU4XGraphemeClusterSegmenter_segment_latin1(this->AsFFI(),
+  auto result = diplomat::capi::icu4x_GraphemeClusterSegmenter_segment_latin1_mv1(this->AsFFI(),
     input.data(),
     input.size());
   return std::unique_ptr<GraphemeClusterBreakIteratorLatin1>(GraphemeClusterBreakIteratorLatin1::FromFFI(result));
@@ -80,7 +80,7 @@ inline GraphemeClusterSegmenter* GraphemeClusterSegmenter::FromFFI(diplomat::cap
 }
 
 inline void GraphemeClusterSegmenter::operator delete(void* ptr) {
-  diplomat::capi::ICU4XGraphemeClusterSegmenter_destroy(reinterpret_cast<diplomat::capi::GraphemeClusterSegmenter*>(ptr));
+  diplomat::capi::icu4x_GraphemeClusterSegmenter_destroy_mv1(reinterpret_cast<diplomat::capi::GraphemeClusterSegmenter*>(ptr));
 }
 
 

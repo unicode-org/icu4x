@@ -16,10 +16,10 @@
 
 
 
-MeasureUnit* ICU4XMeasureUnitParser_parse(const MeasureUnitParser* self, const char* unit_id_data, size_t unit_id_len);
+MeasureUnit* icu4x_MeasureUnitParser_parse_mv1(const MeasureUnitParser* self, const char* unit_id_data, size_t unit_id_len);
 
 
-void ICU4XMeasureUnitParser_destroy(MeasureUnitParser* self);
+void icu4x_MeasureUnitParser_destroy_mv1(MeasureUnitParser* self);
 
 
 
