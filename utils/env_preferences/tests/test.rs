@@ -23,10 +23,10 @@ mod apple_tests {
 #[cfg(target_os = "linux")]
 #[cfg(test)]
 mod linux_tests {
-    use env_preferences::linux_prefs::fetch_locale_settings;
+    use env_preferences::linux_prefs::get_locales;
     #[test]
     fn test_get_locale() {
-        print!("{:?}",fetch_locale_settings());
+        get_locales();
     }
 }
 
