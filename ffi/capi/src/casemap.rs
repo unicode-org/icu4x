@@ -6,6 +6,7 @@ use icu_casemap::titlecase::TitlecaseOptions;
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
+#[diplomat::attr(*, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
 
