@@ -9,11 +9,11 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
 #include "Locale.hpp"
 #include "TitlecaseOptionsV1.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace diplomat {
@@ -49,7 +49,7 @@ inline diplomat::result<std::string, diplomat::Utf8Error> TitlecaseMapper::title
     locale.AsFFI(),
     options.AsFFI(),
     &write);
-  return diplomat::Ok<std::string>(output);
+  return diplomat::Ok<std::string>(std::move(output));
 }
 
 inline const diplomat::capi::TitlecaseMapper* TitlecaseMapper::AsFFI() const {

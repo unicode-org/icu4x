@@ -9,12 +9,12 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
 #include "SentenceBreakIteratorLatin1.hpp"
 #include "SentenceBreakIteratorUtf16.hpp"
 #include "SentenceBreakIteratorUtf8.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace diplomat {

@@ -24,15 +24,15 @@ namespace capi {
 
 inline diplomat::capi::Decomposed Decomposed::AsFFI() const {
   return diplomat::capi::Decomposed {
-    .first = first,
-    .second = second,
+    /* .first = */ first,
+    /* .second = */ second,
   };
 }
 
 inline Decomposed Decomposed::FromFFI(diplomat::capi::Decomposed c_struct) {
   return Decomposed {
-    .first = c_struct.first,
-    .second = c_struct.second,
+    /* .first = */ c_struct.first,
+    /* .second = */ c_struct.second,
   };
 }
 

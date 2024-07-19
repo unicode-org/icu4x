@@ -7,9 +7,9 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "LeadingAdjustment.d.hpp"
 #include "TrailingCase.d.hpp"
+#include "diplomat_runtime.hpp"
 
 class LeadingAdjustment;
 class TrailingCase;

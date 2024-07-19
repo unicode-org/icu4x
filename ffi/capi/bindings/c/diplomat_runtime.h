@@ -5,7 +5,6 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <sys/types.h>
 
 // These come from `uchar.h`, which is not available on all platforms.
 // Redefining them in C is no problem, however in >C++11 they are fundamental

@@ -7,9 +7,9 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "LocaleFallbackPriority.d.hpp"
 #include "LocaleFallbackSupplement.d.hpp"
+#include "diplomat_runtime.hpp"
 
 class LocaleFallbackPriority;
 class LocaleFallbackSupplement;

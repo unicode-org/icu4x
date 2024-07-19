@@ -9,12 +9,12 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
 #include "GraphemeClusterBreakIteratorLatin1.hpp"
 #include "GraphemeClusterBreakIteratorUtf16.hpp"
 #include "GraphemeClusterBreakIteratorUtf8.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace diplomat {

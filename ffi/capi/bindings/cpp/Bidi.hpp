@@ -9,11 +9,11 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "BidiInfo.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
 #include "ReorderedIndexMap.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace diplomat {
