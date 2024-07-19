@@ -44,12 +44,9 @@ pub mod ffi {
     }
 
     #[derive(Debug, PartialEq, Eq)]
-    #[repr(C)]
     #[diplomat::rust_link(fixed_decimal::LimitError, Struct, compact)]
     #[cfg(feature = "icu_decimal")]
-    pub enum FixedDecimalLimitError {
-        TodoZst,
-    }
+    pub struct FixedDecimalLimitError;
 
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
@@ -68,19 +65,13 @@ pub mod ffi {
     }
 
     #[derive(Debug, PartialEq, Eq)]
-    #[repr(C)]
     #[diplomat::rust_link(icu::timezone::InvalidOffsetError, Struct, compact)]
     #[cfg(any(feature = "icu_datetime", feature = "icu_timezone"))]
-    pub enum TimeZoneInvalidOffsetError {
-        TodoZst,
-    }
+    pub struct TimeZoneInvalidOffsetError;
 
     #[derive(Debug, PartialEq, Eq)]
-    #[repr(C)]
     #[cfg(any(feature = "icu_datetime", feature = "icu_timezone"))]
-    pub enum TimeZoneInvalidIdError {
-        TodoZst,
-    }
+    pub struct TimeZoneInvalidIdError;
 
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
@@ -246,7 +237,7 @@ impl From<fixed_decimal::ParseError> for FixedDecimalParseError {
 #[cfg(feature = "icu_decimal")]
 impl From<fixed_decimal::LimitError> for FixedDecimalLimitError {
     fn from(_: fixed_decimal::LimitError) -> Self {
-        Self::TodoZst
+        Self
     }
 }
 
@@ -265,6 +256,6 @@ impl From<icu_locale_core::ParseError> for LocaleParseError {
 #[cfg(any(feature = "icu_timezone", feature = "icu_datetime"))]
 impl From<icu_timezone::InvalidOffsetError> for TimeZoneInvalidOffsetError {
     fn from(_: icu_timezone::InvalidOffsetError) -> Self {
-        Self::TodoZst
+        Self
     }
 }

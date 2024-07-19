@@ -9,7 +9,7 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-class FixedDecimalLimitError;
+struct FixedDecimalLimitError;
 class FixedDecimalParseError;
 class FixedDecimalRoundingIncrement;
 class FixedDecimalRoundingMode;
