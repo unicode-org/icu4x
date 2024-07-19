@@ -72,7 +72,7 @@ pub mod ffi {
         feature = "icu_timezone",
         feature = "icu_calendar"
     ))]
-    pub enum ParseError {
+    pub enum CalendarParseError {
         Unknown = 0x00,
         InvalidSyntax = 0x01,
         OutOfRange = 0x02,
@@ -212,7 +212,7 @@ impl From<icu_calendar::DateError> for CalendarError {
     feature = "icu_timezone",
     feature = "icu_calendar"
 ))]
-impl From<icu_calendar::ParseError> for ParseError {
+impl From<icu_calendar::ParseError> for CalendarParseError {
     fn from(e: icu_calendar::ParseError) -> Self {
         match e {
             icu_calendar::ParseError::Syntax(_) => Self::InvalidSyntax,

@@ -10,7 +10,7 @@ pub mod ffi {
     use core::fmt::Write;
 
     use crate::calendar::ffi::Calendar;
-    use crate::errors::ffi::{CalendarError, ParseError};
+    use crate::errors::ffi::{CalendarError, CalendarParseError};
 
     use tinystr::TinyAsciiStr;
 
@@ -48,7 +48,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::Date::try_iso_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::calendar::Date::from_str, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
-        pub fn from_string(v: &DiplomatStr) -> Result<Box<IsoDate>, ParseError> {
+        pub fn from_string(v: &DiplomatStr) -> Result<Box<IsoDate>, CalendarParseError> {
             Ok(Box::new(IsoDate(icu_calendar::Date::try_iso_from_utf8(v)?)))
         }
 
@@ -211,7 +211,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::Date::from_str, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
         #[cfg(feature = "compiled_data")]
-        pub fn from_string(v: &DiplomatStr) -> Result<Box<Date>, ParseError> {
+        pub fn from_string(v: &DiplomatStr) -> Result<Box<Date>, CalendarParseError> {
             Ok(Box::new(Date(
                 icu_calendar::Date::try_from_utf8(v)?.wrap_calendar_in_arc(),
             )))
