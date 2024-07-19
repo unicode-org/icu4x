@@ -28,7 +28,7 @@ pub mod linux_prefs {
 
     impl FromStr for LocaleCategory {
         type Err = ();
-    
+
         fn from_str(s: &str) -> Result<Self, Self::Err> {
             match s {
                 "LC_CTYPE" => Ok(LocaleCategory::LcCTYPE),
