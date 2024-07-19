@@ -171,6 +171,8 @@ where
     }
 }
 
+// Note: This is implemented manually because the auto-derive adds an extra
+// bound `R: Default` which we don't need.
 impl<R> Default for NeoOptions<R>
 where
     R: DateTimeMarkers,
