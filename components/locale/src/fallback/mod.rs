@@ -10,7 +10,7 @@ use icu_locale_core::subtags::*;
 use icu_provider::prelude::*;
 
 #[doc(inline)]
-pub use icu_provider::_internal::{LocaleFallbackConfig, LocaleFallbackPriority};
+pub use icu_provider::fallback::{LocaleFallbackConfig, LocaleFallbackPriority};
 
 mod algorithms;
 
