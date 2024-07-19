@@ -87,7 +87,7 @@ impl PercentFormatter {
     /// use writeable::Writeable;
     ///
     /// let locale = locale!("en-US").into();
-    /// let fmt = PercentFormatter::try_new(&locale).unwrap();
+    /// let fmt = PercentFormatter::try_new(&locale, Default::default()).unwrap();
     /// let value = "12345.67".parse().unwrap();
     /// let formatted_percent = fmt.format_percent(&value);
     /// let mut sink = String::new();

@@ -4,6 +4,9 @@
 
 use fixed_decimal::{FixedDecimal, Sign};
 
+use crate::alloc::borrow::ToOwned;
+use crate::alloc::string::ToString;
+use alloc::string::String;
 use writeable::Writeable;
 
 use crate::dimension::provider::percent::PercentEssentialsV1;
