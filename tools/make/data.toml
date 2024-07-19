@@ -88,7 +88,7 @@ if array_is_empty ${@}
 else
     exec --fail-on-error cargo build --manifest-path tools/make/bakeddata/Cargo.toml
     for component in ${@}
-        exec --fail-on-error target/debug/make-bakeddata "${component}"
+        exec --fail-on-error target/debug/bakeddata "${component}"
     end
 end
 '''

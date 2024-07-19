@@ -51,7 +51,7 @@ fn main() -> eyre::Result<()> {
     }
 
     let out_root =
-        std::path::Path::new(std::env!("CARGO_MANIFEST_DIR")).join("../../provider/source");
+        std::path::Path::new(std::env!("CARGO_MANIFEST_DIR")).join("../../../provider/source");
 
     fn cached(resource: &str) -> Result<PathBuf, DataError> {
         let root = std::env::var_os("ICU4X_SOURCE_CACHE")

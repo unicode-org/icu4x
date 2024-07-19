@@ -5,7 +5,7 @@
 use std::path::Path;
 
 fn main() -> std::io::Result<()> {
-    let capi = Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/../../ffi/capi"));
+    let capi = Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../ffi/capi"));
 
     let Some(lang) = std::env::args().nth(1) else {
         panic!("Missing argument <language>");

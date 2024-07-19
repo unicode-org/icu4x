@@ -6,7 +6,7 @@
 name = "icu__component__data"
 description = "Data for the icu__component_ crate"
 license = "Unicode-3.0"
-version = "_version_"
+_version_
 
 authors.workspace = true
 categories.workspace = true
