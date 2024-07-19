@@ -8,8 +8,8 @@ pub mod ffi {
     use alloc::boxed::Box;
 
     use crate::{
-        data_struct::ffi::DataStruct, errors::ffi::DataError, fixed_decimal::ffi::FixedDecimal,
-        locale_core::ffi::Locale, provider::ffi::DataProvider,
+        errors::ffi::DataError, fixed_decimal::ffi::FixedDecimal, locale_core::ffi::Locale,
+        provider::ffi::DataProvider,
     };
 
     use writeable::Writeable;
@@ -61,16 +61,58 @@ pub mod ffi {
             )?)))
         }
 
-        /// Creates a new [`FixedDecimalFormatter`] from preconstructed locale data in the form of an [`DataStruct`]
-        /// constructed from `DataStruct::create_decimal_symbols()`.
-        ///
-        /// The contents of the data struct will be consumed: if you wish to use the struct again it will have to be reconstructed.
-        /// Passing a consumed struct to this method will return an error.
-        #[diplomat::attr(any(dart, js), disable)]
-        pub fn create_with_decimal_symbols_v1(
-            data_struct: &DataStruct,
+        /// Creates a new [`FixedDecimalFormatter`] from preconstructed locale data.
+        #[diplomat::rust_link(icu::decimal::provider::DecimalSymbolsV1, Struct)]
+        #[allow(clippy::too_many_arguments)]
+        pub fn create_with_manual_data(
+            plus_sign_prefix: &DiplomatStr,
+            plus_sign_suffix: &DiplomatStr,
+            minus_sign_prefix: &DiplomatStr,
+            minus_sign_suffix: &DiplomatStr,
+            decimal_separator: &DiplomatStr,
+            grouping_separator: &DiplomatStr,
+            primary_group_size: u8,
+            secondary_group_size: u8,
+            min_group_size: u8,
+            digits: &[DiplomatChar],
             grouping_strategy: FixedDecimalGroupingStrategy,
         ) -> Result<Box<FixedDecimalFormatter>, DataError> {
+            use alloc::borrow::Cow;
+            fn str_to_cow(s: &diplomat_runtime::DiplomatStr) -> Cow<'static, str> {
+                if s.is_empty() {
+                    Cow::default()
+                } else {
+                    Cow::Owned(alloc::string::String::from_utf8_lossy(s).into_owned())
+                }
+            }
+
+            use icu_decimal::provider::{
+                AffixesV1, DecimalSymbolsV1, DecimalSymbolsV1Marker, GroupingSizesV1,
+            };
+            let mut new_digits = ['\0'; 10];
+            for (old, new) in digits
+                .iter()
+                .copied()
+                .chain(core::iter::repeat(char::REPLACEMENT_CHARACTER as u32))
+                .zip(new_digits.iter_mut())
+            {
+                *new = char::from_u32(old).unwrap_or(char::REPLACEMENT_CHARACTER);
+            }
+            let digits = new_digits;
+            let plus_sign_affixes = AffixesV1 {
+                prefix: str_to_cow(plus_sign_prefix),
+                suffix: str_to_cow(plus_sign_suffix),
+            };
+            let minus_sign_affixes = AffixesV1 {
+                prefix: str_to_cow(minus_sign_prefix),
+                suffix: str_to_cow(minus_sign_suffix),
+            };
+            let grouping_sizes = GroupingSizesV1 {
+                primary: primary_group_size,
+                secondary: secondary_group_size,
+                min_grouping: min_group_size,
+            };
+
             let grouping_strategy = match grouping_strategy {
                 FixedDecimalGroupingStrategy::Auto => icu_decimal::options::GroupingStrategy::Auto,
                 FixedDecimalGroupingStrategy::Never => {
@@ -88,8 +130,17 @@ pub mod ffi {
                     &icu_provider_adapters::any_payload::AnyPayloadProvider::from_any_payload::<
                         icu_decimal::provider::DecimalSymbolsV1Marker,
                     >(
-                        // Note: This clone is free, since cloning AnyPayload is free.
-                        data_struct.0.clone(),
+                        icu_provider::DataPayload::<DecimalSymbolsV1Marker>::from_owned(
+                            DecimalSymbolsV1 {
+                                plus_sign_affixes,
+                                minus_sign_affixes,
+                                decimal_separator: str_to_cow(decimal_separator),
+                                grouping_separator: str_to_cow(grouping_separator),
+                                grouping_sizes,
+                                digits,
+                            },
+                        )
+                        .wrap_into_any_payload(),
                     ),
                     &Default::default(),
                     options,

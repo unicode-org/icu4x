@@ -14,7 +14,7 @@ const provider = DataProvider.compiled();
 
 const format = FixedDecimalFormatter.createWithGroupingStrategy(provider, locale, FixedDecimalGroupingStrategy.Auto);
 
-const decimal = FixedDecimal.fromInteger(1000007);
+const decimal = FixedDecimal.fromNumber(1000007);
 decimal.multiplyPow10(-2);
 
 const result = format.format(decimal);

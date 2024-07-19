@@ -58,14 +58,14 @@ inline diplomat::result<std::unique_ptr<WordSegmenter>, DataError> WordSegmenter
   return result.is_ok ? diplomat::result<std::unique_ptr<WordSegmenter>, DataError>(diplomat::Ok<std::unique_ptr<WordSegmenter>>(std::unique_ptr<WordSegmenter>(WordSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<WordSegmenter>, DataError>(diplomat::Err<DataError>(DataError::FromFFI(result.err)));
 }
 
-inline std::unique_ptr<WordBreakIteratorUtf8> WordSegmenter::segment_utf8(std::string_view input) const {
+inline std::unique_ptr<WordBreakIteratorUtf8> WordSegmenter::segment(std::string_view input) const {
   auto result = diplomat::capi::icu4x_WordSegmenter_segment_utf8_mv1(this->AsFFI(),
     input.data(),
     input.size());
   return std::unique_ptr<WordBreakIteratorUtf8>(WordBreakIteratorUtf8::FromFFI(result));
 }
 
-inline std::unique_ptr<WordBreakIteratorUtf16> WordSegmenter::segment_utf16(std::u16string_view input) const {
+inline std::unique_ptr<WordBreakIteratorUtf16> WordSegmenter::segment16(std::u16string_view input) const {
   auto result = diplomat::capi::icu4x_WordSegmenter_segment_utf16_mv1(this->AsFFI(),
     input.data(),
     input.size());

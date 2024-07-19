@@ -31,9 +31,9 @@ public:
 
   inline static diplomat::result<std::unique_ptr<SentenceSegmenter>, DataError> create(const DataProvider& provider);
 
-  inline std::unique_ptr<SentenceBreakIteratorUtf8> segment_utf8(std::string_view input) const;
+  inline std::unique_ptr<SentenceBreakIteratorUtf8> segment(std::string_view input) const;
 
-  inline std::unique_ptr<SentenceBreakIteratorUtf16> segment_utf16(std::u16string_view input) const;
+  inline std::unique_ptr<SentenceBreakIteratorUtf16> segment16(std::u16string_view input) const;
 
   inline std::unique_ptr<SentenceBreakIteratorLatin1> segment_latin1(diplomat::span<const uint8_t> input) const;
 

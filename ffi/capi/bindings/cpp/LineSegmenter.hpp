@@ -86,14 +86,14 @@ inline diplomat::result<std::unique_ptr<LineSegmenter>, DataError> LineSegmenter
   return result.is_ok ? diplomat::result<std::unique_ptr<LineSegmenter>, DataError>(diplomat::Ok<std::unique_ptr<LineSegmenter>>(std::unique_ptr<LineSegmenter>(LineSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<LineSegmenter>, DataError>(diplomat::Err<DataError>(DataError::FromFFI(result.err)));
 }
 
-inline std::unique_ptr<LineBreakIteratorUtf8> LineSegmenter::segment_utf8(std::string_view input) const {
+inline std::unique_ptr<LineBreakIteratorUtf8> LineSegmenter::segment(std::string_view input) const {
   auto result = diplomat::capi::icu4x_LineSegmenter_segment_utf8_mv1(this->AsFFI(),
     input.data(),
     input.size());
   return std::unique_ptr<LineBreakIteratorUtf8>(LineBreakIteratorUtf8::FromFFI(result));
 }
 
-inline std::unique_ptr<LineBreakIteratorUtf16> LineSegmenter::segment_utf16(std::u16string_view input) const {
+inline std::unique_ptr<LineBreakIteratorUtf16> LineSegmenter::segment16(std::u16string_view input) const {
   auto result = diplomat::capi::icu4x_LineSegmenter_segment_utf16_mv1(this->AsFFI(),
     input.data(),
     input.size());

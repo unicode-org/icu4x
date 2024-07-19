@@ -27,8 +27,6 @@ public:
 
   inline uint8_t get(char32_t ch) const;
 
-  inline uint8_t get32(uint32_t ch) const;
-
   inline const diplomat::capi::CanonicalCombiningClassMap* AsFFI() const;
   inline diplomat::capi::CanonicalCombiningClassMap* AsFFI();
   inline static const CanonicalCombiningClassMap* FromFFI(const diplomat::capi::CanonicalCombiningClassMap* ptr);

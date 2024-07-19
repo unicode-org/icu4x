@@ -42,14 +42,14 @@ inline diplomat::result<std::unique_ptr<GraphemeClusterSegmenter>, DataError> Gr
   return result.is_ok ? diplomat::result<std::unique_ptr<GraphemeClusterSegmenter>, DataError>(diplomat::Ok<std::unique_ptr<GraphemeClusterSegmenter>>(std::unique_ptr<GraphemeClusterSegmenter>(GraphemeClusterSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<GraphemeClusterSegmenter>, DataError>(diplomat::Err<DataError>(DataError::FromFFI(result.err)));
 }
 
-inline std::unique_ptr<GraphemeClusterBreakIteratorUtf8> GraphemeClusterSegmenter::segment_utf8(std::string_view input) const {
+inline std::unique_ptr<GraphemeClusterBreakIteratorUtf8> GraphemeClusterSegmenter::segment(std::string_view input) const {
   auto result = diplomat::capi::icu4x_GraphemeClusterSegmenter_segment_utf8_mv1(this->AsFFI(),
     input.data(),
     input.size());
   return std::unique_ptr<GraphemeClusterBreakIteratorUtf8>(GraphemeClusterBreakIteratorUtf8::FromFFI(result));
 }
 
-inline std::unique_ptr<GraphemeClusterBreakIteratorUtf16> GraphemeClusterSegmenter::segment_utf16(std::u16string_view input) const {
+inline std::unique_ptr<GraphemeClusterBreakIteratorUtf16> GraphemeClusterSegmenter::segment16(std::u16string_view input) const {
   auto result = diplomat::capi::icu4x_GraphemeClusterSegmenter_segment_utf16_mv1(this->AsFFI(),
     input.data(),
     input.size());
