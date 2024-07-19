@@ -171,15 +171,15 @@ where
     }
 }
 
-impl<R> From<()> for NeoOptions<R>
+impl<R> Default for NeoOptions<R>
 where
     R: DateTimeMarkers,
-    R::LengthOption: From<()>,
+    R::LengthOption: Default,
 {
     #[inline]
-    fn from(value: ()) -> Self {
+    fn default() -> Self {
         NeoOptions {
-            length: value.into(),
+            length: Default::default(),
         }
     }
 }

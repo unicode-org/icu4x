@@ -387,16 +387,9 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<CustomTimeZone>
 // Note: `impl NeoGetField<CustomTimeZone> for CustomTimeZone` comes via blanket impl
 
 /// Struct representing the absence of a datetime formatting field.
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Default)]
 #[allow(clippy::exhaustive_structs)] // empty marker struct
 pub struct NeverField;
-
-impl From<()> for NeverField {
-    #[inline]
-    fn from(_: ()) -> Self {
-        NeverField
-    }
-}
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<NeverField> for Date<A> {
     #[inline]
@@ -1106,7 +1099,7 @@ macro_rules! length_option_helper {
         stringify!(NeoSkeletonLength::Medium.into())
     };
     (no) => {
-        stringify!(().into())
+        stringify!(Default::default())
     };
 }
 
@@ -1750,7 +1743,7 @@ impl_zone_marker!(
     ///
     /// let fmt = TypedNeoFormatter::<Gregorian, NeoTimeZoneSpecificShortMarker>::try_new(
     ///     &locale!("en").into(),
-    ///     ().into(),
+    ///     Default::default(),
     /// )
     /// .unwrap();
     ///
@@ -1866,7 +1859,7 @@ impl_zone_marker!(
     ///
     /// let fmt = TypedNeoFormatter::<Gregorian, NeoTimeZoneGenericShortMarker>::try_new(
     ///     &locale!("en").into(),
-    ///     ().into(),
+    ///     Default::default(),
     /// )
     /// .unwrap();
     ///
