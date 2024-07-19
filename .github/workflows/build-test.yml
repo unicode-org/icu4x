@@ -73,6 +73,25 @@ jobs:
     - name: Check
       run: cargo make ci-job-msrv-${{ matrix.behavior }}
 
+  # Check build for binary size benchmark
+  check-wasm-opt:
+    steps:
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+    # Cargo-make boilerplate
+    - name: Install cargo-make
+      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
+      with:
+        tool: cargo-make@0.37.13
+
+    # Job-specific dependencies
+    - name: Install npm tools
+      run: |
+        npm install -g wasm-opt
+    
+    # Actual job
+    - name: Build wasm executables
+      run: cargo make wasm-opt
 
   # ci-job-test
   test:
