@@ -83,7 +83,7 @@ mod tests {
         options: PercentFormatterOptions,
         value: FixedDecimal,
     ) -> String {
-        let default_fmt = PercentFormatter::try_new(&locale, options).unwrap();
+        let default_fmt = PercentFormatter::try_new(locale, options).unwrap();
         let formatted_percent = default_fmt.format_percent(&value);
         let mut sink = String::new();
         formatted_percent.write_to(&mut sink).unwrap();

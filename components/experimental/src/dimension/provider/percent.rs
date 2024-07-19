@@ -34,8 +34,8 @@ pub use crate::provider::Baked;
 /// A struct including the essentials to create a Percent.
 ///
 /// If an `approximate` or `explicit plus` are required, use the negative pattern as explained below:
-/// https://www.unicode.org/reports/tr35/tr35-numbers.html#approximate-number-formatting
-/// https://www.unicode.org/reports/tr35/tr35-numbers.html#explicit-plus-signs
+/// <https://www.unicode.org/reports/tr35/tr35-numbers.html#approximate-number-formatting>
+/// <https://www.unicode.org/reports/tr35/tr35-numbers.html#explicit-plus-signs>
 pub struct PercentEssentialsV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     /// Represents the standard pattern for negative percents.
