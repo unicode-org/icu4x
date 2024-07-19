@@ -12,7 +12,7 @@ use ixdtf::ParserError;
 /// An error returned from parsing an IXDTF string to an `icu_calendar` type.
 #[derive(Debug)]
 #[non_exhaustive]
-pub enum FromStrError {
+pub enum ParseError {
     /// Syntax error in the IXDTF string.
     Syntax(ParserError),
     /// Value is out of range.
@@ -23,13 +23,13 @@ pub enum FromStrError {
     UnknownCalendar,
 }
 
-impl From<RangeError> for FromStrError {
+impl From<RangeError> for ParseError {
     fn from(value: RangeError) -> Self {
         Self::Range(value)
     }
 }
 
-impl From<ParserError> for FromStrError {
+impl From<ParserError> for ParseError {
     fn from(value: ParserError) -> Self {
         Self::Syntax(value)
     }
@@ -37,10 +37,10 @@ impl From<ParserError> for FromStrError {
 
 impl AnyCalendar {
     #[cfg(feature = "compiled_data")]
-    fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, FromStrError> {
+    fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, ParseError> {
         let calendar_id = ixdtf_record.calendar.unwrap_or(b"iso");
         let calendar_kind = crate::AnyCalendarKind::get_for_bcp47_bytes(calendar_id)
-            .ok_or(FromStrError::UnknownCalendar)?;
+            .ok_or(ParseError::UnknownCalendar)?;
         let calendar = AnyCalendar::new(calendar_kind);
         Ok(calendar)
     }
@@ -67,7 +67,7 @@ impl Date<Iso> {
     /// );
     /// assert_eq!(date.day_of_month().0, 17);
     /// ```
-    pub fn try_iso_from_str(ixdtf_str: &str) -> Result<Self, FromStrError> {
+    pub fn try_iso_from_str(ixdtf_str: &str) -> Result<Self, ParseError> {
         Self::try_iso_from_utf8(ixdtf_str.as_bytes())
     }
 
@@ -76,20 +76,20 @@ impl Date<Iso> {
     /// See [`Self::try_iso_from_str()`].
     ///
     /// ✨ *Enabled with the `ixdtf` Cargo feature.*
-    pub fn try_iso_from_utf8(ixdtf_str: &[u8]) -> Result<Self, FromStrError> {
+    pub fn try_iso_from_utf8(ixdtf_str: &[u8]) -> Result<Self, ParseError> {
         let ixdtf_record = IxdtfParser::from_utf8(ixdtf_str).parse()?;
         Self::try_from_ixdtf_record(&ixdtf_record)
     }
 
-    fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, FromStrError> {
-        let date_record = ixdtf_record.date.ok_or(FromStrError::MissingFields)?;
+    fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, ParseError> {
+        let date_record = ixdtf_record.date.ok_or(ParseError::MissingFields)?;
         let date = Self::try_new_iso_date(date_record.year, date_record.month, date_record.day)?;
         Ok(date)
     }
 }
 
 impl FromStr for Date<Iso> {
-    type Err = FromStrError;
+    type Err = ParseError;
     fn from_str(ixdtf_str: &str) -> Result<Self, Self::Err> {
         Self::try_iso_from_str(ixdtf_str)
     }
@@ -115,7 +115,7 @@ impl Date<AnyCalendar> {
     /// assert_eq!(date.day_of_month().0, 11);
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn try_from_str(ixdtf_str: &str) -> Result<Self, FromStrError> {
+    pub fn try_from_str(ixdtf_str: &str) -> Result<Self, ParseError> {
         Self::try_from_utf8(ixdtf_str.as_bytes())
     }
 
@@ -125,7 +125,7 @@ impl Date<AnyCalendar> {
     ///
     /// See [`Self::try_from_str()`].
     #[cfg(feature = "compiled_data")]
-    pub fn try_from_utf8(ixdtf_str: &[u8]) -> Result<Self, FromStrError> {
+    pub fn try_from_utf8(ixdtf_str: &[u8]) -> Result<Self, ParseError> {
         let ixdtf_record = IxdtfParser::from_utf8(ixdtf_str).parse()?;
         let iso_date = Date::<Iso>::try_from_ixdtf_record(&ixdtf_record)?;
         let calendar = AnyCalendar::try_from_ixdtf_record(&ixdtf_record)?;
@@ -136,7 +136,7 @@ impl Date<AnyCalendar> {
 
 #[cfg(feature = "compiled_data")]
 impl FromStr for Date<AnyCalendar> {
-    type Err = FromStrError;
+    type Err = ParseError;
     fn from_str(ixdtf_str: &str) -> Result<Self, Self::Err> {
         Self::try_from_str(ixdtf_str)
     }
@@ -161,7 +161,7 @@ impl Time {
     /// assert_eq!(time.second.number(), 17);
     /// assert_eq!(time.nanosecond.number(), 45000000);
     /// ```
-    pub fn try_from_str(ixdtf_str: &str) -> Result<Self, FromStrError> {
+    pub fn try_from_str(ixdtf_str: &str) -> Result<Self, ParseError> {
         Self::try_from_utf8(ixdtf_str.as_bytes())
     }
 
@@ -170,13 +170,13 @@ impl Time {
     /// ✨ *Enabled with the `ixdtf` Cargo feature.*
     ///
     /// See [`Self::try_from_str()`].
-    pub fn try_from_utf8(ixdtf_str: &[u8]) -> Result<Self, FromStrError> {
+    pub fn try_from_utf8(ixdtf_str: &[u8]) -> Result<Self, ParseError> {
         let ixdtf_record = IxdtfParser::from_utf8(ixdtf_str).parse_time()?;
         Self::try_from_ixdtf_record(&ixdtf_record)
     }
 
-    fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, FromStrError> {
-        let time_record = ixdtf_record.time.ok_or(FromStrError::MissingFields)?;
+    fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, ParseError> {
+        let time_record = ixdtf_record.time.ok_or(ParseError::MissingFields)?;
         let time = Self::try_new(
             time_record.hour,
             time_record.minute,
@@ -188,7 +188,7 @@ impl Time {
 }
 
 impl FromStr for Time {
-    type Err = FromStrError;
+    type Err = ParseError;
     fn from_str(ixdtf_str: &str) -> Result<Self, Self::Err> {
         Self::try_from_str(ixdtf_str)
     }
@@ -220,7 +220,7 @@ impl DateTime<Iso> {
     /// assert_eq!(datetime.time.second.number(), 17);
     /// assert_eq!(datetime.time.nanosecond.number(), 45000000);
     /// ```
-    pub fn try_iso_from_str(ixdtf_str: &str) -> Result<Self, FromStrError> {
+    pub fn try_iso_from_str(ixdtf_str: &str) -> Result<Self, ParseError> {
         Self::try_iso_from_utf8(ixdtf_str.as_bytes())
     }
 
@@ -229,12 +229,12 @@ impl DateTime<Iso> {
     /// ✨ *Enabled with the `ixdtf` Cargo feature.*
     ///
     /// See [`Self::try_iso_from_str()`].
-    pub fn try_iso_from_utf8(ixdtf_str: &[u8]) -> Result<Self, FromStrError> {
+    pub fn try_iso_from_utf8(ixdtf_str: &[u8]) -> Result<Self, ParseError> {
         let ixdtf_record = IxdtfParser::from_utf8(ixdtf_str).parse()?;
         Self::try_from_ixdtf_record(&ixdtf_record)
     }
 
-    fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, FromStrError> {
+    fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, ParseError> {
         let date = Date::<Iso>::try_from_ixdtf_record(ixdtf_record)?;
         let time = Time::try_from_ixdtf_record(ixdtf_record)?;
         Ok(Self::new(date, time))
@@ -242,7 +242,7 @@ impl DateTime<Iso> {
 }
 
 impl FromStr for DateTime<Iso> {
-    type Err = FromStrError;
+    type Err = ParseError;
     fn from_str(ixdtf_str: &str) -> Result<Self, Self::Err> {
         Self::try_iso_from_str(ixdtf_str)
     }
@@ -273,7 +273,7 @@ impl DateTime<AnyCalendar> {
     /// assert_eq!(datetime.time.nanosecond.number(), 45000000);
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn try_from_str(ixdtf_str: &str) -> Result<Self, FromStrError> {
+    pub fn try_from_str(ixdtf_str: &str) -> Result<Self, ParseError> {
         Self::try_from_utf8(ixdtf_str.as_bytes())
     }
 
@@ -283,7 +283,7 @@ impl DateTime<AnyCalendar> {
     ///
     /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
     #[cfg(feature = "compiled_data")]
-    pub fn try_from_utf8(ixdtf_str: &[u8]) -> Result<Self, FromStrError> {
+    pub fn try_from_utf8(ixdtf_str: &[u8]) -> Result<Self, ParseError> {
         let ixdtf_record = IxdtfParser::from_utf8(ixdtf_str).parse()?;
         let iso_datetime = DateTime::<Iso>::try_from_ixdtf_record(&ixdtf_record)?;
         let calendar = AnyCalendar::try_from_ixdtf_record(&ixdtf_record)?;
@@ -294,7 +294,7 @@ impl DateTime<AnyCalendar> {
 
 #[cfg(feature = "compiled_data")]
 impl FromStr for DateTime<AnyCalendar> {
-    type Err = FromStrError;
+    type Err = ParseError;
     fn from_str(ixdtf_str: &str) -> Result<Self, Self::Err> {
         Self::try_from_str(ixdtf_str)
     }

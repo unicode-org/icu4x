@@ -7,7 +7,7 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::errors::ffi::{CalendarError, CalendarFromStrError};
+    use crate::errors::ffi::{CalendarError, ParseError};
 
     #[diplomat::opaque]
     /// An ICU4X Time object representing a time in terms of hour, minute, second, nanosecond
@@ -43,7 +43,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::Time::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::calendar::Time::from_str, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor)]
-        pub fn from_string(v: &DiplomatStr) -> Result<Box<Time>, CalendarFromStrError> {
+        pub fn from_string(v: &DiplomatStr) -> Result<Box<Time>, ParseError> {
             Ok(Box::new(Time(icu_calendar::Time::try_from_utf8(v)?)))
         }
 
