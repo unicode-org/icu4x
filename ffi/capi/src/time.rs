@@ -41,6 +41,7 @@ pub mod ffi {
         /// Creates a new [`Time`] from an IXDTF string.
         #[diplomat::rust_link(icu_calendar::Time::try_from_str, FnInStruct)]
         #[diplomat::rust_link(icu_calendar::Time::try_from_utf8, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu_calendar::Time::from_str, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_string")]
         pub fn create_from_string(v: &DiplomatStr) -> Result<Box<Time>, FromIxdtfError> {
             Ok(Box::new(Time(icu_calendar::Time::try_from_utf8(v)?)))
