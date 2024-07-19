@@ -270,7 +270,7 @@ where
             &ExternalLoaderCompiledData,
             locale,
             R::COMPONENTS,
-            options.into(),
+            options,
         )
     }
 
@@ -315,7 +315,7 @@ where
             &ExternalLoaderUnstable(provider),
             locale,
             R::COMPONENTS,
-            options.into(),
+            options,
         )
     }
 }
@@ -437,7 +437,7 @@ where
             &ExternalLoaderCompiledData,
             locale,
             components.into(),
-            options.into(),
+            options,
         )
     }
 
@@ -483,7 +483,7 @@ where
             &ExternalLoaderUnstable(provider),
             locale,
             components.into(),
-            options.into(),
+            options,
         )
     }
 }
@@ -767,7 +767,7 @@ where
             &ExternalLoaderCompiledData,
             locale,
             R::COMPONENTS,
-            options.into(),
+            options,
         )
     }
 
@@ -867,7 +867,7 @@ where
             &ExternalLoaderUnstable(provider),
             locale,
             R::COMPONENTS,
-            options.into(),
+            options,
         )
     }
 }
@@ -1032,7 +1032,7 @@ where
             &ExternalLoaderCompiledData,
             locale,
             components.into(),
-            options.into(),
+            options,
         )
     }
 
@@ -1133,7 +1133,7 @@ where
             &ExternalLoaderUnstable(provider),
             locale,
             components.into(),
-            options.into(),
+            options,
         )
     }
 }
