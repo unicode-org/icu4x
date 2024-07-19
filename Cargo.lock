@@ -1008,7 +1008,6 @@ dependencies = [
  "icu_provider_fs",
  "icu_segmenter",
  "icu_timezone",
- "ixdtf",
  "libc_alloc",
  "log",
  "serde",
