@@ -16,6 +16,8 @@ use tinystr::TinyStr8;
 #[derive(PartialEq, Debug, Deserialize)]
 pub(crate) struct Symbols {
     // This list is not comprehensive; add more fields when needed
+    #[serde(rename = "approximatelySign")]
+    pub(crate) approximately_sign: String,
     pub(crate) decimal: String,
     pub(crate) group: String,
     #[serde(rename = "minusSign")]

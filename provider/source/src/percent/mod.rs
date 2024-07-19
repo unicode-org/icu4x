@@ -10,6 +10,8 @@ use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 
 use icu::experimental::dimension::provider::percent::*;
+use icu_pattern::DoublePlaceholder;
+use icu_pattern::DoublePlaceholderPattern;
 use icu_pattern::Pattern;
 use icu_pattern::SinglePlaceholder;
 use icu_pattern::SinglePlaceholderPattern;
@@ -70,8 +72,12 @@ fn extract_percent_essentials<'data>(
         .get(&tinystr!(8, "latn"))
         .ok_or_else(|| DataError::custom("Could not find the percent symbol"))?;
 
-    let percent_sign = symbols.percent_sign.to_owned();
-    let standard_pattern = &percent_patterns.standard.to_owned();
+    let localized_approximately_sign = symbols.approximately_sign.to_owned();
+    let localized_minus_sign = symbols.minus_sign.to_owned();
+    let localized_percent_sign = symbols.percent_sign.to_owned();
+    let localized_plus_sign = symbols.plus_sign.to_owned();
+
+    let standard_pattern = percent_patterns.standard.to_owned();
 
     // If the standard_pattern includes a `;` character,
     // there is both a positive and negative pattern to consider.
@@ -85,20 +91,130 @@ fn extract_percent_essentials<'data>(
                 .next()
                 .ok_or_else(|| DataError::custom("Could not parse negative pattern."))?;
             Ok(PercentEssentialsV1 {
-                positive_pattern: create_pattern(positive_pattern, &percent_sign)?,
-                negative_pattern: create_pattern(negative_pattern, &percent_sign)?,
+                positive_pattern: create_positive_pattern(
+                    positive_pattern,
+                    &localized_percent_sign,
+                )?,
+                negative_pattern: create_negative_pattern(
+                    negative_pattern,
+                    &localized_percent_sign,
+                )?,
+                approximately_sign: localized_approximately_sign.into(),
+                minus_sign: localized_minus_sign.into(),
+                plus_sign: localized_plus_sign.into(),
             })
         }
-        false => Ok(PercentEssentialsV1 {
-            positive_pattern: create_pattern(standard_pattern, &percent_sign)?,
-            negative_pattern: create_pattern(standard_pattern, &percent_sign)?,
+        false => Ok({
+            // When there is no explicit negative subpattern,
+            // an implicit negative subpattern is formed from the positive pattern with a prefixed "-"
+            // Ex: "#,##0%" -> "-#,##0%" || "% #,##0" -> "-% #,##0"
+            let negative_pattern = match standard_pattern.contains('-') {
+                false => String::new() + "-" + &standard_pattern,
+                true => standard_pattern.clone(),
+            };
+            PercentEssentialsV1 {
+                positive_pattern: create_positive_pattern(
+                    &standard_pattern,
+                    &localized_percent_sign,
+                )?,
+                negative_pattern: create_negative_pattern(
+                    &negative_pattern,
+                    &localized_percent_sign,
+                )?,
+                approximately_sign: localized_approximately_sign.into(),
+                minus_sign: localized_minus_sign.into(),
+                plus_sign: localized_plus_sign.into(),
+            }
         }),
     }
 }
 
-fn create_pattern<'a>(
+/// Used to create a percent pattern for negative, approximate, or explicit plus.
+fn create_negative_pattern<'a>(
     pattern: &str,
-    percent_sign: &str,
+    localized_percent_sign: &str,
+) -> Result<Pattern<DoublePlaceholder, Cow<'a, str>>, DataError> {
+    // While all locales use the `%`, some include non-breaking spaces.
+    // Hence using the literal `%` char here.
+    let percent_pattern_index = pattern.find('%').unwrap();
+    let first_num_pattern_index = pattern.find(['0', '#']).unwrap();
+    let last_num_pattern_index = pattern.rfind(['0', '#']).unwrap();
+    let sign_pattern_index = pattern.rfind(['-']).unwrap();
+
+    // Grab all the indexes
+    let mut symbol_indexes = vec![
+        sign_pattern_index,
+        percent_pattern_index,
+        first_num_pattern_index,
+    ];
+    // Sort them to get the correct order
+    symbol_indexes.sort();
+
+    // For the prefix, if the first character is a percent sign, then we have no prefix.
+    // If the percent sign is first, then all characters before the percent sign are the prefix.
+    // If the percent comes after, then all characters between final number and the percent sign are the prefix.
+    let percent_prefix = if percent_pattern_index == 0 {
+        ""
+    } else if percent_pattern_index < first_num_pattern_index
+        || percent_pattern_index < sign_pattern_index
+    {
+        let next_symbol_index = std::cmp::min(first_num_pattern_index, sign_pattern_index);
+        &pattern[0..next_symbol_index]
+    } else {
+        &pattern[last_num_pattern_index + 1..percent_pattern_index]
+    };
+
+    // Index of the percent symbol inside the symbols vec.
+    // Not to be confused with the index inside the pattern.
+    let precent_symbol_index = symbol_indexes
+        .iter()
+        .position(|&i| i == percent_pattern_index)
+        .unwrap();
+
+    // If there are more symbols following the percent, then get all chars between.
+    // Otherwise we're the last symbol, so get all chars until end of string
+    let percent_suffix: &str = match symbol_indexes.len() > precent_symbol_index + 1 {
+        true => {
+            let next_symbol_index = symbol_indexes.get(precent_symbol_index + 1).unwrap();
+            &pattern[percent_pattern_index + 1..next_symbol_index.to_owned()]
+        }
+        _ => &pattern[(percent_pattern_index + 1)..],
+    };
+
+    // Combine the prefix, localized sign, and suffix to create the localized symbol.
+    let percent_symbol = String::new() + percent_prefix + localized_percent_sign + percent_suffix;
+
+    let pattern_vec: Vec<&str> = symbol_indexes
+        .into_iter()
+        .map(|index| {
+            if index == percent_pattern_index {
+                return percent_symbol.as_str();
+            }
+            if index == sign_pattern_index {
+                return "{1}";
+            }
+
+            "{0}"
+        })
+        .collect();
+
+    // Example: "#,##0%", "#,##0 %", "%#,##0", "% #,##0"
+    let pattern = pattern_vec
+        .concat()
+        .parse::<DoublePlaceholderPattern<_>>()
+        .map_err(|e| DataError::custom("Could not parse pattern").with_display_context(&e))?;
+
+    let pattern: Pattern<DoublePlaceholder, Cow<'_, str>> =
+        Pattern::from_store_unchecked(Cow::Owned(pattern.take_store()));
+
+    Ok(pattern)
+}
+
+/// Used only for positive percents.
+/// If you need an approximate, explicit plus, or negative percent, use the negative pattern.
+fn create_positive_pattern<'a>(
+    pattern: &str,
+    localized_percent_sign: &str,
 ) -> Result<Pattern<SinglePlaceholder, Cow<'a, str>>, DataError> {
     // While all locales use the `%`, some include non-breaking spaces.
     // Hence using the literal `%` char here.
@@ -126,7 +242,7 @@ fn create_pattern<'a>(
         &pattern[percent_sign_index + 1..]
     };
 
-    let percent_symbol = String::new() + percent_prefix + percent_sign + percent_suffix;
+    let percent_symbol = String::new() + percent_prefix + localized_percent_sign + percent_suffix;
 
     // Example: "#,##0%", "#,##0 %", "%#,##0", "% #,##0"
     let pattern = match percent_sign_index > first_num_index {
@@ -160,7 +276,10 @@ fn test_basic() {
     // en Should resemble "#,##0%"
     let en_pattern = en.payload.get().to_owned();
     assert_writeable_eq!(en_pattern.positive_pattern.interpolate(["123"]), "123%");
-    assert_writeable_eq!(en_pattern.negative_pattern.interpolate(["-123"]), "-123%");
+    assert_writeable_eq!(
+        en_pattern.negative_pattern.interpolate(["123", "+"]),
+        "+123%"
+    );
     assert_eq!(en_pattern.positive_pattern.take_store(), "\u{1}%");
 
     let fr: DataResponse<PercentEssentialsV1Marker> = provider
@@ -177,8 +296,8 @@ fn test_basic() {
         "234\u{a0}%"
     );
     assert_writeable_eq!(
-        fr_pattern.negative_pattern.interpolate(["-234"]),
-        "-234\u{a0}%"
+        fr_pattern.negative_pattern.interpolate(["234", "+"]),
+        "+234\u{a0}%"
     );
     assert_eq!(fr_pattern.positive_pattern.take_store(), "\u{1}\u{a0}%");
 
@@ -192,7 +311,10 @@ fn test_basic() {
     // tr Should resemble "%#,##0"
     let tr_pattern = tr.payload.get().to_owned();
     assert_writeable_eq!(tr_pattern.positive_pattern.interpolate(["345"]), "%345");
-    assert_writeable_eq!(tr_pattern.negative_pattern.interpolate(["-345"]), "%-345");
+    assert_writeable_eq!(
+        tr_pattern.negative_pattern.interpolate(["345", "+"]),
+        "+%345"
+    );
     assert_eq!(tr_pattern.positive_pattern.take_store(), "\u{2}%");
 
     let ar_eg: DataResponse<PercentEssentialsV1Marker> = provider
@@ -209,11 +331,30 @@ fn test_basic() {
         "456\u{200e}%\u{200e}"
     );
     assert_writeable_eq!(
-        ar_eg_pattern.negative_pattern.interpolate(["-456"]),
-        "-456\u{200e}%\u{200e}"
+        ar_eg_pattern.negative_pattern.interpolate(["456", "+"]),
+        "+456\u{200e}%\u{200e}"
     );
     assert_eq!(
         ar_eg_pattern.positive_pattern.take_store(),
         "\u{1}\u{200e}%\u{200e}"
     );
+}
+
+#[test]
+fn blo_test() {
+    use writeable::assert_writeable_eq;
+
+    let blo_positive_pattern = "% #,#0";
+    let pattern = create_positive_pattern(&blo_positive_pattern, "%").unwrap();
+
+    assert_writeable_eq!(pattern.interpolate(["123"]), "% 123");
+    assert_eq!(pattern.take_store().into_owned(), "\u{4}%\u{a0}");
+
+    let blo_negative_pattern = "% -#,#0";
+    let pattern = create_negative_pattern(&blo_negative_pattern, "%").unwrap();
+
+    assert_writeable_eq!(pattern.interpolate(["123", "+"]), "% +123");
+    assert_writeable_eq!(pattern.interpolate(["123", "-"]), "% -123");
+    assert_writeable_eq!(pattern.interpolate(["123", "~"]), "% ~123");
+    assert_eq!(pattern.take_store().into_owned(), "\t\u{8}%\u{a0}");
 }
