@@ -2,48 +2,46 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-pub mod linux_locales_prefs {
+pub mod linux_prefs {
     use std::{
         borrow::Cow,
-        collections::{HashMap, HashSet},
+        collections::HashMap,
         ffi::CStr,
         ptr,
     };
 
     use libc::{setlocale, LC_ALL, LC_TIME};
 
-    fn fetch_locale_settings() -> HashMap<String, String> {
+    pub fn fetch_locale_settings() -> HashMap<String, String> {
         let mut locale_map = HashMap::new();
-
-        // Thread safety is ensured by fallbacking to the default locale of `linux` which is `C`
+    
         unsafe {
-            let locales_ptr = setlocale(LC_ALL, ptr::null());
-            let locales = CStr::from_ptr(locales_ptr);
-
-            if let Ok(locales_str) = locales.to_str() {
-                let locales_slice = locales_str.split(';');
-                for locale in locales_slice {
-                    let mut locale_parts = locale.split('=');
-                    if let (Some(key), Some(value)) = (locale_parts.next(), locale_parts.next()) {
-                        locale_map.insert(key.to_string(), value.to_string());
+            // Thread safety is ensured by fallbacking to the default locale of `linux` which is `C`
+            let locales_ptr = libc::setlocale(LC_ALL, ptr::null());
+            if locales_ptr.is_null() {
+                locale_map.insert(String::from("LC_ALL"), String::from("C"));
+                return locale_map;
+            }
+    
+            let locales_cstr = CStr::from_ptr(locales_ptr);
+            if let Ok(locales_str) = locales_cstr.to_str() {
+                let locale_pairs = locales_str.split(';');
+                if locale_pairs.clone().count() == 1 {
+                    locale_map.insert(String::from("LC_ALL"), String::from("C"));
+                } else {
+                    for locale_pair in locale_pairs {
+                        let mut parts = locale_pair.split('=');
+                        if let (Some(key), Some(value)) = (parts.next(), parts.next()) {
+                            locale_map.insert(key.to_string(), value.to_string());
+                        }
                     }
                 }
             } else {
                 locale_map.insert(String::from("LC_ALL"), String::from("C"));
             }
         }
-
+    
         locale_map
-    }
-
-    pub fn get_locales_linux() -> Vec<String> {
-        let mut unique_locales = HashSet::new();
-        let locale_map = fetch_locale_settings();
-        for value in locale_map.values() {
-            unique_locales.insert(value.clone());
-        }
-
-        unique_locales.into_iter().collect()
     }
 
     pub fn get_system_calendars_linux(
