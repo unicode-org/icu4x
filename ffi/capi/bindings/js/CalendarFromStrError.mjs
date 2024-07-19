@@ -3,7 +3,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 // Base enumerator definition
-/** Additional information: [1](https://docs.rs/icu/latest/icu/calendar/struct.FromStrError.html)
+/** Additional information: [1](https://docs.rs/icu/latest/icu/calendar/enum.FromStrError.html)
 */
 export class CalendarFromStrError {
     #value = undefined;
