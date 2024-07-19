@@ -13,7 +13,7 @@ use std::io::{self, BufWriter, Cursor, Write};
 use std::path::PathBuf;
 use zip::ZipArchive;
 
-include!("../../globs.rs.data");
+include!("../globs.rs.data");
 include!("../../../../provider/source/tests/locales.rs.data");
 
 #[derive(Parser)]
@@ -51,7 +51,7 @@ fn main() -> eyre::Result<()> {
     }
 
     let out_root =
-        std::path::Path::new(std::env!("CARGO_MANIFEST_DIR")).join("../../provider/source");
+        std::path::Path::new(std::env!("CARGO_MANIFEST_DIR")).join("../../../provider/source");
 
     fn cached(resource: &str) -> Result<PathBuf, DataError> {
         let root = std::env::var_os("ICU4X_SOURCE_CACHE")

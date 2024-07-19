@@ -182,8 +182,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "bakeddata-scripts"
-version = "1.5.0"
+name = "bakeddata"
+version = "0.0.0"
 dependencies = [
  "crlify",
  "icu",
@@ -567,6 +567,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "depcheck"
+version = "0.0.0"
+
+[[package]]
 name = "deranged"
 version = "0.3.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -606,6 +610,18 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.66",
+]
+
+[[package]]
+name = "diplomat-coverage"
+version = "0.0.0"
+dependencies = [
+ "diplomat_core",
+ "elsa",
+ "lazy_static",
+ "rustdoc-types",
+ "serde_json",
+ "syn-inline-mod",
 ]
 
 [[package]]
@@ -686,6 +702,22 @@ name = "downcast-rs"
 version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "75b325c5dbd37f80359721ad39aca5a29fb04c89279657cffdda8736d0c0b9d2"
+
+[[package]]
+name = "download-repo-sources"
+version = "0.0.0"
+dependencies = [
+ "clap",
+ "crlify",
+ "eyre",
+ "icu_locale_core",
+ "icu_provider",
+ "icu_provider_source",
+ "log",
+ "simple_logger",
+ "ureq",
+ "zip",
+]
 
 [[package]]
 name = "ecma402_traits"
@@ -1173,10 +1205,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_depcheck"
-version = "0.0.0"
-
-[[package]]
 name = "icu_experimental"
 version = "0.1.0"
 dependencies = [
@@ -1218,18 +1246,6 @@ version = "0.1.0"
 dependencies = [
  "icu_locale",
  "icu_provider_baked",
-]
-
-[[package]]
-name = "icu_ffi_coverage"
-version = "0.0.0"
-dependencies = [
- "diplomat_core",
- "elsa",
- "lazy_static",
- "rustdoc-types",
- "serde_json",
- "syn-inline-mod",
 ]
 
 [[package]]
@@ -1632,22 +1648,6 @@ version = "1.5.0"
 dependencies = [
  "icu_locale",
  "icu_provider_baked",
-]
-
-[[package]]
-name = "icu_testdata_scripts"
-version = "0.0.0"
-dependencies = [
- "clap",
- "crlify",
- "eyre",
- "icu_locale_core",
- "icu_provider",
- "icu_provider_source",
- "log",
- "simple_logger",
- "ureq",
- "zip",
 ]
 
 [[package]]
