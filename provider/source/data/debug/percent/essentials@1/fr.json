@@ -1,4 +1,15 @@
 {
+  "negative_pattern": [
+    {
+      "Placeholder": "Place1"
+    },
+    {
+      "Placeholder": "Place0"
+    },
+    {
+      "Literal": " %"
+    }
+  ],
   "positive_pattern": [
     {
       "Placeholder": "Singleton"
@@ -7,12 +18,7 @@
       "Literal": " %"
     }
   ],
-  "negative_pattern": [
-    {
-      "Placeholder": "Singleton"
-    },
-    {
-      "Literal": " %"
-    }
-  ]
+  "approximately_sign": "≃",
+  "minus_sign": "-",
+  "plus_sign": "+"
 }
