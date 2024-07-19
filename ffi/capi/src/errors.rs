@@ -221,13 +221,13 @@ impl From<icu_calendar::DateError> for CalendarError {
     feature = "icu_timezone",
     feature = "icu_calendar"
 ))]
-impl From<icu_calendar::FromIxdtfError> for FromIxdtfError {
-    fn from(e: icu_calendar::FromIxdtfError) -> Self {
+impl From<icu_calendar::FromStrError> for FromIxdtfError {
+    fn from(e: icu_calendar::FromStrError) -> Self {
         match e {
-            icu_calendar::FromIxdtfError::Ixdtf(_) => Self::InvalidSyntax,
-            icu_calendar::FromIxdtfError::MissingFields => Self::MissingFields,
-            icu_calendar::FromIxdtfError::Range(_) => Self::OutOfRange,
-            icu_calendar::FromIxdtfError::UnknownCalendar => Self::UnknownCalendar,
+            icu_calendar::FromStrError::Syntax(_) => Self::InvalidSyntax,
+            icu_calendar::FromStrError::MissingFields => Self::MissingFields,
+            icu_calendar::FromStrError::Range(_) => Self::OutOfRange,
+            icu_calendar::FromStrError::UnknownCalendar => Self::UnknownCalendar,
             _ => Self::Unknown,
         }
     }

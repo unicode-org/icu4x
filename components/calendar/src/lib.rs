@@ -154,7 +154,7 @@ pub mod week {
 }
 
 #[cfg(feature = "ixdtf")]
-pub use crate::ixdtf::FromIxdtfError;
+pub use crate::ixdtf::FromStrError;
 #[doc(no_inline)]
 pub use any_calendar::{AnyCalendar, AnyCalendarKind};
 pub use calendar::Calendar;
