@@ -177,7 +177,12 @@ impl Time {
 
     fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, FromStrError> {
         let time_record = ixdtf_record.time.ok_or(FromStrError::MissingFields)?;
-        let time = Self::try_new(time_record.hour, time_record.minute, time_record.second, time_record.nanosecond)?;
+        let time = Self::try_new(
+            time_record.hour,
+            time_record.minute,
+            time_record.second,
+            time_record.nanosecond,
+        )?;
         Ok(time)
     }
 }
