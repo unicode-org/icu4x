@@ -130,7 +130,7 @@ fn datetime_benches(c: &mut Criterion) {
                             TypedNeoFormatter::<Gregorian, _>::try_new_with_components(
                                 &locale.into(),
                                 neo_components,
-                                length,
+                                length.into(),
                             )
                             .expect("Failed to create TypedNeoFormatter.")
                         };
