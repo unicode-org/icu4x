@@ -11,7 +11,7 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 #include "CalendarError.hpp"
-#include "ParseError.hpp"
+#include "CalendarParseError.hpp"
 
 
 namespace diplomat {
@@ -21,7 +21,7 @@ namespace capi {
     typedef struct icu4x_Time_create_mv1_result {union {diplomat::capi::Time* ok; diplomat::capi::CalendarError err;}; bool is_ok;} icu4x_Time_create_mv1_result;
     icu4x_Time_create_mv1_result icu4x_Time_create_mv1(uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
     
-    typedef struct icu4x_Time_from_string_mv1_result {union {diplomat::capi::Time* ok; diplomat::capi::ParseError err;}; bool is_ok;} icu4x_Time_from_string_mv1_result;
+    typedef struct icu4x_Time_from_string_mv1_result {union {diplomat::capi::Time* ok; diplomat::capi::CalendarParseError err;}; bool is_ok;} icu4x_Time_from_string_mv1_result;
     icu4x_Time_from_string_mv1_result icu4x_Time_from_string_mv1(const char* v_data, size_t v_len);
     
     typedef struct icu4x_Time_midnight_mv1_result {union {diplomat::capi::Time* ok; diplomat::capi::CalendarError err;}; bool is_ok;} icu4x_Time_midnight_mv1_result;
@@ -50,10 +50,10 @@ inline diplomat::result<std::unique_ptr<Time>, CalendarError> Time::create(uint8
   return result.is_ok ? diplomat::result<std::unique_ptr<Time>, CalendarError>(diplomat::Ok<std::unique_ptr<Time>>(std::unique_ptr<Time>(Time::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<Time>, CalendarError>(diplomat::Err<CalendarError>(CalendarError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<Time>, ParseError> Time::from_string(std::string_view v) {
+inline diplomat::result<std::unique_ptr<Time>, CalendarParseError> Time::from_string(std::string_view v) {
   auto result = diplomat::capi::icu4x_Time_from_string_mv1(v.data(),
     v.size());
-  return result.is_ok ? diplomat::result<std::unique_ptr<Time>, ParseError>(diplomat::Ok<std::unique_ptr<Time>>(std::unique_ptr<Time>(Time::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<Time>, ParseError>(diplomat::Err<ParseError>(ParseError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<Time>, CalendarParseError>(diplomat::Ok<std::unique_ptr<Time>>(std::unique_ptr<Time>(Time::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<Time>, CalendarParseError>(diplomat::Err<CalendarParseError>(CalendarParseError::FromFFI(result.err)));
 }
 
 inline diplomat::result<std::unique_ptr<Time>, CalendarError> Time::midnight() {

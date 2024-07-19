@@ -228,6 +228,8 @@ export { LanguageDisplay } from "./LanguageDisplay"
 
 export { CalendarError } from "./CalendarError"
 
+export { CalendarParseError } from "./CalendarParseError"
+
 export { DataError } from "./DataError"
 
 export { Error } from "./Error"
@@ -235,8 +237,6 @@ export { Error } from "./Error"
 export { FixedDecimalParseError } from "./FixedDecimalParseError"
 
 export { LocaleParseError } from "./LocaleParseError"
-
-export { ParseError } from "./ParseError"
 
 export { LocaleFallbackPriority } from "./LocaleFallbackPriority"
 

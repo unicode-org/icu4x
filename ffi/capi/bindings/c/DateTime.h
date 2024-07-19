@@ -9,10 +9,10 @@
 
 #include "Calendar.d.h"
 #include "CalendarError.d.h"
+#include "CalendarParseError.d.h"
 #include "Date.d.h"
 #include "IsoDateTime.d.h"
 #include "IsoWeekday.d.h"
-#include "ParseError.d.h"
 #include "Time.d.h"
 #include "WeekCalculator.d.h"
 #include "WeekOf.d.h"
@@ -32,7 +32,7 @@ icu4x_DateTime_from_codes_in_calendar_mv1_result icu4x_DateTime_from_codes_in_ca
 
 DateTime* icu4x_DateTime_from_date_and_time_mv1(const Date* date, const Time* time);
 
-typedef struct icu4x_DateTime_from_string_mv1_result {union {DateTime* ok; ParseError err;}; bool is_ok;} icu4x_DateTime_from_string_mv1_result;
+typedef struct icu4x_DateTime_from_string_mv1_result {union {DateTime* ok; CalendarParseError err;}; bool is_ok;} icu4x_DateTime_from_string_mv1_result;
 icu4x_DateTime_from_string_mv1_result icu4x_DateTime_from_string_mv1(const char* v_data, size_t v_len);
 
 Date* icu4x_DateTime_date_mv1(const DateTime* self);

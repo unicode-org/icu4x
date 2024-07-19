@@ -41,14 +41,14 @@ final class IsoDate implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `try_iso_from_str`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_iso_from_str) for more information.
   ///
-  /// Throws [ParseError] on failure.
+  /// Throws [CalendarParseError] on failure.
   factory IsoDate.fromString(String v) {
     final temp = ffi2.Arena();
     final vView = v.utf8View;
     final result = _icu4x_IsoDate_from_string_mv1(vView.allocIn(temp), vView.length);
     temp.releaseAll();
     if (!result.isOk) {
-      throw ParseError.values[result.union.err];
+      throw CalendarParseError.values[result.union.err];
     }
     return IsoDate._fromFfi(result.union.ok, []);
   }

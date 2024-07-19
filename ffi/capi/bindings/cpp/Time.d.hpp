@@ -10,7 +10,7 @@
 #include "diplomat_runtime.hpp"
 
 class CalendarError;
-class ParseError;
+class CalendarParseError;
 
 
 namespace diplomat {
@@ -24,7 +24,7 @@ public:
 
   inline static diplomat::result<std::unique_ptr<Time>, CalendarError> create(uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
 
-  inline static diplomat::result<std::unique_ptr<Time>, ParseError> from_string(std::string_view v);
+  inline static diplomat::result<std::unique_ptr<Time>, CalendarParseError> from_string(std::string_view v);
 
   inline static diplomat::result<std::unique_ptr<Time>, CalendarError> midnight();
 

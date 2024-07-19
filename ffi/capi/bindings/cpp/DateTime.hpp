@@ -12,10 +12,10 @@
 #include "diplomat_runtime.hpp"
 #include "Calendar.hpp"
 #include "CalendarError.hpp"
+#include "CalendarParseError.hpp"
 #include "Date.hpp"
 #include "IsoDateTime.hpp"
 #include "IsoWeekday.hpp"
-#include "ParseError.hpp"
 #include "Time.hpp"
 #include "WeekCalculator.hpp"
 #include "WeekOf.hpp"
@@ -33,7 +33,7 @@ namespace capi {
     
     diplomat::capi::DateTime* icu4x_DateTime_from_date_and_time_mv1(const diplomat::capi::Date* date, const diplomat::capi::Time* time);
     
-    typedef struct icu4x_DateTime_from_string_mv1_result {union {diplomat::capi::DateTime* ok; diplomat::capi::ParseError err;}; bool is_ok;} icu4x_DateTime_from_string_mv1_result;
+    typedef struct icu4x_DateTime_from_string_mv1_result {union {diplomat::capi::DateTime* ok; diplomat::capi::CalendarParseError err;}; bool is_ok;} icu4x_DateTime_from_string_mv1_result;
     icu4x_DateTime_from_string_mv1_result icu4x_DateTime_from_string_mv1(const char* v_data, size_t v_len);
     
     diplomat::capi::Date* icu4x_DateTime_date_mv1(const diplomat::capi::DateTime* self);
@@ -118,10 +118,10 @@ inline std::unique_ptr<DateTime> DateTime::from_date_and_time(const Date& date, 
   return std::unique_ptr<DateTime>(DateTime::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<DateTime>, ParseError> DateTime::from_string(std::string_view v) {
+inline diplomat::result<std::unique_ptr<DateTime>, CalendarParseError> DateTime::from_string(std::string_view v) {
   auto result = diplomat::capi::icu4x_DateTime_from_string_mv1(v.data(),
     v.size());
-  return result.is_ok ? diplomat::result<std::unique_ptr<DateTime>, ParseError>(diplomat::Ok<std::unique_ptr<DateTime>>(std::unique_ptr<DateTime>(DateTime::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<DateTime>, ParseError>(diplomat::Err<ParseError>(ParseError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<DateTime>, CalendarParseError>(diplomat::Ok<std::unique_ptr<DateTime>>(std::unique_ptr<DateTime>(DateTime::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<DateTime>, CalendarParseError>(diplomat::Err<CalendarParseError>(CalendarParseError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<Date> DateTime::date() const {

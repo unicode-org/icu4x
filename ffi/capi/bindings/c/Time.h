@@ -8,7 +8,7 @@
 #include "diplomat_runtime.h"
 
 #include "CalendarError.d.h"
-#include "ParseError.d.h"
+#include "CalendarParseError.d.h"
 
 #include "Time.d.h"
 
@@ -20,7 +20,7 @@
 typedef struct icu4x_Time_create_mv1_result {union {Time* ok; CalendarError err;}; bool is_ok;} icu4x_Time_create_mv1_result;
 icu4x_Time_create_mv1_result icu4x_Time_create_mv1(uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
 
-typedef struct icu4x_Time_from_string_mv1_result {union {Time* ok; ParseError err;}; bool is_ok;} icu4x_Time_from_string_mv1_result;
+typedef struct icu4x_Time_from_string_mv1_result {union {Time* ok; CalendarParseError err;}; bool is_ok;} icu4x_Time_from_string_mv1_result;
 icu4x_Time_from_string_mv1_result icu4x_Time_from_string_mv1(const char* v_data, size_t v_len);
 
 typedef struct icu4x_Time_midnight_mv1_result {union {Time* ok; CalendarError err;}; bool is_ok;} icu4x_Time_midnight_mv1_result;

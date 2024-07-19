@@ -12,10 +12,10 @@
 #include "diplomat_runtime.hpp"
 #include "Calendar.hpp"
 #include "CalendarError.hpp"
+#include "CalendarParseError.hpp"
 #include "DateTime.hpp"
 #include "IsoDate.hpp"
 #include "IsoWeekday.hpp"
-#include "ParseError.hpp"
 #include "Time.hpp"
 #include "WeekCalculator.hpp"
 #include "WeekOf.hpp"
@@ -30,7 +30,7 @@ namespace capi {
     
     diplomat::capi::IsoDateTime* icu4x_IsoDateTime_from_date_and_time_mv1(const diplomat::capi::IsoDate* date, const diplomat::capi::Time* time);
     
-    typedef struct icu4x_IsoDateTime_from_string_mv1_result {union {diplomat::capi::IsoDateTime* ok; diplomat::capi::ParseError err;}; bool is_ok;} icu4x_IsoDateTime_from_string_mv1_result;
+    typedef struct icu4x_IsoDateTime_from_string_mv1_result {union {diplomat::capi::IsoDateTime* ok; diplomat::capi::CalendarParseError err;}; bool is_ok;} icu4x_IsoDateTime_from_string_mv1_result;
     icu4x_IsoDateTime_from_string_mv1_result icu4x_IsoDateTime_from_string_mv1(const char* v_data, size_t v_len);
     
     diplomat::capi::IsoDateTime* icu4x_IsoDateTime_local_unix_epoch_mv1();
@@ -101,10 +101,10 @@ inline std::unique_ptr<IsoDateTime> IsoDateTime::from_date_and_time(const IsoDat
   return std::unique_ptr<IsoDateTime>(IsoDateTime::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<IsoDateTime>, ParseError> IsoDateTime::from_string(std::string_view v) {
+inline diplomat::result<std::unique_ptr<IsoDateTime>, CalendarParseError> IsoDateTime::from_string(std::string_view v) {
   auto result = diplomat::capi::icu4x_IsoDateTime_from_string_mv1(v.data(),
     v.size());
-  return result.is_ok ? diplomat::result<std::unique_ptr<IsoDateTime>, ParseError>(diplomat::Ok<std::unique_ptr<IsoDateTime>>(std::unique_ptr<IsoDateTime>(IsoDateTime::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<IsoDateTime>, ParseError>(diplomat::Err<ParseError>(ParseError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<IsoDateTime>, CalendarParseError>(diplomat::Ok<std::unique_ptr<IsoDateTime>>(std::unique_ptr<IsoDateTime>(IsoDateTime::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<IsoDateTime>, CalendarParseError>(diplomat::Err<CalendarParseError>(CalendarParseError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<IsoDateTime> IsoDateTime::local_unix_epoch() {

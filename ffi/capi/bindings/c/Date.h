@@ -9,9 +9,9 @@
 
 #include "Calendar.d.h"
 #include "CalendarError.d.h"
+#include "CalendarParseError.d.h"
 #include "IsoDate.d.h"
 #include "IsoWeekday.d.h"
-#include "ParseError.d.h"
 #include "WeekCalculator.d.h"
 #include "WeekOf.d.h"
 
@@ -28,7 +28,7 @@ icu4x_Date_from_iso_in_calendar_mv1_result icu4x_Date_from_iso_in_calendar_mv1(i
 typedef struct icu4x_Date_from_codes_in_calendar_mv1_result {union {Date* ok; CalendarError err;}; bool is_ok;} icu4x_Date_from_codes_in_calendar_mv1_result;
 icu4x_Date_from_codes_in_calendar_mv1_result icu4x_Date_from_codes_in_calendar_mv1(const char* era_code_data, size_t era_code_len, int32_t year, const char* month_code_data, size_t month_code_len, uint8_t day, const Calendar* calendar);
 
-typedef struct icu4x_Date_from_string_mv1_result {union {Date* ok; ParseError err;}; bool is_ok;} icu4x_Date_from_string_mv1_result;
+typedef struct icu4x_Date_from_string_mv1_result {union {Date* ok; CalendarParseError err;}; bool is_ok;} icu4x_Date_from_string_mv1_result;
 icu4x_Date_from_string_mv1_result icu4x_Date_from_string_mv1(const char* v_data, size_t v_len);
 
 Date* icu4x_Date_to_calendar_mv1(const Date* self, const Calendar* calendar);

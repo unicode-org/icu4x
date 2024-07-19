@@ -1,5 +1,5 @@
-#ifndef ParseError_H
-#define ParseError_H
+#ifndef CalendarParseError_H
+#define CalendarParseError_H
 
 #include <stdio.h>
 #include <stdint.h>
@@ -8,7 +8,7 @@
 #include "diplomat_runtime.h"
 
 
-#include "ParseError.d.h"
+#include "CalendarParseError.d.h"
 
 
 
@@ -20,4 +20,4 @@
 
 
 
-#endif // ParseError_H
+#endif // CalendarParseError_H

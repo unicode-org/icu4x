@@ -5,7 +5,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 // Base enumerator definition
 /** Additional information: [1](https://docs.rs/icu/latest/icu/calendar/enum.ParseError.html)
 */
-export class ParseError {
+export class CalendarParseError {
     #value = undefined;
 
     static values = new Map([
@@ -16,17 +16,17 @@ export class ParseError {
         ["UnknownCalendar", 4]
     ]);
     constructor(value) {
-        if (value instanceof ParseError) {
+        if (value instanceof CalendarParseError) {
             this.#value = value.value;
             return;
         }
 
-        if (ParseError.values.has(value)) {
+        if (CalendarParseError.values.has(value)) {
             this.#value = value;
             return;
         }
 
-        throw TypeError(value + " is not a ParseError and does not correspond to any of its enumerator values.");
+        throw TypeError(value + " is not a CalendarParseError and does not correspond to any of its enumerator values.");
     }
 
     get value() {
@@ -34,18 +34,18 @@ export class ParseError {
     }
 
     get ffiValue() {
-        return ParseError.values.get(this.#value);
+        return CalendarParseError.values.get(this.#value);
     }
 
-    static Unknown = new ParseError("Unknown");
+    static Unknown = new CalendarParseError("Unknown");
 
-    static InvalidSyntax = new ParseError("InvalidSyntax");
+    static InvalidSyntax = new CalendarParseError("InvalidSyntax");
 
-    static OutOfRange = new ParseError("OutOfRange");
+    static OutOfRange = new CalendarParseError("OutOfRange");
 
-    static MissingFields = new ParseError("MissingFields");
+    static MissingFields = new CalendarParseError("MissingFields");
 
-    static UnknownCalendar = new ParseError("UnknownCalendar");
+    static UnknownCalendar = new CalendarParseError("UnknownCalendar");
 
 
     

@@ -17,8 +17,8 @@ namespace diplomat::capi { struct WeekCalculator; }
 class WeekCalculator;
 struct WeekOf;
 class CalendarError;
+class CalendarParseError;
 class IsoWeekday;
-class ParseError;
 
 
 namespace diplomat {
@@ -34,7 +34,7 @@ public:
 
   inline static diplomat::result<std::unique_ptr<Date>, CalendarError> from_codes_in_calendar(std::string_view era_code, int32_t year, std::string_view month_code, uint8_t day, const Calendar& calendar);
 
-  inline static diplomat::result<std::unique_ptr<Date>, ParseError> from_string(std::string_view v);
+  inline static diplomat::result<std::unique_ptr<Date>, CalendarParseError> from_string(std::string_view v);
 
   inline std::unique_ptr<Date> to_calendar(const Calendar& calendar) const;
 
