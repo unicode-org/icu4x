@@ -1067,8 +1067,9 @@ mod tests {
         use icu_calendar::Date;
 
         let locale = "en-u-ca-japanese".parse().unwrap();
-        let dtf = NeoFormatter::<NeoAutoDateMarker>::try_new(&locale, NeoSkeletonLength::Medium.into())
-            .expect("DateTimeFormat construction succeeds");
+        let dtf =
+            NeoFormatter::<NeoAutoDateMarker>::try_new(&locale, NeoSkeletonLength::Medium.into())
+                .expect("DateTimeFormat construction succeeds");
 
         let date = Date::try_new_gregorian_date(1800, 9, 1).expect("Failed to construct Date.");
         let date = date

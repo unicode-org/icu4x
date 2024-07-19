@@ -247,10 +247,7 @@ where
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn try_new(
-        locale: &DataLocale,
-        options: NeoOptions<R>,
-    ) -> Result<Self, LoadError>
+    pub fn try_new(locale: &DataLocale, options: NeoOptions<R>) -> Result<Self, LoadError>
     where
         crate::provider::Baked: Sized
             // Date formatting markers
