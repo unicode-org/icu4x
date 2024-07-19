@@ -726,6 +726,7 @@ dependencies = [
 name = "env_preferences"
 version = "1.5.0"
 dependencies = [
+ "cfg-if",
  "core-foundation-sys",
  "libc",
  "windows",

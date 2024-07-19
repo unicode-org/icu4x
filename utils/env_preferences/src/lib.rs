@@ -4,11 +4,19 @@
 
 //! Retrieval of system locales and preferences.
 
-#[cfg(target_os = "linux")]
-pub mod linux;
+use cfg_if::cfg_if;
 
-#[cfg(target_os = "macos")]
-pub mod apple;
-
-#[cfg(target_os = "windows")]
-mod windows;
+cfg_if! {
+    if #[cfg(target_os = "linux")] {
+        mod linux;
+        pub use linux::*;
+    } else if #[cfg(target_os = "macos")] {
+        mod apple;
+        pub use apple::*;
+    } else if #[cfg(target_os = "windows")] {
+        mod windows;
+        pub use windows::*;
+    } else {
+        compile_error!("Unsupported operating system");
+    }
+}
