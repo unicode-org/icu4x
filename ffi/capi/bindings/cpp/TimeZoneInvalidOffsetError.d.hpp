@@ -12,29 +12,13 @@
 
 namespace diplomat {
 namespace capi {
-    enum TimeZoneInvalidOffsetError {
-      TimeZoneInvalidOffsetError_TodoZst = 0,
-    };
+    
 } // namespace capi
 } // namespace
 
-class TimeZoneInvalidOffsetError {
-public:
-  enum Value {
-    TodoZst = 0,
-  };
 
-  TimeZoneInvalidOffsetError() = default;
-  // Implicit conversions between enum and ::Value
-  constexpr TimeZoneInvalidOffsetError(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+struct TimeZoneInvalidOffsetError {
 
-  inline diplomat::capi::TimeZoneInvalidOffsetError AsFFI() const;
-  inline static TimeZoneInvalidOffsetError FromFFI(diplomat::capi::TimeZoneInvalidOffsetError c_enum);
-private:
-    Value value;
 };
 
 

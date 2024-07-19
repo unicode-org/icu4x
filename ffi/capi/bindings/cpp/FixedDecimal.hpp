@@ -30,16 +30,16 @@ namespace capi {
     
     diplomat::capi::FixedDecimal* icu4x_FixedDecimal_from_uint64_mv1(uint64_t v);
     
-    typedef struct icu4x_FixedDecimal_from_double_with_integer_precision_mv1_result {union {diplomat::capi::FixedDecimal* ok; diplomat::capi::FixedDecimalLimitError err;}; bool is_ok;} icu4x_FixedDecimal_from_double_with_integer_precision_mv1_result;
+    typedef struct icu4x_FixedDecimal_from_double_with_integer_precision_mv1_result {union {diplomat::capi::FixedDecimal* ok; }; bool is_ok;} icu4x_FixedDecimal_from_double_with_integer_precision_mv1_result;
     icu4x_FixedDecimal_from_double_with_integer_precision_mv1_result icu4x_FixedDecimal_from_double_with_integer_precision_mv1(double f);
     
-    typedef struct icu4x_FixedDecimal_from_double_with_lower_magnitude_mv1_result {union {diplomat::capi::FixedDecimal* ok; diplomat::capi::FixedDecimalLimitError err;}; bool is_ok;} icu4x_FixedDecimal_from_double_with_lower_magnitude_mv1_result;
+    typedef struct icu4x_FixedDecimal_from_double_with_lower_magnitude_mv1_result {union {diplomat::capi::FixedDecimal* ok; }; bool is_ok;} icu4x_FixedDecimal_from_double_with_lower_magnitude_mv1_result;
     icu4x_FixedDecimal_from_double_with_lower_magnitude_mv1_result icu4x_FixedDecimal_from_double_with_lower_magnitude_mv1(double f, int16_t magnitude);
     
-    typedef struct icu4x_FixedDecimal_from_double_with_significant_digits_mv1_result {union {diplomat::capi::FixedDecimal* ok; diplomat::capi::FixedDecimalLimitError err;}; bool is_ok;} icu4x_FixedDecimal_from_double_with_significant_digits_mv1_result;
+    typedef struct icu4x_FixedDecimal_from_double_with_significant_digits_mv1_result {union {diplomat::capi::FixedDecimal* ok; }; bool is_ok;} icu4x_FixedDecimal_from_double_with_significant_digits_mv1_result;
     icu4x_FixedDecimal_from_double_with_significant_digits_mv1_result icu4x_FixedDecimal_from_double_with_significant_digits_mv1(double f, uint8_t digits);
     
-    typedef struct icu4x_FixedDecimal_from_double_with_floating_precision_mv1_result {union {diplomat::capi::FixedDecimal* ok; diplomat::capi::FixedDecimalLimitError err;}; bool is_ok;} icu4x_FixedDecimal_from_double_with_floating_precision_mv1_result;
+    typedef struct icu4x_FixedDecimal_from_double_with_floating_precision_mv1_result {union {diplomat::capi::FixedDecimal* ok; }; bool is_ok;} icu4x_FixedDecimal_from_double_with_floating_precision_mv1_result;
     icu4x_FixedDecimal_from_double_with_floating_precision_mv1_result icu4x_FixedDecimal_from_double_with_floating_precision_mv1(double f);
     
     typedef struct icu4x_FixedDecimal_from_string_mv1_result {union {diplomat::capi::FixedDecimal* ok; diplomat::capi::FixedDecimalParseError err;}; bool is_ok;} icu4x_FixedDecimal_from_string_mv1_result;
@@ -123,24 +123,24 @@ inline std::unique_ptr<FixedDecimal> FixedDecimal::from(uint64_t v) {
 
 inline diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError> FixedDecimal::from_double_with_integer_precision(double f) {
   auto result = diplomat::capi::icu4x_FixedDecimal_from_double_with_integer_precision_mv1(f);
-  return result.is_ok ? diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError>(diplomat::Ok<std::unique_ptr<FixedDecimal>>(std::unique_ptr<FixedDecimal>(FixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError>(diplomat::Err<FixedDecimalLimitError>(FixedDecimalLimitError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError>(diplomat::Ok<std::unique_ptr<FixedDecimal>>(std::unique_ptr<FixedDecimal>(FixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError>(diplomat::Err<FixedDecimalLimitError>(FixedDecimalLimitError {}));
 }
 
 inline diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError> FixedDecimal::from_double_with_lower_magnitude(double f, int16_t magnitude) {
   auto result = diplomat::capi::icu4x_FixedDecimal_from_double_with_lower_magnitude_mv1(f,
     magnitude);
-  return result.is_ok ? diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError>(diplomat::Ok<std::unique_ptr<FixedDecimal>>(std::unique_ptr<FixedDecimal>(FixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError>(diplomat::Err<FixedDecimalLimitError>(FixedDecimalLimitError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError>(diplomat::Ok<std::unique_ptr<FixedDecimal>>(std::unique_ptr<FixedDecimal>(FixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError>(diplomat::Err<FixedDecimalLimitError>(FixedDecimalLimitError {}));
 }
 
 inline diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError> FixedDecimal::from_double_with_significant_digits(double f, uint8_t digits) {
   auto result = diplomat::capi::icu4x_FixedDecimal_from_double_with_significant_digits_mv1(f,
     digits);
-  return result.is_ok ? diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError>(diplomat::Ok<std::unique_ptr<FixedDecimal>>(std::unique_ptr<FixedDecimal>(FixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError>(diplomat::Err<FixedDecimalLimitError>(FixedDecimalLimitError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError>(diplomat::Ok<std::unique_ptr<FixedDecimal>>(std::unique_ptr<FixedDecimal>(FixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError>(diplomat::Err<FixedDecimalLimitError>(FixedDecimalLimitError {}));
 }
 
 inline diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError> FixedDecimal::from_double_with_floating_precision(double f) {
   auto result = diplomat::capi::icu4x_FixedDecimal_from_double_with_floating_precision_mv1(f);
-  return result.is_ok ? diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError>(diplomat::Ok<std::unique_ptr<FixedDecimal>>(std::unique_ptr<FixedDecimal>(FixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError>(diplomat::Err<FixedDecimalLimitError>(FixedDecimalLimitError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError>(diplomat::Ok<std::unique_ptr<FixedDecimal>>(std::unique_ptr<FixedDecimal>(FixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalLimitError>(diplomat::Err<FixedDecimalLimitError>(FixedDecimalLimitError {}));
 }
 
 inline diplomat::result<std::unique_ptr<FixedDecimal>, FixedDecimalParseError> FixedDecimal::from_string(std::string_view v) {

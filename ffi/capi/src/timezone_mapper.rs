@@ -50,7 +50,7 @@ pub mod ffi {
             let handle = self.0.as_borrowed();
             let bcp47 = handle
                 .iana_bytes_to_bcp47(value)
-                .ok_or(TimeZoneInvalidIdError::TodoZst)?;
+                .ok_or(TimeZoneInvalidIdError)?;
             let _infallible = bcp47.0.write_to(write);
             Ok(())
         }
@@ -62,9 +62,7 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), TimeZoneInvalidIdError> {
             let handle = self.0.as_borrowed();
-            let iana = handle
-                .normalize_iana(value)
-                .ok_or(TimeZoneInvalidIdError::TodoZst)?;
+            let iana = handle.normalize_iana(value).ok_or(TimeZoneInvalidIdError)?;
             let _infallible = iana.0.write_to(write);
             Ok(())
         }
@@ -81,7 +79,7 @@ pub mod ffi {
             let handle = self.0.as_borrowed();
             let iana = handle
                 .canonicalize_iana(value)
-                .ok_or(TimeZoneInvalidIdError::TodoZst)?;
+                .ok_or(TimeZoneInvalidIdError)?;
             let _infallible = iana.0.write_to(write);
             Ok(())
         }
@@ -101,7 +99,7 @@ pub mod ffi {
                 .and_then(|s| {
                     handle.find_canonical_iana_from_bcp47(icu_timezone::TimeZoneBcp47Id(s))
                 })
-                .ok_or(TimeZoneInvalidIdError::TodoZst)?;
+                .ok_or(TimeZoneInvalidIdError)?;
             let _infallible = iana.write_to(write);
             Ok(())
         }
@@ -168,7 +166,7 @@ pub mod ffi {
             let handle = self.0.as_borrowed();
             let iana = handle
                 .canonicalize_iana(value)
-                .ok_or(TimeZoneInvalidIdError::TodoZst)?;
+                .ok_or(TimeZoneInvalidIdError)?;
             let _infallible = iana.0.write_to(write);
             Ok(())
         }
@@ -187,7 +185,7 @@ pub mod ffi {
                 .ok()
                 .map(icu_timezone::TimeZoneBcp47Id)
                 .and_then(|t| handle.canonical_iana_from_bcp47(t))
-                .ok_or(TimeZoneInvalidIdError::TodoZst)?;
+                .ok_or(TimeZoneInvalidIdError)?;
             let _infallible = iana.write_to(write);
             Ok(())
         }

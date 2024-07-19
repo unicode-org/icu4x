@@ -19,7 +19,7 @@ namespace diplomat {
 namespace capi {
     struct LocaleFallbackConfig {
       diplomat::capi::LocaleFallbackPriority priority;
-      DiplomatStringView extension_key;
+      diplomat::capi::DiplomatStringView extension_key;
       diplomat::capi::LocaleFallbackSupplement fallback_supplement;
     };
 } // namespace capi

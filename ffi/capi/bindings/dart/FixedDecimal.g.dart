@@ -40,7 +40,7 @@ final class FixedDecimal implements ffi.Finalizable {
   factory FixedDecimal.fromDoubleWithLowerMagnitude(double f, int magnitude) {
     final result = _icu4x_FixedDecimal_from_double_with_lower_magnitude_mv1(f, magnitude);
     if (!result.isOk) {
-      throw FixedDecimalLimitError.values[result.union.err];
+      throw FixedDecimalLimitError();
     }
     return FixedDecimal._fromFfi(result.union.ok, []);
   }
@@ -55,7 +55,7 @@ final class FixedDecimal implements ffi.Finalizable {
   factory FixedDecimal.fromDoubleWithSignificantDigits(double f, int digits) {
     final result = _icu4x_FixedDecimal_from_double_with_significant_digits_mv1(f, digits);
     if (!result.isOk) {
-      throw FixedDecimalLimitError.values[result.union.err];
+      throw FixedDecimalLimitError();
     }
     return FixedDecimal._fromFfi(result.union.ok, []);
   }
@@ -71,7 +71,7 @@ final class FixedDecimal implements ffi.Finalizable {
   factory FixedDecimal.fromDoubleWithFloatingPrecision(double f) {
     final result = _icu4x_FixedDecimal_from_double_with_floating_precision_mv1(f);
     if (!result.isOk) {
-      throw FixedDecimalLimitError.values[result.union.err];
+      throw FixedDecimalLimitError();
     }
     return FixedDecimal._fromFfi(result.union.ok, []);
   }
@@ -259,19 +259,19 @@ external void _icu4x_FixedDecimal_destroy_mv1(ffi.Pointer<ffi.Void> self);
 external ffi.Pointer<ffi.Opaque> _icu4x_FixedDecimal_from_int64_mv1(int v);
 
 @meta.ResourceIdentifier('icu4x_FixedDecimal_from_double_with_lower_magnitude_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Double, ffi.Int16)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_from_double_with_lower_magnitude_mv1')
+@ffi.Native<_ResultOpaqueFixedDecimalLimitErrorFfi Function(ffi.Double, ffi.Int16)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_from_double_with_lower_magnitude_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_FixedDecimal_from_double_with_lower_magnitude_mv1(double f, int magnitude);
+external _ResultOpaqueFixedDecimalLimitErrorFfi _icu4x_FixedDecimal_from_double_with_lower_magnitude_mv1(double f, int magnitude);
 
 @meta.ResourceIdentifier('icu4x_FixedDecimal_from_double_with_significant_digits_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Double, ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_from_double_with_significant_digits_mv1')
+@ffi.Native<_ResultOpaqueFixedDecimalLimitErrorFfi Function(ffi.Double, ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_from_double_with_significant_digits_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_FixedDecimal_from_double_with_significant_digits_mv1(double f, int digits);
+external _ResultOpaqueFixedDecimalLimitErrorFfi _icu4x_FixedDecimal_from_double_with_significant_digits_mv1(double f, int digits);
 
 @meta.ResourceIdentifier('icu4x_FixedDecimal_from_double_with_floating_precision_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Double)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_from_double_with_floating_precision_mv1')
+@ffi.Native<_ResultOpaqueFixedDecimalLimitErrorFfi Function(ffi.Double)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_from_double_with_floating_precision_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_FixedDecimal_from_double_with_floating_precision_mv1(double f);
+external _ResultOpaqueFixedDecimalLimitErrorFfi _icu4x_FixedDecimal_from_double_with_floating_precision_mv1(double f);
 
 @meta.ResourceIdentifier('icu4x_FixedDecimal_from_string_mv1')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_from_string_mv1')
