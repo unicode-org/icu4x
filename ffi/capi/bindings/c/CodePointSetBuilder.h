@@ -16,7 +16,7 @@
 
 
 
-CodePointSetBuilder* icu4x_CodePointSetBuilder_create_mv1();
+CodePointSetBuilder* icu4x_CodePointSetBuilder_create_mv1(void);
 
 CodePointSetData* icu4x_CodePointSetBuilder_build_mv1(CodePointSetBuilder* self);
 

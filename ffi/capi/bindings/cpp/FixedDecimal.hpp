@@ -9,13 +9,13 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "FixedDecimalLimitError.hpp"
 #include "FixedDecimalParseError.hpp"
 #include "FixedDecimalRoundingIncrement.hpp"
 #include "FixedDecimalRoundingMode.hpp"
 #include "FixedDecimalSign.hpp"
 #include "FixedDecimalSignDisplay.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace diplomat {

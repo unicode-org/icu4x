@@ -9,7 +9,6 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "Calendar.hpp"
 #include "CalendarError.hpp"
 #include "DateTime.hpp"
@@ -18,6 +17,7 @@
 #include "Time.hpp"
 #include "WeekCalculator.hpp"
 #include "WeekOf.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace diplomat {
@@ -29,7 +29,7 @@ namespace capi {
     
     diplomat::capi::IsoDateTime* icu4x_IsoDateTime_from_date_and_time_mv1(const diplomat::capi::IsoDate* date, const diplomat::capi::Time* time);
     
-    diplomat::capi::IsoDateTime* icu4x_IsoDateTime_local_unix_epoch_mv1();
+    diplomat::capi::IsoDateTime* icu4x_IsoDateTime_local_unix_epoch_mv1(void);
     
     diplomat::capi::IsoDateTime* icu4x_IsoDateTime_from_minutes_since_local_unix_epoch_mv1(int32_t minutes);
     

@@ -9,11 +9,11 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "CodePointRangeIterator.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
 #include "Error.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace diplomat {
@@ -588,7 +588,7 @@ inline diplomat::result<diplomat::result<std::unique_ptr<CodePointSetData>, Erro
   auto result = diplomat::capi::icu4x_CodePointSetData_load_for_ecma262_mv1(provider.AsFFI(),
     property_name.data(),
     property_name.size());
-  return diplomat::Ok<diplomat::result<std::unique_ptr<CodePointSetData>, Error>>(std::move(result.is_ok ? diplomat::result<std::unique_ptr<CodePointSetData>, Error>(diplomat::Ok<std::unique_ptr<CodePointSetData>>(std::unique_ptr<CodePointSetData>(CodePointSetData::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<CodePointSetData>, Error>(diplomat::Err<Error>(Error::FromFFI(result.err)))));
+  return diplomat::Ok<diplomat::result<std::unique_ptr<CodePointSetData>, Error>>(result.is_ok ? diplomat::result<std::unique_ptr<CodePointSetData>, Error>(diplomat::Ok<std::unique_ptr<CodePointSetData>>(std::unique_ptr<CodePointSetData>(CodePointSetData::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<CodePointSetData>, Error>(diplomat::Err<Error>(Error::FromFFI(result.err))));
 }
 
 inline const diplomat::capi::CodePointSetData* CodePointSetData::AsFFI() const {

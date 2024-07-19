@@ -9,8 +9,8 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "CodePointRangeIteratorResult.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace diplomat {

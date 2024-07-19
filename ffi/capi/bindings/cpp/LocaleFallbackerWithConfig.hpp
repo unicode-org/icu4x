@@ -9,9 +9,9 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "Locale.hpp"
 #include "LocaleFallbackIterator.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace diplomat {

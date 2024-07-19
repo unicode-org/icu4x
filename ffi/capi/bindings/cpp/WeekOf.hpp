@@ -9,8 +9,8 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "WeekRelativeUnit.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace diplomat {
@@ -25,15 +25,15 @@ namespace capi {
 
 inline diplomat::capi::WeekOf WeekOf::AsFFI() const {
   return diplomat::capi::WeekOf {
-    .week = week,
-    .unit = unit.AsFFI(),
+    /* .week = */ week,
+    /* .unit = */ unit.AsFFI(),
   };
 }
 
 inline WeekOf WeekOf::FromFFI(diplomat::capi::WeekOf c_struct) {
   return WeekOf {
-    .week = c_struct.week,
-    .unit = WeekRelativeUnit::FromFFI(c_struct.unit),
+    /* .week = */ c_struct.week,
+    /* .unit = */ WeekRelativeUnit::FromFFI(c_struct.unit),
   };
 }
 

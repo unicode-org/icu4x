@@ -9,8 +9,8 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "CalendarError.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace diplomat {
@@ -21,7 +21,7 @@ namespace capi {
     icu4x_Time_create_mv1_result icu4x_Time_create_mv1(uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
     
     typedef struct icu4x_Time_midnight_mv1_result {union {diplomat::capi::Time* ok; diplomat::capi::CalendarError err;}; bool is_ok;} icu4x_Time_midnight_mv1_result;
-    icu4x_Time_midnight_mv1_result icu4x_Time_midnight_mv1();
+    icu4x_Time_midnight_mv1_result icu4x_Time_midnight_mv1(void);
     
     uint8_t icu4x_Time_hour_mv1(const diplomat::capi::Time* self);
     

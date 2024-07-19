@@ -16,7 +16,7 @@ pub mod ffi {
     impl ComposingNormalizer {
         /// Construct a new ComposingNormalizer instance for NFC
         #[diplomat::rust_link(icu::normalizer::ComposingNormalizer::new_nfc, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "nfc")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "nfc")]
         pub fn create_nfc(provider: &DataProvider) -> Result<Box<ComposingNormalizer>, DataError> {
             Ok(Box::new(ComposingNormalizer(call_constructor!(
                 icu_normalizer::ComposingNormalizer::new_nfc [r => Ok(r)],
@@ -28,7 +28,7 @@ pub mod ffi {
 
         /// Construct a new ComposingNormalizer instance for NFKC
         #[diplomat::rust_link(icu::normalizer::ComposingNormalizer::new_nfkc, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "nfkc")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "nfkc")]
         pub fn create_nfkc(provider: &DataProvider) -> Result<Box<ComposingNormalizer>, DataError> {
             Ok(Box::new(ComposingNormalizer(call_constructor!(
                 icu_normalizer::ComposingNormalizer::new_nfkc [r => Ok(r)],
@@ -123,7 +123,7 @@ pub mod ffi {
     impl DecomposingNormalizer {
         /// Construct a new DecomposingNormalizer instance for NFC
         #[diplomat::rust_link(icu::normalizer::DecomposingNormalizer::new_nfd, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "nfd")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "nfd")]
         pub fn create_nfd(
             provider: &DataProvider,
         ) -> Result<Box<DecomposingNormalizer>, DataError> {
@@ -137,7 +137,7 @@ pub mod ffi {
 
         /// Construct a new DecomposingNormalizer instance for NFKC
         #[diplomat::rust_link(icu::normalizer::DecomposingNormalizer::new_nfkd, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "nfkd")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "nfkd")]
         pub fn create_nfkd(
             provider: &DataProvider,
         ) -> Result<Box<DecomposingNormalizer>, DataError> {

@@ -28,7 +28,7 @@ icu4x_IsoDateTime_create_mv1_result icu4x_IsoDateTime_create_mv1(int32_t year, u
 
 IsoDateTime* icu4x_IsoDateTime_from_date_and_time_mv1(const IsoDate* date, const Time* time);
 
-IsoDateTime* icu4x_IsoDateTime_local_unix_epoch_mv1();
+IsoDateTime* icu4x_IsoDateTime_local_unix_epoch_mv1(void);
 
 IsoDateTime* icu4x_IsoDateTime_from_minutes_since_local_unix_epoch_mv1(int32_t minutes);
 

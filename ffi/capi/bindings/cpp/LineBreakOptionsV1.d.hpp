@@ -7,9 +7,9 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "LineBreakStrictness.d.hpp"
 #include "LineBreakWordOption.d.hpp"
+#include "diplomat_runtime.hpp"
 
 class LineBreakStrictness;
 class LineBreakWordOption;

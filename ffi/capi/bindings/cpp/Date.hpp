@@ -9,13 +9,13 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "Calendar.hpp"
 #include "CalendarError.hpp"
 #include "IsoDate.hpp"
 #include "IsoWeekday.hpp"
 #include "WeekCalculator.hpp"
 #include "WeekOf.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace diplomat {

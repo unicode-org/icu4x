@@ -9,10 +9,10 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
 #include "Locale.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace diplomat {

@@ -21,7 +21,7 @@ pub mod ffi {
 
     impl MetazoneCalculator {
         #[diplomat::rust_link(icu::timezone::MetazoneCalculator::new, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
+        #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn create(provider: &DataProvider) -> Result<Box<MetazoneCalculator>, DataError> {
             Ok(Box::new(MetazoneCalculator(call_constructor!(
                 icu_timezone::MetazoneCalculator::new [r => Ok(r)],

@@ -9,10 +9,10 @@
 #include <stdbool.h>
 #include <memory>
 #include <optional>
-#include "diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
 #include "TimeZoneInvalidIdError.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace diplomat {
@@ -50,7 +50,7 @@ inline diplomat::result<diplomat::result<std::string, TimeZoneInvalidIdError>, d
     value.data(),
     value.size(),
     &write);
-  return diplomat::Ok<diplomat::result<std::string, TimeZoneInvalidIdError>>(std::move(result.is_ok ? diplomat::result<std::string, TimeZoneInvalidIdError>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, TimeZoneInvalidIdError>(diplomat::Err<TimeZoneInvalidIdError>(TimeZoneInvalidIdError {}))));
+  return diplomat::Ok<diplomat::result<std::string, TimeZoneInvalidIdError>>(result.is_ok ? diplomat::result<std::string, TimeZoneInvalidIdError>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, TimeZoneInvalidIdError>(diplomat::Err<TimeZoneInvalidIdError>(TimeZoneInvalidIdError {})));
 }
 
 inline diplomat::result<std::string, TimeZoneInvalidIdError> TimeZoneIdMapperWithFastCanonicalization::canonical_iana_from_bcp47(std::string_view value) const {

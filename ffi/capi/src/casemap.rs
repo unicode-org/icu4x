@@ -37,7 +37,7 @@ pub mod ffi {
 
     impl TitlecaseOptionsV1 {
         #[diplomat::rust_link(icu::casemap::titlecase::TitlecaseOptions::default, FnInStruct)]
-        #[diplomat::attr(supports = constructors, constructor)]
+        #[diplomat::attr(*, constructor)]
         #[diplomat::attr(any(cpp, js), rename = "default_options")]
         pub fn default() -> TitlecaseOptionsV1 {
             Self {
@@ -54,7 +54,7 @@ pub mod ffi {
     impl CaseMapper {
         /// Construct a new CaseMapper instance
         #[diplomat::rust_link(icu::casemap::CaseMapper::new, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
+        #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn create(provider: &DataProvider) -> Result<Box<CaseMapper>, DataError> {
             Ok(Box::new(CaseMapper(call_constructor!(
                 icu_casemap::CaseMapper::new [r => Ok(r)],
@@ -212,7 +212,7 @@ pub mod ffi {
         /// Construct a new CaseMapper instance
         #[diplomat::rust_link(icu::casemap::CaseMapCloser::new, FnInStruct)]
         #[diplomat::rust_link(icu::casemap::CaseMapCloser::new_with_mapper, FnInStruct, hidden)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
+        #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn create(provider: &DataProvider) -> Result<Box<CaseMapCloser>, DataError> {
             Ok(Box::new(CaseMapCloser(call_constructor!(
                 icu_casemap::CaseMapCloser::new [r => Ok(r)],
@@ -260,7 +260,7 @@ pub mod ffi {
         /// Construct a new `TitlecaseMapper` instance
         #[diplomat::rust_link(icu::casemap::TitlecaseMapper::new, FnInStruct)]
         #[diplomat::rust_link(icu::casemap::TitlecaseMapper::new_with_mapper, FnInStruct, hidden)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
+        #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn create(provider: &DataProvider) -> Result<Box<TitlecaseMapper>, DataError> {
             Ok(Box::new(TitlecaseMapper(call_constructor!(
                 icu_casemap::TitlecaseMapper::new [r => Ok(r)],
