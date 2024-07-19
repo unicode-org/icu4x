@@ -15,7 +15,7 @@ use ixdtf::ParserError;
 pub enum FromStrError {
     /// Syntax error in the IXDTF string.
     Syntax(ParserError),
-    /// Value is out of range of the `icu_calendar` type.
+    /// Value is out of range.
     Range(RangeError),
     /// The IXDTF is missing fields required for parsing into the chosen type.
     MissingFields,
