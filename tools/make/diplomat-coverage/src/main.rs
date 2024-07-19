@@ -123,7 +123,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                 panic!("Rustdoc build failed with {output:?}");
             }
             let path = PathBuf::from(std::env!("CARGO_MANIFEST_DIR"))
-                .join("../../target/doc")
+                .join("../../../target/doc")
                 .join(krate)
                 .with_extension("json");
             eprintln!("Attempting to load {path:?}");

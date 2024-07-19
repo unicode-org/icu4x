@@ -264,4 +264,4 @@ end
 description = "Run the dependency checker"
 category = "ICU4X Development"
 command = "cargo"
-args = ["run", "--manifest-path", "tools/make/depcheck"]
+args = ["run", "--manifest-path", "tools/make/depcheck/Cargo.toml"]
