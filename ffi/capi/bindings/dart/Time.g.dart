@@ -39,16 +39,16 @@ final class Time implements ffi.Finalizable {
 
   /// Creates a new [`Time`] from an IXDTF string.
   ///
-  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu_calendar/latest/icu_calendar/struct.Time.html#method.try_from_str) for more information.
+  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html#method.try_from_str) for more information.
   ///
-  /// Throws [FromIxdtfError] on failure.
+  /// Throws [CalendarFromStrError] on failure.
   factory Time.fromString(String v) {
     final temp = ffi2.Arena();
     final vView = v.utf8View;
-    final result = _icu4x_Time_create_from_string_mv1(vView.allocIn(temp), vView.length);
+    final result = _icu4x_Time_from_string_mv1(vView.allocIn(temp), vView.length);
     temp.releaseAll();
     if (!result.isOk) {
-      throw FromIxdtfError.values[result.union.err];
+      throw CalendarFromStrError.values[result.union.err];
     }
     return Time._fromFfi(result.union.ok, []);
   }
@@ -109,10 +109,10 @@ external void _icu4x_Time_destroy_mv1(ffi.Pointer<ffi.Void> self);
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_Time_create_mv1(int hour, int minute, int second, int nanosecond);
 
-@meta.ResourceIdentifier('icu4x_Time_create_from_string_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_Time_create_from_string_mv1')
+@meta.ResourceIdentifier('icu4x_Time_from_string_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_Time_from_string_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_Time_create_from_string_mv1(ffi.Pointer<ffi.Uint8> vData, int vLength);
+external _ResultOpaqueInt32 _icu4x_Time_from_string_mv1(ffi.Pointer<ffi.Uint8> vData, int vLength);
 
 @meta.ResourceIdentifier('icu4x_Time_midnight_mv1')
 @ffi.Native<_ResultOpaqueInt32 Function()>(isLeaf: true, symbol: 'icu4x_Time_midnight_mv1')

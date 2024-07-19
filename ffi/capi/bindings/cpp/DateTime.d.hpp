@@ -21,7 +21,7 @@ namespace diplomat::capi { struct WeekCalculator; }
 class WeekCalculator;
 struct WeekOf;
 class CalendarError;
-class FromIxdtfError;
+class CalendarFromStrError;
 class IsoWeekday;
 
 
@@ -40,7 +40,7 @@ public:
 
   inline static std::unique_ptr<DateTime> from_date_and_time(const Date& date, const Time& time);
 
-  inline static diplomat::result<std::unique_ptr<DateTime>, FromIxdtfError> create_from_string(std::string_view v);
+  inline static diplomat::result<std::unique_ptr<DateTime>, CalendarFromStrError> from_string(std::string_view v);
 
   inline std::unique_ptr<Date> date() const;
 

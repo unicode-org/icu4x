@@ -19,7 +19,7 @@ export class IsoDate {
 
     static create(year: number, month: number, day: number): IsoDate;
 
-    static createFromString(v: string): IsoDate;
+    static fromString(v: string): IsoDate;
 
     static unixEpoch(): IsoDate;
 

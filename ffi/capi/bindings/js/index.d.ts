@@ -222,6 +222,8 @@ export { LanguageDisplay } from "./LanguageDisplay"
 
 export { CalendarError } from "./CalendarError"
 
+export { CalendarFromStrError } from "./CalendarFromStrError"
+
 export { DataError } from "./DataError"
 
 export { Error } from "./Error"
@@ -229,8 +231,6 @@ export { Error } from "./Error"
 export { FixedDecimalLimitError } from "./FixedDecimalLimitError"
 
 export { FixedDecimalParseError } from "./FixedDecimalParseError"
-
-export { FromIxdtfError } from "./FromIxdtfError"
 
 export { LocaleParseError } from "./LocaleParseError"
 

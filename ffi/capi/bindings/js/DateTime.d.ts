@@ -25,7 +25,7 @@ export class DateTime {
 
     static fromDateAndTime(date: Date, time: Time): DateTime;
 
-    static createFromString(v: string): DateTime;
+    static fromString(v: string): DateTime;
 
     get date(): Date;
 

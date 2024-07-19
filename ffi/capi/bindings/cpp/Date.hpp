@@ -12,7 +12,7 @@
 #include "diplomat_runtime.hpp"
 #include "Calendar.hpp"
 #include "CalendarError.hpp"
-#include "FromIxdtfError.hpp"
+#include "CalendarFromStrError.hpp"
 #include "IsoDate.hpp"
 #include "IsoWeekday.hpp"
 #include "WeekCalculator.hpp"
@@ -29,8 +29,8 @@ namespace capi {
     typedef struct icu4x_Date_from_codes_in_calendar_mv1_result {union {diplomat::capi::Date* ok; diplomat::capi::CalendarError err;}; bool is_ok;} icu4x_Date_from_codes_in_calendar_mv1_result;
     icu4x_Date_from_codes_in_calendar_mv1_result icu4x_Date_from_codes_in_calendar_mv1(const char* era_code_data, size_t era_code_len, int32_t year, const char* month_code_data, size_t month_code_len, uint8_t day, const diplomat::capi::Calendar* calendar);
     
-    typedef struct icu4x_Date_create_from_string_mv1_result {union {diplomat::capi::Date* ok; diplomat::capi::FromIxdtfError err;}; bool is_ok;} icu4x_Date_create_from_string_mv1_result;
-    icu4x_Date_create_from_string_mv1_result icu4x_Date_create_from_string_mv1(const char* v_data, size_t v_len);
+    typedef struct icu4x_Date_from_string_mv1_result {union {diplomat::capi::Date* ok; diplomat::capi::CalendarFromStrError err;}; bool is_ok;} icu4x_Date_from_string_mv1_result;
+    icu4x_Date_from_string_mv1_result icu4x_Date_from_string_mv1(const char* v_data, size_t v_len);
     
     diplomat::capi::Date* icu4x_Date_to_calendar_mv1(const diplomat::capi::Date* self, const diplomat::capi::Calendar* calendar);
     
@@ -88,10 +88,10 @@ inline diplomat::result<std::unique_ptr<Date>, CalendarError> Date::from_codes_i
   return result.is_ok ? diplomat::result<std::unique_ptr<Date>, CalendarError>(diplomat::Ok<std::unique_ptr<Date>>(std::unique_ptr<Date>(Date::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<Date>, CalendarError>(diplomat::Err<CalendarError>(CalendarError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<Date>, FromIxdtfError> Date::create_from_string(std::string_view v) {
-  auto result = diplomat::capi::icu4x_Date_create_from_string_mv1(v.data(),
+inline diplomat::result<std::unique_ptr<Date>, CalendarFromStrError> Date::from_string(std::string_view v) {
+  auto result = diplomat::capi::icu4x_Date_from_string_mv1(v.data(),
     v.size());
-  return result.is_ok ? diplomat::result<std::unique_ptr<Date>, FromIxdtfError>(diplomat::Ok<std::unique_ptr<Date>>(std::unique_ptr<Date>(Date::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<Date>, FromIxdtfError>(diplomat::Err<FromIxdtfError>(FromIxdtfError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<Date>, CalendarFromStrError>(diplomat::Ok<std::unique_ptr<Date>>(std::unique_ptr<Date>(Date::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<Date>, CalendarFromStrError>(diplomat::Err<CalendarFromStrError>(CalendarFromStrError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<Date> Date::to_calendar(const Calendar& calendar) const {

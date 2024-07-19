@@ -9,8 +9,8 @@
 
 #include "Calendar.d.h"
 #include "CalendarError.d.h"
+#include "CalendarFromStrError.d.h"
 #include "Date.d.h"
-#include "FromIxdtfError.d.h"
 #include "IsoDateTime.d.h"
 #include "IsoWeekday.d.h"
 #include "Time.d.h"
@@ -32,8 +32,8 @@ icu4x_DateTime_from_codes_in_calendar_mv1_result icu4x_DateTime_from_codes_in_ca
 
 DateTime* icu4x_DateTime_from_date_and_time_mv1(const Date* date, const Time* time);
 
-typedef struct icu4x_DateTime_create_from_string_mv1_result {union {DateTime* ok; FromIxdtfError err;}; bool is_ok;} icu4x_DateTime_create_from_string_mv1_result;
-icu4x_DateTime_create_from_string_mv1_result icu4x_DateTime_create_from_string_mv1(const char* v_data, size_t v_len);
+typedef struct icu4x_DateTime_from_string_mv1_result {union {DateTime* ok; CalendarFromStrError err;}; bool is_ok;} icu4x_DateTime_from_string_mv1_result;
+icu4x_DateTime_from_string_mv1_result icu4x_DateTime_from_string_mv1(const char* v_data, size_t v_len);
 
 Date* icu4x_DateTime_date_mv1(const DateTime* self);
 

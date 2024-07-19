@@ -220,6 +220,8 @@ export { LanguageDisplay } from "./LanguageDisplay.mjs"
 
 export { CalendarError } from "./CalendarError.mjs"
 
+export { CalendarFromStrError } from "./CalendarFromStrError.mjs"
+
 export { DataError } from "./DataError.mjs"
 
 export { Error } from "./Error.mjs"
@@ -227,8 +229,6 @@ export { Error } from "./Error.mjs"
 export { FixedDecimalLimitError } from "./FixedDecimalLimitError.mjs"
 
 export { FixedDecimalParseError } from "./FixedDecimalParseError.mjs"
-
-export { FromIxdtfError } from "./FromIxdtfError.mjs"
 
 export { LocaleParseError } from "./LocaleParseError.mjs"
 

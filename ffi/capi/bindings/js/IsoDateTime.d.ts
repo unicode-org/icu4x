@@ -23,7 +23,7 @@ export class IsoDateTime {
 
     static fromDateAndTime(date: IsoDate, time: Time): IsoDateTime;
 
-    static createFromString(v: string): IsoDateTime;
+    static fromString(v: string): IsoDateTime;
 
     static localUnixEpoch(): IsoDateTime;
 

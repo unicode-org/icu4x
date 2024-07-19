@@ -67,14 +67,14 @@ final class DateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.try_from_str) for more information.
   ///
-  /// Throws [FromIxdtfError] on failure.
+  /// Throws [CalendarFromStrError] on failure.
   factory DateTime.fromString(String v) {
     final temp = ffi2.Arena();
     final vView = v.utf8View;
-    final result = _icu4x_DateTime_create_from_string_mv1(vView.allocIn(temp), vView.length);
+    final result = _icu4x_DateTime_from_string_mv1(vView.allocIn(temp), vView.length);
     temp.releaseAll();
     if (!result.isOk) {
-      throw FromIxdtfError.values[result.union.err];
+      throw CalendarFromStrError.values[result.union.err];
     }
     return DateTime._fromFfi(result.union.ok, []);
   }
@@ -278,10 +278,10 @@ external _ResultOpaqueInt32 _icu4x_DateTime_from_codes_in_calendar_mv1(ffi.Point
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_DateTime_from_date_and_time_mv1(ffi.Pointer<ffi.Opaque> date, ffi.Pointer<ffi.Opaque> time);
 
-@meta.ResourceIdentifier('icu4x_DateTime_create_from_string_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_DateTime_create_from_string_mv1')
+@meta.ResourceIdentifier('icu4x_DateTime_from_string_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_DateTime_from_string_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_DateTime_create_from_string_mv1(ffi.Pointer<ffi.Uint8> vData, int vLength);
+external _ResultOpaqueInt32 _icu4x_DateTime_from_string_mv1(ffi.Pointer<ffi.Uint8> vData, int vLength);
 
 @meta.ResourceIdentifier('icu4x_DateTime_date_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateTime_date_mv1')
