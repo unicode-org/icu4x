@@ -10,9 +10,7 @@ use icu_provider::prelude::*;
 use itertools::Itertools;
 use std::{borrow::Cow, collections::HashSet};
 
-use icu::experimental::duration::provider::{
-    DigitalDurationDataV1, DigitalDurationDataV1Marker,
-};
+use icu::experimental::duration::provider::{DigitalDurationDataV1, DigitalDurationDataV1Marker};
 
 /// Strips multiples of the given character from the start of the string.
 /// Returns padding size and modifies `s` to point to the stripped string.
