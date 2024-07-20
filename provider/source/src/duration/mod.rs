@@ -5,7 +5,9 @@
 use crate::cldr_serde;
 use crate::cldr_serde::units::data::DurationUnits;
 use crate::SourceDataProvider;
+use icu::experimental::duration::provider::digital::{HmPadding, HmsPadding, MsPadding};
 use icu_provider::prelude::*;
+use itertools::Itertools;
 use std::{borrow::Cow, collections::HashSet};
 
 use icu::experimental::duration::provider::digital::{
@@ -13,7 +15,7 @@ use icu::experimental::duration::provider::digital::{
 };
 
 /// Strips multiples of the given character from the start of the string.
-/// Returns padding size and modifies s to point to the stripped string.
+/// Returns padding size and modifies `s` to point to the stripped string.
 fn strip_padded_character(s: &mut &str, c: char) -> u8 {
     let mut padding = 0;
     while s.starts_with(c) {
@@ -36,42 +38,84 @@ impl DataProvider<DigitalDurationDataV1Marker> for SourceDataProvider {
             self.cldr()?.units().read_and_parse(&langid, "units.json")?;
         let DurationUnits { hms, hm, ms } = &units_format_data.main.value.units.duration;
 
-        // Find hour padding for hm
+        /// Strips the passed padded characters separated by a uniform separator.
+        /// Returns the padding sizes and the separator.
+        /// Modifies `s` to point to the remaining string.
+        /// Returns an error if the separator is missing or inconsistent.
+        fn strip_separated_padded_characters<'s, const N: usize>(
+            s: &mut &'s str,
+            chars: [char; N],
+        ) -> Result<([u8; N], &'s str), DataError> {
+            let mut padding = [0u8; N];
+            let mut sep = None;
+
+            for (p, (c, next_c)) in padding.iter_mut().zip(chars.iter().tuple_windows()) {
+                *p = strip_padded_character(s, *c);
+                let (curr_sep, rest) = s
+                    .split_once(*next_c)
+                    .ok_or_else(|| DataError::custom("Missing separator in pattern"))?;
+                *s = rest;
+                match sep {
+                    Some(s) => {
+                        if s != curr_sep {
+                            return Err(DataError::custom("Inconsistent separators in pattern"));
+                        }
+                    }
+                    None => sep = Some(curr_sep),
+                }
+            }
+            // Handle last padded character.
+            padding[N - 1] = strip_padded_character(s, chars[N - 1]);
+
+            if !s.is_empty() {
+                return Err(DataError::custom(
+                    "Unexpected characters in duration patterns",
+                ));
+            }
+
+            Ok((
+                padding,
+                sep.ok_or_else(|| DataError::custom("Missing separator in pattern"))?,
+            ))
+        }
+
+        // Find paddings for hm
         let mut hm = hm.pat.as_str();
-        let hm_hour_padding = strip_padded_character(&mut hm, 'h');
-        let (hm_separator, _) = hm
-            .split_once(|c| c == 'm')
-            .ok_or_else(|| DataError::custom("Missing separator in hm pattern"))?;
+        let ([hm_hour_pad, hm_min_pad], hm_sep) =
+            strip_separated_padded_characters(&mut hm, ['h', 'm'])?;
 
-        // Find minute padding for ms
+        // Find paddings for ms
         let mut ms = ms.pat.as_str();
-        let minute_padding = strip_padded_character(&mut ms, 'm');
-        let (ms_separator, _) = ms
-            .split_once(|c| c == 's')
-            .ok_or_else(|| DataError::custom("Missing separator in ms pattern"))?;
+        let ([ms_min_pad, ms_sec_pad], ms_sep) =
+            strip_separated_padded_characters(&mut ms, ['m', 's'])?;
 
-        // Find hour padding for hms
+        // Find paddings for hms
         let mut hms = hms.pat.as_str();
-        let hms_hour_padding = strip_padded_character(&mut hms, 'h');
-        let (hms_separator, _) = hms
-            .split_once(|c| c == 'm')
-            .ok_or_else(|| DataError::custom("Missing separator in hms pattern"))?;
+        let ([hms_hour_pad, hms_min_pad, hms_sec_pad], hms_sep) =
+            strip_separated_padded_characters(&mut hms, ['h', 'm', 's'])?;
 
         // Check that separators are consistent
-        if hm_separator != hms_separator
-            || ms_separator != hms_separator
-            || hm_separator != ms_separator
-        {
+        if hm_sep != hms_sep || ms_sep != hms_sep || hm_sep != ms_sep {
             return Err(DataError::custom(
                 "Inconsistent separators in duration patterns",
             ));
         }
 
         let result = DigitalDurationDataV1 {
-            separator: Cow::Owned(hm_separator.to_string()),
-            hms_hour_padding,
-            hm_hour_padding,
-            minute_padding,
+            separator: Cow::Owned(hm_sep.to_string()),
+            hms_padding: HmsPadding {
+                h: hms_hour_pad,
+                m: hms_min_pad,
+                s: hms_sec_pad,
+            },
+            hm_padding: HmPadding {
+                h: hm_hour_pad,
+                m: hm_min_pad,
+            },
+            ms_padding: MsPadding {
+                m: ms_min_pad,
+                s: ms_sec_pad,
+            },
         };
 
         Ok(DataResponse {

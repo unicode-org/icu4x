@@ -27,13 +27,60 @@ pub struct DigitalDurationDataV1<'data> {
 
     /// The number of digits to pad hours when hour, minutes and seconds must be displayed.
     /// Calculated from the hms pattern.
-    pub hms_hour_padding: u8,
+    pub hms_padding: HmsPadding,
 
     /// The number of digits to pad hours when only hour and minutes must be displayed.
     /// Calculated from the hm pattern.
-    pub hm_hour_padding: u8,
+    pub hm_padding: HmPadding,
 
     /// The number of digits to pad minutes when only minutes and seconds must be displayed.
     /// Calculated from the ms pattern.
-    pub minute_padding: u8,
+    pub ms_padding: MsPadding,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(
+    feature = "datagen", 
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_experimental::duration::provider)
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+/// A struct containing the number of digits to pad hours, minutes, and seconds.
+pub struct HmsPadding {
+    /// Hour padding.
+    pub h: u8,
+    /// Minute padding.
+    pub m: u8,
+    /// Second padding.
+    pub s: u8,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(
+    feature = "datagen", 
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_experimental::duration::provider)
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+/// A struct containing the number of digits to pad minutes, and seconds.
+pub struct MsPadding {
+    /// Minute padding.
+    pub m: u8,
+    /// Second padding.
+    pub s: u8,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(
+    feature = "datagen", 
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_experimental::duration::provider)
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+/// A struct containing the number of digits to pad hours and minutes.
+pub struct HmPadding {
+    /// Hour padding.
+    pub h: u8,
+    /// Minute padding.
+    pub m: u8,
 }
