@@ -345,13 +345,13 @@ fn blo_test() {
     use writeable::assert_writeable_eq;
 
     let blo_positive_pattern = "% #,#0";
-    let pattern = create_positive_pattern(&blo_positive_pattern, '%').unwrap();
+    let pattern = create_positive_pattern(&blo_positive_pattern, "%").unwrap();
 
     assert_writeable_eq!(pattern.interpolate(["123"]), "% 123");
     assert_eq!(pattern.take_store().into_owned(), "\u{4}%\u{a0}");
 
     let blo_negative_pattern = "% -#,#0";
-    let pattern = create_negative_pattern(&blo_negative_pattern, '%').unwrap();
+    let pattern = create_negative_pattern(&blo_negative_pattern, "%").unwrap();
 
     assert_writeable_eq!(pattern.interpolate(["123", "+"]), "% +123");
     assert_writeable_eq!(pattern.interpolate(["123", "-"]), "% -123");
