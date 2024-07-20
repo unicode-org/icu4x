@@ -51,18 +51,23 @@ pub mod linux_prefs {
 
     pub fn get_locales() -> HashMap<LocaleCategory, String> {
         let mut locale_map = HashMap::new();
-
+        // SAFETY: In case `libc::setlocale` returns a NULL pointer it fallbacks to the default locale "C"
+        
         unsafe {
-            // Thread safety is ensured by fallbacking to the default locale of `linux` which is `C`
-            let locales_ptr = libc::setlocale(LC_ALL, ptr::null());
+            let locales_ptr = setlocale(LC_ALL, ptr::null());
             if locales_ptr.is_null() {
                 locale_map.insert(LocaleCategory::LcALL, "C".to_string());
                 return locale_map;
             }
 
+            // SAFETY: Creating a `CStr` from a non-null pointer and no mutation is being performed.
             let locales_cstr = CStr::from_ptr(locales_ptr);
+            // SAFETY: Returns `&[str]` slice 
+
             if let Ok(locales_str) = locales_cstr.to_str() {
                 let locale_pairs = locales_str.split(';');
+                
+                // To handle cases in case a single locale is returned or a list of locale
                 if locale_pairs.clone().count() == 1 {
                     locale_map.insert(LocaleCategory::LcALL, "C".to_string());
                 } else {
@@ -75,19 +80,21 @@ pub mod linux_prefs {
                         }
                     }
                 }
-            } else {
-                locale_map.insert(LocaleCategory::LcALL, "C".to_string());
             }
         }
 
         locale_map
     }
 
-    pub fn get_system_calendars_linux(
+    pub fn get_system_calendars(
     ) -> Box<dyn Iterator<Item = (Cow<'static, str>, Cow<'static, str>)>> {
         unsafe {
             let locale_ptr = setlocale(LC_TIME, ptr::null());
+            // SAFETY: In case we get a `NULL` pointer for `LC_TIME` from `setlocale`, fallbacks 
+            // to default locale "C" and default calendar "Gregorian"
             if !locale_ptr.is_null() {
+
+                // SAFETY: Creating a `CStr` from a non-null pointer and no mutation is being performed.
                 let c_str = CStr::from_ptr(locale_ptr);
                 if let Ok(str_slice) = c_str.to_str() {
                     // `gnome-calendar` is the default calendar and it only supports `Gregorian`.
