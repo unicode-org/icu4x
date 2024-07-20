@@ -97,7 +97,7 @@ pub mod provider {
         super::dimension::provider::units_essentials::UnitsEssentialsV1Marker::INFO,
         super::dimension::provider::units::UnitsDisplayNameV1Marker::INFO,
         super::displaynames::provider::LanguageDisplayNamesV1Marker::INFO,
-        super::duration::provider::digital::DigitalDurationDataV1Marker::INFO,
+        super::duration::provider::DigitalDurationDataV1Marker::INFO,
         super::displaynames::provider::LocaleDisplayNamesV1Marker::INFO,
         super::displaynames::provider::RegionDisplayNamesV1Marker::INFO,
         super::displaynames::provider::ScriptDisplayNamesV1Marker::INFO,

@@ -5,12 +5,12 @@
 use crate::cldr_serde;
 use crate::cldr_serde::units::data::DurationUnits;
 use crate::SourceDataProvider;
-use icu::experimental::duration::provider::digital::{HmPadding, HmsPadding, MsPadding};
+use icu::experimental::duration::provider::{HmPadding, HmsPadding, MsPadding};
 use icu_provider::prelude::*;
 use itertools::Itertools;
 use std::{borrow::Cow, collections::HashSet};
 
-use icu::experimental::duration::provider::digital::{
+use icu::experimental::duration::provider::{
     DigitalDurationDataV1, DigitalDurationDataV1Marker,
 };
 
