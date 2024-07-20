@@ -1,6 +1,16 @@
 {
   "separator": ".",
-  "hms_hour_padding": 1,
-  "hm_hour_padding": 1,
-  "minute_padding": 1
+  "hms_padding": {
+    "h": 1,
+    "m": 1,
+    "s": 1
+  },
+  "hm_padding": {
+    "h": 1,
+    "m": 1
+  },
+  "ms_padding": {
+    "m": 1,
+    "s": 1
+  }
 }
