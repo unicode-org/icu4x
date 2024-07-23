@@ -15,7 +15,7 @@ pub mod apple_prefs {
         let mut languages: Vec<String> = Vec::new();
 
         // SAFETY: The call to `CFLocaleCopyPreferredLanguages` returns an `CFArray` which is owned by us
-        
+
         unsafe {
             let locale_carr_ref = CFLocaleCopyPreferredLanguages();
             if !locale_carr_ref.is_null() {
