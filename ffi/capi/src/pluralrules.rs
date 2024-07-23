@@ -4,6 +4,7 @@
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
+#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
 
@@ -84,7 +85,7 @@ pub mod ffi {
 
         /// Get all of the categories needed in the current locale
         #[diplomat::rust_link(icu::plurals::PluralRules::categories, FnInStruct)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn categories(&self) -> PluralCategories {
             PluralCategories::from_iter(self.0.categories())
         }

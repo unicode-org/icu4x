@@ -2,15 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#include "CodePointSetData.hpp"
-#include "UnicodeSetData.hpp"
-#include "CodePointMapData16.hpp"
-#include "CodePointMapData8.hpp"
-#include "PropertyValueNameToEnumMapper.hpp"
-#include "GeneralCategoryNameToMaskMapper.hpp"
-#include "Logger.hpp"
+#include <icu4x/CodePointSetData.hpp>
+#include <icu4x/UnicodeSetData.hpp>
+#include <icu4x/CodePointMapData16.hpp>
+#include <icu4x/CodePointMapData8.hpp>
+#include <icu4x/PropertyValueNameToEnumMapper.hpp>
+#include <icu4x/GeneralCategoryNameToMaskMapper.hpp>
+#include <icu4x/Logger.hpp>
 
 #include <iostream>
+
+using namespace icu4x;
 
 int test_set_property(CodePointSetData* data, char32_t included, char32_t excluded) {
     bool contains1 = data->contains(included);

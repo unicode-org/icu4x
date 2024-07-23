@@ -4,6 +4,7 @@
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
+#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
 
@@ -73,20 +74,20 @@ pub mod ffi {
 
         /// Returns the weekday that starts the week for this object's locale
         #[diplomat::rust_link(icu::calendar::week::WeekCalculator::first_weekday, StructField)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn first_weekday(&self) -> IsoWeekday {
             self.0.first_weekday.into()
         }
         /// The minimum number of days overlapping a year required for a week to be
         /// considered part of that year
         #[diplomat::rust_link(icu::calendar::week::WeekCalculator::min_week_days, StructField)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn min_week_days(&self) -> u8 {
             self.0.min_week_days
         }
 
         #[diplomat::rust_link(icu::calendar::week::WeekCalculator::weekend, FnInStruct)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn weekend(&self) -> WeekendContainsDay {
             let mut contains = WeekendContainsDay::default();
             for day in self.0.weekend() {

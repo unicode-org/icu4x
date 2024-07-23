@@ -2,15 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#include "DataProvider.hpp"
-#include "GraphemeClusterSegmenter.hpp"
-#include "LineSegmenter.hpp"
-#include "SentenceSegmenter.hpp"
-#include "WordSegmenter.hpp"
-#include "Logger.hpp"
+#include <icu4x/DataProvider.hpp>
+#include <icu4x/GraphemeClusterSegmenter.hpp>
+#include <icu4x/LineSegmenter.hpp>
+#include <icu4x/SentenceSegmenter.hpp>
+#include <icu4x/WordSegmenter.hpp>
+#include <icu4x/Logger.hpp>
 
 #include <iostream>
 #include <string_view>
+
+using namespace icu4x;
 
 using std::cout;
 using std::endl;

@@ -2,13 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#include "DataProvider.hpp"
-#include "MeasureUnit.hpp"
-#include "MeasureUnitParser.hpp"
-#include "UnitsConverter.hpp"
-#include "UnitsConverterFactory.hpp"
+#include <icu4x/DataProvider.hpp>
+#include <icu4x/MeasureUnit.hpp>
+#include <icu4x/MeasureUnitParser.hpp>
+#include <icu4x/UnitsConverter.hpp>
+#include <icu4x/UnitsConverterFactory.hpp>
 
 #include <iostream>
+
+using namespace icu4x;
 
 int main() {
   auto dp = DataProvider::compiled();
