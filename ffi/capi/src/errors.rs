@@ -66,6 +66,22 @@ pub mod ffi {
     }
 
     #[derive(Debug, PartialEq, Eq)]
+    #[repr(C)]
+    #[diplomat::rust_link(icu::calendar::ParseError, Enum, compact)]
+    #[cfg(any(
+        feature = "icu_datetime",
+        feature = "icu_timezone",
+        feature = "icu_calendar"
+    ))]
+    pub enum CalendarParseError {
+        Unknown = 0x00,
+        InvalidSyntax = 0x01,
+        OutOfRange = 0x02,
+        MissingFields = 0x03,
+        UnknownCalendar = 0x04,
+    }
+
+    #[derive(Debug, PartialEq, Eq)]
     #[diplomat::rust_link(icu::timezone::InvalidOffsetError, Struct, compact)]
     #[cfg(any(feature = "icu_datetime", feature = "icu_timezone"))]
     pub struct TimeZoneInvalidOffsetError;
@@ -187,6 +203,23 @@ impl From<icu_calendar::DateError> for CalendarError {
             icu_calendar::DateError::Range { .. } => Self::OutOfRange,
             icu_calendar::DateError::UnknownEra(..) => Self::UnknownEra,
             icu_calendar::DateError::UnknownMonthCode(..) => Self::UnknownMonthCode,
+            _ => Self::Unknown,
+        }
+    }
+}
+
+#[cfg(any(
+    feature = "icu_datetime",
+    feature = "icu_timezone",
+    feature = "icu_calendar"
+))]
+impl From<icu_calendar::ParseError> for CalendarParseError {
+    fn from(e: icu_calendar::ParseError) -> Self {
+        match e {
+            icu_calendar::ParseError::Syntax(_) => Self::InvalidSyntax,
+            icu_calendar::ParseError::MissingFields => Self::MissingFields,
+            icu_calendar::ParseError::Range(_) => Self::OutOfRange,
+            icu_calendar::ParseError::UnknownCalendar => Self::UnknownCalendar,
             _ => Self::Unknown,
         }
     }

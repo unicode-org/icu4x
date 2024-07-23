@@ -228,6 +228,8 @@ export { LanguageDisplay } from "./LanguageDisplay"
 
 export { CalendarError } from "./CalendarError"
 
+export { CalendarParseError } from "./CalendarParseError"
+
 export { DataError } from "./DataError"
 
 export { Error } from "./Error"

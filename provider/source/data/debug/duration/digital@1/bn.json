@@ -1,0 +1,16 @@
+{
+  "separator": ":",
+  "hms_padding": {
+    "h": 1,
+    "m": 1,
+    "s": 1
+  },
+  "hm_padding": {
+    "h": 1,
+    "m": 1
+  },
+  "ms_padding": {
+    "m": 1,
+    "s": 1
+  }
+}

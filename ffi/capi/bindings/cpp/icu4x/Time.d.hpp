@@ -13,6 +13,7 @@ namespace icu4x {
 namespace capi { struct Time; }
 class Time;
 class CalendarError;
+class CalendarParseError;
 }
 
 
@@ -27,6 +28,8 @@ class Time {
 public:
 
   inline static diplomat::result<std::unique_ptr<icu4x::Time>, icu4x::CalendarError> create(uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
+
+  inline static diplomat::result<std::unique_ptr<icu4x::Time>, icu4x::CalendarParseError> from_string(std::string_view v);
 
   inline static diplomat::result<std::unique_ptr<icu4x::Time>, icu4x::CalendarError> midnight();
 

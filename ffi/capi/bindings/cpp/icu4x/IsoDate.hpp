@@ -12,6 +12,7 @@
 #include "../diplomat_runtime.hpp"
 #include "Calendar.hpp"
 #include "CalendarError.hpp"
+#include "CalendarParseError.hpp"
 #include "Date.hpp"
 #include "IsoWeekday.hpp"
 #include "WeekCalculator.hpp"
@@ -24,6 +25,9 @@ namespace capi {
     
     typedef struct icu4x_IsoDate_create_mv1_result {union {icu4x::capi::IsoDate* ok; icu4x::capi::CalendarError err;}; bool is_ok;} icu4x_IsoDate_create_mv1_result;
     icu4x_IsoDate_create_mv1_result icu4x_IsoDate_create_mv1(int32_t year, uint8_t month, uint8_t day);
+    
+    typedef struct icu4x_IsoDate_from_string_mv1_result {union {icu4x::capi::IsoDate* ok; icu4x::capi::CalendarParseError err;}; bool is_ok;} icu4x_IsoDate_from_string_mv1_result;
+    icu4x_IsoDate_from_string_mv1_result icu4x_IsoDate_from_string_mv1(const char* v_data, size_t v_len);
     
     icu4x::capi::IsoDate* icu4x_IsoDate_unix_epoch_mv1(void);
     
@@ -65,6 +69,12 @@ inline diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::CalendarError> i
     month,
     day);
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::CalendarError>(diplomat::Ok<std::unique_ptr<icu4x::IsoDate>>(std::unique_ptr<icu4x::IsoDate>(icu4x::IsoDate::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::CalendarError>(diplomat::Err<icu4x::CalendarError>(icu4x::CalendarError::FromFFI(result.err)));
+}
+
+inline diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::CalendarParseError> icu4x::IsoDate::from_string(std::string_view v) {
+  auto result = icu4x::capi::icu4x_IsoDate_from_string_mv1(v.data(),
+    v.size());
+  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::CalendarParseError>(diplomat::Ok<std::unique_ptr<icu4x::IsoDate>>(std::unique_ptr<icu4x::IsoDate>(icu4x::IsoDate::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::CalendarParseError>(diplomat::Err<icu4x::CalendarParseError>(icu4x::CalendarParseError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::IsoDate> icu4x::IsoDate::unix_epoch() {

@@ -12,6 +12,7 @@
 #include "../diplomat_runtime.hpp"
 #include "Calendar.hpp"
 #include "CalendarError.hpp"
+#include "CalendarParseError.hpp"
 #include "Date.hpp"
 #include "IsoDateTime.hpp"
 #include "IsoWeekday.hpp"
@@ -31,6 +32,9 @@ namespace capi {
     icu4x_DateTime_from_codes_in_calendar_mv1_result icu4x_DateTime_from_codes_in_calendar_mv1(const char* era_code_data, size_t era_code_len, int32_t year, const char* month_code_data, size_t month_code_len, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const icu4x::capi::Calendar* calendar);
     
     icu4x::capi::DateTime* icu4x_DateTime_from_date_and_time_mv1(const icu4x::capi::Date* date, const icu4x::capi::Time* time);
+    
+    typedef struct icu4x_DateTime_from_string_mv1_result {union {icu4x::capi::DateTime* ok; icu4x::capi::CalendarParseError err;}; bool is_ok;} icu4x_DateTime_from_string_mv1_result;
+    icu4x_DateTime_from_string_mv1_result icu4x_DateTime_from_string_mv1(const char* v_data, size_t v_len);
     
     icu4x::capi::Date* icu4x_DateTime_date_mv1(const icu4x::capi::DateTime* self);
     
@@ -112,6 +116,12 @@ inline std::unique_ptr<icu4x::DateTime> icu4x::DateTime::from_date_and_time(cons
   auto result = icu4x::capi::icu4x_DateTime_from_date_and_time_mv1(date.AsFFI(),
     time.AsFFI());
   return std::unique_ptr<icu4x::DateTime>(icu4x::DateTime::FromFFI(result));
+}
+
+inline diplomat::result<std::unique_ptr<icu4x::DateTime>, icu4x::CalendarParseError> icu4x::DateTime::from_string(std::string_view v) {
+  auto result = icu4x::capi::icu4x_DateTime_from_string_mv1(v.data(),
+    v.size());
+  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::DateTime>, icu4x::CalendarParseError>(diplomat::Ok<std::unique_ptr<icu4x::DateTime>>(std::unique_ptr<icu4x::DateTime>(icu4x::DateTime::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::DateTime>, icu4x::CalendarParseError>(diplomat::Err<icu4x::CalendarParseError>(icu4x::CalendarParseError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::Date> icu4x::DateTime::date() const {

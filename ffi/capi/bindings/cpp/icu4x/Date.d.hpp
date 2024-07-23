@@ -20,6 +20,7 @@ namespace capi { struct WeekCalculator; }
 class WeekCalculator;
 struct WeekOf;
 class CalendarError;
+class CalendarParseError;
 class IsoWeekday;
 }
 
@@ -37,6 +38,8 @@ public:
   inline static diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarError> from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, const icu4x::Calendar& calendar);
 
   inline static diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarError> from_codes_in_calendar(std::string_view era_code, int32_t year, std::string_view month_code, uint8_t day, const icu4x::Calendar& calendar);
+
+  inline static diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarParseError> from_string(std::string_view v);
 
   inline std::unique_ptr<icu4x::Date> to_calendar(const icu4x::Calendar& calendar) const;
 

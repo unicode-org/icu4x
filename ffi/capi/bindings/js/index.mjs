@@ -226,6 +226,8 @@ export { LanguageDisplay } from "./LanguageDisplay.mjs"
 
 export { CalendarError } from "./CalendarError.mjs"
 
+export { CalendarParseError } from "./CalendarParseError.mjs"
+
 export { DataError } from "./DataError.mjs"
 
 export { Error } from "./Error.mjs"

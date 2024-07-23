@@ -24,6 +24,7 @@ namespace capi { struct WeekCalculator; }
 class WeekCalculator;
 struct WeekOf;
 class CalendarError;
+class CalendarParseError;
 class IsoWeekday;
 }
 
@@ -41,6 +42,8 @@ public:
   inline static diplomat::result<std::unique_ptr<icu4x::IsoDateTime>, icu4x::CalendarError> create(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
 
   inline static std::unique_ptr<icu4x::IsoDateTime> from_date_and_time(const icu4x::IsoDate& date, const icu4x::Time& time);
+
+  inline static diplomat::result<std::unique_ptr<icu4x::IsoDateTime>, icu4x::CalendarParseError> from_string(std::string_view v);
 
   inline static std::unique_ptr<icu4x::IsoDateTime> local_unix_epoch();
 
