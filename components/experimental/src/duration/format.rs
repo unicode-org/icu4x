@@ -42,6 +42,7 @@ pub struct FormattedDuration<'l> {
 }
 
 impl<'a> FormattedDuration<'a> {
+    /// Returns the appropriate Numeric-style padding for the given unit, based on the formatting options.
     fn get_numeric_unit_padding(
         &self,
         unit: Unit,
@@ -69,6 +70,8 @@ impl<'a> FormattedDuration<'a> {
         }
     }
 
+    /// Section 1.1.9
+    /// Formats numeric hours to sink. Requires hours formatting style to be either Numeric or TwoDigit.
     fn format_numeric_hours<V: PartsWrite + ?Sized>(
         &self,
         hour_val: u64,
@@ -106,6 +109,8 @@ impl<'a> FormattedDuration<'a> {
         Ok(())
     }
 
+    /// Section 1.1.10
+    /// Formats numeric minutes to sink. Requires minutes formatting style to be either Numeric or TwoDigit.
     fn format_numeric_minutes<V: PartsWrite + ?Sized>(
         &self,
         minute_val: u64,
@@ -151,24 +156,40 @@ impl<'a> FormattedDuration<'a> {
         Ok(())
     }
 
-    fn seconds_with_fractional_digits(&self) -> FixedDecimal {
-        // Convert to u128 to avoid overflow
-        let mut result: u128 = self.duration.seconds.into();
-        result *= u128::pow(10, 9);
+    /// Section 1.1.7
+    /// Computes the sum of all values in durationFormat units with "fractional" style,
+    /// expressed as a fraction of the smallest unit of durationFormat that does not use "fractional" style.
+    fn add_fractional_digits(&self) -> FixedDecimal {
+        let mut result = FixedDecimal::from(0);
+        let mut exponent = 0;
 
-        for (style, value, exp) in [
-            (self.fmt.options.millisecond, self.duration.milliseconds, 6),
-            (self.fmt.options.microsecond, self.duration.microseconds, 3),
-            (self.fmt.options.nanosecond, self.duration.nanoseconds, 0),
+        // 3. For each row of Table 2, except the header row, in table order, do
+        // a. Let style be the value of durationFormat's internal slot whose name is the Style Slot value of the current row.
+        for (style, value) in [
+            (self.fmt.options.millisecond, self.duration.milliseconds),
+            (self.fmt.options.microsecond, self.duration.microseconds),
+            (self.fmt.options.nanosecond, self.duration.nanoseconds),
         ] {
+            // b. If style is "fractional", then
             if style == FieldStyle::Fractional {
-                result += u128::from(value) * u128::pow(10, exp);
+                // i. Assert: The Unit value of the current row is "milliseconds", "microseconds", or "nanoseconds".
+                // ii. Let value be the value of duration's field whose name is the Value Field value of the current row.
+                // iii. Set value to value / (10 ^ exponent).
+                // iv. Set result to result + value.
+                // NOTE: the below call will fail for values greater than 10^3 because magnitudes may overlap.
+                result
+                    .concatenate_end(FixedDecimal::from(value).multiplied_pow10(-exponent))
+                    .expect("concatenating values with different exponents");
+                // v. Set exponent to exponent + 3.
+                exponent += 3;
             }
         }
 
-        FixedDecimal::from(result).multiplied_pow10(-9)
+        result
     }
 
+    /// Section 1.1.11
+    /// Formats numeric seconds to sink. Requires seconds formatting style to be either Numeric or TwoDigit.
     fn format_numeric_seconds<V: PartsWrite + ?Sized>(
         &self,
         mut second_val: FixedDecimal,
@@ -258,6 +279,8 @@ impl<'a> FormattedDuration<'a> {
         Ok(())
     }
 
+    /// Section 1.1.12
+    /// Formats the parts of duration that use Numeric or TwoDigit style to sink.
     fn format_numeric_units<V: PartsWrite + ?Sized>(
         &self,
         first_numeric_unit: Unit,
@@ -282,7 +305,7 @@ impl<'a> FormattedDuration<'a> {
 				|| self.duration.nanoseconds != 0
 			{
 				// a. Set secondsValue to secondsValue + AddFractionalDigits(durationFormat, duration).
-				self.seconds_with_fractional_digits()
+				FixedDecimal::from(self.duration.seconds).concatenated_end(self.add_fractional_digits()).expect("fractional digits have magnitude less than whole numbers")
 			} else {
 				FixedDecimal::from(self.duration.seconds)
 			};
@@ -370,6 +393,27 @@ impl<'a> FormattedDuration<'a> {
         Ok(())
     }
 
+    /// Section 1.1.8
+    /// Returns true if the next smallest unit uses the "fractional" style.
+    fn next_unit_fractional(&self, unit: Unit) -> bool {
+        // 1. Assert: unit is "seconds", "milliseconds", or "microseconds".
+        debug_assert!(matches!(
+            unit,
+            Unit::Second | Unit::Millisecond | Unit::Microsecond
+        ));
+        // 2. If unit is "seconds" and durationFormat.[[MillisecondsStyle]] is "fractional", return true.
+        // 3. Else if unit is "milliseconds" and durationFormat.[[MicrosecondsStyle]] is "fractional", return true.
+        // 4. Else if unit is "microseconds" and durationFormat.[[NanosecondsStyle]] is "fractional", return true.
+        // 5. Return false.
+
+        match unit {
+            Unit::Second if self.fmt.options.second == FieldStyle::Fractional => true,
+            Unit::Millisecond if self.fmt.options.millisecond == FieldStyle::Fractional => true,
+            Unit::Microsecond if self.fmt.options.microsecond == FieldStyle::Fractional => true,
+            _ => false,
+        }
+    }
+
     fn partition_duration_format_pattern<V: PartsWrite + ?Sized>(
         &self,
         sink: &mut V,
@@ -380,58 +424,97 @@ impl<'a> FormattedDuration<'a> {
         // 3. Let numericUnitFound be false.
         let mut numeric_unit_found = false;
 
-        for (unit, style, display) in self.fmt.options.iter_units() {
-            // 4.  While numericUnitFound is false, repeat for each row in Table 2 in table order, except the header row:
+        // 4.  While numericUnitFound is false, repeat for each row in Table 2 in table order, except the header row:
+        for ((unit, style, display), value) in self
+            .fmt
+            .options
+            .iter_units()
+            .into_iter()
+            .zip(self.duration.iter_units())
+        {
+            if numeric_unit_found {
+                break;
+            }
             // a. Let value be the value of duration's field whose name is the Value Field value of the current row.
             // b. Let style be the value of durationFormat's internal slot whose name is the Style Slot value of the current row.
             // c. Let display be the value of durationFormat's internal slot whose name is the Display Slot value of the current row.
             // d. Let unit be the Unit value of the current row.
-            //  e. If style is "numeric" or "2-digit", then
+            // e. If style is "numeric" or "2-digit", then
             if style == FieldStyle::Numeric || style == FieldStyle::TwoDigit {
                 // i. Append FormatNumericUnits(durationFormat, duration, unit, signDisplayed) to result.
                 self.format_numeric_units(unit, &mut sign_displayed, sink)?;
                 // ii. Set numericUnitFound to true.
                 numeric_unit_found = true;
             }
-            //     f. Else,
+            // f. Else,
             else {
-                //         i. Let nfOpts be OrdinaryObjectCreate(null).
-                //         ii. If unit is "seconds", "milliseconds", or "microseconds", then
+                // i. Let nfOpts be OrdinaryObjectCreate(null).
+                // ii. If unit is "seconds", "milliseconds", or "microseconds", then
                 if matches!(unit, Unit::Second | Unit::Millisecond | Unit::Microsecond) {
-                    //             1. If NextUnitFractional(durationFormat, unit) is true, then
-                    //                 a. Set value to value + AddFractionalDigits(durationFormat, duration).
-                    //                 b. If durationFormat.[[FractionalDigits]] is undefined, then
-                    //                     i. Let maximumFractionDigits be 9𝔽.
-                    //                     ii. Let minimumFractionDigits be +0𝔽.
-                    //                 c. Else,
-                    //                     i. Let maximumFractionDigits be durationFormat.[[FractionalDigits]].
-                    //                     ii. Let minimumFractionDigits be durationFormat.[[FractionalDigits]].
-                    //                 d. Perform ! CreateDataPropertyOrThrow(nfOpts, "maximumFractionDigits", maximumFractionDigits).
-                    //                 e. Perform ! CreateDataPropertyOrThrow(nfOpts, "minimumFractionDigits", minimumFractionDigits).
-                    //                 f. Perform ! CreateDataPropertyOrThrow(nfOpts, "roundingMode", "trunc").
-                    //                 g. Set numericUnitFound to true.
+                    // 1. If NextUnitFractional(durationFormat, unit) is true, then
+                    if self.next_unit_fractional(unit) {
+                        // a. Set value to value + AddFractionalDigits(durationFormat, duration).
+                        let mut value = FixedDecimal::from(value)
+                            .concatenated_end(self.add_fractional_digits())
+                            .expect("fractional digits have magnitude less than whole numbers");
+                        match self.fmt.options.fractional_digits {
+                            // b. If durationFormat.[[FractionalDigits]] is undefined, then
+                            FractionalDigits::ShowAll => {
+                                // i. Let maximumFractionDigits be 9𝔽.
+                                value.set_max_position(-9);
+                                // ii. Let minimumFractionDigits be +0𝔽.
+                                value.pad_end(0);
+                            }
+                            // c. Else,
+                            FractionalDigits::Fixed(i) => {
+                                let i: i16 = i.into();
+                                // i. Let maximumFractionDigits be durationFormat.[[FractionalDigits]].
+                                value.set_max_position(-i);
+                                // ii. Let minimumFractionDigits be durationFormat.[[FractionalDigits]].
+                                value.pad_end(-i);
+                            }
+                        } // d. Perform ! CreateDataPropertyOrThrow(nfOpts, "maximumFractionDigits", maximumFractionDigits).
+                          // e. Perform ! CreateDataPropertyOrThrow(nfOpts, "minimumFractionDigits", minimumFractionDigits).
+
+                        // f. Perform ! CreateDataPropertyOrThrow(nfOpts, "roundingMode", "trunc").
+                        // g. Set numericUnitFound to true.
+                        numeric_unit_found = true;
+                    }
                 }
-                //         iii. If value is not 0 or display is not "auto", then
-                //             1. Let numberingSystem be durationFormat.[[NumberingSystem]].
-                //             2. Perform ! CreateDataPropertyOrThrow(nfOpts, "numberingSystem", numberingSystem).
-                //             3. If signDisplayed is true, then
-                //                 a. Set signDisplayed to false.
-                //                 b. If value is 0 and DurationSign(duration.[[Years]], duration.[[Months]], duration.[[Weeks]], duration.[[Days]], duration.[[Hours]], duration.[[Minutes]], duration.[[Seconds]], duration.[[Milliseconds]], duration.[[Microseconds]], duration.[[Nanoseconds]]) is -1, then
-                //                     i. Set value to negative-zero.
-                //             4. Else,
-                //                 a. Perform ! CreateDataPropertyOrThrow(nfOpts, "signDisplay", "never").
-                //             5. Let numberFormatUnit be the NumberFormat Unit value of the current row.
-                //             6. Perform ! CreateDataPropertyOrThrow(nfOpts, "style", "unit").
-                //             7. Perform ! CreateDataPropertyOrThrow(nfOpts, "unit", numberFormatUnit).
-                //             8. Perform ! CreateDataPropertyOrThrow(nfOpts, "unitDisplay", style).
-                //             9. Let nf be ! Construct(%NumberFormat%, « durationFormat.[[Locale]], nfOpts »).
-                //             10. Let parts be ! PartitionNumberPattern(nf, value).
-                //             11. Let list be a new empty List.
-                //             12. For each Record { [[Type]], [[Value]] } part of parts, do
-                //                 a. Append the Record { [[Type]]: part.[[Type]], [[Value]]: part.[[Value]], [[Unit]]: numberFormatUnit } to list.
-                //             13. Append list to result.
+                //  iii. If value is not 0 or display is not "auto", then
+                if value != 0 || display != FieldDisplay::Auto {
+                    let mut fd = FixedDecimal::from(value);
+                    // 1. Let numberingSystem be durationFormat.[[NumberingSystem]].
+                    // 2. Perform ! CreateDataPropertyOrThrow(nfOpts, "numberingSystem", numberingSystem).
+                    // 3. If signDisplayed is true, then
+                    if sign_displayed {
+                        // a. Set signDisplayed to false.
+                        sign_displayed = false;
+                        // b. If value is 0 and DurationSign(duration.[[Years]], duration.[[Months]], duration.[[Weeks]], duration.[[Days]], duration.[[Hours]], duration.[[Minutes]], duration.[[Seconds]], duration.[[Milliseconds]], duration.[[Microseconds]], duration.[[Nanoseconds]]) is -1, then
+                        if value == 0 {
+                            // i. Set value to negative-zero.
+                            todo!("set value to negative zero");
+                        }
+                    }
+                    // 4. Else,
+                    else {
+                        // a. Perform ! CreateDataPropertyOrThrow(nfOpts, "signDisplay", "never").
+                        fd.apply_sign_display(SignDisplay::Never);
+                    }
+                    // 5. Let numberFormatUnit be the NumberFormat Unit value of the current row.
+                    // 6. Perform ! CreateDataPropertyOrThrow(nfOpts, "style", "unit").
+                    // 7. Perform ! CreateDataPropertyOrThrow(nfOpts, "unit", numberFormatUnit).
+                    // 8. Perform ! CreateDataPropertyOrThrow(nfOpts, "unitDisplay", style).
+                    // 9. Let nf be ! Construct(%NumberFormat%, « durationFormat.[[Locale]], nfOpts »).
+                    // 10. Let parts be ! PartitionNumberPattern(nf, value).
+                    // 11. Let list be a new empty List.
+                    // 12. For each Record { [[Type]], [[Value]] } part of parts, do
+                    // a. Append the Record { [[Type]]: part.[[Type]], [[Value]]: part.[[Value]], [[Unit]]: numberFormatUnit } to list.
+                    // 13. Append list to result.
+                }
             }
         }
+
         // 5. Return ListFormatParts(durationFormat, result).
         Ok(())
     }

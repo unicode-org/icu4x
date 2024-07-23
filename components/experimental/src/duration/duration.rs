@@ -43,6 +43,24 @@ pub struct Duration {
     pub nanoseconds: u64,
 }
 
+impl Duration {
+    /// Iterate over the units of the duration in descending order.
+    pub(crate) fn iter_units(&self) -> [u64; 10] {
+        [
+            self.years,
+            self.months,
+            self.weeks,
+            self.days,
+            self.hours,
+            self.minutes,
+            self.seconds,
+            self.milliseconds,
+            self.microseconds,
+            self.nanoseconds,
+        ]
+    }
+}
+
 /// Describes whether a [`Duration`] is positive or negative.
 #[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum DurationSign {
