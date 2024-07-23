@@ -4,7 +4,7 @@
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
-#[diplomat::attr(*, namespace = "icu4x")]
+#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
 
@@ -25,7 +25,7 @@ pub mod ffi {
             icu::collections::codepointinvlist::CodePointInversionListBuilder::new,
             FnInStruct
         )]
-        #[diplomat::attr(*, constructor)]
+        #[diplomat::attr(auto, constructor)]
         pub fn create() -> Box<Self> {
             Box::new(Self(
                 icu_collections::codepointinvlist::CodePointInversionListBuilder::new(),
@@ -67,7 +67,7 @@ pub mod ffi {
             icu::collections::codepointinvlist::CodePointInversionListBuilder::is_empty,
             FnInStruct
         )]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn is_empty(&self) -> bool {
             self.0.is_empty()
         }

@@ -4,7 +4,7 @@
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
-#[diplomat::attr(*, namespace = "icu4x")]
+#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
 
@@ -48,7 +48,7 @@ pub mod ffi {
 
     impl SegmenterWordType {
         #[diplomat::rust_link(icu::segmenter::WordType::is_word_like, FnInEnum)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn is_word_like(self) -> bool {
             icu_segmenter::WordType::from(self).is_word_like()
         }
@@ -155,14 +155,14 @@ pub mod ffi {
 
         /// Return the status value of break boundary.
         #[diplomat::rust_link(icu::segmenter::WordBreakIterator::word_type, FnInStruct)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn word_type(&self) -> SegmenterWordType {
             self.0.word_type().into()
         }
 
         /// Return true when break boundary is word-like such as letter/number/CJK
         #[diplomat::rust_link(icu::segmenter::WordBreakIterator::is_word_like, FnInStruct)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn is_word_like(&self) -> bool {
             self.0.is_word_like()
         }
@@ -191,14 +191,14 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn word_type(&self) -> SegmenterWordType {
             self.0.word_type().into()
         }
 
         /// Return true when break boundary is word-like such as letter/number/CJK
         #[diplomat::rust_link(icu::segmenter::WordBreakIterator::is_word_like, FnInStruct)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn is_word_like(&self) -> bool {
             self.0.is_word_like()
         }
@@ -222,14 +222,14 @@ pub mod ffi {
 
         /// Return the status value of break boundary.
         #[diplomat::rust_link(icu::segmenter::WordBreakIterator::word_type, FnInStruct)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn word_type(&self) -> SegmenterWordType {
             self.0.word_type().into()
         }
 
         /// Return true when break boundary is word-like such as letter/number/CJK
         #[diplomat::rust_link(icu::segmenter::WordBreakIterator::is_word_like, FnInStruct)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn is_word_like(&self) -> bool {
             self.0.is_word_like()
         }

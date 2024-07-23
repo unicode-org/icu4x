@@ -20,9 +20,6 @@ static_assert(sizeof(char) == sizeof(uint8_t), "your architecture's `char` is no
 static_assert(sizeof(char16_t) == sizeof(uint16_t), "your architecture's `char16_t` is not 16 bits");
 static_assert(sizeof(char32_t) == sizeof(uint32_t), "your architecture's `char32_t` is not 32 bits");
 
-
-
-
 typedef struct DiplomatWrite {
     void* context;
     char* buf;
@@ -33,17 +30,7 @@ typedef struct DiplomatWrite {
     bool (*grow)(struct DiplomatWrite*, size_t);
 } DiplomatWrite;
 
-
-DiplomatWrite diplomat_simple_write(char* buf, size_t buf_size);
-
-DiplomatWrite* diplomat_buffer_write_create(size_t cap);
-char* diplomat_buffer_write_get_bytes(DiplomatWrite* t);
-size_t diplomat_buffer_write_len(DiplomatWrite* t);
-void diplomat_buffer_write_destroy(DiplomatWrite* t);
-
 bool diplomat_is_str(const char* buf, size_t len);
-
-
 
 #define MAKE_SLICES(name, c_ty) \
     typedef struct Diplomat##name##View { \
@@ -78,6 +65,11 @@ MAKE_SLICES(String16, char16_t)
 MAKE_SLICES(Strings, DiplomatStringView)
 MAKE_SLICES(Strings16, DiplomatString16View)
 
+DiplomatWrite diplomat_simple_write(char* buf, size_t buf_size);
 
+DiplomatWrite* diplomat_buffer_write_create(size_t cap);
+char* diplomat_buffer_write_get_bytes(DiplomatWrite* t);
+size_t diplomat_buffer_write_len(DiplomatWrite* t);
+void diplomat_buffer_write_destroy(DiplomatWrite* t);
 
 #endif

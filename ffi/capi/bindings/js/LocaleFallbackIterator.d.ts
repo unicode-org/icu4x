@@ -16,10 +16,6 @@ export class LocaleFallbackIterator {
     #iteratorNext(): Locale | null;
 
     
-    get value(): Locale;
-    
-    get done(): bool;
-    
-    next() : Locale;
+    next() : IteratorResult<Locale>;
 
 }
