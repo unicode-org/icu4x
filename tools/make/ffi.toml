@@ -36,6 +36,7 @@ args = ["-C", "tutorials/cpp", "test"]
 description = "Run JS tests"
 category = "ICU4X Development"
 dependencies = ["install-wasm-nightly"]
+env = { PINNED_CI_NIGHTLY = "${PINNED_CI_NIGHTLY}" }
 command = "npm"
 args = ["-C", "ffi/npm", "install-ci-test"]
 
