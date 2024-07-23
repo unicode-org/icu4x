@@ -2,20 +2,22 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#include "GregorianDateFormatter.hpp"
-#include "GregorianDateTimeFormatter.hpp"
-#include "DateTimeFormatter.hpp"
-#include "TimeFormatter.hpp"
-#include "Logger.hpp"
-#include "CustomTimeZone.hpp"
-#include "TimeZoneIdMapper.hpp"
-#include "TimeZoneIdMapperWithFastCanonicalization.hpp"
-#include "GregorianZonedDateTimeFormatter.hpp"
-#include "ZonedDateTimeFormatter.hpp"
+#include <icu4x/GregorianDateFormatter.hpp>
+#include <icu4x/GregorianDateTimeFormatter.hpp>
+#include <icu4x/DateTimeFormatter.hpp>
+#include <icu4x/TimeFormatter.hpp>
+#include <icu4x/Logger.hpp>
+#include <icu4x/CustomTimeZone.hpp>
+#include <icu4x/TimeZoneIdMapper.hpp>
+#include <icu4x/TimeZoneIdMapperWithFastCanonicalization.hpp>
+#include <icu4x/GregorianZonedDateTimeFormatter.hpp>
+#include <icu4x/ZonedDateTimeFormatter.hpp>
 
 #include <atomic>
 #include <iostream>
 #include <array>
+
+using namespace icu4x;
 
 int main() {
     Logger::init_simple_logger();

@@ -2,13 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#include "CaseMapper.hpp"
-#include "Logger.hpp"
-#include "DataProvider.hpp"
-#include "CodePointSetBuilder.hpp"
-#include "TitlecaseOptionsV1.hpp"
+#include <icu4x/CaseMapper.hpp>
+#include <icu4x/Logger.hpp>
+#include <icu4x/DataProvider.hpp>
+#include <icu4x/CodePointSetBuilder.hpp>
+#include <icu4x/TitlecaseOptionsV1.hpp>
 
 #include <iostream>
+
+using namespace icu4x;
 
 int main() {
     Logger::init_simple_logger();
