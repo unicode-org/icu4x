@@ -141,8 +141,8 @@ impl ExportDriver {
             let instant1 = Instant::now();
 
             if marker.is_singleton {
-                if provider.iter_ids_for_marker(marker)? != HashSet::from_iter([Default::default()])
-                {
+                let supported = provider.iter_ids_for_marker(marker)?;
+                if supported.len() != 1 || !supported.first().unwrap().is_default() {
                     return Err(DataError::custom(
                         "Invalid supported locales for singleton marker",
                     )
@@ -394,7 +394,7 @@ fn select_locales_for_marker<'a>(
                         for morphed_id in parent_ids.iter() {
                             // Special case: don't pull extensions or aux keys up from the root.
                             if morphed_id.locale.is_langid_und()
-                                && !(morphed_id.locale.is_empty()
+                                && !(morphed_id.locale.is_und()
                                     && morphed_id.marker_attributes.is_empty())
                             {
                                 continue;
@@ -543,8 +543,8 @@ fn test_collation_filtering() {
     }
 
     impl IterableDataProvider<icu::collator::provider::CollationDataV1Marker> for Provider {
-        fn iter_ids(&self) -> Result<HashSet<DataIdentifierCow>, DataError> {
-            Ok(HashSet::from_iter(
+        fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+            Ok(BTreeSet::from_iter(
                 [
                     locale!("ko-u-co-search"),
                     locale!("ko-u-co-searchjl"),

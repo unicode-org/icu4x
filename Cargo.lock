@@ -182,14 +182,14 @@ dependencies = [
 ]
 
 [[package]]
-name = "bakeddata-scripts"
-version = "1.5.0"
+name = "bakeddata"
+version = "0.0.0"
 dependencies = [
  "crlify",
  "icu",
- "icu_datagen_bikeshed",
  "icu_provider",
  "icu_provider_export",
+ "icu_provider_source",
  "log",
  "simple_logger",
 ]
@@ -222,7 +222,6 @@ dependencies = [
 name = "bies"
 version = "0.2.2"
 dependencies = [
- "criterion",
  "itertools",
  "partial-min-max",
  "rand",
@@ -568,6 +567,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "depcheck"
+version = "0.0.0"
+
+[[package]]
 name = "deranged"
 version = "0.3.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -601,12 +604,24 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=40dd17124eadcaa3cf91873547fa7504bc8aff80#40dd17124eadcaa3cf91873547fa7504bc8aff80"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=bd491cb7da695486588e0345f45c95345c79a9ee#bd491cb7da695486588e0345f45c95345c79a9ee"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
  "quote",
  "syn 2.0.66",
+]
+
+[[package]]
+name = "diplomat-coverage"
+version = "0.0.0"
+dependencies = [
+ "diplomat_core",
+ "elsa",
+ "lazy_static",
+ "rustdoc-types",
+ "serde_json",
+ "syn-inline-mod",
 ]
 
 [[package]]
@@ -619,7 +634,7 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.8.1"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=40dd17124eadcaa3cf91873547fa7504bc8aff80#40dd17124eadcaa3cf91873547fa7504bc8aff80"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=bd491cb7da695486588e0345f45c95345c79a9ee#bd491cb7da695486588e0345f45c95345c79a9ee"
 dependencies = [
  "log",
 ]
@@ -627,7 +642,7 @@ dependencies = [
 [[package]]
 name = "diplomat-tool"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=40dd17124eadcaa3cf91873547fa7504bc8aff80#40dd17124eadcaa3cf91873547fa7504bc8aff80"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=bd491cb7da695486588e0345f45c95345c79a9ee#bd491cb7da695486588e0345f45c95345c79a9ee"
 dependencies = [
  "askama",
  "clap",
@@ -647,7 +662,7 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=40dd17124eadcaa3cf91873547fa7504bc8aff80#40dd17124eadcaa3cf91873547fa7504bc8aff80"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=bd491cb7da695486588e0345f45c95345c79a9ee#bd491cb7da695486588e0345f45c95345c79a9ee"
 dependencies = [
  "displaydoc",
  "either",
@@ -687,6 +702,22 @@ name = "downcast-rs"
 version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "75b325c5dbd37f80359721ad39aca5a29fb04c89279657cffdda8736d0c0b9d2"
+
+[[package]]
+name = "download-repo-sources"
+version = "0.0.0"
+dependencies = [
+ "clap",
+ "crlify",
+ "eyre",
+ "icu_locale_core",
+ "icu_provider",
+ "icu_provider_source",
+ "log",
+ "simple_logger",
+ "ureq",
+ "zip",
+]
 
 [[package]]
 name = "ecma402_traits"
@@ -899,7 +930,7 @@ dependencies = [
  "icu_provider",
  "icu_provider_adapters",
  "icu_provider_blob",
- "icu_registry",
+ "icu_provider_registry",
  "icu_segmenter",
  "icu_timezone",
  "memchr",
@@ -913,11 +944,11 @@ dependencies = [
  "clap",
  "eyre",
  "icu",
- "icu_datagen_bikeshed",
  "icu_provider",
  "icu_provider_blob",
  "icu_provider_export",
- "icu_registry",
+ "icu_provider_registry",
+ "icu_provider_source",
  "log",
  "simple_logger",
 ]
@@ -967,6 +998,7 @@ dependencies = [
  "icu_calendar_data",
  "icu_locale_core",
  "icu_provider",
+ "ixdtf",
  "serde",
  "serde_json",
  "simple_logger",
@@ -1051,7 +1083,6 @@ version = "0.3.8"
 dependencies = [
  "icu",
  "icu_collections",
- "toml",
  "wasmi",
  "zerovec",
 ]
@@ -1105,46 +1136,6 @@ dependencies = [
  "yoke",
  "zerofrom",
  "zerovec",
-]
-
-[[package]]
-name = "icu_datagen_bikeshed"
-version = "1.5.0"
-dependencies = [
- "calendrical_calculations",
- "displaydoc",
- "either",
- "elsa",
- "icu",
- "icu_codepointtrie_builder",
- "icu_collections",
- "icu_experimental",
- "icu_pattern",
- "icu_provider",
- "icu_provider_adapters",
- "icu_provider_export",
- "icu_registry",
- "icu_segmenter",
- "itertools",
- "litemap",
- "log",
- "ndarray",
- "num-bigint",
- "num-rational",
- "num-traits",
- "postcard",
- "serde",
- "serde-aux",
- "serde_json",
- "simple_logger",
- "tinystr",
- "toml",
- "twox-hash",
- "ureq",
- "writeable",
- "zerotrie",
- "zerovec",
- "zip",
 ]
 
 [[package]]
@@ -1216,10 +1207,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_depcheck"
-version = "0.0.0"
-
-[[package]]
 name = "icu_experimental"
 version = "0.1.0"
 dependencies = [
@@ -1261,18 +1248,6 @@ version = "0.1.0"
 dependencies = [
  "icu_locale",
  "icu_provider_baked",
-]
-
-[[package]]
-name = "icu_ffi_coverage"
-version = "0.0.0"
-dependencies = [
- "diplomat_core",
- "elsa",
- "lazy_static",
- "rustdoc-types",
- "serde_json",
- "syn-inline-mod",
 ]
 
 [[package]]
@@ -1523,8 +1498,7 @@ dependencies = [
  "heck 0.5.0",
  "icu_provider",
  "icu_provider_export",
- "icu_registry",
- "itertools",
+ "icu_provider_registry",
  "log",
  "proc-macro2",
  "writeable",
@@ -1558,12 +1532,12 @@ dependencies = [
  "displaydoc",
  "elsa",
  "icu",
- "icu_datagen_bikeshed",
  "icu_locale",
  "icu_provider",
  "icu_provider_baked",
  "icu_provider_blob",
  "icu_provider_fs",
+ "icu_provider_source",
  "log",
  "postcard",
  "rayon",
@@ -1602,11 +1576,51 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_registry"
+name = "icu_provider_registry"
 version = "1.5.0"
 dependencies = [
  "icu",
  "icu_provider",
+]
+
+[[package]]
+name = "icu_provider_source"
+version = "1.5.0"
+dependencies = [
+ "calendrical_calculations",
+ "displaydoc",
+ "either",
+ "elsa",
+ "icu",
+ "icu_codepointtrie_builder",
+ "icu_collections",
+ "icu_experimental",
+ "icu_pattern",
+ "icu_provider",
+ "icu_provider_adapters",
+ "icu_provider_export",
+ "icu_provider_registry",
+ "icu_segmenter",
+ "itertools",
+ "litemap",
+ "log",
+ "ndarray",
+ "num-bigint",
+ "num-rational",
+ "num-traits",
+ "postcard",
+ "serde",
+ "serde-aux",
+ "serde_json",
+ "simple_logger",
+ "tinystr",
+ "toml",
+ "twox-hash",
+ "ureq",
+ "writeable",
+ "zerotrie",
+ "zerovec",
+ "zip",
 ]
 
 [[package]]
@@ -1636,22 +1650,6 @@ version = "1.5.0"
 dependencies = [
  "icu_locale",
  "icu_provider_baked",
-]
-
-[[package]]
-name = "icu_testdata_scripts"
-version = "0.0.0"
-dependencies = [
- "clap",
- "crlify",
- "eyre",
- "icu_datagen_bikeshed",
- "icu_locale_core",
- "icu_provider",
- "log",
- "simple_logger",
- "ureq",
- "zip",
 ]
 
 [[package]]
@@ -3299,7 +3297,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec"
-version = "0.10.2"
+version = "0.10.4"
 dependencies = [
  "bincode",
  "criterion",
@@ -3322,7 +3320,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec-derive"
-version = "0.10.2"
+version = "0.10.3"
 dependencies = [
  "bincode",
  "proc-macro2",

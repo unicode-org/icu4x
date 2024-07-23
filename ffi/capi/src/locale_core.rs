@@ -3,23 +3,21 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[diplomat::bridge]
+#[diplomat::abi_rename = "icu4x_{0}_mv1"]
 pub mod ffi {
-    use crate::errors::ffi::ICU4XLocaleParseError;
     use alloc::boxed::Box;
-    use icu_locale_core::extensions::unicode::Key;
-    use icu_locale_core::subtags::{Language, Region, Script};
-    use icu_locale_core::Locale;
-    use writeable::Writeable;
 
-    use crate::common::ffi::ICU4XOrdering;
+    use crate::errors::ffi::LocaleParseError;
+
+    use writeable::Writeable;
 
     #[diplomat::opaque]
     /// An ICU4X Locale, capable of representing strings like `"en-US"`.
     #[diplomat::rust_link(icu::locale::Locale, Struct)]
-    pub struct ICU4XLocale(pub Locale);
+    pub struct Locale(pub icu_locale_core::Locale);
 
-    impl ICU4XLocale {
-        /// Construct an [`ICU4XLocale`] from an locale identifier.
+    impl Locale {
+        /// Construct an [`Locale`] from an locale identifier.
         ///
         /// This will run the complete locale parsing algorithm. If code size and
         /// performance are critical and the locale is of a known shape (such as
@@ -27,30 +25,30 @@ pub mod ffi {
         #[diplomat::rust_link(icu::locale::Locale::try_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::locale::Locale::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::locale::Locale::from_str, FnInStruct, hidden)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "from_string")]
-        pub fn create_from_string(
-            name: &DiplomatStr,
-        ) -> Result<Box<ICU4XLocale>, ICU4XLocaleParseError> {
-            Ok(Box::new(ICU4XLocale(Locale::try_from_utf8(name)?)))
+        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        pub fn from_string(name: &DiplomatStr) -> Result<Box<Locale>, LocaleParseError> {
+            Ok(Box::new(Locale(icu_locale_core::Locale::try_from_utf8(
+                name,
+            )?)))
         }
 
-        /// Construct a default undefined [`ICU4XLocale`] "und".
+        /// Construct a default undefined [`Locale`] "und".
         #[diplomat::rust_link(icu::locale::Locale::UND, AssociatedConstantInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "und")]
-        pub fn create_und() -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(Locale::UND))
+        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        pub fn und() -> Box<Locale> {
+            Box::new(Locale(icu_locale_core::Locale::UND))
         }
 
-        /// Clones the [`ICU4XLocale`].
+        /// Clones the [`Locale`].
         #[diplomat::rust_link(icu::locale::Locale, Struct)]
-        pub fn clone(&self) -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(self.0.clone()))
+        pub fn clone(&self) -> Box<Locale> {
+            Box::new(Locale(self.0.clone()))
         }
 
         /// Returns a string representation of the `LanguageIdentifier` part of
-        /// [`ICU4XLocale`].
+        /// [`Locale`].
         #[diplomat::rust_link(icu::locale::Locale::id, StructField)]
-        #[diplomat::attr(supports = accessors, getter)]
+        #[diplomat::attr(*, getter)]
         pub fn basename(&self, write: &mut diplomat_runtime::DiplomatWrite) {
             let _infallible = self.0.id.write_to(write);
         }
@@ -62,7 +60,7 @@ pub mod ffi {
             s: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Option<()> {
-            Key::try_from_utf8(s)
+            icu_locale_core::extensions::unicode::Key::try_from_utf8(s)
                 .ok()
                 .and_then(|k| self.0.extensions.unicode.keywords.get(&k))
                 .map(|v| {
@@ -70,84 +68,84 @@ pub mod ffi {
                 })
         }
 
-        /// Returns a string representation of [`ICU4XLocale`] language.
+        /// Returns a string representation of [`Locale`] language.
         #[diplomat::rust_link(icu::locale::Locale::id, StructField)]
-        #[diplomat::attr(supports = accessors, getter)]
+        #[diplomat::attr(*, getter)]
         pub fn language(&self, write: &mut diplomat_runtime::DiplomatWrite) {
             let _infallible = self.0.id.language.write_to(write);
         }
 
-        /// Set the language part of the [`ICU4XLocale`].
+        /// Set the language part of the [`Locale`].
         #[diplomat::rust_link(icu::locale::Locale::try_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::locale::Locale::try_from_utf8, FnInStruct, hidden)]
-        #[diplomat::attr(supports = accessors, setter = "language")]
-        pub fn set_language(&mut self, s: &DiplomatStr) -> Result<(), ICU4XLocaleParseError> {
+        #[diplomat::attr(*, setter = "language")]
+        pub fn set_language(&mut self, s: &DiplomatStr) -> Result<(), LocaleParseError> {
             self.0.id.language = if s.is_empty() {
-                Language::UND
+                icu_locale_core::subtags::Language::UND
             } else {
-                Language::try_from_utf8(s)?
+                icu_locale_core::subtags::Language::try_from_utf8(s)?
             };
             Ok(())
         }
 
-        /// Returns a string representation of [`ICU4XLocale`] region.
+        /// Returns a string representation of [`Locale`] region.
         #[diplomat::rust_link(icu::locale::Locale::id, StructField)]
-        #[diplomat::attr(supports = accessors, getter)]
+        #[diplomat::attr(*, getter)]
         pub fn region(&self, write: &mut diplomat_runtime::DiplomatWrite) -> Option<()> {
             self.0.id.region.map(|region| {
                 let _infallible = region.write_to(write);
             })
         }
 
-        /// Set the region part of the [`ICU4XLocale`].
+        /// Set the region part of the [`Locale`].
         #[diplomat::rust_link(icu::locale::Locale::try_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::locale::Locale::try_from_utf8, FnInStruct, hidden)]
-        #[diplomat::attr(all(supports = accessors, not(dart)), setter = "region")]
-        pub fn set_region(&mut self, s: &DiplomatStr) -> Result<(), ICU4XLocaleParseError> {
+        #[diplomat::attr(all(*, not(dart)), setter = "region")]
+        pub fn set_region(&mut self, s: &DiplomatStr) -> Result<(), LocaleParseError> {
             self.0.id.region = if s.is_empty() {
                 None
             } else {
-                Some(Region::try_from_utf8(s)?)
+                Some(icu_locale_core::subtags::Region::try_from_utf8(s)?)
             };
             Ok(())
         }
 
-        /// Returns a string representation of [`ICU4XLocale`] script.
+        /// Returns a string representation of [`Locale`] script.
         #[diplomat::rust_link(icu::locale::Locale::id, StructField)]
-        #[diplomat::attr(supports = accessors, getter)]
+        #[diplomat::attr(*, getter)]
         pub fn script(&self, write: &mut diplomat_runtime::DiplomatWrite) -> Option<()> {
             self.0.id.script.map(|script| {
                 let _infallible = script.write_to(write);
             })
         }
 
-        /// Set the script part of the [`ICU4XLocale`]. Pass an empty string to remove the script.
+        /// Set the script part of the [`Locale`]. Pass an empty string to remove the script.
         #[diplomat::rust_link(icu::locale::Locale::try_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::locale::Locale::try_from_utf8, FnInStruct, hidden)]
-        #[diplomat::attr(all(supports = accessors, not(dart)), setter = "script")]
-        pub fn set_script(&mut self, s: &DiplomatStr) -> Result<(), ICU4XLocaleParseError> {
+        #[diplomat::attr(all(*, not(dart)), setter = "script")]
+        pub fn set_script(&mut self, s: &DiplomatStr) -> Result<(), LocaleParseError> {
             self.0.id.script = if s.is_empty() {
                 None
             } else {
-                Some(Script::try_from_utf8(s)?)
+                Some(icu_locale_core::subtags::Script::try_from_utf8(s)?)
             };
             Ok(())
         }
 
         /// Best effort locale canonicalizer that doesn't need any data
         ///
-        /// Use ICU4XLocaleCanonicalizer for better control and functionality
+        /// Use LocaleCanonicalizer for better control and functionality
         #[diplomat::rust_link(icu::locale::Locale::canonicalize, FnInStruct)]
         pub fn canonicalize(
             s: &DiplomatStr,
             write: &mut DiplomatWrite,
-        ) -> Result<(), ICU4XLocaleParseError> {
-            let _infallible = Locale::canonicalize(s)?.write_to(write);
+        ) -> Result<(), LocaleParseError> {
+            let _infallible = icu_locale_core::Locale::canonicalize(s)?.write_to(write);
             Ok(())
         }
-        /// Returns a string representation of [`ICU4XLocale`].
+        /// Returns a string representation of [`Locale`].
         #[diplomat::rust_link(icu::locale::Locale::write_to, FnInStruct)]
-        #[diplomat::attr(supports = stringifiers, stringifier)]
+        #[diplomat::attr(*, stringifier)]
         pub fn to_string(&self, write: &mut diplomat_runtime::DiplomatWrite) {
             let _infallible = self.0.write_to(write);
         }
@@ -163,34 +161,19 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::locale::Locale::strict_cmp, FnInStruct)]
-        #[diplomat::attr(*, disable)]
-        pub fn strict_cmp(&self, other: &DiplomatStr) -> ICU4XOrdering {
-            self.0.strict_cmp(other).into()
-        }
-
-        #[diplomat::rust_link(icu::locale::Locale::strict_cmp, FnInStruct)]
-        #[diplomat::skip_if_ast]
-        #[diplomat::attr(dart, rename = "compareToString")]
-        pub fn strict_cmp_(&self, other: &DiplomatStr) -> core::cmp::Ordering {
+        pub fn compare_to_string(&self, other: &DiplomatStr) -> core::cmp::Ordering {
             self.0.strict_cmp(other)
         }
 
         #[diplomat::rust_link(icu::locale::Locale::total_cmp, FnInStruct)]
-        #[diplomat::attr(*, disable)]
-        pub fn total_cmp(&self, other: &Self) -> ICU4XOrdering {
-            self.0.total_cmp(&other.0).into()
-        }
-
-        #[diplomat::rust_link(icu::locale::Locale::total_cmp, FnInStruct)]
-        #[diplomat::skip_if_ast]
-        #[diplomat::attr(supports = comparators, comparison)]
-        pub fn total_cmp_(&self, other: &Self) -> core::cmp::Ordering {
+        #[diplomat::attr(*, comparison)]
+        pub fn compare_to(&self, other: &Self) -> core::cmp::Ordering {
             self.0.total_cmp(&other.0)
         }
     }
 }
 
-impl ffi::ICU4XLocale {
+impl ffi::Locale {
     pub fn to_datalocale(&self) -> icu_provider::DataLocale {
         (&self.0).into()
     }

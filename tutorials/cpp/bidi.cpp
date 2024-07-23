@@ -2,15 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#include "ICU4XDataProvider.hpp"
-#include "ICU4XBidi.hpp"
-#include "ICU4XLogger.hpp"
+#include "DataProvider.hpp"
+#include "Bidi.hpp"
+#include "Logger.hpp"
 
 #include <iostream>
 
 int main() {
-    std::unique_ptr<ICU4XDataProvider> dp = ICU4XDataProvider::create_compiled();
-    std::unique_ptr<ICU4XBidi> bidi = ICU4XBidi::create(*dp.get()).ok().value();
+    std::unique_ptr<DataProvider> dp = DataProvider::compiled();
+    std::unique_ptr<Bidi> bidi = Bidi::create(*dp.get()).ok().value();
 
     // Written char-by-char to avoid messing up certain text editors.
     std::string_view str = 
@@ -36,7 +36,7 @@ int main() {
         "ג"
         "ב"
         "א";
-    auto bidi_info = bidi->for_text(str, ICU4XBidi::level_ltr());
+    auto bidi_info = bidi->for_text(str, Bidi::level_ltr());
     auto n_para = bidi_info->paragraph_count();
     if (n_para != 2) {
         std::cout << "Expected 2 paragraphs, found " << n_para << std::endl;
@@ -54,7 +54,7 @@ int main() {
     // The first paragraph's first strongly directional character is RTL
     uint8_t level = para->level_at(0);
     std::cout << "Level of first paragraph at index 0 is " << unsigned(level) << std::endl;
-    if (!ICU4XBidi::level_is_rtl(level)) {
+    if (!Bidi::level_is_rtl(level)) {
         std::cout << "Expected level at index 0 to be RTL" << std::endl;
         return 1;
     }
@@ -81,7 +81,7 @@ int main() {
     // The second paragraph's first strongly directional character is LTR
     level = para->level_at(0);
     std::cout << "Level of second paragraph at index 0 is " << unsigned(level) << std::endl;
-    if (!ICU4XBidi::level_is_ltr(level)) {
+    if (!Bidi::level_is_ltr(level)) {
         std::cout << "Expected level at index 0 to be LTR" << std::endl;
         return 1;
     }

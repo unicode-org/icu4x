@@ -14,10 +14,10 @@
 //! ```no_run
 //! use icu_provider_export::blob_exporter::*;
 //! use icu_provider_export::prelude::*;
-//! use icu_datagen_bikeshed::DatagenProvider;
+//! use icu_provider_source::SourceDataProvider;
 //! use std::fs::File;
 //!
-//! let provider = DatagenProvider::new_latest_tested();
+//! let provider = SourceDataProvider::new_latest_tested();
 //!
 //! ExportDriver::new([LocaleFamily::FULL], DeduplicationStrategy::None.into(), LocaleFallbacker::try_new_unstable(&provider).unwrap())
 //!     .with_markers([icu::list::provider::AndListV2Marker::INFO])
@@ -97,16 +97,16 @@ use std::hash::Hash;
 /// Configuration for a data export operation.
 ///
 /// Note that this only configures *which data* is exported. The input provider, usually
-/// `DatagenProvider`, might expose more options about the data itself.
+/// `SourceDataProvider`, might expose more options about the data itself.
 ///
 /// # Examples
 ///
 /// ```no_run
 /// use icu_provider_export::blob_exporter::*;
 /// use icu_provider_export::prelude::*;
-/// use icu_datagen_bikeshed::DatagenProvider;
+/// use icu_provider_source::SourceDataProvider;
 ///
-/// let provider = DatagenProvider::new_latest_tested();
+/// let provider = SourceDataProvider::new_latest_tested();
 ///
 /// ExportDriver::new([LocaleFamily::FULL], DeduplicationStrategy::None.into(), LocaleFallbacker::try_new_unstable(&provider).unwrap())
 ///     .with_markers([icu::list::provider::AndListV2Marker::INFO])

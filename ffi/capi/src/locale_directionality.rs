@@ -3,18 +3,19 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[diplomat::bridge]
+#[diplomat::abi_rename = "icu4x_{0}_mv1"]
 pub mod ffi {
-    use crate::{
-        errors::ffi::ICU4XDataError,
-        locale::ffi::ICU4XLocaleExpander,
-        locale_core::ffi::ICU4XLocale,
-        provider::{ffi::ICU4XDataProvider, ICU4XDataProviderInner},
-    };
     use alloc::boxed::Box;
-    use icu_locale::{Direction, LocaleDirectionality};
+
+    use crate::{
+        errors::ffi::DataError,
+        locale::ffi::LocaleExpander,
+        locale_core::ffi::Locale,
+        provider::{ffi::DataProvider, DataProviderInner},
+    };
 
     #[diplomat::rust_link(icu::locale::Direction, Enum)]
-    pub enum ICU4XLocaleDirection {
+    pub enum LocaleDirection {
         LeftToRight,
         RightToLeft,
         Unknown,
@@ -22,73 +23,71 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::locale::LocaleDirectionality, Struct)]
-    pub struct ICU4XLocaleDirectionality(pub LocaleDirectionality);
+    pub struct LocaleDirectionality(pub icu_locale::LocaleDirectionality);
 
-    impl ICU4XLocaleDirectionality {
-        /// Construct a new ICU4XLocaleDirectionality instance
+    impl LocaleDirectionality {
+        /// Construct a new LocaleDirectionality instance
         #[diplomat::rust_link(icu::locale::LocaleDirectionality::new, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
-        pub fn create(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XLocaleDirectionality>, ICU4XDataError> {
-            Ok(Box::new(ICU4XLocaleDirectionality(call_constructor!(
-                LocaleDirectionality::new [r => Ok(r)],
-                LocaleDirectionality::try_new_with_any_provider,
-                LocaleDirectionality::try_new_with_buffer_provider,
+        #[diplomat::attr(supports = fallible_constructors, constructor)]
+        pub fn create(provider: &DataProvider) -> Result<Box<LocaleDirectionality>, DataError> {
+            Ok(Box::new(LocaleDirectionality(call_constructor!(
+                icu_locale::LocaleDirectionality::new [r => Ok(r)],
+                icu_locale::LocaleDirectionality::try_new_with_any_provider,
+                icu_locale::LocaleDirectionality::try_new_with_buffer_provider,
                 provider,
             )?)))
         }
 
-        /// Construct a new ICU4XLocaleDirectionality instance with a custom expander
+        /// Construct a new LocaleDirectionality instance with a custom expander
         #[diplomat::rust_link(icu::locale::LocaleDirectionality::new_with_expander, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "with_expander")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_expander")]
         pub fn create_with_expander(
-            provider: &ICU4XDataProvider,
-            expander: &ICU4XLocaleExpander,
-        ) -> Result<Box<ICU4XLocaleDirectionality>, ICU4XDataError> {
+            provider: &DataProvider,
+            expander: &LocaleExpander,
+        ) -> Result<Box<LocaleDirectionality>, DataError> {
             #[allow(unused_imports)]
             use icu_provider::prelude::*;
-            Ok(Box::new(ICU4XLocaleDirectionality(match &provider.0 {
-                ICU4XDataProviderInner::Destroyed => Err(icu_provider::DataError::custom(
+            Ok(Box::new(LocaleDirectionality(match &provider.0 {
+                DataProviderInner::Destroyed => Err(icu_provider::DataError::custom(
                     "This provider has been destroyed",
                 ))?,
-                ICU4XDataProviderInner::Empty => {
-                    LocaleDirectionality::try_new_with_expander_unstable(
+                DataProviderInner::Empty => {
+                    icu_locale::LocaleDirectionality::try_new_with_expander_unstable(
                         &icu_provider_adapters::empty::EmptyDataProvider::new(),
                         expander.0.clone(),
                     )?
                 }
                 #[cfg(feature = "buffer_provider")]
-                ICU4XDataProviderInner::Buffer(buffer_provider) => {
-                    LocaleDirectionality::try_new_with_expander_unstable(
+                DataProviderInner::Buffer(buffer_provider) => {
+                    icu_locale::LocaleDirectionality::try_new_with_expander_unstable(
                         &buffer_provider.as_deserializing(),
                         expander.0.clone(),
                     )?
                 }
                 #[cfg(feature = "compiled_data")]
-                ICU4XDataProviderInner::Compiled => {
-                    LocaleDirectionality::new_with_expander(expander.0.clone())
+                DataProviderInner::Compiled => {
+                    icu_locale::LocaleDirectionality::new_with_expander(expander.0.clone())
                 }
             })))
         }
 
         #[diplomat::rust_link(icu::locale::LocaleDirectionality::get, FnInStruct)]
-        #[diplomat::attr(supports = indexing, indexer)]
-        pub fn get(&self, locale: &ICU4XLocale) -> ICU4XLocaleDirection {
+        #[diplomat::attr(*, indexer)]
+        pub fn get(&self, locale: &Locale) -> LocaleDirection {
             match self.0.get(&locale.0) {
-                Some(Direction::LeftToRight) => ICU4XLocaleDirection::LeftToRight,
-                Some(Direction::RightToLeft) => ICU4XLocaleDirection::RightToLeft,
-                _ => ICU4XLocaleDirection::Unknown,
+                Some(icu_locale::Direction::LeftToRight) => LocaleDirection::LeftToRight,
+                Some(icu_locale::Direction::RightToLeft) => LocaleDirection::RightToLeft,
+                _ => LocaleDirection::Unknown,
             }
         }
 
         #[diplomat::rust_link(icu::locale::LocaleDirectionality::is_left_to_right, FnInStruct)]
-        pub fn is_left_to_right(&self, locale: &ICU4XLocale) -> bool {
+        pub fn is_left_to_right(&self, locale: &Locale) -> bool {
             self.0.is_left_to_right(&locale.0)
         }
 
         #[diplomat::rust_link(icu::locale::LocaleDirectionality::is_right_to_left, FnInStruct)]
-        pub fn is_right_to_left(&self, locale: &ICU4XLocale) -> bool {
+        pub fn is_right_to_left(&self, locale: &Locale) -> bool {
             self.0.is_right_to_left(&locale.0)
         }
     }

@@ -184,11 +184,11 @@ $ icu4x-datagen --markers-for-bin target/debug/tutorial --locales ccp --format b
 The output will be much shorter:
 
 ```console
-INFO  [icu_datagen] Generating marker datetime/gregory/datelengths@1
-INFO  [icu_datagen] Generating marker datetime/gregory/datesymbols@1
-INFO  [icu_datagen] Generating marker datetime/week_data@1
-INFO  [icu_datagen] Generating marker decimal/symbols@1
-INFO  [icu_datagen] Generating marker plurals/ordinal@1
+INFO  [icu_provider_export::export_impl] Generating marker datetime/gregory/datelengths@1
+INFO  [icu_provider_export::export_impl] Generating marker datetime/gregory/datesymbols@1
+INFO  [icu_provider_export::export_impl] Generating marker datetime/week_data@1
+INFO  [icu_provider_export::export_impl] Generating marker decimal/symbols@1
+INFO  [icu_provider_export::export_impl] Generating marker plurals/ordinal@1
 ```
 
 And the blob will also be much smaller at the sizes:

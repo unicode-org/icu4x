@@ -22,6 +22,7 @@
 
 mod impls;
 
+use alloc::collections::BTreeSet;
 use icu_provider::prelude::*;
 
 /// A data provider that selectively filters out data requests.
@@ -130,7 +131,6 @@ where
     }
 }
 
-#[cfg(feature = "std")]
 impl<M, D, F> IterableDynamicDataProvider<M> for FilterDataProvider<D, F>
 where
     M: DynamicDataMarker,
@@ -140,7 +140,7 @@ where
     fn iter_ids_for_marker(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<std::collections::HashSet<DataIdentifierCow>, DataError> {
+    ) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
         self.inner.iter_ids_for_marker(marker).map(|set| {
             // Use filter_map instead of filter to avoid cloning the locale
             set.into_iter()
@@ -150,14 +150,13 @@ where
     }
 }
 
-#[cfg(feature = "std")]
 impl<M, D, F> IterableDataProvider<M> for FilterDataProvider<D, F>
 where
     M: DataMarker,
     F: Fn(DataIdentifierBorrowed) -> bool,
     D: IterableDataProvider<M>,
 {
-    fn iter_ids(&self) -> Result<std::collections::HashSet<DataIdentifierCow>, DataError> {
+    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
         self.inner.iter_ids().map(|vec| {
             // Use filter_map instead of filter to avoid cloning the locale
             vec.into_iter()

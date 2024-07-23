@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::fields::{self, Field, FieldLength, FieldSymbol, Second, Week, Year};
-use crate::input::{DateInput, ExtractedDateTimeInput, IsoTimeInput};
+use crate::input::{DateInput, ExtractedDateTimeInput, ExtractedTimeZoneInput, IsoTimeInput};
 use crate::pattern::runtime::{PatternBorrowed, PatternMetadata};
 use crate::pattern::{
     runtime::{Pattern, PatternPlurals},
@@ -17,11 +17,13 @@ use crate::provider::date_time::{
     DateSymbols, GetSymbolForEraError, GetSymbolForMonthError, GetSymbolForWeekdayError,
     MonthPlaceholderValue, TimeSymbols, ZoneSymbols,
 };
+use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
 use crate::time_zone::{
-    ExemplarCityFormat, FallbackTimeZoneFormatterUnit, FormatTimeZone, FormatTimeZoneError,
-    GenericLocationFormat, GenericNonLocationLongFormat, GenericNonLocationShortFormat,
-    Iso8601Format, LocalizedGmtFormat, SpecificNonLocationLongFormat,
-    SpecificNonLocationShortFormat, TimeZoneFormatterUnit,
+    Bcp47IdFormat, ExemplarCityFormat, FallbackTimeZoneFormatterUnit, FormatTimeZone,
+    FormatTimeZoneError, GenericLocationFormat, GenericNonLocationLongFormat,
+    GenericNonLocationShortFormat, Iso8601Format, LocalizedGmtFormat,
+    SpecificNonLocationLongFormat, SpecificNonLocationShortFormat, TimeZoneDataPayloadsBorrowed,
+    TimeZoneFormatterUnit,
 };
 
 use core::fmt::{self, Write};
@@ -35,7 +37,7 @@ use icu_calendar::AnyCalendarKind;
 use icu_decimal::FixedDecimalFormatter;
 use icu_plurals::PluralRules;
 use icu_provider::DataPayload;
-use icu_timezone::CustomTimeZone;
+use icu_timezone::{CustomTimeZone, GmtOffset};
 use writeable::{Part, Writeable};
 
 /// [`FormattedDateTime`] is a intermediate structure which can be retrieved as
@@ -797,9 +799,15 @@ where
     ZS: ZoneSymbols<'data>,
 {
     fn write_time_zone_missing(
+        gmt_offset: Option<GmtOffset>,
         w: &mut (impl writeable::PartsWrite + ?Sized),
-    ) -> Result<(), fmt::Error> {
-        w.with_part(Part::ERROR, |w| "{GMT+?}".write_to(w))
+    ) -> fmt::Result {
+        match gmt_offset {
+            Some(gmt_offset) => w.with_part(Part::ERROR, |w| {
+                Iso8601Format::default_for_fallback().format_infallible(w, gmt_offset)
+            }),
+            None => w.with_part(Part::ERROR, |w| "{GMT+?}".write_to(w)),
+        }
     }
 
     // for errors only:
@@ -811,132 +819,153 @@ where
     // TODO: Implement proper formatting logic here
     Ok(match datetime.time_zone() {
         None => {
-            write_time_zone_missing(w)?;
+            write_time_zone_missing(None, w)?;
             Err(DateTimeWriteError::MissingInputField("time_zone"))
         }
         Some(custom_time_zone) => match zone_symbols {
             None => {
-                write_time_zone_missing(w)?;
+                write_time_zone_missing(custom_time_zone.gmt_offset, w)?;
                 Err(DateTimeWriteError::MissingZoneSymbols)
             }
-            Some(zs) => {
-                let payloads = zs.get_payloads();
-                // Select which formatters to try based on the field.
-                let mut formatters = (
-                    None,
-                    None,
-                    // Friendly Localized GMT Format (requires "essentials" data)
-                    Some(TimeZoneFormatterUnit::WithFallback(
-                        FallbackTimeZoneFormatterUnit::LocalizedGmt(LocalizedGmtFormat {}),
-                    )),
-                );
-                match (field_symbol, field_length) {
-                    // `z..zzz`
-                    (
-                        fields::TimeZone::LowerZ,
-                        FieldLength::One | FieldLength::TwoDigit | FieldLength::Abbreviated,
-                    ) => {
-                        formatters.0 = Some(TimeZoneFormatterUnit::SpecificNonLocationShort(
-                            SpecificNonLocationShortFormat {},
-                        ));
-                    }
-                    // `zzzz`
-                    (fields::TimeZone::LowerZ, FieldLength::Wide) => {
-                        formatters.0 = Some(TimeZoneFormatterUnit::SpecificNonLocationLong(
-                            SpecificNonLocationLongFormat {},
-                        ));
-                    }
-                    // 'v'
-                    (fields::TimeZone::LowerV, FieldLength::One) => {
-                        formatters.0 = Some(TimeZoneFormatterUnit::GenericNonLocationShort(
-                            GenericNonLocationShortFormat {},
-                        ));
-                    }
-                    // 'vvvv'
-                    (fields::TimeZone::LowerV, FieldLength::Wide) => {
-                        formatters.0 = Some(TimeZoneFormatterUnit::GenericNonLocationLong(
-                            GenericNonLocationLongFormat {},
-                        ));
-                    }
-                    // 'VVV'
-                    (fields::TimeZone::UpperV, FieldLength::Abbreviated) => {
-                        formatters.0 =
-                            Some(TimeZoneFormatterUnit::ExemplarCity(ExemplarCityFormat {}));
-                    }
-                    // 'VVVV'
-                    (fields::TimeZone::UpperV, FieldLength::Wide) => {
-                        formatters.0 = Some(TimeZoneFormatterUnit::GenericLocation(
-                            GenericLocationFormat {},
-                        ));
-                    }
-                    // `OOOO`, `ZZZZ`
-                    (fields::TimeZone::UpperO | fields::TimeZone::UpperZ, FieldLength::Wide) => {
-                        // no-op
-                    }
-                    // TODO:
-                    // `V` "uslax"
-                    // `VV` "America/Los_Angeles"
-                    // Generic Partial Location: "Pacific Time (Los Angeles)"
-                    // `O` "GMT-8"
-                    // All `x` and `X` formats
-                    _ => {
-                        // Cause these to fail by unsetting the fallback formats
-                        formatters.2 = None;
-                    }
+            Some(zs) => match ResolvedNeoTimeZoneSkeleton::from_field(field_symbol, field_length) {
+                None => {
+                    write_time_zone_missing(custom_time_zone.gmt_offset, w)?;
+                    Err(DateTimeWriteError::UnsupportedField(field))
                 }
-                let zone_input = custom_time_zone.into();
-                loop {
-                    let Some(formatter) = formatters
-                        .0
-                        .take()
-                        .or_else(|| formatters.1.take())
-                        .or_else(|| formatters.2.take())
-                    else {
-                        // Last Resort ISO-8601 Format (no data required)
-                        let mut result = None;
-                        w.with_part(Part::ERROR, |w| {
-                            result = Some(Iso8601Format::default_for_fallback().format(
-                                w,
-                                &zone_input,
-                                payloads,
-                            )?);
-                            Ok(())
-                        })?;
-                        match result {
-                            Some(Ok(())) => {
-                                // Success, but return an error since GMT data was missing
-                                break Err(DateTimeWriteError::MissingZoneSymbols);
-                            }
-                            None | Some(Err(_)) => {
-                                // Completely failed to format anything
-                                write_time_zone_missing(w)?;
-                                break Err(DateTimeWriteError::MissingNames(field));
-                            }
-                        }
-                    };
-                    match formatter.format(w, &zone_input, payloads)? {
-                        Ok(()) => break Ok(()),
-                        Err(FormatTimeZoneError::MissingInputField(_)) => {
-                            // The time zone input doesn't have the fields for this formatter.
-                            // TODO: What behavior makes the most sense here?
-                            // We can keep trying other formatters.
-                            continue;
-                        }
-                        Err(FormatTimeZoneError::NameNotFound) => {
-                            // Expected common case: data is loaded, but this time zone's
-                            // name was not found in the data.
-                            continue;
-                        }
-                        Err(FormatTimeZoneError::MissingZoneSymbols) => {
-                            // We don't have the necessary data for this formatter.
-                            // TODO: What behavior makes the most sense here?
-                            // We can keep trying other formatters.
-                            continue;
+                Some(time_zone) => {
+                    let payloads = zs.get_payloads();
+                    let zone_input = custom_time_zone.into();
+                    let units = select_zone_units(time_zone);
+                    match do_write_zone(units, &zone_input, payloads, w)? {
+                        Ok(()) => Ok(()),
+                        Err(()) => {
+                            write_time_zone_missing(custom_time_zone.gmt_offset, w)?;
+                            // Return an error since GMT data was missing
+                            Err(DateTimeWriteError::MissingZoneSymbols)
                         }
                     }
                 }
-            }
+            },
         },
+    })
+}
+
+/// Given a [`ResolvedNeoTimeZoneSkeleton`], select the formatter units
+fn select_zone_units(time_zone: ResolvedNeoTimeZoneSkeleton) -> [Option<TimeZoneFormatterUnit>; 3] {
+    // Select which formatters to try based on the field.
+    let mut formatters = (
+        None,
+        None,
+        // Friendly Localized GMT Format (requires "essentials" data)
+        Some(TimeZoneFormatterUnit::WithFallback(
+            FallbackTimeZoneFormatterUnit::LocalizedGmt(LocalizedGmtFormat {}),
+        )),
+    );
+    match time_zone {
+        // `z..zzz`
+        ResolvedNeoTimeZoneSkeleton::SpecificShort => {
+            formatters.0 = Some(TimeZoneFormatterUnit::SpecificNonLocationShort(
+                SpecificNonLocationShortFormat {},
+            ));
+        }
+        // `zzzz`
+        ResolvedNeoTimeZoneSkeleton::SpecificLong => {
+            formatters.0 = Some(TimeZoneFormatterUnit::SpecificNonLocationLong(
+                SpecificNonLocationLongFormat {},
+            ));
+        }
+        // 'v'
+        ResolvedNeoTimeZoneSkeleton::GenericShort => {
+            formatters.0 = Some(TimeZoneFormatterUnit::GenericNonLocationShort(
+                GenericNonLocationShortFormat {},
+            ));
+            formatters.1 = Some(TimeZoneFormatterUnit::GenericLocation(
+                GenericLocationFormat {},
+            ));
+        }
+        // 'vvvv'
+        ResolvedNeoTimeZoneSkeleton::GenericLong => {
+            formatters.0 = Some(TimeZoneFormatterUnit::GenericNonLocationLong(
+                GenericNonLocationLongFormat {},
+            ));
+            formatters.1 = Some(TimeZoneFormatterUnit::GenericLocation(
+                GenericLocationFormat {},
+            ));
+        }
+        // 'VVV'
+        ResolvedNeoTimeZoneSkeleton::City => {
+            formatters.0 = Some(TimeZoneFormatterUnit::ExemplarCity(ExemplarCityFormat {}));
+        }
+        // 'VVVV'
+        ResolvedNeoTimeZoneSkeleton::Location => {
+            formatters.0 = Some(TimeZoneFormatterUnit::GenericLocation(
+                GenericLocationFormat {},
+            ));
+        }
+        // `O`
+        ResolvedNeoTimeZoneSkeleton::GmtShort => {
+            // TODO: For now, use the long format. This should be GMT-8
+        }
+        // `OOOO`, `ZZZZ`
+        ResolvedNeoTimeZoneSkeleton::GmtLong => {
+            // no-op
+        }
+        ResolvedNeoTimeZoneSkeleton::Bcp47Id => {
+            formatters.0 = Some(TimeZoneFormatterUnit::Bcp47Id(Bcp47IdFormat {}))
+        }
+        ResolvedNeoTimeZoneSkeleton::IsoBasic => {
+            formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(
+                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format::basic()),
+            ))
+        }
+        ResolvedNeoTimeZoneSkeleton::IsoExtended => {
+            formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(
+                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format::extended()),
+            ))
+        }
+    };
+    // TODO:
+    // `VV` "America/Los_Angeles"
+    // Generic Partial Location: "Pacific Time (Los Angeles)"
+    // All `x` and `X` formats
+    [formatters.0, formatters.1, formatters.2]
+}
+
+/// Perform the formatting given all of the resolved parameters
+fn do_write_zone<W>(
+    units: [Option<TimeZoneFormatterUnit>; 3],
+    zone_input: &ExtractedTimeZoneInput,
+    payloads: TimeZoneDataPayloadsBorrowed,
+    w: &mut W,
+) -> Result<Result<(), ()>, fmt::Error>
+where
+    W: writeable::PartsWrite + ?Sized,
+{
+    let [mut f0, mut f1, mut f2] = units;
+    Ok(loop {
+        let Some(formatter) = f0.take().or_else(|| f1.take()).or_else(|| f2.take()) else {
+            break Err(());
+        };
+        match formatter.format(w, zone_input, payloads)? {
+            Ok(()) => break Ok(()),
+            Err(FormatTimeZoneError::MissingInputField(_)) => {
+                // The time zone input doesn't have the fields for this formatter.
+                // TODO: What behavior makes the most sense here?
+                // We can keep trying other formatters.
+                continue;
+            }
+            Err(FormatTimeZoneError::NameNotFound) => {
+                // Expected common case: data is loaded, but this time zone's
+                // name was not found in the data.
+                continue;
+            }
+            Err(FormatTimeZoneError::MissingZoneSymbols) => {
+                // We don't have the necessary data for this formatter.
+                // TODO: What behavior makes the most sense here?
+                // We can keep trying other formatters.
+                continue;
+            }
+        }
     })
 }
 
@@ -1038,8 +1067,9 @@ mod tests {
         use icu_calendar::Date;
 
         let locale = "en-u-ca-japanese".parse().unwrap();
-        let dtf = NeoFormatter::<NeoAutoDateMarker>::try_new(&locale, NeoSkeletonLength::Medium)
-            .expect("DateTimeFormat construction succeeds");
+        let dtf =
+            NeoFormatter::<NeoAutoDateMarker>::try_new(&locale, NeoSkeletonLength::Medium.into())
+                .expect("DateTimeFormat construction succeeds");
 
         let date = Date::try_new_gregorian_date(1800, 9, 1).expect("Failed to construct Date.");
         let date = date

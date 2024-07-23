@@ -10,10 +10,11 @@ use icu_decimal::FixedDecimalFormatter;
 use icu_plurals::PluralRules;
 use icu_provider::DataPayload;
 
-use super::super::provider::units::UnitsDisplayNameV1Marker;
 use super::format::FormattedUnit;
-use super::options::UnitsFormatterOptions;
+use super::options::{UnitsFormatterOptions, Width};
+use crate::dimension::provider::units::UnitsDisplayNameV1Marker;
 use icu_provider::prelude::*;
+use smallvec::SmallVec;
 
 extern crate alloc;
 
@@ -27,7 +28,7 @@ extern crate alloc;
 pub struct UnitsFormatter {
     /// Options bag for the units formatter to determine the behavior of the formatter.
     /// for example: width of the units.
-    options: UnitsFormatterOptions,
+    _options: UnitsFormatterOptions,
 
     // /// Essential data for the units formatter.
     // essential: DataPayload<UnitsEssentialsV1Marker>,
@@ -53,6 +54,20 @@ impl UnitsFormatter {
         ]
     );
 
+    // TODO: Remove this function once we have separate markers for different widths.
+    #[inline]
+    fn attribute(width: Width, unit: &str) -> SmallVec<[u8; 32]> {
+        let mut buffer: SmallVec<[u8; 32]> = SmallVec::new();
+        let length = match width {
+            Width::Short => "short-",
+            Width::Narrow => "narrow-",
+            Width::Long => "long-",
+        };
+        buffer.extend_from_slice(length.as_bytes());
+        buffer.extend_from_slice(unit.as_bytes());
+        buffer
+    }
+
     /// Creates a new [`UnitsFormatter`] from compiled locale data and an options bag.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -69,8 +84,10 @@ impl UnitsFormatter {
 
         let plural_rules = PluralRules::try_new_cardinal(locale)?;
 
-        let unit_attribute = DataMarkerAttributes::try_from_str(unit)
-            .map_err(|_| DataError::custom("Failed to parse unit"))?;
+        // TODO: Remove this allocation once we have separate markers for different widths.
+        let attribute = Self::attribute(options.width, unit);
+        let unit_attribute = DataMarkerAttributes::try_from_utf8(&attribute[..attribute.len()])
+            .map_err(|_| DataError::custom("Failed to create a data marker"))?;
 
         let display_name = crate::provider::Baked
             .load(DataRequest {
@@ -83,7 +100,7 @@ impl UnitsFormatter {
             .payload;
 
         Ok(Self {
-            options,
+            _options: options,
             display_name,
             fixed_decimal_formatter,
             plural_rules,
@@ -111,8 +128,10 @@ impl UnitsFormatter {
 
         let plural_rules = PluralRules::try_new_cardinal_unstable(provider, locale)?;
 
-        let unit_attribute = DataMarkerAttributes::try_from_str(unit)
-            .map_err(|_| DataError::custom("Failed to parse unit"))?;
+        // TODO: Remove this allocation once we have separate markers for different widths.
+        let attribute = Self::attribute(options.width, unit);
+        let unit_attribute = DataMarkerAttributes::try_from_utf8(&attribute[..attribute.len()])
+            .map_err(|_| DataError::custom("Failed to create a data marker"))?;
 
         let display_name = provider
             .load(DataRequest {
@@ -125,7 +144,7 @@ impl UnitsFormatter {
             .payload;
 
         Ok(Self {
-            options,
+            _options: options,
             display_name,
             fixed_decimal_formatter,
             plural_rules,
@@ -141,7 +160,6 @@ impl UnitsFormatter {
         FormattedUnit {
             value,
             unit,
-            options: &self.options,
             display_name: self.display_name.get(),
             fixed_decimal_formatter: &self.fixed_decimal_formatter,
             plural_rules: &self.plural_rules,

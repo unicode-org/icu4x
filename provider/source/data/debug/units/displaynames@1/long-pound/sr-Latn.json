@@ -1,0 +1,7 @@
+{
+  "patterns": {
+    "One": "{0} funta",
+    "Few": "{0} funte",
+    "Other": "{0} funti"
+  }
+}

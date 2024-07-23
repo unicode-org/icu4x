@@ -40,7 +40,6 @@ icu4c = []
 
 [dependencies]
 icu_collections = { workspace = true, features = ["serde"] }
-toml = { workspace = true }
 zerovec = { workspace = true }
 wasmi = { workspace = true, optional = true }
 

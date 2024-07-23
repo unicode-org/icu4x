@@ -25,7 +25,7 @@ final class MeasureUnitParser implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XMeasureUnitParser_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_MeasureUnitParser_destroy_mv1));
 
   /// Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`MeasureUnit`],
   /// if the identifier is valid.
@@ -34,18 +34,18 @@ final class MeasureUnitParser implements ffi.Finalizable {
   MeasureUnit? parse(String unitId) {
     final temp = ffi2.Arena();
     final unitIdView = unitId.utf8View;
-    final result = _ICU4XMeasureUnitParser_parse(_ffi, unitIdView.allocIn(temp), unitIdView.length);
+    final result = _icu4x_MeasureUnitParser_parse_mv1(_ffi, unitIdView.allocIn(temp), unitIdView.length);
     temp.releaseAll();
     return result.address == 0 ? null : MeasureUnit._fromFfi(result, []);
   }
 }
 
-@meta.ResourceIdentifier('ICU4XMeasureUnitParser_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XMeasureUnitParser_destroy')
+@meta.ResourceIdentifier('icu4x_MeasureUnitParser_destroy_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_MeasureUnitParser_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XMeasureUnitParser_destroy(ffi.Pointer<ffi.Void> self);
+external void _icu4x_MeasureUnitParser_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XMeasureUnitParser_parse')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XMeasureUnitParser_parse')
+@meta.ResourceIdentifier('icu4x_MeasureUnitParser_parse_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_MeasureUnitParser_parse_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _ICU4XMeasureUnitParser_parse(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> unitIdData, int unitIdLength);
+external ffi.Pointer<ffi.Opaque> _icu4x_MeasureUnitParser_parse_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> unitIdData, int unitIdLength);

@@ -131,6 +131,8 @@ pub mod hebrew;
 pub mod indian;
 pub mod islamic;
 pub mod iso;
+#[cfg(feature = "ixdtf")]
+mod ixdtf;
 pub mod japanese;
 pub mod julian;
 pub mod persian;
@@ -151,6 +153,8 @@ pub mod week {
     pub use week_of::MIN_UNIT_DAYS;
 }
 
+#[cfg(feature = "ixdtf")]
+pub use crate::ixdtf::ParseError;
 #[doc(no_inline)]
 pub use any_calendar::{AnyCalendar, AnyCalendarKind};
 pub use calendar::Calendar;

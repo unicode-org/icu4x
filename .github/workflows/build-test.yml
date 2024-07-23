@@ -53,17 +53,19 @@ jobs:
     env:
       CARGO_HTTP_MULTIPLEXING: false
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
+      with:
+        tool: cargo-make@0.37.13
 
     # Job-specific dependencies
-    - name: Install cargo-binstall 
-      uses: taiki-e/install-action@cargo-binstall
     - name: Install cargo-all-features
-      run: cargo-binstall -y cargo-all-features
+      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
+      with:
+        tool: cargo-all-features@1.10.0
 
     # No toolchain boilerplate as this runs on MSRV
 
@@ -80,11 +82,13 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -101,11 +105,13 @@ jobs:
   test-docs:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -122,11 +128,13 @@ jobs:
   test-gigo:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -147,11 +155,13 @@ jobs:
         behavior: [local] # reenable cratesio for 2.0
       fail-fast: false
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -176,11 +186,13 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -200,11 +212,13 @@ jobs:
   full-datagen:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -226,11 +240,13 @@ jobs:
     runs-on: ubuntu-24.04 # Includes LLVM 16,17,18
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
     
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -254,11 +270,13 @@ jobs:
     runs-on: ubuntu-24.04 # Includes LLVM 16,17,18
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
     
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -276,7 +294,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
     # Software setup/installation for the container
     - name: Install Rust toolchains
@@ -285,7 +303,9 @@ jobs:
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -294,7 +314,7 @@ jobs:
       run: rustup show
 
     # Job-specific dependencies
-    - uses: dart-lang/setup-dart@v1
+    - uses: dart-lang/setup-dart@0a8a0fc875eb934c15d08629302413c671d3f672 # v1.6.5
       with:
         sdk: 3.4.0-204.0.dev
 
@@ -307,11 +327,13 @@ jobs:
   nostd:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -328,11 +350,13 @@ jobs:
   diplomat:
     runs-on: [ ubuntu-latest ]
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -350,11 +374,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -364,7 +390,7 @@ jobs:
 
     # Job-specific dependencies
     - name: Attempt to load cached GN Third-Party Tools
-      uses: actions/cache@v3
+      uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
       id: gn-third-party-tools-cache
       with:
         path: |
@@ -375,7 +401,9 @@ jobs:
       run: cargo make gn-install
 
     - name: Install cargo-rdme
-      uses: taiki-e/install-action@cargo-rdme
+      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
+      with:
+        tool: cargo-rdme@1.4.2
 
     # Actual job
     - name: Run `cargo make ci-job-gn`
@@ -386,11 +414,13 @@ jobs:
   fmt:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -411,11 +441,13 @@ jobs:
   tidy:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -425,7 +457,9 @@ jobs:
 
     # Job-specific dependencies
     - name: Install cargo-rdme
-      uses: taiki-e/install-action@cargo-rdme
+      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
+      with:
+        tool: cargo-rdme@1.4.2
 
     # Actual job
     - name: Tidy
@@ -439,11 +473,13 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -465,11 +501,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
     # Cargo-make boilerplate
     - name: Install cargo-make
-      uses: taiki-e/install-action@cargo-make
+      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
+      with:
+        tool: cargo-make@0.37.13
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -489,7 +527,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Notify slack of failure
-        uses: ravsamhq/notify-slack-action@v1
+        uses: ravsamhq/notify-slack-action@4ed28566c2bdcdaee6dca2b46b9666d01b4ed8a4 # v1
         # Only notify main slack of failure for beta runs and for failed main CI
         if: (github.event_name == 'schedule' && github.event.schedule == '1 14 * * *') || github.event_name == 'push'
         with:
@@ -501,7 +539,7 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       - name: Notify nightly slack of failure
-        uses: ravsamhq/notify-slack-action@v1
+        uses: ravsamhq/notify-slack-action@4ed28566c2bdcdaee6dca2b46b9666d01b4ed8a4 # v1
         with:
           notify_when: failure
           status: failure # We do the filtering earlier

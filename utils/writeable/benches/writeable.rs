@@ -25,10 +25,12 @@ impl Writeable for WriteableMessage<'_> {
 writeable::impl_display_with_writeable!(WriteableMessage<'_>);
 
 /// A sample type implementing Display
+#[cfg(feature = "bench")]
 struct DisplayMessage<'s> {
     message: &'s str,
 }
 
+#[cfg(feature = "bench")]
 impl fmt::Display for DisplayMessage<'_> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         f.write_str(self.message)
@@ -36,6 +38,7 @@ impl fmt::Display for DisplayMessage<'_> {
 }
 
 /// A sample type that contains multiple fields
+#[cfg(feature = "bench")]
 struct ComplexWriteable<'a> {
     prefix: &'a str,
     n0: usize,
@@ -44,6 +47,7 @@ struct ComplexWriteable<'a> {
     suffix: &'a str,
 }
 
+#[cfg(feature = "bench")]
 impl Writeable for ComplexWriteable<'_> {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
         self.prefix.write_to(sink)?;
@@ -63,6 +67,7 @@ impl Writeable for ComplexWriteable<'_> {
     }
 }
 
+#[cfg(feature = "bench")]
 writeable::impl_display_with_writeable!(ComplexWriteable<'_>);
 
 const SHORT_STR: &str = "short";

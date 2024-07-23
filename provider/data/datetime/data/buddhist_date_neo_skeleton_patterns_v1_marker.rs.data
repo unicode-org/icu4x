@@ -22,13 +22,13 @@ macro_rules! __impl_buddhist_date_neo_skeleton_patterns_v1_marker {
         impl icu_provider::DataProvider<icu::datetime::provider::neo::BuddhistDateNeoSkeletonPatternsV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::neo::BuddhistDateNeoSkeletonPatternsV1Marker>, icu_provider::DataError> {
                 let mut metadata = icu_provider::DataResponseMetadata::default();
-                let payload = if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_BUDDHIST_DATE_NEO_SKELETON_PATTERNS_V1_MARKER, req.id) {
+                let payload = if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_BUDDHIST_DATE_NEO_SKELETON_PATTERNS_V1_MARKER, req.id, req.metadata.attributes_prefix_match) {
                     payload
                 } else {
                     const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::datetime::provider::neo::BuddhistDateNeoSkeletonPatternsV1Marker as icu_provider::DataMarker>::INFO.fallback_config);
                     let mut fallback_iterator = FALLBACKER.fallback_for(req.id.locale.clone());
                     loop {
-                        if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_BUDDHIST_DATE_NEO_SKELETON_PATTERNS_V1_MARKER, icu_provider::DataIdentifierBorrowed::for_marker_attributes_and_locale(req.id.marker_attributes, fallback_iterator.get())) {
+                        if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_BUDDHIST_DATE_NEO_SKELETON_PATTERNS_V1_MARKER, icu_provider::DataIdentifierBorrowed::for_marker_attributes_and_locale(req.id.marker_attributes, fallback_iterator.get()), req.metadata.attributes_prefix_match) {
                             metadata.locale = Some(fallback_iterator.take());
                             break payload;
                         }
@@ -46,7 +46,7 @@ macro_rules! __impl_buddhist_date_neo_skeleton_patterns_v1_marker {
         __impl_buddhist_date_neo_skeleton_patterns_v1_marker!($provider);
         #[clippy::msrv = "1.70"]
         impl icu_provider::IterableDataProvider<icu::datetime::provider::neo::BuddhistDateNeoSkeletonPatternsV1Marker> for $provider {
-            fn iter_ids(&self) -> Result<std::collections::HashSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
+            fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_BUDDHIST_DATE_NEO_SKELETON_PATTERNS_V1_MARKER).collect())
             }
         }

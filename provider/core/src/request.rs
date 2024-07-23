@@ -39,6 +39,8 @@ pub struct DataRequest<'a> {
 pub struct DataRequestMetadata {
     /// Silent requests do not log errors. This can be used for exploratory querying, such as fallbacks.
     pub silent: bool,
+    /// Whether to allow prefix matches for the data marker attributes.
+    pub attributes_prefix_match: bool,
 }
 
 /// The borrowed version of a [`DataIdentifierCow`].
@@ -129,7 +131,8 @@ impl Ord for DataIdentifierCow<'_> {
         self.marker_attributes
             .as_str()
             .cmp(other.marker_attributes.as_str())
-            .then_with(|| self.locale.total_cmp(&other.locale))
+            .then_with(|| self.locale.langid.total_cmp(&other.locale.langid))
+            .then_with(|| self.locale.keywords.cmp(&other.locale.keywords))
     }
 }
 
@@ -193,6 +196,11 @@ impl<'a> DataIdentifierCow<'a> {
             marker_attributes: Cow::Borrowed(marker_attributes),
             locale: Cow::Owned(locale),
         }
+    }
+
+    /// Returns whether this id is equal to the default.
+    pub fn is_default(&self) -> bool {
+        self.marker_attributes.is_empty() && self.locale.is_und()
     }
 }
 
@@ -458,48 +466,12 @@ impl DataLocale {
 }
 
 impl DataLocale {
-    /// Returns whether this [`DataLocale`] has all empty fields (no components).
-    ///
-    /// See also:
-    ///
-    /// - [`DataLocale::is_und()`]
-    /// - [`DataLocale::is_langid_und()`]
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_provider::DataLocale;
-    ///
-    /// assert!("und".parse::<DataLocale>().unwrap().is_empty());
-    /// assert!(!"und-u-ca-buddhist"
-    ///     .parse::<DataLocale>()
-    ///     .unwrap()
-    ///     .is_empty());
-    /// assert!(!"ca-ES".parse::<DataLocale>().unwrap().is_empty());
-    /// ```
-    pub fn is_empty(&self) -> bool {
-        self == <&DataLocale>::default()
-    }
-
-    /// Returns an ordering suitable for use in [`BTreeSet`].
-    ///
-    /// The ordering may or may not be equivalent to string ordering, and it
-    /// may or may not be stable across ICU4X releases.
-    ///
-    /// [`BTreeSet`]: alloc::collections::BTreeSet
-    pub fn total_cmp(&self, other: &Self) -> Ordering {
-        self.langid
-            .total_cmp(&other.langid)
-            .then_with(|| self.keywords.cmp(&other.keywords))
-    }
-
     /// Returns whether this [`DataLocale`] is `und` in the locale and extensions portion.
     ///
     /// This ignores auxiliary keys.
     ///
     /// See also:
     ///
-    /// - [`DataLocale::is_empty()`]
     /// - [`DataLocale::is_langid_und()`]
     ///
     /// # Examples
@@ -520,8 +492,6 @@ impl DataLocale {
     /// This ignores extension keywords and auxiliary keys.
     ///
     /// See also:
-    ///
-    /// - [`DataLocale::is_empty()`]
     /// - [`DataLocale::is_und()`]
     ///
     /// # Examples
@@ -759,11 +729,11 @@ impl Debug for DataMarkerAttributes {
 pub struct AttributeParseError;
 
 impl DataMarkerAttributes {
-    const fn validate(s: &str) -> Result<(), AttributeParseError> {
+    const fn validate(s: &[u8]) -> Result<(), AttributeParseError> {
         let mut i = 0;
         while i < s.len() {
             #[allow(clippy::indexing_slicing)] // duh
-            if !matches!(s.as_bytes()[i], b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'-' | b'_') {
+            if !matches!(s[i], b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'-' | b'_') {
                 return Err(AttributeParseError);
             }
             i += 1;
@@ -775,12 +745,7 @@ impl DataMarkerAttributes {
     ///
     /// Returns an error if the string contains characters other than `[a-zA-Z0-9_\-]`.
     pub const fn try_from_str(s: &str) -> Result<&Self, AttributeParseError> {
-        let Ok(()) = Self::validate(s) else {
-            return Err(AttributeParseError);
-        };
-
-        // SAFETY: `Self` has the same layout as `str`
-        Ok(unsafe { &*(s as *const str as *const Self) })
+        Self::try_from_utf8(s.as_bytes())
     }
 
     /// Attempts to create a borrowed [`DataMarkerAttributes`] from a borrowed UTF-8 encoded byte slice.
@@ -797,17 +762,24 @@ impl DataMarkerAttributes {
     ///
     /// # Errors
     ///
-    /// Returns an error if the byte slice contains invalid UTF-8 characters or
-    /// characters other than `[a-zA-Z0-9_\-]`.
-    pub fn try_from_utf8(s: &[u8]) -> Result<&Self, AttributeParseError> {
-        Self::try_from_str(core::str::from_utf8(s).map_err(|_| AttributeParseError)?)
+    /// Returns an error if the byte slice contains code units other than `[a-zA-Z0-9_\-]`.
+    pub const fn try_from_utf8(code_units: &[u8]) -> Result<&Self, AttributeParseError> {
+        let Ok(()) = Self::validate(code_units) else {
+            return Err(AttributeParseError);
+        };
+
+        // SAFETY: `validate` requires a UTF-8 subset
+        let s = unsafe { core::str::from_utf8_unchecked(code_units) };
+
+        // SAFETY: `Self` has the same layout as `str`
+        Ok(unsafe { &*(s as *const str as *const Self) })
     }
 
     /// Creates an owned [`DataMarkerAttributes`] from an owned string.
     ///
     /// Returns an error if the string contains characters other than `[a-zA-Z0-9_\-]`.
     pub fn try_from_string(s: String) -> Result<Box<Self>, AttributeParseError> {
-        let Ok(()) = Self::validate(&s) else {
+        let Ok(()) = Self::validate(s.as_bytes()) else {
             return Err(AttributeParseError);
         };
 

@@ -6,7 +6,7 @@
 //! formatting operations.
 
 #[cfg(feature = "experimental")]
-use crate::neo_marker::{DateMarkers, NeoGetField, TimeMarkers, TypedDateMarkers, ZoneMarkers};
+use crate::neo_marker::{DateInputMarkers, NeoGetField, TimeMarkers, ZoneMarkers};
 use crate::provider::time_zones::{MetazoneId, TimeZoneBcp47Id};
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::week::{RelativeUnit, WeekCalculator};
@@ -170,43 +170,9 @@ impl ExtractedDateTimeInput {
     }
     /// Construct given neo date input instances.
     #[cfg(feature = "experimental")]
-    pub(crate) fn extract_from_typed_neo_input<C, D, T, Z, I>(input: &I) -> Self
+    pub(crate) fn extract_from_neo_input<D, T, Z, I>(input: &I) -> Self
     where
-        D: TypedDateMarkers<C>,
-        T: TimeMarkers,
-        Z: ZoneMarkers,
-        I: ?Sized
-            + NeoGetField<D::YearInput>
-            + NeoGetField<D::MonthInput>
-            + NeoGetField<D::DayOfMonthInput>
-            + NeoGetField<D::DayOfWeekInput>
-            + NeoGetField<D::DayOfYearInput>
-            + NeoGetField<D::AnyCalendarKindInput>
-            + NeoGetField<T::HourInput>
-            + NeoGetField<T::MinuteInput>
-            + NeoGetField<T::SecondInput>
-            + NeoGetField<T::NanoSecondInput>
-            + NeoGetField<Z::TimeZoneInput>,
-    {
-        Self {
-            year: NeoGetField::<D::YearInput>::get_field(input).into(),
-            month: NeoGetField::<D::MonthInput>::get_field(input).into(),
-            day_of_month: NeoGetField::<D::DayOfMonthInput>::get_field(input).into(),
-            iso_weekday: NeoGetField::<D::DayOfWeekInput>::get_field(input).into(),
-            day_of_year_info: NeoGetField::<D::DayOfYearInput>::get_field(input).into(),
-            any_calendar_kind: NeoGetField::<D::AnyCalendarKindInput>::get_field(input).into(),
-            hour: NeoGetField::<T::HourInput>::get_field(input).into(),
-            minute: NeoGetField::<T::MinuteInput>::get_field(input).into(),
-            second: NeoGetField::<T::SecondInput>::get_field(input).into(),
-            nanosecond: NeoGetField::<T::NanoSecondInput>::get_field(input).into(),
-            time_zone: NeoGetField::<Z::TimeZoneInput>::get_field(input).into(),
-        }
-    }
-    /// Construct given neo date input instances.
-    #[cfg(feature = "experimental")]
-    pub(crate) fn extract_from_any_neo_input<D, T, Z, I>(input: &I) -> Self
-    where
-        D: DateMarkers,
+        D: DateInputMarkers,
         T: TimeMarkers,
         Z: ZoneMarkers,
         I: ?Sized

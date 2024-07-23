@@ -58,7 +58,7 @@ macro_rules! cb {
         }
     }
 }
-icu_registry::registry!(cb);
+icu_provider_registry::registry!(cb);
 
 /// Parses a compiled binary and returns a list of [`DataMarkerInfo`]s that it uses *at runtime*.
 ///

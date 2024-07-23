@@ -4,10 +4,12 @@
 
 //! Temporary module for neo datetime skeletons (Semantic Skeleta)
 
-#[cfg(feature = "experimental")]
-use crate::fields::{self, Field, FieldLength, FieldSymbol};
 use crate::options::components;
 use crate::options::length;
+#[cfg(feature = "experimental")]
+use crate::raw::neo::MaybeLength;
+#[cfg(feature = "experimental")]
+use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
 use crate::DateTimeFormatterOptions;
 use icu_provider::DataMarkerAttributes;
 
@@ -17,7 +19,8 @@ use icu_provider::DataMarkerAttributes;
 /// [`crate::options::length::Date`], this has only three levels, with no
 /// `Full`; this is because `Full` corresponds to additional components,
 /// rather than to making the components wider than in `Long`.
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[non_exhaustive]
 pub enum NeoSkeletonLength {
     /// A long date, typically spelled-out, as in “January 1, 2000”.
@@ -71,10 +74,11 @@ impl NeoSkeletonLength {
 }
 
 /// A specification for a set of parts of a date that specifies a single day (as
-/// opposed to a whole month, week, or quarter).
+/// opposed to a whole month or a week).
 /// Only sets that yield “sensible” dates are allowed: this type cannot
 /// describe a date such as “some Tuesday in 2023”.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[non_exhaustive]
 pub enum NeoDayComponents {
     /// The day of the month, as in
@@ -332,8 +336,9 @@ impl NeoDayComponents {
 
 /// A specification for a set of parts of a date.
 /// Only sets that yield “sensible” dates are allowed: this type cannot describe
-/// a date such as “fourth quarter, Anno Domini”.
+/// a date such as “August, Anno Domini”.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[non_exhaustive]
 pub enum NeoDateComponents {
     /// A date that specifies a single day. See [`NeoDayComponents`].
@@ -356,12 +361,7 @@ pub enum NeoDateComponents {
     /// The year and week of the year, as in
     /// “52nd week of 1999”.
     YearWeek,
-    /// The quarter of the year, as in
-    /// “1st quarter”.
-    Quarter,
-    /// The year and quarter of the year, as in
-    /// “1st quarter of 2000”.
-    YearQuarter,
+    // TODO(#501): Consider adding support for Quarter and YearQuarter.
 }
 
 impl NeoDateComponents {
@@ -384,8 +384,6 @@ impl NeoDateComponents {
         Self::Year,
         Self::EraYear,
         Self::YearWeek,
-        Self::Quarter,
-        Self::YearQuarter,
     ];
 
     const MONTH: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("m0");
@@ -396,9 +394,6 @@ impl NeoDateComponents {
     const YEAR: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("y");
     const ERA_YEAR: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("gy");
     const YEAR_WEEK: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("y0w");
-    const QUARTER: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("q");
-    const YEAR_QUARTER: &'static DataMarkerAttributes =
-        DataMarkerAttributes::from_str_or_panic("yq");
 
     // For matching
     const MONTH_STR: &'static str = Self::MONTH.as_str();
@@ -407,8 +402,6 @@ impl NeoDateComponents {
     const YEAR_STR: &'static str = Self::YEAR.as_str();
     const ERA_YEAR_STR: &'static str = Self::ERA_YEAR.as_str();
     const YEAR_WEEK_STR: &'static str = Self::YEAR_WEEK.as_str();
-    const QUARTER_STR: &'static str = Self::QUARTER.as_str();
-    const YEAR_QUARTER_STR: &'static str = Self::YEAR_QUARTER.as_str();
 
     /// Returns a stable string identifying this set of components.
     ///
@@ -422,8 +415,6 @@ impl NeoDateComponents {
             Self::Year => Self::YEAR,
             Self::EraYear => Self::ERA_YEAR,
             Self::YearWeek => Self::YEAR_WEEK,
-            Self::Quarter => Self::QUARTER,
-            Self::YearQuarter => Self::YEAR_QUARTER,
         }
     }
 
@@ -438,8 +429,6 @@ impl NeoDateComponents {
             Self::YEAR_STR => Some(Self::Year),
             Self::ERA_YEAR_STR => Some(Self::EraYear),
             Self::YEAR_WEEK_STR => Some(Self::YearWeek),
-            Self::QUARTER_STR => Some(Self::Quarter),
-            Self::YEAR_QUARTER_STR => Some(Self::YearQuarter),
             _ => NeoDayComponents::from_id_str(id_str).map(Self::Day),
         }
     }
@@ -476,8 +465,6 @@ impl NeoDateComponents {
                 week: Some(length.to_components_week_of_year()),
                 ..Default::default()
             }),
-            Self::Quarter => todo!(),
-            Self::YearQuarter => todo!(),
         }
     }
 }
@@ -486,6 +473,7 @@ impl NeoDateComponents {
 /// Only sets that yield “sensible” time are allowed: this type cannot describe
 /// a time such as “am, 5 minutes, 25 milliseconds”.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[non_exhaustive]
 pub enum NeoTimeComponents {
     /// An hour (12-hour or 24-hour chosen by locale), as in
@@ -692,7 +680,8 @@ impl NeoTimeComponents {
 }
 
 /// A specification of components for parts of a datetime.
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[non_exhaustive]
 pub enum NeoDateTimeComponents {
     /// Components for parts of a date.
@@ -716,7 +705,8 @@ impl From<NeoTimeComponents> for NeoDateTimeComponents {
 }
 
 /// A specification of components for parts of a datetime and/or time zone.
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[non_exhaustive]
 pub enum NeoComponents {
     /// Components for parts of a date.
@@ -759,8 +749,15 @@ impl From<NeoTimeZoneSkeleton> for NeoComponents {
     }
 }
 
-/// Specification of the time zone display style
-#[derive(Debug, Copy, Clone, Default)]
+/// Specification of the time zone display style.
+///
+/// Time zone names contribute a lot of data size. For resource-constrained
+/// environments, the following formats require the least amount of data:
+///
+/// - [`NeoTimeZoneStyle::SpecificNonLocation`] + [`NeoSkeletonLength::Short`]
+/// - [`NeoTimeZoneStyle::Offset`]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[non_exhaustive]
 pub enum NeoTimeZoneStyle {
     /// The location format, e.g., “Los Angeles time” or specific non-location
@@ -774,17 +771,24 @@ pub enum NeoTimeZoneStyle {
     #[default]
     Default,
     /// The location format, e.g., “Los Angeles time”.
+    ///
+    /// When unavailable, falls back to [`NeoTimeZoneStyle::Offset`].
     Location,
     /// The generic non-location format, e.g., “Pacific Time”.
+    ///
+    /// When unavailable, falls back to [`NeoTimeZoneStyle::Location`].
     NonLocation,
     /// The specific non-location format, e.g., “Pacific Daylight Time”.
+    ///
+    /// When unavailable, falls back to [`NeoTimeZoneStyle::Offset`].
     SpecificNonLocation,
     /// The offset from UTC format, e.g., “GMT−8”.
     Offset,
 }
 
 /// A skeleton for formatting a time zone.
-#[derive(Debug, Copy, Clone, Default)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[non_exhaustive]
 pub struct NeoTimeZoneSkeleton {
     /// The length of the time zone format, _i.e._, with
@@ -799,27 +803,13 @@ pub struct NeoTimeZoneSkeleton {
     pub style: NeoTimeZoneStyle,
 }
 
+#[cfg(feature = "experimental")]
 impl NeoTimeZoneSkeleton {
-    #[cfg(feature = "experimental")]
-    pub(crate) const fn non_location_short() -> Self {
-        Self {
-            length: Some(NeoSkeletonLength::Short),
-            style: NeoTimeZoneStyle::NonLocation,
-        }
-    }
-
-    #[cfg(feature = "experimental")]
-    pub(crate) fn to_field(self, length: NeoSkeletonLength) -> Field {
-        use NeoSkeletonLength::*;
-        use NeoTimeZoneStyle::*;
-        let length = self.length.unwrap_or(length);
-        match (self.style, length) {
-            (NonLocation, Short) => Field {
-                symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerV),
-                length: FieldLength::One,
-            },
-            (_, _) => todo!(),
-        }
+    pub(crate) fn resolve(self, length: MaybeLength) -> ResolvedNeoTimeZoneSkeleton {
+        crate::tz_registry::skeleton_to_resolved(
+            self.style,
+            self.length.unwrap_or_else(|| length.get::<Self>()),
+        )
     }
 }
 
@@ -921,7 +911,8 @@ impl NeoDateTimeSkeleton {
 }
 
 /// A skeleton for formatting parts of a date, time, and optional time zone.
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[non_exhaustive]
 pub struct NeoSkeleton {
     /// Desired formatting length.

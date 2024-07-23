@@ -35,21 +35,6 @@ pub(crate) const ZERO_ONE_TWO_SLICE: &zerovec::ZeroSlice<GenericPatternItem> = z
     ]
 );
 
-/// A ZeroSlice containing a 0, 1, and 2 placeholder with spaces
-/// TODO: This is temporary and should be removed once we have zone glue in the data
-#[cfg(feature = "experimental")]
-pub(crate) const ZERO_ONE_TWO_SPACED_SLICE: &zerovec::ZeroSlice<GenericPatternItem> = zerovec::zeroslice!(
-    GenericPatternItem;
-    GenericPatternItem::to_unaligned_const;
-    [
-        GenericPatternItem::Placeholder(0),
-        GenericPatternItem::Literal(' '),
-        GenericPatternItem::Placeholder(1),
-        GenericPatternItem::Literal(' '),
-        GenericPatternItem::Placeholder(2),
-    ]
-);
-
 impl<'data> GenericPattern<'data> {
     /// The function allows for creation of new DTF pattern from a generic pattern
     /// and replacement patterns.

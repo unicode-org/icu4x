@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::ForkByErrorPredicate;
-use alloc::vec::Vec;
+use alloc::{collections::BTreeSet, vec::Vec};
 use icu_provider::prelude::*;
 
 /// A provider that returns data from one of two child providers based on a predicate function.
@@ -138,7 +138,6 @@ where
     }
 }
 
-#[cfg(feature = "std")]
 impl<M, P0, P1, F> IterableDynamicDataProvider<M> for ForkByErrorProvider<P0, P1, F>
 where
     M: DynamicDataMarker,
@@ -149,7 +148,7 @@ where
     fn iter_ids_for_marker(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<std::collections::HashSet<DataIdentifierCow>, DataError> {
+    ) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
         let result = self.0.iter_ids_for_marker(marker);
         match result {
             Ok(ok) => return Ok(ok),
@@ -313,7 +312,6 @@ where
     }
 }
 
-#[cfg(feature = "std")]
 impl<M, P, F> IterableDynamicDataProvider<M> for MultiForkByErrorProvider<P, F>
 where
     M: DynamicDataMarker,
@@ -323,7 +321,7 @@ where
     fn iter_ids_for_marker(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<std::collections::HashSet<DataIdentifierCow>, DataError> {
+    ) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
         let mut last_error = F::UNIT_ERROR.with_marker(marker);
         for provider in self.providers.iter() {
             let result = provider.iter_ids_for_marker(marker);

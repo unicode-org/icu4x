@@ -105,7 +105,7 @@ Our wider testsuite is organized as `ci-job-foo` make tasks corresponding to eac
  - `ci-job-test-tutorials`: Builds all our tutorials against both local code (`locale`), and released ICU4X (`cratesio`).
 <br/>
  
- - `ci-job-testdata`: Runs an `icu_datagen` integration test with a subset of CLDR, ICU, and LSTM source data.
+ - `ci-job-testdata`: Runs an `icu_provider_source` integration test with a subset of CLDR, ICU, and LSTM source data.
  - `ci-job-full-datagen`: Generates compiled data for all crates.
 <br/>
  

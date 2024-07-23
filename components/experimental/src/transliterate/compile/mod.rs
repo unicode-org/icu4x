@@ -13,8 +13,6 @@ use icu_locale_core::Locale;
 use icu_normalizer::provider::*;
 use icu_properties::{provider::*, sets};
 use icu_provider::prelude::*;
-#[cfg(feature = "datagen")]
-use std::collections::HashSet;
 
 mod parse;
 mod pass1;
@@ -465,7 +463,7 @@ where
         + DataProvider<XidStartV1Marker>,
     NP: ?Sized,
 {
-    fn iter_ids(&self) -> Result<HashSet<DataIdentifierCow>, DataError> {
+    fn iter_ids(&self) -> Result<std::collections::BTreeSet<DataIdentifierCow>, DataError> {
         let exclusive_data = self.collection.data.borrow();
         Ok(exclusive_data
             .0

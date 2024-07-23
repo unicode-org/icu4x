@@ -53,6 +53,7 @@ special constructors:
 ```rust
 use icu::datetime::DateTimeFormatter;
 use icu::locale::locale;
+use icu::locale::fallback::LocaleFallbacker;
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_blob::BlobDataProvider;
 
@@ -61,9 +62,10 @@ let data: Box<[u8]> = todo!();
 let provider = BlobDataProvider::try_new_from_blob(data)
     .expect("data should be valid");
 
-let provider =
-    LocaleFallbackProvider::try_new_with_buffer_provider(provider)
+let fallbacker = LocaleFallbacker::try_new_with_buffer_provider(&provider)
         .expect("provider should include fallback data");
+
+let provider = LocaleFallbackProvider::new(provider, fallbacker);
 
 let dtf = DateTimeFormatter::try_new_with_buffer_provider(
     &provider,

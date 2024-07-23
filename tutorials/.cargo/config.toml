@@ -36,14 +36,14 @@ icu_harfbuzz = { path = "../ffi/harfbuzz" }
 
 # Provider
 icu_provider_export = { path = "../provider/export" }
-icu_datagen_bikeshed = { path = "../provider/bikeshed" }
+icu_provider_source = { path = "../provider/source" }
 icu_provider = { path = "../provider/core" }
 icu_provider_macros = { path = "../provider/core/macros" }
 icu_provider_adapters = { path = "../provider/adapters" }
 icu_provider_baked = { path = "../provider/baked" }
 icu_provider_blob = { path = "../provider/blob" }
 icu_provider_fs = { path = "../provider/fs/" }
-icu_registry = { path = "../provider/registry/" }
+icu_provider_registry = { path = "../provider/registry/" }
 icu4x-datagen = { path = "../provider/icu4x-datagen/" }
 
 # Baked data
