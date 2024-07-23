@@ -17,6 +17,6 @@ cfg_if! {
         mod windows;
         pub use windows::*;
     } else {
-        compile_error!("Unsupported operating system");
+        panic!("Unsupported operating system");
     }
 }

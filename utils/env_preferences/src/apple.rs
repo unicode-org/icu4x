@@ -14,6 +14,8 @@ pub mod apple_prefs {
     pub fn get_locales() -> Vec<String> {
         let mut languages: Vec<String> = Vec::new();
 
+        // SAFETY: The call to `CFLocaleCopyPreferredLanguages` returns an `CFArray` which is owned by us
+        
         unsafe {
             let locale_carr_ref = CFLocaleCopyPreferredLanguages();
             if !locale_carr_ref.is_null() {
@@ -47,6 +49,8 @@ pub mod apple_prefs {
         let mut calendar_locale_str = String::new();
         let mut calendar_identifier_str = String::new();
 
+        // SAFETY: The call to `CFCalendarCopyCurrent` returns a calendar object owned by us
+        // This calendar object is used extract locale and type of calendar (identifier)
         unsafe {
             let calendar = CFCalendarCopyCurrent();
             if !calendar.is_null() {
@@ -60,7 +64,7 @@ pub mod apple_prefs {
                     if !locale_cstr.is_null() {
                         calendar_locale_str = CStr::from_ptr(locale_cstr)
                             .to_str()
-                            .unwrap_or("")
+                            .unwrap_or("Unknown")
                             .to_string();
                     }
                 }
@@ -71,7 +75,7 @@ pub mod apple_prefs {
                     if !identifier_cstr.is_null() {
                         calendar_identifier_str = CStr::from_ptr(identifier_cstr)
                             .to_str()
-                            .unwrap_or("")
+                            .unwrap_or("Unknown")
                             .to_string();
                     }
                 }

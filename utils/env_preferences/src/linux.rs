@@ -51,6 +51,7 @@ pub mod linux_prefs {
 
     pub fn get_locales() -> HashMap<LocaleCategory, String> {
         let mut locale_map = HashMap::new();
+
         // SAFETY: In case `libc::setlocale` returns a NULL pointer it fallbacks to the default locale "C"
 
         unsafe {
@@ -61,7 +62,9 @@ pub mod linux_prefs {
             }
 
             // SAFETY: Creating a `CStr` from a non-null pointer and no mutation is being performed.
+
             let locales_cstr = CStr::from_ptr(locales_ptr);
+
             // SAFETY: Returns `&[str]` slice
 
             if let Ok(locales_str) = locales_cstr.to_str() {
@@ -89,10 +92,13 @@ pub mod linux_prefs {
     pub fn get_system_calendars() -> impl Iterator<Item = (Cow<'static, str>, Cow<'static, str>)> {
         unsafe {
             let locale_ptr = setlocale(LC_TIME, ptr::null());
+
             // SAFETY: In case we get a `NULL` pointer for `LC_TIME` from `setlocale`, fallbacks
             // to default locale "C" and default calendar "Gregorian"
+
             if !locale_ptr.is_null() {
                 // SAFETY: Creating a `CStr` from a non-null pointer and no mutation is being performed.
+
                 let c_str = CStr::from_ptr(locale_ptr);
                 if let Ok(str_slice) = c_str.to_str() {
                     // `gnome-calendar` is the default calendar and it only supports `Gregorian`.
