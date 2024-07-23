@@ -99,13 +99,13 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
         if CRATES.get(krate).is_none() {
             eprintln!("Parsing crate {krate}");
             std::process::Command::new("rustup")
-                .args(["install", "nightly-2023-08-08"])
+                .args(["install", std::env!("ICU4X_DIPLOMAT_COVERAGE_NIGHTLY")])
                 .output()
                 .expect("failed to install nightly");
             let output = std::process::Command::new("rustup")
                 .args([
                     "run",
-                    "nightly-2023-08-08",
+                    std::env!("ICU4X_DIPLOMAT_COVERAGE_NIGHTLY"),
                     "cargo",
                     "rustdoc",
                     "-Zsparse-registry",
