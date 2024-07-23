@@ -4,7 +4,7 @@
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
-#[diplomat::attr(*, namespace = "icu4x")]
+#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
 
@@ -44,7 +44,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(*, indexer)]
+        #[diplomat::attr(auto, indexer)]
         pub fn get(&self, cp: DiplomatChar) -> u8 {
             self.0.as_borrowed().get32(cp)
         }
@@ -272,7 +272,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(*, indexer)]
+        #[diplomat::attr(auto, indexer)]
         pub fn get(&self, cp: DiplomatChar) -> u16 {
             self.0.as_borrowed().get32(cp)
         }

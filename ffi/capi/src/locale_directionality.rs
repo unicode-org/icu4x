@@ -4,7 +4,7 @@
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
-#[diplomat::attr(*, namespace = "icu4x")]
+#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
 
@@ -73,7 +73,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::locale::LocaleDirectionality::get, FnInStruct)]
-        #[diplomat::attr(*, indexer)]
+        #[diplomat::attr(auto, indexer)]
         pub fn get(&self, locale: &Locale) -> LocaleDirection {
             match self.0.get(&locale.0) {
                 Some(icu_locale::Direction::LeftToRight) => LocaleDirection::LeftToRight,

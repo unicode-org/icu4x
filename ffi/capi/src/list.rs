@@ -4,7 +4,7 @@
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
-#[diplomat::attr(*, namespace = "icu4x")]
+#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
 
@@ -83,7 +83,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::list::ListFormatter::format_to_string, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::list::FormattedList, Struct, hidden)]
         #[diplomat::attr(not(supports = utf8_strings), disable)]
-        #[diplomat::attr(*, rename = "format")]
+        #[diplomat::attr(auto, rename = "format")]
         pub fn format_utf8(&self, list: &[&DiplomatStr], write: &mut DiplomatWrite) {
             let _infallible = self
                 .0
