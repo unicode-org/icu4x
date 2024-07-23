@@ -4,6 +4,7 @@
 
 ICU4C_SOURCE ?= $(HOME)/icu/icu4c/source
 CXX := clang++
+WASM2WAT := wasm2wat
 
 .PHONY: all clean
 all: ucptrie_wrap.wasm
@@ -74,7 +75,11 @@ ucptrie_wrap.wasm: $(wasm_obj_files)
 		-I$(ICU4C_SOURCE)/common \
 		-I$(ICU4C_SOURCE)/tools/toolutil \
 		$(wasm_obj_files) \
+		-g \
 		-o ucptrie_wrap.wasm
+
+%.wat: %.wasm
+	$(WASM2WAT) $< -o $@
 
 clean:
 	rm -rf wasm_obj
