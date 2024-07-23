@@ -25,7 +25,7 @@ mod windows_locale {
         let calendar = Globalization::Calendar::new().unwrap();
         let system_calendar = Globalization::Calendar::GetCalendarSystem(&calendar).unwrap();
         let calendar_type: String = system_calendar.to_string();
-        let locale_list: Vec<String> = get_locale();
+        let locale_list: Vec<String> = get_locales();
 
         let result: Vec<(String, String)> = locale_list
             .into_iter()
