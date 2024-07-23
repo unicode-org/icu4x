@@ -11,7 +11,7 @@ pub mod apple_prefs {
     };
     use std::ffi::CStr;
 
-    pub fn get_locales_mac() -> Vec<String> {
+    pub fn get_locales() -> Vec<String> {
         let mut languages: Vec<String> = Vec::new();
 
         unsafe {
@@ -42,7 +42,7 @@ pub mod apple_prefs {
         languages
     }
 
-    pub fn get_system_calendars_macos() -> Vec<(String, String)> {
+    pub fn get_system_calendars() -> Vec<(String, String)> {
         let mut calendars = Vec::new();
         let mut calendar_locale_str = String::new();
         let mut calendar_identifier_str = String::new();
