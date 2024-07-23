@@ -83,7 +83,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::list::ListFormatter::format_to_string, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::list::FormattedList, Struct, hidden)]
         #[diplomat::attr(not(supports = utf8_strings), disable)]
-        #[diplomat::attr(auto, rename = "format")]
+        #[diplomat::attr(*, rename = "format")]
         pub fn format_utf8(&self, list: &[&DiplomatStr], write: &mut DiplomatWrite) {
             let _infallible = self
                 .0

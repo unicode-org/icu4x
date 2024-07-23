@@ -165,7 +165,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::segment_utf8, FnInStruct)]
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::segment_str, FnInStruct, hidden)]
         #[diplomat::attr(not(supports = utf8_strings), disable)]
-        #[diplomat::attr(auto, rename = "segment")]
+        #[diplomat::attr(*, rename = "segment")]
         pub fn segment_utf8<'a>(
             &'a self,
             input: &'a DiplomatStr,

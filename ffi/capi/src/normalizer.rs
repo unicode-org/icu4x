@@ -70,7 +70,7 @@ pub mod ffi {
             hidden
         )]
         #[diplomat::attr(not(supports = utf8_strings), disable)]
-        #[diplomat::attr(auto, rename = "is_normalized")]
+        #[diplomat::attr(*, rename = "is_normalized")]
         pub fn is_normalized_utf8(&self, s: &DiplomatStr) -> bool {
             self.0.is_normalized_utf8(s)
         }
@@ -100,7 +100,7 @@ pub mod ffi {
             hidden
         )]
         #[diplomat::attr(not(supports = utf8_strings), disable)]
-        #[diplomat::attr(auto, rename = "is_normalized_up_to")]
+        #[diplomat::attr(*, rename = "is_normalized_up_to")]
         pub fn is_normalized_utf8_up_to(&self, s: &DiplomatStr) -> usize {
             self.0.is_normalized_utf8_up_to(s)
         }

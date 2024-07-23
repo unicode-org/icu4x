@@ -49,7 +49,7 @@ pub mod ffi {
             hidden
         )]
         #[diplomat::attr(not(supports = utf8_strings), disable)]
-        #[diplomat::attr(auto, rename = "for_text")]
+        #[diplomat::attr(*, rename = "for_text")]
         pub fn for_text_utf8<'text>(
             &self,
             text: &'text DiplomatStr,
