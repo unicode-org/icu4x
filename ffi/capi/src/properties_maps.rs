@@ -43,7 +43,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(*, indexer)]
+        #[diplomat::attr(auto, indexer)]
         pub fn get(&self, cp: DiplomatChar) -> u8 {
             self.0.as_borrowed().get32(cp)
         }
@@ -271,7 +271,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(*, indexer)]
+        #[diplomat::attr(auto, indexer)]
         pub fn get(&self, cp: DiplomatChar) -> u16 {
             self.0.as_borrowed().get32(cp)
         }

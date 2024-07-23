@@ -48,7 +48,7 @@ pub mod ffi {
             Struct,
             compact
         )]
-        #[diplomat::attr(*, indexer)]
+        #[diplomat::attr(auto, indexer)]
         pub fn get(&self, ch: DiplomatChar) -> u8 {
             self.0.get32(ch).0
         }

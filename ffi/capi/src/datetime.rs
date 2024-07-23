@@ -85,14 +85,14 @@ pub mod ffi {
 
         /// Gets the date contained in this object
         #[diplomat::rust_link(icu::calendar::DateTime::date, StructField)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn date(&self) -> Box<IsoDate> {
             Box::new(IsoDate(self.0.date))
         }
 
         /// Gets the time contained in this object
         #[diplomat::rust_link(icu::calendar::DateTime::time, StructField)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn time(&self) -> Box<Time> {
             Box::new(Time(self.0.time))
         }
@@ -107,7 +107,7 @@ pub mod ffi {
 
         /// Gets the minutes since the local unix epoch for this date (Jan 1 1970, 00:00)
         #[diplomat::rust_link(icu::calendar::DateTime::minutes_since_local_unix_epoch, FnInStruct)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn minutes_since_local_unix_epoch(&self) -> i32 {
             self.0.minutes_since_local_unix_epoch()
         }
@@ -120,46 +120,46 @@ pub mod ffi {
 
         /// Returns the hour in this time
         #[diplomat::rust_link(icu::calendar::Time::hour, StructField)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn hour(&self) -> u8 {
             self.0.time.hour.into()
         }
         /// Returns the minute in this time
         #[diplomat::rust_link(icu::calendar::Time::minute, StructField)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn minute(&self) -> u8 {
             self.0.time.minute.into()
         }
         /// Returns the second in this time
         #[diplomat::rust_link(icu::calendar::Time::second, StructField)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn second(&self) -> u8 {
             self.0.time.second.into()
         }
         /// Returns the nanosecond in this time
         #[diplomat::rust_link(icu::calendar::Time::nanosecond, StructField)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn nanosecond(&self) -> u32 {
             self.0.time.nanosecond.into()
         }
 
         /// Returns the 1-indexed day in the year for this date
         #[diplomat::rust_link(icu::calendar::Date::day_of_year_info, FnInStruct)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn day_of_year(&self) -> u16 {
             self.0.date.day_of_year_info().day_of_year
         }
 
         /// Returns the 1-indexed day in the month for this date
         #[diplomat::rust_link(icu::calendar::Date::day_of_month, FnInStruct)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn day_of_month(&self) -> u32 {
             self.0.date.day_of_month().0
         }
 
         /// Returns the day in the week for this day
         #[diplomat::rust_link(icu::calendar::Date::day_of_week, FnInStruct)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn day_of_week(&self) -> IsoWeekday {
             self.0.date.day_of_week().into()
         }
@@ -192,42 +192,42 @@ pub mod ffi {
 
         /// Returns 1-indexed number of the month of this date in its year
         #[diplomat::rust_link(icu::calendar::Date::month, FnInStruct)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn month(&self) -> u32 {
             self.0.date.month().ordinal
         }
 
         /// Returns the year number for this date
         #[diplomat::rust_link(icu::calendar::Date::year, FnInStruct)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn year(&self) -> i32 {
             self.0.date.year().number
         }
 
         /// Returns whether this date is in a leap year
         #[diplomat::rust_link(icu::calendar::Date::is_in_leap_year, FnInStruct)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn is_in_leap_year(&self) -> bool {
             self.0.date.is_in_leap_year()
         }
 
         /// Returns the number of months in the year represented by this date
         #[diplomat::rust_link(icu::calendar::Date::months_in_year, FnInStruct)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn months_in_year(&self) -> u8 {
             self.0.date.months_in_year()
         }
 
         /// Returns the number of days in the month represented by this date
         #[diplomat::rust_link(icu::calendar::Date::days_in_month, FnInStruct)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn days_in_month(&self) -> u8 {
             self.0.date.days_in_month()
         }
 
         /// Returns the number of days in the year represented by this date
         #[diplomat::rust_link(icu::calendar::Date::days_in_year, FnInStruct)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn days_in_year(&self) -> u16 {
             self.0.date.days_in_year()
         }
@@ -319,14 +319,14 @@ pub mod ffi {
 
         /// Gets a copy of the date contained in this object
         #[diplomat::rust_link(icu::calendar::DateTime::date, StructField)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn date(&self) -> Box<Date> {
             Box::new(Date(self.0.date.clone()))
         }
 
         /// Gets the time contained in this object
         #[diplomat::rust_link(icu::calendar::DateTime::time, StructField)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn time(&self) -> Box<Time> {
             Box::new(Time(self.0.time))
         }
@@ -345,46 +345,46 @@ pub mod ffi {
 
         /// Returns the hour in this time
         #[diplomat::rust_link(icu::calendar::Time::hour, StructField)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn hour(&self) -> u8 {
             self.0.time.hour.into()
         }
         /// Returns the minute in this time
         #[diplomat::rust_link(icu::calendar::Time::minute, StructField)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn minute(&self) -> u8 {
             self.0.time.minute.into()
         }
         /// Returns the second in this time
         #[diplomat::rust_link(icu::calendar::Time::second, StructField)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn second(&self) -> u8 {
             self.0.time.second.into()
         }
         /// Returns the nanosecond in this time
         #[diplomat::rust_link(icu::calendar::Time::nanosecond, StructField)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn nanosecond(&self) -> u32 {
             self.0.time.nanosecond.into()
         }
 
         /// Returns the 1-indexed day in the year for this date
         #[diplomat::rust_link(icu::calendar::Date::day_of_year_info, FnInStruct)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn day_of_year(&self) -> u16 {
             self.0.date.day_of_year_info().day_of_year
         }
 
         /// Returns the 1-indexed day in the month for this date
         #[diplomat::rust_link(icu::calendar::Date::day_of_month, FnInStruct)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn day_of_month(&self) -> u32 {
             self.0.date.day_of_month().0
         }
 
         /// Returns the day in the week for this day
         #[diplomat::rust_link(icu::calendar::Date::day_of_week, FnInStruct)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn day_of_week(&self) -> IsoWeekday {
             self.0.date.day_of_week().into()
         }
@@ -421,7 +421,7 @@ pub mod ffi {
         /// having the same ordinal month across years; use month_code if you care
         /// about month identity.
         #[diplomat::rust_link(icu::calendar::Date::month, FnInStruct)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn ordinal_month(&self) -> u32 {
             self.0.date.month().ordinal
         }
@@ -429,7 +429,7 @@ pub mod ffi {
         /// Returns the month code for this date. Typically something
         /// like "M01", "M02", but can be more complicated for lunar calendars.
         #[diplomat::rust_link(icu::calendar::Date::month, FnInStruct)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn month_code(&self, write: &mut diplomat_runtime::DiplomatWrite) {
             let code = self.0.date.month().code;
             let _infallible = write.write_str(&code.0);
@@ -437,14 +437,14 @@ pub mod ffi {
 
         /// Returns the year number in the current era for this date
         #[diplomat::rust_link(icu::calendar::Date::year, FnInStruct)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn year_in_era(&self) -> i32 {
             self.0.date.year().number
         }
 
         /// Returns the era for this date,
         #[diplomat::rust_link(icu::calendar::Date::year, FnInStruct)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn era(&self, write: &mut diplomat_runtime::DiplomatWrite) {
             let era = self.0.date.year().era;
             let _infallible = write.write_str(&era.0);
@@ -452,21 +452,21 @@ pub mod ffi {
 
         /// Returns the number of months in the year represented by this date
         #[diplomat::rust_link(icu::calendar::Date::months_in_year, FnInStruct)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn months_in_year(&self) -> u8 {
             self.0.date.months_in_year()
         }
 
         /// Returns the number of days in the month represented by this date
         #[diplomat::rust_link(icu::calendar::Date::days_in_month, FnInStruct)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn days_in_month(&self) -> u8 {
             self.0.date.days_in_month()
         }
 
         /// Returns the number of days in the year represented by this date
         #[diplomat::rust_link(icu::calendar::Date::days_in_year, FnInStruct)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn days_in_year(&self) -> u16 {
             self.0.date.days_in_year()
         }
@@ -474,7 +474,7 @@ pub mod ffi {
         /// Returns the [`Calendar`] object backing this date
         #[diplomat::rust_link(icu::calendar::Date::calendar, FnInStruct)]
         #[diplomat::rust_link(icu::calendar::Date::calendar_wrapper, FnInStruct, hidden)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn calendar(&self) -> Box<Calendar> {
             Box::new(Calendar(self.0.date.calendar_wrapper().clone()))
         }

@@ -137,7 +137,7 @@ pub mod ffi {
     }
 
     impl<'a> LocaleFallbackIterator<'a> {
-        #[diplomat::attr(*, iterator)]
+        #[diplomat::attr(auto, iterator)]
         #[diplomat::rust_link(
             icu::locale::fallback::LocaleFallbackIterator::get,
             FnInStruct,
