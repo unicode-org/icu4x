@@ -2,15 +2,15 @@
   "separator": ":",
   "hms_padding": {
     "h": 1,
-    "m": 1,
-    "s": 1
+    "m": 2,
+    "s": 2
   },
   "hm_padding": {
     "h": 1,
-    "m": 1
+    "m": 2
   },
   "ms_padding": {
     "m": 1,
-    "s": 1
+    "s": 2
   }
 }
