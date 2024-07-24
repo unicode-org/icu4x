@@ -1,5 +1,6 @@
 list_to_ucptrie
 list_to_ucptrie.wasm
 list_to_ucptrie.wat
+ucptrie_wrap.wasm
 icu4c_obj/
 wasm_obj/
