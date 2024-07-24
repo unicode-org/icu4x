@@ -143,9 +143,17 @@ pub mod ffi {
             if current.is_und() {
                 None
             } else {
-                let current = current.clone().into_locale();
+                let locale = icu_locale_core::Locale {
+                    id: icu_locale_core::LanguageIdentifier {
+                        language: current.language,
+                        script: current.script,
+                        region: current.region,
+                        ..Default::default()
+                    },
+                    ..Default::default()
+                };
                 self.0.step();
-                Some(Box::new(Locale(current)))
+                Some(Box::new(Locale(locale)))
             }
         }
     }

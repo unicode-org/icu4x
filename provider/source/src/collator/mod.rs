@@ -36,7 +36,7 @@ fn id_to_file_name(id: &DataIdentifierBorrowed) -> String {
             "gb2312" => "gb2312han",
             extension => extension,
         });
-    } else if id.locale.language() == language!("zh") {
+    } else if id.locale.language == language!("zh") {
         // "zh" uses "_pinyin" as the default
         s.push_str("_pinyin");
     } else {
@@ -203,9 +203,9 @@ fn test_zh_non_baked() {
 
     // Note: ㄅ is Bopomofo.
     {
-        let locale = "zh-u-co-gb2312".parse().unwrap();
+        let locale: icu::locale::Locale = "zh-u-co-gb2312".parse().unwrap();
         let collator =
-            Collator::try_new_unstable(&provider, &locale, CollatorOptions::new()).unwrap();
+            Collator::try_new_unstable(&provider, &locale.into(), CollatorOptions::new()).unwrap();
         assert_eq!(collator.compare("艾", "a"), Ordering::Greater);
         assert_eq!(collator.compare("佰", "a"), Ordering::Greater);
         assert_eq!(collator.compare("ㄅ", "a"), Ordering::Greater);
@@ -220,9 +220,9 @@ fn test_zh_non_baked() {
         assert_ne!(collator.compare("不", "把"), Ordering::Greater);
     }
     {
-        let locale = "zh-u-co-big5han".parse().unwrap();
+        let locale: icu::locale::Locale = "zh-u-co-big5han".parse().unwrap();
         let collator =
-            Collator::try_new_unstable(&provider, &locale, CollatorOptions::new()).unwrap();
+            Collator::try_new_unstable(&provider, &locale.into(), CollatorOptions::new()).unwrap();
         assert_eq!(collator.compare("艾", "a"), Ordering::Greater);
         assert_eq!(collator.compare("佰", "a"), Ordering::Greater);
         assert_eq!(collator.compare("ㄅ", "a"), Ordering::Greater);

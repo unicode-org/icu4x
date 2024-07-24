@@ -6,8 +6,8 @@
 //! locale with data.
 
 use crate::provider::*;
-use icu_locale_core::extensions::unicode::Value;
-use icu_locale_core::subtags::Variants;
+use icu_locale_core::subtags::Subtag;
+use icu_locale_core::subtags::Variant;
 use icu_provider::prelude::*;
 
 #[doc(inline)]
@@ -83,8 +83,8 @@ struct LocaleFallbackIteratorInner<'a> {
     likely_subtags: &'a LocaleFallbackLikelySubtagsV1<'a>,
     parents: &'a LocaleFallbackParentsV1<'a>,
     config: LocaleFallbackConfig,
-    backup_subdivision: Option<Value>,
-    backup_variants: Option<Variants>,
+    backup_subdivision: Option<Subtag>,
+    backup_variant: Option<Variant>,
 }
 
 /// Iteration type for locale fallback operations.
@@ -208,7 +208,7 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
                 parents: self.parents,
                 config: self.config,
                 backup_subdivision: None,
-                backup_variants: None,
+                backup_variant: None,
             },
             phantom: core::marker::PhantomData,
         }

@@ -346,7 +346,7 @@ fn select_locales_for_marker<'a>(
                 log::trace!("Including {current_locale}: full locale family: {marker:?}");
                 selected_locales.insert(current_locale.clone());
             }
-            if current_locale.language().is_empty() && !current_locale.is_und() {
+            if current_locale.language.is_empty() && !current_locale.is_und() {
                 log::trace!("Including {current_locale}: und variant: {marker:?}");
                 selected_locales.insert(current_locale.clone());
             }
@@ -382,7 +382,7 @@ fn select_locales_for_marker<'a>(
                 if let Some(parent_ids) = maybe_parent_ids {
                     for morphed_id in parent_ids.iter() {
                         // Special case: don't pull extensions or aux keys up from the root.
-                        if morphed_id.locale.is_langid_und() && !morphed_id.is_default() {
+                        if morphed_id.locale.is_und() && !morphed_id.is_default() {
                             continue;
                         }
                         let mut morphed_id = morphed_id.clone();

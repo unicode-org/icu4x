@@ -149,15 +149,15 @@ impl Collator {
             + DataProvider<CollationReorderingV1Marker>
             + ?Sized,
     {
-        let id = DataIdentifierCow::from_borrowed_and_owned(
+        let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(
             DataMarkerAttributes::from_str_or_panic(
                 locale.get_single_unicode_ext("co").unwrap_or_default(),
             ),
-            locale.get_langid().into(),
+            locale,
         );
 
         let req = DataRequest {
-            id: id.as_borrowed(),
+            id,
             metadata: {
                 let mut metadata = DataRequestMetadata::default();
                 metadata.silent = true;
@@ -166,7 +166,7 @@ impl Collator {
         };
 
         let fallback_req = DataRequest {
-            id: DataIdentifierBorrowed::for_locale(&id.locale),
+            id: DataIdentifierBorrowed::for_locale(locale),
             ..Default::default()
         };
 

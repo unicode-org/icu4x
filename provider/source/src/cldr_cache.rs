@@ -185,16 +185,17 @@ impl CldrCache {
     /// CLDR sometimes stores locales with default scripts.
     /// Add in the likely script here to make that data reachable.
     fn add_script_extended(&self, locale: &DataLocale) -> Result<Option<DataLocale>, DataError> {
-        if locale.language().is_empty() || locale.script().is_some() {
+        if locale.language.is_empty() || locale.script.is_some() {
             return Ok(None);
         }
-        let mut new_langid = locale.get_langid();
+        let mut new_langid =
+            icu::locale::LanguageIdentifier::from((locale.language, locale.script, locale.region));
         self.extended_locale_expander()?.maximize(&mut new_langid);
         debug_assert!(
             new_langid.script.is_some(),
             "Script not found for: {new_langid:?}"
         );
-        if locale.region().is_none() {
+        if locale.region.is_none() {
             new_langid.region = None;
         }
         Ok(Some(new_langid.into()))
@@ -204,17 +205,18 @@ impl CldrCache {
     /// if the script is the default for the language.
     /// Perform that normalization mapping here.
     fn remove_script_extended(&self, locale: &DataLocale) -> Result<Option<DataLocale>, DataError> {
-        if locale.language().is_empty() || locale.script().is_none() {
+        if locale.language.is_empty() || locale.script.is_none() {
             return Ok(None);
         }
-        let mut langid = locale.get_langid();
+        let mut langid =
+            icu::locale::LanguageIdentifier::from((locale.language, locale.script, locale.region));
         self.extended_locale_expander()?.minimize(&mut langid);
-        if langid.script.is_some() || (locale.region().is_none() && langid.region.is_some()) {
+        if langid.script.is_some() || (locale.region.is_none() && langid.region.is_some()) {
             // Wasn't able to minimize the script, or had to add a region
             return Ok(None);
         }
         // Restore the region
-        langid.region = locale.region();
+        langid.region = locale.region;
         Ok(Some(langid.into()))
     }
 }
@@ -244,12 +246,10 @@ impl<'a> CldrDirLang<'a> {
         for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
     {
         let dir_suffix = self.0.dir_suffix()?;
-        // TODO: remove this when unicode extensions have been removed from data locale
-        let locale = DataLocale::from(locale.get_langid());
         let path = format!("{}-{dir_suffix}/main/{locale}/{file_name}", self.1);
         if self.0.serde_cache.file_exists(&path)? {
             self.0.serde_cache.read_and_parse_json(&path)
-        } else if let Some(new_locale) = self.0.add_script_extended(&locale)? {
+        } else if let Some(new_locale) = self.0.add_script_extended(locale)? {
             self.read_and_parse(&new_locale, file_name)
         } else {
             Err(DataErrorKind::Io(std::io::ErrorKind::NotFound)
