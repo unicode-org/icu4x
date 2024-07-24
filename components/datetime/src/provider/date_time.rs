@@ -364,7 +364,7 @@ where
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::from_str_or_panic(cal),
-                    &self.locale,
+                    self.locale,
                 ),
                 ..Default::default()
             })
