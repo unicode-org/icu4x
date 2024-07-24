@@ -37,10 +37,7 @@ use icu_datetime::{
     TypedDateTimeFormatter, TypedZonedDateTimeFormatter,
 };
 use icu_decimal::provider::DecimalSymbolsV1Marker;
-use icu_locale_core::{
-    extensions::unicode::{key, value},
-    locale, LanguageIdentifier, Locale,
-};
+use icu_locale_core::{locale, LanguageIdentifier, Locale};
 use icu_provider::prelude::*;
 use icu_provider_adapters::any_payload::AnyPayloadProvider;
 use icu_provider_adapters::fork::MultiForkByMarkerProvider;
@@ -387,13 +384,8 @@ fn test_dayperiod_patterns() {
             .unwrap()
             .0
     {
-        let mut locale: Locale = test.locale.parse().unwrap();
-        locale
-            .extensions
-            .unicode
-            .keywords
-            .set(key!("ca"), value!("gregory"));
-        let mut data_locale = DataLocale::from(&locale);
+        let locale: Locale = test.locale.parse().unwrap();
+        let data_locale = DataLocale::from(&locale);
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_locale(&data_locale),
             ..Default::default()
@@ -414,10 +406,17 @@ fn test_dayperiod_patterns() {
             icu_datetime::provider::Baked.load(req).unwrap();
         #[cfg(feature = "experimental")]
         let skeleton_data: DataResponse<DateSkeletonPatternsV1Marker> =
-            icu_datetime::provider::Baked.load(req).unwrap();
+            icu_datetime::provider::Baked
+                .load(DataRequest {
+                    id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                        DataMarkerAttributes::from_str_or_panic("gregory"),
+                        &data_locale,
+                    ),
+                    ..Default::default()
+                })
+                .unwrap();
         let week_data: DataResponse<WeekDataV1Marker> =
             icu_calendar::provider::Baked.load(req).unwrap();
-        data_locale.retain_unicode_ext(|_| false);
         let decimal_data: DataResponse<DecimalSymbolsV1Marker> = icu_decimal::provider::Baked
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&data_locale),
@@ -562,12 +561,7 @@ fn test_time_zone_patterns() {
             .unwrap()
             .0
     {
-        let mut locale: Locale = test.locale.parse().unwrap();
-        locale
-            .extensions
-            .unicode
-            .keywords
-            .set(key!("ca"), value!("gregory"));
+        let locale: Locale = test.locale.parse().unwrap();
         let data_locale = DataLocale::from(&locale);
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_locale(&data_locale),
@@ -585,7 +579,15 @@ fn test_time_zone_patterns() {
             icu_datetime::provider::Baked.load(req).unwrap();
         #[cfg(feature = "experimental")]
         let skeleton_data: DataResponse<DateSkeletonPatternsV1Marker> =
-            icu_datetime::provider::Baked.load(req).unwrap();
+            icu_datetime::provider::Baked
+                .load(DataRequest {
+                    id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                        DataMarkerAttributes::from_str_or_panic("gregory"),
+                        &data_locale,
+                    ),
+                    ..Default::default()
+                })
+                .unwrap();
         let symbols_data: DataResponse<GregorianDateSymbolsV1Marker> =
             icu_datetime::provider::Baked.load(req).unwrap();
         let week_data: DataResponse<WeekDataV1Marker> =
