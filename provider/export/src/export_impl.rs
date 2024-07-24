@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{DeduplicationStrategy, ExportDriver, LocaleFamilyAnnotations};
-use icu_locale::extensions::unicode::key;
 use icu_locale::fallback::LocaleFallbackIterator;
 use icu_locale::LanguageIdentifier;
 use icu_locale::LocaleFallbacker;
@@ -311,18 +310,12 @@ fn select_locales_for_marker<'a>(
     } else if marker.path.as_str().starts_with("collator/") {
         supported_map.retain(|_, ids| {
             ids.retain(|id| {
-                let Some(collation) = id
-                    .locale
-                    .get_unicode_ext(&key!("co"))
-                    .and_then(|co| co.into_single_subtag())
-                else {
-                    return true;
-                };
-                additional_collations.contains(collation.as_str())
-                    || if collation.as_str().starts_with("search") {
+                id.marker_attributes.is_empty()
+                    || additional_collations.contains(id.marker_attributes.as_str())
+                    || if id.marker_attributes.as_str().starts_with("search") {
                         additional_collations.contains("search*")
                     } else {
-                        !["big5han", "gb2312"].contains(&collation.as_str())
+                        !["big5han", "gb2312"].contains(&id.marker_attributes.as_str())
                     }
             });
             !ids.is_empty()
