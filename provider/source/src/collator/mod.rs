@@ -9,105 +9,14 @@ use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::collator::provider::*;
 use icu::collections::codepointtrie::CodePointTrie;
-use icu::locale::provider::CollationFallbackSupplementV1Marker;
-use icu::locale::provider::LocaleFallbackSupplementV1;
 use icu::locale::subtags::language;
-use icu::locale::subtags::Language;
-use icu::locale::subtags::Region;
-use icu::locale::subtags::Script;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::convert::TryFrom;
 use writeable::Writeable;
-use zerovec::ule::UnvalidatedStr;
 use zerovec::ZeroVec;
 
 mod collator_serde;
-
-impl DataProvider<CollationFallbackSupplementV1Marker> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<CollationFallbackSupplementV1Marker>, DataError> {
-        self.check_req::<CollationFallbackSupplementV1Marker>(req)?;
-
-        let parent_locales = &self
-            .cldr()?
-            .core()
-            .read_and_parse::<crate::cldr_serde::parent_locales::Resource>(
-                "supplemental/parentLocales.json",
-            )?
-            .supplemental
-            .parent_locales;
-
-        let additional = if parent_locales
-            .rules
-            .collations
-            .as_ref()
-            .map(|c| &c.non_likely_scripts)
-            != Some(&String::from("root"))
-        {
-            let collation_locales = self
-                .icuexport()?
-                .list(&format!("collation/{}", self.collation_han_database()))?
-                .filter_map(|s| Some(file_name_to_id(s.rsplit_once('_')?.0)?.locale.language()))
-                .collect::<HashSet<_>>();
-
-            parent_locales
-                .parent_locale
-                .iter()
-                .filter(|(k, _)| collation_locales.contains(&k.language))
-                .filter(|(from, to)| {
-                    // Script gets removed while language changes. For collation we want to insert the script-removal as its
-                    // own step.
-                    from.script.is_some() && to.script.is_none() && from.language != to.language
-                })
-                .map(|(from, _)| (from.to_string(), (from.language, None, from.region)))
-                .collect()
-        } else {
-            HashSet::new()
-        };
-
-        let parents = additional
-            .iter()
-            .map(|(k, v)| (UnvalidatedStr::from_str(k), *v))
-            .chain(parent_locales.collations.iter().map(|(from, to)| {
-                (
-                    <&UnvalidatedStr>::from(from.as_str()),
-                    <(Language, Option<Script>, Option<Region>)>::from(to),
-                )
-            }))
-            .collect();
-
-        let data = LocaleFallbackSupplementV1 {
-            parents,
-            unicode_extension_defaults: [
-                (
-                    icu::locale::extensions::unicode::key!("co"),
-                    <&UnvalidatedStr>::from("zh"),
-                    <&UnvalidatedStr>::from("pinyin"),
-                ),
-                (
-                    icu::locale::extensions::unicode::key!("co"),
-                    <&UnvalidatedStr>::from("zh-Hant"),
-                    <&UnvalidatedStr>::from("stroke"),
-                ),
-            ]
-            .into_iter()
-            .collect(),
-        };
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: DataPayload::from_owned(data),
-        })
-    }
-}
-
-impl crate::IterableDataProviderCached<CollationFallbackSupplementV1Marker> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        Ok(HashSet::from_iter([Default::default()]))
-    }
-}
 
 fn id_to_file_name(id: &DataIdentifierBorrowed) -> String {
     let mut s = if id.locale.is_und() {

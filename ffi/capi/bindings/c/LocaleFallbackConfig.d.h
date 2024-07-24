@@ -8,15 +8,12 @@
 #include "diplomat_runtime.h"
 
 #include "LocaleFallbackPriority.d.h"
-#include "LocaleFallbackSupplement.d.h"
 
 
 
 
 typedef struct LocaleFallbackConfig {
   LocaleFallbackPriority priority;
-  DiplomatStringView extension_key;
-  LocaleFallbackSupplement fallback_supplement;
 } LocaleFallbackConfig;
 
 

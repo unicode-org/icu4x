@@ -5,9 +5,6 @@ part of 'lib.g.dart';
 final class _LocaleFallbackConfigFfi extends ffi.Struct {
   @ffi.Int32()
   external int priority;
-  external _SliceUtf8 extensionKey;
-  @ffi.Int32()
-  external int fallbackSupplement;
 }
 
 /// Collection of configurations for the ICU4X fallback algorithm.
@@ -15,51 +12,32 @@ final class _LocaleFallbackConfigFfi extends ffi.Struct {
 /// See the [Rust documentation for `LocaleFallbackConfig`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbackConfig.html) for more information.
 final class LocaleFallbackConfig {
   LocaleFallbackPriority priority;
-  String extensionKey;
-  LocaleFallbackSupplement fallbackSupplement;
 
-  LocaleFallbackConfig({required this.priority, required this.extensionKey, required this.fallbackSupplement});
+  LocaleFallbackConfig({required this.priority});
+
+  // This struct contains borrowed fields, so this takes in a list of
+  // "edges" corresponding to where each lifetime's data may have been borrowed from
+  // and passes it down to individual fields containing the borrow.
+  // This method does not attempt to handle any dependencies between lifetimes, the caller
+  // should handle this when constructing edge arrays.
+  // ignore: unused_element
+  LocaleFallbackConfig._fromFfi(_LocaleFallbackConfigFfi ffi) :
+    priority = LocaleFallbackPriority.values[ffi.priority];
 
   // ignore: unused_element
-  LocaleFallbackConfig._fromFfi(_LocaleFallbackConfigFfi ffi, core.List<Object> aEdges) :
-    priority = LocaleFallbackPriority.values[ffi.priority],
-    extensionKey = ffi.extensionKey._toDart(aEdges),
-    fallbackSupplement = LocaleFallbackSupplement.values[ffi.fallbackSupplement];
-
-  // If this struct contains any slices, their lifetime-edge-relevant objects (typically _FinalizedArenas) will only
-  // be constructed here, and can be appended to any relevant lifetime arrays here. <lifetime>AppendArray accepts a list
-  // of arrays for each lifetime to do so. It accepts multiple lists per lifetime in case the caller needs to tie a lifetime to multiple
-  // output arrays. Null is equivalent to an empty list: this lifetime is not being borrowed from.
-  // ignore: unused_element
-  _LocaleFallbackConfigFfi _toFfi(ffi.Allocator temp, {core.List<core.List<Object>> aAppendArray = const []}) {
+  _LocaleFallbackConfigFfi _toFfi(ffi.Allocator temp) {
     final struct = ffi.Struct.create<_LocaleFallbackConfigFfi>();
     struct.priority = priority.index;
-    final extensionKeyView = extensionKey.utf8View;
-    struct.extensionKey._length = extensionKeyView.length;
-    struct.extensionKey._data = extensionKeyView.allocIn(aAppendArray.isNotEmpty ? _FinalizedArena.withLifetime(aAppendArray).arena : temp);
-    struct.fallbackSupplement = fallbackSupplement.index;
     return struct;
   }
 
   @override
   bool operator ==(Object other) =>
       other is LocaleFallbackConfig &&
-      other.priority == priority &&
-      other.extensionKey == extensionKey &&
-      other.fallbackSupplement == fallbackSupplement;
+      other.priority == priority;
 
   @override
   int get hashCode => Object.hashAll([
         priority,
-        extensionKey,
-        fallbackSupplement,
       ]);
-
-  // Return all fields corresponding to lifetime `'a` 
-  // without handling lifetime dependencies (this is the job of the caller)
-  // This is all fields that may be borrowed from if borrowing `'a`,
-  // assuming that there are no `'other: a`. bounds. In case of such bounds,
-  // the caller should take care to also call _fieldsForLifetimeOther
-  // ignore: unused_element
-  core.List<Object> get _fieldsForLifetimeA => [extensionKey];
 }

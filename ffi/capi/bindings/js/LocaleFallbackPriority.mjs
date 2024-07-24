@@ -12,8 +12,7 @@ export class LocaleFallbackPriority {
 
     static values = new Map([
         ["Language", 0],
-        ["Region", 1],
-        ["Collation", 2]
+        ["Region", 1]
     ]);
     constructor(value) {
         if (value instanceof LocaleFallbackPriority) {
@@ -40,8 +39,6 @@ export class LocaleFallbackPriority {
     static Language = new LocaleFallbackPriority("Language");
 
     static Region = new LocaleFallbackPriority("Region");
-
-    static Collation = new LocaleFallbackPriority("Collation");
 
 
     
