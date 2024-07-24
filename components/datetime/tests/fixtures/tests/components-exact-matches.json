@@ -316,9 +316,9 @@
                 "components": {
                     "weekday": "short",
                     "hour": "numeric",
-                    "minute": "numeric",
-                    "preferences": { "hourCycle": "h12" }
-                }
+                    "minute": "numeric"
+                },
+                "preferences": { "hourCycle": "h12" }
             }
         },
         "output": {
@@ -336,9 +336,9 @@
                     "weekday": "short",
                     "hour": "numeric",
                     "minute": "numeric",
-                    "second": "numeric",
-                    "preferences": { "hourCycle": "h12" }
-                }
+                    "second": "numeric"
+                },
+                "preferences": { "hourCycle": "h12" }
             }
         },
         "output": {
@@ -355,9 +355,9 @@
                 "components": {
                     "weekday": "short",
                     "hour": "numeric",
-                    "minute": "numeric",
-                    "preferences": { "hourCycle": "h23" }
-                }
+                    "minute": "numeric"
+                },
+                "preferences": { "hourCycle": "h23" }
             }
         },
         "output": {
@@ -375,9 +375,9 @@
                     "weekday": "short",
                     "hour": "numeric",
                     "minute": "numeric",
-                    "second": "numeric",
-                    "preferences": { "hourCycle": "h23" }
-                }
+                    "second": "numeric"
+                },
+                "preferences": { "hourCycle": "h23" }
             }
         },
         "output": {
@@ -392,9 +392,9 @@
             "value": "2020-01-07T08:25:07.000",
             "options": {
                 "components": {
-                    "hour": "numeric",
-                    "preferences": { "hourCycle": "h12" }
-                }
+                    "hour": "numeric"
+                },
+                "preferences": { "hourCycle": "h12" }
             }
         },
         "output": {
@@ -410,9 +410,9 @@
             "options": {
                 "components": {
                     "hour": "numeric",
-                    "minute": "numeric",
-                    "preferences": { "hourCycle": "h12" }
-                }
+                    "minute": "numeric"
+                },
+                "preferences": { "hourCycle": "h12" }
             }
         },
         "output": {
@@ -429,9 +429,9 @@
                 "components": {
                     "hour": "numeric",
                     "minute": "numeric",
-                    "second": "numeric",
-                    "preferences": { "hourCycle": "h12" }
-                }
+                    "second": "numeric"
+                },
+                "preferences": { "hourCycle": "h12" }
             }
         },
         "output": {
@@ -446,9 +446,9 @@
             "value": "2020-01-07T08:25:07.000",
             "options": {
                 "components": {
-                    "hour": "numeric",
-                    "preferences": { "hourCycle": "h23" }
-                }
+                    "hour": "numeric"
+                },
+                "preferences": { "hourCycle": "h23" }
             }
         },
         "output": {
@@ -464,9 +464,9 @@
             "options": {
                 "components": {
                     "hour": "numeric",
-                    "minute": "numeric",
-                    "preferences": { "hourCycle": "h23" }
-                }
+                    "minute": "numeric"
+                },
+                "preferences": { "hourCycle": "h23" }
             }
         },
         "output": {
@@ -483,9 +483,9 @@
                 "components": {
                     "hour": "numeric",
                     "minute": "numeric",
-                    "second": "numeric",
-                    "preferences": { "hourCycle": "h23" }
-                }
+                    "second": "numeric"
+                },
+                "preferences": { "hourCycle": "h23" }
             }
         },
         "output": {

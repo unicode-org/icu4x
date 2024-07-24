@@ -11,9 +11,9 @@
 
                     "weekday": "short",
                     "hour": "numeric",
-                    "minute": "numeric",
-                    "preferences": { "hourCycle": "h12" }
-                }
+                    "minute": "numeric"
+                },
+                "preferences": { "hourCycle": "h12" }
             }
         },
         "output": {
@@ -34,9 +34,9 @@
 
                     "weekday": "long",
                     "hour": "numeric",
-                    "minute": "numeric",
-                    "preferences": { "hourCycle": "h12" }
-                }
+                    "minute": "numeric"
+                },
+                "preferences": { "hourCycle": "h12" }
             }
         },
         "output": {

@@ -26,9 +26,11 @@ pub struct TestInput {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TestOptions {
-    length: Option<icu_datetime::options::length::Bag>,
+    pub length: Option<icu_datetime::options::length::Bag>,
     #[cfg(feature = "experimental")]
-    components: Option<icu_datetime::options::components::Bag>,
+    pub components: Option<icu_datetime::options::components::Bag>,
+    #[cfg(feature = "experimental")]
+    pub preferences: Option<icu_datetime::options::preferences::Bag>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -42,7 +44,8 @@ pub fn get_options(input: &TestOptions) -> Option<DateTimeFormatterOptions> {
         return Some(bag.into());
     }
     #[cfg(feature = "experimental")]
-    if let Some(bag) = input.components {
+    if let Some(mut bag) = input.components {
+        bag.preferences = input.preferences;
         return Some(bag.into());
     }
     None
