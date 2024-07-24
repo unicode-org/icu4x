@@ -1,7 +1,0 @@
-{
-  "patterns": {
-    "One": "{0} sekunda",
-    "Few": "{0} sekunde",
-    "Other": "{0} sekundi"
-  }
-}

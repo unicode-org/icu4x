@@ -1,6 +1,0 @@
-{
-  "patterns": {
-    "One": "{0} wk",
-    "Other": "{0} wks"
-  }
-}
