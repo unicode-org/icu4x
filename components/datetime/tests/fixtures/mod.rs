@@ -25,15 +25,10 @@ pub struct TestInput {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub enum TestOptions {
-    #[serde(rename = "length")]
-    Length(icu_datetime::options::length::Bag),
-    #[serde(rename = "components")]
+pub struct TestOptions {
+    length: Option<icu_datetime::options::length::Bag>,
     #[cfg(feature = "experimental")]
-    Components(icu_datetime::options::components::Bag),
-    #[serde(rename = "components")]
-    #[cfg(not(feature = "experimental"))]
-    Components(serde_json::Value),
+    components: Option<icu_datetime::options::components::Bag>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -43,11 +38,12 @@ pub struct TestOutput {
 }
 
 pub fn get_options(input: &TestOptions) -> Option<DateTimeFormatterOptions> {
-    match input {
-        TestOptions::Length(bag) => Some((*bag).into()),
-        #[cfg(feature = "experimental")]
-        TestOptions::Components(bag) => Some((*bag).into()),
-        #[cfg(not(feature = "experimental"))]
-        TestOptions::Components(_) => None,
+    if let Some(bag) = input.length {
+        return Some(bag.into());
     }
+    #[cfg(feature = "experimental")]
+    if let Some(bag) = input.components {
+        return Some(bag.into());
+    }
+    None
 }
