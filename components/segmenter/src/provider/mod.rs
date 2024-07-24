@@ -90,6 +90,10 @@ pub struct RuleBreakDataV2<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub property_table: CodePointTrie<'data, u8>,
 
+    /// The difference of property table for special locale.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub property_table_diff: CodePointTrie<'data, u8>,
+
     /// Break state table.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub break_state_table: ZeroVec<'data, BreakState>,

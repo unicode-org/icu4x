@@ -194,6 +194,7 @@ impl GraphemeClusterSegmenter {
             data: payload,
             complex: None,
             boundary_property: 0,
+            default_rule: true,
         })
     }
 
@@ -214,6 +215,7 @@ impl GraphemeClusterSegmenter {
             data: self.payload.get(),
             complex: None,
             boundary_property: 0,
+            default_rule: true,
         })
     }
     /// Creates a grapheme cluster break iterator for a Latin-1 (8-bit) string.
@@ -231,6 +233,7 @@ impl GraphemeClusterSegmenter {
             data: self.payload.get(),
             complex: None,
             boundary_property: 0,
+            default_rule: true,
         })
     }
 
@@ -257,6 +260,7 @@ impl GraphemeClusterSegmenter {
             data: payload,
             complex: None,
             boundary_property: 0,
+            default_rule: true,
         })
     }
 }

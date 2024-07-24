@@ -12,6 +12,8 @@
 namespace icu4x {
 namespace capi { struct DataProvider; }
 class DataProvider;
+namespace capi { struct Locale; }
+class Locale;
 namespace capi { struct WordBreakIteratorLatin1; }
 class WordBreakIteratorLatin1;
 namespace capi { struct WordBreakIteratorUtf16; }
@@ -34,11 +36,11 @@ namespace icu4x {
 class WordSegmenter {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_auto(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_auto(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_lstm(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_lstm(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_dictionary(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_dictionary(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
 
   inline std::unique_ptr<icu4x::WordBreakIteratorUtf8> segment(std::string_view input) const;
 

@@ -11,6 +11,7 @@ use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
 use core::str::CharIndices;
+use icu_locale_core::subtags::language;
 use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
 
@@ -168,6 +169,7 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 pub struct WordSegmenter {
     payload: DataPayload<WordBreakDataV2Marker>,
     complex: ComplexPayloads,
+    default_rule: bool,
 }
 
 impl WordSegmenter {
@@ -207,14 +209,15 @@ impl WordSegmenter {
                 crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V2_MARKER,
             ),
             complex: ComplexPayloads::new_auto(),
+            default_rule: true,
         }
     }
 
     #[cfg(feature = "auto")]
     icu_provider::gen_any_buffer_data_constructors!(
-        () -> error: DataError,
+        (locale) -> error: DataError,
         functions: [
-            try_new_auto: skip,
+            try_new_auto,
             try_new_auto_with_any_provider,
             try_new_auto_with_buffer_provider,
             try_new_auto_unstable,
@@ -224,7 +227,7 @@ impl WordSegmenter {
 
     #[cfg(feature = "auto")]
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_auto)]
-    pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, DataError>
+    pub fn try_new_auto_unstable<D>(provider: &D, locale: &DataLocale) -> Result<Self, DataError>
     where
         D: DataProvider<WordBreakDataV2Marker>
             + DataProvider<DictionaryForWordOnlyAutoV1Marker>
@@ -235,6 +238,7 @@ impl WordSegmenter {
         Ok(Self {
             payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new_auto(provider)?,
+            default_rule: Self::is_default_rule(locale),
         })
     }
 
@@ -279,14 +283,15 @@ impl WordSegmenter {
                 crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V2_MARKER,
             ),
             complex: ComplexPayloads::new_lstm(),
+            default_rule: true,
         }
     }
 
     #[cfg(feature = "lstm")]
     icu_provider::gen_any_buffer_data_constructors!(
-        () -> error: DataError,
+        (locale) -> error: DataError,
         functions: [
-            new_lstm: skip,
+            try_new_lstm,
             try_new_lstm_with_any_provider,
             try_new_lstm_with_buffer_provider,
             try_new_lstm_unstable,
@@ -296,7 +301,7 @@ impl WordSegmenter {
 
     #[cfg(feature = "lstm")]
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_lstm)]
-    pub fn try_new_lstm_unstable<D>(provider: &D) -> Result<Self, DataError>
+    pub fn try_new_lstm_unstable<D>(provider: &D, locale: &DataLocale) -> Result<Self, DataError>
     where
         D: DataProvider<WordBreakDataV2Marker>
             + DataProvider<LstmForWordLineAutoV1Marker>
@@ -306,6 +311,7 @@ impl WordSegmenter {
         Ok(Self {
             payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new_lstm(provider)?,
+            default_rule: Self::is_default_rule(locale),
         })
     }
 
@@ -344,13 +350,14 @@ impl WordSegmenter {
                 crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V2_MARKER,
             ),
             complex: ComplexPayloads::new_dict(),
+            default_rule: false,
         }
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        () -> error: DataError,
+        (locale) -> error: DataError,
         functions: [
-            new_dictionary: skip,
+            try_new_dictionary,
             try_new_dictionary_with_any_provider,
             try_new_dictionary_with_buffer_provider,
             try_new_dictionary_unstable,
@@ -359,7 +366,10 @@ impl WordSegmenter {
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_dictionary)]
-    pub fn try_new_dictionary_unstable<D>(provider: &D) -> Result<Self, DataError>
+    pub fn try_new_dictionary_unstable<D>(
+        provider: &D,
+        locale: &DataLocale,
+    ) -> Result<Self, DataError>
     where
         D: DataProvider<WordBreakDataV2Marker>
             + DataProvider<DictionaryForWordOnlyAutoV1Marker>
@@ -370,6 +380,7 @@ impl WordSegmenter {
         Ok(Self {
             payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new_dict(provider)?,
+            default_rule: Self::is_default_rule(locale),
         })
     }
 
@@ -385,6 +396,7 @@ impl WordSegmenter {
             data: self.payload.get(),
             complex: Some(&self.complex),
             boundary_property: 0,
+            default_rule: self.default_rule,
         })
     }
 
@@ -405,6 +417,7 @@ impl WordSegmenter {
             data: self.payload.get(),
             complex: Some(&self.complex),
             boundary_property: 0,
+            default_rule: self.default_rule,
         })
     }
 
@@ -420,6 +433,7 @@ impl WordSegmenter {
             data: self.payload.get(),
             complex: Some(&self.complex),
             boundary_property: 0,
+            default_rule: self.default_rule,
         })
     }
 
@@ -435,7 +449,13 @@ impl WordSegmenter {
             data: self.payload.get(),
             complex: Some(&self.complex),
             boundary_property: 0,
+            default_rule: self.default_rule,
         })
+    }
+
+    fn is_default_rule(locale: &DataLocale) -> bool {
+        let lang = locale.language();
+        lang != language!("fi") && lang != language!("sv")
     }
 }
 
