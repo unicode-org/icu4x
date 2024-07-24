@@ -1,7 +1,0 @@
-{
-  "patterns": {
-    "One": "{0} nanometar",
-    "Few": "{0} nanometra",
-    "Other": "{0} nanometara"
-  }
-}
