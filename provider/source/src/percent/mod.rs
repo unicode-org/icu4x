@@ -11,7 +11,6 @@ use crate::SourceDataProvider;
 use icu::experimental::dimension::provider::percent::*;
 use icu_provider::prelude::*;
 use icu_provider::DataProvider;
-use tinystr::tinystr;
 
 impl DataProvider<PercentEssentialsV1Marker> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<PercentEssentialsV1Marker>, DataError> {
@@ -53,7 +52,7 @@ fn extract_percent_essentials<'data>(
         .numbers
         .numsys_data
         .percent_patterns
-        .get(&tinystr!(8, "latn"))
+        .get("latn")
         .ok_or_else(|| DataError::custom("Could not find the standard pattern"))?;
 
     // TODO(#3838): these patterns might be numbering system dependent.
@@ -63,7 +62,7 @@ fn extract_percent_essentials<'data>(
         .numbers
         .numsys_data
         .symbols
-        .get(&tinystr!(8, "latn"))
+        .get("latn")
         .ok_or_else(|| DataError::custom("Could not find the percent symbol"))?;
 
     let standard_pattern = &percent_patterns.standard;
