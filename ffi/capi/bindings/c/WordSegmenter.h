@@ -9,6 +9,7 @@
 
 #include "DataError.d.h"
 #include "DataProvider.d.h"
+#include "Locale.d.h"
 #include "WordBreakIteratorLatin1.d.h"
 #include "WordBreakIteratorUtf16.d.h"
 #include "WordBreakIteratorUtf8.d.h"
@@ -21,13 +22,13 @@
 
 
 typedef struct icu4x_WordSegmenter_create_auto_mv1_result {union {WordSegmenter* ok; DataError err;}; bool is_ok;} icu4x_WordSegmenter_create_auto_mv1_result;
-icu4x_WordSegmenter_create_auto_mv1_result icu4x_WordSegmenter_create_auto_mv1(const DataProvider* provider);
+icu4x_WordSegmenter_create_auto_mv1_result icu4x_WordSegmenter_create_auto_mv1(const DataProvider* provider, const Locale* locale);
 
 typedef struct icu4x_WordSegmenter_create_lstm_mv1_result {union {WordSegmenter* ok; DataError err;}; bool is_ok;} icu4x_WordSegmenter_create_lstm_mv1_result;
-icu4x_WordSegmenter_create_lstm_mv1_result icu4x_WordSegmenter_create_lstm_mv1(const DataProvider* provider);
+icu4x_WordSegmenter_create_lstm_mv1_result icu4x_WordSegmenter_create_lstm_mv1(const DataProvider* provider, const Locale* locale);
 
 typedef struct icu4x_WordSegmenter_create_dictionary_mv1_result {union {WordSegmenter* ok; DataError err;}; bool is_ok;} icu4x_WordSegmenter_create_dictionary_mv1_result;
-icu4x_WordSegmenter_create_dictionary_mv1_result icu4x_WordSegmenter_create_dictionary_mv1(const DataProvider* provider);
+icu4x_WordSegmenter_create_dictionary_mv1_result icu4x_WordSegmenter_create_dictionary_mv1(const DataProvider* provider, const Locale* locale);
 
 WordBreakIteratorUtf8* icu4x_WordSegmenter_segment_utf8_mv1(const WordSegmenter* self, const char* input_data, size_t input_len);
 

@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::vec::Vec;
+use icu_locale_core::subtags::language;
 use icu_provider::prelude::*;
 
 use crate::indices::{Latin1Indices, Utf16Indices};
@@ -100,6 +101,7 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = SentenceBreakIterator<'l, 's, Rule
 #[derive(Debug)]
 pub struct SentenceSegmenter {
     payload: DataPayload<SentenceBreakDataV2Marker>,
+    default_rule: bool,
 }
 
 #[cfg(feature = "compiled_data")]
@@ -121,26 +123,29 @@ impl SentenceSegmenter {
             payload: DataPayload::from_static_ref(
                 crate::provider::Baked::SINGLETON_SENTENCE_BREAK_DATA_V2_MARKER,
             ),
+            default_rule: true,
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
-        functions: [
-            new: skip,
-            try_new_with_any_provider,
-            try_new_with_buffer_provider,
-            try_new_unstable,
-            Self,
-        ]
+    icu_provider::gen_any_buffer_data_constructors!((locale) -> error: DataError,
+        /// Constructs a [`SentenceSegmenter`] for a given locale and using compiled data.
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
+    pub fn try_new_unstable<D>(provider: &D, locale: &DataLocale) -> Result<Self, DataError>
     where
         D: DataProvider<SentenceBreakDataV2Marker> + ?Sized,
     {
+        let default_rule = locale.language() != language!("el");
         let payload = provider.load(Default::default())?.payload;
-        Ok(Self { payload })
+        Ok(Self {
+            payload,
+            default_rule,
+        })
     }
 
     /// Creates a sentence break iterator for an `str` (a UTF-8 string).
@@ -155,6 +160,7 @@ impl SentenceSegmenter {
             data: self.payload.get(),
             complex: None,
             boundary_property: 0,
+            default_rule: self.default_rule,
         })
     }
     /// Creates a sentence break iterator for a potentially ill-formed UTF8 string
@@ -174,6 +180,7 @@ impl SentenceSegmenter {
             data: self.payload.get(),
             complex: None,
             boundary_property: 0,
+            default_rule: self.default_rule,
         })
     }
     /// Creates a sentence break iterator for a Latin-1 (8-bit) string.
@@ -191,6 +198,7 @@ impl SentenceSegmenter {
             data: self.payload.get(),
             complex: None,
             boundary_property: 0,
+            default_rule: self.default_rule,
         })
     }
 
@@ -206,6 +214,7 @@ impl SentenceSegmenter {
             data: self.payload.get(),
             complex: None,
             boundary_property: 0,
+            default_rule: self.default_rule,
         })
     }
 }
