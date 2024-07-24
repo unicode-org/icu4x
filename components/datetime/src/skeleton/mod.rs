@@ -49,7 +49,10 @@ mod test {
             .payload;
         let skeletons = crate::provider::Baked
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(marker_attributes, &locale),
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    marker_attributes,
+                    &locale,
+                ),
                 ..Default::default()
             })
             .expect("Failed to load payload")
