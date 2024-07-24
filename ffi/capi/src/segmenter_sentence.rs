@@ -9,6 +9,7 @@ pub mod ffi {
     use alloc::boxed::Box;
 
     use crate::errors::ffi::DataError;
+    use crate::locale_core::ffi::Locale;
     use crate::provider::ffi::DataProvider;
 
     #[diplomat::opaque]
@@ -40,14 +41,19 @@ pub mod ffi {
 
     impl SentenceSegmenter {
         /// Construct an [`SentenceSegmenter`].
-        #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::new, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::try_new, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, constructor)]
-        pub fn create(provider: &DataProvider) -> Result<Box<SentenceSegmenter>, DataError> {
+        pub fn create(
+            provider: &DataProvider,
+            locale: &Locale,
+        ) -> Result<Box<SentenceSegmenter>, DataError> {
+            let locale = locale.to_datalocale();
             Ok(Box::new(SentenceSegmenter(call_constructor!(
-                icu_segmenter::SentenceSegmenter::new [r => Ok(r)],
+                icu_segmenter::SentenceSegmenter::try_new,
                 icu_segmenter::SentenceSegmenter::try_new_with_any_provider,
                 icu_segmenter::SentenceSegmenter::try_new_with_buffer_provider,
                 provider,
+                &locale,
             )?)))
         }
 

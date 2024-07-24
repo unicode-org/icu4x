@@ -26,11 +26,11 @@ final class SentenceSegmenter implements ffi.Finalizable {
 
   /// Construct an [`SentenceSegmenter`].
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.try_new) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory SentenceSegmenter(DataProvider provider) {
-    final result = _icu4x_SentenceSegmenter_create_mv1(provider._ffi);
+  factory SentenceSegmenter(DataProvider provider, Locale locale) {
+    final result = _icu4x_SentenceSegmenter_create_mv1(provider._ffi, locale._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -58,9 +58,9 @@ final class SentenceSegmenter implements ffi.Finalizable {
 external void _icu4x_SentenceSegmenter_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
 @meta.ResourceIdentifier('icu4x_SentenceSegmenter_create_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_SentenceSegmenter_create_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_SentenceSegmenter_create_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_SentenceSegmenter_create_mv1(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_SentenceSegmenter_create_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
 @meta.ResourceIdentifier('icu4x_SentenceSegmenter_segment_utf16_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, _SliceUtf16)>(isLeaf: true, symbol: 'icu4x_SentenceSegmenter_segment_utf16_mv1')

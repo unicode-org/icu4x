@@ -12,6 +12,8 @@
 namespace icu4x {
 namespace capi { struct DataProvider; }
 class DataProvider;
+namespace capi { struct Locale; }
+class Locale;
 namespace capi { struct SentenceBreakIteratorLatin1; }
 class SentenceBreakIteratorLatin1;
 namespace capi { struct SentenceBreakIteratorUtf16; }
@@ -34,7 +36,7 @@ namespace icu4x {
 class SentenceSegmenter {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::SentenceSegmenter>, icu4x::DataError> create(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::SentenceSegmenter>, icu4x::DataError> create(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
 
   inline std::unique_ptr<icu4x::SentenceBreakIteratorUtf8> segment(std::string_view input) const;
 

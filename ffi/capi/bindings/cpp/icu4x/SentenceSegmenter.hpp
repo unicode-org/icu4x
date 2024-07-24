@@ -12,6 +12,7 @@
 #include "../diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
+#include "Locale.hpp"
 #include "SentenceBreakIteratorLatin1.hpp"
 #include "SentenceBreakIteratorUtf16.hpp"
 #include "SentenceBreakIteratorUtf8.hpp"
@@ -22,7 +23,7 @@ namespace capi {
     extern "C" {
     
     typedef struct icu4x_SentenceSegmenter_create_mv1_result {union {icu4x::capi::SentenceSegmenter* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_SentenceSegmenter_create_mv1_result;
-    icu4x_SentenceSegmenter_create_mv1_result icu4x_SentenceSegmenter_create_mv1(const icu4x::capi::DataProvider* provider);
+    icu4x_SentenceSegmenter_create_mv1_result icu4x_SentenceSegmenter_create_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale);
     
     icu4x::capi::SentenceBreakIteratorUtf8* icu4x_SentenceSegmenter_segment_utf8_mv1(const icu4x::capi::SentenceSegmenter* self, diplomat::capi::DiplomatStringView input);
     
@@ -37,8 +38,9 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline diplomat::result<std::unique_ptr<icu4x::SentenceSegmenter>, icu4x::DataError> icu4x::SentenceSegmenter::create(const icu4x::DataProvider& provider) {
-  auto result = icu4x::capi::icu4x_SentenceSegmenter_create_mv1(provider.AsFFI());
+inline diplomat::result<std::unique_ptr<icu4x::SentenceSegmenter>, icu4x::DataError> icu4x::SentenceSegmenter::create(const icu4x::DataProvider& provider, const icu4x::Locale& locale) {
+  auto result = icu4x::capi::icu4x_SentenceSegmenter_create_mv1(provider.AsFFI(),
+    locale.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::SentenceSegmenter>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::SentenceSegmenter>>(std::unique_ptr<icu4x::SentenceSegmenter>(icu4x::SentenceSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::SentenceSegmenter>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 

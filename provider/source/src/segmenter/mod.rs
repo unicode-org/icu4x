@@ -182,6 +182,7 @@ fn generate_rule_break_data(
     const CODEPOINT_TABLE_LEN: usize = 0xE1000;
 
     let mut properties_map = vec![0; CODEPOINT_TABLE_LEN];
+    let mut properties_map_diff = vec![0; CODEPOINT_TABLE_LEN];
     let mut properties_names = Vec::<String>::new();
     let mut simple_properties_count = 0;
 
@@ -243,6 +244,18 @@ fn generate_rule_break_data(
                         .expect("property name should be valid!");
                     for c in 0..(CODEPOINT_TABLE_LEN as u32) {
                         if wb.get32(c) == prop {
+                            // UAX29 defines the colon as MidLetter, but ICU4C's
+                            // English data doesn't.
+                            // See https://unicode-org.atlassian.net/browse/ICU-22112
+                            //
+                            // TODO: We have to consider this definition from CLDR instead.
+                            if (c == 0x003A || c == 0xFE55 || c == 0xFF1A) && p.name == "MidLetter"
+                            {
+                                properties_map_diff[c as usize] = property_index;
+                                // Default (en etc) is undefined class.
+                                continue;
+                            }
+
                             properties_map[c as usize] = property_index;
                         }
                     }
@@ -324,6 +337,15 @@ fn generate_rule_break_data(
                     let prop = sb_name_to_enum
                         .get_loose(&p.name)
                         .expect("property name should be valid!");
+                    // UAX#29 doesn't define the 2 characters as STerm, but ICU4C's
+                    // Greek data does.
+                    //
+                    // TODO: We have to consider this definition from CLDR instead.
+                    if p.name == "STerm" {
+                        properties_map_diff[0x3B] = property_index;
+                        properties_map_diff[0x37E] = property_index;
+                    }
+
                     for c in 0..(CODEPOINT_TABLE_LEN as u32) {
                         if sb.get32(c) == prop {
                             properties_map[c as usize] = property_index;
@@ -544,6 +566,16 @@ fn generate_rule_break_data(
             },
         }
         .build(),
+        property_table_diff: CodePointTrieBuilder {
+            data: CodePointTrieBuilderData::ValuesByCodePoint(&properties_map_diff),
+            default_value: 0,
+            error_value: 0,
+            trie_type: match trie_type {
+                crate::TrieType::Fast => codepointtrie::TrieType::Fast,
+                crate::TrieType::Small => codepointtrie::TrieType::Small,
+            },
+        }
+        .build(),
         break_state_table: break_state_table
             .into_iter()
             // All states are initialized
@@ -739,5 +771,29 @@ mod tests {
         assert_eq!(data.property_table.get32(0xd0000), XX);
         assert_eq!(data.property_table.get32(0xe0001), CM);
         assert_eq!(data.property_table.get32(0xe0020), CM);
+    }
+
+    #[test]
+    fn locale_diff() {
+        let provider = SourceDataProvider::new_testing();
+        let response: DataResponse<SentenceBreakDataV2Marker> = provider
+            .load(Default::default())
+            .expect("Loading should succeed!");
+        let data = response.payload.get();
+        // STerm
+        assert_eq!(
+            data.property_table_diff.get32(0x003B),
+            data.property_table.get32(0x0021)
+        );
+
+        let response: DataResponse<WordBreakDataV2Marker> = provider
+            .load(Default::default())
+            .expect("Loading should succeed!");
+        let data = response.payload.get();
+        // MidLetter
+        assert_eq!(
+            data.property_table_diff.get32(0x003A),
+            data.property_table.get32(0x00B7)
+        );
     }
 }
