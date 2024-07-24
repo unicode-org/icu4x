@@ -632,13 +632,13 @@ pub trait DateInputMarkers: private::Sealed {
 /// (data markers only).
 pub trait TypedDateDataMarkers<C>: private::Sealed {
     /// Marker for loading date skeleton patterns.
-    type DateSkeletonPatternsV1Marker: DataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
+    type DateSkeletonPatternsV1Marker: DataMarker<DataStruct = PackedSkeletonDataV1<'static>>;
     /// Marker for loading year names.
-    type YearNamesV1Marker: DataMarker<Yokeable = YearNamesV1<'static>>;
+    type YearNamesV1Marker: DataMarker<DataStruct = YearNamesV1<'static>>;
     /// Marker for loading month names.
-    type MonthNamesV1Marker: DataMarker<Yokeable = MonthNamesV1<'static>>;
+    type MonthNamesV1Marker: DataMarker<DataStruct = MonthNamesV1<'static>>;
     /// Marker for loading weekday names.
-    type WeekdayNamesV1Marker: DataMarker<Yokeable = LinearNamesV1<'static>>;
+    type WeekdayNamesV1Marker: DataMarker<DataStruct = LinearNamesV1<'static>>;
 }
 
 /// A trait associating types for date formatting in any calendar
@@ -651,7 +651,7 @@ pub trait DateDataMarkers: private::Sealed {
     /// Cross-calendar data markers for month names.
     type Month: CalMarkers<MonthNamesV1Marker>;
     /// Marker for loading weekday names.
-    type WeekdayNamesV1Marker: DataMarker<Yokeable = LinearNamesV1<'static>>;
+    type WeekdayNamesV1Marker: DataMarker<DataStruct = LinearNamesV1<'static>>;
 }
 
 /// A trait associating types for time formatting
@@ -666,9 +666,9 @@ pub trait TimeMarkers: private::Sealed {
     /// Marker for resolving the any-calendar-kind input field.
     type NanoSecondInput: Into<Option<NanoSecond>>;
     /// Marker for loading time skeleton patterns.
-    type TimeSkeletonPatternsV1Marker: DataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
+    type TimeSkeletonPatternsV1Marker: DataMarker<DataStruct = PackedSkeletonDataV1<'static>>;
     /// Marker for loading day period names.
-    type DayPeriodNamesV1Marker: DataMarker<Yokeable = LinearNamesV1<'static>>;
+    type DayPeriodNamesV1Marker: DataMarker<DataStruct = LinearNamesV1<'static>>;
 }
 
 /// A trait associating types for time zone formatting
@@ -677,17 +677,17 @@ pub trait ZoneMarkers: private::Sealed {
     /// Marker for resolving the time zone input field.
     type TimeZoneInput: Into<Option<CustomTimeZone>>;
     /// Marker for loading core time zone data.
-    type EssentialsV1Marker: DataMarker<Yokeable = tz::EssentialsV1<'static>>;
+    type EssentialsV1Marker: DataMarker<DataStruct = tz::EssentialsV1<'static>>;
     /// Marker for loading exemplar city names for time zone formatting
-    type ExemplarCitiesV1Marker: DataMarker<Yokeable = tz::ExemplarCitiesV1<'static>>;
+    type ExemplarCitiesV1Marker: DataMarker<DataStruct = tz::ExemplarCitiesV1<'static>>;
     /// Marker for loading generic short time zone names.
-    type GenericLongV1Marker: DataMarker<Yokeable = tz::MzGenericLongV1<'static>>;
+    type GenericLongV1Marker: DataMarker<DataStruct = tz::MzGenericLongV1<'static>>;
     /// Marker for loading generic short time zone names.
-    type GenericShortV1Marker: DataMarker<Yokeable = tz::MzGenericShortV1<'static>>;
+    type GenericShortV1Marker: DataMarker<DataStruct = tz::MzGenericShortV1<'static>>;
     /// Marker for loading generic short time zone names.
-    type SpecificLongV1Marker: DataMarker<Yokeable = tz::MzSpecificLongV1<'static>>;
+    type SpecificLongV1Marker: DataMarker<DataStruct = tz::MzSpecificLongV1<'static>>;
     /// Marker for loading generic short time zone names.
-    type SpecificShortV1Marker: DataMarker<Yokeable = tz::MzSpecificShortV1<'static>>;
+    type SpecificShortV1Marker: DataMarker<DataStruct = tz::MzSpecificShortV1<'static>>;
 }
 
 /// A trait associating constants and types implementing various other traits
@@ -708,7 +708,7 @@ pub trait DateTimeMarkers: private::Sealed + DateTimeNamesMarker {
     /// Type of the length option in the constructor.
     type LengthOption: Into<Option<NeoSkeletonLength>>;
     /// Marker for loading the date/time glue pattern.
-    type GluePatternV1Marker: DataMarker<Yokeable = GluePatternV1<'static>>;
+    type GluePatternV1Marker: DataMarker<DataStruct = GluePatternV1<'static>>;
 }
 
 /// Trait to consolidate input markers.

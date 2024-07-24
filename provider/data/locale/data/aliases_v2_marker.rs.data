@@ -16,7 +16,7 @@ macro_rules! __impl_aliases_v2_marker {
         #[clippy::msrv = "1.70"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_ALIASES_V2_MARKER: &'static <icu::locale::provider::AliasesV2Marker as icu_provider::DynamicDataMarker>::Yokeable = &icu::locale::provider::AliasesV2 {
+            pub const SINGLETON_ALIASES_V2_MARKER: &'static <icu::locale::provider::AliasesV2Marker as icu_provider::DynamicDataMarker>::DataStruct = &icu::locale::provider::AliasesV2 {
                 language_variants: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x13\0\0\0\0\0\x17\0/\0H\0a\0x\0\x90\0\xB8\0\xCE\0\xE5\0\xFC\0\x17\x010\x01I\x01a\x01x\x01\x90\x01\xA9\x01\xC0\x01aa\0\x02\0\0\0\0\0\0\0\x05\0\0\0saahossyart\x02\0\0\0\0\0\0\0\x06\0\0\0lojbanjbocel\x02\0\0\0\0\0\0\0\x07\0\0\0gaulishxtghy\0\x02\0\0\0\0\0\0\0\x07\0\0\0arevmdahywno\0\x02\0\0\0\0\0\0\0\x06\0\0\0bokmalnbno\0\x02\0\0\0\0\0\0\0\x07\0\0\0nynorsknnund\x02\0\0\0\0\0\0\0\x0E\0\0\0hepburn-heplocund-alalc97zh\0\x02\0\0\0\0\0\0\0\x05\0\0\0guoyuzhzh\0\x02\0\0\0\0\0\0\0\x05\0\0\0hakkahakzh\0\x02\0\0\0\0\0\0\0\x05\0\0\0xianghsnund\x02\0\0\0\0\0\0\0\x06\0\0\0aalandund-AXund\x02\0\0\0\0\0\0\0\x07\0\0\0arevelaundund\x02\0\0\0\0\0\0\0\x07\0\0\0arevmdaundund\x02\0\0\0\0\0\0\0\x06\0\0\0bokmalundund\x02\0\0\0\0\0\0\0\x05\0\0\0hakkaundund\x02\0\0\0\0\0\0\0\x06\0\0\0lojbanundund\x02\0\0\0\0\0\0\0\x07\0\0\0nynorskundund\x02\0\0\0\0\0\0\0\x05\0\0\0saahoundund\x02\0\0\0\0\0\0\0\x05\0\0\0xiangund") },
                 sgn_region: unsafe {
                     #[allow(unused_unsafe)]

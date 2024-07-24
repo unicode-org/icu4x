@@ -20,7 +20,7 @@ pub use self::serde::*;
 pub struct BufferMarker;
 
 impl DynamicDataMarker for BufferMarker {
-    type Yokeable = &'static [u8];
+    type DataStruct = &'static [u8];
 }
 
 /// A data provider that returns opaque bytes.

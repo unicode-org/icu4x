@@ -16,7 +16,7 @@ macro_rules! __impl_emoji_modifier_v1_marker {
         #[clippy::msrv = "1.70"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_EMOJI_MODIFIER_V1_MARKER: &'static <icu::properties::provider::EmojiModifierV1Marker as icu_provider::DynamicDataMarker>::Yokeable = &icu::properties::provider::PropertyCodePointSetV1::InversionList(unsafe {
+            pub const SINGLETON_EMOJI_MODIFIER_V1_MARKER: &'static <icu::properties::provider::EmojiModifierV1Marker as icu_provider::DynamicDataMarker>::DataStruct = &icu::properties::provider::PropertyCodePointSetV1::InversionList(unsafe {
                 #[allow(unused_unsafe)]
                 icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xFB\xF3\x01\0\0\xF4\x01\0") }, 5u32)
             });

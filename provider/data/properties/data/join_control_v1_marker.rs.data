@@ -16,7 +16,7 @@ macro_rules! __impl_join_control_v1_marker {
         #[clippy::msrv = "1.70"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_JOIN_CONTROL_V1_MARKER: &'static <icu::properties::provider::JoinControlV1Marker as icu_provider::DynamicDataMarker>::Yokeable = &icu::properties::provider::PropertyCodePointSetV1::InversionList(unsafe {
+            pub const SINGLETON_JOIN_CONTROL_V1_MARKER: &'static <icu::properties::provider::JoinControlV1Marker as icu_provider::DynamicDataMarker>::DataStruct = &icu::properties::provider::PropertyCodePointSetV1::InversionList(unsafe {
                 #[allow(unused_unsafe)]
                 icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x0C \0\0\x0E \0\0") }, 2u32)
             });

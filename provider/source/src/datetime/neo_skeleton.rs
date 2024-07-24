@@ -28,7 +28,7 @@ impl SourceDataProvider {
         to_components_bag: impl Fn(NeoSkeletonLength, &C) -> DateTimeFormatterOptions,
     ) -> Result<DataResponse<M>, DataError>
     where
-        M: DataMarker<Yokeable = PackedSkeletonDataV1<'static>>,
+        M: DataMarker<DataStruct = PackedSkeletonDataV1<'static>>,
         Self: crate::IterableDataProviderCached<M>,
     {
         self.check_req::<M>(req)?;

@@ -16,7 +16,7 @@ macro_rules! __impl_ids_binary_operator_v1_marker {
         #[clippy::msrv = "1.70"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_IDS_BINARY_OPERATOR_V1_MARKER: &'static <icu::properties::provider::IdsBinaryOperatorV1Marker as icu_provider::DynamicDataMarker>::Yokeable = &icu::properties::provider::PropertyCodePointSetV1::InversionList(unsafe {
+            pub const SINGLETON_IDS_BINARY_OPERATOR_V1_MARKER: &'static <icu::properties::provider::IdsBinaryOperatorV1Marker as icu_provider::DynamicDataMarker>::DataStruct = &icu::properties::provider::PropertyCodePointSetV1::InversionList(unsafe {
                 #[allow(unused_unsafe)]
                 icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xF0/\0\0\xF2/\0\0\xF4/\0\0\xFE/\0\0\xEF1\0\0\xF01\0\0") }, 13u32)
             });

@@ -16,7 +16,7 @@ macro_rules! __impl_noncharacter_code_point_v1_marker {
         #[clippy::msrv = "1.70"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_NONCHARACTER_CODE_POINT_V1_MARKER: &'static <icu::properties::provider::NoncharacterCodePointV1Marker as icu_provider::DynamicDataMarker>::Yokeable = &icu::properties::provider::PropertyCodePointSetV1::InversionList(unsafe {
+            pub const SINGLETON_NONCHARACTER_CODE_POINT_V1_MARKER: &'static <icu::properties::provider::NoncharacterCodePointV1Marker as icu_provider::DynamicDataMarker>::DataStruct = &icu::properties::provider::PropertyCodePointSetV1::InversionList(unsafe {
                 #[allow(unused_unsafe)]
                 icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xD0\xFD\0\0\xF0\xFD\0\0\xFE\xFF\0\0\0\0\x01\0\xFE\xFF\x01\0\0\0\x02\0\xFE\xFF\x02\0\0\0\x03\0\xFE\xFF\x03\0\0\0\x04\0\xFE\xFF\x04\0\0\0\x05\0\xFE\xFF\x05\0\0\0\x06\0\xFE\xFF\x06\0\0\0\x07\0\xFE\xFF\x07\0\0\0\x08\0\xFE\xFF\x08\0\0\0\t\0\xFE\xFF\t\0\0\0\n\0\xFE\xFF\n\0\0\0\x0B\0\xFE\xFF\x0B\0\0\0\x0C\0\xFE\xFF\x0C\0\0\0\r\0\xFE\xFF\r\0\0\0\x0E\0\xFE\xFF\x0E\0\0\0\x0F\0\xFE\xFF\x0F\0\0\0\x10\0\xFE\xFF\x10\0\0\0\x11\0") }, 66u32)
             });

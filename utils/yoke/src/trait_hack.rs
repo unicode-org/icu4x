@@ -105,7 +105,7 @@
 //! }
 //!
 //! impl MiniDataMarker for SimpleStruct {
-//!     type Yokeable = SimpleStruct;
+//!     type DataStruct = SimpleStruct;
 //! }
 //!
 //! let provider = MiniStructProvider {

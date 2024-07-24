@@ -120,7 +120,7 @@ pub use __impl_casting_upcast as impl_casting_upcast;
 ///
 /// # struct DummyMarker;
 /// # impl DynamicDataMarker for DummyMarker {
-/// #     type Yokeable = <HelloWorldV1Marker as DynamicDataMarker>::Yokeable;
+/// #     type DataStruct = <HelloWorldV1Marker as DynamicDataMarker>::DataStruct;
 /// # }
 /// # impl DataMarker for DummyMarker {
 /// #     const INFO: DataMarkerInfo = DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!("dummy@1"));
@@ -171,7 +171,7 @@ pub use __impl_casting_upcast as impl_casting_upcast;
 /// // Because of the wildcard, any marker actually works:
 /// struct DummyMarker;
 /// impl DynamicDataMarker for DummyMarker {
-///     type Yokeable = <HelloWorldV1Marker as DynamicDataMarker>::Yokeable;
+///     type DataStruct = <HelloWorldV1Marker as DynamicDataMarker>::DataStruct;
 /// }
 /// impl DataMarker for DummyMarker {
 ///     const INFO: DataMarkerInfo = DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!("dummy@1"));

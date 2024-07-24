@@ -36,8 +36,8 @@ fn month_symbols_map_project_cloned<M, P>(
     req: DataRequest,
 ) -> Result<DataResponse<P>, DataError>
 where
-    M: DataMarker<Yokeable = DateSymbolsV1<'static>>,
-    P: DataMarker<Yokeable = MonthNamesV1<'static>>,
+    M: DataMarker<DataStruct = DateSymbolsV1<'static>>,
+    P: DataMarker<DataStruct = MonthNamesV1<'static>>,
 {
     let new_payload = payload.try_map_project_cloned(|payload, _| {
         use key_attr_consts::*;
@@ -73,8 +73,8 @@ fn weekday_symbols_map_project_cloned<M, P>(
     req: DataRequest,
 ) -> Result<DataResponse<P>, DataError>
 where
-    M: DataMarker<Yokeable = DateSymbolsV1<'static>>,
-    P: DataMarker<Yokeable = LinearNamesV1<'static>>,
+    M: DataMarker<DataStruct = DateSymbolsV1<'static>>,
+    P: DataMarker<DataStruct = LinearNamesV1<'static>>,
 {
     let new_payload = payload.try_map_project_cloned(|payload, _| {
         use key_attr_consts::*;
@@ -120,8 +120,8 @@ fn era_symbols_map_project_cloned<M, P>(
     req: DataRequest,
 ) -> Result<DataResponse<P>, DataError>
 where
-    M: DataMarker<Yokeable = DateSymbolsV1<'static>>,
-    P: DataMarker<Yokeable = YearNamesV1<'static>>,
+    M: DataMarker<DataStruct = DateSymbolsV1<'static>>,
+    P: DataMarker<DataStruct = YearNamesV1<'static>>,
 {
     let new_payload = payload.try_map_project_cloned(|payload, _| {
         use key_attr_consts::*;
@@ -148,8 +148,8 @@ fn dayperiod_symbols_map_project_cloned<M, P>(
     req: DataRequest,
 ) -> Result<DataResponse<P>, DataError>
 where
-    M: DataMarker<Yokeable = TimeSymbolsV1<'static>>,
-    P: DataMarker<Yokeable = LinearNamesV1<'static>>,
+    M: DataMarker<DataStruct = TimeSymbolsV1<'static>>,
+    P: DataMarker<DataStruct = LinearNamesV1<'static>>,
 {
     let new_payload = payload.try_map_project_cloned(|payload, _| {
         use key_attr_consts::*;

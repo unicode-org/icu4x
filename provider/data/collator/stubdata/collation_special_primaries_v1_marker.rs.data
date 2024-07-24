@@ -16,7 +16,7 @@ macro_rules! __impl_collation_special_primaries_v1_marker {
         #[clippy::msrv = "1.70"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1_MARKER: &'static <icu::collator::provider::CollationSpecialPrimariesV1Marker as icu_provider::DynamicDataMarker>::Yokeable = &icu::collator::provider::CollationSpecialPrimariesV1 { last_primaries: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x06\x05\0\x0C\x8A\r\0\x0E") }, numeric_primary: 15u8 };
+            pub const SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1_MARKER: &'static <icu::collator::provider::CollationSpecialPrimariesV1Marker as icu_provider::DynamicDataMarker>::DataStruct = &icu::collator::provider::CollationSpecialPrimariesV1 { last_primaries: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x06\x05\0\x0C\x8A\r\0\x0E") }, numeric_primary: 15u8 };
         }
         #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::collator::provider::CollationSpecialPrimariesV1Marker> for $provider {

@@ -143,7 +143,7 @@ pub struct UCharDictionaryBreakDataV1<'data> {
 pub(crate) struct UCharDictionaryBreakDataV1Marker;
 
 impl DynamicDataMarker for UCharDictionaryBreakDataV1Marker {
-    type Yokeable = UCharDictionaryBreakDataV1<'static>;
+    type DataStruct = UCharDictionaryBreakDataV1<'static>;
 }
 
 #[derive(Clone, Copy, PartialEq, Debug)]

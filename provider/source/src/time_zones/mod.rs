@@ -59,7 +59,7 @@ macro_rules! impl_data_provider {
                     Ok(DataResponse {
             metadata: Default::default(),
                         payload: DataPayload::from_owned(
-                            <$marker as DynamicDataMarker>::Yokeable::from(CldrTimeZonesData {
+                            <$marker as DynamicDataMarker>::DataStruct::from(CldrTimeZonesData {
                                 time_zone_names_resource,
                                 bcp47_tzids_resource,
                                 meta_zone_ids_resource,

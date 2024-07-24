@@ -153,5 +153,5 @@ pub struct Pattern<'data> {
 pub(crate) struct ErasedCompactDecimalFormatDataV1Marker;
 
 impl DynamicDataMarker for ErasedCompactDecimalFormatDataV1Marker {
-    type Yokeable = CompactDecimalPatternDataV1<'static>;
+    type DataStruct = CompactDecimalPatternDataV1<'static>;
 }

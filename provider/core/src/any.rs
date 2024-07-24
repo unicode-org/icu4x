@@ -35,7 +35,7 @@ impl<T> MaybeSendSync for T {}
 /// The first refers to the struct itself, whereas the second refers to a `DataPayload`.
 #[derive(Debug, Clone)]
 enum AnyPayloadInner {
-    /// A reference to `M::Yokeable`
+    /// A reference to `M::DataStruct`
     StructRef(&'static dyn Any),
     /// A boxed `DataPayload<M>`.
     ///
@@ -68,13 +68,13 @@ pub struct AnyPayload {
 pub struct AnyMarker;
 
 impl DynamicDataMarker for AnyMarker {
-    type Yokeable = AnyPayload;
+    type DataStruct = AnyPayload;
 }
 
 impl<M> crate::dynutil::UpcastDataPayload<M> for AnyMarker
 where
     M: DynamicDataMarker,
-    M::Yokeable: MaybeSendSync,
+    M::DataStruct: MaybeSendSync,
 {
     #[inline]
     fn upcast(other: DataPayload<M>) -> DataPayload<AnyMarker> {
@@ -92,16 +92,16 @@ impl AnyPayload {
     where
         M: DynamicDataMarker,
         // For the StructRef case:
-        M::Yokeable: ZeroFrom<'static, M::Yokeable>,
+        M::DataStruct: ZeroFrom<'static, M::DataStruct>,
         // For the PayloadRc case:
-        M::Yokeable: MaybeSendSync,
-        for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
+        M::DataStruct: MaybeSendSync,
+        for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: Clone,
     {
         use AnyPayloadInner::*;
         let type_name = self.type_name;
         match self.inner {
             StructRef(any_ref) => {
-                let down_ref: &'static M::Yokeable = any_ref
+                let down_ref: &'static M::DataStruct = any_ref
                     .downcast_ref()
                     .ok_or_else(|| DataError::for_type::<M>().with_str_context(type_name))?;
                 Ok(DataPayload::from_static_ref(down_ref))
@@ -120,10 +120,10 @@ impl AnyPayload {
     where
         M: DynamicDataMarker,
         // For the StructRef case:
-        M::Yokeable: ZeroFrom<'static, M::Yokeable>,
+        M::DataStruct: ZeroFrom<'static, M::DataStruct>,
         // For the PayloadRc case:
-        M::Yokeable: MaybeSendSync,
-        for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
+        M::DataStruct: MaybeSendSync,
+        for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: Clone,
     {
         self.clone().downcast()
     }
@@ -163,7 +163,7 @@ impl AnyPayload {
 impl<M> DataPayload<M>
 where
     M: DynamicDataMarker,
-    M::Yokeable: MaybeSendSync,
+    M::DataStruct: MaybeSendSync,
 {
     /// Converts this DataPayload into a type-erased `AnyPayload`. Unless the payload stores a static
     /// reference, this will move it to the heap.
@@ -203,9 +203,9 @@ impl DataPayload<AnyMarker> {
     pub fn downcast<M>(self) -> Result<DataPayload<M>, DataError>
     where
         M: DynamicDataMarker,
-        for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
-        M::Yokeable: ZeroFrom<'static, M::Yokeable>,
-        M::Yokeable: MaybeSendSync,
+        for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: Clone,
+        M::DataStruct: ZeroFrom<'static, M::DataStruct>,
+        M::DataStruct: MaybeSendSync,
     {
         match self.0 {
             DataPayloadInner::Yoke(yoke) => yoke.try_into_yokeable().ok(),
@@ -245,9 +245,9 @@ impl AnyResponse {
     pub fn downcast<M>(self) -> Result<DataResponse<M>, DataError>
     where
         M: DynamicDataMarker,
-        for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
-        M::Yokeable: ZeroFrom<'static, M::Yokeable>,
-        M::Yokeable: MaybeSendSync,
+        for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: Clone,
+        M::DataStruct: ZeroFrom<'static, M::DataStruct>,
+        M::DataStruct: MaybeSendSync,
     {
         Ok(DataResponse {
             metadata: self.metadata,
@@ -259,9 +259,9 @@ impl AnyResponse {
     pub fn downcast_cloned<M>(&self) -> Result<DataResponse<M>, DataError>
     where
         M: DynamicDataMarker,
-        M::Yokeable: ZeroFrom<'static, M::Yokeable>,
-        M::Yokeable: MaybeSendSync,
-        for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
+        M::DataStruct: ZeroFrom<'static, M::DataStruct>,
+        M::DataStruct: MaybeSendSync,
+        for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: Clone,
     {
         Ok(DataResponse {
             metadata: self.metadata.clone(),
@@ -273,7 +273,7 @@ impl AnyResponse {
 impl<M> DataResponse<M>
 where
     M: DynamicDataMarker,
-    M::Yokeable: MaybeSendSync,
+    M::DataStruct: MaybeSendSync,
 {
     /// Moves the inner DataPayload to the heap (requiring an allocation) and returns it as an
     /// erased `AnyResponse`.
@@ -430,9 +430,9 @@ impl<M, P> DataProvider<M> for DowncastingAnyProvider<'_, P>
 where
     P: AnyProvider + ?Sized,
     M: DataMarker,
-    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
-    M::Yokeable: ZeroFrom<'static, M::Yokeable>,
-    M::Yokeable: MaybeSendSync,
+    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: Clone,
+    M::DataStruct: ZeroFrom<'static, M::DataStruct>,
+    M::DataStruct: MaybeSendSync,
 {
     #[inline]
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
@@ -447,9 +447,9 @@ impl<M, P> DynamicDataProvider<M> for DowncastingAnyProvider<'_, P>
 where
     P: AnyProvider + ?Sized,
     M: DynamicDataMarker,
-    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
-    M::Yokeable: ZeroFrom<'static, M::Yokeable>,
-    M::Yokeable: MaybeSendSync,
+    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: Clone,
+    M::DataStruct: ZeroFrom<'static, M::DataStruct>,
+    M::DataStruct: MaybeSendSync,
 {
     #[inline]
     fn load_data(
@@ -489,7 +489,7 @@ mod test {
         struct WrongMarker;
 
         impl DynamicDataMarker for WrongMarker {
-            type Yokeable = u8;
+            type DataStruct = u8;
         }
 
         let err = any_payload.downcast::<WrongMarker>().unwrap_err();
