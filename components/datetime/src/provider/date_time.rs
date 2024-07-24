@@ -345,8 +345,8 @@ where
     fn skeleton_data_payload(
         &self,
     ) -> Result<DataPayload<DateSkeletonPatternsV1Marker>, DataError> {
+        #![allow(clippy::expect_used)] // experimental
         use icu_locale_core::{extensions::unicode::value, subtags::subtag};
-        #[allow(clippy::expect_used)] // experimental
         let cal_val = self.cal_val.expect("should be present for components bag");
         // Skeleton data for ethioaa is stored under ethiopic
         let cal = if cal_val == &value!("ethioaa") {
