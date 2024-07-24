@@ -6,6 +6,10 @@
             "options": {
                 "components": {
                     "year": "two-digit"
+                },
+                "semantic": {
+                    "fieldSet": ["year"],
+                    "length": "short"
                 }
             }
         },
@@ -23,6 +27,11 @@
                 "components": {
                     "year": "numeric",
                     "era": "short"
+                },
+                "semantic": {
+                    "fieldSet": ["year"],
+                    "length": "medium",
+                    "eraDisplay": "always"
                 }
             }
         },

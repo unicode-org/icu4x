@@ -6,6 +6,10 @@
             "options": {
                 "components": {
                     "year": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["year"],
+                    "length": "short"
                 }
             }
         },
@@ -23,6 +27,10 @@
                 "components": {
                     "year": "numeric",
                     "month": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["year", "month"],
+                    "length": "short"
                 }
             }
         },
@@ -41,6 +49,10 @@
                     "year": "numeric",
                     "month": "numeric",
                     "day": "numeric-day-of-month"
+                },
+                "semantic": {
+                    "fieldSet": ["year", "month", "day"],
+                    "length": "short"
                 }
             }
         },
@@ -60,6 +72,10 @@
                     "month": "numeric",
                     "day": "numeric-day-of-month",
                     "weekday": "short"
+                },
+                "semantic": {
+                    "fieldSet": ["year", "month", "day", "weekday"],
+                    "length": "short"
                 }
             }
         },
@@ -77,6 +93,10 @@
                 "components": {
                     "year": "numeric",
                     "month": "short"
+                },
+                "semantic": {
+                    "fieldSet": ["year", "month"],
+                    "length": "medium"
                 }
             }
         },
@@ -95,6 +115,10 @@
                     "year": "numeric",
                     "month": "short",
                     "day": "numeric-day-of-month"
+                },
+                "semantic": {
+                    "fieldSet": ["year", "month", "day"],
+                    "length": "medium"
                 }
             }
         },
@@ -114,6 +138,10 @@
                     "month": "short",
                     "day": "numeric-day-of-month",
                     "weekday": "short"
+                },
+                "semantic": {
+                    "fieldSet": ["year", "month", "day", "weekday"],
+                    "length": "medium"
                 }
             }
         },
@@ -131,6 +159,10 @@
                 "components": {
                     "year": "numeric",
                     "month": "long"
+                },
+                "semantic": {
+                    "fieldSet": ["year", "month"],
+                    "length": "long"
                 }
             }
         },
@@ -147,6 +179,10 @@
             "options": {
                 "components": {
                     "month": "short"
+                },
+                "semantic": {
+                    "fieldSet": ["month"],
+                    "length": "medium"
                 }
             }
         },
@@ -164,6 +200,10 @@
                 "components": {
                     "month": "numeric",
                     "day": "numeric-day-of-month"
+                },
+                "semantic": {
+                    "fieldSet": ["month", "day"],
+                    "length": "short"
                 }
             }
         },
@@ -182,6 +222,10 @@
                     "month": "numeric",
                     "day": "numeric-day-of-month",
                     "weekday": "short"
+                },
+                "semantic": {
+                    "fieldSet": ["month", "day", "weekday"],
+                    "length": "short"
                 }
             }
         },
@@ -198,6 +242,10 @@
             "options": {
                 "components": {
                     "month": "short"
+                },
+                "semantic": {
+                    "fieldSet": ["month"],
+                    "length": "medium"
                 }
             }
         },
@@ -215,6 +263,10 @@
                 "components": {
                     "month": "short",
                     "day": "numeric-day-of-month"
+                },
+                "semantic": {
+                    "fieldSet": ["month", "day"],
+                    "length": "medium"
                 }
             }
         },
@@ -233,6 +285,10 @@
                     "month": "short",
                     "day": "numeric-day-of-month",
                     "weekday": "short"
+                },
+                "semantic": {
+                    "fieldSet": ["month", "day", "weekday"],
+                    "length": "medium"
                 }
             }
         },
@@ -250,6 +306,10 @@
                 "components": {
                     "month": "long",
                     "day": "numeric-day-of-month"
+                },
+                "semantic": {
+                    "fieldSet": ["month", "day"],
+                    "length": "long"
                 }
             }
         },
@@ -266,6 +326,10 @@
             "options": {
                 "components": {
                     "day": "numeric-day-of-month"
+                },
+                "semantic": {
+                    "fieldSet": ["day"],
+                    "length": "short"
                 }
             }
         },
@@ -283,6 +347,10 @@
                 "components": {
                     "day": "numeric-day-of-month",
                     "weekday": "short"
+                },
+                "semantic": {
+                    "fieldSet": ["day", "weekday"],
+                    "length": "medium"
                 }
             }
         },
@@ -299,6 +367,10 @@
             "options": {
                 "components": {
                     "weekday": "short"
+                },
+                "semantic": {
+                    "fieldSet": ["weekday"],
+                    "length": "medium"
                 }
             }
         },
@@ -317,6 +389,10 @@
                     "weekday": "short",
                     "hour": "numeric",
                     "minute": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["weekday", "hour", "minute"],
+                    "length": "medium"
                 },
                 "preferences": { "hourCycle": "h12" }
             }
@@ -338,6 +414,10 @@
                     "minute": "numeric",
                     "second": "numeric"
                 },
+                "semantic": {
+                    "fieldSet": ["weekday", "hour", "minute", "second"],
+                    "length": "medium"
+                },
                 "preferences": { "hourCycle": "h12" }
             }
         },
@@ -356,6 +436,10 @@
                     "weekday": "short",
                     "hour": "numeric",
                     "minute": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["weekday", "hour", "minute"],
+                    "length": "medium"
                 },
                 "preferences": { "hourCycle": "h23" }
             }
@@ -377,6 +461,10 @@
                     "minute": "numeric",
                     "second": "numeric"
                 },
+                "semantic": {
+                    "fieldSet": ["weekday", "hour", "minute", "second"],
+                    "length": "medium"
+                },
                 "preferences": { "hourCycle": "h23" }
             }
         },
@@ -393,6 +481,10 @@
             "options": {
                 "components": {
                     "hour": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["hour"],
+                    "length": "short"
                 },
                 "preferences": { "hourCycle": "h12" }
             }
@@ -411,6 +503,10 @@
                 "components": {
                     "hour": "numeric",
                     "minute": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["hour", "minute"],
+                    "length": "short"
                 },
                 "preferences": { "hourCycle": "h12" }
             }
@@ -431,6 +527,10 @@
                     "minute": "numeric",
                     "second": "numeric"
                 },
+                "semantic": {
+                    "fieldSet": ["hour", "minute", "second"],
+                    "length": "short"
+                },
                 "preferences": { "hourCycle": "h12" }
             }
         },
@@ -447,6 +547,10 @@
             "options": {
                 "components": {
                     "hour": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["hour"],
+                    "length": "short"
                 },
                 "preferences": { "hourCycle": "h23" }
             }
@@ -466,6 +570,10 @@
                     "hour": "numeric",
                     "minute": "numeric"
                 },
+                "semantic": {
+                    "fieldSet": ["hour", "minute"],
+                    "length": "short"
+                },
                 "preferences": { "hourCycle": "h23" }
             }
         },
@@ -484,6 +592,10 @@
                     "hour": "numeric",
                     "minute": "numeric",
                     "second": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["hour", "minute", "second"],
+                    "length": "short"
                 },
                 "preferences": { "hourCycle": "h23" }
             }
@@ -520,6 +632,10 @@
                 "components": {
                     "year": "numeric-week-of",
                     "week": "numeric-week-of-year"
+                },
+                "semantic": {
+                    "fieldSet": ["year", "weekOfYear"],
+                    "length": "long"
                 }
             }
         },
@@ -542,6 +658,10 @@
                 "components": {
                     "month": "long",
                     "week": "week-of-month"
+                },
+                "semantic": {
+                    "fieldSet": ["month", "weekOfMonth"],
+                    "length": "long"
                 }
             }
         },

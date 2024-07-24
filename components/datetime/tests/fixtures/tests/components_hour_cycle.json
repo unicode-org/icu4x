@@ -8,6 +8,10 @@
                     "hour": "numeric",
                     "minute": "numeric"
                 },
+                "semantic": {
+                    "fieldSet": ["hour", "minute"],
+                    "length": "short"
+                },
                 "preferences": { "hourCycle": "h11" }
             }
         },
@@ -25,6 +29,10 @@
                 "components": {
                     "hour": "numeric",
                     "minute": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["hour", "minute"],
+                    "length": "short"
                 },
                 "preferences": { "hourCycle": "h12" }
             }
@@ -44,6 +52,10 @@
                     "hour": "numeric",
                     "minute": "numeric"
                 },
+                "semantic": {
+                    "fieldSet": ["hour", "minute"],
+                    "length": "short"
+                },
                 "preferences": { "hourCycle": "h23" }
             }
         },
@@ -61,6 +73,10 @@
                 "components": {
                     "hour": "numeric",
                     "minute": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["hour", "minute"],
+                    "length": "short"
                 },
                 "preferences": { "hourCycle": "h24" }
             }
@@ -81,6 +97,10 @@
                     "hour": "numeric",
                     "minute": "numeric"
                 },
+                "semantic": {
+                    "fieldSet": ["hour", "minute"],
+                    "length": "short"
+                },
                 "preferences": { "hourCycle": "h11" }
             }
         },
@@ -98,6 +118,10 @@
                 "components": {
                     "hour": "numeric",
                     "minute": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["hour", "minute"],
+                    "length": "short"
                 },
                 "preferences": { "hourCycle": "h12" }
             }
@@ -117,6 +141,10 @@
                     "hour": "numeric",
                     "minute": "numeric"
                 },
+                "semantic": {
+                    "fieldSet": ["hour", "minute"],
+                    "length": "short"
+                },
                 "preferences": { "hourCycle": "h23" }
             }
         },
@@ -135,6 +163,10 @@
                     "hour": "numeric",
                     "minute": "numeric"
                 },
+                "semantic": {
+                    "fieldSet": ["hour", "minute"],
+                    "length": "short"
+                },
                 "preferences": { "hourCycle": "h24" }
             }
         },
@@ -151,6 +183,10 @@
             "options": {
                 "components": {
                     "hour": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["hour"],
+                    "length": "short"
                 },
                 "preferences": { "hourCycle": "h11" }
             }
@@ -169,6 +205,10 @@
                 "components": {
                     "hour": "numeric"
                 },
+                "semantic": {
+                    "fieldSet": ["hour"],
+                    "length": "short"
+                },
                 "preferences": { "hourCycle": "h12" }
             }
         },
@@ -186,6 +226,10 @@
                 "components": {
                     "hour": "numeric"
                 },
+                "semantic": {
+                    "fieldSet": ["hour"],
+                    "length": "short"
+                },
                 "preferences": { "hourCycle": "h23" }
             }
         },
@@ -202,6 +246,10 @@
             "options": {
                 "components": {
                     "hour": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["hour"],
+                    "length": "short"
                 },
                 "preferences": { "hourCycle": "h24" }
             }
