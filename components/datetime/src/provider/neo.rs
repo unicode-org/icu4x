@@ -588,6 +588,7 @@ pub struct SkeletonDataIndex {
     pub has_eras: bool,
 }
 
+#[cfg(feature = "experimental")]
 #[derive(Debug, Copy, Clone)]
 pub(crate) struct PatternSelectionOptions {
     pub(crate) length: NeoSkeletonLength,
