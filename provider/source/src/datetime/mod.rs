@@ -7,8 +7,8 @@ use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use either::Either;
 use icu::datetime::provider::calendar::*;
+use icu::locale::extensions::unicode::value;
 use icu::locale::extensions::unicode::Value;
-use icu::locale::extensions::unicode::{key, value};
 use icu::locale::LanguageIdentifier;
 use icu_provider::prelude::*;
 use std::collections::HashMap;
@@ -206,21 +206,13 @@ macro_rules! impl_data_provider {
 
                 let langid = req.id.locale.get_langid();
 
-                let calendar = if DateSkeletonPatternsV1Marker::INFO == $marker::INFO {
-                    req.id
-                        .locale
-                        .get_unicode_ext(&key!("ca"))
-                        .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?
-                } else {
-                    value!($calendar)
-                };
-
-                let data = self.get_datetime_resources(&langid, Either::Left(&calendar))?;
+                let data =
+                    self.get_datetime_resources(&langid, Either::Left(&value!($calendar)))?;
 
                 #[allow(clippy::redundant_closure_call)]
                 Ok(DataResponse {
                     metadata: Default::default(),
-                    payload: DataPayload::from_owned(($expr)(&data, &calendar.to_string())),
+                    payload: DataPayload::from_owned(($expr)(&data, $calendar)),
                 })
             }
         }
@@ -228,25 +220,16 @@ macro_rules! impl_data_provider {
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
             fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
                 let mut r = HashSet::new();
-                if DateSkeletonPatternsV1Marker::INFO == $marker::INFO {
-                    for (cal_value, cldr_cal) in supported_cals() {
-                        r.extend(self.cldr()?.dates(cldr_cal).list_langs()?.map(|lid| {
-                            let mut locale = DataLocale::from(lid);
-                            locale.set_unicode_ext(key!("ca"), cal_value.clone());
-                            DataIdentifierCow::from_locale(locale)
-                        }));
-                    }
-                } else {
-                    let cldr_cal = supported_cals()
-                        .get(&value!($calendar))
-                        .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
-                    r.extend(
-                        self.cldr()?
-                            .dates(cldr_cal)
-                            .list_langs()?
-                            .map(|l| DataIdentifierCow::from_locale(DataLocale::from(l))),
-                    );
-                }
+
+                let cldr_cal = supported_cals()
+                    .get(&value!($calendar))
+                    .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
+                r.extend(
+                    self.cldr()?
+                        .dates(cldr_cal)
+                        .list_langs()?
+                        .map(|l| DataIdentifierCow::from_locale(DataLocale::from(l))),
+                );
 
                 // TODO(#3212): Remove
                 if $marker::INFO == TimeLengthsV1Marker::INFO {
@@ -384,12 +367,6 @@ impl_data_provider!(
     "gregory"
 );
 
-impl_data_provider!(
-    DateSkeletonPatternsV1Marker,
-    |dates, _| { DateSkeletonPatternsV1::from(dates) },
-    "unused"
-);
-
 #[cfg(test)]
 mod test {
     use super::*;
@@ -431,15 +408,11 @@ mod test {
         use icu::plurals::PluralCategory;
         use std::convert::TryFrom;
 
-        let provider = SourceDataProvider::new_testing();
+        let data = SourceDataProvider::new_testing()
+            .get_datetime_resources(&langid!("fil"), Either::Left(&value!("gregory")))
+            .unwrap();
 
-        let skeletons: DataResponse<DateSkeletonPatternsV1Marker> = provider
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&"fil-u-ca-gregory".parse().unwrap()),
-                ..Default::default()
-            })
-            .expect("Failed to load payload");
-        let skeletons = &skeletons.payload.get().0;
+        let skeletons = DateSkeletonPatternsV1::from(&data).0;
 
         assert_eq!(
             Some(

@@ -1,7 +1,0 @@
-{
-  "patterns": {
-    "One": "{0} hvat",
-    "Few": "{0} hvata",
-    "Other": "{0} hvati"
-  }
-}

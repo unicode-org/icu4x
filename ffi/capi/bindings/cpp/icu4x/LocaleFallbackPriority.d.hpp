@@ -15,7 +15,6 @@ namespace capi {
     enum LocaleFallbackPriority {
       LocaleFallbackPriority_Language = 0,
       LocaleFallbackPriority_Region = 1,
-      LocaleFallbackPriority_Collation = 2,
     };
 } // namespace capi
 } // namespace
@@ -26,7 +25,6 @@ public:
   enum Value {
     Language = 0,
     Region = 1,
-    Collation = 2,
   };
 
   LocaleFallbackPriority() = default;

@@ -96,7 +96,6 @@ part 'LocaleExpander.g.dart';
 part 'LocaleFallbackConfig.g.dart';
 part 'LocaleFallbackIterator.g.dart';
 part 'LocaleFallbackPriority.g.dart';
-part 'LocaleFallbackSupplement.g.dart';
 part 'LocaleFallbacker.g.dart';
 part 'LocaleFallbackerWithConfig.g.dart';
 part 'LocaleParseError.g.dart';

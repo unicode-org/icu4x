@@ -1,7 +1,0 @@
-{
-  "patterns": {
-    "One": "{0} minut",
-    "Few": "{0} minuta",
-    "Other": "{0} minuta"
-  }
-}
