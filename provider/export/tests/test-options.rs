@@ -8,7 +8,7 @@ mod testutil;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 
-use icu_locale::{LanguageIdentifier, langid};
+use icu_locale::{langid, LanguageIdentifier};
 use icu_provider::export::*;
 use icu_provider::hello_world::*;
 use icu_provider::prelude::*;
@@ -89,7 +89,10 @@ make_exportable_provider!(TestingProvider, [HelloWorldV1Marker,]);
 fn families(
     langids: impl IntoIterator<Item = LanguageIdentifier>,
 ) -> impl IntoIterator<Item = DataLocaleFamily> {
-    langids.into_iter().map(Into::into).map(DataLocaleFamily::with_descendants)
+    langids
+        .into_iter()
+        .map(Into::into)
+        .map(DataLocaleFamily::with_descendants)
 }
 
 fn export_to_map(driver: ExportDriver, provider: &TestingProvider) -> BTreeMap<String, Vec<u8>> {
@@ -473,7 +476,10 @@ fn explicit_preresolved() {
     ];
     let exported = export_to_map(
         ExportDriver::new(
-            SELECTED_LOCALES.into_iter().map(Into::into).map(DataLocaleFamily::single),
+            SELECTED_LOCALES
+                .into_iter()
+                .map(Into::into)
+                .map(DataLocaleFamily::single),
             DeduplicationStrategy::None.into(),
             LocaleFallbacker::new().static_to_owned(),
         ),

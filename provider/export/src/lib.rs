@@ -79,7 +79,7 @@ pub use icu_provider_fs::export as fs_exporter;
 pub mod prelude {
     #[doc(no_inline)]
     pub use crate::{
-        DeduplicationStrategy, ExportDriver, FallbackOptions, DataLocaleFamily, NoFallbackOptions,
+        DataLocaleFamily, DeduplicationStrategy, ExportDriver, FallbackOptions, NoFallbackOptions,
     };
     #[doc(no_inline)]
     pub use icu_locale::{locale, LocaleFallbacker};
@@ -147,7 +147,10 @@ impl ExportDriver {
                     Some((
                         family.locale.or_else(|| {
                             // Full locale family: set the bit instead of adding to the set
-                            debug_assert_eq!(family.annotations, DataLocaleFamily::FULL.annotations);
+                            debug_assert_eq!(
+                                family.annotations,
+                                DataLocaleFamily::FULL.annotations
+                            );
                             include_full = true;
                             None
                         })?,
