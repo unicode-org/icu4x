@@ -178,7 +178,7 @@ jobs:
       run: |
         cd ffi/npm
         make lib/index.mjs
-        npm install typedoc
+        npm install typedoc@0.26.5 --exact
         node_modules/typedoc/bin/typedoc lib/index.d.ts --out docs --readme ../../tutorials/js.md --basePath lib
         cd ../..
         
@@ -490,7 +490,7 @@ jobs:
     # Job-specific dependencies
     - name: Install npm tools
       run: |
-        npm install -g wasm-opt
+        npm install -g wasm-opt@1.4.0 --exact
     
     # Actual job
     - name: Build wasm executables
