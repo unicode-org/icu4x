@@ -159,7 +159,7 @@ pub struct NeoOptions<R: DateTimeMarkers> {
     /// When to display the era field in the formatted string,
     /// if required for the chosen field set.
     ///
-    /// See [`EraDisplay`].
+    /// See [`EraDisplay`](crate::neo_marker::EraDisplay).
     pub era_display: R::EraDisplayOption,
 }
 
