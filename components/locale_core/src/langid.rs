@@ -75,32 +75,6 @@ use writeable::Writeable;
 /// assert_eq!(li.variants.get(0), Some(&variant!("valencia")));
 /// ```
 ///
-/// Using a wrapper to add one of these to a [`BTreeSet`]:
-///
-/// ```no_run
-/// use icu::locale::LanguageIdentifier;
-/// use std::cmp::Ordering;
-/// use std::collections::BTreeSet;
-///
-/// #[derive(PartialEq, Eq)]
-/// struct LanguageIdentifierTotalOrd(LanguageIdentifier);
-///
-/// impl Ord for LanguageIdentifierTotalOrd {
-///     fn cmp(&self, other: &Self) -> Ordering {
-///         self.0.total_cmp(&other.0)
-///     }
-/// }
-///
-/// impl PartialOrd for LanguageIdentifierTotalOrd {
-///     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-///         Some(self.cmp(other))
-///     }
-/// }
-///
-/// let _: BTreeSet<LanguageIdentifierTotalOrd> = unimplemented!();
-/// ```
-///
-/// [`BTreeSet`]: std::collections::BTreeSet
 /// [`Unicode BCP47 Language Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_language_identifier
 #[derive(Default, PartialEq, Eq, Clone, Hash)] // no Ord or PartialOrd: see docs
 #[allow(clippy::exhaustive_structs)] // This struct is stable (and invoked by a macro)
@@ -270,6 +244,33 @@ impl LanguageIdentifier {
     /// The result is a total ordering sufficient for use in a [`BTreeMap`].
     ///
     /// Unlike [`Self::strict_cmp`], this function's ordering may not equal string ordering.
+    ///
+    /// # Examples
+    ///
+    /// Using a wrapper to add one of these to a [`BTreeSet`]:
+    ///
+    /// ```no_run
+    /// use icu::locale::LanguageIdentifier;
+    /// use std::cmp::Ordering;
+    /// use std::collections::BTreeSet;
+    ///
+    /// #[derive(PartialEq, Eq)]
+    /// struct LanguageIdentifierTotalOrd(LanguageIdentifier);
+    ///
+    /// impl Ord for LanguageIdentifierTotalOrd {
+    ///     fn cmp(&self, other: &Self) -> Ordering {
+    ///         self.0.total_cmp(&other.0)
+    ///     }
+    /// }
+    ///
+    /// impl PartialOrd for LanguageIdentifierTotalOrd {
+    ///     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+    ///         Some(self.cmp(other))
+    ///     }
+    /// }
+    ///
+    /// let _: BTreeSet<LanguageIdentifierTotalOrd> = unimplemented!();
+    /// ```
     ///
     /// [`BTreeMap`]: alloc::collections::BTreeMap
     pub fn total_cmp(&self, other: &Self) -> Ordering {

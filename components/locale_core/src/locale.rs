@@ -90,32 +90,6 @@ use writeable::Writeable;
 /// );
 /// ```
 ///
-/// Using a wrapper to add one of these to a [`BTreeSet`]:
-///
-/// ```no_run
-/// use icu::locale::Locale;
-/// use std::cmp::Ordering;
-/// use std::collections::BTreeSet;
-///
-/// #[derive(PartialEq, Eq)]
-/// struct LocaleTotalOrd(Locale);
-///
-/// impl Ord for LocaleTotalOrd {
-///     fn cmp(&self, other: &Self) -> Ordering {
-///         self.0.total_cmp(&other.0)
-///     }
-/// }
-///
-/// impl PartialOrd for LocaleTotalOrd {
-///     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-///         Some(self.cmp(other))
-///     }
-/// }
-///
-/// let _: BTreeSet<LocaleTotalOrd> = unimplemented!();
-/// ```
-///
-/// [`BTreeSet`]: std::collections::BTreeSet
 /// [`Unicode Locale Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_locale_identifier
 #[derive(Default, PartialEq, Eq, Clone, Hash)] // no Ord or PartialOrd: see docs
 #[allow(clippy::exhaustive_structs)] // This struct is stable (and invoked by a macro)
@@ -275,6 +249,33 @@ impl Locale {
     ///
     /// The ordering may or may not be equivalent to string ordering, and it
     /// may or may not be stable across ICU4X releases.
+    ///
+    /// # Examples
+    ///
+    /// Using a wrapper to add one of these to a [`BTreeSet`]:
+    ///
+    /// ```no_run
+    /// use icu::locale::Locale;
+    /// use std::cmp::Ordering;
+    /// use std::collections::BTreeSet;
+    ///
+    /// #[derive(PartialEq, Eq)]
+    /// struct LocaleTotalOrd(Locale);
+    ///
+    /// impl Ord for LocaleTotalOrd {
+    ///     fn cmp(&self, other: &Self) -> Ordering {
+    ///         self.0.total_cmp(&other.0)
+    ///     }
+    /// }
+    ///
+    /// impl PartialOrd for LocaleTotalOrd {
+    ///     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+    ///         Some(self.cmp(other))
+    ///     }
+    /// }
+    ///
+    /// let _: BTreeSet<LocaleTotalOrd> = unimplemented!();
+    /// ```
     ///
     /// [`BTreeSet`]: alloc::collections::BTreeSet
     pub fn total_cmp(&self, other: &Self) -> Ordering {
