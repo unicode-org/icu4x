@@ -1,0 +1,86 @@
+version: 2
+updates:
+  - package-ecosystem: docker
+    directory: /.devcontainer
+    schedule:
+      interval: daily
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: daily
+
+  - package-ecosystem: cargo
+    directory: /
+    schedule:
+      interval: daily
+
+  - package-ecosystem: npm
+    directory: /ffi/npm
+    schedule:
+      interval: daily
+
+  - package-ecosystem: cargo
+    directory: /tutorials/c-tiny/fixeddecimal
+    schedule:
+      interval: daily
+
+  - package-ecosystem: cargo
+    directory: /tutorials/c-tiny/segmenter
+    schedule:
+      interval: daily
+
+  - package-ecosystem: cargo
+    directory: /tutorials/c
+    schedule:
+      interval: daily
+
+  - package-ecosystem: cargo
+    directory: /tutorials/cpp
+    schedule:
+      interval: daily
+
+  - package-ecosystem: cargo
+    directory: /tutorials/js-tiny
+    schedule:
+      interval: daily
+
+  - package-ecosystem: npm
+    directory: /tutorials/npm
+    schedule:
+      interval: daily
+
+  - package-ecosystem: cargo
+    directory: /tutorials/rust/baked
+    schedule:
+      interval: daily
+
+  - package-ecosystem: cargo
+    directory: /tutorials/rust/buffer
+    schedule:
+      interval: daily
+
+  - package-ecosystem: cargo
+    directory: /tutorials/rust/custom_compiled
+    schedule:
+      interval: daily
+
+  - package-ecosystem: cargo
+    directory: /tutorials/rust/default
+    schedule:
+      interval: daily
+
+  - package-ecosystem: cargo
+    directory: /tutorials/rust/experimental
+    schedule:
+      interval: daily
+
+  - package-ecosystem: cargo
+    directory: /tutorials/rust/harfbuzz
+    schedule:
+      interval: daily
+
+  - package-ecosystem: cargo
+    directory: /tutorials/rust/sync
+    schedule:
+      interval: daily
