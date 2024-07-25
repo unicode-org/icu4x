@@ -53,6 +53,11 @@ jobs:
     env:
       CARGO_HTTP_MULTIPLEXING: false
     steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@0d381219ddf674d61a7572ddd19d7941e271515c # v2.9.0
+      with:
+        egress-policy: audit
+
     - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
     # Cargo-make boilerplate
@@ -82,6 +87,11 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@0d381219ddf674d61a7572ddd19d7941e271515c # v2.9.0
+      with:
+        egress-policy: audit
+
     - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
     # Cargo-make boilerplate
@@ -105,6 +115,11 @@ jobs:
   test-docs:
     runs-on: ubuntu-latest
     steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@0d381219ddf674d61a7572ddd19d7941e271515c # v2.9.0
+      with:
+        egress-policy: audit
+
     - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
     # Cargo-make boilerplate
@@ -128,6 +143,11 @@ jobs:
   test-gigo:
     runs-on: ubuntu-latest
     steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@0d381219ddf674d61a7572ddd19d7941e271515c # v2.9.0
+      with:
+        egress-policy: audit
+
     - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
     # Cargo-make boilerplate
@@ -155,6 +175,11 @@ jobs:
         behavior: [local] # reenable cratesio for 2.0
       fail-fast: false
     steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@0d381219ddf674d61a7572ddd19d7941e271515c # v2.9.0
+      with:
+        egress-policy: audit
+
     - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
     # Cargo-make boilerplate
@@ -186,6 +211,11 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@0d381219ddf674d61a7572ddd19d7941e271515c # v2.9.0
+      with:
+        egress-policy: audit
+
     - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
     # Cargo-make boilerplate
@@ -212,6 +242,11 @@ jobs:
   full-datagen:
     runs-on: ubuntu-latest
     steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@0d381219ddf674d61a7572ddd19d7941e271515c # v2.9.0
+      with:
+        egress-policy: audit
+
     - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
     # Cargo-make boilerplate
@@ -240,6 +275,11 @@ jobs:
     runs-on: ubuntu-24.04 # Includes LLVM 16,17,18
 
     steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@0d381219ddf674d61a7572ddd19d7941e271515c # v2.9.0
+      with:
+        egress-policy: audit
+
     - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
     
     # Cargo-make boilerplate
@@ -270,6 +310,11 @@ jobs:
     runs-on: ubuntu-24.04 # Includes LLVM 16,17,18
 
     steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@0d381219ddf674d61a7572ddd19d7941e271515c # v2.9.0
+      with:
+        egress-policy: audit
+
     - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
     
     # Cargo-make boilerplate
@@ -294,6 +339,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@0d381219ddf674d61a7572ddd19d7941e271515c # v2.9.0
+      with:
+        egress-policy: audit
+
     - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
     # Software setup/installation for the container
@@ -327,6 +377,11 @@ jobs:
   nostd:
     runs-on: ubuntu-latest
     steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@0d381219ddf674d61a7572ddd19d7941e271515c # v2.9.0
+      with:
+        egress-policy: audit
+
     - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
     # Cargo-make boilerplate
@@ -350,6 +405,11 @@ jobs:
   diplomat:
     runs-on: [ ubuntu-latest ]
     steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@0d381219ddf674d61a7572ddd19d7941e271515c # v2.9.0
+      with:
+        egress-policy: audit
+
     - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
     # Cargo-make boilerplate
@@ -374,6 +434,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@0d381219ddf674d61a7572ddd19d7941e271515c # v2.9.0
+      with:
+        egress-policy: audit
+
     - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
     # Cargo-make boilerplate
@@ -414,6 +479,11 @@ jobs:
   fmt:
     runs-on: ubuntu-latest
     steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@0d381219ddf674d61a7572ddd19d7941e271515c # v2.9.0
+      with:
+        egress-policy: audit
+
     - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
     # Cargo-make boilerplate
@@ -441,6 +511,11 @@ jobs:
   tidy:
     runs-on: ubuntu-latest
     steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@0d381219ddf674d61a7572ddd19d7941e271515c # v2.9.0
+      with:
+        egress-policy: audit
+
     - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
     # Cargo-make boilerplate
@@ -473,6 +548,11 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@0d381219ddf674d61a7572ddd19d7941e271515c # v2.9.0
+      with:
+        egress-policy: audit
+
     - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
     # Cargo-make boilerplate
@@ -501,6 +581,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@0d381219ddf674d61a7572ddd19d7941e271515c # v2.9.0
+      with:
+        egress-policy: audit
+
     - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
     # Cargo-make boilerplate
@@ -526,6 +611,11 @@ jobs:
     if: ${{ always() && contains(needs.*.result, 'failure') && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref_name == 'main')) }}
     runs-on: ubuntu-latest
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@0d381219ddf674d61a7572ddd19d7941e271515c # v2.9.0
+        with:
+          egress-policy: audit
+
       - name: Notify slack of failure
         uses: ravsamhq/notify-slack-action@4ed28566c2bdcdaee6dca2b46b9666d01b4ed8a4 # v1
         # Only notify main slack of failure for beta runs and for failed main CI
