@@ -342,12 +342,14 @@ fn test_check_req() {
     use icu::locale::langid;
     use icu_provider::hello_world::*;
 
+    #[allow(non_local_definitions)] // test-scoped, only place that uses it
     impl DataProvider<HelloWorldV1Marker> for SourceDataProvider {
         fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
             HelloWorldProvider.load(req)
         }
     }
 
+    #[allow(non_local_definitions)] // test-scoped, only place that uses it
     impl crate::IterableDataProviderCached<HelloWorldV1Marker> for SourceDataProvider {
         fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
             Ok(HelloWorldProvider.iter_ids()?.into_iter().collect())
