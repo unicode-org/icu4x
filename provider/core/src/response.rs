@@ -686,7 +686,7 @@ where
     /// Convert between two [`DynamicDataMarker`] types that are compatible with each other
     /// with compile-time type checking.
     ///
-    /// This happens if they both have the same [`DynamicDataMarker::Yokeable`] type.
+    /// This happens if they both have the same [`DynamicDataMarker::DataStruct`] type.
     ///
     /// Can be used to erase the marker of a data payload in cases where multiple markers correspond
     /// to the same data struct.
@@ -915,7 +915,7 @@ where
     /// Convert between two [`DynamicDataMarker`] types that are compatible with each other
     /// with compile-time type checking.
     ///
-    /// This happens if they both have the same [`DynamicDataMarker::Yokeable`] type.
+    /// This happens if they both have the same [`DynamicDataMarker::DataStruct`] type.
     ///
     /// Can be used to erase the marker of a data payload in cases where multiple markers correspond
     /// to the same data struct.

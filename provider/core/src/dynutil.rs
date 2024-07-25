@@ -38,7 +38,7 @@ where
 }
 
 /// Implements [`UpcastDataPayload`] from several data markers to a single data marker
-/// that all share the same [`DynamicDataMarker::Yokeable`].
+/// that all share the same [`DynamicDataMarker::DataStruct`].
 ///
 /// # Examples
 ///
@@ -61,7 +61,7 @@ where
 /// );
 /// ```
 ///
-/// [`DynamicDataMarker::Yokeable`]: crate::DynamicDataMarker::Yokeable
+/// [`DynamicDataMarker::DataStruct`]: crate::DynamicDataMarker::DataStruct
 #[macro_export]
 #[doc(hidden)] // macro
 macro_rules! __impl_casting_upcast {
