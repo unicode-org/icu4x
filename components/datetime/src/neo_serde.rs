@@ -8,6 +8,7 @@ use crate::neo_skeleton::{
     NeoComponents, NeoDateComponents, NeoDayComponents, NeoSkeleton, NeoSkeletonLength,
     NeoTimeComponents, NeoTimeZoneSkeleton, NeoTimeZoneStyle,
 };
+use alloc::vec::Vec;
 use serde::{Deserialize, Serialize};
 
 // Bring `Day`, `Hour`, ... into scope in this file. They are used in multiple places
