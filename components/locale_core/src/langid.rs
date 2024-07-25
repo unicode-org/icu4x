@@ -75,7 +75,7 @@ use writeable::Writeable;
 /// assert_eq!(li.variants.get(0), Some(&variant!("valencia")));
 /// ```
 ///
-/// Using a wrapper to add one of these to a `BTreeSet`:
+/// Using a wrapper to add one of these to a [`BTreeSet`]:
 ///
 /// ```no_run
 /// use icu::locale::LanguageIdentifier;
@@ -100,6 +100,7 @@ use writeable::Writeable;
 /// let _: BTreeSet<LanguageIdentifierTotalOrd> = unimplemented!();
 /// ```
 ///
+/// [`BTreeSet`]: std::collections::BTreeSet
 /// [`Unicode BCP47 Language Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_language_identifier
 #[derive(Default, PartialEq, Eq, Clone, Hash)]
 #[allow(clippy::exhaustive_structs)] // This struct is stable (and invoked by a macro)

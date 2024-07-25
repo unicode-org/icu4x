@@ -90,7 +90,7 @@ use writeable::Writeable;
 /// );
 /// ```
 ///
-/// Using a wrapper to add one of these to a `BTreeSet`:
+/// Using a wrapper to add one of these to a [`BTreeSet`]:
 ///
 /// ```no_run
 /// use icu::locale::Locale;
@@ -115,6 +115,7 @@ use writeable::Writeable;
 /// let _: BTreeSet<LocaleTotalOrd> = unimplemented!();
 /// ```
 ///
+/// [`BTreeSet`]: std::collections::BTreeSet
 /// [`Unicode Locale Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_locale_identifier
 #[derive(Default, PartialEq, Eq, Clone, Hash)]
 #[allow(clippy::exhaustive_structs)] // This struct is stable (and invoked by a macro)
