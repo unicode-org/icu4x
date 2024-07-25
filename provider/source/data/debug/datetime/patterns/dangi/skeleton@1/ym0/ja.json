@@ -2,11 +2,15 @@
   "index_info": {
     "has_long": true,
     "has_medium": true,
-    "has_plurals": false
+    "has_plurals": false,
+    "has_eras": true
   },
   "patterns": [
     "U年MMMM",
+    "r(U)年MMMM",
     "U年MMM",
-    "U年M月"
+    "U年MMM",
+    "U年M月",
+    "U年MMM"
   ]
 }

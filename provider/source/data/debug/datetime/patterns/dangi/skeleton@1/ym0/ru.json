@@ -2,11 +2,15 @@
   "index_info": {
     "has_long": true,
     "has_medium": true,
-    "has_plurals": false
+    "has_plurals": false,
+    "has_eras": true
   },
   "patterns": [
     "LLLL U",
+    "r(U) MMMM",
     "LLL U",
-    "M.y"
+    "LLL U",
+    "M.y",
+    "LLL U"
   ]
 }

@@ -2,11 +2,15 @@
   "index_info": {
     "has_long": true,
     "has_medium": true,
-    "has_plurals": false
+    "has_plurals": false,
+    "has_eras": true
   },
   "patterns": [
     "LLLL y г. G",
+    "LLLL y г. GGG",
     "LLL y г. G",
-    "M.y G"
+    "LLL y г. GGG",
+    "M.y G",
+    "LLL y г. GGG"
   ]
 }

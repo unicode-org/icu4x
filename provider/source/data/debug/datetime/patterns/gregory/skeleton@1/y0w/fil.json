@@ -2,7 +2,8 @@
   "index_info": {
     "has_long": false,
     "has_medium": false,
-    "has_plurals": true
+    "has_plurals": true,
+    "has_eras": true
   },
   "patterns": [
     "'linggo' w 'ng' Y",
@@ -10,6 +11,12 @@
     "'linggo' w 'ng' Y",
     "'linggo' w 'ng' Y",
     "'linggo' w 'ng' Y",
-    "'linggo' w 'ng' Y"
+    "'linggo' w 'ng' Y",
+    "GGG Y w",
+    "GGG Y w",
+    "GGG Y w",
+    "GGG Y w",
+    "GGG Y w",
+    "GGG Y w"
   ]
 }
