@@ -30,6 +30,8 @@ pub struct TestOptions {
     #[cfg(feature = "experimental")]
     pub components: Option<icu_datetime::options::components::Bag>,
     #[cfg(feature = "experimental")]
+    pub semantic: Option<icu_datetime::neo_skeleton::NeoSkeleton>,
+    #[cfg(feature = "experimental")]
     pub preferences: Option<icu_datetime::options::preferences::Bag>,
 }
 
