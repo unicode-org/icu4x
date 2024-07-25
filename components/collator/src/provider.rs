@@ -117,6 +117,7 @@ fn data_ce_to_primary(data_ce: u64, c: char) -> u32 {
 #[icu_provider::data_struct(marker(
     CollationDataV1Marker,
     "collator/data@1",
+    // TODO(#3867): Use script fallback
     fallback_by = "language",
 ))]
 #[derive(Debug, PartialEq, Clone)]

@@ -345,7 +345,7 @@ mod tests {
             requires_data: true,
             expected_language_chain: &["yue-HK", "yue"],
             expected_region_chain: &["yue-HK", "und-HK"],
-            // TODO: script fallback should do zh-Hant or und-Hant as well
+            // TODO(#3867): script fallback should do zh-Hant or und-Hant as well
         },
     ];
 
