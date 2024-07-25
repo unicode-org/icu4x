@@ -138,7 +138,12 @@ impl FixedDecimalFormatter {
     ) -> Result<Self, DataError> {
         let symbols = provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(locale),
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::from_str_or_panic(
+                        locale.get_single_unicode_ext("nu").unwrap_or_default(),
+                    ),
+                    &locale.get_langid().into(),
+                ),
                 ..Default::default()
             })?
             .payload;

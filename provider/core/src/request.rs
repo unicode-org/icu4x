@@ -633,6 +633,17 @@ impl DataLocale {
         self.keywords.get(key).cloned()
     }
 
+    /// Like `get_unicode_ext` but untyped, easier to use during attributes migration.
+    #[inline]
+    pub fn get_single_unicode_ext(&self, key: &str) -> Option<&str> {
+        Some(
+            self.keywords
+                .get(&key.parse().ok()?)?
+                .as_single_subtag()?
+                .as_str(),
+        )
+    }
+
     /// Returns whether there are any Unicode extension keywords in this [`DataLocale`].
     #[inline]
     pub fn has_unicode_ext(&self) -> bool {

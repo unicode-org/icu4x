@@ -16,7 +16,6 @@ use std::collections::BTreeMap;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::str::FromStr;
-use tinystr::tinystr;
 use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::VarZeroVec;
 use zerovec::ZeroMap;
@@ -128,7 +127,7 @@ fn extract_currency_essentials<'data>(
         .numbers
         .numsys_data
         .currency_patterns
-        .get(&tinystr!(8, "latn"))
+        .get("latn")
         .ok_or_else(|| DataError::custom("Could not find the standard pattern"))?;
 
     let standard = &currency_formats.standard;
@@ -308,6 +307,7 @@ fn extract_currency_essentials<'data>(
 
 #[test]
 fn test_basic() {
+    use tinystr::tinystr;
     fn get_placeholders_of_currency(
         iso_code: UnvalidatedTinyAsciiStr<3>,
         locale: &DataResponse<CurrencyEssentialsV1Marker>,

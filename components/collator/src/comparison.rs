@@ -149,26 +149,54 @@ impl Collator {
             + DataProvider<CollationReorderingV1Marker>
             + ?Sized,
     {
+        let id = DataIdentifierCow::from_borrowed_and_owned(
+            DataMarkerAttributes::from_str_or_panic(
+                locale.get_single_unicode_ext("co").unwrap_or_default(),
+            ),
+            locale.get_langid().into(),
+        );
+
         let req = DataRequest {
-            id: DataIdentifierBorrowed::for_locale(locale),
+            id: id.as_borrowed(),
+            metadata: {
+                let mut metadata = DataRequestMetadata::default();
+                metadata.silent = true;
+                metadata
+            },
+        };
+
+        let fallback_req = DataRequest {
+            id: DataIdentifierBorrowed::for_locale(&id.locale),
             ..Default::default()
         };
 
-        let metadata_payload: DataPayload<crate::provider::CollationMetadataV1Marker> =
-            provider.load(req)?.payload;
+        let metadata_payload: DataPayload<crate::provider::CollationMetadataV1Marker> = provider
+            .load(req)
+            .or_else(|_| provider.load(fallback_req))?
+            .payload;
 
         let metadata = metadata_payload.get();
 
         let tailoring: Option<DataPayload<crate::provider::CollationDataV1Marker>> =
             if metadata.tailored() {
-                Some(provider.load(req)?.payload)
+                Some(
+                    provider
+                        .load(req)
+                        .or_else(|_| provider.load(fallback_req))?
+                        .payload,
+                )
             } else {
                 None
             };
 
         let reordering: Option<DataPayload<crate::provider::CollationReorderingV1Marker>> =
             if metadata.reordering() {
-                Some(provider.load(req)?.payload)
+                Some(
+                    provider
+                        .load(req)
+                        .or_else(|_| provider.load(fallback_req))?
+                        .payload,
+                )
             } else {
                 None
             };
