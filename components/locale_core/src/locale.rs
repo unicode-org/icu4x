@@ -44,8 +44,8 @@ use writeable::Writeable;
 ///
 /// Instead, there are functions available that return these different orderings:
 ///
-/// - [`LanguageIdentifier::strict_cmp`]
-/// - [`LanguageIdentifier::total_cmp`]
+/// - [`Locale::strict_cmp`]
+/// - [`Locale::total_cmp`]
 ///
 /// See issue: <https://github.com/unicode-org/icu4x/issues/1215>
 ///
