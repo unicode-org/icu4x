@@ -17,17 +17,15 @@ use icu_pattern::SinglePlaceholder;
 use icu_pattern::SinglePlaceholderPattern;
 use icu_provider::prelude::*;
 use icu_provider::DataProvider;
-use tinystr::tinystr;
 
 impl DataProvider<PercentEssentialsV1Marker> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<PercentEssentialsV1Marker>, DataError> {
         self.check_req::<PercentEssentialsV1Marker>(req)?;
-        let langid = req.id.locale.get_langid();
 
         let numbers_resource: &cldr_serde::numbers::Resource = self
             .cldr()?
             .numbers()
-            .read_and_parse(&langid, "numbers.json")?;
+            .read_and_parse(req.id.locale, "numbers.json")?;
 
         let result = extract_percent_essentials(numbers_resource);
 
@@ -43,8 +41,8 @@ impl IterableDataProviderCached<PercentEssentialsV1Marker> for SourceDataProvide
         Ok(self
             .cldr()?
             .numbers()
-            .list_langs()?
-            .map(|l| DataIdentifierCow::from_locale(DataLocale::from(l)))
+            .list_locales()?
+            .map(DataIdentifierCow::from_locale)
             .collect())
     }
 }
@@ -59,7 +57,7 @@ fn extract_percent_essentials<'data>(
         .numbers
         .numsys_data
         .percent_patterns
-        .get(&tinystr!(8, "latn"))
+        .get("latn")
         .ok_or_else(|| DataError::custom("Could not find the standard pattern"))?;
 
     // TODO(#3838): these patterns might be numbering system dependent.
@@ -69,7 +67,7 @@ fn extract_percent_essentials<'data>(
         .numbers
         .numsys_data
         .symbols
-        .get(&tinystr!(8, "latn"))
+        .get("latn")
         .ok_or_else(|| DataError::custom("Could not find the percent symbol"))?;
 
     let localized_approximately_sign = symbols.approximately_sign.to_owned();

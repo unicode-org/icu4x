@@ -17,12 +17,11 @@ impl DataProvider<RegionDisplayNamesV1Marker> for SourceDataProvider {
         req: DataRequest,
     ) -> Result<DataResponse<RegionDisplayNamesV1Marker>, DataError> {
         self.check_req::<RegionDisplayNamesV1Marker>(req)?;
-        let langid = req.id.locale.get_langid();
 
         let data: &cldr_serde::displaynames::region::Resource = self
             .cldr()?
             .displaynames()
-            .read_and_parse(&langid, "territories.json")?;
+            .read_and_parse(req.id.locale, "territories.json")?;
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -38,16 +37,16 @@ impl IterableDataProviderCached<RegionDisplayNamesV1Marker> for SourceDataProvid
         Ok(self
             .cldr()?
             .displaynames()
-            .list_langs()?
-            .filter(|langid| {
+            .list_locales()?
+            .filter(|locale| {
                 // The directory might exist without territories.json
                 self.cldr()
                     .unwrap()
                     .displaynames()
-                    .file_exists(langid, "territories.json")
+                    .file_exists(locale, "territories.json")
                     .unwrap_or_default()
             })
-            .map(|l| DataIdentifierCow::from_locale(DataLocale::from(l)))
+            .map(DataIdentifierCow::from_locale)
             .collect())
     }
 }

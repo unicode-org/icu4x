@@ -24,7 +24,7 @@ impl DataProvider<UnitsEssentialsV1Marker> for SourceDataProvider {
         let units_format_data: &cldr_serde::units::data::Resource = self
             .cldr()?
             .units()
-            .read_and_parse(&req.id.locale.get_langid(), "units.json")?;
+            .read_and_parse(req.id.locale, "units.json")?;
         let units_format_data = &units_format_data.main.value.units;
         let length_data = match req.id.marker_attributes.as_str() {
             "long" => &units_format_data.long,
@@ -137,10 +137,10 @@ impl DataProvider<UnitsEssentialsV1Marker> for SourceDataProvider {
 impl crate::IterableDataProviderCached<UnitsEssentialsV1Marker> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         let units = self.cldr()?.units();
-        let langids = units.list_langs()?;
-        Ok(langids
+        let locales = units.list_locales()?;
+        Ok(locales
             .into_iter()
-            .flat_map(|langid| {
+            .flat_map(|locale| {
                 [
                     DataMarkerAttributes::from_str_or_panic("long"),
                     DataMarkerAttributes::from_str_or_panic("short"),
@@ -148,10 +148,7 @@ impl crate::IterableDataProviderCached<UnitsEssentialsV1Marker> for SourceDataPr
                 ]
                 .into_iter()
                 .map(move |length| {
-                    DataIdentifierCow::from_borrowed_and_owned(
-                        length,
-                        DataLocale::from(langid.clone()),
-                    )
+                    DataIdentifierCow::from_borrowed_and_owned(length, locale.clone())
                 })
             })
             .collect())

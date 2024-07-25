@@ -63,16 +63,7 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
             }
         }
         // 3. Remove irrelevant extension subtags
-        locale.retain_unicode_ext(|key| {
-            match *key {
-                // Always retain -u-sd
-                SUBDIVISION_KEY => true,
-                // Retain the query-specific keyword
-                _ if Some(*key) == self.config.extension_key => true,
-                // Drop all others
-                _ => false,
-            }
-        });
+        locale.retain_unicode_ext(|&key| matches!(key, SUBDIVISION_KEY));
         // 4. If there is an invalid "sd" subtag, drop it
         // For now, ignore it, and let fallback do it for us
     }
@@ -83,9 +74,6 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
         match self.config.priority {
             LocaleFallbackPriority::Language => self.step_language(locale),
             LocaleFallbackPriority::Region => self.step_region(locale),
-            // TODO(#1964): Change the collation fallback rules to be different
-            // from the language fallback fules.
-            LocaleFallbackPriority::Collation => self.step_language(locale),
             // This case should not normally happen, but `LocaleFallbackPriority` is non_exhaustive.
             // Make it go directly to `und`.
             _ => {
@@ -100,13 +88,6 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
     }
 
     fn step_language(&mut self, locale: &mut DataLocale) {
-        // 1. Remove the extension fallback keyword
-        if let Some(extension_key) = self.config.extension_key {
-            if let Some(value) = locale.remove_unicode_ext(&extension_key) {
-                self.backup_extension = Some(value);
-                return;
-            }
-        }
         // 2. Remove the subdivision keyword
         if let Some(value) = locale.remove_unicode_ext(&SUBDIVISION_KEY) {
             self.backup_subdivision = Some(value);
@@ -122,7 +103,7 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
         // 5. Check for parent override
         if let Some(parent) = self.get_explicit_parent(locale) {
             locale.set_langid(parent);
-            self.restore_extensions_variants(locale);
+            self.restore_subdivision_variants(locale);
             return;
         }
         // 6. Add the script subtag if necessary
@@ -134,7 +115,7 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
                     &region.into_tinystr().to_unvalidated(),
                 ) {
                     locale.set_script(Some(script));
-                    self.restore_extensions_variants(locale);
+                    self.restore_subdivision_variants(locale);
                     return;
                 }
             }
@@ -142,7 +123,7 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
         // 7. Remove region
         if locale.region().is_some() {
             locale.set_region(None);
-            self.restore_extensions_variants(locale);
+            self.restore_subdivision_variants(locale);
             return;
         }
         // 8. Remove language+script
@@ -152,13 +133,6 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
     }
 
     fn step_region(&mut self, locale: &mut DataLocale) {
-        // 1. Remove the extension fallback keyword
-        if let Some(extension_key) = self.config.extension_key {
-            if let Some(value) = locale.remove_unicode_ext(&extension_key) {
-                self.backup_extension = Some(value);
-                return;
-            }
-        }
         // 2. Remove the subdivision keyword
         if let Some(value) = locale.remove_unicode_ext(&SUBDIVISION_KEY) {
             self.backup_subdivision = Some(value);
@@ -175,7 +149,7 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
         if !locale.language().is_empty() || locale.script().is_some() {
             locale.set_script(None);
             locale.set_language(Language::UND);
-            self.restore_extensions_variants(locale);
+            self.restore_subdivision_variants(locale);
             return;
         }
         // 6. Remove region
@@ -183,11 +157,7 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
         locale.set_region(None);
     }
 
-    fn restore_extensions_variants(&mut self, locale: &mut DataLocale) {
-        if let Some(value) = self.backup_extension.take() {
-            #[allow(clippy::unwrap_used)] // not reachable unless extension_key is present
-            locale.set_unicode_ext(self.config.extension_key.unwrap(), value);
-        }
+    fn restore_subdivision_variants(&mut self, locale: &mut DataLocale) {
         if let Some(value) = self.backup_subdivision.take() {
             locale.set_unicode_ext(SUBDIVISION_KEY, value);
         }
@@ -197,17 +167,9 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
     }
 
     fn get_explicit_parent(&self, locale: &DataLocale) -> Option<LanguageIdentifier> {
-        self.supplement
-            .and_then(|supplement| {
-                supplement
-                    .parents
-                    .get_copied_by(|uvstr| locale.strict_cmp(uvstr).reverse())
-            })
-            .or_else(|| {
-                self.parents
-                    .parents
-                    .get_copied_by(|uvstr| locale.strict_cmp(uvstr).reverse())
-            })
+        self.parents
+            .parents
+            .get_copied_by(|uvstr| locale.strict_cmp(uvstr).reverse())
             .map(LanguageIdentifier::from)
     }
 }
@@ -220,8 +182,6 @@ mod tests {
     struct TestCase {
         input: &'static str,
         requires_data: bool,
-        extension_key: Option<Key>,
-        fallback_supplement: Option<LocaleFallbackSupplement>,
         // Note: The first entry in the chain is the normalized locale
         expected_language_chain: &'static [&'static str],
         expected_region_chain: &'static [&'static str],
@@ -232,40 +192,30 @@ mod tests {
         TestCase {
             input: "en-u-hc-h12-sd-usca",
             requires_data: false,
-            extension_key: None,
-            fallback_supplement: None,
             expected_language_chain: &["en-u-sd-usca", "en"],
             expected_region_chain: &["en-u-sd-usca", "en", "und-u-sd-usca"],
         },
         TestCase {
             input: "en-US-u-hc-h12-sd-usca",
             requires_data: false,
-            extension_key: None,
-            fallback_supplement: None,
             expected_language_chain: &["en-US-u-sd-usca", "en-US", "en-u-sd-usca", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
         },
         TestCase {
             input: "en-US-fonipa-u-hc-h12-sd-usca",
             requires_data: false,
-            extension_key: Some(key!("hc")),
-            fallback_supplement: None,
             expected_language_chain: &[
-                "en-US-fonipa-u-hc-h12-sd-usca",
                 "en-US-fonipa-u-sd-usca",
                 "en-US-fonipa",
                 "en-US",
-                "en-fonipa-u-hc-h12-sd-usca",
                 "en-fonipa-u-sd-usca",
                 "en-fonipa",
                 "en",
             ],
             expected_region_chain: &[
-                "en-US-fonipa-u-hc-h12-sd-usca",
                 "en-US-fonipa-u-sd-usca",
                 "en-US-fonipa",
                 "en-US",
-                "und-US-fonipa-u-hc-h12-sd-usca",
                 "und-US-fonipa-u-sd-usca",
                 "und-US-fonipa",
                 "und-US",
@@ -274,24 +224,18 @@ mod tests {
         TestCase {
             input: "en-u-hc-h12-sd-usca",
             requires_data: true,
-            extension_key: None,
-            fallback_supplement: None,
             expected_language_chain: &["en-u-sd-usca", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
         },
         TestCase {
             input: "en-Latn-u-sd-usca",
             requires_data: true,
-            extension_key: None,
-            fallback_supplement: None,
             expected_language_chain: &["en-u-sd-usca", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
         },
         TestCase {
             input: "en-Latn-US-u-sd-usca",
             requires_data: true,
-            extension_key: None,
-            fallback_supplement: None,
             expected_language_chain: &["en-US-u-sd-usca", "en-US", "en-u-sd-usca", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
         },
@@ -299,32 +243,24 @@ mod tests {
             // TODO(#4413): -u-rg is not yet supported; when it is, this test should be updated
             input: "en-u-rg-gbxxxx",
             requires_data: false,
-            extension_key: None,
-            fallback_supplement: None,
             expected_language_chain: &["en"],
             expected_region_chain: &["en"],
         },
         TestCase {
             input: "sr-ME",
             requires_data: true,
-            extension_key: None,
-            fallback_supplement: None,
             expected_language_chain: &["sr-ME", "sr-Latn-ME", "sr-Latn"],
             expected_region_chain: &["sr-ME", "und-ME"],
         },
         TestCase {
             input: "sr-Latn-ME",
             requires_data: true,
-            extension_key: None,
-            fallback_supplement: None,
             expected_language_chain: &["sr-ME", "sr-Latn-ME", "sr-Latn"],
             expected_region_chain: &["sr-ME", "und-ME"],
         },
         TestCase {
             input: "sr-ME-fonipa",
             requires_data: true,
-            extension_key: None,
-            fallback_supplement: None,
             expected_language_chain: &[
                 "sr-ME-fonipa",
                 "sr-ME",
@@ -338,72 +274,54 @@ mod tests {
         TestCase {
             input: "sr-RS",
             requires_data: true,
-            extension_key: None,
-            fallback_supplement: None,
             expected_language_chain: &["sr-RS", "sr"],
             expected_region_chain: &["sr-RS", "und-RS"],
         },
         TestCase {
             input: "sr-Cyrl-RS",
             requires_data: true,
-            extension_key: None,
-            fallback_supplement: None,
             expected_language_chain: &["sr-RS", "sr"],
             expected_region_chain: &["sr-RS", "und-RS"],
         },
         TestCase {
             input: "sr-Latn-RS",
             requires_data: true,
-            extension_key: None,
-            fallback_supplement: None,
             expected_language_chain: &["sr-Latn-RS", "sr-Latn"],
             expected_region_chain: &["sr-Latn-RS", "und-RS"],
         },
         TestCase {
             input: "de-Latn-LI",
             requires_data: true,
-            extension_key: None,
-            fallback_supplement: None,
             expected_language_chain: &["de-LI", "de"],
             expected_region_chain: &["de-LI", "und-LI"],
         },
         TestCase {
             input: "ca-ES-valencia",
             requires_data: true,
-            extension_key: None,
-            fallback_supplement: None,
             expected_language_chain: &["ca-ES-valencia", "ca-ES", "ca-valencia", "ca"],
             expected_region_chain: &["ca-ES-valencia", "ca-ES", "und-ES-valencia", "und-ES"],
         },
         TestCase {
             input: "es-AR",
             requires_data: true,
-            extension_key: None,
-            fallback_supplement: None,
             expected_language_chain: &["es-AR", "es-419", "es"],
             expected_region_chain: &["es-AR", "und-AR"],
         },
         TestCase {
             input: "hi-IN",
             requires_data: true,
-            extension_key: None,
-            fallback_supplement: None,
             expected_language_chain: &["hi-IN", "hi"],
             expected_region_chain: &["hi-IN", "und-IN"],
         },
         TestCase {
             input: "hi-Latn-IN",
             requires_data: true,
-            extension_key: None,
-            fallback_supplement: None,
             expected_language_chain: &["hi-Latn-IN", "hi-Latn", "en-IN", "en-001", "en"],
             expected_region_chain: &["hi-Latn-IN", "und-IN"],
         },
         TestCase {
             input: "zh-CN",
             requires_data: true,
-            extension_key: None,
-            fallback_supplement: None,
             // Note: "zh-Hans" is not reachable because it is the default script for "zh".
             // The fallback algorithm does not visit the language-script bundle when the
             // script is the default for the language
@@ -413,26 +331,21 @@ mod tests {
         TestCase {
             input: "zh-TW",
             requires_data: true,
-            extension_key: None,
-            fallback_supplement: None,
             expected_language_chain: &["zh-TW", "zh-Hant-TW", "zh-Hant"],
             expected_region_chain: &["zh-TW", "und-TW"],
         },
         TestCase {
             input: "yue-HK",
             requires_data: true,
-            extension_key: None,
-            fallback_supplement: None,
             expected_language_chain: &["yue-HK", "yue"],
             expected_region_chain: &["yue-HK", "und-HK"],
         },
         TestCase {
             input: "yue-HK",
             requires_data: true,
-            extension_key: None,
-            fallback_supplement: Some(LocaleFallbackSupplement::Collation),
-            expected_language_chain: &["yue-HK", "yue", "zh-Hant", "zh"],
+            expected_language_chain: &["yue-HK", "yue"],
             expected_region_chain: &["yue-HK", "und-HK"],
+            // TODO(#3867): script fallback should do zh-Hant or und-Hant as well
         },
     ];
 
@@ -451,8 +364,6 @@ mod tests {
             ] {
                 let mut config = LocaleFallbackConfig::default();
                 config.priority = priority;
-                config.extension_key = cas.extension_key;
-                config.fallback_supplement = cas.fallback_supplement;
                 let fallbacker = if cas.requires_data {
                     fallbacker_with_data
                 } else {

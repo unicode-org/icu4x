@@ -11,9 +11,7 @@ use icu_locale_core::subtags::Variants;
 use icu_provider::prelude::*;
 
 #[doc(inline)]
-pub use icu_provider::_internal::{
-    LocaleFallbackConfig, LocaleFallbackPriority, LocaleFallbackSupplement,
-};
+pub use icu_provider::_internal::{LocaleFallbackConfig, LocaleFallbackPriority};
 
 mod algorithms;
 
@@ -35,7 +33,7 @@ mod algorithms;
 /// let fallbacker = LocaleFallbacker::new();
 ///
 /// // Create a LocaleFallbackerIterator with a default configuration.
-/// // By default, uses language priority with no additional extension keywords.
+/// // By default, uses language priority.
 /// let mut fallback_iterator = fallbacker
 ///     .for_config(Default::default())
 ///     .fallback_for(locale!("hi-Latn-IN").into());
@@ -62,7 +60,6 @@ mod algorithms;
 pub struct LocaleFallbacker {
     likely_subtags: DataPayload<LocaleFallbackLikelySubtagsV1Marker>,
     parents: DataPayload<LocaleFallbackParentsV1Marker>,
-    collation_supplement: Option<DataPayload<CollationFallbackSupplementV1Marker>>,
 }
 
 /// Borrowed version of [`LocaleFallbacker`].
@@ -70,7 +67,6 @@ pub struct LocaleFallbacker {
 pub struct LocaleFallbackerBorrowed<'a> {
     likely_subtags: &'a LocaleFallbackLikelySubtagsV1<'a>,
     parents: &'a LocaleFallbackParentsV1<'a>,
-    collation_supplement: Option<&'a LocaleFallbackSupplementV1<'a>>,
 }
 
 /// A [`LocaleFallbackerBorrowed`] with an associated [`LocaleFallbackConfig`].
@@ -78,7 +74,6 @@ pub struct LocaleFallbackerBorrowed<'a> {
 pub struct LocaleFallbackerWithConfig<'a> {
     likely_subtags: &'a LocaleFallbackLikelySubtagsV1<'a>,
     parents: &'a LocaleFallbackParentsV1<'a>,
-    supplement: Option<&'a LocaleFallbackSupplementV1<'a>>,
     config: LocaleFallbackConfig,
 }
 
@@ -87,9 +82,7 @@ pub struct LocaleFallbackerWithConfig<'a> {
 struct LocaleFallbackIteratorInner<'a> {
     likely_subtags: &'a LocaleFallbackLikelySubtagsV1<'a>,
     parents: &'a LocaleFallbackParentsV1<'a>,
-    supplement: Option<&'a LocaleFallbackSupplementV1<'a>>,
     config: LocaleFallbackConfig,
-    backup_extension: Option<Value>,
     backup_subdivision: Option<Value>,
     backup_variants: Option<Variants>,
 }
@@ -118,9 +111,6 @@ impl LocaleFallbacker {
             likely_subtags:
                 crate::provider::Baked::SINGLETON_LOCALE_FALLBACK_LIKELY_SUBTAGS_V1_MARKER,
             parents: crate::provider::Baked::SINGLETON_LOCALE_FALLBACK_PARENTS_V1_MARKER,
-            collation_supplement: Some(
-                crate::provider::Baked::SINGLETON_COLLATION_FALLBACK_SUPPLEMENT_V1_MARKER,
-            ),
         };
         // Safety: we're transmuting down from LocaleFallbackerBorrowed<'static> to LocaleFallbackerBorrowed<'a>
         // ZeroMaps use associated types in a way that confuse the compiler which gives up and marks them
@@ -144,27 +134,13 @@ impl LocaleFallbacker {
     where
         P: DataProvider<LocaleFallbackLikelySubtagsV1Marker>
             + DataProvider<LocaleFallbackParentsV1Marker>
-            + DataProvider<CollationFallbackSupplementV1Marker>
             + ?Sized,
     {
         let likely_subtags = provider.load(Default::default())?.payload;
         let parents = provider.load(Default::default())?.payload;
-        let collation_supplement = match DataProvider::<CollationFallbackSupplementV1Marker>::load(
-            provider,
-            Default::default(),
-        ) {
-            Ok(response) => Some(response.payload),
-            // It is expected that not all keys are present
-            Err(DataError {
-                kind: DataErrorKind::MarkerNotFound,
-                ..
-            }) => None,
-            Err(e) => return Err(e),
-        };
         Ok(LocaleFallbacker {
             likely_subtags,
             parents,
-            collation_supplement,
         })
     }
 
@@ -174,7 +150,6 @@ impl LocaleFallbacker {
         LocaleFallbacker {
             likely_subtags: DataPayload::from_owned(Default::default()),
             parents: DataPayload::from_owned(Default::default()),
-            collation_supplement: None,
         }
     }
 
@@ -189,7 +164,6 @@ impl LocaleFallbacker {
         LocaleFallbackerBorrowed {
             likely_subtags: self.likely_subtags.get(),
             parents: self.parents.get(),
-            collation_supplement: self.collation_supplement.as_ref().map(|p| p.get()),
         }
     }
 }
@@ -201,10 +175,6 @@ impl<'a> LocaleFallbackerBorrowed<'a> {
         LocaleFallbackerWithConfig {
             likely_subtags: self.likely_subtags,
             parents: self.parents,
-            supplement: match config.fallback_supplement {
-                Some(LocaleFallbackSupplement::Collation) => self.collation_supplement,
-                _ => None,
-            },
             config,
         }
     }
@@ -219,10 +189,6 @@ impl LocaleFallbackerBorrowed<'static> {
         LocaleFallbacker {
             likely_subtags: DataPayload::from_static_ref(self.likely_subtags),
             parents: DataPayload::from_static_ref(self.parents),
-            collation_supplement: match self.collation_supplement {
-                None => None,
-                Some(x) => Some(DataPayload::from_static_ref(x)),
-            },
         }
     }
 }
@@ -240,9 +206,7 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
             inner: LocaleFallbackIteratorInner {
                 likely_subtags: self.likely_subtags,
                 parents: self.parents,
-                supplement: self.supplement,
                 config: self.config,
-                backup_extension: None,
                 backup_subdivision: None,
                 backup_variants: None,
             },

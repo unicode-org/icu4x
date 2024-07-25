@@ -238,8 +238,6 @@ export { LocaleParseError } from "./LocaleParseError.mjs"
 
 export { LocaleFallbackPriority } from "./LocaleFallbackPriority.mjs"
 
-export { LocaleFallbackSupplement } from "./LocaleFallbackSupplement.mjs"
-
 export { FixedDecimalRoundingIncrement } from "./FixedDecimalRoundingIncrement.mjs"
 
 export { FixedDecimalRoundingMode } from "./FixedDecimalRoundingMode.mjs"

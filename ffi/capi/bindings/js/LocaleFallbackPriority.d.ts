@@ -17,8 +17,6 @@ export class LocaleFallbackPriority {
 
     static Region : LocaleFallbackPriority;
 
-    static Collation : LocaleFallbackPriority;
-
 
     
 
