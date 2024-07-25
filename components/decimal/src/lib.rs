@@ -119,6 +119,12 @@ pub struct FixedDecimalFormatter {
     symbols: DataPayload<provider::DecimalSymbolsV1Marker>,
 }
 
+impl AsRef<FixedDecimalFormatter> for FixedDecimalFormatter {
+    fn as_ref(&self) -> &FixedDecimalFormatter {
+        self
+    }
+}
+
 impl FixedDecimalFormatter {
     icu_provider::gen_any_buffer_data_constructors!(
 

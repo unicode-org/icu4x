@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use fixed_decimal::{FixedDecimal, Sign};
+use icu_decimal::FixedDecimalFormatter;
 
 use crate::alloc::borrow::ToOwned;
 use alloc::borrow::Cow;
@@ -28,6 +29,7 @@ pub struct FormattedPercent<'l> {
     pub(crate) value: &'l FixedDecimal,
     pub(crate) essential: &'l PercentEssentialsV1<'l>,
     pub(crate) options: &'l PercentFormatterOptions,
+    pub(crate) fixed_decimal_formatter: &'l FixedDecimalFormatter,
 }
 
 impl<'l> Writeable for FormattedPercent<'l> {
@@ -41,18 +43,20 @@ impl<'l> Writeable for FormattedPercent<'l> {
             _ => self.value.to_owned(),
         };
 
+        let value = self.fixed_decimal_formatter.format(&abs_value);
+
         match self.options.display {
             // In the Standard display, we take the unsigned pattern only when the value is positive.
             Display::Standard => {
                 if self.value.sign() == Sign::Negative {
                     self.essential
                         .signed_pattern
-                        .interpolate((abs_value, &self.essential.minus_sign))
+                        .interpolate((value, &self.essential.minus_sign))
                         .write_to(sink)?
                 } else {
                     self.essential
                         .unsigned_pattern
-                        .interpolate([abs_value])
+                        .interpolate([value])
                         .write_to(sink)?
                 };
             }
@@ -69,14 +73,14 @@ impl<'l> Writeable for FormattedPercent<'l> {
 
                 self.essential
                     .signed_pattern
-                    .interpolate((abs_value, sign))
+                    .interpolate((value, sign))
                     .write_to(sink)?;
             }
             Display::ExplicitSign => self
                 .essential
                 .signed_pattern
                 .interpolate((
-                    abs_value,
+                    value,
                     if self.value.sign() == Sign::Negative {
                         &self.essential.minus_sign
                     } else {
@@ -109,12 +113,12 @@ mod tests {
         let positive_value = "12345.67".parse().unwrap();
         let default_fmt = PercentFormatter::try_new(&locale, Default::default()).unwrap();
         let formatted_percent = default_fmt.format(&positive_value);
-        assert_writeable_eq!(formatted_percent, "12345.67%");
+        assert_writeable_eq!(formatted_percent, "12,345.67%");
 
         // Negative case
         let neg_value = "-12345.67".parse().unwrap();
         let formatted_percent = default_fmt.format(&neg_value);
-        assert_writeable_eq!(formatted_percent, "-12345.67%");
+        assert_writeable_eq!(formatted_percent, "-12,345.67%");
 
         // Approximate Case
         let approx_value = "12345.67".parse().unwrap();
@@ -126,7 +130,7 @@ mod tests {
         )
         .unwrap();
         let formatted_percent = approx_fmt.format(&approx_value);
-        assert_writeable_eq!(formatted_percent, "~12345.67%");
+        assert_writeable_eq!(formatted_percent, "~12,345.67%");
 
         // ExplicitSign Case
         let explicit_fmt = PercentFormatter::try_new(
@@ -137,7 +141,7 @@ mod tests {
         )
         .unwrap();
         let formatted_percent = explicit_fmt.format(&positive_value);
-        assert_writeable_eq!(formatted_percent, "+12345.67%");
+        assert_writeable_eq!(formatted_percent, "+12,345.67%");
     }
 
     #[test]
@@ -147,12 +151,12 @@ mod tests {
         let positive_value = "12345.67".parse().unwrap();
         let default_fmt = PercentFormatter::try_new(&locale, Default::default()).unwrap();
         let formatted_percent = default_fmt.format(&positive_value);
-        assert_writeable_eq!(formatted_percent, "%12345.67");
+        assert_writeable_eq!(formatted_percent, "%12.345,67");
 
         // Negative case
         let neg_value = "-12345.67".parse().unwrap();
         let formatted_percent = default_fmt.format(&neg_value);
-        assert_writeable_eq!(formatted_percent, "-%12345.67");
+        assert_writeable_eq!(formatted_percent, "-%12.345,67");
 
         // Approximate Case
         let approx_value = "12345.67".parse().unwrap();
@@ -164,7 +168,7 @@ mod tests {
         )
         .unwrap();
         let formatted_percent = approx_fmt.format(&approx_value);
-        assert_writeable_eq!(formatted_percent, "~%12345.67");
+        assert_writeable_eq!(formatted_percent, "~%12.345,67");
 
         // ExplicitSign Case
         let explicit_fmt = PercentFormatter::try_new(
@@ -175,7 +179,7 @@ mod tests {
         )
         .unwrap();
         let formatted_percent = explicit_fmt.format(&positive_value);
-        assert_writeable_eq!(formatted_percent, "+%12345.67");
+        assert_writeable_eq!(formatted_percent, "+%12.345,67");
     }
 
     #[test]
@@ -185,12 +189,12 @@ mod tests {
         let positive_value = "12345.67".parse().unwrap();
         let default_fmt = PercentFormatter::try_new(&locale, Default::default()).unwrap();
         let formatted_percent = default_fmt.format(&positive_value);
-        assert_writeable_eq!(formatted_percent, "%\u{a0}12345.67");
+        assert_writeable_eq!(formatted_percent, "%\u{a0}12\u{a0}345,67");
 
         // Negative case
         let neg_value = "-12345.67".parse().unwrap();
         let formatted_percent = default_fmt.format(&neg_value);
-        assert_writeable_eq!(formatted_percent, "%\u{a0}-12345.67");
+        assert_writeable_eq!(formatted_percent, "%\u{a0}-12\u{a0}345,67");
 
         // Approximate Case
         let approx_value = "12345.67".parse().unwrap();
@@ -202,7 +206,7 @@ mod tests {
         )
         .unwrap();
         let formatted_percent = approx_fmt.format(&approx_value);
-        assert_writeable_eq!(formatted_percent, "%\u{a0}~12345.67");
+        assert_writeable_eq!(formatted_percent, "%\u{a0}~12\u{a0}345,67");
 
         // ExplicitSign Case
         let explicit_fmt = PercentFormatter::try_new(
@@ -213,6 +217,6 @@ mod tests {
         )
         .unwrap();
         let formatted_percent = explicit_fmt.format(&positive_value);
-        assert_writeable_eq!(formatted_percent, "%\u{a0}+12345.67");
+        assert_writeable_eq!(formatted_percent, "%\u{a0}+12\u{a0}345,67");
     }
 }
