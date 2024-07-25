@@ -75,6 +75,7 @@ impl NeoSkeletonLength {
 
 /// A specification for when to display the era when formatting a year.
 #[derive(Debug, Copy, Clone)]
+#[non_exhaustive]
 pub enum EraDisplay {
     /// Always display the era.
     ///
