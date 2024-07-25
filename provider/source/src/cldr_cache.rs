@@ -91,7 +91,7 @@ impl CldrCache {
     pub(crate) fn locales(
         &self,
         levels: impl IntoIterator<Item = CoverageLevel>,
-    ) -> Result<Vec<icu::locale::LanguageIdentifier>, DataError> {
+    ) -> Result<Vec<DataLocale>, DataError> {
         let levels = levels.into_iter().collect::<HashSet<_>>();
         Ok(self
             .serde_cache
@@ -102,6 +102,7 @@ impl CldrCache {
             .iter()
             .filter_map(|(locale, c)| levels.contains(c).then_some(locale))
             .cloned()
+            .map(Into::into)
             // `und` needs to be part of every set
             .chain([Default::default()])
             .collect())

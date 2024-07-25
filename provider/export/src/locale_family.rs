@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use displaydoc::Display;
-use icu_locale::LanguageIdentifier;
 use icu_locale::ParseError;
+use icu_provider::DataLocale;
 use std::hash::Hash;
 use std::str::FromStr;
 use writeable::Writeable;
@@ -12,7 +12,7 @@ use writeable::Writeable;
 /// A family of locales to export.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct LocaleFamily {
-    pub(crate) langid: Option<LanguageIdentifier>,
+    pub(crate) locale: Option<DataLocale>,
     pub(crate) annotations: LocaleFamilyAnnotations,
 }
 
@@ -30,15 +30,15 @@ impl LocaleFamily {
     /// Stylized on the CLI as: "en-US"
     ///
     /// The `und` locale is treated specially and behaves like `::single("und")`.
-    pub const fn with_descendants(langid: LanguageIdentifier) -> Self {
-        let annotations = if langid.is_empty() {
+    pub fn with_descendants(locale: DataLocale) -> Self {
+        let annotations = if locale.is_und() {
             LocaleFamilyAnnotations::single()
         } else {
             LocaleFamilyAnnotations::with_descendants()
         };
 
         Self {
-            langid: Some(langid),
+            locale: Some(locale),
             annotations,
         }
     }
@@ -56,14 +56,14 @@ impl LocaleFamily {
     /// Stylized on the CLI as: "^en-US"
     ///
     /// The `und` locale is treated specially and behaves like `::single("und")`.
-    pub const fn without_descendants(langid: LanguageIdentifier) -> Self {
-        let annotations = if langid.is_empty() {
+    pub fn without_descendants(locale: DataLocale) -> Self {
+        let annotations = if locale.is_und() {
             LocaleFamilyAnnotations::single()
         } else {
             LocaleFamilyAnnotations::without_descendants()
         };
         Self {
-            langid: Some(langid),
+            locale: Some(locale),
             annotations,
         }
     }
@@ -82,14 +82,14 @@ impl LocaleFamily {
     /// Stylized on the CLI as: "%en-US"
     ///
     /// The `und` locale is treated specially and behaves like `::single("und")`.
-    pub const fn without_ancestors(langid: LanguageIdentifier) -> Self {
-        let annotations = if langid.is_empty() {
+    pub fn without_ancestors(locale: DataLocale) -> Self {
+        let annotations = if locale.is_und() {
             LocaleFamilyAnnotations::single()
         } else {
             LocaleFamilyAnnotations::without_ancestors()
         };
         Self {
-            langid: Some(langid),
+            locale: Some(locale),
             annotations,
         }
     }
@@ -99,9 +99,9 @@ impl LocaleFamily {
     /// For example, the family `::single("en-001")` contains only "en-001".
     ///
     /// Stylized on the CLI as: "@en-US"
-    pub const fn single(langid: LanguageIdentifier) -> Self {
+    pub const fn single(locale: DataLocale) -> Self {
         Self {
-            langid: Some(langid),
+            locale: Some(locale),
             annotations: LocaleFamilyAnnotations::single(),
         }
     }
@@ -110,7 +110,7 @@ impl LocaleFamily {
     ///
     /// Stylized on the CLI as: "full"
     pub const FULL: Self = Self {
-        langid: None,
+        locale: None,
         annotations: LocaleFamilyAnnotations {
             include_ancestors: false,
             include_descendants: true,
@@ -120,17 +120,17 @@ impl LocaleFamily {
 
 impl Writeable for LocaleFamily {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        if let Some(langid) = self.langid.as_ref() {
+        if let Some(locale) = self.locale.as_ref() {
             self.annotations.write_to(sink)?;
-            langid.write_to(sink)
+            locale.write_to(sink)
         } else {
             sink.write_str("full")
         }
     }
 
     fn writeable_length_hint(&self) -> writeable::LengthHint {
-        if let Some(langid) = self.langid.as_ref() {
-            self.annotations.writeable_length_hint() + langid.writeable_length_hint()
+        if let Some(locale) = self.locale.as_ref() {
+            self.annotations.writeable_length_hint() + locale.writeable_length_hint()
         } else {
             writeable::LengthHint::exact(4)
         }
@@ -202,9 +202,9 @@ impl Writeable for LocaleFamilyAnnotations {
 #[derive(Debug, Copy, Clone, PartialEq, Display)]
 #[non_exhaustive]
 pub enum LocaleFamilyParseError {
-    /// An error bubbled up from parsing a [`LanguageIdentifier`].
+    /// An error bubbled up from parsing a [`Locale`].
     #[displaydoc("{0}")]
-    LanguageIdentifier(ParseError),
+    Locale(ParseError),
     /// Some other error specific to parsing the family, such as an invalid lead byte.
     #[displaydoc("Invalid locale family")]
     InvalidFamily,
@@ -212,7 +212,7 @@ pub enum LocaleFamilyParseError {
 
 impl From<ParseError> for LocaleFamilyParseError {
     fn from(err: ParseError) -> Self {
-        Self::LanguageIdentifier(err)
+        Self::Locale(err)
     }
 }
 
@@ -224,25 +224,23 @@ impl FromStr for LocaleFamily {
         if s == "full" {
             return Ok(Self::FULL);
         }
-        let (first, remainder) = s
-            .as_bytes()
-            .split_first()
-            .ok_or(LocaleFamilyParseError::InvalidFamily)?;
+        let mut iter = s.chars();
+        let first = iter.next().ok_or(LocaleFamilyParseError::InvalidFamily)?;
         match first {
-            b'^' => Ok(Self {
-                langid: Some(LanguageIdentifier::try_from_utf8(remainder)?),
+            '^' => Ok(Self {
+                locale: Some(iter.as_str().parse()?),
                 annotations: LocaleFamilyAnnotations::without_descendants(),
             }),
-            b'%' => Ok(Self {
-                langid: Some(LanguageIdentifier::try_from_utf8(remainder)?),
+            '%' => Ok(Self {
+                locale: Some(iter.as_str().parse()?),
                 annotations: LocaleFamilyAnnotations::without_ancestors(),
             }),
-            b'@' => Ok(Self {
-                langid: Some(LanguageIdentifier::try_from_utf8(remainder)?),
+            '@' => Ok(Self {
+                locale: Some(iter.as_str().parse()?),
                 annotations: LocaleFamilyAnnotations::single(),
             }),
             b if b.is_ascii_alphanumeric() => Ok(Self {
-                langid: Some(s.parse()?),
+                locale: Some(s.parse()?),
                 annotations: LocaleFamilyAnnotations::with_descendants(),
             }),
             _ => Err(LocaleFamilyParseError::InvalidFamily),

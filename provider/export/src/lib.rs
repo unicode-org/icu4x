@@ -82,12 +82,11 @@ pub mod prelude {
         DeduplicationStrategy, ExportDriver, FallbackOptions, LocaleFamily, NoFallbackOptions,
     };
     #[doc(no_inline)]
-    pub use icu_locale::{langid, LanguageIdentifier, LocaleFallbacker};
+    pub use icu_locale::{locale, LocaleFallbacker};
     #[doc(no_inline)]
-    pub use icu_provider::{export::DataExporter, DataMarker, DataMarkerInfo};
+    pub use icu_provider::{export::DataExporter, DataLocale, DataMarker, DataMarkerInfo};
 }
 
-use icu_locale::LanguageIdentifier;
 use icu_locale::LocaleFallbacker;
 use icu_provider::prelude::*;
 use std::collections::HashMap;
@@ -119,7 +118,7 @@ use std::hash::Hash;
 #[derive(Debug, Clone)]
 pub struct ExportDriver {
     markers: Option<HashSet<DataMarkerInfo>>,
-    requested_families: HashMap<LanguageIdentifier, LocaleFamilyAnnotations>,
+    requested_families: HashMap<DataLocale, LocaleFamilyAnnotations>,
     fallbacker: LocaleFallbacker,
     include_full: bool,
     deduplication_strategy: DeduplicationStrategy,
@@ -146,7 +145,7 @@ impl ExportDriver {
                 .into_iter()
                 .filter_map(|family| {
                     Some((
-                        family.langid.or_else(|| {
+                        family.locale.or_else(|| {
                             // Full locale family: set the bit instead of adding to the set
                             debug_assert_eq!(family.annotations, LocaleFamily::FULL.annotations);
                             include_full = true;

@@ -56,7 +56,7 @@ fn make_testdata() {
     let provider = SourceDataProvider::new_testing();
 
     ExportDriver::new(
-        LOCALES.iter().cloned().map(LocaleFamily::with_descendants),
+        LOCALES.iter().cloned().map(Into::into).map(LocaleFamily::with_descendants),
         DeduplicationStrategy::None.into(),
         LocaleFallbacker::try_new_unstable(&provider).unwrap(),
     )

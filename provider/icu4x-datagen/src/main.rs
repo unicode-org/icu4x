@@ -313,13 +313,13 @@ fn main() -> eyre::Result<()> {
     };
 
     enum PreprocessedLocales {
-        LanguageIdentifiers(Vec<LanguageIdentifier>),
+        Locales(Vec<DataLocale>),
         Full,
     }
 
     #[allow(unused_mut)]
     let mut preprocessed_locales = if cli.locales.as_slice() == ["none"] {
-        Some(PreprocessedLocales::LanguageIdentifiers(vec![]))
+        Some(PreprocessedLocales::Locales(vec![]))
     } else if cli.locales.as_slice() == ["full"] {
         Some(PreprocessedLocales::Full)
     } else {
@@ -414,7 +414,7 @@ fn main() -> eyre::Result<()> {
             };
 
             if cli.locales.as_slice() == ["recommended"] {
-                preprocessed_locales = Some(PreprocessedLocales::LanguageIdentifiers(
+                preprocessed_locales = Some(PreprocessedLocales::Locales(
                     p.locales_for_coverage_levels([
                         icu_provider_source::CoverageLevel::Modern,
                         icu_provider_source::CoverageLevel::Moderate,
@@ -434,7 +434,7 @@ fn main() -> eyre::Result<()> {
                 })
                 .collect::<Option<Vec<_>>>()
             {
-                preprocessed_locales = Some(PreprocessedLocales::LanguageIdentifiers(
+                preprocessed_locales = Some(PreprocessedLocales::Locales(
                     p.locales_for_coverage_levels(locale_subsets.into_iter())?
                         .into_iter()
                         .collect(),
@@ -451,7 +451,7 @@ fn main() -> eyre::Result<()> {
 
     let locale_families = match preprocessed_locales {
         Some(PreprocessedLocales::Full) => vec![LocaleFamily::FULL],
-        Some(PreprocessedLocales::LanguageIdentifiers(lids)) => lids
+        Some(PreprocessedLocales::Locales(locales)) => locales
             .into_iter()
             .map(LocaleFamily::with_descendants)
             .collect(),
