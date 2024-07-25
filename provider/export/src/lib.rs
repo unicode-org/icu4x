@@ -311,11 +311,11 @@ fn test_family_precedence() {
         driver.requested_families,
         [
             (
-                icu::locale::langid!("en"),
+                icu::locale::langid!("en").into(),
                 DataLocaleFamilyAnnotations::single()
             ),
             (
-                icu::locale::langid!("zh-TW"),
+                icu::locale::langid!("zh-TW").into(),
                 DataLocaleFamilyAnnotations::without_descendants()
             ),
         ]

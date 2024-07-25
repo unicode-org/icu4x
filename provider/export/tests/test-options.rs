@@ -8,7 +8,7 @@ mod testutil;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 
-use icu_locale::LanguageIdentifier;
+use icu_locale::{LanguageIdentifier, langid};
 use icu_provider::export::*;
 use icu_provider::hello_world::*;
 use icu_provider::prelude::*;
