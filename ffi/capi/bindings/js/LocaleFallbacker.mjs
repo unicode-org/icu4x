@@ -3,7 +3,6 @@ import { DataError } from "./DataError.mjs"
 import { DataProvider } from "./DataProvider.mjs"
 import { LocaleFallbackConfig } from "./LocaleFallbackConfig.mjs"
 import { LocaleFallbackerWithConfig } from "./LocaleFallbackerWithConfig.mjs"
-import { LocaleParseError } from "./LocaleParseError.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
@@ -72,26 +71,18 @@ export class LocaleFallbacker {
         
         let slice_cleanup_callbacks = [];
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this];
-        const result = wasm.icu4x_LocaleFallbacker_for_config_mv1(diplomat_receive_buffer, this.ffiValue, ...config._intoFFI(slice_cleanup_callbacks, {}));
+        const result = wasm.icu4x_LocaleFallbacker_for_config_mv1(this.ffiValue, ...config._intoFFI(slice_cleanup_callbacks, {}));
     
         try {
     
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = LocaleParseError[Array.from(LocaleParseError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('LocaleParseError: ' + cause.value, { cause });
-            }
-            return new LocaleFallbackerWithConfig(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), [], aEdges);
+            return new LocaleFallbackerWithConfig(result, [], aEdges);
         } finally {
         
             for (let cleanup of slice_cleanup_callbacks) {
                 cleanup();
             }
-        
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         
         }
     }

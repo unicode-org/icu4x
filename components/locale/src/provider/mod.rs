@@ -46,7 +46,6 @@ const _: () = {
     make_provider!(Baked);
     impl_locale_fallback_likely_subtags_v1_marker!(Baked);
     impl_locale_fallback_parents_v1_marker!(Baked);
-    impl_collation_fallback_supplement_v1_marker!(Baked);
     impl_aliases_v2_marker!(Baked);
     impl_likely_subtags_extended_v1_marker!(Baked);
     impl_likely_subtags_for_language_v1_marker!(Baked);
@@ -61,7 +60,6 @@ use icu_provider::prelude::*;
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
     AliasesV2Marker::INFO,
-    CollationFallbackSupplementV1Marker::INFO,
     LikelySubtagsExtendedV1Marker::INFO,
     LikelySubtagsForLanguageV1Marker::INFO,
     LikelySubtagsForScriptRegionV1Marker::INFO,
