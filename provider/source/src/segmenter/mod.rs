@@ -182,7 +182,6 @@ fn generate_rule_break_data(
     const CODEPOINT_TABLE_LEN: usize = 0xE1000;
 
     let mut properties_map = vec![0; CODEPOINT_TABLE_LEN];
-    let mut properties_map_diff = vec![0; CODEPOINT_TABLE_LEN];
     let mut properties_names = Vec::<String>::new();
     let mut simple_properties_count = 0;
 
@@ -249,9 +248,8 @@ fn generate_rule_break_data(
                             // See https://unicode-org.atlassian.net/browse/ICU-22112
                             //
                             // TODO: We have to consider this definition from CLDR instead.
-                            if (c == 0x003A || c == 0xFE55 || c == 0xFF1A) && p.name == "MidLetter"
+                            if (c == 0x003a || c == 0xfe55 || c == 0xff1a) && p.name == "MidLetter"
                             {
-                                properties_map_diff[c as usize] = property_index;
                                 // Default (en etc) is undefined class.
                                 continue;
                             }
@@ -337,15 +335,6 @@ fn generate_rule_break_data(
                     let prop = sb_name_to_enum
                         .get_loose(&p.name)
                         .expect("property name should be valid!");
-                    // UAX#29 doesn't define the 2 characters as STerm, but ICU4C's
-                    // Greek data does.
-                    //
-                    // TODO: We have to consider this definition from CLDR instead.
-                    if p.name == "STerm" {
-                        properties_map_diff[0x3B] = property_index;
-                        properties_map_diff[0x37E] = property_index;
-                    }
-
                     for c in 0..(CODEPOINT_TABLE_LEN as u32) {
                         if sb.get32(c) == prop {
                             properties_map[c as usize] = property_index;
@@ -566,16 +555,6 @@ fn generate_rule_break_data(
             },
         }
         .build(),
-        property_table_diff: CodePointTrieBuilder {
-            data: CodePointTrieBuilderData::ValuesByCodePoint(&properties_map_diff),
-            default_value: 0,
-            error_value: 0,
-            trie_type: match trie_type {
-                crate::TrieType::Fast => codepointtrie::TrieType::Fast,
-                crate::TrieType::Small => codepointtrie::TrieType::Small,
-            },
-        }
-        .build(),
         break_state_table: break_state_table
             .into_iter()
             // All states are initialized
@@ -608,6 +587,76 @@ fn generate_rule_break_data(
     }
 }
 
+#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+fn generate_rule_break_data_override(
+    provider: &SourceDataProvider,
+    rules_file: &str,
+    trie_type: crate::TrieType,
+) -> RuleBreakDataOverrideV1<'static> {
+    let segmenter = provider
+        .icuexport()
+        .unwrap()
+        .read_and_parse_toml::<SegmenterRuleTable>(rules_file)
+        .expect("The data should be valid!");
+
+    const CODEPOINT_TABLE_LEN: usize = 0xE1000;
+    let mut properties_map = vec![0; CODEPOINT_TABLE_LEN];
+    let mut properties_names = Vec::<String>::new();
+
+    properties_names.push("Unknown".to_string());
+
+    for p in &segmenter.tables {
+        let property_index = if !properties_names.contains(&p.name) {
+            properties_names.push(p.name.clone());
+            (properties_names.len() - 1).try_into().unwrap()
+        } else {
+            continue;
+        };
+
+        if p.left.is_none() && p.right.is_none() && p.codepoint.is_none() {
+            // If any values aren't set, this is builtin type.
+            match &*segmenter.segmenter_type {
+                "word" => {
+                    // UAX29 defines the colon as MidLetter, but ICU4C's
+                    // English data doesn't.
+                    // See https://unicode-org.atlassian.net/browse/ICU-22112
+                    //
+                    // TODO: We have to consider this definition from CLDR instead.
+                    if p.name == "MidLetter" {
+                        properties_map[0x003a] = property_index;
+                        properties_map[0xfe55] = property_index;
+                        properties_map[0xff1a] = property_index;
+                    }
+                }
+                "sentence" => {
+                    // UAX#29 doesn't define the 2 characters as STerm, but ICU4C's
+                    // Greek data does.
+                    //
+                    // TODO: We have to consider this definition from CLDR instead.
+                    if p.name == "STerm" {
+                        properties_map[0x003b] = property_index;
+                        properties_map[0x037e] = property_index;
+                    }
+                }
+                _ => {}
+            }
+        }
+    }
+
+    RuleBreakDataOverrideV1 {
+        property_table_override: CodePointTrieBuilder {
+            data: CodePointTrieBuilderData::ValuesByCodePoint(&properties_map),
+            default_value: 0,
+            error_value: 0,
+            trie_type: match trie_type {
+                crate::TrieType::Fast => codepointtrie::TrieType::Fast,
+                crate::TrieType::Small => codepointtrie::TrieType::Small,
+            },
+        }
+        .build(),
+    }
+}
+
 macro_rules! implement {
     ($marker:ident, $rules:literal) => {
         impl DataProvider<$marker> for SourceDataProvider {
@@ -621,6 +670,40 @@ macro_rules! implement {
                 return {
                     self.check_req::<$marker>(req)?;
                     let data = generate_rule_break_data(
+                        &hardcoded_segmenter_provider(),
+                        $rules,
+                        self.trie_type(),
+                    );
+
+                    Ok(DataResponse {
+                        metadata: Default::default(),
+                        payload: DataPayload::from_owned(data),
+                    })
+                };
+            }
+        }
+
+        impl crate::IterableDataProviderCached<$marker> for SourceDataProvider {
+            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+                Ok(HashSet::from_iter([Default::default()]))
+            }
+        }
+    }
+}
+
+macro_rules! implement_override {
+    ($marker:ident, $rules:literal) => {
+        impl DataProvider<$marker> for SourceDataProvider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+                return Err(DataError::custom(
+                    "icu_provider_source must be built with use_icu4c or use_wasm to build segmentation rules",
+                )
+                .with_req($marker::INFO, req));
+                #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+                return {
+                    self.check_req::<$marker>(req)?;
+                    let data = generate_rule_break_data_override(
                         &hardcoded_segmenter_provider(),
                         $rules,
                         self.trie_type(),
@@ -726,6 +809,8 @@ implement!(LineBreakDataV2Marker, "segmenter/line.toml");
 implement!(GraphemeClusterBreakDataV2Marker, "segmenter/grapheme.toml");
 implement!(WordBreakDataV2Marker, "segmenter/word.toml");
 implement!(SentenceBreakDataV2Marker, "segmenter/sentence.toml");
+implement_override!(WordBreakDataOverrideV1Marker, "segmenter/word.toml");
+implement_override!(SentenceBreakDataOverrideV1Marker, "segmenter/sentence.toml");
 
 #[cfg(test)]
 mod tests {
@@ -774,15 +859,23 @@ mod tests {
     }
 
     #[test]
-    fn locale_diff() {
+    fn locale_data() {
         let provider = SourceDataProvider::new_testing();
         let response: DataResponse<SentenceBreakDataV2Marker> = provider
             .load(Default::default())
             .expect("Loading should succeed!");
         let data = response.payload.get();
+        let response: DataResponse<SentenceBreakDataOverrideV1Marker> = provider
+            .load(Default::default())
+            .expect("Loading should succeed!");
+        let data_diff = response.payload.get();
         // STerm
         assert_eq!(
-            data.property_table_diff.get32(0x003B),
+            data_diff.property_table_override.get32(0x003b),
+            data.property_table.get32(0x0021)
+        );
+        assert_eq!(
+            data_diff.property_table_override.get32(0x37e),
             data.property_table.get32(0x0021)
         );
 
@@ -790,10 +883,22 @@ mod tests {
             .load(Default::default())
             .expect("Loading should succeed!");
         let data = response.payload.get();
+        let response: DataResponse<WordBreakDataOverrideV1Marker> = provider
+            .load(Default::default())
+            .expect("Loading should succeed!");
+        let data_diff = response.payload.get();
         // MidLetter
         assert_eq!(
-            data.property_table_diff.get32(0x003A),
-            data.property_table.get32(0x00B7)
+            data_diff.property_table_override.get32(0x003a),
+            data.property_table.get32(0x00b7)
+        );
+        assert_eq!(
+            data_diff.property_table_override.get32(0xfe55),
+            data.property_table.get32(0x00b7)
+        );
+        assert_eq!(
+            data_diff.property_table_override.get32(0xff1a),
+            data.property_table.get32(0x00b7)
         );
     }
 }

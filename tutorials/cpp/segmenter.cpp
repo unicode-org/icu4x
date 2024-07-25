@@ -106,13 +106,14 @@ void test_grapheme(const std::string_view& str) {
 }
 
 void test_word(const std::string_view& str) {
+    std::unique_ptr<Locale> locale = Locale::from_string("en").ok().value();
     const auto provider = DataProvider::compiled();
     const auto segmenter_auto =
-        WordSegmenter::create_auto(*provider.get()).ok().value();
+        WordSegmenter::create_auto(*provider.get(), *locale.get()).ok().value();
     const auto segmenter_lstm =
-        WordSegmenter::create_lstm(*provider.get()).ok().value();
+        WordSegmenter::create_lstm(*provider.get(), *locale.get()).ok().value();
     const auto segmenter_dictionary =
-        WordSegmenter::create_dictionary(*provider.get()).ok().value();
+        WordSegmenter::create_dictionary(*provider.get(), *locale.get()).ok().value();
 
     const WordSegmenter* segmenters[] = {segmenter_auto.get(), segmenter_lstm.get(),
                                               segmenter_dictionary.get()};
@@ -127,8 +128,9 @@ void test_word(const std::string_view& str) {
 }
 
 void test_sentence(const std::string_view& str) {
+    std::unique_ptr<Locale> locale = Locale::from_string("en").ok().value();
     const auto provider = DataProvider::compiled();
-    const auto segmenter = SentenceSegmenter::create(*provider.get()).ok().value();
+    const auto segmenter = SentenceSegmenter::create(*provider.get(), *locale.get()).ok().value();
     cout << "Finding sentence breakpoints in string:" << endl
          << str << endl;
     print_ruler(str.size());
