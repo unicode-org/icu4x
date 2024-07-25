@@ -186,6 +186,7 @@ impl DatePatternSelectionData {
 
     /// Borrows a resolved pattern based on the given datetime
     pub(crate) fn select(&self, datetime: &ExtractedDateTimeInput) -> DatePatternDataBorrowed {
+        use tinystr::tinystr;
         match self {
             DatePatternSelectionData::SkeletonDate { skeleton, payload } => {
                 let should_display_era = match skeleton.era_display {
@@ -214,6 +215,7 @@ impl DatePatternSelectionData {
                         Some(AnyCalendarKind::Gregorian) => match datetime.year() {
                             None => true,
                             Some(year) if year.number < 1000 => true,
+                            Some(year) if year.era.0 != tinystr!(16, "ce") => true,
                             Some(_) => false,
                         },
                         Some(_) => {

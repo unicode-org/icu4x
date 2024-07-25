@@ -97,17 +97,7 @@ pub enum EraDisplay {
     /// - `77 AD`
     /// - `2024`
     Auto,
-    /// Do not display the era.
-    ///
-    /// This option is not recommended unless there is other context to
-    /// indicate the value of the year.
-    ///
-    /// Examples:
-    ///
-    /// - `1000`
-    /// - `77`
-    /// - `2024`
-    Never,
+    // TODO(#4478): add Hide and Never options once there is data to back them
 }
 
 /// A specification for a set of parts of a date that specifies a single day (as
@@ -129,6 +119,7 @@ pub enum NeoDayComponents {
     YearMonthDay,
     /// The era, year, month, and day of the month, as in
     /// “January 1st, 2000 A.D.”.
+    // TODO: Remove the explicit era field; superseded by eraDisplay
     EraYearMonthDay,
     /// The day of the month and day of the week, as in
     /// “Saturday 1st”.

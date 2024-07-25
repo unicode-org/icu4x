@@ -6,6 +6,75 @@
 //!
 //! # Examples
 //!
+//! ## Era Display
+//!
+//! The era field can be toggled on and off using the [`EraDisplay`] option.
+//!
+//! ```
+//! use icu::calendar::Date;
+//! use icu::calendar::Gregorian;
+//! use icu::datetime::neo::NeoOptions;
+//! use icu::datetime::neo::TypedNeoFormatter;
+//! use icu::datetime::neo_marker::NeoYearMonthDayMarker;
+//! use icu::datetime::neo_skeleton::EraDisplay;
+//! use icu::datetime::neo_skeleton::NeoSkeletonLength;
+//! use icu::locale::locale;
+//! use writeable::assert_try_writeable_eq;
+//!
+//! let formatter =
+//!     TypedNeoFormatter::<Gregorian, NeoYearMonthDayMarker>::try_new(
+//!         &locale!("en-US").into(),
+//!         {
+//!             let mut options = NeoOptions::from(NeoSkeletonLength::Medium);
+//!             options.era_display = Some(EraDisplay::Auto);
+//!             options
+//!         }
+//!     )
+//!     .unwrap();
+//!
+//! // Era displayed when needed for disambiguation,
+//! // such as years before year 0 and small year numbers:
+//! assert_try_writeable_eq!(
+//!     formatter.format(&Date::try_new_gregorian_date(-1000, 1, 1).unwrap()),
+//!     "Jan 1, 1001 BC"
+//! );
+//! assert_try_writeable_eq!(
+//!     formatter.format(&Date::try_new_gregorian_date(77, 1, 1).unwrap()),
+//!     "Jan 1, 77 AD"
+//! );
+//! // Era elided for modern years:
+//! assert_try_writeable_eq!(
+//!     formatter.format(&Date::try_new_gregorian_date(2023, 12, 20).unwrap()),
+//!     "Dec 20, 2023"
+//! );
+//!
+//! let formatter =
+//!     TypedNeoFormatter::<Gregorian, NeoYearMonthDayMarker>::try_new(
+//!         &locale!("en-US").into(),
+//!         {
+//!             let mut options = NeoOptions::from(NeoSkeletonLength::Medium);
+//!             options.era_display = Some(EraDisplay::Always);
+//!             options
+//!         }
+//!     )
+//!     .unwrap();
+//!
+//! // Era still displayed in cases with ambiguity:
+//! assert_try_writeable_eq!(
+//!     formatter.format(&Date::try_new_gregorian_date(-1000, 1, 1).unwrap()),
+//!     "Jan 1, 1001 BC"
+//! );
+//! assert_try_writeable_eq!(
+//!     formatter.format(&Date::try_new_gregorian_date(77, 1, 1).unwrap()),
+//!     "Jan 1, 77 AD"
+//! );
+//! // But now it is shown even on modern years:
+//! assert_try_writeable_eq!(
+//!     formatter.format(&Date::try_new_gregorian_date(2023, 12, 20).unwrap()),
+//!     "Dec 20, 2023 AD"
+//! );
+//! ```
+//!
 //! ## Time Zone Formatting
 //!
 //! Here, we configure a [`NeoFormatter`] to format with generic non-location short,

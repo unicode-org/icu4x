@@ -86,7 +86,9 @@ impl SourceDataProvider {
                         ..
                     },
                 ) => {
-                    // TODO(#4478): Clean this up
+                    // TODO(#4478): Use CLDR data when it becomes available
+                    // TODO: Set the length to NeoSkeletonLength? Or not, because
+                    // the era should normally be displayed as short?
                     let mut components_with_era = components.clone();
                     components_with_era.era = Some(components::Text::Short);
                     Some(
@@ -164,6 +166,7 @@ impl SourceDataProvider {
         // TODO: Enable this assertion
         // assert_eq!(skeleton_data_index.has_eras, !medium.1.is_empty());
         // assert_eq!(skeleton_data_index.has_eras, !short.1.is_empty());
+        // TODO: Remove the era patterns if the are equivalent to the non-era patterns?
         if long == medium {
             skeleton_data_index.has_long = false;
         } else {
