@@ -6,6 +6,7 @@ use icu_casemap::titlecase::TitlecaseOptions;
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
+#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
 
@@ -37,7 +38,7 @@ pub mod ffi {
 
     impl TitlecaseOptionsV1 {
         #[diplomat::rust_link(icu::casemap::titlecase::TitlecaseOptions::default, FnInStruct)]
-        #[diplomat::attr(*, constructor)]
+        #[diplomat::attr(auto, constructor)]
         #[diplomat::attr(any(cpp, js), rename = "default_options")]
         pub fn default() -> TitlecaseOptionsV1 {
             Self {

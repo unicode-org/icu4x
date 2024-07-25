@@ -4,6 +4,7 @@
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
+#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
 
@@ -137,7 +138,7 @@ pub mod ffi {
     }
 
     impl<'a> LocaleFallbackIterator<'a> {
-        #[diplomat::attr(*, iterator)]
+        #[diplomat::attr(auto, iterator)]
         #[diplomat::rust_link(
             icu::locale::fallback::LocaleFallbackIterator::get,
             FnInStruct,

@@ -1,7 +1,0 @@
-{
-  "patterns": {
-    "One": "{0} kilometar",
-    "Few": "{0} kilometra",
-    "Other": "{0} kilometara"
-  }
-}

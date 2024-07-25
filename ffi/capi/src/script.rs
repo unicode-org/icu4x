@@ -4,6 +4,7 @@
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
+#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
 
@@ -65,7 +66,7 @@ pub mod ffi {
             icu::properties::script::ScriptWithExtensions::as_borrowed,
             FnInStruct
         )]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn as_borrowed<'a>(&'a self) -> Box<ScriptWithExtensionsBorrowed<'a>> {
             Box::new(ScriptWithExtensionsBorrowed(self.0.as_borrowed()))
         }
@@ -140,7 +141,7 @@ pub mod ffi {
 
         /// Get the number of scripts contained in here
         #[diplomat::rust_link(icu::properties::script::ScriptExtensionsSet::iter, FnInStruct)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn count(&self) -> usize {
             self.0.array_len()
         }

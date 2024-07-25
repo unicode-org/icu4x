@@ -1,7 +1,0 @@
-{
-  "patterns": {
-    "One": "{0} nautička milja",
-    "Few": "{0} nautičke milje",
-    "Other": "{0} nautičkih milja"
-  }
-}

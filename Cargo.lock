@@ -604,7 +604,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=bd491cb7da695486588e0345f45c95345c79a9ee#bd491cb7da695486588e0345f45c95345c79a9ee"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=8744ac97162341f347b63131969ad736e1047f6d#8744ac97162341f347b63131969ad736e1047f6d"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -634,7 +634,7 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.8.1"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=bd491cb7da695486588e0345f45c95345c79a9ee#bd491cb7da695486588e0345f45c95345c79a9ee"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=8744ac97162341f347b63131969ad736e1047f6d#8744ac97162341f347b63131969ad736e1047f6d"
 dependencies = [
  "log",
 ]
@@ -642,7 +642,7 @@ dependencies = [
 [[package]]
 name = "diplomat-tool"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=bd491cb7da695486588e0345f45c95345c79a9ee#bd491cb7da695486588e0345f45c95345c79a9ee"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=8744ac97162341f347b63131969ad736e1047f6d#8744ac97162341f347b63131969ad736e1047f6d"
 dependencies = [
  "askama",
  "clap",
@@ -662,11 +662,10 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=bd491cb7da695486588e0345f45c95345c79a9ee#bd491cb7da695486588e0345f45c95345c79a9ee"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=8744ac97162341f347b63131969ad736e1047f6d#8744ac97162341f347b63131969ad736e1047f6d"
 dependencies = [
  "displaydoc",
  "either",
- "lazy_static",
  "proc-macro2",
  "quote",
  "serde",
@@ -1083,6 +1082,7 @@ dependencies = [
  "icu",
  "icu_collections",
  "wasmi",
+ "wat",
  "zerovec",
 ]
 
@@ -1762,6 +1762,12 @@ name = "lazy_static"
 version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
+
+[[package]]
+name = "leb128"
+version = "0.2.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "884e2677b40cc8c339eaefcb701c32ef1fd2493d71118dc0ca4b6a736c93bd67"
 
 [[package]]
 name = "libc"
@@ -2988,6 +2994,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "af190c94f2773fdb3729c55b007a722abb5384da03bc0986df4c289bf5567e96"
 
 [[package]]
+name = "wasm-encoder"
+version = "0.207.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d996306fb3aeaee0d9157adbe2f670df0236caf19f6728b221e92d0f27b3fe17"
+dependencies = [
+ "leb128",
+]
+
+[[package]]
 name = "wasmi"
 version = "0.31.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3025,6 +3040,28 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d5a015fe95f3504a94bb1462c717aae75253e39b9dd6c3fb1062c934535c64aa"
 dependencies = [
  "indexmap-nostd",
+]
+
+[[package]]
+name = "wast"
+version = "207.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0e40be9fd494bfa501309487d2dc0b3f229be6842464ecbdc54eac2679c84c93"
+dependencies = [
+ "bumpalo",
+ "leb128",
+ "memchr",
+ "unicode-width",
+ "wasm-encoder",
+]
+
+[[package]]
+name = "wat"
+version = "1.207.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8eb2b15e2d5f300f5e1209e7dc237f2549edbd4203655b6c6cab5cf180561ee7"
+dependencies = [
+ "wast",
 ]
 
 [[package]]

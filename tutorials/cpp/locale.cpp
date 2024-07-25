@@ -2,10 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#include "Locale.hpp"
-#include "Logger.hpp"
+#include <icu4x/Locale.hpp>
+#include <icu4x/Logger.hpp>
 
 #include <iostream>
+
+using namespace icu4x;
 
 static bool test_locale(Locale &locale, std::string_view expectedString,
                         const char *message) {

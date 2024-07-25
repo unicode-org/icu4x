@@ -4,6 +4,7 @@
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
+#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
     use alloc::sync::Arc;
@@ -86,7 +87,7 @@ pub mod ffi {
         /// Obtain the string suitable for use in the -u-ca- extension in a BCP47 locale.
         #[diplomat::rust_link(icu::calendar::AnyCalendarKind::as_bcp47_string, FnInEnum)]
         #[diplomat::rust_link(icu::calendar::AnyCalendarKind::as_bcp47_value, FnInEnum, hidden)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn bcp47(self, write: &mut diplomat_runtime::DiplomatWrite) {
             let kind = icu_calendar::AnyCalendarKind::from(self);
             let _infallible = write.write_str(kind.as_bcp47_string());
@@ -135,7 +136,7 @@ pub mod ffi {
 
         /// Returns the kind of this calendar
         #[diplomat::rust_link(icu::calendar::AnyCalendar::kind, FnInEnum)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn kind(&self) -> AnyCalendarKind {
             self.0.kind().into()
         }

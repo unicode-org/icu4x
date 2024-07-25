@@ -4,6 +4,7 @@
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
+#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
 
@@ -181,31 +182,31 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::magnitude_range, FnInStruct)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn magnitude_start(&self) -> i16 {
             *self.0.magnitude_range().start()
         }
 
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::magnitude_range, FnInStruct)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn magnitude_end(&self) -> i16 {
             *self.0.magnitude_range().end()
         }
 
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::nonzero_magnitude_start, FnInStruct)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn nonzero_magnitude_start(&self) -> i16 {
             self.0.nonzero_magnitude_start()
         }
 
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::nonzero_magnitude_end, FnInStruct)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn nonzero_magnitude_end(&self) -> i16 {
             self.0.nonzero_magnitude_end()
         }
 
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::is_zero, FnInStruct)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn is_zero(&self) -> bool {
             self.0.is_zero()
         }
@@ -218,7 +219,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::sign, FnInStruct)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         pub fn sign(&self) -> FixedDecimalSign {
             self.0.sign().into()
         }
@@ -226,7 +227,7 @@ pub mod ffi {
         /// Set the sign of the [`FixedDecimal`].
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::set_sign, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::with_sign, FnInStruct, hidden)]
-        #[diplomat::attr(*, setter = "sign")]
+        #[diplomat::attr(auto, setter = "sign")]
         pub fn set_sign(&mut self, sign: FixedDecimalSign) {
             self.0.set_sign(sign.into())
         }
@@ -346,7 +347,7 @@ pub mod ffi {
 
         /// Format the [`FixedDecimal`] as a string.
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::write_to, FnInStruct)]
-        #[diplomat::attr(*, stringifier)]
+        #[diplomat::attr(auto, stringifier)]
         pub fn to_string(&self, to: &mut diplomat_runtime::DiplomatWrite) {
             let _ = self.0.write_to(to);
         }
