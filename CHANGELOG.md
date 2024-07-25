@@ -1,7 +1,12 @@
 # Changelog
 
-## icu4x 1.5.x
+## icu4x Unreleased
 
+- Components
+  - General
+    - `PartialOrd` and `Ord` derived for `LanguageIdentifier`.
+
+## icu4x 1.5.x
 
 - `icu_calendar`
   - (1.5.1) Fix Japanese calendar Gregorian era year 0 (https://github.com/unicode-org/icu4x/issues/4968)
