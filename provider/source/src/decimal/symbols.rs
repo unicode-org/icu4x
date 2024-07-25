@@ -14,12 +14,11 @@ use std::convert::TryFrom;
 impl DataProvider<DecimalSymbolsV1Marker> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<DecimalSymbolsV1Marker>, DataError> {
         self.check_req::<DecimalSymbolsV1Marker>(req)?;
-        let langid = req.id.locale.get_langid();
 
         let resource: &cldr_serde::numbers::Resource = self
             .cldr()?
             .numbers()
-            .read_and_parse(&langid, "numbers.json")?;
+            .read_and_parse(req.id.locale, "numbers.json")?;
 
         let numbers = &resource.main.value.numbers;
 

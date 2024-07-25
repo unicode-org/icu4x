@@ -15,12 +15,10 @@ use crate::IterableDataProviderCached;
 
 impl DataProvider<PersonNamesFormatV1Marker> for crate::SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<PersonNamesFormatV1Marker>, DataError> {
-        let langid = req.id.locale.get_langid();
-
         let data: &Resource = self
             .cldr()?
             .personnames()
-            .read_and_parse(&langid, "personNames.json")?;
+            .read_and_parse(req.id.locale, "personNames.json")?;
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -37,16 +35,16 @@ impl IterableDataProviderCached<PersonNamesFormatV1Marker> for crate::SourceData
         Ok(self
             .cldr()?
             .personnames()
-            .list_langs()?
-            .filter(|langid| {
+            .list_locales()?
+            .filter(|locale| {
                 // The directory might exist without personNames.json
                 self.cldr()
                     .unwrap()
                     .personnames()
-                    .file_exists(langid, "personNames.json")
+                    .file_exists(locale, "personNames.json")
                     .unwrap_or_default()
             })
-            .map(|l| DataIdentifierCow::from_locale(DataLocale::from(l)))
+            .map(DataIdentifierCow::from_locale)
             .collect())
     }
 }

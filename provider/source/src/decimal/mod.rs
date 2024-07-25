@@ -6,7 +6,6 @@ use std::collections::HashSet;
 
 use crate::cldr_serde;
 use crate::SourceDataProvider;
-use icu::locale::LanguageIdentifier;
 use icu_provider::prelude::*;
 
 #[cfg(feature = "experimental")]
@@ -51,12 +50,12 @@ impl SourceDataProvider {
 
     fn get_supported_numsys_for_langid_without_default(
         &self,
-        langid: &LanguageIdentifier,
+        locale: &DataLocale,
     ) -> Result<Vec<Box<DataMarkerAttributes>>, DataError> {
         let resource: &cldr_serde::numbers::Resource = self
             .cldr()?
             .numbers()
-            .read_and_parse(langid, "numbers.json")?;
+            .read_and_parse(locale, "numbers.json")?;
 
         let numbers = &resource.main.value.numbers;
 
@@ -73,12 +72,12 @@ impl SourceDataProvider {
         Ok(self
             .cldr()?
             .numbers()
-            .list_langs()?
-            .flat_map(|langid| {
-                let data_locale = DataLocale::from(&langid);
+            .list_locales()?
+            .flat_map(|locale| {
+                let data_locale = locale.clone();
                 let last = data_locale.clone();
-                self.get_supported_numsys_for_langid_without_default(&langid)
-                    .expect("All languages from list_langs should be present")
+                self.get_supported_numsys_for_langid_without_default(&locale)
+                    .expect("All languages from list_locales should be present")
                     .into_iter()
                     .map(move |nsname| {
                         DataIdentifierBorrowed::for_marker_attributes_and_locale(

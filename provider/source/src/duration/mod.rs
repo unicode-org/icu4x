@@ -71,11 +71,12 @@ impl DataProvider<DigitalDurationDataV1Marker> for SourceDataProvider {
         req: DataRequest,
     ) -> Result<DataResponse<DigitalDurationDataV1Marker>, DataError> {
         self.check_req::<DigitalDurationDataV1Marker>(req)?;
-        let langid = req.id.locale.get_langid();
 
         // Get units
-        let units_format_data: &cldr_serde::units::data::Resource =
-            self.cldr()?.units().read_and_parse(&langid, "units.json")?;
+        let units_format_data: &cldr_serde::units::data::Resource = self
+            .cldr()?
+            .units()
+            .read_and_parse(req.id.locale, "units.json")?;
         let DurationUnits { hms, hm, ms } = &units_format_data.main.value.units.duration;
 
         // Find paddings for hm
@@ -129,15 +130,15 @@ impl crate::IterableDataProviderCached<DigitalDurationDataV1Marker> for SourceDa
         Ok(self
             .cldr()?
             .numbers()
-            .list_langs()?
-            .filter(|langid| {
+            .list_locales()?
+            .filter(|locale| {
                 self.cldr()
                     .unwrap()
                     .units()
-                    .read_and_parse::<cldr_serde::units::data::Resource>(langid, "units.json")
+                    .read_and_parse::<cldr_serde::units::data::Resource>(locale, "units.json")
                     .is_ok()
             })
-            .map(|langid| DataIdentifierCow::from_locale(DataLocale::from(&langid)))
+            .map(DataIdentifierCow::from_locale)
             .collect())
     }
 }
