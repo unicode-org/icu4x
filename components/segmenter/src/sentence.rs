@@ -101,7 +101,7 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = SentenceBreakIterator<'l, 's, Rule
 #[derive(Debug)]
 pub struct SentenceSegmenter {
     payload: DataPayload<SentenceBreakDataV2Marker>,
-    default_rule: bool,
+    payload_locale_override: Option<DataPayload<SentenceBreakDataOverrideV1Marker>>,
 }
 
 #[cfg(feature = "compiled_data")]
@@ -123,7 +123,7 @@ impl SentenceSegmenter {
             payload: DataPayload::from_static_ref(
                 crate::provider::Baked::SINGLETON_SENTENCE_BREAK_DATA_V2_MARKER,
             ),
-            default_rule: true,
+            payload_locale_override: None,
         }
     }
 
@@ -138,13 +138,20 @@ impl SentenceSegmenter {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<D>(provider: &D, locale: &DataLocale) -> Result<Self, DataError>
     where
-        D: DataProvider<SentenceBreakDataV2Marker> + ?Sized,
+        D: DataProvider<SentenceBreakDataV2Marker>
+            + DataProvider<SentenceBreakDataOverrideV1Marker>
+            + ?Sized,
     {
-        let default_rule = locale.language != language!("el");
         let payload = provider.load(Default::default())?.payload;
+        let payload_locale_override = if locale.language == language!("el") {
+            Some(provider.load(Default::default())?.payload)
+        } else {
+            None
+        };
+
         Ok(Self {
             payload,
-            default_rule,
+            payload_locale_override,
         })
     }
 
@@ -152,6 +159,12 @@ impl SentenceSegmenter {
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> SentenceBreakIteratorUtf8<'l, 's> {
+        let locale_override = if let Some(payload) = &self.payload_locale_override {
+            Some(payload.get())
+        } else {
+            None
+        };
+
         SentenceBreakIterator(RuleBreakIterator {
             iter: input.char_indices(),
             len: input.len(),
@@ -160,7 +173,7 @@ impl SentenceSegmenter {
             data: self.payload.get(),
             complex: None,
             boundary_property: 0,
-            default_rule: self.default_rule,
+            locale_override,
         })
     }
     /// Creates a sentence break iterator for a potentially ill-formed UTF8 string
@@ -172,6 +185,12 @@ impl SentenceSegmenter {
         &'l self,
         input: &'s [u8],
     ) -> SentenceBreakIteratorPotentiallyIllFormedUtf8<'l, 's> {
+        let locale_override = if let Some(payload) = &self.payload_locale_override {
+            Some(payload.get())
+        } else {
+            None
+        };
+
         SentenceBreakIterator(RuleBreakIterator {
             iter: Utf8CharIndices::new(input),
             len: input.len(),
@@ -180,7 +199,7 @@ impl SentenceSegmenter {
             data: self.payload.get(),
             complex: None,
             boundary_property: 0,
-            default_rule: self.default_rule,
+            locale_override,
         })
     }
     /// Creates a sentence break iterator for a Latin-1 (8-bit) string.
@@ -190,6 +209,12 @@ impl SentenceSegmenter {
         &'l self,
         input: &'s [u8],
     ) -> SentenceBreakIteratorLatin1<'l, 's> {
+        let locale_override = if let Some(payload) = &self.payload_locale_override {
+            Some(payload.get())
+        } else {
+            None
+        };
+
         SentenceBreakIterator(RuleBreakIterator {
             iter: Latin1Indices::new(input),
             len: input.len(),
@@ -198,7 +223,7 @@ impl SentenceSegmenter {
             data: self.payload.get(),
             complex: None,
             boundary_property: 0,
-            default_rule: self.default_rule,
+            locale_override,
         })
     }
 
@@ -206,6 +231,12 @@ impl SentenceSegmenter {
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_utf16<'l, 's>(&'l self, input: &'s [u16]) -> SentenceBreakIteratorUtf16<'l, 's> {
+        let locale_override = if let Some(payload) = &self.payload_locale_override {
+            Some(payload.get())
+        } else {
+            None
+        };
+
         SentenceBreakIterator(RuleBreakIterator {
             iter: Utf16Indices::new(input),
             len: input.len(),
@@ -214,7 +245,7 @@ impl SentenceSegmenter {
             data: self.payload.get(),
             complex: None,
             boundary_property: 0,
-            default_rule: self.default_rule,
+            locale_override,
         })
     }
 }

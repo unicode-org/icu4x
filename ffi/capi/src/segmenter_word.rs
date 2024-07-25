@@ -62,6 +62,7 @@ pub mod ffi {
         /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
         /// Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::try_new_auto, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::WordSegmenter::new_auto, FnInStruct, hidden)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "auto")]
         pub fn create_auto(
             provider: &DataProvider,
@@ -83,6 +84,7 @@ pub mod ffi {
         /// Warning: [`WordSegmenter`] created by this function doesn't handle Chinese or
         /// Japanese.
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::try_new_lstm, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::WordSegmenter::new_lstm, FnInStruct, hidden)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "lstm")]
         pub fn create_lstm(
             provider: &DataProvider,
@@ -101,6 +103,7 @@ pub mod ffi {
         /// Construct an [`WordSegmenter`] with dictionary payload data for Chinese, Japanese,
         /// Burmese, Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::try_new_dictionary, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::WordSegmenter::new_dictionary, FnInStruct, hidden)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "dictionary")]
         pub fn create_dictionary(
             provider: &DataProvider,

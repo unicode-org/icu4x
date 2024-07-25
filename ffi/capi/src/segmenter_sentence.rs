@@ -42,6 +42,7 @@ pub mod ffi {
     impl SentenceSegmenter {
         /// Construct an [`SentenceSegmenter`].
         #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::try_new, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::new, FnInStruct, hidden)]
         #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn create(
             provider: &DataProvider,

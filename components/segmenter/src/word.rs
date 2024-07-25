@@ -169,7 +169,7 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 pub struct WordSegmenter {
     payload: DataPayload<WordBreakDataV2Marker>,
     complex: ComplexPayloads,
-    default_rule: bool,
+    payload_locale_override: Option<DataPayload<WordBreakDataOverrideV1Marker>>,
 }
 
 impl WordSegmenter {
@@ -209,7 +209,7 @@ impl WordSegmenter {
                 crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V2_MARKER,
             ),
             complex: ComplexPayloads::new_auto(),
-            default_rule: true,
+            payload_locale_override: None,
         }
     }
 
@@ -230,15 +230,22 @@ impl WordSegmenter {
     pub fn try_new_auto_unstable<D>(provider: &D, locale: &DataLocale) -> Result<Self, DataError>
     where
         D: DataProvider<WordBreakDataV2Marker>
+            + DataProvider<WordBreakDataOverrideV1Marker>
             + DataProvider<DictionaryForWordOnlyAutoV1Marker>
             + DataProvider<LstmForWordLineAutoV1Marker>
             + DataProvider<GraphemeClusterBreakDataV2Marker>
             + ?Sized,
     {
+        let payload_locale_override = if !Self::is_default_rule(locale) {
+            Some(provider.load(Default::default())?.payload)
+        } else {
+            None
+        };
+
         Ok(Self {
             payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new_auto(provider)?,
-            default_rule: Self::is_default_rule(locale),
+            payload_locale_override,
         })
     }
 
@@ -283,7 +290,7 @@ impl WordSegmenter {
                 crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V2_MARKER,
             ),
             complex: ComplexPayloads::new_lstm(),
-            default_rule: true,
+            payload_locale_override: None,
         }
     }
 
@@ -304,14 +311,21 @@ impl WordSegmenter {
     pub fn try_new_lstm_unstable<D>(provider: &D, locale: &DataLocale) -> Result<Self, DataError>
     where
         D: DataProvider<WordBreakDataV2Marker>
+            + DataProvider<WordBreakDataOverrideV1Marker>
             + DataProvider<LstmForWordLineAutoV1Marker>
             + DataProvider<GraphemeClusterBreakDataV2Marker>
             + ?Sized,
     {
+        let payload_locale_override = if !Self::is_default_rule(locale) {
+            Some(provider.load(Default::default())?.payload)
+        } else {
+            None
+        };
+
         Ok(Self {
             payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new_lstm(provider)?,
-            default_rule: Self::is_default_rule(locale),
+            payload_locale_override,
         })
     }
 
@@ -350,7 +364,7 @@ impl WordSegmenter {
                 crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V2_MARKER,
             ),
             complex: ComplexPayloads::new_dict(),
-            default_rule: false,
+            payload_locale_override: None,
         }
     }
 
@@ -372,15 +386,22 @@ impl WordSegmenter {
     ) -> Result<Self, DataError>
     where
         D: DataProvider<WordBreakDataV2Marker>
+            + DataProvider<WordBreakDataOverrideV1Marker>
             + DataProvider<DictionaryForWordOnlyAutoV1Marker>
             + DataProvider<DictionaryForWordLineExtendedV1Marker>
             + DataProvider<GraphemeClusterBreakDataV2Marker>
             + ?Sized,
     {
+        let payload_locale_override = if !Self::is_default_rule(locale) {
+            Some(provider.load(Default::default())?.payload)
+        } else {
+            None
+        };
+
         Ok(Self {
             payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new_dict(provider)?,
-            default_rule: Self::is_default_rule(locale),
+            payload_locale_override,
         })
     }
 
@@ -388,6 +409,11 @@ impl WordSegmenter {
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> WordBreakIteratorUtf8<'l, 's> {
+        let locale_override = if let Some(payload) = &self.payload_locale_override {
+            Some(payload.get())
+        } else {
+            None
+        };
         WordBreakIterator(RuleBreakIterator {
             iter: input.char_indices(),
             len: input.len(),
@@ -396,7 +422,7 @@ impl WordSegmenter {
             data: self.payload.get(),
             complex: Some(&self.complex),
             boundary_property: 0,
-            default_rule: self.default_rule,
+            locale_override,
         })
     }
 
@@ -409,6 +435,11 @@ impl WordSegmenter {
         &'l self,
         input: &'s [u8],
     ) -> WordBreakIteratorPotentiallyIllFormedUtf8<'l, 's> {
+        let locale_override = if let Some(payload) = &self.payload_locale_override {
+            Some(payload.get())
+        } else {
+            None
+        };
         WordBreakIterator(RuleBreakIterator {
             iter: Utf8CharIndices::new(input),
             len: input.len(),
@@ -417,7 +448,7 @@ impl WordSegmenter {
             data: self.payload.get(),
             complex: Some(&self.complex),
             boundary_property: 0,
-            default_rule: self.default_rule,
+            locale_override,
         })
     }
 
@@ -425,6 +456,11 @@ impl WordSegmenter {
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_latin1<'l, 's>(&'l self, input: &'s [u8]) -> WordBreakIteratorLatin1<'l, 's> {
+        let locale_override = if let Some(payload) = &self.payload_locale_override {
+            Some(payload.get())
+        } else {
+            None
+        };
         WordBreakIterator(RuleBreakIterator {
             iter: Latin1Indices::new(input),
             len: input.len(),
@@ -433,7 +469,7 @@ impl WordSegmenter {
             data: self.payload.get(),
             complex: Some(&self.complex),
             boundary_property: 0,
-            default_rule: self.default_rule,
+            locale_override,
         })
     }
 
@@ -441,6 +477,12 @@ impl WordSegmenter {
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_utf16<'l, 's>(&'l self, input: &'s [u16]) -> WordBreakIteratorUtf16<'l, 's> {
+        let locale_override = if let Some(payload) = &self.payload_locale_override {
+            Some(payload.get())
+        } else {
+            None
+        };
+
         WordBreakIterator(RuleBreakIterator {
             iter: Utf16Indices::new(input),
             len: input.len(),
@@ -449,7 +491,7 @@ impl WordSegmenter {
             data: self.payload.get(),
             complex: Some(&self.complex),
             boundary_property: 0,
-            default_rule: self.default_rule,
+            locale_override,
         })
     }
 

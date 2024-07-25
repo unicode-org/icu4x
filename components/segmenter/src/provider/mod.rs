@@ -49,7 +49,9 @@ const _: () = {
     impl_line_break_data_v2_marker!(Baked);
     #[cfg(feature = "lstm")]
     impl_lstm_for_word_line_auto_v1_marker!(Baked);
+    impl_sentence_break_data_override_v1_marker!(Baked);
     impl_sentence_break_data_v2_marker!(Baked);
+    impl_word_break_data_override_v1_marker!(Baked);
     impl_word_break_data_v2_marker!(Baked);
 };
 
@@ -61,7 +63,9 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     GraphemeClusterBreakDataV2Marker::INFO,
     LineBreakDataV2Marker::INFO,
     LstmForWordLineAutoV1Marker::INFO,
+    SentenceBreakDataOverrideV1Marker::INFO,
     SentenceBreakDataV2Marker::INFO,
+    WordBreakDataOverrideV1Marker::INFO,
     WordBreakDataV2Marker::INFO,
 ];
 
@@ -89,10 +93,6 @@ pub struct RuleBreakDataV2<'data> {
     /// Property table.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub property_table: CodePointTrie<'data, u8>,
-
-    /// The difference of property table for special locale.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub property_table_diff: CodePointTrie<'data, u8>,
 
     /// Break state table.
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -156,6 +156,29 @@ pub(crate) struct UCharDictionaryBreakDataV1Marker;
 
 impl DynamicDataMarker for UCharDictionaryBreakDataV1Marker {
     type DataStruct = UCharDictionaryBreakDataV1<'static>;
+}
+
+/// codepoint trie data that the difference by specific locale
+///
+#[icu_provider::data_struct(
+    marker(
+        SentenceBreakDataOverrideV1Marker,
+        "segmenter/sentence/override@1",
+        singleton
+    ),
+    marker(WordBreakDataOverrideV1Marker, "segmenter/word/override@1", singleton)
+)]
+#[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize,databake::Bake),
+    databake(path = icu_segmenter::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct RuleBreakDataOverrideV1<'data> {
+    /// The difference of property table for special locale.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub property_table_override: CodePointTrie<'data, u8>,
 }
 
 #[derive(Clone, Copy, PartialEq, Debug)]

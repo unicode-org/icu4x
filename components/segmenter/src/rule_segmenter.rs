@@ -45,7 +45,7 @@ pub struct RuleBreakIterator<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> {
     pub(crate) data: &'l RuleBreakDataV2<'l>,
     pub(crate) complex: Option<&'l ComplexPayloads>,
     pub(crate) boundary_property: u8,
-    pub(crate) default_rule: bool,
+    pub(crate) locale_override: Option<&'l RuleBreakDataOverrideV1<'l>>,
 }
 
 impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> Iterator for RuleBreakIterator<'l, 's, Y> {
@@ -211,8 +211,10 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> RuleBreakIterator<'l, 's, Y> {
 
     fn get_break_property(&self, codepoint: Y::CharType) -> u8 {
         // Note: Default value is 0 == UNKNOWN
-        if !self.default_rule {
-            let property = self.data.property_table_diff.get32(codepoint.into());
+        if let Some(locale_override) = &self.locale_override {
+            let property = locale_override
+                .property_table_override
+                .get32(codepoint.into());
             if property != 0 {
                 return property;
             }
