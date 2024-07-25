@@ -579,6 +579,13 @@ impl From<NeverField> for Option<NeoSkeletonLength> {
     }
 }
 
+impl From<NeverField> for Option<EraDisplay> {
+    #[inline]
+    fn from(_: NeverField) -> Self {
+        None
+    }
+}
+
 /// A trait associating [`NeoComponents`].
 pub trait HasConstComponents {
     /// The associated components.
@@ -707,6 +714,8 @@ pub trait DateTimeMarkers: private::Sealed + DateTimeNamesMarker {
     type Z;
     /// Type of the length option in the constructor.
     type LengthOption: Into<Option<NeoSkeletonLength>>;
+    /// Type of the era display option in the constructor.
+    type EraDisplayOption: Into<Option<EraDisplay>>;
     /// Marker for loading the date/time glue pattern.
     type GluePatternV1Marker: DataMarker<Yokeable = GluePatternV1<'static>>;
 }
@@ -844,6 +853,7 @@ where
     type T = NeoNeverMarker;
     type Z = NeoNeverMarker;
     type LengthOption = NeoSkeletonLength; // always needed for date
+    type EraDisplayOption = D::EraDisplayOption;
     type GluePatternV1Marker = NeverMarker<GluePatternV1<'static>>;
 }
 
@@ -878,6 +888,7 @@ where
     type T = T;
     type Z = NeoNeverMarker;
     type LengthOption = NeoSkeletonLength; // always needed for time
+    type EraDisplayOption = NeverField; // no year in a time-only format
     type GluePatternV1Marker = NeverMarker<GluePatternV1<'static>>;
 }
 
@@ -912,6 +923,7 @@ where
     type T = NeoNeverMarker;
     type Z = Z;
     type LengthOption = Z::LengthOption; // no date or time: inherit from zone
+    type EraDisplayOption = NeverField; // no year in a zone-only format
     type GluePatternV1Marker = GluePatternV1Marker;
 }
 
@@ -949,6 +961,7 @@ where
     type T = T;
     type Z = NeoNeverMarker;
     type LengthOption = NeoSkeletonLength; // always needed for date/time
+    type EraDisplayOption = D::EraDisplayOption;
     type GluePatternV1Marker = GluePatternV1Marker;
 }
 
@@ -992,6 +1005,7 @@ where
     type T = T;
     type Z = Z;
     type LengthOption = NeoSkeletonLength; // always needed for date/time
+    type EraDisplayOption = D::EraDisplayOption;
     type GluePatternV1Marker = GluePatternV1Marker;
 }
 
@@ -1049,7 +1063,10 @@ macro_rules! datetime_marker_helper {
     (@option/length, yes) => {
         NeoSkeletonLength
     };
-    (@option/length, no) => {
+    (@option/eradisplay, yes) => {
+        Option<EraDisplay>
+    };
+    (@option/$any:ident, no) => {
         NeverField
     };
     (@input/year, yes) => {
@@ -1282,6 +1299,7 @@ macro_rules! impl_date_marker {
             type T = NeoNeverMarker;
             type Z = NeoNeverMarker;
             type LengthOption = datetime_marker_helper!(@option/length, yes);
+            type EraDisplayOption = datetime_marker_helper!(@option/eradisplay, $year_yesno);
             type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
         }
         impl HasConstComponents for $type {
@@ -1424,6 +1442,7 @@ macro_rules! impl_time_marker {
             type T = Self;
             type Z = NeoNeverMarker;
             type LengthOption = datetime_marker_helper!(@option/length, yes);
+            type EraDisplayOption = datetime_marker_helper!(@option/eradisplay, no);
             type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
         }
         impl HasConstComponents for $type {
@@ -1548,6 +1567,7 @@ macro_rules! impl_zone_marker {
             type T = NeoNeverMarker;
             type Z = Self;
             type LengthOption = datetime_marker_helper!(@option/length, $option_length_yesno);
+            type EraDisplayOption = datetime_marker_helper!(@option/eradisplay, no);
             type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
         }
         impl HasConstComponents for $type {
@@ -2044,6 +2064,7 @@ impl DateTimeMarkers for NeoDateComponents {
     type T = NeoNeverMarker;
     type Z = NeoNeverMarker;
     type LengthOption = datetime_marker_helper!(@option/length, yes);
+    type EraDisplayOption = datetime_marker_helper!(@option/eradisplay, yes);
     type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
 }
 
@@ -2078,6 +2099,7 @@ impl DateTimeMarkers for NeoTimeComponents {
     type T = Self;
     type Z = NeoNeverMarker;
     type LengthOption = datetime_marker_helper!(@option/length, yes);
+    type EraDisplayOption = datetime_marker_helper!(@option/eradisplay, no);
     type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
 }
 
@@ -2113,6 +2135,7 @@ impl DateTimeMarkers for NeoTimeZoneSkeleton {
     type T = NeoNeverMarker;
     type Z = Self;
     type LengthOption = datetime_marker_helper!(@option/length, yes);
+    type EraDisplayOption = datetime_marker_helper!(@option/eradisplay, no);
     type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
 }
 
@@ -2138,6 +2161,7 @@ impl DateTimeMarkers for NeoDateTimeComponents {
     type T = NeoTimeComponents;
     type Z = NeoNeverMarker;
     type LengthOption = datetime_marker_helper!(@option/length, yes);
+    type EraDisplayOption = datetime_marker_helper!(@option/eradisplay, yes);
     type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
 }
 
@@ -2163,5 +2187,6 @@ impl DateTimeMarkers for NeoComponents {
     type T = NeoTimeComponents;
     type Z = NeoTimeZoneSkeleton;
     type LengthOption = datetime_marker_helper!(@option/length, yes);
+    type EraDisplayOption = datetime_marker_helper!(@option/eradisplay, yes);
     type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
 }

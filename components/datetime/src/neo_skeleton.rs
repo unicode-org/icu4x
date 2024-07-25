@@ -73,6 +73,40 @@ impl NeoSkeletonLength {
     }
 }
 
+/// A specification for when to display the era when formatting a year.
+#[derive(Debug, Copy, Clone)]
+pub enum EraDisplay {
+    /// Always display the era.
+    ///
+    /// Examples:
+    ///
+    /// - `1000 BC`
+    /// - `77 AD`
+    /// - `2024 AD`
+    Always,
+    /// Display the era when needed to disambiguate the year.
+    ///
+    /// This is the default option.
+    ///
+    /// Examples:
+    ///
+    /// - `1000 BC`
+    /// - `77 AD`
+    /// - `2024`
+    Auto,
+    /// Do not display the era.
+    ///
+    /// This option is not recommended unless there is other context to
+    /// indicate the value of the year.
+    ///
+    /// Examples:
+    ///
+    /// - `1000`
+    /// - `77`
+    /// - `2024`
+    Never,
+}
+
 /// A specification for a set of parts of a date that specifies a single day (as
 /// opposed to a whole month or a week).
 /// Only sets that yield “sensible” dates are allowed: this type cannot

@@ -156,17 +156,24 @@ pub struct NeoOptions<R: DateTimeMarkers> {
     ///
     /// See [`NeoSkeletonLength`].
     pub length: R::LengthOption,
+    /// When to display the era field in the formatted string,
+    /// if required for the chosen field set.
+    ///
+    /// See [`EraDisplay`].
+    pub era_display: R::EraDisplayOption,
 }
 
 impl<R> From<NeoSkeletonLength> for NeoOptions<R>
 where
     R: DateTimeMarkers,
     R::LengthOption: From<NeoSkeletonLength>,
+    R::EraDisplayOption: Default,
 {
     #[inline]
     fn from(value: NeoSkeletonLength) -> Self {
         NeoOptions {
             length: value.into(),
+            era_display: Default::default(),
         }
     }
 }
@@ -177,11 +184,13 @@ impl<R> Default for NeoOptions<R>
 where
     R: DateTimeMarkers,
     R::LengthOption: Default,
+    R::EraDisplayOption: Default,
 {
     #[inline]
     fn default() -> Self {
         NeoOptions {
             length: Default::default(),
+            era_display: Default::default(),
         }
     }
 }
