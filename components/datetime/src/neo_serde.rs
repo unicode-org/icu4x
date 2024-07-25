@@ -107,7 +107,10 @@ impl From<FieldSetSerde> for FieldSetHumanReadableSerde {
             if (value.bit_fields & (1 << i)) != 0 {
                 // Note: This could be made more efficient, but for now it is only used in
                 // human-readable deserialization which is not a hot path
-                let Some(field) = FieldSetField::VALUES.iter().find(|field| i == **field as usize) else {
+                let Some(field) = FieldSetField::VALUES
+                    .iter()
+                    .find(|field| i == **field as usize)
+                else {
                     debug_assert!(false, "unknown field discriminant: {i}");
                     break;
                 };
@@ -437,26 +440,13 @@ impl TryFrom<FieldSetSerde> for NeoComponents {
         let date = value.date_only();
         let time = value.time_only();
         let zone = value.zone_only();
-        match (
-            !date.is_empty(),
-            !time.is_empty(),
-            !zone.is_empty(),
-        ) {
+        match (!date.is_empty(), !time.is_empty(), !zone.is_empty()) {
             (true, false, false) => Ok(NeoComponents::Date(date.try_into()?)),
             (false, true, false) => Ok(NeoComponents::Time(time.try_into()?)),
             (false, false, true) => Ok(NeoComponents::Zone(zone.try_into()?)),
-            (true, true, false) => Ok(NeoComponents::DateTime(
-                date.try_into()?,
-                time.try_into()?,
-            )),
-            (true, false, true) => Ok(NeoComponents::DateZone(
-                date.try_into()?,
-                zone.try_into()?,
-            )),
-            (false, true, true) => Ok(NeoComponents::TimeZone(
-                time.try_into()?,
-                zone.try_into()?,
-            )),
+            (true, true, false) => Ok(NeoComponents::DateTime(date.try_into()?, time.try_into()?)),
+            (true, false, true) => Ok(NeoComponents::DateZone(date.try_into()?, zone.try_into()?)),
+            (false, true, true) => Ok(NeoComponents::TimeZone(time.try_into()?, zone.try_into()?)),
             (true, true, true) => Ok(NeoComponents::DateTimeZone(
                 date.try_into()?,
                 time.try_into()?,
@@ -470,12 +460,19 @@ impl TryFrom<FieldSetSerde> for NeoComponents {
 #[test]
 fn test_basic() {
     let skeleton = NeoSkeleton {
-        components: NeoComponents::DateTimeZone(NeoDayComponents::YearMonthDayWeekday, NeoTimeComponents::HourMinute, NeoTimeZoneSkeleton::generic()),
+        components: NeoComponents::DateTimeZone(
+            NeoDayComponents::YearMonthDayWeekday,
+            NeoTimeComponents::HourMinute,
+            NeoTimeZoneSkeleton::generic(),
+        ),
         length: NeoSkeletonLength::Medium,
     };
 
     let json_string = serde_json::to_string(&skeleton).unwrap();
-    assert_eq!(json_string, r#"{"fieldSet":["year","month","day","weekday","hour","minute","zoneGeneric"],"length":"medium"}"#);
+    assert_eq!(
+        json_string,
+        r#"{"fieldSet":["year","month","day","weekday","hour","minute","zoneGeneric"],"length":"medium"}"#
+    );
     let json_skeleton = serde_json::from_str::<NeoSkeleton>(&json_string).unwrap();
     assert_eq!(skeleton, json_skeleton);
 
