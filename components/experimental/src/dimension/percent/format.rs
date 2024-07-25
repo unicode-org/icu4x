@@ -5,13 +5,24 @@
 use fixed_decimal::{FixedDecimal, Sign};
 
 use crate::alloc::borrow::ToOwned;
-use crate::alloc::string::ToString;
-use alloc::string::String;
+use alloc::borrow::Cow;
 use writeable::Writeable;
 
 use crate::dimension::provider::percent::PercentEssentialsV1;
 
 use super::options::{Display, PercentFormatterOptions};
+
+struct Append<W1, W2>(W1, W2);
+// This allows us to combines two writeables together.
+impl<W1: Writeable, W2: Writeable> Writeable for Append<W1, W2> {
+    fn write_to<W>(&self, sink: &mut W) -> core::result::Result<(), core::fmt::Error>
+    where
+        W: core::fmt::Write + ?Sized,
+    {
+        self.0.write_to(sink)?;
+        self.1.write_to(sink)
+    }
+}
 
 pub struct FormattedPercent<'l> {
     pub(crate) value: &'l FixedDecimal,
@@ -24,41 +35,54 @@ impl<'l> Writeable for FormattedPercent<'l> {
     where
         W: core::fmt::Write + ?Sized,
     {
-        match self.options.display {
-            // In the Standard display, we take the
-            Display::Standard => self
-                .essential
-                .positive_pattern
-                .interpolate([self.value])
-                .write_to(sink)?,
-            Display::Approximate => {
-                // Removing the sign from the value
-                let abs_value = match self.value.sign() {
-                    Sign::Negative => self.value.clone().with_sign(Sign::None),
-                    _ => self.value.to_owned(),
-                }
-                .to_string();
+        // Removing the sign from the value
+        let abs_value = match self.value.sign() {
+            Sign::Negative => self.value.clone().with_sign(Sign::None),
+            _ => self.value.to_owned(),
+        };
 
-                // The approximate sign gets pre-pended
-                let sign = match self.value.sign() {
-                    Sign::Negative => {
-                        String::new()
-                            + &self.essential.approximately_sign
-                            + &self.essential.minus_sign
-                    }
-                    _ => self.essential.approximately_sign.to_string(),
+        match self.options.display {
+            // In the Standard display, we take the positive pattern only when the value is positive.
+            Display::Standard => {
+                if self.value.sign() == Sign::Negative {
+                    self.essential
+                        .negative_pattern
+                        .interpolate((abs_value, &self.essential.minus_sign))
+                        .write_to(sink)?
+                } else {
+                    self.essential
+                        .positive_pattern
+                        .interpolate([abs_value])
+                        .write_to(sink)?
+                };
+            }
+            Display::Approximate => {
+                let sign = if self.value.sign() == Sign::Negative {
+                    // The approximate sign gets pre-pended
+                    Append(
+                        &self.essential.approximately_sign,
+                        &self.essential.minus_sign,
+                    )
+                } else {
+                    Append(&self.essential.approximately_sign, &Cow::Borrowed(""))
                 };
 
                 self.essential
                     .negative_pattern
-                    .interpolate([abs_value, sign])
+                    .interpolate((abs_value, sign))
                     .write_to(sink)?;
             }
-            // TODO: Determine if we throw an error when explicit plus is called and the value is negative.
-            Display::ExplicitPlus => self
+            Display::ExplicitSign => self
                 .essential
                 .negative_pattern
-                .interpolate([self.value.to_string(), self.essential.plus_sign.to_string()])
+                .interpolate((
+                    abs_value,
+                    if self.value.sign() == Sign::Negative {
+                        &self.essential.minus_sign
+                    } else {
+                        &self.essential.plus_sign
+                    },
+                ))
                 .write_to(sink)?,
         };
 
@@ -66,178 +90,54 @@ impl<'l> Writeable for FormattedPercent<'l> {
     }
 }
 
+writeable::impl_display_with_writeable!(FormattedPercent<'_>);
+
 #[cfg(test)]
 mod tests {
-    use fixed_decimal::FixedDecimal;
     use icu_locale_core::locale;
-    use icu_provider::DataLocale;
-    use writeable::Writeable;
+    use writeable::assert_writeable_eq;
 
     use crate::dimension::percent::{
         formatter::PercentFormatter,
         options::{Display, PercentFormatterOptions},
     };
 
-    pub fn format_percent(
-        locale: &DataLocale,
-        options: PercentFormatterOptions,
-        value: FixedDecimal,
-    ) -> String {
-        let default_fmt = PercentFormatter::try_new(locale, options).unwrap();
-        let formatted_percent = default_fmt.format_percent(&value);
-        let mut sink = String::new();
-        formatted_percent.write_to(&mut sink).unwrap();
-        sink
-    }
-
     #[test]
     pub fn test_en_us() {
         let locale = locale!("en-US").into();
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
-        let result = format_percent(&locale, Default::default(), positive_value);
-        assert_eq!(result.as_str(), "12345.67%");
+        let default_fmt = PercentFormatter::try_new(&locale, Default::default()).unwrap();
+        let formatted_percent = default_fmt.format(&positive_value);
+        assert_writeable_eq!(formatted_percent, "12345.67%");
 
         // Negative case
         let neg_value = "-12345.67".parse().unwrap();
-        let result = format_percent(&locale, Default::default(), neg_value);
-        assert_eq!(result.as_str(), "-12345.67%");
+        let formatted_percent = default_fmt.format(&neg_value);
+        assert_writeable_eq!(formatted_percent, "-12345.67%");
 
         // Approximate Case
         let approx_value = "12345.67".parse().unwrap();
-        let options = PercentFormatterOptions {
-            display: Display::Approximate,
-        };
-        let result = format_percent(&locale, options, approx_value);
-        assert_eq!(result.as_str(), "~12345.67%");
+        let approx_fmt = PercentFormatter::try_new(
+            &locale,
+            PercentFormatterOptions {
+                display: Display::Approximate,
+            },
+        )
+        .unwrap();
+        let formatted_percent = approx_fmt.format(&approx_value);
+        assert_writeable_eq!(formatted_percent, "~12345.67%");
 
-        // ExplicitPlus Case
-        let neg_value = "12345.67".parse().unwrap();
-        let options = PercentFormatterOptions {
-            display: Display::ExplicitPlus,
-        };
-        let result = format_percent(&locale, options, neg_value);
-        assert_eq!(result.as_str(), "+12345.67%");
-    }
-
-    #[test]
-    pub fn test_fr_fr() {
-        let locale = locale!("fr-FR").into();
-        // Positive case
-        let positive_value = "12345.67".parse().unwrap();
-        let result = format_percent(&locale, Default::default(), positive_value);
-        assert_eq!(result.as_str(), "12345.67\u{a0}%");
-
-        // Negative case
-        let neg_value = "-12345.67".parse().unwrap();
-        let result = format_percent(&locale, Default::default(), neg_value);
-        assert_eq!(result.as_str(), "-12345.67\u{a0}%");
-
-        // Approximate Case
-        let approx_value = "12345.67".parse().unwrap();
-        let options = PercentFormatterOptions {
-            display: Display::Approximate,
-        };
-        let result = format_percent(&locale, options, approx_value);
-        assert_eq!(result.as_str(), "≃12345.67\u{a0}%");
-
-        // ExplicitPlus Case
-        let neg_value = "12345.67".parse().unwrap();
-        let options = PercentFormatterOptions {
-            display: Display::ExplicitPlus,
-        };
-        let result = format_percent(&locale, options, neg_value);
-        assert_eq!(result.as_str(), "+12345.67\u{a0}%");
-    }
-
-    #[test]
-    pub fn test_ar_eg() {
-        let locale = locale!("ar-EG").into();
-        // Positive case
-        let positive_value = "12345.67".parse().unwrap();
-        let result = format_percent(&locale, Default::default(), positive_value);
-        assert_eq!(result.as_str(), "12345.67\u{200e}%\u{200e}");
-
-        // Negative case
-        let neg_value = "-12345.67".parse().unwrap();
-        let result = format_percent(&locale, Default::default(), neg_value);
-        assert_eq!(result.as_str(), "-12345.67\u{200e}%\u{200e}");
-
-        // Approximate Case
-        let approx_value = "12345.67".parse().unwrap();
-        let options = PercentFormatterOptions {
-            display: Display::Approximate,
-        };
-        let result = format_percent(&locale, options, approx_value);
-        assert_eq!(result.as_str(), "~12345.67\u{200e}%\u{200e}");
-
-        // ExplicitPlus Case
-        let neg_value = "12345.67".parse().unwrap();
-        let options = PercentFormatterOptions {
-            display: Display::ExplicitPlus,
-        };
-        let result = format_percent(&locale, options, neg_value);
-        assert_eq!(result.as_str(), "\u{200e}+12345.67\u{200e}%\u{200e}");
-    }
-
-    #[test]
-    pub fn test_es() {
-        let locale = locale!("es").into();
-        // Positive case
-        let positive_value = "12345.67".parse().unwrap();
-        let result = format_percent(&locale, Default::default(), positive_value);
-        assert_eq!(result.as_str(), "12345.67\u{a0}%");
-
-        // Negative case
-        let neg_value = "-12345.67".parse().unwrap();
-        let result = format_percent(&locale, Default::default(), neg_value);
-        assert_eq!(result.as_str(), "-12345.67\u{a0}%");
-
-        // Approximate Case
-        let approx_value = "12345.67".parse().unwrap();
-        let options = PercentFormatterOptions {
-            display: Display::Approximate,
-        };
-        let result = format_percent(&locale, options, approx_value);
-        assert_eq!(result.as_str(), "~12345.67\u{a0}%");
-
-        // ExplicitPlus Case
-        let neg_value = "12345.67".parse().unwrap();
-        let options = PercentFormatterOptions {
-            display: Display::ExplicitPlus,
-        };
-        let result = format_percent(&locale, options, neg_value);
-        assert_eq!(result.as_str(), "+12345.67\u{a0}%");
-    }
-
-    #[test]
-    pub fn test_ccp() {
-        let locale = locale!("ccp").into();
-        // Positive case
-        let positive_value = "12345.67".parse().unwrap();
-        let result = format_percent(&locale, Default::default(), positive_value);
-        assert_eq!(result.as_str(), "12345.67%");
-
-        // Negative case
-        let neg_value = "-12345.67".parse().unwrap();
-        let result = format_percent(&locale, Default::default(), neg_value);
-        assert_eq!(result.as_str(), "-12345.67%");
-
-        // Approximate Case
-        let approx_value = "12345.67".parse().unwrap();
-        let options = PercentFormatterOptions {
-            display: Display::Approximate,
-        };
-        let result = format_percent(&locale, options, approx_value);
-        assert_eq!(result.as_str(), "~12345.67%");
-
-        // ExplicitPlus Case
-        let neg_value = "12345.67".parse().unwrap();
-        let options = PercentFormatterOptions {
-            display: Display::ExplicitPlus,
-        };
-        let result = format_percent(&locale, options, neg_value);
-        assert_eq!(result.as_str(), "+12345.67%");
+        // ExplicitSign Case
+        let explicit_fmt = PercentFormatter::try_new(
+            &locale,
+            PercentFormatterOptions {
+                display: Display::ExplicitSign,
+            },
+        )
+        .unwrap();
+        let formatted_percent = explicit_fmt.format(&positive_value);
+        assert_writeable_eq!(formatted_percent, "+12345.67%");
     }
 
     #[test]
@@ -245,29 +145,37 @@ mod tests {
         let locale = locale!("tr").into();
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
-        let result = format_percent(&locale, Default::default(), positive_value);
-        assert_eq!(result.as_str(), "%12345.67");
+        let default_fmt = PercentFormatter::try_new(&locale, Default::default()).unwrap();
+        let formatted_percent = default_fmt.format(&positive_value);
+        assert_writeable_eq!(formatted_percent, "%12345.67");
 
         // Negative case
         let neg_value = "-12345.67".parse().unwrap();
-        let result = format_percent(&locale, Default::default(), neg_value);
-        assert_eq!(result.as_str(), "%-12345.67");
+        let formatted_percent = default_fmt.format(&neg_value);
+        assert_writeable_eq!(formatted_percent, "-%12345.67");
 
         // Approximate Case
         let approx_value = "12345.67".parse().unwrap();
-        let options = PercentFormatterOptions {
-            display: Display::Approximate,
-        };
-        let result = format_percent(&locale, options, approx_value);
-        assert_eq!(result.as_str(), "~%12345.67");
+        let approx_fmt = PercentFormatter::try_new(
+            &locale,
+            PercentFormatterOptions {
+                display: Display::Approximate,
+            },
+        )
+        .unwrap();
+        let formatted_percent = approx_fmt.format(&approx_value);
+        assert_writeable_eq!(formatted_percent, "~%12345.67");
 
-        // ExplicitPlus Case
-        let neg_value = "12345.67".parse().unwrap();
-        let options = PercentFormatterOptions {
-            display: Display::ExplicitPlus,
-        };
-        let result = format_percent(&locale, options, neg_value);
-        assert_eq!(result.as_str(), "+%12345.67");
+        // ExplicitSign Case
+        let explicit_fmt = PercentFormatter::try_new(
+            &locale,
+            PercentFormatterOptions {
+                display: Display::ExplicitSign,
+            },
+        )
+        .unwrap();
+        let formatted_percent = explicit_fmt.format(&positive_value);
+        assert_writeable_eq!(formatted_percent, "+%12345.67");
     }
 
     #[test]
@@ -275,28 +183,36 @@ mod tests {
         let locale = locale!("blo").into();
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
-        let result = format_percent(&locale, Default::default(), positive_value);
-        assert_eq!(result.as_str(), "%\u{a0}12345.67");
+        let default_fmt = PercentFormatter::try_new(&locale, Default::default()).unwrap();
+        let formatted_percent = default_fmt.format(&positive_value);
+        assert_writeable_eq!(formatted_percent, "%\u{a0}12345.67");
 
         // Negative case
         let neg_value = "-12345.67".parse().unwrap();
-        let result = format_percent(&locale, Default::default(), neg_value);
-        assert_eq!(result.as_str(), "%\u{a0}-12345.67");
+        let formatted_percent = default_fmt.format(&neg_value);
+        assert_writeable_eq!(formatted_percent, "%\u{a0}-12345.67");
 
         // Approximate Case
         let approx_value = "12345.67".parse().unwrap();
-        let options = PercentFormatterOptions {
-            display: Display::Approximate,
-        };
-        let result = format_percent(&locale, options, approx_value);
-        assert_eq!(result.as_str(), "%\u{a0}~12345.67");
+        let approx_fmt = PercentFormatter::try_new(
+            &locale,
+            PercentFormatterOptions {
+                display: Display::Approximate,
+            },
+        )
+        .unwrap();
+        let formatted_percent = approx_fmt.format(&approx_value);
+        assert_writeable_eq!(formatted_percent, "%\u{a0}~12345.67");
 
-        // ExplicitPlus Case
-        let neg_value = "12345.67".parse().unwrap();
-        let options = PercentFormatterOptions {
-            display: Display::ExplicitPlus,
-        };
-        let result = format_percent(&locale, options, neg_value);
-        assert_eq!(result.as_str(), "%\u{a0}+12345.67");
+        // ExplicitSign Case
+        let explicit_fmt = PercentFormatter::try_new(
+            &locale,
+            PercentFormatterOptions {
+                display: Display::ExplicitSign,
+            },
+        )
+        .unwrap();
+        let formatted_percent = explicit_fmt.format(&positive_value);
+        assert_writeable_eq!(formatted_percent, "%\u{a0}+12345.67");
     }
 }

@@ -89,12 +89,12 @@ impl PercentFormatter {
     /// let locale = locale!("en-US").into();
     /// let fmt = PercentFormatter::try_new(&locale, Default::default()).unwrap();
     /// let value = "12345.67".parse().unwrap();
-    /// let formatted_percent = fmt.format_percent(&value);
+    /// let formatted_percent = fmt.format(&value);
     /// let mut sink = String::new();
     /// formatted_percent.write_to(&mut sink).unwrap();
     /// assert_eq!(sink.as_str(), "12345.67%");
     /// ```
-    pub fn format_percent<'l>(&'l self, value: &'l FixedDecimal) -> FormattedPercent<'l> {
+    pub fn format<'l>(&'l self, value: &'l FixedDecimal) -> FormattedPercent<'l> {
         FormattedPercent {
             value,
             essential: self.essential.get(),

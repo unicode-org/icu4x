@@ -22,18 +22,18 @@ impl From<Display> for PercentFormatterOptions {
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
 #[non_exhaustive]
 pub enum Display {
-    /// Format the Percent to display as an approximate value.
-    ///
-    /// For example 123 -> ~123% in en-US.
-    Approximate,
     /// Format the Percent to display with the standard formatting for the locale.
     ///
     /// For example 123 -> 123% in en-US.
     Standard,
-    /// Format the Percent to display with an explicit plus sign.
+    /// Format the Percent to display as an approximate value.
+    ///
+    /// For example 123 -> ~123% in en-US.
+    Approximate,
+    /// Format the Percent to display with an explicit sign.
     ///
     /// For example 123 -> +123% in en-US.
-    ExplicitPlus,
+    ExplicitSign,
 }
 
 impl Default for Display {
