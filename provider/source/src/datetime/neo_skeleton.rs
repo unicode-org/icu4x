@@ -89,7 +89,7 @@ impl SourceDataProvider {
                     // TODO(#4478): Use CLDR data when it becomes available
                     // TODO: Set the length to NeoSkeletonLength? Or not, because
                     // the era should normally be displayed as short?
-                    let mut components_with_era = component;
+                    let mut components_with_era = components;
                     components_with_era.era = Some(components::Text::Short);
                     Some(
                         DateTimeFormatterOptions::Components(components_with_era).select_pattern(
