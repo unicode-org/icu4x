@@ -71,10 +71,15 @@ impl PercentFormatter<FixedDecimalFormatter> {
         options: PercentFormatterOptions,
     ) -> Result<Self, DataError>
     where
-        D: ?Sized + DataProvider<super::super::provider::percent::PercentEssentialsV1Marker>,
+        D: ?Sized
+            + DataProvider<super::super::provider::percent::PercentEssentialsV1Marker>
+            + DataProvider<icu_decimal::provider::DecimalSymbolsV1Marker>,
     {
-        let fixed_decimal_formatter =
-            FixedDecimalFormatter::try_new(locale, FixedDecimalFormatterOptions::default())?;
+        let fixed_decimal_formatter = FixedDecimalFormatter::try_new_unstable(
+            provider,
+            locale,
+            FixedDecimalFormatterOptions::default(),
+        )?;
 
         PercentFormatter::try_new_with_fixed_decimal_formatter_unstable(
             provider,
