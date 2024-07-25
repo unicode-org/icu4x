@@ -22,8 +22,36 @@ use writeable::Writeable;
 /// [`Locale`] exposes all of the same fields and methods as [`LanguageIdentifier`], and
 /// on top of that is able to parse, manipulate and serialize unicode extension fields.
 ///
+/// # Parsing
+///
+/// Unicode recognizes three levels of standard conformance for a locale:
+///
+///  * *well-formed* - syntactically correct
+///  * *valid* - well-formed and only uses registered language subtags, extensions, keywords, types...
+///  * *canonical* - valid and no deprecated codes or structure.
+///
+/// At the moment parsing normalizes a well-formed locale identifier converting
+/// `_` separators to `-` and adjusting casing to conform to the Unicode standard.
+///
+/// Any bogus subtags will cause the parsing to fail with an error.
+///
+/// No subtag validation or alias resolution is performed.
+///
+/// # Ordering
+///
+/// This type deliberately does not implement `Ord` or `PartialOrd` because there are
+/// multiple possible orderings, and the team did not want to favor one over any other.
+///
+/// Instead, there are functions available that return these different orderings:
+///
+/// - [`Locale::strict_cmp`]
+/// - [`Locale::total_cmp`]
+///
+/// See issue: <https://github.com/unicode-org/icu4x/issues/1215>
 ///
 /// # Examples
+///
+/// Simple example:
 ///
 /// ```
 /// use icu::locale::{
@@ -44,22 +72,7 @@ use writeable::Writeable;
 /// );
 /// ```
 ///
-/// # Parsing
-///
-/// Unicode recognizes three levels of standard conformance for a locale:
-///
-///  * *well-formed* - syntactically correct
-///  * *valid* - well-formed and only uses registered language subtags, extensions, keywords, types...
-///  * *canonical* - valid and no deprecated codes or structure.
-///
-/// At the moment parsing normalizes a well-formed locale identifier converting
-/// `_` separators to `-` and adjusting casing to conform to the Unicode standard.
-///
-/// Any bogus subtags will cause the parsing to fail with an error.
-///
-/// No subtag validation or alias resolution is performed.
-///
-/// # Examples
+/// More complex example:
 ///
 /// ```
 /// use icu::locale::{subtags::*, Locale};
@@ -76,8 +89,9 @@ use writeable::Writeable;
 ///     "valencia".parse::<Variant>().ok().as_ref()
 /// );
 /// ```
+///
 /// [`Unicode Locale Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_locale_identifier
-#[derive(Default, PartialEq, Eq, Clone, Hash)]
+#[derive(Default, PartialEq, Eq, Clone, Hash)] // no Ord or PartialOrd: see docs
 #[allow(clippy::exhaustive_structs)] // This struct is stable (and invoked by a macro)
 pub struct Locale {
     /// The basic language/script/region components in the locale identifier along with any variants.
@@ -233,8 +247,35 @@ impl Locale {
 
     /// Returns an ordering suitable for use in [`BTreeSet`].
     ///
-    /// The ordering may or may not be equivalent to string ordering, and it
-    /// may or may not be stable across ICU4X releases.
+    /// Unlike [`Locale::strict_cmp`], the ordering may or may not be equivalent
+    /// to string ordering, and it may or may not be stable across ICU4X releases.
+    ///
+    /// # Examples
+    ///
+    /// Using a wrapper to add one of these to a [`BTreeSet`]:
+    ///
+    /// ```no_run
+    /// use icu::locale::Locale;
+    /// use std::cmp::Ordering;
+    /// use std::collections::BTreeSet;
+    ///
+    /// #[derive(PartialEq, Eq)]
+    /// struct LocaleTotalOrd(Locale);
+    ///
+    /// impl Ord for LocaleTotalOrd {
+    ///     fn cmp(&self, other: &Self) -> Ordering {
+    ///         self.0.total_cmp(&other.0)
+    ///     }
+    /// }
+    ///
+    /// impl PartialOrd for LocaleTotalOrd {
+    ///     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+    ///         Some(self.cmp(other))
+    ///     }
+    /// }
+    ///
+    /// let _: BTreeSet<LocaleTotalOrd> = unimplemented!();
+    /// ```
     ///
     /// [`BTreeSet`]: alloc::collections::BTreeSet
     pub fn total_cmp(&self, other: &Self) -> Ordering {

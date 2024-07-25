@@ -349,7 +349,7 @@ fn main() -> eyre::Result<()> {
             (Box::new(ReexportableBlobDataProvider(provider)), fallbacker)
         },
 
-        #[cfg(all(not(feature = "provider"), feature = "input_blob"))]
+        #[cfg(all(not(feature = "provider"), feature = "blob_input"))]
         () => eyre::bail!("--input-blob is required without the `provider` Cargo feature"),
 
         #[cfg(feature = "provider")]
@@ -445,7 +445,7 @@ fn main() -> eyre::Result<()> {
             (Box::new(p), fallbacker)
         }
 
-        #[cfg(not(feature = "provider"))]
+        #[cfg(not(any(feature = "provider", feature = "blob_input")))]
         () => eyre::bail!("Only the `HelloWorldV1 marker is supported without Cargo features `blob_input` or `provider`"),
     };
 

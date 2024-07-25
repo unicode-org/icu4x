@@ -48,18 +48,13 @@ final class LocaleFallbacker implements ffi.Finalizable {
   /// Associates this `LocaleFallbacker` with configuration options.
   ///
   /// See the [Rust documentation for `for_config`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html#method.for_config) for more information.
-  ///
-  /// Throws [LocaleParseError] on failure.
   LocaleFallbackerWithConfig forConfig(LocaleFallbackConfig config) {
     final temp = ffi2.Arena();
     // This lifetime edge depends on lifetimes: 'a
     core.List<Object> aEdges = [this];
     final result = _icu4x_LocaleFallbacker_for_config_mv1(_ffi, config._toFfi(temp));
     temp.releaseAll();
-    if (!result.isOk) {
-      throw LocaleParseError.values[result.union.err];
-    }
-    return LocaleFallbackerWithConfig._fromFfi(result.union.ok, [], aEdges);
+    return LocaleFallbackerWithConfig._fromFfi(result, [], aEdges);
   }
 }
 
@@ -79,6 +74,6 @@ external _ResultOpaqueInt32 _icu4x_LocaleFallbacker_create_mv1(ffi.Pointer<ffi.O
 external ffi.Pointer<ffi.Opaque> _icu4x_LocaleFallbacker_without_data_mv1();
 
 @meta.ResourceIdentifier('icu4x_LocaleFallbacker_for_config_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _LocaleFallbackConfigFfi)>(isLeaf: true, symbol: 'icu4x_LocaleFallbacker_for_config_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, _LocaleFallbackConfigFfi)>(isLeaf: true, symbol: 'icu4x_LocaleFallbacker_for_config_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_LocaleFallbacker_for_config_mv1(ffi.Pointer<ffi.Opaque> self, _LocaleFallbackConfigFfi config);
+external ffi.Pointer<ffi.Opaque> _icu4x_LocaleFallbacker_for_config_mv1(ffi.Pointer<ffi.Opaque> self, _LocaleFallbackConfigFfi config);

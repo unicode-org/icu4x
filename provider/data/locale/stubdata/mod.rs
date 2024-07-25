@@ -1,7 +1,6 @@
 // @generated
 include!("locale_fallback_likely_subtags_v1_marker.rs.data");
 include!("locale_fallback_parents_v1_marker.rs.data");
-include!("collation_fallback_supplement_v1_marker.rs.data");
 include!("aliases_v2_marker.rs.data");
 include!("likely_subtags_extended_v1_marker.rs.data");
 include!("likely_subtags_for_language_v1_marker.rs.data");
@@ -38,7 +37,6 @@ macro_rules! impl_data_provider {
         make_provider!($provider);
         impl_locale_fallback_likely_subtags_v1_marker!($provider);
         impl_locale_fallback_parents_v1_marker!($provider);
-        impl_collation_fallback_supplement_v1_marker!($provider);
         impl_aliases_v2_marker!($provider);
         impl_likely_subtags_extended_v1_marker!($provider);
         impl_likely_subtags_for_language_v1_marker!($provider);
@@ -55,7 +53,6 @@ macro_rules! impl_any_provider {
                 match marker.path.hashed() {
                     h if h == <icu::locale::provider::LocaleFallbackLikelySubtagsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::locale::provider::LocaleFallbackLikelySubtagsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::locale::provider::LocaleFallbackParentsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::locale::provider::LocaleFallbackParentsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::locale::provider::CollationFallbackSupplementV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::locale::provider::CollationFallbackSupplementV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::locale::provider::AliasesV2Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::locale::provider::AliasesV2Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::locale::provider::LikelySubtagsExtendedV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::locale::provider::LikelySubtagsExtendedV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::locale::provider::LikelySubtagsForLanguageV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::locale::provider::LikelySubtagsForLanguageV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),

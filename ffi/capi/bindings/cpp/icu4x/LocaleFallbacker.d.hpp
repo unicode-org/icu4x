@@ -18,7 +18,6 @@ namespace capi { struct LocaleFallbackerWithConfig; }
 class LocaleFallbackerWithConfig;
 struct LocaleFallbackConfig;
 class DataError;
-class LocaleParseError;
 }
 
 
@@ -36,7 +35,7 @@ public:
 
   inline static std::unique_ptr<icu4x::LocaleFallbacker> without_data();
 
-  inline diplomat::result<std::unique_ptr<icu4x::LocaleFallbackerWithConfig>, icu4x::LocaleParseError> for_config(icu4x::LocaleFallbackConfig config) const;
+  inline std::unique_ptr<icu4x::LocaleFallbackerWithConfig> for_config(icu4x::LocaleFallbackConfig config) const;
 
   inline const icu4x::capi::LocaleFallbacker* AsFFI() const;
   inline icu4x::capi::LocaleFallbacker* AsFFI();
