@@ -198,11 +198,11 @@ impl Writeable for DataLocaleFamilyAnnotations {
     }
 }
 
-/// An error while parsing a [`LocaleFamily`].
+/// An error while parsing a [`DataLocaleFamily`].
 #[derive(Debug, Copy, Clone, PartialEq, Display)]
 #[non_exhaustive]
 pub enum LocaleFamilyParseError {
-    /// An error bubbled up from parsing a [`Locale`].
+    /// An error bubbled up from parsing a [`DataLocale`].
     #[displaydoc("{0}")]
     Locale(ParseError),
     /// Some other error specific to parsing the family, such as an invalid lead byte.
