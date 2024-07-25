@@ -241,7 +241,7 @@ impl LanguageIdentifier {
     }
 
     /// Compare this [`LanguageIdentifier`] with another [`LanguageIdentifier`] field-by-field.
-    /// The result is a total ordering sufficient for use in a [`BTreeMap`].
+    /// The result is a total ordering sufficient for use in a [`BTreeSet`].
     ///
     /// Unlike [`Self::strict_cmp`], this function's ordering may not equal string ordering.
     ///
@@ -272,7 +272,7 @@ impl LanguageIdentifier {
     /// let _: BTreeSet<LanguageIdentifierTotalOrd> = unimplemented!();
     /// ```
     ///
-    /// [`BTreeMap`]: alloc::collections::BTreeMap
+    /// [`BTreeSet`]: alloc::collections::BTreeSet
     pub fn total_cmp(&self, other: &Self) -> Ordering {
         self.as_tuple().cmp(&other.as_tuple())
     }
