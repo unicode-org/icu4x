@@ -10,7 +10,7 @@ use icu_collections::codepointtrie::TrieValue;
 use wasmi::{Config, Engine, Extern, Func, Instance, Linker, Module, Store, Value};
 use zerovec::ZeroSlice;
 
-const UCPTRIE_WRAP_BYTES: &[u8] = include_bytes!("../ucptrie_wrap.wasm");
+const UCPTRIE_WRAP_WAT: &str = include_str!("../cpp/ucptrie_wrap.wat");
 
 pub(crate) struct WasmWrap {
     instance: Instance,
@@ -34,7 +34,8 @@ impl WasmWrap {
     pub(crate) fn create() -> Self {
         let config = Config::default();
         let engine = Engine::new(&config);
-        let module = Module::new(&engine, UCPTRIE_WRAP_BYTES).unwrap();
+        let wasm_bytes = wat::parse_str(UCPTRIE_WRAP_WAT).unwrap();
+        let module = Module::new(&engine, &mut &wasm_bytes[..]).unwrap();
         let linker = <Linker<()>>::new(&engine);
         let mut store = Store::new(&engine, ());
 

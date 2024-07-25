@@ -11,17 +11,10 @@ void main() {
 
   test('LocaleFallbacker', () {
     final iterator = LocaleFallbacker(DataProvider.compiled())
-        .forConfig(LocaleFallbackConfig(
-            extensionKey: 'ca',
-            priority: LocaleFallbackPriority.region,
-            fallbackSupplement: LocaleFallbackSupplement.none))
+        .forConfig(LocaleFallbackConfig(priority: LocaleFallbackPriority.region))
         .fallbackForLocale(Locale.fromString('de-CH-u-ca-japanese'));
     expect(iterator.moveNext(), true);
-    expect(iterator.current, Locale.fromString('de-CH-u-ca-japanese'));
-    expect(iterator.moveNext(), true);
     expect(iterator.current, Locale.fromString('de-CH'));
-    expect(iterator.moveNext(), true);
-    expect(iterator.current, Locale.fromString('und-CH-u-ca-japanese'));
     expect(iterator.moveNext(), true);
     expect(iterator.current, Locale.fromString('und-CH'));
     expect(iterator.moveNext(), false);

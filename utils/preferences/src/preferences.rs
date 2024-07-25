@@ -88,12 +88,13 @@ macro_rules! preferences {
             }
         }
 
+        #[allow(non_local_definitions)] // Locale is in a different crate
         impl From<$name> for icu_locale_core::Locale {
             fn from(input: $name) -> icu_locale_core::Locale {
-                let id = input.lid.clone().unwrap_or_default();
+                let id = input.lid.unwrap_or_default();
                 let mut extensions = icu_locale_core::extensions::Extensions::new();
                 $(
-                    if let Some(value) = &input.$key {
+                    if let Some(value) = input.$key {
                         if let Some(ue) = <$pref>::unicode_extension_key() {
                             let val = value.unicode_extension_value().unwrap();
                             extensions.unicode.keywords.set(ue, val);
@@ -107,6 +108,7 @@ macro_rules! preferences {
             }
         }
 
+        #[allow(non_local_definitions)] // Locale is in a different crate
         impl From<&$resolved_name> for icu_locale_core::Locale {
             fn from(_input: &$resolved_name) -> icu_locale_core::Locale {
                 todo!()

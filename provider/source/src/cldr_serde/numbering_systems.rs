@@ -9,7 +9,6 @@
 
 use serde::Deserialize;
 use std::collections::HashMap;
-use tinystr::TinyStr8;
 
 #[derive(PartialEq, Debug, Deserialize)]
 #[serde(rename_all = "lowercase")]
@@ -31,7 +30,7 @@ pub(crate) struct NumberingSystem {
 #[derive(PartialEq, Debug, Deserialize)]
 pub(crate) struct SupplementalData {
     #[serde(rename = "numberingSystems")]
-    pub(crate) numbering_systems: HashMap<TinyStr8, NumberingSystem>,
+    pub(crate) numbering_systems: HashMap<String, NumberingSystem>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]

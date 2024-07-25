@@ -28,7 +28,7 @@ impl SourceDataProvider {
         let era_name_map = &self
             .cldr()?
             .dates("japanese")
-            .read_and_parse::<cldr_serde::ca::Resource>(&langid!("en"), "ca-japanese.json")?
+            .read_and_parse::<cldr_serde::ca::Resource>(&langid!("en").into(), "ca-japanese.json")?
             .main
             .value
             .dates

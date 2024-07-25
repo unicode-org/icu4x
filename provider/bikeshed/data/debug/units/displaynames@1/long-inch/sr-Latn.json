@@ -1,7 +1,0 @@
-{
-  "patterns": {
-    "One": "{0} inč",
-    "Few": "{0} inča",
-    "Other": "{0} inča"
-  }
-}

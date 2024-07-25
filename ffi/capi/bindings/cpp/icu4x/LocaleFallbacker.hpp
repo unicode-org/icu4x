@@ -14,7 +14,6 @@
 #include "DataProvider.hpp"
 #include "LocaleFallbackConfig.hpp"
 #include "LocaleFallbackerWithConfig.hpp"
-#include "LocaleParseError.hpp"
 
 
 namespace icu4x {
@@ -26,8 +25,7 @@ namespace capi {
     
     icu4x::capi::LocaleFallbacker* icu4x_LocaleFallbacker_without_data_mv1(void);
     
-    typedef struct icu4x_LocaleFallbacker_for_config_mv1_result {union {icu4x::capi::LocaleFallbackerWithConfig* ok; icu4x::capi::LocaleParseError err;}; bool is_ok;} icu4x_LocaleFallbacker_for_config_mv1_result;
-    icu4x_LocaleFallbacker_for_config_mv1_result icu4x_LocaleFallbacker_for_config_mv1(const icu4x::capi::LocaleFallbacker* self, icu4x::capi::LocaleFallbackConfig config);
+    icu4x::capi::LocaleFallbackerWithConfig* icu4x_LocaleFallbacker_for_config_mv1(const icu4x::capi::LocaleFallbacker* self, icu4x::capi::LocaleFallbackConfig config);
     
     
     void icu4x_LocaleFallbacker_destroy_mv1(LocaleFallbacker* self);
@@ -46,10 +44,10 @@ inline std::unique_ptr<icu4x::LocaleFallbacker> icu4x::LocaleFallbacker::without
   return std::unique_ptr<icu4x::LocaleFallbacker>(icu4x::LocaleFallbacker::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::LocaleFallbackerWithConfig>, icu4x::LocaleParseError> icu4x::LocaleFallbacker::for_config(icu4x::LocaleFallbackConfig config) const {
+inline std::unique_ptr<icu4x::LocaleFallbackerWithConfig> icu4x::LocaleFallbacker::for_config(icu4x::LocaleFallbackConfig config) const {
   auto result = icu4x::capi::icu4x_LocaleFallbacker_for_config_mv1(this->AsFFI(),
     config.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::LocaleFallbackerWithConfig>, icu4x::LocaleParseError>(diplomat::Ok<std::unique_ptr<icu4x::LocaleFallbackerWithConfig>>(std::unique_ptr<icu4x::LocaleFallbackerWithConfig>(icu4x::LocaleFallbackerWithConfig::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::LocaleFallbackerWithConfig>, icu4x::LocaleParseError>(diplomat::Err<icu4x::LocaleParseError>(icu4x::LocaleParseError::FromFFI(result.err)));
+  return std::unique_ptr<icu4x::LocaleFallbackerWithConfig>(icu4x::LocaleFallbackerWithConfig::FromFFI(result));
 }
 
 inline const icu4x::capi::LocaleFallbacker* icu4x::LocaleFallbacker::AsFFI() const {

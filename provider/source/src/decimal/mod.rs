@@ -6,12 +6,7 @@ use std::collections::HashSet;
 
 use crate::cldr_serde;
 use crate::SourceDataProvider;
-use icu::locale::extensions::unicode::key;
-use icu::locale::extensions::unicode::Value;
-use icu::locale::subtags::Subtag;
-use icu::locale::LanguageIdentifier;
 use icu_provider::prelude::*;
-use tinystr::TinyAsciiStr;
 
 #[cfg(feature = "experimental")]
 mod compact;
@@ -22,7 +17,7 @@ mod symbols;
 
 impl SourceDataProvider {
     /// Returns the digits for the given numbering system name.
-    fn get_digits_for_numbering_system(&self, nsname: Subtag) -> Result<[char; 10], DataError> {
+    fn get_digits_for_numbering_system(&self, nsname: &str) -> Result<[char; 10], DataError> {
         let resource: &cldr_serde::numbering_systems::Resource = self
             .cldr()?
             .core()
@@ -44,27 +39,23 @@ impl SourceDataProvider {
             ])
         }
 
-        match resource
-            .supplemental
-            .numbering_systems
-            .get(&nsname.as_tinystr())
-        {
+        match resource.supplemental.numbering_systems.get(nsname) {
             Some(ns) => ns.digits.as_deref().and_then(digits_str_to_chars),
             None => None,
         }
         .ok_or_else(|| {
-            DataError::custom("Could not process numbering system").with_display_context(&nsname)
+            DataError::custom("Could not process numbering system").with_display_context(nsname)
         })
     }
 
     fn get_supported_numsys_for_langid_without_default(
         &self,
-        langid: &LanguageIdentifier,
-    ) -> Result<Vec<TinyAsciiStr<8>>, DataError> {
+        locale: &DataLocale,
+    ) -> Result<Vec<Box<DataMarkerAttributes>>, DataError> {
         let resource: &cldr_serde::numbers::Resource = self
             .cldr()?
             .numbers()
-            .read_and_parse(langid, "numbers.json")?;
+            .read_and_parse(locale, "numbers.json")?;
 
         let numbers = &resource.main.value.numbers;
 
@@ -73,7 +64,7 @@ impl SourceDataProvider {
             .symbols
             .keys()
             .filter(|nsname| **nsname != numbers.default_numbering_system)
-            .copied()
+            .filter_map(|nsname| Some(DataMarkerAttributes::try_from_str(nsname).ok()?.to_owned()))
             .collect())
     }
 
@@ -81,24 +72,22 @@ impl SourceDataProvider {
         Ok(self
             .cldr()?
             .numbers()
-            .list_langs()?
-            .flat_map(|langid| {
-                let last = DataLocale::from(&langid);
-                self.get_supported_numsys_for_langid_without_default(&langid)
-                    .expect("All languages from list_langs should be present")
+            .list_locales()?
+            .flat_map(|locale| {
+                let data_locale = locale.clone();
+                let last = data_locale.clone();
+                self.get_supported_numsys_for_langid_without_default(&locale)
+                    .expect("All languages from list_locales should be present")
                     .into_iter()
                     .map(move |nsname| {
-                        let mut data_locale = DataLocale::from(&langid);
-                        data_locale.set_unicode_ext(
-                            key!("nu"),
-                            Value::try_from_str(&nsname)
-                                .expect("CLDR should have valid numbering system names"),
-                        );
-                        data_locale
+                        DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                            DataMarkerAttributes::try_from_str(&nsname).unwrap(),
+                            &data_locale,
+                        )
+                        .into_owned()
                     })
-                    .chain([last])
+                    .chain([DataIdentifierCow::from_locale(last)])
             })
-            .map(DataIdentifierCow::from_locale)
             .collect())
     }
 }

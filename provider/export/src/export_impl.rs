@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{DeduplicationStrategy, ExportDriver, LocaleFamilyAnnotations};
-use icu_locale::extensions::unicode::key;
 use icu_locale::fallback::LocaleFallbackIterator;
 use icu_locale::LanguageIdentifier;
 use icu_locale::LocaleFallbacker;
@@ -311,18 +310,12 @@ fn select_locales_for_marker<'a>(
     } else if marker.path.as_str().starts_with("collator/") {
         supported_map.retain(|_, ids| {
             ids.retain(|id| {
-                let Some(collation) = id
-                    .locale
-                    .get_unicode_ext(&key!("co"))
-                    .and_then(|co| co.into_single_subtag())
-                else {
-                    return true;
-                };
-                additional_collations.contains(collation.as_str())
-                    || if collation.as_str().starts_with("search") {
+                id.marker_attributes.is_empty()
+                    || additional_collations.contains(id.marker_attributes.as_str())
+                    || if id.marker_attributes.as_str().starts_with("search") {
                         additional_collations.contains("search*")
                     } else {
-                        !["big5han", "gb2312"].contains(&collation.as_str())
+                        !["big5han", "gb2312"].contains(&id.marker_attributes.as_str())
                     }
             });
             !ids.is_empty()
@@ -546,23 +539,28 @@ fn test_collation_filtering() {
         fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
             Ok(BTreeSet::from_iter(
                 [
-                    locale!("ko-u-co-search"),
-                    locale!("ko-u-co-searchjl"),
-                    locale!("ko-u-co-unihan"),
-                    locale!("ko"),
-                    locale!("und-u-co-emoji"),
-                    locale!("und-u-co-eor"),
-                    locale!("und-u-co-search"),
-                    locale!("und"),
-                    locale!("zh-u-co-big5han"),
-                    locale!("zh-u-co-gb2312"),
-                    locale!("zh-u-co-stroke"),
-                    locale!("zh-u-co-unihan"),
-                    locale!("zh-u-co-zhuyin"),
-                    locale!("zh"),
+                    (locale!("ko"), "search"),
+                    (locale!("ko"), "searchjl"),
+                    (locale!("ko"), "unihan"),
+                    (locale!("ko"), ""),
+                    (locale!("und"), "emoji"),
+                    (locale!("und"), "eor"),
+                    (locale!("und"), "search"),
+                    (locale!("und"), ""),
+                    (locale!("zh"), "big5han"),
+                    (locale!("zh"), "gb2312"),
+                    (locale!("zh"), "stroke"),
+                    (locale!("zh"), "unihan"),
+                    (locale!("zh"), "zhuyin"),
+                    (locale!("zh"), ""),
                 ]
                 .into_iter()
-                .map(|l| DataIdentifierCow::from_locale(l.into())),
+                .map(|(l, a)| {
+                    DataIdentifierCow::from_borrowed_and_owned(
+                        DataMarkerAttributes::from_str_or_panic(a),
+                        l.into(),
+                    )
+                }),
             ))
         }
     }
@@ -582,70 +580,52 @@ fn test_collation_filtering() {
         TestCase {
             include_collations: &[],
             language: langid!("zh"),
-            expected: &["zh", "zh-u-co-stroke", "zh-u-co-unihan", "zh-u-co-zhuyin"],
+            expected: &["", "stroke", "unihan", "zhuyin"],
         },
         TestCase {
             include_collations: &["gb2312"],
             language: langid!("zh"),
-            expected: &[
-                "zh",
-                "zh-u-co-gb2312",
-                "zh-u-co-stroke",
-                "zh-u-co-unihan",
-                "zh-u-co-zhuyin",
-            ],
+            expected: &["", "gb2312", "stroke", "unihan", "zhuyin"],
         },
         TestCase {
             include_collations: &["big5han"],
             language: langid!("zh"),
-            expected: &[
-                "zh",
-                "zh-u-co-big5han",
-                "zh-u-co-stroke",
-                "zh-u-co-unihan",
-                "zh-u-co-zhuyin",
-            ],
+            expected: &["", "big5han", "stroke", "unihan", "zhuyin"],
         },
         TestCase {
             include_collations: &["gb2312", "search*"],
             language: langid!("zh"),
-            expected: &[
-                "zh",
-                "zh-u-co-gb2312",
-                "zh-u-co-stroke",
-                "zh-u-co-unihan",
-                "zh-u-co-zhuyin",
-            ],
+            expected: &["", "gb2312", "stroke", "unihan", "zhuyin"],
         },
         TestCase {
             include_collations: &[],
             language: langid!("ko"),
-            expected: &["ko", "ko-u-co-unihan"],
+            expected: &["", "unihan"],
         },
         TestCase {
             include_collations: &["search"],
             language: langid!("ko"),
-            expected: &["ko", "ko-u-co-search", "ko-u-co-unihan"],
+            expected: &["", "search", "unihan"],
         },
         TestCase {
             include_collations: &["searchjl"],
             language: langid!("ko"),
-            expected: &["ko", "ko-u-co-searchjl", "ko-u-co-unihan"],
+            expected: &["", "searchjl", "unihan"],
         },
         TestCase {
             include_collations: &["search", "searchjl"],
             language: langid!("ko"),
-            expected: &["ko", "ko-u-co-search", "ko-u-co-searchjl", "ko-u-co-unihan"],
+            expected: &["", "search", "searchjl", "unihan"],
         },
         TestCase {
             include_collations: &["search*", "big5han"],
             language: langid!("ko"),
-            expected: &["ko", "ko-u-co-search", "ko-u-co-searchjl", "ko-u-co-unihan"],
+            expected: &["", "search", "searchjl", "unihan"],
         },
         TestCase {
             include_collations: &[],
             language: langid!("und"),
-            expected: &["und", "und-u-co-emoji", "und-u-co-eor"],
+            expected: &["", "emoji", "eor"],
         },
     ];
     for cas in cases {
@@ -662,7 +642,7 @@ fn test_collation_filtering() {
         )
         .unwrap()
         .into_iter()
-        .map(|id| id.locale.to_string())
+        .map(|id| id.marker_attributes.to_string())
         .collect::<BTreeSet<_>>();
         let expected_locales = cas
             .expected

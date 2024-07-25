@@ -14,7 +14,6 @@
 typedef enum LocaleFallbackPriority {
   LocaleFallbackPriority_Language = 0,
   LocaleFallbackPriority_Region = 1,
-  LocaleFallbackPriority_Collation = 2,
 } LocaleFallbackPriority;
 
 

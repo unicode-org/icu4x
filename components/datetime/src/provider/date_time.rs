@@ -345,28 +345,27 @@ where
     fn skeleton_data_payload(
         &self,
     ) -> Result<DataPayload<DateSkeletonPatternsV1Marker>, DataError> {
-        use icu_locale_core::{
-            extensions::unicode::{key, value},
-            subtags::subtag,
-        };
-        let mut locale = self.locale.clone();
-        #[allow(clippy::expect_used)] // experimental
+        #![allow(clippy::expect_used)] // experimental
+        use icu_locale_core::{extensions::unicode::value, subtags::subtag};
         let cal_val = self.cal_val.expect("should be present for components bag");
         // Skeleton data for ethioaa is stored under ethiopic
-        if cal_val == &value!("ethioaa") {
-            locale.set_unicode_ext(key!("ca"), value!("ethiopic"));
+        let cal = if cal_val == &value!("ethioaa") {
+            "ethiopic"
         } else if cal_val == &value!("islamicc")
             || cal_val.get_subtag(0) == Some(&subtag!("islamic"))
         {
             // All islamic calendars store skeleton data under islamic, not their individual extension keys
-            locale.set_unicode_ext(key!("ca"), value!("islamic"));
+            "islamic"
         } else {
-            locale.set_unicode_ext(key!("ca"), cal_val.clone());
+            cal_val.as_single_subtag().expect("single").as_str()
         };
 
         self.data_provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&locale),
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::from_str_or_panic(cal),
+                    self.locale,
+                ),
                 ..Default::default()
             })
             .map(|r| r.payload)

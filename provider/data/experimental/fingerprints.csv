@@ -1,16 +1,28 @@
-compactdecimal/long@1, <lookup>, 625B, 124 identifiers
+compactdecimal/long@1, <lookup>, 1080B, 176 identifiers
 compactdecimal/long@1, <total>, 29092B, 120 unique payloads
 compactdecimal/long@1, af, 172B, e1003b8073e481ed
 compactdecimal/long@1, am, 186B, 242602afcf658921
 compactdecimal/long@1, ar, 252B, 50509461eabaf845
+compactdecimal/long@1, ar-AE/arab, 252B, -> ar
+compactdecimal/long@1, ar-DZ/arab, 252B, -> ar
+compactdecimal/long@1, ar-EH/arab, 252B, -> ar
+compactdecimal/long@1, ar-LY/arab, 252B, -> ar
+compactdecimal/long@1, ar-MA/arab, 252B, -> ar
+compactdecimal/long@1, ar-TN/arab, 252B, -> ar
+compactdecimal/long@1, ar/latn, 252B, -> ar
 compactdecimal/long@1, as, 244B, 2c7d54adc1d5127d
+compactdecimal/long@1, as/latn, 244B, -> as
 compactdecimal/long@1, ast, 233B, a755b0922148e379
 compactdecimal/long@1, az, 167B, 5553ad94f9f1c152
 compactdecimal/long@1, be, 428B, c57b4afe07719674
 compactdecimal/long@1, bg, 375B, 4d74d692fa137bb1
+compactdecimal/long@1, bgc/latn, 144B, c10b79e54779e6bd
+compactdecimal/long@1, bho/latn, 144B, -> bgc/latn
 compactdecimal/long@1, bn, 202B, 46ea0d7831f8d129
+compactdecimal/long@1, bn/latn, 202B, -> bn
 compactdecimal/long@1, br, 295B, c29142b7f288a3c0
 compactdecimal/long@1, brx, 213B, 5143bed0aea8bf88
+compactdecimal/long@1, brx/deva, 213B, -> brx
 compactdecimal/long@1, bs, 241B, ed0310a27df7889c
 compactdecimal/long@1, bs-Cyrl, 170B, 4d4538b62ea2c27c
 compactdecimal/long@1, ca, 319B, e1b7a6daaaa37da9
@@ -19,6 +31,7 @@ compactdecimal/long@1, cs, 443B, 51ee27ce1099b836
 compactdecimal/long@1, cy, 326B, c7781f74f76ea168
 compactdecimal/long@1, da, 279B, 4620196bb31be93b
 compactdecimal/long@1, de, 281B, 7e5ac4efb16c824a
+compactdecimal/long@1, doi/deva, 144B, -> bgc/latn
 compactdecimal/long@1, dsb, 351B, b562bb69b9d794cb
 compactdecimal/long@1, el, 498B, de5c8224f485ae6c
 compactdecimal/long@1, en, 174B, 8960dbc4f50d6c69
@@ -28,7 +41,9 @@ compactdecimal/long@1, es-MX, 239B, -> es
 compactdecimal/long@1, et, 272B, 9f702a91e48bea98
 compactdecimal/long@1, eu, 134B, bf0da7bd27e9bd01
 compactdecimal/long@1, fa, 200B, b92aa343231f0131
+compactdecimal/long@1, fa/latn, 200B, -> fa
 compactdecimal/long@1, ff-Adlm, 268B, 48c4fd8aaeaafc28
+compactdecimal/long@1, ff-Adlm/latn, 268B, -> ff-Adlm
 compactdecimal/long@1, fi, 309B, 82c72d62f7bae57a
 compactdecimal/long@1, fil, 226B, 352fc2f242cceb18
 compactdecimal/long@1, fo, 286B, 97a86ff31547341b
@@ -39,9 +54,11 @@ compactdecimal/long@1, ga, 507B, 621128485cf97e10
 compactdecimal/long@1, gd, 326B, 721f735d5d6118f
 compactdecimal/long@1, gl, 202B, 7bea239375a03091
 compactdecimal/long@1, gu, 293B, 40ad8ae42cb4f77b
+compactdecimal/long@1, gu/gujr, 293B, -> gu
 compactdecimal/long@1, ha, 170B, d9c0e6abbe483021
 compactdecimal/long@1, he, 202B, f9fbedff9567e35
 compactdecimal/long@1, hi, 212B, cac4a0b0b77b56e3
+compactdecimal/long@1, hi/deva, 212B, -> hi
 compactdecimal/long@1, hr, 245B, 47f6db7c31d361fe
 compactdecimal/long@1, hsb, 354B, e71eed9569295bbb
 compactdecimal/long@1, hu, 171B, ae6824c745d67ba5
@@ -52,42 +69,64 @@ compactdecimal/long@1, is, 228B, 55e288999b951552
 compactdecimal/long@1, it, 309B, e8f47cfb8fd96d0b
 compactdecimal/long@1, ja, 152B, 77922aa8d4b6b2f
 compactdecimal/long@1, jv, 165B, d756ff1a04f59b64
+compactdecimal/long@1, jv/java, 165B, -> jv
 compactdecimal/long@1, ka, 228B, e2a6b1a5dbfa63dd
 compactdecimal/long@1, kea, 172B, 34bffff293baa819
 compactdecimal/long@1, kgp, 218B, 1aeab21fc342e8a9
 compactdecimal/long@1, kk, 196B, b216181239f13edb
 compactdecimal/long@1, km, 226B, 91bc1b3dac89192d
+compactdecimal/long@1, km/khmr, 226B, -> km
 compactdecimal/long@1, kn, 231B, c6a70fc38cf36507
+compactdecimal/long@1, kn/knda, 231B, -> kn
 compactdecimal/long@1, ko, 152B, ba6877213fb734f
 compactdecimal/long@1, kok, 210B, 604fdb3634f9cde3
+compactdecimal/long@1, kok/deva, 210B, -> kok
+compactdecimal/long@1, ks/latn, 144B, -> bgc/latn
+compactdecimal/long@1, kxv-Deva/deva, 144B, -> bgc/latn
+compactdecimal/long@1, kxv-Orya/orya, 144B, -> bgc/latn
+compactdecimal/long@1, kxv-Telu/telu, 144B, -> bgc/latn
 compactdecimal/long@1, ky, 196B, 6f70c2c0685417b3
 compactdecimal/long@1, lb, 286B, 6bd2760b05fbd998
 compactdecimal/long@1, lo, 218B, c78c9e2ec3d0172e
-compactdecimal/long@1, lo-u-nu-laoo, 206B, 6e23191a97047c56
+compactdecimal/long@1, lo/laoo, 206B, 6e23191a97047c56
 compactdecimal/long@1, lt, 378B, 9d5ee5af5a5dafff
 compactdecimal/long@1, lv, 425B, 86b916e2004d2c81
+compactdecimal/long@1, mai/deva, 144B, -> bgc/latn
 compactdecimal/long@1, mk, 280B, 54fb33af45d0e60f
 compactdecimal/long@1, ml, 232B, d43ae5d8f9824ccc
+compactdecimal/long@1, ml/mlym, 232B, -> ml
 compactdecimal/long@1, mn, 185B, 1df0d87d1643d0d4
+compactdecimal/long@1, mni/latn, 144B, -> bgc/latn
 compactdecimal/long@1, mr, 235B, 38be659ef79d0da2
+compactdecimal/long@1, mr/latn, 235B, -> mr
 compactdecimal/long@1, ms, 165B, 1c467194ae58cba0
 compactdecimal/long@1, my, 370B, d902f8feaf5dd559
+compactdecimal/long@1, my/latn, 370B, -> my
 compactdecimal/long@1, ne, 226B, 4aa839fa25159884
+compactdecimal/long@1, ne/latn, 226B, -> ne
 compactdecimal/long@1, nl, 172B, 97e25a85a4412b71
 compactdecimal/long@1, nn, 278B, 57f73c5c241730bf
 compactdecimal/long@1, no, 278B, df4348c70fd5fe21
+compactdecimal/long@1, nqo/latn, 144B, -> bgc/latn
 compactdecimal/long@1, or, 213B, a53bd5c2006fb7ba
+compactdecimal/long@1, or/orya, 213B, -> or
 compactdecimal/long@1, pa, 229B, 204130efccc796d1
+compactdecimal/long@1, pa/guru, 229B, -> pa
 compactdecimal/long@1, pcm, 179B, 2fad9a468ee7c15e
 compactdecimal/long@1, pl, 338B, c12a721c39fd4a4c
 compactdecimal/long@1, ps, 159B, a62f1858d90067ee
+compactdecimal/long@1, ps/latn, 159B, -> ps
 compactdecimal/long@1, pt, 212B, 1b5038d66803ff3c
 compactdecimal/long@1, pt-PT, 239B, e1499ed8d1e625fd
+compactdecimal/long@1, raj/latn, 144B, -> bgc/latn
 compactdecimal/long@1, ro, 283B, dd3196e90f970772
 compactdecimal/long@1, ru, 382B, 2644d0d716d625bf
+compactdecimal/long@1, sa/latn, 144B, -> bgc/latn
 compactdecimal/long@1, sah, 208B, 6db152fda75510cb
+compactdecimal/long@1, sat/latn, 144B, -> bgc/latn
 compactdecimal/long@1, sc, 256B, 8585bc0821b40f59
 compactdecimal/long@1, sd, 230B, d3954d8da98194d
+compactdecimal/long@1, sd/latn, 230B, -> sd
 compactdecimal/long@1, si, 216B, ecba5d6018ed6862
 compactdecimal/long@1, sk, 457B, b45a7f13556cdc50
 compactdecimal/long@1, sl, 364B, 79836a1811481277
@@ -98,20 +137,27 @@ compactdecimal/long@1, sr-Latn, 241B, -> bs
 compactdecimal/long@1, sv, 269B, 2d1b7a676abb5208
 compactdecimal/long@1, sw, 170B, e45ebe05bc3ec68e
 compactdecimal/long@1, ta, 249B, 468da4e2a7fb1f72
+compactdecimal/long@1, ta/tamldec, 249B, -> ta
 compactdecimal/long@1, te, 491B, 69162eaccd926b38
+compactdecimal/long@1, te/telu, 491B, -> te
 compactdecimal/long@1, tg, 200B, c1a4b3fa7b005bca
 compactdecimal/long@1, th, 326B, 8ff3eed84279d633
+compactdecimal/long@1, th/thai, 326B, -> th
 compactdecimal/long@1, ti, 189B, 3638ca5dd2004aeb
 compactdecimal/long@1, tk, 172B, f515074e682646e2
 compactdecimal/long@1, to, 198B, 17606a5d0605f562
 compactdecimal/long@1, tr, 166B, 1e89df8d39d4c4e0
 compactdecimal/long@1, ug, 192B, 1b5a21c0bbafa037
+compactdecimal/long@1, ug/arabext, 192B, -> ug
 compactdecimal/long@1, uk, 444B, b029a98d39c3c6c3
-compactdecimal/long@1, und, 144B, c10b79e54779e6bd
+compactdecimal/long@1, und, 144B, -> bgc/latn
 compactdecimal/long@1, ur, 216B, 75603442e325448a
+compactdecimal/long@1, ur-IN/latn, 216B, -> ur
+compactdecimal/long@1, ur/arabext, 216B, -> ur
 compactdecimal/long@1, uz, 171B, 432e15a6828d45f
 compactdecimal/long@1, uz-Cyrl, 196B, bcfff207a2a0f78c
 compactdecimal/long@1, vi, 172B, 4862df41c3a1feed
+compactdecimal/long@1, xnr/deva, 144B, -> bgc/latn
 compactdecimal/long@1, yo, 199B, 828054281d5f3348
 compactdecimal/long@1, yo-BJ, 194B, 37a62bdd56cacc97
 compactdecimal/long@1, yrl, 223B, e658722f59c007ec
@@ -119,23 +165,41 @@ compactdecimal/long@1, yrl-CO, 223B, 3bd991332a6676d6
 compactdecimal/long@1, yrl-VE, 223B, -> yrl-CO
 compactdecimal/long@1, yue, 152B, 4d03e0202788e4fa
 compactdecimal/long@1, yue-Hans, 139B, 36bec91bc20243cf
+compactdecimal/long@1, yue-Hans/hanidec, 139B, -> yue-Hans
+compactdecimal/long@1, yue/hanidec, 152B, -> yue
 compactdecimal/long@1, zh, 142B, 7a0f620ebc0a4db3
 compactdecimal/long@1, zh-HK, 144B, f0a39a85493a674d
+compactdecimal/long@1, zh-HK/hanidec, 144B, -> zh-HK
 compactdecimal/long@1, zh-Hant, 139B, 4cc30ef25cc242b5
+compactdecimal/long@1, zh-Hant/hanidec, 139B, -> zh-Hant
 compactdecimal/long@1, zh-MO, 144B, -> zh-HK
+compactdecimal/long@1, zh-MO/hanidec, 144B, -> zh-HK
+compactdecimal/long@1, zh/hanidec, 142B, -> zh
 compactdecimal/long@1, zu, 192B, a69d7a35edc647da
-compactdecimal/short@1, <lookup>, 604B, 121 identifiers
+compactdecimal/short@1, <lookup>, 1056B, 173 identifiers
 compactdecimal/short@1, <total>, 17950B, 103 unique payloads
 compactdecimal/short@1, af, 155B, 925ee4821827d7f7
 compactdecimal/short@1, am, 160B, 729f952d5f7edd18
 compactdecimal/short@1, ar, 279B, 7890c55e96655fed
+compactdecimal/short@1, ar-AE/arab, 279B, -> ar
+compactdecimal/short@1, ar-DZ/arab, 279B, -> ar
+compactdecimal/short@1, ar-EH/arab, 279B, -> ar
+compactdecimal/short@1, ar-LY/arab, 279B, -> ar
+compactdecimal/short@1, ar-MA/arab, 279B, -> ar
+compactdecimal/short@1, ar-TN/arab, 279B, -> ar
+compactdecimal/short@1, ar/latn, 279B, -> ar
 compactdecimal/short@1, as, 277B, ccf97fd6f04b09b7
+compactdecimal/short@1, as/latn, 277B, -> as
 compactdecimal/short@1, az, 163B, a75d6a2d43a4350b
 compactdecimal/short@1, be, 177B, f5d31a311a092622
 compactdecimal/short@1, bg, 180B, cba49191dd5f8b29
+compactdecimal/short@1, bgc/latn, 144B, c10b79e54779e6bd
+compactdecimal/short@1, bho/latn, 144B, -> bgc/latn
 compactdecimal/short@1, bn, 241B, 704cf63d66972fe7
+compactdecimal/short@1, bn/latn, 241B, -> bn
 compactdecimal/short@1, br, 159B, fb048d79e0f3dddc
 compactdecimal/short@1, brx, 164B, 117aa0e902ae7c60
+compactdecimal/short@1, brx/deva, 164B, -> brx
 compactdecimal/short@1, bs, 166B, b9601d620b3d8cd3
 compactdecimal/short@1, bs-Cyrl, 174B, 3aa5e9ac8303ef48
 compactdecimal/short@1, ca, 153B, 8b304d4fb66f19fd
@@ -144,6 +208,7 @@ compactdecimal/short@1, cs, 164B, d500ff442a8f0954
 compactdecimal/short@1, cy, 159B, -> chr
 compactdecimal/short@1, da, 161B, ef3918f954ccc007
 compactdecimal/short@1, de, 148B, 127835019c915b07
+compactdecimal/short@1, doi/deva, 144B, -> bgc/latn
 compactdecimal/short@1, dsb, 164B, 52b10ddb843443ba
 compactdecimal/short@1, el, 176B, 7971fb62e895f969
 compactdecimal/short@1, en, 144B, f0a39a85493a674d
@@ -155,7 +220,9 @@ compactdecimal/short@1, es-US, 157B, 5c79a9d4411ae939
 compactdecimal/short@1, et, 161B, cfc172cecd6cf77e
 compactdecimal/short@1, eu, 126B, af2fbcdeb0b161e0
 compactdecimal/short@1, fa, 196B, 2f9cef1de221f04
+compactdecimal/short@1, fa/latn, 196B, -> fa
 compactdecimal/short@1, ff-Adlm, 160B, aa6cbb4d86455174
+compactdecimal/short@1, ff-Adlm/latn, 160B, -> ff-Adlm
 compactdecimal/short@1, fi, 164B, 4d57ef9c3fa44f1d
 compactdecimal/short@1, fil, 159B, -> chr
 compactdecimal/short@1, fo, 167B, 9fd5beb909c40e60
@@ -166,9 +233,11 @@ compactdecimal/short@1, ga, 154B, 5965445760f058d8
 compactdecimal/short@1, gd, 159B, -> chr
 compactdecimal/short@1, gl, 126B, -> eu
 compactdecimal/short@1, gu, 301B, 4b8379cb2bcb71fe
+compactdecimal/short@1, gu/gujr, 301B, -> gu
 compactdecimal/short@1, ha, 154B, e340e15c9c3fd32e
 compactdecimal/short@1, he, 156B, d24af224a60a63b8
 compactdecimal/short@1, hi, 223B, f3e07e1b0cae84ed
+compactdecimal/short@1, hi/deva, 223B, -> hi
 compactdecimal/short@1, hr, 164B, c97ce6f3726a42cc
 compactdecimal/short@1, hsb, 164B, -> dsb
 compactdecimal/short@1, hu, 154B, 9e2e3e7de47a147
@@ -179,41 +248,63 @@ compactdecimal/short@1, is, 158B, 350dcc8ccba795c4
 compactdecimal/short@1, it, 145B, 5663c0b25a64ed0b
 compactdecimal/short@1, ja, 152B, 77922aa8d4b6b2f
 compactdecimal/short@1, jv, 145B, b2e5cc89b4fe5f33
+compactdecimal/short@1, jv/java, 145B, -> jv
 compactdecimal/short@1, ka, 210B, 546f6c881aa16564
 compactdecimal/short@1, kea, 156B, f8137efb28db45a6
 compactdecimal/short@1, kgp, 158B, 6a9a7b6b17a2624f
 compactdecimal/short@1, kk, 191B, e27cedc2853db583
 compactdecimal/short@1, km, 230B, 2ca6775421a826b5
+compactdecimal/short@1, km/khmr, 230B, -> km
 compactdecimal/short@1, kn, 170B, 66c6f3024d6187e0
+compactdecimal/short@1, kn/knda, 170B, -> kn
 compactdecimal/short@1, ko, 152B, ba6877213fb734f
 compactdecimal/short@1, kok, 144B, -> en
+compactdecimal/short@1, kok/deva, 144B, -> en
+compactdecimal/short@1, ks/latn, 144B, -> bgc/latn
+compactdecimal/short@1, kxv-Deva/deva, 144B, -> bgc/latn
+compactdecimal/short@1, kxv-Orya/orya, 144B, -> bgc/latn
+compactdecimal/short@1, kxv-Telu/telu, 144B, -> bgc/latn
 compactdecimal/short@1, ky, 174B, b3a21a2e6139e41b
 compactdecimal/short@1, lb, 164B, c4e9d9f732ecfc89
 compactdecimal/short@1, lo, 239B, b49ef86a210c3775
-compactdecimal/short@1, lo-u-nu-laoo, 188B, 7eb8bebae835a451
+compactdecimal/short@1, lo/laoo, 188B, 7eb8bebae835a451
 compactdecimal/short@1, lt, 169B, d2f2bab14bc4d6
 compactdecimal/short@1, lv, 172B, b3c86628269e972
+compactdecimal/short@1, mai/deva, 144B, -> bgc/latn
 compactdecimal/short@1, mk, 221B, dd0ab8a6fc50397f
 compactdecimal/short@1, ml, 159B, -> chr
+compactdecimal/short@1, ml/mlym, 159B, -> chr
 compactdecimal/short@1, mn, 190B, fe67734f1dd48429
+compactdecimal/short@1, mni/latn, 144B, -> bgc/latn
 compactdecimal/short@1, mr, 232B, 68f8f84f4b1b1205
+compactdecimal/short@1, mr/latn, 232B, -> mr
 compactdecimal/short@1, ms, 144B, 85783660df02527b
 compactdecimal/short@1, my, 384B, 7992ba4c80a64a63
+compactdecimal/short@1, my/latn, 384B, -> my
 compactdecimal/short@1, ne, 232B, ad067d9cb11670b2
+compactdecimal/short@1, ne/latn, 232B, -> ne
 compactdecimal/short@1, nl, 164B, -> fy
 compactdecimal/short@1, no, 161B, fbbd5eeb70046ceb
+compactdecimal/short@1, nqo/latn, 144B, -> bgc/latn
 compactdecimal/short@1, or, 167B, 8a338ba1bd8ada4c
+compactdecimal/short@1, or/orya, 167B, -> or
 compactdecimal/short@1, pa, 235B, a0e4c8705dbb3ed5
+compactdecimal/short@1, pa/guru, 235B, -> pa
 compactdecimal/short@1, pcm, 159B, -> chr
 compactdecimal/short@1, pl, 161B, 2993248c42baa353
 compactdecimal/short@1, ps, 176B, 4cf2e9831a3d2e36
+compactdecimal/short@1, ps/latn, 176B, -> ps
 compactdecimal/short@1, pt, 158B, -> kgp
 compactdecimal/short@1, pt-PT, 156B, 95e8de56ba888821
+compactdecimal/short@1, raj/latn, 144B, -> bgc/latn
 compactdecimal/short@1, ro, 162B, 5418c375601f6a3d
 compactdecimal/short@1, ru, 177B, -> be
+compactdecimal/short@1, sa/latn, 144B, -> bgc/latn
 compactdecimal/short@1, sah, 177B, 1887e1d60b227d35
+compactdecimal/short@1, sat/latn, 144B, -> bgc/latn
 compactdecimal/short@1, sc, 161B, ea6596bb04639e0a
 compactdecimal/short@1, sd, 182B, 84d07175181fde30
+compactdecimal/short@1, sd/latn, 182B, -> sd
 compactdecimal/short@1, si, 170B, 60e4a46f4ede0c85
 compactdecimal/short@1, sk, 164B, -> cs
 compactdecimal/short@1, sl, 164B, 76b70ca5d968d966
@@ -225,27 +316,40 @@ compactdecimal/short@1, sv, 156B, bdd9f61e8257e9bf
 compactdecimal/short@1, sw, 155B, 118bdee6cd2a9cd9
 compactdecimal/short@1, sw-KE, 149B, 431ddea7dbd12277
 compactdecimal/short@1, ta, 161B, 319bd64abb119ce5
+compactdecimal/short@1, ta/tamldec, 161B, -> ta
 compactdecimal/short@1, te, 170B, 813ee89251f7aac2
+compactdecimal/short@1, te/telu, 170B, -> te
 compactdecimal/short@1, tg, 180B, d87e0e91282622a3
 compactdecimal/short@1, th, 144B, -> en
+compactdecimal/short@1, th/thai, 144B, -> en
 compactdecimal/short@1, ti, 160B, 39126f916c1de42b
 compactdecimal/short@1, tk, 164B, 2f68c05f908fcd00
 compactdecimal/short@1, to, 166B, 3cb459b506d961a
 compactdecimal/short@1, tr, 155B, 38574745ff1e12e3
 compactdecimal/short@1, ug, 178B, 994af91906837452
+compactdecimal/short@1, ug/arabext, 178B, -> ug
 compactdecimal/short@1, uk, 177B, 7f4980603d5bce4f
-compactdecimal/short@1, und, 144B, c10b79e54779e6bd
+compactdecimal/short@1, und, 144B, -> bgc/latn
 compactdecimal/short@1, ur, 222B, a9f888769c64dd2e
+compactdecimal/short@1, ur-IN/latn, 222B, -> ur
+compactdecimal/short@1, ur/arabext, 222B, -> ur
 compactdecimal/short@1, uz, 163B, b3805a1429c937cb
 compactdecimal/short@1, uz-Cyrl, 170B, 99ea5a839e16b711
 compactdecimal/short@1, vi, 154B, 7c652bb6b75ae51
+compactdecimal/short@1, xnr/deva, 144B, -> bgc/latn
 compactdecimal/short@1, yrl, 159B, ca66fcb9f548af67
 compactdecimal/short@1, yue, 152B, 4d03e0202788e4fa
 compactdecimal/short@1, yue-Hans, 139B, 36bec91bc20243cf
+compactdecimal/short@1, yue-Hans/hanidec, 139B, -> yue-Hans
+compactdecimal/short@1, yue/hanidec, 152B, -> yue
 compactdecimal/short@1, zh, 142B, 7a0f620ebc0a4db3
 compactdecimal/short@1, zh-HK, 144B, -> en
+compactdecimal/short@1, zh-HK/hanidec, 144B, -> en
 compactdecimal/short@1, zh-Hant, 139B, 4cc30ef25cc242b5
+compactdecimal/short@1, zh-Hant/hanidec, 139B, -> zh-Hant
 compactdecimal/short@1, zh-MO, 144B, -> en
+compactdecimal/short@1, zh-MO/hanidec, 144B, -> en
+compactdecimal/short@1, zh/hanidec, 142B, -> zh
 compactdecimal/short@1, zu, 159B, -> chr
 currency/essentials@1, <lookup>, 1673B, 335 identifiers
 currency/essentials@1, <total>, 340710B, 295 unique payloads
