@@ -6,8 +6,8 @@ use crate::format::neo::FieldForDataLoading;
 use crate::input::ExtractedDateTimeInput;
 use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::{
-    NeoComponents, NeoDateComponents, NeoDateSkeleton, NeoDateTimeComponents, NeoSkeletonLength,
-    NeoTimeComponents, NeoTimeSkeleton, NeoTimeZoneSkeleton,
+    NeoComponents, NeoDateComponents, NeoDateSkeleton, NeoSkeletonLength, NeoTimeComponents,
+    NeoTimeSkeleton, NeoTimeZoneSkeleton,
 };
 use crate::pattern::runtime::PatternMetadata;
 use crate::pattern::{runtime, GenericPatternItem, PatternItem};
@@ -306,10 +306,7 @@ impl DateTimeZonePatternSelectionData {
                 let glue = Self::load_glue(glue_provider, locale, length, GlueType::DateTime)?;
                 Ok(Self::DateTimeGlue { date, time, glue })
             }
-            NeoComponents::DateTimeZone(
-                NeoDateTimeComponents::Date(date_components),
-                zone_components,
-            ) => {
+            NeoComponents::DateZone(date_components, zone_components) => {
                 let date = DatePatternSelectionData::try_new_with_skeleton(
                     date_provider,
                     locale,
@@ -320,10 +317,7 @@ impl DateTimeZonePatternSelectionData {
                 let glue = Self::load_glue(glue_provider, locale, length, GlueType::DateZone)?;
                 Ok(Self::DateZoneGlue { date, zone, glue })
             }
-            NeoComponents::DateTimeZone(
-                NeoDateTimeComponents::Time(time_components),
-                zone_components,
-            ) => {
+            NeoComponents::TimeZone(time_components, zone_components) => {
                 let time = TimePatternSelectionData::try_new_with_skeleton(
                     time_provider,
                     locale,
@@ -334,10 +328,7 @@ impl DateTimeZonePatternSelectionData {
                 let glue = Self::load_glue(glue_provider, locale, length, GlueType::TimeZone)?;
                 Ok(Self::TimeZoneGlue { time, zone, glue })
             }
-            NeoComponents::DateTimeZone(
-                NeoDateTimeComponents::DateTime(day_components, time_components),
-                zone_components,
-            ) => {
+            NeoComponents::DateTimeZone(day_components, time_components, zone_components) => {
                 let date = DatePatternSelectionData::try_new_with_skeleton(
                     date_provider,
                     locale,
