@@ -588,7 +588,7 @@ pub struct SkeletonDataIndex {
     pub has_eras: bool,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub(crate) struct PatternSelectionOptions {
     pub(crate) length: NeoSkeletonLength,
     pub(crate) should_display_era: Option<bool>,
@@ -615,12 +615,7 @@ impl SkeletonDataIndex {
             Some(false) => 0,
             Some(true) | None => 1,
         };
-        let chunk_size = match (self.has_long, self.has_medium) {
-            (true, true) => 3,
-            (true, false) => 2,
-            (false, true) => 2,
-            (false, false) => 1,
-        };
+        let chunk_size = 2;
         offset + chunk_number * chunk_size
     }
 }
