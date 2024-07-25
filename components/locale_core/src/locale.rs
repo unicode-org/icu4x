@@ -247,8 +247,8 @@ impl Locale {
 
     /// Returns an ordering suitable for use in [`BTreeSet`].
     ///
-    /// The ordering may or may not be equivalent to string ordering, and it
-    /// may or may not be stable across ICU4X releases.
+    /// Unlike [`Locale::strict_cmp`], the ordering may or may not be equivalent
+    /// to string ordering, and it may or may not be stable across ICU4X releases.
     ///
     /// # Examples
     ///

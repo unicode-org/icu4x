@@ -243,7 +243,8 @@ impl LanguageIdentifier {
     /// Compare this [`LanguageIdentifier`] with another [`LanguageIdentifier`] field-by-field.
     /// The result is a total ordering sufficient for use in a [`BTreeSet`].
     ///
-    /// Unlike [`Self::strict_cmp`], this function's ordering may not equal string ordering.
+    /// Unlike [`LanguageIdentifier::strict_cmp`], the ordering may or may not be equivalent
+    /// to string ordering, and it may or may not be stable across ICU4X releases.
     ///
     /// # Examples
     ///
