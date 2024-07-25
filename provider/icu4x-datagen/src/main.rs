@@ -450,10 +450,10 @@ fn main() -> eyre::Result<()> {
     };
 
     let locale_families = match preprocessed_locales {
-        Some(PreprocessedLocales::Full) => vec![LocaleFamily::FULL],
+        Some(PreprocessedLocales::Full) => vec![DataLocaleFamily::FULL],
         Some(PreprocessedLocales::Locales(locales)) => locales
             .into_iter()
-            .map(LocaleFamily::with_descendants)
+            .map(DataLocaleFamily::with_descendants)
             .collect(),
         None => cli
             .locales

@@ -85,7 +85,7 @@ fn main() {
             ])
             .unwrap()
             .into_iter()
-            .map(LocaleFamily::with_descendants),
+            .map(DataLocaleFamily::with_descendants),
         DeduplicationStrategy::Maximal.into(),
         LocaleFallbacker::try_new_unstable(&source).unwrap(),
     )

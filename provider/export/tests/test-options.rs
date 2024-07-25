@@ -88,8 +88,8 @@ make_exportable_provider!(TestingProvider, [HelloWorldV1Marker,]);
 
 fn families(
     langids: impl IntoIterator<Item = LanguageIdentifier>,
-) -> impl IntoIterator<Item = LocaleFamily> {
-    langids.into_iter().map(Into::into).map(LocaleFamily::with_descendants)
+) -> impl IntoIterator<Item = DataLocaleFamily> {
+    langids.into_iter().map(Into::into).map(DataLocaleFamily::with_descendants)
 }
 
 fn export_to_map(driver: ExportDriver, provider: &TestingProvider) -> BTreeMap<String, Vec<u8>> {
@@ -108,7 +108,7 @@ fn export_to_map(driver: ExportDriver, provider: &TestingProvider) -> BTreeMap<S
 fn all_preferred() {
     let exported = export_to_map(
         ExportDriver::new(
-            [LocaleFamily::FULL],
+            [DataLocaleFamily::FULL],
             DeduplicationStrategy::None.into(),
             LocaleFallbacker::new().static_to_owned(),
         ),
@@ -151,7 +151,7 @@ fn all_preferred() {
 fn all_hybrid() {
     let exported = export_to_map(
         ExportDriver::new(
-            [LocaleFamily::FULL],
+            [DataLocaleFamily::FULL],
             DeduplicationStrategy::None.into(),
             LocaleFallbacker::new().static_to_owned(),
         ),
@@ -194,7 +194,7 @@ fn all_hybrid() {
 fn all_runtime() {
     let exported = export_to_map(
         ExportDriver::new(
-            [LocaleFamily::FULL],
+            [DataLocaleFamily::FULL],
             DeduplicationStrategy::Maximal.into(),
             LocaleFallbacker::new().static_to_owned(),
         ),
@@ -236,7 +236,7 @@ fn all_runtime() {
 fn all_runtime_retain_base() {
     let exported = export_to_map(
         ExportDriver::new(
-            [LocaleFamily::FULL],
+            [DataLocaleFamily::FULL],
             DeduplicationStrategy::RetainBaseLanguages.into(),
             LocaleFallbacker::new().static_to_owned(),
         ),
@@ -473,7 +473,7 @@ fn explicit_preresolved() {
     ];
     let exported = export_to_map(
         ExportDriver::new(
-            SELECTED_LOCALES.into_iter().map(Into::into).map(LocaleFamily::single),
+            SELECTED_LOCALES.into_iter().map(Into::into).map(DataLocaleFamily::single),
             DeduplicationStrategy::None.into(),
             LocaleFallbacker::new().static_to_owned(),
         ),
@@ -500,13 +500,13 @@ fn explicit_preresolved() {
 #[test]
 fn explicit_hybrid_without_descendants() {
     let selected_locales = [
-        LocaleFamily::without_descendants(locale!("arc").into()), // Aramaic, not in supported list
-        LocaleFamily::without_descendants(locale!("ar-EG").into()),
-        LocaleFamily::without_descendants(locale!("ar-SA").into()),
-        LocaleFamily::without_descendants(locale!("en-GB").into()),
-        LocaleFamily::without_descendants(locale!("es").into()),
-        LocaleFamily::without_descendants(locale!("sr-ME").into()),
-        LocaleFamily::without_descendants(locale!("ru-Cyrl-RU").into()),
+        DataLocaleFamily::without_descendants(locale!("arc").into()), // Aramaic, not in supported list
+        DataLocaleFamily::without_descendants(locale!("ar-EG").into()),
+        DataLocaleFamily::without_descendants(locale!("ar-SA").into()),
+        DataLocaleFamily::without_descendants(locale!("en-GB").into()),
+        DataLocaleFamily::without_descendants(locale!("es").into()),
+        DataLocaleFamily::without_descendants(locale!("sr-ME").into()),
+        DataLocaleFamily::without_descendants(locale!("ru-Cyrl-RU").into()),
     ];
     let exported = export_to_map(
         ExportDriver::new(
@@ -547,13 +547,13 @@ fn explicit_hybrid_without_descendants() {
 #[test]
 fn explicit_hybrid_without_ancestors() {
     let selected_locales = [
-        LocaleFamily::without_ancestors(locale!("arc").into()), // Aramaic, not in supported list
-        LocaleFamily::without_ancestors(locale!("ar-EG").into()),
-        LocaleFamily::without_ancestors(locale!("ar-SA").into()),
-        LocaleFamily::without_ancestors(locale!("en-GB").into()),
-        LocaleFamily::without_ancestors(locale!("es").into()),
-        LocaleFamily::without_ancestors(locale!("sr-ME").into()),
-        LocaleFamily::without_ancestors(locale!("ru-Cyrl-RU").into()),
+        DataLocaleFamily::without_ancestors(locale!("arc").into()), // Aramaic, not in supported list
+        DataLocaleFamily::without_ancestors(locale!("ar-EG").into()),
+        DataLocaleFamily::without_ancestors(locale!("ar-SA").into()),
+        DataLocaleFamily::without_ancestors(locale!("en-GB").into()),
+        DataLocaleFamily::without_ancestors(locale!("es").into()),
+        DataLocaleFamily::without_ancestors(locale!("sr-ME").into()),
+        DataLocaleFamily::without_ancestors(locale!("ru-Cyrl-RU").into()),
     ];
     let exported = export_to_map(
         ExportDriver::new(
@@ -594,14 +594,14 @@ fn explicit_hybrid_without_ancestors() {
 #[test]
 fn explicit_hybrid_mixed_families() {
     let selected_locales = [
-        LocaleFamily::without_ancestors(locale!("arc").into()), // Aramaic, not in supported list
-        LocaleFamily::with_descendants(locale!("ar-EG").into()),
-        LocaleFamily::without_ancestors(locale!("ar-EG").into()), // duplicate entry for ar-EG
-        LocaleFamily::with_descendants(locale!("en").into()),
-        LocaleFamily::single(locale!("en").into()), // duplicate entry for en
-        LocaleFamily::without_ancestors(locale!("en-GB").into()),
-        LocaleFamily::without_descendants(locale!("es").into()),
-        LocaleFamily::with_descendants(locale!("es").into()), // duplicate entry for es
+        DataLocaleFamily::without_ancestors(locale!("arc").into()), // Aramaic, not in supported list
+        DataLocaleFamily::with_descendants(locale!("ar-EG").into()),
+        DataLocaleFamily::without_ancestors(locale!("ar-EG").into()), // duplicate entry for ar-EG
+        DataLocaleFamily::with_descendants(locale!("en").into()),
+        DataLocaleFamily::single(locale!("en").into()), // duplicate entry for en
+        DataLocaleFamily::without_ancestors(locale!("en-GB").into()),
+        DataLocaleFamily::without_descendants(locale!("es").into()),
+        DataLocaleFamily::with_descendants(locale!("es").into()), // duplicate entry for es
     ];
     let exported = export_to_map(
         ExportDriver::new(
@@ -642,7 +642,7 @@ fn explicit_hybrid_mixed_families() {
 fn explicit_runtime_und() {
     let exported = export_to_map(
         ExportDriver::new(
-            [LocaleFamily::with_descendants(Default::default())],
+            [DataLocaleFamily::with_descendants(Default::default())],
             DeduplicationStrategy::Maximal.into(),
             LocaleFallbacker::new().static_to_owned(),
         ),
@@ -660,7 +660,7 @@ fn explicit_runtime_und() {
 fn explicit_runtime_und_retain_base() {
     let exported = export_to_map(
         ExportDriver::new(
-            [LocaleFamily::with_descendants(Default::default())],
+            [DataLocaleFamily::with_descendants(Default::default())],
             DeduplicationStrategy::RetainBaseLanguages.into(),
             LocaleFallbacker::new().static_to_owned(),
         ),
@@ -678,7 +678,7 @@ fn explicit_runtime_und_retain_base() {
 fn explicit_hybrid_und() {
     let exported = export_to_map(
         ExportDriver::new(
-            [LocaleFamily::with_descendants(Default::default())],
+            [DataLocaleFamily::with_descendants(Default::default())],
             DeduplicationStrategy::None.into(),
             LocaleFallbacker::new().static_to_owned(),
         ),
@@ -696,7 +696,7 @@ fn explicit_hybrid_und() {
 fn explicit_preresolved_und() {
     let exported = export_to_map(
         ExportDriver::new(
-            [LocaleFamily::single(Default::default())],
+            [DataLocaleFamily::single(Default::default())],
             DeduplicationStrategy::None.into(),
             LocaleFallbacker::new().static_to_owned(),
         ),

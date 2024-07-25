@@ -11,12 +11,12 @@ use writeable::Writeable;
 
 /// A family of locales to export.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct LocaleFamily {
+pub struct DataLocaleFamily {
     pub(crate) locale: Option<DataLocale>,
-    pub(crate) annotations: LocaleFamilyAnnotations,
+    pub(crate) annotations: DataLocaleFamilyAnnotations,
 }
 
-impl LocaleFamily {
+impl DataLocaleFamily {
     /// The family containing all ancestors and descendants of the selected locale.
     ///
     /// This is the recommended family type since it reflects regional preferences.
@@ -32,9 +32,9 @@ impl LocaleFamily {
     /// The `und` locale is treated specially and behaves like `::single("und")`.
     pub fn with_descendants(locale: DataLocale) -> Self {
         let annotations = if locale.is_und() {
-            LocaleFamilyAnnotations::single()
+            DataLocaleFamilyAnnotations::single()
         } else {
-            LocaleFamilyAnnotations::with_descendants()
+            DataLocaleFamilyAnnotations::with_descendants()
         };
 
         Self {
@@ -58,9 +58,9 @@ impl LocaleFamily {
     /// The `und` locale is treated specially and behaves like `::single("und")`.
     pub fn without_descendants(locale: DataLocale) -> Self {
         let annotations = if locale.is_und() {
-            LocaleFamilyAnnotations::single()
+            DataLocaleFamilyAnnotations::single()
         } else {
-            LocaleFamilyAnnotations::without_descendants()
+            DataLocaleFamilyAnnotations::without_descendants()
         };
         Self {
             locale: Some(locale),
@@ -84,9 +84,9 @@ impl LocaleFamily {
     /// The `und` locale is treated specially and behaves like `::single("und")`.
     pub fn without_ancestors(locale: DataLocale) -> Self {
         let annotations = if locale.is_und() {
-            LocaleFamilyAnnotations::single()
+            DataLocaleFamilyAnnotations::single()
         } else {
-            LocaleFamilyAnnotations::without_ancestors()
+            DataLocaleFamilyAnnotations::without_ancestors()
         };
         Self {
             locale: Some(locale),
@@ -102,7 +102,7 @@ impl LocaleFamily {
     pub const fn single(locale: DataLocale) -> Self {
         Self {
             locale: Some(locale),
-            annotations: LocaleFamilyAnnotations::single(),
+            annotations: DataLocaleFamilyAnnotations::single(),
         }
     }
 
@@ -111,14 +111,14 @@ impl LocaleFamily {
     /// Stylized on the CLI as: "full"
     pub const FULL: Self = Self {
         locale: None,
-        annotations: LocaleFamilyAnnotations {
+        annotations: DataLocaleFamilyAnnotations {
             include_ancestors: false,
             include_descendants: true,
         },
     };
 }
 
-impl Writeable for LocaleFamily {
+impl Writeable for DataLocaleFamily {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
         if let Some(locale) = self.locale.as_ref() {
             self.annotations.write_to(sink)?;
@@ -137,16 +137,16 @@ impl Writeable for LocaleFamily {
     }
 }
 
-writeable::impl_display_with_writeable!(LocaleFamily);
+writeable::impl_display_with_writeable!(DataLocaleFamily);
 
 /// Inner fields of a [`LocaleFamily`].
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub(crate) struct LocaleFamilyAnnotations {
+pub(crate) struct DataLocaleFamilyAnnotations {
     pub(crate) include_ancestors: bool,
     pub(crate) include_descendants: bool,
 }
 
-impl LocaleFamilyAnnotations {
+impl DataLocaleFamilyAnnotations {
     #[inline]
     pub(crate) const fn with_descendants() -> Self {
         Self {
@@ -180,7 +180,7 @@ impl LocaleFamilyAnnotations {
     }
 }
 
-impl Writeable for LocaleFamilyAnnotations {
+impl Writeable for DataLocaleFamilyAnnotations {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
         match (self.include_ancestors, self.include_descendants) {
             (true, true) => Ok(()),
@@ -218,7 +218,7 @@ impl From<ParseError> for LocaleFamilyParseError {
 
 impl std::error::Error for LocaleFamilyParseError {}
 
-impl FromStr for LocaleFamily {
+impl FromStr for DataLocaleFamily {
     type Err = LocaleFamilyParseError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if s == "full" {
@@ -229,19 +229,19 @@ impl FromStr for LocaleFamily {
         match first {
             '^' => Ok(Self {
                 locale: Some(iter.as_str().parse()?),
-                annotations: LocaleFamilyAnnotations::without_descendants(),
+                annotations: DataLocaleFamilyAnnotations::without_descendants(),
             }),
             '%' => Ok(Self {
                 locale: Some(iter.as_str().parse()?),
-                annotations: LocaleFamilyAnnotations::without_ancestors(),
+                annotations: DataLocaleFamilyAnnotations::without_ancestors(),
             }),
             '@' => Ok(Self {
                 locale: Some(iter.as_str().parse()?),
-                annotations: LocaleFamilyAnnotations::single(),
+                annotations: DataLocaleFamilyAnnotations::single(),
             }),
             b if b.is_ascii_alphanumeric() => Ok(Self {
                 locale: Some(s.parse()?),
-                annotations: LocaleFamilyAnnotations::with_descendants(),
+                annotations: DataLocaleFamilyAnnotations::with_descendants(),
             }),
             _ => Err(LocaleFamilyParseError::InvalidFamily),
         }
@@ -253,11 +253,11 @@ fn test_locale_family_parsing() {
     let valid_families = ["und", "de-CH", "^es", "@pt-BR", "%en-001", "full"];
     let invalid_families = ["invalid", "@invalid", "-foo", "@full", "full-001"];
     for family_str in valid_families {
-        let family = family_str.parse::<LocaleFamily>().unwrap();
+        let family = family_str.parse::<DataLocaleFamily>().unwrap();
         let family_to_str = family.to_string();
         assert_eq!(family_str, family_to_str);
     }
     for family_str in invalid_families {
-        assert!(family_str.parse::<LocaleFamily>().is_err());
+        assert!(family_str.parse::<DataLocaleFamily>().is_err());
     }
 }

@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{DeduplicationStrategy, ExportDriver, LocaleFamilyAnnotations};
+use crate::{DeduplicationStrategy, ExportDriver, DataLocaleFamilyAnnotations};
 use icu_locale::fallback::LocaleFallbackIterator;
 use icu_locale::LocaleFallbacker;
 use icu_provider::export::*;
@@ -265,7 +265,7 @@ impl ExportDriver {
 fn select_locales_for_marker<'a>(
     provider: &'a dyn ExportableProvider,
     marker: DataMarkerInfo,
-    requested_families: &HashMap<DataLocale, LocaleFamilyAnnotations>,
+    requested_families: &HashMap<DataLocale, DataLocaleFamilyAnnotations>,
     include_full: bool,
     additional_collations: &HashSet<String>,
     segmenter_models: &[String],
@@ -622,7 +622,7 @@ fn test_collation_filtering() {
         let resolved_locales = select_locales_for_marker(
             &Provider,
             icu::collator::provider::CollationDataV1Marker::INFO,
-            &[(cas.language.clone(), LocaleFamilyAnnotations::single())]
+            &[(cas.language.clone(), DataLocaleFamilyAnnotations::single())]
                 .into_iter()
                 .collect(),
             false,
