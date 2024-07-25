@@ -27,7 +27,8 @@ use writeable::Writeable;
 /// `_` separators to `-` and adjusting casing to conform to the Unicode standard.
 ///
 /// Any bogus subtags will cause the parsing to fail with an error.
-/// No subtag validation is performed.
+///
+/// No subtag validation or alias resolution is performed; use `LocaleCanonicalizer`.
 ///
 /// # Ordering
 ///
