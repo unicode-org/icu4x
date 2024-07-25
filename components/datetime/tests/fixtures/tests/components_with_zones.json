@@ -147,10 +147,6 @@
                     "minute": "two-digit",
                     "second": "two-digit",
                     "time_zone_name": "gmt-offset"
-                },
-                "semantic": {
-                    "fieldSet": ["year", "weekOfYear", "hour", "minute", "second", "genericShortZone"],
-                    "length": "long"
                 }
             }
         },

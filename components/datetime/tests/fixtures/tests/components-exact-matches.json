@@ -658,10 +658,6 @@
                 "components": {
                     "month": "long",
                     "week": "week-of-month"
-                },
-                "semantic": {
-                    "fieldSet": ["month", "weekOfMonth"],
-                    "length": "long"
                 }
             }
         },

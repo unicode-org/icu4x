@@ -23,7 +23,7 @@ use icu_provider::DataMarkerAttributes;
 /// rather than to making the components wider than in `Long`.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "serde", serde(rename_all(serialize = "lowercase")))]
+#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
 #[repr(u8)] // discriminants come from symbol count in UTS 35
 #[non_exhaustive]
 pub enum NeoSkeletonLength {
