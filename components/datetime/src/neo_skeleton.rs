@@ -74,7 +74,9 @@ impl NeoSkeletonLength {
 }
 
 /// A specification for when to display the era when formatting a year.
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
 #[non_exhaustive]
 pub enum EraDisplay {
     /// Always display the era.
@@ -860,6 +862,8 @@ pub struct NeoDateSkeleton {
     pub length: NeoSkeletonLength,
     /// Date components of the skeleton.
     pub components: NeoDateComponents,
+    /// Era display option.
+    pub era_display: Option<EraDisplay>,
 }
 
 impl NeoDateSkeleton {
@@ -868,7 +872,11 @@ impl NeoDateSkeleton {
         length: NeoSkeletonLength,
         components: NeoDateComponents,
     ) -> Self {
-        Self { length, components }
+        Self {
+            length,
+            components,
+            era_display: None,
+        }
     }
 
     /// Converts a [`length::Date`] to a [`NeoDayComponents`] and [`NeoSkeletonLength`].
@@ -891,6 +899,7 @@ impl NeoDateSkeleton {
         NeoDateSkeleton {
             length,
             components: NeoDateComponents::Day(day_components),
+            era_display: None,
         }
     }
 
@@ -933,6 +942,8 @@ pub struct NeoDateTimeSkeleton {
     pub length: NeoSkeletonLength,
     /// Date and time components of the skeleton.
     pub components: NeoDateTimeComponents,
+    /// Era display option.
+    pub era_display: Option<EraDisplay>,
 }
 
 impl NeoDateTimeSkeleton {
@@ -945,6 +956,7 @@ impl NeoDateTimeSkeleton {
         Self {
             length,
             components: NeoDateTimeComponents::DateTime(date, time),
+            era_display: None,
         }
     }
 }
@@ -958,6 +970,8 @@ pub struct NeoSkeleton {
     pub length: NeoSkeletonLength,
     /// Components of the skeleton.
     pub components: NeoComponents,
+    /// Era display option.
+    pub era_display: Option<EraDisplay>,
 }
 
 impl From<NeoDateSkeleton> for NeoSkeleton {
@@ -965,6 +979,7 @@ impl From<NeoDateSkeleton> for NeoSkeleton {
         NeoSkeleton {
             length: value.length,
             components: value.components.into(),
+            era_display: value.era_display,
         }
     }
 }
@@ -974,6 +989,7 @@ impl From<NeoTimeSkeleton> for NeoSkeleton {
         NeoSkeleton {
             length: value.length,
             components: value.components.into(),
+            era_display: None,
         }
     }
 }
@@ -983,6 +999,7 @@ impl From<NeoDateTimeSkeleton> for NeoSkeleton {
         NeoSkeleton {
             length: value.length,
             components: value.components.into(),
+            era_display: None,
         }
     }
 }
@@ -998,6 +1015,7 @@ impl NeoDateTimeSkeleton {
         NeoDateTimeSkeleton {
             length,
             components: NeoDateTimeComponents::DateTime(day_components, time_components),
+            era_display: None,
         }
     }
 }

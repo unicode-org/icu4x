@@ -68,9 +68,12 @@ impl SourceDataProvider {
             has_plurals: false,
         };
         let long_medium_short = [
-            NeoSkeletonLength::Long,
-            NeoSkeletonLength::Medium,
-            NeoSkeletonLength::Short,
+            (NeoSkeletonLength::Long, true),
+            (NeoSkeletonLength::Long, false),
+            (NeoSkeletonLength::Medium, true),
+            (NeoSkeletonLength::Medium, false),
+            (NeoSkeletonLength::Short, true),
+            (NeoSkeletonLength::Short, false),
         ]
         .map(|length| to_components_bag(length, &neo_components))
         .map(|bag| bag.select_pattern(&skeleton_patterns, &date_lengths_v1, &time_lengths_v1));

@@ -3,21 +3,24 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::format::neo::FieldForDataLoading;
-use crate::input::ExtractedDateTimeInput;
+use crate::input::{DateInput, ExtractedDateTimeInput};
 use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::{
-    NeoComponents, NeoDateComponents, NeoDateSkeleton, NeoSkeletonLength, NeoTimeComponents,
-    NeoTimeSkeleton, NeoTimeZoneSkeleton,
+    EraDisplay, NeoComponents, NeoDateComponents, NeoDateSkeleton, NeoSkeletonLength,
+    NeoTimeComponents, NeoTimeSkeleton, NeoTimeZoneSkeleton,
 };
 use crate::pattern::runtime::PatternMetadata;
 use crate::pattern::{runtime, GenericPatternItem, PatternItem};
 use crate::provider::neo::*;
 use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
+use icu_calendar::AnyCalendarKind;
 use icu_provider::prelude::*;
 use marker_attrs::GlueType;
 use zerovec::ule::AsULE;
 use zerovec::ZeroSlice;
 
+/// Wrapper around `Option<NeoSkeletonLength>` that debug-asserts
+/// the presence of a value.
 #[derive(Debug, Copy, Clone)]
 pub(crate) struct MaybeLength(Option<NeoSkeletonLength>);
 
@@ -138,6 +141,7 @@ impl DatePatternSelectionData {
         locale: &DataLocale,
         length: MaybeLength,
         components: NeoDateComponents,
+        era_display: Option<EraDisplay>,
     ) -> Result<Self, DataError> {
         let payload = provider
             .load_bound(DataRequest {
@@ -153,6 +157,7 @@ impl DatePatternSelectionData {
             skeleton: NeoDateSkeleton {
                 length: length.get::<Self>(),
                 components,
+                era_display,
             },
             payload,
         })
@@ -165,7 +170,13 @@ impl DatePatternSelectionData {
     ) -> impl Iterator<Item = FieldForDataLoading> + '_ {
         let items: &ZeroSlice<PatternItem> = match self {
             DatePatternSelectionData::SkeletonDate { skeleton, payload } => {
-                payload.get().get_pattern(skeleton.length).items
+                payload
+                    .get()
+                    .get_pattern(PatternSelectionOptions {
+                        length: skeleton.length,
+                        should_display_era: Some(true),
+                    })
+                    .items
             }
         };
         items
@@ -174,10 +185,49 @@ impl DatePatternSelectionData {
     }
 
     /// Borrows a resolved pattern based on the given datetime
-    pub(crate) fn select(&self, _datetime: &ExtractedDateTimeInput) -> DatePatternDataBorrowed {
+    pub(crate) fn select(&self, datetime: &ExtractedDateTimeInput) -> DatePatternDataBorrowed {
         match self {
             DatePatternSelectionData::SkeletonDate { skeleton, payload } => {
-                DatePatternDataBorrowed::Resolved(payload.get().get_pattern(skeleton.length))
+                let should_display_era = match skeleton.era_display {
+                    Some(EraDisplay::Always) => true,
+                    Some(EraDisplay::Never) => false,
+                    Some(EraDisplay::Auto) | None => match datetime.any_calendar_kind() {
+                        // Unknown calendar: always display the era
+                        None => true,
+                        // TODO(#4478): This is extremely oversimplistic and it should be data-driven.
+                        Some(AnyCalendarKind::Buddhist)
+                        | Some(AnyCalendarKind::Coptic)
+                        | Some(AnyCalendarKind::Ethiopian)
+                        | Some(AnyCalendarKind::EthiopianAmeteAlem)
+                        | Some(AnyCalendarKind::Indian)
+                        | Some(AnyCalendarKind::IslamicCivil)
+                        | Some(AnyCalendarKind::IslamicObservational)
+                        | Some(AnyCalendarKind::IslamicTabular)
+                        | Some(AnyCalendarKind::IslamicUmmAlQura)
+                        | Some(AnyCalendarKind::Japanese)
+                        | Some(AnyCalendarKind::JapaneseExtended)
+                        | Some(AnyCalendarKind::Persian)
+                        | Some(AnyCalendarKind::Roc) => true,
+                        Some(AnyCalendarKind::Chinese)
+                        | Some(AnyCalendarKind::Dangi)
+                        | Some(AnyCalendarKind::Hebrew) => false,
+                        Some(AnyCalendarKind::Gregorian) => match datetime.year() {
+                            None => true,
+                            Some(year) if year.number < 1000 => true,
+                            Some(_) => false,
+                        },
+                        Some(_) => {
+                            debug_assert!(false, "unknown calendar during era display resolution");
+                            true
+                        }
+                    },
+                };
+                DatePatternDataBorrowed::Resolved(payload.get().get_pattern(
+                    PatternSelectionOptions {
+                        length: skeleton.length,
+                        should_display_era: Some(should_display_era),
+                    },
+                ))
             }
         }
     }
@@ -216,7 +266,13 @@ impl TimePatternSelectionData {
     ) -> impl Iterator<Item = FieldForDataLoading> + '_ {
         let items: &ZeroSlice<PatternItem> = match self {
             TimePatternSelectionData::SkeletonTime { skeleton, payload } => {
-                payload.get().get_pattern(skeleton.length).items
+                payload
+                    .get()
+                    .get_pattern(PatternSelectionOptions {
+                        length: skeleton.length,
+                        should_display_era: None,
+                    })
+                    .items
             }
         };
         items
@@ -228,7 +284,12 @@ impl TimePatternSelectionData {
     pub(crate) fn select(&self, _datetime: &ExtractedDateTimeInput) -> TimePatternDataBorrowed {
         match self {
             TimePatternSelectionData::SkeletonTime { skeleton, payload } => {
-                TimePatternDataBorrowed::Resolved(payload.get().get_pattern(skeleton.length))
+                TimePatternDataBorrowed::Resolved(payload.get().get_pattern(
+                    PatternSelectionOptions {
+                        length: skeleton.length,
+                        should_display_era: None,
+                    },
+                ))
             }
         }
     }
@@ -265,6 +326,7 @@ impl DateTimeZonePatternSelectionData {
         locale: &DataLocale,
         length: Option<NeoSkeletonLength>,
         components: NeoComponents,
+        era_display: Option<EraDisplay>,
     ) -> Result<Self, DataError> {
         let length = MaybeLength(length);
         match components {
@@ -274,6 +336,7 @@ impl DateTimeZonePatternSelectionData {
                     locale,
                     length,
                     components,
+                    era_display,
                 )?;
                 Ok(Self::Date(selection))
             }
@@ -296,6 +359,7 @@ impl DateTimeZonePatternSelectionData {
                     locale,
                     length,
                     NeoDateComponents::Day(day_components),
+                    era_display,
                 )?;
                 let time = TimePatternSelectionData::try_new_with_skeleton(
                     time_provider,
@@ -312,6 +376,7 @@ impl DateTimeZonePatternSelectionData {
                     locale,
                     length,
                     date_components,
+                    era_display,
                 )?;
                 let zone = ZonePatternSelectionData::new_with_skeleton(length, zone_components);
                 let glue = Self::load_glue(glue_provider, locale, length, GlueType::DateZone)?;
@@ -334,6 +399,7 @@ impl DateTimeZonePatternSelectionData {
                     locale,
                     length,
                     NeoDateComponents::Day(day_components),
+                    era_display,
                 )?;
                 let time = TimePatternSelectionData::try_new_with_skeleton(
                     time_provider,

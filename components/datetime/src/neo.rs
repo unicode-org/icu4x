@@ -535,6 +535,7 @@ where
             locale,
             options.length.into(),
             components,
+            options.era_display.into(),
         )
         .map_err(LoadError::Data)?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
@@ -1235,6 +1236,7 @@ where
             locale,
             options.length.into(),
             components,
+            options.era_display.into(),
         )
         .map_err(LoadError::Data)?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
