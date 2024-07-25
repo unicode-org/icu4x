@@ -364,7 +364,7 @@ fn select_locales_for_marker<'a>(
                     .fallback_for(current_langid.into());
                 loop {
                     // Inherit aux keys and extension keywords from parent locales
-                    let parent_langid: LanguageIdentifier = iter.get().clone().as_langid();
+                    let parent_langid: LanguageIdentifier = iter.get().get_langid();
                     let maybe_parent_ids = supported_map.get(&parent_langid);
                     let include_descendants = requested_families
                         .get(&parent_langid)
