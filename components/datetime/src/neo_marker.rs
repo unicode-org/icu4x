@@ -976,10 +976,8 @@ where
     T: HasConstTimeComponents,
     Z: HasConstZoneComponent,
 {
-    const COMPONENTS: NeoComponents = NeoComponents::DateTimeZone(
-        NeoDateTimeComponents::DateTime(D::COMPONENTS, T::COMPONENTS),
-        Z::COMPONENT,
-    );
+    const COMPONENTS: NeoComponents =
+        NeoComponents::DateTimeZone(D::COMPONENTS, T::COMPONENTS, Z::COMPONENT);
 }
 
 impl<D, T, Z> DateTimeMarkers for DateTimeCombo<D, T, Z>

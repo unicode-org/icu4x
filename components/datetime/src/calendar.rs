@@ -617,7 +617,7 @@ where
     Ok(payload)
 }
 
-#[cfg(any(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "experimental")]
 mod private {
     pub trait Sealed {}
 }
@@ -628,7 +628,7 @@ mod private {
 /// [`DynamicDataMarker`]. For example, this trait can be implemented for [`YearNamesV1Marker`].
 ///
 /// This trait serves as a building block for a cross-calendar [`BoundDataProvider`].
-#[cfg(any(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "experimental")]
 pub trait CalMarkers<M>: private::Sealed
 where
     M: DynamicDataMarker,
@@ -671,23 +671,23 @@ where
 
 /// Implementation of [`CalMarkers`] that includes data for all calendars.
 #[derive(Debug)]
-#[cfg(any(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "experimental")]
 #[allow(clippy::exhaustive_enums)] // empty enum
 pub enum FullDataCalMarkers {}
 
-#[cfg(any(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "experimental")]
 impl private::Sealed for FullDataCalMarkers {}
 
 /// Implementation of [`CalMarkers`] that includes data for no calendars.
 #[derive(Debug)]
-#[cfg(any(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "experimental")]
 #[allow(clippy::exhaustive_enums)] // empty enum
 pub enum NoDataCalMarkers {}
 
-#[cfg(any(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "experimental")]
 impl private::Sealed for NoDataCalMarkers {}
 
-#[cfg(any(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "experimental")]
 impl<M> CalMarkers<M> for NoDataCalMarkers
 where
     M: DynamicDataMarker,
@@ -805,7 +805,7 @@ where
     }
 }
 
-#[cfg(any(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "experimental")]
 macro_rules! impl_load_any_calendar {
     ([$(($erased:ident, $marker:ident)),+], [$($kind_cal:ident),+], [$($kind:ident => $cal:ident),+]) => {
         impl_load_any_calendar!(@expand [$(($erased, $marker)),+], [$($kind_cal),+], [$($kind => $cal),+]);
@@ -825,7 +825,7 @@ macro_rules! impl_load_any_calendar {
     };
 }
 
-#[cfg(any(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "experimental")]
 impl_load_any_calendar!([
     (YearNamesV1Marker, YearNamesV1Marker),
     (MonthNamesV1Marker, MonthNamesV1Marker),

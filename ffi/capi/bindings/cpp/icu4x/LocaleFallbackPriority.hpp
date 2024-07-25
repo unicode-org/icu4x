@@ -29,7 +29,6 @@ inline icu4x::LocaleFallbackPriority icu4x::LocaleFallbackPriority::FromFFI(icu4
   switch (c_enum) {
     case icu4x::capi::LocaleFallbackPriority_Language:
     case icu4x::capi::LocaleFallbackPriority_Region:
-    case icu4x::capi::LocaleFallbackPriority_Collation:
       return static_cast<icu4x::LocaleFallbackPriority::Value>(c_enum);
     default:
       abort();

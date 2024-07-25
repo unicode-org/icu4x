@@ -240,8 +240,6 @@ export { LocaleParseError } from "./LocaleParseError"
 
 export { LocaleFallbackPriority } from "./LocaleFallbackPriority"
 
-export { LocaleFallbackSupplement } from "./LocaleFallbackSupplement"
-
 export { FixedDecimalRoundingIncrement } from "./FixedDecimalRoundingIncrement"
 
 export { FixedDecimalRoundingMode } from "./FixedDecimalRoundingMode"

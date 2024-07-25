@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
-use icu_locale_core::extensions::unicode::Key;
 use icu_locale_core::subtags::{region, script, Language, Region, Script};
 use icu_provider::prelude::*;
 use zerovec::ule::UnvalidatedStr;
@@ -76,27 +75,4 @@ pub struct LocaleFallbackParentsV1<'data> {
     /// left should inherit from the language on the right.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub parents: ZeroMap<'data, UnvalidatedStr, (Language, Option<Script>, Option<Region>)>,
-}
-
-/// Key-specific supplemental fallback data.
-#[icu_provider::data_struct(marker(
-    CollationFallbackSupplementV1Marker,
-    "fallback/supplement/co@1",
-    singleton,
-))]
-#[derive(Default, Clone, PartialEq, Debug)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_locale::provider),
-)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[yoke(prove_covariance_manually)]
-pub struct LocaleFallbackSupplementV1<'data> {
-    /// Additional parent locales to supplement the common ones.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub parents: ZeroMap<'data, UnvalidatedStr, (Language, Option<Script>, Option<Region>)>,
-    /// Default values for Unicode extension keywords.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub unicode_extension_defaults: ZeroMap2d<'data, Key, UnvalidatedStr, UnvalidatedStr>,
 }
