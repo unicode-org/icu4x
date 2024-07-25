@@ -15,12 +15,11 @@ use icu_provider::DataProvider;
 impl DataProvider<PercentEssentialsV1Marker> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<PercentEssentialsV1Marker>, DataError> {
         self.check_req::<PercentEssentialsV1Marker>(req)?;
-        let langid = req.id.locale.get_langid();
 
         let numbers_resource: &cldr_serde::numbers::Resource = self
             .cldr()?
             .numbers()
-            .read_and_parse(&langid, "numbers.json")?;
+            .read_and_parse(req.id.locale, "numbers.json")?;
 
         let result = extract_percent_essentials(numbers_resource);
 
@@ -36,8 +35,8 @@ impl IterableDataProviderCached<PercentEssentialsV1Marker> for SourceDataProvide
         Ok(self
             .cldr()?
             .numbers()
-            .list_langs()?
-            .map(|l| DataIdentifierCow::from_locale(DataLocale::from(l)))
+            .list_locales()?
+            .map(DataIdentifierCow::from_locale)
             .collect())
     }
 }

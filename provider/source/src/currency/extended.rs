@@ -22,11 +22,10 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::SourceDataProvider {
     ) -> Result<DataResponse<CurrencyExtendedDataV1Marker>, DataError> {
         self.check_req::<CurrencyExtendedDataV1Marker>(req)?;
 
-        let langid = req.id.locale.get_langid();
         let currencies_resource: &cldr_serde::currencies::data::Resource =
             self.cldr()?
                 .numbers()
-                .read_and_parse(&langid, "currencies.json")?;
+                .read_and_parse(req.id.locale, "currencies.json")?;
 
         let currency = currencies_resource
             .main
@@ -82,12 +81,12 @@ impl crate::IterableDataProviderCached<CurrencyExtendedDataV1Marker> for SourceD
 
         let mut result = HashSet::new();
         let numbers = self.cldr()?.numbers();
-        let langids = numbers.list_langs()?;
-        for langid in langids {
+        let locales = numbers.list_locales()?;
+        for locale in locales {
             let currencies_resource: &cldr_serde::currencies::data::Resource = self
                 .cldr()?
                 .numbers()
-                .read_and_parse(&langid, "currencies.json")?;
+                .read_and_parse(&locale, "currencies.json")?;
 
             let currencies = &currencies_resource.main.value.numbers.currencies;
             for key in currencies.keys() {
@@ -96,10 +95,7 @@ impl crate::IterableDataProviderCached<CurrencyExtendedDataV1Marker> for SourceD
                 }
 
                 if let Ok(attributes) = DataMarkerAttributes::try_from_string(key.clone()) {
-                    result.insert(DataIdentifierCow::from_owned(
-                        attributes,
-                        DataLocale::from(langid.clone()),
-                    ));
+                    result.insert(DataIdentifierCow::from_owned(attributes, locale.clone()));
                 }
             }
         }

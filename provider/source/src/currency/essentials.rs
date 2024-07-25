@@ -81,17 +81,16 @@ impl DataProvider<CurrencyEssentialsV1Marker> for SourceDataProvider {
         req: DataRequest,
     ) -> Result<DataResponse<CurrencyEssentialsV1Marker>, DataError> {
         self.check_req::<CurrencyEssentialsV1Marker>(req)?;
-        let langid = req.id.locale.get_langid();
 
         let currencies_resource: &cldr_serde::currencies::data::Resource =
             self.cldr()?
                 .numbers()
-                .read_and_parse(&langid, "currencies.json")?;
+                .read_and_parse(req.id.locale, "currencies.json")?;
 
         let numbers_resource: &cldr_serde::numbers::Resource = self
             .cldr()?
             .numbers()
-            .read_and_parse(&langid, "numbers.json")?;
+            .read_and_parse(req.id.locale, "numbers.json")?;
 
         let result = extract_currency_essentials(self, currencies_resource, numbers_resource);
 
@@ -107,8 +106,8 @@ impl IterableDataProviderCached<CurrencyEssentialsV1Marker> for SourceDataProvid
         Ok(self
             .cldr()?
             .numbers()
-            .list_langs()?
-            .map(|l| DataIdentifierCow::from_locale(DataLocale::from(l)))
+            .list_locales()?
+            .map(DataIdentifierCow::from_locale)
             .collect())
     }
 }
