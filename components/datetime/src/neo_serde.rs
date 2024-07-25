@@ -166,6 +166,7 @@ impl FieldSetSerde {
     const fn from_fields(fields: &[FieldSetField]) -> Self {
         let mut bit_fields = 0;
         let mut i = 0;
+        #[allow(clippy::indexing_slicing)] // const function, guarded by loop condition
         while i < fields.len() {
             bit_fields |= 1 << (fields[i] as usize);
             i += 1;
