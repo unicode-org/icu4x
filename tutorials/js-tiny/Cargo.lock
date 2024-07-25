@@ -47,7 +47,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=3b875c676f60a892eeb818c6a0f6f10086c69a24#3b875c676f60a892eeb818c6a0f6f10086c69a24"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=8744ac97162341f347b63131969ad736e1047f6d#8744ac97162341f347b63131969ad736e1047f6d"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -58,7 +58,7 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.8.1"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=3b875c676f60a892eeb818c6a0f6f10086c69a24#3b875c676f60a892eeb818c6a0f6f10086c69a24"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=8744ac97162341f347b63131969ad736e1047f6d#8744ac97162341f347b63131969ad736e1047f6d"
 dependencies = [
  "log",
 ]
@@ -66,9 +66,8 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=3b875c676f60a892eeb818c6a0f6f10086c69a24#3b875c676f60a892eeb818c6a0f6f10086c69a24"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=8744ac97162341f347b63131969ad736e1047f6d#8744ac97162341f347b63131969ad736e1047f6d"
 dependencies = [
- "lazy_static",
  "proc-macro2",
  "quote",
  "serde",
@@ -113,6 +112,7 @@ dependencies = [
  "icu_calendar_data",
  "icu_locale_core",
  "icu_provider",
+ "ixdtf",
  "tinystr",
  "writeable",
  "zerovec",
@@ -509,6 +509,14 @@ name = "itoa"
 version = "1.0.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "49f1f14873335454500d59611f1cf4a4b0f786f9ac11f4312a78e4cf2566695b"
+
+[[package]]
+name = "ixdtf"
+version = "0.2.0"
+dependencies = [
+ "displaydoc",
+ "utf8_iter",
+]
 
 [[package]]
 name = "lazy_static"
@@ -992,10 +1000,6 @@ version = "1.5.0"
 [[patch.unused]]
 name = "icu_provider_source"
 version = "1.5.0"
-
-[[patch.unused]]
-name = "ixdtf"
-version = "0.2.0"
 
 [[patch.unused]]
 name = "tzif"
