@@ -4,6 +4,8 @@
 
 //! Temporary module for neo datetime skeletons (Semantic Skeleta)
 
+#[cfg(feature = "serde")]
+use crate::neo_serde::*;
 use crate::options::components;
 use crate::options::length;
 #[cfg(feature = "experimental")]
@@ -12,8 +14,6 @@ use crate::raw::neo::MaybeLength;
 use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
 use crate::DateTimeFormatterOptions;
 use icu_provider::DataMarkerAttributes;
-#[cfg(feature = "serde")]
-use crate::neo_serde::*;
 
 /// A specification for the length of a date or component of a date.
 ///
@@ -707,7 +707,10 @@ impl From<NeoTimeComponents> for NeoDateTimeComponents {
 /// A specification of components for parts of a datetime and/or time zone.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "serde", serde(try_from = "FieldSetSerde", into = "FieldSetSerde"))]
+#[cfg_attr(
+    feature = "serde",
+    serde(try_from = "FieldSetSerde", into = "FieldSetSerde")
+)]
 #[non_exhaustive]
 pub enum NeoComponents {
     /// Components for a date.
@@ -916,7 +919,10 @@ impl NeoDateTimeSkeleton {
 /// A skeleton for formatting parts of a date, time, and optional time zone.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "serde", serde(try_from = "SemanticSkeletonSerde", into = "SemanticSkeletonSerde"))]
+#[cfg_attr(
+    feature = "serde",
+    serde(try_from = "SemanticSkeletonSerde", into = "SemanticSkeletonSerde")
+)]
 #[non_exhaustive]
 pub struct NeoSkeleton {
     /// Desired formatting length.
