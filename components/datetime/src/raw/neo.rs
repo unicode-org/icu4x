@@ -191,7 +191,6 @@ impl DatePatternSelectionData {
             DatePatternSelectionData::SkeletonDate { skeleton, payload } => {
                 let should_display_era = match skeleton.era_display {
                     Some(EraDisplay::Always) => true,
-                    Some(EraDisplay::Never) => false,
                     Some(EraDisplay::Auto) | None => match datetime.any_calendar_kind() {
                         // Unknown calendar: always display the era
                         None => true,
