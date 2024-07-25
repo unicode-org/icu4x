@@ -42,16 +42,16 @@ impl<'l> Writeable for FormattedPercent<'l> {
         };
 
         match self.options.display {
-            // In the Standard display, we take the positive pattern only when the value is positive.
+            // In the Standard display, we take the unsigned pattern only when the value is positive.
             Display::Standard => {
                 if self.value.sign() == Sign::Negative {
                     self.essential
-                        .negative_pattern
+                        .signed_pattern
                         .interpolate((abs_value, &self.essential.minus_sign))
                         .write_to(sink)?
                 } else {
                     self.essential
-                        .positive_pattern
+                        .unsigned_pattern
                         .interpolate([abs_value])
                         .write_to(sink)?
                 };
@@ -68,13 +68,13 @@ impl<'l> Writeable for FormattedPercent<'l> {
                 };
 
                 self.essential
-                    .negative_pattern
+                    .signed_pattern
                     .interpolate((abs_value, sign))
                     .write_to(sink)?;
             }
             Display::ExplicitSign => self
                 .essential
-                .negative_pattern
+                .signed_pattern
                 .interpolate((
                     abs_value,
                     if self.value.sign() == Sign::Negative {

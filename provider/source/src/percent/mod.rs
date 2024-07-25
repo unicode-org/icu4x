@@ -80,9 +80,9 @@ fn extract_percent_essentials<'data>(
     let standard_pattern = percent_patterns.standard.to_owned();
 
     let mut split = standard_pattern.split(';');
-    let positive_pattern = split.next().unwrap();
+    let unsigned_pattern = split.next().unwrap();
 
-    let negative_pattern: Cow<str> = match split.next() {
+    let signed_pattern: Cow<str> = match split.next() {
         Some(negative) => Cow::Borrowed(negative),
         None if standard_pattern.contains('-') => Cow::Borrowed(&standard_pattern),
         // When there is no explicit negative subpattern,
@@ -92,8 +92,8 @@ fn extract_percent_essentials<'data>(
     };
 
     Ok(PercentEssentialsV1 {
-        positive_pattern: create_positive_pattern(positive_pattern, &localized_percent_sign)?,
-        negative_pattern: create_negative_pattern(&negative_pattern, &localized_percent_sign)?,
+        unsigned_pattern: create_unsigned_pattern(unsigned_pattern, &localized_percent_sign)?,
+        signed_pattern: create_signed_pattern(&signed_pattern, &localized_percent_sign)?,
         approximately_sign: localized_approximately_sign.into(),
         minus_sign: localized_minus_sign.into(),
         plus_sign: localized_plus_sign.into(),
@@ -101,7 +101,7 @@ fn extract_percent_essentials<'data>(
 }
 
 /// Used to create a percent pattern for negative, approximate, or explicit plus.
-fn create_negative_pattern<'a>(
+fn create_signed_pattern<'a>(
     pattern: &str,
     localized_percent_sign: &str,
 ) -> Result<Pattern<DoublePlaceholder, Cow<'a, str>>, DataError> {
@@ -182,7 +182,7 @@ fn create_negative_pattern<'a>(
 
 /// Used only for positive percents.
 /// If you need an approximate, explicit plus, or negative percent, use the negative pattern.
-fn create_positive_pattern<'a>(
+fn create_unsigned_pattern<'a>(
     pattern: &str,
     localized_percent_sign: &str,
 ) -> Result<Pattern<SinglePlaceholder, Cow<'a, str>>, DataError> {
@@ -246,11 +246,8 @@ fn test_basic() {
 
     // en Should resemble "#,##0%"
     let en_pattern = en.payload.get().to_owned();
-    assert_writeable_eq!(en_pattern.positive_pattern.interpolate(["123"]), "123%");
-    assert_writeable_eq!(
-        en_pattern.negative_pattern.interpolate(["123", "+"]),
-        "+123%"
-    );
+    assert_writeable_eq!(en_pattern.unsigned_pattern.interpolate(["123"]), "123%");
+    assert_writeable_eq!(en_pattern.signed_pattern.interpolate(["123", "+"]), "+123%");
 
     let tr: DataResponse<PercentEssentialsV1Marker> = provider
         .load(DataRequest {
@@ -261,11 +258,8 @@ fn test_basic() {
 
     // tr Should resemble "%#,##0"
     let tr_pattern = tr.payload.get().to_owned();
-    assert_writeable_eq!(tr_pattern.positive_pattern.interpolate(["345"]), "%345");
-    assert_writeable_eq!(
-        tr_pattern.negative_pattern.interpolate(["345", "+"]),
-        "+%345"
-    );
+    assert_writeable_eq!(tr_pattern.unsigned_pattern.interpolate(["345"]), "%345");
+    assert_writeable_eq!(tr_pattern.signed_pattern.interpolate(["345", "+"]), "+%345");
 
     let ar_eg: DataResponse<PercentEssentialsV1Marker> = provider
         .load(DataRequest {
@@ -277,11 +271,11 @@ fn test_basic() {
     // ar_eg Should resemble "#,##0‎%‎"
     let ar_eg_pattern = ar_eg.payload.get().to_owned();
     assert_writeable_eq!(
-        ar_eg_pattern.positive_pattern.interpolate(["456"]),
+        ar_eg_pattern.unsigned_pattern.interpolate(["456"]),
         "456\u{200e}%\u{200e}"
     );
     assert_writeable_eq!(
-        ar_eg_pattern.negative_pattern.interpolate(["456", "+"]),
+        ar_eg_pattern.signed_pattern.interpolate(["456", "+"]),
         "+456\u{200e}%\u{200e}"
     );
 }
@@ -290,10 +284,10 @@ fn test_basic() {
 fn blo_test() {
     use writeable::assert_writeable_eq;
 
-    let blo_positive_pattern = create_positive_pattern("% #,#0", "%").unwrap();
+    let blo_positive_pattern = create_unsigned_pattern("% #,#0", "%").unwrap();
     assert_writeable_eq!(blo_positive_pattern.interpolate(["123"]), "% 123");
 
-    let blo_negative_pattern = create_negative_pattern("% -#,#0", "%").unwrap();
+    let blo_negative_pattern = create_signed_pattern("% -#,#0", "%").unwrap();
     assert_writeable_eq!(blo_negative_pattern.interpolate(["123", "+"]), "% +123");
     assert_writeable_eq!(blo_negative_pattern.interpolate(["123", "-"]), "% -123");
     assert_writeable_eq!(blo_negative_pattern.interpolate(["123", "~"]), "% ~123");

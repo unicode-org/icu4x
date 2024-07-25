@@ -1,5 +1,5 @@
 {
-  "negative_pattern": [
+  "signed_pattern": [
     {
       "Placeholder": "Place1"
     },
@@ -10,7 +10,7 @@
       "Literal": " %"
     }
   ],
-  "positive_pattern": [
+  "unsigned_pattern": [
     {
       "Placeholder": "Singleton"
     },

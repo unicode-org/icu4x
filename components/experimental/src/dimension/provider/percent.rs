@@ -38,14 +38,14 @@ pub use crate::provider::Baked;
 /// <https://www.unicode.org/reports/tr35/tr35-numbers.html#explicit-plus-signs>
 pub struct PercentEssentialsV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
-    /// Represents the standard pattern for negative percents.
+    /// Represents the standard pattern for signed percents.
     /// NOTE: place holder 0 is the place of the percent value.
     ///       place holder 1 is the place of the plus, minus, or approximate signs.
-    pub negative_pattern: DoublePlaceholderPattern<Cow<'data, str>>,
+    pub signed_pattern: DoublePlaceholderPattern<Cow<'data, str>>,
 
     #[cfg_attr(feature = "serde", serde(borrow))]
-    /// Represents the standard pattern for positive percents.
-    pub positive_pattern: SinglePlaceholderPattern<Cow<'data, str>>,
+    /// Represents the standard pattern for unsigned percents.
+    pub unsigned_pattern: SinglePlaceholderPattern<Cow<'data, str>>,
 
     #[cfg_attr(feature = "serde", serde(borrow))]
     /// The localize approximate sign.
