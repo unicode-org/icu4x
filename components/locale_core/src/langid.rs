@@ -15,7 +15,35 @@ use writeable::Writeable;
 
 /// A core struct representing a [`Unicode BCP47 Language Identifier`].
 ///
+/// # Parsing
+///
+/// Unicode recognizes three levels of standard conformance for any language identifier:
+///
+///  * *well-formed* - syntactically correct
+///  * *valid* - well-formed and only uses registered language, region, script and variant subtags...
+///  * *canonical* - valid and no deprecated codes or structure.
+///
+/// At the moment parsing normalizes a well-formed language identifier converting
+/// `_` separators to `-` and adjusting casing to conform to the Unicode standard.
+///
+/// Any bogus subtags will cause the parsing to fail with an error.
+/// No subtag validation is performed.
+///
+/// # Ordering
+///
+/// This type deliberately does not implement `Ord` or `PartialOrd` because there are
+/// multiple possible orderings, and the team did not want to favor one over any other.
+///
+/// Instead, there are functions available that return these different orderings:
+///
+/// - [`LanguageIdentifier::strict_cmp`]
+/// - [`LanguageIdentifier::total_cmp`]
+///
+/// See issue: <https://github.com/unicode-org/icu4x/issues/1215>
+///
 /// # Examples
+///
+/// Simple example:
 ///
 /// ```
 /// use icu::locale::{
@@ -31,21 +59,7 @@ use writeable::Writeable;
 /// assert_eq!(li.variants.len(), 0);
 /// ```
 ///
-/// # Parsing
-///
-/// Unicode recognizes three levels of standard conformance for any language identifier:
-///
-///  * *well-formed* - syntactically correct
-///  * *valid* - well-formed and only uses registered language, region, script and variant subtags...
-///  * *canonical* - valid and no deprecated codes or structure.
-///
-/// At the moment parsing normalizes a well-formed language identifier converting
-/// `_` separators to `-` and adjusting casing to conform to the Unicode standard.
-///
-/// Any bogus subtags will cause the parsing to fail with an error.
-/// No subtag validation is performed.
-///
-/// # Examples
+/// More complex example:
 ///
 /// ```
 /// use icu::locale::{
@@ -62,7 +76,7 @@ use writeable::Writeable;
 /// ```
 ///
 /// [`Unicode BCP47 Language Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_language_identifier
-#[derive(Default, PartialEq, Eq, Clone, Hash)]
+#[derive(Default, PartialEq, Eq, Clone, Hash)] // no Ord or PartialOrd: see docs
 #[allow(clippy::exhaustive_structs)] // This struct is stable (and invoked by a macro)
 pub struct LanguageIdentifier {
     /// Language subtag of the language identifier.
@@ -227,11 +241,39 @@ impl LanguageIdentifier {
     }
 
     /// Compare this [`LanguageIdentifier`] with another [`LanguageIdentifier`] field-by-field.
-    /// The result is a total ordering sufficient for use in a [`BTreeMap`].
+    /// The result is a total ordering sufficient for use in a [`BTreeSet`].
     ///
-    /// Unlike [`Self::strict_cmp`], this function's ordering may not equal string ordering.
+    /// Unlike [`LanguageIdentifier::strict_cmp`], the ordering may or may not be equivalent
+    /// to string ordering, and it may or may not be stable across ICU4X releases.
     ///
-    /// [`BTreeMap`]: alloc::collections::BTreeMap
+    /// # Examples
+    ///
+    /// Using a wrapper to add one of these to a [`BTreeSet`]:
+    ///
+    /// ```no_run
+    /// use icu::locale::LanguageIdentifier;
+    /// use std::cmp::Ordering;
+    /// use std::collections::BTreeSet;
+    ///
+    /// #[derive(PartialEq, Eq)]
+    /// struct LanguageIdentifierTotalOrd(LanguageIdentifier);
+    ///
+    /// impl Ord for LanguageIdentifierTotalOrd {
+    ///     fn cmp(&self, other: &Self) -> Ordering {
+    ///         self.0.total_cmp(&other.0)
+    ///     }
+    /// }
+    ///
+    /// impl PartialOrd for LanguageIdentifierTotalOrd {
+    ///     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+    ///         Some(self.cmp(other))
+    ///     }
+    /// }
+    ///
+    /// let _: BTreeSet<LanguageIdentifierTotalOrd> = unimplemented!();
+    /// ```
+    ///
+    /// [`BTreeSet`]: alloc::collections::BTreeSet
     pub fn total_cmp(&self, other: &Self) -> Ordering {
         self.as_tuple().cmp(&other.as_tuple())
     }
