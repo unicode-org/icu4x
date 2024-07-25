@@ -108,9 +108,12 @@ fn line_break_test(file: &'static str) {
         if result != test.break_result_utf8 {
             let lb = icu::properties::maps::line_break();
             let lb_name = icu::properties::LineBreak::enum_to_long_name_mapper();
+            let gc = icu::properties::maps::general_category();
+            let gc_name = icu::properties::GeneralCategory::enum_to_long_name_mapper();
+
             let mut iter = segmenter.segment_str(&s);
             // TODO(egg): It would be really nice to have Name here.
-            println!("  | A | E | Code pt. | Line_Break     | Literal");
+            println!("  | A | E | Code pt. | Line_Break         | General_Category | Literal");
             for (i, c) in s.char_indices() {
                 let expected_break = test.break_result_utf8.contains(&i);
                 let actual_break = result.contains(&i);
@@ -118,7 +121,7 @@ fn line_break_test(file: &'static str) {
                     iter.next();
                 }
                 println!(
-                    "{}| {} | {} | {:>8} | {:>18} | {}",
+                    "{}| {} | {} | {:>8} | {:>18} | {:>18} | {}",
                     if actual_break != expected_break {
                         "😭"
                     } else {
@@ -130,6 +133,9 @@ fn line_break_test(file: &'static str) {
                     lb_name
                         .get(lb.get(c))
                         .unwrap_or(&format!("{:?}", lb.get(c))),
+                    gc_name
+                        .get(gc.get(c))
+                        .unwrap_or(&format!("{:?}", gc.get(c))),
                     c
                 )
             }
@@ -172,6 +178,11 @@ fn run_line_break_test() {
 #[test]
 fn run_line_break_extra_test() {
     line_break_test(include_str!("testdata/LineBreakExtraTest.txt"));
+}
+
+#[test]
+fn run_line_break_random_test() {
+    line_break_test(include_str!("testdata/LineBreakRandomTest.txt"));
 }
 
 fn word_break_test(file: &'static str) {
