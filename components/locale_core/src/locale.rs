@@ -37,7 +37,7 @@ use writeable::Writeable;
 ///
 /// No subtag validation or alias resolution is performed.
 ///
-/// # Ord/PartialOrd
+/// # Ordering
 ///
 /// This type deliberately does not implement `Ord` or `PartialOrd` because there are
 /// multiple possible orderings, and the team did not want to favor one over any other.

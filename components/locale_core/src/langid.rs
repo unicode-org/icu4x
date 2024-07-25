@@ -29,7 +29,7 @@ use writeable::Writeable;
 /// Any bogus subtags will cause the parsing to fail with an error.
 /// No subtag validation is performed.
 ///
-/// # Ord/PartialOrd
+/// # Ordering
 ///
 /// This type deliberately does not implement `Ord` or `PartialOrd` because there are
 /// multiple possible orderings, and the team did not want to favor one over any other.
