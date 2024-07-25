@@ -11,7 +11,6 @@ use crate::SourceDataProvider;
 use icu::calendar::provider::{
     WeekDataV1, WeekDataV1Marker, WeekDataV2, WeekDataV2Marker, WeekdaySet,
 };
-use icu::locale::LanguageIdentifier;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 
@@ -31,8 +30,11 @@ impl IterableDataProviderCached<WeekDataV1Marker> for SourceDataProvider {
                 Territory::Region(r) => Some(Some(*r)),
                 _ => None,
             })
-            .map(LanguageIdentifier::from)
-            .map(|l| DataIdentifierCow::from_locale(DataLocale::from(l)))
+            .map(|region| {
+                let mut locale = DataLocale::default();
+                locale.set_region(region);
+                DataIdentifierCow::from_locale(locale)
+            })
             .collect())
     }
 }

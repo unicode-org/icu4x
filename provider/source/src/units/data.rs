@@ -12,7 +12,6 @@ use icu::experimental::dimension::provider::units::{
     Count, UnitsDisplayNameV1, UnitsDisplayNameV1Marker,
 };
 
-use icu::locale::LanguageIdentifier;
 use icu_provider::prelude::*;
 use icu_provider::DataMarkerAttributes;
 use zerovec::ZeroMap;
@@ -21,15 +20,16 @@ impl DataProvider<UnitsDisplayNameV1Marker> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<UnitsDisplayNameV1Marker>, DataError> {
         self.check_req::<UnitsDisplayNameV1Marker>(req)?;
 
-        let langid = req.id.locale.get_langid();
         let (length, unit) = req
             .id
             .marker_attributes
             .split_once('-')
             .ok_or_else(|| DataErrorKind::InvalidRequest.into_error())?;
 
-        let units_format_data: &cldr_serde::units::data::Resource =
-            self.cldr()?.units().read_and_parse(&langid, "units.json")?;
+        let units_format_data: &cldr_serde::units::data::Resource = self
+            .cldr()?
+            .units()
+            .read_and_parse(req.id.locale, "units.json")?;
         let units_format_data = &units_format_data.main.value.units;
 
         let unit_patterns = match length {
@@ -89,24 +89,23 @@ impl DataProvider<UnitsDisplayNameV1Marker> for SourceDataProvider {
 impl crate::IterableDataProviderCached<UnitsDisplayNameV1Marker> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         fn make_request_element(
-            langid: &LanguageIdentifier,
+            locale: &DataLocale,
             unit: &str,
             length: &str,
         ) -> Result<DataIdentifierCow<'static>, DataError> {
-            let data_locale = DataLocale::from(langid);
             let key = length.to_string() + "-" + unit;
             let attribute = DataMarkerAttributes::try_from_str(key.as_str()).map_err(|_| {
                 DataError::custom("Failed to parse the attribute").with_debug_context(unit)
             })?;
             Ok(DataIdentifierCow::from_owned(
                 attribute.to_owned(),
-                data_locale,
+                locale.clone(),
             ))
         }
 
         fn fill_data_ids(
             data_locales: &mut HashSet<DataIdentifierCow<'_>>,
-            langid: &LanguageIdentifier,
+            locale: &DataLocale,
             length: &str,
             length_patterns: &BTreeMap<String, Patterns>,
         ) -> Result<(), DataError> {
@@ -132,7 +131,7 @@ impl crate::IterableDataProviderCached<UnitsDisplayNameV1Marker> for SourceDataP
             });
 
             for truncated_quantity in quantities {
-                data_locales.insert(make_request_element(langid, truncated_quantity, length)?);
+                data_locales.insert(make_request_element(locale, truncated_quantity, length)?);
             }
 
             Ok(())
@@ -141,10 +140,10 @@ impl crate::IterableDataProviderCached<UnitsDisplayNameV1Marker> for SourceDataP
         let mut data_locales = HashSet::new();
 
         let numbers = self.cldr()?.numbers();
-        let langids = numbers.list_langs()?;
-        for langid in langids {
+        let locales = numbers.list_locales()?;
+        for locale in locales {
             let units_format_data: &cldr_serde::units::data::Resource =
-                self.cldr()?.units().read_and_parse(&langid, "units.json")?;
+                self.cldr()?.units().read_and_parse(&locale, "units.json")?;
             let units_format_data = &units_format_data.main.value.units;
 
             for length in &["long", "short", "narrow"] {
@@ -159,7 +158,7 @@ impl crate::IterableDataProviderCached<UnitsDisplayNameV1Marker> for SourceDataP
                     }
                 };
 
-                fill_data_ids(&mut data_locales, &langid, length, length_patterns)?;
+                fill_data_ids(&mut data_locales, &locale, length, length_patterns)?;
             }
         }
 
