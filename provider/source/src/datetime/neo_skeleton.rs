@@ -9,6 +9,7 @@ use either::Either;
 use icu::datetime::neo_skeleton::{
     NeoDateComponents, NeoDateSkeleton, NeoSkeletonLength, NeoTimeComponents, NeoTimeSkeleton,
 };
+use icu::datetime::options::components;
 use icu::datetime::pattern::runtime::PatternPlurals;
 use icu::datetime::provider::calendar::{DateLengthsV1, DateSkeletonPatternsV1, TimeLengthsV1};
 use icu::datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker;
@@ -65,6 +66,7 @@ impl SourceDataProvider {
             has_long: true,
             has_medium: true,
             has_plurals: false,
+            has_eras: false,
         };
         let long_medium_short = [
             NeoSkeletonLength::Long,
@@ -72,49 +74,112 @@ impl SourceDataProvider {
             NeoSkeletonLength::Short,
         ]
         .map(|length| to_components_bag(length, &neo_components))
-        .map(|bag| bag.select_pattern(&skeleton_patterns, &date_lengths_v1, &time_lengths_v1));
+        .map(|bag| {
+            let pattern =
+                bag.select_pattern(&skeleton_patterns, &date_lengths_v1, &time_lengths_v1);
+            let pattern_with_era = match bag {
+                DateTimeFormatterOptions::Components(
+                    components @ components::Bag {
+                        year: Some(_),
+                        era: None,
+                        ..
+                    },
+                ) => {
+                    // TODO(#4478): Use CLDR data when it becomes available
+                    // TODO: Set the length to NeoSkeletonLength? Or not, because
+                    // the era should normally be displayed as short?
+                    let mut components_with_era = components;
+                    components_with_era.era = Some(components::Text::Short);
+                    Some(
+                        DateTimeFormatterOptions::Components(components_with_era).select_pattern(
+                            &skeleton_patterns,
+                            &date_lengths_v1,
+                            &time_lengths_v1,
+                        ),
+                    )
+                }
+                _ => None,
+            };
+            // Assert that if there are multiple variants in `pattern_with_era`, then
+            // there are also multiple variants in `pattern`
+            if matches!(pattern_with_era, Some(PatternPlurals::MultipleVariants(_))) {
+                assert!(matches!(pattern, PatternPlurals::MultipleVariants(_)));
+            }
+            (pattern, pattern_with_era)
+        });
         let [long, medium, short] = if long_medium_short
             .iter()
-            .any(|pp| matches!(pp, PatternPlurals::MultipleVariants(_)))
+            .any(|pp| matches!(pp.0, PatternPlurals::MultipleVariants(_)))
         {
             // Expand all variants to vector of length 6
+            fn expand_pp_to_vec(
+                pp: PatternPlurals,
+            ) -> Vec<icu::datetime::pattern::runtime::Pattern> {
+                match pp {
+                    PatternPlurals::MultipleVariants(variants) => vec![
+                        variants.zero.unwrap_or_else(|| variants.other.clone()),
+                        variants.one.unwrap_or_else(|| variants.other.clone()),
+                        variants.two.unwrap_or_else(|| variants.other.clone()),
+                        variants.few.unwrap_or_else(|| variants.other.clone()),
+                        variants.many.unwrap_or_else(|| variants.other.clone()),
+                        variants.other,
+                    ],
+                    PatternPlurals::SinglePattern(pattern) => vec![
+                        pattern.clone(),
+                        pattern.clone(),
+                        pattern.clone(),
+                        pattern.clone(),
+                        pattern.clone(),
+                        pattern,
+                    ],
+                }
+            }
             skeleton_data_index.has_plurals = true;
-            long_medium_short.map(|pp| match pp {
-                PatternPlurals::MultipleVariants(variants) => vec![
-                    variants.zero.unwrap_or_else(|| variants.other.clone()),
-                    variants.one.unwrap_or_else(|| variants.other.clone()),
-                    variants.two.unwrap_or_else(|| variants.other.clone()),
-                    variants.few.unwrap_or_else(|| variants.other.clone()),
-                    variants.many.unwrap_or_else(|| variants.other.clone()),
-                    variants.other,
-                ],
-                PatternPlurals::SinglePattern(pattern) => vec![
-                    pattern.clone(),
-                    pattern.clone(),
-                    pattern.clone(),
-                    pattern.clone(),
-                    pattern.clone(),
-                    pattern,
-                ],
+            long_medium_short.map(|(pp, pp_with_era)| {
+                (
+                    expand_pp_to_vec(pp),
+                    match pp_with_era {
+                        Some(pp_with_era) => expand_pp_to_vec(pp_with_era),
+                        None => vec![],
+                    },
+                )
             })
         } else {
             // Take a single variant of each pattern
-            long_medium_short.map(|pp| match pp {
-                PatternPlurals::MultipleVariants(_) => unreachable!(),
-                PatternPlurals::SinglePattern(pattern) => vec![pattern],
+            long_medium_short.map(|(pp, pp_with_era)| {
+                (
+                    match pp {
+                        PatternPlurals::MultipleVariants(_) => unreachable!(),
+                        PatternPlurals::SinglePattern(pattern) => vec![pattern],
+                    },
+                    match pp_with_era {
+                        Some(PatternPlurals::MultipleVariants(_)) => unreachable!(),
+                        Some(PatternPlurals::SinglePattern(pattern)) => vec![pattern],
+                        None => vec![],
+                    },
+                )
             })
         };
+        skeleton_data_index.has_eras = !long.1.is_empty();
+        // Assert that the presense of the era pattern is the same in all lengths
+        // TODO: Enable this assertion
+        // assert_eq!(skeleton_data_index.has_eras, !medium.1.is_empty());
+        // assert_eq!(skeleton_data_index.has_eras, !short.1.is_empty());
+        // TODO: Remove the era patterns if the are equivalent to the non-era patterns?
         if long == medium {
             skeleton_data_index.has_long = false;
         } else {
-            patterns.extend(long);
+            patterns.extend(long.0);
+            patterns.extend(long.1);
         }
         if medium == short {
             skeleton_data_index.has_medium = false;
         } else {
-            patterns.extend(medium);
+            patterns.extend(medium.0);
+            patterns.extend(medium.1);
         }
-        patterns.extend(short);
+        patterns.extend(short.0);
+        patterns.extend(short.1);
 
         Ok(PackedSkeletonDataV1 {
             index_info: skeleton_data_index,

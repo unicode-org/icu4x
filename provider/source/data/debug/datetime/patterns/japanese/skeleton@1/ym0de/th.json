@@ -2,11 +2,15 @@
   "index_info": {
     "has_long": true,
     "has_medium": true,
-    "has_plurals": false
+    "has_plurals": false,
+    "has_eras": true
   },
   "patterns": [
     "EEEEที่ d MMMM G y",
+    "EEEEที่ d MMMM GGG y",
     "E d MMM G y",
-    "E d/M/GGGGG y"
+    "E d MMM GGG y",
+    "E d/M/GGGGG y",
+    "E d MMM GGG y"
   ]
 }

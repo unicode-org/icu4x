@@ -2,9 +2,11 @@
   "index_info": {
     "has_long": false,
     "has_medium": false,
-    "has_plurals": false
+    "has_plurals": false,
+    "has_eras": true
   },
   "patterns": [
-    "สัปดาห์ที่ w ของปี Y"
+    "สัปดาห์ที่ w ของปี Y",
+    "GGG Y w"
   ]
 }
