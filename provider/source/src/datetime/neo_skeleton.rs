@@ -16,7 +16,6 @@ use icu::datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker;
 use icu::datetime::provider::neo::*;
 use icu::datetime::DateTimeFormatterOptions;
 use icu::locale::extensions::unicode::{value, Value};
-use icu::locale::LanguageIdentifier;
 use icu_provider::prelude::*;
 
 use super::supported_cals;
@@ -37,7 +36,7 @@ impl SourceDataProvider {
         let neo_components = from_id_str(req.id.marker_attributes)
             .expect("Skeleton data provider called with unknown skeleton");
         let packed_skeleton_data = self.make_packed_skeleton_data(
-            &req.id.locale.get_langid(),
+            req.id.locale,
             calendar,
             neo_components,
             to_components_bag,
@@ -50,12 +49,12 @@ impl SourceDataProvider {
 
     fn make_packed_skeleton_data<C>(
         &self,
-        langid: &LanguageIdentifier,
+        locale: &DataLocale,
         calendar: Either<&Value, &str>,
         neo_components: C,
         to_components_bag: impl Fn(NeoSkeletonLength, &C) -> DateTimeFormatterOptions,
     ) -> Result<PackedSkeletonDataV1<'static>, DataError> {
-        let data = self.get_datetime_resources(langid, calendar)?;
+        let data = self.get_datetime_resources(locale, calendar)?;
 
         let date_lengths_v1 = DateLengthsV1::from(&data);
         let time_lengths_v1 = TimeLengthsV1::from(&data);
@@ -194,8 +193,8 @@ impl SourceDataProvider {
         Ok(self
             .cldr()?
             .dates("generic")
-            .list_langs()?
-            .flat_map(|langid| {
+            .list_locales()?
+            .flat_map(|locale| {
                 NeoTimeComponents::VALUES
                     .iter()
                     .filter(|neo_components| {
@@ -207,10 +206,7 @@ impl SourceDataProvider {
                     .copied()
                     .map(NeoTimeComponents::id_str)
                     .map(move |attrs| {
-                        DataIdentifierCow::from_borrowed_and_owned(
-                            attrs,
-                            DataLocale::from(langid.clone()),
-                        )
+                        DataIdentifierCow::from_borrowed_and_owned(attrs, locale.clone())
                     })
             })
             .collect())
@@ -227,17 +223,14 @@ impl SourceDataProvider {
         Ok(self
             .cldr()?
             .dates(cldr_cal)
-            .list_langs()?
-            .flat_map(|langid| {
+            .list_locales()?
+            .flat_map(|locale| {
                 NeoDateComponents::VALUES
                     .iter()
                     .copied()
                     .map(NeoDateComponents::id_str)
                     .map(move |attrs| {
-                        DataIdentifierCow::from_borrowed_and_owned(
-                            attrs,
-                            DataLocale::from(langid.clone()),
-                        )
+                        DataIdentifierCow::from_borrowed_and_owned(attrs, locale.clone())
                     })
             })
             .collect())
