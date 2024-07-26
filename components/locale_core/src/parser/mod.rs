@@ -46,7 +46,7 @@ const fn get_current_subtag(slice: &[u8], idx: usize) -> (usize, usize) {
 }
 
 pub const fn split_out_range(slice: &[u8], start: usize, end: usize) -> &[u8] {
-    assert!(start < slice.len());
+    assert!(start <= slice.len());
     assert!(end <= slice.len());
     assert!(start <= end);
     // SAFETY: assertions and align = size = 1.
