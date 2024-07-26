@@ -16,7 +16,7 @@ macro_rules! __impl_pattern_white_space_v1_marker {
         #[clippy::msrv = "1.70"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_PATTERN_WHITE_SPACE_V1_MARKER: &'static <icu::properties::provider::PatternWhiteSpaceV1Marker as icu_provider::DynamicDataMarker>::Yokeable = &icu::properties::provider::PropertyCodePointSetV1::InversionList(unsafe {
+            pub const SINGLETON_PATTERN_WHITE_SPACE_V1_MARKER: &'static <icu::properties::provider::PatternWhiteSpaceV1Marker as icu_provider::DynamicDataMarker>::DataStruct = &icu::properties::provider::PropertyCodePointSetV1::InversionList(unsafe {
                 #[allow(unused_unsafe)]
                 icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\t\0\0\0\x0E\0\0\0 \0\0\0!\0\0\0\x85\0\0\0\x86\0\0\0\x0E \0\0\x10 \0\0( \0\0* \0\0") }, 11u32)
             });

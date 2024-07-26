@@ -16,7 +16,7 @@ macro_rules! __impl_joining_type_value_to_long_name_v1_marker {
         #[clippy::msrv = "1.70"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_JOINING_TYPE_VALUE_TO_LONG_NAME_V1_MARKER: &'static <icu::properties::provider::names::JoiningTypeValueToLongNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = &icu::properties::provider::names::PropertyEnumToValueNameLinearMapV1 { map: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x06\0\0\0\0\0\x0B\0\x17\0#\0/\0<\0Non_JoiningJoin_CausingDual_JoiningLeft_JoiningRight_JoiningTransparent") } };
+            pub const SINGLETON_JOINING_TYPE_VALUE_TO_LONG_NAME_V1_MARKER: &'static <icu::properties::provider::names::JoiningTypeValueToLongNameV1Marker as icu_provider::DynamicDataMarker>::DataStruct = &icu::properties::provider::names::PropertyEnumToValueNameLinearMapV1 { map: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x06\0\0\0\0\0\x0B\0\x17\0#\0/\0<\0Non_JoiningJoin_CausingDual_JoiningLeft_JoiningRight_JoiningTransparent") } };
         }
         #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::properties::provider::names::JoiningTypeValueToLongNameV1Marker> for $provider {

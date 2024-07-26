@@ -302,7 +302,7 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
             #[doc = #docs]
             pub struct #marker_name;
             impl icu_provider::DynamicDataMarker for #marker_name {
-                type Yokeable = #name_with_lt;
+                type DataStruct = #name_with_lt;
             }
         ));
 

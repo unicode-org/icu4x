@@ -16,7 +16,7 @@ macro_rules! __impl_sentence_break_name_to_value_v1_marker {
         #[clippy::msrv = "1.70"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_SENTENCE_BREAK_NAME_TO_VALUE_V1_MARKER: &'static <icu::properties::provider::names::SentenceBreakNameToValueV1Marker as icu_provider::DynamicDataMarker>::Yokeable = &icu::properties::provider::names::PropertyValueNameToEnumMapV1 {
+            pub const SINGLETON_SENTENCE_BREAK_NAME_TO_VALUE_V1_MARKER: &'static <icu::properties::provider::names::SentenceBreakNameToValueV1Marker as icu_provider::DynamicDataMarker>::DataStruct = &icu::properties::provider::names::PropertyValueNameToEnumMapV1 {
                 map: unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x1C\0\0\0\0\0\x02\0\x07\0\t\0\x0E\0\x10\0\x12\0\x18\0\x1A\0 \0\"\0$\0&\0+\0-\x004\0;\0@\0B\0K\0M\0P\0R\0T\0V\0[\0]\0b\0ATATermCLCloseCREXExtendFOFormatLELFLOLowerNUNumericOLetterOtherSCSContinueSESepSPSpSTSTermUPUpperXX") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\x01\0\x02\0\x02\0\x0B\0\x0C\0\x0C\0\x03\0\x03\0\x06\0\r\0\x04\0\x04\0\x05\0\x05\0\x06\0\0\0\x0E\0\x0E\0\x07\0\x07\0\x08\0\x08\0\t\0\t\0\n\0\n\0\0\0") })

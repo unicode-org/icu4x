@@ -12,7 +12,7 @@ use std::borrow::Cow;
 use std::collections::HashSet;
 use std::sync::OnceLock;
 
-fn load<M: DataMarker<Yokeable = ListFormatterPatternsV2<'static>>>(
+fn load<M: DataMarker<DataStruct = ListFormatterPatternsV2<'static>>>(
     selff: &SourceDataProvider,
     req: DataRequest,
 ) -> Result<DataResponse<M>, DataError> {

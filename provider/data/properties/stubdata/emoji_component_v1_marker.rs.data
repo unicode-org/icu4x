@@ -16,7 +16,7 @@ macro_rules! __impl_emoji_component_v1_marker {
         #[clippy::msrv = "1.70"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_EMOJI_COMPONENT_V1_MARKER: &'static <icu::properties::provider::EmojiComponentV1Marker as icu_provider::DynamicDataMarker>::Yokeable = &icu::properties::provider::PropertyCodePointSetV1::InversionList(unsafe {
+            pub const SINGLETON_EMOJI_COMPONENT_V1_MARKER: &'static <icu::properties::provider::EmojiComponentV1Marker as icu_provider::DynamicDataMarker>::DataStruct = &icu::properties::provider::PropertyCodePointSetV1::InversionList(unsafe {
                 #[allow(unused_unsafe)]
                 icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"#\0\0\0$\0\0\0*\0\0\0+\0\0\x000\0\0\0:\0\0\0\r \0\0\x0E \0\0\xE3 \0\0\xE4 \0\0\x0F\xFE\0\0\x10\xFE\0\0\xE6\xF1\x01\0\0\xF2\x01\0\xFB\xF3\x01\0\0\xF4\x01\0\xB0\xF9\x01\0\xB4\xF9\x01\0 \0\x0E\0\x80\0\x0E\0") }, 146u32)
             });

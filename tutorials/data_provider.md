@@ -106,9 +106,9 @@ impl<'a> Borrow<CacheKey<'a>> for lru::KeyRef<CacheKeyWrap> {
 impl<M, P> DataProvider<M> for LruDataCache<P>
 where
     M: DataMarker,
-    M::Yokeable: ZeroFrom<'static, M::Yokeable>,
-    M::Yokeable: icu_provider::any::MaybeSendSync,
-    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
+    M::DataStruct: ZeroFrom<'static, M::DataStruct>,
+    M::DataStruct: icu_provider::any::MaybeSendSync,
+    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: Clone,
     P: DataProvider<M>,
 {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {

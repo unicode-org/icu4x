@@ -16,7 +16,7 @@ macro_rules! __impl_joining_type_name_to_value_v1_marker {
         #[clippy::msrv = "1.70"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_JOINING_TYPE_NAME_TO_VALUE_V1_MARKER: &'static <icu::properties::provider::names::JoiningTypeNameToValueV1Marker as icu_provider::DynamicDataMarker>::Yokeable = &icu::properties::provider::names::PropertyValueNameToEnumMapV1 {
+            pub const SINGLETON_JOINING_TYPE_NAME_TO_VALUE_V1_MARKER: &'static <icu::properties::provider::names::JoiningTypeNameToValueV1Marker as icu_provider::DynamicDataMarker>::DataStruct = &icu::properties::provider::names::PropertyValueNameToEnumMapV1 {
                 map: unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0C\0\0\0\0\0\x01\0\x02\0\x0E\0\x1A\0\x1B\0'\x002\x003\0@\0A\0L\0CDDual_JoiningJoin_CausingLLeft_JoiningNon_JoiningRRight_JoiningTTransparentU") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\x02\0\x02\0\x01\0\x03\0\x03\0\0\0\x04\0\x04\0\x05\0\x05\0\0\0") })

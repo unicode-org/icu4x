@@ -145,5 +145,5 @@ impl FromStr for SingularSubPattern<'_> {
 pub(crate) struct ErasedRelativeTimeFormatV1Marker;
 
 impl DynamicDataMarker for ErasedRelativeTimeFormatV1Marker {
-    type Yokeable = RelativeTimePatternDataV1<'static>;
+    type DataStruct = RelativeTimePatternDataV1<'static>;
 }

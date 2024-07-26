@@ -16,7 +16,7 @@ macro_rules! __impl_blank_v1_marker {
         #[clippy::msrv = "1.70"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_BLANK_V1_MARKER: &'static <icu::properties::provider::BlankV1Marker as icu_provider::DynamicDataMarker>::Yokeable = &icu::properties::provider::PropertyCodePointSetV1::InversionList(unsafe {
+            pub const SINGLETON_BLANK_V1_MARKER: &'static <icu::properties::provider::BlankV1Marker as icu_provider::DynamicDataMarker>::DataStruct = &icu::properties::provider::PropertyCodePointSetV1::InversionList(unsafe {
                 #[allow(unused_unsafe)]
                 icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\t\0\0\0\n\0\0\0 \0\0\0!\0\0\0\xA0\0\0\0\xA1\0\0\0\x80\x16\0\0\x81\x16\0\0\0 \0\0\x0B \0\0/ \0\x000 \0\0_ \0\0` \0\0\x000\0\0\x010\0\0") }, 18u32)
             });

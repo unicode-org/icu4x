@@ -41,7 +41,7 @@ pub struct CodePointSetData {
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub(crate) struct ErasedSetlikeMarker;
 impl DynamicDataMarker for ErasedSetlikeMarker {
-    type Yokeable = PropertyCodePointSetV1<'static>;
+    type DataStruct = PropertyCodePointSetV1<'static>;
 }
 
 impl CodePointSetData {
@@ -60,7 +60,7 @@ impl CodePointSetData {
     /// Typically it is preferable to use getters like [`load_ascii_hex_digit()`] instead
     pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
     where
-        M: DynamicDataMarker<Yokeable = PropertyCodePointSetV1<'static>>,
+        M: DynamicDataMarker<DataStruct = PropertyCodePointSetV1<'static>>,
     {
         Self { data: data.cast() }
     }
@@ -211,7 +211,7 @@ pub struct UnicodeSetData {
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub(crate) struct ErasedUnicodeSetlikeMarker;
 impl DynamicDataMarker for ErasedUnicodeSetlikeMarker {
-    type Yokeable = PropertyUnicodeSetV1<'static>;
+    type DataStruct = PropertyUnicodeSetV1<'static>;
 }
 
 impl UnicodeSetData {
@@ -231,7 +231,7 @@ impl UnicodeSetData {
     /// Typically it is preferable to use getters instead
     pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
     where
-        M: DynamicDataMarker<Yokeable = PropertyUnicodeSetV1<'static>>,
+        M: DynamicDataMarker<DataStruct = PropertyUnicodeSetV1<'static>>,
     {
         Self { data: data.cast() }
     }
@@ -319,7 +319,7 @@ impl UnicodeSetDataBorrowed<'static> {
 
 pub(crate) fn load_set_data<M, P>(provider: &P) -> Result<CodePointSetData, DataError>
 where
-    M: DataMarker<Yokeable = PropertyCodePointSetV1<'static>>,
+    M: DataMarker<DataStruct = PropertyCodePointSetV1<'static>>,
     P: DataProvider<M> + ?Sized,
 {
     Ok(CodePointSetData::from_data(

@@ -102,7 +102,7 @@ impl SourceDataProvider {
         &self,
         req: DataRequest,
         calendar: &Value,
-        conversion: impl FnOnce(DataIdentifierBorrowed, &ca::Dates) -> Result<M::Yokeable, DataError>,
+        conversion: impl FnOnce(DataIdentifierBorrowed, &ca::Dates) -> Result<M::DataStruct, DataError>,
     ) -> Result<DataResponse<M>, DataError>
     where
         Self: IterableDataProviderCached<M>,
@@ -130,7 +130,7 @@ impl SourceDataProvider {
             &Value,
             Context,
             Length,
-        ) -> Result<M::Yokeable, DataError>,
+        ) -> Result<M::DataStruct, DataError>,
     ) -> Result<DataResponse<M>, DataError>
     where
         Self: IterableDataProviderCached<M>,
@@ -152,7 +152,7 @@ impl SourceDataProvider {
         &self,
         req: DataRequest,
         calendar: Value,
-        conversion: impl FnOnce(&ca::Dates, PatternLength, GlueType) -> Result<M::Yokeable, DataError>,
+        conversion: impl FnOnce(&ca::Dates, PatternLength, GlueType) -> Result<M::DataStruct, DataError>,
     ) -> Result<DataResponse<M>, DataError>
     where
         Self: IterableDataProviderCached<M>,

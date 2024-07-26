@@ -16,7 +16,7 @@ macro_rules! __impl_sentence_break_value_to_long_name_v1_marker {
         #[clippy::msrv = "1.70"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_SENTENCE_BREAK_VALUE_TO_LONG_NAME_V1_MARKER: &'static <icu::properties::provider::names::SentenceBreakValueToLongNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = &icu::properties::provider::names::PropertyEnumToValueNameLinearMapV1 { map: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0F\0\0\0\0\0\x05\0\n\0\x0F\0\x15\0\x1A\0!\0(\0+\0-\x002\x007\09\0?\0A\0OtherATermCloseFormatLowerNumericOLetterSepSpSTermUpperCRExtendLFSContinue") } };
+            pub const SINGLETON_SENTENCE_BREAK_VALUE_TO_LONG_NAME_V1_MARKER: &'static <icu::properties::provider::names::SentenceBreakValueToLongNameV1Marker as icu_provider::DynamicDataMarker>::DataStruct = &icu::properties::provider::names::PropertyEnumToValueNameLinearMapV1 { map: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0F\0\0\0\0\0\x05\0\n\0\x0F\0\x15\0\x1A\0!\0(\0+\0-\x002\x007\09\0?\0A\0OtherATermCloseFormatLowerNumericOLetterSepSpSTermUpperCRExtendLFSContinue") } };
         }
         #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::properties::provider::names::SentenceBreakValueToLongNameV1Marker> for $provider {
