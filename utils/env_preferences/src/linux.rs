@@ -52,34 +52,27 @@ pub mod linux_prefs {
     pub fn get_locales() -> HashMap<LocaleCategory, String> {
         let mut locale_map = HashMap::new();
 
-        // SAFETY: In case `libc::setlocale` returns a NULL pointer it fallbacks to the default locale "C"
+        let locales_ptr = unsafe { setlocale(LC_ALL, ptr::null()) };
 
-        unsafe {
-            let locales_ptr = setlocale(LC_ALL, ptr::null());
-            if locales_ptr.is_null() {
+        if locales_ptr.is_null() {
+            locale_map.insert(LocaleCategory::All, "C".to_string());
+            return locale_map;
+        }
+
+        let locales_cstr = unsafe { CStr::from_ptr(locales_ptr) };
+
+        if let Ok(locales_str) = locales_cstr.to_str() {
+            let locale_pairs = locales_str.split(';');
+
+            // To handle cases in case a single locale is returned or a list of locale
+            if locale_pairs.clone().count() == 1 {
                 locale_map.insert(LocaleCategory::All, "C".to_string());
-                return locale_map;
-            }
-
-            // SAFETY: Creating a `CStr` from a non-null pointer and no mutation is being performed.
-
-            let locales_cstr = CStr::from_ptr(locales_ptr);
-
-            // SAFETY: Returns `&[str]` slice
-
-            if let Ok(locales_str) = locales_cstr.to_str() {
-                let locale_pairs = locales_str.split(';');
-
-                // To handle cases in case a single locale is returned or a list of locale
-                if locale_pairs.clone().count() == 1 {
-                    locale_map.insert(LocaleCategory::All, "C".to_string());
-                } else {
-                    for locale_pair in locale_pairs {
-                        let mut parts = locale_pair.split('=');
-                        if let (Some(key), Some(value)) = (parts.next(), parts.next()) {
-                            if let Ok(category) = LocaleCategory::from_str(key) {
-                                locale_map.insert(category, value.to_string());
-                            }
+            } else {
+                for locale_pair in locale_pairs {
+                    let mut parts = locale_pair.split('=');
+                    if let (Some(key), Some(value)) = (parts.next(), parts.next()) {
+                        if let Ok(category) = LocaleCategory::from_str(key) {
+                            locale_map.insert(category, value.to_string());
                         }
                     }
                 }
@@ -90,30 +83,24 @@ pub mod linux_prefs {
     }
 
     pub fn get_system_calendars() -> impl Iterator<Item = (Cow<'static, str>, Cow<'static, str>)> {
-        unsafe {
-            let locale_ptr = setlocale(LC_TIME, ptr::null());
+        let locale_ptr = unsafe { setlocale(LC_TIME, ptr::null()) };
 
-            // SAFETY: In case we get a `NULL` pointer for `LC_TIME` from `setlocale`, fallbacks
-            // to default locale "C" and default calendar "Gregorian"
+        if !locale_ptr.is_null() {
+            let c_str = unsafe { CStr::from_ptr(locale_ptr) };
 
-            if !locale_ptr.is_null() {
-                // SAFETY: Creating a `CStr` from a non-null pointer and no mutation is being performed.
-
-                let c_str = CStr::from_ptr(locale_ptr);
-                if let Ok(str_slice) = c_str.to_str() {
-                    // `gnome-calendar` is the default calendar and it only supports `Gregorian`.
-                    // Related issue: https://gitlab.gnome.org/GNOME/gnome-calendar/-/issues/998
-                    return Some((
-                        Cow::Owned(str_slice.to_string()),
-                        Cow::Borrowed("Gregorian"),
-                    ))
-                    .into_iter()
-                    .chain(None);
-                }
-            }
-            Some((Cow::Borrowed("C"), Cow::Borrowed("Gregorian")))
+            if let Ok(str_slice) = c_str.to_str() {
+                // `gnome-calendar` is the default calendar and it only supports `Gregorian`.
+                // Related issue: https://gitlab.gnome.org/GNOME/gnome-calendar/-/issues/998
+                return Some((
+                    Cow::Owned(str_slice.to_string()),
+                    Cow::Borrowed("Gregorian"),
+                ))
                 .into_iter()
-                .chain(None)
+                .chain(None);
+            }
         }
+        Some((Cow::Borrowed("C"), Cow::Borrowed("Gregorian")))
+            .into_iter()
+            .chain(None)
     }
 }
