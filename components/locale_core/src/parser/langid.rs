@@ -129,7 +129,7 @@ pub const fn parse_locale_with_single_variant_single_keyword_unicode_extension_f
 
     if let (i, Some(subtag)) = iter.next_const() {
         iter = i;
-        match subtags::Language::try_from_utf8_manual_slice(iter.slice, 0, subtag.len()) {
+        match subtags::Language::try_from_utf8(subtag) {
             Ok(l) => language = l,
             Err(e) => return Err(e),
         }
@@ -145,17 +145,13 @@ pub const fn parse_locale_with_single_variant_single_keyword_unicode_extension_f
         }
 
         if matches!(position, ParserPosition::Script) {
-            if let Ok(s) = subtags::Script::try_from_utf8_manual_slice(subtag, 0, subtag.len()) {
+            if let Ok(s) = subtags::Script::try_from_utf8(subtag) {
                 script = Some(s);
                 position = ParserPosition::Region;
-            } else if let Ok(r) =
-                subtags::Region::try_from_utf8_manual_slice(subtag, 0, subtag.len())
-            {
+            } else if let Ok(r) = subtags::Region::try_from_utf8(subtag) {
                 region = Some(r);
                 position = ParserPosition::Variant;
-            } else if let Ok(v) =
-                subtags::Variant::try_from_utf8_manual_slice(subtag, 0, subtag.len())
-            {
+            } else if let Ok(v) = subtags::Variant::try_from_utf8(subtag) {
                 // We cannot handle multiple variants in a const context
                 debug_assert!(variant.is_none());
                 variant = Some(v);
@@ -166,12 +162,10 @@ pub const fn parse_locale_with_single_variant_single_keyword_unicode_extension_f
                 return Err(ParseError::InvalidSubtag);
             }
         } else if matches!(position, ParserPosition::Region) {
-            if let Ok(s) = subtags::Region::try_from_utf8_manual_slice(subtag, 0, subtag.len()) {
+            if let Ok(s) = subtags::Region::try_from_utf8(subtag) {
                 region = Some(s);
                 position = ParserPosition::Variant;
-            } else if let Ok(v) =
-                subtags::Variant::try_from_utf8_manual_slice(subtag, 0, subtag.len())
-            {
+            } else if let Ok(v) = subtags::Variant::try_from_utf8(subtag) {
                 // We cannot handle multiple variants in a const context
                 debug_assert!(variant.is_none());
                 variant = Some(v);
@@ -181,8 +175,7 @@ pub const fn parse_locale_with_single_variant_single_keyword_unicode_extension_f
             } else {
                 return Err(ParseError::InvalidSubtag);
             }
-        } else if let Ok(v) = subtags::Variant::try_from_utf8_manual_slice(subtag, 0, subtag.len())
-        {
+        } else if let Ok(v) = subtags::Variant::try_from_utf8(subtag) {
             debug_assert!(matches!(position, ParserPosition::Variant));
             if variant.is_some() {
                 // We cannot handle multiple variants in a const context
@@ -200,11 +193,11 @@ pub const fn parse_locale_with_single_variant_single_keyword_unicode_extension_f
 
     if matches!(mode, ParserMode::Locale) {
         if let Some(subtag) = iter.peek() {
-            match ExtensionType::try_from_utf8_manual_slice(subtag, 0, subtag.len()) {
+            match ExtensionType::try_from_utf8(subtag) {
                 Ok(ExtensionType::Unicode) => {
                     iter = iter.next_const().0;
                     if let Some(peek) = iter.peek() {
-                        if Attribute::try_from_utf8_manual_slice(peek, 0, peek.len()).is_ok() {
+                        if Attribute::try_from_utf8(peek).is_ok() {
                             // We cannot handle Attributes in a const context
                             return Err(ParseError::InvalidSubtag);
                         }
@@ -219,12 +212,12 @@ pub const fn parse_locale_with_single_variant_single_keyword_unicode_extension_f
                                 // We cannot handle more than one Key in a const context
                                 return Err(ParseError::InvalidSubtag);
                             }
-                            match Key::try_from_utf8_manual_slice(peek, 0, peek.len()) {
+                            match Key::try_from_utf8(peek) {
                                 Ok(k) => key = Some(k),
                                 Err(e) => return Err(e),
                             };
                         } else if key.is_some() {
-                            match Value::parse_subtag_from_utf8_manual_slice(peek, 0, peek.len()) {
+                            match Value::parse_subtag_from_utf8(peek) {
                                 Ok(Some(t)) => {
                                     if current_type.is_some() {
                                         // We cannot handle more than one type in a const context

@@ -255,16 +255,8 @@ impl Value {
         Self(input)
     }
 
-    pub(crate) fn parse_subtag(t: &[u8]) -> Result<Option<Subtag>, ParseError> {
-        Self::parse_subtag_from_utf8_manual_slice(t, 0, t.len())
-    }
-
-    pub(crate) const fn parse_subtag_from_utf8_manual_slice(
-        code_units: &[u8],
-        start: usize,
-        end: usize,
-    ) -> Result<Option<Subtag>, ParseError> {
-        match Subtag::try_from_utf8_manual_slice(code_units, start, end) {
+    pub(crate) const fn parse_subtag_from_utf8(t: &[u8]) -> Result<Option<Subtag>, ParseError> {
+        match Subtag::try_from_utf8(t) {
             Ok(TRUE_VALUE) => Ok(None),
             Ok(s) => Ok(Some(s)),
             Err(_) => Err(ParseError::InvalidSubtag),

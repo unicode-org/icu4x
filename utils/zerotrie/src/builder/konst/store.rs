@@ -29,15 +29,6 @@ impl<'a, T> ConstSlice<'a, T> {
         }
     }
 
-    /// Creates a [`ConstSlice`] with the given start and limit.
-    pub const fn from_manual_slice(full_slice: &'a [T], start: usize, limit: usize) -> Self {
-        ConstSlice {
-            full_slice,
-            start,
-            limit,
-        }
-    }
-
     /// Returns the length of the [`ConstSlice`].
     pub const fn len(&self) -> usize {
         self.limit - self.start
@@ -147,7 +138,14 @@ impl<const N: usize, T> ConstArrayBuilder<N, T> {
 
     /// Returns the initialized elements as a [`ConstSlice`].
     pub const fn as_const_slice(&self) -> ConstSlice<T> {
-        ConstSlice::from_manual_slice(&self.full_array, self.start, self.limit)
+        ConstSlice::from_slice(
+            &self
+                .full_array
+                .split_at(self.limit)
+                .0
+                .split_at(self.start)
+                .1,
+        )
     }
 
     /// Non-const function that returns a slice of the initialized elements.

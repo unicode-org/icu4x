@@ -32,7 +32,7 @@ const fn get_current_subtag(slice: &[u8], idx: usize) -> (usize, usize) {
         // If it's a separator, set the start to idx+1 and advance the idx to the next char.
         (idx + 1, idx + 1)
     } else {
-        // If it's idx=0, start is 0 and end is set to 1
+        // If it's idx=0, end is set to 1
         debug_assert!(idx == 0);
         (0, 1)
     };

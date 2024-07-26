@@ -96,16 +96,12 @@ impl ExtensionType {
         }
     }
 
-    pub(crate) const fn try_from_utf8_manual_slice(
-        code_units: &[u8],
-        start: usize,
-        end: usize,
-    ) -> Result<Self, ParseError> {
-        if end - start != 1 {
+    pub(crate) const fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
+        let &[first] = code_units else {
             return Err(ParseError::InvalidExtension);
-        }
-        #[allow(clippy::indexing_slicing)]
-        Self::try_from_byte(code_units[start])
+        };
+
+        Self::try_from_byte(first)
     }
 }
 
