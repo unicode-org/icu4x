@@ -146,6 +146,8 @@ pub mod neo;
 pub mod neo_marker;
 #[cfg(feature = "experimental")]
 pub mod neo_pattern;
+#[cfg(all(feature = "serde", any(feature = "datagen", feature = "experimental")))]
+mod neo_serde;
 #[cfg(any(feature = "datagen", feature = "experimental"))]
 pub mod neo_skeleton;
 pub mod options;

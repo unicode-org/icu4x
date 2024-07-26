@@ -4,6 +4,8 @@
 
 //! Temporary module for neo datetime skeletons (Semantic Skeleta)
 
+#[cfg(feature = "serde")]
+use crate::neo_serde::*;
 use crate::options::components;
 use crate::options::length;
 #[cfg(feature = "experimental")]
@@ -21,14 +23,16 @@ use icu_provider::DataMarkerAttributes;
 /// rather than to making the components wider than in `Long`.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+#[repr(u8)] // discriminants come from symbol count in UTS 35
 #[non_exhaustive]
 pub enum NeoSkeletonLength {
     /// A long date, typically spelled-out, as in “January 1, 2000”.
-    Long,
+    Long = 4,
     /// A medium-sized date; typically abbreviated, as in “Jan. 1, 2000”.
-    Medium,
+    Medium = 3,
     /// A short date; typically numeric, as in “1/1/2000”.
-    Short,
+    Short = 1,
 }
 
 impl NeoSkeletonLength {
@@ -105,7 +109,6 @@ pub enum EraDisplay {
 /// Only sets that yield “sensible” dates are allowed: this type cannot
 /// describe a date such as “some Tuesday in 2023”.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[non_exhaustive]
 pub enum NeoDayComponents {
     /// The day of the month, as in
@@ -366,7 +369,6 @@ impl NeoDayComponents {
 /// Only sets that yield “sensible” dates are allowed: this type cannot describe
 /// a date such as “August, Anno Domini”.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[non_exhaustive]
 pub enum NeoDateComponents {
     /// A date that specifies a single day. See [`NeoDayComponents`].
@@ -501,7 +503,6 @@ impl NeoDateComponents {
 /// Only sets that yield “sensible” time are allowed: this type cannot describe
 /// a time such as “am, 5 minutes, 25 milliseconds”.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[non_exhaustive]
 pub enum NeoTimeComponents {
     /// An hour (12-hour or 24-hour chosen by locale), as in
@@ -709,7 +710,6 @@ impl NeoTimeComponents {
 
 /// A specification of components for parts of a datetime.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[non_exhaustive]
 pub enum NeoDateTimeComponents {
     /// Components for parts of a date.
@@ -735,6 +735,10 @@ impl From<NeoTimeComponents> for NeoDateTimeComponents {
 /// A specification of components for parts of a datetime and/or time zone.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    serde(try_from = "FieldSetSerde", into = "FieldSetSerde")
+)]
 #[non_exhaustive]
 pub enum NeoComponents {
     /// Components for a date.
@@ -789,7 +793,6 @@ impl From<NeoTimeZoneSkeleton> for NeoComponents {
 /// - [`NeoTimeZoneStyle::SpecificNonLocation`] + [`NeoSkeletonLength::Short`]
 /// - [`NeoTimeZoneStyle::Offset`]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Default)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[non_exhaustive]
 pub enum NeoTimeZoneStyle {
     /// The location format, e.g., “Los Angeles time” or specific non-location
@@ -820,7 +823,6 @@ pub enum NeoTimeZoneStyle {
 
 /// A skeleton for formatting a time zone.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Default)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[non_exhaustive]
 pub struct NeoTimeZoneSkeleton {
     /// The length of the time zone format, _i.e._, with
@@ -955,6 +957,10 @@ impl NeoDateTimeSkeleton {
 /// A skeleton for formatting parts of a date, time, and optional time zone.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    serde(try_from = "SemanticSkeletonSerde", into = "SemanticSkeletonSerde")
+)]
 #[non_exhaustive]
 pub struct NeoSkeleton {
     /// Desired formatting length.
