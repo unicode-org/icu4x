@@ -81,7 +81,7 @@ impl<'a> SubtagIterator<'a> {
         }
     }
 
-    pub const fn next_manual(mut self) -> (Self, Option<(usize, usize)>) {
+    pub const fn next_const(mut self) -> (Self, Option<&'a [u8]>) {
         if self.done {
             return (self, None);
         }
@@ -91,19 +91,23 @@ impl<'a> SubtagIterator<'a> {
         } else {
             self.done = true;
         }
-        (self, Some(result))
+        (
+            self,
+            Some(self.slice.split_at(result.1).0.split_at(result.0).1),
+        )
     }
 
-    pub const fn peek_manual(&self) -> Option<(usize, usize)> {
+    pub const fn peek(&self) -> Option<&'a [u8]> {
         if self.done {
             return None;
         }
-        Some(self.subtag)
-    }
-
-    pub fn peek(&self) -> Option<&'a [u8]> {
-        #[allow(clippy::indexing_slicing)] // peek_manual returns valid indices
-        self.peek_manual().map(|(s, e)| &self.slice[s..e])
+        Some(
+            self.slice
+                .split_at(self.subtag.1)
+                .0
+                .split_at(self.subtag.0)
+                .1,
+        )
     }
 }
 
@@ -111,10 +115,9 @@ impl<'a> Iterator for SubtagIterator<'a> {
     type Item = &'a [u8];
 
     fn next(&mut self) -> Option<Self::Item> {
-        let (s, res) = self.next_manual();
+        let (s, res) = self.next_const();
         *self = s;
-        #[allow(clippy::indexing_slicing)] // next_manual returns valid indices
-        res.map(|(s, e)| &self.slice[s..e])
+        res
     }
 }
 
