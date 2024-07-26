@@ -423,9 +423,9 @@ impl DataMarkerPath {
             i += 1;
         }
 
-        match Self::validate_path(tagged.as_bytes().split_at(end).0.split_at(start).1) {
+        match Self::validate_path_manual_slice(tagged, start, end) {
             Ok(()) => (),
-            Err((expected, index)) => return Err((expected, start + index)),
+            Err(e) => return Err(e),
         };
 
         let hash = DataMarkerPathHash(
@@ -440,7 +440,13 @@ impl DataMarkerPath {
         Ok(Self { tagged, hash })
     }
 
-    const fn validate_path(path: &'static [u8]) -> Result<(), (&'static str, usize)> {
+    const fn validate_path_manual_slice(
+        path: &'static str,
+        start: usize,
+        end: usize,
+    ) -> Result<(), (&'static str, usize)> {
+        debug_assert!(start <= end);
+        debug_assert!(end <= path.len());
         // Regex: [a-zA-Z0-9_][a-zA-Z0-9_/]*@[0-9]+
         enum State {
             Empty,
@@ -449,12 +455,12 @@ impl DataMarkerPath {
             Version,
         }
         use State::*;
-        let mut i = 0;
+        let mut i = start;
         let mut state = Empty;
         loop {
-            let byte = if i < path.len() {
-                #[allow(clippy::indexing_slicing)] // iterator not const
-                Some(path[i])
+            let byte = if i < end {
+                #[allow(clippy::indexing_slicing)] // protected by debug assertion
+                Some(path.as_bytes()[i])
             } else {
                 None
             };
