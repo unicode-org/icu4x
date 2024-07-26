@@ -5,7 +5,7 @@
 //! Serde definitions for semantic skeleta
 
 use crate::neo_skeleton::{
-    NeoComponents, NeoDateComponents, NeoDayComponents, NeoSkeleton, NeoSkeletonLength,
+    EraDisplay, NeoComponents, NeoDateComponents, NeoDayComponents, NeoSkeleton, NeoSkeletonLength,
     NeoTimeComponents, NeoTimeZoneSkeleton, NeoTimeZoneStyle,
 };
 use alloc::vec::Vec;
@@ -27,6 +27,8 @@ pub(crate) struct SemanticSkeletonSerde {
     #[serde(rename = "fieldSet")]
     pub(crate) field_set: NeoComponents,
     pub(crate) length: NeoSkeletonLength,
+    #[serde(rename = "eraDisplay")]
+    pub(crate) era_display: Option<EraDisplay>,
 }
 
 impl From<NeoSkeleton> for SemanticSkeletonSerde {
@@ -34,6 +36,7 @@ impl From<NeoSkeleton> for SemanticSkeletonSerde {
         Self {
             field_set: value.components,
             length: value.length,
+            era_display: value.era_display,
         }
     }
 }
@@ -44,6 +47,7 @@ impl TryFrom<SemanticSkeletonSerde> for NeoSkeleton {
         Ok(NeoSkeleton {
             length: value.length,
             components: value.field_set,
+            era_display: value.era_display,
         })
     }
 }
@@ -468,12 +472,13 @@ fn test_basic() {
             NeoTimeZoneSkeleton::generic(),
         ),
         length: NeoSkeletonLength::Medium,
+        era_display: Some(EraDisplay::Always),
     };
 
     let json_string = serde_json::to_string(&skeleton).unwrap();
     assert_eq!(
         json_string,
-        r#"{"fieldSet":["year","month","day","weekday","hour","minute","zoneGeneric"],"length":"medium"}"#
+        r#"{"fieldSet":["year","month","day","weekday","hour","minute","zoneGeneric"],"length":"medium","eraDisplay":"always"}"#
     );
     let json_skeleton = serde_json::from_str::<NeoSkeleton>(&json_string).unwrap();
     assert_eq!(skeleton, json_skeleton);
