@@ -52,6 +52,8 @@ pub mod linux_prefs {
     pub fn get_locales() -> HashMap<LocaleCategory, String> {
         let mut locale_map = HashMap::new();
 
+        // SAFETY: Safety is ensured because we pass a `NULL` pointer and retrieve the locale there is
+        // no subsequent calls for `setlocale` which could change the locale of this particular thread
         let locales_ptr = unsafe { setlocale(LC_ALL, ptr::null()) };
 
         if locales_ptr.is_null() {
@@ -59,6 +61,7 @@ pub mod linux_prefs {
             return locale_map;
         }
 
+        // SAFETY: A valid `NULL` terminator is present which is a requirement of `from_ptr`
         let locales_cstr = unsafe { CStr::from_ptr(locales_ptr) };
 
         if let Ok(locales_str) = locales_cstr.to_str() {
@@ -83,9 +86,12 @@ pub mod linux_prefs {
     }
 
     pub fn get_system_calendars() -> impl Iterator<Item = (Cow<'static, str>, Cow<'static, str>)> {
+        // SAFETY: Safety is ensured because we pass a `NULL` pointer and retrieve the locale there is
+        // no subsequent calls for `setlocale` which could change the locale of this particular thread
         let locale_ptr = unsafe { setlocale(LC_TIME, ptr::null()) };
 
         if !locale_ptr.is_null() {
+            // SAFETY: A valid `NULL` terminator is present which is a requirement of `from_ptr`
             let c_str = unsafe { CStr::from_ptr(locale_ptr) };
 
             if let Ok(str_slice) = c_str.to_str() {
