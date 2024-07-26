@@ -45,6 +45,14 @@ const fn get_current_subtag(slice: &[u8], idx: usize) -> (usize, usize) {
     (start, end)
 }
 
+pub const fn split_out_range(slice: &[u8], start: usize, end: usize) -> &[u8] {
+    assert!(start < slice.len());
+    assert!(end <= slice.len());
+    assert!(start <= end);
+    // SAFETY: assertions and align = size = 1.
+    unsafe { core::slice::from_raw_parts(slice.as_ptr().add(start), end - start) }
+}
+
 // `SubtagIterator` is a helper iterator for [`LanguageIdentifier`] and [`Locale`] parsing.
 //
 // It is quite extraordinary due to focus on performance and Rust limitations for `const`
@@ -91,23 +99,14 @@ impl<'a> SubtagIterator<'a> {
         } else {
             self.done = true;
         }
-        (
-            self,
-            Some(self.slice.split_at(result.1).0.split_at(result.0).1),
-        )
+        (self, Some(split_out_range(self.slice, result.0, result.1)))
     }
 
     pub const fn peek(&self) -> Option<&'a [u8]> {
         if self.done {
             return None;
         }
-        Some(
-            self.slice
-                .split_at(self.subtag.1)
-                .0
-                .split_at(self.subtag.0)
-                .1,
-        )
+        Some(split_out_range(self.slice, self.subtag.0, self.subtag.1))
     }
 }
 

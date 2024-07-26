@@ -139,8 +139,7 @@ impl<const N: usize, T> ConstArrayBuilder<N, T> {
     /// Returns the initialized elements as a [`ConstSlice`].
     pub const fn as_const_slice(&self) -> ConstSlice<T> {
         ConstSlice::from_slice(
-            &self
-                .full_array
+            self.full_array
                 .split_at(self.limit)
                 .0
                 .split_at(self.start)
