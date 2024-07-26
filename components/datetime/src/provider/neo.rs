@@ -706,19 +706,19 @@ pub struct DateTimeSkeletonsV1<'data> {
 #[derive(Debug)]
 pub struct YearNamesV1Marker;
 impl DynamicDataMarker for YearNamesV1Marker {
-    type Yokeable = YearNamesV1<'static>;
+    type DataStruct = YearNamesV1<'static>;
 }
 
 /// Calendar-agnostic month name data marker
 #[derive(Debug)]
 pub struct MonthNamesV1Marker;
 impl DynamicDataMarker for MonthNamesV1Marker {
-    type Yokeable = MonthNamesV1<'static>;
+    type DataStruct = MonthNamesV1<'static>;
 }
 
 /// Calendar-agnostic date/time skeleta data marker
 #[derive(Debug)]
 pub struct SkeletaV1Marker;
 impl DynamicDataMarker for SkeletaV1Marker {
-    type Yokeable = PackedSkeletonDataV1<'static>;
+    type DataStruct = PackedSkeletonDataV1<'static>;
 }

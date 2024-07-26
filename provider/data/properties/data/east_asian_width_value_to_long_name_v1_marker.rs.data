@@ -16,7 +16,7 @@ macro_rules! __impl_east_asian_width_value_to_long_name_v1_marker {
         #[clippy::msrv = "1.70"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_EAST_ASIAN_WIDTH_VALUE_TO_LONG_NAME_V1_MARKER: &'static <icu::properties::provider::names::EastAsianWidthValueToLongNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = &icu::properties::provider::names::PropertyEnumToValueNameLinearMapV1 { map: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x06\0\0\0\0\0\x07\0\x10\0\x19\0\"\0(\0NeutralAmbiguousHalfwidthFullwidthNarrowWide") } };
+            pub const SINGLETON_EAST_ASIAN_WIDTH_VALUE_TO_LONG_NAME_V1_MARKER: &'static <icu::properties::provider::names::EastAsianWidthValueToLongNameV1Marker as icu_provider::DynamicDataMarker>::DataStruct = &icu::properties::provider::names::PropertyEnumToValueNameLinearMapV1 { map: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x06\0\0\0\0\0\x07\0\x10\0\x19\0\"\0(\0NeutralAmbiguousHalfwidthFullwidthNarrowWide") } };
         }
         #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::properties::provider::names::EastAsianWidthValueToLongNameV1Marker> for $provider {

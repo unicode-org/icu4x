@@ -16,7 +16,7 @@ macro_rules! __impl_likely_subtags_for_language_v1_marker {
         #[clippy::msrv = "1.70"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_LIKELY_SUBTAGS_FOR_LANGUAGE_V1_MARKER: &'static <icu::locale::provider::LikelySubtagsForLanguageV1Marker as icu_provider::DynamicDataMarker>::Yokeable = &icu::locale::provider::LikelySubtagsForLanguageV1 {
+            pub const SINGLETON_LIKELY_SUBTAGS_FOR_LANGUAGE_V1_MARKER: &'static <icu::locale::provider::LikelySubtagsForLanguageV1Marker as icu_provider::DynamicDataMarker>::DataStruct = &icu::locale::provider::LikelySubtagsForLanguageV1 {
                 language_script: unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"az\0Araben\0Shawff\0Adlmkk\0Arabku\0Arabku\0Yeziky\0Arabky\0Latnmn\0Mongpa\0Arabsd\0Devasd\0Khojsd\0Sindtg\0Arabug\0Cyrluz\0ArabyueHanszh\0Bopozh\0Hanbzh\0Hant") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"IR\0GB\0GN\0CN\0IQ\0GE\0CN\0TR\0CN\0PK\0IN\0IN\0IN\0PK\0KZ\0AF\0CN\0TW\0TW\0TW\0") })

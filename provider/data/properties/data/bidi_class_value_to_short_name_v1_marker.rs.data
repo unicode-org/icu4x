@@ -16,7 +16,7 @@ macro_rules! __impl_bidi_class_value_to_short_name_v1_marker {
         #[clippy::msrv = "1.70"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_BIDI_CLASS_VALUE_TO_SHORT_NAME_V1_MARKER: &'static <icu::properties::provider::names::BidiClassValueToShortNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = &icu::properties::provider::names::PropertyEnumToValueNameLinearMapV1 { map: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x17\0\0\0\0\0\x01\0\x02\0\x04\0\x06\0\x08\0\n\0\x0C\0\r\0\x0E\0\x10\0\x12\0\x15\0\x18\0\x1A\0\x1D\0 \0#\0&\0(\0+\0.\x001\0LRENESETANCSBSWSONLRELROALRLERLOPDFNSMBNFSILRIRLIPDI") } };
+            pub const SINGLETON_BIDI_CLASS_VALUE_TO_SHORT_NAME_V1_MARKER: &'static <icu::properties::provider::names::BidiClassValueToShortNameV1Marker as icu_provider::DynamicDataMarker>::DataStruct = &icu::properties::provider::names::PropertyEnumToValueNameLinearMapV1 { map: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x17\0\0\0\0\0\x01\0\x02\0\x04\0\x06\0\x08\0\n\0\x0C\0\r\0\x0E\0\x10\0\x12\0\x15\0\x18\0\x1A\0\x1D\0 \0#\0&\0(\0+\0.\x001\0LRENESETANCSBSWSONLRELROALRLERLOPDFNSMBNFSILRIRLIPDI") } };
         }
         #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::properties::provider::names::BidiClassValueToShortNameV1Marker> for $provider {

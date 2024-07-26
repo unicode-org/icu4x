@@ -123,7 +123,7 @@ impl<M: DynamicDataMarker, Variables> DateTimeNamesData2<M, Variables> {
 }
 
 pub struct DateTimeNamesData2Borrowed<'data, M: DynamicDataMarker, Variables> {
-    inner: OptionalNames<Variables, &'data <M::Yokeable as Yokeable<'data>>::Output>,
+    inner: OptionalNames<Variables, &'data <M::DataStruct as Yokeable<'data>>::Output>,
 }
 
 impl<M: DynamicDataMarker, Variables> MaybePayload2<M, Variables>
@@ -251,7 +251,7 @@ where
     #[inline]
     pub(crate) fn as_borrowed<'a>(
         &'a self,
-    ) -> OptionalNames<Variables, &'a <M::Yokeable as Yokeable<'a>>::Output> {
+    ) -> OptionalNames<Variables, &'a <M::DataStruct as Yokeable<'a>>::Output> {
         match self {
             Self::None => OptionalNames::None,
             Self::SingleLength { variables, payload } => OptionalNames::SingleLength {

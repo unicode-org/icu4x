@@ -38,7 +38,7 @@ where
 }
 
 /// Implements [`UpcastDataPayload`] from several data markers to a single data marker
-/// that all share the same [`DynamicDataMarker::Yokeable`].
+/// that all share the same [`DynamicDataMarker::DataStruct`].
 ///
 /// # Examples
 ///
@@ -61,7 +61,7 @@ where
 /// );
 /// ```
 ///
-/// [`DynamicDataMarker::Yokeable`]: crate::DynamicDataMarker::Yokeable
+/// [`DynamicDataMarker::DataStruct`]: crate::DynamicDataMarker::DataStruct
 #[macro_export]
 #[doc(hidden)] // macro
 macro_rules! __impl_casting_upcast {
@@ -120,7 +120,7 @@ pub use __impl_casting_upcast as impl_casting_upcast;
 ///
 /// # struct DummyMarker;
 /// # impl DynamicDataMarker for DummyMarker {
-/// #     type Yokeable = <HelloWorldV1Marker as DynamicDataMarker>::Yokeable;
+/// #     type DataStruct = <HelloWorldV1Marker as DynamicDataMarker>::DataStruct;
 /// # }
 /// # impl DataMarker for DummyMarker {
 /// #     const INFO: DataMarkerInfo = DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!("dummy@1"));
@@ -171,7 +171,7 @@ pub use __impl_casting_upcast as impl_casting_upcast;
 /// // Because of the wildcard, any marker actually works:
 /// struct DummyMarker;
 /// impl DynamicDataMarker for DummyMarker {
-///     type Yokeable = <HelloWorldV1Marker as DynamicDataMarker>::Yokeable;
+///     type DataStruct = <HelloWorldV1Marker as DynamicDataMarker>::DataStruct;
 /// }
 /// impl DataMarker for DummyMarker {
 ///     const INFO: DataMarkerInfo = DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!("dummy@1"));

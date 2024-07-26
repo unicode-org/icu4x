@@ -632,13 +632,13 @@ pub trait DateInputMarkers: private::Sealed {
 /// (data markers only).
 pub trait TypedDateDataMarkers<C>: private::Sealed {
     /// Marker for loading date skeleton patterns.
-    type DateSkeletonPatternsV1Marker: DataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
+    type DateSkeletonPatternsV1Marker: DataMarker<DataStruct = PackedSkeletonDataV1<'static>>;
     /// Marker for loading year names.
-    type YearNamesV1Marker: DataMarker<Yokeable = YearNamesV1<'static>>;
+    type YearNamesV1Marker: DataMarker<DataStruct = YearNamesV1<'static>>;
     /// Marker for loading month names.
-    type MonthNamesV1Marker: DataMarker<Yokeable = MonthNamesV1<'static>>;
+    type MonthNamesV1Marker: DataMarker<DataStruct = MonthNamesV1<'static>>;
     /// Marker for loading weekday names.
-    type WeekdayNamesV1Marker: DataMarker<Yokeable = LinearNamesV1<'static>>;
+    type WeekdayNamesV1Marker: DataMarker<DataStruct = LinearNamesV1<'static>>;
 }
 
 /// A trait associating types for date formatting in any calendar
@@ -651,7 +651,7 @@ pub trait DateDataMarkers: private::Sealed {
     /// Cross-calendar data markers for month names.
     type Month: CalMarkers<MonthNamesV1Marker>;
     /// Marker for loading weekday names.
-    type WeekdayNamesV1Marker: DataMarker<Yokeable = LinearNamesV1<'static>>;
+    type WeekdayNamesV1Marker: DataMarker<DataStruct = LinearNamesV1<'static>>;
 }
 
 /// A trait associating types for time formatting
@@ -666,9 +666,9 @@ pub trait TimeMarkers: private::Sealed {
     /// Marker for resolving the any-calendar-kind input field.
     type NanoSecondInput: Into<Option<NanoSecond>>;
     /// Marker for loading time skeleton patterns.
-    type TimeSkeletonPatternsV1Marker: DataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
+    type TimeSkeletonPatternsV1Marker: DataMarker<DataStruct = PackedSkeletonDataV1<'static>>;
     /// Marker for loading day period names.
-    type DayPeriodNamesV1Marker: DataMarker<Yokeable = LinearNamesV1<'static>>;
+    type DayPeriodNamesV1Marker: DataMarker<DataStruct = LinearNamesV1<'static>>;
 }
 
 /// A trait associating types for time zone formatting
@@ -677,17 +677,17 @@ pub trait ZoneMarkers: private::Sealed {
     /// Marker for resolving the time zone input field.
     type TimeZoneInput: Into<Option<CustomTimeZone>>;
     /// Marker for loading core time zone data.
-    type EssentialsV1Marker: DataMarker<Yokeable = tz::EssentialsV1<'static>>;
+    type EssentialsV1Marker: DataMarker<DataStruct = tz::EssentialsV1<'static>>;
     /// Marker for loading exemplar city names for time zone formatting
-    type ExemplarCitiesV1Marker: DataMarker<Yokeable = tz::ExemplarCitiesV1<'static>>;
+    type ExemplarCitiesV1Marker: DataMarker<DataStruct = tz::ExemplarCitiesV1<'static>>;
     /// Marker for loading generic short time zone names.
-    type GenericLongV1Marker: DataMarker<Yokeable = tz::MzGenericLongV1<'static>>;
+    type GenericLongV1Marker: DataMarker<DataStruct = tz::MzGenericLongV1<'static>>;
     /// Marker for loading generic short time zone names.
-    type GenericShortV1Marker: DataMarker<Yokeable = tz::MzGenericShortV1<'static>>;
+    type GenericShortV1Marker: DataMarker<DataStruct = tz::MzGenericShortV1<'static>>;
     /// Marker for loading generic short time zone names.
-    type SpecificLongV1Marker: DataMarker<Yokeable = tz::MzSpecificLongV1<'static>>;
+    type SpecificLongV1Marker: DataMarker<DataStruct = tz::MzSpecificLongV1<'static>>;
     /// Marker for loading generic short time zone names.
-    type SpecificShortV1Marker: DataMarker<Yokeable = tz::MzSpecificShortV1<'static>>;
+    type SpecificShortV1Marker: DataMarker<DataStruct = tz::MzSpecificShortV1<'static>>;
 }
 
 /// A trait associating constants and types implementing various other traits
@@ -708,7 +708,7 @@ pub trait DateTimeMarkers: private::Sealed + DateTimeNamesMarker {
     /// Type of the length option in the constructor.
     type LengthOption: Into<Option<NeoSkeletonLength>>;
     /// Marker for loading the date/time glue pattern.
-    type GluePatternV1Marker: DataMarker<Yokeable = GluePatternV1<'static>>;
+    type GluePatternV1Marker: DataMarker<DataStruct = GluePatternV1<'static>>;
 }
 
 /// Trait to consolidate input markers.
@@ -1187,7 +1187,7 @@ macro_rules! impl_date_marker {
         input_day_of_year = $day_of_year_yesno:ident,
         input_any_calendar_kind = $any_calendar_kind_yesno:ident,
     ) => {
-        #[doc = concat!("Marker for ", $description, ": ", $expectation)]
+        #[doc = concat!("**“", $expectation, "**” ⇒ ", $description)]
         ///
         /// # Examples
         ///
@@ -1340,7 +1340,7 @@ macro_rules! impl_time_marker {
         input_second = $second_yesno:ident,
         input_nanosecond = $nanosecond_yesno:ident,
     ) => {
-        #[doc = concat!("Marker for ", $description, ": ", $expectation)]
+        #[doc = concat!("**“", $expectation, "**” ⇒ ", $description)]
         ///
         /// # Examples
         ///
@@ -1445,7 +1445,7 @@ macro_rules! impl_zone_marker {
         zone_specific_long = $zone_specific_long_yesno:ident,
         zone_specific_short = $zone_specific_short_yesno:ident,
     ) => {
-        #[doc = concat!("Marker for ", $description, ": ", $expectation)]
+        #[doc = concat!("**“", $expectation, "**” ⇒ ", $description)]
         ///
         /// # Examples
         ///
@@ -1562,7 +1562,7 @@ macro_rules! impl_datetime_marker {
         date = $date:path,
         time = $time:path,
     ) => {
-        #[doc = concat!("Marker for ", $description, ": ", $expectation)]
+        #[doc = concat!("**“", $expectation, "**” ⇒ ", $description)]
         ///
         /// # Examples
         ///
@@ -1625,7 +1625,7 @@ macro_rules! impl_zoneddatetime_marker {
         time = $time:path,
         zone = $zone:path,
     ) => {
-        #[doc = concat!("Marker for ", $description, ": ", $expectation)]
+        #[doc = concat!("**“", $expectation, "**” ⇒ ", $description)]
         ///
         /// # Examples
         ///
@@ -1692,7 +1692,7 @@ macro_rules! impl_zoneddatetime_marker {
 impl_day_marker!(
     NeoYearMonthDayMarker,
     NeoDayComponents::YearMonthDay,
-    description = "a Year/Month/Day format",
+    description = "year, month, and day (era elided when possible)",
     expectation = "May 17, 2024",
     years = yes,
     months = yes,
@@ -1709,7 +1709,7 @@ impl_day_marker!(
 impl_day_marker!(
     NeoEraYearMonthMarker,
     NeoDayComponents::EraYearMonthDay,
-    description = "an Era/Year/Month/Day format",
+    description = "year, month, and day (era always displayed)",
     expectation = "May 17, 2024 AD",
     years = yes,
     months = yes,
@@ -1766,7 +1766,7 @@ impl_datetime_marker!(
 impl_date_marker!(
     NeoYearMonthMarker,
     NeoDateComponents::YearMonth,
-    description = "a Year/Month format",
+    description = "year and month (era elided when possible)",
     expectation = "May 2024",
     years = yes,
     months = yes,
@@ -1783,7 +1783,7 @@ impl_date_marker!(
 impl_zone_marker!(
     NeoTimeZoneSpecificMarker,
     NeoTimeZoneSkeleton::specific(),
-    description = "a specific time zone format with inherited length",
+    description = "specific time zone with inherited length, or GMT offset if unavailable",
     expectation = "CDT",
     needs_length_option = yes,
     zone_essentials = yes,
@@ -1829,7 +1829,7 @@ impl_zone_marker!(
     /// ```
     NeoTimeZoneSpecificShortMarker,
     NeoTimeZoneSkeleton::specific_short(),
-    description = "a short specific time zone format",
+    description = "specific time zone with a shorter length, or GMT offset if unavailable",
     expectation = "CDT",
     needs_length_option = no,
     zone_essentials = yes,
@@ -1843,7 +1843,7 @@ impl_zone_marker!(
 impl_zone_marker!(
     NeoTimeZoneSpecificLongMarker,
     NeoTimeZoneSkeleton::specific_long(),
-    description = "a long specific time zone format",
+    description = "specific time zone with a longer length, or GMT offset if unavailable",
     expectation = "Central Daylight Time",
     needs_length_option = no,
     zone_essentials = yes,
@@ -1857,7 +1857,7 @@ impl_zone_marker!(
 impl_zone_marker!(
     NeoTimeZoneGmtMarker,
     NeoTimeZoneSkeleton::gmt(),
-    description = "a GMT-offset time zone format with inherited length",
+    description = "GMT offset with inherited length",
     expectation = "GMT-05:00", // TODO: Implement short localized GMT
     needs_length_option = yes,
     zone_essentials = yes,
@@ -1871,7 +1871,7 @@ impl_zone_marker!(
 impl_zone_marker!(
     NeoTimeZoneGmtShortMarker,
     NeoTimeZoneSkeleton::gmt_short(),
-    description = "a GMT-offset short time zone format",
+    description = "GMT offset with a shorter length",
     expectation = "GMT-05:00", // TODO: Implement short localized GMT
     needs_length_option = no,
     zone_essentials = yes,
@@ -1885,7 +1885,7 @@ impl_zone_marker!(
 impl_zone_marker!(
     NeoTimeZoneGmtLongMarker,
     NeoTimeZoneSkeleton::gmt_long(),
-    description = "a GMT-offset long time zone format",
+    description = "GMT offset with a longer length",
     expectation = "GMT-05:00",
     needs_length_option = no,
     zone_essentials = yes,
@@ -1899,7 +1899,7 @@ impl_zone_marker!(
 impl_zone_marker!(
     NeoTimeZoneGenericMarker,
     NeoTimeZoneSkeleton::generic(),
-    description = "a generic time zone format with inherited length",
+    description = "generic time zone with inherited length, or location if unavailable",
     expectation = "CT",
     needs_length_option = yes,
     zone_essentials = yes,
@@ -1945,7 +1945,7 @@ impl_zone_marker!(
     /// ```
     NeoTimeZoneGenericShortMarker,
     NeoTimeZoneSkeleton::generic_short(),
-    description = "a generic short time zone format",
+    description = "generic time zone with a shorter length, or location if unavailable",
     expectation = "CT",
     needs_length_option = no,
     zone_essentials = yes,
@@ -1959,7 +1959,7 @@ impl_zone_marker!(
 impl_zone_marker!(
     NeoTimeZoneGenericLongMarker,
     NeoTimeZoneSkeleton::generic_long(),
-    description = "a generic long time zone format",
+    description = "generic time zone with a longer length, or location if unavailable",
     expectation = "Central Time",
     needs_length_option = no,
     zone_essentials = yes,
@@ -1973,7 +1973,7 @@ impl_zone_marker!(
 impl_zone_marker!(
     NeoTimeZoneLocationMarker,
     NeoTimeZoneSkeleton::location(),
-    description = "a location time zone format",
+    description = "location time zone",
     expectation = "Chicago Time",
     needs_length_option = no,
     zone_essentials = yes,

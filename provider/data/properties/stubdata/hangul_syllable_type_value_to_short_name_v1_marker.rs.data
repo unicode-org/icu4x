@@ -16,7 +16,7 @@ macro_rules! __impl_hangul_syllable_type_value_to_short_name_v1_marker {
         #[clippy::msrv = "1.70"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_HANGUL_SYLLABLE_TYPE_VALUE_TO_SHORT_NAME_V1_MARKER: &'static <icu::properties::provider::names::HangulSyllableTypeValueToShortNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = &icu::properties::provider::names::PropertyEnumToValueNameLinearMapV1 { map: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x06\0\0\0\0\0\x02\0\x03\0\x04\0\x05\0\x07\0NALVTLVLVT") } };
+            pub const SINGLETON_HANGUL_SYLLABLE_TYPE_VALUE_TO_SHORT_NAME_V1_MARKER: &'static <icu::properties::provider::names::HangulSyllableTypeValueToShortNameV1Marker as icu_provider::DynamicDataMarker>::DataStruct = &icu::properties::provider::names::PropertyEnumToValueNameLinearMapV1 { map: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x06\0\0\0\0\0\x02\0\x03\0\x04\0\x05\0\x07\0NALVTLVLVT") } };
         }
         #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::properties::provider::names::HangulSyllableTypeValueToShortNameV1Marker> for $provider {

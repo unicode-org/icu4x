@@ -16,7 +16,7 @@ macro_rules! __impl_grapheme_cluster_break_value_to_long_name_v1_marker {
         #[clippy::msrv = "1.70"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_GRAPHEME_CLUSTER_BREAK_VALUE_TO_LONG_NAME_V1_MARKER: &'static <icu::properties::provider::names::GraphemeClusterBreakValueToLongNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = &icu::properties::provider::names::PropertyEnumToValueNameLinearMapV1 { map: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x12\0\0\0\0\0\x05\0\x0C\0\x0E\0\x14\0\x15\0\x17\0\x19\0\x1C\0\x1D\0\x1E\0)\x000\0B\0H\0R\0\\\0j\0OtherControlCRExtendLLFLVLVTTVSpacingMarkPrependRegional_IndicatorE_BaseE_Base_GAZE_ModifierGlue_After_ZwjZWJ") } };
+            pub const SINGLETON_GRAPHEME_CLUSTER_BREAK_VALUE_TO_LONG_NAME_V1_MARKER: &'static <icu::properties::provider::names::GraphemeClusterBreakValueToLongNameV1Marker as icu_provider::DynamicDataMarker>::DataStruct = &icu::properties::provider::names::PropertyEnumToValueNameLinearMapV1 { map: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x12\0\0\0\0\0\x05\0\x0C\0\x0E\0\x14\0\x15\0\x17\0\x19\0\x1C\0\x1D\0\x1E\0)\x000\0B\0H\0R\0\\\0j\0OtherControlCRExtendLLFLVLVTTVSpacingMarkPrependRegional_IndicatorE_BaseE_Base_GAZE_ModifierGlue_After_ZwjZWJ") } };
         }
         #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::properties::provider::names::GraphemeClusterBreakValueToLongNameV1Marker> for $provider {

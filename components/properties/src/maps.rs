@@ -35,7 +35,7 @@ pub struct CodePointMapData<T: TrieValue> {
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 struct ErasedMaplikeMarker<T>(PhantomData<T>);
 impl<T: TrieValue> DynamicDataMarker for ErasedMaplikeMarker<T> {
-    type Yokeable = PropertyCodePointMapV1<'static, T>;
+    type DataStruct = PropertyCodePointMapV1<'static, T>;
 }
 
 impl<T: TrieValue> CodePointMapData<T> {
@@ -88,7 +88,7 @@ impl<T: TrieValue> CodePointMapData<T> {
     /// Typically it is preferable to use getters like [`load_general_category()`] instead
     pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
     where
-        M: DynamicDataMarker<Yokeable = PropertyCodePointMapV1<'static, T>>,
+        M: DynamicDataMarker<DataStruct = PropertyCodePointMapV1<'static, T>>,
     {
         Self { data: data.cast() }
     }
