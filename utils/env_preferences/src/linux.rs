@@ -10,19 +10,19 @@ pub mod linux_prefs {
 
     #[derive(Hash, Eq, PartialEq, Debug)]
     pub enum LocaleCategory {
-        LcCTYPE,
-        LcNUMERIC,
-        LcTIME,
-        LcCOLLATE,
-        LcMONETARY,
-        LcMESSAGES,
-        LcPAPER,
-        LcNAME,
-        LcADDRESS,
-        LcTELEPHONE,
-        LcMEASUREMENT,
-        LcIDENTIFICATION,
-        LcALL,
+        Character,
+        Number,
+        Time,
+        Collate,
+        Monetary,
+        Messages,
+        Paper,
+        Name,
+        Address,
+        Telephone,
+        Measurement,
+        Identification,
+        All,
         Other(String),
     }
 
@@ -31,19 +31,19 @@ pub mod linux_prefs {
 
         fn from_str(s: &str) -> Result<Self, Self::Err> {
             match s {
-                "LC_CTYPE" => Ok(LocaleCategory::LcCTYPE),
-                "LC_NUMERIC" => Ok(LocaleCategory::LcNUMERIC),
-                "LC_TIME" => Ok(LocaleCategory::LcTIME),
-                "LC_COLLATE" => Ok(LocaleCategory::LcCOLLATE),
-                "LC_MONETARY" => Ok(LocaleCategory::LcMONETARY),
-                "LC_MESSAGES" => Ok(LocaleCategory::LcMESSAGES),
-                "LC_PAPER" => Ok(LocaleCategory::LcPAPER),
-                "LC_NAME" => Ok(LocaleCategory::LcNAME),
-                "LC_ADDRESS" => Ok(LocaleCategory::LcADDRESS),
-                "LC_TELEPHONE" => Ok(LocaleCategory::LcTELEPHONE),
-                "LC_MEASUREMENT" => Ok(LocaleCategory::LcMEASUREMENT),
-                "LC_IDENTIFICATION" => Ok(LocaleCategory::LcIDENTIFICATION),
-                "LC_ALL" => Ok(LocaleCategory::LcALL),
+                "LC_CTYPE" => Ok(LocaleCategory::Character),
+                "LC_NUMERIC" => Ok(LocaleCategory::Number),
+                "LC_TIME" => Ok(LocaleCategory::Time),
+                "LC_COLLATE" => Ok(LocaleCategory::Collate),
+                "LC_MONETARY" => Ok(LocaleCategory::Monetary),
+                "LC_MESSAGES" => Ok(LocaleCategory::Messages),
+                "LC_PAPER" => Ok(LocaleCategory::Paper),
+                "LC_NAME" => Ok(LocaleCategory::Name),
+                "LC_ADDRESS" => Ok(LocaleCategory::Address),
+                "LC_TELEPHONE" => Ok(LocaleCategory::Telephone),
+                "LC_MEASUREMENT" => Ok(LocaleCategory::Measurement),
+                "LC_IDENTIFICATION" => Ok(LocaleCategory::Identification),
+                "LC_ALL" => Ok(LocaleCategory::All),
                 _ => Ok(LocaleCategory::Other(s.to_string())),
             }
         }
@@ -57,7 +57,7 @@ pub mod linux_prefs {
         unsafe {
             let locales_ptr = setlocale(LC_ALL, ptr::null());
             if locales_ptr.is_null() {
-                locale_map.insert(LocaleCategory::LcALL, "C".to_string());
+                locale_map.insert(LocaleCategory::All, "C".to_string());
                 return locale_map;
             }
 
@@ -72,7 +72,7 @@ pub mod linux_prefs {
 
                 // To handle cases in case a single locale is returned or a list of locale
                 if locale_pairs.clone().count() == 1 {
-                    locale_map.insert(LocaleCategory::LcALL, "C".to_string());
+                    locale_map.insert(LocaleCategory::All, "C".to_string());
                 } else {
                     for locale_pair in locale_pairs {
                         let mut parts = locale_pair.split('=');
