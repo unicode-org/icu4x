@@ -4,19 +4,19 @@
 
 //! Retrieval of system locales and preferences.
 
-use cfg_if::cfg_if;
-
-cfg_if! {
-    if #[cfg(target_os = "linux")] {
-        mod linux;
-        pub use linux::*;
-    } else if #[cfg(target_os = "macos")] {
-        mod apple;
-        pub use apple::*;
-    } else if #[cfg(target_os = "windows")] {
-        mod windows;
-        pub use windows::*;
-    } else {
-        panic!("Unsupported operating system");
-    }
-}
+#[cfg(target_os = "linux")]
+mod linux;
+#[cfg(target_os = "linux")]
+pub use linux::*;
+#[cfg(target_os = "macos")]
+mod apple;
+#[cfg(target_os = "macos")]
+pub use apple::*;
+#[cfg(target_os = "windows")]
+mod windows;
+#[cfg(target_os = "windows")]
+pub use windows::*;
+#[cfg(not(any(target_os = "linux", target_os = "macos", target_os = "windows")))]
+compile_error!(
+    "Unsupported target OS. Supported operating systems are Apple, Linux & Windows as of now"
+);
