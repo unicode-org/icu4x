@@ -1,10 +1,24 @@
 {
-  "number_index": 0,
-  "percent_sign_affixes": {
-    "prefix": "",
-    "suffix": ""
-  },
-  "percent_sign_symbol": "%",
-  "percent_symbol_index": 5,
-  "standard": "#,##0%"
+  "signed_pattern": [
+    {
+      "Placeholder": "Place1"
+    },
+    {
+      "Placeholder": "Place0"
+    },
+    {
+      "Literal": "%"
+    }
+  ],
+  "unsigned_pattern": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": "%"
+    }
+  ],
+  "approximately_sign": "約",
+  "minus_sign": "-",
+  "plus_sign": "+"
 }
