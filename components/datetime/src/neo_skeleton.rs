@@ -8,6 +8,7 @@
 use crate::neo_serde::*;
 use crate::options::components;
 use crate::options::length;
+use crate::options::preferences;
 #[cfg(feature = "experimental")]
 use crate::raw::neo::MaybeLength;
 #[cfg(feature = "experimental")]
@@ -697,14 +698,56 @@ impl NeoTimeComponents {
                 ..Default::default()
             }),
             Self::DayPeriodHour12 => todo!(),
-            Self::Hour12 => todo!(),
+            Self::Hour12 => DateTimeFormatterOptions::Components(components::Bag {
+                hour: Some(length.to_components_numeric()),
+                preferences: Some(preferences::Bag {
+                    hour_cycle: Some(preferences::HourCycle::H12),
+                }),
+                ..Default::default()
+            }),
             Self::DayPeriodHour12Minute => todo!(),
-            Self::Hour12Minute => todo!(),
+            Self::Hour12Minute => DateTimeFormatterOptions::Components(components::Bag {
+                hour: Some(length.to_components_numeric()),
+                minute: Some(length.to_components_numeric()),
+                preferences: Some(preferences::Bag {
+                    hour_cycle: Some(preferences::HourCycle::H12),
+                }),
+                ..Default::default()
+            }),
             Self::DayPeriodHour12MinuteSecond => todo!(),
-            Self::Hour12MinuteSecond => todo!(),
-            Self::Hour24 => todo!(),
-            Self::Hour24Minute => todo!(),
-            Self::Hour24MinuteSecond => todo!(),
+            Self::Hour12MinuteSecond => DateTimeFormatterOptions::Components(components::Bag {
+                hour: Some(length.to_components_numeric()),
+                minute: Some(length.to_components_numeric()),
+                second: Some(length.to_components_numeric()),
+                preferences: Some(preferences::Bag {
+                    hour_cycle: Some(preferences::HourCycle::H12),
+                }),
+                ..Default::default()
+            }),
+            Self::Hour24 => DateTimeFormatterOptions::Components(components::Bag {
+                hour: Some(length.to_components_numeric()),
+                preferences: Some(preferences::Bag {
+                    hour_cycle: Some(preferences::HourCycle::H23),
+                }),
+                ..Default::default()
+            }),
+            Self::Hour24Minute => DateTimeFormatterOptions::Components(components::Bag {
+                hour: Some(length.to_components_numeric()),
+                minute: Some(length.to_components_numeric()),
+                preferences: Some(preferences::Bag {
+                    hour_cycle: Some(preferences::HourCycle::H23),
+                }),
+                ..Default::default()
+            }),
+            Self::Hour24MinuteSecond => DateTimeFormatterOptions::Components(components::Bag {
+                hour: Some(length.to_components_numeric()),
+                minute: Some(length.to_components_numeric()),
+                second: Some(length.to_components_numeric()),
+                preferences: Some(preferences::Bag {
+                    hour_cycle: Some(preferences::HourCycle::H23),
+                }),
+                ..Default::default()
+            }),
             Self::Auto => match length {
                 // Note: For now, make "long" and "medium" both map to "medium".
                 // This could be improved in light of additional data.
