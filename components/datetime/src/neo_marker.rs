@@ -84,7 +84,7 @@
 //! use icu::calendar::Gregorian;
 //! use icu::datetime::neo::NeoOptions;
 //! use icu::datetime::neo::TypedNeoFormatter;
-//! use icu::datetime::neo_marker::NeoAutoTimeMarker;
+//! use icu::datetime::neo_marker::NeoHourMinuteMarker;
 //! use icu::datetime::NeverCalendar;
 //! use icu::datetime::neo_skeleton::NeoSkeletonLength;
 //! use icu::locale::locale;
@@ -92,7 +92,7 @@
 //!
 //! // By default, en-US uses 12-hour time, but we can set a 24-hour override.
 //! let en_US_h23 =
-//!     TypedNeoFormatter::<NeverCalendar, NeoAutoTimeMarker>::try_new(
+//!     TypedNeoFormatter::<NeverCalendar, NeoHourMinuteMarker>::try_new(
 //!         &locale!("en-US-u-hc-h23").into(),
 //!         NeoSkeletonLength::Short.into()
 //!     )
@@ -104,7 +104,7 @@
 //!
 //! // By default, fr-FR uses 24-hour time, but we can set a 12-hour override.
 //! let fr_FR_h12 =
-//!     TypedNeoFormatter::<NeverCalendar, NeoAutoTimeMarker>::try_new(
+//!     TypedNeoFormatter::<NeverCalendar, NeoHourMinuteMarker>::try_new(
 //!         &locale!("en-US-u-hc-h12").into(),
 //!         NeoSkeletonLength::Short.into()
 //!     )
@@ -1867,6 +1867,19 @@ impl_day_marker!(
     input_day_of_week = yes,
     input_day_of_year = no,
     input_any_calendar_kind = yes,
+);
+
+impl_time_marker!(
+    NeoHourMinuteMarker,
+    NeoTimeComponents::HourMinute,
+    description = "hour and minute (locale-dependent hour cycle)",
+    expectation = "3:47 PM",
+    dayperiods = yes,
+    times = yes,
+    input_hour = yes,
+    input_minute = yes,
+    input_second = no,
+    input_nanosecond = no,
 );
 
 impl_time_marker!(
