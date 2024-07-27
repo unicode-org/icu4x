@@ -75,6 +75,46 @@
 //! );
 //! ```
 //!
+//! ## Hour Cycle
+//!
+//! Hours can be switched between 12-hour and 24-hour time via the `u-hc` locale keyword.
+//!
+//! ```
+//! use icu::calendar::Time;
+//! use icu::calendar::Gregorian;
+//! use icu::datetime::neo::NeoOptions;
+//! use icu::datetime::neo::TypedNeoFormatter;
+//! use icu::datetime::neo_marker::NeoAutoTimeMarker;
+//! use icu::datetime::NeverCalendar;
+//! use icu::datetime::neo_skeleton::NeoSkeletonLength;
+//! use icu::locale::locale;
+//! use writeable::assert_try_writeable_eq;
+//!
+//! // By default, en-US uses 12-hour time, but we can set a 24-hour override.
+//! let en_US_h23 =
+//!     TypedNeoFormatter::<NeverCalendar, NeoAutoTimeMarker>::try_new(
+//!         &locale!("en-US-u-hc-h23").into(),
+//!         NeoSkeletonLength::Short.into()
+//!     )
+//!     .unwrap();
+//! assert_try_writeable_eq!(
+//!     en_US_h23.format(&Time::try_new(16, 12, 20, 0).unwrap()),
+//!     "16:12"
+//! );
+//!
+//! // By default, fr-FR uses 24-hour time, but we can set a 12-hour override.
+//! let fr_FR_h12 =
+//!     TypedNeoFormatter::<NeverCalendar, NeoAutoTimeMarker>::try_new(
+//!         &locale!("en-US-u-hc-h12").into(),
+//!         NeoSkeletonLength::Short.into()
+//!     )
+//!     .unwrap();
+//! assert_try_writeable_eq!(
+//!     fr_FR_h12.format(&Time::try_new(16, 12, 20, 0).unwrap()),
+//!     "4:12 PM"
+//! );
+//! ```
+//!
 //! ## Time Zone Formatting
 //!
 //! Here, we configure a [`NeoFormatter`] to format with generic non-location short,

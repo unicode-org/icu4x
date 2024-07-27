@@ -241,16 +241,39 @@ impl TimePatternSelectionData {
         length: MaybeLength,
         components: NeoTimeComponents,
     ) -> Result<Self, DataError> {
-        let payload = provider
-            .load_bound(DataRequest {
+        // First try to load with the explicit hour cycle. If there is no explicit hour cycle,
+        // or if loading the explicit hour cycle fails, then load with the default hour cycle.
+        let mut maybe_payload = None;
+        if let Some(hc) = locale.get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
+        {
+            maybe_payload = match provider.load_bound(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    components.id_str(),
+                    components.with_hour_cycle(&hc).id_str(),
                     locale,
                 ),
                 ..Default::default()
-            })?
-            .payload
-            .cast();
+            }) {
+                Ok(response) => Some(response.payload.cast()),
+                Err(DataError {
+                    kind: DataErrorKind::IdentifierNotFound,
+                    ..
+                }) => None,
+                Err(e) => return Err(e),
+            };
+        }
+        let payload = match maybe_payload {
+            Some(payload) => payload,
+            None => provider
+                .load_bound(DataRequest {
+                    id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                        components.id_str(),
+                        locale,
+                    ),
+                    ..Default::default()
+                })?
+                .payload
+                .cast(),
+        };
         Ok(Self::SkeletonTime {
             skeleton: NeoTimeSkeleton {
                 length: length.get::<Self>(),
