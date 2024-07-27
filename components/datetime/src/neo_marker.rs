@@ -80,38 +80,61 @@
 //! Hours can be switched between 12-hour and 24-hour time via the `u-hc` locale keyword.
 //!
 //! ```
-//! use icu::calendar::Time;
 //! use icu::calendar::Gregorian;
+//! use icu::calendar::Time;
 //! use icu::datetime::neo::NeoOptions;
 //! use icu::datetime::neo::TypedNeoFormatter;
 //! use icu::datetime::neo_marker::NeoHourMinuteMarker;
-//! use icu::datetime::NeverCalendar;
 //! use icu::datetime::neo_skeleton::NeoSkeletonLength;
+//! use icu::datetime::NeverCalendar;
 //! use icu::locale::locale;
 //! use writeable::assert_try_writeable_eq;
 //!
-//! // By default, en-US uses 12-hour time, but we can set a 24-hour override.
-//! let en_US_h23 =
+//! // By default, en-US uses 12-hour time and fr-FR uses 24-hour time,
+//! // but we can set overrides.
+//!
+//! let formatter =
 //!     TypedNeoFormatter::<NeverCalendar, NeoHourMinuteMarker>::try_new(
-//!         &locale!("en-US-u-hc-h23").into(),
-//!         NeoSkeletonLength::Short.into()
+//!         &locale!("en-US-u-hc-h12").into(),
+//!         NeoSkeletonLength::Short.into(),
 //!     )
 //!     .unwrap();
 //! assert_try_writeable_eq!(
-//!     en_US_h23.format(&Time::try_new(16, 12, 20, 0).unwrap()),
+//!     formatter.format(&Time::try_new(16, 12, 20, 0).unwrap()),
+//!     "4:12 PM"
+//! );
+//!
+//! let formatter =
+//!     TypedNeoFormatter::<NeverCalendar, NeoHourMinuteMarker>::try_new(
+//!         &locale!("en-US-u-hc-h23").into(),
+//!         NeoSkeletonLength::Short.into(),
+//!     )
+//!     .unwrap();
+//! assert_try_writeable_eq!(
+//!     formatter.format(&Time::try_new(16, 12, 20, 0).unwrap()),
 //!     "16:12"
 //! );
 //!
-//! // By default, fr-FR uses 24-hour time, but we can set a 12-hour override.
-//! let fr_FR_h12 =
+//! let formatter =
 //!     TypedNeoFormatter::<NeverCalendar, NeoHourMinuteMarker>::try_new(
-//!         &locale!("en-US-u-hc-h12").into(),
-//!         NeoSkeletonLength::Short.into()
+//!         &locale!("fr-FR-u-hc-h12").into(),
+//!         NeoSkeletonLength::Short.into(),
 //!     )
 //!     .unwrap();
 //! assert_try_writeable_eq!(
-//!     fr_FR_h12.format(&Time::try_new(16, 12, 20, 0).unwrap()),
+//!     formatter.format(&Time::try_new(16, 12, 20, 0).unwrap()),
 //!     "4:12 PM"
+//! );
+//!
+//! let formatter =
+//!     TypedNeoFormatter::<NeverCalendar, NeoHourMinuteMarker>::try_new(
+//!         &locale!("fr-FR-u-hc-h23").into(),
+//!         NeoSkeletonLength::Short.into(),
+//!     )
+//!     .unwrap();
+//! assert_try_writeable_eq!(
+//!     formatter.format(&Time::try_new(16, 12, 20, 0).unwrap()),
+//!     "16:12"
 //! );
 //! ```
 //!
