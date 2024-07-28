@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::{options::*, Duration, DurationFormatter};
+use super::{options::*, Duration, DurationFormatter, DurationSign};
 
 use super::validated_options::Unit;
 use core::fmt::Write;
@@ -42,70 +42,49 @@ pub struct FormattedDuration<'l> {
 }
 
 impl<'a> FormattedDuration<'a> {
-    /// Returns the appropriate Numeric-style padding for the given unit, based on the formatting options.
-    fn get_numeric_unit_padding(
-        &self,
-        unit: Unit,
-        hours_formatted: bool,
-        minute_formatted: bool,
-        second_formatted: bool,
-    ) -> u8 {
-        match (hours_formatted, minute_formatted, second_formatted) {
-            (true, true, false) => match unit {
-                Unit::Hour => self.fmt.digital.get().hm_padding.h,
-                Unit::Minute => self.fmt.digital.get().hm_padding.m,
-                _ => unreachable!(),
-            },
-            (false, true, true) => match unit {
-                Unit::Minute => self.fmt.digital.get().ms_padding.m,
-                Unit::Second => self.fmt.digital.get().ms_padding.s,
-                _ => unreachable!(),
-            },
-            _ => match unit {
-                Unit::Hour => self.fmt.digital.get().hms_padding.h,
-                Unit::Minute => self.fmt.digital.get().hms_padding.m,
-                Unit::Second => self.fmt.digital.get().hms_padding.s,
-                _ => unreachable!(),
-            },
-        }
-    }
-
     /// Section 1.1.9
     /// Formats numeric hours to sink. Requires hours formatting style to be either Numeric or TwoDigit.
     fn format_numeric_hours<V: PartsWrite + ?Sized>(
         &self,
         hour_val: u64,
         sign_displayed: &mut bool,
-        hours_formatted: bool,
-        minute_formatted: bool,
-        second_formatted: bool,
         sink: &mut V,
     ) -> core::fmt::Result {
+        // 1. Let hoursStyle be durationFormat.[[HoursStyle]].
+
+        // 2. Assert: hoursStyle is "numeric" or hoursStyle is "2-digit".
         debug_assert!(
             self.fmt.options.hour == FieldStyle::Numeric
                 || self.fmt.options.hour == FieldStyle::TwoDigit
         );
+        // 3. Let result be a new empty List.
+        // 4. Let nfOpts be OrdinaryObjectCreate(null).
+        // 5. Let numberingSystem be durationFormat.[[NumberingSystem]].
+        // 6. Perform ! CreateDataPropertyOrThrow(nfOpts, "numberingSystem", numberingSystem).
 
         let mut fd = FixedDecimal::from(hour_val);
-        match self.fmt.options.hour {
-            FieldStyle::TwoDigit => fd.pad_start(2),
-            FieldStyle::Numeric => fd.pad_start(
-                self.get_numeric_unit_padding(
-                    Unit::Hour,
-                    hours_formatted,
-                    minute_formatted,
-                    second_formatted,
-                )
-                .into(),
-            ),
-            _ => unreachable!(),
+
+        // 7. If hoursStyle is "2-digit", then
+        if let FieldStyle::TwoDigit = self.fmt.options.hour {
+            // a. Perform ! CreateDataPropertyOrThrow(nfOpts, "minimumIntegerDigits", 2𝔽).
+            fd.pad_start(2);
         }
+
+        // 8. If signDisplayed is false, then
         if *sign_displayed {
+            // a. Perform ! CreateDataPropertyOrThrow(nfOpts, "signDisplay", "never").
             fd.apply_sign_display(SignDisplay::Never);
         }
+
+        // 9. Let nf be ! Construct(%NumberFormat%, « durationFormat.[[Locale]], nfOpts »).
+        // 10. Let hoursParts be ! PartitionNumberPattern(nf, hoursValue).
+        // 11. For each Record { [[Type]], [[Value]] } part of hoursParts, do
+        // a. Append the Record { [[Type]]: part.[[Type]], [[Value]]: part.[[Value]], [[Unit]]: "hour" } to result.
+
         let ffd = self.fmt.fdf.format(&fd);
         sink.with_part(parts::HOUR, |e| ffd.write_to_parts(e))?;
 
+        // 12. Return result.
         Ok(())
     }
 
@@ -116,51 +95,61 @@ impl<'a> FormattedDuration<'a> {
         minute_val: u64,
         sign_displayed: &mut bool,
         hours_formatted: bool,
-        minute_formatted: bool,
-        second_formatted: bool,
         sink: &mut V,
     ) -> core::fmt::Result {
+        // 1. Let result be a new empty List.
+
+        // 2. If hoursDisplayed is true, then
         if hours_formatted {
+            // a. Let separator be durationFormat.[[DigitalFormat]].[[HoursMinutesSeparator]].
+            // b. Append the Record { [[Type]]: "literal", [[Value]]: separator, [[Unit]]: empty } to result.
             sink.with_part(parts::LITERAL, |e| {
                 e.write_str(self.fmt.digital.get().separator.as_ref())
             })?;
         }
 
+        // 3. Let minutesStyle be durationFormat.[[MinutesStyle]].
+        // 4. Assert: minutesStyle is "numeric" or minutesStyle is "2-digit".
         debug_assert!(
             self.fmt.options.minute == FieldStyle::Numeric
                 || self.fmt.options.minute == FieldStyle::TwoDigit
         );
 
+        // 5. Let nfOpts be OrdinaryObjectCreate(null).
+        // 6. Let numberingSystem be durationFormat.[[NumberingSystem]].
+        // 7. Perform ! CreateDataPropertyOrThrow(nfOpts, "numberingSystem", numberingSystem).
         let mut fd = FixedDecimal::from(minute_val);
+
+        // 8. If minutesStyle is "2-digit", then
         if let FieldStyle::TwoDigit = self.fmt.options.hour {
+            // a. Perform ! CreateDataPropertyOrThrow(nfOpts, "minimumIntegerDigits", 2𝔽).
             fd.pad_start(2);
-        } else {
-            // Divergence from ECMAScript TC39 proposal:
-            // We pad the number based on cldr-json padding instead of not applying any padding.
-            fd.pad_start(
-                self.get_numeric_unit_padding(
-                    Unit::Minute,
-                    hours_formatted,
-                    minute_formatted,
-                    second_formatted,
-                )
-                .into(),
-            );
         }
+
+        // 9. If signDisplayed is false, then
         if !*sign_displayed {
+            // a. Perform ! CreateDataPropertyOrThrow(nfOpts, "signDisplay", "never").
             fd.apply_sign_display(SignDisplay::Never);
         }
+
+        // 10. Let nf be ! Construct(%NumberFormat%, « durationFormat.[[Locale]], nfOpts »).
+        // 11. Let minutesParts be ! PartitionNumberPattern(nf, minutesValue).
+        // 12. For each Record { [[Type]], [[Value]] } part of minutesParts, do
+        // a. Append the Record { [[Type]]: part.[[Type]], [[Value]]: part.[[Value]], [[Unit]]: "minute" } to result.
+
         let ffd = self.fmt.fdf.format(&fd);
         sink.with_part(parts::MINUTE, |e| ffd.write_to_parts(e))?;
 
+        // 13. Return result.
         Ok(())
     }
 
     /// Section 1.1.7
     /// Computes the sum of all values in durationFormat units with "fractional" style,
     /// expressed as a fraction of the smallest unit of durationFormat that does not use "fractional" style.
-    fn add_fractional_digits(&self) -> FixedDecimal {
-        let mut result = FixedDecimal::from(0);
+    fn add_fractional_digits(&self, original: u64) -> FixedDecimal {
+        // convert to u128 to prevent overflow
+        let mut result: u128 = original.into();
         let mut exponent = 0;
 
         // 3. For each row of Table 2, except the header row, in table order, do
@@ -176,16 +165,14 @@ impl<'a> FormattedDuration<'a> {
                 // ii. Let value be the value of duration's field whose name is the Value Field value of the current row.
                 // iii. Set value to value / (10 ^ exponent).
                 // iv. Set result to result + value.
-                // NOTE: the below call will fail for values greater than 10^3 because magnitudes may overlap.
-                result
-                    .concatenate_end(FixedDecimal::from(value).multiplied_pow10(-exponent))
-                    .expect("concatenating values with different exponents");
+                result *= u128::pow(10, exponent as u32);
+                result += u128::from(value);
                 // v. Set exponent to exponent + 3.
                 exponent += 3;
             }
         }
 
-        result
+        FixedDecimal::from(result).multiplied_pow10(-exponent)
     }
 
     /// Section 1.1.11
@@ -194,9 +181,7 @@ impl<'a> FormattedDuration<'a> {
         &self,
         mut second_val: FixedDecimal,
         sign_displayed: &mut bool,
-        hours_formatted: bool,
         minute_formatted: bool,
-        second_formatted: bool,
         sink: &mut V,
     ) -> core::fmt::Result {
         // 1. Let secondsStyle be durationFormat.[[SecondsStyle]].
@@ -225,18 +210,6 @@ impl<'a> FormattedDuration<'a> {
         if self.fmt.options.second == FieldStyle::TwoDigit {
             // a. Perform ! CreateDataPropertyOrThrow(nfOpts, "minimumIntegerDigits", 2𝔽).
             second_val.pad_start(2);
-        } else {
-            // Divergence from ECMAScript TC39 proposal:
-            // We pad the number based on cldr-json padding instead of not applying any padding.
-            second_val.pad_start(
-                self.get_numeric_unit_padding(
-                    Unit::Second,
-                    hours_formatted,
-                    minute_formatted,
-                    second_formatted,
-                )
-                .into(),
-            );
         }
 
         // 9. If signDisplayed is false, then
@@ -254,6 +227,7 @@ impl<'a> FormattedDuration<'a> {
                 // b. Let minimumFractionDigits be +0𝔽.
                 second_val.set_max_position(-9);
                 second_val.pad_end(0);
+                second_val.trunc(-9);
             }
             // 12. Else,
             FractionalDigits::Fixed(i) => {
@@ -262,12 +236,11 @@ impl<'a> FormattedDuration<'a> {
                 second_val.set_max_position(-i);
                 // b. Let minimumFractionDigits be durationFormat.[[FractionalDigits]].
                 second_val.pad_end(-i);
+                second_val.trunc(-i);
             } // 13. Perform ! CreateDataPropertyOrThrow(nfOpts, "maximumFractionDigits", maximumFractionDigits).
               // 14. Perform ! CreateDataPropertyOrThrow(nfOpts, "minimumFractionDigits", minimumFractionDigits).
+              // 15. Perform ! CreateDataPropertyOrThrow(nfOpts, "roundingMode", "trunc").
         }
-
-        // 15. Perform ! CreateDataPropertyOrThrow(nfOpts, "roundingMode", "trunc").
-        todo!("set rounding mode to trunc");
 
         // 16. Let secondsParts be ! PartitionNumberPattern(nf, secondsValue).
         let ffd = self.fmt.fdf.format(&second_val);
@@ -305,7 +278,7 @@ impl<'a> FormattedDuration<'a> {
 				|| self.duration.nanoseconds != 0
 			{
 				// a. Set secondsValue to secondsValue + AddFractionalDigits(durationFormat, duration).
-				FixedDecimal::from(self.duration.seconds).concatenated_end(self.add_fractional_digits()).expect("fractional digits have magnitude less than whole numbers")
+				self.add_fractional_digits(self.duration.seconds)
 			} else {
 				FixedDecimal::from(self.duration.seconds)
 			};
@@ -349,14 +322,7 @@ impl<'a> FormattedDuration<'a> {
         // 16. If hoursFormatted is true, then
         if hours_formatted {
             // a. Append FormatNumericHours(durationFormat, hoursValue, signDisplayed) to result.
-            self.format_numeric_hours(
-                self.duration.hours,
-                sign_displayed,
-                hours_formatted,
-                minutes_formatted,
-                seconds_formatted,
-                sink,
-            )?;
+            self.format_numeric_hours(self.duration.hours, sign_displayed, sink)?;
             // b. Set signDisplayed to false.
             *sign_displayed = false;
         }
@@ -367,8 +333,6 @@ impl<'a> FormattedDuration<'a> {
                 self.duration.minutes,
                 sign_displayed,
                 hours_formatted,
-                minutes_formatted,
-                seconds_formatted,
                 sink,
             )?;
             // b. Set signDisplayed to false.
@@ -378,14 +342,7 @@ impl<'a> FormattedDuration<'a> {
         // 18. If secondsFormatted is true, then
         if seconds_formatted {
             // a. Append FormatNumericSeconds(durationFormat, secondsValue, minutesFormatted, signDisplayed) to numericPartsList.
-            self.format_numeric_seconds(
-                second_value,
-                sign_displayed,
-                hours_formatted,
-                minutes_formatted,
-                seconds_formatted,
-                sink,
-            )?;
+            self.format_numeric_seconds(second_value, sign_displayed, minutes_formatted, sink)?;
             // b. Set signDisplayed to false.
             *sign_displayed = false;
         }
@@ -454,9 +411,7 @@ impl<'a> FormattedDuration<'a> {
                     // 1. If NextUnitFractional(durationFormat, unit) is true, then
                     if self.next_unit_fractional(unit) {
                         // a. Set value to value + AddFractionalDigits(durationFormat, duration).
-                        let mut value = FixedDecimal::from(value)
-                            .concatenated_end(self.add_fractional_digits())
-                            .expect("fractional digits have magnitude less than whole numbers");
+                        let mut value = self.add_fractional_digits(value);
                         match self.fmt.options.fractional_digits {
                             // b. If durationFormat.[[FractionalDigits]] is undefined, then
                             FractionalDigits::ShowAll => {
@@ -491,7 +446,7 @@ impl<'a> FormattedDuration<'a> {
                         // a. Set signDisplayed to false.
                         sign_displayed = false;
                         // b. If value is 0 and DurationSign(duration.[[Years]], duration.[[Months]], duration.[[Weeks]], duration.[[Days]], duration.[[Hours]], duration.[[Minutes]], duration.[[Seconds]], duration.[[Milliseconds]], duration.[[Microseconds]], duration.[[Nanoseconds]]) is -1, then
-                        if value == 0 {
+                        if value == 0 && self.duration.sign == DurationSign::Negative {
                             // i. Set value to negative-zero.
                             todo!("set value to negative zero");
                         }
