@@ -178,10 +178,11 @@ impl ValidatedDurationFormatterOptions {
             }
 
             // 10. If unit is "hours" and twoDigitHours is true, then
-            if unit == Unit::Hour && todo!("twoDigitHours") {
-                // a. Set style to "2-digit".
-                *style = Some(FieldStyle::TwoDigit);
-            }
+            // NOTE:
+            // Divergence from TC39 standard:
+            // We do not check for twoDigitHours here.
+            // We later check whether we have to display hours, and then use leading separator padding
+            // for displaying hours with two digits.
 
             prev_style = *style;
         }
