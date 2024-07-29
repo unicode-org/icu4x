@@ -18,7 +18,7 @@ use icu_provider::prelude::*;
 /// 2. Digital formatting style
 /// 3. Positive and negative duraitons
 ///
-/// Read more about the options in the [`options`] module.
+/// Read more about the options in the [`options`](super::options) module.
 ///
 /// See the crate-level documentation for examples.
 #[derive(Debug)]
@@ -30,6 +30,41 @@ pub struct DurationFormatter {
 }
 
 impl DurationFormatter {
+    icu_provider::gen_any_buffer_data_constructors!(
+        (locale, options: ValidatedDurationFormatterOptions) -> error: DataError,
+        functions: [
+            try_new: skip,
+            try_new_with_any_provider,
+            try_new_with_buffer_provider,
+            try_new_unstable,
+            Self
+        ]
+    );
+
+    /// Creates a new [`DurationFormatter`] from compiled locale data and an options bag.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub fn try_new(
+        locale: &DataLocale,
+        options: ValidatedDurationFormatterOptions,
+    ) -> Result<Self, DataError> {
+        let digital = crate::provider::Baked
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_locale(locale),
+                ..Default::default()
+            })?
+            .payload;
+
+        Ok(Self {
+            digital,
+            options,
+            fdf: FixedDecimalFormatter::try_new(locale, Default::default())?,
+        })
+    }
+
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<
         D: DataProvider<provider::DigitalDurationDataV1Marker>
@@ -46,6 +81,7 @@ impl DurationFormatter {
                 ..Default::default()
             })?
             .payload;
+
         Ok(Self {
             digital,
             options,

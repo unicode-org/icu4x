@@ -37,8 +37,8 @@ pub mod parts {
 /// the [`writeable`] crate for how to consume this.
 #[derive(Debug)]
 pub struct FormattedDuration<'l> {
-    pub fmt: &'l DurationFormatter,
-    pub duration: &'l Duration,
+    pub(crate) fmt: &'l DurationFormatter,
+    pub(crate) duration: &'l Duration,
 }
 
 impl<'a> FormattedDuration<'a> {
@@ -479,14 +479,53 @@ impl<'a> Writeable for FormattedDuration<'a> {
     fn write_to_parts<V: PartsWrite + ?Sized>(&self, sink: &mut V) -> core::fmt::Result {
         self.partition_duration_format_pattern(sink)
     }
-
-    fn writeable_length_hint(&self) -> LengthHint {
-        todo!();
-    }
 }
 
 impl<'a> core::fmt::Display for FormattedDuration<'a> {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         self.write_to(f)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use icu_locale::locale;
+
+    use super::*;
+    use crate::duration::{formatter::ValidatedDurationFormatterOptions, DurationSign};
+
+    #[test]
+    fn test_digital_formatter() {
+        let duration = Duration {
+            sign: DurationSign::Positive,
+            years: 0,
+            months: 0,
+            weeks: 0,
+            days: 0,
+            hours: 12,
+            minutes: 1,
+            seconds: 32,
+            milliseconds: 12,
+            microseconds: 0,
+            nanoseconds: 0,
+        };
+
+        let options = DurationFormatterOptions {
+            hour: Some(HourStyle::Numeric),
+            minute: Some(MinuteStyle::Numeric),
+            second: Some(SecondStyle::Numeric),
+            ..Default::default()
+        };
+
+        let options = ValidatedDurationFormatterOptions::validate(options).unwrap();
+
+        let formatter = DurationFormatter::try_new(&locale!("en").into(), options).unwrap();
+
+        let formatted = FormattedDuration {
+            fmt: &formatter,
+            duration: &duration,
+        };
+
+        assert_eq!(formatted.write_to_string().into_owned(), "12:01:32");
     }
 }
