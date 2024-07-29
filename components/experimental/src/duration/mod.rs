@@ -15,4 +15,5 @@ pub mod options;
 mod validated_options;
 
 pub use duration::{Duration, DurationSign};
+pub use format::FormattedDuration;
 pub use formatter::DurationFormatter;
