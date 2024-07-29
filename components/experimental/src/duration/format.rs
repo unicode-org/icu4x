@@ -172,8 +172,7 @@ impl<'a> FormattedDuration<'a> {
             }
         }
 
-        FixedDecimal::from(result)
-            .multiplied_pow10(-exponent)
+        FixedDecimal::from(result).multiplied_pow10(-exponent)
     }
 
     /// Section 1.1.11
