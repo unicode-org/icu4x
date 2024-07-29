@@ -7,7 +7,7 @@ use super::{options::*, Duration, DurationFormatter, DurationSign};
 use super::validated_options::Unit;
 use core::fmt::Write;
 use fixed_decimal::{FixedDecimal, SignDisplay};
-use writeable::{LengthHint, PartsWrite, Writeable};
+use writeable::{PartsWrite, Writeable};
 
 pub mod parts {
     use writeable::Part;
@@ -65,7 +65,7 @@ impl<'a> FormattedDuration<'a> {
         let mut fd = FixedDecimal::from(hour_val);
 
         // 7. If hoursStyle is "2-digit", then
-        if let FieldStyle::TwoDigit = self.fmt.options.hour {
+        if self.fmt.options.hour == FieldStyle::TwoDigit {
             // a. Perform ! CreateDataPropertyOrThrow(nfOpts, "minimumIntegerDigits", 2𝔽).
             fd.pad_start(2);
         }
@@ -121,7 +121,7 @@ impl<'a> FormattedDuration<'a> {
         let mut fd = FixedDecimal::from(minute_val);
 
         // 8. If minutesStyle is "2-digit", then
-        if let FieldStyle::TwoDigit = self.fmt.options.hour {
+        if self.fmt.options.minute == FieldStyle::TwoDigit {
             // a. Perform ! CreateDataPropertyOrThrow(nfOpts, "minimumIntegerDigits", 2𝔽).
             fd.pad_start(2);
         }
@@ -165,14 +165,15 @@ impl<'a> FormattedDuration<'a> {
                 // ii. Let value be the value of duration's field whose name is the Value Field value of the current row.
                 // iii. Set value to value / (10 ^ exponent).
                 // iv. Set result to result + value.
-                result *= u128::pow(10, exponent as u32);
+                result *= u128::pow(10, 3);
                 result += u128::from(value);
                 // v. Set exponent to exponent + 3.
                 exponent += 3;
             }
         }
 
-        FixedDecimal::from(result).multiplied_pow10(-exponent)
+        FixedDecimal::from(result)
+            .multiplied_pow10(-exponent)
     }
 
     /// Section 1.1.11
@@ -225,18 +226,16 @@ impl<'a> FormattedDuration<'a> {
             FractionalDigits::ShowAll => {
                 // a. Let maximumFractionDigits be 9𝔽.
                 // b. Let minimumFractionDigits be +0𝔽.
-                second_val.set_max_position(-9);
-                second_val.pad_end(0);
                 second_val.trunc(-9);
+                second_val.pad_end(-1);
             }
             // 12. Else,
             FractionalDigits::Fixed(i) => {
                 let i: i16 = i.into();
                 // a. Let maximumFractionDigits be durationFormat.[[FractionalDigits]].
-                second_val.set_max_position(-i);
+                second_val.trunc(-i);
                 // b. Let minimumFractionDigits be durationFormat.[[FractionalDigits]].
                 second_val.pad_end(-i);
-                second_val.trunc(-i);
             } // 13. Perform ! CreateDataPropertyOrThrow(nfOpts, "maximumFractionDigits", maximumFractionDigits).
               // 14. Perform ! CreateDataPropertyOrThrow(nfOpts, "minimumFractionDigits", minimumFractionDigits).
               // 15. Perform ! CreateDataPropertyOrThrow(nfOpts, "roundingMode", "trunc").
@@ -416,7 +415,7 @@ impl<'a> FormattedDuration<'a> {
                             // b. If durationFormat.[[FractionalDigits]] is undefined, then
                             FractionalDigits::ShowAll => {
                                 // i. Let maximumFractionDigits be 9𝔽.
-                                value.set_max_position(-9);
+                                value.trunc(-9);
                                 // ii. Let minimumFractionDigits be +0𝔽.
                                 value.pad_end(0);
                             }
@@ -424,14 +423,14 @@ impl<'a> FormattedDuration<'a> {
                             FractionalDigits::Fixed(i) => {
                                 let i: i16 = i.into();
                                 // i. Let maximumFractionDigits be durationFormat.[[FractionalDigits]].
-                                value.set_max_position(-i);
+                                value.trunc(-i);
                                 // ii. Let minimumFractionDigits be durationFormat.[[FractionalDigits]].
                                 value.pad_end(-i);
                             }
                         } // d. Perform ! CreateDataPropertyOrThrow(nfOpts, "maximumFractionDigits", maximumFractionDigits).
                           // e. Perform ! CreateDataPropertyOrThrow(nfOpts, "minimumFractionDigits", minimumFractionDigits).
+                          // f. Perform ! CreateDataPropertyOrThrow(nfOpts, "roundingMode", "trunc").
 
-                        // f. Perform ! CreateDataPropertyOrThrow(nfOpts, "roundingMode", "trunc").
                         // g. Set numericUnitFound to true.
                         numeric_unit_found = true;
                     }
@@ -448,7 +447,6 @@ impl<'a> FormattedDuration<'a> {
                         // b. If value is 0 and DurationSign(duration.[[Years]], duration.[[Months]], duration.[[Weeks]], duration.[[Days]], duration.[[Hours]], duration.[[Minutes]], duration.[[Seconds]], duration.[[Milliseconds]], duration.[[Microseconds]], duration.[[Nanoseconds]]) is -1, then
                         if value == 0 && self.duration.sign == DurationSign::Negative {
                             // i. Set value to negative-zero.
-                            todo!("set value to negative zero");
                         }
                     }
                     // 4. Else,
@@ -505,7 +503,7 @@ mod tests {
             hours: 12,
             minutes: 1,
             seconds: 32,
-            milliseconds: 12,
+            milliseconds: 130,
             microseconds: 0,
             nanoseconds: 0,
         };
@@ -526,6 +524,6 @@ mod tests {
             duration: &duration,
         };
 
-        assert_eq!(formatted.write_to_string().into_owned(), "12:01:32");
+        assert_eq!(formatted.write_to_string().into_owned(), "12:01:32.13");
     }
 }
