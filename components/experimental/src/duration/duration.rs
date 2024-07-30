@@ -72,6 +72,15 @@ pub enum DurationSign {
     Negative,
 }
 
+impl DurationSign {
+    pub(crate) fn as_fixed_decimal_sign(&self) -> fixed_decimal::Sign {
+        match self {
+            DurationSign::Positive => fixed_decimal::Sign::Positive,
+            DurationSign::Negative => fixed_decimal::Sign::Negative,
+        }
+    }
+}
+
 impl Duration {
     /// Create a new positive [`Duration`] with all fields set to 0.
     pub fn new() -> Self {
