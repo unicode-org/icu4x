@@ -198,11 +198,9 @@ impl SourceDataProvider {
                 NeoTimeComponents::VALUES
                     .iter()
                     .filter(|neo_components| {
-                        !matches!(neo_components, NeoTimeComponents::DayPeriodHour12)
-                            && !matches!(neo_components, NeoTimeComponents::DayPeriodHour12Minute)
-                            && !matches!(
-                                neo_components,
-                                NeoTimeComponents::DayPeriodHour12MinuteSecond
+                        !matches!(neo_components, 
+NeoTimeComponents::DayPeriodHour12 | NeoTimeComponents::DayPeriodHour12Minute | 
+NeoTimeComponents::DayPeriodHour12MinuteSecond
                             )
                     })
                     .copied()
