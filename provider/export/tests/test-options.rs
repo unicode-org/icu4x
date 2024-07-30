@@ -205,19 +205,28 @@ fn all_runtime() {
     );
 
     // These are all of the supported locales with deduplication applied.
+    #[rustfmt::skip]
     let locales = [
         "ar",
         // "ar-EG", (same as 'ar')
         // "ar-EG/latn", (same as 'ar/latn')
-        "ar/latn", "bn", "bn/latn", "ccp", "ccp/latn",
+        "ar/latn",
+        "bn",
+        "bn/latn",
+        "ccp",
+        "ccp/latn",
         // "en", (same as 'und')
         // "en-001", (same as 'und')
         // "en-ZA", (same as 'und')
-        "es", "es-AR", // "fil", (same as 'und')
+        "es",
+        "es-AR", // "fil", (same as 'und')
         "fr",    // "ja", (same as 'und')
-        "ru", "sr",      // Note: 'sr' and 'sr-Latn' are the same, but they don't inherit
+        "ru",
+        "sr",      // Note: 'sr' and 'sr-Latn' are the same, but they don't inherit
         "sr-Latn", // "th", (same as 'und')
-        "th/thai", "tr", "und",
+        "th/thai",
+        "tr",
+        "und",
     ];
 
     // Should return the supported locales set with deduplication.
@@ -236,18 +245,31 @@ fn all_runtime_retain_base() {
     );
 
     // These are all of the supported locales with deduplication applied.
+    #[rustfmt::skip]
     let locales = [
         "ar",
         // "ar-EG", (same as 'ar')
         // "ar-EG/latn", (same as 'ar/latn')
-        "ar/latn", "bn", "bn/latn", "ccp", "ccp/latn", "en", // (same as 'und', but retained)
+        "ar/latn",
+        "bn",
+        "bn/latn",
+        "ccp",
+        "ccp/latn",
+        "en", // (same as 'und', but retained)
         // "en-001", (same as 'en')
         // "en-ZA", (same as 'en-001')
-        "es", "es-AR", "fil", // (same as 'und', but retained)
-        "fr", "ja", // (same as 'und', but retained)
-        "ru", "sr", // Note: 'sr' and 'sr-Latn' are the same, but they don't inherit
-        "sr-Latn", "th", // (same as 'und', but retained)
-        "th/thai", "tr", "und",
+        "es",
+        "es-AR",
+        "fil", // (same as 'und', but retained)
+        "fr",
+        "ja", // (same as 'und', but retained)
+        "ru",
+        "sr", // Note: 'sr' and 'sr-Latn' are the same, but they don't inherit
+        "sr-Latn",
+        "th", // (same as 'und', but retained)
+        "th/thai",
+        "tr",
+        "und",
     ];
 
     // Should return the supported locales set with deduplication.
@@ -369,6 +391,7 @@ fn explicit_runtime() {
     );
 
     // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
+    #[rustfmt::skip]
     let locales = [
         "ar",
         // "ar-Arab-EG", (same as 'ar')
@@ -381,7 +404,9 @@ fn explicit_runtime() {
         // "en", (same as 'und')
         // "en-001", (same as 'und')
         // "en-GB", (same as 'und')
-        "es", "es-AR", "ru",      // "ru-Cyrl-RU", (same as 'ru')
+        "es",
+        "es-AR",
+        "ru",      // "ru-Cyrl-RU", (same as 'ru')
         "sr-Latn", // "sr-ME", (same as 'sr-Latn')
         "und",
     ];
@@ -411,6 +436,7 @@ fn explicit_runtime_retain_base() {
     );
 
     // Explicit locales are "arc", "ar-EG", "ar-SA", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
+    #[rustfmt::skip]
     let locales = [
         "ar",
         // "ar-Arab-EG", (same as 'ar')
@@ -418,11 +444,14 @@ fn explicit_runtime_retain_base() {
         // "ar-EG/latn", (same as 'ar/latn')
         // "ar-SA", (same as 'ar')
         // "ar-SA/latn", (same as 'ar/latn')
-        "ar/latn", "arc", // (same as 'und', but retained)
+        "ar/latn",
+        "arc", // (same as 'und', but retained)
         "en",  // (same as 'und', but retained)
         // "en-001", (same as 'en')
         // "en-GB", (same as 'en-001')
-        "es", "es-AR", "ru",      // "ru-Cyrl-RU", (same as 'ru')
+        "es",
+        "es-AR",
+        "ru",      // "ru-Cyrl-RU", (same as 'ru')
         "sr-Latn", // "sr-ME", (same as 'sr-Latn')
         "und",
     ];
