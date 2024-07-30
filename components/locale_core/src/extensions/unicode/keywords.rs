@@ -330,7 +330,7 @@ impl Keywords {
                 }
                 current_keyword = Some(Key::try_from_utf8(subtag)?);
             } else if current_keyword.is_some() {
-                match Value::parse_subtag(subtag) {
+                match Value::parse_subtag_from_utf8(subtag) {
                     Ok(Some(t)) => current_value.push(t),
                     Ok(None) => {}
                     Err(_) => break,

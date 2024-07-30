@@ -32,7 +32,7 @@ const fn get_current_subtag(slice: &[u8], idx: usize) -> (usize, usize) {
         // If it's a separator, set the start to idx+1 and advance the idx to the next char.
         (idx + 1, idx + 1)
     } else {
-        // If it's idx=0, start is 0 and end is set to 1
+        // If it's idx=0, end is set to 1
         debug_assert!(idx == 0);
         (0, 1)
     };
@@ -43,6 +43,14 @@ const fn get_current_subtag(slice: &[u8], idx: usize) -> (usize, usize) {
     }
     // Notice: this slice may be empty (start == end) for cases like `"en-"` or `"en--US"`
     (start, end)
+}
+
+pub const fn split_out_range(slice: &[u8], start: usize, end: usize) -> &[u8] {
+    assert!(start <= slice.len());
+    assert!(end <= slice.len());
+    assert!(start <= end);
+    // SAFETY: assertions and align = size = 1.
+    unsafe { core::slice::from_raw_parts(slice.as_ptr().add(start), end - start) }
 }
 
 // `SubtagIterator` is a helper iterator for [`LanguageIdentifier`] and [`Locale`] parsing.
@@ -81,7 +89,7 @@ impl<'a> SubtagIterator<'a> {
         }
     }
 
-    pub const fn next_manual(mut self) -> (Self, Option<(usize, usize)>) {
+    pub const fn next_const(mut self) -> (Self, Option<&'a [u8]>) {
         if self.done {
             return (self, None);
         }
@@ -91,19 +99,14 @@ impl<'a> SubtagIterator<'a> {
         } else {
             self.done = true;
         }
-        (self, Some(result))
+        (self, Some(split_out_range(self.slice, result.0, result.1)))
     }
 
-    pub const fn peek_manual(&self) -> Option<(usize, usize)> {
+    pub const fn peek(&self) -> Option<&'a [u8]> {
         if self.done {
             return None;
         }
-        Some(self.subtag)
-    }
-
-    pub fn peek(&self) -> Option<&'a [u8]> {
-        #[allow(clippy::indexing_slicing)] // peek_manual returns valid indices
-        self.peek_manual().map(|(s, e)| &self.slice[s..e])
+        Some(split_out_range(self.slice, self.subtag.0, self.subtag.1))
     }
 }
 
@@ -111,10 +114,9 @@ impl<'a> Iterator for SubtagIterator<'a> {
     type Item = &'a [u8];
 
     fn next(&mut self) -> Option<Self::Item> {
-        let (s, res) = self.next_manual();
+        let (s, res) = self.next_const();
         *self = s;
-        #[allow(clippy::indexing_slicing)] // next_manual returns valid indices
-        res.map(|(s, e)| &self.slice[s..e])
+        res
     }
 }
 

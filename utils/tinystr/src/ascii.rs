@@ -25,7 +25,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// `code_units` may contain at most `N` non-null ASCII code points.
     #[inline]
     pub const fn try_from_utf8(code_units: &[u8]) -> Result<Self, TinyStrError> {
-        Self::try_from_utf8_inner(code_units, 0, code_units.len(), false)
+        Self::try_from_utf8_inner(code_units, false)
     }
 
     /// Creates a `TinyAsciiStr<N>` from the given UTF-16 slice.
@@ -126,40 +126,18 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// assert!(matches!(TinyAsciiStr::<3>::try_from_raw(*b"\0A\0"), Err(_)));
     /// ```
     pub const fn try_from_raw(raw: [u8; N]) -> Result<Self, TinyStrError> {
-        Self::try_from_utf8_inner(&raw, 0, N, true)
-    }
-
-    /// Equivalent to [`try_from_utf8(bytes[start..end])`](Self::try_from_utf8),
-    /// but callable in a `const` context (which range indexing is not).
-    #[inline]
-    pub const fn try_from_utf8_manual_slice(
-        code_units: &[u8],
-        start: usize,
-        end: usize,
-    ) -> Result<Self, TinyStrError> {
-        Self::try_from_utf8_inner(code_units, start, end, false)
-    }
-
-    /// Equivalent to [`try_from_utf16(bytes[start..end])`](Self::try_from_utf16),
-    /// but callable in a `const` context (which range indexing is not).
-    #[inline]
-    pub const fn try_from_utf16_manual_slice(
-        code_units: &[u16],
-        start: usize,
-        end: usize,
-    ) -> Result<Self, TinyStrError> {
-        Self::try_from_utf16_inner(code_units, start, end, false)
+        Self::try_from_utf8_inner(&raw, true)
     }
 
     pub(crate) const fn try_from_utf8_inner(
         code_units: &[u8],
-        start: usize,
-        end: usize,
         allow_trailing_null: bool,
     ) -> Result<Self, TinyStrError> {
-        let len = end - start;
-        if len > N {
-            return Err(TinyStrError::TooLarge { max: N, len });
+        if code_units.len() > N {
+            return Err(TinyStrError::TooLarge {
+                max: N,
+                len: code_units.len(),
+            });
         }
 
         let mut out = [0; N];
@@ -167,8 +145,8 @@ impl<const N: usize> TinyAsciiStr<N> {
         let mut found_null = false;
         // Indexing is protected by TinyStrError::TooLarge
         #[allow(clippy::indexing_slicing)]
-        while i < len {
-            let b = code_units[start + i];
+        while i < code_units.len() {
+            let b = code_units[i];
 
             if b == 0 {
                 found_null = true;
