@@ -346,7 +346,7 @@ fn select_locales_for_marker<'a>(
                 log::trace!("Including {current_locale}: full locale family: {marker:?}");
                 selected_locales.insert(current_locale.clone());
             }
-            if current_locale.language().is_empty() && current_locale.is_und() {
+            if current_locale.language().is_empty() && !current_locale.is_und() {
                 log::trace!("Including {current_locale}: und variant: {marker:?}");
                 selected_locales.insert(current_locale.clone());
             }

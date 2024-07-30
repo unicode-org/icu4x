@@ -18,7 +18,7 @@ use std::fs::File;
 
 let provider = SourceDataProvider::new_latest_tested();
 
-ExportDriver::new([LocaleFamily::FULL], DeduplicationStrategy::None.into(), LocaleFallbacker::try_new_unstable(&provider).unwrap())
+ExportDriver::new([DataLocaleFamily::FULL], DeduplicationStrategy::None.into(), LocaleFallbacker::try_new_unstable(&provider).unwrap())
     .with_markers([icu::list::provider::AndListV2Marker::INFO])
     .export(
         &provider,
