@@ -9,13 +9,12 @@ use crate::neo_serde::*;
 use crate::options::components;
 use crate::options::length;
 use crate::options::preferences;
+use crate::pattern::CoarseHourCycle;
 #[cfg(feature = "experimental")]
 use crate::raw::neo::MaybeLength;
 #[cfg(feature = "experimental")]
 use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
 use crate::DateTimeFormatterOptions;
-use icu_locale_core::extensions::unicode::Value;
-use icu_locale_core::subtags::Subtag;
 use icu_provider::DataMarkerAttributes;
 
 /// A specification for the length of a date or component of a date.
@@ -654,17 +653,15 @@ impl NeoTimeComponents {
         }
     }
 
-    pub(crate) fn with_hour_cycle(self, hour_cycle: &Value) -> Self {
-        const H11: Subtag = icu_locale_core::subtags::subtag!("h11");
-        const H12: Subtag = icu_locale_core::subtags::subtag!("h12");
-        let explicit_h12 = matches!(hour_cycle.as_single_subtag(), Some(&H11) | Some(&H12));
-        match (self, explicit_h12) {
-            (Self::Hour, true) => Self::Hour12,
-            (Self::HourMinute, true) => Self::Hour12Minute,
-            (Self::HourMinuteSecond, true) => Self::Hour12MinuteSecond,
-            (Self::Hour, false) => Self::Hour24,
-            (Self::HourMinute, false) => Self::Hour24Minute,
-            (Self::HourMinuteSecond, false) => Self::Hour24MinuteSecond,
+    pub(crate) fn with_hour_cycle(self, hour_cycle: CoarseHourCycle) -> Self {
+        use CoarseHourCycle::*;
+        match (self, hour_cycle) {
+            (Self::Hour, H11H12) => Self::Hour12,
+            (Self::HourMinute, H11H12) => Self::Hour12Minute,
+            (Self::HourMinuteSecond, H11H12) => Self::Hour12MinuteSecond,
+            (Self::Hour, H23H24) => Self::Hour24,
+            (Self::HourMinute, H23H24) => Self::Hour24Minute,
+            (Self::HourMinuteSecond, H23H24) => Self::Hour24MinuteSecond,
             _ => self,
         }
     }

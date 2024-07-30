@@ -10,7 +10,7 @@ use crate::neo_skeleton::{
     NeoTimeComponents, NeoTimeSkeleton, NeoTimeZoneSkeleton,
 };
 use crate::pattern::runtime::PatternMetadata;
-use crate::pattern::{runtime, GenericPatternItem, PatternItem};
+use crate::pattern::{runtime, CoarseHourCycle, GenericPatternItem, PatternItem};
 use crate::provider::neo::*;
 use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
 use icu_calendar::AnyCalendarKind;
@@ -240,15 +240,15 @@ impl TimePatternSelectionData {
         locale: &DataLocale,
         length: MaybeLength,
         components: NeoTimeComponents,
+        hour_cycle: Option<CoarseHourCycle>,
     ) -> Result<Self, DataError> {
         // First try to load with the explicit hour cycle. If there is no explicit hour cycle,
         // or if loading the explicit hour cycle fails, then load with the default hour cycle.
         let mut maybe_payload = None;
-        if let Some(hc) = locale.get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
-        {
+        if let Some(hour_cycle) = hour_cycle {
             maybe_payload = match provider.load_bound(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    components.with_hour_cycle(&hc).id_str(),
+                    components.with_hour_cycle(hour_cycle).id_str(),
                     locale,
                 ),
                 ..Default::default()
@@ -351,6 +351,7 @@ impl DateTimeZonePatternSelectionData {
         length: Option<NeoSkeletonLength>,
         components: NeoComponents,
         era_display: Option<EraDisplay>,
+        hour_cycle: Option<CoarseHourCycle>,
     ) -> Result<Self, DataError> {
         let length = MaybeLength(length);
         match components {
@@ -370,6 +371,7 @@ impl DateTimeZonePatternSelectionData {
                     locale,
                     length,
                     components,
+                    hour_cycle,
                 )?;
                 Ok(Self::Time(selection))
             }
@@ -390,6 +392,7 @@ impl DateTimeZonePatternSelectionData {
                     locale,
                     length,
                     time_components,
+                    hour_cycle,
                 )?;
                 let glue = Self::load_glue(glue_provider, locale, length, GlueType::DateTime)?;
                 Ok(Self::DateTimeGlue { date, time, glue })
@@ -412,6 +415,7 @@ impl DateTimeZonePatternSelectionData {
                     locale,
                     length,
                     time_components,
+                    hour_cycle,
                 )?;
                 let zone = ZonePatternSelectionData::new_with_skeleton(length, zone_components);
                 let glue = Self::load_glue(glue_provider, locale, length, GlueType::TimeZone)?;
@@ -430,6 +434,7 @@ impl DateTimeZonePatternSelectionData {
                     locale,
                     length,
                     time_components,
+                    hour_cycle,
                 )?;
                 let zone = ZonePatternSelectionData::new_with_skeleton(length, zone_components);
                 let glue = Self::load_glue(glue_provider, locale, length, GlueType::DateTimeZone)?;
