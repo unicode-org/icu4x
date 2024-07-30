@@ -9,6 +9,7 @@ use crate::neo_serde::*;
 use crate::options::components;
 use crate::options::length;
 use crate::options::preferences;
+#[cfg(feature = "experimental")]
 use crate::pattern::CoarseHourCycle;
 #[cfg(feature = "experimental")]
 use crate::raw::neo::MaybeLength;
