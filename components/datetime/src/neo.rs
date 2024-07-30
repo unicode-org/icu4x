@@ -19,6 +19,7 @@ use crate::neo_marker::{
 };
 use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::{NeoComponents, NeoSkeletonLength};
+use crate::pattern::CoarseHourCycle;
 use crate::provider::neo::*;
 use crate::raw::neo::*;
 use crate::CldrCalendar;
@@ -528,6 +529,10 @@ where
             + DataProvider<R::GluePatternV1Marker>,
         L: FixedDecimalFormatterLoader + WeekCalculatorLoader,
     {
+        let hour_cycle = locale
+            .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
+            .as_ref()
+            .and_then(CoarseHourCycle::from_locale_value);
         let selection = DateTimeZonePatternSelectionData::try_new_with_skeleton(
             &<R::D as TypedDateDataMarkers<C>>::DateSkeletonPatternsV1Marker::bind(provider),
             &<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker::bind(provider),
@@ -536,6 +541,7 @@ where
             options.length.into(),
             components,
             options.era_display.into(),
+            hour_cycle,
         )
         .map_err(LoadError::Data)?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
@@ -1229,6 +1235,10 @@ where
     {
         let calendar = AnyCalendarLoader::load(loader, locale).map_err(LoadError::Data)?;
         let kind = calendar.kind();
+        let hour_cycle = locale
+            .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
+            .as_ref()
+            .and_then(CoarseHourCycle::from_locale_value);
         let selection = DateTimeZonePatternSelectionData::try_new_with_skeleton(
             &AnyCalendarProvider::<<R::D as DateDataMarkers>::Skel, _>::new(provider, kind),
             &<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker::bind(provider),
@@ -1237,6 +1247,7 @@ where
             options.length.into(),
             components,
             options.era_display.into(),
+            hour_cycle,
         )
         .map_err(LoadError::Data)?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();

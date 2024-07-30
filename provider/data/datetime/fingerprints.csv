@@ -24399,13 +24399,17 @@ datetime/patterns/roc/skeleton@1, zu/y, 60B, -> af/y
 datetime/patterns/roc/skeleton@1, zu/ym0, 123B, c04704d3a72c7a7d
 datetime/patterns/roc/skeleton@1, zu/ym0d, 174B, 25e0f7897c82202c
 datetime/patterns/roc/skeleton@1, zu/ym0de, 231B, -> so/ym0de
-datetime/patterns/time_skeleton@1, <lookup>, 2752B, 577 identifiers
-datetime/patterns/time_skeleton@1, <total>, 3558B, 61 unique payloads
+datetime/patterns/time_skeleton@1, <lookup>, 4024B, 912 identifiers
+datetime/patterns/time_skeleton@1, <total>, 5223B, 90 unique payloads
 datetime/patterns/time_skeleton@1, af-NA/a1, 78B, 43a40c4e20509b26
 datetime/patterns/time_skeleton@1, af-NA/j, 48B, 613b010759d7c3e
 datetime/patterns/time_skeleton@1, af-NA/jm, 54B, 5fc26fbd4c3c6e12
 datetime/patterns/time_skeleton@1, af-NA/jms, 60B, 606777e3792aa6f1
+datetime/patterns/time_skeleton@1, af/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, af/hm, 54B, -> af-NA/jm
+datetime/patterns/time_skeleton@1, af/hms, 60B, -> af-NA/jms
 datetime/patterns/time_skeleton@1, am/a1, 78B, 71c5481d4ca0dc5a
+datetime/patterns/time_skeleton@1, am/h0, 42B, c78807bcc7382799
 datetime/patterns/time_skeleton@1, am/j, 48B, cf2ea450ee28b09b
 datetime/patterns/time_skeleton@1, am/jm, 54B, dba3a14009bb0bf4
 datetime/patterns/time_skeleton@1, am/jms, 60B, 176eefdeef43bb46
@@ -24429,10 +24433,22 @@ datetime/patterns/time_skeleton@1, as/a1, 78B, 5152d1020e5a9c6b
 datetime/patterns/time_skeleton@1, as/j, 48B, -> am/j
 datetime/patterns/time_skeleton@1, as/jm, 54B, -> am/jm
 datetime/patterns/time_skeleton@1, as/jms, 60B, -> am/jms
+datetime/patterns/time_skeleton@1, az/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, az/hm, 54B, 53124e3a5659f504
+datetime/patterns/time_skeleton@1, az/hms, 60B, b3ace8dc80fbd82c
+datetime/patterns/time_skeleton@1, be/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, be/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, be/hms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, bg/a1, 66B, -> ar-IL/a1
-datetime/patterns/time_skeleton@1, bg/j, 51B, 7f26d84794df9df2
-datetime/patterns/time_skeleton@1, bg/jm, 57B, f8bd2061e874a6af
-datetime/patterns/time_skeleton@1, bg/jms, 63B, bdc0e1872c9e9864
+datetime/patterns/time_skeleton@1, bg/h, 57B, deb41c5893008484
+datetime/patterns/time_skeleton@1, bg/h0, 51B, 7f26d84794df9df2
+datetime/patterns/time_skeleton@1, bg/h0m, 57B, f8bd2061e874a6af
+datetime/patterns/time_skeleton@1, bg/h0ms, 63B, bdc0e1872c9e9864
+datetime/patterns/time_skeleton@1, bg/hm, 63B, 50b451463c072746
+datetime/patterns/time_skeleton@1, bg/hms, 69B, 6257c92f01b7a088
+datetime/patterns/time_skeleton@1, bg/j, 51B, -> bg/h0
+datetime/patterns/time_skeleton@1, bg/jm, 57B, -> bg/h0m
+datetime/patterns/time_skeleton@1, bg/jms, 63B, -> bg/h0ms
 datetime/patterns/time_skeleton@1, bgc/a1, 78B, -> am/a1
 datetime/patterns/time_skeleton@1, bgc/j, 48B, -> am/j
 datetime/patterns/time_skeleton@1, bgc/jm, 54B, -> am/jm
@@ -24441,45 +24457,93 @@ datetime/patterns/time_skeleton@1, bho/a1, 78B, -> am/a1
 datetime/patterns/time_skeleton@1, bho/j, 48B, -> am/j
 datetime/patterns/time_skeleton@1, bho/jm, 54B, -> am/jm
 datetime/patterns/time_skeleton@1, bho/jms, 60B, -> am/jms
+datetime/patterns/time_skeleton@1, blo/hm, 54B, b187db3baecfaf88
+datetime/patterns/time_skeleton@1, blo/hms, 60B, 7c7f96c360bf03fc
 datetime/patterns/time_skeleton@1, bn/a1, 78B, -> am/a1
 datetime/patterns/time_skeleton@1, bn/j, 48B, -> am/j
 datetime/patterns/time_skeleton@1, bn/jm, 54B, -> am/jm
 datetime/patterns/time_skeleton@1, bn/jms, 60B, -> am/jms
+datetime/patterns/time_skeleton@1, br/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, br/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, br/hms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, brx/a1, 87B, 215438f41632d719
-datetime/patterns/time_skeleton@1, brx/j, 48B, 21e8052c0a3ffc5d
-datetime/patterns/time_skeleton@1, brx/jm, 54B, cb8a1f9506fb55c3
-datetime/patterns/time_skeleton@1, brx/jms, 60B, 494e1e8fb636ccf4
-datetime/patterns/time_skeleton@1, bs/j, 42B, c78807bcc7382799
+datetime/patterns/time_skeleton@1, brx/h, 48B, 21e8052c0a3ffc5d
+datetime/patterns/time_skeleton@1, brx/hm, 54B, cb8a1f9506fb55c3
+datetime/patterns/time_skeleton@1, brx/hms, 60B, 494e1e8fb636ccf4
+datetime/patterns/time_skeleton@1, brx/j, 48B, -> brx/h
+datetime/patterns/time_skeleton@1, brx/jm, 54B, -> brx/hm
+datetime/patterns/time_skeleton@1, brx/jms, 60B, -> brx/hms
+datetime/patterns/time_skeleton@1, bs-Cyrl/h, 48B, a41f75346f2fbb48
+datetime/patterns/time_skeleton@1, bs-Cyrl/hm, 54B, -> af-NA/jm
+datetime/patterns/time_skeleton@1, bs-Cyrl/hms, 60B, -> af-NA/jms
+datetime/patterns/time_skeleton@1, bs/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, bs/h0, 42B, -> am/h0
+datetime/patterns/time_skeleton@1, bs/hm, 54B, -> af-NA/jm
+datetime/patterns/time_skeleton@1, bs/hms, 60B, -> af-NA/jms
+datetime/patterns/time_skeleton@1, bs/j, 42B, -> am/h0
 datetime/patterns/time_skeleton@1, ca/a1, 66B, -> ar-IL/a1
-datetime/patterns/time_skeleton@1, ca/j, 42B, -> bs/j
-datetime/patterns/time_skeleton@1, ca/jm, 48B, 819cd51bb7585ec5
-datetime/patterns/time_skeleton@1, ca/jms, 54B, 6a3beb905ac098bb
+datetime/patterns/time_skeleton@1, ca/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, ca/h0, 42B, -> am/h0
+datetime/patterns/time_skeleton@1, ca/h0m, 48B, 819cd51bb7585ec5
+datetime/patterns/time_skeleton@1, ca/h0ms, 54B, 6a3beb905ac098bb
+datetime/patterns/time_skeleton@1, ca/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, ca/hms, 60B, -> az/hms
+datetime/patterns/time_skeleton@1, ca/j, 42B, -> am/h0
+datetime/patterns/time_skeleton@1, ca/jm, 48B, -> ca/h0m
+datetime/patterns/time_skeleton@1, ca/jms, 54B, -> ca/h0ms
 datetime/patterns/time_skeleton@1, ceb/a1, 78B, -> af-NA/a1
 datetime/patterns/time_skeleton@1, ceb/j, 48B, -> am/j
 datetime/patterns/time_skeleton@1, ceb/jm, 54B, -> am/jm
 datetime/patterns/time_skeleton@1, ceb/jms, 60B, -> am/jms
 datetime/patterns/time_skeleton@1, chr/a1, 78B, -> am/a1
+datetime/patterns/time_skeleton@1, chr/h0m, 48B, -> ca/h0m
+datetime/patterns/time_skeleton@1, chr/h0ms, 54B, -> ca/h0ms
 datetime/patterns/time_skeleton@1, chr/j, 48B, -> am/j
 datetime/patterns/time_skeleton@1, chr/jm, 54B, -> am/jm
 datetime/patterns/time_skeleton@1, chr/jms, 60B, -> am/jms
 datetime/patterns/time_skeleton@1, cs/a1, 66B, -> ar-IL/a1
-datetime/patterns/time_skeleton@1, cs/j, 42B, -> bs/j
-datetime/patterns/time_skeleton@1, cs/jm, 48B, -> ca/jm
-datetime/patterns/time_skeleton@1, cs/jms, 54B, -> ca/jms
+datetime/patterns/time_skeleton@1, cs/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, cs/h0, 42B, -> am/h0
+datetime/patterns/time_skeleton@1, cs/h0m, 48B, -> ca/h0m
+datetime/patterns/time_skeleton@1, cs/h0ms, 54B, -> ca/h0ms
+datetime/patterns/time_skeleton@1, cs/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, cs/hms, 60B, -> az/hms
+datetime/patterns/time_skeleton@1, cs/j, 42B, -> am/h0
+datetime/patterns/time_skeleton@1, cs/jm, 48B, -> ca/h0m
+datetime/patterns/time_skeleton@1, cs/jms, 54B, -> ca/h0ms
+datetime/patterns/time_skeleton@1, cy/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, cy/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, cy/hms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, da/a1, 66B, 5d9a460bbacaa320
-datetime/patterns/time_skeleton@1, da/jm, 48B, e96bc172721c57ad
-datetime/patterns/time_skeleton@1, da/jms, 54B, e37a58af09c48dfa
-datetime/patterns/time_skeleton@1, de/j, 54B, 4412c9f8cc3374de
+datetime/patterns/time_skeleton@1, da/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, da/h0m, 48B, e96bc172721c57ad
+datetime/patterns/time_skeleton@1, da/h0ms, 54B, e37a58af09c48dfa
+datetime/patterns/time_skeleton@1, da/hm, 54B, f54291900b0c21b1
+datetime/patterns/time_skeleton@1, da/hms, 60B, d66176c3bf00b5c7
+datetime/patterns/time_skeleton@1, da/jm, 48B, -> da/h0m
+datetime/patterns/time_skeleton@1, da/jms, 54B, -> da/h0ms
+datetime/patterns/time_skeleton@1, de/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, de/h0, 54B, 4412c9f8cc3374de
+datetime/patterns/time_skeleton@1, de/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, de/hms, 60B, -> az/hms
+datetime/patterns/time_skeleton@1, de/j, 54B, -> de/h0
 datetime/patterns/time_skeleton@1, doi/a1, 78B, -> am/a1
 datetime/patterns/time_skeleton@1, doi/j, 48B, -> am/j
 datetime/patterns/time_skeleton@1, doi/jm, 54B, -> am/jm
 datetime/patterns/time_skeleton@1, doi/jms, 60B, -> am/jms
 datetime/patterns/time_skeleton@1, dsb/a1, 66B, -> ar-IL/a1
-datetime/patterns/time_skeleton@1, dsb/j, 60B, b59ac4579636b9f0
+datetime/patterns/time_skeleton@1, dsb/h, 66B, 5bec9f59e9a5c5d3
+datetime/patterns/time_skeleton@1, dsb/h0, 60B, b59ac4579636b9f0
+datetime/patterns/time_skeleton@1, dsb/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, dsb/hms, 60B, -> az/hms
+datetime/patterns/time_skeleton@1, dsb/j, 60B, -> dsb/h0
 datetime/patterns/time_skeleton@1, el/a1, 78B, -> af-NA/a1
+datetime/patterns/time_skeleton@1, el/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, el/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, el/hms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, el/j, 48B, -> af-NA/j
-datetime/patterns/time_skeleton@1, el/jm, 54B, 53124e3a5659f504
-datetime/patterns/time_skeleton@1, el/jms, 60B, b3ace8dc80fbd82c
+datetime/patterns/time_skeleton@1, el/jm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, el/jms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, en-150/a1, 66B, -> ar-KM/a1
 datetime/patterns/time_skeleton@1, en-150/j, 42B, -> ar-IL/j
 datetime/patterns/time_skeleton@1, en-150/jm, 48B, -> ar-IL/jm
@@ -24521,11 +24585,19 @@ datetime/patterns/time_skeleton@1, en-DG/j, 42B, -> ar-IL/j
 datetime/patterns/time_skeleton@1, en-DG/jm, 48B, -> ar-IL/jm
 datetime/patterns/time_skeleton@1, en-DG/jms, 54B, -> ar-IL/jms
 datetime/patterns/time_skeleton@1, en-DK/a1, 66B, -> da/a1
-datetime/patterns/time_skeleton@1, en-DK/jm, 48B, -> da/jm
-datetime/patterns/time_skeleton@1, en-DK/jms, 54B, -> da/jms
+datetime/patterns/time_skeleton@1, en-DK/h0m, 48B, -> da/h0m
+datetime/patterns/time_skeleton@1, en-DK/h0ms, 54B, -> da/h0ms
+datetime/patterns/time_skeleton@1, en-DK/hm, 54B, -> da/hm
+datetime/patterns/time_skeleton@1, en-DK/hms, 60B, -> da/hms
+datetime/patterns/time_skeleton@1, en-DK/jm, 48B, -> da/h0m
+datetime/patterns/time_skeleton@1, en-DK/jms, 54B, -> da/h0ms
 datetime/patterns/time_skeleton@1, en-FI/a1, 66B, 1c9f667b757ab56
-datetime/patterns/time_skeleton@1, en-FI/jm, 48B, 5cd3d83e92a67b40
-datetime/patterns/time_skeleton@1, en-FI/jms, 54B, b8b90a7df9b188c1
+datetime/patterns/time_skeleton@1, en-FI/h0m, 48B, 5cd3d83e92a67b40
+datetime/patterns/time_skeleton@1, en-FI/h0ms, 54B, b8b90a7df9b188c1
+datetime/patterns/time_skeleton@1, en-FI/hm, 54B, -> da/hm
+datetime/patterns/time_skeleton@1, en-FI/hms, 60B, -> da/hms
+datetime/patterns/time_skeleton@1, en-FI/jm, 48B, -> en-FI/h0m
+datetime/patterns/time_skeleton@1, en-FI/jms, 54B, -> en-FI/h0ms
 datetime/patterns/time_skeleton@1, en-FK/a1, 66B, -> ar-KM/a1
 datetime/patterns/time_skeleton@1, en-FK/j, 42B, -> ar-IL/j
 datetime/patterns/time_skeleton@1, en-FK/jm, 48B, -> ar-IL/jm
@@ -24543,17 +24615,24 @@ datetime/patterns/time_skeleton@1, en-GI/j, 42B, -> ar-IL/j
 datetime/patterns/time_skeleton@1, en-GI/jm, 48B, -> ar-IL/jm
 datetime/patterns/time_skeleton@1, en-GI/jms, 54B, -> ar-IL/jms
 datetime/patterns/time_skeleton@1, en-ID/a1, 66B, -> da/a1
+datetime/patterns/time_skeleton@1, en-ID/h0m, 48B, -> da/h0m
+datetime/patterns/time_skeleton@1, en-ID/h0ms, 54B, -> da/h0ms
+datetime/patterns/time_skeleton@1, en-ID/hm, 54B, -> da/hm
+datetime/patterns/time_skeleton@1, en-ID/hms, 60B, -> da/hms
 datetime/patterns/time_skeleton@1, en-ID/j, 42B, -> ar-IL/j
-datetime/patterns/time_skeleton@1, en-ID/jm, 48B, -> da/jm
-datetime/patterns/time_skeleton@1, en-ID/jms, 54B, -> da/jms
+datetime/patterns/time_skeleton@1, en-ID/jm, 48B, -> da/h0m
+datetime/patterns/time_skeleton@1, en-ID/jms, 54B, -> da/h0ms
 datetime/patterns/time_skeleton@1, en-IE/a1, 66B, -> ar-KM/a1
 datetime/patterns/time_skeleton@1, en-IE/j, 42B, -> ar-IL/j
 datetime/patterns/time_skeleton@1, en-IE/jm, 48B, -> ar-IL/jm
 datetime/patterns/time_skeleton@1, en-IE/jms, 54B, -> ar-IL/jms
 datetime/patterns/time_skeleton@1, en-IL/a1, 66B, -> ar-IL/a1
-datetime/patterns/time_skeleton@1, en-IL/j, 42B, -> bs/j
-datetime/patterns/time_skeleton@1, en-IL/jm, 48B, -> ca/jm
-datetime/patterns/time_skeleton@1, en-IL/jms, 54B, -> ca/jms
+datetime/patterns/time_skeleton@1, en-IL/h0, 42B, -> am/h0
+datetime/patterns/time_skeleton@1, en-IL/h0m, 48B, -> ca/h0m
+datetime/patterns/time_skeleton@1, en-IL/h0ms, 54B, -> ca/h0ms
+datetime/patterns/time_skeleton@1, en-IL/j, 42B, -> am/h0
+datetime/patterns/time_skeleton@1, en-IL/jm, 48B, -> ca/h0m
+datetime/patterns/time_skeleton@1, en-IL/jms, 54B, -> ca/h0ms
 datetime/patterns/time_skeleton@1, en-IM/a1, 66B, -> ar-KM/a1
 datetime/patterns/time_skeleton@1, en-IM/j, 42B, -> ar-IL/j
 datetime/patterns/time_skeleton@1, en-IM/jm, 48B, -> ar-IL/jm
@@ -24651,13 +24730,16 @@ datetime/patterns/time_skeleton@1, en-ZW/j, 42B, -> ar-IL/j
 datetime/patterns/time_skeleton@1, en-ZW/jm, 48B, -> ar-IL/jm
 datetime/patterns/time_skeleton@1, en-ZW/jms, 54B, -> ar-IL/jms
 datetime/patterns/time_skeleton@1, en/a1, 78B, -> af-NA/a1
+datetime/patterns/time_skeleton@1, en/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, en/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, en/hms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, en/j, 48B, -> af-NA/j
-datetime/patterns/time_skeleton@1, en/jm, 54B, -> el/jm
-datetime/patterns/time_skeleton@1, en/jms, 60B, -> el/jms
+datetime/patterns/time_skeleton@1, en/jm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, en/jms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, es-419/a1, 78B, -> af-NA/a1
 datetime/patterns/time_skeleton@1, es-419/j, 48B, -> af-NA/j
-datetime/patterns/time_skeleton@1, es-419/jm, 54B, -> el/jm
-datetime/patterns/time_skeleton@1, es-419/jms, 60B, -> el/jms
+datetime/patterns/time_skeleton@1, es-419/jm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, es-419/jms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, es-BR/a1, 66B, -> ar-KM/a1
 datetime/patterns/time_skeleton@1, es-BR/j, 42B, -> ar-IL/j
 datetime/patterns/time_skeleton@1, es-BR/jm, 48B, -> ar-IL/jm
@@ -24666,19 +24748,35 @@ datetime/patterns/time_skeleton@1, es-BZ/a1, 66B, -> ar-KM/a1
 datetime/patterns/time_skeleton@1, es-BZ/j, 42B, -> ar-IL/j
 datetime/patterns/time_skeleton@1, es-BZ/jm, 48B, -> ar-IL/jm
 datetime/patterns/time_skeleton@1, es-BZ/jms, 54B, -> ar-IL/jms
-datetime/patterns/time_skeleton@1, es-MX/j, 48B, a41f75346f2fbb48
+datetime/patterns/time_skeleton@1, es-MX/h, 48B, -> bs-Cyrl/h
+datetime/patterns/time_skeleton@1, es-MX/hm, 54B, -> af-NA/jm
+datetime/patterns/time_skeleton@1, es-MX/hms, 60B, -> af-NA/jms
+datetime/patterns/time_skeleton@1, es-MX/j, 48B, -> bs-Cyrl/h
 datetime/patterns/time_skeleton@1, es-MX/jm, 54B, -> af-NA/jm
 datetime/patterns/time_skeleton@1, es-MX/jms, 60B, -> af-NA/jms
 datetime/patterns/time_skeleton@1, es-PH/a1, 78B, -> af-NA/a1
 datetime/patterns/time_skeleton@1, es-PH/j, 48B, -> af-NA/j
-datetime/patterns/time_skeleton@1, es-PH/jm, 54B, -> el/jm
-datetime/patterns/time_skeleton@1, es-PH/jms, 60B, -> el/jms
+datetime/patterns/time_skeleton@1, es-PH/jm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, es-PH/jms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, es/a1, 66B, -> ar-IL/a1
-datetime/patterns/time_skeleton@1, et/jms, 54B, -> ca/jms
+datetime/patterns/time_skeleton@1, es/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, es/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, es/hms, 60B, -> az/hms
+datetime/patterns/time_skeleton@1, et/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, et/h0ms, 54B, -> ca/h0ms
+datetime/patterns/time_skeleton@1, et/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, et/hms, 60B, -> az/hms
+datetime/patterns/time_skeleton@1, et/jms, 54B, -> ca/h0ms
+datetime/patterns/time_skeleton@1, eu/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, eu/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, eu/hms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, fa/a1, 66B, -> ar-IL/a1
-datetime/patterns/time_skeleton@1, fa/j, 42B, -> bs/j
-datetime/patterns/time_skeleton@1, fa/jm, 48B, -> ca/jm
-datetime/patterns/time_skeleton@1, fa/jms, 54B, -> ca/jms
+datetime/patterns/time_skeleton@1, fa/h0, 42B, -> am/h0
+datetime/patterns/time_skeleton@1, fa/h0m, 48B, -> ca/h0m
+datetime/patterns/time_skeleton@1, fa/h0ms, 54B, -> ca/h0ms
+datetime/patterns/time_skeleton@1, fa/j, 42B, -> am/h0
+datetime/patterns/time_skeleton@1, fa/jm, 48B, -> ca/h0m
+datetime/patterns/time_skeleton@1, fa/jms, 54B, -> ca/h0ms
 datetime/patterns/time_skeleton@1, ff-Adlm-GH/a1, 78B, -> am/a1
 datetime/patterns/time_skeleton@1, ff-Adlm-GH/j, 48B, -> am/j
 datetime/patterns/time_skeleton@1, ff-Adlm-GH/jm, 54B, -> am/jm
@@ -24700,77 +24798,165 @@ datetime/patterns/time_skeleton@1, ff-Adlm-SL/j, 48B, -> am/j
 datetime/patterns/time_skeleton@1, ff-Adlm-SL/jm, 54B, -> am/jm
 datetime/patterns/time_skeleton@1, ff-Adlm-SL/jms, 60B, -> am/jms
 datetime/patterns/time_skeleton@1, fi/a1, 66B, -> en-FI/a1
-datetime/patterns/time_skeleton@1, fi/j, 42B, -> bs/j
-datetime/patterns/time_skeleton@1, fi/jm, 48B, -> en-FI/jm
-datetime/patterns/time_skeleton@1, fi/jms, 54B, -> en-FI/jms
+datetime/patterns/time_skeleton@1, fi/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, fi/h0, 42B, -> am/h0
+datetime/patterns/time_skeleton@1, fi/h0m, 48B, -> en-FI/h0m
+datetime/patterns/time_skeleton@1, fi/h0ms, 54B, -> en-FI/h0ms
+datetime/patterns/time_skeleton@1, fi/hm, 54B, -> da/hm
+datetime/patterns/time_skeleton@1, fi/hms, 60B, -> da/hms
+datetime/patterns/time_skeleton@1, fi/j, 42B, -> am/h0
+datetime/patterns/time_skeleton@1, fi/jm, 48B, -> en-FI/h0m
+datetime/patterns/time_skeleton@1, fi/jms, 54B, -> en-FI/h0ms
 datetime/patterns/time_skeleton@1, fil/a1, 78B, -> af-NA/a1
+datetime/patterns/time_skeleton@1, fil/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, fil/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, fil/hms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, fil/j, 48B, -> af-NA/j
-datetime/patterns/time_skeleton@1, fil/jm, 54B, -> el/jm
-datetime/patterns/time_skeleton@1, fil/jms, 60B, -> el/jms
+datetime/patterns/time_skeleton@1, fil/jm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, fil/jms, 60B, -> az/hms
+datetime/patterns/time_skeleton@1, fo/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, fo/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, fo/hms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, fr-CA/a1, 96B, 367adc0f25eab18e
-datetime/patterns/time_skeleton@1, fr-CA/j, 48B, fa8c1359489781fc
-datetime/patterns/time_skeleton@1, fr-CA/jm, 54B, f5ad32094b99583b
-datetime/patterns/time_skeleton@1, fr-CA/jms, 78B, 9082ef298ffe6ffa
+datetime/patterns/time_skeleton@1, fr-CA/h, 54B, 5ba6e476e2aba9bc
+datetime/patterns/time_skeleton@1, fr-CA/h0, 48B, fa8c1359489781fc
+datetime/patterns/time_skeleton@1, fr-CA/h0m, 54B, f5ad32094b99583b
+datetime/patterns/time_skeleton@1, fr-CA/h0ms, 78B, 9082ef298ffe6ffa
+datetime/patterns/time_skeleton@1, fr-CA/hm, 60B, b9d2f4609868d4ea
+datetime/patterns/time_skeleton@1, fr-CA/hms, 84B, 24d58fc5e3747cf3
+datetime/patterns/time_skeleton@1, fr-CA/j, 48B, -> fr-CA/h0
+datetime/patterns/time_skeleton@1, fr-CA/jm, 54B, -> fr-CA/h0m
+datetime/patterns/time_skeleton@1, fr-CA/jms, 78B, -> fr-CA/h0ms
 datetime/patterns/time_skeleton@1, fr-DJ/a1, 78B, -> af-NA/a1
 datetime/patterns/time_skeleton@1, fr-DJ/j, 48B, -> af-NA/j
-datetime/patterns/time_skeleton@1, fr-DJ/jm, 54B, -> el/jm
-datetime/patterns/time_skeleton@1, fr-DJ/jms, 60B, -> el/jms
+datetime/patterns/time_skeleton@1, fr-DJ/jm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, fr-DJ/jms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, fr-DZ/a1, 78B, -> af-NA/a1
 datetime/patterns/time_skeleton@1, fr-DZ/j, 48B, -> af-NA/j
-datetime/patterns/time_skeleton@1, fr-DZ/jm, 54B, -> el/jm
-datetime/patterns/time_skeleton@1, fr-DZ/jms, 60B, -> el/jms
+datetime/patterns/time_skeleton@1, fr-DZ/jm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, fr-DZ/jms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, fr-MR/a1, 78B, -> af-NA/a1
 datetime/patterns/time_skeleton@1, fr-MR/j, 48B, -> af-NA/j
-datetime/patterns/time_skeleton@1, fr-MR/jm, 54B, -> el/jm
-datetime/patterns/time_skeleton@1, fr-MR/jms, 60B, -> el/jms
+datetime/patterns/time_skeleton@1, fr-MR/jm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, fr-MR/jms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, fr-SY/a1, 78B, -> af-NA/a1
 datetime/patterns/time_skeleton@1, fr-SY/j, 48B, -> af-NA/j
-datetime/patterns/time_skeleton@1, fr-SY/jm, 54B, -> el/jm
-datetime/patterns/time_skeleton@1, fr-SY/jms, 60B, -> el/jms
+datetime/patterns/time_skeleton@1, fr-SY/jm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, fr-SY/jms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, fr-TD/a1, 78B, -> af-NA/a1
 datetime/patterns/time_skeleton@1, fr-TD/j, 48B, -> af-NA/j
-datetime/patterns/time_skeleton@1, fr-TD/jm, 54B, -> el/jm
-datetime/patterns/time_skeleton@1, fr-TD/jms, 60B, -> el/jms
+datetime/patterns/time_skeleton@1, fr-TD/jm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, fr-TD/jms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, fr-TN/a1, 78B, -> af-NA/a1
 datetime/patterns/time_skeleton@1, fr-TN/j, 48B, -> af-NA/j
-datetime/patterns/time_skeleton@1, fr-TN/jm, 54B, -> el/jm
-datetime/patterns/time_skeleton@1, fr-TN/jms, 60B, -> el/jms
+datetime/patterns/time_skeleton@1, fr-TN/jm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, fr-TN/jms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, fr-VU/a1, 78B, -> af-NA/a1
 datetime/patterns/time_skeleton@1, fr-VU/j, 48B, -> af-NA/j
-datetime/patterns/time_skeleton@1, fr-VU/jm, 54B, -> el/jm
-datetime/patterns/time_skeleton@1, fr-VU/jms, 60B, -> el/jms
+datetime/patterns/time_skeleton@1, fr-VU/jm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, fr-VU/jms, 60B, -> az/hms
+datetime/patterns/time_skeleton@1, fr/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, fr/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, fr/hms, 60B, -> az/hms
+datetime/patterns/time_skeleton@1, fy/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, fy/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, fy/hms, 60B, -> az/hms
+datetime/patterns/time_skeleton@1, ga/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, ga/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, ga/hms, 60B, -> az/hms
+datetime/patterns/time_skeleton@1, gd/h, 45B, de4b091242d4cb38
+datetime/patterns/time_skeleton@1, gd/hm, 51B, c5d29f485b58165d
+datetime/patterns/time_skeleton@1, gd/hms, 57B, d43c75b306435b00
+datetime/patterns/time_skeleton@1, gl/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, gl/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, gl/hms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, gu/a1, 78B, a3fe0d9aeeb68f76
+datetime/patterns/time_skeleton@1, gu/hm, 54B, 56f9f820e8a334c9
+datetime/patterns/time_skeleton@1, gu/hms, 60B, 5974cb6f1b049df4
 datetime/patterns/time_skeleton@1, gu/j, 48B, -> am/j
-datetime/patterns/time_skeleton@1, gu/jm, 54B, 56f9f820e8a334c9
-datetime/patterns/time_skeleton@1, gu/jms, 60B, 5974cb6f1b049df4
+datetime/patterns/time_skeleton@1, gu/jm, 54B, -> gu/hm
+datetime/patterns/time_skeleton@1, gu/jms, 60B, -> gu/hms
 datetime/patterns/time_skeleton@1, ha-GH/a1, 78B, -> af-NA/a1
 datetime/patterns/time_skeleton@1, ha-GH/j, 48B, -> am/j
 datetime/patterns/time_skeleton@1, ha-GH/jm, 54B, -> am/jm
 datetime/patterns/time_skeleton@1, ha-GH/jms, 60B, -> am/jms
 datetime/patterns/time_skeleton@1, he/a1, 66B, -> ar-IL/a1
-datetime/patterns/time_skeleton@1, he/j, 42B, -> bs/j
-datetime/patterns/time_skeleton@1, he/jm, 48B, -> ca/jm
-datetime/patterns/time_skeleton@1, he/jms, 54B, -> ca/jms
+datetime/patterns/time_skeleton@1, he/h, 51B, fda674ba0fcca2ed
+datetime/patterns/time_skeleton@1, he/h0, 42B, -> am/h0
+datetime/patterns/time_skeleton@1, he/h0m, 48B, -> ca/h0m
+datetime/patterns/time_skeleton@1, he/h0ms, 54B, -> ca/h0ms
+datetime/patterns/time_skeleton@1, he/j, 42B, -> am/h0
+datetime/patterns/time_skeleton@1, he/jm, 48B, -> ca/h0m
+datetime/patterns/time_skeleton@1, he/jms, 54B, -> ca/h0ms
 datetime/patterns/time_skeleton@1, hi/a1, 78B, -> am/a1
 datetime/patterns/time_skeleton@1, hi/j, 48B, -> am/j
 datetime/patterns/time_skeleton@1, hi/jm, 54B, -> am/jm
 datetime/patterns/time_skeleton@1, hi/jms, 60B, -> am/jms
+datetime/patterns/time_skeleton@1, hr/h, 48B, -> bs-Cyrl/h
+datetime/patterns/time_skeleton@1, hr/hm, 54B, -> af-NA/jm
+datetime/patterns/time_skeleton@1, hr/hms, 60B, -> af-NA/jms
 datetime/patterns/time_skeleton@1, hsb/a1, 84B, dfd63122baf7832c
-datetime/patterns/time_skeleton@1, hsb/j, 60B, -> dsb/j
+datetime/patterns/time_skeleton@1, hsb/h, 66B, -> dsb/h
+datetime/patterns/time_skeleton@1, hsb/h0, 60B, -> dsb/h0
+datetime/patterns/time_skeleton@1, hsb/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, hsb/hms, 60B, -> az/hms
+datetime/patterns/time_skeleton@1, hsb/j, 60B, -> dsb/h0
 datetime/patterns/time_skeleton@1, hu/a1, 66B, -> ar-IL/a1
-datetime/patterns/time_skeleton@1, hu/j, 42B, -> bs/j
-datetime/patterns/time_skeleton@1, hu/jm, 48B, -> ca/jm
-datetime/patterns/time_skeleton@1, hu/jms, 54B, -> ca/jms
-datetime/patterns/time_skeleton@1, hy/j, 42B, -> bs/j
-datetime/patterns/time_skeleton@1, hy/jm, 48B, -> ca/jm
-datetime/patterns/time_skeleton@1, hy/jms, 54B, -> ca/jms
+datetime/patterns/time_skeleton@1, hu/h, 48B, 378626ccf7a623b4
+datetime/patterns/time_skeleton@1, hu/h0, 42B, -> am/h0
+datetime/patterns/time_skeleton@1, hu/h0m, 48B, -> ca/h0m
+datetime/patterns/time_skeleton@1, hu/h0ms, 54B, -> ca/h0ms
+datetime/patterns/time_skeleton@1, hu/hm, 54B, 9fada0fc26604369
+datetime/patterns/time_skeleton@1, hu/hms, 60B, -> brx/hms
+datetime/patterns/time_skeleton@1, hu/j, 42B, -> am/h0
+datetime/patterns/time_skeleton@1, hu/jm, 48B, -> ca/h0m
+datetime/patterns/time_skeleton@1, hu/jms, 54B, -> ca/h0ms
+datetime/patterns/time_skeleton@1, hy/h0, 42B, -> am/h0
+datetime/patterns/time_skeleton@1, hy/h0m, 48B, -> ca/h0m
+datetime/patterns/time_skeleton@1, hy/h0ms, 54B, -> ca/h0ms
+datetime/patterns/time_skeleton@1, hy/j, 42B, -> am/h0
+datetime/patterns/time_skeleton@1, hy/jm, 48B, -> ca/h0m
+datetime/patterns/time_skeleton@1, hy/jms, 54B, -> ca/h0ms
+datetime/patterns/time_skeleton@1, ia/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, ia/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, ia/hms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, id/a1, 66B, -> da/a1
-datetime/patterns/time_skeleton@1, id/jm, 48B, -> da/jm
-datetime/patterns/time_skeleton@1, id/jms, 54B, -> da/jms
+datetime/patterns/time_skeleton@1, id/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, id/h0m, 48B, -> da/h0m
+datetime/patterns/time_skeleton@1, id/h0ms, 54B, -> da/h0ms
+datetime/patterns/time_skeleton@1, id/hm, 54B, -> da/hm
+datetime/patterns/time_skeleton@1, id/hms, 60B, -> da/hms
+datetime/patterns/time_skeleton@1, id/jm, 48B, -> da/h0m
+datetime/patterns/time_skeleton@1, id/jms, 54B, -> da/h0ms
+datetime/patterns/time_skeleton@1, ig/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, is/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, is/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, is/hms, 60B, -> az/hms
+datetime/patterns/time_skeleton@1, it/h, 48B, -> bs-Cyrl/h
+datetime/patterns/time_skeleton@1, it/hm, 54B, -> af-NA/jm
+datetime/patterns/time_skeleton@1, it/hms, 60B, -> af-NA/jms
 datetime/patterns/time_skeleton@1, ja/a1, 66B, -> ar-IL/a1
-datetime/patterns/time_skeleton@1, ja/j, 45B, 5444e74b498611b8
-datetime/patterns/time_skeleton@1, ja/jm, 48B, -> ca/jm
-datetime/patterns/time_skeleton@1, ja/jms, 54B, -> ca/jms
+datetime/patterns/time_skeleton@1, ja/h, 48B, e59c554e3caefc33
+datetime/patterns/time_skeleton@1, ja/h0, 45B, 5444e74b498611b8
+datetime/patterns/time_skeleton@1, ja/h0m, 48B, -> ca/h0m
+datetime/patterns/time_skeleton@1, ja/h0ms, 54B, -> ca/h0ms
+datetime/patterns/time_skeleton@1, ja/hm, 51B, 150a046bb2412e7d
+datetime/patterns/time_skeleton@1, ja/hms, 57B, 816e2842f8fb9a52
+datetime/patterns/time_skeleton@1, ja/j, 45B, -> ja/h0
+datetime/patterns/time_skeleton@1, ja/jm, 48B, -> ca/h0m
+datetime/patterns/time_skeleton@1, ja/jms, 54B, -> ca/h0ms
+datetime/patterns/time_skeleton@1, jv/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, jv/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, jv/hms, 60B, -> az/hms
+datetime/patterns/time_skeleton@1, kea/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, kea/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, kea/hms, 60B, -> az/hms
+datetime/patterns/time_skeleton@1, kgp/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, kgp/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, kgp/hms, 60B, -> az/hms
+datetime/patterns/time_skeleton@1, kk/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, kk/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, kk/hms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, km/a1, 78B, -> am/a1
 datetime/patterns/time_skeleton@1, km/j, 48B, -> am/j
 datetime/patterns/time_skeleton@1, km/jm, 54B, -> am/jm
@@ -24784,9 +24970,13 @@ datetime/patterns/time_skeleton@1, ko-CN/j, 45B, 750dba5f17ae5952
 datetime/patterns/time_skeleton@1, ko-CN/jm, 48B, -> ar-IL/jm
 datetime/patterns/time_skeleton@1, ko-CN/jms, 54B, -> ar-IL/jms
 datetime/patterns/time_skeleton@1, ko/a1, 78B, 5271117abe3b67b0
-datetime/patterns/time_skeleton@1, ko/j, 51B, 6e1d25345ca8fc21
-datetime/patterns/time_skeleton@1, ko/jm, 54B, -> brx/jm
-datetime/patterns/time_skeleton@1, ko/jms, 60B, af1f409753e9d87c
+datetime/patterns/time_skeleton@1, ko/h, 51B, 6e1d25345ca8fc21
+datetime/patterns/time_skeleton@1, ko/h0, 45B, -> ko-CN/j
+datetime/patterns/time_skeleton@1, ko/hm, 54B, -> brx/hm
+datetime/patterns/time_skeleton@1, ko/hms, 60B, af1f409753e9d87c
+datetime/patterns/time_skeleton@1, ko/j, 51B, -> ko/h
+datetime/patterns/time_skeleton@1, ko/jm, 54B, -> brx/hm
+datetime/patterns/time_skeleton@1, ko/jms, 60B, -> ko/hms
 datetime/patterns/time_skeleton@1, kok/a1, 78B, -> am/a1
 datetime/patterns/time_skeleton@1, kok/j, 48B, -> am/j
 datetime/patterns/time_skeleton@1, kok/jm, 54B, -> am/jm
@@ -24799,11 +24989,24 @@ datetime/patterns/time_skeleton@1, ks/a1, 78B, -> am/a1
 datetime/patterns/time_skeleton@1, ks/j, 48B, -> am/j
 datetime/patterns/time_skeleton@1, ks/jm, 54B, -> am/jm
 datetime/patterns/time_skeleton@1, ks/jms, 60B, -> am/jms
+datetime/patterns/time_skeleton@1, ku/h, 51B, fd8e488624fe3f2f
+datetime/patterns/time_skeleton@1, ku/hm, 57B, 7c79439dfdd446d2
+datetime/patterns/time_skeleton@1, ku/hms, 63B, 7aabb339b98903ce
 datetime/patterns/time_skeleton@1, kxv/a1, 78B, -> af-NA/a1
 datetime/patterns/time_skeleton@1, kxv/j, 48B, -> am/j
 datetime/patterns/time_skeleton@1, kxv/jm, 54B, -> am/jm
 datetime/patterns/time_skeleton@1, kxv/jms, 60B, -> am/jms
+datetime/patterns/time_skeleton@1, ky/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, ky/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, ky/hms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, lo/a1, 66B, -> ar-IL/a1
+datetime/patterns/time_skeleton@1, lo/h, 57B, e30be9ef65fb9ce0
+datetime/patterns/time_skeleton@1, lt/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, lt/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, lt/hms, 60B, -> az/hms
+datetime/patterns/time_skeleton@1, lv/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, lv/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, lv/hms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, mai/a1, 78B, -> am/a1
 datetime/patterns/time_skeleton@1, mai/j, 48B, -> am/j
 datetime/patterns/time_skeleton@1, mai/jm, 54B, -> am/jm
@@ -24812,19 +25015,31 @@ datetime/patterns/time_skeleton@1, mi/a1, 78B, -> af-NA/a1
 datetime/patterns/time_skeleton@1, mi/j, 48B, -> am/j
 datetime/patterns/time_skeleton@1, mi/jm, 54B, -> am/jm
 datetime/patterns/time_skeleton@1, mi/jms, 60B, -> am/jms
-datetime/patterns/time_skeleton@1, mk/j, 42B, -> bs/j
-datetime/patterns/time_skeleton@1, mk/jm, 48B, -> ca/jm
-datetime/patterns/time_skeleton@1, mk/jms, 54B, -> ca/jms
+datetime/patterns/time_skeleton@1, mk/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, mk/h0, 42B, -> am/h0
+datetime/patterns/time_skeleton@1, mk/h0m, 48B, -> ca/h0m
+datetime/patterns/time_skeleton@1, mk/h0ms, 54B, -> ca/h0ms
+datetime/patterns/time_skeleton@1, mk/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, mk/hms, 60B, -> az/hms
+datetime/patterns/time_skeleton@1, mk/j, 42B, -> am/h0
+datetime/patterns/time_skeleton@1, mk/jm, 48B, -> ca/h0m
+datetime/patterns/time_skeleton@1, mk/jms, 54B, -> ca/h0ms
 datetime/patterns/time_skeleton@1, ml/a1, 78B, -> am/a1
 datetime/patterns/time_skeleton@1, ml/j, 48B, -> am/j
 datetime/patterns/time_skeleton@1, ml/jm, 54B, -> am/jm
 datetime/patterns/time_skeleton@1, ml/jms, 60B, -> am/jms
-datetime/patterns/time_skeleton@1, mn/j, 48B, 2796e6db33c7d61d
+datetime/patterns/time_skeleton@1, mn/h, 54B, 6a665e45f4b9a500
+datetime/patterns/time_skeleton@1, mn/h0, 48B, 2796e6db33c7d61d
+datetime/patterns/time_skeleton@1, mn/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, mn/hms, 60B, -> az/hms
+datetime/patterns/time_skeleton@1, mn/j, 48B, -> mn/h0
 datetime/patterns/time_skeleton@1, mni/a1, 78B, -> am/a1
 datetime/patterns/time_skeleton@1, mni/j, 48B, -> am/j
 datetime/patterns/time_skeleton@1, mni/jm, 54B, -> am/jm
 datetime/patterns/time_skeleton@1, mni/jms, 60B, -> am/jms
 datetime/patterns/time_skeleton@1, mr/a1, 78B, -> am/a1
+datetime/patterns/time_skeleton@1, mr/h0m, 48B, faabd52af75770e8
+datetime/patterns/time_skeleton@1, mr/h0ms, 54B, 95ed1ee40af38664
 datetime/patterns/time_skeleton@1, mr/j, 48B, -> am/j
 datetime/patterns/time_skeleton@1, mr/jm, 54B, -> am/jm
 datetime/patterns/time_skeleton@1, mr/jms, 60B, -> am/jms
@@ -24833,14 +25048,23 @@ datetime/patterns/time_skeleton@1, ms-ID/j, 42B, -> ar-IL/j
 datetime/patterns/time_skeleton@1, ms-ID/jm, 48B, -> ar-IL/jm
 datetime/patterns/time_skeleton@1, ms-ID/jms, 54B, -> ar-IL/jms
 datetime/patterns/time_skeleton@1, ms/a1, 78B, -> af-NA/a1
+datetime/patterns/time_skeleton@1, ms/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, ms/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, ms/hms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, ms/j, 48B, -> af-NA/j
-datetime/patterns/time_skeleton@1, ms/jm, 54B, -> el/jm
-datetime/patterns/time_skeleton@1, ms/jms, 60B, -> el/jms
+datetime/patterns/time_skeleton@1, ms/jm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, ms/jms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, my/a1, 66B, -> ar-IL/a1
+datetime/patterns/time_skeleton@1, my/h, 48B, -> brx/h
+datetime/patterns/time_skeleton@1, my/hm, 54B, -> brx/hm
+datetime/patterns/time_skeleton@1, my/hms, 60B, -> ko/hms
 datetime/patterns/time_skeleton@1, ne-IN/a1, 78B, -> am/a1
 datetime/patterns/time_skeleton@1, ne-IN/j, 48B, -> am/j
 datetime/patterns/time_skeleton@1, ne-IN/jm, 54B, -> am/jm
 datetime/patterns/time_skeleton@1, ne-IN/jms, 60B, -> am/jms
+datetime/patterns/time_skeleton@1, no/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, no/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, no/hms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, or/a1, 78B, -> am/a1
 datetime/patterns/time_skeleton@1, or/j, 48B, -> am/j
 datetime/patterns/time_skeleton@1, or/jm, 54B, -> am/jm
@@ -24849,26 +25073,47 @@ datetime/patterns/time_skeleton@1, pa/a1, 78B, -> am/a1
 datetime/patterns/time_skeleton@1, pa/j, 48B, -> am/j
 datetime/patterns/time_skeleton@1, pa/jm, 54B, -> am/jm
 datetime/patterns/time_skeleton@1, pa/jms, 60B, -> am/jms
+datetime/patterns/time_skeleton@1, pcm/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, pcm/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, pcm/hms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, ps-PK/a1, 78B, -> am/a1
 datetime/patterns/time_skeleton@1, ps-PK/j, 48B, -> am/j
 datetime/patterns/time_skeleton@1, ps-PK/jm, 54B, -> am/jm
 datetime/patterns/time_skeleton@1, ps-PK/jms, 60B, -> am/jms
 datetime/patterns/time_skeleton@1, ps/a1, 66B, -> ar-IL/a1
-datetime/patterns/time_skeleton@1, ps/j, 42B, -> bs/j
-datetime/patterns/time_skeleton@1, ps/jm, 48B, -> ca/jm
-datetime/patterns/time_skeleton@1, ps/jms, 54B, -> ca/jms
+datetime/patterns/time_skeleton@1, ps/h0, 42B, -> am/h0
+datetime/patterns/time_skeleton@1, ps/h0m, 48B, -> ca/h0m
+datetime/patterns/time_skeleton@1, ps/h0ms, 54B, -> ca/h0ms
+datetime/patterns/time_skeleton@1, ps/j, 42B, -> am/h0
+datetime/patterns/time_skeleton@1, ps/jm, 48B, -> ca/h0m
+datetime/patterns/time_skeleton@1, ps/jms, 54B, -> ca/h0ms
 datetime/patterns/time_skeleton@1, pt-MO/a1, 78B, -> af-NA/a1
 datetime/patterns/time_skeleton@1, pt-MO/j, 48B, -> af-NA/j
-datetime/patterns/time_skeleton@1, pt-MO/jm, 54B, -> el/jm
-datetime/patterns/time_skeleton@1, pt-MO/jms, 60B, -> el/jms
+datetime/patterns/time_skeleton@1, pt-MO/jm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, pt-MO/jms, 60B, -> az/hms
+datetime/patterns/time_skeleton@1, pt/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, pt/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, pt/hms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, qu/a1, 78B, -> af-NA/a1
+datetime/patterns/time_skeleton@1, qu/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, qu/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, qu/hms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, qu/j, 48B, -> af-NA/j
-datetime/patterns/time_skeleton@1, qu/jm, 54B, -> el/jm
-datetime/patterns/time_skeleton@1, qu/jms, 60B, -> el/jms
+datetime/patterns/time_skeleton@1, qu/jm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, qu/jms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, raj/a1, 78B, -> am/a1
 datetime/patterns/time_skeleton@1, raj/j, 48B, -> am/j
 datetime/patterns/time_skeleton@1, raj/jm, 54B, -> am/jm
 datetime/patterns/time_skeleton@1, raj/jms, 60B, -> am/jms
+datetime/patterns/time_skeleton@1, rm/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, rm/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, rm/hms, 60B, -> az/hms
+datetime/patterns/time_skeleton@1, ro/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, ro/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, ro/hms, 60B, -> az/hms
+datetime/patterns/time_skeleton@1, ru/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, ru/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, ru/hms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, sa/a1, 78B, -> am/a1
 datetime/patterns/time_skeleton@1, sa/j, 48B, -> am/j
 datetime/patterns/time_skeleton@1, sa/jm, 54B, -> am/jm
@@ -24877,6 +25122,9 @@ datetime/patterns/time_skeleton@1, sat/a1, 78B, -> am/a1
 datetime/patterns/time_skeleton@1, sat/j, 48B, -> am/j
 datetime/patterns/time_skeleton@1, sat/jm, 54B, -> am/jm
 datetime/patterns/time_skeleton@1, sat/jms, 60B, -> am/jms
+datetime/patterns/time_skeleton@1, sc/h, 48B, -> bs-Cyrl/h
+datetime/patterns/time_skeleton@1, sc/hm, 54B, -> af-NA/jm
+datetime/patterns/time_skeleton@1, sc/hms, 60B, -> af-NA/jms
 datetime/patterns/time_skeleton@1, sd-Deva/a1, 78B, -> am/a1
 datetime/patterns/time_skeleton@1, sd-Deva/j, 48B, -> am/j
 datetime/patterns/time_skeleton@1, sd-Deva/jm, 54B, -> am/jm
@@ -24886,10 +25134,22 @@ datetime/patterns/time_skeleton@1, sd/j, 48B, -> am/j
 datetime/patterns/time_skeleton@1, sd/jm, 54B, -> am/jm
 datetime/patterns/time_skeleton@1, sd/jms, 60B, -> am/jms
 datetime/patterns/time_skeleton@1, si/a1, 66B, -> da/a1
+datetime/patterns/time_skeleton@1, si/h, 48B, -> brx/h
+datetime/patterns/time_skeleton@1, si/hm, 54B, bd586e85a43a62fa
+datetime/patterns/time_skeleton@1, si/hms, 60B, a6874eff284ae10e
 datetime/patterns/time_skeleton@1, sk/a1, 66B, -> ar-IL/a1
-datetime/patterns/time_skeleton@1, sk/j, 42B, -> bs/j
-datetime/patterns/time_skeleton@1, sk/jm, 48B, -> ca/jm
-datetime/patterns/time_skeleton@1, sk/jms, 54B, -> ca/jms
+datetime/patterns/time_skeleton@1, sk/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, sk/h0, 42B, -> am/h0
+datetime/patterns/time_skeleton@1, sk/h0m, 48B, -> ca/h0m
+datetime/patterns/time_skeleton@1, sk/h0ms, 54B, -> ca/h0ms
+datetime/patterns/time_skeleton@1, sk/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, sk/hms, 60B, -> az/hms
+datetime/patterns/time_skeleton@1, sk/j, 42B, -> am/h0
+datetime/patterns/time_skeleton@1, sk/jm, 48B, -> ca/h0m
+datetime/patterns/time_skeleton@1, sk/jms, 54B, -> ca/h0ms
+datetime/patterns/time_skeleton@1, sl/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, sl/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, sl/hms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, so-KE/a1, 66B, -> ar-KM/a1
 datetime/patterns/time_skeleton@1, so-KE/j, 42B, -> ar-IL/j
 datetime/patterns/time_skeleton@1, so-KE/jm, 48B, -> ar-IL/jm
@@ -24907,10 +25167,25 @@ datetime/patterns/time_skeleton@1, sq-XK/j, 42B, -> ar-IL/j
 datetime/patterns/time_skeleton@1, sq-XK/jm, 48B, -> ar-IL/jm
 datetime/patterns/time_skeleton@1, sq-XK/jms, 54B, -> ar-IL/jms
 datetime/patterns/time_skeleton@1, sq/a1, 78B, -> af-NA/a1
+datetime/patterns/time_skeleton@1, sq/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, sq/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, sq/hms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, sq/j, 48B, -> af-NA/j
-datetime/patterns/time_skeleton@1, sq/jm, 54B, -> el/jm
-datetime/patterns/time_skeleton@1, sq/jms, 60B, -> el/jms
+datetime/patterns/time_skeleton@1, sq/jm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, sq/jms, 60B, -> az/hms
+datetime/patterns/time_skeleton@1, sr-Latn/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, sr-Latn/hm, 54B, -> af-NA/jm
+datetime/patterns/time_skeleton@1, sr-Latn/hms, 60B, -> af-NA/jms
+datetime/patterns/time_skeleton@1, sr/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, sr/hm, 54B, -> af-NA/jm
+datetime/patterns/time_skeleton@1, sr/hms, 60B, -> af-NA/jms
 datetime/patterns/time_skeleton@1, su/a1, 66B, -> en-FI/a1
+datetime/patterns/time_skeleton@1, sv/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, sv/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, sv/hms, 60B, -> az/hms
+datetime/patterns/time_skeleton@1, sw/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, sw/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, sw/hms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, syr/a1, 78B, -> am/a1
 datetime/patterns/time_skeleton@1, syr/j, 48B, -> am/j
 datetime/patterns/time_skeleton@1, syr/jm, 54B, -> am/jm
@@ -24927,20 +25202,43 @@ datetime/patterns/time_skeleton@1, te/a1, 78B, -> am/a1
 datetime/patterns/time_skeleton@1, te/j, 48B, -> am/j
 datetime/patterns/time_skeleton@1, te/jm, 54B, -> am/jm
 datetime/patterns/time_skeleton@1, te/jms, 60B, -> am/jms
+datetime/patterns/time_skeleton@1, tg/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, tg/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, tg/hms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, ti/a1, 78B, -> am/a1
 datetime/patterns/time_skeleton@1, ti/j, 48B, -> am/j
 datetime/patterns/time_skeleton@1, ti/jm, 54B, -> am/jm
 datetime/patterns/time_skeleton@1, ti/jms, 60B, -> am/jms
+datetime/patterns/time_skeleton@1, tk/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, tk/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, tk/hms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, to/a1, 78B, -> af-NA/a1
+datetime/patterns/time_skeleton@1, to/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, to/h0m, 48B, -> ca/h0m
+datetime/patterns/time_skeleton@1, to/h0ms, 54B, -> ca/h0ms
+datetime/patterns/time_skeleton@1, to/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, to/hms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, to/j, 48B, -> af-NA/j
-datetime/patterns/time_skeleton@1, to/jm, 54B, -> el/jm
-datetime/patterns/time_skeleton@1, to/jms, 60B, -> el/jms
+datetime/patterns/time_skeleton@1, to/jm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, to/jms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, tr-CY/a1, 78B, -> af-NA/a1
 datetime/patterns/time_skeleton@1, tr-CY/j, 48B, -> af-NA/j
-datetime/patterns/time_skeleton@1, tr-CY/jm, 54B, -> el/jm
-datetime/patterns/time_skeleton@1, tr-CY/jms, 60B, -> el/jms
+datetime/patterns/time_skeleton@1, tr-CY/jm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, tr-CY/jms, 60B, -> az/hms
+datetime/patterns/time_skeleton@1, tr/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, tr/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, tr/hms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, tt/a1, 66B, -> ar-IL/a1
+datetime/patterns/time_skeleton@1, uk/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, uk/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, uk/hms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, und/a1, 66B, -> ar-KM/a1
+datetime/patterns/time_skeleton@1, und/h, 48B, -> am/j
+datetime/patterns/time_skeleton@1, und/h0, 42B, -> ar-IL/j
+datetime/patterns/time_skeleton@1, und/h0m, 48B, -> ar-IL/jm
+datetime/patterns/time_skeleton@1, und/h0ms, 54B, -> ar-IL/jms
+datetime/patterns/time_skeleton@1, und/hm, 54B, -> am/jm
+datetime/patterns/time_skeleton@1, und/hms, 60B, -> am/jms
 datetime/patterns/time_skeleton@1, und/j, 42B, -> ar-IL/j
 datetime/patterns/time_skeleton@1, und/jm, 48B, -> ar-IL/jm
 datetime/patterns/time_skeleton@1, und/jms, 54B, -> ar-IL/jms
@@ -24948,36 +25246,73 @@ datetime/patterns/time_skeleton@1, ur/a1, 78B, -> am/a1
 datetime/patterns/time_skeleton@1, ur/j, 48B, -> am/j
 datetime/patterns/time_skeleton@1, ur/jm, 54B, -> am/jm
 datetime/patterns/time_skeleton@1, ur/jms, 60B, -> am/jms
-datetime/patterns/time_skeleton@1, vi/j, 54B, a64da10e870fe89d
+datetime/patterns/time_skeleton@1, uz/h, 54B, 9729387767b841c0
+datetime/patterns/time_skeleton@1, uz/hm, 60B, 99f0caaa7e8e838c
+datetime/patterns/time_skeleton@1, uz/hms, 66B, 5e43100bdf88b9fe
+datetime/patterns/time_skeleton@1, vi/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, vi/h0, 54B, a64da10e870fe89d
+datetime/patterns/time_skeleton@1, vi/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, vi/hms, 60B, -> az/hms
+datetime/patterns/time_skeleton@1, vi/j, 54B, -> vi/h0
+datetime/patterns/time_skeleton@1, xh/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, xh/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, xh/hms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, xnr/a1, 78B, -> am/a1
 datetime/patterns/time_skeleton@1, xnr/j, 48B, -> am/j
 datetime/patterns/time_skeleton@1, xnr/jm, 54B, -> am/jm
 datetime/patterns/time_skeleton@1, xnr/jms, 60B, -> am/jms
 datetime/patterns/time_skeleton@1, yo/a1, 66B, d9689d0156fc71b2
+datetime/patterns/time_skeleton@1, yo/hm, 54B, -> az/hm
 datetime/patterns/time_skeleton@1, yrl-CO/a1, 78B, -> af-NA/a1
 datetime/patterns/time_skeleton@1, yrl-CO/j, 48B, -> af-NA/j
-datetime/patterns/time_skeleton@1, yrl-CO/jm, 54B, -> el/jm
-datetime/patterns/time_skeleton@1, yrl-CO/jms, 60B, -> el/jms
+datetime/patterns/time_skeleton@1, yrl-CO/jm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, yrl-CO/jms, 60B, -> az/hms
 datetime/patterns/time_skeleton@1, yrl-VE/a1, 78B, -> af-NA/a1
 datetime/patterns/time_skeleton@1, yrl-VE/j, 48B, -> af-NA/j
-datetime/patterns/time_skeleton@1, yrl-VE/jm, 54B, -> el/jm
-datetime/patterns/time_skeleton@1, yrl-VE/jms, 60B, -> el/jms
-datetime/patterns/time_skeleton@1, yue-Hans/j, 45B, 6f98f4e27b099b2
+datetime/patterns/time_skeleton@1, yrl-VE/jm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, yrl-VE/jms, 60B, -> az/hms
+datetime/patterns/time_skeleton@1, yrl/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, yrl/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, yrl/hms, 60B, -> az/hms
+datetime/patterns/time_skeleton@1, yue-Hans/h, 48B, 80770f57f0b5d71b
+datetime/patterns/time_skeleton@1, yue-Hans/h0, 45B, 6f98f4e27b099b2
+datetime/patterns/time_skeleton@1, yue-Hans/hm, 51B, -> ja/hm
+datetime/patterns/time_skeleton@1, yue-Hans/hms, 57B, -> ja/hms
+datetime/patterns/time_skeleton@1, yue-Hans/j, 45B, -> yue-Hans/h0
 datetime/patterns/time_skeleton@1, yue/a1, 72B, a7bb5502389063a8
-datetime/patterns/time_skeleton@1, yue/j, 48B, e59c554e3caefc33
-datetime/patterns/time_skeleton@1, yue/jm, 51B, 150a046bb2412e7d
-datetime/patterns/time_skeleton@1, yue/jms, 57B, 816e2842f8fb9a52
+datetime/patterns/time_skeleton@1, yue/h, 48B, -> ja/h
+datetime/patterns/time_skeleton@1, yue/h0, 45B, -> ja/h0
+datetime/patterns/time_skeleton@1, yue/h0m, 48B, -> ca/h0m
+datetime/patterns/time_skeleton@1, yue/h0ms, 54B, -> ca/h0ms
+datetime/patterns/time_skeleton@1, yue/hm, 51B, -> ja/hm
+datetime/patterns/time_skeleton@1, yue/hms, 57B, -> ja/hms
+datetime/patterns/time_skeleton@1, yue/j, 48B, -> ja/h
+datetime/patterns/time_skeleton@1, yue/jm, 51B, -> ja/hm
+datetime/patterns/time_skeleton@1, yue/jms, 57B, -> ja/hms
 datetime/patterns/time_skeleton@1, zh-HK/a1, 72B, -> yue/a1
 datetime/patterns/time_skeleton@1, zh-Hant/a1, 72B, c9777f94ada891d2
-datetime/patterns/time_skeleton@1, zh-Hant/j, 48B, 8869e181c568d58d
-datetime/patterns/time_skeleton@1, zh-Hant/jm, 51B, fdf31fc2152af49c
-datetime/patterns/time_skeleton@1, zh-Hant/jms, 57B, 23c457ee7b4bf3c0
+datetime/patterns/time_skeleton@1, zh-Hant/h, 48B, 8869e181c568d58d
+datetime/patterns/time_skeleton@1, zh-Hant/h0, 45B, -> ja/h0
+datetime/patterns/time_skeleton@1, zh-Hant/h0m, 48B, -> ca/h0m
+datetime/patterns/time_skeleton@1, zh-Hant/h0ms, 54B, -> ca/h0ms
+datetime/patterns/time_skeleton@1, zh-Hant/hm, 51B, fdf31fc2152af49c
+datetime/patterns/time_skeleton@1, zh-Hant/hms, 57B, 23c457ee7b4bf3c0
+datetime/patterns/time_skeleton@1, zh-Hant/j, 48B, -> zh-Hant/h
+datetime/patterns/time_skeleton@1, zh-Hant/jm, 51B, -> zh-Hant/hm
+datetime/patterns/time_skeleton@1, zh-Hant/jms, 57B, -> zh-Hant/hms
 datetime/patterns/time_skeleton@1, zh-MO/a1, 72B, -> yue/a1
 datetime/patterns/time_skeleton@1, zh-SG/a1, 72B, -> yue/a1
-datetime/patterns/time_skeleton@1, zh-SG/j, 48B, 80770f57f0b5d71b
-datetime/patterns/time_skeleton@1, zh-SG/jm, 51B, -> yue/jm
-datetime/patterns/time_skeleton@1, zh-SG/jms, 57B, -> yue/jms
-datetime/patterns/time_skeleton@1, zh/j, 45B, -> yue-Hans/j
+datetime/patterns/time_skeleton@1, zh-SG/j, 48B, -> yue-Hans/h
+datetime/patterns/time_skeleton@1, zh-SG/jm, 51B, -> ja/hm
+datetime/patterns/time_skeleton@1, zh-SG/jms, 57B, -> ja/hms
+datetime/patterns/time_skeleton@1, zh/h, 48B, -> yue-Hans/h
+datetime/patterns/time_skeleton@1, zh/h0, 45B, -> yue-Hans/h0
+datetime/patterns/time_skeleton@1, zh/hm, 51B, -> ja/hm
+datetime/patterns/time_skeleton@1, zh/hms, 57B, -> ja/hms
+datetime/patterns/time_skeleton@1, zh/j, 45B, -> yue-Hans/h0
+datetime/patterns/time_skeleton@1, zu/h, 48B, -> af-NA/j
+datetime/patterns/time_skeleton@1, zu/hm, 54B, -> az/hm
+datetime/patterns/time_skeleton@1, zu/hms, 60B, -> az/hms
 datetime/persian/datelengths@1, <lookup>, 856B, 173 identifiers
 datetime/persian/datelengths@1, <total>, 53233B, 143 unique payloads
 datetime/persian/datelengths@1, af, 350B, bfd01a0a0d5e8ae1
