@@ -409,11 +409,10 @@ impl WordSegmenter {
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> WordBreakIteratorUtf8<'l, 's> {
-        let locale_override = if let Some(payload) = &self.payload_locale_override {
-            Some(payload.get())
-        } else {
-            None
-        };
+        let locale_override = self
+            .payload_locale_override
+            .as_ref()
+            .map(|payload| payload.get());
         WordBreakIterator(RuleBreakIterator {
             iter: input.char_indices(),
             len: input.len(),
@@ -435,11 +434,10 @@ impl WordSegmenter {
         &'l self,
         input: &'s [u8],
     ) -> WordBreakIteratorPotentiallyIllFormedUtf8<'l, 's> {
-        let locale_override = if let Some(payload) = &self.payload_locale_override {
-            Some(payload.get())
-        } else {
-            None
-        };
+        let locale_override = self
+            .payload_locale_override
+            .as_ref()
+            .map(|payload| payload.get());
         WordBreakIterator(RuleBreakIterator {
             iter: Utf8CharIndices::new(input),
             len: input.len(),
@@ -456,11 +454,10 @@ impl WordSegmenter {
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_latin1<'l, 's>(&'l self, input: &'s [u8]) -> WordBreakIteratorLatin1<'l, 's> {
-        let locale_override = if let Some(payload) = &self.payload_locale_override {
-            Some(payload.get())
-        } else {
-            None
-        };
+        let locale_override = self
+            .payload_locale_override
+            .as_ref()
+            .map(|payload| payload.get());
         WordBreakIterator(RuleBreakIterator {
             iter: Latin1Indices::new(input),
             len: input.len(),
@@ -477,12 +474,10 @@ impl WordSegmenter {
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_utf16<'l, 's>(&'l self, input: &'s [u16]) -> WordBreakIteratorUtf16<'l, 's> {
-        let locale_override = if let Some(payload) = &self.payload_locale_override {
-            Some(payload.get())
-        } else {
-            None
-        };
-
+        let locale_override = self
+            .payload_locale_override
+            .as_ref()
+            .map(|payload| payload.get());
         WordBreakIterator(RuleBreakIterator {
             iter: Utf16Indices::new(input),
             len: input.len(),
