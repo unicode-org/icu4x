@@ -214,8 +214,8 @@ fn all_runtime() {
         // "en-001", (same as 'und')
         // "en-ZA", (same as 'und')
         "es", "es-AR", // "fil", (same as 'und')
-        "fr", // "ja", (same as 'und')
-        "ru", "sr", // Note: 'sr' and 'sr-Latn' are the same, but they don't inherit
+        "fr",    // "ja", (same as 'und')
+        "ru", "sr",      // Note: 'sr' and 'sr-Latn' are the same, but they don't inherit
         "sr-Latn", // "th", (same as 'und')
         "th/thai", "tr", "und",
     ];
@@ -381,7 +381,7 @@ fn explicit_runtime() {
         // "en", (same as 'und')
         // "en-001", (same as 'und')
         // "en-GB", (same as 'und')
-        "es", "es-AR", "ru", // "ru-Cyrl-RU", (same as 'ru')
+        "es", "es-AR", "ru",      // "ru-Cyrl-RU", (same as 'ru')
         "sr-Latn", // "sr-ME", (same as 'sr-Latn')
         "und",
     ];
@@ -422,7 +422,7 @@ fn explicit_runtime_retain_base() {
         "en",  // (same as 'und', but retained)
         // "en-001", (same as 'en')
         // "en-GB", (same as 'en-001')
-        "es", "es-AR", "ru", // "ru-Cyrl-RU", (same as 'ru')
+        "es", "es-AR", "ru",      // "ru-Cyrl-RU", (same as 'ru')
         "sr-Latn", // "sr-ME", (same as 'sr-Latn')
         "und",
     ];
