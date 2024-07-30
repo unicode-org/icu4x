@@ -139,7 +139,7 @@ impl Writeable for DataLocaleFamily {
 
 writeable::impl_display_with_writeable!(DataLocaleFamily);
 
-/// Inner fields of a [`LocaleFamily`].
+/// Inner fields of a [`DataLocaleFamily`].
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub(crate) struct DataLocaleFamilyAnnotations {
     pub(crate) include_ancestors: bool,
@@ -201,7 +201,7 @@ impl Writeable for DataLocaleFamilyAnnotations {
 /// An error while parsing a [`DataLocaleFamily`].
 #[derive(Debug, Copy, Clone, PartialEq, Display)]
 #[non_exhaustive]
-pub enum LocaleFamilyParseError {
+pub enum DataLocaleFamilyParseError {
     /// An error bubbled up from parsing a [`DataLocale`].
     #[displaydoc("{0}")]
     Locale(ParseError),
@@ -210,22 +210,24 @@ pub enum LocaleFamilyParseError {
     InvalidFamily,
 }
 
-impl From<ParseError> for LocaleFamilyParseError {
+impl From<ParseError> for DataLocaleFamilyParseError {
     fn from(err: ParseError) -> Self {
         Self::Locale(err)
     }
 }
 
-impl std::error::Error for LocaleFamilyParseError {}
+impl std::error::Error for DataLocaleFamilyParseError {}
 
 impl FromStr for DataLocaleFamily {
-    type Err = LocaleFamilyParseError;
+    type Err = DataLocaleFamilyParseError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if s == "full" {
             return Ok(Self::FULL);
         }
         let mut iter = s.chars();
-        let first = iter.next().ok_or(LocaleFamilyParseError::InvalidFamily)?;
+        let first = iter
+            .next()
+            .ok_or(DataLocaleFamilyParseError::InvalidFamily)?;
         match first {
             '^' => Ok(Self {
                 locale: Some(iter.as_str().parse()?),
@@ -243,7 +245,7 @@ impl FromStr for DataLocaleFamily {
                 locale: Some(s.parse()?),
                 annotations: DataLocaleFamilyAnnotations::with_descendants(),
             }),
-            _ => Err(LocaleFamilyParseError::InvalidFamily),
+            _ => Err(DataLocaleFamilyParseError::InvalidFamily),
         }
     }
 }
