@@ -653,6 +653,7 @@ impl NeoTimeComponents {
         }
     }
 
+    #[cfg(feature = "experimental")]
     pub(crate) fn with_hour_cycle(self, hour_cycle: CoarseHourCycle) -> Self {
         use CoarseHourCycle::*;
         match (self, hour_cycle) {

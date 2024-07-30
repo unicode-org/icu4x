@@ -6,6 +6,7 @@ use super::{reference, runtime, PatternItem};
 use crate::{fields, options::preferences};
 #[cfg(feature = "datagen")]
 use crate::{provider, skeleton};
+#[cfg(feature = "experimental")]
 use icu_locale_core::{extensions::unicode::Value, subtags::Subtag};
 use icu_provider::prelude::*;
 
@@ -54,6 +55,7 @@ impl CoarseHourCycle {
         None
     }
 
+    #[cfg(feature = "experimental")]
     pub(crate) fn from_locale_value(value: &Value) -> Option<Self> {
         const H11: Subtag = icu_locale_core::subtags::subtag!("h11");
         const H12: Subtag = icu_locale_core::subtags::subtag!("h12");
