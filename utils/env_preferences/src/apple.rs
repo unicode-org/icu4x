@@ -49,6 +49,8 @@ pub mod apple_prefs {
                 }
             }
         }
+        // Release for memory
+        unsafe {CFRelease(locale_carr_ref as _ );}
 
         // Defaulting to `und`
         if languages.is_empty() {

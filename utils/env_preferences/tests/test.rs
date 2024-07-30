@@ -11,7 +11,7 @@ mod apple_tests {
 
     #[test]
     fn test_get_locale() {
-        print!("{:?}",get_locales());
+       get_locales();
     }
 
     #[test]
