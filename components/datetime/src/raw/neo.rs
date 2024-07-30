@@ -343,6 +343,7 @@ impl ZonePatternSelectionData {
 }
 
 impl DateTimeZonePatternSelectionData {
+    #[allow(clippy::too_many_arguments)] // private function with lots of generics
     pub(crate) fn try_new_with_skeleton(
         date_provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
         time_provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
