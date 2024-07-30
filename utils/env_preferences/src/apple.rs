@@ -120,7 +120,7 @@ pub mod apple_prefs {
             // SAFETY: Release the calendar when done to avoid memory leaks
             unsafe { CFRelease(calendar as _) };
 
-            calendars.push((calendar_locale_str, calendar_identifier_str.clone()));
+            calendars.push((calendar_locale_str, calendar_identifier_str));
         }
 
         if calendars.is_empty() {
