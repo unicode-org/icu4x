@@ -257,6 +257,7 @@ pub struct DataLocale {
     pub subdivision: Option<Subtag>,
 
     // These are ignored by all methods/impls except for get_unicode_ext and get_single_unicode_ext
+    // TODO(#3632): Remove after migrating all inputs to preferences
     keywords: unicode_ext::Keywords,
 }
 
