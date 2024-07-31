@@ -138,6 +138,39 @@
 //! );
 //! ```
 //!
+//! ## Fractional Second Digits
+//!
+//! Times can be displayed with a custom number of fractional digits from 0-9:
+//!
+//! ```
+//! use icu::calendar::Gregorian;
+//! use icu::calendar::Time;
+//! use icu::datetime::neo::NeoOptions;
+//! use icu::datetime::neo::TypedNeoFormatter;
+//! use icu::datetime::neo_marker::NeoAutoTimeMarker;
+//! use icu::datetime::neo_skeleton::NeoSkeletonLength;
+//! use icu::datetime::neo_skeleton::FractionalSecondDigits;
+//! use icu::datetime::NeverCalendar;
+//! use icu::locale::locale;
+//! use writeable::assert_try_writeable_eq;
+//!
+//! let formatter =
+//!     TypedNeoFormatter::<NeverCalendar, NeoAutoTimeMarker>::try_new(
+//!         &locale!("en-US").into(),
+//!         {
+//!             let mut options = NeoOptions::from(NeoSkeletonLength::Short);
+//!             options.fractional_second_digits = Some(FractionalSecondDigits::F2);
+//!             options
+//!         }
+//!     )
+//!     .unwrap();
+//!
+//! assert_try_writeable_eq!(
+//!     formatter.format(&Time::try_new(16, 12, 20, 543200000).unwrap()),
+//!     "4:12.54 PM"
+//! );
+//! ```
+//!
 //! ## Time Zone Formatting
 //!
 //! Here, we configure a [`NeoFormatter`] to format with generic non-location short,
@@ -1935,7 +1968,7 @@ impl_time_marker!(
     input_hour = yes,
     input_minute = yes,
     input_second = yes,
-    input_nanosecond = no,
+    input_nanosecond = yes,
 );
 
 // TODO: Make NeoAutoZoneMarker, derived from time length patterns
