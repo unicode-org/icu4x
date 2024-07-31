@@ -2286,6 +2286,7 @@ impl<'a> TryWriteable for FormattedDateTimePattern<'a> {
     ) -> Result<Result<(), Self::Error>, fmt::Error> {
         try_write_pattern(
             self.pattern.0.as_borrowed(),
+            Default::default(),
             &self.datetime,
             Some(&self.names),
             Some(&self.names),

@@ -39,6 +39,7 @@ use icu_plurals::PluralRules;
 use icu_provider::DataPayload;
 use icu_timezone::{CustomTimeZone, GmtOffset};
 use writeable::{Part, Writeable};
+use super::FormattingOptions;
 
 /// [`FormattedDateTime`] is a intermediate structure which can be retrieved as
 /// an output from [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter).
@@ -133,6 +134,7 @@ impl<'l> Writeable for FormattedDateTime<'l> {
 
         r = r.and(try_write_pattern(
             pattern.as_borrowed(),
+            Default::default(),
             &self.datetime,
             self.date_symbols,
             self.time_symbols,
@@ -203,6 +205,7 @@ where
 #[allow(clippy::too_many_arguments)]
 pub(crate) fn try_write_pattern<'data, W, DS, TS, ZS>(
     pattern: PatternBorrowed<'data>,
+    formatting_options: FormattingOptions,
     datetime: &ExtractedDateTimeInput,
     date_symbols: Option<&DS>,
     time_symbols: Option<&TS>,
@@ -220,6 +223,7 @@ where
     try_write_pattern_items(
         pattern.metadata,
         pattern.items.iter(),
+        formatting_options,
         datetime,
         date_symbols,
         time_symbols,
@@ -234,6 +238,7 @@ where
 pub(crate) fn try_write_pattern_items<'data, W, DS, TS, ZS>(
     pattern_metadata: PatternMetadata,
     pattern_items: impl Iterator<Item = PatternItem>,
+    formatting_options: FormattingOptions,
     datetime: &ExtractedDateTimeInput,
     date_symbols: Option<&DS>,
     time_symbols: Option<&TS>,
@@ -271,6 +276,7 @@ where
                     field,
                     &mut iter,
                     pattern_metadata,
+                    formatting_options,
                     datetime,
                     date_symbols,
                     time_symbols,
@@ -354,6 +360,7 @@ pub(crate) fn try_write_field<'data, W, DS, TS>(
     field: fields::Field,
     iter: &mut Peekable<impl Iterator<Item = PatternItem>>,
     pattern_metadata: PatternMetadata,
+    formatting_options: FormattingOptions,
     datetime: &ExtractedDateTimeInput,
     date_symbols: Option<&DS>,
     time_symbols: Option<&TS>,
