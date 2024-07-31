@@ -155,40 +155,27 @@ impl<'a> FormattedDuration<'a> {
     ///
     /// Divergence from standard: adds the first non-fractional unit as well.
     fn add_fractional_digits(&self) -> FixedDecimal {
-        if self.fmt.options.nanosecond == FieldStyle::Fractional {
-            let nanoseconds = self.duration.nanoseconds;
-            let microseconds = self.duration.microseconds + nanoseconds / 1000; // propogate nanoseconds to micros
-            let formatted_nanoseconds = FixedDecimal::from(nanoseconds % 1000);
-
-            if self.fmt.options.microsecond == FieldStyle::Fractional {
-                let milliseconds = self.duration.milliseconds + microseconds / 1000; // propogate micros to millis
-                let formatted_microseconds = FixedDecimal::from(microseconds % 1000) // mod micros since we propogated to millis
-                    .concatenated_end(formatted_nanoseconds.multiplied_pow10(-3))
+        let mut prev_val = self.duration.nanoseconds;
+        let mut prev_formatted = FixedDecimal::from(prev_val % 1000);
+        for (style, val) in [
+            (self.fmt.options.microsecond, self.duration.microseconds),
+            (self.fmt.options.millisecond, self.duration.milliseconds),
+            (self.fmt.options.second, self.duration.seconds),
+        ] {
+            if style == FieldStyle::Fractional {
+                let val = val + prev_val / 1000;
+                prev_formatted = FixedDecimal::from(val % 1000)
+                    .concatenated_end(prev_formatted.multiplied_pow10(-3))
                     .unwrap();
-
-                if self.fmt.options.millisecond == FieldStyle::Fractional {
-                    let seconds = self.duration.seconds + milliseconds / 1000; // propogate millis to seconds
-                    let formatted_milliseconds =
-                        FixedDecimal::from(milliseconds % 1000) // mod millis since we propogated to seconds
-                            .concatenated_end(formatted_microseconds.multiplied_pow10(-3))
-                            .unwrap();
-
-                    FixedDecimal::from(seconds)
-                        .concatenated_end(formatted_milliseconds.multiplied_pow10(-3))
-                        .unwrap()
-                } else {
-                    FixedDecimal::from(milliseconds)
-                        .concatenated_end(formatted_microseconds.multiplied_pow10(-3))
-                        .unwrap()
-                }
+                prev_val = val;
             } else {
-                FixedDecimal::from(microseconds)
-                    .concatenated_end(formatted_nanoseconds.multiplied_pow10(-3))
-                    .unwrap()
+                return FixedDecimal::from(val)
+                    .concatenated_end(prev_formatted.multiplied_pow10(-3))
+                    .unwrap();
             }
-        } else {
-            FixedDecimal::from(self.duration.nanoseconds)
         }
+
+        prev_formatted
     }
 
     /// Section 1.1.11
