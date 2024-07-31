@@ -718,6 +718,13 @@ impl From<NeverField> for Option<EraDisplay> {
     }
 }
 
+impl From<NeverField> for Option<FractionalSecondDigits> {
+    #[inline]
+    fn from(_: NeverField) -> Self {
+        None
+    }
+}
+
 /// A trait associating [`NeoComponents`].
 pub trait HasConstComponents {
     /// The associated components.
@@ -848,6 +855,8 @@ pub trait DateTimeMarkers: private::Sealed + DateTimeNamesMarker {
     type LengthOption: Into<Option<NeoSkeletonLength>>;
     /// Type of the era display option in the constructor.
     type EraDisplayOption: Into<Option<EraDisplay>>;
+    /// Type of the fractional seconds display option in the constructor.
+    type FractionalSecondDigitsOption: Into<Option<FractionalSecondDigits>>;
     /// Marker for loading the date/time glue pattern.
     type GluePatternV1Marker: DataMarker<DataStruct = GluePatternV1<'static>>;
 }
@@ -986,6 +995,7 @@ where
     type Z = NeoNeverMarker;
     type LengthOption = NeoSkeletonLength; // always needed for date
     type EraDisplayOption = D::EraDisplayOption;
+    type FractionalSecondDigitsOption = NeverField;
     type GluePatternV1Marker = NeverMarker<GluePatternV1<'static>>;
 }
 
@@ -1021,6 +1031,7 @@ where
     type Z = NeoNeverMarker;
     type LengthOption = NeoSkeletonLength; // always needed for time
     type EraDisplayOption = NeverField; // no year in a time-only format
+    type FractionalSecondDigitsOption = T::FractionalSecondDigitsOption;
     type GluePatternV1Marker = NeverMarker<GluePatternV1<'static>>;
 }
 
@@ -1056,6 +1067,7 @@ where
     type Z = Z;
     type LengthOption = Z::LengthOption; // no date or time: inherit from zone
     type EraDisplayOption = NeverField; // no year in a zone-only format
+    type FractionalSecondDigitsOption = NeverField;
     type GluePatternV1Marker = GluePatternV1Marker;
 }
 
@@ -1094,6 +1106,7 @@ where
     type Z = NeoNeverMarker;
     type LengthOption = NeoSkeletonLength; // always needed for date/time
     type EraDisplayOption = D::EraDisplayOption;
+    type FractionalSecondDigitsOption = T::FractionalSecondDigitsOption;
     type GluePatternV1Marker = GluePatternV1Marker;
 }
 
@@ -1136,6 +1149,7 @@ where
     type Z = Z;
     type LengthOption = NeoSkeletonLength; // always needed for date/time
     type EraDisplayOption = D::EraDisplayOption;
+    type FractionalSecondDigitsOption = T::FractionalSecondDigitsOption;
     type GluePatternV1Marker = GluePatternV1Marker;
 }
 
@@ -1195,6 +1209,9 @@ macro_rules! datetime_marker_helper {
     };
     (@option/eradisplay, yes) => {
         Option<EraDisplay>
+    };
+    (@option/fractionalsecondigits, yes) => {
+        Option<FractionalSecondDigits>
     };
     (@option/$any:ident, no) => {
         NeverField
@@ -1430,6 +1447,7 @@ macro_rules! impl_date_marker {
             type Z = NeoNeverMarker;
             type LengthOption = datetime_marker_helper!(@option/length, yes);
             type EraDisplayOption = datetime_marker_helper!(@option/eradisplay, $year_yesno);
+            type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits, no);
             type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
         }
         impl HasConstComponents for $type {
@@ -1573,6 +1591,7 @@ macro_rules! impl_time_marker {
             type Z = NeoNeverMarker;
             type LengthOption = datetime_marker_helper!(@option/length, yes);
             type EraDisplayOption = datetime_marker_helper!(@option/eradisplay, no);
+            type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits, $nanosecond_yesno);
             type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
         }
         impl HasConstComponents for $type {
@@ -1698,6 +1717,7 @@ macro_rules! impl_zone_marker {
             type Z = Self;
             type LengthOption = datetime_marker_helper!(@option/length, $option_length_yesno);
             type EraDisplayOption = datetime_marker_helper!(@option/eradisplay, no);
+            type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits, no);
             type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
         }
         impl HasConstComponents for $type {
@@ -2208,6 +2228,7 @@ impl DateTimeMarkers for NeoDateComponents {
     type Z = NeoNeverMarker;
     type LengthOption = datetime_marker_helper!(@option/length, yes);
     type EraDisplayOption = datetime_marker_helper!(@option/eradisplay, yes);
+    type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits, no);
     type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
 }
 
@@ -2243,6 +2264,7 @@ impl DateTimeMarkers for NeoTimeComponents {
     type Z = NeoNeverMarker;
     type LengthOption = datetime_marker_helper!(@option/length, yes);
     type EraDisplayOption = datetime_marker_helper!(@option/eradisplay, no);
+    type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits, yes);
     type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
 }
 
@@ -2279,6 +2301,7 @@ impl DateTimeMarkers for NeoTimeZoneSkeleton {
     type Z = Self;
     type LengthOption = datetime_marker_helper!(@option/length, yes);
     type EraDisplayOption = datetime_marker_helper!(@option/eradisplay, no);
+    type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits, no);
     type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
 }
 
@@ -2305,6 +2328,7 @@ impl DateTimeMarkers for NeoDateTimeComponents {
     type Z = NeoNeverMarker;
     type LengthOption = datetime_marker_helper!(@option/length, yes);
     type EraDisplayOption = datetime_marker_helper!(@option/eradisplay, yes);
+    type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits, yes);
     type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
 }
 
@@ -2331,5 +2355,6 @@ impl DateTimeMarkers for NeoComponents {
     type Z = NeoTimeZoneSkeleton;
     type LengthOption = datetime_marker_helper!(@option/length, yes);
     type EraDisplayOption = datetime_marker_helper!(@option/eradisplay, yes);
+    type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits, yes);
     type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
 }

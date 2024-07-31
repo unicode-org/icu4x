@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::neo_skeleton::FractionalSecondDigits;
 use crate::format::neo::FieldForDataLoading;
 use crate::input::{DateInput, ExtractedDateTimeInput};
 use crate::neo_pattern::DateTimePattern;
@@ -240,6 +241,7 @@ impl TimePatternSelectionData {
         locale: &DataLocale,
         length: MaybeLength,
         components: NeoTimeComponents,
+        fractional_second_digits: Option<FractionalSecondDigits>,
         hour_cycle: Option<CoarseHourCycle>,
     ) -> Result<Self, DataError> {
         // First try to load with the explicit hour cycle. If there is no explicit hour cycle,
@@ -278,6 +280,7 @@ impl TimePatternSelectionData {
             skeleton: NeoTimeSkeleton {
                 length: length.get::<Self>(),
                 components,
+                fractional_second_digits,
             },
             payload,
         })
@@ -352,6 +355,7 @@ impl DateTimeZonePatternSelectionData {
         length: Option<NeoSkeletonLength>,
         components: NeoComponents,
         era_display: Option<EraDisplay>,
+        fractional_second_digits: Option<FractionalSecondDigits>,
         hour_cycle: Option<CoarseHourCycle>,
     ) -> Result<Self, DataError> {
         let length = MaybeLength(length);
@@ -372,6 +376,7 @@ impl DateTimeZonePatternSelectionData {
                     locale,
                     length,
                     components,
+                    fractional_second_digits,
                     hour_cycle,
                 )?;
                 Ok(Self::Time(selection))
@@ -393,6 +398,7 @@ impl DateTimeZonePatternSelectionData {
                     locale,
                     length,
                     time_components,
+                    fractional_second_digits,
                     hour_cycle,
                 )?;
                 let glue = Self::load_glue(glue_provider, locale, length, GlueType::DateTime)?;
@@ -416,6 +422,7 @@ impl DateTimeZonePatternSelectionData {
                     locale,
                     length,
                     time_components,
+                    fractional_second_digits,
                     hour_cycle,
                 )?;
                 let zone = ZonePatternSelectionData::new_with_skeleton(length, zone_components);
@@ -435,6 +442,7 @@ impl DateTimeZonePatternSelectionData {
                     locale,
                     length,
                     time_components,
+                    fractional_second_digits,
                     hour_cycle,
                 )?;
                 let zone = ZonePatternSelectionData::new_with_skeleton(length, zone_components);

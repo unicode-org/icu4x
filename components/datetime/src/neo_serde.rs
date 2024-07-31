@@ -6,7 +6,7 @@
 
 use crate::neo_skeleton::{
     EraDisplay, NeoComponents, NeoDateComponents, NeoDayComponents, NeoSkeleton, NeoSkeletonLength,
-    NeoTimeComponents, NeoTimeZoneSkeleton, NeoTimeZoneStyle,
+    NeoTimeComponents, NeoTimeZoneSkeleton, NeoTimeZoneStyle, FractionalSecondDigits
 };
 use alloc::vec::Vec;
 use serde::{Deserialize, Serialize};
@@ -29,6 +29,8 @@ pub(crate) struct SemanticSkeletonSerde {
     pub(crate) length: NeoSkeletonLength,
     #[serde(rename = "eraDisplay")]
     pub(crate) era_display: Option<EraDisplay>,
+    #[serde(rename = "FractionalSecondDigits")]
+    pub(crate) fractional_second_digits: Option<FractionalSecondDigits>,
 }
 
 impl From<NeoSkeleton> for SemanticSkeletonSerde {
@@ -37,6 +39,7 @@ impl From<NeoSkeleton> for SemanticSkeletonSerde {
             field_set: value.components,
             length: value.length,
             era_display: value.era_display,
+            fractional_second_digits: value.fractional_second_digits,
         }
     }
 }
@@ -48,6 +51,7 @@ impl TryFrom<SemanticSkeletonSerde> for NeoSkeleton {
             length: value.length,
             components: value.field_set,
             era_display: value.era_display,
+            fractional_second_digits: value.fractional_second_digits,
         })
     }
 }

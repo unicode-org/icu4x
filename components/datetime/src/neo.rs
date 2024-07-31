@@ -162,6 +162,11 @@ pub struct NeoOptions<R: DateTimeMarkers> {
     ///
     /// See [`EraDisplay`](crate::neo_skeleton::EraDisplay).
     pub era_display: R::EraDisplayOption,
+    /// How many fractional seconds to display,
+    /// if seconds are included in the field set.
+    ///
+    /// See [`FractionalSecondDigits`](crate::neo_skeleton::FractionalSecondDigits).
+    pub fractional_second_digits: R::FractionalSecondDigitsOption,
 }
 
 impl<R> From<NeoSkeletonLength> for NeoOptions<R>
@@ -169,12 +174,14 @@ where
     R: DateTimeMarkers,
     R::LengthOption: From<NeoSkeletonLength>,
     R::EraDisplayOption: Default,
+    R::FractionalSecondDigitsOption: Default,
 {
     #[inline]
     fn from(value: NeoSkeletonLength) -> Self {
         NeoOptions {
             length: value.into(),
             era_display: Default::default(),
+            fractional_second_digits: Default::default(),
         }
     }
 }
@@ -186,12 +193,14 @@ where
     R: DateTimeMarkers,
     R::LengthOption: Default,
     R::EraDisplayOption: Default,
+    R::FractionalSecondDigitsOption: Default,
 {
     #[inline]
     fn default() -> Self {
         NeoOptions {
             length: Default::default(),
             era_display: Default::default(),
+            fractional_second_digits: Default::default(),
         }
     }
 }
@@ -541,6 +550,7 @@ where
             options.length.into(),
             components,
             options.era_display.into(),
+            options.fractional_second_digits.into(),
             hour_cycle,
         )
         .map_err(LoadError::Data)?;
@@ -1247,6 +1257,7 @@ where
             options.length.into(),
             components,
             options.era_display.into(),
+            options.fractional_second_digits.into(),
             hour_cycle,
         )
         .map_err(LoadError::Data)?;
