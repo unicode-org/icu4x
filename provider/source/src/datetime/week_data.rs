@@ -32,7 +32,7 @@ impl IterableDataProviderCached<WeekDataV1Marker> for SourceDataProvider {
             })
             .map(|region| {
                 let mut locale = DataLocale::default();
-                locale.set_region(region);
+                locale.region = region;
                 DataIdentifierCow::from_locale(locale)
             })
             .collect())
@@ -45,7 +45,7 @@ impl DataProvider<WeekDataV1Marker> for SourceDataProvider {
         let territory = req
             .id
             .locale
-            .region()
+            .region
             .map(|v| -> Result<Territory, DataError> { Ok(Territory::Region(v)) })
             .transpose()?
             .unwrap_or_else(|| DEFAULT_TERRITORY.clone());
@@ -140,7 +140,7 @@ impl DataProvider<WeekDataV2Marker> for SourceDataProvider {
         let territory = req
             .id
             .locale
-            .region()
+            .region
             .map(Territory::Region)
             .unwrap_or_else(|| DEFAULT_TERRITORY.clone());
 

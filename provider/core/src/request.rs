@@ -14,9 +14,11 @@ use core::hash::Hash;
 use core::ops::Deref;
 use core::str::FromStr;
 use icu_locale_core::extensions::unicode as unicode_ext;
-use icu_locale_core::subtags::{Language, Region, Script, Variants};
+use icu_locale_core::subtags::Subtag;
+use icu_locale_core::subtags::Variant;
+use icu_locale_core::subtags::{Language, Region, Script};
 use icu_locale_core::{LanguageIdentifier, Locale, ParseError};
-use writeable::{LengthHint, Writeable};
+use writeable::Writeable;
 use zerovec::ule::VarULE;
 
 /// The request type passed into all data provider implementations.
@@ -128,11 +130,8 @@ impl PartialOrd for DataIdentifierCow<'_> {
 
 impl Ord for DataIdentifierCow<'_> {
     fn cmp(&self, other: &Self) -> Ordering {
-        self.marker_attributes
-            .as_str()
-            .cmp(other.marker_attributes.as_str())
-            .then_with(|| self.locale.langid.total_cmp(&other.locale.langid))
-            .then_with(|| self.locale.keywords.cmp(&other.locale.keywords))
+        (&self.marker_attributes, self.locale.as_tuple())
+            .cmp(&(&other.marker_attributes, other.locale.as_tuple()))
     }
 }
 
@@ -219,22 +218,7 @@ impl Default for DataIdentifierCow<'_> {
 /// [`LanguageIdentifier`] for better size and performance while still meeting
 /// the needs of the ICU4X data pipeline.
 ///
-/// # Examples
-///
-/// Convert a [`Locale`] to a [`DataLocale`] and back:
-///
-/// ```
-/// use icu_locale_core::locale;
-/// use icu_provider::DataLocale;
-///
-/// let locale = locale!("en-u-ca-buddhist");
-/// let data_locale = DataLocale::from(locale);
-/// let locale = data_locale.into_locale();
-///
-/// assert_eq!(locale, locale!("en-u-ca-buddhist"));
-/// ```
-///
-/// You can alternatively create a [`DataLocale`] from a borrowed [`Locale`], which is more
+/// You can create a [`DataLocale`] from a borrowed [`Locale`], which is more
 /// efficient than cloning the [`Locale`], but less efficient than converting an owned
 /// [`Locale`]:
 ///
@@ -244,48 +228,79 @@ impl Default for DataIdentifierCow<'_> {
 ///
 /// let locale1 = locale!("en-u-ca-buddhist");
 /// let data_locale = DataLocale::from(&locale1);
-/// let locale2 = data_locale.into_locale();
-///
-/// assert_eq!(locale1, locale2);
 /// ```
 ///
-/// If you are sure that you have no Unicode keywords, start with [`LanguageIdentifier`]:
-///
-/// ```
-/// use icu_locale_core::langid;
-/// use icu_provider::DataLocale;
-///
-/// let langid = langid!("es-CA-valencia");
-/// let data_locale = DataLocale::from(langid);
-/// let langid = data_locale.get_langid();
-///
-/// assert_eq!(langid, langid!("es-CA-valencia"));
-/// ```
-///
-/// [`DataLocale`] only supports `-u` keywords, to reflect the current state of CLDR data
+/// [`DataLocale`] only supports `-u-sd` keywords, to reflect the current state of CLDR data
 /// lookup and fallback. This may change in the future.
 ///
 /// ```
 /// use icu_locale_core::{locale, Locale};
 /// use icu_provider::DataLocale;
 ///
-/// let locale = "hi-t-en-h0-hybrid-u-attr-ca-buddhist"
+/// let locale = "hi-IN-t-en-h0-hybrid-u-attr-ca-buddhist-sd-inas"
 ///     .parse::<Locale>()
 ///     .unwrap();
-/// let data_locale = DataLocale::from(locale);
 ///
-/// assert_eq!(data_locale.into_locale(), locale!("hi-u-ca-buddhist"));
+/// assert_eq!(DataLocale::from(locale), DataLocale::from(locale!("hi-IN-u-sd-inas")));
 /// ```
-#[derive(PartialEq, Clone, Default, Eq, Hash)]
+#[derive(Clone, Default, Eq)]
 pub struct DataLocale {
-    langid: LanguageIdentifier,
+    /// Language subtag
+    pub language: Language,
+    /// Script subtag
+    pub script: Option<Script>,
+    /// Region subtag
+    pub region: Option<Region>,
+    /// Variant subtag
+    pub variant: Option<Variant>,
+    /// Subivision (-u-sd-) subtag
+    pub subdivision: Option<Subtag>,
+
+    // These are ignored by all methods/impls except for get_unicode_ext and get_single_unicode_ext
+    // TODO(#3632): Remove after migrating all inputs to preferences
     keywords: unicode_ext::Keywords,
+}
+
+impl DataLocale {
+    fn as_tuple(
+        &self,
+    ) -> (
+        Language,
+        Option<Script>,
+        Option<Region>,
+        Option<Variant>,
+        Option<Subtag>,
+    ) {
+        (
+            self.language,
+            self.script,
+            self.region,
+            self.variant,
+            self.subdivision,
+        )
+    }
+}
+
+impl PartialEq for DataLocale {
+    fn eq(&self, other: &Self) -> bool {
+        self.as_tuple() == other.as_tuple()
+    }
+}
+
+impl Hash for DataLocale {
+    fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
+        self.as_tuple().hash(state)
+    }
 }
 
 impl<'a> Default for &'a DataLocale {
     fn default() -> Self {
         static DEFAULT: DataLocale = DataLocale {
-            langid: LanguageIdentifier::UND,
+            language: Language::UND,
+            script: None,
+            region: None,
+            variant: None,
+            subdivision: None,
             keywords: unicode_ext::Keywords::new(),
         };
         &DEFAULT
@@ -298,59 +313,44 @@ impl fmt::Debug for DataLocale {
     }
 }
 
-impl Writeable for DataLocale {
-    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        self.langid.write_to(sink)?;
-        if !self.keywords.is_empty() {
-            sink.write_str("-u-")?;
-            self.keywords.write_to(sink)?;
-        }
-        Ok(())
-    }
-
-    fn writeable_length_hint(&self) -> LengthHint {
-        let mut length_hint = self.langid.writeable_length_hint();
-        if !self.keywords.is_empty() {
-            length_hint += self.keywords.writeable_length_hint() + 3;
-        }
-        length_hint
-    }
-
-    fn write_to_string(&self) -> alloc::borrow::Cow<str> {
-        if self.keywords.is_empty() {
-            return self.langid.write_to_string();
-        }
-        let mut string =
-            alloc::string::String::with_capacity(self.writeable_length_hint().capacity());
-        let _ = self.write_to(&mut string);
-        alloc::borrow::Cow::Owned(string)
-    }
-}
-
-writeable::impl_display_with_writeable!(DataLocale);
+icu_locale_core::impl_writeable_for_each_subtag_str_no_test!(DataLocale, selff, selff.script.is_none() && selff.region.is_none() && selff.variant.is_none() && selff.subdivision.is_none() => selff.language.write_to_string());
 
 impl From<LanguageIdentifier> for DataLocale {
     fn from(langid: LanguageIdentifier) -> Self {
         Self {
-            langid,
+            language: langid.language,
+            script: langid.script,
+            region: langid.region,
+            variant: langid.variants.iter().copied().next(),
+            subdivision: None,
             keywords: unicode_ext::Keywords::new(),
         }
     }
 }
 
 impl From<Locale> for DataLocale {
-    fn from(locale: Locale) -> Self {
-        Self {
-            langid: locale.id,
-            keywords: locale.extensions.unicode.keywords,
-        }
+    fn from(mut locale: Locale) -> Self {
+        let mut r = Self::from(locale.id);
+
+        r.subdivision = locale
+            .extensions
+            .unicode
+            .keywords
+            .remove(unicode_ext::key!("sd"))
+            .and_then(|v| v.as_single_subtag().copied());
+        r.keywords = locale.extensions.unicode.keywords;
+        r
     }
 }
 
 impl From<&LanguageIdentifier> for DataLocale {
     fn from(langid: &LanguageIdentifier) -> Self {
         Self {
-            langid: langid.clone(),
+            language: langid.language,
+            script: langid.script,
+            region: langid.region,
+            variant: langid.variants.iter().copied().next(),
+            subdivision: None,
             keywords: unicode_ext::Keywords::new(),
         }
     }
@@ -358,21 +358,70 @@ impl From<&LanguageIdentifier> for DataLocale {
 
 impl From<&Locale> for DataLocale {
     fn from(locale: &Locale) -> Self {
-        Self {
-            langid: locale.id.clone(),
-            keywords: locale.extensions.unicode.keywords.clone(),
-        }
+        let mut r = Self::from(&locale.id);
+
+        let mut keywords = locale.extensions.unicode.keywords.clone();
+        r.subdivision = keywords
+            .remove(unicode_ext::key!("sd"))
+            .and_then(|v| v.as_single_subtag().copied());
+        r.keywords = keywords;
+        r
     }
 }
 
 impl FromStr for DataLocale {
     type Err = ParseError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Locale::from_str(s).map(DataLocale::from)
+        let locale = Locale::from_str(s)?;
+        if locale.id.variants.len() > 1
+            || !locale.extensions.transform.is_empty()
+            || !locale.extensions.private.is_empty()
+            || !locale.extensions.other.is_empty()
+            || !locale.extensions.unicode.attributes.is_empty()
+        {
+            return Err(ParseError::InvalidExtension);
+        }
+
+        let unicode_extensions_count = locale.extensions.unicode.keywords.iter().count();
+
+        if unicode_extensions_count != 0
+            && (unicode_extensions_count != 1
+                || !locale
+                    .extensions
+                    .unicode
+                    .keywords
+                    .contains_key(&unicode_ext::key!("sd")))
+        {
+            return Err(ParseError::InvalidExtension);
+        }
+
+        Ok(locale.into())
     }
 }
 
 impl DataLocale {
+    pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
+    where
+        F: FnMut(&str) -> Result<(), E>,
+    {
+        f(self.language.as_str())?;
+        if let Some(ref script) = self.script {
+            f(script.as_str())?;
+        }
+        if let Some(ref region) = self.region {
+            f(region.as_str())?;
+        }
+        if let Some(ref single_variant) = self.variant {
+            f(single_variant.as_str())?;
+        }
+        if let Some(ref subdivision) = self.subdivision {
+            f("u")?;
+            f("sd")?;
+            f(subdivision.as_str())?;
+        }
+        Ok(())
+    }
+
     /// Compare this [`DataLocale`] with BCP-47 bytes.
     ///
     /// The return value is equivalent to what would happen if you first converted this
@@ -390,14 +439,12 @@ impl DataLocale {
     /// let bcp47_strings: &[&str] = &[
     ///     "ca",
     ///     "ca-ES",
-    ///     "ca-ES-u-ca-buddhist",
+    ///     "ca-ES-u-sd-esct",
     ///     "ca-ES-valencia",
     ///     "cat",
     ///     "pl-Latn-PL",
     ///     "und",
     ///     "und-fonipa",
-    ///     "und-u-ca-hebrew",
-    ///     "und-u-ca-japanese",
     ///     "zh",
     /// ];
     ///
@@ -463,16 +510,8 @@ impl DataLocale {
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
         self.writeable_cmp_bytes(other)
     }
-}
 
-impl DataLocale {
     /// Returns whether this [`DataLocale`] is `und` in the locale and extensions portion.
-    ///
-    /// This ignores auxiliary keys.
-    ///
-    /// See also:
-    ///
-    /// - [`DataLocale::is_langid_und()`]
     ///
     /// # Examples
     ///
@@ -480,151 +519,43 @@ impl DataLocale {
     /// use icu_provider::DataLocale;
     ///
     /// assert!("und".parse::<DataLocale>().unwrap().is_und());
-    /// assert!(!"und-u-ca-buddhist".parse::<DataLocale>().unwrap().is_und());
-    /// assert!(!"ca-ES".parse::<DataLocale>().unwrap().is_und());
+    /// assert!(!"de-u-sd-denw".parse::<DataLocale>().unwrap().is_und());
+    /// assert!(!"und-ES".parse::<DataLocale>().unwrap().is_und());
     /// ```
     pub fn is_und(&self) -> bool {
-        self.langid == LanguageIdentifier::UND && self.keywords.is_empty()
+        self.language == Language::UND
+            && self.script.is_none()
+            && self.region.is_none()
+            && self.variant.is_none()
+            && self.subdivision.is_none()
     }
 
-    /// Returns whether the [`LanguageIdentifier`] associated with this request is `und`.
-    ///
-    /// This ignores extension keywords and auxiliary keys.
-    ///
-    /// See also:
-    /// - [`DataLocale::is_und()`]
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_provider::DataLocale;
-    ///
-    /// assert!("und".parse::<DataLocale>().unwrap().is_langid_und());
-    /// assert!("und-u-ca-buddhist"
-    ///     .parse::<DataLocale>()
-    ///     .unwrap()
-    ///     .is_langid_und());
-    /// assert!(!"ca-ES".parse::<DataLocale>().unwrap().is_langid_und());
-    /// ```
-    pub fn is_langid_und(&self) -> bool {
-        self.langid == LanguageIdentifier::UND
-    }
-
-    /// Gets the [`LanguageIdentifier`] for this [`DataLocale`].
-    ///
-    /// This may allocate memory if there are variant subtags. If you need only the language,
-    /// script, and/or region subtag, use the specific getters for those subtags:
-    ///
-    /// - [`DataLocale::language()`]
-    /// - [`DataLocale::script()`]
-    /// - [`DataLocale::region()`]
-    ///
-    /// If you have ownership over the `DataLocale`, use [`DataLocale::into_locale()`]
-    /// and then access the `id` field.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_locale_core::langid;
-    /// use icu_provider::prelude::*;
-    ///
-    /// assert_eq!(DataLocale::default().get_langid(), langid!("und"));
-    /// assert_eq!(DataLocale::from(langid!("ar-EG")).get_langid(), langid!("ar-EG"));
-    /// ```
-    pub fn get_langid(&self) -> LanguageIdentifier {
-        self.langid.clone()
-    }
-
-    /// Overrides the entire [`LanguageIdentifier`] portion of this [`DataLocale`].
-    #[inline]
-    pub fn set_langid(&mut self, lid: LanguageIdentifier) {
-        self.langid = lid;
-    }
-
-    /// Converts this [`DataLocale`] into a [`Locale`].
-    ///
-    /// See also [`DataLocale::get_langid()`].
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_locale_core::{
-    ///     langid, locale,
-    ///     subtags::{language, region},
-    /// };
-    /// use icu_provider::prelude::*;
-    ///
-    /// let locale: DataLocale = locale!("it-IT-u-ca-coptic").into();
-    ///
-    /// assert_eq!(locale.get_langid(), langid!("it-IT"));
-    /// assert_eq!(locale.language(), language!("it"));
-    /// assert_eq!(locale.script(), None);
-    /// assert_eq!(locale.region(), Some(region!("IT")));
-    ///
-    /// let locale = locale.into_locale();
-    /// assert_eq!(locale, locale!("it-IT-u-ca-coptic"));
-    /// ```
+    /// Converts this `DataLocale` into a [`Locale`].
     pub fn into_locale(self) -> Locale {
-        let mut loc = Locale {
-            id: self.langid,
-            ..Default::default()
-        };
-        loc.extensions.unicode.keywords = self.keywords;
-        loc
-    }
-
-    /// Returns the [`Language`] for this [`DataLocale`].
-    #[inline]
-    pub fn language(&self) -> Language {
-        self.langid.language
-    }
-
-    /// Returns the [`Language`] for this [`DataLocale`].
-    #[inline]
-    pub fn set_language(&mut self, language: Language) {
-        self.langid.language = language;
-    }
-
-    /// Returns the [`Script`] for this [`DataLocale`].
-    #[inline]
-    pub fn script(&self) -> Option<Script> {
-        self.langid.script
-    }
-
-    /// Sets the [`Script`] for this [`DataLocale`].
-    #[inline]
-    pub fn set_script(&mut self, script: Option<Script>) {
-        self.langid.script = script;
-    }
-
-    /// Returns the [`Region`] for this [`DataLocale`].
-    #[inline]
-    pub fn region(&self) -> Option<Region> {
-        self.langid.region
-    }
-
-    /// Sets the [`Region`] for this [`DataLocale`].
-    #[inline]
-    pub fn set_region(&mut self, region: Option<Region>) {
-        self.langid.region = region;
-    }
-
-    /// Returns whether there are any [`Variant`](icu_locale_core::subtags::Variant) subtags in this [`DataLocale`].
-    #[inline]
-    pub fn has_variants(&self) -> bool {
-        !self.langid.variants.is_empty()
-    }
-
-    /// Sets all [`Variants`] on this [`DataLocale`], overwriting any that were there previously.
-    #[inline]
-    pub fn set_variants(&mut self, variants: Variants) {
-        self.langid.variants = variants;
-    }
-
-    /// Removes all [`Variant`](icu_locale_core::subtags::Variant) subtags in this [`DataLocale`].
-    #[inline]
-    pub fn clear_variants(&mut self) -> Variants {
-        self.langid.variants.clear()
+        Locale {
+            id: LanguageIdentifier {
+                language: self.language,
+                script: self.script,
+                region: self.region,
+                variants: self
+                    .variant
+                    .map(icu_locale_core::subtags::Variants::from_variant)
+                    .unwrap_or_default(),
+            },
+            extensions: {
+                let mut extensions = icu_locale_core::extensions::Extensions::default();
+                if let Some(sd) = self.subdivision {
+                    extensions.unicode = unicode_ext::Unicode {
+                        keywords: unicode_ext::Keywords::new_single(
+                            unicode_ext::key!("sd"),
+                            unicode_ext::Value::from_subtag(Some(sd)),
+                        ),
+                        ..Default::default()
+                    }
+                }
+                extensions
+            },
+        }
     }
 
     /// Gets the value of the specified Unicode extension keyword for this [`DataLocale`].
@@ -642,64 +573,6 @@ impl DataLocale {
                 .as_single_subtag()?
                 .as_str(),
         )
-    }
-
-    /// Returns whether there are any Unicode extension keywords in this [`DataLocale`].
-    #[inline]
-    pub fn has_unicode_ext(&self) -> bool {
-        !self.keywords.is_empty()
-    }
-
-    /// Returns whether a specific Unicode extension keyword is present in this [`DataLocale`].
-    #[inline]
-    pub fn contains_unicode_ext(&self, key: &unicode_ext::Key) -> bool {
-        self.keywords.contains_key(key)
-    }
-
-    /// Returns whether this [`DataLocale`] contains a Unicode extension keyword
-    /// with the specified key and value.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_locale_core::extensions::unicode::{key, value};
-    /// use icu_provider::prelude::*;
-    ///
-    /// let locale: DataLocale = "it-IT-u-ca-coptic".parse().expect("Valid BCP-47");
-    ///
-    /// assert_eq!(locale.get_unicode_ext(&key!("hc")), None);
-    /// assert_eq!(locale.get_unicode_ext(&key!("ca")), Some(value!("coptic")));
-    /// assert!(locale.matches_unicode_ext(&key!("ca"), &value!("coptic"),));
-    /// ```
-    #[inline]
-    pub fn matches_unicode_ext(&self, key: &unicode_ext::Key, value: &unicode_ext::Value) -> bool {
-        self.keywords.get(key) == Some(value)
-    }
-
-    /// Sets the value for a specific Unicode extension keyword on this [`DataLocale`].
-    #[inline]
-    pub fn set_unicode_ext(
-        &mut self,
-        key: unicode_ext::Key,
-        value: unicode_ext::Value,
-    ) -> Option<unicode_ext::Value> {
-        self.keywords.set(key, value)
-    }
-
-    /// Removes a specific Unicode extension keyword from this [`DataLocale`], returning
-    /// the value if it was present.
-    #[inline]
-    pub fn remove_unicode_ext(&mut self, key: &unicode_ext::Key) -> Option<unicode_ext::Value> {
-        self.keywords.remove(key)
-    }
-
-    /// Retains a subset of keywords as specified by the predicate function.
-    #[inline]
-    pub fn retain_unicode_ext<F>(&mut self, predicate: F)
-    where
-        F: FnMut(&unicode_ext::Key) -> bool,
-    {
-        self.keywords.retain_by_key(predicate)
     }
 }
 
@@ -841,12 +714,12 @@ fn test_data_locale_to_string() {
             expected: "und",
         },
         TestCase {
-            locale: "und-u-cu-gbp",
-            expected: "und-u-cu-gbp",
+            locale: "und-u-sd-sdd",
+            expected: "und-u-sd-sdd",
         },
         TestCase {
-            locale: "en-ZA-u-cu-gbp",
-            expected: "en-ZA-u-cu-gbp",
+            locale: "en-ZA-u-sd-zaa",
+            expected: "en-ZA-u-sd-zaa",
         },
     ] {
         let locale = cas.locale.parse::<DataLocale>().unwrap();
@@ -869,19 +742,15 @@ fn test_data_locale_from_string() {
         },
         TestCase {
             input: "und-u-cu-gbp",
-            success: true,
+            success: false,
         },
         TestCase {
-            input: "en-ZA-u-cu-gbp",
+            input: "en-ZA-u-sd-zaa",
             success: true,
         },
         TestCase {
             input: "en...",
             success: false,
-        },
-        TestCase {
-            input: "en-ZA-u-nu-arab",
-            success: true,
         },
     ] {
         let data_locale = match (DataLocale::from_str(cas.input), cas.success) {

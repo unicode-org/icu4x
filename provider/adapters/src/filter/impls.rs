@@ -36,7 +36,7 @@ where
     /// use icu_provider_adapters::filter::FilterDataProvider;
     ///
     /// let provider = FilterDataProvider::new(HelloWorldProvider, "Demo no-English filter")
-    ///     .with_filter(|id| id.locale.language() != language!("en"));
+    ///     .with_filter(|id| id.locale.language != language!("en"));
     ///
     /// // German requests should succeed:
     /// let de = DataIdentifierCow::from_locale(langid!("de").into());

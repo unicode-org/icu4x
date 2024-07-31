@@ -19,7 +19,7 @@
 //!
 //! let provider = SourceDataProvider::new_latest_tested();
 //!
-//! ExportDriver::new([LocaleFamily::FULL], DeduplicationStrategy::None.into(), LocaleFallbacker::try_new_unstable(&provider).unwrap())
+//! ExportDriver::new([DataLocaleFamily::FULL], DeduplicationStrategy::None.into(), LocaleFallbacker::try_new_unstable(&provider).unwrap())
 //!     .with_markers([icu::list::provider::AndListV2Marker::INFO])
 //!     .export(
 //!         &provider,
@@ -79,15 +79,14 @@ pub use icu_provider_fs::export as fs_exporter;
 pub mod prelude {
     #[doc(no_inline)]
     pub use crate::{
-        DeduplicationStrategy, ExportDriver, FallbackOptions, LocaleFamily, NoFallbackOptions,
+        DataLocaleFamily, DeduplicationStrategy, ExportDriver, FallbackOptions, NoFallbackOptions,
     };
     #[doc(no_inline)]
-    pub use icu_locale::{langid, LanguageIdentifier, LocaleFallbacker};
+    pub use icu_locale::{locale, LocaleFallbacker};
     #[doc(no_inline)]
-    pub use icu_provider::{export::DataExporter, DataMarker, DataMarkerInfo};
+    pub use icu_provider::{export::DataExporter, DataLocale, DataMarker, DataMarkerInfo};
 }
 
-use icu_locale::LanguageIdentifier;
 use icu_locale::LocaleFallbacker;
 use icu_provider::prelude::*;
 use std::collections::HashMap;
@@ -108,7 +107,7 @@ use std::hash::Hash;
 ///
 /// let provider = SourceDataProvider::new_latest_tested();
 ///
-/// ExportDriver::new([LocaleFamily::FULL], DeduplicationStrategy::None.into(), LocaleFallbacker::try_new_unstable(&provider).unwrap())
+/// ExportDriver::new([DataLocaleFamily::FULL], DeduplicationStrategy::None.into(), LocaleFallbacker::try_new_unstable(&provider).unwrap())
 ///     .with_markers([icu::list::provider::AndListV2Marker::INFO])
 ///     .export(
 ///         &provider,
@@ -119,7 +118,7 @@ use std::hash::Hash;
 #[derive(Debug, Clone)]
 pub struct ExportDriver {
     markers: Option<HashSet<DataMarkerInfo>>,
-    requested_families: HashMap<LanguageIdentifier, LocaleFamilyAnnotations>,
+    requested_families: HashMap<DataLocale, DataLocaleFamilyAnnotations>,
     fallbacker: LocaleFallbacker,
     include_full: bool,
     deduplication_strategy: DeduplicationStrategy,
@@ -135,7 +134,7 @@ impl ExportDriver {
     /// Commonly, you will export the fallback markers, in which case you should construct
     /// your fallbacker with the source provider (i.e. [`LocaleFallbacker::try_new_unstable`]).
     pub fn new(
-        locales: impl IntoIterator<Item = LocaleFamily>,
+        locales: impl IntoIterator<Item = DataLocaleFamily>,
         options: FallbackOptions,
         fallbacker: LocaleFallbacker,
     ) -> Self {
@@ -146,9 +145,12 @@ impl ExportDriver {
                 .into_iter()
                 .filter_map(|family| {
                     Some((
-                        family.langid.or_else(|| {
+                        family.locale.or_else(|| {
                             // Full locale family: set the bit instead of adding to the set
-                            debug_assert_eq!(family.annotations, LocaleFamily::FULL.annotations);
+                            debug_assert_eq!(
+                                family.annotations,
+                                DataLocaleFamily::FULL.annotations
+                            );
                             include_full = true;
                             None
                         })?,
@@ -312,12 +314,12 @@ fn test_family_precedence() {
         driver.requested_families,
         [
             (
-                icu::locale::langid!("en"),
-                LocaleFamilyAnnotations::single()
+                icu::locale::langid!("en").into(),
+                DataLocaleFamilyAnnotations::single()
             ),
             (
-                icu::locale::langid!("zh-TW"),
-                LocaleFamilyAnnotations::without_descendants()
+                icu::locale::langid!("zh-TW").into(),
+                DataLocaleFamilyAnnotations::without_descendants()
             ),
         ]
         .into_iter()

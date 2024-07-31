@@ -5,9 +5,10 @@
 use super::{options::*, Duration, DurationFormatter, DurationSign};
 
 use super::validated_options::Unit;
+use alloc::{string::String, vec::Vec};
+use core::fmt;
 use core::fmt::Write;
 use fixed_decimal::{FixedDecimal, SignDisplay};
-use std::fmt;
 use writeable::{PartsWrite, Writeable};
 
 pub mod parts {
@@ -46,7 +47,6 @@ impl<'a> FormattedDuration<'a> {
     /// Formats numeric hours to sink. Requires hours formatting style to be either Numeric or TwoDigit.
     fn format_numeric_hours<V: PartsWrite + ?Sized>(
         &self,
-        hour_val: u64,
         sign_displayed: &mut bool,
         sink: &mut V,
     ) -> core::fmt::Result {
@@ -62,7 +62,8 @@ impl<'a> FormattedDuration<'a> {
         // 5. Let numberingSystem be durationFormat.[[NumberingSystem]].
         // 6. Perform ! CreateDataPropertyOrThrow(nfOpts, "numberingSystem", numberingSystem).
 
-        let mut fd = FixedDecimal::from(hour_val);
+        let mut fd = FixedDecimal::from(self.duration.hours);
+        fd.set_sign(self.duration.sign.into());
 
         // 7. If hoursStyle is "2-digit", then
         if self.fmt.options.hour == FieldStyle::TwoDigit {
@@ -71,7 +72,7 @@ impl<'a> FormattedDuration<'a> {
         }
 
         // 8. If signDisplayed is false, then
-        if *sign_displayed {
+        if !*sign_displayed {
             // a. Perform ! CreateDataPropertyOrThrow(nfOpts, "signDisplay", "never").
             fd.apply_sign_display(SignDisplay::Never);
         }
@@ -82,7 +83,7 @@ impl<'a> FormattedDuration<'a> {
         // a. Append the Record { [[Type]]: part.[[Type]], [[Value]]: part.[[Value]], [[Unit]]: "hour" } to result.
 
         let ffd = self.fmt.fdf.format(&fd);
-        sink.with_part(parts::HOUR, |e| ffd.write_to_parts(e))?;
+        sink.with_part(parts::HOUR, |w| ffd.write_to_parts(w))?;
 
         // 12. Return result.
         Ok(())
@@ -92,7 +93,6 @@ impl<'a> FormattedDuration<'a> {
     /// Formats numeric minutes to sink. Requires minutes formatting style to be either Numeric or TwoDigit.
     fn format_numeric_minutes<V: PartsWrite + ?Sized>(
         &self,
-        minute_val: u64,
         sign_displayed: &mut bool,
         hours_formatted: bool,
         sink: &mut V,
@@ -103,8 +103,8 @@ impl<'a> FormattedDuration<'a> {
         if hours_formatted {
             // a. Let separator be durationFormat.[[DigitalFormat]].[[HoursMinutesSeparator]].
             // b. Append the Record { [[Type]]: "literal", [[Value]]: separator, [[Unit]]: empty } to result.
-            sink.with_part(parts::LITERAL, |e| {
-                e.write_str(self.fmt.digital.get().separator.as_ref())
+            sink.with_part(parts::LITERAL, |w| {
+                w.write_str(self.fmt.digital.get().separator.as_ref())
             })?;
         }
 
@@ -118,7 +118,8 @@ impl<'a> FormattedDuration<'a> {
         // 5. Let nfOpts be OrdinaryObjectCreate(null).
         // 6. Let numberingSystem be durationFormat.[[NumberingSystem]].
         // 7. Perform ! CreateDataPropertyOrThrow(nfOpts, "numberingSystem", numberingSystem).
-        let mut fd = FixedDecimal::from(minute_val);
+        let mut fd = FixedDecimal::from(self.duration.minutes);
+        fd.set_sign(self.duration.sign.into());
 
         // 8. If minutesStyle is "2-digit", then
         if self.fmt.options.minute == FieldStyle::TwoDigit {
@@ -138,7 +139,7 @@ impl<'a> FormattedDuration<'a> {
         // a. Append the Record { [[Type]]: part.[[Type]], [[Value]]: part.[[Value]], [[Unit]]: "minute" } to result.
 
         let ffd = self.fmt.fdf.format(&fd);
-        sink.with_part(parts::MINUTE, |e| ffd.write_to_parts(e))?;
+        sink.with_part(parts::MINUTE, |w| ffd.write_to_parts(w))?;
 
         // 13. Return result.
         Ok(())
@@ -147,39 +148,35 @@ impl<'a> FormattedDuration<'a> {
     /// Section 1.1.7
     /// Computes the sum of all values in durationFormat units with "fractional" style,
     /// expressed as a fraction of the smallest unit of durationFormat that does not use "fractional" style.
-    fn add_fractional_digits(&self, original: u64) -> FixedDecimal {
-        // convert to u128 to prevent overflow
-        let mut result: u128 = original.into();
-        let mut exponent = 0;
-
-        // 3. For each row of Table 2, except the header row, in table order, do
-        // a. Let style be the value of durationFormat's internal slot whose name is the Style Slot value of the current row.
-        for (style, value) in [
-            (self.fmt.options.millisecond, self.duration.milliseconds),
+    fn add_fractional_digits(&self) -> FixedDecimal {
+        let mut prev_val = self.duration.nanoseconds;
+        let mut prev_formatted = FixedDecimal::from(prev_val % 1000);
+        for (style, val) in [
             (self.fmt.options.microsecond, self.duration.microseconds),
-            (self.fmt.options.nanosecond, self.duration.nanoseconds),
+            (self.fmt.options.millisecond, self.duration.milliseconds),
+            (self.fmt.options.second, self.duration.seconds),
         ] {
-            // b. If style is "fractional", then
             if style == FieldStyle::Fractional {
-                // i. Assert: The Unit value of the current row is "milliseconds", "microseconds", or "nanoseconds".
-                // ii. Let value be the value of duration's field whose name is the Value Field value of the current row.
-                // iii. Set value to value / (10 ^ exponent).
-                // iv. Set result to result + value.
-                result *= u128::pow(10, 3);
-                result += u128::from(value);
-                // v. Set exponent to exponent + 3.
-                exponent += 3;
+                let val = val + prev_val / 1000;
+                prev_formatted = FixedDecimal::from(val % 1000)
+                    .concatenated_end(prev_formatted.multiplied_pow10(-3))
+                    .unwrap();
+                prev_val = val;
+            } else {
+                return FixedDecimal::from(val)
+                    .concatenated_end(prev_formatted.multiplied_pow10(-3))
+                    .unwrap();
             }
         }
 
-        FixedDecimal::from(result).multiplied_pow10(-exponent)
+        prev_formatted
     }
 
     /// Section 1.1.11
     /// Formats numeric seconds to sink. Requires seconds formatting style to be either Numeric or TwoDigit.
     fn format_numeric_seconds<V: PartsWrite + ?Sized>(
         &self,
-        mut second_val: FixedDecimal,
+        mut second_fd: FixedDecimal,
         sign_displayed: &mut bool,
         minute_formatted: bool,
         sink: &mut V,
@@ -197,10 +194,13 @@ impl<'a> FormattedDuration<'a> {
         if minute_formatted {
             // a. Let separator be durationFormat.[[DigitalFormat]].[[MinutesSecondsSeparator]].
             // b. Append the Record { [[Type]]: "literal", [[Value]]: separator, [[Unit]]: empty } to result.
-            sink.with_part(parts::LITERAL, |e| {
-                e.write_str(self.fmt.digital.get().separator.as_ref())
+            sink.with_part(parts::LITERAL, |w| {
+                w.write_str(self.fmt.digital.get().separator.as_ref())
             })?;
         }
+
+        // Since we construct the FixedDecimal from an unsigned seconds value, we need to set the sign manually.
+        second_fd.set_sign(self.duration.sign.into());
 
         // 5. Let nfOpts be OrdinaryObjectCreate(null).
         // 6. Let numberingSystem be durationFormat.[[NumberingSystem]].
@@ -209,13 +209,13 @@ impl<'a> FormattedDuration<'a> {
         // 8. If secondsStyle is "2-digit", then
         if self.fmt.options.second == FieldStyle::TwoDigit {
             // a. Perform ! CreateDataPropertyOrThrow(nfOpts, "minimumIntegerDigits", 2𝔽).
-            second_val.pad_start(2);
+            second_fd.pad_start(2);
         }
 
         // 9. If signDisplayed is false, then
         if !*sign_displayed {
             // a. Perform ! CreateDataPropertyOrThrow(nfOpts, "signDisplay", "never").
-            second_val.apply_sign_display(SignDisplay::Never);
+            second_fd.apply_sign_display(SignDisplay::Never);
         }
 
         // 10. Let nf be ! Construct(%NumberFormat%, « durationFormat.[[Locale]], nfOpts »).
@@ -225,26 +225,26 @@ impl<'a> FormattedDuration<'a> {
             FractionalDigits::ShowAll => {
                 // a. Let maximumFractionDigits be 9𝔽.
                 // b. Let minimumFractionDigits be +0𝔽.
-                second_val.trunc(-9);
-                second_val.pad_end(-1);
+                second_fd.trunc(-9);
+                second_fd.pad_end(0);
             }
             // 12. Else,
             FractionalDigits::Fixed(i) => {
                 let i: i16 = i.into();
                 // a. Let maximumFractionDigits be durationFormat.[[FractionalDigits]].
-                second_val.trunc(-i);
+                second_fd.trunc(-i);
                 // b. Let minimumFractionDigits be durationFormat.[[FractionalDigits]].
-                second_val.pad_end(-i);
+                second_fd.pad_end(-i);
             } // 13. Perform ! CreateDataPropertyOrThrow(nfOpts, "maximumFractionDigits", maximumFractionDigits).
               // 14. Perform ! CreateDataPropertyOrThrow(nfOpts, "minimumFractionDigits", minimumFractionDigits).
               // 15. Perform ! CreateDataPropertyOrThrow(nfOpts, "roundingMode", "trunc").
         }
 
         // 16. Let secondsParts be ! PartitionNumberPattern(nf, secondsValue).
-        let ffd = self.fmt.fdf.format(&second_val);
+        let ffd = self.fmt.fdf.format(&second_fd);
         // 17. For each Record { [[Type]], [[Value]] } part of secondsParts, do
         // a. Append the Record { [[Type]]: part.[[Type]], [[Value]]: part.[[Value]], [[Unit]]: "second" } to result
-        sink.with_part(parts::SECOND, |e| ffd.write_to_parts(e))?;
+        sink.with_part(parts::SECOND, |w| ffd.write_to_parts(w))?;
 
         // 18. Return result.
         Ok(())
@@ -276,7 +276,7 @@ impl<'a> FormattedDuration<'a> {
 				|| self.duration.nanoseconds != 0
 			{
 				// a. Set secondsValue to secondsValue + AddFractionalDigits(durationFormat, duration).
-				self.add_fractional_digits(self.duration.seconds)
+				self.add_fractional_digits()
 			} else {
 				FixedDecimal::from(self.duration.seconds)
 			};
@@ -320,19 +320,14 @@ impl<'a> FormattedDuration<'a> {
         // 16. If hoursFormatted is true, then
         if hours_formatted {
             // a. Append FormatNumericHours(durationFormat, hoursValue, signDisplayed) to result.
-            self.format_numeric_hours(self.duration.hours, sign_displayed, sink)?;
+            self.format_numeric_hours(sign_displayed, sink)?;
             // b. Set signDisplayed to false.
             *sign_displayed = false;
         }
         // 17. If minutesFormatted is true, then
         if minutes_formatted {
             // a. Append FormatNumericMinutes(durationFormat, minutesValue, hoursFormatted, signDisplayed) to numericPartsList.
-            self.format_numeric_minutes(
-                self.duration.minutes,
-                sign_displayed,
-                hours_formatted,
-                sink,
-            )?;
+            self.format_numeric_minutes(sign_displayed, hours_formatted, sink)?;
             // b. Set signDisplayed to false.
             *sign_displayed = false;
         }
@@ -415,7 +410,7 @@ impl<'a> FormattedDuration<'a> {
                     // 1. If NextUnitFractional(durationFormat, unit) is true, then
                     if self.next_unit_fractional(unit) {
                         // a. Set value to value + AddFractionalDigits(durationFormat, duration).
-                        formatted_value = self.add_fractional_digits(value);
+                        formatted_value = self.add_fractional_digits();
                         match self.fmt.options.fractional_digits {
                             // b. If durationFormat.[[FractionalDigits]] is undefined, then
                             FractionalDigits::ShowAll => {
@@ -544,7 +539,7 @@ impl<'a> FormattedDuration<'a> {
                 // iii. For each Record { [[Type]], [[Value]], [[Unit]] } part in parts, do
                 for (start, end, part) in parts {
                     // 1. Append part to flattenedPartsList.
-                    sink.with_part(*part, |e| e.write_str(&string[*start..*end]))?;
+                    sink.with_part(*part, |w| w.write_str(&string[*start..*end]))?;
                 }
                 // iv. Set partitionedPartsIndex to partitionedPartsIndex + 1.
                 partitioned_parts_index += 1;
@@ -554,7 +549,7 @@ impl<'a> FormattedDuration<'a> {
                 // i. Assert: listPart.[[Type]] is "literal".
                 debug_assert!(list_part == icu_list::parts::LITERAL);
                 // ii. Append the Record { [[Type]]: "literal", [[Value]]: listPart.[[Value]], [[Unit]]: empty } to flattenedPartsList.
-                sink.with_part(parts::LITERAL, |e| e.write_str(&list_str[start..end]))?;
+                sink.with_part(parts::LITERAL, |w| w.write_str(&list_str[start..end]))?;
             }
         }
 

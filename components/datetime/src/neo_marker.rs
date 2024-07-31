@@ -75,6 +75,69 @@
 //! );
 //! ```
 //!
+//! ## Hour Cycle
+//!
+//! Hours can be switched between 12-hour and 24-hour time via the `u-hc` locale keyword.
+//!
+//! ```
+//! use icu::calendar::Gregorian;
+//! use icu::calendar::Time;
+//! use icu::datetime::neo::NeoOptions;
+//! use icu::datetime::neo::TypedNeoFormatter;
+//! use icu::datetime::neo_marker::NeoHourMinuteMarker;
+//! use icu::datetime::neo_skeleton::NeoSkeletonLength;
+//! use icu::datetime::NeverCalendar;
+//! use icu::locale::locale;
+//! use writeable::assert_try_writeable_eq;
+//!
+//! // By default, en-US uses 12-hour time and fr-FR uses 24-hour time,
+//! // but we can set overrides.
+//!
+//! let formatter =
+//!     TypedNeoFormatter::<NeverCalendar, NeoHourMinuteMarker>::try_new(
+//!         &locale!("en-US-u-hc-h12").into(),
+//!         NeoSkeletonLength::Short.into(),
+//!     )
+//!     .unwrap();
+//! assert_try_writeable_eq!(
+//!     formatter.format(&Time::try_new(16, 12, 20, 0).unwrap()),
+//!     "4:12 PM"
+//! );
+//!
+//! let formatter =
+//!     TypedNeoFormatter::<NeverCalendar, NeoHourMinuteMarker>::try_new(
+//!         &locale!("en-US-u-hc-h23").into(),
+//!         NeoSkeletonLength::Short.into(),
+//!     )
+//!     .unwrap();
+//! assert_try_writeable_eq!(
+//!     formatter.format(&Time::try_new(16, 12, 20, 0).unwrap()),
+//!     "16:12"
+//! );
+//!
+//! let formatter =
+//!     TypedNeoFormatter::<NeverCalendar, NeoHourMinuteMarker>::try_new(
+//!         &locale!("fr-FR-u-hc-h12").into(),
+//!         NeoSkeletonLength::Short.into(),
+//!     )
+//!     .unwrap();
+//! assert_try_writeable_eq!(
+//!     formatter.format(&Time::try_new(16, 12, 20, 0).unwrap()),
+//!     "4:12 PM"
+//! );
+//!
+//! let formatter =
+//!     TypedNeoFormatter::<NeverCalendar, NeoHourMinuteMarker>::try_new(
+//!         &locale!("fr-FR-u-hc-h23").into(),
+//!         NeoSkeletonLength::Short.into(),
+//!     )
+//!     .unwrap();
+//! assert_try_writeable_eq!(
+//!     formatter.format(&Time::try_new(16, 12, 20, 0).unwrap()),
+//!     "16:12"
+//! );
+//! ```
+//!
 //! ## Time Zone Formatting
 //!
 //! Here, we configure a [`NeoFormatter`] to format with generic non-location short,
@@ -1827,6 +1890,19 @@ impl_day_marker!(
     input_day_of_week = yes,
     input_day_of_year = no,
     input_any_calendar_kind = yes,
+);
+
+impl_time_marker!(
+    NeoHourMinuteMarker,
+    NeoTimeComponents::HourMinute,
+    description = "hour and minute (locale-dependent hour cycle)",
+    expectation = "3:47 PM",
+    dayperiods = yes,
+    times = yes,
+    input_hour = yes,
+    input_minute = yes,
+    input_second = no,
+    input_nanosecond = no,
 );
 
 impl_time_marker!(

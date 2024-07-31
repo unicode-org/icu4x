@@ -1066,10 +1066,12 @@ mod tests {
         use icu_calendar::japanese::JapaneseExtended;
         use icu_calendar::Date;
 
-        let locale = "en-u-ca-japanese".parse().unwrap();
-        let dtf =
-            NeoFormatter::<NeoAutoDateMarker>::try_new(&locale, NeoSkeletonLength::Medium.into())
-                .expect("DateTimeFormat construction succeeds");
+        let locale = icu::locale::locale!("en-u-ca-japanese");
+        let dtf = NeoFormatter::<NeoAutoDateMarker>::try_new(
+            &locale.into(),
+            NeoSkeletonLength::Medium.into(),
+        )
+        .expect("DateTimeFormat construction succeeds");
 
         let date = Date::try_new_gregorian_date(1800, 9, 1).expect("Failed to construct Date.");
         let date = date
@@ -1094,7 +1096,7 @@ mod tests {
         use icu_calendar::DateTime;
         use icu_provider::prelude::*;
 
-        let locale = "en-u-ca-gregory".parse().unwrap();
+        let locale = "en".parse().unwrap();
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_locale(&locale),
             ..Default::default()

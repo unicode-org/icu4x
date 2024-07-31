@@ -271,7 +271,7 @@ fn dry_test() {
     impl DryDataProvider<HelloWorldV1Marker> for TestProvider {
         fn dry_load(&self, req: DataRequest) -> Result<DataResponseMetadata, DataError> {
             // We support all languages except English, and no regional variants. This is cheap to check.
-            if req.id.locale.region().is_some() || req.id.locale.language().as_str() == "en" {
+            if req.id.locale.region.is_some() || req.id.locale.language.as_str() == "en" {
                 Err(DataErrorKind::IdentifierNotFound.into_error())
             } else {
                 Ok(Default::default())

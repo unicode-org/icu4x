@@ -20,7 +20,7 @@
 //! let mut exporter = BlobExporter::new_v2_with_sink(Box::new(&mut blob));
 //!
 //! // Export something. Make sure to use the same fallback data at runtime!
-//! ExportDriver::new([LocaleFamily::FULL], DeduplicationStrategy::Maximal.into(), LocaleFallbacker::new().static_to_owned())
+//! ExportDriver::new([DataLocaleFamily::FULL], DeduplicationStrategy::Maximal.into(), LocaleFallbacker::new().static_to_owned())
 //!     .export(&icu_provider::hello_world::HelloWorldProvider, exporter)
 //!     .unwrap();
 //!

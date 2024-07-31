@@ -50,7 +50,7 @@ fn load<M: DataMarker<DataStruct = ListFormatterPatternsV2<'static>>>(
         &narrow.pair,
     ])?;
 
-    if req.id.locale.language() == language!("es") {
+    if req.id.locale.language == language!("es") {
         if M::INFO == AndListV2Marker::INFO || M::INFO == UnitListV2Marker::INFO {
             static I_SOUND: OnceLock<SerdeDFA<'static>> = OnceLock::new();
 
@@ -84,7 +84,7 @@ fn load<M: DataMarker<DataStruct = ListFormatterPatternsV2<'static>>>(
         }
     }
 
-    if req.id.locale.language() == language!("he") {
+    if req.id.locale.language == language!("he") {
         // Cannot cache this because it depends on `selff`. However we don't expect many Hebrew locales.
         let non_hebrew = SerdeDFA::new(Cow::Owned(format!(
             "^[^{}]",
