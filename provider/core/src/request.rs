@@ -530,6 +530,34 @@ impl DataLocale {
             && self.subdivision.is_none()
     }
 
+    /// Converts this `DataLocale` into a [`Locale`].
+    pub fn into_locale(self) -> Locale {
+        Locale {
+            id: LanguageIdentifier {
+                language: self.language,
+                script: self.script,
+                region: self.region,
+                variants: self
+                    .variant
+                    .map(icu_locale_core::subtags::Variants::from_variant)
+                    .unwrap_or_default(),
+            },
+            extensions: {
+                let mut extensions = icu_locale_core::extensions::Extensions::default();
+                if let Some(sd) = self.subdivision {
+                    extensions.unicode = unicode_ext::Unicode {
+                        keywords: unicode_ext::Keywords::new_single(
+                            unicode_ext::key!("sd"),
+                            unicode_ext::Value::from_subtag(Some(sd)),
+                        ),
+                        ..Default::default()
+                    }
+                }
+                extensions
+            },
+        }
+    }
+
     /// Gets the value of the specified Unicode extension keyword for this [`DataLocale`].
     #[inline]
     pub fn get_unicode_ext(&self, key: &unicode_ext::Key) -> Option<unicode_ext::Value> {
