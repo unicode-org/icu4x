@@ -75,7 +75,7 @@ pub enum DurationSign {
 impl From<DurationSign> for fixed_decimal::Sign {
     fn from(sign: DurationSign) -> Self {
         match sign {
-            DurationSign::Positive => fixed_decimal::Sign::Positive,
+            DurationSign::Positive => fixed_decimal::Sign::None,
             DurationSign::Negative => fixed_decimal::Sign::Negative,
         }
     }

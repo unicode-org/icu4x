@@ -8,7 +8,7 @@ use super::validated_options::Unit;
 use alloc::{string::String, vec::Vec};
 use core::fmt;
 use core::fmt::Write;
-use fixed_decimal::{FixedDecimal, SignDisplay};
+use fixed_decimal::{FixedDecimal, Sign, SignDisplay};
 use writeable::{PartsWrite, Writeable};
 
 pub mod parts {
