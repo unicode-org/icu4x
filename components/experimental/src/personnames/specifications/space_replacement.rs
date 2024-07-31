@@ -39,8 +39,8 @@ mod tests {
 
         // locales are maximized earlier during the formatting process.
         let lc = LocaleExpander::new_extended();
-        lc.maximize(&mut formatting_locale);
-        lc.maximize(&mut person_name_locale);
+        lc.maximize(&mut formatting_locale.id);
+        lc.maximize(&mut person_name_locale.id);
 
         let result = super::space_replacement(
             &formatting_locale,
@@ -59,8 +59,8 @@ mod tests {
 
         // locales are maximized earlier during the formatting process.
         let lc = LocaleExpander::new_extended();
-        lc.maximize(&mut formatting_locale);
-        lc.maximize(&mut person_name_locale);
+        lc.maximize(&mut formatting_locale.id);
+        lc.maximize(&mut person_name_locale.id);
 
         let result = super::space_replacement(
             &formatting_locale,
@@ -79,8 +79,8 @@ mod tests {
 
         // locales are maximized earlier during the formatting process.
         let lc = LocaleExpander::new_extended();
-        lc.maximize(&mut formatting_locale);
-        lc.maximize(&mut person_name_locale);
+        lc.maximize(&mut formatting_locale.id);
+        lc.maximize(&mut person_name_locale.id);
 
         let result = super::space_replacement(
             &formatting_locale,
@@ -99,8 +99,8 @@ mod tests {
 
         // locales are maximized earlier during the formatting process.
         let lc = LocaleExpander::new_extended();
-        lc.maximize(&mut formatting_locale);
-        lc.maximize(&mut person_name_locale);
+        lc.maximize(&mut formatting_locale.id);
+        lc.maximize(&mut person_name_locale.id);
 
         let result = super::space_replacement(
             &formatting_locale,
@@ -119,8 +119,8 @@ mod tests {
 
         // locales are maximized earlier during the formatting process.
         let lc = LocaleExpander::new_extended();
-        lc.maximize(&mut formatting_locale);
-        lc.maximize(&mut person_name_locale);
+        lc.maximize(&mut formatting_locale.id);
+        lc.maximize(&mut person_name_locale.id);
 
         let result = super::space_replacement(
             &formatting_locale,

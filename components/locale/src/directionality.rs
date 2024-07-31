@@ -176,8 +176,8 @@ impl LocaleDirectionality {
     ///     Some(Direction::LeftToRight)
     /// );
     /// ```
-    pub fn get(&self, locale: impl AsRef<LanguageIdentifier>) -> Option<Direction> {
-        let script = self.expander.get_likely_script(locale.as_ref())?;
+    pub fn get(&self, langid: &LanguageIdentifier) -> Option<Direction> {
+        let script = self.expander.get_likely_script(langid)?;
 
         if self.script_in_ltr(script) {
             Some(Direction::LeftToRight)
@@ -195,9 +195,9 @@ impl LocaleDirectionality {
     /// You should use [`LocaleDirectionality::get`] if you need to differentiate between these cases.
     ///
     /// See [`LocaleDirectionality::get`] for more information.
-    pub fn is_right_to_left(&self, locale: impl AsRef<LanguageIdentifier>) -> bool {
+    pub fn is_right_to_left(&self, langid: &LanguageIdentifier) -> bool {
         self.expander
-            .get_likely_script(locale.as_ref())
+            .get_likely_script(langid)
             .map(|s| self.script_in_rtl(s))
             .unwrap_or(false)
     }
@@ -209,9 +209,9 @@ impl LocaleDirectionality {
     /// You should use [`LocaleDirectionality::get`] if you need to differentiate between these cases.
     ///
     /// See [`LocaleDirectionality::get`] for more information.
-    pub fn is_left_to_right(&self, locale: impl AsRef<LanguageIdentifier>) -> bool {
+    pub fn is_left_to_right(&self, langid: &LanguageIdentifier) -> bool {
         self.expander
-            .get_likely_script(locale.as_ref())
+            .get_likely_script(langid)
             .map(|s| self.script_in_ltr(s))
             .unwrap_or(false)
     }

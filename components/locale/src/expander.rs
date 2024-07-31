@@ -381,8 +381,7 @@ impl LocaleExpander {
     /// assert_eq!(lc.maximize(&mut locale), TransformResult::Unmodified);
     /// assert_eq!(locale, locale!("mul"));
     /// ```
-    pub fn maximize<T: AsMut<LanguageIdentifier>>(&self, mut langid: T) -> TransformResult {
-        let langid = langid.as_mut();
+    pub fn maximize(&self, langid: &mut LanguageIdentifier) -> TransformResult {
         let data = self.as_borrowed();
 
         if !langid.language.is_default() && langid.script.is_some() && langid.region.is_some() {
@@ -458,7 +457,7 @@ impl LocaleExpander {
     /// assert_eq!(lc.minimize(&mut locale), TransformResult::Unmodified);
     /// assert_eq!(locale, locale!("zh"));
     /// ```
-    pub fn minimize<T: AsMut<LanguageIdentifier>>(&self, langid: T) -> TransformResult {
+    pub fn minimize(&self, langid: &mut LanguageIdentifier) -> TransformResult {
         self.minimize_impl(langid, true)
     }
 
@@ -486,20 +485,18 @@ impl LocaleExpander {
     /// );
     /// assert_eq!(locale, locale!("zh_Hant"));
     /// ```
-    pub fn minimize_favor_script<T: AsMut<LanguageIdentifier>>(
+    pub fn minimize_favor_script(
         &self,
-        langid: T,
+        langid: &mut LanguageIdentifier,
     ) -> TransformResult {
         self.minimize_impl(langid, false)
     }
 
-    fn minimize_impl<T: AsMut<LanguageIdentifier>>(
+    fn minimize_impl(
         &self,
-        mut langid: T,
+        langid: &mut LanguageIdentifier,
         favor_region: bool,
     ) -> TransformResult {
-        let langid = langid.as_mut();
-
         let mut max = langid.clone();
         self.maximize(&mut max);
 
@@ -549,11 +546,10 @@ impl LocaleExpander {
 
     // TODO(3492): consider turning this and a future get_likely_region/get_likely_language public
     #[inline]
-    pub(crate) fn get_likely_script<T: AsRef<LanguageIdentifier>>(
+    pub(crate) fn get_likely_script(
         &self,
-        langid: T,
+        langid: &LanguageIdentifier,
     ) -> Option<Script> {
-        let langid = langid.as_ref();
         langid
             .script
             .or_else(|| self.infer_likely_script(langid.language, langid.region))
@@ -603,7 +599,7 @@ mod tests {
         let lc = LocaleExpander::new();
         let mut locale = locale!("yue-Hans");
         assert_eq!(
-            lc.minimize_favor_script(&mut locale),
+            lc.minimize_favor_script(&mut locale.id),
             TransformResult::Unmodified
         );
         assert_eq!(locale, locale!("yue-Hans"));
@@ -613,7 +609,7 @@ mod tests {
     fn test_minimize_favor_region() {
         let lc = LocaleExpander::new();
         let mut locale = locale!("yue-Hans");
-        assert_eq!(lc.minimize(&mut locale), TransformResult::Modified);
+        assert_eq!(lc.minimize(&mut locale.id), TransformResult::Modified);
         assert_eq!(locale, locale!("yue-CN"));
     }
 }
