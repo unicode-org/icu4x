@@ -10,6 +10,7 @@ use icu_provider::prelude::*;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::fmt;
+use std::sync::Arc;
 use std::time::Duration;
 use std::time::Instant;
 use writeable::Writeable;
@@ -53,8 +54,7 @@ impl ExportDriver {
             include_full,
             fallbacker,
             deduplication_strategy,
-            additional_collations,
-            segmenter_models,
+            attributes_filters,
         } = self;
 
         let markers = markers.unwrap_or_else(|| provider.supported_markers());
@@ -177,9 +177,8 @@ impl ExportDriver {
                 provider,
                 marker,
                 &requested_families,
+                &attributes_filters,
                 include_full,
-                &additional_collations,
-                &segmenter_models,
                 &fallbacker,
             )?;
 
@@ -266,9 +265,8 @@ fn select_locales_for_marker<'a>(
     provider: &'a dyn ExportableProvider,
     marker: DataMarkerInfo,
     requested_families: &HashMap<DataLocale, DataLocaleFamilyAnnotations>,
+    attributes_filters: &HashMap<String, Arc<Box<dyn super::DataMarkerAttributesFilter>>>,
     include_full: bool,
-    additional_collations: &HashSet<String>,
-    segmenter_models: &[String],
     fallbacker: &LocaleFallbacker,
 ) -> Result<HashSet<DataIdentifierCow<'a>>, DataError> {
     // Map from all supported DataLocales to their corresponding supported DataIdentifiers.
@@ -283,39 +281,9 @@ fn select_locales_for_marker<'a>(
             .insert(id);
     }
 
-    if marker.path.as_str().starts_with("segmenter/dictionary/") {
+    if let Some(filter) = attributes_filters.get(marker.path.as_str().split_once("/").unwrap().0) {
         supported_map.retain(|_, ids| {
-            ids.retain(|id| {
-                segmenter_models
-                    .iter()
-                    .any(|m| **m == **id.marker_attributes)
-            });
-            !ids.is_empty()
-        });
-        // Don't perform additional locale filtering
-        return Ok(supported_map.into_values().flatten().collect());
-    } else if marker.path.as_str().starts_with("segmenter/lstm/") {
-        supported_map.retain(|_, locales| {
-            locales.retain(|id| {
-                segmenter_models
-                    .iter()
-                    .any(|m| **m == **id.marker_attributes)
-            });
-            !locales.is_empty()
-        });
-        // Don't perform additional locale filtering
-        return Ok(supported_map.into_values().flatten().collect());
-    } else if marker.path.as_str().starts_with("collator/") {
-        supported_map.retain(|_, ids| {
-            ids.retain(|id| {
-                id.marker_attributes.is_empty()
-                    || additional_collations.contains(id.marker_attributes.as_str())
-                    || if id.marker_attributes.as_str().starts_with("search") {
-                        additional_collations.contains("search*")
-                    } else {
-                        !["big5han", "gb2312"].contains(&id.marker_attributes.as_str())
-                    }
-            });
+            ids.retain(|id| filter(&id.marker_attributes));
             !ids.is_empty()
         });
     }
@@ -510,6 +478,7 @@ impl fmt::Display for DisplayDuration {
 
 #[test]
 fn test_collation_filtering() {
+    use crate::DataLocaleFamily;
     use icu::locale::locale;
     use std::collections::BTreeSet;
 
@@ -619,16 +588,19 @@ fn test_collation_filtering() {
         },
     ];
     for cas in cases {
+        let driver = ExportDriver::new(
+            [DataLocaleFamily::single(cas.language.clone())],
+            DeduplicationStrategy::None.into(),
+            LocaleFallbacker::new_without_data(),
+        )
+        .with_additional_collations(cas.include_collations.iter().copied().map(String::from));
         let resolved_locales = select_locales_for_marker(
             &Provider,
             icu::collator::provider::CollationDataV1Marker::INFO,
-            &[(cas.language.clone(), DataLocaleFamilyAnnotations::single())]
-                .into_iter()
-                .collect(),
+            &driver.requested_families,
+            &driver.attributes_filters,
             false,
-            &HashSet::from_iter(cas.include_collations.iter().copied().map(String::from)),
-            &[],
-            &LocaleFallbacker::new_without_data(),
+            &driver.fallbacker,
         )
         .unwrap()
         .into_iter()
