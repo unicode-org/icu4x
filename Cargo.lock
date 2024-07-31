@@ -1217,6 +1217,7 @@ dependencies = [
  "icu_collections",
  "icu_decimal",
  "icu_experimental_data",
+ "icu_list",
  "icu_locale",
  "icu_locale_core",
  "icu_locale_data",

@@ -400,4 +400,19 @@ impl Unit {
             Unit::Nanosecond => NanoSecondStyle::Numeric.into(),
         }
     }
+
+    pub(crate) fn as_unit_formatter_name(&self) -> &'static str {
+        match self {
+            Unit::Year => "year",
+            Unit::Month => "month",
+            Unit::Week => "week",
+            Unit::Day => "day",
+            Unit::Hour => "hour",
+            Unit::Minute => "minute",
+            Unit::Second => "second",
+            Unit::Millisecond => "millisecond",
+            Unit::Microsecond => "microsecond",
+            Unit::Nanosecond => "nanosecond",
+        }
+    }
 }
