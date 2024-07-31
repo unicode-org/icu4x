@@ -3,49 +3,43 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::LocaleFallbackPriority;
-use icu_locale_core::extensions::unicode::{key, Key};
-use icu_locale_core::subtags::Language;
-use icu_locale_core::LanguageIdentifier;
+use icu_locale_core::subtags::{Language, Region, Script};
 
 use super::*;
 
-const SUBDIVISION_KEY: Key = key!("sd");
-
 impl<'a> LocaleFallbackerWithConfig<'a> {
     pub(crate) fn normalize(&self, locale: &mut DataLocale) {
-        let language = locale.language();
+        let language = locale.language;
         // 1. Populate the region (required for region fallback only)
-        if self.config.priority == LocaleFallbackPriority::Region && locale.region().is_none() {
+        if self.config.priority == LocaleFallbackPriority::Region && locale.region.is_none() {
             // 1a. First look for region based on language+script
-            if let Some(script) = locale.script() {
-                locale.set_region(
-                    self.likely_subtags
-                        .ls2r
-                        .get_2d(
-                            &language.into_tinystr().to_unvalidated(),
-                            &script.into_tinystr().to_unvalidated(),
-                        )
-                        .copied(),
-                );
+            if let Some(script) = locale.script {
+                locale.region = self
+                    .likely_subtags
+                    .ls2r
+                    .get_2d(
+                        &language.into_tinystr().to_unvalidated(),
+                        &script.into_tinystr().to_unvalidated(),
+                    )
+                    .copied();
             }
             // 1b. If that fails, try language only
-            if locale.region().is_none() {
-                locale.set_region(
-                    self.likely_subtags
-                        .l2r
-                        .get(&language.into_tinystr().to_unvalidated())
-                        .copied(),
-                );
+            if locale.region.is_none() {
+                locale.region = self
+                    .likely_subtags
+                    .l2r
+                    .get(&language.into_tinystr().to_unvalidated())
+                    .copied();
             }
         }
         // 2. Remove the script if it is implied by the other subtags
-        if let Some(script) = locale.script() {
+        if let Some(script) = locale.script {
             let default_script = self
                 .likely_subtags
                 .l2s
                 .get_copied(&language.into_tinystr().to_unvalidated())
                 .unwrap_or(DEFAULT_SCRIPT);
-            if let Some(region) = locale.region() {
+            if let Some(region) = locale.region {
                 if script
                     == self
                         .likely_subtags
@@ -56,14 +50,12 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
                         )
                         .unwrap_or(default_script)
                 {
-                    locale.set_script(None);
+                    locale.script = None;
                 }
             } else if script == default_script {
-                locale.set_script(None);
+                locale.script = None;
             }
         }
-        // 3. Remove irrelevant extension subtags
-        locale.retain_unicode_ext(|&key| matches!(key, SUBDIVISION_KEY));
         // 4. If there is an invalid "sd" subtag, drop it
         // For now, ignore it, and let fallback do it for us
     }
@@ -89,88 +81,93 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
 
     fn step_language(&mut self, locale: &mut DataLocale) {
         // 2. Remove the subdivision keyword
-        if let Some(value) = locale.remove_unicode_ext(&SUBDIVISION_KEY) {
+        if let Some(value) = locale.subdivision.take() {
             self.backup_subdivision = Some(value);
             return;
         }
         // 3. Assert that the locale is a language identifier
-        debug_assert!(!locale.has_unicode_ext());
+        debug_assert!(locale.subdivision.is_none());
         // 4. Remove variants
-        if locale.has_variants() {
-            self.backup_variants = Some(locale.clear_variants());
+        if let Some(single_variant) = locale.variant.take() {
+            self.backup_variant = Some(single_variant);
             return;
         }
         // 5. Check for parent override
-        if let Some(parent) = self.get_explicit_parent(locale) {
-            locale.set_langid(parent);
+        if let Some((language, script, region)) = self.get_explicit_parent(locale) {
+            locale.language = language;
+            locale.script = script;
+            locale.region = region;
             self.restore_subdivision_variants(locale);
             return;
         }
         // 6. Add the script subtag if necessary
-        if locale.script().is_none() {
-            if let Some(region) = locale.region() {
-                let language = locale.language();
+        if locale.script.is_none() {
+            if let Some(region) = locale.region {
+                let language = locale.language;
                 if let Some(script) = self.likely_subtags.lr2s.get_copied_2d(
                     &language.into_tinystr().to_unvalidated(),
                     &region.into_tinystr().to_unvalidated(),
                 ) {
-                    locale.set_script(Some(script));
+                    locale.script = Some(script);
                     self.restore_subdivision_variants(locale);
                     return;
                 }
             }
         }
         // 7. Remove region
-        if locale.region().is_some() {
-            locale.set_region(None);
+        if locale.region.is_some() {
+            locale.region = None;
             self.restore_subdivision_variants(locale);
             return;
         }
         // 8. Remove language+script
-        debug_assert!(!locale.language().is_empty()); // don't call .step() on und
-        locale.set_script(None);
-        locale.set_language(Language::UND);
+        debug_assert!(!locale.language.is_empty()); // don't call .step() on und
+        locale.script = None;
+        locale.language = Language::UND;
     }
 
     fn step_region(&mut self, locale: &mut DataLocale) {
+        // TODO(#4413): -u-rg is not yet supported
         // 2. Remove the subdivision keyword
-        if let Some(value) = locale.remove_unicode_ext(&SUBDIVISION_KEY) {
+        if let Some(value) = locale.subdivision.take() {
             self.backup_subdivision = Some(value);
             return;
         }
         // 3. Assert that the locale is a language identifier
-        debug_assert!(!locale.has_unicode_ext());
+        debug_assert!(locale.subdivision.is_none());
         // 4. Remove variants
-        if locale.has_variants() {
-            self.backup_variants = Some(locale.clear_variants());
+        if let Some(variant) = locale.variant.take() {
+            self.backup_variant = Some(variant);
             return;
         }
         // 5. Remove language+script
-        if !locale.language().is_empty() || locale.script().is_some() {
-            locale.set_script(None);
-            locale.set_language(Language::UND);
+        if !locale.language.is_empty() || locale.script.is_some() {
+            locale.script = None;
+            locale.language = Language::UND;
             self.restore_subdivision_variants(locale);
             return;
         }
         // 6. Remove region
-        debug_assert!(locale.region().is_some()); // don't call .step() on und
-        locale.set_region(None);
+        debug_assert!(locale.region.is_some()); // don't call .step() on und
+        locale.region = None;
     }
 
     fn restore_subdivision_variants(&mut self, locale: &mut DataLocale) {
-        if let Some(value) = self.backup_subdivision.take() {
-            locale.set_unicode_ext(SUBDIVISION_KEY, value);
+        if let Some(subdivision) = self.backup_subdivision.take() {
+            locale.subdivision = Some(subdivision);
         }
-        if let Some(variants) = self.backup_variants.take() {
-            locale.set_variants(variants);
+        if let Some(variant) = self.backup_variant.take() {
+            locale.variant = Some(variant);
         }
     }
 
-    fn get_explicit_parent(&self, locale: &DataLocale) -> Option<LanguageIdentifier> {
+    fn get_explicit_parent(
+        &self,
+        locale: &DataLocale,
+    ) -> Option<(Language, Option<Script>, Option<Region>)> {
         self.parents
             .parents
             .get_copied_by(|uvstr| locale.strict_cmp(uvstr).reverse())
-            .map(LanguageIdentifier::from)
     }
 }
 
@@ -190,19 +187,19 @@ mod tests {
     // TODO: Consider loading these from a JSON file
     const TEST_CASES: &[TestCase] = &[
         TestCase {
-            input: "en-u-hc-h12-sd-usca",
+            input: "en-u-sd-usca",
             requires_data: false,
             expected_language_chain: &["en-u-sd-usca", "en"],
             expected_region_chain: &["en-u-sd-usca", "en", "und-u-sd-usca"],
         },
         TestCase {
-            input: "en-US-u-hc-h12-sd-usca",
+            input: "en-US-u-sd-usca",
             requires_data: false,
             expected_language_chain: &["en-US-u-sd-usca", "en-US", "en-u-sd-usca", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
         },
         TestCase {
-            input: "en-US-fonipa-u-hc-h12-sd-usca",
+            input: "en-US-fonipa-u-sd-usca",
             requires_data: false,
             expected_language_chain: &[
                 "en-US-fonipa-u-sd-usca",
@@ -222,7 +219,7 @@ mod tests {
             ],
         },
         TestCase {
-            input: "en-u-hc-h12-sd-usca",
+            input: "en-u-sd-usca",
             requires_data: true,
             expected_language_chain: &["en-u-sd-usca", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
@@ -238,13 +235,6 @@ mod tests {
             requires_data: true,
             expected_language_chain: &["en-US-u-sd-usca", "en-US", "en-u-sd-usca", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
-        },
-        TestCase {
-            // TODO(#4413): -u-rg is not yet supported; when it is, this test should be updated
-            input: "en-u-rg-gbxxxx",
-            requires_data: false,
-            expected_language_chain: &["en"],
-            expected_region_chain: &["en"],
         },
         TestCase {
             input: "sr-ME",

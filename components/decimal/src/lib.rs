@@ -148,7 +148,7 @@ impl FixedDecimalFormatter {
                     DataMarkerAttributes::from_str_or_panic(
                         locale.get_single_unicode_ext("nu").unwrap_or_default(),
                     ),
-                    &locale.get_langid().into(),
+                    locale,
                 ),
                 ..Default::default()
             })?

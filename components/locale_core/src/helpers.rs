@@ -322,6 +322,8 @@ macro_rules! impl_tinystr_subtag {
     };
 }
 
+#[macro_export]
+#[doc(hidden)]
 macro_rules! impl_writeable_for_each_subtag_str_no_test {
     ($type:tt $(, $self:ident, $borrow_cond:expr => $borrow:expr)?) => {
         impl writeable::Writeable for $type {

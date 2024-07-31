@@ -143,9 +143,9 @@ pub mod ffi {
             if current.is_und() {
                 None
             } else {
-                let current = current.clone().into_locale();
+                let current = current.clone();
                 self.0.step();
-                Some(Box::new(Locale(current)))
+                Some(Box::new(Locale(current.into_locale())))
             }
         }
     }
