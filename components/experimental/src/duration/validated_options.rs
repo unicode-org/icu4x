@@ -9,54 +9,54 @@ use crate::duration::options::*;
 pub struct ValidatedDurationFormatterOptions {
     /// The style that will be applied to units
     /// unless overridden by a specific style.
-    base: BaseStyle,
+    pub(crate) base: BaseStyle,
 
     /// Style for year
-    year: FieldStyle,
+    pub(crate) year: FieldStyle,
     /// Visibility control for year
-    year_visibility: FieldDisplay,
+    pub(crate) year_visibility: FieldDisplay,
     /// Style for month
-    month: FieldStyle,
+    pub(crate) month: FieldStyle,
     /// Visibility control for month
-    month_visibility: FieldDisplay,
+    pub(crate) month_visibility: FieldDisplay,
     /// Style for week
-    week: FieldStyle,
+    pub(crate) week: FieldStyle,
     /// Visibility control for week
-    week_visibility: FieldDisplay,
+    pub(crate) week_visibility: FieldDisplay,
     /// Style for day
-    day: FieldStyle,
+    pub(crate) day: FieldStyle,
     /// Visibility control for day
-    day_visibility: FieldDisplay,
+    pub(crate) day_visibility: FieldDisplay,
     /// Style for hour
-    hour: FieldStyle,
+    pub(crate) hour: FieldStyle,
     /// Visibility control for hour
-    hour_visibility: FieldDisplay,
+    pub(crate) hour_visibility: FieldDisplay,
     /// Style for minute
-    minute: FieldStyle,
+    pub(crate) minute: FieldStyle,
     /// Visibility control for minute
-    minute_visibility: FieldDisplay,
+    pub(crate) minute_visibility: FieldDisplay,
     /// Style for second
-    second: FieldStyle,
+    pub(crate) second: FieldStyle,
     /// Visibility control for second
-    second_visibility: FieldDisplay,
+    pub(crate) second_visibility: FieldDisplay,
     /// Style for millisecond
-    millisecond: FieldStyle,
+    pub(crate) millisecond: FieldStyle,
     /// Visibility control for millisecond
-    millisecond_visibility: FieldDisplay,
+    pub(crate) millisecond_visibility: FieldDisplay,
     /// Style for microsecond
-    microsecond: FieldStyle,
+    pub(crate) microsecond: FieldStyle,
     /// Visibility control for microsecond
-    microsecond_visibility: FieldDisplay,
+    pub(crate) microsecond_visibility: FieldDisplay,
     /// Style for nanosecond
-    nanosecond: FieldStyle,
+    pub(crate) nanosecond: FieldStyle,
     /// Visibility control for nanosecond
-    nanosecond_visibility: FieldDisplay,
+    pub(crate) nanosecond_visibility: FieldDisplay,
 
     /// Number of fractional digits to use when formatting sub-second units (milliseconds, microseconds, nanoseconds).
     /// ### Note:
     /// - Only takes effect when the subsecond units are styled as `Numeric`.
     /// - Zero means no fractional digits.
-    fractional_digits: FractionalDigits,
+    pub(crate) fractional_digits: FractionalDigits,
 }
 
 /// Error type for [`DurationFormatterOptions`] validation.
@@ -75,7 +75,7 @@ pub enum DurationFormatterOptionsError {
 }
 
 impl ValidatedDurationFormatterOptions {
-    pub(crate) fn validate(
+    pub fn validate(
         value: DurationFormatterOptions,
     ) -> Result<Self, DurationFormatterOptionsError> {
         let mut builder: ValidatedDurationFormatterOptionsBuilder = value.into();
@@ -178,10 +178,11 @@ impl ValidatedDurationFormatterOptions {
             }
 
             // 10. If unit is "hours" and twoDigitHours is true, then
-            if unit == Unit::Hour && todo!("twoDigitHours") {
-                // a. Set style to "2-digit".
-                *style = Some(FieldStyle::TwoDigit);
-            }
+            // NOTE:
+            // Divergence from TC39 standard:
+            // We do not check for twoDigitHours here.
+            // We later check whether we have to display hours, and then use leading separator padding
+            // for displaying hours with two digits.
 
             prev_style = *style;
         }
@@ -191,8 +192,9 @@ impl ValidatedDurationFormatterOptions {
 
     /// Iterates over all unit fields of the struct, returning a tuple of the unit,
     /// and mutable references to its style and the visibility.
+    /// See also: [iter_units](ValidatedDurationFormatterOptions::iter_units).
     #[allow(dead_code)]
-    pub(crate) fn iter_units(&mut self) -> [(Unit, &mut FieldStyle, &mut FieldDisplay); 10] {
+    pub(crate) fn iter_mut_units(&mut self) -> [(Unit, &mut FieldStyle, &mut FieldDisplay); 10] {
         [
             (Unit::Year, &mut self.year, &mut self.year_visibility),
             (Unit::Month, &mut self.month, &mut self.month_visibility),
@@ -215,6 +217,36 @@ impl ValidatedDurationFormatterOptions {
                 Unit::Nanosecond,
                 &mut self.nanosecond,
                 &mut self.nanosecond_visibility,
+            ),
+        ]
+    }
+
+    /// Iterates over all unit fields of the struct, returning a tuple of the unit,
+    /// and references to its style and the visibility.
+    /// See also: [iter_mut_units](ValidatedDurationFormatterOptions::iter_mut_units).
+    pub(crate) fn iter_units(&self) -> [(Unit, FieldStyle, FieldDisplay); 10] {
+        [
+            (Unit::Year, self.year, self.year_visibility),
+            (Unit::Month, self.month, self.month_visibility),
+            (Unit::Week, self.week, self.week_visibility),
+            (Unit::Day, self.day, self.day_visibility),
+            (Unit::Hour, self.hour, self.hour_visibility),
+            (Unit::Minute, self.minute, self.minute_visibility),
+            (Unit::Second, self.second, self.second_visibility),
+            (
+                Unit::Millisecond,
+                self.millisecond,
+                self.millisecond_visibility,
+            ),
+            (
+                Unit::Microsecond,
+                self.microsecond,
+                self.microsecond_visibility,
+            ),
+            (
+                Unit::Nanosecond,
+                self.nanosecond,
+                self.nanosecond_visibility,
             ),
         ]
     }
