@@ -281,11 +281,13 @@ fn select_locales_for_marker<'a>(
             .insert(id);
     }
 
-    if let Some(filter) = attributes_filters.get(marker.path.as_str().split_once("/").unwrap().0) {
-        supported_map.retain(|_, ids| {
-            ids.retain(|id| filter(&id.marker_attributes));
-            !ids.is_empty()
-        });
+    if !marker.attributes_domain.is_empty() {
+        if let Some(filter) = attributes_filters.get(marker.attributes_domain) {
+            supported_map.retain(|_, ids| {
+                ids.retain(|id| filter(&id.marker_attributes));
+                !ids.is_empty()
+            });
+        }
     }
 
     if include_full && requested_families.is_empty() {
