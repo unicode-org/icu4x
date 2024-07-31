@@ -312,7 +312,7 @@ impl SourceDataProvider {
     pub fn locales_for_coverage_levels(
         &self,
         levels: impl IntoIterator<Item = CoverageLevel>,
-    ) -> Result<impl IntoIterator<Item = icu::locale::LanguageIdentifier>, DataError> {
+    ) -> Result<impl IntoIterator<Item = DataLocale>, DataError> {
         self.cldr()?.locales(levels)
     }
 }

@@ -13,7 +13,7 @@ fn main() {
     let mod_directory = PathBuf::from(std::env::var_os("OUT_DIR").unwrap()).join("baked_data");
 
     ExportDriver::new(
-        [LocaleFamily::single(langid!("ru"))],
+        [DataLocaleFamily::single(locale!("ru").into())],
         DeduplicationStrategy::None.into(),
         // We are not deduplicating, so this can be anything. If we were using runtime fallback,
         // this would need to be the same fallbacker as used at runtime (in the baked data case,
