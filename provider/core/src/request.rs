@@ -218,7 +218,7 @@ impl Default for DataIdentifierCow<'_> {
 /// [`LanguageIdentifier`] for better size and performance while still meeting
 /// the needs of the ICU4X data pipeline.
 ///
-/// You can alternatively create a [`DataLocale`] from a borrowed [`Locale`], which is more
+/// You can create a [`DataLocale`] from a borrowed [`Locale`], which is more
 /// efficient than cloning the [`Locale`], but less efficient than converting an owned
 /// [`Locale`]:
 ///
