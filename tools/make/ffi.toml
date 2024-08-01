@@ -85,6 +85,7 @@ dependencies = [
     "diplomat-gen-cpp",
     "diplomat-gen-js",
     "diplomat-gen-dart",
+    "diplomat-gen-demo",
 ]
 
 [tasks.verify-diplomat-gen]
@@ -119,6 +120,12 @@ description = "Generate JS bindings for the FFI with Diplomat"
 category = "ICU4X Development"
 command = "cargo"
 args = ["run", "--manifest-path", "tools/make/diplomat-gen/Cargo.toml", "js"]
+
+[tasks.diplomat-gen-demo]
+description = "Generate Demo HTML for the FFI with Diplomat"
+category = "ICU4X Development"
+command = "cargo"
+args = ["run", "--manifest-path", "tools/make/diplomat-gen/Cargo.toml", "demo_gen"]
 
 [tasks.diplomat-gen-dart]
 description = "Generate Dart bindings for the FFI with Diplomat"
