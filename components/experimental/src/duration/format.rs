@@ -54,7 +54,7 @@ pub mod parts {
     );
 
     pub const LITERAL: Part = Part {
-        category: "literal",
+        category: "duration",
         value: "literal",
     };
 }
