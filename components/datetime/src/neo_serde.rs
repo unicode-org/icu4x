@@ -29,7 +29,7 @@ pub(crate) struct SemanticSkeletonSerde {
     pub(crate) length: NeoSkeletonLength,
     #[serde(rename = "eraDisplay")]
     pub(crate) era_display: Option<EraDisplay>,
-    #[serde(rename = "FractionalSecondDigits")]
+    #[serde(rename = "fractionalSecondDigits")]
     pub(crate) fractional_second_digits: Option<FractionalSecondDigits>,
 }
 
@@ -477,12 +477,13 @@ fn test_basic() {
         ),
         length: NeoSkeletonLength::Medium,
         era_display: Some(EraDisplay::Always),
+        fractional_second_digits: Some(FractionalSecondDigits::F3),
     };
 
     let json_string = serde_json::to_string(&skeleton).unwrap();
     assert_eq!(
         json_string,
-        r#"{"fieldSet":["year","month","day","weekday","hour","minute","zoneGeneric"],"length":"medium","eraDisplay":"always"}"#
+        r#"{"fieldSet":["year","month","day","weekday","hour","minute","zoneGeneric"],"length":"medium","eraDisplay":"always","fractionalSecondDigits":3}"#
     );
     let json_skeleton = serde_json::from_str::<NeoSkeleton>(&json_string).unwrap();
     assert_eq!(skeleton, json_skeleton);

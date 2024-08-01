@@ -1116,6 +1116,7 @@ mod tests {
         let mut sink = String::new();
         try_write_pattern(
             pattern.as_borrowed(),
+            Default::default(),
             &ExtractedDateTimeInput::extract_from(&datetime),
             Some(date_data.payload.get()),
             Some(time_data.payload.get()),
