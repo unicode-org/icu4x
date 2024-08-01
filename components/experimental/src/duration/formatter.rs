@@ -84,6 +84,7 @@ impl DurationUnitFormatter {
         }
     }
 
+    #[cfg(feature = "compiled_data")]
     fn try_new(
         locale: &DataLocale,
         options: ValidatedDurationFormatterOptions,
