@@ -392,7 +392,7 @@ impl Unit {
             Unit::Month => MonthStyle::Short.into(),
             Unit::Week => WeekStyle::Short.into(),
             Unit::Day => DayStyle::Short.into(),
-            Unit::Hour => HourStyle::Short.into(),
+            Unit::Hour => HourStyle::Numeric.into(),
             Unit::Minute => MinuteStyle::Numeric.into(),
             Unit::Second => SecondStyle::Numeric.into(),
             Unit::Millisecond => MilliSecondStyle::Numeric.into(),
