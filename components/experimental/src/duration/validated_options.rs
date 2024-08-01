@@ -401,7 +401,7 @@ impl Unit {
         }
     }
 
-    pub(crate) fn as_unit_formatter_name(&self) -> &'static str {
+    pub(crate) const fn as_unit_formatter_name(&self) -> &'static str {
         match self {
             Unit::Year => "year",
             Unit::Month => "month",
