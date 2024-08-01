@@ -103,6 +103,7 @@ pub mod ffi {
         /// Creates a new [`Calendar`] from the specified date and time.
         #[diplomat::rust_link(icu::calendar::AnyCalendar::new_for_locale, FnInEnum)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "for_locale")]
+        #[diplomat::demo(default_constructor)]
         pub fn create_for_locale(
             provider: &DataProvider,
             locale: &Locale,

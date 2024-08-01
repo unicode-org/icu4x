@@ -244,6 +244,7 @@ pub mod ffi {
         /// given but in a given calendar
         #[diplomat::rust_link(icu::DateTime::new_from_iso, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::demo(default_constructor)]
         #[allow(clippy::too_many_arguments)]
         pub fn from_iso_in_calendar(
             year: i32,

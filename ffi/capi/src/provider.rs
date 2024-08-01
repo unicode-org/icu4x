@@ -43,6 +43,7 @@ pub mod ffi {
         /// `enabled_fallback_with`, `fork_by_locale`, and `fork_by_key` will return `Err`s.
         #[cfg(feature = "compiled_data")]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::demo(default_constructor)]
         pub fn compiled() -> Box<DataProvider> {
             Box::new(Self(DataProviderInner::Compiled))
         }
