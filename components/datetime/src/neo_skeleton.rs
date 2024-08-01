@@ -115,7 +115,7 @@ pub enum EraDisplay {
 /// Lower-precision digits will be truncated.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "serde", serde(try_from="u8", into="u8"))]
+#[cfg_attr(feature = "serde", serde(try_from = "u8", into = "u8"))]
 #[non_exhaustive]
 pub enum FractionalSecondDigits {
     /// Zero fractional digits. This is the default.
@@ -141,8 +141,7 @@ pub enum FractionalSecondDigits {
 }
 
 /// An error from constructing [`FractionalSecondDigits`].
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
-#[derive(displaydoc::Display)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, displaydoc::Display)]
 #[non_exhaustive]
 pub enum FractionalSecondError {
     /// The provided value is out of range (0-9).
@@ -182,7 +181,7 @@ impl TryFrom<u8> for FractionalSecondDigits {
             7 => Ok(F7),
             8 => Ok(F8),
             9 => Ok(F9),
-            _ => Err(FractionalSecondError::OutOfRange)
+            _ => Err(FractionalSecondError::OutOfRange),
         }
     }
 }
@@ -1059,7 +1058,11 @@ impl NeoTimeSkeleton {
         length: NeoSkeletonLength,
         components: NeoTimeComponents,
     ) -> Self {
-        Self { length, components, fractional_second_digits: None }
+        Self {
+            length,
+            components,
+            fractional_second_digits: None,
+        }
     }
 
     /// Converts this [`NeoTimeSkeleton`] to a [`components::Bag`].

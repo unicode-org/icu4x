@@ -14,6 +14,6 @@ pub mod zoned_datetime;
 /// Internal non-pattern runtime options passed to the formatter
 #[derive(Debug, Copy, Clone, Default)]
 pub(crate) struct FormattingOptions {
-	#[cfg(feature = "experimental")]
-	pub(crate) fractional_second_digits: Option<FractionalSecondDigits>,
+    #[cfg(feature = "experimental")]
+    pub(crate) fractional_second_digits: Option<FractionalSecondDigits>,
 }

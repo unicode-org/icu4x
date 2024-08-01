@@ -26,6 +26,7 @@ use crate::time_zone::{
     TimeZoneFormatterUnit,
 };
 
+use super::FormattingOptions;
 use core::fmt::{self, Write};
 use core::iter::Peekable;
 use fixed_decimal::FixedDecimal;
@@ -39,7 +40,6 @@ use icu_plurals::PluralRules;
 use icu_provider::DataPayload;
 use icu_timezone::{CustomTimeZone, GmtOffset};
 use writeable::{Part, Writeable};
-use super::FormattingOptions;
 
 /// [`FormattedDateTime`] is a intermediate structure which can be retrieved as
 /// an output from [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter).
@@ -694,7 +694,8 @@ where
                                 try_write_number(w, fdf, usize::from(second).into(), l)?;
                             write_value_missing(w, next_field)?;
                             // Return the earlier error
-                            seconds_result.and(Err(DateTimeWriteError::MissingInputField("nanosecond")))
+                            seconds_result
+                                .and(Err(DateTimeWriteError::MissingInputField("nanosecond")))
                         }
                         Some(ns) => {
                             let mut s = FixedDecimal::from(usize::from(second));
@@ -713,7 +714,8 @@ where
                             let seconds_result =
                                 try_write_number(w, fdf, usize::from(second).into(), l)?;
                             // Return the earlier error
-                            seconds_result.and(Err(DateTimeWriteError::MissingInputField("nanosecond")))
+                            seconds_result
+                                .and(Err(DateTimeWriteError::MissingInputField("nanosecond")))
                         }
                         Some(ns) => {
                             let mut s = FixedDecimal::from(usize::from(second));
@@ -725,13 +727,13 @@ where
                             s.trunc(-(p as i16));
                             try_write_number(w, fdf, s, l)?
                         }
-                    }
+                    },
                     None => {
                         // Normal seconds formatting with no fractional second digits
                         try_write_number(w, fdf, usize::from(second).into(), l)?
                     }
-                }
-            }
+                },
+            },
         },
         (FieldSymbol::Second(Second::FractionalSecond), _) => {
             // Fractional second not following second

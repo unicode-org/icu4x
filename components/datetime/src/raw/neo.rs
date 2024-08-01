@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::format::FormattingOptions;
-use crate::neo_skeleton::FractionalSecondDigits;
 use crate::format::neo::FieldForDataLoading;
+use crate::format::FormattingOptions;
 use crate::input::{DateInput, ExtractedDateTimeInput};
 use crate::neo_pattern::DateTimePattern;
+use crate::neo_skeleton::FractionalSecondDigits;
 use crate::neo_skeleton::{
     EraDisplay, NeoComponents, NeoDateComponents, NeoDateSkeleton, NeoSkeletonLength,
     NeoTimeComponents, NeoTimeSkeleton, NeoTimeZoneSkeleton,
@@ -312,12 +312,13 @@ impl TimePatternSelectionData {
     pub(crate) fn select(&self, _datetime: &ExtractedDateTimeInput) -> TimePatternDataBorrowed {
         match self {
             TimePatternSelectionData::SkeletonTime { skeleton, payload } => {
-                TimePatternDataBorrowed::Resolved(payload.get().get_pattern(
-                    PatternSelectionOptions {
+                TimePatternDataBorrowed::Resolved(
+                    payload.get().get_pattern(PatternSelectionOptions {
                         length: skeleton.length,
                         should_display_era: None,
-                    },
-                ), skeleton.fractional_second_digits)
+                    }),
+                    skeleton.fractional_second_digits,
+                )
             }
         }
     }
@@ -663,9 +664,11 @@ impl<'a> DateTimeZonePatternDataBorrowed<'a> {
         // Currently only Time contributes to the formatting options
         let fractional_second_digits = match self.time_pattern() {
             Some(TimePatternDataBorrowed::Resolved(_, v)) => v,
-            _ => None
+            _ => None,
         };
-        FormattingOptions { fractional_second_digits }
+        FormattingOptions {
+            fractional_second_digits,
+        }
     }
 
     pub(crate) fn iter_items(self) -> impl Iterator<Item = PatternItem> + 'a {

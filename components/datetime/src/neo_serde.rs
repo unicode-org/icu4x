@@ -5,8 +5,8 @@
 //! Serde definitions for semantic skeleta
 
 use crate::neo_skeleton::{
-    EraDisplay, NeoComponents, NeoDateComponents, NeoDayComponents, NeoSkeleton, NeoSkeletonLength,
-    NeoTimeComponents, NeoTimeZoneSkeleton, NeoTimeZoneStyle, FractionalSecondDigits
+    EraDisplay, FractionalSecondDigits, NeoComponents, NeoDateComponents, NeoDayComponents,
+    NeoSkeleton, NeoSkeletonLength, NeoTimeComponents, NeoTimeZoneSkeleton, NeoTimeZoneStyle,
 };
 use alloc::vec::Vec;
 use serde::{Deserialize, Serialize};
