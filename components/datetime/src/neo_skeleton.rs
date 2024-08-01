@@ -111,6 +111,8 @@ pub enum EraDisplay {
 ///
 /// For example, to display the time with millisecond precision, use
 /// [`FractionalSecondDigits::F3`].
+///
+/// Lower-precision digits will be truncated.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "serde", serde(try_from="u8", into="u8"))]

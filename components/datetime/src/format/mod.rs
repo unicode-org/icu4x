@@ -15,5 +15,5 @@ pub mod zoned_datetime;
 #[derive(Debug, Copy, Clone, Default)]
 pub(crate) struct FormattingOptions {
 	#[cfg(feature = "experimental")]
-	fractional_second_digits: Option<FractionalSecondDigits>,
+	pub(crate) fractional_second_digits: Option<FractionalSecondDigits>,
 }

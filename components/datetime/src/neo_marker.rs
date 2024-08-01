@@ -147,7 +147,7 @@
 //! use icu::calendar::Time;
 //! use icu::datetime::neo::NeoOptions;
 //! use icu::datetime::neo::TypedNeoFormatter;
-//! use icu::datetime::neo_marker::NeoAutoTimeMarker;
+//! use icu::datetime::neo_marker::NeoHourMinuteSecondMarker;
 //! use icu::datetime::neo_skeleton::NeoSkeletonLength;
 //! use icu::datetime::neo_skeleton::FractionalSecondDigits;
 //! use icu::datetime::NeverCalendar;
@@ -155,7 +155,7 @@
 //! use writeable::assert_try_writeable_eq;
 //!
 //! let formatter =
-//!     TypedNeoFormatter::<NeverCalendar, NeoAutoTimeMarker>::try_new(
+//!     TypedNeoFormatter::<NeverCalendar, NeoHourMinuteSecondMarker>::try_new(
 //!         &locale!("en-US").into(),
 //!         {
 //!             let mut options = NeoOptions::from(NeoSkeletonLength::Short);
@@ -167,7 +167,7 @@
 //!
 //! assert_try_writeable_eq!(
 //!     formatter.format(&Time::try_new(16, 12, 20, 543200000).unwrap()),
-//!     "4:12.54 PM"
+//!     "4:12:20.54 PM"
 //! );
 //! ```
 //!
@@ -1956,6 +1956,19 @@ impl_time_marker!(
     input_minute = yes,
     input_second = no,
     input_nanosecond = no,
+);
+
+impl_time_marker!(
+    NeoHourMinuteSecondMarker,
+    NeoTimeComponents::HourMinuteSecond,
+    description = "hour, minute, and second (locale-dependent hour cycle)",
+    expectation = "3:47:50 PM",
+    dayperiods = yes,
+    times = yes,
+    input_hour = yes,
+    input_minute = yes,
+    input_second = yes,
+    input_nanosecond = yes,
 );
 
 impl_time_marker!(

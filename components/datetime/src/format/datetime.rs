@@ -675,66 +675,63 @@ where
             }
             Some(iso_minute) => try_write_number(w, fdf, usize::from(iso_minute).into(), l)?,
         },
-        (FieldSymbol::Second(Second::Second), l) => match (datetime.second(), iter.peek()) {
-            (
-                None,
-                Some(&PatternItem::Field(
-                    next_field @ Field {
-                        symbol: FieldSymbol::Second(Second::FractionalSecond),
-                        ..
-                    },
-                )),
-            ) => {
-                iter.next(); // Advance over nanosecond symbol
-                write_value_missing(w, field)?;
-                // Write error value for nanos even if we have them
-                write_value_missing(w, next_field)?;
-                Err(DateTimeWriteError::MissingInputField("second"))
-            }
-            (None, _) => {
+        (FieldSymbol::Second(Second::Second), l) => match datetime.second() {
+            None => {
                 write_value_missing(w, field)?;
                 Err(DateTimeWriteError::MissingInputField("second"))
             }
-            (
-                Some(second),
+            Some(second) => match iter.peek() {
                 Some(&PatternItem::Field(
                     next_field @ Field {
                         symbol: FieldSymbol::Second(Second::FractionalSecond),
-                        length,
+                        length: FieldLength::Fixed(p),
                     },
-                )),
-            ) => {
-                iter.next(); // Advance over nanosecond symbol
-                let r = datetime
-                    .nanosecond()
-                    .ok_or(DateTimeWriteError::MissingInputField("nanosecond"))
-                    .and_then(|ns| {
-                        // We only support fixed field length for fractional seconds.
-                        let FieldLength::Fixed(p) = length else {
-                            return Err(DateTimeWriteError::UnsupportedField(next_field));
-                        };
-                        Ok((ns, p))
-                    });
-                match r {
-                    Err(e) => {
-                        let seconds_result =
-                            try_write_number(w, fdf, usize::from(second).into(), l)?;
-                        write_value_missing(w, next_field)?;
-                        // Return the earlier error
-                        seconds_result.and(Err(e))
+                )) => {
+                    iter.next(); // Advance over nanosecond symbol
+                    match datetime.nanosecond() {
+                        None => {
+                            let seconds_result =
+                                try_write_number(w, fdf, usize::from(second).into(), l)?;
+                            write_value_missing(w, next_field)?;
+                            // Return the earlier error
+                            seconds_result.and(Err(DateTimeWriteError::MissingInputField("nanosecond")))
+                        }
+                        Some(ns) => {
+                            let mut s = FixedDecimal::from(usize::from(second));
+                            let _infallible = s.concatenate_end(
+                                FixedDecimal::from(usize::from(ns)).multiplied_pow10(-9),
+                            );
+                            debug_assert!(_infallible.is_ok());
+                            s.pad_end(-(p as i16));
+                            try_write_number(w, fdf, s, l)?
+                        }
                     }
-                    Ok((ns, p)) => {
-                        let mut s = FixedDecimal::from(usize::from(second));
-                        let _infallible = s.concatenate_end(
-                            FixedDecimal::from(usize::from(ns)).multiplied_pow10(-9),
-                        );
-                        debug_assert!(_infallible.is_ok());
-                        s.pad_end(-(p as i16));
-                        try_write_number(w, fdf, s, l)?
+                }
+                _ => match formatting_options.fractional_second_digits {
+                    Some(p) => match datetime.nanosecond() {
+                        None => {
+                            let seconds_result =
+                                try_write_number(w, fdf, usize::from(second).into(), l)?;
+                            // Return the earlier error
+                            seconds_result.and(Err(DateTimeWriteError::MissingInputField("nanosecond")))
+                        }
+                        Some(ns) => {
+                            let mut s = FixedDecimal::from(usize::from(second));
+                            let _infallible = s.concatenate_end(
+                                FixedDecimal::from(usize::from(ns)).multiplied_pow10(-9),
+                            );
+                            debug_assert!(_infallible.is_ok());
+                            s.pad_end(-(p as i16));
+                            s.trunc(-(p as i16));
+                            try_write_number(w, fdf, s, l)?
+                        }
+                    }
+                    None => {
+                        // Normal seconds formatting with no fractional second digits
+                        try_write_number(w, fdf, usize::from(second).into(), l)?
                     }
                 }
             }
-            (Some(second), _) => try_write_number(w, fdf, usize::from(second).into(), l)?,
         },
         (FieldSymbol::Second(Second::FractionalSecond), _) => {
             // Fractional second not following second
