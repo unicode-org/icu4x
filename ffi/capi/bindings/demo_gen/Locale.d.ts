@@ -1,4 +1,4 @@
-import { Locale } from "./js/Locale.mjs"
+import { Locale } from "./Locale.mjs"
 export function basename(name: string);
 export function getUnicodeExtension(name: string, s: string);
 export function language(name: string);

@@ -1,8 +1,8 @@
-import { DataProvider } from "./js/DataProvider.mjs"
-import { GregorianDateFormatter } from "./js/GregorianDateFormatter.mjs"
-import { IsoDate } from "./js/IsoDate.mjs"
-import { IsoDateTime } from "./js/IsoDateTime.mjs"
-import { Locale } from "./js/Locale.mjs"
+import { DataProvider } from "./DataProvider.mjs"
+import { GregorianDateFormatter } from "./GregorianDateFormatter.mjs"
+import { IsoDate } from "./IsoDate.mjs"
+import { IsoDateTime } from "./IsoDateTime.mjs"
+import { Locale } from "./Locale.mjs"
 export function formatIsoDate() {
     var terminusArgs = arguments;
     return (function (...args) { return args[0].formatIsoDate(...args.slice(1)) }).apply(

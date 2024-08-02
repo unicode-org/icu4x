@@ -1,5 +1,5 @@
-import { DataProvider } from "./js/DataProvider.mjs"
-import { TimeZoneIdMapper } from "./js/TimeZoneIdMapper.mjs"
+import { DataProvider } from "./DataProvider.mjs"
+import { TimeZoneIdMapper } from "./TimeZoneIdMapper.mjs"
 export function ianaToBcp47(value: string);
 export function normalizeIana(value: string);
 export function canonicalizeIana(value: string);

@@ -1,5 +1,5 @@
-import { ComposingNormalizer } from "./js/ComposingNormalizer.mjs"
-import { DataProvider } from "./js/DataProvider.mjs"
+import { ComposingNormalizer } from "./ComposingNormalizer.mjs"
+import { DataProvider } from "./DataProvider.mjs"
 export function normalize() {
     var terminusArgs = arguments;
     return (function (...args) { return args[0].normalize(...args.slice(1)) }).apply(

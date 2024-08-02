@@ -1,5 +1,5 @@
-import { DataProvider } from "./js/DataProvider.mjs"
-import { FixedDecimal } from "./js/FixedDecimal.mjs"
-import { FixedDecimalFormatter } from "./js/FixedDecimalFormatter.mjs"
-import { Locale } from "./js/Locale.mjs"
+import { DataProvider } from "./DataProvider.mjs"
+import { FixedDecimal } from "./FixedDecimal.mjs"
+import { FixedDecimalFormatter } from "./FixedDecimalFormatter.mjs"
+import { Locale } from "./Locale.mjs"
 export function format(name: string, groupingStrategy: FixedDecimalGroupingStrategy, f: number);

@@ -1,7 +1,7 @@
-import { Calendar } from "./js/Calendar.mjs"
-import { DataProvider } from "./js/DataProvider.mjs"
-import { DateTime } from "./js/DateTime.mjs"
-import { Locale } from "./js/Locale.mjs"
+import { Calendar } from "./Calendar.mjs"
+import { DataProvider } from "./DataProvider.mjs"
+import { DateTime } from "./DateTime.mjs"
+import { Locale } from "./Locale.mjs"
 export function monthCode() {
     var terminusArgs = arguments;
     return (function (...args) { return args[0].monthCode }).apply(

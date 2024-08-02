@@ -1,7 +1,7 @@
-import { DataProvider } from "./js/DataProvider.mjs"
+import { DataProvider } from "./DataProvider.mjs"
 import { DisplayNamesOptions } from "./js/DisplayNamesOptions.mjs"
-import { Locale } from "./js/Locale.mjs"
-import { LocaleDisplayNamesFormatter } from "./js/LocaleDisplayNamesFormatter.mjs"
+import { Locale } from "./Locale.mjs"
+import { LocaleDisplayNamesFormatter } from "./LocaleDisplayNamesFormatter.mjs"
 export function of() {
     var terminusArgs = arguments;
     return (function (...args) { return args[0].of(...args.slice(1)) }).apply(

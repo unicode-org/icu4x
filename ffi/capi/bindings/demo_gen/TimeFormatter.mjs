@@ -1,10 +1,10 @@
-import { Calendar } from "./js/Calendar.mjs"
-import { DataProvider } from "./js/DataProvider.mjs"
-import { DateTime } from "./js/DateTime.mjs"
-import { IsoDateTime } from "./js/IsoDateTime.mjs"
-import { Locale } from "./js/Locale.mjs"
-import { Time } from "./js/Time.mjs"
-import { TimeFormatter } from "./js/TimeFormatter.mjs"
+import { Calendar } from "./Calendar.mjs"
+import { DataProvider } from "./DataProvider.mjs"
+import { DateTime } from "./DateTime.mjs"
+import { IsoDateTime } from "./IsoDateTime.mjs"
+import { Locale } from "./Locale.mjs"
+import { Time } from "./Time.mjs"
+import { TimeFormatter } from "./TimeFormatter.mjs"
 export function formatTime() {
     var terminusArgs = arguments;
     return (function (...args) { return args[0].formatTime(...args.slice(1)) }).apply(

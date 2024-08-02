@@ -1,4 +1,4 @@
-import { Locale } from "./js/Locale.mjs"
+import { Locale } from "./Locale.mjs"
 export function basename() {
     var terminusArgs = arguments;
     return (function (...args) { return args[0].basename }).apply(

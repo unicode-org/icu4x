@@ -1,4 +1,4 @@
-import { CustomTimeZone } from "./js/CustomTimeZone.mjs"
+import { CustomTimeZone } from "./CustomTimeZone.mjs"
 export function timeZoneId() {
     var terminusArgs = arguments;
     return (function (...args) { return args[0].timeZoneId }).apply(
