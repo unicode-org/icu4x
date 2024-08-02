@@ -24,7 +24,6 @@ pub enum LocaleCategory {
     Measurement,
     Identification,
     All,
-    Other(String),
 }
 
 impl FromStr for LocaleCategory {
