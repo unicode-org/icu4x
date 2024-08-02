@@ -1,2 +1,2 @@
-import { FixedDecimal } from "./FixedDecimal.mjs"
+import { FixedDecimal } from "../lib/FixedDecimal.mjs"
 export function toString(f: number);

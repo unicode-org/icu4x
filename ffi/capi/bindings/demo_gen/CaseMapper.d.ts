@@ -1,6 +1,6 @@
-import { CaseMapper } from "./CaseMapper.mjs"
-import { DataProvider } from "./DataProvider.mjs"
-import { Locale } from "./Locale.mjs"
+import { CaseMapper } from "../lib/CaseMapper.mjs"
+import { DataProvider } from "../lib/DataProvider.mjs"
+import { Locale } from "../lib/Locale.mjs"
 import { TitlecaseOptions } from "./js/TitlecaseOptions.mjs"
 export function lowercase(s: string, name: string);
 export function uppercase(s: string, name: string);

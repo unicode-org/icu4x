@@ -1,10 +1,10 @@
-import { Calendar } from "./Calendar.mjs"
-import { CustomTimeZone } from "./CustomTimeZone.mjs"
-import { DataProvider } from "./DataProvider.mjs"
-import { DateTime } from "./DateTime.mjs"
-import { IsoDateTime } from "./IsoDateTime.mjs"
-import { Locale } from "./Locale.mjs"
-import { ZonedDateTimeFormatter } from "./ZonedDateTimeFormatter.mjs"
+import { Calendar } from "../lib/Calendar.mjs"
+import { CustomTimeZone } from "../lib/CustomTimeZone.mjs"
+import { DataProvider } from "../lib/DataProvider.mjs"
+import { DateTime } from "../lib/DateTime.mjs"
+import { IsoDateTime } from "../lib/IsoDateTime.mjs"
+import { Locale } from "../lib/Locale.mjs"
+import { ZonedDateTimeFormatter } from "../lib/ZonedDateTimeFormatter.mjs"
 export function formatDatetimeWithCustomTimeZone() {
     var terminusArgs = arguments;
     return (function (...args) { return args[0].formatDatetimeWithCustomTimeZone(...args.slice(1)) }).apply(

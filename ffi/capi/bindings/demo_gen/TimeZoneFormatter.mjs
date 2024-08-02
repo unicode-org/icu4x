@@ -1,7 +1,7 @@
-import { CustomTimeZone } from "./CustomTimeZone.mjs"
-import { DataProvider } from "./DataProvider.mjs"
-import { Locale } from "./Locale.mjs"
-import { TimeZoneFormatter } from "./TimeZoneFormatter.mjs"
+import { CustomTimeZone } from "../lib/CustomTimeZone.mjs"
+import { DataProvider } from "../lib/DataProvider.mjs"
+import { Locale } from "../lib/Locale.mjs"
+import { TimeZoneFormatter } from "../lib/TimeZoneFormatter.mjs"
 export function formatCustomTimeZone() {
     var terminusArgs = arguments;
     return (function (...args) { return args[0].formatCustomTimeZone(...args.slice(1)) }).apply(

@@ -1,4 +1,4 @@
-import { DataProvider } from "./DataProvider.mjs"
-import { ListFormatter } from "./ListFormatter.mjs"
-import { Locale } from "./Locale.mjs"
+import { DataProvider } from "../lib/DataProvider.mjs"
+import { ListFormatter } from "../lib/ListFormatter.mjs"
+import { Locale } from "../lib/Locale.mjs"
 export function format(name: string, length: ListLength, list: Array<String>);

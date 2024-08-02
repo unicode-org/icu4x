@@ -1,6 +1,6 @@
-import { DataProvider } from "./DataProvider.mjs"
-import { ListFormatter } from "./ListFormatter.mjs"
-import { Locale } from "./Locale.mjs"
+import { DataProvider } from "../lib/DataProvider.mjs"
+import { ListFormatter } from "../lib/ListFormatter.mjs"
+import { Locale } from "../lib/Locale.mjs"
 export function format() {
     var terminusArgs = arguments;
     return (function (...args) { return args[0].format(...args.slice(1)) }).apply(

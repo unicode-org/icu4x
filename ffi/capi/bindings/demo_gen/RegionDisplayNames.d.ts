@@ -1,4 +1,4 @@
-import { DataProvider } from "./DataProvider.mjs"
-import { Locale } from "./Locale.mjs"
-import { RegionDisplayNames } from "./RegionDisplayNames.mjs"
+import { DataProvider } from "../lib/DataProvider.mjs"
+import { Locale } from "../lib/Locale.mjs"
+import { RegionDisplayNames } from "../lib/RegionDisplayNames.mjs"
 export function of(name: string, region: string);
