@@ -61,27 +61,22 @@ pub fn get_locales() -> Result<HashMap<LocaleCategory, String>, RetrievalError> 
     }
 
     // SAFETY: A valid `NULL` terminator is present which is a requirement of `from_ptr`
-    let locales_cstr_res = unsafe { CStr::from_ptr(locales_ptr) }.to_str();
-    match locales_cstr_res {
-        Ok(locales_str) => {
-            let locale_pairs = locales_str.split(';');
-            for locale_pair in locale_pairs {
-                let mut parts = locale_pair.split('=');
-                if let Some(value) = parts.next() {
-                    if let Some(key) = parts.next() {
-                        if let Ok(category) = LocaleCategory::from_str(value) {
-                            locale_map.insert(category, key.to_string());
-                        }
-                    } else {
-                        // Handle case where only a single locale
-                        locale_map.insert(LocaleCategory::All, value.to_string());
-                    }
+    let locales_str = unsafe { CStr::from_ptr(locales_ptr) }.to_str()?;
+    let locale_pairs = locales_str.split(';');
+    for locale_pair in locale_pairs {
+        let mut parts = locale_pair.split('=');
+        if let Some(value) = parts.next() {
+            if let Some(key) = parts.next() {
+                if let Ok(category) = LocaleCategory::from_str(value) {
+                    locale_map.insert(category, key.to_string());
                 }
+            } else {
+                // Handle case where only a single locale
+                locale_map.insert(LocaleCategory::All, value.to_string());
             }
-            Ok(locale_map)
         }
-        Err(e) => Err(RetrievalError::ConversionError(e)),
     }
+    Ok(locale_map)
 }
 
 /// This only returns the calendar locale,`gnome-calendar` is the default calendar in linux
@@ -94,16 +89,9 @@ pub fn get_system_calendars() -> Result<String, RetrievalError> {
 
     if !locale_ptr.is_null() {
         // SAFETY: A valid `NULL` terminator is present which is a requirement of `from_ptr`
-        let rust_str_res = unsafe { CStr::from_ptr(locale_ptr) }.to_str();
-        match rust_str_res {
-            Ok(rust_str) => {
-                let calendar_locale = rust_str.to_string();
-                return Ok(calendar_locale);
-            }
-            Err(e) => {
-                return Err(RetrievalError::ConversionError(e));
-            }
-        }
+        let rust_str = unsafe { CStr::from_ptr(locale_ptr) }.to_str()?;
+        let calendar_locale = rust_str.to_string();
+        return Ok(calendar_locale);
     }
     Err(RetrievalError::NullLocale)
 }
