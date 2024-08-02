@@ -78,11 +78,9 @@ pub fn get_locales() -> Result<HashMap<LocaleCategory, String>, RetrievalError> 
                     }
                 }
             }
-            return Ok(locale_map);
+            Ok(locale_map)
         }
-        Err(e) => {
-            return Err(RetrievalError::ConversionError(e));
-        }
+        Err(e) => Err(RetrievalError::ConversionError(e)),
     }
 }
 
