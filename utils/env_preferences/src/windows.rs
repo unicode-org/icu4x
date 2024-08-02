@@ -5,33 +5,29 @@
 use windows::{Globalization, System::UserProfile::GlobalizationPreferences};
 
 use crate::RetrievalError;
+
 pub fn get_locales() -> Result<Vec<String>, RetrievalError> {
     let mut locale_vec_str: Vec<String> = Vec::new();
-    let locale = GlobalizationPreferences::Languages();
+    let locale = GlobalizationPreferences::Languages()?;
 
-    match locale {
-        Ok(languages) => {
-            for i in 0..languages.Size().unwrap() {
-                let hstring = languages.GetAt(i).unwrap();
-                let string: String = hstring.to_string_lossy();
-                locale_vec_str.push(string);
-            }
-        }
-        Err(e) => return Err(RetrievalError::Other(e.to_string())),
+    for i in 0..locale.Size()? {
+        let hstring = locale.GetAt(i)?;
+        let string = hstring.to_string_lossy();
+        locale_vec_str.push(string);
     }
     Ok(locale_vec_str)
 }
 
-pub fn get_system_calendars() -> Vec<(String, String)> {
-    let calendar = Globalization::Calendar::new().unwrap();
-    let system_calendar = Globalization::Calendar::GetCalendarSystem(&calendar).unwrap();
+pub fn get_system_calendars() -> Result<Vec<(String, String)>, RetrievalError> {
+    let calendar = Globalization::Calendar::new()?;
+    let system_calendar = Globalization::Calendar::GetCalendarSystem(&calendar)?;
     let calendar_type: String = system_calendar.to_string();
-    let locale_list: Vec<String> = get_locales().unwrap();
+    let locale_list: Vec<String> = get_locales()?;
 
     let result: Vec<(String, String)> = locale_list
         .into_iter()
         .map(|locale| (locale, calendar_type.clone()))
         .collect();
 
-    result
+    Ok(result)
 }

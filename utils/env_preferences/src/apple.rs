@@ -36,11 +36,16 @@ pub fn get_locales() -> Result<Vec<String>, RetrievalError> {
 
                 if !lang_str.is_null() {
                     // SAFETY: A valid `NULL` terminator is present which is a requirement of `from_ptr`
-                    let lang_rust_str = unsafe { CStr::from_ptr(lang_str) }
-                        .to_str()
-                        .unwrap()
-                        .to_string();
-                    languages.push(lang_rust_str);
+                    let lang_rust_str_res: Result<&str, std::str::Utf8Error> =
+                        unsafe { CStr::from_ptr(lang_str) }.to_str();
+                    match lang_rust_str_res {
+                        Ok(lang_rust_str) => {
+                            languages.push(lang_rust_str.to_string());
+                        }
+                        Err(e) => {
+                            return Err(RetrievalError::ConversionError(e));
+                        }
+                    }
                 } else {
                     return Err(RetrievalError::NullPointer);
                 }
@@ -101,10 +106,15 @@ pub fn get_system_calendars() -> Result<Vec<(String, String)>, RetrievalError> {
 
             if !locale_cstr.is_null() {
                 // SAFETY: A valid `NULL` terminator is present which is a requirement of `from_ptr`
-                calendar_locale_str = unsafe { CStr::from_ptr(locale_cstr) }
-                    .to_str()
-                    .unwrap_or("Unknown")
-                    .to_string();
+                let calendar_rust_str_res = unsafe { CStr::from_ptr(locale_cstr) }.to_str();
+                match calendar_rust_str_res {
+                    Ok(calendar_rust_str) => {
+                        calendar_locale_str = calendar_rust_str.to_string();
+                    }
+                    Err(e) => {
+                        return Err(RetrievalError::ConversionError(e));
+                    }
+                }
             }
             // SAFETY: Releases the locale object which was retained
             unsafe { CFRelease(locale as _) };
@@ -119,10 +129,15 @@ pub fn get_system_calendars() -> Result<Vec<(String, String)>, RetrievalError> {
 
             if !identifier_cstr.is_null() {
                 // SAFETY: A valid `NULL` terminator is present which is a requirement of `from_ptr`
-                calendar_identifier_str = unsafe { CStr::from_ptr(identifier_cstr) }
-                    .to_str()
-                    .unwrap()
-                    .to_string();
+                let identifier_str_res = unsafe { CStr::from_ptr(identifier_cstr) }.to_str();
+                match identifier_str_res {
+                    Ok(identifier_str) => {
+                        calendar_identifier_str = identifier_str.to_string();
+                    }
+                    Err(e) => {
+                        return Err(RetrievalError::ConversionError(e));
+                    }
+                }
             }
         } else {
             return Err(RetrievalError::NullPointer);
