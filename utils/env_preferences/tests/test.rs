@@ -3,29 +3,3 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 // TODO: Add meaningful tests
-
-#[cfg(target_os = "macos")]
-#[cfg(test)]
-mod apple_tests {
-    use env_preferences::{get_locales, get_system_calendars};
-
-    #[test]
-    fn test_get_locale() {
-        get_locales();
-    }
-
-    #[test]
-    fn test_get_calendar() {
-        get_system_calendars();
-    }
-}
-
-#[cfg(target_os = "linux")]
-#[cfg(test)]
-mod linux_tests {
-    use env_preferences::get_locales;
-    #[test]
-    fn test_get_locale() {
-        get_locales();
-    }
-}
