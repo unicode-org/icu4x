@@ -2,10 +2,22 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::{borrow::Cow, collections::HashMap, ffi::CStr, ptr};
+use std::{collections::HashMap, ffi::CStr, ptr};
 
 use libc::{setlocale, LC_ALL, LC_TIME};
 use std::str::FromStr;
+
+#[derive(Debug)]
+pub enum LinuxError {
+    /// Received NULL Locale
+    NullLocale,
+
+    /// Error converting into `&CStr` to `&str`
+    ConversionError,
+
+    /// Error whenever retrived locale of categories other than defined in the `LocaleCategory`
+    UnknownCategory, 
+}
 
 #[derive(Hash, Eq, PartialEq, Debug)]
 pub enum LocaleCategory {
@@ -26,7 +38,7 @@ pub enum LocaleCategory {
 }
 
 impl FromStr for LocaleCategory {
-    type Err = ();
+    type Err = LinuxError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
@@ -43,12 +55,12 @@ impl FromStr for LocaleCategory {
             "LC_MEASUREMENT" => Ok(Self::Measurement),
             "LC_IDENTIFICATION" => Ok(Self::Identification),
             "LC_ALL" => Ok(Self::All),
-            _ => Ok(Self::Other(s.to_string())),
+            _ => Err(LinuxError::UnknownCategory),
         }
     }
 }
 
-pub fn get_locales() -> HashMap<LocaleCategory, String> {
+pub fn get_locales() -> Result<HashMap<LocaleCategory, String>, LinuxError> {
     let mut locale_map = HashMap::new();
 
     // SAFETY: Safety is ensured because we pass a `NULL` pointer and retrieve the locale there is
@@ -56,8 +68,7 @@ pub fn get_locales() -> HashMap<LocaleCategory, String> {
     let locales_ptr = unsafe { setlocale(LC_ALL, ptr::null()) };
 
     if locales_ptr.is_null() {
-        locale_map.insert(LocaleCategory::All, "C".to_string());
-        return locale_map;
+        return Err(LinuxError::NullLocale);
     }
 
     // SAFETY: A valid `NULL` terminator is present which is a requirement of `from_ptr`
@@ -79,12 +90,17 @@ pub fn get_locales() -> HashMap<LocaleCategory, String> {
                 }
             }
         }
+
+        return Ok(locale_map);
     }
 
-    locale_map
+    Err(LinuxError::ConversionError)
 }
 
-pub fn get_system_calendars() -> impl Iterator<Item = (Cow<'static, str>, Cow<'static, str>)> {
+/// This only returns the calendar locale,`gnome-calendar` is the default calendar in linux
+/// The locale returned is for `Gregorian` calendar
+/// Related issue: https://gitlab.gnome.org/GNOME/gnome-calendar/-/issues/998
+pub fn get_system_calendars() -> Result<String, LinuxError> {
     // SAFETY: Safety is ensured because we pass a `NULL` pointer and retrieve the locale there is
     // no subsequent calls for `setlocale` which could change the locale of this particular thread
     let locale_ptr = unsafe { setlocale(LC_TIME, ptr::null()) };
@@ -96,15 +112,12 @@ pub fn get_system_calendars() -> impl Iterator<Item = (Cow<'static, str>, Cow<'s
         if let Ok(str_slice) = c_str.to_str() {
             // `gnome-calendar` is the default calendar and it only supports `Gregorian`.
             // Related issue: https://gitlab.gnome.org/GNOME/gnome-calendar/-/issues/998
-            return Some((
-                Cow::Owned(str_slice.to_string()),
-                Cow::Borrowed("Gregorian"),
-            ))
-            .into_iter()
-            .chain(None);
+            let calendar_locale = str_slice.to_string();
+            return Ok(calendar_locale);
+        }
+        else {
+            return Err(LinuxError::ConversionError);
         }
     }
-    Some((Cow::Borrowed("C"), Cow::Borrowed("Gregorian")))
-        .into_iter()
-        .chain(None)
+    Err(LinuxError::NullLocale)
 }
