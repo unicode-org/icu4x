@@ -61,29 +61,29 @@ pub fn get_locales() -> Result<HashMap<LocaleCategory, String>, RetrievalError> 
     }
 
     // SAFETY: A valid `NULL` terminator is present which is a requirement of `from_ptr`
-    let locales_cstr = unsafe { CStr::from_ptr(locales_ptr) };
-
-    if let Ok(locales_str) = locales_cstr.to_str() {
-        let locale_pairs = locales_str.split(';');
-
-        for locale_pair in locale_pairs {
-            let mut parts = locale_pair.split('=');
-            if let Some(value) = parts.next() {
-                if let Some(key) = parts.next() {
-                    if let Ok(category) = LocaleCategory::from_str(value) {
-                        locale_map.insert(category, key.to_string());
+    let locales_cstr_res = unsafe { CStr::from_ptr(locales_ptr) }.to_str();
+    match locales_cstr_res {
+        Ok(locales_str) => {
+            let locale_pairs = locales_str.split(';');
+            for locale_pair in locale_pairs {
+                let mut parts = locale_pair.split('=');
+                if let Some(value) = parts.next() {
+                    if let Some(key) = parts.next() {
+                        if let Ok(category) = LocaleCategory::from_str(value) {
+                            locale_map.insert(category, key.to_string());
+                        }
+                    } else {
+                        // Handle case where only a single locale
+                        locale_map.insert(LocaleCategory::All, value.to_string());
                     }
-                } else {
-                    // Handle case where only a single locale
-                    locale_map.insert(LocaleCategory::All, value.to_string());
                 }
             }
+            return Ok(locale_map);
         }
-
-        return Ok(locale_map);
+        Err(e) => {
+            return Err(RetrievalError::ConversionError(e));
+        }
     }
-
-    Err(RetrievalError::ConversionError)
 }
 
 /// This only returns the calendar locale,`gnome-calendar` is the default calendar in linux
@@ -96,15 +96,15 @@ pub fn get_system_calendars() -> Result<String, RetrievalError> {
 
     if !locale_ptr.is_null() {
         // SAFETY: A valid `NULL` terminator is present which is a requirement of `from_ptr`
-        let c_str = unsafe { CStr::from_ptr(locale_ptr) };
-
-        if let Ok(str_slice) = c_str.to_str() {
-            // `gnome-calendar` is the default calendar and it only supports `Gregorian`.
-            // Related issue: https://gitlab.gnome.org/GNOME/gnome-calendar/-/issues/998
-            let calendar_locale = str_slice.to_string();
-            return Ok(calendar_locale);
-        } else {
-            return Err(RetrievalError::ConversionError);
+        let rust_str_res = unsafe { CStr::from_ptr(locale_ptr) }.to_str();
+        match rust_str_res {
+            Ok(rust_str) => {
+                let calendar_locale = rust_str.to_string();
+                return Ok(calendar_locale);
+            }
+            Err(e) => {
+                return Err(RetrievalError::ConversionError(e));
+            }
         }
     }
     Err(RetrievalError::NullLocale)
