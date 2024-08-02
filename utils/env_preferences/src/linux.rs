@@ -16,7 +16,7 @@ pub enum LinuxError {
     ConversionError,
 
     /// Error whenever retrived locale of categories other than defined in the `LocaleCategory`
-    UnknownCategory, 
+    UnknownCategory,
 }
 
 #[derive(Hash, Eq, PartialEq, Debug)]
@@ -77,16 +77,16 @@ pub fn get_locales() -> Result<HashMap<LocaleCategory, String>, LinuxError> {
     if let Ok(locales_str) = locales_cstr.to_str() {
         let locale_pairs = locales_str.split(';');
 
-        // To handle cases in case a single locale is returned or a list of locale
-        if locale_pairs.clone().count() == 1 {
-            locale_map.insert(LocaleCategory::All, "C".to_string());
-        } else {
-            for locale_pair in locale_pairs {
-                let mut parts = locale_pair.split('=');
-                if let (Some(key), Some(value)) = (parts.next(), parts.next()) {
-                    if let Ok(category) = LocaleCategory::from_str(key) {
-                        locale_map.insert(category, value.to_string());
+        for locale_pair in locale_pairs {
+            let mut parts = locale_pair.split('=');
+            if let Some(value) = parts.next() {
+                if let Some(key) = parts.next() {
+                    if let Ok(category) = LocaleCategory::from_str(value) {
+                        locale_map.insert(category, key.to_string());
                     }
+                } else {
+                    // Handle case where only a single locale
+                    locale_map.insert(LocaleCategory::All, value.to_string());
                 }
             }
         }
@@ -114,8 +114,7 @@ pub fn get_system_calendars() -> Result<String, LinuxError> {
             // Related issue: https://gitlab.gnome.org/GNOME/gnome-calendar/-/issues/998
             let calendar_locale = str_slice.to_string();
             return Ok(calendar_locale);
-        }
-        else {
+        } else {
             return Err(LinuxError::ConversionError);
         }
     }
