@@ -11,7 +11,9 @@ use core_foundation_sys::{
 };
 use std::ffi::CStr;
 
-pub fn get_locales() -> Vec<String> {
+use crate::RetrievalError;
+
+pub fn get_locales() -> Result<Vec<String>, RetrievalError> {
     let mut languages: Vec<String> = Vec::new();
 
     // SAFETY: The call to `CFLocaleCopyPreferredLanguages` returns an immutable reference to `CFArray` which is owned by us
@@ -36,31 +38,34 @@ pub fn get_locales() -> Vec<String> {
                     // SAFETY: A valid `NULL` terminator is present which is a requirement of `from_ptr`
                     let lang_rust_str = unsafe { CStr::from_ptr(lang_str) }
                         .to_str()
-                        .unwrap_or("Unknown")
+                        .unwrap()
                         .to_string();
                     languages.push(lang_rust_str);
+                } else {
+                    return Err(RetrievalError::NullPointer);
                 }
 
                 // TODO: In case `lang_str` is `NULL` try retrieving the string using `CFStringGetCString`
                 // Ref: https://developer.apple.com/documentation/corefoundation/1542721-cfstringgetcstring?language=objc
                 // Note: Not optimal and may give inconsistent results if buffer is not large enough, must add sanity checks
                 // whenever implemented
+            } else {
+                return Err(RetrievalError::NullPointer);
             }
         }
+    } else {
+        // No need to release memory for `locale_carr_ref` since it is NULL
+        return Err(RetrievalError::NullLocale);
     }
     // Release for memory
     unsafe {
         CFRelease(locale_carr_ref as _);
     }
 
-    // Defaulting to `und`
-    if languages.is_empty() {
-        languages.push(String::from("und"));
-    }
-    languages
+    Ok(languages)
 }
 
-pub fn get_system_calendars() -> Vec<(String, String)> {
+pub fn get_system_calendars() -> Result<Vec<(String, String)>, RetrievalError> {
     let mut calendars = Vec::new();
     let mut calendar_locale_str = String::new();
     let mut calendar_identifier_str = String::new();
@@ -101,9 +106,10 @@ pub fn get_system_calendars() -> Vec<(String, String)> {
                     .unwrap_or("Unknown")
                     .to_string();
             }
-
             // SAFETY: Releases the locale object which was retained
             unsafe { CFRelease(locale as _) };
+        } else {
+            return Err(RetrievalError::NullLocale);
         }
 
         if !identifier.is_null() {
@@ -115,20 +121,20 @@ pub fn get_system_calendars() -> Vec<(String, String)> {
                 // SAFETY: A valid `NULL` terminator is present which is a requirement of `from_ptr`
                 calendar_identifier_str = unsafe { CStr::from_ptr(identifier_cstr) }
                     .to_str()
-                    .unwrap_or("Unknown")
+                    .unwrap()
                     .to_string();
             }
+        } else {
+            return Err(RetrievalError::NullPointer);
         }
 
         // SAFETY: Release the calendar when done to avoid memory leaks
         unsafe { CFRelease(calendar as _) };
 
         calendars.push((calendar_locale_str, calendar_identifier_str));
+    } else {
+        return Err(RetrievalError::NullCalendar);
     }
 
-    if calendars.is_empty() {
-        calendars.push((String::from("und"), String::from("Gregorian")));
-    }
-
-    calendars
+    Ok(calendars)
 }
