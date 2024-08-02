@@ -34,3 +34,9 @@ impl From<windows::core::Error> for RetrievalError {
         Self::Windows(input)
     }
 }
+
+impl From<Utf8Error> for RetrievalError {
+    fn from(input: Utf8Error) -> Self {
+        Self::ConversionError(input)
+    }
+}
