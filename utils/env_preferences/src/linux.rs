@@ -66,7 +66,7 @@ pub fn get_locales() -> Result<HashMap<LocaleCategory, String>, RetrievalError> 
 
     if let Ok(locales_str) = locales_cstr.to_str() {
         let locale_pairs = locales_str.split(';');
-    
+
         for locale_pair in locale_pairs {
             let mut parts = locale_pair.split('=');
             if let Some(value) = parts.next() {
@@ -80,17 +80,16 @@ pub fn get_locales() -> Result<HashMap<LocaleCategory, String>, RetrievalError> 
                 }
             }
         }
-    
+
         return Ok(locale_map);
     }
-    
 
     Err(RetrievalError::ConversionError)
 }
 
 /// This only returns the calendar locale,`gnome-calendar` is the default calendar in linux
 /// The locale returned is for `Gregorian` calendar
-/// Related issue: https://gitlab.gnome.org/GNOME/gnome-calendar/-/issues/998
+/// Related issue: `<https://gitlab.gnome.org/GNOME/gnome-calendar/-/issues/998>`
 pub fn get_system_calendars() -> Result<String, RetrievalError> {
     // SAFETY: Safety is ensured because we pass a `NULL` pointer and retrieve the locale there is
     // no subsequent calls for `setlocale` which could change the locale of this particular thread

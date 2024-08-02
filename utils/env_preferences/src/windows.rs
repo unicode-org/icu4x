@@ -3,7 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use windows::{Globalization, System::UserProfile::GlobalizationPreferences};
-pub fn get_locales() -> Vec<String> {
+
+use crate::RetrievalError;
+pub fn get_locales() -> Result<Vec<String>, RetrievalError> {
     let mut locale_vec_str: Vec<String> = Vec::new();
     let locale = GlobalizationPreferences::Languages();
 
@@ -15,16 +17,16 @@ pub fn get_locales() -> Vec<String> {
                 locale_vec_str.push(string);
             }
         }
-        Err(_e) => return Vec::new(),
+        Err(e) => return Err(RetrievalError::Other(e.to_string())),
     }
-    locale_vec_str
+    Ok(locale_vec_str)
 }
 
 pub fn get_system_calendars() -> Vec<(String, String)> {
     let calendar = Globalization::Calendar::new().unwrap();
     let system_calendar = Globalization::Calendar::GetCalendarSystem(&calendar).unwrap();
     let calendar_type: String = system_calendar.to_string();
-    let locale_list: Vec<String> = get_locales();
+    let locale_list: Vec<String> = get_locales().unwrap();
 
     let result: Vec<(String, String)> = locale_list
         .into_iter()

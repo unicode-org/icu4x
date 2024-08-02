@@ -4,7 +4,6 @@
 
 //! Retrieval of system locales and preferences.
 
-
 mod error;
 pub use error::RetrievalError;
 
