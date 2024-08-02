@@ -1,8 +1,8 @@
-import { CustomTimeZone } from "../lib/CustomTimeZone.mjs"
-import { DataProvider } from "../lib/DataProvider.mjs"
-import { GregorianZonedDateTimeFormatter } from "../lib/GregorianZonedDateTimeFormatter.mjs"
-import { IsoDateTime } from "../lib/IsoDateTime.mjs"
-import { Locale } from "../lib/Locale.mjs"
+import { CustomTimeZone } from "icu4x"
+import { DataProvider } from "icu4x"
+import { GregorianZonedDateTimeFormatter } from "icu4x"
+import { IsoDateTime } from "icu4x"
+import { Locale } from "icu4x"
 export function formatIsoDatetimeWithCustomTimeZone() {
     var terminusArgs = arguments;
     return (function (...args) { return args[0].formatIsoDatetimeWithCustomTimeZone(...args.slice(1)) }).apply(

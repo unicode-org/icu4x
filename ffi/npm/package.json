@@ -4,7 +4,8 @@
   "description": "ICU4X JavaScript bindings via WebAssembly",
   "main": "lib/index.mjs",
   "exports": {
-    ".": "./lib/index.mjs"
+    ".": "./lib/index.mjs",
+    "./demo": "./demo/index.mjs"
   },
   "type": "module",
   "directories": {

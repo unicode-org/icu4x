@@ -1,7 +1,7 @@
-import { DataProvider } from "../lib/DataProvider.mjs"
-import { GregorianDateTimeFormatter } from "../lib/GregorianDateTimeFormatter.mjs"
-import { IsoDateTime } from "../lib/IsoDateTime.mjs"
-import { Locale } from "../lib/Locale.mjs"
+import { DataProvider } from "icu4x"
+import { GregorianDateTimeFormatter } from "icu4x"
+import { IsoDateTime } from "icu4x"
+import { Locale } from "icu4x"
 export function formatIsoDatetime() {
     var terminusArgs = arguments;
     return (function (...args) { return args[0].formatIsoDatetime(...args.slice(1)) }).apply(

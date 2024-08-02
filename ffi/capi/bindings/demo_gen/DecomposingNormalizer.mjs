@@ -1,5 +1,5 @@
-import { DataProvider } from "../lib/DataProvider.mjs"
-import { DecomposingNormalizer } from "../lib/DecomposingNormalizer.mjs"
+import { DataProvider } from "icu4x"
+import { DecomposingNormalizer } from "icu4x"
 export function normalize() {
     var terminusArgs = arguments;
     return (function (...args) { return args[0].normalize(...args.slice(1)) }).apply(

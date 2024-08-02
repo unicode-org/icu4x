@@ -1,4 +1,4 @@
-import { Locale } from "../lib/Locale.mjs"
+import { Locale } from "icu4x"
 export function basename(name: string);
 export function getUnicodeExtension(name: string, s: string);
 export function language(name: string);

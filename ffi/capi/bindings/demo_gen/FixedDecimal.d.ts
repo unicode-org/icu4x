@@ -1,2 +1,2 @@
-import { FixedDecimal } from "../lib/FixedDecimal.mjs"
+import { FixedDecimal } from "icu4x"
 export function toString(f: number);

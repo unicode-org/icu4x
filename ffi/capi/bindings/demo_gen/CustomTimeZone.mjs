@@ -1,4 +1,4 @@
-import { CustomTimeZone } from "../lib/CustomTimeZone.mjs"
+import { CustomTimeZone } from "icu4x"
 export function timeZoneId() {
     var terminusArgs = arguments;
     return (function (...args) { return args[0].timeZoneId }).apply(

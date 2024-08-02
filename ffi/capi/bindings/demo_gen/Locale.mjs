@@ -1,4 +1,4 @@
-import { Locale } from "../lib/Locale.mjs"
+import { Locale } from "icu4x"
 export function basename() {
     var terminusArgs = arguments;
     return (function (...args) { return args[0].basename }).apply(

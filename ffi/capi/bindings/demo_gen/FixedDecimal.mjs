@@ -1,4 +1,4 @@
-import { FixedDecimal } from "../lib/FixedDecimal.mjs"
+import { FixedDecimal } from "icu4x"
 export function toString() {
     var terminusArgs = arguments;
     return (function (...args) { return args[0].toString(...args.slice(1)) }).apply(

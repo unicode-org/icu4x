@@ -1,6 +1,6 @@
-import { DataProvider } from "../lib/DataProvider.mjs"
-import { ListFormatter } from "../lib/ListFormatter.mjs"
-import { Locale } from "../lib/Locale.mjs"
+import { DataProvider } from "icu4x"
+import { ListFormatter } from "icu4x"
+import { Locale } from "icu4x"
 export function format() {
     var terminusArgs = arguments;
     return (function (...args) { return args[0].format(...args.slice(1)) }).apply(

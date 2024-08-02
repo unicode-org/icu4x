@@ -1,7 +1,7 @@
-import { Calendar } from "../lib/Calendar.mjs"
-import { DataProvider } from "../lib/DataProvider.mjs"
-import { DateTime } from "../lib/DateTime.mjs"
-import { Locale } from "../lib/Locale.mjs"
+import { Calendar } from "icu4x"
+import { DataProvider } from "icu4x"
+import { DateTime } from "icu4x"
+import { Locale } from "icu4x"
 export function monthCode() {
     var terminusArgs = arguments;
     return (function (...args) { return args[0].monthCode }).apply(

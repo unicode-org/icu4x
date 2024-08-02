@@ -1,5 +1,5 @@
-import { DataProvider } from "../lib/DataProvider.mjs"
-import { DisplayNamesOptions } from "./js/DisplayNamesOptions.mjs"
-import { Locale } from "../lib/Locale.mjs"
-import { LocaleDisplayNamesFormatter } from "../lib/LocaleDisplayNamesFormatter.mjs"
+import { DataProvider } from "icu4x"
+import { DisplayNamesOptions } from "icu4x"
+import { Locale } from "icu4x"
+import { LocaleDisplayNamesFormatter } from "icu4x"
 export function of(name: string, style: DisplayNamesStyle, fallback: DisplayNamesFallback, language_display: LanguageDisplay, name: string);

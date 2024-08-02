@@ -1,5 +1,5 @@
-import { ComposingNormalizer } from "../lib/ComposingNormalizer.mjs"
-import { DataProvider } from "../lib/DataProvider.mjs"
+import { ComposingNormalizer } from "icu4x"
+import { DataProvider } from "icu4x"
 export function normalize() {
     var terminusArgs = arguments;
     return (function (...args) { return args[0].normalize(...args.slice(1)) }).apply(

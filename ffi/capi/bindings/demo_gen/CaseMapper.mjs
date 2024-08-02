@@ -1,7 +1,7 @@
-import { CaseMapper } from "../lib/CaseMapper.mjs"
-import { DataProvider } from "../lib/DataProvider.mjs"
-import { Locale } from "../lib/Locale.mjs"
-import { TitlecaseOptions } from "./js/TitlecaseOptions.mjs"
+import { CaseMapper } from "icu4x"
+import { DataProvider } from "icu4x"
+import { Locale } from "icu4x"
+import { TitlecaseOptions } from "icu4x"
 export function lowercase() {
     var terminusArgs = arguments;
     return (function (...args) { return args[0].lowercase(...args.slice(1)) }).apply(

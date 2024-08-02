@@ -1,6 +1,6 @@
-import { DataProvider } from "../lib/DataProvider.mjs"
-import { Locale } from "../lib/Locale.mjs"
-import { RegionDisplayNames } from "../lib/RegionDisplayNames.mjs"
+import { DataProvider } from "icu4x"
+import { Locale } from "icu4x"
+import { RegionDisplayNames } from "icu4x"
 export function of() {
     var terminusArgs = arguments;
     return (function (...args) { return args[0].of(...args.slice(1)) }).apply(

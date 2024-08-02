@@ -1,7 +1,7 @@
-import { DataProvider } from "../lib/DataProvider.mjs"
-import { DisplayNamesOptions } from "./js/DisplayNamesOptions.mjs"
-import { Locale } from "../lib/Locale.mjs"
-import { LocaleDisplayNamesFormatter } from "../lib/LocaleDisplayNamesFormatter.mjs"
+import { DataProvider } from "icu4x"
+import { DisplayNamesOptions } from "icu4x"
+import { Locale } from "icu4x"
+import { LocaleDisplayNamesFormatter } from "icu4x"
 export function of() {
     var terminusArgs = arguments;
     return (function (...args) { return args[0].of(...args.slice(1)) }).apply(

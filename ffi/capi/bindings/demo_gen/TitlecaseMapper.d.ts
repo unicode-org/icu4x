@@ -1,5 +1,5 @@
-import { DataProvider } from "../lib/DataProvider.mjs"
-import { Locale } from "../lib/Locale.mjs"
-import { TitlecaseMapper } from "../lib/TitlecaseMapper.mjs"
-import { TitlecaseOptions } from "./js/TitlecaseOptions.mjs"
+import { DataProvider } from "icu4x"
+import { Locale } from "icu4x"
+import { TitlecaseMapper } from "icu4x"
+import { TitlecaseOptions } from "icu4x"
 export function titlecaseSegment(s: string, name: string, leading_adjustment: LeadingAdjustment, trailing_case: TrailingCase);

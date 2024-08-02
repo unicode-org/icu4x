@@ -1,5 +1,5 @@
-import { DataProvider } from "../lib/DataProvider.mjs"
-import { TimeZoneIdMapperWithFastCanonicalization } from "../lib/TimeZoneIdMapperWithFastCanonicalization.mjs"
+import { DataProvider } from "icu4x"
+import { TimeZoneIdMapperWithFastCanonicalization } from "icu4x"
 export function canonicalizeIana() {
     var terminusArgs = arguments;
     return (function (...args) { return args[0].canonicalizeIana(...args.slice(1)) }).apply(
