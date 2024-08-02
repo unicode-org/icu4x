@@ -1,3 +1,4 @@
+export * as lib from "icu4x";
 import * as CaseMapperDemo from "./CaseMapper.mjs";
 export * as CaseMapperDemo from "./CaseMapper.mjs";
 import * as TitlecaseMapperDemo from "./TitlecaseMapper.mjs";
