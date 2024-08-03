@@ -103,9 +103,7 @@ fn parse_kv_annotation<'a>(cursor: &mut Cursor<'a>) -> ParserResult<Annotation<'
     // Parse AnnotationKey.
     let annotation_key = parse_annotation_key(cursor)?;
     assert_syntax!(
-        is_annotation_key_value_separator(
-            cursor.next_or(ParseError::AnnotationKeyValueSeparator)?
-        ),
+        is_annotation_key_value_separator(cursor.next_or(ParseError::AnnotationKeyValueSeparator)?),
         AnnotationKeyValueSeparator,
     );
 
