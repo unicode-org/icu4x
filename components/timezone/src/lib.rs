@@ -129,6 +129,7 @@ extern crate alloc;
 
 mod error;
 mod ids;
+mod ixdtf;
 mod metazone;
 pub mod provider;
 mod time_zone;

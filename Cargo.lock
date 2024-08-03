@@ -1661,6 +1661,7 @@ dependencies = [
  "icu_calendar",
  "icu_provider",
  "icu_timezone_data",
+ "ixdtf",
  "serde",
  "tinystr",
  "zerotrie",
