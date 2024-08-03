@@ -727,6 +727,7 @@ name = "env_preferences"
 version = "1.5.0"
 dependencies = [
  "core-foundation-sys",
+ "icu_locale",
  "libc",
  "windows",
 ]

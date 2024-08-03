@@ -29,5 +29,7 @@ features = [
     "Globalization_DateTimeFormatting",
     "Win32",
     "Win32_Globalization"
-
 ]
+
+[dev-dependencies]
+icu_locale = { path = "../../components/locale" }
