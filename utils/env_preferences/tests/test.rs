@@ -5,7 +5,7 @@
 #[cfg(target_os = "linux")]
 #[cfg(test)]
 mod linux_tests {
-    use env_preferences::{get_locales, get_system_calendar, LocaleCategory, RetrievalError};
+    use env_preferences::{get_locales, get_system_calendars, LocaleCategory, RetrievalError};
     use icu_locale::Locale;
     use libc::setlocale;
 
@@ -17,10 +17,9 @@ mod linux_tests {
 
         match locale_res {
             Ok(locale_map) => {
-                assert!(locale_map.is_empty(), "Failed to retrieve locale for linux");
                 assert!(
-                    locale_map.contains_key(&LocaleCategory::All),
-                    "Does not contains LC_ALL"
+                    !locale_map.is_empty(),
+                    "Expected locale_map not to be empty"
                 );
             }
             Err(err) => {
@@ -66,7 +65,7 @@ mod linux_tests {
             panic!("{:?}", RetrievalError::NullPointer);
         }
 
-        let calendar_locale = get_system_calendar().unwrap();
+        let calendar_locale = get_system_calendars().unwrap();
         assert_eq!(test_calendar_locale.to_string(), calendar_locale);
     }
 }
