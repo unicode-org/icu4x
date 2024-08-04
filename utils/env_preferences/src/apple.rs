@@ -28,6 +28,7 @@ pub fn get_locales() -> Result<Vec<String>, RetrievalError> {
     if !locale_carr_ref.is_null() {
         // SAFETY: The call to `CFArrayGetCount` is only made when is `locale_carr_ref` is not `NULL`
         let count = unsafe { CFArrayGetCount(locale_carr_ref as _) };
+
         for i in 0..count {
             // SAFETY: The call to `CFArrayGetValueAtIndex` is safe because we are iterating from 0 to count (`CFArrayGetCount`) which
             // in itself will always be greater than 0 and less than count ensuring we will not get "out of bounds" error
@@ -43,10 +44,19 @@ pub fn get_locales() -> Result<Vec<String>, RetrievalError> {
                 if !lang_str.is_null() {
                     // SAFETY: A valid `NULL` terminator is present which is a requirement of `from_ptr`
                     let lang_rust_str = unsafe { CStr::from_ptr(lang_str) }.to_str()?;
+
                     languages.push(lang_rust_str.to_string());
                 } else {
+                    // SAFETY: It returns length of the string, from above conditional statement we ensure
+                    // that the `lang_ptr` is not NULL thus making it safe to call
                     let length = unsafe { CFStringGetLength(lang_ptr as CFStringRef) as usize };
+
+                    // Needed to create a bigger size buffer otherwise will get corrupted output
                     let mut c_str_buf = vec![0; length * 4];
+
+                    // SAFETY: Safety is ensured by following points
+                    // 1. `lang_ptr` is not NULL, checked through conditional statement
+                    // 2. `c_str_buf` is large enough and in scope after this call
                     unsafe {
                         CFStringGetCString(
                             lang_ptr as CFStringRef,
@@ -58,13 +68,13 @@ pub fn get_locales() -> Result<Vec<String>, RetrievalError> {
 
                     let c_str_buf_u8: Vec<u8> = c_str_buf.iter().map(|&c| c as u8).collect();
                     let locale_converted = String::from_utf8_lossy(&c_str_buf_u8);
-                    languages.push(locale_converted.to_string());
+                    let locale_str = locale_converted
+                        .to_string()
+                        .chars()
+                        .filter(|&c| c != '\0')
+                        .collect();
+                    languages.push(locale_str);
                 }
-
-                // TODO: In case `lang_str` is `NULL` try retrieving the string using `CFStringGetCString`
-                // Ref: https://developer.apple.com/documentation/corefoundation/1542721-cfstringgetcstring?language=objc
-                // Note: Not optimal and may give inconsistent results if buffer is not large enough, must add sanity checks
-                // whenever implemented
             } else {
                 return Err(RetrievalError::Other(format!(
                     "lang_ptr is null at index {} out of {}",
@@ -121,8 +131,10 @@ pub fn get_system_calendars() -> Result<Vec<(String, String)>, RetrievalError> {
             if !locale_cstr.is_null() {
                 // SAFETY: A valid `NULL` terminator is present which is a requirement of `from_ptr`
                 let calendar_rust_str = unsafe { CStr::from_ptr(locale_cstr) }.to_str()?;
+
                 calendar_locale_str = calendar_rust_str.to_string();
             }
+
             // SAFETY: Releases the locale object which was retained
             unsafe { CFRelease(locale as _) };
         } else {

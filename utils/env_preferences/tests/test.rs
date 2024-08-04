@@ -93,8 +93,7 @@ mod macos_test {
     fn test_converting_locales() {
         let locales = get_locales().unwrap();
         for locale in locales {
-            #[allow(unused_variables)]
-            let locale_converted: Locale = locale.parse().unwrap();
+            let _loc: Locale = locale.parse().unwrap();
         }
     }
 
@@ -102,8 +101,8 @@ mod macos_test {
     fn test_calendar() {
         let calendar_res = get_system_calendars().unwrap();
         for calendar in calendar_res {
-            println!("{}\n", calendar.0);
-            println!("{}\n", calendar.1);
+            assert!(!calendar.0.is_empty(), "Couldn't retreive calendar locale");
+            assert!(!calendar.1.is_empty(), "Couldn't retreive calendar");
         }
     }
 }
