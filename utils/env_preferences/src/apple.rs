@@ -39,7 +39,7 @@ pub fn get_locales() -> Result<Vec<String>, RetrievalError> {
                     let lang_rust_str = unsafe { CStr::from_ptr(lang_str) }.to_str()?;
                     languages.push(lang_rust_str.to_string());
                 } else {
-                    return Err(RetrievalError::NullPointer);
+                    return return Err(RetrievalError::Other(format!("lang_str is null at index {} out of {}", i, count)));
                 }
 
                 // TODO: In case `lang_str` is `NULL` try retrieving the string using `CFStringGetCString`
@@ -47,7 +47,7 @@ pub fn get_locales() -> Result<Vec<String>, RetrievalError> {
                 // Note: Not optimal and may give inconsistent results if buffer is not large enough, must add sanity checks
                 // whenever implemented
             } else {
-                return Err(RetrievalError::NullPtr);
+                return return Err(RetrievalError::Other(format!("lang_ptr is null at index {} out of {}", i, count)));
             }
         }
     } else {
