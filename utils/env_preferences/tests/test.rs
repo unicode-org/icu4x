@@ -17,8 +17,8 @@ mod linux_tests {
 
         match locale_res {
             Ok(locale_map) => {
-                assert_eq!(locale_map.is_empty(), false);
-                assert_eq!(locale_map.contains_key(&LocaleCategory::All), true);
+                assert!(locale_map.is_empty(), false);
+                assert!(locale_map.contains_key(&LocaleCategory::All), true);
             }
             Err(err) => {
                 panic!("{:?}", err)
