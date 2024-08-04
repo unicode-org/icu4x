@@ -1,6 +1,6 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
-// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE).
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[cfg(target_os = "linux")]
 #[cfg(test)]
@@ -30,10 +30,11 @@ mod linux_tests {
     #[test]
     fn test_converting() {
         let mut locale_res: std::collections::HashMap<LocaleCategory, String> = HashMap::new();
-        locale_res.insert(LocaleCategory::Address, "C.UTF-8".to_string());
         for locale in locale_res.into_values() {
             let parts: Vec<&str> = locale.split('.').collect();
 
+            // Skipping "C" and those ending with "UTF-8", as they cannot be converted
+            // into the locale
             if !parts.iter().any(|&part| part == "C")
                 && (parts.len() > 1 && parts[parts.len() - 1] != "UTF-8")
             {
