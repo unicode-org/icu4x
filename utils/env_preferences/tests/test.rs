@@ -30,7 +30,7 @@ mod linux_tests {
     }
 
     #[test]
-    fn test_converting() {
+    fn test_converting_locales() {
         let locale_res: std::collections::HashMap<LocaleCategory, String> = get_locales().unwrap();
         for locale in locale_res.into_values() {
             let parts: Vec<&str> = locale.split('.').collect();
@@ -68,5 +68,44 @@ mod linux_tests {
 
         let calendar_locale = get_system_calendar().unwrap();
         assert_eq!(test_calendar_locale.to_string(), calendar_locale);
+    }
+}
+
+#[cfg(target_os = "macos")]
+#[cfg(test)]
+mod macos_test {
+    use env_preferences::{get_locales, get_system_calendars};
+    use icu_locale::Locale;
+
+    #[test]
+    fn test_get_locales() {
+        let locales_res = get_locales();
+        match locales_res {
+            Ok(locales) => {
+                assert!(!locales.is_empty(), "Unable to retrieve locales for Apple")
+            }
+            Err(e) => {
+                panic!("{:?}", e)
+            }
+        }
+    }
+
+    #[test]
+    fn test_converting_locales() {
+        let locales = get_locales().unwrap();
+        for locale in locales {
+            #[allow(unused_variables)]
+            let locale_converted: Locale = locale.parse().unwrap();
+        }
+    }
+
+    #[test]
+    fn test_calendar() {
+        let calendar_res = get_system_calendars().unwrap();
+        for calendar in calendar_res {
+            #[allow(unused_variables)]
+            let calendar_locale: Locale = calendar.0.parse().unwrap();
+            assert!(!calendar.1.is_empty(), "Received empty calendar");
+        }
     }
 }
