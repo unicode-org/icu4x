@@ -103,7 +103,6 @@ mod macos_test {
         let calendar_res = get_system_calendars().unwrap();
         for calendar in calendar_res {
             #[allow(unused_variables)]
-            let calendar_locale: Locale = calendar.0.parse().unwrap();
             assert!(!calendar.1.is_empty(), "Received empty calendar");
         }
     }

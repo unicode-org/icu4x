@@ -47,7 +47,7 @@ pub fn get_locales() -> Result<Vec<String>, RetrievalError> {
                 // Note: Not optimal and may give inconsistent results if buffer is not large enough, must add sanity checks
                 // whenever implemented
             } else {
-                return Err(RetrievalError::NullPointer);
+                return Err(RetrievalError::NullPtr);
             }
         }
     } else {
