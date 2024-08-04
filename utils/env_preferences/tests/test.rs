@@ -5,14 +5,13 @@
 #[cfg(target_os = "linux")]
 #[cfg(test)]
 mod linux_tests {
-    use std::collections::HashMap;
-
-    use env_preferences::{get_locales, LocaleCategory};
+    use env_preferences::{get_locales, get_system_calendar, LocaleCategory, RetrievalError};
     use icu_locale::Locale;
+    use libc::setlocale;
 
-    #[test]
     // Testing fetching of locale, as `get_locales` fetches the locales for category
     // `LC_ALL`. For this category this should return non empty
+    #[test]
     fn test_get_locales() {
         let locale_res = get_locales();
 
@@ -29,7 +28,7 @@ mod linux_tests {
 
     #[test]
     fn test_converting() {
-        let mut locale_res: std::collections::HashMap<LocaleCategory, String> = HashMap::new();
+        let locale_res: std::collections::HashMap<LocaleCategory, String> = get_locales().unwrap();
         for locale in locale_res.into_values() {
             let parts: Vec<&str> = locale.split('.').collect();
 
@@ -45,6 +44,26 @@ mod linux_tests {
         }
     }
 
+    // This test contains unsafe code, the idea is to manually set a locale for `LC_TIME`,
+    // compare the result from `get_locales` and `get_system_calendar` they must be equal
     #[test]
-    fn test_calendar() {}
+    fn test_calendar() {
+        // Using "C" locale since it is the default, using any other locale like `en_IN` or `en_US`
+        // may work on some system and may not others depending on the availability
+        let test_calendar_locale = "C";
+        let locale_cstr =
+            std::ffi::CString::new(test_calendar_locale).expect("CString::new failed");
+
+        // SAFETY: This call is safe because any subsequent call to `setlocale` we pass a `NULL` locale
+        // to retrieve locale which does not sets the locale. The test locale `locale_cstr` is a CString
+        // nul terminated string for which we have the ownership
+        let tr = unsafe { setlocale(libc::LC_TIME, locale_cstr.as_ptr()) };
+
+        if tr.is_null() {
+            panic!("{:?}", RetrievalError::NullPointer);
+        }
+
+        let calendar_locale = get_system_calendar().unwrap();
+        assert_eq!(test_calendar_locale.to_string(), calendar_locale);
+    }
 }
