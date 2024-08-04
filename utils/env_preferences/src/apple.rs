@@ -96,7 +96,7 @@ pub fn get_locales() -> Result<Vec<String>, RetrievalError> {
 
 pub fn get_system_calendars() -> Result<Vec<(String, String)>, RetrievalError> {
     let mut calendars = Vec::new();
-    let mut calendar_locale_str = String::new();
+    let calendar_locale_str: String;
     let mut calendar_identifier_str = String::new();
 
     // SAFETY: The call to `CFCalendarCopyCurrent` returns a calendar object owned by us
@@ -133,6 +133,31 @@ pub fn get_system_calendars() -> Result<Vec<(String, String)>, RetrievalError> {
                 let calendar_rust_str = unsafe { CStr::from_ptr(locale_cstr) }.to_str()?;
 
                 calendar_locale_str = calendar_rust_str.to_string();
+            } else {
+                // SAFETY: It returns length of the string, from above conditional statement we ensure
+                // that the `lang_ptr` is not NULL thus making it safe to call
+                let length =
+                    unsafe { CFStringGetLength(locale_identifier as CFStringRef) as usize };
+                let mut c_str_buf = vec![0; length * 4];
+                // SAFETY: Safety is ensured by following points
+                // 1. `lang_ptr` is not NULL, checked through conditional statement
+                // 2. `c_str_buf` is large enough and in scope after this call
+                unsafe {
+                    CFStringGetCString(
+                        locale_identifier as CFStringRef,
+                        c_str_buf.as_mut_ptr(),
+                        c_str_buf.len() as CFIndex,
+                        kCFStringEncodingUTF8,
+                    );
+                }
+                let c_str_buf_u8: Vec<u8> = c_str_buf.iter().map(|&c| c as u8).collect();
+                let locale_converted = String::from_utf8_lossy(&c_str_buf_u8);
+                let calendar_locale = locale_converted
+                    .to_string()
+                    .chars()
+                    .filter(|&c| c != '\0')
+                    .collect();
+                calendar_locale_str = calendar_locale;
             }
 
             // SAFETY: Releases the locale object which was retained
@@ -152,7 +177,26 @@ pub fn get_system_calendars() -> Result<Vec<(String, String)>, RetrievalError> {
                 calendar_identifier_str = identifier_str.to_string();
             }
         } else {
-            return Err(RetrievalError::NullPointer);
+            let length = unsafe { CFStringGetLength(identifier as CFStringRef) as usize };
+            let mut c_str_buf = vec![0; length * 4];
+            // SAFETY: Safety is ensured by following points
+            // 1. `lang_ptr` is not NULL, checked through conditional statement
+            // 2. `c_str_buf` is large enough and in scope after this call
+            unsafe {
+                CFStringGetCString(
+                    identifier as CFStringRef,
+                    c_str_buf.as_mut_ptr(),
+                    c_str_buf.len() as CFIndex,
+                    kCFStringEncodingUTF8,
+                );
+            }
+            let c_str_buf_u8: Vec<u8> = c_str_buf.iter().map(|&c| c as u8).collect();
+            let locale_converted = String::from_utf8_lossy(&c_str_buf_u8);
+            calendar_identifier_str = locale_converted
+                .to_string()
+                .chars()
+                .filter(|&c| c != '\0')
+                .collect();
         }
 
         // SAFETY: Release the calendar when done to avoid memory leaks
