@@ -4,11 +4,15 @@
 
 use core_foundation_sys::{
     array::{CFArrayGetCount, CFArrayGetValueAtIndex},
-    base::{CFRelease, CFRetain},
+    base::{CFIndex, CFRelease, CFRetain},
     calendar::{CFCalendarCopyCurrent, CFCalendarCopyLocale, CFCalendarGetIdentifier},
     locale::{CFLocaleCopyPreferredLanguages, CFLocaleGetIdentifier},
-    string::CFStringGetCStringPtr,
+    string::{
+        kCFStringEncodingUTF8, CFStringGetCString, CFStringGetCStringPtr, CFStringGetLength,
+        CFStringRef,
+    },
 };
+use libc::c_char;
 use std::ffi::CStr;
 
 use crate::RetrievalError;
@@ -27,19 +31,34 @@ pub fn get_locales() -> Result<Vec<String>, RetrievalError> {
         for i in 0..count {
             // SAFETY: The call to `CFArrayGetValueAtIndex` is safe because we are iterating from 0 to count (`CFArrayGetCount`) which
             // in itself will always be greater than 0 and less than count ensuring we will not get "out of bounds" error
-            let lang_ptr = unsafe { CFArrayGetValueAtIndex(locale_carr_ref as _, i) };
+            let lang_ptr = unsafe { CFArrayGetValueAtIndex(locale_carr_ref, i) };
 
             if !lang_ptr.is_null() {
                 // SAFETY: The call to `CFStringGetCStringPtr` because the reference of string we are accessing is not `NULL`
                 // Returns pointer in O(1) without any memory allocation. This can return NULL so to handle it
-                let lang_str = unsafe { CFStringGetCStringPtr(lang_ptr as _, 0) };
+                let lang_str: *const c_char = unsafe {
+                    CFStringGetCStringPtr(lang_ptr as CFStringRef, kCFStringEncodingUTF8)
+                };
 
                 if !lang_str.is_null() {
                     // SAFETY: A valid `NULL` terminator is present which is a requirement of `from_ptr`
                     let lang_rust_str = unsafe { CStr::from_ptr(lang_str) }.to_str()?;
                     languages.push(lang_rust_str.to_string());
                 } else {
-                    return Err(RetrievalError::Other(format!("lang_str is null at index {} out of {}", i, count)));
+                    let length = unsafe { CFStringGetLength(lang_ptr as CFStringRef) as usize };
+                    let mut c_str_buf = vec![0; length * 4];
+                    unsafe {
+                        CFStringGetCString(
+                            lang_ptr as CFStringRef,
+                            c_str_buf.as_mut_ptr(),
+                            c_str_buf.len() as CFIndex,
+                            kCFStringEncodingUTF8,
+                        );
+                    }
+
+                    let c_str_buf_u8: Vec<u8> = c_str_buf.iter().map(|&c| c as u8).collect();
+                    let locale_converted = String::from_utf8_lossy(&c_str_buf_u8);
+                    languages.push(locale_converted.to_string());
                 }
 
                 // TODO: In case `lang_str` is `NULL` try retrieving the string using `CFStringGetCString`
@@ -47,7 +66,10 @@ pub fn get_locales() -> Result<Vec<String>, RetrievalError> {
                 // Note: Not optimal and may give inconsistent results if buffer is not large enough, must add sanity checks
                 // whenever implemented
             } else {
-                return Err(RetrievalError::Other(format!("lang_ptr is null at index {} out of {}", i, count)));
+                return Err(RetrievalError::Other(format!(
+                    "lang_ptr is null at index {} out of {}",
+                    i, count
+                )));
             }
         }
     } else {
