@@ -17,8 +17,11 @@ mod linux_tests {
 
         match locale_res {
             Ok(locale_map) => {
-                assert!(locale_map.is_empty(), false);
-                assert!(locale_map.contains_key(&LocaleCategory::All), true);
+                assert!(locale_map.is_empty(), "Failed to retrieve locale for linux");
+                assert!(
+                    locale_map.contains_key(&LocaleCategory::All),
+                    "Does not contains LC_ALL"
+                );
             }
             Err(err) => {
                 panic!("{:?}", err)
