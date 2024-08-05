@@ -159,11 +159,10 @@ pub fn get_system_calendars() -> Result<Vec<(String, String)>, RetrievalError> {
                 // SAFETY: A valid `NULL` terminator is present which is a requirement of `from_ptr`
                 let identifier_str = unsafe { CStr::from_ptr(identifier_cstr) }.to_str()?;
                 calendar_identifier_str = identifier_str.to_string();
+            } else {
+                calendar_identifier_str = get_string(identifier as CFStringRef);
             }
-        } else {
-            calendar_identifier_str = get_string(identifier as CFStringRef);
         }
-
         // SAFETY: Release the calendar when done to avoid memory leaks
         unsafe { CFRelease(calendar as _) };
 
@@ -176,13 +175,25 @@ pub fn get_system_calendars() -> Result<Vec<(String, String)>, RetrievalError> {
 }
 
 pub fn get_system_timezone() -> Result<String, RetrievalError> {
-    let timezone: *const timezone::__CFTimeZone = unsafe { timezone::CFTimeZoneCopySystem() };
+    // SAFETY: Returns the time zone currently used by the system
+    // Returns an immutable reference to TimeZone object owned by us
+    let timezone = unsafe { timezone::CFTimeZoneCopySystem() };
+
     if !timezone.is_null() {
+        // SAFETY: Extracts name of time zone from the TimeZone object, reference to timezone
+        // is guaranteed to be not NULL
         let cf_string = unsafe { timezone::CFTimeZoneGetName(timezone) };
+
         if !cf_string.is_null() {
+            // SAFETY: The call to `CFStringGetCStringPtr` because the reference of string we are accessing is not `NULL`
+            // Returns pointer in O(1) without any memory allocation. This can return NULL so we are handling it by directly
+            // copying it using `CFStringGetCString`
             let identifier_cstr = unsafe { CFStringGetCStringPtr(cf_string, 0) };
+
             if !identifier_cstr.is_null() {
+                // SAFETY: A valid `NULL` terminator is present which is a requirement of `from_ptr`
                 let identifier_str = unsafe { CStr::from_ptr(identifier_cstr) }.to_str()?;
+
                 return Ok(identifier_str.to_string());
             } else {
                 return Ok(get_string(cf_string));
