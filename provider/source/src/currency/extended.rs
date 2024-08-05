@@ -5,8 +5,6 @@
 use crate::cldr_serde;
 use crate::SourceDataProvider;
 
-use std::borrow::Cow;
-use std::collections::BTreeMap;
 use std::collections::HashSet;
 
 use icu::experimental::dimension::provider::extended_currency::Count;
