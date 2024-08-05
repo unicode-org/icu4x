@@ -25,7 +25,7 @@ use zerovec::ZeroMap;
 pub struct CurrencyPatternsDataV1<'data> {
     /// Contains the unit patterns for a currency based on plural rules.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub unit_patterns: ZeroMap<'data, UnitPattern, str>,
+    pub unit_patterns: ZeroMap<'data, PatternCount, str>,
 }
 
 #[zerovec::make_ule(UnitPatternULE)]
@@ -38,7 +38,7 @@ pub struct CurrencyPatternsDataV1<'data> {
     databake(path = icu_experimental::dimension::provider::currency_patterns)
 )]
 #[repr(u8)]
-pub enum UnitPattern {
+pub enum PatternCount {
     /// UnitPattern `zero`.
     Zero = 0,
     /// UnitPattern `one`.

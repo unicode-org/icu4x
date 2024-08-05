@@ -44,15 +44,18 @@ impl DataProvider<CurrencyPatternsDataV1Marker> for SourceDataProvider {
             payload: DataPayload::from_owned(CurrencyPatternsDataV1 {
                 unit_patterns: ZeroMap::from_iter(
                     [
-                        (UnitPattern::Zero, patterns.pattern_zero.as_deref()),
-                        (UnitPattern::One, patterns.pattern_one.as_deref()),
-                        (UnitPattern::Two, patterns.pattern_two.as_deref()),
-                        (UnitPattern::Few, patterns.pattern_few.as_deref()),
-                        (UnitPattern::Many, patterns.pattern_many.as_deref()),
-                        (UnitPattern::Other, patterns.pattern_other.as_deref()),
+                        (PatternCount::Zero, patterns.pattern_zero.as_deref()),
+                        (PatternCount::One, patterns.pattern_one.as_deref()),
+                        (PatternCount::Two, patterns.pattern_two.as_deref()),
+                        (PatternCount::Few, patterns.pattern_few.as_deref()),
+                        (PatternCount::Many, patterns.pattern_many.as_deref()),
+                        (PatternCount::Other, patterns.pattern_other.as_deref()),
                     ]
                     .into_iter()
-                    .filter_map(|(k, v)| v.map(|v| (k, v))),
+                    .filter_map(|(count, pattern)| match pattern {
+                        Some(pattern) => Some((count, pattern)),
+                        None => None,
+                    }),
                 ),
             }),
         })
