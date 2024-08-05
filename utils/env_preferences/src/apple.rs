@@ -17,6 +17,31 @@ use std::ffi::CStr;
 
 use crate::RetrievalError;
 
+// Helper function
+fn get_string(length: usize, ptr: CFStringRef) -> String {
+    let mut c_str_buf = vec![0; length * 4];
+
+    // SAFETY: Safety is ensured by following points
+    // 1. `lang_ptr` is not NULL, checked through conditional statement
+    // 2. `c_str_buf` is large enough and in scope after this call
+    unsafe {
+        CFStringGetCString(
+            ptr,
+            c_str_buf.as_mut_ptr(),
+            c_str_buf.len() as CFIndex,
+            kCFStringEncodingUTF8,
+        );
+    }
+
+    let c_str_buf_u8: Vec<u8> = c_str_buf.iter().map(|&c| c as u8).collect();
+    let str_converted = String::from_utf8_lossy(&c_str_buf_u8);
+    str_converted
+        .to_string()
+        .chars()
+        .filter(|&c| c != '\0')
+        .collect()
+}
+
 pub fn get_locales() -> Result<Vec<String>, RetrievalError> {
     let mut languages: Vec<String> = Vec::new();
 
@@ -36,7 +61,8 @@ pub fn get_locales() -> Result<Vec<String>, RetrievalError> {
 
             if !lang_ptr.is_null() {
                 // SAFETY: The call to `CFStringGetCStringPtr` because the reference of string we are accessing is not `NULL`
-                // Returns pointer in O(1) without any memory allocation. This can return NULL so to handle it
+                // Returns pointer in O(1) without any memory allocation. This can return NULL so we are handling it by directly
+                // copying it using `CFStringGetCString`
                 let lang_str: *const c_char = unsafe {
                     CFStringGetCStringPtr(lang_ptr as CFStringRef, kCFStringEncodingUTF8)
                 };
@@ -50,29 +76,7 @@ pub fn get_locales() -> Result<Vec<String>, RetrievalError> {
                     // SAFETY: It returns length of the string, from above conditional statement we ensure
                     // that the `lang_ptr` is not NULL thus making it safe to call
                     let length = unsafe { CFStringGetLength(lang_ptr as CFStringRef) as usize };
-
-                    // Needed to create a bigger size buffer otherwise will get corrupted output
-                    let mut c_str_buf = vec![0; length * 4];
-
-                    // SAFETY: Safety is ensured by following points
-                    // 1. `lang_ptr` is not NULL, checked through conditional statement
-                    // 2. `c_str_buf` is large enough and in scope after this call
-                    unsafe {
-                        CFStringGetCString(
-                            lang_ptr as CFStringRef,
-                            c_str_buf.as_mut_ptr(),
-                            c_str_buf.len() as CFIndex,
-                            kCFStringEncodingUTF8,
-                        );
-                    }
-
-                    let c_str_buf_u8: Vec<u8> = c_str_buf.iter().map(|&c| c as u8).collect();
-                    let locale_converted = String::from_utf8_lossy(&c_str_buf_u8);
-                    let locale_str = locale_converted
-                        .to_string()
-                        .chars()
-                        .filter(|&c| c != '\0')
-                        .collect();
+                    let locale_str = get_string(length, lang_ptr as CFStringRef);
                     languages.push(locale_str);
                 }
             } else {
@@ -125,7 +129,8 @@ pub fn get_system_calendars() -> Result<Vec<(String, String)>, RetrievalError> {
             let locale_identifier = unsafe { CFLocaleGetIdentifier(locale) };
 
             // SAFETY: The call to `CFStringGetCStringPtr` because the reference of string we are accessing is not `NULL`
-            // Returns pointer in O(1) without any memory allocation. This can return NULL so to handle it
+            // Returns pointer in O(1) without any memory allocation. This can return NULL so we are handling it by directly
+            // copying it using `CFStringGetCString`
             let locale_cstr = unsafe { CFStringGetCStringPtr(locale_identifier, 0) };
 
             if !locale_cstr.is_null() {
@@ -138,26 +143,7 @@ pub fn get_system_calendars() -> Result<Vec<(String, String)>, RetrievalError> {
                 // that the `lang_ptr` is not NULL thus making it safe to call
                 let length =
                     unsafe { CFStringGetLength(locale_identifier as CFStringRef) as usize };
-                let mut c_str_buf = vec![0; length * 4];
-                // SAFETY: Safety is ensured by following points
-                // 1. `lang_ptr` is not NULL, checked through conditional statement
-                // 2. `c_str_buf` is large enough and in scope after this call
-                unsafe {
-                    CFStringGetCString(
-                        locale_identifier as CFStringRef,
-                        c_str_buf.as_mut_ptr(),
-                        c_str_buf.len() as CFIndex,
-                        kCFStringEncodingUTF8,
-                    );
-                }
-                let c_str_buf_u8: Vec<u8> = c_str_buf.iter().map(|&c| c as u8).collect();
-                let locale_converted = String::from_utf8_lossy(&c_str_buf_u8);
-                let calendar_locale = locale_converted
-                    .to_string()
-                    .chars()
-                    .filter(|&c| c != '\0')
-                    .collect();
-                calendar_locale_str = calendar_locale;
+                calendar_locale_str = get_string(length, locale_identifier as CFStringRef);
             }
 
             // SAFETY: Releases the locale object which was retained
@@ -168,7 +154,8 @@ pub fn get_system_calendars() -> Result<Vec<(String, String)>, RetrievalError> {
 
         if !identifier.is_null() {
             // SAFETY: The call to `CFStringGetCStringPtr` because the reference of string we are accessing is not `NULL`
-            // Returns pointer in O(1) without any memory allocation. This can return NULL so to handle it
+            // Returns pointer in O(1) without any memory allocation. This can return NULL so we are handling it by directly
+            // copying it using `CFStringGetCString`
             let identifier_cstr = unsafe { CFStringGetCStringPtr(identifier, 0) };
 
             if !identifier_cstr.is_null() {
@@ -178,25 +165,7 @@ pub fn get_system_calendars() -> Result<Vec<(String, String)>, RetrievalError> {
             }
         } else {
             let length = unsafe { CFStringGetLength(identifier as CFStringRef) as usize };
-            let mut c_str_buf = vec![0; length * 4];
-            // SAFETY: Safety is ensured by following points
-            // 1. `lang_ptr` is not NULL, checked through conditional statement
-            // 2. `c_str_buf` is large enough and in scope after this call
-            unsafe {
-                CFStringGetCString(
-                    identifier as CFStringRef,
-                    c_str_buf.as_mut_ptr(),
-                    c_str_buf.len() as CFIndex,
-                    kCFStringEncodingUTF8,
-                );
-            }
-            let c_str_buf_u8: Vec<u8> = c_str_buf.iter().map(|&c| c as u8).collect();
-            let locale_converted = String::from_utf8_lossy(&c_str_buf_u8);
-            calendar_identifier_str = locale_converted
-                .to_string()
-                .chars()
-                .filter(|&c| c != '\0')
-                .collect();
+            calendar_identifier_str = get_string(length, identifier as CFStringRef);
         }
 
         // SAFETY: Release the calendar when done to avoid memory leaks
