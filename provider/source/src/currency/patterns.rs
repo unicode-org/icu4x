@@ -30,12 +30,12 @@ impl DataProvider<CurrencyPatternsDataV1Marker> for SourceDataProvider {
             .default_numbering_system
             .as_str();
 
-        let system = &numbers_resource
+        let patterns = &numbers_resource
             .main
             .value
             .numbers
             .numsys_data
-            .formats
+            .currency_patterns
             .get(default_system)
             .ok_or(DataErrorKind::IdentifierNotFound.into_error())?;
 
@@ -44,12 +44,12 @@ impl DataProvider<CurrencyPatternsDataV1Marker> for SourceDataProvider {
             payload: DataPayload::from_owned(CurrencyPatternsDataV1 {
                 unit_patterns: ZeroMap::from_iter(
                     [
-                        (UnitPattern::Zero, system.pattern_zero.as_deref()),
-                        (UnitPattern::One, system.pattern_one.as_deref()),
-                        (UnitPattern::Two, system.pattern_two.as_deref()),
-                        (UnitPattern::Few, system.pattern_few.as_deref()),
-                        (UnitPattern::Many, system.pattern_many.as_deref()),
-                        (UnitPattern::Other, system.pattern_other.as_deref()),
+                        (UnitPattern::Zero, patterns.pattern_zero.as_deref()),
+                        (UnitPattern::One, patterns.pattern_one.as_deref()),
+                        (UnitPattern::Two, patterns.pattern_two.as_deref()),
+                        (UnitPattern::Few, patterns.pattern_few.as_deref()),
+                        (UnitPattern::Many, patterns.pattern_many.as_deref()),
+                        (UnitPattern::Other, patterns.pattern_other.as_deref()),
                     ]
                     .into_iter()
                     .filter_map(|(k, v)| match v {

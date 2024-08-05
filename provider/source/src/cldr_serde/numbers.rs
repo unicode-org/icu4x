@@ -32,24 +32,6 @@ pub(crate) struct DecimalFormats {
     pub(crate) standard: String,
     pub(crate) long: DecimalFormatLength,
     pub(crate) short: DecimalFormatLength,
-
-    #[serde(rename = "unitPattern-count-zero")]
-    pub(crate) pattern_zero: Option<String>,
-
-    #[serde(rename = "unitPattern-count-one")]
-    pub(crate) pattern_one: Option<String>,
-
-    #[serde(rename = "unitPattern-count-two")]
-    pub(crate) pattern_two: Option<String>,
-
-    #[serde(rename = "unitPattern-count-few")]
-    pub(crate) pattern_few: Option<String>,
-
-    #[serde(rename = "unitPattern-count-many")]
-    pub(crate) pattern_many: Option<String>,
-
-    #[serde(rename = "unitPattern-count-other")]
-    pub(crate) pattern_other: Option<String>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
@@ -115,6 +97,24 @@ pub(crate) struct CurrencyFormattingPatterns {
     /// Standard alphaNextToNumber pattern
     #[serde(rename = "standard-alphaNextToNumber")]
     pub(crate) standard_alpha_next_to_number: Option<String>,
+
+    #[serde(rename = "unitPattern-count-zero")]
+    pub(crate) pattern_zero: Option<String>,
+
+    #[serde(rename = "unitPattern-count-one")]
+    pub(crate) pattern_one: Option<String>,
+
+    #[serde(rename = "unitPattern-count-two")]
+    pub(crate) pattern_two: Option<String>,
+
+    #[serde(rename = "unitPattern-count-few")]
+    pub(crate) pattern_few: Option<String>,
+
+    #[serde(rename = "unitPattern-count-many")]
+    pub(crate) pattern_many: Option<String>,
+
+    #[serde(rename = "unitPattern-count-other")]
+    pub(crate) pattern_other: Option<String>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]

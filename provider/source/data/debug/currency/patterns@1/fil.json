@@ -1,3 +1,6 @@
 {
-  "unit_patterns": {}
+  "unit_patterns": {
+    "One": "{0} {1}",
+    "Other": "{0} {1}"
+  }
 }
