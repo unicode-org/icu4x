@@ -31,3 +31,9 @@ pub fn get_system_calendars() -> Result<Vec<(String, String)>, RetrievalError> {
 
     Ok(result)
 }
+
+pub fn get_system_timezone() -> Result<String, RetrievalError> {
+    let calendar = Globalization::Calendar::new()?;
+    let timezone = calendar.GetTimeZone()?;
+    Ok(timezone.to_string_lossy())
+}
