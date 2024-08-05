@@ -6,8 +6,11 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export default {
 	entry: {
 	  index: [
-		'./index.mjs',
+		'./src/index.mjs',
 	  ],
+	  rendering: [
+		'./src/runtime.mjs'
+	  ]
 	},
 	module: {
 	  rules: [
@@ -23,7 +26,7 @@ export default {
 	// mode: "production",
 	mode: "development",
 	output: {
-	  filename: 'bundle.js',
+	  filename: '[name].bundle.js',
 	  path: path.resolve(__dirname, 'dist'),
 	},
 	devServer: {
@@ -42,5 +45,4 @@ export default {
 	optimization: {
 	  minimize: false
 	},
-  };
-  
+};

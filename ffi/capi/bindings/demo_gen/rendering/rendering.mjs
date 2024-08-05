@@ -1,14 +1,6 @@
-var lib = undefined;
-var templateDoc = undefined;
-
-export function initialize(templateDocument, library) {
-    lib = library;
-    templateDoc = templateDocument;
-}
-
 function generateTemplate(className, variable, selector) {
     if (className[variable] === undefined) {
-        className[variable] = templateDoc.querySelector(selector).content;
+        className[variable] = document.querySelector(selector).content;
     }
 }
 
@@ -133,7 +125,7 @@ customElements.define("terminus-param-enum", EnumTemplate);
 class TerminusParams extends HTMLElement {
     #params = [];
 
-    constructor(params, evaluateExternal){
+    constructor(library, evaluateExternal, params){
         super();
 
         for (var i = 0; i < params.length; i++) {
@@ -158,8 +150,8 @@ class TerminusParams extends HTMLElement {
                     this.#params[i] = 0;
                     break;
                 default:
-                    if (param.type in lib && "values" in lib[param.type]) {
-                        newChild = new EnumTemplate(lib[param.type]);
+                    if (param.type in library && "values" in library[param.type]) {
+                        newChild = new EnumTemplate(library[param.type]);
                         this.#params[i] = newChild.default
                     } else {
                         let updateParamEvent = (value) => {
@@ -196,11 +188,8 @@ export class TerminusRender extends HTMLElement {
     #func = null;
     #parameters;
     #output;
-    constructor() {
+    constructor(library, evaluateExternal, terminus) {
         super();
-    }
-
-    attachTerminus(terminus, evaluateExternal) {
         generateTemplate(TerminusRender, "template", "template#terminus");
         let clone = TerminusRender.template.cloneNode(true);
 
@@ -216,7 +205,7 @@ export class TerminusRender extends HTMLElement {
         funcText.innerText = terminus.funcName;
         this.appendChild(funcText);
 
-        this.#parameters = new TerminusParams(terminus.parameters, evaluateExternal);
+        this.#parameters = new TerminusParams(library, evaluateExternal, terminus.parameters);
         this.#parameters.slot = "parameters";
         this.appendChild(this.#parameters);
 

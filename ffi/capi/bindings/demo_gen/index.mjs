@@ -55,7 +55,6 @@ export const RenderInfo = {
             func: CaseMapperDemo.lowercase,
             // For avoiding webpacking minifying issues:
             funcName: "CaseMapper.lowercase",
-            html: "rendering/CaseMapper_lowercase.html",
             parameters: [
                 
                 {
@@ -75,7 +74,6 @@ export const RenderInfo = {
             func: CaseMapperDemo.uppercase,
             // For avoiding webpacking minifying issues:
             funcName: "CaseMapper.uppercase",
-            html: "rendering/CaseMapper_uppercase.html",
             parameters: [
                 
                 {
@@ -95,7 +93,6 @@ export const RenderInfo = {
             func: CaseMapperDemo.titlecaseSegmentWithOnlyCaseData,
             // For avoiding webpacking minifying issues:
             funcName: "CaseMapper.titlecaseSegmentWithOnlyCaseData",
-            html: "rendering/CaseMapper_titlecaseSegmentWithOnlyCaseData.html",
             parameters: [
                 
                 {
@@ -125,7 +122,6 @@ export const RenderInfo = {
             func: CaseMapperDemo.fold,
             // For avoiding webpacking minifying issues:
             funcName: "CaseMapper.fold",
-            html: "rendering/CaseMapper_fold.html",
             parameters: [
                 
                 {
@@ -140,7 +136,6 @@ export const RenderInfo = {
             func: CaseMapperDemo.foldTurkic,
             // For avoiding webpacking minifying issues:
             funcName: "CaseMapper.foldTurkic",
-            html: "rendering/CaseMapper_foldTurkic.html",
             parameters: [
                 
                 {
@@ -155,7 +150,6 @@ export const RenderInfo = {
             func: TitlecaseMapperDemo.titlecaseSegment,
             // For avoiding webpacking minifying issues:
             funcName: "TitlecaseMapper.titlecaseSegment",
-            html: "rendering/TitlecaseMapper_titlecaseSegment.html",
             parameters: [
                 
                 {
@@ -185,7 +179,6 @@ export const RenderInfo = {
             func: DateDemo.monthCode,
             // For avoiding webpacking minifying issues:
             funcName: "Date.monthCode",
-            html: "rendering/Date_monthCode.html",
             parameters: [
                 
                 {
@@ -215,7 +208,6 @@ export const RenderInfo = {
             func: DateDemo.era,
             // For avoiding webpacking minifying issues:
             funcName: "Date.era",
-            html: "rendering/Date_era.html",
             parameters: [
                 
                 {
@@ -245,7 +237,6 @@ export const RenderInfo = {
             func: DateTimeDemo.monthCode,
             // For avoiding webpacking minifying issues:
             funcName: "DateTime.monthCode",
-            html: "rendering/DateTime_monthCode.html",
             parameters: [
                 
                 {
@@ -295,7 +286,6 @@ export const RenderInfo = {
             func: DateTimeDemo.era,
             // For avoiding webpacking minifying issues:
             funcName: "DateTime.era",
-            html: "rendering/DateTime_era.html",
             parameters: [
                 
                 {
@@ -345,7 +335,6 @@ export const RenderInfo = {
             func: DateFormatterDemo.formatDate,
             // For avoiding webpacking minifying issues:
             funcName: "DateFormatter.formatDate",
-            html: "rendering/DateFormatter_formatDate.html",
             parameters: [
                 
                 {
@@ -385,7 +374,6 @@ export const RenderInfo = {
             func: DateFormatterDemo.formatIsoDate,
             // For avoiding webpacking minifying issues:
             funcName: "DateFormatter.formatIsoDate",
-            html: "rendering/DateFormatter_formatIsoDate.html",
             parameters: [
                 
                 {
@@ -420,7 +408,6 @@ export const RenderInfo = {
             func: DateFormatterDemo.formatDatetime,
             // For avoiding webpacking minifying issues:
             funcName: "DateFormatter.formatDatetime",
-            html: "rendering/DateFormatter_formatDatetime.html",
             parameters: [
                 
                 {
@@ -480,7 +467,6 @@ export const RenderInfo = {
             func: DateFormatterDemo.formatIsoDatetime,
             // For avoiding webpacking minifying issues:
             funcName: "DateFormatter.formatIsoDatetime",
-            html: "rendering/DateFormatter_formatIsoDatetime.html",
             parameters: [
                 
                 {
@@ -535,7 +521,6 @@ export const RenderInfo = {
             func: DateTimeFormatterDemo.formatDatetime,
             // For avoiding webpacking minifying issues:
             funcName: "DateTimeFormatter.formatDatetime",
-            html: "rendering/DateTimeFormatter_formatDatetime.html",
             parameters: [
                 
                 {
@@ -600,7 +585,6 @@ export const RenderInfo = {
             func: DateTimeFormatterDemo.formatIsoDatetime,
             // For avoiding webpacking minifying issues:
             funcName: "DateTimeFormatter.formatIsoDatetime",
-            html: "rendering/DateTimeFormatter_formatIsoDatetime.html",
             parameters: [
                 
                 {
@@ -660,7 +644,6 @@ export const RenderInfo = {
             func: GregorianDateFormatterDemo.formatIsoDate,
             // For avoiding webpacking minifying issues:
             funcName: "GregorianDateFormatter.formatIsoDate",
-            html: "rendering/GregorianDateFormatter_formatIsoDate.html",
             parameters: [
                 
                 {
@@ -695,7 +678,6 @@ export const RenderInfo = {
             func: GregorianDateFormatterDemo.formatIsoDatetime,
             // For avoiding webpacking minifying issues:
             funcName: "GregorianDateFormatter.formatIsoDatetime",
-            html: "rendering/GregorianDateFormatter_formatIsoDatetime.html",
             parameters: [
                 
                 {
@@ -750,7 +732,6 @@ export const RenderInfo = {
             func: GregorianDateTimeFormatterDemo.formatIsoDatetime,
             // For avoiding webpacking minifying issues:
             funcName: "GregorianDateTimeFormatter.formatIsoDatetime",
-            html: "rendering/GregorianDateTimeFormatter_formatIsoDatetime.html",
             parameters: [
                 
                 {
@@ -810,7 +791,6 @@ export const RenderInfo = {
             func: TimeFormatterDemo.formatTime,
             // For avoiding webpacking minifying issues:
             funcName: "TimeFormatter.formatTime",
-            html: "rendering/TimeFormatter_formatTime.html",
             parameters: [
                 
                 {
@@ -850,7 +830,6 @@ export const RenderInfo = {
             func: TimeFormatterDemo.formatDatetime,
             // For avoiding webpacking minifying issues:
             funcName: "TimeFormatter.formatDatetime",
-            html: "rendering/TimeFormatter_formatDatetime.html",
             parameters: [
                 
                 {
@@ -910,7 +889,6 @@ export const RenderInfo = {
             func: TimeFormatterDemo.formatIsoDatetime,
             // For avoiding webpacking minifying issues:
             funcName: "TimeFormatter.formatIsoDatetime",
-            html: "rendering/TimeFormatter_formatIsoDatetime.html",
             parameters: [
                 
                 {
@@ -965,7 +943,6 @@ export const RenderInfo = {
             func: FixedDecimalFormatterDemo.format,
             // For avoiding webpacking minifying issues:
             funcName: "FixedDecimalFormatter.format",
-            html: "rendering/FixedDecimalFormatter_format.html",
             parameters: [
                 
                 {
@@ -990,7 +967,6 @@ export const RenderInfo = {
             func: LocaleDisplayNamesFormatterDemo.of,
             // For avoiding webpacking minifying issues:
             funcName: "LocaleDisplayNamesFormatter.of",
-            html: "rendering/LocaleDisplayNamesFormatter_of.html",
             parameters: [
                 
                 {
@@ -1025,7 +1001,6 @@ export const RenderInfo = {
             func: RegionDisplayNamesDemo.of,
             // For avoiding webpacking minifying issues:
             funcName: "RegionDisplayNames.of",
-            html: "rendering/RegionDisplayNames_of.html",
             parameters: [
                 
                 {
@@ -1045,7 +1020,6 @@ export const RenderInfo = {
             func: FixedDecimalDemo.toString,
             // For avoiding webpacking minifying issues:
             funcName: "FixedDecimal.toString",
-            html: "rendering/FixedDecimal_toString.html",
             parameters: [
                 
                 {
@@ -1060,7 +1034,6 @@ export const RenderInfo = {
             func: ListFormatterDemo.format,
             // For avoiding webpacking minifying issues:
             funcName: "ListFormatter.format",
-            html: "rendering/ListFormatter_format.html",
             parameters: [
                 
                 {
@@ -1085,7 +1058,6 @@ export const RenderInfo = {
             func: LocaleDemo.basename,
             // For avoiding webpacking minifying issues:
             funcName: "Locale.basename",
-            html: "rendering/Locale_basename.html",
             parameters: [
                 
                 {
@@ -1100,7 +1072,6 @@ export const RenderInfo = {
             func: LocaleDemo.getUnicodeExtension,
             // For avoiding webpacking minifying issues:
             funcName: "Locale.getUnicodeExtension",
-            html: "rendering/Locale_getUnicodeExtension.html",
             parameters: [
                 
                 {
@@ -1120,7 +1091,6 @@ export const RenderInfo = {
             func: LocaleDemo.language,
             // For avoiding webpacking minifying issues:
             funcName: "Locale.language",
-            html: "rendering/Locale_language.html",
             parameters: [
                 
                 {
@@ -1135,7 +1105,6 @@ export const RenderInfo = {
             func: LocaleDemo.region,
             // For avoiding webpacking minifying issues:
             funcName: "Locale.region",
-            html: "rendering/Locale_region.html",
             parameters: [
                 
                 {
@@ -1150,7 +1119,6 @@ export const RenderInfo = {
             func: LocaleDemo.script,
             // For avoiding webpacking minifying issues:
             funcName: "Locale.script",
-            html: "rendering/Locale_script.html",
             parameters: [
                 
                 {
@@ -1165,7 +1133,6 @@ export const RenderInfo = {
             func: LocaleDemo.canonicalize,
             // For avoiding webpacking minifying issues:
             funcName: "Locale.canonicalize",
-            html: "rendering/Locale_canonicalize.html",
             parameters: [
                 
                 {
@@ -1180,7 +1147,6 @@ export const RenderInfo = {
             func: LocaleDemo.toString,
             // For avoiding webpacking minifying issues:
             funcName: "Locale.toString",
-            html: "rendering/Locale_toString.html",
             parameters: [
                 
                 {
@@ -1195,7 +1161,6 @@ export const RenderInfo = {
             func: ComposingNormalizerDemo.normalize,
             // For avoiding webpacking minifying issues:
             funcName: "ComposingNormalizer.normalize",
-            html: "rendering/ComposingNormalizer_normalize.html",
             parameters: [
                 
                 {
@@ -1210,7 +1175,6 @@ export const RenderInfo = {
             func: DecomposingNormalizerDemo.normalize,
             // For avoiding webpacking minifying issues:
             funcName: "DecomposingNormalizer.normalize",
-            html: "rendering/DecomposingNormalizer_normalize.html",
             parameters: [
                 
                 {
@@ -1225,7 +1189,6 @@ export const RenderInfo = {
             func: CustomTimeZoneDemo.timeZoneId,
             // For avoiding webpacking minifying issues:
             funcName: "CustomTimeZone.timeZoneId",
-            html: "rendering/CustomTimeZone_timeZoneId.html",
             parameters: [
                 
                 {
@@ -1240,7 +1203,6 @@ export const RenderInfo = {
             func: CustomTimeZoneDemo.metazoneId,
             // For avoiding webpacking minifying issues:
             funcName: "CustomTimeZone.metazoneId",
-            html: "rendering/CustomTimeZone_metazoneId.html",
             parameters: [
                 
                 {
@@ -1255,7 +1217,6 @@ export const RenderInfo = {
             func: CustomTimeZoneDemo.zoneVariant,
             // For avoiding webpacking minifying issues:
             funcName: "CustomTimeZone.zoneVariant",
-            html: "rendering/CustomTimeZone_zoneVariant.html",
             parameters: [
                 
                 {
@@ -1270,7 +1231,6 @@ export const RenderInfo = {
             func: TimeZoneFormatterDemo.formatCustomTimeZone,
             // For avoiding webpacking minifying issues:
             funcName: "TimeZoneFormatter.formatCustomTimeZone",
-            html: "rendering/TimeZoneFormatter_formatCustomTimeZone.html",
             parameters: [
                 
                 {
@@ -1290,7 +1250,6 @@ export const RenderInfo = {
             func: TimeZoneFormatterDemo.formatCustomTimeZoneNoFallback,
             // For avoiding webpacking minifying issues:
             funcName: "TimeZoneFormatter.formatCustomTimeZoneNoFallback",
-            html: "rendering/TimeZoneFormatter_formatCustomTimeZoneNoFallback.html",
             parameters: [
                 
                 {
@@ -1310,7 +1269,6 @@ export const RenderInfo = {
             func: TimeZoneIdMapperDemo.ianaToBcp47,
             // For avoiding webpacking minifying issues:
             funcName: "TimeZoneIdMapper.ianaToBcp47",
-            html: "rendering/TimeZoneIdMapper_ianaToBcp47.html",
             parameters: [
                 
                 {
@@ -1325,7 +1283,6 @@ export const RenderInfo = {
             func: TimeZoneIdMapperDemo.normalizeIana,
             // For avoiding webpacking minifying issues:
             funcName: "TimeZoneIdMapper.normalizeIana",
-            html: "rendering/TimeZoneIdMapper_normalizeIana.html",
             parameters: [
                 
                 {
@@ -1340,7 +1297,6 @@ export const RenderInfo = {
             func: TimeZoneIdMapperDemo.canonicalizeIana,
             // For avoiding webpacking minifying issues:
             funcName: "TimeZoneIdMapper.canonicalizeIana",
-            html: "rendering/TimeZoneIdMapper_canonicalizeIana.html",
             parameters: [
                 
                 {
@@ -1355,7 +1311,6 @@ export const RenderInfo = {
             func: TimeZoneIdMapperDemo.findCanonicalIanaFromBcp47,
             // For avoiding webpacking minifying issues:
             funcName: "TimeZoneIdMapper.findCanonicalIanaFromBcp47",
-            html: "rendering/TimeZoneIdMapper_findCanonicalIanaFromBcp47.html",
             parameters: [
                 
                 {
@@ -1370,7 +1325,6 @@ export const RenderInfo = {
             func: TimeZoneIdMapperWithFastCanonicalizationDemo.canonicalizeIana,
             // For avoiding webpacking minifying issues:
             funcName: "TimeZoneIdMapperWithFastCanonicalization.canonicalizeIana",
-            html: "rendering/TimeZoneIdMapperWithFastCanonicalization_canonicalizeIana.html",
             parameters: [
                 
                 {
@@ -1385,7 +1339,6 @@ export const RenderInfo = {
             func: TimeZoneIdMapperWithFastCanonicalizationDemo.canonicalIanaFromBcp47,
             // For avoiding webpacking minifying issues:
             funcName: "TimeZoneIdMapperWithFastCanonicalization.canonicalIanaFromBcp47",
-            html: "rendering/TimeZoneIdMapperWithFastCanonicalization_canonicalIanaFromBcp47.html",
             parameters: [
                 
                 {
@@ -1400,7 +1353,6 @@ export const RenderInfo = {
             func: GregorianZonedDateTimeFormatterDemo.formatIsoDatetimeWithCustomTimeZone,
             // For avoiding webpacking minifying issues:
             funcName: "GregorianZonedDateTimeFormatter.formatIsoDatetimeWithCustomTimeZone",
-            html: "rendering/GregorianZonedDateTimeFormatter_formatIsoDatetimeWithCustomTimeZone.html",
             parameters: [
                 
                 {
@@ -1465,7 +1417,6 @@ export const RenderInfo = {
             func: ZonedDateTimeFormatterDemo.formatDatetimeWithCustomTimeZone,
             // For avoiding webpacking minifying issues:
             funcName: "ZonedDateTimeFormatter.formatDatetimeWithCustomTimeZone",
-            html: "rendering/ZonedDateTimeFormatter_formatDatetimeWithCustomTimeZone.html",
             parameters: [
                 
                 {
@@ -1535,7 +1486,6 @@ export const RenderInfo = {
             func: ZonedDateTimeFormatterDemo.formatIsoDatetimeWithCustomTimeZone,
             // For avoiding webpacking minifying issues:
             funcName: "ZonedDateTimeFormatter.formatIsoDatetimeWithCustomTimeZone",
-            html: "rendering/ZonedDateTimeFormatter_formatIsoDatetimeWithCustomTimeZone.html",
             parameters: [
                 
                 {
@@ -1600,7 +1550,6 @@ export const RenderInfo = {
             func: AnyCalendarKindDemo.bcp47,
             // For avoiding webpacking minifying issues:
             funcName: "AnyCalendarKind.bcp47",
-            html: "rendering/AnyCalendarKind_bcp47.html",
             parameters: [
                 
                 {

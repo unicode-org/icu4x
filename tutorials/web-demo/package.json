@@ -4,7 +4,7 @@
 	"description": "A demo web application using ICU4X bindings.",
 	"type": "module",
 	"scripts": {
-		"clean": "rm dist/*",
+		"clean": "rm -r dist/*",
 		"build": "webpack"
 	},
 	"author": "",

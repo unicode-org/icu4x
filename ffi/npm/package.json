@@ -5,7 +5,8 @@
   "main": "lib/index.mjs",
   "exports": {
     ".": "./lib/index.mjs",
-    "./demo": "./demo/index.mjs"
+    "./demo": "./demo/index.mjs",
+    "./demo/rendering": "./demo/rendering/rendering.mjs"
   },
   "type": "module",
   "directories": {
