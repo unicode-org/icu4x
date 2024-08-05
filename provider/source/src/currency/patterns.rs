@@ -52,10 +52,7 @@ impl DataProvider<CurrencyPatternsDataV1Marker> for SourceDataProvider {
                         (PatternCount::Other, patterns.pattern_other.as_deref()),
                     ]
                     .into_iter()
-                    .filter_map(|(count, pattern)| match pattern {
-                        Some(pattern) => Some((count, pattern)),
-                        None => None,
-                    }),
+                    .filter_map(|(count, pattern)| pattern.map(|pattern| (count, pattern))),
                 ),
             }),
         })
