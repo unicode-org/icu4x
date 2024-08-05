@@ -4,14 +4,9 @@
 
 use crate::cldr_serde;
 use crate::SourceDataProvider;
-
-use std::collections::HashSet;
-
-use icu::experimental::dimension::provider::extended_currency::Count;
-
 use icu::experimental::dimension::provider::extended_currency::*;
 use icu_provider::prelude::*;
-use icu_provider::DataProvider;
+use std::collections::HashSet;
 use zerovec::ZeroMap;
 
 impl DataProvider<CurrencyExtendedDataV1Marker> for crate::SourceDataProvider {
