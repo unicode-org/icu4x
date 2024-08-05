@@ -32,6 +32,24 @@ pub(crate) struct DecimalFormats {
     pub(crate) standard: String,
     pub(crate) long: DecimalFormatLength,
     pub(crate) short: DecimalFormatLength,
+
+    #[serde(rename = "unitPattern-count-zero")]
+    pub(crate) zero: Option<String>,
+
+    #[serde(rename = "unitPattern-count-one")]
+    pub(crate) one: Option<String>,
+
+    #[serde(rename = "unitPattern-count-two")]
+    pub(crate) two: Option<String>,
+
+    #[serde(rename = "unitPattern-count-few")]
+    pub(crate) few: Option<String>,
+
+    #[serde(rename = "unitPattern-count-many")]
+    pub(crate) many: Option<String>,
+
+    #[serde(rename = "unitPattern-count-other")]
+    pub(crate) other: Option<String>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
