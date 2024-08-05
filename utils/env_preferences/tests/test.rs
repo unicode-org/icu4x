@@ -112,3 +112,42 @@ mod macos_test {
         assert!(!time_zone.is_empty(), "Couldn't retreive time_zone");
     }
 }
+
+#[cfg(target_os = "windows")]
+#[cfg(test)]
+mod windows_test {
+    use env_preferences::{get_locales, get_system_calendars, get_system_timezone};
+    use icu_locale::Locale;
+
+    #[test]
+    fn test_get_locales() {
+        let locales = get_locales().unwrap();
+        assert!(
+            !locales.is_empty(),
+            "Unable to retrieve locales for Windows"
+        );
+    }
+
+    #[test]
+    fn test_converting_locales() {
+        let locales = get_locales().unwrap();
+        for locale in locales {
+            let _converted_locale: Locale = locale.parse().unwrap();
+        }
+    }
+
+    #[test]
+    fn test_calendar() {
+        let calendars = get_system_calendars().unwrap();
+        for calendar in calendars {
+            assert!(!calendar.0.is_empty(), "Calendar locale in empty");
+            assert!(!calendar.1.is_empty(), "Calendar locale in empty");
+        }
+    }
+
+    #[test]
+    fn test_time_zone() {
+        let time_zone = get_system_timezone().unwrap();
+        assert!(!time_zone.is_empty(), "Couldn't retreive time_zone")
+    }
+}
