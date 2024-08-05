@@ -39,6 +39,9 @@ pub struct CurrencyExtendedDataV1<'data> {
     ///     - "US Dollars" when count is `zero`,
     ///     - "US Dollar" when count is `one`,
     ///     ... etc.
+    /// # NOTE
+    ///    Regards to the [Unicode Report TR35](https://unicode.org/reports/tr35/tr35-numbers.html#Currencies),
+    ///    If no matching for specific count, the `other` count will be used.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub display_names: ZeroMap<'data, Count, str>,
 }
