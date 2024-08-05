@@ -73,7 +73,7 @@ mod linux_tests {
 #[cfg(target_os = "macos")]
 #[cfg(test)]
 mod macos_test {
-    use env_preferences::{get_locales, get_system_calendars};
+    use env_preferences::{get_locales, get_system_calendars, get_system_timezone};
     use icu_locale::Locale;
 
     #[test]
@@ -104,5 +104,11 @@ mod macos_test {
             assert!(!calendar.0.is_empty(), "Couldn't retreive calendar locale");
             assert!(!calendar.1.is_empty(), "Couldn't retreive calendar");
         }
+    }
+
+    #[test]
+    fn test_time_zone() {
+        let time_zone = get_system_timezone().unwrap();
+        assert!(!time_zone.is_empty(), "Couldn't retreive time_zone");
     }
 }

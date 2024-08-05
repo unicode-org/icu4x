@@ -15,8 +15,8 @@ pub enum RetrievalError {
     /// Received NULL Pointer
     NullPointer,
 
-    /// Received NULL ptr
-    NullPtr,
+    /// Unable to retrieve
+    NullTimeZone,
 
     /// Error converting into `&CStr` to `&str`
     ConversionError(Utf8Error),
