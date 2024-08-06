@@ -18,9 +18,9 @@ use std::ffi::{CStr, CString};
 
 use crate::RetrievalError;
 
-/// Helps to get string, when a string cannot be obtained in O(1) time and space directly from the pointer
-/// A buffer is created of size `length + 1`. After copying the string into the buffer, the null characters `\0`
-/// are removed from the string, which helps it converting to icu4x locale in tests
+/// Helps to get string, it tries to get the string directly from the pointer itself, in case it is unable to retrieve
+/// the string (c_str_ptr is NULL) a buffer is created of size `length + 1` and we perform manual allocations to get
+/// the string
 fn get_string(ptr: CFStringRef) -> Result<String, RetrievalError> {
     // SAFETY: The call to `CFStringGetCStringPtr` because the reference of string we are accessing is not `NULL`
     // Returns pointer in O(1) without any memory allocation. This can return NULL so we are handling it by directly
