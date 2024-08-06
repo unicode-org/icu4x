@@ -30,12 +30,15 @@ impl DataProvider<CurrencyPatternsDataV1Marker> for SourceDataProvider {
             .default_numbering_system
             .as_str();
 
-        let patterns = &numbers_resource
+        let currency_patterns = &numbers_resource
             .main
             .value
             .numbers
             .numsys_data
-            .currency_patterns
+            .currency_patterns;
+
+        // `default_patterns` is the patterns that came from the default numbering system
+        let patterns = &currency_patterns
             .get(default_system)
             .ok_or(DataErrorKind::IdentifierNotFound.into_error())?;
 
@@ -52,7 +55,11 @@ impl DataProvider<CurrencyPatternsDataV1Marker> for SourceDataProvider {
                         (PatternCount::Other, patterns.pattern_other.as_deref()),
                     ]
                     .into_iter()
-                    .filter_map(|(count, pattern)| pattern.map(|pattern| (count, pattern))),
+                    .filter_map(|(count, pattern)| match (count, pattern) {
+                        (PatternCount::Other, pattern) => Some((count, pattern?)),
+                        (_, pattern) if pattern == patterns.pattern_other.as_deref() => None,
+                        _ => Some((count, pattern?)),
+                    }),
                 ),
             }),
         })
