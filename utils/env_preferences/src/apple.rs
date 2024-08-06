@@ -14,7 +14,7 @@ use core_foundation_sys::{
     timezone,
 };
 use libc::c_char;
-use std::ffi::CStr;
+use std::ffi::{CStr, CString};
 
 use crate::RetrievalError;
 
@@ -24,7 +24,7 @@ fn get_string(ptr: CFStringRef) -> String {
     // that the `lang_ptr` is not NULL thus making it safe to call
     let length = unsafe { CFStringGetLength(ptr) as usize };
 
-    let mut c_str_buf = vec![0; length * 4];
+    let mut c_str_buf: Vec<u8> = vec![0; length + 1];
 
     // SAFETY: Safety is ensured by following points
     // 1. `lang_ptr` is not NULL, checked through conditional statement
@@ -32,14 +32,14 @@ fn get_string(ptr: CFStringRef) -> String {
     unsafe {
         CFStringGetCString(
             ptr,
-            c_str_buf.as_mut_ptr(),
+            c_str_buf.as_mut_ptr() as *mut c_char,
             c_str_buf.len() as CFIndex,
             kCFStringEncodingUTF8,
         );
     }
 
-    let c_str_buf_u8: Vec<u8> = c_str_buf.iter().map(|&c| c as u8).collect();
-    let str_converted = String::from_utf8_lossy(&c_str_buf_u8);
+    let c_string = CString::from_vec_with_nul(c_str_buf).unwrap();
+    let str_converted = c_string.into_string().unwrap();
     str_converted
         .to_string()
         .chars()
