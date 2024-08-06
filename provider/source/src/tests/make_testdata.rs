@@ -76,6 +76,7 @@ fn make_testdata() {
             "meter" | "foot" | "kilogram" | "pound" | "hour" | "minute" | "second"
         )
     })
+    .with_marker_attributes_filter("currency", |attrs| matches!(attrs.as_str(), "EUR"))
     .export(&provider, exporter)
     .unwrap()
 }
