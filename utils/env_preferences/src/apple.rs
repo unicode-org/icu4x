@@ -18,7 +18,9 @@ use std::ffi::{CStr, CString};
 
 use crate::RetrievalError;
 
-// Helper function
+/// Helps to get string, when a string cannot be obtained in O(1) time and space directly from the pointer
+/// A buffer is created of size `length + 1`. After copying the string into the buffer, the null characters `\0`
+/// are removed from the string, which helps it converting to icu4x locale in tests
 fn get_string(ptr: CFStringRef) -> Result<String, RetrievalError> {
     // SAFETY: It returns length of the string, from above conditional statement we ensure
     // that the `lang_ptr` is not NULL thus making it safe to call
@@ -78,8 +80,8 @@ pub fn get_locales() -> Result<Vec<String>, RetrievalError> {
 
                     languages.push(lang_rust_str.to_string());
                 } else {
-                    // SAFETY: It returns length of the string, from above conditional statement we ensure
-                    // that the `lang_ptr` is not NULL thus making it safe to call
+                    // `lang_str` is null, i.e. `CFStringGetCStringPtr` couldn't give desired output, trying with
+                    // manual allocations
                     let locale_str = get_string(lang_ptr as CFStringRef)?;
                     languages.push(locale_str);
                 }
@@ -140,6 +142,8 @@ pub fn get_system_calendars() -> Result<Vec<(String, String)>, RetrievalError> {
 
                 calendar_locale_str = calendar_rust_str.to_string();
             } else {
+                // `lang_str` is null, i.e. `CFStringGetCStringPtr` couldn't give desired output, trying with
+                // manual allocations
                 calendar_locale_str = get_string(locale_identifier as CFStringRef)?;
             }
 
@@ -160,6 +164,8 @@ pub fn get_system_calendars() -> Result<Vec<(String, String)>, RetrievalError> {
                 let identifier_str = unsafe { CStr::from_ptr(identifier_cstr) }.to_str()?;
                 calendar_identifier_str = identifier_str.to_string();
             } else {
+                // `lang_str` is null, i.e. `CFStringGetCStringPtr` couldn't give desired output, trying with
+                // manual allocations
                 calendar_identifier_str = get_string(identifier as CFStringRef)?;
             }
         }
@@ -196,6 +202,8 @@ pub fn get_system_timezone() -> Result<String, RetrievalError> {
 
                 return Ok(identifier_str.to_string());
             } else {
+                // `lang_str` is null, i.e. `CFStringGetCStringPtr` couldn't give desired output, trying with
+                // manual allocations
                 return Ok(get_string(cf_string)?);
             }
         }
