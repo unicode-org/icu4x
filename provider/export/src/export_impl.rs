@@ -261,11 +261,15 @@ impl ExportDriver {
 
 /// Selects the maximal set of locales to export based on a [`DataMarkerInfo`] and this datagen
 /// provider's options bag. The locales may be later optionally deduplicated for fallback.
+#[allow(clippy::type_complexity)] // sigh
 fn select_locales_for_marker<'a>(
     provider: &'a dyn ExportableProvider,
     marker: DataMarkerInfo,
     requested_families: &HashMap<DataLocale, DataLocaleFamilyAnnotations>,
-    attributes_filters: &HashMap<String, Arc<Box<dyn super::DataMarkerAttributesFilter>>>,
+    attributes_filters: &HashMap<
+        String,
+        Arc<Box<dyn Fn(&DataMarkerAttributes) -> bool + Send + Sync + 'static>>,
+    >,
     include_full: bool,
     fallbacker: &LocaleFallbacker,
 ) -> Result<HashSet<DataIdentifierCow<'a>>, DataError> {

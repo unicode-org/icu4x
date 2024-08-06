@@ -120,21 +120,12 @@ use std::sync::Arc;
 pub struct ExportDriver {
     markers: Option<HashSet<DataMarkerInfo>>,
     requested_families: HashMap<DataLocale, DataLocaleFamilyAnnotations>,
-    #[allow(clippy::type_complexity)] // HashMap of cloneable dyns
-    attributes_filters: HashMap<String, Arc<Box<dyn DataMarkerAttributesFilter>>>,
+    #[allow(clippy::type_complexity)] // sigh
+    attributes_filters:
+        HashMap<String, Arc<Box<dyn Fn(&DataMarkerAttributes) -> bool + Send + Sync + 'static>>>,
     fallbacker: LocaleFallbacker,
     include_full: bool,
     deduplication_strategy: DeduplicationStrategy,
-}
-
-/// TODO
-pub trait DataMarkerAttributesFilter:
-    Fn(&DataMarkerAttributes) -> bool + Send + Sync + 'static
-{
-}
-impl<T> DataMarkerAttributesFilter for T where
-    T: Fn(&DataMarkerAttributes) -> bool + Send + Sync + 'static
-{
 }
 
 impl core::fmt::Debug for ExportDriver {
@@ -195,7 +186,7 @@ impl ExportDriver {
     pub fn with_marker_attributes_filter(
         mut self,
         domain: &str,
-        filter: impl DataMarkerAttributesFilter,
+        filter: impl Fn(&DataMarkerAttributes) -> bool + Send + Sync + 'static,
     ) -> Self {
         self.attributes_filters
             .insert(String::from(domain), Arc::new(Box::new(filter)));
