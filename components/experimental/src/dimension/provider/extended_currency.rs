@@ -33,7 +33,6 @@ pub use crate::provider::Baked;
 )]
 #[yoke(prove_covariance_manually)]
 pub struct CurrencyExtendedDataV1<'data> {
-    // TODO: Implement currency pattern selection logic to choose between standard or standard next to text pattern.
     /// Contains the localized display names for a currency based on plural rules.
     /// For instance, in the "en" locale for the "USD" currency:
     ///     - "US Dollars" when count is `zero`,
