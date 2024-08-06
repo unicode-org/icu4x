@@ -151,7 +151,6 @@ impl DynamicDataMarker for UCharDictionaryBreakDataV1Marker {
 }
 
 /// codepoint trie data that the difference by specific locale
-///
 #[icu_provider::data_struct(
     marker(
         SentenceBreakDataOverrideV1Marker,
