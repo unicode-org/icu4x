@@ -115,6 +115,7 @@ struct DataStructArg {
     marker_name: Path,
     path_lit: Option<LitStr>,
     fallback_by: Option<LitStr>,
+    attributes_domain: Option<LitStr>,
     singleton: bool,
 }
 
@@ -124,6 +125,7 @@ impl DataStructArg {
             marker_name,
             path_lit: None,
             fallback_by: None,
+            attributes_domain: None,
             singleton: false,
         }
     }
@@ -155,6 +157,7 @@ impl Parse for DataStructArg {
             let mut marker_name: Option<Path> = None;
             let mut path_lit: Option<LitStr> = None;
             let mut fallback_by: Option<LitStr> = None;
+            let mut attributes_domain: Option<LitStr> = None;
             let mut singleton = false;
             let punct = content.parse_terminated(DataStructMarkerArg::parse, Token![,])?;
 
@@ -169,6 +172,13 @@ impl Parse for DataStructArg {
                                 &mut fallback_by,
                                 value,
                                 "fallback_by",
+                                paren.span.join(),
+                            )?;
+                        } else if name == "attributes_domain" {
+                            at_most_one_option(
+                                &mut attributes_domain,
+                                value,
+                                "attributes_domain",
                                 paren.span.join(),
                             )?;
                         } else {
@@ -199,6 +209,7 @@ impl Parse for DataStructArg {
                 marker_name,
                 path_lit,
                 fallback_by,
+                attributes_domain,
                 singleton,
             })
         } else {
@@ -282,6 +293,7 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
             marker_name,
             path_lit,
             fallback_by,
+            attributes_domain,
             singleton,
         } = single_attr;
 
@@ -324,12 +336,18 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
             } else {
                 quote! {icu_provider::_internal::LocaleFallbackPriority::const_default()}
             };
+            let attributes_domain_setter = if let Some(attributes_domain_lit) = attributes_domain {
+                quote! { info.attributes_domain = #attributes_domain_lit; }
+            } else {
+                quote!()
+            };
             result.extend(quote!(
                 impl icu_provider::DataMarker for #marker_name {
                     const INFO: icu_provider::DataMarkerInfo = {
                         let mut info = icu_provider::DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!(#path_str));
                         info.is_singleton = #singleton;
                         info.fallback_config.priority = #fallback_by_expr;
+                        #attributes_domain_setter
                         info
                     };
                 }

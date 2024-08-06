@@ -69,6 +69,13 @@ fn make_testdata() {
         "thaidict".into(),
         "Thai_codepoints_exclusive_model4_heavy".into(),
     ])
+    .with_marker_attributes_filter("units", |attrs| {
+        let (_length, unit) = attrs.as_str().split_once('-').unwrap();
+        matches!(
+            unit,
+            "meter" | "foot" | "kilogram" | "pound" | "hour" | "minute" | "second"
+        )
+    })
     .export(&provider, exporter)
     .unwrap()
 }
