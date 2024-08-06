@@ -237,15 +237,22 @@ impl WordSegmenter {
             + ?Sized,
     {
         let payload_locale_override = if !Self::is_default_rule(locale) {
-            Some(provider.load(Default::default())?.payload)
+            match provider.load(Default::default()) {
+                Ok(response) => Ok(Some(response.payload)),
+                Err(DataError {
+                    kind: DataErrorKind::IdentifierNotFound,
+                    ..
+                }) => Ok(None),
+                Err(e) => Err(e),
+            }
         } else {
-            None
+            Ok(None)
         };
 
         Ok(Self {
             payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new_auto(provider)?,
-            payload_locale_override,
+            payload_locale_override: payload_locale_override?,
         })
     }
 
@@ -317,15 +324,22 @@ impl WordSegmenter {
             + ?Sized,
     {
         let payload_locale_override = if !Self::is_default_rule(locale) {
-            Some(provider.load(Default::default())?.payload)
+            match provider.load(Default::default()) {
+                Ok(response) => Ok(Some(response.payload)),
+                Err(DataError {
+                    kind: DataErrorKind::IdentifierNotFound,
+                    ..
+                }) => Ok(None),
+                Err(e) => Err(e),
+            }
         } else {
-            None
+            Ok(None)
         };
 
         Ok(Self {
             payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new_lstm(provider)?,
-            payload_locale_override,
+            payload_locale_override: payload_locale_override?,
         })
     }
 
@@ -393,15 +407,22 @@ impl WordSegmenter {
             + ?Sized,
     {
         let payload_locale_override = if !Self::is_default_rule(locale) {
-            Some(provider.load(Default::default())?.payload)
+            match provider.load(Default::default()) {
+                Ok(response) => Ok(Some(response.payload)),
+                Err(DataError {
+                    kind: DataErrorKind::IdentifierNotFound,
+                    ..
+                }) => Ok(None),
+                Err(e) => Err(e),
+            }
         } else {
-            None
+            Ok(None)
         };
 
         Ok(Self {
             payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new_dict(provider)?,
-            payload_locale_override,
+            payload_locale_override: payload_locale_override?,
         })
     }
 
