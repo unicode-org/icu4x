@@ -9,26 +9,26 @@ use std::{
 
 #[derive(Debug)]
 pub enum RetrievalError {
-    /// Unable to retrieve the locale
-    NullLocale,
-
-    /// Unable to retrieve the calendar
-    NullCalendar,
-
-    /// Received NULL Pointer
-    NullPointer,
-
-    /// Unable to retrieve
-    NullTimeZone,
+    /// Error converting from `CString` to `String`
+    CStringConversionError(IntoStringError),
 
     /// Error converting into `&CStr` to `&str`
     ConversionError(Utf8Error),
 
-    /// Error converting from `CString` to `String`
-    CStringConversionError(IntoStringError),
-
     /// Error creating a `CString` from a buffer with a null terminator
     FromVecWithNulError(FromVecWithNulError),
+
+    /// Unable to retrieve the calendar
+    NullCalendar,
+
+    /// Unable to retrieve the locale
+    NullLocale,
+
+    /// Received NULL Pointer
+    NullPointer,
+
+    /// Unable to retrieve TimeZone
+    NullTimeZone,
 
     /// UnknownCategory when retrieving locale for linux
     UnknownCategory,
