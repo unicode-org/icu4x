@@ -22,31 +22,44 @@ use crate::RetrievalError;
 /// A buffer is created of size `length + 1`. After copying the string into the buffer, the null characters `\0`
 /// are removed from the string, which helps it converting to icu4x locale in tests
 fn get_string(ptr: CFStringRef) -> Result<String, RetrievalError> {
-    // SAFETY: It returns length of the string, from above conditional statement we ensure
-    // that the `lang_ptr` is not NULL thus making it safe to call
-    let length = unsafe { CFStringGetLength(ptr) as usize };
+    // SAFETY: The call to `CFStringGetCStringPtr` because the reference of string we are accessing is not `NULL`
+    // Returns pointer in O(1) without any memory allocation. This can return NULL so we are handling it by directly
+    // copying it using `CFStringGetCString`
+    let lang_str: *const c_char = unsafe { CFStringGetCStringPtr(ptr, kCFStringEncodingUTF8) };
 
-    let mut c_str_buf: Vec<u8> = vec![0; length + 1];
+    if !lang_str.is_null() {
+        // SAFETY: A valid `NULL` terminator is present which is a requirement of `from_ptr`
+        let lang_rust_str = unsafe { CStr::from_ptr(lang_str) }.to_str()?;
+        Ok(lang_rust_str.to_string())
+    } else {
+        // `lang_str` is null, i.e. `CFStringGetCStringPtr` couldn't give desired output, trying with
+        // manual allocations
+        // SAFETY: It returns length of the string, from above conditional statement we ensure
+        // that the `lang_ptr` is not NULL thus making it safe to call
+        let length = unsafe { CFStringGetLength(ptr) as usize };
 
-    // SAFETY: Safety is ensured by following points
-    // 1. `lang_ptr` is not NULL, checked through conditional statement
-    // 2. `c_str_buf` is large enough and in scope after this call
-    unsafe {
-        CFStringGetCString(
-            ptr,
-            c_str_buf.as_mut_ptr() as *mut c_char,
-            c_str_buf.len() as CFIndex,
-            kCFStringEncodingUTF8,
-        );
+        let mut c_str_buf: Vec<u8> = vec![0; length + 1];
+
+        // SAFETY: Safety is ensured by following points
+        // 1. `lang_ptr` is not NULL, checked through conditional statement
+        // 2. `c_str_buf` is large enough and in scope after this call
+        unsafe {
+            CFStringGetCString(
+                ptr,
+                c_str_buf.as_mut_ptr() as *mut c_char,
+                c_str_buf.len() as CFIndex,
+                kCFStringEncodingUTF8,
+            );
+        }
+
+        let c_string = CString::from_vec_with_nul(c_str_buf)?;
+        let str_converted = c_string.into_string()?;
+        Ok(str_converted
+            .to_string()
+            .chars()
+            .filter(|&c| c != '\0')
+            .collect())
     }
-
-    let c_string = CString::from_vec_with_nul(c_str_buf)?;
-    let str_converted = c_string.into_string()?;
-    Ok(str_converted
-        .to_string()
-        .chars()
-        .filter(|&c| c != '\0')
-        .collect())
 }
 
 pub fn get_locales() -> Result<Vec<String>, RetrievalError> {
@@ -67,24 +80,8 @@ pub fn get_locales() -> Result<Vec<String>, RetrievalError> {
             let lang_ptr = unsafe { CFArrayGetValueAtIndex(locale_carr_ref, i) };
 
             if !lang_ptr.is_null() {
-                // SAFETY: The call to `CFStringGetCStringPtr` because the reference of string we are accessing is not `NULL`
-                // Returns pointer in O(1) without any memory allocation. This can return NULL so we are handling it by directly
-                // copying it using `CFStringGetCString`
-                let lang_str: *const c_char = unsafe {
-                    CFStringGetCStringPtr(lang_ptr as CFStringRef, kCFStringEncodingUTF8)
-                };
-
-                if !lang_str.is_null() {
-                    // SAFETY: A valid `NULL` terminator is present which is a requirement of `from_ptr`
-                    let lang_rust_str = unsafe { CStr::from_ptr(lang_str) }.to_str()?;
-
-                    languages.push(lang_rust_str.to_string());
-                } else {
-                    // `lang_str` is null, i.e. `CFStringGetCStringPtr` couldn't give desired output, trying with
-                    // manual allocations
-                    let locale_str = get_string(lang_ptr as CFStringRef)?;
-                    languages.push(locale_str);
-                }
+                let locale_str = get_string(lang_ptr as CFStringRef)?;
+                languages.push(locale_str);
             } else {
                 return Err(RetrievalError::NullPointer);
             }
@@ -130,22 +127,7 @@ pub fn get_system_calendars() -> Result<Vec<(String, String)>, RetrievalError> {
             // SAFETY: Retrieves `CFString` (identifier) for the calendar, the `if` statement ensures
             // we don't pass in a `NULL` reference
             let locale_identifier = unsafe { CFLocaleGetIdentifier(locale) };
-
-            // SAFETY: The call to `CFStringGetCStringPtr` because the reference of string we are accessing is not `NULL`
-            // Returns pointer in O(1) without any memory allocation. This can return NULL so we are handling it by directly
-            // copying it using `CFStringGetCString`
-            let locale_cstr = unsafe { CFStringGetCStringPtr(locale_identifier, 0) };
-
-            if !locale_cstr.is_null() {
-                // SAFETY: A valid `NULL` terminator is present which is a requirement of `from_ptr`
-                let calendar_rust_str = unsafe { CStr::from_ptr(locale_cstr) }.to_str()?;
-
-                calendar_locale_str = calendar_rust_str.to_string();
-            } else {
-                // `lang_str` is null, i.e. `CFStringGetCStringPtr` couldn't give desired output, trying with
-                // manual allocations
-                calendar_locale_str = get_string(locale_identifier as CFStringRef)?;
-            }
+            calendar_locale_str = get_string(locale_identifier as CFStringRef)?;
 
             // SAFETY: Releases the locale object which was retained
             unsafe { CFRelease(locale as _) };
@@ -154,20 +136,7 @@ pub fn get_system_calendars() -> Result<Vec<(String, String)>, RetrievalError> {
         }
 
         if !identifier.is_null() {
-            // SAFETY: The call to `CFStringGetCStringPtr` because the reference of string we are accessing is not `NULL`
-            // Returns pointer in O(1) without any memory allocation. This can return NULL so we are handling it by directly
-            // copying it using `CFStringGetCString`
-            let identifier_cstr = unsafe { CFStringGetCStringPtr(identifier, 0) };
-
-            if !identifier_cstr.is_null() {
-                // SAFETY: A valid `NULL` terminator is present which is a requirement of `from_ptr`
-                let identifier_str = unsafe { CStr::from_ptr(identifier_cstr) }.to_str()?;
-                calendar_identifier_str = identifier_str.to_string();
-            } else {
-                // `lang_str` is null, i.e. `CFStringGetCStringPtr` couldn't give desired output, trying with
-                // manual allocations
-                calendar_identifier_str = get_string(identifier as CFStringRef)?;
-            }
+            calendar_identifier_str = get_string(identifier as CFStringRef)?;
         }
         // SAFETY: Release the calendar when done to avoid memory leaks
         unsafe { CFRelease(calendar as _) };
@@ -191,21 +160,7 @@ pub fn get_system_timezone() -> Result<String, RetrievalError> {
         let cf_string = unsafe { timezone::CFTimeZoneGetName(timezone) };
 
         if !cf_string.is_null() {
-            // SAFETY: The call to `CFStringGetCStringPtr` because the reference of string we are accessing is not `NULL`
-            // Returns pointer in O(1) without any memory allocation. This can return NULL so we are handling it by directly
-            // copying it using `CFStringGetCString`
-            let identifier_cstr = unsafe { CFStringGetCStringPtr(cf_string, 0) };
-
-            if !identifier_cstr.is_null() {
-                // SAFETY: A valid `NULL` terminator is present which is a requirement of `from_ptr`
-                let identifier_str = unsafe { CStr::from_ptr(identifier_cstr) }.to_str()?;
-
-                return Ok(identifier_str.to_string());
-            } else {
-                // `lang_str` is null, i.e. `CFStringGetCStringPtr` couldn't give desired output, trying with
-                // manual allocations
-                return Ok(get_string(cf_string)?);
-            }
+            return Ok(get_string(cf_string)?);
         }
     }
     Err(RetrievalError::NullTimeZone)
