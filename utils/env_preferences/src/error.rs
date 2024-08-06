@@ -2,16 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::{
-    ffi::{FromVecWithNulError, IntoStringError},
-    str::Utf8Error,
-};
+use std::{ffi::FromVecWithNulError, str::Utf8Error};
 
 #[derive(Debug)]
 pub enum RetrievalError {
-    /// Error converting from `CString` to `String`
-    CStringConversionError(IntoStringError),
-
     /// Error converting into `&CStr` to `&str`
     ConversionError(Utf8Error),
 
@@ -50,12 +44,6 @@ impl From<windows::core::Error> for RetrievalError {
 impl From<Utf8Error> for RetrievalError {
     fn from(input: Utf8Error) -> Self {
         Self::ConversionError(input)
-    }
-}
-
-impl From<IntoStringError> for RetrievalError {
-    fn from(input: IntoStringError) -> Self {
-        Self::CStringConversionError(input)
     }
 }
 
