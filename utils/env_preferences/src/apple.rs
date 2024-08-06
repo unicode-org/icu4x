@@ -19,7 +19,7 @@ use std::ffi::{CStr, CString};
 use crate::RetrievalError;
 
 // Helper function
-fn get_string(ptr: CFStringRef) -> String {
+fn get_string(ptr: CFStringRef) -> Result<String, RetrievalError> {
     // SAFETY: It returns length of the string, from above conditional statement we ensure
     // that the `lang_ptr` is not NULL thus making it safe to call
     let length = unsafe { CFStringGetLength(ptr) as usize };
@@ -38,13 +38,13 @@ fn get_string(ptr: CFStringRef) -> String {
         );
     }
 
-    let c_string = CString::from_vec_with_nul(c_str_buf).unwrap();
-    let str_converted = c_string.into_string().unwrap();
-    str_converted
+    let c_string = CString::from_vec_with_nul(c_str_buf)?;
+    let str_converted = c_string.into_string()?;
+    Ok(str_converted
         .to_string()
         .chars()
         .filter(|&c| c != '\0')
-        .collect()
+        .collect())
 }
 
 pub fn get_locales() -> Result<Vec<String>, RetrievalError> {
@@ -80,7 +80,7 @@ pub fn get_locales() -> Result<Vec<String>, RetrievalError> {
                 } else {
                     // SAFETY: It returns length of the string, from above conditional statement we ensure
                     // that the `lang_ptr` is not NULL thus making it safe to call
-                    let locale_str = get_string(lang_ptr as CFStringRef);
+                    let locale_str = get_string(lang_ptr as CFStringRef)?;
                     languages.push(locale_str);
                 }
             } else {
@@ -140,7 +140,7 @@ pub fn get_system_calendars() -> Result<Vec<(String, String)>, RetrievalError> {
 
                 calendar_locale_str = calendar_rust_str.to_string();
             } else {
-                calendar_locale_str = get_string(locale_identifier as CFStringRef);
+                calendar_locale_str = get_string(locale_identifier as CFStringRef)?;
             }
 
             // SAFETY: Releases the locale object which was retained
@@ -160,7 +160,7 @@ pub fn get_system_calendars() -> Result<Vec<(String, String)>, RetrievalError> {
                 let identifier_str = unsafe { CStr::from_ptr(identifier_cstr) }.to_str()?;
                 calendar_identifier_str = identifier_str.to_string();
             } else {
-                calendar_identifier_str = get_string(identifier as CFStringRef);
+                calendar_identifier_str = get_string(identifier as CFStringRef)?;
             }
         }
         // SAFETY: Release the calendar when done to avoid memory leaks
@@ -196,7 +196,7 @@ pub fn get_system_timezone() -> Result<String, RetrievalError> {
 
                 return Ok(identifier_str.to_string());
             } else {
-                return Ok(get_string(cf_string));
+                return Ok(get_string(cf_string)?);
             }
         }
     }
