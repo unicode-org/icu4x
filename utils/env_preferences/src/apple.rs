@@ -80,7 +80,7 @@ pub fn get_locales() -> Result<Vec<String>, RetrievalError> {
                 let locale_str = get_string(lang_ptr as CFStringRef)?;
                 languages.push(locale_str);
             } else {
-                return Err(RetrievalError::NullPointer);
+                return Err(RetrievalError::NullLocale);
             }
         }
     } else {
