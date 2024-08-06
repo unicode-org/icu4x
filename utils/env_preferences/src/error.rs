@@ -18,9 +18,6 @@ pub enum RetrievalError {
     /// Unable to retrieve the locale
     NullLocale,
 
-    /// Received NULL Pointer
-    NullPointer,
-
     /// Unable to retrieve TimeZone
     NullTimeZone,
 

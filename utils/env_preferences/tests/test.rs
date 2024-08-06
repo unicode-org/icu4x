@@ -62,7 +62,7 @@ mod linux_tests {
         let tr = unsafe { setlocale(libc::LC_TIME, locale_cstr.as_ptr()) };
 
         if tr.is_null() {
-            panic!("{:?}", RetrievalError::NullPointer);
+            panic!("{:?}", RetrievalError::NullLocale);
         }
 
         let calendar_locale = get_system_calendars().unwrap();
