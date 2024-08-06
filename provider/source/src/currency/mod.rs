@@ -4,3 +4,4 @@
 
 pub(crate) mod essentials;
 pub(crate) mod extended;
+pub(crate) mod patterns;
