@@ -13,7 +13,11 @@ use icu_plurals::PluralCategory;
 use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 
-#[icu_provider::data_struct(UnitsDisplayNameV1Marker = "units/displaynames@1")]
+#[icu_provider::data_struct(marker(
+    UnitsDisplayNameV1Marker,
+    "units/displaynames@1",
+    attributes_domain = "units"
+))]
 #[derive(Clone, PartialEq, Debug)]
 #[cfg_attr(
     feature = "datagen",

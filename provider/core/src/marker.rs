@@ -531,6 +531,8 @@ pub struct DataMarkerInfo {
     /// Useful for reading and writing data to a file system.
     pub path: DataMarkerPath,
     /// TODO
+    pub attributes_domain: &'static str,
+    /// TODO
     pub is_singleton: bool,
     /// TODO
     pub fallback_config: LocaleFallbackConfig,
@@ -560,6 +562,7 @@ impl DataMarkerInfo {
         Self {
             path,
             is_singleton: false,
+            attributes_domain: "",
             fallback_config: LocaleFallbackConfig::const_default(),
         }
     }
