@@ -1359,119 +1359,22 @@ currency/extended@1, zu/EGP, 71B, 97650516a7e7847d
 currency/extended@1, zu/EUR, 61B, 70f4a5b6bbcd9e19
 currency/extended@1, zu/GBP, 70B, 62ef73dd0f1265ed
 currency/extended@1, zu/USD, 66B, ccf8b1189fca0543
-currency/patterns@1, <lookup>, 466B, 111 identifiers
-currency/patterns@1, <total>, 1425B, 18 unique payloads
-currency/patterns@1, af, 72B, d8d61f75068256c3
-currency/patterns@1, am, 72B, -> af
-currency/patterns@1, ar, 112B, c4eaa9d7d1100a0a
-currency/patterns@1, as, 72B, -> af
-currency/patterns@1, ast, 72B, -> af
-currency/patterns@1, az, 72B, -> af
-currency/patterns@1, be, 92B, 2b1d04ec9bc3efaf
-currency/patterns@1, bg, 72B, -> af
+currency/patterns@1, <lookup>, 94B, 14 identifiers
+currency/patterns@1, <total>, 617B, 9 unique payloads
 currency/patterns@1, blo, 82B, da128faf13fad0d5
-currency/patterns@1, bn, 72B, -> af
-currency/patterns@1, br, 102B, bd0541f7b4132a93
-currency/patterns@1, brx, 72B, -> af
-currency/patterns@1, bs, 82B, 28cfd6b0a5488bcb
-currency/patterns@1, bs-Cyrl, 82B, -> bs
-currency/patterns@1, ca, 72B, -> af
 currency/patterns@1, ceb, 72B, db7c7c84fecaf3d0
-currency/patterns@1, chr, 72B, -> af
-currency/patterns@1, cs, 92B, -> be
-currency/patterns@1, cy, 112B, -> ar
-currency/patterns@1, da, 72B, -> af
-currency/patterns@1, de, 72B, -> af
-currency/patterns@1, doi, 72B, -> af
-currency/patterns@1, dsb, 92B, c0b5868748b28367
-currency/patterns@1, el, 72B, -> af
-currency/patterns@1, en, 72B, -> af
-currency/patterns@1, es, 72B, -> af
 currency/patterns@1, es-GT, 72B, -> ceb
-currency/patterns@1, et, 72B, -> af
-currency/patterns@1, eu, 72B, -> af
-currency/patterns@1, fa, 72B, -> af
-currency/patterns@1, ff-Adlm, 72B, -> af
-currency/patterns@1, fi, 72B, -> af
-currency/patterns@1, fil, 72B, -> af
-currency/patterns@1, fo, 72B, -> af
-currency/patterns@1, fr, 72B, -> af
-currency/patterns@1, fy, 72B, -> af
-currency/patterns@1, ga, 102B, -> br
-currency/patterns@1, gd, 92B, -> dsb
-currency/patterns@1, gl, 72B, -> af
-currency/patterns@1, gu, 72B, -> af
-currency/patterns@1, ha, 72B, -> af
-currency/patterns@1, he, 92B, 18eff31cb2ed7017
-currency/patterns@1, hi, 72B, -> af
-currency/patterns@1, hr, 82B, -> bs
-currency/patterns@1, hsb, 92B, -> dsb
-currency/patterns@1, hu, 72B, -> af
-currency/patterns@1, hy, 72B, -> af
-currency/patterns@1, ia, 72B, -> af
-currency/patterns@1, is, 72B, -> af
-currency/patterns@1, it, 72B, -> af
 currency/patterns@1, ja, 61B, 9af35aad6ebc7d70
-currency/patterns@1, ka, 72B, -> af
-currency/patterns@1, kgp, 72B, -> af
-currency/patterns@1, kk, 72B, -> af
-currency/patterns@1, kn, 72B, -> af
-currency/patterns@1, ks, 72B, -> af
-currency/patterns@1, ks-Deva, 72B, -> af
-currency/patterns@1, ku, 72B, -> af
-currency/patterns@1, ky, 72B, -> af
-currency/patterns@1, lb, 72B, -> af
-currency/patterns@1, lt, 92B, -> be
-currency/patterns@1, lv, 82B, b494633fd6da9a81
-currency/patterns@1, mk, 72B, -> af
-currency/patterns@1, ml, 72B, -> af
-currency/patterns@1, mn, 72B, -> af
-currency/patterns@1, mr, 72B, -> af
-currency/patterns@1, mt, 102B, -> br
 currency/patterns@1, my, 62B, 86cee97085536d8b
-currency/patterns@1, ne, 72B, -> af
-currency/patterns@1, nl, 72B, -> af
-currency/patterns@1, no, 72B, -> af
-currency/patterns@1, or, 72B, -> af
-currency/patterns@1, pa, 72B, -> af
-currency/patterns@1, pcm, 72B, -> af
-currency/patterns@1, pl, 92B, -> be
-currency/patterns@1, ps, 72B, -> af
-currency/patterns@1, pt, 72B, -> af
-currency/patterns@1, rm, 72B, -> af
 currency/patterns@1, ro, 85B, 629b2b7dcea97875
-currency/patterns@1, ru, 92B, -> be
-currency/patterns@1, sat, 82B, 43441c2d3c301561
-currency/patterns@1, sc, 72B, -> af
 currency/patterns@1, sd, 48B, 3a6d9523170345d0
-currency/patterns@1, sd-Deva, 72B, -> af
 currency/patterns@1, si, 71B, 4f661a4fd0c9c312
-currency/patterns@1, sk, 92B, -> be
-currency/patterns@1, sl, 92B, -> dsb
-currency/patterns@1, so, 72B, -> af
-currency/patterns@1, sq, 72B, -> af
-currency/patterns@1, sr, 82B, -> bs
-currency/patterns@1, sr-Latn, 82B, -> bs
-currency/patterns@1, sv, 72B, -> af
 currency/patterns@1, sw, 72B, -> ceb
-currency/patterns@1, ta, 72B, -> af
-currency/patterns@1, te, 72B, -> af
-currency/patterns@1, ti, 72B, -> af
-currency/patterns@1, tk, 72B, -> af
 currency/patterns@1, to, 62B, -> my
-currency/patterns@1, tr, 72B, -> af
-currency/patterns@1, ug, 72B, -> af
-currency/patterns@1, uk, 92B, -> be
 currency/patterns@1, und, 62B, 22ee41f60d78bf20
-currency/patterns@1, ur, 72B, -> af
-currency/patterns@1, uz, 72B, -> af
-currency/patterns@1, uz-Cyrl, 72B, -> af
 currency/patterns@1, vec, 74B, 9f4972550abb7df
-currency/patterns@1, xh, 72B, -> af
-currency/patterns@1, yrl, 72B, -> af
 currency/patterns@1, zh, 61B, -> ja
 currency/patterns@1, zh-SG, 62B, -> und
-currency/patterns@1, zu, 72B, -> af
 displaynames/languages@1, <lookup>, 1051B, 209 identifiers
 displaynames/languages@1, <total>, 1557050B, 194 unique payloads
 displaynames/languages@1, af, 5898B, a2f3d9fa576f610
