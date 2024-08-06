@@ -512,7 +512,7 @@ impl WordSegmenter {
     }
 
     fn is_default_rule(locale: &DataLocale) -> bool {
-        let lang = locale.language();
+        let lang = locale.language;
         lang != language!("fi") && lang != language!("sv")
     }
 }

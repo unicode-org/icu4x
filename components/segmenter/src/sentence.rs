@@ -143,7 +143,7 @@ impl SentenceSegmenter {
             + ?Sized,
     {
         let payload = provider.load(Default::default())?.payload;
-        let payload_locale_override = if locale.language() == language!("el") {
+        let payload_locale_override = if locale.language == language!("el") {
             match provider.load(Default::default()) {
                 Ok(response) => Ok(Some(response.payload)),
                 Err(DataError {
