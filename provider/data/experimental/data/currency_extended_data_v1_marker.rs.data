@@ -5,7 +5,7 @@
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
 /// * 4668B for the lookup data structure (669 data identifiers)
-/// * 62157B[^1] for the actual data (584 unique structs)
+/// * 60704B[^1] for the actual data (580 unique structs)
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
 #[doc(hidden)]
@@ -17,7 +17,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
         #[clippy::msrv = "1.70"]
         impl $provider {
             const DATA_CURRENCY_EXTENDED_DATA_V1_MARKER: icu_provider_baked::zerotrie::Data<icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1Marker> = icu_provider_baked::zerotrie::Data {
-                trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1zabcdefghijklmnopqrstuvwxyz\0\x01\x02\x03\x03\x04\x05\x06\x06\x07\x08\t\n\n\x0B\x0B\x0C\x0C\x0E\x0F\x10\x10\x10\x10\x11\xC1\xC8\x8E\x08\xE8\xE7kS\xF8:\xE3g\x8B\xF7\x17\xE1\x01dM9\x10Sg\xAAS\xC5fmrsz\x1E<Z\x99\x1E\xC4CEGU\x03\r\x11AD\x80\xC2GU\x03P\x90hR\x91_BP\x92;SD\x939\x1E\xC4CEGU\x03\r\x11AD\x81\xC2GU\x03P\x90iR\x91`BP\x92<SD\x93:\x1E\xC4CEGU\x03\r\x11AD\x82\xC2GU\x03P\x90jR\x91aBP\x92=SD\x93;\xC2\x1Et\x1D\xC4CEGU\x03\r\x11AD\x83\xC2GU\x03P\x90kR\x91bBP\x92>SD\x93<\x1E\xC4CEGU\x03\r\x11AD\x84\xC2GU\x03P\x90lR\x91cBP\x92?SD\x93=\x1E\xC4CEGU\x03\r\x11AD\x85\xC2GU\x03P\x90mR\x91dBP\x92@SD\x93>\xC6eglnrs\x1E<[y\xB8\x1E\xC4CEGU\x03\r\x11AD\x86\xC2GU\x03P\x90nR\x91eBP\x92ASD\x93?\x1E\xC4CEGU\x03\r\x11AD\x87\xC2GU\x03P\x90oR\x91fBP\x92BSD\x93@o\x1E\xC4CEGU\x03\r\x11AD\x88\xC2GU\x03P\x90pR\x91gBP\x92CSD\x93A\x1E\xC4CEGU\x03\r\x11AD\x89\xC2GU\x03P\x90qR\x91hBP\x92DSD\x93B\xC2\x1Ex\x1D\xC4CEGU\x03\r\x11AD\x8A\xC2GU\x03P\x90rR\x91iBP\x92ESD\x93C\x1E\xC4CEGU\x03\r\x11AD\x8B\xC2GU\x03P\x90sR\x91jBP\x92FSD\x93D\xC2\x1E-\x1D\xC4CEGU\x03\r\x11AD\x8C\xC2GU\x03P\x90tR\x91kBP\x92GSD\x93ECyrl\x1E\xC4CEGU\x03\r\x11AD\x8D\xC2GU\x03P\x90uR\x91lBP\x92HSD\x93F\xC6aehsvy\x1E=]|\x9B\x1E\xC4CEGU\x03\r\x11AD\x8E\xC2GU\x03P\x90vR\x91cBP\x92ISD\x93Gb\x1E\xC4CEGU\x03\r\x11AD\x8F\xC2GU\x03P\x90wR\x91mBP\x92JSD\x93Hr\x1E\xC4CEGU\x04\x0E\x12AD\x90\0\xC2GU\x03P\x90xR\x91nBP\x92KSD\x93I\x1E\xC4CEGU\x04\x0E\x12AD\x90\x01\xC2GU\x03P\x90yR\x91oBP\x92LSD\x93J\x1E\xC4CEGU\x04\x0E\x12AD\x90\x02\xC2GU\x03P\x90zR\x91pBP\x92MSD\x93K\x1E\xC4CEGU\x04\x0E\x12AD\x90\x03\xC2GU\x03P\x90{R\x91qBP\x92NSD\x93L\xC4aeos\x1F>R\x1E\xC4CEGU\x04\x0E\x12AD\x90\x04\xC2GU\x03P\x90|R\x91rBP\x92OSD\x93M\x1E\xC4CEGU\x04\x0E\x12AD\x90\x05\xC2GU\x03P\x90}R\x91sBP\x92PSD\x93Ni\x1E\xC3EGU\x04\x08UR\x91tBP\x92QSD\x93Ob\x1E\xC4CEGU\x04\x0E\x12AD\x90\x06\xC2GU\x03P\x90~R\x91rBP\x92RSD\x93P\xC5lnstu<y\x98\xB7\xC2\x1E-\x1E\xC4CEGU\x04\x0E\x12AD\x90\x07\xC2GU\x03P\x90\x7FR\x91uBP\x92SSD\x93Qpolyton\x1E\xC2CE\x04AD\x90\x08\xC2GU\x03P\x91\0R\x91v\xC2\x1E-\x1E\xC4CEGU\x04\x0E\x12AD\x90\t\xC2GU\x03P\x90wR\x91mBP\x92JSD\x93R\xC3GIJ\x07\x0EG\x1EGBP\x92TM\x1EGBP\x92TE\x1EGBP\x92T\x1E\xC4CEGU\x04\x0E\x12AD\x90\n\xC2GU\x03P\x91\x01R\x91cBP\x92USD\x93S\x1E\xC4CEGU\x04\x0E\x12AD\x90\x0B\xC2GU\x03P\x91\x02R\x91wBP\x92VSD\x93T\x1E\xC4CEGU\x04\x0E\x12AD\x90\x0C\xC2GU\x03P\x91\x03R\x91xBP\x92WSD\x93U\xC6afiory1U\x96\xB5\xD4\xC2\x1E-\x1E\xC4CEGU\x04\x0E\x12AD\x90\r\xC2GU\x03P\x91\x04R\x91yBP\x92XSD\x93VAF\x1E\xC2CU\x04AD\x90\x0ESD\x93W-Adlm\x1E\xC4CEGU\x04\x0E\x12AD\x90\x0F\xC2GU\x03P\x91\x05R\x91zBP\x92YSD\x93X\xC2\x1El\x1E\xC4CEGU\x04\x0E\x12AD\x90\x10\xC2GU\x03P\x91\x06R\x91{BP\x92ZSD\x93Y\x1E\xC4CEGU\x04\x0E\x12AD\x90\x11\xC2GU\x03P\x91\x07R\x91mBP\x92JSD\x93Z\x1E\xC4CEGU\x04\x0E\x12AD\x90\x12\xC2GU\x03P\x91\x08R\x91|BP\x92[SD\x93[\x1E\xC4CEGU\x04\x0E\x12AD\x90\x13\xC2GU\x03P\x91\tR\x91cBP\x92\\SD\x93\\\x1E\xC4CEGU\x04\x0E\x12AD\x90\x14\xC2GU\x03P\x91\nR\x91_BP\x92]SD\x93]\xC4adlu\x1F>]\x1E\xC4CEGU\x04\x0E\x12AD\x90\x15\xC2GU\x03P\x91\x0BR\x91}BP\x92^SD\x93^\x1E\xC4CEGU\x04\x0E\x12AD\x90\x16\xC2GU\x03P\x91\x0CR\x91~BP\x92_SD\x93_\x1E\xC4CEGU\x04\x0E\x12AD\x90\x17\xC2GU\x03P\x91\rR\x91cBP\x92USD\x93S\x1E\xC4CEGU\x04\x0E\x12AD\x90\x18\xC2GU\x03P\x91\x0ER\x91\x7FBP\x92`SD\x93`\xC7aeirsuy\x1F>]|\x9C\xBB\x1E\xC4CEGU\x04\x0E\x12AD\x90\x19\xC2GU\x03P\x91\x0FR\x92\0BP\x92aSD\x93a\x1E\xC4CEGU\x04\x0E\x12AD\x90\x1A\xC2GU\x03P\x91\x10R\x92\x01BP\x92bSD\x93b\x1E\xC4CEGU\x04\x0E\x12AD\x90\x1B\xC2GU\x03P\x91\x11R\x91tBP\x92cSD\x93c\x1E\xC4CEGU\x04\x0E\x12AD\x90\x1C\xC2GU\x03P\x91\x12R\x92\x02BP\x92dSD\x93db\x1E\xC4CEGU\x04\x0E\x12AD\x90\x1D\xC2GU\x03P\x91\x13R\x92\x03BP\x92eSD\x93e\x1E\xC4CEGU\x04\x0E\x12AD\x90\x1E\xC2GU\x03P\x91\x14R\x92\x04BP\x92fSD\x93f\x1E\xC4CEGU\x04\x0E\x12AD\x90\x1F\xC2GU\x03P\x91\x15R\x92\x05BP\x92gSD\x93g\xC5adgst\x1F>]|\x1E\xC4CEGU\x04\x0E\x12AD\x90 \xC2GU\x03P\x91\x16R\x91cBP\x92hSD\x93h\x1E\xC4CEGU\x04\x0E\x12AD\x90!\xC2GU\x03P\x91\x17R\x91sBP\x92iSD\x93i\x1E\xC4CEGU\x04\x0E\x12AD\x90\"\xC2GU\x03P\x91\x18R\x92\x06BP\x92jSD\x93j\x1E\xC4CEGU\x04\x0E\x12AD\x90#\xC2GU\x03P\x91\x19R\x92\x07BP\x92kSD\x93k\x1E\xC4CEGU\x04\x0E\x12AD\x90$\xC2GU\x03P\x91\x1AR\x91rBP\x92lSD\x93l\xC2av\x1F\x1E\xC4CEGU\x04\x0E\x12AD\x90%\xC2GU\x03P\x91\x1BR\x92\x08BP\x92mSD\x93m\x1E\xC4CEGU\x04\x0E\x12AD\x90!\xC2GU\x03P\x91\x17R\x91sBP\x92iSD\x93i\xE1kaegkmnosuxy\0\0\0\0\0\0\0\x01\x01\x01\x1F?_~\x9D\xBC\xFD6Ui\x1E\xC4CEGU\x04\x0E\x12AD\x90&\xC2GU\x03P\x91\x1CR\x92\tBP\x92nSD\x93na\x1E\xC4CEGU\x04\x0E\x12AD\x90'\xC2GU\x03P\x91\x1DR\x91rBP\x92oSD\x93op\x1E\xC4CEGU\x04\x0E\x12AD\x90(\xC2GU\x03P\x91\x1ER\x92\nBP\x92pSD\x93p\x1E\xC4CEGU\x04\x0E\x12AD\x90)\xC2GU\x03P\x91\x1FR\x92\x0BBP\x92qSD\x93q\x1E\xC4CEGU\x04\x0E\x12AD\x90*\xC2GU\x03P\x91 R\x92\x0CBP\x92rSD\x93r\x1E\xC4CEGU\x04\x0E\x12AD\x90+\xC2GU\x03P\x91!R\x92\rBP\x92sSD\x93s\xC2\x1Ek\x1E\xC4CEGU\x04\x0E\x12AD\x90,\xC2GU\x03P\x91\"R\x92\x0EBP\x92tSD\x93t\x1E\xC4CEGU\x04\x0E\x12AD\x90-\xC2GU\x03P\x91#R\x92\x0FBP\x92uSD\x93u\xC2\x1E-\x1E\xC4CEGU\x04\x0E\x12AD\x90.\xC2GU\x03P\x91$R\x92\x10BP\x92vSD\x93vDeva\x1E\xC3EGU\x04\x08UR\x92\x11BP\x92wSD\x93w\x1E\xC4CEGU\x04\x0E\x12AD\x90/\xC2GU\x03P\x91%R\x92\x12BP\x92xSD\x93xv\x1E\xC3EGU\x04\x08UR\x92\x13BP\x92ySD\x93y\x1E\xC4CEGU\x04\x0E\x12AD\x900\xC2GU\x03P\x91&R\x91fBP\x92zSD\x93z\xC4botv\x1F>]\x1E\xC4CEGU\x04\x0E\x12AD\x901\xC2GU\x03P\x91'R\x91sBP\x92{SD\x93N\x1E\xC4CEGU\x04\x0E\x12AD\x902\xC2GU\x03P\x91(R\x92\x14BP\x92|SD\x93{\x1E\xC4CEGU\x04\x0E\x12AD\x903\xC2GU\x03P\x91)R\x92\x15BP\x92}SD\x93|\x1E\xC4CEGU\x04\x0E\x12AD\x904\xC2GU\x03P\x91*R\x92\x16BP\x92~SD\x93}\xE1iaiklnrsty\0\0\0\0\0\0\0\0\x143Rq\xA6\xC5\xE4\xEAi\x1E\xC3EGU\x04\x08UR\x91tBP\x92cSD\x93c\x1E\xC4CEGU\x04\x0E\x12AD\x905\xC2GU\x03P\x91+R\x92\x06BP\x92\x7FSD\x93~\x1E\xC4CEGU\x04\x0E\x12AD\x906\xC2GU\x03P\x91,R\x92\x17BP\x93\0SD\x93\x7F\x1E\xC4CEGU\x04\x0E\x12AD\x907\xC2GU\x03P\x91-R\x92\x18BP\x93\x01SD\x94\0\xC2\x1Ei\x1E\xC4CEGU\x04\x0E\x12AD\x908\xC2GU\x03P\x91.R\x91pBP\x93\x02SD\x94\x01\x1E\xC3EGU\x04\x08UR\x92\x19BP\x93\x03SD\x94\x02\x1E\xC4CEGU\x04\x0E\x12AD\x909\xC2GU\x03P\x91/R\x92\x1ABP\x93\x04SD\x94\x03\x1E\xC4CEGU\x04\x0E\x12AD\x90!\xC2GU\x03P\x910R\x91sBP\x93\x05SD\x94\x04\x1EEUR\x92\x12\x1E\xC4CEGU\x04\x0E\x12AD\x90:\xC2GU\x03P\x911R\x92\x1BBP\x93\x06SD\x94\x05\xC4eloq\x1F>]\x1E\xC4CEGU\x04\x0E\x12AD\x90;\xC2GU\x03P\x912R\x92\x1ABP\x93\x07SD\x94\x06\x1E\xC4CEGU\x04\x0E\x12AD\x90\x14\xC2GU\x03P\x913R\x91_BP\x92;SD\x94\x07\x1E\xC4CEGU\x04\x0E\x12AD\x90<\xC2GU\x03P\x914R\x91rBP\x93\x08SD\x94\x08o\x1EEGP\x915r\x1E\xC4CEGU\x04\x0E\x12AD\x90=\xC2GU\x03P\x916R\x92\x1CBP\x93\tSD\x94\t\xC5aclst\x1F?^}\x1E\xC4CEGU\x04\x0E\x12AD\x90>\xC2GU\x03P\x917R\x92\x1DBP\x93\nSD\x94\nm\x1E\xC4CEGU\x04\x0E\x12AD\x90?\xC2GU\x03P\x918R\x92\x1EBP\x93\x0BSD\x94\x0B\x1E\xC4CEGU\x04\x0E\x12AD\x90@\xC2GU\x03P\x919R\x91rBP\x93\x0CSD\x94\x0C\x1E\xC4CEGU\x04\x0E\x12AD\x90A\xC2GU\x03P\x91:R\x92\x1FBP\x93\rSD\x94\r\xC2\x1E-\x1E\xC4CEGU\x04\x0E\x12AD\x90B\xC2GU\x03P\x91;R\x92 BP\x93\x0ESD\x94\x0EPT\x1E\xC4CEGU\x04\x0E\x12AD\x90C\xC2GU\x03P\x91<R\x91cBP\x93\x0FSD\x94\x0Fu\x1E\xC4CEGU\x04\x0E\x12AD\x90D\xC2GU\x03P\x91=R\x92\x06BP\x93\x10SD\x94\x10\xC3mou\x1F>\x1E\xC4CEGU\x04\x0E\x12AD\x90E\xC2GU\x03P\x91>R\x91cBP\x93\x11SD\x94\x11\x1E\xC4CEGU\x04\x0E\x12AD\x90F\xC2GU\x03P\x91?R\x91rBP\x93\x12SD\x94\x12\x1E\xC4CEGU\x04\x0E\x12AD\x90G\xC2GU\x03P\x91@R\x91pBP\x93\x13SD\x94\x13\xE1lacdikloqruvw\0\0\0\0\0\0\x01\x01\x01\x01\x011P\x89\xA8\xC7\xE6\x05$i|\x9B\xC3\x1Eht\x12\x18\xC3EGU\x04\x08UR\x92!BP\x93\x14SD\x94\x14\x1EUSD\x94\x15\x1E\xC3EGU\x04\x08UR\x92\"BP\x93\x15SD\x94\x16\x1E\xC4CEGU\x04\x0E\x12AD\x90H\xC2GU\x03P\x91AR\x92#BP\x93\x16SD\x94\x17\xC2\x1E-\x1E\xC4CEGU\x04\x0E\x12AD\x90I\xC2GU\x03P\x91BR\x91aBP\x93\x17SD\x94\x18Deva\x1E\xC3EGU\x04\x08UR\x91tBP\x93\x18SD\x94\x19\x1E\xC4CEGU\x04\x0E\x12AD\x90J\xC2GU\x03P\x91CR\x92$BP\x93\x19SD\x94\x1A\x1E\xC4CEGU\x04\x0E\x12AD\x90K\xC2GU\x03P\x91DR\x92%BP\x93\x1ASD\x94\x1B\x1E\xC4CEGU\x04\x0E\x12AD\x90L\xC2GU\x03P\x91ER\x92&BP\x93\x1BSD\x94\x1C\x1E\xC4CEGU\x04\x0E\x12AD\x90M\xC2GU\x03P\x91FR\x92'BP\x93\x1CSD\x94\x1D\x1E\xC4CEGU\x04\x0E\x12AD\x90N\xC2GU\x03P\x91GR\x92(BP\x93\x1DSD\x94\x1E\xC2\x1E-\x1E\xC4CEGU\x04\x0E\x12AD\x90O\xC2GU\x03P\x91HR\x91lBP\x93\x1ESD\x94\x1FLatn\x1E\xC4CEGU\x04\x0E\x12AD\x90\x1C\xC2GU\x03P\x91\x12R\x92)BP\x92dSD\x93d\x1E\xC3EGU\x04\x08UR\x92\x06BP\x93\x1FSD\x94 \x1E\xC4CEGU\x04\x0E\x12AD\x90P\xC2GU\x03P\x91IR\x91rBP\x93 SD\x94!\xC2\x1E-\x1E\xC4CEGU\x04\x0E\x12AD\x90Q\xC2GU\x03P\x91JR\x92*BP\x93!SD\x94\"KE\x1ECAD\x90R\xC9aeghikort\x1F>Qp\x83\xA2\xA8\xC7\x1E\xC4CEGU\x04\x0E\x12AD\x90S\xC2GU\x03P\x91KR\x92+BP\x93\"SD\x94#\x1E\xC4CEGU\x04\x0E\x12AD\x90T\xC2GU\x03P\x91LR\x92,BP\x93#SD\x94$\x1E\xC3EGU\x04\x08UR\x92-BP\x93$SD\x94%\x1E\xC4CEGU\x04\x0E\x12AD\x90U\xC2GU\x03P\x91MR\x92.BP\x93%SD\x94&\x1E\xC3EGU\x04\x08UR\x91`BP\x92<SD\x94'\x1E\xC4CEGU\x04\x0E\x12AD\x90V\xC2GU\x03P\x91NR\x92/BP\x93&SD\x94(\x1EEUR\x920\x1E\xC4CEGU\x04\x0E\x12AD\x90W\xC2GU\x03P\x91OR\x91sBP\x93'SD\x94)\x1E\xC3EGU\x04\x08UR\x91pBP\x93(SD\x93z\xC5gknrz\x1F>^\x88\x1E\xC4CEGU\x04\x0E\x12AD\x90X\xC2GU\x03P\x91PR\x921BP\x93)SD\x94*\x1E\xC4CEGU\x04\x0E\x12AD\x90Y\xC2GU\x03P\x91QR\x922BP\x93*SD\x94+d\x1E\xC4CEGU\x04\x0E\x12AD\x90Z\xC2GU\x03P\x90ZR\x90ZBP\x90ZSD\x90Z\xC2\x1E-\x1E\xC4CEGU\x04\x0E\x12AD\x90[\xC2GU\x03P\x91RR\x91yBP\x93+SD\x94,IN\x1EGBP\x93,\xC2\x1E-\x1E\xC4CEGU\x04\x0E\x12AD\x90\\\xC2GU\x03P\x91SR\x923BP\x93-SD\x94-Cyrl\x1E\xC4CEGU\x04\x0E\x12AD\x90]\xC2GU\x03P\x91TR\x924BP\x93.SD\x94.\xC2ei c\x1E\xC4CEGU\x04\x0E\x12AD\x90^\xC2GU\x03P\x91UR\x91rBP\x93/SD\x94/\x1E\xC4CEGU\x04\x0E\x12AD\x90_\xC2GU\x03P\x91VR\x92\x06BP\x930SD\x940o\x1E\xC3EGU\x04\x08UR\x92\x06BP\x931SD\x941\xC2hn\x1F\x1E\xC4CEGU\x04\x0E\x12AD\x90\t\xC2GU\x03P\x91WR\x925BP\x932SD\x93Rr\x1E\xC4CEGU\x04\x0E\x12AD\x90`\xC2GU\x03P\x91XR\x91tBP\x92cSD\x942\xC3oru=]\xC2\x1E-\x1E\xC4CEGU\x04\x0E\x12AD\x90a\xC2GU\x03P\x91YR\x926BP\x933SD\x943BJ\x1E\xC4CEGU\x04\x08\x0CAD\x90bGP\x91ZBP\x934SD\x944l\x1E\xC4CEGU\x04\x0E\x12AD\x90c\xC2GU\x03P\x91[R\x927BP\x935SD\x945e\xC2\x1E-\x1E\xC4CEGU\x04\x0E\x12AD\x90d\xC2GU\x03P\x91\\R\x928BP\x936SD\x946Hans\x1E\xC4CEGU\x04\x0E\x12AD\x90e\xC2GU\x03P\x91]R\x929BP\x937SD\x946\xC2huX\xC2\x1E-\x1E\xC4CEGU\x04\x0E\x12AD\x90f\xC2GU\x03P\x91]R\x929BP\x937SD\x946\xC2HM+\xC2Ka\x06\x1ECAD\x90fnt\x1E\xC4CEGU\x04\x0E\x12AD\x90d\xC2GU\x03P\x91\\R\x928BP\x936SD\x946O\x1ECAD\x90f\x1E\xC4CEGU\x04\x0E\x12AD\x90g\xC2GU\x03P\x91^R\x92:BP\x938SD\x947" },
+                trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1zabcdefghijklmnopqrstuvwxyz\0\x01\x02\x03\x03\x04\x05\x06\x06\x07\x08\t\n\n\x0B\x0B\x0C\x0C\x0E\x0F\x10\x10\x10\x10\x11\xC1\xC8\x8E\x08\xE8\xE7kS\xF8:\xE3g\x8B\xF7\x17\xE1\x01dM9\x10Sg\xAAS\xC5fmrsz\x1E<Z\x99\x1E\xC4CEGU\x03\r\x11AD\x80\xC2GU\x03P\x90hR\x91_BP\x927SD\x935\x1E\xC4CEGU\x03\r\x11AD\x81\xC2GU\x03P\x90iR\x91`BP\x928SD\x936\x1E\xC4CEGU\x03\r\x11AD\x82\xC2GU\x03P\x90jR\x91aBP\x929SD\x937\xC2\x1Et\x1D\xC4CEGU\x03\r\x11AD\x83\xC2GU\x03P\x90kR\x91bBP\x92:SD\x938\x1E\xC4CEGU\x03\r\x11AD\x84\xC2GU\x03P\x90lR\x91cBP\x92;SD\x939\x1E\xC4CEGU\x03\r\x11AD\x85\xC2GU\x03P\x90mR\x91dBP\x92<SD\x93:\xC6eglnrs\x1E<[y\xB8\x1E\xC4CEGU\x03\r\x11AD\x86\xC2GU\x03P\x90nR\x91eBP\x92=SD\x93;\x1E\xC4CEGU\x03\r\x11AD\x87\xC2GU\x03P\x90oR\x91fBP\x92>SD\x93<o\x1E\xC4CEGU\x03\r\x11AD\x88\xC2GU\x03P\x90pR\x91gBP\x92?SD\x93=\x1E\xC4CEGU\x03\r\x11AD\x89\xC2GU\x03P\x90qR\x91hBP\x92@SD\x93>\xC2\x1Ex\x1D\xC4CEGU\x03\r\x11AD\x8A\xC2GU\x03P\x90rR\x91iBP\x92ASD\x93?\x1E\xC4CEGU\x03\r\x11AD\x8B\xC2GU\x03P\x90sR\x91jBP\x92BSD\x93@\xC2\x1E-\x1D\xC4CEGU\x03\r\x11AD\x8C\xC2GU\x03P\x90tR\x91kBP\x92CSD\x93ACyrl\x1E\xC4CEGU\x03\r\x11AD\x8D\xC2GU\x03P\x90uR\x91lBP\x92DSD\x93B\xC6aehsvy\x1E=]|\x9B\x1E\xC4CEGU\x03\r\x11AD\x8E\xC2GU\x03P\x90vR\x91cBP\x92ESD\x93Cb\x1E\xC4CEGU\x03\r\x11AD\x8F\xC2GU\x03P\x90wR\x91mBP\x92FSD\x93Dr\x1E\xC4CEGU\x04\x0E\x12AD\x90\0\xC2GU\x03P\x90xR\x91nBP\x92GSD\x93E\x1E\xC4CEGU\x04\x0E\x12AD\x90\x01\xC2GU\x03P\x90yR\x91oBP\x92HSD\x93F\x1E\xC4CEGU\x04\x0E\x12AD\x90\x02\xC2GU\x03P\x90zR\x91pBP\x92ISD\x93G\x1E\xC4CEGU\x04\x0E\x12AD\x90\x03\xC2GU\x03P\x90{R\x91qBP\x92JSD\x93H\xC4aeos\x1F>R\x1E\xC4CEGU\x04\x0E\x12AD\x90\x04\xC2GU\x03P\x90|R\x91rBP\x92KSD\x93I\x1E\xC4CEGU\x04\x0E\x12AD\x90\x05\xC2GU\x03P\x90}R\x91sBP\x92LSD\x93Ji\x1E\xC3EGU\x04\x08UR\x91tBP\x92MSD\x93Kb\x1E\xC4CEGU\x04\x0E\x12AD\x90\x06\xC2GU\x03P\x90~R\x91rBP\x92NSD\x93L\xC5lnstu<y\x98\xB7\xC2\x1E-\x1E\xC4CEGU\x04\x0E\x12AD\x90\x07\xC2GU\x03P\x90\x7FR\x91uBP\x92OSD\x93Mpolyton\x1E\xC2CE\x04AD\x90\x08\xC2GU\x03P\x91\0R\x91v\xC2\x1E-\x1E\xC4CEGU\x04\x0E\x12AD\x90\t\xC2GU\x03P\x90wR\x91mBP\x92FSD\x93N\xC3GIJ\x07\x0EG\x1EGBP\x92PM\x1EGBP\x92PE\x1EGBP\x92P\x1E\xC4CEGU\x04\x0E\x12AD\x90\n\xC2GU\x03P\x91\x01R\x91cBP\x92QSD\x93O\x1E\xC4CEGU\x04\x0E\x12AD\x90\x0B\xC2GU\x03P\x91\x02R\x91wBP\x92RSD\x93P\x1E\xC4CEGU\x04\x0E\x12AD\x90\x0C\xC2GU\x03P\x91\x03R\x91xBP\x92SSD\x93Q\xC6afiory1U\x96\xB5\xD4\xC2\x1E-\x1E\xC4CEGU\x04\x0E\x12AD\x90\r\xC2GU\x03P\x91\x04R\x91yBP\x92TSD\x93RAF\x1E\xC2CU\x04AD\x90\x0ESD\x93S-Adlm\x1E\xC4CEGU\x04\x0E\x12AD\x90\x0F\xC2GU\x03P\x91\x05R\x91zBP\x92USD\x93T\xC2\x1El\x1E\xC4CEGU\x04\x0E\x12AD\x90\x10\xC2GU\x03P\x91\x06R\x91{BP\x92VSD\x93U\x1E\xC4CEGU\x04\x0E\x12AD\x90\x11\xC2GU\x03P\x91\x07R\x91mBP\x92FSD\x93V\x1E\xC4CEGU\x04\x0E\x12AD\x90\x12\xC2GU\x03P\x91\x08R\x91|BP\x92WSD\x93W\x1E\xC4CEGU\x04\x0E\x12AD\x90\x13\xC2GU\x03P\x91\tR\x91cBP\x92XSD\x93X\x1E\xC4CEGU\x04\x0E\x12AD\x90\x14\xC2GU\x03P\x91\nR\x91_BP\x92YSD\x93Y\xC4adlu\x1F>]\x1E\xC4CEGU\x04\x0E\x12AD\x90\x15\xC2GU\x03P\x91\x0BR\x91_BP\x92ZSD\x93Z\x1E\xC4CEGU\x04\x0E\x12AD\x90\x16\xC2GU\x03P\x91\x0CR\x91}BP\x92[SD\x93[\x1E\xC4CEGU\x04\x0E\x12AD\x90\x17\xC2GU\x03P\x91\rR\x91cBP\x92QSD\x93O\x1E\xC4CEGU\x04\x0E\x12AD\x90\x18\xC2GU\x03P\x91\x0ER\x91~BP\x92\\SD\x93\\\xC7aeirsuy\x1F>]|\x9C\xBB\x1E\xC4CEGU\x04\x0E\x12AD\x90\x19\xC2GU\x03P\x91\x0FR\x91\x7FBP\x92]SD\x93]\x1E\xC4CEGU\x04\x0E\x12AD\x90\x1A\xC2GU\x03P\x91\x10R\x92\0BP\x92^SD\x93^\x1E\xC4CEGU\x04\x0E\x12AD\x90\x1B\xC2GU\x03P\x91\x11R\x91tBP\x92_SD\x93_\x1E\xC4CEGU\x04\x0E\x12AD\x90\x1C\xC2GU\x03P\x91\x12R\x92\x01BP\x92`SD\x93`b\x1E\xC4CEGU\x04\x0E\x12AD\x90\x1D\xC2GU\x03P\x91\x13R\x92\x02BP\x92aSD\x93a\x1E\xC4CEGU\x04\x0E\x12AD\x90\x1E\xC2GU\x03P\x91\x14R\x92\x03BP\x92bSD\x93b\x1E\xC4CEGU\x04\x0E\x12AD\x90\x1F\xC2GU\x03P\x91\x15R\x92\x04BP\x92cSD\x93c\xC5adgst\x1F>]|\x1E\xC4CEGU\x04\x0E\x12AD\x90 \xC2GU\x03P\x91\x16R\x91cBP\x92dSD\x93d\x1E\xC4CEGU\x04\x0E\x12AD\x90!\xC2GU\x03P\x91\x17R\x91sBP\x92eSD\x93e\x1E\xC4CEGU\x04\x0E\x12AD\x90\"\xC2GU\x03P\x91\x18R\x91_BP\x92fSD\x93f\x1E\xC4CEGU\x04\x0E\x12AD\x90#\xC2GU\x03P\x91\x19R\x92\x05BP\x92gSD\x93g\x1E\xC4CEGU\x04\x0E\x12AD\x90$\xC2GU\x03P\x91\x1AR\x91rBP\x92hSD\x93h\xC2av\x1F\x1E\xC4CEGU\x04\x0E\x12AD\x90%\xC2GU\x03P\x91\x1BR\x92\x06BP\x92iSD\x93i\x1E\xC4CEGU\x04\x0E\x12AD\x90!\xC2GU\x03P\x91\x17R\x91sBP\x92eSD\x93e\xE1kaegkmnosuxy\0\0\0\0\0\0\0\x01\x01\x01\x1F?_~\x9D\xBC\xFD6Ui\x1E\xC4CEGU\x04\x0E\x12AD\x90&\xC2GU\x03P\x91\x1CR\x92\x07BP\x92jSD\x93ja\x1E\xC4CEGU\x04\x0E\x12AD\x90'\xC2GU\x03P\x91\x1DR\x91rBP\x92kSD\x93kp\x1E\xC4CEGU\x04\x0E\x12AD\x90(\xC2GU\x03P\x91\x1ER\x92\x08BP\x92lSD\x93l\x1E\xC4CEGU\x04\x0E\x12AD\x90)\xC2GU\x03P\x91\x1FR\x92\tBP\x92mSD\x93m\x1E\xC4CEGU\x04\x0E\x12AD\x90*\xC2GU\x03P\x91 R\x92\nBP\x92nSD\x93n\x1E\xC4CEGU\x04\x0E\x12AD\x90+\xC2GU\x03P\x91!R\x92\x0BBP\x92oSD\x93o\xC2\x1Ek\x1E\xC4CEGU\x04\x0E\x12AD\x90,\xC2GU\x03P\x91\"R\x92\x0CBP\x92pSD\x93p\x1E\xC4CEGU\x04\x0E\x12AD\x90-\xC2GU\x03P\x91#R\x92\rBP\x92qSD\x93q\xC2\x1E-\x1E\xC4CEGU\x04\x0E\x12AD\x90.\xC2GU\x03P\x91$R\x92\x0EBP\x92rSD\x93rDeva\x1E\xC3EGU\x04\x08UR\x92\x0FBP\x92sSD\x93s\x1E\xC4CEGU\x04\x0E\x12AD\x90/\xC2GU\x03P\x91%R\x92\x10BP\x92tSD\x93tv\x1E\xC3EGU\x04\x08UR\x92\x11BP\x92uSD\x93u\x1E\xC4CEGU\x04\x0E\x12AD\x900\xC2GU\x03P\x91&R\x91fBP\x92vSD\x93v\xC4botv\x1F>]\x1E\xC4CEGU\x04\x0E\x12AD\x901\xC2GU\x03P\x91'R\x91sBP\x92wSD\x93J\x1E\xC4CEGU\x04\x0E\x12AD\x902\xC2GU\x03P\x91(R\x92\x12BP\x92xSD\x93w\x1E\xC4CEGU\x04\x0E\x12AD\x903\xC2GU\x03P\x91)R\x92\x13BP\x92ySD\x93x\x1E\xC4CEGU\x04\x0E\x12AD\x904\xC2GU\x03P\x91*R\x92\x14BP\x92zSD\x93y\xE1iaiklnrsty\0\0\0\0\0\0\0\0\x143Rq\xA6\xC5\xE4\xEAi\x1E\xC3EGU\x04\x08UR\x91tBP\x92_SD\x93_\x1E\xC4CEGU\x04\x0E\x12AD\x905\xC2GU\x03P\x91+R\x91_BP\x92{SD\x93z\x1E\xC4CEGU\x04\x0E\x12AD\x906\xC2GU\x03P\x91,R\x91lBP\x92|SD\x93{\x1E\xC4CEGU\x04\x0E\x12AD\x907\xC2GU\x03P\x91-R\x92\x15BP\x92}SD\x93|\xC2\x1Ei\x1E\xC4CEGU\x04\x0E\x12AD\x908\xC2GU\x03P\x91.R\x91pBP\x92~SD\x93}\x1E\xC3EGU\x04\x08UR\x92\x16BP\x92\x7FSD\x93~\x1E\xC4CEGU\x04\x0E\x12AD\x909\xC2GU\x03P\x91/R\x92\x17BP\x93\0SD\x93\x7F\x1E\xC4CEGU\x04\x0E\x12AD\x90!\xC2GU\x03P\x910R\x91sBP\x93\x01SD\x94\0\x1EEUR\x92\x10\x1E\xC4CEGU\x04\x0E\x12AD\x90:\xC2GU\x03P\x911R\x92\x18BP\x93\x02SD\x94\x01\xC4eloq\x1F>]\x1E\xC4CEGU\x04\x0E\x12AD\x90;\xC2GU\x03P\x912R\x92\x17BP\x93\x03SD\x94\x02\x1E\xC4CEGU\x04\x0E\x12AD\x90\x14\xC2GU\x03P\x913R\x91_BP\x927SD\x94\x03\x1E\xC4CEGU\x04\x0E\x12AD\x90<\xC2GU\x03P\x914R\x91rBP\x93\x04SD\x94\x04o\x1EEGP\x915r\x1E\xC4CEGU\x04\x0E\x12AD\x90=\xC2GU\x03P\x916R\x92\x19BP\x93\x05SD\x94\x05\xC5aclst\x1F?^}\x1E\xC4CEGU\x04\x0E\x12AD\x90>\xC2GU\x03P\x917R\x92\x1ABP\x93\x06SD\x94\x06m\x1E\xC4CEGU\x04\x0E\x12AD\x90?\xC2GU\x03P\x918R\x92\x1BBP\x93\x07SD\x94\x07\x1E\xC4CEGU\x04\x0E\x12AD\x90@\xC2GU\x03P\x919R\x91rBP\x93\x08SD\x94\x08\x1E\xC4CEGU\x04\x0E\x12AD\x90A\xC2GU\x03P\x91:R\x92\x1CBP\x93\tSD\x94\t\xC2\x1E-\x1E\xC4CEGU\x04\x0E\x12AD\x90B\xC2GU\x03P\x91;R\x92\x1DBP\x93\nSD\x94\nPT\x1E\xC4CEGU\x04\x0E\x12AD\x90C\xC2GU\x03P\x91<R\x91cBP\x93\x0BSD\x94\x0Bu\x1E\xC4CEGU\x04\x0E\x12AD\x90D\xC2GU\x03P\x91=R\x91_BP\x93\x0CSD\x94\x0C\xC3mou\x1F>\x1E\xC4CEGU\x04\x0E\x12AD\x90E\xC2GU\x03P\x91>R\x91cBP\x93\rSD\x94\r\x1E\xC4CEGU\x04\x0E\x12AD\x90F\xC2GU\x03P\x91?R\x91rBP\x93\x0ESD\x94\x0E\x1E\xC4CEGU\x04\x0E\x12AD\x90G\xC2GU\x03P\x91@R\x91pBP\x93\x0FSD\x94\x0F\xE1lacdikloqruvw\0\0\0\0\0\0\x01\x01\x01\x01\x011P\x89\xA8\xC7\xE6\x05$i|\x9B\xC3\x1Eht\x12\x18\xC3EGU\x04\x08UR\x92\x1EBP\x93\x10SD\x94\x10\x1EUSD\x94\x11\x1E\xC3EGU\x04\x08UR\x92\x1FBP\x93\x11SD\x94\x12\x1E\xC4CEGU\x04\x0E\x12AD\x90H\xC2GU\x03P\x91AR\x92 BP\x93\x12SD\x94\x13\xC2\x1E-\x1E\xC4CEGU\x04\x0E\x12AD\x90I\xC2GU\x03P\x91BR\x91aBP\x93\x13SD\x94\x14Deva\x1E\xC3EGU\x04\x08UR\x91tBP\x93\x14SD\x94\x15\x1E\xC4CEGU\x04\x0E\x12AD\x90J\xC2GU\x03P\x91CR\x92!BP\x93\x15SD\x94\x16\x1E\xC4CEGU\x04\x0E\x12AD\x90K\xC2GU\x03P\x91DR\x92\"BP\x93\x16SD\x94\x17\x1E\xC4CEGU\x04\x0E\x12AD\x90L\xC2GU\x03P\x91ER\x92#BP\x93\x17SD\x94\x18\x1E\xC4CEGU\x04\x0E\x12AD\x90M\xC2GU\x03P\x91FR\x92$BP\x93\x18SD\x94\x19\x1E\xC4CEGU\x04\x0E\x12AD\x90N\xC2GU\x03P\x91GR\x92%BP\x93\x19SD\x94\x1A\xC2\x1E-\x1E\xC4CEGU\x04\x0E\x12AD\x90O\xC2GU\x03P\x91HR\x91lBP\x93\x1ASD\x94\x1BLatn\x1E\xC4CEGU\x04\x0E\x12AD\x90\x1C\xC2GU\x03P\x91\x12R\x92&BP\x92`SD\x93`\x1E\xC3EGU\x04\x08UR\x91_BP\x93\x1BSD\x94\x1C\x1E\xC4CEGU\x04\x0E\x12AD\x90P\xC2GU\x03P\x91IR\x91rBP\x93\x1CSD\x94\x1D\xC2\x1E-\x1E\xC4CEGU\x04\x0E\x12AD\x90Q\xC2GU\x03P\x91JR\x92'BP\x93\x1DSD\x94\x1EKE\x1ECAD\x90R\xC9aeghikort\x1F>Qp\x83\xA2\xA8\xC7\x1E\xC4CEGU\x04\x0E\x12AD\x90S\xC2GU\x03P\x91KR\x92(BP\x93\x1ESD\x94\x1F\x1E\xC4CEGU\x04\x0E\x12AD\x90T\xC2GU\x03P\x91LR\x92)BP\x93\x1FSD\x94 \x1E\xC3EGU\x04\x08UR\x91fBP\x93 SD\x94!\x1E\xC4CEGU\x04\x0E\x12AD\x90U\xC2GU\x03P\x91MR\x92*BP\x93!SD\x94\"\x1E\xC3EGU\x04\x08UR\x91`BP\x928SD\x94#\x1E\xC4CEGU\x04\x0E\x12AD\x90V\xC2GU\x03P\x91NR\x92+BP\x93\"SD\x94$\x1EEUR\x92,\x1E\xC4CEGU\x04\x0E\x12AD\x90W\xC2GU\x03P\x91OR\x91sBP\x93#SD\x94%\x1E\xC3EGU\x04\x08UR\x91pBP\x93$SD\x93v\xC5gknrz\x1F>^\x88\x1E\xC4CEGU\x04\x0E\x12AD\x90X\xC2GU\x03P\x91PR\x92-BP\x93%SD\x94&\x1E\xC4CEGU\x04\x0E\x12AD\x90Y\xC2GU\x03P\x91QR\x92.BP\x93&SD\x94'd\x1E\xC4CEGU\x04\x0E\x12AD\x90Z\xC2GU\x03P\x90ZR\x90ZBP\x90ZSD\x90Z\xC2\x1E-\x1E\xC4CEGU\x04\x0E\x12AD\x90[\xC2GU\x03P\x91RR\x91yBP\x93'SD\x94(IN\x1EGBP\x93(\xC2\x1E-\x1E\xC4CEGU\x04\x0E\x12AD\x90\\\xC2GU\x03P\x91SR\x92/BP\x93)SD\x94)Cyrl\x1E\xC4CEGU\x04\x0E\x12AD\x90]\xC2GU\x03P\x91TR\x920BP\x93*SD\x94*\xC2ei c\x1E\xC4CEGU\x04\x0E\x12AD\x90^\xC2GU\x03P\x91UR\x91rBP\x93+SD\x94+\x1E\xC4CEGU\x04\x0E\x12AD\x90_\xC2GU\x03P\x91VR\x91_BP\x93,SD\x94,o\x1E\xC3EGU\x04\x08UR\x91_BP\x93-SD\x94-\xC2hn\x1F\x1E\xC4CEGU\x04\x0E\x12AD\x90\t\xC2GU\x03P\x91WR\x921BP\x93.SD\x93Nr\x1E\xC4CEGU\x04\x0E\x12AD\x90`\xC2GU\x03P\x91XR\x91tBP\x92_SD\x94.\xC3oru=]\xC2\x1E-\x1E\xC4CEGU\x04\x0E\x12AD\x90a\xC2GU\x03P\x91YR\x922BP\x93/SD\x94/BJ\x1E\xC4CEGU\x04\x08\x0CAD\x90bGP\x91ZBP\x930SD\x940l\x1E\xC4CEGU\x04\x0E\x12AD\x90c\xC2GU\x03P\x91[R\x923BP\x931SD\x941e\xC2\x1E-\x1E\xC4CEGU\x04\x0E\x12AD\x90d\xC2GU\x03P\x91\\R\x924BP\x932SD\x942Hans\x1E\xC4CEGU\x04\x0E\x12AD\x90e\xC2GU\x03P\x91]R\x925BP\x933SD\x942\xC2huX\xC2\x1E-\x1E\xC4CEGU\x04\x0E\x12AD\x90f\xC2GU\x03P\x91]R\x925BP\x933SD\x942\xC2HM+\xC2Ka\x06\x1ECAD\x90fnt\x1E\xC4CEGU\x04\x0E\x12AD\x90d\xC2GU\x03P\x91\\R\x924BP\x932SD\x942O\x1ECAD\x90f\x1E\xC4CEGU\x04\x0E\x12AD\x90g\xC2GU\x03P\x91^R\x926BP\x934SD\x943" },
                 values: &[
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
@@ -52,7 +52,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x0F\0\x1E\0Kanada dollar\xC4\xB1Kanada dollar\xC4\xB1Kanada Dollar\xC4\xB1") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x0F\0Kanada dollar\xC4\xB1Kanada Dollar\xC4\xB1") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -82,7 +82,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x02\x03\x04\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x06\0\0\0\0\0\r\0\x1A\0'\09\0F\0dollar Kanadazollar Kanadadollar Kanadaa zollaro\xC3\xB9 Kanadadollar Kanadadollar Kanada") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\x04\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\r\0\x1F\0,\0zollar Kanadaa zollaro\xC3\xB9 Kanadadollar Kanadadollar Kanada") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -136,7 +136,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\x01\x02\x03\x04\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x07\0\0\0\0\0\x0C\0\x18\0$\x000\0<\0H\0doler Canadadoler Canadadoler Canadadoler Canadadoler Canadadoler CanadaDoler Canada") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x0C\0doler CanadaDoler Canada") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -190,7 +190,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\r\0\x1A\0dolar kanadardolar kanadardolar kanadarra") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\r\0dolar kanadardolar kanadarra") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -244,13 +244,13 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x02\x03\x04\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x06\0\0\0\0\0\x0F\0\x1F\0/\0?\0N\0dollar Cheanadadhollar Cheanadadhollar Cheanadandollar Cheanadadollar CheanadaDollar Cheanada") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\x03\x04\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x05\0\0\0\0\0\x10\0 \x000\0?\0dhollar Cheanadadhollar Cheanadandollar Cheanadadollar CheanadaDollar Cheanada") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x02\x03\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x05\0\0\0\0\0\x0E\0\x1D\0-\0;\0dolar Canadachdholar Canadachdolaran Canadachdolar CanadachDolar Canadach") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\x03\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x0F\0\x1F\0-\0dholar Canadachdolaran Canadachdolar CanadachDolar Canadach") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -430,7 +430,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x10\0 \x000\0Kan\xC4\x81das dol\xC4\x81riKan\xC4\x81das dol\xC4\x81rsKan\xC4\x81das dol\xC4\x81riKan\xC4\x81das dol\xC4\x81rs") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x10\0 \0Kan\xC4\x81das dol\xC4\x81rsKan\xC4\x81das dol\xC4\x81riKan\xC4\x81das dol\xC4\x81rs") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -538,7 +538,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x03\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x0E\0\x1E\0.\0dolar canadiandolari canadienidolari canadienidolar canadian") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x0E\0\x1E\0dolar canadiandolari canadienidolar canadian") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -634,7 +634,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x0E\0\x1C\0kanada dollarykanada dollaryKanada dollary") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x0E\0kanada dollaryKanada dollary") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -754,7 +754,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\x01\x02\x03\x04\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x07\0\0\0\0\0\x11\0\"\0;\0R\0k\0|\0\xD8\xAC\xD9\x86\xD9\x8A\xD9\x87 \xD9\x85\xD8\xB5\xD8\xB1\xD9\x8A\xD8\xAC\xD9\x86\xD9\x8A\xD9\x87 \xD9\x85\xD8\xB5\xD8\xB1\xD9\x8A\xD8\xAC\xD9\x86\xD9\x8A\xD9\x87\xD8\xA7\xD9\x86 \xD9\x85\xD8\xB5\xD8\xB1\xD9\x8A\xD8\xA7\xD9\x86\xD8\xAC\xD9\x86\xD9\x8A\xD9\x87\xD8\xA7\xD8\xAA \xD9\x85\xD8\xB5\xD8\xB1\xD9\x8A\xD8\xA9\xD8\xAC\xD9\x86\xD9\x8A\xD9\x87\xD9\x8B\xD8\xA7 \xD9\x85\xD8\xB5\xD8\xB1\xD9\x8A\xD9\x8B\xD8\xA7\xD8\xAC\xD9\x86\xD9\x8A\xD9\x87 \xD9\x85\xD8\xB5\xD8\xB1\xD9\x8A\xD8\xAC\xD9\x86\xD9\x8A\xD9\x87 \xD9\x85\xD8\xB5\xD8\xB1\xD9\x8A") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\x03\x04\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x05\0\0\0\0\0\x19\x000\0I\0Z\0\xD8\xAC\xD9\x86\xD9\x8A\xD9\x87\xD8\xA7\xD9\x86 \xD9\x85\xD8\xB5\xD8\xB1\xD9\x8A\xD8\xA7\xD9\x86\xD8\xAC\xD9\x86\xD9\x8A\xD9\x87\xD8\xA7\xD8\xAA \xD9\x85\xD8\xB5\xD8\xB1\xD9\x8A\xD8\xA9\xD8\xAC\xD9\x86\xD9\x8A\xD9\x87\xD9\x8B\xD8\xA7 \xD9\x85\xD8\xB5\xD8\xB1\xD9\x8A\xD9\x8B\xD8\xA7\xD8\xAC\xD9\x86\xD9\x8A\xD9\x87 \xD9\x85\xD8\xB5\xD8\xB1\xD9\x8A\xD8\xAC\xD9\x86\xD9\x8A\xD9\x87 \xD9\x85\xD8\xB5\xD8\xB1\xD9\x8A") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -772,7 +772,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x0B\0\x16\0Misir funtuMisir funtuMisir Funtu") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x0B\0Misir funtuMisir Funtu") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -802,7 +802,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x02\x03\x04\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x06\0\0\0\0\0\t\0\x12\0\x1B\0*\x003\0lur Egiptlur Egiptlur Egipta lurio\xC3\xB9 Egiptlur Egiptlur Egipt") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x04\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x0F\0\x18\0a lurio\xC3\xB9 Egiptlur Egiptlur Egipt") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -856,7 +856,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\x01\x02\x03\x04\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x07\0\0\0\0\0\r\0\x1A\0'\x004\0A\0N\0punt yr Aifftpunt yr Aifftbunt yr Aifftpunt yr Aifftpunt yr Aifftpunt yr AifftPunt Yr Aifft") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\r\0\x1A\0bunt yr Aifftpunt yr AifftPunt Yr Aifft") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -904,7 +904,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x0F\0\x1E\0libera egiptoarlibera egiptoarlibera egiptoarra") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x0F\0libera egiptoarlibera egiptoarra") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -976,7 +976,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x0C\0\x18\0Fam na MasarFam na MasarFam kin Masar") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x0C\0Fam na MasarFam kin Masar") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -1138,7 +1138,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x14\0'\0;\0\xC4\x92\xC4\xA3iptes m\xC4\x81rci\xC5\x86as\xC4\x92\xC4\xA3iptes m\xC4\x81rci\xC5\x86a\xC4\x92\xC4\xA3iptes m\xC4\x81rci\xC5\x86as\xC4\x92\xC4\xA3iptes m\xC4\x81rci\xC5\x86a") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x13\0'\0\xC4\x92\xC4\xA3iptes m\xC4\x81rci\xC5\x86a\xC4\x92\xC4\xA3iptes m\xC4\x81rci\xC5\x86as\xC4\x92\xC4\xA3iptes m\xC4\x81rci\xC5\x86a") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -1264,7 +1264,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x03\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x10\0\x1D\0*\0lir\xC4\x83 egiptean\xC4\x83lire egiptenelire egiptenelir\xC4\x83 egiptean\xC4\x83") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x10\0\x1D\0lir\xC4\x83 egiptean\xC4\x83lire egiptenelir\xC4\x83 egiptean\xC4\x83") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -1306,7 +1306,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\r\0\x1A\0bowndka Masarbowndka MasarBowndka Masar") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\r\0bowndka MasarBowndka Masar") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -1354,7 +1354,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\r\0\x1A\0m\xC3\xBCs\xC3\xBCr funtym\xC3\xBCs\xC3\xBCr funtyM\xC3\xBCs\xC3\xBCr funty") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\r\0m\xC3\xBCs\xC3\xBCr funtyM\xC3\xBCs\xC3\xBCr funty") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -1456,7 +1456,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0euroeuroEuro") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x04\0euroEuro") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -1498,7 +1498,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x08\0\x10\0\xD0\xB5\xD0\xB2\xD1\x80\xD0\xBE\xD0\xB5\xD0\xB2\xD1\x80\xD0\xBE\xD0\x95\xD0\xB2\xD1\x80\xD0\xBE") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x08\0\xD0\xB5\xD0\xB2\xD1\x80\xD0\xBE\xD0\x95\xD0\xB2\xD1\x80\xD0\xBE") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -1516,7 +1516,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x02\x03\x04\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x06\0\0\0\0\0\x04\0\x08\0\x0C\0\x16\0\x1A\0euroeuroeuroa euroio\xC3\xB9euroeuro") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x04\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\n\0\x0E\0a euroio\xC3\xB9euroeuro") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -1528,13 +1528,13 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x03\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x04\0\x08\0\x0C\0euroeuraeuraEuro") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0euroeuraEuro") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x03\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x08\0\x10\0\x18\0\xD0\xB5\xD0\xB2\xD1\x80\xD0\xBE\xD0\xB5\xD0\xB2\xD1\x80\xD0\xB0\xD0\xB5\xD0\xB2\xD1\x80\xD0\xB0\xD0\x95\xD0\xB2\xD1\x80\xD0\xBE") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x08\0\x10\0\xD0\xB5\xD0\xB2\xD1\x80\xD0\xBE\xD0\xB5\xD0\xB2\xD1\x80\xD0\xB0\xD0\x95\xD0\xB2\xD1\x80\xD0\xBE") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -1564,7 +1564,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\x01\x02\x03\x04\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x07\0\0\0\0\0\x04\0\x08\0\x0C\0\x10\0\x14\0\x18\0ewroewroewroewroewroewroEwro") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x04\0ewroEwro") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -1588,13 +1588,13 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x08\0\x10\0\xCE\xB5\xCF\x85\xCF\x81\xCF\x8E\xCE\xB5\xCF\x85\xCF\x81\xCF\x8E\xCE\x95\xCF\x85\xCF\x81\xCF\x8E") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x08\0\xCE\xB5\xCF\x85\xCF\x81\xCF\x8E\xCE\x95\xCF\x85\xCF\x81\xCF\x8E") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x08\0\x10\0\xCE\xB5\xCF\x85\xCF\x81\xCF\x8E\xCE\xB5\xCF\x85\xCF\x81\xCF\x8E\xCE\x95\xE1\xBD\x90\xCF\x81\xCF\x8E") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x08\0\xCE\xB5\xCF\x85\xCF\x81\xCF\x8E\xCE\x95\xE1\xBD\x90\xCF\x81\xCF\x8E") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -1606,7 +1606,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0euroeuroeuroa") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x04\0euroeuroa") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -1636,13 +1636,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x02\x03\x04\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x06\0\0\0\0\0\x04\0\x08\0\x0C\0\x10\0\x14\0euroeuroeuroeuroeuroEuro") })
-                        },
-                    },
-                    icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
-                        display_names: unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x02\x03\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x05\0\0\0\0\0\x05\0\n\0\x13\0\x18\0E\xC3\xB2roE\xC3\xB2roE\xC3\xB2rothanE\xC3\xB2roE\xC3\xB2ro") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\t\0\x0E\0E\xC3\xB2rothanE\xC3\xB2roE\xC3\xB2ro") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -1666,7 +1660,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x03\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x04\0\x08\0\x0C\0euroeuraeuraeuro") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0euroeuraeuro") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -1685,12 +1679,6 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD5\xA5\xD5\xBE\xD6\x80\xD5\xB8") })
-                        },
-                    },
-                    icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
-                        display_names: unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x04\0euroEuro") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -1720,7 +1708,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x08\0\x10\0\xD0\xB5\xD1\x83\xD1\x80\xD0\xBE\xD0\xB5\xD1\x83\xD1\x80\xD0\xBE\xD0\x95\xD1\x83\xD1\x80\xD0\xBE") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x08\0\xD0\xB5\xD1\x83\xD1\x80\xD0\xBE\xD0\x95\xD1\x83\xD1\x80\xD0\xBE") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -1787,12 +1775,6 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0eiro") })
-                        },
-                    },
-                    icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
-                        display_names: unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x08\0\x10\0\xD0\xB5\xD0\xB2\xD1\x80\xD0\xBE\xD0\xB5\xD0\xB2\xD1\x80\xD0\xB0\xD0\x95\xD0\xB2\xD1\x80\xD0\xBE") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -1888,25 +1870,25 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x06\0\x0C\0yuurooyuurooYuuroo") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x06\0yuurooYuuroo") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0euroeuroEuroja") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x04\0euroEuroja") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x03\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x04\0\x08\0\x0C\0evroevraevraEvro") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0evroevraEvro") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x04\0\x08\0yuroyuroYuro") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x04\0yuroYuro") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -1924,19 +1906,13 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x08\0\xD0\xB5\xD0\xB2\xD1\x80\xD0\xBE\xD0\x95\xD0\xB2\xD1\x80\xD0\xBE") })
-                        },
-                    },
-                    icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
-                        display_names: unsafe {
-                            #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xB8\xA2\xE0\xB8\xB9\xE0\xB9\x82\xE0\xB8\xA3") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x06\0\x0C\0\xC3\xBDewro\xC3\xBDewro\xC3\x9Dewro") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x06\0\xC3\xBDewro\xC3\x9Dewro") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -1960,7 +1936,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x05\0\n\0yevroyevroYevro") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x05\0yevroYevro") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -2038,7 +2014,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x0F\0\x1E\0Britaniya funtuBritaniya funtuBritaniya Funtu") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x0F\0Britaniya funtuBritaniya Funtu") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -2068,7 +2044,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x02\x03\x04\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x06\0\0\0\0\0\x0F\0\x1E\0-\0B\0Q\0lur Breizh-Veurlur Breizh-Veurlur Breizh-Veura lurio\xC3\xB9 Breizh-Veurlur Breizh-Veurlur Breizh-Veur") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x04\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x15\0$\0a lurio\xC3\xB9 Breizh-Veurlur Breizh-Veurlur Breizh-Veur") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -2122,7 +2098,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\x01\x02\x03\x04\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x07\0\0\0\0\0\x0C\0\x18\0$\x000\0<\0H\0punt Prydainbunt Prydainbunt Prydainpunt Prydainpunt Prydainpunt PrydainPunt Prydain") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x02\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x0C\0\x18\0$\0bunt Prydainbunt Prydainpunt PrydainPunt Prydain") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -2410,7 +2386,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x1A\x003\0M\0Lielbrit\xC4\x81nijas m\xC4\x81rci\xC5\x86asLielbrit\xC4\x81nijas m\xC4\x81rci\xC5\x86aLielbrit\xC4\x81nijas m\xC4\x81rci\xC5\x86asLielbrit\xC4\x81nijas m\xC4\x81rci\xC5\x86a") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x19\x003\0Lielbrit\xC4\x81nijas m\xC4\x81rci\xC5\x86aLielbrit\xC4\x81nijas m\xC4\x81rci\xC5\x86asLielbrit\xC4\x81nijas m\xC4\x81rci\xC5\x86a") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -2530,7 +2506,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x03\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x0F\0\x1C\0)\0lir\xC4\x83 sterlin\xC4\x83lire sterlinelire sterlinelir\xC4\x83 sterlin\xC4\x83") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x0F\0\x1C\0lir\xC4\x83 sterlin\xC4\x83lire sterlinelir\xC4\x83 sterlin\xC4\x83") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -2548,7 +2524,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x02\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0%\0M\0u\0\xE1\xB1\xB5\xE1\xB1\xA8\xE1\xB1\xA4\xE1\xB1\xB4\xE1\xB1\xA4\xE1\xB1\xA5 \xE1\xB1\xAF\xE1\xB1\x9F\xE1\xB1\xA3\xE1\xB1\xA9\xE1\xB1\xB8\xE1\xB1\xB0\xE1\xB1\xB5\xE1\xB1\xA8\xE1\xB1\xA4\xE1\xB1\xB4\xE1\xB1\xA4\xE1\xB1\xA5 \xE1\xB1\xAF\xE1\xB1\x9F\xE1\xB1\xA3\xE1\xB1\xA9\xE1\xB1\xB8\xE1\xB1\xB0\xE1\xB1\xA5\xE1\xB1\xB5\xE1\xB1\xA8\xE1\xB1\xA4\xE1\xB1\xB4\xE1\xB1\xA4\xE1\xB1\xA5 \xE1\xB1\xAF\xE1\xB1\x9F\xE1\xB1\xA3\xE1\xB1\xA9\xE1\xB1\xB8\xE1\xB1\xB0\xE1\xB1\xA5\xE1\xB1\xB5\xE1\xB1\xA8\xE1\xB1\xA4\xE1\xB1\xB4\xE1\xB1\xA4\xE1\xB1\xA5 \xE1\xB1\xAF\xE1\xB1\x9F\xE1\xB1\xA3\xE1\xB1\xA9\xE1\xB1\xB8\xE1\xB1\xB0") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0%\0M\0\xE1\xB1\xB5\xE1\xB1\xA8\xE1\xB1\xA4\xE1\xB1\xB4\xE1\xB1\xA4\xE1\xB1\xA5 \xE1\xB1\xAF\xE1\xB1\x9F\xE1\xB1\xA3\xE1\xB1\xA9\xE1\xB1\xB8\xE1\xB1\xB0\xE1\xB1\xB5\xE1\xB1\xA8\xE1\xB1\xA4\xE1\xB1\xB4\xE1\xB1\xA4\xE1\xB1\xA5 \xE1\xB1\xAF\xE1\xB1\x9F\xE1\xB1\xA3\xE1\xB1\xA9\xE1\xB1\xB8\xE1\xB1\xB0\xE1\xB1\xA5\xE1\xB1\xB5\xE1\xB1\xA8\xE1\xB1\xA4\xE1\xB1\xB4\xE1\xB1\xA4\xE1\xB1\xA5 \xE1\xB1\xAF\xE1\xB1\x9F\xE1\xB1\xA3\xE1\xB1\xA9\xE1\xB1\xB8\xE1\xB1\xB0") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -2650,7 +2626,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x15\0*\0britan funt sterlingibritan funt sterlingiBritan funt sterlingi") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x15\0britan funt sterlingiBritan funt sterlingi") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -2794,7 +2770,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\r\0\x1A\0AB\xC5\x9E dollar\xC4\xB1AB\xC5\x9E dollar\xC4\xB1AB\xC5\x9E Dollar\xC4\xB1") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\r\0AB\xC5\x9E dollar\xC4\xB1AB\xC5\x9E Dollar\xC4\xB1") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -2824,7 +2800,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x02\x03\x04\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x06\0\0\0\0\0\t\0\x12\0\x1B\0)\x002\0dollar SUzollar SUdollar SUa zollaro\xC3\xB9 SUdollar SUdollar SU") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\x04\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\t\0\x17\0 \0zollar SUa zollaro\xC3\xB9 SUdollar SUdollar SU") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -2878,7 +2854,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\x01\x02\x03\x04\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x07\0\0\0\0\0\t\0\x12\0\x1C\0%\0.\x007\0doler UDAdoler UDAddoler UDAdoler UDAdoler UDAdoler UDADoler UDA") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\n\0\x13\0ddoler UDAdoler UDADoler UDA") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -2932,7 +2908,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x12\0$\0dolar estatubatuardolar estatubatuardolar estatubatuarra") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x12\0dolar estatubatuardolar estatubatuarra") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -2986,13 +2962,13 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x02\x03\x04\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x06\0\0\0\0\0\r\0\x1B\0)\x007\0D\0dollar S.A.M.dhollar S.A.M.dhollar S.A.M.ndollar S.A.M.dollar S.A.M.Dollar S.A.M.") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\x03\x04\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x05\0\0\0\0\0\x0E\0\x1C\0*\x007\0dhollar S.A.M.dhollar S.A.M.ndollar S.A.M.dollar S.A.M.Dollar S.A.M.") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x02\x03\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x05\0\0\0\0\0\x1D\0;\0Z\0w\0dolar nan St\xC3\xA0itean Aonaichtedholar nan St\xC3\xA0itean Aonaichtedolaran nan St\xC3\xA0itean Aonaichtedolar nan St\xC3\xA0itean AonaichteDolar nan St\xC3\xA0itean Aonaichte") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\x03\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x1E\0=\0Z\0dholar nan St\xC3\xA0itean Aonaichtedolaran nan St\xC3\xA0itean Aonaichtedolar nan St\xC3\xA0itean AonaichteDolar nan St\xC3\xA0itean Aonaichte") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -3172,7 +3148,7 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x0B\0\x16\0!\0ASV dol\xC4\x81riASV dol\xC4\x81rsASV dol\xC4\x81riASV dol\xC4\x81rs") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x0B\0\x16\0ASV dol\xC4\x81rsASV dol\xC4\x81riASV dol\xC4\x81rs") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
@@ -3298,13 +3274,13 @@ macro_rules! __impl_currency_extended_data_v1_marker {
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x03\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x0E\0\x1E\0.\0dolar americandolari americanidolari americanidolar american") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x0E\0\x1E\0dolar americandolari americanidolar american") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
                         display_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x03\x04\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x05\0\0\0\0\0\x13\0(\0?\0T\0\xD0\xB4\xD0\xBE\xD0\xBB\xD0\xBB\xD0\xB0\xD1\x80 \xD0\xA1\xD0\xA8\xD0\x90\xD0\xB4\xD0\xBE\xD0\xBB\xD0\xBB\xD0\xB0\xD1\x80\xD0\xB0 \xD0\xA1\xD0\xA8\xD0\x90\xD0\xB4\xD0\xBE\xD0\xBB\xD0\xBB\xD0\xB0\xD1\x80\xD0\xBE\xD0\xB2 \xD0\xA1\xD0\xA8\xD0\x90\xD0\xB4\xD0\xBE\xD0\xBB\xD0\xBB\xD0\xB0\xD1\x80\xD0\xB0 \xD0\xA1\xD0\xA8\xD0\x90\xD0\xB4\xD0\xBE\xD0\xBB\xD0\xBB\xD0\xB0\xD1\x80 \xD0\xA1\xD0\xA8\xD0\x90") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x04\x05\x08") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x13\0*\0?\0\xD0\xB4\xD0\xBE\xD0\xBB\xD0\xBB\xD0\xB0\xD1\x80 \xD0\xA1\xD0\xA8\xD0\x90\xD0\xB4\xD0\xBE\xD0\xBB\xD0\xBB\xD0\xB0\xD1\x80\xD0\xBE\xD0\xB2 \xD0\xA1\xD0\xA8\xD0\x90\xD0\xB4\xD0\xBE\xD0\xBB\xD0\xBB\xD0\xB0\xD1\x80\xD0\xB0 \xD0\xA1\xD0\xA8\xD0\x90\xD0\xB4\xD0\xBE\xD0\xBB\xD0\xBB\xD0\xB0\xD1\x80 \xD0\xA1\xD0\xA8\xD0\x90") })
                         },
                     },
                     icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1 {
