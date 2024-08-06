@@ -4,16 +4,10 @@
 
 use crate::cldr_serde;
 use crate::SourceDataProvider;
-
-use std::borrow::Cow;
-use std::collections::BTreeMap;
-use std::collections::HashSet;
-
-use icu::experimental::dimension::provider::extended_currency::Count;
-
 use icu::experimental::dimension::provider::extended_currency::*;
 use icu_provider::prelude::*;
-use icu_provider::DataProvider;
+use std::collections::HashSet;
+use zerovec::ZeroMap;
 
 impl DataProvider<CurrencyExtendedDataV1Marker> for crate::SourceDataProvider {
     fn load(
@@ -35,40 +29,31 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::SourceDataProvider {
             .get(req.id.marker_attributes.as_str())
             .ok_or(DataError::custom("No currency associated with the aux key"))?;
 
-        let mut placeholders: BTreeMap<Count, String> = BTreeMap::new();
-
-        fn add_placeholder(
-            placeholders: &mut BTreeMap<Count, String>,
-            key: Count,
-            value: Option<String>,
-        ) {
-            if let Some(val) = value {
-                placeholders.insert(key, val);
-            }
-        }
-
-        add_placeholder(&mut placeholders, Count::Zero, currency.zero.clone());
-        add_placeholder(&mut placeholders, Count::One, currency.one.clone());
-        add_placeholder(&mut placeholders, Count::Two, currency.two.clone());
-        add_placeholder(&mut placeholders, Count::Few, currency.few.clone());
-        add_placeholder(&mut placeholders, Count::Many, currency.many.clone());
-        add_placeholder(&mut placeholders, Count::Other, currency.other.clone());
-        add_placeholder(
-            &mut placeholders,
-            Count::DisplayName,
-            currency.display_name.clone(),
-        );
-
-        let data = CurrencyExtendedDataV1 {
-            display_names: placeholders
-                .into_iter()
-                .map(|(k, v)| (k, Cow::Owned(v)))
-                .collect(),
-        };
-
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(data),
+            payload: DataPayload::from_owned(CurrencyExtendedDataV1 {
+                display_names: ZeroMap::from_iter(
+                    [
+                        (Count::Zero, currency.zero.as_deref()),
+                        (Count::One, currency.one.as_deref()),
+                        (Count::Two, currency.two.as_deref()),
+                        (Count::Few, currency.few.as_deref()),
+                        (Count::Many, currency.many.as_deref()),
+                        (Count::Other, currency.other.as_deref()),
+                        (Count::DisplayName, currency.display_name.as_deref()),
+                    ]
+                    .into_iter()
+                    .filter_map(|(count, pattern)| match (count, pattern) {
+                        (Count::DisplayName, Some(p)) => Some((count, p)),
+                        (Count::Other, Some(p)) => Some((count, p)),
+                        // As per [Unicode TR 35](https://unicode.org/reports/tr35/tr35-numbers.html#Currencies)
+                        //      If the pattern is not found for the associated `Count`, fall back to the `Count::Other` pattern.
+                        //      Therefore, we filter out any patterns that are the same as the `Count::Other` pattern.
+                        (_, p) if p == currency.other.as_deref() => None,
+                        _ => Some((count, pattern?)),
+                    }),
+                ),
+            }),
         })
     }
 }
