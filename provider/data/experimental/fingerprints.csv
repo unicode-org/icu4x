@@ -688,6 +688,677 @@ currency/essentials@1, zh-Hant, 1118B, a6694b0315508050
 currency/essentials@1, zh-MO, 1130B, 9d5927e30baf6416
 currency/essentials@1, zh-SG, 1145B, 8d7fb03c234f410b
 currency/essentials@1, zu, 1120B, d87b52cfd6be0d47
+currency/extended@1, <lookup>, 4668B, 669 identifiers
+currency/extended@1, <total>, 62157B, 584 unique payloads
+currency/extended@1, af/CAD, 70B, fca309d9b546bc15
+currency/extended@1, af/EGP, 69B, 84471e92552cd8d2
+currency/extended@1, af/EUR, 73B, 6c4fb1481f084d39
+currency/extended@1, af/GBP, 66B, f0716b23a0b624ae
+currency/extended@1, af/USD, 65B, 3bb7d0079db36e86
+currency/extended@1, am/CAD, 77B, 7bf5fb746ae3e627
+currency/extended@1, am/EGP, 80B, 729bb1b73bec14f1
+currency/extended@1, am/EUR, 61B, 9a8ee232b65eba3c
+currency/extended@1, am/GBP, 105B, e56a740476a12f2b
+currency/extended@1, am/USD, 83B, cf4901e81da3e530
+currency/extended@1, ar/CAD, 74B, 5bfb2e98dea57368
+currency/extended@1, ar/EGP, 214B, 4adcf53471e23bbe
+currency/extended@1, ar/EUR, 63B, d61fa83ef87dbbc5
+currency/extended@1, ar/GBP, 80B, 5cb71ee5fea9a3a2
+currency/extended@1, ar/USD, 78B, e0ab532306a02981
+currency/extended@1, as/CAD, 98B, 795c9ab04c955c14
+currency/extended@1, as/EGP, 95B, cfb365587a035fc3
+currency/extended@1, as/EUR, 67B, 39db052983bd7b87
+currency/extended@1, as/GBP, 95B, d06eea465d0ce156
+currency/extended@1, as/USD, 83B, 5b8dfabb6adda449
+currency/extended@1, ast/CAD, 115B, f2fe38a34869d6da
+currency/extended@1, ast/EGP, 111B, cc932291d2d37177
+currency/extended@1, ast/EUR, 74B, a55faa91b395b178
+currency/extended@1, ast/GBP, 111B, 9c84c45d5be5fa24
+currency/extended@1, ast/USD, 121B, a0be357926e00dd4
+currency/extended@1, az/CAD, 106B, 26d1facb25052f7b
+currency/extended@1, az/EGP, 94B, 178a937a15b84644
+currency/extended@1, az/EUR, 59B, ac10fe6770fbceaf
+currency/extended@1, az/GBP, 106B, 648241d81ba10319
+currency/extended@1, az/USD, 100B, 4dba447d23fdcb47
+currency/extended@1, be/CAD, 218B, 70ca162dbd36e6a4
+currency/extended@1, be/EGP, 208B, f555d7b66c1a60b2
+currency/extended@1, be/EUR, 63B, a8d2eabd9572e8b1
+currency/extended@1, be/GBP, 323B, 9a8e55f7d997792
+currency/extended@1, be/USD, 160B, 5409450aca34b738
+currency/extended@1, bg/CAD, 144B, 939a4c5b451fdbeb
+currency/extended@1, bg/EGP, 142B, 2605fd75d8413b9d
+currency/extended@1, bg/EUR, 85B, 31137b5eb132d85f
+currency/extended@1, bg/GBP, 142B, e0a3f23473698dd6
+currency/extended@1, bg/USD, 132B, e62dac139b19194f
+currency/extended@1, blo/CAD, 133B, ab8259560f66f252
+currency/extended@1, blo/EGP, 125B, 6a3332b308a06192
+currency/extended@1, blo/EUR, 90B, a597b2e3a6dbead3
+currency/extended@1, blo/GBP, 165B, 9e9b9a86976f93b6
+currency/extended@1, blo/USD, 133B, f8e1948c95d10020
+currency/extended@1, bn/CAD, 98B, 5f99b492f2240b06
+currency/extended@1, bn/EGP, 95B, f2f7df310e005f00
+currency/extended@1, bn/EUR, 67B, c0cc383a032a4fae
+currency/extended@1, bn/GBP, 95B, b0d00bfdc6c15ac
+currency/extended@1, bn/USD, 89B, 8be3a4cf14cf3a37
+currency/extended@1, br/CAD, 153B, 15c98c8d2aa2f6e4
+currency/extended@1, br/EGP, 130B, bf9ddea6e72ed8fe
+currency/extended@1, br/EUR, 100B, 84f0098473c353d1
+currency/extended@1, br/GBP, 166B, 357bc58184cd0d38
+currency/extended@1, br/USD, 129B, a940695aac8d2fa0
+currency/extended@1, brx/CAD, 181B, 93e5a91d89c064ba
+currency/extended@1, brx/EGP, 98B, 10e0411e3add724b
+currency/extended@1, brx/EUR, 67B, bb4f2638d4811c56
+currency/extended@1, brx/GBP, 190B, 6a38b34ca14cabda
+currency/extended@1, brx/USD, 148B, 609051f880371050
+currency/extended@1, bs-Cyrl/CAD, 178B, 826de54fd2233dba
+currency/extended@1, bs-Cyrl/EGP, 182B, eb60bb475717278a
+currency/extended@1, bs-Cyrl/EUR, 96B, 80d6bea30d37c4bb
+currency/extended@1, bs-Cyrl/GBP, 182B, 8161283fcb4f57d2
+currency/extended@1, bs-Cyrl/USD, 178B, 9a2e14f5adf07290
+currency/extended@1, bs/CAD, 123B, 46f8efcb9ec9d71c
+currency/extended@1, bs/EGP, 125B, c4b8ed0a969f5f4f
+currency/extended@1, bs/EUR, 80B, 473998ac8679ae80
+currency/extended@1, bs/GBP, 125B, 38f13aa42ed2ab5f
+currency/extended@1, bs/USD, 127B, b662579b3a587eb9
+currency/extended@1, ca/CAD, 108B, 3044fcf5f5cb9f02
+currency/extended@1, ca/EGP, 108B, 3375963250a3762e
+currency/extended@1, ca/EUR, 74B, -> ast/EUR
+currency/extended@1, ca/GBP, 111B, e29c9e1d542ed31e
+currency/extended@1, ca/USD, 134B, dee901f5b7831324
+currency/extended@1, ceb/CAD, 110B, f6e5d1494f47e832
+currency/extended@1, ceb/EGP, 104B, b059818e8604b45c
+currency/extended@1, ceb/EUR, 74B, 3819346aff8682b9
+currency/extended@1, ceb/GBP, 101B, 30290194a486eed1
+currency/extended@1, ceb/USD, 92B, 659f91115a0326a
+currency/extended@1, chr/CAD, 74B, ae505dbe4d13ee67
+currency/extended@1, chr/EGP, 77B, a1c5e1e1f79a6cc1
+currency/extended@1, chr/EUR, 74B, 9332a45f7fdb5a63
+currency/extended@1, chr/GBP, 77B, 9c22c7636977a43c
+currency/extended@1, chr/USD, 67B, 5b036e10749b6342
+currency/extended@1, cs/CAD, 150B, b3adf4aa877d8974
+currency/extended@1, cs/EGP, 144B, 6eff289f8016f625
+currency/extended@1, cs/EUR, 86B, 3cd896802d6efbd8
+currency/extended@1, cs/GBP, 139B, f2fb599552f3abdf
+currency/extended@1, cs/USD, 150B, 2f0072eae67ff556
+currency/extended@1, cv/CAD, 82B, 33400ddfe5402c9f
+currency/extended@1, cv/EGP, 78B, ce94179f33ffeb44
+currency/extended@1, cv/EUR, 63B, 1a112f66c2016729
+currency/extended@1, cv/GBP, 80B, af4d866f33a75f4a
+currency/extended@1, cv/USD, 76B, 1e5993384a48299
+currency/extended@1, cy/CAD, 157B, b2b2ade4e35bd39e
+currency/extended@1, cy/EGP, 164B, f2418b81e95cd405
+currency/extended@1, cy/EUR, 101B, 679042c06e4968aa
+currency/extended@1, cy/GBP, 157B, f9783376cc69dadd
+currency/extended@1, cy/USD, 137B, 3be6151a8fef160e
+currency/extended@1, da/CAD, 107B, 80e36ef2d813ff4a
+currency/extended@1, da/EGP, 101B, 3aef2d125521082
+currency/extended@1, da/EUR, 59B, 84c529da73d5fadc
+currency/extended@1, da/GBP, 98B, a47d5ec7f9402f2
+currency/extended@1, da/USD, 113B, 933ec8cdc3ab123f
+currency/extended@1, de/CAD, 114B, fd3016087fa37427
+currency/extended@1, de/EGP, 114B, 603eedb5ad6a3c57
+currency/extended@1, de/EUR, 59B, 7ff18db91c145ac1
+currency/extended@1, de/GBP, 108B, b4722fdf4e4d3f89
+currency/extended@1, de/USD, 64B, 378211518eab9fe8
+currency/extended@1, doi/EUR, 67B, da851215eae43841
+currency/extended@1, doi/GBP, 92B, 7eddb455f4f77744
+currency/extended@1, doi/USD, 80B, 689aadb99057abd2
+currency/extended@1, dsb/CAD, 149B, 46bc1b9e99055f35
+currency/extended@1, dsb/EGP, 149B, 1ec612438bae7ef4
+currency/extended@1, dsb/EUR, 59B, -> da/EUR
+currency/extended@1, dsb/GBP, 139B, ee43035e4d3e1b1f
+currency/extended@1, dsb/USD, 144B, 6dc32c40e9187a86
+currency/extended@1, el-polyton/CAD, 143B, 71d8196782084a61
+currency/extended@1, el-polyton/EGP, 139B, 282810573d7cee34
+currency/extended@1, el-polyton/EUR, 86B, 62e06891b053f98c
+currency/extended@1, el/CAD, 142B, dcadef70c4c74e
+currency/extended@1, el/EGP, 138B, a220fa45f6aec9a1
+currency/extended@1, el/EUR, 85B, 3d7a464d4baf64b9
+currency/extended@1, el/GBP, 197B, 160de8560d7d17ed
+currency/extended@1, el/USD, 124B, 119ffae9007a49de
+currency/extended@1, en-GG/GBP, 86B, 8c610d40a9a749c2
+currency/extended@1, en-IM/GBP, 86B, -> en-GG/GBP
+currency/extended@1, en-JE/GBP, 86B, -> en-GG/GBP
+currency/extended@1, en/CAD, 107B, 5ba83e083492502f
+currency/extended@1, en/EGP, 104B, -> ceb/EGP
+currency/extended@1, en/EUR, 74B, -> ceb/EUR
+currency/extended@1, en/GBP, 101B, -> ceb/GBP
+currency/extended@1, en/USD, 89B, 4448d41dad4cc701
+currency/extended@1, es/CAD, 115B, e6d245d0611d7fe6
+currency/extended@1, es/EGP, 102B, 73bac969bd3912b0
+currency/extended@1, es/EUR, 74B, -> ast/EUR
+currency/extended@1, es/GBP, 108B, ceff10bf50058501
+currency/extended@1, es/USD, 127B, beeb25a133471bc2
+currency/extended@1, et/CAD, 102B, 9a1a25a7fe7bac64
+currency/extended@1, et/EGP, 101B, def1552678bcde7c
+currency/extended@1, et/EUR, 74B, bc925de0ee0f979
+currency/extended@1, et/GBP, 141B, d69f8186c3419d2c
+currency/extended@1, et/USD, 93B, d7342b8fe36b6db9
+currency/extended@1, eu/CAD, 102B, 152a52b90da96690
+currency/extended@1, eu/EGP, 108B, b4d0ebd82f319a8
+currency/extended@1, eu/EUR, 74B, c312aa292e63119e
+currency/extended@1, eu/GBP, 71B, 59dc18b06c451508
+currency/extended@1, eu/USD, 117B, b914f9b64ee0925c
+currency/extended@1, fa-AF/CAD, 76B, d084ff2a31824622
+currency/extended@1, fa-AF/USD, 76B, b1b67dac2cacdb75
+currency/extended@1, fa/CAD, 76B, 6475f555f70daf05
+currency/extended@1, fa/EGP, 70B, d92df5eb36210a88
+currency/extended@1, fa/EUR, 63B, bb36e58d0d36ff8c
+currency/extended@1, fa/GBP, 80B, 700b04c4309f7475
+currency/extended@1, fa/USD, 76B, 8be41928b7e3a718
+currency/extended@1, ff-Adlm/CAD, 256B, 714ba0e585d63697
+currency/extended@1, ff-Adlm/EGP, 240B, 3ade9c9e9d59e247
+currency/extended@1, ff-Adlm/EUR, 129B, 58feb45b4f2b3c06
+currency/extended@1, ff-Adlm/GBP, 264B, 571f06aa3253025b
+currency/extended@1, ff-Adlm/USD, 322B, 92257c651edb26e2
+currency/extended@1, fi/CAD, 107B, ffbfe2606629b247
+currency/extended@1, fi/EGP, 101B, f4af8910385630b2
+currency/extended@1, fi/EUR, 74B, daea95939886288c
+currency/extended@1, fi/GBP, 107B, df4dc6e5bdcc62a2
+currency/extended@1, fi/USD, 122B, 7390c315223ee332
+currency/extended@1, fil/CAD, 111B, 9475b788fca73eb3
+currency/extended@1, fil/EGP, 104B, 3c0ab67a146e1f4a
+currency/extended@1, fil/EUR, 74B, -> ceb/EUR
+currency/extended@1, fil/GBP, 101B, -> ceb/GBP
+currency/extended@1, fil/USD, 99B, eef8cea32726e649
+currency/extended@1, fo/CAD, 116B, 127e7816066ccd19
+currency/extended@1, fo/EGP, 70B, 2f9d6739f81004e
+currency/extended@1, fo/EUR, 74B, 580666c5d63b113
+currency/extended@1, fo/GBP, 66B, d5975120d05499be
+currency/extended@1, fo/USD, 92B, 466cf967bae5e344
+currency/extended@1, fr/CAD, 108B, e4d606129bbb8473
+currency/extended@1, fr/EGP, 114B, 87b65bbace77997f
+currency/extended@1, fr/EUR, 74B, -> ast/EUR
+currency/extended@1, fr/GBP, 104B, 7dc4a3be94b662c3
+currency/extended@1, fr/USD, 128B, 4981bde38f12c97
+currency/extended@1, fy/CAD, 70B, ec463857dc2f50aa
+currency/extended@1, fy/EGP, 68B, c7f2746bdeee08de
+currency/extended@1, fy/EUR, 73B, -> af/EUR
+currency/extended@1, fy/GBP, 65B, 5ff146faa83046b3
+currency/extended@1, fy/USD, 74B, 2e5db90f26b1aac0
+currency/extended@1, ga/CAD, 163B, 15a12b1f4d74e1b3
+currency/extended@1, ga/EGP, 176B, 3cd032f20e729437
+currency/extended@1, ga/EUR, 94B, e820f6b2e9945794
+currency/extended@1, ga/GBP, 158B, 799498c602f591b9
+currency/extended@1, ga/USD, 151B, 83700b0f76e2fce
+currency/extended@1, gd/CAD, 140B, aede1d081fff5ab2
+currency/extended@1, gd/EGP, 160B, f915b4254fbe88da
+currency/extended@1, gd/EUR, 96B, 4bab0908ed822fd7
+currency/extended@1, gd/GBP, 146B, 184ed319217fc49a
+currency/extended@1, gd/USD, 215B, f644c863adccd1a3
+currency/extended@1, gl/CAD, 112B, 2ae381886748aa56
+currency/extended@1, gl/EGP, 102B, 746a52c1de4f4e28
+currency/extended@1, gl/EUR, 74B, -> ast/EUR
+currency/extended@1, gl/GBP, 108B, -> es/GBP
+currency/extended@1, gl/USD, 127B, -> es/USD
+currency/extended@1, gu/CAD, 92B, 47847e542f0df98e
+currency/extended@1, gu/EGP, 101B, ab576b9935f47448
+currency/extended@1, gu/EUR, 67B, dc49ff04f5f858bf
+currency/extended@1, gu/GBP, 187B, bc955e326956812e
+currency/extended@1, gu/USD, 80B, 26cef1dca9228b27
+currency/extended@1, ha/CAD, 67B, 347d6c1252f6c131
+currency/extended@1, ha/EGP, 98B, dff062791edc9539
+currency/extended@1, ha/EUR, 59B, 47c1151a36916727
+currency/extended@1, ha/GBP, 68B, 2563669dcdc7bce
+currency/extended@1, ha/USD, 97B, f5497c2802b106e
+currency/extended@1, he/CAD, 72B, 42e08a89fd3c05a
+currency/extended@1, he/EGP, 74B, 8cc00a1b653a9bd9
+currency/extended@1, he/EUR, 63B, f43ea4b712f7c7ff
+currency/extended@1, he/GBP, 78B, f3e6721583147ed6
+currency/extended@1, he/USD, 78B, 1e5bd828894651ef
+currency/extended@1, hi/CAD, 86B, d669bf5507b90f
+currency/extended@1, hi/EGP, 86B, 31e3489a2a1c38a9
+currency/extended@1, hi/EUR, 67B, -> doi/EUR
+currency/extended@1, hi/GBP, 120B, 83f53151a0b8dfb2
+currency/extended@1, hi/USD, 80B, fc0f7050f79ab303
+currency/extended@1, hr/CAD, 123B, 9f0e781024547618
+currency/extended@1, hr/EGP, 125B, ce58f46a715c01e1
+currency/extended@1, hr/EUR, 80B, 284654ebe7c1dbaa
+currency/extended@1, hr/GBP, 125B, ec65739b0fb4801c
+currency/extended@1, hr/USD, 127B, b79bf18e6faa959a
+currency/extended@1, hsb/CAD, 150B, 12f5db3561f73a52
+currency/extended@1, hsb/EGP, 150B, ae51f87f28754b40
+currency/extended@1, hsb/EUR, 89B, 6071688697c2c97e
+currency/extended@1, hsb/GBP, 140B, c1755978eb6ab787
+currency/extended@1, hsb/USD, 145B, fc507a640236919a
+currency/extended@1, hu/CAD, 70B, caf009194e208af6
+currency/extended@1, hu/EGP, 69B, 2ddbe508397aa18
+currency/extended@1, hu/EUR, 60B, 80ad8feee8b5c318
+currency/extended@1, hu/GBP, 65B, 13f1fa1f281bf4bb
+currency/extended@1, hu/USD, 66B, 6a98e9e88dbea0e6
+currency/extended@1, hy/CAD, 84B, a80ccf1b39e966c
+currency/extended@1, hy/EGP, 84B, 7984c2244cc17773
+currency/extended@1, hy/EUR, 63B, 816d5bad7d2f4865
+currency/extended@1, hy/GBP, 103B, 2d4bad7d334fcac4
+currency/extended@1, hy/USD, 72B, 6640081d81e2c942
+currency/extended@1, ia/CAD, 108B, e938d48e24e435b7
+currency/extended@1, ia/EGP, 101B, 59689cd23cd5b760
+currency/extended@1, ia/EUR, 74B, -> ast/EUR
+currency/extended@1, ia/GBP, 104B, 227ca286af01da1a
+currency/extended@1, ia/USD, 120B, e6d38a91fbecfe46
+currency/extended@1, id/CAD, 67B, 6402834bb90e2507
+currency/extended@1, id/EGP, 66B, e61a949c0b14a5a3
+currency/extended@1, id/EUR, 59B, -> de/EUR
+currency/extended@1, id/GBP, 68B, f9fad0bdcf20280d
+currency/extended@1, id/USD, 76B, 97438ede7de9a61d
+currency/extended@1, ig/CAD, 85B, 628ceef44340bbe1
+currency/extended@1, ig/EGP, 76B, 50159b25030ad909
+currency/extended@1, ig/EUR, 66B, 3eb53ad1ff7a5a7b
+currency/extended@1, ig/GBP, 68B, 62c003cf834462ff
+currency/extended@1, ig/USD, 77B, 10c029ccd8d9093
+currency/extended@1, is/CAD, 94B, b4cc6219af213805
+currency/extended@1, is/EGP, 96B, 2d285155dfed8991
+currency/extended@1, is/EUR, 74B, 336ab398e43441a2
+currency/extended@1, is/GBP, 68B, 9e0ca35afc787067
+currency/extended@1, is/USD, 109B, 4aef5e93abc484da
+currency/extended@1, it/CAD, 109B, c79b494cc954d3b
+currency/extended@1, it/EGP, 112B, d9fa009a2eb73bfb
+currency/extended@1, it/EUR, 59B, -> da/EUR
+currency/extended@1, it/GBP, 119B, c21852fe29048c2d
+currency/extended@1, it/USD, 121B, 52b90b11fb88eddb
+currency/extended@1, ja/CAD, 71B, 80c4e074db3070fa
+currency/extended@1, ja/EGP, 77B, 26efcbaad37c0bdf
+currency/extended@1, ja/EUR, 64B, a5262a5325018889
+currency/extended@1, ja/GBP, 70B, 76a4610387e58544
+currency/extended@1, ja/USD, 64B, 89cb509ee753750d
+currency/extended@1, jv/CAD, 67B, -> id/CAD
+currency/extended@1, jv/EGP, 66B, -> id/EGP
+currency/extended@1, jv/EUR, 59B, -> de/EUR
+currency/extended@1, jv/GBP, 68B, -> id/GBP
+currency/extended@1, jv/USD, 76B, -> id/USD
+currency/extended@1, ka/CAD, 98B, 688a5efec8385bdc
+currency/extended@1, ka/EGP, 107B, 8f3b848d3a51697b
+currency/extended@1, ka/EUR, 67B, e191ccaae2f03b9a
+currency/extended@1, ka/GBP, 135B, dd26cd09c2453f19
+currency/extended@1, ka/USD, 83B, 5928afc7d509a201
+currency/extended@1, kea/CAD, 69B, 69f162fdd3b9736e
+currency/extended@1, kea/EGP, 69B, 899f0827b5e8eb0a
+currency/extended@1, kea/EUR, 59B, -> da/EUR
+currency/extended@1, kea/GBP, 71B, 45e204517e80ead7
+currency/extended@1, kea/USD, 67B, c4fb5ed7fd31d794
+currency/extended@1, kgp/CAD, 109B, da8990f97362a5ac
+currency/extended@1, kgp/EGP, 100B, b765e7d3c8e25d01
+currency/extended@1, kgp/EUR, 79B, 75286398c3fbfa8d
+currency/extended@1, kgp/GBP, 113B, 75d8da750c62c164
+currency/extended@1, kgp/USD, 139B, 95286f9567cfee95
+currency/extended@1, kk/CAD, 82B, 58687706122b2e22
+currency/extended@1, kk/EGP, 76B, 48c5b02a7608906e
+currency/extended@1, kk/EUR, 85B, 494e04e767b5e8a1
+currency/extended@1, kk/GBP, 82B, cb929de723e8f498
+currency/extended@1, kk/USD, 76B, 79bd0bdeaea6acc5
+currency/extended@1, km/CAD, 97B, a12be86851fa52f0
+currency/extended@1, km/EGP, 88B, 368b70e1d96d89c2
+currency/extended@1, km/EUR, 70B, 609c33aeec42f450
+currency/extended@1, km/GBP, 106B, aeee67f0c4f099d5
+currency/extended@1, km/USD, 100B, 7ab4581e9ef126bc
+currency/extended@1, kn/CAD, 175B, cd149ee82dd2596d
+currency/extended@1, kn/EGP, 217B, b9b1d8d223e3898d
+currency/extended@1, kn/EUR, 106B, 36ebed6c0c45b51c
+currency/extended@1, kn/GBP, 193B, 4472cbbc5391face
+currency/extended@1, kn/USD, 193B, 3b9520625954cc31
+currency/extended@1, ko/CAD, 71B, 383a62b1ef8c2863
+currency/extended@1, ko/EGP, 74B, a4f77d936397f701
+currency/extended@1, ko/EUR, 61B, 74eb79a65878cea8
+currency/extended@1, ko/GBP, 71B, b71b05eba4108050
+currency/extended@1, ko/USD, 68B, d2d425b9f344d365
+currency/extended@1, kok/CAD, 138B, 1ce6ae9da096421a
+currency/extended@1, kok/EGP, 138B, 2a92827672d371c2
+currency/extended@1, kok/EUR, 85B, c0c0d71a40298b20
+currency/extended@1, kok/GBP, 138B, ccf18bf5998d9529
+currency/extended@1, kok/USD, 114B, d8ab938ea4a8968d
+currency/extended@1, ks-Deva/EUR, 103B, 1271ae7cefe8590a
+currency/extended@1, ks-Deva/GBP, 89B, 6fb3d6071ffa3af2
+currency/extended@1, ks-Deva/USD, 115B, f43b830c3019c01a
+currency/extended@1, ks/CAD, 82B, c9d44665c35227ec
+currency/extended@1, ks/EGP, 88B, 4aad8e0e3c2b237a
+currency/extended@1, ks/EUR, 65B, c4ea3d88239588fa
+currency/extended@1, ks/GBP, 80B, 5427ce31dc6df7c5
+currency/extended@1, ks/USD, 96B, 9ad71f07cf97ec3f
+currency/extended@1, ku/CAD, 113B, 831adf5b9fa9c838
+currency/extended@1, ku/EGP, 110B, b021efee6d5649aa
+currency/extended@1, ku/EUR, 59B, 6fed2ccc580f901b
+currency/extended@1, ku/GBP, 122B, ec0a3fbc10595b23
+currency/extended@1, ku/USD, 113B, bce146156f274f2b
+currency/extended@1, kxv/EUR, 59B, b6362f40ab07a2ce
+currency/extended@1, kxv/GBP, 72B, 6d2b519fbc06bcd0
+currency/extended@1, kxv/USD, 69B, 5c7143dd9bded691
+currency/extended@1, ky/CAD, 82B, 5c0b427d62a0f9a5
+currency/extended@1, ky/EGP, 78B, b63f0cdc2f3b0b29
+currency/extended@1, ky/EUR, 85B, -> bg/EUR
+currency/extended@1, ky/GBP, 99B, 24a4bcf0c04cf72a
+currency/extended@1, ky/USD, 76B, bddaf7426f406a52
+currency/extended@1, lb/CAD, 113B, b4476ff014f188a5
+currency/extended@1, lb/EGP, 105B, c759a02c417c94f9
+currency/extended@1, lb/EUR, 59B, -> de/EUR
+currency/extended@1, lb/GBP, 102B, 8cfc66773a38f004
+currency/extended@1, lb/USD, 64B, -> de/USD
+currency/extended@1, lo/CAD, 88B, 90c6f63573e3e419
+currency/extended@1, lo/EGP, 101B, 4eea16f46b294d25
+currency/extended@1, lo/EUR, 70B, 22fbaf665b1dec33
+currency/extended@1, lo/GBP, 83B, 23f35257bd24346e
+currency/extended@1, lo/USD, 109B, fb44d695cdc18127
+currency/extended@1, lt/CAD, 144B, ddf9ba97e6c36611
+currency/extended@1, lt/EGP, 131B, f10531dc22dfebbb
+currency/extended@1, lt/EUR, 91B, 64681c5ad0cbb4eb
+currency/extended@1, lt/GBP, 211B, b892e130bac05715
+currency/extended@1, lt/USD, 124B, 2b7d1222c2410fbd
+currency/extended@1, lv/CAD, 128B, d7683e118929a4d9
+currency/extended@1, lv/EGP, 142B, ddca70586130bae2
+currency/extended@1, lv/EUR, 59B, 14110b9d40a52f35
+currency/extended@1, lv/GBP, 166B, 3b5b45fea5513c
+currency/extended@1, lv/USD, 108B, ac5119401b0dfb98
+currency/extended@1, mai/EUR, 67B, -> doi/EUR
+currency/extended@1, mai/GBP, 120B, -> hi/GBP
+currency/extended@1, mai/USD, 80B, -> hi/USD
+currency/extended@1, mi/CAD, 84B, 573e6aa4c93425bf
+currency/extended@1, mi/EGP, 84B, 3a31ac18857565f9
+currency/extended@1, mi/EUR, 66B, -> ig/EUR
+currency/extended@1, mi/GBP, 88B, 314c375b3737e486
+currency/extended@1, mi/USD, 74B, 728e92358393ad4b
+currency/extended@1, mk/CAD, 144B, 29ce0c1255b23bb6
+currency/extended@1, mk/EGP, 148B, 9e04857ed3a696f7
+currency/extended@1, mk/EUR, 85B, c1fcd95a1093c720
+currency/extended@1, mk/GBP, 148B, b9d56d4b0ddae2a1
+currency/extended@1, mk/USD, 162B, 4f40800560f7b860
+currency/extended@1, ml/CAD, 89B, f95148e84ade2f37
+currency/extended@1, ml/EGP, 104B, cf94e3e663ddc37a
+currency/extended@1, ml/EUR, 67B, f6d2055e0a20990c
+currency/extended@1, ml/GBP, 104B, 2d3156940b76efed
+currency/extended@1, ml/USD, 85B, f3ea3509c6bf6435
+currency/extended@1, mn/CAD, 78B, e440553e18c21bad
+currency/extended@1, mn/EGP, 82B, f0907fb8e85048ce
+currency/extended@1, mn/EUR, 63B, -> cv/EUR
+currency/extended@1, mn/GBP, 82B, 5074e8010b965f46
+currency/extended@1, mn/USD, 80B, 21f222d0fa5aedcb
+currency/extended@1, mni/EUR, 70B, 8010a0ac4a659c92
+currency/extended@1, mni/GBP, 95B, bcb6de4e5a17c49a
+currency/extended@1, mni/USD, 78B, ed96e0dfb7708e3f
+currency/extended@1, mr/CAD, 169B, fe31e02b8d9fdb52
+currency/extended@1, mr/EGP, 196B, 1c4cf55d36f7acb5
+currency/extended@1, mr/EUR, 67B, e123538cfff67401
+currency/extended@1, mr/GBP, 178B, bf93092f4928b308
+currency/extended@1, mr/USD, 142B, 4eeafcd19b18c958
+currency/extended@1, ms/CAD, 67B, -> id/CAD
+currency/extended@1, ms/EGP, 65B, 8076c674939f45b0
+currency/extended@1, ms/EUR, 59B, -> de/EUR
+currency/extended@1, ms/GBP, 67B, 75f82c658269b7a0
+currency/extended@1, ms/USD, 63B, 555758ee53be63bd
+currency/extended@1, mt/EUR, 59B, -> ku/EUR
+currency/extended@1, my/CAD, 89B, 2c1846667aaa6fde
+currency/extended@1, my/EGP, 89B, 28a32b5a6231884b
+currency/extended@1, my/EUR, 70B, 15afc7b47886c6ad
+currency/extended@1, my/GBP, 95B, 5934885c6c936226
+currency/extended@1, my/USD, 98B, cbb04d67deeb93b6
+currency/extended@1, ne/CAD, 101B, b42b15dfc5d505ee
+currency/extended@1, ne/EGP, 101B, 2cc50ea41578d34d
+currency/extended@1, ne/EUR, 67B, -> mr/EUR
+currency/extended@1, ne/GBP, 120B, be849c2ec372fc90
+currency/extended@1, ne/USD, 86B, 567ade06c8899034
+currency/extended@1, nl/CAD, 70B, -> fy/CAD
+currency/extended@1, nl/EGP, 69B, d42d2b159ea2e561
+currency/extended@1, nl/EUR, 73B, -> af/EUR
+currency/extended@1, nl/GBP, 66B, -> af/GBP
+currency/extended@1, nl/USD, 73B, b43bbc0cc7b8eb55
+currency/extended@1, no/CAD, 108B, 3f5540e938ab788e
+currency/extended@1, no/EGP, 102B, feaea0aff5ea83d
+currency/extended@1, no/EUR, 59B, -> da/EUR
+currency/extended@1, no/GBP, 99B, 17191172fa0667ea
+currency/extended@1, no/USD, 114B, 7605eebe5e6fd54c
+currency/extended@1, nqo/EGP, 98B, aba0e457f182286c
+currency/extended@1, or/CAD, 92B, 30bd3fbf256f4a0
+currency/extended@1, or/EGP, 101B, dbc79c2740cfdb1a
+currency/extended@1, or/EUR, 67B, 99617d4411d4e330
+currency/extended@1, or/GBP, 101B, f249092efd94f3aa
+currency/extended@1, or/USD, 107B, c8eefcacfcdc627a
+currency/extended@1, pa/CAD, 92B, 36bf602686b43508
+currency/extended@1, pa/EGP, 83B, f97c4222098834c0
+currency/extended@1, pa/EUR, 67B, 25e1b46da92fbb66
+currency/extended@1, pa/GBP, 92B, 732a6e8032ff3e58
+currency/extended@1, pa/USD, 82B, 47f47dac0ea476d7
+currency/extended@1, pcm/CAD, 73B, 1f1e648d51ce2d36
+currency/extended@1, pcm/EGP, 68B, 5366fe8d641e17e6
+currency/extended@1, pcm/EUR, 77B, 491a98495babb76b
+currency/extended@1, pcm/GBP, 71B, 3a1f6246f885048e
+currency/extended@1, pcm/USD, 105B, d94c8ebba29ded8b
+currency/extended@1, pl/CAD, 158B, 1f746f6e7fe858a9
+currency/extended@1, pl/EGP, 138B, a97eede4c6c3447
+currency/extended@1, pl/EUR, 59B, -> da/EUR
+currency/extended@1, pl/GBP, 147B, 98fd04b398e5e8df
+currency/extended@1, pl/USD, 168B, dbfc20c517de6377
+currency/extended@1, ps/CAD, 138B, 5a1d593cedae7a3b
+currency/extended@1, ps/EGP, 118B, ff4c909ff387426f
+currency/extended@1, ps/EUR, 87B, 23fda21e98d0d5f6
+currency/extended@1, ps/GBP, 136B, 53169c8b9b13d00c
+currency/extended@1, ps/USD, 138B, cd5b6da6edf3fa34
+currency/extended@1, pt-PT/CAD, 112B, dd50898a6a7d445c
+currency/extended@1, pt-PT/EGP, 105B, 7d2827a03a96a815
+currency/extended@1, pt-PT/EUR, 74B, -> ast/EUR
+currency/extended@1, pt-PT/GBP, 142B, 2f161a8f9de046e2
+currency/extended@1, pt-PT/USD, 138B, c3e1d31a6228fb1
+currency/extended@1, pt/CAD, 112B, b34eb08092164c95
+currency/extended@1, pt/EGP, 105B, c01200d683776c82
+currency/extended@1, pt/EUR, 74B, e0828ccca7fea138
+currency/extended@1, pt/GBP, 108B, 87255fc97929d5a2
+currency/extended@1, pt/USD, 112B, 782ec5334adb03fb
+currency/extended@1, qu/CAD, 92B, 423e718748752743
+currency/extended@1, qu/EGP, 84B, 55b10db27e3f3e19
+currency/extended@1, qu/EUR, 66B, -> ig/EUR
+currency/extended@1, qu/GBP, 88B, 56932e9fb5a0a725
+currency/extended@1, qu/USD, 90B, b068dba46edf3e07
+currency/extended@1, rm/CAD, 107B, b87e8123693586fb
+currency/extended@1, rm/EGP, 111B, add83333dc9e25b4
+currency/extended@1, rm/EUR, 74B, -> ast/EUR
+currency/extended@1, rm/GBP, 114B, 18788ba02acbd94e
+currency/extended@1, rm/USD, 113B, 3edfd2599697de0f
+currency/extended@1, ro/CAD, 124B, 69653c9ff3c8a348
+currency/extended@1, ro/EGP, 122B, ee0de881a3e438c9
+currency/extended@1, ro/EUR, 59B, -> da/EUR
+currency/extended@1, ro/GBP, 120B, 8d100b6b2bde380c
+currency/extended@1, ro/USD, 124B, a44b62959687c260
+currency/extended@1, ru/CAD, 232B, a8e77ecd0bb738be
+currency/extended@1, ru/EGP, 222B, 244045d68a619ccd
+currency/extended@1, ru/EUR, 63B, -> cv/EUR
+currency/extended@1, ru/GBP, 327B, 643641dfad728934
+currency/extended@1, ru/USD, 170B, 4269e9c9a184143d
+currency/extended@1, sa/EUR, 101B, e03b66eb78460165
+currency/extended@1, sa/GBP, 107B, df7ebda4322debcc
+currency/extended@1, sa/USD, 129B, baf0b6e710dac54b
+currency/extended@1, sah/USD, 78B, 54653cbd4a6b6bb2
+currency/extended@1, sat/EUR, 67B, 939722be0e1376d2
+currency/extended@1, sat/GBP, 218B, 907bd4eb9435d3e2
+currency/extended@1, sat/USD, 83B, 5d92e463bd2ec2c
+currency/extended@1, sc/CAD, 114B, cb40a35bb16018fa
+currency/extended@1, sc/EGP, 120B, fd54393a66db27b3
+currency/extended@1, sc/EUR, 77B, 11b5534daaa2af68
+currency/extended@1, sc/GBP, 126B, c33d00d2887c7dd4
+currency/extended@1, sc/USD, 117B, 5ee6808a87a33726
+currency/extended@1, sd-Deva/EUR, 67B, -> doi/EUR
+currency/extended@1, sd-Deva/GBP, 178B, a57eb8e71b3d6174
+currency/extended@1, sd-Deva/USD, 157B, eeed64afe3862226
+currency/extended@1, sd/CAD, 82B, 6bd4062786b533f3
+currency/extended@1, sd/EGP, 76B, a1b4b58ede88f7fa
+currency/extended@1, sd/EUR, 63B, -> ar/EUR
+currency/extended@1, sd/GBP, 82B, 5c04833d65541f6c
+currency/extended@1, sd/USD, 76B, 1eb5b0d854fefeb4
+currency/extended@1, si/CAD, 101B, c39d12be3a7b890e
+currency/extended@1, si/EGP, 92B, 34652a2b98e01c31
+currency/extended@1, si/EUR, 67B, 4aefc66e3cf7994d
+currency/extended@1, si/GBP, 132B, b9f1a221b34d22fe
+currency/extended@1, si/USD, 95B, 6734d07bb1f15ebb
+currency/extended@1, sk/CAD, 155B, 8e7050d1a4296718
+currency/extended@1, sk/EGP, 145B, 85e14802b4a7b266
+currency/extended@1, sk/EUR, 87B, cd5105a19f9a19e3
+currency/extended@1, sk/GBP, 140B, b8abac4980f790bb
+currency/extended@1, sk/USD, 155B, 9de67c603256d34b
+currency/extended@1, sl/CAD, 145B, 9184ef00b950dc37
+currency/extended@1, sl/EGP, 147B, 8fb8a142a5a61aaf
+currency/extended@1, sl/EUR, 88B, e5d54a717ddcd3ed
+currency/extended@1, sl/GBP, 142B, 20b43cce23c2a150
+currency/extended@1, sl/USD, 150B, 708100fcc84a5ece
+currency/extended@1, so/CAD, 107B, 7c8b0045636d09ae
+currency/extended@1, so/EGP, 100B, 543cb219e02b6319
+currency/extended@1, so/EUR, 79B, 777d40cbc8ff4039
+currency/extended@1, so/GBP, 73B, 545e9891457b7a3a
+currency/extended@1, so/USD, 122B, c4fa558371f41368
+currency/extended@1, sq/CAD, 108B, 1d26f2a052d8f43e
+currency/extended@1, sq/EGP, 119B, ecf22f0c76c296b
+currency/extended@1, sq/EUR, 75B, b9557813a64215aa
+currency/extended@1, sq/GBP, 116B, 243fe2934fd24b00
+currency/extended@1, sq/USD, 111B, 4e81654cd6447d96
+currency/extended@1, sr-Latn/CAD, 123B, -> hr/CAD
+currency/extended@1, sr-Latn/EGP, 125B, -> hr/EGP
+currency/extended@1, sr-Latn/EUR, 80B, 9f2ab33a8c754ad0
+currency/extended@1, sr-Latn/GBP, 125B, -> hr/GBP
+currency/extended@1, sr-Latn/USD, 127B, -> hr/USD
+currency/extended@1, sr/CAD, 178B, c51b593c6f1ec25c
+currency/extended@1, sr/EGP, 182B, 4b6097042528793e
+currency/extended@1, sr/EUR, 96B, -> bs-Cyrl/EUR
+currency/extended@1, sr/GBP, 182B, d1aa16a5ffc6179a
+currency/extended@1, sr/USD, 178B, 745e69ff048e1bcc
+currency/extended@1, su/EUR, 66B, -> ig/EUR
+currency/extended@1, su/GBP, 84B, ba99f07f002c52c
+currency/extended@1, su/USD, 78B, 93e757c7c11749e2
+currency/extended@1, sv/CAD, 116B, 390ee8da24ac4f10
+currency/extended@1, sv/EGP, 103B, f928e2608c2434e8
+currency/extended@1, sv/EUR, 59B, -> da/EUR
+currency/extended@1, sv/GBP, 103B, 8b228d466410e1f0
+currency/extended@1, sv/USD, 113B, ea1ac3e4822a9e98
+currency/extended@1, sw-KE/CAD, 103B, 12f0ec7d5e0f3804
+currency/extended@1, sw/CAD, 103B, f438d4ac1c617052
+currency/extended@1, sw/EGP, 103B, d25a426758762078
+currency/extended@1, sw/EUR, 73B, a76f475fbca68125
+currency/extended@1, sw/GBP, 115B, 4e23f3533b7c49aa
+currency/extended@1, sw/USD, 109B, e2476d414eb6f56d
+currency/extended@1, ta/CAD, 181B, c2c2563eab62f325
+currency/extended@1, ta/EGP, 208B, c864cf9ac6227d
+currency/extended@1, ta/EUR, 112B, 9704bdfcdddae6f7
+currency/extended@1, ta/GBP, 226B, 48b5349abe1e9ca4
+currency/extended@1, ta/USD, 190B, 50bf7f22e3347a1
+currency/extended@1, te/CAD, 190B, a324cb164e7a4010
+currency/extended@1, te/EGP, 208B, 81f6e9027567565c
+currency/extended@1, te/EUR, 103B, cbc14ff4ccdfaf5e
+currency/extended@1, te/GBP, 190B, 25e994eefc60f686
+currency/extended@1, te/USD, 181B, e7a60da90a649ef7
+currency/extended@1, tg/EUR, 74B, 105246f97af8f253
+currency/extended@1, tg/GBP, 142B, 7feab01fe121768a
+currency/extended@1, tg/USD, 100B, 9b0c0df498590af5
+currency/extended@1, th/CAD, 94B, c882d992c65b8bc9
+currency/extended@1, th/EGP, 91B, ce3c1fac69abf39c
+currency/extended@1, th/EUR, 67B, cd56e5cbfd2e2ba8
+currency/extended@1, th/GBP, 139B, 1f14d2e40493b3c7
+currency/extended@1, th/USD, 91B, 53fa3fccfb866134
+currency/extended@1, ti/EUR, 61B, -> am/EUR
+currency/extended@1, ti/GBP, 105B, -> am/GBP
+currency/extended@1, ti/USD, 77B, be569af68e0afdef
+currency/extended@1, tk/CAD, 103B, 9da717984724eb8f
+currency/extended@1, tk/EGP, 100B, 7c92dc4cf598f551
+currency/extended@1, tk/EUR, 79B, a577a79570750cf4
+currency/extended@1, tk/GBP, 124B, d7f9e00a84169a42
+currency/extended@1, tk/USD, 67B, fc6ee8094e83a66f
+currency/extended@1, to/EUR, 70B, 8d63ffe905a08b60
+currency/extended@1, tr/CAD, 69B, 2dabded6263719d7
+currency/extended@1, tr/EGP, 70B, 422a221296b52187
+currency/extended@1, tr/EUR, 59B, -> de/EUR
+currency/extended@1, tr/GBP, 72B, 7b9c5fcd2fdd6ea4
+currency/extended@1, tr/USD, 66B, c09172ca37d0193e
+currency/extended@1, tt/EUR, 63B, -> cv/EUR
+currency/extended@1, tt/GBP, 80B, d5b5b37858b80f88
+currency/extended@1, tt/USD, 76B, -> ky/USD
+currency/extended@1, ug/CAD, 82B, 34a5ecd24cd3adb7
+currency/extended@1, ug/EGP, 93B, 79a327af466af13d
+currency/extended@1, ug/EUR, 65B, c648e72e08c49244
+currency/extended@1, ug/GBP, 99B, 6e0ac4c76d579ded
+currency/extended@1, ug/USD, 86B, 8a077dc2b5fd8b34
+currency/extended@1, uk/CAD, 230B, 9abddb154fed47b8
+currency/extended@1, uk/EGP, 230B, bded75dab018980d
+currency/extended@1, uk/EUR, 63B, 9c4dba8cb1a63d3f
+currency/extended@1, uk/GBP, 230B, 340942347931b895
+currency/extended@1, uk/USD, 160B, 5c3932f1b52834f
+currency/extended@1, und/CAD, 48B, 3a6d9523170345d0
+currency/extended@1, und/EGP, 48B, -> und/CAD
+currency/extended@1, und/EUR, 48B, -> und/CAD
+currency/extended@1, und/GBP, 48B, -> und/CAD
+currency/extended@1, und/USD, 48B, -> und/CAD
+currency/extended@1, ur-IN/GBP, 93B, d6e26b5a10cde07f
+currency/extended@1, ur/CAD, 76B, 8589aa170a2e3869
+currency/extended@1, ur/EGP, 74B, 1def43722258e2e0
+currency/extended@1, ur/EUR, 63B, -> fa/EUR
+currency/extended@1, ur/GBP, 80B, 46ec2c770193f2c1
+currency/extended@1, ur/USD, 76B, 3882a18ab21f06a0
+currency/extended@1, uz-Cyrl/CAD, 82B, b531fb8c48ee0755
+currency/extended@1, uz-Cyrl/EGP, 74B, f9b157c9127d7531
+currency/extended@1, uz-Cyrl/EUR, 63B, a6fc2529e0711558
+currency/extended@1, uz-Cyrl/GBP, 76B, d113d40d597391d4
+currency/extended@1, uz-Cyrl/USD, 76B, 7ce7c9810ea093ee
+currency/extended@1, uz/CAD, 69B, 8d268c99d7fa5061
+currency/extended@1, uz/EGP, 65B, ab9aafd00bc02fc7
+currency/extended@1, uz/EUR, 76B, e700077f9cd7ff9a
+currency/extended@1, uz/GBP, 77B, f47c653f0539ad2
+currency/extended@1, uz/USD, 67B, f63a8e6ac868a9e5
+currency/extended@1, vec/CAD, 109B, 477e4df7a838aaba
+currency/extended@1, vec/EGP, 112B, 68e7cb0e923883a6
+currency/extended@1, vec/EUR, 59B, -> da/EUR
+currency/extended@1, vec/GBP, 109B, ecd509736cfb76f7
+currency/extended@1, vec/USD, 107B, 9fa2efad29da340f
+currency/extended@1, vi/CAD, 86B, e10b9d63ab7e3aa
+currency/extended@1, vi/EGP, 88B, b2eb1520a50ad936
+currency/extended@1, vi/EUR, 66B, -> ig/EUR
+currency/extended@1, vi/GBP, 78B, 19df3295d128c137
+currency/extended@1, vi/USD, 82B, 4e666b9a9ad3989a
+currency/extended@1, wo/EUR, 66B, -> ig/EUR
+currency/extended@1, wo/GBP, 108B, 512ca568cd3cd972
+currency/extended@1, wo/USD, 78B, 6b96911e4d96b3c5
+currency/extended@1, xh/CAD, 107B, -> en/CAD
+currency/extended@1, xh/EGP, 113B, 1c9f37455192756e
+currency/extended@1, xh/EUR, 80B, 81e12902fceb80c1
+currency/extended@1, xh/GBP, 116B, d902a89087448ccd
+currency/extended@1, xh/USD, 89B, -> en/USD
+currency/extended@1, xnr/CAD, 128B, 7dd3e2face0b3160
+currency/extended@1, xnr/EGP, 134B, 660a94df59d8d612
+currency/extended@1, xnr/EUR, 67B, -> doi/EUR
+currency/extended@1, xnr/GBP, 120B, -> hi/GBP
+currency/extended@1, xnr/USD, 122B, 1f68d8ccb0f8454e
+currency/extended@1, yo-BJ/CAD, 101B, aae19cc29dc1a56a
+currency/extended@1, yo-BJ/EGP, 116B, 252c245acf11f6f7
+currency/extended@1, yo-BJ/GBP, 96B, 2b9b6193e6ea3458
+currency/extended@1, yo-BJ/USD, 63B, be75cb30ee67dbb1
+currency/extended@1, yo/CAD, 104B, 74eb9dfb37d76f28
+currency/extended@1, yo/EGP, 121B, aa332f54cf16040d
+currency/extended@1, yo/EUR, 85B, ac18403e52ed0567
+currency/extended@1, yo/GBP, 100B, bb306eb0e66747d8
+currency/extended@1, yo/USD, 64B, 30978484e64570ba
+currency/extended@1, yrl/CAD, 116B, 7bc40862d5639795
+currency/extended@1, yrl/EGP, 113B, a5db677261f321ee
+currency/extended@1, yrl/EUR, 77B, 5b5af74b2c53a20f
+currency/extended@1, yrl/GBP, 113B, f88573b7f40eff8e
+currency/extended@1, yrl/USD, 113B, 7f921e975f0ded73
+currency/extended@1, yue-Hans/CAD, 61B, bf3d4e1202f6a832
+currency/extended@1, yue-Hans/EGP, 64B, 85670df291582a68
+currency/extended@1, yue-Hans/EUR, 61B, 6c7fbe70bb5881ee
+currency/extended@1, yue-Hans/GBP, 61B, ad9474db4d100de2
+currency/extended@1, yue-Hans/USD, 61B, 68175bdb7eb6f7aa
+currency/extended@1, yue/CAD, 61B, e2700748b7bfcb57
+currency/extended@1, yue/EGP, 64B, ce747c58751d99b7
+currency/extended@1, yue/EUR, 61B, e8ba57ba9e24de50
+currency/extended@1, yue/GBP, 61B, 92e8c19babc984e1
+currency/extended@1, yue/USD, 61B, -> yue-Hans/USD
+currency/extended@1, zh-HK/CAD, 67B, f1b209307d1f4293
+currency/extended@1, zh-Hant/CAD, 61B, -> yue/CAD
+currency/extended@1, zh-Hant/EGP, 64B, -> yue/EGP
+currency/extended@1, zh-Hant/EUR, 61B, -> yue/EUR
+currency/extended@1, zh-Hant/GBP, 61B, -> yue/GBP
+currency/extended@1, zh-Hant/USD, 61B, -> yue-Hans/USD
+currency/extended@1, zh-MO/CAD, 67B, -> zh-HK/CAD
+currency/extended@1, zh/CAD, 67B, -> zh-HK/CAD
+currency/extended@1, zh/EGP, 64B, -> yue-Hans/EGP
+currency/extended@1, zh/EUR, 61B, -> yue-Hans/EUR
+currency/extended@1, zh/GBP, 61B, -> yue-Hans/GBP
+currency/extended@1, zh/USD, 61B, -> yue-Hans/USD
+currency/extended@1, zu/CAD, 71B, 69c223da11f6429
+currency/extended@1, zu/EGP, 71B, 97650516a7e7847d
+currency/extended@1, zu/EUR, 61B, 70f4a5b6bbcd9e19
+currency/extended@1, zu/GBP, 70B, 62ef73dd0f1265ed
+currency/extended@1, zu/USD, 66B, ccf8b1189fca0543
 displaynames/languages@1, <lookup>, 1051B, 209 identifiers
 displaynames/languages@1, <total>, 1557050B, 194 unique payloads
 displaynames/languages@1, af, 5898B, a2f3d9fa576f610
