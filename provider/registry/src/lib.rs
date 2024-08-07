@@ -75,7 +75,6 @@ macro_rules! registry(
             icu::list::provider::AndListV2Marker = "list/and@2",
             icu::list::provider::OrListV2Marker = "list/or@2",
             icu::list::provider::UnitListV2Marker = "list/unit@2",
-            icu::locale::provider::AliasesV1Marker = "locid_transform/aliases@1",
             icu::locale::provider::AliasesV2Marker = "locid_transform/aliases@2",
             icu::locale::provider::LikelySubtagsV1Marker = "locid_transform/likelysubtags@1",
             icu::locale::provider::LikelySubtagsExtendedV1Marker = "locid_transform/likelysubtags_ext@1",
