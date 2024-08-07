@@ -55,10 +55,6 @@
                 "components": {
                     "year": "two-digit-week-of",
                     "week": "numeric-week-of-year"
-                },
-                "semantic": {
-                    "fieldSet": ["year", "weekOfYear"],
-                    "length": "short"
                 }
             }
         },
@@ -98,7 +94,7 @@
                     "day": "numeric-day-of-month"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day"],
+                    "fieldSet": ["fullYear", "month", "day"],
                     "length": "short"
                 }
             }
@@ -109,7 +105,7 @@
                 "en-u-ca-buddhist": "1/7/2563 BE",
                 "fr": "07/01/2020",
                 "en-u-ca-coptic": "4/28/1736 ERA1",
-                "fr-u-ca-coptic": "28/4/1736 ap. D."
+                "fr-u-ca-coptic": "28/04/1736 ap. D."
             }
         }
     },
@@ -200,10 +196,6 @@
                     "year": "numeric",
                     "month": "narrow",
                     "day": "numeric-day-of-month"
-                },
-                "semantic": {
-                    "fieldSet": ["year", "month", "day"],
-                    "length": "short"
                 }
             }
         },
