@@ -100,7 +100,12 @@ mod macos_test {
         let calendar_res = get_system_calendars().unwrap();
         for calendar in calendar_res {
             assert!(!calendar.0.is_empty(), "Couldn't retreive calendar locale");
+            assert!(calendar.0.is_ascii(), "Calendar locale form is not valid");
             assert!(!calendar.1.is_empty(), "Couldn't retreive calendar");
+            assert!(
+                calendar.1.is_ascii(),
+                "Calendar identifier form is not valid"
+            );
         }
     }
 
