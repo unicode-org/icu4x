@@ -321,7 +321,7 @@ fn assert_fixture_element<A>(
     );
 
     assert_try_writeable_eq!(
-        any_dtf.strict_format(&iso_any_input).unwrap(),
+        any_dtf.convert_and_format(&iso_any_input),
         output_value,
         Ok(()),
         "(DateTimeFormatter iso conversion) {}",
