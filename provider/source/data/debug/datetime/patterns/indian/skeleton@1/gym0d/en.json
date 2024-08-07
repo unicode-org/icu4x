@@ -6,8 +6,8 @@
     "has_eras": false
   },
   "patterns": [
-    "MMMM d, y GGGG",
+    "MMMM d, y GGG",
     "MMM d, y GGG",
-    "M/d/y GGG"
+    "M/d/y GGGGG"
   ]
 }

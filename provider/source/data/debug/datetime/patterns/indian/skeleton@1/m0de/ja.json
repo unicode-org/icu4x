@@ -6,8 +6,8 @@
     "has_eras": false
   },
   "patterns": [
-    "M月d日(EEEE)",
-    "M月d日(E)",
+    "M/d(EEEE)",
+    "MM/dd(E)",
     "M/d(E)"
   ]
 }

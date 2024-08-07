@@ -6,7 +6,7 @@
     "has_eras": false
   },
   "patterns": [
-    "MMMM 'de' y GGGG",
-    "MMM y GGG"
+    "MMMM 'de' y GGG",
+    "MMM y GGGGG"
   ]
 }
