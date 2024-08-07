@@ -23,7 +23,11 @@ use zerovec::ZeroMap;
 pub use crate::provider::Baked;
 
 /// Currency Extended V1 data struct.
-#[icu_provider::data_struct(marker(CurrencyExtendedDataV1Marker, "currency/extended@1"))]
+#[icu_provider::data_struct(marker(
+    CurrencyExtendedDataV1Marker,
+    "currency/extended@1",
+    attributes_domain = "currency",
+))]
 #[derive(Debug, Clone, Default, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(

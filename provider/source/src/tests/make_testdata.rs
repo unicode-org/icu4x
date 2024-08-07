@@ -76,6 +76,9 @@ fn make_testdata() {
             "meter" | "foot" | "kilogram" | "pound" | "hour" | "minute" | "second"
         )
     })
+    .with_marker_attributes_filter("currency", |attrs| {
+        matches!(attrs.as_str(), "CAD" | "EGP" | "EUR" | "GBP" | "USD")
+    })
     .export(&provider, exporter)
     .unwrap()
 }

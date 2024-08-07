@@ -60,10 +60,6 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::SourceDataProvider {
 
 impl crate::IterableDataProviderCached<CurrencyExtendedDataV1Marker> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        // TODO: This is a temporary implementation until we have a better way to handle large number of json files.
-        let currencies_to_support: HashSet<_> =
-            ["USD", "CAD", "EUR", "GBP", "EGP"].into_iter().collect();
-
         let mut result = HashSet::new();
         let numbers = self.cldr()?.numbers();
         let locales = numbers.list_locales()?;
@@ -75,10 +71,6 @@ impl crate::IterableDataProviderCached<CurrencyExtendedDataV1Marker> for SourceD
 
             let currencies = &currencies_resource.main.value.numbers.currencies;
             for key in currencies.keys() {
-                if !currencies_to_support.contains(key.as_str()) {
-                    continue;
-                }
-
                 if let Ok(attributes) = DataMarkerAttributes::try_from_string(key.clone()) {
                     result.insert(DataIdentifierCow::from_owned(attributes, locale.clone()));
                 }
