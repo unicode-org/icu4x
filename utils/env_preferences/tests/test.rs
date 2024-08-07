@@ -18,7 +18,7 @@ mod linux_tests {
             !locale_res.is_empty(),
             "Empty hashmap for locales retrieved"
         );
-        for locale in locale_res.into_values().into_iter() {
+        for locale in locale_res.into_values() {
             assert!(locale.is_ascii(), "Invalid form of locale retrieved")
         }
     }
