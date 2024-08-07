@@ -24,10 +24,14 @@ use icu_calendar::{
     roc::Roc,
     AsCalendar, Calendar, DateTime, Gregorian, Iso,
 };
-use icu_datetime::provider::time_zones::{
-    ExemplarCitiesV1Marker, MetazoneGenericNamesLongV1Marker, MetazoneGenericNamesShortV1Marker,
-    MetazoneId, MetazoneSpecificNamesLongV1Marker, MetazoneSpecificNamesShortV1Marker,
-    TimeZoneBcp47Id, TimeZoneFormatsV1Marker,
+use icu_datetime::{
+    neo::{NeoFormatter, NeoOptions, TypedNeoFormatter},
+    neo_skeleton::NeoSkeleton,
+    provider::time_zones::{
+        ExemplarCitiesV1Marker, MetazoneGenericNamesLongV1Marker,
+        MetazoneGenericNamesShortV1Marker, MetazoneId, MetazoneSpecificNamesLongV1Marker,
+        MetazoneSpecificNamesShortV1Marker, TimeZoneBcp47Id, TimeZoneFormatsV1Marker,
+    },
 };
 use icu_datetime::{
     pattern::runtime,
@@ -41,13 +45,13 @@ use icu_locale_core::{locale, LanguageIdentifier, Locale};
 use icu_provider::prelude::*;
 use icu_provider_adapters::any_payload::AnyPayloadProvider;
 use icu_provider_adapters::fork::MultiForkByMarkerProvider;
-use icu_timezone::{CustomTimeZone, ZoneVariant};
+use icu_timezone::{CustomTimeZone, CustomZonedDateTime, ZoneVariant};
 use patterns::{
     dayperiods::{DayPeriodExpectation, DayPeriodTests},
     time_zones::{TimeZoneConfig, TimeZoneExpectation, TimeZoneTests},
 };
 use tinystr::tinystr;
-use writeable::assert_writeable_eq;
+use writeable::{assert_try_writeable_eq, assert_writeable_eq};
 
 mod mock;
 
@@ -58,12 +62,12 @@ fn test_fixture(fixture_name: &str, file: &str) {
     {
         let japanese = Japanese::new();
         let japanext = JapaneseExtended::new();
-        let options = match fixtures::get_options(&fx.input.options) {
-            Some(o) => o,
-            #[cfg(feature = "experimental")]
-            None => unreachable!(),
-            #[cfg(not(feature = "experimental"))]
-            None => continue,
+        let options = match fx.input.options.semantic {
+            Some(semantic) => semantic,
+            None => {
+                eprintln!("Warning: Skipping test with no semantic skeleton: {fx:?}");
+                continue;
+            }
         };
         let input_value = mock::parse_gregorian_from_str(&fx.input.value);
         let input_buddhist = input_value.to_calendar(Buddhist);
@@ -94,8 +98,11 @@ fn test_fixture(fixture_name: &str, file: &str) {
             None => format!("\n  file: {fixture_name}.json\n"),
         };
         for (locale, output_value) in fx.output.values {
-            let locale =
+            let mut locale =
                 Locale::try_from_str(&locale).expect("Expected parseable locale in fixture");
+            if let Some(preferences) = fx.input.options.preferences {
+                preferences.apply_to_locale(&mut locale);
+            }
             if let Some(kind) = AnyCalendarKind::get_for_locale(&locale) {
                 match kind {
                     AnyCalendarKind::Buddhist => assert_fixture_element(
@@ -247,80 +254,79 @@ fn assert_fixture_element<A>(
     input_value: &DateTime<A>,
     input_iso: &DateTime<Iso>,
     output_value: &str,
-    options: DateTimeFormatterOptions,
+    skeleton: NeoSkeleton,
     description: &str,
 ) where
-    A: AsCalendar,
+    A: AsCalendar + Clone,
     A::Calendar: CldrCalendar,
     A::Calendar: IntoAnyCalendar,
-    icu_datetime::provider::Baked: DataProvider<<A::Calendar as CldrCalendar>::DateSymbolsV1Marker>,
-    icu_datetime::provider::Baked: DataProvider<<A::Calendar as CldrCalendar>::DateLengthsV1Marker>,
+    icu_datetime::provider::Baked: DataProvider<<A::Calendar as CldrCalendar>::YearNamesV1Marker>,
+    icu_datetime::provider::Baked: DataProvider<<A::Calendar as CldrCalendar>::MonthNamesV1Marker>,
+    icu_datetime::provider::Baked: DataProvider<<A::Calendar as CldrCalendar>::SkeletaV1Marker>,
 {
     assert!(
         input_value.date.calendar().any_calendar_kind().is_some(),
         "{} does not specify its AsCalendarKind",
         input_value.date.calendar().debug_name()
     );
-    let any_input = input_value.to_any();
-    let iso_any_input = input_iso.to_any();
-    #[cfg(feature = "experimental")]
-    let (dtf, any_dtf) = {
-        (
-            TypedDateTimeFormatter::<A::Calendar>::try_new_experimental(&locale.into(), options)
-                .expect(description),
-            DateTimeFormatter::try_new_experimental(&locale.into(), options).expect(description),
-        )
+
+    let input_value = CustomZonedDateTime {
+        date: input_value.date.clone(),
+        time: input_value.time,
+        zone: CustomTimeZone::utc(),
     };
-    #[cfg(not(feature = "experimental"))]
-    let (dtf, any_dtf) = {
-        (
-            TypedDateTimeFormatter::<A::Calendar>::try_new(&locale.into(), options.clone())
-                .expect(description),
-            DateTimeFormatter::try_new(&locale.into(), options.clone()).expect(description),
-        )
+    let input_iso = CustomZonedDateTime {
+        date: input_iso.date,
+        time: input_iso.time,
+        zone: CustomTimeZone::utc(),
     };
 
-    assert_writeable_eq!(dtf.format(input_value), output_value, "{}", description);
+    let any_input = CustomZonedDateTime {
+        date: input_value.date.to_any(),
+        time: input_value.time,
+        zone: CustomTimeZone::utc(),
+    };
+    let iso_any_input = CustomZonedDateTime {
+        date: input_iso.date.to_any(),
+        time: input_iso.time,
+        zone: CustomTimeZone::utc(),
+    };
 
-    assert_writeable_eq!(
-        any_dtf.format(&any_input).unwrap(),
+    let mut options = NeoOptions::from(skeleton.length);
+    options.era_display = skeleton.era_display;
+    options.fractional_second_digits = skeleton.fractional_second_digits;
+
+    let dtf =
+        TypedNeoFormatter::try_new_with_components(&locale.into(), skeleton.components, options)
+            .expect(description);
+
+    let any_dtf =
+        NeoFormatter::try_new_with_components(&locale.into(), skeleton.components, options)
+            .expect(description);
+
+    assert_try_writeable_eq!(
+        dtf.format(&input_value),
         output_value,
+        Ok(()),
+        "{}",
+        description
+    );
+
+    assert_try_writeable_eq!(
+        any_dtf.strict_format(&any_input).unwrap(),
+        output_value,
+        Ok(()),
         "(DateTimeFormatter) {}",
         description
     );
 
-    assert_writeable_eq!(
-        any_dtf.format(&iso_any_input).unwrap(),
+    assert_try_writeable_eq!(
+        any_dtf.strict_format(&iso_any_input).unwrap(),
         output_value,
+        Ok(()),
         "(DateTimeFormatter iso conversion) {}",
         description
     );
-
-    if let DateTimeFormatterOptions::Length(bag) = options {
-        if bag.date.is_some() && bag.time.is_some() {
-            let df = TypedDateFormatter::<A::Calendar>::try_new_with_length(
-                &locale.into(),
-                bag.date.unwrap(),
-            )
-            .unwrap();
-            let tf = TimeFormatter::try_new_with_length(&locale.into(), bag.time.unwrap()).unwrap();
-
-            let dtf = TypedDateTimeFormatter::try_from_date_and_time(df, tf).unwrap();
-            assert_writeable_eq!(dtf.format(input_value), output_value, "{}", description);
-        } else if bag.date.is_some() {
-            let df = TypedDateFormatter::<A::Calendar>::try_new_with_length(
-                &locale.into(),
-                bag.date.unwrap(),
-            )
-            .unwrap();
-
-            assert_writeable_eq!(df.format(input_value), output_value, "{}", description);
-        } else if bag.time.is_some() {
-            let tf = TimeFormatter::try_new_with_length(&locale.into(), bag.time.unwrap()).unwrap();
-
-            assert_writeable_eq!(tf.format(input_value), output_value, "{}", description);
-        }
-    }
 }
 
 fn test_fixture_with_time_zones(fixture_name: &str, file: &str, config: TimeZoneConfig) {
