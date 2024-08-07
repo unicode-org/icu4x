@@ -79,7 +79,6 @@ macro_rules! registry(
             icu::locale::provider::LikelySubtagsExtendedV1Marker = "locid_transform/likelysubtags_ext@1",
             icu::locale::provider::LikelySubtagsForLanguageV1Marker = "locid_transform/likelysubtags_l@1",
             icu::locale::provider::LikelySubtagsForScriptRegionV1Marker = "locid_transform/likelysubtags_sr@1",
-            icu::locale::provider::LocaleFallbackLikelySubtagsV1Marker = "fallback/likelysubtags@1",
             icu::locale::provider::LocaleFallbackParentsV1Marker = "fallback/parents@1",
             icu::locale::provider::ScriptDirectionV1Marker = "locid_transform/script_dir@1",
             icu::normalizer::provider::CanonicalCompositionsV1Marker = "normalizer/comp@1",
