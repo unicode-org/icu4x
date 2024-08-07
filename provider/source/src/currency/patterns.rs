@@ -45,6 +45,9 @@ impl DataProvider<CurrencyPatternsDataV1Marker> for SourceDataProvider {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(CurrencyPatternsDataV1 {
+                // TODO(#5334):
+                //      Before graduating the currency crate,
+                //      Check that the .json data files are completed and no need to fallback chain up to the root.
                 unit_patterns: ZeroMap::from_iter(
                     [
                         (PatternCount::Zero, patterns.pattern_zero.as_deref()),
@@ -57,6 +60,10 @@ impl DataProvider<CurrencyPatternsDataV1Marker> for SourceDataProvider {
                     .into_iter()
                     .filter_map(|(count, pattern)| match (count, pattern) {
                         (PatternCount::Other, pattern) => Some((count, pattern?)),
+                        // NOTE:
+                        //      According to [Unicode Technical Standard #35](https://unicode.org/reports/tr35/tr35-numbers.html),
+                        //      if a specific count is not available, the `other` pattern should be used.
+                        //      Therefore, if the pattern is equal to the `other` pattern, we should not include it in the map.
                         (_, pattern) if pattern == patterns.pattern_other.as_deref() => None,
                         _ => Some((count, pattern?)),
                     }),
