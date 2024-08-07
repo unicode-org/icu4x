@@ -14,26 +14,6 @@ use std::collections::{BTreeMap, HashSet};
 use tinystr::TinyAsciiStr;
 use zerovec::ZeroSlice;
 
-impl DataProvider<AliasesV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<AliasesV1Marker>, DataError> {
-        self.check_req::<AliasesV1Marker>(req)?;
-        let data: &cldr_serde::aliases::Resource = self
-            .cldr()?
-            .core()
-            .read_and_parse("supplemental/aliases.json")?;
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: DataPayload::from_owned(AliasesV2::from(data).into()),
-        })
-    }
-}
-
-impl crate::IterableDataProviderCached<AliasesV1Marker> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        Ok(HashSet::from_iter([Default::default()]))
-    }
-}
-
 impl DataProvider<AliasesV2Marker> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<AliasesV2Marker>, DataError> {
         self.check_req::<AliasesV2Marker>(req)?;
