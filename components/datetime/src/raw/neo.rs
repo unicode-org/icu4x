@@ -212,15 +212,16 @@ impl DatePatternSelectionData {
                         | Some(AnyCalendarKind::Roc) => true,
                         Some(AnyCalendarKind::Chinese)
                         | Some(AnyCalendarKind::Dangi)
-                        | Some(AnyCalendarKind::Hebrew) => false,
+                        | Some(AnyCalendarKind::Hebrew)
+                        | Some(AnyCalendarKind::Iso) => false,
                         Some(AnyCalendarKind::Gregorian) => match datetime.year() {
                             None => true,
                             Some(year) if year.number < 1000 => true,
                             Some(year) if year.era.0 != tinystr!(16, "ce") => true,
                             Some(_) => false,
                         },
-                        Some(_) => {
-                            debug_assert!(false, "unknown calendar during era display resolution");
+                        Some(kind) => {
+                            debug_assert!(false, "unknown calendar during era display resolution: {kind:?}");
                             true
                         }
                     },
