@@ -45,7 +45,9 @@ impl DataProvider<CurrencyPatternsDataV1Marker> for SourceDataProvider {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(CurrencyPatternsDataV1 {
-                // TODO: before graduating the currency crate, check that the .json data is completed and no need to fallback chain up to the root.
+                // TODO(#5334):
+                //      Before graduating the currency crate,
+                //      Check that the .json data files are completed and no need to fallback chain up to the root.
                 unit_patterns: ZeroMap::from_iter(
                     [
                         (PatternCount::Zero, patterns.pattern_zero.as_deref()),
