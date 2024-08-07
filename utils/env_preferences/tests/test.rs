@@ -13,18 +13,13 @@ mod linux_tests {
     // `LC_ALL`. For this category this should return non empty
     #[test]
     fn test_get_locales() {
-        let locale_res = get_locales();
-
-        match locale_res {
-            Ok(locale_map) => {
-                assert!(
-                    !locale_map.is_empty(),
-                    "Expected locale_map not to be empty"
-                );
-            }
-            Err(err) => {
-                panic!("{:?}", err)
-            }
+        let locale_res = get_locales().unwrap();
+        assert!(
+            !locale_res.is_empty(),
+            "Empty hashmap for locales retrieved"
+        );
+        for locale in locale_res.into_values().into_iter() {
+            assert!(locale.is_ascii(), "Invalid form of locale retrieved")
         }
     }
 
@@ -81,7 +76,10 @@ mod macos_test {
         let locales_res = get_locales();
         match locales_res {
             Ok(locales) => {
-                assert!(!locales.is_empty(), "Unable to retrieve locales for Apple")
+                for locale in locales {
+                    assert!(!locale.is_empty(), "Empty locale retrieved");
+                    assert!(locale.is_ascii(), "Invalid form of locale retrieved");
+                }
             }
             Err(e) => {
                 panic!("{:?}", e)
@@ -122,10 +120,10 @@ mod windows_test {
     #[test]
     fn test_get_locales() {
         let locales = get_locales().unwrap();
-        assert!(
-            !locales.is_empty(),
-            "Unable to retrieve locales for Windows"
-        );
+        for locale in locales {
+            assert!(!locale.is_empty(), "Empty locale retrieved");
+            assert!(locale.is_ascii(), "Invalid form of locale retrieved");
+        }
     }
 
     #[test]
@@ -140,14 +138,20 @@ mod windows_test {
     fn test_calendar() {
         let calendars = get_system_calendars().unwrap();
         for calendar in calendars {
-            assert!(!calendar.0.is_empty(), "Calendar locale in empty");
-            assert!(!calendar.1.is_empty(), "Calendar locale in empty");
+            assert!(!calendar.0.is_empty(), "Calendar locale is empty");
+            assert!(calendar.0.is_ascii(), "Calendar locale form is not valid");
+            assert!(!calendar.1.is_empty(), "Calendar identifier is empty");
+            assert!(
+                calendar.1.is_ascii(),
+                "Calendar identifier form is not valid"
+            );
         }
     }
 
     #[test]
     fn test_time_zone() {
         let time_zone = get_system_timezone().unwrap();
-        assert!(!time_zone.is_empty(), "Couldn't retreive time_zone")
+        assert!(!time_zone.is_empty(), "Couldn't retreive time_zone");
+        assert!(time_zone.is_ascii(), "Invalid TimeZone format");
     }
 }
