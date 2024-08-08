@@ -958,6 +958,11 @@ export const RenderInfo = {
                 {
                     name: "F",
                     type: "number"
+                },
+                
+                {
+                    name: "Magnitude",
+                    type: "number"
                 }
                 
             ]
@@ -1024,6 +1029,11 @@ export const RenderInfo = {
                 
                 {
                     name: "F",
+                    type: "number"
+                },
+                
+                {
+                    name: "Magnitude",
                     type: "number"
                 }
                 

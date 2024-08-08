@@ -24,10 +24,11 @@ export function format() {
                     terminusArgs[1]
                 ]
             ),
-            FixedDecimal.fromDoubleWithIntegerPrecision.apply(
+            FixedDecimal.fromNumberWithLowerMagnitude.apply(
                 null,
                 [
-                    terminusArgs[2]
+                    terminusArgs[2],
+                    terminusArgs[3]
                 ]
             )
         ]

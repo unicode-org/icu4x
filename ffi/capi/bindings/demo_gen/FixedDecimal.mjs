@@ -4,10 +4,11 @@ export function toString() {
     return (function (...args) { return args[0].toString(...args.slice(1)) }).apply(
         null,
         [
-            FixedDecimal.fromDoubleWithIntegerPrecision.apply(
+            FixedDecimal.fromNumberWithLowerMagnitude.apply(
                 null,
                 [
-                    terminusArgs[0]
+                    terminusArgs[0],
+                    terminusArgs[1]
                 ]
             )
         ]
