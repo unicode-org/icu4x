@@ -7,6 +7,7 @@
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
+    use diplomat_runtime::{DiplomatStr16Slice, DiplomatStrSlice};
 
     use crate::{errors::ffi::DataError, locale_core::ffi::Locale, provider::ffi::DataProvider};
 
@@ -85,7 +86,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::list::FormattedList, Struct, hidden)]
         #[diplomat::attr(not(supports = utf8_strings), disable)]
         #[diplomat::attr(*, rename = "format")]
-        pub fn format_utf8(&self, list: &[&DiplomatStr], write: &mut DiplomatWrite) {
+        pub fn format_utf8(&self, list: &[DiplomatStrSlice], write: &mut DiplomatWrite) {
             let _infallible = self
                 .0
                 .format(
@@ -102,7 +103,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::list::FormattedList, Struct, hidden)]
         #[diplomat::attr(not(supports = utf8_strings), rename = "format")]
         #[diplomat::attr(supports = utf8_strings, rename = "format16")]
-        pub fn format_utf16(&self, list: &[&DiplomatStr16], write: &mut DiplomatWrite) {
+        pub fn format_utf16(&self, list: &[DiplomatStr16Slice], write: &mut DiplomatWrite) {
             let _infallible = self
                 .0
                 .format(
