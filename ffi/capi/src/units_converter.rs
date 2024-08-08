@@ -66,16 +66,14 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X Measurement Unit parser object which is capable of parsing the CLDR unit identifier
     /// (e.g. `meter-per-square-second`) and get the [`MeasureUnit`].
-    #[diplomat::rust_link(icu::experimental::measure::measureunit::MeasureUnitParser, Struct)]
-    pub struct MeasureUnitParser<'a>(
-        pub icu_experimental::measure::measureunit::MeasureUnitParser<'a>,
-    );
+    #[diplomat::rust_link(icu::experimental::measure::parser::MeasureUnitParser, Struct)]
+    pub struct MeasureUnitParser<'a>(pub icu_experimental::measure::parser::MeasureUnitParser<'a>);
 
     impl<'a> MeasureUnitParser<'a> {
         /// Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`MeasureUnit`],
         /// if the identifier is valid.
         #[diplomat::rust_link(
-            icu::experimental::measure::measureunit::MeasureUnitParser::parse,
+            icu::experimental::measure::parser::MeasureUnitParser::parse,
             FnInStruct
         )]
         pub fn parse(&self, unit_id: &DiplomatStr) -> Option<Box<MeasureUnit>> {

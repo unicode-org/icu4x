@@ -6,3 +6,4 @@ pub(crate) mod power;
 pub(crate) mod si_prefix;
 
 pub mod measureunit;
+pub mod parser;
