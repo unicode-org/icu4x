@@ -12,16 +12,19 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *values if and only if `done=false`.
 */
 export class CodePointRangeIteratorResult {
+
     #start;
     get start()  {
         return this.#start;
     }
     
+
     #end;
     get end()  {
         return this.#end;
     }
     
+
     #done;
     get done()  {
         return this.#done;
@@ -48,7 +51,7 @@ export class CodePointRangeIteratorResult {
         this.#start = startDeref;
         const endDeref = (new Uint32Array(wasm.memory.buffer, ptr + 4, 1))[0];
         this.#end = endDeref;
-        const doneDeref = (new Uint8Array(wasm.memory.buffer, ptr + 8, 1))[0] == 1;
+        const doneDeref = (new Uint8Array(wasm.memory.buffer, ptr + 8, 1))[0] === 1;
         this.#done = doneDeref;
 
         return this;
@@ -57,6 +60,4 @@ export class CodePointRangeIteratorResult {
     constructor(ptr) {
         this._fromFFI(ptr);
     }
-    
-
 }

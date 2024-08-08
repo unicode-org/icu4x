@@ -12,10 +12,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *See the [Rust documentation for `WeekCalculator`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html) for more information.
 */
-
 const WeekCalculator_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_WeekCalculator_destroy_mv1(ptr);
 });
+
 export class WeekCalculator {
     // Internal ptr reference:
     #ptr = null;
@@ -23,7 +23,6 @@ export class WeekCalculator {
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
     
     constructor(ptr, selfEdge) {
         
@@ -37,23 +36,21 @@ export class WeekCalculator {
         return this.#ptr;
     }
 
-
     static create(provider, locale) {
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_WeekCalculator_create_mv1(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_WeekCalculator_create_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
+            if (!diplomatReceive.resultFlag) {
+                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new Error('DataError: ' + cause.value, { cause });
             }
-            return new WeekCalculator(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new WeekCalculator(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
@@ -61,50 +58,43 @@ export class WeekCalculator {
         const result = wasm.icu4x_WeekCalculator_from_first_day_of_week_and_min_week_days_mv1(firstWeekday.ffiValue, minWeekDays);
     
         try {
-    
             return new WeekCalculator(result, []);
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     get firstWeekday() {
         const result = wasm.icu4x_WeekCalculator_first_weekday_mv1(this.ffiValue);
     
         try {
-    
             return (() => {for (let i of IsoWeekday.values) { if(i[1] === result) return IsoWeekday[i[0]]; } return null;})();
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     get minWeekDays() {
         const result = wasm.icu4x_WeekCalculator_min_week_days_mv1(this.ffiValue);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     get weekend() {
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(7, 1);
-        const result = wasm.icu4x_WeekCalculator_weekend_mv1(diplomat_receive_buffer, this.ffiValue);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 7, 1, false);
+        const result = wasm.icu4x_WeekCalculator_weekend_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {
-    
-            return new WeekendContainsDay()._fromFFI(diplomat_receive_buffer);
-        } finally {
+            return new WeekendContainsDay()._fromFFI(diplomatReceive.buffer);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 7, 1);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
-
-    
-
 }

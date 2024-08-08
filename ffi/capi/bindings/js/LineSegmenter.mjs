@@ -11,10 +11,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *See the [Rust documentation for `LineSegmenter`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html) for more information.
 */
-
 const LineSegmenter_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_LineSegmenter_destroy_mv1(ptr);
 });
+
 export class LineSegmenter {
     // Internal ptr reference:
     #ptr = null;
@@ -22,7 +22,6 @@ export class LineSegmenter {
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
     
     constructor(ptr, selfEdge) {
         
@@ -36,61 +35,57 @@ export class LineSegmenter {
         return this.#ptr;
     }
 
-
     static createAuto(provider) {
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_LineSegmenter_create_auto_mv1(diplomat_receive_buffer, provider.ffiValue);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_LineSegmenter_create_auto_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
+            if (!diplomatReceive.resultFlag) {
+                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new Error('DataError: ' + cause.value, { cause });
             }
-            return new LineSegmenter(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new LineSegmenter(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
     static createLstm(provider) {
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_LineSegmenter_create_lstm_mv1(diplomat_receive_buffer, provider.ffiValue);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_LineSegmenter_create_lstm_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
+            if (!diplomatReceive.resultFlag) {
+                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new Error('DataError: ' + cause.value, { cause });
             }
-            return new LineSegmenter(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new LineSegmenter(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
     static createDictionary(provider) {
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_LineSegmenter_create_dictionary_mv1(diplomat_receive_buffer, provider.ffiValue);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_LineSegmenter_create_dictionary_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
+            if (!diplomatReceive.resultFlag) {
+                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new Error('DataError: ' + cause.value, { cause });
             }
-            return new LineSegmenter(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new LineSegmenter(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
@@ -98,24 +93,23 @@ export class LineSegmenter {
         
         let slice_cleanup_callbacks = [];
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_LineSegmenter_create_auto_with_options_v1_mv1(diplomat_receive_buffer, provider.ffiValue, ...options._intoFFI(slice_cleanup_callbacks, {}));
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_LineSegmenter_create_auto_with_options_v1_mv1(diplomatReceive.buffer, provider.ffiValue, ...options._intoFFI(slice_cleanup_callbacks, {}));
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
+            if (!diplomatReceive.resultFlag) {
+                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new Error('DataError: ' + cause.value, { cause });
             }
-            return new LineSegmenter(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new LineSegmenter(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
+        finally {
             for (let cleanup of slice_cleanup_callbacks) {
                 cleanup();
             }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+            diplomatReceive.free();
         }
     }
 
@@ -123,24 +117,23 @@ export class LineSegmenter {
         
         let slice_cleanup_callbacks = [];
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_LineSegmenter_create_lstm_with_options_v1_mv1(diplomat_receive_buffer, provider.ffiValue, ...options._intoFFI(slice_cleanup_callbacks, {}));
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_LineSegmenter_create_lstm_with_options_v1_mv1(diplomatReceive.buffer, provider.ffiValue, ...options._intoFFI(slice_cleanup_callbacks, {}));
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
+            if (!diplomatReceive.resultFlag) {
+                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new Error('DataError: ' + cause.value, { cause });
             }
-            return new LineSegmenter(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new LineSegmenter(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
+        finally {
             for (let cleanup of slice_cleanup_callbacks) {
                 cleanup();
             }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+            diplomatReceive.free();
         }
     }
 
@@ -148,24 +141,23 @@ export class LineSegmenter {
         
         let slice_cleanup_callbacks = [];
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_LineSegmenter_create_dictionary_with_options_v1_mv1(diplomat_receive_buffer, provider.ffiValue, ...options._intoFFI(slice_cleanup_callbacks, {}));
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_LineSegmenter_create_dictionary_with_options_v1_mv1(diplomatReceive.buffer, provider.ffiValue, ...options._intoFFI(slice_cleanup_callbacks, {}));
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
+            if (!diplomatReceive.resultFlag) {
+                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new Error('DataError: ' + cause.value, { cause });
             }
-            return new LineSegmenter(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new LineSegmenter(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
+        finally {
             for (let cleanup of slice_cleanup_callbacks) {
                 cleanup();
             }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+            diplomatReceive.free();
         }
     }
 
@@ -178,15 +170,11 @@ export class LineSegmenter {
         const result = wasm.icu4x_LineSegmenter_segment_utf16_mv1(this.ffiValue, inputSlice.ptr, inputSlice.size);
     
         try {
-    
             return new LineBreakIteratorUtf16(result, [], aEdges);
-        } finally {
+        }
         
+        finally {
             inputSlice.garbageCollect();
-        
         }
     }
-
-    
-
 }

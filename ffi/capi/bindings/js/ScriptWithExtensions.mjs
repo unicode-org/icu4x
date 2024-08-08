@@ -11,10 +11,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *See the [Rust documentation for `ScriptWithExtensions`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensions.html) for more information.
 */
-
 const ScriptWithExtensions_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_ScriptWithExtensions_destroy_mv1(ptr);
 });
+
 export class ScriptWithExtensions {
     // Internal ptr reference:
     #ptr = null;
@@ -22,7 +22,6 @@ export class ScriptWithExtensions {
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
     
     constructor(ptr, selfEdge) {
         
@@ -36,23 +35,21 @@ export class ScriptWithExtensions {
         return this.#ptr;
     }
 
-
     static create(provider) {
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_ScriptWithExtensions_create_mv1(diplomat_receive_buffer, provider.ffiValue);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_ScriptWithExtensions_create_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
+            if (!diplomatReceive.resultFlag) {
+                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new Error('DataError: ' + cause.value, { cause });
             }
-            return new ScriptWithExtensions(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new ScriptWithExtensions(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
@@ -60,22 +57,20 @@ export class ScriptWithExtensions {
         const result = wasm.icu4x_ScriptWithExtensions_get_script_val_mv1(this.ffiValue, codePoint);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     hasScript(codePoint, script) {
         const result = wasm.icu4x_ScriptWithExtensions_has_script_mv1(this.ffiValue, codePoint, script);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     get asBorrowed() {
@@ -85,11 +80,10 @@ export class ScriptWithExtensions {
         const result = wasm.icu4x_ScriptWithExtensions_as_borrowed_mv1(this.ffiValue);
     
         try {
-    
             return new ScriptWithExtensionsBorrowed(result, [], aEdges);
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     iterRangesForScript(script) {
@@ -99,13 +93,9 @@ export class ScriptWithExtensions {
         const result = wasm.icu4x_ScriptWithExtensions_iter_ranges_for_script_mv1(this.ffiValue, script);
     
         try {
-    
             return new CodePointRangeIterator(result, [], aEdges);
-        } finally {
-        
         }
+        
+        finally {}
     }
-
-    
-
 }

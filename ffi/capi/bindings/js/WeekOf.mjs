@@ -7,11 +7,13 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 /** See the [Rust documentation for `WeekOf`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekOf.html) for more information.
 */
 export class WeekOf {
+
     #week;
     get week()  {
         return this.#week;
     }
     
+
     #unit;
     get unit()  {
         return this.#unit;
@@ -45,6 +47,4 @@ export class WeekOf {
     constructor(ptr) {
         this._fromFFI(ptr);
     }
-    
-
 }

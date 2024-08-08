@@ -7,6 +7,4 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 */
 export class FixedDecimalLimitError {
 
-    
-
 }

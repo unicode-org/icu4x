@@ -11,10 +11,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *See the [Rust documentation for `BidiClassAdapter`](https://docs.rs/icu/latest/icu/properties/bidi/struct.BidiClassAdapter.html) for more information.
 */
-
 const Bidi_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_Bidi_destroy_mv1(ptr);
 });
+
 export class Bidi {
     // Internal ptr reference:
     #ptr = null;
@@ -22,7 +22,6 @@ export class Bidi {
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
     
     constructor(ptr, selfEdge) {
         
@@ -36,23 +35,21 @@ export class Bidi {
         return this.#ptr;
     }
 
-
     static create(provider) {
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_Bidi_create_mv1(diplomat_receive_buffer, provider.ffiValue);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_Bidi_create_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
+            if (!diplomatReceive.resultFlag) {
+                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new Error('DataError: ' + cause.value, { cause });
             }
-            return new Bidi(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new Bidi(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
@@ -65,12 +62,11 @@ export class Bidi {
         const result = wasm.icu4x_Bidi_for_text_valid_utf8_mv1(this.ffiValue, textSlice.ptr, textSlice.size, defaultLevel);
     
         try {
-    
             return new BidiInfo(result, [], textEdges);
-        } finally {
+        }
         
+        finally {
             textSlice.garbageCollect();
-        
         }
     }
 
@@ -80,12 +76,11 @@ export class Bidi {
         const result = wasm.icu4x_Bidi_reorder_visual_mv1(this.ffiValue, levelsSlice.ptr, levelsSlice.size);
     
         try {
-    
             return new ReorderedIndexMap(result, []);
-        } finally {
+        }
         
+        finally {
             levelsSlice.free();
-        
         }
     }
 
@@ -93,46 +88,39 @@ export class Bidi {
         const result = wasm.icu4x_Bidi_level_is_rtl_mv1(level);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     static levelIsLtr(level) {
         const result = wasm.icu4x_Bidi_level_is_ltr_mv1(level);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     static levelRtl() {
         const result = wasm.icu4x_Bidi_level_rtl_mv1();
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     static levelLtr() {
         const result = wasm.icu4x_Bidi_level_ltr_mv1();
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
-
-    
-
 }

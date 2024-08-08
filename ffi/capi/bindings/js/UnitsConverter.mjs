@@ -9,10 +9,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *See the [Rust documentation for `UnitsConverter`](https://docs.rs/icu/latest/icu/experimental/units/converter/struct.UnitsConverter.html) for more information.
 */
-
 const UnitsConverter_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_UnitsConverter_destroy_mv1(ptr);
 });
+
 export class UnitsConverter {
     // Internal ptr reference:
     #ptr = null;
@@ -20,7 +20,6 @@ export class UnitsConverter {
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
     
     constructor(ptr, selfEdge) {
         
@@ -34,29 +33,23 @@ export class UnitsConverter {
         return this.#ptr;
     }
 
-
     convertNumber(value) {
         const result = wasm.icu4x_UnitsConverter_convert_double_mv1(this.ffiValue, value);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     clone() {
         const result = wasm.icu4x_UnitsConverter_clone_mv1(this.ffiValue);
     
         try {
-    
             return new UnitsConverter(result, []);
-        } finally {
-        
         }
+        
+        finally {}
     }
-
-    
-
 }

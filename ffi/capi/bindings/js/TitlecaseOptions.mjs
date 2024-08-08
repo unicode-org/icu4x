@@ -8,6 +8,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 /** See the [Rust documentation for `TitlecaseOptions`](https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html) for more information.
 */
 export class TitlecaseOptions {
+
     #leadingAdjustment;
     get leadingAdjustment()  {
         return this.#leadingAdjustment;
@@ -15,6 +16,7 @@ export class TitlecaseOptions {
     set leadingAdjustment(value) {
         this.#leadingAdjustment = value;
     }
+
     #trailingCase;
     get trailingCase()  {
         return this.#trailingCase;
@@ -46,21 +48,18 @@ export class TitlecaseOptions {
 
         return this;
     }
+
     static defaultOptions() {
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(8, 4);
-        const result = wasm.icu4x_TitlecaseOptionsV1_default_mv1(diplomat_receive_buffer);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 8, 4, false);
+        const result = wasm.icu4x_TitlecaseOptionsV1_default_mv1(diplomatReceive.buffer);
     
         try {
-    
-            return new TitlecaseOptions()._fromFFI(diplomat_receive_buffer);
-        } finally {
+            return new TitlecaseOptions()._fromFFI(diplomatReceive.buffer);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 8, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
-
-    
-
 }

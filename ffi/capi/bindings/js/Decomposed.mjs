@@ -10,11 +10,13 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *See the [Rust documentation for `Decomposed`](https://docs.rs/icu/latest/icu/normalizer/properties/enum.Decomposed.html) for more information.
 */
 export class Decomposed {
+
     #first;
     get first()  {
         return this.#first;
     }
     
+
     #second;
     get second()  {
         return this.#second;
@@ -28,7 +30,7 @@ export class Decomposed {
         slice_cleanup_callbacks,
         appendArrayMap
     ) {
-        return [diplomatRuntime.extractCodePoint(this.#first, 'this.#first'), diplomatRuntime.extractCodePoint(this.#second, 'this.#second')]
+        return [this.#first, this.#second]
     }
 
     // This struct contains borrowed fields, so this takes in a list of
@@ -37,9 +39,9 @@ export class Decomposed {
     // This method does not attempt to handle any dependencies between lifetimes, the caller
     // should handle this when constructing edge arrays.
     _fromFFI(ptr) {
-        const firstDeref = String.fromCharCode((new Uint32Array(wasm.memory.buffer, ptr, 1))[0]);
+        const firstDeref = (new Uint32Array(wasm.memory.buffer, ptr, 1))[0];
         this.#first = firstDeref;
-        const secondDeref = String.fromCharCode((new Uint32Array(wasm.memory.buffer, ptr + 4, 1))[0]);
+        const secondDeref = (new Uint32Array(wasm.memory.buffer, ptr + 4, 1))[0];
         this.#second = secondDeref;
 
         return this;
@@ -48,6 +50,4 @@ export class Decomposed {
     constructor(ptr) {
         this._fromFFI(ptr);
     }
-    
-
 }

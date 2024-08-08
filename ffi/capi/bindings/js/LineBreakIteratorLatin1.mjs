@@ -7,10 +7,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *Additional information: [1](https://docs.rs/icu/latest/icu/segmenter/type.LineBreakIteratorLatin1.html)
 */
-
 const LineBreakIteratorLatin1_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_LineBreakIteratorLatin1_destroy_mv1(ptr);
 });
+
 export class LineBreakIteratorLatin1 {
     // Internal ptr reference:
     #ptr = null;
@@ -18,9 +18,7 @@ export class LineBreakIteratorLatin1 {
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
     #aEdge = [];
-    
     
     constructor(ptr, selfEdge, aEdge) {
         
@@ -37,18 +35,13 @@ export class LineBreakIteratorLatin1 {
         return this.#ptr;
     }
 
-
     next() {
         const result = wasm.icu4x_LineBreakIteratorLatin1_next_mv1(this.ffiValue);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
-
-    
-
 }

@@ -9,6 +9,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 /** See the [Rust documentation for `DisplayNamesOptions`](https://docs.rs/icu/latest/icu/displaynames/options/struct.DisplayNamesOptions.html) for more information.
 */
 export class DisplayNamesOptions {
+
     #style;
     get style()  {
         return this.#style;
@@ -16,6 +17,7 @@ export class DisplayNamesOptions {
     set style(value) {
         this.#style = value;
     }
+
     #fallback;
     get fallback()  {
         return this.#fallback;
@@ -23,6 +25,7 @@ export class DisplayNamesOptions {
     set fallback(value) {
         this.#fallback = value;
     }
+
     #languageDisplay;
     get languageDisplay()  {
         return this.#languageDisplay;
@@ -56,6 +59,4 @@ export class DisplayNamesOptions {
 
         return this;
     }
-    
-
 }

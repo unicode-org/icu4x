@@ -11,10 +11,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *See the [Rust documentation for `LocaleCanonicalizer`](https://docs.rs/icu/latest/icu/locale/struct.LocaleCanonicalizer.html) for more information.
 */
-
 const LocaleCanonicalizer_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_LocaleCanonicalizer_destroy_mv1(ptr);
 });
+
 export class LocaleCanonicalizer {
     // Internal ptr reference:
     #ptr = null;
@@ -22,7 +22,6 @@ export class LocaleCanonicalizer {
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
     
     constructor(ptr, selfEdge) {
         
@@ -36,42 +35,39 @@ export class LocaleCanonicalizer {
         return this.#ptr;
     }
 
-
     static create(provider) {
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_LocaleCanonicalizer_create_mv1(diplomat_receive_buffer, provider.ffiValue);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_LocaleCanonicalizer_create_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)) return Error[i[0]]; } return null;})();
+            if (!diplomatReceive.resultFlag) {
+                const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)) return Error[i[0]]; } return null;})();
                 throw new Error('Error: ' + cause.value, { cause });
             }
-            return new LocaleCanonicalizer(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new LocaleCanonicalizer(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
     static createExtended(provider) {
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_LocaleCanonicalizer_create_extended_mv1(diplomat_receive_buffer, provider.ffiValue);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_LocaleCanonicalizer_create_extended_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)) return Error[i[0]]; } return null;})();
+            if (!diplomatReceive.resultFlag) {
+                const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)) return Error[i[0]]; } return null;})();
                 throw new Error('Error: ' + cause.value, { cause });
             }
-            return new LocaleCanonicalizer(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new LocaleCanonicalizer(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
@@ -79,13 +75,9 @@ export class LocaleCanonicalizer {
         const result = wasm.icu4x_LocaleCanonicalizer_canonicalize_mv1(this.ffiValue, locale.ffiValue);
     
         try {
-    
             return TransformResult[Array.from(TransformResult.values.keys())[result]];
-        } finally {
-        
         }
+        
+        finally {}
     }
-
-    
-
 }

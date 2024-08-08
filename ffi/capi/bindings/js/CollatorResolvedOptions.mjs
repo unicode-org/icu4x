@@ -13,36 +13,43 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 /** See the [Rust documentation for `ResolvedCollatorOptions`](https://docs.rs/icu/latest/icu/collator/struct.ResolvedCollatorOptions.html) for more information.
 */
 export class CollatorResolvedOptions {
+
     #strength;
     get strength()  {
         return this.#strength;
     }
     
+
     #alternateHandling;
     get alternateHandling()  {
         return this.#alternateHandling;
     }
     
+
     #caseFirst;
     get caseFirst()  {
         return this.#caseFirst;
     }
     
+
     #maxVariable;
     get maxVariable()  {
         return this.#maxVariable;
     }
     
+
     #caseLevel;
     get caseLevel()  {
         return this.#caseLevel;
     }
     
+
     #numeric;
     get numeric()  {
         return this.#numeric;
     }
     
+
     #backwardSecondLevel;
     get backwardSecondLevel()  {
         return this.#backwardSecondLevel;
@@ -86,6 +93,4 @@ export class CollatorResolvedOptions {
     constructor(ptr) {
         this._fromFFI(ptr);
     }
-    
-
 }

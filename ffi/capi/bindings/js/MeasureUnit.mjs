@@ -10,10 +10,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *See the [Rust documentation for `MeasureUnit`](https://docs.rs/icu/latest/icu/experimental/units/measureunit/struct.MeasureUnit.html) for more information.
 */
-
 const MeasureUnit_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_MeasureUnit_destroy_mv1(ptr);
 });
+
 export class MeasureUnit {
     // Internal ptr reference:
     #ptr = null;
@@ -21,7 +21,6 @@ export class MeasureUnit {
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
     
     constructor(ptr, selfEdge) {
         
@@ -34,8 +33,4 @@ export class MeasureUnit {
     get ffiValue() {
         return this.#ptr;
     }
-
-
-    
-
 }

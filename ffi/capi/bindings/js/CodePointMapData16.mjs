@@ -17,10 +17,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *See the [Rust documentation for `CodePointMapDataBorrowed`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html) for more information.
 */
-
 const CodePointMapData16_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_CodePointMapData16_destroy_mv1(ptr);
 });
+
 export class CodePointMapData16 {
     // Internal ptr reference:
     #ptr = null;
@@ -28,7 +28,6 @@ export class CodePointMapData16 {
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
     
     constructor(ptr, selfEdge) {
         
@@ -42,16 +41,14 @@ export class CodePointMapData16 {
         return this.#ptr;
     }
 
-
     get(cp) {
-        const result = wasm.icu4x_CodePointMapData16_get_mv1(this.ffiValue, diplomatRuntime.extractCodePoint(cp, 'cp'));
+        const result = wasm.icu4x_CodePointMapData16_get_mv1(this.ffiValue, cp);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     iterRangesForValue(value) {
@@ -61,11 +58,10 @@ export class CodePointMapData16 {
         const result = wasm.icu4x_CodePointMapData16_iter_ranges_for_value_mv1(this.ffiValue, value);
     
         try {
-    
             return new CodePointRangeIterator(result, [], aEdges);
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     iterRangesForValueComplemented(value) {
@@ -75,43 +71,37 @@ export class CodePointMapData16 {
         const result = wasm.icu4x_CodePointMapData16_iter_ranges_for_value_complemented_mv1(this.ffiValue, value);
     
         try {
-    
             return new CodePointRangeIterator(result, [], aEdges);
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     getSetForValue(value) {
         const result = wasm.icu4x_CodePointMapData16_get_set_for_value_mv1(this.ffiValue, value);
     
         try {
-    
             return new CodePointSetData(result, []);
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     static loadScript(provider) {
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_CodePointMapData16_load_script_mv1(diplomat_receive_buffer, provider.ffiValue);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_CodePointMapData16_load_script_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
+            if (!diplomatReceive.resultFlag) {
+                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new Error('DataError: ' + cause.value, { cause });
             }
-            return new CodePointMapData16(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new CodePointMapData16(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
-
-    
-
 }

@@ -6,10 +6,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 /** See the [Rust documentation for `WordBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html) for more information.
 */
-
 const WordBreakIteratorUtf16_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_WordBreakIteratorUtf16_destroy_mv1(ptr);
 });
+
 export class WordBreakIteratorUtf16 {
     // Internal ptr reference:
     #ptr = null;
@@ -17,9 +17,7 @@ export class WordBreakIteratorUtf16 {
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
     #aEdge = [];
-    
     
     constructor(ptr, selfEdge, aEdge) {
         
@@ -36,40 +34,33 @@ export class WordBreakIteratorUtf16 {
         return this.#ptr;
     }
 
-
     next() {
         const result = wasm.icu4x_WordBreakIteratorUtf16_next_mv1(this.ffiValue);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     get wordType() {
         const result = wasm.icu4x_WordBreakIteratorUtf16_word_type_mv1(this.ffiValue);
     
         try {
-    
             return SegmenterWordType[Array.from(SegmenterWordType.values.keys())[result]];
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     get isWordLike() {
         const result = wasm.icu4x_WordBreakIteratorUtf16_is_word_like_mv1(this.ffiValue);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
-
-    
-
 }

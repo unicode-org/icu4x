@@ -6,27 +6,32 @@ import type { CollatorCaseLevel } from "./CollatorCaseLevel"
 import type { CollatorMaxVariable } from "./CollatorMaxVariable"
 import type { CollatorNumeric } from "./CollatorNumeric"
 import type { CollatorStrength } from "./CollatorStrength"
-import type { pointer, char } from "./diplomat-runtime.d.ts";
+import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 /** See the [Rust documentation for `CollatorOptions`](https://docs.rs/icu/latest/icu/collator/struct.CollatorOptions.html) for more information.
 */
 export class CollatorOptions {
+
     get strength() : CollatorStrength;
     set strength(value: CollatorStrength); 
+
     get alternateHandling() : CollatorAlternateHandling;
     set alternateHandling(value: CollatorAlternateHandling); 
+
     get caseFirst() : CollatorCaseFirst;
     set caseFirst(value: CollatorCaseFirst); 
+
     get maxVariable() : CollatorMaxVariable;
     set maxVariable(value: CollatorMaxVariable); 
+
     get caseLevel() : CollatorCaseLevel;
     set caseLevel(value: CollatorCaseLevel); 
+
     get numeric() : CollatorNumeric;
     set numeric(value: CollatorNumeric); 
+
     get backwardSecondLevel() : CollatorBackwardSecondLevel;
     set backwardSecondLevel(value: CollatorBackwardSecondLevel); 
-
-    
 
 }

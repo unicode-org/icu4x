@@ -9,6 +9,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *See the [Rust documentation for `LocaleFallbackConfig`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbackConfig.html) for more information.
 */
 export class LocaleFallbackConfig {
+
     #priority;
     get priority()  {
         return this.#priority;
@@ -38,6 +39,4 @@ export class LocaleFallbackConfig {
 
         return this;
     }
-    
-
 }

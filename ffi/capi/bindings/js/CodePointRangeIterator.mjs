@@ -7,10 +7,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 /** An iterator over code point ranges, produced by `CodePointSetData` or
 *one of the `CodePointMapData` types
 */
-
 const CodePointRangeIterator_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_CodePointRangeIterator_destroy_mv1(ptr);
 });
+
 export class CodePointRangeIterator {
     // Internal ptr reference:
     #ptr = null;
@@ -18,9 +18,7 @@ export class CodePointRangeIterator {
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
     #aEdge = [];
-    
     
     constructor(ptr, selfEdge, aEdge) {
         
@@ -37,22 +35,17 @@ export class CodePointRangeIterator {
         return this.#ptr;
     }
 
-
     next() {
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(9, 4);
-        const result = wasm.icu4x_CodePointRangeIterator_next_mv1(diplomat_receive_buffer, this.ffiValue);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, false);
+        const result = wasm.icu4x_CodePointRangeIterator_next_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {
-    
-            return new CodePointRangeIteratorResult(diplomat_receive_buffer);
-        } finally {
+            return new CodePointRangeIteratorResult(diplomatReceive.buffer);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 9, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
-
-    
-
 }

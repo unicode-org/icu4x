@@ -8,10 +8,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *See the [Rust documentation for `BidiInfo`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html) for more information.
 */
-
 const BidiInfo_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_BidiInfo_destroy_mv1(ptr);
 });
+
 export class BidiInfo {
     // Internal ptr reference:
     #ptr = null;
@@ -19,9 +19,7 @@ export class BidiInfo {
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
     #textEdge = [];
-    
     
     constructor(ptr, selfEdge, textEdge) {
         
@@ -38,16 +36,14 @@ export class BidiInfo {
         return this.#ptr;
     }
 
-
     get paragraphCount() {
         const result = wasm.icu4x_BidiInfo_paragraph_count_mv1(this.ffiValue);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     paragraphAt(n) {
@@ -57,35 +53,29 @@ export class BidiInfo {
         const result = wasm.icu4x_BidiInfo_paragraph_at_mv1(this.ffiValue, n);
     
         try {
-    
-            return result == 0 ? null : new BidiParagraph(result, [], textEdges);
-        } finally {
-        
+            return result === 0 ? null : new BidiParagraph(result, [], textEdges);
         }
+        
+        finally {}
     }
 
     get size() {
         const result = wasm.icu4x_BidiInfo_size_mv1(this.ffiValue);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     levelAt(pos) {
         const result = wasm.icu4x_BidiInfo_level_at_mv1(this.ffiValue, pos);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
-
-    
-
 }

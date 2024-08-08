@@ -6,6 +6,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 export class IsoTimeZoneOptions {
+
     #format;
     get format()  {
         return this.#format;
@@ -13,6 +14,7 @@ export class IsoTimeZoneOptions {
     set format(value) {
         this.#format = value;
     }
+
     #minutes;
     get minutes()  {
         return this.#minutes;
@@ -20,6 +22,7 @@ export class IsoTimeZoneOptions {
     set minutes(value) {
         this.#minutes = value;
     }
+
     #seconds;
     get seconds()  {
         return this.#seconds;
@@ -53,6 +56,4 @@ export class IsoTimeZoneOptions {
 
         return this;
     }
-    
-
 }

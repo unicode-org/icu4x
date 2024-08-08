@@ -14,10 +14,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *See the [Rust documentation for `ConverterFactory`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html) for more information.
 */
-
 const UnitsConverterFactory_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_UnitsConverterFactory_destroy_mv1(ptr);
 });
+
 export class UnitsConverterFactory {
     // Internal ptr reference:
     #ptr = null;
@@ -25,7 +25,6 @@ export class UnitsConverterFactory {
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
     
     constructor(ptr, selfEdge) {
         
@@ -39,23 +38,21 @@ export class UnitsConverterFactory {
         return this.#ptr;
     }
 
-
     static create(provider) {
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_UnitsConverterFactory_create_mv1(diplomat_receive_buffer, provider.ffiValue);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_UnitsConverterFactory_create_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
+            if (!diplomatReceive.resultFlag) {
+                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new Error('DataError: ' + cause.value, { cause });
             }
-            return new UnitsConverterFactory(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new UnitsConverterFactory(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
@@ -63,11 +60,10 @@ export class UnitsConverterFactory {
         const result = wasm.icu4x_UnitsConverterFactory_converter_mv1(this.ffiValue, from.ffiValue, to.ffiValue);
     
         try {
-    
-            return result == 0 ? null : new UnitsConverter(result, []);
-        } finally {
-        
+            return result === 0 ? null : new UnitsConverter(result, []);
         }
+        
+        finally {}
     }
 
     parser() {
@@ -77,13 +73,9 @@ export class UnitsConverterFactory {
         const result = wasm.icu4x_UnitsConverterFactory_parser_mv1(this.ffiValue);
     
         try {
-    
             return new MeasureUnitParser(result, [], aEdges);
-        } finally {
-        
         }
+        
+        finally {}
     }
-
-    
-
 }

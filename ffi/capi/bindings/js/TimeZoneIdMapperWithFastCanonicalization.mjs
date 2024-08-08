@@ -13,10 +13,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *See the [Rust documentation for `TimeZoneIdMapperWithFastCanonicalization`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperWithFastCanonicalization.html) for more information.
 */
-
 const TimeZoneIdMapperWithFastCanonicalization_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_TimeZoneIdMapperWithFastCanonicalization_destroy_mv1(ptr);
 });
+
 export class TimeZoneIdMapperWithFastCanonicalization {
     // Internal ptr reference:
     #ptr = null;
@@ -24,7 +24,6 @@ export class TimeZoneIdMapperWithFastCanonicalization {
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
     
     constructor(ptr, selfEdge) {
         
@@ -38,23 +37,21 @@ export class TimeZoneIdMapperWithFastCanonicalization {
         return this.#ptr;
     }
 
-
     static create(provider) {
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_TimeZoneIdMapperWithFastCanonicalization_create_mv1(diplomat_receive_buffer, provider.ffiValue);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_TimeZoneIdMapperWithFastCanonicalization_create_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
+            if (!diplomatReceive.resultFlag) {
+                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new Error('DataError: ' + cause.value, { cause });
             }
-            return new TimeZoneIdMapperWithFastCanonicalization(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new TimeZoneIdMapperWithFastCanonicalization(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
@@ -62,26 +59,25 @@ export class TimeZoneIdMapperWithFastCanonicalization {
         
         const valueSlice = diplomatRuntime.DiplomatBuf.str8(wasm, value);
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const write = wasm.diplomat_buffer_write_create(0);
-        const result = wasm.icu4x_TimeZoneIdMapperWithFastCanonicalization_canonicalize_iana_mv1(diplomat_receive_buffer, this.ffiValue, valueSlice.ptr, valueSlice.size, write);
+        const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
+        const result = wasm.icu4x_TimeZoneIdMapperWithFastCanonicalization_canonicalize_iana_mv1(diplomatReceive.buffer, this.ffiValue, valueSlice.ptr, valueSlice.size, write.buffer);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
+            if (!diplomatReceive.resultFlag) {
                 const cause = new TimeZoneInvalidIdError();
                 throw new Error('TimeZoneInvalidIdError', { cause });
             }
-            return diplomatRuntime.readString8(wasm, wasm.diplomat_buffer_write_get_bytes(write), wasm.diplomat_buffer_write_len(write));
-        } finally {
+            return write.readString8();
+        }
         
+        finally {
             valueSlice.free();
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+            diplomatReceive.free();
         
-            wasm.diplomat_buffer_write_destroy(write);
-        
+            write.free();
         }
     }
 
@@ -89,29 +85,25 @@ export class TimeZoneIdMapperWithFastCanonicalization {
         
         const valueSlice = diplomatRuntime.DiplomatBuf.str8(wasm, value);
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const write = wasm.diplomat_buffer_write_create(0);
-        const result = wasm.icu4x_TimeZoneIdMapperWithFastCanonicalization_canonical_iana_from_bcp47_mv1(diplomat_receive_buffer, this.ffiValue, valueSlice.ptr, valueSlice.size, write);
+        const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
+        const result = wasm.icu4x_TimeZoneIdMapperWithFastCanonicalization_canonical_iana_from_bcp47_mv1(diplomatReceive.buffer, this.ffiValue, valueSlice.ptr, valueSlice.size, write.buffer);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
+            if (!diplomatReceive.resultFlag) {
                 const cause = new TimeZoneInvalidIdError();
                 throw new Error('TimeZoneInvalidIdError', { cause });
             }
-            return diplomatRuntime.readString8(wasm, wasm.diplomat_buffer_write_get_bytes(write), wasm.diplomat_buffer_write_len(write));
-        } finally {
+            return write.readString8();
+        }
         
+        finally {
             valueSlice.free();
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+            diplomatReceive.free();
         
-            wasm.diplomat_buffer_write_destroy(write);
-        
+            write.free();
         }
     }
-
-    
-
 }

@@ -9,10 +9,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *See the [Rust documentation for `ScriptWithExtensionsBorrowed`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html) for more information.
 */
-
 const ScriptWithExtensionsBorrowed_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_ScriptWithExtensionsBorrowed_destroy_mv1(ptr);
 });
+
 export class ScriptWithExtensionsBorrowed {
     // Internal ptr reference:
     #ptr = null;
@@ -20,9 +20,7 @@ export class ScriptWithExtensionsBorrowed {
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
     #aEdge = [];
-    
     
     constructor(ptr, selfEdge, aEdge) {
         
@@ -39,16 +37,14 @@ export class ScriptWithExtensionsBorrowed {
         return this.#ptr;
     }
 
-
     getScriptVal(codePoint) {
         const result = wasm.icu4x_ScriptWithExtensionsBorrowed_get_script_val_mv1(this.ffiValue, codePoint);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     getScriptExtensionsVal(codePoint) {
@@ -58,35 +54,29 @@ export class ScriptWithExtensionsBorrowed {
         const result = wasm.icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_val_mv1(this.ffiValue, codePoint);
     
         try {
-    
             return new ScriptExtensionsSet(result, [], aEdges);
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     hasScript(codePoint, script) {
         const result = wasm.icu4x_ScriptWithExtensionsBorrowed_has_script_mv1(this.ffiValue, codePoint, script);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     getScriptExtensionsSet(script) {
         const result = wasm.icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_set_mv1(this.ffiValue, script);
     
         try {
-    
             return new CodePointSetData(result, []);
-        } finally {
-        
         }
+        
+        finally {}
     }
-
-    
-
 }

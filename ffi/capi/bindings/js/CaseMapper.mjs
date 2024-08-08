@@ -10,10 +10,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 /** See the [Rust documentation for `CaseMapper`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html) for more information.
 */
-
 const CaseMapper_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_CaseMapper_destroy_mv1(ptr);
 });
+
 export class CaseMapper {
     // Internal ptr reference:
     #ptr = null;
@@ -21,7 +21,6 @@ export class CaseMapper {
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
     
     constructor(ptr, selfEdge) {
         
@@ -35,23 +34,21 @@ export class CaseMapper {
         return this.#ptr;
     }
 
-
     static create(provider) {
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_CaseMapper_create_mv1(diplomat_receive_buffer, provider.ffiValue);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_CaseMapper_create_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
+            if (!diplomatReceive.resultFlag) {
+                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new Error('DataError: ' + cause.value, { cause });
             }
-            return new CaseMapper(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new CaseMapper(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
@@ -59,18 +56,17 @@ export class CaseMapper {
         
         const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
         
-        const write = wasm.diplomat_buffer_write_create(0);
-        wasm.icu4x_CaseMapper_lowercase_mv1(this.ffiValue, sSlice.ptr, sSlice.size, locale.ffiValue, write);
+        const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
+        wasm.icu4x_CaseMapper_lowercase_mv1(this.ffiValue, sSlice.ptr, sSlice.size, locale.ffiValue, write.buffer);
     
         try {
-    
-            return diplomatRuntime.readString8(wasm, wasm.diplomat_buffer_write_get_bytes(write), wasm.diplomat_buffer_write_len(write));
-        } finally {
+            return write.readString8();
+        }
         
+        finally {
             sSlice.free();
         
-            wasm.diplomat_buffer_write_destroy(write);
-        
+            write.free();
         }
     }
 
@@ -78,18 +74,17 @@ export class CaseMapper {
         
         const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
         
-        const write = wasm.diplomat_buffer_write_create(0);
-        wasm.icu4x_CaseMapper_uppercase_mv1(this.ffiValue, sSlice.ptr, sSlice.size, locale.ffiValue, write);
+        const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
+        wasm.icu4x_CaseMapper_uppercase_mv1(this.ffiValue, sSlice.ptr, sSlice.size, locale.ffiValue, write.buffer);
     
         try {
-    
-            return diplomatRuntime.readString8(wasm, wasm.diplomat_buffer_write_get_bytes(write), wasm.diplomat_buffer_write_len(write));
-        } finally {
+            return write.readString8();
+        }
         
+        finally {
             sSlice.free();
         
-            wasm.diplomat_buffer_write_destroy(write);
-        
+            write.free();
         }
     }
 
@@ -99,22 +94,21 @@ export class CaseMapper {
         
         let slice_cleanup_callbacks = [];
         
-        const write = wasm.diplomat_buffer_write_create(0);
-        wasm.icu4x_CaseMapper_titlecase_segment_with_only_case_data_v1_mv1(this.ffiValue, sSlice.ptr, sSlice.size, locale.ffiValue, ...options._intoFFI(slice_cleanup_callbacks, {}), write);
+        const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
+        wasm.icu4x_CaseMapper_titlecase_segment_with_only_case_data_v1_mv1(this.ffiValue, sSlice.ptr, sSlice.size, locale.ffiValue, ...options._intoFFI(slice_cleanup_callbacks, {}), write.buffer);
     
         try {
-    
-            return diplomatRuntime.readString8(wasm, wasm.diplomat_buffer_write_get_bytes(write), wasm.diplomat_buffer_write_len(write));
-        } finally {
+            return write.readString8();
+        }
         
+        finally {
             for (let cleanup of slice_cleanup_callbacks) {
                 cleanup();
             }
         
             sSlice.free();
         
-            wasm.diplomat_buffer_write_destroy(write);
-        
+            write.free();
         }
     }
 
@@ -122,18 +116,17 @@ export class CaseMapper {
         
         const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
         
-        const write = wasm.diplomat_buffer_write_create(0);
-        wasm.icu4x_CaseMapper_fold_mv1(this.ffiValue, sSlice.ptr, sSlice.size, write);
+        const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
+        wasm.icu4x_CaseMapper_fold_mv1(this.ffiValue, sSlice.ptr, sSlice.size, write.buffer);
     
         try {
-    
-            return diplomatRuntime.readString8(wasm, wasm.diplomat_buffer_write_get_bytes(write), wasm.diplomat_buffer_write_len(write));
-        } finally {
+            return write.readString8();
+        }
         
+        finally {
             sSlice.free();
         
-            wasm.diplomat_buffer_write_destroy(write);
-        
+            write.free();
         }
     }
 
@@ -141,86 +134,75 @@ export class CaseMapper {
         
         const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
         
-        const write = wasm.diplomat_buffer_write_create(0);
-        wasm.icu4x_CaseMapper_fold_turkic_mv1(this.ffiValue, sSlice.ptr, sSlice.size, write);
+        const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
+        wasm.icu4x_CaseMapper_fold_turkic_mv1(this.ffiValue, sSlice.ptr, sSlice.size, write.buffer);
     
         try {
-    
-            return diplomatRuntime.readString8(wasm, wasm.diplomat_buffer_write_get_bytes(write), wasm.diplomat_buffer_write_len(write));
-        } finally {
+            return write.readString8();
+        }
         
+        finally {
             sSlice.free();
         
-            wasm.diplomat_buffer_write_destroy(write);
-        
+            write.free();
         }
     }
 
     addCaseClosureTo(c, builder) {
-        wasm.icu4x_CaseMapper_add_case_closure_to_mv1(this.ffiValue, diplomatRuntime.extractCodePoint(c, 'c'), builder.ffiValue);
+        wasm.icu4x_CaseMapper_add_case_closure_to_mv1(this.ffiValue, c, builder.ffiValue);
     
-        try {
-    
-        } finally {
+        try {}
         
-        }
+        finally {}
     }
 
     simpleLowercase(ch) {
-        const result = wasm.icu4x_CaseMapper_simple_lowercase_mv1(this.ffiValue, diplomatRuntime.extractCodePoint(ch, 'ch'));
+        const result = wasm.icu4x_CaseMapper_simple_lowercase_mv1(this.ffiValue, ch);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     simpleUppercase(ch) {
-        const result = wasm.icu4x_CaseMapper_simple_uppercase_mv1(this.ffiValue, diplomatRuntime.extractCodePoint(ch, 'ch'));
+        const result = wasm.icu4x_CaseMapper_simple_uppercase_mv1(this.ffiValue, ch);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     simpleTitlecase(ch) {
-        const result = wasm.icu4x_CaseMapper_simple_titlecase_mv1(this.ffiValue, diplomatRuntime.extractCodePoint(ch, 'ch'));
+        const result = wasm.icu4x_CaseMapper_simple_titlecase_mv1(this.ffiValue, ch);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     simpleFold(ch) {
-        const result = wasm.icu4x_CaseMapper_simple_fold_mv1(this.ffiValue, diplomatRuntime.extractCodePoint(ch, 'ch'));
+        const result = wasm.icu4x_CaseMapper_simple_fold_mv1(this.ffiValue, ch);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     simpleFoldTurkic(ch) {
-        const result = wasm.icu4x_CaseMapper_simple_fold_turkic_mv1(this.ffiValue, diplomatRuntime.extractCodePoint(ch, 'ch'));
+        const result = wasm.icu4x_CaseMapper_simple_fold_turkic_mv1(this.ffiValue, ch);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
-
-    
-
 }

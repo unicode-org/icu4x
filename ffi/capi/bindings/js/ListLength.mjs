@@ -13,6 +13,7 @@ export class ListLength {
         ["Short", 1],
         ["Narrow", 2]
     ]);
+
     constructor(value) {
         if (value instanceof ListLength) {
             this.#value = value.value;
@@ -36,12 +37,6 @@ export class ListLength {
     }
 
     static Wide = new ListLength("Wide");
-
     static Short = new ListLength("Short");
-
     static Narrow = new ListLength("Narrow");
-
-
-    
-
 }

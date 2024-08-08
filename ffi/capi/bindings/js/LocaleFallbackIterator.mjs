@@ -8,10 +8,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *See the [Rust documentation for `LocaleFallbackIterator`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbackIterator.html) for more information.
 */
-
 const LocaleFallbackIterator_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_LocaleFallbackIterator_destroy_mv1(ptr);
 });
+
 export class LocaleFallbackIterator {
     // Internal ptr reference:
     #ptr = null;
@@ -19,9 +19,7 @@ export class LocaleFallbackIterator {
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
     #aEdge = [];
-    
     
     constructor(ptr, selfEdge, aEdge) {
         
@@ -38,26 +36,23 @@ export class LocaleFallbackIterator {
         return this.#ptr;
     }
 
-
     #iteratorNext() {
         const result = wasm.icu4x_LocaleFallbackIterator_next_mv1(this.ffiValue);
     
         try {
-    
-            return result == 0 ? null : new Locale(result, []);
-        } finally {
-        
+            return result === 0 ? null : new Locale(result, []);
         }
+        
+        finally {}
     }
 
     
     next() {
-    	const out = this.#iteratorNext();
+        const out = this.#iteratorNext();
     
-    	return {
-    		value: out,
-    		done: out === null,
-    	};
+        return {
+            value: out,
+            done: out === null,
+        };
     }
-
 }

@@ -8,6 +8,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *See the [Rust documentation for `weekend`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#method.weekend) for more information.
 */
 export class WeekendContainsDay {
+
     #monday;
     get monday()  {
         return this.#monday;
@@ -15,6 +16,7 @@ export class WeekendContainsDay {
     set monday(value) {
         this.#monday = value;
     }
+
     #tuesday;
     get tuesday()  {
         return this.#tuesday;
@@ -22,6 +24,7 @@ export class WeekendContainsDay {
     set tuesday(value) {
         this.#tuesday = value;
     }
+
     #wednesday;
     get wednesday()  {
         return this.#wednesday;
@@ -29,6 +32,7 @@ export class WeekendContainsDay {
     set wednesday(value) {
         this.#wednesday = value;
     }
+
     #thursday;
     get thursday()  {
         return this.#thursday;
@@ -36,6 +40,7 @@ export class WeekendContainsDay {
     set thursday(value) {
         this.#thursday = value;
     }
+
     #friday;
     get friday()  {
         return this.#friday;
@@ -43,6 +48,7 @@ export class WeekendContainsDay {
     set friday(value) {
         this.#friday = value;
     }
+
     #saturday;
     get saturday()  {
         return this.#saturday;
@@ -50,6 +56,7 @@ export class WeekendContainsDay {
     set saturday(value) {
         this.#saturday = value;
     }
+
     #sunday;
     get sunday()  {
         return this.#sunday;
@@ -74,23 +81,21 @@ export class WeekendContainsDay {
     // This method does not attempt to handle any dependencies between lifetimes, the caller
     // should handle this when constructing edge arrays.
     _fromFFI(ptr) {
-        const mondayDeref = (new Uint8Array(wasm.memory.buffer, ptr, 1))[0] == 1;
+        const mondayDeref = (new Uint8Array(wasm.memory.buffer, ptr, 1))[0] === 1;
         this.#monday = mondayDeref;
-        const tuesdayDeref = (new Uint8Array(wasm.memory.buffer, ptr + 1, 1))[0] == 1;
+        const tuesdayDeref = (new Uint8Array(wasm.memory.buffer, ptr + 1, 1))[0] === 1;
         this.#tuesday = tuesdayDeref;
-        const wednesdayDeref = (new Uint8Array(wasm.memory.buffer, ptr + 2, 1))[0] == 1;
+        const wednesdayDeref = (new Uint8Array(wasm.memory.buffer, ptr + 2, 1))[0] === 1;
         this.#wednesday = wednesdayDeref;
-        const thursdayDeref = (new Uint8Array(wasm.memory.buffer, ptr + 3, 1))[0] == 1;
+        const thursdayDeref = (new Uint8Array(wasm.memory.buffer, ptr + 3, 1))[0] === 1;
         this.#thursday = thursdayDeref;
-        const fridayDeref = (new Uint8Array(wasm.memory.buffer, ptr + 4, 1))[0] == 1;
+        const fridayDeref = (new Uint8Array(wasm.memory.buffer, ptr + 4, 1))[0] === 1;
         this.#friday = fridayDeref;
-        const saturdayDeref = (new Uint8Array(wasm.memory.buffer, ptr + 5, 1))[0] == 1;
+        const saturdayDeref = (new Uint8Array(wasm.memory.buffer, ptr + 5, 1))[0] === 1;
         this.#saturday = saturdayDeref;
-        const sundayDeref = (new Uint8Array(wasm.memory.buffer, ptr + 6, 1))[0] == 1;
+        const sundayDeref = (new Uint8Array(wasm.memory.buffer, ptr + 6, 1))[0] === 1;
         this.#sunday = sundayDeref;
 
         return this;
     }
-    
-
 }

@@ -3,31 +3,37 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 export class PluralCategories {
+
     #zero;
     get zero()  {
         return this.#zero;
     }
     
+
     #one;
     get one()  {
         return this.#one;
     }
     
+
     #two;
     get two()  {
         return this.#two;
     }
     
+
     #few;
     get few()  {
         return this.#few;
     }
     
+
     #many;
     get many()  {
         return this.#many;
     }
     
+
     #other;
     get other()  {
         return this.#other;
@@ -50,17 +56,17 @@ export class PluralCategories {
     // This method does not attempt to handle any dependencies between lifetimes, the caller
     // should handle this when constructing edge arrays.
     _fromFFI(ptr) {
-        const zeroDeref = (new Uint8Array(wasm.memory.buffer, ptr, 1))[0] == 1;
+        const zeroDeref = (new Uint8Array(wasm.memory.buffer, ptr, 1))[0] === 1;
         this.#zero = zeroDeref;
-        const oneDeref = (new Uint8Array(wasm.memory.buffer, ptr + 1, 1))[0] == 1;
+        const oneDeref = (new Uint8Array(wasm.memory.buffer, ptr + 1, 1))[0] === 1;
         this.#one = oneDeref;
-        const twoDeref = (new Uint8Array(wasm.memory.buffer, ptr + 2, 1))[0] == 1;
+        const twoDeref = (new Uint8Array(wasm.memory.buffer, ptr + 2, 1))[0] === 1;
         this.#two = twoDeref;
-        const fewDeref = (new Uint8Array(wasm.memory.buffer, ptr + 3, 1))[0] == 1;
+        const fewDeref = (new Uint8Array(wasm.memory.buffer, ptr + 3, 1))[0] === 1;
         this.#few = fewDeref;
-        const manyDeref = (new Uint8Array(wasm.memory.buffer, ptr + 4, 1))[0] == 1;
+        const manyDeref = (new Uint8Array(wasm.memory.buffer, ptr + 4, 1))[0] === 1;
         this.#many = manyDeref;
-        const otherDeref = (new Uint8Array(wasm.memory.buffer, ptr + 5, 1))[0] == 1;
+        const otherDeref = (new Uint8Array(wasm.memory.buffer, ptr + 5, 1))[0] === 1;
         this.#other = otherDeref;
 
         return this;
@@ -69,6 +75,4 @@ export class PluralCategories {
     constructor(ptr) {
         this._fromFFI(ptr);
     }
-    
-
 }

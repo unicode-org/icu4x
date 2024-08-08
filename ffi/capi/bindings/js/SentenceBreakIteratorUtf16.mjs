@@ -5,10 +5,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 /** See the [Rust documentation for `SentenceBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceBreakIterator.html) for more information.
 */
-
 const SentenceBreakIteratorUtf16_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_SentenceBreakIteratorUtf16_destroy_mv1(ptr);
 });
+
 export class SentenceBreakIteratorUtf16 {
     // Internal ptr reference:
     #ptr = null;
@@ -16,9 +16,7 @@ export class SentenceBreakIteratorUtf16 {
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
     #aEdge = [];
-    
     
     constructor(ptr, selfEdge, aEdge) {
         
@@ -35,18 +33,13 @@ export class SentenceBreakIteratorUtf16 {
         return this.#ptr;
     }
 
-
     next() {
         const result = wasm.icu4x_SentenceBreakIteratorUtf16_next_mv1(this.ffiValue);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
-
-    
-
 }

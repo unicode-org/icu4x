@@ -7,10 +7,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *Additional information: [1](https://docs.rs/icu/latest/icu/segmenter/type.LineBreakIteratorPotentiallyIllFormedUtf8.html)
 */
-
 const LineBreakIteratorUtf8_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_LineBreakIteratorUtf8_destroy_mv1(ptr);
 });
+
 export class LineBreakIteratorUtf8 {
     // Internal ptr reference:
     #ptr = null;
@@ -18,9 +18,7 @@ export class LineBreakIteratorUtf8 {
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
     #aEdge = [];
-    
     
     constructor(ptr, selfEdge, aEdge) {
         
@@ -37,18 +35,13 @@ export class LineBreakIteratorUtf8 {
         return this.#ptr;
     }
 
-
     next() {
         const result = wasm.icu4x_LineBreakIteratorUtf8_next_mv1(this.ffiValue);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
-
-    
-
 }

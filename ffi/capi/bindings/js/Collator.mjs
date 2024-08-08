@@ -10,10 +10,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 /** See the [Rust documentation for `Collator`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html) for more information.
 */
-
 const Collator_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_Collator_destroy_mv1(ptr);
 });
+
 export class Collator {
     // Internal ptr reference:
     #ptr = null;
@@ -21,7 +21,6 @@ export class Collator {
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
     
     constructor(ptr, selfEdge) {
         
@@ -35,29 +34,27 @@ export class Collator {
         return this.#ptr;
     }
 
-
     static create(provider, locale, options) {
         
         let slice_cleanup_callbacks = [];
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_Collator_create_v1_mv1(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue, ...options._intoFFI(slice_cleanup_callbacks, {}));
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_Collator_create_v1_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...options._intoFFI(slice_cleanup_callbacks, {}));
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
+            if (!diplomatReceive.resultFlag) {
+                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new Error('DataError: ' + cause.value, { cause });
             }
-            return new Collator(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new Collator(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
+        finally {
             for (let cleanup of slice_cleanup_callbacks) {
                 cleanup();
             }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+            diplomatReceive.free();
         }
     }
 
@@ -69,32 +66,27 @@ export class Collator {
         const result = wasm.icu4x_Collator_compare_utf16_mv1(this.ffiValue, leftSlice.ptr, leftSlice.size, rightSlice.ptr, rightSlice.size);
     
         try {
-    
             return result;
-        } finally {
+        }
         
+        finally {
             leftSlice.free();
         
             rightSlice.free();
-        
         }
     }
 
     get resolvedOptions() {
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(28, 4);
-        const result = wasm.icu4x_Collator_resolved_options_v1_mv1(diplomat_receive_buffer, this.ffiValue);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 28, 4, false);
+        const result = wasm.icu4x_Collator_resolved_options_v1_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {
-    
-            return new CollatorResolvedOptions(diplomat_receive_buffer);
-        } finally {
+            return new CollatorResolvedOptions(diplomatReceive.buffer);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 28, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
-
-    
-
 }

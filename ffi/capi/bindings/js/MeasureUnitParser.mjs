@@ -9,10 +9,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *See the [Rust documentation for `MeasureUnitParser`](https://docs.rs/icu/latest/icu/experimental/units/measureunit/struct.MeasureUnitParser.html) for more information.
 */
-
 const MeasureUnitParser_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_MeasureUnitParser_destroy_mv1(ptr);
 });
+
 export class MeasureUnitParser {
     // Internal ptr reference:
     #ptr = null;
@@ -20,9 +20,7 @@ export class MeasureUnitParser {
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
     #aEdge = [];
-    
     
     constructor(ptr, selfEdge, aEdge) {
         
@@ -39,22 +37,17 @@ export class MeasureUnitParser {
         return this.#ptr;
     }
 
-
     parse(unitId) {
         
         const unitIdSlice = diplomatRuntime.DiplomatBuf.str8(wasm, unitId);
         const result = wasm.icu4x_MeasureUnitParser_parse_mv1(this.ffiValue, unitIdSlice.ptr, unitIdSlice.size);
     
         try {
-    
-            return result == 0 ? null : new MeasureUnit(result, []);
-        } finally {
+            return result === 0 ? null : new MeasureUnit(result, []);
+        }
         
+        finally {
             unitIdSlice.free();
-        
         }
     }
-
-    
-
 }

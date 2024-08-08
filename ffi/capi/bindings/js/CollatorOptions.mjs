@@ -13,6 +13,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 /** See the [Rust documentation for `CollatorOptions`](https://docs.rs/icu/latest/icu/collator/struct.CollatorOptions.html) for more information.
 */
 export class CollatorOptions {
+
     #strength;
     get strength()  {
         return this.#strength;
@@ -20,6 +21,7 @@ export class CollatorOptions {
     set strength(value) {
         this.#strength = value;
     }
+
     #alternateHandling;
     get alternateHandling()  {
         return this.#alternateHandling;
@@ -27,6 +29,7 @@ export class CollatorOptions {
     set alternateHandling(value) {
         this.#alternateHandling = value;
     }
+
     #caseFirst;
     get caseFirst()  {
         return this.#caseFirst;
@@ -34,6 +37,7 @@ export class CollatorOptions {
     set caseFirst(value) {
         this.#caseFirst = value;
     }
+
     #maxVariable;
     get maxVariable()  {
         return this.#maxVariable;
@@ -41,6 +45,7 @@ export class CollatorOptions {
     set maxVariable(value) {
         this.#maxVariable = value;
     }
+
     #caseLevel;
     get caseLevel()  {
         return this.#caseLevel;
@@ -48,6 +53,7 @@ export class CollatorOptions {
     set caseLevel(value) {
         this.#caseLevel = value;
     }
+
     #numeric;
     get numeric()  {
         return this.#numeric;
@@ -55,6 +61,7 @@ export class CollatorOptions {
     set numeric(value) {
         this.#numeric = value;
     }
+
     #backwardSecondLevel;
     get backwardSecondLevel()  {
         return this.#backwardSecondLevel;
@@ -96,6 +103,4 @@ export class CollatorOptions {
 
         return this;
     }
-    
-
 }

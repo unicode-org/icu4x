@@ -5,10 +5,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 /** An object allowing control over the logging used
 */
-
 const Logger_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_Logger_destroy_mv1(ptr);
 });
+
 export class Logger {
     // Internal ptr reference:
     #ptr = null;
@@ -16,7 +16,6 @@ export class Logger {
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
     
     constructor(ptr, selfEdge) {
         
@@ -30,18 +29,13 @@ export class Logger {
         return this.#ptr;
     }
 
-
     static initSimpleLogger() {
         const result = wasm.icu4x_Logger_init_simple_logger_mv1();
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
-
-    
-
 }

@@ -11,10 +11,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *See the [Rust documentation for `LocaleFallbackerWithConfig`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbackerWithConfig.html) for more information.
 */
-
 const LocaleFallbackerWithConfig_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_LocaleFallbackerWithConfig_destroy_mv1(ptr);
 });
+
 export class LocaleFallbackerWithConfig {
     // Internal ptr reference:
     #ptr = null;
@@ -22,9 +22,7 @@ export class LocaleFallbackerWithConfig {
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
     #aEdge = [];
-    
     
     constructor(ptr, selfEdge, aEdge) {
         
@@ -41,7 +39,6 @@ export class LocaleFallbackerWithConfig {
         return this.#ptr;
     }
 
-
     fallbackForLocale(locale) {
         
         // This lifetime edge depends on lifetimes 'a, 'b
@@ -49,13 +46,9 @@ export class LocaleFallbackerWithConfig {
         const result = wasm.icu4x_LocaleFallbackerWithConfig_fallback_for_locale_mv1(this.ffiValue, locale.ffiValue);
     
         try {
-    
             return new LocaleFallbackIterator(result, [], aEdges);
-        } finally {
-        
         }
+        
+        finally {}
     }
-
-    
-
 }

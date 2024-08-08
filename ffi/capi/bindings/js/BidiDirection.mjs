@@ -11,6 +11,7 @@ export class BidiDirection {
         ["Rtl", 1],
         ["Mixed", 2]
     ]);
+
     constructor(value) {
         if (value instanceof BidiDirection) {
             this.#value = value.value;
@@ -34,12 +35,6 @@ export class BidiDirection {
     }
 
     static Ltr = new BidiDirection("Ltr");
-
     static Rtl = new BidiDirection("Rtl");
-
     static Mixed = new BidiDirection("Mixed");
-
-
-    
-
 }
