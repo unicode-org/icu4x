@@ -100,10 +100,10 @@ impl crate::IterableDataProviderCached<UnitsInfoV1Marker> for SourceDataProvider
 
 #[test]
 fn test_basic() {
+    use icu::experimental::measure::provider::si_prefix::{Base, SiPrefix};
+    use icu::experimental::measure::provider::single_unit::SingleUnit;
     use icu::experimental::units::provider::*;
     use icu::locale::langid;
-    use icu_experimental::measure::provider::si_prefix::{Base, SiPrefix};
-    use icu_experimental::measure::provider::single_unit::SingleUnit;
     use icu_provider::prelude::*;
     use num_bigint::BigUint;
     use num_rational::Ratio;
