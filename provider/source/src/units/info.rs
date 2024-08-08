@@ -6,8 +6,8 @@ use std::collections::{BTreeMap, HashSet};
 
 use crate::SourceDataProvider;
 use crate::{cldr_serde, units::helpers::ScientificNumber};
+use icu::experimental::measure::parser::MeasureUnitParser;
 use icu::experimental::units::provider::{ConversionInfo, UnitsInfoV1, UnitsInfoV1Marker};
-use icu_experimental::measure::parser::MeasureUnitParser;
 use icu_provider::prelude::*;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::VarZeroVec;
