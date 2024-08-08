@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_locale_core::locale;
 use icu_segmenter::GraphemeClusterSegmenter;
 use icu_segmenter::LineSegmenter;
 use icu_segmenter::SentenceSegmenter;
@@ -176,7 +177,9 @@ fn run_line_break_extra_test() {
 
 fn word_break_test(file: &'static str) {
     let test_iter = TestContentIterator::new(file);
-    let segmenter = WordSegmenter::new_dictionary();
+    // Default word segmenter isn't UAX29 rule. Swedish is UAX29 rule.
+    let segmenter =
+        WordSegmenter::try_new_dictionary(&locale!("sv").into()).expect("Loading should succeed!");
     for (i, test) in test_iter.enumerate() {
         let s: String = test.utf8_vec.into_iter().collect();
         let iter = segmenter.segment_str(&s);

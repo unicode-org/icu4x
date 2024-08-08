@@ -15,5 +15,7 @@ segmenter/lstm/wl_auto@1, und/Burmese_codepoints_exclusive_model4_heavy, 91369B,
 segmenter/lstm/wl_auto@1, und/Khmer_codepoints_exclusive_model4_heavy, 74669B, b25f5219c4b970f2
 segmenter/lstm/wl_auto@1, und/Lao_codepoints_exclusive_model4_heavy, 72164B, 7e0c3ea7801791bd
 segmenter/lstm/wl_auto@1, und/Thai_codepoints_exclusive_model4_heavy, 72331B, c46e2e0c098c1fc1
+segmenter/sentence/override@1, <singleton>, 332B, 745d858a06d47385
 segmenter/sentence@2, <singleton>, 14528B, da95c51c93946d95
-segmenter/word@2, <singleton>, 14768B, 7cb863d0724b4119
+segmenter/word/override@1, <singleton>, 556B, e523305ca615559e
+segmenter/word@2, <singleton>, 14768B, ca0e9def272a3e47
