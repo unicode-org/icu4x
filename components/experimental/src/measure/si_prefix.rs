@@ -6,7 +6,6 @@ use zerotrie::ZeroTrieSimpleAscii;
 
 use super::provider::si_prefix::{Base, SiPrefix};
 
-
 /// The offset of the SI prefixes.
 /// NOTE:
 ///     The offset is added to the power of the decimal SI prefixes in order to avoid negative powers.

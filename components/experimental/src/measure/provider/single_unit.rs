@@ -4,7 +4,6 @@
 
 use super::si_prefix::SiPrefix;
 
-
 /// Represents a single unit in a measure unit.
 /// For example, the MeasureUnit `kilometer-per-square-second` contains two single units:
 ///    1. `kilometer` with power 1 and prefix 3 with base 10.

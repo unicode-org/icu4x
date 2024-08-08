@@ -8,8 +8,6 @@ use crate::SourceDataProvider;
 use crate::{cldr_serde, units::helpers::ScientificNumber};
 use icu::experimental::measure::parser::MeasureUnitParser;
 use icu::experimental::units::provider::{ConversionInfo, UnitsInfoV1, UnitsInfoV1Marker};
-use icu_experimental::measure::provider::si_prefix::{Base, SiPrefix};
-use icu_experimental::measure::provider::single_unit::SingleUnit;
 use icu_provider::prelude::*;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::VarZeroVec;
@@ -104,6 +102,8 @@ impl crate::IterableDataProviderCached<UnitsInfoV1Marker> for SourceDataProvider
 fn test_basic() {
     use icu::experimental::units::provider::*;
     use icu::locale::langid;
+    use icu_experimental::measure::provider::si_prefix::{Base, SiPrefix};
+    use icu_experimental::measure::provider::single_unit::SingleUnit;
     use icu_provider::prelude::*;
     use num_bigint::BigUint;
     use num_rational::Ratio;

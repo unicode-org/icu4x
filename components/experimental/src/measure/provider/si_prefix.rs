@@ -9,7 +9,6 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-
 /// Represents the base of an si prefix.
 #[zerovec::make_ule(BaseULE)]
 #[cfg_attr(
@@ -28,7 +27,6 @@ pub enum Base {
     /// The base of the si prefix is 2.
     Binary = 1,
 }
-
 
 // TODO: Consider reducing the size of this struct while implementing the ULE.
 /// Represents the SI prefix.
