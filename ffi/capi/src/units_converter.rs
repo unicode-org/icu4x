@@ -66,16 +66,16 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X Measurement Unit parser object which is capable of parsing the CLDR unit identifier
     /// (e.g. `meter-per-square-second`) and get the [`MeasureUnit`].
-    #[diplomat::rust_link(icu::experimental::units::measureunit::MeasureUnitParser, Struct)]
+    #[diplomat::rust_link(icu::experimental::measure::measureunit::MeasureUnitParser, Struct)]
     pub struct MeasureUnitParser<'a>(
-        pub icu_experimental::units::measureunit::MeasureUnitParser<'a>,
+        pub icu_experimental::measure::measureunit::MeasureUnitParser<'a>,
     );
 
     impl<'a> MeasureUnitParser<'a> {
         /// Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`MeasureUnit`],
         /// if the identifier is valid.
         #[diplomat::rust_link(
-            icu::experimental::units::measureunit::MeasureUnitParser::parse,
+            icu::experimental::measure::measureunit::MeasureUnitParser::parse,
             FnInStruct
         )]
         pub fn parse(&self, unit_id: &DiplomatStr) -> Option<Box<MeasureUnit>> {
@@ -92,8 +92,8 @@ pub mod ffi {
     /// such as `meter`, `second`, `kilometer-per-hour`, `square-meter`, etc.
     ///
     /// You can create an instance of this object using [`MeasureUnitParser`] by calling the `parse_measure_unit` method.
-    #[diplomat::rust_link(icu::experimental::units::measureunit::MeasureUnit, Struct)]
-    pub struct MeasureUnit(pub icu_experimental::units::measureunit::MeasureUnit);
+    #[diplomat::rust_link(icu::experimental::measure::measureunit::MeasureUnit, Struct)]
+    pub struct MeasureUnit(pub icu_experimental::measure::measureunit::MeasureUnit);
 
     #[diplomat::opaque]
     /// An ICU4X Units Converter object, capable of converting between two [`MeasureUnit`]s.

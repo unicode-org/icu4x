@@ -5,7 +5,7 @@
 use core::str::FromStr;
 use std::collections::{BTreeMap, VecDeque};
 
-use icu::experimental::units::measureunit::MeasureUnitParser;
+use icu::experimental::measure::measureunit::MeasureUnitParser;
 use icu::experimental::units::provider::{ConversionInfo, Exactness, Sign};
 use icu::experimental::units::ratio::IcuRatio;
 use icu_provider::DataError;

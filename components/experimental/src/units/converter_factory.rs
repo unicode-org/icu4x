@@ -2,15 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::units::provider;
-use crate::units::provider::MeasureUnitItem;
+use crate::measure::measureunit::{MeasureUnit, MeasureUnitParser};
+use crate::units::provider::{self, MeasureUnitItem};
 use crate::units::ratio::IcuRatio;
 use crate::units::{
     converter::{
         OffsetConverter, ProportionalConverter, ReciprocalConverter, UnitsConverter,
         UnitsConverterInner,
     },
-    measureunit::{MeasureUnit, MeasureUnitParser},
     provider::Sign,
 };
 
