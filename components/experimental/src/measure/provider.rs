@@ -10,9 +10,8 @@
 //! Read more about data providers: [`icu_provider`]
 
 use icu_provider::prelude::*;
-use num_bigint::BigInt;
 use zerotrie::ZeroTrieSimpleAscii;
-use zerovec::{ule::AsULE, VarZeroVec, ZeroVec};
+use zerovec::ZeroVec;
 
 #[cfg(feature = "compiled_data")]
 /// Baked data
