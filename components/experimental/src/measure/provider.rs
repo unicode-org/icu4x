@@ -24,7 +24,6 @@ use zerovec::{ule::AsULE, VarZeroVec, ZeroVec};
 /// </div>
 pub use crate::provider::Baked;
 
-
 /// This type encapsulates all the constant data required for unit conversions.
 ///
 /// <div class="stab unstable">
@@ -45,5 +44,4 @@ pub struct UnitsTrieV1<'data> {
     /// Maps from unit name (e.g. foot or meter) to its unit id. this id can be used to retrieve the conversion information from the `UnitsInfoV1`.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub trie: ZeroTrieSimpleAscii<ZeroVec<'data, u8>>,
-
 }

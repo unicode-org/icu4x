@@ -11,7 +11,6 @@ use icu::experimental::measure::provider::{UnitsTrieV1, UnitsTrieV1Marker};
 use icu_provider::prelude::*;
 use zerotrie::ZeroTrieSimpleAscii;
 
-
 impl DataProvider<UnitsTrieV1Marker> for SourceDataProvider {
     fn load(&self, _req: DataRequest) -> Result<DataResponse<UnitsTrieV1Marker>, DataError> {
         self.check_req::<UnitsTrieV1Marker>(_req)?;
@@ -37,11 +36,10 @@ impl DataProvider<UnitsTrieV1Marker> for SourceDataProvider {
             trie_map.insert(unit_name.as_bytes().to_vec(), convert_unit_index);
         }
 
-        let units_conversion_trie =
-            ZeroTrieSimpleAscii::try_from(&trie_map).map_err(|e| {
-                DataError::custom("Could not create ZeroTrie from units.json data")
-                    .with_display_context(&e)
-            })?;
+        let units_conversion_trie = ZeroTrieSimpleAscii::try_from(&trie_map).map_err(|e| {
+            DataError::custom("Could not create ZeroTrie from units.json data")
+                .with_display_context(&e)
+        })?;
 
         let result = UnitsTrieV1 {
             trie: units_conversion_trie.convert_store(),
