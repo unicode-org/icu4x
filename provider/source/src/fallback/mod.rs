@@ -5,7 +5,6 @@
 use crate::cldr_serde;
 use crate::SourceDataProvider;
 
-use super::locale_canonicalizer::likely_subtags::LikelySubtagsResources;
 use icu::locale::provider::*;
 use icu::locale::{
     subtags::{Language, Region, Script},
@@ -14,23 +13,7 @@ use icu::locale::{
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 use writeable::Writeable;
-use zerovec::{maps::ZeroMap2d, ule::UnvalidatedStr};
-
-impl DataProvider<LocaleFallbackLikelySubtagsV1Marker> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<LocaleFallbackLikelySubtagsV1Marker>, DataError> {
-        self.check_req::<LocaleFallbackLikelySubtagsV1Marker>(req)?;
-        let resources = LikelySubtagsResources::try_from_cldr_cache(self.cldr()?)?;
-
-        let metadata = DataResponseMetadata::default();
-        Ok(DataResponse {
-            metadata,
-            payload: DataPayload::from_owned(transform(resources.get_common())),
-        })
-    }
-}
+use zerovec::ule::UnvalidatedStr;
 
 impl DataProvider<LocaleFallbackParentsV1Marker> for SourceDataProvider {
     fn load(
@@ -51,87 +34,9 @@ impl DataProvider<LocaleFallbackParentsV1Marker> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<LocaleFallbackLikelySubtagsV1Marker> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        Ok(HashSet::from_iter([Default::default()]))
-    }
-}
-
 impl crate::IterableDataProviderCached<LocaleFallbackParentsV1Marker> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
-    }
-}
-
-fn transform<'x>(
-    it: impl Iterator<Item = (&'x LanguageIdentifier, &'x LanguageIdentifier)> + 'x,
-) -> LocaleFallbackLikelySubtagsV1<'static> {
-    let mut l2s = BTreeMap::new();
-    let mut lr2s = ZeroMap2d::new();
-    let mut l2r = BTreeMap::new();
-    let mut ls2r = ZeroMap2d::new();
-
-    let (part0, part1) = it
-        // Skip "und" for vertical fallback
-        .filter(|(lid, _)| !lid.language.is_empty())
-        // Find language-only entries
-        .partition::<Vec<_>, _>(|(lid, _)| **lid == LanguageIdentifier::from(lid.language));
-
-    // First collect the l2s and l2r maps
-    for (minimized, maximized) in part0.iter() {
-        let language = minimized.language;
-        let script = maximized.script.expect("maximized");
-        let region = maximized.region.expect("maximized");
-        if script != DEFAULT_SCRIPT {
-            l2s.insert(language.into_tinystr().to_unvalidated(), script);
-        }
-        if region != DEFAULT_REGION {
-            l2r.insert(language.into_tinystr().to_unvalidated(), region);
-        }
-    }
-
-    // Now populate the other maps
-    for (minimized, maximized) in part1.iter() {
-        let language = maximized.language;
-        let script = maximized.script.expect("maximized");
-        let region = maximized.region.expect("maximized");
-        if minimized.script.is_some() {
-            assert!(minimized.region.is_none(), "{minimized:?}");
-            let region_for_lang = l2r
-                .get(&language.into_tinystr().to_unvalidated())
-                .copied()
-                .unwrap_or(DEFAULT_REGION);
-            if region != region_for_lang {
-                ls2r.insert(
-                    &language.into_tinystr().to_unvalidated(),
-                    &script.into_tinystr().to_unvalidated(),
-                    &region,
-                );
-            }
-            continue;
-        }
-        if minimized.region.is_some() {
-            let script_for_lang = l2s
-                .get(&language.into_tinystr().to_unvalidated())
-                .copied()
-                .unwrap_or(DEFAULT_SCRIPT);
-            if script != script_for_lang {
-                lr2s.insert(
-                    &language.into_tinystr().to_unvalidated(),
-                    &region.into_tinystr().to_unvalidated(),
-                    &script,
-                );
-            }
-            continue;
-        }
-        unreachable!();
-    }
-
-    LocaleFallbackLikelySubtagsV1 {
-        l2s: l2s.into_iter().collect(),
-        lr2s,
-        l2r: l2r.into_iter().collect(),
-        ls2r,
     }
 }
 
@@ -162,45 +67,9 @@ impl From<&cldr_serde::parent_locales::Resource> for LocaleFallbackParentsV1<'st
 
 #[test]
 fn test_basic() {
-    use icu::locale::{
-        langid,
-        subtags::{language, region, script},
-    };
+    use icu::locale::langid;
 
     let provider = SourceDataProvider::new_testing();
-    let likely_subtags: DataResponse<LocaleFallbackLikelySubtagsV1Marker> =
-        provider.load(Default::default()).unwrap();
-
-    assert_eq!(
-        likely_subtags
-            .payload
-            .get()
-            .l2s
-            .get_copied(&language!("zh").into_tinystr().to_unvalidated()),
-        Some(script!("Hans"))
-    );
-    assert_eq!(
-        likely_subtags.payload.get().lr2s.get_copied_2d(
-            &language!("zh").into_tinystr().to_unvalidated(),
-            &region!("TW").into_tinystr().to_unvalidated()
-        ),
-        Some(script!("Hant"))
-    );
-    assert_eq!(
-        likely_subtags
-            .payload
-            .get()
-            .l2r
-            .get_copied(&language!("zh").into_tinystr().to_unvalidated()),
-        Some(region!("CN"))
-    );
-    assert_eq!(
-        likely_subtags.payload.get().ls2r.get_copied_2d(
-            &language!("zh").into_tinystr().to_unvalidated(),
-            &script!("Hant").into_tinystr().to_unvalidated()
-        ),
-        Some(region!("TW"))
-    );
 
     let parents: DataResponse<LocaleFallbackParentsV1Marker> =
         provider.load(Default::default()).unwrap();

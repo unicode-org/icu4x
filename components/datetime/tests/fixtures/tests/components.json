@@ -165,11 +165,6 @@
                     "minute": "numeric",
                     "second": "two-digit",
                     "fractional_second": 127
-                },
-                "semantic": {
-                    "fieldSet": ["hour", "minute", "second"],
-                    "length": "short",
-                    "fractionalSecondDigits": 127
                 }
             }
         },
@@ -188,11 +183,6 @@
                     "minute": "numeric",
                     "second": "two-digit",
                     "fractional_second": 255
-                },
-                "semantic": {
-                    "fieldSet": ["hour", "minute", "second"],
-                    "length": "short",
-                    "fractionalSecondDigits": 255
                 }
             }
         },

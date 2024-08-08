@@ -92,6 +92,7 @@ use icu_provider::prelude::*;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::hash::Hash;
+use std::sync::Arc;
 
 /// Configuration for a data export operation.
 ///
@@ -115,15 +116,29 @@ use std::hash::Hash;
 ///     )
 ///     .unwrap();
 /// ```
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct ExportDriver {
     markers: Option<HashSet<DataMarkerInfo>>,
     requested_families: HashMap<DataLocale, DataLocaleFamilyAnnotations>,
+    #[allow(clippy::type_complexity)] // sigh
+    attributes_filters:
+        HashMap<String, Arc<Box<dyn Fn(&DataMarkerAttributes) -> bool + Send + Sync + 'static>>>,
     fallbacker: LocaleFallbacker,
     include_full: bool,
     deduplication_strategy: DeduplicationStrategy,
-    additional_collations: HashSet<String>,
-    segmenter_models: Vec<String>,
+}
+
+impl core::fmt::Debug for ExportDriver {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("ExportDriver")
+            .field("markers", &self.markers)
+            .field("requested_families", &self.requested_families)
+            .field("attributes_filters", &self.attributes_filters.keys())
+            .field("fallbacker", &self.fallbacker)
+            .field("include_full", &self.include_full)
+            .field("deduplication_strategy", &self.deduplication_strategy)
+            .finish()
+    }
 }
 
 impl ExportDriver {
@@ -158,13 +173,24 @@ impl ExportDriver {
                     ))
                 })
                 .collect(),
+            attributes_filters: Default::default(),
             include_full,
             fallbacker,
             deduplication_strategy: options.deduplication_strategy,
-            additional_collations: Default::default(),
-            segmenter_models: Default::default(),
         }
         .with_recommended_segmenter_models()
+        .with_additional_collations([])
+    }
+
+    /// TODO
+    pub fn with_marker_attributes_filter(
+        mut self,
+        domain: &str,
+        filter: impl Fn(&DataMarkerAttributes) -> bool + Send + Sync + 'static,
+    ) -> Self {
+        self.attributes_filters
+            .insert(String::from(domain), Arc::new(Box::new(filter)));
+        self
     }
 
     /// Sets this driver to generate the given data markers.
@@ -187,10 +213,16 @@ impl ExportDriver {
         self,
         additional_collations: impl IntoIterator<Item = String>,
     ) -> Self {
-        Self {
-            additional_collations: additional_collations.into_iter().collect(),
-            ..self
-        }
+        let set = additional_collations.into_iter().collect::<HashSet<_>>();
+        self.with_marker_attributes_filter("collator", move |attrs| {
+            attrs.is_empty()
+                || set.contains(attrs.as_str())
+                || if attrs.as_str().starts_with("search") {
+                    set.contains("search*")
+                } else {
+                    !["big5han", "gb2312"].contains(&attrs.as_str())
+                }
+        })
     }
 
     /// This option is only relevant if using `icu::segmenter`.
@@ -236,10 +268,8 @@ impl ExportDriver {
     /// If multiple models for the same language and segmentation type (dictionary/LSTM) are
     /// listed, the first one will be used.
     pub fn with_segmenter_models(self, models: impl IntoIterator<Item = String>) -> Self {
-        Self {
-            segmenter_models: models.into_iter().collect(),
-            ..self
-        }
+        let set = models.into_iter().collect::<HashSet<_>>();
+        self.with_marker_attributes_filter("segmenter", move |attrs| set.contains(attrs.as_str()))
     }
 }
 

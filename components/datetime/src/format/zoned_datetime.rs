@@ -90,6 +90,7 @@ where
                     field,
                     &mut iter,
                     pattern.metadata,
+                    Default::default(),
                     datetime,
                     date_symbols,
                     time_symbols,

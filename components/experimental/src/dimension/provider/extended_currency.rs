@@ -23,7 +23,11 @@ use zerovec::ZeroMap;
 pub use crate::provider::Baked;
 
 /// Currency Extended V1 data struct.
-#[icu_provider::data_struct(marker(CurrencyExtendedDataV1Marker, "currency/extended@1"))]
+#[icu_provider::data_struct(marker(
+    CurrencyExtendedDataV1Marker,
+    "currency/extended@1",
+    attributes_domain = "currency",
+))]
 #[derive(Debug, Clone, Default, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(
@@ -33,12 +37,14 @@ pub use crate::provider::Baked;
 )]
 #[yoke(prove_covariance_manually)]
 pub struct CurrencyExtendedDataV1<'data> {
-    // TODO: Implement currency pattern selection logic to choose between standard or standard next to text pattern.
     /// Contains the localized display names for a currency based on plural rules.
     /// For instance, in the "en" locale for the "USD" currency:
     ///     - "US Dollars" when count is `zero`,
     ///     - "US Dollar" when count is `one`,
     ///     ... etc.
+    /// # NOTE
+    ///    Regards to the [Unicode Report TR35](https://unicode.org/reports/tr35/tr35-numbers.html#Currencies),
+    ///    If no matching for specific count, the `other` count will be used.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub display_names: ZeroMap<'data, Count, str>,
 }

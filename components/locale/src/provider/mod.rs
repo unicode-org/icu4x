@@ -44,7 +44,6 @@ const _: () = {
         pub use crate as locale;
     }
     make_provider!(Baked);
-    impl_locale_fallback_likely_subtags_v1_marker!(Baked);
     impl_locale_fallback_parents_v1_marker!(Baked);
     impl_aliases_v2_marker!(Baked);
     impl_likely_subtags_extended_v1_marker!(Baked);
@@ -63,7 +62,6 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     LikelySubtagsExtendedV1Marker::INFO,
     LikelySubtagsForLanguageV1Marker::INFO,
     LikelySubtagsForScriptRegionV1Marker::INFO,
-    LocaleFallbackLikelySubtagsV1Marker::INFO,
     LocaleFallbackParentsV1Marker::INFO,
     ScriptDirectionV1Marker::INFO,
 ];

@@ -107,6 +107,85 @@ pub enum EraDisplay {
     // TODO(#4478): add Hide and Never options once there is data to back them
 }
 
+/// A specification for how many fractional second digits to display.
+///
+/// For example, to display the time with millisecond precision, use
+/// [`FractionalSecondDigits::F3`].
+///
+/// Lower-precision digits will be truncated.
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(try_from = "u8", into = "u8"))]
+#[non_exhaustive]
+pub enum FractionalSecondDigits {
+    /// Zero fractional digits. This is the default.
+    F0,
+    /// One fractional digit (tenths of a second).
+    F1,
+    /// Two fractional digits (hundredths of a second).
+    F2,
+    /// Three fractional digits (thousandths of a second).
+    F3,
+    /// Four fractional digits.
+    F4,
+    /// Five fractional digits.
+    F5,
+    /// Six fractional digits.
+    F6,
+    /// Seven fractional digits.
+    F7,
+    /// Eight fractional digits.
+    F8,
+    /// Nine fractional digits.
+    F9,
+}
+
+/// An error from constructing [`FractionalSecondDigits`].
+#[derive(Debug, Copy, Clone, PartialEq, Eq, displaydoc::Display)]
+#[non_exhaustive]
+pub enum FractionalSecondError {
+    /// The provided value is out of range (0-9).
+    OutOfRange,
+}
+
+impl From<FractionalSecondDigits> for u8 {
+    fn from(value: FractionalSecondDigits) -> u8 {
+        use FractionalSecondDigits::*;
+        match value {
+            F0 => 0,
+            F1 => 1,
+            F2 => 2,
+            F3 => 3,
+            F4 => 4,
+            F5 => 5,
+            F6 => 6,
+            F7 => 7,
+            F8 => 8,
+            F9 => 9,
+        }
+    }
+}
+
+impl TryFrom<u8> for FractionalSecondDigits {
+    type Error = FractionalSecondError;
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        use FractionalSecondDigits::*;
+        match value {
+            0 => Ok(F0),
+            1 => Ok(F1),
+            2 => Ok(F2),
+            3 => Ok(F3),
+            4 => Ok(F4),
+            5 => Ok(F5),
+            6 => Ok(F6),
+            7 => Ok(F7),
+            8 => Ok(F8),
+            9 => Ok(F9),
+            _ => Err(FractionalSecondError::OutOfRange),
+        }
+    }
+}
+
 /// A specification for a set of parts of a date that specifies a single day (as
 /// opposed to a whole month or a week).
 /// Only sets that yield “sensible” dates are allowed: this type cannot
@@ -969,6 +1048,8 @@ pub struct NeoTimeSkeleton {
     pub length: NeoSkeletonLength,
     /// Time components of the skeleton.
     pub components: NeoTimeComponents,
+    /// Fractional second digits option.
+    pub fractional_second_digits: Option<FractionalSecondDigits>,
 }
 
 impl NeoTimeSkeleton {
@@ -977,7 +1058,11 @@ impl NeoTimeSkeleton {
         length: NeoSkeletonLength,
         components: NeoTimeComponents,
     ) -> Self {
-        Self { length, components }
+        Self {
+            length,
+            components,
+            fractional_second_digits: None,
+        }
     }
 
     /// Converts this [`NeoTimeSkeleton`] to a [`components::Bag`].
@@ -996,6 +1081,8 @@ pub struct NeoDateTimeSkeleton {
     pub components: NeoDateTimeComponents,
     /// Era display option.
     pub era_display: Option<EraDisplay>,
+    /// Fractional second digits option.
+    pub fractional_second_digits: Option<FractionalSecondDigits>,
 }
 
 impl NeoDateTimeSkeleton {
@@ -1009,6 +1096,7 @@ impl NeoDateTimeSkeleton {
             length,
             components: NeoDateTimeComponents::DateTime(date, time),
             era_display: None,
+            fractional_second_digits: None,
         }
     }
 }
@@ -1028,6 +1116,8 @@ pub struct NeoSkeleton {
     pub components: NeoComponents,
     /// Era display option.
     pub era_display: Option<EraDisplay>,
+    /// Fractional second digits option.
+    pub fractional_second_digits: Option<FractionalSecondDigits>,
 }
 
 impl From<NeoDateSkeleton> for NeoSkeleton {
@@ -1036,6 +1126,7 @@ impl From<NeoDateSkeleton> for NeoSkeleton {
             length: value.length,
             components: value.components.into(),
             era_display: value.era_display,
+            fractional_second_digits: None,
         }
     }
 }
@@ -1046,6 +1137,7 @@ impl From<NeoTimeSkeleton> for NeoSkeleton {
             length: value.length,
             components: value.components.into(),
             era_display: None,
+            fractional_second_digits: value.fractional_second_digits,
         }
     }
 }
@@ -1055,7 +1147,8 @@ impl From<NeoDateTimeSkeleton> for NeoSkeleton {
         NeoSkeleton {
             length: value.length,
             components: value.components.into(),
-            era_display: None,
+            era_display: value.era_display,
+            fractional_second_digits: value.fractional_second_digits,
         }
     }
 }
@@ -1072,6 +1165,7 @@ impl NeoDateTimeSkeleton {
             length,
             components: NeoDateTimeComponents::DateTime(day_components, time_components),
             era_display: None,
+            fractional_second_digits: None,
         }
     }
 }

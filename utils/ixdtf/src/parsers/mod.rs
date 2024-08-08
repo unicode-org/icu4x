@@ -4,7 +4,7 @@
 
 //! The parser module contains the implementation details for `IxdtfParser` and `IsoDurationParser`
 
-use crate::{ParserError, ParserResult};
+use crate::{ParseError, ParserResult};
 
 #[cfg(feature = "duration")]
 use records::DurationParseRecord;
@@ -32,7 +32,7 @@ mod tests;
 macro_rules! assert_syntax {
     ($cond:expr, $err:ident $(,)?) => {
         if !$cond {
-            return Err(ParserError::$err);
+            return Err(ParseError::$err);
         }
     };
 }
@@ -420,13 +420,13 @@ impl<'a> Cursor<'a> {
     fn next_digit(&mut self) -> ParserResult<Option<u8>> {
         // Note: Char digit with a radix of ten must be in the range of a u8
         Ok(self
-            .next_or(ParserError::InvalidEnd)?
+            .next_or(ParseError::InvalidEnd)?
             .to_digit(10)
             .map(|d| d as u8))
     }
 
     /// A utility next method that returns an `AbruptEnd` error if invalid.
-    fn next_or(&mut self, err: ParserError) -> ParserResult<char> {
+    fn next_or(&mut self, err: ParseError) -> ParserResult<char> {
         self.next().ok_or(err)
     }
 
@@ -450,7 +450,7 @@ impl<'a> Cursor<'a> {
     /// Closes the current cursor by checking if all contents have been consumed. If not, returns an error for invalid syntax.
     fn close(&mut self) -> ParserResult<()> {
         if self.pos < self.source.len() {
-            return Err(ParserError::InvalidEnd);
+            return Err(ParseError::InvalidEnd);
         }
         Ok(())
     }

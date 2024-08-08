@@ -213,24 +213,15 @@ impl LocaleCanonicalizer {
         Self::new_with_expander(LocaleExpander::new_extended())
     }
 
-    // Note: This is a custom impl because the bounds on LocaleExpander::try_new_unstable changed
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::new)]
-    pub fn try_new_with_any_provider(
-        provider: &(impl AnyProvider + ?Sized),
-    ) -> Result<Self, DataError> {
-        let expander = LocaleExpander::try_new_with_any_provider(provider)?;
-        Self::try_new_with_expander_compat(&provider.as_downcasting(), expander)
-    }
-
-    // Note: This is a custom impl because the bounds on LocaleExpander::try_new_unstable changed
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::new)]
-    #[cfg(feature = "serde")]
-    pub fn try_new_with_buffer_provider(
-        provider: &(impl BufferProvider + ?Sized),
-    ) -> Result<Self, DataError> {
-        let expander = LocaleExpander::try_new_with_buffer_provider(provider)?;
-        Self::try_new_with_expander_compat(&provider.as_deserializing(), expander)
-    }
+    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
+        functions: [
+            new: skip,
+            try_new_with_any_provider,
+            try_new_with_buffer_provider,
+            try_new_unstable,
+            Self,
+        ]
+    );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
@@ -259,26 +250,6 @@ impl LocaleCanonicalizer {
         }
     }
 
-    fn try_new_with_expander_compat<P>(
-        provider: &P,
-        expander: LocaleExpander,
-    ) -> Result<Self, DataError>
-    where
-        P: DataProvider<AliasesV2Marker> + DataProvider<AliasesV1Marker> + ?Sized,
-    {
-        let aliases = if let Ok(response) =
-            DataProvider::<AliasesV2Marker>::load(provider, Default::default())
-        {
-            response.payload
-        } else {
-            DataProvider::<AliasesV1Marker>::load(provider, Default::default())?
-                .payload
-                .try_map_project(|st, _| st.try_into())?
-        };
-
-        Ok(Self { aliases, expander })
-    }
-
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_with_expander)]
     pub fn try_new_with_expander_unstable<P>(
         provider: &P,
@@ -292,22 +263,15 @@ impl LocaleCanonicalizer {
         Ok(Self { aliases, expander })
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::new_with_expander)]
-    pub fn try_new_with_expander_with_any_provider(
-        provider: &(impl AnyProvider + ?Sized),
-        options: LocaleExpander,
-    ) -> Result<Self, DataError> {
-        Self::try_new_with_expander_compat(&provider.as_downcasting(), options)
-    }
-
-    #[cfg(feature = "serde")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER,Self::new_with_expander)]
-    pub fn try_new_with_expander_with_buffer_provider(
-        provider: &(impl BufferProvider + ?Sized),
-        options: LocaleExpander,
-    ) -> Result<Self, DataError> {
-        Self::try_new_with_expander_compat(&provider.as_deserializing(), options)
-    }
+    icu_provider::gen_any_buffer_data_constructors!((options: LocaleExpander) -> error: DataError,
+        functions: [
+            new_with_expander: skip,
+            try_new_with_expander_with_any_provider,
+            try_new_with_expander_with_buffer_provider,
+            try_new_with_expander_unstable,
+            Self,
+        ]
+    );
 
     /// The canonicalize method potentially updates a passed in locale in place
     /// depending up the results of running the canonicalization algorithm
@@ -621,101 +585,5 @@ mod test {
             );
             assert_eq!(result, locale);
         }
-    }
-}
-
-#[cfg(feature = "serde")]
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use icu_locale_core::locale;
-
-    struct RejectByKeyProvider {
-        markers: Vec<DataMarkerInfo>,
-    }
-
-    impl AnyProvider for RejectByKeyProvider {
-        fn load_any(
-            &self,
-            marker: DataMarkerInfo,
-            _: DataRequest,
-        ) -> Result<AnyResponse, DataError> {
-            use alloc::borrow::Cow;
-
-            println!("{:#?}", marker);
-            if self.markers.contains(&marker) {
-                return Err(DataErrorKind::MarkerNotFound.with_str_context("rejected"));
-            }
-
-            let aliases_v2 = crate::provider::Baked::SINGLETON_ALIASES_V2_MARKER;
-            let l = crate::provider::Baked::SINGLETON_LIKELY_SUBTAGS_FOR_LANGUAGE_V1_MARKER;
-            let ext = crate::provider::Baked::SINGLETON_LIKELY_SUBTAGS_EXTENDED_V1_MARKER;
-            let sr = crate::provider::Baked::SINGLETON_LIKELY_SUBTAGS_FOR_SCRIPT_REGION_V1_MARKER;
-
-            let payload = if marker.path.hashed() == AliasesV1Marker::INFO.path.hashed() {
-                let aliases_v1 = AliasesV1 {
-                    language_variants: zerovec::VarZeroVec::from(&[StrStrPair(
-                        Cow::Borrowed("aa-saaho"),
-                        Cow::Borrowed("ssy"),
-                    )]),
-                    ..Default::default()
-                };
-                DataPayload::<AliasesV1Marker>::from_owned(aliases_v1).wrap_into_any_payload()
-            } else if marker.path.hashed() == AliasesV2Marker::INFO.path.hashed() {
-                DataPayload::<AliasesV2Marker>::from_static_ref(aliases_v2).wrap_into_any_payload()
-            } else if marker.path.hashed() == LikelySubtagsForLanguageV1Marker::INFO.path.hashed() {
-                DataPayload::<LikelySubtagsForLanguageV1Marker>::from_static_ref(l)
-                    .wrap_into_any_payload()
-            } else if marker.path.hashed() == LikelySubtagsExtendedV1Marker::INFO.path.hashed() {
-                DataPayload::<LikelySubtagsExtendedV1Marker>::from_static_ref(ext)
-                    .wrap_into_any_payload()
-            } else if marker.path.hashed()
-                == LikelySubtagsForScriptRegionV1Marker::INFO.path.hashed()
-            {
-                DataPayload::<LikelySubtagsForScriptRegionV1Marker>::from_static_ref(sr)
-                    .wrap_into_any_payload()
-            } else {
-                return Err(DataErrorKind::MarkerNotFound.into_error());
-            };
-
-            Ok(AnyResponse {
-                payload,
-                metadata: Default::default(),
-            })
-        }
-    }
-
-    #[test]
-    fn test_old_keys() {
-        let provider = RejectByKeyProvider {
-            markers: vec![AliasesV2Marker::INFO],
-        };
-        let lc = LocaleCanonicalizer::try_new_with_any_provider(&provider)
-            .expect("should create with old keys");
-        let mut locale = locale!("aa-saaho");
-        assert_eq!(lc.canonicalize(&mut locale), TransformResult::Modified);
-        assert_eq!(locale, locale!("ssy"));
-    }
-
-    #[test]
-    fn test_new_keys() {
-        let provider = RejectByKeyProvider {
-            markers: vec![AliasesV1Marker::INFO],
-        };
-        let lc = LocaleCanonicalizer::try_new_with_any_provider(&provider)
-            .expect("should create with old keys");
-        let mut locale = locale!("aa-saaho");
-        assert_eq!(lc.canonicalize(&mut locale), TransformResult::Modified);
-        assert_eq!(locale, locale!("ssy"));
-    }
-
-    #[test]
-    fn test_no_keys() {
-        let provider = RejectByKeyProvider {
-            markers: vec![AliasesV1Marker::INFO, AliasesV2Marker::INFO],
-        };
-        if LocaleCanonicalizer::try_new_with_any_provider(&provider).is_ok() {
-            panic!("should not create: no data present")
-        };
     }
 }

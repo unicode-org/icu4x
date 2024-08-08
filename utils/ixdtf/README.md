@@ -136,14 +136,14 @@ order with the key value. When parsing this invalid annotation, `ixdtf`
 will attempt to parse the Time Zone annotation as a key-value annotation.
 
 ```rust
-use ixdtf::{parsers::IxdtfParser, ParserError};
+use ixdtf::{parsers::IxdtfParser, ParseError};
 
 let example_one =
     "2024-03-02T08:48:00-05:00[u-ca=iso8601][America/New_York]";
 
 let result = IxdtfParser::from_str(example_one).parse();
 
-assert_eq!(result, Err(ParserError::AnnotationKeyLeadingChar));
+assert_eq!(result, Err(ParseError::AnnotationKeyLeadingChar));
 ```
 
 ###### Example 2
@@ -153,13 +153,13 @@ of the registered keys is flagged as critical, which throws an error as
 the ixdtf string must be treated as erroneous
 
 ```rust
-use ixdtf::{parsers::IxdtfParser, ParserError};
+use ixdtf::{parsers::IxdtfParser, ParseError};
 
 let example_two = "2024-03-02T08:48:00-05:00[u-ca=iso8601][!u-ca=japanese]";
 
 let result = IxdtfParser::from_str(example_two).parse();
 
-assert_eq!(result, Err(ParserError::CriticalDuplicateCalendar));
+assert_eq!(result, Err(ParseError::CriticalDuplicateCalendar));
 ```
 
 ###### Example 3
@@ -168,14 +168,14 @@ This example shows an unknown key flagged as critical. `ixdtf` will return an
 error on an unknown flag being flagged as critical.
 
 ```rust
-use ixdtf::{parsers::IxdtfParser, ParserError};
+use ixdtf::{parsers::IxdtfParser, ParseError};
 
 let example_three =
     "2024-03-02T08:48:00-05:00[u-ca=iso8601][!answer-to-universe=fortytwo]";
 
 let result = IxdtfParser::from_str(example_three).parse();
 
-assert_eq!(result, Err(ParserError::UnrecognizedCritical));
+assert_eq!(result, Err(ParseError::UnrecognizedCritical));
 ```
 
 ##### Annotations with Application Defined Behavior
