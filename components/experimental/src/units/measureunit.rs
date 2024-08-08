@@ -6,10 +6,11 @@ use alloc::vec::Vec;
 use smallvec::SmallVec;
 use zerotrie::ZeroTrieSimpleAscii;
 
+use crate::measure::power::get_power;
+use crate::measure::si_prefix::get_si_prefix;
+
 use crate::units::{
-    power::get_power,
     provider::{Base, MeasureUnitItem, SiPrefix},
-    si_prefix::get_si_prefix,
     InvalidUnitError,
 };
 
