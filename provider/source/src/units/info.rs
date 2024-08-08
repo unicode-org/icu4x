@@ -8,6 +8,8 @@ use crate::SourceDataProvider;
 use crate::{cldr_serde, units::helpers::ScientificNumber};
 use icu::experimental::measure::parser::MeasureUnitParser;
 use icu::experimental::units::provider::{ConversionInfo, UnitsInfoV1, UnitsInfoV1Marker};
+use icu_experimental::measure::provider::si_prefix::{Base, SiPrefix};
+use icu_experimental::measure::provider::single_unit::SingleUnit;
 use icu_provider::prelude::*;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::VarZeroVec;
@@ -147,7 +149,7 @@ fn test_basic() {
         meter_convert,
         ConversionInfo {
             basic_units: {
-                let base_unit = vec![MeasureUnitItem {
+                let base_unit = vec![SingleUnit {
                     power: 1,
                     si_prefix: SiPrefix {
                         power: 0,
@@ -176,7 +178,7 @@ fn test_basic() {
         foot_convert,
         ConversionInfo {
             basic_units: {
-                let base_unit = vec![MeasureUnitItem {
+                let base_unit = vec![SingleUnit {
                     power: 1,
                     si_prefix: SiPrefix {
                         power: 0,

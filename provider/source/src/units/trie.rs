@@ -7,7 +7,7 @@ use std::collections::{BTreeMap, HashSet};
 use crate::cldr_serde;
 use crate::cldr_serde::units::info::ConvertUnit;
 use crate::SourceDataProvider;
-use icu::experimental::measure::provider::{UnitsTrieV1, UnitsTrieV1Marker};
+use icu_experimental::measure::provider::trie::{UnitsTrieV1, UnitsTrieV1Marker};
 use icu_provider::prelude::*;
 use zerotrie::ZeroTrieSimpleAscii;
 
@@ -60,7 +60,6 @@ impl crate::IterableDataProviderCached<UnitsTrieV1Marker> for SourceDataProvider
 
 #[test]
 fn test_basic() {
-    use icu::experimental::measure::provider::*;
     use icu::locale::langid;
     use icu_provider::prelude::*;
 

@@ -8,10 +8,10 @@ use zerotrie::ZeroTrieSimpleAscii;
 use crate::measure::measureunit::MeasureUnit;
 use crate::measure::power::get_power;
 use crate::measure::si_prefix::get_si_prefix;
-use crate::units::{
-    provider::{Base, MeasureUnitItem, SiPrefix},
-    InvalidUnitError,
-};
+use crate::units::InvalidUnitError;
+
+use super::provider::si_prefix::{Base, SiPrefix};
+use super::provider::single_unit::SingleUnit;
 
 // TODO: add test cases for this parser after adding UnitsTest.txt to the test data.
 /// A parser for the CLDR unit identifier (e.g. `meter-per-square-second`)
@@ -96,7 +96,7 @@ impl<'data> MeasureUnitParser<'data> {
             return Err(InvalidUnitError);
         }
 
-        let mut measure_unit_items = Vec::<MeasureUnitItem>::new();
+        let mut measure_unit_items = Vec::<SingleUnit>::new();
         let mut sign = 1;
         while !code_units.is_empty() {
             // First: extract the power.
@@ -137,7 +137,7 @@ impl<'data> MeasureUnitParser<'data> {
                     }
                 };
 
-            measure_unit_items.push(MeasureUnitItem {
+            measure_unit_items.push(SingleUnit {
                 power: sign * power as i8,
                 si_prefix,
                 unit_id,
