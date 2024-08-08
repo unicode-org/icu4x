@@ -8,7 +8,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *You can create an instance of this object using [`MeasureUnitParser`] by calling the `parse_measure_unit` method.
 *
-*See the [Rust documentation for `MeasureUnit`](https://docs.rs/icu/latest/icu/experimental/units/measureunit/struct.MeasureUnit.html) for more information.
+*See the [Rust documentation for `MeasureUnit`](https://docs.rs/icu/latest/icu/experimental/measure/measureunit/struct.MeasureUnit.html) for more information.
 */
 
 const MeasureUnit_box_destroy_registry = new FinalizationRegistry((ptr) => {
