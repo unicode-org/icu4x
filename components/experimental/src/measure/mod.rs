@@ -7,3 +7,4 @@ pub(crate) mod si_prefix;
 
 pub mod measureunit;
 pub mod parser;
+pub mod provider;

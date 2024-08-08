@@ -42,6 +42,7 @@ use super::ratio::IcuRatio;
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct UnitsInfoV1<'data> {
+    // TODO: remove this field once we are using this map from `measure/provider::UnitsTrie`.
     /// Maps from unit name (e.g. foot) to it is conversion information.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub units_conversion_trie: ZeroTrieSimpleAscii<ZeroVec<'data, u8>>,
