@@ -157,7 +157,7 @@ pub fn get_system_timezone() -> Result<String, RetrievalError> {
         let cf_string = unsafe { timezone::CFTimeZoneGetName(timezone) };
 
         if !cf_string.is_null() {
-            return Ok(get_string(cf_string)?);
+            return get_string(cf_string);
         }
     }
     Err(RetrievalError::NullTimeZone)
