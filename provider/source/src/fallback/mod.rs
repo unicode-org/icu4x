@@ -15,12 +15,12 @@ use std::collections::{BTreeMap, HashSet};
 use writeable::Writeable;
 use zerovec::ule::UnvalidatedStr;
 
-impl DataProvider<LocaleFallbackParentsV1Marker> for SourceDataProvider {
+impl DataProvider<ParentsV1Marker> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<LocaleFallbackParentsV1Marker>, DataError> {
-        self.check_req::<LocaleFallbackParentsV1Marker>(req)?;
+    ) -> Result<DataResponse<ParentsV1Marker>, DataError> {
+        self.check_req::<ParentsV1Marker>(req)?;
         let parents_data: &cldr_serde::parent_locales::Resource = self
             .cldr()?
             .core()
@@ -34,13 +34,13 @@ impl DataProvider<LocaleFallbackParentsV1Marker> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<LocaleFallbackParentsV1Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<ParentsV1Marker> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
-impl From<&cldr_serde::parent_locales::Resource> for LocaleFallbackParentsV1<'static> {
+impl From<&cldr_serde::parent_locales::Resource> for ParentsV1<'static> {
     fn from(source_data: &cldr_serde::parent_locales::Resource) -> Self {
         let mut parents = BTreeMap::<_, (Language, Option<Script>, Option<Region>)>::new();
 
@@ -56,7 +56,7 @@ impl From<&cldr_serde::parent_locales::Resource> for LocaleFallbackParentsV1<'st
             parents.insert(source.write_to_string(), target.into());
         }
 
-        LocaleFallbackParentsV1 {
+        ParentsV1 {
             parents: parents
                 .iter()
                 .map(|(k, v)| (<&UnvalidatedStr>::from(k.as_ref()), v))
@@ -71,7 +71,7 @@ fn test_basic() {
 
     let provider = SourceDataProvider::new_testing();
 
-    let parents: DataResponse<LocaleFallbackParentsV1Marker> =
+    let parents: DataResponse<ParentsV1Marker> =
         provider.load(Default::default()).unwrap();
 
     assert_eq!(

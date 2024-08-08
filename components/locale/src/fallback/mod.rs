@@ -59,21 +59,21 @@ mod algorithms;
 #[derive(Debug, Clone, PartialEq)]
 pub struct LocaleFallbacker {
     likely_subtags: DataPayload<LikelySubtagsForLanguageV1Marker>,
-    parents: DataPayload<LocaleFallbackParentsV1Marker>,
+    parents: DataPayload<ParentsV1Marker>,
 }
 
 /// Borrowed version of [`LocaleFallbacker`].
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct LocaleFallbackerBorrowed<'a> {
     likely_subtags: &'a LikelySubtagsForLanguageV1<'a>,
-    parents: &'a LocaleFallbackParentsV1<'a>,
+    parents: &'a ParentsV1<'a>,
 }
 
 /// A [`LocaleFallbackerBorrowed`] with an associated [`LocaleFallbackConfig`].
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct LocaleFallbackerWithConfig<'a> {
     likely_subtags: &'a LikelySubtagsForLanguageV1<'a>,
-    parents: &'a LocaleFallbackParentsV1<'a>,
+    parents: &'a ParentsV1<'a>,
     config: LocaleFallbackConfig,
 }
 
@@ -81,7 +81,7 @@ pub struct LocaleFallbackerWithConfig<'a> {
 #[derive(Debug)]
 struct LocaleFallbackIteratorInner<'a> {
     likely_subtags: &'a LikelySubtagsForLanguageV1<'a>,
-    parents: &'a LocaleFallbackParentsV1<'a>,
+    parents: &'a ParentsV1<'a>,
     config: LocaleFallbackConfig,
     backup_subdivision: Option<Subtag>,
     backup_variant: Option<Variant>,
@@ -109,7 +109,7 @@ impl LocaleFallbacker {
     pub const fn new<'a>() -> LocaleFallbackerBorrowed<'a> {
         let tickstatic = LocaleFallbackerBorrowed {
             likely_subtags: crate::provider::Baked::SINGLETON_LIKELY_SUBTAGS_FOR_LANGUAGE_V1_MARKER,
-            parents: crate::provider::Baked::SINGLETON_LOCALE_FALLBACK_PARENTS_V1_MARKER,
+            parents: crate::provider::Baked::SINGLETON_PARENTS_V1_MARKER,
         };
         // Safety: we're transmuting down from LocaleFallbackerBorrowed<'static> to LocaleFallbackerBorrowed<'a>
         // ZeroMaps use associated types in a way that confuse the compiler which gives up and marks them
@@ -132,7 +132,7 @@ impl LocaleFallbacker {
     pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
         P: DataProvider<LikelySubtagsForLanguageV1Marker>
-            + DataProvider<LocaleFallbackParentsV1Marker>
+            + DataProvider<ParentsV1Marker>
             + ?Sized,
     {
         let likely_subtags = provider.load(Default::default())?.payload;
