@@ -6,6 +6,7 @@
 
 use fixed_decimal::FixedDecimal;
 use icu_decimal::{options::FixedDecimalFormatterOptions, FixedDecimalFormatter};
+use icu_plurals::PluralRules;
 use icu_provider::prelude::*;
 
 use crate::dimension::provider::{
@@ -33,6 +34,9 @@ pub struct LongCurrencyFormatter {
 
     /// A [`FixedDecimalFormatter`] to format the currency value.
     fixed_decimal_formatter: FixedDecimalFormatter,
+
+    /// A [`PluralRules`] to determine the plural category of the unit.
+    plural_rules: PluralRules,
 }
 
 impl LongCurrencyFormatter {
@@ -76,10 +80,14 @@ impl LongCurrencyFormatter {
 
         let patterns = crate::provider::Baked.load(Default::default())?.payload;
 
+        let plural_rules = PluralRules::try_new_cardinal(locale)?;
+
+
         Ok(Self {
             extended,
             patterns,
             fixed_decimal_formatter,
+            plural_rules,
         })
     }
 
@@ -93,7 +101,8 @@ impl LongCurrencyFormatter {
         D: ?Sized
             + DataProvider<super::super::provider::extended_currency::CurrencyExtendedDataV1Marker>
             + DataProvider<super::super::provider::currency_patterns::CurrencyPatternsDataV1Marker>
-            + DataProvider<icu_decimal::provider::DecimalSymbolsV1Marker>,
+            + DataProvider<icu_decimal::provider::DecimalSymbolsV1Marker>
+            + DataProvider<icu_plurals::provider::CardinalV1Marker>,
     {
         let fixed_decimal_formatter = FixedDecimalFormatter::try_new_unstable(
             provider,
@@ -119,10 +128,14 @@ impl LongCurrencyFormatter {
 
         let patterns = provider.load(Default::default())?.payload;
 
+        let plural_rules = PluralRules::try_new_cardinal_unstable(provider, locale)?;
+
+
         Ok(Self {
             extended,
             patterns,
             fixed_decimal_formatter,
+            plural_rules,
         })
     }
 
@@ -157,6 +170,7 @@ impl LongCurrencyFormatter {
             extended: self.extended.get(),
             patterns: self.patterns.get(),
             fixed_decimal_formatter: &self.fixed_decimal_formatter,
+            plural_rules: &self.plural_rules,
         }
     }
 }
