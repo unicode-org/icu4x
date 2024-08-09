@@ -56,15 +56,15 @@ impl From<InvalidOffsetError> for ParseError {
     }
 }
 
-impl TryFrom<UTCOffsetRecord> for GmtOffset {
-    type Error = InvalidOffsetError;
-
-    fn try_from(value: UTCOffsetRecord) -> Result<Self, Self::Error> {
-        let hour_seconds = i32::from(value.hour) * 3600;
-        let minute_seconds = i32::from(value.minute) * 60;
+impl GmtOffset {
+    fn try_from_utc_offset_record(record: &UTCOffsetRecord) -> Result<Self, ParseError> {
+        let hour_seconds = i32::from(record.hour) * 3600;
+        let minute_seconds = i32::from(record.minute) * 60;
         Self::try_from_offset_seconds(
-            i32::from(value.sign as i8) * (hour_seconds + minute_seconds + i32::from(value.second)),
+            i32::from(record.sign as i8)
+                * (hour_seconds + minute_seconds + i32::from(record.second)),
         )
+        .map_err(Into::into)
     }
 }
 
@@ -73,7 +73,7 @@ impl TryFrom<UTCOffsetRecord> for GmtOffset {
 impl CustomTimeZone {
     /// Create a [`CustomTimeZone`] from an IXDTF syntax string.
     ///
-    /// ✨ *Enabled with the `ixdtf` Cargo feature.*
+    /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
     ///
     /// # Examples
     ///
@@ -193,7 +193,7 @@ impl CustomTimeZone {
 
     /// Create a [`CustomTimeZone`] from IXDTF syntax utf8 bytes.
     ///
-    /// ✨ *Enabled with the `ixdtf` Cargo feature.*
+    /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
     ///
     /// See [`Self::try_from_ixdtf_str`].
     #[cfg(feature = "compiled_data")]
@@ -209,19 +209,20 @@ impl CustomTimeZone {
                 offset: Some(offset),
                 tz: None,
                 ..
-            } => Self::try_from(offset),
+            } => Self::try_from_utc_offset_record(offset),
             IxdtfParseRecord {
                 offset: None,
                 tz: Some(time_zone_annotation),
                 ..
-            } => Self::try_from(&time_zone_annotation.tz),
+            } => Self::try_from_time_zone_record(&time_zone_annotation.tz),
             IxdtfParseRecord {
                 offset: Some(offset),
                 tz: Some(time_zone_annotation),
                 ..
             } => {
-                let custom_from_offset = Self::try_from(offset)?;
-                let custom_from_annotation = Self::try_from(&time_zone_annotation.tz)?;
+                let custom_from_offset = Self::try_from_utc_offset_record(offset)?;
+                let custom_from_annotation =
+                    Self::try_from_time_zone_record(&time_zone_annotation.tz)?;
 
                 if custom_from_annotation.gmt_offset.is_some()
                     && custom_from_annotation.gmt_offset != custom_from_offset.gmt_offset
@@ -239,22 +240,16 @@ impl CustomTimeZone {
             _ => Err(ParseError::MissingTimeZone),
         }
     }
-}
 
-impl TryFrom<&UTCOffsetRecord> for CustomTimeZone {
-    type Error = ParseError;
-
-    fn try_from(value: &UTCOffsetRecord) -> Result<Self, Self::Error> {
-        Ok(Self::new_with_offset(GmtOffset::try_from(*value)?))
+    fn try_from_utc_offset_record(record: &UTCOffsetRecord) -> Result<Self, ParseError> {
+        Ok(Self::new_with_offset(
+            GmtOffset::try_from_utc_offset_record(record)?,
+        ))
     }
-}
 
-#[cfg(feature = "compiled_data")]
-impl TryFrom<&TimeZoneRecord<'_>> for CustomTimeZone {
-    type Error = ParseError;
-
-    fn try_from(value: &TimeZoneRecord) -> Result<Self, Self::Error> {
-        match value {
+    #[cfg(feature = "compiled_data")]
+    fn try_from_time_zone_record(record: &TimeZoneRecord<'_>) -> Result<Self, ParseError> {
+        match record {
             TimeZoneRecord::Name(iana_identifier) => {
                 let mapper = TimeZoneIdMapper::new();
                 let bcp47_id = mapper
@@ -263,7 +258,7 @@ impl TryFrom<&TimeZoneRecord<'_>> for CustomTimeZone {
                     .ok_or(ParseError::InvalidIanaIdentifier)?;
                 Ok(Self::new_with_bcp47_id(bcp47_id))
             }
-            TimeZoneRecord::Offset(offset) => Self::try_from(offset),
+            TimeZoneRecord::Offset(offset) => Self::try_from_utc_offset_record(offset),
             _ => Err(ParseError::MissingTimeZone),
         }
     }
@@ -274,7 +269,7 @@ impl TryFrom<&TimeZoneRecord<'_>> for CustomTimeZone {
 impl CustomZonedDateTime<Iso> {
     /// Create a [`CustomZonedDateTime`] in ISO-8601 calendar from an IXDTF syntax string.
     ///
-    /// ✨ *Enabled with the `ixdtf` Cargo feature.*
+    /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
     ///
     /// ```
     /// use icu_timezone::{CustomZonedDateTime, CustomTimeZone, GmtOffset, TimeZoneBcp47Id};
@@ -310,7 +305,7 @@ impl CustomZonedDateTime<Iso> {
 
     /// Create a [`CustomZonedDateTime`] in ISO-8601 calendar from IXDTF syntax utf8 bytes.
     ///
-    /// ✨ *Enabled with the `ixdtf` Cargo feature.*
+    /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
     ///
     /// See [`Self::try_iso_from_ixdtf_str`].
     #[cfg(feature = "compiled_data")]
@@ -343,7 +338,7 @@ impl CustomZonedDateTime<Iso> {
 impl CustomZonedDateTime<AnyCalendar> {
     /// Create a [`CustomZonedDateTime`] in ISO-8601 calendar from an IXDTF syntax string.
     ///
-    /// ✨ *Enabled with the `ixdtf` Cargo feature.*
+    /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
     ///
     /// ```
     /// use icu_timezone::{CustomZonedDateTime, CustomTimeZone, GmtOffset, TimeZoneBcp47Id};
@@ -379,7 +374,7 @@ impl CustomZonedDateTime<AnyCalendar> {
 
     /// Create a [`CustomZonedDateTime`] in any calendar from IXDTF syntax utf8 bytes.
     ///
-    /// ✨ *Enabled with the `ixdtf` Cargo feature.*
+    /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
     ///
     /// See [`Self::try_from_ixdtf_str`].
     #[cfg(feature = "compiled_data")]
@@ -410,7 +405,7 @@ impl CustomZonedDateTime<AnyCalendar> {
 mod test {
     use ixdtf::parsers::IxdtfParser;
 
-    use crate::{GmtOffset, InvalidOffsetError};
+    use crate::{GmtOffset, ParseError};
 
     #[test]
     fn max_possible_ixdtf_utc_offset() {
@@ -418,7 +413,7 @@ mod test {
             IxdtfParser::from_utf8("2024-08-08T12:08:19+23:59:60.999999999".as_bytes())
                 .parse()
                 .unwrap();
-        let result = GmtOffset::try_from(ixdtf_record.offset.unwrap());
-        assert_eq!(result, Err(InvalidOffsetError));
+        let result = GmtOffset::try_from_utc_offset_record(&ixdtf_record.offset.unwrap());
+        assert_eq!(result, Err(ParseError::InvalidOffsetError));
     }
 }
