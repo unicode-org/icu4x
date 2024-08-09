@@ -426,7 +426,7 @@ where
     /// let dt =
     ///     DateTime::try_new_gregorian_datetime(2024, 1, 10, 16, 20, 0).unwrap();
     ///
-    /// assert_try_writeable_eq!(fmt.format(&dt), "miércoles, 4:20 p.m.");
+    /// assert_try_writeable_eq!(fmt.format(&dt), "miércoles, 04:20 p.m.");
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_components(
@@ -983,7 +983,7 @@ where
     ///
     /// assert_try_writeable_eq!(
     ///     fmt.convert_and_format(&dt),
-    ///     "miércoles, 4:20 p.m."
+    ///     "miércoles, 04:20 p.m."
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
