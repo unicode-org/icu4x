@@ -1,9 +1,9 @@
 {
   "index_info": {
-    "has_long": false,
+    "has_long": true,
     "has_medium": false,
     "has_plurals": false,
-    "has_eras": true
+    "has_eras": false
   },
   "patterns": [
     "GGGGy年",

@@ -84,7 +84,10 @@
 
 use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
-    pattern::{runtime::PatternPlurals, PatternItem},
+    pattern::{
+        runtime::{Pattern, PatternPlurals},
+        PatternItem,
+    },
 };
 
 use super::preferences;
@@ -632,7 +635,12 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
             PatternPlurals::SinglePattern(pattern) => pattern,
             PatternPlurals::MultipleVariants(plural_pattern) => &plural_pattern.other,
         };
+        Self::from(pattern)
+    }
+}
 
+impl<'data> From<&Pattern<'data>> for Bag {
+    fn from(pattern: &Pattern) -> Self {
         let mut bag: Bag = Default::default();
 
         // Transform the fields into components per:
@@ -669,7 +677,8 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                             FieldLength::TwoDigit => Year::TwoDigitWeekOf,
                             _ => Year::NumericWeekOf,
                         },
-                        _ => todo!("TODO(#3762): Add support for U and r"),
+                        // TODO(#3762): Add support for U and r
+                        _ => Year::Numeric,
                     });
                 }
                 FieldSymbol::Month(_) => {

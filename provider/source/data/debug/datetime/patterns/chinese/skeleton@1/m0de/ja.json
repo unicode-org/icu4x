@@ -6,7 +6,7 @@
     "has_eras": false
   },
   "patterns": [
-    "MMMMd日EEEE",
+    "MMMd日EEEE",
     "MMMd日(E)",
     "M/d(E)"
   ]

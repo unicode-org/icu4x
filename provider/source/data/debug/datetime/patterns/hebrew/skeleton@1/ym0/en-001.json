@@ -3,12 +3,10 @@
     "has_long": true,
     "has_medium": false,
     "has_plurals": false,
-    "has_eras": true
+    "has_eras": false
   },
   "patterns": [
     "MMMM y",
-    "MMMM y GGG",
-    "MMM y",
-    "MMM y GGG"
+    "MMM y"
   ]
 }
