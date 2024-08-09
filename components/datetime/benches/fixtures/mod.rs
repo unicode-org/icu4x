@@ -58,9 +58,6 @@ pub struct PatternsFixture(pub Vec<String>);
 pub fn get_options(input: &TestOptions) -> Option<DateTimeFormatterOptions> {
     match input {
         TestOptions::Length(bag) => Some((*bag).into()),
-        #[cfg(feature = "experimental")]
-        TestOptions::Components(bag) => Some((*bag).into()),
-        #[cfg(not(feature = "experimental"))]
-        TestOptions::Components(_) => None,
+        TestOptions::Components(_) => todo!(),
     }
 }
