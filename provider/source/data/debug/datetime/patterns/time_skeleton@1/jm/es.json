@@ -6,6 +6,6 @@
     "has_eras": false
   },
   "patterns": [
-    "H:mm"
+    "HH:mm"
   ]
 }
