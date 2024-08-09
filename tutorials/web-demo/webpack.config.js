@@ -6,15 +6,39 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export default {
 	entry: {
 	  index: [
-		'./src/index.mjs',
+		'./src/js/index.mjs',
+		'./src/scss/styles.scss',
 	  ],
 	  rendering: [
-		'./src/runtime.mjs'
+		'./src/js/runtime.mjs'
 	  ]
 	},
 	module: {
 	  rules: [
-		
+		{
+			test: /\.(scss)$/,
+			use: [
+				{
+				loader: 'style-loader',
+				},
+				{
+				loader: 'css-loader'
+				},
+				{
+				loader: 'postcss-loader',
+				options: {
+					postcssOptions: {
+					plugins: () => [
+						require('autoprefixer')
+					]
+					}
+				}
+				},
+				{
+				loader: 'sass-loader'
+				}
+			]
+		}
 	  ]
 	},
 	resolve: {
