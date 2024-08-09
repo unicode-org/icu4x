@@ -17,7 +17,8 @@
                     "fieldSet": ["year", "month", "day", "weekday", "hour", "minute", "second"],
                     "length": "long",
                     "eraDisplay": "always"
-                }
+                },
+                "preferences": { "hourCycle": "h23" }
             }
         },
         "output": {

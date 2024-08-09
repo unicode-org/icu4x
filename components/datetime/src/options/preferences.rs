@@ -39,8 +39,8 @@ use crate::fields;
 use serde::{Deserialize, Serialize};
 
 use icu_locale_core::{
-    extensions::unicode::key,
-    subtags::{subtag, Subtag},
+    extensions::unicode::{key, value, Value},
+    subtags::{subtag, Subtag}, Locale,
 };
 use icu_provider::DataLocale;
 
@@ -97,6 +97,23 @@ impl Bag {
             _ => None,
         };
         Self { hour_cycle }
+    }
+
+    #[doc(hidden)] // internal/temporary
+    pub fn apply_to_locale(&self, locale: &mut Locale) {
+        const H11: Value = value!("h11");
+        const H12: Value = value!("h12");
+        const H23: Value = value!("h23");
+        const H24: Value = value!("h24");
+        if let Some(hour_cycle) = self.hour_cycle {
+            let value = match hour_cycle {
+                HourCycle::H11 => H11,
+                HourCycle::H12 => H12,
+                HourCycle::H23 => H23,
+                HourCycle::H24 => H24,
+            };
+            locale.extensions.unicode.keywords.set(key!("hc"), value);
+        }
     }
 }
 
