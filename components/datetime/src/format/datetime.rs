@@ -4,6 +4,7 @@
 
 use crate::fields::{self, Field, FieldLength, FieldSymbol, Second, Week, Year};
 use crate::input::{DateInput, ExtractedDateTimeInput, ExtractedTimeZoneInput, IsoTimeInput};
+use crate::options::preferences::HourCycle;
 use crate::pattern::runtime::{PatternBorrowed, PatternMetadata};
 use crate::pattern::{
     runtime::{Pattern, PatternPlurals},
@@ -646,9 +647,9 @@ where
             }
             Some(h) => {
                 let h = usize::from(h) as isize;
-                let h = match hour {
-                    fields::Hour::H11 => h % 12,
-                    fields::Hour::H12 => {
+                let h = match (hour, formatting_options.hour_cycle) {
+                    (fields::Hour::H11, None) | (_, Some(HourCycle::H11)) => h % 12,
+                    (fields::Hour::H12, None) | (_, Some(HourCycle::H12)) => {
                         let v = h % 12;
                         if v == 0 {
                             12
@@ -656,8 +657,8 @@ where
                             v
                         }
                     }
-                    fields::Hour::H23 => h,
-                    fields::Hour::H24 => {
+                    (fields::Hour::H23, None) | (_, Some(HourCycle::H23)) => h,
+                    (fields::Hour::H24, None) | (_, Some(HourCycle::H24)) => {
                         if h == 0 {
                             24
                         } else {
