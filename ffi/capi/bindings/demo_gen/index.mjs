@@ -1001,7 +1001,7 @@ export const RenderInfo = {
                 
                 {
                     name: "List",
-                    type: "Array<String>"
+                    type: "Array<string>"
                 }
                 
             ]

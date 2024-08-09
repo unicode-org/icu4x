@@ -19,5 +19,5 @@ export class ListFormatter {
 
     static createUnitWithLength(provider: DataProvider, locale: Locale, length: ListLength): ListFormatter;
 
-    format(list: Array<String>): string;
+    format(list: Array<string>): string;
 }

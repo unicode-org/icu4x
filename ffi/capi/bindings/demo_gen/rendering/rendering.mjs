@@ -81,6 +81,20 @@ class StringTemplate extends ParameterTemplate {
 
 customElements.define("terminus-param-string", StringTemplate);
 
+class StringArrayTemplate extends ParameterTemplate {
+    default = [];
+    static template;
+    constructor() {
+        super(StringArrayTemplate, "template#string-array");
+    }
+
+    getEventValue(event) {
+        return event.target.value.split(",");
+    }
+}
+
+customElements.define("terminus-param-string-array", StringArrayTemplate);
+
 class EnumOption extends HTMLElement {
     static template;
     constructor(optionText) {
@@ -148,6 +162,10 @@ class TerminusParams extends HTMLElement {
                 case "number":
                     newChild = new NumberTemplate();
                     this.#params[i] = 0;
+                    break;
+                case "Array<string>":
+                    newChild = new StringArrayTemplate();
+                    this.#params[i] = [];
                     break;
                 default:
                     if (param.type in library && "values" in library[param.type]) {

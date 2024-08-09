@@ -89,7 +89,7 @@ export class ListFormatter {
 
     format(list) {
         
-        const listSlice = diplomatRuntime.DiplomatBuf.str16(wasm, list);
+        const listSlice = diplomatRuntime.DiplomatBuf.strs(wasm, list, "string16");
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         wasm.icu4x_ListFormatter_format_utf16_mv1(this.ffiValue, listSlice.ptr, listSlice.size, write.buffer);
