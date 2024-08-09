@@ -37,6 +37,7 @@ jobs:
         uses: actions/checkout@v4
         with:
             repository: ambiguousname/diplomat
+            path: diplomat
       - name: Init packages
         run: |
           npm -C main/ffi/npm ci
