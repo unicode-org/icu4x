@@ -358,6 +358,18 @@ macro_rules! impl_neo_skeleton_datagen {
                         if neo_components.has_month() {
                             filtered_components.month = date_bag.month;
                         }
+                        if neo_components.has_month()
+                            && !neo_components.has_year()
+                            && !neo_components.has_day()
+                        {
+                            // standalone month: use the skeleton length
+                            filtered_components.month = match length {
+                                NeoSkeletonLength::Long => Some(components::Month::Long),
+                                NeoSkeletonLength::Medium => Some(components::Month::Short),
+                                NeoSkeletonLength::Short => Some(components::Month::Numeric),
+                                _ => unreachable!(),
+                            };
+                        }
                         if neo_components.has_day() {
                             filtered_components.day = date_bag.day;
                         }
