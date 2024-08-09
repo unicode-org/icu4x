@@ -18,6 +18,10 @@ pub enum LocaleFallbackPriority {
     ///
     /// For example, `"en-US"` should go to `"en"` and then `"und"`.
     Language,
+    /// Prioritize the script.
+    ///
+    /// For example, `"en-US"` should go to `"en"` and then `"und-Latn"` and then `"und"`.
+    Script,
     /// Prioritize the region.
     ///
     /// For example, `"en-US"` should go to `"und-US"` and then `"und"`.
