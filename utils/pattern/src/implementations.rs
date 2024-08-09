@@ -66,7 +66,7 @@ impl<'a> ZeroMapKV<'a> for Pattern<SinglePlaceholder, str> {
 unsafe impl VarULE for Pattern<SinglePlaceholder, str> {
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
         SinglePlaceholderPattern::try_from_utf8_store(bytes)
-            .map_err(|_| ZeroVecError::VarZeroVecFormatError)?;
+            .map_err(|_| ZeroVecError::ZeroVecInternalFormatError)?;
         Ok(())
     }
 

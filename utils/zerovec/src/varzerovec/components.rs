@@ -174,23 +174,23 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
         }
         let len_bytes = slice
             .get(0..LENGTH_WIDTH)
-            .ok_or(ZeroVecError::VarZeroVecFormatError)?;
+            .ok_or(ZeroVecError::ZeroVecInternalFormatError)?;
         let len_ule = RawBytesULE::<LENGTH_WIDTH>::parse_byte_slice(len_bytes)
-            .map_err(|_| ZeroVecError::VarZeroVecFormatError)?;
+            .map_err(|_| ZeroVecError::ZeroVecInternalFormatError)?;
 
         let len = len_ule
             .first()
-            .ok_or(ZeroVecError::VarZeroVecFormatError)?
+            .ok_or(ZeroVecError::ZeroVecInternalFormatError)?
             .as_unsigned_int();
         let indices_bytes = slice
             .get(
                 LENGTH_WIDTH + METADATA_WIDTH
                     ..LENGTH_WIDTH + METADATA_WIDTH + F::INDEX_WIDTH * (len as usize),
             )
-            .ok_or(ZeroVecError::VarZeroVecFormatError)?;
+            .ok_or(ZeroVecError::ZeroVecInternalFormatError)?;
         let things = slice
             .get(F::INDEX_WIDTH * (len as usize) + LENGTH_WIDTH + METADATA_WIDTH..)
-            .ok_or(ZeroVecError::VarZeroVecFormatError)?;
+            .ok_or(ZeroVecError::ZeroVecInternalFormatError)?;
 
         let borrowed = VarZeroVecComponents {
             len,
@@ -321,7 +321,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
         assert_eq!(self.len(), self.indices_slice().len());
         if self.len() == 0 {
             if self.things.len() > 0 {
-                return Err(ZeroVecError::VarZeroVecFormatError);
+                return Err(ZeroVecError::ZeroVecInternalFormatError);
             } else {
                 return Ok(());
             }
@@ -329,7 +329,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
         // Safety: i is in bounds (assertion above)
         let mut start = F::rawbytes_to_usize(unsafe { *self.indices_slice().get_unchecked(0) });
         if start != 0 {
-            return Err(ZeroVecError::VarZeroVecFormatError);
+            return Err(ZeroVecError::ZeroVecInternalFormatError);
         }
         for i in 0..self.len() {
             let end = if i == self.len() - 1 {
@@ -339,10 +339,10 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
                 F::rawbytes_to_usize(unsafe { *self.indices_slice().get_unchecked(i + 1) })
             };
             if start > end {
-                return Err(ZeroVecError::VarZeroVecFormatError);
+                return Err(ZeroVecError::ZeroVecInternalFormatError);
             }
             if end > self.things.len() {
-                return Err(ZeroVecError::VarZeroVecFormatError);
+                return Err(ZeroVecError::ZeroVecInternalFormatError);
             }
             // Safety: start..end is a valid range in self.things
             let bytes = unsafe { self.things.get_unchecked(start..end) };
