@@ -37,7 +37,7 @@ pub struct LongCurrencyFormatter {
 
 impl LongCurrencyFormatter {
     icu_provider::gen_any_buffer_data_constructors!(
-        (locale) -> error: DataError,
+        (locale: &DataLocale, currency_code: &CurrencyCode) -> error: DataError,
         functions: [
             try_new: skip,
             try_new_with_any_provider,
@@ -53,12 +53,23 @@ impl LongCurrencyFormatter {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn try_new(locale: &DataLocale) -> Result<Self, DataError> {
+    pub fn try_new(locale: &DataLocale, currency_code: &CurrencyCode) -> Result<Self, DataError> {
         let fixed_decimal_formatter =
             FixedDecimalFormatter::try_new(locale, FixedDecimalFormatterOptions::default())?;
+
+        let marker_attributes = DataMarkerAttributes::try_from_str(currency_code.0.as_str())
+            .map_err(|_| {
+                DataErrorKind::IdentifierNotFound
+                    .into_error()
+                    .with_debug_context("failed to get data marker attribute from a `CurrencyCode`")
+            })?;
+
         let extended = crate::provider::Baked
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(locale),
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    marker_attributes,
+                    locale,
+                ),
                 ..Default::default()
             })?
             .payload;
@@ -73,7 +84,11 @@ impl LongCurrencyFormatter {
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_unstable<D>(provider: &D, locale: &DataLocale) -> Result<Self, DataError>
+    pub fn try_new_unstable<D>(
+        provider: &D,
+        locale: &DataLocale,
+        currency_code: &CurrencyCode,
+    ) -> Result<Self, DataError>
     where
         D: ?Sized
             + DataProvider<super::super::provider::extended_currency::CurrencyExtendedDataV1Marker>
@@ -85,9 +100,19 @@ impl LongCurrencyFormatter {
             locale,
             FixedDecimalFormatterOptions::default(),
         )?;
+
+        let marker_attributes = DataMarkerAttributes::try_from_str(currency_code.0.as_str())
+            .map_err(|_| {
+                DataErrorKind::IdentifierNotFound
+                    .into_error()
+                    .with_debug_context("failed to get data marker attribute from a `CurrencyCode`")
+            })?;
         let extended = provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(locale),
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    marker_attributes,
+                    locale,
+                ),
                 ..Default::default()
             })?
             .payload;

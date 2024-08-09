@@ -29,8 +29,8 @@ impl<'l> Writeable for LongFormattedCurrency<'l> {
     where
         W: core::fmt::Write + ?Sized,
     {
-        let config = self
-            .essential
+        let display_names = self
+            .essentials
             .pattern_config_map
             .get_copied(&self.currency_code.0.to_unvalidated())
             .unwrap_or(self.essential.default_pattern_config);
