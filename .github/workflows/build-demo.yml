@@ -31,28 +31,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-            path: main
-      - name: Checkout Diplomat
-        uses: actions/checkout@v4
-        with:
-            repository: rust-diplomat/diplomat
-            path: diplomat
       - name: Init packages
         run: |
-          npm -C main/ffi/npm ci
-          npm -C main/tutorials/web-demo ci
+          npm -C ffi/npm ci
+          npm -C tutorials/web-demo ci
         env: 
           PINNED_CI_NIGHTLY: nightly-2024-07-23
       - name: Run Webpack
-        run: npm -C main/tutorials/web-demo run build
+        run: npm -C tutorials/web-demo run build
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           # Upload entire repository
-          path: 'main/tutorials/web-demo/public/'
+          path: 'tutorials/web-demo/public/'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
