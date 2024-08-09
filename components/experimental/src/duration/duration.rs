@@ -62,7 +62,7 @@ impl Duration {
 }
 
 /// Describes whether a [`Duration`] is positive or negative.
-#[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum DurationSign {
     #[default]
     /// A positive duration.
@@ -72,10 +72,10 @@ pub enum DurationSign {
     Negative,
 }
 
-impl DurationSign {
-    pub(crate) fn as_fixed_decimal_sign(&self) -> fixed_decimal::Sign {
-        match self {
-            DurationSign::Positive => fixed_decimal::Sign::Positive,
+impl From<DurationSign> for fixed_decimal::Sign {
+    fn from(sign: DurationSign) -> Self {
+        match sign {
+            DurationSign::Positive => fixed_decimal::Sign::None,
             DurationSign::Negative => fixed_decimal::Sign::Negative,
         }
     }
