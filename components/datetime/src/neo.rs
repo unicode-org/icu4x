@@ -370,13 +370,13 @@ where
     ///
     /// let fmt = TypedNeoFormatter::<Gregorian, _>::try_new_with_components(
     ///     &locale!("es-MX").into(),
-    ///     NeoDateComponents::EraYearMonth,
+    ///     NeoDateComponents::YearMonth,
     ///     NeoSkeletonLength::Medium.into(),
     /// )
     /// .unwrap();
     /// let dt = Date::try_new_gregorian_date(2024, 1, 10).unwrap();
     ///
-    /// assert_try_writeable_eq!(fmt.format(&dt), "ene 2024 d.C.");
+    /// assert_try_writeable_eq!(fmt.format(&dt), "ene 2024");
     /// ```
     ///
     /// Time components:
@@ -928,13 +928,13 @@ where
     ///
     /// let fmt = NeoFormatter::try_new_with_components(
     ///     &locale!("es-MX").into(),
-    ///     NeoDateComponents::EraYearMonth,
+    ///     NeoDateComponents::YearMonth,
     ///     NeoSkeletonLength::Medium.into(),
     /// )
     /// .unwrap();
     /// let dt = Date::try_new_iso_date(2024, 1, 10).unwrap();
     ///
-    /// assert_try_writeable_eq!(fmt.convert_and_format(&dt), "ene 2024 d.C.");
+    /// assert_try_writeable_eq!(fmt.convert_and_format(&dt), "ene 2024");
     /// ```
     ///
     /// Time components:

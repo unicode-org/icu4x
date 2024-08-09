@@ -7,7 +7,7 @@
   },
   "patterns": [
     "d. MMMM",
-    "d. MMM",
+    "d.MM.",
     "d.M."
   ]
 }
