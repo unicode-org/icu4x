@@ -3,10 +3,12 @@
     "has_long": true,
     "has_medium": false,
     "has_plurals": false,
-    "has_eras": false
+    "has_eras": true
   },
   "patterns": [
-    "r(U) MMMM d, EEEE",
+    "EEEE, d-M-r",
+    "EEEE, d-M-r",
+    "E, d-M-r",
     "E, d-M-r"
   ]
 }

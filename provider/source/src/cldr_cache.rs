@@ -118,7 +118,7 @@ impl CldrCache {
     }
 
     fn extended_locale_expander(&self) -> Result<&LocaleExpander, DataError> {
-        use super::locale_canonicalizer::likely_subtags::*;
+        use super::locale::likely_subtags::*;
         self.extended_locale_expander
             .get_or_init(|| {
                 let common_data =

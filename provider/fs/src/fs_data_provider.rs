@@ -85,9 +85,11 @@ impl FsDataProvider {
                 path.push(req.id.marker_attributes.as_str());
             }
         }
-        let mut path = path.into_os_string();
-        write!(&mut path, "/{}", req.id.locale).expect("infallible");
-        let mut path = PathBuf::from(path);
+        if !marker.is_singleton {
+            let mut string_path = path.into_os_string();
+            write!(&mut string_path, "/{}", req.id.locale).expect("infallible");
+            path = PathBuf::from(string_path);
+        }
         path.set_extension(self.manifest.file_extension);
         if !path.exists() {
             return Err(DataErrorKind::IdentifierNotFound.with_req(marker, req));
