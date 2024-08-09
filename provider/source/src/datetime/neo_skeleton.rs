@@ -313,6 +313,9 @@ macro_rules! impl_neo_skeleton_datagen {
                     Either::Left(&value!($calendar)),
                     |id_str| NeoDateComponents::from_id_str(id_str),
                     |length, neo_components, date_lengths_v1| {
+                        // Pull the field lengths from the date length patterns, and then use
+                        // those lengths for classical skeleton datetime pattern generation.
+                        //
                         // TODO: Should this use dateSkeletons?
                         // "full": "yMMMMEEEEd",
                         // "long": "yMMMMd",
