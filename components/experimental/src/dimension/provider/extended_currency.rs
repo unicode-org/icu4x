@@ -9,6 +9,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use icu_plurals::PluralCategory;
 use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 
@@ -88,4 +89,19 @@ pub enum Count {
 
     /// The display name for the currency.
     DisplayName = 8,
+}
+
+
+impl From<PluralCategory> for Count {
+    fn from(other: PluralCategory) -> Self {
+        use PluralCategory::*;
+        match other {
+            Zero => Count::Zero,
+            One => Count::One,
+            Two => Count::Two,
+            Few => Count::Few,
+            Many => Count::Many,
+            Other => Count::Other,
+        }
+    }
 }
