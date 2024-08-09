@@ -150,4 +150,4 @@ pub use types::{GmtOffset, ZoneVariant};
 pub use zoned_datetime::CustomZonedDateTime;
 
 #[cfg(feature = "ixdtf")]
-pub use ixdtf::ParseError;
+pub use crate::ixdtf::ParseError;
