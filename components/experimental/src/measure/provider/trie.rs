@@ -35,7 +35,7 @@ pub use crate::provider::Baked;
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::measure::provider),
+    databake(path = icu_experimental::measure::provider::trie),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct UnitsTrieV1<'data> {
