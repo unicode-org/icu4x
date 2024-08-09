@@ -52,15 +52,32 @@ impl From<InvalidOffsetError> for ParseError {
     }
 }
 
-impl TryFrom<&UTCOffsetRecord> for GmtOffset {
+impl TryFrom<UTCOffsetRecord> for GmtOffset {
     type Error = InvalidOffsetError;
 
-    fn try_from(value: &UTCOffsetRecord) -> Result<Self, Self::Error> {
+    fn try_from(value: UTCOffsetRecord) -> Result<Self, Self::Error> {
         let hour_seconds = i32::from(value.hour) * 3600;
         let minute_seconds = i32::from(value.minute) * 60;
         Self::try_from_offset_seconds(
             i32::from(value.sign as i8) * (hour_seconds + minute_seconds + i32::from(value.second)),
         )
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use ixdtf::parsers::IxdtfParser;
+
+    use crate::{GmtOffset, InvalidOffsetError};
+
+    #[test]
+    fn max_possible_ixdtf_utc_offset() {
+        let ixdtf_record =
+            IxdtfParser::from_utf8("2024-08-08T12:08:19+23:59:60.999999999".as_bytes())
+                .parse()
+                .unwrap();
+        let result = GmtOffset::try_from(ixdtf_record.offset.unwrap());
+        assert_eq!(result, Err(InvalidOffsetError));
     }
 }
 
@@ -240,9 +257,8 @@ impl CustomTimeZone {
 impl TryFrom<&UTCOffsetRecord> for CustomTimeZone {
     type Error = ParseError;
 
-    #[cfg(feature = "compiled_data")]
     fn try_from(value: &UTCOffsetRecord) -> Result<Self, Self::Error> {
-        Ok(Self::new_with_offset(GmtOffset::try_from(value)?))
+        Ok(Self::new_with_offset(GmtOffset::try_from(*value)?))
     }
 }
 
