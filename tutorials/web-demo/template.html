@@ -4,10 +4,12 @@
 		<meta charset="utf-8">
         <script src="/dist/rendering.bundle.js" defer></script>
         <title>Rendering Function</title>
+        <link rel="stylesheet" href="/dist/index.css"/>
     </head>
     <body>
         <div id="render"></div>
         <template id="terminus">
+            <link rel="stylesheet" href="/dist/index.css"/>
             <div>
                 <h1><slot name="func-name"></slot></h1>
                 <slot name="parameters"></slot>
@@ -20,6 +22,7 @@
         </template>
 
         <template id="parameter">
+            <link rel="stylesheet" href="/dist/index.css"/>
             <div>
                 <slot name="param-name"></slot>
                 <slot name="parameter"></slot>
@@ -27,27 +30,32 @@
         </template>
 
         <template id="enum">
+            <link rel="stylesheet" href="/dist/index.css"/>
             <select data-oninput data-options>
                 <!-- Select doesn't evaluate anything other than option nodes, so to allow dropdowns (in addition to other HTML elements), we just search for data-options to append options to.-->
             </select>
         </template>
 
         <template id="enum-option">
+            <link rel="stylesheet" href="/dist/index.css"/>
             <option>
                 <slot name="option-text"></slot>
             </option>
         </template>
 
         <template id="string">
+            <link rel="stylesheet" href="/dist/index.css"/>
             <input type="text" data-oninput/>
         </template>
 
         <template id="number">
+            <link rel="stylesheet" href="/dist/index.css"/>
             <!-- Floats not supported by the example ICU4XFixedDecimal type for whatever reason. -->
             <input type="number" data-oninput/>
         </template>
 
         <template id="boolean">
+            <link rel="stylesheet" href="/dist/index.css"/>
             <input type="checkbox" id="bool" data-oninput/>
         </template>
 	</body>

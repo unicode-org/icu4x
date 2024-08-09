@@ -1,9 +1,13 @@
 import path from "path";
 import { fileURLToPath } from "url";
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default {
+	plugins: [new MiniCssExtractPlugin({
+		filename: "[name].css"
+	})],
 	entry: {
 	  index: [
 		'./src/js/index.mjs',
@@ -18,22 +22,8 @@ export default {
 		{
 			test: /\.(scss)$/,
 			use: [
-				{
-				loader: 'style-loader',
-				},
-				{
-				loader: 'css-loader'
-				},
-				{
-				loader: 'postcss-loader',
-				options: {
-					postcssOptions: {
-					plugins: () => [
-						require('autoprefixer')
-					]
-					}
-				}
-				},
+				MiniCssExtractPlugin.loader,
+				"css-loader",
 				{
 				loader: 'sass-loader'
 				}
