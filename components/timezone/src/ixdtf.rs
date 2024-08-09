@@ -278,7 +278,7 @@ impl CustomTimeZone {
                     .ok_or(ParseError::InvalidIanaIdentifier)?;
 
                 let (year, month, day) =
-                    date.map(|d| (d.year, d.month, d.day)).unwrap_or((0, 0, 0));
+                    date.map(|d| (d.year, d.month, d.day)).unwrap_or((1970, 1, 1));
                 let (hour, minute, second) = time
                     .map(|t| (t.hour, t.minute, t.second))
                     .unwrap_or((0, 0, 0));
