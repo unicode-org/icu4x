@@ -2,15 +2,19 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{CustomTimeZone, CustomZonedDateTime, GmtOffset, InvalidOffsetError, TimeZoneIdMapper};
-use icu_calendar::{AnyCalendar, Date, Iso, RangeError, Time};
+use crate::{CustomTimeZone, CustomZonedDateTime, GmtOffset, InvalidOffsetError};
+use icu_calendar::{AnyCalendar, Iso, RangeError};
 use ixdtf::{
-    parsers::{
-        records::{IxdtfParseRecord, TimeZoneRecord, UTCOffsetRecord},
-        IxdtfParser,
-    },
+    parsers::records::{TimeZoneRecord, UTCOffsetRecord},
     ParseError as IxdtfParseError,
 };
+
+#[cfg(feature = "compiled_data")]
+use icu_calendar::{Date, Time};
+#[cfg(feature = "compiled_data")]
+use crate::TimeZoneIdMapper;
+#[cfg(feature = "compiled_data")]
+use ixdtf::parsers::{IxdtfParser, records::IxdtfParseRecord};
 
 /// The error type for parsing IXDTF syntax strings in `icu_timezone`.
 #[derive(Debug, PartialEq)]
@@ -61,23 +65,6 @@ impl TryFrom<UTCOffsetRecord> for GmtOffset {
         Self::try_from_offset_seconds(
             i32::from(value.sign as i8) * (hour_seconds + minute_seconds + i32::from(value.second)),
         )
-    }
-}
-
-#[cfg(test)]
-mod test {
-    use ixdtf::parsers::IxdtfParser;
-
-    use crate::{GmtOffset, InvalidOffsetError};
-
-    #[test]
-    fn max_possible_ixdtf_utc_offset() {
-        let ixdtf_record =
-            IxdtfParser::from_utf8("2024-08-08T12:08:19+23:59:60.999999999".as_bytes())
-                .parse()
-                .unwrap();
-        let result = GmtOffset::try_from(ixdtf_record.offset.unwrap());
-        assert_eq!(result, Err(InvalidOffsetError));
     }
 }
 
@@ -262,10 +249,10 @@ impl TryFrom<&UTCOffsetRecord> for CustomTimeZone {
     }
 }
 
+#[cfg(feature = "compiled_data")]
 impl TryFrom<&TimeZoneRecord<'_>> for CustomTimeZone {
     type Error = ParseError;
 
-    #[cfg(feature = "compiled_data")]
     fn try_from(value: &TimeZoneRecord) -> Result<Self, Self::Error> {
         match value {
             TimeZoneRecord::Name(iana_identifier) => {
@@ -416,5 +403,22 @@ impl CustomZonedDateTime<AnyCalendar> {
             time: iso_zdt.time,
             zone: iso_zdt.zone,
         })
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use ixdtf::parsers::IxdtfParser;
+
+    use crate::{GmtOffset, InvalidOffsetError};
+
+    #[test]
+    fn max_possible_ixdtf_utc_offset() {
+        let ixdtf_record =
+            IxdtfParser::from_utf8("2024-08-08T12:08:19+23:59:60.999999999".as_bytes())
+                .parse()
+                .unwrap();
+        let result = GmtOffset::try_from(ixdtf_record.offset.unwrap());
+        assert_eq!(result, Err(InvalidOffsetError));
     }
 }
