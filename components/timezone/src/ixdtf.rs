@@ -65,6 +65,7 @@ impl From<InvalidOffsetError> for ParseError {
 }
 
 impl GmtOffset {
+    #[cfg(feature = "compiled_data")]
     fn try_from_utc_offset_record(record: &UTCOffsetRecord) -> Result<Self, ParseError> {
         let hour_seconds = i32::from(record.hour) * 3600;
         let minute_seconds = i32::from(record.minute) * 60;
@@ -255,6 +256,7 @@ impl CustomTimeZone {
         }
     }
 
+    #[cfg(feature = "compiled_data")]
     fn try_from_utc_offset_record(record: &UTCOffsetRecord) -> Result<Self, ParseError> {
         Ok(Self::new_with_offset(
             GmtOffset::try_from_utc_offset_record(record)?,
@@ -277,8 +279,9 @@ impl CustomTimeZone {
                     .iana_bytes_to_bcp47(iana_identifier)
                     .ok_or(ParseError::InvalidIanaIdentifier)?;
 
-                let (year, month, day) =
-                    date.map(|d| (d.year, d.month, d.day)).unwrap_or((1970, 1, 1));
+                let (year, month, day) = date
+                    .map(|d| (d.year, d.month, d.day))
+                    .unwrap_or((1970, 1, 1));
                 let (hour, minute, second) = time
                     .map(|t| (t.hour, t.minute, t.second))
                     .unwrap_or((0, 0, 0));
