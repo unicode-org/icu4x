@@ -9,35 +9,30 @@ use icu_decimal::{options::FixedDecimalFormatterOptions, FixedDecimalFormatter};
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
 
-use super::super::provider::currency::CurrencyEssentialsV1Marker;
-use super::format::FormattedCurrency;
-use super::options::CurrencyFormatterOptions;
-use super::CurrencyCode;
+use crate::dimension::provider::extended_currency::CurrencyExtendedDataV1Marker;
+
+use super::{format::FormattedCurrency, long_format::LongFormattedCurrency, CurrencyCode};
 
 extern crate alloc;
 
 /// A formatter for monetary values.
 ///
-/// [`CurrencyFormatter`] supports:
+/// [`LongCurrencyFormatter`] supports:
 ///   1. Rendering in the locale's currency system.
 ///   2. Locale-sensitive grouping separator positions.
 ///
 /// Read more about the options in the [`super::options`] module.
-pub struct CurrencyFormatter {
-    /// Options bag for the currency formatter to determine the behavior of the formatter.
-    /// for example: currency width.
-    options: CurrencyFormatterOptions,
-
+pub struct LongCurrencyFormatter {
     /// Essential data for the currency formatter.
-    essential: DataPayload<CurrencyEssentialsV1Marker>,
+    extended: DataPayload<CurrencyExtendedDataV1Marker>,
 
     /// A [`FixedDecimalFormatter`] to format the currency value.
     fixed_decimal_formatter: FixedDecimalFormatter,
 }
 
-impl CurrencyFormatter {
+impl LongCurrencyFormatter {
     icu_provider::gen_any_buffer_data_constructors!(
-        (locale, options: super::options::CurrencyFormatterOptions) -> error: DataError,
+        (locale) -> error: DataError,
         functions: [
             try_new: skip,
             try_new_with_any_provider,
@@ -47,7 +42,7 @@ impl CurrencyFormatter {
         ]
     );
 
-    /// Creates a new [`CurrencyFormatter`] from compiled locale data and an options bag.
+    /// Creates a new [`LongCurrencyFormatter`] from compiled locale data.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -55,11 +50,10 @@ impl CurrencyFormatter {
     #[cfg(feature = "compiled_data")]
     pub fn try_new(
         locale: &DataLocale,
-        options: super::options::CurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
         let fixed_decimal_formatter =
             FixedDecimalFormatter::try_new(locale, FixedDecimalFormatterOptions::default())?;
-        let essential = crate::provider::Baked
+        let extended = crate::provider::Baked
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(locale),
                 ..Default::default()
@@ -67,8 +61,7 @@ impl CurrencyFormatter {
             .payload;
 
         Ok(Self {
-            options,
-            essential,
+            extended,
             fixed_decimal_formatter,
         })
     }
@@ -77,11 +70,10 @@ impl CurrencyFormatter {
     pub fn try_new_unstable<D>(
         provider: &D,
         locale: &DataLocale,
-        options: super::options::CurrencyFormatterOptions,
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<super::super::provider::currency::CurrencyEssentialsV1Marker>
+            + DataProvider<super::super::provider::extended_currency::CurrencyExtendedDataV1Marker>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1Marker>,
     {
         let fixed_decimal_formatter = FixedDecimalFormatter::try_new_unstable(
@@ -89,7 +81,7 @@ impl CurrencyFormatter {
             locale,
             FixedDecimalFormatterOptions::default(),
         )?;
-        let essential = provider
+        let extended = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(locale),
                 ..Default::default()
@@ -97,8 +89,7 @@ impl CurrencyFormatter {
             .payload;
 
         Ok(Self {
-            options,
-            essential,
+            extended,
             fixed_decimal_formatter,
         })
     }
@@ -108,14 +99,14 @@ impl CurrencyFormatter {
     /// # Examples
     /// ```
     /// use icu::experimental::dimension::currency::formatter::{
-    ///     CurrencyCode, CurrencyFormatter,
+    ///     CurrencyCode, LongCurrencyFormatter,
     /// };
     /// use icu::locale::locale;
     /// use tinystr::*;
     /// use writeable::Writeable;
     ///
     /// let locale = locale!("en-US").into();
-    /// let fmt = CurrencyFormatter::try_new(&locale, Default::default()).unwrap();
+    /// let fmt = LongCurrencyFormatter::try_new(&locale, Default::default()).unwrap();
     /// let value = "12345.67".parse().unwrap();
     /// let currency_code = CurrencyCode(tinystr!(3, "USD"));
     /// let formatted_currency = fmt.format_fixed_decimal(&value, currency_code);
@@ -127,12 +118,11 @@ impl CurrencyFormatter {
         &'l self,
         value: &'l FixedDecimal,
         currency_code: CurrencyCode,
-    ) -> FormattedCurrency<'l> {
-        FormattedCurrency {
+    ) -> LongFormattedCurrency<'l> {
+        LongFormattedCurrency {
             value,
             currency_code,
-            options: &self.options,
-            essential: self.essential.get(),
+            extended: self.extended.get(),
             fixed_decimal_formatter: &self.fixed_decimal_formatter,
         }
     }

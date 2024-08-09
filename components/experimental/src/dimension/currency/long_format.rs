@@ -7,24 +7,22 @@ use fixed_decimal::FixedDecimal;
 use icu_decimal::FixedDecimalFormatter;
 use writeable::Writeable;
 
-use crate::dimension::currency::options::CurrencyFormatterOptions;
 use crate::dimension::currency::options::Width;
 use crate::dimension::provider::currency;
-use crate::dimension::provider::currency::CurrencyEssentialsV1;
+use crate::dimension::provider::extended_currency::CurrencyExtendedDataV1;
 
 use super::CurrencyCode;
 
-pub struct FormattedCurrency<'l> {
+pub struct LongFormattedCurrency<'l> {
     pub(crate) value: &'l FixedDecimal,
     pub(crate) currency_code: CurrencyCode,
-    pub(crate) options: &'l CurrencyFormatterOptions,
-    pub(crate) essential: &'l CurrencyEssentialsV1<'l>,
+    pub(crate) extended: &'l CurrencyExtendedDataV1<'l>,
     pub(crate) fixed_decimal_formatter: &'l FixedDecimalFormatter,
 }
 
-writeable::impl_display_with_writeable!(FormattedCurrency<'_>);
+writeable::impl_display_with_writeable!(LongFormattedCurrency<'_>);
 
-impl<'l> Writeable for FormattedCurrency<'l> {
+impl<'l> Writeable for LongFormattedCurrency<'l> {
     fn write_to<W>(&self, sink: &mut W) -> core::result::Result<(), core::fmt::Error>
     where
         W: core::fmt::Write + ?Sized,
@@ -79,13 +77,13 @@ mod tests {
     use tinystr::*;
     use writeable::assert_writeable_eq;
 
-    use crate::dimension::currency::formatter::{CurrencyCode, CurrencyFormatter};
+    use crate::dimension::currency::formatter::LongCurrencyFormatter;
 
     #[test]
     pub fn test_en_us() {
         let locale = locale!("en-US").into();
         let currency_code = CurrencyCode(tinystr!(3, "USD"));
-        let fmt = CurrencyFormatter::try_new(&locale, Default::default()).unwrap();
+        let fmt = LongCurrencyFormatter::try_new(&locale, Default::default()).unwrap();
 
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
@@ -102,7 +100,7 @@ mod tests {
     pub fn test_fr_fr() {
         let locale = locale!("fr-FR").into();
         let currency_code = CurrencyCode(tinystr!(3, "EUR"));
-        let fmt = CurrencyFormatter::try_new(&locale, Default::default()).unwrap();
+        let fmt = LongCurrencyFormatter::try_new(&locale, Default::default()).unwrap();
 
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
@@ -119,7 +117,7 @@ mod tests {
     pub fn test_ar_eg() {
         let locale = locale!("ar-EG").into();
         let currency_code = CurrencyCode(tinystr!(3, "EGP"));
-        let fmt = CurrencyFormatter::try_new(&locale, Default::default()).unwrap();
+        let fmt = LongCurrencyFormatter::try_new(&locale, Default::default()).unwrap();
 
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
