@@ -7,11 +7,13 @@
 use fixed_decimal::FixedDecimal;
 use icu_decimal::{options::FixedDecimalFormatterOptions, FixedDecimalFormatter};
 use icu_provider::prelude::*;
-use tinystr::TinyAsciiStr;
 
-use crate::dimension::provider::extended_currency::CurrencyExtendedDataV1Marker;
+use crate::dimension::provider::{
+    currency_patterns::CurrencyPatternsDataV1Marker,
+    extended_currency::CurrencyExtendedDataV1Marker,
+};
 
-use super::{format::FormattedCurrency, long_format::LongFormattedCurrency, CurrencyCode};
+use super::{long_format::LongFormattedCurrency, CurrencyCode};
 
 extern crate alloc;
 
@@ -23,8 +25,11 @@ extern crate alloc;
 ///
 /// Read more about the options in the [`super::options`] module.
 pub struct LongCurrencyFormatter {
-    /// Essential data for the currency formatter.
+    /// Extended data for the currency formatter.
     extended: DataPayload<CurrencyExtendedDataV1Marker>,
+
+    /// Formatting patterns for each currency plural category.
+    patterns: DataPayload<CurrencyPatternsDataV1Marker>,
 
     /// A [`FixedDecimalFormatter`] to format the currency value.
     fixed_decimal_formatter: FixedDecimalFormatter,
@@ -48,9 +53,7 @@ impl LongCurrencyFormatter {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn try_new(
-        locale: &DataLocale,
-    ) -> Result<Self, DataError> {
+    pub fn try_new(locale: &DataLocale) -> Result<Self, DataError> {
         let fixed_decimal_formatter =
             FixedDecimalFormatter::try_new(locale, FixedDecimalFormatterOptions::default())?;
         let extended = crate::provider::Baked
@@ -60,20 +63,21 @@ impl LongCurrencyFormatter {
             })?
             .payload;
 
+        let patterns = crate::provider::Baked.load(Default::default())?.payload;
+
         Ok(Self {
             extended,
+            patterns,
             fixed_decimal_formatter,
         })
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_unstable<D>(
-        provider: &D,
-        locale: &DataLocale,
-    ) -> Result<Self, DataError>
+    pub fn try_new_unstable<D>(provider: &D, locale: &DataLocale) -> Result<Self, DataError>
     where
         D: ?Sized
             + DataProvider<super::super::provider::extended_currency::CurrencyExtendedDataV1Marker>
+            + DataProvider<super::super::provider::currency_patterns::CurrencyPatternsDataV1Marker>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1Marker>,
     {
         let fixed_decimal_formatter = FixedDecimalFormatter::try_new_unstable(
@@ -88,8 +92,11 @@ impl LongCurrencyFormatter {
             })?
             .payload;
 
+        let patterns = provider.load(Default::default())?.payload;
+
         Ok(Self {
             extended,
+            patterns,
             fixed_decimal_formatter,
         })
     }
@@ -123,6 +130,7 @@ impl LongCurrencyFormatter {
             value,
             currency_code,
             extended: self.extended.get(),
+            patterns: self.patterns.get(),
             fixed_decimal_formatter: &self.fixed_decimal_formatter,
         }
     }

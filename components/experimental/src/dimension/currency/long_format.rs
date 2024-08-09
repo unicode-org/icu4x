@@ -9,6 +9,7 @@ use writeable::Writeable;
 
 use crate::dimension::currency::options::Width;
 use crate::dimension::provider::currency;
+use crate::dimension::provider::currency_patterns::CurrencyPatternsDataV1;
 use crate::dimension::provider::extended_currency::CurrencyExtendedDataV1;
 
 use super::CurrencyCode;
@@ -17,6 +18,7 @@ pub struct LongFormattedCurrency<'l> {
     pub(crate) value: &'l FixedDecimal,
     pub(crate) currency_code: CurrencyCode,
     pub(crate) extended: &'l CurrencyExtendedDataV1<'l>,
+    pub(crate) patterns: &'l CurrencyPatternsDataV1<'l>,
     pub(crate) fixed_decimal_formatter: &'l FixedDecimalFormatter,
 }
 
