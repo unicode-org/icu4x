@@ -585,4 +585,12 @@ icu::properties::names::PropertyEnumToValueNameLinearTiny4MapperBorrowed::get#Fn
 icu::properties::names::PropertyEnumToValueNameSparseMapper#Struct
 icu::properties::names::PropertyEnumToValueNameSparseMapperBorrowed#Struct
 icu::properties::names::PropertyEnumToValueNameSparseMapperBorrowed::get#FnInStruct
+icu::timezone::CustomTimeZone::new_with_bcp47_id#FnInStruct
+icu::timezone::CustomTimeZone::try_from_ixdtf_str#FnInStruct
+icu::timezone::CustomTimeZone::try_from_ixdtf_utf8#FnInStruct
 icu::timezone::CustomZonedDateTime#Struct
+icu::timezone::CustomZonedDateTime::try_from_ixdtf_str#FnInStruct
+icu::timezone::CustomZonedDateTime::try_from_ixdtf_utf8#FnInStruct
+icu::timezone::CustomZonedDateTime::try_iso_from_ixdtf_str#FnInStruct
+icu::timezone::CustomZonedDateTime::try_iso_from_ixdtf_utf8#FnInStruct
+icu::timezone::ParseError#Enum

@@ -135,6 +135,9 @@ mod time_zone;
 mod types;
 mod zoned_datetime;
 
+#[cfg(feature = "ixdtf")]
+mod ixdtf;
+
 pub use error::InvalidOffsetError;
 pub use ids::{
     TimeZoneIdMapper, TimeZoneIdMapperBorrowed, TimeZoneIdMapperWithFastCanonicalization,
@@ -145,3 +148,6 @@ pub use provider::{MetazoneId, TimeZoneBcp47Id};
 pub use time_zone::CustomTimeZone;
 pub use types::{GmtOffset, ZoneVariant};
 pub use zoned_datetime::CustomZonedDateTime;
+
+#[cfg(feature = "ixdtf")]
+pub use crate::ixdtf::ParseError;
