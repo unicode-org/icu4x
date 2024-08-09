@@ -36,7 +36,7 @@ jobs:
       - name: Checkout Diplomat
         uses: actions/checkout@v4
         with:
-            repository: ambiguousname/diplomat
+            repository: rust-diplomat/diplomat
             path: diplomat
       - name: Init packages
         run: |
