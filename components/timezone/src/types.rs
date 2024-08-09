@@ -193,14 +193,6 @@ impl FromStr for GmtOffset {
 #[allow(clippy::exhaustive_structs)] // newtype
 pub struct ZoneVariant(pub TinyAsciiStr<2>);
 
-impl FromStr for ZoneVariant {
-    type Err = <TinyAsciiStr<2> as FromStr>::Err;
-
-    fn from_str(input: &str) -> Result<Self, Self::Err> {
-        input.parse().map(ZoneVariant)
-    }
-}
-
 impl ZoneVariant {
     /// Returns the variant corresponding to `"standard"` in CLDR.
     ///
@@ -215,18 +207,6 @@ impl ZoneVariant {
     /// name of this variant may or may not be called "Daylight Time".
     pub const fn daylight() -> Self {
         Self(tinystr!(2, "dt"))
-    }
-}
-
-impl From<TinyAsciiStr<2>> for ZoneVariant {
-    fn from(other: TinyAsciiStr<2>) -> Self {
-        Self(other)
-    }
-}
-
-impl From<ZoneVariant> for TinyAsciiStr<2> {
-    fn from(other: ZoneVariant) -> Self {
-        other.0
     }
 }
 

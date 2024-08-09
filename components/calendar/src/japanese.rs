@@ -1024,7 +1024,7 @@ mod tests {
             4,
             3,
             1,
-            DateError::UnknownEra("hakuho-672".parse().unwrap()),
+            DateError::UnknownEra(Era(tinystr!(16, "hakuho-672"))),
         );
 
         // handle bce/ce

@@ -60,7 +60,7 @@ impl<'l> FormattedTimeZone<'l> {
     /// use icu::datetime::time_zone::TimeZoneFormatter;
     /// use icu::datetime::DateTimeWriteError;
     /// use icu::locale::locale;
-    /// use icu::timezone::CustomTimeZone;
+    /// use icu::timezone::{CustomTimeZone, TimeZoneBcp47Id};
     /// use tinystr::tinystr;
     ///
     /// let mut tzf =
@@ -69,7 +69,7 @@ impl<'l> FormattedTimeZone<'l> {
     /// let mut buf = String::new();
     ///
     /// let mut time_zone = "Z".parse::<CustomTimeZone>().unwrap();
-    /// time_zone.time_zone_id = Some(tinystr!(8, "gblon").into());
+    /// time_zone.time_zone_id = Some(TimeZoneBcp47Id(tinystr!(8, "gblon")));
     ///
     /// // There are no non-fallback formats enabled:
     /// assert!(matches!(
@@ -88,7 +88,7 @@ impl<'l> FormattedTimeZone<'l> {
     ///
     /// // Errors still occur if the time zone is not supported:
     /// buf.clear();
-    /// time_zone.time_zone_id = Some(tinystr!(8, "zzzzz").into());
+    /// time_zone.time_zone_id = Some(TimeZoneBcp47Id(tinystr!(8, "zzzzz")));
     /// assert!(matches!(
     ///     tzf.format(&time_zone).write_no_fallback(&mut buf),
     ///     Ok(Err(DateTimeWriteError::MissingTimeZoneSymbol(_)))

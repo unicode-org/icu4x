@@ -481,7 +481,7 @@ mod tests {
                 MonthCode::new_normal(m).unwrap()
             };
             let hebrew_date =
-                Date::try_new_from_codes(tinystr!(16, "am").into(), y, month_code, d, Hebrew)
+                Date::try_new_from_codes(Era(tinystr!(16, "am")), y, month_code, d, Hebrew)
                     .expect("Date should parse");
 
             let iso_to_hebrew = iso_date.to_calendar(Hebrew);
@@ -544,8 +544,8 @@ mod tests {
     fn test_weekdays() {
         // https://github.com/unicode-org/icu4x/issues/4893
         let cal = Hebrew::new();
-        let era = "am".parse::<Era>().unwrap();
-        let month_code = "M01".parse::<MonthCode>().unwrap();
+        let era = Era(tinystr!(16, "am"));
+        let month_code = MonthCode(tinystr!(4, "M01"));
         let dt = cal.date_from_codes(era, 3760, month_code, 1).unwrap();
 
         // Should be Saturday per:
