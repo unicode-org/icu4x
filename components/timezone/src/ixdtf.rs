@@ -363,7 +363,7 @@ impl CustomZonedDateTime<Iso> {
 }
 
 impl CustomZonedDateTime<AnyCalendar> {
-    /// Create a [`CustomZonedDateTime`] in ISO-8601 calendar from an IXDTF syntax string.
+    /// Create a [`CustomZonedDateTime`] in any calendar from an IXDTF syntax string.
     ///
     /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
     ///
