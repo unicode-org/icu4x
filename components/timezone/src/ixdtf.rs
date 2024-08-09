@@ -4,17 +4,17 @@
 
 use crate::{CustomTimeZone, CustomZonedDateTime, GmtOffset, InvalidOffsetError};
 use icu_calendar::{AnyCalendar, Iso, RangeError};
-use ixdtf::{
-    parsers::records::{TimeZoneRecord, UTCOffsetRecord},
-    ParseError as IxdtfParseError,
-};
+use ixdtf::{parsers::records::UTCOffsetRecord, ParseError as IxdtfParseError};
 
 #[cfg(feature = "compiled_data")]
 use crate::TimeZoneIdMapper;
 #[cfg(feature = "compiled_data")]
 use icu_calendar::{Date, Time};
 #[cfg(feature = "compiled_data")]
-use ixdtf::parsers::{records::IxdtfParseRecord, IxdtfParser};
+use ixdtf::parsers::{
+    records::{IxdtfParseRecord, TimeZoneRecord},
+    IxdtfParser,
+};
 
 /// The error type for parsing IXDTF syntax strings in `icu_timezone`.
 #[derive(Debug, PartialEq)]
