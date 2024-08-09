@@ -135,7 +135,7 @@ mod time_zone;
 mod types;
 mod zoned_datetime;
 
-#[cfg(feature = "ixdtf")]
+#[cfg(all(feature = "ixdtf", feature = "compiled_data"))]
 mod ixdtf;
 
 pub use error::InvalidOffsetError;
@@ -149,5 +149,5 @@ pub use time_zone::CustomTimeZone;
 pub use types::{GmtOffset, ZoneVariant};
 pub use zoned_datetime::CustomZonedDateTime;
 
-#[cfg(feature = "ixdtf")]
+#[cfg(all(feature = "ixdtf", feature = "compiled_data"))]
 pub use crate::ixdtf::ParseError;

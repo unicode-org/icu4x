@@ -2,18 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{CustomTimeZone, CustomZonedDateTime, GmtOffset, InvalidOffsetError};
-use icu_calendar::{AnyCalendar, DateError, Iso, RangeError};
-use ixdtf::{parsers::records::UTCOffsetRecord, ParseError as IxdtfParseError};
-
-#[cfg(feature = "compiled_data")]
-use crate::{MetazoneCalculator, TimeZoneIdMapper};
-#[cfg(feature = "compiled_data")]
-use icu_calendar::{Date, Time};
-#[cfg(feature = "compiled_data")]
-use ixdtf::parsers::{
-    records::{DateRecord, IxdtfParseRecord, TimeRecord, TimeZoneRecord},
-    IxdtfParser,
+use crate::{
+    CustomTimeZone, CustomZonedDateTime, GmtOffset, InvalidOffsetError, MetazoneCalculator,
+    TimeZoneIdMapper,
+};
+use icu_calendar::{AnyCalendar, Date, DateError, DateTime, Iso, RangeError, Time};
+use ixdtf::{
+    parsers::{
+        records::{DateRecord, IxdtfParseRecord, TimeRecord, TimeZoneRecord, UTCOffsetRecord},
+        IxdtfParser,
+    },
+    ParseError as IxdtfParseError,
 };
 
 /// The error type for parsing IXDTF syntax strings in `icu_timezone`.
@@ -65,7 +64,6 @@ impl From<InvalidOffsetError> for ParseError {
 }
 
 impl GmtOffset {
-    #[cfg(feature = "compiled_data")]
     fn try_from_utc_offset_record(record: &UTCOffsetRecord) -> Result<Self, ParseError> {
         let hour_seconds = i32::from(record.hour) * 3600;
         let minute_seconds = i32::from(record.minute) * 60;
@@ -197,7 +195,6 @@ impl CustomTimeZone {
     ///
     /// ```
     ///
-    #[cfg(feature = "compiled_data")]
     pub fn try_from_ixdtf_str(ixdtf_str: &str) -> Result<Self, ParseError> {
         Self::try_from_ixdtf_utf8(ixdtf_str.as_bytes())
     }
@@ -207,13 +204,11 @@ impl CustomTimeZone {
     /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
     ///
     /// See [`Self::try_from_ixdtf_str`].
-    #[cfg(feature = "compiled_data")]
     pub fn try_from_ixdtf_utf8(ixdtf_str: &[u8]) -> Result<Self, ParseError> {
         let ixdtf_record = IxdtfParser::from_utf8(ixdtf_str).parse()?;
         Self::try_from_ixdtf_record(&ixdtf_record)
     }
 
-    #[cfg(feature = "compiled_data")]
     fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, ParseError> {
         match ixdtf_record {
             IxdtfParseRecord {
@@ -256,21 +251,17 @@ impl CustomTimeZone {
         }
     }
 
-    #[cfg(feature = "compiled_data")]
     fn try_from_utc_offset_record(record: &UTCOffsetRecord) -> Result<Self, ParseError> {
         Ok(Self::new_with_offset(
             GmtOffset::try_from_utc_offset_record(record)?,
         ))
     }
 
-    #[cfg(feature = "compiled_data")]
     fn try_from_time_zone_record(
         record: &TimeZoneRecord<'_>,
         date: &Option<DateRecord>,
         time: &Option<TimeRecord>,
     ) -> Result<Self, ParseError> {
-        use icu_calendar::DateTime;
-
         match record {
             TimeZoneRecord::Name(iana_identifier) => {
                 let mapper = TimeZoneIdMapper::new();
@@ -279,19 +270,21 @@ impl CustomTimeZone {
                     .iana_bytes_to_bcp47(iana_identifier)
                     .ok_or(ParseError::InvalidIanaIdentifier)?;
 
-                let (year, month, day) = date
-                    .map(|d| (d.year, d.month, d.day))
-                    .unwrap_or((1970, 1, 1));
-                let (hour, minute, second) = time
-                    .map(|t| (t.hour, t.minute, t.second))
-                    .unwrap_or((0, 0, 0));
-
                 let mut tz = Self::new_with_bcp47_id(bcp47_id);
-                let _ = tz.maybe_calculate_metazone(
-                    &MetazoneCalculator::new(),
-                    &DateTime::<Iso>::try_new_iso_datetime(year, month, day, hour, minute, second)?,
-                );
 
+                if let (Some(date), Some(time)) = (date, time) {
+                    let _ = tz.maybe_calculate_metazone(
+                        &MetazoneCalculator::new(),
+                        &DateTime::<Iso>::try_new_iso_datetime(
+                            date.year,
+                            date.month,
+                            date.day,
+                            time.hour,
+                            time.minute,
+                            time.second,
+                        )?,
+                    );
+                };
                 Ok(tz)
             }
             TimeZoneRecord::Offset(offset) => Self::try_from_utc_offset_record(offset),
@@ -335,7 +328,6 @@ impl CustomZonedDateTime<Iso> {
     /// ```
     ///
     /// For more information on time zone parsing, see [`CustomTimeZone::try_from_ixdtf_str`].
-    #[cfg(feature = "compiled_data")]
     pub fn try_iso_from_ixdtf_str(ixdtf_str: &str) -> Result<Self, ParseError> {
         Self::try_iso_from_ixdtf_utf8(ixdtf_str.as_bytes())
     }
@@ -345,13 +337,11 @@ impl CustomZonedDateTime<Iso> {
     /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
     ///
     /// See [`Self::try_iso_from_ixdtf_str`].
-    #[cfg(feature = "compiled_data")]
     pub fn try_iso_from_ixdtf_utf8(ixdtf_str: &[u8]) -> Result<Self, ParseError> {
         let ixdtf_record = IxdtfParser::from_utf8(ixdtf_str).parse()?;
         Self::try_iso_from_ixdtf_record(&ixdtf_record)
     }
 
-    #[cfg(feature = "compiled_data")]
     fn try_iso_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, ParseError> {
         let date_record = ixdtf_record.date.ok_or(ParseError::MissingFields)?;
         let date = Date::try_new_iso_date(date_record.year, date_record.month, date_record.day)?;
@@ -405,7 +395,6 @@ impl CustomZonedDateTime<AnyCalendar> {
     /// ```
     ///
     /// For more information on time zone parsing, see [`CustomTimeZone::try_from_ixdtf_str`].
-    #[cfg(feature = "compiled_data")]
     pub fn try_from_ixdtf_str(ixdtf_str: &str) -> Result<Self, ParseError> {
         Self::try_from_ixdtf_utf8(ixdtf_str.as_bytes())
     }
@@ -415,13 +404,11 @@ impl CustomZonedDateTime<AnyCalendar> {
     /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
     ///
     /// See [`Self::try_from_ixdtf_str`].
-    #[cfg(feature = "compiled_data")]
     pub fn try_from_ixdtf_utf8(ixdtf_str: &[u8]) -> Result<Self, ParseError> {
         let ixdtf_record = IxdtfParser::from_utf8(ixdtf_str).parse()?;
         Self::try_from_ixdtf_record(&ixdtf_record)
     }
 
-    #[cfg(feature = "compiled_data")]
     fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, ParseError> {
         let iso_zdt = CustomZonedDateTime::<Iso>::try_iso_from_ixdtf_record(ixdtf_record)?;
 
