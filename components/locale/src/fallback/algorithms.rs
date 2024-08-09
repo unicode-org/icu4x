@@ -48,9 +48,7 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
                         .get_copied(&language.into_tinystr().to_unvalidated())
                         .map(|(s, _r)| s)
                 });
-            if locale.script == *default_script
-                && self.config.priority != LocaleFallbackPriority::Script
-            {
+            if locale.script == *default_script {
                 locale.script = None;
             }
         }
@@ -310,8 +308,7 @@ mod tests {
             requires_data: true,
             expected_language_chain: &["en-u-sd-usca", "en"],
             expected_script_chain: &[
-                "en-Latn-u-sd-usca",
-                "en-Latn",
+                "en-u-sd-usca",
                 "en",
                 "und-Latn-u-sd-usca",
                 "und-Latn",
@@ -324,10 +321,6 @@ mod tests {
             requires_data: true,
             expected_language_chain: &["en-US-u-sd-usca", "en-US", "en-u-sd-usca", "en"],
             expected_script_chain: &[
-                "en-Latn-US-u-sd-usca",
-                "en-Latn-US",
-                "en-Latn-u-sd-usca",
-                "en-Latn",
                 "en-US-u-sd-usca",
                 "en-US",
                 "en-u-sd-usca",
@@ -349,7 +342,7 @@ mod tests {
             input: "sr-Latn-ME",
             requires_data: true,
             expected_language_chain: &["sr-ME", "sr-Latn-ME", "sr-Latn"],
-            expected_script_chain: &["sr-Latn-ME", "sr-Latn", "sr-ME", "sr", "und-Latn"],
+            expected_script_chain: &["sr-ME", "sr", "und-Latn"],
             expected_region_chain: &["sr-ME", "und-ME"],
         },
         TestCase {
@@ -385,7 +378,7 @@ mod tests {
             input: "sr-Cyrl-RS",
             requires_data: true,
             expected_language_chain: &["sr-RS", "sr"],
-            expected_script_chain: &["sr-Cyrl-RS", "sr-Cyrl", "sr-RS", "sr", "und-Cyrl"],
+            expected_script_chain: &["sr-RS", "sr", "und-Cyrl"],
             expected_region_chain: &["sr-RS", "und-RS"],
         },
         TestCase {
@@ -399,7 +392,7 @@ mod tests {
             input: "de-Latn-LI",
             requires_data: true,
             expected_language_chain: &["de-LI", "de"],
-            expected_script_chain: &["de-Latn-LI", "de-Latn", "de-LI", "de", "und-Latn"],
+            expected_script_chain: &["de-LI", "de", "und-Latn"],
             expected_region_chain: &["de-LI", "und-LI"],
         },
         TestCase {
@@ -473,7 +466,7 @@ mod tests {
             input: "az-Arab-IR",
             requires_data: true,
             expected_language_chain: &["az-IR", "az-Arab-IR", "az-Arab"],
-            expected_script_chain: &["az-Arab-IR", "az-Arab", "az-IR", "az", "und-Arab"],
+            expected_script_chain: &["az-IR", "az", "und-Arab"],
             expected_region_chain: &["az-IR", "und-IR"],
         },
         TestCase {
