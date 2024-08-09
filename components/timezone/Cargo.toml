@@ -37,9 +37,9 @@ icu_timezone_data = { workspace = true, optional = true }
 icu = { path = "../../components/icu", default-features = false }
 
 [features]
-default = ["compiled_data"]
+default = ["compiled_data", "ixdtf"]
 ixdtf = ["dep:ixdtf"]
 std = ["icu_calendar/std", "icu_provider/std"]
 serde = ["dep:serde", "zerovec/serde", "zerotrie/serde", "tinystr/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "zerotrie/databake", "tinystr/databake"]
-compiled_data = ["dep:icu_timezone_data"]
+compiled_data = ["dep:icu_timezone_data", "icu_calendar/compiled_data"]
