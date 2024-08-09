@@ -10,11 +10,11 @@ use ixdtf::{
 };
 
 #[cfg(feature = "compiled_data")]
-use icu_calendar::{Date, Time};
-#[cfg(feature = "compiled_data")]
 use crate::TimeZoneIdMapper;
 #[cfg(feature = "compiled_data")]
-use ixdtf::parsers::{IxdtfParser, records::IxdtfParseRecord};
+use icu_calendar::{Date, Time};
+#[cfg(feature = "compiled_data")]
+use ixdtf::parsers::{records::IxdtfParseRecord, IxdtfParser};
 
 /// The error type for parsing IXDTF syntax strings in `icu_timezone`.
 #[derive(Debug, PartialEq)]
