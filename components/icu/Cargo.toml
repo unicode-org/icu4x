@@ -4,7 +4,7 @@
 
 [package]
 name = "icu"
-description = "International Components for Unicode"
+description = "ICU4X: International Components for Unicode, written in Rust"
 
 authors.workspace = true
 categories.workspace = true
