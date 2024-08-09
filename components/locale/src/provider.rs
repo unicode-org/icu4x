@@ -334,11 +334,7 @@ pub struct LikelySubtagsExtendedV1<'data> {
 }
 
 /// Locale fallback rules derived from CLDR parent locales data.
-#[icu_provider::data_struct(marker(
-    ParentsV1Marker,
-    "locale/parents@1",
-    singleton
-))]
+#[icu_provider::data_struct(marker(ParentsV1Marker, "locale/parents@1", singleton))]
 #[derive(Default, Clone, PartialEq, Debug)]
 #[cfg_attr(
     feature = "datagen",
@@ -354,11 +350,7 @@ pub struct ParentsV1<'data> {
     pub parents: ZeroMap<'data, UnvalidatedStr, (Language, Option<Script>, Option<Region>)>,
 }
 
-#[icu_provider::data_struct(marker(
-    ScriptDirectionV1Marker,
-    "locale/script_dir@1",
-    singleton
-))]
+#[icu_provider::data_struct(marker(ScriptDirectionV1Marker, "locale/script_dir@1", singleton))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
     feature = "datagen",

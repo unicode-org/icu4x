@@ -131,9 +131,7 @@ impl LocaleFallbacker {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
-        P: DataProvider<LikelySubtagsForLanguageV1Marker>
-            + DataProvider<ParentsV1Marker>
-            + ?Sized,
+        P: DataProvider<LikelySubtagsForLanguageV1Marker> + DataProvider<ParentsV1Marker> + ?Sized,
     {
         let likely_subtags = provider.load(Default::default())?.payload;
         let parents = provider.load(Default::default())?.payload;

@@ -16,10 +16,7 @@ use writeable::Writeable;
 use zerovec::ule::UnvalidatedStr;
 
 impl DataProvider<ParentsV1Marker> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<ParentsV1Marker>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<ParentsV1Marker>, DataError> {
         self.check_req::<ParentsV1Marker>(req)?;
         let parents_data: &cldr_serde::parent_locales::Resource = self
             .cldr()?
@@ -71,8 +68,7 @@ fn test_basic() {
 
     let provider = SourceDataProvider::new_testing();
 
-    let parents: DataResponse<ParentsV1Marker> =
-        provider.load(Default::default()).unwrap();
+    let parents: DataResponse<ParentsV1Marker> = provider.load(Default::default()).unwrap();
 
     assert_eq!(
         parents
