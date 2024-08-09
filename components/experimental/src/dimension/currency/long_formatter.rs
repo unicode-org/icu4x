@@ -82,7 +82,6 @@ impl LongCurrencyFormatter {
 
         let plural_rules = PluralRules::try_new_cardinal(locale)?;
 
-
         Ok(Self {
             extended,
             patterns,
@@ -129,7 +128,6 @@ impl LongCurrencyFormatter {
         let patterns = provider.load(Default::default())?.payload;
 
         let plural_rules = PluralRules::try_new_cardinal_unstable(provider, locale)?;
-
 
         Ok(Self {
             extended,

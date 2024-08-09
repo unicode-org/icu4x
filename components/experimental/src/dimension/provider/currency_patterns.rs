@@ -9,6 +9,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use icu_plurals::PluralCategory;
 use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 
@@ -51,4 +52,18 @@ pub enum PatternCount {
     Many = 4,
     /// UnitPattern `other`.
     Other = 5,
+}
+
+impl From<PluralCategory> for PatternCount {
+    fn from(other: PluralCategory) -> Self {
+        use PluralCategory::*;
+        match other {
+            Zero => PatternCount::Zero,
+            One => PatternCount::One,
+            Two => PatternCount::Two,
+            Few => PatternCount::Few,
+            Many => PatternCount::Many,
+            Other => PatternCount::Other,
+        }
+    }
 }

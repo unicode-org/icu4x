@@ -91,7 +91,6 @@ pub enum Count {
     DisplayName = 8,
 }
 
-
 impl From<PluralCategory> for Count {
     fn from(other: PluralCategory) -> Self {
         use PluralCategory::*;

@@ -7,7 +7,6 @@
 use fixed_decimal::FixedDecimal;
 use icu_decimal::{options::FixedDecimalFormatterOptions, FixedDecimalFormatter};
 use icu_provider::prelude::*;
-use tinystr::TinyAsciiStr;
 
 use super::super::provider::currency::CurrencyEssentialsV1Marker;
 use super::format::FormattedCurrency;

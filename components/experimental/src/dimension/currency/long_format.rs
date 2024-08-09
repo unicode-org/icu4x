@@ -2,14 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use core::str::FromStr;
+
 use fixed_decimal::FixedDecimal;
 
 use icu_decimal::FixedDecimalFormatter;
+use icu_pattern::DoublePlaceholderPattern;
 use icu_plurals::PluralRules;
 use writeable::Writeable;
 
-use crate::dimension::provider::currency_patterns::CurrencyPatternsDataV1;
-use crate::dimension::provider::extended_currency::CurrencyExtendedDataV1;
+use crate::dimension::provider::currency_patterns::{CurrencyPatternsDataV1, PatternCount};
+use crate::dimension::provider::extended_currency::{Count, CurrencyExtendedDataV1};
 
 use super::CurrencyCode;
 
@@ -30,17 +33,31 @@ impl<'l> Writeable for LongFormattedCurrency<'l> {
         W: core::fmt::Write + ?Sized,
     {
         let plural_category = self.plural_rules.category_for(self.value);
+        let count = Count::from(plural_category);
+        let pattern_count = PatternCount::from(plural_category);
 
-        let display_names = &self
-            .extended
-            .display_names;
+        let display_names = &self.extended.display_names;
 
-        
+        let display_name = display_names
+            .get(&count)
+            .or_else(|| display_names.get(&Count::Other))
+            // TOOD: check the cases of using `Count::DisplayName`
+            .unwrap_or_else(|| self.currency_code.0.as_str());
+
+        let patterns = &self.patterns.unit_patterns;
+        let pattern = patterns
+            .get(&pattern_count)
+            .or_else(|| patterns.get(&PatternCount::Other))
+            .ok_or(core::fmt::Error)?;
+
+        // Parse the pattern string into a DoublePlaceholderPattern
+        // The pattern is expected to be in the form of "{0} {1}"
+        let pattern = DoublePlaceholderPattern::from_str(pattern).map_err(|_| core::fmt::Error)?;
 
         pattern
             .interpolate((
                 self.fixed_decimal_formatter.format(self.value),
-                currency_sign_value,
+                display_name,
             ))
             .write_to(sink)?;
 
@@ -55,13 +72,13 @@ mod tests {
     use tinystr::*;
     use writeable::assert_writeable_eq;
 
-    use crate::dimension::currency::formatter::LongCurrencyFormatter;
+    use crate::dimension::currency::{long_formatter::LongCurrencyFormatter, CurrencyCode};
 
     #[test]
     pub fn test_en_us() {
         let locale = locale!("en-US").into();
         let currency_code = CurrencyCode(tinystr!(3, "USD"));
-        let fmt = LongCurrencyFormatter::try_new(&locale, Default::default()).unwrap();
+        let fmt = LongCurrencyFormatter::try_new(&locale, &currency_code).unwrap();
 
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
@@ -78,7 +95,7 @@ mod tests {
     pub fn test_fr_fr() {
         let locale = locale!("fr-FR").into();
         let currency_code = CurrencyCode(tinystr!(3, "EUR"));
-        let fmt = LongCurrencyFormatter::try_new(&locale, Default::default()).unwrap();
+        let fmt = LongCurrencyFormatter::try_new(&locale, &currency_code).unwrap();
 
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
@@ -95,7 +112,7 @@ mod tests {
     pub fn test_ar_eg() {
         let locale = locale!("ar-EG").into();
         let currency_code = CurrencyCode(tinystr!(3, "EGP"));
-        let fmt = LongCurrencyFormatter::try_new(&locale, Default::default()).unwrap();
+        let fmt = LongCurrencyFormatter::try_new(&locale, &currency_code).unwrap();
 
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
