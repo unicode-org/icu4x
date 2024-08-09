@@ -4,6 +4,7 @@
 
 #[cfg(feature = "experimental")]
 use crate::neo_skeleton::FractionalSecondDigits;
+use crate::options::preferences::HourCycle;
 
 pub mod datetime;
 #[cfg(feature = "experimental")]
@@ -14,6 +15,7 @@ pub mod zoned_datetime;
 /// Internal non-pattern runtime options passed to the formatter
 #[derive(Debug, Copy, Clone, Default)]
 pub(crate) struct FormattingOptions {
+    pub(crate) hour_cycle: Option<HourCycle>,
     #[cfg(feature = "experimental")]
     pub(crate) fractional_second_digits: Option<FractionalSecondDigits>,
     #[cfg(not(feature = "experimental"))]
