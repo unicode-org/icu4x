@@ -16,3 +16,6 @@ rustdoc-types = "0.22"
 serde_json = { workspace = true }
 syn-inline-mod = "0.6.0"
 
+[build-dependencies]
+basic-toml = "0.1"
+serde = { version = "1", features = ["derive"] }
