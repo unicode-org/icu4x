@@ -91,8 +91,7 @@ pub mod ffi {
                 .0
                 .format(
                     list.iter()
-                        .copied()
-                        .map(crate::utf::PotentiallyInvalidUtf8)
+                        .map(|a| crate::utf::PotentiallyInvalidUtf8(a))
                         .map(crate::utf::LossyWrap),
                 )
                 .write_to(write);
@@ -108,8 +107,7 @@ pub mod ffi {
                 .0
                 .format(
                     list.iter()
-                        .copied()
-                        .map(crate::utf::PotentiallyInvalidUtf16)
+                        .map(|a| crate::utf::PotentiallyInvalidUtf16(a))
                         .map(crate::utf::LossyWrap),
                 )
                 .write_to(write);
