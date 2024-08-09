@@ -137,25 +137,24 @@ impl LongCurrencyFormatter {
         })
     }
 
-    /// Formats a [`FixedDecimal`] value for the given currency code.
+    /// Formats in the long format a [`FixedDecimal`] value for the given currency code.
     ///
     /// # Examples
     /// ```
-    /// use icu::experimental::dimension::currency::formatter::{
-    ///     CurrencyCode, LongCurrencyFormatter,
-    /// };
+    /// use icu::experimental::dimension::currency::long_formatter::LongCurrencyFormatter;
+    /// use icu::experimental::dimension::currency::CurrencyCode;
     /// use icu::locale::locale;
     /// use tinystr::*;
     /// use writeable::Writeable;
     ///
     /// let locale = locale!("en-US").into();
-    /// let fmt = LongCurrencyFormatter::try_new(&locale, Default::default()).unwrap();
-    /// let value = "12345.67".parse().unwrap();
     /// let currency_code = CurrencyCode(tinystr!(3, "USD"));
+    /// let fmt = LongCurrencyFormatter::try_new(&locale, &currency_code).unwrap();
+    /// let value = "12345.67".parse().unwrap();
     /// let formatted_currency = fmt.format_fixed_decimal(&value, currency_code);
     /// let mut sink = String::new();
     /// formatted_currency.write_to(&mut sink).unwrap();
-    /// assert_eq!(sink.as_str(), "$12,345.67");
+    /// assert_eq!(sink.as_str(), "12,345.67 US dollars");
     /// ```
     pub fn format_fixed_decimal<'l>(
         &'l self,

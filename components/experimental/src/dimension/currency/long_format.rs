@@ -83,12 +83,12 @@ mod tests {
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
         let formatted_currency = fmt.format_fixed_decimal(&positive_value, currency_code);
-        assert_writeable_eq!(formatted_currency, "$12,345.67");
+        assert_writeable_eq!(formatted_currency, "12,345.67 US dollars");
 
         // Negative case
         let negative_value = "-12345.67".parse().unwrap();
         let formatted_currency = fmt.format_fixed_decimal(&negative_value, currency_code);
-        assert_writeable_eq!(formatted_currency, "$-12,345.67");
+        assert_writeable_eq!(formatted_currency, "-12,345.67 US dollars");
     }
 
     #[test]
@@ -100,12 +100,12 @@ mod tests {
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
         let formatted_currency = fmt.format_fixed_decimal(&positive_value, currency_code);
-        assert_writeable_eq!(formatted_currency, "12\u{202f}345,67\u{a0}€");
+        assert_writeable_eq!(formatted_currency, "12\u{202f}345,67 euros");
 
         // Negative case
         let negative_value = "-12345.67".parse().unwrap();
         let formatted_currency = fmt.format_fixed_decimal(&negative_value, currency_code);
-        assert_writeable_eq!(formatted_currency, "-12\u{202f}345,67\u{a0}€");
+        assert_writeable_eq!(formatted_currency, "-12\u{202f}345,67 euros");
     }
 
     #[test]
@@ -117,14 +117,11 @@ mod tests {
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
         let formatted_currency = fmt.format_fixed_decimal(&positive_value, currency_code);
-        assert_writeable_eq!(formatted_currency, "\u{200f}١٢٬٣٤٥٫٦٧\u{a0}ج.م.\u{200f}");
+        assert_writeable_eq!(formatted_currency, "١٢٬٣٤٥٫٦٧ جنيه مصري");
 
         // Negative case
         let negative_value = "-12345.67".parse().unwrap();
         let formatted_currency = fmt.format_fixed_decimal(&negative_value, currency_code);
-        assert_writeable_eq!(
-            formatted_currency,
-            "\u{200f}\u{61c}-١٢٬٣٤٥٫٦٧\u{a0}ج.م.\u{200f}"
-        );
+        assert_writeable_eq!(formatted_currency, "\u{61c}-١٢٬٣٤٥٫٦٧ جنيه مصري");
     }
 }
