@@ -6,7 +6,7 @@
     "has_eras": false
   },
   "patterns": [
-    "LLLL y г. GGGG",
+    "LLLL y г. GGG",
     "LLL y г. GGG"
   ]
 }
