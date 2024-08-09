@@ -72,6 +72,14 @@ pub mod marker_attrs {
     pub const PATTERN_SHORT_DT: &DataMarkerAttributes =
         DataMarkerAttributes::from_str_or_panic("sdt");
 
+    // Note: "E" stands for "Weekday"
+    pub const PATTERN_LONG_ET: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("let");
+    pub const PATTERN_MEDIUM_ET: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("met");
+    pub const PATTERN_SHORT_ET: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("set");
+
     pub const PATTERN_LONG_DZ: &DataMarkerAttributes =
         DataMarkerAttributes::from_str_or_panic("ldz");
     pub const PATTERN_MEDIUM_DZ: &DataMarkerAttributes =
@@ -118,6 +126,10 @@ pub mod marker_attrs {
     pub const PATTERN_LONG_DT_STR: &str = PATTERN_LONG_DT.as_str();
     pub const PATTERN_MEDIUM_DT_STR: &str = PATTERN_MEDIUM_DT.as_str();
     pub const PATTERN_SHORT_DT_STR: &str = PATTERN_SHORT_DT.as_str();
+
+    pub const PATTERN_LONG_ET_STR: &str = PATTERN_LONG_ET.as_str();
+    pub const PATTERN_MEDIUM_ET_STR: &str = PATTERN_MEDIUM_ET.as_str();
+    pub const PATTERN_SHORT_ET_STR: &str = PATTERN_SHORT_ET.as_str();
 
     pub const PATTERN_LONG_DZ_STR: &str = PATTERN_LONG_DZ.as_str();
     pub const PATTERN_MEDIUM_DZ_STR: &str = PATTERN_MEDIUM_DZ.as_str();
@@ -202,6 +214,7 @@ pub mod marker_attrs {
     #[allow(clippy::exhaustive_enums)] // documented as unstable
     pub enum GlueType {
         DateTime,
+        WeekdayTime,
         DateZone,
         TimeZone,
         DateTimeZone,
@@ -247,6 +260,10 @@ pub mod marker_attrs {
             PATTERN_LONG_DT_STR => Some((Long, DateTime)),
             PATTERN_MEDIUM_DT_STR => Some((Medium, DateTime)),
             PATTERN_SHORT_DT_STR => Some((Short, DateTime)),
+
+            PATTERN_LONG_ET_STR => Some((Long, WeekdayTime)),
+            PATTERN_MEDIUM_ET_STR => Some((Medium, WeekdayTime)),
+            PATTERN_SHORT_ET_STR => Some((Short, WeekdayTime)),
 
             PATTERN_LONG_DZ_STR => Some((Long, DateZone)),
             PATTERN_MEDIUM_DZ_STR => Some((Medium, DateZone)),
@@ -296,6 +313,10 @@ pub mod marker_attrs {
             (Long, DateTime) => PATTERN_LONG_DT,
             (Medium, DateTime) => PATTERN_MEDIUM_DT,
             (Short, DateTime) => PATTERN_SHORT_DT,
+
+            (Long, WeekdayTime) => PATTERN_LONG_ET,
+            (Medium, WeekdayTime) => PATTERN_MEDIUM_ET,
+            (Short, WeekdayTime) => PATTERN_SHORT_ET,
 
             (Long, DateZone) => PATTERN_LONG_DZ,
             (Medium, DateZone) => PATTERN_MEDIUM_DZ,

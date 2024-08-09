@@ -15,6 +15,7 @@ use icu::locale::extensions::unicode::{value, Value};
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
 use std::borrow::Cow;
+use std::collections::BTreeSet;
 use std::collections::{BTreeMap, HashSet};
 use tinystr::TinyAsciiStr;
 
@@ -62,6 +63,9 @@ const GLUE_PATTERN_KEY_LENGTHS: &[&DataMarkerAttributes] = &[
     marker_attrs::PATTERN_LONG_DT,
     marker_attrs::PATTERN_MEDIUM_DT,
     marker_attrs::PATTERN_SHORT_DT,
+    marker_attrs::PATTERN_LONG_ET,
+    marker_attrs::PATTERN_MEDIUM_ET,
+    marker_attrs::PATTERN_SHORT_ET,
     marker_attrs::PATTERN_LONG_DZ,
     marker_attrs::PATTERN_MEDIUM_DZ,
     marker_attrs::PATTERN_SHORT_DZ,
@@ -594,6 +598,75 @@ fn datetimepattern_convert(
     let mut pattern_anchor = None;
     let pattern = match glue_type {
         GlueType::DateTime => data.datetime_formats.get_pattern(length).get_pattern(),
+        GlueType::WeekdayTime => {
+            // This is custom logic in ICU4X in order to represent classical skeletons that
+            // overlap between date and time. As of this writing, the only such skeletons are
+            // between weekday and time. We therefore special-case these with a glue pattern.
+            let glue_patterns = [
+                ("EBhm", "Bhm"),
+                ("EBhms", "Bhms"),
+                ("Ehm", "hm"),
+                ("EHm", "Hm"),
+                ("Ehms", "hms"),
+                ("EHms", "Hms"),
+            ]
+            .into_iter()
+            .filter_map(|(weekday_time_skeleton, time_skeleton)| {
+                let Some(weekday_time_pattern) = data
+                    .datetime_formats
+                    .available_formats
+                    .0
+                    .get(weekday_time_skeleton)
+                else {
+                    return None;
+                };
+                let Some(weekday_pattern) = data.datetime_formats.available_formats.0.get("E")
+                else {
+                    log::warn!(
+                        "weekday pattern missing: {:?}",
+                        data.datetime_formats.available_formats
+                    );
+                    return None;
+                };
+                let Some(time_pattern) =
+                    data.datetime_formats.available_formats.0.get(time_skeleton)
+                else {
+                    log::warn!(
+                        "time pattern missing: {:?}",
+                        data.datetime_formats.available_formats
+                    );
+                    return None;
+                };
+                let mut glue_pattern = weekday_time_pattern.clone();
+                glue_pattern = glue_pattern.replace(time_pattern, "{0}");
+                glue_pattern = glue_pattern.replace(weekday_pattern, "{1}");
+                // TODO: This might be wrong
+                if weekday_pattern == "E" {
+                    glue_pattern = glue_pattern.replace("ccc", "{1}");
+                }
+                if weekday_pattern == "ccc" {
+                    glue_pattern = glue_pattern.replace("E", "{1}");
+                }
+                Some(glue_pattern)
+            })
+            .collect::<BTreeSet<_>>();
+            if glue_patterns.len() != 1 {
+                log::warn!(
+                    "glue pattern calculation error: {:?} {:?}",
+                    glue_patterns,
+                    data.datetime_formats.available_formats
+                );
+            }
+            pattern_anchor
+                .insert(
+                    glue_patterns
+                        .iter()
+                        .next()
+                        .unwrap_or_else(|| data.datetime_formats.get_pattern(length).get_pattern())
+                        .clone(),
+                )
+                .as_str()
+        }
         GlueType::DateZone => {
             // TODO: Use proper appendItem here
             "{1} {2}"

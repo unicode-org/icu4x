@@ -6,11 +6,11 @@ use crate::format::neo::FieldForDataLoading;
 use crate::format::FormattingOptions;
 use crate::input::ExtractedDateTimeInput;
 use crate::neo_pattern::DateTimePattern;
-use crate::neo_skeleton::FractionalSecondDigits;
 use crate::neo_skeleton::{
     EraDisplay, NeoComponents, NeoDateComponents, NeoDateSkeleton, NeoSkeletonLength,
     NeoTimeComponents, NeoTimeSkeleton, NeoTimeZoneSkeleton,
 };
+use crate::neo_skeleton::{FractionalSecondDigits, NeoDayComponents};
 use crate::options::preferences::HourCycle;
 use crate::pattern::runtime::PatternMetadata;
 use crate::pattern::{runtime, GenericPatternItem, PatternItem};
@@ -508,7 +508,11 @@ impl DateTimeZonePatternSelectionData {
                     fractional_second_digits,
                     hour_cycle,
                 )?;
-                let glue = Self::load_glue(glue_provider, locale, length, GlueType::DateTime)?;
+                let glue_type = match day_components {
+                    NeoDayComponents::Weekday => GlueType::WeekdayTime,
+                    _ => GlueType::DateTime,
+                };
+                let glue = Self::load_glue(glue_provider, locale, length, glue_type)?;
                 Ok(Self::DateTimeGlue { date, time, glue })
             }
             NeoComponents::DateZone(date_components, zone_components) => {
