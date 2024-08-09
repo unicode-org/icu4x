@@ -35,7 +35,7 @@ use writeable::Writeable;
 ///
 /// Any bogus subtags will cause the parsing to fail with an error.
 ///
-/// No subtag validation or alias resolution is performed.
+/// No subtag validation or alias resolution is performed; use `LocaleCanonicalizer`.
 ///
 /// # Ordering
 ///
