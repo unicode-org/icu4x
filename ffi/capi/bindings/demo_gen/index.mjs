@@ -19,10 +19,6 @@ import * as TimeFormatterDemo from "./TimeFormatter.mjs";
 export * as TimeFormatterDemo from "./TimeFormatter.mjs";
 import * as FixedDecimalFormatterDemo from "./FixedDecimalFormatter.mjs";
 export * as FixedDecimalFormatterDemo from "./FixedDecimalFormatter.mjs";
-import * as LocaleDisplayNamesFormatterDemo from "./LocaleDisplayNamesFormatter.mjs";
-export * as LocaleDisplayNamesFormatterDemo from "./LocaleDisplayNamesFormatter.mjs";
-import * as RegionDisplayNamesDemo from "./RegionDisplayNames.mjs";
-export * as RegionDisplayNamesDemo from "./RegionDisplayNames.mjs";
 import * as FixedDecimalDemo from "./FixedDecimal.mjs";
 export * as FixedDecimalDemo from "./FixedDecimal.mjs";
 import * as ListFormatterDemo from "./ListFormatter.mjs";
@@ -963,59 +959,6 @@ export const RenderInfo = {
                 {
                     name: "Magnitude",
                     type: "number"
-                }
-                
-            ]
-        },
-        
-        "LocaleDisplayNamesFormatter.of": {
-            func: LocaleDisplayNamesFormatterDemo.of,
-            // For avoiding webpacking minifying issues:
-            funcName: "LocaleDisplayNamesFormatter.of",
-            parameters: [
-                
-                {
-                    name: "Name",
-                    type: "string"
-                },
-                
-                {
-                    name: "Style",
-                    type: "DisplayNamesStyle"
-                },
-                
-                {
-                    name: "Fallback",
-                    type: "DisplayNamesFallback"
-                },
-                
-                {
-                    name: "LanguageDisplay",
-                    type: "LanguageDisplay"
-                },
-                
-                {
-                    name: "Name",
-                    type: "string"
-                }
-                
-            ]
-        },
-        
-        "RegionDisplayNames.of": {
-            func: RegionDisplayNamesDemo.of,
-            // For avoiding webpacking minifying issues:
-            funcName: "RegionDisplayNames.of",
-            parameters: [
-                
-                {
-                    name: "Name",
-                    type: "string"
-                },
-                
-                {
-                    name: "Region",
-                    type: "string"
                 }
                 
             ]
