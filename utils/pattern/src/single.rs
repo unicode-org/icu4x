@@ -177,8 +177,15 @@ impl PatternBackend for SinglePlaceholder {
     type Iter<'a> = SinglePlaceholderPatternIterator<'a>;
 
     #[inline]
-    fn try_store_from_utf8(utf8: &[u8]) -> Result<&Self::Store, Self::StoreFromBytesError> {
-        core::str::from_utf8(utf8)
+    fn validate_store_bytes(bytes: &[u8]) -> Result<(), Self::StoreFromBytesError> {
+        core::str::from_utf8(bytes).map(|_| ())
+    }
+
+    #[inline]
+    unsafe fn store_from_bytes(bytes: &[u8]) -> &Self::Store {
+        // The invariant of this function is that `bytes` is valid
+        // according to `validate_store_bytes`
+        core::str::from_utf8_unchecked(bytes)
     }
 
     fn validate_store(store: &Self::Store) -> Result<(), Error> {

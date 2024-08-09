@@ -78,20 +78,29 @@ mod tests {
     use super::*;
     use crate::SinglePlaceholderPattern;
 
+    #[derive(Debug, PartialEq, Deserialize, Serialize)]
+    struct TestDerive<'a> {
+        #[serde(borrow)]
+        pub pattern_cow: SinglePlaceholderPattern<Cow<'a, str>>,
+    }
+
     #[test]
     fn test_json() {
         let pattern_owned = SinglePlaceholderPattern::from_str("Hello, {0}!").unwrap();
         let pattern_cow: SinglePlaceholderPattern<Cow<str>> =
             SinglePlaceholderPattern::from_store_unchecked(Cow::Owned(pattern_owned.take_store()));
-        let pattern_json = serde_json::to_string(&pattern_cow).unwrap();
+        let pattern_obj = TestDerive { pattern_cow };
+        let pattern_json = serde_json::to_string(&pattern_obj).unwrap();
         assert_eq!(
             pattern_json,
-            r#"[{"Literal":"Hello, "},{"Placeholder":"Singleton"},{"Literal":"!"}]"#
+            r#"{"pattern_cow":[{"Literal":"Hello, "},{"Placeholder":"Singleton"},{"Literal":"!"}]}"#
         );
-        let pattern_deserialized: SinglePlaceholderPattern<Cow<str>> =
-            serde_json::from_str(&pattern_json).unwrap();
-        assert_eq!(pattern_cow, pattern_deserialized);
-        assert!(matches!(pattern_deserialized.take_store(), Cow::Owned(_)));
+        let pattern_deserialized: TestDerive = serde_json::from_str(&pattern_json).unwrap();
+        assert_eq!(pattern_obj, pattern_deserialized);
+        assert!(matches!(
+            pattern_deserialized.pattern_cow.take_store(),
+            Cow::Owned(_)
+        ));
     }
 
     #[test]
@@ -99,13 +108,13 @@ mod tests {
         let pattern_owned = SinglePlaceholderPattern::from_str("Hello, {0}!").unwrap();
         let pattern_cow: SinglePlaceholderPattern<Cow<str>> =
             SinglePlaceholderPattern::from_store_unchecked(Cow::Owned(pattern_owned.take_store()));
-        let pattern_postcard = postcard::to_stdvec(&pattern_cow).unwrap();
+        let pattern_obj = TestDerive { pattern_cow };
+        let pattern_postcard = postcard::to_stdvec(&pattern_obj).unwrap();
         assert_eq!(pattern_postcard, b"\x09\x08Hello, !");
-        let pattern_deserialized: SinglePlaceholderPattern<Cow<str>> =
-            postcard::from_bytes(&pattern_postcard).unwrap();
-        assert_eq!(pattern_cow, pattern_deserialized);
+        let pattern_deserialized: TestDerive = postcard::from_bytes(&pattern_postcard).unwrap();
+        assert_eq!(pattern_obj, pattern_deserialized);
         assert!(matches!(
-            pattern_deserialized.take_store(),
+            pattern_deserialized.pattern_cow.take_store(),
             Cow::Borrowed(_)
         ));
     }
@@ -115,13 +124,13 @@ mod tests {
         let pattern_owned = SinglePlaceholderPattern::from_str("Hello, {0}!").unwrap();
         let pattern_cow: SinglePlaceholderPattern<Cow<str>> =
             SinglePlaceholderPattern::from_store_unchecked(Cow::Owned(pattern_owned.take_store()));
-        let pattern_rmp = rmp_serde::to_vec(&pattern_cow).unwrap();
-        assert_eq!(pattern_rmp, b"\xA9\x08Hello, !");
-        let pattern_deserialized: SinglePlaceholderPattern<Cow<str>> =
-            rmp_serde::from_slice(&pattern_rmp).unwrap();
-        assert_eq!(pattern_cow, pattern_deserialized);
+        let pattern_obj = TestDerive { pattern_cow };
+        let pattern_rmp = rmp_serde::to_vec(&pattern_obj).unwrap();
+        assert_eq!(pattern_rmp, b"\x91\xA9\x08Hello, !");
+        let pattern_deserialized: TestDerive = rmp_serde::from_slice(&pattern_rmp).unwrap();
+        assert_eq!(pattern_obj, pattern_deserialized);
         assert!(matches!(
-            pattern_deserialized.take_store(),
+            pattern_deserialized.pattern_cow.take_store(),
             Cow::Borrowed(_)
         ));
     }
