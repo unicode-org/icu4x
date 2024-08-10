@@ -49,6 +49,9 @@ impl FromStr for LocaleCategory {
     }
 }
 
+// TODO: Add a function to return all the locales POSIX categories explicitly
+
+/// Retrieves locale for `LC_ALL` POSIX category. Returns other categories unless explicitly set in the thread
 pub fn get_locales() -> Result<HashMap<LocaleCategory, String>, RetrievalError> {
     let mut locale_map = HashMap::new();
 
