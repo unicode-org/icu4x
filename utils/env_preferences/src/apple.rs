@@ -59,12 +59,12 @@ fn get_string(ptr: CFStringRef) -> Result<String, RetrievalError> {
     }
 }
 
-/// Retrieves system locales for Apple operating systems, in the order preferred by the 
+/// Retrieves system locales for Apple operating systems, in the order preferred by the
 /// user, it consumes [`CFLocaleCopyPreferredLanguages`](https://developer.apple.com/documentation/corefoundation/1542887-cflocalecopypreferredlanguages)
 /// to copy the languages prefered by the user.
-/// 
+///
 /// ### Example
-/// 
+///
 /// ```rust
 /// use env_preferences::get_locales;
 /// let locales: Vec<String> = get_locales().unwrap();
@@ -107,9 +107,9 @@ pub fn get_locales() -> Result<Vec<String>, RetrievalError> {
 
 /// Gets the list calendar type and it's corresponding locale. It returns a Vec<(String, String)>
 /// The first element is the locale of the calendar, second is the calendar identifier
-/// 
+///
 /// ### Example
-/// 
+///
 /// ```rust
 /// use env_preferences::get_system_calendars;
 /// let system_calendars = get_system_calendars().unwrap();
@@ -170,7 +170,7 @@ pub fn get_system_calendars() -> Result<Vec<(String, String)>, RetrievalError> {
 }
 
 /// Get the current time zone of the system
-/// ### Example 
+/// ### Example
 /// ```rust
 /// use env_preferences::get_system_timezone;
 /// let time_zone = get_system_timezone().unwrap();

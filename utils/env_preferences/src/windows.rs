@@ -7,9 +7,9 @@ use windows::{Globalization, System::UserProfile::GlobalizationPreferences};
 use crate::RetrievalError;
 
 /// Retrieves languages preffered by the user , it consumes [`GlobalizationPreferences::Languages`](https://learn.microsoft.com/en-us/uwp/api/windows.system.userprofile.globalizationpreferences.languages?view=winrt-26100)
-/// 
-/// ### Example 
-/// 
+///
+/// ### Example
+///
 /// ```rust
 /// use env_preferences::get_locales;
 /// let locales: Vec<String> = get_locales().unwrap();
@@ -28,9 +28,9 @@ pub fn get_locales() -> Result<Vec<String>, RetrievalError> {
 
 /// Gets the list calendar type and it's corresponding locale. It returns a Vec<(String, String)>
 /// The first element is the locale of the calendar, second is the calendar identifier
-/// 
+///
 /// ### Example
-/// 
+///
 /// ```rust
 /// use env_preferences::get_system_calendars;
 /// let system_calendars = get_system_calendars().unwrap();
@@ -54,7 +54,7 @@ pub fn get_system_calendars() -> Result<Vec<(String, String)>, RetrievalError> {
 }
 
 /// Get the current time zone of the system
-/// ### Example 
+/// ### Example
 /// ```rust
 /// use env_preferences::get_system_timezone;
 /// let time_zone = get_system_timezone().unwrap();
