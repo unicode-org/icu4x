@@ -1,0 +1,41 @@
+{
+  "day_periods": {
+    "format": {
+      "abbreviated": {
+        "am": "ap.",
+        "pm": "ip.",
+        "noon": "keskip.",
+        "midnight": "keskiyöllä"
+      },
+      "narrow": {
+        "am": "ap.",
+        "pm": "ip.",
+        "noon": "kp.",
+        "midnight": "ky."
+      },
+      "short": null,
+      "wide": {
+        "am": "ap.",
+        "pm": "ip.",
+        "noon": "keskipäivällä",
+        "midnight": "keskiyöllä"
+      }
+    },
+    "stand_alone": {
+      "abbreviated": {
+        "am": "ap.",
+        "pm": "ip.",
+        "noon": "keskip.",
+        "midnight": "keskiyö"
+      },
+      "narrow": null,
+      "short": null,
+      "wide": {
+        "am": "ap.",
+        "pm": "ip.",
+        "noon": "keskipäivä",
+        "midnight": "keskiyö"
+      }
+    }
+  }
+}

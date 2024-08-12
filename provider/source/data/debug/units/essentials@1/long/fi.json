@@ -1,0 +1,234 @@
+{
+  "prefixes": [
+    [
+      {
+        "Binary": 1
+      },
+      "kibi{0}"
+    ],
+    [
+      {
+        "Binary": 2
+      },
+      "mebi{0}"
+    ],
+    [
+      {
+        "Binary": 3
+      },
+      "gibi{0}"
+    ],
+    [
+      {
+        "Binary": 4
+      },
+      "tebi{0}"
+    ],
+    [
+      {
+        "Binary": 5
+      },
+      "pebi{0}"
+    ],
+    [
+      {
+        "Binary": 6
+      },
+      "eksbi{0}"
+    ],
+    [
+      {
+        "Binary": 7
+      },
+      "tsebi{0}"
+    ],
+    [
+      {
+        "Binary": 8
+      },
+      "jobi{0}"
+    ],
+    [
+      {
+        "Decimal": -30
+      },
+      "kvekto{0}"
+    ],
+    [
+      {
+        "Decimal": -27
+      },
+      "ronto{0}"
+    ],
+    [
+      {
+        "Decimal": -24
+      },
+      "jokto{0}"
+    ],
+    [
+      {
+        "Decimal": -21
+      },
+      "tsepto{0}"
+    ],
+    [
+      {
+        "Decimal": -18
+      },
+      "atto{0}"
+    ],
+    [
+      {
+        "Decimal": -15
+      },
+      "femto{0}"
+    ],
+    [
+      {
+        "Decimal": -12
+      },
+      "piko{0}"
+    ],
+    [
+      {
+        "Decimal": -9
+      },
+      "nano{0}"
+    ],
+    [
+      {
+        "Decimal": -6
+      },
+      "mikro{0}"
+    ],
+    [
+      {
+        "Decimal": -3
+      },
+      "milli{0}"
+    ],
+    [
+      {
+        "Decimal": -2
+      },
+      "sentti{0}"
+    ],
+    [
+      {
+        "Decimal": -1
+      },
+      "desi{0}"
+    ],
+    [
+      {
+        "Decimal": 1
+      },
+      "deka{0}"
+    ],
+    [
+      {
+        "Decimal": 2
+      },
+      "hehto{0}"
+    ],
+    [
+      {
+        "Decimal": 3
+      },
+      "kilo{0}"
+    ],
+    [
+      {
+        "Decimal": 6
+      },
+      "mega{0}"
+    ],
+    [
+      {
+        "Decimal": 9
+      },
+      "giga{0}"
+    ],
+    [
+      {
+        "Decimal": 12
+      },
+      "tera{0}"
+    ],
+    [
+      {
+        "Decimal": 15
+      },
+      "peta{0}"
+    ],
+    [
+      {
+        "Decimal": 18
+      },
+      "eksa{0}"
+    ],
+    [
+      {
+        "Decimal": 21
+      },
+      "tsetta{0}"
+    ],
+    [
+      {
+        "Decimal": 24
+      },
+      "jotta{0}"
+    ],
+    [
+      {
+        "Decimal": 27
+      },
+      "ronna{0}"
+    ],
+    [
+      {
+        "Decimal": 30
+      },
+      "kvetta{0}"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Two",
+          "count": "One"
+        }
+      },
+      "neliö{0}"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Two",
+          "count": "Other"
+        }
+      },
+      "neliö{0}"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Three",
+          "count": "One"
+        }
+      },
+      "kuutio{0}"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Three",
+          "count": "Other"
+        }
+      },
+      "kuutio{0}"
+    ]
+  ],
+  "per": "{0}/{1}",
+  "times": "{0}⋅{1}"
+}

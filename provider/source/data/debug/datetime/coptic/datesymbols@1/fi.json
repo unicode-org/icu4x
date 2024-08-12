@@ -1,0 +1,164 @@
+{
+  "months": {
+    "format": {
+      "abbreviated": {
+        "Other": {
+          "M01": "thoutkuuta",
+          "M02": "paopikuuta",
+          "M03": "hathorkuuta",
+          "M04": "koiakkuuta",
+          "M05": "tobikuuta",
+          "M06": "meshirkuuta",
+          "M07": "paremhatkuuta",
+          "M08": "paremoudekuuta",
+          "M09": "pashonskuuta",
+          "M10": "paonikuuta",
+          "M11": "epipkuuta",
+          "M12": "mesorikuuta",
+          "M13": "pi-kogi-enavotkuuta"
+        }
+      },
+      "narrow": {
+        "Other": {
+          "M01": "1",
+          "M02": "2",
+          "M03": "3",
+          "M04": "4",
+          "M05": "5",
+          "M06": "6",
+          "M07": "7",
+          "M08": "8",
+          "M09": "9",
+          "M10": "10",
+          "M11": "11",
+          "M12": "12",
+          "M13": "13"
+        }
+      },
+      "short": null,
+      "wide": {
+        "Other": {
+          "M01": "thoutkuuta",
+          "M02": "paopikuuta",
+          "M03": "hathorkuuta",
+          "M04": "koiakkuuta",
+          "M05": "tobikuuta",
+          "M06": "meshirkuuta",
+          "M07": "paremhatkuuta",
+          "M08": "paremoudekuuta",
+          "M09": "pashonskuuta",
+          "M10": "paonikuuta",
+          "M11": "epipkuuta",
+          "M12": "mesorikuuta",
+          "M13": "pi-kogi-enavotkuuta"
+        }
+      }
+    },
+    "stand_alone": {
+      "abbreviated": {
+        "Other": {
+          "M01": "thout",
+          "M02": "paopi",
+          "M03": "hathor",
+          "M04": "koiak",
+          "M05": "toba",
+          "M06": "meshir",
+          "M07": "paremhat",
+          "M08": "paremoude",
+          "M09": "pashons",
+          "M10": "paoni",
+          "M11": "epip",
+          "M12": "mesori",
+          "M13": "pi kogi enavot"
+        }
+      },
+      "narrow": null,
+      "short": null,
+      "wide": {
+        "Other": {
+          "M01": "thoutkuu",
+          "M02": "paopikuu",
+          "M03": "hathorkuu",
+          "M04": "koiakkuu",
+          "M05": "tobikuu",
+          "M06": "meshirkuu",
+          "M07": "paremhatkuu",
+          "M08": "paremoudekuu",
+          "M09": "pashonskuu",
+          "M10": "paonikuu",
+          "M11": "epipkuu",
+          "M12": "mesorikuu",
+          "M13": "pi-kogi-enavotkuu"
+        }
+      }
+    }
+  },
+  "weekdays": {
+    "format": {
+      "abbreviated": [
+        "su",
+        "ma",
+        "ti",
+        "ke",
+        "to",
+        "pe",
+        "la"
+      ],
+      "narrow": [
+        "S",
+        "M",
+        "T",
+        "K",
+        "T",
+        "P",
+        "L"
+      ],
+      "short": [
+        "su",
+        "ma",
+        "ti",
+        "ke",
+        "to",
+        "pe",
+        "la"
+      ],
+      "wide": [
+        "sunnuntaina",
+        "maanantaina",
+        "tiistaina",
+        "keskiviikkona",
+        "torstaina",
+        "perjantaina",
+        "lauantaina"
+      ]
+    },
+    "stand_alone": {
+      "abbreviated": null,
+      "narrow": null,
+      "short": null,
+      "wide": [
+        "sunnuntai",
+        "maanantai",
+        "tiistai",
+        "keskiviikko",
+        "torstai",
+        "perjantai",
+        "lauantai"
+      ]
+    }
+  },
+  "eras": {
+    "names": {
+      "ad": "ERA1",
+      "bd": "ERA0"
+    },
+    "abbr": {
+      "ad": "ERA1",
+      "bd": "ERA0"
+    },
+    "narrow": {
+      "ad": "ERA1",
+      "bd": "ERA0"
+    }
+  }
+}

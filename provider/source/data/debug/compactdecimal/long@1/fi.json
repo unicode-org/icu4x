@@ -1,0 +1,80 @@
+{
+  "patterns": {
+    "3": {
+      "One": {
+        "exponent": 3,
+        "index": 0,
+        "literal_text": " tuhat"
+      },
+      "Other": {
+        "exponent": 3,
+        "index": 0,
+        "literal_text": " tuhatta"
+      }
+    },
+    "4": {
+      "Other": {
+        "exponent": 3,
+        "index": 0,
+        "literal_text": " tuhatta"
+      }
+    },
+    "6": {
+      "One": {
+        "exponent": 6,
+        "index": 0,
+        "literal_text": " miljoona"
+      },
+      "Other": {
+        "exponent": 6,
+        "index": 0,
+        "literal_text": " miljoonaa"
+      }
+    },
+    "7": {
+      "Other": {
+        "exponent": 6,
+        "index": 0,
+        "literal_text": " miljoonaa"
+      }
+    },
+    "9": {
+      "One": {
+        "exponent": 9,
+        "index": 0,
+        "literal_text": " miljardi"
+      },
+      "Other": {
+        "exponent": 9,
+        "index": 0,
+        "literal_text": " miljardia"
+      }
+    },
+    "10": {
+      "Other": {
+        "exponent": 9,
+        "index": 0,
+        "literal_text": " miljardia"
+      }
+    },
+    "12": {
+      "One": {
+        "exponent": 12,
+        "index": 0,
+        "literal_text": " biljoona"
+      },
+      "Other": {
+        "exponent": 12,
+        "index": 0,
+        "literal_text": " biljoonaa"
+      }
+    },
+    "13": {
+      "Other": {
+        "exponent": 12,
+        "index": 0,
+        "literal_text": " biljoonaa"
+      }
+    }
+  }
+}

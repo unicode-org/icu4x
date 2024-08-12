@@ -1,0 +1,156 @@
+{
+  "months": {
+    "format": {
+      "abbreviated": {
+        "SolarTwelve": [
+          "chaitrakuuta",
+          "vaisakhakuuta",
+          "jyaisthakuuta",
+          "asadhakuuta",
+          "sravanakuuta",
+          "bhadrakuuta",
+          "asvinakuuta",
+          "kartikakuuta",
+          "agrahayanakuuta",
+          "pausakuuta",
+          "maghakuuta",
+          "phalgunakuuta"
+        ]
+      },
+      "narrow": {
+        "SolarTwelve": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          "10",
+          "11",
+          "12"
+        ]
+      },
+      "short": null,
+      "wide": {
+        "SolarTwelve": [
+          "chaitrakuuta",
+          "vaisakhakuuta",
+          "jyaisthakuuta",
+          "asadhakuuta",
+          "sravanakuuta",
+          "bhadrakuuta",
+          "asvinakuuta",
+          "kartikakuuta",
+          "agrahayanakuuta",
+          "pausakuuta",
+          "maghakuuta",
+          "phalgunakuuta"
+        ]
+      }
+    },
+    "stand_alone": {
+      "abbreviated": {
+        "SolarTwelve": [
+          "chaitra",
+          "vaisakha",
+          "jyaistha",
+          "asadha",
+          "sravana",
+          "bhadra",
+          "asvina",
+          "kartika",
+          "agrahayana",
+          "pausa",
+          "magha",
+          "phalguna"
+        ]
+      },
+      "narrow": null,
+      "short": null,
+      "wide": {
+        "SolarTwelve": [
+          "chaitrakuu",
+          "vaisakhakuu",
+          "jyaisthakuu",
+          "asadhakuu",
+          "sravanakuu",
+          "bhadrakuu",
+          "asvinakuu",
+          "kartikakuu",
+          "agrahayanakuu",
+          "pausakuu",
+          "maghakuu",
+          "phalgunakuu"
+        ]
+      }
+    }
+  },
+  "weekdays": {
+    "format": {
+      "abbreviated": [
+        "su",
+        "ma",
+        "ti",
+        "ke",
+        "to",
+        "pe",
+        "la"
+      ],
+      "narrow": [
+        "S",
+        "M",
+        "T",
+        "K",
+        "T",
+        "P",
+        "L"
+      ],
+      "short": [
+        "su",
+        "ma",
+        "ti",
+        "ke",
+        "to",
+        "pe",
+        "la"
+      ],
+      "wide": [
+        "sunnuntaina",
+        "maanantaina",
+        "tiistaina",
+        "keskiviikkona",
+        "torstaina",
+        "perjantaina",
+        "lauantaina"
+      ]
+    },
+    "stand_alone": {
+      "abbreviated": null,
+      "narrow": null,
+      "short": null,
+      "wide": [
+        "sunnuntai",
+        "maanantai",
+        "tiistai",
+        "keskiviikko",
+        "torstai",
+        "perjantai",
+        "lauantai"
+      ]
+    }
+  },
+  "eras": {
+    "names": {
+      "saka": "Saka-ajanlaskua"
+    },
+    "abbr": {
+      "saka": "Saka"
+    },
+    "narrow": {
+      "saka": "Saka"
+    }
+  }
+}

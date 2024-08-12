@@ -1,0 +1,15 @@
+{
+  "hour_format": [
+    "+H.mm",
+    "-H.mm"
+  ],
+  "gmt_format": "UTC{0}",
+  "gmt_zero_format": "UTC",
+  "region_format": "aikavyöhyke: {0}",
+  "region_format_variants": {
+    "daylight": "{0} (kesäaika)",
+    "standard": "{0} (normaaliaika)"
+  },
+  "fallback_format": "{1} ({0})",
+  "gmt_offset_fallback": "GMT+?"
+}

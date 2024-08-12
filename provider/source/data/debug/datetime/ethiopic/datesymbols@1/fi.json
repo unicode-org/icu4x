@@ -1,0 +1,167 @@
+{
+  "months": {
+    "format": {
+      "abbreviated": {
+        "Other": {
+          "M01": "mäskärämkuuta",
+          "M02": "ṭəqəmtkuuta",
+          "M03": "ḫədarkuuta",
+          "M04": "taḫśaśkuuta",
+          "M05": "ṭərrkuuta",
+          "M06": "yäkatitkuuta",
+          "M07": "mägabitkuuta",
+          "M08": "miyazyakuuta",
+          "M09": "gənbotkuuta",
+          "M10": "sänekuuta",
+          "M11": "ḥamlekuuta",
+          "M12": "nähasekuuta",
+          "M13": "ṗagumenkuuta"
+        }
+      },
+      "narrow": {
+        "Other": {
+          "M01": "1",
+          "M02": "2",
+          "M03": "3",
+          "M04": "4",
+          "M05": "5",
+          "M06": "6",
+          "M07": "7",
+          "M08": "8",
+          "M09": "9",
+          "M10": "10",
+          "M11": "11",
+          "M12": "12",
+          "M13": "13"
+        }
+      },
+      "short": null,
+      "wide": {
+        "Other": {
+          "M01": "mäskärämkuuta",
+          "M02": "ṭəqəmtkuuta",
+          "M03": "ḫədarkuuta",
+          "M04": "taḫśaśkuuta",
+          "M05": "ṭərrkuuta",
+          "M06": "yäkatitkuuta",
+          "M07": "mägabitkuuta",
+          "M08": "miyazyakuuta",
+          "M09": "gənbotkuuta",
+          "M10": "sänekuuta",
+          "M11": "ḥamlekuuta",
+          "M12": "nähasekuuta",
+          "M13": "ṗagumenkuuta"
+        }
+      }
+    },
+    "stand_alone": {
+      "abbreviated": {
+        "Other": {
+          "M01": "mäskärämkuu",
+          "M02": "ṭəqəmtkuu",
+          "M03": "ḫədarkuu",
+          "M04": "taḫśaśkuu",
+          "M05": "ṭərrkuu",
+          "M06": "yäkatitkuu",
+          "M07": "mägabitkuu",
+          "M08": "miyazyakuu",
+          "M09": "gənbotkuu",
+          "M10": "sänekuu",
+          "M11": "ḥamlekuu",
+          "M12": "nähasekuu",
+          "M13": "ṗagumenkuu"
+        }
+      },
+      "narrow": null,
+      "short": null,
+      "wide": {
+        "Other": {
+          "M01": "mäskärämkuu",
+          "M02": "ṭəqəmtkuu",
+          "M03": "ḫədarkuu",
+          "M04": "taḫśaśkuu",
+          "M05": "ṭərrkuu",
+          "M06": "yäkatitkuu",
+          "M07": "mägabitkuu",
+          "M08": "miyazyakuu",
+          "M09": "gənbotkuu",
+          "M10": "sänekuu",
+          "M11": "ḥamlekuu",
+          "M12": "nähasekuu",
+          "M13": "ṗagumenkuu"
+        }
+      }
+    }
+  },
+  "weekdays": {
+    "format": {
+      "abbreviated": [
+        "su",
+        "ma",
+        "ti",
+        "ke",
+        "to",
+        "pe",
+        "la"
+      ],
+      "narrow": [
+        "S",
+        "M",
+        "T",
+        "K",
+        "T",
+        "P",
+        "L"
+      ],
+      "short": [
+        "su",
+        "ma",
+        "ti",
+        "ke",
+        "to",
+        "pe",
+        "la"
+      ],
+      "wide": [
+        "sunnuntaina",
+        "maanantaina",
+        "tiistaina",
+        "keskiviikkona",
+        "torstaina",
+        "perjantaina",
+        "lauantaina"
+      ]
+    },
+    "stand_alone": {
+      "abbreviated": null,
+      "narrow": null,
+      "short": null,
+      "wide": [
+        "sunnuntai",
+        "maanantai",
+        "tiistai",
+        "keskiviikko",
+        "torstai",
+        "perjantai",
+        "lauantai"
+      ]
+    }
+  },
+  "eras": {
+    "names": {
+      "incar": "ERA0",
+      "mundi": "ERA0",
+      "pre-incar": "ERA1"
+    },
+    "abbr": {
+      "incar": "ERA0",
+      "mundi": "ERA0",
+      "pre-incar": "ERA1"
+    },
+    "narrow": {
+      "incar": "ERA0",
+      "mundi": "ERA0",
+      "pre-incar": "ERA1"
+    }
+  }
+}

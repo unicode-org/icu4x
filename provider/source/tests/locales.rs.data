@@ -32,6 +32,10 @@ const LOCALES: &[LanguageIdentifier] = &[
     // French:
     // - Often the first non-English locale to receive new data in CLDR
     langid!("fr"),
+    // Finnish:
+    // - Inflected weekday names (different standalone/format variants).
+    // - Locale-specific segmentation overrides.
+    langid!("fi"),
     // Filipino:
     // - Week of month/year have plural variants.
     langid!("fil"),

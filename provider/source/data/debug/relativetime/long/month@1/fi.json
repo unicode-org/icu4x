@@ -1,0 +1,35 @@
+{
+  "relatives": {
+    "-1": "viime kuussa",
+    "0": "tässä kuussa",
+    "1": "ensi kuussa"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": " kuukausi sitten",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " kuukautta sitten",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": " kuukauden päästä",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " kuukauden päästä",
+      "index": 0
+    }
+  }
+}

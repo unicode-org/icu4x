@@ -1,0 +1,35 @@
+{
+  "relatives": {
+    "-1": "viime vk",
+    "0": "tällä vk",
+    "1": "ensi vk"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": " vk sitten",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " vk sitten",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": " vk päästä",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " vk päästä",
+      "index": 0
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "relatives": {
+    "0": "minuutin sisällä"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": " min sitten",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " min sitten",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": " min päästä",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " min päästä",
+      "index": 0
+    }
+  }
+}

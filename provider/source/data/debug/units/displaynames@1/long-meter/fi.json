@@ -1,0 +1,6 @@
+{
+  "patterns": {
+    "One": "{0} metri",
+    "Other": "{0} metriä"
+  }
+}

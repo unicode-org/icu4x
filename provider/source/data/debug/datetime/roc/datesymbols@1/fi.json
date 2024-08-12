@@ -1,0 +1,159 @@
+{
+  "months": {
+    "format": {
+      "abbreviated": {
+        "SolarTwelve": [
+          "tammik.",
+          "helmik.",
+          "maalisk.",
+          "huhtik.",
+          "toukok.",
+          "kesäk.",
+          "heinäk.",
+          "elok.",
+          "syysk.",
+          "lokak.",
+          "marrask.",
+          "jouluk."
+        ]
+      },
+      "narrow": {
+        "SolarTwelve": [
+          "T",
+          "H",
+          "M",
+          "H",
+          "T",
+          "K",
+          "H",
+          "E",
+          "S",
+          "L",
+          "M",
+          "J"
+        ]
+      },
+      "short": null,
+      "wide": {
+        "SolarTwelve": [
+          "tammikuuta",
+          "helmikuuta",
+          "maaliskuuta",
+          "huhtikuuta",
+          "toukokuuta",
+          "kesäkuuta",
+          "heinäkuuta",
+          "elokuuta",
+          "syyskuuta",
+          "lokakuuta",
+          "marraskuuta",
+          "joulukuuta"
+        ]
+      }
+    },
+    "stand_alone": {
+      "abbreviated": {
+        "SolarTwelve": [
+          "tammi",
+          "helmi",
+          "maalis",
+          "huhti",
+          "touko",
+          "kesä",
+          "heinä",
+          "elo",
+          "syys",
+          "loka",
+          "marras",
+          "joulu"
+        ]
+      },
+      "narrow": null,
+      "short": null,
+      "wide": {
+        "SolarTwelve": [
+          "tammikuu",
+          "helmikuu",
+          "maaliskuu",
+          "huhtikuu",
+          "toukokuu",
+          "kesäkuu",
+          "heinäkuu",
+          "elokuu",
+          "syyskuu",
+          "lokakuu",
+          "marraskuu",
+          "joulukuu"
+        ]
+      }
+    }
+  },
+  "weekdays": {
+    "format": {
+      "abbreviated": [
+        "su",
+        "ma",
+        "ti",
+        "ke",
+        "to",
+        "pe",
+        "la"
+      ],
+      "narrow": [
+        "S",
+        "M",
+        "T",
+        "K",
+        "T",
+        "P",
+        "L"
+      ],
+      "short": [
+        "su",
+        "ma",
+        "ti",
+        "ke",
+        "to",
+        "pe",
+        "la"
+      ],
+      "wide": [
+        "sunnuntaina",
+        "maanantaina",
+        "tiistaina",
+        "keskiviikkona",
+        "torstaina",
+        "perjantaina",
+        "lauantaina"
+      ]
+    },
+    "stand_alone": {
+      "abbreviated": null,
+      "narrow": null,
+      "short": null,
+      "wide": [
+        "sunnuntai",
+        "maanantai",
+        "tiistai",
+        "keskiviikko",
+        "torstai",
+        "perjantai",
+        "lauantai"
+      ]
+    }
+  },
+  "eras": {
+    "names": {
+      "roc": "Minguo",
+      "roc-inverse": "ennen Kiinan tasavaltaa"
+    },
+    "abbr": {
+      "roc": "Minguo",
+      "roc-inverse": "e. Kiinan tasav."
+    },
+    "narrow": {
+      "roc": "Minguo",
+      "roc-inverse": "e. Kiinan tasav."
+    }
+  }
+}

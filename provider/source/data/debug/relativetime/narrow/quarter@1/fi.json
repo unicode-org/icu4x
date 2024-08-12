@@ -1,0 +1,35 @@
+{
+  "relatives": {
+    "-1": "viime nelj.",
+    "0": "tänä nelj.",
+    "1": "ensi nelj."
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": " nelj. sitten",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " nelj. sitten",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": " nelj. päästä",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " nelj. päästä",
+      "index": 0
+    }
+  }
+}

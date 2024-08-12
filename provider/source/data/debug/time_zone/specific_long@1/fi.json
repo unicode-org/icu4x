@@ -1,0 +1,572 @@
+{
+  "defaults": {
+    "acre": {
+      "dt": "Acren kesäaika",
+      "st": "Acren normaaliaika"
+    },
+    "afce": {
+      "st": "Keski-Afrikan aika"
+    },
+    "afea": {
+      "st": "Itä-Afrikan aika"
+    },
+    "afgh": {
+      "st": "Afganistanin aika"
+    },
+    "afso": {
+      "st": "Etelä-Afrikan aika"
+    },
+    "afwe": {
+      "dt": "Länsi-Afrikan kesäaika",
+      "st": "Länsi-Afrikan normaaliaika"
+    },
+    "alam": {
+      "dt": "Almatyn kesäaika",
+      "st": "Almatyn normaaliaika"
+    },
+    "alas": {
+      "dt": "Alaskan kesäaika",
+      "st": "Alaskan normaaliaika"
+    },
+    "amaz": {
+      "dt": "Amazonin kesäaika",
+      "st": "Amazonin normaaliaika"
+    },
+    "amce": {
+      "dt": "Yhdysvaltain keskinen kesäaika",
+      "st": "Yhdysvaltain keskinen normaaliaika"
+    },
+    "amea": {
+      "dt": "Yhdysvaltain itäinen kesäaika",
+      "st": "Yhdysvaltain itäinen normaaliaika"
+    },
+    "ammo": {
+      "dt": "Kalliovuorten kesäaika",
+      "st": "Kalliovuorten normaaliaika"
+    },
+    "ampa": {
+      "dt": "Yhdysvaltain Tyynenmeren kesäaika",
+      "st": "Yhdysvaltain Tyynenmeren normaaliaika"
+    },
+    "anad": {
+      "dt": "Anadyrin kesäaika",
+      "st": "Anadyrin normaaliaika"
+    },
+    "apia": {
+      "dt": "Apian kesäaika",
+      "st": "Apian normaaliaika"
+    },
+    "aqta": {
+      "dt": "Aqtaw’n kesäaika",
+      "st": "Aqtaw’n normaaliaika"
+    },
+    "aqto": {
+      "dt": "Aqtöben kesäaika",
+      "st": "Aqtöben normaaliaika"
+    },
+    "arab": {
+      "dt": "Saudi-Arabian kesäaika",
+      "st": "Saudi-Arabian normaaliaika"
+    },
+    "arge": {
+      "dt": "Argentiinan kesäaika",
+      "st": "Argentiinan normaaliaika"
+    },
+    "arme": {
+      "dt": "Armenian kesäaika",
+      "st": "Armenian normaaliaika"
+    },
+    "arwe": {
+      "dt": "Länsi-Argentiinan kesäaika",
+      "st": "Länsi-Argentiinan normaaliaika"
+    },
+    "atla": {
+      "dt": "Kanadan Atlantin kesäaika",
+      "st": "Kanadan Atlantin normaaliaika"
+    },
+    "auce": {
+      "dt": "Keski-Australian kesäaika",
+      "st": "Keski-Australian normaaliaika"
+    },
+    "aucw": {
+      "dt": "Läntisen Keski-Australian kesäaika",
+      "st": "Läntisen Keski-Australian normaaliaika"
+    },
+    "auea": {
+      "dt": "Itä-Australian kesäaika",
+      "st": "Itä-Australian normaaliaika"
+    },
+    "auwe": {
+      "dt": "Länsi-Australian kesäaika",
+      "st": "Länsi-Australian normaaliaika"
+    },
+    "azer": {
+      "dt": "Azerbaidžanin kesäaika",
+      "st": "Azerbaidžanin normaaliaika"
+    },
+    "azor": {
+      "dt": "Azorien kesäaika",
+      "st": "Azorien normaaliaika"
+    },
+    "bang": {
+      "dt": "Bangladeshin kesäaika",
+      "st": "Bangladeshin normaaliaika"
+    },
+    "bhut": {
+      "st": "Bhutanin aika"
+    },
+    "boli": {
+      "st": "Bolivian aika"
+    },
+    "bras": {
+      "dt": "Brasilian kesäaika",
+      "st": "Brasilian normaaliaika"
+    },
+    "brun": {
+      "st": "Brunein aika"
+    },
+    "case": {
+      "st": "Caseyn aika"
+    },
+    "cave": {
+      "dt": "Kap Verden kesäaika",
+      "st": "Kap Verden normaaliaika"
+    },
+    "cham": {
+      "st": "Tšamorron aika"
+    },
+    "chat": {
+      "dt": "Chathamin kesäaika",
+      "st": "Chathamin normaaliaika"
+    },
+    "chil": {
+      "dt": "Chilen kesäaika",
+      "st": "Chilen normaaliaika"
+    },
+    "chin": {
+      "dt": "Kiinan kesäaika",
+      "st": "Kiinan normaaliaika"
+    },
+    "choi": {
+      "dt": "Tšoibalsan kesäaika",
+      "st": "Tšoibalsan normaaliaika"
+    },
+    "chri": {
+      "st": "Joulusaaren aika"
+    },
+    "coco": {
+      "st": "Kookossaarten aika"
+    },
+    "colo": {
+      "dt": "Kolumbian kesäaika",
+      "st": "Kolumbian normaaliaika"
+    },
+    "cook": {
+      "dt": "Cookinsaarten kesäaika",
+      "st": "Cookinsaarten normaaliaika"
+    },
+    "cuba": {
+      "dt": "Kuuban kesäaika",
+      "st": "Kuuban normaaliaika"
+    },
+    "davi": {
+      "st": "Davisin aika"
+    },
+    "dumo": {
+      "st": "Dumont d’Urvillen aika"
+    },
+    "east": {
+      "dt": "Pääsiäissaaren kesäaika",
+      "st": "Pääsiäissaaren normaaliaika"
+    },
+    "eati": {
+      "st": "Itä-Timorin aika"
+    },
+    "ecua": {
+      "st": "Ecuadorin aika"
+    },
+    "euce": {
+      "dt": "Keski-Euroopan kesäaika",
+      "st": "Keski-Euroopan normaaliaika"
+    },
+    "euea": {
+      "dt": "Itä-Euroopan kesäaika",
+      "st": "Itä-Euroopan normaaliaika"
+    },
+    "eufe": {
+      "st": "Itäisemmän Euroopan aika"
+    },
+    "euwe": {
+      "dt": "Länsi-Euroopan kesäaika",
+      "st": "Länsi-Euroopan normaaliaika"
+    },
+    "falk": {
+      "dt": "Falklandinsaarten kesäaika",
+      "st": "Falklandinsaarten normaaliaika"
+    },
+    "fiji": {
+      "dt": "Fidžin kesäaika",
+      "st": "Fidžin normaaliaika"
+    },
+    "frgu": {
+      "st": "Ranskan Guayanan aika"
+    },
+    "frso": {
+      "st": "Ranskan eteläisten ja antarktisten alueiden aika"
+    },
+    "gala": {
+      "st": "Galápagossaarten aika"
+    },
+    "gamb": {
+      "st": "Gambiersaarten aika"
+    },
+    "geor": {
+      "dt": "Georgian kesäaika",
+      "st": "Georgian normaaliaika"
+    },
+    "giis": {
+      "st": "Gilbertsaarten aika"
+    },
+    "grea": {
+      "dt": "Itä-Grönlannin kesäaika",
+      "st": "Itä-Grönlannin normaaliaika"
+    },
+    "grwe": {
+      "dt": "Länsi-Grönlannin kesäaika",
+      "st": "Länsi-Grönlannin normaaliaika"
+    },
+    "guam": {
+      "st": "Guamin aika"
+    },
+    "gulf": {
+      "st": "Arabiemiirikuntien normaaliaika"
+    },
+    "guya": {
+      "st": "Guyanan aika"
+    },
+    "haal": {
+      "dt": "Havaijin-Aleuttien kesäaika",
+      "st": "Havaijin-Aleuttien normaaliaika"
+    },
+    "hoko": {
+      "dt": "Hongkongin kesäaika",
+      "st": "Hongkongin normaaliaika"
+    },
+    "hovd": {
+      "dt": "Hovdin kesäaika",
+      "st": "Hovdin normaaliaika"
+    },
+    "ince": {
+      "st": "Keski-Indonesian aika"
+    },
+    "indi": {
+      "st": "Intian aika"
+    },
+    "indo": {
+      "st": "Indokiinan aika"
+    },
+    "inea": {
+      "st": "Itä-Indonesian aika"
+    },
+    "inoc": {
+      "st": "Intian valtameren aika"
+    },
+    "inwe": {
+      "st": "Länsi-Indonesian aika"
+    },
+    "iran": {
+      "dt": "Iranin kesäaika",
+      "st": "Iranin normaaliaika"
+    },
+    "irku": {
+      "dt": "Irkutskin kesäaika",
+      "st": "Irkutskin normaaliaika"
+    },
+    "isra": {
+      "dt": "Israelin kesäaika",
+      "st": "Israelin normaaliaika"
+    },
+    "japa": {
+      "dt": "Japanin kesäaika",
+      "st": "Japanin normaaliaika"
+    },
+    "kaea": {
+      "st": "Itä-Kazakstanin aika"
+    },
+    "kamc": {
+      "dt": "Kamtšatkan kesäaika",
+      "st": "Kamtšatkan normaaliaika"
+    },
+    "kawe": {
+      "st": "Länsi-Kazakstanin aika"
+    },
+    "kore": {
+      "dt": "Korean kesäaika",
+      "st": "Korean normaaliaika"
+    },
+    "kosr": {
+      "st": "Kosraen aika"
+    },
+    "kras": {
+      "dt": "Krasnojarskin kesäaika",
+      "st": "Krasnojarskin normaaliaika"
+    },
+    "kyrg": {
+      "st": "Kirgisian aika"
+    },
+    "lank": {
+      "st": "Sri Lankan aika"
+    },
+    "liis": {
+      "st": "Linesaarten aika"
+    },
+    "loho": {
+      "dt": "Lord Howen kesäaika",
+      "st": "Lord Howen normaaliaika"
+    },
+    "maca": {
+      "dt": "Macaon kesäaika",
+      "st": "Macaon normaaliaika"
+    },
+    "maga": {
+      "dt": "Magadanin kesäaika",
+      "st": "Magadanin normaaliaika"
+    },
+    "mais": {
+      "st": "Marshallinsaarten aika"
+    },
+    "mala": {
+      "st": "Malesian aika"
+    },
+    "mald": {
+      "st": "Malediivien aika"
+    },
+    "marq": {
+      "st": "Marquesassaarten aika"
+    },
+    "maur": {
+      "dt": "Mauritiuksen kesäaika",
+      "st": "Mauritiuksen normaaliaika"
+    },
+    "maws": {
+      "st": "Mawsonin aika"
+    },
+    "mepa": {
+      "dt": "Meksikon Tyynenmeren kesäaika",
+      "st": "Meksikon Tyynenmeren normaaliaika"
+    },
+    "mgmt": {
+      "st": "Greenwichin normaaliaika"
+    },
+    "mong": {
+      "dt": "Ulan Batorin kesäaika",
+      "st": "Ulan Batorin normaaliaika"
+    },
+    "mosc": {
+      "dt": "Moskovan kesäaika",
+      "st": "Moskovan normaaliaika"
+    },
+    "myan": {
+      "st": "Myanmarin aika"
+    },
+    "naur": {
+      "st": "Naurun aika"
+    },
+    "neca": {
+      "dt": "Uuden-Kaledonian kesäaika",
+      "st": "Uuden-Kaledonian normaaliaika"
+    },
+    "nepa": {
+      "st": "Nepalin aika"
+    },
+    "newf": {
+      "dt": "Newfoundlandin kesäaika",
+      "st": "Newfoundlandin normaaliaika"
+    },
+    "neze": {
+      "dt": "Uuden-Seelannin kesäaika",
+      "st": "Uuden-Seelannin normaaliaika"
+    },
+    "niue": {
+      "st": "Niuen aika"
+    },
+    "noma": {
+      "st": "Pohjois-Mariaanien aika"
+    },
+    "norf": {
+      "dt": "Norfolkinsaaren kesäaika",
+      "st": "Norfolkinsaaren normaaliaika"
+    },
+    "noro": {
+      "dt": "Fernando de Noronhan kesäaika",
+      "st": "Fernando de Noronhan normaaliaika"
+    },
+    "novo": {
+      "dt": "Novosibirskin kesäaika",
+      "st": "Novosibirskin normaaliaika"
+    },
+    "omsk": {
+      "dt": "Omskin kesäaika",
+      "st": "Omskin normaaliaika"
+    },
+    "paki": {
+      "dt": "Pakistanin kesäaika",
+      "st": "Pakistanin normaaliaika"
+    },
+    "pala": {
+      "st": "Palaun aika"
+    },
+    "pang": {
+      "st": "Papua-Uuden-Guinean aika"
+    },
+    "para": {
+      "dt": "Paraguayn kesäaika",
+      "st": "Paraguayn normaaliaika"
+    },
+    "peru": {
+      "dt": "Perun kesäaika",
+      "st": "Perun normaaliaika"
+    },
+    "phil": {
+      "dt": "Filippiinien kesäaika",
+      "st": "Filippiinien normaaliaika"
+    },
+    "phis": {
+      "st": "Phoenixsaarten aika"
+    },
+    "pimi": {
+      "dt": "Saint-Pierren ja Miquelonin kesäaika",
+      "st": "Saint-Pierren ja Miquelonin normaaliaika"
+    },
+    "pitc": {
+      "st": "Pitcairnin aika"
+    },
+    "pona": {
+      "st": "Pohnpein aika"
+    },
+    "pyon": {
+      "st": "Pjongjangin aika"
+    },
+    "qyzy": {
+      "dt": "Qızılordan kesäaika",
+      "st": "Qızılordan normaaliaika"
+    },
+    "reun": {
+      "st": "Réunionin aika"
+    },
+    "roth": {
+      "st": "Rotheran aika"
+    },
+    "sakh": {
+      "dt": "Sahalinin kesäaika",
+      "st": "Sahalinin normaaliaika"
+    },
+    "sama": {
+      "dt": "Samaran kesäaika",
+      "st": "Samaran normaaliaika"
+    },
+    "samo": {
+      "dt": "Samoan kesäaika",
+      "st": "Samoan normaaliaika"
+    },
+    "seyc": {
+      "st": "Seychellien aika"
+    },
+    "sing": {
+      "st": "Singaporen aika"
+    },
+    "soge": {
+      "st": "Etelä-Georgian aika"
+    },
+    "solo": {
+      "st": "Salomonsaarten aika"
+    },
+    "suri": {
+      "st": "Surinamen aika"
+    },
+    "syow": {
+      "st": "Syowan aika"
+    },
+    "tahi": {
+      "st": "Tahitin aika"
+    },
+    "taip": {
+      "dt": "Taipein kesäaika",
+      "st": "Taipein normaaliaika"
+    },
+    "taji": {
+      "st": "Tadžikistanin aika"
+    },
+    "toke": {
+      "st": "Tokelaun aika"
+    },
+    "tong": {
+      "dt": "Tongan kesäaika",
+      "st": "Tongan normaaliaika"
+    },
+    "truk": {
+      "st": "Chuukin aika"
+    },
+    "turk": {
+      "dt": "Turkmenistanin kesäaika",
+      "st": "Turkmenistanin normaaliaika"
+    },
+    "tuva": {
+      "st": "Tuvalun aika"
+    },
+    "urug": {
+      "dt": "Uruguayn kesäaika",
+      "st": "Uruguayn normaaliaika"
+    },
+    "uzbe": {
+      "dt": "Uzbekistanin kesäaika",
+      "st": "Uzbekistanin normaaliaika"
+    },
+    "vanu": {
+      "dt": "Vanuatun kesäaika",
+      "st": "Vanuatun normaaliaika"
+    },
+    "vene": {
+      "st": "Venezuelan aika"
+    },
+    "vlad": {
+      "dt": "Vladivostokin kesäaika",
+      "st": "Vladivostokin normaaliaika"
+    },
+    "volg": {
+      "dt": "Volgogradin kesäaika",
+      "st": "Volgogradin normaaliaika"
+    },
+    "vost": {
+      "st": "Vostokin aika"
+    },
+    "wake": {
+      "st": "Waken aika"
+    },
+    "wall": {
+      "st": "Wallisin ja Futunan aika"
+    },
+    "yaku": {
+      "dt": "Jakutskin kesäaika",
+      "st": "Jakutskin normaaliaika"
+    },
+    "yeka": {
+      "dt": "Jekaterinburgin kesäaika",
+      "st": "Jekaterinburgin normaaliaika"
+    },
+    "yuko": {
+      "st": "Yukonin aika"
+    }
+  },
+  "overrides": {
+    "gblon": {
+      "dt": "Britannian kesäaika"
+    },
+    "iedub": {
+      "dt": "Irlannin kesäaika"
+    },
+    "utc": {
+      "st": "UTC-yleisaika"
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "relatives": {
+    "-1": "viime neljänneksenä",
+    "0": "tänä neljänneksenä",
+    "1": "ensi neljänneksenä"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": " neljännes sitten",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " neljännestä sitten",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": " neljänneksen päästä",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " neljänneksen päästä",
+      "index": 0
+    }
+  }
+}

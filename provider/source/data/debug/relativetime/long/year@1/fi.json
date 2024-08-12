@@ -1,0 +1,35 @@
+{
+  "relatives": {
+    "-1": "viime vuonna",
+    "0": "tänä vuonna",
+    "1": "ensi vuonna"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": " vuosi sitten",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " vuotta sitten",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": " vuoden päästä",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " vuoden päästä",
+      "index": 0
+    }
+  }
+}

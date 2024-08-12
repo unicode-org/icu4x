@@ -1,0 +1,6 @@
+{
+  "patterns": {
+    "One": "{0} minuutti",
+    "Other": "{0} minuuttia"
+  }
+}

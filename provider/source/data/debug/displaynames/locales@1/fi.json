@@ -1,0 +1,32 @@
+{
+  "names": {
+    "ar-001": "yleisarabia",
+    "de-AT": "itävallansaksa",
+    "de-CH": "sveitsinyläsaksa",
+    "en-AU": "australianenglanti",
+    "en-CA": "kanadanenglanti",
+    "en-GB": "britannianenglanti",
+    "en-US": "amerikanenglanti",
+    "es-419": "amerikanespanja",
+    "es-ES": "euroopanespanja",
+    "es-MX": "meksikonespanja",
+    "fa-AF": "dari",
+    "fr-CA": "kanadanranska",
+    "fr-CH": "sveitsinranska",
+    "nds-NL": "alankomaidenalasaksa",
+    "nl-BE": "flaami",
+    "pt-BR": "brasilianportugali",
+    "pt-PT": "euroopanportugali",
+    "ro-MD": "moldova",
+    "sw-CD": "kongonswahili"
+  },
+  "short_names": {
+    "en-GB": "englanti (Britannia)",
+    "en-US": "englanti (USA)"
+  },
+  "long_names": {
+    "zh-Hans": "mandariinikiina (yksinkertaistettu)",
+    "zh-Hant": "mandariinikiina (perinteinen)"
+  },
+  "menu_names": {}
+}

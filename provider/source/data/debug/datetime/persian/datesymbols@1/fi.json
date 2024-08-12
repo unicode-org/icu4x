@@ -1,0 +1,156 @@
+{
+  "months": {
+    "format": {
+      "abbreviated": {
+        "SolarTwelve": [
+          "farvardinkuuta",
+          "ordibeheštkuuta",
+          "khordadkuuta",
+          "tirkuuta",
+          "mordadkuuta",
+          "šahrivarkuuta",
+          "mehrkuuta",
+          "abankuuta",
+          "azarkuuta",
+          "deykuuta",
+          "bahmankuuta",
+          "esfandkuuta"
+        ]
+      },
+      "narrow": {
+        "SolarTwelve": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          "10",
+          "11",
+          "12"
+        ]
+      },
+      "short": null,
+      "wide": {
+        "SolarTwelve": [
+          "farvardinkuuta",
+          "ordibeheštkuuta",
+          "khordadkuuta",
+          "tirkuuta",
+          "mordadkuuta",
+          "šahrivarkuuta",
+          "mehrkuuta",
+          "abankuuta",
+          "azarkuuta",
+          "deykuuta",
+          "bahmankuuta",
+          "esfandkuuta"
+        ]
+      }
+    },
+    "stand_alone": {
+      "abbreviated": {
+        "SolarTwelve": [
+          "farvardin",
+          "ordibehešt",
+          "khordad",
+          "tir",
+          "mordad",
+          "šahrivar",
+          "mehr",
+          "aban",
+          "azar",
+          "dey",
+          "bahman",
+          "esfand"
+        ]
+      },
+      "narrow": null,
+      "short": null,
+      "wide": {
+        "SolarTwelve": [
+          "farvardinkuu",
+          "ordibeheštkuu",
+          "khordadkuu",
+          "tirkuu",
+          "mordadkuu",
+          "šahrivarkuu",
+          "mehrkuu",
+          "abankuu",
+          "azarkuu",
+          "deykuu",
+          "bahmankuu",
+          "esfandkuu"
+        ]
+      }
+    }
+  },
+  "weekdays": {
+    "format": {
+      "abbreviated": [
+        "su",
+        "ma",
+        "ti",
+        "ke",
+        "to",
+        "pe",
+        "la"
+      ],
+      "narrow": [
+        "S",
+        "M",
+        "T",
+        "K",
+        "T",
+        "P",
+        "L"
+      ],
+      "short": [
+        "su",
+        "ma",
+        "ti",
+        "ke",
+        "to",
+        "pe",
+        "la"
+      ],
+      "wide": [
+        "sunnuntaina",
+        "maanantaina",
+        "tiistaina",
+        "keskiviikkona",
+        "torstaina",
+        "perjantaina",
+        "lauantaina"
+      ]
+    },
+    "stand_alone": {
+      "abbreviated": null,
+      "narrow": null,
+      "short": null,
+      "wide": [
+        "sunnuntai",
+        "maanantai",
+        "tiistai",
+        "keskiviikko",
+        "torstai",
+        "perjantai",
+        "lauantai"
+      ]
+    }
+  },
+  "eras": {
+    "names": {
+      "ah": "Anno Persico"
+    },
+    "abbr": {
+      "ah": "AP"
+    },
+    "narrow": {
+      "ah": "AP"
+    }
+  }
+}

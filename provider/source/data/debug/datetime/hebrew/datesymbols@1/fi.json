@@ -1,0 +1,149 @@
+{
+  "months": {
+    "format": {
+      "abbreviated": {
+        "Other": {
+          "M01": "tišrí",
+          "M02": "hešván",
+          "M03": "kislév",
+          "M04": "tevét",
+          "M05": "ševát",
+          "M05L": "adár I",
+          "M06": "adár",
+          "M06L": "adár II",
+          "M07": "nisán",
+          "M08": "ijjár",
+          "M09": "siván",
+          "M10": "tammúz",
+          "M11": "ab",
+          "M12": "elúl"
+        }
+      },
+      "narrow": {
+        "Other": {
+          "M01": "T",
+          "M02": "H",
+          "M03": "K",
+          "M04": "T",
+          "M05": "S",
+          "M05L": "A",
+          "M06": "A",
+          "M06L": "A",
+          "M07": "N",
+          "M08": "I",
+          "M09": "S",
+          "M10": "T",
+          "M11": "A",
+          "M12": "E"
+        }
+      },
+      "short": null,
+      "wide": {
+        "Other": {
+          "M01": "tišríkuuta",
+          "M02": "hešvánkuuta",
+          "M03": "kislévkuuta",
+          "M04": "tevétkuuta",
+          "M05": "ševátkuuta",
+          "M05L": "adárkuuta I",
+          "M06": "adárkuuta",
+          "M06L": "adárkuuta II",
+          "M07": "nisánkuuta",
+          "M08": "ijjárkuuta",
+          "M09": "sivánkuuta",
+          "M10": "tammúzkuuta",
+          "M11": "abkuuta",
+          "M12": "elúlkuuta"
+        }
+      }
+    },
+    "stand_alone": {
+      "abbreviated": null,
+      "narrow": null,
+      "short": null,
+      "wide": {
+        "Other": {
+          "M01": "tišríkuu",
+          "M02": "hešvánkuu",
+          "M03": "kislévkuu",
+          "M04": "tevétkuu",
+          "M05": "ševátkuu",
+          "M05L": "adárkuu I",
+          "M06": "adárkuu",
+          "M06L": "adárkuu II",
+          "M07": "nisánkuu",
+          "M08": "ijjárkuu",
+          "M09": "sivánkuu",
+          "M10": "tammúzkuu",
+          "M11": "abkuu",
+          "M12": "elúlkuu"
+        }
+      }
+    }
+  },
+  "weekdays": {
+    "format": {
+      "abbreviated": [
+        "su",
+        "ma",
+        "ti",
+        "ke",
+        "to",
+        "pe",
+        "la"
+      ],
+      "narrow": [
+        "S",
+        "M",
+        "T",
+        "K",
+        "T",
+        "P",
+        "L"
+      ],
+      "short": [
+        "su",
+        "ma",
+        "ti",
+        "ke",
+        "to",
+        "pe",
+        "la"
+      ],
+      "wide": [
+        "sunnuntaina",
+        "maanantaina",
+        "tiistaina",
+        "keskiviikkona",
+        "torstaina",
+        "perjantaina",
+        "lauantaina"
+      ]
+    },
+    "stand_alone": {
+      "abbreviated": null,
+      "narrow": null,
+      "short": null,
+      "wide": [
+        "sunnuntai",
+        "maanantai",
+        "tiistai",
+        "keskiviikko",
+        "torstai",
+        "perjantai",
+        "lauantai"
+      ]
+    }
+  },
+  "eras": {
+    "names": {
+      "hebrew": "Anno Mundi"
+    },
+    "abbr": {
+      "hebrew": "AM"
+    },
+    "narrow": {
+      "hebrew": "AM"
+    }
+  }
+}

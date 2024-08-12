@@ -1,0 +1,37 @@
+{
+  "relatives": {
+    "-2": "toissa päivänä",
+    "-1": "eilen",
+    "0": "tänään",
+    "1": "huomenna",
+    "2": "ylihuomenna"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": " päivä sitten",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " päivää sitten",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": " päivän päästä",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " päivän päästä",
+      "index": 0
+    }
+  }
+}

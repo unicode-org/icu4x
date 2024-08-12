@@ -1,0 +1,35 @@
+{
+  "relatives": {
+    "-1": "viime neljännesvuonna",
+    "0": "tänä neljännesvuonna",
+    "1": "ensi neljännesvuonna"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": " neljännesvuosi sitten",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " neljännesvuotta sitten",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": " neljännesvuoden päästä",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " neljännesvuoden päästä",
+      "index": 0
+    }
+  }
+}
