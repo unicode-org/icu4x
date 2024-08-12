@@ -756,7 +756,7 @@ macro_rules! __impl_long_compact_decimal_format_data_v1_marker {
                             metadata.locale = Some(fallback_iterator.take());
                             break payload;
                         }
-                        if fallback_iterator.get().is_und() {
+                        if fallback_iterator.get().is_default() {
                             return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::experimental::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker as icu_provider::DataMarker>::INFO, req));
                         }
                         fallback_iterator.step();

@@ -46,7 +46,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
 
   /// Construct a default undefined [`Locale`] "und".
   ///
-  /// See the [Rust documentation for `UND`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#associatedconstant.UND) for more information.
+  /// See the [Rust documentation for `default`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#associatedconstant.default) for more information.
   factory Locale.und() {
     final result = _icu4x_Locale_und_mv1();
     return Locale._fromFfi(result, []);

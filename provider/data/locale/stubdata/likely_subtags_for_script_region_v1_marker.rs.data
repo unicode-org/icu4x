@@ -34,7 +34,7 @@ macro_rules! __impl_likely_subtags_for_script_region_v1_marker {
         #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::locale::provider::LikelySubtagsForScriptRegionV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::locale::provider::LikelySubtagsForScriptRegionV1Marker>, icu_provider::DataError> {
-                if req.id.locale.is_und() {
+                if req.id.locale.is_default() {
                     Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(Self::SINGLETON_LIKELY_SUBTAGS_FOR_SCRIPT_REGION_V1_MARKER), metadata: Default::default() })
                 } else {
                     Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::locale::provider::LikelySubtagsForScriptRegionV1Marker as icu_provider::DataMarker>::INFO, req))

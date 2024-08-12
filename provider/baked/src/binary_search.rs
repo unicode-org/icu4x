@@ -68,7 +68,7 @@ pub(crate) fn bake(
                 })
                 .collect::<Vec<_>>(),
         )
-    } else if ids_to_idents.iter().all(|(id, _)| id.locale.is_und()) {
+    } else if ids_to_idents.iter().all(|(id, _)| id.locale.is_default()) {
         // Only marker attributes
         size += ids_to_idents.len() * core::mem::size_of::<&str>();
         (

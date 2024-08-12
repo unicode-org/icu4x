@@ -59,27 +59,12 @@ impl Language {
     /// ```
     pub const UND: Self = unsafe { Self::from_raw_unchecked(*b"und") };
 
-    /// Resets the [`Language`] subtag to an empty one (equal to `"und"`).
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::locale::subtags::{language, Language};
-    ///
-    /// let mut lang = language!("csb");
-    ///
-    /// assert_ne!(lang, Language::UND);
-    ///
-    /// lang.clear();
-    ///
-    /// assert_eq!(lang, Language::UND);
-    /// ```
-    #[inline]
-    pub fn clear(&mut self) {
-        *self = Self::UND
+    /// Const-friendly version of [`Default::default`].
+    pub const fn default() -> Self {
+        Self::UND
     }
 
-    /// Tests if the [`Language`] subtag is empty (equal to `"und"`).
+    /// Tests if the [`Language`] subtag is the default one (`"und"`).
     ///
     /// # Examples
     ///
@@ -88,20 +73,20 @@ impl Language {
     ///
     /// let mut lang = Language::UND;
     ///
-    /// assert!(lang.is_empty());
+    /// assert!(lang.is_default());
     ///
     /// lang.clear();
     ///
-    /// assert!(lang.is_empty());
+    /// assert!(lang.is_default());
     /// ```
     #[inline]
-    pub const fn is_empty(self) -> bool {
+    pub const fn is_default(self) -> bool {
         matches!(self, Self::UND)
     }
 }
 
 impl Default for Language {
     fn default() -> Language {
-        Language::UND
+        Self::default()
     }
 }
