@@ -116,7 +116,7 @@ impl CurrencyFormatter {
     /// let fmt = CurrencyFormatter::try_new(&locale, Default::default()).unwrap();
     /// let value = "12345.67".parse().unwrap();
     /// let currency_code = CurrencyCode(tinystr!(3, "USD"));
-    /// let formatted_currency = fmt.format_fixed_decimal(&value, currency_code);
+    /// let formatted_currency = fmt.format_fixed_decimal(&value, &currency_code);
     /// let mut sink = String::new();
     /// formatted_currency.write_to(&mut sink).unwrap();
     /// assert_eq!(sink.as_str(), "$12,345.67");
@@ -124,7 +124,7 @@ impl CurrencyFormatter {
     pub fn format_fixed_decimal<'l>(
         &'l self,
         value: &'l FixedDecimal,
-        currency_code: CurrencyCode,
+        currency_code: &'l CurrencyCode,
     ) -> FormattedCurrency<'l> {
         FormattedCurrency {
             value,

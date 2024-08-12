@@ -16,7 +16,7 @@ use crate::dimension::currency::CurrencyCode;
 
 pub struct FormattedCurrency<'l> {
     pub(crate) value: &'l FixedDecimal,
-    pub(crate) currency_code: CurrencyCode,
+    pub(crate) currency_code: &'l CurrencyCode,
     pub(crate) options: &'l CurrencyFormatterOptions,
     pub(crate) essential: &'l CurrencyEssentialsV1<'l>,
     pub(crate) fixed_decimal_formatter: &'l FixedDecimalFormatter,
@@ -89,12 +89,12 @@ mod tests {
 
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
-        let formatted_currency = fmt.format_fixed_decimal(&positive_value, currency_code);
+        let formatted_currency = fmt.format_fixed_decimal(&positive_value, &currency_code);
         assert_writeable_eq!(formatted_currency, "$12,345.67");
 
         // Negative case
         let negative_value = "-12345.67".parse().unwrap();
-        let formatted_currency = fmt.format_fixed_decimal(&negative_value, currency_code);
+        let formatted_currency = fmt.format_fixed_decimal(&negative_value, &currency_code);
         assert_writeable_eq!(formatted_currency, "$-12,345.67");
     }
 
@@ -106,12 +106,12 @@ mod tests {
 
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
-        let formatted_currency = fmt.format_fixed_decimal(&positive_value, currency_code);
+        let formatted_currency = fmt.format_fixed_decimal(&positive_value, &currency_code);
         assert_writeable_eq!(formatted_currency, "12\u{202f}345,67\u{a0}€");
 
         // Negative case
         let negative_value = "-12345.67".parse().unwrap();
-        let formatted_currency = fmt.format_fixed_decimal(&negative_value, currency_code);
+        let formatted_currency = fmt.format_fixed_decimal(&negative_value, &currency_code);
         assert_writeable_eq!(formatted_currency, "-12\u{202f}345,67\u{a0}€");
     }
 
@@ -123,12 +123,12 @@ mod tests {
 
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
-        let formatted_currency = fmt.format_fixed_decimal(&positive_value, currency_code);
+        let formatted_currency = fmt.format_fixed_decimal(&positive_value, &currency_code);
         assert_writeable_eq!(formatted_currency, "\u{200f}١٢٬٣٤٥٫٦٧\u{a0}ج.م.\u{200f}");
 
         // Negative case
         let negative_value = "-12345.67".parse().unwrap();
-        let formatted_currency = fmt.format_fixed_decimal(&negative_value, currency_code);
+        let formatted_currency = fmt.format_fixed_decimal(&negative_value, &currency_code);
         assert_writeable_eq!(
             formatted_currency,
             "\u{200f}\u{61c}-١٢٬٣٤٥٫٦٧\u{a0}ج.م.\u{200f}"
