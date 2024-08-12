@@ -71,6 +71,7 @@ members = [
     "utils/pattern",
     "utils/preferences",
     "utils/resb",
+    "utils/env_preferences",
     "utils/tinystr",
     "utils/tzif",
     "utils/writeable",

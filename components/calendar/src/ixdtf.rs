@@ -7,14 +7,14 @@ use core::str::FromStr;
 use crate::{AnyCalendar, Date, DateTime, Iso, RangeError, Time};
 use ixdtf::parsers::records::IxdtfParseRecord;
 use ixdtf::parsers::IxdtfParser;
-use ixdtf::ParserError;
+use ixdtf::ParseError as IxdtfError;
 
 /// An error returned from parsing an IXDTF string to an `icu_calendar` type.
 #[derive(Debug)]
 #[non_exhaustive]
 pub enum ParseError {
     /// Syntax error in the IXDTF string.
-    Syntax(ParserError),
+    Syntax(IxdtfError),
     /// Value is out of range.
     Range(RangeError),
     /// The IXDTF is missing fields required for parsing into the chosen type.
@@ -29,8 +29,8 @@ impl From<RangeError> for ParseError {
     }
 }
 
-impl From<ParserError> for ParseError {
-    fn from(value: ParserError) -> Self {
+impl From<IxdtfError> for ParseError {
+    fn from(value: IxdtfError) -> Self {
         Self::Syntax(value)
     }
 }

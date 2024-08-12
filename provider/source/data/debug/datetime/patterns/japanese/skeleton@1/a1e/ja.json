@@ -7,9 +7,7 @@
   },
   "patterns": [
     "Gy年M月d日EEEE",
-    "Gy年M月d日(E)",
     "GGGy年M月d日(E)",
-    "GGGGGy/M/d(E)",
-    "GGGy年M月d日(E)"
+    "GGGGGy年M月d日(E)"
   ]
 }

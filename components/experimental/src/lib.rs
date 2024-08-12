@@ -21,6 +21,7 @@ pub mod compactdecimal;
 pub mod dimension;
 pub mod displaynames;
 pub mod duration;
+pub mod measure;
 pub mod personnames;
 pub mod relativetime;
 pub mod transliterate;
@@ -45,6 +46,8 @@ pub mod provider {
         impl_long_compact_decimal_format_data_v1_marker!(Baked);
         impl_short_compact_decimal_format_data_v1_marker!(Baked);
         impl_currency_essentials_v1_marker!(Baked);
+        impl_currency_patterns_data_v1_marker!(Baked);
+        impl_currency_extended_data_v1_marker!(Baked);
         impl_units_display_name_v1_marker!(Baked);
         impl_units_essentials_v1_marker!(Baked);
         impl_language_display_names_v1_marker!(Baked);
@@ -93,6 +96,8 @@ pub mod provider {
         super::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker::INFO,
         super::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker::INFO,
         super::dimension::provider::currency::CurrencyEssentialsV1Marker::INFO,
+        super::dimension::provider::currency_patterns::CurrencyPatternsDataV1Marker::INFO,
+        super::dimension::provider::extended_currency::CurrencyExtendedDataV1Marker::INFO,
         super::dimension::provider::percent::PercentEssentialsV1Marker::INFO,
         super::dimension::provider::units_essentials::UnitsEssentialsV1Marker::INFO,
         super::dimension::provider::units::UnitsDisplayNameV1Marker::INFO,

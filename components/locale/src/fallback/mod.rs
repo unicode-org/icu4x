@@ -58,30 +58,30 @@ mod algorithms;
 #[doc(hidden)] // canonical location in super
 #[derive(Debug, Clone, PartialEq)]
 pub struct LocaleFallbacker {
-    likely_subtags: DataPayload<LocaleFallbackLikelySubtagsV1Marker>,
-    parents: DataPayload<LocaleFallbackParentsV1Marker>,
+    likely_subtags: DataPayload<LikelySubtagsForLanguageV1Marker>,
+    parents: DataPayload<ParentsV1Marker>,
 }
 
 /// Borrowed version of [`LocaleFallbacker`].
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct LocaleFallbackerBorrowed<'a> {
-    likely_subtags: &'a LocaleFallbackLikelySubtagsV1<'a>,
-    parents: &'a LocaleFallbackParentsV1<'a>,
+    likely_subtags: &'a LikelySubtagsForLanguageV1<'a>,
+    parents: &'a ParentsV1<'a>,
 }
 
 /// A [`LocaleFallbackerBorrowed`] with an associated [`LocaleFallbackConfig`].
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct LocaleFallbackerWithConfig<'a> {
-    likely_subtags: &'a LocaleFallbackLikelySubtagsV1<'a>,
-    parents: &'a LocaleFallbackParentsV1<'a>,
+    likely_subtags: &'a LikelySubtagsForLanguageV1<'a>,
+    parents: &'a ParentsV1<'a>,
     config: LocaleFallbackConfig,
 }
 
 /// Inner iteration type. Does not own the item under fallback.
 #[derive(Debug)]
 struct LocaleFallbackIteratorInner<'a> {
-    likely_subtags: &'a LocaleFallbackLikelySubtagsV1<'a>,
-    parents: &'a LocaleFallbackParentsV1<'a>,
+    likely_subtags: &'a LikelySubtagsForLanguageV1<'a>,
+    parents: &'a ParentsV1<'a>,
     config: LocaleFallbackConfig,
     backup_subdivision: Option<Subtag>,
     backup_variant: Option<Variant>,
@@ -108,9 +108,8 @@ impl LocaleFallbacker {
     #[allow(clippy::new_ret_no_self)] // keeping constructors together
     pub const fn new<'a>() -> LocaleFallbackerBorrowed<'a> {
         let tickstatic = LocaleFallbackerBorrowed {
-            likely_subtags:
-                crate::provider::Baked::SINGLETON_LOCALE_FALLBACK_LIKELY_SUBTAGS_V1_MARKER,
-            parents: crate::provider::Baked::SINGLETON_LOCALE_FALLBACK_PARENTS_V1_MARKER,
+            likely_subtags: crate::provider::Baked::SINGLETON_LIKELY_SUBTAGS_FOR_LANGUAGE_V1_MARKER,
+            parents: crate::provider::Baked::SINGLETON_PARENTS_V1_MARKER,
         };
         // Safety: we're transmuting down from LocaleFallbackerBorrowed<'static> to LocaleFallbackerBorrowed<'a>
         // ZeroMaps use associated types in a way that confuse the compiler which gives up and marks them
@@ -132,9 +131,7 @@ impl LocaleFallbacker {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
-        P: DataProvider<LocaleFallbackLikelySubtagsV1Marker>
-            + DataProvider<LocaleFallbackParentsV1Marker>
-            + ?Sized,
+        P: DataProvider<LikelySubtagsForLanguageV1Marker> + DataProvider<ParentsV1Marker> + ?Sized,
     {
         let likely_subtags = provider.load(Default::default())?.payload;
         let parents = provider.load(Default::default())?.payload;
@@ -148,7 +145,17 @@ impl LocaleFallbacker {
     /// surprising behavior, especially in multi-script languages.
     pub fn new_without_data() -> Self {
         LocaleFallbacker {
-            likely_subtags: DataPayload::from_owned(Default::default()),
+            likely_subtags: DataPayload::from_owned(LikelySubtagsForLanguageV1 {
+                language: Default::default(),
+                language_region: Default::default(),
+                language_script: Default::default(),
+                // Unused
+                und: (
+                    Default::default(),
+                    crate::subtags::script!("Zzzz"),
+                    crate::subtags::region!("ZZ"),
+                ),
+            }),
             parents: DataPayload::from_owned(Default::default()),
         }
     }

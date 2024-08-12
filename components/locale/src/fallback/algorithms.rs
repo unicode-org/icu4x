@@ -16,43 +16,40 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
             if let Some(script) = locale.script {
                 locale.region = self
                     .likely_subtags
-                    .ls2r
-                    .get_2d(
-                        &language.into_tinystr().to_unvalidated(),
-                        &script.into_tinystr().to_unvalidated(),
-                    )
+                    .language_script
+                    .get(&(
+                        language.into_tinystr().to_unvalidated(),
+                        script.into_tinystr().to_unvalidated(),
+                    ))
                     .copied();
             }
             // 1b. If that fails, try language only
             if locale.region.is_none() {
                 locale.region = self
                     .likely_subtags
-                    .l2r
-                    .get(&language.into_tinystr().to_unvalidated())
-                    .copied();
+                    .language
+                    .get_copied(&language.into_tinystr().to_unvalidated())
+                    .map(|(_s, r)| r);
             }
         }
         // 2. Remove the script if it is implied by the other subtags
         if let Some(script) = locale.script {
-            let default_script = self
-                .likely_subtags
-                .l2s
-                .get_copied(&language.into_tinystr().to_unvalidated())
-                .unwrap_or(DEFAULT_SCRIPT);
-            if let Some(region) = locale.region {
-                if script
-                    == self
-                        .likely_subtags
-                        .lr2s
-                        .get_copied_2d(
-                            &language.into_tinystr().to_unvalidated(),
-                            &region.into_tinystr().to_unvalidated(),
-                        )
-                        .unwrap_or(default_script)
-                {
-                    locale.script = None;
-                }
-            } else if script == default_script {
+            let default_script = locale
+                .region
+                .and_then(|region| {
+                    self.likely_subtags.language_region.get_copied(&(
+                        language.into_tinystr().to_unvalidated(),
+                        region.into_tinystr().to_unvalidated(),
+                    ))
+                })
+                .or_else(|| {
+                    self.likely_subtags
+                        .language
+                        .get_copied(&language.into_tinystr().to_unvalidated())
+                        .map(|(s, _r)| s)
+                });
+
+            if Some(script) == default_script {
                 locale.script = None;
             }
         }
@@ -104,10 +101,10 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
         if locale.script.is_none() {
             if let Some(region) = locale.region {
                 let language = locale.language;
-                if let Some(script) = self.likely_subtags.lr2s.get_copied_2d(
-                    &language.into_tinystr().to_unvalidated(),
-                    &region.into_tinystr().to_unvalidated(),
-                ) {
+                if let Some(script) = self.likely_subtags.language_region.get_copied(&(
+                    language.into_tinystr().to_unvalidated(),
+                    region.into_tinystr().to_unvalidated(),
+                )) {
                     locale.script = Some(script);
                     self.restore_subdivision_variants(locale);
                     return;

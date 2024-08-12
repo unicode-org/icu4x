@@ -86,6 +86,7 @@ pub mod adapters {
     use super::*;
 
     pub use parts_write_adapter::CoreWriteAsPartsWrite;
+    pub use parts_write_adapter::WithPart;
     pub use try_writeable::TryWriteableInfallibleAsWriteable;
     pub use try_writeable::WriteableAsTryWriteableInfallible;
 }

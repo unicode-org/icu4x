@@ -315,13 +315,13 @@ size_test!(
 ///     .include_day_period_names(FieldLength::Abbreviated)
 ///     .unwrap();
 ///
-/// // Create a pattern from a pattern string:
-/// let pattern_str = "E MMM d y -- h:mm a";
+/// // Create a pattern from a pattern string (note: K is the hour with h11 hour cycle):
+/// let pattern_str = "E MMM d y -- K:mm a";
 /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
 ///
 /// // Test it:
-/// let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 20, 11, 35, 3).unwrap();
-/// assert_try_writeable_eq!(names.with_pattern(&pattern).format(&datetime), "пн лист. 20 2023 -- 11:35 дп");
+/// let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 20, 12, 35, 3).unwrap();
+/// assert_try_writeable_eq!(names.with_pattern(&pattern).format(&datetime), "пн лист. 20 2023 -- 0:35 пп");
 /// ```
 ///
 /// If the correct data is not loaded, and error will occur:
@@ -2286,6 +2286,7 @@ impl<'a> TryWriteable for FormattedDateTimePattern<'a> {
     ) -> Result<Result<(), Self::Error>, fmt::Error> {
         try_write_pattern(
             self.pattern.0.as_borrowed(),
+            Default::default(),
             &self.datetime,
             Some(&self.names),
             Some(&self.names),

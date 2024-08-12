@@ -3,9 +3,10 @@
     "has_long": false,
     "has_medium": false,
     "has_plurals": false,
-    "has_eras": false
+    "has_eras": true
   },
   "patterns": [
+    "U年",
     "U年"
   ]
 }

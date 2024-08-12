@@ -6,7 +6,7 @@
     "has_eras": false
   },
   "patterns": [
-    "EEEEที่ d MMMM GGGG y",
+    "EEEEที่ d MMMM GGG y",
     "E d MMM GGG y"
   ]
 }

@@ -3,14 +3,11 @@
     "has_long": true,
     "has_medium": true,
     "has_plurals": false,
-    "has_eras": true
+    "has_eras": false
   },
   "patterns": [
-    "EEEE, d 'de' MMMM 'de' y G",
     "EEEE, d 'de' MMMM 'de' y GGG",
-    "EEE, d 'de' MMM 'de' y G",
     "E, d 'de' MMM 'de' y GGG",
-    "E d/M/y G",
-    "E, d 'de' MMM 'de' y GGG"
+    "E, d 'de' MMM 'de' y GGGGG"
   ]
 }

@@ -8,6 +8,6 @@
   "patterns": [
     "d MMMM",
     "d MMM",
-    "d/M"
+    "d/MM"
   ]
 }

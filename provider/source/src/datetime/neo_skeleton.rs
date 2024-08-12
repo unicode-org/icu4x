@@ -7,9 +7,9 @@ use std::collections::HashSet;
 use crate::{IterableDataProviderCached, SourceDataProvider};
 use either::Either;
 use icu::datetime::neo_skeleton::{
-    NeoDateComponents, NeoDateSkeleton, NeoSkeletonLength, NeoTimeComponents, NeoTimeSkeleton,
+    NeoDateComponents, NeoDayComponents, NeoSkeletonLength, NeoTimeComponents,
 };
-use icu::datetime::options::components;
+use icu::datetime::options::{components, length, preferences};
 use icu::datetime::pattern::runtime::PatternPlurals;
 use icu::datetime::provider::calendar::{DateLengthsV1, DateSkeletonPatternsV1, TimeLengthsV1};
 use icu::datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker;
@@ -26,7 +26,8 @@ impl SourceDataProvider {
         req: DataRequest,
         calendar: Either<&Value, &str>,
         from_id_str: impl Fn(&DataMarkerAttributes) -> Option<C>,
-        to_components_bag: impl Fn(NeoSkeletonLength, &C) -> DateTimeFormatterOptions,
+        to_components_bag: impl Fn(NeoSkeletonLength, &C, &DateLengthsV1) -> DateTimeFormatterOptions,
+        should_include_era: impl Fn(&C) -> bool,
     ) -> Result<DataResponse<M>, DataError>
     where
         M: DataMarker<DataStruct = PackedSkeletonDataV1<'static>>,
@@ -40,6 +41,7 @@ impl SourceDataProvider {
             calendar,
             neo_components,
             to_components_bag,
+            should_include_era,
         )?;
         Ok(DataResponse {
             metadata: Default::default(),
@@ -52,7 +54,8 @@ impl SourceDataProvider {
         locale: &DataLocale,
         calendar: Either<&Value, &str>,
         neo_components: C,
-        to_components_bag: impl Fn(NeoSkeletonLength, &C) -> DateTimeFormatterOptions,
+        to_components_bag: impl Fn(NeoSkeletonLength, &C, &DateLengthsV1) -> DateTimeFormatterOptions,
+        should_include_era: impl Fn(&C) -> bool,
     ) -> Result<PackedSkeletonDataV1<'static>, DataError> {
         let data = self.get_datetime_resources(locale, calendar)?;
 
@@ -73,32 +76,34 @@ impl SourceDataProvider {
             NeoSkeletonLength::Medium,
             NeoSkeletonLength::Short,
         ]
-        .map(|length| to_components_bag(length, &neo_components))
+        .map(|length| to_components_bag(length, &neo_components, &date_lengths_v1))
         .map(|bag| {
             let pattern =
                 bag.select_pattern(&skeleton_patterns, &date_lengths_v1, &time_lengths_v1);
-            let pattern_with_era = match bag {
-                DateTimeFormatterOptions::Components(
-                    components @ components::Bag {
-                        year: Some(_),
-                        era: None,
-                        ..
-                    },
-                ) => {
-                    // TODO(#4478): Use CLDR data when it becomes available
-                    // TODO: Set the length to NeoSkeletonLength? Or not, because
-                    // the era should normally be displayed as short?
-                    let mut components_with_era = components;
-                    components_with_era.era = Some(components::Text::Short);
-                    Some(
-                        DateTimeFormatterOptions::Components(components_with_era).select_pattern(
-                            &skeleton_patterns,
-                            &date_lengths_v1,
-                            &time_lengths_v1,
-                        ),
-                    )
+            // TODO: use should_include_era
+            let pattern_with_era = if should_include_era(&neo_components) {
+                match bag {
+                    DateTimeFormatterOptions::Components(
+                        components @ components::Bag { era: None, .. },
+                    ) => {
+                        // TODO(#4478): Use CLDR data when it becomes available
+                        // TODO: Set the length to NeoSkeletonLength? Or not, because
+                        // the era should normally be displayed as short?
+                        let mut components_with_era = components;
+                        components_with_era.era = Some(components::Text::Short);
+                        Some(
+                            DateTimeFormatterOptions::Components(components_with_era)
+                                .select_pattern(
+                                    &skeleton_patterns,
+                                    &date_lengths_v1,
+                                    &time_lengths_v1,
+                                ),
+                        )
+                    }
+                    _ => None,
                 }
-                _ => None,
+            } else {
+                None
             };
             // Assert that if there are multiple variants in `pattern_with_era`, then
             // there are also multiple variants in `pattern`
@@ -248,10 +253,47 @@ impl DataProvider<TimeNeoSkeletonPatternsV1Marker> for SourceDataProvider {
             req,
             Either::Right("generic"),
             NeoTimeComponents::from_id_str,
-            |length, neo_components| {
-                NeoTimeSkeleton::for_length_and_components(length, *neo_components)
-                    .to_components_bag()
+            |length, neo_components, _date_lengths_v1| {
+                // TODO: Should this use timeSkeletons?
+                // "full": "ahmmsszzzz",
+                // "long": "ahmmssz",
+                // "medium": "ahmmss",
+                // "short": "ahmm"
+                //
+                // Probably depends on CLDR data being higher quality.
+                // <https://unicode-org.atlassian.net/browse/CLDR-14993>
+                if matches!(neo_components, NeoTimeComponents::Auto) {
+                    return DateTimeFormatterOptions::Length(length::Bag::from_time_style(
+                        length.to_time_style(),
+                    ));
+                }
+                let mut filtered_components = components::Bag::empty();
+                if neo_components.has_hour() {
+                    filtered_components.hour = Some(components::Numeric::Numeric);
+                }
+                if neo_components.has_minute() {
+                    filtered_components.minute = Some(components::Numeric::Numeric);
+                }
+                if neo_components.has_second() {
+                    filtered_components.second = Some(components::Numeric::Numeric);
+                }
+                // Select the correct hour cycle
+                filtered_components.preferences = match neo_components {
+                    NeoTimeComponents::Hour12
+                    | NeoTimeComponents::Hour12Minute
+                    | NeoTimeComponents::Hour12MinuteSecond => Some(
+                        preferences::Bag::from_hour_cycle(preferences::HourCycle::H12),
+                    ),
+                    NeoTimeComponents::Hour24
+                    | NeoTimeComponents::Hour24Minute
+                    | NeoTimeComponents::Hour24MinuteSecond => Some(
+                        preferences::Bag::from_hour_cycle(preferences::HourCycle::H23),
+                    ),
+                    _ => None,
+                };
+                DateTimeFormatterOptions::Components(filtered_components)
             },
+            |_| false,
         )
     }
 }
@@ -270,10 +312,86 @@ macro_rules! impl_neo_skeleton_datagen {
                     req,
                     Either::Left(&value!($calendar)),
                     |id_str| NeoDateComponents::from_id_str(id_str),
-                    |length, neo_components| {
-                        NeoDateSkeleton::for_length_and_components(length, *neo_components)
-                            .to_components_bag()
+                    |length, neo_components, date_lengths_v1| {
+                        // Pull the field lengths from the date length patterns, and then use
+                        // those lengths for classical skeleton datetime pattern generation.
+                        //
+                        // TODO: Should this use dateSkeletons?
+                        // "full": "yMMMMEEEEd",
+                        // "long": "yMMMMd",
+                        // "medium": "yMMMd",
+                        // "short": "yMMdd"
+                        //
+                        // Probably depends on CLDR data being higher quality.
+                        // <https://unicode-org.atlassian.net/browse/CLDR-14993>
+                        if matches!(
+                            neo_components,
+                            NeoDateComponents::Day(NeoDayComponents::Auto)
+                        ) {
+                            return DateTimeFormatterOptions::Length(length::Bag::from_date_style(
+                                length.to_date_style(),
+                            ));
+                        }
+                        if length == NeoSkeletonLength::Long
+                            && matches!(
+                                neo_components,
+                                NeoDateComponents::Day(NeoDayComponents::AutoWeekday)
+                            )
+                        {
+                            return DateTimeFormatterOptions::Length(length::Bag::from_date_style(
+                                length::Date::Full,
+                            ));
+                        }
+                        let date_pattern = match length {
+                            NeoSkeletonLength::Long => &date_lengths_v1.date.long,
+                            NeoSkeletonLength::Medium => &date_lengths_v1.date.medium,
+                            NeoSkeletonLength::Short => &date_lengths_v1.date.short,
+                            _ => unreachable!(),
+                        };
+                        let date_bag = components::Bag::from(date_pattern);
+                        let mut filtered_components = components::Bag::empty();
+                        if neo_components.has_year() {
+                            filtered_components.era = date_bag.era;
+                            filtered_components.year = date_bag.year;
+                        }
+                        if neo_components.has_full_year() {
+                            // override the year field to be a full year
+                            filtered_components.year = Some(components::Year::Numeric);
+                        }
+                        if neo_components.has_month() {
+                            filtered_components.month = date_bag.month;
+                        }
+                        if neo_components.has_month()
+                            && !neo_components.has_year()
+                            && !neo_components.has_day()
+                        {
+                            // standalone month: use the skeleton length
+                            filtered_components.month = match length {
+                                NeoSkeletonLength::Long => Some(components::Month::Long),
+                                NeoSkeletonLength::Medium => Some(components::Month::Short),
+                                NeoSkeletonLength::Short => Some(components::Month::Numeric),
+                                _ => unreachable!(),
+                            };
+                        }
+                        if neo_components.has_day() {
+                            filtered_components.day = date_bag.day;
+                        }
+                        if neo_components.has_day() && !neo_components.has_month() {
+                            // override the day field to use the skeleton day length
+                            filtered_components.day = Some(components::Day::NumericDayOfMonth);
+                        }
+                        if neo_components.has_weekday() {
+                            // Not all length patterns have the weekday
+                            filtered_components.weekday = match length {
+                                NeoSkeletonLength::Long => Some(components::Text::Long),
+                                NeoSkeletonLength::Medium => Some(components::Text::Short),
+                                NeoSkeletonLength::Short => Some(components::Text::Short),
+                                _ => unreachable!(),
+                            };
+                        }
+                        DateTimeFormatterOptions::Components(filtered_components)
                     },
+                    |neo_components| neo_components.has_full_year(),
                 )
             }
         }

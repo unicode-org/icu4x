@@ -38,9 +38,8 @@ mod decimal;
 mod displaynames;
 #[cfg(feature = "experimental")]
 mod duration;
-mod fallback;
 mod list;
-mod locale_canonicalizer;
+mod locale;
 mod normalizer;
 #[cfg(feature = "experimental")]
 mod percent;

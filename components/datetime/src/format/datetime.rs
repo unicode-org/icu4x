@@ -4,6 +4,7 @@
 
 use crate::fields::{self, Field, FieldLength, FieldSymbol, Second, Week, Year};
 use crate::input::{DateInput, ExtractedDateTimeInput, ExtractedTimeZoneInput, IsoTimeInput};
+use crate::options::preferences::HourCycle;
 use crate::pattern::runtime::{PatternBorrowed, PatternMetadata};
 use crate::pattern::{
     runtime::{Pattern, PatternPlurals},
@@ -26,6 +27,7 @@ use crate::time_zone::{
     TimeZoneFormatterUnit,
 };
 
+use super::FormattingOptions;
 use core::fmt::{self, Write};
 use core::iter::Peekable;
 use fixed_decimal::FixedDecimal;
@@ -133,6 +135,7 @@ impl<'l> Writeable for FormattedDateTime<'l> {
 
         r = r.and(try_write_pattern(
             pattern.as_borrowed(),
+            Default::default(),
             &self.datetime,
             self.date_symbols,
             self.time_symbols,
@@ -203,6 +206,7 @@ where
 #[allow(clippy::too_many_arguments)]
 pub(crate) fn try_write_pattern<'data, W, DS, TS, ZS>(
     pattern: PatternBorrowed<'data>,
+    formatting_options: FormattingOptions,
     datetime: &ExtractedDateTimeInput,
     date_symbols: Option<&DS>,
     time_symbols: Option<&TS>,
@@ -220,6 +224,7 @@ where
     try_write_pattern_items(
         pattern.metadata,
         pattern.items.iter(),
+        formatting_options,
         datetime,
         date_symbols,
         time_symbols,
@@ -234,6 +239,7 @@ where
 pub(crate) fn try_write_pattern_items<'data, W, DS, TS, ZS>(
     pattern_metadata: PatternMetadata,
     pattern_items: impl Iterator<Item = PatternItem>,
+    formatting_options: FormattingOptions,
     datetime: &ExtractedDateTimeInput,
     date_symbols: Option<&DS>,
     time_symbols: Option<&TS>,
@@ -271,6 +277,7 @@ where
                     field,
                     &mut iter,
                     pattern_metadata,
+                    formatting_options,
                     datetime,
                     date_symbols,
                     time_symbols,
@@ -354,6 +361,7 @@ pub(crate) fn try_write_field<'data, W, DS, TS>(
     field: fields::Field,
     iter: &mut Peekable<impl Iterator<Item = PatternItem>>,
     pattern_metadata: PatternMetadata,
+    formatting_options: FormattingOptions,
     datetime: &ExtractedDateTimeInput,
     date_symbols: Option<&DS>,
     time_symbols: Option<&TS>,
@@ -639,9 +647,9 @@ where
             }
             Some(h) => {
                 let h = usize::from(h) as isize;
-                let h = match hour {
-                    fields::Hour::H11 => h % 12,
-                    fields::Hour::H12 => {
+                let h = match (hour, formatting_options.hour_cycle) {
+                    (fields::Hour::H11, None) | (_, Some(HourCycle::H11)) => h % 12,
+                    (fields::Hour::H12, None) | (_, Some(HourCycle::H12)) => {
                         let v = h % 12;
                         if v == 0 {
                             12
@@ -649,8 +657,8 @@ where
                             v
                         }
                     }
-                    fields::Hour::H23 => h,
-                    fields::Hour::H24 => {
+                    (fields::Hour::H23, None) | (_, Some(HourCycle::H23)) => h,
+                    (fields::Hour::H24, None) | (_, Some(HourCycle::H24)) => {
                         if h == 0 {
                             24
                         } else {
@@ -668,69 +676,66 @@ where
             }
             Some(iso_minute) => try_write_number(w, fdf, usize::from(iso_minute).into(), l)?,
         },
-        (FieldSymbol::Second(Second::Second), l) => match (datetime.second(), iter.peek()) {
-            (
-                None,
-                Some(&PatternItem::Field(
-                    next_field @ Field {
-                        symbol: FieldSymbol::Second(Second::FractionalSecond),
-                        ..
-                    },
-                )),
-            ) => {
-                iter.next(); // Advance over nanosecond symbol
-                write_value_missing(w, field)?;
-                // Write error value for nanos even if we have them
-                write_value_missing(w, next_field)?;
-                Err(DateTimeWriteError::MissingInputField("second"))
-            }
-            (None, _) => {
+        (FieldSymbol::Second(Second::Second), l) => match datetime.second() {
+            None => {
                 write_value_missing(w, field)?;
                 Err(DateTimeWriteError::MissingInputField("second"))
             }
-            (
-                Some(second),
-                Some(&PatternItem::Field(
-                    next_field @ Field {
-                        symbol: FieldSymbol::Second(Second::FractionalSecond),
-                        length,
-                    },
-                )),
-            ) => {
-                iter.next(); // Advance over nanosecond symbol
-                let r = datetime
-                    .nanosecond()
-                    .ok_or(DateTimeWriteError::MissingInputField("nanosecond"))
-                    .and_then(|ns| {
-                        // We only support fixed field length for fractional seconds.
-                        let FieldLength::Fixed(p) = length else {
-                            return Err(DateTimeWriteError::UnsupportedField(next_field));
-                        };
-                        Ok((ns, p))
-                    });
-                match r {
-                    Err(e) => {
+            Some(second) => {
+                match match (iter.peek(), formatting_options.fractional_second_digits) {
+                    (
+                        Some(&PatternItem::Field(
+                            next_field @ Field {
+                                symbol: FieldSymbol::Second(Second::FractionalSecond),
+                                length: FieldLength::Fixed(p),
+                            },
+                        )),
+                        _,
+                    ) => {
+                        // Fractional second digits via field symbol
+                        iter.next(); // Advance over nanosecond symbol
+                        Some((-(p as i16), Some(next_field), datetime.nanosecond()))
+                    }
+                    (_, Some(p)) => {
+                        // Fractional second digits via semantic option
+                        Some((-(p as i16), None, datetime.nanosecond()))
+                    }
+                    _ => None,
+                } {
+                    Some((_, maybe_next_field, None)) => {
+                        // Request to format nanoseconds but we don't have nanoseconds
                         let seconds_result =
                             try_write_number(w, fdf, usize::from(second).into(), l)?;
-                        write_value_missing(w, next_field)?;
+                        if let Some(next_field) = maybe_next_field {
+                            write_value_missing(w, next_field)?;
+                        }
                         // Return the earlier error
-                        seconds_result.and(Err(e))
+                        seconds_result.and(Err(DateTimeWriteError::MissingInputField("nanosecond")))
                     }
-                    Ok((ns, p)) => {
+                    Some((position, maybe_next_field, Some(ns))) => {
+                        // Formatting with fractional seconds
                         let mut s = FixedDecimal::from(usize::from(second));
                         let _infallible = s.concatenate_end(
                             FixedDecimal::from(usize::from(ns)).multiplied_pow10(-9),
                         );
                         debug_assert!(_infallible.is_ok());
-                        s.pad_end(-(p as i16));
+                        s.pad_end(position);
+                        if maybe_next_field.is_none() {
+                            // Truncate on semantic option but not "S" field
+                            // TODO: Does this make sense?
+                            s.trunc(position);
+                        }
                         try_write_number(w, fdf, s, l)?
+                    }
+                    None => {
+                        // Normal seconds formatting with no fractional second digits
+                        try_write_number(w, fdf, usize::from(second).into(), l)?
                     }
                 }
             }
-            (Some(second), _) => try_write_number(w, fdf, usize::from(second).into(), l)?,
         },
         (FieldSymbol::Second(Second::FractionalSecond), _) => {
-            // Fractional second not following second
+            // Fractional second not following second or with invalid length
             write_value_missing(w, field)?;
             Err(DateTimeWriteError::UnsupportedField(field))
         }
@@ -1114,6 +1119,7 @@ mod tests {
         let mut sink = String::new();
         try_write_pattern(
             pattern.as_borrowed(),
+            Default::default(),
             &ExtractedDateTimeInput::extract_from(&datetime),
             Some(date_data.payload.get()),
             Some(time_data.payload.get()),

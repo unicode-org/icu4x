@@ -118,7 +118,7 @@ impl CldrCache {
     }
 
     fn extended_locale_expander(&self) -> Result<&LocaleExpander, DataError> {
-        use super::locale_canonicalizer::likely_subtags::*;
+        use super::locale::likely_subtags::*;
         self.extended_locale_expander
             .get_or_init(|| {
                 let common_data =
@@ -129,13 +129,13 @@ impl CldrCache {
                     ForkByMarkerProvider::new,
                     [
                         AnyPayloadProvider::from_owned::<LikelySubtagsForLanguageV1Marker>(
-                            common_data.clone().into(),
+                            common_data.as_langs(),
                         ),
                         AnyPayloadProvider::from_owned::<LikelySubtagsForScriptRegionV1Marker>(
-                            common_data.into(),
+                            common_data.as_script_region(),
                         ),
                         AnyPayloadProvider::from_owned::<LikelySubtagsExtendedV1Marker>(
-                            extended_data.into()
+                            extended_data.as_extended()
                         ),
                     ]
                 );

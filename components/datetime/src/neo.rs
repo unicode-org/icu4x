@@ -19,7 +19,7 @@ use crate::neo_marker::{
 };
 use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::{NeoComponents, NeoSkeletonLength};
-use crate::pattern::CoarseHourCycle;
+use crate::options::preferences::HourCycle;
 use crate::provider::neo::*;
 use crate::raw::neo::*;
 use crate::CldrCalendar;
@@ -162,6 +162,11 @@ pub struct NeoOptions<R: DateTimeMarkers> {
     ///
     /// See [`EraDisplay`](crate::neo_skeleton::EraDisplay).
     pub era_display: R::EraDisplayOption,
+    /// How many fractional seconds to display,
+    /// if seconds are included in the field set.
+    ///
+    /// See [`FractionalSecondDigits`](crate::neo_skeleton::FractionalSecondDigits).
+    pub fractional_second_digits: R::FractionalSecondDigitsOption,
 }
 
 impl<R> From<NeoSkeletonLength> for NeoOptions<R>
@@ -169,12 +174,14 @@ where
     R: DateTimeMarkers,
     R::LengthOption: From<NeoSkeletonLength>,
     R::EraDisplayOption: Default,
+    R::FractionalSecondDigitsOption: Default,
 {
     #[inline]
     fn from(value: NeoSkeletonLength) -> Self {
         NeoOptions {
             length: value.into(),
             era_display: Default::default(),
+            fractional_second_digits: Default::default(),
         }
     }
 }
@@ -186,12 +193,14 @@ where
     R: DateTimeMarkers,
     R::LengthOption: Default,
     R::EraDisplayOption: Default,
+    R::FractionalSecondDigitsOption: Default,
 {
     #[inline]
     fn default() -> Self {
         NeoOptions {
             length: Default::default(),
             era_display: Default::default(),
+            fractional_second_digits: Default::default(),
         }
     }
 }
@@ -361,13 +370,13 @@ where
     ///
     /// let fmt = TypedNeoFormatter::<Gregorian, _>::try_new_with_components(
     ///     &locale!("es-MX").into(),
-    ///     NeoDateComponents::EraYearMonth,
+    ///     NeoDateComponents::YearMonth,
     ///     NeoSkeletonLength::Medium.into(),
     /// )
     /// .unwrap();
     /// let dt = Date::try_new_gregorian_date(2024, 1, 10).unwrap();
     ///
-    /// assert_try_writeable_eq!(fmt.format(&dt), "ene 2024 d.C.");
+    /// assert_try_writeable_eq!(fmt.format(&dt), "ene 2024");
     /// ```
     ///
     /// Time components:
@@ -532,7 +541,7 @@ where
         let hour_cycle = locale
             .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
             .as_ref()
-            .and_then(CoarseHourCycle::from_locale_value);
+            .and_then(HourCycle::from_locale_value);
         let selection = DateTimeZonePatternSelectionData::try_new_with_skeleton(
             &<R::D as TypedDateDataMarkers<C>>::DateSkeletonPatternsV1Marker::bind(provider),
             &<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker::bind(provider),
@@ -541,6 +550,7 @@ where
             options.length.into(),
             components,
             options.era_display.into(),
+            options.fractional_second_digits.into(),
             hour_cycle,
         )
         .map_err(LoadError::Data)?;
@@ -918,13 +928,13 @@ where
     ///
     /// let fmt = NeoFormatter::try_new_with_components(
     ///     &locale!("es-MX").into(),
-    ///     NeoDateComponents::EraYearMonth,
+    ///     NeoDateComponents::YearMonth,
     ///     NeoSkeletonLength::Medium.into(),
     /// )
     /// .unwrap();
     /// let dt = Date::try_new_iso_date(2024, 1, 10).unwrap();
     ///
-    /// assert_try_writeable_eq!(fmt.convert_and_format(&dt), "ene 2024 d.C.");
+    /// assert_try_writeable_eq!(fmt.convert_and_format(&dt), "ene 2024");
     /// ```
     ///
     /// Time components:
@@ -1238,7 +1248,7 @@ where
         let hour_cycle = locale
             .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
             .as_ref()
-            .and_then(CoarseHourCycle::from_locale_value);
+            .and_then(HourCycle::from_locale_value);
         let selection = DateTimeZonePatternSelectionData::try_new_with_skeleton(
             &AnyCalendarProvider::<<R::D as DateDataMarkers>::Skel, _>::new(provider, kind),
             &<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker::bind(provider),
@@ -1247,6 +1257,7 @@ where
             options.length.into(),
             components,
             options.era_display.into(),
+            options.fractional_second_digits.into(),
             hour_cycle,
         )
         .map_err(LoadError::Data)?;
@@ -1447,6 +1458,7 @@ impl<'a> TryWriteable for FormattedNeoDateTime<'a> {
         try_write_pattern_items(
             self.pattern.metadata(),
             self.pattern.iter_items(),
+            self.pattern.formatting_options(),
             &self.datetime,
             Some(&self.names),
             Some(&self.names),

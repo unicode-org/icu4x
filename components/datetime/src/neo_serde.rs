@@ -5,8 +5,8 @@
 //! Serde definitions for semantic skeleta
 
 use crate::neo_skeleton::{
-    EraDisplay, NeoComponents, NeoDateComponents, NeoDayComponents, NeoSkeleton, NeoSkeletonLength,
-    NeoTimeComponents, NeoTimeZoneSkeleton, NeoTimeZoneStyle,
+    EraDisplay, FractionalSecondDigits, NeoComponents, NeoDateComponents, NeoDayComponents,
+    NeoSkeleton, NeoSkeletonLength, NeoTimeComponents, NeoTimeZoneSkeleton, NeoTimeZoneStyle,
 };
 use alloc::vec::Vec;
 use serde::{Deserialize, Serialize};
@@ -29,6 +29,8 @@ pub(crate) struct SemanticSkeletonSerde {
     pub(crate) length: NeoSkeletonLength,
     #[serde(rename = "eraDisplay")]
     pub(crate) era_display: Option<EraDisplay>,
+    #[serde(rename = "fractionalSecondDigits")]
+    pub(crate) fractional_second_digits: Option<FractionalSecondDigits>,
 }
 
 impl From<NeoSkeleton> for SemanticSkeletonSerde {
@@ -37,6 +39,7 @@ impl From<NeoSkeleton> for SemanticSkeletonSerde {
             field_set: value.components,
             length: value.length,
             era_display: value.era_display,
+            fractional_second_digits: value.fractional_second_digits,
         }
     }
 }
@@ -48,6 +51,7 @@ impl TryFrom<SemanticSkeletonSerde> for NeoSkeleton {
             length: value.length,
             components: value.field_set,
             era_display: value.era_display,
+            fractional_second_digits: value.fractional_second_digits,
         })
     }
 }
@@ -473,12 +477,13 @@ fn test_basic() {
         ),
         length: NeoSkeletonLength::Medium,
         era_display: Some(EraDisplay::Always),
+        fractional_second_digits: Some(FractionalSecondDigits::F3),
     };
 
     let json_string = serde_json::to_string(&skeleton).unwrap();
     assert_eq!(
         json_string,
-        r#"{"fieldSet":["year","month","day","weekday","hour","minute","zoneGeneric"],"length":"medium","eraDisplay":"always"}"#
+        r#"{"fieldSet":["year","month","day","weekday","hour","minute","zoneGeneric"],"length":"medium","eraDisplay":"always","fractionalSecondDigits":3}"#
     );
     let json_skeleton = serde_json::from_str::<NeoSkeleton>(&json_string).unwrap();
     assert_eq!(skeleton, json_skeleton);
