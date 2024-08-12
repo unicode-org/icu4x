@@ -20,7 +20,7 @@ pub mod ffi {
     #[diplomat::enum_convert(icu_locale::fallback::LocaleFallbackPriority, needs_wildcard)]
     #[diplomat::rust_link(icu::locale::fallback::LocaleFallbackPriority, Enum)]
     #[diplomat::rust_link(
-        icu::locale::fallback::LocaleFallbackPriority::const_default,
+        icu::locale::fallback::LocaleFallbackPriority::default,
         FnInEnum,
         hidden
     )]
@@ -32,7 +32,7 @@ pub mod ffi {
     /// Collection of configurations for the ICU4X fallback algorithm.
     #[diplomat::rust_link(icu::locale::fallback::LocaleFallbackConfig, Struct)]
     #[diplomat::rust_link(
-        icu::locale::fallback::LocaleFallbackConfig::const_default,
+        icu::locale::fallback::LocaleFallbackConfig::default,
         FnInStruct,
         hidden
     )]

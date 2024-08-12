@@ -26,14 +26,14 @@ pub enum LocaleFallbackPriority {
 
 impl LocaleFallbackPriority {
     /// Const-friendly version of [`Default::default`].
-    pub const fn const_default() -> Self {
+    pub const fn default() -> Self {
         Self::Language
     }
 }
 
 impl Default for LocaleFallbackPriority {
     fn default() -> Self {
-        Self::const_default()
+        Self::default()
     }
 }
 
@@ -105,15 +105,15 @@ pub struct LocaleFallbackConfig {
 
 impl LocaleFallbackConfig {
     /// Const version of [`Default::default`].
-    pub const fn const_default() -> Self {
+    pub const fn default() -> Self {
         Self {
-            priority: LocaleFallbackPriority::const_default(),
+            priority: LocaleFallbackPriority::default(),
         }
     }
 }
 
 impl Default for LocaleFallbackConfig {
     fn default() -> Self {
-        Self::const_default()
+        Self::default()
     }
 }
