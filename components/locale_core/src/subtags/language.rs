@@ -65,20 +65,6 @@ impl Language {
     }
 
     /// Tests if the [`Language`] subtag is the default one (`"und"`).
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::locale::subtags::Language;
-    ///
-    /// let mut lang = Language::UND;
-    ///
-    /// assert!(lang.is_default());
-    ///
-    /// lang.clear();
-    ///
-    /// assert!(lang.is_default());
-    /// ```
     #[inline]
     pub const fn is_default(self) -> bool {
         matches!(self, Self::UND)
