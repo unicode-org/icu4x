@@ -587,58 +587,6 @@ impl<'a> FormattedDuration<'a> {
     }
 }
 
-struct PartSink {
-    string: String,
-    parts: Vec<(usize, usize, writeable::Part)>,
-}
-
-impl PartSink {
-    fn new() -> Self {
-        Self {
-            string: String::new(),
-            parts: Vec::new(),
-        }
-    }
-}
-
-impl fmt::Write for PartSink {
-    fn write_str(&mut self, s: &str) -> fmt::Result {
-        self.string.write_str(s)
-    }
-    fn write_char(&mut self, c: char) -> fmt::Result {
-        self.string.write_char(c)
-    }
-}
-
-impl PartsWrite for PartSink {
-    type SubPartsWrite = Self;
-    fn with_part(
-        &mut self,
-        part: writeable::Part,
-        mut f: impl FnMut(&mut Self::SubPartsWrite) -> core::fmt::Result,
-    ) -> core::fmt::Result {
-        let start = self.string.len();
-        f(self)?;
-        let end = self.string.len();
-        if start < end {
-            self.parts.push((start, end, part));
-        }
-        Ok(())
-    }
-}
-
-impl<'a> Writeable for FormattedDuration<'a> {
-    fn write_to_parts<V: PartsWrite + ?Sized>(&self, sink: &mut V) -> core::fmt::Result {
-        self.partition_duration_format_pattern(sink)
-    }
-}
-
-impl<'a> core::fmt::Display for FormattedDuration<'a> {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        self.write_to(f)
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use icu_locale::locale;
