@@ -9,10 +9,9 @@ use writeable::Writeable;
 
 use crate::dimension::currency::options::CurrencyFormatterOptions;
 use crate::dimension::currency::options::Width;
+use crate::dimension::currency::CurrencyCode;
 use crate::dimension::provider::currency;
 use crate::dimension::provider::currency::CurrencyEssentialsV1;
-
-use crate::dimension::currency::CurrencyCode;
 
 pub struct FormattedCurrency<'l> {
     pub(crate) value: &'l FixedDecimal,
