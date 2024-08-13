@@ -271,7 +271,7 @@ impl Keywords {
     ///     .unicode
     ///     .keywords
     ///     .retain_by_key(|&k| k == key!("ms"));
-    /// assert_eq!(loc, Locale::UND);
+    /// assert_eq!(loc, Locale::default());
     /// ```
     pub fn retain_by_key<F>(&mut self, mut predicate: F)
     where

@@ -116,7 +116,7 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
             return;
         }
         // 8. Remove language+script
-        debug_assert!(!locale.language.is_empty()); // don't call .step() on und
+        debug_assert!(!locale.language.is_default()); // don't call .step() on und
         locale.script = None;
         locale.language = Language::UND;
     }
@@ -134,7 +134,7 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
             return;
         }
         // 5. Remove language+script
-        if !locale.language.is_empty() || locale.script.is_some() {
+        if !locale.language.is_default() || locale.script.is_some() {
             locale.script = None;
             locale.language = Language::UND;
             self.restore_subdivision_variants(locale);
@@ -173,7 +173,7 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
         }
 
         // Remove the script if we have a language
-        if !locale.language.is_empty() {
+        if !locale.language.is_default() {
             if locale.script.is_some() {
                 locale.script = None;
                 if let Some(region) = self.backup_region.take() {
@@ -510,7 +510,7 @@ mod tests {
                     .for_config(config)
                     .fallback_for(cas.input.parse().unwrap());
                 let mut actual_chain = Vec::new();
-                while !it.get().is_und() {
+                while !it.get().is_default() {
                     actual_chain.push(it.get().write_to_string().into_owned());
                     it.step();
                 }

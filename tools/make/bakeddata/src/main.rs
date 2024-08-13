@@ -295,7 +295,7 @@ impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
                 .into_iter()
                 .map(|(id, (size, hash))| {
                     (
-                        if marker.is_singleton && id.locale.is_und() {
+                        if marker.is_singleton && id.locale.is_default() {
                             "<singleton>".to_string()
                         } else if !id.marker_attributes.is_empty() {
                             format!(

@@ -8,8 +8,6 @@
   "patterns": [
     "EEEE, MMMM d, y",
     "E, MMM d, y",
-    "E, MMM d, y GGG",
-    "E, M/d/y",
-    "E, MMM d, y GGG"
+    "E, M/d/yy"
   ]
 }

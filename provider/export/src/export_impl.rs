@@ -105,7 +105,7 @@ impl ExportDriver {
                 match provider.load_data(marker, req) {
                     Ok(data_response) => {
                         if let Some(iter) = locale_iter.as_ref() {
-                            if iter.get().is_und() && !id.locale.is_und() {
+                            if iter.get().is_default() && !id.locale.is_default() {
                                 log::debug!("Falling back to und: {marker:?}/{}", id.locale);
                             }
                         }
@@ -116,7 +116,7 @@ impl ExportDriver {
                         ..
                     }) => {
                         if let Some(iter) = locale_iter.as_mut() {
-                            if iter.get().is_und() {
+                            if iter.get().is_default() {
                                 log::debug!("Could not find data for: {marker:?}/{}", id.locale);
                                 return None;
                             }
@@ -320,7 +320,7 @@ fn select_locales_for_marker<'a>(
                 log::trace!("Including {current_locale}: full locale family: {marker:?}");
                 selected_locales.insert(current_locale.clone());
             }
-            if current_locale.language.is_empty() && !current_locale.is_und() {
+            if current_locale.language.is_default() && !current_locale.is_default() {
                 log::trace!("Including {current_locale}: und variant: {marker:?}");
                 selected_locales.insert(current_locale.clone());
             }
@@ -356,7 +356,7 @@ fn select_locales_for_marker<'a>(
                 if let Some(parent_ids) = maybe_parent_ids {
                     for morphed_id in parent_ids.iter() {
                         // Special case: don't pull extensions or aux keys up from the root.
-                        if morphed_id.locale.is_und() && !morphed_id.is_default() {
+                        if morphed_id.locale.is_default() && !morphed_id.is_default() {
                             continue;
                         }
                         let mut morphed_id = morphed_id.clone();
@@ -364,7 +364,7 @@ fn select_locales_for_marker<'a>(
                         expansion.insert(morphed_id);
                     }
                 }
-                if iter.get().is_und() {
+                if iter.get().is_default() {
                     break;
                 }
                 iter.step();
@@ -390,7 +390,7 @@ fn deduplicate_payloads<const MAXIMAL: bool>(
     let fallbacker_with_config = fallbacker.for_config(marker.fallback_config);
     payloads.iter().try_for_each(|(id, (payload, _duration))| {
         // Always export `und`. This prevents calling `step` on an empty locale.
-        if id.locale.is_und() {
+        if id.locale.is_default() {
             return sink
                 .put_payload(marker, id.as_borrowed(), payload)
                 .map_err(|e| {
@@ -411,7 +411,7 @@ fn deduplicate_payloads<const MAXIMAL: bool>(
                 // the next parent is `und`.
                 iter.step();
             }
-            if iter.get().is_und() {
+            if iter.get().is_default() {
                 break;
             }
             if MAXIMAL {

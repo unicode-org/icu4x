@@ -7,6 +7,6 @@
   },
   "patterns": [
     "GGGGy年M月d日",
-    "GGGy年M月d日"
+    "GGGy年MM月dd日"
   ]
 }

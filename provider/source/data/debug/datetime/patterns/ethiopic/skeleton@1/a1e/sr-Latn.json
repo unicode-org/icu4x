@@ -7,9 +7,7 @@
   },
   "patterns": [
     "EEEE, d. MMMM y. G",
-    "E, d. MMM y. G",
     "E, d. MMM y. GGG",
-    "E, d.M.y. GGGGG",
-    "E, d. MMM y. GGG"
+    "E, d. MMM y. GGGGG"
   ]
 }

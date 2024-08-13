@@ -18,7 +18,7 @@ pub(crate) struct BranchMeta {
 
 impl BranchMeta {
     /// Creates a new empty [`BranchMeta`].
-    pub const fn const_default() -> Self {
+    pub const fn default() -> Self {
         BranchMeta {
             ascii: 0,
             cumulative_length: 0,

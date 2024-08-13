@@ -19,7 +19,7 @@ use crate::neo_marker::{
 };
 use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::{NeoComponents, NeoSkeletonLength};
-use crate::pattern::CoarseHourCycle;
+use crate::options::preferences::HourCycle;
 use crate::provider::neo::*;
 use crate::raw::neo::*;
 use crate::CldrCalendar;
@@ -370,13 +370,13 @@ where
     ///
     /// let fmt = TypedNeoFormatter::<Gregorian, _>::try_new_with_components(
     ///     &locale!("es-MX").into(),
-    ///     NeoDateComponents::EraYearMonth,
+    ///     NeoDateComponents::YearMonth,
     ///     NeoSkeletonLength::Medium.into(),
     /// )
     /// .unwrap();
     /// let dt = Date::try_new_gregorian_date(2024, 1, 10).unwrap();
     ///
-    /// assert_try_writeable_eq!(fmt.format(&dt), "ene 2024 d.C.");
+    /// assert_try_writeable_eq!(fmt.format(&dt), "ene 2024");
     /// ```
     ///
     /// Time components:
@@ -541,7 +541,7 @@ where
         let hour_cycle = locale
             .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
             .as_ref()
-            .and_then(CoarseHourCycle::from_locale_value);
+            .and_then(HourCycle::from_locale_value);
         let selection = DateTimeZonePatternSelectionData::try_new_with_skeleton(
             &<R::D as TypedDateDataMarkers<C>>::DateSkeletonPatternsV1Marker::bind(provider),
             &<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker::bind(provider),
@@ -928,13 +928,13 @@ where
     ///
     /// let fmt = NeoFormatter::try_new_with_components(
     ///     &locale!("es-MX").into(),
-    ///     NeoDateComponents::EraYearMonth,
+    ///     NeoDateComponents::YearMonth,
     ///     NeoSkeletonLength::Medium.into(),
     /// )
     /// .unwrap();
     /// let dt = Date::try_new_iso_date(2024, 1, 10).unwrap();
     ///
-    /// assert_try_writeable_eq!(fmt.convert_and_format(&dt), "ene 2024 d.C.");
+    /// assert_try_writeable_eq!(fmt.convert_and_format(&dt), "ene 2024");
     /// ```
     ///
     /// Time components:
@@ -1248,7 +1248,7 @@ where
         let hour_cycle = locale
             .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
             .as_ref()
-            .and_then(CoarseHourCycle::from_locale_value);
+            .and_then(HourCycle::from_locale_value);
         let selection = DateTimeZonePatternSelectionData::try_new_with_skeleton(
             &AnyCalendarProvider::<<R::D as DateDataMarkers>::Skel, _>::new(provider, kind),
             &<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker::bind(provider),
