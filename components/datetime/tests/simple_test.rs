@@ -210,7 +210,7 @@ fn old_date_lengths() {
 fn overlap_patterns() {
     let datetime = CustomZonedDateTime {
         date: Date::try_new_gregorian_date(2024, 8, 9).unwrap(),
-        time: Time::try_new(20, 40, 07, 250).unwrap(),
+        time: Time::try_new(20, 40, 7, 250).unwrap(),
         zone: CustomTimeZone::utc(),
     };
     struct TestCase {
