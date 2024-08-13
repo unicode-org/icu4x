@@ -6,8 +6,7 @@
 //! locale with data.
 
 use crate::provider::*;
-use icu_locale_core::subtags::Subtag;
-use icu_locale_core::subtags::Variant;
+use icu_locale_core::subtags::*;
 use icu_provider::prelude::*;
 
 #[doc(inline)]
@@ -85,6 +84,8 @@ struct LocaleFallbackIteratorInner<'a> {
     config: LocaleFallbackConfig,
     backup_subdivision: Option<Subtag>,
     backup_variant: Option<Variant>,
+    backup_region: Option<Region>,
+    max_script: Option<Script>,
 }
 
 /// Iteration type for locale fallback operations.
@@ -207,7 +208,9 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
     ///
     /// When first initialized, the locale is normalized according to the fallback algorithm.
     pub fn fallback_for(&self, mut locale: DataLocale) -> LocaleFallbackIterator<'a, 'static> {
-        self.normalize(&mut locale);
+        let mut default_script = None;
+        self.normalize(&mut locale, &mut default_script);
+        let max_script = locale.script.or(default_script);
         LocaleFallbackIterator {
             current: locale,
             inner: LocaleFallbackIteratorInner {
@@ -216,6 +219,8 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
                 config: self.config,
                 backup_subdivision: None,
                 backup_variant: None,
+                backup_region: None,
+                max_script,
             },
             phantom: core::marker::PhantomData,
         }
