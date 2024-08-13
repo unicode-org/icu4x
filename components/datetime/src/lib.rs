@@ -24,7 +24,7 @@
 //! will only be formatting Gregorian dates, you can use [`TypedDateTimeFormatter<Gregorian>`](TypedDateTimeFormatter) and the
 //! APIs will make sure that only Gregorian [`DateTime`]s are used with the calendar. On the other hand, if you want to be able to select
 //! the calendar at runtime, you can use [`DateTimeFormatter`] with the calendar specified in the locale, and use it with
-//! [`DateTime<AnyCalendar>`](DateTime) (see [`AnyCalendar`]). These formatters still require dates associated
+//! [`DateTime<AnyCalendar>`](icu_calendar::DateTime) (see [`AnyCalendar`]). These formatters still require dates associated
 //! with the appropriate calendar (though they will convert ISO dates to the calendar if provided), they just do not force the
 //! programmer to pick the calendar at compile time.
 //!
