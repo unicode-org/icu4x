@@ -5,7 +5,7 @@
 use crate::measure::measureunit::MeasureUnit;
 use crate::measure::parser::MeasureUnitParser;
 use crate::measure::provider::single_unit::SingleUnit;
-use crate::units::provider::{self};
+use crate::units::provider;
 use crate::units::ratio::IcuRatio;
 use crate::units::{
     converter::{
