@@ -194,8 +194,9 @@ pub mod ffi {
             day: u8,
             calendar: &Calendar,
         ) -> Result<Box<Date>, CalendarError> {
-            let era = icu_calendar::types::Era(TinyAsciiStr::try_from_utf8(era_code)
-                .map_err(|_| CalendarError::UnknownEra)?);
+            let era = icu_calendar::types::Era(
+                TinyAsciiStr::try_from_utf8(era_code).map_err(|_| CalendarError::UnknownEra)?,
+            );
             let month = icu_calendar::types::MonthCode(
                 TinyAsciiStr::try_from_utf8(month_code)
                     .map_err(|_| CalendarError::UnknownMonthCode)?,
