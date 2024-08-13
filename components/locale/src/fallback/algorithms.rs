@@ -9,6 +9,17 @@ use super::*;
 
 impl<'a> LocaleFallbackerWithConfig<'a> {
     pub(crate) fn normalize(&self, locale: &mut DataLocale, default_script: &mut Option<Script>) {
+        // 0. If there is an invalid "sd" subtag, drop it
+        if let Some(subdivision) = locale.subdivision.take() {
+            if let Some(region) = locale.region {
+                if subdivision
+                    .as_str()
+                    .starts_with(region.into_tinystr().to_ascii_lowercase().as_str())
+                {
+                    locale.subdivision = Some(subdivision);
+                }
+            }
+        }
         let language = locale.language;
         // 1. Populate the region (required for region fallback only)
         if self.config.priority == LocaleFallbackPriority::Region && locale.region.is_none() {
@@ -52,8 +63,6 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
                 locale.script = None;
             }
         }
-        // 4. If there is an invalid "sd" subtag, drop it
-        // For now, ignore it, and let fallback do it for us
     }
 }
 
@@ -92,7 +101,7 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
             locale.language = language;
             locale.script = script;
             locale.region = region;
-            self.restore_subdivision_variants(locale);
+            locale.variant = self.backup_variant.take();
             return;
         }
         // 6. Add the script subtag if necessary
@@ -104,7 +113,7 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
                     region.into_tinystr().to_unvalidated(),
                 )) {
                     locale.script = Some(script);
-                    self.restore_subdivision_variants(locale);
+                    locale.variant = self.backup_variant.take();
                     return;
                 }
             }
@@ -112,7 +121,7 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
         // 7. Remove region
         if locale.region.is_some() {
             locale.region = None;
-            self.restore_subdivision_variants(locale);
+            locale.variant = self.backup_variant.take();
             return;
         }
         // 8. Remove language+script
@@ -137,7 +146,8 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
         if !locale.language.is_default() || locale.script.is_some() {
             locale.script = None;
             locale.language = Language::UND;
-            self.restore_subdivision_variants(locale);
+            locale.variant = self.backup_variant.take();
+            locale.subdivision = self.backup_subdivision.take();
             return;
         }
         // 6. Remove region
@@ -161,7 +171,7 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
             locale.language = language;
             locale.script = script;
             locale.region = region;
-            self.restore_subdivision_variants(locale);
+            locale.variant = self.backup_variant.take();
             return;
         }
         // Remove the region
@@ -176,7 +186,7 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
                 locale.script = self.max_script;
             }
             locale.region = None;
-            self.restore_subdivision_variants(locale);
+            locale.variant = self.backup_variant.take();
             return;
         }
 
@@ -191,7 +201,8 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
                 locale.script = None;
                 if let Some(region) = self.backup_region.take() {
                     locale.region = Some(region);
-                    self.restore_subdivision_variants(locale);
+                    locale.subdivision = self.backup_subdivision.take();
+                    locale.variant = self.backup_variant.take();
                 }
                 // needed if more fallback is added at the end
                 #[allow(clippy::needless_return)]
@@ -200,7 +211,7 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
                 // 3. Remove the language and apply the maximized script
                 locale.language = Language::UND;
                 locale.script = self.max_script;
-                self.restore_subdivision_variants(locale);
+                locale.variant = self.backup_variant.take();
                 // needed if more fallback is added at the end
                 #[allow(clippy::needless_return)]
                 return;
@@ -214,16 +225,7 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
         // 6. Remove script
         if locale.script.is_some() {
             locale.script = None;
-            self.restore_subdivision_variants(locale);
-        }
-    }
-
-    fn restore_subdivision_variants(&mut self, locale: &mut DataLocale) {
-        if let Some(subdivision) = self.backup_subdivision.take() {
-            locale.subdivision = Some(subdivision);
-        }
-        if let Some(variant) = self.backup_variant.take() {
-            locale.variant = Some(variant);
+            locale.variant = self.backup_variant.take();
         }
     }
 
@@ -254,23 +256,17 @@ mod tests {
     // TODO: Consider loading these from a JSON file
     const TEST_CASES: &[TestCase] = &[
         TestCase {
-            input: "en-u-sd-usca",
+            input: "en-fonipa",
             requires_data: false,
-            expected_language_chain: &["en-u-sd-usca", "en"],
-            expected_script_chain: &["en-u-sd-usca", "en", "und-u-sd-usca"],
-            expected_region_chain: &["en-u-sd-usca", "en", "und-u-sd-usca"],
+            expected_language_chain: &["en-fonipa", "en"],
+            expected_script_chain: &["en-fonipa", "en", "und-fonipa"],
+            expected_region_chain: &["en-fonipa", "en", "und-fonipa"],
         },
         TestCase {
             input: "en-US-u-sd-usca",
             requires_data: false,
-            expected_language_chain: &["en-US-u-sd-usca", "en-US", "en-u-sd-usca", "en"],
-            expected_script_chain: &[
-                "en-US-u-sd-usca",
-                "en-US",
-                "en-u-sd-usca",
-                "en",
-                "und-u-sd-usca",
-            ],
+            expected_language_chain: &["en-US-u-sd-usca", "en-US", "en"],
+            expected_script_chain: &["en-US-u-sd-usca", "en-US", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
         },
         TestCase {
@@ -280,7 +276,6 @@ mod tests {
                 "en-US-fonipa-u-sd-usca",
                 "en-US-fonipa",
                 "en-US",
-                "en-fonipa-u-sd-usca",
                 "en-fonipa",
                 "en",
             ],
@@ -288,10 +283,8 @@ mod tests {
                 "en-US-fonipa-u-sd-usca",
                 "en-US-fonipa",
                 "en-US",
-                "en-fonipa-u-sd-usca",
                 "en-fonipa",
                 "en",
-                "und-fonipa-u-sd-usca",
                 "und-fonipa",
             ],
             expected_region_chain: &[
@@ -304,44 +297,36 @@ mod tests {
             ],
         },
         TestCase {
-            input: "en-u-sd-usca",
+            input: "en-fonipa",
             requires_data: true,
-            expected_language_chain: &["en-u-sd-usca", "en"],
+            expected_language_chain: &["en-fonipa", "en"],
             expected_script_chain: &[
-                "en-u-sd-usca",
+                "en-fonipa",
                 "en",
-                "und-Latn-u-sd-usca",
+                "und-Latn-fonipa",
                 "und-Latn",
-                "und-u-sd-usca",
+                "und-fonipa",
             ],
-            expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
+            expected_region_chain: &["en-US-fonipa", "en-US", "und-US-fonipa", "und-US"],
         },
         TestCase {
-            input: "en-Latn-u-sd-usca",
+            input: "en-Latn-fonipa",
             requires_data: true,
-            expected_language_chain: &["en-u-sd-usca", "en"],
+            expected_language_chain: &["en-fonipa", "en"],
             expected_script_chain: &[
-                "en-u-sd-usca",
+                "en-fonipa",
                 "en",
-                "und-Latn-u-sd-usca",
+                "und-Latn-fonipa",
                 "und-Latn",
-                "und-u-sd-usca",
+                "und-fonipa",
             ],
-            expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
+            expected_region_chain: &["en-US-fonipa", "en-US", "und-US-fonipa", "und-US"],
         },
         TestCase {
             input: "en-Latn-US-u-sd-usca",
             requires_data: true,
-            expected_language_chain: &["en-US-u-sd-usca", "en-US", "en-u-sd-usca", "en"],
-            expected_script_chain: &[
-                "en-US-u-sd-usca",
-                "en-US",
-                "en-u-sd-usca",
-                "en",
-                "und-Latn-u-sd-usca",
-                "und-Latn",
-                "und-u-sd-usca",
-            ],
+            expected_language_chain: &["en-US-u-sd-usca", "en-US", "en"],
+            expected_script_chain: &["en-US-u-sd-usca", "en-US", "en", "und-Latn"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
         },
         TestCase {
