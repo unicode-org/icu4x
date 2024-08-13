@@ -20,17 +20,17 @@ final class CaseMapCloser implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XCaseMapCloser_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_CaseMapCloser_destroy_mv1));
 
-  /// Construct a new ICU4XCaseMapper instance
+  /// Construct a new CaseMapper instance
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory CaseMapCloser(DataProvider provider) {
-    final result = _ICU4XCaseMapCloser_create(provider._ffi);
+    final result = _icu4x_CaseMapCloser_create_mv1(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return CaseMapCloser._fromFfi(result.union.ok, []);
   }
@@ -40,7 +40,7 @@ final class CaseMapCloser implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `add_case_closure_to`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.add_case_closure_to) for more information.
   void addCaseClosureTo(Rune c, CodePointSetBuilder builder) {
-    _ICU4XCaseMapCloser_add_case_closure_to(_ffi, c, builder._ffi);
+    _icu4x_CaseMapCloser_add_case_closure_to_mv1(_ffi, c, builder._ffi);
   }
 
   /// Finds all characters and strings which may casemap to `s` as their full case folding string
@@ -52,28 +52,28 @@ final class CaseMapCloser implements ffi.Finalizable {
   bool addStringCaseClosureTo(String s, CodePointSetBuilder builder) {
     final temp = ffi2.Arena();
     final sView = s.utf8View;
-    final result = _ICU4XCaseMapCloser_add_string_case_closure_to(_ffi, sView.allocIn(temp), sView.length, builder._ffi);
+    final result = _icu4x_CaseMapCloser_add_string_case_closure_to_mv1(_ffi, sView.allocIn(temp), sView.length, builder._ffi);
     temp.releaseAll();
     return result;
   }
 }
 
-@meta.ResourceIdentifier('ICU4XCaseMapCloser_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XCaseMapCloser_destroy')
+@meta.ResourceIdentifier('icu4x_CaseMapCloser_destroy_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_CaseMapCloser_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XCaseMapCloser_destroy(ffi.Pointer<ffi.Void> self);
+external void _icu4x_CaseMapCloser_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XCaseMapCloser_create')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCaseMapCloser_create')
+@meta.ResourceIdentifier('icu4x_CaseMapCloser_create_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CaseMapCloser_create_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCaseMapCloser_create(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CaseMapCloser_create_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCaseMapCloser_add_case_closure_to')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCaseMapCloser_add_case_closure_to')
+@meta.ResourceIdentifier('icu4x_CaseMapCloser_add_case_closure_to_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CaseMapCloser_add_case_closure_to_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XCaseMapCloser_add_case_closure_to(ffi.Pointer<ffi.Opaque> self, Rune c, ffi.Pointer<ffi.Opaque> builder);
+external void _icu4x_CaseMapCloser_add_case_closure_to_mv1(ffi.Pointer<ffi.Opaque> self, Rune c, ffi.Pointer<ffi.Opaque> builder);
 
-@meta.ResourceIdentifier('ICU4XCaseMapCloser_add_string_case_closure_to')
-@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCaseMapCloser_add_string_case_closure_to')
+@meta.ResourceIdentifier('icu4x_CaseMapCloser_add_string_case_closure_to_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CaseMapCloser_add_string_case_closure_to_mv1')
 // ignore: non_constant_identifier_names
-external bool _ICU4XCaseMapCloser_add_string_case_closure_to(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> builder);
+external bool _icu4x_CaseMapCloser_add_string_case_closure_to_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> builder);

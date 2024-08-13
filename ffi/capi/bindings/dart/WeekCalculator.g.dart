@@ -22,24 +22,24 @@ final class WeekCalculator implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XWeekCalculator_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_WeekCalculator_destroy_mv1));
 
   /// Creates a new [`WeekCalculator`] from locale data.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#method.try_new) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory WeekCalculator(DataProvider provider, Locale locale) {
-    final result = _ICU4XWeekCalculator_create(provider._ffi, locale._ffi);
+    final result = _icu4x_WeekCalculator_create_mv1(provider._ffi, locale._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return WeekCalculator._fromFfi(result.union.ok, []);
   }
 
   /// Additional information: [1](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.first_weekday), [2](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.min_week_days)
   factory WeekCalculator.fromFirstDayOfWeekAndMinWeekDays(IsoWeekday firstWeekday, int minWeekDays) {
-    final result = _ICU4XWeekCalculator_create_from_first_day_of_week_and_min_week_days(firstWeekday._ffi, minWeekDays);
+    final result = _icu4x_WeekCalculator_from_first_day_of_week_and_min_week_days_mv1(firstWeekday._ffi, minWeekDays);
     return WeekCalculator._fromFfi(result, []);
   }
 
@@ -47,7 +47,7 @@ final class WeekCalculator implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `first_weekday`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.first_weekday) for more information.
   IsoWeekday get firstWeekday {
-    final result = _ICU4XWeekCalculator_first_weekday(_ffi);
+    final result = _icu4x_WeekCalculator_first_weekday_mv1(_ffi);
     return IsoWeekday.values.firstWhere((v) => v._ffi == result);
   }
 
@@ -56,32 +56,43 @@ final class WeekCalculator implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `min_week_days`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.min_week_days) for more information.
   int get minWeekDays {
-    final result = _ICU4XWeekCalculator_min_week_days(_ffi);
+    final result = _icu4x_WeekCalculator_min_week_days_mv1(_ffi);
     return result;
+  }
+
+  /// See the [Rust documentation for `weekend`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#method.weekend) for more information.
+  WeekendContainsDay get weekend {
+    final result = _icu4x_WeekCalculator_weekend_mv1(_ffi);
+    return WeekendContainsDay._fromFfi(result);
   }
 }
 
-@meta.ResourceIdentifier('ICU4XWeekCalculator_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XWeekCalculator_destroy')
+@meta.ResourceIdentifier('icu4x_WeekCalculator_destroy_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_WeekCalculator_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XWeekCalculator_destroy(ffi.Pointer<ffi.Void> self);
+external void _icu4x_WeekCalculator_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XWeekCalculator_create')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XWeekCalculator_create')
+@meta.ResourceIdentifier('icu4x_WeekCalculator_create_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_WeekCalculator_create_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XWeekCalculator_create(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
+external _ResultOpaqueInt32 _icu4x_WeekCalculator_create_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
-@meta.ResourceIdentifier('ICU4XWeekCalculator_create_from_first_day_of_week_and_min_week_days')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Int32, ffi.Uint8)>(isLeaf: true, symbol: 'ICU4XWeekCalculator_create_from_first_day_of_week_and_min_week_days')
+@meta.ResourceIdentifier('icu4x_WeekCalculator_from_first_day_of_week_and_min_week_days_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Int32, ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_WeekCalculator_from_first_day_of_week_and_min_week_days_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _ICU4XWeekCalculator_create_from_first_day_of_week_and_min_week_days(int firstWeekday, int minWeekDays);
+external ffi.Pointer<ffi.Opaque> _icu4x_WeekCalculator_from_first_day_of_week_and_min_week_days_mv1(int firstWeekday, int minWeekDays);
 
-@meta.ResourceIdentifier('ICU4XWeekCalculator_first_weekday')
-@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XWeekCalculator_first_weekday')
+@meta.ResourceIdentifier('icu4x_WeekCalculator_first_weekday_mv1')
+@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_WeekCalculator_first_weekday_mv1')
 // ignore: non_constant_identifier_names
-external int _ICU4XWeekCalculator_first_weekday(ffi.Pointer<ffi.Opaque> self);
+external int _icu4x_WeekCalculator_first_weekday_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('ICU4XWeekCalculator_min_week_days')
-@ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XWeekCalculator_min_week_days')
+@meta.ResourceIdentifier('icu4x_WeekCalculator_min_week_days_mv1')
+@ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_WeekCalculator_min_week_days_mv1')
 // ignore: non_constant_identifier_names
-external int _ICU4XWeekCalculator_min_week_days(ffi.Pointer<ffi.Opaque> self);
+external int _icu4x_WeekCalculator_min_week_days_mv1(ffi.Pointer<ffi.Opaque> self);
+
+@meta.ResourceIdentifier('icu4x_WeekCalculator_weekend_mv1')
+@ffi.Native<_WeekendContainsDayFfi Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_WeekCalculator_weekend_mv1')
+// ignore: non_constant_identifier_names
+external _WeekendContainsDayFfi _icu4x_WeekCalculator_weekend_mv1(ffi.Pointer<ffi.Opaque> self);

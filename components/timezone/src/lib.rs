@@ -11,7 +11,7 @@
 //! 1. The offset from GMT
 //! 2. The time zone ID
 //! 3. The metazone ID
-//! 4. The zone variant (standard or daylight time)
+//! 4. The zone variant, representing concepts such as Standard, Summer, Daylight, and Ramadan time
 //!
 //! ## GMT Offset
 //!
@@ -31,7 +31,7 @@
 //! 2. BCP-47 time zone IDs, like `"uschi"`
 //!
 //! ICU4X uses BCP-47 time zone IDs for all of its APIs. To get a BCP-47 time zone from an
-//! IANA time zone, use [`IanaToBcp47Mapper`].
+//! IANA time zone, use [`TimeZoneIdMapper`].
 //!
 //! ## Metazone
 //!
@@ -58,10 +58,11 @@
 //! ## Zone Variant
 //!
 //! Many metazones use different names and offsets in the summer than in the winter. In ICU4X,
-//! this is called the _zone variant_. There are two zone variants:
+//! this is called the _zone variant_.
 //!
-//! 1. `"dt"` = daylight or summer time
-//! 2. `"st"` = standard or winter time
+//! CLDR has two zone variants, named `"standard"` and `"daylight"`. However, the mapping of these
+//! variants to specific observed offsets varies from time zone to time zone, and they may not
+//! consistently represent winter versus summer time.
 //!
 //! Note: It is optional (not required) to set the zone variant when constructing a
 //! [`CustomTimeZone`]. Therefore, the list of possible variants does not include a generic variant
@@ -86,15 +87,16 @@
 //! use icu::calendar::DateTime;
 //! use icu::timezone::CustomTimeZone;
 //! use icu::timezone::GmtOffset;
-//! use icu::timezone::IanaToBcp47Mapper;
 //! use icu::timezone::MetazoneCalculator;
+//! use icu::timezone::TimeZoneIdMapper;
 //! use tinystr::{tinystr, TinyAsciiStr};
 //!
 //! // Create a time zone for America/Chicago at GMT-6:
 //! let mut time_zone = CustomTimeZone::new_empty();
 //! time_zone.gmt_offset = "-0600".parse::<GmtOffset>().ok();
-//! let mapper = IanaToBcp47Mapper::new();
-//! time_zone.time_zone_id = mapper.as_borrowed().get("America/Chicago");
+//! let mapper = TimeZoneIdMapper::new();
+//! time_zone.time_zone_id =
+//!     mapper.as_borrowed().iana_to_bcp47("America/Chicago");
 //!
 //! // Alternatively, set it directly from the BCP-47 ID
 //! assert_eq!(time_zone.time_zone_id, Some(tinystr!(8, "uschi").into()));
@@ -126,18 +128,20 @@
 extern crate alloc;
 
 mod error;
-mod iana_ids;
+mod ids;
 mod metazone;
 pub mod provider;
 mod time_zone;
 mod types;
+mod zoned_datetime;
 
-pub use error::TimeZoneError;
-pub use iana_ids::{IanaBcp47RoundTripMapper, IanaToBcp47Mapper};
+pub use error::InvalidOffsetError;
+pub use ids::{
+    TimeZoneIdMapper, TimeZoneIdMapperBorrowed, TimeZoneIdMapperWithFastCanonicalization,
+    TimeZoneIdMapperWithFastCanonicalizationBorrowed,
+};
 pub use metazone::MetazoneCalculator;
 pub use provider::{MetazoneId, TimeZoneBcp47Id};
 pub use time_zone::CustomTimeZone;
 pub use types::{GmtOffset, ZoneVariant};
-
-#[doc(no_inline)]
-pub use TimeZoneError as Error;
+pub use zoned_datetime::CustomZonedDateTime;

@@ -3,5 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 pub mod currency;
+pub mod currency_patterns;
+pub mod extended_currency;
+pub mod pattern_key;
 pub mod percent;
 pub mod ule;
+pub mod units;
+pub mod units_essentials;

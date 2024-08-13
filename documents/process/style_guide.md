@@ -128,7 +128,7 @@ their type.
 
 | Package | Crate | Standalone Import | ICU Meta-package |
 |----|----|----|----|
-| locale | `icu_locid` | `use icu_locid::Locale` | `use icu::Locale` |
+| locale | `icu_locale_core` | `use icu_locale_core::Locale` | `use icu::Locale` |
 | plurals | `icu_plurals` | `use icu_plurals::PluralRules` | `use icu::PluralRules` |
 | datetime | `icu_datetime` | `use icu_datetime::DateTimeFormat` | `use icu::DateTimeFormat` |
 | datetime | `icu_datetime` | `use icu_datetime::skeleton::SkeletonField` | `use icu::datetime::skeleton::SkeletonField` |
@@ -136,7 +136,7 @@ their type.
 While the scheme may feel repetitive when looking at the import lines, it pays off in being unambiguous without aliasing when multiple structs from different components get used together:
 
 ```rust
-use icu_locid::Locale;
+use icu_locale_core::Locale;
 use icu_datetime::{DateTimeFormat, DateTimeLength, skeleton::{Skeleton, SkeletonField}};
 use icu_list::ListFormat;
 
@@ -191,6 +191,8 @@ Often in internationalization, we deal with code points from other scripts. It i
 
 - If directly rendering the characters could cause confusion due to the bidi algorithm
 - If the test cares more about the code point values than the characters they represent
+
+Special case: if dealing with the Unicode replacement character U+FFFD, it is suggested to use [char::REPLACEMENT_CHARACTER](https://doc.rust-lang.org/std/primitive.char.html#associatedconstant.REPLACEMENT_CHARACTER) instead of either a literal code point or the escape syntax.
 
 ### Render invisible characters in docs but escape them in code :: suggested
 
@@ -746,7 +748,7 @@ While it's still an open question in the Rust community as to what the best way 
 ```rust
 // Nesting semantically interesting error information inside the generic error type.
 enum IcuError {
-    Parser(parser::ParserError),
+    Parser(parser::ParseError),
     Runtime(...)
 }
 ```

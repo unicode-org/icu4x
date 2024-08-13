@@ -85,6 +85,13 @@ macro_rules! lstm_matrix {
                 }
             }
         }
+
+        #[cfg(feature = "datagen")]
+        impl databake::BakeSize for $name<'_> {
+            fn borrows_size(&self) -> usize {
+                self.data.borrows_size()
+            }
+        }
     };
 }
 
@@ -318,6 +325,23 @@ impl databake::Bake for LstmDataFloat32<'_> {
     }
 }
 
+#[cfg(feature = "datagen")]
+impl databake::BakeSize for LstmDataFloat32<'_> {
+    fn borrows_size(&self) -> usize {
+        self.model.borrows_size()
+            + self.dic.borrows_size()
+            + self.embedding.borrows_size()
+            + self.fw_w.borrows_size()
+            + self.fw_u.borrows_size()
+            + self.fw_b.borrows_size()
+            + self.bw_w.borrows_size()
+            + self.bw_u.borrows_size()
+            + self.bw_b.borrows_size()
+            + self.time_w.borrows_size()
+            + self.time_b.borrows_size()
+    }
+}
+
 /// The data to power the LSTM segmentation model.
 ///
 /// This data enum is extensible: more backends may be added in the future.
@@ -333,7 +357,11 @@ impl databake::Bake for LstmDataFloat32<'_> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(LstmForWordLineAutoV1Marker = "segmenter/lstm/wl_auto@1")]
+#[icu_provider::data_struct(marker(
+    LstmForWordLineAutoV1Marker,
+    "segmenter/lstm/wl_auto@1",
+    attributes_domain = "segmenter"
+))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
     feature = "datagen", 
@@ -349,10 +377,4 @@ pub enum LstmDataV1<'data> {
     // new variants should go BELOW existing ones
     // Serde serializes based on variant name and index in the enum
     // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
-}
-
-pub(crate) struct LstmDataV1Marker;
-
-impl DataMarker for LstmDataV1Marker {
-    type Yokeable = LstmDataV1<'static>;
 }

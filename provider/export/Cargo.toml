@@ -1,0 +1,60 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "icu_provider_export"
+description = "Generate data for ICU4X DataProvider"
+license = "Unicode-3.0"
+include = [
+    "src/**/*",
+    "examples/**/*",
+    "benches/**/*",
+    "tests/**/*",
+    "!tests/data/json/**/*",
+    "!tests/data/postcard/**/*",
+    "Cargo.toml",
+    "LICENSE",
+    "README.md",
+]
+
+authors.workspace = true
+categories.workspace = true
+edition.workspace = true
+homepage.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+version.workspace = true
+
+[package.metadata.docs.rs]
+all-features = true
+
+[dependencies]
+
+# ExportDriver
+displaydoc = { workspace = true }
+icu_locale = { workspace = true }
+icu_provider = { workspace = true, features = ["std", "logging", "export"]}
+log = { workspace = true }
+rayon = { workspace = true, optional = true }
+writeable = { workspace = true }
+
+# Exporters
+icu_provider_blob = { workspace = true, features = ["export"], optional = true }
+icu_provider_fs = { workspace = true, features = ["export"], optional = true }
+icu_provider_baked = { workspace = true, features = ["export"], optional = true }
+
+[dev-dependencies]
+elsa = { workspace = true }
+postcard = { workspace = true }
+simple_logger = { workspace = true }
+icu = { path = "../../components/icu", default-features = false, features = ["datagen"] }
+icu_locale = { path = "../../components/locale" }
+icu_provider_source = { path = "../source" }
+
+[features]
+default = ["rayon", "fs_exporter", "blob_exporter", "baked_exporter"]
+baked_exporter = ["dep:icu_provider_baked"]
+blob_exporter = ["dep:icu_provider_blob"]
+fs_exporter = ["dep:icu_provider_fs"]
+rayon = ["dep:rayon"]

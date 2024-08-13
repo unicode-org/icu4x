@@ -13,7 +13,6 @@
 use crate::provider::bidi_data::{
     BidiAuxiliaryPropertiesV1, BidiAuxiliaryPropertiesV1Marker, CheckedBidiPairedBracketType,
 };
-use crate::PropertiesError;
 
 use icu_provider::prelude::*;
 
@@ -41,7 +40,7 @@ impl BidiAuxiliaryProperties {
     /// Construct a new one from loaded data
     ///
     /// Typically it is preferable to use getters like [`bidi_auxiliary_properties()`] instead
-    pub fn from_data(data: DataPayload<BidiAuxiliaryPropertiesV1Marker>) -> Self {
+    pub(crate) fn from_data(data: DataPayload<BidiAuxiliaryPropertiesV1Marker>) -> Self {
         Self { data }
     }
 }
@@ -97,7 +96,7 @@ impl<'a> BidiAuxiliaryPropertiesBorrowed<'a> {
     ///
     /// # Examples
     /// ```
-    /// use icu_properties::bidi_data;
+    /// use icu::properties::bidi_data;
     ///
     /// let bidi_data = bidi_data::bidi_auxiliary_properties();
     ///
@@ -132,7 +131,7 @@ impl<'a> BidiAuxiliaryPropertiesBorrowed<'a> {
     ///
     /// # Examples
     /// ```
-    /// use icu_properties::{bidi_data, bidi_data::BidiPairingProperties};
+    /// use icu::properties::{bidi_data, bidi_data::BidiPairingProperties};
     ///
     /// let bidi_data = bidi_data::bidi_auxiliary_properties();
     ///
@@ -160,7 +159,10 @@ impl<'a> BidiAuxiliaryPropertiesBorrowed<'a> {
 }
 
 impl BidiAuxiliaryPropertiesBorrowed<'static> {
-    /// Cheaply converts a `BidiAuxiliaryPropertiesBorrowed<'static>` into a `BidiAuxiliaryProperties`.
+    /// Cheaply converts a [`BidiAuxiliaryPropertiesBorrowed<'static>`] into a [`BidiAuxiliaryProperties`].
+    ///
+    /// Note: Due to branching and indirection, using [`BidiAuxiliaryProperties`] might inhibit some
+    /// compile-time optimizations that are possible with [`BidiAuxiliaryPropertiesBorrowed`].
     pub const fn static_to_owned(self) -> BidiAuxiliaryProperties {
         BidiAuxiliaryProperties {
             data: DataPayload::from_static_ref(self.data),
@@ -177,7 +179,7 @@ impl BidiAuxiliaryPropertiesBorrowed<'static> {
 ///
 /// # Examples
 /// ```
-/// use icu_properties::bidi_data;
+/// use icu::properties::bidi_data;
 ///
 /// let bidi_data = bidi_data::bidi_auxiliary_properties();
 ///
@@ -188,17 +190,14 @@ impl BidiAuxiliaryPropertiesBorrowed<'static> {
 #[cfg(feature = "compiled_data")]
 pub const fn bidi_auxiliary_properties() -> BidiAuxiliaryPropertiesBorrowed<'static> {
     BidiAuxiliaryPropertiesBorrowed {
-        data: crate::provider::Baked::SINGLETON_PROPS_BIDIAUXILIARYPROPS_V1,
+        data: crate::provider::Baked::SINGLETON_BIDI_AUXILIARY_PROPERTIES_V1_MARKER,
     }
 }
 
 icu_provider::gen_any_buffer_data_constructors!(
-    locale: skip,
-    options: skip,
-    result: Result<BidiAuxiliaryProperties, PropertiesError>,
-    #[cfg(skip)]
+    () -> result: Result<BidiAuxiliaryProperties, DataError>,
     functions: [
-        bidi_auxiliary_properties,
+        bidi_auxiliary_properties: skip,
         load_bidi_auxiliary_properties_with_any_provider,
         load_bidi_auxiliary_properties_with_buffer_provider,
         load_bidi_auxiliary_properties_unstable,
@@ -208,9 +207,8 @@ icu_provider::gen_any_buffer_data_constructors!(
 #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, bidi_auxiliary_properties)]
 pub fn load_bidi_auxiliary_properties_unstable(
     provider: &(impl DataProvider<BidiAuxiliaryPropertiesV1Marker> + ?Sized),
-) -> Result<BidiAuxiliaryProperties, PropertiesError> {
-    Ok(provider
-        .load(Default::default())
-        .and_then(DataResponse::take_payload)
-        .map(BidiAuxiliaryProperties::from_data)?)
+) -> Result<BidiAuxiliaryProperties, DataError> {
+    Ok(BidiAuxiliaryProperties::from_data(
+        provider.load(Default::default())?.payload,
+    ))
 }

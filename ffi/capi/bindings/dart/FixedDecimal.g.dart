@@ -20,13 +20,13 @@ final class FixedDecimal implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XFixedDecimal_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_FixedDecimal_destroy_mv1));
 
   /// Construct an [`FixedDecimal`] from an integer.
   ///
   /// See the [Rust documentation for `FixedDecimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html) for more information.
   factory FixedDecimal.fromInt(int v) {
-    final result = _ICU4XFixedDecimal_create_from_i64(v);
+    final result = _icu4x_FixedDecimal_from_int64_mv1(v);
     return FixedDecimal._fromFfi(result, []);
   }
 
@@ -36,11 +36,11 @@ final class FixedDecimal implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [FixedDecimalLimitError] on failure.
   factory FixedDecimal.fromDoubleWithLowerMagnitude(double f, int magnitude) {
-    final result = _ICU4XFixedDecimal_create_from_f64_with_lower_magnitude(f, magnitude);
+    final result = _icu4x_FixedDecimal_from_double_with_lower_magnitude_mv1(f, magnitude);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw FixedDecimalLimitError();
     }
     return FixedDecimal._fromFfi(result.union.ok, []);
   }
@@ -51,11 +51,11 @@ final class FixedDecimal implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [FixedDecimalLimitError] on failure.
   factory FixedDecimal.fromDoubleWithSignificantDigits(double f, int digits) {
-    final result = _ICU4XFixedDecimal_create_from_f64_with_significant_digits(f, digits);
+    final result = _icu4x_FixedDecimal_from_double_with_significant_digits_mv1(f, digits);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw FixedDecimalLimitError();
     }
     return FixedDecimal._fromFfi(result.union.ok, []);
   }
@@ -67,11 +67,11 @@ final class FixedDecimal implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
   ///
-  /// Throws [Error] on failure.
-  factory FixedDecimal.fromDoubleWithDoublePrecision(double f) {
-    final result = _ICU4XFixedDecimal_create_from_f64_with_floating_precision(f);
+  /// Throws [FixedDecimalLimitError] on failure.
+  factory FixedDecimal.fromDoubleWithFloatingPrecision(double f) {
+    final result = _icu4x_FixedDecimal_from_double_with_floating_precision_mv1(f);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw FixedDecimalLimitError();
     }
     return FixedDecimal._fromFfi(result.union.ok, []);
   }
@@ -80,51 +80,51 @@ final class FixedDecimal implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `from_str`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.from_str) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [FixedDecimalParseError] on failure.
   factory FixedDecimal.fromString(String v) {
     final temp = ffi2.Arena();
     final vView = v.utf8View;
-    final result = _ICU4XFixedDecimal_create_from_string(vView.allocIn(temp), vView.length);
+    final result = _icu4x_FixedDecimal_from_string_mv1(vView.allocIn(temp), vView.length);
     temp.releaseAll();
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw FixedDecimalParseError.values[result.union.err];
     }
     return FixedDecimal._fromFfi(result.union.ok, []);
   }
 
   /// See the [Rust documentation for `digit_at`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.digit_at) for more information.
   int digitAt(int magnitude) {
-    final result = _ICU4XFixedDecimal_digit_at(_ffi, magnitude);
+    final result = _icu4x_FixedDecimal_digit_at_mv1(_ffi, magnitude);
     return result;
   }
 
   /// See the [Rust documentation for `magnitude_range`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.magnitude_range) for more information.
   int get magnitudeStart {
-    final result = _ICU4XFixedDecimal_magnitude_start(_ffi);
+    final result = _icu4x_FixedDecimal_magnitude_start_mv1(_ffi);
     return result;
   }
 
   /// See the [Rust documentation for `magnitude_range`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.magnitude_range) for more information.
   int get magnitudeEnd {
-    final result = _ICU4XFixedDecimal_magnitude_end(_ffi);
+    final result = _icu4x_FixedDecimal_magnitude_end_mv1(_ffi);
     return result;
   }
 
   /// See the [Rust documentation for `nonzero_magnitude_start`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.nonzero_magnitude_start) for more information.
   int get nonzeroMagnitudeStart {
-    final result = _ICU4XFixedDecimal_nonzero_magnitude_start(_ffi);
+    final result = _icu4x_FixedDecimal_nonzero_magnitude_start_mv1(_ffi);
     return result;
   }
 
   /// See the [Rust documentation for `nonzero_magnitude_end`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.nonzero_magnitude_end) for more information.
   int get nonzeroMagnitudeEnd {
-    final result = _ICU4XFixedDecimal_nonzero_magnitude_end(_ffi);
+    final result = _icu4x_FixedDecimal_nonzero_magnitude_end_mv1(_ffi);
     return result;
   }
 
   /// See the [Rust documentation for `is_zero`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.is_zero) for more information.
   bool get isZero {
-    final result = _ICU4XFixedDecimal_is_zero(_ffi);
+    final result = _icu4x_FixedDecimal_is_zero_mv1(_ffi);
     return result;
   }
 
@@ -132,12 +132,12 @@ final class FixedDecimal implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `multiply_pow10`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.multiply_pow10) for more information.
   void multiplyPow10(int power) {
-    _ICU4XFixedDecimal_multiply_pow10(_ffi, power);
+    _icu4x_FixedDecimal_multiply_pow10_mv1(_ffi, power);
   }
 
   /// See the [Rust documentation for `sign`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.sign) for more information.
   FixedDecimalSign get sign {
-    final result = _ICU4XFixedDecimal_sign(_ffi);
+    final result = _icu4x_FixedDecimal_sign_mv1(_ffi);
     return FixedDecimalSign.values[result];
   }
 
@@ -145,36 +145,36 @@ final class FixedDecimal implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `set_sign`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.set_sign) for more information.
   set sign(FixedDecimalSign sign) {
-    _ICU4XFixedDecimal_set_sign(_ffi, sign.index);
+    _icu4x_FixedDecimal_set_sign_mv1(_ffi, sign.index);
   }
 
   /// See the [Rust documentation for `apply_sign_display`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.apply_sign_display) for more information.
   void applySignDisplay(FixedDecimalSignDisplay signDisplay) {
-    _ICU4XFixedDecimal_apply_sign_display(_ffi, signDisplay.index);
+    _icu4x_FixedDecimal_apply_sign_display_mv1(_ffi, signDisplay.index);
   }
 
   /// See the [Rust documentation for `trim_start`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.trim_start) for more information.
   void trimStart() {
-    _ICU4XFixedDecimal_trim_start(_ffi);
+    _icu4x_FixedDecimal_trim_start_mv1(_ffi);
   }
 
   /// See the [Rust documentation for `trim_end`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.trim_end) for more information.
   void trimEnd() {
-    _ICU4XFixedDecimal_trim_end(_ffi);
+    _icu4x_FixedDecimal_trim_end_mv1(_ffi);
   }
 
   /// Zero-pad the [`FixedDecimal`] on the left to a particular position
   ///
   /// See the [Rust documentation for `pad_start`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.pad_start) for more information.
   void padStart(int position) {
-    _ICU4XFixedDecimal_pad_start(_ffi, position);
+    _icu4x_FixedDecimal_pad_start_mv1(_ffi, position);
   }
 
   /// Zero-pad the [`FixedDecimal`] on the right to a particular position
   ///
   /// See the [Rust documentation for `pad_end`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.pad_end) for more information.
   void padEnd(int position) {
-    _ICU4XFixedDecimal_pad_end(_ffi, position);
+    _icu4x_FixedDecimal_pad_end_mv1(_ffi, position);
   }
 
   /// Truncate the [`FixedDecimal`] on the left to a particular position, deleting digits if necessary. This is useful for, e.g. abbreviating years
@@ -182,97 +182,47 @@ final class FixedDecimal implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `set_max_position`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.set_max_position) for more information.
   void setMaxPosition(int position) {
-    _ICU4XFixedDecimal_set_max_position(_ffi, position);
+    _icu4x_FixedDecimal_set_max_position_mv1(_ffi, position);
   }
 
-  /// See the [Rust documentation for `trunc`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.trunc) for more information.
-  void trunc(int position) {
-    _ICU4XFixedDecimal_trunc(_ffi, position);
-  }
-
-  /// See the [Rust documentation for `trunc_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.trunc_to_increment) for more information.
-  void truncToIncrement(int position, RoundingIncrement increment) {
-    _ICU4XFixedDecimal_trunc_to_increment(_ffi, position, increment.index);
-  }
-
-  /// See the [Rust documentation for `half_trunc`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_trunc) for more information.
-  void halfTrunc(int position) {
-    _ICU4XFixedDecimal_half_trunc(_ffi, position);
-  }
-
-  /// See the [Rust documentation for `half_trunc_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_trunc_to_increment) for more information.
-  void halfTruncToIncrement(int position, RoundingIncrement increment) {
-    _ICU4XFixedDecimal_half_trunc_to_increment(_ffi, position, increment.index);
-  }
-
-  /// See the [Rust documentation for `expand`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.expand) for more information.
-  void expand(int position) {
-    _ICU4XFixedDecimal_expand(_ffi, position);
-  }
-
-  /// See the [Rust documentation for `expand_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.expand_to_increment) for more information.
-  void expandToIncrement(int position, RoundingIncrement increment) {
-    _ICU4XFixedDecimal_expand_to_increment(_ffi, position, increment.index);
-  }
-
-  /// See the [Rust documentation for `half_expand`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_expand) for more information.
-  void halfExpand(int position) {
-    _ICU4XFixedDecimal_half_expand(_ffi, position);
-  }
-
-  /// See the [Rust documentation for `half_expand_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_expand_to_increment) for more information.
-  void halfExpandToIncrement(int position, RoundingIncrement increment) {
-    _ICU4XFixedDecimal_half_expand_to_increment(_ffi, position, increment.index);
+  /// Round the number at a particular digit position.
+  ///
+  /// This uses half to even rounding, which resolves ties by selecting the nearest
+  /// even integer to the original value.
+  ///
+  /// See the [Rust documentation for `round`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.round) for more information.
+  void round(int position) {
+    _icu4x_FixedDecimal_round_mv1(_ffi, position);
   }
 
   /// See the [Rust documentation for `ceil`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.ceil) for more information.
   void ceil(int position) {
-    _ICU4XFixedDecimal_ceil(_ffi, position);
+    _icu4x_FixedDecimal_ceil_mv1(_ffi, position);
   }
 
-  /// See the [Rust documentation for `ceil_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.ceil_to_increment) for more information.
-  void ceilToIncrement(int position, RoundingIncrement increment) {
-    _ICU4XFixedDecimal_ceil_to_increment(_ffi, position, increment.index);
-  }
-
-  /// See the [Rust documentation for `half_ceil`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_ceil) for more information.
-  void halfCeil(int position) {
-    _ICU4XFixedDecimal_half_ceil(_ffi, position);
-  }
-
-  /// See the [Rust documentation for `half_ceil_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_ceil_to_increment) for more information.
-  void halfCeilToIncrement(int position, RoundingIncrement increment) {
-    _ICU4XFixedDecimal_half_ceil_to_increment(_ffi, position, increment.index);
+  /// See the [Rust documentation for `expand`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.expand) for more information.
+  void expand(int position) {
+    _icu4x_FixedDecimal_expand_mv1(_ffi, position);
   }
 
   /// See the [Rust documentation for `floor`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.floor) for more information.
   void floor(int position) {
-    _ICU4XFixedDecimal_floor(_ffi, position);
+    _icu4x_FixedDecimal_floor_mv1(_ffi, position);
   }
 
-  /// See the [Rust documentation for `floor_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.floor_to_increment) for more information.
-  void floorToIncrement(int position, RoundingIncrement increment) {
-    _ICU4XFixedDecimal_floor_to_increment(_ffi, position, increment.index);
+  /// See the [Rust documentation for `trunc`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.trunc) for more information.
+  void trunc(int position) {
+    _icu4x_FixedDecimal_trunc_mv1(_ffi, position);
   }
 
-  /// See the [Rust documentation for `half_floor`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_floor) for more information.
-  void halfFloor(int position) {
-    _ICU4XFixedDecimal_half_floor(_ffi, position);
+  /// See the [Rust documentation for `round_with_mode`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.round_with_mode) for more information.
+  void roundWithMode(int position, FixedDecimalRoundingMode mode) {
+    _icu4x_FixedDecimal_round_with_mode_mv1(_ffi, position, mode.index);
   }
 
-  /// See the [Rust documentation for `half_floor_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_floor_to_increment) for more information.
-  void halfFloorToIncrement(int position, RoundingIncrement increment) {
-    _ICU4XFixedDecimal_half_floor_to_increment(_ffi, position, increment.index);
-  }
-
-  /// See the [Rust documentation for `half_even`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_even) for more information.
-  void halfEven(int position) {
-    _ICU4XFixedDecimal_half_even(_ffi, position);
-  }
-
-  /// See the [Rust documentation for `half_even_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_even_to_increment) for more information.
-  void halfEvenToIncrement(int position, RoundingIncrement increment) {
-    _ICU4XFixedDecimal_half_even_to_increment(_ffi, position, increment.index);
+  /// See the [Rust documentation for `round_with_mode_and_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.round_with_mode_and_increment) for more information.
+  void roundWithModeAndIncrement(int position, FixedDecimalRoundingMode mode, FixedDecimalRoundingIncrement increment) {
+    _icu4x_FixedDecimal_round_with_mode_and_increment_mv1(_ffi, position, mode.index, increment.index);
   }
 
   /// Concatenates `other` to the end of `self`.
@@ -283,7 +233,7 @@ final class FixedDecimal implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `concatenate_end`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.concatenate_end) for more information.
   bool concatenateEnd(FixedDecimal other) {
-    final result = _ICU4XFixedDecimal_concatenate_end(_ffi, other._ffi);
+    final result = _icu4x_FixedDecimal_concatenate_end_mv1(_ffi, other._ffi);
     return result.isOk;
   }
 
@@ -292,213 +242,158 @@ final class FixedDecimal implements ffi.Finalizable {
   /// See the [Rust documentation for `write_to`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.write_to) for more information.
   @override
   String toString() {
-    final writeable = _Writeable();
-    _ICU4XFixedDecimal_to_string(_ffi, writeable._ffi);
-    return writeable.finalize();
+    final write = _Write();
+    _icu4x_FixedDecimal_to_string_mv1(_ffi, write._ffi);
+    return write.finalize();
   }
 }
 
-@meta.ResourceIdentifier('ICU4XFixedDecimal_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_destroy')
+@meta.ResourceIdentifier('icu4x_FixedDecimal_destroy_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XFixedDecimal_destroy(ffi.Pointer<ffi.Void> self);
+external void _icu4x_FixedDecimal_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XFixedDecimal_create_from_i64')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Int64)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_create_from_i64')
+@meta.ResourceIdentifier('icu4x_FixedDecimal_from_int64_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Int64)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_from_int64_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _ICU4XFixedDecimal_create_from_i64(int v);
+external ffi.Pointer<ffi.Opaque> _icu4x_FixedDecimal_from_int64_mv1(int v);
 
-@meta.ResourceIdentifier('ICU4XFixedDecimal_create_from_f64_with_lower_magnitude')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Double, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_create_from_f64_with_lower_magnitude')
+@meta.ResourceIdentifier('icu4x_FixedDecimal_from_double_with_lower_magnitude_mv1')
+@ffi.Native<_ResultOpaqueFixedDecimalLimitErrorFfi Function(ffi.Double, ffi.Int16)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_from_double_with_lower_magnitude_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XFixedDecimal_create_from_f64_with_lower_magnitude(double f, int magnitude);
+external _ResultOpaqueFixedDecimalLimitErrorFfi _icu4x_FixedDecimal_from_double_with_lower_magnitude_mv1(double f, int magnitude);
 
-@meta.ResourceIdentifier('ICU4XFixedDecimal_create_from_f64_with_significant_digits')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Double, ffi.Uint8)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_create_from_f64_with_significant_digits')
+@meta.ResourceIdentifier('icu4x_FixedDecimal_from_double_with_significant_digits_mv1')
+@ffi.Native<_ResultOpaqueFixedDecimalLimitErrorFfi Function(ffi.Double, ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_from_double_with_significant_digits_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XFixedDecimal_create_from_f64_with_significant_digits(double f, int digits);
+external _ResultOpaqueFixedDecimalLimitErrorFfi _icu4x_FixedDecimal_from_double_with_significant_digits_mv1(double f, int digits);
 
-@meta.ResourceIdentifier('ICU4XFixedDecimal_create_from_f64_with_floating_precision')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Double)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_create_from_f64_with_floating_precision')
+@meta.ResourceIdentifier('icu4x_FixedDecimal_from_double_with_floating_precision_mv1')
+@ffi.Native<_ResultOpaqueFixedDecimalLimitErrorFfi Function(ffi.Double)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_from_double_with_floating_precision_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XFixedDecimal_create_from_f64_with_floating_precision(double f);
+external _ResultOpaqueFixedDecimalLimitErrorFfi _icu4x_FixedDecimal_from_double_with_floating_precision_mv1(double f);
 
-@meta.ResourceIdentifier('ICU4XFixedDecimal_create_from_string')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_create_from_string')
+@meta.ResourceIdentifier('icu4x_FixedDecimal_from_string_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_from_string_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XFixedDecimal_create_from_string(ffi.Pointer<ffi.Uint8> vData, int vLength);
+external _ResultOpaqueInt32 _icu4x_FixedDecimal_from_string_mv1(ffi.Pointer<ffi.Uint8> vData, int vLength);
 
-@meta.ResourceIdentifier('ICU4XFixedDecimal_digit_at')
-@ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_digit_at')
+@meta.ResourceIdentifier('icu4x_FixedDecimal_digit_at_mv1')
+@ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_digit_at_mv1')
 // ignore: non_constant_identifier_names
-external int _ICU4XFixedDecimal_digit_at(ffi.Pointer<ffi.Opaque> self, int magnitude);
+external int _icu4x_FixedDecimal_digit_at_mv1(ffi.Pointer<ffi.Opaque> self, int magnitude);
 
-@meta.ResourceIdentifier('ICU4XFixedDecimal_magnitude_start')
-@ffi.Native<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_magnitude_start')
+@meta.ResourceIdentifier('icu4x_FixedDecimal_magnitude_start_mv1')
+@ffi.Native<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_magnitude_start_mv1')
 // ignore: non_constant_identifier_names
-external int _ICU4XFixedDecimal_magnitude_start(ffi.Pointer<ffi.Opaque> self);
+external int _icu4x_FixedDecimal_magnitude_start_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('ICU4XFixedDecimal_magnitude_end')
-@ffi.Native<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_magnitude_end')
+@meta.ResourceIdentifier('icu4x_FixedDecimal_magnitude_end_mv1')
+@ffi.Native<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_magnitude_end_mv1')
 // ignore: non_constant_identifier_names
-external int _ICU4XFixedDecimal_magnitude_end(ffi.Pointer<ffi.Opaque> self);
+external int _icu4x_FixedDecimal_magnitude_end_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('ICU4XFixedDecimal_nonzero_magnitude_start')
-@ffi.Native<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_nonzero_magnitude_start')
+@meta.ResourceIdentifier('icu4x_FixedDecimal_nonzero_magnitude_start_mv1')
+@ffi.Native<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_nonzero_magnitude_start_mv1')
 // ignore: non_constant_identifier_names
-external int _ICU4XFixedDecimal_nonzero_magnitude_start(ffi.Pointer<ffi.Opaque> self);
+external int _icu4x_FixedDecimal_nonzero_magnitude_start_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('ICU4XFixedDecimal_nonzero_magnitude_end')
-@ffi.Native<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_nonzero_magnitude_end')
+@meta.ResourceIdentifier('icu4x_FixedDecimal_nonzero_magnitude_end_mv1')
+@ffi.Native<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_nonzero_magnitude_end_mv1')
 // ignore: non_constant_identifier_names
-external int _ICU4XFixedDecimal_nonzero_magnitude_end(ffi.Pointer<ffi.Opaque> self);
+external int _icu4x_FixedDecimal_nonzero_magnitude_end_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('ICU4XFixedDecimal_is_zero')
-@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_is_zero')
+@meta.ResourceIdentifier('icu4x_FixedDecimal_is_zero_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_is_zero_mv1')
 // ignore: non_constant_identifier_names
-external bool _ICU4XFixedDecimal_is_zero(ffi.Pointer<ffi.Opaque> self);
+external bool _icu4x_FixedDecimal_is_zero_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('ICU4XFixedDecimal_multiply_pow10')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_multiply_pow10')
+@meta.ResourceIdentifier('icu4x_FixedDecimal_multiply_pow10_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_multiply_pow10_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XFixedDecimal_multiply_pow10(ffi.Pointer<ffi.Opaque> self, int power);
+external void _icu4x_FixedDecimal_multiply_pow10_mv1(ffi.Pointer<ffi.Opaque> self, int power);
 
-@meta.ResourceIdentifier('ICU4XFixedDecimal_sign')
-@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_sign')
+@meta.ResourceIdentifier('icu4x_FixedDecimal_sign_mv1')
+@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_sign_mv1')
 // ignore: non_constant_identifier_names
-external int _ICU4XFixedDecimal_sign(ffi.Pointer<ffi.Opaque> self);
+external int _icu4x_FixedDecimal_sign_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('ICU4XFixedDecimal_set_sign')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_set_sign')
+@meta.ResourceIdentifier('icu4x_FixedDecimal_set_sign_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_set_sign_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XFixedDecimal_set_sign(ffi.Pointer<ffi.Opaque> self, int sign);
+external void _icu4x_FixedDecimal_set_sign_mv1(ffi.Pointer<ffi.Opaque> self, int sign);
 
-@meta.ResourceIdentifier('ICU4XFixedDecimal_apply_sign_display')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_apply_sign_display')
+@meta.ResourceIdentifier('icu4x_FixedDecimal_apply_sign_display_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_apply_sign_display_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XFixedDecimal_apply_sign_display(ffi.Pointer<ffi.Opaque> self, int signDisplay);
+external void _icu4x_FixedDecimal_apply_sign_display_mv1(ffi.Pointer<ffi.Opaque> self, int signDisplay);
 
-@meta.ResourceIdentifier('ICU4XFixedDecimal_trim_start')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_trim_start')
+@meta.ResourceIdentifier('icu4x_FixedDecimal_trim_start_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_trim_start_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XFixedDecimal_trim_start(ffi.Pointer<ffi.Opaque> self);
+external void _icu4x_FixedDecimal_trim_start_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('ICU4XFixedDecimal_trim_end')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_trim_end')
+@meta.ResourceIdentifier('icu4x_FixedDecimal_trim_end_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_trim_end_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XFixedDecimal_trim_end(ffi.Pointer<ffi.Opaque> self);
+external void _icu4x_FixedDecimal_trim_end_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('ICU4XFixedDecimal_pad_start')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_pad_start')
+@meta.ResourceIdentifier('icu4x_FixedDecimal_pad_start_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_pad_start_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XFixedDecimal_pad_start(ffi.Pointer<ffi.Opaque> self, int position);
+external void _icu4x_FixedDecimal_pad_start_mv1(ffi.Pointer<ffi.Opaque> self, int position);
 
-@meta.ResourceIdentifier('ICU4XFixedDecimal_pad_end')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_pad_end')
+@meta.ResourceIdentifier('icu4x_FixedDecimal_pad_end_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_pad_end_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XFixedDecimal_pad_end(ffi.Pointer<ffi.Opaque> self, int position);
+external void _icu4x_FixedDecimal_pad_end_mv1(ffi.Pointer<ffi.Opaque> self, int position);
 
-@meta.ResourceIdentifier('ICU4XFixedDecimal_set_max_position')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_set_max_position')
+@meta.ResourceIdentifier('icu4x_FixedDecimal_set_max_position_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_set_max_position_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XFixedDecimal_set_max_position(ffi.Pointer<ffi.Opaque> self, int position);
+external void _icu4x_FixedDecimal_set_max_position_mv1(ffi.Pointer<ffi.Opaque> self, int position);
 
-@meta.ResourceIdentifier('ICU4XFixedDecimal_trunc')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_trunc')
+@meta.ResourceIdentifier('icu4x_FixedDecimal_round_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_round_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XFixedDecimal_trunc(ffi.Pointer<ffi.Opaque> self, int position);
+external void _icu4x_FixedDecimal_round_mv1(ffi.Pointer<ffi.Opaque> self, int position);
 
-@meta.ResourceIdentifier('ICU4XFixedDecimal_trunc_to_increment')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_trunc_to_increment')
+@meta.ResourceIdentifier('icu4x_FixedDecimal_ceil_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_ceil_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XFixedDecimal_trunc_to_increment(ffi.Pointer<ffi.Opaque> self, int position, int increment);
+external void _icu4x_FixedDecimal_ceil_mv1(ffi.Pointer<ffi.Opaque> self, int position);
 
-@meta.ResourceIdentifier('ICU4XFixedDecimal_half_trunc')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_half_trunc')
+@meta.ResourceIdentifier('icu4x_FixedDecimal_expand_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_expand_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XFixedDecimal_half_trunc(ffi.Pointer<ffi.Opaque> self, int position);
+external void _icu4x_FixedDecimal_expand_mv1(ffi.Pointer<ffi.Opaque> self, int position);
 
-@meta.ResourceIdentifier('ICU4XFixedDecimal_half_trunc_to_increment')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_half_trunc_to_increment')
+@meta.ResourceIdentifier('icu4x_FixedDecimal_floor_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_floor_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XFixedDecimal_half_trunc_to_increment(ffi.Pointer<ffi.Opaque> self, int position, int increment);
+external void _icu4x_FixedDecimal_floor_mv1(ffi.Pointer<ffi.Opaque> self, int position);
 
-@meta.ResourceIdentifier('ICU4XFixedDecimal_expand')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_expand')
+@meta.ResourceIdentifier('icu4x_FixedDecimal_trunc_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_trunc_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XFixedDecimal_expand(ffi.Pointer<ffi.Opaque> self, int position);
+external void _icu4x_FixedDecimal_trunc_mv1(ffi.Pointer<ffi.Opaque> self, int position);
 
-@meta.ResourceIdentifier('ICU4XFixedDecimal_expand_to_increment')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_expand_to_increment')
+@meta.ResourceIdentifier('icu4x_FixedDecimal_round_with_mode_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_round_with_mode_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XFixedDecimal_expand_to_increment(ffi.Pointer<ffi.Opaque> self, int position, int increment);
+external void _icu4x_FixedDecimal_round_with_mode_mv1(ffi.Pointer<ffi.Opaque> self, int position, int mode);
 
-@meta.ResourceIdentifier('ICU4XFixedDecimal_half_expand')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_half_expand')
+@meta.ResourceIdentifier('icu4x_FixedDecimal_round_with_mode_and_increment_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16, ffi.Int32, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_round_with_mode_and_increment_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XFixedDecimal_half_expand(ffi.Pointer<ffi.Opaque> self, int position);
+external void _icu4x_FixedDecimal_round_with_mode_and_increment_mv1(ffi.Pointer<ffi.Opaque> self, int position, int mode, int increment);
 
-@meta.ResourceIdentifier('ICU4XFixedDecimal_half_expand_to_increment')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_half_expand_to_increment')
+@meta.ResourceIdentifier('icu4x_FixedDecimal_concatenate_end_mv1')
+@ffi.Native<_ResultVoidVoid Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_concatenate_end_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XFixedDecimal_half_expand_to_increment(ffi.Pointer<ffi.Opaque> self, int position, int increment);
+external _ResultVoidVoid _icu4x_FixedDecimal_concatenate_end_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> other);
 
-@meta.ResourceIdentifier('ICU4XFixedDecimal_ceil')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_ceil')
+@meta.ResourceIdentifier('icu4x_FixedDecimal_to_string_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_to_string_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XFixedDecimal_ceil(ffi.Pointer<ffi.Opaque> self, int position);
-
-@meta.ResourceIdentifier('ICU4XFixedDecimal_ceil_to_increment')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_ceil_to_increment')
-// ignore: non_constant_identifier_names
-external void _ICU4XFixedDecimal_ceil_to_increment(ffi.Pointer<ffi.Opaque> self, int position, int increment);
-
-@meta.ResourceIdentifier('ICU4XFixedDecimal_half_ceil')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_half_ceil')
-// ignore: non_constant_identifier_names
-external void _ICU4XFixedDecimal_half_ceil(ffi.Pointer<ffi.Opaque> self, int position);
-
-@meta.ResourceIdentifier('ICU4XFixedDecimal_half_ceil_to_increment')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_half_ceil_to_increment')
-// ignore: non_constant_identifier_names
-external void _ICU4XFixedDecimal_half_ceil_to_increment(ffi.Pointer<ffi.Opaque> self, int position, int increment);
-
-@meta.ResourceIdentifier('ICU4XFixedDecimal_floor')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_floor')
-// ignore: non_constant_identifier_names
-external void _ICU4XFixedDecimal_floor(ffi.Pointer<ffi.Opaque> self, int position);
-
-@meta.ResourceIdentifier('ICU4XFixedDecimal_floor_to_increment')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_floor_to_increment')
-// ignore: non_constant_identifier_names
-external void _ICU4XFixedDecimal_floor_to_increment(ffi.Pointer<ffi.Opaque> self, int position, int increment);
-
-@meta.ResourceIdentifier('ICU4XFixedDecimal_half_floor')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_half_floor')
-// ignore: non_constant_identifier_names
-external void _ICU4XFixedDecimal_half_floor(ffi.Pointer<ffi.Opaque> self, int position);
-
-@meta.ResourceIdentifier('ICU4XFixedDecimal_half_floor_to_increment')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_half_floor_to_increment')
-// ignore: non_constant_identifier_names
-external void _ICU4XFixedDecimal_half_floor_to_increment(ffi.Pointer<ffi.Opaque> self, int position, int increment);
-
-@meta.ResourceIdentifier('ICU4XFixedDecimal_half_even')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_half_even')
-// ignore: non_constant_identifier_names
-external void _ICU4XFixedDecimal_half_even(ffi.Pointer<ffi.Opaque> self, int position);
-
-@meta.ResourceIdentifier('ICU4XFixedDecimal_half_even_to_increment')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_half_even_to_increment')
-// ignore: non_constant_identifier_names
-external void _ICU4XFixedDecimal_half_even_to_increment(ffi.Pointer<ffi.Opaque> self, int position, int increment);
-
-@meta.ResourceIdentifier('ICU4XFixedDecimal_concatenate_end')
-@ffi.Native<_ResultVoidVoid Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_concatenate_end')
-// ignore: non_constant_identifier_names
-external _ResultVoidVoid _ICU4XFixedDecimal_concatenate_end(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> other);
-
-@meta.ResourceIdentifier('ICU4XFixedDecimal_to_string')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XFixedDecimal_to_string')
-// ignore: non_constant_identifier_names
-external void _ICU4XFixedDecimal_to_string(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> writeable);
+external void _icu4x_FixedDecimal_to_string_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);

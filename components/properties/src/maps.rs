@@ -11,11 +11,10 @@
 //!
 //! [`TR44`]: https://www.unicode.org/reports/tr44
 
-use crate::error::PropertiesError;
+#[cfg(doc)]
+use super::*;
 use crate::provider::*;
 use crate::sets::CodePointSetData;
-#[cfg(doc)]
-use crate::*;
 use core::marker::PhantomData;
 use core::ops::RangeInclusive;
 use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
@@ -35,8 +34,8 @@ pub struct CodePointMapData<T: TrieValue> {
 /// to work for all same-value map properties at once
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 struct ErasedMaplikeMarker<T>(PhantomData<T>);
-impl<T: TrieValue> DataMarker for ErasedMaplikeMarker<T> {
-    type Yokeable = PropertyCodePointMapV1<'static, T>;
+impl<T: TrieValue> DynamicDataMarker for ErasedMaplikeMarker<T> {
+    type DataStruct = PropertyCodePointMapV1<'static, T>;
 }
 
 impl<T: TrieValue> CodePointMapData<T> {
@@ -87,9 +86,9 @@ impl<T: TrieValue> CodePointMapData<T> {
     /// Construct a new one from loaded data
     ///
     /// Typically it is preferable to use getters like [`load_general_category()`] instead
-    pub fn from_data<M>(data: DataPayload<M>) -> Self
+    pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
     where
-        M: DataMarker<Yokeable = PropertyCodePointMapV1<'static, T>>,
+        M: DynamicDataMarker<DataStruct = PropertyCodePointMapV1<'static, T>>,
     {
         Self { data: data.cast() }
     }
@@ -249,7 +248,7 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// have a use case first.
     ///
     /// FFI needs this since it operates on erased maps and can't use `iter_ranges_for_group()`
-    #[doc(hidden)]
+    #[doc(hidden)] // used by FFI code
     pub fn iter_ranges_mapped<U: Eq + 'a>(
         self,
         predicate: impl FnMut(T) -> U + Copy + 'a,
@@ -259,7 +258,10 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
 }
 
 impl<T: TrieValue> CodePointMapDataBorrowed<'static, T> {
-    /// Cheaply converts a `CodePointMapDataBorrowed<'static>` into a `CodePointMapData`.
+    /// Cheaply converts a [`CodePointMapDataBorrowed<'static>`] into a [`CodePointMapData`].
+    ///
+    /// Note: Due to branching and indirection, using [`CodePointMapData`] might inhibit some
+    /// compile-time optimizations that are possible with [`CodePointMapDataBorrowed`].
     pub const fn static_to_owned(self) -> CodePointMapData<T> {
         CodePointMapData {
             data: DataPayload::from_static_ref(self.map),
@@ -303,11 +305,11 @@ impl<'a> CodePointMapDataBorrowed<'a, crate::GeneralCategory> {
 macro_rules! make_map_property {
     (
         // currently unused
-        property: $prop_name:expr;
+        property: $p:expr;
         // currently unused
-        marker: $marker_name:ident;
+        dyn_marker: $d:ident;
         value: $value_ty:path;
-        keyed_data_marker: $keyed_data_marker:ty;
+        data_marker: $data_marker:ty;
         func:
         $(#[$doc:meta])*
         $vis2:vis const $constname:ident => $singleton:ident;
@@ -320,9 +322,9 @@ macro_rules! make_map_property {
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         $vis fn $name(
-            provider: &(impl DataProvider<$keyed_data_marker> + ?Sized)
-        ) -> Result<CodePointMapData<$value_ty>, PropertiesError> {
-            Ok(provider.load(Default::default()).and_then(DataResponse::take_payload).map(CodePointMapData::from_data)?)
+            provider: &(impl DataProvider<$data_marker> + ?Sized)
+        ) -> Result<CodePointMapData<$value_ty>, DataError> {
+            Ok(CodePointMapData::from_data(provider.load(Default::default())?.payload))
         }
         $(#[$doc])*
         #[cfg(feature = "compiled_data")]
@@ -336,9 +338,9 @@ macro_rules! make_map_property {
 
 make_map_property! {
     property: "General_Category";
-    marker: GeneralCategoryProperty;
+    dyn_marker: GeneralCategoryProperty;
     value: crate::GeneralCategory;
-    keyed_data_marker: GeneralCategoryV1Marker;
+    data_marker: GeneralCategoryV1Marker;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the General_Category Unicode enumerated property. See [`GeneralCategory`].
     ///
@@ -354,15 +356,15 @@ make_map_property! {
     /// assert_eq!(maps::general_category().get('木'), GeneralCategory::OtherLetter);  // U+6728
     /// assert_eq!(maps::general_category().get('🎃'), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
     /// ```
-    pub const general_category => SINGLETON_PROPS_GC_V1;
+    pub const general_category => SINGLETON_GENERAL_CATEGORY_V1_MARKER;
     pub fn load_general_category();
 }
 
 make_map_property! {
     property: "Bidi_Class";
-    marker: BidiClassProperty;
+    dyn_marker: BidiClassProperty;
     value: crate::BidiClass;
-    keyed_data_marker: BidiClassV1Marker;
+    data_marker: BidiClassV1Marker;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Bidi_Class Unicode enumerated property. See [`BidiClass`].
     ///
@@ -378,15 +380,15 @@ make_map_property! {
     /// assert_eq!(maps::bidi_class().get('y'), BidiClass::LeftToRight);  // U+0079
     /// assert_eq!(maps::bidi_class().get('ع'), BidiClass::ArabicLetter);  // U+0639
     /// ```
-    pub const bidi_class => SINGLETON_PROPS_BC_V1;
+    pub const bidi_class => SINGLETON_BIDI_CLASS_V1_MARKER;
     pub fn load_bidi_class();
 }
 
 make_map_property! {
     property: "Script";
-    marker: ScriptProperty;
+    dyn_marker: ScriptProperty;
     value: crate::Script;
-    keyed_data_marker: ScriptV1Marker;
+    data_marker: ScriptV1Marker;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Script Unicode enumerated property. See [`Script`].
     ///
@@ -409,15 +411,41 @@ make_map_property! {
     /// ```
     /// [`load_script_with_extensions_unstable`]: crate::script::load_script_with_extensions_unstable
     /// [`ScriptWithExtensionsBorrowed::has_script`]: crate::script::ScriptWithExtensionsBorrowed::has_script
-    pub const script => SINGLETON_PROPS_SC_V1;
+    pub const script => SINGLETON_SCRIPT_V1_MARKER;
     pub fn load_script();
 }
 
 make_map_property! {
+    property: "Hangul_Syllable_Type";
+    dyn_marker: HangulSyllableTypeProperty;
+    value: crate::HangulSyllableType;
+    data_marker: HangulSyllableTypeV1Marker;
+    func:
+    /// Returns a [`CodePointMapDataBorrowed`] for the Hangul_Syllable_Type
+    /// Unicode enumerated property. See [`HangulSyllableType`].
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, HangulSyllableType};
+    ///
+    /// assert_eq!(maps::hangul_syllable_type().get('ᄀ'), HangulSyllableType::LeadingJamo);  // U+1100
+    /// assert_eq!(maps::hangul_syllable_type().get('가'), HangulSyllableType::LeadingVowelSyllable);  // U+AC00
+    /// ```
+
+    pub const hangul_syllable_type => SINGLETON_HANGUL_SYLLABLE_TYPE_V1_MARKER;
+    pub fn load_hangul_syllable_type();
+}
+
+make_map_property! {
     property: "East_Asian_Width";
-    marker: EastAsianWidthProperty;
+    dyn_marker: EastAsianWidthProperty;
     value: crate::EastAsianWidth;
-    keyed_data_marker: EastAsianWidthV1Marker;
+    data_marker: EastAsianWidthV1Marker;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the East_Asian_Width Unicode enumerated
     /// property. See [`EastAsianWidth`].
@@ -434,15 +462,15 @@ make_map_property! {
     /// assert_eq!(maps::east_asian_width().get('ｱ'), EastAsianWidth::Halfwidth); // U+FF71: Halfwidth Katakana Letter A
     /// assert_eq!(maps::east_asian_width().get('ア'), EastAsianWidth::Wide); //U+30A2: Katakana Letter A
     /// ```
-    pub const east_asian_width => SINGLETON_PROPS_EA_V1;
+    pub const east_asian_width => SINGLETON_EAST_ASIAN_WIDTH_V1_MARKER;
     pub fn load_east_asian_width();
 }
 
 make_map_property! {
     property: "Line_Break";
-    marker: LineBreakProperty;
+    dyn_marker: LineBreakProperty;
     value: crate::LineBreak;
-    keyed_data_marker: LineBreakV1Marker;
+    data_marker: LineBreakV1Marker;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Line_Break Unicode enumerated
     /// property. See [`LineBreak`].
@@ -461,15 +489,15 @@ make_map_property! {
     /// assert_eq!(maps::line_break().get(')'), LineBreak::CloseParenthesis); // U+0029: Right Parenthesis
     /// assert_eq!(maps::line_break().get('ぁ'), LineBreak::ConditionalJapaneseStarter); //U+3041: Hiragana Letter Small A
     /// ```
-    pub const line_break => SINGLETON_PROPS_LB_V1;
+    pub const line_break => SINGLETON_LINE_BREAK_V1_MARKER;
     pub fn load_line_break();
 }
 
 make_map_property! {
     property: "Grapheme_Cluster_Break";
-    marker: GraphemeClusterBreakProperty;
+    dyn_marker: GraphemeClusterBreakProperty;
     value: crate::GraphemeClusterBreak;
-    keyed_data_marker: GraphemeClusterBreakV1Marker;
+    data_marker: GraphemeClusterBreakV1Marker;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Grapheme_Cluster_Break Unicode enumerated
     /// property. See [`GraphemeClusterBreak`].
@@ -488,15 +516,15 @@ make_map_property! {
     /// assert_eq!(maps::grapheme_cluster_break().get('🇦'), GraphemeClusterBreak::RegionalIndicator); // U+1F1E6: Regional Indicator Symbol Letter A
     /// assert_eq!(maps::grapheme_cluster_break().get('ำ'), GraphemeClusterBreak::SpacingMark); //U+0E33: Thai Character Sara Am
     /// ```
-    pub const grapheme_cluster_break => SINGLETON_PROPS_GCB_V1;
+    pub const grapheme_cluster_break => SINGLETON_GRAPHEME_CLUSTER_BREAK_V1_MARKER;
     pub fn load_grapheme_cluster_break();
 }
 
 make_map_property! {
     property: "Word_Break";
-    marker: WordBreakProperty;
+    dyn_marker: WordBreakProperty;
     value: crate::WordBreak;
-    keyed_data_marker: WordBreakV1Marker;
+    data_marker: WordBreakV1Marker;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Word_Break Unicode enumerated
     /// property. See [`WordBreak`].
@@ -515,15 +543,15 @@ make_map_property! {
     /// assert_eq!(maps::word_break().get('.'), WordBreak::MidNumLet); // U+002E: Full Stop
     /// assert_eq!(maps::word_break().get('，'), WordBreak::MidNum); // U+FF0C: Fullwidth Comma
     /// ```
-    pub const word_break => SINGLETON_PROPS_WB_V1;
+    pub const word_break => SINGLETON_WORD_BREAK_V1_MARKER;
     pub fn load_word_break();
 }
 
 make_map_property! {
     property: "Sentence_Break";
-    marker: SentenceBreakProperty;
+    dyn_marker: SentenceBreakProperty;
     value: crate::SentenceBreak;
-    keyed_data_marker: SentenceBreakV1Marker;
+    data_marker: SentenceBreakV1Marker;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Sentence_Break Unicode enumerated
     /// property. See [`SentenceBreak`].
@@ -542,15 +570,15 @@ make_map_property! {
     /// assert_eq!(maps::sentence_break().get('９'), SentenceBreak::Numeric); // U+FF19: Fullwidth Digit Nine
     /// assert_eq!(maps::sentence_break().get(','), SentenceBreak::SContinue); // U+002C: Comma
     /// ```
-    pub const sentence_break => SINGLETON_PROPS_SB_V1;
+    pub const sentence_break => SINGLETON_SENTENCE_BREAK_V1_MARKER;
     pub fn load_sentence_break();
 }
 
 make_map_property! {
     property: "Canonical_Combining_Class";
-    marker: CanonicalCombiningClassProperty;
+    dyn_marker: CanonicalCombiningClassProperty;
     value: crate::CanonicalCombiningClass;
-    keyed_data_marker: CanonicalCombiningClassV1Marker;
+    data_marker: CanonicalCombiningClassV1Marker;
     func:
     /// Return a [`CodePointMapData`] for the Canonical_Combining_Class Unicode property. See
     /// [`CanonicalCombiningClass`].
@@ -559,7 +587,7 @@ make_map_property! {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
-    /// **Note:** See `icu_normalizer::CanonicalCombiningClassMap` for the preferred API
+    /// **Note:** See `icu::normalizer::CanonicalCombiningClassMap` for the preferred API
     /// to look up the Canonical_Combining_Class property by scalar value.
     ///
     /// # Example
@@ -570,15 +598,15 @@ make_map_property! {
     /// assert_eq!(maps::canonical_combining_class().get('a'), CanonicalCombiningClass::NotReordered); // U+0061: LATIN SMALL LETTER A
     /// assert_eq!(maps::canonical_combining_class().get32(0x0301), CanonicalCombiningClass::Above); // U+0301: COMBINING ACUTE ACCENT
     /// ```
-    pub const canonical_combining_class => SINGLETON_PROPS_CCC_V1;
+    pub const canonical_combining_class => SINGLETON_CANONICAL_COMBINING_CLASS_V1_MARKER;
     pub fn load_canonical_combining_class();
 }
 
 make_map_property! {
     property: "Indic_Syllabic_Category";
-    marker: IndicSyllabicCategoryProperty;
+    dyn_marker: IndicSyllabicCategoryProperty;
     value: crate::IndicSyllabicCategory;
-    keyed_data_marker: IndicSyllabicCategoryV1Marker;
+    data_marker: IndicSyllabicCategoryV1Marker;
     func:
     /// Return a [`CodePointMapData`] for the Indic_Syllabic_Category Unicode property. See
     /// [`IndicSyllabicCategory`].
@@ -595,15 +623,15 @@ make_map_property! {
     /// assert_eq!(maps::indic_syllabic_category().get('a'), IndicSyllabicCategory::Other);
     /// assert_eq!(maps::indic_syllabic_category().get32(0x0900), IndicSyllabicCategory::Bindu); // U+0900: DEVANAGARI SIGN INVERTED CANDRABINDU
     /// ```
-    pub const indic_syllabic_category => SINGLETON_PROPS_INSC_V1;
+    pub const indic_syllabic_category => SINGLETON_INDIC_SYLLABIC_CATEGORY_V1_MARKER;
     pub fn load_indic_syllabic_category();
 }
 
 make_map_property! {
     property: "Joining_Type";
-    marker: JoiningTypeProperty;
+    dyn_marker: JoiningTypeProperty;
     value: crate::JoiningType;
-    keyed_data_marker: JoiningTypeV1Marker;
+    data_marker: JoiningTypeV1Marker;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Joining_Type Unicode enumerated
     /// property. See [`JoiningType`].
@@ -620,6 +648,6 @@ make_map_property! {
     /// assert_eq!(maps::joining_type().get('ؠ'), JoiningType::DualJoining); // U+0620: Arabic Letter Kashmiri Yeh
     /// assert_eq!(maps::joining_type().get('𐫍'), JoiningType::LeftJoining); // U+10ACD: Manichaean Letter Heth
     /// ```
-    pub const joining_type => SINGLETON_PROPS_JT_V1;
+    pub const joining_type => SINGLETON_JOINING_TYPE_V1_MARKER;
     pub fn load_joining_type();
 }

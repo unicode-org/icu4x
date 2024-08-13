@@ -3,6 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[diplomat::bridge]
+#[diplomat::abi_rename = "icu4x_{0}_mv1"]
+#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
     use core::ops::RangeInclusive;
@@ -21,8 +23,8 @@ pub mod ffi {
         pub done: bool,
     }
 
-    /// An iterator over code point ranges, produced by `ICU4XCodePointSetData` or
-    /// one of the `ICU4XCodePointMapData` types
+    /// An iterator over code point ranges, produced by `CodePointSetData` or
+    /// one of the `CodePointMapData` types
     #[diplomat::opaque]
     pub struct CodePointRangeIterator<'a>(pub Box<dyn Iterator<Item = RangeInclusive<u32>> + 'a>);
 

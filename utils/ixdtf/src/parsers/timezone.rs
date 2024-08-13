@@ -14,7 +14,7 @@ use super::{
     time::{parse_fraction, parse_hour, parse_minute_second},
     Cursor,
 };
-use crate::{assert_syntax, ParserError, ParserResult};
+use crate::{assert_syntax, ParseError, ParserResult};
 
 // NOTE: critical field on time zones is captured but not handled.
 
@@ -26,9 +26,9 @@ pub(crate) fn parse_ambiguous_tz_annotation<'a>(
     // Peek position + 1 to check for critical flag.
     let mut current_peek = 1;
     let critical = cursor
-        .peek_n_char(current_peek)
+        .peek_n(current_peek)
         .map(is_critical_flag)
-        .ok_or(ParserError::abrupt_end("AmbiguousAnnotation"))?;
+        .ok_or(ParseError::abrupt_end("AmbiguousAnnotation"))?;
 
     // Advance cursor if critical flag present.
     if critical {
@@ -36,14 +36,14 @@ pub(crate) fn parse_ambiguous_tz_annotation<'a>(
     }
 
     let leading_char = cursor
-        .peek_n_char(current_peek)
-        .ok_or(ParserError::abrupt_end("AmbiguousAnnotation"))?;
+        .peek_n(current_peek)
+        .ok_or(ParseError::abrupt_end("AmbiguousAnnotation"))?;
 
     if is_tz_leading_char(leading_char) || is_sign(leading_char) {
         // Ambigious start values when lowercase alpha that is shared between `TzLeadingChar` and `KeyLeadingChar`.
         if is_a_key_leading_char(leading_char) {
             let mut peek_pos = current_peek + 1;
-            while let Some(ch) = cursor.peek_n_char(peek_pos) {
+            while let Some(ch) = cursor.peek_n(peek_pos) {
                 if is_tz_name_separator(ch) || (is_tz_char(ch) && !is_a_key_char(ch)) {
                     let tz = parse_tz_annotation(cursor)?;
                     return Ok(Some(tz));
@@ -52,12 +52,12 @@ pub(crate) fn parse_ambiguous_tz_annotation<'a>(
                 {
                     return Ok(None);
                 } else if is_annotation_close(ch) {
-                    return Err(ParserError::InvalidAnnotation);
+                    return Err(ParseError::InvalidAnnotation);
                 }
 
                 peek_pos += 1;
             }
-            return Err(ParserError::abrupt_end("AmbiguousAnnotation"));
+            return Err(ParseError::abrupt_end("AmbiguousAnnotation"));
         }
         let tz = parse_tz_annotation(cursor)?;
         return Ok(Some(tz));
@@ -67,12 +67,12 @@ pub(crate) fn parse_ambiguous_tz_annotation<'a>(
         return Ok(None);
     };
 
-    Err(ParserError::AnnotationChar)
+    Err(ParseError::AnnotationChar)
 }
 
 fn parse_tz_annotation<'a>(cursor: &mut Cursor<'a>) -> ParserResult<TimeZoneAnnotation<'a>> {
     assert_syntax!(
-        is_annotation_open(cursor.next_or(ParserError::AnnotationOpen)?),
+        is_annotation_open(cursor.next_or(ParseError::AnnotationOpen)?),
         AnnotationOpen
     );
 
@@ -82,7 +82,7 @@ fn parse_tz_annotation<'a>(cursor: &mut Cursor<'a>) -> ParserResult<TimeZoneAnno
     let tz = parse_time_zone(cursor)?;
 
     assert_syntax!(
-        is_annotation_close(cursor.next_or(ParserError::AnnotationClose)?),
+        is_annotation_close(cursor.next_or(ParseError::AnnotationClose)?),
         AnnotationClose
     );
 
@@ -95,7 +95,7 @@ fn parse_tz_annotation<'a>(cursor: &mut Cursor<'a>) -> ParserResult<TimeZoneAnno
 pub(crate) fn parse_time_zone<'a>(cursor: &mut Cursor<'a>) -> ParserResult<TimeZoneRecord<'a>> {
     let is_iana = cursor
         .check(is_tz_leading_char)
-        .ok_or(ParserError::abrupt_end("TimeZoneAnnotation"))?;
+        .ok_or(ParseError::abrupt_end("TimeZoneAnnotation"))?;
     let is_offset = cursor.check_or(false, is_sign);
 
     if is_iana {
@@ -105,7 +105,7 @@ pub(crate) fn parse_time_zone<'a>(cursor: &mut Cursor<'a>) -> ParserResult<TimeZ
         return Ok(TimeZoneRecord::Offset(offset));
     }
 
-    Err(ParserError::TzLeadingChar)
+    Err(ParseError::TzLeadingChar)
 }
 
 /// Parse a `TimeZoneIANAName` Parse Node
@@ -117,7 +117,7 @@ fn parse_tz_iana_name<'a>(cursor: &mut Cursor<'a>) -> ParserResult<TimeZoneRecor
             return Ok(TimeZoneRecord::Name(
                 cursor
                     .slice(tz_name_start, cursor.pos())
-                    .ok_or(ParserError::ImplAssert)?,
+                    .ok_or(ParseError::ImplAssert)?,
             ));
         }
 
@@ -129,7 +129,7 @@ fn parse_tz_iana_name<'a>(cursor: &mut Cursor<'a>) -> ParserResult<TimeZoneRecor
         assert_syntax!(is_tz_char(potential_value_char), IanaChar,);
     }
 
-    Err(ParserError::abrupt_end("IANATimeZoneName"))
+    Err(ParseError::abrupt_end("IANATimeZoneName"))
 }
 
 // ==== Utc Offset Parsing ====
@@ -147,12 +147,12 @@ pub(crate) fn parse_date_time_utc(cursor: &mut Cursor) -> ParserResult<UTCOffset
         });
     }
 
-    let separated = cursor.peek_n_char(3).map_or(false, is_time_separator);
+    let separated = cursor.peek_n(3).map_or(false, is_time_separator);
 
     let (mut utc_to_minute, parsed_minute) = parse_utc_offset_minute_precision(cursor)?;
 
     if cursor.check_or(false, is_time_separator) && !separated {
-        return Err(ParserError::UtcTimeSeparator);
+        return Err(ParseError::UtcTimeSeparator);
     }
     cursor.advance_if(cursor.check_or(false, is_time_separator));
 
@@ -178,7 +178,7 @@ pub(crate) fn parse_utc_offset_minute_precision(
     cursor: &mut Cursor,
 ) -> ParserResult<(UTCOffsetRecord, bool)> {
     let sign = if cursor.check_or(false, is_sign) {
-        let sign = cursor.next_or(ParserError::ImplAssert)?;
+        let sign = cursor.next_or(ParseError::ImplAssert)?;
         Sign::from(sign == '+')
     } else {
         Sign::Positive

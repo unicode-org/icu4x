@@ -50,31 +50,32 @@ use super::MaxVariable;
 pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
+#[allow(unused_imports)]
 const _: () = {
+    use icu_collator_data::*;
     pub mod icu {
         pub use crate as collator;
+        pub use icu_collator_data::icu_locale as locale;
         pub use icu_collections as collections;
-        #[allow(unused_imports)] // baked data may or may not need this
-        pub use icu_locid_transform as locid_transform;
     }
-    icu_collator_data::make_provider!(Baked);
-    icu_collator_data::impl_collator_data_v1!(Baked);
-    icu_collator_data::impl_collator_dia_v1!(Baked);
-    icu_collator_data::impl_collator_jamo_v1!(Baked);
-    icu_collator_data::impl_collator_meta_v1!(Baked);
-    icu_collator_data::impl_collator_prim_v1!(Baked);
-    icu_collator_data::impl_collator_reord_v1!(Baked);
+    make_provider!(Baked);
+    impl_collation_data_v1_marker!(Baked);
+    impl_collation_diacritics_v1_marker!(Baked);
+    impl_collation_jamo_v1_marker!(Baked);
+    impl_collation_metadata_v1_marker!(Baked);
+    impl_collation_special_primaries_v1_marker!(Baked);
+    impl_collation_reordering_v1_marker!(Baked);
 };
 
 #[cfg(feature = "datagen")]
-/// The latest minimum set of keys required by this component.
-pub const KEYS: &[DataKey] = &[
-    CollationDataV1Marker::KEY,
-    CollationDiacriticsV1Marker::KEY,
-    CollationJamoV1Marker::KEY,
-    CollationMetadataV1Marker::KEY,
-    CollationReorderingV1Marker::KEY,
-    CollationSpecialPrimariesV1Marker::KEY,
+/// The latest minimum set of markers required by this component.
+pub const MARKERS: &[DataMarkerInfo] = &[
+    CollationDataV1Marker::INFO,
+    CollationDiacriticsV1Marker::INFO,
+    CollationJamoV1Marker::INFO,
+    CollationMetadataV1Marker::INFO,
+    CollationReorderingV1Marker::INFO,
+    CollationSpecialPrimariesV1Marker::INFO,
 ];
 
 const SINGLE_U32: &ZeroSlice<u32> =
@@ -116,9 +117,9 @@ fn data_ce_to_primary(data_ce: u64, c: char) -> u32 {
 #[icu_provider::data_struct(marker(
     CollationDataV1Marker,
     "collator/data@1",
-    extension_key = "co",
-    fallback_by = "collation",
-    fallback_supplement = "collation"
+    // TODO(#3867): Use script fallback
+    fallback_by = "language",
+    attributes_domain = "collator",
 ))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
@@ -232,9 +233,8 @@ impl<'data> CollationDataV1<'data> {
 #[icu_provider::data_struct(marker(
     CollationDiacriticsV1Marker,
     "collator/dia@1",
-    extension_key = "co",
-    fallback_by = "collation",
-    fallback_supplement = "collation",
+    fallback_by = "language",
+    attributes_domain = "collator",
 ))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
@@ -276,9 +276,8 @@ pub struct CollationJamoV1<'data> {
 #[icu_provider::data_struct(marker(
     CollationReorderingV1Marker,
     "collator/reord@1",
-    extension_key = "co",
-    fallback_by = "collation",
-    fallback_supplement = "collation"
+    fallback_by = "language",
+    attributes_domain = "collator",
 ))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
@@ -366,9 +365,8 @@ impl<'data> CollationReorderingV1<'data> {
 #[icu_provider::data_struct(marker(
     CollationMetadataV1Marker,
     "collator/meta@1",
-    extension_key = "co",
-    fallback_by = "collation",
-    fallback_supplement = "collation"
+    fallback_by = "language",
+    attributes_domain = "collator",
 ))]
 #[derive(Debug, PartialEq, Clone, Copy)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]

@@ -11,6 +11,7 @@ repository = "https://github.com/unicode-org/icu4x"
 homepage = "https://icu4x.unicode.org"
 license = "Unicode-3.0"
 categories = ["internationalization"]
+description = "Deprecated crate!"
 include = ["src/**/*", "README.md", "LICENSE"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

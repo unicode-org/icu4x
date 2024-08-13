@@ -57,7 +57,6 @@ fn test_grouper() {
     use crate::provider::*;
     use crate::FixedDecimalFormatter;
     use fixed_decimal::FixedDecimal;
-    use icu_locid::LanguageIdentifier;
     use icu_provider::prelude::*;
     use icu_provider_adapters::any_payload::AnyPayloadProvider;
     use writeable::assert_writeable_eq;
@@ -167,7 +166,7 @@ fn test_grouper() {
             };
             let fdf = FixedDecimalFormatter::try_new_unstable(
                 &provider.as_downcasting(),
-                &LanguageIdentifier::UND.into(),
+                &Default::default(),
                 options,
             )
             .unwrap();

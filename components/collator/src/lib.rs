@@ -41,22 +41,20 @@
 //! ```
 //! use core::cmp::Ordering;
 //! use icu::collator::*;
-//! use icu::locid::{locale, Locale};
+//! use icu::locale::locale;
 //!
-//! let locale_es: Locale = locale!("es-u-co-trad");
+//! let locale_es = locale!("es-u-co-trad").into();
 //! let mut options = CollatorOptions::new();
 //! options.strength = Some(Strength::Primary);
-//! let collator_es: Collator =
-//!     Collator::try_new(&locale_es.into(), options).unwrap();
+//! let collator_es: Collator = Collator::try_new(&locale_es, options).unwrap();
 //!
 //! // "pollo" > "polvo" in traditional Spanish
 //! assert_eq!(collator_es.compare("pollo", "polvo"), Ordering::Greater);
 //!
-//! let locale_en: Locale = locale!("en");
+//! let locale_en = locale!("en").into();
 //! let mut options = CollatorOptions::new();
 //! options.strength = Some(Strength::Primary);
-//! let collator_en: Collator =
-//!     Collator::try_new(&locale_en.into(), options).unwrap();
+//! let collator_en: Collator = Collator::try_new(&locale_en, options).unwrap();
 //!
 //! // "pollo" < "polvo" according to English rules
 //! assert_eq!(collator_en.compare("pollo", "polvo"), Ordering::Less);
@@ -279,14 +277,12 @@ pub mod docs;
 // name of that struct without coordination.
 mod elements;
 
-mod error;
 mod options;
 pub mod provider;
 
 extern crate alloc;
 
 pub use comparison::Collator;
-pub use error::CollatorError;
 pub use options::AlternateHandling;
 pub use options::BackwardSecondLevel;
 pub use options::CaseFirst;
@@ -296,6 +292,3 @@ pub use options::MaxVariable;
 pub use options::Numeric;
 pub use options::ResolvedCollatorOptions;
 pub use options::Strength;
-
-#[doc(no_inline)]
-pub use CollatorError as Error;

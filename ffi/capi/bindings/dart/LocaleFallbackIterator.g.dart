@@ -4,8 +4,8 @@ part of 'lib.g.dart';
 
 /// An iterator over the locale under fallback.
 ///
-/// See the [Rust documentation for `LocaleFallbackIterator`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbackIterator.html) for more information.
-final class LocaleFallbackIterator implements ffi.Finalizable {
+/// See the [Rust documentation for `LocaleFallbackIterator`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbackIterator.html) for more information.
+final class LocaleFallbackIterator implements ffi.Finalizable, core.Iterator<Locale> {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
   // These are "used" in the sense that they keep dependencies alive
@@ -24,35 +24,29 @@ final class LocaleFallbackIterator implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XLocaleFallbackIterator_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_LocaleFallbackIterator_destroy_mv1));
 
-  /// Gets a snapshot of the current state of the locale.
-  ///
-  /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbackIterator.html#method.get) for more information.
-  Locale get get {
-    final result = _ICU4XLocaleFallbackIterator_get(_ffi);
-    return Locale._fromFfi(result, []);
+  Locale? _current;
+
+  Locale get current => _current!;
+
+  bool moveNext() {
+    _current = _iteratorNext();
+    return _current != null;
   }
 
-  /// Performs one step of the fallback algorithm, mutating the locale.
-  ///
-  /// See the [Rust documentation for `step`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbackIterator.html#method.step) for more information.
-  void step() {
-    _ICU4XLocaleFallbackIterator_step(_ffi);
+  Locale? _iteratorNext() {
+    final result = _icu4x_LocaleFallbackIterator_next_mv1(_ffi);
+    return result.address == 0 ? null : Locale._fromFfi(result, []);
   }
 }
 
-@meta.ResourceIdentifier('ICU4XLocaleFallbackIterator_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XLocaleFallbackIterator_destroy')
+@meta.ResourceIdentifier('icu4x_LocaleFallbackIterator_destroy_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_LocaleFallbackIterator_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XLocaleFallbackIterator_destroy(ffi.Pointer<ffi.Void> self);
+external void _icu4x_LocaleFallbackIterator_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XLocaleFallbackIterator_get')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleFallbackIterator_get')
+@meta.ResourceIdentifier('icu4x_LocaleFallbackIterator_next_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleFallbackIterator_next_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _ICU4XLocaleFallbackIterator_get(ffi.Pointer<ffi.Opaque> self);
-
-@meta.ResourceIdentifier('ICU4XLocaleFallbackIterator_step')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleFallbackIterator_step')
-// ignore: non_constant_identifier_names
-external void _ICU4XLocaleFallbackIterator_step(ffi.Pointer<ffi.Opaque> self);
+external ffi.Pointer<ffi.Opaque> _icu4x_LocaleFallbackIterator_next_mv1(ffi.Pointer<ffi.Opaque> self);

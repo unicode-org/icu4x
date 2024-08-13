@@ -15,7 +15,11 @@ use crate::{
         PatternItem, TimeGranularity,
     },
     provider::calendar::{patterns::GenericLengthPatternsV1, DateSkeletonPatternsV1},
+    DateTimeFormatterOptions,
 };
+
+#[cfg(feature = "datagen")]
+use crate::provider::calendar::{DateLengthsV1, TimeLengthsV1};
 
 // The following scalar values are for testing the suitability of a skeleton's field for the
 // given input. Per UTS 35, the better the fit of a pattern, the "lower the distance". In this
@@ -312,7 +316,17 @@ fn adjust_pattern_field_lengths(fields: &[Field], pattern: &mut runtime::Pattern
                 if requested_field.length != pattern_field.length
                     && requested_field.get_length_type() == pattern_field.get_length_type()
                 {
-                    return Some(PatternItem::Field(*requested_field));
+                    let length = requested_field.length;
+                    #[cfg(feature = "experimental")]
+                    let length = if requested_field.symbol.is_at_least_abbreviated() {
+                        length.numeric_to_abbr()
+                    } else {
+                        length
+                    };
+                    return Some(PatternItem::Field(Field {
+                        length,
+                        ..*pattern_field
+                    }));
                 }
             }
         }
@@ -522,4 +536,92 @@ pub fn get_best_available_format_pattern<'data>(
     }
 
     BestSkeleton::AllFieldsMatch(closest_format_pattern)
+}
+
+impl DateTimeFormatterOptions {
+    #[doc(hidden)] // TODO(#4467): Internal
+    #[cfg(feature = "datagen")]
+    pub fn select_pattern<'data>(
+        self,
+        skeletons: &DateSkeletonPatternsV1<'data>,
+        date_patterns: &DateLengthsV1<'data>,
+        time_patterns: &TimeLengthsV1<'data>,
+    ) -> PatternPlurals<'data> {
+        use crate::options::preferences::HourCycle;
+        use crate::pattern::hour_cycle::CoarseHourCycle;
+        use crate::pattern::runtime::Pattern;
+
+        let default_hour_cycle = match time_patterns.preferred_hour_cycle {
+            CoarseHourCycle::H11H12 => HourCycle::H12,
+            CoarseHourCycle::H23H24 => HourCycle::H23,
+        };
+        match self {
+            Self::Components(components_bag) => {
+                let fields = components_bag.to_vec_fields(default_hour_cycle);
+                match create_best_pattern_for_fields(
+                    skeletons,
+                    &date_patterns.length_combinations,
+                    &fields,
+                    &components_bag,
+                    false,
+                ) {
+                    BestSkeleton::AllFieldsMatch(p) => p,
+                    _ => {
+                        // Build a last-resort pattern that contains all of the requested fields.
+                        // This is NOT in the CLDR standard! Better would be:
+                        // - Use Append Items?
+                        // - Fall back to the format from the Gregorian or Generic calendar?
+                        // - Bubble up an error of some sort?
+                        // See issue: <https://github.com/unicode-org/icu4x/issues/586>
+                        let pattern_items = fields
+                            .into_iter()
+                            .flat_map(|field| {
+                                [PatternItem::Literal(' '), PatternItem::Field(field)]
+                            })
+                            .skip(1)
+                            .collect::<Vec<_>>();
+                        let pattern = Pattern::from(pattern_items);
+                        PatternPlurals::SinglePattern(pattern)
+                    }
+                }
+            }
+            Self::Length(length::Bag {
+                date: Some(date_length),
+                time: None,
+            }) => match date_length {
+                length::Date::Full => {
+                    PatternPlurals::SinglePattern(date_patterns.date.full.clone())
+                }
+                length::Date::Long => {
+                    PatternPlurals::SinglePattern(date_patterns.date.long.clone())
+                }
+                length::Date::Medium => {
+                    PatternPlurals::SinglePattern(date_patterns.date.medium.clone())
+                }
+                length::Date::Short => {
+                    PatternPlurals::SinglePattern(date_patterns.date.short.clone())
+                }
+            },
+            Self::Length(length::Bag {
+                date: None,
+                time: Some(time_length),
+            }) => {
+                let time_patterns = match time_patterns.preferred_hour_cycle {
+                    CoarseHourCycle::H11H12 => &time_patterns.time_h11_h12,
+                    CoarseHourCycle::H23H24 => &time_patterns.time_h23_h24,
+                };
+                match time_length {
+                    length::Time::Full => PatternPlurals::SinglePattern(time_patterns.full.clone()),
+                    length::Time::Long => PatternPlurals::SinglePattern(time_patterns.long.clone()),
+                    length::Time::Medium => {
+                        PatternPlurals::SinglePattern(time_patterns.medium.clone())
+                    }
+                    length::Time::Short => {
+                        PatternPlurals::SinglePattern(time_patterns.short.clone())
+                    }
+                }
+            }
+            _ => unimplemented!(),
+        }
+    }
 }

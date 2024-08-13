@@ -9,6 +9,6 @@ publish = false
 edition = "2021"
 
 [dependencies]
-serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
-clap = {version = "4", features = ["derive"] }
+serde_json = { workspace = true }
+clap = { workspace = true, features = ["derive"] }
 libc = "0.2"

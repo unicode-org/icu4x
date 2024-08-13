@@ -4,7 +4,7 @@ part of 'lib.g.dart';
 
 /// A locale expander.
 ///
-/// See the [Rust documentation for `LocaleExpander`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html) for more information.
+/// See the [Rust documentation for `LocaleExpander`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html) for more information.
 final class LocaleExpander implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -22,15 +22,15 @@ final class LocaleExpander implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XLocaleExpander_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_LocaleExpander_destroy_mv1));
 
   /// Create a new [`LocaleExpander`].
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.new) for more information.
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.new) for more information.
   ///
   /// Throws [Error] on failure.
   factory LocaleExpander(DataProvider provider) {
-    final result = _ICU4XLocaleExpander_create(provider._ffi);
+    final result = _icu4x_LocaleExpander_create_mv1(provider._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -39,51 +39,62 @@ final class LocaleExpander implements ffi.Finalizable {
 
   /// Create a new [`LocaleExpander`] with extended data.
   ///
-  /// See the [Rust documentation for `new_extended`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.new_extended) for more information.
+  /// See the [Rust documentation for `new_extended`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.new_extended) for more information.
   ///
   /// Throws [Error] on failure.
   factory LocaleExpander.extended(DataProvider provider) {
-    final result = _ICU4XLocaleExpander_create_extended(provider._ffi);
+    final result = _icu4x_LocaleExpander_create_extended_mv1(provider._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
     return LocaleExpander._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `maximize`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.maximize) for more information.
+  /// See the [Rust documentation for `maximize`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.maximize) for more information.
   TransformResult maximize(Locale locale) {
-    final result = _ICU4XLocaleExpander_maximize(_ffi, locale._ffi);
+    final result = _icu4x_LocaleExpander_maximize_mv1(_ffi, locale._ffi);
     return TransformResult.values[result];
   }
 
-  /// See the [Rust documentation for `minimize`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.minimize) for more information.
+  /// See the [Rust documentation for `minimize`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.minimize) for more information.
   TransformResult minimize(Locale locale) {
-    final result = _ICU4XLocaleExpander_minimize(_ffi, locale._ffi);
+    final result = _icu4x_LocaleExpander_minimize_mv1(_ffi, locale._ffi);
+    return TransformResult.values[result];
+  }
+
+  /// See the [Rust documentation for `minimize_favor_script`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.minimize_favor_script) for more information.
+  TransformResult minimizeFavorScript(Locale locale) {
+    final result = _icu4x_LocaleExpander_minimize_favor_script_mv1(_ffi, locale._ffi);
     return TransformResult.values[result];
   }
 }
 
-@meta.ResourceIdentifier('ICU4XLocaleExpander_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XLocaleExpander_destroy')
+@meta.ResourceIdentifier('icu4x_LocaleExpander_destroy_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_LocaleExpander_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XLocaleExpander_destroy(ffi.Pointer<ffi.Void> self);
+external void _icu4x_LocaleExpander_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XLocaleExpander_create')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleExpander_create')
+@meta.ResourceIdentifier('icu4x_LocaleExpander_create_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleExpander_create_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XLocaleExpander_create(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_LocaleExpander_create_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XLocaleExpander_create_extended')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleExpander_create_extended')
+@meta.ResourceIdentifier('icu4x_LocaleExpander_create_extended_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleExpander_create_extended_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XLocaleExpander_create_extended(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_LocaleExpander_create_extended_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XLocaleExpander_maximize')
-@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleExpander_maximize')
+@meta.ResourceIdentifier('icu4x_LocaleExpander_maximize_mv1')
+@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleExpander_maximize_mv1')
 // ignore: non_constant_identifier_names
-external int _ICU4XLocaleExpander_maximize(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale);
+external int _icu4x_LocaleExpander_maximize_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale);
 
-@meta.ResourceIdentifier('ICU4XLocaleExpander_minimize')
-@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleExpander_minimize')
+@meta.ResourceIdentifier('icu4x_LocaleExpander_minimize_mv1')
+@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleExpander_minimize_mv1')
 // ignore: non_constant_identifier_names
-external int _ICU4XLocaleExpander_minimize(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale);
+external int _icu4x_LocaleExpander_minimize_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale);
+
+@meta.ResourceIdentifier('icu4x_LocaleExpander_minimize_favor_script_mv1')
+@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleExpander_minimize_favor_script_mv1')
+// ignore: non_constant_identifier_names
+external int _icu4x_LocaleExpander_minimize_favor_script_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale);

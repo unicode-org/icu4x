@@ -9,12 +9,13 @@ import 'dart:typed_data';
 import 'package:ffi/ffi.dart' as ffi2 show Arena, calloc;
 import 'package:meta/meta.dart' as meta;
 part 'AnyCalendarKind.g.dart';
-part 'Bcp47ToIanaMapper.g.dart';
 part 'Bidi.g.dart';
 part 'BidiDirection.g.dart';
 part 'BidiInfo.g.dart';
 part 'BidiParagraph.g.dart';
 part 'Calendar.g.dart';
+part 'CalendarError.g.dart';
+part 'CalendarParseError.g.dart';
 part 'CanonicalCombiningClassMap.g.dart';
 part 'CanonicalComposition.g.dart';
 part 'CanonicalDecomposition.g.dart';
@@ -34,9 +35,11 @@ part 'CollatorCaseLevel.g.dart';
 part 'CollatorMaxVariable.g.dart';
 part 'CollatorNumeric.g.dart';
 part 'CollatorOptions.g.dart';
+part 'CollatorResolvedOptions.g.dart';
 part 'CollatorStrength.g.dart';
 part 'ComposingNormalizer.g.dart';
 part 'CustomTimeZone.g.dart';
+part 'DataError.g.dart';
 part 'DataProvider.g.dart';
 part 'Date.g.dart';
 part 'DateFormatter.g.dart';
@@ -52,6 +55,10 @@ part 'Error.g.dart';
 part 'FixedDecimal.g.dart';
 part 'FixedDecimalFormatter.g.dart';
 part 'FixedDecimalGroupingStrategy.g.dart';
+part 'FixedDecimalLimitError.g.dart';
+part 'FixedDecimalParseError.g.dart';
+part 'FixedDecimalRoundingIncrement.g.dart';
+part 'FixedDecimalRoundingMode.g.dart';
 part 'FixedDecimalSign.g.dart';
 part 'FixedDecimalSignDisplay.g.dart';
 part 'GeneralCategoryNameToMaskMapper.g.dart';
@@ -62,7 +69,6 @@ part 'GraphemeClusterSegmenter.g.dart';
 part 'GregorianDateFormatter.g.dart';
 part 'GregorianDateTimeFormatter.g.dart';
 part 'GregorianZonedDateTimeFormatter.g.dart';
-part 'IanaToBcp47Mapper.g.dart';
 part 'IsoDate.g.dart';
 part 'IsoDateTime.g.dart';
 part 'IsoTimeZoneFormat.g.dart';
@@ -79,7 +85,6 @@ part 'LineBreakOptions.g.dart';
 part 'LineBreakStrictness.g.dart';
 part 'LineBreakWordOption.g.dart';
 part 'LineSegmenter.g.dart';
-part 'List.g.dart';
 part 'ListFormatter.g.dart';
 part 'ListLength.g.dart';
 part 'Locale.g.dart';
@@ -91,12 +96,13 @@ part 'LocaleExpander.g.dart';
 part 'LocaleFallbackConfig.g.dart';
 part 'LocaleFallbackIterator.g.dart';
 part 'LocaleFallbackPriority.g.dart';
-part 'LocaleFallbackSupplement.g.dart';
 part 'LocaleFallbacker.g.dart';
 part 'LocaleFallbackerWithConfig.g.dart';
+part 'LocaleParseError.g.dart';
 part 'Logger.g.dart';
+part 'MeasureUnit.g.dart';
+part 'MeasureUnitParser.g.dart';
 part 'MetazoneCalculator.g.dart';
-part 'Ordering.g.dart';
 part 'PluralCategories.g.dart';
 part 'PluralCategory.g.dart';
 part 'PluralOperands.g.dart';
@@ -104,8 +110,6 @@ part 'PluralRules.g.dart';
 part 'PropertyValueNameToEnumMapper.g.dart';
 part 'RegionDisplayNames.g.dart';
 part 'ReorderedIndexMap.g.dart';
-part 'ResolvedCollatorOptions.g.dart';
-part 'RoundingIncrement.g.dart';
 part 'ScriptExtensionsSet.g.dart';
 part 'ScriptWithExtensions.g.dart';
 part 'ScriptWithExtensionsBorrowed.g.dart';
@@ -118,14 +122,21 @@ part 'Time.g.dart';
 part 'TimeFormatter.g.dart';
 part 'TimeLength.g.dart';
 part 'TimeZoneFormatter.g.dart';
+part 'TimeZoneIdMapper.g.dart';
+part 'TimeZoneIdMapperWithFastCanonicalization.g.dart';
+part 'TimeZoneInvalidIdError.g.dart';
+part 'TimeZoneInvalidOffsetError.g.dart';
 part 'TitlecaseMapper.g.dart';
 part 'TitlecaseOptions.g.dart';
 part 'TrailingCase.g.dart';
 part 'TransformResult.g.dart';
 part 'UnicodeSetData.g.dart';
+part 'UnitsConverter.g.dart';
+part 'UnitsConverterFactory.g.dart';
 part 'WeekCalculator.g.dart';
 part 'WeekOf.g.dart';
 part 'WeekRelativeUnit.g.dart';
+part 'WeekendContainsDay.g.dart';
 part 'WordBreakIteratorLatin1.g.dart';
 part 'WordBreakIteratorUtf16.g.dart';
 part 'WordBreakIteratorUtf8.g.dart';
@@ -150,7 +161,33 @@ typedef Rune = int;
 // ignore: unused_element
 final _callocFree = core.Finalizer(ffi2.calloc.free);
 
+// ignore: unused_element
 final _nopFree = core.Finalizer((nothing) => {});
+
+// ignore: unused_element
+final _rustFree = core.Finalizer((({ffi.Pointer<ffi.Void> pointer, int bytes, int align}) record) => _diplomat_free(record.pointer, record.bytes, record.align));
+
+final class _RustAlloc implements ffi.Allocator {
+  @override
+  ffi.Pointer<T> allocate<T extends ffi.NativeType>(int byteCount, {int? alignment}) {
+      return _diplomat_alloc(byteCount, alignment ?? 1).cast();
+  }
+
+  void free(ffi.Pointer<ffi.NativeType> pointer) {
+    throw 'Internal error: should not deallocate in Rust memory';
+  }
+}
+
+@meta.ResourceIdentifier('diplomat_alloc')
+@ffi.Native<ffi.Pointer<ffi.Void> Function(ffi.Size, ffi.Size)>(symbol: 'diplomat_alloc', isLeaf: true)
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Void> _diplomat_alloc(int len, int align);
+
+@meta.ResourceIdentifier('diplomat_free')
+@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Void>, ffi.Size, ffi.Size)>(symbol: 'diplomat_free', isLeaf: true)
+// ignore: non_constant_identifier_names
+external int _diplomat_free(ffi.Pointer<ffi.Void> ptr, int len, int align);
+
 
 // ignore: unused_element
 class _FinalizedArena {
@@ -185,6 +222,13 @@ extension on String {
   _Utf8View get utf8View => _Utf8View(this);
   // ignore: unused_element
   _Utf16View get utf16View => _Utf16View(this);
+}
+
+extension on core.List<String> {
+  // ignore: unused_element
+  _ListUtf8View get utf8View => _ListUtf8View(this);
+  // ignore: unused_element
+  _ListUtf16View get utf16View => _ListUtf16View(this);
 }
 
 extension on core.List<bool> {
@@ -252,7 +296,48 @@ class _Utf16View {
 }
 
 // ignore: unused_element
-class _BoolListView{
+class _ListUtf8View {
+  final core.List<String> _strings;
+
+  // Copies
+  _ListUtf8View(this._strings);
+
+  ffi.Pointer<_SliceUtf8> allocIn(ffi.Allocator alloc) {
+    final slice = alloc<_SliceUtf8>(length);
+    for (var i = 0; i < length; i++) {
+      final codeUnits = Utf8Encoder().convert(_strings[i]);
+      final str = alloc<ffi.Uint8>(codeUnits.length)..asTypedList(codeUnits.length).setRange(0, codeUnits.length, codeUnits);
+      slice[i]._data = str;
+      slice[i]._length = codeUnits.length;
+    }
+    return slice;
+  }
+
+  int get length => _strings.length;
+}
+
+// ignore: unused_element
+class _ListUtf16View {
+  final core.List<String> _strings;
+
+  _ListUtf16View(this._strings);
+
+  ffi.Pointer<_SliceUtf16> allocIn(ffi.Allocator alloc) {
+    final slice = alloc<_SliceUtf16>(length);
+    for (var i = 0; i < length; i++) {
+      final codeUnits = _strings[i].codeUnits;
+      final str = alloc<ffi.Uint16>(codeUnits.length)..asTypedList(codeUnits.length).setRange(0, codeUnits.length, codeUnits);
+      slice[i]._data = str;
+      slice[i]._length = codeUnits.length;
+    }
+    return slice;
+  }
+
+  int get length => _strings.length;
+}
+
+// ignore: unused_element
+class _BoolListView {
   final core.List<bool> _values;
 
   _BoolListView(this._values);
@@ -451,31 +536,13 @@ class _Float64ListView {
   int get length => _values.length;
 }
 
-final class _ResultBoolInt32Union extends ffi.Union {
+final class _ResultBoolVoidUnion extends ffi.Union {
   @ffi.Bool()
   external bool ok;
-
-  @ffi.Int32()
-  external int err;
 }
 
-final class _ResultBoolInt32 extends ffi.Struct {
-  external _ResultBoolInt32Union union;
-
-  @ffi.Bool()
-  external bool isOk;
-}
-
-final class _ResultInt32Int32Union extends ffi.Union {
-  @ffi.Int32()
-  external int ok;
-
-  @ffi.Int32()
-  external int err;
-}
-
-final class _ResultInt32Int32 extends ffi.Struct {
-  external _ResultInt32Int32Union union;
+final class _ResultBoolVoid extends ffi.Struct {
+  external _ResultBoolVoidUnion union;
 
   @ffi.Bool()
   external bool isOk;
@@ -493,6 +560,17 @@ final class _ResultInt32Void extends ffi.Struct {
   external bool isOk;
 }
 
+final class _ResultOpaqueFixedDecimalLimitErrorFfiUnion extends ffi.Union {
+  external ffi.Pointer<ffi.Opaque> ok;
+}
+
+final class _ResultOpaqueFixedDecimalLimitErrorFfi extends ffi.Struct {
+  external _ResultOpaqueFixedDecimalLimitErrorFfiUnion union;
+
+  @ffi.Bool()
+  external bool isOk;
+}
+
 final class _ResultOpaqueInt32Union extends ffi.Union {
   external ffi.Pointer<ffi.Opaque> ok;
 
@@ -502,6 +580,17 @@ final class _ResultOpaqueInt32Union extends ffi.Union {
 
 final class _ResultOpaqueInt32 extends ffi.Struct {
   external _ResultOpaqueInt32Union union;
+
+  @ffi.Bool()
+  external bool isOk;
+}
+
+final class _ResultOpaqueTimeZoneInvalidOffsetErrorFfiUnion extends ffi.Union {
+  external ffi.Pointer<ffi.Opaque> ok;
+}
+
+final class _ResultOpaqueTimeZoneInvalidOffsetErrorFfi extends ffi.Struct {
+  external _ResultOpaqueTimeZoneInvalidOffsetErrorFfiUnion union;
 
   @ffi.Bool()
   external bool isOk;
@@ -531,22 +620,22 @@ final class _ResultVoidInt32 extends ffi.Struct {
   external bool isOk;
 }
 
-final class _ResultVoidVoid extends ffi.Struct {
+final class _ResultVoidTimeZoneInvalidIdErrorFfi extends ffi.Struct {
   
 
   @ffi.Bool()
   external bool isOk;
 }
 
-final class _ResultWeekOfFfiInt32Union extends ffi.Union {
-  external _WeekOfFfi ok;
+final class _ResultVoidTimeZoneInvalidOffsetErrorFfi extends ffi.Struct {
+  
 
-  @ffi.Int32()
-  external int err;
+  @ffi.Bool()
+  external bool isOk;
 }
 
-final class _ResultWeekOfFfiInt32 extends ffi.Struct {
-  external _ResultWeekOfFfiInt32Union union;
+final class _ResultVoidVoid extends ffi.Struct {
+  
 
   @ffi.Bool()
   external bool isOk;
@@ -578,8 +667,45 @@ final class _SliceUsize extends ffi.Struct {
   int get hashCode => _length.hashCode;
 
   core.List<int> _toDart(core.List<Object> lifetimeEdges) {
-    // Do not have to keep lifetimeEdges alive, because this copies
-    return core.Iterable.generate(_length).map((i) => _data[i]).toList(growable: false);
+    final r = core.Iterable.generate(_length).map((i) => _data[i]).toList(growable: false);
+    if (lifetimeEdges.isEmpty) {
+      _diplomat_free(_data.cast(), _length * ffi.sizeOf<ffi.Size>(), ffi.sizeOf<ffi.Size>());
+    }
+    return r;
+  }
+}
+
+final class _SliceUtf16 extends ffi.Struct {
+  external ffi.Pointer<ffi.Uint16> _data;
+
+  @ffi.Size()
+  external int _length;
+
+  // This is expensive
+  @override
+  bool operator ==(Object other) {
+    if (other is! _SliceUtf16 || other._length != _length) {
+      return false;
+    }
+
+    for (var i = 0; i < _length; i++) {
+      if (other._data[i] != _data[i]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  // This is cheap
+  @override
+  int get hashCode => _length.hashCode;
+
+  String _toDart(core.List<Object> lifetimeEdges) {
+    final r = core.String.fromCharCodes(_data.asTypedList(_length));
+    if (lifetimeEdges.isEmpty) {
+      _diplomat_free(_data.cast(), _length * 2, 2);
+    }
+    return r;
   }
 }
 
@@ -609,40 +735,48 @@ final class _SliceUtf8 extends ffi.Struct {
   int get hashCode => _length.hashCode;
 
   String _toDart(core.List<Object> lifetimeEdges) {
-    // Do not have to keep lifetimeEdges alive, because this copies
-    return Utf8Decoder().convert(_data.asTypedList(_length));
+    final r = Utf8Decoder().convert(_data.asTypedList(_length));
+    if (lifetimeEdges.isEmpty) {
+      _diplomat_free(_data.cast(), _length, 1);
+    }
+    return r;
   }
 }
 
-final class _Writeable {
+final class _Write {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
-  _Writeable() : _ffi = _diplomat_buffer_writeable_create(0);
+  _Write() : _ffi = _diplomat_buffer_write_create(0);
   
   String finalize() {
-    final string = Utf8Decoder().convert(_diplomat_buffer_writeable_get_bytes(_ffi).asTypedList(_diplomat_buffer_writeable_len(_ffi)));
-    _diplomat_buffer_writeable_destroy(_ffi);
-    return string;
+    try {
+      final buf = _diplomat_buffer_write_get_bytes(_ffi);
+      if (buf == ffi.Pointer.fromAddress(0)) {
+        throw core.OutOfMemoryError();
+      }
+      return Utf8Decoder().convert(buf.asTypedList(_diplomat_buffer_write_len(_ffi)));
+    } finally {
+      _diplomat_buffer_write_destroy(_ffi);
+    }
   }
 }
 
-  
-@meta.ResourceIdentifier('diplomat_buffer_writeable_create')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Size)>(symbol: 'diplomat_buffer_writeable_create', isLeaf: true)
+@meta.ResourceIdentifier('diplomat_buffer_write_create')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Size)>(symbol: 'diplomat_buffer_write_create', isLeaf: true)
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _diplomat_buffer_writeable_create(int len);
+external ffi.Pointer<ffi.Opaque> _diplomat_buffer_write_create(int len);
 
-@meta.ResourceIdentifier('diplomat_buffer_writeable_len')
-@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(symbol: 'diplomat_buffer_writeable_len', isLeaf: true)
+@meta.ResourceIdentifier('diplomat_buffer_write_len')
+@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(symbol: 'diplomat_buffer_write_len', isLeaf: true)
 // ignore: non_constant_identifier_names
-external int _diplomat_buffer_writeable_len(ffi.Pointer<ffi.Opaque> ptr);
+external int _diplomat_buffer_write_len(ffi.Pointer<ffi.Opaque> ptr);
 
-@meta.ResourceIdentifier('diplomat_buffer_writeable_get_bytes')
-@ffi.Native<ffi.Pointer<ffi.Uint8> Function(ffi.Pointer<ffi.Opaque>)>(symbol: 'diplomat_buffer_writeable_get_bytes', isLeaf: true)
+@meta.ResourceIdentifier('diplomat_buffer_write_get_bytes')
+@ffi.Native<ffi.Pointer<ffi.Uint8> Function(ffi.Pointer<ffi.Opaque>)>(symbol: 'diplomat_buffer_write_get_bytes', isLeaf: true)
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Uint8> _diplomat_buffer_writeable_get_bytes(ffi.Pointer<ffi.Opaque> ptr);
+external ffi.Pointer<ffi.Uint8> _diplomat_buffer_write_get_bytes(ffi.Pointer<ffi.Opaque> ptr);
 
-@meta.ResourceIdentifier('diplomat_buffer_writeable_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(symbol: 'diplomat_buffer_writeable_destroy', isLeaf: true)
+@meta.ResourceIdentifier('diplomat_buffer_write_destroy')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(symbol: 'diplomat_buffer_write_destroy', isLeaf: true)
 // ignore: non_constant_identifier_names
-external void _diplomat_buffer_writeable_destroy(ffi.Pointer<ffi.Opaque> ptr);
+external void _diplomat_buffer_write_destroy(ffi.Pointer<ffi.Opaque> ptr);

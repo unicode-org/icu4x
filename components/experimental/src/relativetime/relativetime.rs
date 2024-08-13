@@ -10,8 +10,8 @@ use icu_plurals::{provider::CardinalV1Marker, PluralRules};
 use icu_provider::prelude::*;
 
 use crate::relativetime::format::FormattedRelativeTime;
+use crate::relativetime::options::RelativeTimeFormatterOptions;
 use crate::relativetime::provider::*;
-use crate::relativetime::{options::RelativeTimeFormatterOptions, RelativeTimeError};
 
 /// A formatter to render locale-sensitive relative time.
 ///
@@ -19,10 +19,10 @@ use crate::relativetime::{options::RelativeTimeFormatterOptions, RelativeTimeErr
 ///
 /// ```
 /// use fixed_decimal::FixedDecimal;
-/// use icu_locid::locale;
-/// use icu_experimental::relativetime::{
+/// use icu::experimental::relativetime::{
 ///     RelativeTimeFormatter, RelativeTimeFormatterOptions,
 /// };
+/// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
 ///
 /// let relative_time_formatter = RelativeTimeFormatter::try_new_long_second(
@@ -45,11 +45,11 @@ use crate::relativetime::{options::RelativeTimeFormatterOptions, RelativeTimeErr
 ///
 /// ```
 /// use fixed_decimal::FixedDecimal;
-/// use icu_locid::locale;
-/// use icu_experimental::relativetime::options::Numeric;
-/// use icu_experimental::relativetime::{
+/// use icu::experimental::relativetime::options::Numeric;
+/// use icu::experimental::relativetime::{
 ///     RelativeTimeFormatter, RelativeTimeFormatterOptions,
 /// };
+/// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
 ///
 /// let relative_time_formatter = RelativeTimeFormatter::try_new_short_day(
@@ -81,10 +81,10 @@ use crate::relativetime::{options::RelativeTimeFormatterOptions, RelativeTimeErr
 /// # Example
 /// ```
 /// use fixed_decimal::FixedDecimal;
-/// use icu_locid::locale;
-/// use icu_experimental::relativetime::{
+/// use icu::experimental::relativetime::{
 ///     RelativeTimeFormatter, RelativeTimeFormatterOptions,
 /// };
+/// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
 ///
 /// let relative_time_formatter = RelativeTimeFormatter::try_new_narrow_year(
@@ -121,20 +121,19 @@ macro_rules! constructor {
         pub fn $baked(
             locale: &DataLocale,
             options: RelativeTimeFormatterOptions,
-        ) -> Result<Self, RelativeTimeError> {
+        ) -> Result<Self, DataError> {
             let plural_rules = PluralRules::try_new_cardinal(locale)?;
             // Initialize FixedDecimalFormatter with default options
             let fixed_decimal_format = FixedDecimalFormatter::try_new(
                 locale,
                 FixedDecimalFormatterOptions::default(),
             )?;
-            let rt: DataPayload<$marker> = crate::provider::Baked
+            let rt: DataResponse<$marker> = crate::provider::Baked
                 .load(DataRequest {
-                    locale,
-                    metadata: Default::default(),
-                })?
-                .take_payload()?;
-            let rt = rt.cast();
+                    id: DataIdentifierBorrowed::for_locale(locale),
+                    ..Default::default()
+                })?;
+            let rt = rt.payload.cast();
             Ok(RelativeTimeFormatter {
                 plural_rules,
                 options,
@@ -144,12 +143,9 @@ macro_rules! constructor {
         }
 
         icu_provider::gen_any_buffer_data_constructors!(
-            locale: include,
-            options: RelativeTimeFormatterOptions,
-            error: RelativeTimeError,
-            #[cfg(skip)]
+            (locale, options: RelativeTimeFormatterOptions) -> error: DataError,
             functions: [
-                $baked,
+                $baked: skip,
                 $any,
                 $buffer,
                 $unstable,
@@ -163,7 +159,7 @@ macro_rules! constructor {
             provider: &D,
             locale: &DataLocale,
             options: RelativeTimeFormatterOptions,
-        ) -> Result<Self, RelativeTimeError>
+        ) -> Result<Self, DataError>
         where
             D: DataProvider<CardinalV1Marker>
                 + DataProvider<$marker>
@@ -177,13 +173,12 @@ macro_rules! constructor {
                 locale,
                 FixedDecimalFormatterOptions::default(),
             )?;
-            let rt: DataPayload<$marker> = provider
+            let rt: DataResponse<$marker> = provider
                 .load(DataRequest {
-                    locale,
-                    metadata: Default::default(),
-                })?
-                .take_payload()?;
-            let rt = rt.cast();
+                id: DataIdentifierBorrowed::for_locale(locale),
+                    ..Default::default()
+                })?;
+            let rt = rt.payload.cast();
             Ok(RelativeTimeFormatter {
                 plural_rules,
                 options,

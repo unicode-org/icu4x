@@ -5,16 +5,16 @@
 [package]
 name = "zerotrie"
 description = "A data structure that efficiently maps strings to integers"
-version = "0.1.2"
-license = "Unicode-3.0"
+version = "0.1.3"
 
-rust-version.workspace = true
 authors.workspace = true
-edition.workspace = true
-repository.workspace = true
-homepage.workspace = true
 categories.workspace = true
+edition.workspace = true
+homepage.workspace = true
 include.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
@@ -25,24 +25,25 @@ denylist = ["bench"]
 
 [dependencies]
 databake = { workspace = true, features = ["derive"], optional = true }
-displaydoc = { version = "0.2.3", default-features = false }
+displaydoc = { workspace = true }
 litemap = { workspace = true, features = ["alloc"], optional = true }
-serde = { version = "1.0", default-features = false, optional = true }
+serde = { workspace = true, optional = true }
 yoke = { workspace = true, features = ["derive"], optional = true }
 zerofrom = { workspace = true, optional = true }
 zerovec = { workspace = true, optional = true }
 
 [dev-dependencies]
-bincode = "1.0"
+bincode = { workspace = true }
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 litemap = { path = "../../utils/litemap" }
-postcard = { version = "1.0", default-features = false, features = ["alloc"] }
-rand = "0.8"
-rand_pcg = "0.3"
-serde = { version = "1.0", default-features = false }
-serde_json = "1.0"
+postcard = { workspace = true, features = ["alloc"] }
+rand = { workspace = true }
+rand_pcg = { workspace = true }
+rmp-serde = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
 zerovec = { path = "../../utils/zerovec", features = ["serde", "hashmap"] }
-icu_locid = { path = "../../components/locid" }
+icu_locale_core = { path = "../../components/locale_core" }
 writeable = { path = "../../utils/writeable" }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]

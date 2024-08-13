@@ -4,10 +4,10 @@
 
 use crate::manifest::Manifest;
 use icu_provider::prelude::*;
+use icu_provider::DynamicDryDataProvider;
 use std::fmt::Debug;
 use std::fmt::Write;
 use std::fs;
-use std::path::Path;
 use std::path::PathBuf;
 
 /// A data provider that reads ICU4X data from a filesystem directory.
@@ -18,14 +18,14 @@ use std::path::PathBuf;
 /// # Examples
 ///
 /// ```
-/// use icu_locid::locale;
+/// use icu_locale_core::locale;
 /// use icu_provider::hello_world::HelloWorldFormatter;
 /// use icu_provider_fs::FsDataProvider;
 /// use writeable::assert_writeable_eq;
 ///
 /// // Create a DataProvider from data files stored in a filesystem directory:
 /// let provider =
-///     FsDataProvider::try_new("tests/data/json").expect("Directory exists");
+///     FsDataProvider::try_new("tests/data/json".into()).expect("Directory exists");
 ///
 /// // Check that it works:
 /// let formatter = HelloWorldFormatter::try_new_with_buffer_provider(
@@ -50,47 +50,77 @@ impl FsDataProvider {
     /// ```
     /// use icu_provider_fs::FsDataProvider;
     ///
-    /// let provider = FsDataProvider::try_new("/path/to/data/directory")
+    /// let provider = FsDataProvider::try_new("/path/to/data/directory".into())
     ///     .expect_err("Specify a real directory in the line above");
     /// ```
-    pub fn try_new<T: Into<PathBuf>>(root: T) -> Result<Self, DataError> {
-        let root = root.into();
+    pub fn try_new(root: PathBuf) -> Result<Self, DataError> {
         Ok(Self {
             manifest: Manifest::parse(&root)?,
             root,
         })
     }
-}
 
-impl BufferProvider for FsDataProvider {
-    fn load_buffer(
+    fn dry_load_internal(
         &self,
-        key: DataKey,
+        marker: DataMarkerInfo,
         req: DataRequest,
-    ) -> Result<DataResponse<BufferMarker>, DataError> {
-        if key.metadata().singleton && !req.locale.is_empty() {
-            return Err(DataErrorKind::ExtraneousLocale.with_req(key, req));
+    ) -> Result<(DataResponseMetadata, PathBuf), DataError> {
+        if marker.is_singleton && !req.id.locale.is_default() {
+            return Err(DataErrorKind::InvalidRequest.with_req(marker, req));
         }
-        let mut path = self.root.clone().into_os_string();
-        write!(&mut path, "/{key}").expect("infallible");
-        if !Path::new(&path).exists() {
-            return Err(DataErrorKind::MissingDataKey.with_req(key, req));
+        let mut path = self.root.join(marker.path.as_str());
+        if !path.exists() {
+            return Err(DataErrorKind::MarkerNotFound.with_req(marker, req));
         }
-        write!(
-            &mut path,
-            "/{}.{}",
-            req.locale, self.manifest.file_extension
-        )
-        .expect("infallible");
-        if !Path::new(&path).exists() {
-            return Err(DataErrorKind::MissingLocale.with_req(key, req));
+        if !req.id.marker_attributes.is_empty() {
+            if req.metadata.attributes_prefix_match {
+                path.push(
+                    std::fs::read_dir(&path)?
+                        .filter_map(|e| e.ok()?.file_name().into_string().ok())
+                        .filter(|c| c.starts_with(req.id.marker_attributes.as_str()))
+                        .min()
+                        .ok_or(DataErrorKind::IdentifierNotFound.with_req(marker, req))?,
+                );
+            } else {
+                path.push(req.id.marker_attributes.as_str());
+            }
         }
-        let buffer = fs::read(&path).map_err(|e| DataError::from(e).with_path_context(&path))?;
+        if !marker.is_singleton {
+            let mut string_path = path.into_os_string();
+            write!(&mut string_path, "/{}", req.id.locale).expect("infallible");
+            path = PathBuf::from(string_path);
+        }
+        path.set_extension(self.manifest.file_extension);
+        if !path.exists() {
+            return Err(DataErrorKind::IdentifierNotFound.with_req(marker, req));
+        }
         let mut metadata = DataResponseMetadata::default();
         metadata.buffer_format = Some(self.manifest.buffer_format);
+        Ok((metadata, path))
+    }
+}
+
+impl DynamicDataProvider<BufferMarker> for FsDataProvider {
+    fn load_data(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<DataResponse<BufferMarker>, DataError> {
+        let (metadata, path) = self.dry_load_internal(marker, req)?;
+        let buffer = fs::read(&path).map_err(|e| DataError::from(e).with_path_context(&path))?;
         Ok(DataResponse {
             metadata,
-            payload: Some(DataPayload::from_owned_buffer(buffer.into_boxed_slice())),
+            payload: DataPayload::from_owned_buffer(buffer.into_boxed_slice()),
         })
+    }
+}
+
+impl DynamicDryDataProvider<BufferMarker> for FsDataProvider {
+    fn dry_load_data(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<DataResponseMetadata, DataError> {
+        Ok(self.dry_load_internal(marker, req)?.0)
     }
 }

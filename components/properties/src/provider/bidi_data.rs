@@ -52,23 +52,17 @@ pub struct BidiAuxiliaryPropertiesV1<'data> {
     pub trie: CodePointTrie<'data, MirroredPairedBracketData>,
 }
 
-impl<'data> BidiAuxiliaryPropertiesV1<'data> {
-    #[doc(hidden)]
-    pub fn new(
-        trie: CodePointTrie<'data, MirroredPairedBracketData>,
-    ) -> BidiAuxiliaryPropertiesV1<'data> {
-        BidiAuxiliaryPropertiesV1 { trie }
-    }
-}
-
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::provider::bidi_data))]
-#[doc(hidden)] // needed for datagen but not intended for users
+/// MirroredPairedBracketData
 pub struct MirroredPairedBracketData {
+    /// The mirroring glyph
     pub mirroring_glyph: char,
+    /// Whether the glyph is mirrored
     pub mirrored: bool,
+    /// The paired bracket type
     pub paired_bracket_type: CheckedBidiPairedBracketType,
 }
 
@@ -143,20 +137,19 @@ pub enum CheckedBidiPairedBracketType {
     Close = 2,
 }
 
-/// Bit layout for the 24 bits (0..=23) of the `[u8; 3]` ULE raw type.
-/// LE means first byte is 0..=7, second byte 8..=15, third byte is 16..=23
-///  0..=20  Code point return value for Bidi_Mirroring_Glyph value
-///    extracted with: mask = 0x1FFFFF <=> [bytes[0], bytes[1], bytes[2] & 0x1F]
-///  21..=21 Boolean for Bidi_Mirrored
-///    extracted with: bitshift right by 21 followed by mask = 0x1 <=> (bytes[2] >> 5) & 0x1
-///  22..=23 Enum discriminant value for Bidi_Paired_Bracket_Type
-///    extracted with: bitshift right by 22 followed by mask = 0x3 <=> (bytes[2] >> 6) & 0x3
-///                    <=> (bytes[2] >> 6) b/c we left fill with 0s on bitshift right for unsigned
+/// Bit layout for the 24 bits `(0..=23)` of the `[u8; 3]` ULE raw type.
+/// LE means first byte is `0..=7`, second byte `8..=15`, third byte is `16..=23`
+///  `0..=20`  Code point return value for `Bidi_Mirroring_Glyph` value
+///    extracted with: `mask = 0x1FFFFF` <=> `[bytes[0], bytes[1], bytes[2] & 0x1F]`
+///  `21..=21` Boolean for `Bidi_Mirrored`
+///    extracted with: bitshift right by 21 followed by `mask = 0x1` <=> `(bytes[2] >> 5) & 0x1`
+///  `22..=23` Enum discriminant value for `Bidi_Paired_Bracket_Type`
+///    extracted with: bitshift right by 22 followed by `mask = 0x3` <=> `(bytes[2] >> 6) & 0x3`
+///                    <=> `(bytes[2] >> 6)` b/c we left fill with 0s on bitshift right for unsigned
 ///                         numbers and a byte has 8 bits
-#[doc(hidden)]
 /// needed for datagen but not intended for users
 #[derive(Copy, Clone, Hash, PartialEq, Eq, Debug)]
-#[repr(packed)]
+#[repr(C, packed)]
 pub struct MirroredPairedBracketDataULE([u8; 3]);
 
 // Safety (based on the safety checklist on the ULE trait):

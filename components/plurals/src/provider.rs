@@ -17,7 +17,7 @@
 
 use crate::rules::runtime::ast::Rule;
 use icu_provider::prelude::*;
-use icu_provider::DataMarker;
+use icu_provider::DynamicDataMarker;
 
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
@@ -31,30 +31,29 @@ use icu_provider::DataMarker;
 pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
+#[allow(unused_imports)]
 const _: () = {
-    pub mod icu {
+    use icu_plurals_data::*;
+    mod icu {
         pub use crate as plurals;
-        #[allow(unused_imports)] // baked data may or may not need this
-        pub use icu_locid_transform as locid_transform;
+        pub use icu_plurals_data::icu_locale as locale;
     }
-    icu_plurals_data::make_provider!(Baked);
-    icu_plurals_data::impl_plurals_ordinal_v1!(Baked);
-    icu_plurals_data::impl_plurals_cardinal_v1!(Baked);
+
+    make_provider!(Baked);
+    impl_cardinal_v1_marker!(Baked);
+    impl_ordinal_v1_marker!(Baked);
     #[cfg(feature = "experimental")]
-    icu_plurals_data::impl_plurals_ranges_v1!(Baked);
+    impl_plural_ranges_v1_marker!(Baked);
 };
 
 #[cfg(feature = "datagen")]
-/// The latest minimum set of keys required by this component.
-pub const KEYS: &[DataKey] = &[
-    CardinalV1Marker::KEY,
-    OrdinalV1Marker::KEY,
+/// The latest minimum set of markers required by this component.
+pub const MARKERS: &[DataMarkerInfo] = &[
+    CardinalV1Marker::INFO,
+    OrdinalV1Marker::INFO,
     #[cfg(feature = "experimental")]
-    PluralRangesV1Marker::KEY,
+    PluralRangesV1Marker::INFO,
 ];
-
-#[cfg(doc)]
-use crate::PluralCategory;
 
 /// Plural rule strings conforming to UTS 35 syntax. Includes separate fields for five of the six
 /// standard plural forms. If none of the rules match, the "other" category is assumed.
@@ -78,27 +77,27 @@ use crate::PluralCategory;
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct PluralRulesV1<'data> {
-    /// Rule that matches [`PluralCategory::Zero`], or `None` if not present.
+    /// Rule that matches [`PluralCategory::Zero`](super::PluralCategory::Zero), or `None` if not present.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub zero: Option<Rule<'data>>,
-    /// Rule that matches [`PluralCategory::One`], or `None` if not present.
+    /// Rule that matches [`PluralCategory::One`](super::PluralCategory::One), or `None` if not present.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub one: Option<Rule<'data>>,
-    /// Rule that matches [`PluralCategory::Two`], or `None` if not present.
+    /// Rule that matches [`PluralCategory::Two`](super::PluralCategory::Two), or `None` if not present.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub two: Option<Rule<'data>>,
-    /// Rule that matches [`PluralCategory::Few`], or `None` if not present.
+    /// Rule that matches [`PluralCategory::Few`](super::PluralCategory::Few), or `None` if not present.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub few: Option<Rule<'data>>,
-    /// Rule that matches [`PluralCategory::Many`], or `None` if not present.
+    /// Rule that matches [`PluralCategory::Many`](super::PluralCategory::Many), or `None` if not present.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub many: Option<Rule<'data>>,
 }
 
 pub(crate) struct ErasedPluralRulesV1Marker;
 
-impl DataMarker for ErasedPluralRulesV1Marker {
-    type Yokeable = PluralRulesV1<'static>;
+impl DynamicDataMarker for ErasedPluralRulesV1Marker {
+    type DataStruct = PluralRulesV1<'static>;
 }
 
 #[cfg(any(feature = "datagen", feature = "experimental"))]

@@ -4,15 +4,32 @@
 
 // Provider structs must be stable
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
-#![warn(unused_imports)]
 //! Data provider struct definitions for this ICU4X component.
 //!
 //! Read more about data providers: [`icu_provider`]
 
 use alloc::borrow::Cow;
+use core::fmt::{Debug, Formatter};
 
 use icu_provider::prelude::*;
+#[cfg(feature = "serde")]
+use icu_provider::serde_borrow_de_utils::option_of_cow;
 use zerovec::VarZeroVec;
+
+use crate::personnames::api::FormattingFormality;
+use crate::personnames::api::FormattingLength;
+use crate::personnames::api::FormattingOrder;
+use crate::personnames::api::FormattingUsage;
+
+#[cfg(feature = "compiled_data")]
+/// Baked data
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+pub use crate::provider::Baked;
 
 /// This is the equivalent of
 /// <https://www.unicode.org/reports/tr35/tr35-personNames.html#personnames-element>
@@ -24,14 +41,14 @@ use zerovec::VarZeroVec;
 /// e.g. : initialPattern has no upper bound, DTD allows for the element to be specified any number
 /// of times, while in this implementation we are restraining it to the 2 documented types
 /// (`initial`, `initialSequence`).
-#[icu_provider::data_struct(PersonNamesFormattingDefinitionV1Marker = "personnames/personnames@1")]
+#[icu_provider::data_struct(PersonNamesFormatV1Marker = "personnames/personnames@1")]
 #[derive(PartialEq, Clone)]
 #[cfg_attr(feature = "datagen",
 derive(serde::Serialize, databake::Bake),
 databake(path = icu_experimental::personnames::provider))
 ]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct PersonNamesFormattingDefinitionV1<'data> {
+pub struct PersonNamesFormatV1<'data> {
     /// <nameOrderLocales order="surnameFirst">ko vi yue zh</nameOrderLocales>
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub surname_first_locales: VarZeroVec<'data, str>,
@@ -41,21 +58,21 @@ pub struct PersonNamesFormattingDefinitionV1<'data> {
     pub given_first_locales: VarZeroVec<'data, str>,
 
     /// foreignSpaceReplacement element.
-    #[cfg_attr(feature = "serde", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow, deserialize_with = "option_of_cow"))]
     pub foreign_space_replacement: Option<Cow<'data, str>>,
 
     /// Equivalent of initialPattern tag + initial
     /// ```xml
     /// <initialPattern type="initial">{0}.</initialPattern>
     /// ```
-    #[cfg_attr(feature = "serde", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow, deserialize_with = "option_of_cow"))]
     pub initial_pattern: Option<Cow<'data, str>>,
 
     /// Equivalent of initialPattern tag + initialSequence
     /// ```xml
     /// <initialPattern type="initialSequence">{0} {1}</initialPattern>
     /// ```
-    #[cfg_attr(feature = "serde", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow, deserialize_with = "option_of_cow"))]
     pub initial_pattern_sequence: Option<Cow<'data, str>>,
 
     /// Equivalent of PersonNames
@@ -68,27 +85,81 @@ pub struct PersonNamesFormattingDefinitionV1<'data> {
 
 /// Person Name Attributes.
 /// {order=givenFirst, length=long, usage=referring, formality=formal}
-/// see <https://www.unicode.org/reports/tr35/tr35-personNames.html#personname-element>
-#[repr(u32)]
 pub enum PersonNamesFormattingAttributes {
-    // Order
-    GivenFirst = 1 << 0,
-    SurnameFirst = 1 << 1,
-    Sorting = 1 << 2,
+    GivenFirst,
+    SurnameFirst,
+    Sorting,
     // Length
-    Short = 1 << 3,
-    Medium = 1 << 4,
-    Long = 1 << 5,
+    Short,
+    Medium,
+    Long,
     // Usage
-    Addressing = 1 << 6,
-    Referring = 1 << 7,
-    Monogram = 1 << 8,
+    Addressing,
+    Referring,
+    Monogram,
     // Formality
-    Formal = 1 << 9,
-    Informal = 1 << 10,
+    Formal,
+    Informal,
 }
 
-type PersonNamesFormattingAttributesMask = u32;
+impl PersonNamesFormattingAttributes {
+    pub fn bit_value(&self) -> PersonNamesFormattingAttributesMask {
+        match self {
+            PersonNamesFormattingAttributes::GivenFirst => 1 << 0,
+            PersonNamesFormattingAttributes::SurnameFirst => 1 << 1,
+            PersonNamesFormattingAttributes::Sorting => 1 << 2,
+            PersonNamesFormattingAttributes::Short => 1 << 3,
+            PersonNamesFormattingAttributes::Medium => 1 << 4,
+            PersonNamesFormattingAttributes::Long => 1 << 5,
+            PersonNamesFormattingAttributes::Addressing => 1 << 6,
+            PersonNamesFormattingAttributes::Referring => 1 << 7,
+            PersonNamesFormattingAttributes::Monogram => 1 << 8,
+            PersonNamesFormattingAttributes::Formal => 1 << 9,
+            PersonNamesFormattingAttributes::Informal => 1 << 10,
+        }
+    }
+}
+
+impl From<FormattingOrder> for PersonNamesFormattingAttributes {
+    fn from(value: FormattingOrder) -> Self {
+        match value {
+            FormattingOrder::GivenFirst => PersonNamesFormattingAttributes::GivenFirst,
+            FormattingOrder::SurnameFirst => PersonNamesFormattingAttributes::SurnameFirst,
+            FormattingOrder::Sorting => PersonNamesFormattingAttributes::Sorting,
+        }
+    }
+}
+
+impl From<FormattingFormality> for PersonNamesFormattingAttributes {
+    fn from(value: FormattingFormality) -> Self {
+        match value {
+            FormattingFormality::Formal => PersonNamesFormattingAttributes::Formal,
+            FormattingFormality::Informal => PersonNamesFormattingAttributes::Informal,
+        }
+    }
+}
+
+impl From<FormattingLength> for PersonNamesFormattingAttributes {
+    fn from(value: FormattingLength) -> Self {
+        match value {
+            FormattingLength::Short => PersonNamesFormattingAttributes::Short,
+            FormattingLength::Medium => PersonNamesFormattingAttributes::Medium,
+            FormattingLength::Long => PersonNamesFormattingAttributes::Long,
+        }
+    }
+}
+
+impl From<FormattingUsage> for PersonNamesFormattingAttributes {
+    fn from(value: FormattingUsage) -> Self {
+        match value {
+            FormattingUsage::Addressing => PersonNamesFormattingAttributes::Addressing,
+            FormattingUsage::Referring => PersonNamesFormattingAttributes::Referring,
+            FormattingUsage::Monogram => PersonNamesFormattingAttributes::Monogram,
+        }
+    }
+}
+
+pub type PersonNamesFormattingAttributesMask = u32;
 
 /// PersonName Formatting data.
 ///
@@ -112,4 +183,67 @@ pub struct PersonNamesFormattingData<'data> {
     /// <https://www.unicode.org/reports/tr35/tr35-personNames.html#namepattern-syntax>
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub patterns: VarZeroVec<'data, str>,
+}
+
+impl Debug for PersonNamesFormattingData<'_> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
+        let mut debug = f.debug_struct("PersonNamesFormattingData");
+
+        debug.field(
+            "given_first",
+            &(self.attributes & PersonNamesFormattingAttributes::GivenFirst.bit_value()
+                == PersonNamesFormattingAttributes::GivenFirst.bit_value()),
+        );
+        debug.field(
+            "surname_first",
+            &(self.attributes & PersonNamesFormattingAttributes::SurnameFirst.bit_value()
+                == PersonNamesFormattingAttributes::SurnameFirst.bit_value()),
+        );
+        debug.field(
+            "sorting",
+            &(self.attributes & PersonNamesFormattingAttributes::Sorting.bit_value()
+                == PersonNamesFormattingAttributes::Sorting.bit_value()),
+        );
+        debug.field(
+            "short",
+            &(self.attributes & PersonNamesFormattingAttributes::Short.bit_value()
+                == PersonNamesFormattingAttributes::Short.bit_value()),
+        );
+        debug.field(
+            "medium",
+            &(self.attributes & PersonNamesFormattingAttributes::Medium.bit_value()
+                == PersonNamesFormattingAttributes::Medium.bit_value()),
+        );
+        debug.field(
+            "long",
+            &(self.attributes & PersonNamesFormattingAttributes::Long.bit_value()
+                == PersonNamesFormattingAttributes::Long.bit_value()),
+        );
+        debug.field(
+            "addressing",
+            &(self.attributes & PersonNamesFormattingAttributes::Addressing.bit_value()
+                == PersonNamesFormattingAttributes::Addressing.bit_value()),
+        );
+        debug.field(
+            "referring",
+            &(self.attributes & PersonNamesFormattingAttributes::Referring.bit_value()
+                == PersonNamesFormattingAttributes::Referring.bit_value()),
+        );
+        debug.field(
+            "monogram",
+            &(self.attributes & PersonNamesFormattingAttributes::Monogram.bit_value()
+                == PersonNamesFormattingAttributes::Monogram.bit_value()),
+        );
+        debug.field(
+            "formal",
+            &(self.attributes & PersonNamesFormattingAttributes::Formal.bit_value()
+                == PersonNamesFormattingAttributes::Formal.bit_value()),
+        );
+        debug.field(
+            "informal",
+            &(self.attributes & PersonNamesFormattingAttributes::Informal.bit_value()
+                == PersonNamesFormattingAttributes::Informal.bit_value()),
+        );
+        debug.finish()
+    }
 }

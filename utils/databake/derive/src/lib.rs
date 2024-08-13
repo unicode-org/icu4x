@@ -62,8 +62,8 @@ fn bake_derive_impl(input: &DeriveInput) -> TokenStream2 {
         .unwrap()
         .0;
 
-    let body = structure.each_variant(|vi| {
-        let recursive_bakes = vi.bindings().iter().map(|b| {
+    let bake_body = structure.each_variant(|vi| {
+        let recursive_calls = vi.bindings().iter().map(|b| {
             let ident = b.binding.clone();
             quote! { let #ident =  #ident.bake(env); }
         });
@@ -74,8 +74,19 @@ fn bake_derive_impl(input: &DeriveInput) -> TokenStream2 {
         });
 
         quote! {
-            #(#recursive_bakes)*
+            #(#recursive_calls)*
             databake::quote! { #path::#constructor }
+        }
+    });
+
+    let borrows_size_body = structure.each_variant(|vi| {
+        let recursive_calls = vi.bindings().iter().map(|b| {
+            let ident = b.binding.clone();
+            quote! { #ident.borrows_size() }
+        });
+
+        quote! {
+            0 #(+ #recursive_calls)*
         }
     });
 
@@ -89,7 +100,14 @@ fn bake_derive_impl(input: &DeriveInput) -> TokenStream2 {
             fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
                 env.insert(#crate_name);
                 match self {
-                    #body
+                    #bake_body
+                }
+            }
+        }
+        gen impl databake::BakeSize for @Self {
+            fn borrows_size(&self) -> usize {
+                match self {
+                    #borrows_size_body
                 }
             }
         }

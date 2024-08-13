@@ -42,7 +42,7 @@ pub struct RuleBreakIterator<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> {
     pub(crate) len: usize,
     pub(crate) current_pos_data: Option<(usize, Y::CharType)>,
     pub(crate) result_cache: alloc::vec::Vec<usize>,
-    pub(crate) data: &'l RuleBreakDataV1<'l>,
+    pub(crate) data: &'l RuleBreakDataV2<'l>,
     pub(crate) complex: Option<&'l ComplexPayloads>,
     pub(crate) boundary_property: u8,
 }
@@ -63,6 +63,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> Iterator for RuleBreakIterator<'
                 self.advance_iter();
                 if self.is_eof() {
                     self.result_cache.clear();
+                    self.boundary_property = self.data.complex_property;
                     return Some(self.len);
                 }
             }
@@ -77,8 +78,12 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> Iterator for RuleBreakIterator<'
                 self.len = 1;
                 return Some(0);
             }
+            let Some(right_prop) = self.get_current_break_property() else {
+                // iterator already reaches to EOT. Reset boundary property for word-like.
+                self.boundary_property = 0;
+                return None;
+            };
             // SOT x anything
-            let right_prop = self.get_current_break_property()?;
             if matches!(
                 self.get_break_state_from_table(self.data.sot_property, right_prop),
                 BreakState::Break | BreakState::NoMatch

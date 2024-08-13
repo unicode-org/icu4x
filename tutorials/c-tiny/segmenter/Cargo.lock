@@ -4,8 +4,8 @@ version = 3
 
 [[package]]
 name = "diplomat"
-version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=99ab75d8054b9ddca7fd1def0902f7a43bd68259#99ab75d8054b9ddca7fd1def0902f7a43bd68259"
+version = "0.8.0"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=8744ac97162341f347b63131969ad736e1047f6d#8744ac97162341f347b63131969ad736e1047f6d"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -15,15 +15,14 @@ dependencies = [
 
 [[package]]
 name = "diplomat-runtime"
-version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=99ab75d8054b9ddca7fd1def0902f7a43bd68259#99ab75d8054b9ddca7fd1def0902f7a43bd68259"
+version = "0.8.1"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=8744ac97162341f347b63131969ad736e1047f6d#8744ac97162341f347b63131969ad736e1047f6d"
 
 [[package]]
 name = "diplomat_core"
-version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=99ab75d8054b9ddca7fd1def0902f7a43bd68259#99ab75d8054b9ddca7fd1def0902f7a43bd68259"
+version = "0.8.0"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=8744ac97162341f347b63131969ad736e1047f6d#8744ac97162341f347b63131969ad736e1047f6d"
 dependencies = [
- "lazy_static",
  "proc-macro2",
  "quote",
  "serde",
@@ -45,11 +44,11 @@ dependencies = [
 
 [[package]]
 name = "icu_capi"
-version = "1.4.0"
+version = "1.5.0"
 dependencies = [
  "diplomat",
  "diplomat-runtime",
- "icu_locid",
+ "icu_locale_core",
  "icu_provider",
  "icu_provider_adapters",
  "tinystr",
@@ -57,8 +56,19 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_locid"
-version = "1.4.0"
+name = "icu_locale"
+version = "1.5.0"
+dependencies = [
+ "displaydoc",
+ "icu_locale_core",
+ "icu_provider",
+ "tinystr",
+ "zerovec",
+]
+
+[[package]]
+name = "icu_locale_core"
+version = "1.5.0"
 dependencies = [
  "displaydoc",
  "litemap",
@@ -68,22 +78,11 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_locid_transform"
-version = "1.4.0"
-dependencies = [
- "displaydoc",
- "icu_locid",
- "icu_provider",
- "tinystr",
- "zerovec",
-]
-
-[[package]]
 name = "icu_provider"
-version = "1.4.0"
+version = "1.5.0"
 dependencies = [
  "displaydoc",
- "icu_locid",
+ "icu_locale_core",
  "icu_provider_macros",
  "stable_deref_trait",
  "tinystr",
@@ -95,10 +94,9 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_adapters"
-version = "1.4.0"
+version = "1.5.0"
 dependencies = [
- "icu_locid",
- "icu_locid_transform",
+ "icu_locale",
  "icu_provider",
  "tinystr",
  "zerovec",
@@ -106,7 +104,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_macros"
-version = "1.4.0"
+version = "1.5.0"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -114,47 +112,41 @@ dependencies = [
 ]
 
 [[package]]
-name = "lazy_static"
-version = "1.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
-
-[[package]]
 name = "litemap"
-version = "0.7.2"
+version = "0.7.3"
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.76"
+version = "1.0.84"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "95fc56cda0b5c3325f5fbbd7ff9fda9e02bb00bb3dac51252d2f1bfa1cb8cc8c"
+checksum = "ec96c6a92621310b51366f1e28d05ef11489516e93be030060e5fc12024a49d6"
 dependencies = [
  "unicode-ident",
 ]
 
 [[package]]
 name = "quote"
-version = "1.0.35"
+version = "1.0.36"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "291ec9ab5efd934aaf503a6466c5d5251535d108ee747472c3977cc5acc868ef"
+checksum = "0fa76aaf39101c457836aec0ce2316dbdc3ab723cdda1c6bd4e6ad4208acaca7"
 dependencies = [
  "proc-macro2",
 ]
 
 [[package]]
 name = "serde"
-version = "1.0.195"
+version = "1.0.203"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "63261df402c67811e9ac6def069e4786148c4563f4b50fd4bf30aa370d626b02"
+checksum = "7253ab4de971e72fb7be983802300c30b5a7f0c2e56fab8abfc6a214307c0094"
 dependencies = [
  "serde_derive",
 ]
 
 [[package]]
 name = "serde_derive"
-version = "1.0.195"
+version = "1.0.203"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "46fe8f8603d81ba86327b23a2e9cdf49e1255fb94a4c5f297f6ee0547178ea2c"
+checksum = "500cbc0ebeb6f46627f50f3f5811ccf6bf00643be300b4c3eabc0ef55dc5b5ba"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -163,9 +155,9 @@ dependencies = [
 
 [[package]]
 name = "smallvec"
-version = "1.11.2"
+version = "1.13.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4dccd0940a2dcdf68d092b8cbab7dc0ad8fa938bf95787e1b916b0e3d0e8e970"
+checksum = "3c5e1a9a646d36c3599cd173a41282daf47c44583ad367b8e6837255952e5c67"
 
 [[package]]
 name = "stable_deref_trait"
@@ -191,9 +183,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "2.0.48"
+version = "2.0.66"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0f3531638e407dfc0814761abb7c00a5b54992b849452a0646b7f65c9f770f3f"
+checksum = "c42f3f41a2de00b01c0aaad383c5a45241efc8b2d1eda5661812fda5f3cdcff5"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -202,19 +194,18 @@ dependencies = [
 
 [[package]]
 name = "synstructure"
-version = "0.13.0"
+version = "0.13.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "285ba80e733fac80aa4270fbcdf83772a79b80aa35c97075320abfee4a915b06"
+checksum = "c8af7666ab7b6390ab78131fb5b0fce11d6b7a6951602017c35fa82800708971"
 dependencies = [
  "proc-macro2",
  "quote",
  "syn",
- "unicode-xid",
 ]
 
 [[package]]
 name = "tinystr"
-version = "0.7.5"
+version = "0.7.6"
 dependencies = [
  "displaydoc",
  "zerovec",
@@ -227,12 +218,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3354b9ac3fae1ff6755cb6db53683adb661634f67557942dea4facebec0fee4b"
 
 [[package]]
-name = "unicode-xid"
-version = "0.2.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f962df74c8c05a667b5ee8bcf162993134c104e96440b663c8daa176dc772d8c"
-
-[[package]]
 name = "unused"
 version = "0.0.0"
 dependencies = [
@@ -241,11 +226,11 @@ dependencies = [
 
 [[package]]
 name = "writeable"
-version = "0.5.4"
+version = "0.5.5"
 
 [[package]]
 name = "yoke"
-version = "0.7.3"
+version = "0.7.4"
 dependencies = [
  "serde",
  "stable_deref_trait",
@@ -255,7 +240,7 @@ dependencies = [
 
 [[package]]
 name = "yoke-derive"
-version = "0.7.3"
+version = "0.7.4"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -265,14 +250,14 @@ dependencies = [
 
 [[package]]
 name = "zerofrom"
-version = "0.1.3"
+version = "0.1.4"
 dependencies = [
  "zerofrom-derive",
 ]
 
 [[package]]
 name = "zerofrom-derive"
-version = "0.1.3"
+version = "0.1.4"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -282,7 +267,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec"
-version = "0.10.1"
+version = "0.10.4"
 dependencies = [
  "yoke",
  "zerofrom",
@@ -291,7 +276,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec-derive"
-version = "0.10.1"
+version = "0.10.3"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -300,35 +285,39 @@ dependencies = [
 
 [[patch.unused]]
 name = "bies"
-version = "0.2.1"
+version = "0.2.2"
 
 [[patch.unused]]
 name = "crlify"
-version = "1.0.3"
+version = "1.0.4"
 
 [[patch.unused]]
 name = "databake"
-version = "0.1.7"
+version = "0.1.8"
 
 [[patch.unused]]
 name = "databake-derive"
-version = "0.1.7"
+version = "0.1.8"
 
 [[patch.unused]]
 name = "deduplicating_array"
-version = "0.1.5"
+version = "0.1.6"
 
 [[patch.unused]]
 name = "fixed_decimal"
-version = "0.5.5"
+version = "0.5.6"
 
 [[patch.unused]]
 name = "icu"
-version = "1.4.0"
+version = "1.5.0"
+
+[[patch.unused]]
+name = "icu4x-datagen"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu4x_ecma402"
-version = "0.8.1"
+version = "0.8.2"
 
 [[patch.unused]]
 name = "icu_benchmark_macros"
@@ -336,144 +325,156 @@ version = "0.0.0"
 
 [[patch.unused]]
 name = "icu_calendar"
-version = "1.4.0"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_calendar_data"
-version = "1.4.0"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_casemap"
-version = "1.4.0"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_casemap_data"
-version = "1.4.0"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_codepointtrie_builder"
-version = "0.3.7"
+version = "0.3.8"
 
 [[patch.unused]]
 name = "icu_collator"
-version = "1.4.0"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_collator_data"
-version = "1.4.0"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_collections"
-version = "1.4.0"
-
-[[patch.unused]]
-name = "icu_datagen"
-version = "1.4.1"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_datetime"
-version = "1.4.0"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_datetime_data"
-version = "1.4.0"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_decimal"
-version = "1.4.0"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_decimal_data"
-version = "1.4.0"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "icu_experimental"
-version = "0.0.0"
-
-[[patch.unused]]
-name = "icu_experimental_data"
-version = "0.0.0"
-
-[[patch.unused]]
-name = "icu_freertos"
-version = "1.4.0"
-
-[[patch.unused]]
-name = "icu_harfbuzz"
-version = "0.1.2"
-
-[[patch.unused]]
-name = "icu_list"
-version = "1.4.0"
-
-[[patch.unused]]
-name = "icu_list_data"
-version = "1.4.0"
-
-[[patch.unused]]
-name = "icu_locid_transform_data"
-version = "1.4.0"
-
-[[patch.unused]]
-name = "icu_normalizer"
-version = "1.4.1"
-
-[[patch.unused]]
-name = "icu_normalizer_data"
-version = "1.4.0"
-
-[[patch.unused]]
-name = "icu_pattern"
-version = "0.1.5"
-
-[[patch.unused]]
-name = "icu_plurals"
-version = "1.4.0"
-
-[[patch.unused]]
-name = "icu_plurals_data"
-version = "1.4.0"
-
-[[patch.unused]]
-name = "icu_properties"
-version = "1.4.0"
-
-[[patch.unused]]
-name = "icu_properties_data"
-version = "1.4.0"
-
-[[patch.unused]]
-name = "icu_provider_blob"
-version = "1.4.0"
-
-[[patch.unused]]
-name = "icu_provider_fs"
-version = "1.4.0"
-
-[[patch.unused]]
-name = "icu_segmenter"
-version = "1.4.0"
-
-[[patch.unused]]
-name = "icu_segmenter_data"
-version = "1.4.0"
-
-[[patch.unused]]
-name = "icu_timezone"
-version = "1.4.0"
-
-[[patch.unused]]
-name = "icu_timezone_data"
-version = "1.4.0"
-
-[[patch.unused]]
-name = "ixdtf"
 version = "0.1.0"
 
 [[patch.unused]]
+name = "icu_experimental_data"
+version = "0.1.0"
+
+[[patch.unused]]
+name = "icu_freertos"
+version = "1.5.0"
+
+[[patch.unused]]
+name = "icu_harfbuzz"
+version = "0.2.0"
+
+[[patch.unused]]
+name = "icu_list"
+version = "1.5.0"
+
+[[patch.unused]]
+name = "icu_list_data"
+version = "1.5.0"
+
+[[patch.unused]]
+name = "icu_locale_data"
+version = "1.5.0"
+
+[[patch.unused]]
+name = "icu_normalizer"
+version = "1.5.0"
+
+[[patch.unused]]
+name = "icu_normalizer_data"
+version = "1.5.0"
+
+[[patch.unused]]
+name = "icu_pattern"
+version = "0.2.0"
+
+[[patch.unused]]
+name = "icu_plurals"
+version = "1.5.0"
+
+[[patch.unused]]
+name = "icu_plurals_data"
+version = "1.5.0"
+
+[[patch.unused]]
+name = "icu_properties"
+version = "1.5.0"
+
+[[patch.unused]]
+name = "icu_properties_data"
+version = "1.5.0"
+
+[[patch.unused]]
+name = "icu_provider_baked"
+version = "1.5.0"
+
+[[patch.unused]]
+name = "icu_provider_blob"
+version = "1.5.0"
+
+[[patch.unused]]
+name = "icu_provider_export"
+version = "1.5.0"
+
+[[patch.unused]]
+name = "icu_provider_fs"
+version = "1.5.0"
+
+[[patch.unused]]
+name = "icu_provider_registry"
+version = "1.5.0"
+
+[[patch.unused]]
+name = "icu_provider_source"
+version = "1.5.0"
+
+[[patch.unused]]
+name = "icu_segmenter"
+version = "1.5.0"
+
+[[patch.unused]]
+name = "icu_segmenter_data"
+version = "1.5.0"
+
+[[patch.unused]]
+name = "icu_timezone"
+version = "1.5.0"
+
+[[patch.unused]]
+name = "icu_timezone_data"
+version = "1.5.0"
+
+[[patch.unused]]
+name = "ixdtf"
+version = "0.2.0"
+
+[[patch.unused]]
 name = "tzif"
-version = "0.2.2"
+version = "0.2.3"
 
 [[patch.unused]]
 name = "zerotrie"
-version = "0.1.2"
+version = "0.1.3"

@@ -24,13 +24,13 @@ final class ScriptExtensionsSet implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XScriptExtensionsSet_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_ScriptExtensionsSet_destroy_mv1));
 
   /// Check if the Script_Extensions property of the given code point covers the given script
   ///
   /// See the [Rust documentation for `contains`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html#method.contains) for more information.
   bool contains(int script) {
-    final result = _ICU4XScriptExtensionsSet_contains(_ffi, script);
+    final result = _icu4x_ScriptExtensionsSet_contains_mv1(_ffi, script);
     return result;
   }
 
@@ -38,7 +38,7 @@ final class ScriptExtensionsSet implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `iter`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter) for more information.
   int get count {
-    final result = _ICU4XScriptExtensionsSet_count(_ffi);
+    final result = _icu4x_ScriptExtensionsSet_count_mv1(_ffi);
     return result;
   }
 
@@ -46,7 +46,7 @@ final class ScriptExtensionsSet implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `iter`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter) for more information.
   int? scriptAt(int index) {
-    final result = _ICU4XScriptExtensionsSet_script_at(_ffi, index);
+    final result = _icu4x_ScriptExtensionsSet_script_at_mv1(_ffi, index);
     if (!result.isOk) {
       return null;
     }
@@ -54,22 +54,22 @@ final class ScriptExtensionsSet implements ffi.Finalizable {
   }
 }
 
-@meta.ResourceIdentifier('ICU4XScriptExtensionsSet_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XScriptExtensionsSet_destroy')
+@meta.ResourceIdentifier('icu4x_ScriptExtensionsSet_destroy_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_ScriptExtensionsSet_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XScriptExtensionsSet_destroy(ffi.Pointer<ffi.Void> self);
+external void _icu4x_ScriptExtensionsSet_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XScriptExtensionsSet_contains')
-@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Uint16)>(isLeaf: true, symbol: 'ICU4XScriptExtensionsSet_contains')
+@meta.ResourceIdentifier('icu4x_ScriptExtensionsSet_contains_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Uint16)>(isLeaf: true, symbol: 'icu4x_ScriptExtensionsSet_contains_mv1')
 // ignore: non_constant_identifier_names
-external bool _ICU4XScriptExtensionsSet_contains(ffi.Pointer<ffi.Opaque> self, int script);
+external bool _icu4x_ScriptExtensionsSet_contains_mv1(ffi.Pointer<ffi.Opaque> self, int script);
 
-@meta.ResourceIdentifier('ICU4XScriptExtensionsSet_count')
-@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XScriptExtensionsSet_count')
+@meta.ResourceIdentifier('icu4x_ScriptExtensionsSet_count_mv1')
+@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ScriptExtensionsSet_count_mv1')
 // ignore: non_constant_identifier_names
-external int _ICU4XScriptExtensionsSet_count(ffi.Pointer<ffi.Opaque> self);
+external int _icu4x_ScriptExtensionsSet_count_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('ICU4XScriptExtensionsSet_script_at')
-@ffi.Native<_ResultUint16Void Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XScriptExtensionsSet_script_at')
+@meta.ResourceIdentifier('icu4x_ScriptExtensionsSet_script_at_mv1')
+@ffi.Native<_ResultUint16Void Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_ScriptExtensionsSet_script_at_mv1')
 // ignore: non_constant_identifier_names
-external _ResultUint16Void _ICU4XScriptExtensionsSet_script_at(ffi.Pointer<ffi.Opaque> self, int index);
+external _ResultUint16Void _icu4x_ScriptExtensionsSet_script_at_mv1(ffi.Pointer<ffi.Opaque> self, int index);

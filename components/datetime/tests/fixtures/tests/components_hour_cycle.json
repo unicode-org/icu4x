@@ -6,9 +6,13 @@
             "options": {
                 "components": {
                     "hour": "numeric",
-                    "minute": "numeric",
-                    "preferences": { "hourCycle": "h11" }
-                }
+                    "minute": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["hour", "minute"],
+                    "length": "short"
+                },
+                "preferences": { "hourCycle": "h11" }
             }
         },
         "output": {
@@ -24,9 +28,13 @@
             "options": {
                 "components": {
                     "hour": "numeric",
-                    "minute": "numeric",
-                    "preferences": { "hourCycle": "h12" }
-                }
+                    "minute": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["hour", "minute"],
+                    "length": "short"
+                },
+                "preferences": { "hourCycle": "h12" }
             }
         },
         "output": {
@@ -42,9 +50,13 @@
             "options": {
                 "components": {
                     "hour": "numeric",
-                    "minute": "numeric",
-                    "preferences": { "hourCycle": "h23" }
-                }
+                    "minute": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["hour", "minute"],
+                    "length": "short"
+                },
+                "preferences": { "hourCycle": "h23" }
             }
         },
         "output": {
@@ -60,9 +72,13 @@
             "options": {
                 "components": {
                     "hour": "numeric",
-                    "minute": "numeric",
-                    "preferences": { "hourCycle": "h24" }
-                }
+                    "minute": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["hour", "minute"],
+                    "length": "short"
+                },
+                "preferences": { "hourCycle": "h24" }
             }
         },
         "output": {
@@ -79,9 +95,13 @@
             "options": {
                 "components": {
                     "hour": "numeric",
-                    "minute": "numeric",
-                    "preferences": { "hourCycle": "h11" }
-                }
+                    "minute": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["hour", "minute"],
+                    "length": "short"
+                },
+                "preferences": { "hourCycle": "h11" }
             }
         },
         "output": {
@@ -97,9 +117,13 @@
             "options": {
                 "components": {
                     "hour": "numeric",
-                    "minute": "numeric",
-                    "preferences": { "hourCycle": "h12" }
-                }
+                    "minute": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["hour", "minute"],
+                    "length": "short"
+                },
+                "preferences": { "hourCycle": "h12" }
             }
         },
         "output": {
@@ -115,9 +139,13 @@
             "options": {
                 "components": {
                     "hour": "numeric",
-                    "minute": "numeric",
-                    "preferences": { "hourCycle": "h23" }
-                }
+                    "minute": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["hour", "minute"],
+                    "length": "short"
+                },
+                "preferences": { "hourCycle": "h23" }
             }
         },
         "output": {
@@ -133,9 +161,13 @@
             "options": {
                 "components": {
                     "hour": "numeric",
-                    "minute": "numeric",
-                    "preferences": { "hourCycle": "h24" }
-                }
+                    "minute": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["hour", "minute"],
+                    "length": "short"
+                },
+                "preferences": { "hourCycle": "h24" }
             }
         },
         "output": {
@@ -150,9 +182,13 @@
             "value": "2002-12-31T00:05:07.000",
             "options": {
                 "components": {
-                    "hour": "numeric",
-                    "preferences": { "hourCycle": "h11" }
-                }
+                    "hour": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["hour"],
+                    "length": "short"
+                },
+                "preferences": { "hourCycle": "h11" }
             }
         },
         "output": {
@@ -167,9 +203,13 @@
             "value": "2002-12-31T00:05:07.000",
             "options": {
                 "components": {
-                    "hour": "numeric",
-                    "preferences": { "hourCycle": "h12" }
-                }
+                    "hour": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["hour"],
+                    "length": "short"
+                },
+                "preferences": { "hourCycle": "h12" }
             }
         },
         "output": {
@@ -184,9 +224,13 @@
             "value": "2002-12-31T00:05:07.000",
             "options": {
                 "components": {
-                    "hour": "numeric",
-                    "preferences": { "hourCycle": "h23" }
-                }
+                    "hour": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["hour"],
+                    "length": "short"
+                },
+                "preferences": { "hourCycle": "h23" }
             }
         },
         "output": {
@@ -201,9 +245,13 @@
             "value": "2002-12-31T00:05:07.000",
             "options": {
                 "components": {
-                    "hour": "numeric",
-                    "preferences": { "hourCycle": "h24" }
-                }
+                    "hour": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["hour"],
+                    "length": "short"
+                },
+                "preferences": { "hourCycle": "h24" }
             }
         },
         "output": {

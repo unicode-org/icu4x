@@ -4,8 +4,11 @@
 
 //! Code for the [`DoublePlaceholder`] pattern backend.
 
+use core::convert::Infallible;
+use core::str::Utf8Error;
 use core::{cmp::Ordering, str::FromStr};
 use either::Either;
+use writeable::adapters::WriteableAsTryWriteableInfallible;
 use writeable::Writeable;
 
 use crate::common::*;
@@ -20,13 +23,14 @@ use alloc::string::String;
 ///
 /// ```
 /// use core::cmp::Ordering;
-/// use icu_pattern::PatternItem;
+/// use core::str::FromStr;
 /// use icu_pattern::DoublePlaceholderKey;
 /// use icu_pattern::DoublePlaceholderPattern;
+/// use icu_pattern::PatternItem;
 ///
 /// // Parse the string syntax and check the resulting data store:
 /// let pattern =
-///     DoublePlaceholderPattern::try_from_str("Hello, {0} and {1}!").unwrap();
+///     DoublePlaceholderPattern::from_str("Hello, {0} and {1}!").unwrap();
 ///
 /// assert_eq!(
 ///     pattern.iter().cmp(
@@ -68,13 +72,19 @@ where
     W0: Writeable,
     W1: Writeable,
 {
-    type W<'a> = Either<&'a W0, &'a W1> where W0: 'a, W1: 'a;
+    type Error = Infallible;
+    type W<'a> = WriteableAsTryWriteableInfallible<Either<&'a W0, &'a W1>> where W0: 'a, W1: 'a;
+    const LITERAL_PART: writeable::Part = crate::PATTERN_LITERAL_PART;
     #[inline]
-    fn value_for(&self, key: DoublePlaceholderKey) -> Self::W<'_> {
-        match key {
+    fn value_for(&self, key: DoublePlaceholderKey) -> (Self::W<'_>, writeable::Part) {
+        let writeable = match key {
             DoublePlaceholderKey::Place0 => Either::Left(&self.0),
             DoublePlaceholderKey::Place1 => Either::Right(&self.1),
-        }
+        };
+        (
+            WriteableAsTryWriteableInfallible(writeable),
+            crate::PATTERN_PLACEHOLDER_PART,
+        )
     }
 }
 
@@ -82,14 +92,20 @@ impl<W> PlaceholderValueProvider<DoublePlaceholderKey> for [W; 2]
 where
     W: Writeable,
 {
-    type W<'a> = &'a W where W: 'a;
+    type Error = Infallible;
+    type W<'a> = WriteableAsTryWriteableInfallible<&'a W> where W: 'a;
+    const LITERAL_PART: writeable::Part = crate::PATTERN_LITERAL_PART;
     #[inline]
-    fn value_for(&self, key: DoublePlaceholderKey) -> Self::W<'_> {
+    fn value_for(&self, key: DoublePlaceholderKey) -> (Self::W<'_>, writeable::Part) {
         let [item0, item1] = self;
-        match key {
+        let writeable = match key {
             DoublePlaceholderKey::Place0 => item0,
             DoublePlaceholderKey::Place1 => item1,
-        }
+        };
+        (
+            WriteableAsTryWriteableInfallible(writeable),
+            crate::PATTERN_PLACEHOLDER_PART,
+        )
     }
 }
 
@@ -177,13 +193,15 @@ impl DoublePlaceholderInfo {
 /// Parsing a pattern into the encoding:
 ///
 /// ```
-/// use icu_pattern::Pattern;
+/// use core::str::FromStr;
 /// use icu_pattern::DoublePlaceholder;
+/// use icu_pattern::Pattern;
 ///
 /// // Parse the string syntax and check the resulting data store:
-/// let store = Pattern::<DoublePlaceholder, _>::try_from_str("Hello, {0} and {1}!")
-///     .unwrap()
-///     .take_store();
+/// let store =
+///     Pattern::<DoublePlaceholder, _>::from_str("Hello, {0} and {1}!")
+///         .unwrap()
+///         .take_store();
 ///
 /// assert_eq!("\x10\x1BHello,  and !", store);
 /// ```
@@ -196,12 +214,13 @@ impl DoublePlaceholderInfo {
 /// Example patterns supported by this backend:
 ///
 /// ```
-/// use icu_pattern::Pattern;
+/// use core::str::FromStr;
 /// use icu_pattern::DoublePlaceholder;
+/// use icu_pattern::Pattern;
 ///
 /// // Single numeric placeholder (note, "5" is used):
 /// assert_eq!(
-///     Pattern::<DoublePlaceholder, _>::try_from_str("{0} days ago")
+///     Pattern::<DoublePlaceholder, _>::from_str("{0} days ago")
 ///         .unwrap()
 ///         .interpolate_to_string([5, 7]),
 ///     "5 days ago",
@@ -209,7 +228,7 @@ impl DoublePlaceholderInfo {
 ///
 /// // No placeholder (note, the placeholder value is never accessed):
 /// assert_eq!(
-///     Pattern::<DoublePlaceholder, _>::try_from_str("yesterday")
+///     Pattern::<DoublePlaceholder, _>::from_str("yesterday")
 ///         .unwrap()
 ///         .interpolate_to_string(["foo", "bar"]),
 ///     "yesterday",
@@ -217,7 +236,7 @@ impl DoublePlaceholderInfo {
 ///
 /// // Escaped placeholder and a placeholder value 1 (note, "bar" is used):
 /// assert_eq!(
-///     Pattern::<DoublePlaceholder, _>::try_from_str("'{0}' {1}")
+///     Pattern::<DoublePlaceholder, _>::from_str("'{0}' {1}")
 ///         .unwrap()
 ///         .interpolate_to_string(("foo", "bar")),
 ///     "{0} bar",
@@ -225,7 +244,7 @@ impl DoublePlaceholderInfo {
 ///
 /// // Pattern with the placeholders in the opposite order:
 /// assert_eq!(
-///     Pattern::<DoublePlaceholder, _>::try_from_str("A {1} B {0} C")
+///     Pattern::<DoublePlaceholder, _>::from_str("A {1} B {0} C")
 ///         .unwrap()
 ///         .interpolate_to_string(("D", "E")),
 ///     "A E B D C",
@@ -233,7 +252,7 @@ impl DoublePlaceholderInfo {
 ///
 /// // No literals, only placeholders:
 /// assert_eq!(
-///     Pattern::<DoublePlaceholder, _>::try_from_str("{1}{0}")
+///     Pattern::<DoublePlaceholder, _>::from_str("{1}{0}")
 ///         .unwrap()
 ///         .interpolate_to_string((1, "A")),
 ///     "A1",
@@ -248,9 +267,18 @@ pub enum DoublePlaceholder {}
 impl crate::private::Sealed for DoublePlaceholder {}
 
 impl PatternBackend for DoublePlaceholder {
-    type PlaceholderKey = DoublePlaceholderKey;
+    type PlaceholderKey<'a> = DoublePlaceholderKey;
+    #[cfg(feature = "alloc")]
+    type PlaceholderKeyCow<'a> = DoublePlaceholderKey;
+    type Error<'a> = Infallible;
+    type StoreFromBytesError = Utf8Error;
     type Store = str;
     type Iter<'a> = DoublePlaceholderPatternIterator<'a>;
+
+    #[inline]
+    fn try_store_from_utf8(bytes: &[u8]) -> Result<&Self::Store, Self::StoreFromBytesError> {
+        core::str::from_utf8(bytes)
+    }
 
     fn validate_store(store: &Self::Store) -> Result<(), Error> {
         let mut chars = store.chars();
@@ -303,8 +331,9 @@ impl PatternBackend for DoublePlaceholder {
 
     #[cfg(feature = "alloc")]
     fn try_from_items<
-        'a,
-        I: Iterator<Item = Result<PatternItemCow<'a, Self::PlaceholderKey>, Error>>,
+        'cow,
+        'ph,
+        I: Iterator<Item = Result<PatternItemCow<'cow, Self::PlaceholderKey<'ph>>, Error>>,
     >(
         items: I,
     ) -> Result<String, Error> {
@@ -676,7 +705,7 @@ mod tests {
                 store,
                 interpolated,
             } = cas;
-            let parsed = DoublePlaceholderPattern::try_from_str(pattern).unwrap();
+            let parsed = DoublePlaceholderPattern::from_str(pattern).unwrap();
             let actual = parsed
                 .interpolate(["apple", "orange"])
                 .write_to_string()

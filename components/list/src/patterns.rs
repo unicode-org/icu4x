@@ -11,28 +11,25 @@ use alloc::borrow::Cow;
 use icu_provider::DataError;
 use writeable::{LengthHint, Writeable};
 
-impl<'data> ListFormatterPatternsV1<'data> {
-    /// Creates a new [`ListFormatterPatternsV1`] from the given patterns. Fails if any pattern is invalid.
-    ///
-    /// See [`ListJoinerPattern::from_str`]. `allow_prefix` will be true for `pair` and `end` patterns,
-    /// `allow_suffix` for `start` and `pair` patterns.
+impl<'data> ListFormatterPatternsV2<'data> {
+    /// Creates a new [`ListFormatterPatternsV2`] from the given patterns. Fails if any pattern is invalid.
     #[cfg(feature = "datagen")]
     pub fn try_new(
         [start, middle, end, pair, short_start, short_middle, short_end, short_pair, narrow_start, narrow_middle, narrow_end, narrow_pair]: [&str; 12],
     ) -> Result<Self, DataError> {
         Ok(Self([
-            ListJoinerPattern::from_str(start, true, false)?.into(),
-            ListJoinerPattern::from_str(middle, false, false)?.into(),
-            ListJoinerPattern::from_str(end, false, true)?.into(),
-            ListJoinerPattern::from_str(pair, true, true)?.into(),
-            ListJoinerPattern::from_str(short_start, true, false)?.into(),
-            ListJoinerPattern::from_str(short_middle, false, false)?.into(),
-            ListJoinerPattern::from_str(short_end, false, true)?.into(),
-            ListJoinerPattern::from_str(short_pair, true, true)?.into(),
-            ListJoinerPattern::from_str(narrow_start, true, false)?.into(),
-            ListJoinerPattern::from_str(narrow_middle, false, false)?.into(),
-            ListJoinerPattern::from_str(narrow_end, false, true)?.into(),
-            ListJoinerPattern::from_str(narrow_pair, true, true)?.into(),
+            ListJoinerPattern::try_from_str(start, true, false)?.into(),
+            ListJoinerPattern::try_from_str(middle, false, false)?.into(),
+            ListJoinerPattern::try_from_str(end, false, true)?.into(),
+            ListJoinerPattern::try_from_str(pair, true, true)?.into(),
+            ListJoinerPattern::try_from_str(short_start, true, false)?.into(),
+            ListJoinerPattern::try_from_str(short_middle, false, false)?.into(),
+            ListJoinerPattern::try_from_str(short_end, false, true)?.into(),
+            ListJoinerPattern::try_from_str(short_pair, true, true)?.into(),
+            ListJoinerPattern::try_from_str(narrow_start, true, false)?.into(),
+            ListJoinerPattern::try_from_str(narrow_middle, false, false)?.into(),
+            ListJoinerPattern::try_from_str(narrow_end, false, true)?.into(),
+            ListJoinerPattern::try_from_str(narrow_pair, true, true)?.into(),
         ]))
     }
 
@@ -48,13 +45,13 @@ impl<'data> ListFormatterPatternsV1<'data> {
         regex: &SerdeDFA<'static>,
         alternative_pattern: &str,
     ) -> Result<(), DataError> {
-        let old = ListJoinerPattern::from_str(pattern, true, true)?;
+        let old = ListJoinerPattern::try_from_str(pattern, true, true)?;
         for i in 0..12 {
             #[allow(clippy::indexing_slicing)] // self.0 is &[_; 12]
             if self.0[i].default == old {
                 self.0[i].special_case = Some(SpecialCasePattern {
                     condition: regex.clone(),
-                    pattern: ListJoinerPattern::from_str(
+                    pattern: ListJoinerPattern::try_from_str(
                         alternative_pattern,
                         i % 4 == 0 || i % 4 == 3, // allow_prefix = start or pair
                         i % 4 == 2 || i % 4 == 3, // allow_suffix = end or pair
@@ -108,9 +105,8 @@ impl<'a> ConditionalListJoinerPattern<'a> {
 }
 
 impl<'data> ListJoinerPattern<'data> {
-    /// Construct the pattern from a CLDR pattern string
     #[cfg(feature = "datagen")]
-    pub fn from_str(
+    fn try_from_str(
         pattern: &str,
         allow_prefix: bool,
         allow_suffix: bool,
@@ -123,7 +119,7 @@ impl<'data> ListJoinerPattern<'data> {
             {
                 if (index_0 > 0 && !cfg!(test)) || index_1 - 3 >= 256 {
                     return Err(DataError::custom(
-                        "Found valid pattern that cannot be stored in ListFormatterPatternsV1",
+                        "Found valid pattern that cannot be stored in ListFormatterPatternsV2",
                     )
                     .with_debug_context(pattern));
                 }
@@ -173,8 +169,8 @@ impl<'data> From<ListJoinerPattern<'data>> for ConditionalListJoinerPattern<'dat
 pub mod test {
     use super::*;
 
-    pub fn test_patterns() -> ListFormatterPatternsV1<'static> {
-        let mut patterns = ListFormatterPatternsV1::try_new([
+    pub fn test_patterns() -> ListFormatterPatternsV2<'static> {
+        let mut patterns = ListFormatterPatternsV2::try_new([
             // Wide: general
             "@{0}:{1}",
             "{0},{1}",
@@ -195,7 +191,7 @@ pub mod test {
         patterns
             .make_conditional(
                 "{0}. {1}",
-                &SerdeDFA::new(Cow::Borrowed("A")).unwrap(),
+                &SerdeDFA::new(Cow::Borrowed("^a")).unwrap(),
                 "{0} :o {1}",
             )
             .unwrap();
@@ -204,17 +200,17 @@ pub mod test {
 
     #[test]
     fn rejects_bad_patterns() {
-        assert!(ListJoinerPattern::from_str("{0} and", true, true).is_err());
-        assert!(ListJoinerPattern::from_str("and {1}", true, true).is_err());
-        assert!(ListJoinerPattern::from_str("{1} and {0}", true, true).is_err());
-        assert!(ListJoinerPattern::from_str("{1{0}}", true, true).is_err());
-        assert!(ListJoinerPattern::from_str("{0\u{202e}} and {1}", true, true).is_err());
-        assert!(ListJoinerPattern::from_str("{{0}} {{1}}", true, true).is_ok());
+        assert!(ListJoinerPattern::try_from_str("{0} and", true, true).is_err());
+        assert!(ListJoinerPattern::try_from_str("and {1}", true, true).is_err());
+        assert!(ListJoinerPattern::try_from_str("{1} and {0}", true, true).is_err());
+        assert!(ListJoinerPattern::try_from_str("{1{0}}", true, true).is_err());
+        assert!(ListJoinerPattern::try_from_str("{0\u{202e}} and {1}", true, true).is_err());
+        assert!(ListJoinerPattern::try_from_str("{{0}} {{1}}", true, true).is_ok());
 
-        assert!(ListJoinerPattern::from_str("{0} and {1} ", true, true).is_ok());
-        assert!(ListJoinerPattern::from_str("{0} and {1} ", true, false).is_err());
-        assert!(ListJoinerPattern::from_str(" {0} and {1}", true, true).is_ok());
-        assert!(ListJoinerPattern::from_str(" {0} and {1}", false, true).is_err());
+        assert!(ListJoinerPattern::try_from_str("{0} and {1} ", true, true).is_ok());
+        assert!(ListJoinerPattern::try_from_str("{0} and {1} ", true, false).is_err());
+        assert!(ListJoinerPattern::try_from_str(" {0} and {1}", true, true).is_ok());
+        assert!(ListJoinerPattern::try_from_str(" {0} and {1}", false, true).is_err());
     }
 
     #[test]
@@ -228,10 +224,6 @@ pub mod test {
     #[test]
     fn produces_correct_parts_conditionally() {
         assert_eq!(
-            test_patterns().end(ListLength::Narrow).parts("A"),
-            ("", " :o ", "")
-        );
-        assert_eq!(
             test_patterns().end(ListLength::Narrow).parts("a"),
             ("", " :o ", "")
         );
@@ -240,11 +232,11 @@ pub mod test {
             ("", " :o ", "")
         );
         assert_eq!(
-            test_patterns().end(ListLength::Narrow).parts("B"),
+            test_patterns().end(ListLength::Narrow).parts("b"),
             ("", ". ", "")
         );
         assert_eq!(
-            test_patterns().end(ListLength::Narrow).parts("BA"),
+            test_patterns().end(ListLength::Narrow).parts("ba"),
             ("", ". ", "")
         );
     }

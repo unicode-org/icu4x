@@ -1,26 +1,80 @@
 #ifndef DIPLOMAT_RUNTIME_CPP_H
 #define DIPLOMAT_RUNTIME_CPP_H
 
-#include <string>
-#include <variant>
-#include <array>
 #include <optional>
+#include <string>
 #include <type_traits>
+#include <variant>
 
 #if __cplusplus >= 202002L
-#include<span>
+#include <span>
+#else
+#include <array>
 #endif
-
-#include "diplomat_runtime.h"
 
 namespace diplomat {
 
-extern "C" inline void Flush(capi::DiplomatWriteable* w) {
+namespace capi {
+extern "C" {
+
+static_assert(sizeof(char) == sizeof(uint8_t), "your architecture's `char` is not 8 bits");
+static_assert(sizeof(char16_t) == sizeof(uint16_t), "your architecture's `char16_t` is not 16 bits");
+static_assert(sizeof(char32_t) == sizeof(uint32_t), "your architecture's `char32_t` is not 32 bits");
+
+typedef struct DiplomatWrite {
+    void* context;
+    char* buf;
+    size_t len;
+    size_t cap;
+    bool grow_failed;
+    void (*flush)(struct DiplomatWrite*);
+    bool (*grow)(struct DiplomatWrite*, size_t);
+} DiplomatWrite;
+
+bool diplomat_is_str(const char* buf, size_t len);
+
+#define MAKE_SLICES(name, c_ty) \
+    typedef struct Diplomat##name##View { \
+        const c_ty* data; \
+        size_t len; \
+    } Diplomat##name##View; \
+    typedef struct Diplomat##name##ViewMut { \
+        c_ty* data; \
+        size_t len; \
+    } Diplomat##name##ViewMut; \
+    typedef struct Diplomat##name##Array { \
+        const c_ty* data; \
+        size_t len; \
+    } Diplomat##name##Array;
+
+MAKE_SLICES(I8, int8_t)
+MAKE_SLICES(U8, uint8_t)
+MAKE_SLICES(I16, int16_t)
+MAKE_SLICES(U16, uint16_t)
+MAKE_SLICES(I32, int32_t)
+MAKE_SLICES(U32, uint32_t)
+MAKE_SLICES(I64, int64_t)
+MAKE_SLICES(U64, uint64_t)
+MAKE_SLICES(Isize, intptr_t)
+MAKE_SLICES(Usize, size_t)
+MAKE_SLICES(F32, float)
+MAKE_SLICES(F64, double)
+MAKE_SLICES(Bool, bool)
+MAKE_SLICES(Char, char32_t)
+MAKE_SLICES(String, char)
+MAKE_SLICES(String16, char16_t)
+MAKE_SLICES(Strings, DiplomatStringView)
+MAKE_SLICES(Strings16, DiplomatString16View)
+
+} // extern "C"
+} // namespace capi
+
+extern "C" inline void _flush(capi::DiplomatWrite* w) {
   std::string* string = reinterpret_cast<std::string*>(w->context);
   string->resize(w->len);
 };
 
-extern "C" inline bool Grow(capi::DiplomatWriteable* w, uintptr_t requested) {
+extern "C" inline bool _grow(capi::DiplomatWrite* w, uintptr_t requested) {
   std::string* string = reinterpret_cast<std::string*>(w->context);
   string->resize(requested);
   w->cap = string->length();
@@ -28,28 +82,17 @@ extern "C" inline bool Grow(capi::DiplomatWriteable* w, uintptr_t requested) {
   return true;
 };
 
-inline capi::DiplomatWriteable WriteableFromString(std::string& string) {
-  capi::DiplomatWriteable w;
+inline capi::DiplomatWrite WriteFromString(std::string& string) {
+  capi::DiplomatWrite w;
   w.context = &string;
   w.buf = &string[0];
   w.len = string.length();
-  // Same as length, since C++ strings are not supposed
-  // to be written to past their len; you resize *first*
   w.cap = string.length();
-  w.flush = Flush;
-  w.grow = Grow;
+  // Will never become true, as _grow is infallible.
+  w.grow_failed = false;
+  w.flush = _flush;
+  w.grow = _grow;
   return w;
-};
-
-template<typename T> struct WriteableTrait {
-  // static inline capi::DiplomatWriteable Construct(T& t);
-};
-
-
-template<> struct WriteableTrait<std::string> {
-  static inline capi::DiplomatWriteable Construct(std::string& t) {
-    return diplomat::WriteableFromString(t);
-  }
 };
 
 template<class T> struct Ok {
@@ -131,13 +174,14 @@ public:
   }
 };
 
+class Utf8Error {};
 
 // Use custom std::span on C++17, otherwise use std::span
 #if __cplusplus >= 202002L
 
 template<class T> using span = std::span<T>;
 
-#else // __cplusplus >= 202002L
+#else // __cplusplus < 202002L
 
 // C++-17-compatible std::span
 template<class T>
@@ -162,6 +206,6 @@ private:
 
 #endif // __cplusplus >= 202002L
 
-}
+} // namespace diplomat
 
 #endif

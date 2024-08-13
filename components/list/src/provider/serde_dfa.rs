@@ -51,6 +51,13 @@ impl databake::Bake for SerdeDFA<'_> {
 }
 
 #[cfg(feature = "datagen")]
+impl databake::BakeSize for SerdeDFA<'_> {
+    fn borrows_size(&self) -> usize {
+        self.deref().write_to_len()
+    }
+}
+
+#[cfg(feature = "datagen")]
 impl serde::Serialize for SerdeDFA<'_> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -63,11 +70,11 @@ impl serde::Serialize for SerdeDFA<'_> {
                 .unwrap_or_else(|| {
                     use serde::ser::Error;
                     Err(S::Error::custom(
-                        "cannot serialize a deserialized bincode SerdeDFA to JSON",
+                        "cannot serialize a binary-deserialized SerdeDFA to JSON",
                     ))
                 })
         } else {
-            self.deref().to_bytes_little_endian().serialize(serializer)
+            serializer.serialize_bytes(&self.deref().to_bytes_little_endian())
         }
     }
 }
@@ -80,7 +87,7 @@ impl<'data> SerdeDFA<'data> {
     where
         D: serde::de::Deserializer<'de>,
     {
-        use icu_provider::serde::borrow_de_utils::CowBytesWrap;
+        use icu_provider::serde_borrow_de_utils::CowBytesWrap;
         use serde::Deserialize;
 
         #[cfg(feature = "serde_human")]
@@ -128,23 +135,33 @@ impl<'data> SerdeDFA<'data> {
     /// Creates a `SerdeDFA` from a regex.
     #[cfg(any(feature = "datagen", feature = "serde_human",))]
     pub fn new(pattern: Cow<'data, str>) -> Result<Self, icu_provider::DataError> {
-        use regex_automata::{
-            dfa::dense::{Builder, Config},
-            SyntaxConfig,
+        use regex_automata::dfa::dense::{Builder, Config};
+
+        let Some(anchored_pattern) = pattern.strip_prefix('^') else {
+            return Err(
+                DataError::custom("Only anchored regexes (starting with ^) are supported")
+                    .with_display_context(&pattern),
+            );
         };
 
         let mut builder = Builder::new();
         let dfa = builder
-            .syntax(SyntaxConfig::new().case_insensitive(true))
-            .configure(Config::new().anchored(true).minimize(true))
-            .build(&pattern)
-            .map_err(|_| {
-                icu_provider::DataError::custom("Cannot build DFA").with_display_context(&pattern)
+            .configure(
+                Config::new()
+                    .start_kind(regex_automata::dfa::StartKind::Anchored)
+                    .minimize(true),
+            )
+            .build(anchored_pattern)
+            .map_err(|e| {
+                icu_provider::DataError::custom("Cannot build DFA")
+                    .with_display_context(anchored_pattern)
+                    .with_debug_context(&e)
             })?
             .to_sparse()
-            .map_err(|_| {
+            .map_err(|e| {
                 icu_provider::DataError::custom("Cannot sparsify DFA")
-                    .with_display_context(&pattern)
+                    .with_display_context(anchored_pattern)
+                    .with_debug_context(&e)
             })?;
 
         Ok(Self {
@@ -164,23 +181,32 @@ impl<'data> SerdeDFA<'data> {
 #[cfg(all(test, feature = "datagen"))]
 mod test {
     use super::*;
+    use regex_automata::Input;
 
     #[test]
     fn test_serde_dfa() {
         use regex_automata::dfa::Automaton;
 
-        let matcher = SerdeDFA::new(Cow::Borrowed("abc")).unwrap();
+        let matcher = SerdeDFA::new(Cow::Borrowed("^abc")).unwrap();
 
-        assert!(matcher.deref().find_earliest_fwd(b"ab").unwrap().is_none());
-        assert!(matcher.deref().find_earliest_fwd(b"abc").unwrap().is_some());
         assert!(matcher
             .deref()
-            .find_earliest_fwd(b"abcde")
+            .try_search_fwd(&Input::new("ab").anchored(regex_automata::Anchored::Yes))
+            .unwrap()
+            .is_none());
+        assert!(matcher
+            .deref()
+            .try_search_fwd(&Input::new("abc").anchored(regex_automata::Anchored::Yes))
             .unwrap()
             .is_some());
         assert!(matcher
             .deref()
-            .find_earliest_fwd(b" abcde")
+            .try_search_fwd(&Input::new("abcde").anchored(regex_automata::Anchored::Yes))
+            .unwrap()
+            .is_some());
+        assert!(matcher
+            .deref()
+            .try_search_fwd(&Input::new(" abcde").anchored(regex_automata::Anchored::Yes))
             .unwrap()
             .is_none());
     }
@@ -193,7 +219,7 @@ mod test {
     #[test]
     #[cfg(target_endian = "little")]
     fn test_postcard_serialization() {
-        let matcher = SerdeDFA::new(Cow::Borrowed("abc*")).unwrap();
+        let matcher = SerdeDFA::new(Cow::Borrowed("^abc*")).unwrap();
 
         let mut bytes = postcard::to_stdvec(&matcher).unwrap();
         assert_eq!(
@@ -216,9 +242,20 @@ mod test {
     }
 
     #[test]
+    fn test_rmp_serialization() {
+        let matcher = SerdeDFA::new(Cow::Borrowed("^abc*")).unwrap();
+
+        let bytes = rmp_serde::to_vec(&matcher).unwrap();
+        assert_eq!(
+            rmp_serde::from_slice::<OptionSerdeDFA>(&bytes).unwrap().0,
+            Some(matcher)
+        );
+    }
+
+    #[test]
     #[cfg(feature = "serde_human")]
     fn test_json_serialization() {
-        let matcher = SerdeDFA::new(Cow::Borrowed("abc*")).unwrap();
+        let matcher = SerdeDFA::new(Cow::Borrowed("^abc*")).unwrap();
 
         let json = serde_json::to_string(&matcher).unwrap();
         assert_eq!(
@@ -233,11 +270,16 @@ mod test {
         // This is the DFA for ".*"
         databake::test_bake!(
             SerdeDFA,
-            const: unsafe { crate::provider::SerdeDFA::from_dfa_bytes_unchecked(if cfg!(target_endian = "little") {
-                b"rust-regex-automata-dfa-sparse\0\0\xFF\xFE\0\0\x02\0\0\0\0\0\0\0\x0E\0\0\0\x01\0\0\0\0\0\0\0\0\0\0\0\0\0\x01\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x06\x06\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x08\t\t\t\t\t\t\t\t\t\t\t\t\n\x0B\x0B\x0C\r\r\r\x0E\x0F\x0F\x0F\x0F\x0F\x0F\x0F\x0F\x0F\x0F\x0F\x98\x01\0\0\x01\0\0\0\0\0\0\0\0\x01\0\0\0\0\0\0\0\0\x0E\x80\0\0\x01\x01\x02\x02\x03\x06\x07\x07\x08\x08\t\t\n\n\x0B\x0B\x0C\x0C\r\r\x0E\x0E\x0F\x0F\0\0\x12\0\0\0q\0\0\0\x12\0\0\0q\0\0\0\x82\0\0\0\x99\0\0\0\xB0\0\0\0\xC7\0\0\0\xB0\0\0\0\xDE\0\0\0\xF5\0\0\0\x0C\x01\0\0q\0\0\0q\0\0\0\x01\0\0\0\0\0\0\0\0\x01\x80\0\0\0\0\0\0\x01\0\0\0\0\0\0\0\0\x02\x80\x03\x05\0\0#\x01\0\0\0\0\0\0\x01\0\0\0\0\0\0\0\0\x02\x80\x05\x05\0\0\x89\x01\0\0\0\0\0\0\x01\0\0\0\0\0\0\0\0\x02\x80\x03\x05\0\0\x89\x01\0\0\0\0\0\0\x01\0\0\0\0\0\0\0\0\x02\x80\x03\x04\0\0\x89\x01\0\0\0\0\0\0\x01\0\0\0\0\0\0\0\0\x02\x80\x04\x05\0\0z\x01\0\0\0\0\0\0\x01\0\0\0\0\0\0\0\0\x02\x80\x03\x05\0\0z\x01\0\0\0\0\0\0\x01\0\0\0\0\0\0\0\0\x02\x80\x03\x03\0\0z\x01\0\0\0\0\0\0\x01\0\0\0\0\0\0\0\0\x0E\0\0\0\x01\x01\x02\x02\x03\x06\x07\x07\x08\x08\t\t\n\n\x0B\x0B\x0C\x0C\r\r\x0E\x0E\x0F\x0F\0\0\x12\0\0\0q\0\0\0\x12\0\0\0q\0\0\0\x82\0\0\0\x99\0\0\0\xB0\0\0\0\xC7\0\0\0\xB0\0\0\0\xDE\0\0\0\xF5\0\0\0\x0C\x01\0\0q\0\0\0q\0\0\0\0\x02\0\x03\x05\0\0\x89\x01\0\0\0\0\0\0\0\x02\0\x03\x05\0\0#\x01\0\0\0\0\0\0\0\x04\0\0\0\0\0\0\0#\x01\0\0#\x01\0\0#\x01\0\0#\x01\0\0#\x01\0\0\t\0\0\0\x12\0\0\0\x0C\x01\0\0\0\0\0\0\0\0\0\0#\x01\0\0#\x01\0\0"
-            } else {
-                b"rust-regex-automata-dfa-sparse\0\0\0\0\xFE\xFF\0\0\0\x02\0\0\0\0\0\0\0\x0E\0\0\0\x01\0\0\0\0\0\0\0\0\0\0\x01\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x06\x06\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x08\t\t\t\t\t\t\t\t\t\t\t\t\n\x0B\x0B\x0C\r\r\r\x0E\x0F\x0F\x0F\x0F\x0F\x0F\x0F\x0F\x0F\x0F\x0F\0\0\x01\x98\x01\0\0\0\0\0\0\0\0\x01\0\0\0\0\0\0\0\0\x0E\x80\0\0\x01\x01\x02\x02\x03\x06\x07\x07\x08\x08\t\t\n\n\x0B\x0B\x0C\x0C\r\r\x0E\x0E\x0F\x0F\0\0\x12\0\0\0q\0\0\0\x12\0\0\0q\0\0\0\x82\0\0\0\x99\0\0\0\xB0\0\0\0\xC7\0\0\0\xB0\0\0\0\xDE\0\0\0\xF5\0\0\0\x0C\x01\0\0q\0\0\0q\0\0\0\x01\0\0\0\0\0\0\0\0\x01\x80\0\0\0\0\0\0\x01\0\0\0\0\0\0\0\0\x02\x80\x03\x05\0\0#\x01\0\0\0\0\0\0\x01\0\0\0\0\0\0\0\0\x02\x80\x05\x05\0\0\x89\x01\0\0\0\0\0\0\x01\0\0\0\0\0\0\0\0\x02\x80\x03\x05\0\0\x89\x01\0\0\0\0\0\0\x01\0\0\0\0\0\0\0\0\x02\x80\x03\x04\0\0\x89\x01\0\0\0\0\0\0\x01\0\0\0\0\0\0\0\0\x02\x80\x04\x05\0\0z\x01\0\0\0\0\0\0\x01\0\0\0\0\0\0\0\0\x02\x80\x03\x05\0\0z\x01\0\0\0\0\0\0\x01\0\0\0\0\0\0\0\0\x02\x80\x03\x03\0\0z\x01\0\0\0\0\0\0\x01\0\0\0\0\0\0\0\0\x0E\0\0\0\x01\x01\x02\x02\x03\x06\x07\x07\x08\x08\t\t\n\n\x0B\x0B\x0C\x0C\r\r\x0E\x0E\x0F\x0F\0\0\x12\0\0\0q\0\0\0\x12\0\0\0q\0\0\0\x82\0\0\0\x99\0\0\0\xB0\0\0\0\xC7\0\0\0\xB0\0\0\0\xDE\0\0\0\xF5\0\0\0\x0C\x01\0\0q\0\0\0q\0\0\0\0\x02\0\x03\x05\0\0\x89\x01\0\0\0\0\0\0\0\x02\0\x03\x05\0\0#\x01\0\0\0\0\0\0\0\0\0\0\x04\0\0\0\0#\x01\0\0#\x01\0\0#\x01\0\0#\x01\0\0\0\0\x01#\0\0\0\t\0\0\0\x12\0\0\x01\x0C\0\0\0\0\0\0\0\0\0\0\x01#\0\0\x01#"
-            })},
+            const,
+            unsafe {
+                crate::provider::SerdeDFA::from_dfa_bytes_unchecked(
+                    if cfg!(target_endian = "little") {
+                        b"rust-regex-automata-dfa-sparse\0\0\xFF\xFE\0\0\x02\0\0\0\0\0\0\0\x02\0\0\0\x0E\0\0\0\x01\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\x01\x02\x02\x02\x03\x04\x04\x05\x06\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x08\t\t\t\n\x0B\x0B\x0C\r\x0E\x0E\x0E\x0E\x0E\x0E\x0E\x0E\x0E\x0E\x0E\x0E\x0E\x0E\x0E\x0E\x0E\x0E\x0E\x0E\x0E\x0E\x0F\x0F\x0F\x0F\x0F\x0F\x0F\x0F\x0F\x0F\x0F\x0F\x0F\x0F\x0F\x0F\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x12\x12\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x14\x15\x15\x15\x15\x15\x15\x15\x15\x15\x15\x15\x15\x16\x17\x17\x18\x19\x19\x19\x1A\x1B\x1B\x1B\x1B\x1B\x1B\x1B\x1B\x1B\x1B\x1B(\x01\0\0\x01\0\0\0\0\0\0\0\0\x01\0\0\0\0\0\0\0\0\x01\x80\0\0\0\0\0\0\x01\0\0\0\0\0\0\0\0\x05\0\x05\x05\x06\x06\x0C\x0C\r\r\0\0S\0\0\0D\0\0\0S\0\0\0D\0\0\0\0\0\0\0\0\x02\0\0\x1B\0\0\x12\0\0\0\x12\0\0\0\0\x03\0\x06\x06\r\r\0\0h\0\0\0h\0\0\0\0\0\0\0\0\x0E\0\0\0\x02\x02\x04\x07\t\t\x0B\x0E\x13\x13\x14\x14\x15\x15\x16\x16\x17\x17\x18\x18\x19\x19\x1A\x1A\0\0D\0\0\0D\0\0\0D\0\0\0D\0\0\0D\0\0\0\xBF\0\0\0\xCE\0\0\0\xDD\0\0\0\xEC\0\0\0\xDD\0\0\0\xFB\0\0\0\n\x01\0\0\x19\x01\0\0\x12\0\0\0\0\x02\0\x0F\x11\0\0D\0\0\0\0\0\0\0\0\x02\0\x11\x11\0\0\xBF\0\0\0\0\0\0\0\0\x02\0\x0F\x11\0\0\xBF\0\0\0\0\0\0\0\0\x02\0\x0F\x10\0\0\xBF\0\0\0\0\0\0\0\0\x02\0\x10\x11\0\0\xDD\0\0\0\0\0\0\0\0\x02\0\x0F\x11\0\0\xDD\0\0\0\0\0\0\0\0\x02\0\x0F\x0F\0\0\xDD\0\0\0\0\0\0\0\0\x02\0\0\0\0\0\0\0\0\0\0\0\0\0\x03\0\0\x04\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\0\0\0\0\0\0\0\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\0\0\0\0\x01\0\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\x06\0\0\0\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF`\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0#\0\0\0#\0\0\0#\0\0\0#\0\0\0#\0\0\0#\0\0\0\x12\0\0\0\t\0\0\0\x12\0\0\0\x12\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+                    } else {
+                        b"rust-regex-automata-dfa-sparse\0\0\0\0\xFE\xFF\0\0\0\x02\0\0\0\0\0\0\0\x02\0\0\0\x0E\0\0\0\x01\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\x01\x02\x02\x02\x03\x04\x04\x05\x06\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x08\t\t\t\n\x0B\x0B\x0C\r\x0E\x0E\x0E\x0E\x0E\x0E\x0E\x0E\x0E\x0E\x0E\x0E\x0E\x0E\x0E\x0E\x0E\x0E\x0E\x0E\x0E\x0E\x0F\x0F\x0F\x0F\x0F\x0F\x0F\x0F\x0F\x0F\x0F\x0F\x0F\x0F\x0F\x0F\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x12\x12\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x13\x14\x15\x15\x15\x15\x15\x15\x15\x15\x15\x15\x15\x15\x16\x17\x17\x18\x19\x19\x19\x1A\x1B\x1B\x1B\x1B\x1B\x1B\x1B\x1B\x1B\x1B\x1B\0\0\x01(\0\x01\0\0\0\0\0\0\0\0\x01\0\0\0\0\0\0\0\x80\x01\0\0\0\0\0\0\0\0\0\x01\0\0\0\0\0\0\x05\x05\x05\x06\x06\x0C\x0C\r\r\0\0\0\0\0S\0\0\0D\0\0\0S\0\0\0D\0\0\0\0\0\0\x02\0\x1B\0\0\0\0\0\x12\0\0\0\x12\0\0\x03\x06\x06\r\r\0\0\0\0\0h\0\0\0h\0\0\0\0\0\0\x0E\0\0\x02\x02\x04\x07\t\t\x0B\x0E\x13\x13\x14\x14\x15\x15\x16\x16\x17\x17\x18\x18\x19\x19\x1A\x1A\0\0\0\0\0D\0\0\0D\0\0\0D\0\0\0D\0\0\0D\0\0\0\xBF\0\0\0\xCE\0\0\0\xDD\0\0\0\xEC\0\0\0\xDD\0\0\0\xFB\0\0\x01\n\0\0\x01\x19\0\0\0\x12\0\0\x02\x0F\x11\0\0\0\0\0D\0\0\0\0\0\0\x02\x11\x11\0\0\0\0\0\xBF\0\0\0\0\0\0\x02\x0F\x11\0\0\0\0\0\xBF\0\0\0\0\0\0\x02\x0F\x10\0\0\0\0\0\xBF\0\0\0\0\0\0\x02\x10\x11\0\0\0\0\0\xDD\0\0\0\0\0\0\x02\x0F\x11\0\0\0\0\0\xDD\0\0\0\0\0\0\x02\x0F\x0F\0\0\0\0\0\xDD\0\0\0\0\0\0\0\0\x02\0\0\0\0\0\0\0\0\0\0\x03\0\0\x04\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\0\0\0\0\0\0\0\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\0\0\0\0\x01\0\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\x06\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\0\0\0`\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0#\0\0\0#\0\0\0#\0\0\0#\0\0\0#\0\0\0#\0\0\0\x12\0\0\0\t\0\0\0\x12\0\0\0\x12\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+                    },
+                )
+            },
             icu_list
         );
     }

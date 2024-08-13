@@ -13,7 +13,6 @@ use crate::elements::{
     CollationElement, CollationElements, NonPrimary, JAMO_COUNT, NO_CE, NO_CE_PRIMARY,
     NO_CE_SECONDARY, NO_CE_TERTIARY, OPTIMIZED_DIACRITICS_MAX_COUNT, QUATERNARY_MASK,
 };
-use crate::error::CollatorError;
 use crate::options::CollatorOptionsBitField;
 use crate::provider::CollationDataV1Marker;
 use crate::provider::CollationDiacriticsV1Marker;
@@ -70,19 +69,21 @@ pub struct Collator {
 impl Collator {
     /// Creates a collator for the given locale and options from compiled data.
     #[cfg(feature = "compiled_data")]
-    pub fn try_new(locale: &DataLocale, options: CollatorOptions) -> Result<Self, CollatorError> {
+    pub fn try_new(locale: &DataLocale, options: CollatorOptions) -> Result<Self, DataError> {
         Self::try_new_unstable_internal(
             &crate::provider::Baked,
             DataPayload::from_static_ref(
-                icu_normalizer::provider::Baked::SINGLETON_NORMALIZER_NFD_V1,
+                icu_normalizer::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V1_MARKER,
             ),
             DataPayload::from_static_ref(
-                icu_normalizer::provider::Baked::SINGLETON_NORMALIZER_NFDEX_V1,
+                icu_normalizer::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER,
             ),
-            DataPayload::from_static_ref(crate::provider::Baked::SINGLETON_COLLATOR_JAMO_V1),
+            DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_COLLATION_JAMO_V1_MARKER,
+            ),
             || {
                 Ok(DataPayload::from_static_ref(
-                    crate::provider::Baked::SINGLETON_COLLATOR_PRIM_V1,
+                    crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1_MARKER,
                 ))
             },
             locale,
@@ -91,10 +92,14 @@ impl Collator {
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        options: CollatorOptions,
-        error: CollatorError,
-        #[cfg(skip)]
+        (locale, options: CollatorOptions) -> error: DataError,
+        functions: [
+            try_new: skip,
+            try_new_with_any_provider,
+            try_new_with_buffer_provider,
+            try_new_unstable,
+            Self
+        ]
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
@@ -102,7 +107,7 @@ impl Collator {
         provider: &D,
         locale: &DataLocale,
         options: CollatorOptions,
-    ) -> Result<Self, CollatorError>
+    ) -> Result<Self, DataError>
     where
         D: DataProvider<CollationSpecialPrimariesV1Marker>
             + DataProvider<CollationDataV1Marker>
@@ -116,10 +121,10 @@ impl Collator {
     {
         Self::try_new_unstable_internal(
             provider,
-            provider.load(Default::default())?.take_payload()?,
-            provider.load(Default::default())?.take_payload()?,
-            provider.load(Default::default())?.take_payload()?,
-            || provider.load(Default::default())?.take_payload(),
+            provider.load(Default::default())?.payload,
+            provider.load(Default::default())?.payload,
+            provider.load(Default::default())?.payload,
+            || provider.load(Default::default()).map(|r| r.payload),
             locale,
             options,
         )
@@ -136,7 +141,7 @@ impl Collator {
         >,
         locale: &DataLocale,
         options: CollatorOptions,
-    ) -> Result<Self, CollatorError>
+    ) -> Result<Self, DataError>
     where
         D: DataProvider<CollationDataV1Marker>
             + DataProvider<CollationDiacriticsV1Marker>
@@ -144,38 +149,67 @@ impl Collator {
             + DataProvider<CollationReorderingV1Marker>
             + ?Sized,
     {
-        let req = DataRequest {
+        let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(
+            DataMarkerAttributes::from_str_or_panic(
+                locale.get_single_unicode_ext("co").unwrap_or_default(),
+            ),
             locale,
-            metadata: Default::default(),
+        );
+
+        let req = DataRequest {
+            id,
+            metadata: {
+                let mut metadata = DataRequestMetadata::default();
+                metadata.silent = true;
+                metadata
+            },
         };
 
-        let metadata_payload: DataPayload<crate::provider::CollationMetadataV1Marker> =
-            provider.load(req)?.take_payload()?;
+        let fallback_req = DataRequest {
+            id: DataIdentifierBorrowed::for_locale(locale),
+            ..Default::default()
+        };
+
+        let metadata_payload: DataPayload<crate::provider::CollationMetadataV1Marker> = provider
+            .load(req)
+            .or_else(|_| provider.load(fallback_req))?
+            .payload;
 
         let metadata = metadata_payload.get();
 
         let tailoring: Option<DataPayload<crate::provider::CollationDataV1Marker>> =
             if metadata.tailored() {
-                Some(provider.load(req)?.take_payload()?)
+                Some(
+                    provider
+                        .load(req)
+                        .or_else(|_| provider.load(fallback_req))?
+                        .payload,
+                )
             } else {
                 None
             };
 
         let reordering: Option<DataPayload<crate::provider::CollationReorderingV1Marker>> =
             if metadata.reordering() {
-                Some(provider.load(req)?.take_payload()?)
+                Some(
+                    provider
+                        .load(req)
+                        .or_else(|_| provider.load(fallback_req))?
+                        .payload,
+                )
             } else {
                 None
             };
 
         if let Some(reordering) = &reordering {
             if reordering.get().reorder_table.len() != 256 {
-                return Err(CollatorError::MalformedData);
+                return Err(
+                    DataError::custom("invalid").with_marker(CollationReorderingV1Marker::INFO)
+                );
             }
         }
 
-        let root: DataPayload<CollationDataV1Marker> =
-            provider.load(Default::default())?.take_payload()?;
+        let root: DataPayload<CollationDataV1Marker> = provider.load(Default::default())?.payload;
 
         let tailored_diacritics = metadata.tailored_diacritics();
         let diacritics: DataPayload<CollationDiacriticsV1Marker> = provider
@@ -184,7 +218,7 @@ impl Collator {
             } else {
                 Default::default()
             })?
-            .take_payload()?;
+            .payload;
 
         if tailored_diacritics {
             // In the tailored case we accept a shorter table in which case the tailoring is
@@ -193,15 +227,17 @@ impl Collator {
             // Vietnamese and Ewe load a full-length alternative table and the rest use
             // the default one.
             if diacritics.get().secondaries.len() > OPTIMIZED_DIACRITICS_MAX_COUNT {
-                return Err(CollatorError::MalformedData);
+                return Err(
+                    DataError::custom("invalid").with_marker(CollationDiacriticsV1Marker::INFO)
+                );
             }
         } else if diacritics.get().secondaries.len() != OPTIMIZED_DIACRITICS_MAX_COUNT {
-            return Err(CollatorError::MalformedData);
+            return Err(DataError::custom("invalid").with_marker(CollationDiacriticsV1Marker::INFO));
         }
 
         // TODO: redesign Korean search collation handling
         if jamo.get().ce32s.len() != JAMO_COUNT {
-            return Err(CollatorError::MalformedData);
+            return Err(DataError::custom("invalid").with_marker(CollationJamoV1Marker::INFO));
         }
 
         let mut altered_defaults = CollatorOptionsBitField::new();
@@ -226,7 +262,8 @@ impl Collator {
             // `variant_count` isn't stable yet:
             // https://github.com/rust-lang/rust/issues/73662
             if special_primaries.get().last_primaries.len() <= (MaxVariable::Currency as usize) {
-                return Err(CollatorError::MalformedData);
+                return Err(DataError::custom("invalid")
+                    .with_marker(CollationSpecialPrimariesV1Marker::INFO));
             }
             Some(special_primaries)
         } else {

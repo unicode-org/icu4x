@@ -4,7 +4,10 @@
 
 //! Code for the [`SinglePlaceholder`] pattern backend.
 
+use core::convert::Infallible;
+use core::str::Utf8Error;
 use core::{cmp::Ordering, str::FromStr};
+use writeable::adapters::WriteableAsTryWriteableInfallible;
 use writeable::Writeable;
 
 use crate::common::*;
@@ -19,14 +22,14 @@ use alloc::string::String;
 ///
 /// ```
 /// use core::cmp::Ordering;
+/// use core::str::FromStr;
 /// use icu_pattern::PatternItem;
 /// use icu_pattern::SinglePlaceholder;
 /// use icu_pattern::SinglePlaceholderKey;
 /// use icu_pattern::SinglePlaceholderPattern;
 ///
 /// // Parse the string syntax and check the resulting data store:
-/// let pattern =
-///     SinglePlaceholderPattern::try_from_str("Hello, {0}!").unwrap();
+/// let pattern = SinglePlaceholderPattern::from_str("Hello, {0}!").unwrap();
 ///
 /// assert_eq!(
 ///     pattern.iter().cmp(
@@ -58,9 +61,14 @@ impl<W> PlaceholderValueProvider<SinglePlaceholderKey> for (W,)
 where
     W: Writeable,
 {
-    type W<'a> = &'a W where W: 'a;
-    fn value_for(&self, _key: SinglePlaceholderKey) -> Self::W<'_> {
-        &self.0
+    type Error = Infallible;
+    type W<'a> = WriteableAsTryWriteableInfallible<&'a W> where W: 'a;
+    const LITERAL_PART: writeable::Part = crate::PATTERN_LITERAL_PART;
+    fn value_for(&self, _key: SinglePlaceholderKey) -> (Self::W<'_>, writeable::Part) {
+        (
+            WriteableAsTryWriteableInfallible(&self.0),
+            crate::PATTERN_PLACEHOLDER_PART,
+        )
     }
 }
 
@@ -68,10 +76,15 @@ impl<W> PlaceholderValueProvider<SinglePlaceholderKey> for [W; 1]
 where
     W: Writeable,
 {
-    type W<'a> = &'a W where W: 'a;
-    fn value_for(&self, _key: SinglePlaceholderKey) -> Self::W<'_> {
+    type Error = Infallible;
+    type W<'a> = WriteableAsTryWriteableInfallible<&'a W> where W: 'a;
+    const LITERAL_PART: writeable::Part = crate::PATTERN_LITERAL_PART;
+    fn value_for(&self, _key: SinglePlaceholderKey) -> (Self::W<'_>, writeable::Part) {
         let [value] = self;
-        value
+        (
+            WriteableAsTryWriteableInfallible(value),
+            crate::PATTERN_PLACEHOLDER_PART,
+        )
     }
 }
 
@@ -95,11 +108,12 @@ where
 /// Parsing a pattern into the encoding:
 ///
 /// ```
+/// use core::str::FromStr;
 /// use icu_pattern::Pattern;
 /// use icu_pattern::SinglePlaceholder;
 ///
 /// // Parse the string syntax and check the resulting data store:
-/// let store = Pattern::<SinglePlaceholder, _>::try_from_str("Hello, {0}!")
+/// let store = Pattern::<SinglePlaceholder, _>::from_str("Hello, {0}!")
 ///     .unwrap()
 ///     .take_store();
 ///
@@ -109,12 +123,13 @@ where
 /// Example patterns supported by this backend:
 ///
 /// ```
+/// use core::str::FromStr;
 /// use icu_pattern::Pattern;
 /// use icu_pattern::SinglePlaceholder;
 ///
 /// // Single numeric placeholder:
 /// assert_eq!(
-///     Pattern::<SinglePlaceholder, _>::try_from_str("{0} days ago")
+///     Pattern::<SinglePlaceholder, _>::from_str("{0} days ago")
 ///         .unwrap()
 ///         .interpolate_to_string([5]),
 ///     "5 days ago",
@@ -122,7 +137,7 @@ where
 ///
 /// // Single named placeholder:
 /// assert_eq!(
-///     Pattern::<SinglePlaceholder, _>::try_from_str("{name}")
+///     Pattern::<SinglePlaceholder, _>::from_str("{name}")
 ///         .unwrap()
 ///         .interpolate_to_string(["Alice"]),
 ///     "Alice",
@@ -130,7 +145,7 @@ where
 ///
 /// // No placeholder (note, the placeholder value is never accessed):
 /// assert_eq!(
-///     Pattern::<SinglePlaceholder, _>::try_from_str("yesterday")
+///     Pattern::<SinglePlaceholder, _>::from_str("yesterday")
 ///         .unwrap()
 ///         .interpolate_to_string(["hi"]),
 ///     "yesterday",
@@ -138,7 +153,7 @@ where
 ///
 /// // Escaped placeholder and a real placeholder:
 /// assert_eq!(
-///     Pattern::<SinglePlaceholder, _>::try_from_str("'{0}' {1}")
+///     Pattern::<SinglePlaceholder, _>::from_str("'{0}' {1}")
 ///         .unwrap()
 ///         .interpolate_to_string(("hi",)),
 ///     "{0} hi",
@@ -153,9 +168,18 @@ pub enum SinglePlaceholder {}
 impl crate::private::Sealed for SinglePlaceholder {}
 
 impl PatternBackend for SinglePlaceholder {
-    type PlaceholderKey = SinglePlaceholderKey;
+    type PlaceholderKey<'a> = SinglePlaceholderKey;
+    #[cfg(feature = "alloc")]
+    type PlaceholderKeyCow<'a> = SinglePlaceholderKey;
+    type Error<'a> = Infallible;
+    type StoreFromBytesError = Utf8Error;
     type Store = str;
     type Iter<'a> = SinglePlaceholderPatternIterator<'a>;
+
+    #[inline]
+    fn try_store_from_utf8(utf8: &[u8]) -> Result<&Self::Store, Self::StoreFromBytesError> {
+        core::str::from_utf8(utf8)
+    }
 
     fn validate_store(store: &Self::Store) -> Result<(), Error> {
         let placeholder_offset_char = store.chars().next().ok_or(Error::InvalidPattern)?;
@@ -188,8 +212,9 @@ impl PatternBackend for SinglePlaceholder {
 
     #[cfg(feature = "alloc")]
     fn try_from_items<
-        'a,
-        I: Iterator<Item = Result<PatternItemCow<'a, Self::PlaceholderKey>, Error>>,
+        'cow,
+        'ph,
+        I: Iterator<Item = Result<PatternItemCow<'cow, Self::PlaceholderKey<'ph>>, Error>>,
     >(
         items: I,
     ) -> Result<String, Error> {

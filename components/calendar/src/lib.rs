@@ -76,7 +76,7 @@
 //! `Time` object, including granularity of hour, minute, second, and nanosecond.
 //!
 //! ```rust
-//! use icu::calendar::{types::IsoWeekday, Time, DateTime};
+//! use icu::calendar::{types::IsoWeekday, DateTime, Time};
 //!
 //! // Creating ISO date: 1992-09-02 8:59
 //! let mut datetime_iso = DateTime::try_new_iso_datetime(1992, 9, 2, 8, 59, 0)
@@ -131,11 +131,15 @@ pub mod hebrew;
 pub mod indian;
 pub mod islamic;
 pub mod iso;
+#[cfg(feature = "ixdtf")]
+mod ixdtf;
 pub mod japanese;
 pub mod julian;
 pub mod persian;
 pub mod provider;
 pub mod roc;
+#[cfg(test)]
+mod tests;
 pub mod types;
 mod week_of;
 
@@ -145,21 +149,22 @@ pub mod week {
     pub use week_of::RelativeUnit;
     pub use week_of::WeekCalculator;
     pub use week_of::WeekOf;
+    #[doc(hidden)] // for debug-assert in datetime
+    pub use week_of::MIN_UNIT_DAYS;
 }
 
+#[cfg(feature = "ixdtf")]
+pub use crate::ixdtf::ParseError;
 #[doc(no_inline)]
 pub use any_calendar::{AnyCalendar, AnyCalendarKind};
 pub use calendar::Calendar;
 pub use date::{AsCalendar, Date, Ref};
 pub use datetime::DateTime;
-#[doc(hidden)]
+#[doc(hidden)] // unstable
 pub use duration::{DateDuration, DateDurationUnit};
-pub use error::CalendarError;
+pub use error::{DateError, RangeError};
 #[doc(no_inline)]
 pub use gregorian::Gregorian;
 #[doc(no_inline)]
 pub use iso::Iso;
 pub use types::Time;
-
-#[doc(no_inline)]
-pub use CalendarError as Error;

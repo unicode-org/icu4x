@@ -8,7 +8,8 @@ use displaydoc::Display;
 
 #[non_exhaustive]
 #[derive(PartialEq, Display, Clone, Copy, Debug)]
-pub enum ParserError {
+/// The error returned by `ixdtf`'s parsers.
+pub enum ParseError {
     #[displaydoc("Implementation error: this error must not throw.")]
     ImplAssert,
     #[displaydoc("Invalid float while parsing fraction part.")]
@@ -75,6 +76,8 @@ pub enum ParserError {
     // Duplicate calendar with critical.
     #[displaydoc("Duplicate calendars cannot be provided when one is critical.")]
     CriticalDuplicateCalendar,
+    #[displaydoc("Unrecognized annoation is marked as critical.")]
+    UnrecognizedCritical,
 
     // Time Zone Errors
     #[displaydoc("Invalid time zone leading character.")]
@@ -103,8 +106,8 @@ pub enum ParserError {
     TimeDurationDesignator,
 }
 
-impl ParserError {
+impl ParseError {
     pub(crate) fn abrupt_end(location: &'static str) -> Self {
-        ParserError::AbruptEnd { location }
+        ParseError::AbruptEnd { location }
     }
 }

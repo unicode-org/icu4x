@@ -13,12 +13,18 @@ use icu_calendar::{
     islamic::IslamicUmmAlQura, japanese::Japanese, japanese::JapaneseExtended, persian::Persian,
     Gregorian,
 };
-use icu_locid::extensions::unicode::{value, Value};
+use icu_locale_core::{
+    extensions::unicode::{value, Value},
+    subtags::{subtag, Subtag},
+};
 use icu_provider::prelude::*;
-use tinystr::{tinystr, TinyAsciiStr};
 
-#[cfg(feature = "experimental")]
+#[cfg(any(feature = "datagen", feature = "experimental"))]
 use crate::provider::neo::*;
+#[cfg(feature = "experimental")]
+use core::marker::PhantomData;
+#[cfg(any(feature = "datagen", feature = "experimental"))]
+use icu_provider::marker::NeverMarker;
 
 /// The `CldrCalendar` trait is sealed except when the `"experimental"` Cargo
 /// feature is enabled. If implementing `CldrCalendar`, you must also
@@ -50,22 +56,22 @@ pub trait CldrCalendar: InternalCldrCalendar {
     const DEFAULT_BCP_47_IDENTIFIER: Value;
 
     /// The data marker for loading symbols for this calendar.
-    type DateSymbolsV1Marker: KeyedDataMarker<Yokeable = DateSymbolsV1<'static>>;
+    type DateSymbolsV1Marker: DataMarker<DataStruct = DateSymbolsV1<'static>>;
 
     /// The data marker for loading length-patterns for this calendar.
-    type DateLengthsV1Marker: KeyedDataMarker<Yokeable = DateLengthsV1<'static>>;
+    type DateLengthsV1Marker: DataMarker<DataStruct = DateLengthsV1<'static>>;
 
-    #[cfg(feature = "experimental")]
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
     /// The data marker for loading year symbols for this calendar.
-    type YearNamesV1Marker: KeyedDataMarker<Yokeable = YearNamesV1<'static>>;
+    type YearNamesV1Marker: DataMarker<DataStruct = YearNamesV1<'static>>;
 
-    #[cfg(feature = "experimental")]
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
     /// The data marker for loading month symbols for this calendar.
-    type MonthNamesV1Marker: KeyedDataMarker<Yokeable = MonthNamesV1<'static>>;
+    type MonthNamesV1Marker: DataMarker<DataStruct = MonthNamesV1<'static>>;
 
-    #[cfg(feature = "experimental")]
-    /// The data marker for loading a single date pattern for this calendar.
-    type DatePatternV1Marker: KeyedDataMarker<Yokeable = DatePatternV1<'static>>;
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
+    /// The data marker for loading skeleton patterns for this calendar.
+    type SkeletaV1Marker: DataMarker<DataStruct = PackedSkeletonDataV1<'static>>;
 
     /// Checks if a given BCP 47 identifier is allowed to be used with this calendar
     ///
@@ -75,121 +81,92 @@ pub trait CldrCalendar: InternalCldrCalendar {
     }
 }
 
-#[cfg(feature = "experimental")]
-pub(crate) trait YearNamesV1Provider<M: DataMarker> {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
-}
-
-#[cfg(feature = "experimental")]
-impl<M, P> YearNamesV1Provider<M> for P
-where
-    M: KeyedDataMarker<Yokeable = YearNamesV1<'static>>,
-    P: DataProvider<M> + ?Sized,
-{
-    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        DataProvider::<M>::load(self, req)
-    }
-}
-
-#[cfg(feature = "experimental")]
-pub(crate) trait MonthNamesV1Provider<M: DataMarker> {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
-}
-
-#[cfg(feature = "experimental")]
-impl<M, P> MonthNamesV1Provider<M> for P
-where
-    M: KeyedDataMarker<Yokeable = MonthNamesV1<'static>>,
-    P: DataProvider<M> + ?Sized,
-{
-    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        DataProvider::<M>::load(self, req)
-    }
-}
-
-#[cfg(feature = "experimental")]
-pub(crate) trait DatePatternV1Provider<M: DataMarker> {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
-}
-
-#[cfg(feature = "experimental")]
-impl<M, P> DatePatternV1Provider<M> for P
-where
-    M: KeyedDataMarker<Yokeable = DatePatternV1<'static>>,
-    P: DataProvider<M> + ?Sized,
-{
-    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        DataProvider::<M>::load(self, req)
-    }
-}
-
 /// Check if the provided value is of the form `islamic-{subcal}`
-fn is_islamic_subcal(value: &Value, subcal: TinyAsciiStr<8>) -> bool {
-    if let &[first, second] = value.as_tinystr_slice() {
-        first == "islamic" && second == subcal
+fn is_islamic_subcal(value: &Value, subcal: Subtag) -> bool {
+    if let &[first, second] = value.as_subtags_slice() {
+        first == *"islamic" && second == subcal
     } else {
         false
     }
+}
+
+/// A calendar that can never exist.
+///
+/// Used as a substitute for calendar parameters when a calendar is not needed,
+/// such as in a time formatter.
+#[derive(Debug)]
+#[allow(clippy::exhaustive_enums)] // empty enum
+#[cfg(any(feature = "datagen", feature = "experimental"))]
+pub enum NeverCalendar {}
+
+#[cfg(any(feature = "datagen", feature = "experimental"))]
+impl CldrCalendar for NeverCalendar {
+    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("never");
+    type DateSymbolsV1Marker = NeverMarker<DateSymbolsV1<'static>>;
+    type DateLengthsV1Marker = NeverMarker<DateLengthsV1<'static>>;
+    type YearNamesV1Marker = NeverMarker<YearNamesV1<'static>>;
+    type MonthNamesV1Marker = NeverMarker<MonthNamesV1<'static>>;
+    type SkeletaV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>;
 }
 
 impl CldrCalendar for Buddhist {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("buddhist");
     type DateSymbolsV1Marker = BuddhistDateSymbolsV1Marker;
     type DateLengthsV1Marker = BuddhistDateLengthsV1Marker;
-    #[cfg(feature = "experimental")]
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type YearNamesV1Marker = BuddhistYearNamesV1Marker;
-    #[cfg(feature = "experimental")]
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type MonthNamesV1Marker = BuddhistMonthNamesV1Marker;
-    #[cfg(feature = "experimental")]
-    type DatePatternV1Marker = BuddhistDatePatternV1Marker;
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
+    type SkeletaV1Marker = BuddhistDateNeoSkeletonPatternsV1Marker;
 }
 
 impl CldrCalendar for Chinese {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("chinese");
     type DateSymbolsV1Marker = ChineseDateSymbolsV1Marker;
     type DateLengthsV1Marker = ChineseDateLengthsV1Marker;
-    #[cfg(feature = "experimental")]
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type YearNamesV1Marker = ChineseYearNamesV1Marker;
-    #[cfg(feature = "experimental")]
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type MonthNamesV1Marker = ChineseMonthNamesV1Marker;
-    #[cfg(feature = "experimental")]
-    type DatePatternV1Marker = ChineseDatePatternV1Marker;
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
+    type SkeletaV1Marker = ChineseDateNeoSkeletonPatternsV1Marker;
 }
 
 impl CldrCalendar for Coptic {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("coptic");
     type DateSymbolsV1Marker = CopticDateSymbolsV1Marker;
     type DateLengthsV1Marker = CopticDateLengthsV1Marker;
-    #[cfg(feature = "experimental")]
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type YearNamesV1Marker = CopticYearNamesV1Marker;
-    #[cfg(feature = "experimental")]
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type MonthNamesV1Marker = CopticMonthNamesV1Marker;
-    #[cfg(feature = "experimental")]
-    type DatePatternV1Marker = CopticDatePatternV1Marker;
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
+    type SkeletaV1Marker = CopticDateNeoSkeletonPatternsV1Marker;
 }
 
 impl CldrCalendar for Dangi {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("dangi");
     type DateSymbolsV1Marker = DangiDateSymbolsV1Marker;
     type DateLengthsV1Marker = DangiDateLengthsV1Marker;
-    #[cfg(feature = "experimental")]
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type YearNamesV1Marker = DangiYearNamesV1Marker;
-    #[cfg(feature = "experimental")]
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type MonthNamesV1Marker = DangiMonthNamesV1Marker;
-    #[cfg(feature = "experimental")]
-    type DatePatternV1Marker = DangiDatePatternV1Marker;
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
+    type SkeletaV1Marker = DangiDateNeoSkeletonPatternsV1Marker;
 }
 
 impl CldrCalendar for Ethiopian {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("ethiopic");
     type DateSymbolsV1Marker = EthiopianDateSymbolsV1Marker;
     type DateLengthsV1Marker = EthiopianDateLengthsV1Marker;
-    #[cfg(feature = "experimental")]
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type YearNamesV1Marker = EthiopianYearNamesV1Marker;
-    #[cfg(feature = "experimental")]
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type MonthNamesV1Marker = EthiopianMonthNamesV1Marker;
-    #[cfg(feature = "experimental")]
-    type DatePatternV1Marker = EthiopianDatePatternV1Marker;
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
+    type SkeletaV1Marker = EthiopianDateNeoSkeletonPatternsV1Marker;
     fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
         *value == value!("ethiopic") || *value == value!("ethioaa")
     }
@@ -199,36 +176,36 @@ impl CldrCalendar for Gregorian {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("gregory");
     type DateSymbolsV1Marker = GregorianDateSymbolsV1Marker;
     type DateLengthsV1Marker = GregorianDateLengthsV1Marker;
-    #[cfg(feature = "experimental")]
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type YearNamesV1Marker = GregorianYearNamesV1Marker;
-    #[cfg(feature = "experimental")]
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type MonthNamesV1Marker = GregorianMonthNamesV1Marker;
-    #[cfg(feature = "experimental")]
-    type DatePatternV1Marker = GregorianDatePatternV1Marker;
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
+    type SkeletaV1Marker = GregorianDateNeoSkeletonPatternsV1Marker;
 }
 
 impl CldrCalendar for Hebrew {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("hebrew");
     type DateSymbolsV1Marker = HebrewDateSymbolsV1Marker;
     type DateLengthsV1Marker = HebrewDateLengthsV1Marker;
-    #[cfg(feature = "experimental")]
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type YearNamesV1Marker = HebrewYearNamesV1Marker;
-    #[cfg(feature = "experimental")]
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type MonthNamesV1Marker = HebrewMonthNamesV1Marker;
-    #[cfg(feature = "experimental")]
-    type DatePatternV1Marker = HebrewDatePatternV1Marker;
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
+    type SkeletaV1Marker = HebrewDateNeoSkeletonPatternsV1Marker;
 }
 
 impl CldrCalendar for Indian {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("indian");
     type DateSymbolsV1Marker = IndianDateSymbolsV1Marker;
     type DateLengthsV1Marker = IndianDateLengthsV1Marker;
-    #[cfg(feature = "experimental")]
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type YearNamesV1Marker = IndianYearNamesV1Marker;
-    #[cfg(feature = "experimental")]
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type MonthNamesV1Marker = IndianMonthNamesV1Marker;
-    #[cfg(feature = "experimental")]
-    type DatePatternV1Marker = IndianDatePatternV1Marker;
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
+    type SkeletaV1Marker = IndianDateNeoSkeletonPatternsV1Marker;
 }
 
 impl CldrCalendar for IslamicCivil {
@@ -238,14 +215,14 @@ impl CldrCalendar for IslamicCivil {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("islamic");
     type DateSymbolsV1Marker = IslamicDateSymbolsV1Marker;
     type DateLengthsV1Marker = IslamicDateLengthsV1Marker;
-    #[cfg(feature = "experimental")]
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type YearNamesV1Marker = IslamicYearNamesV1Marker;
-    #[cfg(feature = "experimental")]
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type MonthNamesV1Marker = IslamicMonthNamesV1Marker;
-    #[cfg(feature = "experimental")]
-    type DatePatternV1Marker = IslamicDatePatternV1Marker;
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
+    type SkeletaV1Marker = IslamicDateNeoSkeletonPatternsV1Marker;
     fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
-        *value == value!("islamicc") || is_islamic_subcal(value, tinystr!(8, "civil"))
+        *value == value!("islamicc") || is_islamic_subcal(value, subtag!("civil"))
     }
 }
 
@@ -253,12 +230,12 @@ impl CldrCalendar for IslamicObservational {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("islamic");
     type DateSymbolsV1Marker = IslamicDateSymbolsV1Marker;
     type DateLengthsV1Marker = IslamicDateLengthsV1Marker;
-    #[cfg(feature = "experimental")]
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type YearNamesV1Marker = IslamicYearNamesV1Marker;
-    #[cfg(feature = "experimental")]
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type MonthNamesV1Marker = IslamicMonthNamesV1Marker;
-    #[cfg(feature = "experimental")]
-    type DatePatternV1Marker = IslamicDatePatternV1Marker;
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
+    type SkeletaV1Marker = IslamicDateNeoSkeletonPatternsV1Marker;
 }
 
 impl CldrCalendar for IslamicTabular {
@@ -268,14 +245,14 @@ impl CldrCalendar for IslamicTabular {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("islamic");
     type DateSymbolsV1Marker = IslamicDateSymbolsV1Marker;
     type DateLengthsV1Marker = IslamicDateLengthsV1Marker;
-    #[cfg(feature = "experimental")]
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type YearNamesV1Marker = IslamicYearNamesV1Marker;
-    #[cfg(feature = "experimental")]
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type MonthNamesV1Marker = IslamicMonthNamesV1Marker;
-    #[cfg(feature = "experimental")]
-    type DatePatternV1Marker = IslamicDatePatternV1Marker;
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
+    type SkeletaV1Marker = IslamicDateNeoSkeletonPatternsV1Marker;
     fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
-        is_islamic_subcal(value, tinystr!(8, "tbla"))
+        is_islamic_subcal(value, subtag!("tbla"))
     }
 }
 
@@ -286,14 +263,14 @@ impl CldrCalendar for IslamicUmmAlQura {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("islamic");
     type DateSymbolsV1Marker = IslamicDateSymbolsV1Marker;
     type DateLengthsV1Marker = IslamicDateLengthsV1Marker;
-    #[cfg(feature = "experimental")]
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type YearNamesV1Marker = IslamicYearNamesV1Marker;
-    #[cfg(feature = "experimental")]
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type MonthNamesV1Marker = IslamicMonthNamesV1Marker;
-    #[cfg(feature = "experimental")]
-    type DatePatternV1Marker = IslamicDatePatternV1Marker;
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
+    type SkeletaV1Marker = IslamicDateNeoSkeletonPatternsV1Marker;
     fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
-        is_islamic_subcal(value, tinystr!(8, "umalqura"))
+        is_islamic_subcal(value, subtag!("umalqura"))
     }
 }
 
@@ -301,50 +278,52 @@ impl CldrCalendar for Japanese {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("japanese");
     type DateSymbolsV1Marker = JapaneseDateSymbolsV1Marker;
     type DateLengthsV1Marker = JapaneseDateLengthsV1Marker;
-    #[cfg(feature = "experimental")]
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type YearNamesV1Marker = JapaneseYearNamesV1Marker;
-    #[cfg(feature = "experimental")]
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type MonthNamesV1Marker = JapaneseMonthNamesV1Marker;
-    #[cfg(feature = "experimental")]
-    type DatePatternV1Marker = JapaneseDatePatternV1Marker;
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
+    type SkeletaV1Marker = JapaneseDateNeoSkeletonPatternsV1Marker;
 }
 
 impl CldrCalendar for JapaneseExtended {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("japanext");
     type DateSymbolsV1Marker = JapaneseExtendedDateSymbolsV1Marker;
     type DateLengthsV1Marker = JapaneseExtendedDateLengthsV1Marker;
-    #[cfg(feature = "experimental")]
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type YearNamesV1Marker = JapaneseExtendedYearNamesV1Marker;
-    #[cfg(feature = "experimental")]
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type MonthNamesV1Marker = JapaneseExtendedMonthNamesV1Marker;
-    #[cfg(feature = "experimental")]
-    type DatePatternV1Marker = JapaneseExtendedDatePatternV1Marker;
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
+    type SkeletaV1Marker = JapaneseExtendedDateNeoSkeletonPatternsV1Marker;
 }
 
 impl CldrCalendar for Persian {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("persian");
     type DateSymbolsV1Marker = PersianDateSymbolsV1Marker;
     type DateLengthsV1Marker = PersianDateLengthsV1Marker;
-    #[cfg(feature = "experimental")]
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type YearNamesV1Marker = PersianYearNamesV1Marker;
-    #[cfg(feature = "experimental")]
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type MonthNamesV1Marker = PersianMonthNamesV1Marker;
-    #[cfg(feature = "experimental")]
-    type DatePatternV1Marker = PersianDatePatternV1Marker;
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
+    type SkeletaV1Marker = PersianDateNeoSkeletonPatternsV1Marker;
 }
 
 impl CldrCalendar for Roc {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("roc");
     type DateSymbolsV1Marker = RocDateSymbolsV1Marker;
     type DateLengthsV1Marker = RocDateLengthsV1Marker;
-    #[cfg(feature = "experimental")]
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type YearNamesV1Marker = RocYearNamesV1Marker;
-    #[cfg(feature = "experimental")]
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type MonthNamesV1Marker = RocMonthNamesV1Marker;
-    #[cfg(feature = "experimental")]
-    type DatePatternV1Marker = RocDatePatternV1Marker;
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
+    type SkeletaV1Marker = RocDateNeoSkeletonPatternsV1Marker;
 }
 
+#[cfg(any(feature = "datagen", feature = "experimental"))]
+impl InternalCldrCalendar for NeverCalendar {}
 impl InternalCldrCalendar for Buddhist {}
 impl InternalCldrCalendar for Chinese {}
 impl InternalCldrCalendar for Coptic {}
@@ -372,10 +351,10 @@ where
 {
     let payload = provider
         .load(DataRequest {
-            locale,
-            metadata: Default::default(),
+            id: DataIdentifierBorrowed::for_locale(locale),
+            ..Default::default()
         })?
-        .take_payload()?;
+        .payload;
     Ok(payload.cast())
 }
 
@@ -389,10 +368,10 @@ where
 {
     let payload = provider
         .load(DataRequest {
-            locale,
-            metadata: Default::default(),
+            id: DataIdentifierBorrowed::for_locale(locale),
+            ..Default::default()
         })?
-        .take_payload()?;
+        .payload;
     Ok(payload.cast())
 }
 
@@ -418,93 +397,93 @@ where
         + ?Sized,
 {
     let req = DataRequest {
-        locale,
-        metadata: Default::default(),
+        id: DataIdentifierBorrowed::for_locale(locale),
+        ..Default::default()
     };
     let payload = match kind {
         AnyCalendarKind::Buddhist => {
             DataProvider::<<Buddhist as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::Chinese => {
             DataProvider::<<Chinese as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::Coptic => {
             DataProvider::<<Coptic as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::Dangi => {
             DataProvider::<<Dangi as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::Ethiopian => {
             DataProvider::<<Ethiopian as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::EthiopianAmeteAlem => {
             DataProvider::<<Ethiopian as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::Gregorian => {
             DataProvider::<<Gregorian as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::Hebrew => {
             DataProvider::<<Hebrew as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::Indian => {
             DataProvider::<<Indian as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::IslamicCivil => DataProvider::<
             <IslamicCivil as CldrCalendar>::DateLengthsV1Marker,
         >::load(provider, req)?
-        .take_payload()?
+        .payload
         .cast(),
         AnyCalendarKind::IslamicObservational => DataProvider::<
             <IslamicObservational as CldrCalendar>::DateLengthsV1Marker,
         >::load(provider, req)?
-        .take_payload()?
+        .payload
         .cast(),
         AnyCalendarKind::IslamicTabular => DataProvider::<
             <IslamicTabular as CldrCalendar>::DateLengthsV1Marker,
         >::load(provider, req)?
-        .take_payload()?
+        .payload
         .cast(),
         AnyCalendarKind::IslamicUmmAlQura => DataProvider::<
             <IslamicUmmAlQura as CldrCalendar>::DateLengthsV1Marker,
         >::load(provider, req)?
-        .take_payload()?
+        .payload
         .cast(),
         AnyCalendarKind::Japanese => {
             DataProvider::<<Japanese as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::JapaneseExtended => DataProvider::<
             <JapaneseExtended as CldrCalendar>::DateLengthsV1Marker,
         >::load(provider, req)?
-        .take_payload()?
+        .payload
         .cast(),
         AnyCalendarKind::Persian => {
             DataProvider::<<Persian as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::Roc => {
             DataProvider::<<Roc as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         _ => {
@@ -539,93 +518,93 @@ where
         + ?Sized,
 {
     let req = DataRequest {
-        locale,
-        metadata: Default::default(),
+        id: DataIdentifierBorrowed::for_locale(locale),
+        ..Default::default()
     };
     let payload = match kind {
         AnyCalendarKind::Buddhist => {
             DataProvider::<<Buddhist as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::Chinese => {
             DataProvider::<<Chinese as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::Coptic => {
             DataProvider::<<Coptic as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::Dangi => {
             DataProvider::<<Dangi as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::Ethiopian => {
             DataProvider::<<Ethiopian as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::EthiopianAmeteAlem => {
             DataProvider::<<Ethiopian as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::Gregorian => {
             DataProvider::<<Gregorian as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::Hebrew => {
             DataProvider::<<Hebrew as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::Indian => {
             DataProvider::<<Indian as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::IslamicCivil => DataProvider::<
             <IslamicCivil as CldrCalendar>::DateSymbolsV1Marker,
         >::load(provider, req)?
-        .take_payload()?
+        .payload
         .cast(),
         AnyCalendarKind::IslamicObservational => DataProvider::<
             <IslamicObservational as CldrCalendar>::DateSymbolsV1Marker,
         >::load(provider, req)?
-        .take_payload()?
+        .payload
         .cast(),
         AnyCalendarKind::IslamicTabular => DataProvider::<
             <IslamicTabular as CldrCalendar>::DateSymbolsV1Marker,
         >::load(provider, req)?
-        .take_payload()?
+        .payload
         .cast(),
         AnyCalendarKind::IslamicUmmAlQura => DataProvider::<
             <IslamicUmmAlQura as CldrCalendar>::DateSymbolsV1Marker,
         >::load(provider, req)?
-        .take_payload()?
+        .payload
         .cast(),
         AnyCalendarKind::Japanese => {
             DataProvider::<<Japanese as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::JapaneseExtended => DataProvider::<
             <JapaneseExtended as CldrCalendar>::DateSymbolsV1Marker,
         >::load(provider, req)?
-        .take_payload()?
+        .payload
         .cast(),
         AnyCalendarKind::Persian => {
             DataProvider::<<Persian as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         AnyCalendarKind::Roc => {
             DataProvider::<<Roc as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
-                .take_payload()?
+                .payload
                 .cast()
         }
         _ => {
@@ -639,55 +618,218 @@ where
 }
 
 #[cfg(feature = "experimental")]
-pub(crate) struct AnyCalendarProvider<'a, P: ?Sized> {
-    pub(crate) provider: &'a P,
-    pub(crate) kind: AnyCalendarKind,
+mod private {
+    pub trait Sealed {}
+}
+
+/// A collection of marker types associated with all calendars.
+///
+/// This is used to group together the calendar-specific marker types that produce a common
+/// [`DynamicDataMarker`]. For example, this trait can be implemented for [`YearNamesV1Marker`].
+///
+/// This trait serves as a building block for a cross-calendar [`BoundDataProvider`].
+#[cfg(feature = "experimental")]
+pub trait CalMarkers<M>: private::Sealed
+where
+    M: DynamicDataMarker,
+{
+    /// The type for a [`Buddhist`] calendar
+    type Buddhist: DataMarker<DataStruct = M::DataStruct>;
+    /// The type for a [`Chinese`] calendar
+    type Chinese: DataMarker<DataStruct = M::DataStruct>;
+    /// The type for a [`Coptic`] calendar
+    type Coptic: DataMarker<DataStruct = M::DataStruct>;
+    /// The type for a [`Dangi`] calendar
+    type Dangi: DataMarker<DataStruct = M::DataStruct>;
+    /// The type for an [`Ethiopian`] calendar, with Amete Mihret era
+    type Ethiopian: DataMarker<DataStruct = M::DataStruct>;
+    /// The type for an [`Ethiopian`] calendar, with Amete Alem era
+    type EthiopianAmeteAlem: DataMarker<DataStruct = M::DataStruct>;
+    /// The type for a [`Gregorian`] calendar
+    type Gregorian: DataMarker<DataStruct = M::DataStruct>;
+    /// The type for a [`Hebrew`] calendar
+    type Hebrew: DataMarker<DataStruct = M::DataStruct>;
+    /// The type for a [`Indian`] calendar
+    type Indian: DataMarker<DataStruct = M::DataStruct>;
+    /// The type for an [`IslamicCivil`] calendar
+    type IslamicCivil: DataMarker<DataStruct = M::DataStruct>;
+    /// The type for an [`IslamicObservational`] calendar
+    type IslamicObservational: DataMarker<DataStruct = M::DataStruct>;
+    /// The type for an [`IslamicTabular`] calendar
+    type IslamicTabular: DataMarker<DataStruct = M::DataStruct>;
+    /// The type for an [`IslamicUmmAlQura`] calendar
+    type IslamicUmmAlQura: DataMarker<DataStruct = M::DataStruct>;
+    /// The type for a [`Japanese`] calendar
+    type Japanese: DataMarker<DataStruct = M::DataStruct>;
+    /// The type for a [`JapaneseExtended`] calendar
+    type JapaneseExtended: DataMarker<DataStruct = M::DataStruct>;
+    /// The type for a [`Persian`] calendar
+    type Persian: DataMarker<DataStruct = M::DataStruct>;
+    /// The type for a [`Roc`] calendar
+    type Roc: DataMarker<DataStruct = M::DataStruct>;
+}
+
+/// Implementation of [`CalMarkers`] that includes data for all calendars.
+#[derive(Debug)]
+#[cfg(feature = "experimental")]
+#[allow(clippy::exhaustive_enums)] // empty enum
+pub enum FullDataCalMarkers {}
+
+#[cfg(feature = "experimental")]
+impl private::Sealed for FullDataCalMarkers {}
+
+/// Implementation of [`CalMarkers`] that includes data for no calendars.
+#[derive(Debug)]
+#[cfg(feature = "experimental")]
+#[allow(clippy::exhaustive_enums)] // empty enum
+pub enum NoDataCalMarkers {}
+
+#[cfg(feature = "experimental")]
+impl private::Sealed for NoDataCalMarkers {}
+
+#[cfg(feature = "experimental")]
+impl<M> CalMarkers<M> for NoDataCalMarkers
+where
+    M: DynamicDataMarker,
+{
+    type Buddhist = NeverMarker<M::DataStruct>;
+    type Chinese = NeverMarker<M::DataStruct>;
+    type Coptic = NeverMarker<M::DataStruct>;
+    type Dangi = NeverMarker<M::DataStruct>;
+    type Ethiopian = NeverMarker<M::DataStruct>;
+    type EthiopianAmeteAlem = NeverMarker<M::DataStruct>;
+    type Gregorian = NeverMarker<M::DataStruct>;
+    type Hebrew = NeverMarker<M::DataStruct>;
+    type Indian = NeverMarker<M::DataStruct>;
+    type IslamicCivil = NeverMarker<M::DataStruct>;
+    type IslamicObservational = NeverMarker<M::DataStruct>;
+    type IslamicTabular = NeverMarker<M::DataStruct>;
+    type IslamicUmmAlQura = NeverMarker<M::DataStruct>;
+    type Japanese = NeverMarker<M::DataStruct>;
+    type JapaneseExtended = NeverMarker<M::DataStruct>;
+    type Persian = NeverMarker<M::DataStruct>;
+    type Roc = NeverMarker<M::DataStruct>;
+}
+
+#[cfg(feature = "experimental")]
+pub(crate) struct AnyCalendarProvider<H, P> {
+    provider: P,
+    kind: AnyCalendarKind,
+    _helper: PhantomData<H>,
+}
+
+#[cfg(feature = "experimental")]
+impl<H, P> AnyCalendarProvider<H, P> {
+    pub(crate) fn new(provider: P, kind: AnyCalendarKind) -> Self {
+        Self {
+            provider,
+            kind,
+            _helper: PhantomData,
+        }
+    }
+}
+
+#[cfg(feature = "experimental")]
+impl<M, H, P> BoundDataProvider<M> for AnyCalendarProvider<H, P>
+where
+    M: DynamicDataMarker,
+    H: CalMarkers<M>,
+    P: Sized
+        + DataProvider<H::Buddhist>
+        + DataProvider<H::Chinese>
+        + DataProvider<H::Coptic>
+        + DataProvider<H::Dangi>
+        + DataProvider<H::Ethiopian>
+        + DataProvider<H::EthiopianAmeteAlem>
+        + DataProvider<H::Gregorian>
+        + DataProvider<H::Hebrew>
+        + DataProvider<H::Indian>
+        + DataProvider<H::IslamicCivil>
+        + DataProvider<H::IslamicObservational>
+        + DataProvider<H::IslamicTabular>
+        + DataProvider<H::IslamicUmmAlQura>
+        + DataProvider<H::Japanese>
+        + DataProvider<H::JapaneseExtended>
+        + DataProvider<H::Persian>
+        + DataProvider<H::Roc>,
+{
+    fn load_bound(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        use AnyCalendarKind::*;
+        let p = &self.provider;
+        match self.kind {
+            Buddhist => H::Buddhist::bind(p).load_bound(req),
+            Chinese => H::Chinese::bind(p).load_bound(req),
+            Coptic => H::Coptic::bind(p).load_bound(req),
+            Dangi => H::Dangi::bind(p).load_bound(req),
+            Ethiopian => H::Ethiopian::bind(p).load_bound(req),
+            EthiopianAmeteAlem => H::EthiopianAmeteAlem::bind(p).load_bound(req),
+            Gregorian => H::Gregorian::bind(p).load_bound(req),
+            Hebrew => H::Hebrew::bind(p).load_bound(req),
+            Indian => H::Indian::bind(p).load_bound(req),
+            IslamicCivil => H::IslamicCivil::bind(p).load_bound(req),
+            IslamicObservational => H::IslamicObservational::bind(p).load_bound(req),
+            IslamicTabular => H::IslamicTabular::bind(p).load_bound(req),
+            IslamicUmmAlQura => H::IslamicUmmAlQura::bind(p).load_bound(req),
+            Japanese => H::Japanese::bind(p).load_bound(req),
+            JapaneseExtended => H::JapaneseExtended::bind(p).load_bound(req),
+            Persian => H::Persian::bind(p).load_bound(req),
+            Roc => H::Roc::bind(p).load_bound(req),
+            _ => Err(
+                DataError::custom("Don't know how to load data for specified calendar")
+                    .with_debug_context(&self.kind),
+            ),
+        }
+    }
+    fn bound_marker(&self) -> DataMarkerInfo {
+        use AnyCalendarKind::*;
+        match self.kind {
+            Buddhist => H::Buddhist::INFO,
+            Chinese => H::Chinese::INFO,
+            Coptic => H::Coptic::INFO,
+            Dangi => H::Dangi::INFO,
+            Ethiopian => H::Ethiopian::INFO,
+            EthiopianAmeteAlem => H::EthiopianAmeteAlem::INFO,
+            Gregorian => H::Gregorian::INFO,
+            Hebrew => H::Hebrew::INFO,
+            Indian => H::Indian::INFO,
+            IslamicCivil => H::IslamicCivil::INFO,
+            IslamicObservational => H::IslamicObservational::INFO,
+            IslamicTabular => H::IslamicTabular::INFO,
+            IslamicUmmAlQura => H::IslamicUmmAlQura::INFO,
+            Japanese => H::Japanese::INFO,
+            JapaneseExtended => H::JapaneseExtended::INFO,
+            Persian => H::Persian::INFO,
+            Roc => H::Roc::INFO,
+            _ => NeverMarker::<M::DataStruct>::INFO,
+        }
+    }
 }
 
 #[cfg(feature = "experimental")]
 macro_rules! impl_load_any_calendar {
-    ([$(($trait:ident, $erased:ident, $marker:ident)),+], [$($kind_cal:ident),+], [$($kind:ident => $cal:ident),+]) => {
-        impl_load_any_calendar!(@expand [$(($trait, $erased, $marker)),+], [$($kind_cal),+], [$($kind => $cal),+]);
+    ([$(($erased:ident, $marker:ident)),+], [$($kind_cal:ident),+], [$($kind:ident => $cal:ident),+]) => {
+        impl_load_any_calendar!(@expand [$(($erased, $marker)),+], [$($kind_cal),+], [$($kind => $cal),+]);
     };
-    (@expand [$(($trait:ident, $erased:ident, $marker:ident)),+], $tail1:tt, $tail2:tt) => {
-        $(impl_load_any_calendar!(@single_impl $trait, $erased, $marker, $tail1, $tail2);)+
+    (@expand [$(($erased:ident, $marker:ident)),+], $tail1:tt, $tail2:tt) => {
+        $(impl_load_any_calendar!(@single_impl $erased, $marker, $tail1, $tail2);)+
     };
-    (@single_impl $trait:ident, $erased:ident, $marker:ident, [$($kind_cal:ident),+], [$($kind:ident => $cal:ident),+]) => {
-        impl<P> $trait<$erased> for AnyCalendarProvider<'_, P>
-        where
-            P: ?Sized + $(DataProvider::<<$kind_cal as CldrCalendar>::$marker> +)+
-        {
-            fn load(
-                &self,
-                req: DataRequest,
-            ) -> Result<DataResponse<$erased>, DataError> {
-                match self.kind {
-                    $(
-                        AnyCalendarKind::$kind_cal => DataProvider
-                            ::<<$kind_cal as CldrCalendar>::$marker>
-                            ::load(self.provider, req)
-                            .map(DataResponse::cast),
-                    )+
-                    $(
-                        AnyCalendarKind::$kind => DataProvider
-                            ::<<$cal as CldrCalendar>::$marker>
-                            ::load(self.provider, req)
-                            .map(DataResponse::cast),
-                    )+
-                    _ => Err(
-                        DataError::custom("Don't know how to load data for specified calendar")
-                            .with_debug_context(&self.kind)),
-                }
-            }
+    (@single_impl $erased:ident, $marker:ident, [$($kind_cal:ident),+], [$($kind:ident => $cal:ident),+]) => {
+        impl CalMarkers<$erased> for FullDataCalMarkers {
+            $(
+                type $kind_cal = <$kind_cal as CldrCalendar>::$marker;
+            )+
+            $(
+                type $kind = <$cal as CldrCalendar>::$marker;
+            )+
         }
     };
 }
 
 #[cfg(feature = "experimental")]
 impl_load_any_calendar!([
-    (DatePatternV1Provider, ErasedDatePatternV1Marker, DatePatternV1Marker),
-    (YearNamesV1Provider, ErasedYearNamesV1Marker, YearNamesV1Marker),
-    (MonthNamesV1Provider, ErasedMonthNamesV1Marker, MonthNamesV1Marker)
+    (YearNamesV1Marker, YearNamesV1Marker),
+    (MonthNamesV1Marker, MonthNamesV1Marker),
+    (SkeletaV1Marker, SkeletaV1Marker)
 ], [
     Buddhist,
     Chinese,

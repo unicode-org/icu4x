@@ -26,12 +26,20 @@ const imports = {
   }
 }
 
-if (typeof fetch === 'undefined') { // Node
-  const fs = await import("fs");
+if (globalThis.process?.getBuiltinModule) {
+  // Node (>=22)
+  const fs = globalThis.process.getBuiltinModule('fs');
   const wasmFile = new Uint8Array(fs.readFileSync(cfg['wasm_path']));
   const loadedWasm = await WebAssembly.instantiate(wasmFile, imports);
   wasm = loadedWasm.instance.exports;
-} else { // Browser
+} else if (globalThis.process) {
+  // Node (<22)
+  const fs = await import('fs');
+  const wasmFile = new Uint8Array(fs.readFileSync(cfg['wasm_path']));
+  const loadedWasm = await WebAssembly.instantiate(wasmFile, imports);
+  wasm = loadedWasm.instance.exports;
+} else {
+  // Browser
   const loadedWasm = await WebAssembly.instantiateStreaming(fetch(cfg['wasm_path']), imports);
   wasm = loadedWasm.instance.exports;
 }

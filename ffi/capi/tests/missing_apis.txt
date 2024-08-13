@@ -14,7 +14,6 @@
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 
-icu::calendar::week::WeekCalculator::weekend#FnInStruct
 icu::properties::BidiClass#Struct
 icu::properties::BidiClass::ArabicLetter#AssociatedConstantInStruct
 icu::properties::BidiClass::ArabicNumber#AssociatedConstantInStruct
@@ -44,7 +43,6 @@ icu::properties::BidiClass::enum_to_long_name_mapper#FnInStruct
 icu::properties::BidiClass::enum_to_short_name_mapper#FnInStruct
 icu::properties::BidiClass::get_enum_to_long_name_mapper#FnInStruct
 icu::properties::BidiClass::get_enum_to_short_name_mapper#FnInStruct
-icu::properties::BidiClass::get_name_to_enum_mapper#FnInStruct
 icu::properties::BidiClass::to_u32#FnInStruct
 icu::properties::BidiClass::try_from_u32#FnInStruct
 icu::properties::CanonicalCombiningClass#Struct
@@ -127,7 +125,6 @@ icu::properties::EastAsianWidth::enum_to_long_name_mapper#FnInStruct
 icu::properties::EastAsianWidth::enum_to_short_name_mapper#FnInStruct
 icu::properties::EastAsianWidth::get_enum_to_long_name_mapper#FnInStruct
 icu::properties::EastAsianWidth::get_enum_to_short_name_mapper#FnInStruct
-icu::properties::EastAsianWidth::get_name_to_enum_mapper#FnInStruct
 icu::properties::EastAsianWidth::to_u32#FnInStruct
 icu::properties::EastAsianWidth::try_from_u32#FnInStruct
 icu::properties::GeneralCategory#Enum
@@ -184,7 +181,6 @@ icu::properties::GeneralCategoryGroup::complement#FnInStruct
 icu::properties::GeneralCategoryGroup::contains#FnInStruct
 icu::properties::GeneralCategoryGroup::empty#FnInStruct
 icu::properties::GeneralCategoryGroup::intersection#FnInStruct
-icu::properties::GeneralCategoryGroup::name_to_enum_mapper#FnInStruct
 icu::properties::GeneralCategoryGroup::to_u32#FnInStruct
 icu::properties::GeneralCategoryGroup::try_from_u32#FnInStruct
 icu::properties::GeneralCategoryGroup::union#FnInStruct
@@ -212,9 +208,22 @@ icu::properties::GraphemeClusterBreak::enum_to_long_name_mapper#FnInStruct
 icu::properties::GraphemeClusterBreak::enum_to_short_name_mapper#FnInStruct
 icu::properties::GraphemeClusterBreak::get_enum_to_long_name_mapper#FnInStruct
 icu::properties::GraphemeClusterBreak::get_enum_to_short_name_mapper#FnInStruct
-icu::properties::GraphemeClusterBreak::name_to_enum_mapper#FnInStruct
 icu::properties::GraphemeClusterBreak::to_u32#FnInStruct
 icu::properties::GraphemeClusterBreak::try_from_u32#FnInStruct
+icu::properties::HangulSyllableType#Struct
+icu::properties::HangulSyllableType::LeadingJamo#AssociatedConstantInStruct
+icu::properties::HangulSyllableType::LeadingVowelSyllable#AssociatedConstantInStruct
+icu::properties::HangulSyllableType::LeadingVowelTrailingSyllable#AssociatedConstantInStruct
+icu::properties::HangulSyllableType::NotApplicable#AssociatedConstantInStruct
+icu::properties::HangulSyllableType::TrailingJamo#AssociatedConstantInStruct
+icu::properties::HangulSyllableType::TryFromU32Error#AssociatedTypeInStruct
+icu::properties::HangulSyllableType::VowelJamo#AssociatedConstantInStruct
+icu::properties::HangulSyllableType::enum_to_long_name_mapper#FnInStruct
+icu::properties::HangulSyllableType::enum_to_short_name_mapper#FnInStruct
+icu::properties::HangulSyllableType::get_enum_to_long_name_mapper#FnInStruct
+icu::properties::HangulSyllableType::get_enum_to_short_name_mapper#FnInStruct
+icu::properties::HangulSyllableType::to_u32#FnInStruct
+icu::properties::HangulSyllableType::try_from_u32#FnInStruct
 icu::properties::IndicSyllabicCategory#Struct
 icu::properties::IndicSyllabicCategory::Avagraha#AssociatedConstantInStruct
 icu::properties::IndicSyllabicCategory::Bindu#AssociatedConstantInStruct
@@ -257,7 +266,6 @@ icu::properties::IndicSyllabicCategory::enum_to_long_name_mapper#FnInStruct
 icu::properties::IndicSyllabicCategory::enum_to_short_name_mapper#FnInStruct
 icu::properties::IndicSyllabicCategory::get_enum_to_long_name_mapper#FnInStruct
 icu::properties::IndicSyllabicCategory::get_enum_to_short_name_mapper#FnInStruct
-icu::properties::IndicSyllabicCategory::get_name_to_enum_mapper#FnInStruct
 icu::properties::IndicSyllabicCategory::to_u32#FnInStruct
 icu::properties::IndicSyllabicCategory::try_from_u32#FnInStruct
 icu::properties::JoiningType#Struct
@@ -330,7 +338,6 @@ icu::properties::LineBreak::enum_to_long_name_mapper#FnInStruct
 icu::properties::LineBreak::enum_to_short_name_mapper#FnInStruct
 icu::properties::LineBreak::get_enum_to_long_name_mapper#FnInStruct
 icu::properties::LineBreak::get_enum_to_short_name_mapper#FnInStruct
-icu::properties::LineBreak::get_name_to_enum_mapper#FnInStruct
 icu::properties::LineBreak::to_u32#FnInStruct
 icu::properties::LineBreak::try_from_u32#FnInStruct
 icu::properties::Script#Struct
@@ -504,7 +511,6 @@ icu::properties::Script::enum_to_long_name_mapper#FnInStruct
 icu::properties::Script::enum_to_short_name_mapper#FnInStruct
 icu::properties::Script::get_enum_to_long_name_mapper#FnInStruct
 icu::properties::Script::get_enum_to_short_name_mapper#FnInStruct
-icu::properties::Script::get_name_to_enum_mapper#FnInStruct
 icu::properties::Script::to_u32#FnInStruct
 icu::properties::Script::try_from_u32#FnInStruct
 icu::properties::SentenceBreak#Struct
@@ -528,7 +534,6 @@ icu::properties::SentenceBreak::enum_to_long_name_mapper#FnInStruct
 icu::properties::SentenceBreak::enum_to_short_name_mapper#FnInStruct
 icu::properties::SentenceBreak::get_enum_to_long_name_mapper#FnInStruct
 icu::properties::SentenceBreak::get_enum_to_short_name_mapper#FnInStruct
-icu::properties::SentenceBreak::get_name_to_enum_mapper#FnInStruct
 icu::properties::SentenceBreak::to_u32#FnInStruct
 icu::properties::SentenceBreak::try_from_u32#FnInStruct
 icu::properties::WordBreak#Struct
@@ -560,11 +565,9 @@ icu::properties::WordBreak::enum_to_long_name_mapper#FnInStruct
 icu::properties::WordBreak::enum_to_short_name_mapper#FnInStruct
 icu::properties::WordBreak::get_enum_to_long_name_mapper#FnInStruct
 icu::properties::WordBreak::get_enum_to_short_name_mapper#FnInStruct
-icu::properties::WordBreak::get_name_to_enum_mapper#FnInStruct
 icu::properties::WordBreak::to_u32#FnInStruct
 icu::properties::WordBreak::try_from_u32#FnInStruct
 icu::properties::bidi_data::BidiAuxiliaryProperties#Struct
-icu::properties::bidi_data::BidiAuxiliaryProperties::from_data#FnInStruct
 icu::properties::bidi_data::BidiAuxiliaryPropertiesBorrowed#Struct
 icu::properties::bidi_data::BidiAuxiliaryPropertiesBorrowed::get32_mirroring_props#FnInStruct
 icu::properties::bidi_data::BidiAuxiliaryPropertiesBorrowed::get32_pairing_props#FnInStruct
@@ -582,3 +585,4 @@ icu::properties::names::PropertyEnumToValueNameLinearTiny4MapperBorrowed::get#Fn
 icu::properties::names::PropertyEnumToValueNameSparseMapper#Struct
 icu::properties::names::PropertyEnumToValueNameSparseMapperBorrowed#Struct
 icu::properties::names::PropertyEnumToValueNameSparseMapperBorrowed::get#FnInStruct
+icu::timezone::CustomZonedDateTime#Struct

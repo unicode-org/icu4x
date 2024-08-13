@@ -2,11 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![allow(unused_imports)]
+
 // TODO(#3736): find a way to keep cldr_testData uptodate
 
 use icu_experimental::transliterate::Transliterator;
 
-include!("data/baked/mod.rs");
+#[allow(clippy::single_component_path_imports)]
+use icu_experimental;
+include!("data/provider.rs");
 
 #[test]
 fn test_all_cldr() {
@@ -37,7 +41,7 @@ fn test_all_cldr() {
         ),
     ] {
         let t =
-            Transliterator::try_new_unstable(locale.parse().unwrap(), &BakedDataProvider).unwrap();
+            Transliterator::try_new_unstable(locale.parse().unwrap(), &TestingProvider).unwrap();
         let test_cases = data
             .lines()
             .filter(|x| !x.starts_with('#'))

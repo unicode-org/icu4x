@@ -24,15 +24,15 @@ impl From<GroupingStrategy> for FixedDecimalFormatterOptions {
 /// # Examples
 ///
 /// ```
-/// use icu_decimal::options;
-/// use icu_decimal::FixedDecimalFormatter;
-/// use icu_locid::Locale;
+/// use icu::decimal::options;
+/// use icu::decimal::FixedDecimalFormatter;
+/// use icu::locale::Locale;
 /// use writeable::assert_writeable_eq;
 ///
-/// let locale = Locale::UND;
+/// let locale = Default::default();
 /// let mut options: options::FixedDecimalFormatterOptions = Default::default();
 /// options.grouping_strategy = options::GroupingStrategy::Min2;
-/// let fdf = FixedDecimalFormatter::try_new(&locale.into(), options)
+/// let fdf = FixedDecimalFormatter::try_new(&locale, options)
 ///     .expect("locale should be present");
 ///
 /// let one_thousand = 1000.into();

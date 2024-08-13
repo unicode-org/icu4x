@@ -3,13 +3,19 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::helpers::size_test;
-use crate::provider::{calendar::*, date_time::PatternSelector};
+#[cfg(feature = "experimental")]
+use crate::provider::date_time::UnsupportedOptionsOrDataOrPatternError;
+use crate::provider::{
+    calendar::*,
+    date_time::{PatternForLengthError, PatternSelector},
+};
 use crate::{calendar, options::DateTimeFormatterOptions, raw, DateFormatter, TimeFormatter};
 use crate::{input::DateTimeInput, DateTimeError, FormattedDateTime};
 use alloc::string::String;
 use icu_calendar::any_calendar::AnyCalendar;
 use icu_calendar::provider::{
-    ChineseCacheV1Marker, DangiCacheV1Marker, JapaneseErasV1Marker, JapaneseExtendedErasV1Marker,
+    ChineseCacheV1Marker, DangiCacheV1Marker, IslamicObservationalCacheV1Marker,
+    IslamicUmmAlQuraCacheV1Marker, JapaneseErasV1Marker, JapaneseExtendedErasV1Marker,
     WeekDataV1Marker,
 };
 use icu_decimal::provider::DecimalSymbolsV1Marker;
@@ -29,17 +35,16 @@ size_test!(DateTimeFormatter, date_time_formatter_size, 5208);
 ///
 /// For that reason, one should think of the process of formatting a date in two steps - first, a computational
 /// heavy construction of [`DateTimeFormatter`], and then fast formatting of [`DateTime`](icu_calendar::DateTime) data using the instance.
-///
 #[doc = date_time_formatter_size!()]
 ///
-/// [`icu_datetime`]: crate
+/// [`icu::datetime`]: crate
 ///
 /// # Examples
 ///
 /// ```
 /// use icu::calendar::DateTime;
 /// use icu::datetime::{options::length, DateTimeFormatter};
-/// use icu::locid::locale;
+/// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
 ///
 /// let mut options = length::Bag::from_date_time_style(
@@ -69,7 +74,7 @@ size_test!(DateTimeFormatter, date_time_formatter_size, 5208);
 /// ```
 /// use icu::calendar::{AnyCalendar, DateTime, Time};
 /// use icu::datetime::{options::length, DateTimeFormatter};
-/// use icu::locid::locale;
+/// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
 /// # use std::rc::Rc;
 ///
@@ -127,16 +132,16 @@ impl DateTimeFormatter {
     /// ```
     /// use icu::calendar::DateTime;
     /// use icu::datetime::{options::length, DateTimeFormatter};
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
     /// let options = length::Bag::from_date_time_style(
     ///     length::Date::Medium,
     ///     length::Time::Short,
     /// );
-    /// let locale = locale!("en-u-ca-gregory");
+    /// let locale = locale!("en-u-ca-gregory").into();
     ///
-    /// let dtf = DateTimeFormatter::try_new(&locale.into(), options.into())
+    /// let dtf = DateTimeFormatter::try_new(&locale, options.into())
     ///     .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
     /// let datetime = DateTime::try_new_iso_datetime(2020, 9, 1, 12, 34, 28)
@@ -165,7 +170,11 @@ impl DateTimeFormatter {
             calendar::load_lengths_for_any_calendar_kind(&crate::provider::Baked, locale, kind)?,
             locale,
             &options,
-        )?;
+        )
+        .map_err(|e| match e {
+            PatternForLengthError::Data(e) => DateTimeError::Data(e),
+            PatternForLengthError::Pattern(e) => DateTimeError::Pattern(e),
+        })?;
 
         Ok(Self(
             raw::DateTimeFormatter::try_new(
@@ -241,6 +250,8 @@ impl DateTimeFormatter {
             + DataProvider<IndianDateSymbolsV1Marker>
             + DataProvider<IslamicDateLengthsV1Marker>
             + DataProvider<IslamicDateSymbolsV1Marker>
+            + DataProvider<IslamicObservationalCacheV1Marker>
+            + DataProvider<IslamicUmmAlQuraCacheV1Marker>
             + DataProvider<JapaneseDateLengthsV1Marker>
             + DataProvider<JapaneseDateSymbolsV1Marker>
             + DataProvider<JapaneseErasV1Marker>
@@ -262,7 +273,14 @@ impl DateTimeFormatter {
             locale,
             &kind.as_bcp47_value(),
             &options,
-        )?;
+        )
+        .map_err(|e| match e {
+            UnsupportedOptionsOrDataOrPatternError::UnsupportedOptions => {
+                DateTimeError::UnsupportedOptions
+            }
+            UnsupportedOptionsOrDataOrPatternError::Data(e) => DateTimeError::Data(e),
+            UnsupportedOptionsOrDataOrPatternError::Pattern(e) => DateTimeError::Pattern(e),
+        })?;
 
         Ok(Self(
             raw::DateTimeFormatter::try_new_unstable(
@@ -293,7 +311,7 @@ impl DateTimeFormatter {
     /// ```
     /// use icu::calendar::DateTime;
     /// use icu::datetime::{options::components, DateTimeFormatter};
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
     /// let mut options = components::Bag::default();
@@ -331,7 +349,14 @@ impl DateTimeFormatter {
             locale,
             &kind.as_bcp47_value(),
             &options,
-        )?;
+        )
+        .map_err(|e| match e {
+            UnsupportedOptionsOrDataOrPatternError::UnsupportedOptions => {
+                DateTimeError::UnsupportedOptions
+            }
+            UnsupportedOptionsOrDataOrPatternError::Data(e) => DateTimeError::Data(e),
+            UnsupportedOptionsOrDataOrPatternError::Pattern(e) => DateTimeError::Pattern(e),
+        })?;
 
         Ok(Self(
             raw::DateTimeFormatter::try_new(
@@ -388,6 +413,8 @@ impl DateTimeFormatter {
             + DataProvider<JapaneseExtendedDateLengthsV1Marker>
             + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
             + DataProvider<JapaneseExtendedErasV1Marker>
+            + DataProvider<IslamicObservationalCacheV1Marker>
+            + DataProvider<IslamicUmmAlQuraCacheV1Marker>
             + DataProvider<PersianDateLengthsV1Marker>
             + DataProvider<PersianDateSymbolsV1Marker>
             + DataProvider<RocDateLengthsV1Marker>
@@ -402,7 +429,11 @@ impl DateTimeFormatter {
             calendar::load_lengths_for_any_calendar_kind(provider, locale, kind)?,
             locale,
             &options,
-        )?;
+        )
+        .map_err(|e| match e {
+            PatternForLengthError::Data(e) => DateTimeError::Data(e),
+            PatternForLengthError::Pattern(e) => DateTimeError::Pattern(e),
+        })?;
 
         Ok(Self(
             raw::DateTimeFormatter::try_new_unstable(
@@ -425,14 +456,14 @@ impl DateTimeFormatter {
     /// use icu::datetime::{
     ///     options::length, DateFormatter, DateTimeFormatter, TimeFormatter,
     /// };
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let length = length::Date::Medium;
-    /// let locale = locale!("en-u-ca-gregory");
-    ///
-    /// let df = DateFormatter::try_new_with_length(&locale.into(), length)
-    ///     .expect("Failed to create TypedDateFormatter instance.");
+    /// let df = DateFormatter::try_new_with_length(
+    ///     &locale!("en-u-ca-gregory").into(),
+    ///     length::Date::Medium,
+    /// )
+    /// .expect("Failed to create TypedDateFormatter instance.");
     ///
     /// let tf = TimeFormatter::try_new_with_length(
     ///     &locale!("en").into(),
@@ -517,7 +548,7 @@ where {
     ///     options::{components, length},
     ///     DateTimeFormatter,
     /// };
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     ///
     /// let options = length::Bag::from_date_style(length::Date::Medium).into();
     ///
@@ -543,12 +574,13 @@ where {
 mod tests {
     use icu::calendar::{AnyCalendar, DateTime};
     use icu::datetime::{options::length, DateTimeFormatter};
-    use icu::locid::{locale, Locale};
+    use icu::locale::locale;
+    use icu_provider::DataLocale;
 
-    fn test_format(datetime: &DateTime<AnyCalendar>, locale: Locale, expected: &str) {
+    fn test_format(datetime: &DateTime<AnyCalendar>, locale: DataLocale, expected: &str) {
         let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Short);
 
-        let dtf = DateTimeFormatter::try_new(&locale.into(), options.into()).unwrap();
+        let dtf = DateTimeFormatter::try_new(&locale, options.into()).unwrap();
         writeable::assert_writeable_eq!(
             dtf.format(datetime).expect("Calendars should match"),
             expected
@@ -561,23 +593,23 @@ mod tests {
         let datetime = DateTime::try_new_iso_datetime(2022, 4, 5, 12, 33, 44).unwrap();
         let datetime = datetime.to_any();
         // fr with unspecified and nonsense calendars falls back to gregorian
-        test_format(&datetime, locale!("fr"), "5 avril 2022, 12:33");
+        test_format(&datetime, locale!("fr").into(), "5 avril 2022, 12:33");
         test_format(
             &datetime,
-            locale!("fr-u-ca-blahblah"),
+            locale!("fr-u-ca-blahblah").into(),
             "5 avril 2022, 12:33",
         );
         // thai falls back to buddhist
         test_format(
             &datetime,
-            locale!("th-u-ca-buddhist"),
+            locale!("th-u-ca-buddhist").into(),
             "5 เมษายน 2565 12:33",
         );
-        test_format(&datetime, locale!("th"), "5 เมษายน 2565 12:33");
+        test_format(&datetime, locale!("th").into(), "5 เมษายน 2565 12:33");
         // except when overridden
         test_format(
             &datetime,
-            locale!("th-u-ca-gregory"),
+            locale!("th-u-ca-gregory").into(),
             "5 เมษายน ค.ศ. 2022 12:33",
         );
     }
@@ -604,7 +636,7 @@ mod tests {
 fn buffer_constructor() {
     use icu::calendar::DateTime;
     use icu::datetime::{options::length, DateTimeFormatter};
-    use icu::locid::locale;
+    use icu::locale::locale;
     use writeable::assert_writeable_eq;
 
     let provider = icu_provider_blob::BlobDataProvider::try_new_from_static_blob(include_bytes!(

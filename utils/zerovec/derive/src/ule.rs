@@ -10,10 +10,10 @@ use syn::spanned::Spanned;
 use syn::{Data, DeriveInput, Error};
 
 pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
-    if !utils::has_valid_repr(&input.attrs, |r| r == "packed" || r == "transparent") {
+    if !utils::ReprInfo::compute(&input.attrs).cpacked_or_transparent() {
         return Error::new(
             input.span(),
-            "derive(ULE) must be applied to a #[repr(packed)] or #[repr(transparent)] type",
+            "derive(ULE) must be applied to a #[repr(C, packed)] or #[repr(transparent)] type",
         )
         .to_compile_error();
     }
@@ -48,9 +48,9 @@ pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
 
     // Safety (based on the safety checklist on the ULE trait):
     //  1. #name does not include any uninitialized or padding bytes.
-    //     (achieved by enforcing #[repr(transparent)] or #[repr(packed)] on a struct of only ULE types)
+    //     (achieved by enforcing #[repr(transparent)] or #[repr(C, packed)] on a struct of only ULE types)
     //  2. #name is aligned to 1 byte.
-    //     (achieved by enforcing #[repr(transparent)] or #[repr(packed)] on a struct of only ULE types)
+    //     (achieved by enforcing #[repr(transparent)] or #[repr(C, packed)] on a struct of only ULE types)
     //  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
     //  4. The impl of validate_byte_slice() returns an error if there are extra bytes.
     //  5. The other ULE methods use the default impl.

@@ -10,56 +10,50 @@
 //! Read more about data providers: [`icu_provider`]
 
 use alloc::borrow::Cow;
+use icu_pattern::{DoublePlaceholderPattern, SinglePlaceholderPattern};
 use icu_provider::prelude::*;
 
-#[icu_provider::data_struct(PercentEssentialsV1Marker = "percent/essentials@1")]
-#[derive(Default, Clone, PartialEq, Debug)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::dimension::provider::percent),
-)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct PercentEssentialsV1<'data> {
-    /// The index of the number placeholder in the standard pattern.
-    pub number_index: u8,
-
-    /// Prefix and suffix to apply to a percent sign when needed.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub percent_sign_affixes: PercentAffixesV1<'data>,
-
-    /// The percent symbol.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub percent_sign_symbol: Cow<'data, str>,
-
-    /// The index of the percent symbol in the standard pattern.
-    pub percent_symbol_index: u8,
-
-    /// Represents the standard pattern.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub standard: Cow<'data, str>,
-}
-
-/// A collection of strings to affix to a percent number.
+#[cfg(feature = "compiled_data")]
+/// Baked data
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
 /// </div>
-#[derive(Default, Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+pub use crate::provider::Baked;
+
+#[icu_provider::data_struct(PercentEssentialsV1Marker = "percent/essentials@1")]
+#[derive(Clone, PartialEq, Debug)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
     databake(path = icu_experimental::dimension::provider::percent),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct PercentAffixesV1<'data> {
-    /// String to prepend before the percent sign.
+/// A struct including the essentials to create a Percent.
+///
+/// If an `approximate` or `explicit plus` are required, use the negative pattern as explained below:
+/// <https://www.unicode.org/reports/tr35/tr35-numbers.html#approximate-number-formatting>
+/// <https://www.unicode.org/reports/tr35/tr35-numbers.html#explicit-plus-signs>
+pub struct PercentEssentialsV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub prefix: Cow<'data, str>,
+    /// Represents the standard pattern for signed percents.
+    /// NOTE: place holder 0 is the place of the percent value.
+    ///       place holder 1 is the place of the plus, minus, or approximate signs.
+    pub signed_pattern: DoublePlaceholderPattern<Cow<'data, str>>,
 
-    /// String to append after the percent sign.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub suffix: Cow<'data, str>,
+    /// Represents the standard pattern for unsigned percents.
+    pub unsigned_pattern: SinglePlaceholderPattern<Cow<'data, str>>,
+
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    /// The localize approximate sign.
+    pub approximately_sign: Cow<'data, str>,
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    /// The localize minus sign.
+    pub minus_sign: Cow<'data, str>,
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    /// The localize plus sign.
+    pub plus_sign: Cow<'data, str>,
 }

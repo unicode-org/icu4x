@@ -84,7 +84,10 @@
 
 use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
-    pattern::{runtime::PatternPlurals, PatternItem},
+    pattern::{
+        runtime::{Pattern, PatternPlurals},
+        PatternItem,
+    },
 };
 
 use super::preferences;
@@ -140,12 +143,38 @@ impl Bag {
         Self::default()
     }
 
+    /// Merges the fields of other into self if non-None. If both fields are set, `other` is kept.
+    pub fn merge(self, other: Self) -> Self {
+        Self {
+            era: other.era.or(self.era),
+            year: other.year.or(self.year),
+            month: other.month.or(self.month),
+            week: other.week.or(self.week),
+            day: other.day.or(self.day),
+            weekday: other.weekday.or(self.weekday),
+            hour: other.hour.or(self.hour),
+            minute: other.minute.or(self.minute),
+            second: other.second.or(self.second),
+            fractional_second: other.fractional_second.or(self.fractional_second),
+            time_zone_name: other.time_zone_name.or(self.time_zone_name),
+            preferences: other.preferences.or(self.preferences),
+        }
+    }
+
     #[allow(clippy::wrong_self_convention)]
     /// Converts the components::Bag into a Vec<Field>. The fields will be ordered in from most
     /// significant field to least significant. This is the order the fields are listed in
     /// the UTS 35 table - <https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table>
-    #[cfg(any(test, feature = "experimental"))] // only used in test and experimental code
-    pub(crate) fn to_vec_fields(&self) -> alloc::vec::Vec<Field> {
+    ///
+    /// Arguments:
+    ///
+    /// - `default_hour_cycle` specifies the hour cycle to use for the hour field if not in the Bag.
+    ///   `preferences::Bag::hour_cycle` takes precedence over this argument.
+    #[cfg(any(test, feature = "datagen", feature = "experimental"))]
+    pub(crate) fn to_vec_fields(
+        &self,
+        default_hour_cycle: preferences::HourCycle,
+    ) -> alloc::vec::Vec<Field> {
         let mut fields = alloc::vec::Vec::new();
         if let Some(era) = self.era {
             fields.push(Field {
@@ -273,32 +302,30 @@ impl Bag {
             // fields::Hour::H23
             // fields::Hour::H24
 
+            let hour_cycle = match self.preferences {
+                Some(preferences::Bag {
+                    hour_cycle: Some(hour_cycle),
+                }) => hour_cycle,
+                _ => default_hour_cycle,
+            };
+
             // When used in skeleton data or in a skeleton passed in an API for flexible date
             // pattern generation, it should match the 12-hour-cycle format preferred by the
             // locale (h or K); it should not match a 24-hour-cycle format (H or k).
             fields.push(Field {
-                symbol: FieldSymbol::Hour(match self.preferences {
-                    Some(preferences::Bag {
-                        hour_cycle: Some(hour_cycle),
-                    }) => match hour_cycle {
-                        // Skeletons only contain the h12, not h11. The pattern that is matched
-                        // is free to use h11 or h12.
-                        preferences::HourCycle::H11 | preferences::HourCycle::H12 => {
-                            // h - symbol
-                            fields::Hour::H12
-                        }
-                        // Skeletons only contain the h23, not h24. The pattern that is matched
-                        // is free to use h23 or h24.
-                        preferences::HourCycle::H24 | preferences::HourCycle::H23 => {
-                            // H - symbol
-                            fields::Hour::H23
-                        }
-                    },
-                    // TODO(#594) - This should default should be the locale default, which is
-                    // region-based (h12 for US, h23 for GB, etc). This is in CLDR, but we need
-                    // to load it as well as think about the best architecture for where that
-                    // data loading code should reside.
-                    _ => fields::Hour::H23,
+                symbol: FieldSymbol::Hour(match hour_cycle {
+                    // Skeletons only contain the h12, not h11. The pattern that is matched
+                    // is free to use h11 or h12.
+                    preferences::HourCycle::H11 | preferences::HourCycle::H12 => {
+                        // h - symbol
+                        fields::Hour::H12
+                    }
+                    // Skeletons only contain the h23, not h24. The pattern that is matched
+                    // is free to use h23 or h24.
+                    preferences::HourCycle::H24 | preferences::HourCycle::H23 => {
+                        // H - symbol
+                        fields::Hour::H23
+                    }
                 }),
                 length: match hour {
                     // Example for h: (note that this is the same for k, K, and H)
@@ -403,10 +430,13 @@ pub enum Numeric {
 #[non_exhaustive]
 pub enum Text {
     /// Display the long form of the text, such as "Wednesday" for the weekday.
+    /// In UTS-35, known as "Wide" (4 letters)
     Long,
     /// Display the short form of the text, such as "Wed" for the weekday.
+    /// In UTS-35, known as "Abbreviated" (3 letters)
     Short,
     /// Display the narrow form of the text, such as "W" for the weekday.
+    /// In UTS-35, known as "Narrow" (5 letters)
     Narrow,
 }
 
@@ -605,7 +635,12 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
             PatternPlurals::SinglePattern(pattern) => pattern,
             PatternPlurals::MultipleVariants(plural_pattern) => &plural_pattern.other,
         };
+        Self::from(pattern)
+    }
+}
 
+impl<'data> From<&Pattern<'data>> for Bag {
+    fn from(pattern: &Pattern) -> Self {
         let mut bag: Bag = Default::default();
 
         // Transform the fields into components per:
@@ -622,6 +657,10 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                         | FieldLength::NumericOverride(_)
                         | FieldLength::TwoDigit
                         | FieldLength::Abbreviated => Text::Short,
+                        FieldLength::TimeZoneFallbackOverride(_) => {
+                            debug_assert!(false, "unexpected length for era field");
+                            Text::Short
+                        }
                         FieldLength::Wide => Text::Long,
                         FieldLength::Narrow | FieldLength::Six | FieldLength::Fixed(_) => {
                             Text::Narrow
@@ -638,7 +677,8 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                             FieldLength::TwoDigit => Year::TwoDigitWeekOf,
                             _ => Year::NumericWeekOf,
                         },
-                        _ => todo!("TODO(#3762): Add support for U and r"),
+                        // TODO(#3762): Add support for U and r
+                        _ => Year::Numeric,
                     });
                 }
                 FieldSymbol::Month(_) => {
@@ -647,6 +687,10 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                     bag.month = Some(match field.length {
                         FieldLength::One => Month::Numeric,
                         FieldLength::NumericOverride(_) => Month::Numeric,
+                        FieldLength::TimeZoneFallbackOverride(_) => {
+                            debug_assert!(false, "unexpected length for month field");
+                            Month::Numeric
+                        }
                         FieldLength::TwoDigit => Month::TwoDigit,
                         FieldLength::Abbreviated => Month::Short,
                         FieldLength::Wide => Month::Long,
@@ -712,6 +756,10 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                                 //     'ccc, d.MM.y',
                                 //     'ccc, MMM d. y'
                                 unimplemented!("Numeric stand-alone fields are not supported.")
+                            }
+                            FieldLength::TimeZoneFallbackOverride(_) => {
+                                debug_assert!(false, "unexpected length for weekday field");
+                                Text::Short
                             }
                             FieldLength::Abbreviated => Text::Short,
                             FieldLength::Wide => Text::Long,
@@ -813,7 +861,7 @@ mod test {
             ..Default::default()
         };
         assert_eq!(
-            bag.to_vec_fields(),
+            bag.to_vec_fields(preferences::HourCycle::H23),
             [
                 (Symbol::Year(fields::Year::Calendar), Length::One).into(),
                 (Symbol::Month(fields::Month::Format), Length::Wide).into(),
@@ -840,7 +888,7 @@ mod test {
             ..Default::default()
         };
         assert_eq!(
-            bag.to_vec_fields(),
+            bag.to_vec_fields(preferences::HourCycle::H23),
             [
                 (Symbol::Year(fields::Year::Calendar), Length::One).into(),
                 (Symbol::Month(fields::Month::Format), Length::TwoDigit).into(),

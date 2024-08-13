@@ -29,6 +29,7 @@
 //! Code that does not compile ([playground](https://play.rust-lang.org/?version=beta&mode=debug&edition=2018&gist=ebbda5b15a398d648bdff9e439b27dc0)):
 //!
 //! ```compile_fail
+//! # this compiles in 1.78+, so this text will make it fail
 //! use yoke::*;
 //!
 //! trait MiniDataMarker {
@@ -104,7 +105,7 @@
 //! }
 //!
 //! impl MiniDataMarker for SimpleStruct {
-//!     type Yokeable = SimpleStruct;
+//!     type DataStruct = SimpleStruct;
 //! }
 //!
 //! let provider = MiniStructProvider {
@@ -296,7 +297,7 @@ impl<'a, T> YokeTraitHack<&'a T> {
     ///
     /// This method is required to implement `Clone` on `Yoke`.
     pub fn into_ref(self) -> &'a YokeTraitHack<T> {
-        // YokeTraitHack is repr(transparent) so it's always safe
+        // Safety: YokeTraitHack is repr(transparent) so it's always safe
         // to transmute YTH<&T> to &YTH<T>
         unsafe { mem::transmute::<YokeTraitHack<&T>, &YokeTraitHack<T>>(self) }
     }

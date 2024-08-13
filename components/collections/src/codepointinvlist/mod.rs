@@ -20,12 +20,12 @@
 //! the [`CodePointInversionListBuilder`], or from the Properties API.
 //!
 //! ```
-//! use icu_collections::codepointinvlist::{
+//! use icu::collections::codepointinvlist::{
 //!     CodePointInversionList, CodePointInversionListBuilder,
 //! };
 //!
 //! let mut builder = CodePointInversionListBuilder::new();
-//! builder.add_range(&('A'..='Z'));
+//! builder.add_range('A'..='Z');
 //! let set: CodePointInversionList = builder.build();
 //!
 //! assert!(set.contains('A'));
@@ -36,16 +36,16 @@
 //! Currently, you can check if a character/range of characters exists in the [`CodePointInversionList`], or iterate through the characters.
 //!
 //! ```
-//! use icu_collections::codepointinvlist::{
+//! use icu::collections::codepointinvlist::{
 //!     CodePointInversionList, CodePointInversionListBuilder,
 //! };
 //!
 //! let mut builder = CodePointInversionListBuilder::new();
-//! builder.add_range(&('A'..='Z'));
+//! builder.add_range('A'..='Z');
 //! let set: CodePointInversionList = builder.build();
 //!
 //! assert!(set.contains('A'));
-//! assert!(set.contains_range(&('A'..='C')));
+//! assert!(set.contains_range('A'..='C'));
 //! assert_eq!(set.iter_chars().next(), Some('A'));
 //! ```
 //!
@@ -68,21 +68,12 @@ pub use cpinvlist::CodePointInversionList;
 pub use cpinvlist::CodePointInversionListULE;
 use displaydoc::Display;
 
-/// Custom Errors for [`CodePointInversionList`].
-///
-/// Re-exported as [`Error`].
 #[derive(Display, Debug)]
-pub enum CodePointInversionListError {
-    /// A CodePointInversionList was constructed with an invalid inversion list
-    #[displaydoc("Invalid set: {0:?}")]
-    InvalidSet(Vec<u32>),
-    /// A CodePointInversionList was constructed containing an invalid range
-    #[displaydoc("Invalid range: {0}..{1}")]
-    InvalidRange(u32, u32),
-}
+/// A CodePointInversionList was constructed with an invalid inversion list
+#[displaydoc("Invalid set: {0:?}")]
+pub struct InvalidSetError(pub Vec<u32>);
 
-#[cfg(feature = "std")]
-impl std::error::Error for CodePointInversionListError {}
-
-#[doc(no_inline)]
-pub use CodePointInversionListError as Error;
+/// A CodePointInversionList was constructed from an invalid range
+#[derive(Display, Debug)]
+#[displaydoc("Invalid range: {0}..{1}")]
+pub struct RangeError(pub u32, pub u32);

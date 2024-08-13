@@ -8,10 +8,8 @@
 
 [package]
 name = "tutorial_experimental"
-version = "0.0.0"
 edition = "2021"
 publish = false
 
 [dependencies]
-icu = "1.4"
-icu_experimental = "0"
+icu = { version = "1.5", features = ["experimental"] }

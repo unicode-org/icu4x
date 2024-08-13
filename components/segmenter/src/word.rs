@@ -7,7 +7,6 @@ use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::iterator_helpers::derive_usize_iterator_with_type;
 use crate::provider::*;
 use crate::rule_segmenter::*;
-use crate::SegmenterError;
 use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
@@ -107,7 +106,7 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 /// Segment a string:
 ///
 /// ```rust
-/// use icu_segmenter::WordSegmenter;
+/// use icu::segmenter::WordSegmenter;
 /// let segmenter = WordSegmenter::new_auto();
 ///
 /// let breakpoints: Vec<usize> =
@@ -118,7 +117,7 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 /// Segment a Latin1 byte string:
 ///
 /// ```rust
-/// use icu_segmenter::WordSegmenter;
+/// use icu::segmenter::WordSegmenter;
 /// let segmenter = WordSegmenter::new_auto();
 ///
 /// let breakpoints: Vec<usize> =
@@ -131,7 +130,7 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 /// length of the segmented text in code units.
 ///
 /// ```rust
-/// # use icu_segmenter::WordSegmenter;
+/// # use icu::segmenter::WordSegmenter;
 /// # let segmenter = WordSegmenter::new_auto();
 /// use itertools::Itertools;
 /// let text = "Mark’d ye his words?";
@@ -153,7 +152,7 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 /// associates each boundary with its status.
 /// ```rust
 /// # use itertools::Itertools;
-/// # use icu_segmenter::{WordType, WordSegmenter};
+/// # use icu::segmenter::{WordType, WordSegmenter};
 /// # let segmenter = WordSegmenter::new_auto();
 /// # let text = "Mark’d ye his words?";
 /// let words: Vec<&str> = segmenter
@@ -167,7 +166,7 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 /// ```
 #[derive(Debug)]
 pub struct WordSegmenter {
-    payload: DataPayload<WordBreakDataV1Marker>,
+    payload: DataPayload<WordBreakDataV2Marker>,
     complex: ComplexPayloads,
 }
 
@@ -205,7 +204,7 @@ impl WordSegmenter {
     pub fn new_auto() -> Self {
         Self {
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_WORD_V1,
+                crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V2_MARKER,
             ),
             complex: ComplexPayloads::new_auto(),
         }
@@ -213,12 +212,9 @@ impl WordSegmenter {
 
     #[cfg(feature = "auto")]
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: skip,
-        options: skip,
-        error: SegmenterError,
-        #[cfg(skip)]
+        () -> error: DataError,
         functions: [
-            try_new_auto,
+            try_new_auto: skip,
             try_new_auto_with_any_provider,
             try_new_auto_with_buffer_provider,
             try_new_auto_unstable,
@@ -228,16 +224,16 @@ impl WordSegmenter {
 
     #[cfg(feature = "auto")]
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_auto)]
-    pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
+    pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<WordBreakDataV1Marker>
+        D: DataProvider<WordBreakDataV2Marker>
             + DataProvider<DictionaryForWordOnlyAutoV1Marker>
             + DataProvider<LstmForWordLineAutoV1Marker>
-            + DataProvider<GraphemeClusterBreakDataV1Marker>
+            + DataProvider<GraphemeClusterBreakDataV2Marker>
             + ?Sized,
     {
         Ok(Self {
-            payload: provider.load(Default::default())?.take_payload()?,
+            payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new_auto(provider)?,
         })
     }
@@ -280,7 +276,7 @@ impl WordSegmenter {
     pub fn new_lstm() -> Self {
         Self {
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_WORD_V1,
+                crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V2_MARKER,
             ),
             complex: ComplexPayloads::new_lstm(),
         }
@@ -288,12 +284,9 @@ impl WordSegmenter {
 
     #[cfg(feature = "lstm")]
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: skip,
-        options: skip,
-        error: SegmenterError,
-        #[cfg(skip)]
+        () -> error: DataError,
         functions: [
-            new_lstm,
+            new_lstm: skip,
             try_new_lstm_with_any_provider,
             try_new_lstm_with_buffer_provider,
             try_new_lstm_unstable,
@@ -303,15 +296,15 @@ impl WordSegmenter {
 
     #[cfg(feature = "lstm")]
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_lstm)]
-    pub fn try_new_lstm_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
+    pub fn try_new_lstm_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<WordBreakDataV1Marker>
+        D: DataProvider<WordBreakDataV2Marker>
             + DataProvider<LstmForWordLineAutoV1Marker>
-            + DataProvider<GraphemeClusterBreakDataV1Marker>
+            + DataProvider<GraphemeClusterBreakDataV2Marker>
             + ?Sized,
     {
         Ok(Self {
-            payload: provider.load(Default::default())?.take_payload()?,
+            payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new_lstm(provider)?,
         })
     }
@@ -348,19 +341,16 @@ impl WordSegmenter {
     pub fn new_dictionary() -> Self {
         Self {
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_WORD_V1,
+                crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V2_MARKER,
             ),
             complex: ComplexPayloads::new_dict(),
         }
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: skip,
-        options: skip,
-        error: SegmenterError,
-        #[cfg(skip)]
+        () -> error: DataError,
         functions: [
-            new_dictionary,
+            new_dictionary: skip,
             try_new_dictionary_with_any_provider,
             try_new_dictionary_with_buffer_provider,
             try_new_dictionary_unstable,
@@ -369,16 +359,16 @@ impl WordSegmenter {
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_dictionary)]
-    pub fn try_new_dictionary_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
+    pub fn try_new_dictionary_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<WordBreakDataV1Marker>
+        D: DataProvider<WordBreakDataV2Marker>
             + DataProvider<DictionaryForWordOnlyAutoV1Marker>
             + DataProvider<DictionaryForWordLineExtendedV1Marker>
-            + DataProvider<GraphemeClusterBreakDataV1Marker>
+            + DataProvider<GraphemeClusterBreakDataV2Marker>
             + ?Sized,
     {
         Ok(Self {
-            payload: provider.load(Default::default())?.take_payload()?,
+            payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new_dict(provider)?,
         })
     }

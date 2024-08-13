@@ -11,9 +11,13 @@
 
                     "weekday": "short",
                     "hour": "numeric",
-                    "minute": "numeric",
-                    "preferences": { "hourCycle": "h12" }
-                }
+                    "minute": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["year", "month", "day", "weekday", "hour", "minute"],
+                    "length": "medium"
+                },
+                "preferences": { "hourCycle": "h12" }
             }
         },
         "output": {
@@ -34,9 +38,13 @@
 
                     "weekday": "long",
                     "hour": "numeric",
-                    "minute": "numeric",
-                    "preferences": { "hourCycle": "h12" }
-                }
+                    "minute": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["year", "month", "day", "weekday", "hour", "minute"],
+                    "length": "long"
+                },
+                "preferences": { "hourCycle": "h12" }
             }
         },
         "output": {

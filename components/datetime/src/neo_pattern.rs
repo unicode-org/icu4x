@@ -20,7 +20,6 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 ///
 /// 1. From a custom pattern string: [`DateTimePattern::try_from_pattern_str`]
 /// 2. From a formatted datetime: [`FormattedNeoDateTime::pattern`]
-///
 #[doc = date_time_pattern_size!()]
 ///
 /// # Examples
@@ -30,18 +29,19 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// ```
 /// use icu::calendar::DateTime;
 /// use icu::calendar::Gregorian;
-/// use icu::datetime::neo::TypedNeoDateTimeFormatter;
+/// use icu::datetime::neo::TypedNeoFormatter;
+/// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
 /// use icu::datetime::neo_pattern::DateTimePattern;
-/// use icu::datetime::options::length;
-/// use icu::locid::locale;
+/// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+/// use icu::locale::locale;
 ///
 /// let custom_pattern =
 ///     DateTimePattern::try_from_pattern_str("d MMM y").unwrap();
 ///
 /// let data_pattern =
-///     TypedNeoDateTimeFormatter::<Gregorian>::try_new_with_date_length(
+///     TypedNeoFormatter::<Gregorian, NeoYearMonthDayMarker>::try_new(
 ///         &locale!("es-MX").into(),
-///         length::Date::Medium,
+///         NeoSkeletonLength::Medium.into(),
 ///     )
 ///     .unwrap()
 ///     // The pattern can depend on the datetime being formatted.

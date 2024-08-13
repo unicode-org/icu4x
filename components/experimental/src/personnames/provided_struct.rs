@@ -2,13 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::personnames::api::NameFieldKind::{Given, Surname};
 use crate::personnames::api::{
     NameField, NameFieldKind, PersonName, PersonNamesFormatterError, PreferredOrder,
 };
 use alloc::string::String;
 use alloc::vec::Vec;
-use icu_locid::Locale;
+use icu_locale_core::Locale;
 use litemap::LiteMap;
 
 ///
@@ -28,8 +27,11 @@ impl PersonName for DefaultPersonName {
         self.preferred_order.as_ref()
     }
 
-    fn get(&self, field: &NameField) -> Option<&str> {
-        self.person_data.get(field).map(String::as_ref)
+    fn get(&self, field: &NameField) -> &str {
+        self.person_data
+            .get(field)
+            .map(String::as_ref)
+            .unwrap_or("")
     }
 
     fn available_name_fields(&self) -> Vec<&NameField> {
@@ -49,15 +51,6 @@ impl PersonName for DefaultPersonName {
     }
 }
 
-/// Validate that the provided fields are valid.
-/// If the person name is not valid, it will not be formatted.
-fn validate_person_name<P: PersonName>(person_name: &P) -> bool {
-    person_name
-        .available_name_fields()
-        .into_iter()
-        .any(|field| field.kind == Given || field.kind == Surname)
-}
-
 ///
 /// Default person name functions.
 impl DefaultPersonName {
@@ -73,7 +66,7 @@ impl DefaultPersonName {
             locale,
             preferred_order,
         };
-        if !validate_person_name(&result) {
+        if !crate::personnames::formatter::validate_person_name(&result.available_name_fields()) {
             return Err(PersonNamesFormatterError::InvalidPersonName);
         }
         Ok(result)

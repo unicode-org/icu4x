@@ -130,11 +130,11 @@ const CONTRACT_TRAILING_CCC: u32 = 0x400;
 /// Set if at least one contraction suffix contains a starter
 const CONTRACT_HAS_STARTER: u32 = 0x800;
 
-// const NO_CE32: CollationElement32 = CollationElement32::const_default();
+// const NO_CE32: CollationElement32 = CollationElement32::default();
 // constants named NO_CE* : End of input. Only used in runtime code, not stored in data.
-pub(crate) const NO_CE: CollationElement = CollationElement::const_default();
+pub(crate) const NO_CE: CollationElement = CollationElement::default();
 pub(crate) const NO_CE_PRIMARY: u32 = 1; // not a left-adjusted weight
-                                         // const NO_CE_NON_PRIMARY: NonPrimary = NonPrimary::const_default();
+                                         // const NO_CE_NON_PRIMARY: NonPrimary = NonPrimary::default();
 pub(crate) const NO_CE_SECONDARY: u16 = 0x0100;
 pub(crate) const NO_CE_TERTIARY: u16 = 0x0100;
 const NO_CE_VALUE: u64 =
@@ -536,7 +536,7 @@ impl CollationElement {
     }
 
     #[inline(always)]
-    pub const fn const_default() -> CollationElement {
+    pub const fn default() -> CollationElement {
         CollationElement(NO_CE_VALUE) // NO_CE
     }
 }
@@ -772,7 +772,7 @@ where
     /// `iter` but haven't yet been mapped to `CollationElement`s.
     ///
     /// Typically, `upcoming` holds one character and corresponds semantically
-    /// to `pending_unnormalized_starter` in `icu_normalizer::Decomposition`.
+    /// to `pending_unnormalized_starter` in `icu::normalizer::Decomposition`.
     /// This is why there isn't a move avoidance optimization similar to
     /// `pending_pos` above for this buffer. A complex decomposition, a
     /// Hangul syllable followed by a non-starter, or lookahead can cause

@@ -6,18 +6,14 @@ use displaydoc::Display;
 
 pub mod converter;
 pub mod converter_factory;
+pub mod convertible;
 pub mod measureunit;
-pub mod power;
 pub mod provider;
-pub mod si_prefix;
+pub mod ratio;
 
-/// Represents the possible errors that can occur during the measurement unit operations.
 #[derive(Display, Debug, Copy, Clone, PartialEq)]
-#[non_exhaustive]
-pub enum ConversionError {
-    /// The unit is not valid.
-    /// This can happen if the unit id is not following the CLDR specification.
-    /// For example, `meter` is a valid unit id, but `metre` is not.
-    #[displaydoc("Invalid given unit")]
-    InvalidUnit,
-}
+#[displaydoc("The unit is not valid.")]
+/// The unit is not valid.
+/// This can happen if the unit id is not following the CLDR specification.
+/// For example, `meter` is a valid unit id, but `metre` is not.
+pub struct InvalidUnitError;

@@ -3,35 +3,36 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[diplomat::bridge]
+#[diplomat::abi_rename = "icu4x_{0}_mv1"]
+#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
-    use crate::{errors::ffi::ICU4XError, provider::ffi::ICU4XDataProvider};
     use alloc::boxed::Box;
-    use icu_normalizer::properties::{
-        CanonicalCombiningClassMap, CanonicalComposition, CanonicalDecomposition, Decomposed,
-    };
+
+    use crate::{errors::ffi::DataError, provider::ffi::DataProvider};
 
     /// Lookup of the Canonical_Combining_Class Unicode property
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::normalizer::properties::CanonicalCombiningClassMap, Struct)]
-    pub struct ICU4XCanonicalCombiningClassMap(pub CanonicalCombiningClassMap);
+    pub struct CanonicalCombiningClassMap(
+        pub icu_normalizer::properties::CanonicalCombiningClassMap,
+    );
 
-    impl ICU4XCanonicalCombiningClassMap {
-        /// Construct a new ICU4XCanonicalCombiningClassMap instance for NFC
+    impl CanonicalCombiningClassMap {
+        /// Construct a new CanonicalCombiningClassMap instance for NFC
         #[diplomat::rust_link(
             icu::normalizer::properties::CanonicalCombiningClassMap::new,
             FnInStruct
         )]
+        #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn create(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCanonicalCombiningClassMap>, ICU4XError> {
-            Ok(Box::new(ICU4XCanonicalCombiningClassMap(
-                call_constructor!(
-                    CanonicalCombiningClassMap::new [r => Ok(r)],
-                    CanonicalCombiningClassMap::try_new_with_any_provider,
-                    CanonicalCombiningClassMap::try_new_with_buffer_provider,
-                    provider
-                )?,
-            )))
+            provider: &DataProvider,
+        ) -> Result<Box<CanonicalCombiningClassMap>, DataError> {
+            Ok(Box::new(CanonicalCombiningClassMap(call_constructor!(
+                icu_normalizer::properties::CanonicalCombiningClassMap::new [r => Ok(r)],
+                icu_normalizer::properties::CanonicalCombiningClassMap::try_new_with_any_provider,
+                icu_normalizer::properties::CanonicalCombiningClassMap::try_new_with_buffer_provider,
+                provider
+            )?)))
         }
 
         #[diplomat::rust_link(
@@ -39,45 +40,37 @@ pub mod ffi {
             FnInStruct
         )]
         #[diplomat::rust_link(
-            icu::properties::properties::CanonicalCombiningClass,
-            Struct,
-            compact
-        )]
-        pub fn get(&self, ch: DiplomatChar) -> u8 {
-            self.0.get32(ch).0
-        }
-        #[diplomat::rust_link(
             icu::normalizer::properties::CanonicalCombiningClassMap::get32,
-            FnInStruct
+            FnInStruct,
+            hidden
         )]
         #[diplomat::rust_link(
             icu::properties::properties::CanonicalCombiningClass,
             Struct,
             compact
         )]
-        #[diplomat::attr(dart, disable)]
-        pub fn get32(&self, ch: u32) -> u8 {
+        #[diplomat::attr(auto, indexer)]
+        pub fn get(&self, ch: DiplomatChar) -> u8 {
             self.0.get32(ch).0
         }
     }
 
     /// The raw canonical composition operation.
     ///
-    /// Callers should generally use ICU4XComposingNormalizer unless they specifically need raw composition operations
+    /// Callers should generally use ComposingNormalizer unless they specifically need raw composition operations
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::normalizer::properties::CanonicalComposition, Struct)]
-    pub struct ICU4XCanonicalComposition(pub CanonicalComposition);
+    pub struct CanonicalComposition(pub icu_normalizer::properties::CanonicalComposition);
 
-    impl ICU4XCanonicalComposition {
-        /// Construct a new ICU4XCanonicalComposition instance for NFC
+    impl CanonicalComposition {
+        /// Construct a new CanonicalComposition instance for NFC
         #[diplomat::rust_link(icu::normalizer::properties::CanonicalComposition::new, FnInStruct)]
-        pub fn create(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCanonicalComposition>, ICU4XError> {
-            Ok(Box::new(ICU4XCanonicalComposition(call_constructor!(
-                CanonicalComposition::new [r => Ok(r)],
-                CanonicalComposition::try_new_with_any_provider,
-                CanonicalComposition::try_new_with_buffer_provider,
+        #[diplomat::attr(supports = fallible_constructors, constructor)]
+        pub fn create(provider: &DataProvider) -> Result<Box<CanonicalComposition>, DataError> {
+            Ok(Box::new(CanonicalComposition(call_constructor!(
+                icu_normalizer::properties::CanonicalComposition::new [r => Ok(r)],
+                icu_normalizer::properties::CanonicalComposition::try_new_with_any_provider,
+                icu_normalizer::properties::CanonicalComposition::try_new_with_buffer_provider,
                 provider,
             )?)))
         }
@@ -102,28 +95,27 @@ pub mod ffi {
     /// (which may or may not be the original one)
     #[diplomat::rust_link(icu::normalizer::properties::Decomposed, Enum)]
     #[diplomat::out]
-    pub struct ICU4XDecomposed {
+    pub struct Decomposed {
         first: DiplomatChar,
         second: DiplomatChar,
     }
 
     /// The raw (non-recursive) canonical decomposition operation.
     ///
-    /// Callers should generally use ICU4XDecomposingNormalizer unless they specifically need raw composition operations
+    /// Callers should generally use DecomposingNormalizer unless they specifically need raw composition operations
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::normalizer::properties::CanonicalDecomposition, Struct)]
-    pub struct ICU4XCanonicalDecomposition(pub CanonicalDecomposition);
+    pub struct CanonicalDecomposition(pub icu_normalizer::properties::CanonicalDecomposition);
 
-    impl ICU4XCanonicalDecomposition {
-        /// Construct a new ICU4XCanonicalDecomposition instance for NFC
+    impl CanonicalDecomposition {
+        /// Construct a new CanonicalDecomposition instance for NFC
         #[diplomat::rust_link(icu::normalizer::properties::CanonicalDecomposition::new, FnInStruct)]
-        pub fn create(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XCanonicalDecomposition>, ICU4XError> {
-            Ok(Box::new(ICU4XCanonicalDecomposition(call_constructor!(
-                CanonicalDecomposition::new [r => Ok(r)],
-                CanonicalDecomposition::try_new_with_any_provider,
-                CanonicalDecomposition::try_new_with_buffer_provider,
+        #[diplomat::attr(supports = fallible_constructors, constructor)]
+        pub fn create(provider: &DataProvider) -> Result<Box<CanonicalDecomposition>, DataError> {
+            Ok(Box::new(CanonicalDecomposition(call_constructor!(
+                icu_normalizer::properties::CanonicalDecomposition::new [r => Ok(r)],
+                icu_normalizer::properties::CanonicalDecomposition::try_new_with_any_provider,
+                icu_normalizer::properties::CanonicalDecomposition::try_new_with_buffer_provider,
                 provider,
             )?)))
         }
@@ -133,23 +125,25 @@ pub mod ffi {
             icu::normalizer::properties::CanonicalDecomposition::decompose,
             FnInStruct
         )]
-        pub fn decompose(&self, c: DiplomatChar) -> ICU4XDecomposed {
+        pub fn decompose(&self, c: DiplomatChar) -> Decomposed {
             match char::from_u32(c) {
                 Some(c) => match self.0.decompose(c) {
-                    Decomposed::Default => ICU4XDecomposed {
+                    icu_normalizer::properties::Decomposed::Default => Decomposed {
                         first: c as DiplomatChar,
                         second: '\0' as DiplomatChar,
                     },
-                    Decomposed::Singleton(s) => ICU4XDecomposed {
+                    icu_normalizer::properties::Decomposed::Singleton(s) => Decomposed {
                         first: s as DiplomatChar,
                         second: '\0' as DiplomatChar,
                     },
-                    Decomposed::Expansion(first, second) => ICU4XDecomposed {
-                        first: first as DiplomatChar,
-                        second: second as DiplomatChar,
-                    },
+                    icu_normalizer::properties::Decomposed::Expansion(first, second) => {
+                        Decomposed {
+                            first: first as DiplomatChar,
+                            second: second as DiplomatChar,
+                        }
+                    }
                 },
-                _ => ICU4XDecomposed {
+                _ => Decomposed {
                     first: c,
                     second: '\0' as DiplomatChar,
                 },

@@ -3,8 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::any_calendar::{AnyCalendar, IntoAnyCalendar};
+use crate::error::DateError;
 use crate::week::{WeekCalculator, WeekOf};
-use crate::{types, Calendar, CalendarError, DateDuration, DateDurationUnit, Iso};
+use crate::{types, Calendar, DateDuration, DateDurationUnit, Iso};
 use alloc::rc::Rc;
 use alloc::sync::Arc;
 use core::fmt;
@@ -115,7 +116,7 @@ impl<A: AsCalendar> Date<A> {
         month_code: types::MonthCode,
         day: u8,
         calendar: A,
-    ) -> Result<Self, CalendarError> {
+    ) -> Result<Self, DateError> {
         let inner = calendar
             .as_calendar()
             .date_from_codes(era, year, month_code, day)?;
@@ -168,9 +169,7 @@ impl<A: AsCalendar> Date<A> {
     }
 
     /// Add a `duration` to this date, mutating it
-    ///
-    /// Currently unstable for ICU4X 1.0
-    #[doc(hidden)]
+    #[doc(hidden)] // unstable
     #[inline]
     pub fn add(&mut self, duration: DateDuration<A::Calendar>) {
         self.calendar
@@ -179,9 +178,7 @@ impl<A: AsCalendar> Date<A> {
     }
 
     /// Add a `duration` to this date, returning the new one
-    ///
-    /// Currently unstable for ICU4X 1.0
-    #[doc(hidden)]
+    #[doc(hidden)] // unstable
     #[inline]
     pub fn added(mut self, duration: DateDuration<A::Calendar>) -> Self {
         self.add(duration);
@@ -189,9 +186,7 @@ impl<A: AsCalendar> Date<A> {
     }
 
     /// Calculating the duration between `other - self`
-    ///
-    /// Currently unstable for ICU4X 1.0
-    #[doc(hidden)]
+    #[doc(hidden)] // unstable
     #[inline]
     pub fn until<B: AsCalendar<Calendar = A::Calendar>>(
         &self,
@@ -280,13 +275,13 @@ impl<A: AsCalendar> Date<A> {
     ///
     /// assert_eq!(
     ///     date.week_of_year(&week_calculator),
-    ///     Ok(WeekOf {
+    ///     WeekOf {
     ///         week: 35,
     ///         unit: RelativeUnit::Current
-    ///     })
+    ///     }
     /// );
     /// ```
-    pub fn week_of_year(&self, config: &WeekCalculator) -> Result<WeekOf, CalendarError> {
+    pub fn week_of_year(&self, config: &WeekCalculator) -> WeekOf {
         config.week_of_year(self.day_of_year_info(), self.day_of_week())
     }
 
@@ -321,6 +316,11 @@ impl<A: AsCalendar> Date<A> {
     #[inline]
     pub fn calendar_wrapper(&self) -> &A {
         &self.calendar
+    }
+
+    #[cfg(test)]
+    pub(crate) fn to_fixed(&self) -> calendrical_calculations::rata_die::RataDie {
+        Iso::fixed_from_iso(self.to_iso().inner)
     }
 }
 

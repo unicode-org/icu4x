@@ -18,21 +18,29 @@ const MAX_L2_SEARCH_MISSES: usize = 24;
 /// Returns `(p, [q_0, q_1, ..., q_(N-1)])`, or an error if the PHF could not be computed.
 #[allow(unused_labels)] // for readability
 pub fn find(bytes: &[u8]) -> Result<(u8, Vec<u8>), Error> {
-    #[allow(non_snake_case)]
-    let N = bytes.len();
+    let n_usize = bytes.len();
 
     let mut p = 0u8;
-    let mut qq = vec![0u8; N];
+    let mut qq = vec![0u8; n_usize];
 
-    let mut bqs = vec![0u8; N];
-    let mut seen = vec![false; N];
-    let mut max_allowable_p = P_FAST_MAX;
+    let mut bqs = vec![0u8; n_usize];
+    let mut seen = vec![false; n_usize];
+    let max_allowable_p = P_FAST_MAX;
     let mut max_allowable_q = Q_FAST_MAX;
 
+    #[allow(non_snake_case)]
+    let N = if n_usize > 0 && n_usize < 256 {
+        n_usize as u8
+    } else {
+        debug_assert!(n_usize == 0 || n_usize == 256);
+        return Ok((p, qq));
+    };
+
     'p_loop: loop {
-        let mut buckets: Vec<(usize, Vec<u8>)> = (0..N).map(|i| (i, vec![])).collect();
+        let mut buckets: Vec<(usize, Vec<u8>)> = (0..n_usize).map(|i| (i, vec![])).collect();
         for byte in bytes {
-            buckets[f1(*byte, p, N)].1.push(*byte);
+            let l1 = f1(*byte, p, N) as usize;
+            buckets[l1].1.push(*byte);
         }
         buckets.sort_by_key(|(_, v)| -(v.len() as isize));
         // println!("New P: p={p:?}, buckets={buckets:?}");
@@ -53,11 +61,13 @@ pub fn find(bytes: &[u8]) -> Result<(u8, Vec<u8>), Error> {
             }
             let mut bucket = buckets[i].1.as_slice();
             'byte_loop: for (j, byte) in bucket.iter().enumerate() {
-                if seen[f2(*byte, bqs[i], N)] {
+                let l2 = f2(*byte, bqs[i], N) as usize;
+                if seen[l2] {
                     // println!("Skipping Q: p={p:?}, i={i:?}, byte={byte:}, q={i:?}, l2={:?}", f2(*byte, bqs[i], N));
                     for k_byte in &bucket[0..j] {
-                        assert!(seen[f2(*k_byte, bqs[i], N)]);
-                        seen[f2(*k_byte, bqs[i], N)] = false;
+                        let l2 = f2(*k_byte, bqs[i], N) as usize;
+                        assert!(seen[l2]);
+                        seen[l2] = false;
                     }
                     'reset_loop: loop {
                         if bqs[i] < max_allowable_q {
@@ -67,13 +77,15 @@ pub fn find(bytes: &[u8]) -> Result<(u8, Vec<u8>), Error> {
                         num_max_q += 1;
                         bqs[i] = 0;
                         if i == 0 || num_max_q > MAX_L2_SEARCH_MISSES {
-                            if p == max_allowable_p && max_allowable_p != P_REAL_MAX {
+                            if p == max_allowable_p && max_allowable_q != Q_REAL_MAX {
                                 // println!("Could not solve fast function: trying again: {bytes:?}");
-                                max_allowable_p = P_REAL_MAX;
                                 max_allowable_q = Q_REAL_MAX;
                                 p = 0;
                                 continue 'p_loop;
-                            } else if p == P_REAL_MAX {
+                            } else if p == max_allowable_p {
+                                // If a fallback algorithm for `p` is added, relax this assertion
+                                // and re-run the loop with a higher `max_allowable_p`.
+                                debug_assert_eq!(max_allowable_p, P_REAL_MAX);
                                 // println!("Could not solve PHF function");
                                 return Err(Error::CouldNotSolvePerfectHash);
                             } else {
@@ -84,13 +96,15 @@ pub fn find(bytes: &[u8]) -> Result<(u8, Vec<u8>), Error> {
                         i -= 1;
                         bucket = buckets[i].1.as_slice();
                         for byte in bucket {
-                            assert!(seen[f2(*byte, bqs[i], N)]);
-                            seen[f2(*byte, bqs[i], N)] = false;
+                            let l2 = f2(*byte, bqs[i], N) as usize;
+                            assert!(seen[l2]);
+                            seen[l2] = false;
                         }
                     }
                 } else {
                     // println!("Marking as seen: i={i:?}, byte={byte:}, l2={:?}", f2(*byte, bqs[i], N));
-                    seen[f2(*byte, bqs[i], N)] = true;
+                    let l2 = f2(*byte, bqs[i], N) as usize;
+                    seen[l2] = true;
                 }
             }
             // println!("Found Q: i={i:?}, q={:?}", bqs[i]);
@@ -104,16 +118,17 @@ impl PerfectByteHashMap<Vec<u8>> {
     ///
     /// (this is a doc-hidden API)
     pub fn try_new(keys: &[u8]) -> Result<Self, Error> {
-        let n = keys.len();
+        let n_usize = keys.len();
+        let n = n_usize as u8;
         let (p, mut qq) = find(keys)?;
-        let mut keys_permuted = vec![0; n];
+        let mut keys_permuted = vec![0; n_usize];
         for key in keys {
-            let l1 = f1(*key, p, n);
+            let l1 = f1(*key, p, n) as usize;
             let q = qq[l1];
-            let l2 = f2(*key, q, n);
+            let l2 = f2(*key, q, n) as usize;
             keys_permuted[l2] = *key;
         }
-        let mut result = Vec::with_capacity(n * 2 + 1);
+        let mut result = Vec::with_capacity(n_usize * 2 + 1);
         result.push(p);
         result.append(&mut qq);
         result.append(&mut keys_permuted);
@@ -176,16 +191,16 @@ mod tests {
         let bytes = random_alphanums(0, 16);
 
         #[allow(non_snake_case)]
-        let N = bytes.len();
+        let N = u8::try_from(bytes.len()).unwrap();
 
         let (p, qq) = find(bytes.as_slice()).unwrap();
 
         println!("Results:");
         for byte in bytes.iter() {
             print_byte_to_stdout(*byte);
-            let l1 = f1(*byte, p, N);
+            let l1 = f1(*byte, p, N) as usize;
             let q = qq[l1];
-            let l2 = f2(*byte, q, N);
+            let l2 = f2(*byte, q, N) as usize;
             println!(" => l1 {l1} => q {q} => l2 {l2}");
         }
     }

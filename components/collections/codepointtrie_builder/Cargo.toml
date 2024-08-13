@@ -5,7 +5,7 @@
 [package]
 name = "icu_codepointtrie_builder"
 description = "Runtime builder for CodePointTrie"
-version = "0.3.7"
+version = "0.3.8"
 license = "Unicode-3.0"
 include = [
     "src/**/*",
@@ -15,7 +15,7 @@ include = [
     "Cargo.toml",
     "LICENSE",
     "README.md",
-    "list_to_ucptrie.wasm"
+    "ucptrie_wrap.wasm"
 ]
 
 authors.workspace = true
@@ -31,7 +31,7 @@ independent = true
 [features]
 # Use the wasm builder
 default = ["wasm"]
-wasm = ["dep:wasmi"]
+wasm = ["dep:wasmi", "dep:wat"]
 # Use the ICU4C builder
 # needs the ICU4C_LIB_PATH variable set and pointing to an ICU4C lib folder
 # containing dylibs. If you want to use staticlibs, set ICU4C_LINK_STATICALLY.
@@ -40,14 +40,17 @@ icu4c = []
 
 [dependencies]
 icu_collections = { workspace = true, features = ["serde"] }
-toml = "0.5"
 zerovec = { workspace = true }
-wasmi = { version = "0.31.2", optional = true }
+wasmi = { workspace = true, optional = true }
+wat = { workspace = true, optional = true }
 
 [dev-dependencies]
-icu = { workspace = true }
+icu = { path = "../../icu" }
 
 [package.metadata.cargo-all-features]
 skip_optional_dependencies = true
 # these need env vars. They still get `cargo check'd` when doing `--all-features`
 denylist = ["icu4c"]
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(icu4c_enable_renaming)'] }

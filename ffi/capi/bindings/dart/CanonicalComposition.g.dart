@@ -4,7 +4,7 @@ part of 'lib.g.dart';
 
 /// The raw canonical composition operation.
 ///
-/// Callers should generally use ICU4XComposingNormalizer unless they specifically need raw composition operations
+/// Callers should generally use ComposingNormalizer unless they specifically need raw composition operations
 ///
 /// See the [Rust documentation for `CanonicalComposition`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalComposition.html) for more information.
 final class CanonicalComposition implements ffi.Finalizable {
@@ -24,17 +24,17 @@ final class CanonicalComposition implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XCanonicalComposition_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_CanonicalComposition_destroy_mv1));
 
-  /// Construct a new ICU4XCanonicalComposition instance for NFC
+  /// Construct a new CanonicalComposition instance for NFC
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory CanonicalComposition(DataProvider provider) {
-    final result = _ICU4XCanonicalComposition_create(provider._ffi);
+    final result = _icu4x_CanonicalComposition_create_mv1(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return CanonicalComposition._fromFfi(result.union.ok, []);
   }
@@ -44,22 +44,22 @@ final class CanonicalComposition implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `compose`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalComposition.html#method.compose) for more information.
   Rune compose(Rune starter, Rune second) {
-    final result = _ICU4XCanonicalComposition_compose(_ffi, starter, second);
+    final result = _icu4x_CanonicalComposition_compose_mv1(_ffi, starter, second);
     return result;
   }
 }
 
-@meta.ResourceIdentifier('ICU4XCanonicalComposition_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XCanonicalComposition_destroy')
+@meta.ResourceIdentifier('icu4x_CanonicalComposition_destroy_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_CanonicalComposition_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XCanonicalComposition_destroy(ffi.Pointer<ffi.Void> self);
+external void _icu4x_CanonicalComposition_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XCanonicalComposition_create')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCanonicalComposition_create')
+@meta.ResourceIdentifier('icu4x_CanonicalComposition_create_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CanonicalComposition_create_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCanonicalComposition_create(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CanonicalComposition_create_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCanonicalComposition_compose')
-@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>(isLeaf: true, symbol: 'ICU4XCanonicalComposition_compose')
+@meta.ResourceIdentifier('icu4x_CanonicalComposition_compose_mv1')
+@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CanonicalComposition_compose_mv1')
 // ignore: non_constant_identifier_names
-external Rune _ICU4XCanonicalComposition_compose(ffi.Pointer<ffi.Opaque> self, Rune starter, Rune second);
+external Rune _icu4x_CanonicalComposition_compose_mv1(ffi.Pointer<ffi.Opaque> self, Rune starter, Rune second);

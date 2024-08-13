@@ -18,6 +18,12 @@ impl<T: VarULE + ?Sized> Bake for VarZeroVec<'_, T> {
     }
 }
 
+impl<T: VarULE + ?Sized> BakeSize for VarZeroVec<'_, T> {
+    fn borrows_size(&self) -> usize {
+        self.as_bytes().len()
+    }
+}
+
 impl<T: VarULE + ?Sized> Bake for &VarZeroSlice<T> {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("zerovec");
@@ -31,20 +37,24 @@ impl<T: VarULE + ?Sized> Bake for &VarZeroSlice<T> {
     }
 }
 
+impl<T: VarULE + ?Sized> BakeSize for &VarZeroSlice<T> {
+    fn borrows_size(&self) -> usize {
+        if self.is_empty() {
+            0
+        } else {
+            self.as_bytes().len()
+        }
+    }
+}
+
 #[test]
 fn test_baked_vec() {
+    test_bake!(VarZeroVec<str>, const, crate::VarZeroVec::new(), zerovec);
+
     test_bake!(
         VarZeroVec<str>,
-        const: crate::VarZeroVec::new(),
-        zerovec
-    );
-    test_bake!(
-        VarZeroVec<str>,
-        const: unsafe {
-            crate::VarZeroVec::from_bytes_unchecked(
-                b"\x02\x01\0\x16\0M\x01\\\x11"
-            )
-        },
+        const,
+        unsafe { crate::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x05\0helloworld") },
         zerovec
     );
 }
@@ -53,16 +63,14 @@ fn test_baked_vec() {
 fn test_baked_slice() {
     test_bake!(
         &VarZeroSlice<str>,
-        const: crate::VarZeroSlice::new_empty(),
+        const,
+        crate::VarZeroSlice::new_empty(),
         zerovec
     );
     test_bake!(
         &VarZeroSlice<str>,
-        const: unsafe {
-            crate::VarZeroSlice::from_bytes_unchecked(
-                b"\x02\x01\0\x16\0M\x01\\\x11"
-            )
-        },
+        const,
+        unsafe { crate::VarZeroSlice::from_bytes_unchecked(b"\x02\0\0\0\0\0\x05\0helloworld") },
         zerovec
     );
 }

@@ -10,4 +10,4 @@ version = "0.0.0"
 path = "unused"
 
 [dependencies]
-icu_capi = { version = "1.4", default-features = false }
+icu_capi = { version = "1.5", default-features = false }

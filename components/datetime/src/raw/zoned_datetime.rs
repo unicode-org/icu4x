@@ -13,8 +13,7 @@ use icu_provider::prelude::*;
 
 use crate::{
     format::{datetime, zoned_datetime::FormattedZonedDateTime},
-    input::{DateTimeInput, TimeZoneInput},
-    input::{ExtractedDateTimeInput, ExtractedTimeZoneInput},
+    input::{DateTimeInput, ExtractedTimeZoneInput, TimeZoneInput},
     pattern::runtime::PatternPlurals,
     provider::{
         self,
@@ -49,8 +48,8 @@ impl ZonedDateTimeFormatter {
             .map_err(|field| DateTimeError::UnsupportedField(field.symbol))?;
 
         let req = DataRequest {
-            locale,
-            metadata: Default::default(),
+            id: DataIdentifierBorrowed::for_locale(locale),
+            ..Default::default()
         };
 
         let week_data = if required.week_data {
@@ -72,7 +71,7 @@ impl ZonedDateTimeFormatter {
         };
 
         let time_symbols_data = if required.time_symbols_data {
-            Some(crate::provider::Baked.load(req)?.take_payload()?)
+            Some(crate::provider::Baked.load(req)?.payload)
         } else {
             None
         };
@@ -134,8 +133,8 @@ impl ZonedDateTimeFormatter {
             .map_err(|field| DateTimeError::UnsupportedField(field.symbol))?;
 
         let req = DataRequest {
-            locale,
-            metadata: Default::default(),
+            id: DataIdentifierBorrowed::for_locale(locale),
+            ..Default::default()
         };
 
         let week_data = if required.week_data {
@@ -143,11 +142,11 @@ impl ZonedDateTimeFormatter {
                 (*DataProvider::<WeekDataV1Marker>::load(
                     provider,
                     DataRequest {
-                        locale,
-                        metadata: Default::default(),
+                        id: DataIdentifierBorrowed::for_locale(locale),
+                        ..Default::default()
                     },
                 )?
-                .take_payload()?
+                .payload
                 .get())
                 .into(),
             )
@@ -168,7 +167,7 @@ impl ZonedDateTimeFormatter {
         };
 
         let time_symbols_data = if required.time_symbols_data {
-            Some(provider.load(req)?.take_payload()?)
+            Some(provider.load(req)?.payload)
         } else {
             None
         };
@@ -217,8 +216,8 @@ impl ZonedDateTimeFormatter {
     ) -> FormattedZonedDateTime<'l> {
         // Todo: optimize extraction #2143
         FormattedZonedDateTime {
-            zoned_datetime_format: self,
-            datetime: ExtractedDateTimeInput::extract_from(date),
+            formatted_datetime: self.datetime_format.format(date),
+            time_zone_format: &self.time_zone_format,
             time_zone: ExtractedTimeZoneInput::extract_from(time_zone),
         }
     }

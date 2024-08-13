@@ -3,51 +3,49 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[diplomat::bridge]
+#[diplomat::abi_rename = "icu4x_{0}_mv1"]
+#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
-    use icu_collator::{Collator, CollatorOptions};
 
-    use crate::{
-        common::ffi::ICU4XOrdering, errors::ffi::ICU4XError, locale::ffi::ICU4XLocale,
-        provider::ffi::ICU4XDataProvider,
-    };
+    use crate::{errors::ffi::DataError, locale_core::ffi::Locale, provider::ffi::DataProvider};
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::collator::Collator, Struct)]
-    pub struct ICU4XCollator(pub Collator);
+    pub struct Collator(pub icu_collator::Collator);
 
     #[diplomat::rust_link(icu::collator::CollatorOptions, Struct)]
     #[diplomat::rust_link(icu::collator::CollatorOptions::new, FnInStruct, hidden)]
-    #[diplomat::attr(dart, rename = "CollatorOptions")]
-    pub struct ICU4XCollatorOptionsV1 {
-        pub strength: ICU4XCollatorStrength,
-        pub alternate_handling: ICU4XCollatorAlternateHandling,
-        pub case_first: ICU4XCollatorCaseFirst,
-        pub max_variable: ICU4XCollatorMaxVariable,
-        pub case_level: ICU4XCollatorCaseLevel,
-        pub numeric: ICU4XCollatorNumeric,
-        pub backward_second_level: ICU4XCollatorBackwardSecondLevel,
+    #[diplomat::attr(supports = non_exhaustive_structs, rename = "CollatorOptions")]
+    pub struct CollatorOptionsV1 {
+        pub strength: CollatorStrength,
+        pub alternate_handling: CollatorAlternateHandling,
+        pub case_first: CollatorCaseFirst,
+        pub max_variable: CollatorMaxVariable,
+        pub case_level: CollatorCaseLevel,
+        pub numeric: CollatorNumeric,
+        pub backward_second_level: CollatorBackwardSecondLevel,
     }
 
     // Note the flipped order of the words `Collator` and `Resolved`, because
-    // in FFI `Collator` is part of the `ICU4XCollator` prefix, but in Rust,
+    // in FFI `Collator` is part of the `Collator` prefix, but in Rust,
     // `ResolvedCollatorOptions` makes more sense as English.
     #[diplomat::rust_link(icu::collator::ResolvedCollatorOptions, Struct)]
     #[diplomat::out]
-    #[diplomat::attr(dart, rename = "ResolvedCollatorOptions")]
-    pub struct ICU4XCollatorResolvedOptionsV1 {
-        pub strength: ICU4XCollatorStrength,
-        pub alternate_handling: ICU4XCollatorAlternateHandling,
-        pub case_first: ICU4XCollatorCaseFirst,
-        pub max_variable: ICU4XCollatorMaxVariable,
-        pub case_level: ICU4XCollatorCaseLevel,
-        pub numeric: ICU4XCollatorNumeric,
-        pub backward_second_level: ICU4XCollatorBackwardSecondLevel,
+    #[diplomat::attr(supports = non_exhaustive_structs, rename = "CollatorResolvedOptions")]
+    pub struct CollatorResolvedOptionsV1 {
+        pub strength: CollatorStrength,
+        pub alternate_handling: CollatorAlternateHandling,
+        pub case_first: CollatorCaseFirst,
+        pub max_variable: CollatorMaxVariable,
+        pub case_level: CollatorCaseLevel,
+        pub numeric: CollatorNumeric,
+        pub backward_second_level: CollatorBackwardSecondLevel,
     }
 
     #[diplomat::rust_link(icu::collator::Strength, Enum)]
     #[derive(Eq, PartialEq, Debug, PartialOrd, Ord)]
-    pub enum ICU4XCollatorStrength {
+    pub enum CollatorStrength {
         Auto = 0,
         Primary = 1,
         Secondary = 2,
@@ -58,7 +56,7 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::collator::AlternateHandling, Enum)]
     #[derive(Eq, PartialEq, Debug, PartialOrd, Ord)]
-    pub enum ICU4XCollatorAlternateHandling {
+    pub enum CollatorAlternateHandling {
         Auto = 0,
         NonIgnorable = 1,
         Shifted = 2,
@@ -66,7 +64,7 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::collator::CaseFirst, Enum)]
     #[derive(Eq, PartialEq, Debug, PartialOrd, Ord)]
-    pub enum ICU4XCollatorCaseFirst {
+    pub enum CollatorCaseFirst {
         Auto = 0,
         Off = 1,
         LowerFirst = 2,
@@ -75,7 +73,7 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::collator::MaxVariable, Enum)]
     #[derive(Eq, PartialEq, Debug, PartialOrd, Ord)]
-    pub enum ICU4XCollatorMaxVariable {
+    pub enum CollatorMaxVariable {
         Auto = 0,
         Space = 1,
         Punctuation = 2,
@@ -85,7 +83,7 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::collator::CaseLevel, Enum)]
     #[derive(Eq, PartialEq, Debug, PartialOrd, Ord)]
-    pub enum ICU4XCollatorCaseLevel {
+    pub enum CollatorCaseLevel {
         Auto = 0,
         Off = 1,
         On = 2,
@@ -93,7 +91,7 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::collator::Numeric, Enum)]
     #[derive(Eq, PartialEq, Debug, PartialOrd, Ord)]
-    pub enum ICU4XCollatorNumeric {
+    pub enum CollatorNumeric {
         Auto = 0,
         Off = 1,
         On = 2,
@@ -101,28 +99,29 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::collator::BackwardSecondLevel, Enum)]
     #[derive(Eq, PartialEq, Debug, PartialOrd, Ord)]
-    pub enum ICU4XCollatorBackwardSecondLevel {
+    pub enum CollatorBackwardSecondLevel {
         Auto = 0,
         Off = 1,
         On = 2,
     }
 
-    impl ICU4XCollator {
+    impl Collator {
         /// Construct a new Collator instance.
         #[diplomat::rust_link(icu::collator::Collator::try_new, FnInStruct)]
-        #[diplomat::attr(dart, rename = "create")]
+        #[diplomat::attr(supports = fallible_constructors, constructor)]
+        #[diplomat::attr(supports = non_exhaustive_structs, rename = "create")]
         pub fn create_v1(
-            provider: &ICU4XDataProvider,
-            locale: &ICU4XLocale,
-            options: ICU4XCollatorOptionsV1,
-        ) -> Result<Box<ICU4XCollator>, ICU4XError> {
+            provider: &DataProvider,
+            locale: &Locale,
+            options: CollatorOptionsV1,
+        ) -> Result<Box<Collator>, DataError> {
             let locale = locale.to_datalocale();
-            let options = CollatorOptions::from(options);
+            let options = icu_collator::CollatorOptions::from(options);
 
-            Ok(Box::new(ICU4XCollator(call_constructor!(
-                Collator::try_new,
-                Collator::try_new_with_any_provider,
-                Collator::try_new_with_buffer_provider,
+            Ok(Box::new(Collator(call_constructor!(
+                icu_collator::Collator::try_new,
+                icu_collator::Collator::try_new_with_any_provider,
+                icu_collator::Collator::try_new_with_buffer_provider,
                 provider,
                 &locale,
                 options,
@@ -134,16 +133,11 @@ pub mod ffi {
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(icu::collator::Collator::compare_utf8, FnInStruct)]
-        #[diplomat::attr(dart, disable)]
-        pub fn compare(&self, left: &DiplomatStr, right: &DiplomatStr) -> ICU4XOrdering {
-            self.0.compare_utf8(left, right).into()
-        }
-
-        /// Compare two strings.
-        #[diplomat::rust_link(icu::collator::Collator::compare, FnInStruct)]
-        #[diplomat::attr(dart, disable)]
-        pub fn compare_valid_utf8(&self, left: &str, right: &str) -> ICU4XOrdering {
-            self.0.compare(left, right).into()
+        #[diplomat::rust_link(icu::collator::Collator::compare, FnInStruct, hidden)]
+        #[diplomat::attr(not(supports = utf8_strings), disable)]
+        #[diplomat::attr(supports = utf8_strings, rename = "compare")]
+        pub fn compare_utf8(&self, left: &DiplomatStr, right: &DiplomatStr) -> core::cmp::Ordering {
+            self.0.compare_utf8(left, right)
         }
 
         /// Compare two strings.
@@ -151,208 +145,218 @@ pub mod ffi {
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(icu::collator::Collator::compare_utf16, FnInStruct)]
-        #[diplomat::attr(dart, rename = "compare")]
-        pub fn compare_utf16(&self, left: &DiplomatStr16, right: &DiplomatStr16) -> ICU4XOrdering {
-            self.0.compare_utf16(left, right).into()
+        #[diplomat::attr(not(supports = utf8_strings), rename = "compare")]
+        #[diplomat::attr(supports = utf8_strings, rename = "compare16")]
+        pub fn compare_utf16(
+            &self,
+            left: &DiplomatStr16,
+            right: &DiplomatStr16,
+        ) -> core::cmp::Ordering {
+            self.0.compare_utf16(left, right)
         }
 
         /// The resolved options showing how the default options, the requested options,
         /// and the options from locale data were combined. None of the struct fields
         /// will have `Auto` as the value.
         #[diplomat::rust_link(icu::collator::Collator::resolved_options, FnInStruct)]
-        pub fn resolved_options(&self) -> ICU4XCollatorResolvedOptionsV1 {
+        #[diplomat::attr(auto, getter)]
+        #[diplomat::attr(supports = non_exhaustive_structs, rename = "resolved_options")]
+        pub fn resolved_options_v1(&self) -> CollatorResolvedOptionsV1 {
             self.0.resolved_options().into()
         }
     }
 }
 
-use icu_collator::{
-    AlternateHandling, BackwardSecondLevel, CaseFirst, CaseLevel, CollatorOptions, MaxVariable,
-    Numeric, ResolvedCollatorOptions, Strength,
-};
-
-impl From<ffi::ICU4XCollatorStrength> for Option<Strength> {
-    fn from(strength: ffi::ICU4XCollatorStrength) -> Option<Strength> {
+impl From<ffi::CollatorStrength> for Option<icu_collator::Strength> {
+    fn from(strength: ffi::CollatorStrength) -> Option<icu_collator::Strength> {
         match strength {
-            ffi::ICU4XCollatorStrength::Auto => None,
-            ffi::ICU4XCollatorStrength::Primary => Some(Strength::Primary),
-            ffi::ICU4XCollatorStrength::Secondary => Some(Strength::Secondary),
-            ffi::ICU4XCollatorStrength::Tertiary => Some(Strength::Tertiary),
-            ffi::ICU4XCollatorStrength::Quaternary => Some(Strength::Quaternary),
-            ffi::ICU4XCollatorStrength::Identical => Some(Strength::Identical),
+            ffi::CollatorStrength::Auto => None,
+            ffi::CollatorStrength::Primary => Some(icu_collator::Strength::Primary),
+            ffi::CollatorStrength::Secondary => Some(icu_collator::Strength::Secondary),
+            ffi::CollatorStrength::Tertiary => Some(icu_collator::Strength::Tertiary),
+            ffi::CollatorStrength::Quaternary => Some(icu_collator::Strength::Quaternary),
+            ffi::CollatorStrength::Identical => Some(icu_collator::Strength::Identical),
         }
     }
 }
 
-impl From<ffi::ICU4XCollatorAlternateHandling> for Option<AlternateHandling> {
-    fn from(alternate_handling: ffi::ICU4XCollatorAlternateHandling) -> Option<AlternateHandling> {
-        match alternate_handling {
-            ffi::ICU4XCollatorAlternateHandling::Auto => None,
-            ffi::ICU4XCollatorAlternateHandling::NonIgnorable => {
-                Some(AlternateHandling::NonIgnorable)
-            }
-            ffi::ICU4XCollatorAlternateHandling::Shifted => Some(AlternateHandling::Shifted),
-        }
-    }
-}
-
-impl From<ffi::ICU4XCollatorCaseFirst> for Option<CaseFirst> {
-    fn from(case_first: ffi::ICU4XCollatorCaseFirst) -> Option<CaseFirst> {
-        match case_first {
-            ffi::ICU4XCollatorCaseFirst::Auto => None,
-            ffi::ICU4XCollatorCaseFirst::Off => Some(CaseFirst::Off),
-            ffi::ICU4XCollatorCaseFirst::LowerFirst => Some(CaseFirst::LowerFirst),
-            ffi::ICU4XCollatorCaseFirst::UpperFirst => Some(CaseFirst::UpperFirst),
-        }
-    }
-}
-
-impl From<ffi::ICU4XCollatorMaxVariable> for Option<MaxVariable> {
-    fn from(max_variable: ffi::ICU4XCollatorMaxVariable) -> Option<MaxVariable> {
-        match max_variable {
-            ffi::ICU4XCollatorMaxVariable::Auto => None,
-            ffi::ICU4XCollatorMaxVariable::Space => Some(MaxVariable::Space),
-            ffi::ICU4XCollatorMaxVariable::Punctuation => Some(MaxVariable::Punctuation),
-            ffi::ICU4XCollatorMaxVariable::Symbol => Some(MaxVariable::Symbol),
-            ffi::ICU4XCollatorMaxVariable::Currency => Some(MaxVariable::Currency),
-        }
-    }
-}
-
-impl From<ffi::ICU4XCollatorCaseLevel> for Option<CaseLevel> {
-    fn from(case_level: ffi::ICU4XCollatorCaseLevel) -> Option<CaseLevel> {
-        match case_level {
-            ffi::ICU4XCollatorCaseLevel::Auto => None,
-            ffi::ICU4XCollatorCaseLevel::Off => Some(CaseLevel::Off),
-            ffi::ICU4XCollatorCaseLevel::On => Some(CaseLevel::On),
-        }
-    }
-}
-
-impl From<ffi::ICU4XCollatorNumeric> for Option<Numeric> {
-    fn from(numeric: ffi::ICU4XCollatorNumeric) -> Option<Numeric> {
-        match numeric {
-            ffi::ICU4XCollatorNumeric::Auto => None,
-            ffi::ICU4XCollatorNumeric::Off => Some(Numeric::Off),
-            ffi::ICU4XCollatorNumeric::On => Some(Numeric::On),
-        }
-    }
-}
-
-impl From<ffi::ICU4XCollatorBackwardSecondLevel> for Option<BackwardSecondLevel> {
+impl From<ffi::CollatorAlternateHandling> for Option<icu_collator::AlternateHandling> {
     fn from(
-        backward_second_level: ffi::ICU4XCollatorBackwardSecondLevel,
-    ) -> Option<BackwardSecondLevel> {
-        match backward_second_level {
-            ffi::ICU4XCollatorBackwardSecondLevel::Auto => None,
-            ffi::ICU4XCollatorBackwardSecondLevel::Off => Some(BackwardSecondLevel::Off),
-            ffi::ICU4XCollatorBackwardSecondLevel::On => Some(BackwardSecondLevel::On),
+        alternate_handling: ffi::CollatorAlternateHandling,
+    ) -> Option<icu_collator::AlternateHandling> {
+        match alternate_handling {
+            ffi::CollatorAlternateHandling::Auto => None,
+            ffi::CollatorAlternateHandling::NonIgnorable => {
+                Some(icu_collator::AlternateHandling::NonIgnorable)
+            }
+            ffi::CollatorAlternateHandling::Shifted => {
+                Some(icu_collator::AlternateHandling::Shifted)
+            }
         }
     }
 }
 
-impl From<Strength> for ffi::ICU4XCollatorStrength {
-    fn from(strength: Strength) -> ffi::ICU4XCollatorStrength {
+impl From<ffi::CollatorCaseFirst> for Option<icu_collator::CaseFirst> {
+    fn from(case_first: ffi::CollatorCaseFirst) -> Option<icu_collator::CaseFirst> {
+        match case_first {
+            ffi::CollatorCaseFirst::Auto => None,
+            ffi::CollatorCaseFirst::Off => Some(icu_collator::CaseFirst::Off),
+            ffi::CollatorCaseFirst::LowerFirst => Some(icu_collator::CaseFirst::LowerFirst),
+            ffi::CollatorCaseFirst::UpperFirst => Some(icu_collator::CaseFirst::UpperFirst),
+        }
+    }
+}
+
+impl From<ffi::CollatorMaxVariable> for Option<icu_collator::MaxVariable> {
+    fn from(max_variable: ffi::CollatorMaxVariable) -> Option<icu_collator::MaxVariable> {
+        match max_variable {
+            ffi::CollatorMaxVariable::Auto => None,
+            ffi::CollatorMaxVariable::Space => Some(icu_collator::MaxVariable::Space),
+            ffi::CollatorMaxVariable::Punctuation => Some(icu_collator::MaxVariable::Punctuation),
+            ffi::CollatorMaxVariable::Symbol => Some(icu_collator::MaxVariable::Symbol),
+            ffi::CollatorMaxVariable::Currency => Some(icu_collator::MaxVariable::Currency),
+        }
+    }
+}
+
+impl From<ffi::CollatorCaseLevel> for Option<icu_collator::CaseLevel> {
+    fn from(case_level: ffi::CollatorCaseLevel) -> Option<icu_collator::CaseLevel> {
+        match case_level {
+            ffi::CollatorCaseLevel::Auto => None,
+            ffi::CollatorCaseLevel::Off => Some(icu_collator::CaseLevel::Off),
+            ffi::CollatorCaseLevel::On => Some(icu_collator::CaseLevel::On),
+        }
+    }
+}
+
+impl From<ffi::CollatorNumeric> for Option<icu_collator::Numeric> {
+    fn from(numeric: ffi::CollatorNumeric) -> Option<icu_collator::Numeric> {
+        match numeric {
+            ffi::CollatorNumeric::Auto => None,
+            ffi::CollatorNumeric::Off => Some(icu_collator::Numeric::Off),
+            ffi::CollatorNumeric::On => Some(icu_collator::Numeric::On),
+        }
+    }
+}
+
+impl From<ffi::CollatorBackwardSecondLevel> for Option<icu_collator::BackwardSecondLevel> {
+    fn from(
+        backward_second_level: ffi::CollatorBackwardSecondLevel,
+    ) -> Option<icu_collator::BackwardSecondLevel> {
+        match backward_second_level {
+            ffi::CollatorBackwardSecondLevel::Auto => None,
+            ffi::CollatorBackwardSecondLevel::Off => Some(icu_collator::BackwardSecondLevel::Off),
+            ffi::CollatorBackwardSecondLevel::On => Some(icu_collator::BackwardSecondLevel::On),
+        }
+    }
+}
+
+impl From<icu_collator::Strength> for ffi::CollatorStrength {
+    fn from(strength: icu_collator::Strength) -> ffi::CollatorStrength {
         match strength {
-            Strength::Primary => ffi::ICU4XCollatorStrength::Primary,
-            Strength::Secondary => ffi::ICU4XCollatorStrength::Secondary,
-            Strength::Tertiary => ffi::ICU4XCollatorStrength::Tertiary,
-            Strength::Quaternary => ffi::ICU4XCollatorStrength::Quaternary,
-            Strength::Identical => ffi::ICU4XCollatorStrength::Identical,
+            icu_collator::Strength::Primary => ffi::CollatorStrength::Primary,
+            icu_collator::Strength::Secondary => ffi::CollatorStrength::Secondary,
+            icu_collator::Strength::Tertiary => ffi::CollatorStrength::Tertiary,
+            icu_collator::Strength::Quaternary => ffi::CollatorStrength::Quaternary,
+            icu_collator::Strength::Identical => ffi::CollatorStrength::Identical,
             _ => {
                 debug_assert!(false, "FFI out of sync");
-                ffi::ICU4XCollatorStrength::Identical // Highest we know of
+                ffi::CollatorStrength::Identical // Highest we know of
             }
         }
     }
 }
 
-impl From<AlternateHandling> for ffi::ICU4XCollatorAlternateHandling {
-    fn from(alternate_handling: AlternateHandling) -> ffi::ICU4XCollatorAlternateHandling {
+impl From<icu_collator::AlternateHandling> for ffi::CollatorAlternateHandling {
+    fn from(alternate_handling: icu_collator::AlternateHandling) -> ffi::CollatorAlternateHandling {
         match alternate_handling {
-            AlternateHandling::NonIgnorable => ffi::ICU4XCollatorAlternateHandling::NonIgnorable,
-            AlternateHandling::Shifted => ffi::ICU4XCollatorAlternateHandling::Shifted,
+            icu_collator::AlternateHandling::NonIgnorable => {
+                ffi::CollatorAlternateHandling::NonIgnorable
+            }
+            icu_collator::AlternateHandling::Shifted => ffi::CollatorAlternateHandling::Shifted,
             _ => {
                 debug_assert!(false, "FFI out of sync");
                 // Possible future values: ShiftTrimmed, Blanked
-                ffi::ICU4XCollatorAlternateHandling::Shifted // Highest we know of
+                ffi::CollatorAlternateHandling::Shifted // Highest we know of
             }
         }
     }
 }
 
-impl From<CaseFirst> for ffi::ICU4XCollatorCaseFirst {
-    fn from(case_first: CaseFirst) -> ffi::ICU4XCollatorCaseFirst {
+impl From<icu_collator::CaseFirst> for ffi::CollatorCaseFirst {
+    fn from(case_first: icu_collator::CaseFirst) -> ffi::CollatorCaseFirst {
         match case_first {
-            CaseFirst::Off => ffi::ICU4XCollatorCaseFirst::Off,
-            CaseFirst::LowerFirst => ffi::ICU4XCollatorCaseFirst::LowerFirst,
-            CaseFirst::UpperFirst => ffi::ICU4XCollatorCaseFirst::UpperFirst,
+            icu_collator::CaseFirst::Off => ffi::CollatorCaseFirst::Off,
+            icu_collator::CaseFirst::LowerFirst => ffi::CollatorCaseFirst::LowerFirst,
+            icu_collator::CaseFirst::UpperFirst => ffi::CollatorCaseFirst::UpperFirst,
             _ => {
                 debug_assert!(false, "FFI out of sync");
                 // Does it even make sense that `CaseFirst` is non-exhaustive?
-                ffi::ICU4XCollatorCaseFirst::Off // The most neutral value
+                ffi::CollatorCaseFirst::Off // The most neutral value
             }
         }
     }
 }
 
-impl From<MaxVariable> for ffi::ICU4XCollatorMaxVariable {
-    fn from(max_variable: MaxVariable) -> ffi::ICU4XCollatorMaxVariable {
+impl From<icu_collator::MaxVariable> for ffi::CollatorMaxVariable {
+    fn from(max_variable: icu_collator::MaxVariable) -> ffi::CollatorMaxVariable {
         match max_variable {
-            MaxVariable::Space => ffi::ICU4XCollatorMaxVariable::Space,
-            MaxVariable::Punctuation => ffi::ICU4XCollatorMaxVariable::Punctuation,
-            MaxVariable::Symbol => ffi::ICU4XCollatorMaxVariable::Symbol,
-            MaxVariable::Currency => ffi::ICU4XCollatorMaxVariable::Currency,
+            icu_collator::MaxVariable::Space => ffi::CollatorMaxVariable::Space,
+            icu_collator::MaxVariable::Punctuation => ffi::CollatorMaxVariable::Punctuation,
+            icu_collator::MaxVariable::Symbol => ffi::CollatorMaxVariable::Symbol,
+            icu_collator::MaxVariable::Currency => ffi::CollatorMaxVariable::Currency,
             _ => {
                 debug_assert!(false, "FFI out of sync");
-                ffi::ICU4XCollatorMaxVariable::Currency // Highest we know of
+                ffi::CollatorMaxVariable::Currency // Highest we know of
             }
         }
     }
 }
 
-impl From<CaseLevel> for ffi::ICU4XCollatorCaseLevel {
-    fn from(case_level: CaseLevel) -> ffi::ICU4XCollatorCaseLevel {
+impl From<icu_collator::CaseLevel> for ffi::CollatorCaseLevel {
+    fn from(case_level: icu_collator::CaseLevel) -> ffi::CollatorCaseLevel {
         match case_level {
-            CaseLevel::Off => ffi::ICU4XCollatorCaseLevel::Off,
-            CaseLevel::On => ffi::ICU4XCollatorCaseLevel::On,
+            icu_collator::CaseLevel::Off => ffi::CollatorCaseLevel::Off,
+            icu_collator::CaseLevel::On => ffi::CollatorCaseLevel::On,
             _ => {
                 debug_assert!(false, "FFI out of sync");
-                ffi::ICU4XCollatorCaseLevel::On // The most enabled that we know of
+                ffi::CollatorCaseLevel::On // The most enabled that we know of
             }
         }
     }
 }
 
-impl From<Numeric> for ffi::ICU4XCollatorNumeric {
-    fn from(numeric: Numeric) -> ffi::ICU4XCollatorNumeric {
+impl From<icu_collator::Numeric> for ffi::CollatorNumeric {
+    fn from(numeric: icu_collator::Numeric) -> ffi::CollatorNumeric {
         match numeric {
-            Numeric::Off => ffi::ICU4XCollatorNumeric::Off,
-            Numeric::On => ffi::ICU4XCollatorNumeric::On,
+            icu_collator::Numeric::Off => ffi::CollatorNumeric::Off,
+            icu_collator::Numeric::On => ffi::CollatorNumeric::On,
             _ => {
                 debug_assert!(false, "FFI out of sync");
-                ffi::ICU4XCollatorNumeric::On // The most enabled that we know of
+                ffi::CollatorNumeric::On // The most enabled that we know of
             }
         }
     }
 }
 
-impl From<BackwardSecondLevel> for ffi::ICU4XCollatorBackwardSecondLevel {
-    fn from(backward_second_level: BackwardSecondLevel) -> ffi::ICU4XCollatorBackwardSecondLevel {
+impl From<icu_collator::BackwardSecondLevel> for ffi::CollatorBackwardSecondLevel {
+    fn from(
+        backward_second_level: icu_collator::BackwardSecondLevel,
+    ) -> ffi::CollatorBackwardSecondLevel {
         match backward_second_level {
-            BackwardSecondLevel::Off => ffi::ICU4XCollatorBackwardSecondLevel::Off,
-            BackwardSecondLevel::On => ffi::ICU4XCollatorBackwardSecondLevel::On,
+            icu_collator::BackwardSecondLevel::Off => ffi::CollatorBackwardSecondLevel::Off,
+            icu_collator::BackwardSecondLevel::On => ffi::CollatorBackwardSecondLevel::On,
             _ => {
                 debug_assert!(false, "FFI out of sync");
-                ffi::ICU4XCollatorBackwardSecondLevel::On // The most enabled that we know of
+                ffi::CollatorBackwardSecondLevel::On // The most enabled that we know of
             }
         }
     }
 }
 
-impl From<ffi::ICU4XCollatorOptionsV1> for CollatorOptions {
-    fn from(options: ffi::ICU4XCollatorOptionsV1) -> CollatorOptions {
-        let mut result = CollatorOptions::new();
+impl From<ffi::CollatorOptionsV1> for icu_collator::CollatorOptions {
+    fn from(options: ffi::CollatorOptionsV1) -> icu_collator::CollatorOptions {
+        let mut result = icu_collator::CollatorOptions::new();
         result.strength = options.strength.into();
         result.alternate_handling = options.alternate_handling.into();
         result.case_first = options.case_first.into();
@@ -365,8 +369,8 @@ impl From<ffi::ICU4XCollatorOptionsV1> for CollatorOptions {
     }
 }
 
-impl From<ResolvedCollatorOptions> for ffi::ICU4XCollatorResolvedOptionsV1 {
-    fn from(options: ResolvedCollatorOptions) -> ffi::ICU4XCollatorResolvedOptionsV1 {
+impl From<icu_collator::ResolvedCollatorOptions> for ffi::CollatorResolvedOptionsV1 {
+    fn from(options: icu_collator::ResolvedCollatorOptions) -> ffi::CollatorResolvedOptionsV1 {
         Self {
             strength: options.strength.into(),
             alternate_handling: options.alternate_handling.into(),

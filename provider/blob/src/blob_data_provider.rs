@@ -4,9 +4,11 @@
 
 use crate::blob_schema::BlobSchema;
 use alloc::boxed::Box;
+use alloc::collections::BTreeSet;
 use icu_provider::buf::BufferFormat;
 use icu_provider::prelude::*;
 use icu_provider::Cart;
+use icu_provider::DynamicDryDataProvider;
 use yoke::*;
 
 /// A data provider that reads from serialized blobs of data.
@@ -30,14 +32,14 @@ use yoke::*;
 /// Load "hello world" data from a postcard blob loaded at runtime:
 ///
 /// ```
-/// use icu_locid::locale;
+/// use icu_locale_core::locale;
 /// use icu_provider::hello_world::HelloWorldFormatter;
 /// use icu_provider_blob::BlobDataProvider;
 /// use writeable::assert_writeable_eq;
 ///
 /// // Read an ICU4X data blob dynamically:
 /// let blob = std::fs::read("tests/data/v2.postcard")
-/// .expect("Reading pre-computed postcard buffer");
+///     .expect("Reading pre-computed postcard buffer");
 ///
 /// // Create a DataProvider from it:
 /// let provider = BlobDataProvider::try_new_from_blob(blob.into_boxed_slice())
@@ -58,7 +60,7 @@ use yoke::*;
 /// Load "hello world" data from a postcard blob statically linked at compile time:
 ///
 /// ```
-/// use icu_locid::locale;
+/// use icu_locale_core::locale;
 /// use icu_provider::hello_world::HelloWorldFormatter;
 /// use icu_provider_blob::BlobDataProvider;
 /// use writeable::assert_writeable_eq;
@@ -111,23 +113,48 @@ impl BlobDataProvider {
             )?),
         })
     }
+
+    #[doc(hidden)] // for testing purposes only: checks if it is using the V2Bigger format
+    pub fn internal_is_using_v2_bigger_format(&self) -> bool {
+        matches!(self.data.get(), BlobSchema::V002Bigger(..))
+    }
 }
 
-impl BufferProvider for BlobDataProvider {
-    fn load_buffer(
+impl DynamicDataProvider<BufferMarker> for BlobDataProvider {
+    fn load_data(
         &self,
-        key: DataKey,
+        marker: DataMarkerInfo,
         req: DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
+        let payload = self
+            .data
+            .try_map_project_cloned(|blob, _| blob.load(marker, req))
+            .map(DataPayload::from_yoked_buffer)?;
         let mut metadata = DataResponseMetadata::default();
         metadata.buffer_format = Some(BufferFormat::Postcard1);
-        Ok(DataResponse {
-            metadata,
-            payload: Some(DataPayload::from_yoked_buffer(
-                self.data
-                    .try_map_project_cloned(|blob, _| blob.load(key, req))?,
-            )),
-        })
+        Ok(DataResponse { metadata, payload })
+    }
+}
+
+impl DynamicDryDataProvider<BufferMarker> for BlobDataProvider {
+    fn dry_load_data(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<DataResponseMetadata, DataError> {
+        self.data.get().load(marker, req)?;
+        let mut metadata = DataResponseMetadata::default();
+        metadata.buffer_format = Some(BufferFormat::Postcard1);
+        Ok(metadata)
+    }
+}
+
+impl IterableDynamicDataProvider<BufferMarker> for BlobDataProvider {
+    fn iter_ids_for_marker(
+        &self,
+        marker: DataMarkerInfo,
+    ) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+        self.data.get().iter_ids(marker)
     }
 }
 
@@ -135,7 +162,7 @@ impl BufferProvider for BlobDataProvider {
 mod test {
     use super::*;
     use crate::export::*;
-    use icu_provider::datagen::*;
+    use icu_provider::export::*;
     use icu_provider::hello_world::*;
 
     #[icu_provider::data_struct(marker(HelloSingletonV1Marker, "hello/singleton@1", singleton))]
@@ -154,7 +181,7 @@ mod test {
                     BlobExporter::new_v2_with_sink(Box::new(&mut blob))
                 };
 
-                exporter.flush(HelloWorldV1Marker::KEY).unwrap();
+                exporter.flush(HelloWorldV1Marker::INFO).unwrap();
 
                 exporter.close().unwrap();
             }
@@ -163,9 +190,9 @@ mod test {
 
             assert!(
                 matches!(
-                    provider.load_buffer(HelloWorldV1Marker::KEY, Default::default()),
+                    provider.load_data(HelloWorldV1Marker::INFO, Default::default()),
                     Err(DataError {
-                        kind: DataErrorKind::MissingLocale,
+                        kind: DataErrorKind::IdentifierNotFound,
                         ..
                     })
                 ),
@@ -186,7 +213,7 @@ mod test {
                     BlobExporter::new_v2_with_sink(Box::new(&mut blob))
                 };
 
-                exporter.flush(HelloSingletonV1Marker::KEY).unwrap();
+                exporter.flush(HelloSingletonV1Marker::INFO).unwrap();
 
                 exporter.close().unwrap();
             }
@@ -195,15 +222,17 @@ mod test {
 
             assert!(
                 matches!(
-                    provider.load_buffer(
-                        HelloSingletonV1Marker::KEY,
+                    provider.load_data(
+                        HelloSingletonV1Marker::INFO,
                         DataRequest {
-                            locale: &icu_locid::locale!("de").into(),
-                            metadata: Default::default()
+                            id: DataIdentifierBorrowed::for_locale(
+                                &icu_locale_core::langid!("de").into()
+                            ),
+                            ..Default::default()
                         }
                     ),
                     Err(DataError {
-                        kind: DataErrorKind::ExtraneousLocale,
+                        kind: DataErrorKind::InvalidRequest,
                         ..
                     })
                 ),
@@ -212,9 +241,9 @@ mod test {
 
             assert!(
                 matches!(
-                    provider.load_buffer(HelloSingletonV1Marker::KEY, Default::default()),
+                    provider.load_data(HelloSingletonV1Marker::INFO, Default::default()),
                     Err(DataError {
-                        kind: DataErrorKind::MissingLocale,
+                        kind: DataErrorKind::IdentifierNotFound,
                         ..
                     })
                 ),

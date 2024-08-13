@@ -3,9 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::ForkByErrorPredicate;
-use alloc::vec::Vec;
-#[cfg(feature = "datagen")]
-use icu_provider::datagen;
+use alloc::{collections::BTreeSet, vec::Vec};
 use icu_provider::prelude::*;
 
 /// A provider that returns data from one of two child providers based on a predicate function.
@@ -43,24 +41,39 @@ impl<P0, P1, F> ForkByErrorProvider<P0, P1, F> {
     }
 }
 
-impl<P0, P1, F> BufferProvider for ForkByErrorProvider<P0, P1, F>
+impl<M, P0, P1, F> DataProvider<M> for ForkByErrorProvider<P0, P1, F>
 where
-    P0: BufferProvider,
-    P1: BufferProvider,
+    M: DataMarker,
+    P0: DataProvider<M>,
+    P1: DataProvider<M>,
     F: ForkByErrorPredicate,
 {
-    fn load_buffer(
-        &self,
-        key: DataKey,
-        req: DataRequest,
-    ) -> Result<DataResponse<BufferMarker>, DataError> {
-        let result = self.0.load_buffer(key, req);
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        let result = self.0.load(req);
         match result {
             Ok(ok) => return Ok(ok),
-            Err(err) if !self.2.test(key, Some(req), err) => return Err(err),
+            Err(err) if !self.2.test(M::INFO, Some(req), err) => return Err(err),
             _ => (),
         };
-        self.1.load_buffer(key, req)
+        self.1.load(req)
+    }
+}
+
+impl<M, P0, P1, F> DryDataProvider<M> for ForkByErrorProvider<P0, P1, F>
+where
+    M: DataMarker,
+    P0: DryDataProvider<M>,
+    P1: DryDataProvider<M>,
+    F: ForkByErrorPredicate,
+{
+    fn dry_load(&self, req: DataRequest) -> Result<DataResponseMetadata, DataError> {
+        let result = self.0.dry_load(req);
+        match result {
+            Ok(ok) => return Ok(ok),
+            Err(err) if !self.2.test(M::INFO, Some(req), err) => return Err(err),
+            _ => (),
+        };
+        self.1.dry_load(req)
     }
 }
 
@@ -70,51 +83,79 @@ where
     P1: AnyProvider,
     F: ForkByErrorPredicate,
 {
-    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
-        let result = self.0.load_any(key, req);
+    fn load_any(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<AnyResponse, DataError> {
+        let result = self.0.load_any(marker, req);
         match result {
             Ok(ok) => return Ok(ok),
-            Err(err) if !self.2.test(key, Some(req), err) => return Err(err),
+            Err(err) if !self.2.test(marker, Some(req), err) => return Err(err),
             _ => (),
         };
-        self.1.load_any(key, req)
+        self.1.load_any(marker, req)
     }
 }
 
 impl<M, P0, P1, F> DynamicDataProvider<M> for ForkByErrorProvider<P0, P1, F>
 where
-    M: DataMarker,
+    M: DynamicDataMarker,
     P0: DynamicDataProvider<M>,
     P1: DynamicDataProvider<M>,
     F: ForkByErrorPredicate,
 {
-    fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        let result = self.0.load_data(key, req);
+    fn load_data(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<DataResponse<M>, DataError> {
+        let result = self.0.load_data(marker, req);
         match result {
             Ok(ok) => return Ok(ok),
-            Err(err) if !self.2.test(key, Some(req), err) => return Err(err),
+            Err(err) if !self.2.test(marker, Some(req), err) => return Err(err),
             _ => (),
         };
-        self.1.load_data(key, req)
+        self.1.load_data(marker, req)
     }
 }
 
-#[cfg(feature = "datagen")]
-impl<M, P0, P1, F> datagen::IterableDynamicDataProvider<M> for ForkByErrorProvider<P0, P1, F>
+impl<M, P0, P1, F> DynamicDryDataProvider<M> for ForkByErrorProvider<P0, P1, F>
 where
-    M: DataMarker,
-    P0: datagen::IterableDynamicDataProvider<M>,
-    P1: datagen::IterableDynamicDataProvider<M>,
+    M: DynamicDataMarker,
+    P0: DynamicDryDataProvider<M>,
+    P1: DynamicDryDataProvider<M>,
     F: ForkByErrorPredicate,
 {
-    fn supported_locales_for_key(&self, key: DataKey) -> Result<Vec<DataLocale>, DataError> {
-        let result = self.0.supported_locales_for_key(key);
+    fn dry_load_data(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<DataResponseMetadata, DataError> {
+        let result = self.0.dry_load_data(marker, req);
         match result {
             Ok(ok) => return Ok(ok),
-            Err(err) if !self.2.test(key, None, err) => return Err(err),
+            Err(err) if !self.2.test(marker, Some(req), err) => return Err(err),
             _ => (),
         };
-        self.1.supported_locales_for_key(key)
+        self.1.dry_load_data(marker, req)
+    }
+}
+
+impl<M, P0, P1, F> IterableDynamicDataProvider<M> for ForkByErrorProvider<P0, P1, F>
+where
+    M: DynamicDataMarker,
+    P0: IterableDynamicDataProvider<M>,
+    P1: IterableDynamicDataProvider<M>,
+    F: ForkByErrorPredicate,
+{
+    fn iter_ids_for_marker(
+        &self,
+        marker: DataMarkerInfo,
+    ) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+        let result = self.0.iter_ids_for_marker(marker);
+        match result {
+            Ok(ok) => return Ok(ok),
+            Err(err) if !self.2.test(marker, None, err) => return Err(err),
+            _ => (),
+        };
+        self.1.iter_ids_for_marker(marker)
     }
 }
 
@@ -164,22 +205,39 @@ impl<P, F> MultiForkByErrorProvider<P, F> {
     }
 }
 
-impl<P, F> BufferProvider for MultiForkByErrorProvider<P, F>
+impl<M, P, F> DataProvider<M> for MultiForkByErrorProvider<P, F>
 where
-    P: BufferProvider,
+    M: DataMarker,
+    P: DataProvider<M>,
     F: ForkByErrorPredicate,
 {
-    fn load_buffer(
-        &self,
-        key: DataKey,
-        req: DataRequest,
-    ) -> Result<DataResponse<BufferMarker>, DataError> {
-        let mut last_error = F::UNIT_ERROR.with_key(key);
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        let mut last_error = F::UNIT_ERROR.with_marker(M::INFO);
         for provider in self.providers.iter() {
-            let result = provider.load_buffer(key, req);
+            let result = provider.load(req);
             match result {
                 Ok(ok) => return Ok(ok),
-                Err(err) if !self.predicate.test(key, Some(req), err) => return Err(err),
+                Err(err) if !self.predicate.test(M::INFO, Some(req), err) => return Err(err),
+                Err(err) => last_error = err,
+            };
+        }
+        Err(last_error)
+    }
+}
+
+impl<M, P, F> DryDataProvider<M> for MultiForkByErrorProvider<P, F>
+where
+    M: DataMarker,
+    P: DryDataProvider<M>,
+    F: ForkByErrorPredicate,
+{
+    fn dry_load(&self, req: DataRequest) -> Result<DataResponseMetadata, DataError> {
+        let mut last_error = F::UNIT_ERROR.with_marker(M::INFO);
+        for provider in self.providers.iter() {
+            let result = provider.dry_load(req);
+            match result {
+                Ok(ok) => return Ok(ok),
+                Err(err) if !self.predicate.test(M::INFO, Some(req), err) => return Err(err),
                 Err(err) => last_error = err,
             };
         }
@@ -192,13 +250,13 @@ where
     P: AnyProvider,
     F: ForkByErrorPredicate,
 {
-    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
-        let mut last_error = F::UNIT_ERROR.with_key(key);
+    fn load_any(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<AnyResponse, DataError> {
+        let mut last_error = F::UNIT_ERROR.with_marker(marker);
         for provider in self.providers.iter() {
-            let result = provider.load_any(key, req);
+            let result = provider.load_any(marker, req);
             match result {
                 Ok(ok) => return Ok(ok),
-                Err(err) if !self.predicate.test(key, Some(req), err) => return Err(err),
+                Err(err) if !self.predicate.test(marker, Some(req), err) => return Err(err),
                 Err(err) => last_error = err,
             };
         }
@@ -208,17 +266,21 @@ where
 
 impl<M, P, F> DynamicDataProvider<M> for MultiForkByErrorProvider<P, F>
 where
-    M: DataMarker,
+    M: DynamicDataMarker,
     P: DynamicDataProvider<M>,
     F: ForkByErrorPredicate,
 {
-    fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        let mut last_error = F::UNIT_ERROR.with_key(key);
+    fn load_data(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<DataResponse<M>, DataError> {
+        let mut last_error = F::UNIT_ERROR.with_marker(marker);
         for provider in self.providers.iter() {
-            let result = provider.load_data(key, req);
+            let result = provider.load_data(marker, req);
             match result {
                 Ok(ok) => return Ok(ok),
-                Err(err) if !self.predicate.test(key, Some(req), err) => return Err(err),
+                Err(err) if !self.predicate.test(marker, Some(req), err) => return Err(err),
                 Err(err) => last_error = err,
             };
         }
@@ -226,20 +288,23 @@ where
     }
 }
 
-#[cfg(feature = "datagen")]
-impl<M, P, F> datagen::IterableDynamicDataProvider<M> for MultiForkByErrorProvider<P, F>
+impl<M, P, F> DynamicDryDataProvider<M> for MultiForkByErrorProvider<P, F>
 where
-    M: DataMarker,
-    P: datagen::IterableDynamicDataProvider<M>,
+    M: DynamicDataMarker,
+    P: DynamicDryDataProvider<M>,
     F: ForkByErrorPredicate,
 {
-    fn supported_locales_for_key(&self, key: DataKey) -> Result<Vec<DataLocale>, DataError> {
-        let mut last_error = F::UNIT_ERROR.with_key(key);
+    fn dry_load_data(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<DataResponseMetadata, DataError> {
+        let mut last_error = F::UNIT_ERROR.with_marker(marker);
         for provider in self.providers.iter() {
-            let result = provider.supported_locales_for_key(key);
+            let result = provider.dry_load_data(marker, req);
             match result {
                 Ok(ok) => return Ok(ok),
-                Err(err) if !self.predicate.test(key, None, err) => return Err(err),
+                Err(err) if !self.predicate.test(marker, Some(req), err) => return Err(err),
                 Err(err) => last_error = err,
             };
         }
@@ -247,63 +312,25 @@ where
     }
 }
 
-#[cfg(feature = "datagen")]
-impl<P, MFrom, MTo, F> datagen::DataConverter<MFrom, MTo> for MultiForkByErrorProvider<P, F>
+impl<M, P, F> IterableDynamicDataProvider<M> for MultiForkByErrorProvider<P, F>
 where
-    P: datagen::DataConverter<MFrom, MTo>,
+    M: DynamicDataMarker,
+    P: IterableDynamicDataProvider<M>,
     F: ForkByErrorPredicate,
-    MFrom: DataMarker,
-    MTo: DataMarker,
 {
-    fn convert(
+    fn iter_ids_for_marker(
         &self,
-        key: DataKey,
-        mut from: DataPayload<MFrom>,
-    ) -> Result<DataPayload<MTo>, (DataPayload<MFrom>, DataError)> {
-        let mut last_error = F::UNIT_ERROR.with_key(key);
+        marker: DataMarkerInfo,
+    ) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+        let mut last_error = F::UNIT_ERROR.with_marker(marker);
         for provider in self.providers.iter() {
-            let result = provider.convert(key, from);
+            let result = provider.iter_ids_for_marker(marker);
             match result {
                 Ok(ok) => return Ok(ok),
-                Err(e) => {
-                    let (returned, err) = e;
-                    if !self.predicate.test(key, None, err) {
-                        return Err((returned, err));
-                    }
-                    from = returned;
-                    last_error = err;
-                }
+                Err(err) if !self.predicate.test(marker, None, err) => return Err(err),
+                Err(err) => last_error = err,
             };
         }
-        Err((from, last_error))
-    }
-}
-
-#[cfg(feature = "datagen")]
-impl<P0, P1, F, MFrom, MTo> datagen::DataConverter<MFrom, MTo> for ForkByErrorProvider<P0, P1, F>
-where
-    P0: datagen::DataConverter<MFrom, MTo>,
-    P1: datagen::DataConverter<MFrom, MTo>,
-    F: ForkByErrorPredicate,
-    MFrom: DataMarker,
-    MTo: DataMarker,
-{
-    fn convert(
-        &self,
-        key: DataKey,
-        mut from: DataPayload<MFrom>,
-    ) -> Result<DataPayload<MTo>, (DataPayload<MFrom>, DataError)> {
-        let result = self.0.convert(key, from);
-        match result {
-            Ok(ok) => return Ok(ok),
-            Err(e) => {
-                let (returned, err) = e;
-                if !self.2.test(key, None, err) {
-                    return Err((returned, err));
-                }
-                from = returned;
-            }
-        };
-        self.1.convert(key, from)
+        Err(last_error)
     }
 }

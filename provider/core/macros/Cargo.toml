@@ -5,13 +5,13 @@
 [package]
 name = "icu_provider_macros"
 description = "Proc macros for ICU data providers"
-license = "Unicode-3.0"
 
 authors.workspace = true
 categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true
+license.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 version.workspace = true
@@ -21,9 +21,9 @@ path = "src/lib.rs"
 proc-macro = true
 
 [dependencies]
-proc-macro2 = "1.0.27"
-quote = "1.0.9"
-syn = { version = "2", features = ["full", "parsing"]}
+proc-macro2 = { workspace = true }
+quote = { workspace = true }
+syn = { workspace = true }
 
 [dev-dependencies]
-icu_provider = { path = ".." }
+icu_provider = { path = "..", features = ["macros"] }

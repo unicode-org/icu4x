@@ -6,15 +6,11 @@
 
 #![warn(missing_docs)]
 
-mod error;
 mod format;
 pub mod options;
 pub mod provider;
 mod relativetime;
 
-pub use error::RelativeTimeError;
 pub use format::FormattedRelativeTime;
 pub use options::RelativeTimeFormatterOptions;
 pub use relativetime::RelativeTimeFormatter;
-#[doc(no_inline)]
-pub use RelativeTimeError as Error;

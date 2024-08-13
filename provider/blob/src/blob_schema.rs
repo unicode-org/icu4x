@@ -3,12 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::boxed::Box;
-use icu_provider::prelude::*;
+use alloc::collections::BTreeSet;
+use core::fmt::Write;
+use icu_provider::{marker::DataMarkerPathHash, prelude::*};
 use serde::Deserialize;
 use writeable::Writeable;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::maps::{ZeroMap2dBorrowed, ZeroMapKV};
-use zerovec::vecs::{Index32, VarZeroSlice, VarZeroVec, ZeroSlice};
+use zerovec::vecs::{Index16, Index32, VarZeroSlice, VarZeroVec, VarZeroVecFormat, ZeroSlice};
 
 /// A versioned Serde schema for ICU4X data blobs.
 #[derive(serde::Deserialize, yoke::Yokeable)]
@@ -19,8 +21,13 @@ pub(crate) enum BlobSchema<'data> {
     #[serde(borrow)]
     V001(BlobSchemaV1<'data>),
     #[serde(borrow)]
-    V002(BlobSchemaV2<'data>),
+    V002(BlobSchemaV2<'data, Index16>),
+    #[serde(borrow)]
+    V002Bigger(BlobSchemaV2<'data, Index32>),
 }
+
+// This is a valid separator as `DataLocale` will never produce it.
+pub(crate) const REQUEST_SEPARATOR: char = '\x1E';
 
 impl<'data> BlobSchema<'data> {
     pub fn deserialize_and_check<D: serde::Deserializer<'data>>(
@@ -32,18 +39,22 @@ impl<'data> BlobSchema<'data> {
         Ok(blob)
     }
 
-    pub fn load(&self, key: DataKey, req: DataRequest) -> Result<&'data [u8], DataError> {
+    pub fn load(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<&'data [u8], DataError> {
         match self {
-            BlobSchema::V001(s) => s.load(key, req),
-            BlobSchema::V002(s) => s.load(key, req),
+            BlobSchema::V001(s) => s.load(marker, req),
+            BlobSchema::V002(s) => s.load(marker, req),
+            BlobSchema::V002Bigger(s) => s.load(marker, req),
         }
     }
 
-    #[cfg(feature = "export")]
-    pub fn list_locales(&self, key: DataKey) -> Result<Vec<DataLocale>, DataError> {
+    pub fn iter_ids(
+        &self,
+        marker: DataMarkerInfo,
+    ) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
         match self {
-            BlobSchema::V001(s) => s.list_locales(key),
-            BlobSchema::V002(s) => s.list_locales(key),
+            BlobSchema::V001(s) => s.iter_ids(marker),
+            BlobSchema::V002(s) => s.iter_ids(marker),
+            BlobSchema::V002Bigger(s) => s.iter_ids(marker),
         }
     }
 
@@ -52,6 +63,7 @@ impl<'data> BlobSchema<'data> {
         match self {
             BlobSchema::V001(s) => s.check_invariants(),
             BlobSchema::V002(s) => s.check_invariants(),
+            BlobSchema::V002Bigger(s) => s.check_invariants(),
         }
     }
 }
@@ -61,11 +73,11 @@ impl<'data> BlobSchema<'data> {
 #[yoke(prove_covariance_manually)]
 #[cfg_attr(feature = "export", derive(serde::Serialize))]
 pub(crate) struct BlobSchemaV1<'data> {
-    /// Map from key hash and locale to buffer index.
+    /// Map from marker hash and locale to buffer index.
     /// Weak invariant: the `usize` values are valid indices into `self.buffers`
     /// Weak invariant: there is at least one value for every integer in 0..self.buffers.len()
     #[serde(borrow)]
-    pub keys: ZeroMap2dBorrowed<'data, DataKeyHash, Index32U8, usize>,
+    pub markers: ZeroMap2dBorrowed<'data, DataMarkerPathHash, Index32U8, usize>,
     /// Vector of buffers
     #[serde(borrow)]
     pub buffers: &'data VarZeroSlice<[u8], Index32>,
@@ -74,54 +86,86 @@ pub(crate) struct BlobSchemaV1<'data> {
 impl Default for BlobSchemaV1<'_> {
     fn default() -> Self {
         Self {
-            keys: ZeroMap2dBorrowed::new(),
+            markers: ZeroMap2dBorrowed::new(),
             buffers: VarZeroSlice::new_empty(),
         }
     }
 }
 
 impl<'data> BlobSchemaV1<'data> {
-    pub fn load(&self, key: DataKey, req: DataRequest) -> Result<&'data [u8], DataError> {
+    pub fn load(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<&'data [u8], DataError> {
         let idx = self
-            .keys
-            .get0(&key.hashed())
-            .ok_or(DataErrorKind::MissingDataKey)
+            .markers
+            .get0(&marker.path.hashed())
+            .ok_or(DataErrorKind::MarkerNotFound)
             .and_then(|cursor| {
-                if key.metadata().singleton && !req.locale.is_empty() {
-                    return Err(DataErrorKind::ExtraneousLocale);
+                if marker.is_singleton && !req.id.locale.is_default() {
+                    return Err(DataErrorKind::InvalidRequest);
                 }
                 cursor
-                    .get1_copied_by(|bytes| req.locale.strict_cmp(&bytes.0).reverse())
-                    .ok_or(DataErrorKind::MissingLocale)
+                    .get1_copied_by(|k| {
+                        struct Comparator<'a>(&'a DataLocale, &'a DataMarkerAttributes);
+                        impl writeable::Writeable for Comparator<'_> {
+                            fn write_to<W: core::fmt::Write + ?Sized>(
+                                &self,
+                                sink: &mut W,
+                            ) -> core::fmt::Result {
+                                self.0.write_to(sink)?;
+                                if !self.1.is_empty() {
+                                    sink.write_char(REQUEST_SEPARATOR)?;
+                                    sink.write_str(self.1)?;
+                                }
+                                Ok(())
+                            }
+                        }
+                        Comparator(req.id.locale, req.id.marker_attributes)
+                            .writeable_cmp_bytes(&k.0)
+                            .reverse()
+                    })
+                    .ok_or(DataErrorKind::IdentifierNotFound)
             })
-            .map_err(|kind| kind.with_req(key, req))?;
+            .map_err(|kind| kind.with_req(marker, req))?;
         self.buffers
             .get(idx)
-            .ok_or_else(|| DataError::custom("Invalid blob bytes").with_req(key, req))
+            .ok_or_else(|| DataError::custom("Invalid blob bytes").with_req(marker, req))
     }
 
-    #[cfg(feature = "export")]
-    pub fn list_locales(&self, key: DataKey) -> Result<Vec<DataLocale>, DataError> {
+    pub fn iter_ids(
+        &self,
+        marker: DataMarkerInfo,
+    ) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
         Ok(self
-            .keys
-            .get0(&key.hashed())
-            .ok_or_else(|| DataErrorKind::MissingDataKey.with_key(key))?
+            .markers
+            .get0(&marker.path.hashed())
+            .ok_or_else(|| DataErrorKind::MarkerNotFound.with_marker(marker))?
             .iter1_copied()
-            .filter_map(|(s, _)| std::str::from_utf8(&s.0).ok()?.parse().ok())
+            .filter_map(|(s, _)| core::str::from_utf8(&s.0).ok())
+            .filter_map(|s| {
+                #[allow(unused_imports)]
+                use alloc::borrow::ToOwned;
+                if let Some((locale, attrs)) = s.split_once(REQUEST_SEPARATOR) {
+                    Some(DataIdentifierCow::from_owned(
+                        DataMarkerAttributes::try_from_str(attrs).ok()?.to_owned(),
+                        locale.parse().ok()?,
+                    ))
+                } else {
+                    Some(DataIdentifierCow::from_locale(s.parse().ok()?))
+                }
+            })
             .collect())
     }
 
     /// Verifies the weak invariants using debug assertions
     #[cfg(debug_assertions)]
     fn check_invariants(&self) {
-        if self.keys.is_empty() && self.buffers.is_empty() {
+        if self.markers.is_empty() && self.buffers.is_empty() {
             return;
         }
         // Note: We could check that every index occurs at least once, but that's a more expensive
         // operation, so we will just check for the min and max index.
         let mut seen_min = false;
         let mut seen_max = self.buffers.is_empty();
-        for cursor in self.keys.iter0() {
+        for cursor in self.markers.iter0() {
             for (locale, idx) in cursor.iter1_copied() {
                 debug_assert!(idx < self.buffers.len() || locale == Index32U8::SENTINEL);
                 if idx == 0 {
@@ -138,87 +182,119 @@ impl<'data> BlobSchemaV1<'data> {
 }
 
 /// Version 2 of the ICU4X data blob schema.
+///
+/// This itself has two modes, using [`Index16`] or [`Index32`] buffers for the locales array.
+///
+/// The exporter will autoupgrade to the larger buffer as needed.
 #[derive(Clone, Copy, Debug, serde::Deserialize, yoke::Yokeable)]
 #[yoke(prove_covariance_manually)]
 #[cfg_attr(feature = "export", derive(serde::Serialize))]
-pub(crate) struct BlobSchemaV2<'data> {
-    /// Map from key hash to locale trie.
+#[serde(bound = "")] // Override the autogenerated `LocaleVecFormat: Serialize/Deserialize` bound
+pub(crate) struct BlobSchemaV2<'data, LocaleVecFormat: VarZeroVecFormat> {
+    /// Map from marker hash to locale trie.
     /// Weak invariant: should be sorted.
     #[serde(borrow)]
-    pub keys: &'data ZeroSlice<DataKeyHash>,
+    pub markers: &'data ZeroSlice<DataMarkerPathHash>,
     /// Map from locale to buffer index.
     /// Weak invariant: the `usize` values are valid indices into `self.buffers`
     /// Weak invariant: there is at least one value for every integer in 0..self.buffers.len()
-    /// Weak invariant: keys and locales are the same length
+    /// Weak invariant: markers and locales are the same length
     // TODO: Make ZeroTrieSimpleAscii<[u8]> work when in this position.
     #[serde(borrow)]
-    pub locales: &'data VarZeroSlice<[u8]>,
+    pub locales: &'data VarZeroSlice<[u8], LocaleVecFormat>,
     /// Vector of buffers
     #[serde(borrow)]
     pub buffers: &'data VarZeroSlice<[u8], Index32>,
 }
 
-impl Default for BlobSchemaV2<'_> {
+impl<LocaleVecFormat: VarZeroVecFormat> Default for BlobSchemaV2<'_, LocaleVecFormat> {
     fn default() -> Self {
         Self {
-            keys: ZeroSlice::new_empty(),
+            markers: ZeroSlice::new_empty(),
             locales: VarZeroSlice::new_empty(),
             buffers: VarZeroSlice::new_empty(),
         }
     }
 }
 
-impl<'data> BlobSchemaV2<'data> {
-    pub fn load(&self, key: DataKey, req: DataRequest) -> Result<&'data [u8], DataError> {
-        let key_index = self
-            .keys
-            .binary_search(&key.hashed())
+impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV2<'data, LocaleVecFormat> {
+    pub fn load(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<&'data [u8], DataError> {
+        let marker_index = self
+            .markers
+            .binary_search(&marker.path.hashed())
             .ok()
-            .ok_or_else(|| DataErrorKind::MissingDataKey.with_req(key, req))?;
-        if key.metadata().singleton && !req.locale.is_empty() {
-            return Err(DataErrorKind::ExtraneousLocale.with_req(key, req));
+            .ok_or_else(|| DataErrorKind::MarkerNotFound.with_req(marker, req))?;
+        if marker.is_singleton && !req.id.locale.is_default() {
+            return Err(DataErrorKind::InvalidRequest.with_req(marker, req));
         }
         let zerotrie = self
             .locales
-            .get(key_index)
-            .ok_or_else(|| DataError::custom("Invalid blob bytes").with_req(key, req))?;
+            .get(marker_index)
+            .ok_or_else(|| DataError::custom("Invalid blob bytes").with_req(marker, req))?;
         let mut cursor = ZeroTrieSimpleAscii::from_store(zerotrie).into_cursor();
-        #[allow(clippy::unwrap_used)] // DataLocale::write_to produces ASCII only
-        req.locale.write_to(&mut cursor).unwrap();
-        let blob_index = cursor
-            .take_value()
-            .ok_or_else(|| DataErrorKind::MissingLocale.with_req(key, req))?;
+        let _infallible_ascii = req.id.locale.write_to(&mut cursor);
+        let blob_index = if !req.id.marker_attributes.is_empty() {
+            let _infallible_ascii = cursor.write_char(REQUEST_SEPARATOR);
+            req.id
+                .marker_attributes
+                .write_to(&mut cursor)
+                .map_err(|_| DataErrorKind::IdentifierNotFound.with_req(marker, req))?;
+            loop {
+                if let Some(v) = cursor.take_value() {
+                    break Some(v);
+                }
+                if !req.metadata.attributes_prefix_match || cursor.probe(0).is_none() {
+                    break None;
+                }
+            }
+        } else {
+            cursor.take_value()
+        }
+        .ok_or_else(|| DataErrorKind::IdentifierNotFound.with_req(marker, req))?;
         let buffer = self
             .buffers
             .get(blob_index)
-            .ok_or_else(|| DataError::custom("Invalid blob bytes").with_req(key, req))?;
+            .ok_or_else(|| DataError::custom("Invalid blob bytes").with_req(marker, req))?;
         Ok(buffer)
     }
 
-    #[cfg(feature = "export")]
-    pub fn list_locales(&self, key: DataKey) -> Result<Vec<DataLocale>, DataError> {
-        let key_index = self
-            .keys
-            .binary_search(&key.hashed())
+    pub fn iter_ids(
+        &self,
+        marker: DataMarkerInfo,
+    ) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+        let marker_index = self
+            .markers
+            .binary_search(&marker.path.hashed())
             .ok()
-            .ok_or_else(|| DataErrorKind::MissingDataKey.with_key(key))?;
+            .ok_or_else(|| DataErrorKind::MarkerNotFound.with_marker(marker))?;
         let zerotrie = self
             .locales
-            .get(key_index)
-            .ok_or_else(|| DataError::custom("Invalid blob bytes").with_key(key))?;
+            .get(marker_index)
+            .ok_or_else(|| DataError::custom("Invalid blob bytes").with_marker(marker))?;
         Ok(ZeroTrieSimpleAscii::from_store(zerotrie)
             .iter()
-            .filter_map(|(s, _)| s.parse().ok())
+            .filter_map(|(s, _)| {
+                #[allow(unused_imports)]
+                use alloc::borrow::ToOwned;
+                if let Some((locale, attrs)) = s.split_once(REQUEST_SEPARATOR) {
+                    Some(DataIdentifierCow::from_owned(
+                        DataMarkerAttributes::try_from_str(attrs).ok()?.to_owned(),
+                        locale.parse().ok()?,
+                    ))
+                } else {
+                    Some(DataIdentifierCow::from_locale(s.parse().ok()?))
+                }
+            })
             .collect())
     }
 
     /// Verifies the weak invariants using debug assertions
     #[cfg(debug_assertions)]
     fn check_invariants(&self) {
-        if self.keys.is_empty() && self.locales.is_empty() && self.buffers.is_empty() {
+        if self.markers.is_empty() && self.locales.is_empty() && self.buffers.is_empty() {
             return;
         }
-        debug_assert_eq!(self.keys.len(), self.locales.len());
+        debug_assert_eq!(self.markers.len(), self.locales.len());
         // Note: We could check that every index occurs at least once, but that's a more expensive
         // operation, so we will just check for the min and max index.
         let mut seen_min = self.buffers.is_empty();

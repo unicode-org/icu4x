@@ -36,6 +36,7 @@ args = ["-C", "tutorials/cpp", "test"]
 description = "Run JS tests"
 category = "ICU4X Development"
 dependencies = ["install-wasm-nightly"]
+env = { PINNED_CI_NIGHTLY = "${PINNED_CI_NIGHTLY}" }
 command = "npm"
 args = ["-C", "ffi/npm", "install-ci-test"]
 
@@ -71,7 +72,7 @@ command = "cargo"
 args = ["check", "--package", "icu_freertos",
         "--target", "thumbv8m.main-none-eabihf",
         "--no-default-features", "--features=wearos",
-        "-Zbuild-std=std,panic_abort", "-Zbuild-std-features=panic_immediate_abort"]
+        "-Zbuild-std=core,alloc", "-Zbuild-std-features=panic_immediate_abort"]
 
 
 # Diplomat gen
@@ -105,25 +106,25 @@ end
 description = "Generate C headers for the FFI with Diplomat"
 category = "ICU4X Development"
 command = "cargo"
-args = ["run", "-p", "diplomat-gen", "c"]
+args = ["run", "--manifest-path", "tools/make/diplomat-gen/Cargo.toml", "c"]
 
 [tasks.diplomat-gen-cpp]
 description = "Generate C++ headers for the FFI with Diplomat"
 category = "ICU4X Development"
 command = "cargo"
-args = ["run", "-p", "diplomat-gen", "cpp"]
+args = ["run", "--manifest-path", "tools/make/diplomat-gen/Cargo.toml", "cpp"]
 
 [tasks.diplomat-gen-js]
 description = "Generate JS bindings for the FFI with Diplomat"
 category = "ICU4X Development"
 command = "cargo"
-args = ["run", "-p", "diplomat-gen", "js"]
+args = ["run", "--manifest-path", "tools/make/diplomat-gen/Cargo.toml", "js"]
 
 [tasks.diplomat-gen-dart]
 description = "Generate Dart bindings for the FFI with Diplomat"
 category = "ICU4X Development"
 command = "cargo"
-args = ["run", "-p", "diplomat-gen", "dart"]
+args = ["run", "--manifest-path", "tools/make/diplomat-gen/Cargo.toml", "dart"]
 
 # Diplomat coverage
 
@@ -131,7 +132,8 @@ args = ["run", "-p", "diplomat-gen", "dart"]
 description = "Produces the list of ICU APIs that are not exported through Diplomat"
 category = "ICU4X Development"
 command = "cargo"
-args = ["run", "-p=icu_ffi_coverage", "--", "ffi/capi/tests/missing_apis.txt"]
+env = { ICU4X_DATA_DIR = "../stubdata" }
+args = ["run", "--manifest-path=tools/make/diplomat-coverage/Cargo.toml", "--", "ffi/capi/tests/missing_apis.txt"]
 
 [tasks.verify-diplomat-coverage]
 description = "Verify that checked-in Diplomat coverage is up to date"
@@ -147,7 +149,6 @@ if ${code}
     trigger_error "Diplomat coverage dump need to be regenerated. Please run `cargo make diplomat-coverage` and commit."
 end
 '''
-
 
 # Install tasks
 

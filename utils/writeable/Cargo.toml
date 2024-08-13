@@ -5,12 +5,12 @@
 [package]
 name = "writeable"
 description = "A more efficient alternative to fmt::Display"
-version = "0.5.4"
-license = "Unicode-3.0"
+version = "0.5.5"
 
 authors.workspace = true
 edition.workspace = true
 include.workspace = true
+license.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 
@@ -25,7 +25,7 @@ either = { workspace = true, optional = true }
 
 [dev-dependencies]
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
-rand = { version = "0.8", features = ["small_rng"] }
+rand = { workspace = true, features = ["small_rng"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = { workspace = true }

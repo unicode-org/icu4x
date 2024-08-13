@@ -4,16 +4,20 @@
 
 mod adapter;
 
-use crate::pattern::runtime;
+use crate::pattern::runtime::{self, PatternULE};
 use alloc::borrow::Cow;
 use icu_provider::prelude::*;
-use zerovec::ule::UnvalidatedStr;
+use zerovec::ule::{AsULE, UnvalidatedStr, ULE};
 use zerovec::{VarZeroVec, ZeroMap};
 
 #[cfg(feature = "experimental")]
+use crate::neo_skeleton::NeoSkeletonLength;
+#[cfg(feature = "experimental")]
+use crate::pattern::runtime::PatternBorrowed;
+#[cfg(feature = "experimental")]
 use core::ops::Range;
 
-/// Helpers involving the auxiliary subtags used for date symbols.
+/// Helpers involving the data marker attributes used for date symbols.
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -21,36 +25,110 @@ use core::ops::Range;
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[allow(missing_docs)]
-pub mod aux {
-    use crate::pattern::CoarseHourCycle;
-    use icu_locid::extensions::private::{subtag, Subtag};
+pub mod marker_attrs {
+    use icu_provider::DataMarkerAttributes;
 
-    pub const NUMERIC: Subtag = subtag!("1");
-    pub const ABBR: Subtag = subtag!("3");
-    pub const NARROW: Subtag = subtag!("4");
-    pub const WIDE: Subtag = subtag!("5");
-    pub const SHORT: Subtag = subtag!("6");
-    pub const ABBR_STANDALONE: Subtag = subtag!("3s");
-    pub const NARROW_STANDALONE: Subtag = subtag!("4s");
-    pub const WIDE_STANDALONE: Subtag = subtag!("5s");
-    pub const SHORT_STANDALONE: Subtag = subtag!("6s");
+    pub const NUMERIC: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("1");
+    pub const ABBR: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("3");
+    pub const NARROW: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("4");
+    pub const WIDE: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("5");
+    pub const SHORT: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("6");
+    pub const ABBR_STANDALONE: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("3s");
+    pub const NARROW_STANDALONE: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("4s");
+    pub const WIDE_STANDALONE: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("5s");
+    pub const SHORT_STANDALONE: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("6s");
 
-    pub const PATTERN_FULL: Subtag = subtag!("f");
-    pub const PATTERN_LONG: Subtag = subtag!("l");
-    pub const PATTERN_MEDIUM: Subtag = subtag!("m");
-    pub const PATTERN_SHORT: Subtag = subtag!("s");
+    pub const PATTERN_LONG: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("l");
+    pub const PATTERN_MEDIUM: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("m");
+    pub const PATTERN_SHORT: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("s");
 
-    pub const PATTERN_FULL12: Subtag = subtag!("f12");
-    pub const PATTERN_LONG12: Subtag = subtag!("l12");
-    pub const PATTERN_MEDIUM12: Subtag = subtag!("m12");
-    pub const PATTERN_SHORT12: Subtag = subtag!("s12");
+    // TODO: The 12-hour and 24-hour DataMarkerAttributes can probably be deleted
 
-    pub const PATTERN_FULL24: Subtag = subtag!("f24");
-    pub const PATTERN_LONG24: Subtag = subtag!("l24");
-    pub const PATTERN_MEDIUM24: Subtag = subtag!("m24");
-    pub const PATTERN_SHORT24: Subtag = subtag!("s24");
+    pub const PATTERN_LONG12: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("l12");
+    pub const PATTERN_MEDIUM12: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("m12");
+    pub const PATTERN_SHORT12: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("s12");
 
-    /// Field lengths supported in auxiliary subtags.
+    pub const PATTERN_LONG24: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("l24");
+    pub const PATTERN_MEDIUM24: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("m24");
+    pub const PATTERN_SHORT24: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("s24");
+
+    pub const PATTERN_LONG_DT: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("ldt");
+    pub const PATTERN_MEDIUM_DT: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("mdt");
+    pub const PATTERN_SHORT_DT: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("sdt");
+
+    pub const PATTERN_LONG_DZ: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("ldz");
+    pub const PATTERN_MEDIUM_DZ: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("mdz");
+    pub const PATTERN_SHORT_DZ: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("sdz");
+
+    pub const PATTERN_LONG_TZ: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("ltz");
+    pub const PATTERN_MEDIUM_TZ: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("mtz");
+    pub const PATTERN_SHORT_TZ: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("stz");
+
+    pub const PATTERN_LONG_DTZ: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("ldtz");
+    pub const PATTERN_MEDIUM_DTZ: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("mdtz");
+    pub const PATTERN_SHORT_DTZ: &DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("sdtz");
+
+    pub const NUMERIC_STR: &str = NUMERIC.as_str();
+    pub const ABBR_STR: &str = ABBR.as_str();
+    pub const NARROW_STR: &str = NARROW.as_str();
+    pub const WIDE_STR: &str = WIDE.as_str();
+    pub const SHORT_STR: &str = SHORT.as_str();
+    pub const ABBR_STANDALONE_STR: &str = ABBR_STANDALONE.as_str();
+    pub const NARROW_STANDALONE_STR: &str = NARROW_STANDALONE.as_str();
+    pub const WIDE_STANDALONE_STR: &str = WIDE_STANDALONE.as_str();
+    pub const SHORT_STANDALONE_STR: &str = SHORT_STANDALONE.as_str();
+
+    pub const PATTERN_LONG_STR: &str = PATTERN_LONG.as_str();
+    pub const PATTERN_MEDIUM_STR: &str = PATTERN_MEDIUM.as_str();
+    pub const PATTERN_SHORT_STR: &str = PATTERN_SHORT.as_str();
+
+    pub const PATTERN_LONG12_STR: &str = PATTERN_LONG12.as_str();
+    pub const PATTERN_MEDIUM12_STR: &str = PATTERN_MEDIUM12.as_str();
+    pub const PATTERN_SHORT12_STR: &str = PATTERN_SHORT12.as_str();
+
+    pub const PATTERN_LONG24_STR: &str = PATTERN_LONG24.as_str();
+    pub const PATTERN_MEDIUM24_STR: &str = PATTERN_MEDIUM24.as_str();
+    pub const PATTERN_SHORT24_STR: &str = PATTERN_SHORT24.as_str();
+
+    pub const PATTERN_LONG_DT_STR: &str = PATTERN_LONG_DT.as_str();
+    pub const PATTERN_MEDIUM_DT_STR: &str = PATTERN_MEDIUM_DT.as_str();
+    pub const PATTERN_SHORT_DT_STR: &str = PATTERN_SHORT_DT.as_str();
+
+    pub const PATTERN_LONG_DZ_STR: &str = PATTERN_LONG_DZ.as_str();
+    pub const PATTERN_MEDIUM_DZ_STR: &str = PATTERN_MEDIUM_DZ.as_str();
+    pub const PATTERN_SHORT_DZ_STR: &str = PATTERN_SHORT_DZ.as_str();
+
+    pub const PATTERN_LONG_TZ_STR: &str = PATTERN_LONG_TZ.as_str();
+    pub const PATTERN_MEDIUM_TZ_STR: &str = PATTERN_MEDIUM_TZ.as_str();
+    pub const PATTERN_SHORT_TZ_STR: &str = PATTERN_SHORT_TZ.as_str();
+
+    pub const PATTERN_LONG_DTZ_STR: &str = PATTERN_LONG_DTZ.as_str();
+    pub const PATTERN_MEDIUM_DTZ_STR: &str = PATTERN_MEDIUM_DTZ.as_str();
+    pub const PATTERN_SHORT_DTZ_STR: &str = PATTERN_SHORT_DTZ.as_str();
+
+    /// Field lengths supported in data marker attribute.
     ///
     /// For a stable version of this enum, use [`FieldLength`].
     ///
@@ -71,7 +149,7 @@ pub mod aux {
         Numeric,
     }
 
-    /// Pattern lengths supported in auxiliary subtags.
+    /// Pattern lengths supported in data marker attributes.
     ///
     /// For a stable version of this enum, use [`length::Date`] or [`length::Time`].
     ///
@@ -85,13 +163,12 @@ pub mod aux {
     /// [`length::Time`]: crate::options::length::Time
     #[derive(Copy, Clone, Debug, PartialEq, Eq)]
     pub enum PatternLength {
-        Full,
         Long,
         Medium,
         Short,
     }
 
-    /// Field contexts supported in auxiliary subtags.
+    /// Field contexts supported in data marker attributes.
     ///
     /// For a stable version of this enum, use one of the specific field symbol enums in [`fields`].
     ///
@@ -109,65 +186,89 @@ pub mod aux {
         Standalone,
     }
 
-    /// Parses a symbol aux key subtag to enum values.
+    /// Date, time, and time zone combinations supported in data marker attributes.
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
     /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
-    pub fn symbol_subtag_info(subtag: Subtag) -> Option<(Context, Length)> {
+    ///
+    /// [`fields`]: crate::fields
+    #[derive(Copy, Clone, Debug, PartialEq, Eq)]
+    #[allow(clippy::exhaustive_enums)] // documented as unstable
+    pub enum GlueType {
+        DateTime,
+        DateZone,
+        TimeZone,
+        DateTimeZone,
+    }
+
+    /// Parses a symbol data marker attribute to enum values.
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+    /// to be stable, their Rust representation might not be. Use with caution.
+    /// </div>
+    pub fn symbol_marker_attr_info(
+        marker_attr: &DataMarkerAttributes,
+    ) -> Option<(Context, Length)> {
         use {Context::*, Length::*};
-        match subtag {
-            NUMERIC => Some((Format, Numeric)),
-            ABBR => Some((Format, Abbr)),
-            NARROW => Some((Format, Narrow)),
-            WIDE => Some((Format, Wide)),
-            SHORT => Some((Format, Short)),
-            ABBR_STANDALONE => Some((Standalone, Abbr)),
-            NARROW_STANDALONE => Some((Standalone, Narrow)),
-            WIDE_STANDALONE => Some((Standalone, Wide)),
-            SHORT_STANDALONE => Some((Standalone, Short)),
+        match &**marker_attr {
+            NUMERIC_STR => Some((Format, Numeric)),
+            ABBR_STR => Some((Format, Abbr)),
+            NARROW_STR => Some((Format, Narrow)),
+            WIDE_STR => Some((Format, Wide)),
+            SHORT_STR => Some((Format, Short)),
+            ABBR_STANDALONE_STR => Some((Standalone, Abbr)),
+            NARROW_STANDALONE_STR => Some((Standalone, Narrow)),
+            WIDE_STANDALONE_STR => Some((Standalone, Wide)),
+            SHORT_STANDALONE_STR => Some((Standalone, Short)),
             _ => None,
         }
     }
 
-    /// Parses a pattern aux key subtag to enum values.
+    /// Parses a pattern data marker attribute to enum values.
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
     /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
-    pub fn pattern_subtag_info(subtag: Subtag) -> Option<(PatternLength, Option<CoarseHourCycle>)> {
-        use {CoarseHourCycle::*, PatternLength::*};
-        match subtag {
-            PATTERN_FULL => Some((Full, None)),
-            PATTERN_LONG => Some((Long, None)),
-            PATTERN_MEDIUM => Some((Medium, None)),
-            PATTERN_SHORT => Some((Short, None)),
+    pub fn pattern_marker_attr_info_for_glue(
+        marker_attr: &DataMarkerAttributes,
+    ) -> Option<(PatternLength, GlueType)> {
+        use {GlueType::*, PatternLength::*};
+        match &**marker_attr {
+            PATTERN_LONG_DT_STR => Some((Long, DateTime)),
+            PATTERN_MEDIUM_DT_STR => Some((Medium, DateTime)),
+            PATTERN_SHORT_DT_STR => Some((Short, DateTime)),
 
-            PATTERN_FULL12 => Some((Full, Some(H11H12))),
-            PATTERN_LONG12 => Some((Long, Some(H11H12))),
-            PATTERN_MEDIUM12 => Some((Medium, Some(H11H12))),
-            PATTERN_SHORT12 => Some((Short, Some(H11H12))),
+            PATTERN_LONG_DZ_STR => Some((Long, DateZone)),
+            PATTERN_MEDIUM_DZ_STR => Some((Medium, DateZone)),
+            PATTERN_SHORT_DZ_STR => Some((Short, DateZone)),
 
-            PATTERN_FULL24 => Some((Full, Some(H23H24))),
-            PATTERN_LONG24 => Some((Long, Some(H23H24))),
-            PATTERN_MEDIUM24 => Some((Medium, Some(H23H24))),
-            PATTERN_SHORT24 => Some((Short, Some(H23H24))),
+            PATTERN_LONG_TZ_STR => Some((Long, TimeZone)),
+            PATTERN_MEDIUM_TZ_STR => Some((Medium, TimeZone)),
+            PATTERN_SHORT_TZ_STR => Some((Short, TimeZone)),
+
+            PATTERN_LONG_DTZ_STR => Some((Long, DateTimeZone)),
+            PATTERN_MEDIUM_DTZ_STR => Some((Medium, DateTimeZone)),
+            PATTERN_SHORT_DTZ_STR => Some((Short, DateTimeZone)),
+
             _ => None,
         }
     }
 
-    /// Creates a symbol aux key from the enum values.
+    /// Creates a symbol data marker attribute from the enum values.
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
     /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
-    pub fn symbol_subtag_for(context: Context, length: Length) -> Subtag {
+    pub fn symbol_attr_for(context: Context, length: Length) -> &'static DataMarkerAttributes {
         use {Context::*, Length::*};
         match (context, length) {
             (Format, Numeric) => NUMERIC,
@@ -183,33 +284,27 @@ pub mod aux {
         }
     }
 
-    /// Creates a pattern aux key from the enum values.
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-    /// to be stable, their Rust representation might not be. Use with caution.
-    /// </div>
-    pub fn pattern_subtag_for(
+    pub fn pattern_marker_attr_for_glue(
         length: PatternLength,
-        hour_cycle: Option<CoarseHourCycle>,
-    ) -> Subtag {
-        use {CoarseHourCycle::*, PatternLength::*};
-        match (length, hour_cycle) {
-            (Full, None) => PATTERN_FULL,
-            (Long, None) => PATTERN_LONG,
-            (Medium, None) => PATTERN_MEDIUM,
-            (Short, None) => PATTERN_SHORT,
+        glue_type: GlueType,
+    ) -> &'static DataMarkerAttributes {
+        use {GlueType::*, PatternLength::*};
+        match (length, glue_type) {
+            (Long, DateTime) => PATTERN_LONG_DT,
+            (Medium, DateTime) => PATTERN_MEDIUM_DT,
+            (Short, DateTime) => PATTERN_SHORT_DT,
 
-            (Full, Some(H11H12)) => PATTERN_FULL12,
-            (Long, Some(H11H12)) => PATTERN_LONG12,
-            (Medium, Some(H11H12)) => PATTERN_MEDIUM12,
-            (Short, Some(H11H12)) => PATTERN_SHORT12,
+            (Long, DateZone) => PATTERN_LONG_DZ,
+            (Medium, DateZone) => PATTERN_MEDIUM_DZ,
+            (Short, DateZone) => PATTERN_SHORT_DZ,
 
-            (Full, Some(H23H24)) => PATTERN_FULL24,
-            (Long, Some(H23H24)) => PATTERN_LONG24,
-            (Medium, Some(H23H24)) => PATTERN_MEDIUM24,
-            (Short, Some(H23H24)) => PATTERN_SHORT24,
+            (Long, TimeZone) => PATTERN_LONG_TZ,
+            (Medium, TimeZone) => PATTERN_MEDIUM_TZ,
+            (Short, TimeZone) => PATTERN_SHORT_TZ,
+
+            (Long, DateTimeZone) => PATTERN_LONG_DTZ,
+            (Medium, DateTimeZone) => PATTERN_MEDIUM_DTZ,
+            (Short, DateTimeZone) => PATTERN_SHORT_DTZ,
         }
     }
 }
@@ -218,9 +313,9 @@ size_test!(YearNamesV1, year_names_v1_size, 48);
 
 /// Symbols used for representing the year name
 ///
-/// This uses an auxiliary subtag for length. The subtag is simply the number of
+/// This uses a data marker attribute for length. The value is simply the number of
 /// characters in the equivalent CLDR field syntax name, plus "s" for standalone contexts. For example,
-/// "abbreviated" (e.g. `MMM`) is `-x-3` or `-x-3s` depending on whether it is format or standalone
+/// "abbreviated" (e.g. `MMM`) is `3` or `3s` depending on whether it is format or standalone
 /// respectively.
 ///
 /// The full list is:
@@ -228,7 +323,6 @@ size_test!(YearNamesV1, year_names_v1_size, 48);
 /// - 4 is "narrow"
 /// - 5 is "wide"
 /// - 6 is "short" (weekdays only)
-///
 #[doc = year_names_v1_size!()]
 ///
 /// <div class="stab unstable">
@@ -271,9 +365,8 @@ size_test!(MonthNamesV1, month_names_v1_size, 32);
 
 /// Symbols used for representing the month name
 ///
-/// This uses an auxiliary subtag for length. See [`YearNamesV1`] for more information on the scheme. This
-/// has an additional `-x-1` subtag value used for numeric symbols, only found for calendars with leap months.
-///
+/// This uses a data marker attribute for length. See [`YearNamesV1`] for more information on the scheme. This
+/// has an additional `1` value used for numeric symbols, only found for calendars with leap months.
 #[doc = month_names_v1_size!()]
 ///
 /// <div class="stab unstable">
@@ -374,8 +467,7 @@ size_test!(LinearNamesV1, linear_names_v1_size, 24);
 ///   In the case noon is missing but midnight is present, the noon value can be the empty string. This is unlikely.
 /// - For day names element 0 is the first day of the month
 ///
-/// This uses an auxiliary subtag for length. See [`YearNamesV1`] for more information on the scheme.
-///
+/// This uses a data marker attribute for length. See [`YearNamesV1`] for more information on the scheme.
 #[doc = linear_names_v1_size!()]
 ///
 /// <div class="stab unstable">
@@ -433,75 +525,24 @@ impl<'data> LinearNamesV1<'data> {
     }
 }
 
-size_test!(DatePatternV1, date_pattern_v1_size, 32);
-
-/// The default per-length patterns associated with dates
-///
-/// This uses an auxiliary subtag for length. The subtag can be "f", "l", "m", "s" for
-/// "full", "long", "medium", or "short".
-///
-#[doc = date_pattern_v1_size!()]
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
-/// </div>
-#[icu_provider::data_struct(
-    // date patterns
-    marker(BuddhistDatePatternV1Marker, "datetime/patterns/buddhist/date@1"),
-    marker(ChineseDatePatternV1Marker, "datetime/patterns/chinese/date@1"),
-    marker(CopticDatePatternV1Marker, "datetime/patterns/coptic/date@1"),
-    marker(DangiDatePatternV1Marker, "datetime/patterns/dangi/date@1"),
-    marker(EthiopianDatePatternV1Marker, "datetime/patterns/ethiopic/date@1"),
-    marker(GregorianDatePatternV1Marker, "datetime/patterns/gregory/date@1"),
-    marker(HebrewDatePatternV1Marker, "datetime/patterns/hebrew/date@1"),
-    marker(IndianDatePatternV1Marker, "datetime/patterns/indian/date@1"),
-    marker(IslamicDatePatternV1Marker, "datetime/patterns/islamic/date@1"),
-    marker(JapaneseDatePatternV1Marker, "datetime/patterns/japanese/date@1"),
-    marker(JapaneseExtendedDatePatternV1Marker, "datetime/patterns/japanext/date@1"),
-    marker(PersianDatePatternV1Marker, "datetime/patterns/persian/date@1"),
-    marker(RocDatePatternV1Marker, "datetime/patterns/roc/date@1")
-)]
-#[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::neo),
-)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[yoke(prove_covariance_manually)]
-pub struct DatePatternV1<'data> {
-    /// The pattern
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub pattern: runtime::Pattern<'data>,
-}
-
 // TODO: We may need to support plural forms here. Something like
 // pub enum NeoPatternPlurals<'data> {
 //     SingleDate(runtime::Pattern<'data>),
 //     WeekPlurals(ZeroMap<'data, PluralCategory, runtime::PatternULE>),
 // }
 
-size_test!(TimePatternV1, time_pattern_v1_size, 32);
+size_test!(GluePatternV1, glue_pattern_v1_size, 24);
 
-/// The default per-length patterns associated with times
+/// The default per-length patterns used for combining dates, times, and timezones into formatted strings.
 ///
-/// This uses an auxiliary subtag for length. See [`DatePatternV1`] for more information on the scheme.
-///
-/// It also uses the subtag to track hour cycles; the data for the default hour cycle will
-/// use a regular length auxiliary subtag (e.g. `-x-f` for full), and the non-default
-/// one will tack on a `h` or `k` depending on whether it is H11H12 or H23H24
-/// (`-x-fk` for full, non-default, 23/24 hours)
-///
-#[doc = time_pattern_v1_size!()]
+#[doc = glue_pattern_v1_size!()]
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(TimePatternV1Marker, "datetime/patterns/time@1"))]
+#[icu_provider::data_struct(marker(GluePatternV1Marker, "datetime/patterns/glue@1"))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
     feature = "datagen",
@@ -510,51 +551,197 @@ size_test!(TimePatternV1, time_pattern_v1_size, 32);
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct TimePatternV1<'data> {
-    /// The pattern
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub pattern: runtime::Pattern<'data>,
-}
-
-size_test!(DateTimePatternV1, date_time_pattern_v1_size, 24);
-
-/// The default per-length patterns used for combining dates and times into datetimes
-///
-/// This uses an auxiliary subtag for length. See [`DatePatternV1`] for more information on the scheme.
-///
-#[doc = date_time_pattern_v1_size!()]
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
-/// </div>
-#[icu_provider::data_struct(marker(DateTimePatternV1Marker, "datetime/patterns/datetime@1"))]
-#[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::neo),
-)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[yoke(prove_covariance_manually)]
-pub struct DateTimePatternV1<'data> {
+pub struct GluePatternV1<'data> {
     /// The pattern
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub pattern: runtime::GenericPattern<'data>,
 }
 
-pub(crate) struct ErasedYearNamesV1Marker;
-impl DataMarker for ErasedYearNamesV1Marker {
-    type Yokeable = YearNamesV1<'static>;
+// conceptually:
+// {
+//   has_long: bool,
+//   has_medium: bool,
+//   has_short: bool,
+//   index: u16, // index of first pattern (long if present, else medium, else short)
+// }
+#[allow(missing_docs)] // TODO
+#[derive(Debug, Copy, Clone, PartialEq)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_datetime::provider::neo),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct SkeletonDataIndex {
+    /// If true, the first pattern is for `Long`.
+    /// If false, fall back to the next pattern (`Medium``).
+    pub has_long: bool,
+    /// If true, the next pattern is for `Long`.
+    /// If false, fall back to the next pattern (`Short`).
+    pub has_medium: bool,
+    /// If true, there are 6 plural variants for each pattern.
+    /// If false, it is just a single variant.
+    pub has_plurals: bool,
+    /// If true, there are 2 era variants for each pattern.
+    /// The first does not have an era, and the second has an era.
+    /// if false, there is no era variant.
+    pub has_eras: bool,
 }
 
-pub(crate) struct ErasedMonthNamesV1Marker;
-impl DataMarker for ErasedMonthNamesV1Marker {
-    type Yokeable = MonthNamesV1<'static>;
+#[cfg(feature = "experimental")]
+#[derive(Debug, Copy, Clone)]
+pub(crate) struct PatternSelectionOptions {
+    pub(crate) length: NeoSkeletonLength,
+    pub(crate) should_display_era: Option<bool>,
 }
 
-pub(crate) struct ErasedDatePatternV1Marker;
-impl DataMarker for ErasedDatePatternV1Marker {
-    type Yokeable = DatePatternV1<'static>;
+impl SkeletonDataIndex {
+    // TODO: This should handle plurals
+    #[cfg(feature = "experimental")]
+    pub(crate) fn index_for(self, options: PatternSelectionOptions) -> u8 {
+        let chunk_number = match (options.length, self.has_long, self.has_medium) {
+            (NeoSkeletonLength::Long, _, _) => 0,
+            (NeoSkeletonLength::Medium, true, _) => 1,
+            (NeoSkeletonLength::Medium, false, _) => 0,
+            (NeoSkeletonLength::Short, true, true) => 2,
+            (NeoSkeletonLength::Short, true, false) => 1,
+            (NeoSkeletonLength::Short, false, true) => 1,
+            (NeoSkeletonLength::Short, false, false) => 0,
+        };
+        if !self.has_eras {
+            // chunks are size 1
+            return chunk_number;
+        }
+        let offset = match options.should_display_era {
+            Some(false) => 0,
+            Some(true) | None => 1,
+        };
+        let chunk_size = 2;
+        offset + chunk_number * chunk_size
+    }
+}
+
+/// Bit-packed [`ULE`] variant of [`SkeletonDataIndex`].
+#[derive(Debug, Copy, Clone, ULE)]
+#[repr(transparent)]
+pub struct SkeletonDataIndexULE(u8);
+
+impl AsULE for SkeletonDataIndex {
+    type ULE = SkeletonDataIndexULE;
+
+    fn to_unaligned(self) -> Self::ULE {
+        let mut flags = 0;
+        flags |= (self.has_long as u8) << 7;
+        flags |= (self.has_medium as u8) << 6;
+        flags |= (self.has_plurals as u8) << 5;
+        flags |= (self.has_eras as u8) << 4;
+        SkeletonDataIndexULE(flags)
+    }
+
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        let flags = unaligned.0;
+        // TODO: `flags` could have more bits set, but we don't check that here.
+        SkeletonDataIndex {
+            has_long: (flags & (1 << 7)) != 0,
+            has_medium: (flags & (1 << 6)) != 0,
+            has_plurals: (flags & (1 << 5)) != 0,
+            has_eras: (flags & (1 << 4)) != 0,
+        }
+    }
+}
+
+#[icu_provider::data_struct(
+    // date patterns
+    marker(BuddhistDateNeoSkeletonPatternsV1Marker, "datetime/patterns/buddhist/skeleton@1"),
+    marker(ChineseDateNeoSkeletonPatternsV1Marker, "datetime/patterns/chinese/skeleton@1"),
+    marker(CopticDateNeoSkeletonPatternsV1Marker, "datetime/patterns/coptic/skeleton@1"),
+    marker(DangiDateNeoSkeletonPatternsV1Marker, "datetime/patterns/dangi/skeleton@1"),
+    marker(EthiopianDateNeoSkeletonPatternsV1Marker, "datetime/patterns/ethiopic/skeleton@1"),
+    marker(GregorianDateNeoSkeletonPatternsV1Marker, "datetime/patterns/gregory/skeleton@1"),
+    marker(HebrewDateNeoSkeletonPatternsV1Marker, "datetime/patterns/hebrew/skeleton@1"),
+    marker(IndianDateNeoSkeletonPatternsV1Marker, "datetime/patterns/indian/skeleton@1"),
+    marker(IslamicDateNeoSkeletonPatternsV1Marker, "datetime/patterns/islamic/skeleton@1"),
+    marker(JapaneseDateNeoSkeletonPatternsV1Marker, "datetime/patterns/japanese/skeleton@1"),
+    marker(JapaneseExtendedDateNeoSkeletonPatternsV1Marker, "datetime/patterns/japanext/skeleton@1"),
+    marker(PersianDateNeoSkeletonPatternsV1Marker, "datetime/patterns/persian/skeleton@1"),
+    marker(RocDateNeoSkeletonPatternsV1Marker, "datetime/patterns/roc/skeleton@1"),
+    // Time patterns
+    marker(TimeNeoSkeletonPatternsV1Marker, "datetime/patterns/time_skeleton@1")
+)]
+#[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_datetime::provider::neo),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[allow(missing_docs)] // TODO
+pub struct PackedSkeletonDataV1<'data> {
+    #[allow(missing_docs)] // TODO
+    // TODO: Use the bitpacked version here
+    pub index_info: SkeletonDataIndex,
+    // TODO: This should support plurals
+    #[allow(missing_docs)] // TODO
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub patterns: VarZeroVec<'data, PatternULE>,
+}
+
+impl<'data> PackedSkeletonDataV1<'data> {
+    #[cfg(feature = "experimental")]
+    /// Gets a pattern according to a length and a numeric variant.
+    pub(crate) fn get_pattern(&self, options: PatternSelectionOptions) -> PatternBorrowed {
+        match self
+            .patterns
+            .get(self.index_info.index_for(options) as usize)
+        {
+            Some(pattern_ule) => pattern_ule.as_borrowed(),
+            None => {
+                debug_assert!(false, "failed to load a pattern for {options:?}");
+                PatternBorrowed::DEFAULT
+            }
+        }
+    }
+}
+
+#[icu_provider::data_struct(marker(
+    DateTimeSkeletonPatternsV1Marker,
+    "datetime/patterns/datetime_skeleton@1"
+))]
+#[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_datetime::provider::neo),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[yoke(prove_covariance_manually)]
+#[allow(missing_docs)] // TODO
+pub struct DateTimeSkeletonsV1<'data> {
+    // will typically be small, there are only a couple special cases like E B h m
+    // TODO: This should support plurals
+    // TODO: The key of this map should be Skeleton
+    #[allow(missing_docs)] // TODO
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub map: ZeroMap<'data, str, PatternULE>,
+}
+
+/// Calendar-agnostic year name data marker
+#[derive(Debug)]
+pub struct YearNamesV1Marker;
+impl DynamicDataMarker for YearNamesV1Marker {
+    type DataStruct = YearNamesV1<'static>;
+}
+
+/// Calendar-agnostic month name data marker
+#[derive(Debug)]
+pub struct MonthNamesV1Marker;
+impl DynamicDataMarker for MonthNamesV1Marker {
+    type DataStruct = MonthNamesV1<'static>;
+}
+
+/// Calendar-agnostic date/time skeleta data marker
+#[derive(Debug)]
+pub struct SkeletaV1Marker;
+impl DynamicDataMarker for SkeletaV1Marker {
+    type DataStruct = PackedSkeletonDataV1<'static>;
 }

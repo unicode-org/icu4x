@@ -6,7 +6,7 @@ extern crate icu;
 extern crate icu_provider;
 
 use icu_provider::hello_world::{HelloWorldFormatter, HelloWorldProvider};
-use icu::locid::locale;
+use icu::locale::locale;
 
 fn main() {
     let fmt = HelloWorldFormatter::try_new_unstable(

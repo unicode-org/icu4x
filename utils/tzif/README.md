@@ -14,7 +14,7 @@ Resources to generate `TZif` files are provided by the [IANA database](https://w
 
 #### Parse TZif Files
 ```rust
-let data = tzif::parse_tzif_file("path_to_file").unwrap();
+let data = tzif::parse_tzif_file(Path::new("path_to_file")).unwrap();
 ```
 
 #### Parse POSIX time-zone strings

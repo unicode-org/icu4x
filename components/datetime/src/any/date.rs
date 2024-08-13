@@ -9,7 +9,8 @@ use crate::{input::DateInput, DateTimeError, FormattedDateTime};
 use alloc::string::String;
 use icu_calendar::any_calendar::AnyCalendar;
 use icu_calendar::provider::{
-    ChineseCacheV1Marker, DangiCacheV1Marker, JapaneseErasV1Marker, JapaneseExtendedErasV1Marker,
+    ChineseCacheV1Marker, DangiCacheV1Marker, IslamicObservationalCacheV1Marker,
+    IslamicUmmAlQuraCacheV1Marker, JapaneseErasV1Marker, JapaneseExtendedErasV1Marker,
     WeekDataV1Marker,
 };
 use icu_decimal::provider::DecimalSymbolsV1Marker;
@@ -29,17 +30,16 @@ size_test!(DateFormatter, date_formatter_size, 4456);
 ///
 /// For that reason, one should think of the process of formatting a date in two steps - first, a computational
 /// heavy construction of [`DateFormatter`], and then fast formatting of [`DateTime`](icu_calendar::DateTime) data using the instance.
-///
 #[doc = date_formatter_size!()]
 ///
-/// [`icu_datetime`]: crate
+/// [`icu::datetime`]: crate
 ///
 /// # Examples
 ///
 /// ```
-/// use icu::calendar:: Date;
+/// use icu::calendar::Date;
 /// use icu::datetime::{options::length, DateFormatter};
-/// use icu::locid::locale;
+/// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
 ///
 /// let length = length::Date::Medium;
@@ -81,13 +81,13 @@ impl DateFormatter {
     /// ```
     /// use icu::calendar::Date;
     /// use icu::datetime::{options::length, DateFormatter};
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
     /// let length = length::Date::Medium;
-    /// let locale = locale!("en-u-ca-gregory");
+    /// let locale = locale!("en-u-ca-gregory").into();
     ///
-    /// let df = DateFormatter::try_new_with_length(&locale.into(), length)
+    /// let df = DateFormatter::try_new_with_length(&locale, length)
     ///     .expect("Failed to create TypedDateFormatter instance.");
     ///
     /// let datetime =
@@ -187,6 +187,8 @@ impl DateFormatter {
             + DataProvider<IndianDateSymbolsV1Marker>
             + DataProvider<IslamicDateLengthsV1Marker>
             + DataProvider<IslamicDateSymbolsV1Marker>
+            + DataProvider<IslamicObservationalCacheV1Marker>
+            + DataProvider<IslamicUmmAlQuraCacheV1Marker>
             + DataProvider<JapaneseDateLengthsV1Marker>
             + DataProvider<JapaneseDateSymbolsV1Marker>
             + DataProvider<JapaneseErasV1Marker>
@@ -251,7 +253,7 @@ impl DateFormatter {
 fn serde_constructor() {
     use icu::calendar::Date;
     use icu::datetime::{options::length, DateFormatter};
-    use icu::locid::locale;
+    use icu::locale::locale;
     use writeable::assert_writeable_eq;
 
     let provider = icu_provider_blob::BlobDataProvider::try_new_from_static_blob(include_bytes!(

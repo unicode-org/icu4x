@@ -1,0 +1,24 @@
+{
+  "signed_pattern": [
+    {
+      "Placeholder": "Place1"
+    },
+    {
+      "Placeholder": "Place0"
+    },
+    {
+      "Literal": "%"
+    }
+  ],
+  "unsigned_pattern": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": "%"
+    }
+  ],
+  "approximately_sign": "約",
+  "minus_sign": "-",
+  "plus_sign": "+"
+}

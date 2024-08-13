@@ -8,6 +8,7 @@ use crate::DoublePlaceholder;
 use crate::SinglePlaceholder;
 
 use super::*;
+use ::databake::BakeSize;
 use ::databake::{quote, Bake, CrateEnv, TokenStream};
 
 impl<B, Store> Bake for Pattern<B, Store>
@@ -31,13 +32,24 @@ where
     }
 }
 
+impl<B, Store> BakeSize for Pattern<B, Store>
+where
+    B: 'static,
+    Store: BakeSize,
+{
+    fn borrows_size(&self) -> usize {
+        self.store.borrows_size()
+    }
+}
+
 #[test]
 fn test_baked() {
     use ::databake::test_bake;
     use alloc::borrow::Cow;
     test_bake!(
         Pattern<SinglePlaceholder, Cow<str>>,
-        const: crate::Pattern::<crate::SinglePlaceholder, _>::from_store_unchecked(alloc::borrow::Cow::Borrowed("")),
+        const,
+        crate::Pattern::<crate::SinglePlaceholder, _>::from_store_unchecked(alloc::borrow::Cow::Borrowed("")),
         icu_pattern
     );
 }

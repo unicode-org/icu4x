@@ -28,13 +28,14 @@ impl<const N: usize> fmt::Debug for UnvalidatedTinyAsciiStr<N> {
 
 impl<const N: usize> UnvalidatedTinyAsciiStr<N> {
     #[inline]
-    // Converts into a [`TinyAsciiStr`]. Fails if the bytes are not valid ASCII.
+    /// Converts into a [`TinyAsciiStr`]. Fails if the bytes are not valid ASCII.
     pub fn try_into_tinystr(&self) -> Result<TinyAsciiStr<N>, TinyStrError> {
         TinyAsciiStr::try_from_raw(self.0)
     }
 
-    #[doc(hidden)]
-    pub const fn from_bytes_unchecked(bytes: [u8; N]) -> Self {
+    #[inline]
+    /// Unsafely converts into a [`TinyAsciiStr`].
+    pub const fn from_utf8_unchecked(bytes: [u8; N]) -> Self {
         Self(bytes)
     }
 }

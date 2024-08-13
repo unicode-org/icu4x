@@ -31,10 +31,10 @@
 //! assert_eq!(datetime_indian.time.second.number(), 0);
 //! ```
 
-use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
+use crate::error::DateError;
 use crate::iso::Iso;
-use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime, Time};
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, RangeError, Time};
 use tinystr::tinystr;
 
 /// The Indian National Calendar (aka the Saka calendar)
@@ -114,9 +114,9 @@ impl Calendar for Indian {
         year: i32,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::DateInner, CalendarError> {
+    ) -> Result<Self::DateInner, DateError> {
         if era.0 != tinystr!(16, "saka") && era.0 != tinystr!(16, "indian") {
-            return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
+            return Err(DateError::UnknownEra(era));
         }
 
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(IndianDateInner)
@@ -240,8 +240,8 @@ impl Calendar for Indian {
         "Indian"
     }
 
-    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
-        Some(AnyCalendarKind::Indian)
+    fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
+        Some(crate::any_calendar::IntoAnyCalendar::kind(self))
     }
 }
 
@@ -273,11 +273,7 @@ impl Date<Indian> {
     /// assert_eq!(date_indian.month().ordinal, 10);
     /// assert_eq!(date_indian.day_of_month().0, 12);
     /// ```
-    pub fn try_new_indian_date(
-        year: i32,
-        month: u8,
-        day: u8,
-    ) -> Result<Date<Indian>, CalendarError> {
+    pub fn try_new_indian_date(year: i32, month: u8, day: u8) -> Result<Date<Indian>, RangeError> {
         ArithmeticDate::new_from_ordinals(year, month, day)
             .map(IndianDateInner)
             .map(|inner| Date::from_raw(inner, Indian))
@@ -308,7 +304,7 @@ impl DateTime<Indian> {
         hour: u8,
         minute: u8,
         second: u8,
-    ) -> Result<DateTime<Indian>, CalendarError> {
+    ) -> Result<DateTime<Indian>, DateError> {
         Ok(DateTime {
             date: Date::try_new_indian_date(year, month, day)?,
             time: Time::try_new(hour, minute, second, 0)?,

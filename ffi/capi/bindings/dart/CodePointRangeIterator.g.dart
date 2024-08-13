@@ -23,23 +23,23 @@ final class CodePointRangeIterator implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_CodePointRangeIterator_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_CodePointRangeIterator_destroy_mv1));
 
   /// Advance the iterator by one and return the next range.
   ///
   /// If the iterator is out of items, `done` will be true
   CodePointRangeIteratorResult next() {
-    final result = _CodePointRangeIterator_next(_ffi);
+    final result = _icu4x_CodePointRangeIterator_next_mv1(_ffi);
     return CodePointRangeIteratorResult._fromFfi(result);
   }
 }
 
-@meta.ResourceIdentifier('CodePointRangeIterator_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'CodePointRangeIterator_destroy')
+@meta.ResourceIdentifier('icu4x_CodePointRangeIterator_destroy_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_CodePointRangeIterator_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _CodePointRangeIterator_destroy(ffi.Pointer<ffi.Void> self);
+external void _icu4x_CodePointRangeIterator_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('CodePointRangeIterator_next')
-@ffi.Native<_CodePointRangeIteratorResultFfi Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'CodePointRangeIterator_next')
+@meta.ResourceIdentifier('icu4x_CodePointRangeIterator_next_mv1')
+@ffi.Native<_CodePointRangeIteratorResultFfi Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointRangeIterator_next_mv1')
 // ignore: non_constant_identifier_names
-external _CodePointRangeIteratorResultFfi _CodePointRangeIterator_next(ffi.Pointer<ffi.Opaque> self);
+external _CodePointRangeIteratorResultFfi _icu4x_CodePointRangeIterator_next_mv1(ffi.Pointer<ffi.Opaque> self);
