@@ -27,14 +27,6 @@ macro_rules! __make_provider {
             pub(crate) const MUST_USE_MAKE_PROVIDER_MACRO: () = ();
         }
         icu_provider::marker::impl_data_provider_never_marker!($name);
-        impl<M: icu_provider::DataMarker> icu_provider::DryDataProvider<M> for $name
-        where
-            $name: icu_provider::DataProvider<M>,
-        {
-            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
-                icu_provider::DataProvider::load(self, req).map(|r| r.metadata)
-            }
-        }
     };
 }
 #[doc(inline)]
