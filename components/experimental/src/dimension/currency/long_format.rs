@@ -54,14 +54,9 @@ impl<'l> Writeable for LongFormattedCurrency<'l> {
         // The pattern is expected to be in the form of "{0} {1}"
         let pattern = DoublePlaceholderPattern::from_str(pattern).map_err(|_| core::fmt::Error)?;
 
-        pattern
-            .interpolate((
-                self.fixed_decimal_formatter.format(self.value),
-                display_name,
-            ))
-            .write_to(sink)?;
-
-        Ok(())
+        let formatted_value = self.fixed_decimal_formatter.format(self.value);
+        let interpolated = pattern.interpolate((formatted_value, display_name));
+        interpolated.write_to(sink)
     }
 }
 
