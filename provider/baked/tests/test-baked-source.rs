@@ -14,7 +14,7 @@ const _: () = {
     #[path = "data/mod.rs"]
     mod baked_data;
     baked_data::make_provider!(Baked);
-    baked_data::impl_hello_world_v1_marker!(Baked, ITER);
+    baked_data::impl_hello_world_v1_marker!(Baked, DRY, ITER);
 };
 
 #[test]

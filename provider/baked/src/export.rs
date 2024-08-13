@@ -309,6 +309,7 @@ impl BakedExporter {
         marker: DataMarkerInfo,
         stats: Statistics,
         body: TokenStream,
+        dry_body: TokenStream,
         iterable_body: TokenStream,
     ) -> Result<(), DataError> {
         let marker_unqualified = bake_marker(marker).into_iter().last().unwrap().to_string();
@@ -367,8 +368,17 @@ impl BakedExporter {
                         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
                         #body
                     };
+                    ($provider:ty, DRY) => {
+                        #prefixed_macro_ident!($provider);
+                        #dry_body
+                    };
                     ($provider:ty, ITER) => {
                         #prefixed_macro_ident!($provider);
+                        #iterable_body
+                    };
+                    ($provider:ty, DRY, ITER) => {
+                        #prefixed_macro_ident!($provider);
+                        #dry_body
                         #iterable_body
                     };
                 }
@@ -458,7 +468,20 @@ impl DataExporter for BakedExporter {
                     }
                 }
             }
-        }, quote! {
+        },
+        quote! {
+            #maybe_msrv
+            impl icu_provider::DryDataProvider<#marker_bake> for $provider {
+                fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
+                    if req.id.locale.is_default() {
+                        Ok(Default::default())
+                    } else {
+                        Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<#marker_bake as icu_provider::DataMarker>::INFO, req))
+                    }
+                }
+            }
+        },
+        quote! {
             #maybe_msrv
             impl icu_provider::IterableDataProvider<#marker_bake> for $provider {
                 fn iter_ids(&self) -> Result<std::collections::BtreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
@@ -491,6 +514,14 @@ impl DataExporter for BakedExporter {
                             &self,
                             req: icu_provider::DataRequest,
                         ) -> Result<icu_provider::DataResponse<#marker_bake>, icu_provider::DataError> {
+                            Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<#marker_bake as icu_provider::DataMarker>::INFO, req))
+                        }
+                    }
+                },
+                quote! {
+                    #maybe_msrv
+                    impl icu_provider::DryDataProvider<#marker_bake> for $provider {
+                        fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                             Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<#marker_bake as icu_provider::DataMarker>::INFO, req))
                         }
                     }
@@ -604,6 +635,14 @@ impl DataExporter for BakedExporter {
                 },
                 quote! {
                     #maybe_msrv
+                    impl icu_provider::DryDataProvider<#marker_bake> for $provider {
+                        fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
+                            icu_provider::DataProvider::<#marker_bake>::load(self, req).map(|r| r.metadata)
+                        }
+                    }
+                },
+                quote! {
+                    #maybe_msrv
                     impl icu_provider::IterableDataProvider<#marker_bake> for $provider {
                         fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                             Ok(icu_provider_baked::DataStore::iter(&Self::#data_ident).collect())
@@ -660,13 +699,6 @@ impl DataExporter for BakedExporter {
                             pub(crate) const MUST_USE_MAKE_PROVIDER_MACRO: () = ();
                         }
                         icu_provider::marker::impl_data_provider_never_marker!($name);
-                        impl<M: icu_provider::DataMarker> icu_provider::DryDataProvider<M> for $name
-                            where $name: icu_provider::DataProvider<M>
-                        {
-                            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
-                                icu_provider::DataProvider::load(self, req).map(|r| r.metadata)
-                            }
-                        }
                     };
                 }
                 #[doc(inline)]
