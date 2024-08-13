@@ -866,6 +866,7 @@ impl From<NeoTimeZoneSkeleton> for NeoComponents {
 
 impl NeoComponents {
     // Attributes for skeleta that span date/time/zone
+    // TODO: Add variants for H, h, and B hours
     const WEEKDAY_HOUR_MINUTE: &'static DataMarkerAttributes =
         DataMarkerAttributes::from_str_or_panic("ejm");
     const WEEKDAY_HOUR_MINUTE_SECOND: &'static DataMarkerAttributes =
