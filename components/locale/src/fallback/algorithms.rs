@@ -104,22 +104,18 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
             locale.variant = self.backup_variant.take();
             return;
         }
-        // 6. Add the script subtag if necessary
-        if locale.script.is_none() {
-            if let Some(region) = locale.region {
+        // 7. Remove region
+        if let Some(region) = locale.region {
+            // 6. Add the script subtag if necessary
+            if locale.script.is_none() {
                 let language = locale.language;
                 if let Some(script) = self.likely_subtags.language_region.get_copied(&(
                     language.into_tinystr().to_unvalidated(),
                     region.into_tinystr().to_unvalidated(),
                 )) {
                     locale.script = Some(script);
-                    locale.variant = self.backup_variant.take();
-                    return;
                 }
             }
-        }
-        // 7. Remove region
-        if locale.region.is_some() {
             locale.region = None;
             locale.variant = self.backup_variant.take();
             return;
@@ -324,28 +320,21 @@ mod tests {
         TestCase {
             input: "sr-ME",
             requires_data: true,
-            expected_language_chain: &["sr-ME", "sr-Latn-ME", "sr-Latn"],
+            expected_language_chain: &["sr-ME", "sr-Latn"],
             expected_script_chain: &["sr-ME", "sr-Latn", "und-Latn"],
             expected_region_chain: &["sr-ME", "und-ME"],
         },
         TestCase {
             input: "sr-Latn-ME",
             requires_data: true,
-            expected_language_chain: &["sr-ME", "sr-Latn-ME", "sr-Latn"],
+            expected_language_chain: &["sr-ME", "sr-Latn"],
             expected_script_chain: &["sr-ME", "sr-Latn", "und-Latn"],
             expected_region_chain: &["sr-ME", "und-ME"],
         },
         TestCase {
             input: "sr-ME-fonipa",
             requires_data: true,
-            expected_language_chain: &[
-                "sr-ME-fonipa",
-                "sr-ME",
-                "sr-Latn-ME-fonipa",
-                "sr-Latn-ME",
-                "sr-Latn-fonipa",
-                "sr-Latn",
-            ],
+            expected_language_chain: &["sr-ME-fonipa", "sr-ME", "sr-Latn-fonipa", "sr-Latn"],
             expected_script_chain: &[
                 "sr-ME-fonipa",
                 "sr-ME",
@@ -432,7 +421,7 @@ mod tests {
         TestCase {
             input: "zh-TW",
             requires_data: true,
-            expected_language_chain: &["zh-TW", "zh-Hant-TW", "zh-Hant"],
+            expected_language_chain: &["zh-TW", "zh-Hant"],
             expected_script_chain: &["zh-TW", "zh-Hant", "und-Hant"],
             expected_region_chain: &["zh-TW", "und-TW"],
         },
@@ -453,14 +442,14 @@ mod tests {
         TestCase {
             input: "az-Arab-IR",
             requires_data: true,
-            expected_language_chain: &["az-IR", "az-Arab-IR", "az-Arab"],
+            expected_language_chain: &["az-IR", "az-Arab"],
             expected_script_chain: &["az-IR", "az-Arab", "und-Arab"],
             expected_region_chain: &["az-IR", "und-IR"],
         },
         TestCase {
             input: "az-IR",
             requires_data: true,
-            expected_language_chain: &["az-IR", "az-Arab-IR", "az-Arab"],
+            expected_language_chain: &["az-IR", "az-Arab"],
             expected_script_chain: &["az-IR", "az-Arab", "und-Arab"],
             expected_region_chain: &["az-IR", "und-IR"],
         },
