@@ -57,6 +57,9 @@ pub(crate) enum DatePatternDataBorrowed<'a> {
 }
 
 /// An "overlap" pattern: one that has fields from at least 2 of date, time, and zone.
+///
+/// TODO: Consider reducing data size by filtering out explicit overlap patterns when they are
+/// the same as their individual patterns with glue.
 #[derive(Debug)]
 pub(crate) enum OverlapPatternSelectionData {
     SkeletonDateTime {
