@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::borrow::Cow;
-
 use core::fmt::Write;
 use writeable::{LengthHint, Part, TryWriteable, Writeable};
 

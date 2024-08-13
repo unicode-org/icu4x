@@ -1,6 +1,5 @@
 {
   "patterns": {
-    "One": "{0} stopa",
     "Few": "{0} stope",
     "Other": "{0} stopa"
   }

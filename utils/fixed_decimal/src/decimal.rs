@@ -36,13 +36,11 @@ compile_error!("The fixed_decimal crate only works if usizes are at least the si
 ///
 /// - Integers, signed and unsigned
 /// - Strings representing an arbitrary-precision decimal
+/// - Floating point values (using the `ryu` feature)
 ///
 /// To create a [`FixedDecimal`] with fraction digits, either create it from an integer and then
-/// call [`FixedDecimal::multiplied_pow10`], or create it from a string.
-///
-/// Floating point numbers will be supported pending a resolution to
-/// [#166](https://github.com/unicode-org/icu4x/issues/166). In the mean time, a third-party
-/// float-to-string library may be used.
+/// call [`FixedDecimal::multiplied_pow10`], create it from a string, or (when the `ryu` feature is
+/// enabled) create it from a floating point value using [`FixedDecimal::try_from_f64`].
 ///
 /// # Magnitude and Position
 ///
@@ -57,8 +55,9 @@ compile_error!("The fixed_decimal crate only works if usizes are at least the si
 /// | -2        | 4     | Hundredths place |
 ///
 /// Some functions deal with a *position* for the purpose of padding, truncating, or rounding a
-/// number. In these cases, the position is the index on the right side of the digit of the
-/// corresponding magnitude. Illustration:
+/// number. In these cases, the position sits between the corresponding magnitude of that position
+/// and the next lower significant digit.
+/// Illustration:
 ///
 /// ```text
 /// Position:   2   0  -2
@@ -68,12 +67,12 @@ compile_error!("The fixed_decimal crate only works if usizes are at least the si
 ///
 /// Expected output of various operations, all with input "12.34":
 ///
-/// | Operation       | Position  | Expected Result |
-/// |-----------------|-----------|-----------------|
-/// | Truncate Left   | 1         | 10              |
-/// | Truncate Right  | -1        | 12.3            |
-/// | Pad Left        | 4         | 0012.34         |
-/// | Pad Right       | -4        | 12.3400         |
+/// | Operation                | Position  | Expected Result |
+/// |--------------------------|-----------|-----------------|
+/// | Truncate to tens         |         1 |   10            |
+/// | Truncate to tenths       |        -1 |   12.3          |
+/// | Pad to ten thousands     |         4 | 0012.34         |
+/// | Pad to ten thousandths   |        -4 |   12.3400       |
 ///
 /// # Examples
 ///
@@ -262,20 +261,59 @@ pub enum RoundingMode {
 /// Increment used in a rounding operation.
 ///
 /// Forces a rounding operation to round to only multiples of the specified increment.
+///
+/// # Example
+///
+/// ```
+/// use fixed_decimal::{FixedDecimal, RoundingIncrement, RoundingMode};
+/// use writeable::assert_writeable_eq;
+/// # use std::str::FromStr;
+/// let dec = FixedDecimal::from_str("-7.266").unwrap();
+/// let mode = RoundingMode::Expand;
+/// let increments = [
+///     // .266 normally expands to .27 when rounding on position -2...
+///     (RoundingIncrement::MultiplesOf1, "-7.27"),
+///     // ...however, when rounding to multiples of 2, .266 expands to .28, since the next multiple
+///     // of 2 bigger than the least significant digit of the rounded value (7) is 8.
+///     (RoundingIncrement::MultiplesOf2, "-7.28"),
+///     // .266 expands to .30, since the next multiple of 5 bigger than 7 is 10.
+///     (RoundingIncrement::MultiplesOf5, "-7.30"),
+///     // .266 expands to .50, since the next multiple of 25 bigger than 27 is 50.
+///     // Note how we compare against 27 instead of only 7, because the increment applies to
+///     // the two least significant digits of the rounded value instead of only the least
+///     // significant digit.
+///     (RoundingIncrement::MultiplesOf25, "-7.50"),
+/// ];
+///
+/// for (increment, expected) in increments {
+///     assert_writeable_eq!(
+///         dec.clone().rounded_with_mode_and_increment(
+///             -2,
+///             mode,
+///             increment
+///         ),
+///         expected
+///     );
+/// }
+/// ```
 #[derive(Debug, Eq, PartialEq, Clone, Copy, Default)]
 #[non_exhaustive]
 pub enum RoundingIncrement {
-    /// Round the last digit to any digit (0-9).
+    /// Round the least significant digit to any digit (0-9).
     ///
     /// This is the default rounding increment for all the methods that don't take a
     /// `RoundingIncrement` as an argument.
     #[default]
     MultiplesOf1,
-    /// Round the last digit to only multiples of two (0, 2, 4, 6, 8).
+    /// Round the least significant digit to multiples of two (0, 2, 4, 6, 8).
     MultiplesOf2,
-    /// Round the last digit to only multiples of five (0, 5).
+    /// Round the least significant digit to multiples of five (0, 5).
     MultiplesOf5,
-    /// Round the last two digits to only multiples of twenty-five (0, 25, 50, 75).
+    /// Round the two least significant digits to multiples of twenty-five (0, 25, 50, 75).
+    ///
+    /// With this increment, the rounding position index will match the least significant digit
+    /// of the multiple of 25; e.g. the number .264 expanded at position -2 using increments of 25
+    /// will give .50 as a result, since the next multiple of 25 bigger than 26 is 50.
     MultiplesOf25,
 }
 
@@ -666,7 +704,7 @@ impl FixedDecimal {
         self.check_invariants();
     }
 
-    /// Shift the digits by a power of 10, modifying self.
+    /// Shift the digits of this number by a power of 10.
     ///
     /// Leading or trailing zeros may be added to keep the digit at magnitude 0 (the last digit
     /// before the decimal separator) visible.
@@ -725,7 +763,7 @@ impl FixedDecimal {
         self.check_invariants();
     }
 
-    /// Shift the digits by a power of 10, consuming self and returning a new object if successful.
+    /// Returns this number with its digits shifted by a power of 10.
     ///
     /// Leading or trailing zeros may be added to keep the digit at magnitude 0 (the last digit
     /// before the decimal separator) visible.
@@ -745,8 +783,10 @@ impl FixedDecimal {
         self
     }
 
-    /// Returns the sign.
+    /// Returns the sign of this number.
+    ///
     /// # Examples
+    ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
     /// use fixed_decimal::Sign;
@@ -766,7 +806,7 @@ impl FixedDecimal {
         self.sign
     }
 
-    /// Change the sign to the one given.
+    /// Changes the sign of this number to the one given.
     ///
     /// # Examples
     ///
@@ -790,7 +830,7 @@ impl FixedDecimal {
         self.sign = sign;
     }
 
-    /// Change the sign to the one given, consuming self and returning a new object.
+    /// Returns this number with the sign changed to the one given.
     ///
     /// # Examples
     ///
@@ -820,7 +860,7 @@ impl FixedDecimal {
         self
     }
 
-    /// Sets the sign according to the given sign display strategy.
+    /// Sets the sign of this number according to the given sign display strategy.
     ///
     /// # Examples
     /// ```
@@ -861,8 +901,7 @@ impl FixedDecimal {
         }
     }
 
-    /// Sets the sign according to the given sign display strategy, consuming
-    /// self and returning a new object.
+    /// Returns this number with its sign set according to the given sign display strategy.
     ///
     /// # Examples
     /// ```
@@ -881,7 +920,7 @@ impl FixedDecimal {
         self
     }
 
-    /// Remove leading zeroes, consuming self and returning a new object.
+    /// Returns this number with its leading zeroes removed.
     ///
     /// # Examples
     ///
@@ -900,7 +939,7 @@ impl FixedDecimal {
         self
     }
 
-    /// Remove leading zeroes, modifying self.
+    /// Removes the leading zeroes of this number.
     ///
     /// # Examples
     ///
@@ -932,7 +971,7 @@ impl FixedDecimal {
         self.check_invariants();
     }
 
-    /// Remove trailing zeroes, consuming self and returning a new object.
+    /// Returns this number with its trailing zeros removed.
     ///
     /// # Examples
     ///
@@ -951,7 +990,7 @@ impl FixedDecimal {
         self
     }
 
-    /// Remove trailing zeroes, modifying self.
+    /// Removes the trailing zeros of this number.
     ///
     /// # Examples
     ///
@@ -983,10 +1022,9 @@ impl FixedDecimal {
         self.check_invariants();
     }
 
-    /// Zero-pad the number on the left to a particular position,
-    /// returning the result.
+    /// Returns this number padded with leading zeros on a particular position.
     ///
-    /// Negative numbers have no effect.
+    /// Negative position numbers have no effect.
     ///
     /// Also see [`FixedDecimal::with_max_position()`].
     ///
@@ -1010,9 +1048,9 @@ impl FixedDecimal {
         self
     }
 
-    /// Zero-pad the number on the left to a particular position.
+    /// Pads this number with leading zeros on a particular position.
     ///
-    /// Negative numbers have no effect.
+    /// Negative position numbers have no effect.
     ///
     /// Also see [`FixedDecimal::set_max_position()`].
     ///
@@ -1050,10 +1088,10 @@ impl FixedDecimal {
         self.check_invariants();
     }
 
-    /// Zero-pad the number on the right to a particular (negative) position. Will truncate
-    /// trailing zeros if necessary, but will not truncate other digits, returning the result.
+    /// Returns this number padded with trailing zeros on a particular (negative) position.
+    /// Will truncate zeros if necessary, but will not truncate other digits.
     ///
-    /// Positive numbers have no effect.
+    /// Positive position numbers have no effect.
     ///
     /// Also see [`FixedDecimal::trunced()`].
     ///
@@ -1079,10 +1117,10 @@ impl FixedDecimal {
         self
     }
 
-    /// Zero-pad the number on the right to a particular (negative) position. Will truncate
+    /// Pads this number with trailing zeros on a particular (non-positive) position. Will truncate
     /// trailing zeros if necessary, but will not truncate other digits.
     ///
-    /// Positive numbers have no effect.
+    /// Positive position numbers have no effect.
     ///
     /// Also see [`FixedDecimal::trunc()`].
     ///
@@ -1095,20 +1133,19 @@ impl FixedDecimal {
     /// let mut dec = FixedDecimal::from_str("123.456").unwrap();
     /// assert_eq!("123.456", dec.to_string());
     ///
-    /// dec.pad_end(-1);
-    /// assert_eq!("123.456", dec.to_string());
-    ///
     /// dec.pad_end(-2);
     /// assert_eq!("123.456", dec.to_string());
     ///
     /// dec.pad_end(-6);
     /// assert_eq!("123.456000", dec.to_string());
     ///
-    /// dec.pad_end(-4);
-    /// assert_eq!("123.4560", dec.to_string());
+    /// let mut dec = FixedDecimal::from_str("123.000").unwrap();
+    /// dec.pad_end(0);
+    /// assert_eq!("123", dec.to_string());
+    ///
     /// ```
     pub fn pad_end(&mut self, position: i16) {
-        if position >= 0 {
+        if position > 0 {
             return;
         }
         let bottom_magnitude = self.nonzero_magnitude_end();
@@ -1122,8 +1159,8 @@ impl FixedDecimal {
         self.check_invariants();
     }
 
-    /// Truncate the number on the left to a particular position, deleting
-    /// digits if necessary, returning the result.
+    /// Returns this number with the leading significant digits truncated to a particular position,
+    /// deleting digits if necessary.
     ///
     /// Also see [`FixedDecimal::padded_start()`].
     ///
@@ -1154,7 +1191,7 @@ impl FixedDecimal {
         self
     }
 
-    /// Truncate the number on the left to a particular position, deleting
+    /// Truncates the leading significant digits of this number to a particular position, deleting
     /// digits if necessary.
     ///
     /// Also see [`FixedDecimal::pad_start()`].
@@ -1212,10 +1249,10 @@ impl FixedDecimal {
         self.check_invariants();
     }
 
-    /// Rounds the number at a particular digit position.
+    /// Rounds this number at a particular digit position.
     ///
-    /// This uses half to even rounding, which resolves ties by selecting the nearest
-    /// even integer to the original value.
+    /// This uses half to even rounding, which rounds to the nearest integer and resolves ties by
+    /// selecting the nearest even integer to the original value.
     ///
     /// # Examples
     ///
@@ -1243,10 +1280,10 @@ impl FixedDecimal {
         self.half_even_to_increment_internal(position, NoIncrement)
     }
 
-    /// Rounds the number at a particular digit position.
+    /// Returns this number rounded at a particular digit position.
     ///
-    /// This uses half to even rounding by default, which resolves ties by selecting the nearest
-    /// even integer to the original value.
+    /// This uses half to even rounding by default, which rounds to the nearest integer and
+    /// resolves ties by selecting the nearest even integer to the original value.
     ///
     /// # Examples
     ///
@@ -1270,7 +1307,7 @@ impl FixedDecimal {
         self
     }
 
-    /// Take the ceiling of the number at a particular position.
+    /// Rounds this number towards positive infinity at a particular digit position.
     ///
     /// # Examples
     ///
@@ -1299,7 +1336,7 @@ impl FixedDecimal {
         self.ceil_to_increment_internal(position, NoIncrement);
     }
 
-    /// Take the ceiling of the number at a particular position.
+    /// Returns this number rounded towards positive infinity at a particular digit position.
     ///
     /// # Examples
     ///
@@ -1323,7 +1360,7 @@ impl FixedDecimal {
         self
     }
 
-    /// Take the expand of the number at a particular position.
+    /// Rounds this number away from zero at a particular digit position.
     ///
     /// # Examples
     ///
@@ -1352,7 +1389,7 @@ impl FixedDecimal {
         self.expand_to_increment_internal(position, NoIncrement)
     }
 
-    /// Take the expand of the number at a particular position.
+    /// Returns this number rounded away from zero at a particular digit position.
     ///
     /// # Examples
     ///
@@ -1376,7 +1413,7 @@ impl FixedDecimal {
         self
     }
 
-    /// Take the floor of the number at a particular position.
+    /// Rounds this number towards negative infinity at a particular digit position.
     ///
     /// # Examples
     ///
@@ -1405,7 +1442,7 @@ impl FixedDecimal {
         self.floor_to_increment_internal(position, NoIncrement);
     }
 
-    /// Take the floor of the number at a particular position.
+    /// Returns this number rounded towards negative infinity at a particular digit position.
     ///
     /// # Examples
     ///
@@ -1429,8 +1466,7 @@ impl FixedDecimal {
         self
     }
 
-    /// Truncates the number on the right to a particular position, deleting
-    /// digits if necessary.
+    /// Rounds this number towards zero at a particular digit position.
     ///
     /// Also see [`FixedDecimal::pad_end()`].
     ///
@@ -1461,8 +1497,7 @@ impl FixedDecimal {
         self.trunc_to_increment_internal(position, NoIncrement)
     }
 
-    /// Truncate the number on the right to a particular position, deleting
-    /// digits if necessary.
+    /// Returns this number rounded towards zero at a particular digit position.
     ///
     /// Also see [`FixedDecimal::padded_end()`].
     ///
@@ -1488,7 +1523,7 @@ impl FixedDecimal {
         self
     }
 
-    /// Rounds the number at a particular digit position, using the specified rounding mode.
+    /// Rounds this number at a particular digit position, using the specified rounding mode.
     ///
     /// # Examples
     ///
@@ -1528,7 +1563,7 @@ impl FixedDecimal {
         }
     }
 
-    /// Rounds the number at a particular digit position, using the specified rounding mode.
+    /// Returns this number rounded at a particular digit position, using the specified rounding mode.
     ///
     /// # Examples
     ///
@@ -1570,7 +1605,7 @@ impl FixedDecimal {
         self
     }
 
-    /// Rounds the number at a particular digit position and increment, using the specified rounding mode.
+    /// Rounds this number at a particular digit position and increment, using the specified rounding mode.
     ///
     /// # Examples
     ///
@@ -1633,7 +1668,7 @@ impl FixedDecimal {
         }
     }
 
-    /// Rounds the number at a particular digit position and increment, using the specified rounding mode.
+    /// Returns this number rounded at a particular digit position and increment, using the specified rounding mode.
     ///
     /// # Examples
     ///
@@ -2586,7 +2621,7 @@ pub enum FloatPrecision {
 
 #[cfg(feature = "ryu")]
 impl FixedDecimal {
-    /// Construct a [`FixedDecimal`] from an f64.
+    /// Constructs a [`FixedDecimal`] from an f64.
     ///
     /// Since f64 values do not carry a notion of their precision, the second argument to this
     /// function specifies the type of precision associated with the f64. For more information,

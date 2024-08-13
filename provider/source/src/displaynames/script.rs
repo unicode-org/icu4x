@@ -17,12 +17,11 @@ impl DataProvider<ScriptDisplayNamesV1Marker> for SourceDataProvider {
         req: DataRequest,
     ) -> Result<DataResponse<ScriptDisplayNamesV1Marker>, DataError> {
         self.check_req::<ScriptDisplayNamesV1Marker>(req)?;
-        let langid = req.id.locale.get_langid();
 
         let data: &cldr_serde::displaynames::script::Resource = self
             .cldr()?
             .displaynames()
-            .read_and_parse(&langid, "scripts.json")?;
+            .read_and_parse(req.id.locale, "scripts.json")?;
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -38,16 +37,16 @@ impl IterableDataProviderCached<ScriptDisplayNamesV1Marker> for SourceDataProvid
         Ok(self
             .cldr()?
             .displaynames()
-            .list_langs()?
-            .filter(|langid| {
+            .list_locales()?
+            .filter(|locale| {
                 // The directory might exist without scripts.json
                 self.cldr()
                     .unwrap()
                     .displaynames()
-                    .file_exists(langid, "scripts.json")
+                    .file_exists(locale, "scripts.json")
                     .unwrap_or_default()
             })
-            .map(|l| DataIdentifierCow::from_locale(DataLocale::from(l)))
+            .map(DataIdentifierCow::from_locale)
             .collect())
     }
 }

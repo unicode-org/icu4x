@@ -1,7 +1,0 @@
-{
-  "patterns": {
-    "One": "{0} godina",
-    "Few": "{0} godine",
-    "Other": "{0} godina"
-  }
-}

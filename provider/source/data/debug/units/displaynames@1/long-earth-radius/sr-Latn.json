@@ -1,7 +1,0 @@
-{
-  "patterns": {
-    "One": "{0} poluprečnik Zemlje",
-    "Few": "{0} poluprečnik Zemlje",
-    "Other": "{0} poluprečnika Zemlje"
-  }
-}

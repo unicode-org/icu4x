@@ -20,7 +20,7 @@ final class PluralRules implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XPluralRules_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_PluralRules_destroy_mv1));
 
   /// Construct an [`PluralRules`] for the given locale, for cardinal numbers
   ///
@@ -28,7 +28,7 @@ final class PluralRules implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory PluralRules.cardinal(DataProvider provider, Locale locale) {
-    final result = _ICU4XPluralRules_create_cardinal(provider._ffi, locale._ffi);
+    final result = _icu4x_PluralRules_create_cardinal_mv1(provider._ffi, locale._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -41,7 +41,7 @@ final class PluralRules implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory PluralRules.ordinal(DataProvider provider, Locale locale) {
-    final result = _ICU4XPluralRules_create_ordinal(provider._ffi, locale._ffi);
+    final result = _icu4x_PluralRules_create_ordinal_mv1(provider._ffi, locale._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -52,7 +52,7 @@ final class PluralRules implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `category_for`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.category_for) for more information.
   PluralCategory categoryFor(PluralOperands op) {
-    final result = _ICU4XPluralRules_category_for(_ffi, op._ffi);
+    final result = _icu4x_PluralRules_category_for_mv1(_ffi, op._ffi);
     return PluralCategory.values[result];
   }
 
@@ -60,32 +60,32 @@ final class PluralRules implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `categories`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.categories) for more information.
   PluralCategories get categories {
-    final result = _ICU4XPluralRules_categories(_ffi);
+    final result = _icu4x_PluralRules_categories_mv1(_ffi);
     return PluralCategories._fromFfi(result);
   }
 }
 
-@meta.ResourceIdentifier('ICU4XPluralRules_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XPluralRules_destroy')
+@meta.ResourceIdentifier('icu4x_PluralRules_destroy_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_PluralRules_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XPluralRules_destroy(ffi.Pointer<ffi.Void> self);
+external void _icu4x_PluralRules_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XPluralRules_create_cardinal')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XPluralRules_create_cardinal')
+@meta.ResourceIdentifier('icu4x_PluralRules_create_cardinal_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PluralRules_create_cardinal_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XPluralRules_create_cardinal(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
+external _ResultOpaqueInt32 _icu4x_PluralRules_create_cardinal_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
-@meta.ResourceIdentifier('ICU4XPluralRules_create_ordinal')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XPluralRules_create_ordinal')
+@meta.ResourceIdentifier('icu4x_PluralRules_create_ordinal_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PluralRules_create_ordinal_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XPluralRules_create_ordinal(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
+external _ResultOpaqueInt32 _icu4x_PluralRules_create_ordinal_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
-@meta.ResourceIdentifier('ICU4XPluralRules_category_for')
-@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XPluralRules_category_for')
+@meta.ResourceIdentifier('icu4x_PluralRules_category_for_mv1')
+@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PluralRules_category_for_mv1')
 // ignore: non_constant_identifier_names
-external int _ICU4XPluralRules_category_for(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> op);
+external int _icu4x_PluralRules_category_for_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> op);
 
-@meta.ResourceIdentifier('ICU4XPluralRules_categories')
-@ffi.Native<_PluralCategoriesFfi Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XPluralRules_categories')
+@meta.ResourceIdentifier('icu4x_PluralRules_categories_mv1')
+@ffi.Native<_PluralCategoriesFfi Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PluralRules_categories_mv1')
 // ignore: non_constant_identifier_names
-external _PluralCategoriesFfi _ICU4XPluralRules_categories(ffi.Pointer<ffi.Opaque> self);
+external _PluralCategoriesFfi _icu4x_PluralRules_categories_mv1(ffi.Pointer<ffi.Opaque> self);

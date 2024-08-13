@@ -1,14 +1,14 @@
-import { ICU4XDataProvider, ICU4XWordSegmenter } from "icu4x";
+import { DataProvider, WordSegmenter } from "icu4x";
 
 export class SegmenterDemo {
     #displayFn: (formatted: string) => void;
-    #dataProvider: ICU4XDataProvider;
+    #dataProvider: DataProvider;
 
-    #segmenter: ICU4XWordSegmenter;
+    #segmenter: WordSegmenter;
     #model: string;
     #text: string;
 
-    constructor(displayFn: (formatted: string) => void, dataProvider: ICU4XDataProvider) {
+    constructor(displayFn: (formatted: string) => void, dataProvider: DataProvider) {
         this.#displayFn = displayFn;
         this.#dataProvider = dataProvider;
 
@@ -29,11 +29,11 @@ export class SegmenterDemo {
 
     #updateSegmenter(): void {
         if (this.#model === "Auto") {
-            this.#segmenter = ICU4XWordSegmenter.create_auto(this.#dataProvider);
+            this.#segmenter = WordSegmenter.create_auto(this.#dataProvider);
         } else if (this.#model === "LSTM") {
-            this.#segmenter = ICU4XWordSegmenter.create_lstm(this.#dataProvider);
+            this.#segmenter = WordSegmenter.create_lstm(this.#dataProvider);
         } else if (this.#model === "Dictionary") {
-            this.#segmenter = ICU4XWordSegmenter.create_dictionary(this.#dataProvider);
+            this.#segmenter = WordSegmenter.create_dictionary(this.#dataProvider);
         } else {
             console.error("Unknown model: " + this.#model);
         }
@@ -73,7 +73,7 @@ export class SegmenterDemo {
     }
 }
 
-export function setup(dataProvider: ICU4XDataProvider): void {
+export function setup(dataProvider: DataProvider): void {
     const segmentedText = document.getElementById('seg-segmented') as HTMLParagraphElement;
     const segmenterDemo = new SegmenterDemo((formatted) => {
         // Use innerHTML because we have actual HTML we want to display

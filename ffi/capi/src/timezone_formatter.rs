@@ -2,120 +2,117 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_datetime::time_zone::{FallbackFormat, TimeZoneFormatterOptions};
-
 macro_rules! call_method {
     ($self:ident, $compiled:ident, $unstable:ident, $provider:expr) => {
         match &$provider.0 {
-            $crate::provider::ICU4XDataProviderInner::Destroyed => Err(
+            $crate::provider::DataProviderInner::Destroyed => Err(
                 icu_provider::DataError::custom("This provider has been destroyed"),
             )?,
-            $crate::provider::ICU4XDataProviderInner::Empty => $self
+            $crate::provider::DataProviderInner::Empty => $self
                 .0
                 .$unstable(&icu_provider_adapters::empty::EmptyDataProvider::new()),
             #[cfg(feature = "buffer_provider")]
-            $crate::provider::ICU4XDataProviderInner::Buffer(buffer_provider) => $self.0.$unstable(
+            $crate::provider::DataProviderInner::Buffer(buffer_provider) => $self.0.$unstable(
                 &icu_provider::buf::AsDeserializingBufferProvider::as_deserializing(
                     buffer_provider,
                 ),
             ),
             #[cfg(feature = "compiled_data")]
-            $crate::provider::ICU4XDataProviderInner::Compiled => $self.0.$compiled(),
+            $crate::provider::DataProviderInner::Compiled => $self.0.$compiled(),
         }
     };
 }
 
 #[diplomat::bridge]
+#[diplomat::abi_rename = "icu4x_{0}_mv1"]
+#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
-    use crate::errors::ffi::ICU4XError;
-    use crate::locale_core::ffi::ICU4XLocale;
-    use crate::provider::ffi::ICU4XDataProvider;
-    use crate::timezone::ffi::ICU4XCustomTimeZone;
     use alloc::boxed::Box;
-    use icu_datetime::time_zone::FallbackFormat;
-    use icu_datetime::time_zone::IsoFormat;
-    use icu_datetime::time_zone::IsoMinutes;
-    use icu_datetime::time_zone::IsoSeconds;
-    use icu_datetime::time_zone::TimeZoneFormatter;
+
+    use crate::errors::ffi::Error;
+    use crate::locale_core::ffi::Locale;
+    use crate::provider::ffi::DataProvider;
+    use crate::timezone::ffi::CustomTimeZone;
+
     use writeable::Writeable;
 
     #[diplomat::opaque]
-    /// An ICU4X TimeZoneFormatter object capable of formatting an [`ICU4XCustomTimeZone`] type (and others) as a string
+    /// An ICU4X TimeZoneFormatter object capable of formatting an [`CustomTimeZone`] type (and others) as a string
     #[diplomat::rust_link(icu::datetime::time_zone::TimeZoneFormatter, Struct)]
     #[diplomat::rust_link(icu::datetime::FormattedTimeZone, Struct, hidden)]
-    pub struct ICU4XTimeZoneFormatter(pub TimeZoneFormatter);
+    pub struct TimeZoneFormatter(pub icu_datetime::time_zone::TimeZoneFormatter);
 
-    #[diplomat::enum_convert(IsoFormat, needs_wildcard)]
+    #[diplomat::enum_convert(icu_datetime::time_zone::IsoFormat, needs_wildcard)]
     #[diplomat::rust_link(icu::datetime::time_zone::IsoFormat, Enum)]
-    pub enum ICU4XIsoTimeZoneFormat {
+    pub enum IsoTimeZoneFormat {
         Basic,
         Extended,
         UtcBasic,
         UtcExtended,
     }
 
-    #[diplomat::enum_convert(IsoMinutes, needs_wildcard)]
+    #[diplomat::enum_convert(icu_datetime::time_zone::IsoMinutes, needs_wildcard)]
     #[diplomat::rust_link(icu::datetime::time_zone::IsoMinutes, Enum)]
-    pub enum ICU4XIsoTimeZoneMinuteDisplay {
+    pub enum IsoTimeZoneMinuteDisplay {
         Required,
         Optional,
     }
 
-    #[diplomat::enum_convert(IsoSeconds, needs_wildcard)]
+    #[diplomat::enum_convert(icu_datetime::time_zone::IsoSeconds, needs_wildcard)]
     #[diplomat::rust_link(icu::datetime::time_zone::IsoSeconds, Enum)]
-    pub enum ICU4XIsoTimeZoneSecondDisplay {
+    pub enum IsoTimeZoneSecondDisplay {
         Optional,
         Never,
     }
 
-    pub struct ICU4XIsoTimeZoneOptions {
-        pub format: ICU4XIsoTimeZoneFormat,
-        pub minutes: ICU4XIsoTimeZoneMinuteDisplay,
-        pub seconds: ICU4XIsoTimeZoneSecondDisplay,
+    pub struct IsoTimeZoneOptions {
+        pub format: IsoTimeZoneFormat,
+        pub minutes: IsoTimeZoneMinuteDisplay,
+        pub seconds: IsoTimeZoneSecondDisplay,
     }
 
-    impl ICU4XTimeZoneFormatter {
-        /// Creates a new [`ICU4XTimeZoneFormatter`] from locale data.
+    impl TimeZoneFormatter {
+        /// Creates a new [`TimeZoneFormatter`] from locale data.
         ///
         /// Uses localized GMT as the fallback format.
         #[diplomat::rust_link(icu::datetime::time_zone::TimeZoneFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::time_zone::FallbackFormat, Enum, compact)]
         #[diplomat::rust_link(icu::datetime::time_zone::TimeZoneFormatterOptions, Struct, hidden)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "with_localized_gmt_fallback")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_localized_gmt_fallback")]
         pub fn create_with_localized_gmt_fallback(
-            provider: &ICU4XDataProvider,
-            locale: &ICU4XLocale,
-        ) -> Result<Box<ICU4XTimeZoneFormatter>, ICU4XError> {
+            provider: &DataProvider,
+            locale: &Locale,
+        ) -> Result<Box<TimeZoneFormatter>, Error> {
             let locale = locale.to_datalocale();
 
-            Ok(Box::new(ICU4XTimeZoneFormatter(call_constructor!(
-                TimeZoneFormatter::try_new,
-                TimeZoneFormatter::try_new_with_any_provider,
-                TimeZoneFormatter::try_new_with_buffer_provider,
+            Ok(Box::new(TimeZoneFormatter(call_constructor!(
+                icu_datetime::time_zone::TimeZoneFormatter::try_new,
+                icu_datetime::time_zone::TimeZoneFormatter::try_new_with_any_provider,
+                icu_datetime::time_zone::TimeZoneFormatter::try_new_with_buffer_provider,
                 provider,
                 &locale,
-                FallbackFormat::LocalizedGmt.into(),
+                icu_datetime::time_zone::FallbackFormat::LocalizedGmt.into(),
             )?)))
         }
 
-        /// Creates a new [`ICU4XTimeZoneFormatter`] from locale data.
+        /// Creates a new [`TimeZoneFormatter`] from locale data.
         ///
         /// Uses ISO-8601 as the fallback format.
         #[diplomat::rust_link(icu::datetime::time_zone::TimeZoneFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::time_zone::FallbackFormat, Enum, compact)]
         #[diplomat::rust_link(icu::datetime::time_zone::TimeZoneFormatterOptions, Struct, hidden)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "with_iso_8601_fallback")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_iso_8601_fallback")]
         pub fn create_with_iso_8601_fallback(
-            provider: &ICU4XDataProvider,
-            locale: &ICU4XLocale,
-            options: ICU4XIsoTimeZoneOptions,
-        ) -> Result<Box<ICU4XTimeZoneFormatter>, ICU4XError> {
+            provider: &DataProvider,
+            locale: &Locale,
+            options: IsoTimeZoneOptions,
+        ) -> Result<Box<TimeZoneFormatter>, Error> {
             let locale = locale.to_datalocale();
 
-            Ok(Box::new(ICU4XTimeZoneFormatter(call_constructor!(
-                TimeZoneFormatter::try_new,
-                TimeZoneFormatter::try_new_with_any_provider,
-                TimeZoneFormatter::try_new_with_buffer_provider,
+            Ok(Box::new(TimeZoneFormatter(call_constructor!(
+                icu_datetime::time_zone::TimeZoneFormatter::try_new,
+                icu_datetime::time_zone::TimeZoneFormatter::try_new_with_any_provider,
+                icu_datetime::time_zone::TimeZoneFormatter::try_new_with_buffer_provider,
                 provider,
                 &locale,
                 options.into(),
@@ -134,8 +131,8 @@ pub mod ffi {
         )]
         pub fn load_generic_non_location_long(
             &mut self,
-            provider: &ICU4XDataProvider,
-        ) -> Result<(), ICU4XError> {
+            provider: &DataProvider,
+        ) -> Result<(), Error> {
             call_method!(
                 self,
                 include_generic_non_location_long,
@@ -157,8 +154,8 @@ pub mod ffi {
         )]
         pub fn load_generic_non_location_short(
             &mut self,
-            provider: &ICU4XDataProvider,
-        ) -> Result<(), ICU4XError> {
+            provider: &DataProvider,
+        ) -> Result<(), Error> {
             call_method!(
                 self,
                 include_generic_non_location_short,
@@ -180,8 +177,8 @@ pub mod ffi {
         )]
         pub fn load_specific_non_location_long(
             &mut self,
-            provider: &ICU4XDataProvider,
-        ) -> Result<(), ICU4XError> {
+            provider: &DataProvider,
+        ) -> Result<(), Error> {
             call_method!(
                 self,
                 include_specific_non_location_long,
@@ -203,8 +200,8 @@ pub mod ffi {
         )]
         pub fn load_specific_non_location_short(
             &mut self,
-            provider: &ICU4XDataProvider,
-        ) -> Result<(), ICU4XError> {
+            provider: &DataProvider,
+        ) -> Result<(), Error> {
             call_method!(
                 self,
                 include_specific_non_location_short,
@@ -226,8 +223,8 @@ pub mod ffi {
         )]
         pub fn load_generic_location_format(
             &mut self,
-            provider: &ICU4XDataProvider,
-        ) -> Result<(), ICU4XError> {
+            provider: &DataProvider,
+        ) -> Result<(), Error> {
             call_method!(
                 self,
                 include_generic_location_format,
@@ -247,7 +244,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn include_localized_gmt_format(&mut self) -> Result<(), ICU4XError> {
+        pub fn include_localized_gmt_format(&mut self) -> Result<(), Error> {
             self.0.include_localized_gmt_format()?;
             Ok(())
         }
@@ -262,10 +259,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn load_iso_8601_format(
-            &mut self,
-            options: ICU4XIsoTimeZoneOptions,
-        ) -> Result<(), ICU4XError> {
+        pub fn load_iso_8601_format(&mut self, options: IsoTimeZoneOptions) -> Result<(), Error> {
             self.0.include_iso_8601_format(
                 options.format.into(),
                 options.minutes.into(),
@@ -274,7 +268,7 @@ pub mod ffi {
             Ok(())
         }
 
-        /// Formats a [`ICU4XCustomTimeZone`] to a string.
+        /// Formats a [`CustomTimeZone`] to a string.
         #[diplomat::rust_link(icu::datetime::time_zone::TimeZoneFormatter::format, FnInStruct)]
         #[diplomat::rust_link(
             icu::datetime::time_zone::TimeZoneFormatter::format_to_string,
@@ -283,23 +277,23 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::FormattedTimeZone::write_to, FnInStruct, hidden)]
         pub fn format_custom_time_zone(
             &self,
-            value: &ICU4XCustomTimeZone,
+            value: &CustomTimeZone,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
             let _infallible = self.0.format(&value.0).write_to(write);
         }
 
-        /// Formats a [`ICU4XCustomTimeZone`] to a string, performing no fallback
+        /// Formats a [`CustomTimeZone`] to a string, performing no fallback
         #[diplomat::rust_link(icu::datetime::FormattedTimeZone::write_no_fallback, FnInStruct)]
         pub fn format_custom_time_zone_no_fallback(
             &self,
-            value: &ICU4XCustomTimeZone,
+            value: &CustomTimeZone,
             write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Result<(), ICU4XError> {
+        ) -> Result<(), Error> {
             match self.0.format(&value.0).write_no_fallback(write) {
                 Ok(Ok(())) => Ok(()),
                 // TODO: Use narrow error type here
-                Ok(Err(_e)) => Err(ICU4XError::UnknownError),
+                Ok(Err(_e)) => Err(Error::UnknownError),
                 Err(core::fmt::Error) => {
                     debug_assert!(false, "unreachable");
                     Ok(())
@@ -309,9 +303,9 @@ pub mod ffi {
     }
 }
 
-impl From<ffi::ICU4XIsoTimeZoneOptions> for TimeZoneFormatterOptions {
-    fn from(other: ffi::ICU4XIsoTimeZoneOptions) -> Self {
-        FallbackFormat::Iso8601(
+impl From<ffi::IsoTimeZoneOptions> for icu_datetime::time_zone::TimeZoneFormatterOptions {
+    fn from(other: ffi::IsoTimeZoneOptions) -> Self {
+        icu_datetime::time_zone::FallbackFormat::Iso8601(
             other.format.into(),
             other.minutes.into(),
             other.seconds.into(),

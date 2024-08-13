@@ -12,6 +12,9 @@ on:
   pull_request:
     branches: ["*"]
 
+permissions:
+  contents: read
+
 jobs:
   docs:
     name: "Docs Preview"

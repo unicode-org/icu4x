@@ -140,17 +140,17 @@ pub struct DataPayload<M: DynamicDataMarker>(pub(crate) DataPayloadInner<M>);
 pub struct DataPayloadOr<M: DynamicDataMarker, O>(pub(crate) DataPayloadOrInner<M, O>);
 
 pub(crate) enum DataPayloadInner<M: DynamicDataMarker> {
-    Yoke(Yoke<M::Yokeable, CartableOptionPointer<CartInner>>),
-    StaticRef(&'static M::Yokeable),
+    Yoke(Yoke<M::DataStruct, CartableOptionPointer<CartInner>>),
+    StaticRef(&'static M::DataStruct),
 }
 
 pub(crate) enum DataPayloadOrInner<M: DynamicDataMarker, O> {
-    Yoke(Yoke<M::Yokeable, CartableOptionPointer<CartInner>>),
+    Yoke(Yoke<M::DataStruct, CartableOptionPointer<CartInner>>),
     Inner(DataPayloadOrInnerInner<M, O>),
 }
 
 pub(crate) enum DataPayloadOrInnerInner<M: DynamicDataMarker, O> {
-    StaticRef(&'static M::Yokeable),
+    StaticRef(&'static M::DataStruct),
     Other(O),
 }
 
@@ -205,7 +205,7 @@ impl Cart {
 impl<M> Debug for DataPayload<M>
 where
     M: DynamicDataMarker,
-    for<'a> &'a <M::Yokeable as Yokeable<'a>>::Output: Debug,
+    for<'a> &'a <M::DataStruct as Yokeable<'a>>::Output: Debug,
 {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         self.get().fmt(f)
@@ -215,7 +215,7 @@ where
 impl<M, O> Debug for DataPayloadOr<M, O>
 where
     M: DynamicDataMarker,
-    for<'a> &'a <M::Yokeable as Yokeable<'a>>::Output: Debug,
+    for<'a> &'a <M::DataStruct as Yokeable<'a>>::Output: Debug,
     O: Debug,
 {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
@@ -240,7 +240,7 @@ where
 impl<M> Clone for DataPayload<M>
 where
     M: DynamicDataMarker,
-    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
+    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: Clone,
 {
     fn clone(&self) -> Self {
         Self(match &self.0 {
@@ -253,7 +253,7 @@ where
 impl<M, O> Clone for DataPayloadOr<M, O>
 where
     M: DynamicDataMarker,
-    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
+    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: Clone,
     O: Clone,
 {
     fn clone(&self) -> Self {
@@ -272,7 +272,7 @@ where
 impl<M> PartialEq for DataPayload<M>
 where
     M: DynamicDataMarker,
-    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: PartialEq,
+    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: PartialEq,
 {
     fn eq(&self, other: &Self) -> bool {
         YokeTraitHack(self.get()).into_ref() == YokeTraitHack(other.get()).into_ref()
@@ -282,7 +282,7 @@ where
 impl<M, O> PartialEq for DataPayloadOr<M, O>
 where
     M: DynamicDataMarker,
-    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: PartialEq,
+    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: PartialEq,
     O: Eq,
 {
     fn eq(&self, other: &Self) -> bool {
@@ -297,14 +297,14 @@ where
 impl<M> Eq for DataPayload<M>
 where
     M: DynamicDataMarker,
-    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Eq,
+    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: Eq,
 {
 }
 
 impl<M, O> Eq for DataPayloadOr<M, O>
 where
     M: DynamicDataMarker,
-    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Eq,
+    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: Eq,
     O: Eq,
 {
 }
@@ -364,7 +364,7 @@ where
     /// assert_eq!(payload.get(), &local_struct);
     /// ```
     #[inline]
-    pub fn from_owned(data: M::Yokeable) -> Self {
+    pub fn from_owned(data: M::DataStruct) -> Self {
         Self(DataPayloadInner::Yoke(
             Yoke::new_owned(data).convert_cart_into_option_pointer(),
         ))
@@ -374,7 +374,7 @@ where
     ///
     /// This is mainly used by databake.
     #[inline]
-    pub const fn from_static_ref(data: &'static M::Yokeable) -> Self {
+    pub const fn from_static_ref(data: &'static M::DataStruct) -> Self {
         Self(DataPayloadInner::StaticRef(data))
     }
 
@@ -415,8 +415,8 @@ where
     /// ```
     pub fn with_mut<'a, F>(&'a mut self, f: F)
     where
-        F: 'static + for<'b> FnOnce(&'b mut <M::Yokeable as Yokeable<'a>>::Output),
-        M::Yokeable: zerofrom::ZeroFrom<'static, M::Yokeable>,
+        F: 'static + for<'b> FnOnce(&'b mut <M::DataStruct as Yokeable<'a>>::Output),
+        M::DataStruct: zerofrom::ZeroFrom<'static, M::DataStruct>,
     {
         if let DataPayloadInner::StaticRef(r) = self.0 {
             self.0 = DataPayloadInner::Yoke(
@@ -447,7 +447,7 @@ where
     /// ```
     #[inline]
     #[allow(clippy::needless_lifetimes)]
-    pub fn get<'a>(&'a self) -> &'a <M::Yokeable as Yokeable<'a>>::Output {
+    pub fn get<'a>(&'a self) -> &'a <M::DataStruct as Yokeable<'a>>::Output {
         match &self.0 {
             DataPayloadInner::Yoke(yoke) => yoke.get(),
             DataPayloadInner::StaticRef(r) => Yokeable::transform(*r),
@@ -476,12 +476,12 @@ where
     /// use icu_provider::prelude::*;
     /// use std::borrow::Cow;
     ///
-    /// // A custom marker type is required when using `map_project`. The Yokeable should be the
+    /// // A custom marker type is required when using `map_project`. The DataStruct should be the
     /// // target type, and the Cart should correspond to the type being transformed.
     ///
     /// struct HelloWorldV1MessageMarker;
     /// impl DynamicDataMarker for HelloWorldV1MessageMarker {
-    ///     type Yokeable = Cow<'static, str>;
+    ///     type DataStruct = Cow<'static, str>;
     /// }
     ///
     /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
@@ -500,10 +500,10 @@ where
     where
         M2: DynamicDataMarker,
         F: for<'a> FnOnce(
-            <M::Yokeable as Yokeable<'a>>::Output,
+            <M::DataStruct as Yokeable<'a>>::Output,
             PhantomData<&'a ()>,
-        ) -> <M2::Yokeable as Yokeable<'a>>::Output,
-        M::Yokeable: zerofrom::ZeroFrom<'static, M::Yokeable>,
+        ) -> <M2::DataStruct as Yokeable<'a>>::Output,
+        M::DataStruct: zerofrom::ZeroFrom<'static, M::DataStruct>,
     {
         DataPayload(DataPayloadInner::Yoke(
             match self.0 {
@@ -528,7 +528,7 @@ where
     /// # use std::borrow::Cow;
     /// # struct HelloWorldV1MessageMarker;
     /// # impl DynamicDataMarker for HelloWorldV1MessageMarker {
-    /// #     type Yokeable = Cow<'static, str>;
+    /// #     type DataStruct = Cow<'static, str>;
     /// # }
     ///
     /// let p1: DataPayload<HelloWorldV1Marker> =
@@ -549,19 +549,19 @@ where
     where
         M2: DynamicDataMarker,
         F: for<'a> FnOnce(
-            &'this <M::Yokeable as Yokeable<'a>>::Output,
+            &'this <M::DataStruct as Yokeable<'a>>::Output,
             PhantomData<&'a ()>,
-        ) -> <M2::Yokeable as Yokeable<'a>>::Output,
+        ) -> <M2::DataStruct as Yokeable<'a>>::Output,
     {
         DataPayload(DataPayloadInner::Yoke(match &self.0 {
             DataPayloadInner::Yoke(yoke) => yoke.map_project_cloned(f),
             DataPayloadInner::StaticRef(r) => {
-                let output: <M2::Yokeable as Yokeable<'static>>::Output =
+                let output: <M2::DataStruct as Yokeable<'static>>::Output =
                     f(Yokeable::transform(*r), PhantomData);
                 // Safety: <M2::Yokeable as Yokeable<'static>>::Output is the same type as M2::Yokeable;
                 // we're going from 'static to 'static, however in a generic context it's not
                 // clear to the compiler that that is the case. We have to use the unsafe make API to do this.
-                let yokeable: M2::Yokeable = unsafe { M2::Yokeable::make(output) };
+                let yokeable: M2::DataStruct = unsafe { M2::DataStruct::make(output) };
                 Yoke::new_owned(yokeable).convert_cart_into_option_pointer()
             }
         }))
@@ -580,7 +580,7 @@ where
     /// # use std::borrow::Cow;
     /// # struct HelloWorldV1MessageMarker;
     /// # impl DynamicDataMarker for HelloWorldV1MessageMarker {
-    /// #     type Yokeable = Cow<'static, str>;
+    /// #     type DataStruct = Cow<'static, str>;
     /// # }
     ///
     /// let p1: DataPayload<HelloWorldV1Marker> =
@@ -608,10 +608,10 @@ where
     where
         M2: DynamicDataMarker,
         F: for<'a> FnOnce(
-            <M::Yokeable as Yokeable<'a>>::Output,
+            <M::DataStruct as Yokeable<'a>>::Output,
             PhantomData<&'a ()>,
-        ) -> Result<<M2::Yokeable as Yokeable<'a>>::Output, E>,
-        M::Yokeable: zerofrom::ZeroFrom<'static, M::Yokeable>,
+        ) -> Result<<M2::DataStruct as Yokeable<'a>>::Output, E>,
+        M::DataStruct: zerofrom::ZeroFrom<'static, M::DataStruct>,
     {
         Ok(DataPayload(DataPayloadInner::Yoke(
             match self.0 {
@@ -636,7 +636,7 @@ where
     /// # use std::borrow::Cow;
     /// # struct HelloWorldV1MessageMarker;
     /// # impl DynamicDataMarker for HelloWorldV1MessageMarker {
-    /// #     type Yokeable = Cow<'static, str>;
+    /// #     type DataStruct = Cow<'static, str>;
     /// # }
     ///
     /// let p1: DataPayload<HelloWorldV1Marker> =
@@ -667,17 +667,17 @@ where
     where
         M2: DynamicDataMarker,
         F: for<'a> FnOnce(
-            &'this <M::Yokeable as Yokeable<'a>>::Output,
+            &'this <M::DataStruct as Yokeable<'a>>::Output,
             PhantomData<&'a ()>,
-        ) -> Result<<M2::Yokeable as Yokeable<'a>>::Output, E>,
+        ) -> Result<<M2::DataStruct as Yokeable<'a>>::Output, E>,
     {
         Ok(DataPayload(DataPayloadInner::Yoke(match &self.0 {
             DataPayloadInner::Yoke(yoke) => yoke.try_map_project_cloned(f)?,
             DataPayloadInner::StaticRef(r) => {
-                let output: <M2::Yokeable as Yokeable<'static>>::Output =
+                let output: <M2::DataStruct as Yokeable<'static>>::Output =
                     f(Yokeable::transform(*r), PhantomData)?;
                 // Safety: <M2::Yokeable as Yokeable<'static>>::Output is the same type as M2::Yokeable
-                Yoke::new_owned(unsafe { M2::Yokeable::make(output) })
+                Yoke::new_owned(unsafe { M2::DataStruct::make(output) })
                     .convert_cart_into_option_pointer()
             }
         })))
@@ -686,7 +686,7 @@ where
     /// Convert between two [`DynamicDataMarker`] types that are compatible with each other
     /// with compile-time type checking.
     ///
-    /// This happens if they both have the same [`DynamicDataMarker::Yokeable`] type.
+    /// This happens if they both have the same [`DynamicDataMarker::DataStruct`] type.
     ///
     /// Can be used to erase the marker of a data payload in cases where multiple markers correspond
     /// to the same data struct.
@@ -701,7 +701,7 @@ where
     ///
     /// struct CustomHelloWorldV1Marker;
     /// impl DynamicDataMarker for CustomHelloWorldV1Marker {
-    ///     type Yokeable = HelloWorldV1<'static>;
+    ///     type DataStruct = HelloWorldV1<'static>;
     /// }
     ///
     /// let hello_world: DataPayload<HelloWorldV1Marker> = todo!();
@@ -710,7 +710,7 @@ where
     #[inline]
     pub fn cast<M2>(self) -> DataPayload<M2>
     where
-        M2: DynamicDataMarker<Yokeable = M::Yokeable>,
+        M2: DynamicDataMarker<DataStruct = M::DataStruct>,
     {
         DataPayload(match self.0 {
             DataPayloadInner::Yoke(yoke) => DataPayloadInner::Yoke(yoke),
@@ -810,7 +810,7 @@ impl DataPayload<BufferMarker> {
 impl<M> Default for DataPayload<M>
 where
     M: DynamicDataMarker,
-    M::Yokeable: Default,
+    M::DataStruct: Default,
 {
     fn default() -> Self {
         Self::from_owned(Default::default())
@@ -853,7 +853,7 @@ where
     /// Gets the value from this [`DataPayload`] as `Ok` or the other type as `Err`.
     #[allow(clippy::needless_lifetimes)]
     #[inline]
-    pub fn get<'a>(&'a self) -> Result<&'a <M::Yokeable as Yokeable<'a>>::Output, &'a O> {
+    pub fn get<'a>(&'a self) -> Result<&'a <M::DataStruct as Yokeable<'a>>::Output, &'a O> {
         match &self.0 {
             DataPayloadOrInner::Yoke(yoke) => Ok(yoke.get()),
             DataPayloadOrInner::Inner(DataPayloadOrInnerInner::StaticRef(r)) => {
@@ -890,7 +890,7 @@ where
     /// Convenience function to return `Some` or `None` for other type `()`
     #[allow(clippy::needless_lifetimes)]
     #[inline]
-    pub fn get_option<'a>(&'a self) -> Option<&'a <M::Yokeable as Yokeable<'a>>::Output> {
+    pub fn get_option<'a>(&'a self) -> Option<&'a <M::DataStruct as Yokeable<'a>>::Output> {
         self.get().ok()
     }
 }
@@ -915,7 +915,7 @@ where
     /// Convert between two [`DynamicDataMarker`] types that are compatible with each other
     /// with compile-time type checking.
     ///
-    /// This happens if they both have the same [`DynamicDataMarker::Yokeable`] type.
+    /// This happens if they both have the same [`DynamicDataMarker::DataStruct`] type.
     ///
     /// Can be used to erase the marker of a data payload in cases where multiple markers correspond
     /// to the same data struct.
@@ -924,7 +924,7 @@ where
     #[inline]
     pub fn cast<M2>(self) -> DataResponse<M2>
     where
-        M2: DynamicDataMarker<Yokeable = M::Yokeable>,
+        M2: DynamicDataMarker<DataStruct = M::DataStruct>,
     {
         DataResponse {
             metadata: self.metadata,
@@ -936,7 +936,7 @@ where
 impl<M> Debug for DataResponse<M>
 where
     M: DynamicDataMarker,
-    for<'a> &'a <M::Yokeable as Yokeable<'a>>::Output: Debug,
+    for<'a> &'a <M::DataStruct as Yokeable<'a>>::Output: Debug,
 {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(
@@ -962,7 +962,7 @@ where
 impl<M> Clone for DataResponse<M>
 where
     M: DynamicDataMarker,
-    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
+    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: Clone,
 {
     fn clone(&self) -> Self {
         Self {

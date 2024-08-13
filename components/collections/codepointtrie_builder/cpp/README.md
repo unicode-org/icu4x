@@ -4,6 +4,8 @@ This directory contains C++ bindings to the ICU4C CodePointTrie builder in the f
 
 The WebAssembly module is checked into tree and made available to Rust library clients.
 
+Since ICU4X 2.0, we check the WebAssembly Text (.wat) file into source control to make it more easily reviewable.
+
 ## WebAssembly Module
 
 To build the WebAssembly module, you need:
@@ -13,11 +15,13 @@ To build the WebAssembly module, you need:
   - `lld`
   - `libc++-dev-wasm32`
   - `libclang-rt-dev-wasm32`
+  - `wabt`
 
 Once you have these two tools installed, from this directory, simply run:
 
 ```bash
-$ make ICU4C_SOURCE=/path/to/icu4c/source ucptrie_wrap.wasm
+$ make clean
+$ make ICU4C_SOURCE=/path/to/icu4c/source ucptrie_wrap.wat
 ```
 
 You can then copy the wasm file up one directory in order to update the version shipped with ICU4X.

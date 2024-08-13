@@ -71,6 +71,7 @@ members = [
     "utils/pattern",
     "utils/preferences",
     "utils/resb",
+    "utils/env_preferences",
     "utils/tinystr",
     "utils/tzif",
     "utils/writeable",
@@ -83,14 +84,14 @@ members = [
     "utils/zerovec/derive",
 
     # Tools
-    "tools/bakeddata-scripts",
     "tools/benchmark/binsize",
     "tools/benchmark/macros",
     "tools/benchmark/memory",
-    "tools/depcheck",
-    "tools/diplomat-gen",
-    "tools/ffi_coverage",
-    "tools/testdata-scripts",
+    "tools/make/bakeddata",
+    "tools/make/depcheck",
+    "tools/make/diplomat-coverage",
+    "tools/make/diplomat-gen",
+    "tools/make/download-repo-sources",
     "tools/md-tests",
 ]
 # Note: Workspaces in subdirectories, such as tutorials/crates, are
@@ -200,18 +201,16 @@ zerovec-derive = { version = "0.10.2", path = "utils/zerovec/derive", default-fe
 
 # Tools
 icu_benchmark_macros = { path = "tools/benchmark/macros" }
-# icu_benchmark_binsize never used as a dep
-# icu_benchmark_memory never used as a dep
-# depcheck never used as a dep
-# ffi_coverage never used as a dep
-# testdata-scripts never used as a dep
+# bench-binsize never used as a dep
+# bench-memory never used as a dep
+# make/* never used as a dep
 
 # The version here can either be a `version = ".."` spec or `git = "https://github.com/rust-diplomat/diplomat", rev = ".."`
 # Diplomat must be published preceding a new ICU4X release but may use git versions in between
-diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "40dd17124eadcaa3cf91873547fa7504bc8aff80" }
-diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "40dd17124eadcaa3cf91873547fa7504bc8aff80" }
-diplomat_core = { git = "https://github.com/rust-diplomat/diplomat", rev = "40dd17124eadcaa3cf91873547fa7504bc8aff80" }
-diplomat-tool = { git = "https://github.com/rust-diplomat/diplomat", rev = "40dd17124eadcaa3cf91873547fa7504bc8aff80" }
+diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "8744ac97162341f347b63131969ad736e1047f6d" }
+diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "8744ac97162341f347b63131969ad736e1047f6d" }
+diplomat_core = { git = "https://github.com/rust-diplomat/diplomat", rev = "8744ac97162341f347b63131969ad736e1047f6d" }
+diplomat-tool = { git = "https://github.com/rust-diplomat/diplomat", rev = "8744ac97162341f347b63131969ad736e1047f6d" }
 
 # EXTERNAL DEPENDENCIES
 #
@@ -295,6 +294,7 @@ toml = "0.5.8"
 ureq = "2.3.0"
 walkdir = "2.3.2"
 wasmi = "0.31.2"
+wat = "1"
 
 # Size optimized builds
 [profile.release-opt-size]

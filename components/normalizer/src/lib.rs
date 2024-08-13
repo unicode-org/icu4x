@@ -1503,6 +1503,13 @@ macro_rules! normalizer_methods {
             ret
         }
 
+        /// Return the index a string slice is normalized up to.
+        pub fn is_normalized_up_to(&self, text: &str) -> usize {
+            let mut sink = IsNormalizedSinkStr::new(text);
+            let _ = self.normalize_to(text, &mut sink);
+            text.len() - sink.remaining_len()
+        }
+
         /// Check whether a string slice is normalized.
         pub fn is_normalized(&self, text: &str) -> bool {
             let mut sink = IsNormalizedSinkStr::new(text);
@@ -1520,6 +1527,13 @@ macro_rules! normalizer_methods {
             let mut ret = Vec::new();
             let _ = self.normalize_utf16_to(text, &mut ret);
             ret
+        }
+
+        /// Return the index a slice of potentially-invalid UTF-16 is normalized up to.
+        pub fn is_normalized_utf16_up_to(&self, text: &[u16]) -> usize {
+            let mut sink = IsNormalizedSinkUtf16::new(text);
+            let _ = self.normalize_utf16_to(text, &mut sink);
+            text.len() - sink.remaining_len()
         }
 
         /// Checks whether a slice of potentially-invalid UTF-16 is normalized.
@@ -1542,6 +1556,13 @@ macro_rules! normalizer_methods {
             ret.reserve(text.len());
             let _ = self.normalize_utf8_to(text, &mut ret);
             ret
+        }
+
+        /// Return the index a slice of potentially-invalid UTF-8 is normalized up to
+        pub fn is_normalized_utf8_up_to(&self, text: &[u8]) -> usize {
+            let mut sink = IsNormalizedSinkUtf8::new(text);
+            let _ = self.normalize_utf8_to(text, &mut sink);
+            text.len() - sink.remaining_len()
         }
 
         /// Check if a slice of potentially-invalid UTF-8 is normalized.
@@ -2673,6 +2694,9 @@ impl<'a> IsNormalizedSinkUtf16<'a> {
     pub fn finished(&self) -> bool {
         self.expect.is_empty()
     }
+    pub fn remaining_len(&self) -> usize {
+        self.expect.len()
+    }
 }
 
 impl<'a> Write16 for IsNormalizedSinkUtf16<'a> {
@@ -2712,6 +2736,9 @@ impl<'a> IsNormalizedSinkUtf8<'a> {
     pub fn finished(&self) -> bool {
         self.expect.is_empty()
     }
+    pub fn remaining_len(&self) -> usize {
+        self.expect.len()
+    }
 }
 
 impl<'a> core::fmt::Write for IsNormalizedSinkUtf8<'a> {
@@ -2750,6 +2777,9 @@ impl<'a> IsNormalizedSinkStr<'a> {
     }
     pub fn finished(&self) -> bool {
         self.expect.is_empty()
+    }
+    pub fn remaining_len(&self) -> usize {
+        self.expect.len()
     }
 }
 

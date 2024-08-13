@@ -17,7 +17,11 @@ pub mod binary_search;
 pub mod zerotrie;
 
 pub trait DataStore<M: DataMarker> {
-    fn get(&self, req: DataIdentifierBorrowed) -> Option<&'static M::Yokeable>;
+    fn get(
+        &self,
+        req: DataIdentifierBorrowed,
+        attributes_prefix_match: bool,
+    ) -> Option<&'static M::DataStruct>;
 
     type IterReturn: Iterator<Item = DataIdentifierCow<'static>>;
     fn iter(&'static self) -> Self::IterReturn;

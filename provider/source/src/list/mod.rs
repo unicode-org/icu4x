@@ -12,16 +12,14 @@ use std::borrow::Cow;
 use std::collections::HashSet;
 use std::sync::OnceLock;
 
-fn load<M: DataMarker<Yokeable = ListFormatterPatternsV2<'static>>>(
+fn load<M: DataMarker<DataStruct = ListFormatterPatternsV2<'static>>>(
     selff: &SourceDataProvider,
     req: DataRequest,
 ) -> Result<DataResponse<M>, DataError> {
-    let langid = req.id.locale.get_langid();
-
     let resource: &cldr_serde::list_patterns::Resource = selff
         .cldr()?
         .misc()
-        .read_and_parse(&langid, "listPatterns.json")?;
+        .read_and_parse(req.id.locale, "listPatterns.json")?;
 
     let data = &resource.main.value.list_patterns;
 
@@ -52,7 +50,7 @@ fn load<M: DataMarker<Yokeable = ListFormatterPatternsV2<'static>>>(
         &narrow.pair,
     ])?;
 
-    if langid.language == language!("es") {
+    if req.id.locale.language == language!("es") {
         if M::INFO == AndListV2Marker::INFO || M::INFO == UnitListV2Marker::INFO {
             static I_SOUND: OnceLock<SerdeDFA<'static>> = OnceLock::new();
 
@@ -86,7 +84,7 @@ fn load<M: DataMarker<Yokeable = ListFormatterPatternsV2<'static>>>(
         }
     }
 
-    if langid.language == language!("he") {
+    if req.id.locale.language == language!("he") {
         // Cannot cache this because it depends on `selff`. However we don't expect many Hebrew locales.
         let non_hebrew = SerdeDFA::new(Cow::Owned(format!(
             "^[^{}]",
@@ -135,8 +133,8 @@ macro_rules! implement {
                 Ok(self
                     .cldr()?
                     .misc()
-                    .list_langs()?
-                    .map(|l| DataIdentifierCow::from_locale(DataLocale::from(l)))
+                    .list_locales()?
+                    .map(DataIdentifierCow::from_locale)
                     .collect())
             }
         }

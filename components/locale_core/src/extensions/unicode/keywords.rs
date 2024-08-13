@@ -271,7 +271,7 @@ impl Keywords {
     ///     .unicode
     ///     .keywords
     ///     .retain_by_key(|&k| k == key!("ms"));
-    /// assert_eq!(loc, Locale::UND);
+    /// assert_eq!(loc, Locale::default());
     /// ```
     pub fn retain_by_key<F>(&mut self, mut predicate: F)
     where
@@ -330,7 +330,7 @@ impl Keywords {
                 }
                 current_keyword = Some(Key::try_from_utf8(subtag)?);
             } else if current_keyword.is_some() {
-                match Value::parse_subtag(subtag) {
+                match Value::parse_subtag_from_utf8(subtag) {
                     Ok(Some(t)) => current_value.push(t),
                     Ok(None) => {}
                     Err(_) => break,

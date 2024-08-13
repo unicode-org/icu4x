@@ -68,7 +68,7 @@ pub(crate) fn bake(
                 })
                 .collect::<Vec<_>>(),
         )
-    } else if ids_to_idents.iter().all(|(id, _)| id.locale.is_und()) {
+    } else if ids_to_idents.iter().all(|(id, _)| id.locale.is_default()) {
         // Only marker attributes
         size += ids_to_idents.len() * core::mem::size_of::<&str>();
         (
@@ -105,7 +105,7 @@ pub(crate) fn bake(
     (
         quote! {
             icu_provider_baked::binary_search::Data<#ty, #marker_bake> = {
-                type S = <#marker_bake as icu_provider::DynamicDataMarker>::Yokeable;
+                type S = <#marker_bake as icu_provider::DynamicDataMarker>::DataStruct;
                 #(#idents_to_bakes)*
                 icu_provider_baked::binary_search::Data(&[#(#id_bakes_to_idents,)*])
             }
@@ -114,19 +114,32 @@ pub(crate) fn bake(
     )
 }
 
-pub struct Data<K: BinarySearchKey, M: DataMarker>(pub &'static [(K::Type, &'static M::Yokeable)]);
+pub struct Data<K: BinarySearchKey, M: DataMarker>(
+    pub &'static [(K::Type, &'static M::DataStruct)],
+);
 
 impl<K: BinarySearchKey, M: DataMarker> super::DataStore<M> for Data<K, M> {
-    fn get(&self, id: DataIdentifierBorrowed) -> Option<&'static M::Yokeable> {
+    fn get(
+        &self,
+        id: DataIdentifierBorrowed,
+        attributes_prefix_match: bool,
+    ) -> Option<&'static M::DataStruct> {
         self.0
             .binary_search_by(|&(k, _)| K::cmp(k, id))
+            .or_else(|e| {
+                if attributes_prefix_match {
+                    Ok(e)
+                } else {
+                    Err(e)
+                }
+            })
             .map(|i| unsafe { self.0.get_unchecked(i) }.1)
             .ok()
     }
 
     type IterReturn = core::iter::Map<
-        core::slice::Iter<'static, (K::Type, &'static M::Yokeable)>,
-        fn(&'static (K::Type, &'static M::Yokeable)) -> DataIdentifierCow<'static>,
+        core::slice::Iter<'static, (K::Type, &'static M::DataStruct)>,
+        fn(&'static (K::Type, &'static M::DataStruct)) -> DataIdentifierCow<'static>,
     >;
     fn iter(&self) -> Self::IterReturn {
         self.0.iter().map(|&(k, _)| K::to_id(k))

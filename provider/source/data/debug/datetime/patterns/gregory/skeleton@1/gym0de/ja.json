@@ -2,10 +2,13 @@
   "index_info": {
     "has_long": true,
     "has_medium": false,
-    "has_plurals": false
+    "has_plurals": false,
+    "has_eras": true
   },
   "patterns": [
-    "GGGGy年M月d日EEEE",
-    "GGGy年M月d日(E)"
+    "y/M/dEEEE",
+    "GGGy年M月d日EEEE",
+    "y/MM/dd(E)",
+    "GGGy年MM月dd日(E)"
   ]
 }

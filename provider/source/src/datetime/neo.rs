@@ -6,17 +6,12 @@ use super::supported_cals;
 use crate::cldr_serde::ca;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
-use icu::datetime::pattern::{self, CoarseHourCycle};
+use icu::datetime::pattern;
 
-use icu::datetime::provider::calendar::{
-    patterns::GenericLengthPatternsV1, DateSkeletonPatternsV1,
-};
+use icu::datetime::provider::neo::marker_attrs::GlueType;
 use icu::datetime::provider::neo::marker_attrs::{self, Context, Length, PatternLength};
 use icu::datetime::provider::neo::*;
-use icu::locale::{
-    extensions::unicode::{value, Value},
-    LanguageIdentifier,
-};
+use icu::locale::extensions::unicode::{value, Value};
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::collections::{BTreeMap, HashSet};
@@ -62,18 +57,26 @@ const FULL_KEY_LENGTHS: &[&DataMarkerAttributes] = &[
     marker_attrs::SHORT_STANDALONE,
 ];
 
-/// Lengths for normal patterns (not counting hour cycle stuff)
-const NORMAL_PATTERN_KEY_LENGTHS: &[&DataMarkerAttributes] = &[
-    marker_attrs::PATTERN_FULL,
-    marker_attrs::PATTERN_LONG,
-    marker_attrs::PATTERN_MEDIUM,
-    marker_attrs::PATTERN_SHORT,
+/// Lengths for glue patterns
+const GLUE_PATTERN_KEY_LENGTHS: &[&DataMarkerAttributes] = &[
+    marker_attrs::PATTERN_LONG_DT,
+    marker_attrs::PATTERN_MEDIUM_DT,
+    marker_attrs::PATTERN_SHORT_DT,
+    marker_attrs::PATTERN_LONG_DZ,
+    marker_attrs::PATTERN_MEDIUM_DZ,
+    marker_attrs::PATTERN_SHORT_DZ,
+    marker_attrs::PATTERN_LONG_TZ,
+    marker_attrs::PATTERN_MEDIUM_TZ,
+    marker_attrs::PATTERN_SHORT_TZ,
+    marker_attrs::PATTERN_LONG_DTZ,
+    marker_attrs::PATTERN_MEDIUM_DTZ,
+    marker_attrs::PATTERN_SHORT_DTZ,
 ];
 
 impl SourceDataProvider {
     fn load_calendar_dates(
         &self,
-        langid: &LanguageIdentifier,
+        locale: &DataLocale,
         calendar: &Value,
     ) -> Result<&ca::Dates, DataError> {
         let cldr_cal = supported_cals()
@@ -83,7 +86,7 @@ impl SourceDataProvider {
         let resource: &ca::Resource = self
             .cldr()?
             .dates(cldr_cal)
-            .read_and_parse(langid, &format!("ca-{}.json", cldr_cal))?;
+            .read_and_parse(locale, &format!("ca-{}.json", cldr_cal))?;
 
         let data = resource
             .main
@@ -99,15 +102,14 @@ impl SourceDataProvider {
         &self,
         req: DataRequest,
         calendar: &Value,
-        conversion: impl FnOnce(DataIdentifierBorrowed, &ca::Dates) -> Result<M::Yokeable, DataError>,
+        conversion: impl FnOnce(DataIdentifierBorrowed, &ca::Dates) -> Result<M::DataStruct, DataError>,
     ) -> Result<DataResponse<M>, DataError>
     where
         Self: IterableDataProviderCached<M>,
     {
         self.check_req::<M>(req)?;
-        let langid = req.id.locale.get_langid();
-        let data = self.load_calendar_dates(&langid, calendar)?;
 
+        let data = self.load_calendar_dates(req.id.locale, calendar)?;
         let data = conversion(req.id, data)?;
 
         #[allow(clippy::redundant_closure_call)]
@@ -123,12 +125,12 @@ impl SourceDataProvider {
         calendar: Value,
         conversion: impl FnOnce(
             &SourceDataProvider,
-            &LanguageIdentifier,
+            &DataLocale,
             &ca::Dates,
             &Value,
             Context,
             Length,
-        ) -> Result<M::Yokeable, DataError>,
+        ) -> Result<M::DataStruct, DataError>,
     ) -> Result<DataResponse<M>, DataError>
     where
         Self: IterableDataProviderCached<M>,
@@ -142,14 +144,7 @@ impl SourceDataProvider {
                     id.marker_attributes.as_str()
                 )
             };
-            conversion(
-                self,
-                &id.locale.get_langid(),
-                data,
-                &calendar,
-                context,
-                length,
-            )
+            conversion(self, id.locale, data, &calendar, context, length)
         })
     }
 
@@ -157,24 +152,21 @@ impl SourceDataProvider {
         &self,
         req: DataRequest,
         calendar: Value,
-        conversion: impl FnOnce(
-            &ca::Dates,
-            PatternLength,
-            Option<CoarseHourCycle>,
-        ) -> Result<M::Yokeable, DataError>,
+        conversion: impl FnOnce(&ca::Dates, PatternLength, GlueType) -> Result<M::DataStruct, DataError>,
     ) -> Result<DataResponse<M>, DataError>
     where
         Self: IterableDataProviderCached<M>,
     {
         self.load_neo_key(req, &calendar, |id, data| {
-            let Some((length, hc)) = marker_attrs::pattern_marker_attr_info(id.marker_attributes)
+            let Some((length, glue_type)) =
+                marker_attrs::pattern_marker_attr_info_for_glue(id.marker_attributes)
             else {
                 panic!(
                     "Found unexpected marker attributes {}",
                     id.marker_attributes.as_str()
                 )
             };
-            conversion(data, length, hc)
+            conversion(data, length, glue_type)
         })
     }
 
@@ -189,13 +181,10 @@ impl SourceDataProvider {
         Ok(self
             .cldr()?
             .dates(cldr_cal)
-            .list_langs()?
-            .flat_map(|lid| {
+            .list_locales()?
+            .flat_map(|locale| {
                 keylengths.iter().map(move |&length| {
-                    DataIdentifierCow::from_borrowed_and_owned(
-                        length,
-                        DataLocale::from(lid.clone()),
-                    )
+                    DataIdentifierCow::from_borrowed_and_owned(length, locale.clone())
                 })
             })
             .collect())
@@ -204,7 +193,7 @@ impl SourceDataProvider {
 
 fn weekday_convert(
     _datagen: &SourceDataProvider,
-    _langid: &LanguageIdentifier,
+    _locale: &DataLocale,
     data: &ca::Dates,
     _calendar: &Value,
     context: Context,
@@ -229,7 +218,7 @@ fn weekday_convert(
 
 fn dayperiods_convert(
     _datagen: &SourceDataProvider,
-    _langid: &LanguageIdentifier,
+    _locale: &DataLocale,
     data: &ca::Dates,
     _calendar: &Value,
     context: Context,
@@ -256,7 +245,7 @@ fn dayperiods_convert(
 
 fn eras_convert(
     datagen: &SourceDataProvider,
-    langid: &LanguageIdentifier,
+    locale: &DataLocale,
     eras: &ca::Eras,
     calendar: &Value,
     length: Length,
@@ -274,7 +263,7 @@ fn eras_convert(
         let ethioaa: &ca::Resource = datagen
             .cldr()?
             .dates("ethiopic")
-            .read_and_parse(langid, "ca-ethiopic-amete-alem.json")?;
+            .read_and_parse(locale, "ca-ethiopic-amete-alem.json")?;
 
         let ethioaa_data = ethioaa
             .main
@@ -307,7 +296,7 @@ fn eras_convert(
         let greg: &ca::Resource = datagen
             .cldr()?
             .dates("gregorian")
-            .read_and_parse(langid, "ca-gregorian.json")?;
+            .read_and_parse(locale, "ca-gregorian.json")?;
 
         let greg_data = greg
             .main
@@ -355,7 +344,7 @@ fn eras_convert(
                 panic!("Unknown japanese era number {cldr}");
             }
         } else {
-            panic!("Did not find era data for era {code} (#{cldr}) for {calendar} and {langid}");
+            panic!("Did not find era data for era {code} (#{cldr}) for {calendar} and {locale}");
         }
     }
 
@@ -368,7 +357,7 @@ fn eras_convert(
 }
 fn years_convert(
     datagen: &SourceDataProvider,
-    langid: &LanguageIdentifier,
+    locale: &DataLocale,
     data: &ca::Dates,
     calendar: &Value,
     context: Context,
@@ -381,7 +370,7 @@ fn years_convert(
     );
 
     if let Some(ref eras) = data.eras {
-        eras_convert(datagen, langid, eras, calendar, length)
+        eras_convert(datagen, locale, eras, calendar, length)
     } else if let Some(years) = data
         .cyclic_name_sets
         .as_ref()
@@ -391,14 +380,14 @@ fn years_convert(
 
         let years: Vec<_> = years.iter().enumerate().map(|(index, (key, value))| {
             if *key as usize != index + 1 {
-                panic!("Calendar {calendar} in locale {langid} missing cyclic year name for index {index}");
+                panic!("Calendar {calendar} in locale {locale} missing cyclic year name for index {index}");
             }
             &**value
         }).collect();
         Ok(YearNamesV1::Cyclic((&years).into()))
     } else {
         panic!(
-            "Calendar {calendar} in locale {langid} has neither eras nor cyclicNameSets for years"
+            "Calendar {calendar} in locale {locale} has neither eras nor cyclicNameSets for years"
         )
     }
 }
@@ -430,7 +419,7 @@ fn calendar_months(cal: &Value) -> (usize, bool) {
 
 fn months_convert(
     _datagen: &SourceDataProvider,
-    langid: &LanguageIdentifier,
+    locale: &DataLocale,
     data: &ca::Dates,
     calendar: &Value,
     context: Context,
@@ -443,12 +432,12 @@ fn months_convert(
             "numeric months only found for Context::Format"
         );
         let Some(ref patterns) = data.month_patterns else {
-            panic!("No month_patterns found but numeric months were requested for {calendar} with {langid}");
+            panic!("No month_patterns found but numeric months were requested for {calendar} with {locale}");
         };
         let pattern = patterns.get_symbols(context, length);
         let leap = &pattern.leap;
         let Some(index) = leap.find("{0}") else {
-            panic!("Calendar {calendar} for {langid} has leap pattern {leap}, which does not contain {{0}} placeholder");
+            panic!("Calendar {calendar} for {locale} has leap pattern {leap}, which does not contain {{0}} placeholder");
         };
         let string = leap.replace("{0}", "");
         let pattern = SimpleSubstitutionPattern {
@@ -543,6 +532,7 @@ fn months_convert(
 }
 
 /// Given a lengthpattern, apply any numeric overrides it may have to `pattern`
+#[allow(dead_code)] // TODO: Implement numeric overrides in neo patterns
 fn apply_numeric_overrides(lp: &ca::LengthPattern, pattern: &mut pattern::runtime::Pattern) {
     use icu::datetime::fields::{self, FieldLength, FieldNumericOverrides::*, FieldSymbol};
     let ca::LengthPattern::WithNumberingSystems {
@@ -588,152 +578,37 @@ fn apply_numeric_overrides(lp: &ca::LengthPattern, pattern: &mut pattern::runtim
     })
 }
 
-fn datepattern_convert(
-    data: &ca::Dates,
-    length: PatternLength,
-    _hc: Option<CoarseHourCycle>,
-) -> Result<DatePatternV1<'static>, DataError> {
-    let length_pattern = data.date_formats.get_pattern(length);
-
-    let mut pattern = length_pattern
-        .get_pattern()
-        .parse()
-        .expect("failed to parse pattern");
-
-    apply_numeric_overrides(length_pattern, &mut pattern);
-    Ok(DatePatternV1 { pattern })
-}
-
 fn datetimepattern_convert(
     data: &ca::Dates,
     length: PatternLength,
-    _hc: Option<CoarseHourCycle>,
-) -> Result<DateTimePatternV1<'static>, DataError> {
-    let pattern = data.datetime_formats.get_pattern(length);
-
-    let pattern = pattern
-        .get_pattern()
-        .parse()
-        .expect("failed to parse pattern");
-    Ok(DateTimePatternV1 { pattern })
-}
-
-fn timepattern_convert(
-    data: &ca::Dates,
-    length: PatternLength,
-    hc: Option<CoarseHourCycle>,
-) -> Result<TimePatternV1<'static>, DataError> {
-    let pattern = data.time_formats.get_pattern(length);
-
-    let pattern_str = pattern.get_pattern();
-    let pattern = pattern_str.parse().expect("failed to parse pattern");
-    // We only get an hc if we're generating the non-default hc, so we know we must replace it in the pattern
-    let pattern: pattern::runtime::Pattern = if let Some(hc) = hc {
-        let length_combinations_v1 = GenericLengthPatternsV1::from(&data.datetime_formats);
-        let skeletons_v1 = DateSkeletonPatternsV1::from(data);
-        let pattern =
-            hc.apply_on_pattern(&length_combinations_v1, &skeletons_v1, pattern_str, pattern);
-        let pattern = pattern
-            .as_ref()
-            .expect("Failed to apply a coarse hour cycle to a full pattern.");
-        pattern.into()
-    } else {
-        (&pattern).into()
+    glue_type: GlueType,
+) -> Result<GluePatternV1<'static>, DataError> {
+    let mut pattern_anchor = None;
+    let pattern = match glue_type {
+        GlueType::DateTime => data.datetime_formats.get_pattern(length).get_pattern(),
+        GlueType::DateZone => {
+            // TODO: Use proper appendItem here
+            "{1} {2}"
+        }
+        GlueType::TimeZone => {
+            // TODO: Use proper appendItem here
+            "{0} {2}"
+        }
+        GlueType::DateTimeZone => {
+            let pattern = pattern_anchor.insert(
+                data.datetime_formats
+                    .get_pattern(length)
+                    .get_pattern()
+                    .to_string(),
+            );
+            // TODO: Use proper appendItem here
+            pattern.push_str(" {2}");
+            pattern
+        }
     };
-    Ok(TimePatternV1 { pattern })
-}
 
-/// Looks at the hour cycle in `time_pattern`, and return the subtag related to the *opposite* hour cycle; i.e. the
-/// non-default one
-fn nondefault_subtag(
-    time_pattern: &ca::LengthPattern,
-    subtag12: &'static DataMarkerAttributes,
-    subtag24: &'static DataMarkerAttributes,
-) -> &'static DataMarkerAttributes {
-    let pattern = time_pattern.get_pattern();
-
-    let pattern = pattern
-        .parse()
-        .expect("Failed to create a Pattern from bytes.");
-
-    let hc = CoarseHourCycle::determine(&pattern)
-        .expect("Could not find preferred hour cycle in locale");
-    match hc {
-        // this must invert the hour cycle since we're getting the nondefault one
-        CoarseHourCycle::H11H12 => subtag24,
-        CoarseHourCycle::H23H24 => subtag12,
-    }
-}
-
-// Time patterns have a manual implementation since they have custom supported_locales logic below
-impl DataProvider<TimePatternV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<TimePatternV1Marker>, DataError> {
-        self.load_neo_patterns_marker::<TimePatternV1Marker>(
-            req,
-            value!("gregory"),
-            timepattern_convert,
-        )
-    }
-}
-
-// Potential future optimization: if we split out aux subtags from supported_locales into a separate
-// method that eagerly generates all aux subtags (even if unused) and expects load() to figure out if the aux
-// subtag actually should be produced (by returning a special error), then this code is no longer necessary
-// and we can use a union of the H12/H24 key lengths arrays, instead checking for preferred hc
-// in timepattern_convert
-impl IterableDataProviderCached<TimePatternV1Marker> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        let calendar = value!("gregory");
-
-        let cldr_cal = supported_cals()
-            .get(&calendar)
-            .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
-
-        Ok(self
-            .cldr()?
-            .dates(cldr_cal)
-            .list_langs()?
-            .flat_map(|lid| {
-                let data = self
-                    .load_calendar_dates(&lid, &calendar)
-                    .expect("list_langs returned a language that couldn't be loaded");
-                let tp = &data.time_formats;
-
-                let keylengths = [
-                    marker_attrs::PATTERN_FULL,
-                    marker_attrs::PATTERN_LONG,
-                    marker_attrs::PATTERN_MEDIUM,
-                    marker_attrs::PATTERN_SHORT,
-                    nondefault_subtag(
-                        &tp.full,
-                        marker_attrs::PATTERN_FULL12,
-                        marker_attrs::PATTERN_FULL24,
-                    ),
-                    nondefault_subtag(
-                        &tp.long,
-                        marker_attrs::PATTERN_LONG12,
-                        marker_attrs::PATTERN_LONG24,
-                    ),
-                    nondefault_subtag(
-                        &tp.medium,
-                        marker_attrs::PATTERN_MEDIUM12,
-                        marker_attrs::PATTERN_MEDIUM24,
-                    ),
-                    nondefault_subtag(
-                        &tp.short,
-                        marker_attrs::PATTERN_SHORT12,
-                        marker_attrs::PATTERN_SHORT24,
-                    ),
-                ];
-                keylengths.into_iter().map(move |length| {
-                    DataIdentifierCow::from_borrowed_and_owned(
-                        length,
-                        DataLocale::from(lid.clone()),
-                    )
-                })
-            })
-            .collect())
-    }
+    let pattern = pattern.parse().expect("failed to parse pattern");
+    Ok(GluePatternV1 { pattern })
 }
 
 macro_rules! impl_symbols_datagen {
@@ -946,88 +821,8 @@ impl_symbols_datagen!(
 
 // Datetime patterns
 impl_pattern_datagen!(
-    DateTimePatternV1Marker,
+    GluePatternV1Marker,
     "gregory",
-    NORMAL_PATTERN_KEY_LENGTHS,
+    GLUE_PATTERN_KEY_LENGTHS,
     datetimepattern_convert
-);
-
-// Date patterns
-impl_pattern_datagen!(
-    BuddhistDatePatternV1Marker,
-    "buddhist",
-    NORMAL_PATTERN_KEY_LENGTHS,
-    datepattern_convert
-);
-impl_pattern_datagen!(
-    ChineseDatePatternV1Marker,
-    "chinese",
-    NORMAL_PATTERN_KEY_LENGTHS,
-    datepattern_convert
-);
-impl_pattern_datagen!(
-    CopticDatePatternV1Marker,
-    "coptic",
-    NORMAL_PATTERN_KEY_LENGTHS,
-    datepattern_convert
-);
-impl_pattern_datagen!(
-    DangiDatePatternV1Marker,
-    "dangi",
-    NORMAL_PATTERN_KEY_LENGTHS,
-    datepattern_convert
-);
-impl_pattern_datagen!(
-    EthiopianDatePatternV1Marker,
-    "ethiopic",
-    NORMAL_PATTERN_KEY_LENGTHS,
-    datepattern_convert
-);
-impl_pattern_datagen!(
-    GregorianDatePatternV1Marker,
-    "gregory",
-    NORMAL_PATTERN_KEY_LENGTHS,
-    datepattern_convert
-);
-impl_pattern_datagen!(
-    HebrewDatePatternV1Marker,
-    "hebrew",
-    NORMAL_PATTERN_KEY_LENGTHS,
-    datepattern_convert
-);
-impl_pattern_datagen!(
-    IndianDatePatternV1Marker,
-    "indian",
-    NORMAL_PATTERN_KEY_LENGTHS,
-    datepattern_convert
-);
-impl_pattern_datagen!(
-    IslamicDatePatternV1Marker,
-    "islamic",
-    NORMAL_PATTERN_KEY_LENGTHS,
-    datepattern_convert
-);
-impl_pattern_datagen!(
-    JapaneseDatePatternV1Marker,
-    "japanese",
-    NORMAL_PATTERN_KEY_LENGTHS,
-    datepattern_convert
-);
-impl_pattern_datagen!(
-    JapaneseExtendedDatePatternV1Marker,
-    "japanext",
-    NORMAL_PATTERN_KEY_LENGTHS,
-    datepattern_convert
-);
-impl_pattern_datagen!(
-    PersianDatePatternV1Marker,
-    "persian",
-    NORMAL_PATTERN_KEY_LENGTHS,
-    datepattern_convert
-);
-impl_pattern_datagen!(
-    RocDatePatternV1Marker,
-    "roc",
-    NORMAL_PATTERN_KEY_LENGTHS,
-    datepattern_convert
 );

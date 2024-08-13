@@ -64,29 +64,29 @@ You should now have a `target/release/libicu_capi.a`, ready to compile into your
 Here's an annotated, shorter version of the fixed decimal example:
 
  ```cpp
-#include "ICU4XFixedDecimalFormatter.hpp"
-#include "ICU4XDataStruct.hpp"
-#include "ICU4XLogger.hpp"
+#include "FixedDecimalFormatter.hpp"
+#include "DataStruct.hpp"
+#include "Logger.hpp"
 
 #include <iostream>
 #include <array>
 
 int main() {
     // For basic logging
-    ICU4XLogger::init_simple_logger();
+    Logger::init_simple_logger();
 
     // Create a locale object representing Bangla
-    ICU4XLocale locale = ICU4XLocale::create_from_string("bn").ok().value();
+    Locale locale = Locale::create_from_string("bn").ok().value();
 
     // Use compiled data
-    ICU4XDataProvider dp = ICU4XDataProvider::create_compiled();
+    DataProvider dp = DataProvider::create_compiled();
 
     // Create a formatter object with the appropriate settings
-    ICU4XFixedDecimalFormatter fdf = ICU4XFixedDecimalFormatter::create_with_grouping_strategy(
-        dp, locale, ICU4XFixedDecimalGroupingStrategy::Auto).ok().value();
+    FixedDecimalFormatter fdf = FixedDecimalFormatter::create_with_grouping_strategy(
+        dp, locale, FixedDecimalGroupingStrategy::Auto).ok().value();
 
     // Create a decimal representing the number 1,000,007
-    ICU4XFixedDecimal decimal = ICU4XFixedDecimal::create_from_u64(1000007);
+    FixedDecimal decimal = FixedDecimal::create_from_u64(1000007);
 
     // Format it to a string
     std::string out = fdf.format(decimal).ok().value();

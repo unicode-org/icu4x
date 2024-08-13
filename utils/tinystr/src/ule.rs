@@ -24,7 +24,7 @@ unsafe impl<const N: usize> ULE for TinyAsciiStr<N> {
         }
         // Validate the bytes
         for chunk in bytes.chunks_exact(N) {
-            let _ = TinyAsciiStr::<N>::try_from_utf8_inner(chunk, 0, N, true)
+            let _ = TinyAsciiStr::<N>::try_from_utf8_inner(chunk, true)
                 .map_err(|_| ZeroVecError::parse::<Self>())?;
         }
         Ok(())

@@ -43,7 +43,14 @@ impl TestingExporter {
         self.0
             .into_tuple_vec()
             .into_iter()
-            .map(|(id, buffer)| (id.locale.to_string(), buffer))
+            .map(|(id, buffer)| {
+                let mut string = id.locale.to_string();
+                if !id.marker_attributes.is_empty() {
+                    string.push('/');
+                    string.push_str(id.marker_attributes.as_str());
+                }
+                (string, buffer)
+            })
             .collect()
     }
 }

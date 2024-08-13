@@ -149,26 +149,54 @@ impl Collator {
             + DataProvider<CollationReorderingV1Marker>
             + ?Sized,
     {
+        let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(
+            DataMarkerAttributes::from_str_or_panic(
+                locale.get_single_unicode_ext("co").unwrap_or_default(),
+            ),
+            locale,
+        );
+
         let req = DataRequest {
+            id,
+            metadata: {
+                let mut metadata = DataRequestMetadata::default();
+                metadata.silent = true;
+                metadata
+            },
+        };
+
+        let fallback_req = DataRequest {
             id: DataIdentifierBorrowed::for_locale(locale),
             ..Default::default()
         };
 
-        let metadata_payload: DataPayload<crate::provider::CollationMetadataV1Marker> =
-            provider.load(req)?.payload;
+        let metadata_payload: DataPayload<crate::provider::CollationMetadataV1Marker> = provider
+            .load(req)
+            .or_else(|_| provider.load(fallback_req))?
+            .payload;
 
         let metadata = metadata_payload.get();
 
         let tailoring: Option<DataPayload<crate::provider::CollationDataV1Marker>> =
             if metadata.tailored() {
-                Some(provider.load(req)?.payload)
+                Some(
+                    provider
+                        .load(req)
+                        .or_else(|_| provider.load(fallback_req))?
+                        .payload,
+                )
             } else {
                 None
             };
 
         let reordering: Option<DataPayload<crate::provider::CollationReorderingV1Marker>> =
             if metadata.reordering() {
-                Some(provider.load(req)?.payload)
+                Some(
+                    provider
+                        .load(req)
+                        .or_else(|_| provider.load(fallback_req))?
+                        .payload,
+                )
             } else {
                 None
             };

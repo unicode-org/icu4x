@@ -3,6 +3,14 @@
 part of 'lib.g.dart';
 
 /// Additional information: [1](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.LimitError.html)
-enum FixedDecimalLimitError {
-  todoZst;
+final class FixedDecimalLimitError {
+
+  FixedDecimalLimitError();
+
+  @override
+  bool operator ==(Object other) =>
+      other is FixedDecimalLimitError;
+
+  @override
+  int get hashCode => 0;
 }

@@ -11,11 +11,12 @@ use itertools::Itertools;
 use serde::de::{Deserializer, Error, MapAccess, Unexpected, Visitor};
 use serde::Deserialize;
 use std::collections::HashMap;
-use tinystr::TinyStr8;
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub(crate) struct Symbols {
     // This list is not comprehensive; add more fields when needed
+    #[serde(rename = "approximatelySign")]
+    pub(crate) approximately_sign: String,
     pub(crate) decimal: String,
     pub(crate) group: String,
     #[serde(rename = "minusSign")]
@@ -96,6 +97,24 @@ pub(crate) struct CurrencyFormattingPatterns {
     /// Standard alphaNextToNumber pattern
     #[serde(rename = "standard-alphaNextToNumber")]
     pub(crate) standard_alpha_next_to_number: Option<String>,
+
+    #[serde(rename = "unitPattern-count-zero")]
+    pub(crate) pattern_zero: Option<String>,
+
+    #[serde(rename = "unitPattern-count-one")]
+    pub(crate) pattern_one: Option<String>,
+
+    #[serde(rename = "unitPattern-count-two")]
+    pub(crate) pattern_two: Option<String>,
+
+    #[serde(rename = "unitPattern-count-few")]
+    pub(crate) pattern_few: Option<String>,
+
+    #[serde(rename = "unitPattern-count-many")]
+    pub(crate) pattern_many: Option<String>,
+
+    #[serde(rename = "unitPattern-count-other")]
+    pub(crate) pattern_other: Option<String>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
@@ -107,13 +126,13 @@ pub(crate) struct PercentFormattingPatterns {
 #[derive(PartialEq, Debug, Default)]
 pub(crate) struct NumberingSystemData {
     /// Map from numbering system to symbols
-    pub(crate) symbols: HashMap<TinyStr8, Symbols>,
+    pub(crate) symbols: HashMap<String, Symbols>,
     /// Map from numbering system to decimal formats
-    pub(crate) formats: HashMap<TinyStr8, DecimalFormats>,
+    pub(crate) formats: HashMap<String, DecimalFormats>,
     /// Map from numbering system to patterns
-    pub(crate) currency_patterns: HashMap<TinyStr8, CurrencyFormattingPatterns>,
+    pub(crate) currency_patterns: HashMap<String, CurrencyFormattingPatterns>,
     /// Map from numbering system to percent patterns
-    pub(crate) percent_patterns: HashMap<TinyStr8, PercentFormattingPatterns>,
+    pub(crate) percent_patterns: HashMap<String, PercentFormattingPatterns>,
 }
 
 pub(crate) struct NumberingSystemDataVisitor;
@@ -137,25 +156,22 @@ impl<'de> Visitor<'de> for NumberingSystemDataVisitor {
                 Some(v) => v,
                 None => continue, // Not what we were looking for; ignore.
             };
-            let numsys: TinyStr8 = numsys.parse().map_err(|_| {
-                M::Error::invalid_value(Unexpected::Str(&key), &"numsys to be valid TinyStr8")
-            })?;
             match stype {
                 "symbols" => {
                     let value: Symbols = access.next_value()?;
-                    result.symbols.insert(numsys, value);
+                    result.symbols.insert(numsys.to_string(), value);
                 }
                 "decimalFormats" => {
                     let value: DecimalFormats = access.next_value()?;
-                    result.formats.insert(numsys, value);
+                    result.formats.insert(numsys.to_string(), value);
                 }
                 "currencyFormats" => {
                     let value: CurrencyFormattingPatterns = access.next_value()?;
-                    result.currency_patterns.insert(numsys, value);
+                    result.currency_patterns.insert(numsys.to_string(), value);
                 }
                 "percentFormats" => {
                     let value: PercentFormattingPatterns = access.next_value()?;
-                    result.percent_patterns.insert(numsys, value);
+                    result.percent_patterns.insert(numsys.to_string(), value);
                 }
                 _ => {
                     // When needed, consume "scientificFormats", "percentFormats", ...
@@ -179,7 +195,7 @@ impl<'de> Deserialize<'de> for NumberingSystemData {
 #[derive(PartialEq, Debug, Deserialize)]
 pub(crate) struct Numbers {
     #[serde(rename = "defaultNumberingSystem")]
-    pub(crate) default_numbering_system: TinyStr8,
+    pub(crate) default_numbering_system: String,
     #[serde(rename = "minimumGroupingDigits")]
     #[serde(deserialize_with = "serde_aux::prelude::deserialize_number_from_string")]
     pub(crate) minimum_grouping_digits: u8,

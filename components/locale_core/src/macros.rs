@@ -155,8 +155,8 @@ macro_rules! locale {
                     "Invalid language code: ",
                     $locale,
                     " . Note the locale! macro only supports up to one variant tag; \
-                                        unicode extensions are not supported. Use \
-                                        runtime parsing instead."
+                                        and one unicode keyword, other extension are \
+                                        not supported. Use runtime parsing instead."
                 )),
             };
         R

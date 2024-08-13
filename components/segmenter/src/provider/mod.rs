@@ -124,8 +124,16 @@ pub struct RuleBreakDataV2<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    DictionaryForWordOnlyAutoV1Marker = "segmenter/dictionary/w_auto@1",
-    DictionaryForWordLineExtendedV1Marker = "segmenter/dictionary/wl_ext@1"
+    marker(
+        DictionaryForWordOnlyAutoV1Marker,
+        "segmenter/dictionary/w_auto@1",
+        attributes_domain = "segmenter"
+    ),
+    marker(
+        DictionaryForWordLineExtendedV1Marker,
+        "segmenter/dictionary/wl_ext@1",
+        attributes_domain = "segmenter"
+    )
 )]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
@@ -143,7 +151,7 @@ pub struct UCharDictionaryBreakDataV1<'data> {
 pub(crate) struct UCharDictionaryBreakDataV1Marker;
 
 impl DynamicDataMarker for UCharDictionaryBreakDataV1Marker {
-    type Yokeable = UCharDictionaryBreakDataV1<'static>;
+    type DataStruct = UCharDictionaryBreakDataV1<'static>;
 }
 
 #[derive(Clone, Copy, PartialEq, Debug)]

@@ -1,7 +1,0 @@
-{
-  "patterns": {
-    "One": "{0} parsek",
-    "Few": "{0} parseka",
-    "Other": "{0} parseka"
-  }
-}

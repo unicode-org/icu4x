@@ -1,7 +1,0 @@
-{
-  "patterns": {
-    "One": "{0} sg",
-    "Few": "{0} sg",
-    "Other": "{0} sg"
-  }
-}

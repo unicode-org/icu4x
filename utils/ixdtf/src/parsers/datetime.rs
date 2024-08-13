@@ -15,7 +15,7 @@ use crate::{
         time::parse_time_record,
         timezone, Cursor, IxdtfParseRecord,
     },
-    ParserError, ParserResult,
+    ParseError, ParserResult,
 };
 
 use super::records::{Annotation, UTCOffsetRecord};
@@ -175,7 +175,7 @@ fn parse_date(cursor: &mut Cursor) -> ParserResult<DateRecord> {
     let year = parse_date_year(cursor)?;
     let hyphenated = cursor
         .check(is_hyphen)
-        .ok_or(ParserError::abrupt_end("Date"))?;
+        .ok_or(ParseError::abrupt_end("Date"))?;
 
     cursor.advance_if(hyphenated);
 
@@ -198,16 +198,16 @@ fn parse_date(cursor: &mut Cursor) -> ParserResult<DateRecord> {
 pub(crate) fn parse_month_day(cursor: &mut Cursor) -> ParserResult<DateRecord> {
     let hyphenated = cursor
         .check(is_hyphen)
-        .ok_or(ParserError::abrupt_end("MonthDay"))?;
+        .ok_or(ParseError::abrupt_end("MonthDay"))?;
     cursor.advance_if(hyphenated);
     let balanced_hyphens = hyphenated
         && cursor
             .check(is_hyphen)
-            .ok_or(ParserError::abrupt_end("MonthDay"))?;
+            .ok_or(ParseError::abrupt_end("MonthDay"))?;
     cursor.advance_if(balanced_hyphens);
 
     if hyphenated && !balanced_hyphens {
-        return Err(ParserError::MonthDayHyphen);
+        return Err(ParseError::MonthDayHyphen);
     }
 
     let month = parse_date_month(cursor)?;
@@ -230,30 +230,30 @@ pub(crate) fn parse_month_day(cursor: &mut Cursor) -> ParserResult<DateRecord> {
 #[inline]
 fn parse_date_year(cursor: &mut Cursor) -> ParserResult<i32> {
     if cursor.check_or(false, is_sign) {
-        let sign = if cursor.next_or(ParserError::ImplAssert)? == '+' {
+        let sign = if cursor.next_or(ParseError::ImplAssert)? == '+' {
             1
         } else {
             -1
         };
 
-        let first = cursor.next_digit()?.ok_or(ParserError::DateExtendedYear)? as i32 * 100_000;
-        let second = cursor.next_digit()?.ok_or(ParserError::DateExtendedYear)? as i32 * 10_000;
-        let third = cursor.next_digit()?.ok_or(ParserError::DateExtendedYear)? as i32 * 1000;
-        let fourth = cursor.next_digit()?.ok_or(ParserError::DateExtendedYear)? as i32 * 100;
-        let fifth = cursor.next_digit()?.ok_or(ParserError::DateExtendedYear)? as i32 * 10;
+        let first = cursor.next_digit()?.ok_or(ParseError::DateExtendedYear)? as i32 * 100_000;
+        let second = cursor.next_digit()?.ok_or(ParseError::DateExtendedYear)? as i32 * 10_000;
+        let third = cursor.next_digit()?.ok_or(ParseError::DateExtendedYear)? as i32 * 1000;
+        let fourth = cursor.next_digit()?.ok_or(ParseError::DateExtendedYear)? as i32 * 100;
+        let fifth = cursor.next_digit()?.ok_or(ParseError::DateExtendedYear)? as i32 * 10;
 
         let year_value = first
             + second
             + third
             + fourth
             + fifth
-            + cursor.next_digit()?.ok_or(ParserError::DateExtendedYear)? as i32;
+            + cursor.next_digit()?.ok_or(ParseError::DateExtendedYear)? as i32;
 
         // 13.30.1 Static Semantics: Early Errors
         //
         // It is a Syntax Error if DateYear is "-000000" or "−000000" (U+2212 MINUS SIGN followed by 000000).
         if sign == -1 && year_value == 0 {
-            return Err(ParserError::DateExtendedYear);
+            return Err(ParseError::DateExtendedYear);
         }
 
         let year = sign * year_value;
@@ -261,29 +261,29 @@ fn parse_date_year(cursor: &mut Cursor) -> ParserResult<i32> {
         return Ok(year);
     }
 
-    let first = cursor.next_digit()?.ok_or(ParserError::DateYear)? as i32 * 1000;
-    let second = cursor.next_digit()?.ok_or(ParserError::DateYear)? as i32 * 100;
-    let third = cursor.next_digit()?.ok_or(ParserError::DateYear)? as i32 * 10;
+    let first = cursor.next_digit()?.ok_or(ParseError::DateYear)? as i32 * 1000;
+    let second = cursor.next_digit()?.ok_or(ParseError::DateYear)? as i32 * 100;
+    let third = cursor.next_digit()?.ok_or(ParseError::DateYear)? as i32 * 10;
     let year_value =
-        first + second + third + cursor.next_digit()?.ok_or(ParserError::DateYear)? as i32;
+        first + second + third + cursor.next_digit()?.ok_or(ParseError::DateYear)? as i32;
 
     Ok(year_value)
 }
 
 #[inline]
 fn parse_date_month(cursor: &mut Cursor) -> ParserResult<u8> {
-    let first = cursor.next_digit()?.ok_or(ParserError::DateMonth)?;
-    let month_value = first * 10 + cursor.next_digit()?.ok_or(ParserError::DateMonth)?;
+    let first = cursor.next_digit()?.ok_or(ParseError::DateMonth)?;
+    let month_value = first * 10 + cursor.next_digit()?.ok_or(ParseError::DateMonth)?;
     if !(1..=12).contains(&month_value) {
-        return Err(ParserError::InvalidMonthRange);
+        return Err(ParseError::InvalidMonthRange);
     }
     Ok(month_value)
 }
 
 #[inline]
 fn parse_date_day(cursor: &mut Cursor) -> ParserResult<u8> {
-    let first = cursor.next_digit()?.ok_or(ParserError::DateDay)?;
-    let day_value = first * 10 + cursor.next_digit()?.ok_or(ParserError::DateDay)?;
+    let first = cursor.next_digit()?.ok_or(ParseError::DateDay)?;
+    let day_value = first * 10 + cursor.next_digit()?.ok_or(ParseError::DateDay)?;
     Ok(day_value)
 }
 
@@ -291,10 +291,10 @@ fn parse_date_day(cursor: &mut Cursor) -> ParserResult<u8> {
 fn check_date_validity(year: i32, month: u8, day: u8) -> ParserResult<()> {
     let Some(days_in_month) = days_in_month(year, month) else {
         // NOTE: This should never through due to check in `parse_date_month`
-        return Err(ParserError::InvalidMonthRange);
+        return Err(ParseError::InvalidMonthRange);
     };
     if !(1..=days_in_month).contains(&day) {
-        return Err(ParserError::InvalidDayRange);
+        return Err(ParseError::InvalidDayRange);
     }
     Ok(())
 }

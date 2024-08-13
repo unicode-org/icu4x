@@ -1,7 +1,0 @@
-{
-  "patterns": {
-    "One": "{0} jard",
-    "Few": "{0} jarda",
-    "Other": "{0} jardi"
-  }
-}

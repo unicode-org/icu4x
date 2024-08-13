@@ -2,6 +2,14 @@
 
 part of 'lib.g.dart';
 
-enum TimeZoneInvalidIdError {
-  todoZst;
+final class TimeZoneInvalidIdError {
+
+  TimeZoneInvalidIdError();
+
+  @override
+  bool operator ==(Object other) =>
+      other is TimeZoneInvalidIdError;
+
+  @override
+  int get hashCode => 0;
 }

@@ -3,7 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::{reference, runtime, PatternItem};
-use crate::{fields, options::preferences};
+use crate::{
+    fields,
+    options::preferences::{self, HourCycle},
+};
 #[cfg(feature = "datagen")]
 use crate::{provider, skeleton};
 use icu_provider::prelude::*;
@@ -30,6 +33,17 @@ pub enum CoarseHourCycle {
 impl Default for CoarseHourCycle {
     fn default() -> Self {
         CoarseHourCycle::H23H24
+    }
+}
+
+impl From<HourCycle> for CoarseHourCycle {
+    fn from(value: HourCycle) -> Self {
+        match value {
+            HourCycle::H11 => CoarseHourCycle::H11H12,
+            HourCycle::H12 => CoarseHourCycle::H11H12,
+            HourCycle::H23 => CoarseHourCycle::H23H24,
+            HourCycle::H24 => CoarseHourCycle::H23H24,
+        }
     }
 }
 

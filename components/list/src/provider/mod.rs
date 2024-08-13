@@ -104,7 +104,7 @@ impl<'de> serde::Deserialize<'de> for ListFormatterPatternsV2<'de> {
 pub(crate) struct ErasedListV2Marker;
 
 impl DynamicDataMarker for ErasedListV2Marker {
-    type Yokeable = ListFormatterPatternsV2<'static>;
+    type DataStruct = ListFormatterPatternsV2<'static>;
 }
 
 impl<'data> ListFormatterPatternsV2<'data> {

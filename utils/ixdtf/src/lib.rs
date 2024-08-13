@@ -137,14 +137,14 @@
 //! will attempt to parse the Time Zone annotation as a key-value annotation.
 //!
 //! ```rust
-//! use ixdtf::{parsers::IxdtfParser, ParserError};
+//! use ixdtf::{parsers::IxdtfParser, ParseError};
 //!
 //! let example_one =
 //!     "2024-03-02T08:48:00-05:00[u-ca=iso8601][America/New_York]";
 //!
 //! let result = IxdtfParser::from_str(example_one).parse();
 //!
-//! assert_eq!(result, Err(ParserError::AnnotationKeyLeadingChar));
+//! assert_eq!(result, Err(ParseError::AnnotationKeyLeadingChar));
 //! ```
 //!
 //! ##### Example 2
@@ -154,13 +154,13 @@
 //! the ixdtf string must be treated as erroneous
 //!
 //! ```rust
-//! use ixdtf::{parsers::IxdtfParser, ParserError};
+//! use ixdtf::{parsers::IxdtfParser, ParseError};
 //!
 //! let example_two = "2024-03-02T08:48:00-05:00[u-ca=iso8601][!u-ca=japanese]";
 //!
 //! let result = IxdtfParser::from_str(example_two).parse();
 //!
-//! assert_eq!(result, Err(ParserError::CriticalDuplicateCalendar));
+//! assert_eq!(result, Err(ParseError::CriticalDuplicateCalendar));
 //! ```
 //!
 //! ##### Example 3
@@ -169,14 +169,14 @@
 //! error on an unknown flag being flagged as critical.
 //!
 //! ```rust
-//! use ixdtf::{parsers::IxdtfParser, ParserError};
+//! use ixdtf::{parsers::IxdtfParser, ParseError};
 //!
 //! let example_three =
 //!     "2024-03-02T08:48:00-05:00[u-ca=iso8601][!answer-to-universe=fortytwo]";
 //!
 //! let result = IxdtfParser::from_str(example_three).parse();
 //!
-//! assert_eq!(result, Err(ParserError::UnrecognizedCritical));
+//! assert_eq!(result, Err(ParseError::UnrecognizedCritical));
 //! ```
 //!
 //! #### Annotations with Application Defined Behavior
@@ -306,7 +306,7 @@ pub mod parsers;
 
 extern crate alloc;
 
-pub use error::ParserError;
+pub use error::ParseError;
 
 /// The `ixdtf` crate's Result type.
-pub type ParserResult<T> = Result<T, ParserError>;
+pub type ParserResult<T> = Result<T, ParseError>;

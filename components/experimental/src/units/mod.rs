@@ -8,10 +8,8 @@ pub mod converter;
 pub mod converter_factory;
 pub mod convertible;
 pub mod measureunit;
-pub mod power;
 pub mod provider;
 pub mod ratio;
-pub mod si_prefix;
 
 #[derive(Display, Debug, Copy, Clone, PartialEq)]
 #[displaydoc("The unit is not valid.")]

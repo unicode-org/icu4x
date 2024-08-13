@@ -5,8 +5,8 @@
 //! `icu_provider_source` defines [`SourceDataProvider`], the authorative ICU4X [`DataProvider`] that produces data from
 //! CLDR and ICU sources.
 //!
-//! As the name suggests, [`SourceDataProvider`] is mainly intended as a source for the `icu_datagen` crate,
-//! which transforms the data into a more efficient format.
+//! [`SourceDataProvider`] is mainly intended as a source for the `icu_provider_export` crate,
+//! which can be used to transform the data into a more efficient format.
 //!
 //! # Cargo features
 //!
@@ -36,9 +36,10 @@ mod datetime;
 mod decimal;
 #[cfg(feature = "experimental")]
 mod displaynames;
-mod fallback;
+#[cfg(feature = "experimental")]
+mod duration;
 mod list;
-mod locale_canonicalizer;
+mod locale;
 mod normalizer;
 #[cfg(feature = "experimental")]
 mod percent;
@@ -108,16 +109,16 @@ icu_provider_registry::registry!(cb);
 icu_provider::marker::impl_data_provider_never_marker!(SourceDataProvider);
 
 impl SourceDataProvider {
-    /// The latest CLDR JSON tag that has been verified to work with this version of `icu_provider_source`.
+    /// The latest CLDR JSON tag that has been verified to work with this version of `SourceDataProvider`.
     pub const LATEST_TESTED_CLDR_TAG: &'static str = "45.0.0";
 
-    /// The latest ICU export tag that has been verified to work with this version of `icu_provider_source`.
+    /// The latest ICU export tag that has been verified to work with this version of `SourceDataProvider`.
     pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "icu4x/2024-05-16/75.x";
 
-    /// The latest segmentation LSTM model tag that has been verified to work with this version of `icu_provider_source`.
+    /// The latest segmentation LSTM model tag that has been verified to work with this version of `SourceDataProvider`.
     pub const LATEST_TESTED_SEGMENTER_LSTM_TAG: &'static str = "v0.1.0";
 
-    /// A provider using the latest data that has been verified to work with this version of `icu_provider_source`.
+    /// A provider using the latest data that has been verified to work with this version of `SourceDataProvider`.
     ///
     /// See [`LATEST_TESTED_CLDR_TAG`](Self::LATEST_TESTED_CLDR_TAG),
     /// [`LATEST_TESTED_ICUEXPORT_TAG`](Self::LATEST_TESTED_ICUEXPORT_TAG),
@@ -310,7 +311,7 @@ impl SourceDataProvider {
     pub fn locales_for_coverage_levels(
         &self,
         levels: impl IntoIterator<Item = CoverageLevel>,
-    ) -> Result<impl IntoIterator<Item = icu::locale::LanguageIdentifier>, DataError> {
+    ) -> Result<impl IntoIterator<Item = DataLocale>, DataError> {
         self.cldr()?.locales(levels)
     }
 }
@@ -321,7 +322,7 @@ impl SourceDataProvider {
         SourceDataProvider: IterableDataProviderCached<M>,
     {
         if <M as DataMarker>::INFO.is_singleton {
-            if !req.id.locale.is_und() {
+            if !req.id.locale.is_default() {
                 Err(DataErrorKind::InvalidRequest)
             } else {
                 Ok(())
@@ -340,12 +341,14 @@ fn test_check_req() {
     use icu::locale::langid;
     use icu_provider::hello_world::*;
 
+    #[allow(non_local_definitions)] // test-scoped, only place that uses it
     impl DataProvider<HelloWorldV1Marker> for SourceDataProvider {
         fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
             HelloWorldProvider.load(req)
         }
     }
 
+    #[allow(non_local_definitions)] // test-scoped, only place that uses it
     impl crate::IterableDataProviderCached<HelloWorldV1Marker> for SourceDataProvider {
         fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
             Ok(HelloWorldProvider.iter_ids()?.into_iter().collect())

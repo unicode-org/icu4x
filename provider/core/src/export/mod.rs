@@ -2,11 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains various utilities required to generate ICU4X data files, typically
-//! via the `icu_datagen` reference crate. End users should not need to consume anything in
-//! this module as a library unless defining new types that integrate with `icu_datagen`.
+//! This module contains types required to export ICU4X data via the `icu_provider_export` crate.
+//! End users should not need to consume anything in this module.
 //!
-//! This module can be enabled with the `datagen` Cargo feature on `icu_provider`.
+//! This module is enabled with the `export` Cargo feature.
 
 mod payload;
 
@@ -96,18 +95,15 @@ impl ExportableProvider for Box<dyn ExportableProvider> {
     }
 }
 
-/// This macro can be used on a data provider to allow it to be used for data generation.
+/// This macro can be used on a data provider to allow it to be exported by `ExportDriver`.
 ///
 /// Data generation 'compiles' data by using this data provider (which usually translates data from
 /// different sources and doesn't have to be efficient) to generate data structs, and then writing
-/// them to an efficient format like [`BlobDataProvider`] or [`BakedDataProvider`]. The requirements
+/// them to an efficient format like `BlobDataProvider` or `BakedDataProvider`. The requirements
 /// for `make_exportable_provider` are:
 /// * The data struct has to implement [`serde::Serialize`](::serde::Serialize) and [`databake::Bake`]
 /// * The provider needs to implement [`IterableDataProvider`] for all specified [`DataMarker`]s.
-///   This allows the generating code to know which [`DataLocale`] to collect.
-///
-/// [`BlobDataProvider`]: ../../icu_provider_blob/struct.BlobDataProvider.html
-/// [`BakedDataProvider`]: ../../icu_datagen/index.html
+///   This allows the generating code to know which [`DataIdentifierCow`]s to export.
 #[macro_export]
 #[doc(hidden)] // macro
 macro_rules! __make_exportable_provider {

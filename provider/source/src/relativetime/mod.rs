@@ -86,11 +86,10 @@ macro_rules! make_data_provider {
             impl DataProvider<$marker> for SourceDataProvider {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                     self.check_req::<$marker>(req)?;
-                    let langid = req.id.locale.get_langid();
                     let resource: &cldr_serde::date_fields::Resource = self
                         .cldr()?
                         .dates("gregorian")
-                        .read_and_parse(&langid, "dateFields.json")?;
+                        .read_and_parse(req.id.locale, "dateFields.json")?;
                     let fields = &resource.main.value.dates.fields;
 
                     let field = marker_filters()
@@ -113,8 +112,8 @@ macro_rules! make_data_provider {
                     Ok(self
                         .cldr()?
                         .dates("gregorian")
-                        .list_langs()?
-                        .map(|l| DataIdentifierCow::from_locale(DataLocale::from(l)))
+                        .list_locales()?
+                        .map(DataIdentifierCow::from_locale)
                         .collect())
                 }
             }

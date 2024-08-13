@@ -22,7 +22,7 @@
 //!     BakedExporter::new(demo_path.clone(), Default::default()).unwrap();
 //!
 //! // Export something. Make sure to use the same fallback data at runtime!
-//! ExportDriver::new([LocaleFamily::FULL], DeduplicationStrategy::Maximal.into(), LocaleFallbacker::new().static_to_owned())
+//! ExportDriver::new([DataLocaleFamily::FULL], DeduplicationStrategy::Maximal.into(), LocaleFallbacker::new().static_to_owned())
 //!     .export(&icu_provider::hello_world::HelloWorldProvider, exporter)
 //!     .unwrap();
 //! #
@@ -439,7 +439,7 @@ impl DataExporter for BakedExporter {
             impl $provider {
                 // Exposing singleton structs as consts allows us to get rid of fallibility
                 #[doc(hidden)] // singletons might be used cross-crate
-                pub const #singleton_ident: &'static <#marker_bake as icu_provider::DynamicDataMarker>::Yokeable = &#bake;
+                pub const #singleton_ident: &'static <#marker_bake as icu_provider::DynamicDataMarker>::DataStruct = &#bake;
             }
 
             #maybe_msrv
@@ -448,7 +448,7 @@ impl DataExporter for BakedExporter {
                     &self,
                     req: icu_provider::DataRequest,
                 ) -> Result<icu_provider::DataResponse<#marker_bake>, icu_provider::DataError> {
-                    if req.id.locale.is_und() {
+                    if req.id.locale.is_default() {
                         Ok(icu_provider::DataResponse {
                             payload: icu_provider::DataPayload::from_static_ref(Self::#singleton_ident),
                             metadata: Default::default(),
@@ -510,7 +510,7 @@ impl DataExporter for BakedExporter {
             let needs_fallback = self.use_internal_fallback
                 && deduplicated_values
                     .iter()
-                    .any(|(_, ids)| ids.iter().any(|id| !id.locale.is_und()));
+                    .any(|(_, ids)| ids.iter().any(|id| !id.locale.is_default()));
 
             let mut baked_values = deduplicated_values
                 .into_iter()
@@ -543,10 +543,12 @@ impl DataExporter for BakedExporter {
             .parse::<TokenStream>()
             .unwrap();
 
+            self.dependencies.insert("icu_provider_baked");
+
             let search = if !needs_fallback {
                 quote! {
                     let metadata = Default::default();
-                    let Some(payload) = icu_provider_baked::DataStore::get(&Self::#data_ident, req.id) else {
+                    let Some(payload) = icu_provider_baked::DataStore::get(&Self::#data_ident, req.id, req.metadata.attributes_prefix_match) else {
                         return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<#marker_bake as icu_provider::DataMarker>::INFO, req))
                     };
                 }
@@ -555,7 +557,7 @@ impl DataExporter for BakedExporter {
                 quote! {
                     let mut metadata = icu_provider::DataResponseMetadata::default();
 
-                    let payload =  if let Some(payload) = icu_provider_baked::DataStore::get(&Self::#data_ident, req.id) {
+                    let payload =  if let Some(payload) = icu_provider_baked::DataStore::get(&Self::#data_ident, req.id, req.metadata.attributes_prefix_match) {
                         payload
                     } else {
                         const FALLBACKER: icu_locale::fallback::LocaleFallbackerWithConfig<'static> =
@@ -563,11 +565,11 @@ impl DataExporter for BakedExporter {
                                 .for_config(<#marker_bake as icu_provider::DataMarker>::INFO.fallback_config);
                         let mut fallback_iterator = FALLBACKER.fallback_for(req.id.locale.clone());
                         loop {
-                            if let Some(payload) = icu_provider_baked::DataStore::get(&Self::#data_ident, icu_provider::DataIdentifierBorrowed::for_marker_attributes_and_locale(req.id.marker_attributes, fallback_iterator.get())) {
+                            if let Some(payload) = icu_provider_baked::DataStore::get(&Self::#data_ident, icu_provider::DataIdentifierBorrowed::for_marker_attributes_and_locale(req.id.marker_attributes, fallback_iterator.get()), req.metadata.attributes_prefix_match) {
                                 metadata.locale = Some(fallback_iterator.take());
                                 break payload;
                             }
-                            if fallback_iterator.get().is_und() {
+                            if fallback_iterator.get().is_default() {
                                 return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<#marker_bake as icu_provider::DataMarker>::INFO, req));
                             }
                             fallback_iterator.step();

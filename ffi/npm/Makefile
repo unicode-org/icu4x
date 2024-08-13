@@ -5,13 +5,13 @@
 .DEFAULT_GOAL := build
 FORCE:
 
-PINNED_CI_NIGHTLY ?= "nightly-2023-08-08"
+PINNED_CI_NIGHTLY ?= "nightly"
 
 # 100 KiB, working around a bug in older rustc
 # https://github.com/unicode-org/icu4x/issues/2753
 WASM_STACK_SIZE := 100000
  
-lib/index.mjs:
+lib/index.mjs: FORCE
 	rm -rf lib
 	cp -r ../capi/bindings/js lib
 

@@ -313,13 +313,13 @@ fn main() -> eyre::Result<()> {
     };
 
     enum PreprocessedLocales {
-        LanguageIdentifiers(Vec<LanguageIdentifier>),
+        Locales(Vec<DataLocale>),
         Full,
     }
 
     #[allow(unused_mut)]
     let mut preprocessed_locales = if cli.locales.as_slice() == ["none"] {
-        Some(PreprocessedLocales::LanguageIdentifiers(vec![]))
+        Some(PreprocessedLocales::Locales(vec![]))
     } else if cli.locales.as_slice() == ["full"] {
         Some(PreprocessedLocales::Full)
     } else {
@@ -349,7 +349,7 @@ fn main() -> eyre::Result<()> {
             (Box::new(ReexportableBlobDataProvider(provider)), fallbacker)
         },
 
-        #[cfg(all(not(feature = "provider"), feature = "input_blob"))]
+        #[cfg(all(not(feature = "provider"), feature = "blob_input"))]
         () => eyre::bail!("--input-blob is required without the `provider` Cargo feature"),
 
         #[cfg(feature = "provider")]
@@ -414,7 +414,7 @@ fn main() -> eyre::Result<()> {
             };
 
             if cli.locales.as_slice() == ["recommended"] {
-                preprocessed_locales = Some(PreprocessedLocales::LanguageIdentifiers(
+                preprocessed_locales = Some(PreprocessedLocales::Locales(
                     p.locales_for_coverage_levels([
                         icu_provider_source::CoverageLevel::Modern,
                         icu_provider_source::CoverageLevel::Moderate,
@@ -434,7 +434,7 @@ fn main() -> eyre::Result<()> {
                 })
                 .collect::<Option<Vec<_>>>()
             {
-                preprocessed_locales = Some(PreprocessedLocales::LanguageIdentifiers(
+                preprocessed_locales = Some(PreprocessedLocales::Locales(
                     p.locales_for_coverage_levels(locale_subsets.into_iter())?
                         .into_iter()
                         .collect(),
@@ -445,15 +445,15 @@ fn main() -> eyre::Result<()> {
             (Box::new(p), fallbacker)
         }
 
-        #[cfg(not(feature = "provider"))]
+        #[cfg(not(any(feature = "provider", feature = "blob_input")))]
         () => eyre::bail!("Only the `HelloWorldV1 marker is supported without Cargo features `blob_input` or `provider`"),
     };
 
     let locale_families = match preprocessed_locales {
-        Some(PreprocessedLocales::Full) => vec![LocaleFamily::FULL],
-        Some(PreprocessedLocales::LanguageIdentifiers(lids)) => lids
+        Some(PreprocessedLocales::Full) => vec![DataLocaleFamily::FULL],
+        Some(PreprocessedLocales::Locales(locales)) => locales
             .into_iter()
-            .map(LocaleFamily::with_descendants)
+            .map(DataLocaleFamily::with_descendants)
             .collect(),
         None => cli
             .locales
