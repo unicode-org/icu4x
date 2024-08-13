@@ -9,7 +9,7 @@ use displaydoc::Display;
 #[non_exhaustive]
 #[derive(PartialEq, Display, Clone, Copy, Debug)]
 /// The error returned by `ixdtf`'s parsers.
-pub enum ParserError {
+pub enum ParseError {
     #[displaydoc("Implementation error: this error must not throw.")]
     ImplAssert,
     #[displaydoc("Invalid float while parsing fraction part.")]
@@ -106,8 +106,8 @@ pub enum ParserError {
     TimeDurationDesignator,
 }
 
-impl ParserError {
+impl ParseError {
     pub(crate) fn abrupt_end(location: &'static str) -> Self {
-        ParserError::AbruptEnd { location }
+        ParseError::AbruptEnd { location }
     }
 }

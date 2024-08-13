@@ -24,15 +24,15 @@ trait ExportableDataPayload {
 
 impl<M: DynamicDataMarker> ExportableDataPayload for DataPayload<M>
 where
-    for<'a> <M::Yokeable as Yokeable<'a>>::Output: Bake + BakeSize + serde::Serialize,
-    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: PartialEq,
+    for<'a> <M::DataStruct as Yokeable<'a>>::Output: Bake + BakeSize + serde::Serialize,
+    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: PartialEq,
 {
     fn bake_yoke(&self, ctx: &CrateEnv) -> TokenStream {
         self.get().bake(ctx)
     }
 
     fn bake_size(&self) -> usize {
-        core::mem::size_of::<<M::Yokeable as Yokeable>::Output>() + self.get().borrows_size()
+        core::mem::size_of::<<M::DataStruct as Yokeable>::Output>() + self.get().borrows_size()
     }
 
     fn serialize_yoke(
@@ -91,9 +91,9 @@ impl core::fmt::Debug for ExportBox {
 impl<M> UpcastDataPayload<M> for ExportMarker
 where
     M: DynamicDataMarker,
-    M::Yokeable: Sync + Send,
-    for<'a> <M::Yokeable as Yokeable<'a>>::Output: Bake + BakeSize + serde::Serialize,
-    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: PartialEq,
+    M::DataStruct: Sync + Send,
+    for<'a> <M::DataStruct as Yokeable<'a>>::Output: Bake + BakeSize + serde::Serialize,
+    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: PartialEq,
 {
     fn upcast(other: DataPayload<M>) -> DataPayload<ExportMarker> {
         DataPayload::from_owned(ExportBox {
@@ -231,7 +231,7 @@ impl core::hash::Hash for DataPayload<ExportMarker> {
 pub struct ExportMarker {}
 
 impl DynamicDataMarker for ExportMarker {
-    type Yokeable = ExportBox;
+    type DataStruct = ExportBox;
 }
 
 #[cfg(test)]

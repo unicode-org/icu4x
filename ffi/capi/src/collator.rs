@@ -4,6 +4,7 @@
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
+#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
 
@@ -158,7 +159,7 @@ pub mod ffi {
         /// and the options from locale data were combined. None of the struct fields
         /// will have `Auto` as the value.
         #[diplomat::rust_link(icu::collator::Collator::resolved_options, FnInStruct)]
-        #[diplomat::attr(*, getter)]
+        #[diplomat::attr(auto, getter)]
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "resolved_options")]
         pub fn resolved_options_v1(&self) -> CollatorResolvedOptionsV1 {
             self.0.resolved_options().into()

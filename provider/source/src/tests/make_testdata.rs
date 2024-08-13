@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::SourceDataProvider;
+use icu::locale::{langid, LanguageIdentifier};
 use icu_provider::dynutil::UpcastDataPayload;
 use icu_provider::export::*;
 use icu_provider::prelude::*;
@@ -56,7 +57,11 @@ fn make_testdata() {
     let provider = SourceDataProvider::new_testing();
 
     ExportDriver::new(
-        LOCALES.iter().cloned().map(LocaleFamily::with_descendants),
+        LOCALES
+            .iter()
+            .cloned()
+            .map(Into::into)
+            .map(DataLocaleFamily::with_descendants),
         DeduplicationStrategy::None.into(),
         LocaleFallbacker::try_new_unstable(&provider).unwrap(),
     )
@@ -64,6 +69,16 @@ fn make_testdata() {
         "thaidict".into(),
         "Thai_codepoints_exclusive_model4_heavy".into(),
     ])
+    .with_marker_attributes_filter("units", |attrs| {
+        let (_length, unit) = attrs.as_str().split_once('-').unwrap();
+        matches!(
+            unit,
+            "meter" | "foot" | "kilogram" | "pound" | "hour" | "minute" | "second"
+        )
+    })
+    .with_marker_attributes_filter("currency", |attrs| {
+        matches!(attrs.as_str(), "CAD" | "EGP" | "EUR" | "GBP" | "USD")
+    })
     .export(&provider, exporter)
     .unwrap()
 }

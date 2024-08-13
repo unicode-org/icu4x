@@ -22,7 +22,7 @@
 //!     BakedExporter::new(demo_path.clone(), Default::default()).unwrap();
 //!
 //! // Export something. Make sure to use the same fallback data at runtime!
-//! ExportDriver::new([LocaleFamily::FULL], DeduplicationStrategy::Maximal.into(), LocaleFallbacker::new().static_to_owned())
+//! ExportDriver::new([DataLocaleFamily::FULL], DeduplicationStrategy::Maximal.into(), LocaleFallbacker::new().static_to_owned())
 //!     .export(&icu_provider::hello_world::HelloWorldProvider, exporter)
 //!     .unwrap();
 //! #
@@ -439,7 +439,7 @@ impl DataExporter for BakedExporter {
             impl $provider {
                 // Exposing singleton structs as consts allows us to get rid of fallibility
                 #[doc(hidden)] // singletons might be used cross-crate
-                pub const #singleton_ident: &'static <#marker_bake as icu_provider::DynamicDataMarker>::Yokeable = &#bake;
+                pub const #singleton_ident: &'static <#marker_bake as icu_provider::DynamicDataMarker>::DataStruct = &#bake;
             }
 
             #maybe_msrv
@@ -448,7 +448,7 @@ impl DataExporter for BakedExporter {
                     &self,
                     req: icu_provider::DataRequest,
                 ) -> Result<icu_provider::DataResponse<#marker_bake>, icu_provider::DataError> {
-                    if req.id.locale.is_und() {
+                    if req.id.locale.is_default() {
                         Ok(icu_provider::DataResponse {
                             payload: icu_provider::DataPayload::from_static_ref(Self::#singleton_ident),
                             metadata: Default::default(),
@@ -510,7 +510,7 @@ impl DataExporter for BakedExporter {
             let needs_fallback = self.use_internal_fallback
                 && deduplicated_values
                     .iter()
-                    .any(|(_, ids)| ids.iter().any(|id| !id.locale.is_und()));
+                    .any(|(_, ids)| ids.iter().any(|id| !id.locale.is_default()));
 
             let mut baked_values = deduplicated_values
                 .into_iter()
@@ -569,7 +569,7 @@ impl DataExporter for BakedExporter {
                                 metadata.locale = Some(fallback_iterator.take());
                                 break payload;
                             }
-                            if fallback_iterator.get().is_und() {
+                            if fallback_iterator.get().is_default() {
                                 return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<#marker_bake as icu_provider::DataMarker>::INFO, req));
                             }
                             fallback_iterator.step();

@@ -2,13 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#include "Collator.hpp"
-#include "DataProvider.hpp"
-#include "Locale.hpp"
-#include "Logger.hpp"
+#include <icu4x/Collator.hpp>
+#include <icu4x/DataProvider.hpp>
+#include <icu4x/Locale.hpp>
+#include <icu4x/Logger.hpp>
 
 #include <iostream>
 #include <string_view>
+
+using namespace icu4x;
 
 int main() {
   Logger::init_simple_logger();

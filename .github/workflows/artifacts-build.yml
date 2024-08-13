@@ -178,7 +178,7 @@ jobs:
       run: |
         cd ffi/npm
         make lib/index.mjs
-        npm install typedoc
+        npm install typedoc@0.26.5 --exact
         node_modules/typedoc/bin/typedoc lib/index.d.ts --out docs --readme ../../tutorials/js.md --basePath lib
         cd ../..
         
@@ -270,6 +270,8 @@ jobs:
       run: |
         npm -C ffi/npm ci
         npm -C tutorials/npm ci
+      env: 
+        PINNED_CI_NIGHTLY: nightly-2024-07-23
 
     - name: Run Webpack
       run: npm -C tutorials/npm run build
@@ -490,7 +492,7 @@ jobs:
     # Job-specific dependencies
     - name: Install npm tools
       run: |
-        npm install -g wasm-opt
+        npm install -g wasm-opt@1.4.0 --exact
     
     # Actual job
     - name: Build wasm executables
@@ -566,7 +568,6 @@ jobs:
     runs-on: 'ubuntu-latest'
     concurrency:
       group: "pages"
-      cancel-in-progress: true
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
       # GCP Boilerplate for jobs in main repository

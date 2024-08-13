@@ -24,9 +24,8 @@ const _: () = {
 
     make_provider!(TestingProvider);
     impl_person_names_format_v1_marker!(TestingProvider);
-    icu_locale_data::impl_locale_fallback_likely_subtags_v1_marker!(TestingProvider);
-    icu_locale_data::impl_locale_fallback_parents_v1_marker!(TestingProvider);
-    icu_locale_data::impl_collation_fallback_supplement_v1_marker!(TestingProvider);
+    icu_locale_data::impl_likely_subtags_for_language_v1_marker!(TestingProvider);
+    icu_locale_data::impl_parents_v1_marker!(TestingProvider);
     icu_properties_data::impl_script_value_to_short_name_v1_marker!(TestingProvider);
     icu_properties_data::impl_script_with_extensions_property_v1_marker!(TestingProvider);
 };

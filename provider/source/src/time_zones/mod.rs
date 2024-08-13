@@ -33,12 +33,11 @@ macro_rules! impl_data_provider {
             impl DataProvider<$marker> for SourceDataProvider {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                     self.check_req::<$marker>(req)?;
-                    let langid = req.id.locale.get_langid();
 
                     let resource: &cldr_serde::time_zones::time_zone_names::Resource = self
                         .cldr()?
                         .dates("gregorian")
-                        .read_and_parse(&langid, "timeZoneNames.json")?;
+                        .read_and_parse(req.id.locale, "timeZoneNames.json")?;
 
                     let time_zone_names_resource = &resource.main.value.dates.time_zone_names;
 
@@ -60,7 +59,7 @@ macro_rules! impl_data_provider {
                     Ok(DataResponse {
             metadata: Default::default(),
                         payload: DataPayload::from_owned(
-                            <$marker as DynamicDataMarker>::Yokeable::from(CldrTimeZonesData {
+                            <$marker as DynamicDataMarker>::DataStruct::from(CldrTimeZonesData {
                                 time_zone_names_resource,
                                 bcp47_tzids_resource,
                                 meta_zone_ids_resource,
@@ -80,8 +79,8 @@ macro_rules! impl_data_provider {
                         Ok(self
                             .cldr()?
                             .dates("gregorian")
-                            .list_langs()?
-                            .map(|l| DataIdentifierCow::from_locale(DataLocale::from(l)))
+                            .list_locales()?
+                            .map(DataIdentifierCow::from_locale)
                             .collect())
                     }
                 }

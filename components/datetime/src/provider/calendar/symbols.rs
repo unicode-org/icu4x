@@ -64,7 +64,7 @@ pub struct DateSymbolsV1<'data> {
 pub(crate) struct ErasedDateSymbolsV1Marker;
 
 impl DynamicDataMarker for ErasedDateSymbolsV1Marker {
-    type Yokeable = DateSymbolsV1<'static>;
+    type DataStruct = DateSymbolsV1<'static>;
 }
 
 size_test!(TimeSymbolsV1, time_symbols_v1_size, 768);

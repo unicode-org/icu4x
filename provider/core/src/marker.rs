@@ -44,7 +44,7 @@ use zerovec::ule::*;
 /// struct MyDataStructMarker;
 ///
 /// impl DynamicDataMarker for MyDataStructMarker {
-///     type Yokeable = MyDataStruct<'static>;
+///     type DataStruct = MyDataStruct<'static>;
 /// }
 ///
 /// // We can now use MyDataStruct with DataProvider:
@@ -59,7 +59,7 @@ use zerovec::ule::*;
 pub trait DynamicDataMarker: 'static {
     /// A type that implements [`Yokeable`]. This should typically be the `'static` version of a
     /// data struct.
-    type Yokeable: for<'a> Yokeable<'a>;
+    type DataStruct: for<'a> Yokeable<'a>;
 }
 
 /// A [`DynamicDataMarker`] with a [`DataMarkerInfo`] attached.
@@ -137,7 +137,7 @@ impl<Y> DynamicDataMarker for NeverMarker<Y>
 where
     for<'a> Y: Yokeable<'a>,
 {
-    type Yokeable = Y;
+    type DataStruct = Y;
 }
 
 impl<Y> DataMarker for NeverMarker<Y>
@@ -531,6 +531,8 @@ pub struct DataMarkerInfo {
     /// Useful for reading and writing data to a file system.
     pub path: DataMarkerPath,
     /// TODO
+    pub attributes_domain: &'static str,
+    /// TODO
     pub is_singleton: bool,
     /// TODO
     pub fallback_config: LocaleFallbackConfig,
@@ -560,7 +562,8 @@ impl DataMarkerInfo {
         Self {
             path,
             is_singleton: false,
-            fallback_config: LocaleFallbackConfig::const_default(),
+            attributes_domain: "",
+            fallback_config: LocaleFallbackConfig::default(),
         }
     }
 
@@ -575,7 +578,7 @@ impl DataMarkerInfo {
     /// use icu_provider::hello_world::*;
     /// # struct DummyMarker;
     /// # impl DynamicDataMarker for DummyMarker {
-    /// #     type Yokeable = <HelloWorldV1Marker as DynamicDataMarker>::Yokeable;
+    /// #     type DataStruct = <HelloWorldV1Marker as DynamicDataMarker>::DataStruct;
     /// # }
     /// # impl DataMarker for DummyMarker {
     /// #     const INFO: DataMarkerInfo = DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!("dummy@1"));

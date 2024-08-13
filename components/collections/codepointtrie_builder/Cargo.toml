@@ -31,7 +31,7 @@ independent = true
 [features]
 # Use the wasm builder
 default = ["wasm"]
-wasm = ["dep:wasmi"]
+wasm = ["dep:wasmi", "dep:wat"]
 # Use the ICU4C builder
 # needs the ICU4C_LIB_PATH variable set and pointing to an ICU4C lib folder
 # containing dylibs. If you want to use staticlibs, set ICU4C_LINK_STATICALLY.
@@ -42,6 +42,7 @@ icu4c = []
 icu_collections = { workspace = true, features = ["serde"] }
 zerovec = { workspace = true }
 wasmi = { workspace = true, optional = true }
+wat = { workspace = true, optional = true }
 
 [dev-dependencies]
 icu = { path = "../../icu" }

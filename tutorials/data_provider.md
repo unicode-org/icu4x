@@ -106,9 +106,9 @@ impl<'a> Borrow<CacheKey<'a>> for lru::KeyRef<CacheKeyWrap> {
 impl<M, P> DataProvider<M> for LruDataCache<P>
 where
     M: DataMarker,
-    M::Yokeable: ZeroFrom<'static, M::Yokeable>,
-    M::Yokeable: icu_provider::any::MaybeSendSync,
-    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
+    M::DataStruct: ZeroFrom<'static, M::DataStruct>,
+    M::DataStruct: icu_provider::any::MaybeSendSync,
+    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: Clone,
     P: DataProvider<M>,
 {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
@@ -217,7 +217,7 @@ where
         // Cast from `DataPayload<M>` to `DataPayload<DecimalSymbolsV1Marker>`
         let mut any_payload = (&mut res.payload) as &mut dyn Any;
         if let Some(mut decimal_payload) = any_payload.downcast_mut::<DataPayload<DecimalSymbolsV1Marker>>() {
-            if req.id.locale.region() == Some(region!("CH")) {
+            if req.id.locale.region == Some(region!("CH")) {
                 decimal_payload.with_mut(|data| {
                     // Change the grouping separator for all Swiss locales to '🐮'
                     data.grouping_separator = Cow::Borrowed("🐮");

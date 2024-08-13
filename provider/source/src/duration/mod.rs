@@ -7,7 +7,6 @@ use crate::cldr_serde::units::data::DurationUnits;
 use crate::SourceDataProvider;
 use icu::experimental::duration::provider::{HmPadding, HmsPadding, MsPadding};
 use icu_provider::prelude::*;
-use itertools::Itertools;
 use std::{borrow::Cow, collections::HashSet};
 
 use icu::experimental::duration::provider::{DigitalDurationDataV1, DigitalDurationDataV1Marker};
@@ -23,59 +22,62 @@ fn strip_padded_character(s: &mut &str, c: char) -> u8 {
     padding
 }
 
+/// Strips the passed padded characters separated by a uniform separator.
+/// Returns the padding sizes and the separator.
+/// Modifies `s` to point to the remaining string.
+/// Returns an error if the separator is missing or inconsistent.
+fn strip_separated_padded_characters<'s, const N: usize>(
+    string: &mut &'s str,
+    chars: [char; N],
+) -> Result<([u8; N], &'s str), DataError> {
+    let mut padding = [0u8; N];
+    let mut sep = None;
+
+    for i in 0..(N - 1) {
+        padding[i] += strip_padded_character(string, chars[i]);
+        let (curr_sep, rest) = string
+            .split_once(chars[i + 1])
+            .ok_or_else(|| DataError::custom("Missing separator in pattern"))?;
+        padding[i + 1] += 1; // split_once consumes the matching character
+
+        *string = rest;
+        match sep {
+            Some(sep) => {
+                if sep != curr_sep {
+                    return Err(DataError::custom("Inconsistent separators in pattern"));
+                }
+            }
+            None => sep = Some(curr_sep),
+        }
+    }
+    // Handle last padded character.
+    padding[N - 1] += strip_padded_character(string, chars[N - 1]);
+
+    if !string.is_empty() {
+        return Err(DataError::custom(
+            "Unexpected characters in duration patterns",
+        ));
+    }
+
+    Ok((
+        padding,
+        sep.ok_or_else(|| DataError::custom("Missing separator in pattern"))?,
+    ))
+}
+
 impl DataProvider<DigitalDurationDataV1Marker> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<DigitalDurationDataV1Marker>, DataError> {
         self.check_req::<DigitalDurationDataV1Marker>(req)?;
-        let langid = req.id.locale.get_langid();
 
         // Get units
-        let units_format_data: &cldr_serde::units::data::Resource =
-            self.cldr()?.units().read_and_parse(&langid, "units.json")?;
+        let units_format_data: &cldr_serde::units::data::Resource = self
+            .cldr()?
+            .units()
+            .read_and_parse(req.id.locale, "units.json")?;
         let DurationUnits { hms, hm, ms } = &units_format_data.main.value.units.duration;
-
-        /// Strips the passed padded characters separated by a uniform separator.
-        /// Returns the padding sizes and the separator.
-        /// Modifies `s` to point to the remaining string.
-        /// Returns an error if the separator is missing or inconsistent.
-        fn strip_separated_padded_characters<'s, const N: usize>(
-            s: &mut &'s str,
-            chars: [char; N],
-        ) -> Result<([u8; N], &'s str), DataError> {
-            let mut padding = [0u8; N];
-            let mut sep = None;
-
-            for (p, (c, next_c)) in padding.iter_mut().zip(chars.iter().tuple_windows()) {
-                *p = strip_padded_character(s, *c);
-                let (curr_sep, rest) = s
-                    .split_once(*next_c)
-                    .ok_or_else(|| DataError::custom("Missing separator in pattern"))?;
-                *s = rest;
-                match sep {
-                    Some(s) => {
-                        if s != curr_sep {
-                            return Err(DataError::custom("Inconsistent separators in pattern"));
-                        }
-                    }
-                    None => sep = Some(curr_sep),
-                }
-            }
-            // Handle last padded character.
-            padding[N - 1] = strip_padded_character(s, chars[N - 1]);
-
-            if !s.is_empty() {
-                return Err(DataError::custom(
-                    "Unexpected characters in duration patterns",
-                ));
-            }
-
-            Ok((
-                padding,
-                sep.ok_or_else(|| DataError::custom("Missing separator in pattern"))?,
-            ))
-        }
 
         // Find paddings for hm
         let mut hm = hm.pat.as_str();
@@ -128,15 +130,44 @@ impl crate::IterableDataProviderCached<DigitalDurationDataV1Marker> for SourceDa
         Ok(self
             .cldr()?
             .numbers()
-            .list_langs()?
-            .filter(|langid| {
+            .list_locales()?
+            .filter(|locale| {
                 self.cldr()
                     .unwrap()
                     .units()
-                    .read_and_parse::<cldr_serde::units::data::Resource>(langid, "units.json")
+                    .read_and_parse::<cldr_serde::units::data::Resource>(locale, "units.json")
                     .is_ok()
             })
-            .map(|langid| DataIdentifierCow::from_locale(DataLocale::from(&langid)))
+            .map(DataIdentifierCow::from_locale)
             .collect())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_strip_padded_character() {
+        let mut s = "hhmmss";
+        assert_eq!(strip_padded_character(&mut s, 'h'), 2);
+        assert_eq!(strip_padded_character(&mut s, 'm'), 2);
+        assert_eq!(strip_padded_character(&mut s, 's'), 2);
+        assert_eq!(s, "");
+    }
+
+    #[test]
+    fn test_strip_separated_padded_characters() {
+        let mut s = "hh:mm:ss";
+        let (padding, sep) = strip_separated_padded_characters(&mut s, ['h', 'm', 's']).unwrap();
+        assert_eq!(padding, [2, 2, 2]);
+        assert_eq!(sep, ":");
+        assert_eq!(s, "");
+
+        let mut s = "h:mm:ss";
+        let (padding, sep) = strip_separated_padded_characters(&mut s, ['h', 'm', 's']).unwrap();
+        assert_eq!(padding, [1, 2, 2]);
+        assert_eq!(sep, ":");
+        assert_eq!(s, "");
     }
 }

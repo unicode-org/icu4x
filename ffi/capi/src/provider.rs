@@ -15,6 +15,7 @@ pub enum DataProviderInner {
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
+#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
 
@@ -231,9 +232,9 @@ impl<M> DataProvider<M> for DataProviderInner
 where
     M: DataMarker,
     // Actual bound:
-    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Deserialize<'de>,
+    //     for<'de> <M::DataStruct as DataStruct<'de>>::Output: Deserialize<'de>,
     // Necessary workaround bound (see `yoke::trait_hack` docs):
-    for<'de> yoke::trait_hack::YokeTraitHack<<M::Yokeable as yoke::Yokeable<'de>>::Output>:
+    for<'de> yoke::trait_hack::YokeTraitHack<<M::DataStruct as yoke::Yokeable<'de>>::Output>:
         serde::Deserialize<'de>,
 {
     load!();

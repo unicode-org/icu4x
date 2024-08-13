@@ -123,7 +123,7 @@ impl<M: DynamicDataMarker, Variables> DateTimeNamesData2<M, Variables> {
 }
 
 pub struct DateTimeNamesData2Borrowed<'data, M: DynamicDataMarker, Variables> {
-    inner: OptionalNames<Variables, &'data <M::Yokeable as Yokeable<'data>>::Output>,
+    inner: OptionalNames<Variables, &'data <M::DataStruct as Yokeable<'data>>::Output>,
 }
 
 impl<M: DynamicDataMarker, Variables> MaybePayload2<M, Variables>
@@ -251,7 +251,7 @@ where
     #[inline]
     pub(crate) fn as_borrowed<'a>(
         &'a self,
-    ) -> OptionalNames<Variables, &'a <M::Yokeable as Yokeable<'a>>::Output> {
+    ) -> OptionalNames<Variables, &'a <M::DataStruct as Yokeable<'a>>::Output> {
         match self {
             Self::None => OptionalNames::None,
             Self::SingleLength { variables, payload } => OptionalNames::SingleLength {
@@ -315,13 +315,13 @@ size_test!(
 ///     .include_day_period_names(FieldLength::Abbreviated)
 ///     .unwrap();
 ///
-/// // Create a pattern from a pattern string:
-/// let pattern_str = "E MMM d y -- h:mm a";
+/// // Create a pattern from a pattern string (note: K is the hour with h11 hour cycle):
+/// let pattern_str = "E MMM d y -- K:mm a";
 /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
 ///
 /// // Test it:
-/// let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 20, 11, 35, 3).unwrap();
-/// assert_try_writeable_eq!(names.with_pattern(&pattern).format(&datetime), "пн лист. 20 2023 -- 11:35 дп");
+/// let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 20, 12, 35, 3).unwrap();
+/// assert_try_writeable_eq!(names.with_pattern(&pattern).format(&datetime), "пн лист. 20 2023 -- 0:35 пп");
 /// ```
 ///
 /// If the correct data is not loaded, and error will occur:
@@ -2286,6 +2286,7 @@ impl<'a> TryWriteable for FormattedDateTimePattern<'a> {
     ) -> Result<Result<(), Self::Error>, fmt::Error> {
         try_write_pattern(
             self.pattern.0.as_borrowed(),
+            Default::default(),
             &self.datetime,
             Some(&self.names),
             Some(&self.names),

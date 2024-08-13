@@ -85,7 +85,7 @@ fn main() {
             ])
             .unwrap()
             .into_iter()
-            .map(LocaleFamily::with_descendants),
+            .map(DataLocaleFamily::with_descendants),
         DeduplicationStrategy::Maximal.into(),
         LocaleFallbacker::try_new_unstable(&source).unwrap(),
     )
@@ -295,7 +295,7 @@ impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
                 .into_iter()
                 .map(|(id, (size, hash))| {
                     (
-                        if marker.is_singleton && id.locale.is_und() {
+                        if marker.is_singleton && id.locale.is_default() {
                             "<singleton>".to_string()
                         } else if !id.marker_attributes.is_empty() {
                             format!(

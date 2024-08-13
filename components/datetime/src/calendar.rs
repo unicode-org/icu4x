@@ -56,22 +56,22 @@ pub trait CldrCalendar: InternalCldrCalendar {
     const DEFAULT_BCP_47_IDENTIFIER: Value;
 
     /// The data marker for loading symbols for this calendar.
-    type DateSymbolsV1Marker: DataMarker<Yokeable = DateSymbolsV1<'static>>;
+    type DateSymbolsV1Marker: DataMarker<DataStruct = DateSymbolsV1<'static>>;
 
     /// The data marker for loading length-patterns for this calendar.
-    type DateLengthsV1Marker: DataMarker<Yokeable = DateLengthsV1<'static>>;
+    type DateLengthsV1Marker: DataMarker<DataStruct = DateLengthsV1<'static>>;
 
     #[cfg(any(feature = "datagen", feature = "experimental"))]
     /// The data marker for loading year symbols for this calendar.
-    type YearNamesV1Marker: DataMarker<Yokeable = YearNamesV1<'static>>;
+    type YearNamesV1Marker: DataMarker<DataStruct = YearNamesV1<'static>>;
 
     #[cfg(any(feature = "datagen", feature = "experimental"))]
     /// The data marker for loading month symbols for this calendar.
-    type MonthNamesV1Marker: DataMarker<Yokeable = MonthNamesV1<'static>>;
+    type MonthNamesV1Marker: DataMarker<DataStruct = MonthNamesV1<'static>>;
 
     #[cfg(any(feature = "datagen", feature = "experimental"))]
     /// The data marker for loading skeleton patterns for this calendar.
-    type SkeletaV1Marker: DataMarker<Yokeable = PackedSkeletonDataV1<'static>>;
+    type SkeletaV1Marker: DataMarker<DataStruct = PackedSkeletonDataV1<'static>>;
 
     /// Checks if a given BCP 47 identifier is allowed to be used with this calendar
     ///
@@ -617,7 +617,7 @@ where
     Ok(payload)
 }
 
-#[cfg(any(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "experimental")]
 mod private {
     pub trait Sealed {}
 }
@@ -628,87 +628,87 @@ mod private {
 /// [`DynamicDataMarker`]. For example, this trait can be implemented for [`YearNamesV1Marker`].
 ///
 /// This trait serves as a building block for a cross-calendar [`BoundDataProvider`].
-#[cfg(any(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "experimental")]
 pub trait CalMarkers<M>: private::Sealed
 where
     M: DynamicDataMarker,
 {
     /// The type for a [`Buddhist`] calendar
-    type Buddhist: DataMarker<Yokeable = M::Yokeable>;
+    type Buddhist: DataMarker<DataStruct = M::DataStruct>;
     /// The type for a [`Chinese`] calendar
-    type Chinese: DataMarker<Yokeable = M::Yokeable>;
+    type Chinese: DataMarker<DataStruct = M::DataStruct>;
     /// The type for a [`Coptic`] calendar
-    type Coptic: DataMarker<Yokeable = M::Yokeable>;
+    type Coptic: DataMarker<DataStruct = M::DataStruct>;
     /// The type for a [`Dangi`] calendar
-    type Dangi: DataMarker<Yokeable = M::Yokeable>;
+    type Dangi: DataMarker<DataStruct = M::DataStruct>;
     /// The type for an [`Ethiopian`] calendar, with Amete Mihret era
-    type Ethiopian: DataMarker<Yokeable = M::Yokeable>;
+    type Ethiopian: DataMarker<DataStruct = M::DataStruct>;
     /// The type for an [`Ethiopian`] calendar, with Amete Alem era
-    type EthiopianAmeteAlem: DataMarker<Yokeable = M::Yokeable>;
+    type EthiopianAmeteAlem: DataMarker<DataStruct = M::DataStruct>;
     /// The type for a [`Gregorian`] calendar
-    type Gregorian: DataMarker<Yokeable = M::Yokeable>;
+    type Gregorian: DataMarker<DataStruct = M::DataStruct>;
     /// The type for a [`Hebrew`] calendar
-    type Hebrew: DataMarker<Yokeable = M::Yokeable>;
+    type Hebrew: DataMarker<DataStruct = M::DataStruct>;
     /// The type for a [`Indian`] calendar
-    type Indian: DataMarker<Yokeable = M::Yokeable>;
+    type Indian: DataMarker<DataStruct = M::DataStruct>;
     /// The type for an [`IslamicCivil`] calendar
-    type IslamicCivil: DataMarker<Yokeable = M::Yokeable>;
+    type IslamicCivil: DataMarker<DataStruct = M::DataStruct>;
     /// The type for an [`IslamicObservational`] calendar
-    type IslamicObservational: DataMarker<Yokeable = M::Yokeable>;
+    type IslamicObservational: DataMarker<DataStruct = M::DataStruct>;
     /// The type for an [`IslamicTabular`] calendar
-    type IslamicTabular: DataMarker<Yokeable = M::Yokeable>;
+    type IslamicTabular: DataMarker<DataStruct = M::DataStruct>;
     /// The type for an [`IslamicUmmAlQura`] calendar
-    type IslamicUmmAlQura: DataMarker<Yokeable = M::Yokeable>;
+    type IslamicUmmAlQura: DataMarker<DataStruct = M::DataStruct>;
     /// The type for a [`Japanese`] calendar
-    type Japanese: DataMarker<Yokeable = M::Yokeable>;
+    type Japanese: DataMarker<DataStruct = M::DataStruct>;
     /// The type for a [`JapaneseExtended`] calendar
-    type JapaneseExtended: DataMarker<Yokeable = M::Yokeable>;
+    type JapaneseExtended: DataMarker<DataStruct = M::DataStruct>;
     /// The type for a [`Persian`] calendar
-    type Persian: DataMarker<Yokeable = M::Yokeable>;
+    type Persian: DataMarker<DataStruct = M::DataStruct>;
     /// The type for a [`Roc`] calendar
-    type Roc: DataMarker<Yokeable = M::Yokeable>;
+    type Roc: DataMarker<DataStruct = M::DataStruct>;
 }
 
 /// Implementation of [`CalMarkers`] that includes data for all calendars.
 #[derive(Debug)]
-#[cfg(any(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "experimental")]
 #[allow(clippy::exhaustive_enums)] // empty enum
 pub enum FullDataCalMarkers {}
 
-#[cfg(any(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "experimental")]
 impl private::Sealed for FullDataCalMarkers {}
 
 /// Implementation of [`CalMarkers`] that includes data for no calendars.
 #[derive(Debug)]
-#[cfg(any(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "experimental")]
 #[allow(clippy::exhaustive_enums)] // empty enum
 pub enum NoDataCalMarkers {}
 
-#[cfg(any(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "experimental")]
 impl private::Sealed for NoDataCalMarkers {}
 
-#[cfg(any(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "experimental")]
 impl<M> CalMarkers<M> for NoDataCalMarkers
 where
     M: DynamicDataMarker,
 {
-    type Buddhist = NeverMarker<M::Yokeable>;
-    type Chinese = NeverMarker<M::Yokeable>;
-    type Coptic = NeverMarker<M::Yokeable>;
-    type Dangi = NeverMarker<M::Yokeable>;
-    type Ethiopian = NeverMarker<M::Yokeable>;
-    type EthiopianAmeteAlem = NeverMarker<M::Yokeable>;
-    type Gregorian = NeverMarker<M::Yokeable>;
-    type Hebrew = NeverMarker<M::Yokeable>;
-    type Indian = NeverMarker<M::Yokeable>;
-    type IslamicCivil = NeverMarker<M::Yokeable>;
-    type IslamicObservational = NeverMarker<M::Yokeable>;
-    type IslamicTabular = NeverMarker<M::Yokeable>;
-    type IslamicUmmAlQura = NeverMarker<M::Yokeable>;
-    type Japanese = NeverMarker<M::Yokeable>;
-    type JapaneseExtended = NeverMarker<M::Yokeable>;
-    type Persian = NeverMarker<M::Yokeable>;
-    type Roc = NeverMarker<M::Yokeable>;
+    type Buddhist = NeverMarker<M::DataStruct>;
+    type Chinese = NeverMarker<M::DataStruct>;
+    type Coptic = NeverMarker<M::DataStruct>;
+    type Dangi = NeverMarker<M::DataStruct>;
+    type Ethiopian = NeverMarker<M::DataStruct>;
+    type EthiopianAmeteAlem = NeverMarker<M::DataStruct>;
+    type Gregorian = NeverMarker<M::DataStruct>;
+    type Hebrew = NeverMarker<M::DataStruct>;
+    type Indian = NeverMarker<M::DataStruct>;
+    type IslamicCivil = NeverMarker<M::DataStruct>;
+    type IslamicObservational = NeverMarker<M::DataStruct>;
+    type IslamicTabular = NeverMarker<M::DataStruct>;
+    type IslamicUmmAlQura = NeverMarker<M::DataStruct>;
+    type Japanese = NeverMarker<M::DataStruct>;
+    type JapaneseExtended = NeverMarker<M::DataStruct>;
+    type Persian = NeverMarker<M::DataStruct>;
+    type Roc = NeverMarker<M::DataStruct>;
 }
 
 #[cfg(feature = "experimental")]
@@ -800,12 +800,12 @@ where
             JapaneseExtended => H::JapaneseExtended::INFO,
             Persian => H::Persian::INFO,
             Roc => H::Roc::INFO,
-            _ => NeverMarker::<M::Yokeable>::INFO,
+            _ => NeverMarker::<M::DataStruct>::INFO,
         }
     }
 }
 
-#[cfg(any(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "experimental")]
 macro_rules! impl_load_any_calendar {
     ([$(($erased:ident, $marker:ident)),+], [$($kind_cal:ident),+], [$($kind:ident => $cal:ident),+]) => {
         impl_load_any_calendar!(@expand [$(($erased, $marker)),+], [$($kind_cal),+], [$($kind => $cal),+]);
@@ -825,7 +825,7 @@ macro_rules! impl_load_any_calendar {
     };
 }
 
-#[cfg(any(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "experimental")]
 impl_load_any_calendar!([
     (YearNamesV1Marker, YearNamesV1Marker),
     (MonthNamesV1Marker, MonthNamesV1Marker),

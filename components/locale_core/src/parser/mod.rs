@@ -17,32 +17,19 @@ pub use locale::{
     parse_locale, parse_locale_with_single_variant_single_keyword_unicode_keyword_extension,
 };
 
-#[inline]
-const fn is_separator(slice: &[u8], idx: usize) -> bool {
-    #[allow(clippy::indexing_slicing)]
-    let b = slice[idx];
-    b == b'-' || b == b'_'
-}
+const fn skip_before_separator(slice: &[u8]) -> &[u8] {
+    let mut end = 0;
 
-const fn get_current_subtag(slice: &[u8], idx: usize) -> (usize, usize) {
-    debug_assert!(idx < slice.len());
-
-    // This function is called only on the idx == 0 or on a separator.
-    let (start, mut end) = if is_separator(slice, idx) {
-        // If it's a separator, set the start to idx+1 and advance the idx to the next char.
-        (idx + 1, idx + 1)
-    } else {
-        // If it's idx=0, start is 0 and end is set to 1
-        debug_assert!(idx == 0);
-        (0, 1)
-    };
-
-    while end < slice.len() && !is_separator(slice, end) {
+    #[allow(clippy::indexing_slicing)] // very protected, should optimize out
+    while end < slice.len() && !matches!(slice[end], b'-' | b'_') {
         // Advance until we reach end of slice or a separator.
         end += 1;
     }
-    // Notice: this slice may be empty (start == end) for cases like `"en-"` or `"en--US"`
-    (start, end)
+
+    // Notice: this slice may be empty for cases like `"en-"` or `"en--US"`
+    // MSRV 1.71/1.79: Use split_at/split_at_unchecked
+    // SAFETY: end < slice.len() by while loop
+    unsafe { core::slice::from_raw_parts(slice.as_ptr(), end) }
 }
 
 // `SubtagIterator` is a helper iterator for [`LanguageIdentifier`] and [`Locale`] parsing.
@@ -59,51 +46,43 @@ const fn get_current_subtag(slice: &[u8], idx: usize) -> (usize, usize) {
 // All methods return an `Option` of a `Result`.
 #[derive(Copy, Clone, Debug)]
 pub struct SubtagIterator<'a> {
-    pub slice: &'a [u8],
-    done: bool,
-    // done + subtag is faster than Option<(usize, usize)>
-    // at the time of writing.
-    subtag: (usize, usize),
+    remaining: &'a [u8],
+    // current is a prefix of remaning
+    current: Option<&'a [u8]>,
 }
 
 impl<'a> SubtagIterator<'a> {
-    pub const fn new(slice: &'a [u8]) -> Self {
-        let subtag = if slice.is_empty() || is_separator(slice, 0) {
-            // This returns (0, 0) which returns Some(b"") for slices like `"-en"` or `"-"`
-            (0, 0)
-        } else {
-            get_current_subtag(slice, 0)
-        };
+    pub const fn new(rest: &'a [u8]) -> Self {
         Self {
-            slice,
-            done: false,
-            subtag,
+            remaining: rest,
+            current: Some(skip_before_separator(rest)),
         }
     }
 
-    pub const fn next_manual(mut self) -> (Self, Option<(usize, usize)>) {
-        if self.done {
+    pub const fn next_const(mut self) -> (Self, Option<&'a [u8]>) {
+        let Some(result) = self.current else {
             return (self, None);
-        }
-        let result = self.subtag;
-        if result.1 < self.slice.len() {
-            self.subtag = get_current_subtag(self.slice, result.1);
+        };
+
+        self.current = if result.len() < self.remaining.len() {
+            // If there is more after `result`, by construction `current` starts with a separator
+            // MSRV 1.79: Use split_at_unchecked
+            // SAFETY: `self.remaining` is strictly longer than `result`
+            self.remaining = unsafe {
+                core::slice::from_raw_parts(
+                    self.remaining.as_ptr().add(result.len() + 1),
+                    self.remaining.len() - (result.len() + 1),
+                )
+            };
+            Some(skip_before_separator(self.remaining))
         } else {
-            self.done = true;
-        }
+            None
+        };
         (self, Some(result))
     }
 
-    pub const fn peek_manual(&self) -> Option<(usize, usize)> {
-        if self.done {
-            return None;
-        }
-        Some(self.subtag)
-    }
-
-    pub fn peek(&self) -> Option<&'a [u8]> {
-        #[allow(clippy::indexing_slicing)] // peek_manual returns valid indices
-        self.peek_manual().map(|(s, e)| &self.slice[s..e])
+    pub const fn peek(&self) -> Option<&'a [u8]> {
+        self.current
     }
 }
 
@@ -111,10 +90,9 @@ impl<'a> Iterator for SubtagIterator<'a> {
     type Item = &'a [u8];
 
     fn next(&mut self) -> Option<Self::Item> {
-        let (s, res) = self.next_manual();
+        let (s, res) = self.next_const();
         *self = s;
-        #[allow(clippy::indexing_slicing)] // next_manual returns valid indices
-        res.map(|(s, e)| &self.slice[s..e])
+        res
     }
 }
 
@@ -187,45 +165,26 @@ mod test {
     }
 
     #[test]
-    fn get_current_subtag_test() {
-        let slice = "-";
-        let current = get_current_subtag(slice.as_bytes(), 0);
-        assert_eq!(current, (1, 1));
+    fn skip_before_separator_test() {
+        let current = skip_before_separator(b"");
+        assert_eq!(current, b"");
 
-        let slice = "-en";
-        let current = get_current_subtag(slice.as_bytes(), 0);
-        assert_eq!(current, (1, 3));
+        let current = skip_before_separator(b"en");
+        assert_eq!(current, b"en");
 
-        let slice = "-en-";
-        let current = get_current_subtag(slice.as_bytes(), 3);
-        assert_eq!(current, (4, 4));
+        let current = skip_before_separator(b"en-");
+        assert_eq!(current, b"en");
 
-        let slice = "en-";
-        let current = get_current_subtag(slice.as_bytes(), 0);
-        assert_eq!(current, (0, 2));
+        let current = skip_before_separator(b"en--US");
+        assert_eq!(current, b"en");
 
-        let current = get_current_subtag(slice.as_bytes(), 2);
-        assert_eq!(current, (3, 3));
+        let current = skip_before_separator(b"-US");
+        assert_eq!(current, b"");
 
-        let slice = "en--US";
-        let current = get_current_subtag(slice.as_bytes(), 0);
-        assert_eq!(current, (0, 2));
+        let current = skip_before_separator(b"US");
+        assert_eq!(current, b"US");
 
-        let current = get_current_subtag(slice.as_bytes(), 2);
-        assert_eq!(current, (3, 3));
-
-        let current = get_current_subtag(slice.as_bytes(), 3);
-        assert_eq!(current, (4, 6));
-
-        let slice = "--";
-        let current = get_current_subtag(slice.as_bytes(), 0);
-        assert_eq!(current, (1, 1));
-
-        let current = get_current_subtag(slice.as_bytes(), 1);
-        assert_eq!(current, (2, 2));
-
-        let slice = "-";
-        let current = get_current_subtag(slice.as_bytes(), 0);
-        assert_eq!(current, (1, 1));
+        let current = skip_before_separator(b"-");
+        assert_eq!(current, b"");
     }
 }

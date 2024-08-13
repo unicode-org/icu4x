@@ -65,7 +65,7 @@ impl FsDataProvider {
         marker: DataMarkerInfo,
         req: DataRequest,
     ) -> Result<(DataResponseMetadata, PathBuf), DataError> {
-        if marker.is_singleton && !req.id.locale.is_und() {
+        if marker.is_singleton && !req.id.locale.is_default() {
             return Err(DataErrorKind::InvalidRequest.with_req(marker, req));
         }
         let mut path = self.root.join(marker.path.as_str());
@@ -85,9 +85,11 @@ impl FsDataProvider {
                 path.push(req.id.marker_attributes.as_str());
             }
         }
-        let mut path = path.into_os_string();
-        write!(&mut path, "/{}", req.id.locale).expect("infallible");
-        let mut path = PathBuf::from(path);
+        if !marker.is_singleton {
+            let mut string_path = path.into_os_string();
+            write!(&mut string_path, "/{}", req.id.locale).expect("infallible");
+            path = PathBuf::from(string_path);
+        }
         path.set_extension(self.manifest.file_extension);
         if !path.exists() {
             return Err(DataErrorKind::IdentifierNotFound.with_req(marker, req));

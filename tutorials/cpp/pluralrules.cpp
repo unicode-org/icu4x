@@ -2,10 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#include "PluralRules.hpp"
-#include "Logger.hpp"
+#include <icu4x/PluralRules.hpp>
+#include <icu4x/Logger.hpp>
 
 #include <iostream>
+
+using namespace icu4x;
 
 const std::string_view path = "../../provider/source/data/debug/";
 

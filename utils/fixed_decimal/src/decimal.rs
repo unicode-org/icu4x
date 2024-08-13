@@ -1117,7 +1117,7 @@ impl FixedDecimal {
         self
     }
 
-    /// Pads this number with trailing zeros on a particular (negative) position. Will truncate
+    /// Pads this number with trailing zeros on a particular (non-positive) position. Will truncate
     /// trailing zeros if necessary, but will not truncate other digits.
     ///
     /// Positive numbers have no effect.
@@ -1133,20 +1133,19 @@ impl FixedDecimal {
     /// let mut dec = FixedDecimal::from_str("123.456").unwrap();
     /// assert_eq!("123.456", dec.to_string());
     ///
-    /// dec.pad_end(-1);
-    /// assert_eq!("123.456", dec.to_string());
-    ///
     /// dec.pad_end(-2);
     /// assert_eq!("123.456", dec.to_string());
     ///
     /// dec.pad_end(-6);
     /// assert_eq!("123.456000", dec.to_string());
     ///
-    /// dec.pad_end(-4);
-    /// assert_eq!("123.4560", dec.to_string());
+    /// let mut dec = FixedDecimal::from_str("123.000").unwrap();
+    /// dec.pad_end(0);
+    /// assert_eq!("123", dec.to_string());
+    ///
     /// ```
     pub fn pad_end(&mut self, position: i16) {
-        if position >= 0 {
+        if position > 0 {
             return;
         }
         let bottom_magnitude = self.nonzero_magnitude_end();

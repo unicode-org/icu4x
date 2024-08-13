@@ -582,13 +582,24 @@ pub struct SkeletonDataIndex {
     /// If true, there are 6 plural variants for each pattern.
     /// If false, it is just a single variant.
     pub has_plurals: bool,
+    /// If true, there are 2 era variants for each pattern.
+    /// The first does not have an era, and the second has an era.
+    /// if false, there is no era variant.
+    pub has_eras: bool,
+}
+
+#[cfg(feature = "experimental")]
+#[derive(Debug, Copy, Clone)]
+pub(crate) struct PatternSelectionOptions {
+    pub(crate) length: NeoSkeletonLength,
+    pub(crate) should_display_era: Option<bool>,
 }
 
 impl SkeletonDataIndex {
     // TODO: This should handle plurals
     #[cfg(feature = "experimental")]
-    pub(crate) fn index_for(self, length: NeoSkeletonLength) -> u8 {
-        match (length, self.has_long, self.has_medium) {
+    pub(crate) fn index_for(self, options: PatternSelectionOptions) -> u8 {
+        let chunk_number = match (options.length, self.has_long, self.has_medium) {
             (NeoSkeletonLength::Long, _, _) => 0,
             (NeoSkeletonLength::Medium, true, _) => 1,
             (NeoSkeletonLength::Medium, false, _) => 0,
@@ -596,7 +607,17 @@ impl SkeletonDataIndex {
             (NeoSkeletonLength::Short, true, false) => 1,
             (NeoSkeletonLength::Short, false, true) => 1,
             (NeoSkeletonLength::Short, false, false) => 0,
+        };
+        if !self.has_eras {
+            // chunks are size 1
+            return chunk_number;
         }
+        let offset = match options.should_display_era {
+            Some(false) => 0,
+            Some(true) | None => 1,
+        };
+        let chunk_size = 2;
+        offset + chunk_number * chunk_size
     }
 }
 
@@ -613,6 +634,7 @@ impl AsULE for SkeletonDataIndex {
         flags |= (self.has_long as u8) << 7;
         flags |= (self.has_medium as u8) << 6;
         flags |= (self.has_plurals as u8) << 5;
+        flags |= (self.has_eras as u8) << 4;
         SkeletonDataIndexULE(flags)
     }
 
@@ -623,6 +645,7 @@ impl AsULE for SkeletonDataIndex {
             has_long: (flags & (1 << 7)) != 0,
             has_medium: (flags & (1 << 6)) != 0,
             has_plurals: (flags & (1 << 5)) != 0,
+            has_eras: (flags & (1 << 4)) != 0,
         }
     }
 }
@@ -665,15 +688,15 @@ pub struct PackedSkeletonDataV1<'data> {
 
 impl<'data> PackedSkeletonDataV1<'data> {
     #[cfg(feature = "experimental")]
-    // TODO: Handle plurals
-    pub(crate) fn get_pattern(&self, length: NeoSkeletonLength) -> PatternBorrowed {
+    /// Gets a pattern according to a length and a numeric variant.
+    pub(crate) fn get_pattern(&self, options: PatternSelectionOptions) -> PatternBorrowed {
         match self
             .patterns
-            .get(self.index_info.index_for(length) as usize)
+            .get(self.index_info.index_for(options) as usize)
         {
             Some(pattern_ule) => pattern_ule.as_borrowed(),
             None => {
-                debug_assert!(false, "failed to load a pattern for length {length:?}");
+                debug_assert!(false, "failed to load a pattern for {options:?}");
                 PatternBorrowed::DEFAULT
             }
         }
@@ -706,19 +729,19 @@ pub struct DateTimeSkeletonsV1<'data> {
 #[derive(Debug)]
 pub struct YearNamesV1Marker;
 impl DynamicDataMarker for YearNamesV1Marker {
-    type Yokeable = YearNamesV1<'static>;
+    type DataStruct = YearNamesV1<'static>;
 }
 
 /// Calendar-agnostic month name data marker
 #[derive(Debug)]
 pub struct MonthNamesV1Marker;
 impl DynamicDataMarker for MonthNamesV1Marker {
-    type Yokeable = MonthNamesV1<'static>;
+    type DataStruct = MonthNamesV1<'static>;
 }
 
 /// Calendar-agnostic date/time skeleta data marker
 #[derive(Debug)]
 pub struct SkeletaV1Marker;
 impl DynamicDataMarker for SkeletaV1Marker {
-    type Yokeable = PackedSkeletonDataV1<'static>;
+    type DataStruct = PackedSkeletonDataV1<'static>;
 }

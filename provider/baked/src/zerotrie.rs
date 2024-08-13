@@ -51,7 +51,7 @@ pub(crate) fn bake(
 
 pub struct Data<M: DataMarker> {
     pub trie: ZeroTrieSimpleAscii<&'static [u8]>,
-    pub values: &'static [M::Yokeable],
+    pub values: &'static [M::DataStruct],
 }
 
 impl<M: DataMarker> super::DataStore<M> for Data<M> {
@@ -59,7 +59,7 @@ impl<M: DataMarker> super::DataStore<M> for Data<M> {
         &self,
         id: DataIdentifierBorrowed,
         attributes_prefix_match: bool,
-    ) -> Option<&'static <M>::Yokeable> {
+    ) -> Option<&'static <M>::DataStruct> {
         use writeable::Writeable;
         let mut cursor = self.trie.cursor();
         let _is_ascii = id.locale.write_to(&mut cursor);

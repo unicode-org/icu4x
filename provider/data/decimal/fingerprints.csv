@@ -1,58 +1,38 @@
-decimal/symbols@1, <lookup>, 1984B, 252 identifiers
+decimal/symbols@1, <lookup>, 1141B, 214 identifiers
 decimal/symbols@1, <total>, 8905B, 45 unique payloads
 decimal/symbols@1, af, 197B, 8f773f51e85a65c1
 decimal/symbols@1, ar, 202B, c3f15eb63fa35608
 decimal/symbols@1, ar-AE, 202B, 29e2dc764329c56
-decimal/symbols@1, ar-AE-u-nu-arab, 202B, -> ar
-decimal/symbols@1, ar-BH-u-nu-latn, 202B, -> ar-AE
-decimal/symbols@1, ar-DJ-u-nu-latn, 202B, -> ar-AE
+decimal/symbols@1, ar-AE/arab, 202B, -> ar
 decimal/symbols@1, ar-DZ, 202B, d2f2336636ab14d7
-decimal/symbols@1, ar-DZ-u-nu-arab, 202B, -> ar
-decimal/symbols@1, ar-EG-u-nu-latn, 202B, -> ar-AE
+decimal/symbols@1, ar-DZ/arab, 202B, -> ar
 decimal/symbols@1, ar-EH, 202B, -> ar-AE
-decimal/symbols@1, ar-EH-u-nu-arab, 202B, -> ar
-decimal/symbols@1, ar-ER-u-nu-latn, 202B, -> ar-AE
-decimal/symbols@1, ar-IL-u-nu-latn, 202B, -> ar-AE
-decimal/symbols@1, ar-IQ-u-nu-latn, 202B, -> ar-AE
-decimal/symbols@1, ar-JO-u-nu-latn, 202B, -> ar-AE
-decimal/symbols@1, ar-KM-u-nu-latn, 202B, -> ar-AE
-decimal/symbols@1, ar-KW-u-nu-latn, 202B, -> ar-AE
-decimal/symbols@1, ar-LB-u-nu-latn, 202B, -> ar-DZ
+decimal/symbols@1, ar-EH/arab, 202B, -> ar
+decimal/symbols@1, ar-LB/latn, 202B, -> ar-DZ
 decimal/symbols@1, ar-LY, 202B, -> ar-DZ
-decimal/symbols@1, ar-LY-u-nu-arab, 202B, -> ar
+decimal/symbols@1, ar-LY/arab, 202B, -> ar
 decimal/symbols@1, ar-MA, 202B, -> ar-DZ
-decimal/symbols@1, ar-MA-u-nu-arab, 202B, -> ar
-decimal/symbols@1, ar-MR-u-nu-latn, 202B, -> ar-DZ
-decimal/symbols@1, ar-OM-u-nu-latn, 202B, -> ar-AE
-decimal/symbols@1, ar-PS-u-nu-latn, 202B, -> ar-AE
-decimal/symbols@1, ar-QA-u-nu-latn, 202B, -> ar-AE
-decimal/symbols@1, ar-SA-u-nu-latn, 202B, -> ar-AE
-decimal/symbols@1, ar-SD-u-nu-latn, 202B, -> ar-AE
-decimal/symbols@1, ar-SO-u-nu-latn, 202B, -> ar-AE
-decimal/symbols@1, ar-SS-u-nu-latn, 202B, -> ar-AE
-decimal/symbols@1, ar-SY-u-nu-latn, 202B, -> ar-AE
-decimal/symbols@1, ar-TD-u-nu-latn, 202B, -> ar-AE
+decimal/symbols@1, ar-MA/arab, 202B, -> ar
+decimal/symbols@1, ar-MR/latn, 202B, -> ar-DZ
 decimal/symbols@1, ar-TN, 202B, -> ar-DZ
-decimal/symbols@1, ar-TN-u-nu-arab, 202B, -> ar
-decimal/symbols@1, ar-YE-u-nu-latn, 202B, -> ar-AE
-decimal/symbols@1, ar-u-nu-latn, 202B, -> ar-AE
+decimal/symbols@1, ar-TN/arab, 202B, -> ar
+decimal/symbols@1, ar/latn, 202B, -> ar-AE
 decimal/symbols@1, as, 196B, 31828215dcef2fcb
-decimal/symbols@1, as-u-nu-latn, 196B, 1be94084ee7dcfbf
+decimal/symbols@1, as/latn, 196B, 1be94084ee7dcfbf
 decimal/symbols@1, ast, 196B, 3ec76252c7ed8d8c
 decimal/symbols@1, az, 196B, -> ast
 decimal/symbols@1, be, 197B, 9a02a4ca8407cfb5
 decimal/symbols@1, bg, 197B, -> be
 decimal/symbols@1, bgc, 196B, ca87a14f1561c47
-decimal/symbols@1, bgc-u-nu-latn, 196B, 8df59f98704d3b0c
+decimal/symbols@1, bgc/latn, 196B, 8df59f98704d3b0c
 decimal/symbols@1, bho, 196B, -> bgc
-decimal/symbols@1, bho-u-nu-latn, 196B, -> bgc-u-nu-latn
+decimal/symbols@1, bho/latn, 196B, -> bgc/latn
 decimal/symbols@1, blo, 197B, -> af
 decimal/symbols@1, bn, 196B, -> as
-decimal/symbols@1, bn-IN-u-nu-latn, 196B, -> as-u-nu-latn
-decimal/symbols@1, bn-u-nu-latn, 196B, -> as-u-nu-latn
+decimal/symbols@1, bn/latn, 196B, -> as/latn
 decimal/symbols@1, br, 197B, -> af
-decimal/symbols@1, brx, 196B, -> as-u-nu-latn
-decimal/symbols@1, brx-u-nu-deva, 196B, 7e9a4eca2b249e6b
+decimal/symbols@1, brx, 196B, -> as/latn
+decimal/symbols@1, brx/deva, 196B, 7e9a4eca2b249e6b
 decimal/symbols@1, bs, 196B, -> ast
 decimal/symbols@1, bs-Cyrl, 196B, -> ast
 decimal/symbols@1, ca, 196B, -> ast
@@ -63,7 +43,7 @@ decimal/symbols@1, de, 196B, -> ast
 decimal/symbols@1, de-AT, 197B, -> af
 decimal/symbols@1, de-CH, 198B, 3d32cccea80b3e04
 decimal/symbols@1, de-LI, 198B, -> de-CH
-decimal/symbols@1, doi-u-nu-deva, 196B, -> bgc
+decimal/symbols@1, doi/deva, 196B, -> bgc
 decimal/symbols@1, dsb, 196B, -> ast
 decimal/symbols@1, el, 196B, -> ast
 decimal/symbols@1, en-AT, 196B, -> ast
@@ -73,13 +53,13 @@ decimal/symbols@1, en-DE, 196B, -> ast
 decimal/symbols@1, en-DK, 196B, -> ast
 decimal/symbols@1, en-FI, 197B, -> af
 decimal/symbols@1, en-ID, 196B, -> ast
-decimal/symbols@1, en-IN, 196B, -> as-u-nu-latn
+decimal/symbols@1, en-IN, 196B, -> as/latn
 decimal/symbols@1, en-NL, 196B, -> ast
 decimal/symbols@1, en-SE, 197B, -> af
 decimal/symbols@1, en-SI, 196B, -> ast
 decimal/symbols@1, eo, 197B, -> af
 decimal/symbols@1, es, 196B, 2c22710b06ef69b6
-decimal/symbols@1, es-419, 196B, -> bgc-u-nu-latn
+decimal/symbols@1, es-419, 196B, -> bgc/latn
 decimal/symbols@1, es-AR, 196B, -> ast
 decimal/symbols@1, es-BO, 196B, -> ast
 decimal/symbols@1, es-CL, 196B, -> ast
@@ -92,21 +72,9 @@ decimal/symbols@1, es-VE, 196B, -> ast
 decimal/symbols@1, et, 199B, 7f5a8b63b2f65e0a
 decimal/symbols@1, eu, 198B, a15eb3eb99d7e82f
 decimal/symbols@1, fa, 206B, a0fa297e66c61095
-decimal/symbols@1, fa-AF-u-nu-latn, 204B, 1e71e4af6837906a
-decimal/symbols@1, fa-u-nu-latn, 204B, -> fa-AF-u-nu-latn
+decimal/symbols@1, fa/latn, 204B, 1e71e4af6837906a
 decimal/symbols@1, ff-Adlm, 198B, 6616be7d2ee463e2
-decimal/symbols@1, ff-Adlm-BF-u-nu-latn, 198B, e1fea4ebad753241
-decimal/symbols@1, ff-Adlm-CM-u-nu-latn, 198B, -> ff-Adlm-BF-u-nu-latn
-decimal/symbols@1, ff-Adlm-GH-u-nu-latn, 198B, -> ff-Adlm-BF-u-nu-latn
-decimal/symbols@1, ff-Adlm-GM-u-nu-latn, 198B, -> ff-Adlm-BF-u-nu-latn
-decimal/symbols@1, ff-Adlm-GW-u-nu-latn, 198B, -> ff-Adlm-BF-u-nu-latn
-decimal/symbols@1, ff-Adlm-LR-u-nu-latn, 198B, -> ff-Adlm-BF-u-nu-latn
-decimal/symbols@1, ff-Adlm-MR-u-nu-latn, 198B, -> ff-Adlm-BF-u-nu-latn
-decimal/symbols@1, ff-Adlm-NE-u-nu-latn, 198B, -> ff-Adlm-BF-u-nu-latn
-decimal/symbols@1, ff-Adlm-NG-u-nu-latn, 198B, -> ff-Adlm-BF-u-nu-latn
-decimal/symbols@1, ff-Adlm-SL-u-nu-latn, 198B, -> ff-Adlm-BF-u-nu-latn
-decimal/symbols@1, ff-Adlm-SN-u-nu-latn, 198B, -> ff-Adlm-BF-u-nu-latn
-decimal/symbols@1, ff-Adlm-u-nu-latn, 198B, -> ff-Adlm-BF-u-nu-latn
+decimal/symbols@1, ff-Adlm/latn, 198B, e1fea4ebad753241
 decimal/symbols@1, fi, 199B, 90d0f7c945c25099
 decimal/symbols@1, fo, 198B, -> eu
 decimal/symbols@1, fr, 198B, bd076f44d0623175
@@ -115,11 +83,11 @@ decimal/symbols@1, fr-LU, 196B, -> ast
 decimal/symbols@1, fr-MA, 196B, -> ast
 decimal/symbols@1, fy, 196B, -> ast
 decimal/symbols@1, gl, 196B, -> ast
-decimal/symbols@1, gu, 196B, -> as-u-nu-latn
-decimal/symbols@1, gu-u-nu-gujr, 196B, 732c15d0265eb49f
+decimal/symbols@1, gu, 196B, -> as/latn
+decimal/symbols@1, gu/gujr, 196B, 732c15d0265eb49f
 decimal/symbols@1, he, 202B, -> ar-AE
-decimal/symbols@1, hi, 196B, -> as-u-nu-latn
-decimal/symbols@1, hi-u-nu-deva, 196B, -> brx-u-nu-deva
+decimal/symbols@1, hi, 196B, -> as/latn
+decimal/symbols@1, hi/deva, 196B, -> brx/deva
 decimal/symbols@1, hr, 198B, -> eu
 decimal/symbols@1, hsb, 196B, -> ast
 decimal/symbols@1, hu, 197B, -> be
@@ -131,80 +99,78 @@ decimal/symbols@1, is, 196B, -> ast
 decimal/symbols@1, it, 196B, -> ast
 decimal/symbols@1, it-CH, 198B, -> de-CH
 decimal/symbols@1, jv, 196B, -> ast
-decimal/symbols@1, jv-u-nu-java, 196B, c00a347acd69f78e
+decimal/symbols@1, jv/java, 196B, c00a347acd69f78e
 decimal/symbols@1, ka, 197B, -> be
 decimal/symbols@1, kea, 197B, -> af
 decimal/symbols@1, kgp, 196B, -> ast
 decimal/symbols@1, kk, 197B, -> af
-decimal/symbols@1, km-u-nu-khmr, 196B, d371a392c8a49ebd
-decimal/symbols@1, kn-u-nu-knda, 196B, f56a54acfc463e3d
-decimal/symbols@1, kok-u-nu-deva, 196B, -> bgc
+decimal/symbols@1, km/khmr, 196B, d371a392c8a49ebd
+decimal/symbols@1, kn/knda, 196B, f56a54acfc463e3d
+decimal/symbols@1, kok/deva, 196B, -> bgc
 decimal/symbols@1, ks, 210B, ad303d0e62ad991d
-decimal/symbols@1, ks-u-nu-latn, 197B, 5e2dfa25e6dcacef
+decimal/symbols@1, ks/latn, 197B, 5e2dfa25e6dcacef
 decimal/symbols@1, ku, 196B, -> ast
-decimal/symbols@1, kxv, 196B, -> as-u-nu-latn
-decimal/symbols@1, kxv-Deva, 196B, -> as-u-nu-latn
-decimal/symbols@1, kxv-Deva-u-nu-deva, 196B, -> brx-u-nu-deva
-decimal/symbols@1, kxv-Orya, 196B, -> as-u-nu-latn
-decimal/symbols@1, kxv-Orya-u-nu-orya, 196B, b5be2e9987aa0e92
-decimal/symbols@1, kxv-Telu, 196B, -> as-u-nu-latn
-decimal/symbols@1, kxv-Telu-u-nu-telu, 196B, c56cc668c8df4720
+decimal/symbols@1, kxv, 196B, -> as/latn
+decimal/symbols@1, kxv-Deva, 196B, -> as/latn
+decimal/symbols@1, kxv-Deva/deva, 196B, -> brx/deva
+decimal/symbols@1, kxv-Orya, 196B, -> as/latn
+decimal/symbols@1, kxv-Orya/orya, 196B, b5be2e9987aa0e92
+decimal/symbols@1, kxv-Telu, 196B, -> as/latn
+decimal/symbols@1, kxv-Telu/telu, 196B, c56cc668c8df4720
 decimal/symbols@1, ky, 197B, -> af
 decimal/symbols@1, lb, 196B, -> ast
 decimal/symbols@1, lij, 196B, -> ast
 decimal/symbols@1, lmo, 198B, b356ba779def73df
 decimal/symbols@1, lo, 196B, -> ast
-decimal/symbols@1, lo-u-nu-laoo, 196B, b75d40e037c05312
+decimal/symbols@1, lo/laoo, 196B, b75d40e037c05312
 decimal/symbols@1, lt, 199B, -> fi
 decimal/symbols@1, lv, 197B, -> be
-decimal/symbols@1, mai-u-nu-deva, 196B, -> bgc
+decimal/symbols@1, mai/deva, 196B, -> bgc
 decimal/symbols@1, mk, 196B, -> ast
-decimal/symbols@1, ml, 196B, -> as-u-nu-latn
-decimal/symbols@1, ml-u-nu-mlym, 196B, 5a127888d0a6d8ec
+decimal/symbols@1, ml, 196B, -> as/latn
+decimal/symbols@1, ml/mlym, 196B, 5a127888d0a6d8ec
 decimal/symbols@1, mni, 196B, 315b942fbd3f19d5
-decimal/symbols@1, mni-u-nu-latn, 196B, -> bgc-u-nu-latn
-decimal/symbols@1, mr, 196B, -> brx-u-nu-deva
-decimal/symbols@1, mr-u-nu-latn, 196B, -> as-u-nu-latn
+decimal/symbols@1, mni/latn, 196B, -> bgc/latn
+decimal/symbols@1, mr, 196B, -> brx/deva
+decimal/symbols@1, mr/latn, 196B, -> as/latn
 decimal/symbols@1, ms-BN, 196B, -> ast
 decimal/symbols@1, ms-ID, 196B, -> ast
 decimal/symbols@1, my, 196B, dec50a433ec6e07a
-decimal/symbols@1, my-u-nu-latn, 196B, -> bgc-u-nu-latn
+decimal/symbols@1, my/latn, 196B, -> bgc/latn
 decimal/symbols@1, nds, 196B, -> ast
-decimal/symbols@1, ne, 196B, -> brx-u-nu-deva
-decimal/symbols@1, ne-IN-u-nu-latn, 196B, -> as-u-nu-latn
-decimal/symbols@1, ne-u-nu-latn, 196B, -> as-u-nu-latn
+decimal/symbols@1, ne, 196B, -> brx/deva
+decimal/symbols@1, ne/latn, 196B, -> as/latn
 decimal/symbols@1, nl, 196B, -> ast
 decimal/symbols@1, no, 199B, -> fi
 decimal/symbols@1, nqo, 197B, 3ad10eb5c875f27f
-decimal/symbols@1, nqo-u-nu-latn, 197B, -> ks-u-nu-latn
+decimal/symbols@1, nqo/latn, 197B, -> ks/latn
 decimal/symbols@1, oc, 197B, -> af
-decimal/symbols@1, or, 196B, -> as-u-nu-latn
-decimal/symbols@1, or-u-nu-orya, 196B, -> kxv-Orya-u-nu-orya
-decimal/symbols@1, pa, 196B, -> as-u-nu-latn
-decimal/symbols@1, pa-u-nu-guru, 196B, a9bbb8e9c2e4c0a8
+decimal/symbols@1, or, 196B, -> as/latn
+decimal/symbols@1, or/orya, 196B, -> kxv-Orya/orya
+decimal/symbols@1, pa, 196B, -> as/latn
+decimal/symbols@1, pa/guru, 196B, a9bbb8e9c2e4c0a8
 decimal/symbols@1, pl, 197B, -> be
 decimal/symbols@1, prg, 197B, -> af
 decimal/symbols@1, ps, 210B, -> ks
-decimal/symbols@1, ps-PK-u-nu-latn, 204B, 20eefabce09a4818
-decimal/symbols@1, ps-u-nu-latn, 204B, -> ps-PK-u-nu-latn
+decimal/symbols@1, ps/latn, 204B, 20eefabce09a4818
 decimal/symbols@1, pt, 196B, -> ast
 decimal/symbols@1, pt-AO, 197B, -> af
 decimal/symbols@1, pt-PT, 197B, -> be
 decimal/symbols@1, qu-BO, 196B, -> ast
 decimal/symbols@1, raj, 196B, -> bgc
-decimal/symbols@1, raj-u-nu-latn, 196B, -> bgc-u-nu-latn
+decimal/symbols@1, raj/latn, 196B, -> bgc/latn
 decimal/symbols@1, rm, 200B, 45ca5c6d1c50c098
 decimal/symbols@1, ro, 196B, -> ast
 decimal/symbols@1, ru, 197B, -> af
 decimal/symbols@1, ru-UA, 197B, -> be
-decimal/symbols@1, sa, 196B, -> brx-u-nu-deva
-decimal/symbols@1, sa-u-nu-latn, 196B, -> as-u-nu-latn
+decimal/symbols@1, sa, 196B, -> brx/deva
+decimal/symbols@1, sa/latn, 196B, -> as/latn
 decimal/symbols@1, sah, 197B, -> af
 decimal/symbols@1, sat, 196B, 811b1d8c42386f5
-decimal/symbols@1, sat-u-nu-latn, 196B, -> bgc-u-nu-latn
+decimal/symbols@1, sat/latn, 196B, -> bgc/latn
 decimal/symbols@1, sc, 196B, -> ast
 decimal/symbols@1, sd, 202B, -> ar
-decimal/symbols@1, sd-u-nu-latn, 196B, -> bgc-u-nu-latn
+decimal/symbols@1, sd/latn, 196B, -> bgc/latn
 decimal/symbols@1, sk, 197B, -> af
 decimal/symbols@1, sl, 198B, -> eu
 decimal/symbols@1, sq, 197B, -> be
@@ -214,27 +180,26 @@ decimal/symbols@1, su, 196B, -> ast
 decimal/symbols@1, sv, 199B, -> fi
 decimal/symbols@1, sw-CD, 196B, -> ast
 decimal/symbols@1, szl, 197B, -> af
-decimal/symbols@1, ta, 196B, -> as-u-nu-latn
-decimal/symbols@1, ta-LK-u-nu-tamldec, 196B, 1b13bb3a71cbed6d
-decimal/symbols@1, ta-MY, 196B, -> bgc-u-nu-latn
-decimal/symbols@1, ta-MY-u-nu-tamldec, 196B, 2cbb0cd77497e017
-decimal/symbols@1, ta-SG, 196B, -> bgc-u-nu-latn
-decimal/symbols@1, ta-SG-u-nu-tamldec, 196B, -> ta-MY-u-nu-tamldec
-decimal/symbols@1, ta-u-nu-tamldec, 196B, -> ta-LK-u-nu-tamldec
-decimal/symbols@1, te, 196B, -> as-u-nu-latn
-decimal/symbols@1, te-u-nu-telu, 196B, 3dbd189bc0e1b0f5
+decimal/symbols@1, ta, 196B, -> as/latn
+decimal/symbols@1, ta-MY, 196B, -> bgc/latn
+decimal/symbols@1, ta-MY/tamldec, 196B, 2cbb0cd77497e017
+decimal/symbols@1, ta-SG, 196B, -> bgc/latn
+decimal/symbols@1, ta-SG/tamldec, 196B, -> ta-MY/tamldec
+decimal/symbols@1, ta/tamldec, 196B, 1b13bb3a71cbed6d
+decimal/symbols@1, te, 196B, -> as/latn
+decimal/symbols@1, te/telu, 196B, 3dbd189bc0e1b0f5
 decimal/symbols@1, tg, 197B, -> af
-decimal/symbols@1, th-u-nu-thai, 196B, db1d187d375ccfd2
+decimal/symbols@1, th/thai, 196B, db1d187d375ccfd2
 decimal/symbols@1, tk, 197B, -> af
 decimal/symbols@1, tr, 196B, -> ast
 decimal/symbols@1, tt, 197B, -> af
-decimal/symbols@1, ug-u-nu-arabext, 210B, -> ks
+decimal/symbols@1, ug/arabext, 210B, -> ks
 decimal/symbols@1, uk, 197B, -> af
-decimal/symbols@1, und, 196B, -> bgc-u-nu-latn
+decimal/symbols@1, und, 196B, -> bgc/latn
 decimal/symbols@1, ur, 202B, -> ar-AE
 decimal/symbols@1, ur-IN, 210B, -> ks
-decimal/symbols@1, ur-IN-u-nu-latn, 202B, -> ar-AE
-decimal/symbols@1, ur-u-nu-arabext, 210B, -> ks
+decimal/symbols@1, ur-IN/latn, 202B, -> ar-AE
+decimal/symbols@1, ur/arabext, 210B, -> ks
 decimal/symbols@1, uz, 197B, -> af
 decimal/symbols@1, uz-Cyrl, 197B, -> af
 decimal/symbols@1, vec, 198B, -> fr
@@ -242,13 +207,10 @@ decimal/symbols@1, vi, 196B, -> ast
 decimal/symbols@1, vmw, 196B, -> ast
 decimal/symbols@1, wo, 196B, -> ast
 decimal/symbols@1, xh, 197B, 900c37a0e41f6259
-decimal/symbols@1, xnr, 196B, -> as-u-nu-latn
-decimal/symbols@1, xnr-u-nu-deva, 196B, -> brx-u-nu-deva
+decimal/symbols@1, xnr, 196B, -> as/latn
+decimal/symbols@1, xnr/deva, 196B, -> brx/deva
 decimal/symbols@1, yrl, 196B, -> ast
-decimal/symbols@1, yue-Hans-u-nu-hanidec, 196B, 61528a85cbe1449
-decimal/symbols@1, yue-u-nu-hanidec, 196B, -> yue-Hans-u-nu-hanidec
-decimal/symbols@1, zh-HK-u-nu-hanidec, 196B, -> yue-Hans-u-nu-hanidec
-decimal/symbols@1, zh-Hant-u-nu-hanidec, 196B, -> yue-Hans-u-nu-hanidec
-decimal/symbols@1, zh-MO-u-nu-hanidec, 196B, -> yue-Hans-u-nu-hanidec
-decimal/symbols@1, zh-SG-u-nu-hanidec, 196B, -> yue-Hans-u-nu-hanidec
-decimal/symbols@1, zh-u-nu-hanidec, 196B, -> yue-Hans-u-nu-hanidec
+decimal/symbols@1, yue-Hans/hanidec, 196B, 61528a85cbe1449
+decimal/symbols@1, yue/hanidec, 196B, -> yue-Hans/hanidec
+decimal/symbols@1, zh-Hant/hanidec, 196B, -> yue-Hans/hanidec
+decimal/symbols@1, zh/hanidec, 196B, -> yue-Hans/hanidec

@@ -1,11 +1,13 @@
 {
   "index_info": {
     "has_long": true,
-    "has_medium": false,
-    "has_plurals": false
+    "has_medium": true,
+    "has_plurals": false,
+    "has_eras": false
   },
   "patterns": [
-    "GGGG MMMM y",
-    "GGG MMM y"
+    "GGG MMMM y",
+    "GGG MMM y",
+    "GGGGG MMM y"
   ]
 }

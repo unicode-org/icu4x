@@ -6,6 +6,10 @@
             "options": {
                 "components": {
                     "year": "two-digit"
+                },
+                "semantic": {
+                    "fieldSet": ["year"],
+                    "length": "short"
                 }
             }
         },
@@ -23,6 +27,11 @@
                 "components": {
                     "year": "numeric",
                     "era": "short"
+                },
+                "semantic": {
+                    "fieldSet": ["year"],
+                    "length": "medium",
+                    "eraDisplay": "always"
                 }
             }
         },
@@ -46,6 +55,10 @@
                 "components": {
                     "year": "two-digit-week-of",
                     "week": "numeric-week-of-year"
+                },
+                "semantic": {
+                    "fieldSet": ["year", "weekOfYear"],
+                    "length": "short"
                 }
             }
         },
@@ -83,6 +96,10 @@
                     "year": "numeric",
                     "month": "numeric",
                     "day": "numeric-day-of-month"
+                },
+                "semantic": {
+                    "fieldSet": ["year", "month", "day"],
+                    "length": "short"
                 }
             }
         },
@@ -105,6 +122,10 @@
                     "year": "numeric",
                     "month": "two-digit",
                     "day": "numeric-day-of-month"
+                },
+                "semantic": {
+                    "fieldSet": ["year", "month", "day"],
+                    "length": "short"
                 }
             }
         },
@@ -127,6 +148,10 @@
                     "year": "numeric",
                     "month": "short",
                     "day": "numeric-day-of-month"
+                },
+                "semantic": {
+                    "fieldSet": ["year", "month", "day"],
+                    "length": "medium"
                 }
             }
         },
@@ -149,6 +174,10 @@
                     "year": "numeric",
                     "month": "long",
                     "day": "numeric-day-of-month"
+                },
+                "semantic": {
+                    "fieldSet": ["year", "month", "day"],
+                    "length": "long"
                 }
             }
         },
@@ -171,6 +200,10 @@
                     "year": "numeric",
                     "month": "narrow",
                     "day": "numeric-day-of-month"
+                },
+                "semantic": {
+                    "fieldSet": ["year", "month", "day"],
+                    "length": "short"
                 }
             }
         },

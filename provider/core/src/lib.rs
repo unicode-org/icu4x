@@ -185,9 +185,7 @@ mod fallback;
 
 #[doc(hidden)] // macro use
 pub mod _internal {
-    pub use super::fallback::{
-        LocaleFallbackConfig, LocaleFallbackPriority, LocaleFallbackSupplement,
-    };
+    pub use super::fallback::{LocaleFallbackConfig, LocaleFallbackPriority};
     pub use icu_locale_core as locale_core;
 
     #[cfg(feature = "logging")]

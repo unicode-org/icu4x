@@ -15,7 +15,7 @@ use crate::{
         timezone::parse_date_time_utc,
         Cursor,
     },
-    ParserError, ParserResult,
+    ParseError, ParserResult,
 };
 
 use super::{annotations, records::IxdtfParseRecord};
@@ -112,10 +112,10 @@ pub(crate) fn parse_time_record(cursor: &mut Cursor) -> ParserResult<TimeRecord>
 /// Parse an hour value.
 #[inline]
 pub(crate) fn parse_hour(cursor: &mut Cursor) -> ParserResult<u8> {
-    let first = cursor.next_digit()?.ok_or(ParserError::TimeHour)?;
-    let hour_value = first * 10 + cursor.next_digit()?.ok_or(ParserError::TimeHour)?;
+    let first = cursor.next_digit()?.ok_or(ParseError::TimeHour)?;
+    let hour_value = first * 10 + cursor.next_digit()?.ok_or(ParseError::TimeHour)?;
     if !(0..=23).contains(&hour_value) {
-        return Err(ParserError::TimeHour);
+        return Err(ParseError::TimeHour);
     }
     Ok(hour_value)
 }
@@ -124,9 +124,9 @@ pub(crate) fn parse_hour(cursor: &mut Cursor) -> ParserResult<u8> {
 #[inline]
 pub(crate) fn parse_minute_second(cursor: &mut Cursor, is_second: bool) -> ParserResult<u8> {
     let (valid_range, err) = if is_second {
-        (0..=60, ParserError::TimeSecond)
+        (0..=60, ParseError::TimeSecond)
     } else {
-        (0..=59, ParserError::TimeMinute)
+        (0..=59, ParseError::TimeMinute)
     };
     let first = cursor.next_digit()?.ok_or(err)?;
     let min_sec_value = first * 10 + cursor.next_digit()?.ok_or(err)?;
@@ -146,15 +146,15 @@ pub(crate) fn parse_fraction(cursor: &mut Cursor) -> ParserResult<Option<u32>> {
     if !cursor.check_or(false, is_decimal_separator) {
         return Ok(None);
     }
-    cursor.next_or(ParserError::FractionPart)?;
+    cursor.next_or(ParseError::FractionPart)?;
 
     let mut result = 0;
     let mut fraction_len = 0;
     while cursor.check_or(false, |ch| ch.is_ascii_digit()) {
         if fraction_len > 9 {
-            return Err(ParserError::FractionPart);
+            return Err(ParseError::FractionPart);
         }
-        result = result * 10 + u32::from(cursor.next_digit()?.ok_or(ParserError::FractionPart)?);
+        result = result * 10 + u32::from(cursor.next_digit()?.ok_or(ParseError::FractionPart)?);
         fraction_len += 1;
     }
 
@@ -162,7 +162,7 @@ pub(crate) fn parse_fraction(cursor: &mut Cursor) -> ParserResult<Option<u32>> {
     let result = result
         * 10u32
             .checked_pow(9 - fraction_len)
-            .ok_or(ParserError::ImplAssert)?;
+            .ok_or(ParseError::ImplAssert)?;
 
     Ok(Some(result))
 }

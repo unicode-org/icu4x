@@ -13,7 +13,7 @@ use crate::{
         },
         IxdtfParser,
     },
-    ParserError,
+    ParseError,
 };
 
 #[test]
@@ -80,7 +80,7 @@ fn bad_zoned_date_time() {
     let err = IxdtfParser::from_str(bad_value).parse();
     assert_eq!(
         err,
-        Err(ParserError::InvalidEnd),
+        Err(ParseError::InvalidEnd),
         "Invalid ZonedDateTime parsing: \"{bad_value}\" should fail to parse."
     );
 
@@ -88,7 +88,7 @@ fn bad_zoned_date_time() {
     let err = IxdtfParser::from_str(bad_value).parse();
     assert_eq!(
         err,
-        Err(ParserError::IanaChar),
+        Err(ParseError::IanaChar),
         "Invalid ZonedDateTime parsing: \"{bad_value}\" should fail to parse."
     );
 
@@ -96,7 +96,7 @@ fn bad_zoned_date_time() {
     let err = IxdtfParser::from_str(bad_value).parse();
     assert_eq!(
         err,
-        Err(ParserError::IanaCharPostSeparator),
+        Err(ParseError::IanaCharPostSeparator),
         "Invalid ZonedDateTime parsing: \"{bad_value}\" should fail to parse."
     );
 
@@ -104,7 +104,7 @@ fn bad_zoned_date_time() {
     let err = IxdtfParser::from_str(bad_value).parse();
     assert_eq!(
         err,
-        Err(ParserError::AbruptEnd {
+        Err(ParseError::AbruptEnd {
             location: "IANATimeZoneName"
         }),
         "Invalid ZonedDateTime parsing: \"{bad_value}\" should fail to parse."
@@ -114,7 +114,7 @@ fn bad_zoned_date_time() {
     let err = IxdtfParser::from_str(bad_value).parse();
     assert_eq!(
         err,
-        Err(ParserError::AnnotationKeyLeadingChar),
+        Err(ParseError::AnnotationKeyLeadingChar),
         "Invalid ZonedDateTime parsing: \"{bad_value}\" should fail to parse."
     );
 }
@@ -152,7 +152,7 @@ fn bad_extended_year() {
     let err = IxdtfParser::from_str(bad_year).parse();
     assert_eq!(
         err,
-        Err(ParserError::DateExtendedYear),
+        Err(ParseError::DateExtendedYear),
         "Invalid extended year parsing: \"{bad_year}\" should fail to parse."
     );
 
@@ -160,7 +160,7 @@ fn bad_extended_year() {
     let err = IxdtfParser::from_str(bad_year).parse();
     assert_eq!(
         err,
-        Err(ParserError::DateMonth),
+        Err(ParseError::DateMonth),
         "Invalid year range parsing: \"{bad_year}\" should fail to parse."
     );
 
@@ -168,7 +168,7 @@ fn bad_extended_year() {
     let err = IxdtfParser::from_str(bad_year).parse();
     assert_eq!(
         err,
-        Err(ParserError::InvalidEnd),
+        Err(ParseError::InvalidEnd),
         "Invalid year range parsing: \"{bad_year}\" should fail to parse."
     );
 }
@@ -208,7 +208,7 @@ fn invalid_day_for_month() {
     let err = IxdtfParser::from_str(bad_value).parse();
     assert_eq!(
         err,
-        Err(ParserError::InvalidDayRange),
+        Err(ParseError::InvalidDayRange),
         "Invalid day range parsing: \"{bad_value}\" should fail to parse."
     );
 
@@ -216,7 +216,7 @@ fn invalid_day_for_month() {
     let err = IxdtfParser::from_str(bad_value).parse();
     assert_eq!(
         err,
-        Err(ParserError::InvalidDayRange),
+        Err(ParseError::InvalidDayRange),
         "Invalid day range parsing: \"{bad_value}\" should fail to parse."
     );
 
@@ -224,7 +224,7 @@ fn invalid_day_for_month() {
     let err = IxdtfParser::from_str(bad_value).parse();
     assert_eq!(
         err,
-        Err(ParserError::InvalidDayRange),
+        Err(ParseError::InvalidDayRange),
         "Invalid day range parsing: \"{bad_value}\" should fail to parse."
     );
 
@@ -232,7 +232,7 @@ fn invalid_day_for_month() {
     let err = IxdtfParser::from_str(bad_value).parse();
     assert_eq!(
         err,
-        Err(ParserError::InvalidDayRange),
+        Err(ParseError::InvalidDayRange),
         "Invalid day range parsing: \"{bad_value}\" should fail to parse."
     );
 }
@@ -244,7 +244,7 @@ fn invalid_month() {
     let err = ixdtf.parse();
     assert_eq!(
         err,
-        Err(ParserError::InvalidMonthRange),
+        Err(ParseError::InvalidMonthRange),
         "Invalid month range parsing: \"{bad_value}\" should fail to parse."
     );
 
@@ -253,7 +253,7 @@ fn invalid_month() {
     let err = ixdtf.parse();
     assert_eq!(
         err,
-        Err(ParserError::InvalidMonthRange),
+        Err(ParseError::InvalidMonthRange),
         "Invalid month range parsing: \"{bad_value}\" should fail to parse."
     );
 }
@@ -264,7 +264,7 @@ fn invalid_annotations() {
     let err = IxdtfParser::from_str(bad_value).parse();
     assert_eq!(
         err,
-        Err(ParserError::InvalidEnd),
+        Err(ParseError::InvalidEnd),
         "Invalid annotation parsing: \"{bad_value}\" should fail to parse."
     );
 
@@ -272,7 +272,7 @@ fn invalid_annotations() {
     let err = IxdtfParser::from_str(bad_value).parse();
     assert_eq!(
         err,
-        Err(ParserError::AnnotationValueChar),
+        Err(ParseError::AnnotationValueChar),
         "Invalid annotation parsing: \"{bad_value}\" should fail to parse."
     );
 
@@ -280,7 +280,7 @@ fn invalid_annotations() {
     let err = IxdtfParser::from_str(bad_value).parse();
     assert_eq!(
         err,
-        Err(ParserError::InvalidAnnotation),
+        Err(ParseError::InvalidAnnotation),
         "Invalid annotation parsing: \"{bad_value}\" should fail to parse."
     );
 
@@ -288,7 +288,7 @@ fn invalid_annotations() {
     let err = IxdtfParser::from_str(bad_value).parse();
     assert_eq!(
         err,
-        Err(ParserError::UnrecognizedCritical),
+        Err(ParseError::UnrecognizedCritical),
         "Invalid annotation parsing: \"{bad_value}\" should fail to parse."
     );
 }
@@ -299,7 +299,7 @@ fn invalid_calendar_annotations() {
     let err = IxdtfParser::from_str(bad_value).parse();
     assert_eq!(
         err,
-        Err(ParserError::CriticalDuplicateCalendar),
+        Err(ParseError::CriticalDuplicateCalendar),
         "Invalid annotation parsing: \"{bad_value}\" should fail to parse."
     );
 
@@ -307,7 +307,7 @@ fn invalid_calendar_annotations() {
     let err = IxdtfParser::from_str(bad_value).parse();
     assert_eq!(
         err,
-        Err(ParserError::CriticalDuplicateCalendar),
+        Err(ParseError::CriticalDuplicateCalendar),
         "Invalid annotation parsing: \"{bad_value}\" should fail to parse."
     );
 }
@@ -425,15 +425,15 @@ fn invalid_year_month() {
     // Valid AnnotatedDateTime, but not a valid AnnotatedYearMonth.
     let bad_value = "+002020-11T12:28:32[!u-ca=iso8601]";
     let err = IxdtfParser::from_str(bad_value).parse_year_month();
-    assert_eq!(err, Err(ParserError::InvalidEnd));
+    assert_eq!(err, Err(ParseError::InvalidEnd));
 
     let bad_value = "-202011[!u-ca=iso8601]";
     let err = IxdtfParser::from_str(bad_value).parse_year_month();
-    assert_eq!(err, Err(ParserError::DateMonth));
+    assert_eq!(err, Err(ParseError::DateMonth));
 
     let bad_value = "-00202011Z[Europe/Berlin]";
     let err = IxdtfParser::from_str(bad_value).parse_year_month();
-    assert_eq!(err, Err(ParserError::InvalidEnd));
+    assert_eq!(err, Err(ParseError::InvalidEnd));
 }
 
 #[test]
@@ -454,7 +454,7 @@ fn temporal_month_day() {
 fn invalid_month_day() {
     let bad_value = "-11-07";
     let err = IxdtfParser::from_str(bad_value).parse_month_day();
-    assert_eq!(err, Err(ParserError::MonthDayHyphen))
+    assert_eq!(err, Err(ParseError::MonthDayHyphen))
 }
 
 #[test]
@@ -483,7 +483,7 @@ fn invalid_time() {
     let err = IxdtfParser::from_str(bad_value).parse_time();
     assert_eq!(
         err,
-        Err(ParserError::InvalidEnd),
+        Err(ParseError::InvalidEnd),
         "Invalid time parsing: \"{bad_value}\" should fail to parse."
     );
 
@@ -491,7 +491,7 @@ fn invalid_time() {
     let err = IxdtfParser::from_str(bad_value).parse_time();
     assert_eq!(
         err,
-        Err(ParserError::TimeHour),
+        Err(ParseError::TimeHour),
         "Invalid time parsing: \"{bad_value}\" should fail to parse."
     );
 
@@ -500,7 +500,7 @@ fn invalid_time() {
     let err = IxdtfParser::from_str(bad_value).parse_time();
     assert_eq!(
         err,
-        Err(ParserError::InvalidEnd),
+        Err(ParseError::InvalidEnd),
         "Invalid time parsing: \"{bad_value}\" should fail to parse."
     );
 
@@ -508,7 +508,7 @@ fn invalid_time() {
     let err = IxdtfParser::from_str(bad_value).parse_time();
     assert_eq!(
         err,
-        Err(ParserError::InvalidEnd),
+        Err(ParseError::InvalidEnd),
         "Invalid time parsing: \"{bad_value}\" should fail to parse."
     );
 
@@ -516,7 +516,7 @@ fn invalid_time() {
     let err = IxdtfParser::from_str(bad_value).parse_time();
     assert_eq!(
         err,
-        Err(ParserError::TimeSeparator),
+        Err(ParseError::TimeSeparator),
         "Invalid time parsing: \"{bad_value}\" should fail to parse."
     );
 }
@@ -645,11 +645,11 @@ fn duration_exceeds_range() {
 
     let test = "P1000000000000000000000000000000000000000YT1H";
     let err = IsoDurationParser::from_str(test).parse();
-    assert_eq!(err, Err(ParserError::DurationValueExceededRange));
+    assert_eq!(err, Err(ParseError::DurationValueExceededRange));
 
     let test = "P1YT1000000000000000000000000000000000000000H";
     let err = IsoDurationParser::from_str(test).parse();
-    assert_eq!(err, Err(ParserError::DurationValueExceededRange));
+    assert_eq!(err, Err(ParseError::DurationValueExceededRange));
 }
 
 #[test]
@@ -850,52 +850,52 @@ fn test_correct_datetime() {
 fn test_bad_date() {
     let dt = "-2022-06-05";
     let err = IxdtfParser::from_str(dt).parse();
-    assert_eq!(err, Err(ParserError::DateExtendedYear));
+    assert_eq!(err, Err(ParseError::DateExtendedYear));
 
     let dt = "!2022-06-05";
     let err = IxdtfParser::from_str(dt).parse();
-    assert_eq!(err, Err(ParserError::DateYear));
+    assert_eq!(err, Err(ParseError::DateYear));
 
     let dt = "20-06-05";
     let err = IxdtfParser::from_str(dt).parse();
-    assert_eq!(err, Err(ParserError::DateYear));
+    assert_eq!(err, Err(ParseError::DateYear));
 
     let dt = "2022-0605";
     let err = IxdtfParser::from_str(dt).parse();
-    assert_eq!(err, Err(ParserError::DateSeparator));
+    assert_eq!(err, Err(ParseError::DateSeparator));
 
     let dt = "202206-05";
     let err = IxdtfParser::from_str(dt).parse();
-    assert_eq!(err, Err(ParserError::DateSeparator));
+    assert_eq!(err, Err(ParseError::DateSeparator));
 
     let dt = "2022-06-05e";
     let err = IxdtfParser::from_str(dt).parse();
-    assert_eq!(err, Err(ParserError::InvalidEnd));
+    assert_eq!(err, Err(ParseError::InvalidEnd));
 }
 
 #[test]
 fn test_bad_time_spec_separator() {
     let dt = "2022-06-05  043422.000";
     let err = IxdtfParser::from_str(dt).parse();
-    assert_eq!(err, Err(ParserError::TimeHour));
+    assert_eq!(err, Err(ParseError::TimeHour));
 
     let dt = "2022-06-05 04:3422.000";
     let err = IxdtfParser::from_str(dt).parse();
-    assert_eq!(err, Err(ParserError::TimeSeparator));
+    assert_eq!(err, Err(ParseError::TimeSeparator));
 
     let dt = "2022-06-05 0434:22.000";
     let err = IxdtfParser::from_str(dt).parse();
-    assert_eq!(err, Err(ParserError::TimeSeparator));
+    assert_eq!(err, Err(ParseError::TimeSeparator));
 
     let dt = "2022-06-05 03422.000";
     let err = IxdtfParser::from_str(dt).parse();
-    assert_eq!(err, Err(ParserError::TimeSecond));
+    assert_eq!(err, Err(ParseError::TimeSecond));
 
     let dt = "2022-06-05 3:42:22.000";
     let err = IxdtfParser::from_str(dt).parse();
-    assert_eq!(err, Err(ParserError::TimeHour));
+    assert_eq!(err, Err(ParseError::TimeHour));
 
     let dt = "2022-06-05 03:42:22;000";
     let err = IxdtfParser::from_str(dt).parse();
-    assert_eq!(err, Err(ParserError::InvalidEnd));
+    assert_eq!(err, Err(ParseError::InvalidEnd));
 }

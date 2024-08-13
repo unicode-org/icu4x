@@ -11,10 +11,7 @@ use icu::datetime::pattern;
 use icu::datetime::provider::neo::marker_attrs::GlueType;
 use icu::datetime::provider::neo::marker_attrs::{self, Context, Length, PatternLength};
 use icu::datetime::provider::neo::*;
-use icu::locale::{
-    extensions::unicode::{value, Value},
-    LanguageIdentifier,
-};
+use icu::locale::extensions::unicode::{value, Value};
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::collections::{BTreeMap, HashSet};
@@ -79,7 +76,7 @@ const GLUE_PATTERN_KEY_LENGTHS: &[&DataMarkerAttributes] = &[
 impl SourceDataProvider {
     fn load_calendar_dates(
         &self,
-        langid: &LanguageIdentifier,
+        locale: &DataLocale,
         calendar: &Value,
     ) -> Result<&ca::Dates, DataError> {
         let cldr_cal = supported_cals()
@@ -89,7 +86,7 @@ impl SourceDataProvider {
         let resource: &ca::Resource = self
             .cldr()?
             .dates(cldr_cal)
-            .read_and_parse(langid, &format!("ca-{}.json", cldr_cal))?;
+            .read_and_parse(locale, &format!("ca-{}.json", cldr_cal))?;
 
         let data = resource
             .main
@@ -105,15 +102,14 @@ impl SourceDataProvider {
         &self,
         req: DataRequest,
         calendar: &Value,
-        conversion: impl FnOnce(DataIdentifierBorrowed, &ca::Dates) -> Result<M::Yokeable, DataError>,
+        conversion: impl FnOnce(DataIdentifierBorrowed, &ca::Dates) -> Result<M::DataStruct, DataError>,
     ) -> Result<DataResponse<M>, DataError>
     where
         Self: IterableDataProviderCached<M>,
     {
         self.check_req::<M>(req)?;
-        let langid = req.id.locale.get_langid();
-        let data = self.load_calendar_dates(&langid, calendar)?;
 
+        let data = self.load_calendar_dates(req.id.locale, calendar)?;
         let data = conversion(req.id, data)?;
 
         #[allow(clippy::redundant_closure_call)]
@@ -129,12 +125,12 @@ impl SourceDataProvider {
         calendar: Value,
         conversion: impl FnOnce(
             &SourceDataProvider,
-            &LanguageIdentifier,
+            &DataLocale,
             &ca::Dates,
             &Value,
             Context,
             Length,
-        ) -> Result<M::Yokeable, DataError>,
+        ) -> Result<M::DataStruct, DataError>,
     ) -> Result<DataResponse<M>, DataError>
     where
         Self: IterableDataProviderCached<M>,
@@ -148,14 +144,7 @@ impl SourceDataProvider {
                     id.marker_attributes.as_str()
                 )
             };
-            conversion(
-                self,
-                &id.locale.get_langid(),
-                data,
-                &calendar,
-                context,
-                length,
-            )
+            conversion(self, id.locale, data, &calendar, context, length)
         })
     }
 
@@ -163,7 +152,7 @@ impl SourceDataProvider {
         &self,
         req: DataRequest,
         calendar: Value,
-        conversion: impl FnOnce(&ca::Dates, PatternLength, GlueType) -> Result<M::Yokeable, DataError>,
+        conversion: impl FnOnce(&ca::Dates, PatternLength, GlueType) -> Result<M::DataStruct, DataError>,
     ) -> Result<DataResponse<M>, DataError>
     where
         Self: IterableDataProviderCached<M>,
@@ -192,13 +181,10 @@ impl SourceDataProvider {
         Ok(self
             .cldr()?
             .dates(cldr_cal)
-            .list_langs()?
-            .flat_map(|lid| {
+            .list_locales()?
+            .flat_map(|locale| {
                 keylengths.iter().map(move |&length| {
-                    DataIdentifierCow::from_borrowed_and_owned(
-                        length,
-                        DataLocale::from(lid.clone()),
-                    )
+                    DataIdentifierCow::from_borrowed_and_owned(length, locale.clone())
                 })
             })
             .collect())
@@ -207,7 +193,7 @@ impl SourceDataProvider {
 
 fn weekday_convert(
     _datagen: &SourceDataProvider,
-    _langid: &LanguageIdentifier,
+    _locale: &DataLocale,
     data: &ca::Dates,
     _calendar: &Value,
     context: Context,
@@ -232,7 +218,7 @@ fn weekday_convert(
 
 fn dayperiods_convert(
     _datagen: &SourceDataProvider,
-    _langid: &LanguageIdentifier,
+    _locale: &DataLocale,
     data: &ca::Dates,
     _calendar: &Value,
     context: Context,
@@ -259,7 +245,7 @@ fn dayperiods_convert(
 
 fn eras_convert(
     datagen: &SourceDataProvider,
-    langid: &LanguageIdentifier,
+    locale: &DataLocale,
     eras: &ca::Eras,
     calendar: &Value,
     length: Length,
@@ -277,7 +263,7 @@ fn eras_convert(
         let ethioaa: &ca::Resource = datagen
             .cldr()?
             .dates("ethiopic")
-            .read_and_parse(langid, "ca-ethiopic-amete-alem.json")?;
+            .read_and_parse(locale, "ca-ethiopic-amete-alem.json")?;
 
         let ethioaa_data = ethioaa
             .main
@@ -310,7 +296,7 @@ fn eras_convert(
         let greg: &ca::Resource = datagen
             .cldr()?
             .dates("gregorian")
-            .read_and_parse(langid, "ca-gregorian.json")?;
+            .read_and_parse(locale, "ca-gregorian.json")?;
 
         let greg_data = greg
             .main
@@ -358,7 +344,7 @@ fn eras_convert(
                 panic!("Unknown japanese era number {cldr}");
             }
         } else {
-            panic!("Did not find era data for era {code} (#{cldr}) for {calendar} and {langid}");
+            panic!("Did not find era data for era {code} (#{cldr}) for {calendar} and {locale}");
         }
     }
 
@@ -371,7 +357,7 @@ fn eras_convert(
 }
 fn years_convert(
     datagen: &SourceDataProvider,
-    langid: &LanguageIdentifier,
+    locale: &DataLocale,
     data: &ca::Dates,
     calendar: &Value,
     context: Context,
@@ -384,7 +370,7 @@ fn years_convert(
     );
 
     if let Some(ref eras) = data.eras {
-        eras_convert(datagen, langid, eras, calendar, length)
+        eras_convert(datagen, locale, eras, calendar, length)
     } else if let Some(years) = data
         .cyclic_name_sets
         .as_ref()
@@ -394,14 +380,14 @@ fn years_convert(
 
         let years: Vec<_> = years.iter().enumerate().map(|(index, (key, value))| {
             if *key as usize != index + 1 {
-                panic!("Calendar {calendar} in locale {langid} missing cyclic year name for index {index}");
+                panic!("Calendar {calendar} in locale {locale} missing cyclic year name for index {index}");
             }
             &**value
         }).collect();
         Ok(YearNamesV1::Cyclic((&years).into()))
     } else {
         panic!(
-            "Calendar {calendar} in locale {langid} has neither eras nor cyclicNameSets for years"
+            "Calendar {calendar} in locale {locale} has neither eras nor cyclicNameSets for years"
         )
     }
 }
@@ -433,7 +419,7 @@ fn calendar_months(cal: &Value) -> (usize, bool) {
 
 fn months_convert(
     _datagen: &SourceDataProvider,
-    langid: &LanguageIdentifier,
+    locale: &DataLocale,
     data: &ca::Dates,
     calendar: &Value,
     context: Context,
@@ -446,12 +432,12 @@ fn months_convert(
             "numeric months only found for Context::Format"
         );
         let Some(ref patterns) = data.month_patterns else {
-            panic!("No month_patterns found but numeric months were requested for {calendar} with {langid}");
+            panic!("No month_patterns found but numeric months were requested for {calendar} with {locale}");
         };
         let pattern = patterns.get_symbols(context, length);
         let leap = &pattern.leap;
         let Some(index) = leap.find("{0}") else {
-            panic!("Calendar {calendar} for {langid} has leap pattern {leap}, which does not contain {{0}} placeholder");
+            panic!("Calendar {calendar} for {locale} has leap pattern {leap}, which does not contain {{0}} placeholder");
         };
         let string = leap.replace("{0}", "");
         let pattern = SimpleSubstitutionPattern {

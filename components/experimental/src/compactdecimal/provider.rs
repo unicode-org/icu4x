@@ -52,16 +52,8 @@ pub use crate::provider::Baked;
 /// Finally, the pattern indicating noncompact notation for the first few powers
 /// of ten is omitted; that is, there is an implicit (1, other) ↦ 0.
 #[icu_provider::data_struct(
-    marker(
-        LongCompactDecimalFormatDataV1Marker,
-        "compactdecimal/long@1",
-        extension_key = "nu"
-    ),
-    marker(
-        ShortCompactDecimalFormatDataV1Marker,
-        "compactdecimal/short@1",
-        extension_key = "nu"
-    )
+    LongCompactDecimalFormatDataV1Marker = "compactdecimal/long@1",
+    ShortCompactDecimalFormatDataV1Marker = "compactdecimal/short@1"
 )]
 #[derive(Debug, Clone, Default, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -161,5 +153,5 @@ pub struct Pattern<'data> {
 pub(crate) struct ErasedCompactDecimalFormatDataV1Marker;
 
 impl DynamicDataMarker for ErasedCompactDecimalFormatDataV1Marker {
-    type Yokeable = CompactDecimalPatternDataV1<'static>;
+    type DataStruct = CompactDecimalPatternDataV1<'static>;
 }

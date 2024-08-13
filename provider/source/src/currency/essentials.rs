@@ -16,7 +16,6 @@ use std::collections::BTreeMap;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::str::FromStr;
-use tinystr::tinystr;
 use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::VarZeroVec;
 use zerovec::ZeroMap;
@@ -82,17 +81,16 @@ impl DataProvider<CurrencyEssentialsV1Marker> for SourceDataProvider {
         req: DataRequest,
     ) -> Result<DataResponse<CurrencyEssentialsV1Marker>, DataError> {
         self.check_req::<CurrencyEssentialsV1Marker>(req)?;
-        let langid = req.id.locale.get_langid();
 
         let currencies_resource: &cldr_serde::currencies::data::Resource =
             self.cldr()?
                 .numbers()
-                .read_and_parse(&langid, "currencies.json")?;
+                .read_and_parse(req.id.locale, "currencies.json")?;
 
         let numbers_resource: &cldr_serde::numbers::Resource = self
             .cldr()?
             .numbers()
-            .read_and_parse(&langid, "numbers.json")?;
+            .read_and_parse(req.id.locale, "numbers.json")?;
 
         let result = extract_currency_essentials(self, currencies_resource, numbers_resource);
 
@@ -108,8 +106,8 @@ impl IterableDataProviderCached<CurrencyEssentialsV1Marker> for SourceDataProvid
         Ok(self
             .cldr()?
             .numbers()
-            .list_langs()?
-            .map(|l| DataIdentifierCow::from_locale(DataLocale::from(l)))
+            .list_locales()?
+            .map(DataIdentifierCow::from_locale)
             .collect())
     }
 }
@@ -128,7 +126,7 @@ fn extract_currency_essentials<'data>(
         .numbers
         .numsys_data
         .currency_patterns
-        .get(&tinystr!(8, "latn"))
+        .get("latn")
         .ok_or_else(|| DataError::custom("Could not find the standard pattern"))?;
 
     let standard = &currency_formats.standard;
@@ -308,6 +306,7 @@ fn extract_currency_essentials<'data>(
 
 #[test]
 fn test_basic() {
+    use tinystr::tinystr;
     fn get_placeholders_of_currency(
         iso_code: UnvalidatedTinyAsciiStr<3>,
         locale: &DataResponse<CurrencyEssentialsV1Marker>,
