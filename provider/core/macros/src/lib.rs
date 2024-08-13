@@ -334,7 +334,7 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
                     _ => panic!("Invalid value for fallback_by"),
                 }
             } else {
-                quote! {icu_provider::_internal::LocaleFallbackPriority::const_default()}
+                quote! {icu_provider::_internal::LocaleFallbackPriority::default()}
             };
             let attributes_domain_setter = if let Some(attributes_domain_lit) = attributes_domain {
                 quote! { info.attributes_domain = #attributes_domain_lit; }

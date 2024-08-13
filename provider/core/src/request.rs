@@ -199,7 +199,7 @@ impl<'a> DataIdentifierCow<'a> {
 
     /// Returns whether this id is equal to the default.
     pub fn is_default(&self) -> bool {
-        self.marker_attributes.is_empty() && self.locale.is_und()
+        self.marker_attributes.is_empty() && self.locale.is_default()
     }
 }
 
@@ -518,12 +518,12 @@ impl DataLocale {
     /// ```
     /// use icu_provider::DataLocale;
     ///
-    /// assert!("und".parse::<DataLocale>().unwrap().is_und());
-    /// assert!(!"de-u-sd-denw".parse::<DataLocale>().unwrap().is_und());
-    /// assert!(!"und-ES".parse::<DataLocale>().unwrap().is_und());
+    /// assert!("und".parse::<DataLocale>().unwrap().is_default());
+    /// assert!(!"de-u-sd-denw".parse::<DataLocale>().unwrap().is_default());
+    /// assert!(!"und-ES".parse::<DataLocale>().unwrap().is_default());
     /// ```
-    pub fn is_und(&self) -> bool {
-        self.language == Language::UND
+    pub fn is_default(&self) -> bool {
+        self.language.is_default()
             && self.script.is_none()
             && self.region.is_none()
             && self.variant.is_none()

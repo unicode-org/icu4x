@@ -147,7 +147,7 @@ use icu::calendar::{Date, Iso};
 use icu::datetime::options::length;
 use icu::datetime::DateFormatter;
 
-let locale = icu::locale::Locale::UND; // to make this example compile
+let locale = icu::locale::Locale::default(); // to make this example compile
 
 /// Helper function to create an ICU4X DateTime for the current local time:
 fn get_current_date() -> Date<Iso> {

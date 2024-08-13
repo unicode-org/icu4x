@@ -118,7 +118,7 @@ impl CldrCache {
     }
 
     fn extended_locale_expander(&self) -> Result<&LocaleExpander, DataError> {
-        use super::locale_canonicalizer::likely_subtags::*;
+        use super::locale::likely_subtags::*;
         self.extended_locale_expander
             .get_or_init(|| {
                 let common_data =
@@ -185,7 +185,7 @@ impl CldrCache {
     /// CLDR sometimes stores locales with default scripts.
     /// Add in the likely script here to make that data reachable.
     fn add_script_extended(&self, locale: &DataLocale) -> Result<Option<DataLocale>, DataError> {
-        if locale.language.is_empty() || locale.script.is_some() {
+        if locale.language.is_default() || locale.script.is_some() {
             return Ok(None);
         }
         let mut new_langid =
@@ -205,7 +205,7 @@ impl CldrCache {
     /// if the script is the default for the language.
     /// Perform that normalization mapping here.
     fn remove_script_extended(&self, locale: &DataLocale) -> Result<Option<DataLocale>, DataError> {
-        if locale.language.is_empty() || locale.script.is_none() {
+        if locale.language.is_default() || locale.script.is_none() {
             return Ok(None);
         }
         let mut langid =
