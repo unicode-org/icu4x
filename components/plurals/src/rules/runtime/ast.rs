@@ -6,7 +6,6 @@ use crate::rules::reference;
 use core::{
     convert::{TryFrom, TryInto},
     fmt, num,
-    str::FromStr,
 };
 use icu_provider::prelude::*;
 use zerovec::{
@@ -259,7 +258,8 @@ impl From<RangeOrValue> for reference::ast::RangeListItem {
     }
 }
 
-impl FromStr for Rule<'_> {
+#[cfg(feature = "datagen")]
+impl core::str::FromStr for Rule<'_> {
     type Err = reference::parser::ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -405,7 +405,12 @@ mod serde {
         where
             E: de::Error,
         {
-            Rule::from_str(rule_string).map_err(|err| {
+            fn from_str(s: &str) -> Result<Rule, reference::parser::ParseError> {
+                let rule = reference::parser::parse(s.as_bytes())?;
+                Rule::try_from(&rule).map_err(|_| reference::parser::ParseError::ValueTooLarge)
+            }
+
+            from_str(rule_string).map_err(|err| {
                 de::Error::invalid_value(
                     de::Unexpected::Other(&format!("{err}")),
                     &"a valid UTS 35 rule string",

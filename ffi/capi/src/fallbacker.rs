@@ -140,7 +140,7 @@ pub mod ffi {
         )]
         pub fn next(&mut self) -> Option<Box<Locale>> {
             let current = self.0.get();
-            if current.is_und() {
+            if current.is_default() {
                 None
             } else {
                 let current = current.clone();

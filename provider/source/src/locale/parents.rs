@@ -6,10 +6,7 @@ use crate::cldr_serde;
 use crate::SourceDataProvider;
 
 use icu::locale::provider::*;
-use icu::locale::{
-    subtags::{Language, Region, Script},
-    LanguageIdentifier,
-};
+use icu::locale::subtags::{Language, Region, Script};
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 use writeable::Writeable;
@@ -42,11 +39,8 @@ impl From<&cldr_serde::parent_locales::Resource> for ParentsV1<'static> {
         let mut parents = BTreeMap::<_, (Language, Option<Script>, Option<Region>)>::new();
 
         for (source, target) in source_data.supplemental.parent_locales.parent_locale.iter() {
-            assert!(!source.language.is_empty());
-            if source.script.is_some()
-                && source.region.is_none()
-                && target == &LanguageIdentifier::UND
-            {
+            assert!(!source.language.is_default());
+            if source.script.is_some() && source.region.is_none() && target.is_default() {
                 // We always fall back from language-script to und
                 continue;
             }
@@ -64,7 +58,7 @@ impl From<&cldr_serde::parent_locales::Resource> for ParentsV1<'static> {
 
 #[test]
 fn test_basic() {
-    use icu::locale::langid;
+    use icu::locale::{langid, LanguageIdentifier};
 
     let provider = SourceDataProvider::new_testing();
 

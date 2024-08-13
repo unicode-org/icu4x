@@ -57,6 +57,8 @@ use crate::{
 ///
 /// ```
 /// use icu::timezone::TimeZoneIdMapper;
+/// use icu::timezone::TimeZoneBcp47Id;
+/// use tinystr::tinystr;
 ///
 /// let mapper = TimeZoneIdMapper::new();
 /// let mapper = mapper.as_borrowed();
@@ -64,19 +66,19 @@ use crate::{
 /// // The IANA zone "Australia/Melbourne" is the BCP-47 zone "aumel":
 /// assert_eq!(
 ///     mapper.iana_to_bcp47("Australia/Melbourne"),
-///     Some("aumel".parse().unwrap())
+///     Some(TimeZoneBcp47Id(tinystr!(8, "aumel")))
 /// );
 ///
 /// // Lookup is ASCII-case-insensitive:
 /// assert_eq!(
 ///     mapper.iana_to_bcp47("australia/melbourne"),
-///     Some("aumel".parse().unwrap())
+///     Some(TimeZoneBcp47Id(tinystr!(8, "aumel")))
 /// );
 ///
 /// // The IANA zone "Australia/Victoria" is an alias:
 /// assert_eq!(
 ///     mapper.iana_to_bcp47("Australia/Victoria"),
-///     Some("aumel".parse().unwrap())
+///     Some(TimeZoneBcp47Id(tinystr!(8, "aumel")))
 /// );
 ///
 /// // We can recover the canonical identifier from the mapper:

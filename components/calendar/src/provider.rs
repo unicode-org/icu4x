@@ -21,7 +21,6 @@ pub use chinese_based::{ChineseCacheV1Marker, DangiCacheV1Marker};
 pub use islamic::{IslamicObservationalCacheV1Marker, IslamicUmmAlQuraCacheV1Marker};
 
 use crate::types::IsoWeekday;
-use core::str::FromStr;
 use icu_provider::prelude::*;
 use tinystr::TinyStr16;
 use zerovec::ZeroVec;
@@ -124,7 +123,8 @@ pub struct JapaneseErasV1<'data> {
     pub dates_to_eras: ZeroVec<'data, (EraStartDate, TinyStr16)>,
 }
 
-impl FromStr for EraStartDate {
+#[cfg(feature = "datagen")]
+impl core::str::FromStr for EraStartDate {
     type Err = ();
     fn from_str(mut s: &str) -> Result<Self, Self::Err> {
         let sign = if let Some(suffix) = s.strip_prefix('-') {
