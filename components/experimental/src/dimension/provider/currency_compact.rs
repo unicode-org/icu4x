@@ -28,9 +28,9 @@ pub struct CurrencyCompactV1<'data> {
     /// NOTE:
     ///       A map keyed on log10 of the CLDR `type` attribute.
     ///       For example:
-    ///         `"1000-count-one": "¤0K"` 
+    ///         `"1000-count-one": "¤0K"`
     ///                 -> key1 = 3, key2 = CompactCount::One, value = "¤0K"
-    ///         `"1000-count-one-alt-alphaNextToNumber": "¤ 0K"` 
+    ///         `"1000-count-one-alt-alphaNextToNumber": "¤ 0K"`
     ///                 -> key1 = 3, key2 = CompactCount::OneAlt, value = "¤ 0K"
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub compact_patterns: ZeroMap2d<'data, i8, CompactCount, str>,
