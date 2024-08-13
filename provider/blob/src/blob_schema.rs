@@ -99,7 +99,7 @@ impl<'data> BlobSchemaV1<'data> {
             .get0(&marker.path.hashed())
             .ok_or(DataErrorKind::MarkerNotFound)
             .and_then(|cursor| {
-                if marker.is_singleton && !req.id.locale.is_und() {
+                if marker.is_singleton && !req.id.locale.is_default() {
                     return Err(DataErrorKind::InvalidRequest);
                 }
                 cursor
@@ -224,7 +224,7 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV2<'data, LocaleVecForm
             .binary_search(&marker.path.hashed())
             .ok()
             .ok_or_else(|| DataErrorKind::MarkerNotFound.with_req(marker, req))?;
-        if marker.is_singleton && !req.id.locale.is_und() {
+        if marker.is_singleton && !req.id.locale.is_default() {
             return Err(DataErrorKind::InvalidRequest.with_req(marker, req));
         }
         let zerotrie = self

@@ -118,7 +118,7 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
             return;
         }
         // 8. Remove language+script
-        debug_assert!(!locale.language.is_empty()); // don't call .step() on und
+        debug_assert!(!locale.language.is_default()); // don't call .step() on und
         locale.script = None;
         locale.language = Language::UND;
     }
@@ -138,7 +138,7 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
             return;
         }
         // 5. Remove language+script
-        if !locale.language.is_empty() || locale.script.is_some() {
+        if !locale.language.is_default() || locale.script.is_some() {
             locale.script = None;
             locale.language = Language::UND;
             self.restore_subdivision_variants(locale);

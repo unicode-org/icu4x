@@ -60,7 +60,7 @@ macro_rules! __impl_aliases_v2_marker {
         #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::locale::provider::AliasesV2Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::locale::provider::AliasesV2Marker>, icu_provider::DataError> {
-                if req.id.locale.is_und() {
+                if req.id.locale.is_default() {
                     Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(Self::SINGLETON_ALIASES_V2_MARKER), metadata: Default::default() })
                 } else {
                     Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::locale::provider::AliasesV2Marker as icu_provider::DataMarker>::INFO, req))
