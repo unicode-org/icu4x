@@ -1,1 +1,2 @@
-dist/*
+dist
+icu_capi.wasm
