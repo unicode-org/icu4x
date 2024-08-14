@@ -111,6 +111,7 @@ icu_provider = { workspace = true }
 icu_provider_adapters = { workspace = true }
 
 tinystr = { workspace = true }
+potential_utf = { workspace = true, features = ["writeable"]}
 writeable = { workspace = true }
 
 # Diplomat

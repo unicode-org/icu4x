@@ -25,13 +25,14 @@ denylist = ["bench"]
 all-features = true
 
 [dependencies]
+databake = { workspace = true, optional = true, features = ["derive"] }
+displaydoc = { workspace = true }
 icu_locale_core = { workspace = true, features = ["zerovec"] }
 icu_provider = { workspace = true, features = ["macros"] }
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 tinystr = { workspace = true, features = ["alloc", "zerovec"] }
+potential_utf = { workspace = true, features = ["zerovec"] }
 zerovec = { workspace = true,  features = ["yoke"] }
-databake = { workspace = true, optional = true, features = ["derive"] }
-displaydoc = { workspace = true }
 
 icu_locale_data = { workspace = true, optional = true }
 
@@ -51,7 +52,7 @@ bench = false  # This option is required for Benchmark CI
 default = ["compiled_data"]
 std = []
 bench = ["serde"]
-serde = ["dep:serde", "icu_locale_core/serde", "tinystr/serde", "zerovec/serde", "icu_provider/serde"]
+serde = ["dep:serde", "icu_locale_core/serde", "tinystr/serde", "zerovec/serde", "icu_provider/serde", "potential_utf/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_locale_core/databake", "tinystr/databake"]
 compiled_data = ["dep:icu_locale_data"]
 

@@ -7,8 +7,11 @@ mod adapter;
 use crate::pattern::runtime::{self, PatternULE};
 use alloc::borrow::Cow;
 use icu_provider::prelude::*;
-use zerovec::ule::{AsULE, UnvalidatedStr, ULE};
-use zerovec::{VarZeroVec, ZeroMap};
+use potential_utf::PotentialUtf8;
+use zerovec::{
+    ule::{AsULE, ULE},
+    VarZeroVec, ZeroMap,
+};
 
 #[cfg(feature = "experimental")]
 use crate::neo_skeleton::NeoSkeletonLength;
@@ -356,7 +359,7 @@ size_test!(YearNamesV1, year_names_v1_size, 48);
 pub enum YearNamesV1<'data> {
     /// This calendar uses eras with numeric years, this stores the era names mapped from
     /// era code to the name
-    Eras(#[cfg_attr(feature = "serde", serde(borrow))] ZeroMap<'data, UnvalidatedStr, str>),
+    Eras(#[cfg_attr(feature = "serde", serde(borrow))] ZeroMap<'data, PotentialUtf8, str>),
     /// This calendar is cyclic (Chinese, Dangi), so it uses cyclic year names without any eras
     Cyclic(#[cfg_attr(feature = "serde", serde(borrow))] VarZeroVec<'data, str>),
 }
