@@ -268,7 +268,7 @@ macro_rules! registry(
             icu::datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker = "datetime/patterns/time_skeleton@1",
             icu::experimental::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker = "compactdecimal/long@1",
             icu::experimental::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker = "compactdecimal/short@1",
-            icu::experimental::dimension::provider::currency_compact::CurrencyCompactV1Marker = "currency/compact@1",
+            icu::experimental::dimension::provider::currency_compact::ShortCurrencyCompactV1Marker = "currency/compact@1",
             icu::experimental::dimension::provider::currency::CurrencyEssentialsV1Marker = "currency/essentials@1",
             icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1Marker = "currency/patterns@1",
             icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1Marker = "currency/extended@1",

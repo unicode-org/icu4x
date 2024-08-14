@@ -13,7 +13,7 @@ use icu_provider::prelude::*;
 use zerovec::ZeroMap2d;
 
 /// Currency Compact V1 data struct.
-#[icu_provider::data_struct(marker(CurrencyCompactV1Marker, "currency/compact@1"))]
+#[icu_provider::data_struct(marker(ShortCurrencyCompactV1Marker, "currency/compact@1"))]
 #[derive(Debug, Clone, Default, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(
@@ -22,7 +22,7 @@ use zerovec::ZeroMap2d;
     databake(path = icu_experimental::dimension::provider::currency_compact)
 )]
 #[yoke(prove_covariance_manually)]
-pub struct CurrencyCompactV1<'data> {
+pub struct ShortCurrencyCompactV1<'data> {
     // TODO: this map should include a `DoublePattern` as a value.
     /// Contains the compact patterns for a compact currency format based on the plural rules.
     /// NOTE:

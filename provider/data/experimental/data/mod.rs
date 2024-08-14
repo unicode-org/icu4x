@@ -1,7 +1,7 @@
 // @generated
 include!("long_compact_decimal_format_data_v1_marker.rs.data");
 include!("short_compact_decimal_format_data_v1_marker.rs.data");
-include!("currency_compact_v1_marker.rs.data");
+include!("short_currency_compact_v1_marker.rs.data");
 include!("currency_essentials_v1_marker.rs.data");
 include!("currency_extended_data_v1_marker.rs.data");
 include!("currency_patterns_data_v1_marker.rs.data");
@@ -71,7 +71,7 @@ macro_rules! impl_data_provider {
         make_provider!($provider);
         impl_long_compact_decimal_format_data_v1_marker!($provider);
         impl_short_compact_decimal_format_data_v1_marker!($provider);
-        impl_currency_compact_v1_marker!($provider);
+        impl_short_currency_compact_v1_marker!($provider);
         impl_currency_essentials_v1_marker!($provider);
         impl_currency_extended_data_v1_marker!($provider);
         impl_currency_patterns_data_v1_marker!($provider);
@@ -121,7 +121,7 @@ macro_rules! impl_any_provider {
                 match marker.path.hashed() {
                     h if h == <icu::experimental::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::experimental::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::experimental::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::experimental::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::experimental::dimension::provider::currency_compact::CurrencyCompactV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::experimental::dimension::provider::currency_compact::CurrencyCompactV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::experimental::dimension::provider::currency_compact::ShortCurrencyCompactV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::experimental::dimension::provider::currency_compact::ShortCurrencyCompactV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::experimental::dimension::provider::currency::CurrencyEssentialsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::experimental::dimension::provider::currency::CurrencyEssentialsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),

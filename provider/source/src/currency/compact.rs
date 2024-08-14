@@ -13,8 +13,11 @@ use icu_provider::prelude::*;
 use icu_provider::DataProvider;
 use zerovec::ZeroMap2d;
 
-impl DataProvider<CurrencyCompactV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<CurrencyCompactV1Marker>, DataError> {
+impl DataProvider<ShortCurrencyCompactV1Marker> for SourceDataProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<ShortCurrencyCompactV1Marker>, DataError> {
         let numbers_resource: &cldr_serde::numbers::Resource = self
             .cldr()?
             .numbers()
@@ -45,7 +48,7 @@ impl DataProvider<CurrencyCompactV1Marker> for SourceDataProvider {
             None => {
                 return Ok(DataResponse {
                     metadata: Default::default(),
-                    payload: DataPayload::from_owned(CurrencyCompactV1 {
+                    payload: DataPayload::from_owned(ShortCurrencyCompactV1 {
                         compact_patterns: result,
                     }),
                 })
@@ -73,14 +76,14 @@ impl DataProvider<CurrencyCompactV1Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(CurrencyCompactV1 {
+            payload: DataPayload::from_owned(ShortCurrencyCompactV1 {
                 compact_patterns: result,
             }),
         })
     }
 }
 
-impl IterableDataProviderCached<CurrencyCompactV1Marker> for SourceDataProvider {
+impl IterableDataProviderCached<ShortCurrencyCompactV1Marker> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .cldr()?
@@ -97,7 +100,7 @@ fn test_basic() {
     use icu::locale::langid;
 
     let provider = SourceDataProvider::new_testing();
-    let en: DataResponse<CurrencyCompactV1Marker> = provider
+    let en: DataResponse<ShortCurrencyCompactV1Marker> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
             ..Default::default()
@@ -109,7 +112,7 @@ fn test_basic() {
     assert_eq!(en_patterns.get_2d(&3, &CompactCount::One), Some("¤0K"));
     assert_eq!(en_patterns.get_2d(&3, &CompactCount::OneAlt), Some("¤ 0K"));
 
-    let ja: DataResponse<CurrencyCompactV1Marker> = provider
+    let ja: DataResponse<ShortCurrencyCompactV1Marker> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_locale(&langid!("ja").into()),
             ..Default::default()
