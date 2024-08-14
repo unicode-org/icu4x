@@ -90,3 +90,37 @@ impl IterableDataProviderCached<CurrencyCompactV1Marker> for SourceDataProvider 
             .collect())
     }
 }
+
+#[test]
+fn test_basic() {
+    use icu::experimental::dimension::provider::currency_compact::*;
+    use icu::locale::langid;
+
+    let provider = SourceDataProvider::new_testing();
+    let en: DataResponse<CurrencyCompactV1Marker> = provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
+            ..Default::default()
+        })
+        .unwrap();
+
+    let en_patterns = &en.payload.get().to_owned().compact_patterns;
+
+    assert_eq!(en_patterns.get_2d(&3, &CompactCount::One), Some("¤0K"));
+    assert_eq!(en_patterns.get_2d(&3, &CompactCount::OneAlt), Some("¤ 0K"));
+
+    let ja: DataResponse<CurrencyCompactV1Marker> = provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_locale(&langid!("ja").into()),
+            ..Default::default()
+        })
+        .unwrap();
+
+    let ja_patterns = &ja.payload.get().to_owned().compact_patterns;
+
+    assert_eq!(ja_patterns.get_2d(&4, &CompactCount::Other), Some("¤0万"));
+    assert_eq!(
+        ja_patterns.get_2d(&4, &CompactCount::OtherAlt),
+        Some("¤\u{a0}0万")
+    );
+}
