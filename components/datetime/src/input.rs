@@ -206,6 +206,41 @@ impl ExtractedDateTimeInput {
     pub(crate) fn time_zone(&self) -> Option<CustomTimeZone> {
         self.time_zone
     }
+
+    #[cfg(feature = "experimental")]
+    pub(crate) fn should_display_era(&self) -> bool {
+        match self.any_calendar_kind() {
+            // Unknown calendar: always display the era
+            None => true,
+            // TODO(#4478): This is extremely oversimplistic and it should be data-driven.
+            Some(AnyCalendarKind::Buddhist)
+            | Some(AnyCalendarKind::Coptic)
+            | Some(AnyCalendarKind::Ethiopian)
+            | Some(AnyCalendarKind::EthiopianAmeteAlem)
+            | Some(AnyCalendarKind::Indian)
+            | Some(AnyCalendarKind::IslamicCivil)
+            | Some(AnyCalendarKind::IslamicObservational)
+            | Some(AnyCalendarKind::IslamicTabular)
+            | Some(AnyCalendarKind::IslamicUmmAlQura)
+            | Some(AnyCalendarKind::Japanese)
+            | Some(AnyCalendarKind::JapaneseExtended)
+            | Some(AnyCalendarKind::Persian)
+            | Some(AnyCalendarKind::Roc) => true,
+            Some(AnyCalendarKind::Chinese)
+            | Some(AnyCalendarKind::Dangi)
+            | Some(AnyCalendarKind::Hebrew) => false,
+            Some(AnyCalendarKind::Gregorian) => match self.year() {
+                None => true,
+                Some(year) if year.number < 1000 => true,
+                Some(year) if year.era.0 != tinystr::tinystr!(16, "ce") => true,
+                Some(_) => false,
+            },
+            Some(_) => {
+                debug_assert!(false, "unknown calendar during era display resolution");
+                true
+            }
+        }
+    }
 }
 
 impl ExtractedTimeZoneInput {
