@@ -91,7 +91,7 @@ impl<'de> Visitor<'de> for DecimalFormatVisitor {
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub(crate) struct ShortCompactCurrencyPatterns {
-    pub(crate) standard: Option<DecimalFormat>,
+    pub(crate) standard: DecimalFormat,
 }
 
 
