@@ -151,7 +151,7 @@ fn test_attributes() {
                 const INFO: icu_provider::DataMarkerInfo = {
                     let mut info = icu_provider::DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!("demo/bar@1"));
                     info.is_singleton = true;
-                    info.fallback_config.priority = icu_provider::_internal::LocaleFallbackPriority::Region;
+                    info.fallback_config.priority = icu_provider::fallback::LocaleFallbackPriority::Region;
                     info
                 };
             }
