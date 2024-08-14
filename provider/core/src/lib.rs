@@ -176,49 +176,49 @@ pub mod prelude {
     };
 
     #[doc(no_inline)]
+    pub use icu_locale_core;
+    #[doc(no_inline)]
     pub use yoke;
     #[doc(no_inline)]
     pub use zerofrom;
 }
 
-mod fallback;
+#[doc(hidden)] // internal
+pub mod fallback;
 
-#[doc(hidden)] // macro use
-pub mod _internal {
-    pub use super::fallback::{LocaleFallbackConfig, LocaleFallbackPriority};
-    pub use icu_locale_core as locale_core;
+#[doc(hidden)] // internal
+#[cfg(feature = "logging")]
+pub use log;
 
-    #[cfg(feature = "logging")]
-    pub use log;
+#[doc(hidden)] // internal
+#[cfg(all(not(feature = "logging"), debug_assertions, feature = "std"))]
+pub mod log {
+    pub use std::eprintln as error;
+    pub use std::eprintln as warn;
+    pub use std::eprintln as info;
+    pub use std::eprintln as debug;
+    pub use std::eprintln as trace;
+}
 
-    #[cfg(all(not(feature = "logging"), debug_assertions, feature = "std"))]
-    pub mod log {
-        pub use std::eprintln as error;
-        pub use std::eprintln as warn;
-        pub use std::eprintln as info;
-        pub use std::eprintln as debug;
-        pub use std::eprintln as trace;
+#[cfg(all(
+    not(feature = "logging"),
+    any(not(debug_assertions), not(feature = "std"))
+))]
+#[doc(hidden)] // internal
+pub mod log {
+    #[macro_export]
+    macro_rules! _internal_noop_log {
+        ($($t:expr),*) => {};
     }
-
-    #[cfg(all(
-        not(feature = "logging"),
-        any(not(debug_assertions), not(feature = "std"))
-    ))]
-    pub mod log {
-        #[macro_export]
-        macro_rules! _internal_noop_log {
-            ($($t:expr),*) => {};
-        }
-        pub use crate::_internal_noop_log as error;
-        pub use crate::_internal_noop_log as warn;
-        pub use crate::_internal_noop_log as info;
-        pub use crate::_internal_noop_log as debug;
-        pub use crate::_internal_noop_log as trace;
-    }
+    pub use crate::_internal_noop_log as error;
+    pub use crate::_internal_noop_log as warn;
+    pub use crate::_internal_noop_log as info;
+    pub use crate::_internal_noop_log as debug;
+    pub use crate::_internal_noop_log as trace;
 }
 
 #[test]
 fn test_logging() {
     // This should compile on all combinations of features
-    crate::_internal::log::info!("Hello World");
+    crate::log::info!("Hello World");
 }
