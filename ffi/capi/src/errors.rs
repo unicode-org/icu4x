@@ -37,7 +37,7 @@ pub mod ffi {
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
     #[diplomat::rust_link(fixed_decimal::ParseError, Enum, compact)]
-    #[cfg(any(feature = "icu_decimal", feature = "icu_plurals"))]
+    #[cfg(any(feature = "decimal", feature = "plurals"))]
     pub enum FixedDecimalParseError {
         Unknown = 0x00,
         Limit = 0x01,
@@ -46,7 +46,7 @@ pub mod ffi {
 
     #[derive(Debug, PartialEq, Eq)]
     #[diplomat::rust_link(fixed_decimal::LimitError, Struct, compact)]
-    #[cfg(feature = "icu_decimal")]
+    #[cfg(feature = "decimal")]
     pub struct FixedDecimalLimitError;
 
     #[derive(Debug, PartialEq, Eq)]
@@ -54,9 +54,9 @@ pub mod ffi {
     #[diplomat::rust_link(icu::calendar::RangeError, Struct, compact)]
     #[diplomat::rust_link(icu::calendar::DateError, Enum, compact)]
     #[cfg(any(
-        feature = "icu_datetime",
-        feature = "icu_timezone",
-        feature = "icu_calendar"
+        feature = "datetime",
+        feature = "timezone",
+        feature = "calendar"
     ))]
     pub enum CalendarError {
         Unknown = 0x00,
@@ -69,9 +69,9 @@ pub mod ffi {
     #[repr(C)]
     #[diplomat::rust_link(icu::calendar::ParseError, Enum, compact)]
     #[cfg(any(
-        feature = "icu_datetime",
-        feature = "icu_timezone",
-        feature = "icu_calendar"
+        feature = "datetime",
+        feature = "timezone",
+        feature = "calendar"
     ))]
     pub enum CalendarParseError {
         Unknown = 0x00,
@@ -83,11 +83,11 @@ pub mod ffi {
 
     #[derive(Debug, PartialEq, Eq)]
     #[diplomat::rust_link(icu::timezone::InvalidOffsetError, Struct, compact)]
-    #[cfg(any(feature = "icu_datetime", feature = "icu_timezone"))]
+    #[cfg(any(feature = "datetime", feature = "timezone"))]
     pub struct TimeZoneInvalidOffsetError;
 
     #[derive(Debug, PartialEq, Eq)]
-    #[cfg(any(feature = "icu_datetime", feature = "icu_timezone"))]
+    #[cfg(any(feature = "datetime", feature = "timezone"))]
     pub struct TimeZoneInvalidIdError;
 
     #[derive(Debug, PartialEq, Eq)]
@@ -169,7 +169,7 @@ impl From<icu_provider::DataError> for DataError {
     }
 }
 
-#[cfg(feature = "icu_properties")]
+#[cfg(feature = "properties")]
 impl From<icu_properties::UnexpectedPropertyNameOrDataError> for Error {
     fn from(e: icu_properties::UnexpectedPropertyNameOrDataError) -> Self {
         match e {
@@ -182,9 +182,9 @@ impl From<icu_properties::UnexpectedPropertyNameOrDataError> for Error {
 }
 
 #[cfg(any(
-    feature = "icu_datetime",
-    feature = "icu_timezone",
-    feature = "icu_calendar"
+    feature = "datetime",
+    feature = "timezone",
+    feature = "calendar"
 ))]
 impl From<icu_calendar::RangeError> for CalendarError {
     fn from(_: icu_calendar::RangeError) -> Self {
@@ -193,9 +193,9 @@ impl From<icu_calendar::RangeError> for CalendarError {
 }
 
 #[cfg(any(
-    feature = "icu_datetime",
-    feature = "icu_timezone",
-    feature = "icu_calendar"
+    feature = "datetime",
+    feature = "timezone",
+    feature = "calendar"
 ))]
 impl From<icu_calendar::DateError> for CalendarError {
     fn from(e: icu_calendar::DateError) -> Self {
@@ -209,9 +209,9 @@ impl From<icu_calendar::DateError> for CalendarError {
 }
 
 #[cfg(any(
-    feature = "icu_datetime",
-    feature = "icu_timezone",
-    feature = "icu_calendar"
+    feature = "datetime",
+    feature = "timezone",
+    feature = "calendar"
 ))]
 impl From<icu_calendar::ParseError> for CalendarParseError {
     fn from(e: icu_calendar::ParseError) -> Self {
@@ -225,7 +225,7 @@ impl From<icu_calendar::ParseError> for CalendarParseError {
     }
 }
 
-#[cfg(feature = "icu_datetime")]
+#[cfg(feature = "datetime")]
 impl From<icu_datetime::DateTimeError> for Error {
     fn from(e: icu_datetime::DateTimeError) -> Self {
         match e {
@@ -257,7 +257,7 @@ impl From<icu_datetime::DateTimeError> for Error {
     }
 }
 
-#[cfg(any(feature = "icu_decimal", feature = "icu_plurals"))]
+#[cfg(any(feature = "decimal", feature = "plurals"))]
 impl From<fixed_decimal::ParseError> for FixedDecimalParseError {
     fn from(e: fixed_decimal::ParseError) -> Self {
         match e {
@@ -268,7 +268,7 @@ impl From<fixed_decimal::ParseError> for FixedDecimalParseError {
     }
 }
 
-#[cfg(feature = "icu_decimal")]
+#[cfg(feature = "decimal")]
 impl From<fixed_decimal::LimitError> for FixedDecimalLimitError {
     fn from(_: fixed_decimal::LimitError) -> Self {
         Self
@@ -287,7 +287,7 @@ impl From<icu_locale_core::ParseError> for LocaleParseError {
     }
 }
 
-#[cfg(any(feature = "icu_timezone", feature = "icu_datetime"))]
+#[cfg(any(feature = "timezone", feature = "datetime"))]
 impl From<icu_timezone::InvalidOffsetError> for TimeZoneInvalidOffsetError {
     fn from(_: icu_timezone::InvalidOffsetError) -> Self {
         Self

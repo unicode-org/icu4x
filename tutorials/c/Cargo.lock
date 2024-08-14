@@ -151,6 +151,7 @@ dependencies = [
  "icu_segmenter",
  "icu_timezone",
  "log",
+ "potential_utf",
  "simple_logger",
  "tinystr",
  "unicode-bidi",
@@ -167,6 +168,7 @@ dependencies = [
  "icu_locale_core",
  "icu_properties",
  "icu_provider",
+ "potential_utf",
  "writeable",
  "zerovec",
 ]
@@ -226,6 +228,7 @@ dependencies = [
  "icu_plurals",
  "icu_provider",
  "icu_timezone",
+ "potential_utf",
  "smallvec",
  "tinystr",
  "writeable",
@@ -268,6 +271,7 @@ dependencies = [
  "icu_collections",
  "icu_decimal",
  "icu_experimental_data",
+ "icu_list",
  "icu_locale",
  "icu_locale_core",
  "icu_normalizer",
@@ -279,6 +283,7 @@ dependencies = [
  "num-bigint",
  "num-rational",
  "num-traits",
+ "potential_utf",
  "smallvec",
  "tinystr",
  "writeable",
@@ -322,6 +327,7 @@ dependencies = [
  "icu_locale_core",
  "icu_locale_data",
  "icu_provider",
+ "potential_utf",
  "tinystr",
  "zerovec",
 ]
@@ -405,6 +411,7 @@ dependencies = [
  "icu_collections",
  "icu_properties_data",
  "icu_provider",
+ "potential_utf",
  "tinystr",
  "unicode-bidi",
  "zerovec",
@@ -472,6 +479,7 @@ dependencies = [
  "icu_locale_core",
  "icu_provider",
  "icu_segmenter_data",
+ "potential_utf",
  "utf8_iter",
  "zerovec",
 ]
@@ -598,6 +606,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5c7398b9c8b70908f6371f47ed36737907c87c52af34c268fed0bf0ceb92ead9"
 dependencies = [
  "libc",
+]
+
+[[package]]
+name = "potential_utf"
+version = "0.0.0"
+dependencies = [
+ "serde",
+ "writeable",
+ "zerovec",
 ]
 
 [[package]]
