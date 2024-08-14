@@ -217,6 +217,7 @@ impl ExtractedDateTimeInput {
             | Some(AnyCalendarKind::Coptic)
             | Some(AnyCalendarKind::Ethiopian)
             | Some(AnyCalendarKind::EthiopianAmeteAlem)
+            | Some(AnyCalendarKind::Hebrew)
             | Some(AnyCalendarKind::Indian)
             | Some(AnyCalendarKind::IslamicCivil)
             | Some(AnyCalendarKind::IslamicObservational)
@@ -228,7 +229,7 @@ impl ExtractedDateTimeInput {
             | Some(AnyCalendarKind::Roc) => true,
             Some(AnyCalendarKind::Chinese)
             | Some(AnyCalendarKind::Dangi)
-            | Some(AnyCalendarKind::Hebrew) => false,
+            | Some(AnyCalendarKind::Iso) => false,
             Some(AnyCalendarKind::Gregorian) => match self.year() {
                 None => true,
                 Some(year) if year.number < 1000 => true,
