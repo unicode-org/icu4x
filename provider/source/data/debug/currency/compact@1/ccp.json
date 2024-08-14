@@ -1,40 +1,112 @@
 {
-  "compact_patterns": {
-    "3": {
-      "Other": "¤ 0K"
-    },
-    "4": {
-      "Other": "¤ 00K"
-    },
-    "5": {
-      "Other": "¤ 000K"
-    },
-    "6": {
-      "Other": "¤ 0M"
-    },
-    "7": {
-      "Other": "¤ 00M"
-    },
-    "8": {
-      "Other": "¤ 000M"
-    },
-    "9": {
-      "Other": "¤ 0G"
-    },
-    "10": {
-      "Other": "¤ 00G"
-    },
-    "11": {
-      "Other": "¤ 000G"
-    },
-    "12": {
-      "Other": "¤ 0T"
-    },
-    "13": {
-      "Other": "¤ 00T"
-    },
-    "14": {
-      "Other": "¤ 000T"
-    }
-  }
+  "compact_patterns": [
+    [
+      [
+        3,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "¤ 0K"
+    ],
+    [
+      [
+        4,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "¤ 00K"
+    ],
+    [
+      [
+        5,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "¤ 000K"
+    ],
+    [
+      [
+        6,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "¤ 0M"
+    ],
+    [
+      [
+        7,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "¤ 00M"
+    ],
+    [
+      [
+        8,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "¤ 000M"
+    ],
+    [
+      [
+        9,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "¤ 0G"
+    ],
+    [
+      [
+        10,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "¤ 00G"
+    ],
+    [
+      [
+        11,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "¤ 000G"
+    ],
+    [
+      [
+        12,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "¤ 0T"
+    ],
+    [
+      [
+        13,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "¤ 00T"
+    ],
+    [
+      [
+        14,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "¤ 000T"
+    ]
+  ]
 }

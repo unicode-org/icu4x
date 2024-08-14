@@ -1,76 +1,436 @@
 {
-  "compact_patterns": {
-    "3": {
-      "One": "0 হা¤",
-      "OneAlt": "0 হা ¤",
-      "Other": "0 হা¤",
-      "OtherAlt": "0 হা ¤"
-    },
-    "4": {
-      "One": "00 হা¤",
-      "OneAlt": "00 হা ¤",
-      "Other": "00 হা¤",
-      "OtherAlt": "00 হা ¤"
-    },
-    "5": {
-      "One": "0 লা¤",
-      "OneAlt": "0 লা ¤",
-      "Other": "0 লা¤",
-      "OtherAlt": "0 লা ¤"
-    },
-    "6": {
-      "One": "00 লা¤",
-      "OneAlt": "00 লা ¤",
-      "Other": "00 লা¤",
-      "OtherAlt": "00 লা ¤"
-    },
-    "7": {
-      "One": "0 কো¤",
-      "OneAlt": "0 কো ¤",
-      "Other": "0 কো¤",
-      "OtherAlt": "0 কো ¤"
-    },
-    "8": {
-      "One": "00 কো¤",
-      "OneAlt": "00 কো ¤",
-      "Other": "00 কো¤",
-      "OtherAlt": "00 কো ¤"
-    },
-    "9": {
-      "One": "000 কো¤",
-      "OneAlt": "000 কো ¤",
-      "Other": "000 কো¤",
-      "OtherAlt": "000 কো ¤"
-    },
-    "10": {
-      "One": "0000 কো¤",
-      "OneAlt": "0000 কো ¤",
-      "Other": "0000 কো¤",
-      "OtherAlt": "0000 কো ¤"
-    },
-    "11": {
-      "One": "00000 কো¤",
-      "OneAlt": "00000 কো ¤",
-      "Other": "00000 কো¤",
-      "OtherAlt": "00000 কো ¤"
-    },
-    "12": {
-      "One": "0 লা'.'কো'.'¤",
-      "OneAlt": "0 লা'.'কো'.' ¤",
-      "Other": "0 লা'.'কো'.'¤",
-      "OtherAlt": "0 লা'.'কো'.' ¤"
-    },
-    "13": {
-      "One": "00 লা'.'কো'.'¤",
-      "OneAlt": "00 লা'.'কো'.' ¤",
-      "Other": "00 লা'.'কো'.'¤",
-      "OtherAlt": "00 লা'.'কো'.' ¤"
-    },
-    "14": {
-      "One": "000 লা'.'কো'.'¤",
-      "OneAlt": "000 লা'.'কো'.' ¤",
-      "Other": "000 লা'.'কো'.'¤",
-      "OtherAlt": "000 লা'.'কো'.' ¤"
-    }
-  }
+  "compact_patterns": [
+    [
+      [
+        3,
+        {
+          "Standard": "One"
+        }
+      ],
+      "0 হা¤"
+    ],
+    [
+      [
+        3,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "0 হা¤"
+    ],
+    [
+      [
+        3,
+        {
+          "AlphaNextToNumber": "One"
+        }
+      ],
+      "0 হা ¤"
+    ],
+    [
+      [
+        3,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "0 হা ¤"
+    ],
+    [
+      [
+        4,
+        {
+          "Standard": "One"
+        }
+      ],
+      "00 হা¤"
+    ],
+    [
+      [
+        4,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "00 হা¤"
+    ],
+    [
+      [
+        4,
+        {
+          "AlphaNextToNumber": "One"
+        }
+      ],
+      "00 হা ¤"
+    ],
+    [
+      [
+        4,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "00 হা ¤"
+    ],
+    [
+      [
+        5,
+        {
+          "Standard": "One"
+        }
+      ],
+      "0 লা¤"
+    ],
+    [
+      [
+        5,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "0 লা¤"
+    ],
+    [
+      [
+        5,
+        {
+          "AlphaNextToNumber": "One"
+        }
+      ],
+      "0 লা ¤"
+    ],
+    [
+      [
+        5,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "0 লা ¤"
+    ],
+    [
+      [
+        6,
+        {
+          "Standard": "One"
+        }
+      ],
+      "00 লা¤"
+    ],
+    [
+      [
+        6,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "00 লা¤"
+    ],
+    [
+      [
+        6,
+        {
+          "AlphaNextToNumber": "One"
+        }
+      ],
+      "00 লা ¤"
+    ],
+    [
+      [
+        6,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "00 লা ¤"
+    ],
+    [
+      [
+        7,
+        {
+          "Standard": "One"
+        }
+      ],
+      "0 কো¤"
+    ],
+    [
+      [
+        7,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "0 কো¤"
+    ],
+    [
+      [
+        7,
+        {
+          "AlphaNextToNumber": "One"
+        }
+      ],
+      "0 কো ¤"
+    ],
+    [
+      [
+        7,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "0 কো ¤"
+    ],
+    [
+      [
+        8,
+        {
+          "Standard": "One"
+        }
+      ],
+      "00 কো¤"
+    ],
+    [
+      [
+        8,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "00 কো¤"
+    ],
+    [
+      [
+        8,
+        {
+          "AlphaNextToNumber": "One"
+        }
+      ],
+      "00 কো ¤"
+    ],
+    [
+      [
+        8,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "00 কো ¤"
+    ],
+    [
+      [
+        9,
+        {
+          "Standard": "One"
+        }
+      ],
+      "000 কো¤"
+    ],
+    [
+      [
+        9,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "000 কো¤"
+    ],
+    [
+      [
+        9,
+        {
+          "AlphaNextToNumber": "One"
+        }
+      ],
+      "000 কো ¤"
+    ],
+    [
+      [
+        9,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "000 কো ¤"
+    ],
+    [
+      [
+        10,
+        {
+          "Standard": "One"
+        }
+      ],
+      "0000 কো¤"
+    ],
+    [
+      [
+        10,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "0000 কো¤"
+    ],
+    [
+      [
+        10,
+        {
+          "AlphaNextToNumber": "One"
+        }
+      ],
+      "0000 কো ¤"
+    ],
+    [
+      [
+        10,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "0000 কো ¤"
+    ],
+    [
+      [
+        11,
+        {
+          "Standard": "One"
+        }
+      ],
+      "00000 কো¤"
+    ],
+    [
+      [
+        11,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "00000 কো¤"
+    ],
+    [
+      [
+        11,
+        {
+          "AlphaNextToNumber": "One"
+        }
+      ],
+      "00000 কো ¤"
+    ],
+    [
+      [
+        11,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "00000 কো ¤"
+    ],
+    [
+      [
+        12,
+        {
+          "Standard": "One"
+        }
+      ],
+      "0 লা'.'কো'.'¤"
+    ],
+    [
+      [
+        12,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "0 লা'.'কো'.'¤"
+    ],
+    [
+      [
+        12,
+        {
+          "AlphaNextToNumber": "One"
+        }
+      ],
+      "0 লা'.'কো'.' ¤"
+    ],
+    [
+      [
+        12,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "0 লা'.'কো'.' ¤"
+    ],
+    [
+      [
+        13,
+        {
+          "Standard": "One"
+        }
+      ],
+      "00 লা'.'কো'.'¤"
+    ],
+    [
+      [
+        13,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "00 লা'.'কো'.'¤"
+    ],
+    [
+      [
+        13,
+        {
+          "AlphaNextToNumber": "One"
+        }
+      ],
+      "00 লা'.'কো'.' ¤"
+    ],
+    [
+      [
+        13,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "00 লা'.'কো'.' ¤"
+    ],
+    [
+      [
+        14,
+        {
+          "Standard": "One"
+        }
+      ],
+      "000 লা'.'কো'.'¤"
+    ],
+    [
+      [
+        14,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "000 লা'.'কো'.'¤"
+    ],
+    [
+      [
+        14,
+        {
+          "AlphaNextToNumber": "One"
+        }
+      ],
+      "000 লা'.'কো'.' ¤"
+    ],
+    [
+      [
+        14,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "000 লা'.'কো'.' ¤"
+    ]
+  ]
 }

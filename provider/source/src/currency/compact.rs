@@ -11,7 +11,7 @@ use std::collections::HashSet;
 use icu::experimental::dimension::provider::currency_compact::*;
 use icu_provider::prelude::*;
 use icu_provider::DataProvider;
-use zerovec::ZeroMap2d;
+use zerovec::ZeroMap;
 
 impl DataProvider<ShortCurrencyCompactV1Marker> for SourceDataProvider {
     fn load(
@@ -37,7 +37,7 @@ impl DataProvider<ShortCurrencyCompactV1Marker> for SourceDataProvider {
             .numsys_data
             .currency_patterns;
 
-        let mut result = ZeroMap2d::new();
+        let mut result = ZeroMap::new();
 
         let compact_patterns = match currency_patterns
             .get(default_system)
@@ -71,7 +71,7 @@ impl DataProvider<ShortCurrencyCompactV1Marker> for SourceDataProvider {
             let count = CompactCount::try_from(pattern.compact_decimal_count.as_str())
                 .map_err(|_| DataErrorKind::IdentifierNotFound.into_error())?;
 
-            result.insert(&lg10, &count, pattern.pattern.as_str());
+            result.insert(&(lg10, count), pattern.pattern.as_str());
         }
 
         Ok(DataResponse {
@@ -109,8 +109,14 @@ fn test_basic() {
 
     let en_patterns = &en.payload.get().to_owned().compact_patterns;
 
-    assert_eq!(en_patterns.get_2d(&3, &CompactCount::One), Some("¤0K"));
-    assert_eq!(en_patterns.get_2d(&3, &CompactCount::OneAlt), Some("¤ 0K"));
+    assert_eq!(
+        en_patterns.get(&(3, CompactCount::Standard(Count::One))),
+        Some("¤0K")
+    );
+    assert_eq!(
+        en_patterns.get(&(3, CompactCount::AlphaNextToNumber(Count::One))),
+        Some("¤ 0K")
+    );
 
     let ja: DataResponse<ShortCurrencyCompactV1Marker> = provider
         .load(DataRequest {
@@ -121,9 +127,12 @@ fn test_basic() {
 
     let ja_patterns = &ja.payload.get().to_owned().compact_patterns;
 
-    assert_eq!(ja_patterns.get_2d(&4, &CompactCount::Other), Some("¤0万"));
     assert_eq!(
-        ja_patterns.get_2d(&4, &CompactCount::OtherAlt),
+        ja_patterns.get(&(4, CompactCount::Standard(Count::Other))),
+        Some("¤0万")
+    );
+    assert_eq!(
+        ja_patterns.get(&(4, CompactCount::AlphaNextToNumber(Count::Other))),
         Some("¤\u{a0}0万")
     );
 }

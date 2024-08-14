@@ -1,64 +1,328 @@
 {
-  "compact_patterns": {
-    "3": {
-      "One": "0 hilj'.' ¤",
-      "Few": "0 hilj'.' ¤",
-      "Other": "0 hilj'.' ¤"
-    },
-    "4": {
-      "One": "00 hilj'.' ¤",
-      "Few": "00 hilj'.' ¤",
-      "Other": "00 hilj'.' ¤"
-    },
-    "5": {
-      "One": "000 hilj'.' ¤",
-      "Few": "000 hilj'.' ¤",
-      "Other": "000 hilj'.' ¤"
-    },
-    "6": {
-      "One": "0 mil'.' ¤",
-      "Few": "0 mil'.' ¤",
-      "Other": "0 mil'.' ¤"
-    },
-    "7": {
-      "One": "00 mil'.' ¤",
-      "Few": "00 mil'.' ¤",
-      "Other": "00 mil'.' ¤"
-    },
-    "8": {
-      "One": "000 mil'.' ¤",
-      "Few": "000 mil'.' ¤",
-      "Other": "000 mil'.' ¤"
-    },
-    "9": {
-      "One": "0 mlrd'.' ¤",
-      "Few": "0 mlrd'.' ¤",
-      "Other": "0 mlrd'.' ¤"
-    },
-    "10": {
-      "One": "00 mlrd'.' ¤",
-      "Few": "00 mlrd'.' ¤",
-      "Other": "00 mlrd'.' ¤"
-    },
-    "11": {
-      "One": "000 mlrd'.' ¤",
-      "Few": "000 mlrd'.' ¤",
-      "Other": "000 mlrd'.' ¤"
-    },
-    "12": {
-      "One": "0 bil'.' ¤",
-      "Few": "0 bil'.' ¤",
-      "Other": "0 bil'.' ¤"
-    },
-    "13": {
-      "One": "00 bil'.' ¤",
-      "Few": "00 bil'.' ¤",
-      "Other": "00 bil'.' ¤"
-    },
-    "14": {
-      "One": "000 bil'.' ¤",
-      "Few": "000 bil'.' ¤",
-      "Other": "000 bil'.' ¤"
-    }
-  }
+  "compact_patterns": [
+    [
+      [
+        3,
+        {
+          "Standard": "One"
+        }
+      ],
+      "0 hilj'.' ¤"
+    ],
+    [
+      [
+        3,
+        {
+          "Standard": "Few"
+        }
+      ],
+      "0 hilj'.' ¤"
+    ],
+    [
+      [
+        3,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "0 hilj'.' ¤"
+    ],
+    [
+      [
+        4,
+        {
+          "Standard": "One"
+        }
+      ],
+      "00 hilj'.' ¤"
+    ],
+    [
+      [
+        4,
+        {
+          "Standard": "Few"
+        }
+      ],
+      "00 hilj'.' ¤"
+    ],
+    [
+      [
+        4,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "00 hilj'.' ¤"
+    ],
+    [
+      [
+        5,
+        {
+          "Standard": "One"
+        }
+      ],
+      "000 hilj'.' ¤"
+    ],
+    [
+      [
+        5,
+        {
+          "Standard": "Few"
+        }
+      ],
+      "000 hilj'.' ¤"
+    ],
+    [
+      [
+        5,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "000 hilj'.' ¤"
+    ],
+    [
+      [
+        6,
+        {
+          "Standard": "One"
+        }
+      ],
+      "0 mil'.' ¤"
+    ],
+    [
+      [
+        6,
+        {
+          "Standard": "Few"
+        }
+      ],
+      "0 mil'.' ¤"
+    ],
+    [
+      [
+        6,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "0 mil'.' ¤"
+    ],
+    [
+      [
+        7,
+        {
+          "Standard": "One"
+        }
+      ],
+      "00 mil'.' ¤"
+    ],
+    [
+      [
+        7,
+        {
+          "Standard": "Few"
+        }
+      ],
+      "00 mil'.' ¤"
+    ],
+    [
+      [
+        7,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "00 mil'.' ¤"
+    ],
+    [
+      [
+        8,
+        {
+          "Standard": "One"
+        }
+      ],
+      "000 mil'.' ¤"
+    ],
+    [
+      [
+        8,
+        {
+          "Standard": "Few"
+        }
+      ],
+      "000 mil'.' ¤"
+    ],
+    [
+      [
+        8,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "000 mil'.' ¤"
+    ],
+    [
+      [
+        9,
+        {
+          "Standard": "One"
+        }
+      ],
+      "0 mlrd'.' ¤"
+    ],
+    [
+      [
+        9,
+        {
+          "Standard": "Few"
+        }
+      ],
+      "0 mlrd'.' ¤"
+    ],
+    [
+      [
+        9,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "0 mlrd'.' ¤"
+    ],
+    [
+      [
+        10,
+        {
+          "Standard": "One"
+        }
+      ],
+      "00 mlrd'.' ¤"
+    ],
+    [
+      [
+        10,
+        {
+          "Standard": "Few"
+        }
+      ],
+      "00 mlrd'.' ¤"
+    ],
+    [
+      [
+        10,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "00 mlrd'.' ¤"
+    ],
+    [
+      [
+        11,
+        {
+          "Standard": "One"
+        }
+      ],
+      "000 mlrd'.' ¤"
+    ],
+    [
+      [
+        11,
+        {
+          "Standard": "Few"
+        }
+      ],
+      "000 mlrd'.' ¤"
+    ],
+    [
+      [
+        11,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "000 mlrd'.' ¤"
+    ],
+    [
+      [
+        12,
+        {
+          "Standard": "One"
+        }
+      ],
+      "0 bil'.' ¤"
+    ],
+    [
+      [
+        12,
+        {
+          "Standard": "Few"
+        }
+      ],
+      "0 bil'.' ¤"
+    ],
+    [
+      [
+        12,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "0 bil'.' ¤"
+    ],
+    [
+      [
+        13,
+        {
+          "Standard": "One"
+        }
+      ],
+      "00 bil'.' ¤"
+    ],
+    [
+      [
+        13,
+        {
+          "Standard": "Few"
+        }
+      ],
+      "00 bil'.' ¤"
+    ],
+    [
+      [
+        13,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "00 bil'.' ¤"
+    ],
+    [
+      [
+        14,
+        {
+          "Standard": "One"
+        }
+      ],
+      "000 bil'.' ¤"
+    ],
+    [
+      [
+        14,
+        {
+          "Standard": "Few"
+        }
+      ],
+      "000 bil'.' ¤"
+    ],
+    [
+      [
+        14,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "000 bil'.' ¤"
+    ]
+  ]
 }

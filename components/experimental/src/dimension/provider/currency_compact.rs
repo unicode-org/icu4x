@@ -10,7 +10,7 @@
 //! Read more about data providers: [`icu_provider`]
 
 use icu_provider::prelude::*;
-use zerovec::ZeroMap2d;
+use zerovec::ZeroMap;
 
 /// Currency Compact V1 data struct.
 #[icu_provider::data_struct(marker(ShortCurrencyCompactV1Marker, "currency/compact@1"))]
@@ -33,11 +33,37 @@ pub struct ShortCurrencyCompactV1<'data> {
     ///         `"1000-count-one-alt-alphaNextToNumber": "¤ 0K"`
     ///                 -> key1 = 3, key2 = CompactCount::OneAlt, value = "¤ 0K"
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub compact_patterns: ZeroMap2d<'data, i8, CompactCount, str>,
+    pub compact_patterns: ZeroMap<'data, (i8, CompactCount), str>,
 }
 
-#[zerovec::make_ule(CompactCountULE)]
-#[zerovec::derive(Debug)]
+#[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(
+    feature = "datagen", 
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_experimental::dimension::provider::currency_compact)
+)]
+#[repr(u8)]
+pub enum Count {
+    /// CompactPattern `zero`.
+    Zero = 0,
+
+    /// CompactPattern `one`.
+    One = 1,
+
+    /// CompactPattern `two`.
+    Two = 2,
+
+    /// Compact Pattern `few`.
+    Few = 3,
+
+    /// CompactPattern `many`.
+    Many = 4,
+
+    /// CompactPattern `other`.
+    Other = 5,
+}
+
 #[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(
@@ -47,35 +73,8 @@ pub struct ShortCurrencyCompactV1<'data> {
 )]
 #[repr(u8)]
 pub enum CompactCount {
-    /// CompactPattern `zero`.
-    Zero = 0,
-    /// Compact Pattern `zero` alternative.
-    ZeroAlt = 1,
-
-    /// CompactPattern `one`.
-    One = 2,
-    /// Compact Pattern `one` alternative.
-    OneAlt = 3,
-
-    /// CompactPattern `two`.
-    Two = 4,
-    /// Compact Pattern `two` alternative.
-    TwoAlt = 5,
-
-    /// Compact Pattern `few`.
-    Few = 6,
-    /// Compact Pattern `few` alternative.
-    FewAlt = 7,
-
-    /// CompactPattern `many`.
-    Many = 8,
-    /// Compact Pattern `many` alternative.
-    ManyAlt = 9,
-
-    /// CompactPattern `other`.
-    Other = 10,
-    /// Compact Pattern `other` alternative.
-    OtherAlt = 11,
+    Standard(Count),
+    AlphaNextToNumber(Count),
 }
 
 impl TryFrom<&str> for CompactCount {
@@ -83,18 +82,18 @@ impl TryFrom<&str> for CompactCount {
 
     fn try_from(value: &str) -> Result<Self, Self::Error> {
         match value {
-            "zero" => Ok(CompactCount::Zero),
-            "zero-alt-alphaNextToNumber" => Ok(CompactCount::ZeroAlt),
-            "one" => Ok(CompactCount::One),
-            "one-alt-alphaNextToNumber" => Ok(CompactCount::OneAlt),
-            "two" => Ok(CompactCount::Two),
-            "two-alt-alphaNextToNumber" => Ok(CompactCount::TwoAlt),
-            "few" => Ok(CompactCount::Few),
-            "few-alt-alphaNextToNumber" => Ok(CompactCount::FewAlt),
-            "many" => Ok(CompactCount::Many),
-            "many-alt-alphaNextToNumber" => Ok(CompactCount::ManyAlt),
-            "other" => Ok(CompactCount::Other),
-            "other-alt-alphaNextToNumber" => Ok(CompactCount::OtherAlt),
+            "zero" => Ok(CompactCount::Standard(Count::Zero)),
+            "zero-alt-alphaNextToNumber" => Ok(CompactCount::AlphaNextToNumber(Count::Zero)),
+            "one" => Ok(CompactCount::Standard(Count::One)),
+            "one-alt-alphaNextToNumber" => Ok(CompactCount::AlphaNextToNumber(Count::One)),
+            "two" => Ok(CompactCount::Standard(Count::Two)),
+            "two-alt-alphaNextToNumber" => Ok(CompactCount::AlphaNextToNumber(Count::Two)),
+            "few" => Ok(CompactCount::Standard(Count::Few)),
+            "few-alt-alphaNextToNumber" => Ok(CompactCount::AlphaNextToNumber(Count::Few)),
+            "many" => Ok(CompactCount::Standard(Count::Many)),
+            "many-alt-alphaNextToNumber" => Ok(CompactCount::AlphaNextToNumber(Count::Many)),
+            "other" => Ok(CompactCount::Standard(Count::Other)),
+            "other-alt-alphaNextToNumber" => Ok(CompactCount::AlphaNextToNumber(Count::Other)),
             _ => Err(()),
         }
     }

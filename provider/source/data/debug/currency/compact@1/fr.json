@@ -1,52 +1,220 @@
 {
-  "compact_patterns": {
-    "3": {
-      "One": "0 k ¤",
-      "Other": "0 k ¤"
-    },
-    "4": {
-      "One": "00 k ¤",
-      "Other": "00 k ¤"
-    },
-    "5": {
-      "One": "000 k ¤",
-      "Other": "000 k ¤"
-    },
-    "6": {
-      "One": "0 M ¤",
-      "Other": "0 M ¤"
-    },
-    "7": {
-      "One": "00 M ¤",
-      "Other": "00 M ¤"
-    },
-    "8": {
-      "One": "000 M ¤",
-      "Other": "000 M ¤"
-    },
-    "9": {
-      "One": "0 Md ¤",
-      "Other": "0 Md ¤"
-    },
-    "10": {
-      "One": "00 Md ¤",
-      "Other": "00 Md ¤"
-    },
-    "11": {
-      "One": "000 Md ¤",
-      "Other": "000 Md ¤"
-    },
-    "12": {
-      "One": "0 Bn ¤",
-      "Other": "0 Bn ¤"
-    },
-    "13": {
-      "One": "00 Bn ¤",
-      "Other": "00 Bn ¤"
-    },
-    "14": {
-      "One": "000 Bn ¤",
-      "Other": "000 Bn ¤"
-    }
-  }
+  "compact_patterns": [
+    [
+      [
+        3,
+        {
+          "Standard": "One"
+        }
+      ],
+      "0 k ¤"
+    ],
+    [
+      [
+        3,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "0 k ¤"
+    ],
+    [
+      [
+        4,
+        {
+          "Standard": "One"
+        }
+      ],
+      "00 k ¤"
+    ],
+    [
+      [
+        4,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "00 k ¤"
+    ],
+    [
+      [
+        5,
+        {
+          "Standard": "One"
+        }
+      ],
+      "000 k ¤"
+    ],
+    [
+      [
+        5,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "000 k ¤"
+    ],
+    [
+      [
+        6,
+        {
+          "Standard": "One"
+        }
+      ],
+      "0 M ¤"
+    ],
+    [
+      [
+        6,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "0 M ¤"
+    ],
+    [
+      [
+        7,
+        {
+          "Standard": "One"
+        }
+      ],
+      "00 M ¤"
+    ],
+    [
+      [
+        7,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "00 M ¤"
+    ],
+    [
+      [
+        8,
+        {
+          "Standard": "One"
+        }
+      ],
+      "000 M ¤"
+    ],
+    [
+      [
+        8,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "000 M ¤"
+    ],
+    [
+      [
+        9,
+        {
+          "Standard": "One"
+        }
+      ],
+      "0 Md ¤"
+    ],
+    [
+      [
+        9,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "0 Md ¤"
+    ],
+    [
+      [
+        10,
+        {
+          "Standard": "One"
+        }
+      ],
+      "00 Md ¤"
+    ],
+    [
+      [
+        10,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "00 Md ¤"
+    ],
+    [
+      [
+        11,
+        {
+          "Standard": "One"
+        }
+      ],
+      "000 Md ¤"
+    ],
+    [
+      [
+        11,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "000 Md ¤"
+    ],
+    [
+      [
+        12,
+        {
+          "Standard": "One"
+        }
+      ],
+      "0 Bn ¤"
+    ],
+    [
+      [
+        12,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "0 Bn ¤"
+    ],
+    [
+      [
+        13,
+        {
+          "Standard": "One"
+        }
+      ],
+      "00 Bn ¤"
+    ],
+    [
+      [
+        13,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "00 Bn ¤"
+    ],
+    [
+      [
+        14,
+        {
+          "Standard": "One"
+        }
+      ],
+      "000 Bn ¤"
+    ],
+    [
+      [
+        14,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "000 Bn ¤"
+    ]
+  ]
 }

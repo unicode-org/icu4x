@@ -1,71 +1,301 @@
 {
-  "compact_patterns": {
-    "3": {
-      "Other": "0"
-    },
-    "4": {
-      "Other": "¤0万",
-      "OtherAlt": "¤ 0万"
-    },
-    "5": {
-      "Other": "¤00万",
-      "OtherAlt": "¤ 00万"
-    },
-    "6": {
-      "Other": "¤000万",
-      "OtherAlt": "¤ 000万"
-    },
-    "7": {
-      "Other": "¤0000万",
-      "OtherAlt": "¤ 0000万"
-    },
-    "8": {
-      "Other": "¤0億",
-      "OtherAlt": "¤ 0億"
-    },
-    "9": {
-      "Other": "¤00億",
-      "OtherAlt": "¤ 00億"
-    },
-    "10": {
-      "Other": "¤000億",
-      "OtherAlt": "¤ 000億"
-    },
-    "11": {
-      "Other": "¤0000億",
-      "OtherAlt": "¤ 0000億"
-    },
-    "12": {
-      "Other": "¤0兆",
-      "OtherAlt": "¤ 0兆"
-    },
-    "13": {
-      "Other": "¤00兆",
-      "OtherAlt": "¤ 00兆"
-    },
-    "14": {
-      "Other": "¤000兆",
-      "OtherAlt": "¤ 000兆"
-    },
-    "15": {
-      "Other": "¤0000兆",
-      "OtherAlt": "¤ 0000兆"
-    },
-    "16": {
-      "Other": "¤0京",
-      "OtherAlt": "¤ 0京"
-    },
-    "17": {
-      "Other": "¤00京",
-      "OtherAlt": "¤ 00京"
-    },
-    "18": {
-      "Other": "¤000京",
-      "OtherAlt": "¤ 000京"
-    },
-    "19": {
-      "Other": "¤0000京",
-      "OtherAlt": "¤ 0000京"
-    }
-  }
+  "compact_patterns": [
+    [
+      [
+        3,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "0"
+    ],
+    [
+      [
+        4,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "¤0万"
+    ],
+    [
+      [
+        4,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "¤ 0万"
+    ],
+    [
+      [
+        5,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "¤00万"
+    ],
+    [
+      [
+        5,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "¤ 00万"
+    ],
+    [
+      [
+        6,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "¤000万"
+    ],
+    [
+      [
+        6,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "¤ 000万"
+    ],
+    [
+      [
+        7,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "¤0000万"
+    ],
+    [
+      [
+        7,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "¤ 0000万"
+    ],
+    [
+      [
+        8,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "¤0億"
+    ],
+    [
+      [
+        8,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "¤ 0億"
+    ],
+    [
+      [
+        9,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "¤00億"
+    ],
+    [
+      [
+        9,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "¤ 00億"
+    ],
+    [
+      [
+        10,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "¤000億"
+    ],
+    [
+      [
+        10,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "¤ 000億"
+    ],
+    [
+      [
+        11,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "¤0000億"
+    ],
+    [
+      [
+        11,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "¤ 0000億"
+    ],
+    [
+      [
+        12,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "¤0兆"
+    ],
+    [
+      [
+        12,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "¤ 0兆"
+    ],
+    [
+      [
+        13,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "¤00兆"
+    ],
+    [
+      [
+        13,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "¤ 00兆"
+    ],
+    [
+      [
+        14,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "¤000兆"
+    ],
+    [
+      [
+        14,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "¤ 000兆"
+    ],
+    [
+      [
+        15,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "¤0000兆"
+    ],
+    [
+      [
+        15,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "¤ 0000兆"
+    ],
+    [
+      [
+        16,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "¤0京"
+    ],
+    [
+      [
+        16,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "¤ 0京"
+    ],
+    [
+      [
+        17,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "¤00京"
+    ],
+    [
+      [
+        17,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "¤ 00京"
+    ],
+    [
+      [
+        18,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "¤000京"
+    ],
+    [
+      [
+        18,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "¤ 000京"
+    ],
+    [
+      [
+        19,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "¤0000京"
+    ],
+    [
+      [
+        19,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "¤ 0000京"
+    ]
+  ]
 }
