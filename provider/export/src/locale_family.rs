@@ -224,15 +224,17 @@ impl DataLocaleFamily {
         if code_units == b"full" {
             return Ok(Self::FULL);
         }
-        let (annotation, locale) = code_units
+        let (annotation, mut locale) = code_units
             .split_first()
             .ok_or(DataLocaleFamilyParseError::InvalidFamily)?;
         let annotations = match annotation {
             b'^' => DataLocaleFamilyAnnotations::without_descendants(),
             b'%' => DataLocaleFamilyAnnotations::without_ancestors(),
             b'@' => DataLocaleFamilyAnnotations::single(),
-            b if b.is_ascii_alphanumeric() => DataLocaleFamilyAnnotations::with_descendants(),
-            _ => return Err(DataLocaleFamilyParseError::InvalidFamily),
+            _ => {
+                locale = code_units;
+                DataLocaleFamilyAnnotations::with_descendants()
+            }
         };
 
         Ok(Self {
