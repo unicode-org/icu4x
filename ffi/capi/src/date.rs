@@ -15,7 +15,7 @@ pub mod ffi {
 
     use tinystr::TinyAsciiStr;
 
-    #[cfg(feature = "icu_calendar")]
+    #[cfg(feature = "calendar")]
     use crate::week::ffi::WeekCalculator;
 
     #[diplomat::enum_convert(icu_calendar::types::IsoWeekday)]
@@ -113,7 +113,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[cfg(feature = "icu_calendar")]
+        #[cfg(feature = "calendar")]
         pub fn week_of_year(&self, calculator: &WeekCalculator) -> crate::week::ffi::WeekOf {
             self.0.week_of_year(&calculator.0).into()
         }
@@ -273,7 +273,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[cfg(feature = "icu_calendar")]
+        #[cfg(feature = "calendar")]
         pub fn week_of_year(&self, calculator: &WeekCalculator) -> crate::week::ffi::WeekOf {
             self.0.week_of_year(&calculator.0).into()
         }

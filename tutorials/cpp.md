@@ -37,7 +37,7 @@ Some of the keys are required by the parser, but won't be used by us.
 - `std` \[default\] set this when building for a target with a Rust standard library, otherwise see below
 - `compiled_data` \[default\] to include data (`ICU4XDataProvider::create_compiled()`)
 - `simple_logger` \[default\] enable basic stdout logging of error metadata. Further loggers can be added on request.
-- `default_components` \[default\] activate all stable ICU4X components. For smaller builds, this can be disabled, and components can be added with features like `icu_list`.
+- `default_components` \[default\] activate all stable ICU4X components. For smaller builds, this can be disabled, and components can be added with features like `list`.
 - `buffer_provider` for working with blob data providers (`ICU4XDataProvider::create_from_byte_slice()`)
 
 You can now set features by updating the `features` key in `Cargo.toml`:

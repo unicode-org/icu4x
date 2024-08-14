@@ -173,6 +173,7 @@ dependencies = [
  "icu_segmenter",
  "icu_timezone",
  "log",
+ "potential_utf",
  "serde",
  "simple_logger",
  "tinystr",
@@ -190,6 +191,7 @@ dependencies = [
  "icu_locale_core",
  "icu_properties",
  "icu_provider",
+ "potential_utf",
  "serde",
  "writeable",
  "zerovec",
@@ -253,6 +255,7 @@ dependencies = [
  "icu_provider",
  "icu_timezone",
  "litemap",
+ "potential_utf",
  "serde",
  "smallvec",
  "tinystr",
@@ -297,6 +300,7 @@ dependencies = [
  "icu_collections",
  "icu_decimal",
  "icu_experimental_data",
+ "icu_list",
  "icu_locale",
  "icu_locale_core",
  "icu_normalizer",
@@ -308,6 +312,7 @@ dependencies = [
  "num-bigint",
  "num-rational",
  "num-traits",
+ "potential_utf",
  "serde",
  "smallvec",
  "tinystr",
@@ -354,6 +359,7 @@ dependencies = [
  "icu_locale_core",
  "icu_locale_data",
  "icu_provider",
+ "potential_utf",
  "serde",
  "tinystr",
  "zerovec",
@@ -442,6 +448,7 @@ dependencies = [
  "icu_collections",
  "icu_properties_data",
  "icu_provider",
+ "potential_utf",
  "serde",
  "tinystr",
  "unicode-bidi",
@@ -536,6 +543,7 @@ dependencies = [
  "icu_locale_core",
  "icu_provider",
  "icu_segmenter_data",
+ "potential_utf",
  "serde",
  "utf8_iter",
  "zerovec",
@@ -678,6 +686,15 @@ dependencies = [
  "cobs",
  "embedded-io",
  "serde",
+]
+
+[[package]]
+name = "potential_utf"
+version = "0.0.0"
+dependencies = [
+ "serde",
+ "writeable",
+ "zerovec",
 ]
 
 [[package]]
