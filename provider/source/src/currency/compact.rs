@@ -55,6 +55,30 @@ impl DataProvider<ShortCurrencyCompactV1Marker> for SourceDataProvider {
             }
         };
 
+        /// Try to parse a compact count from a string.
+        fn try_parse_count_from_str(value: &str) -> Result<CompactCount, DataError> {
+            let (count_str, is_alpha_next) = match value.split_once("-alt-alphaNextToNumber") {
+                Some((count, _)) => (count, true),
+                None => (value, false),
+            };
+
+            let count = match count_str {
+                "zero" => Count::Zero,
+                "one" => Count::One,
+                "two" => Count::Two,
+                "few" => Count::Few,
+                "many" => Count::Many,
+                "other" => Count::Other,
+                _ => return Err(DataErrorKind::IdentifierNotFound.into_error()),
+            };
+
+            Ok(if is_alpha_next {
+                CompactCount::AlphaNextToNumber(count)
+            } else {
+                CompactCount::Standard(count)
+            })
+        }
+
         for pattern in compact_patterns {
             let lg10 = pattern
                 .compact_decimal_type
@@ -68,8 +92,7 @@ impl DataProvider<ShortCurrencyCompactV1Marker> for SourceDataProvider {
                     .with_debug_context("the number of zeros must be one less than the number of digits in the compact decimal count"));
             }
 
-            let count = CompactCount::try_from(pattern.compact_decimal_count.as_str())
-                .map_err(|_| DataErrorKind::IdentifierNotFound.into_error())?;
+            let count = try_parse_count_from_str(pattern.compact_decimal_count.as_str())?;
 
             result.insert(&(lg10, count), pattern.pattern.as_str());
         }

@@ -76,25 +76,3 @@ pub enum CompactCount {
     Standard(Count),
     AlphaNextToNumber(Count),
 }
-
-impl TryFrom<&str> for CompactCount {
-    type Error = ();
-
-    fn try_from(value: &str) -> Result<Self, Self::Error> {
-        match value {
-            "zero" => Ok(CompactCount::Standard(Count::Zero)),
-            "zero-alt-alphaNextToNumber" => Ok(CompactCount::AlphaNextToNumber(Count::Zero)),
-            "one" => Ok(CompactCount::Standard(Count::One)),
-            "one-alt-alphaNextToNumber" => Ok(CompactCount::AlphaNextToNumber(Count::One)),
-            "two" => Ok(CompactCount::Standard(Count::Two)),
-            "two-alt-alphaNextToNumber" => Ok(CompactCount::AlphaNextToNumber(Count::Two)),
-            "few" => Ok(CompactCount::Standard(Count::Few)),
-            "few-alt-alphaNextToNumber" => Ok(CompactCount::AlphaNextToNumber(Count::Few)),
-            "many" => Ok(CompactCount::Standard(Count::Many)),
-            "many-alt-alphaNextToNumber" => Ok(CompactCount::AlphaNextToNumber(Count::Many)),
-            "other" => Ok(CompactCount::Standard(Count::Other)),
-            "other-alt-alphaNextToNumber" => Ok(CompactCount::AlphaNextToNumber(Count::Other)),
-            _ => Err(()),
-        }
-    }
-}
