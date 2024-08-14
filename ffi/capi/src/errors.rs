@@ -53,11 +53,7 @@ pub mod ffi {
     #[repr(C)]
     #[diplomat::rust_link(icu::calendar::RangeError, Struct, compact)]
     #[diplomat::rust_link(icu::calendar::DateError, Enum, compact)]
-    #[cfg(any(
-        feature = "datetime",
-        feature = "timezone",
-        feature = "calendar"
-    ))]
+    #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
     pub enum CalendarError {
         Unknown = 0x00,
         OutOfRange = 0x01,
@@ -68,11 +64,7 @@ pub mod ffi {
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
     #[diplomat::rust_link(icu::calendar::ParseError, Enum, compact)]
-    #[cfg(any(
-        feature = "datetime",
-        feature = "timezone",
-        feature = "calendar"
-    ))]
+    #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
     pub enum CalendarParseError {
         Unknown = 0x00,
         InvalidSyntax = 0x01,
@@ -181,22 +173,14 @@ impl From<icu_properties::UnexpectedPropertyNameOrDataError> for Error {
     }
 }
 
-#[cfg(any(
-    feature = "datetime",
-    feature = "timezone",
-    feature = "calendar"
-))]
+#[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
 impl From<icu_calendar::RangeError> for CalendarError {
     fn from(_: icu_calendar::RangeError) -> Self {
         Self::OutOfRange
     }
 }
 
-#[cfg(any(
-    feature = "datetime",
-    feature = "timezone",
-    feature = "calendar"
-))]
+#[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
 impl From<icu_calendar::DateError> for CalendarError {
     fn from(e: icu_calendar::DateError) -> Self {
         match e {
@@ -208,11 +192,7 @@ impl From<icu_calendar::DateError> for CalendarError {
     }
 }
 
-#[cfg(any(
-    feature = "datetime",
-    feature = "timezone",
-    feature = "calendar"
-))]
+#[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
 impl From<icu_calendar::ParseError> for CalendarParseError {
     fn from(e: icu_calendar::ParseError) -> Self {
         match e {

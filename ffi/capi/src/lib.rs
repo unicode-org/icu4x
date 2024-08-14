@@ -69,11 +69,7 @@ mod utf;
 
 #[cfg(feature = "properties")]
 pub mod bidi;
-#[cfg(any(
-    feature = "datetime",
-    feature = "timezone",
-    feature = "calendar"
-))]
+#[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
 pub mod calendar;
 #[cfg(feature = "casemap")]
 pub mod casemap;
@@ -81,17 +77,9 @@ pub mod casemap;
 pub mod collator;
 #[cfg(feature = "properties")]
 pub mod collections_sets;
-#[cfg(any(
-    feature = "datetime",
-    feature = "timezone",
-    feature = "calendar"
-))]
+#[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
 pub mod date;
-#[cfg(any(
-    feature = "datetime",
-    feature = "timezone",
-    feature = "calendar"
-))]
+#[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
 pub mod datetime;
 #[cfg(feature = "datetime")]
 pub mod datetime_formatter;
@@ -137,11 +125,7 @@ pub mod segmenter_line;
 pub mod segmenter_sentence;
 #[cfg(feature = "segmenter")]
 pub mod segmenter_word;
-#[cfg(any(
-    feature = "datetime",
-    feature = "timezone",
-    feature = "calendar"
-))]
+#[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
 pub mod time;
 #[cfg(any(feature = "datetime", feature = "timezone"))]
 pub mod timezone;
