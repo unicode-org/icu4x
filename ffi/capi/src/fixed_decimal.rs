@@ -172,7 +172,7 @@ pub mod ffi {
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
         pub fn from_string(v: &DiplomatStr) -> Result<Box<FixedDecimal>, FixedDecimalParseError> {
             Ok(Box::new(FixedDecimal(
-                fixed_decimal::FixedDecimal::try_from(v)?,
+                fixed_decimal::FixedDecimal::try_from_utf8(v)?,
             )))
         }
 

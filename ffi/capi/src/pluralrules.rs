@@ -101,7 +101,7 @@ pub mod ffi {
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
         pub fn from_string(s: &DiplomatStr) -> Result<Box<PluralOperands>, FixedDecimalParseError> {
             Ok(Box::new(PluralOperands(icu_plurals::PluralOperands::from(
-                &fixed_decimal::FixedDecimal::try_from(s)?,
+                &fixed_decimal::FixedDecimal::try_from_utf8(s)?,
             ))))
         }
 
