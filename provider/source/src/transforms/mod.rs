@@ -123,7 +123,7 @@ impl DataProvider<TransliteratorRulesV1Marker> for SourceDataProvider {
             .transforms()?
             .lock()
             .expect("poison")
-            .as_provider_unstable(self, self)?
+            .as_provider_unstable(self, self, self)?
             .load(req)
     }
 }
@@ -135,7 +135,7 @@ impl crate::IterableDataProviderCached<TransliteratorRulesV1Marker> for SourceDa
             .transforms()?
             .lock()
             .expect("poison")
-            .as_provider_unstable(self, self)?
+            .as_provider_unstable(self, self, self)?
             .iter_ids()?
             .into_iter()
             .map(|id| id.as_borrowed().into_owned())

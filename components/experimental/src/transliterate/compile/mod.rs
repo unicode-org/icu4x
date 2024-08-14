@@ -9,6 +9,7 @@ use alloc::format;
 use alloc::string::{String, ToString};
 use alloc::vec::Vec;
 use core::cell::RefCell;
+use icu_locale::provider::*;
 use icu_locale_core::Locale;
 use icu_normalizer::provider::*;
 use icu_properties::{provider::*, sets};
@@ -135,12 +136,17 @@ impl RuleCollection {
     #[cfg(feature = "compiled_data")]
     pub fn as_provider(
         &self,
-    ) -> RuleCollectionProvider<'_, icu_properties::provider::Baked, icu_normalizer::provider::Baked>
-    {
+    ) -> RuleCollectionProvider<
+        '_,
+        icu_properties::provider::Baked,
+        icu_normalizer::provider::Baked,
+        icu_locale::provider::Baked,
+    > {
         RuleCollectionProvider {
             collection: self,
             properties_provider: &icu_properties::provider::Baked,
             normalizer_provider: &icu_normalizer::provider::Baked,
+            locale_provider: &icu_locale::provider::Baked,
             xid_start: sets::xid_start().static_to_owned(),
             xid_continue: sets::xid_continue().static_to_owned(),
             pat_ws: sets::pattern_white_space().static_to_owned(),
@@ -148,11 +154,12 @@ impl RuleCollection {
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::as_provider)]
-    pub fn as_provider_unstable<'a, PP, NP>(
+    pub fn as_provider_unstable<'a, PP, NP, LP>(
         &'a self,
         properties_provider: &'a PP,
         normalizer_provider: &'a NP,
-    ) -> Result<RuleCollectionProvider<'a, PP, NP>, DataError>
+        locale_provider: &'a LP,
+    ) -> Result<RuleCollectionProvider<'a, PP, NP, LP>, DataError>
     where
         PP: ?Sized
             + DataProvider<AsciiHexDigitV1Marker>
@@ -227,6 +234,7 @@ impl RuleCollection {
             collection: self,
             properties_provider,
             normalizer_provider,
+            locale_provider,
             xid_start: sets::load_xid_start(properties_provider)?,
             xid_continue: sets::load_xid_continue(properties_provider)?,
             pat_ws: sets::load_pattern_white_space(properties_provider)?,
@@ -236,16 +244,18 @@ impl RuleCollection {
 
 /// A provider that is usable by [`Transliterator::try_new_unstable`](crate::Transliterator::try_new_unstable).
 #[derive(Debug)]
-pub struct RuleCollectionProvider<'a, PP: ?Sized, NP: ?Sized> {
+pub struct RuleCollectionProvider<'a, PP: ?Sized, NP: ?Sized, LP: ?Sized> {
     collection: &'a RuleCollection,
     properties_provider: &'a PP,
     normalizer_provider: &'a NP,
+    locale_provider: &'a LP,
     xid_start: sets::CodePointSetData,
     xid_continue: sets::CodePointSetData,
     pat_ws: sets::CodePointSetData,
 }
 
-impl<PP, NP> DataProvider<TransliteratorRulesV1Marker> for RuleCollectionProvider<'_, PP, NP>
+impl<PP, NP, LP> DataProvider<TransliteratorRulesV1Marker>
+    for RuleCollectionProvider<'_, PP, NP, LP>
 where
     PP: ?Sized
         + DataProvider<AsciiHexDigitV1Marker>
@@ -385,11 +395,11 @@ where
 }
 
 macro_rules! redirect {
-    ($($marker:ty),*) => {
+    ($field:ident, $($marker:ty),*) => {
         $(
-            impl<PP: ?Sized, NP: ?Sized + DataProvider<$marker>> DataProvider<$marker> for RuleCollectionProvider<'_, PP, NP> {
+            impl<PP: ?Sized, NP: ?Sized + DataProvider<$marker>, LP: ?Sized + DataProvider<$marker>> DataProvider<$marker> for RuleCollectionProvider<'_, PP, NP, LP> {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
-                    self.normalizer_provider.load(req)
+                    self.$field.load(req)
                 }
             }
         )*
@@ -397,6 +407,7 @@ macro_rules! redirect {
 }
 
 redirect!(
+    normalizer_provider,
     CanonicalDecompositionDataV1Marker,
     CompatibilityDecompositionSupplementV1Marker,
     CanonicalDecompositionTablesV1Marker,
@@ -404,9 +415,15 @@ redirect!(
     CanonicalCompositionsV1Marker
 );
 
+redirect!(
+    locale_provider,
+    ParentsV1Marker,
+    LikelySubtagsExtendedV1Marker
+);
+
 #[cfg(feature = "datagen")]
-impl<PP, NP> IterableDataProvider<TransliteratorRulesV1Marker>
-    for RuleCollectionProvider<'_, PP, NP>
+impl<PP, NP, LP> IterableDataProvider<TransliteratorRulesV1Marker>
+    for RuleCollectionProvider<'_, PP, NP, LP>
 where
     PP: ?Sized
         + DataProvider<AsciiHexDigitV1Marker>

@@ -117,16 +117,11 @@ fn data_ce_to_primary(data_ce: u64, c: char) -> u32 {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(
-        CollationRootV1Marker,
-        "collator/root@1",
-        singleton,
-    ),
+    marker(CollationRootV1Marker, "collator/root@1", singleton,),
     marker(
         CollationTailoringV1Marker,
         "collator/tailoring@1",
-        // TODO(#3867): Use script fallback
-        fallback_by = "language",
+        fallback_by = "script",
         attributes_domain = "collator",
     )
 )]

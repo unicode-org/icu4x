@@ -18,6 +18,8 @@ use core::fmt::Debug;
 use core::ops::Range;
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
+use icu_locale::fallback::{LocaleFallbackConfig, LocaleFallbackPriority, LocaleFallbacker};
+use icu_locale::provider::*;
 use icu_locale_core::Locale;
 use icu_normalizer::provider::*;
 use icu_normalizer::{ComposingNormalizer, DecomposingNormalizer};
@@ -250,6 +252,8 @@ impl Transliterator {
             + DataProvider<CanonicalDecompositionTablesV1Marker>
             + DataProvider<CompatibilityDecompositionTablesV1Marker>
             + DataProvider<CanonicalCompositionsV1Marker>
+            + DataProvider<ParentsV1Marker>
+            + DataProvider<LikelySubtagsForLanguageV1Marker>
             + ?Sized,
     {
         Self::internal_try_new_with_override_unstable(
@@ -257,6 +261,7 @@ impl Transliterator {
             None::<&fn(&Locale) -> Option<Box<dyn CustomTransliterator>>>,
             provider,
             provider,
+            || LocaleFallbacker::try_new_unstable(provider),
         )
     }
 
@@ -306,10 +311,18 @@ impl Transliterator {
             + DataProvider<CanonicalDecompositionTablesV1Marker>
             + DataProvider<CompatibilityDecompositionTablesV1Marker>
             + DataProvider<CanonicalCompositionsV1Marker>
+            + DataProvider<ParentsV1Marker>
+            + DataProvider<LikelySubtagsForLanguageV1Marker>
             + ?Sized,
         F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
     {
-        Self::internal_try_new_with_override_unstable(locale, Some(&lookup), provider, provider)
+        Self::internal_try_new_with_override_unstable(
+            locale,
+            Some(&lookup),
+            provider,
+            provider,
+            || LocaleFallbacker::try_new_unstable(provider),
+        )
     }
 
     fn internal_try_new_with_override_unstable<PN, PT, F>(
@@ -317,6 +330,7 @@ impl Transliterator {
         lookup: Option<&F>,
         transliterator_provider: &PT,
         normalizer_provider: &PN,
+        fallbacker: impl Fn() -> Result<LocaleFallbacker, DataError>,
     ) -> Result<Transliterator, DataError>
     where
         PT: DataProvider<TransliteratorRulesV1Marker> + ?Sized,
@@ -328,19 +342,72 @@ impl Transliterator {
             + ?Sized,
         F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
     {
-        let payload = Transliterator::load_rbt(
+        // TODO(#3950): How is fallback handled with special parts?
+
+        // first try loading of locale
+        let transliterator = if let Ok(transliterator) = Self::load_rbt(
             #[allow(clippy::unwrap_used)] // infallible
             DataMarkerAttributes::try_from_str(&locale.to_string().to_ascii_lowercase()).unwrap(),
             transliterator_provider,
-        )?;
-        let rbt = payload.get();
+        ) {
+            transliterator
+        } else {
+            let fallbacker = fallbacker()?;
+            let mut fallback_config = LocaleFallbackConfig::default();
+            fallback_config.priority = LocaleFallbackPriority::Script;
+            let fallbacker = fallbacker.for_config(fallback_config);
+
+            let mut transform_extensions = locale.extensions.transform;
+            let source_id = transform_extensions.lang.take().unwrap_or_default();
+            let target_id = locale.id;
+
+            let mut source_iterator = fallbacker.fallback_for(source_id.into());
+            let mut target_iterator = fallbacker.fallback_for(target_id.into());
+
+            'target: loop {
+                if target_iterator.get().is_default() {
+                    Err(DataErrorKind::IdentifierNotFound
+                        .with_marker(TransliteratorRulesV1Marker::INFO))?;
+                }
+                'source: loop {
+                    if source_iterator.get().is_default() {
+                        break 'source;
+                    }
+                    let mut candidate = target_iterator.get().clone().into_locale();
+                    candidate.extensions.transform = transform_extensions.clone();
+                    candidate.extensions.transform.lang =
+                        Some(icu_locale_core::LanguageIdentifier {
+                            language: source_iterator.get().language,
+                            script: source_iterator.get().script,
+                            region: source_iterator.get().region,
+                            variants: source_iterator
+                                .get()
+                                .variant
+                                .map(icu_locale_core::subtags::Variants::from_variant)
+                                .unwrap_or_default(),
+                        });
+                    if let Ok(t) = Self::load_rbt(
+                        #[allow(clippy::unwrap_used)] // infallible
+                        DataMarkerAttributes::try_from_str(
+                            &candidate.to_string().to_ascii_lowercase(),
+                        )
+                        .unwrap(),
+                        transliterator_provider,
+                    ) {
+                        break 'target t;
+                    }
+                    source_iterator.step();
+                }
+                target_iterator.step();
+            }
+        };
+        let rbt = transliterator.get();
+
         if !rbt.visibility {
             // transliterator is internal
             return Err(DataError::custom("internal only transliterator"));
         }
         let mut env = LiteMap::new();
-        // Avoid recursive load
-        env.insert(locale.to_string(), InternalTransliterator::Null);
         Transliterator::load_dependencies_recursive(
             rbt,
             &mut env,
@@ -349,7 +416,7 @@ impl Transliterator {
             normalizer_provider,
         )?;
         Ok(Transliterator {
-            transliterator: payload,
+            transliterator,
             env,
         })
     }
@@ -476,9 +543,11 @@ impl Transliterator {
     where
         P: DataProvider<TransliteratorRulesV1Marker> + ?Sized,
     {
+        let mut metadata = DataRequestMetadata::default();
+        metadata.silent = true;
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes(marker_attributes),
-            ..Default::default()
+            metadata,
         };
         let payload = provider.load(req)?.payload;
         let rbt = payload.get();
@@ -1397,6 +1466,22 @@ mod tests {
         let t =
             Transliterator::try_new_unstable("de-t-de-d0-ascii".parse().unwrap(), &TestingProvider)
                 .unwrap();
+        let input =
+            "Über ältere Lügner lästern ist sehr a\u{0308}rgerlich. Ja, SEHR ÄRGERLICH! - ꜵ";
+        let output =
+            "Ueber aeltere Luegner laestern ist sehr aergerlich. Ja, SEHR AERGERLICH! - ao";
+        assert_eq!(t.transliterate(input.to_string()), output);
+    }
+
+    #[test]
+    fn test_de_ascii_fallback() {
+        // the actual, existing transliterator has source `und-Latn`. Check that the fallback chain from `fr-CH`
+        // eventually reaches `und-Latn` and gives us the expected transliterator.
+        let t = Transliterator::try_new_unstable(
+            "de-t-fr-ch-d0-ascii".parse().unwrap(),
+            &TestingProvider,
+        )
+        .unwrap();
         let input =
             "Über ältere Lügner lästern ist sehr a\u{0308}rgerlich. Ja, SEHR ÄRGERLICH! - ꜵ";
         let output =
