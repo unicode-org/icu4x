@@ -34,29 +34,29 @@ impl DataProvider<CurrencyCompactV1Marker> for SourceDataProvider {
             .numsys_data
             .currency_patterns;
 
-        // `default_patterns` is the patterns that came from the default numbering system
-        let compact_patterns = match currency_patterns.get(default_system) {
-            Some(patterns) => &patterns.compact_short,
-            None => return Ok(DataResponse {
-                metadata: Default::default(),
-                payload: DataPayload::from_owned(CurrencyCompactV1 {
-                    compact_patterns: ZeroMap2d::new(),
-                }),
-            }),
-        };
-
-        let compact_patterns = match compact_patterns {
+        let compact_patterns = match {
+            match currency_patterns.get(default_system) {
+                Some(patterns) => &patterns.compact_short,
+                None => {
+                    return Ok(DataResponse {
+                        metadata: Default::default(),
+                        payload: DataPayload::from_owned(CurrencyCompactV1 {
+                            compact_patterns: ZeroMap2d::new(),
+                        }),
+                    })
+                }
+            }
+        } {
             Some(patterns) => &patterns.standard.patterns,
-            None => return Ok(DataResponse {
-                metadata: Default::default(),
-                payload: DataPayload::from_owned(CurrencyCompactV1 {
-                    compact_patterns: ZeroMap2d::new(),
-                }),
-            }),
+            None => {
+                return Ok(DataResponse {
+                    metadata: Default::default(),
+                    payload: DataPayload::from_owned(CurrencyCompactV1 {
+                        compact_patterns: ZeroMap2d::new(),
+                    }),
+                })
+            }
         };
-
-        
-
 
         Ok(DataResponse {
             metadata: Default::default(),
