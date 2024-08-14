@@ -77,3 +77,25 @@ pub enum CompactCount {
     /// Compact Pattern `other` alternative.
     OtherAlt = 11,
 }
+
+impl TryFrom<&str> for CompactCount {
+    type Error = ();
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        match value {
+            "zero" => Ok(CompactCount::Zero),
+            "zero-alt-alphaNextToNumber" => Ok(CompactCount::ZeroAlt),
+            "one" => Ok(CompactCount::One),
+            "one-alt-alphaNextToNumber" => Ok(CompactCount::OneAlt),
+            "two" => Ok(CompactCount::Two),
+            "two-alt-alphaNextToNumber" => Ok(CompactCount::TwoAlt),
+            "few" => Ok(CompactCount::Few),
+            "few-alt-alphaNextToNumber" => Ok(CompactCount::FewAlt),
+            "many" => Ok(CompactCount::Many),
+            "many-alt-alphaNextToNumber" => Ok(CompactCount::ManyAlt),
+            "other" => Ok(CompactCount::Other),
+            "other-alt-alphaNextToNumber" => Ok(CompactCount::OtherAlt),
+            _ => Err(()),
+        }
+    }
+}

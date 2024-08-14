@@ -34,34 +34,47 @@ impl DataProvider<CurrencyCompactV1Marker> for SourceDataProvider {
             .numsys_data
             .currency_patterns;
 
-        let compact_patterns = match {
-            match currency_patterns.get(default_system) {
-                Some(patterns) => &patterns.compact_short,
-                None => {
-                    return Ok(DataResponse {
-                        metadata: Default::default(),
-                        payload: DataPayload::from_owned(CurrencyCompactV1 {
-                            compact_patterns: ZeroMap2d::new(),
-                        }),
-                    })
-                }
-            }
-        } {
-            Some(patterns) => &patterns.standard.patterns,
+        let mut result = ZeroMap2d::new();
+
+        let compact_patterns = match currency_patterns
+            .get(default_system)
+            .and_then(|patterns| patterns.compact_short.as_ref())
+            .map(|short_compact| &short_compact.standard.patterns)
+        {
+            Some(patterns) => patterns,
             None => {
                 return Ok(DataResponse {
                     metadata: Default::default(),
                     payload: DataPayload::from_owned(CurrencyCompactV1 {
-                        compact_patterns: ZeroMap2d::new(),
+                        compact_patterns: result,
                     }),
                 })
             }
         };
 
+        for pattern in compact_patterns {
+            let lg10 = pattern
+                .compact_decimal_type
+                .chars()
+                .filter(|&c| c == '0')
+                .count() as i8;
+
+            if lg10 + 1 != pattern.compact_decimal_type.len() as i8 {
+                return Err(DataErrorKind::IdentifierNotFound
+                    .into_error()
+                    .with_debug_context("the number of zeros must be one less than the number of digits in the compact decimal count"));
+            }
+
+            let count = CompactCount::try_from(pattern.compact_decimal_count.as_str())
+                .map_err(|_| DataErrorKind::IdentifierNotFound.into_error())?;
+
+            result.insert(&lg10, &count, pattern.pattern.as_str());
+        }
+
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(CurrencyCompactV1 {
-                compact_patterns: ZeroMap2d::new(),
+                compact_patterns: result,
             }),
         })
     }

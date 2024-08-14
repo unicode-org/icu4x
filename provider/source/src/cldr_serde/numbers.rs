@@ -47,7 +47,16 @@ pub(crate) struct DecimalFormat {
 
 #[derive(PartialEq, Debug, Default)]
 pub(crate) struct CompactDecimalPattern {
+    /// The decimal part of the pattern
+    ///
+    /// Examples:
+    /// - "1000000-count-zero" --> "1000000"
     pub(crate) compact_decimal_type: String,
+
+    /// The count of the decimal part of the pattern
+    ///
+    /// Examples:
+    /// - "1000000-count-zero" --> "zero"
     pub(crate) compact_decimal_count: String,
     pub(crate) pattern: String,
 }
@@ -93,8 +102,6 @@ impl<'de> Visitor<'de> for DecimalFormatVisitor {
 pub(crate) struct ShortCompactCurrencyPatterns {
     pub(crate) standard: DecimalFormat,
 }
-
-
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub(crate) struct CurrencyFormattingPatterns {

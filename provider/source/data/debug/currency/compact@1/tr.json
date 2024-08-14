@@ -1,3 +1,52 @@
 {
-  "compact_patterns": {}
+  "compact_patterns": {
+    "3": {
+      "One": "0 B ¤",
+      "Other": "0 B ¤"
+    },
+    "4": {
+      "One": "00 B ¤",
+      "Other": "00 B ¤"
+    },
+    "5": {
+      "One": "000 B ¤",
+      "Other": "000 B ¤"
+    },
+    "6": {
+      "One": "0 Mn ¤",
+      "Other": "0 Mn ¤"
+    },
+    "7": {
+      "One": "00 Mn ¤",
+      "Other": "00 Mn ¤"
+    },
+    "8": {
+      "One": "000 Mn ¤",
+      "Other": "000 Mn ¤"
+    },
+    "9": {
+      "One": "0 Mr ¤",
+      "Other": "0 Mr ¤"
+    },
+    "10": {
+      "One": "00 Mr ¤",
+      "Other": "00 Mr ¤"
+    },
+    "11": {
+      "One": "000 Mr ¤",
+      "Other": "000 Mr ¤"
+    },
+    "12": {
+      "One": "0 Tn ¤",
+      "Other": "0 Tn ¤"
+    },
+    "13": {
+      "One": "00 Tn ¤",
+      "Other": "00 Tn ¤"
+    },
+    "14": {
+      "One": "000 Tn ¤",
+      "Other": "000 Tn ¤"
+    }
+  }
 }

@@ -1,3 +1,76 @@
 {
-  "compact_patterns": {}
+  "compact_patterns": {
+    "3": {
+      "One": "¤0K",
+      "OneAlt": "¤ 0K",
+      "Other": "¤0K",
+      "OtherAlt": "¤ 0K"
+    },
+    "4": {
+      "One": "¤00K",
+      "OneAlt": "¤ 00K",
+      "Other": "¤00K",
+      "OtherAlt": "¤ 00K"
+    },
+    "5": {
+      "One": "¤000K",
+      "OneAlt": "¤ 000K",
+      "Other": "¤000K",
+      "OtherAlt": "¤ 000K"
+    },
+    "6": {
+      "One": "¤0M",
+      "OneAlt": "¤ 0M",
+      "Other": "¤0M",
+      "OtherAlt": "¤ 0M"
+    },
+    "7": {
+      "One": "¤00M",
+      "OneAlt": "¤ 00M",
+      "Other": "¤00M",
+      "OtherAlt": "¤ 00M"
+    },
+    "8": {
+      "One": "¤000M",
+      "OneAlt": "¤ 000M",
+      "Other": "¤000M",
+      "OtherAlt": "¤ 000M"
+    },
+    "9": {
+      "One": "¤0B",
+      "OneAlt": "¤ 0B",
+      "Other": "¤0B",
+      "OtherAlt": "¤ 0B"
+    },
+    "10": {
+      "One": "¤00B",
+      "OneAlt": "¤ 00B",
+      "Other": "¤00B",
+      "OtherAlt": "¤ 00B"
+    },
+    "11": {
+      "One": "¤000B",
+      "OneAlt": "¤ 000B",
+      "Other": "¤000B",
+      "OtherAlt": "¤ 000B"
+    },
+    "12": {
+      "One": "¤0T",
+      "OneAlt": "¤ 0T",
+      "Other": "¤0T",
+      "OtherAlt": "¤ 0T"
+    },
+    "13": {
+      "One": "¤00T",
+      "OneAlt": "¤ 00T",
+      "Other": "¤00T",
+      "OtherAlt": "¤ 00T"
+    },
+    "14": {
+      "One": "¤000T",
+      "OneAlt": "¤ 000T",
+      "Other": "¤000T",
+      "OtherAlt": "¤ 000T"
+    }
+  }
 }
