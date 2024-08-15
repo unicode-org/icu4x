@@ -20,7 +20,7 @@ use crate::ParseError;
 /// # use std::str::FromStr;
 /// use fixed_decimal::FixedDecimal;
 /// use fixed_decimal::FixedInteger;
-/// use fixed_decimal::ParseError;
+/// use fixed_decimal::LimitError;
 ///
 /// assert_eq!(
 ///     FixedDecimal::from(FixedInteger::from(5)),
@@ -36,7 +36,7 @@ use crate::ParseError;
 /// );
 /// assert_eq!(
 ///     FixedInteger::try_from(FixedDecimal::from_str("5.0").unwrap()),
-///     Err(ParseError::Limit)
+///     Err(LimitError)
 /// );
 /// ```
 #[derive(Debug, Clone, PartialEq, Default)]
