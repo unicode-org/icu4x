@@ -4,6 +4,7 @@
 
 #[zerovec::make_ule(CountULE)]
 #[zerovec::derive(Debug)]
+
 #[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(
@@ -13,16 +14,21 @@
 )]
 #[repr(u8)]
 pub enum Count {
-    /// UnitPattern `zero`.
+    /// CompactPattern `zero`.
     Zero = 0,
-    /// UnitPattern `one`.
+
+    /// CompactPattern `one`.
     One = 1,
-    /// UnitPattern `two`.
+
+    /// CompactPattern `two`.
     Two = 2,
-    /// UnitPattern `few`.
+
+    /// Compact Pattern `few`.
     Few = 3,
-    /// UnitPattern `many`.
+
+    /// CompactPattern `many`.
     Many = 4,
-    /// UnitPattern `other`.
+
+    /// CompactPattern `other`.
     Other = 5,
 }
