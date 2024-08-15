@@ -2,6 +2,7 @@
   "index_info": {
     "has_long": true,
     "has_medium": true,
+    "has_aligned": true,
     "has_plurals": false,
     "has_eras": true
   },
@@ -10,6 +11,8 @@
     "EEEE, d MMMM, y GGG",
     "E, d MMM, y",
     "E, d MMM, y GGG",
+    "E, dd/MM/y",
+    "E, dd MMM, y GGG",
     "E, d/M/y",
     "E, d MMM, y GGG"
   ]

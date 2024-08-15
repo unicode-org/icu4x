@@ -2,12 +2,14 @@
   "index_info": {
     "has_long": true,
     "has_medium": true,
+    "has_aligned": true,
     "has_plurals": false,
     "has_eras": false
   },
   "patterns": [
     "d MMMM G y",
     "d MMM G y",
+    "dd/MM/y GGG",
     "d/M/y G"
   ]
 }

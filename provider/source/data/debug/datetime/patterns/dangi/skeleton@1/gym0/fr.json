@@ -2,6 +2,7 @@
   "index_info": {
     "has_long": true,
     "has_medium": true,
+    "has_aligned": true,
     "has_plurals": false,
     "has_eras": true
   },
@@ -9,6 +10,8 @@
     "MMMM U",
     "r(U) MMMM",
     "MMM U",
+    "MMM U",
+    "MM/y",
     "MMM U",
     "M/y",
     "MMM U"

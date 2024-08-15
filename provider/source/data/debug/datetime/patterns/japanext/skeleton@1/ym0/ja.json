@@ -2,11 +2,13 @@
   "index_info": {
     "has_long": false,
     "has_medium": true,
+    "has_aligned": true,
     "has_plurals": false,
     "has_eras": false
   },
   "patterns": [
     "GGGy年M月",
+    "GGGGGy年MM月",
     "GGGGGy年M月"
   ]
 }

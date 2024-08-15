@@ -2,11 +2,13 @@
   "index_info": {
     "has_long": false,
     "has_medium": true,
+    "has_aligned": true,
     "has_plurals": false,
     "has_eras": false
   },
   "patterns": [
     "H:mm:ss",
+    "HH",
     "H:mm"
   ]
 }

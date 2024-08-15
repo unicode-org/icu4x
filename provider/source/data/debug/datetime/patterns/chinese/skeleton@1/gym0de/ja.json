@@ -2,6 +2,7 @@
   "index_info": {
     "has_long": true,
     "has_medium": true,
+    "has_aligned": true,
     "has_plurals": false,
     "has_eras": true
   },
@@ -10,6 +11,8 @@
     "U年MMMd日EEEE",
     "U年MMMd日(E)",
     "U年MMMd日(E)",
+    "U年MM月dd日(E)",
+    "U年MMMdd日(E)",
     "U年M月d日(E)",
     "U年MMMd日(E)"
   ]

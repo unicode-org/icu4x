@@ -1,12 +1,15 @@
 {
   "index_info": {
     "has_long": true,
-    "has_medium": false,
+    "has_medium": true,
+    "has_aligned": true,
     "has_plurals": false,
     "has_eras": false
   },
   "patterns": [
     "EEEE, d-M",
+    "E, d-M",
+    "E, dd-MM",
     "E, d-M"
   ]
 }

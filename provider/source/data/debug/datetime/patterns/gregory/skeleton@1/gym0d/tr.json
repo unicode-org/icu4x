@@ -2,6 +2,7 @@
   "index_info": {
     "has_long": true,
     "has_medium": true,
+    "has_aligned": true,
     "has_plurals": false,
     "has_eras": true
   },
@@ -10,6 +11,8 @@
     "GGG d MMMM y",
     "d MMM y",
     "GGG d MMM y",
+    "dd.MM.y",
+    "dd/MM/y GGG",
     "d.MM.y",
     "d/MM/y GGG"
   ]
