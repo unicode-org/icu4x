@@ -20,7 +20,7 @@ typedef struct IsoTimeZoneOptions {
   IsoTimeZoneSecondDisplay seconds;
 } IsoTimeZoneOptions;
 
-
+typedef struct IsoTimeZoneOptions_option {union { IsoTimeZoneOptions ok; }; bool is_ok; } IsoTimeZoneOptions_option;
 
 
 

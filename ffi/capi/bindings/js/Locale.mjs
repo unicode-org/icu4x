@@ -42,7 +42,7 @@ export class Locale {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = LocaleParseError[Array.from(LocaleParseError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('LocaleParseError: ' + cause.value, { cause });
+                throw new globalThis.Error('LocaleParseError: ' + cause.value, { cause });
             }
             return new Locale(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -130,7 +130,7 @@ export class Locale {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = LocaleParseError[Array.from(LocaleParseError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('LocaleParseError: ' + cause.value, { cause });
+                throw new globalThis.Error('LocaleParseError: ' + cause.value, { cause });
             }
     
         }
@@ -166,7 +166,7 @@ export class Locale {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = LocaleParseError[Array.from(LocaleParseError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('LocaleParseError: ' + cause.value, { cause });
+                throw new globalThis.Error('LocaleParseError: ' + cause.value, { cause });
             }
     
         }
@@ -202,7 +202,7 @@ export class Locale {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = LocaleParseError[Array.from(LocaleParseError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('LocaleParseError: ' + cause.value, { cause });
+                throw new globalThis.Error('LocaleParseError: ' + cause.value, { cause });
             }
     
         }
@@ -226,7 +226,7 @@ export class Locale {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = LocaleParseError[Array.from(LocaleParseError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('LocaleParseError: ' + cause.value, { cause });
+                throw new globalThis.Error('LocaleParseError: ' + cause.value, { cause });
             }
             return write.readString8();
         }

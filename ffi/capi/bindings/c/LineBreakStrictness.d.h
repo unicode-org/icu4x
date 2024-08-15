@@ -18,7 +18,7 @@ typedef enum LineBreakStrictness {
   LineBreakStrictness_Anywhere = 3,
 } LineBreakStrictness;
 
-
+typedef struct LineBreakStrictness_option {union { LineBreakStrictness ok; }; bool is_ok; } LineBreakStrictness_option;
 
 
 

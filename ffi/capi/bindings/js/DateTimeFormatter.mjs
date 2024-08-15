@@ -47,7 +47,7 @@ export class DateTimeFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)) return Error[i[0]]; } return null;})();
-                throw new Error('Error: ' + cause.value, { cause });
+                throw new globalThis.Error('Error: ' + cause.value, { cause });
             }
             return new DateTimeFormatter(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -67,7 +67,7 @@ export class DateTimeFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)) return Error[i[0]]; } return null;})();
-                throw new Error('Error: ' + cause.value, { cause });
+                throw new globalThis.Error('Error: ' + cause.value, { cause });
             }
             return write.readString8();
         }
@@ -89,7 +89,7 @@ export class DateTimeFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)) return Error[i[0]]; } return null;})();
-                throw new Error('Error: ' + cause.value, { cause });
+                throw new globalThis.Error('Error: ' + cause.value, { cause });
             }
             return write.readString8();
         }

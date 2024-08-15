@@ -18,7 +18,7 @@ typedef enum IsoTimeZoneFormat {
   IsoTimeZoneFormat_UtcExtended = 3,
 } IsoTimeZoneFormat;
 
-
+typedef struct IsoTimeZoneFormat_option {union { IsoTimeZoneFormat ok; }; bool is_ok; } IsoTimeZoneFormat_option;
 
 
 

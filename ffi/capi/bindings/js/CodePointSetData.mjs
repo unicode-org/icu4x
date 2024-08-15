@@ -83,7 +83,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -101,7 +101,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -119,7 +119,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -137,7 +137,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -155,7 +155,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -173,7 +173,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -191,7 +191,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -209,7 +209,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -227,7 +227,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -245,7 +245,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -263,7 +263,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -281,7 +281,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -299,7 +299,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -317,7 +317,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -335,7 +335,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -353,7 +353,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -371,7 +371,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -389,7 +389,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -407,7 +407,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -425,7 +425,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -443,7 +443,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -461,7 +461,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -479,7 +479,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -497,7 +497,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -515,7 +515,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -533,7 +533,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -551,7 +551,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -569,7 +569,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -587,7 +587,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -605,7 +605,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -623,7 +623,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -641,7 +641,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -659,7 +659,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -677,7 +677,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -695,7 +695,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -713,7 +713,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -731,7 +731,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -749,7 +749,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -767,7 +767,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -785,7 +785,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -803,7 +803,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -821,7 +821,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -839,7 +839,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -857,7 +857,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -875,7 +875,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -893,7 +893,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -911,7 +911,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -929,7 +929,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -947,7 +947,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -965,7 +965,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -983,7 +983,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -1001,7 +1001,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -1019,7 +1019,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -1037,7 +1037,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -1055,7 +1055,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -1073,7 +1073,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -1091,7 +1091,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -1109,7 +1109,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -1127,7 +1127,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -1145,7 +1145,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -1163,7 +1163,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -1181,7 +1181,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -1199,7 +1199,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -1217,7 +1217,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -1235,7 +1235,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -1253,7 +1253,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -1273,7 +1273,7 @@ export class CodePointSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)) return Error[i[0]]; } return null;})();
-                throw new Error('Error: ' + cause.value, { cause });
+                throw new globalThis.Error('Error: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }

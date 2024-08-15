@@ -21,7 +21,7 @@ typedef enum IsoWeekday {
   IsoWeekday_Sunday = 7,
 } IsoWeekday;
 
-
+typedef struct IsoWeekday_option {union { IsoWeekday ok; }; bool is_ok; } IsoWeekday_option;
 
 
 

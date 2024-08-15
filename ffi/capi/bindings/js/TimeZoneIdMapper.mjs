@@ -45,7 +45,7 @@ export class TimeZoneIdMapper {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new TimeZoneIdMapper(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -67,7 +67,7 @@ export class TimeZoneIdMapper {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new TimeZoneInvalidIdError();
-                throw new Error('TimeZoneInvalidIdError', { cause });
+                throw new globalThis.Error('TimeZoneInvalidIdError', { cause });
             }
             return write.readString8();
         }
@@ -93,7 +93,7 @@ export class TimeZoneIdMapper {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new TimeZoneInvalidIdError();
-                throw new Error('TimeZoneInvalidIdError', { cause });
+                throw new globalThis.Error('TimeZoneInvalidIdError', { cause });
             }
             return write.readString8();
         }
@@ -119,7 +119,7 @@ export class TimeZoneIdMapper {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new TimeZoneInvalidIdError();
-                throw new Error('TimeZoneInvalidIdError', { cause });
+                throw new globalThis.Error('TimeZoneInvalidIdError', { cause });
             }
             return write.readString8();
         }
@@ -145,7 +145,7 @@ export class TimeZoneIdMapper {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new TimeZoneInvalidIdError();
-                throw new Error('TimeZoneInvalidIdError', { cause });
+                throw new globalThis.Error('TimeZoneInvalidIdError', { cause });
             }
             return write.readString8();
         }

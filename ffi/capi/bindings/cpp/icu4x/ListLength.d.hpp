@@ -17,6 +17,8 @@ namespace capi {
       ListLength_Short = 1,
       ListLength_Narrow = 2,
     };
+    
+    typedef struct ListLength_option {union { ListLength ok; }; bool is_ok; } ListLength_option;
 } // namespace capi
 } // namespace
 

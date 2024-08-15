@@ -95,7 +95,7 @@ export class CodePointMapData16 {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointMapData16(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }

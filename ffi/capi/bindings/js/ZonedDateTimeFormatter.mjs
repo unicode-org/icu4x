@@ -48,7 +48,7 @@ export class ZonedDateTimeFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)) return Error[i[0]]; } return null;})();
-                throw new Error('Error: ' + cause.value, { cause });
+                throw new globalThis.Error('Error: ' + cause.value, { cause });
             }
             return new ZonedDateTimeFormatter(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -68,7 +68,7 @@ export class ZonedDateTimeFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)) return Error[i[0]]; } return null;})();
-                throw new Error('Error: ' + cause.value, { cause });
+                throw new globalThis.Error('Error: ' + cause.value, { cause });
             }
             return new ZonedDateTimeFormatter(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -92,7 +92,7 @@ export class ZonedDateTimeFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)) return Error[i[0]]; } return null;})();
-                throw new Error('Error: ' + cause.value, { cause });
+                throw new globalThis.Error('Error: ' + cause.value, { cause });
             }
             return write.readString8();
         }
@@ -114,7 +114,7 @@ export class ZonedDateTimeFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)) return Error[i[0]]; } return null;})();
-                throw new Error('Error: ' + cause.value, { cause });
+                throw new globalThis.Error('Error: ' + cause.value, { cause });
             }
             return write.readString8();
         }

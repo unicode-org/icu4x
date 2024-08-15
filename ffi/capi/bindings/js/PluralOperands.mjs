@@ -41,7 +41,7 @@ export class PluralOperands {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = FixedDecimalParseError[Array.from(FixedDecimalParseError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('FixedDecimalParseError: ' + cause.value, { cause });
+                throw new globalThis.Error('FixedDecimalParseError: ' + cause.value, { cause });
             }
             return new PluralOperands(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }

@@ -29,11 +29,11 @@ icu4x_WordSegmenter_create_lstm_mv1_result icu4x_WordSegmenter_create_lstm_mv1(c
 typedef struct icu4x_WordSegmenter_create_dictionary_mv1_result {union {WordSegmenter* ok; DataError err;}; bool is_ok;} icu4x_WordSegmenter_create_dictionary_mv1_result;
 icu4x_WordSegmenter_create_dictionary_mv1_result icu4x_WordSegmenter_create_dictionary_mv1(const DataProvider* provider);
 
-WordBreakIteratorUtf8* icu4x_WordSegmenter_segment_utf8_mv1(const WordSegmenter* self, const char* input_data, size_t input_len);
+WordBreakIteratorUtf8* icu4x_WordSegmenter_segment_utf8_mv1(const WordSegmenter* self, DiplomatStringView input);
 
-WordBreakIteratorUtf16* icu4x_WordSegmenter_segment_utf16_mv1(const WordSegmenter* self, const char16_t* input_data, size_t input_len);
+WordBreakIteratorUtf16* icu4x_WordSegmenter_segment_utf16_mv1(const WordSegmenter* self, DiplomatString16View input);
 
-WordBreakIteratorLatin1* icu4x_WordSegmenter_segment_latin1_mv1(const WordSegmenter* self, const uint8_t* input_data, size_t input_len);
+WordBreakIteratorLatin1* icu4x_WordSegmenter_segment_latin1_mv1(const WordSegmenter* self, DiplomatU8View input);
 
 
 void icu4x_WordSegmenter_destroy_mv1(WordSegmenter* self);

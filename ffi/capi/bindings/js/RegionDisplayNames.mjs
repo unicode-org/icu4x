@@ -41,7 +41,7 @@ export class RegionDisplayNames {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new RegionDisplayNames(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -63,7 +63,7 @@ export class RegionDisplayNames {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = LocaleParseError[Array.from(LocaleParseError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('LocaleParseError: ' + cause.value, { cause });
+                throw new globalThis.Error('LocaleParseError: ' + cause.value, { cause });
             }
             return write.readString8();
         }

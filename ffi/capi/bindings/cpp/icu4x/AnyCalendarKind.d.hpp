@@ -38,6 +38,8 @@ namespace capi {
       AnyCalendarKind_Persian = 16,
       AnyCalendarKind_Roc = 17,
     };
+    
+    typedef struct AnyCalendarKind_option {union { AnyCalendarKind ok; }; bool is_ok; } AnyCalendarKind_option;
 } // namespace capi
 } // namespace
 

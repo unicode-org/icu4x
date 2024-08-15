@@ -16,7 +16,7 @@ typedef enum LocaleFallbackPriority {
   LocaleFallbackPriority_Region = 1,
 } LocaleFallbackPriority;
 
-
+typedef struct LocaleFallbackPriority_option {union { LocaleFallbackPriority ok; }; bool is_ok; } LocaleFallbackPriority_option;
 
 
 

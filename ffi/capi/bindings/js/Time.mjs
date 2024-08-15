@@ -41,7 +41,7 @@ export class Time {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = CalendarError[Array.from(CalendarError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('CalendarError: ' + cause.value, { cause });
+                throw new globalThis.Error('CalendarError: ' + cause.value, { cause });
             }
             return new Time(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -61,7 +61,7 @@ export class Time {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = CalendarParseError[Array.from(CalendarParseError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('CalendarParseError: ' + cause.value, { cause });
+                throw new globalThis.Error('CalendarParseError: ' + cause.value, { cause });
             }
             return new Time(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -81,7 +81,7 @@ export class Time {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = CalendarError[Array.from(CalendarError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('CalendarError: ' + cause.value, { cause });
+                throw new globalThis.Error('CalendarError: ' + cause.value, { cause });
             }
             return new Time(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }

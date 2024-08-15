@@ -18,6 +18,8 @@ namespace capi {
       FixedDecimalRoundingIncrement_MultiplesOf5 = 2,
       FixedDecimalRoundingIncrement_MultiplesOf25 = 3,
     };
+    
+    typedef struct FixedDecimalRoundingIncrement_option {union { FixedDecimalRoundingIncrement ok; }; bool is_ok; } FixedDecimalRoundingIncrement_option;
 } // namespace capi
 } // namespace
 

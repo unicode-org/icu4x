@@ -41,10 +41,8 @@ final class DataProvider implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory DataProvider.fromByteSlice(ByteBuffer blob) {
-    final temp = ffi2.Arena();
-    final blobView = blob;
-    final result = _icu4x_DataProvider_from_byte_slice_mv1(blobView.allocIn(temp), blobView.length);
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final result = _icu4x_DataProvider_from_byte_slice_mv1(blob.asUint8List()._uint8AllocIn(temp.arena));
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -117,9 +115,9 @@ external void _icu4x_DataProvider_destroy_mv1(ffi.Pointer<ffi.Void> self);
 external ffi.Pointer<ffi.Opaque> _icu4x_DataProvider_compiled_mv1();
 
 @meta.ResourceIdentifier('icu4x_DataProvider_from_byte_slice_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_DataProvider_from_byte_slice_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(_SliceUint8)>(isLeaf: true, symbol: 'icu4x_DataProvider_from_byte_slice_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_DataProvider_from_byte_slice_mv1(ffi.Pointer<ffi.Uint8> blobData, int blobLength);
+external _ResultOpaqueInt32 _icu4x_DataProvider_from_byte_slice_mv1(_SliceUint8 blob);
 
 @meta.ResourceIdentifier('icu4x_DataProvider_empty_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_DataProvider_empty_mv1')

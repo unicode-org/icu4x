@@ -224,7 +224,7 @@ typedef struct icu4x_CodePointSetData_load_xid_start_mv1_result {union {CodePoin
 icu4x_CodePointSetData_load_xid_start_mv1_result icu4x_CodePointSetData_load_xid_start_mv1(const DataProvider* provider);
 
 typedef struct icu4x_CodePointSetData_load_for_ecma262_mv1_result {union {CodePointSetData* ok; Error err;}; bool is_ok;} icu4x_CodePointSetData_load_for_ecma262_mv1_result;
-icu4x_CodePointSetData_load_for_ecma262_mv1_result icu4x_CodePointSetData_load_for_ecma262_mv1(const DataProvider* provider, const char* property_name_data, size_t property_name_len);
+icu4x_CodePointSetData_load_for_ecma262_mv1_result icu4x_CodePointSetData_load_for_ecma262_mv1(const DataProvider* provider, DiplomatStringView property_name);
 
 
 void icu4x_CodePointSetData_destroy_mv1(CodePointSetData* self);

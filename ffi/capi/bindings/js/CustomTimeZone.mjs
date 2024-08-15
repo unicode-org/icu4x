@@ -44,7 +44,7 @@ export class CustomTimeZone {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new TimeZoneInvalidOffsetError();
-                throw new Error('TimeZoneInvalidOffsetError', { cause });
+                throw new globalThis.Error('TimeZoneInvalidOffsetError', { cause });
             }
             return new CustomTimeZone(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -104,7 +104,7 @@ export class CustomTimeZone {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new TimeZoneInvalidOffsetError();
-                throw new Error('TimeZoneInvalidOffsetError', { cause });
+                throw new globalThis.Error('TimeZoneInvalidOffsetError', { cause });
             }
     
         }
@@ -225,7 +225,7 @@ export class CustomTimeZone {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new TimeZoneInvalidIdError();
-                throw new Error('TimeZoneInvalidIdError', { cause });
+                throw new globalThis.Error('TimeZoneInvalidIdError', { cause });
             }
     
         }
@@ -247,7 +247,7 @@ export class CustomTimeZone {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new TimeZoneInvalidIdError();
-                throw new Error('TimeZoneInvalidIdError', { cause });
+                throw new globalThis.Error('TimeZoneInvalidIdError', { cause });
             }
     
         }
@@ -291,7 +291,7 @@ export class CustomTimeZone {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new TimeZoneInvalidIdError();
-                throw new Error('TimeZoneInvalidIdError', { cause });
+                throw new globalThis.Error('TimeZoneInvalidIdError', { cause });
             }
     
         }

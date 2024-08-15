@@ -19,7 +19,7 @@ namespace icu4x {
 namespace capi {
     extern "C" {
     
-    bool icu4x_UnicodeSetData_contains_mv1(const icu4x::capi::UnicodeSetData* self, const char* s_data, size_t s_len);
+    bool icu4x_UnicodeSetData_contains_mv1(const icu4x::capi::UnicodeSetData* self, diplomat::capi::DiplomatStringView s);
     
     bool icu4x_UnicodeSetData_contains_char_mv1(const icu4x::capi::UnicodeSetData* self, char32_t cp);
     
@@ -50,8 +50,7 @@ namespace capi {
 
 inline bool icu4x::UnicodeSetData::contains(std::string_view s) const {
   auto result = icu4x::capi::icu4x_UnicodeSetData_contains_mv1(this->AsFFI(),
-    s.data(),
-    s.size());
+    {s.data(), s.size()});
   return result;
 }
 

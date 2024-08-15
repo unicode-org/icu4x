@@ -50,10 +50,8 @@ final class CaseMapCloser implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `add_string_case_closure_to`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.add_string_case_closure_to) for more information.
   bool addStringCaseClosureTo(String s, CodePointSetBuilder builder) {
-    final temp = ffi2.Arena();
-    final sView = s.utf8View;
-    final result = _icu4x_CaseMapCloser_add_string_case_closure_to_mv1(_ffi, sView.allocIn(temp), sView.length, builder._ffi);
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final result = _icu4x_CaseMapCloser_add_string_case_closure_to_mv1(_ffi, s._utf8AllocIn(temp.arena), builder._ffi);
     return result;
   }
 }
@@ -74,6 +72,6 @@ external _ResultOpaqueInt32 _icu4x_CaseMapCloser_create_mv1(ffi.Pointer<ffi.Opaq
 external void _icu4x_CaseMapCloser_add_case_closure_to_mv1(ffi.Pointer<ffi.Opaque> self, Rune c, ffi.Pointer<ffi.Opaque> builder);
 
 @meta.ResourceIdentifier('icu4x_CaseMapCloser_add_string_case_closure_to_mv1')
-@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CaseMapCloser_add_string_case_closure_to_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CaseMapCloser_add_string_case_closure_to_mv1')
 // ignore: non_constant_identifier_names
-external bool _icu4x_CaseMapCloser_add_string_case_closure_to_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> builder);
+external bool _icu4x_CaseMapCloser_add_string_case_closure_to_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 s, ffi.Pointer<ffi.Opaque> builder);

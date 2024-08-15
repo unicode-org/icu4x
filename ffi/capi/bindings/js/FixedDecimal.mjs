@@ -63,7 +63,7 @@ export class FixedDecimal {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new FixedDecimalLimitError();
-                throw new Error('FixedDecimalLimitError', { cause });
+                throw new globalThis.Error('FixedDecimalLimitError', { cause });
             }
             return new FixedDecimal(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -81,7 +81,7 @@ export class FixedDecimal {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new FixedDecimalLimitError();
-                throw new Error('FixedDecimalLimitError', { cause });
+                throw new globalThis.Error('FixedDecimalLimitError', { cause });
             }
             return new FixedDecimal(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -99,7 +99,7 @@ export class FixedDecimal {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new FixedDecimalLimitError();
-                throw new Error('FixedDecimalLimitError', { cause });
+                throw new globalThis.Error('FixedDecimalLimitError', { cause });
             }
             return new FixedDecimal(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -119,7 +119,7 @@ export class FixedDecimal {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = FixedDecimalParseError[Array.from(FixedDecimalParseError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new Error('FixedDecimalParseError: ' + cause.value, { cause });
+                throw new globalThis.Error('FixedDecimalParseError: ' + cause.value, { cause });
             }
             return new FixedDecimal(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
