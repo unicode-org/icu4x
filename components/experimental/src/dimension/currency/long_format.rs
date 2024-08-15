@@ -50,9 +50,10 @@ impl<'l> Writeable for LongFormattedCurrency<'l> {
             .or_else(|| patterns.get(&PatternCount::Other))
             .ok_or(core::fmt::Error)?;
 
+        // TODO: Remove this line once the pattern is already implemented in the provider.
         // Parse the pattern string into a DoublePlaceholderPattern
         // The pattern is expected to be in the form of "{0} {1}"
-        let pattern = DoublePlaceholderPattern::from_str(pattern).map_err(|_| core::fmt::Error)?;
+        let pattern = DoublePlaceholderPattern::from_str(pattern).unwrap();
 
         let formatted_value = self.fixed_decimal_formatter.format(self.value);
         let interpolated = pattern.interpolate((formatted_value, display_name));
