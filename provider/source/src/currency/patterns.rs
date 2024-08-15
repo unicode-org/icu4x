@@ -42,6 +42,12 @@ impl DataProvider<CurrencyPatternsDataV1Marker> for SourceDataProvider {
             .get(default_system)
             .ok_or(DataErrorKind::IdentifierNotFound.into_error())?;
 
+        //  According to [Unicode Technical Standard #35](https://unicode.org/reports/tr35/tr35-numbers.html),
+        //  The `other` pattern must be present in the data.
+        if patterns.pattern_other.is_none() {
+            return Err(DataErrorKind::IdentifierNotFound.into_error());
+        }
+
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(CurrencyPatternsDataV1 {

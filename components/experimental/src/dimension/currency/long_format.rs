@@ -48,7 +48,10 @@ impl<'l> Writeable for LongFormattedCurrency<'l> {
         let pattern = patterns
             .get(&pattern_count)
             .or_else(|| patterns.get(&PatternCount::Other))
-            .ok_or(core::fmt::Error)?;
+            // According to [Unicode Technical Standard #35](https://unicode.org/reports/tr35/tr35-numbers.html),
+            // The `other` pattern must be present in the data.
+            // Also, if the `other` pattern is not present, the datagen will fail.
+            .unwrap();
 
         // TODO: Remove this line once the pattern is already implemented in the provider.
         // Parse the pattern string into a DoublePlaceholderPattern
