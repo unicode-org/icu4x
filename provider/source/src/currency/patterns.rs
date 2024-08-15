@@ -8,6 +8,7 @@ use crate::SourceDataProvider;
 
 use std::collections::HashSet;
 
+use icu::experimental::dimension::provider::count::Count;
 use icu::experimental::dimension::provider::currency_patterns::*;
 use icu_provider::prelude::*;
 use icu_provider::DataProvider;
@@ -50,16 +51,16 @@ impl DataProvider<CurrencyPatternsDataV1Marker> for SourceDataProvider {
                 //      Check that the .json data files are completed and no need to fallback chain up to the root.
                 unit_patterns: ZeroMap::from_iter(
                     [
-                        (PatternCount::Zero, patterns.pattern_zero.as_deref()),
-                        (PatternCount::One, patterns.pattern_one.as_deref()),
-                        (PatternCount::Two, patterns.pattern_two.as_deref()),
-                        (PatternCount::Few, patterns.pattern_few.as_deref()),
-                        (PatternCount::Many, patterns.pattern_many.as_deref()),
-                        (PatternCount::Other, patterns.pattern_other.as_deref()),
+                        (Count::Zero, patterns.pattern_zero.as_deref()),
+                        (Count::One, patterns.pattern_one.as_deref()),
+                        (Count::Two, patterns.pattern_two.as_deref()),
+                        (Count::Few, patterns.pattern_few.as_deref()),
+                        (Count::Many, patterns.pattern_many.as_deref()),
+                        (Count::Other, patterns.pattern_other.as_deref()),
                     ]
                     .into_iter()
                     .filter_map(|(count, pattern)| match (count, pattern) {
-                        (PatternCount::Other, pattern) => Some((count, pattern?)),
+                        (Count::Other, pattern) => Some((count, pattern?)),
                         // NOTE:
                         //      According to [Unicode Technical Standard #35](https://unicode.org/reports/tr35/tr35-numbers.html),
                         //      if a specific count is not available, the `other` pattern should be used.
