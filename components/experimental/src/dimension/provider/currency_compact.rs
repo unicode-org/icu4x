@@ -12,6 +12,8 @@
 use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 
+use super::count::Count;
+
 /// Currency Compact V1 data struct.
 #[icu_provider::data_struct(marker(ShortCurrencyCompactV1Marker, "currency/compact@1"))]
 #[derive(Debug, Clone, Default, PartialEq)]
@@ -36,33 +38,6 @@ pub struct ShortCurrencyCompactV1<'data> {
     pub compact_patterns: ZeroMap<'data, (i8, CompactCount), str>,
 }
 
-#[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::dimension::provider::currency_compact)
-)]
-#[repr(u8)]
-pub enum Count {
-    /// CompactPattern `zero`.
-    Zero = 0,
-
-    /// CompactPattern `one`.
-    One = 1,
-
-    /// CompactPattern `two`.
-    Two = 2,
-
-    /// Compact Pattern `few`.
-    Few = 3,
-
-    /// CompactPattern `many`.
-    Many = 4,
-
-    /// CompactPattern `other`.
-    Other = 5,
-}
 
 #[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
