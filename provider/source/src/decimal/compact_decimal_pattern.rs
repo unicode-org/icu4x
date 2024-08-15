@@ -170,14 +170,14 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
             BTreeMap::new();
         // First ingest the CLDR mapping.
         for pattern in other.patterns.iter() {
-            let mut type_bytes = pattern.compact_decimal_type.bytes();
+            let mut type_bytes = pattern.magnitude.bytes();
 
             if !(type_bytes.next() == Some(b'1') && type_bytes.all(|b| b == b'0')) {
-                return Err(format!("Ill-formed type {}", pattern.compact_decimal_type).into());
+                return Err(format!("Ill-formed type {}", pattern.magnitude).into());
             }
-            let log10_type = i8::try_from(pattern.compact_decimal_type.len() - 1)
-                .map_err(|_| format!("Too many digits in type {}", pattern.compact_decimal_type))?;
-            let count = match &*pattern.compact_decimal_count {
+            let log10_type = i8::try_from(pattern.magnitude.len() - 1)
+                .map_err(|_| format!("Too many digits in type {}", pattern.magnitude))?;
+            let count = match &*pattern.count {
                 "zero" => Count::Zero,
                 "one" => Count::One,
                 "two" => Count::Two,
@@ -188,7 +188,7 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
                 _ => {
                     return Err(format!(
                         "Invalid count {} in type {}",
-                        pattern.compact_decimal_count, pattern.compact_decimal_type
+                        pattern.count, pattern.magnitude
                     )
                     .into())
                 }
