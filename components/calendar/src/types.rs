@@ -9,7 +9,6 @@ use core::convert::TryFrom;
 use core::convert::TryInto;
 use core::fmt;
 use core::num::NonZeroU8;
-use core::str::FromStr;
 use tinystr::TinyAsciiStr;
 use tinystr::{TinyStr16, TinyStr4};
 use zerovec::maps::ZeroMapKV;
@@ -26,19 +25,6 @@ use zerovec::ule::AsULE;
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this is a newtype
 pub struct Era(pub TinyStr16);
-
-impl From<TinyStr16> for Era {
-    fn from(x: TinyStr16) -> Self {
-        Self(x)
-    }
-}
-
-impl FromStr for Era {
-    type Err = <TinyStr16 as FromStr>::Err;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        s.parse().map(Self)
-    }
-}
 
 /// Representation of a formattable year.
 ///
@@ -189,18 +175,6 @@ impl<'a> ZeroMapKV<'a> for MonthCode {
 impl fmt::Display for MonthCode {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}", self.0)
-    }
-}
-
-impl From<TinyStr4> for MonthCode {
-    fn from(x: TinyStr4) -> Self {
-        Self(x)
-    }
-}
-impl FromStr for MonthCode {
-    type Err = <TinyStr4 as FromStr>::Err;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        s.parse().map(Self)
     }
 }
 

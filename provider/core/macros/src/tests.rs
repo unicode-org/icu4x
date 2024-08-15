@@ -65,7 +65,7 @@ fn test_data_marker() {
                 const INFO: icu_provider::DataMarkerInfo = {
                     let mut info = icu_provider::DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!("demo/bar@1"));
                     info.is_singleton = false;
-                    info.fallback_config.priority = icu_provider::_internal::LocaleFallbackPriority::const_default();
+                    info.fallback_config.priority = icu_provider::_internal::LocaleFallbackPriority::default();
                     info
                 };
             }
@@ -102,7 +102,7 @@ fn test_multi_named_keyed_data_marker() {
                 const INFO: icu_provider::DataMarkerInfo = {
                     let mut info = icu_provider::DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!("demo/bar@1"));
                     info.is_singleton = false;
-                    info.fallback_config.priority = icu_provider::_internal::LocaleFallbackPriority::const_default();
+                    info.fallback_config.priority = icu_provider::_internal::LocaleFallbackPriority::default();
                     info
                 };
             }
@@ -115,7 +115,7 @@ fn test_multi_named_keyed_data_marker() {
                 const INFO: icu_provider::DataMarkerInfo =  {
                     let mut info = icu_provider::DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!("demo/baz@1"));
                     info.is_singleton = false;
-                    info.fallback_config.priority = icu_provider::_internal::LocaleFallbackPriority::const_default();
+                    info.fallback_config.priority = icu_provider::_internal::LocaleFallbackPriority::default();
                     info
                 };
             }

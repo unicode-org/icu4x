@@ -19,7 +19,7 @@ use zerovec::ZeroVec;
 mod collator_serde;
 
 fn id_to_file_name(id: &DataIdentifierBorrowed) -> String {
-    let mut s = if id.locale.is_und() {
+    let mut s = if id.locale.is_default() {
         "root".to_owned()
     } else {
         id.locale

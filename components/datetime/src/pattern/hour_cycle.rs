@@ -3,11 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::{reference, runtime, PatternItem};
-use crate::{fields, options::preferences};
+use crate::{
+    fields,
+    options::preferences::{self, HourCycle},
+};
 #[cfg(feature = "datagen")]
 use crate::{provider, skeleton};
-#[cfg(feature = "experimental")]
-use icu_locale_core::{extensions::unicode::Value, subtags::Subtag};
 use icu_provider::prelude::*;
 
 /// Used to represent either H11/H12, or H23/H24. Skeletons only store these
@@ -35,6 +36,17 @@ impl Default for CoarseHourCycle {
     }
 }
 
+impl From<HourCycle> for CoarseHourCycle {
+    fn from(value: HourCycle) -> Self {
+        match value {
+            HourCycle::H11 => CoarseHourCycle::H11H12,
+            HourCycle::H12 => CoarseHourCycle::H11H12,
+            HourCycle::H23 => CoarseHourCycle::H23H24,
+            HourCycle::H24 => CoarseHourCycle::H23H24,
+        }
+    }
+}
+
 impl CoarseHourCycle {
     /// Figure out the coarse hour cycle given a pattern, which is useful for generating the provider
     /// patterns for `length::Bag`.
@@ -53,19 +65,6 @@ impl CoarseHourCycle {
         }
 
         None
-    }
-
-    #[cfg(feature = "experimental")]
-    pub(crate) fn from_locale_value(value: &Value) -> Option<Self> {
-        const H11: Subtag = icu_locale_core::subtags::subtag!("h11");
-        const H12: Subtag = icu_locale_core::subtags::subtag!("h12");
-        const H23: Subtag = icu_locale_core::subtags::subtag!("h23");
-        const H24: Subtag = icu_locale_core::subtags::subtag!("h24");
-        match value.as_single_subtag() {
-            Some(&H11) | Some(&H12) => Some(Self::H11H12),
-            Some(&H23) | Some(&H24) => Some(Self::H23H24),
-            _ => None,
-        }
     }
 
     /// Invoke the pattern matching machinery to transform the hour cycle of a pattern. This provides

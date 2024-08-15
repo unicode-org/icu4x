@@ -563,7 +563,7 @@ impl DataMarkerInfo {
             path,
             is_singleton: false,
             attributes_domain: "",
-            fallback_config: LocaleFallbackConfig::const_default(),
+            fallback_config: LocaleFallbackConfig::default(),
         }
     }
 

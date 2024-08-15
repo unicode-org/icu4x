@@ -979,6 +979,7 @@ name = "icu4x_ecma402"
 version = "0.8.2"
 dependencies = [
  "ecma402_traits",
+ "fixed_decimal",
  "icu",
  "icu_provider",
  "writeable",
@@ -1239,6 +1240,7 @@ dependencies = [
  "icu_collections",
  "icu_decimal",
  "icu_experimental_data",
+ "icu_list",
  "icu_locale",
  "icu_locale_core",
  "icu_locale_data",

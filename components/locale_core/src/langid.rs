@@ -148,25 +148,19 @@ impl LanguageIdentifier {
         parse_language_identifier(v, ParserMode::Locale)
     }
 
-    /// The default undefined language "und". Same as [`default()`](Default::default()).
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::locale::LanguageIdentifier;
-    ///
-    /// assert_eq!(LanguageIdentifier::default(), LanguageIdentifier::UND);
-    /// ```
-    pub const UND: Self = Self {
-        language: subtags::Language::UND,
-        script: None,
-        region: None,
-        variants: subtags::Variants::new(),
-    };
+    /// Const-friendly version of [`Default::default`].
+    pub const fn default() -> Self {
+        Self {
+            language: subtags::Language::UND,
+            script: None,
+            region: None,
+            variants: subtags::Variants::new(),
+        }
+    }
 
-    /// Whether this language identifier equals [`Self::UND`].
-    pub const fn is_empty(&self) -> bool {
-        self.language.is_empty()
+    /// Whether this language identifier equals [`Self::default`].
+    pub const fn is_default(&self) -> bool {
+        self.language.is_default()
             && self.script.is_none()
             && self.region.is_none()
             && self.variants.is_empty()
@@ -452,7 +446,7 @@ impl_writeable_for_each_subtag_str_no_test!(LanguageIdentifier, selff, selff.scr
 #[test]
 fn test_writeable() {
     use writeable::assert_writeable_eq;
-    assert_writeable_eq!(LanguageIdentifier::UND, "und");
+    assert_writeable_eq!(LanguageIdentifier::default(), "und");
     assert_writeable_eq!("und-001".parse::<LanguageIdentifier>().unwrap(), "und-001");
     assert_writeable_eq!(
         "und-Mymr".parse::<LanguageIdentifier>().unwrap(),

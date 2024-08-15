@@ -7,8 +7,10 @@
 use icu::plurals as ipr;
 
 pub(crate) mod internal {
+    use core::str::FromStr;
     use ecma402_traits::pluralrules::options::Type;
     use ecma402_traits::pluralrules::Options;
+    use fixed_decimal::FixedDecimal;
     use icu::plurals::{PluralCategory, PluralOperands, PluralRuleType};
     use std::cmp::{max, min};
 
@@ -111,7 +113,7 @@ pub(crate) mod internal {
         dbg!("n={}", n);
         let nstr = fixed_format(n, &opts);
         #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        let ret = nstr.parse().unwrap();
+        let ret = PluralOperands::from(&FixedDecimal::from_str(&nstr).unwrap());
         dbg!("ret={:?}\n---\n", &ret);
         ret
     }

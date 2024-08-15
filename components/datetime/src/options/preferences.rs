@@ -39,7 +39,7 @@ use crate::fields;
 use serde::{Deserialize, Serialize};
 
 use icu_locale_core::{
-    extensions::unicode::key,
+    extensions::unicode::{key, Value},
     subtags::{subtag, Subtag},
 };
 use icu_provider::DataLocale;
@@ -82,20 +82,10 @@ impl Bag {
 
     /// Construct a [`Bag`] from a given [`DataLocale`]
     pub(crate) fn from_data_locale(data_locale: &DataLocale) -> Self {
-        const H11: Subtag = subtag!("h11");
-        const H12: Subtag = subtag!("h12");
-        const H23: Subtag = subtag!("h23");
-        const H24: Subtag = subtag!("h24");
-        let hour_cycle = match data_locale
+        let hour_cycle = data_locale
             .get_unicode_ext(&key!("hc"))
-            .and_then(|v| v.into_single_subtag())
-        {
-            Some(H11) => Some(HourCycle::H11),
-            Some(H12) => Some(HourCycle::H12),
-            Some(H23) => Some(HourCycle::H23),
-            Some(H24) => Some(HourCycle::H24),
-            _ => None,
-        };
+            .as_ref()
+            .and_then(HourCycle::from_locale_value);
         Self { hour_cycle }
     }
 }
@@ -170,6 +160,20 @@ impl HourCycle {
             Self::H12 => fields::Hour::H12,
             Self::H23 => fields::Hour::H23,
             Self::H24 => fields::Hour::H24,
+        }
+    }
+
+    pub(crate) fn from_locale_value(value: &Value) -> Option<Self> {
+        const H11: Subtag = subtag!("h11");
+        const H12: Subtag = subtag!("h12");
+        const H23: Subtag = subtag!("h23");
+        const H24: Subtag = subtag!("h24");
+        match value.as_single_subtag() {
+            Some(&H11) => Some(HourCycle::H11),
+            Some(&H12) => Some(HourCycle::H12),
+            Some(&H23) => Some(HourCycle::H23),
+            Some(&H24) => Some(HourCycle::H24),
+            _ => None,
         }
     }
 }
