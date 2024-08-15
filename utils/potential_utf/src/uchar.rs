@@ -113,6 +113,7 @@ impl PotentialCodePoint {
     }
 }
 
+/// This impl requires enabling the optional `zerovec` Cargo feature
 #[cfg(feature = "zerovec")]
 impl zerovec::ule::AsULE for PotentialCodePoint {
     type ULE = zerovec::ule::RawBytesULE<3>;
@@ -130,6 +131,7 @@ impl zerovec::ule::AsULE for PotentialCodePoint {
 
 // Safety: PotentialCodePoint is always the little-endian representation of a char,
 // which corresponds to its AsULE::ULE type
+/// This impl requires enabling the optional `zerovec` Cargo feature
 #[cfg(feature = "zerovec")]
 unsafe impl zerovec::ule::EqULE for PotentialCodePoint {}
 
@@ -176,7 +178,7 @@ impl TryFrom<PotentialCodePoint> for char {
     }
 }
 
-/// This impl requires enabling the optional `serde` Cargo feature of the `zerovec` crate
+/// This impl requires enabling the optional `serde` Cargo feature
 #[cfg(feature = "serde")]
 impl serde::Serialize for PotentialCodePoint {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -195,7 +197,7 @@ impl serde::Serialize for PotentialCodePoint {
     }
 }
 
-/// This impl requires enabling the optional `serde` Cargo feature of the `zerovec` crate
+/// This impl requires enabling the optional `serde` Cargo feature
 #[cfg(feature = "serde")]
 impl<'de> serde::Deserialize<'de> for PotentialCodePoint {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
@@ -212,6 +214,7 @@ impl<'de> serde::Deserialize<'de> for PotentialCodePoint {
     }
 }
 
+/// This impl requires enabling the optional `databake` Cargo feature
 #[cfg(feature = "databake")]
 impl databake::Bake for PotentialCodePoint {
     fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {

@@ -9,6 +9,7 @@ use writeable::{LengthHint, Part, PartsWrite, TryWriteable};
 
 use core::{char::DecodeUtf16Error, fmt, str::Utf8Error};
 
+/// This impl requires enabling the optional `writeable` Cargo feature
 impl TryWriteable for &'_ PotentialUtf8 {
     type Error = Utf8Error;
 
@@ -80,6 +81,7 @@ impl TryWriteable for &'_ PotentialUtf8 {
     }
 }
 
+/// This impl requires enabling the optional `writeable` Cargo feature
 impl TryWriteable for &'_ PotentialUtf16 {
     type Error = DecodeUtf16Error;
 

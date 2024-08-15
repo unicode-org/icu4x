@@ -131,6 +131,7 @@ impl Deref for PotentialUtf8 {
     }
 }
 
+/// This impl requires enabling the optional `zerovec` Cargo feature
 #[cfg(feature = "zerovec")]
 impl<'a> zerovec::maps::ZeroMapKV<'a> for PotentialUtf8 {
     type Container = zerovec::VarZeroVec<'a, PotentialUtf8>;
@@ -147,6 +148,7 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for PotentialUtf8 {
 //  5. The impl of `from_byte_slice_unchecked()` returns a reference to the same data (returns the argument directly)
 //  6. All other methods are defaulted
 //  7. `[T]` byte equality is semantic equality (transparent over a ULE)
+/// This impl requires enabling the optional `zerovec` Cargo feature
 #[cfg(feature = "zerovec")]
 unsafe impl zerovec::ule::VarULE for PotentialUtf8 {
     #[inline]
@@ -159,7 +161,7 @@ unsafe impl zerovec::ule::VarULE for PotentialUtf8 {
     }
 }
 
-/// This impl requires enabling the optional `serde` Cargo feature of the `zerovec` crate
+/// This impl requires enabling the optional `serde` Cargo feature
 #[cfg(feature = "serde")]
 impl serde::Serialize for PotentialUtf8 {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -178,7 +180,7 @@ impl serde::Serialize for PotentialUtf8 {
     }
 }
 
-/// This impl requires enabling the optional `serde` Cargo feature of the `zerovec` crate
+/// This impl requires enabling the optional `serde` Cargo feature
 #[cfg(all(feature = "serde", feature = "alloc"))]
 impl<'de> serde::Deserialize<'de> for Box<PotentialUtf8> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
@@ -195,7 +197,7 @@ impl<'de> serde::Deserialize<'de> for Box<PotentialUtf8> {
     }
 }
 
-/// This impl requires enabling the optional `serde` Cargo feature of the `zerovec` crate
+/// This impl requires enabling the optional `serde` Cargo feature
 #[cfg(feature = "serde")]
 impl<'de, 'a> serde::Deserialize<'de> for &'a PotentialUtf8
 where
