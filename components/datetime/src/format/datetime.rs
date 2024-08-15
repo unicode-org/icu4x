@@ -158,7 +158,7 @@ impl<'l> fmt::Display for FormattedDateTime<'l> {
     }
 }
 
-// Apply length to input number and write to result using fixed_decimal_format.
+/// Apply length to input number and write to result using fixed_decimal_format.
 fn try_write_number<W>(
     result: &mut W,
     fixed_decimal_format: Option<&FixedDecimalFormatter>,
@@ -386,7 +386,21 @@ where
         })
     }
 
-    Ok(match (field.symbol, field.length) {
+    let mut field_length = field.length;
+    if formatting_options.force_2_digit_month_day_week_hour
+        && field_length == FieldLength::One
+        && matches!(
+            field.symbol,
+            FieldSymbol::Month(_)
+                | FieldSymbol::Day(_)
+                | FieldSymbol::Week(_)
+                | FieldSymbol::Hour(_)
+        )
+    {
+        field_length = FieldLength::TwoDigit;
+    }
+
+    Ok(match (field.symbol, field_length) {
         (FieldSymbol::Era, l) => match datetime.year() {
             None => {
                 write_value_missing(w, field)?;
