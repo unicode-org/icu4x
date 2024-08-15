@@ -8,6 +8,7 @@ use crate::SourceDataProvider;
 
 use std::collections::HashSet;
 
+use icu::experimental::dimension::provider::count::Count;
 use icu::experimental::dimension::provider::currency_compact::*;
 use icu_provider::prelude::*;
 use icu_provider::DataProvider;

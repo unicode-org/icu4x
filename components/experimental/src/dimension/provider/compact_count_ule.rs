@@ -4,7 +4,7 @@
 
 use zerovec::ule::{AsULE, ZeroVecError, ULE};
 
-use super::currency_compact::{CompactCount, Count};
+use super::{count::Count, currency_compact::CompactCount};
 
 /// [`CompactCountULE`] is a type optimized for efficient storing and
 /// deserialization of [`CompactCount`] using the `ZeroVec` model.
