@@ -16,6 +16,7 @@ pub mod zoned_datetime;
 #[derive(Debug, Copy, Clone, Default)]
 pub(crate) struct FormattingOptions {
     pub(crate) hour_cycle: Option<HourCycle>,
+    pub(crate) force_2_digit_month_day_week_hour: bool,
     #[cfg(feature = "experimental")]
     pub(crate) fractional_second_digits: Option<FractionalSecondDigits>,
     #[cfg(not(feature = "experimental"))]
