@@ -579,6 +579,8 @@ impl DateTimeZonePatternSelectionData {
                         match length.get::<Self>() {
                             NeoSkeletonLength::Long => marker_attrs::PatternLength::Long,
                             NeoSkeletonLength::Medium => marker_attrs::PatternLength::Medium,
+                            // Aligned can use the Short glue pattern
+                            NeoSkeletonLength::Aligned => marker_attrs::PatternLength::Short,
                             NeoSkeletonLength::Short => marker_attrs::PatternLength::Short,
                         },
                         glue_type,

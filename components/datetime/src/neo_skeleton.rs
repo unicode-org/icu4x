@@ -16,23 +16,41 @@ use crate::raw::neo::MaybeLength;
 use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
 use icu_provider::DataMarkerAttributes;
 
-/// A specification for the length of a date or component of a date.
-///
-/// Contrary to [`crate::options::length::Time`] and
-/// [`crate::options::length::Date`], this has only three levels, with no
-/// `Full`; this is because `Full` corresponds to additional components,
-/// rather than to making the components wider than in `Long`.
+/// A specification for how much screen space is available for displaying a date/time.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
 #[repr(u8)] // discriminants come from symbol count in UTS 35
 #[non_exhaustive]
 pub enum NeoSkeletonLength {
-    /// A long date, typically spelled-out, as in “January 1, 2000”.
+    /// Much space is available. Example: January 1, 2000
+    ///
+    /// Fields are typically spelled out.
     Long = 4,
-    /// A medium-sized date; typically abbreviated, as in “Jan. 1, 2000”.
+    /// Space is somewhat limited. Example: Jan. 1, 2000
+    ///
+    /// Fields are typically spelled out, but the locale or calendar might
+    /// coerce individual fields (such as the month) to be numeric.
     Medium = 3,
-    /// A short date; typically numeric, as in “1/1/2000”.
+    /// Space is limited and resembles a column. Example: 01/01/2000
+    ///
+    /// Use this option if dates and times are being displayed in a
+    /// column-like layout. For example:
+    ///
+    /// | US Holiday   | Date       |
+    /// |--------------|------------|
+    /// | Memorial Day | 05/26/2025 |
+    /// | Labor Day    | 09/01/2025 |
+    /// | Veterans Day | 11/11/2025 |
+    ///
+    /// Fields are typically numeric, with individual fields selected so that
+    /// they have the same width if possible. The locale or calendar might
+    /// coerce individual fields (such as the month) to be spelled out.
+    Aligned = 2,
+    /// Space is very limited. Example: 1/1/2000
+    ///
+    /// Fields are typically numeric, but the locale or calendar might
+    /// coerce individual fields (such as the month) to be spelled out.
     Short = 1,
 }
 
@@ -45,6 +63,7 @@ impl NeoSkeletonLength {
         match self {
             Self::Long => options::length::Date::Long,
             Self::Medium => options::length::Date::Medium,
+            Self::Aligned => unimplemented!("deprecated"),
             Self::Short => options::length::Date::Short,
         }
     }
@@ -56,6 +75,7 @@ impl NeoSkeletonLength {
         match self {
             Self::Long => options::length::Time::Medium,
             Self::Medium => options::length::Time::Medium,
+            Self::Aligned => unimplemented!("deprecated"),
             Self::Short => options::length::Time::Short,
         }
     }

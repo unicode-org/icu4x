@@ -30,13 +30,18 @@ macro_rules! time_zone_style_registry {
             ],
             // Skeleton to resolved (for exhaustive match)
             [
+                (SpecificNonLocation, Aligned, SpecificShort),
                 (SpecificNonLocation, Medium, SpecificShort),
+                (Offset, Aligned, GmtShort),
                 (Offset, Medium, GmtShort),
+                (NonLocation, Aligned, GenericShort),
                 (NonLocation, Medium, GenericShort),
                 (Location, Short, Location),
+                (Location, Aligned, Location),
                 (Location, Medium, Location),
                 // See comments above about Default behavior
                 (Default, Short, SpecificShort),
+                (Default, Aligned, SpecificShort),
                 (Default, Medium, SpecificShort),
                 (Default, Long, SpecificLong),
             ],
