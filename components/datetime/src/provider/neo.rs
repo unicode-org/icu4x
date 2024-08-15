@@ -579,9 +579,12 @@ pub struct SkeletonDataIndex {
     /// If true, the first pattern is for `Long`.
     /// If false, fall back to the next pattern (`Medium``).
     pub has_long: bool,
-    /// If true, the next pattern is for `Long`.
-    /// If false, fall back to the next pattern (`Short`).
+    /// If true, the next pattern is for `Medium`.
+    /// If false, fall back to the next pattern (`Aligned`).
     pub has_medium: bool,
+    /// If true, the next pattern is for `Aligned`.
+    /// If false, fall back to the next pattern (`Short`).
+    pub has_aligned: bool,
     /// If true, there are 6 plural variants for each pattern.
     /// If false, it is just a single variant.
     pub has_plurals: bool,
@@ -602,14 +605,27 @@ impl SkeletonDataIndex {
     // TODO: This should handle plurals
     #[cfg(feature = "experimental")]
     pub(crate) fn index_for(self, options: PatternSelectionOptions) -> u8 {
-        let chunk_number = match (options.length, self.has_long, self.has_medium) {
-            (NeoSkeletonLength::Long, _, _) => 0,
-            (NeoSkeletonLength::Medium, true, _) => 1,
-            (NeoSkeletonLength::Medium, false, _) => 0,
-            (NeoSkeletonLength::Short, true, true) => 2,
-            (NeoSkeletonLength::Short, true, false) => 1,
-            (NeoSkeletonLength::Short, false, true) => 1,
-            (NeoSkeletonLength::Short, false, false) => 0,
+        let chunk_number = match (
+            options.length,
+            self.has_long,
+            self.has_medium,
+            self.has_aligned,
+        ) {
+            (NeoSkeletonLength::Long, _, _, _) => 0,
+            (NeoSkeletonLength::Medium, true, _, _) => 1,
+            (NeoSkeletonLength::Medium, false, _, _) => 0,
+            (NeoSkeletonLength::Aligned, true, true, _) => 2,
+            (NeoSkeletonLength::Aligned, true, false, _) => 1,
+            (NeoSkeletonLength::Aligned, false, true, _) => 1,
+            (NeoSkeletonLength::Aligned, false, false, _) => 0,
+            (NeoSkeletonLength::Short, true, true, true) => 3,
+            (NeoSkeletonLength::Short, true, true, false) => 2,
+            (NeoSkeletonLength::Short, false, true, true) => 2,
+            (NeoSkeletonLength::Short, false, true, false) => 1,
+            (NeoSkeletonLength::Short, true, false, true) => 2,
+            (NeoSkeletonLength::Short, true, false, false) => 1,
+            (NeoSkeletonLength::Short, false, false, true) => 1,
+            (NeoSkeletonLength::Short, false, false, false) => 0,
         };
         if !self.has_eras {
             // chunks are size 1
@@ -647,8 +663,9 @@ impl AsULE for SkeletonDataIndex {
         SkeletonDataIndex {
             has_long: (flags & (1 << 7)) != 0,
             has_medium: (flags & (1 << 6)) != 0,
-            has_plurals: (flags & (1 << 5)) != 0,
-            has_eras: (flags & (1 << 4)) != 0,
+            has_aligned: (flags & (1 << 5)) != 0,
+            has_plurals: (flags & (1 << 4)) != 0,
+            has_eras: (flags & (1 << 3)) != 0,
         }
     }
 }
