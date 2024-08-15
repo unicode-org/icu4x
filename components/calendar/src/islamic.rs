@@ -1350,6 +1350,8 @@ impl<A: AsCalendar<Calendar = IslamicTabular>> DateTime<A> {
 
 #[cfg(test)]
 mod test {
+    use types::{Era, MonthCode};
+
     use super::*;
     use crate::Ref;
 
@@ -2219,9 +2221,9 @@ mod test {
     fn test_regression_4914() {
         // https://github.com/unicode-org/icu4x/issues/4914
         let cal = IslamicUmmAlQura::new_always_calculating();
-        let era = "ah".parse().unwrap();
+        let era = Era(tinystr!(16, "ah"));
         let year = -6823;
-        let month_code = "M01".parse().unwrap();
+        let month_code = MonthCode(tinystr!(4, "M01"));
         let dt = cal.date_from_codes(era, year, month_code, 1).unwrap();
         assert_eq!(dt.0.day, 1);
         assert_eq!(dt.0.month, 1);

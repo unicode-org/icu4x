@@ -19,7 +19,7 @@ use crate::neo_marker::{
 };
 use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::{NeoComponents, NeoSkeletonLength};
-use crate::pattern::CoarseHourCycle;
+use crate::options::preferences::HourCycle;
 use crate::provider::neo::*;
 use crate::raw::neo::*;
 use crate::CldrCalendar;
@@ -426,7 +426,7 @@ where
     /// let dt =
     ///     DateTime::try_new_gregorian_datetime(2024, 1, 10, 16, 20, 0).unwrap();
     ///
-    /// assert_try_writeable_eq!(fmt.format(&dt), "miércoles, 04:20 p.m.");
+    /// assert_try_writeable_eq!(fmt.format(&dt), "miércoles 4:20 p.m.");
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_components(
@@ -541,7 +541,7 @@ where
         let hour_cycle = locale
             .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
             .as_ref()
-            .and_then(CoarseHourCycle::from_locale_value);
+            .and_then(HourCycle::from_locale_value);
         let selection = DateTimeZonePatternSelectionData::try_new_with_skeleton(
             &<R::D as TypedDateDataMarkers<C>>::DateSkeletonPatternsV1Marker::bind(provider),
             &<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker::bind(provider),
@@ -983,7 +983,7 @@ where
     ///
     /// assert_try_writeable_eq!(
     ///     fmt.convert_and_format(&dt),
-    ///     "miércoles, 04:20 p.m."
+    ///     "miércoles 4:20 p.m."
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
@@ -1248,7 +1248,7 @@ where
         let hour_cycle = locale
             .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
             .as_ref()
-            .and_then(CoarseHourCycle::from_locale_value);
+            .and_then(HourCycle::from_locale_value);
         let selection = DateTimeZonePatternSelectionData::try_new_with_skeleton(
             &AnyCalendarProvider::<<R::D as DateDataMarkers>::Skel, _>::new(provider, kind),
             &<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker::bind(provider),

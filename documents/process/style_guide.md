@@ -327,7 +327,7 @@ In ICU4X, we have a convention of making error types implement `Copy`. This is p
 To associate additional metadata with errors, such as file paths, use a logging macro. In binaries, including the `log` dependency directly and gate logs with a `"logging"` feature. In component library code, utilize the macros exported by the `icu_provider` crate, as shown below. For more discussion, see [#2648](https://github.com/unicode-org/icu4x/issues/2648).
 
 ```rust
-icu_provider::_internal::log::warn!("This is a warning");
+icu_provider::log::warn!("This is a warning");
 ```
 
 The logs are forwarded to one of three places:

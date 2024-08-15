@@ -64,7 +64,7 @@ where
         .map_err(|_err| PersonNamesFormatterError::InvalidPersonName)?;
     person_name.name_locale().map_or_else(
         || {
-            let mut effective_locale = Locale::UND;
+            let mut effective_locale = Locale::default();
             effective_locale.id.script = Some(locid_script);
             Ok(effective_locale)
         },

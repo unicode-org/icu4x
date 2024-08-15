@@ -47,7 +47,7 @@ impl PersonNamesFormatter {
             + DataProvider<icu_properties::provider::ScriptWithExtensionsPropertyV1Marker>
             + DataProvider<icu_properties::provider::ScriptValueToShortNameV1Marker>
             + DataProvider<icu_locale::provider::LikelySubtagsForLanguageV1Marker>
-            + DataProvider<icu_locale::provider::LocaleFallbackParentsV1Marker>,
+            + DataProvider<icu_locale::provider::ParentsV1Marker>,
     {
         let swe = icu_properties::script::load_script_with_extensions_unstable(provider)?;
         let scripts = icu_properties::Script::get_enum_to_short_name_mapper(provider)?;

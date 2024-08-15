@@ -80,9 +80,7 @@
 //! Hours can be switched between 12-hour and 24-hour time via the `u-hc` locale keyword.
 //!
 //! ```
-//! use icu::calendar::Gregorian;
 //! use icu::calendar::Time;
-//! use icu::datetime::neo::NeoOptions;
 //! use icu::datetime::neo::TypedNeoFormatter;
 //! use icu::datetime::neo_marker::NeoHourMinuteMarker;
 //! use icu::datetime::neo_skeleton::NeoSkeletonLength;
@@ -138,6 +136,40 @@
 //! );
 //! ```
 //!
+//! Hour cycles `h11` and `h24` are supported, too:
+//!
+//! ```
+//! use icu::calendar::Time;
+//! use icu::datetime::neo::TypedNeoFormatter;
+//! use icu::datetime::neo_marker::NeoHourMinuteMarker;
+//! use icu::datetime::neo_skeleton::NeoSkeletonLength;
+//! use icu::datetime::NeverCalendar;
+//! use icu::locale::locale;
+//! use writeable::assert_try_writeable_eq;
+//!
+//! let formatter =
+//!     TypedNeoFormatter::<NeverCalendar, NeoHourMinuteMarker>::try_new(
+//!         &locale!("und-u-hc-h11").into(),
+//!         NeoSkeletonLength::Short.into(),
+//!     )
+//!     .unwrap();
+//! assert_try_writeable_eq!(
+//!     formatter.format(&Time::try_new(0, 0, 0, 0).unwrap()),
+//!     "0:00 AM"
+//! );
+//!
+//! let formatter =
+//!     TypedNeoFormatter::<NeverCalendar, NeoHourMinuteMarker>::try_new(
+//!         &locale!("und-u-hc-h24").into(),
+//!         NeoSkeletonLength::Short.into(),
+//!     )
+//!     .unwrap();
+//! assert_try_writeable_eq!(
+//!     formatter.format(&Time::try_new(0, 0, 0, 0).unwrap()),
+//!     "24:00"
+//! );
+//! ```
+//!
 //! ## Fractional Second Digits
 //!
 //! Times can be displayed with a custom number of fractional digits from 0-9:
@@ -178,7 +210,7 @@
 //!
 //! ```
 //! use icu::calendar::DateTime;
-//! use icu::timezone::{CustomTimeZone, MetazoneCalculator, TimeZoneIdMapper};
+//! use icu::timezone::{CustomTimeZone, MetazoneCalculator, TimeZoneIdMapper, TimeZoneBcp47Id};
 //! use icu::datetime::neo::TypedNeoFormatter;
 //! use icu::datetime::neo_marker::NeoTimeZoneGenericShortMarker;
 //! use icu::datetime::NeverCalendar;
@@ -218,7 +250,7 @@
 //!
 //! // "ushnl" - has time zone override symbol data for generic_non_location_short
 //! let mut time_zone = "-1000".parse::<CustomTimeZone>().unwrap();
-//! time_zone.time_zone_id = Some(tinystr!(8, "ushnl").into());
+//! time_zone.time_zone_id = Some(TimeZoneBcp47Id(tinystr!(8, "ushnl")));
 //! time_zone.maybe_calculate_metazone(&mzc, &datetime);
 //! assert_try_writeable_eq!(
 //!     tzf.format(&time_zone),

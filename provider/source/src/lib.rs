@@ -38,9 +38,8 @@ mod decimal;
 mod displaynames;
 #[cfg(feature = "experimental")]
 mod duration;
-mod fallback;
 mod list;
-mod locale_canonicalizer;
+mod locale;
 mod normalizer;
 #[cfg(feature = "experimental")]
 mod percent;
@@ -323,7 +322,7 @@ impl SourceDataProvider {
         SourceDataProvider: IterableDataProviderCached<M>,
     {
         if <M as DataMarker>::INFO.is_singleton {
-            if !req.id.locale.is_und() {
+            if !req.id.locale.is_default() {
                 Err(DataErrorKind::InvalidRequest)
             } else {
                 Ok(())
