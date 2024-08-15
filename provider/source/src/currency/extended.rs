@@ -34,18 +34,18 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::SourceDataProvider {
             payload: DataPayload::from_owned(CurrencyExtendedDataV1 {
                 display_names: ZeroMap::from_iter(
                     [
-                        (Count::Zero, currency.zero.as_deref()),
-                        (Count::One, currency.one.as_deref()),
-                        (Count::Two, currency.two.as_deref()),
-                        (Count::Few, currency.few.as_deref()),
-                        (Count::Many, currency.many.as_deref()),
-                        (Count::Other, currency.other.as_deref()),
-                        (Count::DisplayName, currency.display_name.as_deref()),
+                        (CurrencyDisplayNameCount::Zero, currency.zero.as_deref()),
+                        (CurrencyDisplayNameCount::One, currency.one.as_deref()),
+                        (CurrencyDisplayNameCount::Two, currency.two.as_deref()),
+                        (CurrencyDisplayNameCount::Few, currency.few.as_deref()),
+                        (CurrencyDisplayNameCount::Many, currency.many.as_deref()),
+                        (CurrencyDisplayNameCount::Other, currency.other.as_deref()),
+                        (CurrencyDisplayNameCount::DisplayName, currency.display_name.as_deref()),
                     ]
                     .into_iter()
                     .filter_map(|(count, pattern)| match (count, pattern) {
-                        (Count::DisplayName, Some(p)) => Some((count, p)),
-                        (Count::Other, Some(p)) => Some((count, p)),
+                        (CurrencyDisplayNameCount::DisplayName, Some(p)) => Some((count, p)),
+                        (CurrencyDisplayNameCount::Other, Some(p)) => Some((count, p)),
                         // As per [Unicode TR 35](https://unicode.org/reports/tr35/tr35-numbers.html#Currencies)
                         //      If the pattern is not found for the associated `Count`, fall back to the `Count::Other` pattern.
                         //      Therefore, we filter out any patterns that are the same as the `Count::Other` pattern.
@@ -97,13 +97,13 @@ fn test_basic() {
         .unwrap()
         .payload;
     let display_names = en.get().to_owned().display_names;
-    assert_eq!(display_names.get(&Count::Zero), None);
-    assert_eq!(display_names.get(&Count::One).unwrap(), "US dollar");
-    assert_eq!(display_names.get(&Count::Two), None);
-    assert_eq!(display_names.get(&Count::Few), None);
-    assert_eq!(display_names.get(&Count::Many), None);
-    assert_eq!(display_names.get(&Count::Other).unwrap(), "US dollars");
-    assert_eq!(display_names.get(&Count::DisplayName).unwrap(), "US Dollar");
+    assert_eq!(display_names.get(&CurrencyDisplayNameCount::Zero), None);
+    assert_eq!(display_names.get(&CurrencyDisplayNameCount::One).unwrap(), "US dollar");
+    assert_eq!(display_names.get(&CurrencyDisplayNameCount::Two), None);
+    assert_eq!(display_names.get(&CurrencyDisplayNameCount::Few), None);
+    assert_eq!(display_names.get(&CurrencyDisplayNameCount::Many), None);
+    assert_eq!(display_names.get(&CurrencyDisplayNameCount::Other).unwrap(), "US dollars");
+    assert_eq!(display_names.get(&CurrencyDisplayNameCount::DisplayName).unwrap(), "US Dollar");
 
     let fr: DataPayload<CurrencyExtendedDataV1Marker> = provider
         .load(DataRequest {
@@ -117,20 +117,20 @@ fn test_basic() {
         .payload;
 
     let display_names = fr.get().to_owned().display_names;
-    assert_eq!(display_names.get(&Count::Zero), None);
+    assert_eq!(display_names.get(&CurrencyDisplayNameCount::Zero), None);
     assert_eq!(
-        display_names.get(&Count::One).unwrap(),
+        display_names.get(&CurrencyDisplayNameCount::One).unwrap(),
         "dollar des États-Unis"
     );
-    assert_eq!(display_names.get(&Count::Two), None);
-    assert_eq!(display_names.get(&Count::Few), None);
-    assert_eq!(display_names.get(&Count::Many), None);
+    assert_eq!(display_names.get(&CurrencyDisplayNameCount::Two), None);
+    assert_eq!(display_names.get(&CurrencyDisplayNameCount::Few), None);
+    assert_eq!(display_names.get(&CurrencyDisplayNameCount::Many), None);
     assert_eq!(
-        display_names.get(&Count::Other).unwrap(),
+        display_names.get(&CurrencyDisplayNameCount::Other).unwrap(),
         "dollars des États-Unis"
     );
     assert_eq!(
-        display_names.get(&Count::DisplayName).unwrap(),
+        display_names.get(&CurrencyDisplayNameCount::DisplayName).unwrap(),
         "dollar des États-Unis"
     );
 }

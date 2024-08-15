@@ -46,7 +46,7 @@ pub struct CurrencyExtendedDataV1<'data> {
     ///    Regards to the [Unicode Report TR35](https://unicode.org/reports/tr35/tr35-numbers.html#Currencies),
     ///    If no matching for specific count, the `other` count will be used.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub display_names: ZeroMap<'data, Count, str>,
+    pub display_names: ZeroMap<'data, CurrencyDisplayNameCount, str>,
 }
 
 /// A CLDR plural keyword, or the explicit value 1.
@@ -61,7 +61,7 @@ pub struct CurrencyExtendedDataV1<'data> {
     databake(path = icu_experimental::dimension::provider::extended_currency)
 )]
 #[repr(u8)]
-pub enum Count {
+pub enum CurrencyDisplayNameCount {
     /// The CLDR keyword `zero`.
     Zero = 0,
     /// The CLDR keyword `one`.
