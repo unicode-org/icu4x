@@ -104,9 +104,18 @@ impl<'de> Visitor<'de> for DecimalFormatVisitor {
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
+pub(crate) struct ShortCompactCurrencyPatterns {
+    pub(crate) standard: DecimalFormat,
+}
+
+#[derive(PartialEq, Debug, Deserialize)]
 pub(crate) struct CurrencyFormattingPatterns {
     /// Standard pattern
     pub(crate) standard: String,
+
+    /// Contains the compact currency patterns for short compact currency formatting
+    #[serde(rename = "short")]
+    pub(crate) compact_short: Option<ShortCompactCurrencyPatterns>,
 
     /// Standard alphaNextToNumber pattern
     #[serde(rename = "standard-alphaNextToNumber")]
