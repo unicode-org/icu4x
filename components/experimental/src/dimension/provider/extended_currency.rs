@@ -22,6 +22,8 @@ use zerovec::ZeroMap;
 /// </div>
 pub use crate::provider::Baked;
 
+use super::count::Count;
+
 /// Currency Extended V1 data struct.
 #[icu_provider::data_struct(marker(
     CurrencyExtendedDataV1Marker,
@@ -62,30 +64,8 @@ pub struct CurrencyExtendedDataV1<'data> {
 )]
 #[repr(u8)]
 pub enum CurrencyDisplayNameCount {
-    /// The CLDR keyword `zero`.
-    Zero = 0,
-    /// The CLDR keyword `one`.
-    One = 1,
-    /// The CLDR keyword `two`.
-    Two = 2,
-    /// The CLDR keyword `few`.
-    Few = 3,
-    /// The CLDR keyword `many`.
-    Many = 4,
-    /// The CLDR keyword `other`.
-    Other = 5,
-    // TODO(younies): revise this for currency
-    /// The explicit 1 case, see <https://www.unicode.org/reports/tr35/tr35-numbers.html#Explicit_0_1_rules>.
-    Explicit1 = 6,
-    // NOTE(egg): No explicit 0, because the compact decimal pattern selection
-    // algorithm does not allow such a thing to arise.
-    // TODO(younies): implment this case.
-    /// The default case.
-    /// NOTE:
-    ///     Used as the default when there is no match.
-    ///     This is also used to replace the most frequently occurring case in all plural rules.
-    Default = 7,
+    PluralRules(Count),
 
     /// The display name for the currency.
-    DisplayName = 8,
+    DisplayName = 6,
 }
