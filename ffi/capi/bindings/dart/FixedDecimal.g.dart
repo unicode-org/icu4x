@@ -78,7 +78,7 @@ final class FixedDecimal implements ffi.Finalizable {
 
   /// Construct an [`FixedDecimal`] from a string.
   ///
-  /// See the [Rust documentation for `from_str`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.from_str) for more information.
+  /// See the [Rust documentation for `try_from_str`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_str) for more information.
   ///
   /// Throws [FixedDecimalParseError] on failure.
   factory FixedDecimal.fromString(String v) {

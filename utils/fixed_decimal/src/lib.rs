@@ -95,7 +95,6 @@ pub use scientific::ScientificDecimal;
 #[derive(Display, Debug, Copy, Clone, PartialEq)]
 #[allow(clippy::exhaustive_structs)]
 #[displaydoc("Magnitude or number of digits exceeded")]
-#[cfg(feature = "ryu")]
 pub struct LimitError;
 
 /// An error involving FixedDecimal operations or conversion.
