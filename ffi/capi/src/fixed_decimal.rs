@@ -169,11 +169,13 @@ pub mod ffi {
         }
 
         /// Construct an [`FixedDecimal`] from a string.
-        #[diplomat::rust_link(fixed_decimal::FixedDecimal::from_str, FnInStruct)]
+        #[diplomat::rust_link(fixed_decimal::FixedDecimal::try_from_str, FnInStruct)]
+        #[diplomat::rust_link(fixed_decimal::FixedDecimal::try_from_utf8, FnInStruct, hidden)]
+        #[diplomat::rust_link(fixed_decimal::FixedDecimal::from_str, FnInStruct, hidden)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
         pub fn from_string(v: &DiplomatStr) -> Result<Box<FixedDecimal>, FixedDecimalParseError> {
             Ok(Box::new(FixedDecimal(
-                fixed_decimal::FixedDecimal::try_from(v)?,
+                fixed_decimal::FixedDecimal::try_from_utf8(v)?,
             )))
         }
 

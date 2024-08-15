@@ -31,6 +31,7 @@ icu_provider = { workspace = true, features = ["macros"] }
 icu_timezone = { workspace = true }
 smallvec = { workspace = true }
 tinystr = { workspace = true, features = ["alloc", "zerovec"] }
+potential_utf = { workspace = true, features = ["zerovec"] }
 writeable = { workspace = true }
 zerovec = { workspace = true, features = ["yoke"] }
 
@@ -78,6 +79,7 @@ serde = [
     "litemap?/serde",
     "smallvec/serde",
     "tinystr/serde",
+    "potential_utf/serde",
     "zerovec/serde",
 ]
 datagen = [

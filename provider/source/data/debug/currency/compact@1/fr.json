@@ -1,0 +1,220 @@
+{
+  "compact_patterns": [
+    [
+      [
+        3,
+        {
+          "Standard": "One"
+        }
+      ],
+      "0 k ¤"
+    ],
+    [
+      [
+        3,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "0 k ¤"
+    ],
+    [
+      [
+        4,
+        {
+          "Standard": "One"
+        }
+      ],
+      "00 k ¤"
+    ],
+    [
+      [
+        4,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "00 k ¤"
+    ],
+    [
+      [
+        5,
+        {
+          "Standard": "One"
+        }
+      ],
+      "000 k ¤"
+    ],
+    [
+      [
+        5,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "000 k ¤"
+    ],
+    [
+      [
+        6,
+        {
+          "Standard": "One"
+        }
+      ],
+      "0 M ¤"
+    ],
+    [
+      [
+        6,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "0 M ¤"
+    ],
+    [
+      [
+        7,
+        {
+          "Standard": "One"
+        }
+      ],
+      "00 M ¤"
+    ],
+    [
+      [
+        7,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "00 M ¤"
+    ],
+    [
+      [
+        8,
+        {
+          "Standard": "One"
+        }
+      ],
+      "000 M ¤"
+    ],
+    [
+      [
+        8,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "000 M ¤"
+    ],
+    [
+      [
+        9,
+        {
+          "Standard": "One"
+        }
+      ],
+      "0 Md ¤"
+    ],
+    [
+      [
+        9,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "0 Md ¤"
+    ],
+    [
+      [
+        10,
+        {
+          "Standard": "One"
+        }
+      ],
+      "00 Md ¤"
+    ],
+    [
+      [
+        10,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "00 Md ¤"
+    ],
+    [
+      [
+        11,
+        {
+          "Standard": "One"
+        }
+      ],
+      "000 Md ¤"
+    ],
+    [
+      [
+        11,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "000 Md ¤"
+    ],
+    [
+      [
+        12,
+        {
+          "Standard": "One"
+        }
+      ],
+      "0 Bn ¤"
+    ],
+    [
+      [
+        12,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "0 Bn ¤"
+    ],
+    [
+      [
+        13,
+        {
+          "Standard": "One"
+        }
+      ],
+      "00 Bn ¤"
+    ],
+    [
+      [
+        13,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "00 Bn ¤"
+    ],
+    [
+      [
+        14,
+        {
+          "Standard": "One"
+        }
+      ],
+      "000 Bn ¤"
+    ],
+    [
+      [
+        14,
+        {
+          "Standard": "Other"
+        }
+      ],
+      "000 Bn ¤"
+    ]
+  ]
+}

@@ -56,8 +56,9 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 use alloc::borrow::Cow;
 use icu_locale_core::subtags::{Language, Region, Script, Variant};
 use icu_provider::prelude::*;
+use potential_utf::PotentialUtf8;
 use tinystr::{TinyAsciiStr, UnvalidatedTinyAsciiStr};
-use zerovec::{ule::UnvalidatedStr, VarZeroVec, ZeroMap, ZeroSlice, ZeroVec};
+use zerovec::{VarZeroVec, ZeroMap, ZeroSlice, ZeroVec};
 
 // We use raw TinyAsciiStrs for map keys, as we then don't have to
 // validate them as subtags on deserialization. Map lookup can be
@@ -347,7 +348,7 @@ pub struct ParentsV1<'data> {
     /// Map from language identifier to language identifier, indicating that the language on the
     /// left should inherit from the language on the right.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub parents: ZeroMap<'data, UnvalidatedStr, (Language, Option<Script>, Option<Region>)>,
+    pub parents: ZeroMap<'data, PotentialUtf8, (Language, Option<Script>, Option<Region>)>,
 }
 
 #[icu_provider::data_struct(marker(ScriptDirectionV1Marker, "locale/script_dir@1", singleton))]

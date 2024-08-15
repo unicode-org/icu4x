@@ -8,7 +8,7 @@
                     "year": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["year"],
+                    "fieldSet": ["fullYear"],
                     "length": "short"
                 }
             }
@@ -29,7 +29,7 @@
                     "month": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month"],
+                    "fieldSet": ["fullYear", "month"],
                     "length": "short"
                 }
             }
@@ -51,7 +51,7 @@
                     "day": "numeric-day-of-month"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day"],
+                    "fieldSet": ["fullYear", "month", "day"],
                     "length": "short"
                 }
             }
@@ -74,7 +74,7 @@
                     "weekday": "short"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday"],
+                    "fieldSet": ["fullYear", "month", "day", "weekday"],
                     "length": "short"
                 }
             }
@@ -428,7 +428,7 @@
         }
     },
     {
-        "description": "Exact match for: EHm => E h:mm a",
+        "description": "Exact match for: EHm => E HH:mm",
         "input": {
             "value": "2020-01-07T08:25:07.000",
             "options": {
@@ -451,7 +451,7 @@
         }
     },
     {
-        "description": "Exact match for: EHms => E h:mm:ss a",
+        "description": "Exact match for: EHms => E HH:mm:ss",
         "input": {
             "value": "2020-01-07T08:25:07.000",
             "options": {

@@ -32,6 +32,7 @@ pub const BASIC_RUNTIME_DEPS: &[&str] = &[
     "icu_provider",
     "litemap",
     "tinystr",
+    "potential_utf",
     "writeable",
     "yoke",
     "zerofrom",
