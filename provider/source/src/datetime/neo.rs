@@ -13,10 +13,10 @@ use icu::datetime::provider::neo::marker_attrs::{self, Context, Length, PatternL
 use icu::datetime::provider::neo::*;
 use icu::locale::extensions::unicode::{value, Value};
 use icu_provider::prelude::*;
+use potential_utf::PotentialUtf8;
 use std::borrow::Cow;
 use std::collections::{BTreeMap, HashSet};
 use tinystr::TinyAsciiStr;
-use zerovec::ule::UnvalidatedStr;
 
 /// Most keys don't have short symbols (except weekdays)
 ///
@@ -351,7 +351,7 @@ fn eras_convert(
     Ok(YearNamesV1::Eras(
         out_eras
             .iter()
-            .map(|(k, v)| (UnvalidatedStr::from_str(k), &**v))
+            .map(|(k, v)| (PotentialUtf8::from_str(k), &**v))
             .collect(),
     ))
 }

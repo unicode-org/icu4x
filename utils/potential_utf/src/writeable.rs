@@ -2,40 +2,22 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::{PotentialUtf16, PotentialUtf8};
 use alloc::borrow::Cow;
 use core::fmt::Write;
-use writeable::{LengthHint, Part, TryWriteable, Writeable};
-
-#[allow(dead_code)]
-pub(crate) struct LossyWrap<T>(pub T);
-
-impl<T: TryWriteable> Writeable for LossyWrap<T> {
-    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        let _ = self.0.try_write_to(sink)?;
-        Ok(())
-    }
-
-    fn writeable_length_hint(&self) -> LengthHint {
-        self.0.writeable_length_hint()
-    }
-}
+use writeable::{LengthHint, Part, PartsWrite, TryWriteable};
 
 use core::{char::DecodeUtf16Error, fmt, str::Utf8Error};
 
-/// Implements [`Writeable`] for [`&[u8]`] according to the [WHATWG Encoding Standard](
-/// https://encoding.spec.whatwg.org/#utf-8-decoder).
-#[derive(Debug)]
-#[allow(clippy::exhaustive_structs)] // newtype
-pub struct PotentiallyInvalidUtf8<'a>(pub &'a [u8]);
-
-impl TryWriteable for PotentiallyInvalidUtf8<'_> {
+/// This impl requires enabling the optional `writeable` Cargo feature
+impl TryWriteable for &'_ PotentialUtf8 {
     type Error = Utf8Error;
 
-    fn try_write_to_parts<S: writeable::PartsWrite + ?Sized>(
+    fn try_write_to_parts<S: PartsWrite + ?Sized>(
         &self,
         sink: &mut S,
     ) -> Result<Result<(), Self::Error>, fmt::Error> {
-        let mut remaining = self.0;
+        let mut remaining = &self.0;
         let mut r = Ok(());
         loop {
             match core::str::from_utf8(remaining) {
@@ -63,13 +45,13 @@ impl TryWriteable for PotentiallyInvalidUtf8<'_> {
         }
     }
 
-    fn writeable_length_hint(&self) -> writeable::LengthHint {
+    fn writeable_length_hint(&self) -> LengthHint {
         // Lower bound is all valid UTF-8, upper bound is all bytes with the high bit, which become replacement characters.
         LengthHint::between(self.0.len(), self.0.len() * 3)
     }
 
     fn try_write_to_string(&self) -> Result<Cow<str>, (Self::Error, Cow<str>)> {
-        match core::str::from_utf8(self.0) {
+        match core::str::from_utf8(&self.0) {
             Ok(valid) => Ok(Cow::Borrowed(valid)),
             Err(e) => {
                 // SAFETY: By Utf8Error invariants
@@ -90,7 +72,7 @@ impl TryWriteable for PotentiallyInvalidUtf8<'_> {
                 if let Some(error_len) = e.error_len() {
                     // SAFETY: By Utf8Error invariants
                     let remaining = unsafe { self.0.get_unchecked(e.valid_up_to() + error_len..) };
-                    let _discard = Self(remaining).try_write_to(&mut out);
+                    let _discard = PotentialUtf8::from_bytes(remaining).try_write_to(&mut out);
                 }
 
                 Err((e, Cow::Owned(out)))
@@ -99,16 +81,11 @@ impl TryWriteable for PotentiallyInvalidUtf8<'_> {
     }
 }
 
-/// Implements [`Writeable`] for [`&[u16]`] according to the [WHATWG Encoding Standard](
-/// https://encoding.spec.whatwg.org/#shared-utf-16-decoder).
-#[derive(Debug)]
-#[allow(clippy::exhaustive_structs)] // newtype
-pub struct PotentiallyInvalidUtf16<'a>(pub &'a [u16]);
-
-impl TryWriteable for PotentiallyInvalidUtf16<'_> {
+/// This impl requires enabling the optional `writeable` Cargo feature
+impl TryWriteable for &'_ PotentialUtf16 {
     type Error = DecodeUtf16Error;
 
-    fn try_write_to_parts<S: writeable::PartsWrite + ?Sized>(
+    fn try_write_to_parts<S: PartsWrite + ?Sized>(
         &self,
         sink: &mut S,
     ) -> Result<Result<(), Self::Error>, fmt::Error> {
@@ -141,15 +118,20 @@ mod test {
 
     #[test]
     fn test_utf8() {
-        assert_try_writeable_parts_eq!(PotentiallyInvalidUtf8(b"Foo Bar"), "Foo Bar", Ok(()), []);
         assert_try_writeable_parts_eq!(
-            PotentiallyInvalidUtf8(b"Foo\xFDBar"),
+            PotentialUtf8::from_bytes(b"Foo Bar"),
+            "Foo Bar",
+            Ok(()),
+            []
+        );
+        assert_try_writeable_parts_eq!(
+            PotentialUtf8::from_bytes(b"Foo\xFDBar"),
             "Foo�Bar",
             Err(core::str::from_utf8(b"Foo\xFDBar").unwrap_err()),
             [(3, 6, Part::ERROR)]
         );
         assert_try_writeable_parts_eq!(
-            PotentiallyInvalidUtf8(b"Foo\xFDBar\xff"),
+            PotentialUtf8::from_bytes(b"Foo\xFDBar\xff"),
             "Foo�Bar�",
             Err(core::str::from_utf8(b"Foo\xFDBar\xff").unwrap_err()),
             [(3, 6, Part::ERROR), (9, 12, Part::ERROR)],
@@ -159,13 +141,13 @@ mod test {
     #[test]
     fn test_utf16() {
         assert_try_writeable_parts_eq!(
-            PotentiallyInvalidUtf16(&[0xD83E, 0xDD73]),
+            PotentialUtf16::from_slice(&[0xD83E, 0xDD73]),
             "🥳",
             Ok(()),
             []
         );
         assert_try_writeable_parts_eq!(
-            PotentiallyInvalidUtf16(&[0xD83E, 0x20, 0xDD73]),
+            PotentialUtf16::from_slice(&[0xD83E, 0x20, 0xDD73]),
             "� �",
             Err(core::char::decode_utf16([0xD83E].into_iter())
                 .next()

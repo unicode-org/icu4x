@@ -44,6 +44,7 @@ icu_provider_adapters = { workspace = true }
 icu_provider_registry = { workspace = true }
 litemap = { workspace = true, features = ["serde"] }
 tinystr = { workspace = true, features = ["alloc", "serde", "zerovec"] }
+potential_utf = { workspace = true }
 writeable = { workspace = true }
 zerotrie = { workspace = true, features = ["alloc"] }
 zerovec = { workspace = true, features = ["serde", "yoke"] }
