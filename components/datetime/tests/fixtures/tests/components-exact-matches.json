@@ -8,7 +8,7 @@
                     "year": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["year"],
+                    "fieldSet": ["fullYear"],
                     "length": "short"
                 }
             }
@@ -29,7 +29,7 @@
                     "month": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month"],
+                    "fieldSet": ["fullYear", "month"],
                     "length": "short"
                 }
             }
@@ -51,7 +51,7 @@
                     "day": "numeric-day-of-month"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day"],
+                    "fieldSet": ["fullYear", "month", "day"],
                     "length": "short"
                 }
             }
@@ -74,7 +74,7 @@
                     "weekday": "short"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday"],
+                    "fieldSet": ["fullYear", "month", "day", "weekday"],
                     "length": "short"
                 }
             }
