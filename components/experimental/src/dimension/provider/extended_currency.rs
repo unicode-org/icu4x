@@ -51,10 +51,7 @@ pub struct CurrencyExtendedDataV1<'data> {
     pub display_names: ZeroMap<'data, CurrencyDisplayNameCount, str>,
 }
 
-/// A CLDR plural keyword, or the explicit value 1.
-/// See <https://www.unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules>.
-#[zerovec::make_ule(CountULE)]
-#[zerovec::derive(Debug)]
+/// Represents the display name count and the absolute display name.
 #[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(
@@ -67,5 +64,5 @@ pub enum CurrencyDisplayNameCount {
     PluralRules(Count),
 
     /// The display name for the currency.
-    DisplayName = 6,
+    DisplayName,
 }

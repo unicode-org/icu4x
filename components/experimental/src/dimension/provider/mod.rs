@@ -6,6 +6,7 @@ pub mod compact_count_ule;
 pub mod count;
 pub mod currency;
 pub mod currency_compact;
+pub mod currency_displayname_count_ule;
 pub mod currency_patterns;
 pub mod extended_currency;
 pub mod pattern_key;
