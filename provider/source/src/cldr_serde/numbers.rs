@@ -47,17 +47,22 @@ pub(crate) struct DecimalFormat {
 
 #[derive(PartialEq, Debug, Default)]
 pub(crate) struct CompactDecimalPattern {
-    /// The decimal part of the pattern
+    /// The decimal part of the pattern key.
     ///
     /// Examples:
     /// - "1000000-count-zero" --> "1000000"
     pub(crate) compact_decimal_type: String,
 
-    /// The count of the decimal part of the pattern
+    /// The count part of the pattern key.
     ///
     /// Examples:
     /// - "1000000-count-zero" --> "zero"
     pub(crate) compact_decimal_count: String,
+
+    /// The pattern value.
+    ///
+    /// Examples:
+    /// - "1000-count-one": "¤0K" --> "¤0K"
     pub(crate) pattern: String,
 }
 

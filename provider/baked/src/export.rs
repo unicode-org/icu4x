@@ -39,7 +39,7 @@
 //! data and lazily loading more data from the network.
 //!
 //! ```
-//! # use icu_provider::_internal::locale_core as icu_locale_core;
+//! # use icu_provider::prelude::icu_locale_core;
 //! use icu_locale_core::locale;
 //! use icu_provider::hello_world::*;
 //!
@@ -79,7 +79,7 @@
 //! ```
 //!
 //! ```
-//! # use icu_provider::_internal::locale_core as icu_locale_core;
+//! # use icu_provider::prelude::icu_locale_core;
 //! use icu_locale_core::locale;
 //! use icu_provider::hello_world::*;
 //!
