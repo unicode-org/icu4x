@@ -2,8 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_calendar::hebrew::Hebrew;
 use icu_calendar::{Date, DateTime, Time};
 use icu_datetime::neo::TypedNeoFormatter;
+use icu_datetime::neo_marker::NeoYearMonthDayMarker;
 use icu_datetime::neo_skeleton::{
     NeoComponents, NeoDateComponents, NeoDateSkeleton, NeoDateTimeComponents, NeoDayComponents,
     NeoSkeletonLength, NeoTimeComponents,
@@ -278,4 +280,19 @@ fn overlap_patterns() {
             "{locale:?} {components:?} {length:?}"
         );
     }
+}
+
+#[test]
+fn hebrew_months() {
+    let datetime = DateTime::try_new_iso_datetime(2011, 4, 3, 14, 15, 7).unwrap();
+    let datetime = datetime.to_calendar(Hebrew);
+    let formatter = TypedNeoFormatter::<_, NeoYearMonthDayMarker>::try_new(
+        &locale!("en").into(),
+        NeoSkeletonLength::Long.into(),
+    )
+    .unwrap();
+
+    let formatted_datetime = formatter.format(&datetime);
+
+    assert_try_writeable_eq!(formatted_datetime, "28 Adar II 5771");
 }

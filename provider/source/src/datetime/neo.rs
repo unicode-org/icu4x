@@ -459,9 +459,17 @@ fn months_convert(
             // So we need to handle the 6 and 7 cases as leap months, and everything after 6 needs to
             // be offset by 1
             let index = if k == "7-yeartype-leap" {
-                7 + 11
+                // Adar II => M06L:
+                // * 12 months in a year
+                // * M06 is the 6th month
+                // * -1 because the data is zero-indexed
+                12 + 6 - 1
             } else if k == "6" {
-                6 + 11
+                // Adar I => M05L:
+                // * 12 months in a year
+                // * M05 is the 5th month
+                // * -1 because the data is zero-indexed
+                12 + 5 - 1
             } else {
                 let mut index: usize = k
                     .parse()
