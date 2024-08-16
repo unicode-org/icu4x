@@ -131,8 +131,8 @@ impl TryFrom<&cldr_serde::date_fields::Field> for RelativeTimePatternDataV1<'_> 
         }
         Ok(Self {
             relatives: relatives.into_iter().collect(),
-            past: PluralRulesCategoryMapping::try_from(&field.past)?,
-            future: PluralRulesCategoryMapping::try_from(&field.future)?,
+            past: SinglePlaceholderPluralPattern::try_from(&field.past)?,
+            future: SinglePlaceholderPluralPattern::try_from(&field.future)?,
         })
     }
 }
@@ -153,7 +153,7 @@ fn optional_convert(
         .transpose()
 }
 
-impl TryFrom<&cldr_serde::date_fields::PluralRulesPattern> for PluralRulesCategoryMapping<'_> {
+impl TryFrom<&cldr_serde::date_fields::PluralRulesPattern> for SinglePlaceholderPluralPattern<'_> {
     type Error = PatternError;
     fn try_from(
         pattern: &cldr_serde::date_fields::PluralRulesPattern,

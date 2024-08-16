@@ -68,10 +68,10 @@ pub struct RelativeTimePatternDataV1<'data> {
     pub relatives: ZeroMap<'data, i8, str>,
     /// How to display times in the past.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub past: PluralRulesCategoryMapping<'data>,
+    pub past: SinglePlaceholderPluralPattern<'data>,
     /// How to display times in the future.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub future: PluralRulesCategoryMapping<'data>,
+    pub future: SinglePlaceholderPluralPattern<'data>,
 }
 
 /// Display specification for relative times, split over potential plural patterns.
@@ -83,7 +83,7 @@ pub struct RelativeTimePatternDataV1<'data> {
     databake(path = icu_experimental::relativetime::provider)
 )]
 #[yoke(prove_covariance_manually)]
-pub struct PluralRulesCategoryMapping<'data> {
+pub struct SinglePlaceholderPluralPattern<'data> {
     /// Mapping for PluralCategory::Zero or `None` if not present.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub zero: Option<SinglePlaceholderPattern<Cow<'data, str>>>,
@@ -102,6 +102,23 @@ pub struct PluralRulesCategoryMapping<'data> {
     /// Mapping for PluralCategory::Other
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub other: SinglePlaceholderPattern<Cow<'data, str>>,
+}
+
+impl<'data> SinglePlaceholderPluralPattern<'data> {
+    pub(crate) fn get(
+        &self,
+        c: icu_plurals::PluralCategory,
+    ) -> &SinglePlaceholderPattern<Cow<'data, str>> {
+        match c {
+            icu_plurals::PluralCategory::Zero => self.zero.as_ref(),
+            icu_plurals::PluralCategory::One => self.one.as_ref(),
+            icu_plurals::PluralCategory::Two => self.two.as_ref(),
+            icu_plurals::PluralCategory::Few => self.few.as_ref(),
+            icu_plurals::PluralCategory::Many => self.many.as_ref(),
+            icu_plurals::PluralCategory::Other => None,
+        }
+        .unwrap_or(&self.other)
+    }
 }
 
 pub(crate) struct ErasedRelativeTimeFormatV1Marker;

@@ -50,29 +50,14 @@ impl<'a> Writeable for FormattedRelativeTime<'a> {
             }
         }
 
-        let plural_rules_mapping = if self.is_negative {
+        if self.is_negative {
             &self.formatter.rt.get().past
         } else {
             &self.formatter.rt.get().future
-        };
-        let category = self.formatter.plural_rules.category_for(&self.value);
-        let singular_sub_pattern = match category {
-            icu_plurals::PluralCategory::Zero => &plural_rules_mapping.zero,
-            icu_plurals::PluralCategory::One => &plural_rules_mapping.one,
-            icu_plurals::PluralCategory::Two => &plural_rules_mapping.two,
-            icu_plurals::PluralCategory::Few => &plural_rules_mapping.few,
-            icu_plurals::PluralCategory::Many => &plural_rules_mapping.many,
-            icu_plurals::PluralCategory::Other => &None,
-        };
-
-        // Default to using PluralCategory::Other mapping.
-        let singular_sub_pattern = singular_sub_pattern
-            .as_ref()
-            .unwrap_or(&plural_rules_mapping.other);
-
-        singular_sub_pattern
-            .interpolate((self.formatter.fixed_decimal_format.format(&self.value),))
-            .write_to(sink)
+        }
+        .get(self.formatter.plural_rules.category_for(&self.value))
+        .interpolate((self.formatter.fixed_decimal_format.format(&self.value),))
+        .write_to(sink)
     }
 }
 
