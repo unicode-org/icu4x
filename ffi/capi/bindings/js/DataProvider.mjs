@@ -25,8 +25,11 @@ export class DataProvider {
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        // Unconditionally register to destroy when this object is ready to garbage collect.
-        DataProvider_box_destroy_registry.register(this, this.#ptr);
+        
+        // Are we being borrowed? If not, we can register.
+        if (this.#selfEdge.length === 0) {
+            DataProvider_box_destroy_registry.register(this, this.#ptr);
+        }
     }
 
     get ffiValue() {
@@ -41,28 +44,6 @@ export class DataProvider {
         }
         
         finally {}
-    }
-
-    static fromByteSlice(blob) {
-        
-        const blobSlice = diplomatRuntime.DiplomatBuf.slice(wasm, blob, "u8");
-        
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        const result = wasm.icu4x_DataProvider_from_byte_slice_mv1(diplomatReceive.buffer, blobSlice.ptr, blobSlice.size);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
-            }
-            return new DataProvider(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
-        }
-        
-        finally {
-            blobSlice.free();
-        
-            diplomatReceive.free();
-        }
     }
 
     static empty() {

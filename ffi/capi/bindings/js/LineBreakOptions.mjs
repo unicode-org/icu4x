@@ -37,7 +37,7 @@ export class LineBreakOptions {
     // Returns an array that can be expanded with spread syntax (...)
     
     _intoFFI(
-        slice_cleanup_callbacks,
+        functionCleanupArena,
         appendArrayMap
     ) {
         return [this.#strictness.ffiValue, this.#wordOption.ffiValue, this.#jaZh]

@@ -27,8 +27,11 @@ export class LineBreakIteratorLatin1 {
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        // Unconditionally register to destroy when this object is ready to garbage collect.
-        LineBreakIteratorLatin1_box_destroy_registry.register(this, this.#ptr);
+        
+        // Are we being borrowed? If not, we can register.
+        if (this.#selfEdge.length === 0) {
+            LineBreakIteratorLatin1_box_destroy_registry.register(this, this.#ptr);
+        }
     }
 
     get ffiValue() {

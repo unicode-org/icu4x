@@ -25,8 +25,11 @@ export class ReorderedIndexMap {
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        // Unconditionally register to destroy when this object is ready to garbage collect.
-        ReorderedIndexMap_box_destroy_registry.register(this, this.#ptr);
+        
+        // Are we being borrowed? If not, we can register.
+        if (this.#selfEdge.length === 0) {
+            ReorderedIndexMap_box_destroy_registry.register(this, this.#ptr);
+        }
     }
 
     get ffiValue() {
@@ -42,7 +45,7 @@ export class ReorderedIndexMap {
         const result = wasm.icu4x_ReorderedIndexMap_as_slice_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {
-            return diplomatReceive.buffer.getSlice("u32");
+            return new diplomatRuntime.DiplomatPrimitiveSlice.getSlice(wasm, diplomatReceive.buffer, "u32", aEdges);
         }
         
         finally {

@@ -25,8 +25,11 @@ export class TitlecaseMapper {
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        // Unconditionally register to destroy when this object is ready to garbage collect.
-        TitlecaseMapper_box_destroy_registry.register(this, this.#ptr);
+        
+        // Are we being borrowed? If not, we can register.
+        if (this.#selfEdge.length === 0) {
+            TitlecaseMapper_box_destroy_registry.register(this, this.#ptr);
+        }
     }
 
     get ffiValue() {
@@ -53,21 +56,19 @@ export class TitlecaseMapper {
 
     titlecaseSegment(s, locale, options) {
         
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
         
-        let slice_cleanup_callbacks = [];
-        
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        wasm.icu4x_TitlecaseMapper_titlecase_segment_v1_mv1(this.ffiValue, sSlice.ptr, sSlice.size, locale.ffiValue, ...options._intoFFI(slice_cleanup_callbacks, {}), write.buffer);
+        wasm.icu4x_TitlecaseMapper_titlecase_segment_v1_mv1(this.ffiValue, sSlice.ptr, sSlice.size, locale.ffiValue, ...options._intoFFI(functionCleanupArena, {}), write.buffer);
     
         try {
             return write.readString8();
         }
         
         finally {
-            for (let cleanup of slice_cleanup_callbacks) {
-                cleanup();
-            }
+            functionCleanupArena.free();
         
             sSlice.free();
         

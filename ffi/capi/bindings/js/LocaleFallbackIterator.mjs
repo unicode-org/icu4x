@@ -28,8 +28,11 @@ export class LocaleFallbackIterator {
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        // Unconditionally register to destroy when this object is ready to garbage collect.
-        LocaleFallbackIterator_box_destroy_registry.register(this, this.#ptr);
+        
+        // Are we being borrowed? If not, we can register.
+        if (this.#selfEdge.length === 0) {
+            LocaleFallbackIterator_box_destroy_registry.register(this, this.#ptr);
+        }
     }
 
     get ffiValue() {

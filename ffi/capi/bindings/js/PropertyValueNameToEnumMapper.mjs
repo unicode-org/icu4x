@@ -27,8 +27,11 @@ export class PropertyValueNameToEnumMapper {
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        // Unconditionally register to destroy when this object is ready to garbage collect.
-        PropertyValueNameToEnumMapper_box_destroy_registry.register(this, this.#ptr);
+        
+        // Are we being borrowed? If not, we can register.
+        if (this.#selfEdge.length === 0) {
+            PropertyValueNameToEnumMapper_box_destroy_registry.register(this, this.#ptr);
+        }
     }
 
     get ffiValue() {

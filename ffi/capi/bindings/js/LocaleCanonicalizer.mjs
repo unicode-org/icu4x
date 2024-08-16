@@ -27,8 +27,11 @@ export class LocaleCanonicalizer {
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        // Unconditionally register to destroy when this object is ready to garbage collect.
-        LocaleCanonicalizer_box_destroy_registry.register(this, this.#ptr);
+        
+        // Are we being borrowed? If not, we can register.
+        if (this.#selfEdge.length === 0) {
+            LocaleCanonicalizer_box_destroy_registry.register(this, this.#ptr);
+        }
     }
 
     get ffiValue() {

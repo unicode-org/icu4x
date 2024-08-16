@@ -27,8 +27,11 @@ export class LocaleFallbacker {
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        // Unconditionally register to destroy when this object is ready to garbage collect.
-        LocaleFallbacker_box_destroy_registry.register(this, this.#ptr);
+        
+        // Are we being borrowed? If not, we can register.
+        if (this.#selfEdge.length === 0) {
+            LocaleFallbacker_box_destroy_registry.register(this, this.#ptr);
+        }
     }
 
     get ffiValue() {
@@ -65,20 +68,18 @@ export class LocaleFallbacker {
 
     forConfig(config) {
         
-        let slice_cleanup_callbacks = [];
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this];
-        const result = wasm.icu4x_LocaleFallbacker_for_config_mv1(this.ffiValue, ...config._intoFFI(slice_cleanup_callbacks, {}));
+        const result = wasm.icu4x_LocaleFallbacker_for_config_mv1(this.ffiValue, ...config._intoFFI(functionCleanupArena, {}));
     
         try {
             return new LocaleFallbackerWithConfig(result, [], aEdges);
         }
         
         finally {
-            for (let cleanup of slice_cleanup_callbacks) {
-                cleanup();
-            }
+            functionCleanupArena.free();
         }
     }
 }

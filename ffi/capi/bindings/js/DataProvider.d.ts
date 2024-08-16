@@ -15,8 +15,6 @@ export class DataProvider {
 
     static compiled(): DataProvider;
 
-    static fromByteSlice(blob: Uint8Array): DataProvider;
-
     static empty(): DataProvider;
 
     forkByKey(other: DataProvider): void;

@@ -44,7 +44,7 @@ export class PluralCategories {
     // Returns an array that can be expanded with spread syntax (...)
     
     _intoFFI(
-        slice_cleanup_callbacks,
+        functionCleanupArena,
         appendArrayMap
     ) {
         return [this.#zero, this.#one, this.#two, this.#few, this.#many, this.#other]

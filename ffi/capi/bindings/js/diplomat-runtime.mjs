@@ -169,6 +169,10 @@ export class DiplomatBuf {
         this.leak = () => { };
         this.garbageCollect = () => DiplomatBufferFinalizer.register(this, this.free);
     }
+
+    splat() {
+        return [this.ptr, this.size];
+    }
 }
 
 /** 
@@ -214,42 +218,53 @@ export class DiplomatWriteBuf {
 }
 
 /**
- * A number of Rust functions in WebAssembly require a buffer to populate struct, slice, Option<> or Result<> types with information.
- * {@link DiplomatReceiveBuf} allocates a buffer in WebAssembly, which can then be passed into functions with the {@link DiplomatReceiveBuf.buffer}
- * property.
+ * Represents an underlying slice that we've grabbed from WebAssembly.
+ * You can treat this in JS as a regular slice of primitives, but it handles additional data for you behind the scenes.
  */
-export class DiplomatReceiveBuf {
+export class DiplomatSlice {
     #wasm;
 
-    #size;
-    #align;
-
-    #hasResult;
-
-    #buffer;
-
-    constructor(wasm, size, align, hasResult) {
-        this.#wasm = wasm;
-
-        this.#size = size;
-        this.#align = align;
-
-        this.#hasResult = hasResult;
-
-        this.#buffer = this.#wasm.diplomat_alloc(this.#size, this.#align);
-
-        this.leak = () => { };
+    #bufferType;
+    get bufferType() {
+        return this.#bufferType;
     }
 
-    /**
-     * Only used if the receive buffer points to a slice.
-     * @param {string} sliceType The slice type we expect to be used. 
-     * @returns A slice of the `sliceType` provided.
-     */
-    getSlice(sliceType) {
-        const [ptr, size] = new Uint32Array(this.#wasm.memory.buffer, this.#buffer, 2);
+    #buffer;
+    get buffer() {
+        return this.#buffer;
+    }
 
-        var arrayType;
+    #lifetimeEdges;
+
+    constructor(wasm, buffer, bufferType, lifetimeEdges) {
+        this.#wasm = wasm;
+        
+        const [ptr, size] = new Uint32Array(this.#wasm.memory.buffer, buffer, 2);
+
+        this.#buffer = new bufferType(this.#wasm.memory.buffer, ptr, size);
+        this.#bufferType = bufferType;
+
+        this.#lifetimeEdges = lifetimeEdges;
+    }
+
+    getValue() {
+        return this.#buffer;
+    }
+
+    [Symbol.toPrimitive]() {
+        return this.getValue();
+    }
+
+    valueOf() {
+        return this.getValue();
+    }
+}
+
+export class DiplomatSlicePrimitive extends DiplomatSlice {
+    constructor(wasm, buffer, sliceType, lifetimeEdges) {
+        const [ptr, size] = new Uint32Array(wasm.memory.buffer, buffer, 2);
+
+        let arrayType;
         switch (sliceType) {
             case "u8":
             case "boolean":
@@ -285,52 +300,91 @@ export class DiplomatReceiveBuf {
             default:
                 console.error("Unrecognized bufferType ", bufferType);
         }
-        return arrayType.from(new arrayType(this.#wasm.memory.buffer, ptr, size));
-    }
 
-    /**
-     * Returns a string, if the receive buffer points to a string.
-     * @param {string} stringEncoding `string8` or `string16`. 
-     * @param {number} buffer Buffer to use. Only used by `getStrings`, other wise {@link DiplomatReceiveBuf.buffer} is used.
-     * @returns {string} String with encoding of the provided `stringEncoding`.
-     */
-    getString(stringEncoding) {
-        const [ptr, size] = new Uint32Array(this.#wasm.memory.buffer, this.#buffer, 2);
+        super(wasm, buffer, arrayType, lifetimeEdges);
+    }
+}
+
+export class DiplomatSliceStr extends DiplomatSlice {
+    #decoder;
+
+    constructor(wasm, buffer, stringEncoding, lifetimeEdges) {
+        let encoding;
         switch (stringEncoding) {
             case "string8":
-                return readString8(wasm, ptr, size);
+                encoding = Uint8Array;
+                break;
             case "string16":
-                return readString16(wasm, ptr, size);
+                encoding = Uint16Array;
+                break;
             default:
                 console.error("Unrecognized stringEncoding ", stringEncoding);
                 break;
         }
+        super(wasm, buffer, encoding, lifetimeEdges);
+
+        if (stringEncoding === "string8") {
+            this.#decoder = new TextDecoder('utf-8');
+        }
     }
 
-    /**
-     * Returns an array of strings, assuming the receive buffer points to an array of strings.
-     * @param {string} stringEncoding `string8` or `string16`. 
-     * @returns {Array[string]} An array of strings with the encoding of the provided `stringEncoding`.
-     */
-    getStrings(stringEncoding) {
-        const [ptr, size] = new Uint32Array(this.#wasm.memory.buffer, this.#buffer, 2);
-
-        let strPtrs = new Uint32Array(this.#wasm.memory.buffer, ptr, size);
-        let strings = [];
-
-        for (let arrayPtr = 0; arrayPtr < strPtrs.length; arrayPtr += 2) {
-            const [strPtr, strSize] = [strPtrs[arrayPtr], strPtrs[arrayPtr + 1]];
-            switch (stringEncoding) {
-                case "string8":
-                    strings.push(readString8(this.#wasm, strPtr, strSize));
-                case "string16":
-                    strings.push(readString16(this.#wasm, strPtr, strSize));
-                default:
-                    console.error("Unrecognized stringEncoding ", stringEncoding);
-                    break;
-            }
+    getValue() {
+        switch (this.bufferType) {
+            case Uint8Array:
+                return this.#decoder.decode(super.getValue());
+            case Uint16Array:
+                return String.fromCharCode.apply(null, super.getValue());
+            default:
+                return null;
         }
-        return strings;
+    }
+
+    toString() {
+        return this.getValue();
+    }
+}
+
+export class DiplomatSliceStrings extends DiplomatSlice {
+    #strings = [];
+    constructor(wasm, buffer, stringEncoding, lifetimeEdges) {
+        super(wasm, buffer, Uint32Array, lifetimeEdges);
+
+        for (let i = this.buffer.byteOffset; i < this.buffer.byteLength; i += this.buffer.BYTES_PER_ELEMENT * 2) {
+            this.#strings.push(new DiplomatSliceStr(wasm, i, stringEncoding, lifetimeEdges));
+        }
+    }
+
+    getValue() {
+        return this.#strings;
+    }
+}
+
+/**
+ * A number of Rust functions in WebAssembly require a buffer to populate struct, slice, Option<> or Result<> types with information.
+ * {@link DiplomatReceiveBuf} allocates a buffer in WebAssembly, which can then be passed into functions with the {@link DiplomatReceiveBuf.buffer}
+ * property.
+ */
+export class DiplomatReceiveBuf {
+    #wasm;
+
+    #size;
+    #align;
+
+    #hasResult;
+
+    #buffer;
+
+    constructor(wasm, size, align, hasResult) {
+        this.#wasm = wasm;
+
+        this.#size = size;
+        this.#align = align;
+
+        this.#hasResult = hasResult;
+
+        this.#buffer = this.#wasm.diplomat_alloc(this.#size, this.#align);
+
+        this.leak = () => { };
     }
     
     free() {
@@ -352,6 +406,39 @@ export class DiplomatReceiveBuf {
         } else {
             return true;
         }
+    }
+}
+
+/**
+ * For cleaning up slices inside struct _intoFFI functions.
+ * Based somewhat on how the Dart backend handles slice cleanup.
+ * 
+ * We want to ensure a slice only lasts as long as its struct, so we have a `functionCleanupArena` CleanupArena that we use in each method for any slice that needs to be cleaned up. It lasts only as long as the function is called for.
+ * 
+ * Then we have `createWith`, which is meant for longer lasting slices. It takes an array of edges and will last as long as those edges do. Cleanup is only called later.
+ */
+export class CleanupArena {
+    #items = [];
+
+    #edgeArray = [];
+    
+    constructor() {
+    }
+    
+    alloc(item) {
+        this.#items.push(item);
+        return item;
+    }
+
+    createWith(edgeArray) {
+        this.#edgeArray = edgeArray;
+        DiplomatBufferFinalizer.register(this, this.free);
+    }
+
+    free() {
+        this.#items.forEach((i) => {
+            i.free();
+        });
     }
 }
 

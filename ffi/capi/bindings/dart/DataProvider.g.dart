@@ -35,20 +35,6 @@ final class DataProvider implements ffi.Finalizable {
     return DataProvider._fromFfi(result, []);
   }
 
-  /// Constructs a `BlobDataProvider` and returns it as an [`DataProvider`].
-  ///
-  /// See the [Rust documentation for `BlobDataProvider`](https://docs.rs/icu_provider_blob/latest/icu_provider_blob/struct.BlobDataProvider.html) for more information.
-  ///
-  /// Throws [DataError] on failure.
-  factory DataProvider.fromByteSlice(ByteBuffer blob) {
-    final temp = _FinalizedArena();
-    final result = _icu4x_DataProvider_from_byte_slice_mv1(blob.asUint8List()._uint8AllocIn(temp.arena));
-    if (!result.isOk) {
-      throw DataError.values[result.union.err];
-    }
-    return DataProvider._fromFfi(result.union.ok, []);
-  }
-
   /// Constructs an empty [`DataProvider`].
   ///
   /// See the [Rust documentation for `EmptyDataProvider`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/empty/struct.EmptyDataProvider.html) for more information.
@@ -113,11 +99,6 @@ external void _icu4x_DataProvider_destroy_mv1(ffi.Pointer<ffi.Void> self);
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_DataProvider_compiled_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_DataProvider_compiled_mv1();
-
-@meta.ResourceIdentifier('icu4x_DataProvider_from_byte_slice_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(_SliceUint8)>(isLeaf: true, symbol: 'icu4x_DataProvider_from_byte_slice_mv1')
-// ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_DataProvider_from_byte_slice_mv1(_SliceUint8 blob);
 
 @meta.ResourceIdentifier('icu4x_DataProvider_empty_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_DataProvider_empty_mv1')
