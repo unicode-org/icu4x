@@ -174,7 +174,7 @@ fn test_basic() {
     );
     assert_eq!(
         display_names.get(&CurrencyDisplayNameCount::PluralRules(Count::One)),
-        None
+        Some("dollar des États-Unis")
     );
     assert_eq!(
         display_names.get(&CurrencyDisplayNameCount::PluralRules(Count::Two)),
