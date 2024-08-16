@@ -8,10 +8,14 @@
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": " 分前",
-      "index": 0
-    }
+    "other": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " 分前"
+      }
+    ]
   },
   "future": {
     "zero": null,
@@ -19,9 +23,13 @@
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": " 分後",
-      "index": 0
-    }
+    "other": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " 分後"
+      }
+    ]
   }
 }

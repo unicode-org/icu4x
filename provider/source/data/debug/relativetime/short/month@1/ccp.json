@@ -6,17 +6,25 @@
   },
   "past": {
     "zero": null,
-    "one": {
-      "pattern": " 𑄇𑄏𑄧 𑄃𑄉𑄬",
-      "index": 0
-    },
+    "one": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " 𑄇𑄏𑄧 𑄃𑄉𑄬"
+      }
+    ],
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": " 𑄟𑄏𑄧 𑄃𑄉𑄬",
-      "index": 0
-    }
+    "other": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " 𑄟𑄏𑄧 𑄃𑄉𑄬"
+      }
+    ]
   },
   "future": {
     "zero": null,
@@ -24,9 +32,13 @@
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": " 𑄟𑄏𑄬",
-      "index": 0
-    }
+    "other": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " 𑄟𑄏𑄬"
+      }
+    ]
   }
 }

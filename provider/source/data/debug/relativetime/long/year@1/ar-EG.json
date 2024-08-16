@@ -5,55 +5,115 @@
     "1": "السنة القادمة"
   },
   "past": {
-    "zero": {
-      "pattern": "قبل  سنة",
-      "index": 7
-    },
-    "one": {
-      "pattern": "قبل سنة واحدة",
-      "index": 255
-    },
-    "two": {
-      "pattern": "قبل سنتين",
-      "index": 255
-    },
-    "few": {
-      "pattern": "قبل  سنوات",
-      "index": 7
-    },
-    "many": {
-      "pattern": "قبل  سنة",
-      "index": 7
-    },
-    "other": {
-      "pattern": "قبل  سنة",
-      "index": 7
-    }
+    "zero": [
+      {
+        "Literal": "قبل "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " سنة"
+      }
+    ],
+    "one": [
+      {
+        "Literal": "قبل سنة واحدة"
+      }
+    ],
+    "two": [
+      {
+        "Literal": "قبل سنتين"
+      }
+    ],
+    "few": [
+      {
+        "Literal": "قبل "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " سنوات"
+      }
+    ],
+    "many": [
+      {
+        "Literal": "قبل "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " سنة"
+      }
+    ],
+    "other": [
+      {
+        "Literal": "قبل "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " سنة"
+      }
+    ]
   },
   "future": {
-    "zero": {
-      "pattern": "خلال  سنة",
-      "index": 9
-    },
-    "one": {
-      "pattern": "خلال سنة واحدة",
-      "index": 255
-    },
-    "two": {
-      "pattern": "خلال سنتين",
-      "index": 255
-    },
-    "few": {
-      "pattern": "خلال  سنوات",
-      "index": 9
-    },
-    "many": {
-      "pattern": "خلال  سنة",
-      "index": 9
-    },
-    "other": {
-      "pattern": "خلال  سنة",
-      "index": 9
-    }
+    "zero": [
+      {
+        "Literal": "خلال "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " سنة"
+      }
+    ],
+    "one": [
+      {
+        "Literal": "خلال سنة واحدة"
+      }
+    ],
+    "two": [
+      {
+        "Literal": "خلال سنتين"
+      }
+    ],
+    "few": [
+      {
+        "Literal": "خلال "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " سنوات"
+      }
+    ],
+    "many": [
+      {
+        "Literal": "خلال "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " سنة"
+      }
+    ],
+    "other": [
+      {
+        "Literal": "خلال "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " سنة"
+      }
+    ]
   }
 }

@@ -6,30 +6,52 @@
   },
   "past": {
     "zero": null,
-    "one": {
-      "pattern": "d ago",
-      "index": 0
-    },
+    "one": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": "d ago"
+      }
+    ],
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": "d ago",
-      "index": 0
-    }
+    "other": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": "d ago"
+      }
+    ]
   },
   "future": {
     "zero": null,
-    "one": {
-      "pattern": "in d",
-      "index": 3
-    },
+    "one": [
+      {
+        "Literal": "in "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": "d"
+      }
+    ],
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": "in d",
-      "index": 3
-    }
+    "other": [
+      {
+        "Literal": "in "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": "d"
+      }
+    ]
   }
 }

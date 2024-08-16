@@ -6,42 +6,86 @@
   },
   "past": {
     "zero": null,
-    "one": {
-      "pattern": " месяц назад",
-      "index": 0
-    },
+    "one": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " месяц назад"
+      }
+    ],
     "two": null,
-    "few": {
-      "pattern": " месяца назад",
-      "index": 0
-    },
-    "many": {
-      "pattern": " месяцев назад",
-      "index": 0
-    },
-    "other": {
-      "pattern": " месяца назад",
-      "index": 0
-    }
+    "few": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " месяца назад"
+      }
+    ],
+    "many": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " месяцев назад"
+      }
+    ],
+    "other": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " месяца назад"
+      }
+    ]
   },
   "future": {
     "zero": null,
-    "one": {
-      "pattern": "через  месяц",
-      "index": 11
-    },
+    "one": [
+      {
+        "Literal": "через "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " месяц"
+      }
+    ],
     "two": null,
-    "few": {
-      "pattern": "через  месяца",
-      "index": 11
-    },
-    "many": {
-      "pattern": "через  месяцев",
-      "index": 11
-    },
-    "other": {
-      "pattern": "через  месяца",
-      "index": 11
-    }
+    "few": [
+      {
+        "Literal": "через "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " месяца"
+      }
+    ],
+    "many": [
+      {
+        "Literal": "через "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " месяцев"
+      }
+    ],
+    "other": [
+      {
+        "Literal": "через "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " месяца"
+      }
+    ]
   }
 }

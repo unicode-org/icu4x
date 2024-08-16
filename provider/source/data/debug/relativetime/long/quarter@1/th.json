@@ -10,10 +10,14 @@
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": " ไตรมาสที่แล้ว",
-      "index": 0
-    }
+    "other": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " ไตรมาสที่แล้ว"
+      }
+    ]
   },
   "future": {
     "zero": null,
@@ -21,9 +25,16 @@
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": "ในอีก  ไตรมาส",
-      "index": 16
-    }
+    "other": [
+      {
+        "Literal": "ในอีก "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " ไตรมาส"
+      }
+    ]
   }
 }

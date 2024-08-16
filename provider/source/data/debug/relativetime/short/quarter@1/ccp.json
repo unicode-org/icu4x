@@ -10,23 +10,35 @@
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": "𑄖𑄨𑄚𑄴𑄟𑄏𑄧𑄢𑄴 𑄃𑄉𑄬",
-      "index": 0
-    }
+    "other": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": "𑄖𑄨𑄚𑄴𑄟𑄏𑄧𑄢𑄴 𑄃𑄉𑄬"
+      }
+    ]
   },
   "future": {
     "zero": null,
-    "one": {
-      "pattern": " 𑄖𑄨𑄚𑄴𑄟𑄏𑄬",
-      "index": 0
-    },
+    "one": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " 𑄖𑄨𑄚𑄴𑄟𑄏𑄬"
+      }
+    ],
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": " 𑄖𑄨𑄚𑄴𑄟𑄏𑄬",
-      "index": 0
-    }
+    "other": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " 𑄖𑄨𑄚𑄴𑄟𑄏𑄬"
+      }
+    ]
   }
 }
