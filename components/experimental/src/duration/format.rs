@@ -1,15 +1,16 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
-
 use super::{options::*, Duration, DurationFormatter, DurationSign};
 
 use super::validated_options::Unit;
-use alloc::{string::String, vec::Vec};
+use arrayvec::ArrayVec;
 use core::fmt;
 use core::fmt::Write;
+use either::Either;
 use fixed_decimal::{FixedDecimal, SignDisplay};
-use writeable::{PartsWrite, Writeable};
+use icu_decimal::FormattedFixedDecimal;
+use writeable::{adapters::WithPart, PartsWrite, Writeable};
 
 macro_rules! create_unit_parts {
     ($($part:ident, $unit:expr),*) => {
@@ -66,14 +67,76 @@ pub struct FormattedDuration<'l> {
     pub(crate) duration: &'l Duration,
 }
 
+/// Exists to allow creating lists of heterogeneous [`Writeable`]s to pass to [`ListFormatter`].
+/// The (Unit, FixedDecimal) pair is used to crerate [`FormattedUnit`]s.
+type HeterogenousToFormatter = Either<DigitalDurationFormatter, (Unit, FixedDecimal)>;
+
+/// Describes a formatted duration.
+#[derive(Default)]
+struct DigitalDurationFormatter {
+    hours: Option<FixedDecimal>,
+    add_hour_minute_separator: bool,
+    minutes: Option<FixedDecimal>,
+    add_minute_second_separator: bool,
+    seconds: Option<FixedDecimal>,
+}
+
+impl DigitalDurationFormatter {
+    fn format<'l>(&'l self, fmt: &'l DurationFormatter) -> FormattedDigitalDuration<'l> {
+        FormattedDigitalDuration {
+            fmt,
+            hours: self.hours.as_ref().map(|h| fmt.fdf.format(h)),
+            add_hour_minute_separator: self.add_hour_minute_separator,
+            minutes: self.minutes.as_ref().map(|m| fmt.fdf.format(m)),
+            add_minute_second_separator: self.add_minute_second_separator,
+            seconds: self.seconds.as_ref().map(|s| fmt.fdf.format(s)),
+        }
+    }
+}
+
+struct FormattedDigitalDuration<'l> {
+    fmt: &'l DurationFormatter,
+    hours: Option<FormattedFixedDecimal<'l>>,
+    add_hour_minute_separator: bool,
+    minutes: Option<FormattedFixedDecimal<'l>>,
+    add_minute_second_separator: bool,
+    seconds: Option<FormattedFixedDecimal<'l>>,
+}
+
+impl Writeable for FormattedDigitalDuration<'_> {
+    fn write_to_parts<S: PartsWrite + ?Sized>(&self, sink: &mut S) -> fmt::Result {
+        if let Some(hours) = &self.hours {
+            sink.with_part(parts::HOUR, |w| hours.write_to_parts(w))?;
+        }
+        if self.add_hour_minute_separator {
+            sink.with_part(parts::LITERAL, |w| {
+                w.write_str(&self.fmt.digital.get().separator)
+            })?;
+        }
+        if let Some(minutes) = &self.minutes {
+            sink.with_part(parts::MINUTE, |w| minutes.write_to_parts(w))?;
+        }
+        if self.add_minute_second_separator {
+            sink.with_part(parts::LITERAL, |w| {
+                w.write_str(&self.fmt.digital.get().separator)
+            })?;
+        }
+        if let Some(seconds) = &self.seconds {
+            sink.with_part(parts::SECOND, |w| seconds.write_to_parts(w))?;
+        }
+
+        Ok(())
+    }
+}
+
 impl<'a> FormattedDuration<'a> {
     /// Section 1.1.9
-    /// Formats numeric hours to sink. Requires hours formatting style to be either Numeric or TwoDigit.
-    fn format_numeric_hours<V: PartsWrite + ?Sized>(
+    /// Formats numeric hours to [`DigitalDurationFormatter`]. Requires hours formatting style to be either Numeric or TwoDigit.
+    fn format_numeric_hours(
         &self,
+        formatted_digital_duration: &mut DigitalDurationFormatter,
         sign_displayed: &mut bool,
-        sink: &mut V,
-    ) -> core::fmt::Result {
+    ) {
         // 1. Let hoursStyle be durationFormat.[[HoursStyle]].
 
         // 2. Assert: hoursStyle is "numeric" or hoursStyle is "2-digit".
@@ -87,6 +150,8 @@ impl<'a> FormattedDuration<'a> {
         // 6. Perform ! CreateDataPropertyOrThrow(nfOpts, "numberingSystem", numberingSystem).
 
         let mut fd = FixedDecimal::from(self.duration.hours);
+
+        // Since we construct the FixedDecimal from an unsigned hours value, we need to set the sign manually.
         fd.set_sign(self.duration.sign.into());
 
         // 7. If hoursStyle is "2-digit", then
@@ -101,35 +166,23 @@ impl<'a> FormattedDuration<'a> {
             fd.apply_sign_display(SignDisplay::Never);
         }
 
-        // 9. Let nf be ! Construct(%NumberFormat%, « durationFormat.[[Locale]], nfOpts »).
-        // 10. Let hoursParts be ! PartitionNumberPattern(nf, hoursValue).
-        // 11. For each Record { [[Type]], [[Value]] } part of hoursParts, do
-        // a. Append the Record { [[Type]]: part.[[Type]], [[Value]]: part.[[Value]], [[Unit]]: "hour" } to result.
-
-        let ffd = self.fmt.fdf.format(&fd);
-        sink.with_part(parts::HOUR, |w| ffd.write_to_parts(w))?;
-
-        // 12. Return result.
-        Ok(())
+        formatted_digital_duration.hours = Some(fd);
     }
 
     /// Section 1.1.10
     /// Formats numeric minutes to sink. Requires minutes formatting style to be either Numeric or TwoDigit.
-    fn format_numeric_minutes<V: PartsWrite + ?Sized>(
+    fn format_numeric_minutes(
         &self,
+        formatted_digital_duration: &mut DigitalDurationFormatter,
         sign_displayed: &mut bool,
-        hours_formatted: bool,
-        sink: &mut V,
-    ) -> core::fmt::Result {
+    ) {
         // 1. Let result be a new empty List.
 
         // 2. If hoursDisplayed is true, then
-        if hours_formatted {
+        if formatted_digital_duration.hours.is_some() {
             // a. Let separator be durationFormat.[[DigitalFormat]].[[HoursMinutesSeparator]].
             // b. Append the Record { [[Type]]: "literal", [[Value]]: separator, [[Unit]]: empty } to result.
-            sink.with_part(parts::LITERAL, |w| {
-                w.write_str(&self.fmt.digital.get().separator)
-            })?;
+            formatted_digital_duration.add_hour_minute_separator = true;
         }
 
         // 3. Let minutesStyle be durationFormat.[[MinutesStyle]].
@@ -143,6 +196,8 @@ impl<'a> FormattedDuration<'a> {
         // 6. Let numberingSystem be durationFormat.[[NumberingSystem]].
         // 7. Perform ! CreateDataPropertyOrThrow(nfOpts, "numberingSystem", numberingSystem).
         let mut fd = FixedDecimal::from(self.duration.minutes);
+
+        // Since we construct the FixedDecimal from an unsigned minutes value, we need to set the sign manually.
         fd.set_sign(self.duration.sign.into());
 
         // 8. If minutesStyle is "2-digit", then
@@ -162,11 +217,8 @@ impl<'a> FormattedDuration<'a> {
         // 12. For each Record { [[Type]], [[Value]] } part of minutesParts, do
         // a. Append the Record { [[Type]]: part.[[Type]], [[Value]]: part.[[Value]], [[Unit]]: "minute" } to result.
 
-        let ffd = self.fmt.fdf.format(&fd);
-        sink.with_part(parts::MINUTE, |w| ffd.write_to_parts(w))?;
-
         // 13. Return result.
-        Ok(())
+        formatted_digital_duration.minutes = Some(fd);
     }
 
     /// Section 1.1.7
@@ -201,13 +253,12 @@ impl<'a> FormattedDuration<'a> {
 
     /// Section 1.1.11
     /// Formats numeric seconds to sink. Requires seconds formatting style to be either Numeric or TwoDigit.
-    fn format_numeric_seconds<V: PartsWrite + ?Sized>(
+    fn format_numeric_seconds(
         &self,
         mut second_fd: FixedDecimal,
+        formatted_digital_duration: &mut DigitalDurationFormatter,
         sign_displayed: &mut bool,
-        minute_formatted: bool,
-        sink: &mut V,
-    ) -> core::fmt::Result {
+    ) {
         // 1. Let secondsStyle be durationFormat.[[SecondsStyle]].
         // 2. Assert: secondsStyle is "numeric" or secondsStyle is "2-digit".
         debug_assert!(matches!(
@@ -218,12 +269,10 @@ impl<'a> FormattedDuration<'a> {
         // 3. Let result be a new empty List.
 
         // 4. If minutesDisplayed is true, then
-        if minute_formatted {
+        if formatted_digital_duration.minutes.is_some() {
             // a. Let separator be durationFormat.[[DigitalFormat]].[[MinutesSecondsSeparator]].
             // b. Append the Record { [[Type]]: "literal", [[Value]]: separator, [[Unit]]: empty } to result.
-            sink.with_part(parts::LITERAL, |w| {
-                w.write_str(&self.fmt.digital.get().separator)
-            })?;
+            formatted_digital_duration.add_minute_second_separator = true;
         }
 
         // Since we construct the FixedDecimal from an unsigned seconds value, we need to set the sign manually.
@@ -268,23 +317,20 @@ impl<'a> FormattedDuration<'a> {
         }
 
         // 16. Let secondsParts be ! PartitionNumberPattern(nf, secondsValue).
-        let ffd = self.fmt.fdf.format(&second_fd);
         // 17. For each Record { [[Type]], [[Value]] } part of secondsParts, do
         // a. Append the Record { [[Type]]: part.[[Type]], [[Value]]: part.[[Value]], [[Unit]]: "second" } to result
-        sink.with_part(parts::SECOND, |w| ffd.write_to_parts(w))?;
+        formatted_digital_duration.seconds = Some(second_fd);
 
         // 18. Return result.
-        Ok(())
     }
 
     /// Section 1.1.12
     /// Formats the parts of duration that use Numeric or TwoDigit style to sink.
-    fn format_numeric_units<V: PartsWrite + ?Sized>(
+    fn format_numeric_units(
         &self,
         first_numeric_unit: Unit,
         sign_displayed: &mut bool,
-        sink: &mut V,
-    ) -> core::fmt::Result {
+    ) -> DigitalDurationFormatter {
         // 1. Assert: firstNumericUnit is "hours", "minutes", or "seconds".
         debug_assert!(matches!(
             first_numeric_unit,
@@ -297,7 +343,7 @@ impl<'a> FormattedDuration<'a> {
         // 6. Let minutesDisplay be durationFormat.[[MinutesDisplay]].
         // 7. Let secondsValue be duration.[[Seconds]].
 
-        let second_value = // 8. If duration.[[Milliseconds]] is not 0 or duration.[[Microseconds]] is not 0 or duration.[[Nanoseconds]] is not 0, then
+        let seconds_value = // 8. If duration.[[Milliseconds]] is not 0 or duration.[[Microseconds]] is not 0 or duration.[[Nanoseconds]] is not 0, then
 			if self.duration.milliseconds != 0
 				|| self.duration.microseconds != 0
 				|| self.duration.nanoseconds != 0
@@ -344,17 +390,19 @@ impl<'a> FormattedDuration<'a> {
             }
         }
 
+        let mut formatted_digital_duration = DigitalDurationFormatter::default();
+
         // 16. If hoursFormatted is true, then
         if hours_formatted {
             // a. Append FormatNumericHours(durationFormat, hoursValue, signDisplayed) to numericPartsList.
-            self.format_numeric_hours(sign_displayed, sink)?;
+            self.format_numeric_hours(&mut formatted_digital_duration, sign_displayed);
             // b. Set signDisplayed to false.
             *sign_displayed = false;
         }
         // 17. If minutesFormatted is true, then
         if minutes_formatted {
             // a. Append FormatNumericMinutes(durationFormat, minutesValue, hoursFormatted, signDisplayed) to numericPartsList.
-            self.format_numeric_minutes(sign_displayed, hours_formatted, sink)?;
+            self.format_numeric_minutes(&mut formatted_digital_duration, sign_displayed);
             // b. Set signDisplayed to false.
             *sign_displayed = false;
         }
@@ -362,12 +410,17 @@ impl<'a> FormattedDuration<'a> {
         // 18. If secondsFormatted is true, then
         if seconds_formatted {
             // a. Append FormatNumericSeconds(durationFormat, secondsValue, minutesFormatted, signDisplayed) to numericPartsList.
-            self.format_numeric_seconds(second_value, sign_displayed, minutes_formatted, sink)?;
+            self.format_numeric_seconds(
+                seconds_value,
+                &mut formatted_digital_duration,
+                sign_displayed,
+            );
             // b. Set signDisplayed to false.
             *sign_displayed = false;
         }
+
         // 19. Return numericPartsList.
-        Ok(())
+        formatted_digital_duration
     }
 
     /// Section 1.1.8
@@ -395,7 +448,10 @@ impl<'a> FormattedDuration<'a> {
         &self,
         sink: &mut V,
     ) -> core::fmt::Result {
-        let mut parts_list = Vec::new();
+        // We can have a maximum of 9 writeables (one FormattedUnit for each unit).
+        // In the digital case, one or more unit is represented by the FormattedDigitalDuration,
+        // which is a single writeable.
+        let mut parts_list: ArrayVec<_, 9> = ArrayVec::new();
 
         // 2. Let signDisplayed be true.
         let mut sign_displayed = true;
@@ -420,9 +476,9 @@ impl<'a> FormattedDuration<'a> {
             // e. If style is "numeric" or "2-digit", then
             if style == FieldStyle::Numeric || style == FieldStyle::TwoDigit {
                 // i. Append FormatNumericUnits(durationFormat, duration, unit, signDisplayed) to result.
-                let mut numeric_parts = PartSink::new();
-                self.format_numeric_units(unit, &mut sign_displayed, &mut numeric_parts)?;
-                parts_list.push(numeric_parts);
+                let digital_duration_formatter =
+                    self.format_numeric_units(unit, &mut sign_displayed);
+                parts_list.push(HeterogenousToFormatter::Left(digital_duration_formatter));
                 // ii. Set numericUnitFound to true.
                 numeric_unit_found = true;
             }
@@ -473,6 +529,7 @@ impl<'a> FormattedDuration<'a> {
                         // b. If value is 0 and DurationSign(duration.[[Years]], duration.[[Months]], duration.[[Weeks]], duration.[[Days]], duration.[[Hours]], duration.[[Minutes]], duration.[[Seconds]], duration.[[Milliseconds]], duration.[[Microseconds]], duration.[[Nanoseconds]]) is -1, then
                         if value == 0 && self.duration.sign == DurationSign::Negative {
                             // i. Set value to negative-zero.
+                            formatted_value.apply_sign_display(SignDisplay::Always);
                         }
                     }
                     // 4. Else,
@@ -487,25 +544,14 @@ impl<'a> FormattedDuration<'a> {
                     // 8. Perform ! CreateDataPropertyOrThrow(nfOpts, "unitDisplay", style).
                     // NOTE: we perform the above steps while initializing DurationFormatter.
                     // 9. Let nf be ! Construct(%NumberFormat%, « durationFormat.[[Locale]], nfOpts »).
-                    let nf = &self.fmt.unit[unit];
 
                     // 10. Let parts be ! PartitionNumberPattern(nf, value).
-                    let formatted_unit =
-                        nf.format_fixed_decimal(&formatted_value, unit.as_unit_formatter_name());
 
                     // 11. Let list be a new empty List.
                     // 12. For each Record { [[Type]], [[Value]] } part of parts, do
                     // a. Append the Record { [[Type]]: part.[[Type]], [[Value]]: part.[[Value]], [[Unit]]: numberFormatUnit } to list.
-                    let mut parts = PartSink::new();
-                    parts.with_part(
-                        writeable::Part {
-                            category: "unit",
-                            value: unit.as_unit_formatter_name(),
-                        },
-                        |w| formatted_unit.write_to_parts(w),
-                    )?;
                     // 13. Append list to result.
-                    parts_list.push(parts);
+                    parts_list.push(HeterogenousToFormatter::Right((unit, formatted_value)));
                 }
             }
         }
@@ -516,9 +562,9 @@ impl<'a> FormattedDuration<'a> {
 
     /// 1.1.13 ListFormatParts ( durationFormat, partitionedPartsList )
     /// Given a partitioned part list of formatted duration parts, it creates and returns a List with all the corresponding parts according to the effective locale and the formatting options of durationFormat.
-    fn list_format_parts<V: PartsWrite + ?Sized>(
+    fn list_format_parts<V: PartsWrite + ?Sized, const CAP: usize>(
         &self,
-        parts_list: Vec<PartSink>,
+        parts_list: ArrayVec<HeterogenousToFormatter, CAP>,
         sink: &mut V,
     ) -> fmt::Result {
         // 1. Let lfOpts be OrdinaryObjectCreate(null).
@@ -532,58 +578,35 @@ impl<'a> FormattedDuration<'a> {
         // 6. Let lf be ! Construct(%ListFormat%, « durationFormat.[[Locale]], lfOpts »).
 
         // Note: the above steps are performed while initializing DurationFormatter.
-        let formatted_list = self.fmt.list.format(parts_list.iter().map(|s| &s.string));
+        let formatted_list = self.fmt.list.format(parts_list.iter().map(|w| match w {
+            Either::Left(digital) => Either::Left(digital.format(self.fmt)),
+            Either::Right((unit, formatted_fixed_decimal)) => {
+                let nf = &self.fmt.unit[*unit];
 
-        let mut list_sink = PartSink::new();
-        formatted_list.write_to_parts(&mut list_sink)?;
-
-        // 7. Let strings be a new empty List.
-        // 8. For each element parts of partitionedPartsList, do
-
-        // a. Let string be the empty String.
-        // b. For each Record { [[Type]], [[Value]], [[Unit]] } part in parts, do
-        //     i. Set string to the string-concatenation of string and part.[[Value]].
-        // c. Append string to strings.
-
-        // 9. Let formattedPartsList be CreatePartsFromList(lf, strings).
-        // 10. Let partitionedPartsIndex be 0.
-        let mut partitioned_parts_index = 0;
-        // 11. Let partitionedLength be the number of elements in partitionedPartsList.
-        let partitioned_length = parts_list.len();
-        // 12. Let flattenedPartsList be a new empty List.
-        // 13. For each Record { [[Type]], [[Value]] } listPart in formattedPartsList, do
-
-        let PartSink {
-            string: list_str,
-            parts: list_parts,
-        } = list_sink;
-
-        for (start, end, list_part) in list_parts {
-            // a. If listPart.[[Type]] is "element", then
-            if list_part == icu_list::parts::ELEMENT {
-                // i. Assert: partitionedPartsIndex < partitionedLength.
-                debug_assert!(partitioned_parts_index < partitioned_length);
-                // ii. Let parts be partitionedPartsList[partitionedPartsIndex].
-                let PartSink { string, parts } = &parts_list[partitioned_parts_index];
-                // iii. For each Record { [[Type]], [[Value]], [[Unit]] } part in parts, do
-                for (start, end, part) in parts {
-                    // 1. Append part to flattenedPartsList.
-                    sink.with_part(*part, |w| w.write_str(&string[*start..*end]))?;
-                }
-                // iv. Set partitionedPartsIndex to partitionedPartsIndex + 1.
-                partitioned_parts_index += 1;
+                let formatted_unit = WithPart {
+                    part: writeable::Part {
+                        category: "unit",
+                        value: unit.as_unit_formatter_name(),
+                    },
+                    writeable: nf.format_fixed_decimal(
+                        formatted_fixed_decimal,
+                        unit.as_unit_formatter_name(),
+                    ),
+                };
+                Either::Right(formatted_unit)
             }
-            // b. Else,
-            else {
-                // i. Assert: listPart.[[Type]] is "literal".
-                debug_assert!(list_part == icu_list::parts::LITERAL);
-                // ii. Append the Record { [[Type]]: "literal", [[Value]]: listPart.[[Value]], [[Unit]]: empty } to flattenedPartsList.
-                sink.with_part(parts::LITERAL, |w| w.write_str(&list_str[start..end]))?;
-            }
-        }
+        }));
+
+        formatted_list.write_to_parts(sink)?;
 
         // 14. Return flattenedPartsList.
         Ok(())
+    }
+}
+
+impl Writeable for FormattedDuration<'_> {
+    fn write_to_parts<S: PartsWrite + ?Sized>(&self, sink: &mut S) -> fmt::Result {
+        self.partition_duration_format_pattern(sink)
     }
 }
 
@@ -625,20 +648,20 @@ mod tests {
     fn test_duration_formatter() {
         let duration = Duration {
             sign: DurationSign::Negative,
-            years: 1,
+            years: 0,
             months: 2,
             weeks: 3,
-            days: 0,
             hours: 12,
             minutes: 1,
             seconds: 5,
             milliseconds: 130,
             microseconds: 140,
-            nanoseconds: 0,
+            ..Default::default()
         };
 
         let options = DurationFormatterOptions {
             base: BaseStyle::Long,
+            year_visibility: Some(FieldDisplay::Always),
             millisecond: Some(MilliSecondStyle::Numeric),
             ..Default::default()
         };
@@ -648,7 +671,7 @@ mod tests {
         let formatted = formatter.format(&duration);
         assert_eq!(
             formatted.write_to_string().into_owned(),
-            "-1 year, 2 months, 3 weeks, 12 hours, 1 minute, 5.13014 seconds"
+            "-0 year, 2 months, 3 weeks, 12 hours, 1 minute, 5.13014 seconds"
         );
     }
 }
