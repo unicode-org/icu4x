@@ -2,13 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::borrow::Borrow;
-
 use crate::cldr_serde;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::experimental::relativetime::provider::*;
+use icu_pattern::Error as PatternError;
+use icu_pattern::SinglePlaceholderPattern;
 use icu_provider::prelude::*;
+use std::borrow::Cow;
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::str::FromStr;
 use std::sync::OnceLock;
@@ -102,7 +103,7 @@ macro_rules! make_data_provider {
 
                     Ok(DataResponse {
             metadata: Default::default(),
-                        payload: DataPayload::from_owned(data.try_into()?),
+                        payload: DataPayload::from_owned(data.try_into().map_err(|_| DataError::custom("Invalid pattern"))?),
                     })
                 }
             }
@@ -122,7 +123,7 @@ macro_rules! make_data_provider {
 }
 
 impl TryFrom<&cldr_serde::date_fields::Field> for RelativeTimePatternDataV1<'_> {
-    type Error = DataError;
+    type Error = PatternError;
     fn try_from(field: &cldr_serde::date_fields::Field) -> Result<Self, Self::Error> {
         let mut relatives = BTreeMap::new();
         for relative in &field.relatives {
@@ -136,22 +137,24 @@ impl TryFrom<&cldr_serde::date_fields::Field> for RelativeTimePatternDataV1<'_> 
     }
 }
 
-/// Try to convert an `Option<String>` to [`SingularSubPattern`].
+/// Try to convert an `&Option<String>` to [`SinglePlaceholderPattern`].
 /// If pattern is `None`, we return `None`
-/// If pattern is `Some(pattern)`, we try to parse the pattern as [`SingularSubPattern`] failing
+/// If pattern is `Some(pattern)`, we try to parse the pattern as [`SinglePlaceholderPattern`] failing
 /// if an error is encountered
-fn optional_convert<'a, B: Borrow<Option<String>>>(
-    pattern: B,
-) -> Result<Option<SingularSubPattern<'a>>, DataError> {
+fn optional_convert(
+    pattern: &Option<String>,
+) -> Result<Option<SinglePlaceholderPattern<Cow<'static, str>>>, PatternError> {
     pattern
-        .borrow()
-        .as_ref()
-        .map(|s| SingularSubPattern::from_str(s))
+        .as_deref()
+        .map(|s| {
+            SinglePlaceholderPattern::from_str(s)
+                .map(|p| SinglePlaceholderPattern::from_store_unchecked(p.take_store().into()))
+        })
         .transpose()
 }
 
 impl TryFrom<&cldr_serde::date_fields::PluralRulesPattern> for PluralRulesCategoryMapping<'_> {
-    type Error = DataError;
+    type Error = PatternError;
     fn try_from(
         pattern: &cldr_serde::date_fields::PluralRulesPattern,
     ) -> Result<Self, Self::Error> {
@@ -161,7 +164,8 @@ impl TryFrom<&cldr_serde::date_fields::PluralRulesPattern> for PluralRulesCatego
             two: optional_convert(&pattern.two)?,
             few: optional_convert(&pattern.few)?,
             many: optional_convert(&pattern.many)?,
-            other: SingularSubPattern::from_str(&pattern.other)?,
+            other: SinglePlaceholderPattern::from_str(&pattern.other)
+                .map(|p| SinglePlaceholderPattern::from_store_unchecked(p.take_store().into()))?,
         })
     }
 }
@@ -197,6 +201,7 @@ make_data_provider!(
 mod tests {
     use super::*;
     use icu::locale::langid;
+    use writeable::assert_writeable_eq;
 
     #[test]
     fn test_basic() {
@@ -209,12 +214,15 @@ mod tests {
             .unwrap()
             .payload;
         assert_eq!(data.get().relatives.get(&0).unwrap(), "this qtr.");
-        assert_eq!(data.get().past.one.as_ref().unwrap().pattern, " qtr. ago");
-        assert_eq!(data.get().past.one.as_ref().unwrap().index, 0u8);
-        assert_eq!(data.get().past.other.pattern, " qtrs. ago");
-        assert_eq!(data.get().past.other.index, 0u8);
-        assert_eq!(data.get().future.one.as_ref().unwrap().pattern, "in  qtr.");
-        assert_eq!(data.get().future.one.as_ref().unwrap().index, 3u8);
+        assert_writeable_eq!(
+            data.get().past.one.as_ref().unwrap().interpolate([1]),
+            "1 qtr. ago"
+        );
+        assert_writeable_eq!(data.get().past.other.interpolate([2]), "2 qtrs. ago");
+        assert_writeable_eq!(
+            data.get().future.one.as_ref().unwrap().interpolate([1]),
+            "in 1 qtr."
+        );
     }
 
     #[test]
@@ -230,20 +238,19 @@ mod tests {
         assert_eq!(data.get().relatives.get(&-1).unwrap(), "السنة الماضية");
 
         // past.one, future.two are without a placeholder.
-        assert_eq!(
-            data.get().past.one.as_ref().unwrap().pattern,
+        assert_writeable_eq!(
+            data.get().past.one.as_ref().unwrap().interpolate([1]),
             "قبل سنة واحدة"
         );
-        assert_eq!(data.get().past.one.as_ref().unwrap().index, 255u8);
-        assert_eq!(
-            data.get().future.two.as_ref().unwrap().pattern,
+        assert_writeable_eq!(
+            data.get().future.two.as_ref().unwrap().interpolate([2]),
             "خلال سنتين"
         );
-        assert_eq!(data.get().future.two.as_ref().unwrap().index, 255u8);
 
-        assert_eq!(data.get().past.many.as_ref().unwrap().pattern, "قبل  سنة");
-        assert_eq!(data.get().past.many.as_ref().unwrap().index, 7u8);
-        assert_eq!(data.get().future.other.pattern, "خلال  سنة");
-        assert_eq!(data.get().future.other.index, 9u8);
+        assert_writeable_eq!(
+            data.get().past.many.as_ref().unwrap().interpolate([5]),
+            "قبل 5 سنة"
+        );
+        assert_writeable_eq!(data.get().future.other.interpolate([6]), "خلال 6 سنة");
     }
 }

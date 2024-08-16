@@ -6,36 +6,78 @@
   },
   "past": {
     "zero": null,
-    "one": {
-      "pattern": "пре  квартала",
-      "index": 7
-    },
+    "one": [
+      {
+        "Literal": "пре "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " квартала"
+      }
+    ],
     "two": null,
-    "few": {
-      "pattern": "пре  квартала",
-      "index": 7
-    },
+    "few": [
+      {
+        "Literal": "пре "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " квартала"
+      }
+    ],
     "many": null,
-    "other": {
-      "pattern": "пре  квартала",
-      "index": 7
-    }
+    "other": [
+      {
+        "Literal": "пре "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " квартала"
+      }
+    ]
   },
   "future": {
     "zero": null,
-    "one": {
-      "pattern": "за  квартал",
-      "index": 5
-    },
+    "one": [
+      {
+        "Literal": "за "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " квартал"
+      }
+    ],
     "two": null,
-    "few": {
-      "pattern": "за  квартала",
-      "index": 5
-    },
+    "few": [
+      {
+        "Literal": "за "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " квартала"
+      }
+    ],
     "many": null,
-    "other": {
-      "pattern": "за  квартала",
-      "index": 5
-    }
+    "other": [
+      {
+        "Literal": "за "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " квартала"
+      }
+    ]
   }
 }

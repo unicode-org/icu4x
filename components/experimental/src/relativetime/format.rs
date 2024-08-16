@@ -70,30 +70,9 @@ impl<'a> Writeable for FormattedRelativeTime<'a> {
             .as_ref()
             .unwrap_or(&plural_rules_mapping.other);
 
-        // 255 is used to denote a string without placeholder '{0}'.
-        if singular_sub_pattern.index == 255 {
-            sink.with_part(parts::LITERAL, |s| {
-                s.write_str(&singular_sub_pattern.pattern)
-            })?;
-        } else {
-            let (prefix, suffix) =
-                if singular_sub_pattern.index as usize <= singular_sub_pattern.pattern.len() {
-                    singular_sub_pattern
-                        .pattern
-                        .split_at(singular_sub_pattern.index as usize)
-                } else {
-                    return Err(core::fmt::Error);
-                };
-
-            sink.with_part(parts::LITERAL, |s| s.write_str(prefix))?;
-            self.formatter
-                .fixed_decimal_format
-                .format(&self.value)
-                .write_to_parts(sink)?;
-            sink.with_part(parts::LITERAL, |s| s.write_str(suffix))?;
-        }
-
-        Ok(())
+        singular_sub_pattern
+            .interpolate((self.formatter.fixed_decimal_format.format(&self.value),))
+            .write_to(sink)
     }
 }
 

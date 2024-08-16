@@ -6,42 +6,86 @@
   },
   "past": {
     "zero": null,
-    "one": {
-      "pattern": " нед. назад",
-      "index": 0
-    },
+    "one": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " нед. назад"
+      }
+    ],
     "two": null,
-    "few": {
-      "pattern": " нед. назад",
-      "index": 0
-    },
-    "many": {
-      "pattern": " нед. назад",
-      "index": 0
-    },
-    "other": {
-      "pattern": " нед. назад",
-      "index": 0
-    }
+    "few": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " нед. назад"
+      }
+    ],
+    "many": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " нед. назад"
+      }
+    ],
+    "other": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " нед. назад"
+      }
+    ]
   },
   "future": {
     "zero": null,
-    "one": {
-      "pattern": "через  нед.",
-      "index": 11
-    },
+    "one": [
+      {
+        "Literal": "через "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " нед."
+      }
+    ],
     "two": null,
-    "few": {
-      "pattern": "через  нед.",
-      "index": 11
-    },
-    "many": {
-      "pattern": "через  нед.",
-      "index": 11
-    },
-    "other": {
-      "pattern": "через  нед.",
-      "index": 11
-    }
+    "few": [
+      {
+        "Literal": "через "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " нед."
+      }
+    ],
+    "many": [
+      {
+        "Literal": "через "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " нед."
+      }
+    ],
+    "other": [
+      {
+        "Literal": "через "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " нед."
+      }
+    ]
   }
 }

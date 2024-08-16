@@ -8,10 +8,14 @@
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": " นาทีที่ผ่านมา",
-      "index": 0
-    }
+    "other": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " นาทีที่ผ่านมา"
+      }
+    ]
   },
   "future": {
     "zero": null,
@@ -19,9 +23,16 @@
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": "ในอีก  นาที",
-      "index": 16
-    }
+    "other": [
+      {
+        "Literal": "ในอีก "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " นาที"
+      }
+    ]
   }
 }
