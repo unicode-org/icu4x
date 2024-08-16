@@ -864,6 +864,58 @@ impl From<NeoTimeZoneSkeleton> for NeoComponents {
     }
 }
 
+impl NeoComponents {
+    // Attributes for skeleta that span date/time/zone
+    // TODO: Add variants for H, h, and B hours
+    const WEEKDAY_HOUR_MINUTE: &'static DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("ejm");
+    const WEEKDAY_HOUR_MINUTE_SECOND: &'static DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("ejms");
+
+    // For matching
+    const WEEKDAY_HOUR_MINUTE_STR: &'static str = Self::WEEKDAY_HOUR_MINUTE.as_str();
+    const WEEKDAY_HOUR_MINUTE_SECOND_STR: &'static str = Self::WEEKDAY_HOUR_MINUTE_SECOND.as_str();
+
+    #[doc(hidden)] // for datagen
+    pub fn attributes_with_overrides() -> &'static [&'static DataMarkerAttributes] {
+        &[Self::WEEKDAY_HOUR_MINUTE, Self::WEEKDAY_HOUR_MINUTE_SECOND]
+    }
+
+    /// Returns a stable string identifying this field set,
+    /// but only if this set has its own pattern override.
+    ///
+    /// For details, see [`NeoDayComponents::id_str()`].
+    pub const fn id_str(self) -> Option<&'static DataMarkerAttributes> {
+        match self {
+            Self::DateTime(NeoDayComponents::Weekday, NeoTimeComponents::HourMinute) => {
+                Some(Self::WEEKDAY_HOUR_MINUTE)
+            }
+            Self::DateTime(NeoDayComponents::Weekday, NeoTimeComponents::HourMinuteSecond) => {
+                Some(Self::WEEKDAY_HOUR_MINUTE_SECOND)
+            }
+            _ => None,
+        }
+    }
+
+    /// Returns the field set for the given stable string,
+    /// but only if this set has its own pattern override.
+    ///
+    /// For details, see [`NeoDayComponents::from_id_str()`].
+    pub fn from_id_str(id_str: &DataMarkerAttributes) -> Option<Self> {
+        match &**id_str {
+            Self::WEEKDAY_HOUR_MINUTE_STR => Some(Self::DateTime(
+                NeoDayComponents::Weekday,
+                NeoTimeComponents::HourMinute,
+            )),
+            Self::WEEKDAY_HOUR_MINUTE_SECOND_STR => Some(Self::DateTime(
+                NeoDayComponents::Weekday,
+                NeoTimeComponents::HourMinuteSecond,
+            )),
+            _ => None,
+        }
+    }
+}
+
 /// Specification of the time zone display style.
 ///
 /// Time zone names contribute a lot of data size. For resource-constrained

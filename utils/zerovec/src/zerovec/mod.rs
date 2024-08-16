@@ -1043,16 +1043,10 @@ impl<T: AsULE> FromIterator<T> for ZeroVec<'_, T> {
 ///
 /// ```
 /// use zerovec::{ZeroSlice, zeroslice, ule::AsULE};
-/// use zerovec::ule::UnvalidatedChar;
 ///
 /// const SIGNATURE: &ZeroSlice<char> = zeroslice!(char; <char as AsULE>::ULE::from_aligned; ['b', 'y', 'e', '✌']);
 /// const EMPTY: &ZeroSlice<u32> = zeroslice![];
-/// const UC: &ZeroSlice<UnvalidatedChar> =
-///     zeroslice!(
-///         UnvalidatedChar;
-///         <UnvalidatedChar as AsULE>::ULE::from_unvalidated_char;
-///         [UnvalidatedChar::from_char('a')]
-///     );
+///
 /// let empty: &ZeroSlice<u32> = zeroslice![];
 /// let nums = zeroslice!(u32; <u32 as AsULE>::ULE::from_unsigned; [1, 2, 3, 4, 5]);
 /// assert_eq!(nums.last().unwrap(), 5);

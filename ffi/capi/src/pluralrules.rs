@@ -101,14 +101,14 @@ pub mod ffi {
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
         pub fn from_string(s: &DiplomatStr) -> Result<Box<PluralOperands>, FixedDecimalParseError> {
             Ok(Box::new(PluralOperands(icu_plurals::PluralOperands::from(
-                &fixed_decimal::FixedDecimal::try_from(s)?,
+                &fixed_decimal::FixedDecimal::try_from_utf8(s)?,
             ))))
         }
 
         /// Construct from a FixedDecimal
         ///
         /// Retains at most 18 digits each from the integer and fraction parts.
-        #[cfg(feature = "icu_decimal")]
+        #[cfg(feature = "decimal")]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
         pub fn from_fixed_decimal(x: &crate::fixed_decimal::ffi::FixedDecimal) -> Box<Self> {
             Box::new(Self((&x.0).into()))

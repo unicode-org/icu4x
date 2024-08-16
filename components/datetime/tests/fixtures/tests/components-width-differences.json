@@ -29,7 +29,7 @@
                     "era": "short"
                 },
                 "semantic": {
-                    "fieldSet": ["year"],
+                    "fieldSet": ["fullYear"],
                     "length": "medium",
                     "eraDisplay": "always"
                 }
