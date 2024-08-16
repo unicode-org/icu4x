@@ -4,8 +4,10 @@
 
 use crate::cldr_serde;
 use crate::SourceDataProvider;
+use icu::experimental::dimension::provider::count::Count;
 use icu::experimental::dimension::provider::extended_currency::*;
 use icu_provider::prelude::*;
+use std::borrow::Cow;
 use std::collections::HashSet;
 use zerovec::ZeroMap;
 
@@ -32,43 +34,18 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::SourceDataProvider {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(CurrencyExtendedDataV1 {
-                display_names: ZeroMap::from_iter(
+                display_names_plurals: ZeroMap::from_iter(
                     [
-                        (
-                            CurrencyDisplayNameCount::PluralRules(Count::Zero),
-                            currency.zero.as_deref(),
-                        ),
-                        (
-                            CurrencyDisplayNameCount::PluralRules(Count::One),
-                            currency.one.as_deref(),
-                        ),
-                        (
-                            CurrencyDisplayNameCount::PluralRules(Count::Two),
-                            currency.two.as_deref(),
-                        ),
-                        (
-                            CurrencyDisplayNameCount::PluralRules(Count::Few),
-                            currency.few.as_deref(),
-                        ),
-                        (
-                            CurrencyDisplayNameCount::PluralRules(Count::Many),
-                            currency.many.as_deref(),
-                        ),
-                        (
-                            CurrencyDisplayNameCount::PluralRules(Count::Other),
-                            currency.other.as_deref(),
-                        ),
-                        (
-                            CurrencyDisplayNameCount::DisplayName,
-                            currency.display_name.as_deref(),
-                        ),
+                        (Count::Zero, currency.zero.as_deref()),
+                        (Count::One, currency.one.as_deref()),
+                        (Count::Two, currency.two.as_deref()),
+                        (Count::Few, currency.few.as_deref()),
+                        (Count::Many, currency.many.as_deref()),
+                        (Count::Other, currency.other.as_deref()),
                     ]
                     .into_iter()
                     .filter_map(|(count, pattern)| match (count, pattern) {
-                        (CurrencyDisplayNameCount::DisplayName, Some(p)) => Some((count, p)),
-                        (CurrencyDisplayNameCount::PluralRules(Count::Other), Some(p)) => {
-                            Some((count, p))
-                        }
+                        (Count::Other, Some(p)) => Some((count, p)),
                         // As per [Unicode TR 35](https://unicode.org/reports/tr35/tr35-numbers.html#Currencies)
                         //      If the pattern is not found for the associated `Count`, fall back to the `Count::Other` pattern.
                         //      Therefore, we filter out any patterns that are the same as the `Count::Other` pattern.
@@ -76,6 +53,7 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::SourceDataProvider {
                         _ => Some((count, pattern?)),
                     }),
                 ),
+                display_name: currency.display_name.clone().map(Cow::Owned),
             }),
         })
     }
@@ -119,41 +97,18 @@ fn test_basic() {
         })
         .unwrap()
         .payload;
-    let display_names = en.get().to_owned().display_names;
+    let en_extended = en.get().to_owned();
+    let display_names_plurals = &en_extended.display_names_plurals;
+    assert_eq!(display_names_plurals.get(&Count::Zero), None);
+    assert_eq!(display_names_plurals.get(&Count::One).unwrap(), "US dollar");
+    assert_eq!(display_names_plurals.get(&Count::Two), None);
+    assert_eq!(display_names_plurals.get(&Count::Few), None);
+    assert_eq!(display_names_plurals.get(&Count::Many), None);
     assert_eq!(
-        display_names.get(&CurrencyDisplayNameCount::PluralRules(Count::Zero)),
-        None
-    );
-    assert_eq!(
-        display_names
-            .get(&CurrencyDisplayNameCount::PluralRules(Count::One))
-            .unwrap(),
-        "US dollar"
-    );
-    assert_eq!(
-        display_names.get(&CurrencyDisplayNameCount::PluralRules(Count::Two)),
-        None
-    );
-    assert_eq!(
-        display_names.get(&CurrencyDisplayNameCount::PluralRules(Count::Few)),
-        None
-    );
-    assert_eq!(
-        display_names.get(&CurrencyDisplayNameCount::PluralRules(Count::Many)),
-        None
-    );
-    assert_eq!(
-        display_names
-            .get(&CurrencyDisplayNameCount::PluralRules(Count::Other))
-            .unwrap(),
+        display_names_plurals.get(&Count::Other).unwrap(),
         "US dollars"
     );
-    assert_eq!(
-        display_names
-            .get(&CurrencyDisplayNameCount::DisplayName)
-            .unwrap(),
-        "US Dollar"
-    );
+    assert_eq!(en_extended.display_name.unwrap(), "US Dollar");
 
     let fr: DataPayload<CurrencyExtendedDataV1Marker> = provider
         .load(DataRequest {
@@ -166,37 +121,19 @@ fn test_basic() {
         .unwrap()
         .payload;
 
-    let display_names = fr.get().to_owned().display_names;
+    let fr_extended = fr.get().to_owned();
+    let display_names_plurals = &fr_extended.display_names_plurals;
+    assert_eq!(display_names_plurals.get(&Count::Zero), None);
     assert_eq!(
-        display_names.get(&CurrencyDisplayNameCount::PluralRules(Count::Zero)),
-        None
-    );
-    assert_eq!(
-        display_names.get(&CurrencyDisplayNameCount::One).unwrap(),
+        display_names_plurals.get(&Count::One).unwrap(),
         "dollar des États-Unis"
     );
+    assert_eq!(display_names_plurals.get(&Count::Two), None);
+    assert_eq!(display_names_plurals.get(&Count::Few), None);
+    assert_eq!(display_names_plurals.get(&Count::Many), None);
     assert_eq!(
-        display_names.get(&CurrencyDisplayNameCount::PluralRules(Count::Two)),
-        None
-    );
-    assert_eq!(
-        display_names.get(&CurrencyDisplayNameCount::PluralRules(Count::Few)),
-        None
-    );
-    assert_eq!(
-        display_names.get(&CurrencyDisplayNameCount::PluralRules(Count::Many)),
-        None
-    );
-    assert_eq!(
-        display_names
-            .get(&CurrencyDisplayNameCount::PluralRules(Count::Other))
-            .unwrap(),
+        display_names_plurals.get(&Count::Other).unwrap(),
         "dollars des États-Unis"
     );
-    assert_eq!(
-        display_names
-            .get(&CurrencyDisplayNameCount::DisplayName)
-            .unwrap(),
-        "dollar des États-Unis"
-    );
+    assert_eq!(fr_extended.display_name.unwrap(), "dollar des États-Unis");
 }
