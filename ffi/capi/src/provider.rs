@@ -73,6 +73,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu_provider_blob::BlobDataProvider, Struct)]
         #[cfg(feature = "buffer_provider")]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::attr(not(supports = static_slices), disable)]
         pub fn from_byte_slice(
             blob: &'static [DiplomatByte],
         ) -> Result<Box<DataProvider>, DataError> {
