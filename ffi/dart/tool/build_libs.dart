@@ -37,11 +37,7 @@ Future<void> buildLib(
     Target.linuxRiscv32,
   ].contains(target);
 
-  var rustupArguments = [
-    'target',
-    'add',
-    rustTarget,
-  ];
+  final rustupArguments = ['target', 'add', rustTarget];
   final rustup = await Process.start('rustup', rustupArguments);
   stdout.addStream(rustup.stdout);
   stderr.addStream(rustup.stderr);
@@ -57,7 +53,7 @@ Future<void> buildLib(
   }
 
   final features = [
-    'compiled_data',
+    if (linkMode == LinkMode.dynamic) 'compiled_data',
     'buffer_provider',
     if (isNoStd) ...['libc-alloc', 'panic-handler'],
     if (!isNoStd) ...['logging', 'simple_logger'],
