@@ -25,7 +25,7 @@ macro_rules! create_unit_parts {
 
 pub mod parts {
     // The below constants are not directly used in the library,
-    // but are instead generated programmitically by [`super::FormattedDuration::partition_duration_format_pattern`].
+    // but are instead generated programmatically by [`super::FormattedDuration::partition_duration_format_pattern`].
     #![allow(dead_code)]
 
     use crate::duration::validated_options::Unit;
