@@ -9,16 +9,42 @@ mod serde;
 use crate::common::*;
 use crate::Error;
 use crate::PatternOrUtf8Error;
+use crate::SinglePlaceholderPattern;
 #[cfg(feature = "alloc")]
 use crate::{Parser, ParserOptions};
 #[cfg(feature = "alloc")]
 use alloc::{borrow::ToOwned, str::FromStr, string::String};
+use core::ops::Deref;
 use core::{
     convert::Infallible,
     fmt::{self, Write},
     marker::PhantomData,
 };
 use writeable::{adapters::TryWriteableInfallibleAsWriteable, PartsWrite, TryWriteable, Writeable};
+
+#[allow(clippy::unwrap_used, clippy::indexing_slicing)]
+impl<Store> SinglePlaceholderPattern<Store> where Store: Deref<Target = str> {
+    pub fn prefix(&self) -> &str {
+        let mut chars = self.store.chars();
+        let index = chars.next().unwrap() as usize;
+        if let Some(index) = index.checked_sub(1) {
+            &chars.as_str()[..index]
+        } else {
+            chars.as_str()
+        }
+    }
+
+    pub fn suffix(&self) -> &str {
+        let mut chars = self.store.chars();
+        let index = chars.next().unwrap() as usize;
+        if let Some(index) = index.checked_sub(1) {
+            &chars.as_str()[index..]
+        } else {
+            chars.as_str()
+        }
+    }
+
+}
 
 /// A string pattern with placeholders.
 ///

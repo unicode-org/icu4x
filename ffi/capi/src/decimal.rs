@@ -133,8 +133,8 @@ pub mod ffi {
                     >(
                         icu_provider::DataPayload::<DecimalSymbolsV1Marker>::from_owned(
                             DecimalSymbolsV1 {
-                                plus_sign_affixes,
-                                minus_sign_affixes,
+                                plus_sign_pattern,
+                                minus_sign_pattern,
                                 decimal_separator: str_to_cow(decimal_separator),
                                 grouping_separator: str_to_cow(grouping_separator),
                                 grouping_sizes,

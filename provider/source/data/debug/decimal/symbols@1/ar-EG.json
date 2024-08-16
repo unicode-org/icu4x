@@ -1,12 +1,20 @@
 {
-  "minus_sign_affixes": {
-    "prefix": "؜-",
-    "suffix": ""
-  },
-  "plus_sign_affixes": {
-    "prefix": "؜+",
-    "suffix": ""
-  },
+  "minus_sign_pattern": [
+    {
+      "Literal": "؜-"
+    },
+    {
+      "Placeholder": "Singleton"
+    }
+  ],
+  "plus_sign_pattern": [
+    {
+      "Literal": "؜+"
+    },
+    {
+      "Placeholder": "Singleton"
+    }
+  ],
   "decimal_separator": "٫",
   "grouping_separator": "٬",
   "grouping_sizes": {

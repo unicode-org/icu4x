@@ -7,7 +7,7 @@
 //! Spec reference: <https://unicode.org/reports/tr35/tr35-numbers.html#Number_Format_Patterns>
 
 use displaydoc::Display;
-use icu::decimal::provider::AffixesV1;
+use icu_pattern::SinglePlaceholderPattern;
 #[cfg(feature = "experimental")]
 use icu_pattern::{DoublePlaceholderKey, PatternItemCow};
 use itertools::Itertools;
@@ -117,17 +117,28 @@ impl FromStr for DecimalPattern {
 }
 
 impl DecimalPattern {
-    pub(crate) fn localize_sign(&self, sign_str: &str) -> AffixesV1<'static> {
-        // UTS 35: the absence of a negative pattern means a single prefixed sign
+    pub(crate) fn localize_sign(
+        &self,
+        sign_str: &str,
+    ) -> SinglePlaceholderPattern<Cow<'static, str>> {
         let signed_affixes = self
             .negative
             .as_ref()
-            .map(|subpattern| (subpattern.prefix.as_str(), subpattern.suffix.as_str()))
-            .unwrap_or_else(|| ("-", ""));
-        AffixesV1 {
-            prefix: Cow::Owned(signed_affixes.0.replace('-', sign_str)),
-            suffix: Cow::Owned(signed_affixes.1.replace('-', sign_str)),
-        }
+            .map(|subpattern| {
+                format!(
+                    "{}{{0}}{}",
+                    subpattern.prefix.replace('-', sign_str),
+                    subpattern.suffix.replace('-', sign_str)
+                )
+            })
+            // UTS 35: the absence of a negative pattern means a single prefixed sign
+            .unwrap_or_else(|| format!("{sign_str}{{0}}"));
+        SinglePlaceholderPattern::from_store_unchecked(
+            SinglePlaceholderPattern::from_str(&signed_affixes)
+                .unwrap()
+                .take_store()
+                .into(),
+        )
     }
 }
 

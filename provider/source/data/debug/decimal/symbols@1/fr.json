@@ -1,12 +1,6 @@
 {
-  "minus_sign_affixes": {
-    "prefix": "-",
-    "suffix": ""
-  },
-  "plus_sign_affixes": {
-    "prefix": "+",
-    "suffix": ""
-  },
+  "minus_sign_pattern": null,
+  "plus_sign_pattern": null,
   "decimal_separator": ",",
   "grouping_separator": " ",
   "grouping_sizes": {

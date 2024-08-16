@@ -18,6 +18,7 @@
 
 use alloc::borrow::Cow;
 use icu_provider::prelude::*;
+use icu_pattern::SinglePlaceholderPattern;
 
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
@@ -45,30 +46,6 @@ const _: () = {
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[DecimalSymbolsV1Marker::INFO];
-
-/// A collection of strings to affix to a decimal number.
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
-/// </div>
-#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_decimal::provider),
-)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct AffixesV1<'data> {
-    /// String to prepend before the decimal number.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub prefix: Cow<'data, str>,
-
-    /// String to append after the decimal number.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub suffix: Cow<'data, str>,
-}
 
 /// A collection of settings expressing where to put grouping separators in a decimal number.
 /// For example, `1,000,000` has two grouping separators, positioned along every 3 digits.
@@ -117,13 +94,13 @@ pub struct GroupingSizesV1 {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct DecimalSymbolsV1<'data> {
-    /// Prefix and suffix to apply when a negative sign is needed.
+    /// Pattern to apply when a negative sign is needed.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub minus_sign_affixes: AffixesV1<'data>,
+    pub minus_sign_pattern: Option<SinglePlaceholderPattern<Cow<'data, str>>>,
 
-    /// Prefix and suffix to apply when a plus sign is needed.
+    /// Pattern to apply when a plus sign is needed.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub plus_sign_affixes: AffixesV1<'data>,
+    pub plus_sign_pattern: Option<SinglePlaceholderPattern<Cow<'data, str>>>,
 
     /// Character used to separate the integer and fraction parts of the number.
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -141,17 +118,16 @@ pub struct DecimalSymbolsV1<'data> {
     pub digits: [char; 10],
 }
 
+/// The value used if [`DecimalSymbolsV1::minus_sign_pattern`] is empty.
+pub static NEGATIVE_DEFAULT: SinglePlaceholderPattern<Cow<'static, str>> = SinglePlaceholderPattern::from_store_unchecked(Cow::Borrowed("\x02-"));
+/// The value used if [`DecimalSymbolsV1::plus_sign_pattern`] is empty.
+pub static POSITIVE_DEFAULT: SinglePlaceholderPattern<Cow<'static, str>> = SinglePlaceholderPattern::from_store_unchecked(Cow::Borrowed("\x02+"));
+
 impl Default for DecimalSymbolsV1<'static> {
     fn default() -> Self {
         Self {
-            minus_sign_affixes: AffixesV1 {
-                prefix: Cow::Borrowed("-"),
-                suffix: Cow::Borrowed(""),
-            },
-            plus_sign_affixes: AffixesV1 {
-                prefix: Cow::Borrowed("+"),
-                suffix: Cow::Borrowed(""),
-            },
+            minus_sign_pattern: None,
+            plus_sign_pattern: None,
             decimal_separator: ".".into(),
             grouping_separator: ",".into(),
             grouping_sizes: GroupingSizesV1 {

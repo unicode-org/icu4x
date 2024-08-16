@@ -7,8 +7,10 @@
 use crate::grouper;
 use crate::options::*;
 use crate::provider::*;
+use alloc::borrow::Cow;
 use fixed_decimal::FixedDecimal;
 use fixed_decimal::Sign;
+use icu_pattern::SinglePlaceholderPattern;
 use writeable::Writeable;
 
 /// An intermediate structure returned by [`FixedDecimalFormatter`](crate::FixedDecimalFormatter).
@@ -21,11 +23,11 @@ pub struct FormattedFixedDecimal<'l> {
 }
 
 impl<'l> FormattedFixedDecimal<'l> {
-    fn get_affixes(&self) -> Option<&AffixesV1> {
+    fn get_patterns(&self) -> Option<&SinglePlaceholderPattern<Cow<'l, str>>> {
         match self.value.sign() {
             Sign::None => None,
-            Sign::Negative => Some(&self.symbols.minus_sign_affixes),
-            Sign::Positive => Some(&self.symbols.plus_sign_affixes),
+            Sign::Negative => Some(self.symbols.minus_sign_pattern.as_ref().unwrap_or(&NEGATIVE_DEFAULT)),
+            Sign::Positive => Some(self.symbols.plus_sign_pattern.as_ref().unwrap_or(&POSITIVE_DEFAULT)),
         }
     }
 }
@@ -35,9 +37,9 @@ impl<'l> Writeable for FormattedFixedDecimal<'l> {
     where
         W: core::fmt::Write + ?Sized,
     {
-        let affixes = self.get_affixes();
-        if let Some(affixes) = affixes {
-            sink.write_str(&affixes.prefix)?;
+        let patterns = self.get_patterns();
+        if let Some(patterns) = patterns {
+            sink.write_str(&patterns.prefix())?;
         }
         let range = self.value.magnitude_range();
         let upper_magnitude = *range.end();
@@ -56,8 +58,8 @@ impl<'l> Writeable for FormattedFixedDecimal<'l> {
                 sink.write_str(&self.symbols.grouping_separator)?;
             }
         }
-        if let Some(affixes) = affixes {
-            sink.write_str(&affixes.suffix)?;
+        if let Some(patterns) = patterns {
+            sink.write_str(&patterns.suffix())?;
         }
         Ok(())
     }

@@ -1208,6 +1208,7 @@ dependencies = [
  "icu_benchmark_macros",
  "icu_decimal_data",
  "icu_locale_core",
+ "icu_pattern",
  "icu_provider",
  "icu_provider_adapters",
  "rand",
