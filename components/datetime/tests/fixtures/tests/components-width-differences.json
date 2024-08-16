@@ -110,26 +110,27 @@
         }
     },
     {
-        "description": "Enumerate month lengths which may need expansion: yMMd => MM/d/y",
+        "description": "Enumerate month lengths which may need expansion: yMMdd => MM/dd/y",
         "input": {
             "value": "2020-01-07T08:25:07.000",
             "options": {
                 "components": {
                     "year": "numeric",
                     "month": "two-digit",
-                    "day": "numeric-day-of-month"
+                    "day": "two-digit-day-of-month"
                 },
                 "semantic": {
                     "fieldSet": ["year", "month", "day"],
-                    "length": "short"
+                    "length": "short",
+                    "alignment": "column"
                 }
             }
         },
         "output": {
             "values": {
-                "en": "01/7/2020",
-                "en-u-ca-buddhist": "01/7/2563 BE",
-                "fr": "7/01/2020",
+                "en": "01/07/20",
+                "en-u-ca-buddhist": "01/07/2563 BE",
+                "fr": "07/01/2020",
                 "en-u-ca-coptic": "04/28/1736 ERA1",
                 "fr-u-ca-coptic": "28/04/1736 ap. D."
             }

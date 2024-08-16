@@ -312,6 +312,7 @@ fn assert_fixture_element<A>(
     };
 
     let mut options = NeoOptions::from(skeleton.length);
+    options.alignment = skeleton.alignment;
     options.era_display = skeleton.era_display;
     options.fractional_second_digits = skeleton.fractional_second_digits;
 
