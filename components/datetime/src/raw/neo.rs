@@ -461,7 +461,8 @@ impl DateTimeZonePatternSelectionData {
                 Ok(Self::Zone(selection))
             }
             NeoComponents::DateTime(day_components, time_components) => {
-                if let Some(marker_attrs) = components.id_str() {
+                // TODO(#5387): load the patterns for custom hour cycles here
+                if let (Some(marker_attrs), None) = (components.id_str(), hour_cycle) {
                     // Try loading an overlap pattern.
                     let length = length.get::<Self>();
                     let date_skeleton = NeoDateSkeleton {
