@@ -1,7 +1,20 @@
 {
-  "display_names": {
-    "One": "dolyar ng US",
-    "Other": "dolyares ng US",
-    "DisplayName": "Dolyar ng US"
-  }
+  "display_names": [
+    [
+      {
+        "PluralRules": "One"
+      },
+      "dolyar ng US"
+    ],
+    [
+      {
+        "PluralRules": "Other"
+      },
+      "dolyares ng US"
+    ],
+    [
+      "DisplayName",
+      "Dolyar ng US"
+    ]
+  ]
 }

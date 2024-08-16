@@ -1,7 +1,20 @@
 {
-  "display_names": {
-    "One": "livre égyptienne",
-    "Other": "livres égyptiennes",
-    "DisplayName": "livre égyptienne"
-  }
+  "display_names": [
+    [
+      {
+        "PluralRules": "One"
+      },
+      "livre égyptienne"
+    ],
+    [
+      {
+        "PluralRules": "Other"
+      },
+      "livres égyptiennes"
+    ],
+    [
+      "DisplayName",
+      "livre égyptienne"
+    ]
+  ]
 }

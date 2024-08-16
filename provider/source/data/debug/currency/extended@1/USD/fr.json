@@ -1,7 +1,20 @@
 {
-  "display_names": {
-    "One": "dollar des États-Unis",
-    "Other": "dollars des États-Unis",
-    "DisplayName": "dollar des États-Unis"
-  }
+  "display_names": [
+    [
+      {
+        "PluralRules": "One"
+      },
+      "dollar des États-Unis"
+    ],
+    [
+      {
+        "PluralRules": "Other"
+      },
+      "dollars des États-Unis"
+    ],
+    [
+      "DisplayName",
+      "dollar des États-Unis"
+    ]
+  ]
 }

@@ -10,7 +10,7 @@
 //! Read more about data providers: [`icu_provider`]
 
 use icu_provider::prelude::*;
-use zerovec::ZeroMap;
+use zerovec::{maps::ZeroMapKV, ule::AsULE, ZeroMap, ZeroSlice, ZeroVec};
 
 #[cfg(feature = "compiled_data")]
 /// Baked data
@@ -59,10 +59,19 @@ pub struct CurrencyExtendedDataV1<'data> {
     derive(serde::Serialize, databake::Bake),
     databake(path = icu_experimental::dimension::provider::extended_currency)
 )]
-#[repr(u8)]
 pub enum CurrencyDisplayNameCount {
     PluralRules(Count),
 
     /// The display name for the currency.
     DisplayName,
+}
+
+impl<'a> ZeroMapKV<'a> for CurrencyDisplayNameCount {
+    type Container = ZeroVec<'a, CurrencyDisplayNameCount>;
+
+    type Slice = ZeroSlice<CurrencyDisplayNameCount>;
+
+    type GetType = <CurrencyDisplayNameCount as AsULE>::ULE;
+
+    type OwnedType = CurrencyDisplayNameCount;
 }

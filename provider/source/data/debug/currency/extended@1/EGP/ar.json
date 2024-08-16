@@ -1,9 +1,32 @@
 {
-  "display_names": {
-    "Two": "جنيهان مصريان",
-    "Few": "جنيهات مصرية",
-    "Many": "جنيهًا مصريًا",
-    "Other": "جنيه مصري",
-    "DisplayName": "جنيه مصري"
-  }
+  "display_names": [
+    [
+      {
+        "PluralRules": "Two"
+      },
+      "جنيهان مصريان"
+    ],
+    [
+      {
+        "PluralRules": "Few"
+      },
+      "جنيهات مصرية"
+    ],
+    [
+      {
+        "PluralRules": "Many"
+      },
+      "جنيهًا مصريًا"
+    ],
+    [
+      {
+        "PluralRules": "Other"
+      },
+      "جنيه مصري"
+    ],
+    [
+      "DisplayName",
+      "جنيه مصري"
+    ]
+  ]
 }

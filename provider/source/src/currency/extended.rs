@@ -4,6 +4,7 @@
 
 use crate::cldr_serde;
 use crate::SourceDataProvider;
+use icu::experimental::dimension::provider::count::Count;
 use icu::experimental::dimension::provider::extended_currency::*;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
@@ -172,8 +173,8 @@ fn test_basic() {
         None
     );
     assert_eq!(
-        display_names.get(&CurrencyDisplayNameCount::One).unwrap(),
-        "dollar des États-Unis"
+        display_names.get(&CurrencyDisplayNameCount::PluralRules(Count::One)),
+        None
     );
     assert_eq!(
         display_names.get(&CurrencyDisplayNameCount::PluralRules(Count::Two)),

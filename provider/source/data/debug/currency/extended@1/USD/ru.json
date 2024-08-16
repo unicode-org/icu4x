@@ -1,8 +1,26 @@
 {
-  "display_names": {
-    "One": "доллар США",
-    "Many": "долларов США",
-    "Other": "доллара США",
-    "DisplayName": "доллар США"
-  }
+  "display_names": [
+    [
+      {
+        "PluralRules": "One"
+      },
+      "доллар США"
+    ],
+    [
+      {
+        "PluralRules": "Many"
+      },
+      "долларов США"
+    ],
+    [
+      {
+        "PluralRules": "Other"
+      },
+      "доллара США"
+    ],
+    [
+      "DisplayName",
+      "доллар США"
+    ]
+  ]
 }

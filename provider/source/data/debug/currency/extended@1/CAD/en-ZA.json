@@ -1,7 +1,20 @@
 {
-  "display_names": {
-    "One": "Canadian dollar",
-    "Other": "Canadian dollars",
-    "DisplayName": "Canadian Dollar"
-  }
+  "display_names": [
+    [
+      {
+        "PluralRules": "One"
+      },
+      "Canadian dollar"
+    ],
+    [
+      {
+        "PluralRules": "Other"
+      },
+      "Canadian dollars"
+    ],
+    [
+      "DisplayName",
+      "Canadian Dollar"
+    ]
+  ]
 }

@@ -1,7 +1,20 @@
 {
-  "display_names": {
-    "One": "Egyptian pound",
-    "Other": "Egyptian pounds",
-    "DisplayName": "Egyptian Pound"
-  }
+  "display_names": [
+    [
+      {
+        "PluralRules": "One"
+      },
+      "Egyptian pound"
+    ],
+    [
+      {
+        "PluralRules": "Other"
+      },
+      "Egyptian pounds"
+    ],
+    [
+      "DisplayName",
+      "Egyptian Pound"
+    ]
+  ]
 }

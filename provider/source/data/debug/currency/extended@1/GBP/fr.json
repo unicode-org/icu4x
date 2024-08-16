@@ -1,7 +1,20 @@
 {
-  "display_names": {
-    "One": "livre sterling",
-    "Other": "livres sterling",
-    "DisplayName": "livre sterling"
-  }
+  "display_names": [
+    [
+      {
+        "PluralRules": "One"
+      },
+      "livre sterling"
+    ],
+    [
+      {
+        "PluralRules": "Other"
+      },
+      "livres sterling"
+    ],
+    [
+      "DisplayName",
+      "livre sterling"
+    ]
+  ]
 }

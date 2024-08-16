@@ -1,7 +1,20 @@
 {
-  "display_names": {
-    "One": "British pound",
-    "Other": "British pounds",
-    "DisplayName": "British Pound"
-  }
+  "display_names": [
+    [
+      {
+        "PluralRules": "One"
+      },
+      "British pound"
+    ],
+    [
+      {
+        "PluralRules": "Other"
+      },
+      "British pounds"
+    ],
+    [
+      "DisplayName",
+      "British Pound"
+    ]
+  ]
 }

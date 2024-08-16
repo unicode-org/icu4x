@@ -1,7 +1,20 @@
 {
-  "display_names": {
-    "One": "evro",
-    "Other": "evra",
-    "DisplayName": "Evro"
-  }
+  "display_names": [
+    [
+      {
+        "PluralRules": "One"
+      },
+      "evro"
+    ],
+    [
+      {
+        "PluralRules": "Other"
+      },
+      "evra"
+    ],
+    [
+      "DisplayName",
+      "Evro"
+    ]
+  ]
 }
