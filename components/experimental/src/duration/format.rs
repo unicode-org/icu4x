@@ -621,7 +621,6 @@ mod tests {
     fn test_digital_formatter() {
         let duration = Duration {
             sign: DurationSign::Positive,
-            sign: DurationSign::Positive,
             years: 0,
             months: 0,
             weeks: 0,
@@ -635,7 +634,6 @@ mod tests {
         };
 
         let options = DurationFormatterOptions {
-            base: BaseStyle::Digital,
             base: BaseStyle::Digital,
             ..Default::default()
         };
@@ -673,7 +671,7 @@ mod tests {
         let formatted = formatter.format(&duration);
         assert_eq!(
             formatted.write_to_string().into_owned(),
-            "-0 year, 2 months, 3 weeks, 12 hours, 1 minute, 5.13014 seconds"
+            "-0 years, 2 months, 3 weeks, 12 hours, 1 minute, 5.13014 seconds"
         );
     }
 }
