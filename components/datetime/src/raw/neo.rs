@@ -4,7 +4,7 @@
 
 use crate::format::neo::FieldForDataLoading;
 use crate::format::FormattingOptions;
-use crate::input::{DateInput, ExtractedDateTimeInput};
+use crate::input::ExtractedDateTimeInput;
 use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::FractionalSecondDigits;
 use crate::neo_skeleton::{
@@ -16,7 +16,6 @@ use crate::pattern::runtime::PatternMetadata;
 use crate::pattern::{runtime, GenericPatternItem, PatternItem};
 use crate::provider::neo::*;
 use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
-use icu_calendar::AnyCalendarKind;
 use icu_provider::prelude::*;
 use marker_attrs::GlueType;
 use zerovec::ule::AsULE;
@@ -57,6 +56,20 @@ pub(crate) enum DatePatternDataBorrowed<'a> {
     Resolved(runtime::PatternBorrowed<'a>),
 }
 
+/// An "overlap" pattern: one that has fields from at least 2 of date, time, and zone.
+///
+/// TODO: Consider reducing data size by filtering out explicit overlap patterns when they are
+/// the same as their individual patterns with glue.
+#[derive(Debug)]
+pub(crate) enum OverlapPatternSelectionData {
+    SkeletonDateTime {
+        date_skeleton: NeoDateSkeleton,
+        time_skeleton: NeoTimeSkeleton,
+        hour_cycle: Option<HourCycle>,
+        payload: DataPayload<SkeletaV1Marker>,
+    },
+}
+
 #[derive(Debug)]
 pub(crate) enum TimePatternSelectionData {
     SkeletonTime {
@@ -92,6 +105,7 @@ pub(crate) enum DateTimeZonePatternSelectionData {
     Date(DatePatternSelectionData),
     Time(TimePatternSelectionData),
     Zone(ZonePatternSelectionData),
+    Overlap(OverlapPatternSelectionData),
     DateTimeGlue {
         date: DatePatternSelectionData,
         time: TimePatternSelectionData,
@@ -120,6 +134,9 @@ pub(crate) enum DateTimeZonePatternDataBorrowed<'a> {
     Date(DatePatternDataBorrowed<'a>),
     Time(TimePatternDataBorrowed<'a>),
     Zone(ZonePatternDataBorrowed<'a>),
+    // Minor hack: the borrowed runtime data for the overlap case is the same as for time,
+    // so use the same intermediate type. This assumption might need to be revisited.
+    Overlap(TimePatternDataBorrowed<'a>),
     DateTimeGlue {
         date: DatePatternDataBorrowed<'a>,
         time: TimePatternDataBorrowed<'a>,
@@ -194,42 +211,11 @@ impl DatePatternSelectionData {
 
     /// Borrows a resolved pattern based on the given datetime
     pub(crate) fn select(&self, datetime: &ExtractedDateTimeInput) -> DatePatternDataBorrowed {
-        use tinystr::tinystr;
         match self {
             DatePatternSelectionData::SkeletonDate { skeleton, payload } => {
                 let should_display_era = match skeleton.era_display {
                     Some(EraDisplay::Always) => true,
-                    Some(EraDisplay::Auto) | None => match datetime.any_calendar_kind() {
-                        // Unknown calendar: always display the era
-                        None => true,
-                        // TODO(#4478): This is extremely oversimplistic and it should be data-driven.
-                        Some(AnyCalendarKind::Buddhist)
-                        | Some(AnyCalendarKind::Coptic)
-                        | Some(AnyCalendarKind::Ethiopian)
-                        | Some(AnyCalendarKind::EthiopianAmeteAlem)
-                        | Some(AnyCalendarKind::Indian)
-                        | Some(AnyCalendarKind::IslamicCivil)
-                        | Some(AnyCalendarKind::IslamicObservational)
-                        | Some(AnyCalendarKind::IslamicTabular)
-                        | Some(AnyCalendarKind::IslamicUmmAlQura)
-                        | Some(AnyCalendarKind::Japanese)
-                        | Some(AnyCalendarKind::JapaneseExtended)
-                        | Some(AnyCalendarKind::Persian)
-                        | Some(AnyCalendarKind::Roc) => true,
-                        Some(AnyCalendarKind::Chinese)
-                        | Some(AnyCalendarKind::Dangi)
-                        | Some(AnyCalendarKind::Hebrew) => false,
-                        Some(AnyCalendarKind::Gregorian) => match datetime.year() {
-                            None => true,
-                            Some(year) if year.number < 1000 => true,
-                            Some(year) if year.era.0 != tinystr!(16, "ce") => true,
-                            Some(_) => false,
-                        },
-                        Some(_) => {
-                            debug_assert!(false, "unknown calendar during era display resolution");
-                            true
-                        }
-                    },
+                    Some(EraDisplay::Auto) | None => datetime.should_display_era(),
                 };
                 DatePatternDataBorrowed::Resolved(payload.get().get_pattern(
                     PatternSelectionOptions {
@@ -237,6 +223,81 @@ impl DatePatternSelectionData {
                         should_display_era: Some(should_display_era),
                     },
                 ))
+            }
+        }
+    }
+}
+
+impl OverlapPatternSelectionData {
+    pub(crate) fn try_new_with_skeleton(
+        provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
+        locale: &DataLocale,
+        date_skeleton: NeoDateSkeleton,
+        time_skeleton: NeoTimeSkeleton,
+        marker_attrs: &DataMarkerAttributes,
+        hour_cycle: Option<HourCycle>,
+    ) -> Result<Self, DataError> {
+        let payload = provider
+            .load_bound(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(marker_attrs, locale),
+                ..Default::default()
+            })?
+            .payload
+            .cast();
+        Ok(Self::SkeletonDateTime {
+            date_skeleton,
+            time_skeleton,
+            hour_cycle,
+            payload,
+        })
+    }
+
+    /// Borrows a pattern containing all of the fields that need to be loaded.
+    #[inline]
+    pub(crate) fn pattern_items_for_data_loading(
+        &self,
+    ) -> impl Iterator<Item = FieldForDataLoading> + '_ {
+        let items: &ZeroSlice<PatternItem> = match self {
+            OverlapPatternSelectionData::SkeletonDateTime {
+                date_skeleton,
+                payload,
+                ..
+            } => {
+                payload
+                    .get()
+                    .get_pattern(PatternSelectionOptions {
+                        length: date_skeleton.length,
+                        should_display_era: Some(true),
+                    })
+                    .items
+            }
+        };
+        items
+            .iter()
+            .filter_map(FieldForDataLoading::try_from_pattern_item)
+    }
+
+    /// Borrows a resolved pattern based on the given datetime
+    pub(crate) fn select(&self, datetime: &ExtractedDateTimeInput) -> TimePatternDataBorrowed {
+        match self {
+            OverlapPatternSelectionData::SkeletonDateTime {
+                date_skeleton,
+                time_skeleton,
+                hour_cycle,
+                payload,
+            } => {
+                let should_display_era = match date_skeleton.era_display {
+                    Some(EraDisplay::Always) => true,
+                    Some(EraDisplay::Auto) | None => datetime.should_display_era(),
+                };
+                TimePatternDataBorrowed::Resolved(
+                    payload.get().get_pattern(PatternSelectionOptions {
+                        length: date_skeleton.length,
+                        should_display_era: Some(should_display_era),
+                    }),
+                    *hour_cycle,
+                    time_skeleton.fractional_second_digits,
+                )
             }
         }
     }
@@ -400,6 +461,39 @@ impl DateTimeZonePatternSelectionData {
                 Ok(Self::Zone(selection))
             }
             NeoComponents::DateTime(day_components, time_components) => {
+                // TODO(#5387): load the patterns for custom hour cycles here
+                if let (Some(marker_attrs), None) = (components.id_str(), hour_cycle) {
+                    // Try loading an overlap pattern.
+                    let length = length.get::<Self>();
+                    let date_skeleton = NeoDateSkeleton {
+                        length,
+                        components: NeoDateComponents::Day(day_components),
+                        era_display,
+                    };
+                    let time_skeleton = NeoTimeSkeleton {
+                        length,
+                        components: time_components,
+                        fractional_second_digits,
+                    };
+                    match OverlapPatternSelectionData::try_new_with_skeleton(
+                        // Note: overlap patterns are stored in the date provider
+                        date_provider,
+                        locale,
+                        date_skeleton,
+                        time_skeleton,
+                        marker_attrs,
+                        hour_cycle,
+                    ) {
+                        Ok(overlap) => return Ok(Self::Overlap(overlap)),
+                        Err(DataError {
+                            kind: DataErrorKind::IdentifierNotFound,
+                            ..
+                        }) => {
+                            // fall through
+                        }
+                        Err(e) => return Err(e),
+                    }
+                }
                 let date = DatePatternSelectionData::try_new_with_skeleton(
                     date_provider,
                     locale,
@@ -502,31 +596,32 @@ impl DateTimeZonePatternSelectionData {
     pub(crate) fn pattern_items_for_data_loading(
         &self,
     ) -> impl Iterator<Item = FieldForDataLoading> + '_ {
-        let (date, time, zone) = match self {
-            DateTimeZonePatternSelectionData::Date(date) => (Some(date), None, None),
-            DateTimeZonePatternSelectionData::Time(time) => (None, Some(time), None),
-            DateTimeZonePatternSelectionData::Zone(zone) => (None, None, Some(zone)),
+        let (date, time, zone, overlap) = match self {
+            DateTimeZonePatternSelectionData::Date(date) => (Some(date), None, None, None),
+            DateTimeZonePatternSelectionData::Time(time) => (None, Some(time), None, None),
+            DateTimeZonePatternSelectionData::Zone(zone) => (None, None, Some(zone), None),
+            DateTimeZonePatternSelectionData::Overlap(overlap) => (None, None, None, Some(overlap)),
             DateTimeZonePatternSelectionData::DateTimeGlue {
                 date,
                 time,
                 glue: _,
-            } => (Some(date), Some(time), None),
+            } => (Some(date), Some(time), None, None),
             DateTimeZonePatternSelectionData::DateZoneGlue {
                 date,
                 zone,
                 glue: _,
-            } => (Some(date), None, Some(zone)),
+            } => (Some(date), None, Some(zone), None),
             DateTimeZonePatternSelectionData::TimeZoneGlue {
                 time,
                 zone,
                 glue: _,
-            } => (None, Some(time), Some(zone)),
+            } => (None, Some(time), Some(zone), None),
             DateTimeZonePatternSelectionData::DateTimeZoneGlue {
                 date,
                 time,
                 zone,
                 glue: _,
-            } => (Some(date), Some(time), Some(zone)),
+            } => (Some(date), Some(time), Some(zone), None),
         };
         let date_items = date
             .into_iter()
@@ -537,7 +632,13 @@ impl DateTimeZonePatternSelectionData {
         let zone_items = zone
             .into_iter()
             .flat_map(|x| x.pattern_items_for_data_loading());
-        date_items.chain(time_items).chain(zone_items)
+        let overlap_items = overlap
+            .into_iter()
+            .flat_map(|x| x.pattern_items_for_data_loading());
+        date_items
+            .chain(time_items)
+            .chain(zone_items)
+            .chain(overlap_items)
     }
 
     /// Borrows a resolved pattern based on the given datetime
@@ -554,6 +655,9 @@ impl DateTimeZonePatternSelectionData {
             }
             DateTimeZonePatternSelectionData::Zone(zone) => {
                 DateTimeZonePatternDataBorrowed::Zone(zone.select(datetime))
+            }
+            DateTimeZonePatternSelectionData::Overlap(overlap) => {
+                DateTimeZonePatternDataBorrowed::Overlap(overlap.select(datetime))
             }
             DateTimeZonePatternSelectionData::DateTimeGlue { date, time, glue } => {
                 DateTimeZonePatternDataBorrowed::DateTimeGlue {
@@ -598,6 +702,7 @@ impl<'a> DateTimeZonePatternDataBorrowed<'a> {
             Self::Date(date) => Some(date),
             Self::Time(_) => None,
             Self::Zone(_) => None,
+            Self::Overlap(_) => None,
             Self::DateTimeGlue { date, .. } => Some(date),
             Self::DateZoneGlue { date, .. } => Some(date),
             Self::TimeZoneGlue { .. } => None,
@@ -611,6 +716,7 @@ impl<'a> DateTimeZonePatternDataBorrowed<'a> {
             Self::Date(_) => None,
             Self::Time(time) => Some(time),
             Self::Zone(_) => None,
+            Self::Overlap(time) => Some(time),
             Self::DateTimeGlue { time, .. } => Some(time),
             Self::DateZoneGlue { .. } => None,
             Self::TimeZoneGlue { time, .. } => Some(time),
@@ -624,6 +730,7 @@ impl<'a> DateTimeZonePatternDataBorrowed<'a> {
             Self::Date(_) => None,
             Self::Time(_) => None,
             Self::Zone(zone) => Some(zone),
+            Self::Overlap(_) => None,
             Self::DateTimeGlue { .. } => None,
             Self::DateZoneGlue { zone, .. } => Some(zone),
             Self::TimeZoneGlue { zone, .. } => Some(zone),
@@ -637,6 +744,7 @@ impl<'a> DateTimeZonePatternDataBorrowed<'a> {
             Self::Date(_) => None,
             Self::Time(_) => None,
             Self::Zone(_) => None,
+            Self::Overlap(_) => None,
             Self::DateTimeGlue { glue, .. } => Some(&glue.pattern.items),
             Self::DateZoneGlue { glue, .. } => Some(&glue.pattern.items),
             Self::TimeZoneGlue { glue, .. } => Some(&glue.pattern.items),
@@ -650,6 +758,7 @@ impl<'a> DateTimeZonePatternDataBorrowed<'a> {
             Self::Date(DatePatternDataBorrowed::Resolved(pb)) => pb.metadata,
             Self::Time(TimePatternDataBorrowed::Resolved(pb, _, _)) => pb.metadata,
             Self::Zone(_) => Default::default(),
+            Self::Overlap(_) => Default::default(),
             Self::DateTimeGlue {
                 date: DatePatternDataBorrowed::Resolved(date),
                 time: TimePatternDataBorrowed::Resolved(time, _, _),

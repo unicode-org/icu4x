@@ -6,42 +6,98 @@
   },
   "past": {
     "zero": null,
-    "one": {
-      "pattern": "- кв.",
-      "index": 1
-    },
+    "one": [
+      {
+        "Literal": "-"
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " кв."
+      }
+    ],
     "two": null,
-    "few": {
-      "pattern": "- кв.",
-      "index": 1
-    },
-    "many": {
-      "pattern": "- кв.",
-      "index": 1
-    },
-    "other": {
-      "pattern": "- кв.",
-      "index": 1
-    }
+    "few": [
+      {
+        "Literal": "-"
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " кв."
+      }
+    ],
+    "many": [
+      {
+        "Literal": "-"
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " кв."
+      }
+    ],
+    "other": [
+      {
+        "Literal": "-"
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " кв."
+      }
+    ]
   },
   "future": {
     "zero": null,
-    "one": {
-      "pattern": "+ кв.",
-      "index": 1
-    },
+    "one": [
+      {
+        "Literal": "+"
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " кв."
+      }
+    ],
     "two": null,
-    "few": {
-      "pattern": "+ кв.",
-      "index": 1
-    },
-    "many": {
-      "pattern": "+ кв.",
-      "index": 1
-    },
-    "other": {
-      "pattern": "+ кв.",
-      "index": 1
-    }
+    "few": [
+      {
+        "Literal": "+"
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " кв."
+      }
+    ],
+    "many": [
+      {
+        "Literal": "+"
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " кв."
+      }
+    ],
+    "other": [
+      {
+        "Literal": "+"
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " кв."
+      }
+    ]
   }
 }

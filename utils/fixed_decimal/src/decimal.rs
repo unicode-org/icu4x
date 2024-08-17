@@ -6,10 +6,8 @@ use smallvec::SmallVec;
 
 use core::cmp;
 use core::cmp::Ordering;
-use core::convert::TryFrom;
 use core::fmt;
 use core::ops::RangeInclusive;
-
 use core::str::FromStr;
 
 use crate::uint_iterator::IntIterator;
@@ -1024,7 +1022,7 @@ impl FixedDecimal {
 
     /// Returns this number padded with leading zeros on a particular position.
     ///
-    /// Negative numbers have no effect.
+    /// Negative position numbers have no effect.
     ///
     /// Also see [`FixedDecimal::with_max_position()`].
     ///
@@ -1050,7 +1048,7 @@ impl FixedDecimal {
 
     /// Pads this number with leading zeros on a particular position.
     ///
-    /// Negative numbers have no effect.
+    /// Negative position numbers have no effect.
     ///
     /// Also see [`FixedDecimal::set_max_position()`].
     ///
@@ -1091,7 +1089,7 @@ impl FixedDecimal {
     /// Returns this number padded with trailing zeros on a particular (negative) position.
     /// Will truncate zeros if necessary, but will not truncate other digits.
     ///
-    /// Positive numbers have no effect.
+    /// Positive position numbers have no effect.
     ///
     /// Also see [`FixedDecimal::trunced()`].
     ///
@@ -1120,7 +1118,7 @@ impl FixedDecimal {
     /// Pads this number with trailing zeros on a particular (non-positive) position. Will truncate
     /// trailing zeros if necessary, but will not truncate other digits.
     ///
-    /// Positive numbers have no effect.
+    /// Positive position numbers have no effect.
     ///
     /// Also see [`FixedDecimal::trunc()`].
     ///
@@ -2379,16 +2377,14 @@ impl writeable::Writeable for FixedDecimal {
 
 writeable::impl_display_with_writeable!(FixedDecimal);
 
-impl FromStr for FixedDecimal {
-    type Err = ParseError;
-    fn from_str(input_str: &str) -> Result<Self, Self::Err> {
-        Self::try_from(input_str.as_bytes())
+impl FixedDecimal {
+    #[inline]
+    /// Parses a [`FixedDecimal`].
+    pub fn try_from_str(s: &str) -> Result<Self, ParseError> {
+        Self::try_from_utf8(s.as_bytes())
     }
-}
 
-impl TryFrom<&[u8]> for FixedDecimal {
-    type Error = ParseError;
-    fn try_from(input_str: &[u8]) -> Result<Self, Self::Error> {
+    pub fn try_from_utf8(input_str: &[u8]) -> Result<Self, ParseError> {
         // input_str: the input string
         // no_sign_str: the input string when the sign is removed from it
         if input_str.is_empty() {
@@ -2584,6 +2580,13 @@ impl TryFrom<&[u8]> for FixedDecimal {
         }
 
         Ok(dec)
+    }
+}
+
+impl FromStr for FixedDecimal {
+    type Err = ParseError;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Self::try_from_str(s)
     }
 }
 

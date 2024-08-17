@@ -4,30 +4,58 @@
   },
   "past": {
     "zero": null,
-    "one": {
-      "pattern": "hace  h",
-      "index": 5
-    },
+    "one": [
+      {
+        "Literal": "hace "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " h"
+      }
+    ],
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": "hace  h",
-      "index": 5
-    }
+    "other": [
+      {
+        "Literal": "hace "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " h"
+      }
+    ]
   },
   "future": {
     "zero": null,
-    "one": {
-      "pattern": "dentro de  h",
-      "index": 10
-    },
+    "one": [
+      {
+        "Literal": "dentro de "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " h"
+      }
+    ],
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": "dentro de  h",
-      "index": 10
-    }
+    "other": [
+      {
+        "Literal": "dentro de "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " h"
+      }
+    ]
   }
 }

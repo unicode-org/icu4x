@@ -621,6 +621,7 @@ mod tests {
     fn test_digital_formatter() {
         let duration = Duration {
             sign: DurationSign::Positive,
+            sign: DurationSign::Positive,
             years: 0,
             months: 0,
             weeks: 0,
@@ -634,6 +635,7 @@ mod tests {
         };
 
         let options = DurationFormatterOptions {
+            base: BaseStyle::Digital,
             base: BaseStyle::Digital,
             ..Default::default()
         };

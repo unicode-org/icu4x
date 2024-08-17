@@ -305,7 +305,7 @@ impl<const K: usize> ConstLengthsStack<K> {
         len: usize,
     ) -> (Self, ConstArrayBuilder<256, BranchMeta>) {
         debug_assert!(len <= 256);
-        let mut result = ConstArrayBuilder::new_empty([BranchMeta::const_default(); 256], 256);
+        let mut result = ConstArrayBuilder::new_empty([BranchMeta::default(); 256], 256);
         let mut ix = 0;
         loop {
             if ix == len {

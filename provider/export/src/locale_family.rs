@@ -31,7 +31,7 @@ impl DataLocaleFamily {
     ///
     /// The `und` locale is treated specially and behaves like `::single("und")`.
     pub fn with_descendants(locale: DataLocale) -> Self {
-        let annotations = if locale.is_und() {
+        let annotations = if locale.is_default() {
             DataLocaleFamilyAnnotations::single()
         } else {
             DataLocaleFamilyAnnotations::with_descendants()
@@ -57,7 +57,7 @@ impl DataLocaleFamily {
     ///
     /// The `und` locale is treated specially and behaves like `::single("und")`.
     pub fn without_descendants(locale: DataLocale) -> Self {
-        let annotations = if locale.is_und() {
+        let annotations = if locale.is_default() {
             DataLocaleFamilyAnnotations::single()
         } else {
             DataLocaleFamilyAnnotations::without_descendants()
@@ -83,7 +83,7 @@ impl DataLocaleFamily {
     ///
     /// The `und` locale is treated specially and behaves like `::single("und")`.
     pub fn without_ancestors(locale: DataLocale) -> Self {
-        let annotations = if locale.is_und() {
+        let annotations = if locale.is_default() {
             DataLocaleFamilyAnnotations::single()
         } else {
             DataLocaleFamilyAnnotations::without_ancestors()
@@ -218,35 +218,43 @@ impl From<ParseError> for DataLocaleFamilyParseError {
 
 impl std::error::Error for DataLocaleFamilyParseError {}
 
-impl FromStr for DataLocaleFamily {
-    type Err = DataLocaleFamilyParseError;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s == "full" {
+impl DataLocaleFamily {
+    /// Parses a [`DataLocaleFamily`] from a UTF-8 slice.
+    pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, DataLocaleFamilyParseError> {
+        if code_units == b"full" {
             return Ok(Self::FULL);
         }
-        let mut iter = s.chars();
-        let first = iter
-            .next()
+        let (annotation, mut locale) = code_units
+            .split_first()
             .ok_or(DataLocaleFamilyParseError::InvalidFamily)?;
-        match first {
-            '^' => Ok(Self {
-                locale: Some(iter.as_str().parse()?),
-                annotations: DataLocaleFamilyAnnotations::without_descendants(),
-            }),
-            '%' => Ok(Self {
-                locale: Some(iter.as_str().parse()?),
-                annotations: DataLocaleFamilyAnnotations::without_ancestors(),
-            }),
-            '@' => Ok(Self {
-                locale: Some(iter.as_str().parse()?),
-                annotations: DataLocaleFamilyAnnotations::single(),
-            }),
-            b if b.is_ascii_alphanumeric() => Ok(Self {
-                locale: Some(s.parse()?),
-                annotations: DataLocaleFamilyAnnotations::with_descendants(),
-            }),
-            _ => Err(DataLocaleFamilyParseError::InvalidFamily),
-        }
+        let annotations = match annotation {
+            b'^' => DataLocaleFamilyAnnotations::without_descendants(),
+            b'%' => DataLocaleFamilyAnnotations::without_ancestors(),
+            b'@' => DataLocaleFamilyAnnotations::single(),
+            _ => {
+                locale = code_units;
+                DataLocaleFamilyAnnotations::with_descendants()
+            }
+        };
+
+        Ok(Self {
+            locale: Some(DataLocale::try_from_utf8(locale)?),
+            annotations,
+        })
+    }
+
+    #[inline]
+    /// Parses a [`DataLocaleFamily`].
+    pub fn try_from_str(s: &str) -> Result<Self, DataLocaleFamilyParseError> {
+        Self::try_from_utf8(s.as_bytes())
+    }
+}
+
+impl FromStr for DataLocaleFamily {
+    type Err = DataLocaleFamilyParseError;
+    #[inline]
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Self::try_from_str(s)
     }
 }
 

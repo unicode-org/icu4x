@@ -26,7 +26,7 @@ macro_rules! __impl_sentence_break_name_to_value_v1_marker {
         #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::properties::provider::names::SentenceBreakNameToValueV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::properties::provider::names::SentenceBreakNameToValueV1Marker>, icu_provider::DataError> {
-                if req.id.locale.is_und() {
+                if req.id.locale.is_default() {
                     Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(Self::SINGLETON_SENTENCE_BREAK_NAME_TO_VALUE_V1_MARKER), metadata: Default::default() })
                 } else {
                     Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::properties::provider::names::SentenceBreakNameToValueV1Marker as icu_provider::DataMarker>::INFO, req))

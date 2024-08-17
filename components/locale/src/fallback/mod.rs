@@ -6,12 +6,11 @@
 //! locale with data.
 
 use crate::provider::*;
-use icu_locale_core::subtags::Subtag;
-use icu_locale_core::subtags::Variant;
+use icu_locale_core::subtags::*;
 use icu_provider::prelude::*;
 
 #[doc(inline)]
-pub use icu_provider::_internal::{LocaleFallbackConfig, LocaleFallbackPriority};
+pub use icu_provider::fallback::{LocaleFallbackConfig, LocaleFallbackPriority};
 
 mod algorithms;
 
@@ -21,7 +20,7 @@ mod algorithms;
 /// algorithm. See *[the design doc]* for a detailed description and [#2243](
 /// https://github.com/unicode-org/icu4x/issues/2243) to track alignment with *UTS #35*.
 ///
-/// If running fallback in a loop, use [`DataLocale::is_und()`] to break from the loop.
+/// If running fallback in a loop, use [`DataLocale::is_default()`] to break from the loop.
 ///
 /// # Examples
 ///
@@ -85,6 +84,8 @@ struct LocaleFallbackIteratorInner<'a> {
     config: LocaleFallbackConfig,
     backup_subdivision: Option<Subtag>,
     backup_variant: Option<Variant>,
+    backup_region: Option<Region>,
+    max_script: Option<Script>,
 }
 
 /// Iteration type for locale fallback operations.
@@ -207,7 +208,9 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
     ///
     /// When first initialized, the locale is normalized according to the fallback algorithm.
     pub fn fallback_for(&self, mut locale: DataLocale) -> LocaleFallbackIterator<'a, 'static> {
-        self.normalize(&mut locale);
+        let mut default_script = None;
+        self.normalize(&mut locale, &mut default_script);
+        let max_script = locale.script.or(default_script);
         LocaleFallbackIterator {
             current: locale,
             inner: LocaleFallbackIteratorInner {
@@ -216,6 +219,8 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
                 config: self.config,
                 backup_subdivision: None,
                 backup_variant: None,
+                backup_region: None,
+                max_script,
             },
             phantom: core::marker::PhantomData,
         }
@@ -235,7 +240,7 @@ impl LocaleFallbackIterator<'_, '_> {
 
     /// Performs one step of the locale fallback algorithm.
     ///
-    /// The fallback is completed once the inner [`DataLocale`] becomes `und`.
+    /// The fallback is completed once the inner [`DataLocale`] becomes [`DataLocale::default()`].
     pub fn step(&mut self) -> &mut Self {
         self.inner.step(&mut self.current);
         self

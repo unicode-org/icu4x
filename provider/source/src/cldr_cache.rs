@@ -6,7 +6,6 @@
 
 use crate::source::SerdeCache;
 use crate::CoverageLevel;
-use icu::calendar::provider::EraStartDate;
 use icu::locale::provider::{
     LikelySubtagsExtendedV1Marker, LikelySubtagsForLanguageV1Marker,
     LikelySubtagsForScriptRegionV1Marker,
@@ -159,18 +158,9 @@ impl CldrCache {
                     .read_and_parse("supplemental/calendarData.json")?;
                 let mut set = BTreeSet::<String>::new();
                 for (era_index, date) in era_dates.supplemental.calendar_data.japanese.eras.iter() {
-                    let start_date =
-                        EraStartDate::from_str(if let Some(start_date) = date.start.as_ref() {
-                            start_date
-                        } else {
-                            continue;
-                        })
-                        .map_err(|_| {
-                            DataError::custom(
-                                "calendarData.json contains unparseable data for a japanese era",
-                            )
-                            .with_display_context(&format!("era index {}", era_index))
-                        })?;
+                    let Some(start_date) = date.start.as_ref() else {
+                        continue;
+                    };
 
                     if start_date.year >= 1868 {
                         set.insert(era_index.into());
@@ -185,7 +175,7 @@ impl CldrCache {
     /// CLDR sometimes stores locales with default scripts.
     /// Add in the likely script here to make that data reachable.
     fn add_script_extended(&self, locale: &DataLocale) -> Result<Option<DataLocale>, DataError> {
-        if locale.language.is_empty() || locale.script.is_some() {
+        if locale.language.is_default() || locale.script.is_some() {
             return Ok(None);
         }
         let mut new_langid =
@@ -205,7 +195,7 @@ impl CldrCache {
     /// if the script is the default for the language.
     /// Perform that normalization mapping here.
     fn remove_script_extended(&self, locale: &DataLocale) -> Result<Option<DataLocale>, DataError> {
-        if locale.language.is_empty() || locale.script.is_none() {
+        if locale.language.is_default() || locale.script.is_none() {
             return Ok(None);
         }
         let mut langid =

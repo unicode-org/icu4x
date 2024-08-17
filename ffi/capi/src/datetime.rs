@@ -17,7 +17,7 @@ pub mod ffi {
 
     use tinystr::TinyAsciiStr;
 
-    #[cfg(feature = "icu_calendar")]
+    #[cfg(feature = "calendar")]
     use crate::week::ffi::WeekCalculator;
 
     #[diplomat::opaque]
@@ -186,7 +186,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[cfg(feature = "icu_calendar")]
+        #[cfg(feature = "calendar")]
         pub fn week_of_year(&self, calculator: &WeekCalculator) -> crate::week::ffi::WeekOf {
             self.0.date.week_of_year(&calculator.0).into()
         }
@@ -277,12 +277,13 @@ pub mod ffi {
             nanosecond: u32,
             calendar: &Calendar,
         ) -> Result<Box<DateTime>, CalendarError> {
-            let era = TinyAsciiStr::try_from_utf8(era_code)
-                .map_err(|_| CalendarError::UnknownEra)?
-                .into();
-            let month = TinyAsciiStr::try_from_utf8(month_code)
-                .map_err(|_| CalendarError::UnknownMonthCode)?
-                .into();
+            let era = icu_calendar::types::Era(
+                TinyAsciiStr::try_from_utf8(era_code).map_err(|_| CalendarError::UnknownEra)?,
+            );
+            let month = icu_calendar::types::MonthCode(
+                TinyAsciiStr::try_from_utf8(month_code)
+                    .map_err(|_| CalendarError::UnknownMonthCode)?,
+            );
             let cal = calendar.0.clone();
             let hour = hour.try_into()?;
             let minute = minute.try_into()?;
@@ -411,7 +412,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[cfg(feature = "icu_calendar")]
+        #[cfg(feature = "calendar")]
         pub fn week_of_year(&self, calculator: &WeekCalculator) -> crate::week::ffi::WeekOf {
             self.0.date.week_of_year(&calculator.0).into()
         }

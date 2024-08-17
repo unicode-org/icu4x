@@ -973,6 +973,7 @@ name = "icu4x_ecma402"
 version = "0.8.2"
 dependencies = [
  "ecma402_traits",
+ "fixed_decimal",
  "icu",
  "icu_provider",
  "writeable",
@@ -1057,6 +1058,7 @@ dependencies = [
  "icu_timezone",
  "libc_alloc",
  "log",
+ "potential_utf",
  "serde",
  "simple_logger",
  "tinystr",
@@ -1079,6 +1081,7 @@ dependencies = [
  "icu_normalizer",
  "icu_properties",
  "icu_provider",
+ "potential_utf",
  "serde",
  "writeable",
  "zerovec",
@@ -1175,6 +1178,7 @@ dependencies = [
  "icu_provider_blob",
  "icu_timezone",
  "litemap",
+ "potential_utf",
  "serde",
  "serde_json",
  "smallvec",
@@ -1251,6 +1255,7 @@ dependencies = [
  "num-bigint",
  "num-rational",
  "num-traits",
+ "potential_utf",
  "serde",
  "smallvec",
  "tinystr",
@@ -1328,6 +1333,7 @@ dependencies = [
  "icu_locale_core",
  "icu_locale_data",
  "icu_provider",
+ "potential_utf",
  "serde",
  "serde_json",
  "tinystr",
@@ -1347,6 +1353,7 @@ dependencies = [
  "icu_benchmark_macros",
  "litemap",
  "postcard",
+ "potential_utf",
  "serde",
  "serde_json",
  "tinystr",
@@ -1455,6 +1462,7 @@ dependencies = [
  "icu_collections",
  "icu_properties_data",
  "icu_provider",
+ "potential_utf",
  "serde",
  "tinystr",
  "unicode-bidi",
@@ -1627,6 +1635,7 @@ dependencies = [
  "num-rational",
  "num-traits",
  "postcard",
+ "potential_utf",
  "serde",
  "serde-aux",
  "serde_json",
@@ -1656,6 +1665,7 @@ dependencies = [
  "icu_provider",
  "icu_segmenter_data",
  "itertools",
+ "potential_utf",
  "serde",
  "serde_json",
  "utf8_iter",
@@ -1680,6 +1690,7 @@ dependencies = [
  "icu_calendar",
  "icu_provider",
  "icu_timezone_data",
+ "ixdtf",
  "serde",
  "tinystr",
  "zerotrie",
@@ -2122,6 +2133,18 @@ checksum = "d534c6e61df1c7166e636ca612d9820d486fe96ddad37f7abc671517b297488e"
 dependencies = [
  "cobs",
  "serde",
+]
+
+[[package]]
+name = "potential_utf"
+version = "0.0.0"
+dependencies = [
+ "bincode",
+ "databake",
+ "serde",
+ "serde_json",
+ "writeable",
+ "zerovec",
 ]
 
 [[package]]
@@ -3414,6 +3437,7 @@ dependencies = [
  "iai",
  "icu_benchmark_macros",
  "postcard",
+ "potential_utf",
  "rand",
  "rand_distr",
  "rand_pcg",

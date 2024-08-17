@@ -5,55 +5,115 @@
     "1": "الأسبوع القادم"
   },
   "past": {
-    "zero": {
-      "pattern": "قبل  أسبوع",
-      "index": 7
-    },
-    "one": {
-      "pattern": "قبل أسبوع واحد",
-      "index": 255
-    },
-    "two": {
-      "pattern": "قبل أسبوعين",
-      "index": 255
-    },
-    "few": {
-      "pattern": "قبل  أسابيع",
-      "index": 7
-    },
-    "many": {
-      "pattern": "قبل  أسبوعًا",
-      "index": 7
-    },
-    "other": {
-      "pattern": "قبل  أسبوع",
-      "index": 7
-    }
+    "zero": [
+      {
+        "Literal": "قبل "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " أسبوع"
+      }
+    ],
+    "one": [
+      {
+        "Literal": "قبل أسبوع واحد"
+      }
+    ],
+    "two": [
+      {
+        "Literal": "قبل أسبوعين"
+      }
+    ],
+    "few": [
+      {
+        "Literal": "قبل "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " أسابيع"
+      }
+    ],
+    "many": [
+      {
+        "Literal": "قبل "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " أسبوعًا"
+      }
+    ],
+    "other": [
+      {
+        "Literal": "قبل "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " أسبوع"
+      }
+    ]
   },
   "future": {
-    "zero": {
-      "pattern": "خلال  أسبوع",
-      "index": 9
-    },
-    "one": {
-      "pattern": "خلال أسبوع واحد",
-      "index": 255
-    },
-    "two": {
-      "pattern": "خلال أسبوعين",
-      "index": 255
-    },
-    "few": {
-      "pattern": "خلال  أسابيع",
-      "index": 9
-    },
-    "many": {
-      "pattern": "خلال  أسبوعًا",
-      "index": 9
-    },
-    "other": {
-      "pattern": "خلال  أسبوع",
-      "index": 9
-    }
+    "zero": [
+      {
+        "Literal": "خلال "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " أسبوع"
+      }
+    ],
+    "one": [
+      {
+        "Literal": "خلال أسبوع واحد"
+      }
+    ],
+    "two": [
+      {
+        "Literal": "خلال أسبوعين"
+      }
+    ],
+    "few": [
+      {
+        "Literal": "خلال "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " أسابيع"
+      }
+    ],
+    "many": [
+      {
+        "Literal": "خلال "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " أسبوعًا"
+      }
+    ],
+    "other": [
+      {
+        "Literal": "خلال "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " أسبوع"
+      }
+    ]
   }
 }
