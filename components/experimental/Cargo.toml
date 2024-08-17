@@ -37,7 +37,7 @@ icu_properties = { workspace = true }
 
 databake = { workspace = true, optional = true, features = ["derive"] }
 either = { workspace = true }
-arrayvec = { workspace = true }
+arrayvec = { workspace = true, default-features = false }
 fixed_decimal = { workspace = true }
 icu_pattern = { workspace = true , features = ["alloc", "yoke", "zerofrom"]}
 litemap = { workspace = true }
