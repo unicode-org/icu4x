@@ -49,7 +49,7 @@ export class ReorderedIndexMap {
         const result = wasm.icu4x_ReorderedIndexMap_as_slice_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {
-            return new diplomatRuntime.DiplomatPrimitiveSlice.getSlice(wasm, diplomatReceive.buffer, "u32", aEdges);
+            return new diplomatRuntime.DiplomatSlicePrimitive.getSlice(wasm, diplomatReceive.buffer, "u32", aEdges);
         }
         
         finally {
