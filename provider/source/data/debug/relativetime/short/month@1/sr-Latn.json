@@ -6,36 +6,78 @@
   },
   "past": {
     "zero": null,
-    "one": {
-      "pattern": "pre  mes.",
-      "index": 4
-    },
+    "one": [
+      {
+        "Literal": "pre "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " mes."
+      }
+    ],
     "two": null,
-    "few": {
-      "pattern": "pre  mes.",
-      "index": 4
-    },
+    "few": [
+      {
+        "Literal": "pre "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " mes."
+      }
+    ],
     "many": null,
-    "other": {
-      "pattern": "pre  mes.",
-      "index": 4
-    }
+    "other": [
+      {
+        "Literal": "pre "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " mes."
+      }
+    ]
   },
   "future": {
     "zero": null,
-    "one": {
-      "pattern": "za  mes.",
-      "index": 3
-    },
+    "one": [
+      {
+        "Literal": "za "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " mes."
+      }
+    ],
     "two": null,
-    "few": {
-      "pattern": "za  mes.",
-      "index": 3
-    },
+    "few": [
+      {
+        "Literal": "za "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " mes."
+      }
+    ],
     "many": null,
-    "other": {
-      "pattern": "za  mes.",
-      "index": 3
-    }
+    "other": [
+      {
+        "Literal": "za "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " mes."
+      }
+    ]
   }
 }

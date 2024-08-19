@@ -123,26 +123,6 @@ pub struct JapaneseErasV1<'data> {
     pub dates_to_eras: ZeroVec<'data, (EraStartDate, TinyStr16)>,
 }
 
-#[cfg(feature = "datagen")]
-impl core::str::FromStr for EraStartDate {
-    type Err = ();
-    fn from_str(mut s: &str) -> Result<Self, Self::Err> {
-        let sign = if let Some(suffix) = s.strip_prefix('-') {
-            s = suffix;
-            -1
-        } else {
-            1
-        };
-
-        let mut split = s.split('-');
-        let year = split.next().ok_or(())?.parse::<i32>().map_err(|_| ())? * sign;
-        let month = split.next().ok_or(())?.parse().map_err(|_| ())?;
-        let day = split.next().ok_or(())?.parse().map_err(|_| ())?;
-
-        Ok(EraStartDate { year, month, day })
-    }
-}
-
 /// An ICU4X mapping to a subset of CLDR weekData.
 /// See CLDR-JSON's weekData.json for more context.
 ///

@@ -6,30 +6,52 @@
   },
   "past": {
     "zero": null,
-    "one": {
-      "pattern": " quarter ago",
-      "index": 0
-    },
+    "one": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " quarter ago"
+      }
+    ],
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": " quarters ago",
-      "index": 0
-    }
+    "other": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " quarters ago"
+      }
+    ]
   },
   "future": {
     "zero": null,
-    "one": {
-      "pattern": "in  quarter",
-      "index": 3
-    },
+    "one": [
+      {
+        "Literal": "in "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " quarter"
+      }
+    ],
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": "in  quarters",
-      "index": 3
-    }
+    "other": [
+      {
+        "Literal": "in "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " quarters"
+      }
+    ]
   }
 }

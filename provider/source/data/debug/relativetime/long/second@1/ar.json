@@ -3,55 +3,115 @@
     "0": "الآن"
   },
   "past": {
-    "zero": {
-      "pattern": "قبل  ثانية",
-      "index": 7
-    },
-    "one": {
-      "pattern": "قبل ثانية واحدة",
-      "index": 255
-    },
-    "two": {
-      "pattern": "قبل ثانيتين",
-      "index": 255
-    },
-    "few": {
-      "pattern": "قبل  ثوانِ",
-      "index": 7
-    },
-    "many": {
-      "pattern": "قبل  ثانية",
-      "index": 7
-    },
-    "other": {
-      "pattern": "قبل  ثانية",
-      "index": 7
-    }
+    "zero": [
+      {
+        "Literal": "قبل "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " ثانية"
+      }
+    ],
+    "one": [
+      {
+        "Literal": "قبل ثانية واحدة"
+      }
+    ],
+    "two": [
+      {
+        "Literal": "قبل ثانيتين"
+      }
+    ],
+    "few": [
+      {
+        "Literal": "قبل "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " ثوانِ"
+      }
+    ],
+    "many": [
+      {
+        "Literal": "قبل "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " ثانية"
+      }
+    ],
+    "other": [
+      {
+        "Literal": "قبل "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " ثانية"
+      }
+    ]
   },
   "future": {
-    "zero": {
-      "pattern": "خلال  ثانية",
-      "index": 9
-    },
-    "one": {
-      "pattern": "خلال ثانية واحدة",
-      "index": 255
-    },
-    "two": {
-      "pattern": "خلال ثانيتين",
-      "index": 255
-    },
-    "few": {
-      "pattern": "خلال  ثوانٍ",
-      "index": 9
-    },
-    "many": {
-      "pattern": "خلال  ثانية",
-      "index": 9
-    },
-    "other": {
-      "pattern": "خلال  ثانية",
-      "index": 9
-    }
+    "zero": [
+      {
+        "Literal": "خلال "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " ثانية"
+      }
+    ],
+    "one": [
+      {
+        "Literal": "خلال ثانية واحدة"
+      }
+    ],
+    "two": [
+      {
+        "Literal": "خلال ثانيتين"
+      }
+    ],
+    "few": [
+      {
+        "Literal": "خلال "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " ثوانٍ"
+      }
+    ],
+    "many": [
+      {
+        "Literal": "خلال "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " ثانية"
+      }
+    ],
+    "other": [
+      {
+        "Literal": "خلال "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " ثانية"
+      }
+    ]
   }
 }

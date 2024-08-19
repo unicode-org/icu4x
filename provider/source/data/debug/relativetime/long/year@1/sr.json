@@ -6,36 +6,78 @@
   },
   "past": {
     "zero": null,
-    "one": {
-      "pattern": "пре  године",
-      "index": 7
-    },
+    "one": [
+      {
+        "Literal": "пре "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " године"
+      }
+    ],
     "two": null,
-    "few": {
-      "pattern": "пре  године",
-      "index": 7
-    },
+    "few": [
+      {
+        "Literal": "пре "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " године"
+      }
+    ],
     "many": null,
-    "other": {
-      "pattern": "пре  година",
-      "index": 7
-    }
+    "other": [
+      {
+        "Literal": "пре "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " година"
+      }
+    ]
   },
   "future": {
     "zero": null,
-    "one": {
-      "pattern": "за  годину",
-      "index": 5
-    },
+    "one": [
+      {
+        "Literal": "за "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " годину"
+      }
+    ],
     "two": null,
-    "few": {
-      "pattern": "за  године",
-      "index": 5
-    },
+    "few": [
+      {
+        "Literal": "за "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " године"
+      }
+    ],
     "many": null,
-    "other": {
-      "pattern": "за  година",
-      "index": 5
-    }
+    "other": [
+      {
+        "Literal": "за "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " година"
+      }
+    ]
   }
 }

@@ -4,36 +4,78 @@
   },
   "past": {
     "zero": null,
-    "one": {
-      "pattern": "пре  сата",
-      "index": 7
-    },
+    "one": [
+      {
+        "Literal": "пре "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " сата"
+      }
+    ],
     "two": null,
-    "few": {
-      "pattern": "пре  сата",
-      "index": 7
-    },
+    "few": [
+      {
+        "Literal": "пре "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " сата"
+      }
+    ],
     "many": null,
-    "other": {
-      "pattern": "пре  сати",
-      "index": 7
-    }
+    "other": [
+      {
+        "Literal": "пре "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " сати"
+      }
+    ]
   },
   "future": {
     "zero": null,
-    "one": {
-      "pattern": "за  сат",
-      "index": 5
-    },
+    "one": [
+      {
+        "Literal": "за "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " сат"
+      }
+    ],
     "two": null,
-    "few": {
-      "pattern": "за  сата",
-      "index": 5
-    },
+    "few": [
+      {
+        "Literal": "за "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " сата"
+      }
+    ],
     "many": null,
-    "other": {
-      "pattern": "за  сати",
-      "index": 5
-    }
+    "other": [
+      {
+        "Literal": "за "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " сати"
+      }
+    ]
   }
 }

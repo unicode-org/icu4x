@@ -10,7 +10,6 @@ use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use std::collections::HashSet;
 use std::env;
-use std::str::FromStr;
 use std::sync::OnceLock;
 use tinystr::tinystr;
 use tinystr::TinyStr16;
@@ -64,13 +63,7 @@ impl SourceDataProvider {
                 continue;
             }
 
-            let start_date =
-                EraStartDate::from_str(date.start.as_ref().unwrap()).map_err(|_| {
-                    DataError::custom(
-                        "calendarData.json contains unparseable data for a japanese era",
-                    )
-                    .with_display_context(&format!("era index {era_id}"))
-                })?;
+            let start_date = date.start.unwrap();
 
             if start_date.year >= 1868 || japanext {
                 let code = era_to_code(era_name_map.get(era_id).unwrap(), start_date.year)

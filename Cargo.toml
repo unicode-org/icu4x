@@ -74,6 +74,7 @@ members = [
     "utils/env_preferences",
     "utils/tinystr",
     "utils/tzif",
+    "utils/potential_utf",
     "utils/writeable",
     "utils/yoke",
     "utils/yoke/derive",
@@ -159,8 +160,8 @@ icu_provider_macros = { version = "~1.5.0", path = "provider/core/macros", defau
 icu_provider_adapters = { version = "~1.5.0", path = "provider/adapters", default-features = false }
 icu_provider_baked = { version = "~1.5.0", path = "provider/baked", default-features = false }
 icu_provider_blob = { version = "~1.5.0", path = "provider/blob", default-features = false }
-icu_provider_fs = { version = "~1.5.0", path = "provider/fs/", default-features = false }
-icu_provider_registry = { version = "~1.5.0", path = "provider/registry/", default-features = false }
+icu_provider_fs = { version = "~1.5.0", path = "provider/fs", default-features = false }
+icu_provider_registry = { version = "~1.5.0", path = "provider/registry", default-features = false }
 
 # Baked data
 icu_calendar_data = { version = "~1.5.0", path = "provider/data/calendar", default-features = false }
@@ -190,7 +191,8 @@ ixdtf = { version = "0.2.0", path = "utils/ixdtf", default-features = false }
 litemap = { version = "0.7.3", path = "utils/litemap", default-features = false }
 tinystr = { version = "0.7.5", path = "utils/tinystr", default-features = false }
 tzif = { version = "0.2.3", path = "utils/tzif", default-features = false }
-writeable = { version = "0.5.5", path = "utils/writeable/", default-features = false }
+potential_utf = { version = "0.0.0", path = "utils/potential_utf", default-features = false }
+writeable = { version = "0.5.5", path = "utils/writeable", default-features = false }
 yoke = { version = "0.7.4", path = "utils/yoke", default-features = false }
 yoke-derive = { version = "0.7.4", path = "utils/yoke/derive", default-features = false }
 zerofrom = { version = "0.1.3", path = "utils/zerofrom", default-features = false }
@@ -242,7 +244,9 @@ memchr = { version = "2.6.0", default-features = false }
 num-bigint = { version = "0.4.3", default-features = false }
 num-rational = { version = "0.4.0", default-features = false }
 num-traits = { version = "0.2.0", default-features = false }
-postcard = { version = "1.0.1", default-features = false }
+# Postcard 1.0.8 pulls in embedded_io by accident, and it doesn't
+# look like that's being fixed: https://github.com/jamesmunns/postcard/issues/158
+postcard = { version = "1.0.1, <1.0.8", default-features = false }
 regex-automata = { version = "0.4.7", default-features = false }
 ryu = { version = "1.0.5", default-features = false }
 serde = { version = "1.0.110", default-features = false }

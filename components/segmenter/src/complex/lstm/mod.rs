@@ -6,7 +6,8 @@ use crate::grapheme::GraphemeClusterSegmenter;
 use crate::provider::*;
 use alloc::vec::Vec;
 use core::char::{decode_utf16, REPLACEMENT_CHARACTER};
-use zerovec::{maps::ZeroMapBorrowed, ule::UnvalidatedStr};
+use potential_utf::PotentialUtf8;
+use zerovec::maps::ZeroMapBorrowed;
 
 mod matrix;
 use matrix::*;
@@ -53,7 +54,7 @@ impl Iterator for LstmSegmenterIteratorUtf16<'_> {
 }
 
 pub(super) struct LstmSegmenter<'l> {
-    dic: ZeroMapBorrowed<'l, UnvalidatedStr, u16>,
+    dic: ZeroMapBorrowed<'l, PotentialUtf8, u16>,
     embedding: MatrixZero<'l, 2>,
     fw_w: MatrixZero<'l, 3>,
     fw_u: MatrixZero<'l, 3>,
@@ -116,7 +117,7 @@ impl<'l> LstmSegmenter<'l> {
                     };
 
                     self.dic
-                        .get_copied(UnvalidatedStr::from_str(grapheme_cluster))
+                        .get_copied(PotentialUtf8::from_str(grapheme_cluster))
                         .unwrap_or_else(|| self.dic.len() as u16)
                 })
                 .collect()
@@ -125,7 +126,7 @@ impl<'l> LstmSegmenter<'l> {
                 .chars()
                 .map(|c| {
                     self.dic
-                        .get_copied(UnvalidatedStr::from_str(c.encode_utf8(&mut [0; 4])))
+                        .get_copied(PotentialUtf8::from_str(c.encode_utf8(&mut [0; 4])))
                         .unwrap_or_else(|| self.dic.len() as u16)
                 })
                 .collect()
@@ -176,7 +177,7 @@ impl<'l> LstmSegmenter<'l> {
                 .map(|c| c.unwrap_or(REPLACEMENT_CHARACTER))
                 .map(|c| {
                     self.dic
-                        .get_copied(UnvalidatedStr::from_str(c.encode_utf8(&mut [0; 4])))
+                        .get_copied(PotentialUtf8::from_str(c.encode_utf8(&mut [0; 4])))
                         .unwrap_or_else(|| self.dic.len() as u16)
                 })
                 .collect()

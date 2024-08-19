@@ -393,8 +393,7 @@
                 "semantic": {
                     "fieldSet": ["weekday", "hour", "minute"],
                     "length": "medium"
-                },
-                "preferences": { "hourCycle": "h12" }
+                }
             }
         },
         "output": {
@@ -417,8 +416,7 @@
                 "semantic": {
                     "fieldSet": ["weekday", "hour", "minute", "second"],
                     "length": "medium"
-                },
-                "preferences": { "hourCycle": "h12" }
+                }
             }
         },
         "output": {
@@ -428,7 +426,7 @@
         }
     },
     {
-        "description": "Exact match for: EHm => E HH:mm",
+        "description": "Exact match for: EHm => E HH:mm (TODO #5387)",
         "input": {
             "value": "2020-01-07T08:25:07.000",
             "options": {
@@ -446,12 +444,12 @@
         },
         "output": {
             "values": {
-                "en": "Tue 08:25"
+                "en": "Tue, 08:25"
             }
         }
     },
     {
-        "description": "Exact match for: EHms => E HH:mm:ss",
+        "description": "Exact match for: EHms => E HH:mm:ss (TODO #5387)",
         "input": {
             "value": "2020-01-07T08:25:07.000",
             "options": {
@@ -470,7 +468,7 @@
         },
         "output": {
             "values": {
-                "en": "Tue 08:25:07"
+                "en": "Tue, 08:25:07"
             }
         }
     },
@@ -632,10 +630,6 @@
                 "components": {
                     "year": "numeric-week-of",
                     "week": "numeric-week-of-year"
-                },
-                "semantic": {
-                    "fieldSet": ["year", "weekOfYear"],
-                    "length": "long"
                 }
             }
         },

@@ -20,7 +20,6 @@ mod niche;
 mod option;
 mod plain;
 mod slices;
-mod unvalidated;
 
 pub mod tuple;
 pub use super::ZeroVecError;
@@ -30,7 +29,6 @@ pub use multi::MultiFieldsULE;
 pub use niche::{NicheBytes, NichedOption, NichedOptionULE};
 pub use option::{OptionULE, OptionVarULE};
 pub use plain::RawBytesULE;
-pub use unvalidated::{UnvalidatedChar, UnvalidatedStr};
 
 use alloc::alloc::Layout;
 use alloc::borrow::ToOwned;

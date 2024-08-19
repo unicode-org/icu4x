@@ -81,19 +81,15 @@ impl DataProvider<ShortCurrencyCompactV1Marker> for SourceDataProvider {
         }
 
         for pattern in compact_patterns {
-            let lg10 = pattern
-                .compact_decimal_type
-                .chars()
-                .filter(|&c| c == '0')
-                .count() as i8;
+            let lg10 = pattern.magnitude.chars().filter(|&c| c == '0').count() as i8;
 
-            if lg10 + 1 != pattern.compact_decimal_type.len() as i8 {
+            if lg10 + 1 != pattern.magnitude.len() as i8 {
                 return Err(DataErrorKind::IdentifierNotFound
                     .into_error()
                     .with_debug_context("the number of zeros must be one less than the number of digits in the compact decimal count"));
             }
 
-            let count = try_parse_count_from_str(pattern.compact_decimal_count.as_str())?;
+            let count = try_parse_count_from_str(pattern.count.as_str())?;
 
             result.insert(&(lg10, count), pattern.pattern.as_str());
         }

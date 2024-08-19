@@ -10,10 +10,17 @@
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": "- w",
-      "index": 1
-    }
+    "other": [
+      {
+        "Literal": "-"
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " w"
+      }
+    ]
   },
   "future": {
     "zero": null,
@@ -21,9 +28,16 @@
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": "+ w",
-      "index": 1
-    }
+    "other": [
+      {
+        "Literal": "+"
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " w"
+      }
+    ]
   }
 }

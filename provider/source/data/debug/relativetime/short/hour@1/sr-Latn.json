@@ -4,36 +4,78 @@
   },
   "past": {
     "zero": null,
-    "one": {
-      "pattern": "pre  č.",
-      "index": 4
-    },
+    "one": [
+      {
+        "Literal": "pre "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " č."
+      }
+    ],
     "two": null,
-    "few": {
-      "pattern": "pre  č.",
-      "index": 4
-    },
+    "few": [
+      {
+        "Literal": "pre "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " č."
+      }
+    ],
     "many": null,
-    "other": {
-      "pattern": "pre  č.",
-      "index": 4
-    }
+    "other": [
+      {
+        "Literal": "pre "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " č."
+      }
+    ]
   },
   "future": {
     "zero": null,
-    "one": {
-      "pattern": "za  č.",
-      "index": 3
-    },
+    "one": [
+      {
+        "Literal": "za "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " č."
+      }
+    ],
     "two": null,
-    "few": {
-      "pattern": "za  č.",
-      "index": 3
-    },
+    "few": [
+      {
+        "Literal": "za "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " č."
+      }
+    ],
     "many": null,
-    "other": {
-      "pattern": "za  č.",
-      "index": 3
-    }
+    "other": [
+      {
+        "Literal": "za "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " č."
+      }
+    ]
   }
 }

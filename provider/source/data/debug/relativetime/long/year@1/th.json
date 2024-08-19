@@ -10,10 +10,14 @@
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": " ปีที่แล้ว",
-      "index": 0
-    }
+    "other": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " ปีที่แล้ว"
+      }
+    ]
   },
   "future": {
     "zero": null,
@@ -21,9 +25,16 @@
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": "ในอีก  ปี",
-      "index": 16
-    }
+    "other": [
+      {
+        "Literal": "ในอีก "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " ปี"
+      }
+    ]
   }
 }
