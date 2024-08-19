@@ -24,7 +24,7 @@ use icu_provider::prelude::*;
 use icu_provider::DataLocale;
 use writeable::Writeable;
 
-size_test!(DateTimeFormatter, date_time_formatter_size, 5208);
+size_test!(DateTimeFormatter, date_time_formatter_size, 5160);
 
 /// [`DateTimeFormatter`] is a formatter capable of formatting
 /// date/times from any calendar, selected at runtime. For the difference between this and [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter),

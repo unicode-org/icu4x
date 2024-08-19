@@ -29,7 +29,7 @@ use crate::{
     DateTimeError, FormattedDateTime,
 };
 
-size_test!(TimeFormatter, time_formatter_size, 1200);
+size_test!(TimeFormatter, time_formatter_size, 1152);
 
 /// [`TimeFormatter`] is a structure of the [`icu::datetime`] component that provides time formatting only.
 /// When constructed, it uses data from the [data provider], selected locale and provided preferences to
@@ -186,7 +186,7 @@ impl TimeFormatter {
 size_test!(
     TypedDateFormatter<icu_calendar::Gregorian>,
     typed_date_formatter_size,
-    4400
+    4352
 );
 
 /// [`TypedDateFormatter`] is a formatter capable of formatting
@@ -402,7 +402,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
 size_test!(
     TypedDateTimeFormatter<icu_calendar::Gregorian>,
     typed_date_time_formatter_size,
-    5152
+    5104
 );
 
 /// [`TypedDateTimeFormatter`] is a formatter capable of formatting
