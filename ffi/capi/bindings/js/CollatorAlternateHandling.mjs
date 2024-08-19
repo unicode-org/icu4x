@@ -13,6 +13,7 @@ export class CollatorAlternateHandling {
         ["NonIgnorable", 1],
         ["Shifted", 2]
     ]);
+
     constructor(value) {
         if (value instanceof CollatorAlternateHandling) {
             this.#value = value.value;
@@ -36,12 +37,6 @@ export class CollatorAlternateHandling {
     }
 
     static Auto = new CollatorAlternateHandling("Auto");
-
     static NonIgnorable = new CollatorAlternateHandling("NonIgnorable");
-
     static Shifted = new CollatorAlternateHandling("Shifted");
-
-
-    
-
 }

@@ -16,6 +16,8 @@ namespace capi {
       IsoTimeZoneMinuteDisplay_Required = 0,
       IsoTimeZoneMinuteDisplay_Optional = 1,
     };
+    
+    typedef struct IsoTimeZoneMinuteDisplay_option {union { IsoTimeZoneMinuteDisplay ok; }; bool is_ok; } IsoTimeZoneMinuteDisplay_option;
 } // namespace capi
 } // namespace
 

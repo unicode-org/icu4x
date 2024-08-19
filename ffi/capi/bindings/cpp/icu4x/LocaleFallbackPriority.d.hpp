@@ -16,6 +16,8 @@ namespace capi {
       LocaleFallbackPriority_Language = 0,
       LocaleFallbackPriority_Region = 1,
     };
+    
+    typedef struct LocaleFallbackPriority_option {union { LocaleFallbackPriority ok; }; bool is_ok; } LocaleFallbackPriority_option;
 } // namespace capi
 } // namespace
 

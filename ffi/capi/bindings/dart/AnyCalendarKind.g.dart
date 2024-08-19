@@ -80,10 +80,8 @@ enum AnyCalendarKind {
   ///
   /// See the [Rust documentation for `get_for_bcp47_value`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html#method.get_for_bcp47_value) for more information.
   static AnyCalendarKind? getForBcp47(String s) {
-    final temp = ffi2.Arena();
-    final sView = s.utf8View;
-    final result = _icu4x_AnyCalendarKind_get_for_bcp47_mv1(sView.allocIn(temp), sView.length);
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final result = _icu4x_AnyCalendarKind_get_for_bcp47_mv1(s._utf8AllocIn(temp.arena));
     if (!result.isOk) {
       return null;
     }
@@ -106,9 +104,9 @@ enum AnyCalendarKind {
 external _ResultInt32Void _icu4x_AnyCalendarKind_get_for_locale_mv1(ffi.Pointer<ffi.Opaque> locale);
 
 @meta.ResourceIdentifier('icu4x_AnyCalendarKind_get_for_bcp47_mv1')
-@ffi.Native<_ResultInt32Void Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_AnyCalendarKind_get_for_bcp47_mv1')
+@ffi.Native<_ResultInt32Void Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_AnyCalendarKind_get_for_bcp47_mv1')
 // ignore: non_constant_identifier_names
-external _ResultInt32Void _icu4x_AnyCalendarKind_get_for_bcp47_mv1(ffi.Pointer<ffi.Uint8> sData, int sLength);
+external _ResultInt32Void _icu4x_AnyCalendarKind_get_for_bcp47_mv1(_SliceUtf8 s);
 
 @meta.ResourceIdentifier('icu4x_AnyCalendarKind_bcp47_mv1')
 @ffi.Native<ffi.Void Function(ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_AnyCalendarKind_bcp47_mv1')

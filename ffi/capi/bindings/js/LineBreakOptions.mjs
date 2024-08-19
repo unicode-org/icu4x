@@ -8,6 +8,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 /** See the [Rust documentation for `LineBreakOptions`](https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakOptions.html) for more information.
 */
 export class LineBreakOptions {
+
     #strictness;
     get strictness()  {
         return this.#strictness;
@@ -15,6 +16,7 @@ export class LineBreakOptions {
     set strictness(value) {
         this.#strictness = value;
     }
+
     #wordOption;
     get wordOption()  {
         return this.#wordOption;
@@ -22,6 +24,7 @@ export class LineBreakOptions {
     set wordOption(value) {
         this.#wordOption = value;
     }
+
     #jaZh;
     get jaZh()  {
         return this.#jaZh;
@@ -29,12 +32,22 @@ export class LineBreakOptions {
     set jaZh(value) {
         this.#jaZh = value;
     }
+    constructor() {
+        if (arguments.length > 0 && arguments[0] === diplomatRuntime.internalConstructor) {
+            this.#fromFFI(...Array.prototype.slice.call(arguments, 1));
+        } else {
+            
+            this.#strictness = arguments[0];
+            this.#wordOption = arguments[1];
+            this.#jaZh = arguments[2];
+        }
+    }
 
     // Return this struct in FFI function friendly format.
     // Returns an array that can be expanded with spread syntax (...)
     
     _intoFFI(
-        slice_cleanup_callbacks,
+        functionCleanupArena,
         appendArrayMap
     ) {
         return [this.#strictness.ffiValue, this.#wordOption.ffiValue, this.#jaZh]
@@ -45,16 +58,12 @@ export class LineBreakOptions {
     // and passes it down to individual fields containing the borrow.
     // This method does not attempt to handle any dependencies between lifetimes, the caller
     // should handle this when constructing edge arrays.
-    _fromFFI(ptr) {
+    #fromFFI(ptr) {
         const strictnessDeref = diplomatRuntime.enumDiscriminant(wasm, ptr);
         this.#strictness = LineBreakStrictness[Array.from(LineBreakStrictness.values.keys())[strictnessDeref]];
         const wordOptionDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 4);
         this.#wordOption = LineBreakWordOption[Array.from(LineBreakWordOption.values.keys())[wordOptionDeref]];
-        const jaZhDeref = (new Uint8Array(wasm.memory.buffer, ptr + 8, 1))[0] == 1;
+        const jaZhDeref = (new Uint8Array(wasm.memory.buffer, ptr + 8, 1))[0] === 1;
         this.#jaZh = jaZhDeref;
-
-        return this;
     }
-    
-
 }

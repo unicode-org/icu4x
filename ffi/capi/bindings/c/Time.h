@@ -21,7 +21,7 @@ typedef struct icu4x_Time_create_mv1_result {union {Time* ok; CalendarError err;
 icu4x_Time_create_mv1_result icu4x_Time_create_mv1(uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
 
 typedef struct icu4x_Time_from_string_mv1_result {union {Time* ok; CalendarParseError err;}; bool is_ok;} icu4x_Time_from_string_mv1_result;
-icu4x_Time_from_string_mv1_result icu4x_Time_from_string_mv1(const char* v_data, size_t v_len);
+icu4x_Time_from_string_mv1_result icu4x_Time_from_string_mv1(DiplomatStringView v);
 
 typedef struct icu4x_Time_midnight_mv1_result {union {Time* ok; CalendarError err;}; bool is_ok;} icu4x_Time_midnight_mv1_result;
 icu4x_Time_midnight_mv1_result icu4x_Time_midnight_mv1(void);

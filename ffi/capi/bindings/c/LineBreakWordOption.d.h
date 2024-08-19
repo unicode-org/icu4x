@@ -17,7 +17,7 @@ typedef enum LineBreakWordOption {
   LineBreakWordOption_KeepAll = 2,
 } LineBreakWordOption;
 
-
+typedef struct LineBreakWordOption_option {union { LineBreakWordOption ok; }; bool is_ok; } LineBreakWordOption_option;
 
 
 

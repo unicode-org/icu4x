@@ -12,7 +12,11 @@
 
 int main() {
     icu4x_Logger_init_simple_logger_mv1();
-    icu4x_Locale_from_string_mv1_result locale_result = icu4x_Locale_from_string_mv1("ar", 2);
+    struct DiplomatStringView ar_str = {
+        "ar",
+        2
+    };
+    icu4x_Locale_from_string_mv1_result locale_result = icu4x_Locale_from_string_mv1(ar_str);
     if (!locale_result.is_ok) {
         return 1;
     }
@@ -33,7 +37,11 @@ int main() {
     printf("Plural Category many  (should be true): %s\n", categories.many  ? "true" : "false");
     printf("Plural Category other (should be true): %s\n", categories.other ? "true" : "false");
 
-    icu4x_PluralOperands_from_string_mv1_result op1_result = icu4x_PluralOperands_from_string_mv1("3", 1);
+    struct DiplomatStringView int_str = {
+        "3",
+        1
+    };
+    icu4x_PluralOperands_from_string_mv1_result op1_result = icu4x_PluralOperands_from_string_mv1(int_str);
 
     if (!op1_result.is_ok) {
         printf("Failed to create PluralOperands from string\n");
@@ -44,7 +52,11 @@ int main() {
 
     printf("Plural Category %d (should be %d)\n", (int)cat1, (int)PluralCategory_Few);
 
-    icu4x_PluralOperands_from_string_mv1_result op2_result = icu4x_PluralOperands_from_string_mv1("1011.0", 6);
+    struct DiplomatStringView decimal_str = {
+        "1011.0",
+        6
+    };
+    icu4x_PluralOperands_from_string_mv1_result op2_result = icu4x_PluralOperands_from_string_mv1(decimal_str);
 
     if (!op2_result.is_ok) {
         printf("Failed to create PluralOperands from string\n");

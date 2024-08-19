@@ -23,10 +23,8 @@ enum PluralCategory {
   ///
   /// See the [Rust documentation for `get_for_cldr_bytes`](https://docs.rs/icu/latest/icu/plurals/enum.PluralCategory.html#method.get_for_cldr_bytes) for more information.
   static PluralCategory? getForCldrString(String s) {
-    final temp = ffi2.Arena();
-    final sView = s.utf8View;
-    final result = _icu4x_PluralCategory_get_for_cldr_string_mv1(sView.allocIn(temp), sView.length);
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final result = _icu4x_PluralCategory_get_for_cldr_string_mv1(s._utf8AllocIn(temp.arena));
     if (!result.isOk) {
       return null;
     }
@@ -35,6 +33,6 @@ enum PluralCategory {
 }
 
 @meta.ResourceIdentifier('icu4x_PluralCategory_get_for_cldr_string_mv1')
-@ffi.Native<_ResultInt32Void Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_PluralCategory_get_for_cldr_string_mv1')
+@ffi.Native<_ResultInt32Void Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_PluralCategory_get_for_cldr_string_mv1')
 // ignore: non_constant_identifier_names
-external _ResultInt32Void _icu4x_PluralCategory_get_for_cldr_string_mv1(ffi.Pointer<ffi.Uint8> sData, int sLength);
+external _ResultInt32Void _icu4x_PluralCategory_get_for_cldr_string_mv1(_SliceUtf8 s);

@@ -24,6 +24,8 @@ namespace capi {
       icu4x::capi::LeadingAdjustment leading_adjustment;
       icu4x::capi::TrailingCase trailing_case;
     };
+    
+    typedef struct TitlecaseOptionsV1_option {union { TitlecaseOptionsV1 ok; }; bool is_ok; } TitlecaseOptionsV1_option;
 } // namespace capi
 } // namespace
 

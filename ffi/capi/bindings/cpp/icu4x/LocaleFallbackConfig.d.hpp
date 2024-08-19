@@ -20,6 +20,8 @@ namespace capi {
     struct LocaleFallbackConfig {
       icu4x::capi::LocaleFallbackPriority priority;
     };
+    
+    typedef struct LocaleFallbackConfig_option {union { LocaleFallbackConfig ok; }; bool is_ok; } LocaleFallbackConfig_option;
 } // namespace capi
 } // namespace
 

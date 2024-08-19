@@ -16,7 +16,7 @@ typedef enum IsoTimeZoneMinuteDisplay {
   IsoTimeZoneMinuteDisplay_Optional = 1,
 } IsoTimeZoneMinuteDisplay;
 
-
+typedef struct IsoTimeZoneMinuteDisplay_option {union { IsoTimeZoneMinuteDisplay ok; }; bool is_ok; } IsoTimeZoneMinuteDisplay_option;
 
 
 

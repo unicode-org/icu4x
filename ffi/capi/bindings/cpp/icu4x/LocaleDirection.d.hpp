@@ -17,6 +17,8 @@ namespace capi {
       LocaleDirection_RightToLeft = 1,
       LocaleDirection_Unknown = 2,
     };
+    
+    typedef struct LocaleDirection_option {union { LocaleDirection ok; }; bool is_ok; } LocaleDirection_option;
 } // namespace capi
 } // namespace
 

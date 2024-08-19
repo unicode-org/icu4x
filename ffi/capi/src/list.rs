@@ -7,6 +7,7 @@
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
+    use diplomat_runtime::{DiplomatStr16Slice, DiplomatStrSlice};
 
     use crate::{errors::ffi::DataError, locale_core::ffi::Locale, provider::ffi::DataProvider};
 
@@ -27,6 +28,7 @@ pub mod ffi {
         /// Construct a new ListFormatter instance for And patterns
         #[diplomat::rust_link(icu::list::ListFormatter::try_new_and_with_length, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "and_with_length")]
+        #[diplomat::demo(default_constructor)]
         pub fn create_and_with_length(
             provider: &DataProvider,
             locale: &Locale,
@@ -84,13 +86,12 @@ pub mod ffi {
         #[diplomat::rust_link(icu::list::FormattedList, Struct, hidden)]
         #[diplomat::attr(not(supports = utf8_strings), disable)]
         #[diplomat::attr(*, rename = "format")]
-        pub fn format_utf8(&self, list: &[&DiplomatStr], write: &mut DiplomatWrite) {
+        pub fn format_utf8(&self, list: &[DiplomatStrSlice], write: &mut DiplomatWrite) {
             let _infallible = self
                 .0
                 .format(
                     list.iter()
-                        .copied()
-                        .map(potential_utf::PotentialUtf8::from_bytes)
+                        .map(|a| potential_utf::PotentialUtf8::from_bytes(a))
                         .map(writeable::adapters::LossyWrap),
                 )
                 .write_to(write);
@@ -101,13 +102,12 @@ pub mod ffi {
         #[diplomat::rust_link(icu::list::FormattedList, Struct, hidden)]
         #[diplomat::attr(not(supports = utf8_strings), rename = "format")]
         #[diplomat::attr(supports = utf8_strings, rename = "format16")]
-        pub fn format_utf16(&self, list: &[&DiplomatStr16], write: &mut DiplomatWrite) {
+        pub fn format_utf16(&self, list: &[DiplomatStr16Slice], write: &mut DiplomatWrite) {
             let _infallible = self
                 .0
                 .format(
                     list.iter()
-                        .copied()
-                        .map(potential_utf::PotentialUtf16::from_slice)
+                        .map(|a| potential_utf::PotentialUtf16::from_slice(a))
                         .map(writeable::adapters::LossyWrap),
                 )
                 .write_to(write);

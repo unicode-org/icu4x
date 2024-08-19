@@ -12,6 +12,7 @@ export class IsoTimeZoneSecondDisplay {
         ["Optional", 0],
         ["Never", 1]
     ]);
+
     constructor(value) {
         if (value instanceof IsoTimeZoneSecondDisplay) {
             this.#value = value.value;
@@ -35,10 +36,5 @@ export class IsoTimeZoneSecondDisplay {
     }
 
     static Optional = new IsoTimeZoneSecondDisplay("Optional");
-
     static Never = new IsoTimeZoneSecondDisplay("Never");
-
-
-    
-
 }

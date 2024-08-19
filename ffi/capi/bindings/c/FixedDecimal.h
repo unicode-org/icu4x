@@ -41,7 +41,7 @@ typedef struct icu4x_FixedDecimal_from_double_with_floating_precision_mv1_result
 icu4x_FixedDecimal_from_double_with_floating_precision_mv1_result icu4x_FixedDecimal_from_double_with_floating_precision_mv1(double f);
 
 typedef struct icu4x_FixedDecimal_from_string_mv1_result {union {FixedDecimal* ok; FixedDecimalParseError err;}; bool is_ok;} icu4x_FixedDecimal_from_string_mv1_result;
-icu4x_FixedDecimal_from_string_mv1_result icu4x_FixedDecimal_from_string_mv1(const char* v_data, size_t v_len);
+icu4x_FixedDecimal_from_string_mv1_result icu4x_FixedDecimal_from_string_mv1(DiplomatStringView v);
 
 uint8_t icu4x_FixedDecimal_digit_at_mv1(const FixedDecimal* self, int16_t magnitude);
 

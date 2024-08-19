@@ -12,10 +12,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *See the [Rust documentation for `CanonicalDecomposition`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecomposition.html) for more information.
 */
-
 const CanonicalDecomposition_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_CanonicalDecomposition_destroy_mv1(ptr);
 });
+
 export class CanonicalDecomposition {
     // Internal ptr reference:
     #ptr = null;
@@ -24,54 +24,54 @@ export class CanonicalDecomposition {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("CanonicalDecomposition is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        // Unconditionally register to destroy when this object is ready to garbage collect.
-        CanonicalDecomposition_box_destroy_registry.register(this, this.#ptr);
+        
+        // Are we being borrowed? If not, we can register.
+        if (this.#selfEdge.length === 0) {
+            CanonicalDecomposition_box_destroy_registry.register(this, this.#ptr);
+        }
     }
 
     get ffiValue() {
         return this.#ptr;
     }
 
-
     static create(provider) {
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_CanonicalDecomposition_create_mv1(diplomat_receive_buffer, provider.ffiValue);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_CanonicalDecomposition_create_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+            if (!diplomatReceive.resultFlag) {
+                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new CanonicalDecomposition(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new CanonicalDecomposition(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
     decompose(c) {
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(8, 4);
-        const result = wasm.icu4x_CanonicalDecomposition_decompose_mv1(diplomat_receive_buffer, this.ffiValue, diplomatRuntime.extractCodePoint(c, 'c'));
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 8, 4, false);
+        const result = wasm.icu4x_CanonicalDecomposition_decompose_mv1(diplomatReceive.buffer, this.ffiValue, c);
     
         try {
-    
-            return new Decomposed(diplomat_receive_buffer);
-        } finally {
+            return new Decomposed(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 8, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
-
-    
-
 }

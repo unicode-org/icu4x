@@ -12,6 +12,7 @@ export class TrailingCase {
         ["Lower", 0],
         ["Unchanged", 1]
     ]);
+
     constructor(value) {
         if (value instanceof TrailingCase) {
             this.#value = value.value;
@@ -35,10 +36,5 @@ export class TrailingCase {
     }
 
     static Lower = new TrailingCase("Lower");
-
     static Unchanged = new TrailingCase("Unchanged");
-
-
-    
-
 }

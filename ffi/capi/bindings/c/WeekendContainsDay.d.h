@@ -21,7 +21,7 @@ typedef struct WeekendContainsDay {
   bool sunday;
 } WeekendContainsDay;
 
-
+typedef struct WeekendContainsDay_option {union { WeekendContainsDay ok; }; bool is_ok; } WeekendContainsDay_option;
 
 
 

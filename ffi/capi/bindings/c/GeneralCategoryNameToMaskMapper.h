@@ -17,9 +17,9 @@
 
 
 
-uint32_t icu4x_GeneralCategoryNameToMaskMapper_get_strict_mv1(const GeneralCategoryNameToMaskMapper* self, const char* name_data, size_t name_len);
+uint32_t icu4x_GeneralCategoryNameToMaskMapper_get_strict_mv1(const GeneralCategoryNameToMaskMapper* self, DiplomatStringView name);
 
-uint32_t icu4x_GeneralCategoryNameToMaskMapper_get_loose_mv1(const GeneralCategoryNameToMaskMapper* self, const char* name_data, size_t name_len);
+uint32_t icu4x_GeneralCategoryNameToMaskMapper_get_loose_mv1(const GeneralCategoryNameToMaskMapper* self, DiplomatStringView name);
 
 typedef struct icu4x_GeneralCategoryNameToMaskMapper_load_mv1_result {union {GeneralCategoryNameToMaskMapper* ok; DataError err;}; bool is_ok;} icu4x_GeneralCategoryNameToMaskMapper_load_mv1_result;
 icu4x_GeneralCategoryNameToMaskMapper_load_mv1_result icu4x_GeneralCategoryNameToMaskMapper_load_mv1(const DataProvider* provider);

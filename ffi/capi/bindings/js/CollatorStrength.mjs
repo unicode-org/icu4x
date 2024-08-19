@@ -16,6 +16,7 @@ export class CollatorStrength {
         ["Quaternary", 4],
         ["Identical", 5]
     ]);
+
     constructor(value) {
         if (value instanceof CollatorStrength) {
             this.#value = value.value;
@@ -39,18 +40,9 @@ export class CollatorStrength {
     }
 
     static Auto = new CollatorStrength("Auto");
-
     static Primary = new CollatorStrength("Primary");
-
     static Secondary = new CollatorStrength("Secondary");
-
     static Tertiary = new CollatorStrength("Tertiary");
-
     static Quaternary = new CollatorStrength("Quaternary");
-
     static Identical = new CollatorStrength("Identical");
-
-
-    
-
 }

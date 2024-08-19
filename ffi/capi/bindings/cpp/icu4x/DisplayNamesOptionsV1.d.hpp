@@ -26,6 +26,8 @@ namespace capi {
       icu4x::capi::DisplayNamesFallback fallback;
       icu4x::capi::LanguageDisplay language_display;
     };
+    
+    typedef struct DisplayNamesOptionsV1_option {union { DisplayNamesOptionsV1 ok; }; bool is_ok; } DisplayNamesOptionsV1_option;
 } // namespace capi
 } // namespace
 

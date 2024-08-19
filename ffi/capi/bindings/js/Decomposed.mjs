@@ -10,25 +10,34 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *See the [Rust documentation for `Decomposed`](https://docs.rs/icu/latest/icu/normalizer/properties/enum.Decomposed.html) for more information.
 */
 export class Decomposed {
+
     #first;
     get first()  {
         return this.#first;
     }
     
+
     #second;
     get second()  {
         return this.#second;
     }
     
+    constructor() {
+        if (arguments.length > 0 && arguments[0] === diplomatRuntime.internalConstructor) {
+            this.#fromFFI(...Array.prototype.slice.call(arguments, 1));
+        } else {
+            console.error("Decomposed is an out struct and can only be created internally.");
+        }
+    }
 
     // Return this struct in FFI function friendly format.
     // Returns an array that can be expanded with spread syntax (...)
     
     _intoFFI(
-        slice_cleanup_callbacks,
+        functionCleanupArena,
         appendArrayMap
     ) {
-        return [diplomatRuntime.extractCodePoint(this.#first, 'this.#first'), diplomatRuntime.extractCodePoint(this.#second, 'this.#second')]
+        return [this.#first, this.#second]
     }
 
     // This struct contains borrowed fields, so this takes in a list of
@@ -36,18 +45,10 @@ export class Decomposed {
     // and passes it down to individual fields containing the borrow.
     // This method does not attempt to handle any dependencies between lifetimes, the caller
     // should handle this when constructing edge arrays.
-    _fromFFI(ptr) {
-        const firstDeref = String.fromCharCode((new Uint32Array(wasm.memory.buffer, ptr, 1))[0]);
+    #fromFFI(ptr) {
+        const firstDeref = (new Uint32Array(wasm.memory.buffer, ptr, 1))[0];
         this.#first = firstDeref;
-        const secondDeref = String.fromCharCode((new Uint32Array(wasm.memory.buffer, ptr + 4, 1))[0]);
+        const secondDeref = (new Uint32Array(wasm.memory.buffer, ptr + 4, 1))[0];
         this.#second = secondDeref;
-
-        return this;
     }
-    // This is an out struct. You need to call other methods to be able to get this struct.
-    constructor(ptr) {
-        this._fromFFI(ptr);
-    }
-    
-
 }

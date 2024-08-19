@@ -12,6 +12,7 @@ export class LanguageDisplay {
         ["Dialect", 0],
         ["Standard", 1]
     ]);
+
     constructor(value) {
         if (value instanceof LanguageDisplay) {
             this.#value = value.value;
@@ -35,10 +36,5 @@ export class LanguageDisplay {
     }
 
     static Dialect = new LanguageDisplay("Dialect");
-
     static Standard = new LanguageDisplay("Standard");
-
-
-    
-
 }

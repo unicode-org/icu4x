@@ -22,7 +22,7 @@
 typedef struct icu4x_TitlecaseMapper_create_mv1_result {union {TitlecaseMapper* ok; DataError err;}; bool is_ok;} icu4x_TitlecaseMapper_create_mv1_result;
 icu4x_TitlecaseMapper_create_mv1_result icu4x_TitlecaseMapper_create_mv1(const DataProvider* provider);
 
-void icu4x_TitlecaseMapper_titlecase_segment_v1_mv1(const TitlecaseMapper* self, const char* s_data, size_t s_len, const Locale* locale, TitlecaseOptionsV1 options, DiplomatWrite* write);
+void icu4x_TitlecaseMapper_titlecase_segment_v1_mv1(const TitlecaseMapper* self, DiplomatStringView s, const Locale* locale, TitlecaseOptionsV1 options, DiplomatWrite* write);
 
 
 void icu4x_TitlecaseMapper_destroy_mv1(TitlecaseMapper* self);
