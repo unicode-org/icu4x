@@ -91,7 +91,7 @@ fn make_ule_enum_impl(
         .to_compile_error();
     }
 
-    if enu.variants.len() == 0 {
+    if enu.variants.is_empty() {
         return Error::new(input.span(), "#[make_ule] cannot be applied to empty enums")
             .to_compile_error();
     }

@@ -80,21 +80,12 @@ fn main() {
     test_zerovec(TEST_SLICE_TUPLESTRUCT);
     test_zerovec(TEST_SLICE_ENUM);
 
-    assert!(matches!(EnumULE::parse_byte_slice(&[0]), Ok(_)));
-    assert!(matches!(EnumULE::parse_byte_slice(&[1]), Ok(_)));
-    assert!(matches!(EnumULE::parse_byte_slice(&[6]), Err(_)));
-    assert!(matches!(
-        OutOfOrderMissingZeroEnumULE::parse_byte_slice(&[0]),
-        Err(_)
-    ));
-    assert!(matches!(
-        OutOfOrderMissingZeroEnumULE::parse_byte_slice(&[1]),
-        Ok(_)
-    ));
-    assert!(matches!(
-        OutOfOrderMissingZeroEnumULE::parse_byte_slice(&[6]),
-        Err(_)
-    ));
+    assert!(EnumULE::parse_byte_slice(&[0]).is_ok());
+    assert!(EnumULE::parse_byte_slice(&[1]).is_ok());
+    assert!(EnumULE::parse_byte_slice(&[6]).is_err());
+    assert!(OutOfOrderMissingZeroEnumULE::parse_byte_slice(&[0]).is_ok());
+    assert!(OutOfOrderMissingZeroEnumULE::parse_byte_slice(&[1]).is_err());
+    assert!(OutOfOrderMissingZeroEnumULE::parse_byte_slice(&[6]).is_ok());
 }
 
 const TEST_SLICE_STRUCT: &[Struct] = &[
