@@ -77,8 +77,10 @@ impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbolsV1<'static> {
             .map_err(|s: super::decimal_pattern::Error| s.to_string())?;
 
         Ok(Self {
-            minus_sign_pattern: Some(parsed_pattern.localize_sign(&symbols.minus_sign)).filter(|p| *p != NEGATIVE_DEFAULT),
-            plus_sign_pattern: Some(parsed_pattern.localize_sign(&symbols.plus_sign)).filter(|p| *p != POSITIVE_DEFAULT),
+            minus_sign_pattern: Some(parsed_pattern.localize_sign(&symbols.minus_sign))
+                .filter(|p| *p != NEGATIVE_DEFAULT),
+            plus_sign_pattern: Some(parsed_pattern.localize_sign(&symbols.plus_sign))
+                .filter(|p| *p != POSITIVE_DEFAULT),
             decimal_separator: Cow::Owned(symbols.decimal.clone()),
             grouping_separator: Cow::Owned(symbols.group.clone()),
             grouping_sizes: GroupingSizesV1 {

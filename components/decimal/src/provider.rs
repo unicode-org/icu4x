@@ -17,8 +17,8 @@
 #![allow(clippy::exhaustive_enums)]
 
 use alloc::borrow::Cow;
-use icu_provider::prelude::*;
 use icu_pattern::SinglePlaceholderPattern;
+use icu_provider::prelude::*;
 
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
@@ -119,9 +119,11 @@ pub struct DecimalSymbolsV1<'data> {
 }
 
 /// The value used if [`DecimalSymbolsV1::minus_sign_pattern`] is empty.
-pub static NEGATIVE_DEFAULT: SinglePlaceholderPattern<Cow<'static, str>> = SinglePlaceholderPattern::from_store_unchecked(Cow::Borrowed("\x02-"));
+pub static NEGATIVE_DEFAULT: SinglePlaceholderPattern<Cow<'static, str>> =
+    SinglePlaceholderPattern::from_store_unchecked(Cow::Borrowed("\x02-"));
 /// The value used if [`DecimalSymbolsV1::plus_sign_pattern`] is empty.
-pub static POSITIVE_DEFAULT: SinglePlaceholderPattern<Cow<'static, str>> = SinglePlaceholderPattern::from_store_unchecked(Cow::Borrowed("\x02+"));
+pub static POSITIVE_DEFAULT: SinglePlaceholderPattern<Cow<'static, str>> =
+    SinglePlaceholderPattern::from_store_unchecked(Cow::Borrowed("\x02+"));
 
 impl Default for DecimalSymbolsV1<'static> {
     fn default() -> Self {

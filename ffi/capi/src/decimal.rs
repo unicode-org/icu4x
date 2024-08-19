@@ -7,6 +7,7 @@
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
+    use icu_pattern::SinglePlaceholderPattern;
 
     use crate::{
         errors::ffi::DataError, fixed_decimal::ffi::FixedDecimal, locale_core::ffi::Locale,
@@ -88,7 +89,7 @@ pub mod ffi {
             }
 
             use icu_decimal::provider::{
-                AffixesV1, DecimalSymbolsV1, DecimalSymbolsV1Marker, GroupingSizesV1,
+                DecimalSymbolsV1, DecimalSymbolsV1Marker, GroupingSizesV1,
             };
             let mut new_digits = ['\0'; 10];
             for (old, new) in digits
@@ -100,13 +101,27 @@ pub mod ffi {
                 *new = char::from_u32(old).unwrap_or(char::REPLACEMENT_CHARACTER);
             }
             let digits = new_digits;
-            let plus_sign_affixes = AffixesV1 {
-                prefix: str_to_cow(plus_sign_prefix),
-                suffix: str_to_cow(plus_sign_suffix),
+            let plus_sign_pattern = if plus_sign_prefix != b"+" || plus_sign_suffix != b"" {
+                Some(SinglePlaceholderPattern::from_store_unchecked(Cow::Owned(
+                    SinglePlaceholderPattern::encode_store(
+                        core::str::from_utf8(plus_sign_prefix).unwrap_or_default(),
+                        core::str::from_utf8(plus_sign_suffix).unwrap_or_default(),
+                    )
+                    .into_string(),
+                )))
+            } else {
+                None
             };
-            let minus_sign_affixes = AffixesV1 {
-                prefix: str_to_cow(minus_sign_prefix),
-                suffix: str_to_cow(minus_sign_suffix),
+            let minus_sign_pattern = if minus_sign_prefix != b"-" || minus_sign_suffix != b"" {
+                Some(SinglePlaceholderPattern::from_store_unchecked(Cow::Owned(
+                    SinglePlaceholderPattern::encode_store(
+                        core::str::from_utf8(minus_sign_prefix).unwrap_or_default(),
+                        core::str::from_utf8(minus_sign_suffix).unwrap_or_default(),
+                    )
+                    .into_string(),
+                )))
+            } else {
+                None
             };
             let grouping_sizes = GroupingSizesV1 {
                 primary: primary_group_size,

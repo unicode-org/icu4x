@@ -26,8 +26,18 @@ impl<'l> FormattedFixedDecimal<'l> {
     fn get_patterns(&self) -> Option<&SinglePlaceholderPattern<Cow<'l, str>>> {
         match self.value.sign() {
             Sign::None => None,
-            Sign::Negative => Some(self.symbols.minus_sign_pattern.as_ref().unwrap_or(&NEGATIVE_DEFAULT)),
-            Sign::Positive => Some(self.symbols.plus_sign_pattern.as_ref().unwrap_or(&POSITIVE_DEFAULT)),
+            Sign::Negative => Some(
+                self.symbols
+                    .minus_sign_pattern
+                    .as_ref()
+                    .unwrap_or(&NEGATIVE_DEFAULT),
+            ),
+            Sign::Positive => Some(
+                self.symbols
+                    .plus_sign_pattern
+                    .as_ref()
+                    .unwrap_or(&POSITIVE_DEFAULT),
+            ),
         }
     }
 }

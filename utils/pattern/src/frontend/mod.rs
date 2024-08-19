@@ -22,8 +22,22 @@ use core::{
 };
 use writeable::{adapters::TryWriteableInfallibleAsWriteable, PartsWrite, TryWriteable, Writeable};
 
+#[cfg(feature = "alloc")]
+impl SinglePlaceholderPattern<str> {
+    pub fn encode_store(prefix: &str, suffix: &str) -> alloc::boxed::Box<str> {
+        alloc::format!(
+            "{}{prefix}{suffix}",
+            char::from_u32(prefix.len() as u32 + 1).unwrap()
+        )
+        .into_boxed_str()
+    }
+}
+
 #[allow(clippy::unwrap_used, clippy::indexing_slicing)]
-impl<Store> SinglePlaceholderPattern<Store> where Store: Deref<Target = str> {
+impl<Store> SinglePlaceholderPattern<Store>
+where
+    Store: Deref<Target = str>,
+{
     pub fn prefix(&self) -> &str {
         let mut chars = self.store.chars();
         let index = chars.next().unwrap() as usize;
@@ -43,7 +57,6 @@ impl<Store> SinglePlaceholderPattern<Store> where Store: Deref<Target = str> {
             chars.as_str()
         }
     }
-
 }
 
 /// A string pattern with placeholders.
