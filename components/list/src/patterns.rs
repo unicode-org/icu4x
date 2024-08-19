@@ -25,7 +25,11 @@ impl<'data> ListFormatterPatternsV2<'data> {
                 .to_string()
                 .into(),
             end: ListJoinerPattern::try_from_str(end, false, true)?.into(),
-            pair: ListJoinerPattern::try_from_str(pair, true, true)?.into(),
+            pair: if end != pair {
+                Some(ListJoinerPattern::try_from_str(pair, true, true)?.into())
+            } else {
+                None
+            },
         })
     }
 
@@ -34,7 +38,7 @@ impl<'data> ListFormatterPatternsV2<'data> {
     pub(crate) fn size_hint(&self, len: usize) -> LengthHint {
         match len {
             0 | 1 => LengthHint::exact(0),
-            2 => self.pair.size_hint(),
+            2 => self.pair.as_ref().unwrap_or(&self.end).size_hint(),
             n => {
                 self.start.size_hint()
                     + self.middle.writeable_length_hint() * (n - 3)
@@ -154,7 +158,6 @@ pub mod test {
             condition: SerdeDFA::new(Cow::Borrowed("^a")).unwrap(),
             pattern: ListJoinerPattern::try_from_str("{0} :o {1}", false, false).unwrap(),
         });
-        patterns.pair.special_case = patterns.end.special_case.clone();
         patterns
     }
 
@@ -175,7 +178,10 @@ pub mod test {
 
     #[test]
     fn produces_correct_parts() {
-        assert_eq!(test_patterns_general().pair.parts(""), ("$", ";", "+"));
+        assert_eq!(
+            test_patterns_general().pair.unwrap().parts(""),
+            ("$", ";", "+")
+        );
     }
 
     #[test]

@@ -17,17 +17,5 @@
       }
     }
   },
-  "pair": {
-    "default": {
-      "string": " y ",
-      "index_1": 3
-    },
-    "special_case": {
-      "condition": "^[iI]|(?:[hH][iI](?:[^aeAE]|$))",
-      "pattern": {
-        "string": " e ",
-        "index_1": 3
-      }
-    }
-  }
+  "pair": null
 }

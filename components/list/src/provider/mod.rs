@@ -85,9 +85,9 @@ pub struct ListFormatterPatternsV2<'data> {
     /// The end pattern
     #[cfg_attr(feature = "datagen", serde(borrow))]
     pub end: ConditionalListJoinerPattern<'data>,
-    /// The pair pattern
+    /// The pair pattern, if it's different from the end pattern.
     #[cfg_attr(feature = "datagen", serde(borrow))]
-    pub pair: ConditionalListJoinerPattern<'data>,
+    pub pair: Option<ConditionalListJoinerPattern<'data>>,
 }
 
 impl ListFormatterPatternsV2<'_> {

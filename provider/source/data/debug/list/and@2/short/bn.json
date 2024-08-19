@@ -11,11 +11,5 @@
     },
     "special_case": null
   },
-  "pair": {
-    "default": {
-      "string": " এবং ",
-      "index_1": 11
-    },
-    "special_case": null
-  }
+  "pair": null
 }

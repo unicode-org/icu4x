@@ -11,11 +11,5 @@
     },
     "special_case": null
   },
-  "pair": {
-    "default": {
-      "string": " veya ",
-      "index_1": 6
-    },
-    "special_case": null
-  }
+  "pair": null
 }

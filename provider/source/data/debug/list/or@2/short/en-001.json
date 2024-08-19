@@ -11,11 +11,5 @@
     },
     "special_case": null
   },
-  "pair": {
-    "default": {
-      "string": " or ",
-      "index_1": 4
-    },
-    "special_case": null
-  }
+  "pair": null
 }

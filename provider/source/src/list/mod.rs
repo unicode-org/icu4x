@@ -79,8 +79,10 @@ fn load<M: DataMarker<DataStruct = ListFormatterPatternsV2<'static>>>(
             if patterns.end.default == default {
                 patterns.end.special_case = Some(i_sound_becomes_e.clone());
             }
-            if patterns.pair.default == default {
-                patterns.pair.special_case = Some(i_sound_becomes_e.clone());
+            if let Some(pair) = patterns.pair.as_mut() {
+                if pair.default == default {
+                    pair.special_case = Some(i_sound_becomes_e.clone());
+                }
             }
         } else if M::INFO == OrListV2Marker::INFO {
             // Replace " o " with " u " before /o/ sound.
@@ -106,8 +108,10 @@ fn load<M: DataMarker<DataStruct = ListFormatterPatternsV2<'static>>>(
             if patterns.end.default == default {
                 patterns.end.special_case = Some(o_sound_becomes_u.clone());
             }
-            if patterns.pair.default == default {
-                patterns.pair.special_case = Some(o_sound_becomes_u.clone());
+            if let Some(pair) = patterns.pair.as_mut() {
+                if pair.default == default {
+                    pair.special_case = Some(o_sound_becomes_u.clone());
+                }
             }
         }
     }
@@ -140,8 +144,10 @@ fn load<M: DataMarker<DataStruct = ListFormatterPatternsV2<'static>>>(
         if patterns.end.default == default {
             patterns.end.special_case = Some(dashes_in_front_of_non_hebrew.clone());
         }
-        if patterns.end.default == default {
-            patterns.pair.special_case = Some(dashes_in_front_of_non_hebrew.clone());
+        if let Some(pair) = patterns.pair.as_mut() {
+            if pair.default == default {
+                pair.special_case = Some(dashes_in_front_of_non_hebrew.clone());
+            }
         }
     }
 

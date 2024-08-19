@@ -11,11 +11,5 @@
     },
     "special_case": null
   },
-  "pair": {
-    "default": {
-      "string": " 𑄃𑄳𑄃 ",
-      "index_1": 14
-    },
-    "special_case": null
-  }
+  "pair": null
 }

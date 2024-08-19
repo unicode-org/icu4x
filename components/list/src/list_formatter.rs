@@ -222,7 +222,11 @@ impl<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> Writeable
                     literal!(end_after)
                 } else {
                     // Pair(values[0], values[1]) = pair_before + values[0] + pair_between + values[1] + pair_after
-                    let (before, between, after) = patterns.pair.parts(&second);
+                    let (before, between, after) = patterns
+                        .pair
+                        .as_ref()
+                        .unwrap_or(&patterns.end)
+                        .parts(&second);
                     literal!(before)?;
                     value!(first)?;
                     literal!(between)?;
