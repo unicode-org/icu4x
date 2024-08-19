@@ -20,7 +20,7 @@ export class DateTimeDemo {
         this.#displayFn = displayFn;
         this.#dataProvider = dataProvider;
 
-        this.#locale = Ok(Locale.createFromString("en"));
+        this.#locale = Ok(Locale.fromString("en"));
         this.#calendar = Ok(Calendar.createForLocale(dataProvider, unwrap(this.#locale)));
         this.#dateLength = DateLength.Short;
         this.#timeLength = TimeLength.Short;
@@ -55,7 +55,7 @@ export class DateTimeDemo {
                 locid = locid.replace("-u-", `-u-ca-${this.#calendarStr}-`);
             }
         }
-        this.#locale = result(() => Locale.createFromString(locid));
+        this.#locale = result(() => Locale.fromString(locid));
         this.#calendar = result(() => Calendar.createForLocale(this.#dataProvider, unwrap(this.#locale) ));
         this.#updateDateTime();
     }

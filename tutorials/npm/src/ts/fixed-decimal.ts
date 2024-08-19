@@ -14,14 +14,14 @@ export class FixedDecimalDemo {
         this.#displayFn = displayFn;
         this.#dataProvider = dataProvider;
 
-        this.#locale = Ok(Locale.createFromString("en"));
+        this.#locale = Ok(Locale.fromString("en"));
         this.#groupingStrategy = FixedDecimalGroupingStrategy.Auto;
         this.#fixedDecimal = null;
         this.#updateFormatter()
     }
 
     setLocale(locid: string): void {
-        this.#locale = result(() => Locale.createFromString(locid));
+        this.#locale = result(() => Locale.fromString(locid));
         this.#updateFormatter()
     }
 
@@ -31,7 +31,7 @@ export class FixedDecimalDemo {
     }
 
     setFixedDecimal(digits: string): void {
-        this.#fixedDecimal = digits === "" ? null : result(() => FixedDecimal.createFromString(digits));
+        this.#fixedDecimal = digits === "" ? null : result(() => FixedDecimal.fromString(digits));
         this.#render();
     }
 
