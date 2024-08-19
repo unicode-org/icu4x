@@ -154,7 +154,7 @@ pub const EXTRA_FS_DEPS: &[&str] = &["icu_provider_fs", "serde-json-core"];
 
 /// Dependencies needed by datagen provider (not counting `log` and `zip` deps)
 /// This might change semi frequently but we should try and keep this small.
-pub const EXTRA_DATAGEN_BIKESHED_DEPS: &[&str] = &[
+pub const EXTRA_SOURCE_DEPS: &[&str] = &[
     "bincode",
     "crlify",
     "databake",
