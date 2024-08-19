@@ -5,12 +5,12 @@
 use super::{options::*, Duration, DurationFormatter, DurationSign};
 
 use super::validated_options::Unit;
-use arrayvec::ArrayVec;
 use core::fmt;
 use core::fmt::Write;
 use either::Either;
 use fixed_decimal::{FixedDecimal, SignDisplay};
 use icu_decimal::FormattedFixedDecimal;
+use smallvec::SmallVec;
 use writeable::{adapters::WithPart, PartsWrite, Writeable};
 
 macro_rules! create_unit_parts {
@@ -452,7 +452,7 @@ impl<'a> FormattedDuration<'a> {
         // We can have a maximum of 9 writeables (one FormattedUnit for each unit).
         // In the digital case, one or more unit is represented by the FormattedDigitalDuration,
         // which is a single writeable.
-        let mut parts_list: ArrayVec<_, 9> = ArrayVec::new();
+        let mut parts_list: SmallVec<[HeterogenousToFormatter; 9]> = SmallVec::new();
 
         // 2. Let signDisplayed be true.
         let mut sign_displayed = true;
@@ -565,7 +565,7 @@ impl<'a> FormattedDuration<'a> {
     /// Given a partitioned part list of formatted duration parts, it creates and returns a List with all the corresponding parts according to the effective locale and the formatting options of durationFormat.
     fn list_format_parts<V: PartsWrite + ?Sized, const CAP: usize>(
         &self,
-        parts_list: ArrayVec<HeterogenousToFormatter, CAP>,
+        parts_list: SmallVec<[HeterogenousToFormatter; CAP]>,
         sink: &mut V,
     ) -> fmt::Result {
         // 1. Let lfOpts be OrdinaryObjectCreate(null).

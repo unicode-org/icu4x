@@ -35,7 +35,6 @@ icu_normalizer = { workspace = true }
 icu_plurals = { workspace = true }
 icu_properties = { workspace = true }
 
-arrayvec = { workspace = true, default-features = false }
 databake = { workspace = true, optional = true, features = ["derive"] }
 either = { workspace = true }
 fixed_decimal = { workspace = true }

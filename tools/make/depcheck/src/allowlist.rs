@@ -96,7 +96,6 @@ pub const EXTRA_DATA_DEPS: &[&str] = &[
 ///
 /// Keep in sync with Cargo.toml crates.io dependencies.
 pub const EXTRA_EXPERIMENTAL_DEPS: &[&str] = &[
-    "arrayvec",
     "icu_experimental",
     "icu_pattern",
     "num-bigint",
