@@ -53,7 +53,7 @@ num-bigint = { workspace = true }
 num-rational = { workspace = true, features = ["num-bigint"]}
 num-traits = { workspace = true }
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
-smallvec = { workspace = true }
+smallvec = { workspace = true, features = ["const_generics"] }
 
 icu_experimental_data = { workspace = true, optional = true }
 
