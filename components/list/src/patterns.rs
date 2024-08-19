@@ -35,7 +35,7 @@ impl<'data> ListFormatterPatternsV2<'data> {
 
     /// The range of the number of bytes required by the list literals to join a
     /// list of length `len`. If none of the patterns are conditional, this is exact.
-    pub(crate) fn size_hint(&self, len: usize) -> LengthHint {
+    pub(crate) fn length_hint(&self, len: usize) -> LengthHint {
         match len {
             0 | 1 => LengthHint::exact(0),
             2 => self.pair.as_ref().unwrap_or(&self.end).size_hint(),
@@ -199,20 +199,20 @@ pub mod test {
     fn size_hint_works() {
         let pattern = test_patterns_lengths();
 
-        assert_eq!(pattern.size_hint(0), LengthHint::exact(0));
-        assert_eq!(pattern.size_hint(1), LengthHint::exact(0));
+        assert_eq!(pattern.length_hint(0), LengthHint::exact(0));
+        assert_eq!(pattern.length_hint(1), LengthHint::exact(0));
 
         // pair pattern "{0}123{1}456"
-        assert_eq!(pattern.size_hint(2), LengthHint::exact(6));
+        assert_eq!(pattern.length_hint(2), LengthHint::exact(6));
 
         // patterns "{0}1{1}", "{0}12{1}" (x197), and "{0}12{1}34"
-        assert_eq!(pattern.size_hint(200), LengthHint::exact(1 + 2 * 197 + 4));
+        assert_eq!(pattern.length_hint(200), LengthHint::exact(1 + 2 * 197 + 4));
 
         let pattern = test_patterns_conditional();
 
         // patterns "{0}: {1}", "{0}, {1}" (x197), and "{0} :o {1}" or "{0}. {1}"
         assert_eq!(
-            pattern.size_hint(200),
+            pattern.length_hint(200),
             LengthHint::exact(2 + 197 * 2) + LengthHint::between(2, 4)
         );
     }

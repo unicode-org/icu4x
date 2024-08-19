@@ -251,7 +251,7 @@ impl<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> Writeable
                 w.writeable_length_hint()
             })
             .sum::<LengthHint>();
-        item_length + self.formatter.data.get().size_hint(count)
+        item_length + self.formatter.data.get().length_hint(count)
     }
 }
 
