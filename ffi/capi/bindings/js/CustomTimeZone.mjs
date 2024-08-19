@@ -22,7 +22,11 @@ export class CustomTimeZone {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("CustomTimeZone is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
@@ -46,10 +50,10 @@ export class CustomTimeZone {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = new TimeZoneInvalidOffsetError();
+                const cause = new TimeZoneInvalidOffsetError(diplomatRuntime.internalConstructor);
                 throw new globalThis.Error('TimeZoneInvalidOffsetError', { cause });
             }
-            return new CustomTimeZone(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new CustomTimeZone(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -63,7 +67,7 @@ export class CustomTimeZone {
         const result = wasm.icu4x_CustomTimeZone_empty_mv1();
     
         try {
-            return new CustomTimeZone(result, []);
+            return new CustomTimeZone(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}
@@ -73,7 +77,7 @@ export class CustomTimeZone {
         const result = wasm.icu4x_CustomTimeZone_utc_mv1();
     
         try {
-            return new CustomTimeZone(result, []);
+            return new CustomTimeZone(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}
@@ -83,7 +87,7 @@ export class CustomTimeZone {
         const result = wasm.icu4x_CustomTimeZone_gmt_mv1();
     
         try {
-            return new CustomTimeZone(result, []);
+            return new CustomTimeZone(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}
@@ -93,7 +97,7 @@ export class CustomTimeZone {
         const result = wasm.icu4x_CustomTimeZone_bst_mv1();
     
         try {
-            return new CustomTimeZone(result, []);
+            return new CustomTimeZone(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}
@@ -106,7 +110,7 @@ export class CustomTimeZone {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = new TimeZoneInvalidOffsetError();
+                const cause = new TimeZoneInvalidOffsetError(diplomatRuntime.internalConstructor);
                 throw new globalThis.Error('TimeZoneInvalidOffsetError', { cause });
             }
     
@@ -227,7 +231,7 @@ export class CustomTimeZone {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = new TimeZoneInvalidIdError();
+                const cause = new TimeZoneInvalidIdError(diplomatRuntime.internalConstructor);
                 throw new globalThis.Error('TimeZoneInvalidIdError', { cause });
             }
     
@@ -249,7 +253,7 @@ export class CustomTimeZone {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = new TimeZoneInvalidIdError();
+                const cause = new TimeZoneInvalidIdError(diplomatRuntime.internalConstructor);
                 throw new globalThis.Error('TimeZoneInvalidIdError', { cause });
             }
     
@@ -293,7 +297,7 @@ export class CustomTimeZone {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = new TimeZoneInvalidIdError();
+                const cause = new TimeZoneInvalidIdError(diplomatRuntime.internalConstructor);
                 throw new globalThis.Error('TimeZoneInvalidIdError', { cause });
             }
     

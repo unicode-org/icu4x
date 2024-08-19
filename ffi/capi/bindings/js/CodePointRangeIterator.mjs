@@ -20,7 +20,11 @@ export class CodePointRangeIterator {
     #selfEdge = [];
     #aEdge = [];
     
-    constructor(ptr, selfEdge, aEdge) {
+    constructor(symbol, ptr, selfEdge, aEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("CodePointRangeIterator is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         
         this.#aEdge = aEdge;
@@ -44,7 +48,7 @@ export class CodePointRangeIterator {
         const result = wasm.icu4x_CodePointRangeIterator_next_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {
-            return new CodePointRangeIteratorResult(diplomatReceive.buffer);
+            return new CodePointRangeIteratorResult(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
         }
         
         finally {

@@ -15,5 +15,4 @@ export class Decomposed {
 
     get second() : codepoint;
     
-
 }

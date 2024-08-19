@@ -24,7 +24,11 @@ export class LocaleFallbackerWithConfig {
     #selfEdge = [];
     #aEdge = [];
     
-    constructor(ptr, selfEdge, aEdge) {
+    constructor(symbol, ptr, selfEdge, aEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("LocaleFallbackerWithConfig is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         
         this.#aEdge = aEdge;
@@ -49,7 +53,7 @@ export class LocaleFallbackerWithConfig {
         const result = wasm.icu4x_LocaleFallbackerWithConfig_fallback_for_locale_mv1(this.ffiValue, locale.ffiValue);
     
         try {
-            return new LocaleFallbackIterator(result, [], aEdges);
+            return new LocaleFallbackIterator(diplomatRuntime.internalConstructor, result, [], aEdges);
         }
         
         finally {}

@@ -18,7 +18,11 @@ export class CodePointSetBuilder {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("CodePointSetBuilder is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
@@ -37,7 +41,7 @@ export class CodePointSetBuilder {
         const result = wasm.icu4x_CodePointSetBuilder_create_mv1();
     
         try {
-            return new CodePointSetBuilder(result, []);
+            return new CodePointSetBuilder(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}
@@ -47,7 +51,7 @@ export class CodePointSetBuilder {
         const result = wasm.icu4x_CodePointSetBuilder_build_mv1(this.ffiValue);
     
         try {
-            return new CodePointSetData(result, []);
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}

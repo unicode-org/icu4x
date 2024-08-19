@@ -32,6 +32,16 @@ export class LineBreakOptions {
     set jaZh(value) {
         this.#jaZh = value;
     }
+    constructor() {
+        if (arguments.length > 0 && arguments[0] === diplomatRuntime.internalConstructor) {
+            this.#fromFFI(...Array.prototype.slice.call(arguments, 1));
+        } else {
+            
+            this.#strictness = arguments[0];
+            this.#wordOption = arguments[1];
+            this.#jaZh = arguments[2];
+        }
+    }
 
     // Return this struct in FFI function friendly format.
     // Returns an array that can be expanded with spread syntax (...)
@@ -48,14 +58,12 @@ export class LineBreakOptions {
     // and passes it down to individual fields containing the borrow.
     // This method does not attempt to handle any dependencies between lifetimes, the caller
     // should handle this when constructing edge arrays.
-    _fromFFI(ptr) {
+    #fromFFI(ptr) {
         const strictnessDeref = diplomatRuntime.enumDiscriminant(wasm, ptr);
         this.#strictness = LineBreakStrictness[Array.from(LineBreakStrictness.values.keys())[strictnessDeref]];
         const wordOptionDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 4);
         this.#wordOption = LineBreakWordOption[Array.from(LineBreakWordOption.values.keys())[wordOptionDeref]];
         const jaZhDeref = (new Uint8Array(wasm.memory.buffer, ptr + 8, 1))[0] === 1;
         this.#jaZh = jaZhDeref;
-
-        return this;
     }
 }

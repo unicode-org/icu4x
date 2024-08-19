@@ -22,7 +22,11 @@ export class ScriptWithExtensionsBorrowed {
     #selfEdge = [];
     #aEdge = [];
     
-    constructor(ptr, selfEdge, aEdge) {
+    constructor(symbol, ptr, selfEdge, aEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("ScriptWithExtensionsBorrowed is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         
         this.#aEdge = aEdge;
@@ -57,7 +61,7 @@ export class ScriptWithExtensionsBorrowed {
         const result = wasm.icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_val_mv1(this.ffiValue, codePoint);
     
         try {
-            return new ScriptExtensionsSet(result, [], aEdges);
+            return new ScriptExtensionsSet(diplomatRuntime.internalConstructor, result, [], aEdges);
         }
         
         finally {}
@@ -77,7 +81,7 @@ export class ScriptWithExtensionsBorrowed {
         const result = wasm.icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_set_mv1(this.ffiValue, script);
     
         try {
-            return new CodePointSetData(result, []);
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}

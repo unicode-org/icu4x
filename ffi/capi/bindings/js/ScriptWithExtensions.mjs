@@ -23,7 +23,11 @@ export class ScriptWithExtensions {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("ScriptWithExtensions is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
@@ -48,7 +52,7 @@ export class ScriptWithExtensions {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new ScriptWithExtensions(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new ScriptWithExtensions(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -83,7 +87,7 @@ export class ScriptWithExtensions {
         const result = wasm.icu4x_ScriptWithExtensions_as_borrowed_mv1(this.ffiValue);
     
         try {
-            return new ScriptWithExtensionsBorrowed(result, [], aEdges);
+            return new ScriptWithExtensionsBorrowed(diplomatRuntime.internalConstructor, result, [], aEdges);
         }
         
         finally {}
@@ -96,7 +100,7 @@ export class ScriptWithExtensions {
         const result = wasm.icu4x_ScriptWithExtensions_iter_ranges_for_script_mv1(this.ffiValue, script);
     
         try {
-            return new CodePointRangeIterator(result, [], aEdges);
+            return new CodePointRangeIterator(diplomatRuntime.internalConstructor, result, [], aEdges);
         }
         
         finally {}

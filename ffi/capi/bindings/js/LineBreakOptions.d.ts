@@ -16,5 +16,5 @@ export class LineBreakOptions {
 
     get jaZh() : boolean;
     set jaZh(value: boolean); 
-
+    constructor(strictness: LineBreakStrictness, wordOption: LineBreakWordOption, jaZh: boolean);
 }

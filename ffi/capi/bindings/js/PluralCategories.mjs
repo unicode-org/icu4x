@@ -39,6 +39,13 @@ export class PluralCategories {
         return this.#other;
     }
     
+    constructor() {
+        if (arguments.length > 0 && arguments[0] === diplomatRuntime.internalConstructor) {
+            this.#fromFFI(...Array.prototype.slice.call(arguments, 1));
+        } else {
+            console.error("PluralCategories is an out struct and can only be created internally.");
+        }
+    }
 
     // Return this struct in FFI function friendly format.
     // Returns an array that can be expanded with spread syntax (...)
@@ -55,7 +62,7 @@ export class PluralCategories {
     // and passes it down to individual fields containing the borrow.
     // This method does not attempt to handle any dependencies between lifetimes, the caller
     // should handle this when constructing edge arrays.
-    _fromFFI(ptr) {
+    #fromFFI(ptr) {
         const zeroDeref = (new Uint8Array(wasm.memory.buffer, ptr, 1))[0] === 1;
         this.#zero = zeroDeref;
         const oneDeref = (new Uint8Array(wasm.memory.buffer, ptr + 1, 1))[0] === 1;
@@ -68,11 +75,5 @@ export class PluralCategories {
         this.#many = manyDeref;
         const otherDeref = (new Uint8Array(wasm.memory.buffer, ptr + 5, 1))[0] === 1;
         this.#other = otherDeref;
-
-        return this;
-    }
-    // This is an out struct. You need to call other methods to be able to get this struct.
-    constructor(ptr) {
-        this._fromFFI(ptr);
     }
 }

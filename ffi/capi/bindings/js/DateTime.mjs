@@ -28,7 +28,11 @@ export class DateTime {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("DateTime is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
@@ -53,7 +57,7 @@ export class DateTime {
                 const cause = CalendarError[Array.from(CalendarError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new globalThis.Error('CalendarError: ' + cause.value, { cause });
             }
-            return new DateTime(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new DateTime(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -75,7 +79,7 @@ export class DateTime {
                 const cause = CalendarError[Array.from(CalendarError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new globalThis.Error('CalendarError: ' + cause.value, { cause });
             }
-            return new DateTime(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new DateTime(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -91,7 +95,7 @@ export class DateTime {
         const result = wasm.icu4x_DateTime_from_date_and_time_mv1(date.ffiValue, time.ffiValue);
     
         try {
-            return new DateTime(result, []);
+            return new DateTime(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}
@@ -109,7 +113,7 @@ export class DateTime {
                 const cause = CalendarParseError[Array.from(CalendarParseError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new globalThis.Error('CalendarParseError: ' + cause.value, { cause });
             }
-            return new DateTime(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new DateTime(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -123,7 +127,7 @@ export class DateTime {
         const result = wasm.icu4x_DateTime_date_mv1(this.ffiValue);
     
         try {
-            return new Date(result, []);
+            return new Date(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}
@@ -133,7 +137,7 @@ export class DateTime {
         const result = wasm.icu4x_DateTime_time_mv1(this.ffiValue);
     
         try {
-            return new Time(result, []);
+            return new Time(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}
@@ -143,7 +147,7 @@ export class DateTime {
         const result = wasm.icu4x_DateTime_to_iso_mv1(this.ffiValue);
     
         try {
-            return new IsoDateTime(result, []);
+            return new IsoDateTime(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}
@@ -153,7 +157,7 @@ export class DateTime {
         const result = wasm.icu4x_DateTime_to_calendar_mv1(this.ffiValue, calendar.ffiValue);
     
         try {
-            return new DateTime(result, []);
+            return new DateTime(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}
@@ -245,7 +249,7 @@ export class DateTime {
         const result = wasm.icu4x_DateTime_week_of_year_mv1(diplomatReceive.buffer, this.ffiValue, calculator.ffiValue);
     
         try {
-            return new WeekOf(diplomatReceive.buffer);
+            return new WeekOf(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
         }
         
         finally {
@@ -335,7 +339,7 @@ export class DateTime {
         const result = wasm.icu4x_DateTime_calendar_mv1(this.ffiValue);
     
         try {
-            return new Calendar(result, []);
+            return new Calendar(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}

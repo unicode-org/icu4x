@@ -12,5 +12,4 @@ export class WeekOf {
 
     get unit() : WeekRelativeUnit;
     
-
 }

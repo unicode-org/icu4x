@@ -24,7 +24,11 @@ export class WeekCalculator {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("WeekCalculator is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
@@ -49,7 +53,7 @@ export class WeekCalculator {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new WeekCalculator(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new WeekCalculator(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -61,7 +65,7 @@ export class WeekCalculator {
         const result = wasm.icu4x_WeekCalculator_from_first_day_of_week_and_min_week_days_mv1(firstWeekday.ffiValue, minWeekDays);
     
         try {
-            return new WeekCalculator(result, []);
+            return new WeekCalculator(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}
@@ -93,7 +97,7 @@ export class WeekCalculator {
         const result = wasm.icu4x_WeekCalculator_weekend_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {
-            return new WeekendContainsDay()._fromFFI(diplomatReceive.buffer);
+            return new WeekendContainsDay(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
         }
         
         finally {

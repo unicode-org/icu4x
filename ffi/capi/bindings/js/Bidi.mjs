@@ -23,7 +23,11 @@ export class Bidi {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("Bidi is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
@@ -48,7 +52,7 @@ export class Bidi {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new Bidi(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new Bidi(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -65,7 +69,7 @@ export class Bidi {
         const result = wasm.icu4x_Bidi_for_text_valid_utf8_mv1(this.ffiValue, textSlice.ptr, textSlice.size, defaultLevel);
     
         try {
-            return new BidiInfo(result, [], textEdges);
+            return new BidiInfo(diplomatRuntime.internalConstructor, result, [], textEdges);
         }
         
         finally {
@@ -79,7 +83,7 @@ export class Bidi {
         const result = wasm.icu4x_Bidi_reorder_visual_mv1(this.ffiValue, levelsSlice.ptr, levelsSlice.size);
     
         try {
-            return new ReorderedIndexMap(result, []);
+            return new ReorderedIndexMap(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {

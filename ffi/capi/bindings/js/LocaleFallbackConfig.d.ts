@@ -11,5 +11,5 @@ export class LocaleFallbackConfig {
 
     get priority() : LocaleFallbackPriority;
     set priority(value: LocaleFallbackPriority); 
-
+    constructor(priority: LocaleFallbackPriority);
 }

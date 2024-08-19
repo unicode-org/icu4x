@@ -26,7 +26,11 @@ export class Date {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("Date is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
@@ -51,7 +55,7 @@ export class Date {
                 const cause = CalendarError[Array.from(CalendarError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new globalThis.Error('CalendarError: ' + cause.value, { cause });
             }
-            return new Date(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new Date(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -73,7 +77,7 @@ export class Date {
                 const cause = CalendarError[Array.from(CalendarError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new globalThis.Error('CalendarError: ' + cause.value, { cause });
             }
-            return new Date(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new Date(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -97,7 +101,7 @@ export class Date {
                 const cause = CalendarParseError[Array.from(CalendarParseError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new globalThis.Error('CalendarParseError: ' + cause.value, { cause });
             }
-            return new Date(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new Date(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -111,7 +115,7 @@ export class Date {
         const result = wasm.icu4x_Date_to_calendar_mv1(this.ffiValue, calendar.ffiValue);
     
         try {
-            return new Date(result, []);
+            return new Date(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}
@@ -121,7 +125,7 @@ export class Date {
         const result = wasm.icu4x_Date_to_iso_mv1(this.ffiValue);
     
         try {
-            return new IsoDate(result, []);
+            return new IsoDate(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}
@@ -173,7 +177,7 @@ export class Date {
         const result = wasm.icu4x_Date_week_of_year_mv1(diplomatReceive.buffer, this.ffiValue, calculator.ffiValue);
     
         try {
-            return new WeekOf(diplomatReceive.buffer);
+            return new WeekOf(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
         }
         
         finally {
@@ -263,7 +267,7 @@ export class Date {
         const result = wasm.icu4x_Date_calendar_mv1(this.ffiValue);
     
         try {
-            return new Calendar(result, []);
+            return new Calendar(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}

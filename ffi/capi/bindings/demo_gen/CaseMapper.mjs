@@ -75,13 +75,7 @@ export function titlecaseSegmentWithOnlyCaseData() {
                 ]
             ),
             (function (...args) {
-                let out = new TitlecaseOptions();
-                
-                out.leadingAdjustment = args[0];
-                
-                out.trailingCase = args[1];
-                
-                return out;
+                return new TitlecaseOptions(...args);
             }).apply(
                 null,
                 [

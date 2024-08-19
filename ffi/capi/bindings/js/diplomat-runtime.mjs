@@ -1,3 +1,6 @@
+/** For internal Diplomat use when constructing opaques or structs. */
+export const internalConstructor = Symbol("constructor");
+
 export function readString8(wasm, ptr, len) {
     const buf = new Uint8Array(wasm.memory.buffer, ptr, len);
     return (new TextDecoder("utf-8")).decode(buf)

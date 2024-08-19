@@ -30,6 +30,13 @@ export class CodePointRangeIteratorResult {
         return this.#done;
     }
     
+    constructor() {
+        if (arguments.length > 0 && arguments[0] === diplomatRuntime.internalConstructor) {
+            this.#fromFFI(...Array.prototype.slice.call(arguments, 1));
+        } else {
+            console.error("CodePointRangeIteratorResult is an out struct and can only be created internally.");
+        }
+    }
 
     // Return this struct in FFI function friendly format.
     // Returns an array that can be expanded with spread syntax (...)
@@ -46,18 +53,12 @@ export class CodePointRangeIteratorResult {
     // and passes it down to individual fields containing the borrow.
     // This method does not attempt to handle any dependencies between lifetimes, the caller
     // should handle this when constructing edge arrays.
-    _fromFFI(ptr) {
+    #fromFFI(ptr) {
         const startDeref = (new Uint32Array(wasm.memory.buffer, ptr, 1))[0];
         this.#start = startDeref;
         const endDeref = (new Uint32Array(wasm.memory.buffer, ptr + 4, 1))[0];
         this.#end = endDeref;
         const doneDeref = (new Uint8Array(wasm.memory.buffer, ptr + 8, 1))[0] === 1;
         this.#done = doneDeref;
-
-        return this;
-    }
-    // This is an out struct. You need to call other methods to be able to get this struct.
-    constructor(ptr) {
-        this._fromFFI(ptr);
     }
 }

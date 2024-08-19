@@ -30,6 +30,16 @@ export class IsoTimeZoneOptions {
     set seconds(value) {
         this.#seconds = value;
     }
+    constructor() {
+        if (arguments.length > 0 && arguments[0] === diplomatRuntime.internalConstructor) {
+            this.#fromFFI(...Array.prototype.slice.call(arguments, 1));
+        } else {
+            
+            this.#format = arguments[0];
+            this.#minutes = arguments[1];
+            this.#seconds = arguments[2];
+        }
+    }
 
     // Return this struct in FFI function friendly format.
     // Returns an array that can be expanded with spread syntax (...)
@@ -46,14 +56,12 @@ export class IsoTimeZoneOptions {
     // and passes it down to individual fields containing the borrow.
     // This method does not attempt to handle any dependencies between lifetimes, the caller
     // should handle this when constructing edge arrays.
-    _fromFFI(ptr) {
+    #fromFFI(ptr) {
         const formatDeref = diplomatRuntime.enumDiscriminant(wasm, ptr);
         this.#format = IsoTimeZoneFormat[Array.from(IsoTimeZoneFormat.values.keys())[formatDeref]];
         const minutesDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 4);
         this.#minutes = IsoTimeZoneMinuteDisplay[Array.from(IsoTimeZoneMinuteDisplay.values.keys())[minutesDeref]];
         const secondsDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 8);
         this.#seconds = IsoTimeZoneSecondDisplay[Array.from(IsoTimeZoneSecondDisplay.values.keys())[secondsDeref]];
-
-        return this;
     }
 }

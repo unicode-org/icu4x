@@ -33,5 +33,5 @@ export class CollatorOptions {
 
     get backwardSecondLevel() : CollatorBackwardSecondLevel;
     set backwardSecondLevel(value: CollatorBackwardSecondLevel); 
-
+    constructor(strength: CollatorStrength, alternateHandling: CollatorAlternateHandling, caseFirst: CollatorCaseFirst, maxVariable: CollatorMaxVariable, caseLevel: CollatorCaseLevel, numeric: CollatorNumeric, backwardSecondLevel: CollatorBackwardSecondLevel);
 }

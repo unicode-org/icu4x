@@ -21,7 +21,11 @@ export class Time {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("Time is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
@@ -46,7 +50,7 @@ export class Time {
                 const cause = CalendarError[Array.from(CalendarError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new globalThis.Error('CalendarError: ' + cause.value, { cause });
             }
-            return new Time(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new Time(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -66,7 +70,7 @@ export class Time {
                 const cause = CalendarParseError[Array.from(CalendarParseError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new globalThis.Error('CalendarParseError: ' + cause.value, { cause });
             }
-            return new Time(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new Time(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -86,7 +90,7 @@ export class Time {
                 const cause = CalendarError[Array.from(CalendarError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new globalThis.Error('CalendarError: ' + cause.value, { cause });
             }
-            return new Time(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new Time(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {

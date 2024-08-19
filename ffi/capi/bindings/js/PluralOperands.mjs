@@ -19,7 +19,11 @@ export class PluralOperands {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("PluralOperands is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
@@ -46,7 +50,7 @@ export class PluralOperands {
                 const cause = FixedDecimalParseError[Array.from(FixedDecimalParseError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new globalThis.Error('FixedDecimalParseError: ' + cause.value, { cause });
             }
-            return new PluralOperands(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new PluralOperands(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -60,7 +64,7 @@ export class PluralOperands {
         const result = wasm.icu4x_PluralOperands_from_fixed_decimal_mv1(x.ffiValue);
     
         try {
-            return new PluralOperands(result, []);
+            return new PluralOperands(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}

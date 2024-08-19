@@ -21,7 +21,11 @@ export class UnitsConverter {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("UnitsConverter is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
@@ -50,7 +54,7 @@ export class UnitsConverter {
         const result = wasm.icu4x_UnitsConverter_clone_mv1(this.ffiValue);
     
         try {
-            return new UnitsConverter(result, []);
+            return new UnitsConverter(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}

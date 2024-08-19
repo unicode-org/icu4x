@@ -69,6 +69,20 @@ export class CollatorOptions {
     set backwardSecondLevel(value) {
         this.#backwardSecondLevel = value;
     }
+    constructor() {
+        if (arguments.length > 0 && arguments[0] === diplomatRuntime.internalConstructor) {
+            this.#fromFFI(...Array.prototype.slice.call(arguments, 1));
+        } else {
+            
+            this.#strength = arguments[0];
+            this.#alternateHandling = arguments[1];
+            this.#caseFirst = arguments[2];
+            this.#maxVariable = arguments[3];
+            this.#caseLevel = arguments[4];
+            this.#numeric = arguments[5];
+            this.#backwardSecondLevel = arguments[6];
+        }
+    }
 
     // Return this struct in FFI function friendly format.
     // Returns an array that can be expanded with spread syntax (...)
@@ -85,7 +99,7 @@ export class CollatorOptions {
     // and passes it down to individual fields containing the borrow.
     // This method does not attempt to handle any dependencies between lifetimes, the caller
     // should handle this when constructing edge arrays.
-    _fromFFI(ptr) {
+    #fromFFI(ptr) {
         const strengthDeref = diplomatRuntime.enumDiscriminant(wasm, ptr);
         this.#strength = CollatorStrength[Array.from(CollatorStrength.values.keys())[strengthDeref]];
         const alternateHandlingDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 4);
@@ -100,7 +114,5 @@ export class CollatorOptions {
         this.#numeric = CollatorNumeric[Array.from(CollatorNumeric.values.keys())[numericDeref]];
         const backwardSecondLevelDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 24);
         this.#backwardSecondLevel = CollatorBackwardSecondLevel[Array.from(CollatorBackwardSecondLevel.values.keys())[backwardSecondLevelDeref]];
-
-        return this;
     }
 }

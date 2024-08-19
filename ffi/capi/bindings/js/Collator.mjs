@@ -22,7 +22,11 @@ export class Collator {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("Collator is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
@@ -49,7 +53,7 @@ export class Collator {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new Collator(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new Collator(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -83,7 +87,7 @@ export class Collator {
         const result = wasm.icu4x_Collator_resolved_options_v1_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {
-            return new CollatorResolvedOptions(diplomatReceive.buffer);
+            return new CollatorResolvedOptions(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
         }
         
         finally {

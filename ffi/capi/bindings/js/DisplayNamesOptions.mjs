@@ -33,6 +33,16 @@ export class DisplayNamesOptions {
     set languageDisplay(value) {
         this.#languageDisplay = value;
     }
+    constructor() {
+        if (arguments.length > 0 && arguments[0] === diplomatRuntime.internalConstructor) {
+            this.#fromFFI(...Array.prototype.slice.call(arguments, 1));
+        } else {
+            
+            this.#style = arguments[0];
+            this.#fallback = arguments[1];
+            this.#languageDisplay = arguments[2];
+        }
+    }
 
     // Return this struct in FFI function friendly format.
     // Returns an array that can be expanded with spread syntax (...)
@@ -49,14 +59,12 @@ export class DisplayNamesOptions {
     // and passes it down to individual fields containing the borrow.
     // This method does not attempt to handle any dependencies between lifetimes, the caller
     // should handle this when constructing edge arrays.
-    _fromFFI(ptr) {
+    #fromFFI(ptr) {
         const styleDeref = diplomatRuntime.enumDiscriminant(wasm, ptr);
         this.#style = DisplayNamesStyle[Array.from(DisplayNamesStyle.values.keys())[styleDeref]];
         const fallbackDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 4);
         this.#fallback = DisplayNamesFallback[Array.from(DisplayNamesFallback.values.keys())[fallbackDeref]];
         const languageDisplayDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 8);
         this.#languageDisplay = LanguageDisplay[Array.from(LanguageDisplay.values.keys())[languageDisplayDeref]];
-
-        return this;
     }
 }

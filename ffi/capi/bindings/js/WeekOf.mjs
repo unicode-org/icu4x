@@ -19,6 +19,13 @@ export class WeekOf {
         return this.#unit;
     }
     
+    constructor() {
+        if (arguments.length > 0 && arguments[0] === diplomatRuntime.internalConstructor) {
+            this.#fromFFI(...Array.prototype.slice.call(arguments, 1));
+        } else {
+            console.error("WeekOf is an out struct and can only be created internally.");
+        }
+    }
 
     // Return this struct in FFI function friendly format.
     // Returns an array that can be expanded with spread syntax (...)
@@ -27,7 +34,7 @@ export class WeekOf {
         functionCleanupArena,
         appendArrayMap
     ) {
-        return [this.#week, this.#unit.ffiValue]
+        return [this.#week,/* Padding for week */ 0, 0 /* End Padding */, this.#unit.ffiValue]
     }
 
     // This struct contains borrowed fields, so this takes in a list of
@@ -35,16 +42,10 @@ export class WeekOf {
     // and passes it down to individual fields containing the borrow.
     // This method does not attempt to handle any dependencies between lifetimes, the caller
     // should handle this when constructing edge arrays.
-    _fromFFI(ptr) {
+    #fromFFI(ptr) {
         const weekDeref = (new Uint16Array(wasm.memory.buffer, ptr, 1))[0];
         this.#week = weekDeref;
         const unitDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 4);
         this.#unit = WeekRelativeUnit[Array.from(WeekRelativeUnit.values.keys())[unitDeref]];
-
-        return this;
-    }
-    // This is an out struct. You need to call other methods to be able to get this struct.
-    constructor(ptr) {
-        this._fromFFI(ptr);
     }
 }

@@ -26,7 +26,11 @@ export class UnitsConverterFactory {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("UnitsConverterFactory is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
@@ -51,7 +55,7 @@ export class UnitsConverterFactory {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new UnitsConverterFactory(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new UnitsConverterFactory(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -63,7 +67,7 @@ export class UnitsConverterFactory {
         const result = wasm.icu4x_UnitsConverterFactory_converter_mv1(this.ffiValue, from.ffiValue, to.ffiValue);
     
         try {
-            return result === 0 ? null : new UnitsConverter(result, []);
+            return result === 0 ? null : new UnitsConverter(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}
@@ -76,7 +80,7 @@ export class UnitsConverterFactory {
         const result = wasm.icu4x_UnitsConverterFactory_parser_mv1(this.ffiValue);
     
         try {
-            return new MeasureUnitParser(result, [], aEdges);
+            return new MeasureUnitParser(diplomatRuntime.internalConstructor, result, [], aEdges);
         }
         
         finally {}

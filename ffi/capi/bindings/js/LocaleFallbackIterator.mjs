@@ -21,7 +21,11 @@ export class LocaleFallbackIterator {
     #selfEdge = [];
     #aEdge = [];
     
-    constructor(ptr, selfEdge, aEdge) {
+    constructor(symbol, ptr, selfEdge, aEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("LocaleFallbackIterator is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         
         this.#aEdge = aEdge;
@@ -43,7 +47,7 @@ export class LocaleFallbackIterator {
         const result = wasm.icu4x_LocaleFallbackIterator_next_mv1(this.ffiValue);
     
         try {
-            return result === 0 ? null : new Locale(result, []);
+            return result === 0 ? null : new Locale(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}

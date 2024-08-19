@@ -24,7 +24,11 @@ export class CanonicalDecomposition {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("CanonicalDecomposition is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
@@ -49,7 +53,7 @@ export class CanonicalDecomposition {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new CanonicalDecomposition(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new CanonicalDecomposition(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -63,7 +67,7 @@ export class CanonicalDecomposition {
         const result = wasm.icu4x_CanonicalDecomposition_decompose_mv1(diplomatReceive.buffer, this.ffiValue, c);
     
         try {
-            return new Decomposed(diplomatReceive.buffer);
+            return new Decomposed(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
         }
         
         finally {

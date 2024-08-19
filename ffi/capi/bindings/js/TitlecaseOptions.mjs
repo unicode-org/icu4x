@@ -24,6 +24,15 @@ export class TitlecaseOptions {
     set trailingCase(value) {
         this.#trailingCase = value;
     }
+    constructor() {
+        if (arguments.length > 0 && arguments[0] === diplomatRuntime.internalConstructor) {
+            this.#fromFFI(...Array.prototype.slice.call(arguments, 1));
+        } else {
+            
+            this.#leadingAdjustment = arguments[0];
+            this.#trailingCase = arguments[1];
+        }
+    }
 
     // Return this struct in FFI function friendly format.
     // Returns an array that can be expanded with spread syntax (...)
@@ -40,13 +49,11 @@ export class TitlecaseOptions {
     // and passes it down to individual fields containing the borrow.
     // This method does not attempt to handle any dependencies between lifetimes, the caller
     // should handle this when constructing edge arrays.
-    _fromFFI(ptr) {
+    #fromFFI(ptr) {
         const leadingAdjustmentDeref = diplomatRuntime.enumDiscriminant(wasm, ptr);
         this.#leadingAdjustment = LeadingAdjustment[Array.from(LeadingAdjustment.values.keys())[leadingAdjustmentDeref]];
         const trailingCaseDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 4);
         this.#trailingCase = TrailingCase[Array.from(TrailingCase.values.keys())[trailingCaseDeref]];
-
-        return this;
     }
 
     static defaultOptions() {
@@ -55,7 +62,7 @@ export class TitlecaseOptions {
         const result = wasm.icu4x_TitlecaseOptionsV1_default_mv1(diplomatReceive.buffer);
     
         try {
-            return new TitlecaseOptions()._fromFFI(diplomatReceive.buffer);
+            return new TitlecaseOptions(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
         }
         
         finally {

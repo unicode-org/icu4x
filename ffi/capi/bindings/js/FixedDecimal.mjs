@@ -23,7 +23,11 @@ export class FixedDecimal {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("FixedDecimal is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
@@ -42,7 +46,7 @@ export class FixedDecimal {
         const result = wasm.icu4x_FixedDecimal_from_int32_mv1(v);
     
         try {
-            return new FixedDecimal(result, []);
+            return new FixedDecimal(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}
@@ -52,7 +56,7 @@ export class FixedDecimal {
         const result = wasm.icu4x_FixedDecimal_from_int64_mv1(v);
     
         try {
-            return new FixedDecimal(result, []);
+            return new FixedDecimal(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}
@@ -65,10 +69,10 @@ export class FixedDecimal {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = new FixedDecimalLimitError();
+                const cause = new FixedDecimalLimitError(diplomatRuntime.internalConstructor);
                 throw new globalThis.Error('FixedDecimalLimitError', { cause });
             }
-            return new FixedDecimal(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new FixedDecimal(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -83,10 +87,10 @@ export class FixedDecimal {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = new FixedDecimalLimitError();
+                const cause = new FixedDecimalLimitError(diplomatRuntime.internalConstructor);
                 throw new globalThis.Error('FixedDecimalLimitError', { cause });
             }
-            return new FixedDecimal(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new FixedDecimal(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -101,10 +105,10 @@ export class FixedDecimal {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = new FixedDecimalLimitError();
+                const cause = new FixedDecimalLimitError(diplomatRuntime.internalConstructor);
                 throw new globalThis.Error('FixedDecimalLimitError', { cause });
             }
-            return new FixedDecimal(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new FixedDecimal(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -124,7 +128,7 @@ export class FixedDecimal {
                 const cause = FixedDecimalParseError[Array.from(FixedDecimalParseError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new globalThis.Error('FixedDecimalParseError: ' + cause.value, { cause });
             }
-            return new FixedDecimal(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new FixedDecimal(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {

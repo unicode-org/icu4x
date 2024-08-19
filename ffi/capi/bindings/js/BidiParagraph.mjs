@@ -19,7 +19,11 @@ export class BidiParagraph {
     #selfEdge = [];
     #infoEdge = [];
     
-    constructor(ptr, selfEdge, infoEdge) {
+    constructor(symbol, ptr, selfEdge, infoEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("BidiParagraph is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         
         this.#infoEdge = infoEdge;

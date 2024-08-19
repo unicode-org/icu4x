@@ -33,5 +33,4 @@ export class CollatorResolvedOptions {
 
     get backwardSecondLevel() : CollatorBackwardSecondLevel;
     
-
 }

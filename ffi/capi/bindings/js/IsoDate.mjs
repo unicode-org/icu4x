@@ -26,7 +26,11 @@ export class IsoDate {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("IsoDate is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
@@ -51,7 +55,7 @@ export class IsoDate {
                 const cause = CalendarError[Array.from(CalendarError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new globalThis.Error('CalendarError: ' + cause.value, { cause });
             }
-            return new IsoDate(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new IsoDate(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -71,7 +75,7 @@ export class IsoDate {
                 const cause = CalendarParseError[Array.from(CalendarParseError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new globalThis.Error('CalendarParseError: ' + cause.value, { cause });
             }
-            return new IsoDate(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new IsoDate(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -85,7 +89,7 @@ export class IsoDate {
         const result = wasm.icu4x_IsoDate_unix_epoch_mv1();
     
         try {
-            return new IsoDate(result, []);
+            return new IsoDate(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}
@@ -95,7 +99,7 @@ export class IsoDate {
         const result = wasm.icu4x_IsoDate_to_calendar_mv1(this.ffiValue, calendar.ffiValue);
     
         try {
-            return new Date(result, []);
+            return new Date(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}
@@ -105,7 +109,7 @@ export class IsoDate {
         const result = wasm.icu4x_IsoDate_to_any_mv1(this.ffiValue);
     
         try {
-            return new Date(result, []);
+            return new Date(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}
@@ -157,7 +161,7 @@ export class IsoDate {
         const result = wasm.icu4x_IsoDate_week_of_year_mv1(diplomatReceive.buffer, this.ffiValue, calculator.ffiValue);
     
         try {
-            return new WeekOf(diplomatReceive.buffer);
+            return new WeekOf(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
         }
         
         finally {

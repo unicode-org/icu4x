@@ -23,7 +23,11 @@ export class GraphemeClusterSegmenter {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("GraphemeClusterSegmenter is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
@@ -48,7 +52,7 @@ export class GraphemeClusterSegmenter {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new GraphemeClusterSegmenter(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new GraphemeClusterSegmenter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -65,7 +69,7 @@ export class GraphemeClusterSegmenter {
         const result = wasm.icu4x_GraphemeClusterSegmenter_segment_utf16_mv1(this.ffiValue, inputSlice.ptr, inputSlice.size);
     
         try {
-            return new GraphemeClusterBreakIteratorUtf16(result, [], aEdges);
+            return new GraphemeClusterBreakIteratorUtf16(diplomatRuntime.internalConstructor, result, [], aEdges);
         }
         
         finally {

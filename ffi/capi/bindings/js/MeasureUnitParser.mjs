@@ -22,7 +22,11 @@ export class MeasureUnitParser {
     #selfEdge = [];
     #aEdge = [];
     
-    constructor(ptr, selfEdge, aEdge) {
+    constructor(symbol, ptr, selfEdge, aEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("MeasureUnitParser is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         
         this.#aEdge = aEdge;
@@ -46,7 +50,7 @@ export class MeasureUnitParser {
         const result = wasm.icu4x_MeasureUnitParser_parse_mv1(this.ffiValue, unitIdSlice.ptr, unitIdSlice.size);
     
         try {
-            return result === 0 ? null : new MeasureUnit(result, []);
+            return result === 0 ? null : new MeasureUnit(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {

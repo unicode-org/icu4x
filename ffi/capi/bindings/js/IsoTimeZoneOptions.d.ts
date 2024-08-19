@@ -14,5 +14,5 @@ export class IsoTimeZoneOptions {
 
     get seconds() : IsoTimeZoneSecondDisplay;
     set seconds(value: IsoTimeZoneSecondDisplay); 
-
+    constructor(format: IsoTimeZoneFormat, minutes: IsoTimeZoneMinuteDisplay, seconds: IsoTimeZoneSecondDisplay);
 }

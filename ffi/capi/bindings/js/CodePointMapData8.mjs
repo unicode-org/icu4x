@@ -29,7 +29,11 @@ export class CodePointMapData8 {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("CodePointMapData8 is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
@@ -71,7 +75,7 @@ export class CodePointMapData8 {
         const result = wasm.icu4x_CodePointMapData8_iter_ranges_for_value_mv1(this.ffiValue, value);
     
         try {
-            return new CodePointRangeIterator(result, [], aEdges);
+            return new CodePointRangeIterator(diplomatRuntime.internalConstructor, result, [], aEdges);
         }
         
         finally {}
@@ -84,7 +88,7 @@ export class CodePointMapData8 {
         const result = wasm.icu4x_CodePointMapData8_iter_ranges_for_value_complemented_mv1(this.ffiValue, value);
     
         try {
-            return new CodePointRangeIterator(result, [], aEdges);
+            return new CodePointRangeIterator(diplomatRuntime.internalConstructor, result, [], aEdges);
         }
         
         finally {}
@@ -97,7 +101,7 @@ export class CodePointMapData8 {
         const result = wasm.icu4x_CodePointMapData8_iter_ranges_for_mask_mv1(this.ffiValue, mask);
     
         try {
-            return new CodePointRangeIterator(result, [], aEdges);
+            return new CodePointRangeIterator(diplomatRuntime.internalConstructor, result, [], aEdges);
         }
         
         finally {}
@@ -107,7 +111,7 @@ export class CodePointMapData8 {
         const result = wasm.icu4x_CodePointMapData8_get_set_for_value_mv1(this.ffiValue, value);
     
         try {
-            return new CodePointSetData(result, []);
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}
@@ -123,7 +127,7 @@ export class CodePointMapData8 {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new CodePointMapData8(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new CodePointMapData8(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -141,7 +145,7 @@ export class CodePointMapData8 {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new CodePointMapData8(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new CodePointMapData8(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -159,7 +163,7 @@ export class CodePointMapData8 {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new CodePointMapData8(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new CodePointMapData8(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -177,7 +181,7 @@ export class CodePointMapData8 {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new CodePointMapData8(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new CodePointMapData8(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -195,7 +199,7 @@ export class CodePointMapData8 {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new CodePointMapData8(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new CodePointMapData8(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -213,7 +217,7 @@ export class CodePointMapData8 {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new CodePointMapData8(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new CodePointMapData8(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -231,7 +235,7 @@ export class CodePointMapData8 {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new CodePointMapData8(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new CodePointMapData8(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -249,7 +253,7 @@ export class CodePointMapData8 {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new CodePointMapData8(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new CodePointMapData8(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -267,7 +271,7 @@ export class CodePointMapData8 {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new CodePointMapData8(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new CodePointMapData8(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -285,7 +289,7 @@ export class CodePointMapData8 {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new CodePointMapData8(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new CodePointMapData8(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {

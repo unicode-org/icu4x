@@ -17,5 +17,5 @@ export class DisplayNamesOptions {
 
     get languageDisplay() : LanguageDisplay;
     set languageDisplay(value: LanguageDisplay); 
-
+    constructor(style: DisplayNamesStyle, fallback: DisplayNamesFallback, languageDisplay: LanguageDisplay);
 }

@@ -23,7 +23,11 @@ export class LocaleFallbacker {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("LocaleFallbacker is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
@@ -48,7 +52,7 @@ export class LocaleFallbacker {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new LocaleFallbacker(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new LocaleFallbacker(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -60,7 +64,7 @@ export class LocaleFallbacker {
         const result = wasm.icu4x_LocaleFallbacker_without_data_mv1();
     
         try {
-            return new LocaleFallbacker(result, []);
+            return new LocaleFallbacker(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}
@@ -75,7 +79,7 @@ export class LocaleFallbacker {
         const result = wasm.icu4x_LocaleFallbacker_for_config_mv1(this.ffiValue, ...config._intoFFI(functionCleanupArena, {}));
     
         try {
-            return new LocaleFallbackerWithConfig(result, [], aEdges);
+            return new LocaleFallbackerWithConfig(diplomatRuntime.internalConstructor, result, [], aEdges);
         }
         
         finally {

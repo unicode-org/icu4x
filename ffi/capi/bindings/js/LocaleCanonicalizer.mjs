@@ -23,7 +23,11 @@ export class LocaleCanonicalizer {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("LocaleCanonicalizer is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
@@ -48,7 +52,7 @@ export class LocaleCanonicalizer {
                 const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)) return Error[i[0]]; } return null;})();
                 throw new globalThis.Error('Error: ' + cause.value, { cause });
             }
-            return new LocaleCanonicalizer(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new LocaleCanonicalizer(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -66,7 +70,7 @@ export class LocaleCanonicalizer {
                 const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)) return Error[i[0]]; } return null;})();
                 throw new globalThis.Error('Error: ' + cause.value, { cause });
             }
-            return new LocaleCanonicalizer(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new LocaleCanonicalizer(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {

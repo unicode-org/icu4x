@@ -20,5 +20,4 @@ export class CodePointRangeIteratorResult {
 
     get done() : boolean;
     
-
 }

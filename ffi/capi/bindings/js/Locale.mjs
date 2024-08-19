@@ -20,7 +20,11 @@ export class Locale {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("Locale is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
@@ -47,7 +51,7 @@ export class Locale {
                 const cause = LocaleParseError[Array.from(LocaleParseError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new globalThis.Error('LocaleParseError: ' + cause.value, { cause });
             }
-            return new Locale(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new Locale(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -61,7 +65,7 @@ export class Locale {
         const result = wasm.icu4x_Locale_und_mv1();
     
         try {
-            return new Locale(result, []);
+            return new Locale(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}
@@ -71,7 +75,7 @@ export class Locale {
         const result = wasm.icu4x_Locale_clone_mv1(this.ffiValue);
     
         try {
-            return new Locale(result, []);
+            return new Locale(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}

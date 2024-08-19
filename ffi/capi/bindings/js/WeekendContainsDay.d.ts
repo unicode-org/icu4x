@@ -28,5 +28,5 @@ export class WeekendContainsDay {
 
     get sunday() : boolean;
     set sunday(value: boolean); 
-
+    constructor(monday: boolean, tuesday: boolean, wednesday: boolean, thursday: boolean, friday: boolean, saturday: boolean, sunday: boolean);
 }

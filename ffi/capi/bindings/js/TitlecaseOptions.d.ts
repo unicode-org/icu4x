@@ -13,7 +13,7 @@ export class TitlecaseOptions {
 
     get trailingCase() : TrailingCase;
     set trailingCase(value: TrailingCase); 
-
+    constructor(leadingAdjustment: LeadingAdjustment, trailingCase: TrailingCase);
 
     static defaultOptions(): TitlecaseOptions;
 }

@@ -20,5 +20,4 @@ export class PluralCategories {
 
     get other() : boolean;
     
-
 }

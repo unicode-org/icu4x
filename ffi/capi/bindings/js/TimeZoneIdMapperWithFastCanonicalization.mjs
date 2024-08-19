@@ -25,7 +25,11 @@ export class TimeZoneIdMapperWithFastCanonicalization {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("TimeZoneIdMapperWithFastCanonicalization is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
@@ -50,7 +54,7 @@ export class TimeZoneIdMapperWithFastCanonicalization {
                 const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new TimeZoneIdMapperWithFastCanonicalization(diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new TimeZoneIdMapperWithFastCanonicalization(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -69,7 +73,7 @@ export class TimeZoneIdMapperWithFastCanonicalization {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = new TimeZoneInvalidIdError();
+                const cause = new TimeZoneInvalidIdError(diplomatRuntime.internalConstructor);
                 throw new globalThis.Error('TimeZoneInvalidIdError', { cause });
             }
             return write.readString8();
@@ -95,7 +99,7 @@ export class TimeZoneIdMapperWithFastCanonicalization {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = new TimeZoneInvalidIdError();
+                const cause = new TimeZoneInvalidIdError(diplomatRuntime.internalConstructor);
                 throw new globalThis.Error('TimeZoneInvalidIdError', { cause });
             }
             return write.readString8();

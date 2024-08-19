@@ -64,6 +64,20 @@ export class WeekendContainsDay {
     set sunday(value) {
         this.#sunday = value;
     }
+    constructor() {
+        if (arguments.length > 0 && arguments[0] === diplomatRuntime.internalConstructor) {
+            this.#fromFFI(...Array.prototype.slice.call(arguments, 1));
+        } else {
+            
+            this.#monday = arguments[0];
+            this.#tuesday = arguments[1];
+            this.#wednesday = arguments[2];
+            this.#thursday = arguments[3];
+            this.#friday = arguments[4];
+            this.#saturday = arguments[5];
+            this.#sunday = arguments[6];
+        }
+    }
 
     // Return this struct in FFI function friendly format.
     // Returns an array that can be expanded with spread syntax (...)
@@ -80,7 +94,7 @@ export class WeekendContainsDay {
     // and passes it down to individual fields containing the borrow.
     // This method does not attempt to handle any dependencies between lifetimes, the caller
     // should handle this when constructing edge arrays.
-    _fromFFI(ptr) {
+    #fromFFI(ptr) {
         const mondayDeref = (new Uint8Array(wasm.memory.buffer, ptr, 1))[0] === 1;
         this.#monday = mondayDeref;
         const tuesdayDeref = (new Uint8Array(wasm.memory.buffer, ptr + 1, 1))[0] === 1;
@@ -95,7 +109,5 @@ export class WeekendContainsDay {
         this.#saturday = saturdayDeref;
         const sundayDeref = (new Uint8Array(wasm.memory.buffer, ptr + 6, 1))[0] === 1;
         this.#sunday = sundayDeref;
-
-        return this;
     }
 }

@@ -21,7 +21,11 @@ export class BidiInfo {
     #selfEdge = [];
     #textEdge = [];
     
-    constructor(ptr, selfEdge, textEdge) {
+    constructor(symbol, ptr, selfEdge, textEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("BidiInfo is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         
         this.#textEdge = textEdge;
@@ -56,7 +60,7 @@ export class BidiInfo {
         const result = wasm.icu4x_BidiInfo_paragraph_at_mv1(this.ffiValue, n);
     
         try {
-            return result === 0 ? null : new BidiParagraph(result, [], textEdges);
+            return result === 0 ? null : new BidiParagraph(diplomatRuntime.internalConstructor, result, [], textEdges);
         }
         
         finally {}

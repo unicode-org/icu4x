@@ -17,6 +17,14 @@ export class LocaleFallbackConfig {
     set priority(value) {
         this.#priority = value;
     }
+    constructor() {
+        if (arguments.length > 0 && arguments[0] === diplomatRuntime.internalConstructor) {
+            this.#fromFFI(...Array.prototype.slice.call(arguments, 1));
+        } else {
+            
+            this.#priority = arguments[0];
+        }
+    }
 
     // Return this struct in FFI function friendly format.
     // Returns an array that can be expanded with spread syntax (...)
@@ -33,10 +41,8 @@ export class LocaleFallbackConfig {
     // and passes it down to individual fields containing the borrow.
     // This method does not attempt to handle any dependencies between lifetimes, the caller
     // should handle this when constructing edge arrays.
-    _fromFFI(ptr) {
+    #fromFFI(ptr) {
         const priorityDeref = diplomatRuntime.enumDiscriminant(wasm, ptr);
         this.#priority = LocaleFallbackPriority[Array.from(LocaleFallbackPriority.values.keys())[priorityDeref]];
-
-        return this;
     }
 }
