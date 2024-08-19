@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use std::fmt::Debug;
+use ule::ULE;
 use zerovec::*;
 
 #[make_ule(StructULE)]
@@ -39,14 +40,13 @@ enum Enum {
     F = 5,
 }
 
-#[make_ule(OutOfOrderEnumULE)]
+#[make_ule(OutOfOrderMissingZeroEnumULE)]
 #[repr(u8)]
 #[derive(Copy, Clone, PartialEq, Eq, Ord, PartialOrd, Debug)]
 #[allow(unused)]
-enum OutOfOrderEnum {
-    A = 0,
-    B = 1,
+enum OutOfOrderMissingZeroEnum {
     E = 3,
+    B = 1,
     FooBar = 4,
     D = 2,
     F = 5,
@@ -79,6 +79,22 @@ fn main() {
     test_zerovec(TEST_SLICE_STRUCT);
     test_zerovec(TEST_SLICE_TUPLESTRUCT);
     test_zerovec(TEST_SLICE_ENUM);
+
+    assert!(matches!(EnumULE::parse_byte_slice(&[0]), Ok(_)));
+    assert!(matches!(EnumULE::parse_byte_slice(&[1]), Ok(_)));
+    assert!(matches!(EnumULE::parse_byte_slice(&[6]), Err(_)));
+    assert!(matches!(
+        OutOfOrderMissingZeroEnumULE::parse_byte_slice(&[0]),
+        Err(_)
+    ));
+    assert!(matches!(
+        OutOfOrderMissingZeroEnumULE::parse_byte_slice(&[1]),
+        Ok(_)
+    ));
+    assert!(matches!(
+        OutOfOrderMissingZeroEnumULE::parse_byte_slice(&[6]),
+        Err(_)
+    ));
 }
 
 const TEST_SLICE_STRUCT: &[Struct] = &[
