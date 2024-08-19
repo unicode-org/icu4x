@@ -6,30 +6,58 @@
   },
   "past": {
     "zero": null,
-    "one": {
-      "pattern": "il y a  trim.",
-      "index": 7
-    },
+    "one": [
+      {
+        "Literal": "il y a "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " trim."
+      }
+    ],
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": "il y a  trim.",
-      "index": 7
-    }
+    "other": [
+      {
+        "Literal": "il y a "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " trim."
+      }
+    ]
   },
   "future": {
     "zero": null,
-    "one": {
-      "pattern": "dans  trim.",
-      "index": 5
-    },
+    "one": [
+      {
+        "Literal": "dans "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " trim."
+      }
+    ],
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": "dans  trim.",
-      "index": 5
-    }
+    "other": [
+      {
+        "Literal": "dans "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " trim."
+      }
+    ]
   }
 }

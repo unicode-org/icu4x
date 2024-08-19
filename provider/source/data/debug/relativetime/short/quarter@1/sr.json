@@ -6,36 +6,78 @@
   },
   "past": {
     "zero": null,
-    "one": {
-      "pattern": "пре  кв.",
-      "index": 7
-    },
+    "one": [
+      {
+        "Literal": "пре "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " кв."
+      }
+    ],
     "two": null,
-    "few": {
-      "pattern": "пре  кв.",
-      "index": 7
-    },
+    "few": [
+      {
+        "Literal": "пре "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " кв."
+      }
+    ],
     "many": null,
-    "other": {
-      "pattern": "пре  кв.",
-      "index": 7
-    }
+    "other": [
+      {
+        "Literal": "пре "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " кв."
+      }
+    ]
   },
   "future": {
     "zero": null,
-    "one": {
-      "pattern": "за  кв.",
-      "index": 5
-    },
+    "one": [
+      {
+        "Literal": "за "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " кв."
+      }
+    ],
     "two": null,
-    "few": {
-      "pattern": "за  кв.",
-      "index": 5
-    },
+    "few": [
+      {
+        "Literal": "за "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " кв."
+      }
+    ],
     "many": null,
-    "other": {
-      "pattern": "за  кв.",
-      "index": 5
-    }
+    "other": [
+      {
+        "Literal": "за "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " кв."
+      }
+    ]
   }
 }

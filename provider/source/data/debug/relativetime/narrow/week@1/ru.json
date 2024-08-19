@@ -6,42 +6,98 @@
   },
   "past": {
     "zero": null,
-    "one": {
-      "pattern": "- нед.",
-      "index": 1
-    },
+    "one": [
+      {
+        "Literal": "-"
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " нед."
+      }
+    ],
     "two": null,
-    "few": {
-      "pattern": "- нед.",
-      "index": 1
-    },
-    "many": {
-      "pattern": "- нед.",
-      "index": 1
-    },
-    "other": {
-      "pattern": "- нед.",
-      "index": 1
-    }
+    "few": [
+      {
+        "Literal": "-"
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " нед."
+      }
+    ],
+    "many": [
+      {
+        "Literal": "-"
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " нед."
+      }
+    ],
+    "other": [
+      {
+        "Literal": "-"
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " нед."
+      }
+    ]
   },
   "future": {
     "zero": null,
-    "one": {
-      "pattern": "+ нед.",
-      "index": 1
-    },
+    "one": [
+      {
+        "Literal": "+"
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " нед."
+      }
+    ],
     "two": null,
-    "few": {
-      "pattern": "+ нед.",
-      "index": 1
-    },
-    "many": {
-      "pattern": "+ нед.",
-      "index": 1
-    },
-    "other": {
-      "pattern": "+ нед.",
-      "index": 1
-    }
+    "few": [
+      {
+        "Literal": "+"
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " нед."
+      }
+    ],
+    "many": [
+      {
+        "Literal": "+"
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " нед."
+      }
+    ],
+    "other": [
+      {
+        "Literal": "+"
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " нед."
+      }
+    ]
   }
 }

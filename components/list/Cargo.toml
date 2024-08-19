@@ -25,7 +25,6 @@ regex-automata = { workspace = true, features = ["dfa-search"] }
 writeable = { workspace = true }
 
 databake = { workspace = true, features = ["derive"], optional = true}
-deduplicating_array = { workspace = true, optional = true }
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 
 icu_list_data = { workspace = true, optional = true }
@@ -41,7 +40,7 @@ serde_json = { workspace = true }
 [features]
 default = ["compiled_data"]
 std = ["icu_provider/std"]
-serde = ["dep:deduplicating_array", "dep:serde", "icu_provider/serde"]
+serde = ["dep:serde", "icu_provider/serde"]
 serde_human = ["serde", "regex-automata/dfa-build", "regex-automata/syntax"]
 datagen = ["serde", "std", "dep:databake", "regex-automata/dfa-build", "regex-automata/syntax"]
 bench = []

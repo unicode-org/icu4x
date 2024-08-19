@@ -12,10 +12,14 @@
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": " วันที่ผ่านมา",
-      "index": 0
-    }
+    "other": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " วันที่ผ่านมา"
+      }
+    ]
   },
   "future": {
     "zero": null,
@@ -23,9 +27,16 @@
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": "ในอีก  วัน",
-      "index": 16
-    }
+    "other": [
+      {
+        "Literal": "ในอีก "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " วัน"
+      }
+    ]
   }
 }

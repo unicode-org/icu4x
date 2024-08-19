@@ -1298,7 +1298,6 @@ name = "icu_list"
 version = "1.5.0"
 dependencies = [
  "databake",
- "deduplicating_array",
  "displaydoc",
  "icu",
  "icu_benchmark_macros",
@@ -1688,6 +1687,7 @@ dependencies = [
  "icu_calendar",
  "icu_provider",
  "icu_timezone_data",
+ "ixdtf",
  "serde",
  "tinystr",
  "zerotrie",

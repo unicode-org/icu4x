@@ -6,36 +6,78 @@
   },
   "past": {
     "zero": null,
-    "one": {
-      "pattern": "пре  недеље",
-      "index": 7
-    },
+    "one": [
+      {
+        "Literal": "пре "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " недеље"
+      }
+    ],
     "two": null,
-    "few": {
-      "pattern": "пре  недеље",
-      "index": 7
-    },
+    "few": [
+      {
+        "Literal": "пре "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " недеље"
+      }
+    ],
     "many": null,
-    "other": {
-      "pattern": "пре  недеља",
-      "index": 7
-    }
+    "other": [
+      {
+        "Literal": "пре "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " недеља"
+      }
+    ]
   },
   "future": {
     "zero": null,
-    "one": {
-      "pattern": "за  недељу",
-      "index": 5
-    },
+    "one": [
+      {
+        "Literal": "за "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " недељу"
+      }
+    ],
     "two": null,
-    "few": {
-      "pattern": "за  недеље",
-      "index": 5
-    },
+    "few": [
+      {
+        "Literal": "за "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " недеље"
+      }
+    ],
     "many": null,
-    "other": {
-      "pattern": "за  недеља",
-      "index": 5
-    }
+    "other": [
+      {
+        "Literal": "за "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " недеља"
+      }
+    ]
   }
 }

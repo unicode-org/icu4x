@@ -296,3 +296,31 @@ fn hebrew_months() {
 
     assert_try_writeable_eq!(formatted_datetime, "28 Adar II 5771");
 }
+
+#[test]
+fn test_5387() {
+    let datetime = DateTime::try_new_gregorian_datetime(2024, 8, 16, 14, 15, 16).unwrap();
+    let formatter_auto = TypedNeoFormatter::try_new_with_components(
+        &locale!("en").into(),
+        NeoDateTimeComponents::DateTime(NeoDayComponents::Weekday, NeoTimeComponents::HourMinute),
+        NeoSkeletonLength::Medium.into(),
+    )
+    .unwrap();
+    let formatter_h12 = TypedNeoFormatter::try_new_with_components(
+        &locale!("en-u-hc-h12").into(),
+        NeoDateTimeComponents::DateTime(NeoDayComponents::Weekday, NeoTimeComponents::HourMinute),
+        NeoSkeletonLength::Medium.into(),
+    )
+    .unwrap();
+    let formatter_h24 = TypedNeoFormatter::try_new_with_components(
+        &locale!("en-u-hc-h23").into(),
+        NeoDateTimeComponents::DateTime(NeoDayComponents::Weekday, NeoTimeComponents::HourMinute),
+        NeoSkeletonLength::Medium.into(),
+    )
+    .unwrap();
+
+    // TODO(#5387): All of these should resolve to a pattern without a comma
+    assert_try_writeable_eq!(formatter_auto.format(&datetime), "Fri 2:15\u{202f}PM");
+    assert_try_writeable_eq!(formatter_h12.format(&datetime), "Fri, 2:15\u{202f}PM");
+    assert_try_writeable_eq!(formatter_h24.format(&datetime), "Fri, 14:15");
+}

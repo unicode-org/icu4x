@@ -6,36 +6,78 @@
   },
   "past": {
     "zero": null,
-    "one": {
-      "pattern": "pre  nedelje",
-      "index": 4
-    },
+    "one": [
+      {
+        "Literal": "pre "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " nedelje"
+      }
+    ],
     "two": null,
-    "few": {
-      "pattern": "pre  nedelje",
-      "index": 4
-    },
+    "few": [
+      {
+        "Literal": "pre "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " nedelje"
+      }
+    ],
     "many": null,
-    "other": {
-      "pattern": "pre  nedelja",
-      "index": 4
-    }
+    "other": [
+      {
+        "Literal": "pre "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " nedelja"
+      }
+    ]
   },
   "future": {
     "zero": null,
-    "one": {
-      "pattern": "za  nedelju",
-      "index": 3
-    },
+    "one": [
+      {
+        "Literal": "za "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " nedelju"
+      }
+    ],
     "two": null,
-    "few": {
-      "pattern": "za  nedelje",
-      "index": 3
-    },
+    "few": [
+      {
+        "Literal": "za "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " nedelje"
+      }
+    ],
     "many": null,
-    "other": {
-      "pattern": "za  nedelja",
-      "index": 3
-    }
+    "other": [
+      {
+        "Literal": "za "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " nedelja"
+      }
+    ]
   }
 }

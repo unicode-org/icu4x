@@ -6,30 +6,58 @@
   },
   "past": {
     "zero": null,
-    "one": {
-      "pattern": "hace  semana",
-      "index": 5
-    },
+    "one": [
+      {
+        "Literal": "hace "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " semana"
+      }
+    ],
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": "hace  semanas",
-      "index": 5
-    }
+    "other": [
+      {
+        "Literal": "hace "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " semanas"
+      }
+    ]
   },
   "future": {
     "zero": null,
-    "one": {
-      "pattern": "dentro de  semana",
-      "index": 10
-    },
+    "one": [
+      {
+        "Literal": "dentro de "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " semana"
+      }
+    ],
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": "dentro de  semanas",
-      "index": 10
-    }
+    "other": [
+      {
+        "Literal": "dentro de "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " semanas"
+      }
+    ]
   }
 }

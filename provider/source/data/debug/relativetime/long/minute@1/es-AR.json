@@ -4,30 +4,58 @@
   },
   "past": {
     "zero": null,
-    "one": {
-      "pattern": "hace  minuto",
-      "index": 5
-    },
+    "one": [
+      {
+        "Literal": "hace "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " minuto"
+      }
+    ],
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": "hace  minutos",
-      "index": 5
-    }
+    "other": [
+      {
+        "Literal": "hace "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " minutos"
+      }
+    ]
   },
   "future": {
     "zero": null,
-    "one": {
-      "pattern": "dentro de  minuto",
-      "index": 10
-    },
+    "one": [
+      {
+        "Literal": "dentro de "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " minuto"
+      }
+    ],
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": "dentro de  minutos",
-      "index": 10
-    }
+    "other": [
+      {
+        "Literal": "dentro de "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " minutos"
+      }
+    ]
   }
 }

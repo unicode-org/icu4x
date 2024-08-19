@@ -6,30 +6,52 @@
   },
   "past": {
     "zero": null,
-    "one": {
-      "pattern": " month ago",
-      "index": 0
-    },
+    "one": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " month ago"
+      }
+    ],
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": " months ago",
-      "index": 0
-    }
+    "other": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " months ago"
+      }
+    ]
   },
   "future": {
     "zero": null,
-    "one": {
-      "pattern": "in  month",
-      "index": 3
-    },
+    "one": [
+      {
+        "Literal": "in "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " month"
+      }
+    ],
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": "in  months",
-      "index": 3
-    }
+    "other": [
+      {
+        "Literal": "in "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " months"
+      }
+    ]
   }
 }
