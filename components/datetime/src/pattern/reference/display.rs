@@ -10,6 +10,7 @@ use super::{
     super::{GenericPatternItem, PatternItem},
     GenericPattern, Pattern,
 };
+use crate::fields::FieldSymbol;
 use alloc::string::String;
 use core::fmt::{self, Write};
 
@@ -83,6 +84,12 @@ impl fmt::Display for Pattern {
                     let ch: char = field.symbol.into();
                     for _ in 0..field.length.to_len() {
                         formatter.write_char(ch)?;
+                    }
+                    if let FieldSymbol::DecimalSecond(decimal_second) = field.symbol {
+                        formatter.write_char('.')?;
+                        for _ in 0..(decimal_second as u8) {
+                            formatter.write_char('S')?;
+                        }
                     }
                 }
                 PatternItem::Literal(ch) => {

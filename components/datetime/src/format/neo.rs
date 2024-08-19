@@ -394,7 +394,7 @@ size_test!(
 /// // Missing data is filled in on a best-effort basis, and an error is signaled.
 /// assert_try_writeable_parts_eq!(
 ///     names.with_pattern(&pattern).format(&CustomTimeZone::new_empty()),
-///     "It is: {E} {M} {d} {y} {G} at {h}:{m}:{s}{S} {a} {GMT+?}",
+///     "It is: {E} {M} {d} {y} {G} at {h}:{m}:{s} {a} {GMT+?}",
 ///     Err(DateTimeWriteError::MissingInputField("iso_weekday")),
 ///     [
 ///         (7, 10, Part::ERROR), // {E}
@@ -405,9 +405,8 @@ size_test!(
 ///         (30, 33, Part::ERROR), // {h}
 ///         (34, 37, Part::ERROR), // {m}
 ///         (38, 41, Part::ERROR), // {s}
-///         (41, 44, Part::ERROR), // {S}
-///         (45, 48, Part::ERROR), // {a}
-///         (49, 56, Part::ERROR), // {GMT+?}
+///         (42, 45, Part::ERROR), // {a}
+///         (46, 53, Part::ERROR), // {GMT+?}
 ///     ]
 /// );
 /// ```
@@ -2094,6 +2093,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 FieldSymbol::Hour(_) => numeric_field = Some(field),
                 FieldSymbol::Minute => numeric_field = Some(field),
                 FieldSymbol::Second(_) => numeric_field = Some(field),
+                FieldSymbol::DecimalSecond(_) => numeric_field = Some(field),
             };
         }
 

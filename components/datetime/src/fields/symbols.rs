@@ -4,6 +4,8 @@
 
 #[cfg(any(feature = "datagen", feature = "experimental"))]
 use crate::fields::FieldLength;
+#[cfg(any(feature = "datagen", feature = "experimental"))]
+use crate::neo_skeleton::FractionalSecondDigits;
 use core::{cmp::Ordering, convert::TryFrom};
 use displaydoc::Display;
 use icu_provider::prelude::*;
@@ -55,10 +57,13 @@ pub enum FieldSymbol {
     Hour(Hour),
     /// Minute number within an hour.
     Minute,
-    /// Seconds number within a minute, including fractional seconds, or milliseconds within a day.
+    /// Seconds integer within a minute or milliseconds within a day.
     Second(Second),
     /// Time zone as a name, a zone ID, or a ISO 8601 numerical offset.
     TimeZone(TimeZone),
+    /// Seconds with fractional digits. If seconds are an integer,
+    /// [`FieldSymbol::Second`] is used.
+    DecimalSecond(DecimalSecond),
 }
 
 impl FieldSymbol {
@@ -110,6 +115,7 @@ impl FieldSymbol {
             FieldSymbol::Minute => (8, 0),
             FieldSymbol::Second(second) => (9, second.idx()),
             FieldSymbol::TimeZone(tz) => (10, tz.idx()),
+            FieldSymbol::DecimalSecond(second) => (11, second.idx()),
         };
         let result = high << 4;
         result | low
@@ -134,13 +140,14 @@ impl FieldSymbol {
             8 if low == 0 => Self::Minute,
             9 => Self::Second(Second::from_idx(low)?),
             10 => Self::TimeZone(TimeZone::from_idx(low)?),
+            11 => Self::DecimalSecond(DecimalSecond::from_idx(low)?),
             _ => return Err(SymbolError::InvalidIndex(idx)),
         })
     }
 
     /// Returns the index associated with this FieldSymbol.
     #[cfg(any(feature = "datagen", feature = "experimental"))] // only referenced in experimental code
-    fn discriminant_idx(&self) -> u8 {
+    fn idx_for_skeleton(&self) -> u8 {
         match self {
             FieldSymbol::Era => 0,
             FieldSymbol::Year(_) => 1,
@@ -151,16 +158,37 @@ impl FieldSymbol {
             FieldSymbol::DayPeriod(_) => 6,
             FieldSymbol::Hour(_) => 7,
             FieldSymbol::Minute => 8,
-            FieldSymbol::Second(_) => 9,
+            FieldSymbol::Second(_) | FieldSymbol::DecimalSecond(_) => 9,
             FieldSymbol::TimeZone(_) => 10,
         }
     }
 
     /// Compares this enum with other solely based on the enum variant,
     /// ignoring the enum's data.
+    ///
+    /// Second and DecimalSecond are considered equal.
     #[cfg(any(feature = "datagen", feature = "experimental"))] // only referenced in experimental code
-    pub(crate) fn discriminant_cmp(&self, other: &Self) -> Ordering {
-        self.discriminant_idx().cmp(&other.discriminant_idx())
+    pub(crate) fn skeleton_cmp(&self, other: &Self) -> Ordering {
+        self.idx_for_skeleton().cmp(&other.idx_for_skeleton())
+    }
+
+    #[cfg(any(feature = "datagen", feature = "experimental"))]
+    pub(crate) fn from_fractional_second_digits(
+        fractional_second_digits: FractionalSecondDigits,
+    ) -> Self {
+        use FractionalSecondDigits::*;
+        match fractional_second_digits {
+            F0 => FieldSymbol::Second(Second::Second),
+            F1 => FieldSymbol::DecimalSecond(DecimalSecond::SecondF1),
+            F2 => FieldSymbol::DecimalSecond(DecimalSecond::SecondF2),
+            F3 => FieldSymbol::DecimalSecond(DecimalSecond::SecondF3),
+            F4 => FieldSymbol::DecimalSecond(DecimalSecond::SecondF4),
+            F5 => FieldSymbol::DecimalSecond(DecimalSecond::SecondF5),
+            F6 => FieldSymbol::DecimalSecond(DecimalSecond::SecondF6),
+            F7 => FieldSymbol::DecimalSecond(DecimalSecond::SecondF7),
+            F8 => FieldSymbol::DecimalSecond(DecimalSecond::SecondF8),
+            F9 => FieldSymbol::DecimalSecond(DecimalSecond::SecondF9),
+        }
     }
 
     /// UTS 35 defines several 1 and 2 symbols to be the same as 3 symbols (abbreviated).
@@ -273,15 +301,23 @@ impl FieldSymbol {
             Self::Hour(Hour::H24) => 21,
             Self::Minute => 22,
             Self::Second(Second::Second) => 23,
-            Self::Second(Second::FractionalSecond) => 24,
-            Self::Second(Second::Millisecond) => 25,
-            Self::TimeZone(TimeZone::LowerZ) => 26,
-            Self::TimeZone(TimeZone::UpperZ) => 27,
-            Self::TimeZone(TimeZone::UpperO) => 28,
-            Self::TimeZone(TimeZone::LowerV) => 29,
-            Self::TimeZone(TimeZone::UpperV) => 30,
-            Self::TimeZone(TimeZone::LowerX) => 31,
-            Self::TimeZone(TimeZone::UpperX) => 32,
+            Self::Second(Second::Millisecond) => 24,
+            Self::DecimalSecond(DecimalSecond::SecondF1) => 31,
+            Self::DecimalSecond(DecimalSecond::SecondF2) => 32,
+            Self::DecimalSecond(DecimalSecond::SecondF3) => 33,
+            Self::DecimalSecond(DecimalSecond::SecondF4) => 34,
+            Self::DecimalSecond(DecimalSecond::SecondF5) => 35,
+            Self::DecimalSecond(DecimalSecond::SecondF6) => 36,
+            Self::DecimalSecond(DecimalSecond::SecondF7) => 37,
+            Self::DecimalSecond(DecimalSecond::SecondF8) => 38,
+            Self::DecimalSecond(DecimalSecond::SecondF9) => 39,
+            Self::TimeZone(TimeZone::LowerZ) => 100,
+            Self::TimeZone(TimeZone::UpperZ) => 101,
+            Self::TimeZone(TimeZone::UpperO) => 102,
+            Self::TimeZone(TimeZone::LowerV) => 103,
+            Self::TimeZone(TimeZone::UpperV) => 104,
+            Self::TimeZone(TimeZone::LowerX) => 105,
+            Self::TimeZone(TimeZone::UpperX) => 106,
         }
     }
 }
@@ -314,6 +350,7 @@ impl TryFrom<char> for FieldSymbol {
         })
         .or_else(|_| Second::try_from(ch).map(Self::Second))
         .or_else(|_| TimeZone::try_from(ch).map(Self::TimeZone))
+        // Note: char-to-enum conversion for DecimalSecond is handled directly in the parser
     }
 }
 
@@ -331,6 +368,8 @@ impl From<FieldSymbol> for char {
             FieldSymbol::Minute => 'm',
             FieldSymbol::Second(second) => second.into(),
             FieldSymbol::TimeZone(time_zone) => time_zone.into(),
+            // Note: This is only used for representing the integer portion
+            FieldSymbol::DecimalSecond(_) => 's',
         }
     }
 }
@@ -509,10 +548,6 @@ impl LengthType for Month {
             FieldLength::Wide => TextOrNumeric::Text,
             FieldLength::Narrow => TextOrNumeric::Text,
             FieldLength::Six => TextOrNumeric::Text,
-            FieldLength::Fixed(_) | FieldLength::TimeZoneFallbackOverride(_) => {
-                debug_assert!(false, "Invalid field length for month");
-                TextOrNumeric::Text
-            }
         }
     }
 }
@@ -553,19 +588,18 @@ field_type!(
     HourULE
 );
 
+// NOTE: 'S' FractionalSecond is represented via DecimalSecond,
+// so it is not included in the Second enum.
+
 field_type!(
     /// An enum for the possible symbols of a second field in a date pattern.
     Second; {
         /// Field symbol for second (numeric).
         's' => Second = 0,
-        /// Field symbol for fractional second (numeric).
-        ///
-        /// Produces the number of digits specified by the field length.
-        'S' => FractionalSecond = 1,
         /// Field symbol for milliseconds in day (numeric).
         ///
         /// This field behaves exactly like a composite of all time-related fields, not including the zone fields.
-        'A' => Millisecond = 2,
+        'A' => Millisecond = 1,
     };
     Numeric;
     SecondULE
@@ -695,5 +729,57 @@ impl LengthType for TimeZone {
             Self::LowerX | Self::UpperX => Numeric,
             Self::LowerZ | Self::LowerV | Self::UpperV => Text,
         }
+    }
+}
+
+/// A second field with fractional digits.
+#[derive(
+    Debug, Eq, PartialEq, Ord, PartialOrd, Clone, Copy, yoke::Yokeable, zerofrom::ZeroFrom,
+)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_datetime::fields),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[allow(clippy::enum_variant_names)]
+#[repr(u8)]
+#[zerovec::make_ule(DecimalSecondULE)]
+#[zerovec::derive(Debug)]
+#[allow(clippy::exhaustive_enums)] // used in data struct
+pub enum DecimalSecond {
+    /// A second with 1 fractional digit: "1.0"
+    SecondF1 = 1,
+    /// A second with 2 fractional digits: "1.00"
+    SecondF2 = 2,
+    /// A second with 3 fractional digits: "1.000"
+    SecondF3 = 3,
+    /// A second with 4 fractional digits: "1.0000"
+    SecondF4 = 4,
+    /// A second with 5 fractional digits: "1.00000"
+    SecondF5 = 5,
+    /// A second with 6 fractional digits: "1.000000"
+    SecondF6 = 6,
+    /// A second with 7 fractional digits: "1.0000000"
+    SecondF7 = 7,
+    /// A second with 8 fractional digits: "1.00000000"
+    SecondF8 = 8,
+    /// A second with 9 fractional digits: "1.000000000"
+    SecondF9 = 9,
+}
+
+impl DecimalSecond {
+    #[inline]
+    pub(crate) fn idx(self) -> u8 {
+        self as u8
+    }
+    #[inline]
+    pub(crate) fn from_idx(idx: u8) -> Result<Self, SymbolError> {
+        Self::new_from_u8(idx).ok_or(SymbolError::InvalidIndex(idx))
+    }
+}
+impl From<DecimalSecond> for FieldSymbol {
+    fn from(input: DecimalSecond) -> Self {
+        Self::DecimalSecond(input)
     }
 }

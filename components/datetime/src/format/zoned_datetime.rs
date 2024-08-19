@@ -88,7 +88,6 @@ where
             PatternItem::Field(field) => {
                 r = r.and(datetime::try_write_field(
                     field,
-                    &mut iter,
                     pattern.metadata,
                     Default::default(),
                     datetime,
