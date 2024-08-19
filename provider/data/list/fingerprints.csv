@@ -1,1005 +1,1005 @@
 list/and@2, <lookup>, 3317B, 355 identifiers
-list/and@2, <total>, 63269B, 127 unique payloads
-list/and@2, af/narrow, 458B, 52fd804deabd054d
-list/and@2, af/short, 460B, 150d4ec35edeac95
-list/and@2, af/wide, 460B, -> af/short
-list/and@2, am/narrow, 473B, 1b34d7e2341b3769
-list/and@2, am/short, 475B, 9ddcdcd49d393cba
-list/and@2, am/wide, 475B, -> am/short
-list/and@2, ar/narrow, 460B, a7fdbe7e2ca2ec49
-list/and@2, ar/short, 460B, -> ar/narrow
-list/and@2, ar/wide, 460B, -> ar/narrow
-list/and@2, as/short, 474B, 442e27c2d6bb9cda
-list/and@2, as/wide, 474B, -> as/short
-list/and@2, ast/narrow, 458B, 4a624c5aacebee4d
-list/and@2, ast/short, 458B, -> ast/narrow
-list/and@2, ast/wide, 458B, -> ast/narrow
-list/and@2, az/short, 462B, 3a782044f8839383
-list/and@2, az/wide, 462B, -> az/short
-list/and@2, be/narrow, 460B, 31870c54bca5d9c4
-list/and@2, be/short, 460B, -> be/narrow
-list/and@2, be/wide, 460B, -> be/narrow
-list/and@2, bg/narrow, 458B, c58c58eecbf70c6d
-list/and@2, bg/short, 460B, 53b69cc72f175986
-list/and@2, bg/wide, 460B, -> bg/short
-list/and@2, blo/narrow, 458B, 4ca1a1f617f93698
-list/and@2, blo/short, 458B, -> blo/narrow
-list/and@2, blo/wide, 460B, 63af98e95e8eec95
-list/and@2, bn/short, 474B, b226da619941a42a
-list/and@2, bn/wide, 474B, -> bn/short
-list/and@2, br/narrow, 458B, -> blo/narrow
-list/and@2, br/short, 458B, -> blo/narrow
-list/and@2, br/wide, 460B, 2e60d1f785999ef
-list/and@2, brx/narrow, 475B, 525c195859fb6955
-list/and@2, brx/short, 475B, -> brx/narrow
-list/and@2, brx/wide, 475B, -> brx/narrow
-list/and@2, bs-Cyrl/narrow, 460B, -> bg/short
-list/and@2, bs-Cyrl/short, 460B, -> bg/short
-list/and@2, bs-Cyrl/wide, 460B, -> bg/short
-list/and@2, bs/narrow, 458B, 18fe93f525f21955
-list/and@2, bs/short, 458B, -> bs/narrow
-list/and@2, bs/wide, 458B, -> bs/narrow
-list/and@2, ca/narrow, 458B, -> bs/narrow
-list/and@2, ca/short, 458B, -> bs/narrow
-list/and@2, ca/wide, 458B, -> bs/narrow
-list/and@2, ceb/short, 461B, f4b3a74f911831fa
-list/and@2, ceb/wide, 461B, -> ceb/short
-list/and@2, chr/narrow, 458B, 3f6755040ff7c912
-list/and@2, chr/short, 459B, 179741b66acefda7
-list/and@2, chr/wide, 469B, 37f8d1940720de6b
-list/and@2, cs/short, 460B, bf0c1973469e8d6f
-list/and@2, cs/wide, 460B, -> cs/short
-list/and@2, cv/short, 472B, a7f2ec702a07e6ae
-list/and@2, cv/wide, 472B, -> cv/short
-list/and@2, cy/short, 465B, 392cc75905309f77
-list/and@2, cy/wide, 465B, -> cy/short
-list/and@2, da/narrow, 460B, 4ed50d5dbeb88efc
-list/and@2, da/short, 460B, -> da/narrow
-list/and@2, da/wide, 460B, -> da/narrow
-list/and@2, de/narrow, 462B, 21206c205553f9c3
-list/and@2, de/short, 462B, -> de/narrow
-list/and@2, de/wide, 462B, -> de/narrow
-list/and@2, doi/narrow, 469B, b9cb3d30b2c251e4
-list/and@2, doi/short, 469B, -> doi/narrow
-list/and@2, doi/wide, 469B, -> doi/narrow
-list/and@2, dsb/narrow, 458B, e2149ef000e19f51
-list/and@2, dsb/short, 458B, -> dsb/narrow
-list/and@2, dsb/wide, 458B, -> dsb/narrow
-list/and@2, el/short, 468B, 25798e33309a7ef9
-list/and@2, el/wide, 468B, -> el/short
-list/and@2, en-001/short, 462B, ad9dbc7cb59ab62f
-list/and@2, en-001/wide, 462B, -> en-001/short
-list/and@2, en-CA/short, 462B, -> en-001/short
-list/and@2, en-CA/wide, 462B, -> en-001/short
-list/and@2, en-IN/narrow, 460B, e0a839e469eac46a
-list/and@2, en/short, 459B, -> chr/short
-list/and@2, en/wide, 463B, 871e0543bb4df0df
-list/and@2, es/narrow, 2464B, 59e7c49375c1ee3e
-list/and@2, es/short, 2464B, -> es/narrow
-list/and@2, es/wide, 2464B, -> es/narrow
-list/and@2, et/short, 460B, 8c33d0d204842f9e
-list/and@2, et/wide, 460B, -> et/short
-list/and@2, eu/short, 462B, 7caf550ed388b7b7
-list/and@2, eu/wide, 462B, -> eu/short
-list/and@2, fa/narrow, 472B, 457c212a92a6e578
-list/and@2, fa/short, 470B, a970db574f7d08d
-list/and@2, fa/wide, 470B, -> fa/short
-list/and@2, ff-Adlm/narrow, 464B, e9450aff447d8a11
-list/and@2, ff-Adlm/short, 465B, 34a1d709b4f8834f
-list/and@2, ff-Adlm/wide, 471B, 8b5a427885f0e94d
-list/and@2, fi/narrow, 460B, -> et/short
-list/and@2, fi/short, 460B, -> et/short
-list/and@2, fi/wide, 460B, -> et/short
-list/and@2, fil/short, 461B, b354379ece129436
-list/and@2, fil/wide, 461B, -> fil/short
-list/and@2, fo/short, 459B, -> chr/short
-list/and@2, fo/wide, 461B, 8ad7fb372792e42d
-list/and@2, fr/short, 460B, d50e6a1656881
-list/and@2, fr/wide, 460B, -> fr/short
-list/and@2, fy/narrow, 460B, -> af/short
-list/and@2, fy/short, 460B, -> af/short
-list/and@2, fy/wide, 460B, -> af/short
-list/and@2, ga/short, 464B, ac4bb4d5ff319161
-list/and@2, ga/wide, 464B, -> ga/short
-list/and@2, gd/short, 462B, 4aaa272eb39e1e31
-list/and@2, gd/wide, 464B, -> ga/short
-list/and@2, gl/narrow, 458B, 6c255c176c1921d0
-list/and@2, gl/short, 458B, -> gl/narrow
-list/and@2, gl/wide, 458B, -> gl/narrow
-list/and@2, gu/short, 474B, e98fb881c0f13305
-list/and@2, gu/wide, 474B, -> gu/short
-list/and@2, ha/narrow, 461B, 55488ee4f5bd0e6
-list/and@2, ha/short, 461B, -> ha/narrow
-list/and@2, ha/wide, 461B, -> ha/narrow
-list/and@2, he/narrow, 2632B, dae1af1e8c7edef4
-list/and@2, he/short, 2632B, -> he/narrow
-list/and@2, he/wide, 2632B, -> he/narrow
-list/and@2, hi-Latn/narrow, 459B, b46a95377abbf0b8
-list/and@2, hi-Latn/short, 463B, 154b6986d854b98c
-list/and@2, hi-Latn/wide, 463B, -> hi-Latn/short
-list/and@2, hi/narrow, 468B, d92224e249535c7a
-list/and@2, hi/short, 468B, -> hi/narrow
-list/and@2, hi/wide, 469B, 2fae52977dc22e2d
-list/and@2, hr/narrow, 458B, -> bs/narrow
-list/and@2, hr/short, 458B, -> bs/narrow
-list/and@2, hr/wide, 458B, -> bs/narrow
-list/and@2, hsb/narrow, 458B, -> dsb/narrow
-list/and@2, hsb/short, 458B, -> dsb/narrow
-list/and@2, hsb/wide, 458B, -> dsb/narrow
-list/and@2, hu/narrow, 462B, be41d589571c8097
-list/and@2, hu/short, 462B, -> hu/narrow
-list/and@2, hu/wide, 462B, -> hu/narrow
-list/and@2, hy/short, 460B, 715db1f6ea1451b2
-list/and@2, hy/wide, 460B, -> hy/short
-list/and@2, ia/short, 458B, -> gl/narrow
-list/and@2, ia/wide, 458B, -> gl/narrow
-list/and@2, id/short, 463B, df367ebdf1775dfc
-list/and@2, id/wide, 463B, -> id/short
-list/and@2, ig/narrow, 459B, 31b9121f7b2298a1
-list/and@2, ig/short, 461B, d94af9d72b0c9672
-list/and@2, ig/wide, 461B, -> ig/short
-list/and@2, is/short, 460B, -> da/narrow
-list/and@2, is/wide, 460B, -> da/narrow
-list/and@2, it/narrow, 458B, -> gl/narrow
-list/and@2, it/short, 458B, -> gl/narrow
-list/and@2, it/wide, 458B, -> gl/narrow
-list/and@2, ja/narrow, 460B, cbdcea629d3a1080
-list/and@2, ja/short, 460B, -> ja/narrow
-list/and@2, ja/wide, 460B, -> ja/narrow
-list/and@2, jv/short, 463B, 44516f50bebebb2b
-list/and@2, jv/wide, 463B, -> jv/short
-list/and@2, ka/narrow, 468B, ca6e23adb43080d9
-list/and@2, ka/short, 468B, -> ka/narrow
-list/and@2, ka/wide, 468B, -> ka/narrow
-list/and@2, kea/narrow, 458B, -> bs/narrow
-list/and@2, kea/short, 458B, -> bs/narrow
-list/and@2, kea/wide, 458B, -> bs/narrow
-list/and@2, kgp/short, 462B, a26b20447ba66e70
-list/and@2, kgp/wide, 462B, -> kgp/short
-list/and@2, kk/narrow, 464B, e16646729f802f9
-list/and@2, kk/short, 464B, -> kk/narrow
-list/and@2, kk/wide, 464B, -> kk/narrow
-list/and@2, km/short, 474B, 2623e80efe446cfc
-list/and@2, km/wide, 476B, 80fd44b183cc2b4a
-list/and@2, kn/short, 487B, 9647678b1fb000e8
-list/and@2, kn/wide, 487B, -> kn/short
-list/and@2, ko/narrow, 462B, aaa7ff634d486073
-list/and@2, ko/short, 462B, -> ko/narrow
-list/and@2, ko/wide, 462B, -> ko/narrow
-list/and@2, kok/short, 459B, -> chr/short
-list/and@2, ks-Deva/narrow, 469B, ae9c79435eaf7eb5
-list/and@2, ks-Deva/short, 469B, -> ks-Deva/narrow
-list/and@2, ks-Deva/wide, 469B, -> ks-Deva/narrow
-list/and@2, ks/narrow, 472B, 7fc7b6fe27cd52b4
-list/and@2, ks/short, 472B, -> ks/narrow
-list/and@2, ks/wide, 472B, -> ks/narrow
-list/and@2, ku/narrow, 460B, 67ecbabdc499419f
-list/and@2, ku/short, 460B, -> ku/narrow
-list/and@2, ku/wide, 460B, -> ku/narrow
-list/and@2, kxv/narrow, 467B, bac5d87e953b2edf
-list/and@2, kxv/short, 467B, -> kxv/narrow
-list/and@2, kxv/wide, 467B, -> kxv/narrow
-list/and@2, ky/narrow, 472B, 84be9cde81c9c9c
-list/and@2, ky/short, 472B, -> ky/narrow
-list/and@2, ky/wide, 472B, -> ky/narrow
-list/and@2, lb/narrow, 464B, 31bdbef69990c2e0
-list/and@2, lb/short, 464B, -> lb/narrow
-list/and@2, lb/wide, 464B, -> lb/narrow
-list/and@2, lo/narrow, 465B, 3424c58154ee60dd
-list/and@2, lo/short, 474B, b41542432331bf7b
-list/and@2, lo/wide, 465B, -> lo/narrow
-list/and@2, lt/narrow, 460B, 536ca6b0af498a82
-list/and@2, lt/short, 460B, -> lt/narrow
-list/and@2, lt/wide, 460B, -> lt/narrow
-list/and@2, lv/narrow, 460B, c5f66cfe056cce6e
-list/and@2, lv/short, 460B, -> lv/narrow
-list/and@2, lv/wide, 460B, -> lv/narrow
-list/and@2, mai/narrow, 469B, -> hi/wide
-list/and@2, mai/short, 469B, -> hi/wide
-list/and@2, mai/wide, 469B, -> hi/wide
-list/and@2, mi/short, 459B, -> chr/short
-list/and@2, mk/narrow, 460B, -> bg/short
-list/and@2, mk/short, 460B, -> bg/short
-list/and@2, mk/wide, 460B, -> bg/short
-list/and@2, ml/narrow, 475B, 913da7fc62567758
-list/and@2, ml/short, 493B, 2aad990b25ab1d09
-list/and@2, ml/wide, 493B, -> ml/short
-list/and@2, mni/narrow, 486B, 1ed2370b79cd36
-list/and@2, mni/short, 486B, -> mni/narrow
-list/and@2, mni/wide, 486B, -> mni/narrow
-list/and@2, mr/narrow, 474B, eaed3233647594d8
-list/and@2, mr/short, 474B, -> mr/narrow
-list/and@2, mr/wide, 474B, -> mr/narrow
-list/and@2, ms/short, 462B, 400a7513283fed7c
-list/and@2, ms/wide, 462B, -> ms/short
-list/and@2, mt/narrow, 459B, dd6e59e82bab2268
-list/and@2, mt/short, 459B, -> mt/narrow
-list/and@2, mt/wide, 459B, -> mt/narrow
-list/and@2, my/narrow, 486B, 3705d4ec8c8b6239
-list/and@2, my/short, 486B, -> my/narrow
-list/and@2, my/wide, 486B, -> my/narrow
-list/and@2, ne/narrow, 455B, 6de15909f33dc456
-list/and@2, ne/short, 461B, dc1c3570cba68108
-list/and@2, ne/wide, 461B, -> ne/short
-list/and@2, nl/short, 458B, -> blo/narrow
-list/and@2, nl/wide, 460B, -> af/short
-list/and@2, no/narrow, 460B, -> da/narrow
-list/and@2, no/short, 460B, -> da/narrow
-list/and@2, no/wide, 460B, -> da/narrow
-list/and@2, or/narrow, 463B, 8b0fbc7b18c3b668
-list/and@2, or/short, 463B, -> or/narrow
-list/and@2, or/wide, 463B, -> or/narrow
-list/and@2, pa/short, 474B, 6ee9b703660c9d8c
-list/and@2, pa/wide, 474B, -> pa/short
-list/and@2, pcm/narrow, 460B, c313b968b0a19e8b
-list/and@2, pcm/short, 459B, -> chr/short
-list/and@2, pcm/wide, 461B, d91fa35871adaa78
-list/and@2, pl/narrow, 458B, -> bs/narrow
-list/and@2, pl/short, 458B, -> bs/narrow
-list/and@2, pl/wide, 458B, -> bs/narrow
-list/and@2, ps/narrow, 465B, 78cbd185862aefb7
-list/and@2, ps/short, 468B, 952c73663a70614d
-list/and@2, ps/wide, 468B, -> ps/short
-list/and@2, pt/short, 458B, -> gl/narrow
-list/and@2, pt/wide, 458B, -> gl/narrow
-list/and@2, rm/narrow, 458B, -> gl/narrow
-list/and@2, rm/short, 458B, -> gl/narrow
-list/and@2, rm/wide, 458B, -> gl/narrow
-list/and@2, ro/short, 462B, 46c55b5aedf2540b
-list/and@2, ro/wide, 462B, -> ro/short
-list/and@2, ru/short, 460B, -> bg/short
-list/and@2, ru/wide, 460B, -> bg/short
-list/and@2, sa/narrow, 475B, 73c55ea4f8030c6b
-list/and@2, sa/short, 475B, -> sa/narrow
-list/and@2, sa/wide, 475B, -> sa/narrow
-list/and@2, sah/narrow, 476B, 5808729ea84d2a50
-list/and@2, sah/short, 476B, -> sah/narrow
-list/and@2, sah/wide, 476B, -> sah/narrow
-list/and@2, sc/narrow, 458B, -> gl/narrow
-list/and@2, sc/short, 458B, -> gl/narrow
-list/and@2, sc/wide, 458B, -> gl/narrow
-list/and@2, sd/short, 462B, 8190e6fad7c9ecc3
-list/and@2, sd/wide, 462B, -> sd/short
-list/and@2, si/narrow, 469B, e43bc9d2221aa4e6
-list/and@2, si/short, 469B, -> si/narrow
-list/and@2, si/wide, 469B, -> si/narrow
-list/and@2, sk/narrow, 459B, 2c11cf5a80347ecb
-list/and@2, sk/short, 459B, -> sk/narrow
-list/and@2, sk/wide, 459B, -> sk/narrow
-list/and@2, sl/narrow, 460B, dd4047fbcaca72a6
-list/and@2, sl/short, 460B, -> sl/narrow
-list/and@2, sl/wide, 460B, -> sl/narrow
-list/and@2, so/short, 458B, -> blo/narrow
-list/and@2, so/wide, 462B, f296b09a5dc9c45a
-list/and@2, sq/narrow, 462B, 8a1999f90f6393d4
-list/and@2, sq/short, 462B, -> sq/narrow
-list/and@2, sq/wide, 462B, -> sq/narrow
-list/and@2, sr-Latn/narrow, 458B, -> bs/narrow
-list/and@2, sr-Latn/short, 458B, -> bs/narrow
-list/and@2, sr-Latn/wide, 458B, -> bs/narrow
-list/and@2, sr/narrow, 460B, -> bg/short
-list/and@2, sr/short, 460B, -> bg/short
-list/and@2, sr/wide, 460B, -> bg/short
-list/and@2, su/narrow, 469B, 8058e81e302cda4b
-list/and@2, su/short, 469B, -> su/narrow
-list/and@2, su/wide, 469B, -> su/narrow
-list/and@2, sv/short, 462B, 5397f993f378d76d
-list/and@2, sv/wide, 462B, -> sv/short
-list/and@2, sw/narrow, 458B, 6a595b732effb74d
-list/and@2, sw/short, 460B, -> blo/wide
-list/and@2, sw/wide, 460B, -> blo/wide
-list/and@2, syr/narrow, 460B, d0835a23a08014bd
-list/and@2, syr/short, 460B, -> syr/narrow
-list/and@2, syr/wide, 460B, -> syr/narrow
-list/and@2, ta/narrow, 498B, 8b08ddd1809f75ce
-list/and@2, ta/short, 498B, -> ta/narrow
-list/and@2, ta/wide, 498B, -> ta/narrow
-list/and@2, te/short, 486B, 9bf8e2a07314561
-list/and@2, te/wide, 486B, -> te/short
-list/and@2, th/narrow, 469B, da59c474aedea754
-list/and@2, th/short, 469B, -> th/narrow
-list/and@2, th/wide, 469B, -> th/narrow
-list/and@2, ti/narrow, 470B, b4aec378e66869c1
-list/and@2, ti/short, 470B, -> ti/narrow
-list/and@2, ti/wide, 470B, -> ti/narrow
-list/and@2, tk/short, 460B, 755c1f0793105605
-list/and@2, tk/wide, 460B, -> tk/short
-list/and@2, to/narrow, 464B, fd0732ca7717c477
-list/and@2, to/short, 464B, -> to/narrow
-list/and@2, to/wide, 464B, -> to/narrow
-list/and@2, tr/short, 460B, 8049c2df5bc2676
-list/and@2, tr/wide, 460B, -> tr/short
-list/and@2, tt/narrow, 468B, 5fa6e0b185b5adb8
-list/and@2, tt/short, 468B, -> tt/narrow
-list/and@2, tt/wide, 468B, -> tt/narrow
-list/and@2, ug/narrow, 463B, -> en/wide
-list/and@2, ug/short, 463B, -> en/wide
-list/and@2, ug/wide, 463B, -> en/wide
-list/and@2, uk/short, 460B, -> be/narrow
-list/and@2, uk/wide, 460B, -> be/narrow
-list/and@2, und/narrow, 456B, ed970f1d7fa3993d
-list/and@2, und/short, 456B, -> und/narrow
-list/and@2, und/wide, 456B, -> und/narrow
-list/and@2, ur/narrow, 460B, b1a3f89da4a60f03
-list/and@2, ur/short, 472B, 528f6f52b4e3dbbf
-list/and@2, ur/wide, 472B, -> ur/short
-list/and@2, uz/short, 460B, 6fff2e9771785635
-list/and@2, uz/wide, 460B, -> uz/short
-list/and@2, vec/narrow, 457B, bfec09d0539bdcee
-list/and@2, vec/short, 458B, -> gl/narrow
-list/and@2, vec/wide, 458B, -> gl/narrow
-list/and@2, vi/short, 462B, f57a9543fe948417
-list/and@2, vi/wide, 462B, -> vi/short
-list/and@2, xnr/narrow, 474B, ff45d5101dc0d8be
-list/and@2, xnr/short, 474B, -> xnr/narrow
-list/and@2, xnr/wide, 475B, 5c479b881c555183
-list/and@2, yrl/short, 466B, f549710463477105
-list/and@2, yrl/wide, 466B, -> yrl/short
-list/and@2, yue-Hans/narrow, 460B, 43cf0585e095ece4
-list/and@2, yue-Hans/short, 460B, -> yue-Hans/narrow
-list/and@2, yue-Hans/wide, 460B, -> yue-Hans/narrow
-list/and@2, yue/narrow, 460B, -> yue-Hans/narrow
-list/and@2, yue/short, 460B, -> yue-Hans/narrow
-list/and@2, yue/wide, 460B, -> yue-Hans/narrow
-list/and@2, zh-HK/narrow, 460B, 12e2233a4aadd6ef
-list/and@2, zh-HK/short, 460B, -> zh-HK/narrow
-list/and@2, zh-HK/wide, 460B, -> zh-HK/narrow
-list/and@2, zh-Hant/narrow, 460B, cfcd0a5d182476bf
-list/and@2, zh-Hant/short, 460B, fe878931b179aee0
-list/and@2, zh-Hant/wide, 460B, -> zh-Hant/short
-list/and@2, zh-MO/narrow, 460B, -> zh-HK/narrow
-list/and@2, zh-MO/short, 460B, -> zh-HK/narrow
-list/and@2, zh-MO/wide, 460B, -> zh-HK/narrow
-list/and@2, zh/narrow, 460B, -> ja/narrow
-list/and@2, zh/short, 460B, -> zh-Hant/short
-list/and@2, zh/wide, 460B, -> zh-Hant/short
-list/and@2, zu/short, 461B, f5830452a02cac12
-list/and@2, zu/wide, 461B, -> zu/short
+list/and@2, <total>, 42949B, 127 unique payloads
+list/and@2, af/narrow, 298B, 689fe12e5da7efdf
+list/and@2, af/short, 300B, d44b38fc7312fe85
+list/and@2, af/wide, 300B, -> af/short
+list/and@2, am/narrow, 313B, b4f508ba42a2e69e
+list/and@2, am/short, 315B, 55200ce72f6381ac
+list/and@2, am/wide, 315B, -> am/short
+list/and@2, ar/narrow, 300B, 768db4e722c28cbe
+list/and@2, ar/short, 300B, -> ar/narrow
+list/and@2, ar/wide, 300B, -> ar/narrow
+list/and@2, as/short, 314B, b2de2ca456ee1d03
+list/and@2, as/wide, 314B, -> as/short
+list/and@2, ast/narrow, 298B, f895051a438844f2
+list/and@2, ast/short, 298B, -> ast/narrow
+list/and@2, ast/wide, 298B, -> ast/narrow
+list/and@2, az/short, 302B, 15d36d710a9b2f44
+list/and@2, az/wide, 302B, -> az/short
+list/and@2, be/narrow, 300B, 28bd6a8e46924f77
+list/and@2, be/short, 300B, -> be/narrow
+list/and@2, be/wide, 300B, -> be/narrow
+list/and@2, bg/narrow, 298B, a434dec2b16158ff
+list/and@2, bg/short, 300B, fdb75bf1c8bf225e
+list/and@2, bg/wide, 300B, -> bg/short
+list/and@2, blo/narrow, 298B, df6e35f16c47b226
+list/and@2, blo/short, 298B, -> blo/narrow
+list/and@2, blo/wide, 300B, b9d8e282c09b079f
+list/and@2, bn/short, 314B, c2ec875788095a8a
+list/and@2, bn/wide, 314B, -> bn/short
+list/and@2, br/narrow, 298B, -> blo/narrow
+list/and@2, br/short, 298B, -> blo/narrow
+list/and@2, br/wide, 300B, b65a427b226f30ca
+list/and@2, brx/narrow, 315B, a0b1f8831454743b
+list/and@2, brx/short, 315B, -> brx/narrow
+list/and@2, brx/wide, 315B, -> brx/narrow
+list/and@2, bs-Cyrl/narrow, 300B, -> bg/short
+list/and@2, bs-Cyrl/short, 300B, -> bg/short
+list/and@2, bs-Cyrl/wide, 300B, -> bg/short
+list/and@2, bs/narrow, 298B, 43eda01c6cbf4690
+list/and@2, bs/short, 298B, -> bs/narrow
+list/and@2, bs/wide, 298B, -> bs/narrow
+list/and@2, ca/narrow, 298B, -> bs/narrow
+list/and@2, ca/short, 298B, -> bs/narrow
+list/and@2, ca/wide, 298B, -> bs/narrow
+list/and@2, ceb/short, 301B, 4079fc3ce28e5e00
+list/and@2, ceb/wide, 301B, -> ceb/short
+list/and@2, chr/narrow, 298B, 13848fc9644d066d
+list/and@2, chr/short, 299B, e971f36f36c36413
+list/and@2, chr/wide, 309B, 95306fc38c11e8d
+list/and@2, cs/short, 300B, 9fad23e407d4b100
+list/and@2, cs/wide, 300B, -> cs/short
+list/and@2, cv/short, 312B, f97374555f40fef0
+list/and@2, cv/wide, 312B, -> cv/short
+list/and@2, cy/short, 305B, 722309158d1fed82
+list/and@2, cy/wide, 305B, -> cy/short
+list/and@2, da/narrow, 300B, 284a55728aa08f2e
+list/and@2, da/short, 300B, -> da/narrow
+list/and@2, da/wide, 300B, -> da/narrow
+list/and@2, de/narrow, 302B, bb81f0c78ec52c9a
+list/and@2, de/short, 302B, -> de/narrow
+list/and@2, de/wide, 302B, -> de/narrow
+list/and@2, doi/narrow, 309B, 9a5ce3921833a854
+list/and@2, doi/short, 309B, -> doi/narrow
+list/and@2, doi/wide, 309B, -> doi/narrow
+list/and@2, dsb/narrow, 298B, d437e88105ccd2f2
+list/and@2, dsb/short, 298B, -> dsb/narrow
+list/and@2, dsb/wide, 298B, -> dsb/narrow
+list/and@2, el/short, 308B, f32ede189fd2a42d
+list/and@2, el/wide, 308B, -> el/short
+list/and@2, en-001/short, 302B, d6a81bc5de9dfd44
+list/and@2, en-001/wide, 302B, -> en-001/short
+list/and@2, en-CA/short, 302B, -> en-001/short
+list/and@2, en-CA/wide, 302B, -> en-001/short
+list/and@2, en-IN/narrow, 300B, 79338f31d5fc318d
+list/and@2, en/short, 299B, -> chr/short
+list/and@2, en/wide, 303B, b0229665478a3399
+list/and@2, es/narrow, 2304B, 9b6c3fa09da2552e
+list/and@2, es/short, 2304B, -> es/narrow
+list/and@2, es/wide, 2304B, -> es/narrow
+list/and@2, et/short, 300B, 968c7c752ad27945
+list/and@2, et/wide, 300B, -> et/short
+list/and@2, eu/short, 302B, 5323166f2d971db4
+list/and@2, eu/wide, 302B, -> eu/short
+list/and@2, fa/narrow, 312B, 47a499a9a6144e6f
+list/and@2, fa/short, 310B, a7f4a9a2e3cb7fee
+list/and@2, fa/wide, 310B, -> fa/short
+list/and@2, ff-Adlm/narrow, 304B, cdc063c84c62d640
+list/and@2, ff-Adlm/short, 305B, 147eca1b988588e4
+list/and@2, ff-Adlm/wide, 311B, 94c3b6e1ddb71e9a
+list/and@2, fi/narrow, 300B, -> et/short
+list/and@2, fi/short, 300B, -> et/short
+list/and@2, fi/wide, 300B, -> et/short
+list/and@2, fil/short, 301B, e43a33fbb0a6438f
+list/and@2, fil/wide, 301B, -> fil/short
+list/and@2, fo/short, 299B, -> chr/short
+list/and@2, fo/wide, 301B, 778827f96883f52
+list/and@2, fr/short, 300B, 70270755c3c3bd7f
+list/and@2, fr/wide, 300B, -> fr/short
+list/and@2, fy/narrow, 300B, -> af/short
+list/and@2, fy/short, 300B, -> af/short
+list/and@2, fy/wide, 300B, -> af/short
+list/and@2, ga/short, 304B, f4099bc085121ccc
+list/and@2, ga/wide, 304B, -> ga/short
+list/and@2, gd/short, 302B, 3f095125cb943a38
+list/and@2, gd/wide, 304B, -> ga/short
+list/and@2, gl/narrow, 298B, b25ed2dd5c0c216a
+list/and@2, gl/short, 298B, -> gl/narrow
+list/and@2, gl/wide, 298B, -> gl/narrow
+list/and@2, gu/short, 314B, 2b5a41f0e2abe4ef
+list/and@2, gu/wide, 314B, -> gu/short
+list/and@2, ha/narrow, 301B, c7320203a8489eb9
+list/and@2, ha/short, 301B, -> ha/narrow
+list/and@2, ha/wide, 301B, -> ha/narrow
+list/and@2, he/narrow, 2472B, ea470766425bfcba
+list/and@2, he/short, 2472B, -> he/narrow
+list/and@2, he/wide, 2472B, -> he/narrow
+list/and@2, hi-Latn/narrow, 299B, b67d7177aa9a7a1f
+list/and@2, hi-Latn/short, 303B, 6dd2f917627efdb5
+list/and@2, hi-Latn/wide, 303B, -> hi-Latn/short
+list/and@2, hi/narrow, 308B, d9750d73eff6ad24
+list/and@2, hi/short, 308B, -> hi/narrow
+list/and@2, hi/wide, 309B, 6d4c4c58026dd178
+list/and@2, hr/narrow, 298B, -> bs/narrow
+list/and@2, hr/short, 298B, -> bs/narrow
+list/and@2, hr/wide, 298B, -> bs/narrow
+list/and@2, hsb/narrow, 298B, -> dsb/narrow
+list/and@2, hsb/short, 298B, -> dsb/narrow
+list/and@2, hsb/wide, 298B, -> dsb/narrow
+list/and@2, hu/narrow, 302B, 55d7db3adb1fa211
+list/and@2, hu/short, 302B, -> hu/narrow
+list/and@2, hu/wide, 302B, -> hu/narrow
+list/and@2, hy/short, 300B, f28bf4d7712b1d2
+list/and@2, hy/wide, 300B, -> hy/short
+list/and@2, ia/short, 298B, -> gl/narrow
+list/and@2, ia/wide, 298B, -> gl/narrow
+list/and@2, id/short, 303B, 6ccb02cd23e42f21
+list/and@2, id/wide, 303B, -> id/short
+list/and@2, ig/narrow, 299B, 98ab3a9dda085d0a
+list/and@2, ig/short, 301B, c926fd1cfb43cdb5
+list/and@2, ig/wide, 301B, -> ig/short
+list/and@2, is/short, 300B, -> da/narrow
+list/and@2, is/wide, 300B, -> da/narrow
+list/and@2, it/narrow, 298B, -> gl/narrow
+list/and@2, it/short, 298B, -> gl/narrow
+list/and@2, it/wide, 298B, -> gl/narrow
+list/and@2, ja/narrow, 300B, d2bb06bc22016a4b
+list/and@2, ja/short, 300B, -> ja/narrow
+list/and@2, ja/wide, 300B, -> ja/narrow
+list/and@2, jv/short, 303B, 817ac12419a174a9
+list/and@2, jv/wide, 303B, -> jv/short
+list/and@2, ka/narrow, 308B, e240de7a9fc5f5c6
+list/and@2, ka/short, 308B, -> ka/narrow
+list/and@2, ka/wide, 308B, -> ka/narrow
+list/and@2, kea/narrow, 298B, -> bs/narrow
+list/and@2, kea/short, 298B, -> bs/narrow
+list/and@2, kea/wide, 298B, -> bs/narrow
+list/and@2, kgp/short, 302B, e38e9413e599d31f
+list/and@2, kgp/wide, 302B, -> kgp/short
+list/and@2, kk/narrow, 304B, 64caa46aff94b76c
+list/and@2, kk/short, 304B, -> kk/narrow
+list/and@2, kk/wide, 304B, -> kk/narrow
+list/and@2, km/short, 314B, 1e26f0383cf7a5e7
+list/and@2, km/wide, 316B, 5cd4fb3a7df0ff2
+list/and@2, kn/short, 327B, 5a1b225f18db5727
+list/and@2, kn/wide, 327B, -> kn/short
+list/and@2, ko/narrow, 302B, 34a5f6015c37b3e8
+list/and@2, ko/short, 302B, -> ko/narrow
+list/and@2, ko/wide, 302B, -> ko/narrow
+list/and@2, kok/short, 299B, -> chr/short
+list/and@2, ks-Deva/narrow, 309B, 4a829a960a048855
+list/and@2, ks-Deva/short, 309B, -> ks-Deva/narrow
+list/and@2, ks-Deva/wide, 309B, -> ks-Deva/narrow
+list/and@2, ks/narrow, 312B, 9a63c560d0e41341
+list/and@2, ks/short, 312B, -> ks/narrow
+list/and@2, ks/wide, 312B, -> ks/narrow
+list/and@2, ku/narrow, 300B, 676f4ec31d2bcf7d
+list/and@2, ku/short, 300B, -> ku/narrow
+list/and@2, ku/wide, 300B, -> ku/narrow
+list/and@2, kxv/narrow, 307B, 4a62e364dd19ce73
+list/and@2, kxv/short, 307B, -> kxv/narrow
+list/and@2, kxv/wide, 307B, -> kxv/narrow
+list/and@2, ky/narrow, 312B, bfae09b2aec541b9
+list/and@2, ky/short, 312B, -> ky/narrow
+list/and@2, ky/wide, 312B, -> ky/narrow
+list/and@2, lb/narrow, 304B, 8cc05e4dff75ad91
+list/and@2, lb/short, 304B, -> lb/narrow
+list/and@2, lb/wide, 304B, -> lb/narrow
+list/and@2, lo/narrow, 305B, 2505dc915201fe5c
+list/and@2, lo/short, 314B, cbd14f61b0bca871
+list/and@2, lo/wide, 305B, -> lo/narrow
+list/and@2, lt/narrow, 300B, 5970a473b4dd4dc5
+list/and@2, lt/short, 300B, -> lt/narrow
+list/and@2, lt/wide, 300B, -> lt/narrow
+list/and@2, lv/narrow, 300B, 4256c9eeb3cacc65
+list/and@2, lv/short, 300B, -> lv/narrow
+list/and@2, lv/wide, 300B, -> lv/narrow
+list/and@2, mai/narrow, 309B, -> hi/wide
+list/and@2, mai/short, 309B, -> hi/wide
+list/and@2, mai/wide, 309B, -> hi/wide
+list/and@2, mi/short, 299B, -> chr/short
+list/and@2, mk/narrow, 300B, -> bg/short
+list/and@2, mk/short, 300B, -> bg/short
+list/and@2, mk/wide, 300B, -> bg/short
+list/and@2, ml/narrow, 315B, dba67e93015207c8
+list/and@2, ml/short, 333B, d04e6524e8356319
+list/and@2, ml/wide, 333B, -> ml/short
+list/and@2, mni/narrow, 326B, daf81a197e0ce0ea
+list/and@2, mni/short, 326B, -> mni/narrow
+list/and@2, mni/wide, 326B, -> mni/narrow
+list/and@2, mr/narrow, 314B, 2ab610fdcb8dde9e
+list/and@2, mr/short, 314B, -> mr/narrow
+list/and@2, mr/wide, 314B, -> mr/narrow
+list/and@2, ms/short, 302B, bddb0b561eb3b8c1
+list/and@2, ms/wide, 302B, -> ms/short
+list/and@2, mt/narrow, 299B, 149eff739df96973
+list/and@2, mt/short, 299B, -> mt/narrow
+list/and@2, mt/wide, 299B, -> mt/narrow
+list/and@2, my/narrow, 326B, 5bcd7f671fd4a6b7
+list/and@2, my/short, 326B, -> my/narrow
+list/and@2, my/wide, 326B, -> my/narrow
+list/and@2, ne/narrow, 295B, 9f316d623a9e573e
+list/and@2, ne/short, 301B, 819a59f088a9777c
+list/and@2, ne/wide, 301B, -> ne/short
+list/and@2, nl/short, 298B, -> blo/narrow
+list/and@2, nl/wide, 300B, -> af/short
+list/and@2, no/narrow, 300B, -> da/narrow
+list/and@2, no/short, 300B, -> da/narrow
+list/and@2, no/wide, 300B, -> da/narrow
+list/and@2, or/narrow, 303B, 5e0bb9e3f69a94b1
+list/and@2, or/short, 303B, -> or/narrow
+list/and@2, or/wide, 303B, -> or/narrow
+list/and@2, pa/short, 314B, 4e56c5736db54104
+list/and@2, pa/wide, 314B, -> pa/short
+list/and@2, pcm/narrow, 300B, 2dfea880e5ace53a
+list/and@2, pcm/short, 299B, -> chr/short
+list/and@2, pcm/wide, 301B, 3a2c3252a3fac16
+list/and@2, pl/narrow, 298B, -> bs/narrow
+list/and@2, pl/short, 298B, -> bs/narrow
+list/and@2, pl/wide, 298B, -> bs/narrow
+list/and@2, ps/narrow, 305B, 2a8b939a41aa18fa
+list/and@2, ps/short, 308B, 52a12a61a82f25eb
+list/and@2, ps/wide, 308B, -> ps/short
+list/and@2, pt/short, 298B, -> gl/narrow
+list/and@2, pt/wide, 298B, -> gl/narrow
+list/and@2, rm/narrow, 298B, -> gl/narrow
+list/and@2, rm/short, 298B, -> gl/narrow
+list/and@2, rm/wide, 298B, -> gl/narrow
+list/and@2, ro/short, 302B, c3f86d357a7c8bf7
+list/and@2, ro/wide, 302B, -> ro/short
+list/and@2, ru/short, 300B, -> bg/short
+list/and@2, ru/wide, 300B, -> bg/short
+list/and@2, sa/narrow, 315B, 6d523860a65d4a29
+list/and@2, sa/short, 315B, -> sa/narrow
+list/and@2, sa/wide, 315B, -> sa/narrow
+list/and@2, sah/narrow, 316B, a837a5d4406547a2
+list/and@2, sah/short, 316B, -> sah/narrow
+list/and@2, sah/wide, 316B, -> sah/narrow
+list/and@2, sc/narrow, 298B, -> gl/narrow
+list/and@2, sc/short, 298B, -> gl/narrow
+list/and@2, sc/wide, 298B, -> gl/narrow
+list/and@2, sd/short, 302B, b8cf0dbee7e87fdb
+list/and@2, sd/wide, 302B, -> sd/short
+list/and@2, si/narrow, 309B, de133816032e2da4
+list/and@2, si/short, 309B, -> si/narrow
+list/and@2, si/wide, 309B, -> si/narrow
+list/and@2, sk/narrow, 299B, 6bc6f6b001979a6
+list/and@2, sk/short, 299B, -> sk/narrow
+list/and@2, sk/wide, 299B, -> sk/narrow
+list/and@2, sl/narrow, 300B, 14b0b1a8899bea62
+list/and@2, sl/short, 300B, -> sl/narrow
+list/and@2, sl/wide, 300B, -> sl/narrow
+list/and@2, so/short, 298B, -> blo/narrow
+list/and@2, so/wide, 302B, ec44a9728d85baa4
+list/and@2, sq/narrow, 302B, 80afb55b6ebe5105
+list/and@2, sq/short, 302B, -> sq/narrow
+list/and@2, sq/wide, 302B, -> sq/narrow
+list/and@2, sr-Latn/narrow, 298B, -> bs/narrow
+list/and@2, sr-Latn/short, 298B, -> bs/narrow
+list/and@2, sr-Latn/wide, 298B, -> bs/narrow
+list/and@2, sr/narrow, 300B, -> bg/short
+list/and@2, sr/short, 300B, -> bg/short
+list/and@2, sr/wide, 300B, -> bg/short
+list/and@2, su/narrow, 309B, 66387436ba7fd5c3
+list/and@2, su/short, 309B, -> su/narrow
+list/and@2, su/wide, 309B, -> su/narrow
+list/and@2, sv/short, 302B, d6370dec1f0f8826
+list/and@2, sv/wide, 302B, -> sv/short
+list/and@2, sw/narrow, 298B, 7ae1900996e5a6f0
+list/and@2, sw/short, 300B, -> blo/wide
+list/and@2, sw/wide, 300B, -> blo/wide
+list/and@2, syr/narrow, 300B, e94c553281be9836
+list/and@2, syr/short, 300B, -> syr/narrow
+list/and@2, syr/wide, 300B, -> syr/narrow
+list/and@2, ta/narrow, 338B, 5435a33f73d8b8b7
+list/and@2, ta/short, 338B, -> ta/narrow
+list/and@2, ta/wide, 338B, -> ta/narrow
+list/and@2, te/short, 326B, a61c4e20f9668da9
+list/and@2, te/wide, 326B, -> te/short
+list/and@2, th/narrow, 309B, 1323fdc7647078ae
+list/and@2, th/short, 309B, -> th/narrow
+list/and@2, th/wide, 309B, -> th/narrow
+list/and@2, ti/narrow, 310B, b1cb5f5a5a9bc4bc
+list/and@2, ti/short, 310B, -> ti/narrow
+list/and@2, ti/wide, 310B, -> ti/narrow
+list/and@2, tk/short, 300B, 16283da63ab400f
+list/and@2, tk/wide, 300B, -> tk/short
+list/and@2, to/narrow, 304B, a9ef5ad88b7146de
+list/and@2, to/short, 304B, -> to/narrow
+list/and@2, to/wide, 304B, -> to/narrow
+list/and@2, tr/short, 300B, 5dc846861618c758
+list/and@2, tr/wide, 300B, -> tr/short
+list/and@2, tt/narrow, 308B, 4772e1dead890481
+list/and@2, tt/short, 308B, -> tt/narrow
+list/and@2, tt/wide, 308B, -> tt/narrow
+list/and@2, ug/narrow, 303B, -> en/wide
+list/and@2, ug/short, 303B, -> en/wide
+list/and@2, ug/wide, 303B, -> en/wide
+list/and@2, uk/short, 300B, -> be/narrow
+list/and@2, uk/wide, 300B, -> be/narrow
+list/and@2, und/narrow, 296B, 913cb377537a1123
+list/and@2, und/short, 296B, -> und/narrow
+list/and@2, und/wide, 296B, -> und/narrow
+list/and@2, ur/narrow, 300B, 70e101da898f1e0f
+list/and@2, ur/short, 312B, 4b71ce00bc45d184
+list/and@2, ur/wide, 312B, -> ur/short
+list/and@2, uz/short, 300B, 3f1655fda61fe4ef
+list/and@2, uz/wide, 300B, -> uz/short
+list/and@2, vec/narrow, 297B, 13decb0691e2bc21
+list/and@2, vec/short, 298B, -> gl/narrow
+list/and@2, vec/wide, 298B, -> gl/narrow
+list/and@2, vi/short, 302B, 567c52abba8bc169
+list/and@2, vi/wide, 302B, -> vi/short
+list/and@2, xnr/narrow, 314B, 731f717a3c179222
+list/and@2, xnr/short, 314B, -> xnr/narrow
+list/and@2, xnr/wide, 315B, e55ed4b2b24ce92f
+list/and@2, yrl/short, 306B, 99e721060d2dc047
+list/and@2, yrl/wide, 306B, -> yrl/short
+list/and@2, yue-Hans/narrow, 300B, 928a9836d07774f8
+list/and@2, yue-Hans/short, 300B, -> yue-Hans/narrow
+list/and@2, yue-Hans/wide, 300B, -> yue-Hans/narrow
+list/and@2, yue/narrow, 300B, -> yue-Hans/narrow
+list/and@2, yue/short, 300B, -> yue-Hans/narrow
+list/and@2, yue/wide, 300B, -> yue-Hans/narrow
+list/and@2, zh-HK/narrow, 300B, 1183049889dcb692
+list/and@2, zh-HK/short, 300B, -> zh-HK/narrow
+list/and@2, zh-HK/wide, 300B, -> zh-HK/narrow
+list/and@2, zh-Hant/narrow, 300B, c52618705d466ab7
+list/and@2, zh-Hant/short, 300B, e8e4dc4fe6f7c901
+list/and@2, zh-Hant/wide, 300B, -> zh-Hant/short
+list/and@2, zh-MO/narrow, 300B, -> zh-HK/narrow
+list/and@2, zh-MO/short, 300B, -> zh-HK/narrow
+list/and@2, zh-MO/wide, 300B, -> zh-HK/narrow
+list/and@2, zh/narrow, 300B, -> ja/narrow
+list/and@2, zh/short, 300B, -> zh-Hant/short
+list/and@2, zh/wide, 300B, -> zh-Hant/short
+list/and@2, zu/short, 301B, 53ad8488e25f386c
+list/and@2, zu/wide, 301B, -> zu/short
 list/or@2, <lookup>, 3288B, 355 identifiers
-list/or@2, <total>, 50434B, 102 unique payloads
-list/or@2, af/narrow, 460B, bc458cebdd28ecfe
-list/or@2, af/short, 460B, -> af/narrow
-list/or@2, af/wide, 460B, -> af/narrow
-list/or@2, am/narrow, 481B, 95716a9bc9ae28b
-list/or@2, am/short, 481B, -> am/narrow
-list/or@2, am/wide, 481B, -> am/narrow
-list/or@2, ar/narrow, 472B, 97785936d57df93e
-list/or@2, ar/short, 472B, -> ar/narrow
-list/or@2, ar/wide, 472B, -> ar/narrow
-list/or@2, as/narrow, 468B, e8a2a3637e208714
-list/or@2, as/short, 468B, -> as/narrow
-list/or@2, as/wide, 468B, -> as/narrow
-list/or@2, ast/narrow, 458B, 22fb767283fd5a34
-list/or@2, ast/short, 458B, -> ast/narrow
-list/or@2, ast/wide, 458B, -> ast/narrow
-list/or@2, az/narrow, 468B, 372e16bd44b9b80b
-list/or@2, az/short, 468B, -> az/narrow
-list/or@2, az/wide, 467B, 572d18f7eee32c6c
-list/or@2, be/narrow, 464B, 221299df16ed5753
-list/or@2, be/short, 464B, -> be/narrow
-list/or@2, be/wide, 464B, -> be/narrow
-list/or@2, bg/narrow, 468B, 23f2f002b6b12417
-list/or@2, bg/short, 468B, -> bg/narrow
-list/or@2, bg/wide, 468B, -> bg/narrow
-list/or@2, blo/narrow, 462B, 197276e321ff6b21
-list/or@2, blo/short, 462B, -> blo/narrow
-list/or@2, blo/wide, 462B, -> blo/narrow
-list/or@2, bn/narrow, 469B, cf1aead3e8ae1c4d
-list/or@2, bn/short, 469B, -> bn/narrow
-list/or@2, bn/wide, 469B, -> bn/narrow
-list/or@2, br/narrow, 460B, 678608a21f3ec17d
-list/or@2, br/short, 460B, -> br/narrow
-list/or@2, br/wide, 460B, -> br/narrow
-list/or@2, bs/narrow, 462B, e1e545849669f247
-list/or@2, bs/short, 462B, -> bs/narrow
-list/or@2, bs/wide, 462B, -> bs/narrow
-list/or@2, ca/narrow, 458B, -> ast/narrow
-list/or@2, ca/short, 458B, -> ast/narrow
-list/or@2, ca/wide, 458B, -> ast/narrow
-list/or@2, ceb/narrow, 459B, 7b4ff98589795cb4
-list/or@2, ceb/short, 459B, -> ceb/narrow
-list/or@2, ceb/wide, 459B, -> ceb/narrow
-list/or@2, chr/narrow, 481B, 747af25bee0756c2
-list/or@2, chr/short, 481B, -> chr/narrow
-list/or@2, chr/wide, 481B, -> chr/narrow
-list/or@2, cs/narrow, 464B, 3f6a3e9bd5fd4834
-list/or@2, cs/short, 464B, -> cs/narrow
-list/or@2, cs/wide, 464B, -> cs/narrow
-list/or@2, cv/narrow, 460B, b49c1ed1696c1ea1
-list/or@2, cv/short, 460B, -> cv/narrow
-list/or@2, cv/wide, 460B, -> cv/narrow
-list/or@2, cy/narrow, 462B, 59486c08c2b6d030
-list/or@2, cy/short, 462B, -> cy/narrow
-list/or@2, cy/wide, 462B, -> cy/narrow
-list/or@2, da/narrow, 462B, 59d264dd93d2f130
-list/or@2, da/short, 462B, -> da/narrow
-list/or@2, da/wide, 466B, f1682a2992531b21
-list/or@2, de/narrow, 464B, bc605685d9219f52
-list/or@2, de/short, 464B, -> de/narrow
-list/or@2, de/wide, 464B, -> de/narrow
-list/or@2, dsb/narrow, 462B, c13c57f830cfb7d3
-list/or@2, dsb/short, 462B, -> dsb/narrow
-list/or@2, dsb/wide, 462B, -> dsb/narrow
-list/or@2, el/narrow, 460B, e5a219baa7384b08
-list/or@2, el/short, 460B, -> el/narrow
-list/or@2, el/wide, 460B, -> el/narrow
-list/or@2, en-001/narrow, 460B, 385c32be4532e8f9
-list/or@2, en-001/short, 460B, -> en-001/narrow
-list/or@2, en-001/wide, 460B, -> en-001/narrow
-list/or@2, en-CA/narrow, 460B, -> en-001/narrow
-list/or@2, en-CA/short, 460B, -> en-001/narrow
-list/or@2, en-CA/wide, 460B, -> en-001/narrow
-list/or@2, es/narrow, 3050B, fb59238d07551d1f
-list/or@2, es/short, 3050B, -> es/narrow
-list/or@2, es/wide, 3050B, -> es/narrow
-list/or@2, et/narrow, 464B, 94b37abbb97146f8
-list/or@2, et/short, 464B, -> et/narrow
-list/or@2, et/wide, 464B, -> et/narrow
-list/or@2, eu/narrow, 462B, d434467dd1a18a4a
-list/or@2, eu/short, 462B, -> eu/narrow
-list/or@2, eu/wide, 462B, -> eu/narrow
-list/or@2, fa/narrow, 474B, ae20f076d66ced01
-list/or@2, fa/short, 474B, -> fa/narrow
-list/or@2, fa/wide, 474B, -> fa/narrow
-list/or@2, ff-Adlm/narrow, 511B, c3c347979677f413
-list/or@2, ff-Adlm/short, 511B, -> ff-Adlm/narrow
-list/or@2, ff-Adlm/wide, 511B, -> ff-Adlm/narrow
-list/or@2, fi/narrow, 462B, 618d5d211d420da
-list/or@2, fi/short, 462B, -> fi/narrow
-list/or@2, fi/wide, 462B, -> fi/narrow
-list/or@2, fil/narrow, 459B, -> ceb/narrow
-list/or@2, fil/short, 459B, -> ceb/narrow
-list/or@2, fil/wide, 459B, -> ceb/narrow
-list/or@2, fo/narrow, 465B, 1e66c2c56a60a617
-list/or@2, fo/short, 465B, -> fo/narrow
-list/or@2, fo/wide, 465B, -> fo/narrow
-list/or@2, fr/narrow, 460B, b65abd3b69a05b82
-list/or@2, fr/short, 460B, -> fr/narrow
-list/or@2, fr/wide, 460B, -> fr/narrow
-list/or@2, ga/narrow, 462B, 4b1cae9c0e112006
-list/or@2, ga/short, 462B, -> ga/narrow
-list/or@2, ga/wide, 462B, -> ga/narrow
-list/or@2, gd/narrow, 460B, b9ada574a12c380c
-list/or@2, gd/short, 460B, -> gd/narrow
-list/or@2, gd/wide, 460B, -> gd/narrow
-list/or@2, gl/narrow, 460B, -> fr/narrow
-list/or@2, gl/short, 460B, -> fr/narrow
-list/or@2, gl/wide, 460B, -> fr/narrow
-list/or@2, gu/narrow, 480B, c1cc7cfefce1c7e1
-list/or@2, gu/short, 480B, -> gu/narrow
-list/or@2, gu/wide, 481B, 92bef0872673a1fd
-list/or@2, ha/narrow, 460B, 288f1177871475e4
-list/or@2, ha/short, 460B, -> ha/narrow
-list/or@2, ha/wide, 460B, -> ha/narrow
-list/or@2, he/narrow, 464B, 2324b1d3adc24d4a
-list/or@2, he/short, 464B, -> he/narrow
-list/or@2, he/wide, 464B, -> he/narrow
-list/or@2, hi-Latn/narrow, 462B, 43fbc6126e7c59
-list/or@2, hi-Latn/short, 462B, -> hi-Latn/narrow
-list/or@2, hi-Latn/wide, 462B, -> hi-Latn/narrow
-list/or@2, hi/narrow, 468B, 2b80772cb1fb39c4
-list/or@2, hi/short, 468B, -> hi/narrow
-list/or@2, hi/wide, 468B, -> hi/narrow
-list/or@2, hr/narrow, 462B, -> bs/narrow
-list/or@2, hr/short, 462B, -> bs/narrow
-list/or@2, hr/wide, 462B, -> bs/narrow
-list/or@2, hsb/narrow, 462B, -> dsb/narrow
-list/or@2, hsb/short, 462B, -> dsb/narrow
-list/or@2, hsb/wide, 462B, -> dsb/narrow
-list/or@2, hu/narrow, 464B, b364efe22c5c1b3c
-list/or@2, hu/short, 464B, -> hu/narrow
-list/or@2, hu/wide, 464B, -> hu/narrow
-list/or@2, hy/narrow, 468B, 2e72e4795cdbd3d4
-list/or@2, hy/short, 468B, -> hy/narrow
-list/or@2, hy/wide, 468B, -> hy/narrow
-list/or@2, ia/narrow, 458B, -> ast/narrow
-list/or@2, ia/short, 458B, -> ast/narrow
-list/or@2, ia/wide, 458B, -> ast/narrow
-list/or@2, id/narrow, 465B, df35c4f01435b96f
-list/or@2, id/short, 465B, -> id/narrow
-list/or@2, id/wide, 465B, -> id/narrow
-list/or@2, is/narrow, 464B, 6376a470bc8e88e1
-list/or@2, is/short, 464B, -> is/narrow
-list/or@2, is/wide, 464B, -> is/narrow
-list/or@2, it/narrow, 458B, -> ast/narrow
-list/or@2, it/short, 458B, -> ast/narrow
-list/or@2, it/wide, 458B, -> ast/narrow
-list/or@2, ja/narrow, 475B, 822326d5681b3d29
-list/or@2, ja/short, 475B, -> ja/narrow
-list/or@2, ja/wide, 475B, -> ja/narrow
-list/or@2, jv/narrow, 467B, 5d141c8f0190c8ce
-list/or@2, jv/short, 467B, -> jv/narrow
-list/or@2, jv/wide, 467B, -> jv/narrow
-list/or@2, ka/narrow, 468B, f27ac8ad23e24848
-list/or@2, ka/short, 468B, -> ka/narrow
-list/or@2, ka/wide, 468B, -> ka/narrow
-list/or@2, kea/narrow, 458B, -> ast/narrow
-list/or@2, kea/short, 458B, -> ast/narrow
-list/or@2, kea/wide, 458B, -> ast/narrow
-list/or@2, kgp/narrow, 476B, ec456acc8df80417
-list/or@2, kgp/short, 476B, -> kgp/narrow
-list/or@2, kgp/wide, 476B, -> kgp/narrow
-list/or@2, kk/narrow, 480B, 3fde5243ff16a928
-list/or@2, kk/short, 480B, -> kk/narrow
-list/or@2, kk/wide, 480B, -> kk/narrow
-list/or@2, km/narrow, 462B, 811219c0d466e5a7
-list/or@2, km/short, 462B, -> km/narrow
-list/or@2, km/wide, 462B, -> km/narrow
-list/or@2, kn/narrow, 481B, f2994de6a2fd7032
-list/or@2, kn/short, 481B, -> kn/narrow
-list/or@2, kn/wide, 481B, -> kn/narrow
-list/or@2, ko/narrow, 468B, 2e4bae3c7f28485
-list/or@2, ko/short, 468B, -> ko/narrow
-list/or@2, ko/wide, 468B, -> ko/narrow
-list/or@2, kok/narrow, 469B, f64681e6271f77ed
-list/or@2, kok/short, 469B, -> kok/narrow
-list/or@2, kok/wide, 469B, -> kok/narrow
-list/or@2, ku/narrow, 460B, fca88af8f7dfc4c
-list/or@2, ku/short, 460B, -> ku/narrow
-list/or@2, ku/wide, 460B, -> ku/narrow
-list/or@2, kxv/narrow, 472B, 3c647d796bb1ab30
-list/or@2, kxv/short, 472B, -> kxv/narrow
-list/or@2, kxv/wide, 472B, -> kxv/narrow
-list/or@2, ky/narrow, 464B, 2a9dea4a02877409
-list/or@2, ky/short, 464B, -> ky/narrow
-list/or@2, ky/wide, 464B, -> ky/narrow
-list/or@2, lo/narrow, 474B, 4fccc4270eaad50f
-list/or@2, lo/short, 474B, -> lo/narrow
-list/or@2, lo/wide, 474B, -> lo/narrow
-list/or@2, lt/narrow, 460B, 5e8165e851e9b475
-list/or@2, lt/short, 460B, -> lt/narrow
-list/or@2, lt/wide, 460B, -> lt/narrow
-list/or@2, lv/narrow, 462B, e1247406f6befc35
-list/or@2, lv/short, 462B, -> lv/narrow
-list/or@2, lv/wide, 462B, -> lv/narrow
-list/or@2, mi/narrow, 469B, dc748ad8bfb5ee7a
-list/or@2, mi/short, 469B, -> mi/narrow
-list/or@2, mi/wide, 469B, -> mi/narrow
-list/or@2, mk/narrow, 468B, -> bg/narrow
-list/or@2, mk/short, 468B, -> bg/narrow
-list/or@2, mk/wide, 468B, -> bg/narrow
-list/or@2, ml/narrow, 517B, 9259768f9cd0258a
-list/or@2, ml/short, 517B, -> ml/narrow
-list/or@2, ml/wide, 517B, -> ml/narrow
-list/or@2, mn/narrow, 495B, a91c702b1445b0a8
-list/or@2, mn/short, 495B, -> mn/narrow
-list/or@2, mn/wide, 495B, -> mn/narrow
-list/or@2, mr/narrow, 486B, d9f5918a90c87cf6
-list/or@2, mr/short, 486B, -> mr/narrow
-list/or@2, mr/wide, 487B, dd2bb8e8c2520d23
-list/or@2, ms/narrow, 465B, -> id/narrow
-list/or@2, ms/short, 465B, -> id/narrow
-list/or@2, ms/wide, 465B, -> id/narrow
-list/or@2, my/narrow, 512B, 1ae9a6b710339ffe
-list/or@2, my/short, 512B, -> my/narrow
-list/or@2, my/wide, 512B, -> my/narrow
-list/or@2, ne/narrow, 469B, -> kok/narrow
-list/or@2, ne/short, 469B, -> kok/narrow
-list/or@2, ne/wide, 469B, -> kok/narrow
-list/or@2, nl/narrow, 460B, -> af/narrow
-list/or@2, nl/short, 460B, -> af/narrow
-list/or@2, nl/wide, 460B, -> af/narrow
-list/or@2, no/narrow, 466B, -> da/wide
-list/or@2, no/short, 466B, -> da/wide
-list/or@2, no/wide, 466B, -> da/wide
-list/or@2, or/narrow, 492B, e42919c2d9b6e1de
-list/or@2, or/short, 492B, -> or/narrow
-list/or@2, or/wide, 492B, -> or/narrow
-list/or@2, pa/narrow, 475B, 40cd7bf328008e9a
-list/or@2, pa/short, 475B, -> pa/narrow
-list/or@2, pa/wide, 474B, 896f5426306159c8
-list/or@2, pcm/narrow, 462B, a6dc58be30505d52
-list/or@2, pcm/short, 463B, 91735feebd671ee9
-list/or@2, pcm/wide, 462B, -> pcm/narrow
-list/or@2, pl/narrow, 462B, 7c3e772b91d3c8a5
-list/or@2, pl/short, 462B, -> pl/narrow
-list/or@2, pl/wide, 462B, -> pl/narrow
-list/or@2, ps/narrow, 463B, eeb58ae43432c6ab
-list/or@2, ps/short, 463B, -> ps/narrow
-list/or@2, ps/wide, 463B, -> ps/narrow
-list/or@2, pt/narrow, 460B, -> fr/narrow
-list/or@2, pt/short, 460B, -> fr/narrow
-list/or@2, pt/wide, 460B, -> fr/narrow
-list/or@2, qu/narrow, 465B, c13cc1ea9906f9e3
-list/or@2, qu/short, 465B, -> qu/narrow
-list/or@2, qu/wide, 465B, -> qu/narrow
-list/or@2, rm/narrow, 458B, e91763a0213da273
-list/or@2, rm/short, 458B, -> rm/narrow
-list/or@2, rm/wide, 458B, -> rm/narrow
-list/or@2, ro/narrow, 462B, 742df3f33414bab7
-list/or@2, ro/short, 462B, -> ro/narrow
-list/or@2, ro/wide, 462B, -> ro/narrow
-list/or@2, ru/narrow, 468B, -> bg/narrow
-list/or@2, ru/short, 468B, -> bg/narrow
-list/or@2, ru/wide, 468B, -> bg/narrow
-list/or@2, sc/narrow, 458B, -> ast/narrow
-list/or@2, sc/short, 458B, -> ast/narrow
-list/or@2, sc/wide, 458B, -> ast/narrow
-list/or@2, sd/narrow, 465B, 9228d3317ae83668
-list/or@2, sd/short, 465B, -> sd/narrow
-list/or@2, sd/wide, 465B, -> sd/narrow
-list/or@2, si/narrow, 469B, 9b5a2f33d0a4460d
-list/or@2, si/short, 469B, -> si/narrow
-list/or@2, si/wide, 469B, -> si/narrow
-list/or@2, sk/narrow, 466B, 250111266191a955
-list/or@2, sk/short, 466B, -> sk/narrow
-list/or@2, sk/wide, 466B, -> sk/narrow
-list/or@2, sl/narrow, 462B, 8eb04c9f51649245
-list/or@2, sl/short, 462B, -> sl/narrow
-list/or@2, sl/wide, 462B, -> sl/narrow
-list/or@2, so/narrow, 462B, 448a830ed399ebd0
-list/or@2, so/short, 462B, -> so/narrow
-list/or@2, so/wide, 462B, -> so/narrow
-list/or@2, sq/narrow, 462B, 13a5b00331f9902
-list/or@2, sq/short, 462B, -> sq/narrow
-list/or@2, sq/wide, 462B, -> sq/narrow
-list/or@2, sr-Latn/narrow, 462B, -> bs/narrow
-list/or@2, sr-Latn/short, 462B, -> bs/narrow
-list/or@2, sr-Latn/wide, 462B, -> bs/narrow
-list/or@2, sr/narrow, 468B, -> bg/narrow
-list/or@2, sr/short, 468B, -> bg/narrow
-list/or@2, sr/wide, 468B, -> bg/narrow
-list/or@2, sv/narrow, 466B, -> da/wide
-list/or@2, sv/short, 466B, -> da/wide
-list/or@2, sv/wide, 466B, -> da/wide
-list/or@2, sw/narrow, 461B, 795705a00541ec4d
-list/or@2, sw/short, 461B, -> sw/narrow
-list/or@2, sw/wide, 460B, 33ef1e3b983a1683
-list/or@2, syr/narrow, 472B, fb7cedeca54b3d8f
-list/or@2, syr/short, 472B, -> syr/narrow
-list/or@2, syr/wide, 472B, -> syr/narrow
-list/or@2, ta/narrow, 492B, 6a607212514bb4be
-list/or@2, ta/short, 492B, -> ta/narrow
-list/or@2, ta/wide, 492B, -> ta/narrow
-list/or@2, te/narrow, 480B, 4cfeeadf33b20d4e
-list/or@2, te/short, 480B, -> te/narrow
-list/or@2, te/wide, 480B, -> te/narrow
-list/or@2, th/narrow, 478B, 5f37dd73f3380113
-list/or@2, th/short, 478B, -> th/narrow
-list/or@2, th/wide, 480B, 65a7ea9775645012
-list/or@2, ti/narrow, 472B, 6d482c0a2ebd1e17
-list/or@2, ti/short, 472B, -> ti/narrow
-list/or@2, ti/wide, 472B, -> ti/narrow
-list/or@2, tk/narrow, 468B, 3117717dad50b1de
-list/or@2, tk/short, 468B, -> tk/narrow
-list/or@2, tk/wide, 468B, -> tk/narrow
-list/or@2, to/narrow, 463B, d9211a9026999d07
-list/or@2, to/short, 463B, -> to/narrow
-list/or@2, to/wide, 463B, -> to/narrow
-list/or@2, tr/narrow, 464B, a4eda97a692ef1e5
-list/or@2, tr/short, 464B, -> tr/narrow
-list/or@2, tr/wide, 464B, -> tr/narrow
-list/or@2, uk/narrow, 468B, dc5784f2ac2ea9c7
-list/or@2, uk/short, 468B, -> uk/narrow
-list/or@2, uk/wide, 468B, -> uk/narrow
-list/or@2, und/narrow, 461B, 2e452dd80784dab5
-list/or@2, und/short, 461B, -> und/narrow
-list/or@2, und/wide, 461B, -> und/narrow
-list/or@2, ur/narrow, 468B, 8311d19c457b3f5e
-list/or@2, ur/short, 468B, -> ur/narrow
-list/or@2, ur/wide, 468B, -> ur/narrow
-list/or@2, uz/narrow, 464B, ea8a64203aecce08
-list/or@2, uz/short, 464B, -> uz/narrow
-list/or@2, uz/wide, 464B, -> uz/narrow
-list/or@2, vec/narrow, 459B, -> ceb/narrow
-list/or@2, vec/short, 459B, -> ceb/narrow
-list/or@2, vec/wide, 459B, -> ceb/narrow
-list/or@2, vi/narrow, 468B, 8d63408108daa992
-list/or@2, vi/short, 468B, -> vi/narrow
-list/or@2, vi/wide, 468B, -> vi/narrow
-list/or@2, xh/narrow, 469B, 4e95ebb0d1c254ae
-list/or@2, xnr/narrow, 468B, -> hi/narrow
-list/or@2, xnr/short, 468B, -> hi/narrow
-list/or@2, xnr/wide, 468B, -> hi/narrow
-list/or@2, yo-BJ/narrow, 475B, e9db075152889dc4
-list/or@2, yo-BJ/short, 475B, -> yo-BJ/narrow
-list/or@2, yo-BJ/wide, 475B, -> yo-BJ/narrow
-list/or@2, yo/narrow, 476B, 7e503fa4c7aff9cf
-list/or@2, yo/short, 476B, -> yo/narrow
-list/or@2, yo/wide, 476B, -> yo/narrow
-list/or@2, yrl/narrow, 458B, -> rm/narrow
-list/or@2, yrl/short, 458B, -> rm/narrow
-list/or@2, yrl/wide, 458B, -> rm/narrow
-list/or@2, yue-Hans/narrow, 464B, 2fa70bcf590a5511
-list/or@2, yue-Hans/short, 464B, -> yue-Hans/narrow
-list/or@2, yue-Hans/wide, 464B, -> yue-Hans/narrow
-list/or@2, yue/narrow, 464B, -> yue-Hans/narrow
-list/or@2, yue/short, 464B, -> yue-Hans/narrow
-list/or@2, yue/wide, 464B, -> yue-Hans/narrow
-list/or@2, zh-Hant/narrow, 460B, 7690b72ffea92f16
-list/or@2, zh-Hant/short, 460B, -> zh-Hant/narrow
-list/or@2, zh-Hant/wide, 460B, -> zh-Hant/narrow
-list/or@2, zh/narrow, 460B, -> zh-Hant/narrow
-list/or@2, zh/short, 460B, -> zh-Hant/narrow
-list/or@2, zh/wide, 460B, -> zh-Hant/narrow
+list/or@2, <total>, 34114B, 102 unique payloads
+list/or@2, af/narrow, 300B, a9b50840f2637798
+list/or@2, af/short, 300B, -> af/narrow
+list/or@2, af/wide, 300B, -> af/narrow
+list/or@2, am/narrow, 321B, 21b55c43035d5d59
+list/or@2, am/short, 321B, -> am/narrow
+list/or@2, am/wide, 321B, -> am/narrow
+list/or@2, ar/narrow, 312B, c58445179e4b4e56
+list/or@2, ar/short, 312B, -> ar/narrow
+list/or@2, ar/wide, 312B, -> ar/narrow
+list/or@2, as/narrow, 308B, 543df4c3d9c8ad44
+list/or@2, as/short, 308B, -> as/narrow
+list/or@2, as/wide, 308B, -> as/narrow
+list/or@2, ast/narrow, 298B, e2542a1bb18d6e40
+list/or@2, ast/short, 298B, -> ast/narrow
+list/or@2, ast/wide, 298B, -> ast/narrow
+list/or@2, az/narrow, 308B, 408c0a516b8713f2
+list/or@2, az/short, 308B, -> az/narrow
+list/or@2, az/wide, 307B, 35c7b1cac365d22e
+list/or@2, be/narrow, 304B, cad5312f022de9a7
+list/or@2, be/short, 304B, -> be/narrow
+list/or@2, be/wide, 304B, -> be/narrow
+list/or@2, bg/narrow, 308B, b2025aab1a28a2d4
+list/or@2, bg/short, 308B, -> bg/narrow
+list/or@2, bg/wide, 308B, -> bg/narrow
+list/or@2, blo/narrow, 302B, f7be8dc5e9bec0d8
+list/or@2, blo/short, 302B, -> blo/narrow
+list/or@2, blo/wide, 302B, -> blo/narrow
+list/or@2, bn/narrow, 309B, c3e99059dea8a256
+list/or@2, bn/short, 309B, -> bn/narrow
+list/or@2, bn/wide, 309B, -> bn/narrow
+list/or@2, br/narrow, 300B, 6a7750172265b0c4
+list/or@2, br/short, 300B, -> br/narrow
+list/or@2, br/wide, 300B, -> br/narrow
+list/or@2, bs/narrow, 302B, 5a5413aa06ae782c
+list/or@2, bs/short, 302B, -> bs/narrow
+list/or@2, bs/wide, 302B, -> bs/narrow
+list/or@2, ca/narrow, 298B, -> ast/narrow
+list/or@2, ca/short, 298B, -> ast/narrow
+list/or@2, ca/wide, 298B, -> ast/narrow
+list/or@2, ceb/narrow, 299B, 65a5cdcc9a43c62c
+list/or@2, ceb/short, 299B, -> ceb/narrow
+list/or@2, ceb/wide, 299B, -> ceb/narrow
+list/or@2, chr/narrow, 321B, e3b008668e4863fd
+list/or@2, chr/short, 321B, -> chr/narrow
+list/or@2, chr/wide, 321B, -> chr/narrow
+list/or@2, cs/narrow, 304B, d59020f47e594179
+list/or@2, cs/short, 304B, -> cs/narrow
+list/or@2, cs/wide, 304B, -> cs/narrow
+list/or@2, cv/narrow, 300B, f71dd6ef9dcb04bb
+list/or@2, cv/short, 300B, -> cv/narrow
+list/or@2, cv/wide, 300B, -> cv/narrow
+list/or@2, cy/narrow, 302B, c64fb3b4a9d31460
+list/or@2, cy/short, 302B, -> cy/narrow
+list/or@2, cy/wide, 302B, -> cy/narrow
+list/or@2, da/narrow, 302B, 25e68dcbbc4f89f3
+list/or@2, da/short, 302B, -> da/narrow
+list/or@2, da/wide, 306B, c0c16cb7da9a15b1
+list/or@2, de/narrow, 304B, de102490dbb35c10
+list/or@2, de/short, 304B, -> de/narrow
+list/or@2, de/wide, 304B, -> de/narrow
+list/or@2, dsb/narrow, 302B, ae5fcb0437d752f0
+list/or@2, dsb/short, 302B, -> dsb/narrow
+list/or@2, dsb/wide, 302B, -> dsb/narrow
+list/or@2, el/narrow, 300B, 2bc8c9c4d83a32cf
+list/or@2, el/short, 300B, -> el/narrow
+list/or@2, el/wide, 300B, -> el/narrow
+list/or@2, en-001/narrow, 300B, 4f7c4b8a30eb7ec7
+list/or@2, en-001/short, 300B, -> en-001/narrow
+list/or@2, en-001/wide, 300B, -> en-001/narrow
+list/or@2, en-CA/narrow, 300B, -> en-001/narrow
+list/or@2, en-CA/short, 300B, -> en-001/narrow
+list/or@2, en-CA/wide, 300B, -> en-001/narrow
+list/or@2, es/narrow, 2890B, e65348e85d0d2a2a
+list/or@2, es/short, 2890B, -> es/narrow
+list/or@2, es/wide, 2890B, -> es/narrow
+list/or@2, et/narrow, 304B, e00820bcdae495e7
+list/or@2, et/short, 304B, -> et/narrow
+list/or@2, et/wide, 304B, -> et/narrow
+list/or@2, eu/narrow, 302B, cfbf73a8f3add72
+list/or@2, eu/short, 302B, -> eu/narrow
+list/or@2, eu/wide, 302B, -> eu/narrow
+list/or@2, fa/narrow, 314B, 6dc989fffc0b8863
+list/or@2, fa/short, 314B, -> fa/narrow
+list/or@2, fa/wide, 314B, -> fa/narrow
+list/or@2, ff-Adlm/narrow, 351B, 67daa5431643ef72
+list/or@2, ff-Adlm/short, 351B, -> ff-Adlm/narrow
+list/or@2, ff-Adlm/wide, 351B, -> ff-Adlm/narrow
+list/or@2, fi/narrow, 302B, 5e612494afd525ae
+list/or@2, fi/short, 302B, -> fi/narrow
+list/or@2, fi/wide, 302B, -> fi/narrow
+list/or@2, fil/narrow, 299B, -> ceb/narrow
+list/or@2, fil/short, 299B, -> ceb/narrow
+list/or@2, fil/wide, 299B, -> ceb/narrow
+list/or@2, fo/narrow, 305B, 497436ea5936b7ea
+list/or@2, fo/short, 305B, -> fo/narrow
+list/or@2, fo/wide, 305B, -> fo/narrow
+list/or@2, fr/narrow, 300B, 3ca80d34353b6463
+list/or@2, fr/short, 300B, -> fr/narrow
+list/or@2, fr/wide, 300B, -> fr/narrow
+list/or@2, ga/narrow, 302B, d81f6107197580e2
+list/or@2, ga/short, 302B, -> ga/narrow
+list/or@2, ga/wide, 302B, -> ga/narrow
+list/or@2, gd/narrow, 300B, 866acd138021ce7
+list/or@2, gd/short, 300B, -> gd/narrow
+list/or@2, gd/wide, 300B, -> gd/narrow
+list/or@2, gl/narrow, 300B, -> fr/narrow
+list/or@2, gl/short, 300B, -> fr/narrow
+list/or@2, gl/wide, 300B, -> fr/narrow
+list/or@2, gu/narrow, 320B, 1ea7e7a63288f54b
+list/or@2, gu/short, 320B, -> gu/narrow
+list/or@2, gu/wide, 321B, e6aa0ee70d19c123
+list/or@2, ha/narrow, 300B, 33422cc656f7f860
+list/or@2, ha/short, 300B, -> ha/narrow
+list/or@2, ha/wide, 300B, -> ha/narrow
+list/or@2, he/narrow, 304B, aa4202eefe7de824
+list/or@2, he/short, 304B, -> he/narrow
+list/or@2, he/wide, 304B, -> he/narrow
+list/or@2, hi-Latn/narrow, 302B, 238766b89dabf77e
+list/or@2, hi-Latn/short, 302B, -> hi-Latn/narrow
+list/or@2, hi-Latn/wide, 302B, -> hi-Latn/narrow
+list/or@2, hi/narrow, 308B, 369c19cac0f4767b
+list/or@2, hi/short, 308B, -> hi/narrow
+list/or@2, hi/wide, 308B, -> hi/narrow
+list/or@2, hr/narrow, 302B, -> bs/narrow
+list/or@2, hr/short, 302B, -> bs/narrow
+list/or@2, hr/wide, 302B, -> bs/narrow
+list/or@2, hsb/narrow, 302B, -> dsb/narrow
+list/or@2, hsb/short, 302B, -> dsb/narrow
+list/or@2, hsb/wide, 302B, -> dsb/narrow
+list/or@2, hu/narrow, 304B, 9b99ed96b49ab392
+list/or@2, hu/short, 304B, -> hu/narrow
+list/or@2, hu/wide, 304B, -> hu/narrow
+list/or@2, hy/narrow, 308B, 11c8d14ab3cc152f
+list/or@2, hy/short, 308B, -> hy/narrow
+list/or@2, hy/wide, 308B, -> hy/narrow
+list/or@2, ia/narrow, 298B, -> ast/narrow
+list/or@2, ia/short, 298B, -> ast/narrow
+list/or@2, ia/wide, 298B, -> ast/narrow
+list/or@2, id/narrow, 305B, 6d17e84fee709367
+list/or@2, id/short, 305B, -> id/narrow
+list/or@2, id/wide, 305B, -> id/narrow
+list/or@2, is/narrow, 304B, fe44392d78311c49
+list/or@2, is/short, 304B, -> is/narrow
+list/or@2, is/wide, 304B, -> is/narrow
+list/or@2, it/narrow, 298B, -> ast/narrow
+list/or@2, it/short, 298B, -> ast/narrow
+list/or@2, it/wide, 298B, -> ast/narrow
+list/or@2, ja/narrow, 315B, 59e3dfd3857a4182
+list/or@2, ja/short, 315B, -> ja/narrow
+list/or@2, ja/wide, 315B, -> ja/narrow
+list/or@2, jv/narrow, 307B, b52afcc0f9b32339
+list/or@2, jv/short, 307B, -> jv/narrow
+list/or@2, jv/wide, 307B, -> jv/narrow
+list/or@2, ka/narrow, 308B, 57643c838db9e0e
+list/or@2, ka/short, 308B, -> ka/narrow
+list/or@2, ka/wide, 308B, -> ka/narrow
+list/or@2, kea/narrow, 298B, -> ast/narrow
+list/or@2, kea/short, 298B, -> ast/narrow
+list/or@2, kea/wide, 298B, -> ast/narrow
+list/or@2, kgp/narrow, 316B, 384879734347b76
+list/or@2, kgp/short, 316B, -> kgp/narrow
+list/or@2, kgp/wide, 316B, -> kgp/narrow
+list/or@2, kk/narrow, 320B, fbcedd25246b2751
+list/or@2, kk/short, 320B, -> kk/narrow
+list/or@2, kk/wide, 320B, -> kk/narrow
+list/or@2, km/narrow, 302B, fc0928431f4645e7
+list/or@2, km/short, 302B, -> km/narrow
+list/or@2, km/wide, 302B, -> km/narrow
+list/or@2, kn/narrow, 321B, b9561f570c3abdbd
+list/or@2, kn/short, 321B, -> kn/narrow
+list/or@2, kn/wide, 321B, -> kn/narrow
+list/or@2, ko/narrow, 308B, 36fab84ccf956416
+list/or@2, ko/short, 308B, -> ko/narrow
+list/or@2, ko/wide, 308B, -> ko/narrow
+list/or@2, kok/narrow, 309B, 610b3dd4b1746157
+list/or@2, kok/short, 309B, -> kok/narrow
+list/or@2, kok/wide, 309B, -> kok/narrow
+list/or@2, ku/narrow, 300B, 404ccc31c31d966f
+list/or@2, ku/short, 300B, -> ku/narrow
+list/or@2, ku/wide, 300B, -> ku/narrow
+list/or@2, kxv/narrow, 312B, e73d82677974e6c2
+list/or@2, kxv/short, 312B, -> kxv/narrow
+list/or@2, kxv/wide, 312B, -> kxv/narrow
+list/or@2, ky/narrow, 304B, c4f5ca9c2215ce6e
+list/or@2, ky/short, 304B, -> ky/narrow
+list/or@2, ky/wide, 304B, -> ky/narrow
+list/or@2, lo/narrow, 314B, fab89ed34ee5ba2e
+list/or@2, lo/short, 314B, -> lo/narrow
+list/or@2, lo/wide, 314B, -> lo/narrow
+list/or@2, lt/narrow, 300B, 9a176722efbda307
+list/or@2, lt/short, 300B, -> lt/narrow
+list/or@2, lt/wide, 300B, -> lt/narrow
+list/or@2, lv/narrow, 302B, 1a6b40bc79862246
+list/or@2, lv/short, 302B, -> lv/narrow
+list/or@2, lv/wide, 302B, -> lv/narrow
+list/or@2, mi/narrow, 309B, c88bea0eac2a6fa3
+list/or@2, mi/short, 309B, -> mi/narrow
+list/or@2, mi/wide, 309B, -> mi/narrow
+list/or@2, mk/narrow, 308B, -> bg/narrow
+list/or@2, mk/short, 308B, -> bg/narrow
+list/or@2, mk/wide, 308B, -> bg/narrow
+list/or@2, ml/narrow, 357B, c6890a950e5f12e6
+list/or@2, ml/short, 357B, -> ml/narrow
+list/or@2, ml/wide, 357B, -> ml/narrow
+list/or@2, mn/narrow, 335B, a77218dc3a24414e
+list/or@2, mn/short, 335B, -> mn/narrow
+list/or@2, mn/wide, 335B, -> mn/narrow
+list/or@2, mr/narrow, 326B, edf195fe52c4b1f2
+list/or@2, mr/short, 326B, -> mr/narrow
+list/or@2, mr/wide, 327B, 1447ec6a0f986f15
+list/or@2, ms/narrow, 305B, -> id/narrow
+list/or@2, ms/short, 305B, -> id/narrow
+list/or@2, ms/wide, 305B, -> id/narrow
+list/or@2, my/narrow, 352B, e9eb807c354b57f
+list/or@2, my/short, 352B, -> my/narrow
+list/or@2, my/wide, 352B, -> my/narrow
+list/or@2, ne/narrow, 309B, -> kok/narrow
+list/or@2, ne/short, 309B, -> kok/narrow
+list/or@2, ne/wide, 309B, -> kok/narrow
+list/or@2, nl/narrow, 300B, -> af/narrow
+list/or@2, nl/short, 300B, -> af/narrow
+list/or@2, nl/wide, 300B, -> af/narrow
+list/or@2, no/narrow, 306B, -> da/wide
+list/or@2, no/short, 306B, -> da/wide
+list/or@2, no/wide, 306B, -> da/wide
+list/or@2, or/narrow, 332B, 2c401a26368cb66
+list/or@2, or/short, 332B, -> or/narrow
+list/or@2, or/wide, 332B, -> or/narrow
+list/or@2, pa/narrow, 315B, ee5c0bf7c3d98c28
+list/or@2, pa/short, 315B, -> pa/narrow
+list/or@2, pa/wide, 314B, d3956ec76ed3e304
+list/or@2, pcm/narrow, 302B, a05868fdf69ee31f
+list/or@2, pcm/short, 303B, e4a8367badcc03dc
+list/or@2, pcm/wide, 302B, -> pcm/narrow
+list/or@2, pl/narrow, 302B, b90b387f23cce0b3
+list/or@2, pl/short, 302B, -> pl/narrow
+list/or@2, pl/wide, 302B, -> pl/narrow
+list/or@2, ps/narrow, 303B, 55c8b3f5b2e1dd8e
+list/or@2, ps/short, 303B, -> ps/narrow
+list/or@2, ps/wide, 303B, -> ps/narrow
+list/or@2, pt/narrow, 300B, -> fr/narrow
+list/or@2, pt/short, 300B, -> fr/narrow
+list/or@2, pt/wide, 300B, -> fr/narrow
+list/or@2, qu/narrow, 305B, 72c4b6b0fa749964
+list/or@2, qu/short, 305B, -> qu/narrow
+list/or@2, qu/wide, 305B, -> qu/narrow
+list/or@2, rm/narrow, 298B, bad8c7dc46661ac8
+list/or@2, rm/short, 298B, -> rm/narrow
+list/or@2, rm/wide, 298B, -> rm/narrow
+list/or@2, ro/narrow, 302B, 6c9e5f8d593526d1
+list/or@2, ro/short, 302B, -> ro/narrow
+list/or@2, ro/wide, 302B, -> ro/narrow
+list/or@2, ru/narrow, 308B, -> bg/narrow
+list/or@2, ru/short, 308B, -> bg/narrow
+list/or@2, ru/wide, 308B, -> bg/narrow
+list/or@2, sc/narrow, 298B, -> ast/narrow
+list/or@2, sc/short, 298B, -> ast/narrow
+list/or@2, sc/wide, 298B, -> ast/narrow
+list/or@2, sd/narrow, 305B, 3784e774a5a11d5a
+list/or@2, sd/short, 305B, -> sd/narrow
+list/or@2, sd/wide, 305B, -> sd/narrow
+list/or@2, si/narrow, 309B, 522e6290a94c96a
+list/or@2, si/short, 309B, -> si/narrow
+list/or@2, si/wide, 309B, -> si/narrow
+list/or@2, sk/narrow, 306B, e6128f61b6239346
+list/or@2, sk/short, 306B, -> sk/narrow
+list/or@2, sk/wide, 306B, -> sk/narrow
+list/or@2, sl/narrow, 302B, a6f4cfed42fdad11
+list/or@2, sl/short, 302B, -> sl/narrow
+list/or@2, sl/wide, 302B, -> sl/narrow
+list/or@2, so/narrow, 302B, e048f4b29e3c858f
+list/or@2, so/short, 302B, -> so/narrow
+list/or@2, so/wide, 302B, -> so/narrow
+list/or@2, sq/narrow, 302B, 3712fa1f755c2299
+list/or@2, sq/short, 302B, -> sq/narrow
+list/or@2, sq/wide, 302B, -> sq/narrow
+list/or@2, sr-Latn/narrow, 302B, -> bs/narrow
+list/or@2, sr-Latn/short, 302B, -> bs/narrow
+list/or@2, sr-Latn/wide, 302B, -> bs/narrow
+list/or@2, sr/narrow, 308B, -> bg/narrow
+list/or@2, sr/short, 308B, -> bg/narrow
+list/or@2, sr/wide, 308B, -> bg/narrow
+list/or@2, sv/narrow, 306B, -> da/wide
+list/or@2, sv/short, 306B, -> da/wide
+list/or@2, sv/wide, 306B, -> da/wide
+list/or@2, sw/narrow, 301B, a98a74b22595f95d
+list/or@2, sw/short, 301B, -> sw/narrow
+list/or@2, sw/wide, 300B, 350e5d311f256db9
+list/or@2, syr/narrow, 312B, cd537d187c8c6838
+list/or@2, syr/short, 312B, -> syr/narrow
+list/or@2, syr/wide, 312B, -> syr/narrow
+list/or@2, ta/narrow, 332B, 10529276a4d37b24
+list/or@2, ta/short, 332B, -> ta/narrow
+list/or@2, ta/wide, 332B, -> ta/narrow
+list/or@2, te/narrow, 320B, 7be12f95cc9cdff6
+list/or@2, te/short, 320B, -> te/narrow
+list/or@2, te/wide, 320B, -> te/narrow
+list/or@2, th/narrow, 318B, 157371a1c0742d29
+list/or@2, th/short, 318B, -> th/narrow
+list/or@2, th/wide, 320B, e848bb62d7642cd7
+list/or@2, ti/narrow, 312B, f89334d23e2b1cdb
+list/or@2, ti/short, 312B, -> ti/narrow
+list/or@2, ti/wide, 312B, -> ti/narrow
+list/or@2, tk/narrow, 308B, d9249c03b70ff1f0
+list/or@2, tk/short, 308B, -> tk/narrow
+list/or@2, tk/wide, 308B, -> tk/narrow
+list/or@2, to/narrow, 303B, 2b0202967241c85f
+list/or@2, to/short, 303B, -> to/narrow
+list/or@2, to/wide, 303B, -> to/narrow
+list/or@2, tr/narrow, 304B, 8a94c1f90e54fe34
+list/or@2, tr/short, 304B, -> tr/narrow
+list/or@2, tr/wide, 304B, -> tr/narrow
+list/or@2, uk/narrow, 308B, 5f7351c03f7c32a1
+list/or@2, uk/short, 308B, -> uk/narrow
+list/or@2, uk/wide, 308B, -> uk/narrow
+list/or@2, und/narrow, 301B, b1170d9c6acf848e
+list/or@2, und/short, 301B, -> und/narrow
+list/or@2, und/wide, 301B, -> und/narrow
+list/or@2, ur/narrow, 308B, 8acdef274395d870
+list/or@2, ur/short, 308B, -> ur/narrow
+list/or@2, ur/wide, 308B, -> ur/narrow
+list/or@2, uz/narrow, 304B, 4a20705dea228f1a
+list/or@2, uz/short, 304B, -> uz/narrow
+list/or@2, uz/wide, 304B, -> uz/narrow
+list/or@2, vec/narrow, 299B, -> ceb/narrow
+list/or@2, vec/short, 299B, -> ceb/narrow
+list/or@2, vec/wide, 299B, -> ceb/narrow
+list/or@2, vi/narrow, 308B, 2c616992dd6b9619
+list/or@2, vi/short, 308B, -> vi/narrow
+list/or@2, vi/wide, 308B, -> vi/narrow
+list/or@2, xh/narrow, 309B, e868826b21034c2
+list/or@2, xnr/narrow, 308B, -> hi/narrow
+list/or@2, xnr/short, 308B, -> hi/narrow
+list/or@2, xnr/wide, 308B, -> hi/narrow
+list/or@2, yo-BJ/narrow, 315B, 63de67533f95a38c
+list/or@2, yo-BJ/short, 315B, -> yo-BJ/narrow
+list/or@2, yo-BJ/wide, 315B, -> yo-BJ/narrow
+list/or@2, yo/narrow, 316B, 503c5124d016b615
+list/or@2, yo/short, 316B, -> yo/narrow
+list/or@2, yo/wide, 316B, -> yo/narrow
+list/or@2, yrl/narrow, 298B, -> rm/narrow
+list/or@2, yrl/short, 298B, -> rm/narrow
+list/or@2, yrl/wide, 298B, -> rm/narrow
+list/or@2, yue-Hans/narrow, 304B, 77d16f9b4bb42c2e
+list/or@2, yue-Hans/short, 304B, -> yue-Hans/narrow
+list/or@2, yue-Hans/wide, 304B, -> yue-Hans/narrow
+list/or@2, yue/narrow, 304B, -> yue-Hans/narrow
+list/or@2, yue/short, 304B, -> yue-Hans/narrow
+list/or@2, yue/wide, 304B, -> yue-Hans/narrow
+list/or@2, zh-Hant/narrow, 300B, 2dc2e9f4d706db5b
+list/or@2, zh-Hant/short, 300B, -> zh-Hant/narrow
+list/or@2, zh-Hant/wide, 300B, -> zh-Hant/narrow
+list/or@2, zh/narrow, 300B, -> zh-Hant/narrow
+list/or@2, zh/short, 300B, -> zh-Hant/narrow
+list/or@2, zh/wide, 300B, -> zh-Hant/narrow
 list/unit@2, <lookup>, 2702B, 289 identifiers
-list/unit@2, <total>, 43793B, 86 unique payloads
-list/unit@2, af/narrow, 460B, 150d4ec35edeac95
-list/unit@2, af/short, 460B, -> af/narrow
-list/unit@2, af/wide, 460B, -> af/narrow
-list/unit@2, am/narrow, 458B, 7100f1a5e5b2799
-list/unit@2, am/short, 464B, 47f165f4dfb3d417
-list/unit@2, am/wide, 464B, -> am/short
-list/unit@2, ar/narrow, 460B, a7fdbe7e2ca2ec49
-list/unit@2, ar/short, 466B, 3d8bf03eddc91803
-list/unit@2, ar/wide, 466B, -> ar/short
-list/unit@2, as/narrow, 452B, fd38915678a98f0b
-list/unit@2, ast/narrow, 458B, 4a624c5aacebee4d
-list/unit@2, ast/short, 458B, -> ast/narrow
-list/unit@2, ast/wide, 458B, -> ast/narrow
-list/unit@2, be/narrow, 452B, -> as/narrow
-list/unit@2, be/short, 452B, -> as/narrow
-list/unit@2, be/wide, 452B, -> as/narrow
-list/unit@2, bg/narrow, 458B, fe083330bbebbe05
-list/unit@2, bg/short, 458B, -> bg/narrow
-list/unit@2, bg/wide, 460B, 53b69cc72f175986
-list/unit@2, blo/short, 460B, 63af98e95e8eec95
-list/unit@2, blo/wide, 460B, -> blo/short
-list/unit@2, brx/narrow, 475B, 525c195859fb6955
-list/unit@2, brx/short, 475B, -> brx/narrow
-list/unit@2, brx/wide, 475B, -> brx/narrow
-list/unit@2, bs-Cyrl/narrow, 460B, -> bg/wide
-list/unit@2, bs-Cyrl/short, 460B, -> bg/wide
-list/unit@2, bs-Cyrl/wide, 460B, -> bg/wide
-list/unit@2, bs/narrow, 458B, 18fe93f525f21955
-list/unit@2, bs/short, 458B, -> bs/narrow
-list/unit@2, bs/wide, 458B, -> bs/narrow
-list/unit@2, ca/narrow, 458B, -> bs/narrow
-list/unit@2, ca/short, 458B, -> bs/narrow
-list/unit@2, ca/wide, 458B, -> bs/narrow
-list/unit@2, ceb/narrow, 452B, -> as/narrow
-list/unit@2, chr/narrow, 452B, -> as/narrow
-list/unit@2, cs/narrow, 452B, -> as/narrow
-list/unit@2, cs/short, 458B, fc6bcc463ba548c5
-list/unit@2, cs/wide, 460B, bf0c1973469e8d6f
-list/unit@2, cv/narrow, 452B, -> as/narrow
-list/unit@2, cv/short, 452B, -> as/narrow
-list/unit@2, cv/wide, 452B, -> as/narrow
-list/unit@2, da/narrow, 460B, 4ed50d5dbeb88efc
-list/unit@2, da/short, 460B, -> da/narrow
-list/unit@2, da/wide, 460B, -> da/narrow
-list/unit@2, de/narrow, 459B, ad056240a81fa206
-list/unit@2, de/short, 459B, -> de/narrow
-list/unit@2, de/wide, 459B, -> de/narrow
-list/unit@2, doi/narrow, 469B, b9cb3d30b2c251e4
-list/unit@2, doi/short, 469B, -> doi/narrow
-list/unit@2, doi/wide, 469B, -> doi/narrow
-list/unit@2, dsb/short, 457B, 3e25bf3262b75759
-list/unit@2, dsb/wide, 458B, e2149ef000e19f51
-list/unit@2, el/narrow, 452B, -> as/narrow
-list/unit@2, en/narrow, 452B, -> as/narrow
-list/unit@2, es-DO/narrow, 1457B, ef647d762093abc0
-list/unit@2, es-DO/short, 2464B, 59e7c49375c1ee3e
-list/unit@2, es-PY/short, 2464B, -> es-DO/short
-list/unit@2, es-US/short, 2464B, -> es-DO/short
-list/unit@2, es/narrow, 452B, -> as/narrow
-list/unit@2, es/short, 1460B, 4e623c11f5f6a817
-list/unit@2, es/wide, 2464B, -> es-DO/short
-list/unit@2, et/narrow, 452B, -> as/narrow
-list/unit@2, eu/narrow, 462B, 7caf550ed388b7b7
-list/unit@2, eu/short, 462B, -> eu/narrow
-list/unit@2, eu/wide, 462B, -> eu/narrow
-list/unit@2, fa/narrow, 452B, -> as/narrow
-list/unit@2, fa/short, 472B, 6e4f211b6f2935fb
-list/unit@2, fa/wide, 470B, a970db574f7d08d
-list/unit@2, ff-Adlm/narrow, 452B, -> as/narrow
-list/unit@2, ff-Adlm/short, 462B, 62f3aa1dfa0135e3
-list/unit@2, ff-Adlm/wide, 466B, c8753d96b2a83f56
-list/unit@2, fi/narrow, 452B, -> as/narrow
-list/unit@2, fi/wide, 460B, 8c33d0d204842f9e
-list/unit@2, fil/narrow, 452B, -> as/narrow
-list/unit@2, fo/narrow, 452B, -> as/narrow
-list/unit@2, fo/wide, 458B, 14657bb18724d53b
-list/unit@2, fr/narrow, 452B, -> as/narrow
-list/unit@2, fr/short, 460B, d50e6a1656881
-list/unit@2, fr/wide, 460B, -> fr/short
-list/unit@2, fy/wide, 458B, 52fd804deabd054d
-list/unit@2, ga/narrow, 452B, -> as/narrow
-list/unit@2, ga/wide, 464B, ac4bb4d5ff319161
-list/unit@2, gd/narrow, 452B, -> as/narrow
-list/unit@2, gd/short, 464B, ebdfb884ce9eb252
-list/unit@2, gd/wide, 464B, -> ga/wide
-list/unit@2, gl/wide, 458B, 6c255c176c1921d0
-list/unit@2, gu/wide, 465B, c83da5f280bcdec2
-list/unit@2, he/narrow, 452B, -> as/narrow
-list/unit@2, he/wide, 458B, 9fb45d51e72eef60
-list/unit@2, hi-Latn/narrow, 456B, ed970f1d7fa3993d
-list/unit@2, hi-Latn/wide, 463B, 154b6986d854b98c
-list/unit@2, hi/narrow, 454B, 682348cd5050e972
-list/unit@2, hi/wide, 469B, 2fae52977dc22e2d
-list/unit@2, hr/narrow, 452B, -> as/narrow
-list/unit@2, hr/short, 458B, -> bs/narrow
-list/unit@2, hr/wide, 458B, -> bs/narrow
-list/unit@2, hsb/short, 457B, -> dsb/short
-list/unit@2, hsb/wide, 458B, -> dsb/wide
-list/unit@2, hu/narrow, 462B, be41d589571c8097
-list/unit@2, hu/short, 462B, -> hu/narrow
-list/unit@2, hu/wide, 462B, -> hu/narrow
-list/unit@2, hy/narrow, 452B, -> as/narrow
-list/unit@2, hy/short, 458B, c333a8fc361b6b37
-list/unit@2, hy/wide, 460B, 715db1f6ea1451b2
-list/unit@2, ia/narrow, 452B, -> as/narrow
-list/unit@2, ig/narrow, 461B, d94af9d72b0c9672
-list/unit@2, ig/short, 461B, -> ig/narrow
-list/unit@2, ig/wide, 461B, -> ig/narrow
-list/unit@2, is/narrow, 458B, 6cd9514e9ca03a74
-list/unit@2, is/short, 460B, -> da/narrow
-list/unit@2, is/wide, 460B, -> da/narrow
-list/unit@2, it/narrow, 452B, -> as/narrow
-list/unit@2, it/short, 458B, -> gl/wide
-list/unit@2, it/wide, 458B, -> gl/wide
-list/unit@2, ja/narrow, 448B, 7fdf4ce08a0150f2
-list/unit@2, ja/short, 452B, -> as/narrow
-list/unit@2, ja/wide, 452B, -> as/narrow
-list/unit@2, jv/narrow, 452B, -> as/narrow
-list/unit@2, kea/wide, 458B, -> bs/narrow
-list/unit@2, kgp/narrow, 452B, -> as/narrow
-list/unit@2, kgp/short, 462B, a26b20447ba66e70
-list/unit@2, kgp/wide, 462B, -> kgp/short
-list/unit@2, kk/narrow, 452B, -> as/narrow
-list/unit@2, kk/short, 452B, -> as/narrow
-list/unit@2, kk/wide, 452B, -> as/narrow
-list/unit@2, km/narrow, 452B, -> as/narrow
-list/unit@2, km/short, 452B, -> as/narrow
-list/unit@2, km/wide, 452B, -> as/narrow
-list/unit@2, kn/narrow, 455B, bc025889eaebc042
-list/unit@2, ko/narrow, 452B, -> as/narrow
-list/unit@2, ko/short, 452B, -> as/narrow
-list/unit@2, ko/wide, 452B, -> as/narrow
-list/unit@2, kok/narrow, 452B, -> as/narrow
-list/unit@2, ks-Deva/narrow, 469B, ae9c79435eaf7eb5
-list/unit@2, ks-Deva/short, 469B, -> ks-Deva/narrow
-list/unit@2, ks-Deva/wide, 469B, -> ks-Deva/narrow
-list/unit@2, ks/narrow, 472B, 7fc7b6fe27cd52b4
-list/unit@2, ks/short, 472B, -> ks/narrow
-list/unit@2, ks/wide, 472B, -> ks/narrow
-list/unit@2, ku/narrow, 452B, -> as/narrow
-list/unit@2, ku/short, 460B, 67ecbabdc499419f
-list/unit@2, ku/wide, 460B, -> ku/short
-list/unit@2, kxv/narrow, 452B, -> as/narrow
-list/unit@2, ky/narrow, 452B, -> as/narrow
-list/unit@2, lb/narrow, 452B, -> as/narrow
-list/unit@2, lo/narrow, 452B, -> as/narrow
-list/unit@2, lt/narrow, 452B, -> as/narrow
-list/unit@2, lt/short, 452B, -> as/narrow
-list/unit@2, lt/wide, 458B, 376857e10de633de
-list/unit@2, lv/narrow, 452B, -> as/narrow
-list/unit@2, lv/short, 460B, c5f66cfe056cce6e
-list/unit@2, lv/wide, 460B, -> lv/short
-list/unit@2, mai/narrow, 469B, -> hi/wide
-list/unit@2, mai/short, 469B, -> hi/wide
-list/unit@2, mai/wide, 469B, -> hi/wide
-list/unit@2, mi/narrow, 452B, -> as/narrow
-list/unit@2, mk/narrow, 460B, -> bg/wide
-list/unit@2, mk/short, 460B, -> bg/wide
-list/unit@2, mk/wide, 460B, -> bg/wide
-list/unit@2, ml/narrow, 453B, 360f1a9387d26400
-list/unit@2, mn/narrow, 452B, -> as/narrow
-list/unit@2, mn/short, 452B, -> as/narrow
-list/unit@2, mn/wide, 452B, -> as/narrow
-list/unit@2, mni/narrow, 486B, 1ed2370b79cd36
-list/unit@2, mni/short, 486B, -> mni/narrow
-list/unit@2, mni/wide, 486B, -> mni/narrow
-list/unit@2, mr/narrow, 452B, -> as/narrow
-list/unit@2, ms/narrow, 452B, -> as/narrow
-list/unit@2, ms/short, 462B, 400a7513283fed7c
-list/unit@2, mt/short, 459B, dd6e59e82bab2268
-list/unit@2, mt/wide, 459B, -> mt/short
-list/unit@2, my/narrow, 482B, 1dd3df01fb3e20d4
-list/unit@2, my/short, 486B, 3705d4ec8c8b6239
-list/unit@2, my/wide, 484B, 482b26706a899873
-list/unit@2, ne/narrow, 451B, e3c5a516188d7ab2
-list/unit@2, ne/short, 453B, 13af976305d88ac4
-list/unit@2, ne/wide, 453B, 3c538628f6d3cbfb
-list/unit@2, nl/wide, 460B, -> af/narrow
-list/unit@2, nn/narrow, 452B, -> as/narrow
-list/unit@2, nn/wide, 456B, -> hi-Latn/narrow
-list/unit@2, no/wide, 460B, -> da/narrow
-list/unit@2, or/narrow, 452B, -> as/narrow
-list/unit@2, pa/narrow, 452B, -> as/narrow
-list/unit@2, pcm/narrow, 452B, -> as/narrow
-list/unit@2, pl/narrow, 458B, -> bs/narrow
-list/unit@2, pl/short, 458B, -> bs/narrow
-list/unit@2, pl/wide, 458B, -> bs/narrow
-list/unit@2, ps/narrow, 452B, -> as/narrow
-list/unit@2, ps/short, 458B, 5f15c59a56a0645
-list/unit@2, ps/wide, 460B, 28e5779957e4281f
-list/unit@2, pt-PT/narrow, 458B, -> gl/wide
-list/unit@2, pt/narrow, 452B, -> as/narrow
-list/unit@2, pt/short, 458B, -> gl/wide
-list/unit@2, pt/wide, 458B, -> gl/wide
-list/unit@2, rm/narrow, 452B, -> as/narrow
-list/unit@2, rm/short, 458B, -> gl/wide
-list/unit@2, rm/wide, 458B, -> gl/wide
-list/unit@2, ro/wide, 459B, a4a599ceb059b67c
-list/unit@2, ru/narrow, 452B, -> as/narrow
-list/unit@2, ru/short, 452B, -> as/narrow
-list/unit@2, ru/wide, 452B, -> as/narrow
-list/unit@2, sa/narrow, 475B, 73c55ea4f8030c6b
-list/unit@2, sa/short, 475B, -> sa/narrow
-list/unit@2, sa/wide, 475B, -> sa/narrow
-list/unit@2, sah/narrow, 476B, 5808729ea84d2a50
-list/unit@2, sah/short, 476B, -> sah/narrow
-list/unit@2, sah/wide, 476B, -> sah/narrow
-list/unit@2, sc/narrow, 452B, -> as/narrow
-list/unit@2, sc/short, 458B, -> gl/wide
-list/unit@2, sc/wide, 458B, -> gl/wide
-list/unit@2, si/narrow, 469B, e43bc9d2221aa4e6
-list/unit@2, si/short, 469B, -> si/narrow
-list/unit@2, si/wide, 469B, -> si/narrow
-list/unit@2, sl/narrow, 460B, dd4047fbcaca72a6
-list/unit@2, sl/short, 460B, -> sl/narrow
-list/unit@2, sl/wide, 460B, -> sl/narrow
-list/unit@2, so/wide, 459B, 5a82c622f419989b
-list/unit@2, sq/narrow, 458B, -> gl/wide
-list/unit@2, sq/short, 458B, -> gl/wide
-list/unit@2, sq/wide, 458B, -> gl/wide
-list/unit@2, sr-Latn/narrow, 458B, -> bs/narrow
-list/unit@2, sr-Latn/short, 458B, -> bs/narrow
-list/unit@2, sr-Latn/wide, 458B, -> bs/narrow
-list/unit@2, sr/narrow, 460B, -> bg/wide
-list/unit@2, sr/short, 460B, -> bg/wide
-list/unit@2, sr/wide, 460B, -> bg/wide
-list/unit@2, su/narrow, 469B, 8058e81e302cda4b
-list/unit@2, su/short, 469B, -> su/narrow
-list/unit@2, su/wide, 469B, -> su/narrow
-list/unit@2, sv/narrow, 452B, -> as/narrow
-list/unit@2, sw/narrow, 460B, -> blo/short
-list/unit@2, sw/short, 460B, -> blo/short
-list/unit@2, sw/wide, 460B, -> blo/short
-list/unit@2, syr/narrow, 460B, d0835a23a08014bd
-list/unit@2, syr/short, 460B, -> syr/narrow
-list/unit@2, syr/wide, 460B, -> syr/narrow
-list/unit@2, ta/narrow, 452B, -> as/narrow
-list/unit@2, th/narrow, 452B, -> as/narrow
-list/unit@2, th/short, 462B, 509a87175f014f26
-list/unit@2, th/wide, 472B, 976c49e0f916d00b
-list/unit@2, ti/narrow, 452B, -> as/narrow
-list/unit@2, ti/short, 467B, f19bc32ed9b53665
-list/unit@2, ti/wide, 470B, b4aec378e66869c1
-list/unit@2, tk/narrow, 452B, -> as/narrow
-list/unit@2, to/narrow, 462B, 705a6b954e577180
-list/unit@2, to/short, 464B, 86692f1ce70c6125
-list/unit@2, to/wide, 464B, -> to/short
-list/unit@2, tr/narrow, 452B, -> as/narrow
-list/unit@2, tr/short, 452B, -> as/narrow
-list/unit@2, tr/wide, 452B, -> as/narrow
-list/unit@2, tt/narrow, 468B, 5fa6e0b185b5adb8
-list/unit@2, tt/short, 468B, -> tt/narrow
-list/unit@2, tt/wide, 468B, -> tt/narrow
-list/unit@2, ug/narrow, 463B, 871e0543bb4df0df
-list/unit@2, ug/short, 463B, -> ug/narrow
-list/unit@2, ug/wide, 463B, -> ug/narrow
-list/unit@2, uk/narrow, 460B, 31870c54bca5d9c4
-list/unit@2, uk/short, 460B, -> uk/narrow
-list/unit@2, uk/wide, 460B, -> uk/narrow
-list/unit@2, und/narrow, 456B, -> hi-Latn/narrow
-list/unit@2, und/short, 456B, -> hi-Latn/narrow
-list/unit@2, und/wide, 456B, -> hi-Latn/narrow
-list/unit@2, ur/narrow, 472B, 528f6f52b4e3dbbf
-list/unit@2, ur/short, 472B, -> ur/narrow
-list/unit@2, ur/wide, 465B, 42e0e34e0beb9dc5
-list/unit@2, uz/narrow, 452B, -> as/narrow
-list/unit@2, uz/short, 452B, -> as/narrow
-list/unit@2, uz/wide, 452B, -> as/narrow
-list/unit@2, vec/narrow, 452B, -> as/narrow
-list/unit@2, vec/short, 458B, -> gl/wide
-list/unit@2, vec/wide, 458B, -> gl/wide
-list/unit@2, vi/narrow, 452B, -> as/narrow
-list/unit@2, xnr/narrow, 454B, -> hi/narrow
-list/unit@2, yrl/narrow, 452B, -> as/narrow
-list/unit@2, yrl/short, 466B, f549710463477105
-list/unit@2, yrl/wide, 466B, -> yrl/short
-list/unit@2, yue-Hans/narrow, 448B, -> ja/narrow
-list/unit@2, yue-Hans/short, 452B, -> as/narrow
-list/unit@2, yue-Hans/wide, 452B, -> as/narrow
-list/unit@2, yue/narrow, 448B, -> ja/narrow
-list/unit@2, yue/short, 452B, -> as/narrow
-list/unit@2, yue/wide, 452B, -> as/narrow
-list/unit@2, zh-Hant/narrow, 448B, -> ja/narrow
-list/unit@2, zh-Hant/short, 452B, -> as/narrow
-list/unit@2, zh-Hant/wide, 452B, -> as/narrow
-list/unit@2, zh/narrow, 448B, -> ja/narrow
-list/unit@2, zh/short, 448B, -> ja/narrow
-list/unit@2, zh/wide, 448B, -> ja/narrow
-list/unit@2, zu/narrow, 455B, b6031e827bf329ef
+list/unit@2, <total>, 30033B, 86 unique payloads
+list/unit@2, af/narrow, 300B, d44b38fc7312fe85
+list/unit@2, af/short, 300B, -> af/narrow
+list/unit@2, af/wide, 300B, -> af/narrow
+list/unit@2, am/narrow, 298B, 23d1193d2033d79a
+list/unit@2, am/short, 304B, 51f60ed1958b5123
+list/unit@2, am/wide, 304B, -> am/short
+list/unit@2, ar/narrow, 300B, 768db4e722c28cbe
+list/unit@2, ar/short, 306B, 5c2faa6dfcaf359c
+list/unit@2, ar/wide, 306B, -> ar/short
+list/unit@2, as/narrow, 292B, 7cd2c4dd85db33f
+list/unit@2, ast/narrow, 298B, f895051a438844f2
+list/unit@2, ast/short, 298B, -> ast/narrow
+list/unit@2, ast/wide, 298B, -> ast/narrow
+list/unit@2, be/narrow, 292B, -> as/narrow
+list/unit@2, be/short, 292B, -> as/narrow
+list/unit@2, be/wide, 292B, -> as/narrow
+list/unit@2, bg/narrow, 298B, a728c9a427fd3623
+list/unit@2, bg/short, 298B, -> bg/narrow
+list/unit@2, bg/wide, 300B, fdb75bf1c8bf225e
+list/unit@2, blo/short, 300B, b9d8e282c09b079f
+list/unit@2, blo/wide, 300B, -> blo/short
+list/unit@2, brx/narrow, 315B, a0b1f8831454743b
+list/unit@2, brx/short, 315B, -> brx/narrow
+list/unit@2, brx/wide, 315B, -> brx/narrow
+list/unit@2, bs-Cyrl/narrow, 300B, -> bg/wide
+list/unit@2, bs-Cyrl/short, 300B, -> bg/wide
+list/unit@2, bs-Cyrl/wide, 300B, -> bg/wide
+list/unit@2, bs/narrow, 298B, 43eda01c6cbf4690
+list/unit@2, bs/short, 298B, -> bs/narrow
+list/unit@2, bs/wide, 298B, -> bs/narrow
+list/unit@2, ca/narrow, 298B, -> bs/narrow
+list/unit@2, ca/short, 298B, -> bs/narrow
+list/unit@2, ca/wide, 298B, -> bs/narrow
+list/unit@2, ceb/narrow, 292B, -> as/narrow
+list/unit@2, chr/narrow, 292B, -> as/narrow
+list/unit@2, cs/narrow, 292B, -> as/narrow
+list/unit@2, cs/short, 298B, 9800ad689094ccc3
+list/unit@2, cs/wide, 300B, 9fad23e407d4b100
+list/unit@2, cv/narrow, 292B, -> as/narrow
+list/unit@2, cv/short, 292B, -> as/narrow
+list/unit@2, cv/wide, 292B, -> as/narrow
+list/unit@2, da/narrow, 300B, 284a55728aa08f2e
+list/unit@2, da/short, 300B, -> da/narrow
+list/unit@2, da/wide, 300B, -> da/narrow
+list/unit@2, de/narrow, 299B, 3803212e4bf75258
+list/unit@2, de/short, 299B, -> de/narrow
+list/unit@2, de/wide, 299B, -> de/narrow
+list/unit@2, doi/narrow, 309B, 9a5ce3921833a854
+list/unit@2, doi/short, 309B, -> doi/narrow
+list/unit@2, doi/wide, 309B, -> doi/narrow
+list/unit@2, dsb/short, 297B, 38bff2ee9ec69742
+list/unit@2, dsb/wide, 298B, d437e88105ccd2f2
+list/unit@2, el/narrow, 292B, -> as/narrow
+list/unit@2, en/narrow, 292B, -> as/narrow
+list/unit@2, es-DO/narrow, 1297B, c4d44ef1393e8456
+list/unit@2, es-DO/short, 2304B, 9b6c3fa09da2552e
+list/unit@2, es-PY/short, 2304B, -> es-DO/short
+list/unit@2, es-US/short, 2304B, -> es-DO/short
+list/unit@2, es/narrow, 292B, -> as/narrow
+list/unit@2, es/short, 1300B, 1290fee0d72af22c
+list/unit@2, es/wide, 2304B, -> es-DO/short
+list/unit@2, et/narrow, 292B, -> as/narrow
+list/unit@2, eu/narrow, 302B, 5323166f2d971db4
+list/unit@2, eu/short, 302B, -> eu/narrow
+list/unit@2, eu/wide, 302B, -> eu/narrow
+list/unit@2, fa/narrow, 292B, -> as/narrow
+list/unit@2, fa/short, 312B, 95284b50965d8e14
+list/unit@2, fa/wide, 310B, a7f4a9a2e3cb7fee
+list/unit@2, ff-Adlm/narrow, 292B, -> as/narrow
+list/unit@2, ff-Adlm/short, 302B, 78e6f595751e56ab
+list/unit@2, ff-Adlm/wide, 306B, a087526b40d91da1
+list/unit@2, fi/narrow, 292B, -> as/narrow
+list/unit@2, fi/wide, 300B, 968c7c752ad27945
+list/unit@2, fil/narrow, 292B, -> as/narrow
+list/unit@2, fo/narrow, 292B, -> as/narrow
+list/unit@2, fo/wide, 298B, 9d8731e92d3b7189
+list/unit@2, fr/narrow, 292B, -> as/narrow
+list/unit@2, fr/short, 300B, 70270755c3c3bd7f
+list/unit@2, fr/wide, 300B, -> fr/short
+list/unit@2, fy/wide, 298B, 689fe12e5da7efdf
+list/unit@2, ga/narrow, 292B, -> as/narrow
+list/unit@2, ga/wide, 304B, f4099bc085121ccc
+list/unit@2, gd/narrow, 292B, -> as/narrow
+list/unit@2, gd/short, 304B, 42d6a197134d2505
+list/unit@2, gd/wide, 304B, -> ga/wide
+list/unit@2, gl/wide, 298B, b25ed2dd5c0c216a
+list/unit@2, gu/wide, 305B, c4f7f96353e5a444
+list/unit@2, he/narrow, 292B, -> as/narrow
+list/unit@2, he/wide, 298B, 917752297b91c8d
+list/unit@2, hi-Latn/narrow, 296B, 913cb377537a1123
+list/unit@2, hi-Latn/wide, 303B, 6dd2f917627efdb5
+list/unit@2, hi/narrow, 294B, 175586153fec7185
+list/unit@2, hi/wide, 309B, 6d4c4c58026dd178
+list/unit@2, hr/narrow, 292B, -> as/narrow
+list/unit@2, hr/short, 298B, -> bs/narrow
+list/unit@2, hr/wide, 298B, -> bs/narrow
+list/unit@2, hsb/short, 297B, -> dsb/short
+list/unit@2, hsb/wide, 298B, -> dsb/wide
+list/unit@2, hu/narrow, 302B, 55d7db3adb1fa211
+list/unit@2, hu/short, 302B, -> hu/narrow
+list/unit@2, hu/wide, 302B, -> hu/narrow
+list/unit@2, hy/narrow, 292B, -> as/narrow
+list/unit@2, hy/short, 298B, 52eafa186225961b
+list/unit@2, hy/wide, 300B, f28bf4d7712b1d2
+list/unit@2, ia/narrow, 292B, -> as/narrow
+list/unit@2, ig/narrow, 301B, c926fd1cfb43cdb5
+list/unit@2, ig/short, 301B, -> ig/narrow
+list/unit@2, ig/wide, 301B, -> ig/narrow
+list/unit@2, is/narrow, 298B, 53b8c4cb1a274c92
+list/unit@2, is/short, 300B, -> da/narrow
+list/unit@2, is/wide, 300B, -> da/narrow
+list/unit@2, it/narrow, 292B, -> as/narrow
+list/unit@2, it/short, 298B, -> gl/wide
+list/unit@2, it/wide, 298B, -> gl/wide
+list/unit@2, ja/narrow, 288B, 713a61bc14fadc0a
+list/unit@2, ja/short, 292B, -> as/narrow
+list/unit@2, ja/wide, 292B, -> as/narrow
+list/unit@2, jv/narrow, 292B, -> as/narrow
+list/unit@2, kea/wide, 298B, -> bs/narrow
+list/unit@2, kgp/narrow, 292B, -> as/narrow
+list/unit@2, kgp/short, 302B, e38e9413e599d31f
+list/unit@2, kgp/wide, 302B, -> kgp/short
+list/unit@2, kk/narrow, 292B, -> as/narrow
+list/unit@2, kk/short, 292B, -> as/narrow
+list/unit@2, kk/wide, 292B, -> as/narrow
+list/unit@2, km/narrow, 292B, -> as/narrow
+list/unit@2, km/short, 292B, -> as/narrow
+list/unit@2, km/wide, 292B, -> as/narrow
+list/unit@2, kn/narrow, 295B, c2e35b8d11bd476
+list/unit@2, ko/narrow, 292B, -> as/narrow
+list/unit@2, ko/short, 292B, -> as/narrow
+list/unit@2, ko/wide, 292B, -> as/narrow
+list/unit@2, kok/narrow, 292B, -> as/narrow
+list/unit@2, ks-Deva/narrow, 309B, 4a829a960a048855
+list/unit@2, ks-Deva/short, 309B, -> ks-Deva/narrow
+list/unit@2, ks-Deva/wide, 309B, -> ks-Deva/narrow
+list/unit@2, ks/narrow, 312B, 9a63c560d0e41341
+list/unit@2, ks/short, 312B, -> ks/narrow
+list/unit@2, ks/wide, 312B, -> ks/narrow
+list/unit@2, ku/narrow, 292B, -> as/narrow
+list/unit@2, ku/short, 300B, 676f4ec31d2bcf7d
+list/unit@2, ku/wide, 300B, -> ku/short
+list/unit@2, kxv/narrow, 292B, -> as/narrow
+list/unit@2, ky/narrow, 292B, -> as/narrow
+list/unit@2, lb/narrow, 292B, -> as/narrow
+list/unit@2, lo/narrow, 292B, -> as/narrow
+list/unit@2, lt/narrow, 292B, -> as/narrow
+list/unit@2, lt/short, 292B, -> as/narrow
+list/unit@2, lt/wide, 298B, b6814bdf0894517e
+list/unit@2, lv/narrow, 292B, -> as/narrow
+list/unit@2, lv/short, 300B, 4256c9eeb3cacc65
+list/unit@2, lv/wide, 300B, -> lv/short
+list/unit@2, mai/narrow, 309B, -> hi/wide
+list/unit@2, mai/short, 309B, -> hi/wide
+list/unit@2, mai/wide, 309B, -> hi/wide
+list/unit@2, mi/narrow, 292B, -> as/narrow
+list/unit@2, mk/narrow, 300B, -> bg/wide
+list/unit@2, mk/short, 300B, -> bg/wide
+list/unit@2, mk/wide, 300B, -> bg/wide
+list/unit@2, ml/narrow, 293B, 7cc7adb14f360e2
+list/unit@2, mn/narrow, 292B, -> as/narrow
+list/unit@2, mn/short, 292B, -> as/narrow
+list/unit@2, mn/wide, 292B, -> as/narrow
+list/unit@2, mni/narrow, 326B, daf81a197e0ce0ea
+list/unit@2, mni/short, 326B, -> mni/narrow
+list/unit@2, mni/wide, 326B, -> mni/narrow
+list/unit@2, mr/narrow, 292B, -> as/narrow
+list/unit@2, ms/narrow, 292B, -> as/narrow
+list/unit@2, ms/short, 302B, bddb0b561eb3b8c1
+list/unit@2, mt/short, 299B, 149eff739df96973
+list/unit@2, mt/wide, 299B, -> mt/short
+list/unit@2, my/narrow, 322B, cf4dcee3ced3ebea
+list/unit@2, my/short, 326B, 5bcd7f671fd4a6b7
+list/unit@2, my/wide, 324B, 2841ab80ec78c1a3
+list/unit@2, ne/narrow, 291B, c242c9205e30e63d
+list/unit@2, ne/short, 293B, 9e17de9c4ab7d4f5
+list/unit@2, ne/wide, 293B, 28aceb103cf685c
+list/unit@2, nl/wide, 300B, -> af/narrow
+list/unit@2, nn/narrow, 292B, -> as/narrow
+list/unit@2, nn/wide, 296B, -> hi-Latn/narrow
+list/unit@2, no/wide, 300B, -> da/narrow
+list/unit@2, or/narrow, 292B, -> as/narrow
+list/unit@2, pa/narrow, 292B, -> as/narrow
+list/unit@2, pcm/narrow, 292B, -> as/narrow
+list/unit@2, pl/narrow, 298B, -> bs/narrow
+list/unit@2, pl/short, 298B, -> bs/narrow
+list/unit@2, pl/wide, 298B, -> bs/narrow
+list/unit@2, ps/narrow, 292B, -> as/narrow
+list/unit@2, ps/short, 298B, 47a9f944adefccea
+list/unit@2, ps/wide, 300B, adb1188438f70b03
+list/unit@2, pt-PT/narrow, 298B, -> gl/wide
+list/unit@2, pt/narrow, 292B, -> as/narrow
+list/unit@2, pt/short, 298B, -> gl/wide
+list/unit@2, pt/wide, 298B, -> gl/wide
+list/unit@2, rm/narrow, 292B, -> as/narrow
+list/unit@2, rm/short, 298B, -> gl/wide
+list/unit@2, rm/wide, 298B, -> gl/wide
+list/unit@2, ro/wide, 299B, a40b5fdc4f3d3d24
+list/unit@2, ru/narrow, 292B, -> as/narrow
+list/unit@2, ru/short, 292B, -> as/narrow
+list/unit@2, ru/wide, 292B, -> as/narrow
+list/unit@2, sa/narrow, 315B, 6d523860a65d4a29
+list/unit@2, sa/short, 315B, -> sa/narrow
+list/unit@2, sa/wide, 315B, -> sa/narrow
+list/unit@2, sah/narrow, 316B, a837a5d4406547a2
+list/unit@2, sah/short, 316B, -> sah/narrow
+list/unit@2, sah/wide, 316B, -> sah/narrow
+list/unit@2, sc/narrow, 292B, -> as/narrow
+list/unit@2, sc/short, 298B, -> gl/wide
+list/unit@2, sc/wide, 298B, -> gl/wide
+list/unit@2, si/narrow, 309B, de133816032e2da4
+list/unit@2, si/short, 309B, -> si/narrow
+list/unit@2, si/wide, 309B, -> si/narrow
+list/unit@2, sl/narrow, 300B, 14b0b1a8899bea62
+list/unit@2, sl/short, 300B, -> sl/narrow
+list/unit@2, sl/wide, 300B, -> sl/narrow
+list/unit@2, so/wide, 299B, 9f7673ed2468b5dc
+list/unit@2, sq/narrow, 298B, -> gl/wide
+list/unit@2, sq/short, 298B, -> gl/wide
+list/unit@2, sq/wide, 298B, -> gl/wide
+list/unit@2, sr-Latn/narrow, 298B, -> bs/narrow
+list/unit@2, sr-Latn/short, 298B, -> bs/narrow
+list/unit@2, sr-Latn/wide, 298B, -> bs/narrow
+list/unit@2, sr/narrow, 300B, -> bg/wide
+list/unit@2, sr/short, 300B, -> bg/wide
+list/unit@2, sr/wide, 300B, -> bg/wide
+list/unit@2, su/narrow, 309B, 66387436ba7fd5c3
+list/unit@2, su/short, 309B, -> su/narrow
+list/unit@2, su/wide, 309B, -> su/narrow
+list/unit@2, sv/narrow, 292B, -> as/narrow
+list/unit@2, sw/narrow, 300B, -> blo/short
+list/unit@2, sw/short, 300B, -> blo/short
+list/unit@2, sw/wide, 300B, -> blo/short
+list/unit@2, syr/narrow, 300B, e94c553281be9836
+list/unit@2, syr/short, 300B, -> syr/narrow
+list/unit@2, syr/wide, 300B, -> syr/narrow
+list/unit@2, ta/narrow, 292B, -> as/narrow
+list/unit@2, th/narrow, 292B, -> as/narrow
+list/unit@2, th/short, 302B, f0091558efb1dfb1
+list/unit@2, th/wide, 312B, 4d60601651de62a5
+list/unit@2, ti/narrow, 292B, -> as/narrow
+list/unit@2, ti/short, 307B, eb6e7a6a424ef720
+list/unit@2, ti/wide, 310B, b1cb5f5a5a9bc4bc
+list/unit@2, tk/narrow, 292B, -> as/narrow
+list/unit@2, to/narrow, 302B, 8e3c9580a8efc0ec
+list/unit@2, to/short, 304B, b7c9394645251b08
+list/unit@2, to/wide, 304B, -> to/short
+list/unit@2, tr/narrow, 292B, -> as/narrow
+list/unit@2, tr/short, 292B, -> as/narrow
+list/unit@2, tr/wide, 292B, -> as/narrow
+list/unit@2, tt/narrow, 308B, 4772e1dead890481
+list/unit@2, tt/short, 308B, -> tt/narrow
+list/unit@2, tt/wide, 308B, -> tt/narrow
+list/unit@2, ug/narrow, 303B, b0229665478a3399
+list/unit@2, ug/short, 303B, -> ug/narrow
+list/unit@2, ug/wide, 303B, -> ug/narrow
+list/unit@2, uk/narrow, 300B, 28bd6a8e46924f77
+list/unit@2, uk/short, 300B, -> uk/narrow
+list/unit@2, uk/wide, 300B, -> uk/narrow
+list/unit@2, und/narrow, 296B, -> hi-Latn/narrow
+list/unit@2, und/short, 296B, -> hi-Latn/narrow
+list/unit@2, und/wide, 296B, -> hi-Latn/narrow
+list/unit@2, ur/narrow, 312B, 4b71ce00bc45d184
+list/unit@2, ur/short, 312B, -> ur/narrow
+list/unit@2, ur/wide, 305B, 7e730b0c821509a9
+list/unit@2, uz/narrow, 292B, -> as/narrow
+list/unit@2, uz/short, 292B, -> as/narrow
+list/unit@2, uz/wide, 292B, -> as/narrow
+list/unit@2, vec/narrow, 292B, -> as/narrow
+list/unit@2, vec/short, 298B, -> gl/wide
+list/unit@2, vec/wide, 298B, -> gl/wide
+list/unit@2, vi/narrow, 292B, -> as/narrow
+list/unit@2, xnr/narrow, 294B, -> hi/narrow
+list/unit@2, yrl/narrow, 292B, -> as/narrow
+list/unit@2, yrl/short, 306B, 99e721060d2dc047
+list/unit@2, yrl/wide, 306B, -> yrl/short
+list/unit@2, yue-Hans/narrow, 288B, -> ja/narrow
+list/unit@2, yue-Hans/short, 292B, -> as/narrow
+list/unit@2, yue-Hans/wide, 292B, -> as/narrow
+list/unit@2, yue/narrow, 288B, -> ja/narrow
+list/unit@2, yue/short, 292B, -> as/narrow
+list/unit@2, yue/wide, 292B, -> as/narrow
+list/unit@2, zh-Hant/narrow, 288B, -> ja/narrow
+list/unit@2, zh-Hant/short, 292B, -> as/narrow
+list/unit@2, zh-Hant/wide, 292B, -> as/narrow
+list/unit@2, zh/narrow, 288B, -> ja/narrow
+list/unit@2, zh/short, 288B, -> ja/narrow
+list/unit@2, zh/wide, 288B, -> ja/narrow
+list/unit@2, zu/narrow, 295B, 5e871232c030bae1

@@ -1,17 +1,11 @@
 {
   "start": {
-    "default": {
-      "string": "",
-      "index_1": 0
-    },
-    "special_case": null
+    "string": "",
+    "index_1": 0
   },
   "middle": {
-    "default": {
-      "string": "",
-      "index_1": 0
-    },
-    "special_case": null
+    "string": "",
+    "index_1": 0
   },
   "end": {
     "default": {

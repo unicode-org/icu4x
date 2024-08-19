@@ -200,7 +200,7 @@ impl<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> Writeable
                     // start_before + values[0] + start_between + (values[1..n-3] + middle_between)* +
                     // values[n-2] + end_between + values[n-1] + end_after
 
-                    let (start_before, start_between, _) = patterns.start.parts(&second);
+                    let (start_before, start_between, _) = patterns.start.parts();
 
                     literal!(start_before)?;
                     value!(first)?;
@@ -210,7 +210,7 @@ impl<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> Writeable
                     let mut next = third;
 
                     for next_next in values {
-                        let (_, between, _) = patterns.middle.parts(&next);
+                        let (_, between, _) = patterns.middle.parts();
                         literal!(between)?;
                         value!(next)?;
                         next = next_next;

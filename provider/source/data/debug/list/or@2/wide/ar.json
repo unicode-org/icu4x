@@ -1,17 +1,11 @@
 {
   "start": {
-    "default": {
-      "string": " أو ",
-      "index_1": 6
-    },
-    "special_case": null
+    "string": " أو ",
+    "index_1": 6
   },
   "middle": {
-    "default": {
-      "string": " أو ",
-      "index_1": 6
-    },
-    "special_case": null
+    "string": " أو ",
+    "index_1": 6
   },
   "end": {
     "default": {

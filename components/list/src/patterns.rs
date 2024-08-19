@@ -15,8 +15,8 @@ impl<'data> ListFormatterPatternsV2<'data> {
     #[cfg(feature = "datagen")]
     pub fn try_new(start: &str, middle: &str, end: &str, pair: &str) -> Result<Self, DataError> {
         Ok(Self {
-            start: ListJoinerPattern::try_from_str(start, true, false)?.into(),
-            middle: ListJoinerPattern::try_from_str(middle, false, false)?.into(),
+            start: ListJoinerPattern::try_from_str(start, true, false)?,
+            middle: ListJoinerPattern::try_from_str(middle, false, false)?,
             end: ListJoinerPattern::try_from_str(end, false, true)?.into(),
             pair: ListJoinerPattern::try_from_str(pair, true, true)?.into(),
         })
@@ -44,9 +44,9 @@ impl<'a> ConditionalListJoinerPattern<'a> {
             Some(SpecialCasePattern { condition, pattern })
                 if condition.deref().matches_earliest_fwd_lazy(following_value) =>
             {
-                pattern.borrow_tuple()
+                pattern.parts()
             }
-            _ => self.default.borrow_tuple(),
+            _ => self.default.parts(),
         }
     }
 
@@ -96,7 +96,7 @@ impl<'data> ListJoinerPattern<'data> {
         }
     }
 
-    fn borrow_tuple(&'data self) -> PatternParts<'data> {
+    pub(crate) fn parts(&'data self) -> PatternParts<'data> {
         #![allow(clippy::indexing_slicing)] // by invariant
         let index_0 = self.index_0 as usize;
         let index_1 = self.index_1 as usize;

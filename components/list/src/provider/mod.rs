@@ -77,10 +77,10 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 pub struct ListFormatterPatternsV2<'data> {
     /// The start pattern
     #[cfg_attr(feature = "datagen", serde(borrow))]
-    pub start: ConditionalListJoinerPattern<'data>,
+    pub start: ListJoinerPattern<'data>,
     /// The middle pattern
     #[cfg_attr(feature = "datagen", serde(borrow))]
-    pub middle: ConditionalListJoinerPattern<'data>,
+    pub middle: ListJoinerPattern<'data>,
     /// The end pattern
     #[cfg_attr(feature = "datagen", serde(borrow))]
     pub end: ConditionalListJoinerPattern<'data>,

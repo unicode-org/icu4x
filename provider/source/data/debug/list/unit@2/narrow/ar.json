@@ -1,17 +1,11 @@
 {
   "start": {
-    "default": {
-      "string": " و",
-      "index_1": 3
-    },
-    "special_case": null
+    "string": " و",
+    "index_1": 3
   },
   "middle": {
-    "default": {
-      "string": " و",
-      "index_1": 3
-    },
-    "special_case": null
+    "string": " و",
+    "index_1": 3
   },
   "end": {
     "default": {
