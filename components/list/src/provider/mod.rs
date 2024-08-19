@@ -76,17 +76,17 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct ListFormatterPatternsV2<'data> {
     /// The start pattern
-    #[cfg_attr(feature = "datagen", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub start: ListJoinerPattern<'data>,
     /// The middle pattern. It doesn't need to be a pattern because it has to start with `{0}`
     /// and end with `{1}`, so we just store the string in between.
-    #[cfg_attr(feature = "datagen", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub middle: Cow<'data, str>,
     /// The end pattern
-    #[cfg_attr(feature = "datagen", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub end: ConditionalListJoinerPattern<'data>,
     /// The pair pattern, if it's different from the end pattern.
-    #[cfg_attr(feature = "datagen", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub pair: Option<ConditionalListJoinerPattern<'data>>,
 }
 
