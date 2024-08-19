@@ -15,8 +15,8 @@ Future<void> main(List<String> args) async {
   final target = Target.values.firstWhere((t) => t.toString() == args[1]);
   final linkMode = LinkMode.values.firstWhere((l) => l.toString() == args[2]);
 
-  final defaultFeatures = ['default_components', 'compiled_data'].join(',');
-  final cargoFeatures = args.elementAtOrNull(3) ?? defaultFeatures;
+  final defaultFeatures = ['default_components', 'compiled_data'];
+  final cargoFeatures = args.elementAtOrNull(3)?.split(',') ?? defaultFeatures;
 
   await buildLib(target, linkMode, cargoFeatures, out);
 }
@@ -24,7 +24,7 @@ Future<void> main(List<String> args) async {
 Future<void> buildLib(
   Target target,
   LinkMode linkMode,
-  String cargoFeatures,
+  Iterable<String> cargoFeatures,
   String outName,
 ) async {
   var root = Platform.script.toFilePath().split('ffi')[0];
@@ -58,7 +58,7 @@ Future<void> buildLib(
     'buffer_provider',
     if (isNoStd) ...['libc-alloc', 'panic-handler'],
     if (!isNoStd) ...['logging', 'simple_logger'],
-  ].join(',');
+  ];
   final arguments = [
     if (isNoStd) '+nightly',
     'rustc',
@@ -68,7 +68,7 @@ Future<void> buildLib(
     '--config=profile.release.panic="abort"',
     '--config=profile.release.codegen-units=1',
     '--no-default-features',
-    '--features=$features,$cargoFeatures',
+    '--features=${[...features, ...cargoFeatures].join(',')}',
     if (isNoStd) '-Zbuild-std=core,alloc',
     if (isNoStd) '-Zbuild-std-features=panic_immediate_abort',
     '--target=$rustTarget',
