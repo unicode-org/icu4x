@@ -14,7 +14,9 @@ Future<void> main(List<String> args) async {
   final out = Uri.file(args[0]).toFilePath();
   final target = Target.values.firstWhere((t) => t.toString() == args[1]);
   final linkMode = LinkMode.values.firstWhere((l) => l.toString() == args[2]);
-  final cargoFeatures = args.elementAtOrNull(3) ?? 'default_components';
+
+  final defaultFeatures = ['default_components', 'compiled_data'].join(',');
+  final cargoFeatures = args.elementAtOrNull(3) ?? defaultFeatures;
 
   await buildLib(target, linkMode, cargoFeatures, out);
 }
@@ -53,7 +55,6 @@ Future<void> buildLib(
   }
 
   final features = [
-    if (linkMode == LinkMode.dynamic) 'compiled_data',
     'buffer_provider',
     if (isNoStd) ...['libc-alloc', 'panic-handler'],
     if (!isNoStd) ...['logging', 'simple_logger'],
