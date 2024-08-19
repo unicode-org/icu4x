@@ -4,7 +4,6 @@
 
 use crate::lazy_automaton::LazyAutomaton;
 use crate::provider::*;
-use crate::ListLength;
 #[cfg(feature = "datagen")]
 use alloc::borrow::Cow;
 #[cfg(feature = "datagen")]
@@ -14,65 +13,22 @@ use writeable::{LengthHint, Writeable};
 impl<'data> ListFormatterPatternsV2<'data> {
     /// Creates a new [`ListFormatterPatternsV2`] from the given patterns. Fails if any pattern is invalid.
     #[cfg(feature = "datagen")]
-    pub fn try_new(
-        [start, middle, end, pair, short_start, short_middle, short_end, short_pair, narrow_start, narrow_middle, narrow_end, narrow_pair]: [&str; 12],
-    ) -> Result<Self, DataError> {
-        Ok(Self([
-            ListJoinerPattern::try_from_str(start, true, false)?.into(),
-            ListJoinerPattern::try_from_str(middle, false, false)?.into(),
-            ListJoinerPattern::try_from_str(end, false, true)?.into(),
-            ListJoinerPattern::try_from_str(pair, true, true)?.into(),
-            ListJoinerPattern::try_from_str(short_start, true, false)?.into(),
-            ListJoinerPattern::try_from_str(short_middle, false, false)?.into(),
-            ListJoinerPattern::try_from_str(short_end, false, true)?.into(),
-            ListJoinerPattern::try_from_str(short_pair, true, true)?.into(),
-            ListJoinerPattern::try_from_str(narrow_start, true, false)?.into(),
-            ListJoinerPattern::try_from_str(narrow_middle, false, false)?.into(),
-            ListJoinerPattern::try_from_str(narrow_end, false, true)?.into(),
-            ListJoinerPattern::try_from_str(narrow_pair, true, true)?.into(),
-        ]))
-    }
-
-    /// Adds a special case to all `pattern`s that will evaluate to
-    /// `alternative_pattern` when `regex` matches the following element.
-    /// The regex is interpreted case-insensitive and anchored to the beginning, but
-    /// to improve efficiency does not search for full matches. If a full match is
-    /// required, use `$`.
-    #[cfg(feature = "datagen")]
-    pub fn make_conditional(
-        &mut self,
-        pattern: &str,
-        regex: &SerdeDFA<'static>,
-        alternative_pattern: &str,
-    ) -> Result<(), DataError> {
-        let old = ListJoinerPattern::try_from_str(pattern, true, true)?;
-        for i in 0..12 {
-            #[allow(clippy::indexing_slicing)] // self.0 is &[_; 12]
-            if self.0[i].default == old {
-                self.0[i].special_case = Some(SpecialCasePattern {
-                    condition: regex.clone(),
-                    pattern: ListJoinerPattern::try_from_str(
-                        alternative_pattern,
-                        i % 4 == 0 || i % 4 == 3, // allow_prefix = start or pair
-                        i % 4 == 2 || i % 4 == 3, // allow_suffix = end or pair
-                    )?,
-                });
-            }
-        }
-        Ok(())
+    pub fn try_new(start: &str, middle: &str, end: &str, pair: &str) -> Result<Self, DataError> {
+        Ok(Self {
+            start: ListJoinerPattern::try_from_str(start, true, false)?.into(),
+            middle: ListJoinerPattern::try_from_str(middle, false, false)?.into(),
+            end: ListJoinerPattern::try_from_str(end, false, true)?.into(),
+            pair: ListJoinerPattern::try_from_str(pair, true, true)?.into(),
+        })
     }
 
     /// The range of the number of bytes required by the list literals to join a
     /// list of length `len`. If none of the patterns are conditional, this is exact.
-    pub(crate) fn size_hint(&self, style: ListLength, len: usize) -> LengthHint {
+    pub(crate) fn size_hint(&self, len: usize) -> LengthHint {
         match len {
             0 | 1 => LengthHint::exact(0),
-            2 => self.pair(style).size_hint(),
-            n => {
-                self.start(style).size_hint()
-                    + self.middle(style).size_hint() * (n - 3)
-                    + self.end(style).size_hint()
-            }
+            2 => self.pair.size_hint(),
+            n => self.start.size_hint() + self.middle.size_hint() * (n - 3) + self.end.size_hint(),
         }
     }
 }
@@ -106,7 +62,8 @@ impl<'a> ConditionalListJoinerPattern<'a> {
 
 impl<'data> ListJoinerPattern<'data> {
     #[cfg(feature = "datagen")]
-    fn try_from_str(
+    /// TODO
+    pub fn try_from_str(
         pattern: &str,
         allow_prefix: bool,
         allow_suffix: bool,
@@ -169,32 +126,24 @@ impl<'data> From<ListJoinerPattern<'data>> for ConditionalListJoinerPattern<'dat
 pub mod test {
     use super::*;
 
-    pub fn test_patterns() -> ListFormatterPatternsV2<'static> {
-        let mut patterns = ListFormatterPatternsV2::try_new([
-            // Wide: general
-            "@{0}:{1}",
-            "{0},{1}",
-            "{0}.{1}!",
-            "${0};{1}+",
-            // Short: different pattern lengths
-            "{0}1{1}",
-            "{0}12{1}",
-            "{0}12{1}34",
-            "{0}123{1}456",
-            // Narrow: conditionals
-            "{0}: {1}",
-            "{0}, {1}",
-            "{0}. {1}",
-            "{0}. {1}",
-        ])
-        .unwrap();
-        patterns
-            .make_conditional(
-                "{0}. {1}",
-                &SerdeDFA::new(Cow::Borrowed("^a")).unwrap(),
-                "{0} :o {1}",
-            )
-            .unwrap();
+    pub fn test_patterns_general() -> ListFormatterPatternsV2<'static> {
+        ListFormatterPatternsV2::try_new("@{0}:{1}", "{0},{1}", "{0}.{1}!", "${0};{1}+").unwrap()
+    }
+
+    pub fn test_patterns_lengths() -> ListFormatterPatternsV2<'static> {
+        ListFormatterPatternsV2::try_new("{0}1{1}", "{0}12{1}", "{0}12{1}34", "{0}123{1}456")
+            .unwrap()
+    }
+
+    pub fn test_patterns_conditional() -> ListFormatterPatternsV2<'static> {
+        let mut patterns =
+            ListFormatterPatternsV2::try_new("{0}: {1}", "{0}, {1}", "{0}. {1}", "{0}. {1}")
+                .unwrap();
+        patterns.end.special_case = Some(SpecialCasePattern {
+            condition: SerdeDFA::new(Cow::Borrowed("^a")).unwrap(),
+            pattern: ListJoinerPattern::try_from_str("{0} :o {1}", false, false).unwrap(),
+        });
+        patterns.pair.special_case = patterns.end.special_case.clone();
         patterns
     }
 
@@ -215,60 +164,38 @@ pub mod test {
 
     #[test]
     fn produces_correct_parts() {
-        assert_eq!(
-            test_patterns().pair(ListLength::Wide).parts(""),
-            ("$", ";", "+")
-        );
+        assert_eq!(test_patterns_general().pair.parts(""), ("$", ";", "+"));
     }
 
     #[test]
     fn produces_correct_parts_conditionally() {
+        assert_eq!(test_patterns_conditional().end.parts("a"), ("", " :o ", ""));
         assert_eq!(
-            test_patterns().end(ListLength::Narrow).parts("a"),
+            test_patterns_conditional().end.parts("ab"),
             ("", " :o ", "")
         );
-        assert_eq!(
-            test_patterns().end(ListLength::Narrow).parts("ab"),
-            ("", " :o ", "")
-        );
-        assert_eq!(
-            test_patterns().end(ListLength::Narrow).parts("b"),
-            ("", ". ", "")
-        );
-        assert_eq!(
-            test_patterns().end(ListLength::Narrow).parts("ba"),
-            ("", ". ", "")
-        );
+        assert_eq!(test_patterns_conditional().end.parts("b"), ("", ". ", ""));
+        assert_eq!(test_patterns_conditional().end.parts("ba"), ("", ". ", ""));
     }
 
     #[test]
     fn size_hint_works() {
-        let pattern = test_patterns();
+        let pattern = test_patterns_lengths();
 
-        assert_eq!(
-            pattern.size_hint(ListLength::Short, 0),
-            LengthHint::exact(0)
-        );
-        assert_eq!(
-            pattern.size_hint(ListLength::Short, 1),
-            LengthHint::exact(0)
-        );
+        assert_eq!(pattern.size_hint(0), LengthHint::exact(0));
+        assert_eq!(pattern.size_hint(1), LengthHint::exact(0));
 
         // pair pattern "{0}123{1}456"
-        assert_eq!(
-            pattern.size_hint(ListLength::Short, 2),
-            LengthHint::exact(6)
-        );
+        assert_eq!(pattern.size_hint(2), LengthHint::exact(6));
 
         // patterns "{0}1{1}", "{0}12{1}" (x197), and "{0}12{1}34"
-        assert_eq!(
-            pattern.size_hint(ListLength::Short, 200),
-            LengthHint::exact(1 + 2 * 197 + 4)
-        );
+        assert_eq!(pattern.size_hint(200), LengthHint::exact(1 + 2 * 197 + 4));
+
+        let pattern = test_patterns_conditional();
 
         // patterns "{0}: {1}", "{0}, {1}" (x197), and "{0} :o {1}" or "{0}. {1}"
         assert_eq!(
-            pattern.size_hint(ListLength::Narrow, 200),
+            pattern.size_hint(200),
             LengthHint::exact(2 + 197 * 2) + LengthHint::between(2, 4)
         );
     }

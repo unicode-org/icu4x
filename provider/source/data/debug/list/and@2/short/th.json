@@ -1,0 +1,30 @@
+{
+  "start": {
+    "default": {
+      "string": " ",
+      "index_1": 1
+    },
+    "special_case": null
+  },
+  "middle": {
+    "default": {
+      "string": " ",
+      "index_1": 1
+    },
+    "special_case": null
+  },
+  "end": {
+    "default": {
+      "string": " และ",
+      "index_1": 10
+    },
+    "special_case": null
+  },
+  "pair": {
+    "default": {
+      "string": "และ",
+      "index_1": 9
+    },
+    "special_case": null
+  }
+}

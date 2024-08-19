@@ -15,7 +15,6 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use crate::ListLength;
 use alloc::borrow::Cow;
 use icu_provider::prelude::*;
 use icu_provider::DynamicDataMarker;
@@ -74,59 +73,43 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     derive(serde::Serialize, databake::Bake),
     databake(path = icu_list::provider),
 )]
-pub struct ListFormatterPatternsV2<'data>(
-    #[cfg_attr(feature = "datagen", serde(with = "deduplicating_array"))]
-    /// The patterns in the order start, middle, end, pair, short_start, short_middle,
-    /// short_end, short_pair, narrow_start, narrow_middle, narrow_end, narrow_pair,
-    pub [ConditionalListJoinerPattern<'data>; 12],
-);
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct ListFormatterPatternsV2<'data> {
+    /// The start pattern
+    #[cfg_attr(feature = "datagen", serde(borrow))]
+    pub start: ConditionalListJoinerPattern<'data>,
+    /// The middle pattern
+    #[cfg_attr(feature = "datagen", serde(borrow))]
+    pub middle: ConditionalListJoinerPattern<'data>,
+    /// The end pattern
+    #[cfg_attr(feature = "datagen", serde(borrow))]
+    pub end: ConditionalListJoinerPattern<'data>,
+    /// The pair pattern
+    #[cfg_attr(feature = "datagen", serde(borrow))]
+    pub pair: ConditionalListJoinerPattern<'data>,
+}
 
-#[cfg(feature = "serde")]
-impl<'de> serde::Deserialize<'de> for ListFormatterPatternsV2<'de> {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::de::Deserializer<'de>,
-    {
-        #[cfg(not(feature = "serde_human"))]
-        if deserializer.is_human_readable() {
-            use serde::de::Error;
-            return Err(D::Error::custom(
-                    "Deserializing human-readable ListFormatter data requires the 'serde_human' feature",
-                ));
-        }
-
-        Ok(ListFormatterPatternsV2(deduplicating_array::deserialize(
-            deserializer,
-        )?))
-    }
+impl ListFormatterPatternsV2<'_> {
+    /// The marker attributes for narrow lists
+    pub const NARROW: &'static DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("narrow");
+    #[doc(hidden)]
+    pub const NARROW_STR: &'static str = Self::NARROW.as_str();
+    /// The marker attributes for short lists
+    pub const SHORT: &'static DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("short");
+    #[doc(hidden)]
+    pub const SHORT_STR: &'static str = Self::SHORT.as_str();
+    /// The marker attributes for wide lists
+    pub const WIDE: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("wide");
+    #[doc(hidden)]
+    pub const WIDE_STR: &'static str = Self::WIDE.as_str();
 }
 
 pub(crate) struct ErasedListV2Marker;
 
 impl DynamicDataMarker for ErasedListV2Marker {
     type DataStruct = ListFormatterPatternsV2<'static>;
-}
-
-impl<'data> ListFormatterPatternsV2<'data> {
-    pub(crate) fn start(&self, style: ListLength) -> &ConditionalListJoinerPattern<'data> {
-        #![allow(clippy::indexing_slicing)] // style as usize < 3
-        &self.0[4 * (style as usize)]
-    }
-
-    pub(crate) fn middle(&self, style: ListLength) -> &ConditionalListJoinerPattern<'data> {
-        #![allow(clippy::indexing_slicing)] // style as usize < 3
-        &self.0[4 * (style as usize) + 1]
-    }
-
-    pub(crate) fn end(&self, style: ListLength) -> &ConditionalListJoinerPattern<'data> {
-        #![allow(clippy::indexing_slicing)] // style as usize < 3
-        &self.0[4 * (style as usize) + 2]
-    }
-
-    pub(crate) fn pair(&self, style: ListLength) -> &ConditionalListJoinerPattern<'data> {
-        #![allow(clippy::indexing_slicing)] // style as usize < 3
-        &self.0[4 * (style as usize) + 3]
-    }
 }
 
 /// A pattern that can behave conditionally on the next element.

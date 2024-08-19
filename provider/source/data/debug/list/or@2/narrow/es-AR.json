@@ -1,0 +1,42 @@
+{
+  "start": {
+    "default": {
+      "string": ", ",
+      "index_1": 2
+    },
+    "special_case": null
+  },
+  "middle": {
+    "default": {
+      "string": ", ",
+      "index_1": 2
+    },
+    "special_case": null
+  },
+  "end": {
+    "default": {
+      "string": " o ",
+      "index_1": 3
+    },
+    "special_case": {
+      "condition": "^[oO]|[hH][oO]|8|(?:11(?:[\\.  ]?[0-9]{3})*(?:,[0-9]*)?(?:[^\\.,[0-9]]|$))",
+      "pattern": {
+        "string": " u ",
+        "index_1": 3
+      }
+    }
+  },
+  "pair": {
+    "default": {
+      "string": " o ",
+      "index_1": 3
+    },
+    "special_case": {
+      "condition": "^[oO]|[hH][oO]|8|(?:11(?:[\\.  ]?[0-9]{3})*(?:,[0-9]*)?(?:[^\\.,[0-9]]|$))",
+      "pattern": {
+        "string": " u ",
+        "index_1": 3
+      }
+    }
+  }
+}

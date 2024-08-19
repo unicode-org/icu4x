@@ -1,0 +1,30 @@
+{
+  "start": {
+    "default": {
+      "string": ", ",
+      "index_1": 2
+    },
+    "special_case": null
+  },
+  "middle": {
+    "default": {
+      "string": ", ",
+      "index_1": 2
+    },
+    "special_case": null
+  },
+  "end": {
+    "default": {
+      "string": " এবং ",
+      "index_1": 11
+    },
+    "special_case": null
+  },
+  "pair": {
+    "default": {
+      "string": " এবং ",
+      "index_1": 11
+    },
+    "special_case": null
+  }
+}
