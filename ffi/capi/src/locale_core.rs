@@ -102,7 +102,7 @@ pub mod ffi {
         /// Set the region part of the [`Locale`].
         #[diplomat::rust_link(icu::locale::Locale::try_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::locale::Locale::try_from_utf8, FnInStruct, hidden)]
-        #[diplomat::attr(auto, setter = "region")]
+        #[diplomat::attr(all(auto, not(dart)), setter = "region")]
         pub fn set_region(&mut self, s: &DiplomatStr) -> Result<(), LocaleParseError> {
             self.0.id.region = if s.is_empty() {
                 None
@@ -124,7 +124,7 @@ pub mod ffi {
         /// Set the script part of the [`Locale`]. Pass an empty string to remove the script.
         #[diplomat::rust_link(icu::locale::Locale::try_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::locale::Locale::try_from_utf8, FnInStruct, hidden)]
-        #[diplomat::attr(auto, setter = "script")]
+        #[diplomat::attr(all(auto, not(dart)), setter = "script")]
         pub fn set_script(&mut self, s: &DiplomatStr) -> Result<(), LocaleParseError> {
             self.0.id.script = if s.is_empty() {
                 None
