@@ -4,42 +4,98 @@
   },
   "past": {
     "zero": null,
-    "one": {
-      "pattern": "- ч",
-      "index": 1
-    },
+    "one": [
+      {
+        "Literal": "-"
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " ч"
+      }
+    ],
     "two": null,
-    "few": {
-      "pattern": "- ч",
-      "index": 1
-    },
-    "many": {
-      "pattern": "- ч",
-      "index": 1
-    },
-    "other": {
-      "pattern": "- ч",
-      "index": 1
-    }
+    "few": [
+      {
+        "Literal": "-"
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " ч"
+      }
+    ],
+    "many": [
+      {
+        "Literal": "-"
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " ч"
+      }
+    ],
+    "other": [
+      {
+        "Literal": "-"
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " ч"
+      }
+    ]
   },
   "future": {
     "zero": null,
-    "one": {
-      "pattern": "+ ч",
-      "index": 1
-    },
+    "one": [
+      {
+        "Literal": "+"
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " ч"
+      }
+    ],
     "two": null,
-    "few": {
-      "pattern": "+ ч",
-      "index": 1
-    },
-    "many": {
-      "pattern": "+ ч",
-      "index": 1
-    },
-    "other": {
-      "pattern": "+ ч",
-      "index": 1
-    }
+    "few": [
+      {
+        "Literal": "+"
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " ч"
+      }
+    ],
+    "many": [
+      {
+        "Literal": "+"
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " ч"
+      }
+    ],
+    "other": [
+      {
+        "Literal": "+"
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " ч"
+      }
+    ]
   }
 }

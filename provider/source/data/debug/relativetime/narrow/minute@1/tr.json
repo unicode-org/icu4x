@@ -4,30 +4,46 @@
   },
   "past": {
     "zero": null,
-    "one": {
-      "pattern": " dk. önce",
-      "index": 0
-    },
+    "one": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " dk. önce"
+      }
+    ],
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": " dk. önce",
-      "index": 0
-    }
+    "other": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " dk. önce"
+      }
+    ]
   },
   "future": {
     "zero": null,
-    "one": {
-      "pattern": " dk. sonra",
-      "index": 0
-    },
+    "one": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " dk. sonra"
+      }
+    ],
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": " dk. sonra",
-      "index": 0
-    }
+    "other": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " dk. sonra"
+      }
+    ]
   }
 }

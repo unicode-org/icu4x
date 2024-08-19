@@ -10,10 +10,14 @@
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": " 𑄝𑄧𑄏𑄧𑄢𑄴 𑄃𑄉𑄬",
-      "index": 0
-    }
+    "other": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " 𑄝𑄧𑄏𑄧𑄢𑄴 𑄃𑄉𑄬"
+      }
+    ]
   },
   "future": {
     "zero": null,
@@ -21,9 +25,13 @@
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": " 𑄝𑄧𑄏𑄧𑄢𑄬",
-      "index": 0
-    }
+    "other": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " 𑄝𑄧𑄏𑄧𑄢𑄬"
+      }
+    ]
   }
 }

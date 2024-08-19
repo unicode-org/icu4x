@@ -8,10 +8,14 @@
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": " 𑄥𑄬𑄉𑄬𑄚𑄴 𑄃𑄉𑄬",
-      "index": 0
-    }
+    "other": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " 𑄥𑄬𑄉𑄬𑄚𑄴 𑄃𑄉𑄬"
+      }
+    ]
   },
   "future": {
     "zero": null,
@@ -19,9 +23,13 @@
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": " 𑄥𑄬𑄉𑄬𑄚𑄴𑄘𑄬",
-      "index": 0
-    }
+    "other": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " 𑄥𑄬𑄉𑄬𑄚𑄴𑄘𑄬"
+      }
+    ]
   }
 }

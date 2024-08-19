@@ -6,30 +6,46 @@
   },
   "past": {
     "zero": null,
-    "one": {
-      "pattern": " çyr. önce",
-      "index": 0
-    },
+    "one": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " çyr. önce"
+      }
+    ],
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": " çyr. önce",
-      "index": 0
-    }
+    "other": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " çyr. önce"
+      }
+    ]
   },
   "future": {
     "zero": null,
-    "one": {
-      "pattern": " çyr. sonra",
-      "index": 0
-    },
+    "one": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " çyr. sonra"
+      }
+    ],
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": " çyr. sonra",
-      "index": 0
-    }
+    "other": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " çyr. sonra"
+      }
+    ]
   }
 }

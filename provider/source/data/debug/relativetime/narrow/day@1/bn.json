@@ -8,30 +8,46 @@
   },
   "past": {
     "zero": null,
-    "one": {
-      "pattern": " দিন আগে",
-      "index": 0
-    },
+    "one": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " দিন আগে"
+      }
+    ],
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": " দিন আগে",
-      "index": 0
-    }
+    "other": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " দিন আগে"
+      }
+    ]
   },
   "future": {
     "zero": null,
-    "one": {
-      "pattern": " দিনের মধ্যে",
-      "index": 0
-    },
+    "one": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " দিনের মধ্যে"
+      }
+    ],
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": " দিনের মধ্যে",
-      "index": 0
-    }
+    "other": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " দিনের মধ্যে"
+      }
+    ]
   }
 }

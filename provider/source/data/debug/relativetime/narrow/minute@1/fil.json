@@ -4,30 +4,52 @@
   },
   "past": {
     "zero": null,
-    "one": {
-      "pattern": " min. ang nakalipas",
-      "index": 0
-    },
+    "one": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " min. ang nakalipas"
+      }
+    ],
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": " min. ang nakalipas",
-      "index": 0
-    }
+    "other": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " min. ang nakalipas"
+      }
+    ]
   },
   "future": {
     "zero": null,
-    "one": {
-      "pattern": "sa  min.",
-      "index": 3
-    },
+    "one": [
+      {
+        "Literal": "sa "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " min."
+      }
+    ],
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": "sa  min.",
-      "index": 3
-    }
+    "other": [
+      {
+        "Literal": "sa "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " min."
+      }
+    ]
   }
 }
