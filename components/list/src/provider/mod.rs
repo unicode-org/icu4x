@@ -78,9 +78,10 @@ pub struct ListFormatterPatternsV2<'data> {
     /// The start pattern
     #[cfg_attr(feature = "datagen", serde(borrow))]
     pub start: ListJoinerPattern<'data>,
-    /// The middle pattern
+    /// The middle pattern. It doesn't need to be a pattern because it has to start with `{0}`
+    /// and end with `{1}`, so we just store the string in between.
     #[cfg_attr(feature = "datagen", serde(borrow))]
-    pub middle: ListJoinerPattern<'data>,
+    pub middle: Cow<'data, str>,
     /// The end pattern
     #[cfg_attr(feature = "datagen", serde(borrow))]
     pub end: ConditionalListJoinerPattern<'data>,

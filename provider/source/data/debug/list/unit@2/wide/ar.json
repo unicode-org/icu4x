@@ -3,10 +3,7 @@
     "string": "، و",
     "index_1": 5
   },
-  "middle": {
-    "string": "، و",
-    "index_1": 5
-  },
+  "middle": "، و",
   "end": {
     "default": {
       "string": "، و",

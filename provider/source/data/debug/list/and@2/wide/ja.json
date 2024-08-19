@@ -3,10 +3,7 @@
     "string": "、",
     "index_1": 3
   },
-  "middle": {
-    "string": "、",
-    "index_1": 3
-  },
+  "middle": "、",
   "end": {
     "default": {
       "string": "、",

@@ -14,9 +14,16 @@ impl<'data> ListFormatterPatternsV2<'data> {
     /// Creates a new [`ListFormatterPatternsV2`] from the given patterns. Fails if any pattern is invalid.
     #[cfg(feature = "datagen")]
     pub fn try_new(start: &str, middle: &str, end: &str, pair: &str) -> Result<Self, DataError> {
+        let err = DataError::custom("Invalid list pattern");
         Ok(Self {
             start: ListJoinerPattern::try_from_str(start, true, false)?,
-            middle: ListJoinerPattern::try_from_str(middle, false, false)?,
+            middle: middle
+                .strip_prefix("{0}")
+                .ok_or(err)?
+                .strip_suffix("{1}")
+                .ok_or(err)?
+                .to_string()
+                .into(),
             end: ListJoinerPattern::try_from_str(end, false, true)?.into(),
             pair: ListJoinerPattern::try_from_str(pair, true, true)?.into(),
         })
@@ -28,7 +35,11 @@ impl<'data> ListFormatterPatternsV2<'data> {
         match len {
             0 | 1 => LengthHint::exact(0),
             2 => self.pair.size_hint(),
-            n => self.start.size_hint() + self.middle.size_hint() * (n - 3) + self.end.size_hint(),
+            n => {
+                self.start.size_hint()
+                    + self.middle.writeable_length_hint() * (n - 3)
+                    + self.end.size_hint()
+            }
         }
     }
 }

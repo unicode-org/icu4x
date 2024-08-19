@@ -3,10 +3,7 @@
     "string": " ",
     "index_1": 1
   },
-  "middle": {
-    "string": " ",
-    "index_1": 1
-  },
+  "middle": " ",
   "end": {
     "default": {
       "string": " และ",

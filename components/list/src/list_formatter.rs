@@ -210,7 +210,7 @@ impl<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> Writeable
                     let mut next = third;
 
                     for next_next in values {
-                        let (_, between, _) = patterns.middle.parts();
+                        let between = &*patterns.middle;
                         literal!(between)?;
                         value!(next)?;
                         next = next_next;

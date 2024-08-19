@@ -3,10 +3,7 @@
     "string": ", ",
     "index_1": 2
   },
-  "middle": {
-    "string": ", ",
-    "index_1": 2
-  },
+  "middle": ", ",
   "end": {
     "default": {
       "string": " and ",
