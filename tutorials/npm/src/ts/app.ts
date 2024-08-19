@@ -8,7 +8,7 @@ import 'bootstrap/js/dist/dropdown';
 import 'bootstrap/js/dist/collapse';
 
 (async function init() {
-    const dataProvider = DataProvider.create_compiled();
+    const dataProvider = DataProvider.createCompiled();
     fdf.setup(dataProvider);
     dtf.setup(dataProvider);
     seg.setup(dataProvider);

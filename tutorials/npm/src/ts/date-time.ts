@@ -20,8 +20,8 @@ export class DateTimeDemo {
         this.#displayFn = displayFn;
         this.#dataProvider = dataProvider;
 
-        this.#locale = Ok(Locale.create_from_string("en"));
-        this.#calendar = Ok(Calendar.create_for_locale(dataProvider, unwrap(this.#locale)));
+        this.#locale = Ok(Locale.createFromString("en"));
+        this.#calendar = Ok(Calendar.createForLocale(dataProvider, unwrap(this.#locale)));
         this.#dateLength = DateLength.Short;
         this.#timeLength = TimeLength.Short;
         this.#dateTime = null;
@@ -55,8 +55,8 @@ export class DateTimeDemo {
                 locid = locid.replace("-u-", `-u-ca-${this.#calendarStr}-`);
             }
         }
-        this.#locale = result(() => Locale.create_from_string(locid));
-        this.#calendar = result(() => Calendar.create_for_locale(this.#dataProvider, unwrap(this.#locale) ));
+        this.#locale = result(() => Locale.createFromString(locid));
+        this.#calendar = result(() => Calendar.createForLocale(this.#dataProvider, unwrap(this.#locale) ));
         this.#updateDateTime();
     }
 
@@ -79,7 +79,7 @@ export class DateTimeDemo {
     #updateDateTime(): void {
         const date = new Date(this.#dateTimeStr);
 
-        this.#dateTime = result(() => DateTime.create_from_iso_in_calendar(
+        this.#dateTime = result(() => DateTime.createFromIsoInCalendar(
             date.getFullYear(),
             date.getMonth() + 1,
             date.getDate(),
@@ -92,7 +92,7 @@ export class DateTimeDemo {
     }
 
     #updateFormatter(): void {
-        this.#formatter = result(() => DateTimeFormatter.create_with_lengths(
+        this.#formatter = result(() => DateTimeFormatter.createWithLengths(
             this.#dataProvider,
             unwrap(this.#locale),
             this.#dateLength,
