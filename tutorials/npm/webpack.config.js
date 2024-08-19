@@ -1,3 +1,8 @@
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 export default {
 	entry: {
 	  index: [
@@ -48,7 +53,7 @@ export default {
 	// mode: "development",
 	output: {
 	  filename: 'bundle.js',
-	  path: new URL('dist', import.meta.url).pathname,
+	  path: path.resolve(__dirname, 'dist'),
 	},
 	devServer: {
 	  static: '.',
