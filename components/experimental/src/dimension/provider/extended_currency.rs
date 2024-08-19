@@ -9,6 +9,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use icu_plurals::PluralCategory;
 use icu_provider::prelude::*;
 use zerovec::{maps::ZeroMapKV, ule::AsULE, ZeroMap, ZeroSlice, ZeroVec};
 
@@ -21,8 +22,6 @@ use zerovec::{maps::ZeroMapKV, ule::AsULE, ZeroMap, ZeroSlice, ZeroVec};
 /// guaranteed to match with this version's `*_unstable` providers. Use with caution.
 /// </div>
 pub use crate::provider::Baked;
-
-use super::count::Count;
 
 /// Currency Extended V1 data struct.
 #[icu_provider::data_struct(marker(
@@ -60,7 +59,7 @@ pub struct CurrencyExtendedDataV1<'data> {
     databake(path = icu_experimental::dimension::provider::extended_currency)
 )]
 pub enum CurrencyDisplayNameCount {
-    PluralRules(Count),
+    PluralRules(PluralCategory),
 
     /// The display name for the currency.
     DisplayName,

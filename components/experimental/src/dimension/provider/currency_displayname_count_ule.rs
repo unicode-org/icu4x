@@ -2,9 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_plurals::PluralCategory;
 use zerovec::ule::{AsULE, ZeroVecError, ULE};
 
-use super::{count::Count, extended_currency::CurrencyDisplayNameCount};
+use super::extended_currency::CurrencyDisplayNameCount;
 
 /// [`CurrencyDisplayNameCountULE`] is a type optimized for efficient storing and
 /// deserialization of [`CurrencyDisplayNameCount`] using the `ZeroVec` model.
@@ -12,12 +13,12 @@ use super::{count::Count, extended_currency::CurrencyDisplayNameCount};
 /// The serialization model packages the pattern item in one byte.
 ///
 /// The last three bits (b2, b1 & b0), are used to determine the count:
-///     000 -> PluralRules(Count::Zero)
-///     001 -> PluralRules(Count::One)
-///     010 -> PluralRules(Count::Two)
-///     011 -> PluralRules(Count::Few)
-///     100 -> PluralRules(Count::Many)
-///     101 -> PluralRules(Count::Other)
+///     000 -> PluralRules(PluralCategory::Zero)
+///     001 -> PluralRules(PluralCategory::One)
+///     010 -> PluralRules(PluralCategory::Two)
+///     011 -> PluralRules(PluralCategory::Few)
+///     100 -> PluralRules(PluralCategory::Many)
+///     101 -> PluralRules(PluralCategory::Other)
 ///     110 -> DisplayName,
 ///
 /// The other bits (b7, b6, b5, b4, b3) must always be zeros.
@@ -63,12 +64,12 @@ impl AsULE for CurrencyDisplayNameCount {
     #[inline]
     fn from_unaligned(unaligned: Self::ULE) -> Self {
         match unaligned.0 & 0b0000_0111 {
-            0 => CurrencyDisplayNameCount::PluralRules(Count::Zero),
-            1 => CurrencyDisplayNameCount::PluralRules(Count::One),
-            2 => CurrencyDisplayNameCount::PluralRules(Count::Two),
-            3 => CurrencyDisplayNameCount::PluralRules(Count::Few),
-            4 => CurrencyDisplayNameCount::PluralRules(Count::Many),
-            5 => CurrencyDisplayNameCount::PluralRules(Count::Other),
+            0 => CurrencyDisplayNameCount::PluralRules(PluralCategory::Zero),
+            1 => CurrencyDisplayNameCount::PluralRules(PluralCategory::One),
+            2 => CurrencyDisplayNameCount::PluralRules(PluralCategory::Two),
+            3 => CurrencyDisplayNameCount::PluralRules(PluralCategory::Few),
+            4 => CurrencyDisplayNameCount::PluralRules(PluralCategory::Many),
+            5 => CurrencyDisplayNameCount::PluralRules(PluralCategory::Other),
             6 => CurrencyDisplayNameCount::DisplayName,
             _ => unreachable!(),
         }
