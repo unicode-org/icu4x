@@ -22,6 +22,7 @@ use core::{
 };
 use writeable::{adapters::TryWriteableInfallibleAsWriteable, PartsWrite, TryWriteable, Writeable};
 
+#[allow(clippy::unwrap_used)]
 #[cfg(feature = "alloc")]
 impl SinglePlaceholderPattern<str> {
     pub fn encode_store(prefix: &str, suffix: &str) -> alloc::boxed::Box<str> {

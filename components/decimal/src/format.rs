@@ -23,7 +23,7 @@ pub struct FormattedFixedDecimal<'l> {
 }
 
 impl<'l> FormattedFixedDecimal<'l> {
-    fn get_patterns(&self) -> Option<&SinglePlaceholderPattern<Cow<'l, str>>> {
+    fn get_pattern(&self) -> Option<&SinglePlaceholderPattern<Cow<'l, str>>> {
         match self.value.sign() {
             Sign::None => None,
             Sign::Negative => Some(
@@ -47,9 +47,9 @@ impl<'l> Writeable for FormattedFixedDecimal<'l> {
     where
         W: core::fmt::Write + ?Sized,
     {
-        let patterns = self.get_patterns();
-        if let Some(patterns) = patterns {
-            sink.write_str(&patterns.prefix())?;
+        let pattern = self.get_pattern();
+        if let Some(pattern) = pattern {
+            sink.write_str(pattern.prefix())?;
         }
         let range = self.value.magnitude_range();
         let upper_magnitude = *range.end();
@@ -68,8 +68,8 @@ impl<'l> Writeable for FormattedFixedDecimal<'l> {
                 sink.write_str(&self.symbols.grouping_separator)?;
             }
         }
-        if let Some(patterns) = patterns {
-            sink.write_str(&patterns.suffix())?;
+        if let Some(pattern) = pattern {
+            sink.write_str(pattern.suffix())?;
         }
         Ok(())
     }

@@ -29,6 +29,7 @@ pub const BASIC_RUNTIME_DEPS: &[&str] = &[
     // ICU4X utils
     "calendrical_calculations",
     "fixed_decimal",
+    "icu_pattern",
     "icu_provider",
     "litemap",
     "tinystr",
@@ -97,7 +98,6 @@ pub const EXTRA_DATA_DEPS: &[&str] = &[
 /// Keep in sync with Cargo.toml crates.io dependencies.
 pub const EXTRA_EXPERIMENTAL_DEPS: &[&str] = &[
     "icu_experimental",
-    "icu_pattern",
     "num-bigint",
     "num-integer",
     "num-rational",
@@ -163,7 +163,6 @@ pub const EXTRA_DATAGEN_BIKESHED_DEPS: &[&str] = &[
     "erased-serde",
     "heck",
     "icu_codepointtrie_builder",
-    "icu_pattern",
     "icu_provider_adapters",
     "icu_provider_baked",
     "icu_provider_registry",
