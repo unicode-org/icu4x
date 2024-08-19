@@ -54,11 +54,12 @@ Future<void> buildLib(
     );
   }
 
-  final features = [
+  final features = {
     'buffer_provider',
     if (isNoStd) ...['libc-alloc', 'panic-handler'],
     if (!isNoStd) ...['logging', 'simple_logger'],
-  ];
+    ...cargoFeatures,
+  };
   final arguments = [
     if (isNoStd) '+nightly',
     'rustc',
@@ -68,7 +69,7 @@ Future<void> buildLib(
     '--config=profile.release.panic="abort"',
     '--config=profile.release.codegen-units=1',
     '--no-default-features',
-    '--features=${[...features, ...cargoFeatures].join(',')}',
+    '--features=${features.join(',')}',
     if (isNoStd) '-Zbuild-std=core,alloc',
     if (isNoStd) '-Zbuild-std-features=panic_immediate_abort',
     '--target=$rustTarget',
