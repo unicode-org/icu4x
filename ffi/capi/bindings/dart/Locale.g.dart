@@ -121,7 +121,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
   /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.try_from_str) for more information.
   ///
   /// Throws [LocaleParseError] on failure.
-  set region(String s) {
+  void setRegion(String s) {
     final temp = _FinalizedArena();
     final result = _icu4x_Locale_set_region_mv1(_ffi, s._utf8AllocIn(temp.arena));
     if (!result.isOk) {
@@ -147,7 +147,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
   /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.try_from_str) for more information.
   ///
   /// Throws [LocaleParseError] on failure.
-  set script(String s) {
+  void setScript(String s) {
     final temp = _FinalizedArena();
     final result = _icu4x_Locale_set_script_mv1(_ffi, s._utf8AllocIn(temp.arena));
     if (!result.isOk) {
