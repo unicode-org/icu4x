@@ -5,8 +5,9 @@
 //! Serde definitions for semantic skeleta
 
 use crate::neo_skeleton::{
-    EraDisplay, FractionalSecondDigits, NeoComponents, NeoDateComponents, NeoDayComponents,
-    NeoSkeleton, NeoSkeletonLength, NeoTimeComponents, NeoTimeZoneSkeleton, NeoTimeZoneStyle,
+    Alignment, EraDisplay, FractionalSecondDigits, NeoComponents, NeoDateComponents,
+    NeoDayComponents, NeoSkeleton, NeoSkeletonLength, NeoTimeComponents, NeoTimeZoneSkeleton,
+    NeoTimeZoneStyle,
 };
 use alloc::vec::Vec;
 use serde::{Deserialize, Serialize};
@@ -27,6 +28,7 @@ pub(crate) struct SemanticSkeletonSerde {
     #[serde(rename = "fieldSet")]
     pub(crate) field_set: NeoComponents,
     pub(crate) length: NeoSkeletonLength,
+    pub(crate) alignment: Option<Alignment>,
     #[serde(rename = "eraDisplay")]
     pub(crate) era_display: Option<EraDisplay>,
     #[serde(rename = "fractionalSecondDigits")]
@@ -38,6 +40,7 @@ impl From<NeoSkeleton> for SemanticSkeletonSerde {
         Self {
             field_set: value.components,
             length: value.length,
+            alignment: value.alignment,
             era_display: value.era_display,
             fractional_second_digits: value.fractional_second_digits,
         }
@@ -50,6 +53,7 @@ impl TryFrom<SemanticSkeletonSerde> for NeoSkeleton {
         Ok(NeoSkeleton {
             length: value.length,
             components: value.field_set,
+            alignment: value.alignment,
             era_display: value.era_display,
             fractional_second_digits: value.fractional_second_digits,
         })
@@ -484,6 +488,7 @@ fn test_basic() {
             NeoTimeZoneSkeleton::generic(),
         ),
         length: NeoSkeletonLength::Medium,
+        alignment: Some(Alignment::Column),
         era_display: Some(EraDisplay::Always),
         fractional_second_digits: Some(FractionalSecondDigits::F3),
     };
@@ -491,7 +496,7 @@ fn test_basic() {
     let json_string = serde_json::to_string(&skeleton).unwrap();
     assert_eq!(
         json_string,
-        r#"{"fieldSet":["year","month","day","weekday","hour","minute","zoneGeneric"],"length":"medium","eraDisplay":"always","fractionalSecondDigits":3}"#
+        r#"{"fieldSet":["year","month","day","weekday","hour","minute","zoneGeneric"],"length":"medium","alignment":"column","eraDisplay":"always","fractionalSecondDigits":3}"#
     );
     let json_skeleton = serde_json::from_str::<NeoSkeleton>(&json_string).unwrap();
     assert_eq!(skeleton, json_skeleton);
