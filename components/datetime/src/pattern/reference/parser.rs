@@ -50,6 +50,9 @@ impl SegmentSecondSymbol {
         let length = FieldLength::from_idx(self.integer_digits)
             .map_err(|_| PatternError::FieldLengthInvalid(symbol))?;
         result.push(PatternItem::Field(Field { symbol, length }));
+        if self.seen_decimal_separator && self.fraction_digits == 0 {
+            result.push(PatternItem::Literal('.'));
+        }
         Ok(())
     }
 }
@@ -246,20 +249,6 @@ impl<'p> Parser<'p> {
                                 ..
                             },
                         ) if ch == '.' => second_symbol.seen_decimal_separator = true,
-                        state @ Segment::SecondSymbol(SegmentSecondSymbol {
-                            seen_decimal_separator: true,
-                            ..
-                        }) if ch == '.' => {
-                            // "s.." => treat the ".." as a literal
-                            mem::replace(
-                                state,
-                                Segment::Literal(SegmentLiteral {
-                                    literal: String::from(".."),
-                                    quoted: false,
-                                }),
-                            )
-                            .finish(&mut result)?;
-                        }
                         Segment::SecondSymbol(second_symbol) if ch == 'S' => {
                             // Note: this accepts both "ssSSS" and "ss.SSS"
                             // We say we've seen the separator to switch to fraction mode
@@ -651,6 +640,22 @@ mod tests {
                 "sSSss",
                 vec![
                     (fields::DecimalSecond::SecondF2.into(), FieldLength::One).into(),
+                    (fields::Second::Second.into(), FieldLength::TwoDigit).into(),
+                ],
+            ),
+            (
+                "s.z",
+                vec![
+                    (fields::Second::Second.into(), FieldLength::One).into(),
+                    '.'.into(),
+                    (fields::TimeZone::LowerZ.into(), FieldLength::One).into(),
+                ],
+            ),
+            (
+                "s.ss",
+                vec![
+                    (fields::Second::Second.into(), FieldLength::One).into(),
+                    '.'.into(),
                     (fields::Second::Second.into(), FieldLength::TwoDigit).into(),
                 ],
             ),
