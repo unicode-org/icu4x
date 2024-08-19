@@ -351,18 +351,11 @@ impl Bag {
         }
 
         if let Some(second) = self.second {
-            use FractionalSecondDigits::*;
             let symbol = match self.fractional_second {
-                None | Some(F0) => FieldSymbol::Second(fields::Second::Second),
-                Some(F1) => FieldSymbol::DecimalSecond(fields::DecimalSecond::SecondF1),
-                Some(F2) => FieldSymbol::DecimalSecond(fields::DecimalSecond::SecondF2),
-                Some(F3) => FieldSymbol::DecimalSecond(fields::DecimalSecond::SecondF3),
-                Some(F4) => FieldSymbol::DecimalSecond(fields::DecimalSecond::SecondF4),
-                Some(F5) => FieldSymbol::DecimalSecond(fields::DecimalSecond::SecondF5),
-                Some(F6) => FieldSymbol::DecimalSecond(fields::DecimalSecond::SecondF6),
-                Some(F7) => FieldSymbol::DecimalSecond(fields::DecimalSecond::SecondF7),
-                Some(F8) => FieldSymbol::DecimalSecond(fields::DecimalSecond::SecondF8),
-                Some(F9) => FieldSymbol::DecimalSecond(fields::DecimalSecond::SecondF9),
+                None => FieldSymbol::Second(fields::Second::Second),
+                Some(fractional_second) => {
+                    FieldSymbol::from_fractional_second_digits(fractional_second)
+                }
             };
             // s    8, 12    Numeric: minimum digits
             // ss  08, 12    Numeric: 2 digits, zero pad if needed
