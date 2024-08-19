@@ -92,13 +92,11 @@ pub struct ListFormatterPatternsV2<'data> {
 
 impl ListFormatterPatternsV2<'_> {
     /// The marker attributes for narrow lists
-    pub const NARROW: &'static DataMarkerAttributes =
-        DataMarkerAttributes::from_str_or_panic("N");
+    pub const NARROW: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("N");
     #[doc(hidden)]
     pub const NARROW_STR: &'static str = Self::NARROW.as_str();
     /// The marker attributes for short lists
-    pub const SHORT: &'static DataMarkerAttributes =
-        DataMarkerAttributes::from_str_or_panic("S");
+    pub const SHORT: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("S");
     #[doc(hidden)]
     pub const SHORT_STR: &'static str = Self::SHORT.as_str();
     /// The marker attributes for wide lists
