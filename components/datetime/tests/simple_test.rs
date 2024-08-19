@@ -2,8 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_calendar::hebrew::Hebrew;
 use icu_calendar::{Date, DateTime, Time};
 use icu_datetime::neo::TypedNeoFormatter;
+use icu_datetime::neo_marker::NeoYearMonthDayMarker;
 use icu_datetime::neo_skeleton::{
     NeoComponents, NeoDateComponents, NeoDateSkeleton, NeoDateTimeComponents, NeoDayComponents,
     NeoSkeletonLength, NeoTimeComponents,
@@ -278,4 +280,47 @@ fn overlap_patterns() {
             "{locale:?} {components:?} {length:?}"
         );
     }
+}
+
+#[test]
+fn hebrew_months() {
+    let datetime = DateTime::try_new_iso_datetime(2011, 4, 3, 14, 15, 7).unwrap();
+    let datetime = datetime.to_calendar(Hebrew);
+    let formatter = TypedNeoFormatter::<_, NeoYearMonthDayMarker>::try_new(
+        &locale!("en").into(),
+        NeoSkeletonLength::Long.into(),
+    )
+    .unwrap();
+
+    let formatted_datetime = formatter.format(&datetime);
+
+    assert_try_writeable_eq!(formatted_datetime, "28 Adar II 5771");
+}
+
+#[test]
+fn test_5387() {
+    let datetime = DateTime::try_new_gregorian_datetime(2024, 8, 16, 14, 15, 16).unwrap();
+    let formatter_auto = TypedNeoFormatter::try_new_with_components(
+        &locale!("en").into(),
+        NeoDateTimeComponents::DateTime(NeoDayComponents::Weekday, NeoTimeComponents::HourMinute),
+        NeoSkeletonLength::Medium.into(),
+    )
+    .unwrap();
+    let formatter_h12 = TypedNeoFormatter::try_new_with_components(
+        &locale!("en-u-hc-h12").into(),
+        NeoDateTimeComponents::DateTime(NeoDayComponents::Weekday, NeoTimeComponents::HourMinute),
+        NeoSkeletonLength::Medium.into(),
+    )
+    .unwrap();
+    let formatter_h24 = TypedNeoFormatter::try_new_with_components(
+        &locale!("en-u-hc-h23").into(),
+        NeoDateTimeComponents::DateTime(NeoDayComponents::Weekday, NeoTimeComponents::HourMinute),
+        NeoSkeletonLength::Medium.into(),
+    )
+    .unwrap();
+
+    // TODO(#5387): All of these should resolve to a pattern without a comma
+    assert_try_writeable_eq!(formatter_auto.format(&datetime), "Fri 2:15\u{202f}PM");
+    assert_try_writeable_eq!(formatter_h12.format(&datetime), "Fri, 2:15\u{202f}PM");
+    assert_try_writeable_eq!(formatter_h24.format(&datetime), "Fri, 14:15");
 }

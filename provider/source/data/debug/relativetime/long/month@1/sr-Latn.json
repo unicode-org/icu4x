@@ -6,36 +6,78 @@
   },
   "past": {
     "zero": null,
-    "one": {
-      "pattern": "pre  meseca",
-      "index": 4
-    },
+    "one": [
+      {
+        "Literal": "pre "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " meseca"
+      }
+    ],
     "two": null,
-    "few": {
-      "pattern": "pre  meseca",
-      "index": 4
-    },
+    "few": [
+      {
+        "Literal": "pre "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " meseca"
+      }
+    ],
     "many": null,
-    "other": {
-      "pattern": "pre  meseci",
-      "index": 4
-    }
+    "other": [
+      {
+        "Literal": "pre "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " meseci"
+      }
+    ]
   },
   "future": {
     "zero": null,
-    "one": {
-      "pattern": "za  mesec",
-      "index": 3
-    },
+    "one": [
+      {
+        "Literal": "za "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " mesec"
+      }
+    ],
     "two": null,
-    "few": {
-      "pattern": "za  meseca",
-      "index": 3
-    },
+    "few": [
+      {
+        "Literal": "za "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " meseca"
+      }
+    ],
     "many": null,
-    "other": {
-      "pattern": "za  meseci",
-      "index": 3
-    }
+    "other": [
+      {
+        "Literal": "za "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " meseci"
+      }
+    ]
   }
 }

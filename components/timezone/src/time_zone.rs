@@ -58,6 +58,16 @@ impl CustomTimeZone {
         }
     }
 
+    /// Creates a new [`CustomTimeZone`] with a given BCP47 time zone identifier.
+    pub const fn new_with_bcp47_id(time_zone_id: TimeZoneBcp47Id) -> Self {
+        Self {
+            gmt_offset: None,
+            time_zone_id: Some(time_zone_id),
+            metazone_id: None,
+            zone_variant: None,
+        }
+    }
+
     /// Creates a time zone with no information.
     ///
     /// One or more fields must be specified before this time zone is usable.

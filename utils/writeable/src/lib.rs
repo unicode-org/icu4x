@@ -89,6 +89,21 @@ pub mod adapters {
     pub use parts_write_adapter::WithPart;
     pub use try_writeable::TryWriteableInfallibleAsWriteable;
     pub use try_writeable::WriteableAsTryWriteableInfallible;
+
+    #[derive(Debug)]
+    #[allow(clippy::exhaustive_structs)] // newtype
+    pub struct LossyWrap<T>(pub T);
+
+    impl<T: TryWriteable> Writeable for LossyWrap<T> {
+        fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+            let _ = self.0.try_write_to(sink)?;
+            Ok(())
+        }
+
+        fn writeable_length_hint(&self) -> LengthHint {
+            self.0.writeable_length_hint()
+        }
+    }
 }
 
 #[doc(hidden)] // for testing

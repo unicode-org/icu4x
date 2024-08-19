@@ -32,6 +32,7 @@ pub const BASIC_RUNTIME_DEPS: &[&str] = &[
     "icu_provider",
     "litemap",
     "tinystr",
+    "potential_utf",
     "writeable",
     "yoke",
     "zerofrom",
@@ -71,7 +72,7 @@ pub const BASIC_BUILD_DEPS: &[&str] = &[
 /// This should almost never change
 ///
 /// Keep in sync with Cargo.toml crates.io dependencies.
-pub const EXTRA_SERDE_DEPS: &[&str] = &["deduplicating_array", "serde", "serde_derive"];
+pub const EXTRA_SERDE_DEPS: &[&str] = &["serde", "serde_derive"];
 
 /// Dependencies allowed when opting in to compiled data
 pub const EXTRA_DATA_DEPS: &[&str] = &[
@@ -153,7 +154,7 @@ pub const EXTRA_FS_DEPS: &[&str] = &["icu_provider_fs", "serde-json-core"];
 
 /// Dependencies needed by datagen provider (not counting `log` and `zip` deps)
 /// This might change semi frequently but we should try and keep this small.
-pub const EXTRA_DATAGEN_BIKESHED_DEPS: &[&str] = &[
+pub const EXTRA_SOURCE_DEPS: &[&str] = &[
     "bincode",
     "crlify",
     "databake",

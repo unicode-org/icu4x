@@ -6,36 +6,78 @@
   },
   "past": {
     "zero": null,
-    "one": {
-      "pattern": "pre  kvartala",
-      "index": 4
-    },
+    "one": [
+      {
+        "Literal": "pre "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " kvartala"
+      }
+    ],
     "two": null,
-    "few": {
-      "pattern": "pre  kvartala",
-      "index": 4
-    },
+    "few": [
+      {
+        "Literal": "pre "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " kvartala"
+      }
+    ],
     "many": null,
-    "other": {
-      "pattern": "pre  kvartala",
-      "index": 4
-    }
+    "other": [
+      {
+        "Literal": "pre "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " kvartala"
+      }
+    ]
   },
   "future": {
     "zero": null,
-    "one": {
-      "pattern": "za  kvartal",
-      "index": 3
-    },
+    "one": [
+      {
+        "Literal": "za "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " kvartal"
+      }
+    ],
     "two": null,
-    "few": {
-      "pattern": "za  kvartala",
-      "index": 3
-    },
+    "few": [
+      {
+        "Literal": "za "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " kvartala"
+      }
+    ],
     "many": null,
-    "other": {
-      "pattern": "za  kvartala",
-      "index": 3
-    }
+    "other": [
+      {
+        "Literal": "za "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " kvartala"
+      }
+    ]
   }
 }

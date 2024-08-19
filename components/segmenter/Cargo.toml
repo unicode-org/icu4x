@@ -29,6 +29,7 @@ zerovec = { workspace = true, features = ["yoke"] }
 
 databake = { workspace = true, optional = true, features = ["derive"] }
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
+potential_utf = { workspace = true, features = ["zerovec"] }
 
 core_maths = { workspace = true, optional = true }
 
@@ -47,8 +48,8 @@ criterion = { workspace = true }
 [features]
 default = ["compiled_data", "auto"]
 std = ["icu_collections/std", "icu_locale_core/std", "icu_provider/std"]
-serde = ["dep:serde", "zerovec/serde", "icu_collections/serde", "icu_provider/serde"]
-datagen = ["serde", "dep:databake", "zerovec/databake", "icu_collections/databake"]
+serde = ["dep:serde", "potential_utf/serde", "zerovec/serde", "icu_collections/serde", "icu_provider/serde"]
+datagen = ["serde", "dep:databake", "potential_utf/databake", "zerovec/databake", "icu_collections/databake"]
 lstm = ["dep:core_maths"]
 auto = ["lstm"] # Enabled try_new_auto_unstable constructors
 compiled_data = ["dep:icu_segmenter_data"]

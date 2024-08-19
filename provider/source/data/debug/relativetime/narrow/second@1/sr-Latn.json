@@ -4,36 +4,78 @@
   },
   "past": {
     "zero": null,
-    "one": {
-      "pattern": "pre  s.",
-      "index": 4
-    },
+    "one": [
+      {
+        "Literal": "pre "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " s."
+      }
+    ],
     "two": null,
-    "few": {
-      "pattern": "pre  s.",
-      "index": 4
-    },
+    "few": [
+      {
+        "Literal": "pre "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " s."
+      }
+    ],
     "many": null,
-    "other": {
-      "pattern": "pre  s.",
-      "index": 4
-    }
+    "other": [
+      {
+        "Literal": "pre "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " s."
+      }
+    ]
   },
   "future": {
     "zero": null,
-    "one": {
-      "pattern": "za  s.",
-      "index": 3
-    },
+    "one": [
+      {
+        "Literal": "za "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " s."
+      }
+    ],
     "two": null,
-    "few": {
-      "pattern": "za  s.",
-      "index": 3
-    },
+    "few": [
+      {
+        "Literal": "za "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " s."
+      }
+    ],
     "many": null,
-    "other": {
-      "pattern": "za  s.",
-      "index": 3
-    }
+    "other": [
+      {
+        "Literal": "za "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " s."
+      }
+    ]
   }
 }

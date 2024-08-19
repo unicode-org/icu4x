@@ -10,10 +10,14 @@
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": " สัปดาห์ที่แล้ว",
-      "index": 0
-    }
+    "other": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " สัปดาห์ที่แล้ว"
+      }
+    ]
   },
   "future": {
     "zero": null,
@@ -21,9 +25,16 @@
     "two": null,
     "few": null,
     "many": null,
-    "other": {
-      "pattern": "ใน  สัปดาห์",
-      "index": 7
-    }
+    "other": [
+      {
+        "Literal": "ใน "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " สัปดาห์"
+      }
+    ]
   }
 }

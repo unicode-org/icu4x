@@ -10,8 +10,8 @@
 //! Read more about data providers: [`icu_provider`]
 
 use icu_provider::prelude::*;
+use potential_utf::PotentialUtf8;
 use tinystr::UnvalidatedTinyAsciiStr;
-use zerovec::ule::UnvalidatedStr;
 use zerovec::ZeroMap;
 
 // We use raw TinyAsciiStrs for map keys, as we then don't have to
@@ -21,7 +21,7 @@ use zerovec::ZeroMap;
 type UnvalidatedRegion = UnvalidatedTinyAsciiStr<3>;
 type UnvalidatedLanguage = UnvalidatedTinyAsciiStr<3>;
 type UnvalidatedScript = UnvalidatedTinyAsciiStr<4>;
-type UnvalidatedLocale = UnvalidatedStr;
+type UnvalidatedLocale = PotentialUtf8;
 type UnvalidatedVariant = UnvalidatedTinyAsciiStr<8>;
 
 #[cfg(feature = "compiled_data")]

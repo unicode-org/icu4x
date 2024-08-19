@@ -4,42 +4,86 @@
   },
   "past": {
     "zero": null,
-    "one": {
-      "pattern": " минуту назад",
-      "index": 0
-    },
+    "one": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " минуту назад"
+      }
+    ],
     "two": null,
-    "few": {
-      "pattern": " минуты назад",
-      "index": 0
-    },
-    "many": {
-      "pattern": " минут назад",
-      "index": 0
-    },
-    "other": {
-      "pattern": " минуты назад",
-      "index": 0
-    }
+    "few": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " минуты назад"
+      }
+    ],
+    "many": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " минут назад"
+      }
+    ],
+    "other": [
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " минуты назад"
+      }
+    ]
   },
   "future": {
     "zero": null,
-    "one": {
-      "pattern": "через  минуту",
-      "index": 11
-    },
+    "one": [
+      {
+        "Literal": "через "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " минуту"
+      }
+    ],
     "two": null,
-    "few": {
-      "pattern": "через  минуты",
-      "index": 11
-    },
-    "many": {
-      "pattern": "через  минут",
-      "index": 11
-    },
-    "other": {
-      "pattern": "через  минуты",
-      "index": 11
-    }
+    "few": [
+      {
+        "Literal": "через "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " минуты"
+      }
+    ],
+    "many": [
+      {
+        "Literal": "через "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " минут"
+      }
+    ],
+    "other": [
+      {
+        "Literal": "через "
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " минуты"
+      }
+    ]
   }
 }

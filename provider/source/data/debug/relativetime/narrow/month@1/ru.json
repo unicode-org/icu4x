@@ -6,42 +6,98 @@
   },
   "past": {
     "zero": null,
-    "one": {
-      "pattern": "- мес.",
-      "index": 1
-    },
+    "one": [
+      {
+        "Literal": "-"
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " мес."
+      }
+    ],
     "two": null,
-    "few": {
-      "pattern": "- мес.",
-      "index": 1
-    },
-    "many": {
-      "pattern": "- мес.",
-      "index": 1
-    },
-    "other": {
-      "pattern": "- мес.",
-      "index": 1
-    }
+    "few": [
+      {
+        "Literal": "-"
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " мес."
+      }
+    ],
+    "many": [
+      {
+        "Literal": "-"
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " мес."
+      }
+    ],
+    "other": [
+      {
+        "Literal": "-"
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " мес."
+      }
+    ]
   },
   "future": {
     "zero": null,
-    "one": {
-      "pattern": "+ мес.",
-      "index": 1
-    },
+    "one": [
+      {
+        "Literal": "+"
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " мес."
+      }
+    ],
     "two": null,
-    "few": {
-      "pattern": "+ мес.",
-      "index": 1
-    },
-    "many": {
-      "pattern": "+ мес.",
-      "index": 1
-    },
-    "other": {
-      "pattern": "+ мес.",
-      "index": 1
-    }
+    "few": [
+      {
+        "Literal": "+"
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " мес."
+      }
+    ],
+    "many": [
+      {
+        "Literal": "+"
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " мес."
+      }
+    ],
+    "other": [
+      {
+        "Literal": "+"
+      },
+      {
+        "Placeholder": "Singleton"
+      },
+      {
+        "Literal": " мес."
+      }
+    ]
   }
 }
