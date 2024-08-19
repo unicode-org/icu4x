@@ -82,10 +82,12 @@ fn main() {
 
     assert!(EnumULE::parse_byte_slice(&[0]).is_ok());
     assert!(EnumULE::parse_byte_slice(&[1]).is_ok());
+    assert!(EnumULE::parse_byte_slice(&[5]).is_ok());
     assert!(EnumULE::parse_byte_slice(&[6]).is_err());
-    assert!(OutOfOrderMissingZeroEnumULE::parse_byte_slice(&[0]).is_ok());
-    assert!(OutOfOrderMissingZeroEnumULE::parse_byte_slice(&[1]).is_err());
-    assert!(OutOfOrderMissingZeroEnumULE::parse_byte_slice(&[6]).is_ok());
+    assert!(OutOfOrderMissingZeroEnumULE::parse_byte_slice(&[0]).is_err());
+    assert!(OutOfOrderMissingZeroEnumULE::parse_byte_slice(&[1]).is_ok());
+    assert!(OutOfOrderMissingZeroEnumULE::parse_byte_slice(&[5]).is_ok());
+    assert!(OutOfOrderMissingZeroEnumULE::parse_byte_slice(&[6]).is_err());
 }
 
 const TEST_SLICE_STRUCT: &[Struct] = &[
