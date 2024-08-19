@@ -1,29 +1,29 @@
-import { ICU4XDataProvider, ICU4XDateLength, ICU4XDateTime, ICU4XDateTimeFormatter, ICU4XLocale, ICU4XTimeLength, ICU4XCalendar } from "icu4x";
+import { DataProvider, DateLength, DateTime, DateTimeFormatter, Locale, TimeLength, Calendar } from "icu4x";
 import { Ok, Result, result, unwrap } from "./index";
 
 export class DateTimeDemo {
     #displayFn: (formatted: string) => void;
-    #dataProvider: ICU4XDataProvider;
+    #dataProvider: DataProvider;
 
     #localeStr: string;
     #calendarStr: string;
     #dateTimeStr: string;
-    #locale: Result<ICU4XLocale>;
-    #calendar: Result<ICU4XCalendar>;
-    #dateLength: ICU4XDateLength;
-    #timeLength: ICU4XTimeLength;
+    #locale: Result<Locale>;
+    #calendar: Result<Calendar>;
+    #dateLength: DateLength;
+    #timeLength: TimeLength;
 
-    #formatter: Result<ICU4XDateTimeFormatter>;
-    #dateTime: Result<ICU4XDateTime> | null;
+    #formatter: Result<DateTimeFormatter>;
+    #dateTime: Result<DateTime> | null;
 
-    constructor(displayFn: (formatted: string) => void, dataProvider: ICU4XDataProvider) {
+    constructor(displayFn: (formatted: string) => void, dataProvider: DataProvider) {
         this.#displayFn = displayFn;
         this.#dataProvider = dataProvider;
 
-        this.#locale = Ok(ICU4XLocale.create_from_string("en"));
-        this.#calendar = Ok(ICU4XCalendar.create_for_locale(dataProvider, unwrap(this.#locale)));
-        this.#dateLength = ICU4XDateLength.Short;
-        this.#timeLength = ICU4XTimeLength.Short;
+        this.#locale = Ok(Locale.create_from_string("en"));
+        this.#calendar = Ok(Calendar.create_for_locale(dataProvider, unwrap(this.#locale)));
+        this.#dateLength = DateLength.Short;
+        this.#timeLength = TimeLength.Short;
         this.#dateTime = null;
         this.#dateTimeStr = "";
         this.#calendarStr = "from-locale";
@@ -55,18 +55,18 @@ export class DateTimeDemo {
                 locid = locid.replace("-u-", `-u-ca-${this.#calendarStr}-`);
             }
         }
-        this.#locale = result(() => ICU4XLocale.create_from_string(locid));
-        this.#calendar = result(() => ICU4XCalendar.create_for_locale(this.#dataProvider, unwrap(this.#locale) ));
+        this.#locale = result(() => Locale.create_from_string(locid));
+        this.#calendar = result(() => Calendar.create_for_locale(this.#dataProvider, unwrap(this.#locale) ));
         this.#updateDateTime();
     }
 
     setDateLength(dateLength: string): void {
-        this.#dateLength = ICU4XDateLength[dateLength];
+        this.#dateLength = DateLength[dateLength];
         this.#updateFormatter()
     }
 
     setTimeLength(timeLength: string): void {
-        this.#timeLength = ICU4XTimeLength[timeLength];
+        this.#timeLength = TimeLength[timeLength];
         this.#updateFormatter()
     }
 
@@ -79,7 +79,7 @@ export class DateTimeDemo {
     #updateDateTime(): void {
         const date = new Date(this.#dateTimeStr);
 
-        this.#dateTime = result(() => ICU4XDateTime.create_from_iso_in_calendar(
+        this.#dateTime = result(() => DateTime.create_from_iso_in_calendar(
             date.getFullYear(),
             date.getMonth() + 1,
             date.getDate(),
@@ -92,7 +92,7 @@ export class DateTimeDemo {
     }
 
     #updateFormatter(): void {
-        this.#formatter = result(() => ICU4XDateTimeFormatter.create_with_lengths(
+        this.#formatter = result(() => DateTimeFormatter.create_with_lengths(
             this.#dataProvider,
             unwrap(this.#locale),
             this.#dateLength,
@@ -112,7 +112,7 @@ export class DateTimeDemo {
             }
         } catch (e) {
             if (e.error_value) {
-                this.#displayFn(`ICU4X Error: ${e.error_value}`);
+                this.#displayFn(` Error: ${e.error_value}`);
             } else {
                 this.#displayFn(`Unexpected Error: ${e}`);
             }
@@ -120,7 +120,7 @@ export class DateTimeDemo {
     }
 }
 
-export function setup(dataProvider: ICU4XDataProvider): void {
+export function setup(dataProvider: DataProvider): void {
     const formattedDateTime = document.getElementById('dtf-formatted') as HTMLInputElement;
     const dateTimeDemo = new DateTimeDemo((formatted) => formattedDateTime.innerText = formatted, dataProvider);
 

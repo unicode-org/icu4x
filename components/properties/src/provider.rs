@@ -435,7 +435,7 @@ macro_rules! data_struct_generic {
             )]
             pub struct $marker;
             impl icu_provider::DynamicDataMarker for $marker {
-                type Yokeable = PropertyCodePointMapV1<'static, crate::$ty>;
+                type DataStruct = PropertyCodePointMapV1<'static, crate::$ty>;
             }
             impl icu_provider::DataMarker for $marker {
                 const INFO: icu_provider::DataMarkerInfo = {

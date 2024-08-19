@@ -9,128 +9,34 @@ use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::collator::provider::*;
 use icu::collections::codepointtrie::CodePointTrie;
-use icu::locale::extensions::unicode::{key, value};
-use icu::locale::provider::CollationFallbackSupplementV1Marker;
-use icu::locale::provider::LocaleFallbackSupplementV1;
 use icu::locale::subtags::language;
-use icu::locale::subtags::Language;
-use icu::locale::subtags::Region;
-use icu::locale::subtags::Script;
-use icu::locale::LanguageIdentifier;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::convert::TryFrom;
 use writeable::Writeable;
-use zerovec::ule::UnvalidatedStr;
 use zerovec::ZeroVec;
 
 mod collator_serde;
 
-impl DataProvider<CollationFallbackSupplementV1Marker> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<CollationFallbackSupplementV1Marker>, DataError> {
-        self.check_req::<CollationFallbackSupplementV1Marker>(req)?;
-
-        let parent_locales = &self
-            .cldr()?
-            .core()
-            .read_and_parse::<crate::cldr_serde::parent_locales::Resource>(
-                "supplemental/parentLocales.json",
-            )?
-            .supplemental
-            .parent_locales;
-
-        let additional = if parent_locales
-            .rules
-            .collations
-            .as_ref()
-            .map(|c| &c.non_likely_scripts)
-            != Some(&String::from("root"))
-        {
-            let collation_locales = self
-                .icuexport()?
-                .list(&format!("collation/{}", self.collation_han_database()))?
-                .filter_map(|s| Some(file_name_to_locale(s.rsplit_once('_')?.0)?.language()))
-                .collect::<HashSet<_>>();
-
-            parent_locales
-                .parent_locale
-                .iter()
-                .filter(|(k, _)| collation_locales.contains(&k.language))
-                .filter(|(from, to)| {
-                    // Script gets removed while language changes. For collation we want to insert the script-removal as its
-                    // own step.
-                    from.script.is_some() && to.script.is_none() && from.language != to.language
-                })
-                .map(|(from, _)| (from.to_string(), (from.language, None, from.region)))
-                .collect()
-        } else {
-            HashSet::new()
-        };
-
-        let parents = additional
-            .iter()
-            .map(|(k, v)| (UnvalidatedStr::from_str(k), *v))
-            .chain(parent_locales.collations.iter().map(|(from, to)| {
-                (
-                    <&UnvalidatedStr>::from(from.as_str()),
-                    <(Language, Option<Script>, Option<Region>)>::from(to),
-                )
-            }))
-            .collect();
-
-        let data = LocaleFallbackSupplementV1 {
-            parents,
-            unicode_extension_defaults: [
-                (
-                    key!("co"),
-                    <&UnvalidatedStr>::from("zh"),
-                    <&UnvalidatedStr>::from("pinyin"),
-                ),
-                (
-                    key!("co"),
-                    <&UnvalidatedStr>::from("zh-Hant"),
-                    <&UnvalidatedStr>::from("stroke"),
-                ),
-            ]
-            .into_iter()
-            .collect(),
-        };
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: DataPayload::from_owned(data),
-        })
-    }
-}
-
-impl crate::IterableDataProviderCached<CollationFallbackSupplementV1Marker> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        Ok(HashSet::from_iter([Default::default()]))
-    }
-}
-
-fn locale_to_file_name(locale: &DataLocale) -> String {
-    let mut s = if locale.get_langid() == LanguageIdentifier::UND {
+fn id_to_file_name(id: &DataIdentifierBorrowed) -> String {
+    let mut s = if id.locale.is_default() {
         "root".to_owned()
     } else {
-        locale
-            .get_langid()
+        id.locale
             .write_to_string()
             .replace('-', "_")
             .replace("posix", "POSIX")
     };
-    if let Some(extension) = &locale.get_unicode_ext(&key!("co")) {
+    if !id.marker_attributes.is_empty() {
         s.push('_');
-        s.push_str(match extension.to_string().as_str() {
+        s.push_str(match id.marker_attributes.as_str() {
             "trad" => "traditional",
             "phonebk" => "phonebook",
             "dict" => "dictionary",
             "gb2312" => "gb2312han",
             extension => extension,
         });
-    } else if locale.get_langid().language == language!("zh") {
+    } else if id.locale.language == language!("zh") {
         // "zh" uses "_pinyin" as the default
         s.push_str("_pinyin");
     } else {
@@ -140,9 +46,9 @@ fn locale_to_file_name(locale: &DataLocale) -> String {
     s
 }
 
-fn file_name_to_locale(file_name: &str) -> Option<DataLocale> {
-    let (language, variant) = file_name.rsplit_once('_').unwrap();
-    let mut locale = if language == "root" {
+fn file_name_to_id(file_name: &str) -> Option<DataIdentifierCow<'static>> {
+    let (language, mut variant) = file_name.rsplit_once('_').unwrap();
+    let locale = if language == "root" {
         DataLocale::default()
     } else {
         language.parse().ok()?
@@ -151,24 +57,21 @@ fn file_name_to_locale(file_name: &str) -> Option<DataLocale> {
     // See above for the two special cases.
     if language == "zh" {
         if variant == "pinyin" {
-            return Some(locale);
+            variant = "";
         }
     } else if variant == "standard" {
-        return Some(locale);
+        variant = "";
     }
 
-    locale.set_unicode_ext(
-        key!("co"),
-        match variant {
-            "traditional" => value!("trad"),
-            "phonebook" => value!("phonebk"),
-            "dictionary" => value!("dict"),
-            "gb2312han" => value!("gb2312"),
-            _ => variant.parse().unwrap(),
-        },
-    );
+    let marker_attributes = match variant {
+        "traditional" => DataMarkerAttributes::from_str_or_panic("trad").to_owned(),
+        "phonebook" => DataMarkerAttributes::from_str_or_panic("phonebk").to_owned(),
+        "dictionary" => DataMarkerAttributes::from_str_or_panic("dict").to_owned(),
+        "gb2312han" => DataMarkerAttributes::from_str_or_panic("gb2312").to_owned(),
+        v => DataMarkerAttributes::try_from_str(v).ok()?.to_owned(),
+    };
 
-    Some(locale)
+    Some(DataIdentifierCow::from_owned(marker_attributes, locale))
 }
 
 macro_rules! collation_provider {
@@ -182,7 +85,7 @@ macro_rules! collation_provider {
                         .read_and_parse_toml(&format!(
                             "collation/{}/{}{}.toml",
                             self.collation_han_database(),
-                            locale_to_file_name(&req.id.locale),
+                            id_to_file_name(&req.id),
                             $suffix
                         ))
                         .map_err(|e| match e.kind {
@@ -218,8 +121,7 @@ macro_rules! collation_provider {
                                 file_name
                             })
                         })
-                        .filter_map(|s| file_name_to_locale(&s))
-                        .map(|l| DataIdentifierCow::from_locale(DataLocale::from(l)))
+                        .filter_map(|s| file_name_to_id(&s))
                         .collect())
                 }
             }
@@ -291,16 +193,19 @@ collation_provider!(
 fn test_zh_non_baked() {
     use core::cmp::Ordering;
     use icu::collator::{Collator, CollatorOptions};
+    use icu::locale::fallback::LocaleFallbacker;
     use icu_provider_adapters::fallback::LocaleFallbackProvider;
 
-    let provider =
-        LocaleFallbackProvider::try_new_unstable(SourceDataProvider::new_testing()).unwrap();
+    let provider = LocaleFallbackProvider::new(
+        SourceDataProvider::new_testing(),
+        LocaleFallbacker::new_without_data(),
+    );
 
     // Note: ㄅ is Bopomofo.
     {
-        let locale = "zh-u-co-gb2312".parse().unwrap();
+        let locale: icu::locale::Locale = "zh-u-co-gb2312".parse().unwrap();
         let collator =
-            Collator::try_new_unstable(&provider, &locale, CollatorOptions::new()).unwrap();
+            Collator::try_new_unstable(&provider, &locale.into(), CollatorOptions::new()).unwrap();
         assert_eq!(collator.compare("艾", "a"), Ordering::Greater);
         assert_eq!(collator.compare("佰", "a"), Ordering::Greater);
         assert_eq!(collator.compare("ㄅ", "a"), Ordering::Greater);
@@ -315,9 +220,9 @@ fn test_zh_non_baked() {
         assert_ne!(collator.compare("不", "把"), Ordering::Greater);
     }
     {
-        let locale = "zh-u-co-big5han".parse().unwrap();
+        let locale: icu::locale::Locale = "zh-u-co-big5han".parse().unwrap();
         let collator =
-            Collator::try_new_unstable(&provider, &locale, CollatorOptions::new()).unwrap();
+            Collator::try_new_unstable(&provider, &locale.into(), CollatorOptions::new()).unwrap();
         assert_eq!(collator.compare("艾", "a"), Ordering::Greater);
         assert_eq!(collator.compare("佰", "a"), Ordering::Greater);
         assert_eq!(collator.compare("ㄅ", "a"), Ordering::Greater);

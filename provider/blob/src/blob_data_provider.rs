@@ -4,6 +4,7 @@
 
 use crate::blob_schema::BlobSchema;
 use alloc::boxed::Box;
+use alloc::collections::BTreeSet;
 use icu_provider::buf::BufferFormat;
 use icu_provider::prelude::*;
 use icu_provider::Cart;
@@ -145,6 +146,15 @@ impl DynamicDryDataProvider<BufferMarker> for BlobDataProvider {
         let mut metadata = DataResponseMetadata::default();
         metadata.buffer_format = Some(BufferFormat::Postcard1);
         Ok(metadata)
+    }
+}
+
+impl IterableDynamicDataProvider<BufferMarker> for BlobDataProvider {
+    fn iter_ids_for_marker(
+        &self,
+        marker: DataMarkerInfo,
+    ) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+        self.data.get().iter_ids(marker)
     }
 }
 

@@ -62,25 +62,35 @@ logging = ["icu_provider/logging", "dep:log", "diplomat-runtime/log", "std"]
 simple_logger = ["dep:simple_logger", "logging"]
 
 # Components
-default_components = ["icu_calendar", "icu_casemap", "icu_collator", "icu_datetime", "icu_decimal",
-                      "icu_list", "icu_locale",
-                      "icu_normalizer", "icu_plurals", "icu_properties",
-                      "icu_segmenter", "icu_timezone"]
-experimental_components = ["dep:icu_experimental"]
+default_components = [
+    "calendar",
+    "casemap",
+    "collator",
+    "datetime",
+    "decimal",
+    "list",
+    "locale",
+    "normalizer",
+    "plurals",
+    "properties",
+    "segmenter",
+    "timezone"
+]
 
-icu_calendar = ["dep:icu_calendar"]
-icu_casemap = ["dep:icu_casemap"]
-icu_collator = ["dep:icu_collator"]
-# icu_collections = ["dep:icu_collections"] # Not useful on its own: use icu_properties
-icu_datetime = ["dep:icu_datetime", "dep:icu_calendar", "dep:icu_timezone", "dep:icu_decimal", "dep:icu_plurals"]
-icu_decimal = ["dep:icu_decimal", "dep:fixed_decimal"]
-icu_list = ["dep:icu_list"]
-icu_locale = ["dep:icu_locale"]
-icu_normalizer = ["dep:icu_normalizer"]
-icu_plurals = ["dep:icu_plurals", "dep:fixed_decimal"]
-icu_properties = ["dep:icu_properties", "dep:icu_collections", "dep:unicode-bidi"]
-icu_segmenter = ["dep:icu_segmenter"]
-icu_timezone = ["dep:icu_timezone", "dep:icu_calendar"]
+calendar = ["dep:icu_calendar"]
+casemap = ["dep:icu_casemap"]
+collator = ["dep:icu_collator"]
+# collections = ["dep:icu_collections"] # Not useful on its own: use properties
+datetime = ["dep:icu_datetime", "dep:icu_calendar", "dep:icu_timezone", "dep:icu_decimal", "dep:icu_plurals"]
+decimal = ["dep:icu_decimal", "dep:fixed_decimal"]
+experimental = ["dep:icu_experimental"]
+list = ["dep:icu_list"]
+locale = ["dep:icu_locale"]
+normalizer = ["dep:icu_normalizer"]
+plurals = ["dep:icu_plurals", "dep:fixed_decimal"]
+properties = ["dep:icu_properties", "dep:icu_collections", "dep:unicode-bidi"]
+segmenter = ["dep:icu_segmenter"]
+timezone = ["dep:icu_timezone", "dep:icu_calendar"]
 
 compiled_data = [
     "icu_calendar?/compiled_data",
@@ -111,6 +121,7 @@ icu_provider = { workspace = true }
 icu_provider_adapters = { workspace = true }
 
 tinystr = { workspace = true }
+potential_utf = { workspace = true, features = ["writeable"]}
 writeable = { workspace = true }
 
 # Diplomat
@@ -118,8 +129,8 @@ diplomat = { workspace = true }
 diplomat-runtime = { workspace = true }
 
 # Optional ICU4X components and their dependent utils
-fixed_decimal = { workspace = true, features = ["ryu"] , optional = true}
-icu_calendar = { workspace = true, optional = true }
+fixed_decimal = { workspace = true, features = ["ryu"] , optional = true }
+icu_calendar = { workspace = true, features = ["ixdtf"], optional = true }
 icu_casemap = { workspace = true, optional = true }
 icu_collator = { workspace = true, optional = true }
 icu_collections = { workspace = true, optional = true }

@@ -59,7 +59,7 @@ pub struct DateLengthsV1<'data> {
 pub(crate) struct ErasedDateLengthsV1Marker;
 
 impl DynamicDataMarker for ErasedDateLengthsV1Marker {
-    type Yokeable = DateLengthsV1<'static>;
+    type DataStruct = DateLengthsV1<'static>;
 }
 
 size_test!(TimeLengthsV1, time_lengths_v1_size, 264);
@@ -180,7 +180,7 @@ pub mod patterns {
     pub(crate) struct PatternPluralsFromPatternsV1Marker;
 
     impl DynamicDataMarker for PatternPluralsFromPatternsV1Marker {
-        type Yokeable = PatternPluralsV1<'static>;
+        type DataStruct = PatternPluralsV1<'static>;
     }
 
     /// A general purpose pattern representation. Used for date-time glue patterns.
@@ -206,7 +206,7 @@ pub mod patterns {
     pub(crate) struct GenericPatternV1Marker;
 
     impl DynamicDataMarker for GenericPatternV1Marker {
-        type Yokeable = GenericPatternV1<'static>;
+        type DataStruct = GenericPatternV1<'static>;
     }
 
     impl<'data> From<GenericPattern<'data>> for GenericPatternV1<'data> {

@@ -6,7 +6,6 @@ use crate::cldr_serde;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::decimal::provider::*;
-use icu::locale::{extensions::unicode::key, subtags::Subtag};
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::collections::HashSet;
@@ -15,25 +14,25 @@ use std::convert::TryFrom;
 impl DataProvider<DecimalSymbolsV1Marker> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<DecimalSymbolsV1Marker>, DataError> {
         self.check_req::<DecimalSymbolsV1Marker>(req)?;
-        let langid = req.id.locale.get_langid();
 
         let resource: &cldr_serde::numbers::Resource = self
             .cldr()?
             .numbers()
-            .read_and_parse(&langid, "numbers.json")?;
+            .read_and_parse(req.id.locale, "numbers.json")?;
 
         let numbers = &resource.main.value.numbers;
 
-        let nsname = match req.id.locale.get_unicode_ext(&key!("nu")) {
-            Some(v) => *v.get_subtag(0).expect("expecting subtag if key is present"),
-            None => Subtag::from_tinystr_unvalidated(numbers.default_numbering_system),
+        let nsname = if !req.id.marker_attributes.is_empty() {
+            req.id.marker_attributes.as_str()
+        } else {
+            &numbers.default_numbering_system
         };
 
         let mut result =
             DecimalSymbolsV1::try_from(NumbersWithNumsys(numbers, nsname)).map_err(|s| {
                 DataError::custom("Could not create decimal symbols")
                     .with_display_context(&s)
-                    .with_display_context(&nsname)
+                    .with_display_context(nsname)
             })?;
 
         result.digits = self.get_digits_for_numbering_system(nsname)?;
@@ -54,7 +53,7 @@ impl IterableDataProviderCached<DecimalSymbolsV1Marker> for SourceDataProvider {
 #[derive(Debug)]
 struct NumbersWithNumsys<'a>(
     pub(crate) &'a cldr_serde::numbers::Numbers,
-    pub(crate) Subtag,
+    pub(crate) &'a str,
 );
 
 impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbolsV1<'static> {
@@ -65,12 +64,12 @@ impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbolsV1<'static> {
         let symbols = numbers
             .numsys_data
             .symbols
-            .get(&nsname.as_tinystr())
+            .get(nsname)
             .ok_or("Could not find symbols for numbering system")?;
         let formats = numbers
             .numsys_data
             .formats
-            .get(&nsname.as_tinystr())
+            .get(nsname)
             .ok_or("Could not find formats for numbering system")?;
         let parsed_pattern: super::decimal_pattern::DecimalPattern = formats
             .standard

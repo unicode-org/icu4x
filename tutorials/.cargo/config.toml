@@ -43,7 +43,7 @@ icu_provider_adapters = { path = "../provider/adapters" }
 icu_provider_baked = { path = "../provider/baked" }
 icu_provider_blob = { path = "../provider/blob" }
 icu_provider_fs = { path = "../provider/fs/" }
-icu_registry = { path = "../provider/registry/" }
+icu_provider_registry = { path = "../provider/registry/" }
 icu4x-datagen = { path = "../provider/icu4x-datagen/" }
 
 # Baked data
@@ -72,6 +72,7 @@ ixdtf = { path = "../utils/ixdtf" }
 litemap = { path = "../utils/litemap" }
 tinystr = { path = "../utils/tinystr" }
 tzif = { path = "../utils/tzif" }
+potential_utf = { path = "../utils/potential_utf/" }
 writeable = { path = "../utils/writeable/" }
 yoke = { path = "../utils/yoke" }
 yoke-derive = { path = "../utils/yoke/derive" }

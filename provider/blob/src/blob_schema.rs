@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::fmt::Write;
-
 use alloc::boxed::Box;
+use alloc::collections::BTreeSet;
+use core::fmt::Write;
 use icu_provider::{marker::DataMarkerPathHash, prelude::*};
 use serde::Deserialize;
 use writeable::Writeable;
@@ -47,15 +47,14 @@ impl<'data> BlobSchema<'data> {
         }
     }
 
-    #[cfg(feature = "export")]
-    pub fn list_requests(
+    pub fn iter_ids(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<std::collections::HashSet<DataIdentifierCow>, DataError> {
+    ) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
         match self {
-            BlobSchema::V001(s) => s.list_requests(marker),
-            BlobSchema::V002(s) => s.list_requests(marker),
-            BlobSchema::V002Bigger(s) => s.list_requests(marker),
+            BlobSchema::V001(s) => s.iter_ids(marker),
+            BlobSchema::V002(s) => s.iter_ids(marker),
+            BlobSchema::V002Bigger(s) => s.iter_ids(marker),
         }
     }
 
@@ -100,7 +99,7 @@ impl<'data> BlobSchemaV1<'data> {
             .get0(&marker.path.hashed())
             .ok_or(DataErrorKind::MarkerNotFound)
             .and_then(|cursor| {
-                if marker.is_singleton && !req.id.locale.is_empty() {
+                if marker.is_singleton && !req.id.locale.is_default() {
                     return Err(DataErrorKind::InvalidRequest);
                 }
                 cursor
@@ -131,18 +130,19 @@ impl<'data> BlobSchemaV1<'data> {
             .ok_or_else(|| DataError::custom("Invalid blob bytes").with_req(marker, req))
     }
 
-    #[cfg(feature = "export")]
-    pub fn list_requests(
+    pub fn iter_ids(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<std::collections::HashSet<DataIdentifierCow>, DataError> {
+    ) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
         Ok(self
             .markers
             .get0(&marker.path.hashed())
             .ok_or_else(|| DataErrorKind::MarkerNotFound.with_marker(marker))?
             .iter1_copied()
-            .filter_map(|(s, _)| std::str::from_utf8(&s.0).ok())
+            .filter_map(|(s, _)| core::str::from_utf8(&s.0).ok())
             .filter_map(|s| {
+                #[allow(unused_imports)]
+                use alloc::borrow::ToOwned;
                 if let Some((locale, attrs)) = s.split_once(REQUEST_SEPARATOR) {
                     Some(DataIdentifierCow::from_owned(
                         DataMarkerAttributes::try_from_str(attrs).ok()?.to_owned(),
@@ -224,7 +224,7 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV2<'data, LocaleVecForm
             .binary_search(&marker.path.hashed())
             .ok()
             .ok_or_else(|| DataErrorKind::MarkerNotFound.with_req(marker, req))?;
-        if marker.is_singleton && !req.id.locale.is_empty() {
+        if marker.is_singleton && !req.id.locale.is_default() {
             return Err(DataErrorKind::InvalidRequest.with_req(marker, req));
         }
         let zerotrie = self
@@ -233,16 +233,24 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV2<'data, LocaleVecForm
             .ok_or_else(|| DataError::custom("Invalid blob bytes").with_req(marker, req))?;
         let mut cursor = ZeroTrieSimpleAscii::from_store(zerotrie).into_cursor();
         let _infallible_ascii = req.id.locale.write_to(&mut cursor);
-        if !req.id.marker_attributes.is_empty() {
+        let blob_index = if !req.id.marker_attributes.is_empty() {
             let _infallible_ascii = cursor.write_char(REQUEST_SEPARATOR);
             req.id
                 .marker_attributes
                 .write_to(&mut cursor)
                 .map_err(|_| DataErrorKind::IdentifierNotFound.with_req(marker, req))?;
+            loop {
+                if let Some(v) = cursor.take_value() {
+                    break Some(v);
+                }
+                if !req.metadata.attributes_prefix_match || cursor.probe(0).is_none() {
+                    break None;
+                }
+            }
+        } else {
+            cursor.take_value()
         }
-        let blob_index = cursor
-            .take_value()
-            .ok_or_else(|| DataErrorKind::IdentifierNotFound.with_req(marker, req))?;
+        .ok_or_else(|| DataErrorKind::IdentifierNotFound.with_req(marker, req))?;
         let buffer = self
             .buffers
             .get(blob_index)
@@ -250,11 +258,10 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV2<'data, LocaleVecForm
         Ok(buffer)
     }
 
-    #[cfg(feature = "export")]
-    pub fn list_requests(
+    pub fn iter_ids(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<std::collections::HashSet<DataIdentifierCow>, DataError> {
+    ) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
         let marker_index = self
             .markers
             .binary_search(&marker.path.hashed())
@@ -267,6 +274,8 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV2<'data, LocaleVecForm
         Ok(ZeroTrieSimpleAscii::from_store(zerotrie)
             .iter()
             .filter_map(|(s, _)| {
+                #[allow(unused_imports)]
+                use alloc::borrow::ToOwned;
                 if let Some((locale, attrs)) = s.split_once(REQUEST_SEPARATOR) {
                     Some(DataIdentifierCow::from_owned(
                         DataMarkerAttributes::try_from_str(attrs).ok()?.to_owned(),

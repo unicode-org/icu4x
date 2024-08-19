@@ -2,24 +2,26 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#include "ICU4XCaseMapper.hpp"
-#include "ICU4XLogger.hpp"
-#include "ICU4XDataProvider.hpp"
-#include "ICU4XCodePointSetBuilder.hpp"
-#include "ICU4XTitlecaseOptionsV1.hpp"
+#include <icu4x/CaseMapper.hpp>
+#include <icu4x/Logger.hpp>
+#include <icu4x/DataProvider.hpp>
+#include <icu4x/CodePointSetBuilder.hpp>
+#include <icu4x/TitlecaseOptionsV1.hpp>
 
 #include <iostream>
 
+using namespace icu4x;
+
 int main() {
-    ICU4XLogger::init_simple_logger();
-    std::unique_ptr<ICU4XLocale> und = ICU4XLocale::create_from_string("und").ok().value();
-    std::unique_ptr<ICU4XLocale> greek = ICU4XLocale::create_from_string("el").ok().value();
-    std::unique_ptr<ICU4XLocale> turkish = ICU4XLocale::create_from_string("tr").ok().value();
-    std::unique_ptr<ICU4XDataProvider> dp = ICU4XDataProvider::create_compiled();
+    Logger::init_simple_logger();
+    std::unique_ptr<Locale> und = Locale::from_string("und").ok().value();
+    std::unique_ptr<Locale> greek = Locale::from_string("el").ok().value();
+    std::unique_ptr<Locale> turkish = Locale::from_string("tr").ok().value();
+    std::unique_ptr<DataProvider> dp = DataProvider::compiled();
 
-    std::unique_ptr<ICU4XCaseMapper> cm = ICU4XCaseMapper::create(*dp.get()).ok().value();
+    std::unique_ptr<CaseMapper> cm = CaseMapper::create(*dp.get()).ok().value();
 
-    ICU4XTitlecaseOptionsV1 tc_options = ICU4XTitlecaseOptionsV1::default_options();
+    TitlecaseOptionsV1 tc_options = TitlecaseOptionsV1::default_options();
 
     std::string out = cm->lowercase("hEllO WorLd", *und.get()).ok().value();
     std::cout << "Lowercased value is " << out << std::endl;
@@ -87,7 +89,7 @@ int main() {
         return 1;
     }
 
-    std::unique_ptr<ICU4XCodePointSetBuilder> builder = ICU4XCodePointSetBuilder::create();
+    std::unique_ptr<CodePointSetBuilder> builder = CodePointSetBuilder::create();
 
     cm->add_case_closure_to('s', *builder.get());
 

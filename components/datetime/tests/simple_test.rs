@@ -2,14 +2,16 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_calendar::DateTime;
+use icu_calendar::{Date, DateTime, Time};
 use icu_datetime::neo::TypedNeoFormatter;
 use icu_datetime::neo_skeleton::{
-    NeoDateComponents, NeoDateSkeleton, NeoDateTimeComponents, NeoTimeComponents,
+    NeoComponents, NeoDateComponents, NeoDateSkeleton, NeoDateTimeComponents, NeoDayComponents,
+    NeoSkeletonLength, NeoTimeComponents,
 };
 use icu_datetime::options::length;
 use icu_datetime::{DateTimeFormatterOptions, TypedDateTimeFormatter};
-use icu_locale_core::locale;
+use icu_locale_core::{locale, Locale};
+use icu_timezone::{CustomTimeZone, CustomZonedDateTime};
 use writeable::{assert_try_writeable_eq, assert_writeable_eq};
 
 const EXPECTED_DATETIME: &[&str] = &[
@@ -88,7 +90,7 @@ fn neo_datetime_lengths() {
                 let formatter = TypedNeoFormatter::try_new_with_components(
                     &locale,
                     NeoDateTimeComponents::DateTime(day_components, time_components),
-                    length,
+                    length.into(),
                 )
                 .unwrap();
                 let formatted = formatter.format(&datetime);
@@ -124,7 +126,7 @@ fn neo_date_lengths() {
             let formatter = TypedNeoFormatter::try_new_with_components(
                 &locale,
                 NeoDateComponents::Day(day_components),
-                length,
+                length.into(),
             )
             .unwrap();
             let formatted = formatter.format(&datetime);
@@ -201,5 +203,79 @@ fn old_date_lengths() {
             let expected = expected_iter.next().unwrap();
             assert_writeable_eq!(formatted, *expected, "{date_length:?} {locale:?}");
         }
+    }
+}
+
+#[test]
+fn overlap_patterns() {
+    let datetime = CustomZonedDateTime {
+        date: Date::try_new_gregorian_date(2024, 8, 9).unwrap(),
+        time: Time::try_new(20, 40, 7, 250).unwrap(),
+        zone: CustomTimeZone::utc(),
+    };
+    struct TestCase {
+        locale: Locale,
+        components: NeoComponents,
+        length: NeoSkeletonLength,
+        expected: &'static str,
+    }
+    let cases = [
+        // Note: in en-US, there is no comma in the overlap pattern
+        TestCase {
+            locale: locale!("en-US"),
+            components: NeoComponents::DateTime(
+                NeoDayComponents::Weekday,
+                NeoTimeComponents::HourMinute,
+            ),
+            length: NeoSkeletonLength::Medium,
+            expected: "Fri 8:40\u{202f}PM",
+        },
+        TestCase {
+            locale: locale!("en-US"),
+            components: NeoComponents::DateTime(
+                NeoDayComponents::MonthDayWeekday,
+                NeoTimeComponents::HourMinute,
+            ),
+            length: NeoSkeletonLength::Medium,
+            expected: "Fri, Aug 9, 8:40\u{202f}PM",
+        },
+        // Note: in ru, the standalone weekday name is used when it is the only one in the pattern
+        // (but the strings are the same in data)
+        TestCase {
+            locale: locale!("ru"),
+            components: NeoComponents::DateTime(
+                NeoDayComponents::Weekday,
+                NeoTimeComponents::HourMinute,
+            ),
+            length: NeoSkeletonLength::Medium,
+            expected: "пт 20:40",
+        },
+        TestCase {
+            locale: locale!("ru"),
+            components: NeoComponents::Date(NeoDateComponents::Day(NeoDayComponents::Weekday)),
+            length: NeoSkeletonLength::Medium,
+            expected: "пт",
+        },
+    ];
+    for TestCase {
+        locale,
+        components,
+        length,
+        expected,
+    } in cases
+    {
+        let formatter = TypedNeoFormatter::try_new_with_components(
+            &(&locale).into(),
+            components,
+            length.into(),
+        )
+        .unwrap();
+        let formatted = formatter.format(&datetime);
+        assert_try_writeable_eq!(
+            formatted,
+            expected,
+            Ok(()),
+            "{locale:?} {components:?} {length:?}"
+        );
     }
 }

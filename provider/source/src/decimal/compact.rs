@@ -6,7 +6,6 @@ use crate::cldr_serde;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::experimental::compactdecimal::provider::*;
-use icu::locale::{extensions::unicode::key, subtags::Subtag};
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::convert::TryFrom;
@@ -17,28 +16,28 @@ impl DataProvider<ShortCompactDecimalFormatDataV1Marker> for SourceDataProvider 
         req: DataRequest,
     ) -> Result<DataResponse<ShortCompactDecimalFormatDataV1Marker>, DataError> {
         self.check_req::<ShortCompactDecimalFormatDataV1Marker>(req)?;
-        let langid = req.id.locale.get_langid();
 
         let resource: &cldr_serde::numbers::Resource = self
             .cldr()?
             .numbers()
-            .read_and_parse(&langid, "numbers.json")?;
+            .read_and_parse(req.id.locale, "numbers.json")?;
 
         let numbers = &resource.main.value.numbers;
 
-        let nsname = match req.id.locale.get_unicode_ext(&key!("nu")) {
-            Some(v) => *v.get_subtag(0).expect("expecting subtag if key is present"),
-            None => Subtag::from_tinystr_unvalidated(numbers.default_numbering_system),
+        let nsname = if !req.id.marker_attributes.is_empty() {
+            req.id.marker_attributes.as_str()
+        } else {
+            &numbers.default_numbering_system
         };
 
         let result = CompactDecimalPatternDataV1::try_from(
             &numbers
                 .numsys_data
                 .formats
-                .get(&nsname.as_tinystr())
+                .get(nsname)
                 .ok_or_else(|| {
                     DataError::custom("Could not find formats for numbering system")
-                        .with_display_context(&nsname)
+                        .with_display_context(nsname)
                 })?
                 .short
                 .decimal_format,
@@ -46,7 +45,7 @@ impl DataProvider<ShortCompactDecimalFormatDataV1Marker> for SourceDataProvider 
         .map_err(|s| {
             DataError::custom("Could not create compact decimal patterns")
                 .with_display_context(&s)
-                .with_display_context(&nsname)
+                .with_display_context(nsname)
         })?;
 
         Ok(DataResponse {
@@ -62,28 +61,28 @@ impl DataProvider<LongCompactDecimalFormatDataV1Marker> for SourceDataProvider {
         req: DataRequest,
     ) -> Result<DataResponse<LongCompactDecimalFormatDataV1Marker>, DataError> {
         self.check_req::<LongCompactDecimalFormatDataV1Marker>(req)?;
-        let langid = req.id.locale.get_langid();
 
         let resource: &cldr_serde::numbers::Resource = self
             .cldr()?
             .numbers()
-            .read_and_parse(&langid, "numbers.json")?;
+            .read_and_parse(req.id.locale, "numbers.json")?;
 
         let numbers = &resource.main.value.numbers;
 
-        let nsname = match req.id.locale.get_unicode_ext(&key!("nu")) {
-            Some(v) => *v.get_subtag(0).expect("expecting subtag if key is present"),
-            None => Subtag::from_tinystr_unvalidated(numbers.default_numbering_system),
+        let nsname = if !req.id.marker_attributes.is_empty() {
+            req.id.marker_attributes.as_str()
+        } else {
+            &numbers.default_numbering_system
         };
 
         let result = CompactDecimalPatternDataV1::try_from(
             &numbers
                 .numsys_data
                 .formats
-                .get(&nsname.as_tinystr())
+                .get(nsname)
                 .ok_or_else(|| {
                     DataError::custom("Could not find formats for numbering system")
-                        .with_display_context(&nsname)
+                        .with_display_context(nsname)
                 })?
                 .long
                 .decimal_format,
@@ -91,7 +90,7 @@ impl DataProvider<LongCompactDecimalFormatDataV1Marker> for SourceDataProvider {
         .map_err(|s| {
             DataError::custom("Could not create compact decimal patterns")
                 .with_display_context(&s)
-                .with_display_context(&nsname)
+                .with_display_context(nsname)
         })?;
 
         Ok(DataResponse {

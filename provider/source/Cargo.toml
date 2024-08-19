@@ -41,9 +41,10 @@ icu_collections = { workspace = true, features = ["serde"] }
 icu_pattern = { workspace = true, features = ["alloc"] }
 icu_provider = { workspace = true, features = ["std", "logging", "export"]}
 icu_provider_adapters = { workspace = true }
-icu_registry = { workspace = true }
+icu_provider_registry = { workspace = true }
 litemap = { workspace = true, features = ["serde"] }
 tinystr = { workspace = true, features = ["alloc", "serde", "zerovec"] }
+potential_utf = { workspace = true }
 writeable = { workspace = true }
 zerotrie = { workspace = true, features = ["alloc"] }
 zerovec = { workspace = true, features = ["serde", "yoke"] }
@@ -77,7 +78,7 @@ icu_provider_export = { workspace = true, features = ["fs_exporter", "baked_expo
 icu_provider = { workspace = true, features = ["deserialize_postcard_1"] }
 icu_segmenter = { path = "../../components/segmenter", features = ["lstm"] }
 simple_logger = { workspace = true }
-icu = { path = "../../components/icu", features = ["experimental"] }
+icu = { path = "../../components/icu", default-features = false, features = ["experimental"] }
 
 [features]
 default = ["use_wasm", "networking"]

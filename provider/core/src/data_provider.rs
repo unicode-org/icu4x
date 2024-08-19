@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use alloc::{boxed::Box, collections::BTreeSet};
 use core::marker::PhantomData;
 use yoke::Yokeable;
 
@@ -30,7 +31,7 @@ where
     }
 }
 
-impl<M, P> DataProvider<M> for alloc::boxed::Box<P>
+impl<M, P> DataProvider<M> for Box<P>
 where
     M: DataMarker,
     P: DataProvider<M> + ?Sized,
@@ -52,14 +53,13 @@ where
     }
 }
 
-#[cfg(feature = "std")]
 /// A [`DataProvider`] that can iterate over all supported [`DataIdentifierCow`]s.
 ///
 /// The provider is not allowed to return `Ok` for requests that were not returned by `iter_ids`,
 /// and must not fail with a [`DataErrorKind::IdentifierNotFound`] for requests that were returned.
 pub trait IterableDataProvider<M: DataMarker>: DataProvider<M> {
     /// Returns a set of [`DataIdentifierCow`].
-    fn iter_ids(&self) -> Result<std::collections::HashSet<DataIdentifierCow>, DataError>;
+    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError>;
 }
 
 #[cfg(target_has_atomic = "ptr")]
@@ -140,7 +140,7 @@ where
     }
 }
 
-impl<M, P> DynamicDataProvider<M> for alloc::boxed::Box<P>
+impl<M, P> DynamicDataProvider<M> for Box<P>
 where
     M: DynamicDataMarker,
     P: DynamicDataProvider<M> + ?Sized,
@@ -186,7 +186,6 @@ where
     }
 }
 
-#[cfg(feature = "std")]
 /// A [`DynamicDataProvider`] that can iterate over all supported [`DataIdentifierCow`]s for a certain marker.
 ///
 /// The provider is not allowed to return `Ok` for requests that were not returned by `iter_ids`,
@@ -196,10 +195,9 @@ pub trait IterableDynamicDataProvider<M: DynamicDataMarker>: DynamicDataProvider
     fn iter_ids_for_marker(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<std::collections::HashSet<DataIdentifierCow>, DataError>;
+    ) -> Result<BTreeSet<DataIdentifierCow>, DataError>;
 }
 
-#[cfg(feature = "std")]
 impl<M, P> IterableDynamicDataProvider<M> for Box<P>
 where
     M: DynamicDataMarker,
@@ -208,7 +206,7 @@ where
     fn iter_ids_for_marker(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<std::collections::HashSet<DataIdentifierCow>, DataError> {
+    ) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
         (**self).iter_ids_for_marker(marker)
     }
 }
@@ -251,7 +249,7 @@ where
     }
 }
 
-impl<M, P> BoundDataProvider<M> for alloc::boxed::Box<P>
+impl<M, P> BoundDataProvider<M> for Box<P>
 where
     M: DynamicDataMarker,
     P: BoundDataProvider<M> + ?Sized,
@@ -322,8 +320,8 @@ where
 
 impl<M, M0, Y, P> BoundDataProvider<M0> for DataProviderWithMarker<M, P>
 where
-    M: DataMarker<Yokeable = Y>,
-    M0: DynamicDataMarker<Yokeable = Y>,
+    M: DataMarker<DataStruct = Y>,
+    M0: DynamicDataMarker<DataStruct = Y>,
     Y: for<'a> Yokeable<'a>,
     P: DataProvider<M>,
 {
@@ -367,7 +365,7 @@ mod test {
     struct HelloAltMarker {}
 
     impl DynamicDataMarker for HelloAltMarker {
-        type Yokeable = HelloAlt;
+        type DataStruct = HelloAlt;
     }
 
     impl DataMarker for HelloAltMarker {

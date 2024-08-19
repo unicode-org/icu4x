@@ -4,6 +4,7 @@
 
 use fixed_decimal::FixedDecimal;
 
+use icu_decimal::FixedDecimalFormatter;
 use writeable::Writeable;
 
 use crate::dimension::currency::formatter::CurrencyCode;
@@ -17,7 +18,10 @@ pub struct FormattedCurrency<'l> {
     pub(crate) currency_code: CurrencyCode,
     pub(crate) options: &'l CurrencyFormatterOptions,
     pub(crate) essential: &'l CurrencyEssentialsV1<'l>,
+    pub(crate) fixed_decimal_formatter: &'l FixedDecimalFormatter,
 }
+
+writeable::impl_display_with_writeable!(FormattedCurrency<'_>);
 
 impl<'l> Writeable for FormattedCurrency<'l> {
     fn write_to<W>(&self, sink: &mut W) -> core::result::Result<(), core::fmt::Error>
@@ -57,7 +61,10 @@ impl<'l> Writeable for FormattedCurrency<'l> {
         .ok_or(core::fmt::Error)?;
 
         pattern
-            .interpolate((self.value, currency_sign_value))
+            .interpolate((
+                self.fixed_decimal_formatter.format(self.value),
+                currency_sign_value,
+            ))
             .write_to(sink)?;
 
         Ok(())
@@ -69,43 +76,61 @@ impl<'l> Writeable for FormattedCurrency<'l> {
 mod tests {
     use icu_locale_core::locale;
     use tinystr::*;
-    use writeable::Writeable;
+    use writeable::assert_writeable_eq;
 
     use crate::dimension::currency::formatter::{CurrencyCode, CurrencyFormatter};
 
     #[test]
     pub fn test_en_us() {
         let locale = locale!("en-US").into();
-        let fmt = CurrencyFormatter::try_new(&locale, Default::default()).unwrap();
-        let value = "12345.67".parse().unwrap();
         let currency_code = CurrencyCode(tinystr!(3, "USD"));
-        let formatted_currency = fmt.format_fixed_decimal(&value, currency_code);
-        let mut sink = String::new();
-        formatted_currency.write_to(&mut sink).unwrap();
-        assert_eq!(sink.as_str(), "$12345.67");
+        let fmt = CurrencyFormatter::try_new(&locale, Default::default()).unwrap();
+
+        // Positive case
+        let positive_value = "12345.67".parse().unwrap();
+        let formatted_currency = fmt.format_fixed_decimal(&positive_value, currency_code);
+        assert_writeable_eq!(formatted_currency, "$12,345.67");
+
+        // Negative case
+        let negative_value = "-12345.67".parse().unwrap();
+        let formatted_currency = fmt.format_fixed_decimal(&negative_value, currency_code);
+        assert_writeable_eq!(formatted_currency, "$-12,345.67");
     }
 
     #[test]
     pub fn test_fr_fr() {
         let locale = locale!("fr-FR").into();
-        let fmt = CurrencyFormatter::try_new(&locale, Default::default()).unwrap();
-        let value = "12345.67".parse().unwrap();
         let currency_code = CurrencyCode(tinystr!(3, "EUR"));
-        let formatted_currency = fmt.format_fixed_decimal(&value, currency_code);
-        let mut sink = String::new();
-        formatted_currency.write_to(&mut sink).unwrap();
-        assert_eq!(sink.as_str(), "12345.67\u{a0}€");
+        let fmt = CurrencyFormatter::try_new(&locale, Default::default()).unwrap();
+
+        // Positive case
+        let positive_value = "12345.67".parse().unwrap();
+        let formatted_currency = fmt.format_fixed_decimal(&positive_value, currency_code);
+        assert_writeable_eq!(formatted_currency, "12\u{202f}345,67\u{a0}€");
+
+        // Negative case
+        let negative_value = "-12345.67".parse().unwrap();
+        let formatted_currency = fmt.format_fixed_decimal(&negative_value, currency_code);
+        assert_writeable_eq!(formatted_currency, "-12\u{202f}345,67\u{a0}€");
     }
 
     #[test]
     pub fn test_ar_eg() {
         let locale = locale!("ar-EG").into();
-        let fmt = CurrencyFormatter::try_new(&locale, Default::default()).unwrap();
-        let value = "12345.67".parse().unwrap();
         let currency_code = CurrencyCode(tinystr!(3, "EGP"));
-        let formatted_currency = fmt.format_fixed_decimal(&value, currency_code);
-        let mut sink = String::new();
-        formatted_currency.write_to(&mut sink).unwrap();
-        assert_eq!(sink.as_str(), "\u{200f}12345.67\u{a0}ج.م.\u{200f}");
+        let fmt = CurrencyFormatter::try_new(&locale, Default::default()).unwrap();
+
+        // Positive case
+        let positive_value = "12345.67".parse().unwrap();
+        let formatted_currency = fmt.format_fixed_decimal(&positive_value, currency_code);
+        assert_writeable_eq!(formatted_currency, "\u{200f}١٢٬٣٤٥٫٦٧\u{a0}ج.م.\u{200f}");
+
+        // Negative case
+        let negative_value = "-12345.67".parse().unwrap();
+        let formatted_currency = fmt.format_fixed_decimal(&negative_value, currency_code);
+        assert_writeable_eq!(
+            formatted_currency,
+            "\u{200f}\u{61c}-١٢٬٣٤٥٫٦٧\u{a0}ج.م.\u{200f}"
+        );
     }
 }

@@ -9,8 +9,8 @@ use crate::SourceDataProvider;
 use icu::experimental::displaynames::provider::*;
 use icu::locale::subtags::Language;
 use icu_provider::prelude::*;
+use potential_utf::PotentialUtf8;
 use std::collections::{BTreeMap, HashSet};
-use zerovec::ule::UnvalidatedStr;
 
 impl DataProvider<LanguageDisplayNamesV1Marker> for SourceDataProvider {
     fn load(
@@ -18,12 +18,11 @@ impl DataProvider<LanguageDisplayNamesV1Marker> for SourceDataProvider {
         req: DataRequest,
     ) -> Result<DataResponse<LanguageDisplayNamesV1Marker>, DataError> {
         self.check_req::<LanguageDisplayNamesV1Marker>(req)?;
-        let langid = req.id.locale.get_langid();
 
         let data: &cldr_serde::displaynames::language::Resource = self
             .cldr()?
             .displaynames()
-            .read_and_parse(&langid, "languages.json")?;
+            .read_and_parse(req.id.locale, "languages.json")?;
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -37,12 +36,11 @@ impl DataProvider<LocaleDisplayNamesV1Marker> for SourceDataProvider {
         req: DataRequest,
     ) -> Result<DataResponse<LocaleDisplayNamesV1Marker>, DataError> {
         self.check_req::<LocaleDisplayNamesV1Marker>(req)?;
-        let langid = req.id.locale.get_langid();
 
         let data: &cldr_serde::displaynames::language::Resource = self
             .cldr()?
             .displaynames()
-            .read_and_parse(&langid, "languages.json")?;
+            .read_and_parse(req.id.locale, "languages.json")?;
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -56,16 +54,16 @@ impl IterableDataProviderCached<LanguageDisplayNamesV1Marker> for SourceDataProv
         Ok(self
             .cldr()?
             .displaynames()
-            .list_langs()?
-            .filter(|langid| {
+            .list_locales()?
+            .filter(|locale| {
                 // The directory might exist without languages.json
                 self.cldr()
                     .unwrap()
                     .displaynames()
-                    .file_exists(langid, "languages.json")
+                    .file_exists(locale, "languages.json")
                     .unwrap_or_default()
             })
-            .map(|l| DataIdentifierCow::from_locale(DataLocale::from(l)))
+            .map(DataIdentifierCow::from_locale)
             .collect())
     }
 }
@@ -75,16 +73,16 @@ impl IterableDataProviderCached<LocaleDisplayNamesV1Marker> for SourceDataProvid
         Ok(self
             .cldr()?
             .displaynames()
-            .list_langs()?
-            .filter(|langid| {
+            .list_locales()?
+            .filter(|locale| {
                 // The directory might exist without languages.json
                 self.cldr()
                     .unwrap()
                     .displaynames()
-                    .file_exists(langid, "languages.json")
+                    .file_exists(locale, "languages.json")
                     .unwrap_or_default()
             })
-            .map(|l| DataIdentifierCow::from_locale(DataLocale::from(l)))
+            .map(DataIdentifierCow::from_locale)
             .collect())
     }
 }
@@ -177,22 +175,22 @@ impl From<&cldr_serde::displaynames::language::Resource> for LocaleDisplayNamesV
             names: names
                 .into_iter()
                 .filter(|&(k, v)| k != v)
-                .map(|(k, v)| (UnvalidatedStr::from_str(k), v))
+                .map(|(k, v)| (PotentialUtf8::from_str(k), v))
                 .collect(),
             short_names: short_names
                 .into_iter()
                 .filter(|&(k, v)| k != v)
-                .map(|(k, v)| (UnvalidatedStr::from_str(k), v))
+                .map(|(k, v)| (PotentialUtf8::from_str(k), v))
                 .collect(),
             long_names: long_names
                 .into_iter()
                 .filter(|&(k, v)| k != v)
-                .map(|(k, v)| (UnvalidatedStr::from_str(k), v))
+                .map(|(k, v)| (PotentialUtf8::from_str(k), v))
                 .collect(),
             menu_names: menu_names
                 .into_iter()
                 .filter(|&(k, v)| k != v)
-                .map(|(k, v)| (UnvalidatedStr::from_str(k), v))
+                .map(|(k, v)| (PotentialUtf8::from_str(k), v))
                 .collect(),
         }
     }
@@ -302,7 +300,7 @@ mod tests {
         assert_eq!(
             data.get()
                 .names
-                .get(UnvalidatedStr::from_str("de-CH"))
+                .get(PotentialUtf8::from_str("de-CH"))
                 .unwrap(),
             "Swiss High German"
         );

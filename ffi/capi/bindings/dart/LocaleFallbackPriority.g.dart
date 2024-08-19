@@ -8,7 +8,5 @@ part of 'lib.g.dart';
 enum LocaleFallbackPriority {
   language,
 
-  region,
-
-  collation;
+  region;
 }

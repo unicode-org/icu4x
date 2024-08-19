@@ -20,7 +20,7 @@ final class RegionDisplayNames implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XRegionDisplayNames_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_RegionDisplayNames_destroy_mv1));
 
   /// Creates a new `RegionDisplayNames` from locale data and an options bag.
   ///
@@ -28,7 +28,7 @@ final class RegionDisplayNames implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory RegionDisplayNames(DataProvider provider, Locale locale) {
-    final result = _ICU4XRegionDisplayNames_create(provider._ffi, locale._ffi);
+    final result = _icu4x_RegionDisplayNames_create_mv1(provider._ffi, locale._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -46,7 +46,7 @@ final class RegionDisplayNames implements ffi.Finalizable {
     final temp = ffi2.Arena();
     final regionView = region.utf8View;
     final write = _Write();
-    final result = _ICU4XRegionDisplayNames_of(_ffi, regionView.allocIn(temp), regionView.length, write._ffi);
+    final result = _icu4x_RegionDisplayNames_of_mv1(_ffi, regionView.allocIn(temp), regionView.length, write._ffi);
     temp.releaseAll();
     if (!result.isOk) {
       throw LocaleParseError.values[result.union.err];
@@ -55,17 +55,17 @@ final class RegionDisplayNames implements ffi.Finalizable {
   }
 }
 
-@meta.ResourceIdentifier('ICU4XRegionDisplayNames_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XRegionDisplayNames_destroy')
+@meta.ResourceIdentifier('icu4x_RegionDisplayNames_destroy_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_RegionDisplayNames_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XRegionDisplayNames_destroy(ffi.Pointer<ffi.Void> self);
+external void _icu4x_RegionDisplayNames_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XRegionDisplayNames_create')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XRegionDisplayNames_create')
+@meta.ResourceIdentifier('icu4x_RegionDisplayNames_create_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_RegionDisplayNames_create_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XRegionDisplayNames_create(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
+external _ResultOpaqueInt32 _icu4x_RegionDisplayNames_create_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
-@meta.ResourceIdentifier('ICU4XRegionDisplayNames_of')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XRegionDisplayNames_of')
+@meta.ResourceIdentifier('icu4x_RegionDisplayNames_of_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_RegionDisplayNames_of_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XRegionDisplayNames_of(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> regionData, int regionLength, ffi.Pointer<ffi.Opaque> write);
+external _ResultVoidInt32 _icu4x_RegionDisplayNames_of_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> regionData, int regionLength, ffi.Pointer<ffi.Opaque> write);

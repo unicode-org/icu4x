@@ -182,8 +182,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "bakeddata-scripts"
-version = "1.5.0"
+name = "bakeddata"
+version = "0.0.0"
 dependencies = [
  "crlify",
  "icu",
@@ -222,7 +222,6 @@ dependencies = [
 name = "bies"
 version = "0.2.2"
 dependencies = [
- "criterion",
  "itertools",
  "partial-min-max",
  "rand",
@@ -438,6 +437,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "core-foundation-sys"
+version = "0.8.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "06ea2b9bc92be3c2baa9334a323ebca2d6f074ff852cd1d7b11064035cd3868f"
+
+[[package]]
 name = "core_maths"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -568,6 +573,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "depcheck"
+version = "0.0.0"
+
+[[package]]
 name = "deranged"
 version = "0.3.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -601,12 +610,24 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=40dd17124eadcaa3cf91873547fa7504bc8aff80#40dd17124eadcaa3cf91873547fa7504bc8aff80"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=8744ac97162341f347b63131969ad736e1047f6d#8744ac97162341f347b63131969ad736e1047f6d"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
  "quote",
  "syn 2.0.66",
+]
+
+[[package]]
+name = "diplomat-coverage"
+version = "0.0.0"
+dependencies = [
+ "diplomat_core",
+ "elsa",
+ "lazy_static",
+ "rustdoc-types",
+ "serde_json",
+ "syn-inline-mod",
 ]
 
 [[package]]
@@ -619,7 +640,7 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.8.1"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=40dd17124eadcaa3cf91873547fa7504bc8aff80#40dd17124eadcaa3cf91873547fa7504bc8aff80"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=8744ac97162341f347b63131969ad736e1047f6d#8744ac97162341f347b63131969ad736e1047f6d"
 dependencies = [
  "log",
 ]
@@ -627,7 +648,7 @@ dependencies = [
 [[package]]
 name = "diplomat-tool"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=40dd17124eadcaa3cf91873547fa7504bc8aff80#40dd17124eadcaa3cf91873547fa7504bc8aff80"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=8744ac97162341f347b63131969ad736e1047f6d#8744ac97162341f347b63131969ad736e1047f6d"
 dependencies = [
  "askama",
  "clap",
@@ -647,11 +668,10 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=40dd17124eadcaa3cf91873547fa7504bc8aff80#40dd17124eadcaa3cf91873547fa7504bc8aff80"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=8744ac97162341f347b63131969ad736e1047f6d#8744ac97162341f347b63131969ad736e1047f6d"
 dependencies = [
  "displaydoc",
  "either",
- "lazy_static",
  "proc-macro2",
  "quote",
  "serde",
@@ -689,6 +709,22 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "75b325c5dbd37f80359721ad39aca5a29fb04c89279657cffdda8736d0c0b9d2"
 
 [[package]]
+name = "download-repo-sources"
+version = "0.0.0"
+dependencies = [
+ "clap",
+ "crlify",
+ "eyre",
+ "icu_locale_core",
+ "icu_provider",
+ "icu_provider_source",
+ "log",
+ "simple_logger",
+ "ureq",
+ "zip",
+]
+
+[[package]]
 name = "ecma402_traits"
 version = "4.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -717,6 +753,16 @@ checksum = "35949884794ad573cf46071e41c9b60efb0cb311e3ca01f7af807af1debc66ff"
 dependencies = [
  "nb 0.1.3",
  "void",
+]
+
+[[package]]
+name = "env_preferences"
+version = "1.5.0"
+dependencies = [
+ "core-foundation-sys",
+ "icu_locale",
+ "libc",
+ "windows",
 ]
 
 [[package]]
@@ -899,7 +945,7 @@ dependencies = [
  "icu_provider",
  "icu_provider_adapters",
  "icu_provider_blob",
- "icu_registry",
+ "icu_provider_registry",
  "icu_segmenter",
  "icu_timezone",
  "memchr",
@@ -916,8 +962,8 @@ dependencies = [
  "icu_provider",
  "icu_provider_blob",
  "icu_provider_export",
+ "icu_provider_registry",
  "icu_provider_source",
- "icu_registry",
  "log",
  "simple_logger",
 ]
@@ -927,6 +973,7 @@ name = "icu4x_ecma402"
 version = "0.8.2"
 dependencies = [
  "ecma402_traits",
+ "fixed_decimal",
  "icu",
  "icu_provider",
  "writeable",
@@ -966,6 +1013,7 @@ dependencies = [
  "icu_calendar_data",
  "icu_locale_core",
  "icu_provider",
+ "ixdtf",
  "serde",
  "serde_json",
  "simple_logger",
@@ -1010,6 +1058,7 @@ dependencies = [
  "icu_timezone",
  "libc_alloc",
  "log",
+ "potential_utf",
  "serde",
  "simple_logger",
  "tinystr",
@@ -1032,6 +1081,7 @@ dependencies = [
  "icu_normalizer",
  "icu_properties",
  "icu_provider",
+ "potential_utf",
  "serde",
  "writeable",
  "zerovec",
@@ -1050,8 +1100,8 @@ version = "0.3.8"
 dependencies = [
  "icu",
  "icu_collections",
- "toml",
  "wasmi",
+ "wat",
  "zerovec",
 ]
 
@@ -1128,6 +1178,7 @@ dependencies = [
  "icu_provider_blob",
  "icu_timezone",
  "litemap",
+ "potential_utf",
  "serde",
  "serde_json",
  "smallvec",
@@ -1175,10 +1226,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_depcheck"
-version = "0.0.0"
-
-[[package]]
 name = "icu_experimental"
 version = "0.1.0"
 dependencies = [
@@ -1190,6 +1237,7 @@ dependencies = [
  "icu_collections",
  "icu_decimal",
  "icu_experimental_data",
+ "icu_list",
  "icu_locale",
  "icu_locale_core",
  "icu_locale_data",
@@ -1205,6 +1253,7 @@ dependencies = [
  "num-bigint",
  "num-rational",
  "num-traits",
+ "potential_utf",
  "serde",
  "smallvec",
  "tinystr",
@@ -1220,18 +1269,6 @@ version = "0.1.0"
 dependencies = [
  "icu_locale",
  "icu_provider_baked",
-]
-
-[[package]]
-name = "icu_ffi_coverage"
-version = "0.0.0"
-dependencies = [
- "diplomat_core",
- "elsa",
- "lazy_static",
- "rustdoc-types",
- "serde_json",
- "syn-inline-mod",
 ]
 
 [[package]]
@@ -1294,6 +1331,7 @@ dependencies = [
  "icu_locale_core",
  "icu_locale_data",
  "icu_provider",
+ "potential_utf",
  "serde",
  "serde_json",
  "tinystr",
@@ -1313,6 +1351,7 @@ dependencies = [
  "icu_benchmark_macros",
  "litemap",
  "postcard",
+ "potential_utf",
  "serde",
  "serde_json",
  "tinystr",
@@ -1421,6 +1460,7 @@ dependencies = [
  "icu_collections",
  "icu_properties_data",
  "icu_provider",
+ "potential_utf",
  "serde",
  "tinystr",
  "unicode-bidi",
@@ -1482,8 +1522,7 @@ dependencies = [
  "heck 0.5.0",
  "icu_provider",
  "icu_provider_export",
- "icu_registry",
- "itertools",
+ "icu_provider_registry",
  "log",
  "proc-macro2",
  "writeable",
@@ -1561,6 +1600,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_provider_registry"
+version = "1.5.0"
+dependencies = [
+ "icu",
+ "icu_provider",
+]
+
+[[package]]
 name = "icu_provider_source"
 version = "1.5.0"
 dependencies = [
@@ -1576,7 +1623,7 @@ dependencies = [
  "icu_provider",
  "icu_provider_adapters",
  "icu_provider_export",
- "icu_registry",
+ "icu_provider_registry",
  "icu_segmenter",
  "itertools",
  "litemap",
@@ -1586,6 +1633,7 @@ dependencies = [
  "num-rational",
  "num-traits",
  "postcard",
+ "potential_utf",
  "serde",
  "serde-aux",
  "serde_json",
@@ -1598,14 +1646,6 @@ dependencies = [
  "zerotrie",
  "zerovec",
  "zip",
-]
-
-[[package]]
-name = "icu_registry"
-version = "1.5.0"
-dependencies = [
- "icu",
- "icu_provider",
 ]
 
 [[package]]
@@ -1623,6 +1663,7 @@ dependencies = [
  "icu_provider",
  "icu_segmenter_data",
  "itertools",
+ "potential_utf",
  "serde",
  "serde_json",
  "utf8_iter",
@@ -1635,22 +1676,6 @@ version = "1.5.0"
 dependencies = [
  "icu_locale",
  "icu_provider_baked",
-]
-
-[[package]]
-name = "icu_testdata_scripts"
-version = "0.0.0"
-dependencies = [
- "clap",
- "crlify",
- "eyre",
- "icu_locale_core",
- "icu_provider",
- "icu_provider_source",
- "log",
- "simple_logger",
- "ureq",
- "zip",
 ]
 
 [[package]]
@@ -1764,6 +1789,12 @@ name = "lazy_static"
 version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
+
+[[package]]
+name = "leb128"
+version = "0.2.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "884e2677b40cc8c339eaefcb701c32ef1fd2493d71118dc0ca4b6a736c93bd67"
 
 [[package]]
 name = "libc"
@@ -2099,6 +2130,18 @@ checksum = "d534c6e61df1c7166e636ca612d9820d486fe96ddad37f7abc671517b297488e"
 dependencies = [
  "cobs",
  "serde",
+]
+
+[[package]]
+name = "potential_utf"
+version = "0.0.0"
+dependencies = [
+ "bincode",
+ "databake",
+ "serde",
+ "serde_json",
+ "writeable",
+ "zerovec",
 ]
 
 [[package]]
@@ -2990,6 +3033,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "af190c94f2773fdb3729c55b007a722abb5384da03bc0986df4c289bf5567e96"
 
 [[package]]
+name = "wasm-encoder"
+version = "0.207.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d996306fb3aeaee0d9157adbe2f670df0236caf19f6728b221e92d0f27b3fe17"
+dependencies = [
+ "leb128",
+]
+
+[[package]]
 name = "wasmi"
 version = "0.31.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3030,6 +3082,28 @@ dependencies = [
 ]
 
 [[package]]
+name = "wast"
+version = "207.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0e40be9fd494bfa501309487d2dc0b3f229be6842464ecbdc54eac2679c84c93"
+dependencies = [
+ "bumpalo",
+ "leb128",
+ "memchr",
+ "unicode-width",
+ "wasm-encoder",
+]
+
+[[package]]
+name = "wat"
+version = "1.207.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8eb2b15e2d5f300f5e1209e7dc237f2549edbd4203655b6c6cab5cf180561ee7"
+dependencies = [
+ "wast",
+]
+
+[[package]]
 name = "web-sys"
 version = "0.3.69"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3055,6 +3129,59 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4d4cc384e1e73b93bafa6fb4f1df8c41695c8a91cf9c4c64358067d15a7b6c6b"
 dependencies = [
  "windows-sys 0.52.0",
+]
+
+[[package]]
+name = "windows"
+version = "0.56.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1de69df01bdf1ead2f4ac895dc77c9351aefff65b2f3db429a343f9cbf05e132"
+dependencies = [
+ "windows-core",
+ "windows-targets 0.52.5",
+]
+
+[[package]]
+name = "windows-core"
+version = "0.56.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4698e52ed2d08f8658ab0c39512a7c00ee5fe2688c65f8c0a4f06750d729f2a6"
+dependencies = [
+ "windows-implement",
+ "windows-interface",
+ "windows-result",
+ "windows-targets 0.52.5",
+]
+
+[[package]]
+name = "windows-implement"
+version = "0.56.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f6fc35f58ecd95a9b71c4f2329b911016e6bec66b3f2e6a4aad86bd2e99e2f9b"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.66",
+]
+
+[[package]]
+name = "windows-interface"
+version = "0.56.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "08990546bf4edef8f431fa6326e032865f27138718c587dc21bc0265bbcb57cc"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.66",
+]
+
+[[package]]
+name = "windows-result"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5e383302e8ec8515204254685643de10811af0ed97ea37210dc26fb0032647f8"
+dependencies = [
+ "windows-targets 0.52.5",
 ]
 
 [[package]]
@@ -3298,7 +3425,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec"
-version = "0.10.2"
+version = "0.10.4"
 dependencies = [
  "bincode",
  "criterion",
@@ -3307,6 +3434,7 @@ dependencies = [
  "iai",
  "icu_benchmark_macros",
  "postcard",
+ "potential_utf",
  "rand",
  "rand_distr",
  "rand_pcg",
@@ -3321,7 +3449,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec-derive"
-version = "0.10.2"
+version = "0.10.3"
 dependencies = [
  "bincode",
  "proc-macro2",

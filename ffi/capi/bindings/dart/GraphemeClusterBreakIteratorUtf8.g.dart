@@ -22,24 +22,24 @@ final class GraphemeClusterBreakIteratorUtf8 implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XGraphemeClusterBreakIteratorUtf8_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_GraphemeClusterBreakIteratorUtf8_destroy_mv1));
 
   /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
   /// out of range of a 32-bit signed integer.
   ///
   /// See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterBreakIterator.html#method.next) for more information.
   int next() {
-    final result = _ICU4XGraphemeClusterBreakIteratorUtf8_next(_ffi);
+    final result = _icu4x_GraphemeClusterBreakIteratorUtf8_next_mv1(_ffi);
     return result;
   }
 }
 
-@meta.ResourceIdentifier('ICU4XGraphemeClusterBreakIteratorUtf8_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XGraphemeClusterBreakIteratorUtf8_destroy')
+@meta.ResourceIdentifier('icu4x_GraphemeClusterBreakIteratorUtf8_destroy_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_GraphemeClusterBreakIteratorUtf8_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XGraphemeClusterBreakIteratorUtf8_destroy(ffi.Pointer<ffi.Void> self);
+external void _icu4x_GraphemeClusterBreakIteratorUtf8_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XGraphemeClusterBreakIteratorUtf8_next')
-@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XGraphemeClusterBreakIteratorUtf8_next')
+@meta.ResourceIdentifier('icu4x_GraphemeClusterBreakIteratorUtf8_next_mv1')
+@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_GraphemeClusterBreakIteratorUtf8_next_mv1')
 // ignore: non_constant_identifier_names
-external int _ICU4XGraphemeClusterBreakIteratorUtf8_next(ffi.Pointer<ffi.Opaque> self);
+external int _icu4x_GraphemeClusterBreakIteratorUtf8_next_mv1(ffi.Pointer<ffi.Opaque> self);

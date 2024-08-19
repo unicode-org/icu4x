@@ -3,17 +3,18 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[diplomat::bridge]
+#[diplomat::abi_rename = "icu4x_{0}_mv1"]
+#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
-    use icu_locale::{LocaleCanonicalizer, LocaleExpander, TransformResult};
 
-    use crate::{locale_core::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider};
-
-    use crate::errors::ffi::ICU4XError;
+    use crate::errors::ffi::Error;
+    use crate::locale_core::ffi::Locale;
+    use crate::provider::ffi::DataProvider;
 
     #[diplomat::rust_link(icu::locale::TransformResult, Enum)]
-    #[diplomat::enum_convert(TransformResult)]
-    pub enum ICU4XTransformResult {
+    #[diplomat::enum_convert(icu_locale::TransformResult)]
+    pub enum TransformResult {
         Modified,
         Unmodified,
     }
@@ -21,46 +22,42 @@ pub mod ffi {
     /// A locale canonicalizer.
     #[diplomat::rust_link(icu::locale::LocaleCanonicalizer, Struct)]
     #[diplomat::opaque]
-    pub struct ICU4XLocaleCanonicalizer(LocaleCanonicalizer);
+    pub struct LocaleCanonicalizer(icu_locale::LocaleCanonicalizer);
 
-    impl ICU4XLocaleCanonicalizer {
-        /// Create a new [`ICU4XLocaleCanonicalizer`].
+    impl LocaleCanonicalizer {
+        /// Create a new [`LocaleCanonicalizer`].
         #[diplomat::rust_link(icu::locale::LocaleCanonicalizer::new, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
-        pub fn create(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XLocaleCanonicalizer>, ICU4XError> {
-            Ok(Box::new(ICU4XLocaleCanonicalizer(call_constructor!(
-                LocaleCanonicalizer::new [r => Ok(r)],
-                LocaleCanonicalizer::try_new_with_any_provider,
-                LocaleCanonicalizer::try_new_with_buffer_provider,
+        #[diplomat::attr(supports = fallible_constructors, constructor)]
+        pub fn create(provider: &DataProvider) -> Result<Box<LocaleCanonicalizer>, Error> {
+            Ok(Box::new(LocaleCanonicalizer(call_constructor!(
+                icu_locale::LocaleCanonicalizer::new [r => Ok(r)],
+                icu_locale::LocaleCanonicalizer::try_new_with_any_provider,
+                icu_locale::LocaleCanonicalizer::try_new_with_buffer_provider,
                 provider,
             )?)))
         }
 
-        /// Create a new [`ICU4XLocaleCanonicalizer`] with extended data.
+        /// Create a new [`LocaleCanonicalizer`] with extended data.
         #[diplomat::rust_link(icu::locale::LocaleCanonicalizer::new_with_expander, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "extended")]
-        pub fn create_extended(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XLocaleCanonicalizer>, ICU4XError> {
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "extended")]
+        pub fn create_extended(provider: &DataProvider) -> Result<Box<LocaleCanonicalizer>, Error> {
             let expander = call_constructor!(
-                LocaleExpander::new_extended [r => Ok(r)],
-                LocaleExpander::try_new_with_any_provider,
-                LocaleExpander::try_new_with_buffer_provider,
+                icu_locale::LocaleExpander::new_extended [r => Ok(r)],
+                icu_locale::LocaleExpander::try_new_with_any_provider,
+                icu_locale::LocaleExpander::try_new_with_buffer_provider,
                 provider,
             )?;
-            Ok(Box::new(ICU4XLocaleCanonicalizer(call_constructor!(
-                LocaleCanonicalizer::new_with_expander [r => Ok(r)],
-                LocaleCanonicalizer::try_new_with_expander_with_any_provider,
-                LocaleCanonicalizer::try_new_with_expander_with_buffer_provider,
+            Ok(Box::new(LocaleCanonicalizer(call_constructor!(
+                icu_locale::LocaleCanonicalizer::new_with_expander [r => Ok(r)],
+                icu_locale::LocaleCanonicalizer::try_new_with_expander_with_any_provider,
+                icu_locale::LocaleCanonicalizer::try_new_with_expander_with_buffer_provider,
                 provider,
                 expander
             )?)))
         }
 
         #[diplomat::rust_link(icu::locale::LocaleCanonicalizer::canonicalize, FnInStruct)]
-        pub fn canonicalize(&self, locale: &mut ICU4XLocale) -> ICU4XTransformResult {
+        pub fn canonicalize(&self, locale: &mut Locale) -> TransformResult {
             self.0.canonicalize(&mut locale.0).into()
         }
     }
@@ -68,49 +65,45 @@ pub mod ffi {
     /// A locale expander.
     #[diplomat::rust_link(icu::locale::LocaleExpander, Struct)]
     #[diplomat::opaque]
-    pub struct ICU4XLocaleExpander(pub LocaleExpander);
+    pub struct LocaleExpander(pub icu_locale::LocaleExpander);
 
-    impl ICU4XLocaleExpander {
-        /// Create a new [`ICU4XLocaleExpander`].
+    impl LocaleExpander {
+        /// Create a new [`LocaleExpander`].
         #[diplomat::rust_link(icu::locale::LocaleExpander::new, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors), constructor)]
-        pub fn create(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XLocaleExpander>, ICU4XError> {
-            Ok(Box::new(ICU4XLocaleExpander(call_constructor!(
-                LocaleExpander::new [r => Ok(r)],
-                LocaleExpander::try_new_with_any_provider,
-                LocaleExpander::try_new_with_buffer_provider,
+        #[diplomat::attr(supports = fallible_constructors, constructor)]
+        pub fn create(provider: &DataProvider) -> Result<Box<LocaleExpander>, Error> {
+            Ok(Box::new(LocaleExpander(call_constructor!(
+                icu_locale::LocaleExpander::new [r => Ok(r)],
+                icu_locale::LocaleExpander::try_new_with_any_provider,
+                icu_locale::LocaleExpander::try_new_with_buffer_provider,
                 provider,
             )?)))
         }
 
-        /// Create a new [`ICU4XLocaleExpander`] with extended data.
+        /// Create a new [`LocaleExpander`] with extended data.
         #[diplomat::rust_link(icu::locale::LocaleExpander::new_extended, FnInStruct)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "extended")]
-        pub fn create_extended(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XLocaleExpander>, ICU4XError> {
-            Ok(Box::new(ICU4XLocaleExpander(call_constructor!(
-                LocaleExpander::new_extended [r => Ok(r)],
-                LocaleExpander::try_new_with_any_provider,
-                LocaleExpander::try_new_with_buffer_provider,
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "extended")]
+        pub fn create_extended(provider: &DataProvider) -> Result<Box<LocaleExpander>, Error> {
+            Ok(Box::new(LocaleExpander(call_constructor!(
+                icu_locale::LocaleExpander::new_extended [r => Ok(r)],
+                icu_locale::LocaleExpander::try_new_with_any_provider,
+                icu_locale::LocaleExpander::try_new_with_buffer_provider,
                 provider,
             )?)))
         }
 
         #[diplomat::rust_link(icu::locale::LocaleExpander::maximize, FnInStruct)]
-        pub fn maximize(&self, locale: &mut ICU4XLocale) -> ICU4XTransformResult {
+        pub fn maximize(&self, locale: &mut Locale) -> TransformResult {
             self.0.maximize(&mut locale.0).into()
         }
 
         #[diplomat::rust_link(icu::locale::LocaleExpander::minimize, FnInStruct)]
-        pub fn minimize(&self, locale: &mut ICU4XLocale) -> ICU4XTransformResult {
+        pub fn minimize(&self, locale: &mut Locale) -> TransformResult {
             self.0.minimize(&mut locale.0).into()
         }
 
         #[diplomat::rust_link(icu::locale::LocaleExpander::minimize_favor_script, FnInStruct)]
-        pub fn minimize_favor_script(&self, locale: &mut ICU4XLocale) -> ICU4XTransformResult {
+        pub fn minimize_favor_script(&self, locale: &mut Locale) -> TransformResult {
             self.0.minimize_favor_script(&mut locale.0).into()
         }
     }

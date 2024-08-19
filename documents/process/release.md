@@ -64,6 +64,7 @@ The ICU4X TC may decide to make a patch release of an ICU4X component on an old 
 * Fix the issue on the main branch. Get it reviewed and landed.
   * Include an update to the changelog.
   * If possible, avoid mixing functional changes with generated files (e.g. data or FFI) in the commit that lands on the main branch.
+* For util crates (and other crates not versioned with ICU4X), update their `Cargo.toml`s on `main` to reflect the version you wish to publish, to simplify things for people making ICU4X major/minor releases in the future. Do NOT publish from `main`.
 * Check out the `release/x.y` branch. On this branch:
   * Cherry-pick the functional change from the main branch
   * Cherry-pick the changelog update if it was a separate commit

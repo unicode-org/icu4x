@@ -1,12 +1,16 @@
 // @generated
 include!("long_compact_decimal_format_data_v1_marker.rs.data");
 include!("short_compact_decimal_format_data_v1_marker.rs.data");
+include!("short_currency_compact_v1_marker.rs.data");
 include!("currency_essentials_v1_marker.rs.data");
+include!("currency_extended_data_v1_marker.rs.data");
+include!("currency_patterns_data_v1_marker.rs.data");
 include!("language_display_names_v1_marker.rs.data");
 include!("locale_display_names_v1_marker.rs.data");
 include!("region_display_names_v1_marker.rs.data");
 include!("script_display_names_v1_marker.rs.data");
 include!("variant_display_names_v1_marker.rs.data");
+include!("digital_duration_data_v1_marker.rs.data");
 include!("percent_essentials_v1_marker.rs.data");
 include!("person_names_format_v1_marker.rs.data");
 include!("long_day_relative_time_format_data_v1_marker.rs.data");
@@ -67,12 +71,16 @@ macro_rules! impl_data_provider {
         make_provider!($provider);
         impl_long_compact_decimal_format_data_v1_marker!($provider);
         impl_short_compact_decimal_format_data_v1_marker!($provider);
+        impl_short_currency_compact_v1_marker!($provider);
         impl_currency_essentials_v1_marker!($provider);
+        impl_currency_extended_data_v1_marker!($provider);
+        impl_currency_patterns_data_v1_marker!($provider);
         impl_language_display_names_v1_marker!($provider);
         impl_locale_display_names_v1_marker!($provider);
         impl_region_display_names_v1_marker!($provider);
         impl_script_display_names_v1_marker!($provider);
         impl_variant_display_names_v1_marker!($provider);
+        impl_digital_duration_data_v1_marker!($provider);
         impl_percent_essentials_v1_marker!($provider);
         impl_person_names_format_v1_marker!($provider);
         impl_long_day_relative_time_format_data_v1_marker!($provider);
@@ -113,12 +121,16 @@ macro_rules! impl_any_provider {
                 match marker.path.hashed() {
                     h if h == <icu::experimental::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::experimental::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::experimental::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::experimental::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::experimental::dimension::provider::currency_compact::ShortCurrencyCompactV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::experimental::dimension::provider::currency_compact::ShortCurrencyCompactV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::experimental::dimension::provider::currency::CurrencyEssentialsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::experimental::dimension::provider::currency::CurrencyEssentialsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::experimental::displaynames::provider::LanguageDisplayNamesV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::experimental::displaynames::provider::LanguageDisplayNamesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::experimental::displaynames::provider::LocaleDisplayNamesV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::experimental::displaynames::provider::LocaleDisplayNamesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::experimental::displaynames::provider::RegionDisplayNamesV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::experimental::displaynames::provider::RegionDisplayNamesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::experimental::displaynames::provider::ScriptDisplayNamesV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::experimental::displaynames::provider::ScriptDisplayNamesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::experimental::displaynames::provider::VariantDisplayNamesV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::experimental::displaynames::provider::VariantDisplayNamesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::experimental::duration::provider::DigitalDurationDataV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::experimental::duration::provider::DigitalDurationDataV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::experimental::dimension::provider::percent::PercentEssentialsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::experimental::dimension::provider::percent::PercentEssentialsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::experimental::personnames::provider::PersonNamesFormatV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::experimental::personnames::provider::PersonNamesFormatV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::experimental::relativetime::provider::LongDayRelativeTimeFormatDataV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::experimental::relativetime::provider::LongDayRelativeTimeFormatDataV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),

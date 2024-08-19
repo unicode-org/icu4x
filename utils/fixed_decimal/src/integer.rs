@@ -8,6 +8,7 @@ use core::fmt;
 use core::str::FromStr;
 
 use crate::FixedDecimal;
+use crate::LimitError;
 use crate::ParseError;
 
 /// A [`FixedInteger`] is a [`FixedDecimal`] with no fractional part.
@@ -19,7 +20,7 @@ use crate::ParseError;
 /// # use std::str::FromStr;
 /// use fixed_decimal::FixedDecimal;
 /// use fixed_decimal::FixedInteger;
-/// use fixed_decimal::ParseError;
+/// use fixed_decimal::LimitError;
 ///
 /// assert_eq!(
 ///     FixedDecimal::from(FixedInteger::from(5)),
@@ -35,7 +36,7 @@ use crate::ParseError;
 /// );
 /// assert_eq!(
 ///     FixedInteger::try_from(FixedDecimal::from_str("5.0").unwrap()),
-///     Err(ParseError::Limit)
+///     Err(LimitError)
 /// );
 /// ```
 #[derive(Debug, Clone, PartialEq, Default)]
@@ -77,26 +78,32 @@ impl writeable::Writeable for FixedInteger {
 }
 
 impl TryFrom<FixedDecimal> for FixedInteger {
-    type Error = ParseError;
+    type Error = LimitError;
     fn try_from(value: FixedDecimal) -> Result<Self, Self::Error> {
         if value.magnitude_range().start() != &0 {
-            Err(ParseError::Limit)
+            Err(LimitError)
         } else {
             Ok(FixedInteger(value))
         }
     }
 }
 
-impl TryFrom<&[u8]> for FixedInteger {
-    type Error = ParseError;
-    fn try_from(value: &[u8]) -> Result<Self, Self::Error> {
-        FixedInteger::try_from(FixedDecimal::try_from(value)?)
+impl FixedInteger {
+    #[inline]
+    pub fn try_from_str(s: &str) -> Result<Self, ParseError> {
+        Self::try_from_utf8(s.as_bytes())
+    }
+
+    pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
+        FixedInteger::try_from(FixedDecimal::try_from_utf8(code_units)?)
+            .map_err(|LimitError| ParseError::Limit)
     }
 }
 
 impl FromStr for FixedInteger {
     type Err = ParseError;
-    fn from_str(value: &str) -> Result<Self, Self::Err> {
-        FixedInteger::try_from(FixedDecimal::from_str(value)?)
+    #[inline]
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Self::try_from_str(s)
     }
 }

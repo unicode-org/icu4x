@@ -5,7 +5,7 @@
 [package]
 name = "zerovec"
 description = "Zero-copy vector backed by a byte array"
-version = "0.10.2"
+version = "0.10.4"
 categories = ["rust-patterns", "memory-management", "caching", "no-std", "data-structures"]
 keywords = ["zerocopy", "serialization", "zero-copy", "serde"]
 
@@ -50,6 +50,7 @@ rand_pcg = { workspace = true }
 rmp-serde = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
+potential_utf = { workspace = true, features = ["zerovec"] }
 yoke = { path = "../../utils/yoke", features = ["derive"] }
 zerofrom = { path = "../../utils/zerofrom", features = ["derive"] }
 

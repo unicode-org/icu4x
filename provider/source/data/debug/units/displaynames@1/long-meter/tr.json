@@ -1,6 +1,5 @@
 {
   "patterns": {
-    "One": "{0} metre",
     "Other": "{0} metre"
   }
 }

@@ -71,8 +71,10 @@ members = [
     "utils/pattern",
     "utils/preferences",
     "utils/resb",
+    "utils/env_preferences",
     "utils/tinystr",
     "utils/tzif",
+    "utils/potential_utf",
     "utils/writeable",
     "utils/yoke",
     "utils/yoke/derive",
@@ -83,14 +85,14 @@ members = [
     "utils/zerovec/derive",
 
     # Tools
-    "tools/bakeddata-scripts",
     "tools/benchmark/binsize",
     "tools/benchmark/macros",
     "tools/benchmark/memory",
-    "tools/depcheck",
-    "tools/diplomat-gen",
-    "tools/ffi_coverage",
-    "tools/testdata-scripts",
+    "tools/make/bakeddata",
+    "tools/make/depcheck",
+    "tools/make/diplomat-coverage",
+    "tools/make/diplomat-gen",
+    "tools/make/download-repo-sources",
     "tools/md-tests",
 ]
 # Note: Workspaces in subdirectories, such as tutorials/crates, are
@@ -158,8 +160,8 @@ icu_provider_macros = { version = "~1.5.0", path = "provider/core/macros", defau
 icu_provider_adapters = { version = "~1.5.0", path = "provider/adapters", default-features = false }
 icu_provider_baked = { version = "~1.5.0", path = "provider/baked", default-features = false }
 icu_provider_blob = { version = "~1.5.0", path = "provider/blob", default-features = false }
-icu_provider_fs = { version = "~1.5.0", path = "provider/fs/", default-features = false }
-icu_registry = { version = "~1.5.0", path = "provider/registry/", default-features = false }
+icu_provider_fs = { version = "~1.5.0", path = "provider/fs", default-features = false }
+icu_provider_registry = { version = "~1.5.0", path = "provider/registry", default-features = false }
 
 # Baked data
 icu_calendar_data = { version = "~1.5.0", path = "provider/data/calendar", default-features = false }
@@ -189,7 +191,8 @@ ixdtf = { version = "0.2.0", path = "utils/ixdtf", default-features = false }
 litemap = { version = "0.7.3", path = "utils/litemap", default-features = false }
 tinystr = { version = "0.7.5", path = "utils/tinystr", default-features = false }
 tzif = { version = "0.2.3", path = "utils/tzif", default-features = false }
-writeable = { version = "0.5.5", path = "utils/writeable/", default-features = false }
+potential_utf = { version = "0.0.0", path = "utils/potential_utf", default-features = false }
+writeable = { version = "0.5.5", path = "utils/writeable", default-features = false }
 yoke = { version = "0.7.4", path = "utils/yoke", default-features = false }
 yoke-derive = { version = "0.7.4", path = "utils/yoke/derive", default-features = false }
 zerofrom = { version = "0.1.3", path = "utils/zerofrom", default-features = false }
@@ -200,18 +203,16 @@ zerovec-derive = { version = "0.10.2", path = "utils/zerovec/derive", default-fe
 
 # Tools
 icu_benchmark_macros = { path = "tools/benchmark/macros" }
-# icu_benchmark_binsize never used as a dep
-# icu_benchmark_memory never used as a dep
-# depcheck never used as a dep
-# ffi_coverage never used as a dep
-# testdata-scripts never used as a dep
+# bench-binsize never used as a dep
+# bench-memory never used as a dep
+# make/* never used as a dep
 
 # The version here can either be a `version = ".."` spec or `git = "https://github.com/rust-diplomat/diplomat", rev = ".."`
 # Diplomat must be published preceding a new ICU4X release but may use git versions in between
-diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "40dd17124eadcaa3cf91873547fa7504bc8aff80" }
-diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "40dd17124eadcaa3cf91873547fa7504bc8aff80" }
-diplomat_core = { git = "https://github.com/rust-diplomat/diplomat", rev = "40dd17124eadcaa3cf91873547fa7504bc8aff80" }
-diplomat-tool = { git = "https://github.com/rust-diplomat/diplomat", rev = "40dd17124eadcaa3cf91873547fa7504bc8aff80" }
+diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "8744ac97162341f347b63131969ad736e1047f6d" }
+diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "8744ac97162341f347b63131969ad736e1047f6d" }
+diplomat_core = { git = "https://github.com/rust-diplomat/diplomat", rev = "8744ac97162341f347b63131969ad736e1047f6d" }
+diplomat-tool = { git = "https://github.com/rust-diplomat/diplomat", rev = "8744ac97162341f347b63131969ad736e1047f6d" }
 
 # EXTERNAL DEPENDENCIES
 #
@@ -295,6 +296,7 @@ toml = "0.5.8"
 ureq = "2.3.0"
 walkdir = "2.3.2"
 wasmi = "0.31.2"
+wat = "1"
 
 # Size optimized builds
 [profile.release-opt-size]

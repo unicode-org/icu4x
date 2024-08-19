@@ -16,7 +16,8 @@ The following steps take place at build time:
 2. The source data is parsed and transformed into a runtime data struct. This step can be expensive, because it is normally run as an offline build step.
 3. The runtime data struct is stored in a way so that a provider can use it: a postcard blob, JSON directory tree, Rust module, etc.
 
-These steps are performed by the `icu_datagen`, but clients can also write their own data generation logic.
+Steps 1 and 2 are performed by the `icu_provider_source` crate, but clients can also write their own source provider. Step 3 is performed by the `icu_provider_export` crate.
+The `icu4x-datagen` pulls these two crates together as a CLI.
 
 When deserializing from the blob store, it is a design principle of ICU4X that no heap allocations will be required. We have many utilities and abstractions to help make this safe and easy.
 
@@ -42,9 +43,9 @@ Additionally, data structs should keep internal invariants to a minimum. For mor
 
 The first step to introduce data into the ICU4X pipeline is to download it from an external source. This corresponds to step 1 above.
 
-When clients use ICU4X, this is generally a manual step, although we may provide tooling to assist with it. For the purpose of ICU4X test data, the tool `download-repo-sources` should automatically download data from the external source and save it in the ICU4X tree. `download-repo-sources` should not do anything other than downloading the raw source data.
+When clients use ICU4X, this is generally an automatic step. For the purpose of ICU4X test data, the tool `download-repo-sources` should automatically download data from the external source and save it in the ICU4X tree. `download-repo-sources` should not do anything other than downloading the raw source data.
 
-To download test data into the ICU4X source tree, run: 
+To add new files to the repo, edit `tools/testdata-scripts/globs.rs.data`, and run 
 
 ```console
 $ cargo make download-repo-sources
@@ -52,73 +53,33 @@ $ cargo make download-repo-sources
 
 ### Source Data Providers
 
-"Source data providers" read from a source data file, deserialize it, and transform it to an ICU4X data struct. This corresponds to steps 2 and 3 above.
+"Source data providers" read from a source data file, deserialize it, and transform it to an ICU4X data struct. This corresponds to step 2 above.
 
-To add a new source data provider, implement the following traits on [`DatagenProvider`](https://unicode-org.github.io/icu4x/rustdoc/icu_datagen/struct.DatagenProvider.html) for your data marker(s):
+To enabled generation of a new data marker `M`, add the following implementations to ICU4X's source data provider, [`SourceDataProvider`](https://unicode-org.github.io/icu4x/rustdoc/icu_provider_source/struct.SourceDataProvider.html):
 
-- `DataProvider<M>` for one or more data markers `M`; this impl is the main step where data transformation takes place
-- `IterableDataProviderInternal<M>`, which automatically results in a cached impl of `IterableDataProvider<M>`
+- `DataProvider<M>`; this impl is the main step where data transformation takes place
+- `IterableDataProviderCached<M>`, which automatically results in a cached impl of `IterableDataProvider<M>`
 
-Source data providers are often complex to write. Rules of thumb:
+Source data providers implementations are often complex to write. Rules of thumb:
 
 - Optimize for readability and maintainability. The source data providers are not used in production, so performance is not a driving concern; however, we want the transformer to be fast enough to make a good developer experience.
 - If the data source is similar to an existing data source (e.g., importing new data from CLDR JSON), try to share code with existing data providers for that source.
-- If the data source is novel, feel free to add a new module under `icu_datagen::transform`.
 
-### Data Exporters and Runtime Data Providers
+As the last step, add the marker to the [registry](https://unicode-org.github.io/icu4x/rustdoc/icu_provider_registry/index.html).
 
-"Data exporters" read from one or more ICU4X data structs and dump them to storage. This corresponds to step 4 above.
+You can now run `cargo make testdata` to test your implementation on our testing locales. This will generate JSON data in `provider/source/data/debug`, which you can use for debugging.
 
-Examples of data exporters include:
+After you are done, add your data marker to the component's `provider::KEYS` list, and run `cargo make bakeddata` to generate compiled data for inclusion in the crate.
 
-- [`FilesystemExporter`](https://unicode-org.github.io/icu4x/rustdoc/icu_provider_fs/export/fs_exporter/struct.FilesystemExporter.html)
-- [`BlobExporter`](https://unicode-org.github.io/icu4x/rustdoc/icu_provider_blob/export/struct.BlobExporter.html)
+### Data export and runtime data providers
 
-"Runtime data providers" are ones that read serialized ICU4X data structs and deserialize them for use at runtime. These are the providers where performance is the key driving factor.
+[`ExportDriver`](https://unicode-org.github.io/icu4x/rustdoc/icu_provider_export/struct.ExportDriver.html) reads from a source data provider and dumps it to storage. This corresponds to step 3 above. It is parameterized by a [`DataExporter`](https://unicode-org.github.io/icu4x/rustdoc/icu_provider/export/trait.DataExporter.html), which produces data for one of the high-performance runtime providers:
 
-Examples of runtime data providers include:
+- [`FilesystemExporter`](https://unicode-org.github.io/icu4x/rustdoc/icu_provider_fs/export/fs_exporter/struct.FilesystemExporter.html) for [`FsDataProvider`](https://unicode-org.github.io/icu4x/rustdoc/icu_provider_fs/struct.FsDataProvider.html)
+- [`BlobExporter`](https://unicode-org.github.io/icu4x/rustdoc/icu_provider_blob/export/struct.BlobExporter.html) for [`BlobDataProvider`](https://unicode-org.github.io/icu4x/rustdoc/icu_provider_blob/struct.BlobDataProvider.html)
+- [`BakedExporter`](https://unicode-org.github.io/icu4x/rustdoc/icu_provider_baked/export/struct.BakedExporter.html) for a baked data provider
 
-- [`FsDataProvider`](https://unicode-org.github.io/icu4x/rustdoc/icu_provider_fs/struct.FsDataProvider.html)
-- [`BlobDataProvider`](https://unicode-org.github.io/icu4x/rustdoc/icu_provider_blob/struct.BlobDataProvider.html)
-
-**Most ICU4X contributors will not need to touch the data exporters or runtime data providers.** New implementations are only necessary when adding a new ICU4X data struct storage mechanism.
-
-### Data Generation Tool (`icu4x-datagen`)
-
-The [data generation tool, i.e., `icu4x-datagen`](https://unicode-org.github.io/icu4x/rustdoc/icu_datagen/index.html), ties together the source data providers with a data exporter.
-
-When adding new data structs, it is necessary to make `icu4x-datagen` aware of your source data provider. To do this, edit 
-[*provider/datagen/src/registry.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/datagen/src/registry.rs) and add your data provider to the macro
-
-```rust,compile_fail
-registry!(
-    // ...
-    FooV1Marker,
-)
-```
-
-as well as to the list of keys 
-
-```rust
-
-use std::borrow::Cow;
-use icu_provider::prelude::*;
-
-#[derive(Debug, PartialEq, Clone)]
-#[icu_provider::data_struct(marker(FooV1Marker, "foo/bar@1"))]
-pub struct FooV1<'data> {
-  message: Cow<'data, str>,
-}
-
-```
-
-When finished, run from the top level:
-
-```bash
-$ cargo make testdata
-```
-
-If everything is hooked together properly, JSON files for your new data struct should appear under *provider/datagen/tests/data/json*.
+**Most ICU4X contributors will not need to touch data export or runtime data providers.** New implementations are only necessary when adding a new ICU4X data struct storage mechanism.
 
 ## Example
 
@@ -134,7 +95,7 @@ use icu_provider::prelude::*;
 use icu::decimal::provider::{ AffixesV1, GroupingSizesV1 };
 
 /// Symbols and metadata required for formatting a [`FixedDecimal`](crate::FixedDecimal).
-#[icu_provider::data_struct(marker(DecimalSymbolsV1Marker, "decimal/symbols@1", extension_key = "nu" ))]
+#[icu_provider::data_struct(DecimalSymbolsV1Marker = "decimal/symbols@1")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
     feature = "datagen",
@@ -172,7 +133,7 @@ The above example is an abridged definition for `DecimalSymbolsV1`. Note how the
 
 ### CLDR JSON Deserialize
 
-[*provider/datagen/src/transform/cldr/cldr_serde/numbers.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/datagen/src/transform/cldr/cldr_serde/numbers.rs)
+[*provider/source/src/cldr_serde/numbers.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/source/src/cldr_serde/numbers.rs)
 
 
 ```rust
@@ -206,30 +167,27 @@ pub struct Resource {
 }
 ```
 
-
 The above example is an abridged definition of the Serde structure corresponding to CLDR JSON. Since this Serde definition is not used at runtime, it does not need to be zero-copy.
 
 ### Transformer
 
 [*provider/core/src/data_provider.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/core/src/data_provider.rs)
 
-[*provider/core/src/datagen/iter.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/core/src/datagen/iter.rs)
-
 ```rust,compile_fail
-impl DataProvider<FooV1Marker> for DatagenProvider {
+impl DataProvider<FooV1Marker> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<FooV1Marker>, DataError> {
-        // Use the data inside self.source and emit it as an ICU4X data struct.
+        // Use the data inside self and emit it as an ICU4X data struct.
         // This is the core transform operation. This step could take a lot of
         // work, such as pre-parsing patterns, re-organizing the data, etc.
-        // This method will be called once per option returned by supported_locales.
+        // This method will be called once per option returned by iter_locales.
     }
 }
 
-impl IterableDataProviderInternal<FooV1Marker> for FooProvider {
-    fn supported_locales_impl(
+impl IterableDataProviderCached<FooV1Marker> for SourceDataProvider {
+    fn iter_locales_cached(
         &self,
     ) -> Result<HashSet<DataLocale>, DataError> {
         // This should list all supported locales.
@@ -237,4 +195,12 @@ impl IterableDataProviderInternal<FooV1Marker> for FooProvider {
 }
 ```
 
-The above example is an abridged snippet of code illustrating the most important boilerplate for implementing and ICU4X data transform.
+### Registry
+
+```rust,compile_fail
+registry!(
+    // ...
+    icu::foo::provider::FooV1Marker = "foo/bar@1",
+    // ...
+)
+```

@@ -26,7 +26,7 @@ final class LocaleFallbackerWithConfig implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XLocaleFallbackerWithConfig_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_LocaleFallbackerWithConfig_destroy_mv1));
 
   /// Creates an iterator from a locale with each step of fallback.
   ///
@@ -34,17 +34,17 @@ final class LocaleFallbackerWithConfig implements ffi.Finalizable {
   LocaleFallbackIterator fallbackForLocale(Locale locale) {
     // This lifetime edge depends on lifetimes: 'a, 'b
     core.List<Object> aEdges = [this];
-    final result = _ICU4XLocaleFallbackerWithConfig_fallback_for_locale(_ffi, locale._ffi);
+    final result = _icu4x_LocaleFallbackerWithConfig_fallback_for_locale_mv1(_ffi, locale._ffi);
     return LocaleFallbackIterator._fromFfi(result, [], aEdges);
   }
 }
 
-@meta.ResourceIdentifier('ICU4XLocaleFallbackerWithConfig_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XLocaleFallbackerWithConfig_destroy')
+@meta.ResourceIdentifier('icu4x_LocaleFallbackerWithConfig_destroy_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_LocaleFallbackerWithConfig_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XLocaleFallbackerWithConfig_destroy(ffi.Pointer<ffi.Void> self);
+external void _icu4x_LocaleFallbackerWithConfig_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XLocaleFallbackerWithConfig_fallback_for_locale')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleFallbackerWithConfig_fallback_for_locale')
+@meta.ResourceIdentifier('icu4x_LocaleFallbackerWithConfig_fallback_for_locale_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleFallbackerWithConfig_fallback_for_locale_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _ICU4XLocaleFallbackerWithConfig_fallback_for_locale(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale);
+external ffi.Pointer<ffi.Opaque> _icu4x_LocaleFallbackerWithConfig_fallback_for_locale_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale);

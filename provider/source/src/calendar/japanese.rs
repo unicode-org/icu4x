@@ -10,7 +10,6 @@ use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use std::collections::HashSet;
 use std::env;
-use std::str::FromStr;
 use std::sync::OnceLock;
 use tinystr::tinystr;
 use tinystr::TinyStr16;
@@ -28,7 +27,7 @@ impl SourceDataProvider {
         let era_name_map = &self
             .cldr()?
             .dates("japanese")
-            .read_and_parse::<cldr_serde::ca::Resource>(&langid!("en"), "ca-japanese.json")?
+            .read_and_parse::<cldr_serde::ca::Resource>(&langid!("en").into(), "ca-japanese.json")?
             .main
             .value
             .dates
@@ -64,13 +63,7 @@ impl SourceDataProvider {
                 continue;
             }
 
-            let start_date =
-                EraStartDate::from_str(date.start.as_ref().unwrap()).map_err(|_| {
-                    DataError::custom(
-                        "calendarData.json contains unparseable data for a japanese era",
-                    )
-                    .with_display_context(&format!("era index {era_id}"))
-                })?;
+            let start_date = date.start.unwrap();
 
             if start_date.year >= 1868 || japanext {
                 let code = era_to_code(era_name_map.get(era_id).unwrap(), start_date.year)
@@ -97,8 +90,8 @@ impl SourceDataProvider {
                 return Err(DataError::custom(
                     "Era data has changed! This can be for two reasons: Either the CLDR locale data for Japanese eras has \
                     changed in an incompatible way, or there is a new Japanese era. Run \
-                    `ICU4X_SKIP_JAPANESE_INTEGRITY_CHECK=1 cargo run -p icu4x-datagen -- --markers JapaneseErasV1Marker --format dir --syntax json \
-                    --out provider/datagen/data/japanese-golden --pretty --overwrite` in the icu4x repo and inspect the diff to \
+                    `ICU4X_SKIP_JAPANESE_INTEGRITY_CHECK=1 cargo run -p icu4x-datagen -- --markers JapaneseExtendedErasV1Marker --format dir --syntax json \
+                    --out provider/source/data/japanese-golden --pretty --overwrite` in the icu4x repo and inspect the diff to \
                     check which situation it is. If a new era has been introduced, commit the diff, if not, it's likely that japanese.rs \
                     in icu_provider_source will need to be updated to handle the data changes."
                 ));

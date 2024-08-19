@@ -1,7 +1,0 @@
-{
-  "patterns": {
-    "One": "{0} decenija",
-    "Few": "{0} decenije",
-    "Other": "{0} decenija"
-  }
-}

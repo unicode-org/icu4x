@@ -1,0 +1,56 @@
+// @generated
+/// Implement `DataProvider<DigitalDurationDataV1Marker>` on the given struct using the data
+/// hardcoded in this file. This allows the struct to be used with
+/// `icu`'s `_unstable` constructors.
+///
+/// Using this implementation will embed the following data in the binary's data segment:
+/// * 635B for the lookup data structure (157 data identifiers)
+/// * 198B[^1] for the actual data (6 unique structs)
+///
+/// [^1]: these numbers can be smaller in practice due to linker deduplication
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impl_digital_duration_data_v1_marker {
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.70"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.70"]
+        impl $provider {
+            const DATA_DIGITAL_DURATION_DATA_V1_MARKER: icu_provider_baked::zerotrie::Data<icu::experimental::duration::provider::DigitalDurationDataV1Marker> = icu_provider_baked::zerotrie::Data { trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1zabcdefghijklmnopqrstuvwxyz\0\0\0\0\0\0\0\0\0\0\0\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x112HVl\x85\x91\xA7\xB9\xBF\xFE\x120AG[]j\xA8\xC3\xD9\xE4\xE6\xED\xFE\xC5fmrsz\x01\x02\x03\x06\x80\x81\x81\x81t\x81\x81\xC7eghlnrs\x01\x04\x06\x08\t\x0C\x80\x81c\x81o\x81o\x81\x81\x81x\x81\x81-Cyrl\x81\xC6aehsvy\x01\x03\x05\x08\t\x81b\x81r\x81\x81w\x81\x81\x81\xC4aeos\x01\x02\x04\x82\x81i\x81b\x81\xC6lnostu\x01\x02\x03\x08\t\x81\x81\x81\x81-CL\x83\x81\x81\xC6afiory\x01\x07\n\x0B\x0C\x81-Adlm\x81\x82l\x81\x81\x81\x81\xC4adlu\x01\x02\x03\x81\x81\x81\x81\xC7aeirsuy\x01\x02\x03\x04\x06\x07\x81\x81\x81\x81b\x81\x81\x81\xC6adegst\x01\x02\x03\x04\x05\x80\x82\x81\x81\x81\x81\xC2av\x01\x81\x81\xCBaegkmnosuxy\x01\x03\x05\x06\x07\x08\x0B\x12\x13(\x81a\x81p\x81\x81\x81\x81\x81k\x81\x81-Deva\x81\x81v\x81-\xC3DOT\x04\x08eva\x81rya\x81elu\x81\x81\xC6bimotv\x01\x03\x05\x06\x07\x81j\x81o\x81\x81\x80\x81\xC9aiklnrsty\x02\x03\x04\x05\x08\t\n\x0Bi\x81\x81\x81\x81\x84i\x81\x81\x81\x81\x81\xC5deloq\x02\x03\x04\x05s\x81\x81\x81\x81o\x81\xC2cr\x01\x81\x81\xC6aclrst\x01\x03\x04\x06\x07\x81m\x81\x81g\x81\x81\x81u\x81\xC4amou\x02\x03\x04j\x81\x81\x81\x81\xCEacdikloqruvwyz\x07\x08\x0F\x10\x11\x12\x13\x14\x1B\x1C\x1D\x1E \x81\xC2ht\x01\x81\x81\x81\x81-Deva\x81\x82\x81\x82\x81\x81\x82-Latn\x82\x82\x81\x81r\x81l\x81\xC9aeghikort\x01\x02\x03\x04\x05\x06\x07\x08\x81\x81\x81\x81\x81\x85\x81\x81\x81\xC5gknrz\x01\x02\x04\x05\x81\x81d\x81\x81\x81-Cyrl\x81\xC3eim\x02\x03c\x81\x81w\x81o\x81\xC2hn\x01\x81r\x81\xC3oru\x01\x03\x81l\x81e\x81-Hans\x81\xC3ahu\x01\x08\x81\x81-Hant\x81\x81" }, values: &[icu::experimental::duration::provider::DigitalDurationDataV1 { separator: alloc::borrow::Cow::Borrowed(":"), hms_padding: icu::experimental::duration::provider::HmsPadding { h: 2u8, m: 2u8, s: 2u8 }, hm_padding: icu::experimental::duration::provider::HmPadding { h: 2u8, m: 2u8 }, ms_padding: icu::experimental::duration::provider::MsPadding { m: 2u8, s: 2u8 } }, icu::experimental::duration::provider::DigitalDurationDataV1 { separator: alloc::borrow::Cow::Borrowed(":"), hms_padding: icu::experimental::duration::provider::HmsPadding { h: 1u8, m: 2u8, s: 2u8 }, hm_padding: icu::experimental::duration::provider::HmPadding { h: 1u8, m: 2u8 }, ms_padding: icu::experimental::duration::provider::MsPadding { m: 1u8, s: 2u8 } }, icu::experimental::duration::provider::DigitalDurationDataV1 { separator: alloc::borrow::Cow::Borrowed("."), hms_padding: icu::experimental::duration::provider::HmsPadding { h: 1u8, m: 2u8, s: 2u8 }, hm_padding: icu::experimental::duration::provider::HmPadding { h: 1u8, m: 2u8 }, ms_padding: icu::experimental::duration::provider::MsPadding { m: 1u8, s: 2u8 } }, icu::experimental::duration::provider::DigitalDurationDataV1 { separator: alloc::borrow::Cow::Borrowed(":"), hms_padding: icu::experimental::duration::provider::HmsPadding { h: 2u8, m: 2u8, s: 2u8 }, hm_padding: icu::experimental::duration::provider::HmPadding { h: 1u8, m: 2u8 }, ms_padding: icu::experimental::duration::provider::MsPadding { m: 2u8, s: 2u8 } }, icu::experimental::duration::provider::DigitalDurationDataV1 { separator: alloc::borrow::Cow::Borrowed(":"), hms_padding: icu::experimental::duration::provider::HmsPadding { h: 2u8, m: 2u8, s: 2u8 }, hm_padding: icu::experimental::duration::provider::HmPadding { h: 2u8, m: 2u8 }, ms_padding: icu::experimental::duration::provider::MsPadding { m: 1u8, s: 2u8 } }, icu::experimental::duration::provider::DigitalDurationDataV1 { separator: alloc::borrow::Cow::Borrowed(":"), hms_padding: icu::experimental::duration::provider::HmsPadding { h: 2u8, m: 2u8, s: 2u8 }, hm_padding: icu::experimental::duration::provider::HmPadding { h: 1u8, m: 2u8 }, ms_padding: icu::experimental::duration::provider::MsPadding { m: 1u8, s: 2u8 } }] };
+        }
+        #[clippy::msrv = "1.70"]
+        impl icu_provider::DataProvider<icu::experimental::duration::provider::DigitalDurationDataV1Marker> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::experimental::duration::provider::DigitalDurationDataV1Marker>, icu_provider::DataError> {
+                let mut metadata = icu_provider::DataResponseMetadata::default();
+                let payload = if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_DIGITAL_DURATION_DATA_V1_MARKER, req.id, req.metadata.attributes_prefix_match) {
+                    payload
+                } else {
+                    const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::experimental::duration::provider::DigitalDurationDataV1Marker as icu_provider::DataMarker>::INFO.fallback_config);
+                    let mut fallback_iterator = FALLBACKER.fallback_for(req.id.locale.clone());
+                    loop {
+                        if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_DIGITAL_DURATION_DATA_V1_MARKER, icu_provider::DataIdentifierBorrowed::for_marker_attributes_and_locale(req.id.marker_attributes, fallback_iterator.get()), req.metadata.attributes_prefix_match) {
+                            metadata.locale = Some(fallback_iterator.take());
+                            break payload;
+                        }
+                        if fallback_iterator.get().is_default() {
+                            return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::experimental::duration::provider::DigitalDurationDataV1Marker as icu_provider::DataMarker>::INFO, req));
+                        }
+                        fallback_iterator.step();
+                    }
+                };
+                Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(payload), metadata })
+            }
+        }
+    };
+    ($ provider : ty , ITER) => {
+        __impl_digital_duration_data_v1_marker!($provider);
+        #[clippy::msrv = "1.70"]
+        impl icu_provider::IterableDataProvider<icu::experimental::duration::provider::DigitalDurationDataV1Marker> for $provider {
+            fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
+                Ok(icu_provider_baked::DataStore::iter(&Self::DATA_DIGITAL_DURATION_DATA_V1_MARKER).collect())
+            }
+        }
+    };
+}
+#[doc(inline)]
+pub use __impl_digital_duration_data_v1_marker as impl_digital_duration_data_v1_marker;

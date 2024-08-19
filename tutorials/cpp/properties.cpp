@@ -2,17 +2,19 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#include "ICU4XCodePointSetData.hpp"
-#include "ICU4XUnicodeSetData.hpp"
-#include "ICU4XCodePointMapData16.hpp"
-#include "ICU4XCodePointMapData8.hpp"
-#include "ICU4XPropertyValueNameToEnumMapper.hpp"
-#include "ICU4XGeneralCategoryNameToMaskMapper.hpp"
-#include "ICU4XLogger.hpp"
+#include <icu4x/CodePointSetData.hpp>
+#include <icu4x/UnicodeSetData.hpp>
+#include <icu4x/CodePointMapData16.hpp>
+#include <icu4x/CodePointMapData8.hpp>
+#include <icu4x/PropertyValueNameToEnumMapper.hpp>
+#include <icu4x/GeneralCategoryNameToMaskMapper.hpp>
+#include <icu4x/Logger.hpp>
 
 #include <iostream>
 
-int test_set_property(ICU4XCodePointSetData* data, char32_t included, char32_t excluded) {
+using namespace icu4x;
+
+int test_set_property(CodePointSetData* data, char32_t included, char32_t excluded) {
     bool contains1 = data->contains(included);
     bool contains2 = data->contains(excluded);
     std::cout << std::hex; // print hex for U+####
@@ -25,7 +27,7 @@ int test_set_property(ICU4XCodePointSetData* data, char32_t included, char32_t e
     return 0;
 }
 
-int test_map_16_property(ICU4XCodePointMapData16* data, char32_t sample, uint32_t expected) {
+int test_map_16_property(CodePointMapData16* data, char32_t sample, uint32_t expected) {
     uint32_t actual = data->get(sample);
     std::cout << std::hex; // print hex for U+####
     if (actual == expected) {
@@ -37,7 +39,7 @@ int test_map_16_property(ICU4XCodePointMapData16* data, char32_t sample, uint32_
     return 0;
 }
 
-int test_map_8_property(ICU4XCodePointMapData8* data, char32_t sample, uint32_t expected) {
+int test_map_8_property(CodePointMapData8* data, char32_t sample, uint32_t expected) {
     uint32_t actual = data->get(sample);
     std::cout << std::hex; // print hex for U+####
     if (actual == expected) {
@@ -50,12 +52,12 @@ int test_map_8_property(ICU4XCodePointMapData8* data, char32_t sample, uint32_t 
 }
 
 int main() {
-    ICU4XLogger::init_simple_logger();
-    std::unique_ptr<ICU4XDataProvider> dp = ICU4XDataProvider::create_compiled();
+    Logger::init_simple_logger();
+    std::unique_ptr<DataProvider> dp = DataProvider::compiled();
     int result;
 
     result = test_set_property(
-        ICU4XCodePointSetData::load_ascii_hex_digit(*dp.get()).ok().value().get(),
+        CodePointSetData::load_ascii_hex_digit(*dp.get()).ok().value().get(),
         u'3',
         u'੩'
     );
@@ -64,7 +66,7 @@ int main() {
     }
 
     result = test_map_16_property(
-        ICU4XCodePointMapData16::load_script(*dp.get()).ok().value().get(),
+        CodePointMapData16::load_script(*dp.get()).ok().value().get(),
         u'木',
         17 // Script::Han
     );
@@ -73,7 +75,7 @@ int main() {
     }
 
     result = test_map_8_property(
-        ICU4XCodePointMapData8::load_general_category(*dp.get()).ok().value().get(),
+        CodePointMapData8::load_general_category(*dp.get()).ok().value().get(),
         u'木',
         5 // GeneralCategory::OtherLetter
     );
@@ -82,7 +84,7 @@ int main() {
     }
 
     result = test_map_8_property(
-        ICU4XCodePointMapData8::load_bidi_class(*dp.get()).ok().value().get(),
+        CodePointMapData8::load_bidi_class(*dp.get()).ok().value().get(),
         u'ع',
         13 // GeneralCategory::ArabicLetter
     );
@@ -90,7 +92,7 @@ int main() {
         return result;
     }
 
-    std::unique_ptr<ICU4XUnicodeSetData> basic_emoji = ICU4XUnicodeSetData::load_basic_emoji(*dp.get()).ok().value();
+    std::unique_ptr<UnicodeSetData> basic_emoji = UnicodeSetData::load_basic_emoji(*dp.get()).ok().value();
     std::string letter = u8"hello";
 
     if (!basic_emoji->contains_char(U'🔥')) {
@@ -117,8 +119,8 @@ int main() {
     } else {
         std::cout << "Basic_Emoji set contains appropriate characters" << std::endl;
     }
-    std::unique_ptr<ICU4XLocale> locale = ICU4XLocale::create_from_string("bn").ok().value();
-    std::unique_ptr<ICU4XUnicodeSetData> exemplars = ICU4XUnicodeSetData::load_exemplars_main(*dp.get(), *locale.get()).ok().value();
+    std::unique_ptr<Locale> locale = Locale::from_string("bn").ok().value();
+    std::unique_ptr<UnicodeSetData> exemplars = UnicodeSetData::load_exemplars_main(*dp.get(), *locale.get()).ok().value();
     if (!exemplars->contains_char(U'ব')) {
         std::cout << "Character 'ব' not found in Bangla exemplar chars set" << std::endl;
         result = 1;
@@ -144,7 +146,7 @@ int main() {
     }
 
 
-    std::unique_ptr<ICU4XPropertyValueNameToEnumMapper> mapper = ICU4XPropertyValueNameToEnumMapper::load_script(*dp.get()).ok().value();
+    std::unique_ptr<PropertyValueNameToEnumMapper> mapper = PropertyValueNameToEnumMapper::load_script(*dp.get()).ok().value();
     int32_t script = mapper->get_strict("Brah");
     if (script != 65) {
         std::cout << "Expected discriminant 64 for script name `Brah`, found " << script << std::endl;
@@ -171,7 +173,7 @@ int main() {
         std::cout << "Script name mapper returns correct values" << std::endl;
     }
 
-    std::unique_ptr<ICU4XGeneralCategoryNameToMaskMapper> mask_mapper = ICU4XGeneralCategoryNameToMaskMapper::load(*dp.get()).ok().value();
+    std::unique_ptr<GeneralCategoryNameToMaskMapper> mask_mapper = GeneralCategoryNameToMaskMapper::load(*dp.get()).ok().value();
     int32_t mask = mask_mapper->get_strict("Lu");
     if (mask != 0x02) {
         std::cout << "Expected discriminant 0x02 for mask name `Lu`, found " << mask << std::endl;
@@ -212,7 +214,7 @@ int main() {
 
 
     mask = mask_mapper->get_strict("Lu");
-    std::unique_ptr<ICU4XCodePointMapData8> gc = ICU4XCodePointMapData8::load_general_category(*dp.get()).ok().value();
+    std::unique_ptr<CodePointMapData8> gc = CodePointMapData8::load_general_category(*dp.get()).ok().value();
     auto ranges = gc->iter_ranges_for_mask(mask);
     auto next = ranges->next();
     if (next.done) {

@@ -1,6 +1,6 @@
 # Data management in ICU4X
 
-This tutorial introduces data providers as well as the `icu_datagen` tool.
+This tutorial introduces data providers as well as the `icu4x-datagen` tool.
 
 If you're happy shipping your app with the recommended set of locales included in `ICU4X`, you can stop reading now. If you want to reduce code size, do runtime data loading, or build your own complex data pipelines, this tutorial is for you.
 
@@ -10,7 +10,7 @@ This tutorial assumes you have finished the [introductory tutorial](intro.md) an
 
 # 2. Generating data
 
-Data generation is done using the `icu_datagen` crate, which pulls in data from [Unicode's *Common Locale Data Repository* (*CLDR*)](http://cldr.unicode.org/index/downloads) and from `ICU4C` releases to generate `ICU4X` data. The crate has a command line interface as well as a Rust API, which can be used in Rust scripts. Here we will use the CLI.
+Data generation is done using the `icu4x-datagen` tool, which pulls in data from [Unicode's *Common Locale Data Repository* (*CLDR*)](http://cldr.unicode.org/index/downloads) and from `ICU4C` releases to generate `ICU4X` data.
 
 First we will need to install the binary:
 
@@ -82,15 +82,17 @@ Because of these three data provider types, every `ICU4X` API has four construct
 
 The data we generated in section 2 is actually just Rust code defining `DataProvider` implementations for all markers using hardcoded data (go take a look!).
 
-So far we've used it through the default `try_new` constructor by using the environment variable to replace the built-in data. However, we can also directly access the `DataProvider` implementations if we want, for example to combine it with other providers. For this, we first need to add some dependencies (icu_datagen did tell you which ones you need):
+So far we've used it through the default `try_new` constructor by using the environment variable to replace the built-in data. However, we can also directly access the `DataProvider` implementations if we want, for example to combine it with other providers. For this, we first need to add some dependencies (`icu4x-datagen` did tell you which ones you need):
 
 ```console
+$ cargo add icu_locale_core
 $ cargo add icu_provider
-$ cargo add litemap
+$ cargo add icu_provider_baked
+$ cargo add zerotrie
 $ cargo add zerovec
 ```
 
-We can use the generate code with the `include!` macro. The `impl_data_provider!` macro adds the generated implementations to any type.
+We can include the generate code with the `include!` macro. The `impl_data_provider!` macro adds the generated implementations to any type.
 
 ```rust,compile_fail
 extern crate alloc; // required as my-data is written for #[no_std]
@@ -100,12 +102,12 @@ use icu::datetime::{DateTimeFormatter, options::length};
 
 const LOCALE: Locale = locale!("ja");
 
-struct UnstableDataProvider;
+struct MyDataProvider;
 include!("../my-data/mod.rs");
-impl_data_provider!(UnstableDataProvider);
+impl_data_provider!(MyDataProvider);
 
 fn main() {
-    let baked_provider = UnstableDataProvider;
+    let baked_provider = MyDataProvider;
 
     let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium);
 
@@ -149,12 +151,12 @@ This will generate a `my_data_blob.postcard` file containing the serialized data
 
 Unlike `BakedDataProvider`, `BlobDataProvider` (and `FsDataProvider`) does not perform locale fallbacking. For example, if `en-US` is requested but only `en` data is available, then the data request will fail. To enable fallback, we can wrap the provider in a `LocaleFallbackProvider`.
 
-Note that fallback comes at a cost, as fallbacking code and data has to be included and executed on every request. If you don't need fallback (disclaimer: you probably do), you can use the `BlobDataProvider` directly (for `BakedDataProvider`, see [`FallbackMode::Preresolved`](https://docs.rs/icu_datagen/latest/icu_datagen/enum.FallbackMode.html)).
+Note that fallback comes at a cost, as fallbacking code and data has to be included and executed on every request. If you don't need fallback (disclaimer: you probably do), you can use the `BlobDataProvider` directly (for baked data, see [`Options::skip_internal_fallback`](https://docs.rs/icu_provider_baked/latest/icu_provider_baked/export/struct.Options.html)).
 
 We can then use the provider in our code:
 
 ```rust,no_run
-use icu::locale::{locale, Locale};
+use icu::locale::{locale, Locale, fallback::LocaleFallbacker};
 use icu::calendar::DateTime;
 use icu::datetime::{DateTimeFormatter, options::length};
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
@@ -168,8 +170,10 @@ fn main() {
         BlobDataProvider::try_new_from_blob(blob.into_boxed_slice())
             .expect("blob should be valid");
 
-    let buffer_provider = LocaleFallbackProvider::try_new_with_buffer_provider(buffer_provider)
+    let fallbacker = LocaleFallbacker::try_new_with_buffer_provider(&buffer_provider)
         .expect("Provider should contain fallback rules");
+
+    let buffer_provider = LocaleFallbackProvider::new(buffer_provider, fallbacker);
 
     let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium);
 
@@ -203,7 +207,7 @@ But there is more to optimize. You might have noticed this in the output of the 
 We can instead use `TypedDateTimeFormatter<Gregorian>`, which only supports formatting `DateTime<Gregorian>`s:
 
 ```rust,no_run
-use icu::locale::{locale, Locale};
+use icu::locale::{locale, Locale, fallback::LocaleFallbacker};
 use icu::calendar::{DateTime, Gregorian};
 use icu::datetime::{TypedDateTimeFormatter, options::length};
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
@@ -217,8 +221,10 @@ fn main() {
         BlobDataProvider::try_new_from_blob(blob.into_boxed_slice())
             .expect("blob should be valid");
 
-    let buffer_provider = LocaleFallbackProvider::try_new_with_buffer_provider(buffer_provider)
+    let fallbacker = LocaleFallbacker::try_new_with_buffer_provider(&buffer_provider)
         .expect("Provider should contain fallback rules");
+
+    let buffer_provider = LocaleFallbackProvider::new(buffer_provider, fallbacker);
 
     let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium);
 
@@ -248,4 +254,4 @@ We have learned how to generate data and load it into our programs, optimize dat
 
 For a deeper dive into configuring your data providers in code, see [data_provider.md].
 
-You can learn more about datagen, including the Rust API which we have not used in this tutorial, by reading [the docs](https://docs.rs/icu_datagen/latest/).
+You can learn more about datagen, including the Rust API which we have not used in this tutorial, by reading [the docs](https://docs.rs/icu_provider_export/latest/).

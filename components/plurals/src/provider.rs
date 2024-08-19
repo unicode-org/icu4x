@@ -97,7 +97,7 @@ pub struct PluralRulesV1<'data> {
 pub(crate) struct ErasedPluralRulesV1Marker;
 
 impl DynamicDataMarker for ErasedPluralRulesV1Marker {
-    type Yokeable = PluralRulesV1<'static>;
+    type DataStruct = PluralRulesV1<'static>;
 }
 
 #[cfg(any(feature = "datagen", feature = "experimental"))]

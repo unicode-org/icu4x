@@ -155,7 +155,7 @@
 
 #[doc(hidden)]
 pub mod reference;
-// Need to expose it for `icu_datagen` use, but we don't
+// Need to expose it for datagen, but we don't
 // have a reason to make it fully public, so hiding docs for now.
 #[cfg(feature = "experimental")]
 mod raw_operands;

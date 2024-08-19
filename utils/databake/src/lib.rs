@@ -72,6 +72,7 @@
 //! ```
 
 mod alloc;
+pub mod converter;
 mod primitives;
 
 #[doc(no_inline)]

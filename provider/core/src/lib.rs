@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! `icu_provider` is one of the [`ICU4X`] components.
+//! `icu_provider` is one of the `ICU4X` components.
 //!
 //! Unicode's experience with ICU4X's parent projects, ICU4C and ICU4J, led the team to realize
 //! that data management is the most critical aspect of deploying internationalization, and that it requires
@@ -78,26 +78,17 @@
 //! Data structs should generally have one lifetime argument: `'data`. This lifetime allows data
 //! structs to borrow zero-copy data.
 //!
-//! ## Data generation API
-//!
-//! *This functionality is enabled with the "datagen" Cargo feature*
-//!
-//! The [`export`] module contains several APIs for data generation. See [`icu_provider_export`] for the reference
-//! data generation implementation.
-//!
-//! [`ICU4X`]: ../icu/index.html
-//! [`AnyPayloadProvider`]: ../icu_provider_adapters/any_payload/struct.AnyPayloadProvider.html
+//! [`AnyPayloadProvider`]: https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/any_payload/struct.AnyPayloadProvider.html
 //! [`HelloWorldProvider`]: hello_world::HelloWorldProvider
 //! [`AnyProvider`]: any::AnyProvider
 //! [`Yokeable`]: yoke::Yokeable
 //! [`impl_dynamic_data_provider!`]: dynutil::impl_dynamic_data_provider
-//! [`icu_provider_adapters`]: ../icu_provider_adapters/index.html
-//! [`SourceDataProvider`]: ../icu_provider_export/struct.SourceDataProvider.html
+//! [`icu_provider_adapters`]: https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/index.html
+//! [`SourceDataProvider`]: https://docs.rs/icu_provider_source/latest/icu_provider_source/struct.SourceDataProvider.html
 //! [`as_downcasting()`]: any::AsDowncastingAnyProvider::as_downcasting
 //! [`as_deserializing()`]: buf::AsDeserializingBufferProvider::as_deserializing
-//! [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
-//! [`BlobDataProvider`]: ../icu_provider_blob/struct.BlobDataProvider.html
-//! [`icu_provider_export`]: ../icu_provider_export/index.html
+//! [`FsDataProvider`]: https://docs.rs/icu_provider_fs/latest/icu_provider_fs/struct.FsDataProvider.html
+//! [`BlobDataProvider`]: https://docs.rs/icu_provider_blob/latest/icu_provider_blob/struct.BlobDataProvider.html
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
@@ -133,10 +124,8 @@ pub mod serde_borrow_de_utils;
 mod data_provider;
 pub use data_provider::{
     BoundDataProvider, DataProvider, DataProviderWithMarker, DryDataProvider, DynamicDataProvider,
-    DynamicDryDataProvider,
+    DynamicDryDataProvider, IterableDataProvider, IterableDynamicDataProvider,
 };
-#[cfg(feature = "std")]
-pub use data_provider::{IterableDataProvider, IterableDynamicDataProvider};
 
 mod error;
 pub use error::{DataError, DataErrorKind};
@@ -183,57 +172,53 @@ pub mod prelude {
         BoundDataProvider, DataError, DataErrorKind, DataLocale, DataMarker, DataMarkerAttributes,
         DataMarkerInfo, DataPayload, DataProvider, DataRequest, DataRequestMetadata, DataResponse,
         DataResponseMetadata, DryDataProvider, DynamicDataMarker, DynamicDataProvider,
-        DynamicDryDataProvider,
+        DynamicDryDataProvider, IterableDataProvider, IterableDynamicDataProvider,
     };
-    #[cfg(feature = "std")]
-    pub use crate::{IterableDataProvider, IterableDynamicDataProvider};
 
+    #[doc(no_inline)]
+    pub use icu_locale_core;
     #[doc(no_inline)]
     pub use yoke;
     #[doc(no_inline)]
     pub use zerofrom;
 }
 
-mod fallback;
+#[doc(hidden)] // internal
+pub mod fallback;
 
-#[doc(hidden)] // macro use
-pub mod _internal {
-    pub use super::fallback::{
-        LocaleFallbackConfig, LocaleFallbackPriority, LocaleFallbackSupplement,
-    };
-    pub use icu_locale_core as locale_core;
+#[doc(hidden)] // internal
+#[cfg(feature = "logging")]
+pub use log;
 
-    #[cfg(feature = "logging")]
-    pub use log;
+#[doc(hidden)] // internal
+#[cfg(all(not(feature = "logging"), debug_assertions, feature = "std"))]
+pub mod log {
+    pub use std::eprintln as error;
+    pub use std::eprintln as warn;
+    pub use std::eprintln as info;
+    pub use std::eprintln as debug;
+    pub use std::eprintln as trace;
+}
 
-    #[cfg(all(not(feature = "logging"), debug_assertions, feature = "std"))]
-    pub mod log {
-        pub use std::eprintln as error;
-        pub use std::eprintln as warn;
-        pub use std::eprintln as info;
-        pub use std::eprintln as debug;
-        pub use std::eprintln as trace;
+#[cfg(all(
+    not(feature = "logging"),
+    any(not(debug_assertions), not(feature = "std"))
+))]
+#[doc(hidden)] // internal
+pub mod log {
+    #[macro_export]
+    macro_rules! _internal_noop_log {
+        ($($t:expr),*) => {};
     }
-
-    #[cfg(all(
-        not(feature = "logging"),
-        any(not(debug_assertions), not(feature = "std"))
-    ))]
-    pub mod log {
-        #[macro_export]
-        macro_rules! _internal_noop_log {
-            ($($t:expr),*) => {};
-        }
-        pub use crate::_internal_noop_log as error;
-        pub use crate::_internal_noop_log as warn;
-        pub use crate::_internal_noop_log as info;
-        pub use crate::_internal_noop_log as debug;
-        pub use crate::_internal_noop_log as trace;
-    }
+    pub use crate::_internal_noop_log as error;
+    pub use crate::_internal_noop_log as warn;
+    pub use crate::_internal_noop_log as info;
+    pub use crate::_internal_noop_log as debug;
+    pub use crate::_internal_noop_log as trace;
 }
 
 #[test]
 fn test_logging() {
     // This should compile on all combinations of features
-    crate::_internal::log::info!("Hello World");
+    crate::log::info!("Hello World");
 }

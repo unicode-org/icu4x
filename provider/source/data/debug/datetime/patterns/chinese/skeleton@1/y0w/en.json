@@ -2,9 +2,10 @@
   "index_info": {
     "has_long": false,
     "has_medium": false,
-    "has_plurals": false
+    "has_plurals": false,
+    "has_eras": false
   },
   "patterns": [
-    "Y w"
+    "r(U)"
   ]
 }

@@ -1,0 +1,6 @@
+{
+    "compilerOptions": {
+        "module": "es2015",
+        "target": "es2015"
+    }
+}

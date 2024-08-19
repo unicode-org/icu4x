@@ -43,8 +43,26 @@ pub struct Duration {
     pub nanoseconds: u64,
 }
 
+impl Duration {
+    /// Iterate over the units of the duration in descending order.
+    pub(crate) fn iter_units(&self) -> [u64; 10] {
+        [
+            self.years,
+            self.months,
+            self.weeks,
+            self.days,
+            self.hours,
+            self.minutes,
+            self.seconds,
+            self.milliseconds,
+            self.microseconds,
+            self.nanoseconds,
+        ]
+    }
+}
+
 /// Describes whether a [`Duration`] is positive or negative.
-#[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum DurationSign {
     #[default]
     /// A positive duration.
@@ -52,6 +70,15 @@ pub enum DurationSign {
 
     /// A negative duration.
     Negative,
+}
+
+impl From<DurationSign> for fixed_decimal::Sign {
+    fn from(sign: DurationSign) -> Self {
+        match sign {
+            DurationSign::Positive => fixed_decimal::Sign::None,
+            DurationSign::Negative => fixed_decimal::Sign::Negative,
+        }
+    }
 }
 
 impl Duration {

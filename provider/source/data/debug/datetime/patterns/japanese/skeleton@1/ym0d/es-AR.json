@@ -2,11 +2,12 @@
   "index_info": {
     "has_long": true,
     "has_medium": true,
-    "has_plurals": false
+    "has_plurals": false,
+    "has_eras": false
   },
   "patterns": [
-    "d 'de' MMMM 'de' y G",
-    "d 'de' MMM 'de' y G",
-    "d/M/y GGGGG"
+    "d 'de' MMMM 'de' y GGG",
+    "dd/MM/y GGGGG",
+    "dd/MM/yy GGGGG"
   ]
 }

@@ -8,7 +8,8 @@
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
 use icu_provider::prelude::*;
-use zerovec::{ule::UnvalidatedStr, ZeroMap, ZeroVec};
+use potential_utf::PotentialUtf8;
+use zerovec::{ZeroMap, ZeroVec};
 
 // We do this instead of const generics because ZeroFrom and Yokeable derives, as well as serde
 // don't support them
@@ -134,7 +135,7 @@ pub struct LstmDataFloat32<'data> {
     /// Type of the model
     pub(crate) model: ModelType,
     /// The grapheme cluster dictionary used to train the model
-    pub(crate) dic: ZeroMap<'data, UnvalidatedStr, u16>,
+    pub(crate) dic: ZeroMap<'data, PotentialUtf8, u16>,
     /// The embedding layer. Shape (dic.len + 1, e)
     pub(crate) embedding: LstmMatrix2<'data>,
     /// The forward layer's first matrix. Shape (h, 4, e)
@@ -160,7 +161,7 @@ impl<'data> LstmDataFloat32<'data> {
     #[allow(clippy::too_many_arguments)] // constructor
     pub const fn from_parts_unchecked(
         model: ModelType,
-        dic: ZeroMap<'data, UnvalidatedStr, u16>,
+        dic: ZeroMap<'data, PotentialUtf8, u16>,
         embedding: LstmMatrix2<'data>,
         fw_w: LstmMatrix3<'data>,
         fw_u: LstmMatrix3<'data>,
@@ -191,7 +192,7 @@ impl<'data> LstmDataFloat32<'data> {
     #[allow(clippy::too_many_arguments)] // constructor
     pub fn try_from_parts(
         model: ModelType,
-        dic: ZeroMap<'data, UnvalidatedStr, u16>,
+        dic: ZeroMap<'data, PotentialUtf8, u16>,
         embedding: LstmMatrix2<'data>,
         fw_w: LstmMatrix3<'data>,
         fw_u: LstmMatrix3<'data>,
@@ -252,7 +253,7 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for LstmDataFloat32<'data> {
         struct Raw<'data> {
             model: ModelType,
             #[cfg_attr(feature = "serde", serde(borrow))]
-            dic: ZeroMap<'data, UnvalidatedStr, u16>,
+            dic: ZeroMap<'data, PotentialUtf8, u16>,
             #[cfg_attr(feature = "serde", serde(borrow))]
             embedding: LstmMatrix2<'data>,
             #[cfg_attr(feature = "serde", serde(borrow))]
@@ -357,7 +358,11 @@ impl databake::BakeSize for LstmDataFloat32<'_> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(LstmForWordLineAutoV1Marker = "segmenter/lstm/wl_auto@1")]
+#[icu_provider::data_struct(marker(
+    LstmForWordLineAutoV1Marker,
+    "segmenter/lstm/wl_auto@1",
+    attributes_domain = "segmenter"
+))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
     feature = "datagen", 

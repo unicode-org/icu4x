@@ -8,8 +8,9 @@
 use alloc::borrow::Cow;
 use icu_calendar::types::MonthCode;
 use icu_provider::prelude::*;
+use potential_utf::PotentialUtf8;
 use tinystr::{tinystr, TinyStr4};
-use zerovec::{ule::UnvalidatedStr, ZeroMap};
+use zerovec::ZeroMap;
 
 size_test!(DateSymbolsV1, date_symbols_v1_size, 3792);
 
@@ -64,7 +65,7 @@ pub struct DateSymbolsV1<'data> {
 pub(crate) struct ErasedDateSymbolsV1Marker;
 
 impl DynamicDataMarker for ErasedDateSymbolsV1Marker {
-    type Yokeable = DateSymbolsV1<'static>;
+    type DataStruct = DateSymbolsV1<'static>;
 }
 
 size_test!(TimeSymbolsV1, time_symbols_v1_size, 768);
@@ -123,17 +124,17 @@ pub struct Eras<'data> {
     ///
     /// Keys are era codes, and values are display names. See [`Eras`].
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub names: ZeroMap<'data, UnvalidatedStr, str>,
+    pub names: ZeroMap<'data, PotentialUtf8, str>,
     /// Symbol data for era abbreviations.
     ///
     /// Keys are era codes, and values are display names. See [`Eras`].
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub abbr: ZeroMap<'data, UnvalidatedStr, str>,
+    pub abbr: ZeroMap<'data, PotentialUtf8, str>,
     /// Symbol data for era narrow forms.
     ///
     /// Keys are era codes, and values are display names. See [`Eras`].
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub narrow: ZeroMap<'data, UnvalidatedStr, str>,
+    pub narrow: ZeroMap<'data, PotentialUtf8, str>,
 }
 
 // Note: the SymbolsV* struct doc strings metadata are attached to `$name` in the macro invocation to

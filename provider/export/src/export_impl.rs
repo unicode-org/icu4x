@@ -2,16 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{DeduplicationStrategy, ExportDriver, LocaleFamilyAnnotations};
-use icu_locale::extensions::unicode::key;
+use crate::{DataLocaleFamilyAnnotations, DeduplicationStrategy, ExportDriver};
 use icu_locale::fallback::LocaleFallbackIterator;
-use icu_locale::LanguageIdentifier;
 use icu_locale::LocaleFallbacker;
 use icu_provider::export::*;
 use icu_provider::prelude::*;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::fmt;
+use std::sync::Arc;
 use std::time::Duration;
 use std::time::Instant;
 use writeable::Writeable;
@@ -55,8 +54,7 @@ impl ExportDriver {
             include_full,
             fallbacker,
             deduplication_strategy,
-            additional_collations,
-            segmenter_models,
+            attributes_filters,
         } = self;
 
         let markers = markers.unwrap_or_else(|| provider.supported_markers());
@@ -107,7 +105,7 @@ impl ExportDriver {
                 match provider.load_data(marker, req) {
                     Ok(data_response) => {
                         if let Some(iter) = locale_iter.as_ref() {
-                            if iter.get().is_und() && !id.locale.is_und() {
+                            if iter.get().is_default() && !id.locale.is_default() {
                                 log::debug!("Falling back to und: {marker:?}/{}", id.locale);
                             }
                         }
@@ -118,7 +116,7 @@ impl ExportDriver {
                         ..
                     }) => {
                         if let Some(iter) = locale_iter.as_mut() {
-                            if iter.get().is_und() {
+                            if iter.get().is_default() {
                                 log::debug!("Could not find data for: {marker:?}/{}", id.locale);
                                 return None;
                             }
@@ -141,8 +139,8 @@ impl ExportDriver {
             let instant1 = Instant::now();
 
             if marker.is_singleton {
-                if provider.iter_ids_for_marker(marker)? != HashSet::from_iter([Default::default()])
-                {
+                let supported = provider.iter_ids_for_marker(marker)?;
+                if supported.len() != 1 || !supported.first().unwrap().is_default() {
                     return Err(DataError::custom(
                         "Invalid supported locales for singleton marker",
                     )
@@ -179,9 +177,8 @@ impl ExportDriver {
                 provider,
                 marker,
                 &requested_families,
+                &attributes_filters,
                 include_full,
-                &additional_collations,
-                &segmenter_models,
                 &fallbacker,
             )?;
 
@@ -264,69 +261,37 @@ impl ExportDriver {
 
 /// Selects the maximal set of locales to export based on a [`DataMarkerInfo`] and this datagen
 /// provider's options bag. The locales may be later optionally deduplicated for fallback.
+#[allow(clippy::type_complexity)] // sigh
 fn select_locales_for_marker<'a>(
     provider: &'a dyn ExportableProvider,
     marker: DataMarkerInfo,
-    requested_families: &HashMap<LanguageIdentifier, LocaleFamilyAnnotations>,
+    requested_families: &HashMap<DataLocale, DataLocaleFamilyAnnotations>,
+    attributes_filters: &HashMap<
+        String,
+        Arc<Box<dyn Fn(&DataMarkerAttributes) -> bool + Send + Sync + 'static>>,
+    >,
     include_full: bool,
-    additional_collations: &HashSet<String>,
-    segmenter_models: &[String],
     fallbacker: &LocaleFallbacker,
 ) -> Result<HashSet<DataIdentifierCow<'a>>, DataError> {
-    // Map from all supported LanguageIdentifiers to their
-    // corresponding supported DataLocales.
-    let mut supported_map = HashMap::<LanguageIdentifier, HashSet<DataIdentifierCow<'a>>>::new();
+    // Map from all supported DataLocales to their corresponding supported DataIdentifiers.
+    let mut supported_map = HashMap::<DataLocale, HashSet<DataIdentifierCow<'a>>>::new();
     for id in provider
         .iter_ids_for_marker(marker)
         .map_err(|e| e.with_marker(marker))?
     {
         supported_map
-            .entry(id.locale.get_langid())
+            .entry(id.locale.clone().into_owned())
             .or_default()
             .insert(id);
     }
 
-    if marker.path.as_str().starts_with("segmenter/dictionary/") {
-        supported_map.retain(|_, ids| {
-            ids.retain(|id| {
-                segmenter_models
-                    .iter()
-                    .any(|m| **m == **id.marker_attributes)
+    if !marker.attributes_domain.is_empty() {
+        if let Some(filter) = attributes_filters.get(marker.attributes_domain) {
+            supported_map.retain(|_, ids| {
+                ids.retain(|id| filter(&id.marker_attributes));
+                !ids.is_empty()
             });
-            !ids.is_empty()
-        });
-        // Don't perform additional locale filtering
-        return Ok(supported_map.into_values().flatten().collect());
-    } else if marker.path.as_str().starts_with("segmenter/lstm/") {
-        supported_map.retain(|_, locales| {
-            locales.retain(|id| {
-                segmenter_models
-                    .iter()
-                    .any(|m| **m == **id.marker_attributes)
-            });
-            !locales.is_empty()
-        });
-        // Don't perform additional locale filtering
-        return Ok(supported_map.into_values().flatten().collect());
-    } else if marker.path.as_str().starts_with("collator/") {
-        supported_map.retain(|_, ids| {
-            ids.retain(|id| {
-                let Some(collation) = id
-                    .locale
-                    .get_unicode_ext(&key!("co"))
-                    .and_then(|co| co.into_single_subtag())
-                else {
-                    return true;
-                };
-                additional_collations.contains(collation.as_str())
-                    || if collation.as_str().starts_with("search") {
-                        additional_collations.contains("search*")
-                    } else {
-                        !["big5han", "gb2312"].contains(&collation.as_str())
-                    }
-            });
-            !ids.is_empty()
-        });
+        }
     }
 
     if include_full && requested_families.is_empty() {
@@ -335,90 +300,82 @@ fn select_locales_for_marker<'a>(
         return Ok(selected_locales);
     }
 
-    // The "candidate" langids that could be exported is the union of requested and supported.
-    let all_candidate_langids = supported_map
+    // The "candidate" locales that could be exported is the union of requested and supported.
+    let all_candidate_locales = supported_map
         .keys()
         .chain(requested_families.keys())
         .collect::<HashSet<_>>();
 
     // Compute a map from LanguageIdentifiers to DataLocales, including inherited auxiliary keys
     // and extensions. Also resolve the ancestors and descendants while building this map.
-    let mut selected_langids = requested_families.keys().cloned().collect::<HashSet<_>>();
-    let expansion_map: HashMap<&LanguageIdentifier, HashSet<DataIdentifierCow>> =
-        all_candidate_langids
-            .into_iter()
-            .map(|current_langid| {
-                let mut expansion = supported_map
-                    .get(current_langid)
-                    .cloned()
-                    .unwrap_or_default();
-                if include_full && !selected_langids.contains(current_langid) {
-                    log::trace!("Including {current_langid}: full locale family: {marker:?}");
-                    selected_langids.insert(current_langid.clone());
-                }
-                if current_langid.language.is_empty() && current_langid != &LanguageIdentifier::UND
-                {
-                    log::trace!("Including {current_langid}: und variant: {marker:?}");
-                    selected_langids.insert(current_langid.clone());
-                }
-                let include_ancestors = requested_families
-                    .get(current_langid)
-                    .map(|family| family.include_ancestors)
-                    // default to `false` if the langid was not requested
+    let mut selected_locales = requested_families.keys().cloned().collect::<HashSet<_>>();
+    let expansion_map: HashMap<&DataLocale, HashSet<DataIdentifierCow>> = all_candidate_locales
+        .into_iter()
+        .map(|current_locale| {
+            let mut expansion = supported_map
+                .get(current_locale)
+                .cloned()
+                .unwrap_or_default();
+            if include_full && !selected_locales.contains(current_locale) {
+                log::trace!("Including {current_locale}: full locale family: {marker:?}");
+                selected_locales.insert(current_locale.clone());
+            }
+            if current_locale.language.is_default() && !current_locale.is_default() {
+                log::trace!("Including {current_locale}: und variant: {marker:?}");
+                selected_locales.insert(current_locale.clone());
+            }
+            let include_ancestors = requested_families
+                .get(current_locale)
+                .map(|family| family.include_ancestors)
+                // default to `false` if the locale was not requested
+                .unwrap_or(false);
+            let mut iter = fallbacker
+                .for_config(marker.fallback_config)
+                .fallback_for(current_locale.clone());
+            loop {
+                // Inherit aux keys and extension keywords from parent locales
+                let parent_locale = iter.get();
+                let maybe_parent_ids = supported_map.get(parent_locale);
+                let include_descendants = requested_families
+                    .get(parent_locale)
+                    .map(|family| family.include_descendants)
+                    // default to `false` if the locale was not requested
                     .unwrap_or(false);
-                let mut iter = fallbacker
-                    .for_config(marker.fallback_config)
-                    .fallback_for(current_langid.into());
-                loop {
-                    // Inherit aux keys and extension keywords from parent locales
-                    let parent_langid: LanguageIdentifier = iter.get().get_langid();
-                    let maybe_parent_ids = supported_map.get(&parent_langid);
-                    let include_descendants = requested_families
-                        .get(&parent_langid)
-                        .map(|family| family.include_descendants)
-                        // default to `false` if the langid was not requested
-                        .unwrap_or(false);
-                    if include_descendants && !selected_langids.contains(current_langid) {
-                        log::trace!(
-                            "Including {current_langid}: descendant of {parent_langid}: {marker:?}"
-                        );
-                        selected_langids.insert(current_langid.clone());
-                    }
-                    if include_ancestors && !selected_langids.contains(&parent_langid) {
-                        log::trace!(
-                            "Including {parent_langid}: ancestor of {current_langid}: {marker:?}"
-                        );
-                        selected_langids.insert(parent_langid);
-                    }
-                    if let Some(parent_ids) = maybe_parent_ids {
-                        for morphed_id in parent_ids.iter() {
-                            // Special case: don't pull extensions or aux keys up from the root.
-                            if morphed_id.locale.is_langid_und()
-                                && !(morphed_id.locale.is_empty()
-                                    && morphed_id.marker_attributes.is_empty())
-                            {
-                                continue;
-                            }
-                            let mut morphed_id = morphed_id.clone();
-                            morphed_id
-                                .locale
-                                .to_mut()
-                                .set_langid(current_langid.clone());
-                            expansion.insert(morphed_id);
-                        }
-                    }
-                    if iter.get().is_und() {
-                        break;
-                    }
-                    iter.step();
+                if include_descendants && !selected_locales.contains(current_locale) {
+                    log::trace!(
+                        "Including {current_locale}: descendant of {parent_locale}: {marker:?}"
+                    );
+                    selected_locales.insert(current_locale.clone());
                 }
-                (current_langid, expansion)
-            })
-            .collect();
+                if include_ancestors && !selected_locales.contains(parent_locale) {
+                    log::trace!(
+                        "Including {parent_locale}: ancestor of {current_locale}: {marker:?}"
+                    );
+                    selected_locales.insert(parent_locale.clone());
+                }
+                if let Some(parent_ids) = maybe_parent_ids {
+                    for morphed_id in parent_ids.iter() {
+                        // Special case: don't pull extensions or aux keys up from the root.
+                        if morphed_id.locale.is_default() && !morphed_id.is_default() {
+                            continue;
+                        }
+                        let mut morphed_id = morphed_id.clone();
+                        *morphed_id.locale.to_mut() = current_locale.clone();
+                        expansion.insert(morphed_id);
+                    }
+                }
+                if iter.get().is_default() {
+                    break;
+                }
+                iter.step();
+            }
+            (current_locale, expansion)
+        })
+        .collect();
 
     let selected_locales = expansion_map
         .into_iter()
-        .filter(|(langid, _)| selected_langids.contains(langid))
+        .filter(|(locale, _)| selected_locales.contains(locale))
         .flat_map(|(_, data_locales)| data_locales)
         .collect();
     Ok(selected_locales)
@@ -433,7 +390,7 @@ fn deduplicate_payloads<const MAXIMAL: bool>(
     let fallbacker_with_config = fallbacker.for_config(marker.fallback_config);
     payloads.iter().try_for_each(|(id, (payload, _duration))| {
         // Always export `und`. This prevents calling `step` on an empty locale.
-        if id.locale.is_und() {
+        if id.locale.is_default() {
             return sink
                 .put_payload(marker, id.as_borrowed(), payload)
                 .map_err(|e| {
@@ -454,7 +411,7 @@ fn deduplicate_payloads<const MAXIMAL: bool>(
                 // the next parent is `und`.
                 iter.step();
             }
-            if iter.get().is_und() {
+            if iter.get().is_default() {
                 break;
             }
             if MAXIMAL {
@@ -527,7 +484,8 @@ impl fmt::Display for DisplayDuration {
 
 #[test]
 fn test_collation_filtering() {
-    use icu::locale::{langid, locale};
+    use crate::DataLocaleFamily;
+    use icu::locale::locale;
     use std::collections::BTreeSet;
 
     struct Provider;
@@ -543,26 +501,31 @@ fn test_collation_filtering() {
     }
 
     impl IterableDataProvider<icu::collator::provider::CollationDataV1Marker> for Provider {
-        fn iter_ids(&self) -> Result<HashSet<DataIdentifierCow>, DataError> {
-            Ok(HashSet::from_iter(
+        fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+            Ok(BTreeSet::from_iter(
                 [
-                    locale!("ko-u-co-search"),
-                    locale!("ko-u-co-searchjl"),
-                    locale!("ko-u-co-unihan"),
-                    locale!("ko"),
-                    locale!("und-u-co-emoji"),
-                    locale!("und-u-co-eor"),
-                    locale!("und-u-co-search"),
-                    locale!("und"),
-                    locale!("zh-u-co-big5han"),
-                    locale!("zh-u-co-gb2312"),
-                    locale!("zh-u-co-stroke"),
-                    locale!("zh-u-co-unihan"),
-                    locale!("zh-u-co-zhuyin"),
-                    locale!("zh"),
+                    (locale!("ko"), "search"),
+                    (locale!("ko"), "searchjl"),
+                    (locale!("ko"), "unihan"),
+                    (locale!("ko"), ""),
+                    (locale!("und"), "emoji"),
+                    (locale!("und"), "eor"),
+                    (locale!("und"), "search"),
+                    (locale!("und"), ""),
+                    (locale!("zh"), "big5han"),
+                    (locale!("zh"), "gb2312"),
+                    (locale!("zh"), "stroke"),
+                    (locale!("zh"), "unihan"),
+                    (locale!("zh"), "zhuyin"),
+                    (locale!("zh"), ""),
                 ]
                 .into_iter()
-                .map(|l| DataIdentifierCow::from_locale(l.into())),
+                .map(|(l, a)| {
+                    DataIdentifierCow::from_borrowed_and_owned(
+                        DataMarkerAttributes::from_str_or_panic(a),
+                        l.into(),
+                    )
+                }),
             ))
         }
     }
@@ -575,94 +538,79 @@ fn test_collation_filtering() {
     #[derive(Debug)]
     struct TestCase<'a> {
         include_collations: &'a [&'a str],
-        language: LanguageIdentifier,
+        language: DataLocale,
         expected: &'a [&'a str],
     }
     let cases = [
         TestCase {
             include_collations: &[],
-            language: langid!("zh"),
-            expected: &["zh", "zh-u-co-stroke", "zh-u-co-unihan", "zh-u-co-zhuyin"],
+            language: locale!("zh").into(),
+            expected: &["", "stroke", "unihan", "zhuyin"],
         },
         TestCase {
             include_collations: &["gb2312"],
-            language: langid!("zh"),
-            expected: &[
-                "zh",
-                "zh-u-co-gb2312",
-                "zh-u-co-stroke",
-                "zh-u-co-unihan",
-                "zh-u-co-zhuyin",
-            ],
+            language: locale!("zh").into(),
+            expected: &["", "gb2312", "stroke", "unihan", "zhuyin"],
         },
         TestCase {
             include_collations: &["big5han"],
-            language: langid!("zh"),
-            expected: &[
-                "zh",
-                "zh-u-co-big5han",
-                "zh-u-co-stroke",
-                "zh-u-co-unihan",
-                "zh-u-co-zhuyin",
-            ],
+            language: locale!("zh").into(),
+            expected: &["", "big5han", "stroke", "unihan", "zhuyin"],
         },
         TestCase {
             include_collations: &["gb2312", "search*"],
-            language: langid!("zh"),
-            expected: &[
-                "zh",
-                "zh-u-co-gb2312",
-                "zh-u-co-stroke",
-                "zh-u-co-unihan",
-                "zh-u-co-zhuyin",
-            ],
+            language: locale!("zh").into(),
+            expected: &["", "gb2312", "stroke", "unihan", "zhuyin"],
         },
         TestCase {
             include_collations: &[],
-            language: langid!("ko"),
-            expected: &["ko", "ko-u-co-unihan"],
+            language: locale!("ko").into(),
+            expected: &["", "unihan"],
         },
         TestCase {
             include_collations: &["search"],
-            language: langid!("ko"),
-            expected: &["ko", "ko-u-co-search", "ko-u-co-unihan"],
+            language: locale!("ko").into(),
+            expected: &["", "search", "unihan"],
         },
         TestCase {
             include_collations: &["searchjl"],
-            language: langid!("ko"),
-            expected: &["ko", "ko-u-co-searchjl", "ko-u-co-unihan"],
+            language: locale!("ko").into(),
+            expected: &["", "searchjl", "unihan"],
         },
         TestCase {
             include_collations: &["search", "searchjl"],
-            language: langid!("ko"),
-            expected: &["ko", "ko-u-co-search", "ko-u-co-searchjl", "ko-u-co-unihan"],
+            language: locale!("ko").into(),
+            expected: &["", "search", "searchjl", "unihan"],
         },
         TestCase {
             include_collations: &["search*", "big5han"],
-            language: langid!("ko"),
-            expected: &["ko", "ko-u-co-search", "ko-u-co-searchjl", "ko-u-co-unihan"],
+            language: locale!("ko").into(),
+            expected: &["", "search", "searchjl", "unihan"],
         },
         TestCase {
             include_collations: &[],
-            language: langid!("und"),
-            expected: &["und", "und-u-co-emoji", "und-u-co-eor"],
+            language: locale!("und").into(),
+            expected: &["", "emoji", "eor"],
         },
     ];
     for cas in cases {
+        let driver = ExportDriver::new(
+            [DataLocaleFamily::single(cas.language.clone())],
+            DeduplicationStrategy::None.into(),
+            LocaleFallbacker::new_without_data(),
+        )
+        .with_additional_collations(cas.include_collations.iter().copied().map(String::from));
         let resolved_locales = select_locales_for_marker(
             &Provider,
             icu::collator::provider::CollationDataV1Marker::INFO,
-            &[(cas.language.clone(), LocaleFamilyAnnotations::single())]
-                .into_iter()
-                .collect(),
+            &driver.requested_families,
+            &driver.attributes_filters,
             false,
-            &HashSet::from_iter(cas.include_collations.iter().copied().map(String::from)),
-            &[],
-            &LocaleFallbacker::new_without_data(),
+            &driver.fallbacker,
         )
         .unwrap()
         .into_iter()
-        .map(|id| id.locale.to_string())
+        .map(|id| id.marker_attributes.to_string())
         .collect::<BTreeSet<_>>();
         let expected_locales = cas
             .expected

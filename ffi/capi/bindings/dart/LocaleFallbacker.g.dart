@@ -22,7 +22,7 @@ final class LocaleFallbacker implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XLocaleFallbacker_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_LocaleFallbacker_destroy_mv1));
 
   /// Creates a new `LocaleFallbacker` from a data provider.
   ///
@@ -30,7 +30,7 @@ final class LocaleFallbacker implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory LocaleFallbacker(DataProvider provider) {
-    final result = _ICU4XLocaleFallbacker_create(provider._ffi);
+    final result = _icu4x_LocaleFallbacker_create_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -41,44 +41,39 @@ final class LocaleFallbacker implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new_without_data`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html#method.new_without_data) for more information.
   factory LocaleFallbacker.withoutData() {
-    final result = _ICU4XLocaleFallbacker_create_without_data();
+    final result = _icu4x_LocaleFallbacker_without_data_mv1();
     return LocaleFallbacker._fromFfi(result, []);
   }
 
   /// Associates this `LocaleFallbacker` with configuration options.
   ///
   /// See the [Rust documentation for `for_config`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html#method.for_config) for more information.
-  ///
-  /// Throws [LocaleParseError] on failure.
   LocaleFallbackerWithConfig forConfig(LocaleFallbackConfig config) {
     final temp = ffi2.Arena();
     // This lifetime edge depends on lifetimes: 'a
     core.List<Object> aEdges = [this];
-    final result = _ICU4XLocaleFallbacker_for_config(_ffi, config._toFfi(temp));
+    final result = _icu4x_LocaleFallbacker_for_config_mv1(_ffi, config._toFfi(temp));
     temp.releaseAll();
-    if (!result.isOk) {
-      throw LocaleParseError.values[result.union.err];
-    }
-    return LocaleFallbackerWithConfig._fromFfi(result.union.ok, [], aEdges);
+    return LocaleFallbackerWithConfig._fromFfi(result, [], aEdges);
   }
 }
 
-@meta.ResourceIdentifier('ICU4XLocaleFallbacker_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XLocaleFallbacker_destroy')
+@meta.ResourceIdentifier('icu4x_LocaleFallbacker_destroy_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_LocaleFallbacker_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XLocaleFallbacker_destroy(ffi.Pointer<ffi.Void> self);
+external void _icu4x_LocaleFallbacker_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XLocaleFallbacker_create')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleFallbacker_create')
+@meta.ResourceIdentifier('icu4x_LocaleFallbacker_create_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleFallbacker_create_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XLocaleFallbacker_create(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_LocaleFallbacker_create_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XLocaleFallbacker_create_without_data')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'ICU4XLocaleFallbacker_create_without_data')
+@meta.ResourceIdentifier('icu4x_LocaleFallbacker_without_data_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_LocaleFallbacker_without_data_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _ICU4XLocaleFallbacker_create_without_data();
+external ffi.Pointer<ffi.Opaque> _icu4x_LocaleFallbacker_without_data_mv1();
 
-@meta.ResourceIdentifier('ICU4XLocaleFallbacker_for_config')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _LocaleFallbackConfigFfi)>(isLeaf: true, symbol: 'ICU4XLocaleFallbacker_for_config')
+@meta.ResourceIdentifier('icu4x_LocaleFallbacker_for_config_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, _LocaleFallbackConfigFfi)>(isLeaf: true, symbol: 'icu4x_LocaleFallbacker_for_config_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XLocaleFallbacker_for_config(ffi.Pointer<ffi.Opaque> self, _LocaleFallbackConfigFfi config);
+external ffi.Pointer<ffi.Opaque> _icu4x_LocaleFallbacker_for_config_mv1(ffi.Pointer<ffi.Opaque> self, _LocaleFallbackConfigFfi config);

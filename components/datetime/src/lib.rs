@@ -11,18 +11,20 @@
 //! allow it to collect necessary data from the [data provider], and once instantiated, can be
 //! used to quickly format any date and time provided. There are variants of these types that can format greater or fewer components,
 //! including [`TypedDateFormatter`] & [`DateFormatter`], [`TypedZonedDateTimeFormatter`] & [`ZonedDateTimeFormatter`], [`TimeFormatter`],
-//! and [`TimeZoneFormatter`]
+//! and [`TimeZoneFormatter`].
+//!
+//! There is no `ZonedTimeFormatter`. To format only a time in a time zone, use [`ZonedDateTimeFormatter`].
 //!
 //! These formatters work with types from the [`calendar`] module, like [`Date`], [`DateTime`], and [`Time`],
 //! and [`timezone::CustomTimeZone`], however other types may be used provided they implement the traits from the [`input`] module.
 //!
-//! Each instance of a date-related formatter (i.e. not [`TimeFormatter`] or [`TimeZoneFormatter`]
+//! Each instance of a date-related formatter (i.e. not [`TimeFormatter`] or [`TimeZoneFormatter`])
 //! is associated with a particular [`Calendar`].
 //! The "Typed" vs untyped formatter distinction is to help with this. For example, if you know at compile time that you
 //! will only be formatting Gregorian dates, you can use [`TypedDateTimeFormatter<Gregorian>`](TypedDateTimeFormatter) and the
 //! APIs will make sure that only Gregorian [`DateTime`]s are used with the calendar. On the other hand, if you want to be able to select
 //! the calendar at runtime, you can use [`DateTimeFormatter`] with the calendar specified in the locale, and use it with
-//! [`DateTime`],[`AnyCalendar`]. These formatters still require dates associated
+//! [`DateTime<AnyCalendar>`](icu_calendar::DateTime) (see [`AnyCalendar`]). These formatters still require dates associated
 //! with the appropriate calendar (though they will convert ISO dates to the calendar if provided), they just do not force the
 //! programmer to pick the calendar at compile time.
 //!
@@ -146,6 +148,8 @@ pub mod neo;
 pub mod neo_marker;
 #[cfg(feature = "experimental")]
 pub mod neo_pattern;
+#[cfg(all(feature = "serde", any(feature = "datagen", feature = "experimental")))]
+mod neo_serde;
 #[cfg(any(feature = "datagen", feature = "experimental"))]
 pub mod neo_skeleton;
 pub mod options;
@@ -158,6 +162,7 @@ pub(crate) mod raw;
 #[cfg(any(feature = "datagen", feature = "experimental"))]
 pub mod skeleton;
 pub mod time_zone;
+mod tz_registry;
 mod zoned_datetime;
 
 pub use any::{DateFormatter, DateTimeFormatter, ZonedDateTimeFormatter};

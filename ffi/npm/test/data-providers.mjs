@@ -4,16 +4,16 @@
 
 import test from 'ava';
 
-import { ICU4XFixedDecimal, ICU4XLocale, ICU4XDataProvider, ICU4XFixedDecimalFormatter } from "icu4x"
+import { FixedDecimal, Locale, DataProvider, FixedDecimalFormatter, FixedDecimalGroupingStrategy } from 'icu4x';
 
-test("use create_compiled to format a simple decimal", async t => {
-  const locale = ICU4XLocale.create_from_string("bn");
-  const provider = ICU4XDataProvider.create_compiled();
+test('use createCompiled to format a simple decimal', async t => {
+  const locale = Locale.fromString('bn');
+  const provider = DataProvider.compiled();
 
-  const format = ICU4XFixedDecimalFormatter.create_with_grouping_strategy(provider, locale, "Auto");
+  const format = FixedDecimalFormatter.createWithGroupingStrategy(provider, locale, FixedDecimalGroupingStrategy.Auto);
 
-  const decimal = ICU4XFixedDecimal.create_from_i32(1234);
-  decimal.multiply_pow10(-2);
+  const decimal = FixedDecimal.fromNumber(1234);
+  decimal.multiplyPow10(-2);
 
-  t.is(format.format(decimal), "১২.৩৪");
+  t.is(format.format(decimal), '১২.৩৪');
 });
