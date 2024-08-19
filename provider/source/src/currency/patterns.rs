@@ -8,8 +8,8 @@ use crate::SourceDataProvider;
 
 use std::collections::HashSet;
 
-use icu::experimental::dimension::provider::count::Count;
 use icu::experimental::dimension::provider::currency_patterns::*;
+use icu::plurals::PluralCategory;
 use icu_provider::prelude::*;
 use icu_provider::DataProvider;
 use zerovec::ZeroMap;
@@ -51,16 +51,16 @@ impl DataProvider<CurrencyPatternsDataV1Marker> for SourceDataProvider {
                 //      Check that the .json data files are completed and no need to fallback chain up to the root.
                 unit_patterns: ZeroMap::from_iter(
                     [
-                        (Count::Zero, patterns.pattern_zero.as_deref()),
-                        (Count::One, patterns.pattern_one.as_deref()),
-                        (Count::Two, patterns.pattern_two.as_deref()),
-                        (Count::Few, patterns.pattern_few.as_deref()),
-                        (Count::Many, patterns.pattern_many.as_deref()),
-                        (Count::Other, patterns.pattern_other.as_deref()),
+                        (PluralCategory::Zero, patterns.pattern_zero.as_deref()),
+                        (PluralCategory::One, patterns.pattern_one.as_deref()),
+                        (PluralCategory::Two, patterns.pattern_two.as_deref()),
+                        (PluralCategory::Few, patterns.pattern_few.as_deref()),
+                        (PluralCategory::Many, patterns.pattern_many.as_deref()),
+                        (PluralCategory::Other, patterns.pattern_other.as_deref()),
                     ]
                     .into_iter()
                     .filter_map(|(count, pattern)| match (count, pattern) {
-                        (Count::Other, pattern) => Some((count, pattern?)),
+                        (PluralCategory::Other, pattern) => Some((count, pattern?)),
                         // NOTE:
                         //      According to [Unicode Technical Standard #35](https://unicode.org/reports/tr35/tr35-numbers.html),
                         //      if a specific count is not available, the `other` pattern should be used.

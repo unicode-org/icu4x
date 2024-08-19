@@ -9,10 +9,9 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use icu_plurals::PluralCategory;
 use icu_provider::prelude::*;
 use zerovec::ZeroMap;
-
-use super::count::Count;
 
 /// Currency Extended V1 data struct.
 #[icu_provider::data_struct(marker(CurrencyPatternsDataV1Marker, "currency/patterns@1"))]
@@ -27,5 +26,5 @@ use super::count::Count;
 pub struct CurrencyPatternsDataV1<'data> {
     /// Contains the unit patterns for a currency based on plural rules.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub unit_patterns: ZeroMap<'data, Count, str>,
+    pub unit_patterns: ZeroMap<'data, PluralCategory, str>,
 }
