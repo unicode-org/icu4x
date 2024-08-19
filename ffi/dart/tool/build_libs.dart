@@ -14,13 +14,19 @@ Future<void> main(List<String> args) async {
   final out = Uri.file(args[0]).toFilePath();
   final target = Target.values.firstWhere((t) => t.toString() == args[1]);
   final linkMode = LinkMode.values.firstWhere((l) => l.toString() == args[2]);
-  final cargoFeatures = args.elementAtOrNull(3) ?? 'default_components';
+
+  final defaultFeatures = ['default_components', 'compiled_data'];
+  final cargoFeatures = args.elementAtOrNull(3)?.split(',') ?? defaultFeatures;
 
   await buildLib(target, linkMode, cargoFeatures, out);
 }
 
 Future<void> buildLib(
-    Target target, LinkMode linkMode, String cargoFeatures, String outName) async {
+  Target target,
+  LinkMode linkMode,
+  Iterable<String> cargoFeatures,
+  String outName,
+) async {
   var root = Platform.script.toFilePath().split('ffi')[0];
   root = root.substring(0, root.length - 1); // trim trailing slash
 
@@ -28,26 +34,33 @@ Future<void> buildLib(
 
   final rustTarget = dartToRustTargets[target]!;
 
-  const noStdTargets = [
+  final isNoStd = [
     Target.androidRiscv64,
     Target.linuxRiscv32,
-  ];
+  ].contains(target);
 
-  final isNoStd = noStdTargets.contains(target);
-
-  final rustup = await Process.start('rustup', [
-    'target',
-    'add',
-    rustTarget,
-  ]);
+  final rustupArguments = ['target', 'add', rustTarget];
+  final rustup = await Process.start('rustup', rustupArguments);
   stdout.addStream(rustup.stdout);
   stderr.addStream(rustup.stderr);
 
-  if (await rustup.exitCode != 0) {
-    throw (await rustup.exitCode);
+  final rustupExitCode = await rustup.exitCode;
+  if (rustupExitCode != 0) {
+    throw ProcessException(
+      'rustup',
+      rustupArguments,
+      'Exited with a non-zero exit code',
+      rustupExitCode,
+    );
   }
 
-  final cargo = await Process.start('cargo', [
+  final features = {
+    'buffer_provider',
+    if (isNoStd) ...['libc-alloc', 'panic-handler'],
+    if (!isNoStd) ...['logging', 'simple_logger'],
+    ...cargoFeatures,
+  };
+  final arguments = [
     if (isNoStd) '+nightly',
     'rustc',
     '--manifest-path=$root/ffi/capi/Cargo.toml',
@@ -56,25 +69,31 @@ Future<void> buildLib(
     '--config=profile.release.panic="abort"',
     '--config=profile.release.codegen-units=1',
     '--no-default-features',
-    if (!isNoStd)
-      '--features=compiled_data,buffer_provider,logging,simple_logger,$cargoFeatures',
-    if (isNoStd)
-      '--features=compiled_data,buffer_provider,libc-alloc,panic-handler,$cargoFeatures',
+    '--features=${features.join(',')}',
     if (isNoStd) '-Zbuild-std=core,alloc',
     if (isNoStd) '-Zbuild-std-features=panic_immediate_abort',
     '--target=$rustTarget',
-  ]);
+  ];
+  final cargo = await Process.start('cargo', arguments);
   stdout.addStream(cargo.stdout);
   stderr.addStream(cargo.stderr);
 
-  if (await cargo.exitCode != 0) {
-    throw (await cargo.exitCode);
+  final cargoExitCode = await cargo.exitCode;
+  if (cargoExitCode != 0) {
+    throw ProcessException(
+      'cargo',
+      arguments,
+      'Exited with a non-zero exit code',
+      cargoExitCode,
+    );
   }
 
-  await File(Uri.file(
-              '$root/target/$rustTarget/release/${linkMode == LinkMode.dynamic ? target.os.dylibFileName('icu_capi') : target.os.staticlibFileName('icu_capi')}')
-          .toFilePath())
-      .copy(outName);
+  final filename = linkMode == LinkMode.dynamic
+      ? target.os.dylibFileName
+      : target.os.staticlibFileName;
+  final uri =
+      Uri.file('$root/target/$rustTarget/release/${filename(('icu_capi'))}');
+  await File.fromUri(uri).copy(outName);
 }
 
 const dartToRustTargets = {

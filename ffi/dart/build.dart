@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 import 'package:native_assets_cli/native_assets_cli.dart';
+
 import 'tool/build_libs.dart' show buildLib;
-import 'dart:io';
 
 void main(List<String> args) async {
   final config = await BuildConfig.fromArgs(args);
@@ -19,7 +19,12 @@ void main(List<String> args) async {
 
   final path = '${config.outDir.path}/icu4x';
 
-  await buildLib(target, linkMode, 'default_components,experimental_components', path);
+  await buildLib(
+    target,
+    linkMode,
+    ['default_components', 'experimental_components', 'compiled_data'],
+    path,
+  );
 
   await BuildOutput(
     assets: [
