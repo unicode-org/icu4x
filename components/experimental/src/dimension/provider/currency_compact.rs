@@ -9,10 +9,9 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use icu_plurals::PluralCategory;
 use icu_provider::prelude::*;
 use zerovec::ZeroMap;
-
-use super::count::Count;
 
 /// Currency Compact V1 data struct.
 #[icu_provider::data_struct(marker(ShortCurrencyCompactV1Marker, "currency/compact@1"))]
@@ -47,6 +46,6 @@ pub struct ShortCurrencyCompactV1<'data> {
 )]
 #[repr(u8)]
 pub enum CompactCount {
-    Standard(Count),
-    AlphaNextToNumber(Count),
+    Standard(PluralCategory),
+    AlphaNextToNumber(PluralCategory),
 }
