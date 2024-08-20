@@ -2046,8 +2046,16 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                         }
                         ResolvedNeoTimeZoneSkeleton::GmtShort
                         | ResolvedNeoTimeZoneSkeleton::GmtLong
-                        | ResolvedNeoTimeZoneSkeleton::IsoBasic
-                        | ResolvedNeoTimeZoneSkeleton::IsoExtended
+                        | ResolvedNeoTimeZoneSkeleton::Isox
+                        | ResolvedNeoTimeZoneSkeleton::Isoxx
+                        | ResolvedNeoTimeZoneSkeleton::Isoxxx
+                        | ResolvedNeoTimeZoneSkeleton::Isoxxxx
+                        | ResolvedNeoTimeZoneSkeleton::Isoxxxxx
+                        | ResolvedNeoTimeZoneSkeleton::IsoX
+                        | ResolvedNeoTimeZoneSkeleton::IsoXX
+                        | ResolvedNeoTimeZoneSkeleton::IsoXXX
+                        | ResolvedNeoTimeZoneSkeleton::IsoXXXX
+                        | ResolvedNeoTimeZoneSkeleton::IsoXXXXX
                         | ResolvedNeoTimeZoneSkeleton::Bcp47Id => {
                             // all data needed for this is in time zone essentials
                         }

@@ -18,7 +18,7 @@ use crate::provider::date_time::{
     DateSymbols, GetSymbolForEraError, GetSymbolForMonthError, GetSymbolForWeekdayError,
     MonthPlaceholderValue, TimeSymbols, ZoneSymbols,
 };
-use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
+use crate::time_zone::{IsoFormat, IsoMinutes, IsoSeconds, ResolvedNeoTimeZoneSkeleton};
 use crate::time_zone::{
     Bcp47IdFormat, ExemplarCityFormat, FallbackTimeZoneFormatterUnit, FormatTimeZone,
     FormatTimeZoneError, GenericLocationFormat, GenericNonLocationLongFormat,
@@ -929,18 +929,109 @@ fn select_zone_units(time_zone: ResolvedNeoTimeZoneSkeleton) -> [Option<TimeZone
         ResolvedNeoTimeZoneSkeleton::GmtLong => {
             // no-op
         }
+        // 'V'
         ResolvedNeoTimeZoneSkeleton::Bcp47Id => {
-            formatters.0 = Some(TimeZoneFormatterUnit::Bcp47Id(Bcp47IdFormat {}))
+            formatters.0 = Some(TimeZoneFormatterUnit::Bcp47Id(Bcp47IdFormat {}));
         }
-        ResolvedNeoTimeZoneSkeleton::IsoBasic => {
+        // 'X'
+        ResolvedNeoTimeZoneSkeleton::IsoX => {
             formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(
-                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format::basic()),
-            ))
+                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format {
+                    format: IsoFormat::UtcBasic,
+                    minutes: IsoMinutes::Optional,
+                    seconds: IsoSeconds::Never,
+                }),
+            ));
         }
-        ResolvedNeoTimeZoneSkeleton::IsoExtended => {
+        // 'XX'
+        ResolvedNeoTimeZoneSkeleton::IsoXX => {
             formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(
-                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format::extended()),
-            ))
+                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format {
+                    format: IsoFormat::UtcBasic,
+                    minutes: IsoMinutes::Required,
+                    seconds: IsoSeconds::Never,
+                }),
+            ));
+        }
+        // 'XXX'
+        ResolvedNeoTimeZoneSkeleton::IsoXXX => {
+            formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(
+                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format {
+                    format: IsoFormat::UtcExtended,
+                    minutes: IsoMinutes::Required,
+                    seconds: IsoSeconds::Never,
+                }),
+            ));
+        }
+        // 'XXXX'
+        ResolvedNeoTimeZoneSkeleton::IsoXXXX => {
+            formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(
+                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format {
+                    format: IsoFormat::UtcBasic,
+                    minutes: IsoMinutes::Required,
+                    seconds: IsoSeconds::Optional,
+                }),
+            ));
+        }
+        // 'XXXXX', 'ZZZZZ'
+        ResolvedNeoTimeZoneSkeleton::IsoXXXXX => {
+            formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(
+                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format {
+                    format: IsoFormat::UtcExtended,
+                    minutes: IsoMinutes::Required,
+                    seconds: IsoSeconds::Optional,
+                }),
+            ));
+        }
+        // 'x'
+        ResolvedNeoTimeZoneSkeleton::Isox => {
+            formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(
+                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format {
+                    format: IsoFormat::Basic,
+                    minutes: IsoMinutes::Optional,
+                    seconds: IsoSeconds::Never,
+                }),
+            ));
+        }
+        // 'xx'
+        ResolvedNeoTimeZoneSkeleton::Isoxx => {
+            formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(
+                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format {
+                    format: IsoFormat::Basic,
+                    minutes: IsoMinutes::Required,
+                    seconds: IsoSeconds::Never,
+                }),
+            ));
+        }
+        // 'xxx'
+        ResolvedNeoTimeZoneSkeleton::Isoxxx => {
+            formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(
+                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format {
+                    format: IsoFormat::Extended,
+                    minutes: IsoMinutes::Required,
+                    seconds: IsoSeconds::Never,
+                }),
+            ));
+        }
+        // 'xxxx', 'Z', 'ZZ', 'ZZZ'
+        ResolvedNeoTimeZoneSkeleton::Isoxxxx => {
+            formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(
+                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format {
+                    format: IsoFormat::Basic,
+                    minutes: IsoMinutes::Required,
+                    seconds: IsoSeconds::Optional,
+                }),
+            ));
+        }
+        // 'xxxxx', 'ZZZZZ'
+        ResolvedNeoTimeZoneSkeleton::Isoxxxxx => {
+            formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(
+                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format {
+                    format: IsoFormat::Extended,
+                    minutes: IsoMinutes::Required,
+                    seconds: IsoSeconds::Optional,
+                }),
+            ));
         }
     };
     // TODO:
