@@ -3,17 +3,29 @@
     "0": "ovog minuta"
   },
   "past": {
-    "specials": {
-      "One": "\u0005pre  minuta",
-      "Few": "\u0005pre  minuta"
-    },
+    "specials": [
+      [
+        "One",
+        "\u0005pre  minuta"
+      ],
+      [
+        "Few",
+        "\u0005pre  minuta"
+      ]
+    ],
     "other": "\u0005pre  minuta"
   },
   "future": {
-    "specials": {
-      "One": "\u0004za  minut",
-      "Few": "\u0004za  minuta"
-    },
+    "specials": [
+      [
+        "One",
+        "\u0004za  minut"
+      ],
+      [
+        "Few",
+        "\u0004za  minuta"
+      ]
+    ],
     "other": "\u0004za  minuta"
   }
 }

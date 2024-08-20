@@ -3,15 +3,21 @@
     "0": "ahora"
   },
   "past": {
-    "specials": {
-      "One": "\u0006hace  seg."
-    },
+    "specials": [
+      [
+        "One",
+        "\u0006hace  seg."
+      ]
+    ],
     "other": "\u0006hace  seg."
   },
   "future": {
-    "specials": {
-      "One": "\u000bdentro de  seg."
-    },
+    "specials": [
+      [
+        "One",
+        "\u000bdentro de  seg."
+      ]
+    ],
     "other": "\u000bdentro de  seg."
   }
 }

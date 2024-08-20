@@ -3,15 +3,21 @@
     "0": "şimdi"
   },
   "past": {
-    "specials": {
-      "One": "\u0001 saniye önce"
-    },
+    "specials": [
+      [
+        "One",
+        "\u0001 saniye önce"
+      ]
+    ],
     "other": "\u0001 saniye önce"
   },
   "future": {
-    "specials": {
-      "One": "\u0001 saniye sonra"
-    },
+    "specials": [
+      [
+        "One",
+        "\u0001 saniye sonra"
+      ]
+    ],
     "other": "\u0001 saniye sonra"
   }
 }

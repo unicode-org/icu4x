@@ -7,15 +7,21 @@
     "2": "Samakalawa"
   },
   "past": {
-    "specials": {
-      "One": "\u0001 araw ang nakalipas"
-    },
+    "specials": [
+      [
+        "One",
+        "\u0001 araw ang nakalipas"
+      ]
+    ],
     "other": "\u0001 araw ang nakalipas"
   },
   "future": {
-    "specials": {
-      "One": "\u0004sa  araw"
-    },
+    "specials": [
+      [
+        "One",
+        "\u0004sa  araw"
+      ]
+    ],
     "other": "\u0004sa  araw"
   }
 }

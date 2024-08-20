@@ -5,17 +5,29 @@
     "1": "sledeće ned."
   },
   "past": {
-    "specials": {
-      "One": "\u0005pre  ned.",
-      "Few": "\u0005pre  ned."
-    },
+    "specials": [
+      [
+        "One",
+        "\u0005pre  ned."
+      ],
+      [
+        "Few",
+        "\u0005pre  ned."
+      ]
+    ],
     "other": "\u0005pre  ned."
   },
   "future": {
-    "specials": {
-      "One": "\u0004za  ned.",
-      "Few": "\u0004za  ned."
-    },
+    "specials": [
+      [
+        "One",
+        "\u0004za  ned."
+      ],
+      [
+        "Few",
+        "\u0004za  ned."
+      ]
+    ],
     "other": "\u0004za  ned."
   }
 }

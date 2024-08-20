@@ -3,11 +3,11 @@
     "0": "this hour"
   },
   "past": {
-    "specials": {},
+    "specials": [],
     "other": "\u0002- h"
   },
   "future": {
-    "specials": {},
+    "specials": [],
     "other": "\u0002+ h"
   }
 }

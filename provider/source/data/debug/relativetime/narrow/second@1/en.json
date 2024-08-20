@@ -3,15 +3,21 @@
     "0": "now"
   },
   "past": {
-    "specials": {
-      "One": "\u0001s ago"
-    },
+    "specials": [
+      [
+        "One",
+        "\u0001s ago"
+      ]
+    ],
     "other": "\u0001s ago"
   },
   "future": {
-    "specials": {
-      "One": "\u0004in s"
-    },
+    "specials": [
+      [
+        "One",
+        "\u0004in s"
+      ]
+    ],
     "other": "\u0004in s"
   }
 }

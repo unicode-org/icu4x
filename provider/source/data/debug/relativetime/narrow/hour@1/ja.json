@@ -3,11 +3,11 @@
     "0": "1 時間以内"
   },
   "past": {
-    "specials": {},
+    "specials": [],
     "other": "\u0001時間前"
   },
   "future": {
-    "specials": {},
+    "specials": [],
     "other": "\u0001時間後"
   }
 }

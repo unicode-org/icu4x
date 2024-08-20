@@ -3,15 +3,21 @@
     "0": "maintenant"
   },
   "past": {
-    "specials": {
-      "One": "\u0002- s"
-    },
+    "specials": [
+      [
+        "One",
+        "\u0002- s"
+      ]
+    ],
     "other": "\u0002- s"
   },
   "future": {
-    "specials": {
-      "One": "\u0002+ s"
-    },
+    "specials": [
+      [
+        "One",
+        "\u0002+ s"
+      ]
+    ],
     "other": "\u0002+ s"
   }
 }

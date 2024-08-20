@@ -3,11 +3,11 @@
     "0": "นาทีนี้"
   },
   "past": {
-    "specials": {},
+    "specials": [],
     "other": "\u0001 นาทีที่แล้ว"
   },
   "future": {
-    "specials": {},
+    "specials": [],
     "other": "\bใน  นาที"
   }
 }

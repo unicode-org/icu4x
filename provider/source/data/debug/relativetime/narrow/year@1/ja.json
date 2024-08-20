@@ -5,11 +5,11 @@
     "1": "来年"
   },
   "past": {
-    "specials": {},
+    "specials": [],
     "other": "\u0001年前"
   },
   "future": {
-    "specials": {},
+    "specials": [],
     "other": "\u0001年後"
   }
 }

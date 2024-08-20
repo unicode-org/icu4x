@@ -5,11 +5,11 @@
     "1": "来週"
   },
   "past": {
-    "specials": {},
+    "specials": [],
     "other": "\u0001 週間前"
   },
   "future": {
-    "specials": {},
+    "specials": [],
     "other": "\u0001 週間後"
   }
 }

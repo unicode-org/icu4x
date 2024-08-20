@@ -160,7 +160,7 @@ impl TryFrom<&cldr_serde::date_fields::PluralRulesPattern> for SinglePlaceholder
         pattern: &cldr_serde::date_fields::PluralRulesPattern,
     ) -> Result<Self, Self::Error> {
         Ok(Self {
-            specials: [
+            specials: (&[
                 (PluralCategory::Zero, optional_convert(&pattern.zero)?),
                 (PluralCategory::One, optional_convert(&pattern.one)?),
                 (PluralCategory::Two, optional_convert(&pattern.two)?),
@@ -168,8 +168,9 @@ impl TryFrom<&cldr_serde::date_fields::PluralRulesPattern> for SinglePlaceholder
                 (PluralCategory::Many, optional_convert(&pattern.many)?),
             ]
             .into_iter()
-            .filter_map(|(c, s)| Some((c, s?.take_store())))
-            .collect(),
+            .filter_map(|(c, s)| Some(PluralCategoryStr(c, s?.take_store())))
+            .collect::<Vec<_>>())
+                .into(),
             other: SinglePlaceholderPattern::from_str(&pattern.other)?
                 .take_store()
                 .into(),

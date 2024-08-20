@@ -3,11 +3,11 @@
     "0": "ขณะนี้"
   },
   "past": {
-    "specials": {},
+    "specials": [],
     "other": "\u0001 วินาทีที่แล้ว"
   },
   "future": {
-    "specials": {},
+    "specials": [],
     "other": "\bใน  วินาที"
   }
 }

@@ -5,11 +5,11 @@
     "1": "next month"
   },
   "past": {
-    "specials": {},
+    "specials": [],
     "other": "\u0002- m"
   },
   "future": {
-    "specials": {},
+    "specials": [],
     "other": "\u0002+ m"
   }
 }

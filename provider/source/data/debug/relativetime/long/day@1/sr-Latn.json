@@ -7,17 +7,29 @@
     "2": "prekosutra"
   },
   "past": {
-    "specials": {
-      "One": "\u0005pre  dana",
-      "Few": "\u0005pre  dana"
-    },
+    "specials": [
+      [
+        "One",
+        "\u0005pre  dana"
+      ],
+      [
+        "Few",
+        "\u0005pre  dana"
+      ]
+    ],
     "other": "\u0005pre  dana"
   },
   "future": {
-    "specials": {
-      "One": "\u0004za  dan",
-      "Few": "\u0004za  dana"
-    },
+    "specials": [
+      [
+        "One",
+        "\u0004za  dan"
+      ],
+      [
+        "Few",
+        "\u0004za  dana"
+      ]
+    ],
     "other": "\u0004za  dana"
   }
 }

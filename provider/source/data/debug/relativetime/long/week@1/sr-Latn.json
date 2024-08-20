@@ -5,17 +5,29 @@
     "1": "sledeće nedelje"
   },
   "past": {
-    "specials": {
-      "One": "\u0005pre  nedelje",
-      "Few": "\u0005pre  nedelje"
-    },
+    "specials": [
+      [
+        "One",
+        "\u0005pre  nedelje"
+      ],
+      [
+        "Few",
+        "\u0005pre  nedelje"
+      ]
+    ],
     "other": "\u0005pre  nedelja"
   },
   "future": {
-    "specials": {
-      "One": "\u0004za  nedelju",
-      "Few": "\u0004za  nedelje"
-    },
+    "specials": [
+      [
+        "One",
+        "\u0004za  nedelju"
+      ],
+      [
+        "Few",
+        "\u0004za  nedelje"
+      ]
+    ],
     "other": "\u0004za  nedelja"
   }
 }

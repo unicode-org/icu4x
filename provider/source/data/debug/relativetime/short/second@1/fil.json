@@ -3,15 +3,21 @@
     "0": "ngayon"
   },
   "past": {
-    "specials": {
-      "One": "\u0001 seg. ang nakalipas"
-    },
+    "specials": [
+      [
+        "One",
+        "\u0001 seg. ang nakalipas"
+      ]
+    ],
     "other": "\u0001 seg. ang nakalipas"
   },
   "future": {
-    "specials": {
-      "One": "\u0004sa  seg."
-    },
+    "specials": [
+      [
+        "One",
+        "\u0004sa  seg."
+      ]
+    ],
     "other": "\u0004sa  seg."
   }
 }

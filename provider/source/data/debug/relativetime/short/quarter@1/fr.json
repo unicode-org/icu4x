@@ -5,15 +5,21 @@
     "1": "le trimestre prochain"
   },
   "past": {
-    "specials": {
-      "One": "\bil y a  trim."
-    },
+    "specials": [
+      [
+        "One",
+        "\bil y a  trim."
+      ]
+    ],
     "other": "\bil y a  trim."
   },
   "future": {
-    "specials": {
-      "One": "\u0006dans  trim."
-    },
+    "specials": [
+      [
+        "One",
+        "\u0006dans  trim."
+      ]
+    ],
     "other": "\u0006dans  trim."
   }
 }

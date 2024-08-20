@@ -5,17 +5,29 @@
     "1": "sledećeg meseca"
   },
   "past": {
-    "specials": {
-      "One": "\u0005pre  meseca",
-      "Few": "\u0005pre  meseca"
-    },
+    "specials": [
+      [
+        "One",
+        "\u0005pre  meseca"
+      ],
+      [
+        "Few",
+        "\u0005pre  meseca"
+      ]
+    ],
     "other": "\u0005pre  meseci"
   },
   "future": {
-    "specials": {
-      "One": "\u0004za  mesec",
-      "Few": "\u0004za  meseca"
-    },
+    "specials": [
+      [
+        "One",
+        "\u0004za  mesec"
+      ],
+      [
+        "Few",
+        "\u0004za  meseca"
+      ]
+    ],
     "other": "\u0004za  meseci"
   }
 }

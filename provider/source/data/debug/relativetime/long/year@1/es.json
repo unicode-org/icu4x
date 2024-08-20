@@ -5,15 +5,21 @@
     "1": "el próximo año"
   },
   "past": {
-    "specials": {
-      "One": "\u0006hace  año"
-    },
+    "specials": [
+      [
+        "One",
+        "\u0006hace  año"
+      ]
+    ],
     "other": "\u0006hace  años"
   },
   "future": {
-    "specials": {
-      "One": "\u000bdentro de  año"
-    },
+    "specials": [
+      [
+        "One",
+        "\u000bdentro de  año"
+      ]
+    ],
     "other": "\u000bdentro de  años"
   }
 }

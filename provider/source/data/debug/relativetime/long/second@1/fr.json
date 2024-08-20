@@ -3,15 +3,21 @@
     "0": "maintenant"
   },
   "past": {
-    "specials": {
-      "One": "\bil y a  seconde"
-    },
+    "specials": [
+      [
+        "One",
+        "\bil y a  seconde"
+      ]
+    ],
     "other": "\bil y a  secondes"
   },
   "future": {
-    "specials": {
-      "One": "\u0006dans  seconde"
-    },
+    "specials": [
+      [
+        "One",
+        "\u0006dans  seconde"
+      ]
+    ],
     "other": "\u0006dans  secondes"
   }
 }

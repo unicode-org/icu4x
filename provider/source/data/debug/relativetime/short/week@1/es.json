@@ -5,15 +5,21 @@
     "1": "próx. sem."
   },
   "past": {
-    "specials": {
-      "One": "\u0006hace  sem."
-    },
+    "specials": [
+      [
+        "One",
+        "\u0006hace  sem."
+      ]
+    ],
     "other": "\u0006hace  sem."
   },
   "future": {
-    "specials": {
-      "One": "\u000bdentro de  sem."
-    },
+    "specials": [
+      [
+        "One",
+        "\u000bdentro de  sem."
+      ]
+    ],
     "other": "\u000bdentro de  sem."
   }
 }

@@ -3,15 +3,21 @@
     "0": "este minuto"
   },
   "past": {
-    "specials": {
-      "One": "\u0006hace  min"
-    },
+    "specials": [
+      [
+        "One",
+        "\u0006hace  min"
+      ]
+    ],
     "other": "\u0006hace  min"
   },
   "future": {
-    "specials": {
-      "One": "\u000bdentro de  min"
-    },
+    "specials": [
+      [
+        "One",
+        "\u000bdentro de  min"
+      ]
+    ],
     "other": "\u000bdentro de  min"
   }
 }

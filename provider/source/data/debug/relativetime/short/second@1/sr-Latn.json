@@ -3,17 +3,29 @@
     "0": "sada"
   },
   "past": {
-    "specials": {
-      "One": "\u0005pre  sek.",
-      "Few": "\u0005pre  sek."
-    },
+    "specials": [
+      [
+        "One",
+        "\u0005pre  sek."
+      ],
+      [
+        "Few",
+        "\u0005pre  sek."
+      ]
+    ],
     "other": "\u0005pre  sek."
   },
   "future": {
-    "specials": {
-      "One": "\u0004za  sek.",
-      "Few": "\u0004za  sek."
-    },
+    "specials": [
+      [
+        "One",
+        "\u0004za  sek."
+      ],
+      [
+        "Few",
+        "\u0004za  sek."
+      ]
+    ],
     "other": "\u0004za  sek."
   }
 }

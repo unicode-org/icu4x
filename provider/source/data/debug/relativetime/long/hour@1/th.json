@@ -3,11 +3,11 @@
     "0": "ชั่วโมงนี้"
   },
   "past": {
-    "specials": {},
+    "specials": [],
     "other": "\u0001 ชั่วโมงที่ผ่านมา"
   },
   "future": {
-    "specials": {},
+    "specials": [],
     "other": "\u0011ในอีก  ชั่วโมง"
   }
 }

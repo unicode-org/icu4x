@@ -7,15 +7,21 @@
     "2": "öbür gün"
   },
   "past": {
-    "specials": {
-      "One": "\u0001 gün önce"
-    },
+    "specials": [
+      [
+        "One",
+        "\u0001 gün önce"
+      ]
+    ],
     "other": "\u0001 gün önce"
   },
   "future": {
-    "specials": {
-      "One": "\u0001 gün sonra"
-    },
+    "specials": [
+      [
+        "One",
+        "\u0001 gün sonra"
+      ]
+    ],
     "other": "\u0001 gün sonra"
   }
 }

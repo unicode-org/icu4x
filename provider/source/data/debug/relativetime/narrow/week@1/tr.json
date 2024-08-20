@@ -5,15 +5,21 @@
     "1": "gelecek hf."
   },
   "past": {
-    "specials": {
-      "One": "\u0001 hf. önce"
-    },
+    "specials": [
+      [
+        "One",
+        "\u0001 hf. önce"
+      ]
+    ],
     "other": "\u0001 hf. önce"
   },
   "future": {
-    "specials": {
-      "One": "\u0001 hf. sonra"
-    },
+    "specials": [
+      [
+        "One",
+        "\u0001 hf. sonra"
+      ]
+    ],
     "other": "\u0001 hf. sonra"
   }
 }

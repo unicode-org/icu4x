@@ -3,15 +3,21 @@
     "0": "ahora"
   },
   "past": {
-    "specials": {
-      "One": "\u0006hace  segundo"
-    },
+    "specials": [
+      [
+        "One",
+        "\u0006hace  segundo"
+      ]
+    ],
     "other": "\u0006hace  segundos"
   },
   "future": {
-    "specials": {
-      "One": "\u000bdentro de  segundo"
-    },
+    "specials": [
+      [
+        "One",
+        "\u000bdentro de  segundo"
+      ]
+    ],
     "other": "\u000bdentro de  segundos"
   }
 }

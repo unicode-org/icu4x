@@ -7,11 +7,11 @@
     "2": "มะรืนนี้"
   },
   "past": {
-    "specials": {},
+    "specials": [],
     "other": "\u0001 วันที่ผ่านมา"
   },
   "future": {
-    "specials": {},
+    "specials": [],
     "other": "\u0011ในอีก  วัน"
   }
 }

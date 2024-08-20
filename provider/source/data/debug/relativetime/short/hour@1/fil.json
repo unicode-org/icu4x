@@ -3,15 +3,21 @@
     "0": "ngayong oras"
   },
   "past": {
-    "specials": {
-      "One": "\u0001 oras ang nakalipas"
-    },
+    "specials": [
+      [
+        "One",
+        "\u0001 oras ang nakalipas"
+      ]
+    ],
     "other": "\u0001 oras ang nakalipas"
   },
   "future": {
-    "specials": {
-      "One": "\u0004sa  oras"
-    },
+    "specials": [
+      [
+        "One",
+        "\u0004sa  oras"
+      ]
+    ],
     "other": "\u0004sa  (na) oras"
   }
 }

@@ -5,15 +5,21 @@
     "1": "next year"
   },
   "past": {
-    "specials": {
-      "One": "\u0001 year ago"
-    },
+    "specials": [
+      [
+        "One",
+        "\u0001 year ago"
+      ]
+    ],
     "other": "\u0001 years ago"
   },
   "future": {
-    "specials": {
-      "One": "\u0004in  year"
-    },
+    "specials": [
+      [
+        "One",
+        "\u0004in  year"
+      ]
+    ],
     "other": "\u0004in  years"
   }
 }

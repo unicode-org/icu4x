@@ -13,7 +13,7 @@ use alloc::borrow::Cow;
 use icu_pattern::SinglePlaceholderPattern;
 use icu_plurals::PluralCategory;
 use icu_provider::prelude::*;
-use zerovec::ZeroMap;
+use zerovec::{ule::AsULE, VarZeroVec, ZeroMap};
 
 #[cfg(feature = "compiled_data")]
 /// Baked data
@@ -75,6 +75,23 @@ pub struct RelativeTimePatternDataV1<'data> {
     pub future: SinglePlaceholderPluralPattern<'data>,
 }
 
+#[derive(Debug)]
+#[zerovec::make_varule(PluralCategoryStrULE)]
+#[zerovec::skip_derive(Ord)]
+#[zerovec::derive(Debug)]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde::Deserialize),
+    zerovec::derive(Deserialize)
+)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize),
+    zerovec::derive(Serialize)
+)]
+/// A tuple of [`PluralCategory`] and [`str`].
+pub struct PluralCategoryStr<'data>(pub PluralCategory, pub Cow<'data, str>);
+
 /// Display specification for relative times, split over potential plural patterns.
 #[derive(Debug, Clone, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -87,7 +104,7 @@ pub struct RelativeTimePatternDataV1<'data> {
 pub struct SinglePlaceholderPluralPattern<'data> {
     /// Optional patterns for categories other than PluralCategory::Other
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub specials: ZeroMap<'data, PluralCategory, str>,
+    pub specials: VarZeroVec<'data, PluralCategoryStrULE>,
     /// The pattern for PluralCategory::Other
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub other: Cow<'data, str>,
@@ -99,7 +116,11 @@ impl<'data> SinglePlaceholderPluralPattern<'data> {
         SinglePlaceholderPattern::from_ref_store_unchecked(if c == PluralCategory::Other {
             &*self.other
         } else {
-            self.specials.get(&c).unwrap_or(&*self.other)
+            self.specials
+                .iter()
+                .filter_map(|ule| (ule.0 == c.to_unaligned()).then_some(&ule.1))
+                .next()
+                .unwrap_or(&*self.other)
         })
     }
 }
