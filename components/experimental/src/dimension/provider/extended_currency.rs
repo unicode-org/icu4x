@@ -49,7 +49,7 @@ pub struct CurrencyExtendedDataV1<'data> {
     pub display_names: ZeroMap<'data, Count, str>,
 }
 
-// TODO: use the `Count` enum from from `count.rs` instead of defining it here.
+// TODO: use `icu_plurals::PluralCategory` instead of defining it here.
 /// A CLDR plural keyword, or the explicit value 1.
 /// See <https://www.unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules>.
 #[zerovec::make_ule(CountULE)]
