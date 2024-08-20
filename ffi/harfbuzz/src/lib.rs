@@ -244,7 +244,7 @@ impl CombiningClassData {
 impl CombiningClassFunc for CombiningClassData {
     #[inline]
     fn combining_class(&self, ch: char) -> u8 {
-        self.ccc.get(ch).0
+        self.ccc.as_borrowed().get(ch).0
     }
 }
 
@@ -381,7 +381,7 @@ impl ComposeData {
 impl ComposeFunc for ComposeData {
     #[inline]
     fn compose(&self, a: char, b: char) -> Option<char> {
-        self.comp.compose(a, b)
+        self.comp.as_borrowed().compose(a, b)
     }
 }
 
@@ -425,7 +425,7 @@ impl DecomposeData {
 impl DecomposeFunc for DecomposeData {
     #[inline]
     fn decompose(&self, ab: char) -> Option<(char, char)> {
-        match self.decomp.decompose(ab) {
+        match self.decomp.as_borrowed().decompose(ab) {
             Decomposed::Default => None,
             Decomposed::Expansion(first, second) => Some((first, second)),
             Decomposed::Singleton(single) => Some((single, '\0')),

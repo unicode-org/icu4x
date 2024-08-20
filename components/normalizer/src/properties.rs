@@ -13,9 +13,13 @@
 
 use crate::char_from_u16;
 use crate::in_inclusive_range;
+use crate::provider::CanonicalCompositionsV1;
 use crate::provider::CanonicalCompositionsV1Marker;
 use crate::provider::CanonicalDecompositionDataV1Marker;
 use crate::provider::CanonicalDecompositionTablesV1Marker;
+use crate::provider::DecompositionDataV1;
+use crate::provider::DecompositionTablesV1;
+use crate::provider::NonRecursiveDecompositionSupplementV1;
 use crate::provider::NonRecursiveDecompositionSupplementV1Marker;
 use crate::trie_value_has_ccc;
 use crate::trie_value_indicates_special_non_starter_decomposition;
@@ -34,6 +38,65 @@ use crate::SPECIAL_NON_STARTER_DECOMPOSITION_MARKER_U16;
 /// glyph-availability-guided custom normalizer.
 use icu_properties::CanonicalCombiningClass;
 use icu_provider::prelude::*;
+
+/// Borrowed version of the raw canonical composition operation.
+///
+/// Callers should generally use `ComposingNormalizer` instead of this API.
+/// However, this API is provided for callers such as HarfBuzz that specifically
+/// want access to the raw canonical composition operation e.g. for use in a
+/// glyph-availability-guided custom normalizer.
+#[derive(Debug)]
+pub struct CanonicalCompositionBorrowed<'a> {
+    canonical_compositions: &'a CanonicalCompositionsV1<'a>,
+}
+
+#[cfg(feature = "compiled_data")]
+impl<'a> Default for CanonicalCompositionBorrowed<'a> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl<'a> CanonicalCompositionBorrowed<'a> {
+    /// Performs canonical composition (including Hangul) on a pair of
+    /// characters or returns `None` if these characters don't compose.
+    /// Composition exclusions are taken into account.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let comp = icu::normalizer::properties::CanonicalCompositionBorrowed::new();
+    ///
+    /// assert_eq!(comp.compose('a', 'b'), None); // Just two non-composing starters
+    /// assert_eq!(comp.compose('a', '\u{0308}'), Some('ä'));
+    /// assert_eq!(comp.compose('ẹ', '\u{0302}'), Some('ệ'));
+    /// assert_eq!(comp.compose('𝅗', '𝅥'), None); // Composition exclusion
+    /// assert_eq!(comp.compose('ে', 'া'), Some('ো')); // Second is starter
+    /// assert_eq!(comp.compose('ᄀ', 'ᅡ'), Some('가')); // Hangul LV
+    /// assert_eq!(comp.compose('가', 'ᆨ'), Some('각')); // Hangul LVT
+    /// ```
+    #[inline(always)]
+    pub fn compose(&self, starter: char, second: char) -> Option<char> {
+        crate::compose(
+            self.canonical_compositions.canonical_compositions.iter(),
+            starter,
+            second,
+        )
+    }
+
+    /// Constructs a new `CanonicalComposition` using compiled data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub const fn new() -> Self {
+        Self {
+            canonical_compositions:
+                crate::provider::Baked::SINGLETON_CANONICAL_COMPOSITIONS_V1_MARKER,
+        }
+    }
+}
 
 /// The raw canonical composition operation.
 ///
@@ -54,36 +117,17 @@ impl Default for CanonicalComposition {
 }
 
 impl CanonicalComposition {
-    /// Performs canonical composition (including Hangul) on a pair of
-    /// characters or returns `None` if these characters don't compose.
-    /// Composition exclusions are taken into account.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// let comp = icu::normalizer::properties::CanonicalComposition::new();
-    ///
-    /// assert_eq!(comp.compose('a', 'b'), None); // Just two non-composing starters
-    /// assert_eq!(comp.compose('a', '\u{0308}'), Some('ä'));
-    /// assert_eq!(comp.compose('ẹ', '\u{0302}'), Some('ệ'));
-    /// assert_eq!(comp.compose('𝅗', '𝅥'), None); // Composition exclusion
-    /// assert_eq!(comp.compose('ে', 'া'), Some('ো')); // Second is starter
-    /// assert_eq!(comp.compose('ᄀ', 'ᅡ'), Some('가')); // Hangul LV
-    /// assert_eq!(comp.compose('가', 'ᆨ'), Some('각')); // Hangul LVT
-    /// ```
-    #[inline(always)]
-    pub fn compose(&self, starter: char, second: char) -> Option<char> {
-        crate::compose(
-            self.canonical_compositions
-                .get()
-                .canonical_compositions
-                .iter(),
-            starter,
-            second,
-        )
+    /// Constructs a borrowed version of this type for more efficient querying.
+    pub fn as_borrowed(&self) -> CanonicalCompositionBorrowed<'_> {
+        CanonicalCompositionBorrowed {
+            canonical_compositions: self.canonical_compositions.get(),
+        }
     }
 
     /// Constructs a new `CanonicalComposition` using compiled data.
+    ///
+    /// Unless you know you need this constructor, using
+    /// `CanonicalCompositionBorrowed::new()` is likely a better idea.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -132,32 +176,32 @@ pub enum Decomposed {
     Expansion(char, char),
 }
 
-/// The raw (non-recursive) canonical decomposition operation.
+/// Borrowed version of the raw (non-recursive) canonical decomposition operation.
 ///
 /// Callers should generally use `DecomposingNormalizer` instead of this API.
 /// However, this API is provided for callers such as HarfBuzz that specifically
 /// want access to non-recursive canonical decomposition e.g. for use in a
 /// glyph-availability-guided custom normalizer.
 #[derive(Debug)]
-pub struct CanonicalDecomposition {
-    decompositions: DataPayload<CanonicalDecompositionDataV1Marker>,
-    tables: DataPayload<CanonicalDecompositionTablesV1Marker>,
-    non_recursive: DataPayload<NonRecursiveDecompositionSupplementV1Marker>,
+pub struct CanonicalDecompositionBorrowed<'a> {
+    decompositions: &'a DecompositionDataV1<'a>,
+    tables: &'a DecompositionTablesV1<'a>,
+    non_recursive: &'a NonRecursiveDecompositionSupplementV1<'a>,
 }
 
 #[cfg(feature = "compiled_data")]
-impl Default for CanonicalDecomposition {
+impl<'a> Default for CanonicalDecompositionBorrowed<'a> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl CanonicalDecomposition {
+impl<'a> CanonicalDecompositionBorrowed<'a> {
     /// Performs non-recursive canonical decomposition (including for Hangul).
     ///
     /// ```
     ///     use icu::normalizer::properties::Decomposed;
-    ///     let decomp = icu::normalizer::properties::CanonicalDecomposition::new();
+    ///     let decomp = icu::normalizer::properties::CanonicalDecompositionBorrowed::new();
     ///
     ///     assert_eq!(decomp.decompose('e'), Decomposed::Default);
     ///     assert_eq!(
@@ -197,7 +241,7 @@ impl CanonicalDecomposition {
     /// are reported as `Decomposed::Default`.
     #[inline(always)]
     fn decompose_non_hangul(&self, c: char) -> Decomposed {
-        let decomposition = self.decompositions.get().trie.get(c);
+        let decomposition = self.decompositions.trie.get(c);
         if decomposition <= BACKWARD_COMBINING_STARTER_MARKER {
             return Decomposed::Default;
         }
@@ -284,7 +328,7 @@ impl CanonicalDecomposition {
             //         sequence of scalars16, scalars32, supplementary_scalars16,
             //         supplementary_scalars32.
             let offset = usize::from(trail_or_complex & 0xFFF);
-            let tables = self.tables.get();
+            let tables = self.tables;
             if offset < tables.scalars16.len() {
                 if usize::from(trail_or_complex >> 13) != 0 {
                     // i.e. logical len isn't 2
@@ -327,7 +371,7 @@ impl CanonicalDecomposition {
             debug_assert!(false);
             return Decomposed::Default;
         }
-        let non_recursive = self.non_recursive.get();
+        let non_recursive = self.non_recursive;
         let non_recursive_decomposition = non_recursive.trie.get(c);
         if non_recursive_decomposition == 0 {
             // GIGO case
@@ -358,6 +402,67 @@ impl CanonicalDecomposition {
     }
 
     /// Construct from compiled data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub const fn new() -> Self {
+        const _: () = assert!(
+            crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER
+                .scalars16
+                .const_len()
+                + crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER
+                    .scalars24
+                    .const_len()
+                <= 0xFFF,
+            "future extension"
+        );
+
+        Self {
+            decompositions:
+                crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V1_MARKER,
+            tables: crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER,
+            non_recursive:
+                crate::provider::Baked::SINGLETON_NON_RECURSIVE_DECOMPOSITION_SUPPLEMENT_V1_MARKER,
+        }
+    }
+}
+
+/// The raw (non-recursive) canonical decomposition operation.
+///
+/// Callers should generally use `DecomposingNormalizer` instead of this API.
+/// However, this API is provided for callers such as HarfBuzz that specifically
+/// want access to non-recursive canonical decomposition e.g. for use in a
+/// glyph-availability-guided custom normalizer.
+#[derive(Debug)]
+pub struct CanonicalDecomposition {
+    decompositions: DataPayload<CanonicalDecompositionDataV1Marker>,
+    tables: DataPayload<CanonicalDecompositionTablesV1Marker>,
+    non_recursive: DataPayload<NonRecursiveDecompositionSupplementV1Marker>,
+}
+
+#[cfg(feature = "compiled_data")]
+impl Default for CanonicalDecomposition {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl CanonicalDecomposition {
+    /// Constructs a borrowed version of this type for more efficient querying.
+    pub fn as_borrowed(&self) -> CanonicalDecompositionBorrowed<'_> {
+        CanonicalDecompositionBorrowed {
+            decompositions: self.decompositions.get(),
+            tables: self.tables.get(),
+            non_recursive: self.non_recursive.get(),
+        }
+    }
+
+    /// Construct from compiled data.
+    ///
+    /// Unless you know you need this constructor, using
+    /// `CanonicalDecompositionBorrowed::new()` is likely a better idea.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -432,18 +537,70 @@ impl CanonicalDecomposition {
     }
 }
 
-/// Lookup of the Canonical_Combining_Class Unicode property.
+/// Borrowed version of lookup of the Canonical_Combining_Class Unicode property.
 ///
 /// # Example
 ///
 /// ```
 /// use icu::properties::CanonicalCombiningClass;
-/// use icu::normalizer::properties::CanonicalCombiningClassMap;
+/// use icu::normalizer::properties::CanonicalCombiningClassMapBorrowed;
 ///
-/// let map = CanonicalCombiningClassMap::new();
+/// let map = CanonicalCombiningClassMapBorrowed::new();
 /// assert_eq!(map.get('a'), CanonicalCombiningClass::NotReordered); // U+0061: LATIN SMALL LETTER A
 /// assert_eq!(map.get32(0x0301), CanonicalCombiningClass::Above); // U+0301: COMBINING ACUTE ACCENT
 /// ```
+#[derive(Debug)]
+pub struct CanonicalCombiningClassMapBorrowed<'a> {
+    /// The data trie
+    decompositions: &'a DecompositionDataV1<'a>,
+}
+
+#[cfg(feature = "compiled_data")]
+impl<'a> Default for CanonicalCombiningClassMapBorrowed<'a> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl<'a> CanonicalCombiningClassMapBorrowed<'a> {
+    /// Look up the canonical combining class for a scalar value
+    #[inline(always)]
+    pub fn get(&self, c: char) -> CanonicalCombiningClass {
+        self.get32(u32::from(c))
+    }
+
+    /// Look up the canonical combining class for a scalar value
+    /// represented as `u32`. If the argument is outside the scalar
+    /// value range, `CanonicalCombiningClass::NotReordered` is returned.
+    pub fn get32(&self, c: u32) -> CanonicalCombiningClass {
+        let trie_value = self.decompositions.trie.get32(c);
+        if trie_value_has_ccc(trie_value) {
+            CanonicalCombiningClass(trie_value as u8)
+        } else if trie_value_indicates_special_non_starter_decomposition(trie_value) {
+            match c {
+                0x0340 | 0x0341 | 0x0343 | 0x0344 => CanonicalCombiningClass::Above,
+                _ => CanonicalCombiningClass::NotReordered,
+            }
+        } else {
+            CanonicalCombiningClass::NotReordered
+        }
+    }
+
+    /// Construct from compiled data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub const fn new() -> Self {
+        CanonicalCombiningClassMapBorrowed {
+            decompositions:
+                crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V1_MARKER,
+        }
+    }
+}
+
+/// Lookup of the Canonical_Combining_Class Unicode property.
 #[derive(Debug)]
 pub struct CanonicalCombiningClassMap {
     /// The data trie
@@ -458,30 +615,17 @@ impl Default for CanonicalCombiningClassMap {
 }
 
 impl CanonicalCombiningClassMap {
-    /// Look up the canonical combining class for a scalar value
-    #[inline(always)]
-    pub fn get(&self, c: char) -> CanonicalCombiningClass {
-        self.get32(u32::from(c))
-    }
-
-    /// Look up the canonical combining class for a scalar value
-    /// represented as `u32`. If the argument is outside the scalar
-    /// value range, `CanonicalCombiningClass::NotReordered` is returned.
-    pub fn get32(&self, c: u32) -> CanonicalCombiningClass {
-        let trie_value = self.decompositions.get().trie.get32(c);
-        if trie_value_has_ccc(trie_value) {
-            CanonicalCombiningClass(trie_value as u8)
-        } else if trie_value_indicates_special_non_starter_decomposition(trie_value) {
-            match c {
-                0x0340 | 0x0341 | 0x0343 | 0x0344 => CanonicalCombiningClass::Above,
-                _ => CanonicalCombiningClass::NotReordered,
-            }
-        } else {
-            CanonicalCombiningClass::NotReordered
+    /// Constructs a borrowed version of this type for more efficient querying.
+    pub fn as_borrowed(&self) -> CanonicalCombiningClassMapBorrowed<'_> {
+        CanonicalCombiningClassMapBorrowed {
+            decompositions: self.decompositions.get(),
         }
     }
 
     /// Construct from compiled data.
+    ///
+    /// Unless you know you need this constructor, using
+    /// `CanonicalCombiningClassMapBorrowed::new()` is likely a better idea.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
