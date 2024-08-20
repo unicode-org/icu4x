@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::dimension::provider::currency_compact::CompactCount;
+use icu_plurals::PluralCategory;
 use zerovec::ule::{AsULE, ZeroVecError, ULE};
-
-use super::{count::Count, currency_compact::CompactCount};
 
 /// [`CompactCountULE`] is a type optimized for efficient storing and
 /// deserialization of [`CompactCount`] using the `ZeroVec` model.
@@ -65,12 +65,12 @@ impl AsULE for CompactCount {
     #[inline]
     fn from_unaligned(unaligned: Self::ULE) -> Self {
         let count = match unaligned.0 & 0b0000_0111 {
-            0 => Count::Zero,
-            1 => Count::One,
-            2 => Count::Two,
-            3 => Count::Few,
-            4 => Count::Many,
-            5 => Count::Other,
+            0 => PluralCategory::Zero,
+            1 => PluralCategory::One,
+            2 => PluralCategory::Two,
+            3 => PluralCategory::Few,
+            4 => PluralCategory::Many,
+            5 => PluralCategory::Other,
             _ => unreachable!(),
         };
         match unaligned.0 & 0b1000_0000 {
