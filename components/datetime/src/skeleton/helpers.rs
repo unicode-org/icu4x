@@ -352,18 +352,16 @@ fn apply_fractional_seconds(
     if let Some(fractional_seconds) = fractional_seconds {
         let mut items = pattern.items.to_vec();
         for item in items.iter_mut() {
-            match item {
-                PatternItem::Field(
-                    ref mut field @ Field {
-                        symbol:
-                            FieldSymbol::Second(fields::Second::Second) | FieldSymbol::DecimalSecond(_),
-                        ..
-                    },
-                ) => {
-                    field.symbol = FieldSymbol::from_fractional_second_digits(fractional_seconds);
-                }
-                _ => {}
-            }
+            if let PatternItem::Field(
+                ref mut field @ Field {
+                    symbol:
+                        FieldSymbol::Second(fields::Second::Second) | FieldSymbol::DecimalSecond(_),
+                    ..
+                },
+            ) = item
+            {
+                field.symbol = FieldSymbol::from_fractional_second_digits(fractional_seconds);
+            };
         }
         *pattern = runtime::Pattern::from(items);
         pattern

@@ -248,8 +248,7 @@ where
     ZS: ZoneSymbols<'data>,
 {
     let mut r = Ok(());
-    let mut iter = pattern_items.peekable();
-    while let Some(item) = iter.next() {
+    for item in pattern_items {
         match item {
             PatternItem::Literal(ch) => w.write_char(ch)?,
             PatternItem::Field(Field {
