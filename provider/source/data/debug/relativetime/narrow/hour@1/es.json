@@ -3,59 +3,15 @@
     "0": "esta hora"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "hace "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " h"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "hace "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " h"
-      }
-    ]
+    "specials": {
+      "One": "\u0006hace  h"
+    },
+    "other": "\u0006hace  h"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "dentro de "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " h"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "dentro de "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " h"
-      }
-    ]
+    "specials": {
+      "One": "\u000bdentro de  h"
+    },
+    "other": "\u000bdentro de  h"
   }
 }

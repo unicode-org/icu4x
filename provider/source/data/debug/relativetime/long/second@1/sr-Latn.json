@@ -3,79 +3,17 @@
     "0": "sada"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "pre "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " sekunde"
-      }
-    ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "pre "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " sekunde"
-      }
-    ],
-    "many": null,
-    "other": [
-      {
-        "Literal": "pre "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " sekundi"
-      }
-    ]
+    "specials": {
+      "One": "\u0005pre  sekunde",
+      "Few": "\u0005pre  sekunde"
+    },
+    "other": "\u0005pre  sekundi"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "za "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " sekundu"
-      }
-    ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "za "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " sekunde"
-      }
-    ],
-    "many": null,
-    "other": [
-      {
-        "Literal": "za "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " sekundi"
-      }
-    ]
+    "specials": {
+      "One": "\u0004za  sekundu",
+      "Few": "\u0004za  sekunde"
+    },
+    "other": "\u0004za  sekundi"
   }
 }

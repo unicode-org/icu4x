@@ -3,36 +3,11 @@
     "0": "ขณะนี้"
   },
   "past": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " วินาทีที่แล้ว"
-      }
-    ]
+    "specials": {},
+    "other": "\u0001 วินาทีที่แล้ว"
   },
   "future": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "ใน "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " วินาที"
-      }
-    ]
+    "specials": {},
+    "other": "\bใน  วินาที"
   }
 }

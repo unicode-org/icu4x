@@ -5,115 +5,23 @@
     "1": "السنة القادمة"
   },
   "past": {
-    "zero": [
-      {
-        "Literal": "قبل "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " سنة"
-      }
-    ],
-    "one": [
-      {
-        "Literal": "قبل سنة واحدة"
-      }
-    ],
-    "two": [
-      {
-        "Literal": "قبل سنتين"
-      }
-    ],
-    "few": [
-      {
-        "Literal": "قبل "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " سنوات"
-      }
-    ],
-    "many": [
-      {
-        "Literal": "قبل "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " سنة"
-      }
-    ],
-    "other": [
-      {
-        "Literal": "قبل "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " سنة"
-      }
-    ]
+    "specials": {
+      "Zero": "\bقبل  سنة",
+      "One": "\u0000قبل سنة واحدة",
+      "Two": "\u0000قبل سنتين",
+      "Few": "\bقبل  سنوات",
+      "Many": "\bقبل  سنة"
+    },
+    "other": "\bقبل  سنة"
   },
   "future": {
-    "zero": [
-      {
-        "Literal": "خلال "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " سنة"
-      }
-    ],
-    "one": [
-      {
-        "Literal": "خلال سنة واحدة"
-      }
-    ],
-    "two": [
-      {
-        "Literal": "خلال سنتين"
-      }
-    ],
-    "few": [
-      {
-        "Literal": "خلال "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " سنوات"
-      }
-    ],
-    "many": [
-      {
-        "Literal": "خلال "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " سنة"
-      }
-    ],
-    "other": [
-      {
-        "Literal": "خلال "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " سنة"
-      }
-    ]
+    "specials": {
+      "Zero": "\nخلال  سنة",
+      "One": "\u0000خلال سنة واحدة",
+      "Two": "\u0000خلال سنتين",
+      "Few": "\nخلال  سنوات",
+      "Many": "\nخلال  سنة"
+    },
+    "other": "\nخلال  سنة"
   }
 }

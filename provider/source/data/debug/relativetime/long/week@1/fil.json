@@ -5,53 +5,15 @@
     "1": "susunod na linggo"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " linggo ang nakalipas"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " linggo ang nakalipas"
-      }
-    ]
+    "specials": {
+      "One": "\u0001 linggo ang nakalipas"
+    },
+    "other": "\u0001 linggo ang nakalipas"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "sa "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " linggo"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "sa "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " linggo"
-      }
-    ]
+    "specials": {
+      "One": "\u0004sa  linggo"
+    },
+    "other": "\u0004sa  linggo"
   }
 }

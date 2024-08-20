@@ -5,33 +5,11 @@
     "1": "来週"
   },
   "past": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": "週間前"
-      }
-    ]
+    "specials": {},
+    "other": "\u0001週間前"
   },
   "future": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": "週間後"
-      }
-    ]
+    "specials": {},
+    "other": "\u0001週間後"
   }
 }

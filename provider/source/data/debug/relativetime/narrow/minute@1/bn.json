@@ -3,47 +3,15 @@
     "0": "এই মিনিট"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " মিনিট আগে"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " মিনিট আগে"
-      }
-    ]
+    "specials": {
+      "One": "\u0001 মিনিট আগে"
+    },
+    "other": "\u0001 মিনিট আগে"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " মিনিটে"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " মিনিটে"
-      }
-    ]
+    "specials": {
+      "One": "\u0001 মিনিটে"
+    },
+    "other": "\u0001 মিনিটে"
   }
 }

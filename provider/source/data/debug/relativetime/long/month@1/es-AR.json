@@ -5,59 +5,15 @@
     "1": "el próximo mes"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "hace "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " mes"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "hace "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " meses"
-      }
-    ]
+    "specials": {
+      "One": "\u0006hace  mes"
+    },
+    "other": "\u0006hace  meses"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "dentro de "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " mes"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "dentro de "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " meses"
-      }
-    ]
+    "specials": {
+      "One": "\u000bdentro de  mes"
+    },
+    "other": "\u000bdentro de  meses"
   }
 }

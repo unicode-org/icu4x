@@ -3,47 +3,15 @@
     "0": "এই ঘণ্টায়"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " ঘন্টা আগে"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " ঘন্টা আগে"
-      }
-    ]
+    "specials": {
+      "One": "\u0001 ঘন্টা আগে"
+    },
+    "other": "\u0001 ঘন্টা আগে"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " ঘন্টায়"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " ঘন্টায়"
-      }
-    ]
+    "specials": {
+      "One": "\u0001 ঘন্টায়"
+    },
+    "other": "\u0001 ঘন্টায়"
   }
 }

@@ -5,53 +5,15 @@
     "1": "next qtr."
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " qtr ago"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " qtr ago"
-      }
-    ]
+    "specials": {
+      "One": "\u0001 qtr ago"
+    },
+    "other": "\u0001 qtr ago"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "in "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " qtr"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "in "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " qtr"
-      }
-    ]
+    "specials": {
+      "One": "\u0004in  qtr"
+    },
+    "other": "\u0004in  qtr"
   }
 }

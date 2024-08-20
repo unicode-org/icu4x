@@ -5,33 +5,11 @@
     "1": "来月"
   },
   "past": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": "か月前"
-      }
-    ]
+    "specials": {},
+    "other": "\u0001か月前"
   },
   "future": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": "か月後"
-      }
-    ]
+    "specials": {},
+    "other": "\u0001か月後"
   }
 }

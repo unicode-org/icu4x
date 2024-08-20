@@ -3,53 +3,15 @@
     "0": "this hour"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " hour ago"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " hours ago"
-      }
-    ]
+    "specials": {
+      "One": "\u0001 hour ago"
+    },
+    "other": "\u0001 hours ago"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "in "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " hour"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "in "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " hours"
-      }
-    ]
+    "specials": {
+      "One": "\u0004in  hour"
+    },
+    "other": "\u0004in  hours"
   }
 }

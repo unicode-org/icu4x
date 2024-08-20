@@ -7,87 +7,19 @@
     "2": "послезавтра"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " день назад"
-      }
-    ],
-    "two": null,
-    "few": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " дня назад"
-      }
-    ],
-    "many": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " дней назад"
-      }
-    ],
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " дня назад"
-      }
-    ]
+    "specials": {
+      "One": "\u0001 день назад",
+      "Few": "\u0001 дня назад",
+      "Many": "\u0001 дней назад"
+    },
+    "other": "\u0001 дня назад"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " день"
-      }
-    ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " дня"
-      }
-    ],
-    "many": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " дней"
-      }
-    ],
-    "other": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " дня"
-      }
-    ]
+    "specials": {
+      "One": "\fчерез  день",
+      "Few": "\fчерез  дня",
+      "Many": "\fчерез  дней"
+    },
+    "other": "\fчерез  дня"
   }
 }

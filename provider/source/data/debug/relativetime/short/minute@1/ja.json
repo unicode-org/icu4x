@@ -3,33 +3,11 @@
     "0": "1 分以内"
   },
   "past": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " 分前"
-      }
-    ]
+    "specials": {},
+    "other": "\u0001 分前"
   },
   "future": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " 分後"
-      }
-    ]
+    "specials": {},
+    "other": "\u0001 分後"
   }
 }

@@ -3,47 +3,15 @@
     "0": "bu dakika"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " dk. önce"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " dk. önce"
-      }
-    ]
+    "specials": {
+      "One": "\u0001 dk. önce"
+    },
+    "other": "\u0001 dk. önce"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " dk. sonra"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " dk. sonra"
-      }
-    ]
+    "specials": {
+      "One": "\u0001 dk. sonra"
+    },
+    "other": "\u0001 dk. sonra"
   }
 }

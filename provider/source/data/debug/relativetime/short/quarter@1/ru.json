@@ -5,87 +5,19 @@
     "1": "следующий кв."
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " кв. назад"
-      }
-    ],
-    "two": null,
-    "few": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " кв. назад"
-      }
-    ],
-    "many": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " кв. назад"
-      }
-    ],
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " кв. назад"
-      }
-    ]
+    "specials": {
+      "One": "\u0001 кв. назад",
+      "Few": "\u0001 кв. назад",
+      "Many": "\u0001 кв. назад"
+    },
+    "other": "\u0001 кв. назад"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " кв."
-      }
-    ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " кв."
-      }
-    ],
-    "many": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " кв."
-      }
-    ],
-    "other": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " кв."
-      }
-    ]
+    "specials": {
+      "One": "\fчерез  кв.",
+      "Few": "\fчерез  кв.",
+      "Many": "\fчерез  кв."
+    },
+    "other": "\fчерез  кв."
   }
 }

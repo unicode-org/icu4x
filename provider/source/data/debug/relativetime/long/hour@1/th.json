@@ -3,36 +3,11 @@
     "0": "ชั่วโมงนี้"
   },
   "past": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " ชั่วโมงที่ผ่านมา"
-      }
-    ]
+    "specials": {},
+    "other": "\u0001 ชั่วโมงที่ผ่านมา"
   },
   "future": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "ในอีก "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " ชั่วโมง"
-      }
-    ]
+    "specials": {},
+    "other": "\u0011ในอีก  ชั่วโมง"
   }
 }

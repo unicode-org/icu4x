@@ -5,87 +5,19 @@
     "1": "в следующем месяце"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " месяц назад"
-      }
-    ],
-    "two": null,
-    "few": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " месяца назад"
-      }
-    ],
-    "many": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " месяцев назад"
-      }
-    ],
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " месяца назад"
-      }
-    ]
+    "specials": {
+      "One": "\u0001 месяц назад",
+      "Few": "\u0001 месяца назад",
+      "Many": "\u0001 месяцев назад"
+    },
+    "other": "\u0001 месяца назад"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " месяц"
-      }
-    ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " месяца"
-      }
-    ],
-    "many": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " месяцев"
-      }
-    ],
-    "other": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " месяца"
-      }
-    ]
+    "specials": {
+      "One": "\fчерез  месяц",
+      "Few": "\fчерез  месяца",
+      "Many": "\fчерез  месяцев"
+    },
+    "other": "\fчерез  месяца"
   }
 }

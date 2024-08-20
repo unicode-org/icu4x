@@ -5,53 +5,15 @@
     "1": "susunod na taon"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " taon ang nakalipas"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " taon ang nakalipas"
-      }
-    ]
+    "specials": {
+      "One": "\u0001 taon ang nakalipas"
+    },
+    "other": "\u0001 taon ang nakalipas"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "sa "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " taon"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "sa "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " taon"
-      }
-    ]
+    "specials": {
+      "One": "\u0004sa  taon"
+    },
+    "other": "\u0004sa  taon"
   }
 }

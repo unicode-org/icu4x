@@ -5,47 +5,15 @@
     "1": "পরের সপ্তাহ"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " সপ্তাহ আগে"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " সপ্তাহ আগে"
-      }
-    ]
+    "specials": {
+      "One": "\u0001 সপ্তাহ আগে"
+    },
+    "other": "\u0001 সপ্তাহ আগে"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " সপ্তাহে"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " সপ্তাহে"
-      }
-    ]
+    "specials": {
+      "One": "\u0001 সপ্তাহে"
+    },
+    "other": "\u0001 সপ্তাহে"
   }
 }

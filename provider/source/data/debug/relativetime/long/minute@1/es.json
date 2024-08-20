@@ -3,59 +3,15 @@
     "0": "este minuto"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "hace "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " minuto"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "hace "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " minutos"
-      }
-    ]
+    "specials": {
+      "One": "\u0006hace  minuto"
+    },
+    "other": "\u0006hace  minutos"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "dentro de "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " minuto"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "dentro de "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " minutos"
-      }
-    ]
+    "specials": {
+      "One": "\u000bdentro de  minuto"
+    },
+    "other": "\u000bdentro de  minutos"
   }
 }

@@ -3,115 +3,23 @@
     "0": "الآن"
   },
   "past": {
-    "zero": [
-      {
-        "Literal": "قبل "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " ثانية"
-      }
-    ],
-    "one": [
-      {
-        "Literal": "قبل ثانية واحدة"
-      }
-    ],
-    "two": [
-      {
-        "Literal": "قبل ثانيتين"
-      }
-    ],
-    "few": [
-      {
-        "Literal": "قبل "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " ثوانٍ"
-      }
-    ],
-    "many": [
-      {
-        "Literal": "قبل "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " ثانية"
-      }
-    ],
-    "other": [
-      {
-        "Literal": "قبل "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " ثانية"
-      }
-    ]
+    "specials": {
+      "Zero": "\bقبل  ثانية",
+      "One": "\u0000قبل ثانية واحدة",
+      "Two": "\u0000قبل ثانيتين",
+      "Few": "\bقبل  ثوانٍ",
+      "Many": "\bقبل  ثانية"
+    },
+    "other": "\bقبل  ثانية"
   },
   "future": {
-    "zero": [
-      {
-        "Literal": "خلال "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " ثانية"
-      }
-    ],
-    "one": [
-      {
-        "Literal": "خلال ثانية واحدة"
-      }
-    ],
-    "two": [
-      {
-        "Literal": "خلال ثانيتين"
-      }
-    ],
-    "few": [
-      {
-        "Literal": "خلال "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " ثوانٍ"
-      }
-    ],
-    "many": [
-      {
-        "Literal": "خلال "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " ثانية"
-      }
-    ],
-    "other": [
-      {
-        "Literal": "خلال "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " ثانية"
-      }
-    ]
+    "specials": {
+      "Zero": "\nخلال  ثانية",
+      "One": "\u0000خلال ثانية واحدة",
+      "Two": "\u0000خلال ثانيتين",
+      "Few": "\nخلال  ثوانٍ",
+      "Many": "\nخلال  ثانية"
+    },
+    "other": "\nخلال  ثانية"
   }
 }

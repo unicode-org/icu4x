@@ -3,59 +3,15 @@
     "0": "cette heure-ci"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "il y a "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " heure"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "il y a "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " heures"
-      }
-    ]
+    "specials": {
+      "One": "\bil y a  heure"
+    },
+    "other": "\bil y a  heures"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "dans "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " heure"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "dans "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " heures"
-      }
-    ]
+    "specials": {
+      "One": "\u0006dans  heure"
+    },
+    "other": "\u0006dans  heures"
   }
 }

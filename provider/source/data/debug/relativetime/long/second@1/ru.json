@@ -3,87 +3,19 @@
     "0": "сейчас"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " секунду назад"
-      }
-    ],
-    "two": null,
-    "few": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " секунды назад"
-      }
-    ],
-    "many": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " секунд назад"
-      }
-    ],
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " секунды назад"
-      }
-    ]
+    "specials": {
+      "One": "\u0001 секунду назад",
+      "Few": "\u0001 секунды назад",
+      "Many": "\u0001 секунд назад"
+    },
+    "other": "\u0001 секунды назад"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " секунду"
-      }
-    ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " секунды"
-      }
-    ],
-    "many": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " секунд"
-      }
-    ],
-    "other": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " секунды"
-      }
-    ]
+    "specials": {
+      "One": "\fчерез  секунду",
+      "Few": "\fчерез  секунды",
+      "Many": "\fчерез  секунд"
+    },
+    "other": "\fчерез  секунды"
   }
 }

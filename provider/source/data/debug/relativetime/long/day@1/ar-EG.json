@@ -7,115 +7,23 @@
     "2": "بعد الغد"
   },
   "past": {
-    "zero": [
-      {
-        "Literal": "قبل "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " يوم"
-      }
-    ],
-    "one": [
-      {
-        "Literal": "قبل يوم واحد"
-      }
-    ],
-    "two": [
-      {
-        "Literal": "قبل يومين"
-      }
-    ],
-    "few": [
-      {
-        "Literal": "قبل "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " أيام"
-      }
-    ],
-    "many": [
-      {
-        "Literal": "قبل "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " يومًا"
-      }
-    ],
-    "other": [
-      {
-        "Literal": "قبل "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " يوم"
-      }
-    ]
+    "specials": {
+      "Zero": "\bقبل  يوم",
+      "One": "\u0000قبل يوم واحد",
+      "Two": "\u0000قبل يومين",
+      "Few": "\bقبل  أيام",
+      "Many": "\bقبل  يومًا"
+    },
+    "other": "\bقبل  يوم"
   },
   "future": {
-    "zero": [
-      {
-        "Literal": "خلال "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " يوم"
-      }
-    ],
-    "one": [
-      {
-        "Literal": "خلال يوم واحد"
-      }
-    ],
-    "two": [
-      {
-        "Literal": "خلال يومين"
-      }
-    ],
-    "few": [
-      {
-        "Literal": "خلال "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " أيام"
-      }
-    ],
-    "many": [
-      {
-        "Literal": "خلال "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " يومًا"
-      }
-    ],
-    "other": [
-      {
-        "Literal": "خلال "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " يوم"
-      }
-    ]
+    "specials": {
+      "Zero": "\nخلال  يوم",
+      "One": "\u0000خلال يوم واحد",
+      "Two": "\u0000خلال يومين",
+      "Few": "\nخلال  أيام",
+      "Many": "\nخلال  يومًا"
+    },
+    "other": "\nخلال  يوم"
   }
 }

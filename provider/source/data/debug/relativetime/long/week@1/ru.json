@@ -5,87 +5,19 @@
     "1": "на следующей неделе"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " неделю назад"
-      }
-    ],
-    "two": null,
-    "few": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " недели назад"
-      }
-    ],
-    "many": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " недель назад"
-      }
-    ],
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " недели назад"
-      }
-    ]
+    "specials": {
+      "One": "\u0001 неделю назад",
+      "Few": "\u0001 недели назад",
+      "Many": "\u0001 недель назад"
+    },
+    "other": "\u0001 недели назад"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " неделю"
-      }
-    ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " недели"
-      }
-    ],
-    "many": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " недель"
-      }
-    ],
-    "other": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " недели"
-      }
-    ]
+    "specials": {
+      "One": "\fчерез  неделю",
+      "Few": "\fчерез  недели",
+      "Many": "\fчерез  недель"
+    },
+    "other": "\fчерез  недели"
   }
 }

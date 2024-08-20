@@ -5,33 +5,11 @@
     "1": "来年"
   },
   "past": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " 年前"
-      }
-    ]
+    "specials": {},
+    "other": "\u0001 年前"
   },
   "future": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " 年後"
-      }
-    ]
+    "specials": {},
+    "other": "\u0001 年後"
   }
 }

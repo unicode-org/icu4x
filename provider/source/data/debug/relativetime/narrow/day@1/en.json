@@ -5,53 +5,15 @@
     "1": "tomorrow"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": "d ago"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": "d ago"
-      }
-    ]
+    "specials": {
+      "One": "\u0001d ago"
+    },
+    "other": "\u0001d ago"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "in "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": "d"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "in "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": "d"
-      }
-    ]
+    "specials": {
+      "One": "\u0004in d"
+    },
+    "other": "\u0004in d"
   }
 }

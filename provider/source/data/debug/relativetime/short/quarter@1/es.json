@@ -5,59 +5,15 @@
     "1": "el próximo trimestre"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "hace "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " trim."
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "hace "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " trim."
-      }
-    ]
+    "specials": {
+      "One": "\u0006hace  trim."
+    },
+    "other": "\u0006hace  trim."
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "dentro de "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " trim."
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "dentro de "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " trim."
-      }
-    ]
+    "specials": {
+      "One": "\u000bdentro de  trim."
+    },
+    "other": "\u000bdentro de  trim."
   }
 }

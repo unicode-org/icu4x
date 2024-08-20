@@ -6,6 +6,7 @@ use crate::cldr_serde;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::experimental::relativetime::provider::*;
+use icu::plurals::PluralCategory;
 use icu_pattern::Error as PatternError;
 use icu_pattern::SinglePlaceholderPattern;
 use icu_provider::prelude::*;
@@ -159,13 +160,19 @@ impl TryFrom<&cldr_serde::date_fields::PluralRulesPattern> for SinglePlaceholder
         pattern: &cldr_serde::date_fields::PluralRulesPattern,
     ) -> Result<Self, Self::Error> {
         Ok(Self {
-            zero: optional_convert(&pattern.zero)?,
-            one: optional_convert(&pattern.one)?,
-            two: optional_convert(&pattern.two)?,
-            few: optional_convert(&pattern.few)?,
-            many: optional_convert(&pattern.many)?,
-            other: SinglePlaceholderPattern::from_str(&pattern.other)
-                .map(|p| SinglePlaceholderPattern::from_store_unchecked(p.take_store().into()))?,
+            specials: [
+                (PluralCategory::Zero, optional_convert(&pattern.zero)?),
+                (PluralCategory::One, optional_convert(&pattern.one)?),
+                (PluralCategory::Two, optional_convert(&pattern.two)?),
+                (PluralCategory::Few, optional_convert(&pattern.few)?),
+                (PluralCategory::Many, optional_convert(&pattern.many)?),
+            ]
+            .into_iter()
+            .filter_map(|(c, s)| Some((c, s?.take_store())))
+            .collect(),
+            other: SinglePlaceholderPattern::from_str(&pattern.other)?
+                .take_store()
+                .into(),
         })
     }
 }
@@ -215,12 +222,15 @@ mod tests {
             .payload;
         assert_eq!(data.get().relatives.get(&0).unwrap(), "this qtr.");
         assert_writeable_eq!(
-            data.get().past.one.as_ref().unwrap().interpolate([1]),
+            data.get().past.get(PluralCategory::One).interpolate([1]),
             "1 qtr. ago"
         );
-        assert_writeable_eq!(data.get().past.other.interpolate([2]), "2 qtrs. ago");
         assert_writeable_eq!(
-            data.get().future.one.as_ref().unwrap().interpolate([1]),
+            data.get().past.get(PluralCategory::Other).interpolate([2]),
+            "2 qtrs. ago"
+        );
+        assert_writeable_eq!(
+            data.get().future.get(PluralCategory::One).interpolate([1]),
             "in 1 qtr."
         );
     }
@@ -239,18 +249,24 @@ mod tests {
 
         // past.one, future.two are without a placeholder.
         assert_writeable_eq!(
-            data.get().past.one.as_ref().unwrap().interpolate([1]),
+            data.get().past.get(PluralCategory::One).interpolate([1]),
             "قبل سنة واحدة"
         );
         assert_writeable_eq!(
-            data.get().future.two.as_ref().unwrap().interpolate([2]),
+            data.get().future.get(PluralCategory::Two).interpolate([2]),
             "خلال سنتين"
         );
 
         assert_writeable_eq!(
-            data.get().past.many.as_ref().unwrap().interpolate([5]),
+            data.get().past.get(PluralCategory::Many).interpolate([5]),
             "قبل 5 سنة"
         );
-        assert_writeable_eq!(data.get().future.other.interpolate([6]), "خلال 6 سنة");
+        assert_writeable_eq!(
+            data.get()
+                .future
+                .get(PluralCategory::Other)
+                .interpolate([6]),
+            "خلال 6 سنة"
+        );
     }
 }

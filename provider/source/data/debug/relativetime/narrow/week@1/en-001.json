@@ -5,53 +5,15 @@
     "1": "next wk"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " wk ago"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " wk ago"
-      }
-    ]
+    "specials": {
+      "One": "\u0001 wk ago"
+    },
+    "other": "\u0001 wk ago"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "in "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " wk"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "in "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " wk"
-      }
-    ]
+    "specials": {
+      "One": "\u0004in  wk"
+    },
+    "other": "\u0004in  wk"
   }
 }

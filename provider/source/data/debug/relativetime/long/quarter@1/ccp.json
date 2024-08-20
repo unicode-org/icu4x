@@ -5,40 +5,13 @@
     "1": "𑄛𑄧𑄢𑄬 𑄖𑄨𑄚𑄴𑄟𑄏𑄧𑄢𑄴"
   },
   "past": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " 𑄖𑄨𑄚𑄴𑄟𑄏𑄧𑄢𑄴 𑄃𑄉𑄬"
-      }
-    ]
+    "specials": {},
+    "other": "\u0001 𑄖𑄨𑄚𑄴𑄟𑄏𑄧𑄢𑄴 𑄃𑄉𑄬"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " 𑄖𑄨𑄚𑄴𑄟𑄏𑄬"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " 𑄖𑄨𑄚𑄟𑄏𑄬"
-      }
-    ]
+    "specials": {
+      "One": "\u0001 𑄖𑄨𑄚𑄴𑄟𑄏𑄬"
+    },
+    "other": "\u0001 𑄖𑄨𑄚𑄟𑄏𑄬"
   }
 }

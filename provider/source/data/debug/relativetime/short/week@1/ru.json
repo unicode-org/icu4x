@@ -5,87 +5,19 @@
     "1": "на следующей нед."
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " нед. назад"
-      }
-    ],
-    "two": null,
-    "few": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " нед. назад"
-      }
-    ],
-    "many": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " нед. назад"
-      }
-    ],
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " нед. назад"
-      }
-    ]
+    "specials": {
+      "One": "\u0001 нед. назад",
+      "Few": "\u0001 нед. назад",
+      "Many": "\u0001 нед. назад"
+    },
+    "other": "\u0001 нед. назад"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " нед."
-      }
-    ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " нед."
-      }
-    ],
-    "many": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " нед."
-      }
-    ],
-    "other": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " нед."
-      }
-    ]
+    "specials": {
+      "One": "\fчерез  нед.",
+      "Few": "\fчерез  нед.",
+      "Many": "\fчерез  нед."
+    },
+    "other": "\fчерез  нед."
   }
 }

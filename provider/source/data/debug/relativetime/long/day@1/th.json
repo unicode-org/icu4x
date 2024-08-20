@@ -7,36 +7,11 @@
     "2": "มะรืนนี้"
   },
   "past": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " วันที่ผ่านมา"
-      }
-    ]
+    "specials": {},
+    "other": "\u0001 วันที่ผ่านมา"
   },
   "future": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "ในอีก "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " วัน"
-      }
-    ]
+    "specials": {},
+    "other": "\u0011ในอีก  วัน"
   }
 }

@@ -5,47 +5,15 @@
     "1": "gelecek çyr."
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " çyr. önce"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " çyr. önce"
-      }
-    ]
+    "specials": {
+      "One": "\u0001 çyr. önce"
+    },
+    "other": "\u0001 çyr. önce"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " çyr. sonra"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " çyr. sonra"
-      }
-    ]
+    "specials": {
+      "One": "\u0001 çyr. sonra"
+    },
+    "other": "\u0001 çyr. sonra"
   }
 }

@@ -7,47 +7,15 @@
     "2": "öbür gün"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " gün önce"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " gün önce"
-      }
-    ]
+    "specials": {
+      "One": "\u0001 gün önce"
+    },
+    "other": "\u0001 gün önce"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " gün sonra"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " gün sonra"
-      }
-    ]
+    "specials": {
+      "One": "\u0001 gün sonra"
+    },
+    "other": "\u0001 gün sonra"
   }
 }
