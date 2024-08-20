@@ -150,7 +150,7 @@ fn main() {
     let fs: BTreeSet<_> = EXTRA_FS_DEPS.iter().copied().collect();
     let zip: BTreeSet<_> = EXTRA_ZIP_DEPS.iter().copied().collect();
     let rayon: BTreeSet<_> = EXTRA_RAYON_DEPS.iter().copied().collect();
-    let datagen: BTreeSet<_> = EXTRA_DATAGEN_DEPS.iter().copied().collect();
+    let export: BTreeSet<_> = EXTRA_EXPORT_DEPS.iter().copied().collect();
     let source: BTreeSet<_> = EXTRA_SOURCE_DEPS.iter().copied().collect();
 
     // These tests are in a deliberate order such that the `dep_list_name_for_error`
@@ -224,7 +224,7 @@ fn main() {
     test_dep_list(
         "icu_capi",
         "normal,no-proc-macro",
-        "",
+        "--features default_components",
         // capi should NOT pull in serde or capi-build when the proc macro is disabled
         &[&basic, &experimental, &lstm, &ryu, &capi_runtime],
         "`EXTRA_CAPI_DEPS`",
@@ -233,7 +233,7 @@ fn main() {
     test_dep_list(
         "icu_capi",
         "normal",
-        "",
+        "--features default_components",
         &[&basic, &serde, &experimental, &lstm, &ryu, &capi],
         "`EXTRA_CAPI_BUILD_DEPS`",
     );
@@ -241,14 +241,14 @@ fn main() {
     test_dep_list(
         "icu_capi",
         "normal",
-        "--features buffer_provider",
+        "--features default_components,buffer_provider",
         &[&basic, &serde, &experimental, &lstm, &ryu, &capi, &blob],
         "`EXTRA_BLOB_DEPS`",
     );
     test_dep_list(
         "icu_capi",
         "normal",
-        "--features provider_fs",
+        "--features default_components,provider_fs",
         &[
             &basic,
             &serde,
@@ -297,6 +297,14 @@ fn main() {
         "icu_provider_export",
         "normal",
         "",
+        &[&basic, &serde, &experimental, &lstm, &fs, &export, &logging],
+        "`EXTRA_EXPORT_DEPS`",
+    );
+
+    test_dep_list(
+        "icu_provider_export",
+        "normal",
+        "--features rayon",
         &[
             &basic,
             &serde,
@@ -304,7 +312,7 @@ fn main() {
             &lstm,
             &fs,
             &rayon,
-            &datagen,
+            &export,
             &logging,
         ],
         "`EXTRA_RAYON_DEPS`",
