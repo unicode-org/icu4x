@@ -179,8 +179,8 @@ make_data_provider!(
 mod tests {
     use super::*;
     use icu::locale::langid;
-    use writeable::assert_writeable_eq;
     use icu::plurals::PluralCategory;
+    use writeable::assert_writeable_eq;
 
     #[test]
     fn test_basic() {
