@@ -49,9 +49,8 @@ final class ZonedDateTimeFormatter implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   factory ZonedDateTimeFormatter.withLengthsAndIso8601TimeZoneFallback(DataProvider provider, Locale locale, DateLength dateLength, TimeLength timeLength, IsoTimeZoneOptions zoneOptions) {
-    final temp = ffi2.Arena();
-    final result = _icu4x_ZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback_mv1(provider._ffi, locale._ffi, dateLength.index, timeLength.index, zoneOptions._toFfi(temp));
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final result = _icu4x_ZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback_mv1(provider._ffi, locale._ffi, dateLength.index, timeLength.index, zoneOptions._toFfi(temp.arena));
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }

@@ -16,7 +16,7 @@ typedef enum TrailingCase {
   TrailingCase_Unchanged = 1,
 } TrailingCase;
 
-
+typedef struct TrailingCase_option {union { TrailingCase ok; }; bool is_ok; } TrailingCase_option;
 
 
 

@@ -13,6 +13,7 @@ export class CollatorCaseLevel {
         ["Off", 1],
         ["On", 2]
     ]);
+
     constructor(value) {
         if (value instanceof CollatorCaseLevel) {
             this.#value = value.value;
@@ -36,12 +37,6 @@ export class CollatorCaseLevel {
     }
 
     static Auto = new CollatorCaseLevel("Auto");
-
     static Off = new CollatorCaseLevel("Off");
-
     static On = new CollatorCaseLevel("On");
-
-
-    
-
 }

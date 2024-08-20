@@ -13,6 +13,7 @@ export class WeekRelativeUnit {
         ["Current", 1],
         ["Next", 2]
     ]);
+
     constructor(value) {
         if (value instanceof WeekRelativeUnit) {
             this.#value = value.value;
@@ -36,12 +37,6 @@ export class WeekRelativeUnit {
     }
 
     static Previous = new WeekRelativeUnit("Previous");
-
     static Current = new WeekRelativeUnit("Current");
-
     static Next = new WeekRelativeUnit("Next");
-
-
-    
-
 }

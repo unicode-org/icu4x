@@ -40,11 +40,11 @@ namespace capi {
     typedef struct icu4x_LineSegmenter_create_dictionary_with_options_v1_mv1_result {union {icu4x::capi::LineSegmenter* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_LineSegmenter_create_dictionary_with_options_v1_mv1_result;
     icu4x_LineSegmenter_create_dictionary_with_options_v1_mv1_result icu4x_LineSegmenter_create_dictionary_with_options_v1_mv1(const icu4x::capi::DataProvider* provider, icu4x::capi::LineBreakOptionsV1 options);
     
-    icu4x::capi::LineBreakIteratorUtf8* icu4x_LineSegmenter_segment_utf8_mv1(const icu4x::capi::LineSegmenter* self, const char* input_data, size_t input_len);
+    icu4x::capi::LineBreakIteratorUtf8* icu4x_LineSegmenter_segment_utf8_mv1(const icu4x::capi::LineSegmenter* self, diplomat::capi::DiplomatStringView input);
     
-    icu4x::capi::LineBreakIteratorUtf16* icu4x_LineSegmenter_segment_utf16_mv1(const icu4x::capi::LineSegmenter* self, const char16_t* input_data, size_t input_len);
+    icu4x::capi::LineBreakIteratorUtf16* icu4x_LineSegmenter_segment_utf16_mv1(const icu4x::capi::LineSegmenter* self, diplomat::capi::DiplomatString16View input);
     
-    icu4x::capi::LineBreakIteratorLatin1* icu4x_LineSegmenter_segment_latin1_mv1(const icu4x::capi::LineSegmenter* self, const uint8_t* input_data, size_t input_len);
+    icu4x::capi::LineBreakIteratorLatin1* icu4x_LineSegmenter_segment_latin1_mv1(const icu4x::capi::LineSegmenter* self, diplomat::capi::DiplomatU8View input);
     
     
     void icu4x_LineSegmenter_destroy_mv1(LineSegmenter* self);
@@ -88,22 +88,19 @@ inline diplomat::result<std::unique_ptr<icu4x::LineSegmenter>, icu4x::DataError>
 
 inline std::unique_ptr<icu4x::LineBreakIteratorUtf8> icu4x::LineSegmenter::segment(std::string_view input) const {
   auto result = icu4x::capi::icu4x_LineSegmenter_segment_utf8_mv1(this->AsFFI(),
-    input.data(),
-    input.size());
+    {input.data(), input.size()});
   return std::unique_ptr<icu4x::LineBreakIteratorUtf8>(icu4x::LineBreakIteratorUtf8::FromFFI(result));
 }
 
 inline std::unique_ptr<icu4x::LineBreakIteratorUtf16> icu4x::LineSegmenter::segment16(std::u16string_view input) const {
   auto result = icu4x::capi::icu4x_LineSegmenter_segment_utf16_mv1(this->AsFFI(),
-    input.data(),
-    input.size());
+    {input.data(), input.size()});
   return std::unique_ptr<icu4x::LineBreakIteratorUtf16>(icu4x::LineBreakIteratorUtf16::FromFFI(result));
 }
 
 inline std::unique_ptr<icu4x::LineBreakIteratorLatin1> icu4x::LineSegmenter::segment_latin1(diplomat::span<const uint8_t> input) const {
   auto result = icu4x::capi::icu4x_LineSegmenter_segment_latin1_mv1(this->AsFFI(),
-    input.data(),
-    input.size());
+    {input.data(), input.size()});
   return std::unique_ptr<icu4x::LineBreakIteratorLatin1>(icu4x::LineBreakIteratorLatin1::FromFFI(result));
 }
 

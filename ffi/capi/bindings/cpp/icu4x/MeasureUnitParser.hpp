@@ -17,7 +17,7 @@ namespace icu4x {
 namespace capi {
     extern "C" {
     
-    icu4x::capi::MeasureUnit* icu4x_MeasureUnitParser_parse_mv1(const icu4x::capi::MeasureUnitParser* self, const char* unit_id_data, size_t unit_id_len);
+    icu4x::capi::MeasureUnit* icu4x_MeasureUnitParser_parse_mv1(const icu4x::capi::MeasureUnitParser* self, diplomat::capi::DiplomatStringView unit_id);
     
     
     void icu4x_MeasureUnitParser_destroy_mv1(MeasureUnitParser* self);
@@ -28,8 +28,7 @@ namespace capi {
 
 inline std::unique_ptr<icu4x::MeasureUnit> icu4x::MeasureUnitParser::parse(std::string_view unit_id) const {
   auto result = icu4x::capi::icu4x_MeasureUnitParser_parse_mv1(this->AsFFI(),
-    unit_id.data(),
-    unit_id.size());
+    {unit_id.data(), unit_id.size()});
   return std::unique_ptr<icu4x::MeasureUnit>(icu4x::MeasureUnit::FromFFI(result));
 }
 

@@ -20,7 +20,7 @@ typedef struct icu4x_AnyCalendarKind_get_for_locale_mv1_result {union {AnyCalend
 icu4x_AnyCalendarKind_get_for_locale_mv1_result icu4x_AnyCalendarKind_get_for_locale_mv1(const Locale* locale);
 
 typedef struct icu4x_AnyCalendarKind_get_for_bcp47_mv1_result {union {AnyCalendarKind ok; }; bool is_ok;} icu4x_AnyCalendarKind_get_for_bcp47_mv1_result;
-icu4x_AnyCalendarKind_get_for_bcp47_mv1_result icu4x_AnyCalendarKind_get_for_bcp47_mv1(const char* s_data, size_t s_len);
+icu4x_AnyCalendarKind_get_for_bcp47_mv1_result icu4x_AnyCalendarKind_get_for_bcp47_mv1(DiplomatStringView s);
 
 void icu4x_AnyCalendarKind_bcp47_mv1(AnyCalendarKind self, DiplomatWrite* write);
 

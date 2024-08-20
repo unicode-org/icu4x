@@ -19,6 +19,8 @@ namespace capi {
       CalendarParseError_MissingFields = 3,
       CalendarParseError_UnknownCalendar = 4,
     };
+    
+    typedef struct CalendarParseError_option {union { CalendarParseError ok; }; bool is_ok; } CalendarParseError_option;
 } // namespace capi
 } // namespace
 

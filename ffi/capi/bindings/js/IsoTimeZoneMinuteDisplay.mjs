@@ -12,6 +12,7 @@ export class IsoTimeZoneMinuteDisplay {
         ["Required", 0],
         ["Optional", 1]
     ]);
+
     constructor(value) {
         if (value instanceof IsoTimeZoneMinuteDisplay) {
             this.#value = value.value;
@@ -35,10 +36,5 @@ export class IsoTimeZoneMinuteDisplay {
     }
 
     static Required = new IsoTimeZoneMinuteDisplay("Required");
-
     static Optional = new IsoTimeZoneMinuteDisplay("Optional");
-
-
-    
-
 }

@@ -14,6 +14,7 @@ export class IsoTimeZoneFormat {
         ["UtcBasic", 2],
         ["UtcExtended", 3]
     ]);
+
     constructor(value) {
         if (value instanceof IsoTimeZoneFormat) {
             this.#value = value.value;
@@ -37,14 +38,7 @@ export class IsoTimeZoneFormat {
     }
 
     static Basic = new IsoTimeZoneFormat("Basic");
-
     static Extended = new IsoTimeZoneFormat("Extended");
-
     static UtcBasic = new IsoTimeZoneFormat("UtcBasic");
-
     static UtcExtended = new IsoTimeZoneFormat("UtcExtended");
-
-
-    
-
 }

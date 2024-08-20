@@ -18,6 +18,8 @@ namespace capi {
       FixedDecimalGroupingStrategy_Always = 2,
       FixedDecimalGroupingStrategy_Min2 = 3,
     };
+    
+    typedef struct FixedDecimalGroupingStrategy_option {union { FixedDecimalGroupingStrategy ok; }; bool is_ok; } FixedDecimalGroupingStrategy_option;
 } // namespace capi
 } // namespace
 

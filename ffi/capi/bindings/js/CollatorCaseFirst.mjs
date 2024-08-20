@@ -14,6 +14,7 @@ export class CollatorCaseFirst {
         ["LowerFirst", 2],
         ["UpperFirst", 3]
     ]);
+
     constructor(value) {
         if (value instanceof CollatorCaseFirst) {
             this.#value = value.value;
@@ -37,14 +38,7 @@ export class CollatorCaseFirst {
     }
 
     static Auto = new CollatorCaseFirst("Auto");
-
     static Off = new CollatorCaseFirst("Off");
-
     static LowerFirst = new CollatorCaseFirst("LowerFirst");
-
     static UpperFirst = new CollatorCaseFirst("UpperFirst");
-
-
-    
-
 }

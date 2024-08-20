@@ -16,7 +16,11 @@ int main(int argc, char *argv[]) {
     }
 
     Locale* locale = icu4x_Locale_und_mv1();
-    if (!icu4x_Locale_set_language_mv1(locale, argv[1], strlen(argv[1])).is_ok) {
+    struct DiplomatStringView arg_str = {
+        argv[1],
+        strlen(argv[1])
+    };
+    if (!icu4x_Locale_set_language_mv1(locale, arg_str).is_ok) {
         printf("Invalid language tag \"%s\"\n", argv[1]);
         return 1;
     }

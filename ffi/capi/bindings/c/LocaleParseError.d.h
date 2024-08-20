@@ -18,7 +18,7 @@ typedef enum LocaleParseError {
   LocaleParseError_Extension = 3,
 } LocaleParseError;
 
-
+typedef struct LocaleParseError_option {union { LocaleParseError ok; }; bool is_ok; } LocaleParseError_option;
 
 
 

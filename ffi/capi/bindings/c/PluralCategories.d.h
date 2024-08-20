@@ -20,7 +20,7 @@ typedef struct PluralCategories {
   bool other;
 } PluralCategories;
 
-
+typedef struct PluralCategories_option {union { PluralCategories ok; }; bool is_ok; } PluralCategories_option;
 
 
 

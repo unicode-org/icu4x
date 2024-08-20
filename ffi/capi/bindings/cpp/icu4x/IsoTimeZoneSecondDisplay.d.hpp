@@ -16,6 +16,8 @@ namespace capi {
       IsoTimeZoneSecondDisplay_Optional = 0,
       IsoTimeZoneSecondDisplay_Never = 1,
     };
+    
+    typedef struct IsoTimeZoneSecondDisplay_option {union { IsoTimeZoneSecondDisplay ok; }; bool is_ok; } IsoTimeZoneSecondDisplay_option;
 } // namespace capi
 } // namespace
 

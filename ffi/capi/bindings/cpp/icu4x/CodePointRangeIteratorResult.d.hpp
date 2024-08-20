@@ -17,6 +17,8 @@ namespace capi {
       uint32_t end;
       bool done;
     };
+    
+    typedef struct CodePointRangeIteratorResult_option {union { CodePointRangeIteratorResult ok; }; bool is_ok; } CodePointRangeIteratorResult_option;
 } // namespace capi
 } // namespace
 

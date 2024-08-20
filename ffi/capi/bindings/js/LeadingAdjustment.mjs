@@ -13,6 +13,7 @@ export class LeadingAdjustment {
         ["None", 1],
         ["ToCased", 2]
     ]);
+
     constructor(value) {
         if (value instanceof LeadingAdjustment) {
             this.#value = value.value;
@@ -36,12 +37,6 @@ export class LeadingAdjustment {
     }
 
     static Auto = new LeadingAdjustment("Auto");
-
     static None = new LeadingAdjustment("None");
-
     static ToCased = new LeadingAdjustment("ToCased");
-
-
-    
-
 }

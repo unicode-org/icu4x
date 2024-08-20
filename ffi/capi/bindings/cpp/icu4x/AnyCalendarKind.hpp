@@ -21,7 +21,7 @@ namespace capi {
     icu4x_AnyCalendarKind_get_for_locale_mv1_result icu4x_AnyCalendarKind_get_for_locale_mv1(const icu4x::capi::Locale* locale);
     
     typedef struct icu4x_AnyCalendarKind_get_for_bcp47_mv1_result {union {icu4x::capi::AnyCalendarKind ok; }; bool is_ok;} icu4x_AnyCalendarKind_get_for_bcp47_mv1_result;
-    icu4x_AnyCalendarKind_get_for_bcp47_mv1_result icu4x_AnyCalendarKind_get_for_bcp47_mv1(const char* s_data, size_t s_len);
+    icu4x_AnyCalendarKind_get_for_bcp47_mv1_result icu4x_AnyCalendarKind_get_for_bcp47_mv1(diplomat::capi::DiplomatStringView s);
     
     void icu4x_AnyCalendarKind_bcp47_mv1(icu4x::capi::AnyCalendarKind self, diplomat::capi::DiplomatWrite* write);
     
@@ -66,8 +66,7 @@ inline std::optional<icu4x::AnyCalendarKind> icu4x::AnyCalendarKind::get_for_loc
 }
 
 inline std::optional<icu4x::AnyCalendarKind> icu4x::AnyCalendarKind::get_for_bcp47(std::string_view s) {
-  auto result = icu4x::capi::icu4x_AnyCalendarKind_get_for_bcp47_mv1(s.data(),
-    s.size());
+  auto result = icu4x::capi::icu4x_AnyCalendarKind_get_for_bcp47_mv1({s.data(), s.size()});
   return result.is_ok ? std::optional<icu4x::AnyCalendarKind>(icu4x::AnyCalendarKind::FromFFI(result.ok)) : std::nullopt;
 }
 

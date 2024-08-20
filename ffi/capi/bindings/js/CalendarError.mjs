@@ -14,6 +14,7 @@ export class CalendarError {
         ["UnknownEra", 2],
         ["UnknownMonthCode", 3]
     ]);
+
     constructor(value) {
         if (value instanceof CalendarError) {
             this.#value = value.value;
@@ -37,14 +38,7 @@ export class CalendarError {
     }
 
     static Unknown = new CalendarError("Unknown");
-
     static OutOfRange = new CalendarError("OutOfRange");
-
     static UnknownEra = new CalendarError("UnknownEra");
-
     static UnknownMonthCode = new CalendarError("UnknownMonthCode");
-
-
-    
-
 }

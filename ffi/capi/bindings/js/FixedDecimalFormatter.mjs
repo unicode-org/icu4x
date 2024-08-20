@@ -12,10 +12,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *See the [Rust documentation for `FixedDecimalFormatter`](https://docs.rs/icu/latest/icu/decimal/struct.FixedDecimalFormatter.html) for more information.
 */
-
 const FixedDecimalFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_FixedDecimalFormatter_destroy_mv1(ptr);
 });
+
 export class FixedDecimalFormatter {
     // Internal ptr reference:
     #ptr = null;
@@ -24,36 +24,40 @@ export class FixedDecimalFormatter {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("FixedDecimalFormatter is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        // Unconditionally register to destroy when this object is ready to garbage collect.
-        FixedDecimalFormatter_box_destroy_registry.register(this, this.#ptr);
+        
+        // Are we being borrowed? If not, we can register.
+        if (this.#selfEdge.length === 0) {
+            FixedDecimalFormatter_box_destroy_registry.register(this, this.#ptr);
+        }
     }
 
     get ffiValue() {
         return this.#ptr;
     }
 
-
     static createWithGroupingStrategy(provider, locale, groupingStrategy) {
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue, groupingStrategy.ffiValue);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, groupingStrategy.ffiValue);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+            if (!diplomatReceive.resultFlag) {
+                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new FixedDecimalFormatter(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new FixedDecimalFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
@@ -73,18 +77,18 @@ export class FixedDecimalFormatter {
         
         const digitsSlice = diplomatRuntime.DiplomatBuf.slice(wasm, digits, "u16");
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_FixedDecimalFormatter_create_with_manual_data_mv1(diplomat_receive_buffer, plusSignPrefixSlice.ptr, plusSignPrefixSlice.size, plusSignSuffixSlice.ptr, plusSignSuffixSlice.size, minusSignPrefixSlice.ptr, minusSignPrefixSlice.size, minusSignSuffixSlice.ptr, minusSignSuffixSlice.size, decimalSeparatorSlice.ptr, decimalSeparatorSlice.size, groupingSeparatorSlice.ptr, groupingSeparatorSlice.size, primaryGroupSize, secondaryGroupSize, minGroupSize, digitsSlice.ptr, digitsSlice.size, groupingStrategy.ffiValue);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_FixedDecimalFormatter_create_with_manual_data_mv1(diplomatReceive.buffer, plusSignPrefixSlice.ptr, plusSignPrefixSlice.size, plusSignSuffixSlice.ptr, plusSignSuffixSlice.size, minusSignPrefixSlice.ptr, minusSignPrefixSlice.size, minusSignSuffixSlice.ptr, minusSignSuffixSlice.size, decimalSeparatorSlice.ptr, decimalSeparatorSlice.size, groupingSeparatorSlice.ptr, groupingSeparatorSlice.size, primaryGroupSize, secondaryGroupSize, minGroupSize, digitsSlice.ptr, digitsSlice.size, groupingStrategy.ffiValue);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+            if (!diplomatReceive.resultFlag) {
+                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new FixedDecimalFormatter(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new FixedDecimalFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
+        finally {
             plusSignPrefixSlice.free();
         
             plusSignSuffixSlice.free();
@@ -99,26 +103,21 @@ export class FixedDecimalFormatter {
         
             digitsSlice.free();
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+            diplomatReceive.free();
         }
     }
 
     format(value) {
         
-        const write = wasm.diplomat_buffer_write_create(0);
-        wasm.icu4x_FixedDecimalFormatter_format_mv1(this.ffiValue, value.ffiValue, write);
+        const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
+        wasm.icu4x_FixedDecimalFormatter_format_mv1(this.ffiValue, value.ffiValue, write.buffer);
     
         try {
-    
-            return diplomatRuntime.readString8(wasm, wasm.diplomat_buffer_write_get_bytes(write), wasm.diplomat_buffer_write_len(write));
-        } finally {
+            return write.readString8();
+        }
         
-            wasm.diplomat_buffer_write_destroy(write);
-        
+        finally {
+            write.free();
         }
     }
-
-    
-
 }

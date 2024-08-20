@@ -16,7 +16,7 @@ typedef enum LanguageDisplay {
   LanguageDisplay_Standard = 1,
 } LanguageDisplay;
 
-
+typedef struct LanguageDisplay_option {union { LanguageDisplay ok; }; bool is_ok; } LanguageDisplay_option;
 
 
 

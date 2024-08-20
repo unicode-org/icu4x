@@ -18,7 +18,7 @@ typedef enum TimeLength {
   TimeLength_Short = 3,
 } TimeLength;
 
-
+typedef struct TimeLength_option {union { TimeLength ok; }; bool is_ok; } TimeLength_option;
 
 
 

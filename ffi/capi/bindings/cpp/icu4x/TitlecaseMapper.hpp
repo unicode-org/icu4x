@@ -23,7 +23,7 @@ namespace capi {
     typedef struct icu4x_TitlecaseMapper_create_mv1_result {union {icu4x::capi::TitlecaseMapper* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_TitlecaseMapper_create_mv1_result;
     icu4x_TitlecaseMapper_create_mv1_result icu4x_TitlecaseMapper_create_mv1(const icu4x::capi::DataProvider* provider);
     
-    void icu4x_TitlecaseMapper_titlecase_segment_v1_mv1(const icu4x::capi::TitlecaseMapper* self, const char* s_data, size_t s_len, const icu4x::capi::Locale* locale, icu4x::capi::TitlecaseOptionsV1 options, diplomat::capi::DiplomatWrite* write);
+    void icu4x_TitlecaseMapper_titlecase_segment_v1_mv1(const icu4x::capi::TitlecaseMapper* self, diplomat::capi::DiplomatStringView s, const icu4x::capi::Locale* locale, icu4x::capi::TitlecaseOptionsV1 options, diplomat::capi::DiplomatWrite* write);
     
     
     void icu4x_TitlecaseMapper_destroy_mv1(TitlecaseMapper* self);
@@ -44,8 +44,7 @@ inline diplomat::result<std::string, diplomat::Utf8Error> icu4x::TitlecaseMapper
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
   icu4x::capi::icu4x_TitlecaseMapper_titlecase_segment_v1_mv1(this->AsFFI(),
-    s.data(),
-    s.size(),
+    {s.data(), s.size()},
     locale.AsFFI(),
     options.AsFFI(),
     &write);
