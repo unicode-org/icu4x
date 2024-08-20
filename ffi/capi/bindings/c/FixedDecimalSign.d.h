@@ -17,7 +17,7 @@ typedef enum FixedDecimalSign {
   FixedDecimalSign_Positive = 2,
 } FixedDecimalSign;
 
-
+typedef struct FixedDecimalSign_option {union { FixedDecimalSign ok; }; bool is_ok; } FixedDecimalSign_option;
 
 
 

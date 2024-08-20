@@ -796,10 +796,8 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   factory CodePointSetData.forEcma262(DataProvider provider, String propertyName) {
-    final temp = ffi2.Arena();
-    final propertyNameView = propertyName.utf8View;
-    final result = _icu4x_CodePointSetData_load_for_ecma262_mv1(provider._ffi, propertyNameView.allocIn(temp), propertyNameView.length);
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final result = _icu4x_CodePointSetData_load_for_ecma262_mv1(provider._ffi, propertyName._utf8AllocIn(temp.arena));
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -1158,6 +1156,6 @@ external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_xid_continue_mv1(ffi.Po
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_xid_start_mv1(ffi.Pointer<ffi.Opaque> provider);
 
 @meta.ResourceIdentifier('icu4x_CodePointSetData_load_for_ecma262_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_for_ecma262_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_for_ecma262_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_for_ecma262_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Uint8> propertyNameData, int propertyNameLength);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_for_ecma262_mv1(ffi.Pointer<ffi.Opaque> provider, _SliceUtf8 propertyName);

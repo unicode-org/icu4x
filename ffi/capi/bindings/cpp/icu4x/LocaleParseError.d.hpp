@@ -18,6 +18,8 @@ namespace capi {
       LocaleParseError_Subtag = 2,
       LocaleParseError_Extension = 3,
     };
+    
+    typedef struct LocaleParseError_option {union { LocaleParseError ok; }; bool is_ok; } LocaleParseError_option;
 } // namespace capi
 } // namespace
 

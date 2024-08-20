@@ -18,7 +18,7 @@ typedef enum FixedDecimalRoundingIncrement {
   FixedDecimalRoundingIncrement_MultiplesOf25 = 3,
 } FixedDecimalRoundingIncrement;
 
-
+typedef struct FixedDecimalRoundingIncrement_option {union { FixedDecimalRoundingIncrement ok; }; bool is_ok; } FixedDecimalRoundingIncrement_option;
 
 
 

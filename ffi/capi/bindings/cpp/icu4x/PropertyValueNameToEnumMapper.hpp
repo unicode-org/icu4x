@@ -18,9 +18,9 @@ namespace icu4x {
 namespace capi {
     extern "C" {
     
-    int16_t icu4x_PropertyValueNameToEnumMapper_get_strict_mv1(const icu4x::capi::PropertyValueNameToEnumMapper* self, const char* name_data, size_t name_len);
+    int16_t icu4x_PropertyValueNameToEnumMapper_get_strict_mv1(const icu4x::capi::PropertyValueNameToEnumMapper* self, diplomat::capi::DiplomatStringView name);
     
-    int16_t icu4x_PropertyValueNameToEnumMapper_get_loose_mv1(const icu4x::capi::PropertyValueNameToEnumMapper* self, const char* name_data, size_t name_len);
+    int16_t icu4x_PropertyValueNameToEnumMapper_get_loose_mv1(const icu4x::capi::PropertyValueNameToEnumMapper* self, diplomat::capi::DiplomatStringView name);
     
     typedef struct icu4x_PropertyValueNameToEnumMapper_load_general_category_mv1_result {union {icu4x::capi::PropertyValueNameToEnumMapper* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_PropertyValueNameToEnumMapper_load_general_category_mv1_result;
     icu4x_PropertyValueNameToEnumMapper_load_general_category_mv1_result icu4x_PropertyValueNameToEnumMapper_load_general_category_mv1(const icu4x::capi::DataProvider* provider);
@@ -61,15 +61,13 @@ namespace capi {
 
 inline int16_t icu4x::PropertyValueNameToEnumMapper::get_strict(std::string_view name) const {
   auto result = icu4x::capi::icu4x_PropertyValueNameToEnumMapper_get_strict_mv1(this->AsFFI(),
-    name.data(),
-    name.size());
+    {name.data(), name.size()});
   return result;
 }
 
 inline int16_t icu4x::PropertyValueNameToEnumMapper::get_loose(std::string_view name) const {
   auto result = icu4x::capi::icu4x_PropertyValueNameToEnumMapper_get_loose_mv1(this->AsFFI(),
-    name.data(),
-    name.size());
+    {name.data(), name.size()});
   return result;
 }
 

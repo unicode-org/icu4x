@@ -19,7 +19,7 @@ typedef enum CalendarParseError {
   CalendarParseError_UnknownCalendar = 4,
 } CalendarParseError;
 
-
+typedef struct CalendarParseError_option {union { CalendarParseError ok; }; bool is_ok; } CalendarParseError_option;
 
 
 

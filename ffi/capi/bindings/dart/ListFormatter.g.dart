@@ -63,11 +63,9 @@ final class ListFormatter implements ffi.Finalizable {
 
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.format) for more information.
   String format(core.List<core.String> list) {
-    final temp = ffi2.Arena();
-    final listView = list.utf16View;
+    final temp = _FinalizedArena();
     final write = _Write();
-    _icu4x_ListFormatter_format_utf16_mv1(_ffi, listView.allocIn(temp), listView.length, write._ffi);
-    temp.releaseAll();
+    _icu4x_ListFormatter_format_utf16_mv1(_ffi, list._utf16SliceAllocIn(temp.arena), write._ffi);
     return write.finalize();
   }
 }
@@ -93,6 +91,6 @@ external _ResultOpaqueInt32 _icu4x_ListFormatter_create_or_with_length_mv1(ffi.P
 external _ResultOpaqueInt32 _icu4x_ListFormatter_create_unit_with_length_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int length);
 
 @meta.ResourceIdentifier('icu4x_ListFormatter_format_utf16_mv1')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<_SliceUtf16>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ListFormatter_format_utf16_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, _SliceSliceUtf16, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ListFormatter_format_utf16_mv1')
 // ignore: non_constant_identifier_names
-external void _icu4x_ListFormatter_format_utf16_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<_SliceUtf16> listData, int listLength, ffi.Pointer<ffi.Opaque> write);
+external void _icu4x_ListFormatter_format_utf16_mv1(ffi.Pointer<ffi.Opaque> self, _SliceSliceUtf16 list, ffi.Pointer<ffi.Opaque> write);

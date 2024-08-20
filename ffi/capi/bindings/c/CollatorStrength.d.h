@@ -20,7 +20,7 @@ typedef enum CollatorStrength {
   CollatorStrength_Identical = 5,
 } CollatorStrength;
 
-
+typedef struct CollatorStrength_option {union { CollatorStrength ok; }; bool is_ok; } CollatorStrength_option;
 
 
 

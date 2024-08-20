@@ -24,15 +24,15 @@ namespace capi {
     typedef struct icu4x_DecomposingNormalizer_create_nfkd_mv1_result {union {icu4x::capi::DecomposingNormalizer* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_DecomposingNormalizer_create_nfkd_mv1_result;
     icu4x_DecomposingNormalizer_create_nfkd_mv1_result icu4x_DecomposingNormalizer_create_nfkd_mv1(const icu4x::capi::DataProvider* provider);
     
-    void icu4x_DecomposingNormalizer_normalize_mv1(const icu4x::capi::DecomposingNormalizer* self, const char* s_data, size_t s_len, diplomat::capi::DiplomatWrite* write);
+    void icu4x_DecomposingNormalizer_normalize_mv1(const icu4x::capi::DecomposingNormalizer* self, diplomat::capi::DiplomatStringView s, diplomat::capi::DiplomatWrite* write);
     
-    bool icu4x_DecomposingNormalizer_is_normalized_mv1(const icu4x::capi::DecomposingNormalizer* self, const char* s_data, size_t s_len);
+    bool icu4x_DecomposingNormalizer_is_normalized_mv1(const icu4x::capi::DecomposingNormalizer* self, diplomat::capi::DiplomatStringView s);
     
-    bool icu4x_DecomposingNormalizer_is_normalized_utf16_mv1(const icu4x::capi::DecomposingNormalizer* self, const char16_t* s_data, size_t s_len);
+    bool icu4x_DecomposingNormalizer_is_normalized_utf16_mv1(const icu4x::capi::DecomposingNormalizer* self, diplomat::capi::DiplomatString16View s);
     
-    size_t icu4x_DecomposingNormalizer_is_normalized_up_to_mv1(const icu4x::capi::DecomposingNormalizer* self, const char* s_data, size_t s_len);
+    size_t icu4x_DecomposingNormalizer_is_normalized_up_to_mv1(const icu4x::capi::DecomposingNormalizer* self, diplomat::capi::DiplomatStringView s);
     
-    size_t icu4x_DecomposingNormalizer_is_normalized_utf16_up_to_mv1(const icu4x::capi::DecomposingNormalizer* self, const char16_t* s_data, size_t s_len);
+    size_t icu4x_DecomposingNormalizer_is_normalized_utf16_up_to_mv1(const icu4x::capi::DecomposingNormalizer* self, diplomat::capi::DiplomatString16View s);
     
     
     void icu4x_DecomposingNormalizer_destroy_mv1(DecomposingNormalizer* self);
@@ -55,37 +55,32 @@ inline std::string icu4x::DecomposingNormalizer::normalize(std::string_view s) c
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
   icu4x::capi::icu4x_DecomposingNormalizer_normalize_mv1(this->AsFFI(),
-    s.data(),
-    s.size(),
+    {s.data(), s.size()},
     &write);
   return output;
 }
 
 inline bool icu4x::DecomposingNormalizer::is_normalized(std::string_view s) const {
   auto result = icu4x::capi::icu4x_DecomposingNormalizer_is_normalized_mv1(this->AsFFI(),
-    s.data(),
-    s.size());
+    {s.data(), s.size()});
   return result;
 }
 
 inline bool icu4x::DecomposingNormalizer::is_normalized_utf16(std::u16string_view s) const {
   auto result = icu4x::capi::icu4x_DecomposingNormalizer_is_normalized_utf16_mv1(this->AsFFI(),
-    s.data(),
-    s.size());
+    {s.data(), s.size()});
   return result;
 }
 
 inline size_t icu4x::DecomposingNormalizer::is_normalized_up_to(std::string_view s) const {
   auto result = icu4x::capi::icu4x_DecomposingNormalizer_is_normalized_up_to_mv1(this->AsFFI(),
-    s.data(),
-    s.size());
+    {s.data(), s.size()});
   return result;
 }
 
 inline size_t icu4x::DecomposingNormalizer::is_normalized_utf16_up_to(std::u16string_view s) const {
   auto result = icu4x::capi::icu4x_DecomposingNormalizer_is_normalized_utf16_up_to_mv1(this->AsFFI(),
-    s.data(),
-    s.size());
+    {s.data(), s.size()});
   return result;
 }
 

@@ -17,7 +17,7 @@ typedef enum FixedDecimalParseError {
   FixedDecimalParseError_Syntax = 2,
 } FixedDecimalParseError;
 
-
+typedef struct FixedDecimalParseError_option {union { FixedDecimalParseError ok; }; bool is_ok; } FixedDecimalParseError_option;
 
 
 

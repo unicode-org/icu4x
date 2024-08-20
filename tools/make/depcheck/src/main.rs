@@ -151,7 +151,7 @@ fn main() {
     let zip: BTreeSet<_> = EXTRA_ZIP_DEPS.iter().copied().collect();
     let rayon: BTreeSet<_> = EXTRA_RAYON_DEPS.iter().copied().collect();
     let datagen: BTreeSet<_> = EXTRA_DATAGEN_DEPS.iter().copied().collect();
-    let datagen_bikeshed: BTreeSet<_> = EXTRA_DATAGEN_BIKESHED_DEPS.iter().copied().collect();
+    let source: BTreeSet<_> = EXTRA_SOURCE_DEPS.iter().copied().collect();
 
     // These tests are in a deliberate order such that the `dep_list_name_for_error`
     // will be accurate, i.e. each test tests at most one extra array of data compared to the
@@ -287,10 +287,10 @@ fn main() {
             &lstm,
             &blob,
             &zip,
-            &datagen_bikeshed,
+            &source,
             &logging,
         ],
-        "`EXTRA_DATAGEN_BIKESHED_DEPS` or `EXTRA_ZIP_DEPS`",
+        "`EXTRA_SOURCE_DEPS` or `EXTRA_ZIP_DEPS`",
     );
 
     test_dep_list(

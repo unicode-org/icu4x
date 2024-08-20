@@ -828,6 +828,9 @@ impl_symbols_datagen!(
 );
 
 // Datetime patterns
+// TODO: This is modeled with glue patterns that are the same across calendar
+// systems, but CLDR has some instances where the glue patterns differ, such
+// as in French (Gregorian has a comma but other calendars do not).
 impl_pattern_datagen!(
     GluePatternV1Marker,
     "gregory",

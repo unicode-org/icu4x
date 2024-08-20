@@ -118,7 +118,7 @@ required-features = ["bench"]
 
 [[test]]
 name = "datetime"
-required-features = ["compiled_data"]
+required-features = ["experimental", "compiled_data"]
 
 [[test]]
 name = "resolved_components"

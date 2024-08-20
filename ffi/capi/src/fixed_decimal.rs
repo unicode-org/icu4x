@@ -125,6 +125,7 @@ pub mod ffi {
         #[diplomat::rust_link(fixed_decimal::DoublePrecision, Enum, hidden)]
         #[diplomat::attr(js, rename = "from_number_with_lower_magnitude")]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::demo(default_constructor)]
         pub fn from_double_with_lower_magnitude(
             f: f64,
             magnitude: i16,

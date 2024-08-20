@@ -19,7 +19,7 @@ typedef enum CollatorMaxVariable {
   CollatorMaxVariable_Currency = 4,
 } CollatorMaxVariable;
 
-
+typedef struct CollatorMaxVariable_option {union { CollatorMaxVariable ok; }; bool is_ok; } CollatorMaxVariable_option;
 
 
 

@@ -43,16 +43,8 @@ final class FixedDecimalFormatter implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   static FixedDecimalFormatter createWithManualData(String plusSignPrefix, String plusSignSuffix, String minusSignPrefix, String minusSignSuffix, String decimalSeparator, String groupingSeparator, int primaryGroupSize, int secondaryGroupSize, int minGroupSize, core.List<Rune> digits, FixedDecimalGroupingStrategy groupingStrategy) {
-    final temp = ffi2.Arena();
-    final plusSignPrefixView = plusSignPrefix.utf8View;
-    final plusSignSuffixView = plusSignSuffix.utf8View;
-    final minusSignPrefixView = minusSignPrefix.utf8View;
-    final minusSignSuffixView = minusSignSuffix.utf8View;
-    final decimalSeparatorView = decimalSeparator.utf8View;
-    final groupingSeparatorView = groupingSeparator.utf8View;
-    final digitsView = digits.uint32View;
-    final result = _icu4x_FixedDecimalFormatter_create_with_manual_data_mv1(plusSignPrefixView.allocIn(temp), plusSignPrefixView.length, plusSignSuffixView.allocIn(temp), plusSignSuffixView.length, minusSignPrefixView.allocIn(temp), minusSignPrefixView.length, minusSignSuffixView.allocIn(temp), minusSignSuffixView.length, decimalSeparatorView.allocIn(temp), decimalSeparatorView.length, groupingSeparatorView.allocIn(temp), groupingSeparatorView.length, primaryGroupSize, secondaryGroupSize, minGroupSize, digitsView.allocIn(temp), digitsView.length, groupingStrategy.index);
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final result = _icu4x_FixedDecimalFormatter_create_with_manual_data_mv1(plusSignPrefix._utf8AllocIn(temp.arena), plusSignSuffix._utf8AllocIn(temp.arena), minusSignPrefix._utf8AllocIn(temp.arena), minusSignSuffix._utf8AllocIn(temp.arena), decimalSeparator._utf8AllocIn(temp.arena), groupingSeparator._utf8AllocIn(temp.arena), primaryGroupSize, secondaryGroupSize, minGroupSize, digits._uint32AllocIn(temp.arena), groupingStrategy.index);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -80,9 +72,9 @@ external void _icu4x_FixedDecimalFormatter_destroy_mv1(ffi.Pointer<ffi.Void> sel
 external _ResultOpaqueInt32 _icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int groupingStrategy);
 
 @meta.ResourceIdentifier('icu4x_FixedDecimalFormatter_create_with_manual_data_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Uint8, ffi.Uint8, ffi.Uint8, ffi.Pointer<ffi.Uint32>, ffi.Size, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_FixedDecimalFormatter_create_with_manual_data_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(_SliceUtf8, _SliceUtf8, _SliceUtf8, _SliceUtf8, _SliceUtf8, _SliceUtf8, ffi.Uint8, ffi.Uint8, ffi.Uint8, _SliceRune, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_FixedDecimalFormatter_create_with_manual_data_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_FixedDecimalFormatter_create_with_manual_data_mv1(ffi.Pointer<ffi.Uint8> plusSignPrefixData, int plusSignPrefixLength, ffi.Pointer<ffi.Uint8> plusSignSuffixData, int plusSignSuffixLength, ffi.Pointer<ffi.Uint8> minusSignPrefixData, int minusSignPrefixLength, ffi.Pointer<ffi.Uint8> minusSignSuffixData, int minusSignSuffixLength, ffi.Pointer<ffi.Uint8> decimalSeparatorData, int decimalSeparatorLength, ffi.Pointer<ffi.Uint8> groupingSeparatorData, int groupingSeparatorLength, int primaryGroupSize, int secondaryGroupSize, int minGroupSize, ffi.Pointer<ffi.Uint32> digitsData, int digitsLength, int groupingStrategy);
+external _ResultOpaqueInt32 _icu4x_FixedDecimalFormatter_create_with_manual_data_mv1(_SliceUtf8 plusSignPrefix, _SliceUtf8 plusSignSuffix, _SliceUtf8 minusSignPrefix, _SliceUtf8 minusSignSuffix, _SliceUtf8 decimalSeparator, _SliceUtf8 groupingSeparator, int primaryGroupSize, int secondaryGroupSize, int minGroupSize, _SliceRune digits, int groupingStrategy);
 
 @meta.ResourceIdentifier('icu4x_FixedDecimalFormatter_format_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_FixedDecimalFormatter_format_mv1')

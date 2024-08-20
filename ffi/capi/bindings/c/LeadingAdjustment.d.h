@@ -17,7 +17,7 @@ typedef enum LeadingAdjustment {
   LeadingAdjustment_ToCased = 2,
 } LeadingAdjustment;
 
-
+typedef struct LeadingAdjustment_option {union { LeadingAdjustment ok; }; bool is_ok; } LeadingAdjustment_option;
 
 
 
