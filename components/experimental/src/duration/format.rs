@@ -649,7 +649,7 @@ mod tests {
     fn test_duration_formatter() {
         let duration = Duration {
             sign: DurationSign::Negative,
-            years: 0,
+            years: 0, // test always-display leading zero
             months: 2,
             weeks: 3,
             hours: 12,
