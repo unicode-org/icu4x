@@ -70,11 +70,11 @@ pub struct FormattedDuration<'l> {
 
 /// Exists to allow creating lists of heterogeneous [`Writeable`]s to pass to [`ListFormatter`].
 /// The (Unit, FixedDecimal) pair is used to crerate [`FormattedUnit`]s.
-type HeterogenousToFormatter = Either<DigitalDurationFormatter, (Unit, FixedDecimal)>;
+type HeterogenousToFormatter = Either<DigitalDuration, (Unit, FixedDecimal)>;
 
 /// Describes a formatted duration.
 #[derive(Default)]
-struct DigitalDurationFormatter {
+struct DigitalDuration {
     hours: Option<FixedDecimal>,
     add_hour_minute_separator: bool,
     minutes: Option<FixedDecimal>,
@@ -82,7 +82,7 @@ struct DigitalDurationFormatter {
     seconds: Option<FixedDecimal>,
 }
 
-impl DigitalDurationFormatter {
+impl DigitalDuration {
     fn format<'l>(&'l self, fmt: &'l DurationFormatter) -> FormattedDigitalDuration<'l> {
         FormattedDigitalDuration {
             fmt,
@@ -135,7 +135,7 @@ impl<'a> FormattedDuration<'a> {
     /// Formats numeric hours to [`DigitalDurationFormatter`]. Requires hours formatting style to be either Numeric or TwoDigit.
     fn format_numeric_hours(
         &self,
-        formatted_digital_duration: &mut DigitalDurationFormatter,
+        formatted_digital_duration: &mut DigitalDuration,
         sign_displayed: &mut bool,
     ) {
         // 1. Let hoursStyle be durationFormat.[[HoursStyle]].
@@ -174,7 +174,7 @@ impl<'a> FormattedDuration<'a> {
     /// Formats numeric minutes to sink. Requires minutes formatting style to be either Numeric or TwoDigit.
     fn format_numeric_minutes(
         &self,
-        formatted_digital_duration: &mut DigitalDurationFormatter,
+        formatted_digital_duration: &mut DigitalDuration,
         sign_displayed: &mut bool,
     ) {
         // 1. Let result be a new empty List.
@@ -257,7 +257,7 @@ impl<'a> FormattedDuration<'a> {
     fn format_numeric_seconds(
         &self,
         mut second_fd: FixedDecimal,
-        formatted_digital_duration: &mut DigitalDurationFormatter,
+        formatted_digital_duration: &mut DigitalDuration,
         sign_displayed: &mut bool,
     ) {
         // 1. Let secondsStyle be durationFormat.[[SecondsStyle]].
@@ -331,7 +331,7 @@ impl<'a> FormattedDuration<'a> {
         &self,
         first_numeric_unit: Unit,
         sign_displayed: &mut bool,
-    ) -> DigitalDurationFormatter {
+    ) -> DigitalDuration {
         // 1. Assert: firstNumericUnit is "hours", "minutes", or "seconds".
         debug_assert!(matches!(
             first_numeric_unit,
@@ -391,7 +391,7 @@ impl<'a> FormattedDuration<'a> {
             }
         }
 
-        let mut formatted_digital_duration = DigitalDurationFormatter::default();
+        let mut formatted_digital_duration = DigitalDuration::default();
 
         // 16. If hoursFormatted is true, then
         if hours_formatted {
