@@ -3,79 +3,29 @@
     "0": "ovog sata"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "pre "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " č."
-      }
+    "specials": [
+      [
+        "One",
+        "\u0005pre  č."
+      ],
+      [
+        "Few",
+        "\u0005pre  č."
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "pre "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " č."
-      }
-    ],
-    "many": null,
-    "other": [
-      {
-        "Literal": "pre "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " č."
-      }
-    ]
+    "other": "\u0005pre  č."
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "za "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " č."
-      }
+    "specials": [
+      [
+        "One",
+        "\u0004za  č."
+      ],
+      [
+        "Few",
+        "\u0004za  č."
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "za "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " č."
-      }
-    ],
-    "many": null,
-    "other": [
-      {
-        "Literal": "za "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " č."
-      }
-    ]
+    "other": "\u0004za  č."
   }
 }

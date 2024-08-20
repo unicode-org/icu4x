@@ -11,10 +11,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *See the [Rust documentation for `GraphemeClusterSegmenter`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html) for more information.
 */
-
 const GraphemeClusterSegmenter_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_GraphemeClusterSegmenter_destroy_mv1(ptr);
 });
+
 export class GraphemeClusterSegmenter {
     // Internal ptr reference:
     #ptr = null;
@@ -23,36 +23,40 @@ export class GraphemeClusterSegmenter {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("GraphemeClusterSegmenter is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        // Unconditionally register to destroy when this object is ready to garbage collect.
-        GraphemeClusterSegmenter_box_destroy_registry.register(this, this.#ptr);
+        
+        // Are we being borrowed? If not, we can register.
+        if (this.#selfEdge.length === 0) {
+            GraphemeClusterSegmenter_box_destroy_registry.register(this, this.#ptr);
+        }
     }
 
     get ffiValue() {
         return this.#ptr;
     }
 
-
     static create(provider) {
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_GraphemeClusterSegmenter_create_mv1(diplomat_receive_buffer, provider.ffiValue);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_GraphemeClusterSegmenter_create_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+            if (!diplomatReceive.resultFlag) {
+                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new GraphemeClusterSegmenter(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new GraphemeClusterSegmenter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
@@ -65,15 +69,11 @@ export class GraphemeClusterSegmenter {
         const result = wasm.icu4x_GraphemeClusterSegmenter_segment_utf16_mv1(this.ffiValue, inputSlice.ptr, inputSlice.size);
     
         try {
-    
-            return new GraphemeClusterBreakIteratorUtf16(result, [], aEdges);
-        } finally {
+            return new GraphemeClusterBreakIteratorUtf16(diplomatRuntime.internalConstructor, result, [], aEdges);
+        }
         
+        finally {
             inputSlice.garbageCollect();
-        
         }
     }
-
-    
-
 }

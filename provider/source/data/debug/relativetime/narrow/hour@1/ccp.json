@@ -3,33 +3,11 @@
     "0": "𑄃𑄳𑄆𑄬 𑄊𑄮𑄚𑄴𑄓𑄠𑄴"
   },
   "past": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " 𑄊𑄮𑄚𑄴𑄓 𑄃𑄉𑄬"
-      }
-    ]
+    "specials": [],
+    "other": "\u0001 𑄊𑄮𑄚𑄴𑄓 𑄃𑄉𑄬"
   },
   "future": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " 𑄊𑄮𑄚𑄴𑄓𑄠𑄴"
-      }
-    ]
+    "specials": [],
+    "other": "\u0001 𑄊𑄮𑄚𑄴𑄓𑄠𑄴"
   }
 }

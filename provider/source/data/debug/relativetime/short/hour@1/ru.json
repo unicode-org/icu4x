@@ -3,87 +3,37 @@
     "0": "в этот час"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " ч назад"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0001 ч назад"
+      ],
+      [
+        "Few",
+        "\u0001 ч назад"
+      ],
+      [
+        "Many",
+        "\u0001 ч назад"
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " ч назад"
-      }
-    ],
-    "many": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " ч назад"
-      }
-    ],
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " ч назад"
-      }
-    ]
+    "other": "\u0001 ч назад"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " ч"
-      }
+    "specials": [
+      [
+        "One",
+        "\fчерез  ч"
+      ],
+      [
+        "Few",
+        "\fчерез  ч"
+      ],
+      [
+        "Many",
+        "\fчерез  ч"
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " ч"
-      }
-    ],
-    "many": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " ч"
-      }
-    ],
-    "other": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " ч"
-      }
-    ]
+    "other": "\fчерез  ч"
   }
 }

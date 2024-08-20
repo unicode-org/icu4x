@@ -3,53 +3,21 @@
     "0": "this minute"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " min ago"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0001 min ago"
+      ]
     ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " min ago"
-      }
-    ]
+    "other": "\u0001 min ago"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "in "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " min"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0004in  min"
+      ]
     ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "in "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " min"
-      }
-    ]
+    "other": "\u0004in  min"
   }
 }

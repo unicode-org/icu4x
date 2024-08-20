@@ -7,87 +7,37 @@
     "2": "послезавтра"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " дн. назад"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0001 дн. назад"
+      ],
+      [
+        "Few",
+        "\u0001 дн. назад"
+      ],
+      [
+        "Many",
+        "\u0001 дн. назад"
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " дн. назад"
-      }
-    ],
-    "many": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " дн. назад"
-      }
-    ],
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " дн. назад"
-      }
-    ]
+    "other": "\u0001 дн. назад"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " дн."
-      }
+    "specials": [
+      [
+        "One",
+        "\fчерез  дн."
+      ],
+      [
+        "Few",
+        "\fчерез  дн."
+      ],
+      [
+        "Many",
+        "\fчерез  дн."
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " дн."
-      }
-    ],
-    "many": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " дн."
-      }
-    ],
-    "other": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " дн."
-      }
-    ]
+    "other": "\fчерез  дн."
   }
 }

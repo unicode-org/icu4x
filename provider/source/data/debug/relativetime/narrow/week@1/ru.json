@@ -5,99 +5,37 @@
     "1": "на след. нед."
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "-"
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " нед."
-      }
+    "specials": [
+      [
+        "One",
+        "\u0002- нед."
+      ],
+      [
+        "Few",
+        "\u0002- нед."
+      ],
+      [
+        "Many",
+        "\u0002- нед."
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "-"
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " нед."
-      }
-    ],
-    "many": [
-      {
-        "Literal": "-"
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " нед."
-      }
-    ],
-    "other": [
-      {
-        "Literal": "-"
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " нед."
-      }
-    ]
+    "other": "\u0002- нед."
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "+"
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " нед."
-      }
+    "specials": [
+      [
+        "One",
+        "\u0002+ нед."
+      ],
+      [
+        "Few",
+        "\u0002+ нед."
+      ],
+      [
+        "Many",
+        "\u0002+ нед."
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "+"
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " нед."
-      }
-    ],
-    "many": [
-      {
-        "Literal": "+"
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " нед."
-      }
-    ],
-    "other": [
-      {
-        "Literal": "+"
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " нед."
-      }
-    ]
+    "other": "\u0002+ нед."
   }
 }

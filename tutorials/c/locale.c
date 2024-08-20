@@ -31,7 +31,12 @@ bool test_locale(Locale* locale, const char* message, const char* expected) {
 }
 
 Locale* get_locale(const char* localeText) {
-    icu4x_Locale_from_string_mv1_result locale_result = icu4x_Locale_from_string_mv1(localeText, strlen(localeText));
+    struct DiplomatStringView locale_text_str = {
+        localeText,
+        strlen(localeText)
+    };
+
+    icu4x_Locale_from_string_mv1_result locale_result = icu4x_Locale_from_string_mv1(locale_text_str);
     if (!locale_result.is_ok) {
         printf("Could not create locale from: %s", localeText);
     }
@@ -47,7 +52,13 @@ int main() {
 
     // Test creating a locale.
     DiplomatWrite write = diplomat_simple_write(output, 40);
-    locale_result = icu4x_Locale_from_string_mv1("ar", 2);
+
+    struct DiplomatStringView ar_str = {
+        "ar",
+        2
+    };
+
+    locale_result = icu4x_Locale_from_string_mv1(ar_str);
     if (!locale_result.is_ok) {
         return 1;
     }
@@ -66,7 +77,13 @@ int main() {
 
     // Test some accessors.
     write = diplomat_simple_write(output, 40);
-    locale_result = icu4x_Locale_from_string_mv1("fr-FR-u-hc-h23", 14);
+
+    struct DiplomatStringView fr_str = {
+        "fr-FR-u-hc-h23",
+        14
+    };
+
+    locale_result = icu4x_Locale_from_string_mv1(fr_str);
     if (!locale_result.is_ok) {
         return 1;
     }
@@ -95,7 +112,11 @@ int main() {
     }
 
     write = diplomat_simple_write(output, 40);
-    icu4x_Locale_get_unicode_extension_mv1_result e_result = icu4x_Locale_get_unicode_extension_mv1(locale, "hc", 2, &write);
+    struct DiplomatStringView hc_str = {
+        "hc",
+        2
+    };
+    icu4x_Locale_get_unicode_extension_mv1_result e_result = icu4x_Locale_get_unicode_extension_mv1(locale, hc_str, &write);
     if (!e_result.is_ok || write.grow_failed) {
         return 1;
     }
@@ -107,7 +128,11 @@ int main() {
     }
 
     write = diplomat_simple_write(output, 40);
-    e_result = icu4x_Locale_get_unicode_extension_mv1(locale, "ca", 2, &write);
+    struct DiplomatStringView ca_str = {
+        "ca",
+        2
+    };
+    e_result = icu4x_Locale_get_unicode_extension_mv1(locale, ca_str, &write);
     if (e_result.is_ok || write.grow_failed) {
         return 1;
     }
@@ -115,14 +140,22 @@ int main() {
     // Test setting the language
     write = diplomat_simple_write(output, 40);
     const char* str = "fr-FR-u-hc-h23";
-    locale_result = icu4x_Locale_from_string_mv1(str, strlen(str));
+    struct DiplomatStringView view_from_str = {
+        str,
+        strlen(str)
+    };
+    locale_result = icu4x_Locale_from_string_mv1(view_from_str);
     if (!locale_result.is_ok) {
         printf("Could not create the locale.");
         return 1;
     }
     locale = locale_result.ok;
     str = "zh";
-    icu4x_Locale_set_language_mv1_result l_result = icu4x_Locale_set_language_mv1(locale, str, strlen(str));
+    struct DiplomatStringView str_view = {
+        str,
+        strlen(str)
+    };
+    icu4x_Locale_set_language_mv1_result l_result = icu4x_Locale_set_language_mv1(locale, str_view);
     if (!l_result.is_ok) {
         printf("Could not set the language tag.");
         return 1;
@@ -135,7 +168,11 @@ int main() {
     // Test setting the region
     write = diplomat_simple_write(output, 40);
     str = "es-ES-u-hc-h23";
-    locale_result = icu4x_Locale_from_string_mv1(str, strlen(str));
+    struct DiplomatStringView es_str = {
+        str,
+        strlen(str)
+    };
+    locale_result = icu4x_Locale_from_string_mv1(es_str);
     if (!locale_result.is_ok) {
         printf("Could not create the locale.");
         return 1;
@@ -145,7 +182,11 @@ int main() {
         return 1;
     }
     str = "MX";
-    icu4x_Locale_set_region_mv1_result r_result = icu4x_Locale_set_region_mv1(locale, str, strlen(str));
+    struct DiplomatStringView mx_str = {
+        str,
+        strlen(str)
+    };
+    icu4x_Locale_set_region_mv1_result r_result = icu4x_Locale_set_region_mv1(locale, mx_str);
     if (!r_result.is_ok) {
         printf("Could not set the region.");
         return 1;
@@ -158,7 +199,11 @@ int main() {
      // Test setting the script
     write = diplomat_simple_write(output, 40);
     str = "en-US";
-    locale_result = icu4x_Locale_from_string_mv1(str, strlen(str));
+    struct DiplomatStringView en_str = {
+        str,
+        strlen(str)
+    };
+    locale_result = icu4x_Locale_from_string_mv1(en_str);
     if (!locale_result.is_ok) {
         printf("Could not create the locale.");
         return 1;
@@ -168,7 +213,11 @@ int main() {
         return 1;
     }
     str = "Latn";
-    icu4x_Locale_set_script_mv1_result s_result = icu4x_Locale_set_script_mv1(locale, str, strlen(str));
+    struct DiplomatStringView latn_str = {
+        str,
+        strlen(str)
+    };
+    icu4x_Locale_set_script_mv1_result s_result = icu4x_Locale_set_script_mv1(locale, latn_str);
     if (!s_result.is_ok) {
         printf("Could not set the script.");
         return 1;
@@ -176,7 +225,11 @@ int main() {
     if (!test_locale(locale, "setting the script", "en-Latn-US")) {
         return 1;
     }
-    s_result = icu4x_Locale_set_script_mv1(locale, "", 0);
+    struct DiplomatStringView empty_str = {
+        "",
+        0
+    };
+    s_result = icu4x_Locale_set_script_mv1(locale, empty_str);
     if (!s_result.is_ok) {
         printf("Could not set the script.");
         return 1;
@@ -204,7 +257,11 @@ int main() {
 
     // Test maximize.
     write = diplomat_simple_write(output, 40);
-    locale_result = icu4x_Locale_from_string_mv1("und", 3);
+    struct DiplomatStringView und_str = {
+        "und",
+        3
+    };
+    locale_result = icu4x_Locale_from_string_mv1(und_str);
     if (!locale_result.is_ok) {
         printf("Could not create the locale.");
         return 1;
@@ -225,7 +282,11 @@ int main() {
 
     // Test minimize.
     write = diplomat_simple_write(output, 40);
-    locale_result = icu4x_Locale_from_string_mv1("zh-Hant", 7);
+    struct DiplomatStringView zh_str = {
+        "zh-Hant",
+        7
+    };
+    locale_result = icu4x_Locale_from_string_mv1(zh_str);
     if (!locale_result.is_ok) {
         printf("Could not create the locale.");
         return 1;
@@ -246,7 +307,11 @@ int main() {
 
     // Test canonicalize.
     write = diplomat_simple_write(output, 40);
-    locale_result = icu4x_Locale_from_string_mv1("no-nynorsk", 10);
+    struct DiplomatStringView no_str = {
+        "no-nynorsk",
+        10
+    };
+    locale_result = icu4x_Locale_from_string_mv1(no_str);
     if (!locale_result.is_ok) {
         printf("Could not create the locale.");
         return 1;

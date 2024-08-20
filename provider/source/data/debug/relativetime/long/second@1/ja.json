@@ -3,33 +3,11 @@
     "0": "今"
   },
   "past": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " 秒前"
-      }
-    ]
+    "specials": [],
+    "other": "\u0001 秒前"
   },
   "future": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " 秒後"
-      }
-    ]
+    "specials": [],
+    "other": "\u0001 秒後"
   }
 }

@@ -225,7 +225,7 @@ namespace capi {
     icu4x_CodePointSetData_load_xid_start_mv1_result icu4x_CodePointSetData_load_xid_start_mv1(const icu4x::capi::DataProvider* provider);
     
     typedef struct icu4x_CodePointSetData_load_for_ecma262_mv1_result {union {icu4x::capi::CodePointSetData* ok; icu4x::capi::Error err;}; bool is_ok;} icu4x_CodePointSetData_load_for_ecma262_mv1_result;
-    icu4x_CodePointSetData_load_for_ecma262_mv1_result icu4x_CodePointSetData_load_for_ecma262_mv1(const icu4x::capi::DataProvider* provider, const char* property_name_data, size_t property_name_len);
+    icu4x_CodePointSetData_load_for_ecma262_mv1_result icu4x_CodePointSetData_load_for_ecma262_mv1(const icu4x::capi::DataProvider* provider, diplomat::capi::DiplomatStringView property_name);
     
     
     void icu4x_CodePointSetData_destroy_mv1(CodePointSetData* self);
@@ -586,8 +586,7 @@ inline diplomat::result<diplomat::result<std::unique_ptr<icu4x::CodePointSetData
     return diplomat::Err<diplomat::Utf8Error>(diplomat::Utf8Error());
   }
   auto result = icu4x::capi::icu4x_CodePointSetData_load_for_ecma262_mv1(provider.AsFFI(),
-    property_name.data(),
-    property_name.size());
+    {property_name.data(), property_name.size()});
   return diplomat::Ok<diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::Error>>(result.is_ok ? diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::Error>(diplomat::Ok<std::unique_ptr<icu4x::CodePointSetData>>(std::unique_ptr<icu4x::CodePointSetData>(icu4x::CodePointSetData::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::Error>(diplomat::Err<icu4x::Error>(icu4x::Error::FromFFI(result.err))));
 }
 

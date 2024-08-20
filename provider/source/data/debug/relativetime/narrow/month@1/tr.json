@@ -5,47 +5,21 @@
     "1": "gelecek ay"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " ay önce"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0001 ay önce"
+      ]
     ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " ay önce"
-      }
-    ]
+    "other": "\u0001 ay önce"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " ay sonra"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0001 ay sonra"
+      ]
     ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " ay sonra"
-      }
-    ]
+    "other": "\u0001 ay sonra"
   }
 }

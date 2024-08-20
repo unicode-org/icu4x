@@ -17,6 +17,8 @@ namespace capi {
       CollatorCaseLevel_Off = 1,
       CollatorCaseLevel_On = 2,
     };
+    
+    typedef struct CollatorCaseLevel_option {union { CollatorCaseLevel ok; }; bool is_ok; } CollatorCaseLevel_option;
 } // namespace capi
 } // namespace
 

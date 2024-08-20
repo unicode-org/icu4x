@@ -15,6 +15,7 @@ export class FixedDecimalSign {
         ["Negative", 1],
         ["Positive", 2]
     ]);
+
     constructor(value) {
         if (value instanceof FixedDecimalSign) {
             this.#value = value.value;
@@ -38,12 +39,6 @@ export class FixedDecimalSign {
     }
 
     static None = new FixedDecimalSign("None");
-
     static Negative = new FixedDecimalSign("Negative");
-
     static Positive = new FixedDecimalSign("Positive");
-
-
-    
-
 }

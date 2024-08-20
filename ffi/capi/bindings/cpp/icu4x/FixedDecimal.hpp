@@ -43,7 +43,7 @@ namespace capi {
     icu4x_FixedDecimal_from_double_with_floating_precision_mv1_result icu4x_FixedDecimal_from_double_with_floating_precision_mv1(double f);
     
     typedef struct icu4x_FixedDecimal_from_string_mv1_result {union {icu4x::capi::FixedDecimal* ok; icu4x::capi::FixedDecimalParseError err;}; bool is_ok;} icu4x_FixedDecimal_from_string_mv1_result;
-    icu4x_FixedDecimal_from_string_mv1_result icu4x_FixedDecimal_from_string_mv1(const char* v_data, size_t v_len);
+    icu4x_FixedDecimal_from_string_mv1_result icu4x_FixedDecimal_from_string_mv1(diplomat::capi::DiplomatStringView v);
     
     uint8_t icu4x_FixedDecimal_digit_at_mv1(const icu4x::capi::FixedDecimal* self, int16_t magnitude);
     
@@ -144,8 +144,7 @@ inline diplomat::result<std::unique_ptr<icu4x::FixedDecimal>, icu4x::FixedDecima
 }
 
 inline diplomat::result<std::unique_ptr<icu4x::FixedDecimal>, icu4x::FixedDecimalParseError> icu4x::FixedDecimal::from_string(std::string_view v) {
-  auto result = icu4x::capi::icu4x_FixedDecimal_from_string_mv1(v.data(),
-    v.size());
+  auto result = icu4x::capi::icu4x_FixedDecimal_from_string_mv1({v.data(), v.size()});
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::FixedDecimal>, icu4x::FixedDecimalParseError>(diplomat::Ok<std::unique_ptr<icu4x::FixedDecimal>>(std::unique_ptr<icu4x::FixedDecimal>(icu4x::FixedDecimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::FixedDecimal>, icu4x::FixedDecimalParseError>(diplomat::Err<icu4x::FixedDecimalParseError>(icu4x::FixedDecimalParseError::FromFFI(result.err)));
 }
 

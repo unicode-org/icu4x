@@ -17,6 +17,8 @@ namespace capi {
       WeekRelativeUnit_Current = 1,
       WeekRelativeUnit_Next = 2,
     };
+    
+    typedef struct WeekRelativeUnit_option {union { WeekRelativeUnit ok; }; bool is_ok; } WeekRelativeUnit_option;
 } // namespace capi
 } // namespace
 

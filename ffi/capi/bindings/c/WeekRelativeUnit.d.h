@@ -17,7 +17,7 @@ typedef enum WeekRelativeUnit {
   WeekRelativeUnit_Next = 2,
 } WeekRelativeUnit;
 
-
+typedef struct WeekRelativeUnit_option {union { WeekRelativeUnit ok; }; bool is_ok; } WeekRelativeUnit_option;
 
 
 

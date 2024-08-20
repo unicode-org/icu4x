@@ -20,6 +20,8 @@ namespace capi {
       CollatorStrength_Quaternary = 4,
       CollatorStrength_Identical = 5,
     };
+    
+    typedef struct CollatorStrength_option {union { CollatorStrength ok; }; bool is_ok; } CollatorStrength_option;
 } // namespace capi
 } // namespace
 

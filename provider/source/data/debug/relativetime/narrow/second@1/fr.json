@@ -3,59 +3,21 @@
     "0": "maintenant"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "-"
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " s"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0002- s"
+      ]
     ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "-"
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " s"
-      }
-    ]
+    "other": "\u0002- s"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "+"
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " s"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0002+ s"
+      ]
     ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "+"
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " s"
-      }
-    ]
+    "other": "\u0002+ s"
   }
 }

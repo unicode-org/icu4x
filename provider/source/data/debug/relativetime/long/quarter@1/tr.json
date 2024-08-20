@@ -5,47 +5,21 @@
     "1": "gelecek çeyrek"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " çeyrek önce"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0001 çeyrek önce"
+      ]
     ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " çeyrek önce"
-      }
-    ]
+    "other": "\u0001 çeyrek önce"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " çeyrek sonra"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0001 çeyrek sonra"
+      ]
     ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " çeyrek sonra"
-      }
-    ]
+    "other": "\u0001 çeyrek sonra"
   }
 }

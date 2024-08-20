@@ -27,6 +27,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::locale::Locale::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::locale::Locale::from_str, FnInStruct, hidden)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::demo(default_constructor)]
         pub fn from_string(name: &DiplomatStr) -> Result<Box<Locale>, LocaleParseError> {
             Ok(Box::new(Locale(icu_locale_core::Locale::try_from_utf8(
                 name,
@@ -101,7 +102,7 @@ pub mod ffi {
         /// Set the region part of the [`Locale`].
         #[diplomat::rust_link(icu::locale::Locale::try_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::locale::Locale::try_from_utf8, FnInStruct, hidden)]
-        #[diplomat::attr(all(*, not(dart)), setter = "region")]
+        #[diplomat::attr(all(supports = accessors, not(dart)), setter = "region")]
         pub fn set_region(&mut self, s: &DiplomatStr) -> Result<(), LocaleParseError> {
             self.0.id.region = if s.is_empty() {
                 None
@@ -123,7 +124,7 @@ pub mod ffi {
         /// Set the script part of the [`Locale`]. Pass an empty string to remove the script.
         #[diplomat::rust_link(icu::locale::Locale::try_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::locale::Locale::try_from_utf8, FnInStruct, hidden)]
-        #[diplomat::attr(all(*, not(dart)), setter = "script")]
+        #[diplomat::attr(all(supports = accessors, not(dart)), setter = "script")]
         pub fn set_script(&mut self, s: &DiplomatStr) -> Result<(), LocaleParseError> {
             self.0.id.script = if s.is_empty() {
                 None

@@ -3,79 +3,29 @@
     "0": "сада"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "пре "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " секунде"
-      }
+    "specials": [
+      [
+        "One",
+        "\bпре  секунде"
+      ],
+      [
+        "Few",
+        "\bпре  секунде"
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "пре "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " секунде"
-      }
-    ],
-    "many": null,
-    "other": [
-      {
-        "Literal": "пре "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " секунди"
-      }
-    ]
+    "other": "\bпре  секунди"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "за "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " секунду"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0006за  секунду"
+      ],
+      [
+        "Few",
+        "\u0006за  секунде"
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "за "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " секунде"
-      }
-    ],
-    "many": null,
-    "other": [
-      {
-        "Literal": "за "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " секунди"
-      }
-    ]
+    "other": "\u0006за  секунди"
   }
 }

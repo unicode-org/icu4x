@@ -21,6 +21,7 @@ export class FixedDecimalRoundingMode {
         ["HalfTrunc", 7],
         ["HalfEven", 8]
     ]);
+
     constructor(value) {
         if (value instanceof FixedDecimalRoundingMode) {
             this.#value = value.value;
@@ -44,24 +45,12 @@ export class FixedDecimalRoundingMode {
     }
 
     static Ceil = new FixedDecimalRoundingMode("Ceil");
-
     static Expand = new FixedDecimalRoundingMode("Expand");
-
     static Floor = new FixedDecimalRoundingMode("Floor");
-
     static Trunc = new FixedDecimalRoundingMode("Trunc");
-
     static HalfCeil = new FixedDecimalRoundingMode("HalfCeil");
-
     static HalfExpand = new FixedDecimalRoundingMode("HalfExpand");
-
     static HalfFloor = new FixedDecimalRoundingMode("HalfFloor");
-
     static HalfTrunc = new FixedDecimalRoundingMode("HalfTrunc");
-
     static HalfEven = new FixedDecimalRoundingMode("HalfEven");
-
-
-    
-
 }

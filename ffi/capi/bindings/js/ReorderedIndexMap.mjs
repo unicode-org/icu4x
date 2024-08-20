@@ -9,10 +9,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *Produced by `reorder_visual()` on [`Bidi`].
 */
-
 const ReorderedIndexMap_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_ReorderedIndexMap_destroy_mv1(ptr);
 });
+
 export class ReorderedIndexMap {
     // Internal ptr reference:
     #ptr = null;
@@ -21,35 +21,39 @@ export class ReorderedIndexMap {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("ReorderedIndexMap is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        // Unconditionally register to destroy when this object is ready to garbage collect.
-        ReorderedIndexMap_box_destroy_registry.register(this, this.#ptr);
+        
+        // Are we being borrowed? If not, we can register.
+        if (this.#selfEdge.length === 0) {
+            ReorderedIndexMap_box_destroy_registry.register(this, this.#ptr);
+        }
     }
 
     get ffiValue() {
         return this.#ptr;
     }
 
-
     get asSlice() {
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(8, 4);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 8, 4, false);
         
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this];
-        const result = wasm.icu4x_ReorderedIndexMap_as_slice_mv1(diplomat_receive_buffer, this.ffiValue);
+        const result = wasm.icu4x_ReorderedIndexMap_as_slice_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {
-    
-            return diplomatRuntime.DiplomatBuf.sliceFromPtr(wasm, diplomat_receive_buffer, "u32");
-        } finally {
+            return new diplomatRuntime.DiplomatSlicePrimitive.getSlice(wasm, diplomatReceive.buffer, "u32", aEdges);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 8, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
@@ -57,35 +61,29 @@ export class ReorderedIndexMap {
         const result = wasm.icu4x_ReorderedIndexMap_len_mv1(this.ffiValue);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     get isEmpty() {
         const result = wasm.icu4x_ReorderedIndexMap_is_empty_mv1(this.ffiValue);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     get(index) {
         const result = wasm.icu4x_ReorderedIndexMap_get_mv1(this.ffiValue, index);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
-
-    
-
 }

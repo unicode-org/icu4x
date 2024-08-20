@@ -17,7 +17,7 @@ typedef enum SegmenterWordType {
   SegmenterWordType_Letter = 2,
 } SegmenterWordType;
 
-
+typedef struct SegmenterWordType_option {union { SegmenterWordType ok; }; bool is_ok; } SegmenterWordType_option;
 
 
 

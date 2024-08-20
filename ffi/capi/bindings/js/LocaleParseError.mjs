@@ -14,6 +14,7 @@ export class LocaleParseError {
         ["Subtag", 2],
         ["Extension", 3]
     ]);
+
     constructor(value) {
         if (value instanceof LocaleParseError) {
             this.#value = value.value;
@@ -37,14 +38,7 @@ export class LocaleParseError {
     }
 
     static Unknown = new LocaleParseError("Unknown");
-
     static Language = new LocaleParseError("Language");
-
     static Subtag = new LocaleParseError("Subtag");
-
     static Extension = new LocaleParseError("Extension");
-
-
-    
-
 }

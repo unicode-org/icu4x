@@ -5,79 +5,29 @@
     "1": "sledeće g."
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "pre "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " g."
-      }
+    "specials": [
+      [
+        "One",
+        "\u0005pre  g."
+      ],
+      [
+        "Few",
+        "\u0005pre  g."
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "pre "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " g."
-      }
-    ],
-    "many": null,
-    "other": [
-      {
-        "Literal": "pre "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " g."
-      }
-    ]
+    "other": "\u0005pre  g."
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "za "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " g."
-      }
+    "specials": [
+      [
+        "One",
+        "\u0004za  g."
+      ],
+      [
+        "Few",
+        "\u0004za  g."
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "za "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " g."
-      }
-    ],
-    "many": null,
-    "other": [
-      {
-        "Literal": "za "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " g."
-      }
-    ]
+    "other": "\u0004za  g."
   }
 }

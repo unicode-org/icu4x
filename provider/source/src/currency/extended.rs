@@ -77,8 +77,16 @@ impl crate::IterableDataProviderCached<CurrencyExtendedDataV1Marker> for SourceD
                 .read_and_parse(&locale, "currencies.json")?;
 
             let currencies = &currencies_resource.main.value.numbers.currencies;
-            for key in currencies.keys() {
-                if let Ok(attributes) = DataMarkerAttributes::try_from_string(key.clone()) {
+            for (currency, patterns) in currencies {
+                if patterns
+                    .display_name
+                    .as_ref()
+                    .or(patterns.other.as_ref())
+                    .is_none()
+                {
+                    continue;
+                }
+                if let Ok(attributes) = DataMarkerAttributes::try_from_string(currency.clone()) {
                     result.insert(DataIdentifierCow::from_owned(attributes, locale.clone()));
                 }
             }

@@ -14,6 +14,7 @@ export class TimeLength {
         ["Medium", 2],
         ["Short", 3]
     ]);
+
     constructor(value) {
         if (value instanceof TimeLength) {
             this.#value = value.value;
@@ -37,14 +38,7 @@ export class TimeLength {
     }
 
     static Full = new TimeLength("Full");
-
     static Long = new TimeLength("Long");
-
     static Medium = new TimeLength("Medium");
-
     static Short = new TimeLength("Short");
-
-
-    
-
 }

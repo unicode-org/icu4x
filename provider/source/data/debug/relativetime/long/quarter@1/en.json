@@ -5,53 +5,21 @@
     "1": "next quarter"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " quarter ago"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0001 quarter ago"
+      ]
     ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " quarters ago"
-      }
-    ]
+    "other": "\u0001 quarters ago"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "in "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " quarter"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0004in  quarter"
+      ]
     ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "in "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " quarters"
-      }
-    ]
+    "other": "\u0004in  quarters"
   }
 }

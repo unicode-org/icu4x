@@ -16,10 +16,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *See the [Rust documentation for `DateTime`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html) for more information.
 */
-
 const IsoDateTime_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_IsoDateTime_destroy_mv1(ptr);
 });
+
 export class IsoDateTime {
     // Internal ptr reference:
     #ptr = null;
@@ -28,36 +28,40 @@ export class IsoDateTime {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("IsoDateTime is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        // Unconditionally register to destroy when this object is ready to garbage collect.
-        IsoDateTime_box_destroy_registry.register(this, this.#ptr);
+        
+        // Are we being borrowed? If not, we can register.
+        if (this.#selfEdge.length === 0) {
+            IsoDateTime_box_destroy_registry.register(this, this.#ptr);
+        }
     }
 
     get ffiValue() {
         return this.#ptr;
     }
 
-
     static create(year, month, day, hour, minute, second, nanosecond) {
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_IsoDateTime_create_mv1(diplomat_receive_buffer, year, month, day, hour, minute, second, nanosecond);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_IsoDateTime_create_mv1(diplomatReceive.buffer, year, month, day, hour, minute, second, nanosecond);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = CalendarError[Array.from(CalendarError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('CalendarError: ' + cause.value, { cause });
+            if (!diplomatReceive.resultFlag) {
+                const cause = CalendarError[Array.from(CalendarError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                throw new globalThis.Error('CalendarError: ' + cause.value, { cause });
             }
-            return new IsoDateTime(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new IsoDateTime(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
@@ -65,33 +69,31 @@ export class IsoDateTime {
         const result = wasm.icu4x_IsoDateTime_from_date_and_time_mv1(date.ffiValue, time.ffiValue);
     
         try {
-    
-            return new IsoDateTime(result, []);
-        } finally {
-        
+            return new IsoDateTime(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
     static fromString(v) {
         
         const vSlice = diplomatRuntime.DiplomatBuf.str8(wasm, v);
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_IsoDateTime_from_string_mv1(diplomat_receive_buffer, vSlice.ptr, vSlice.size);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_IsoDateTime_from_string_mv1(diplomatReceive.buffer, vSlice.ptr, vSlice.size);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = CalendarParseError[Array.from(CalendarParseError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('CalendarParseError: ' + cause.value, { cause });
+            if (!diplomatReceive.resultFlag) {
+                const cause = CalendarParseError[Array.from(CalendarParseError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                throw new globalThis.Error('CalendarParseError: ' + cause.value, { cause });
             }
-            return new IsoDateTime(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new IsoDateTime(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
+        finally {
             vSlice.free();
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+            diplomatReceive.free();
         }
     }
 
@@ -99,179 +101,163 @@ export class IsoDateTime {
         const result = wasm.icu4x_IsoDateTime_local_unix_epoch_mv1();
     
         try {
-    
-            return new IsoDateTime(result, []);
-        } finally {
-        
+            return new IsoDateTime(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
     static fromMinutesSinceLocalUnixEpoch(minutes) {
         const result = wasm.icu4x_IsoDateTime_from_minutes_since_local_unix_epoch_mv1(minutes);
     
         try {
-    
-            return new IsoDateTime(result, []);
-        } finally {
-        
+            return new IsoDateTime(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
     get date() {
         const result = wasm.icu4x_IsoDateTime_date_mv1(this.ffiValue);
     
         try {
-    
-            return new IsoDate(result, []);
-        } finally {
-        
+            return new IsoDate(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
     get time() {
         const result = wasm.icu4x_IsoDateTime_time_mv1(this.ffiValue);
     
         try {
-    
-            return new Time(result, []);
-        } finally {
-        
+            return new Time(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
     toAny() {
         const result = wasm.icu4x_IsoDateTime_to_any_mv1(this.ffiValue);
     
         try {
-    
-            return new DateTime(result, []);
-        } finally {
-        
+            return new DateTime(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
     get minutesSinceLocalUnixEpoch() {
         const result = wasm.icu4x_IsoDateTime_minutes_since_local_unix_epoch_mv1(this.ffiValue);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     toCalendar(calendar) {
         const result = wasm.icu4x_IsoDateTime_to_calendar_mv1(this.ffiValue, calendar.ffiValue);
     
         try {
-    
-            return new DateTime(result, []);
-        } finally {
-        
+            return new DateTime(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
     get hour() {
         const result = wasm.icu4x_IsoDateTime_hour_mv1(this.ffiValue);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     get minute() {
         const result = wasm.icu4x_IsoDateTime_minute_mv1(this.ffiValue);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     get second() {
         const result = wasm.icu4x_IsoDateTime_second_mv1(this.ffiValue);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     get nanosecond() {
         const result = wasm.icu4x_IsoDateTime_nanosecond_mv1(this.ffiValue);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     get dayOfYear() {
         const result = wasm.icu4x_IsoDateTime_day_of_year_mv1(this.ffiValue);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     get dayOfMonth() {
         const result = wasm.icu4x_IsoDateTime_day_of_month_mv1(this.ffiValue);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     get dayOfWeek() {
         const result = wasm.icu4x_IsoDateTime_day_of_week_mv1(this.ffiValue);
     
         try {
-    
             return (() => {for (let i of IsoWeekday.values) { if(i[1] === result) return IsoWeekday[i[0]]; } return null;})();
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     weekOfMonth(firstWeekday) {
         const result = wasm.icu4x_IsoDateTime_week_of_month_mv1(this.ffiValue, firstWeekday.ffiValue);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     weekOfYear(calculator) {
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(8, 4);
-        const result = wasm.icu4x_IsoDateTime_week_of_year_mv1(diplomat_receive_buffer, this.ffiValue, calculator.ffiValue);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 8, 4, false);
+        const result = wasm.icu4x_IsoDateTime_week_of_year_mv1(diplomatReceive.buffer, this.ffiValue, calculator.ffiValue);
     
         try {
-    
-            return new WeekOf(diplomat_receive_buffer);
-        } finally {
+            return new WeekOf(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 8, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
@@ -279,68 +265,59 @@ export class IsoDateTime {
         const result = wasm.icu4x_IsoDateTime_month_mv1(this.ffiValue);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     get year() {
         const result = wasm.icu4x_IsoDateTime_year_mv1(this.ffiValue);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     get isInLeapYear() {
         const result = wasm.icu4x_IsoDateTime_is_in_leap_year_mv1(this.ffiValue);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     get monthsInYear() {
         const result = wasm.icu4x_IsoDateTime_months_in_year_mv1(this.ffiValue);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     get daysInMonth() {
         const result = wasm.icu4x_IsoDateTime_days_in_month_mv1(this.ffiValue);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     get daysInYear() {
         const result = wasm.icu4x_IsoDateTime_days_in_year_mv1(this.ffiValue);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
-
-    
-
 }

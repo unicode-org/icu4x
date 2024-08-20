@@ -13,6 +13,7 @@ export class CollatorNumeric {
         ["Off", 1],
         ["On", 2]
     ]);
+
     constructor(value) {
         if (value instanceof CollatorNumeric) {
             this.#value = value.value;
@@ -36,12 +37,6 @@ export class CollatorNumeric {
     }
 
     static Auto = new CollatorNumeric("Auto");
-
     static Off = new CollatorNumeric("Off");
-
     static On = new CollatorNumeric("On");
-
-
-    
-
 }

@@ -5,79 +5,29 @@
     "1": "следећег квартала"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "пре "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " квартала"
-      }
+    "specials": [
+      [
+        "One",
+        "\bпре  квартала"
+      ],
+      [
+        "Few",
+        "\bпре  квартала"
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "пре "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " квартала"
-      }
-    ],
-    "many": null,
-    "other": [
-      {
-        "Literal": "пре "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " квартала"
-      }
-    ]
+    "other": "\bпре  квартала"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "за "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " квартал"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0006за  квартал"
+      ],
+      [
+        "Few",
+        "\u0006за  квартала"
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "за "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " квартала"
-      }
-    ],
-    "many": null,
-    "other": [
-      {
-        "Literal": "за "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " квартала"
-      }
-    ]
+    "other": "\u0006за  квартала"
   }
 }

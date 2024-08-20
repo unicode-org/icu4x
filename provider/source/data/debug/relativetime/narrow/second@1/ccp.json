@@ -3,40 +3,16 @@
     "0": "𑄃𑄨𑄇𑄴𑄅𑄚𑄪"
   },
   "past": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " 𑄥𑄬𑄉𑄬𑄚𑄴 𑄃𑄉𑄬"
-      }
-    ]
+    "specials": [],
+    "other": "\u0001 𑄥𑄬𑄉𑄬𑄚𑄴 𑄃𑄉𑄬"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " 𑄥𑄬𑄉𑄬𑄚𑄴"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0001 𑄥𑄬𑄉𑄬𑄚𑄴"
+      ]
     ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " 𑄥𑄬𑄉𑄬𑄚𑄴𑄘𑄬"
-      }
-    ]
+    "other": "\u0001 𑄥𑄬𑄉𑄬𑄚𑄴𑄘𑄬"
   }
 }

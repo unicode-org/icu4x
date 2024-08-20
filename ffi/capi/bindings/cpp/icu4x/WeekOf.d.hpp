@@ -21,6 +21,8 @@ namespace capi {
       uint16_t week;
       icu4x::capi::WeekRelativeUnit unit;
     };
+    
+    typedef struct WeekOf_option {union { WeekOf ok; }; bool is_ok; } WeekOf_option;
 } // namespace capi
 } // namespace
 

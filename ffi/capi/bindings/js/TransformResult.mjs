@@ -12,6 +12,7 @@ export class TransformResult {
         ["Modified", 0],
         ["Unmodified", 1]
     ]);
+
     constructor(value) {
         if (value instanceof TransformResult) {
             this.#value = value.value;
@@ -35,10 +36,5 @@ export class TransformResult {
     }
 
     static Modified = new TransformResult("Modified");
-
     static Unmodified = new TransformResult("Unmodified");
-
-
-    
-
 }

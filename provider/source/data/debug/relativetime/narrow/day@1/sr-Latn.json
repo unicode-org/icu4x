@@ -7,79 +7,29 @@
     "2": "prekosutra"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "pre "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " d."
-      }
+    "specials": [
+      [
+        "One",
+        "\u0005pre  d."
+      ],
+      [
+        "Few",
+        "\u0005pre  d."
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "pre "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " d."
-      }
-    ],
-    "many": null,
-    "other": [
-      {
-        "Literal": "pre "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " d."
-      }
-    ]
+    "other": "\u0005pre  d."
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "za "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " d."
-      }
+    "specials": [
+      [
+        "One",
+        "\u0004za  d."
+      ],
+      [
+        "Few",
+        "\u0004za  d."
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "za "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " d."
-      }
-    ],
-    "many": null,
-    "other": [
-      {
-        "Literal": "za "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " d."
-      }
-    ]
+    "other": "\u0004za  d."
   }
 }

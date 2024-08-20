@@ -16,6 +16,8 @@ namespace capi {
       LanguageDisplay_Dialect = 0,
       LanguageDisplay_Standard = 1,
     };
+    
+    typedef struct LanguageDisplay_option {union { LanguageDisplay ok; }; bool is_ok; } LanguageDisplay_option;
 } // namespace capi
 } // namespace
 
