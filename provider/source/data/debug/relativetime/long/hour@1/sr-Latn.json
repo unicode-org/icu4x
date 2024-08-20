@@ -3,79 +3,29 @@
     "0": "ovog sata"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "pre "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " sata"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0005pre  sata"
+      ],
+      [
+        "Few",
+        "\u0005pre  sata"
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "pre "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " sata"
-      }
-    ],
-    "many": null,
-    "other": [
-      {
-        "Literal": "pre "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " sati"
-      }
-    ]
+    "other": "\u0005pre  sati"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "za "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " sat"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0004za  sat"
+      ],
+      [
+        "Few",
+        "\u0004za  sata"
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "za "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " sata"
-      }
-    ],
-    "many": null,
-    "other": [
-      {
-        "Literal": "za "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " sati"
-      }
-    ]
+    "other": "\u0004za  sati"
   }
 }

@@ -5,87 +5,37 @@
     "1": "в след. г."
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " г. назад"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0001 г. назад"
+      ],
+      [
+        "Few",
+        "\u0001 г. назад"
+      ],
+      [
+        "Many",
+        "\u0001 л. назад"
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " г. назад"
-      }
-    ],
-    "many": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " л. назад"
-      }
-    ],
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " г. назад"
-      }
-    ]
+    "other": "\u0001 г. назад"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " г."
-      }
+    "specials": [
+      [
+        "One",
+        "\fчерез  г."
+      ],
+      [
+        "Few",
+        "\fчерез  г."
+      ],
+      [
+        "Many",
+        "\fчерез  л."
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " г."
-      }
-    ],
-    "many": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " л."
-      }
-    ],
-    "other": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " г."
-      }
-    ]
+    "other": "\fчерез  г."
   }
 }

@@ -3,79 +3,29 @@
     "0": "сада"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "пре "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " с."
-      }
+    "specials": [
+      [
+        "One",
+        "\bпре  с."
+      ],
+      [
+        "Few",
+        "\bпре  с."
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "пре "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " с."
-      }
-    ],
-    "many": null,
-    "other": [
-      {
-        "Literal": "пре "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " с."
-      }
-    ]
+    "other": "\bпре  с."
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "за "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " с."
-      }
+    "specials": [
+      [
+        "One",
+        "\u0006за  с."
+      ],
+      [
+        "Few",
+        "\u0006за  с."
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "за "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " с."
-      }
-    ],
-    "many": null,
-    "other": [
-      {
-        "Literal": "за "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " с."
-      }
-    ]
+    "other": "\u0006за  с."
   }
 }

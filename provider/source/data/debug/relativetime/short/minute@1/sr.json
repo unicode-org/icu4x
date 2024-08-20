@@ -3,79 +3,29 @@
     "0": "овог минута"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "пре "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " мин."
-      }
+    "specials": [
+      [
+        "One",
+        "\bпре  мин."
+      ],
+      [
+        "Few",
+        "\bпре  мин."
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "пре "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " мин."
-      }
-    ],
-    "many": null,
-    "other": [
-      {
-        "Literal": "пре "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " мин."
-      }
-    ]
+    "other": "\bпре  мин."
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "за "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " мин."
-      }
+    "specials": [
+      [
+        "One",
+        "\u0006за  мин."
+      ],
+      [
+        "Few",
+        "\u0006за  мин."
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "за "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " мин."
-      }
-    ],
-    "many": null,
-    "other": [
-      {
-        "Literal": "за "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " мин."
-      }
-    ]
+    "other": "\u0006за  мин."
   }
 }

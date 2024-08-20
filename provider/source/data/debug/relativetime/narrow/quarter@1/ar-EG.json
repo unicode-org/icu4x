@@ -5,115 +5,53 @@
     "1": "الربع القادم"
   },
   "past": {
-    "zero": [
-      {
-        "Literal": "قبل "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " ربع سنة"
-      }
+    "specials": [
+      [
+        "Zero",
+        "\bقبل  ربع سنة"
+      ],
+      [
+        "One",
+        "\u0000قبل ربع سنة واحد"
+      ],
+      [
+        "Two",
+        "\u0000قبل ربعي سنة"
+      ],
+      [
+        "Few",
+        "\bقبل  أرباع سنة"
+      ],
+      [
+        "Many",
+        "\bقبل  ربع سنة"
+      ]
     ],
-    "one": [
-      {
-        "Literal": "قبل ربع سنة واحد"
-      }
-    ],
-    "two": [
-      {
-        "Literal": "قبل ربعي سنة"
-      }
-    ],
-    "few": [
-      {
-        "Literal": "قبل "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " أرباع سنة"
-      }
-    ],
-    "many": [
-      {
-        "Literal": "قبل "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " ربع سنة"
-      }
-    ],
-    "other": [
-      {
-        "Literal": "قبل "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " ربع سنة"
-      }
-    ]
+    "other": "\bقبل  ربع سنة"
   },
   "future": {
-    "zero": [
-      {
-        "Literal": "خلال "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " ربع سنة"
-      }
+    "specials": [
+      [
+        "Zero",
+        "\nخلال  ربع سنة"
+      ],
+      [
+        "One",
+        "\u0000خلال ربع سنة واحد"
+      ],
+      [
+        "Two",
+        "\u0000خلال ربعي سنة"
+      ],
+      [
+        "Few",
+        "\nخلال  أرباع سنة"
+      ],
+      [
+        "Many",
+        "\nخلال  ربع سنة"
+      ]
     ],
-    "one": [
-      {
-        "Literal": "خلال ربع سنة واحد"
-      }
-    ],
-    "two": [
-      {
-        "Literal": "خلال ربعي سنة"
-      }
-    ],
-    "few": [
-      {
-        "Literal": "خلال "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " أرباع سنة"
-      }
-    ],
-    "many": [
-      {
-        "Literal": "خلال "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " ربع سنة"
-      }
-    ],
-    "other": [
-      {
-        "Literal": "خلال "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " ربع سنة"
-      }
-    ]
+    "other": "\nخلال  ربع سنة"
   }
 }

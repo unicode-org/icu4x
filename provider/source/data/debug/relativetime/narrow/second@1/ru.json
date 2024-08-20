@@ -3,99 +3,37 @@
     "0": "сейчас"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "-"
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " с"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0002- с"
+      ],
+      [
+        "Few",
+        "\u0002- с"
+      ],
+      [
+        "Many",
+        "\u0002- с"
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "-"
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " с"
-      }
-    ],
-    "many": [
-      {
-        "Literal": "-"
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " с"
-      }
-    ],
-    "other": [
-      {
-        "Literal": "-"
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " с"
-      }
-    ]
+    "other": "\u0002- с"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "+"
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " с"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0002+ с"
+      ],
+      [
+        "Few",
+        "\u0002+ с"
+      ],
+      [
+        "Many",
+        "\u0002+ с"
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "+"
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " с"
-      }
-    ],
-    "many": [
-      {
-        "Literal": "+"
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " с"
-      }
-    ],
-    "other": [
-      {
-        "Literal": "+"
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " с"
-      }
-    ]
+    "other": "\u0002+ с"
   }
 }

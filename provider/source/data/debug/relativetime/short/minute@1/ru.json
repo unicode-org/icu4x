@@ -3,87 +3,37 @@
     "0": "в эту минуту"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " мин. назад"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0001 мин. назад"
+      ],
+      [
+        "Few",
+        "\u0001 мин. назад"
+      ],
+      [
+        "Many",
+        "\u0001 мин. назад"
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " мин. назад"
-      }
-    ],
-    "many": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " мин. назад"
-      }
-    ],
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " мин. назад"
-      }
-    ]
+    "other": "\u0001 мин. назад"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " мин."
-      }
+    "specials": [
+      [
+        "One",
+        "\fчерез  мин."
+      ],
+      [
+        "Few",
+        "\fчерез  мин."
+      ],
+      [
+        "Many",
+        "\fчерез  мин."
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " мин."
-      }
-    ],
-    "many": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " мин."
-      }
-    ],
-    "other": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " мин."
-      }
-    ]
+    "other": "\fчерез  мин."
   }
 }

@@ -5,59 +5,21 @@
     "1": "l’année prochaine"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "il y a "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " an"
-      }
+    "specials": [
+      [
+        "One",
+        "\bil y a  an"
+      ]
     ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "il y a "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " ans"
-      }
-    ]
+    "other": "\bil y a  ans"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "dans "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " an"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0006dans  an"
+      ]
     ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "dans "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " ans"
-      }
-    ]
+    "other": "\u0006dans  ans"
   }
 }

@@ -7,79 +7,29 @@
     "2": "prekosutra"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "pre "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " dana"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0005pre  dana"
+      ],
+      [
+        "Few",
+        "\u0005pre  dana"
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "pre "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " dana"
-      }
-    ],
-    "many": null,
-    "other": [
-      {
-        "Literal": "pre "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " dana"
-      }
-    ]
+    "other": "\u0005pre  dana"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "za "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " dan"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0004za  dan"
+      ],
+      [
+        "Few",
+        "\u0004za  dana"
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "za "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " dana"
-      }
-    ],
-    "many": null,
-    "other": [
-      {
-        "Literal": "za "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " dana"
-      }
-    ]
+    "other": "\u0004za  dana"
   }
 }

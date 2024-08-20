@@ -5,59 +5,21 @@
     "1": "le trimestre prochain"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "-"
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " trim."
-      }
+    "specials": [
+      [
+        "One",
+        "\u0002- trim."
+      ]
     ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "-"
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " trim."
-      }
-    ]
+    "other": "\u0002- trim."
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "+"
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " trim."
-      }
+    "specials": [
+      [
+        "One",
+        "\u0002+ trim."
+      ]
     ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "+"
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " trim."
-      }
-    ]
+    "other": "\u0002+ trim."
   }
 }

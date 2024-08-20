@@ -11,8 +11,9 @@
 
 use alloc::borrow::Cow;
 use icu_pattern::SinglePlaceholderPattern;
+use icu_plurals::PluralCategory;
 use icu_provider::prelude::*;
-use zerovec::ZeroMap;
+use zerovec::{ule::AsULE, VarZeroVec, ZeroMap};
 
 #[cfg(feature = "compiled_data")]
 /// Baked data
@@ -74,6 +75,23 @@ pub struct RelativeTimePatternDataV1<'data> {
     pub future: SinglePlaceholderPluralPattern<'data>,
 }
 
+#[derive(Debug)]
+#[zerovec::make_varule(PluralCategoryStrULE)]
+#[zerovec::skip_derive(Ord)]
+#[zerovec::derive(Debug)]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde::Deserialize),
+    zerovec::derive(Deserialize)
+)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize),
+    zerovec::derive(Serialize)
+)]
+/// A tuple of [`PluralCategory`] and [`str`].
+pub struct PluralCategoryStr<'data>(pub PluralCategory, pub Cow<'data, str>);
+
 /// Display specification for relative times, split over potential plural patterns.
 #[derive(Debug, Clone, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -84,40 +102,26 @@ pub struct RelativeTimePatternDataV1<'data> {
 )]
 #[yoke(prove_covariance_manually)]
 pub struct SinglePlaceholderPluralPattern<'data> {
-    /// Mapping for PluralCategory::Zero or `None` if not present.
+    /// Optional patterns for categories other than PluralCategory::Other
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub zero: Option<SinglePlaceholderPattern<Cow<'data, str>>>,
-    /// Mapping for PluralCategory::One or `None` if not present.
+    pub specials: VarZeroVec<'data, PluralCategoryStrULE>,
+    /// The pattern for PluralCategory::Other
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub one: Option<SinglePlaceholderPattern<Cow<'data, str>>>,
-    /// Mapping for PluralCategory::Two or `None` if not present.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub two: Option<SinglePlaceholderPattern<Cow<'data, str>>>,
-    /// Mapping for PluralCategory::Few or `None` if not present.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub few: Option<SinglePlaceholderPattern<Cow<'data, str>>>,
-    /// Mapping for PluralCategory::Many or `None` if not present.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub many: Option<SinglePlaceholderPattern<Cow<'data, str>>>,
-    /// Mapping for PluralCategory::Other
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub other: SinglePlaceholderPattern<Cow<'data, str>>,
+    pub other: Cow<'data, str>,
 }
 
 impl<'data> SinglePlaceholderPluralPattern<'data> {
-    pub(crate) fn get(
-        &self,
-        c: icu_plurals::PluralCategory,
-    ) -> &SinglePlaceholderPattern<Cow<'data, str>> {
-        match c {
-            icu_plurals::PluralCategory::Zero => self.zero.as_ref(),
-            icu_plurals::PluralCategory::One => self.one.as_ref(),
-            icu_plurals::PluralCategory::Two => self.two.as_ref(),
-            icu_plurals::PluralCategory::Few => self.few.as_ref(),
-            icu_plurals::PluralCategory::Many => self.many.as_ref(),
-            icu_plurals::PluralCategory::Other => None,
-        }
-        .unwrap_or(&self.other)
+    /// Returns the pattern for the given [`PluralCategory`].
+    pub fn get(&'data self, c: PluralCategory) -> &'data SinglePlaceholderPattern<str> {
+        SinglePlaceholderPattern::from_ref_store_unchecked(if c == PluralCategory::Other {
+            &*self.other
+        } else {
+            self.specials
+                .iter()
+                .filter_map(|ule| (ule.0 == c.to_unaligned()).then_some(&ule.1))
+                .next()
+                .unwrap_or(&*self.other)
+        })
     }
 }
 

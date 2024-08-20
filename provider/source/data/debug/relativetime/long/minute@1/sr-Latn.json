@@ -3,79 +3,29 @@
     "0": "ovog minuta"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "pre "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " minuta"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0005pre  minuta"
+      ],
+      [
+        "Few",
+        "\u0005pre  minuta"
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "pre "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " minuta"
-      }
-    ],
-    "many": null,
-    "other": [
-      {
-        "Literal": "pre "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " minuta"
-      }
-    ]
+    "other": "\u0005pre  minuta"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "za "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " minut"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0004za  minut"
+      ],
+      [
+        "Few",
+        "\u0004za  minuta"
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "za "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " minuta"
-      }
-    ],
-    "many": null,
-    "other": [
-      {
-        "Literal": "za "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " minuta"
-      }
-    ]
+    "other": "\u0004za  minuta"
   }
 }

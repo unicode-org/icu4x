@@ -7,99 +7,37 @@
     "2": "послезавтра"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "-"
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " дн."
-      }
+    "specials": [
+      [
+        "One",
+        "\u0002- дн."
+      ],
+      [
+        "Few",
+        "\u0002- дн."
+      ],
+      [
+        "Many",
+        "\u0002- дн."
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "-"
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " дн."
-      }
-    ],
-    "many": [
-      {
-        "Literal": "-"
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " дн."
-      }
-    ],
-    "other": [
-      {
-        "Literal": "-"
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " дн."
-      }
-    ]
+    "other": "\u0002- дн."
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "+"
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " дн."
-      }
+    "specials": [
+      [
+        "One",
+        "\u0002+ дн."
+      ],
+      [
+        "Few",
+        "\u0002+ дн."
+      ],
+      [
+        "Many",
+        "\u0002+ дн."
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "+"
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " дн."
-      }
-    ],
-    "many": [
-      {
-        "Literal": "+"
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " дн."
-      }
-    ],
-    "other": [
-      {
-        "Literal": "+"
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " дн."
-      }
-    ]
+    "other": "\u0002+ дн."
   }
 }

@@ -5,59 +5,21 @@
     "1": "próx. sem."
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "hace "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " sem."
-      }
+    "specials": [
+      [
+        "One",
+        "\u0006hace  sem."
+      ]
     ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "hace "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " sem."
-      }
-    ]
+    "other": "\u0006hace  sem."
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "dentro de "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " sem."
-      }
+    "specials": [
+      [
+        "One",
+        "\u000bdentro de  sem."
+      ]
     ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "dentro de "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " sem."
-      }
-    ]
+    "other": "\u000bdentro de  sem."
   }
 }

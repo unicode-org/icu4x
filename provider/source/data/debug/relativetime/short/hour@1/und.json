@@ -3,39 +3,11 @@
     "0": "this hour"
   },
   "past": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "-"
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " h"
-      }
-    ]
+    "specials": [],
+    "other": "\u0002- h"
   },
   "future": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "+"
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " h"
-      }
-    ]
+    "specials": [],
+    "other": "\u0002+ h"
   }
 }

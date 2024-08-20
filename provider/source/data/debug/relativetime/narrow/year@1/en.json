@@ -5,53 +5,21 @@
     "1": "next yr."
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": "y ago"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0001y ago"
+      ]
     ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": "y ago"
-      }
-    ]
+    "other": "\u0001y ago"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "in "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": "y"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0004in y"
+      ]
     ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "in "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": "y"
-      }
-    ]
+    "other": "\u0004in y"
   }
 }

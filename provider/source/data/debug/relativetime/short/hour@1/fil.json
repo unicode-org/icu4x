@@ -3,53 +3,21 @@
     "0": "ngayong oras"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " oras ang nakalipas"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0001 oras ang nakalipas"
+      ]
     ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " oras ang nakalipas"
-      }
-    ]
+    "other": "\u0001 oras ang nakalipas"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "sa "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " oras"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0004sa  oras"
+      ]
     ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "sa "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " (na) oras"
-      }
-    ]
+    "other": "\u0004sa  (na) oras"
   }
 }

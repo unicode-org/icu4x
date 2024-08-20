@@ -5,87 +5,37 @@
     "1": "в следующем квартале"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " квартал назад"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0001 квартал назад"
+      ],
+      [
+        "Few",
+        "\u0001 квартала назад"
+      ],
+      [
+        "Many",
+        "\u0001 кварталов назад"
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " квартала назад"
-      }
-    ],
-    "many": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " кварталов назад"
-      }
-    ],
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " квартала назад"
-      }
-    ]
+    "other": "\u0001 квартала назад"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " квартал"
-      }
+    "specials": [
+      [
+        "One",
+        "\fчерез  квартал"
+      ],
+      [
+        "Few",
+        "\fчерез  квартала"
+      ],
+      [
+        "Many",
+        "\fчерез  кварталов"
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " квартала"
-      }
-    ],
-    "many": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " кварталов"
-      }
-    ],
-    "other": [
-      {
-        "Literal": "через "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " квартала"
-      }
-    ]
+    "other": "\fчерез  квартала"
   }
 }

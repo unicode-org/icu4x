@@ -5,53 +5,21 @@
     "1": "next month"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " month ago"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0001 month ago"
+      ]
     ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " months ago"
-      }
-    ]
+    "other": "\u0001 months ago"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "in "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " month"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0004in  month"
+      ]
     ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "in "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " months"
-      }
-    ]
+    "other": "\u0004in  months"
   }
 }

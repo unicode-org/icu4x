@@ -5,53 +5,21 @@
     "1": "susunod na quarter"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " quarter ang nakalipas"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0001 quarter ang nakalipas"
+      ]
     ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " quarter ang nakalipas"
-      }
-    ]
+    "other": "\u0001 quarter ang nakalipas"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "sa "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " quarter"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0004sa  quarter"
+      ]
     ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "sa "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " quarter"
-      }
-    ]
+    "other": "\u0004sa  quarter"
   }
 }

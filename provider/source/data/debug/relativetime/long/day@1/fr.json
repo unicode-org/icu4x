@@ -7,59 +7,21 @@
     "2": "après-demain"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "il y a "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " jour"
-      }
+    "specials": [
+      [
+        "One",
+        "\bil y a  jour"
+      ]
     ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "il y a "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " jours"
-      }
-    ]
+    "other": "\bil y a  jours"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "dans "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " jour"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0006dans  jour"
+      ]
     ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "dans "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " jours"
-      }
-    ]
+    "other": "\u0006dans  jours"
   }
 }
