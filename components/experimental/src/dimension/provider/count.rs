@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// TODO: remove `Count` once `icu_plurals::PluralCategory` is used instead.
 /// Represents the plural rules count.
 #[zerovec::make_ule(CountULE)]
 #[zerovec::derive(Debug)]
