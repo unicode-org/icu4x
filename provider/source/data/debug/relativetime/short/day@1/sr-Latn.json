@@ -7,29 +7,11 @@
     "2": "prekosutra"
   },
   "past": {
-    "specials": [
-      [
-        "One",
-        "\u0005pre  d."
-      ],
-      [
-        "Few",
-        "\u0005pre  d."
-      ]
-    ],
+    "specials": [],
     "other": "\u0005pre  d."
   },
   "future": {
-    "specials": [
-      [
-        "One",
-        "\u0004za  d."
-      ],
-      [
-        "Few",
-        "\u0004za  d."
-      ]
-    ],
+    "specials": [],
     "other": "\u0004za  d."
   }
 }

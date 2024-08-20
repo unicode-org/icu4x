@@ -3,21 +3,11 @@
     "0": "cette heure-ci"
   },
   "past": {
-    "specials": [
-      [
-        "One",
-        "\bil y a  h"
-      ]
-    ],
+    "specials": [],
     "other": "\bil y a  h"
   },
   "future": {
-    "specials": [
-      [
-        "One",
-        "\u0006dans  h"
-      ]
-    ],
+    "specials": [],
     "other": "\u0006dans  h"
   }
 }

@@ -6,13 +6,9 @@ use crate::cldr_serde;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::experimental::relativetime::provider::*;
-use icu::plurals::PluralCategory;
-use icu_pattern::Error as PatternError;
-use icu_pattern::SinglePlaceholderPattern;
+use icu_pattern::PatternError;
 use icu_provider::prelude::*;
-use std::borrow::Cow;
 use std::collections::{BTreeMap, HashMap, HashSet};
-use std::str::FromStr;
 use std::sync::OnceLock;
 
 pub(crate) static MARKER_FILTERS: OnceLock<HashMap<DataMarkerInfo, &'static str>> = OnceLock::new();
@@ -132,48 +128,22 @@ impl TryFrom<&cldr_serde::date_fields::Field> for RelativeTimePatternDataV1<'_> 
         }
         Ok(Self {
             relatives: relatives.into_iter().collect(),
-            past: SinglePlaceholderPluralPattern::try_from(&field.past)?,
-            future: SinglePlaceholderPluralPattern::try_from(&field.future)?,
-        })
-    }
-}
-
-/// Try to convert an `&Option<String>` to [`SinglePlaceholderPattern`].
-/// If pattern is `None`, we return `None`
-/// If pattern is `Some(pattern)`, we try to parse the pattern as [`SinglePlaceholderPattern`] failing
-/// if an error is encountered
-fn optional_convert(
-    pattern: &Option<String>,
-) -> Result<Option<SinglePlaceholderPattern<Cow<'static, str>>>, PatternError> {
-    pattern
-        .as_deref()
-        .map(|s| {
-            SinglePlaceholderPattern::from_str(s)
-                .map(|p| SinglePlaceholderPattern::from_store_unchecked(p.take_store().into()))
-        })
-        .transpose()
-}
-
-impl TryFrom<&cldr_serde::date_fields::PluralRulesPattern> for SinglePlaceholderPluralPattern<'_> {
-    type Error = PatternError;
-    fn try_from(
-        pattern: &cldr_serde::date_fields::PluralRulesPattern,
-    ) -> Result<Self, Self::Error> {
-        Ok(Self {
-            specials: (&[
-                (PluralCategory::Zero, optional_convert(&pattern.zero)?),
-                (PluralCategory::One, optional_convert(&pattern.one)?),
-                (PluralCategory::Two, optional_convert(&pattern.two)?),
-                (PluralCategory::Few, optional_convert(&pattern.few)?),
-                (PluralCategory::Many, optional_convert(&pattern.many)?),
-            ]
-            .into_iter()
-            .filter_map(|(c, s)| Some(PluralCategoryStr(c, s?.take_store())))
-            .collect::<Vec<_>>())
-                .into(),
-            other: SinglePlaceholderPattern::from_str(&pattern.other)?
-                .take_store()
-                .into(),
+            past: SinglePlaceholderPluralPattern::try_new(
+                &field.past.other,
+                field.past.zero.as_deref(),
+                field.past.one.as_deref(),
+                field.past.two.as_deref(),
+                field.past.few.as_deref(),
+                field.past.many.as_deref(),
+            )?,
+            future: SinglePlaceholderPluralPattern::try_new(
+                &field.future.other,
+                field.future.zero.as_deref(),
+                field.future.one.as_deref(),
+                field.future.two.as_deref(),
+                field.future.few.as_deref(),
+                field.future.many.as_deref(),
+            )?,
         })
     }
 }
@@ -210,6 +180,7 @@ mod tests {
     use super::*;
     use icu::locale::langid;
     use writeable::assert_writeable_eq;
+    use icu::plurals::PluralCategory;
 
     #[test]
     fn test_basic() {

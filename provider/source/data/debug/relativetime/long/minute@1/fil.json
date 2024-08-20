@@ -3,21 +3,11 @@
     "0": "sa minutong ito"
   },
   "past": {
-    "specials": [
-      [
-        "One",
-        "\u0001 minuto ang nakalipas"
-      ]
-    ],
+    "specials": [],
     "other": "\u0001 minuto ang nakalipas"
   },
   "future": {
-    "specials": [
-      [
-        "One",
-        "\u0004sa  minuto"
-      ]
-    ],
+    "specials": [],
     "other": "\u0004sa  minuto"
   }
 }

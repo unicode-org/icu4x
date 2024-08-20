@@ -5,21 +5,11 @@
     "1": "tomorrow"
   },
   "past": {
-    "specials": [
-      [
-        "One",
-        "\u0001d ago"
-      ]
-    ],
+    "specials": [],
     "other": "\u0001d ago"
   },
   "future": {
-    "specials": [
-      [
-        "One",
-        "\u0004in d"
-      ]
-    ],
+    "specials": [],
     "other": "\u0004in d"
   }
 }

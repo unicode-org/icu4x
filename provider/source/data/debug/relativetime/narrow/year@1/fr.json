@@ -5,21 +5,11 @@
     "1": "l’année prochaine"
   },
   "past": {
-    "specials": [
-      [
-        "One",
-        "\u0002- a"
-      ]
-    ],
+    "specials": [],
     "other": "\u0002- a"
   },
   "future": {
-    "specials": [
-      [
-        "One",
-        "\u0002+ a"
-      ]
-    ],
+    "specials": [],
     "other": "\u0002+ a"
   }
 }

@@ -14,12 +14,7 @@
     "other": "\u0001 (na) linggo ang nakalipas"
   },
   "future": {
-    "specials": [
-      [
-        "One",
-        "\u0004sa  linggo"
-      ]
-    ],
+    "specials": [],
     "other": "\u0004sa  linggo"
   }
 }

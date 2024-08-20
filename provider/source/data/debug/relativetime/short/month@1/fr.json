@@ -5,21 +5,11 @@
     "1": "le mois prochain"
   },
   "past": {
-    "specials": [
-      [
-        "One",
-        "\bil y a  m."
-      ]
-    ],
+    "specials": [],
     "other": "\bil y a  m."
   },
   "future": {
-    "specials": [
-      [
-        "One",
-        "\u0006dans  m."
-      ]
-    ],
+    "specials": [],
     "other": "\u0006dans  m."
   }
 }

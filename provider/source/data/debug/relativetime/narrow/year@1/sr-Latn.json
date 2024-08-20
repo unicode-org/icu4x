@@ -5,29 +5,11 @@
     "1": "sledeće g."
   },
   "past": {
-    "specials": [
-      [
-        "One",
-        "\u0005pre  g."
-      ],
-      [
-        "Few",
-        "\u0005pre  g."
-      ]
-    ],
+    "specials": [],
     "other": "\u0005pre  g."
   },
   "future": {
-    "specials": [
-      [
-        "One",
-        "\u0004za  g."
-      ],
-      [
-        "Few",
-        "\u0004za  g."
-      ]
-    ],
+    "specials": [],
     "other": "\u0004za  g."
   }
 }

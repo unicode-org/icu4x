@@ -7,21 +7,11 @@
     "2": "pasado mañana"
   },
   "past": {
-    "specials": [
-      [
-        "One",
-        "\u0006hace  d"
-      ]
-    ],
+    "specials": [],
     "other": "\u0006hace  d"
   },
   "future": {
-    "specials": [
-      [
-        "One",
-        "\u000bdentro de  d"
-      ]
-    ],
+    "specials": [],
     "other": "\u000bdentro de  d"
   }
 }

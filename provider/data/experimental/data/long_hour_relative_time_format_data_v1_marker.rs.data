@@ -5,7 +5,7 @@
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
 /// * 637B for the lookup data structure (128 data identifiers)
-/// * 32296B[^1] for the actual data (126 unique structs)
+/// * 29413B[^1] for the actual data (126 unique structs)
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
 #[doc(hidden)]
@@ -24,8 +24,8 @@ macro_rules! __impl_long_hour_relative_time_format_data_v1_marker {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0hierdie uur") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 uur gelede") }, other: alloc::borrow::Cow::Borrowed("\u{1} uur gelede") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x05oor  uur") }, other: alloc::borrow::Cow::Borrowed("\u{5}oor  uur") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} uur gelede") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{5}oor  uur") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
@@ -40,16 +40,16 @@ macro_rules! __impl_long_hour_relative_time_format_data_v1_marker {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD8\xA7\xD9\x84\xD8\xB3\xD8\xA7\xD8\xB9\xD8\xA9 \xD8\xA7\xD9\x84\xD8\xAD\xD8\xA7\xD9\x84\xD9\x8A\xD8\xA9") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x05\0\0\0\0\0\x12\0.\0C\0W\0\0\x08\xD9\x82\xD8\xA8\xD9\x84  \xD8\xB3\xD8\xA7\xD8\xB9\xD8\xA9\x01\0\xD9\x82\xD8\xA8\xD9\x84 \xD8\xB3\xD8\xA7\xD8\xB9\xD8\xA9 \xD9\x88\xD8\xA7\xD8\xAD\xD8\xAF\xD8\xA9\x02\0\xD9\x82\xD8\xA8\xD9\x84 \xD8\xB3\xD8\xA7\xD8\xB9\xD8\xAA\xD9\x8A\xD9\x86\x03\x08\xD9\x82\xD8\xA8\xD9\x84  \xD8\xB3\xD8\xA7\xD8\xB9\xD8\xA7\xD8\xAA\x04\x08\xD9\x82\xD8\xA8\xD9\x84  \xD8\xB3\xD8\xA7\xD8\xB9\xD8\xA9") }, other: alloc::borrow::Cow::Borrowed("\u{8}قبل  ساعة") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x05\0\0\0\0\0\x14\x002\0I\0_\0\0\n\xD8\xAE\xD9\x84\xD8\xA7\xD9\x84  \xD8\xB3\xD8\xA7\xD8\xB9\xD8\xA9\x01\0\xD8\xAE\xD9\x84\xD8\xA7\xD9\x84 \xD8\xB3\xD8\xA7\xD8\xB9\xD8\xA9 \xD9\x88\xD8\xA7\xD8\xAD\xD8\xAF\xD8\xA9\x02\0\xD8\xAE\xD9\x84\xD8\xA7\xD9\x84 \xD8\xB3\xD8\xA7\xD8\xB9\xD8\xAA\xD9\x8A\xD9\x86\x03\n\xD8\xAE\xD9\x84\xD8\xA7\xD9\x84  \xD8\xB3\xD8\xA7\xD8\xB9\xD8\xA7\xD8\xAA\x04\n\xD8\xAE\xD9\x84\xD8\xA7\xD9\x84  \xD8\xB3\xD8\xA7\xD8\xB9\xD8\xA9") }, other: alloc::borrow::Cow::Borrowed("\nخلال  ساعة") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x1C\x001\0\x01\0\xD9\x82\xD8\xA8\xD9\x84 \xD8\xB3\xD8\xA7\xD8\xB9\xD8\xA9 \xD9\x88\xD8\xA7\xD8\xAD\xD8\xAF\xD8\xA9\x02\0\xD9\x82\xD8\xA8\xD9\x84 \xD8\xB3\xD8\xA7\xD8\xB9\xD8\xAA\xD9\x8A\xD9\x86\x03\x08\xD9\x82\xD8\xA8\xD9\x84  \xD8\xB3\xD8\xA7\xD8\xB9\xD8\xA7\xD8\xAA") }, other: alloc::borrow::Cow::Borrowed("\u{8}قبل  ساعة") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x1E\x005\0\x01\0\xD8\xAE\xD9\x84\xD8\xA7\xD9\x84 \xD8\xB3\xD8\xA7\xD8\xB9\xD8\xA9 \xD9\x88\xD8\xA7\xD8\xAD\xD8\xAF\xD8\xA9\x02\0\xD8\xAE\xD9\x84\xD8\xA7\xD9\x84 \xD8\xB3\xD8\xA7\xD8\xB9\xD8\xAA\xD9\x8A\xD9\x86\x03\n\xD8\xAE\xD9\x84\xD8\xA7\xD9\x84  \xD8\xB3\xD8\xA7\xD8\xB9\xD8\xA7\xD8\xAA") }, other: alloc::borrow::Cow::Borrowed("\nخلال  ساعة") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xA6\x8F\xE0\xA6\x87\xE0\xA6\x9F\xE0\xA7\x8B \xE0\xA6\x98\xE0\xA6\xA3\xE0\xA7\x8D\xE0\xA6\x9F\xE0\xA6\xBE\xE0\xA6\xA4") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xE0\xA6\x98\xE0\xA6\xA3\xE0\xA7\x8D\xE0\xA6\x9F\xE0\xA6\xBE \xE0\xA6\xAA\xE0\xA7\x82\xE0\xA7\xB0\xE0\xA7\x8D\xE0\xA6\xAC\xE0\xA7\x87") }, other: alloc::borrow::Cow::Borrowed("\u{1} ঘণ\u{9cd}ট\u{9be} প\u{9c2}ৰ\u{9cd}বে") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xE0\xA6\x98\xE0\xA6\xA3\xE0\xA7\x8D\xE0\xA6\x9F\xE0\xA6\xBE\xE0\xA6\xA4") }, other: alloc::borrow::Cow::Borrowed("\u{1} ঘণ\u{9cd}ট\u{9be}ত") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} ঘণ\u{9cd}ট\u{9be} প\u{9c2}ৰ\u{9cd}বে") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} ঘণ\u{9cd}ট\u{9be}ত") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
@@ -64,16 +64,16 @@ macro_rules! __impl_long_hour_relative_time_format_data_v1_marker {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0bu saat") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 saat \xC3\xB6nc\xC9\x99") }, other: alloc::borrow::Cow::Borrowed("\u{1} saat öncə") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 saat \xC9\x99rzind\xC9\x99") }, other: alloc::borrow::Cow::Borrowed("\u{1} saat ərzində") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} saat öncə") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} saat ərzində") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD1\x83 \xD0\xB3\xD1\x8D\xD1\x82\xD1\x83 \xD0\xB3\xD0\xB0\xD0\xB4\xD0\xB7\xD1\x96\xD0\xBD\xD1\x83") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x1A\x004\0\x01\x01 \xD0\xB3\xD0\xB0\xD0\xB4\xD0\xB7\xD1\x96\xD0\xBD\xD1\x83 \xD1\x82\xD0\xB0\xD0\xBC\xD1\x83\x03\x01 \xD0\xB3\xD0\xB0\xD0\xB4\xD0\xB7\xD1\x96\xD0\xBD\xD1\x8B \xD1\x82\xD0\xB0\xD0\xBC\xD1\x83\x04\x01 \xD0\xB3\xD0\xB0\xD0\xB4\xD0\xB7\xD1\x96\xD0\xBD \xD1\x82\xD0\xB0\xD0\xBC\xD1\x83") }, other: alloc::borrow::Cow::Borrowed("\u{1} гадзіны таму") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x1A\x004\0\x01\n\xD0\xBF\xD1\x80\xD0\xB0\xD0\xB7  \xD0\xB3\xD0\xB0\xD0\xB4\xD0\xB7\xD1\x96\xD0\xBD\xD1\x83\x03\n\xD0\xBF\xD1\x80\xD0\xB0\xD0\xB7  \xD0\xB3\xD0\xB0\xD0\xB4\xD0\xB7\xD1\x96\xD0\xBD\xD1\x8B\x04\n\xD0\xBF\xD1\x80\xD0\xB0\xD0\xB7  \xD0\xB3\xD0\xB0\xD0\xB4\xD0\xB7\xD1\x96\xD0\xBD") }, other: alloc::borrow::Cow::Borrowed("\nпраз  гадзіны") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x1A\0\x01\x01 \xD0\xB3\xD0\xB0\xD0\xB4\xD0\xB7\xD1\x96\xD0\xBD\xD1\x83 \xD1\x82\xD0\xB0\xD0\xBC\xD1\x83\x04\x01 \xD0\xB3\xD0\xB0\xD0\xB4\xD0\xB7\xD1\x96\xD0\xBD \xD1\x82\xD0\xB0\xD0\xBC\xD1\x83") }, other: alloc::borrow::Cow::Borrowed("\u{1} гадзіны таму") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x1A\0\x01\n\xD0\xBF\xD1\x80\xD0\xB0\xD0\xB7  \xD0\xB3\xD0\xB0\xD0\xB4\xD0\xB7\xD1\x96\xD0\xBD\xD1\x83\x04\n\xD0\xBF\xD1\x80\xD0\xB0\xD0\xB7  \xD0\xB3\xD0\xB0\xD0\xB4\xD0\xB7\xD1\x96\xD0\xBD") }, other: alloc::borrow::Cow::Borrowed("\nпраз  гадзіны") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
@@ -96,24 +96,24 @@ macro_rules! __impl_long_hour_relative_time_format_data_v1_marker {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xA6\x8F\xE0\xA6\x87 \xE0\xA6\x98\xE0\xA6\xA3\xE0\xA7\x8D\xE0\xA6\x9F\xE0\xA6\xBE\xE0\xA6\xAF\xE0\xA6\xBC") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xE0\xA6\x98\xE0\xA6\xA8\xE0\xA7\x8D\xE0\xA6\x9F\xE0\xA6\xBE \xE0\xA6\x86\xE0\xA6\x97\xE0\xA7\x87") }, other: alloc::borrow::Cow::Borrowed("\u{1} ঘন\u{9cd}ট\u{9be} আগে") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xE0\xA6\x98\xE0\xA6\xA8\xE0\xA7\x8D\xE0\xA6\x9F\xE0\xA6\xBE\xE0\xA6\xAF\xE0\xA6\xBC") }, other: alloc::borrow::Cow::Borrowed("\u{1} ঘন\u{9cd}ট\u{9be}য\u{9bc}") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} ঘন\u{9cd}ট\u{9be} আগে") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} ঘন\u{9cd}ট\u{9be}য\u{9bc}") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0d\xCA\xBCan eur-ma\xC3\xB1") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\t\0\x12\0\x1B\0\x01\x01 eur zo\x02\x01 eur zo\x03\x01 eur zo\x04\x01 a eurio\xC3\xB9 zo") }, other: alloc::borrow::Cow::Borrowed("\u{1} eur zo") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\r\0\x1A\0'\0\x01\x08a-benn  eur\x02\x08a-benn  eur\x03\x08a-benn  eur\x04\x08a-benn  a eurio\xC3\xB9") }, other: alloc::borrow::Cow::Borrowed("\u{8}a-benn  eur") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x04\x01 a eurio\xC3\xB9 zo") }, other: alloc::borrow::Cow::Borrowed("\u{1} eur zo") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x04\x08a-benn  a eurio\xC3\xB9") }, other: alloc::borrow::Cow::Borrowed("\u{8}a-benn  eur") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xA4\xAC\xE0\xA5\x87 \xE0\xA4\x98\xE0\xA4\xA8\xE0\xA5\x8D\xE0\xA4\x9F\xE0\xA4\xBE") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xE0\xA4\x98\xE0\xA4\xA8\xE0\xA5\x8D\xE0\xA4\x9F\xE0\xA4\xBE \xE0\xA4\xB8\xE0\xA4\xBF\xE0\xA4\x97\xE0\xA4\xBE\xE0\xA4\x82") }, other: alloc::borrow::Cow::Borrowed("\u{1} घन\u{94d}टा सिगा\u{902}") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xE0\xA4\x98\xE0\xA4\xA8\xE0\xA5\x8D\xE0\xA4\x9F\xE0\xA4\xBE\xE0\xA4\xAF\xE0\xA4\xBE\xE0\xA4\xB5") }, other: alloc::borrow::Cow::Borrowed("\u{1} घन\u{94d}टायाव") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} घन\u{94d}टा सिगा\u{902}") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} घन\u{94d}टायाव") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
@@ -152,7 +152,7 @@ macro_rules! __impl_long_hour_relative_time_format_data_v1_marker {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0tuto hodinu") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x10\0!\0\x01\x07p\xC5\x99ed  hodinou\x03\x07p\xC5\x99ed  hodinami\x04\x07p\xC5\x99ed  hodiny") }, other: alloc::borrow::Cow::Borrowed("\u{7}před  hodinami") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x10\0\x01\x07p\xC5\x99ed  hodinou\x04\x07p\xC5\x99ed  hodiny") }, other: alloc::borrow::Cow::Borrowed("\u{7}před  hodinami") },
                         future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x0C\0\x18\0\x01\x04za  hodinu\x03\x04za  hodiny\x04\x04za  hodiny") }, other: alloc::borrow::Cow::Borrowed("\u{4}za  hodin") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
@@ -160,8 +160,8 @@ macro_rules! __impl_long_hour_relative_time_format_data_v1_marker {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0yr awr hon") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x05\0\0\0\0\0\r\0\x1A\0'\x004\0\0\x01 awr yn \xC3\xB4l\x01\x01 awr yn \xC3\xB4l\x02\x01 awr yn \xC3\xB4l\x03\x01 awr yn \xC3\xB4l\x04\x01 awr yn \xC3\xB4l") }, other: alloc::borrow::Cow::Borrowed("\u{1} awr yn ôl") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x05\0\0\0\0\0\x0C\0\x17\0#\0/\0\0\x07ymhen  awr\x01\0ymhen awr\x02\x07ymhen  awr\x03\x07ymhen  awr\x04\x07ymhen  awr") }, other: alloc::borrow::Cow::Borrowed("\u{7}ymhen  awr") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} awr yn ôl") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\0ymhen awr") }, other: alloc::borrow::Cow::Borrowed("\u{7}ymhen  awr") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
@@ -184,7 +184,7 @@ macro_rules! __impl_long_hour_relative_time_format_data_v1_marker {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0w to\xC5\x9B tej g\xC3\xB3\xC5\xBAinje") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x11\0$\0\x01\x07p\xC5\x9Bed  g\xC3\xB3\xC5\xBAinu\x02\x07p\xC5\x9Bed  g\xC3\xB3\xC5\xBAinoma\x03\x07p\xC5\x9Bed  g\xC3\xB3\xC5\xBAinami") }, other: alloc::borrow::Cow::Borrowed("\u{7}pśed  góźinami") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x11\0\x01\x07p\xC5\x9Bed  g\xC3\xB3\xC5\xBAinu\x02\x07p\xC5\x9Bed  g\xC3\xB3\xC5\xBAinoma") }, other: alloc::borrow::Cow::Borrowed("\u{7}pśed  góźinami") },
                         future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x0E\0\x1D\0\x01\x04za  g\xC3\xB3\xC5\xBAinu\x02\x04za  g\xC3\xB3\xC5\xBAinje\x03\x04za  g\xC3\xB3\xC5\xBAiny") }, other: alloc::borrow::Cow::Borrowed("\u{4}za  góźin") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
@@ -216,24 +216,24 @@ macro_rules! __impl_long_hour_relative_time_format_data_v1_marker {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0praegusel tunnil") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 tunni eest") }, other: alloc::borrow::Cow::Borrowed("\u{1} tunni eest") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 tunni p\xC3\xA4rast") }, other: alloc::borrow::Cow::Borrowed("\u{1} tunni pärast") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} tunni eest") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} tunni pärast") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0ordu honetan") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x07duela  ordu") }, other: alloc::borrow::Cow::Borrowed("\u{7}duela  ordu") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 ordu barru") }, other: alloc::borrow::Cow::Borrowed("\u{1} ordu barru") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{7}duela  ordu") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} ordu barru") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD9\x87\xD9\x85\xDB\x8C\xD9\x86 \xD8\xB3\xD8\xA7\xD8\xB9\xD8\xAA") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xD8\xB3\xD8\xA7\xD8\xB9\xD8\xAA \xD9\xBE\xDB\x8C\xD8\xB4") }, other: alloc::borrow::Cow::Borrowed("\u{1} ساعت پیش") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xD8\xB3\xD8\xA7\xD8\xB9\xD8\xAA \xD8\xA8\xD8\xB9\xD8\xAF") }, other: alloc::borrow::Cow::Borrowed("\u{1} ساعت بعد") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} ساعت پیش") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} ساعت بعد") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
@@ -249,15 +249,15 @@ macro_rules! __impl_long_hour_relative_time_format_data_v1_marker {
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0t\xC3\xA4m\xC3\xA4n tunnin aikana") })
                         },
                         past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 tunti sitten") }, other: alloc::borrow::Cow::Borrowed("\u{1} tuntia sitten") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 tunnin p\xC3\xA4\xC3\xA4st\xC3\xA4") }, other: alloc::borrow::Cow::Borrowed("\u{1} tunnin päästä") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} tunnin päästä") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0ngayong oras") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 oras ang nakalipas") }, other: alloc::borrow::Cow::Borrowed("\u{1} oras ang nakalipas") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x04sa  oras") }, other: alloc::borrow::Cow::Borrowed("\u{4}sa  oras") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} oras ang nakalipas") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{4}sa  oras") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
@@ -280,24 +280,24 @@ macro_rules! __impl_long_hour_relative_time_format_data_v1_marker {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0this hour") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 oere lyn") }, other: alloc::borrow::Cow::Borrowed("\u{1} oere lyn") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x05Oer  oere") }, other: alloc::borrow::Cow::Borrowed("\u{5}Oer  oere") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} oere lyn") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{5}Oer  oere") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0an uair seo") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x19\x002\0K\0\x01\x01 uair an chloig \xC3\xB3 shin\x02\x01 uair an chloig \xC3\xB3 shin\x03\x01 uair an chloig \xC3\xB3 shin\x04\x01 n-uair an chloig \xC3\xB3 shin") }, other: alloc::borrow::Cow::Borrowed("\u{1} uair an chloig ó shin") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x1A\x004\0N\0\x01\ni gceann  uair an chloig\x02\ni gceann  uair an chloig\x03\ni gceann  uair an chloig\x04\ni gceann  n-uair an chloig") }, other: alloc::borrow::Cow::Borrowed("\ni gceann  uair an chloig") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x04\x01 n-uair an chloig \xC3\xB3 shin") }, other: alloc::borrow::Cow::Borrowed("\u{1} uair an chloig ó shin") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x04\ni gceann  n-uair an chloig") }, other: alloc::borrow::Cow::Borrowed("\ni gceann  uair an chloig") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0am broinn uair a th\xC3\xACde") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x18\x000\0\x01\x01 uair a th\xC3\xACde air ais\x02\x01 uair a th\xC3\xACde air ais\x03\x01 uairean a th\xC3\xACde air ais") }, other: alloc::borrow::Cow::Borrowed("\u{1} uair a thìde air ais") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x19\x002\0\x01\nan ceann  uair a th\xC3\xACde\x02\nan ceann  uair a th\xC3\xACde\x03\nan ceann  uairean a th\xC3\xACde") }, other: alloc::borrow::Cow::Borrowed("\nan ceann  uair a thìde") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x03\x01 uairean a th\xC3\xACde air ais") }, other: alloc::borrow::Cow::Borrowed("\u{1} uair a thìde air ais") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x03\nan ceann  uairean a th\xC3\xACde") }, other: alloc::borrow::Cow::Borrowed("\nan ceann  uair a thìde") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
@@ -312,16 +312,16 @@ macro_rules! __impl_long_hour_relative_time_format_data_v1_marker {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xAA\x86 \xE0\xAA\x95\xE0\xAA\xB2\xE0\xAA\xBE\xE0\xAA\x95") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xE0\xAA\x95\xE0\xAA\xB2\xE0\xAA\xBE\xE0\xAA\x95 \xE0\xAA\xAA\xE0\xAA\xB9\xE0\xAB\x87\xE0\xAA\xB2\xE0\xAA\xBE\xE0\xAA\x82") }, other: alloc::borrow::Cow::Borrowed("\u{1} કલાક પહ\u{ac7}લા\u{a82}") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xE0\xAA\x95\xE0\xAA\xB2\xE0\xAA\xBE\xE0\xAA\x95\xE0\xAA\xAE\xE0\xAA\xBE\xE0\xAA\x82") }, other: alloc::borrow::Cow::Borrowed("\u{1} કલાકમા\u{a82}") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} કલાક પહ\u{ac7}લા\u{a82}") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} કલાકમા\u{a82}") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0wannan awa") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 awa da ya gabata") }, other: alloc::borrow::Cow::Borrowed("\u{1} awa da ya gabata") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x07cikin  awa") }, other: alloc::borrow::Cow::Borrowed("\u{7}cikin  awa") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} awa da ya gabata") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{7}cikin  awa") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
@@ -336,23 +336,23 @@ macro_rules! __impl_long_hour_relative_time_format_data_v1_marker {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xA4\xAF\xE0\xA4\xB9 \xE0\xA4\x98\xE0\xA4\x82\xE0\xA4\x9F\xE0\xA4\xBE") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xE0\xA4\x98\xE0\xA4\x82\xE0\xA4\x9F\xE0\xA5\x87 \xE0\xA4\xAA\xE0\xA4\xB9\xE0\xA4\xB2\xE0\xA5\x87") }, other: alloc::borrow::Cow::Borrowed("\u{1} घ\u{902}ट\u{947} पहल\u{947}") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xE0\xA4\x98\xE0\xA4\x82\xE0\xA4\x9F\xE0\xA5\x87 \xE0\xA4\xAE\xE0\xA5\x87\xE0\xA4\x82") }, other: alloc::borrow::Cow::Borrowed("\u{1} घ\u{902}ट\u{947} म\u{947}\u{902}") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} घ\u{902}ट\u{947} पहल\u{947}") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} घ\u{902}ट\u{947} म\u{947}\u{902}") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0yah ghanta") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 ghante pahle") }, other: alloc::borrow::Cow::Borrowed("\u{1} ghante pahle") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 ghante mein") }, other: alloc::borrow::Cow::Borrowed("\u{1} ghante mein") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} ghante pahle") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} ghante mein") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0w tutej hod\xC5\xBAinje") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x11\0%\0\x01\x07p\xC5\x99ed  hod\xC5\xBAinu\x02\x07p\xC5\x99ed  hod\xC5\xBAinomaj\x03\x07p\xC5\x99ed  hod\xC5\xBAinami") }, other: alloc::borrow::Cow::Borrowed("\u{7}před  hodźinami") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x11\0\x01\x07p\xC5\x99ed  hod\xC5\xBAinu\x02\x07p\xC5\x99ed  hod\xC5\xBAinomaj") }, other: alloc::borrow::Cow::Borrowed("\u{7}před  hodźinami") },
                         future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x0E\0\x1D\0\x01\x04za  hod\xC5\xBAinu\x02\x04za  hod\xC5\xBAinje\x03\x04za  hod\xC5\xBAiny") }, other: alloc::borrow::Cow::Borrowed("\u{4}za  hodźin") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
@@ -360,16 +360,16 @@ macro_rules! __impl_long_hour_relative_time_format_data_v1_marker {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0ebben az \xC3\xB3r\xC3\xA1ban") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xC3\xB3r\xC3\xA1val ezel\xC5\x91tt") }, other: alloc::borrow::Cow::Borrowed("\u{1} órával ezelőtt") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xC3\xB3ra m\xC3\xBAlva") }, other: alloc::borrow::Cow::Borrowed("\u{1} óra múlva") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} órával ezelőtt") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} óra múlva") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD5\xA1\xD5\xB5\xD5\xBD \xD5\xAA\xD5\xA1\xD5\xB4\xD5\xAB\xD5\xB6") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xD5\xAA\xD5\xA1\xD5\xB4 \xD5\xA1\xD5\xBC\xD5\xA1\xD5\xBB") }, other: alloc::borrow::Cow::Borrowed("\u{1} ժամ առաջ") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xD5\xAA\xD5\xA1\xD5\xB4\xD5\xAB\xD6\x81") }, other: alloc::borrow::Cow::Borrowed("\u{1} ժամից") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} ժամ առաջ") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} ժամից") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
@@ -432,8 +432,8 @@ macro_rules! __impl_long_hour_relative_time_format_data_v1_marker {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE1\x83\x90\xE1\x83\x9B \xE1\x83\xA1\xE1\x83\x90\xE1\x83\x90\xE1\x83\x97\xE1\x83\xA8\xE1\x83\x98") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xE1\x83\xA1\xE1\x83\x90\xE1\x83\x90\xE1\x83\x97\xE1\x83\x98\xE1\x83\xA1 \xE1\x83\xAC\xE1\x83\x98\xE1\x83\x9C") }, other: alloc::borrow::Cow::Borrowed("\u{1} საათის წინ") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xE1\x83\xA1\xE1\x83\x90\xE1\x83\x90\xE1\x83\x97\xE1\x83\xA8\xE1\x83\x98") }, other: alloc::borrow::Cow::Borrowed("\u{1} საათში") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} საათის წინ") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} საათში") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
@@ -456,8 +456,8 @@ macro_rules! __impl_long_hour_relative_time_format_data_v1_marker {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD0\xBE\xD1\x81\xD1\x8B \xD1\x81\xD0\xB0\xD2\x93\xD0\xB0\xD1\x82") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xD1\x81\xD0\xB0\xD2\x93\xD0\xB0\xD1\x82 \xD0\xB1\xD2\xB1\xD1\x80\xD1\x8B\xD0\xBD") }, other: alloc::borrow::Cow::Borrowed("\u{1} сағат бұрын") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xD1\x81\xD0\xB0\xD2\x93\xD0\xB0\xD1\x82\xD1\x82\xD0\xB0\xD0\xBD \xD0\xBA\xD0\xB5\xD0\xB9\xD1\x96\xD0\xBD") }, other: alloc::borrow::Cow::Borrowed("\u{1} сағаттан кейін") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} сағат бұрын") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} сағаттан кейін") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
@@ -496,8 +496,8 @@ macro_rules! __impl_long_hour_relative_time_format_data_v1_marker {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD1\x83\xD1\x88\xD1\x83\xD0\xBB \xD1\x81\xD0\xB0\xD0\xB0\xD1\x82\xD1\x82\xD0\xB0") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xD1\x81\xD0\xB0\xD0\xB0\xD1\x82 \xD0\xBC\xD1\x83\xD1\x80\xD1\x83\xD0\xBD") }, other: alloc::borrow::Cow::Borrowed("\u{1} саат мурун") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xD1\x81\xD0\xB0\xD0\xB0\xD1\x82\xD1\x82\xD0\xB0\xD0\xBD \xD0\xBA\xD0\xB8\xD0\xB9\xD0\xB8\xD0\xBD") }, other: alloc::borrow::Cow::Borrowed("\u{1} сааттан кийин") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} саат мурун") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} сааттан кийин") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
@@ -521,15 +521,15 @@ macro_rules! __impl_long_hour_relative_time_format_data_v1_marker {
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xC5\xA1i\xC4\x85 valand\xC4\x85") })
                         },
                         past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x12\0$\0\x01\x08prie\xC5\xA1  valand\xC4\x85\x03\x08prie\xC5\xA1  valandas\x04\x08prie\xC5\xA1  valandos") }, other: alloc::borrow::Cow::Borrowed("\u{8}prieš  valandų") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x0E\0\x1C\0\x01\x04po  valandos\x03\x04po  valand\xC5\xB3\x04\x04po  valandos") }, other: alloc::borrow::Cow::Borrowed("\u{4}po  valandų") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x0E\0\x01\x04po  valandos\x04\x04po  valandos") }, other: alloc::borrow::Cow::Borrowed("\u{4}po  valandų") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xC5\xA1aj\xC4\x81 stund\xC4\x81") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x11\0\0\x07pirms  stund\xC4\x81m\x01\x07pirms  stundas") }, other: alloc::borrow::Cow::Borrowed("\u{7}pirms  stundām") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x10\0\0\x06p\xC4\x93c  stund\xC4\x81m\x01\x06p\xC4\x93c  stundas") }, other: alloc::borrow::Cow::Borrowed("\u{6}pēc  stundām") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x07pirms  stundas") }, other: alloc::borrow::Cow::Borrowed("\u{7}pirms  stundām") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x06p\xC4\x93c  stundas") }, other: alloc::borrow::Cow::Borrowed("\u{6}pēc  stundām") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
@@ -560,16 +560,16 @@ macro_rules! __impl_long_hour_relative_time_format_data_v1_marker {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xB4\x88 \xE0\xB4\xAE\xE0\xB4\xA3\xE0\xB4\xBF\xE0\xB4\x95\xE0\xB5\x8D\xE0\xB4\x95\xE0\xB5\x82\xE0\xB4\xB1\xE0\xB4\xBF\xE0\xB5\xBD") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xE0\xB4\xAE\xE0\xB4\xA3\xE0\xB4\xBF\xE0\xB4\x95\xE0\xB5\x8D\xE0\xB4\x95\xE0\xB5\x82\xE0\xB5\xBC \xE0\xB4\xAE\xE0\xB5\x81\xE0\xB4\xAE\xE0\xB5\x8D\xE0\xB4\xAA\xE0\xB5\x8D") }, other: alloc::borrow::Cow::Borrowed("\u{1} മണിക\u{d4d}ക\u{d42}ർ മ\u{d41}മ\u{d4d}പ\u{d4d}") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xE0\xB4\xAE\xE0\xB4\xA3\xE0\xB4\xBF\xE0\xB4\x95\xE0\xB5\x8D\xE0\xB4\x95\xE0\xB5\x82\xE0\xB4\xB1\xE0\xB4\xBF\xE0\xB5\xBD") }, other: alloc::borrow::Cow::Borrowed("\u{1} മണിക\u{d4d}ക\u{d42}റിൽ") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} മണിക\u{d4d}ക\u{d42}ർ മ\u{d41}മ\u{d4d}പ\u{d4d}") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} മണിക\u{d4d}ക\u{d42}റിൽ") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD1\x8D\xD0\xBD\xD1\x8D \xD1\x86\xD0\xB0\xD0\xB3") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xD1\x86\xD0\xB0\xD0\xB3\xD0\xB8\xD0\xB9\xD0\xBD \xD3\xA9\xD0\xBC\xD0\xBD\xD3\xA9") }, other: alloc::borrow::Cow::Borrowed("\u{1} цагийн өмнө") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xD1\x86\xD0\xB0\xD0\xB3\xD0\xB8\xD0\xB9\xD0\xBD \xD0\xB4\xD0\xB0\xD1\x80\xD0\xB0\xD0\xB0") }, other: alloc::borrow::Cow::Borrowed("\u{1} цагийн дараа") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} цагийн өмнө") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} цагийн дараа") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
@@ -608,16 +608,16 @@ macro_rules! __impl_long_hour_relative_time_format_data_v1_marker {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xA4\xAF\xE0\xA4\xB8 \xE0\xA4\x98\xE0\xA4\xA1\xE0\xA5\x80\xE0\xA4\xAE\xE0\xA4\xBE") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xE0\xA4\x98\xE0\xA4\xA3\xE0\xA5\x8D\xE0\xA4\x9F\xE0\xA4\xBE \xE0\xA4\xAA\xE0\xA4\xB9\xE0\xA4\xBF\xE0\xA4\xB2\xE0\xA5\x87") }, other: alloc::borrow::Cow::Borrowed("\u{1} घण\u{94d}टा पहिल\u{947}") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xE0\xA4\x98\xE0\xA4\xA3\xE0\xA5\x8D\xE0\xA4\x9F\xE0\xA4\xBE\xE0\xA4\xAE\xE0\xA4\xBE") }, other: alloc::borrow::Cow::Borrowed("\u{1} घण\u{94d}टामा") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} घण\u{94d}टा पहिल\u{947}") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} घण\u{94d}टामा") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0binnen een uur") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 uur geleden") }, other: alloc::borrow::Cow::Borrowed("\u{1} uur geleden") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x06over  uur") }, other: alloc::borrow::Cow::Borrowed("\u{6}over  uur") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} uur geleden") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{6}over  uur") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
@@ -640,8 +640,8 @@ macro_rules! __impl_long_hour_relative_time_format_data_v1_marker {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xAC\x8F\xE0\xAC\xB9\xE0\xAC\xBF \xE0\xAC\x98\xE0\xAC\xA3\xE0\xAD\x8D\xE0\xAC\x9F\xE0\xAC\xBE") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xE0\xAC\x98\xE0\xAC\xA3\xE0\xAD\x8D\xE0\xAC\x9F\xE0\xAC\xBE \xE0\xAC\xAA\xE0\xAD\x82\xE0\xAC\xB0\xE0\xAD\x8D\xE0\xAC\xAC\xE0\xAD\x87") }, other: alloc::borrow::Cow::Borrowed("\u{1} ଘଣ\u{b4d}ଟ\u{b3e} ପ\u{b42}ର\u{b4d}ବେ") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xE0\xAC\x98\xE0\xAC\xA3\xE0\xAD\x8D\xE0\xAC\x9F\xE0\xAC\xBE\xE0\xAC\xB0\xE0\xAD\x87") }, other: alloc::borrow::Cow::Borrowed("\u{1} ଘଣ\u{b4d}ଟ\u{b3e}ରେ") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} ଘଣ\u{b4d}ଟ\u{b3e} ପ\u{b42}ର\u{b4d}ବେ") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} ଘଣ\u{b4d}ଟ\u{b3e}ରେ") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
@@ -656,16 +656,16 @@ macro_rules! __impl_long_hour_relative_time_format_data_v1_marker {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0D\xC3\xADs \xC3\xA1wa") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xC3\xA1wa w\xC3\xA9 d\xE1\xBB\x8D\xCC\x81n pas") }, other: alloc::borrow::Cow::Borrowed("\u{1} áwa wé dọ\u{301}n pas") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x06F\xE1\xBB\x8D  \xC3\xA1wa w\xC3\xA9 de k\xE1\xBB\x8Dm") }, other: alloc::borrow::Cow::Borrowed("\u{6}Fọ  áwa wé de kọm") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} áwa wé dọ\u{301}n pas") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{6}Fọ  áwa wé de kọm") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0ta godzina") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x10\0\x1F\0\x01\x01 godzin\xC4\x99 temu\x03\x01 godziny temu\x04\x01 godzin temu") }, other: alloc::borrow::Cow::Borrowed("\u{1} godziny temu") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x0E\0\x1B\0\x01\x04za  godzin\xC4\x99\x03\x04za  godziny\x04\x04za  godzin") }, other: alloc::borrow::Cow::Borrowed("\u{4}za  godziny") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x10\0\x01\x01 godzin\xC4\x99 temu\x04\x01 godzin temu") }, other: alloc::borrow::Cow::Borrowed("\u{1} godziny temu") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x0E\0\x01\x04za  godzin\xC4\x99\x04\x04za  godzin") }, other: alloc::borrow::Cow::Borrowed("\u{4}za  godziny") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
@@ -712,8 +712,8 @@ macro_rules! __impl_long_hour_relative_time_format_data_v1_marker {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD0\xB2 \xD1\x8D\xD1\x82\xD0\xBE\xD1\x82 \xD1\x87\xD0\xB0\xD1\x81") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x14\0*\0\x01\x01 \xD1\x87\xD0\xB0\xD1\x81 \xD0\xBD\xD0\xB0\xD0\xB7\xD0\xB0\xD0\xB4\x03\x01 \xD1\x87\xD0\xB0\xD1\x81\xD0\xB0 \xD0\xBD\xD0\xB0\xD0\xB7\xD0\xB0\xD0\xB4\x04\x01 \xD1\x87\xD0\xB0\xD1\x81\xD0\xBE\xD0\xB2 \xD0\xBD\xD0\xB0\xD0\xB7\xD0\xB0\xD0\xB4") }, other: alloc::borrow::Cow::Borrowed("\u{1} часа назад") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x14\0*\0\x01\x0C\xD1\x87\xD0\xB5\xD1\x80\xD0\xB5\xD0\xB7  \xD1\x87\xD0\xB0\xD1\x81\x03\x0C\xD1\x87\xD0\xB5\xD1\x80\xD0\xB5\xD0\xB7  \xD1\x87\xD0\xB0\xD1\x81\xD0\xB0\x04\x0C\xD1\x87\xD0\xB5\xD1\x80\xD0\xB5\xD0\xB7  \xD1\x87\xD0\xB0\xD1\x81\xD0\xBE\xD0\xB2") }, other: alloc::borrow::Cow::Borrowed("\u{c}через  часа") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x14\0\x01\x01 \xD1\x87\xD0\xB0\xD1\x81 \xD0\xBD\xD0\xB0\xD0\xB7\xD0\xB0\xD0\xB4\x04\x01 \xD1\x87\xD0\xB0\xD1\x81\xD0\xBE\xD0\xB2 \xD0\xBD\xD0\xB0\xD0\xB7\xD0\xB0\xD0\xB4") }, other: alloc::borrow::Cow::Borrowed("\u{1} часа назад") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x14\0\x01\x0C\xD1\x87\xD0\xB5\xD1\x80\xD0\xB5\xD0\xB7  \xD1\x87\xD0\xB0\xD1\x81\x04\x0C\xD1\x87\xD0\xB5\xD1\x80\xD0\xB5\xD0\xB7  \xD1\x87\xD0\xB0\xD1\x81\xD0\xBE\xD0\xB2") }, other: alloc::borrow::Cow::Borrowed("\u{c}через  часа") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
@@ -736,23 +736,23 @@ macro_rules! __impl_long_hour_relative_time_format_data_v1_marker {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD9\x87\xD9\x86 \xDA\xAA\xD9\x84\xDA\xAA") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xDA\xAA\xD9\x84\xD8\xA7\xDA\xAA \xD9\xBE\xD9\x87\xD8\xB1\xD9\x8A\xD9\x86") }, other: alloc::borrow::Cow::Borrowed("\u{1} ڪلاڪ پهرين") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xDA\xAA\xD9\x84\xD8\xA7\xDA\xAA \xDB\xBE") }, other: alloc::borrow::Cow::Borrowed("\u{1} ڪلاڪ ۾") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} ڪلاڪ پهرين") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} ڪلاڪ ۾") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xB6\xB8\xE0\xB7\x99\xE0\xB6\xB8 \xE0\xB6\xB4\xE0\xB7\x90\xE0\xB6\xBA") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x0B\xE0\xB6\xB4\xE0\xB7\x90\xE0\xB6\xBA \xE0\xB6\x9A\xE0\xB6\xA7 \xE0\xB6\xB4\xE0\xB7\x99\xE0\xB6\xBB") }, other: alloc::borrow::Cow::Borrowed("\u{b}පැය කට පෙර") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x0B\xE0\xB6\xB4\xE0\xB7\x90\xE0\xB6\xBA \xE0\xB6\x9A\xE0\xB7\x92\xE0\xB6\xB1\xE0\xB7\x8A") }, other: alloc::borrow::Cow::Borrowed("\u{b}පැය ක\u{dd2}න\u{dca}") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{b}පැය කට පෙර") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{b}පැය ක\u{dd2}න\u{dca}") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0v tejto hodine") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x0F\0\x1F\0\x01\x06pred  hodinou\x03\x06pred  hodinami\x04\x06pred  hodinou") }, other: alloc::borrow::Cow::Borrowed("\u{6}pred  hodinami") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x0F\0\x01\x06pred  hodinou\x04\x06pred  hodinou") }, other: alloc::borrow::Cow::Borrowed("\u{6}pred  hodinami") },
                         future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x0B\0\x16\0\x01\x03o  hodinu\x03\x03o  hodiny\x04\x03o  hodiny") }, other: alloc::borrow::Cow::Borrowed("\u{3}o  hodín") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
@@ -760,7 +760,7 @@ macro_rules! __impl_long_hour_relative_time_format_data_v1_marker {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0v tej uri") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x0B\0\x18\0\x01\x06pred  uro\x02\x06pred  urama\x03\x06pred  urami") }, other: alloc::borrow::Cow::Borrowed("\u{6}pred  urami") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x0B\0\x01\x06pred  uro\x02\x06pred  urama") }, other: alloc::borrow::Cow::Borrowed("\u{6}pred  urami") },
                         future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x0B\0\x16\0\x01\x06\xC4\x8Dez  uro\x02\x06\xC4\x8Dez  uri\x03\x06\xC4\x8Dez  ure") }, other: alloc::borrow::Cow::Borrowed("\u{6}čez  ur") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
@@ -776,7 +776,7 @@ macro_rules! __impl_long_hour_relative_time_format_data_v1_marker {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0k\xC3\xABt\xC3\xAB or\xC3\xAB") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 or\xC3\xAB m\xC3\xAB par\xC3\xAB") }, other: alloc::borrow::Cow::Borrowed("\u{1} orë më parë") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} orë më parë") },
                         future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x05pas  ore") }, other: alloc::borrow::Cow::Borrowed("\u{5}pas  orësh") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
@@ -825,7 +825,7 @@ macro_rules! __impl_long_hour_relative_time_format_data_v1_marker {
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saa hii") })
                         },
                         past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x05saa  iliyopita") }, other: alloc::borrow::Cow::Borrowed("\u{5}saa  zilizopita") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x0Ebaada ya saa ") }, other: alloc::borrow::Cow::Borrowed("\u{e}baada ya saa ") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{e}baada ya saa ") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
@@ -840,8 +840,8 @@ macro_rules! __impl_long_hour_relative_time_format_data_v1_marker {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE0\xAE\x87\xE0\xAE\xA8\xE0\xAF\x8D\xE0\xAE\xA4 \xE0\xAE\x92\xE0\xAE\xB0\xE0\xAF\x81 \xE0\xAE\xAE\xE0\xAE\xA3\xE0\xAE\xBF\xE0\xAE\xA8\xE0\xAF\x87\xE0\xAE\xB0\xE0\xAE\xA4\xE0\xAF\x8D\xE0\xAE\xA4\xE0\xAE\xBF\xE0\xAE\xB2\xE0\xAF\x8D") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xE0\xAE\xAE\xE0\xAE\xA3\xE0\xAE\xBF\xE0\xAE\xA8\xE0\xAF\x87\xE0\xAE\xB0\xE0\xAE\xAE\xE0\xAF\x8D \xE0\xAE\xAE\xE0\xAF\x81\xE0\xAE\xA9\xE0\xAF\x8D") }, other: alloc::borrow::Cow::Borrowed("\u{1} மணிநேரம\u{bcd} முன\u{bcd}") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xE0\xAE\xAE\xE0\xAE\xA3\xE0\xAE\xBF\xE0\xAE\xA8\xE0\xAF\x87\xE0\xAE\xB0\xE0\xAE\xA4\xE0\xAF\x8D\xE0\xAE\xA4\xE0\xAE\xBF\xE0\xAE\xB2\xE0\xAF\x8D") }, other: alloc::borrow::Cow::Borrowed("\u{1} மணிநேரத\u{bcd}தில\u{bcd}") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} மணிநேரம\u{bcd} முன\u{bcd}") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} மணிநேரத\u{bcd}தில\u{bcd}") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
@@ -872,16 +872,16 @@ macro_rules! __impl_long_hour_relative_time_format_data_v1_marker {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xE1\x8A\xA3\xE1\x89\xA5\xE1\x8B\x9A \xE1\x88\xB0\xE1\x8B\x93\xE1\x89\xB5") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x0B\xE1\x89\x85\xE1\x8B\xB5\xE1\x88\x9A  \xE1\x88\xB0\xE1\x8B\x93\xE1\x89\xB5") }, other: alloc::borrow::Cow::Borrowed("\u{b}ቅድሚ  ሰዓት") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x08\xE1\x8A\xA3\xE1\x89\xA5  \xE1\x88\xB0\xE1\x8B\x93\xE1\x89\xB5") }, other: alloc::borrow::Cow::Borrowed("\u{8}ኣብ  ሰዓት") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{b}ቅድሚ  ሰዓት") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{8}ኣብ  ሰዓት") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xC5\x9Fu sagat") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 sagat \xC3\xB6\xC5\x88") }, other: alloc::borrow::Cow::Borrowed("\u{1} sagat öň") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 sagatdan") }, other: alloc::borrow::Cow::Borrowed("\u{1} sagatdan") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} sagat öň") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} sagatdan") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
@@ -896,8 +896,8 @@ macro_rules! __impl_long_hour_relative_time_format_data_v1_marker {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0bu saat") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 saat \xC3\xB6nce") }, other: alloc::borrow::Cow::Borrowed("\u{1} saat önce") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 saat sonra") }, other: alloc::borrow::Cow::Borrowed("\u{1} saat sonra") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} saat önce") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} saat sonra") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
@@ -912,16 +912,16 @@ macro_rules! __impl_long_hour_relative_time_format_data_v1_marker {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0this hour") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xD8\xB3\xD8\xA7\xD8\xA6\xDB\x95\xD8\xAA \xD8\xA6\xD9\x89\xD9\x84\xDA\xAF\xD9\x89\xD8\xB1\xD9\x89") }, other: alloc::borrow::Cow::Borrowed("\u{1} سائەت ئىلگىرى") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xD8\xB3\xD8\xA7\xD8\xA6\xDB\x95\xD8\xAA\xD8\xAA\xD9\x89\xD9\x86 \xD9\x83\xDB\x90\xD9\x8A\xD9\x89\xD9\x86") }, other: alloc::borrow::Cow::Borrowed("\u{1} سائەتتىن كېيىن") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} سائەت ئىلگىرى") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} سائەتتىن كېيىن") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD1\x86\xD1\x96\xD1\x94\xD1\x97 \xD0\xB3\xD0\xBE\xD0\xB4\xD0\xB8\xD0\xBD\xD0\xB8") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x18\x000\0\x01\x01 \xD0\xB3\xD0\xBE\xD0\xB4\xD0\xB8\xD0\xBD\xD1\x83 \xD1\x82\xD0\xBE\xD0\xBC\xD1\x83\x03\x01 \xD0\xB3\xD0\xBE\xD0\xB4\xD0\xB8\xD0\xBD\xD0\xB8 \xD1\x82\xD0\xBE\xD0\xBC\xD1\x83\x04\x01 \xD0\xB3\xD0\xBE\xD0\xB4\xD0\xB8\xD0\xBD \xD1\x82\xD0\xBE\xD0\xBC\xD1\x83") }, other: alloc::borrow::Cow::Borrowed("\u{1} години тому") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x1A\x004\0\x01\x0C\xD1\x87\xD0\xB5\xD1\x80\xD0\xB5\xD0\xB7  \xD0\xB3\xD0\xBE\xD0\xB4\xD0\xB8\xD0\xBD\xD1\x83\x03\x0C\xD1\x87\xD0\xB5\xD1\x80\xD0\xB5\xD0\xB7  \xD0\xB3\xD0\xBE\xD0\xB4\xD0\xB8\xD0\xBD\xD0\xB8\x04\x0C\xD1\x87\xD0\xB5\xD1\x80\xD0\xB5\xD0\xB7  \xD0\xB3\xD0\xBE\xD0\xB4\xD0\xB8\xD0\xBD") }, other: alloc::borrow::Cow::Borrowed("\u{c}через  години") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x18\0\x01\x01 \xD0\xB3\xD0\xBE\xD0\xB4\xD0\xB8\xD0\xBD\xD1\x83 \xD1\x82\xD0\xBE\xD0\xBC\xD1\x83\x04\x01 \xD0\xB3\xD0\xBE\xD0\xB4\xD0\xB8\xD0\xBD \xD1\x82\xD0\xBE\xD0\xBC\xD1\x83") }, other: alloc::borrow::Cow::Borrowed("\u{1} години тому") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x1A\0\x01\x0C\xD1\x87\xD0\xB5\xD1\x80\xD0\xB5\xD0\xB7  \xD0\xB3\xD0\xBE\xD0\xB4\xD0\xB8\xD0\xBD\xD1\x83\x04\x0C\xD1\x87\xD0\xB5\xD1\x80\xD0\xB5\xD0\xB7  \xD0\xB3\xD0\xBE\xD0\xB4\xD0\xB8\xD0\xBD") }, other: alloc::borrow::Cow::Borrowed("\u{c}через  години") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
@@ -937,23 +937,23 @@ macro_rules! __impl_long_hour_relative_time_format_data_v1_marker {
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\xD8\xA7\xD8\xB3 \xDA\xAF\xDA\xBE\xD9\x86\xD9\xB9\xDB\x92") })
                         },
                         past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xDA\xAF\xDA\xBE\xD9\x86\xD9\xB9\xDB\x81 \xD9\xBE\xDB\x81\xD9\x84\xDB\x92") }, other: alloc::borrow::Cow::Borrowed("\u{1} گھنٹے پہلے") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xDA\xAF\xDA\xBE\xD9\x86\xD9\xB9\xDB\x92 \xD9\x85\xDB\x8C\xDA\xBA") }, other: alloc::borrow::Cow::Borrowed("\u{1} گھنٹے میں") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} گھنٹے میں") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0shu soatda") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 soat oldin") }, other: alloc::borrow::Cow::Borrowed("\u{1} soat oldin") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 soatdan keyin") }, other: alloc::borrow::Cow::Borrowed("\u{1} soatdan keyin") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} soat oldin") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} soatdan keyin") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0this hour") })
                         },
-                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xD1\x81\xD0\xBE\xD0\xB0\xD1\x82 \xD0\xBE\xD0\xBB\xD0\xB4\xD0\xB8\xD0\xBD") }, other: alloc::borrow::Cow::Borrowed("\u{1} соат олдин") },
-                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x01 \xD1\x81\xD0\xBE\xD0\xB0\xD1\x82\xD0\xB4\xD0\xB0\xD0\xBD \xD1\x81\xD1\x9E\xD0\xBD\xD0\xB3") }, other: alloc::borrow::Cow::Borrowed("\u{1} соатдан сўнг") },
+                        past: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} соат олдин") },
+                        future: icu::experimental::relativetime::provider::SinglePlaceholderPluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{1} соатдан сўнг") },
                     },
                     icu::experimental::relativetime::provider::RelativeTimePatternDataV1 {
                         relatives: unsafe {

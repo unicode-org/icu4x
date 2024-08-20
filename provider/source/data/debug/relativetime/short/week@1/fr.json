@@ -5,21 +5,11 @@
     "1": "la semaine prochaine"
   },
   "past": {
-    "specials": [
-      [
-        "One",
-        "\bil y a  sem."
-      ]
-    ],
+    "specials": [],
     "other": "\bil y a  sem."
   },
   "future": {
-    "specials": [
-      [
-        "One",
-        "\u0006dans  sem."
-      ]
-    ],
+    "specials": [],
     "other": "\u0006dans  sem."
   }
 }
