@@ -3,21 +3,11 @@
     "0": "bu saat"
   },
   "past": {
-    "specials": [
-      [
-        "One",
-        "\u0001 sa. önce"
-      ]
-    ],
+    "specials": [],
     "other": "\u0001 sa. önce"
   },
   "future": {
-    "specials": [
-      [
-        "One",
-        "\u0001 sa. sonra"
-      ]
-    ],
+    "specials": [],
     "other": "\u0001 sa. sonra"
   }
 }

@@ -5,29 +5,11 @@
     "1": "sledeće god."
   },
   "past": {
-    "specials": [
-      [
-        "One",
-        "\u0005pre  god."
-      ],
-      [
-        "Few",
-        "\u0005pre  god."
-      ]
-    ],
+    "specials": [],
     "other": "\u0005pre  god."
   },
   "future": {
-    "specials": [
-      [
-        "One",
-        "\u0004za  god."
-      ],
-      [
-        "Few",
-        "\u0004za  god."
-      ]
-    ],
+    "specials": [],
     "other": "\u0004za  god."
   }
 }

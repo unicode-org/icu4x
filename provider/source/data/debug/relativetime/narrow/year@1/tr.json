@@ -5,21 +5,11 @@
     "1": "gelecek yıl"
   },
   "past": {
-    "specials": [
-      [
-        "One",
-        "\u0001 yıl önce"
-      ]
-    ],
+    "specials": [],
     "other": "\u0001 yıl önce"
   },
   "future": {
-    "specials": [
-      [
-        "One",
-        "\u0001 yıl sonra"
-      ]
-    ],
+    "specials": [],
     "other": "\u0001 yıl sonra"
   }
 }

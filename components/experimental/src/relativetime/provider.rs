@@ -111,6 +111,54 @@ pub struct SinglePlaceholderPluralPattern<'data> {
 }
 
 impl<'data> SinglePlaceholderPluralPattern<'data> {
+    /// Creates a [`SinglePlaceholderPluralPattern`] from the given patterns.
+    #[cfg(feature = "datagen")]
+    pub fn try_new(
+        other: &str,
+        zero: Option<&str>,
+        one: Option<&str>,
+        two: Option<&str>,
+        few: Option<&str>,
+        many: Option<&str>,
+    ) -> Result<Self, icu_pattern::PatternError> {
+        use core::str::FromStr;
+
+        let optional_convert = |category, pattern: Option<&str>| {
+            pattern
+                .filter(|p| *p != other)
+                .map(|s| {
+                    Ok(PluralCategoryStr(
+                        category,
+                        SinglePlaceholderPattern::from_str(s)
+                            .map(|p| {
+                                SinglePlaceholderPattern::from_store_unchecked(
+                                    p.take_store().into(),
+                                )
+                            })?
+                            .take_store(),
+                    ))
+                })
+                .transpose()
+        };
+
+        Ok(Self {
+            specials: (&[
+                (optional_convert(PluralCategory::Zero, zero)?),
+                (optional_convert(PluralCategory::One, one)?),
+                (optional_convert(PluralCategory::Two, two)?),
+                (optional_convert(PluralCategory::Few, few)?),
+                (optional_convert(PluralCategory::Many, many)?),
+            ]
+            .into_iter()
+            .flatten()
+            .collect::<Vec<_>>())
+                .into(),
+            other: SinglePlaceholderPattern::from_str(other)?
+                .take_store()
+                .into(),
+        })
+    }
+
     /// Returns the pattern for the given [`PluralCategory`].
     pub fn get(&'data self, c: PluralCategory) -> &'data SinglePlaceholderPattern<str> {
         SinglePlaceholderPattern::from_ref_store_unchecked(if c == PluralCategory::Other {

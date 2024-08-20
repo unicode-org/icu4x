@@ -5,21 +5,11 @@
     "1": "next mo"
   },
   "past": {
-    "specials": [
-      [
-        "One",
-        "\u0001 mo ago"
-      ]
-    ],
+    "specials": [],
     "other": "\u0001 mo ago"
   },
   "future": {
-    "specials": [
-      [
-        "One",
-        "\u0004in  mo"
-      ]
-    ],
+    "specials": [],
     "other": "\u0004in  mo"
   }
 }
