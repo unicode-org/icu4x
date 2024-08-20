@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_datetime::neo_skeleton::{NeoSkeletonLength, NeoTimeZoneSkeleton, NeoTimeZoneStyle};
 use icu_datetime::time_zone;
 use icu_datetime::time_zone::TimeZoneFormatter;
 use icu_datetime::DateTimeError;
@@ -145,5 +146,39 @@ impl TimeZoneFormatterConfig {
             }
         }
         .map(|_| ())
+    }
+
+    pub fn to_semantic_skeleton(self) -> NeoTimeZoneSkeleton {
+        let mut skeleton = NeoTimeZoneSkeleton::default();
+        match self {
+            TimeZoneFormatterConfig::GenericNonLocationLong => {
+                skeleton.length = Some(NeoSkeletonLength::Long);
+                skeleton.style = NeoTimeZoneStyle::NonLocation;
+            }
+            TimeZoneFormatterConfig::GenericNonLocationShort => {
+                skeleton.length = Some(NeoSkeletonLength::Short);
+                skeleton.style = NeoTimeZoneStyle::NonLocation;
+            }
+            TimeZoneFormatterConfig::GenericLocation => {
+                skeleton.length = Some(NeoSkeletonLength::Long);
+                skeleton.style = NeoTimeZoneStyle::Location;
+            }
+            TimeZoneFormatterConfig::SpecificNonLocationLong => {
+                skeleton.length = Some(NeoSkeletonLength::Long);
+                skeleton.style = NeoTimeZoneStyle::SpecificNonLocation;
+            }
+            TimeZoneFormatterConfig::SpecificNonLocationShort => {
+                skeleton.length = Some(NeoSkeletonLength::Short);
+                skeleton.style = NeoTimeZoneStyle::SpecificNonLocation;
+            }
+            TimeZoneFormatterConfig::LocalizedGMT => {
+                skeleton.length = Some(NeoSkeletonLength::Long);
+                skeleton.style = NeoTimeZoneStyle::Offset;
+            }
+            TimeZoneFormatterConfig::Iso8601(format, minutes, seconds) => {
+                todo!()
+            }
+        }
+        skeleton
     }
 }

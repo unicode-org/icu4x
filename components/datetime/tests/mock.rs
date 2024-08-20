@@ -5,7 +5,7 @@
 //! Some useful parsing functions for tests.
 
 use icu_calendar::{DateTime, Gregorian};
-use icu_timezone::CustomTimeZone;
+use icu_timezone::CustomZonedDateTime;
 
 /// Temporary function for parsing a `DateTime<Gregorian>`
 ///
@@ -55,11 +55,7 @@ pub fn parse_gregorian_from_str(input: &str) -> DateTime<Gregorian> {
 ///     mock::parse_zoned_gregorian_from_str("2020-10-14T13:21:00+05:30")
 ///         .expect("Failed to parse a zoned datetime.");
 /// ```
-pub fn parse_zoned_gregorian_from_str(input: &str) -> (DateTime<Gregorian>, CustomTimeZone) {
-    let idx = input.rfind(&['+', '-', '\u{2212}', 'Z']).unwrap();
-    #[allow(clippy::indexing_slicing)] // valid index
-    (
-        parse_gregorian_from_str(&input[..idx]),
-        input[idx..].parse().unwrap(),
-    )
+pub fn parse_zoned_gregorian_from_str(input: &str) -> CustomZonedDateTime<Gregorian> {
+    let datetime_iso = CustomZonedDateTime::try_iso_from_ixdtf_str(input).unwrap();
+    datetime_iso.to_calendar(Gregorian)
 }
