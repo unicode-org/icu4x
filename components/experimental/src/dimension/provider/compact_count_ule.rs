@@ -64,15 +64,7 @@ impl AsULE for CompactCount {
 
     #[inline]
     fn from_unaligned(unaligned: Self::ULE) -> Self {
-        let count = match unaligned.0 & 0b0000_0111 {
-            0 => PluralCategory::Zero,
-            1 => PluralCategory::One,
-            2 => PluralCategory::Two,
-            3 => PluralCategory::Few,
-            4 => PluralCategory::Many,
-            5 => PluralCategory::Other,
-            _ => unreachable!(),
-        };
+        let count =  (unaligned.0 & 0b0000_0111) as PluralCategory;
         match unaligned.0 & 0b1000_0000 {
             0 => CompactCount::Standard(count),
             0b1000_0000 => CompactCount::AlphaNextToNumber(count),
