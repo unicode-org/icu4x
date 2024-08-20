@@ -5,7 +5,7 @@
 use super::{GenericPatternItem, PatternItem};
 use crate::fields;
 use core::convert::TryFrom;
-use zerovec::ule::{AsULE, ZeroVecError, ULE};
+use zerovec::ule::{AsULE, UleError, ULE};
 
 /// `PatternItemULE` is a type optimized for efficient storing and
 /// deserialization of `TypedDateTimeFormatter` `PatternItem` elements using
@@ -93,9 +93,9 @@ impl PatternItemULE {
 //  5. The other ULE methods use the default impl.
 //  6. PatternItemULE byte equality is semantic equality.
 unsafe impl ULE for PatternItemULE {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
         if bytes.len() % 3 != 0 {
-            return Err(ZeroVecError::length::<Self>(bytes.len()));
+            return Err(UleError::length::<Self>(bytes.len()));
         }
 
         #[allow(clippy::indexing_slicing)] // chunks
@@ -103,7 +103,7 @@ unsafe impl ULE for PatternItemULE {
             .chunks(3)
             .all(|c| Self::bytes_in_range((&c[0], &c[1], &c[2])))
         {
-            return Err(ZeroVecError::parse::<Self>());
+            return Err(UleError::parse::<Self>());
         }
         Ok(())
     }
@@ -251,16 +251,16 @@ impl GenericPatternItemULE {
 //  5. The other ULE methods use the default impl.
 //  6. GenericPatternItemULE byte equality is semantic equality.
 unsafe impl ULE for GenericPatternItemULE {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
         if bytes.len() % 3 != 0 {
-            return Err(ZeroVecError::length::<Self>(bytes.len()));
+            return Err(UleError::length::<Self>(bytes.len()));
         }
         #[allow(clippy::indexing_slicing)] // chunks
         if !bytes
             .chunks_exact(3)
             .all(|c| Self::bytes_in_range((&c[0], &c[1], &c[2])))
         {
-            return Err(ZeroVecError::parse::<Self>());
+            return Err(UleError::parse::<Self>());
         }
         Ok(())
     }

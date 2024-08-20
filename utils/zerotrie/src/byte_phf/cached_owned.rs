@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
-use crate::error::Error;
+use crate::error::ZeroTrieBuildError;
 use alloc::collections::btree_map::Entry;
 use alloc::collections::BTreeMap;
 use alloc::vec::Vec;
@@ -23,7 +23,10 @@ impl PerfectByteHashMapCacheOwned {
     }
 
     /// Gets the [`PerfectByteHashMap`] for the given bytes, calculating it if necessary.
-    pub fn try_get_or_insert(&mut self, keys: Vec<u8>) -> Result<&PerfectByteHashMap<[u8]>, Error> {
+    pub fn try_get_or_insert(
+        &mut self,
+        keys: Vec<u8>,
+    ) -> Result<&PerfectByteHashMap<[u8]>, ZeroTrieBuildError> {
         let mut_phf = match self.data.entry(keys) {
             Entry::Vacant(entry) => {
                 let value = PerfectByteHashMap::try_new(entry.key())?;

@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use super::VarZeroVecFormatError;
 use crate::ule::*;
 use alloc::boxed::Box;
 use alloc::format;
@@ -161,7 +162,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
     /// - `indices[len - 1]..things.len()` must index into a valid section of
     ///   `things`, such that it parses to a `T::VarULE`
     #[inline]
-    pub fn parse_byte_slice(slice: &'a [u8]) -> Result<Self, ZeroVecError> {
+    pub fn parse_byte_slice(slice: &'a [u8]) -> Result<Self, VarZeroVecFormatError> {
         // The empty VZV is special-cased to the empty slice
         if slice.is_empty() {
             return Ok(VarZeroVecComponents {
@@ -174,23 +175,23 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
         }
         let len_bytes = slice
             .get(0..LENGTH_WIDTH)
-            .ok_or(ZeroVecError::VarZeroVecFormatError)?;
+            .ok_or(VarZeroVecFormatError::Metadata)?;
         let len_ule = RawBytesULE::<LENGTH_WIDTH>::parse_byte_slice(len_bytes)
-            .map_err(|_| ZeroVecError::VarZeroVecFormatError)?;
+            .map_err(|_| VarZeroVecFormatError::Metadata)?;
 
         let len = len_ule
             .first()
-            .ok_or(ZeroVecError::VarZeroVecFormatError)?
+            .ok_or(VarZeroVecFormatError::Metadata)?
             .as_unsigned_int();
         let indices_bytes = slice
             .get(
                 LENGTH_WIDTH + METADATA_WIDTH
                     ..LENGTH_WIDTH + METADATA_WIDTH + F::INDEX_WIDTH * (len as usize),
             )
-            .ok_or(ZeroVecError::VarZeroVecFormatError)?;
+            .ok_or(VarZeroVecFormatError::Metadata)?;
         let things = slice
             .get(F::INDEX_WIDTH * (len as usize) + LENGTH_WIDTH + METADATA_WIDTH..)
-            .ok_or(ZeroVecError::VarZeroVecFormatError)?;
+            .ok_or(VarZeroVecFormatError::Metadata)?;
 
         let borrowed = VarZeroVecComponents {
             len,
@@ -317,11 +318,11 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
     /// assume that the slice has been passed through check_indices_and_things
     #[inline]
     #[allow(clippy::len_zero)] // more explicit to enforce safety invariants
-    fn check_indices_and_things(self) -> Result<(), ZeroVecError> {
+    fn check_indices_and_things(self) -> Result<(), VarZeroVecFormatError> {
         assert_eq!(self.len(), self.indices_slice().len());
         if self.len() == 0 {
             if self.things.len() > 0 {
-                return Err(ZeroVecError::VarZeroVecFormatError);
+                return Err(VarZeroVecFormatError::Metadata);
             } else {
                 return Ok(());
             }
@@ -329,7 +330,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
         // Safety: i is in bounds (assertion above)
         let mut start = F::rawbytes_to_usize(unsafe { *self.indices_slice().get_unchecked(0) });
         if start != 0 {
-            return Err(ZeroVecError::VarZeroVecFormatError);
+            return Err(VarZeroVecFormatError::Metadata);
         }
         for i in 0..self.len() {
             let end = if i == self.len() - 1 {
@@ -339,14 +340,14 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
                 F::rawbytes_to_usize(unsafe { *self.indices_slice().get_unchecked(i + 1) })
             };
             if start > end {
-                return Err(ZeroVecError::VarZeroVecFormatError);
+                return Err(VarZeroVecFormatError::Metadata);
             }
             if end > self.things.len() {
-                return Err(ZeroVecError::VarZeroVecFormatError);
+                return Err(VarZeroVecFormatError::Metadata);
             }
             // Safety: start..end is a valid range in self.things
             let bytes = unsafe { self.things.get_unchecked(start..end) };
-            T::parse_byte_slice(bytes)?;
+            T::parse_byte_slice(bytes).map_err(VarZeroVecFormatError::Values)?;
             start = end;
         }
         Ok(())
