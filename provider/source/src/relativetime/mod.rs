@@ -6,9 +6,8 @@ use crate::cldr_serde;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::experimental::relativetime::provider::*;
-use icu_pattern::PatternError;
 use icu_provider::prelude::*;
-use std::collections::{BTreeMap, HashMap, HashSet};
+use std::collections::{HashMap, HashSet};
 use std::sync::OnceLock;
 
 pub(crate) static MARKER_FILTERS: OnceLock<HashMap<DataMarkerInfo, &'static str>> = OnceLock::new();
