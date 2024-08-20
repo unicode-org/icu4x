@@ -18,7 +18,6 @@ use crate::provider::date_time::{
     DateSymbols, GetSymbolForEraError, GetSymbolForMonthError, GetSymbolForWeekdayError,
     MonthPlaceholderValue, TimeSymbols, ZoneSymbols,
 };
-use crate::time_zone::{IsoFormat, IsoMinutes, IsoSeconds, ResolvedNeoTimeZoneSkeleton};
 use crate::time_zone::{
     Bcp47IdFormat, ExemplarCityFormat, FallbackTimeZoneFormatterUnit, FormatTimeZone,
     FormatTimeZoneError, GenericLocationFormat, GenericNonLocationLongFormat,
@@ -26,6 +25,7 @@ use crate::time_zone::{
     SpecificNonLocationLongFormat, SpecificNonLocationShortFormat, TimeZoneDataPayloadsBorrowed,
     TimeZoneFormatterUnit,
 };
+use crate::time_zone::{IsoFormat, IsoMinutes, IsoSeconds, ResolvedNeoTimeZoneSkeleton};
 
 use super::FormattingOptions;
 use core::fmt::{self, Write};
