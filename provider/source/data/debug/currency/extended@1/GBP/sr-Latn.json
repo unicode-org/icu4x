@@ -1,26 +1,8 @@
 {
-  "display_names": [
-    [
-      {
-        "PluralRules": "One"
-      },
-      "britanska funta"
-    ],
-    [
-      {
-        "PluralRules": "Few"
-      },
-      "britanske funte"
-    ],
-    [
-      {
-        "PluralRules": "Other"
-      },
-      "britanskih funti"
-    ],
-    [
-      "DisplayName",
-      "britanska funta"
-    ]
-  ]
+  "categorized_display_names": {
+    "One": "britanska funta",
+    "Few": "britanske funte",
+    "Other": "britanskih funti"
+  },
+  "display_name": "britanska funta"
 }

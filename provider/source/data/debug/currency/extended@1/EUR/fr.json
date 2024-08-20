@@ -1,20 +1,7 @@
 {
-  "display_names": [
-    [
-      {
-        "PluralRules": "One"
-      },
-      "euro"
-    ],
-    [
-      {
-        "PluralRules": "Other"
-      },
-      "euros"
-    ],
-    [
-      "DisplayName",
-      "euro"
-    ]
-  ]
+  "categorized_display_names": {
+    "One": "euro",
+    "Other": "euros"
+  },
+  "display_name": "euro"
 }

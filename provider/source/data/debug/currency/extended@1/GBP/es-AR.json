@@ -1,20 +1,7 @@
 {
-  "display_names": [
-    [
-      {
-        "PluralRules": "One"
-      },
-      "libra esterlina"
-    ],
-    [
-      {
-        "PluralRules": "Other"
-      },
-      "libras esterlinas"
-    ],
-    [
-      "DisplayName",
-      "libra esterlina"
-    ]
-  ]
+  "categorized_display_names": {
+    "One": "libra esterlina",
+    "Other": "libras esterlinas"
+  },
+  "display_name": "libra esterlina"
 }

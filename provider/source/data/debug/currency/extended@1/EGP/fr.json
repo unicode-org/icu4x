@@ -1,20 +1,7 @@
 {
-  "display_names": [
-    [
-      {
-        "PluralRules": "One"
-      },
-      "livre égyptienne"
-    ],
-    [
-      {
-        "PluralRules": "Other"
-      },
-      "livres égyptiennes"
-    ],
-    [
-      "DisplayName",
-      "livre égyptienne"
-    ]
-  ]
+  "categorized_display_names": {
+    "One": "livre égyptienne",
+    "Other": "livres égyptiennes"
+  },
+  "display_name": "livre égyptienne"
 }

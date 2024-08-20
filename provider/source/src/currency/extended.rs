@@ -31,6 +31,11 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::SourceDataProvider {
             .get(req.id.marker_attributes.as_str())
             .ok_or(DataError::custom("No currency associated with the aux key"))?;
 
+        let display_name = currency.display_name.clone().ok_or(
+            DataErrorKind::IdentifierNotFound
+                .into_error()
+                .with_debug_context(req.id.locale),
+        )?;
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(CurrencyExtendedDataV1 {
@@ -53,13 +58,7 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::SourceDataProvider {
                         _ => Some((count, pattern?)),
                     }),
                 ),
-                display_name: Cow::Owned(
-                    currency
-                        .display_name
-                        .clone()
-                        .ok_or(DataErrorKind::InvalidRequest.into_error())?
-                        .to_owned(),
-                ),
+                display_name: Cow::Owned(display_name.to_owned()),
             }),
         })
     }
@@ -99,7 +98,6 @@ impl crate::IterableDataProviderCached<CurrencyExtendedDataV1Marker> for SourceD
 #[test]
 fn test_basic() {
     use icu::locale::langid;
-
     let provider = SourceDataProvider::new_testing();
     let en: DataPayload<CurrencyExtendedDataV1Marker> = provider
         .load(DataRequest {

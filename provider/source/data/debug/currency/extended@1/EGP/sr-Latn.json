@@ -1,26 +1,8 @@
 {
-  "display_names": [
-    [
-      {
-        "PluralRules": "One"
-      },
-      "egipatska funta"
-    ],
-    [
-      {
-        "PluralRules": "Few"
-      },
-      "egipatske funte"
-    ],
-    [
-      {
-        "PluralRules": "Other"
-      },
-      "egipatskih funti"
-    ],
-    [
-      "DisplayName",
-      "egipatska funta"
-    ]
-  ]
+  "categorized_display_names": {
+    "One": "egipatska funta",
+    "Few": "egipatske funte",
+    "Other": "egipatskih funti"
+  },
+  "display_name": "egipatska funta"
 }

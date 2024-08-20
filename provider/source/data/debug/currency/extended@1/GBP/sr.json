@@ -1,26 +1,8 @@
 {
-  "display_names": [
-    [
-      {
-        "PluralRules": "One"
-      },
-      "британска фунта"
-    ],
-    [
-      {
-        "PluralRules": "Few"
-      },
-      "британске фунте"
-    ],
-    [
-      {
-        "PluralRules": "Other"
-      },
-      "британских фунти"
-    ],
-    [
-      "DisplayName",
-      "британска фунта"
-    ]
-  ]
+  "categorized_display_names": {
+    "One": "британска фунта",
+    "Few": "британске фунте",
+    "Other": "британских фунти"
+  },
+  "display_name": "британска фунта"
 }

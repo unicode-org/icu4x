@@ -1,26 +1,8 @@
 {
-  "display_names": [
-    [
-      {
-        "PluralRules": "One"
-      },
-      "američki dolar"
-    ],
-    [
-      {
-        "PluralRules": "Few"
-      },
-      "američka dolara"
-    ],
-    [
-      {
-        "PluralRules": "Other"
-      },
-      "američkih dolara"
-    ],
-    [
-      "DisplayName",
-      "američki dolar"
-    ]
-  ]
+  "categorized_display_names": {
+    "One": "američki dolar",
+    "Few": "američka dolara",
+    "Other": "američkih dolara"
+  },
+  "display_name": "američki dolar"
 }

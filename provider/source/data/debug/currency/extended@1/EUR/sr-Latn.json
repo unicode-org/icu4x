@@ -1,20 +1,7 @@
 {
-  "display_names": [
-    [
-      {
-        "PluralRules": "One"
-      },
-      "evro"
-    ],
-    [
-      {
-        "PluralRules": "Other"
-      },
-      "evra"
-    ],
-    [
-      "DisplayName",
-      "Evro"
-    ]
-  ]
+  "categorized_display_names": {
+    "One": "evro",
+    "Other": "evra"
+  },
+  "display_name": "Evro"
 }

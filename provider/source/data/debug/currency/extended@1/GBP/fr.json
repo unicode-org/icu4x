@@ -1,20 +1,7 @@
 {
-  "display_names": [
-    [
-      {
-        "PluralRules": "One"
-      },
-      "livre sterling"
-    ],
-    [
-      {
-        "PluralRules": "Other"
-      },
-      "livres sterling"
-    ],
-    [
-      "DisplayName",
-      "livre sterling"
-    ]
-  ]
+  "categorized_display_names": {
+    "One": "livre sterling",
+    "Other": "livres sterling"
+  },
+  "display_name": "livre sterling"
 }

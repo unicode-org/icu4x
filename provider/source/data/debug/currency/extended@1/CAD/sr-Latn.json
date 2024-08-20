@@ -1,26 +1,8 @@
 {
-  "display_names": [
-    [
-      {
-        "PluralRules": "One"
-      },
-      "kanadski dolar"
-    ],
-    [
-      {
-        "PluralRules": "Few"
-      },
-      "kanadska dolara"
-    ],
-    [
-      {
-        "PluralRules": "Other"
-      },
-      "kanadskih dolara"
-    ],
-    [
-      "DisplayName",
-      "kanadski dolar"
-    ]
-  ]
+  "categorized_display_names": {
+    "One": "kanadski dolar",
+    "Few": "kanadska dolara",
+    "Other": "kanadskih dolara"
+  },
+  "display_name": "kanadski dolar"
 }

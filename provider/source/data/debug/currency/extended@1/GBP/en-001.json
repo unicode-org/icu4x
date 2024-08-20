@@ -1,20 +1,7 @@
 {
-  "display_names": [
-    [
-      {
-        "PluralRules": "One"
-      },
-      "British pound"
-    ],
-    [
-      {
-        "PluralRules": "Other"
-      },
-      "British pounds"
-    ],
-    [
-      "DisplayName",
-      "British Pound"
-    ]
-  ]
+  "categorized_display_names": {
+    "One": "British pound",
+    "Other": "British pounds"
+  },
+  "display_name": "British Pound"
 }

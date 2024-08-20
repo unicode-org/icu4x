@@ -1,32 +1,9 @@
 {
-  "display_names": [
-    [
-      {
-        "PluralRules": "One"
-      },
-      "египетский фунт"
-    ],
-    [
-      {
-        "PluralRules": "Few"
-      },
-      "египетских фунта"
-    ],
-    [
-      {
-        "PluralRules": "Many"
-      },
-      "египетских фунтов"
-    ],
-    [
-      {
-        "PluralRules": "Other"
-      },
-      "египетского фунта"
-    ],
-    [
-      "DisplayName",
-      "египетский фунт"
-    ]
-  ]
+  "categorized_display_names": {
+    "One": "египетский фунт",
+    "Few": "египетских фунта",
+    "Many": "египетских фунтов",
+    "Other": "египетского фунта"
+  },
+  "display_name": "египетский фунт"
 }

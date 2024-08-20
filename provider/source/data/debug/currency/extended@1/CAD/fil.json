@@ -1,20 +1,7 @@
 {
-  "display_names": [
-    [
-      {
-        "PluralRules": "One"
-      },
-      "dolyar ng Canada"
-    ],
-    [
-      {
-        "PluralRules": "Other"
-      },
-      "Dolyares ng Canada"
-    ],
-    [
-      "DisplayName",
-      "Dolyar ng Canada"
-    ]
-  ]
+  "categorized_display_names": {
+    "One": "dolyar ng Canada",
+    "Other": "Dolyares ng Canada"
+  },
+  "display_name": "Dolyar ng Canada"
 }
