@@ -21,6 +21,8 @@ namespace capi {
       IsoWeekday_Saturday = 6,
       IsoWeekday_Sunday = 7,
     };
+    
+    typedef struct IsoWeekday_option {union { IsoWeekday ok; }; bool is_ok; } IsoWeekday_option;
 } // namespace capi
 } // namespace
 

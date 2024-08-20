@@ -73,9 +73,8 @@ final class LineSegmenter implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory LineSegmenter.autoWithOptions(DataProvider provider, LineBreakOptions options) {
-    final temp = ffi2.Arena();
-    final result = _icu4x_LineSegmenter_create_auto_with_options_v1_mv1(provider._ffi, options._toFfi(temp));
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final result = _icu4x_LineSegmenter_create_auto_with_options_v1_mv1(provider._ffi, options._toFfi(temp.arena));
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -89,9 +88,8 @@ final class LineSegmenter implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory LineSegmenter.lstmWithOptions(DataProvider provider, LineBreakOptions options) {
-    final temp = ffi2.Arena();
-    final result = _icu4x_LineSegmenter_create_lstm_with_options_v1_mv1(provider._ffi, options._toFfi(temp));
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final result = _icu4x_LineSegmenter_create_lstm_with_options_v1_mv1(provider._ffi, options._toFfi(temp.arena));
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -105,9 +103,8 @@ final class LineSegmenter implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory LineSegmenter.dictionaryWithOptions(DataProvider provider, LineBreakOptions options) {
-    final temp = ffi2.Arena();
-    final result = _icu4x_LineSegmenter_create_dictionary_with_options_v1_mv1(provider._ffi, options._toFfi(temp));
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final result = _icu4x_LineSegmenter_create_dictionary_with_options_v1_mv1(provider._ffi, options._toFfi(temp.arena));
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -121,11 +118,10 @@ final class LineSegmenter implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.segment_utf16) for more information.
   LineBreakIteratorUtf16 segment(String input) {
-    final inputView = input.utf16View;
     final inputArena = _FinalizedArena();
     // This lifetime edge depends on lifetimes: 'a
     core.List<Object> aEdges = [this, inputArena];
-    final result = _icu4x_LineSegmenter_segment_utf16_mv1(_ffi, inputView.allocIn(inputArena.arena), inputView.length);
+    final result = _icu4x_LineSegmenter_segment_utf16_mv1(_ffi, input._utf16AllocIn(inputArena.arena));
     return LineBreakIteratorUtf16._fromFfi(result, [], aEdges);
   }
 }
@@ -166,6 +162,6 @@ external _ResultOpaqueInt32 _icu4x_LineSegmenter_create_lstm_with_options_v1_mv1
 external _ResultOpaqueInt32 _icu4x_LineSegmenter_create_dictionary_with_options_v1_mv1(ffi.Pointer<ffi.Opaque> provider, _LineBreakOptionsFfi options);
 
 @meta.ResourceIdentifier('icu4x_LineSegmenter_segment_utf16_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_LineSegmenter_segment_utf16_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, _SliceUtf16)>(isLeaf: true, symbol: 'icu4x_LineSegmenter_segment_utf16_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_LineSegmenter_segment_utf16_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint16> inputData, int inputLength);
+external ffi.Pointer<ffi.Opaque> _icu4x_LineSegmenter_segment_utf16_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf16 input);

@@ -13,47 +13,61 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 /** See the [Rust documentation for `ResolvedCollatorOptions`](https://docs.rs/icu/latest/icu/collator/struct.ResolvedCollatorOptions.html) for more information.
 */
 export class CollatorResolvedOptions {
+
     #strength;
     get strength()  {
         return this.#strength;
     }
     
+
     #alternateHandling;
     get alternateHandling()  {
         return this.#alternateHandling;
     }
     
+
     #caseFirst;
     get caseFirst()  {
         return this.#caseFirst;
     }
     
+
     #maxVariable;
     get maxVariable()  {
         return this.#maxVariable;
     }
     
+
     #caseLevel;
     get caseLevel()  {
         return this.#caseLevel;
     }
     
+
     #numeric;
     get numeric()  {
         return this.#numeric;
     }
     
+
     #backwardSecondLevel;
     get backwardSecondLevel()  {
         return this.#backwardSecondLevel;
     }
     
+    constructor() {
+        if (arguments.length > 0 && arguments[0] === diplomatRuntime.internalConstructor) {
+            this.#fromFFI(...Array.prototype.slice.call(arguments, 1));
+        } else {
+            console.error("CollatorResolvedOptions is an out struct and can only be created internally.");
+        }
+    }
 
     // Return this struct in FFI function friendly format.
     // Returns an array that can be expanded with spread syntax (...)
     
     _intoFFI(
-        slice_cleanup_callbacks,
+        functionCleanupArena,
         appendArrayMap
     ) {
         return [this.#strength.ffiValue, this.#alternateHandling.ffiValue, this.#caseFirst.ffiValue, this.#maxVariable.ffiValue, this.#caseLevel.ffiValue, this.#numeric.ffiValue, this.#backwardSecondLevel.ffiValue]
@@ -64,7 +78,7 @@ export class CollatorResolvedOptions {
     // and passes it down to individual fields containing the borrow.
     // This method does not attempt to handle any dependencies between lifetimes, the caller
     // should handle this when constructing edge arrays.
-    _fromFFI(ptr) {
+    #fromFFI(ptr) {
         const strengthDeref = diplomatRuntime.enumDiscriminant(wasm, ptr);
         this.#strength = CollatorStrength[Array.from(CollatorStrength.values.keys())[strengthDeref]];
         const alternateHandlingDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 4);
@@ -79,13 +93,5 @@ export class CollatorResolvedOptions {
         this.#numeric = CollatorNumeric[Array.from(CollatorNumeric.values.keys())[numericDeref]];
         const backwardSecondLevelDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 24);
         this.#backwardSecondLevel = CollatorBackwardSecondLevel[Array.from(CollatorBackwardSecondLevel.values.keys())[backwardSecondLevelDeref]];
-
-        return this;
     }
-    // This is an out struct. You need to call other methods to be able to get this struct.
-    constructor(ptr) {
-        this._fromFFI(ptr);
-    }
-    
-
 }

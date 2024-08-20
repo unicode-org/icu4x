@@ -82,10 +82,8 @@ final class FixedDecimal implements ffi.Finalizable {
   ///
   /// Throws [FixedDecimalParseError] on failure.
   factory FixedDecimal.fromString(String v) {
-    final temp = ffi2.Arena();
-    final vView = v.utf8View;
-    final result = _icu4x_FixedDecimal_from_string_mv1(vView.allocIn(temp), vView.length);
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final result = _icu4x_FixedDecimal_from_string_mv1(v._utf8AllocIn(temp.arena));
     if (!result.isOk) {
       throw FixedDecimalParseError.values[result.union.err];
     }
@@ -240,7 +238,7 @@ final class FixedDecimal implements ffi.Finalizable {
   /// Format the [`FixedDecimal`] as a string.
   ///
   /// See the [Rust documentation for `write_to`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.write_to) for more information.
-  @override
+  @core.override
   String toString() {
     final write = _Write();
     _icu4x_FixedDecimal_to_string_mv1(_ffi, write._ffi);
@@ -274,9 +272,9 @@ external _ResultOpaqueFixedDecimalLimitErrorFfi _icu4x_FixedDecimal_from_double_
 external _ResultOpaqueFixedDecimalLimitErrorFfi _icu4x_FixedDecimal_from_double_with_floating_precision_mv1(double f);
 
 @meta.ResourceIdentifier('icu4x_FixedDecimal_from_string_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_from_string_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_from_string_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_FixedDecimal_from_string_mv1(ffi.Pointer<ffi.Uint8> vData, int vLength);
+external _ResultOpaqueInt32 _icu4x_FixedDecimal_from_string_mv1(_SliceUtf8 v);
 
 @meta.ResourceIdentifier('icu4x_FixedDecimal_digit_at_mv1')
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Int16)>(isLeaf: true, symbol: 'icu4x_FixedDecimal_digit_at_mv1')

@@ -12,6 +12,7 @@ export class DisplayNamesFallback {
         ["Code", 0],
         ["None", 1]
     ]);
+
     constructor(value) {
         if (value instanceof DisplayNamesFallback) {
             this.#value = value.value;
@@ -35,10 +36,5 @@ export class DisplayNamesFallback {
     }
 
     static Code = new DisplayNamesFallback("Code");
-
     static None = new DisplayNamesFallback("None");
-
-
-    
-
 }

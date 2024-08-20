@@ -23,6 +23,8 @@ namespace capi {
       FixedDecimalRoundingMode_HalfTrunc = 7,
       FixedDecimalRoundingMode_HalfEven = 8,
     };
+    
+    typedef struct FixedDecimalRoundingMode_option {union { FixedDecimalRoundingMode ok; }; bool is_ok; } FixedDecimalRoundingMode_option;
 } // namespace capi
 } // namespace
 

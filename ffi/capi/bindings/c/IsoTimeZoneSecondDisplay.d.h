@@ -16,7 +16,7 @@ typedef enum IsoTimeZoneSecondDisplay {
   IsoTimeZoneSecondDisplay_Never = 1,
 } IsoTimeZoneSecondDisplay;
 
-
+typedef struct IsoTimeZoneSecondDisplay_option {union { IsoTimeZoneSecondDisplay ok; }; bool is_ok; } IsoTimeZoneSecondDisplay_option;
 
 
 

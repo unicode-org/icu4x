@@ -17,6 +17,8 @@ namespace capi {
       FixedDecimalSign_Negative = 1,
       FixedDecimalSign_Positive = 2,
     };
+    
+    typedef struct FixedDecimalSign_option {union { FixedDecimalSign ok; }; bool is_ok; } FixedDecimalSign_option;
 } // namespace capi
 } // namespace
 

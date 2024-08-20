@@ -17,9 +17,9 @@
 
 
 
-int16_t icu4x_PropertyValueNameToEnumMapper_get_strict_mv1(const PropertyValueNameToEnumMapper* self, const char* name_data, size_t name_len);
+int16_t icu4x_PropertyValueNameToEnumMapper_get_strict_mv1(const PropertyValueNameToEnumMapper* self, DiplomatStringView name);
 
-int16_t icu4x_PropertyValueNameToEnumMapper_get_loose_mv1(const PropertyValueNameToEnumMapper* self, const char* name_data, size_t name_len);
+int16_t icu4x_PropertyValueNameToEnumMapper_get_loose_mv1(const PropertyValueNameToEnumMapper* self, DiplomatStringView name);
 
 typedef struct icu4x_PropertyValueNameToEnumMapper_load_general_category_mv1_result {union {PropertyValueNameToEnumMapper* ok; DataError err;}; bool is_ok;} icu4x_PropertyValueNameToEnumMapper_load_general_category_mv1_result;
 icu4x_PropertyValueNameToEnumMapper_load_general_category_mv1_result icu4x_PropertyValueNameToEnumMapper_load_general_category_mv1(const DataProvider* provider);

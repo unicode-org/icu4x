@@ -19,7 +19,7 @@ typedef enum DisplayNamesStyle {
   DisplayNamesStyle_Menu = 4,
 } DisplayNamesStyle;
 
-
+typedef struct DisplayNamesStyle_option {union { DisplayNamesStyle ok; }; bool is_ok; } DisplayNamesStyle_option;
 
 
 

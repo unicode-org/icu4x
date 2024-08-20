@@ -16,7 +16,7 @@
 
 
 typedef struct icu4x_PluralCategory_get_for_cldr_string_mv1_result {union {PluralCategory ok; }; bool is_ok;} icu4x_PluralCategory_get_for_cldr_string_mv1_result;
-icu4x_PluralCategory_get_for_cldr_string_mv1_result icu4x_PluralCategory_get_for_cldr_string_mv1(const char* s_data, size_t s_len);
+icu4x_PluralCategory_get_for_cldr_string_mv1_result icu4x_PluralCategory_get_for_cldr_string_mv1(DiplomatStringView s);
 
 
 

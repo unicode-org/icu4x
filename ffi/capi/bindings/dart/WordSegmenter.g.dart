@@ -79,11 +79,10 @@ final class WordSegmenter implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.segment_utf16) for more information.
   WordBreakIteratorUtf16 segment(String input) {
-    final inputView = input.utf16View;
     final inputArena = _FinalizedArena();
     // This lifetime edge depends on lifetimes: 'a
     core.List<Object> aEdges = [this, inputArena];
-    final result = _icu4x_WordSegmenter_segment_utf16_mv1(_ffi, inputView.allocIn(inputArena.arena), inputView.length);
+    final result = _icu4x_WordSegmenter_segment_utf16_mv1(_ffi, input._utf16AllocIn(inputArena.arena));
     return WordBreakIteratorUtf16._fromFfi(result, [], aEdges);
   }
 }
@@ -109,6 +108,6 @@ external _ResultOpaqueInt32 _icu4x_WordSegmenter_create_lstm_mv1(ffi.Pointer<ffi
 external _ResultOpaqueInt32 _icu4x_WordSegmenter_create_dictionary_mv1(ffi.Pointer<ffi.Opaque> provider);
 
 @meta.ResourceIdentifier('icu4x_WordSegmenter_segment_utf16_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_WordSegmenter_segment_utf16_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, _SliceUtf16)>(isLeaf: true, symbol: 'icu4x_WordSegmenter_segment_utf16_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_WordSegmenter_segment_utf16_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint16> inputData, int inputLength);
+external ffi.Pointer<ffi.Opaque> _icu4x_WordSegmenter_segment_utf16_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf16 input);

@@ -3,11 +3,12 @@ import type { CustomTimeZone } from "./CustomTimeZone"
 import type { DataProvider } from "./DataProvider"
 import type { DateLength } from "./DateLength"
 import type { DateTime } from "./DateTime"
+import type { Error } from "./Error"
 import type { IsoDateTime } from "./IsoDateTime"
 import type { IsoTimeZoneOptions } from "./IsoTimeZoneOptions"
 import type { Locale } from "./Locale"
 import type { TimeLength } from "./TimeLength"
-import type { pointer, char } from "./diplomat-runtime.d.ts";
+import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 /** An object capable of formatting a date time with time zone to a string.
@@ -19,7 +20,6 @@ export class ZonedDateTimeFormatter {
 
     get ffiValue(): pointer;
 
-
     static createWithLengths(provider: DataProvider, locale: Locale, dateLength: DateLength, timeLength: TimeLength): ZonedDateTimeFormatter;
 
     static createWithLengthsAndIso8601TimeZoneFallback(provider: DataProvider, locale: Locale, dateLength: DateLength, timeLength: TimeLength, zoneOptions: IsoTimeZoneOptions): ZonedDateTimeFormatter;
@@ -27,7 +27,4 @@ export class ZonedDateTimeFormatter {
     formatDatetimeWithCustomTimeZone(datetime: DateTime, timeZone: CustomTimeZone): string;
 
     formatIsoDatetimeWithCustomTimeZone(datetime: IsoDateTime, timeZone: CustomTimeZone): string;
-
-    
-
 }

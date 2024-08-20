@@ -38,6 +38,8 @@ namespace capi {
       icu4x::capi::CollatorNumeric numeric;
       icu4x::capi::CollatorBackwardSecondLevel backward_second_level;
     };
+    
+    typedef struct CollatorOptionsV1_option {union { CollatorOptionsV1 ok; }; bool is_ok; } CollatorOptionsV1_option;
 } // namespace capi
 } // namespace
 

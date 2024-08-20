@@ -32,6 +32,7 @@ export class Error {
         ["DateTimeFixedDecimalError", 2055],
         ["DateTimeMismatchedCalendarError", 2056]
     ]);
+
     constructor(value) {
         if (value instanceof Error) {
             this.#value = value.value;
@@ -55,46 +56,23 @@ export class Error {
     }
 
     static UnknownError = new Error("UnknownError");
-
     static DataMissingDataMarkerError = new Error("DataMissingDataMarkerError");
-
     static DataMissingLocaleError = new Error("DataMissingLocaleError");
-
     static DataNeedsLocaleError = new Error("DataNeedsLocaleError");
-
     static DataExtraneousLocaleError = new Error("DataExtraneousLocaleError");
-
     static DataFilteredResourceError = new Error("DataFilteredResourceError");
-
     static DataMismatchedTypeError = new Error("DataMismatchedTypeError");
-
     static DataCustomError = new Error("DataCustomError");
-
     static DataIoError = new Error("DataIoError");
-
     static DataUnavailableBufferFormatError = new Error("DataUnavailableBufferFormatError");
-
     static PropertyUnexpectedPropertyNameError = new Error("PropertyUnexpectedPropertyNameError");
-
     static DateTimePatternError = new Error("DateTimePatternError");
-
     static DateTimeMissingInputFieldError = new Error("DateTimeMissingInputFieldError");
-
     static DateTimeSkeletonError = new Error("DateTimeSkeletonError");
-
     static DateTimeUnsupportedFieldError = new Error("DateTimeUnsupportedFieldError");
-
     static DateTimeUnsupportedOptionsError = new Error("DateTimeUnsupportedOptionsError");
-
     static DateTimeMissingWeekdaySymbolError = new Error("DateTimeMissingWeekdaySymbolError");
-
     static DateTimeMissingMonthSymbolError = new Error("DateTimeMissingMonthSymbolError");
-
     static DateTimeFixedDecimalError = new Error("DateTimeFixedDecimalError");
-
     static DateTimeMismatchedCalendarError = new Error("DateTimeMismatchedCalendarError");
-
-
-    
-
 }

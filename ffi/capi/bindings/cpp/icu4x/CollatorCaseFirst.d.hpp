@@ -18,6 +18,8 @@ namespace capi {
       CollatorCaseFirst_LowerFirst = 2,
       CollatorCaseFirst_UpperFirst = 3,
     };
+    
+    typedef struct CollatorCaseFirst_option {union { CollatorCaseFirst ok; }; bool is_ok; } CollatorCaseFirst_option;
 } // namespace capi
 } // namespace
 

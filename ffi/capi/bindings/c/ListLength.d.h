@@ -17,7 +17,7 @@ typedef enum ListLength {
   ListLength_Narrow = 2,
 } ListLength;
 
-
+typedef struct ListLength_option {union { ListLength ok; }; bool is_ok; } ListLength_option;
 
 
 

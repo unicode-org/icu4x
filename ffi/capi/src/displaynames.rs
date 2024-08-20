@@ -86,6 +86,8 @@ pub mod ffi {
 
         /// Returns the locale-specific display name of a locale.
         #[diplomat::rust_link(icu::displaynames::LocaleDisplayNamesFormatter::of, FnInStruct)]
+        // Experimental, do not generate in demo:
+        #[diplomat::attr(demo_gen, disable)]
         pub fn of(&self, locale: &Locale, write: &mut DiplomatWrite) {
             let _infallible = self.0.of(&locale.0).write_to(write);
         }
@@ -114,6 +116,8 @@ pub mod ffi {
         /// Note that the function returns an empty string in case the display name for a given
         /// region code is not found.
         #[diplomat::rust_link(icu::displaynames::RegionDisplayNames::of, FnInStruct)]
+        // Experimental, do not generate in demo:
+        #[diplomat::attr(demo_gen, disable)]
         pub fn of(
             &self,
             region: &DiplomatStr,

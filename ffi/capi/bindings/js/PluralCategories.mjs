@@ -3,42 +3,55 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 export class PluralCategories {
+
     #zero;
     get zero()  {
         return this.#zero;
     }
     
+
     #one;
     get one()  {
         return this.#one;
     }
     
+
     #two;
     get two()  {
         return this.#two;
     }
     
+
     #few;
     get few()  {
         return this.#few;
     }
     
+
     #many;
     get many()  {
         return this.#many;
     }
     
+
     #other;
     get other()  {
         return this.#other;
     }
     
+    constructor() {
+        if (arguments.length > 0 && arguments[0] === diplomatRuntime.internalConstructor) {
+            this.#fromFFI(...Array.prototype.slice.call(arguments, 1));
+        } else {
+            console.error("PluralCategories is an out struct and can only be created internally.");
+        }
+    }
 
     // Return this struct in FFI function friendly format.
     // Returns an array that can be expanded with spread syntax (...)
     
     _intoFFI(
-        slice_cleanup_callbacks,
+        functionCleanupArena,
         appendArrayMap
     ) {
         return [this.#zero, this.#one, this.#two, this.#few, this.#many, this.#other]
@@ -49,26 +62,18 @@ export class PluralCategories {
     // and passes it down to individual fields containing the borrow.
     // This method does not attempt to handle any dependencies between lifetimes, the caller
     // should handle this when constructing edge arrays.
-    _fromFFI(ptr) {
-        const zeroDeref = (new Uint8Array(wasm.memory.buffer, ptr, 1))[0] == 1;
+    #fromFFI(ptr) {
+        const zeroDeref = (new Uint8Array(wasm.memory.buffer, ptr, 1))[0] === 1;
         this.#zero = zeroDeref;
-        const oneDeref = (new Uint8Array(wasm.memory.buffer, ptr + 1, 1))[0] == 1;
+        const oneDeref = (new Uint8Array(wasm.memory.buffer, ptr + 1, 1))[0] === 1;
         this.#one = oneDeref;
-        const twoDeref = (new Uint8Array(wasm.memory.buffer, ptr + 2, 1))[0] == 1;
+        const twoDeref = (new Uint8Array(wasm.memory.buffer, ptr + 2, 1))[0] === 1;
         this.#two = twoDeref;
-        const fewDeref = (new Uint8Array(wasm.memory.buffer, ptr + 3, 1))[0] == 1;
+        const fewDeref = (new Uint8Array(wasm.memory.buffer, ptr + 3, 1))[0] === 1;
         this.#few = fewDeref;
-        const manyDeref = (new Uint8Array(wasm.memory.buffer, ptr + 4, 1))[0] == 1;
+        const manyDeref = (new Uint8Array(wasm.memory.buffer, ptr + 4, 1))[0] === 1;
         this.#many = manyDeref;
-        const otherDeref = (new Uint8Array(wasm.memory.buffer, ptr + 5, 1))[0] == 1;
+        const otherDeref = (new Uint8Array(wasm.memory.buffer, ptr + 5, 1))[0] === 1;
         this.#other = otherDeref;
-
-        return this;
     }
-    // This is an out struct. You need to call other methods to be able to get this struct.
-    constructor(ptr) {
-        this._fromFFI(ptr);
-    }
-    
-
 }

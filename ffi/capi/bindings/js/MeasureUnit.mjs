@@ -10,10 +10,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *See the [Rust documentation for `MeasureUnit`](https://docs.rs/icu/latest/icu/experimental/units/measureunit/struct.MeasureUnit.html) for more information.
 */
-
 const MeasureUnit_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_MeasureUnit_destroy_mv1(ptr);
 });
+
 export class MeasureUnit {
     // Internal ptr reference:
     #ptr = null;
@@ -22,20 +22,22 @@ export class MeasureUnit {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("MeasureUnit is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        // Unconditionally register to destroy when this object is ready to garbage collect.
-        MeasureUnit_box_destroy_registry.register(this, this.#ptr);
+        
+        // Are we being borrowed? If not, we can register.
+        if (this.#selfEdge.length === 0) {
+            MeasureUnit_box_destroy_registry.register(this, this.#ptr);
+        }
     }
 
     get ffiValue() {
         return this.#ptr;
     }
-
-
-    
-
 }

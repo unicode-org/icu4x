@@ -13,6 +13,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 /** See the [Rust documentation for `CollatorOptions`](https://docs.rs/icu/latest/icu/collator/struct.CollatorOptions.html) for more information.
 */
 export class CollatorOptions {
+
     #strength;
     get strength()  {
         return this.#strength;
@@ -20,6 +21,7 @@ export class CollatorOptions {
     set strength(value) {
         this.#strength = value;
     }
+
     #alternateHandling;
     get alternateHandling()  {
         return this.#alternateHandling;
@@ -27,6 +29,7 @@ export class CollatorOptions {
     set alternateHandling(value) {
         this.#alternateHandling = value;
     }
+
     #caseFirst;
     get caseFirst()  {
         return this.#caseFirst;
@@ -34,6 +37,7 @@ export class CollatorOptions {
     set caseFirst(value) {
         this.#caseFirst = value;
     }
+
     #maxVariable;
     get maxVariable()  {
         return this.#maxVariable;
@@ -41,6 +45,7 @@ export class CollatorOptions {
     set maxVariable(value) {
         this.#maxVariable = value;
     }
+
     #caseLevel;
     get caseLevel()  {
         return this.#caseLevel;
@@ -48,6 +53,7 @@ export class CollatorOptions {
     set caseLevel(value) {
         this.#caseLevel = value;
     }
+
     #numeric;
     get numeric()  {
         return this.#numeric;
@@ -55,6 +61,7 @@ export class CollatorOptions {
     set numeric(value) {
         this.#numeric = value;
     }
+
     #backwardSecondLevel;
     get backwardSecondLevel()  {
         return this.#backwardSecondLevel;
@@ -62,12 +69,26 @@ export class CollatorOptions {
     set backwardSecondLevel(value) {
         this.#backwardSecondLevel = value;
     }
+    constructor() {
+        if (arguments.length > 0 && arguments[0] === diplomatRuntime.internalConstructor) {
+            this.#fromFFI(...Array.prototype.slice.call(arguments, 1));
+        } else {
+            
+            this.#strength = arguments[0];
+            this.#alternateHandling = arguments[1];
+            this.#caseFirst = arguments[2];
+            this.#maxVariable = arguments[3];
+            this.#caseLevel = arguments[4];
+            this.#numeric = arguments[5];
+            this.#backwardSecondLevel = arguments[6];
+        }
+    }
 
     // Return this struct in FFI function friendly format.
     // Returns an array that can be expanded with spread syntax (...)
     
     _intoFFI(
-        slice_cleanup_callbacks,
+        functionCleanupArena,
         appendArrayMap
     ) {
         return [this.#strength.ffiValue, this.#alternateHandling.ffiValue, this.#caseFirst.ffiValue, this.#maxVariable.ffiValue, this.#caseLevel.ffiValue, this.#numeric.ffiValue, this.#backwardSecondLevel.ffiValue]
@@ -78,7 +99,7 @@ export class CollatorOptions {
     // and passes it down to individual fields containing the borrow.
     // This method does not attempt to handle any dependencies between lifetimes, the caller
     // should handle this when constructing edge arrays.
-    _fromFFI(ptr) {
+    #fromFFI(ptr) {
         const strengthDeref = diplomatRuntime.enumDiscriminant(wasm, ptr);
         this.#strength = CollatorStrength[Array.from(CollatorStrength.values.keys())[strengthDeref]];
         const alternateHandlingDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 4);
@@ -93,9 +114,5 @@ export class CollatorOptions {
         this.#numeric = CollatorNumeric[Array.from(CollatorNumeric.values.keys())[numericDeref]];
         const backwardSecondLevelDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 24);
         this.#backwardSecondLevel = CollatorBackwardSecondLevel[Array.from(CollatorBackwardSecondLevel.values.keys())[backwardSecondLevelDeref]];
-
-        return this;
     }
-    
-
 }

@@ -15,6 +15,7 @@ export class DisplayNamesStyle {
         ["Long", 3],
         ["Menu", 4]
     ]);
+
     constructor(value) {
         if (value instanceof DisplayNamesStyle) {
             this.#value = value.value;
@@ -38,16 +39,8 @@ export class DisplayNamesStyle {
     }
 
     static Auto = new DisplayNamesStyle("Auto");
-
     static Narrow = new DisplayNamesStyle("Narrow");
-
     static Short = new DisplayNamesStyle("Short");
-
     static Long = new DisplayNamesStyle("Long");
-
     static Menu = new DisplayNamesStyle("Menu");
-
-
-    
-
 }
