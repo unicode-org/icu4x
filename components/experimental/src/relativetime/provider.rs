@@ -10,7 +10,7 @@
 //! Read more about data providers: [`icu_provider`]
 
 use alloc::borrow::Cow;
-use icu_pattern::{PatternError, SinglePlaceholderPattern};
+use icu_pattern::SinglePlaceholderPattern;
 use icu_plurals::PluralCategory;
 use icu_provider::prelude::*;
 use zerovec::{ule::AsULE, VarZeroVec, ZeroMap};
@@ -120,7 +120,7 @@ impl<'data> SinglePlaceholderPluralPattern<'data> {
         two: Option<&str>,
         few: Option<&str>,
         many: Option<&str>,
-    ) -> Result<Self, PatternError> {
+    ) -> Result<Self, icu_pattern::PatternError> {
         use core::str::FromStr;
 
         let optional_convert = |category, pattern: Option<&str>| {

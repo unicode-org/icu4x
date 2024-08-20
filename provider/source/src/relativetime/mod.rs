@@ -99,8 +99,12 @@ macro_rules! make_data_provider {
                     ))?;
 
                     Ok(DataResponse {
-            metadata: Default::default(),
-                        payload: DataPayload::from_owned(data.try_into().map_err(|_| DataError::custom("Invalid pattern"))?),
+                        metadata: Default::default(),
+                        payload: DataPayload::from_owned(RelativeTimePatternDataV1 {
+                            relatives: data.relatives.iter().map(|r| (&r.count, r.pattern.as_ref())).collect(),
+                            past: (&data.past).try_into()?,
+                            future: (&data.future).try_into()?,
+                        }),
                     })
                 }
             }
@@ -119,32 +123,18 @@ macro_rules! make_data_provider {
     };
 }
 
-impl TryFrom<&cldr_serde::date_fields::Field> for RelativeTimePatternDataV1<'_> {
-    type Error = PatternError;
-    fn try_from(field: &cldr_serde::date_fields::Field) -> Result<Self, Self::Error> {
-        let mut relatives = BTreeMap::new();
-        for relative in &field.relatives {
-            relatives.insert(&relative.count, relative.pattern.as_ref());
-        }
-        Ok(Self {
-            relatives: relatives.into_iter().collect(),
-            past: SinglePlaceholderPluralPattern::try_new(
-                &field.past.other,
-                field.past.zero.as_deref(),
-                field.past.one.as_deref(),
-                field.past.two.as_deref(),
-                field.past.few.as_deref(),
-                field.past.many.as_deref(),
-            )?,
-            future: SinglePlaceholderPluralPattern::try_new(
-                &field.future.other,
-                field.future.zero.as_deref(),
-                field.future.one.as_deref(),
-                field.future.two.as_deref(),
-                field.future.few.as_deref(),
-                field.future.many.as_deref(),
-            )?,
-        })
+impl TryFrom<&cldr_serde::date_fields::PluralRulesPattern> for SinglePlaceholderPluralPattern<'_> {
+    type Error = DataError;
+    fn try_from(field: &cldr_serde::date_fields::PluralRulesPattern) -> Result<Self, Self::Error> {
+        SinglePlaceholderPluralPattern::try_new(
+            &field.other,
+            field.zero.as_deref(),
+            field.one.as_deref(),
+            field.two.as_deref(),
+            field.few.as_deref(),
+            field.many.as_deref(),
+        )
+        .map_err(|_| DataError::custom("Invalid pattern"))
     }
 }
 
