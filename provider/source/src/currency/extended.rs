@@ -7,6 +7,7 @@ use crate::SourceDataProvider;
 use icu::experimental::dimension::provider::extended_currency::*;
 use icu::plurals::PluralCategory;
 use icu_provider::prelude::*;
+use std::borrow::Cow;
 use std::collections::HashSet;
 use zerovec::ZeroMap;
 
@@ -33,49 +34,31 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::SourceDataProvider {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(CurrencyExtendedDataV1 {
-                display_names: ZeroMap::from_iter(
+                categorized_display_names: ZeroMap::from_iter(
                     [
-                        (
-                            CurrencyDisplayNameCount::PluralRules(PluralCategory::Zero),
-                            currency.zero.as_deref(),
-                        ),
-                        (
-                            CurrencyDisplayNameCount::PluralRules(PluralCategory::One),
-                            currency.one.as_deref(),
-                        ),
-                        (
-                            CurrencyDisplayNameCount::PluralRules(PluralCategory::Two),
-                            currency.two.as_deref(),
-                        ),
-                        (
-                            CurrencyDisplayNameCount::PluralRules(PluralCategory::Few),
-                            currency.few.as_deref(),
-                        ),
-                        (
-                            CurrencyDisplayNameCount::PluralRules(PluralCategory::Many),
-                            currency.many.as_deref(),
-                        ),
-                        (
-                            CurrencyDisplayNameCount::PluralRules(PluralCategory::Other),
-                            currency.other.as_deref(),
-                        ),
-                        (
-                            CurrencyDisplayNameCount::DisplayName,
-                            currency.display_name.as_deref(),
-                        ),
+                        (PluralCategory::Zero, currency.zero.as_deref()),
+                        (PluralCategory::One, currency.one.as_deref()),
+                        (PluralCategory::Two, currency.two.as_deref()),
+                        (PluralCategory::Few, currency.few.as_deref()),
+                        (PluralCategory::Many, currency.many.as_deref()),
+                        (PluralCategory::Other, currency.other.as_deref()),
                     ]
                     .into_iter()
                     .filter_map(|(count, pattern)| match (count, pattern) {
-                        (CurrencyDisplayNameCount::DisplayName, Some(p)) => Some((count, p)),
-                        (CurrencyDisplayNameCount::PluralRules(PluralCategory::Other), Some(p)) => {
-                            Some((count, p))
-                        }
+                        (PluralCategory::Other, Some(p)) => Some((count, p)),
                         // As per [Unicode TR 35](https://unicode.org/reports/tr35/tr35-numbers.html#Currencies)
                         //      If the pattern is not found for the associated `Count`, fall back to the `Count::Other` pattern.
                         //      Therefore, we filter out any patterns that are the same as the `Count::Other` pattern.
                         (_, p) if p == currency.other.as_deref() => None,
                         _ => Some((count, pattern?)),
                     }),
+                ),
+                display_name: Cow::Owned(
+                    currency
+                        .display_name
+                        .clone()
+                        .ok_or(DataErrorKind::InvalidRequest.into_error())?
+                        .to_owned(),
                 ),
             }),
         })
@@ -120,43 +103,23 @@ fn test_basic() {
         })
         .unwrap()
         .payload;
-    let display_names = en.get().to_owned().display_names;
+    let extended_en = en.get().to_owned();
+    let categorized_display_names = extended_en.categorized_display_names;
+    assert_eq!(categorized_display_names.get(&PluralCategory::Zero), None);
     assert_eq!(
-        display_names.get(&CurrencyDisplayNameCount::PluralRules(PluralCategory::Zero)),
-        None
-    );
-    assert_eq!(
-        display_names
-            .get(&CurrencyDisplayNameCount::PluralRules(PluralCategory::One))
-            .unwrap(),
+        categorized_display_names.get(&PluralCategory::One).unwrap(),
         "US dollar"
     );
+    assert_eq!(categorized_display_names.get(&PluralCategory::Two), None);
+    assert_eq!(categorized_display_names.get(&PluralCategory::Few), None);
+    assert_eq!(categorized_display_names.get(&PluralCategory::Many), None);
     assert_eq!(
-        display_names.get(&CurrencyDisplayNameCount::PluralRules(PluralCategory::Two)),
-        None
-    );
-    assert_eq!(
-        display_names.get(&CurrencyDisplayNameCount::PluralRules(PluralCategory::Few)),
-        None
-    );
-    assert_eq!(
-        display_names.get(&CurrencyDisplayNameCount::PluralRules(PluralCategory::Many)),
-        None
-    );
-    assert_eq!(
-        display_names
-            .get(&CurrencyDisplayNameCount::PluralRules(
-                PluralCategory::Other
-            ))
+        categorized_display_names
+            .get(&PluralCategory::Other)
             .unwrap(),
         "US dollars"
     );
-    assert_eq!(
-        display_names
-            .get(&CurrencyDisplayNameCount::DisplayName)
-            .unwrap(),
-        "US Dollar"
-    );
+    assert_eq!(extended_en.display_name, "US Dollar");
 
     let fr: DataPayload<CurrencyExtendedDataV1Marker> = provider
         .load(DataRequest {
@@ -169,39 +132,21 @@ fn test_basic() {
         .unwrap()
         .payload;
 
-    let display_names = fr.get().to_owned().display_names;
+    let extended_fr = fr.get().to_owned();
+    let categorized_display_names = extended_fr.categorized_display_names;
+    assert_eq!(categorized_display_names.get(&PluralCategory::Zero), None);
     assert_eq!(
-        display_names.get(&CurrencyDisplayNameCount::PluralRules(PluralCategory::Zero)),
-        None
-    );
-    assert_eq!(
-        display_names.get(&CurrencyDisplayNameCount::PluralRules(PluralCategory::One)),
+        categorized_display_names.get(&PluralCategory::One),
         Some("dollar des États-Unis")
     );
+    assert_eq!(categorized_display_names.get(&PluralCategory::Two), None);
+    assert_eq!(categorized_display_names.get(&PluralCategory::Few), None);
+    assert_eq!(categorized_display_names.get(&PluralCategory::Many), None);
     assert_eq!(
-        display_names.get(&CurrencyDisplayNameCount::PluralRules(PluralCategory::Two)),
-        None
-    );
-    assert_eq!(
-        display_names.get(&CurrencyDisplayNameCount::PluralRules(PluralCategory::Few)),
-        None
-    );
-    assert_eq!(
-        display_names.get(&CurrencyDisplayNameCount::PluralRules(PluralCategory::Many)),
-        None
-    );
-    assert_eq!(
-        display_names
-            .get(&CurrencyDisplayNameCount::PluralRules(
-                PluralCategory::Other
-            ))
+        categorized_display_names
+            .get(&PluralCategory::Other)
             .unwrap(),
         "dollars des États-Unis"
     );
-    assert_eq!(
-        display_names
-            .get(&CurrencyDisplayNameCount::DisplayName)
-            .unwrap(),
-        "dollar des États-Unis"
-    );
+    assert_eq!(extended_fr.display_name, "dollar des États-Unis");
 }

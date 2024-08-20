@@ -9,9 +9,10 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use alloc::borrow::Cow;
 use icu_plurals::PluralCategory;
 use icu_provider::prelude::*;
-use zerovec::{maps::ZeroMapKV, ule::AsULE, ZeroMap, ZeroSlice, ZeroVec};
+use zerovec::ZeroMap;
 
 #[cfg(feature = "compiled_data")]
 /// Baked data
@@ -47,30 +48,8 @@ pub struct CurrencyExtendedDataV1<'data> {
     ///    Regards to the [Unicode Report TR35](https://unicode.org/reports/tr35/tr35-numbers.html#Currencies),
     ///    If no matching for specific count, the `other` count will be used.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub display_names: ZeroMap<'data, CurrencyDisplayNameCount, str>,
-}
+    pub categorized_display_names: ZeroMap<'data, PluralCategory, str>,
 
-/// Represents the display name count and the absolute display name.
-#[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::dimension::provider::extended_currency)
-)]
-pub enum CurrencyDisplayNameCount {
-    PluralRules(PluralCategory),
-
-    /// The display name for the currency.
-    DisplayName,
-}
-
-impl<'a> ZeroMapKV<'a> for CurrencyDisplayNameCount {
-    type Container = ZeroVec<'a, CurrencyDisplayNameCount>;
-
-    type Slice = ZeroSlice<CurrencyDisplayNameCount>;
-
-    type GetType = <CurrencyDisplayNameCount as AsULE>::ULE;
-
-    type OwnedType = CurrencyDisplayNameCount;
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub display_name: Cow<'data, str>,
 }
