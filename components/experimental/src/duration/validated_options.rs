@@ -422,3 +422,20 @@ impl Unit {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_fractional_digit_clamp() {
+        let options = DurationFormatterOptions {
+            fractional_digits: FractionalDigits::Fixed(10),
+            ..Default::default()
+        };
+
+        let validated = ValidatedDurationFormatterOptions::validate(options).unwrap();
+
+        assert_eq!(validated.fractional_digits, FractionalDigits::Fixed(9));
+    }
+}
