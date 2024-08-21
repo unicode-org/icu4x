@@ -10,10 +10,8 @@ use std::collections::HashSet;
 
 use icu::experimental::dimension::provider::currency_patterns::*;
 use icu::experimental::relativetime::provider::PluralPattern;
-use icu::plurals::PluralCategory;
 use icu_provider::prelude::*;
 use icu_provider::DataProvider;
-use writeable::assert_writeable_eq;
 
 impl DataProvider<CurrencyPatternsDataV1Marker> for SourceDataProvider {
     fn load(
@@ -91,6 +89,7 @@ impl IterableDataProviderCached<CurrencyPatternsDataV1Marker> for SourceDataProv
 #[test]
 fn test_basic() {
     use icu::locale::langid;
+    use icu::plurals::PluralCategory;
     use writeable::assert_writeable_eq;
 
     let provider = SourceDataProvider::new_testing();
