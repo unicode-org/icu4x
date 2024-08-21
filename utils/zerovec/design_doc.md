@@ -174,7 +174,7 @@ where
     Self: Sized + Copy + 'static, 
 {
     // Required
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError>;
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError>;
 
     // Some automatically provided methods elided
 }
@@ -214,7 +214,7 @@ Unsized types use [`VarULE`]. Unlike sized types, there is no `AsVarULE` type fo
 
 ```rust
 pub unsafe trait VarULE: 'static {
-    fn validate_byte_slice(_bytes: &[u8]) -> Result<(), ZeroVecError>;
+    fn validate_byte_slice(_bytes: &[u8]) -> Result<(), UleError>;
     unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self;
 
     // Some automatically provided methods elided

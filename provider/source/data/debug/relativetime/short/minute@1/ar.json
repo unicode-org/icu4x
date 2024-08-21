@@ -3,115 +3,37 @@
     "0": "هذه الدقيقة"
   },
   "past": {
-    "zero": [
-      {
-        "Literal": "قبل "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " دقيقة"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0000قبل دقيقة واحدة"
+      ],
+      [
+        "Two",
+        "\u0000قبل دقيقتين"
+      ],
+      [
+        "Few",
+        "\bقبل  دقائق"
+      ]
     ],
-    "one": [
-      {
-        "Literal": "قبل دقيقة واحدة"
-      }
-    ],
-    "two": [
-      {
-        "Literal": "قبل دقيقتين"
-      }
-    ],
-    "few": [
-      {
-        "Literal": "قبل "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " دقائق"
-      }
-    ],
-    "many": [
-      {
-        "Literal": "قبل "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " دقيقة"
-      }
-    ],
-    "other": [
-      {
-        "Literal": "قبل "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " دقيقة"
-      }
-    ]
+    "other": "\bقبل  دقيقة"
   },
   "future": {
-    "zero": [
-      {
-        "Literal": "خلال "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " دقيقة"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0000خلال دقيقة واحدة"
+      ],
+      [
+        "Two",
+        "\u0000خلال دقيقتين"
+      ],
+      [
+        "Few",
+        "\nخلال  دقائق"
+      ]
     ],
-    "one": [
-      {
-        "Literal": "خلال دقيقة واحدة"
-      }
-    ],
-    "two": [
-      {
-        "Literal": "خلال دقيقتين"
-      }
-    ],
-    "few": [
-      {
-        "Literal": "خلال "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " دقائق"
-      }
-    ],
-    "many": [
-      {
-        "Literal": "خلال "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " دقيقة"
-      }
-    ],
-    "other": [
-      {
-        "Literal": "خلال "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " دقيقة"
-      }
-    ]
+    "other": "\nخلال  دقيقة"
   }
 }

@@ -5,47 +5,11 @@
     "1": "পরের বছর"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " বছর পূর্বে"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " বছর পূর্বে"
-      }
-    ]
+    "specials": [],
+    "other": "\u0001 বছর পূর্বে"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " বছরে"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " বছরে"
-      }
-    ]
+    "specials": [],
+    "other": "\u0001 বছরে"
   }
 }

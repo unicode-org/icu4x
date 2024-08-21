@@ -4,8 +4,8 @@
 /// `icu`'s `_unstable` constructors.
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
-/// * 94B for the lookup data structure (14 data identifiers)
-/// * 617B[^1] for the actual data (9 unique structs)
+/// * 91B for the lookup data structure (13 data identifiers)
+/// * 473B[^1] for the actual data (8 unique structs)
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
 #[doc(hidden)]
@@ -16,65 +16,7 @@ macro_rules! __impl_currency_patterns_data_v1_marker {
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
         #[clippy::msrv = "1.70"]
         impl $provider {
-            const DATA_CURRENCY_PATTERNS_DATA_V1_MARKER: icu_provider_baked::zerotrie::Data<icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1Marker> = icu_provider_baked::zerotrie::Data {
-                trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xCBbcejmrstuvz\x03\x06\x0B\r\x0F\x11\x1A\x1C\x1F\"lo\x80eb\x81s-GT\x81a\x82y\x83o\x84\xC3diw\x01\x02\x85\x86\x81o\x83nd\x87ec\x88h\x82-SG\x87" },
-                values: &[
-                    icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1 {
-                        unit_patterns: unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\x01\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x07\0\x0E\0{0} {1}{0} {1}{1} {0}") })
-                        },
-                    },
-                    icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1 {
-                        unit_patterns: unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x07\0{0} {1}{1} {0}") })
-                        },
-                    },
-                    icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1 {
-                        unit_patterns: unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0}{1}") })
-                        },
-                    },
-                    icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1 {
-                        unit_patterns: unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{1} {0}") })
-                        },
-                    },
-                    icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1 {
-                        unit_patterns: unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x03\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x07\0\x0E\0{0} {1}{0} {1}{0} de {1}") })
-                        },
-                    },
-                    icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1 {
-                        unit_patterns: unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::VarZeroVec::new())
-                        },
-                    },
-                    icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1 {
-                        unit_patterns: unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x07\0{0} {1}{1}{0}") })
-                        },
-                    },
-                    icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1 {
-                        unit_patterns: unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0{0} {1}") })
-                        },
-                    },
-                    icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1 {
-                        unit_patterns: unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x07\0{0} {1}{0}\xE2\x80\xAF{1}") })
-                        },
-                    },
-                ],
-            };
+            const DATA_CURRENCY_PATTERNS_DATA_V1_MARKER: icu_provider_baked::zerotrie::Data<icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1Marker> = icu_provider_baked::zerotrie::Data { trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xCBbcejmrstuvz\x03\x06\x0B\r\x0F\x11\x17\x19\x1C\x1Flo\x80eb\x81s-GT\x81a\x82y\x83o\x84\xC2iw\x01\x85\x81o\x83nd\x86ec\x87h\x82-SG\x86" }, values: &[icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1 { patterns: icu::experimental::relativetime::provider::PluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x04\0\0\x02\x05 \x01\x02\x05 ") }, other: alloc::borrow::Cow::Borrowed("\u{3}\u{4} "), _phantom: ::core::marker::PhantomData } }, icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1 { patterns: icu::experimental::relativetime::provider::PluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x02\x05 ") }, other: alloc::borrow::Cow::Borrowed("\u{3}\u{4} "), _phantom: ::core::marker::PhantomData } }, icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1 { patterns: icu::experimental::relativetime::provider::PluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{2}\u{3}"), _phantom: ::core::marker::PhantomData } }, icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1 { patterns: icu::experimental::relativetime::provider::PluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{3}\u{4} "), _phantom: ::core::marker::PhantomData } }, icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1 { patterns: icu::experimental::relativetime::provider::PluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x04\0\x01\x02\x05 \x03\x02\x05 ") }, other: alloc::borrow::Cow::Borrowed("\u{2}\u{b} de "), _phantom: ::core::marker::PhantomData } }, icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1 { patterns: icu::experimental::relativetime::provider::PluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x02\x05 ") }, other: alloc::borrow::Cow::Borrowed("\u{3}\u{2}"), _phantom: ::core::marker::PhantomData } }, icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1 { patterns: icu::experimental::relativetime::provider::PluralPattern { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{2}\u{5} "), _phantom: ::core::marker::PhantomData } }, icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1 { patterns: icu::experimental::relativetime::provider::PluralPattern { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x02\x05 ") }, other: alloc::borrow::Cow::Borrowed("\u{2}\t\u{202f}"), _phantom: ::core::marker::PhantomData } }] };
         }
         #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1Marker> for $provider {

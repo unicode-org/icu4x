@@ -7,7 +7,7 @@ use crate::fields::FieldLength;
 use core::{cmp::Ordering, convert::TryFrom};
 use displaydoc::Display;
 use icu_provider::prelude::*;
-use zerovec::ule::{AsULE, ZeroVecError, ULE};
+use zerovec::ule::{AsULE, UleError, ULE};
 
 /// An error relating to the field symbol for a date pattern field.
 #[derive(Display, Debug, PartialEq, Copy, Clone)]
@@ -198,10 +198,10 @@ impl AsULE for FieldSymbol {
 
 impl FieldSymbolULE {
     #[inline]
-    pub(crate) fn validate_byte(byte: u8) -> Result<(), ZeroVecError> {
+    pub(crate) fn validate_byte(byte: u8) -> Result<(), UleError> {
         FieldSymbol::from_idx(byte)
             .map(|_| ())
-            .map_err(|_| ZeroVecError::parse::<FieldSymbol>())
+            .map_err(|_| UleError::parse::<FieldSymbol>())
     }
 }
 
@@ -215,7 +215,7 @@ impl FieldSymbolULE {
 // 5. All other methods must be left with their default impl.
 // 6. Byte equality is semantic equality.
 unsafe impl ULE for FieldSymbolULE {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
         for byte in bytes {
             Self::validate_byte(*byte)?;
         }

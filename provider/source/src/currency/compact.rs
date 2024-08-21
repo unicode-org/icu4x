@@ -8,8 +8,8 @@ use crate::SourceDataProvider;
 
 use std::collections::HashSet;
 
-use icu::experimental::dimension::provider::count::Count;
 use icu::experimental::dimension::provider::currency_compact::*;
+use icu::plurals::PluralCategory;
 use icu_provider::prelude::*;
 use icu_provider::DataProvider;
 use zerovec::ZeroMap;
@@ -64,12 +64,12 @@ impl DataProvider<ShortCurrencyCompactV1Marker> for SourceDataProvider {
             };
 
             let count = match count_str {
-                "zero" => Count::Zero,
-                "one" => Count::One,
-                "two" => Count::Two,
-                "few" => Count::Few,
-                "many" => Count::Many,
-                "other" => Count::Other,
+                "zero" => PluralCategory::Zero,
+                "one" => PluralCategory::One,
+                "two" => PluralCategory::Two,
+                "few" => PluralCategory::Few,
+                "many" => PluralCategory::Many,
+                "other" => PluralCategory::Other,
                 _ => return Err(DataErrorKind::IdentifierNotFound.into_error()),
             };
 
@@ -130,11 +130,11 @@ fn test_basic() {
     let en_patterns = &en.payload.get().to_owned().compact_patterns;
 
     assert_eq!(
-        en_patterns.get(&(3, CompactCount::Standard(Count::One))),
+        en_patterns.get(&(3, CompactCount::Standard(PluralCategory::One))),
         Some("¤0K")
     );
     assert_eq!(
-        en_patterns.get(&(3, CompactCount::AlphaNextToNumber(Count::One))),
+        en_patterns.get(&(3, CompactCount::AlphaNextToNumber(PluralCategory::One))),
         Some("¤ 0K")
     );
 
@@ -148,11 +148,11 @@ fn test_basic() {
     let ja_patterns = &ja.payload.get().to_owned().compact_patterns;
 
     assert_eq!(
-        ja_patterns.get(&(4, CompactCount::Standard(Count::Other))),
+        ja_patterns.get(&(4, CompactCount::Standard(PluralCategory::Other))),
         Some("¤0万")
     );
     assert_eq!(
-        ja_patterns.get(&(4, CompactCount::AlphaNextToNumber(Count::Other))),
+        ja_patterns.get(&(4, CompactCount::AlphaNextToNumber(PluralCategory::Other))),
         Some("¤\u{a0}0万")
     );
 }

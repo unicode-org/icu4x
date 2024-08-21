@@ -5,47 +5,11 @@
     "1": "পরের মাস"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " মাস আগে"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " মাস আগে"
-      }
-    ]
+    "specials": [],
+    "other": "\u0001 মাস আগে"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " মাসে"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " মাসে"
-      }
-    ]
+    "specials": [],
+    "other": "\u0001 মাসে"
   }
 }

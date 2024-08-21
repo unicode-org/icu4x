@@ -3,53 +3,11 @@
     "0": "sa minutong ito"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " minuto ang nakalipas"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " minuto ang nakalipas"
-      }
-    ]
+    "specials": [],
+    "other": "\u0001 minuto ang nakalipas"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "sa "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " minuto"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "sa "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " minuto"
-      }
-    ]
+    "specials": [],
+    "other": "\u0004sa  minuto"
   }
 }

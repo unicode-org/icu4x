@@ -3,53 +3,11 @@
     "0": "ngayon"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " segundo ang nakalipas"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " segundo ang nakalipas"
-      }
-    ]
+    "specials": [],
+    "other": "\u0001 segundo ang nakalipas"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "sa "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " segundo"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "sa "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " segundo"
-      }
-    ]
+    "specials": [],
+    "other": "\u0004sa  segundo"
   }
 }

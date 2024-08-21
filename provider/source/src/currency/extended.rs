@@ -40,7 +40,17 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::SourceDataProvider {
                         (Count::Few, currency.few.as_deref()),
                         (Count::Many, currency.many.as_deref()),
                         (Count::Other, currency.other.as_deref()),
-                        (Count::DisplayName, currency.display_name.as_deref()),
+                        (
+                            Count::DisplayName,
+                            Some(
+                                currency
+                                    .display_name
+                                    .as_deref()
+                                    .or(currency.one.as_deref())
+                                    .or(currency.other.as_deref())
+                                    .unwrap(),
+                            ),
+                        ),
                     ]
                     .into_iter()
                     .filter_map(|(count, pattern)| match (count, pattern) {
@@ -70,8 +80,16 @@ impl crate::IterableDataProviderCached<CurrencyExtendedDataV1Marker> for SourceD
                 .read_and_parse(&locale, "currencies.json")?;
 
             let currencies = &currencies_resource.main.value.numbers.currencies;
-            for key in currencies.keys() {
-                if let Ok(attributes) = DataMarkerAttributes::try_from_string(key.clone()) {
+            for (currency, patterns) in currencies {
+                if patterns
+                    .display_name
+                    .as_ref()
+                    .or(patterns.other.as_ref())
+                    .is_none()
+                {
+                    continue;
+                }
+                if let Ok(attributes) = DataMarkerAttributes::try_from_string(currency.clone()) {
                     result.insert(DataIdentifierCow::from_owned(attributes, locale.clone()));
                 }
             }

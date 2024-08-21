@@ -3,59 +3,11 @@
     "0": "ahora"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "hace "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " seg."
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "hace "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " seg."
-      }
-    ]
+    "specials": [],
+    "other": "\u0006hace  seg."
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "dentro de "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " seg."
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "dentro de "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " seg."
-      }
-    ]
+    "specials": [],
+    "other": "\u000bdentro de  seg."
   }
 }

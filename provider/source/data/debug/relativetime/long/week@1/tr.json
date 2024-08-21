@@ -5,47 +5,11 @@
     "1": "gelecek hafta"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " hafta önce"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " hafta önce"
-      }
-    ]
+    "specials": [],
+    "other": "\u0001 hafta önce"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " hafta sonra"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " hafta sonra"
-      }
-    ]
+    "specials": [],
+    "other": "\u0001 hafta sonra"
   }
 }

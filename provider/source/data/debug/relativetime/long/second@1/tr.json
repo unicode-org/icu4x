@@ -3,47 +3,11 @@
     "0": "şimdi"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " saniye önce"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " saniye önce"
-      }
-    ]
+    "specials": [],
+    "other": "\u0001 saniye önce"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " saniye sonra"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " saniye sonra"
-      }
-    ]
+    "specials": [],
+    "other": "\u0001 saniye sonra"
   }
 }

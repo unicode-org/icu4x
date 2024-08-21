@@ -13,7 +13,7 @@ use crate::ule::*;
 //  6. [T; N] byte equality is semantic equality since T is ULE
 unsafe impl<T: ULE, const N: usize> ULE for [T; N] {
     #[inline]
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
         // a slice of multiple Selfs is equivalent to just a larger slice of Ts
         T::validate_byte_slice(bytes)
     }
@@ -43,14 +43,14 @@ unsafe impl<T: EqULE, const N: usize> EqULE for [T; N] {}
 //  7. str byte equality is semantic equality
 unsafe impl VarULE for str {
     #[inline]
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
-        core::str::from_utf8(bytes).map_err(|_| ZeroVecError::parse::<Self>())?;
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
+        core::str::from_utf8(bytes).map_err(|_| UleError::parse::<Self>())?;
         Ok(())
     }
 
     #[inline]
-    fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, ZeroVecError> {
-        core::str::from_utf8(bytes).map_err(|_| ZeroVecError::parse::<Self>())
+    fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, UleError> {
+        core::str::from_utf8(bytes).map_err(|_| UleError::parse::<Self>())
     }
     /// Invariant: must be safe to call when called on a slice that previously
     /// succeeded with `parse_byte_slice`
@@ -91,7 +91,7 @@ where
     T: ULE,
 {
     #[inline]
-    fn validate_byte_slice(slice: &[u8]) -> Result<(), ZeroVecError> {
+    fn validate_byte_slice(slice: &[u8]) -> Result<(), UleError> {
         T::validate_byte_slice(slice)
     }
 

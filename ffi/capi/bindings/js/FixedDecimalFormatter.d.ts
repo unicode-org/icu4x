@@ -18,7 +18,7 @@ export class FixedDecimalFormatter {
 
     static createWithGroupingStrategy(provider: DataProvider, locale: Locale, groupingStrategy: FixedDecimalGroupingStrategy): FixedDecimalFormatter;
 
-    static createWithManualData(plusSignPrefix: string, plusSignSuffix: string, minusSignPrefix: string, minusSignSuffix: string, decimalSeparator: string, groupingSeparator: string, primaryGroupSize: number, secondaryGroupSize: number, minGroupSize: number, digits: Array<char>, groupingStrategy: FixedDecimalGroupingStrategy): FixedDecimalFormatter;
+    static createWithManualData(plusSignPrefix: string, plusSignSuffix: string, minusSignPrefix: string, minusSignSuffix: string, decimalSeparator: string, groupingSeparator: string, primaryGroupSize: number, secondaryGroupSize: number, minGroupSize: number, digits: Array<codepoint>, groupingStrategy: FixedDecimalGroupingStrategy): FixedDecimalFormatter;
 
     format(value: FixedDecimal): string;
 }

@@ -62,7 +62,6 @@ pub const BASIC_BUILD_DEPS: &[&str] = &[
     "syn",
     "synstructure",
     "unicode-ident",
-    "unicode-xid",
     "yoke-derive",
     "zerofrom-derive",
     "zerovec-derive",
@@ -125,20 +124,14 @@ pub const EXTRA_RYU_DEPS: &[&str] = &["ryu"];
 /// Keep in sync with Cargo.toml crates.io dependencies.
 pub const EXTRA_CAPI_DEPS: &[&str] = &[
     "diplomat-runtime",
-    "icu_capi",
     "icu_provider_adapters",
+    "ixdtf",
     "unicode-bidi",
 ];
 
 /// Build-time dependencies allowed when building `icu_capi`
 /// This may change as Diplomat evolves, but care should be taken to keep this small
-pub const EXTRA_CAPI_BUILD_DEPS: &[&str] = &[
-    "diplomat",
-    "diplomat_core",
-    "lazy_static",
-    "strck",
-    "strck_ident",
-];
+pub const EXTRA_CAPI_BUILD_DEPS: &[&str] = &["diplomat", "diplomat_core", "strck", "strck_ident"];
 
 /// Dependencies allowed when opting in to blob providers on FFI
 /// This shuld rarely change
@@ -155,25 +148,18 @@ pub const EXTRA_FS_DEPS: &[&str] = &["icu_provider_fs", "serde-json-core"];
 /// Dependencies needed by datagen provider (not counting `log` and `zip` deps)
 /// This might change semi frequently but we should try and keep this small.
 pub const EXTRA_SOURCE_DEPS: &[&str] = &[
-    "bincode",
-    "crlify",
     "databake",
     "databake-derive",
     "elsa",
     "erased-serde",
-    "heck",
     "icu_codepointtrie_builder",
-    "icu_pattern",
     "icu_provider_adapters",
-    "icu_provider_baked",
     "icu_provider_registry",
     "itertools",
     "itoa",
     "matrixmultiply",
     "ndarray",
     "num-complex",
-    "num-integer",
-    "num-traits",
     "rawpointer",
     "regex-syntax",
     "ryu",
@@ -186,12 +172,11 @@ pub const EXTRA_SOURCE_DEPS: &[&str] = &[
 
 /// Dependencies needed by datagen (not counting `log` and `rayon` deps)
 /// This might change semi frequently but we should try and keep this small.
-pub const EXTRA_DATAGEN_DEPS: &[&str] = &[
+pub const EXTRA_EXPORT_DEPS: &[&str] = &[
     "cobs",
     "databake",
     "databake-derive",
     "erased-serde",
-    "icu_provider_registry",
     "postcard",
 ];
 
@@ -204,29 +189,20 @@ pub const EXTRA_LOGGING_DEPS: &[&str] = &["cfg-if", "log"];
 /// Dependencies needed by the `zip` crate
 /// This should rarely change, and if it does consider toggling features until it doesn't
 pub const EXTRA_ZIP_DEPS: &[&str] = &[
-    "adler",
+    "adler2",
     "byteorder",
-    "cfg-if",
-    "crc32fast",
     "crc32fast",
     "flate2",
     "miniz_oxide",
-    "thiserror",
-    "thiserror-impl",
     "zip",
 ];
 
 /// Dependencies needed by the `rayon` crate
 /// This should rarely change, and if it does consider toggling features until it doesn't
 pub const EXTRA_RAYON_DEPS: &[&str] = &[
-    "crossbeam-channel",
     "crossbeam-deque",
     "crossbeam-epoch",
     "crossbeam-utils",
-    "libc",
-    "memoffset",
-    "num_cpus",
     "rayon",
     "rayon-core",
-    "scopeguard",
 ];

@@ -22,7 +22,6 @@ mod plain;
 mod slices;
 
 pub mod tuple;
-pub use super::ZeroVecError;
 pub use chars::CharULE;
 pub use encode::{encode_varule_to_box, EncodeAsVarULE};
 pub use multi::MultiFieldsULE;
@@ -33,7 +32,7 @@ pub use plain::RawBytesULE;
 use alloc::alloc::Layout;
 use alloc::borrow::ToOwned;
 use alloc::boxed::Box;
-use core::{mem, slice};
+use core::{any, fmt, mem, slice};
 
 /// Fixed-width, byte-aligned data that can be cast to and from a little-endian byte slice.
 ///
@@ -83,8 +82,8 @@ where
     ///
     /// If `Self` is not well-defined for all possible bit values, the bytes should be validated.
     /// If the bytes can be transmuted, *in their entirety*, to a valid slice of `Self`, then `Ok`
-    /// should be returned; otherwise, `Self::Error` should be returned.
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError>;
+    /// should be returned; otherwise, `Err` should be returned.
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError>;
 
     /// Parses a byte slice, `&[u8]`, and return it as `&[Self]` with the same lifetime.
     ///
@@ -96,7 +95,7 @@ where
     ///
     /// Note: The following equality should hold: `bytes.len() % size_of::<Self>() == 0`. This
     /// means that the returned slice can span the entire byte slice.
-    fn parse_byte_slice(bytes: &[u8]) -> Result<&[Self], ZeroVecError> {
+    fn parse_byte_slice(bytes: &[u8]) -> Result<&[Self], UleError> {
         Self::validate_byte_slice(bytes)?;
         debug_assert_eq!(bytes.len() % mem::size_of::<Self>(), 0);
         Ok(unsafe { Self::from_byte_slice_unchecked(bytes) })
@@ -296,7 +295,7 @@ pub unsafe trait VarULE: 'static {
     /// If `Self` is not well-defined for all possible bit values, the bytes should be validated.
     /// If the bytes can be transmuted, *in their entirety*, to a valid `&Self`, then `Ok` should
     /// be returned; otherwise, `Self::Error` should be returned.
-    fn validate_byte_slice(_bytes: &[u8]) -> Result<(), ZeroVecError>;
+    fn validate_byte_slice(_bytes: &[u8]) -> Result<(), UleError>;
 
     /// Parses a byte slice, `&[u8]`, and return it as `&Self` with the same lifetime.
     ///
@@ -309,7 +308,7 @@ pub unsafe trait VarULE: 'static {
     /// Note: The following equality should hold: `size_of_val(result) == size_of_val(bytes)`,
     /// where `result` is the successful return value of the method. This means that the return
     /// value spans the entire byte slice.
-    fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, ZeroVecError> {
+    fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, UleError> {
         Self::validate_byte_slice(bytes)?;
         let result = unsafe { Self::from_byte_slice_unchecked(bytes) };
         debug_assert_eq!(mem::size_of_val(result), mem::size_of_val(bytes));
@@ -390,3 +389,56 @@ pub use zerovec_derive::ULE;
 /// a custom [`VarULE`] type.
 #[cfg(feature = "derive")]
 pub use zerovec_derive::VarULE;
+
+/// An error type to be used for decoding slices of ULE types
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum UleError {
+    /// Attempted to parse a buffer into a slice of the given ULE type but its
+    /// length was not compatible.
+    ///
+    /// Typically created by a [`ULE`] impl via [`UleError::length()`].
+    ///
+    /// [`ULE`]: crate::ule::ULE
+    InvalidLength { ty: &'static str, len: usize },
+    /// The byte sequence provided for `ty` failed to parse correctly in the
+    /// given ULE type.
+    ///
+    /// Typically created by a [`ULE`] impl via [`UleError::parse()`].
+    ///
+    /// [`ULE`]: crate::ule::ULE
+    ParseError { ty: &'static str },
+}
+
+impl fmt::Display for UleError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
+        match *self {
+            UleError::InvalidLength { ty, len } => {
+                write!(f, "Invalid length {len} for slice of type {ty}")
+            }
+            UleError::ParseError { ty } => {
+                write!(f, "Could not parse bytes to slice of type {ty}")
+            }
+        }
+    }
+}
+
+impl UleError {
+    /// Construct a parse error for the given type
+    pub fn parse<T: ?Sized + 'static>() -> UleError {
+        UleError::ParseError {
+            ty: any::type_name::<T>(),
+        }
+    }
+
+    /// Construct an "invalid length" error for the given type and length
+    pub fn length<T: ?Sized + 'static>(len: usize) -> UleError {
+        UleError::InvalidLength {
+            ty: any::type_name::<T>(),
+            len,
+        }
+    }
+}
+
+#[cfg(feature = "std")]
+impl ::std::error::Error for UleError {}

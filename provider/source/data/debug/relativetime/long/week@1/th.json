@@ -5,36 +5,11 @@
     "1": "สัปดาห์หน้า"
   },
   "past": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " สัปดาห์ที่ผ่านมา"
-      }
-    ]
+    "specials": [],
+    "other": "\u0001 สัปดาห์ที่ผ่านมา"
   },
   "future": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "ในอีก "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " สัปดาห์"
-      }
-    ]
+    "specials": [],
+    "other": "\u0011ในอีก  สัปดาห์"
   }
 }

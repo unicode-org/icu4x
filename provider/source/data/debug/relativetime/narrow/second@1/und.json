@@ -3,39 +3,11 @@
     "0": "now"
   },
   "past": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "-"
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " s"
-      }
-    ]
+    "specials": [],
+    "other": "\u0002- s"
   },
   "future": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Literal": "+"
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " s"
-      }
-    ]
+    "specials": [],
+    "other": "\u0002+ s"
   }
 }

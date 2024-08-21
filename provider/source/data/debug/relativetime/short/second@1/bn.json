@@ -3,47 +3,11 @@
     "0": "এখন"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " সেকেন্ড পূর্বে"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " সেকেন্ড পূর্বে"
-      }
-    ]
+    "specials": [],
+    "other": "\u0001 সেকেন্ড পূর্বে"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " সেকেন্ডে"
-      }
-    ],
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": [
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " সেকেন্ডে"
-      }
-    ]
+    "specials": [],
+    "other": "\u0001 সেকেন্ডে"
   }
 }

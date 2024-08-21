@@ -9,7 +9,7 @@ use core::{
 };
 use icu_provider::prelude::*;
 use zerovec::{
-    ule::{tuple::Tuple2ULE, AsULE, ZeroVecError, ULE},
+    ule::{tuple::Tuple2ULE, AsULE, UleError, ULE},
     {VarZeroVec, ZeroVec},
 };
 
@@ -297,9 +297,9 @@ pub(crate) struct AndOrPolarityOperandULE(u8);
 //  5 The other ULE methods use the default impl.
 //  6. AndOrPolarityOperandULE byte equality is semantic equality.
 unsafe impl ULE for AndOrPolarityOperandULE {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
         for byte in bytes {
-            Operand::new_from_u8(byte & 0b0011_1111).ok_or_else(ZeroVecError::parse::<Self>)?;
+            Operand::new_from_u8(byte & 0b0011_1111).ok_or_else(UleError::parse::<Self>)?;
         }
         Ok(())
     }

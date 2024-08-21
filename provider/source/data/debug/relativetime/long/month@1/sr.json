@@ -5,79 +5,29 @@
     "1": "следећег месеца"
   },
   "past": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "пре "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " месеца"
-      }
+    "specials": [
+      [
+        "One",
+        "\bпре  месеца"
+      ],
+      [
+        "Few",
+        "\bпре  месеца"
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "пре "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " месеца"
-      }
-    ],
-    "many": null,
-    "other": [
-      {
-        "Literal": "пре "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " месеци"
-      }
-    ]
+    "other": "\bпре  месеци"
   },
   "future": {
-    "zero": null,
-    "one": [
-      {
-        "Literal": "за "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " месец"
-      }
+    "specials": [
+      [
+        "One",
+        "\u0006за  месец"
+      ],
+      [
+        "Few",
+        "\u0006за  месеца"
+      ]
     ],
-    "two": null,
-    "few": [
-      {
-        "Literal": "за "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " месеца"
-      }
-    ],
-    "many": null,
-    "other": [
-      {
-        "Literal": "за "
-      },
-      {
-        "Placeholder": "Singleton"
-      },
-      {
-        "Literal": " месеци"
-      }
-    ]
+    "other": "\u0006за  месеци"
   }
 }
