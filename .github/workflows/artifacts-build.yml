@@ -579,9 +579,11 @@ jobs:
           mkdir website
           gsutil -m cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/* website || true
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@a753861a5debcf57bf8b404356158c8e1e33150c # v2.0.0
+        uses: actions/upload-pages-artifact@v3.0.1 # v3.0.1
         with:
           path: 'website'
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@f27bcc15848fdcdcc02f01754eb838e44bcf389b # v1.2.9
+        uses: actions/deploy-pages@v4.0.5 # v4.0.5
+        with:
+          timeout: "900000" # 15 minutes
