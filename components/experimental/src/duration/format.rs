@@ -608,9 +608,12 @@ impl Writeable for FormattedDuration<'_> {
     }
 }
 
+writeable::impl_display_with_writeable!(FormattedDuration<'_>);
+
 #[cfg(test)]
 mod tests {
     use icu_locale::locale;
+    use writeable::assert_writeable_parts_eq;
 
     use super::*;
     use crate::duration::{formatter::ValidatedDurationFormatterOptions, DurationSign};
@@ -670,6 +673,53 @@ mod tests {
         assert_eq!(
             formatted.write_to_string().into_owned(),
             "-0 years, 2 months, 3 weeks, 12 hours, 1 minute, 5.13014 seconds"
+        );
+    }
+
+    #[test]
+    fn test_duration_formatter_parts() {
+        let duration = Duration {
+            sign: DurationSign::Negative,
+            years: 0,
+            months: 2,
+            weeks: 3,
+            hours: 12,
+            minutes: 1,
+            seconds: 5,
+            milliseconds: 130,
+            microseconds: 140,
+            ..Default::default()
+        };
+
+        let options = DurationFormatterOptions {
+            base: BaseStyle::Digital,
+            year_visibility: Some(FieldDisplay::Always),
+            ..Default::default()
+        };
+
+        let options = ValidatedDurationFormatterOptions::validate(options).unwrap();
+        let formatter = DurationFormatter::try_new(&locale!("en").into(), options).unwrap();
+        let formatted = formatter.format(&duration);
+        assert_writeable_parts_eq!(
+            &formatted,
+            "-0 yrs, 2 mths, 3 wks, 12:01:05.13014",
+            [
+                (0, 6, parts::YEAR),
+                (0, 6, icu_list::parts::ELEMENT),
+                (6, 8, icu_list::parts::LITERAL),
+                (8, 14, parts::MONTH),
+                (8, 14, icu_list::parts::ELEMENT),
+                (14, 16, icu_list::parts::LITERAL),
+                (16, 21, parts::WEEK),
+                (16, 21, icu_list::parts::ELEMENT),
+                (21, 23, icu_list::parts::LITERAL),
+                (23, 37, icu_list::parts::ELEMENT),
+                (23, 25, parts::HOUR),
+                (25, 26, parts::LITERAL),
+                (26, 28, parts::MINUTE),
+                (28, 29, parts::LITERAL),
+                (29, 37, parts::SECOND)
+            ]
         );
     }
 }
