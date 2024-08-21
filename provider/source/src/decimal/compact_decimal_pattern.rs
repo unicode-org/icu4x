@@ -5,11 +5,14 @@
 use crate::cldr_serde::numbers::DecimalFormat;
 use icu::experimental::compactdecimal::provider::CompactDecimalPatternDataV1;
 use icu::experimental::compactdecimal::provider::*;
+use icu::plurals::PluralCategory;
+use icu_pattern::SinglePlaceholderPattern;
 use itertools::Itertools;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use std::collections::HashMap;
+use std::str::FromStr;
 use zerovec::ule::encode_varule_to_box;
 
 /// A [`ParsedPattern`] represents a compact decimal pattern, which consists of
@@ -166,7 +169,7 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
     type Error = Cow<'static, str>;
 
     fn try_from(other: &DecimalFormat) -> Result<Self, Self::Error> {
-        let mut parsed_patterns: BTreeMap<i8, BTreeMap<Count, Option<ParsedPattern>>> =
+        let mut parsed_patterns: BTreeMap<i8, BTreeMap<PluralCategory, Option<ParsedPattern>>> =
             BTreeMap::new();
         // First ingest the CLDR mapping.
         for pattern in other.patterns.iter() {
@@ -177,22 +180,12 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
             }
             let log10_type = i8::try_from(pattern.magnitude.len() - 1)
                 .map_err(|_| format!("Too many digits in type {}", pattern.magnitude))?;
-            let count = match &*pattern.count {
-                "zero" => Count::Zero,
-                "one" => Count::One,
-                "two" => Count::Two,
-                "few" => Count::Few,
-                "many" => Count::Many,
-                "other" => Count::Other,
-                "1" => Count::Explicit1,
-                _ => {
-                    return Err(format!(
-                        "Invalid count {} in type {}",
-                        pattern.count, pattern.magnitude
-                    )
-                    .into())
-                }
-            };
+            let count = PluralCategory::get_for_cldr_string(&pattern.count).ok_or_else(|| {
+                format!(
+                    "Invalid count {} in type {}",
+                    pattern.count, pattern.magnitude
+                )
+            })?;
             let plural_map = parsed_patterns.entry(log10_type).or_default();
             plural_map
                 .insert(count, parse(&pattern.pattern)?)
@@ -208,11 +201,11 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
         }
         // Figure out which plural cases are used, and make the map dense by
         // filling out the implicit fallbacks to the 0 (noncompact) pattern.
-        let plural_cases: BTreeSet<Count> = parsed_patterns
+        let plural_cases: BTreeSet<_> = parsed_patterns
             .iter()
             .flat_map(|(_, plural_map)| plural_map.keys())
             .copied()
-            .filter(|count| count != &Count::Explicit1)
+            .filter(|count| count != &PluralCategory::Explicit1)
             .collect();
         for log10_type in 0..=parsed_patterns.iter().last().map_or(0, |(key, _)| *key) {
             for plural_case in &plural_cases {
@@ -223,7 +216,7 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
                     .or_insert(None);
             }
         }
-        let mut patterns: BTreeMap<i8, BTreeMap<Count, Pattern>> = BTreeMap::new();
+        let mut patterns: BTreeMap<i8, BTreeMap<_, _>> = BTreeMap::new();
         // Compute the exponents based on the numbers of 0s in the placeholders
         // and the type values: the exponent is 3 for type=1000, "0K", as well
         // as for type=10000, "00K", etc.
@@ -231,7 +224,7 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
         for (log10_type, parsed_plural_map) in parsed_patterns {
             let plural_map = patterns.entry(log10_type).or_default();
             let other_pattern = parsed_plural_map
-                .get(&Count::Other)
+                .get(&PluralCategory::Other)
                 .ok_or_else(|| format!("Missing other case for type 10^{log10_type}"))?
                 .clone();
             let exponent: i8;
@@ -280,7 +273,7 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
             }
             for (count, optional_pattern) in parsed_plural_map {
                 // Omit duplicates of the other case.
-                if count != Count::Other && optional_pattern == other_pattern {
+                if count != PluralCategory::Other && optional_pattern == other_pattern {
                     continue;
                 }
                 plural_map.insert(
@@ -288,24 +281,23 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
                     match optional_pattern {
                         None => Pattern {
                             exponent: 0,
-                            literal_text: std::borrow::Cow::Borrowed(""),
-                            index: 0,
+                            pattern: SinglePlaceholderPattern::from_str("")
+                                .unwrap()
+                                .take_store()
+                                .into(),
                         },
                         Some(pattern) => Pattern {
                             exponent,
-                            literal_text: pattern.literal_text,
-                            index: pattern
-                                .placeholder
-                                .map_or(Some(u8::MAX), |p| {
-                                    u8::try_from(p.index)
-                                        .ok()
-                                        .and_then(|i| (i < u8::MAX).then_some(i))
-                                })
-                                .ok_or_else(|| {
-                                    format!(
-                                        "Placeholder index is too large in type=10^{log10_type}, count={count:?}"
-                                    )
-                                })?,
+                            pattern: format!(
+                                "{}{}",
+                                char::from_u32(
+                                    pattern.placeholder.map(|p| p.index + 1).unwrap_or_default()
+                                        as u32
+                                )
+                                .unwrap(),
+                                pattern.literal_text
+                            )
+                            .into(),
                         },
                     },
                 );
@@ -315,15 +307,15 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
             .iter()
             .tuple_windows()
             .all(|((_, low), (_, high))| {
-                low.get(&Count::Other).map(|p| p.exponent)
-                    <= high.get(&Count::Other).map(|p| p.exponent)
+                low.get(&PluralCategory::Other).map(|p| p.exponent)
+                    <= high.get(&PluralCategory::Other).map(|p| p.exponent)
             })
         {
             Err(format!(
                 "Compact decimal exponents should be nondecreasing: {:?}",
                 patterns
                     .values()
-                    .map(|plural_map| plural_map.get(&Count::Other).map(|p| p.exponent))
+                    .map(|plural_map| plural_map.get(&PluralCategory::Other).map(|p| p.exponent))
                     .collect::<Vec<_>>(),
             ))?;
         }
@@ -334,10 +326,10 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
             .coalesce(
                 |(log10_low_type, low_plural_map), (log10_high_type, high_plural_map)| {
                     if low_plural_map == high_plural_map
-                        || (low_plural_map.contains_key(&Count::Explicit1)
+                        || (low_plural_map.contains_key(&PluralCategory::Explicit1)
                             && low_plural_map
                                 .iter()
-                                .filter(|(count, _)| **count != Count::Explicit1)
+                                .filter(|(count, _)| **count != PluralCategory::Explicit1)
                                 .all(|(k, v)| high_plural_map.get(k) == Some(v))
                             && high_plural_map
                                 .iter()
@@ -398,13 +390,18 @@ mod tests {
             .unwrap(),
         )
         .unwrap();
-        let cldr_42_long_french: Box<[(i8, Count, Pattern)]> = cldr_42_long_french_data
+        let cldr_42_long_french: Box<[(i8, PluralCategory, Pattern)]> = cldr_42_long_french_data
             .patterns
             .iter0()
             .flat_map(|kkv| {
                 let key0 = *kkv.key0();
-                kkv.into_iter1()
-                    .map(move |(k, v)| (key0, Count::from_unaligned(*k), Pattern::zero_from(v)))
+                kkv.into_iter1().map(move |(k, v)| {
+                    (
+                        key0,
+                        PluralCategory::from_unaligned(*k),
+                        Pattern::zero_from(v),
+                    )
+                })
             })
             .collect();
         assert_eq!(
@@ -412,38 +409,34 @@ mod tests {
             [
                 (
                     3,
-                    Count::One,
+                    PluralCategory::One,
                     Pattern {
-                        index: 0,
                         exponent: 3,
-                        literal_text: Cow::Borrowed(" millier")
+                        pattern: Cow::Borrowed("\x01 millier")
                     }
                 ),
                 (
                     3,
-                    Count::Other,
+                    PluralCategory::Other,
                     Pattern {
-                        index: 0,
                         exponent: 3,
-                        literal_text: Cow::Borrowed(" mille")
+                        pattern: Cow::Borrowed("\x01 mille")
                     }
                 ),
                 (
                     3,
-                    Count::Explicit1,
+                    PluralCategory::Explicit1,
                     Pattern {
-                        index: 255,
                         exponent: 3,
-                        literal_text: Cow::Borrowed("mille")
+                        pattern: Cow::Borrowed("\0mille")
                     }
                 ),
                 (
                     4,
-                    Count::Other,
+                    PluralCategory::Other,
                     Pattern {
-                        index: 0,
                         exponent: 3,
-                        literal_text: Cow::Borrowed(" mille")
+                        pattern: Cow::Borrowed("\x01 mille")
                     }
                 ),
             ]
@@ -467,34 +460,38 @@ mod tests {
             .unwrap(),
         )
         .unwrap();
-        let compressible_long_french: Box<[(i8, Count, Pattern)]> = compressible_long_french_data
-            .patterns
-            .iter0()
-            .flat_map(|kkv| {
-                let key0 = *kkv.key0();
-                kkv.into_iter1()
-                    .map(move |(k, v)| (key0, Count::from_unaligned(*k), Pattern::zero_from(v)))
-            })
-            .collect();
+        let compressible_long_french: Box<[(i8, PluralCategory, Pattern)]> =
+            compressible_long_french_data
+                .patterns
+                .iter0()
+                .flat_map(|kkv| {
+                    let key0 = *kkv.key0();
+                    kkv.into_iter1().map(move |(k, v)| {
+                        (
+                            key0,
+                            PluralCategory::from_unaligned(*k),
+                            Pattern::zero_from(v),
+                        )
+                    })
+                })
+                .collect();
         assert_eq!(
             compressible_long_french.as_ref(),
             [
                 (
                     3,
-                    Count::Other,
+                    PluralCategory::Other,
                     Pattern {
-                        index: 0,
                         exponent: 3,
-                        literal_text: Cow::Borrowed(" mille")
+                        pattern: Cow::Borrowed("\x01 mille")
                     }
                 ),
                 (
                     3,
-                    Count::Explicit1,
+                    PluralCategory::Explicit1,
                     Pattern {
-                        index: 255,
                         exponent: 3,
-                        literal_text: Cow::Borrowed("mille")
+                        pattern: Cow::Borrowed("\0mille")
                     }
                 ),
             ]
@@ -533,13 +530,18 @@ mod tests {
             .unwrap(),
         )
         .unwrap();
-        let spanish: Box<[(i8, Count, Pattern)]> = spanish_data
+        let spanish: Box<[(i8, PluralCategory, Pattern)]> = spanish_data
             .patterns
             .iter0()
             .flat_map(|kkv| {
                 let key0 = *kkv.key0();
-                kkv.into_iter1()
-                    .map(move |(k, v)| (key0, Count::from_unaligned(*k), Pattern::zero_from(v)))
+                kkv.into_iter1().map(move |(k, v)| {
+                    (
+                        key0,
+                        PluralCategory::from_unaligned(*k),
+                        Pattern::zero_from(v),
+                    )
+                })
             })
             .collect();
         assert_eq!(
@@ -547,29 +549,26 @@ mod tests {
             [
                 (
                     3,
-                    Count::Other,
+                    PluralCategory::Other,
                     Pattern {
-                        index: 0,
                         exponent: 3,
-                        literal_text: Cow::Borrowed(" mil")
+                        pattern: Cow::Borrowed("\x01 mil")
                     }
                 ),
                 (
                     6,
-                    Count::Other,
+                    PluralCategory::Other,
                     Pattern {
-                        index: 0,
                         exponent: 6,
-                        literal_text: Cow::Borrowed(" M")
+                        pattern: Cow::Borrowed("\x01 M")
                     }
                 ),
                 (
                     10,
-                    Count::Other,
+                    PluralCategory::Other,
                     Pattern {
-                        index: 0,
                         exponent: 9,
-                        literal_text: Cow::Borrowed(" mil M")
+                        pattern: Cow::Borrowed("\x01 mil M")
                     }
                 ),
             ]
@@ -669,19 +668,6 @@ mod tests {
         );
 
         let long_pattern = format!("thous{}nds (0)", str::repeat("a", 244));
-        let overlong_pattern = format!("thous{}nds (0)", str::repeat("a", 245));
-
-        assert_eq!(
-            CompactDecimalPatternDataV1::try_from(
-                &serde_json::from_str::<DecimalFormat>(
-                    format!(r#"{{ "1000-count-other": "{overlong_pattern}" }}"#).as_str()
-                )
-                .unwrap()
-            )
-            .err()
-            .unwrap(),
-            "Placeholder index is too large in type=10^3, count=Other"
-        );
 
         assert_eq!(
             CompactDecimalPatternDataV1::try_from(
@@ -693,10 +679,13 @@ mod tests {
             .unwrap()
             .patterns
             .get0(&3)
-            .and_then(|plural_map| plural_map.get1(&Count::Other))
+            .and_then(|plural_map| plural_map.get1(&PluralCategory::Other))
             .unwrap()
-            .index,
-            254
+            .pattern
+            .chars()
+            .next()
+            .unwrap(),
+            '\u{00ff}'
         );
     }
 }

@@ -3,69 +3,57 @@
     "3": {
       "One": {
         "exponent": 3,
-        "index": 0,
-        "literal_text": " тысяча"
+        "pattern": "\u0001 тысяча"
       },
       "Many": {
         "exponent": 3,
-        "index": 0,
-        "literal_text": " тысяч"
+        "pattern": "\u0001 тысяч"
       },
       "Other": {
         "exponent": 3,
-        "index": 0,
-        "literal_text": " тысячи"
+        "pattern": "\u0001 тысячи"
       }
     },
     "6": {
       "One": {
         "exponent": 6,
-        "index": 0,
-        "literal_text": " миллион"
+        "pattern": "\u0001 миллион"
       },
       "Many": {
         "exponent": 6,
-        "index": 0,
-        "literal_text": " миллионов"
+        "pattern": "\u0001 миллионов"
       },
       "Other": {
         "exponent": 6,
-        "index": 0,
-        "literal_text": " миллиона"
+        "pattern": "\u0001 миллиона"
       }
     },
     "9": {
       "One": {
         "exponent": 9,
-        "index": 0,
-        "literal_text": " миллиард"
+        "pattern": "\u0001 миллиард"
       },
       "Many": {
         "exponent": 9,
-        "index": 0,
-        "literal_text": " миллиардов"
+        "pattern": "\u0001 миллиардов"
       },
       "Other": {
         "exponent": 9,
-        "index": 0,
-        "literal_text": " миллиарда"
+        "pattern": "\u0001 миллиарда"
       }
     },
     "12": {
       "One": {
         "exponent": 12,
-        "index": 0,
-        "literal_text": " триллион"
+        "pattern": "\u0001 триллион"
       },
       "Many": {
         "exponent": 12,
-        "index": 0,
-        "literal_text": " триллионов"
+        "pattern": "\u0001 триллионов"
       },
       "Other": {
         "exponent": 12,
-        "index": 0,
-        "literal_text": " триллиона"
+        "pattern": "\u0001 триллиона"
       }
     }
   }

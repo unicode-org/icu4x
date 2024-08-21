@@ -66,54 +66,7 @@ pub use crate::provider::Baked;
 pub struct CompactDecimalPatternDataV1<'data> {
     /// A map keyed on log10 of the CLDR `type` attribute and the CLDR `count` attribute.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub patterns: ZeroMap2d<'data, i8, Count, PatternULE>,
-}
-
-/// A CLDR plural keyword, or the explicit value 1.
-/// See <https://www.unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules>.
-#[zerovec::make_ule(CountULE)]
-#[zerovec::derive(Debug)]
-#[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::compactdecimal::provider)
-)]
-#[repr(u8)]
-pub enum Count {
-    /// The CLDR keyword `zero`.
-    Zero = 0,
-    /// The CLDR keyword `one`.
-    One = 1,
-    /// The CLDR keyword `two`.
-    Two = 2,
-    /// The CLDR keyword `few`.
-    Few = 3,
-    /// The CLDR keyword `many`.
-    Many = 4,
-    /// The CLDR keyword `other`.
-    Other = 5,
-    /// The explicit 1 case, see <https://www.unicode.org/reports/tr35/tr35-numbers.html#Explicit_0_1_rules>.
-    Explicit1 = 6,
-    // NOTE(egg): No explicit 0, because the compact decimal pattern selection
-    // algorithm does not allow such a thing to arise.
-}
-
-impl From<PluralCategory> for Count {
-    fn from(other: PluralCategory) -> Self {
-        use PluralCategory::*;
-        match other {
-            Zero => Count::Zero,
-            One => Count::One,
-            Two => Count::Two,
-            Few => Count::Few,
-            Many => Count::Many,
-            Other => Count::Other,
-            Explicit1 => Count::Explicit1,
-            Explicit0 => Count::Zero,
-        }
-    }
+    pub patterns: ZeroMap2d<'data, i8, PluralCategory, PatternULE>,
 }
 
 /// A compact decimal pattern, representing some literal text with an optional
@@ -142,15 +95,10 @@ pub struct Pattern<'data> {
     ///   <pattern type="1000000" count="other">0 M</pattern>
     ///   <pattern type="10000000" count="other">00 M</pattern>
     pub exponent: i8,
-    /// The index in literal_text before which the placeholder is inserted;
-    /// this is 0 for insertion at the beginning, which is most common.
-    /// The value 255 indicates that the pattern does not have a placeholder,
-    /// as in French "mille" for 1000.
-    pub index: u8,
     #[cfg_attr(feature = "serde", serde(borrow))]
     /// The underlying CLDR pattern with the placeholder removed, e.g.,
     /// " M" for the pattern "000 M"
-    pub literal_text: Cow<'data, str>,
+    pub pattern: Cow<'data, str>,
 }
 pub(crate) struct ErasedCompactDecimalFormatDataV1Marker;
 

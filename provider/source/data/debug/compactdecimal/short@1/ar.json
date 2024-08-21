@@ -3,101 +3,83 @@
     "3": {
       "Few": {
         "exponent": 3,
-        "index": 0,
-        "literal_text": " آلاف"
+        "pattern": "\u0001 آلاف"
       },
       "Other": {
         "exponent": 3,
-        "index": 0,
-        "literal_text": " ألف"
+        "pattern": "\u0001 ألف"
       }
     },
     "4": {
       "Other": {
         "exponent": 3,
-        "index": 0,
-        "literal_text": " ألف"
+        "pattern": "\u0001 ألف"
       }
     },
     "6": {
       "Zero": {
         "exponent": 0,
-        "index": 0,
-        "literal_text": ""
+        "pattern": "\u0000"
       },
       "Two": {
         "exponent": 0,
-        "index": 0,
-        "literal_text": ""
+        "pattern": "\u0000"
       },
       "Few": {
         "exponent": 0,
-        "index": 0,
-        "literal_text": ""
+        "pattern": "\u0000"
       },
       "Many": {
         "exponent": 0,
-        "index": 0,
-        "literal_text": ""
+        "pattern": "\u0000"
       },
       "Other": {
         "exponent": 6,
-        "index": 0,
-        "literal_text": " مليون"
+        "pattern": "\u0001 مليون"
       }
     },
     "9": {
       "Zero": {
         "exponent": 0,
-        "index": 0,
-        "literal_text": ""
+        "pattern": "\u0000"
       },
       "Two": {
         "exponent": 0,
-        "index": 0,
-        "literal_text": ""
+        "pattern": "\u0000"
       },
       "Few": {
         "exponent": 0,
-        "index": 0,
-        "literal_text": ""
+        "pattern": "\u0000"
       },
       "Many": {
         "exponent": 0,
-        "index": 0,
-        "literal_text": ""
+        "pattern": "\u0000"
       },
       "Other": {
         "exponent": 9,
-        "index": 0,
-        "literal_text": " مليار"
+        "pattern": "\u0001 مليار"
       }
     },
     "12": {
       "Zero": {
         "exponent": 0,
-        "index": 0,
-        "literal_text": ""
+        "pattern": "\u0000"
       },
       "Two": {
         "exponent": 0,
-        "index": 0,
-        "literal_text": ""
+        "pattern": "\u0000"
       },
       "Few": {
         "exponent": 0,
-        "index": 0,
-        "literal_text": ""
+        "pattern": "\u0000"
       },
       "Many": {
         "exponent": 0,
-        "index": 0,
-        "literal_text": ""
+        "pattern": "\u0000"
       },
       "Other": {
         "exponent": 12,
-        "index": 0,
-        "literal_text": " ترليون"
+        "pattern": "\u0001 ترليون"
       }
     }
   }

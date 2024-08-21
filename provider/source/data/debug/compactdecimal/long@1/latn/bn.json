@@ -3,29 +3,25 @@
     "3": {
       "Other": {
         "exponent": 3,
-        "index": 0,
-        "literal_text": " হাজার"
+        "pattern": "\u0001 হাজার"
       }
     },
     "5": {
       "Other": {
         "exponent": 5,
-        "index": 0,
-        "literal_text": " লাখ"
+        "pattern": "\u0001 লাখ"
       }
     },
     "7": {
       "Other": {
         "exponent": 7,
-        "index": 0,
-        "literal_text": " কোটি"
+        "pattern": "\u0001 কোটি"
       }
     },
     "12": {
       "Other": {
         "exponent": 12,
-        "index": 0,
-        "literal_text": " লাখ কোটি"
+        "pattern": "\u0001 লাখ কোটি"
       }
     }
   }

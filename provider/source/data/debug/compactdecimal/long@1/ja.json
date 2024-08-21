@@ -3,29 +3,25 @@
     "4": {
       "Other": {
         "exponent": 4,
-        "index": 0,
-        "literal_text": "万"
+        "pattern": "\u0001万"
       }
     },
     "8": {
       "Other": {
         "exponent": 8,
-        "index": 0,
-        "literal_text": "億"
+        "pattern": "\u0001億"
       }
     },
     "12": {
       "Other": {
         "exponent": 12,
-        "index": 0,
-        "literal_text": "兆"
+        "pattern": "\u0001兆"
       }
     },
     "16": {
       "Other": {
         "exponent": 16,
-        "index": 0,
-        "literal_text": "京"
+        "pattern": "\u0001京"
       }
     }
   }

@@ -3,48 +3,41 @@
     "3": {
       "Other": {
         "exponent": 3,
-        "index": 0,
-        "literal_text": " mil"
+        "pattern": "\u0001 mil"
       }
     },
     "6": {
       "One": {
         "exponent": 6,
-        "index": 0,
-        "literal_text": " millón"
+        "pattern": "\u0001 millón"
       },
       "Other": {
         "exponent": 6,
-        "index": 0,
-        "literal_text": " millones"
+        "pattern": "\u0001 millones"
       }
     },
     "7": {
       "Other": {
         "exponent": 6,
-        "index": 0,
-        "literal_text": " millones"
+        "pattern": "\u0001 millones"
       }
     },
     "9": {
       "Other": {
         "exponent": 9,
-        "index": 0,
-        "literal_text": " mil millones"
+        "pattern": "\u0001 mil millones"
       }
     },
     "12": {
       "Other": {
         "exponent": 12,
-        "index": 0,
-        "literal_text": " billón"
+        "pattern": "\u0001 billón"
       }
     },
     "13": {
       "Other": {
         "exponent": 12,
-        "index": 0,
-        "literal_text": " billones"
+        "pattern": "\u0001 billones"
       }
     }
   }

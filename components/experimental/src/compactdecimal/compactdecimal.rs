@@ -9,15 +9,15 @@ use icu_decimal::{
     options::{FixedDecimalFormatterOptions, GroupingStrategy},
     FixedDecimalFormatter,
 };
-use icu_plurals::PluralRules;
+use icu_plurals::{PluralCategory, PluralRules};
 use icu_provider::prelude::*;
 use zerovec::maps::ZeroMap2dCursor;
 
 use crate::compactdecimal::{
     format::FormattedCompactDecimal,
     provider::{
-        Count, ErasedCompactDecimalFormatDataV1Marker, LongCompactDecimalFormatDataV1Marker,
-        PatternULE, ShortCompactDecimalFormatDataV1Marker,
+        ErasedCompactDecimalFormatDataV1Marker, LongCompactDecimalFormatDataV1Marker, PatternULE,
+        ShortCompactDecimalFormatDataV1Marker,
     },
     ExponentError,
 };
@@ -676,7 +676,7 @@ impl CompactDecimalFormatter {
     fn plural_map_and_exponent_for_magnitude(
         &self,
         magnitude: i16,
-    ) -> (Option<ZeroMap2dCursor<i8, Count, PatternULE>>, u8) {
+    ) -> (Option<ZeroMap2dCursor<i8, PluralCategory, PatternULE>>, u8) {
         let plural_map = self
             .compact_data
             .get()
@@ -687,7 +687,7 @@ impl CompactDecimalFormatter {
         let exponent = plural_map
             .as_ref()
             .and_then(|map| {
-                map.get1(&Count::Other)
+                map.get1(&PluralCategory::Other)
                     .and_then(|pattern| u8::try_from(pattern.exponent).ok())
             })
             .unwrap_or(0);

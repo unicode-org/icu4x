@@ -3,54 +3,45 @@
     "3": {
       "Few": {
         "exponent": 3,
-        "index": 0,
-        "literal_text": " хиљаде"
+        "pattern": "\u0001 хиљаде"
       },
       "Other": {
         "exponent": 3,
-        "index": 0,
-        "literal_text": " хиљада"
+        "pattern": "\u0001 хиљада"
       }
     },
     "6": {
       "One": {
         "exponent": 6,
-        "index": 0,
-        "literal_text": " милион"
+        "pattern": "\u0001 милион"
       },
       "Other": {
         "exponent": 6,
-        "index": 0,
-        "literal_text": " милиона"
+        "pattern": "\u0001 милиона"
       }
     },
     "9": {
       "One": {
         "exponent": 9,
-        "index": 0,
-        "literal_text": " милијарда"
+        "pattern": "\u0001 милијарда"
       },
       "Few": {
         "exponent": 9,
-        "index": 0,
-        "literal_text": " милијарде"
+        "pattern": "\u0001 милијарде"
       },
       "Other": {
         "exponent": 9,
-        "index": 0,
-        "literal_text": " милијарди"
+        "pattern": "\u0001 милијарди"
       }
     },
     "12": {
       "One": {
         "exponent": 12,
-        "index": 0,
-        "literal_text": " билион"
+        "pattern": "\u0001 билион"
       },
       "Other": {
         "exponent": 12,
-        "index": 0,
-        "literal_text": " билиона"
+        "pattern": "\u0001 билиона"
       }
     }
   }

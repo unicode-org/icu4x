@@ -4,11 +4,13 @@
 
 use alloc::borrow::Cow;
 use fixed_decimal::{CompactDecimal, FixedDecimal};
+use icu_pattern::SinglePlaceholderPattern;
+use icu_plurals::PluralCategory;
 use writeable::Writeable;
 use zerovec::maps::ZeroMap2dCursor;
 
 use crate::compactdecimal::compactdecimal::CompactDecimalFormatter;
-use crate::compactdecimal::provider::{Count, PatternULE};
+use crate::compactdecimal::provider::PatternULE;
 
 /// An intermediate structure returned by [`CompactDecimalFormatter`](super::CompactDecimalFormatter).
 /// Use [`Writeable`][Writeable] to render the formatted decimal to a string or buffer.
@@ -16,7 +18,7 @@ use crate::compactdecimal::provider::{Count, PatternULE};
 pub struct FormattedCompactDecimal<'l> {
     pub(crate) formatter: &'l CompactDecimalFormatter,
     pub(crate) value: Cow<'l, CompactDecimal>,
-    pub(crate) plural_map: Option<ZeroMap2dCursor<'l, 'l, i8, Count, PatternULE>>,
+    pub(crate) plural_map: Option<ZeroMap2dCursor<'l, 'l, i8, PluralCategory, PatternULE>>,
 }
 
 impl FormattedCompactDecimal<'_> {
@@ -63,7 +65,7 @@ impl<'l> Writeable for FormattedCompactDecimal<'l> {
             let plural_map = self.plural_map.as_ref().ok_or(core::fmt::Error)?;
             let chosen_pattern = (|| {
                 if self.value.significand() == &FixedDecimal::from(1) {
-                    if let Some(pattern) = plural_map.get1(&Count::Explicit1) {
+                    if let Some(pattern) = plural_map.get1(&PluralCategory::Explicit1) {
                         return Some(pattern);
                     }
                 }
@@ -72,32 +74,16 @@ impl<'l> Writeable for FormattedCompactDecimal<'l> {
                     .plural_rules
                     .category_for(self.value.significand());
                 plural_map
-                    .get1(&plural_category.into())
-                    .or_else(|| plural_map.get1(&Count::Other))
+                    .get1(&plural_category)
+                    .or_else(|| plural_map.get1(&PluralCategory::Other))
             })()
             .ok_or(core::fmt::Error)?;
-            match chosen_pattern.index {
-                u8::MAX => sink.write_str(&chosen_pattern.literal_text),
-                _ => {
-                    let i = usize::from(chosen_pattern.index);
-                    sink.write_str(
-                        chosen_pattern
-                            .literal_text
-                            .get(..i)
-                            .ok_or(core::fmt::Error)?,
-                    )?;
-                    self.formatter
-                        .fixed_decimal_format
-                        .format(self.value.significand())
-                        .write_to(sink)?;
-                    sink.write_str(
-                        chosen_pattern
-                            .literal_text
-                            .get(i..)
-                            .ok_or(core::fmt::Error)?,
-                    )
-                }
-            }
+            SinglePlaceholderPattern::from_ref_store_unchecked(&chosen_pattern.pattern)
+                .interpolate([self
+                    .formatter
+                    .fixed_decimal_format
+                    .format(self.value.significand())])
+                .write_to(sink)
         }
     }
 }

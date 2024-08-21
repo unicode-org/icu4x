@@ -116,7 +116,7 @@ impl IterableDataProviderCached<LongCompactDecimalFormatDataV1Marker> for Source
 
 mod tests {
     use super::*;
-    use icu::locale::langid;
+    use icu::{locale::langid, plurals::PluralCategory};
     use std::borrow::Cow;
     use zerofrom::ZeroFrom;
     use zerovec::ule::AsULE;
@@ -134,14 +134,19 @@ mod tests {
             .unwrap()
             .payload;
 
-        let nonzero_copy: Box<[(i8, Count, Pattern)]> = fr_compact_long
+        let nonzero_copy: Box<[(i8, PluralCategory, Pattern)]> = fr_compact_long
             .get()
             .patterns
             .iter0()
             .flat_map(|kkv| {
                 let key0 = *kkv.key0();
-                kkv.into_iter1()
-                    .map(move |(k, v)| (key0, Count::from_unaligned(*k), Pattern::zero_from(v)))
+                kkv.into_iter1().map(move |(k, v)| {
+                    (
+                        key0,
+                        PluralCategory::from_unaligned(*k),
+                        Pattern::zero_from(v),
+                    )
+                })
             })
             .collect();
         assert_eq!(
@@ -149,38 +154,34 @@ mod tests {
             [
                 (
                     3,
-                    Count::Other,
+                    PluralCategory::Other,
                     Pattern {
-                        index: 0,
                         exponent: 3,
-                        literal_text: Cow::Borrowed(" thousand")
+                        pattern: Cow::Borrowed("\x01 thousand")
                     }
                 ),
                 (
                     6,
-                    Count::Other,
+                    PluralCategory::Other,
                     Pattern {
-                        index: 0,
                         exponent: 6,
-                        literal_text: Cow::Borrowed(" million")
+                        pattern: Cow::Borrowed("\x01 million")
                     }
                 ),
                 (
                     9,
-                    Count::Other,
+                    PluralCategory::Other,
                     Pattern {
-                        index: 0,
                         exponent: 9,
-                        literal_text: Cow::Borrowed(" billion")
+                        pattern: Cow::Borrowed("\x01 billion")
                     }
                 ),
                 (
                     12,
-                    Count::Other,
+                    PluralCategory::Other,
                     Pattern {
-                        index: 0,
                         exponent: 12,
-                        literal_text: Cow::Borrowed(" trillion")
+                        pattern: Cow::Borrowed("\x01 trillion")
                     }
                 ),
             ]
@@ -198,15 +199,20 @@ mod tests {
             })
             .unwrap();
 
-        let nonzero_copy: Box<[(i8, Count, Pattern)]> = ja_compact_short
+        let nonzero_copy: Box<[(i8, PluralCategory, Pattern)]> = ja_compact_short
             .payload
             .get()
             .patterns
             .iter0()
             .flat_map(|kkv| {
                 let key0 = *kkv.key0();
-                kkv.into_iter1()
-                    .map(move |(k, v)| (key0, Count::from_unaligned(*k), Pattern::zero_from(v)))
+                kkv.into_iter1().map(move |(k, v)| {
+                    (
+                        key0,
+                        PluralCategory::from_unaligned(*k),
+                        Pattern::zero_from(v),
+                    )
+                })
             })
             .collect();
         assert_eq!(
@@ -214,38 +220,34 @@ mod tests {
             [
                 (
                     4,
-                    Count::Other,
+                    PluralCategory::Other,
                     Pattern {
-                        index: 0,
                         exponent: 4,
-                        literal_text: Cow::Borrowed("万")
+                        pattern: Cow::Borrowed("\x01万")
                     }
                 ),
                 (
                     8,
-                    Count::Other,
+                    PluralCategory::Other,
                     Pattern {
-                        index: 0,
                         exponent: 8,
-                        literal_text: Cow::Borrowed("億")
+                        pattern: Cow::Borrowed("\x01億")
                     }
                 ),
                 (
                     12,
-                    Count::Other,
+                    PluralCategory::Other,
                     Pattern {
-                        index: 0,
                         exponent: 12,
-                        literal_text: Cow::Borrowed("兆")
+                        pattern: Cow::Borrowed("\x01兆")
                     }
                 ),
                 (
                     16,
-                    Count::Other,
+                    PluralCategory::Other,
                     Pattern {
-                        index: 0,
                         exponent: 16,
-                        literal_text: Cow::Borrowed("京")
+                        pattern: Cow::Borrowed("\x01京")
                     }
                 )
             ]

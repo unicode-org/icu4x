@@ -3,29 +3,25 @@
     "3": {
       "Other": {
         "exponent": 3,
-        "index": 0,
-        "literal_text": " hilj."
+        "pattern": "\u0001 hilj."
       }
     },
     "6": {
       "Other": {
         "exponent": 6,
-        "index": 0,
-        "literal_text": " mil."
+        "pattern": "\u0001 mil."
       }
     },
     "9": {
       "Other": {
         "exponent": 9,
-        "index": 0,
-        "literal_text": " mlrd."
+        "pattern": "\u0001 mlrd."
       }
     },
     "12": {
       "Other": {
         "exponent": 12,
-        "index": 0,
-        "literal_text": " bil."
+        "pattern": "\u0001 bil."
       }
     }
   }

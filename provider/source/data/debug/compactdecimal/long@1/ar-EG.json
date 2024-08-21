@@ -3,53 +3,45 @@
     "3": {
       "Few": {
         "exponent": 3,
-        "index": 0,
-        "literal_text": " آلاف"
+        "pattern": "\u0001 آلاف"
       },
       "Other": {
         "exponent": 3,
-        "index": 0,
-        "literal_text": " ألف"
+        "pattern": "\u0001 ألف"
       }
     },
     "4": {
       "Other": {
         "exponent": 3,
-        "index": 0,
-        "literal_text": " ألف"
+        "pattern": "\u0001 ألف"
       }
     },
     "6": {
       "Few": {
         "exponent": 6,
-        "index": 0,
-        "literal_text": " ملايين"
+        "pattern": "\u0001 ملايين"
       },
       "Other": {
         "exponent": 6,
-        "index": 0,
-        "literal_text": " مليون"
+        "pattern": "\u0001 مليون"
       }
     },
     "8": {
       "Other": {
         "exponent": 6,
-        "index": 0,
-        "literal_text": " مليون"
+        "pattern": "\u0001 مليون"
       }
     },
     "9": {
       "Other": {
         "exponent": 9,
-        "index": 0,
-        "literal_text": " مليار"
+        "pattern": "\u0001 مليار"
       }
     },
     "12": {
       "Other": {
         "exponent": 12,
-        "index": 0,
-        "literal_text": " ترليون"
+        "pattern": "\u0001 ترليون"
       }
     }
   }

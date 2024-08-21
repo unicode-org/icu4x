@@ -3,29 +3,25 @@
     "3": {
       "Other": {
         "exponent": 3,
-        "index": 0,
-        "literal_text": "K"
+        "pattern": "\u0001K"
       }
     },
     "6": {
       "Other": {
         "exponent": 6,
-        "index": 0,
-        "literal_text": "M"
+        "pattern": "\u0001M"
       }
     },
     "9": {
       "Other": {
         "exponent": 9,
-        "index": 0,
-        "literal_text": "G"
+        "pattern": "\u0001G"
       }
     },
     "12": {
       "Other": {
         "exponent": 12,
-        "index": 0,
-        "literal_text": "T"
+        "pattern": "\u0001T"
       }
     }
   }

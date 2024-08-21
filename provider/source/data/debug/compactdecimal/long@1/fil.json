@@ -3,49 +3,41 @@
     "3": {
       "One": {
         "exponent": 3,
-        "index": 0,
-        "literal_text": " libo"
+        "pattern": "\u0001 libo"
       },
       "Other": {
         "exponent": 3,
-        "index": 0,
-        "literal_text": " na libo"
+        "pattern": "\u0001 na libo"
       }
     },
     "6": {
       "One": {
         "exponent": 6,
-        "index": 0,
-        "literal_text": " milyon"
+        "pattern": "\u0001 milyon"
       },
       "Other": {
         "exponent": 6,
-        "index": 0,
-        "literal_text": " na milyon"
+        "pattern": "\u0001 na milyon"
       }
     },
     "9": {
       "One": {
         "exponent": 9,
-        "index": 0,
-        "literal_text": " bilyon"
+        "pattern": "\u0001 bilyon"
       },
       "Other": {
         "exponent": 9,
-        "index": 0,
-        "literal_text": " na bilyon"
+        "pattern": "\u0001 na bilyon"
       }
     },
     "12": {
       "One": {
         "exponent": 12,
-        "index": 0,
-        "literal_text": " trilyon"
+        "pattern": "\u0001 trilyon"
       },
       "Other": {
         "exponent": 12,
-        "index": 0,
-        "literal_text": " na trilyon"
+        "pattern": "\u0001 na trilyon"
       }
     }
   }
