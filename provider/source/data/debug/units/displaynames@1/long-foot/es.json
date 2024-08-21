@@ -1,6 +1,11 @@
 {
   "patterns": {
-    "One": "{0} pie",
-    "Other": "{0} pies"
+    "specials": [
+      [
+        "One",
+        "\u0001 pie"
+      ]
+    ],
+    "other": "\u0001 pies"
   }
 }

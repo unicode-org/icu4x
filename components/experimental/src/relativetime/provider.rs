@@ -137,7 +137,8 @@ impl<'data, B: PatternBackend<Store = str>> PluralPattern<'data, B> {
                 .map(|s| {
                     Ok(PluralCategoryStr(
                         category,
-                        Pattern::<B, String>::from_str(s)
+                        // TODO: Make pattern support apostrophes
+                        Pattern::<B, String>::from_str(&s.replace('\'', "''"))
                             .map(|p| Pattern::<B, _>::from_store_unchecked(p.take_store().into()))?
                             .take_store(),
                     ))
@@ -157,7 +158,10 @@ impl<'data, B: PatternBackend<Store = str>> PluralPattern<'data, B> {
             .flatten()
             .collect::<Vec<_>>())
                 .into(),
-            other: Pattern::<B, String>::from_str(other)?.take_store().into(),
+            // TODO: Make pattern support apostrophes
+            other: Pattern::<B, String>::from_str(&other.replace('\'', "''"))?
+                .take_store()
+                .into(),
             _phantom: PhantomData::<B>,
         })
     }
