@@ -10,7 +10,10 @@
 //! Read more about data providers: [`icu_provider`]
 
 use alloc::borrow::Cow;
-use icu_pattern::SinglePlaceholderPattern;
+use core::marker::PhantomData;
+#[cfg(feature = "datagen")]
+use core::{fmt::Debug, str::FromStr};
+use icu_pattern::{Pattern, PatternBackend, SinglePlaceholder};
 use icu_plurals::PluralCategory;
 use icu_provider::prelude::*;
 use zerovec::{ule::AsULE, VarZeroVec, ZeroMap};
@@ -69,10 +72,10 @@ pub struct RelativeTimePatternDataV1<'data> {
     pub relatives: ZeroMap<'data, i8, str>,
     /// How to display times in the past.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub past: SinglePlaceholderPluralPattern<'data>,
+    pub past: PluralPattern<'data, SinglePlaceholder>,
     /// How to display times in the future.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub future: SinglePlaceholderPluralPattern<'data>,
+    pub future: PluralPattern<'data, SinglePlaceholder>,
 }
 
 #[derive(Debug)]
@@ -101,17 +104,20 @@ pub struct PluralCategoryStr<'data>(pub PluralCategory, pub Cow<'data, str>);
     databake(path = icu_experimental::relativetime::provider)
 )]
 #[yoke(prove_covariance_manually)]
-pub struct SinglePlaceholderPluralPattern<'data> {
+pub struct PluralPattern<'data, B: PatternBackend<Store = str>> {
     /// Optional patterns for categories other than PluralCategory::Other
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub specials: VarZeroVec<'data, PluralCategoryStrULE>,
     /// The pattern for PluralCategory::Other
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub other: Cow<'data, str>,
+    /// Keeps track of B
+    #[cfg_attr(feature = "serde", serde(skip))]
+    pub _phantom: PhantomData<B>,
 }
 
-impl<'data> SinglePlaceholderPluralPattern<'data> {
-    /// Creates a [`SinglePlaceholderPluralPattern`] from the given patterns.
+impl<'data, B: PatternBackend<Store = str>> PluralPattern<'data, B> {
+    /// Creates a [`PluralPattern`] from the given patterns.
     #[cfg(feature = "datagen")]
     pub fn try_new(
         other: &str,
@@ -120,21 +126,19 @@ impl<'data> SinglePlaceholderPluralPattern<'data> {
         two: Option<&str>,
         few: Option<&str>,
         many: Option<&str>,
-    ) -> Result<Self, icu_pattern::PatternError> {
-        use core::str::FromStr;
-
+    ) -> Result<Self, icu_pattern::PatternError>
+    where
+        B::PlaceholderKeyCow<'data>: FromStr,
+        <B::PlaceholderKeyCow<'data> as FromStr>::Err: Debug,
+    {
         let optional_convert = |category, pattern: Option<&str>| {
             pattern
                 .filter(|p| *p != other)
                 .map(|s| {
                     Ok(PluralCategoryStr(
                         category,
-                        SinglePlaceholderPattern::from_str(s)
-                            .map(|p| {
-                                SinglePlaceholderPattern::from_store_unchecked(
-                                    p.take_store().into(),
-                                )
-                            })?
+                        Pattern::<B, String>::from_str(s)
+                            .map(|p| Pattern::<B, _>::from_store_unchecked(p.take_store().into()))?
                             .take_store(),
                     ))
                 })
@@ -153,15 +157,14 @@ impl<'data> SinglePlaceholderPluralPattern<'data> {
             .flatten()
             .collect::<Vec<_>>())
                 .into(),
-            other: SinglePlaceholderPattern::from_str(other)?
-                .take_store()
-                .into(),
+            other: Pattern::<B, String>::from_str(other)?.take_store().into(),
+            _phantom: PhantomData::<B>,
         })
     }
 
     /// Returns the pattern for the given [`PluralCategory`].
-    pub fn get(&'data self, c: PluralCategory) -> &'data SinglePlaceholderPattern<str> {
-        SinglePlaceholderPattern::from_ref_store_unchecked(if c == PluralCategory::Other {
+    pub fn get(&'data self, c: PluralCategory) -> &'data Pattern<B, str> {
+        Pattern::from_ref_store_unchecked(if c == PluralCategory::Other {
             &*self.other
         } else {
             self.specials
@@ -171,6 +174,15 @@ impl<'data> SinglePlaceholderPluralPattern<'data> {
                 .unwrap_or(&*self.other)
         })
     }
+}
+
+#[test]
+fn plural_patterns_niche() {
+    assert_eq!(core::mem::size_of::<PluralPattern<SinglePlaceholder>>(), 48);
+    assert_eq!(
+        core::mem::size_of::<Option<PluralPattern<SinglePlaceholder>>>(),
+        48
+    );
 }
 
 pub(crate) struct ErasedRelativeTimeFormatV1Marker;

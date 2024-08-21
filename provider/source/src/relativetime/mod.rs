@@ -6,6 +6,7 @@ use crate::cldr_serde;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::experimental::relativetime::provider::*;
+use icu_pattern::SinglePlaceholder;
 use icu_provider::prelude::*;
 use std::collections::{HashMap, HashSet};
 use std::sync::OnceLock;
@@ -122,10 +123,12 @@ macro_rules! make_data_provider {
     };
 }
 
-impl TryFrom<&cldr_serde::date_fields::PluralRulesPattern> for SinglePlaceholderPluralPattern<'_> {
+impl TryFrom<&cldr_serde::date_fields::PluralRulesPattern>
+    for PluralPattern<'_, SinglePlaceholder>
+{
     type Error = DataError;
     fn try_from(field: &cldr_serde::date_fields::PluralRulesPattern) -> Result<Self, Self::Error> {
-        SinglePlaceholderPluralPattern::try_new(
+        PluralPattern::try_new(
             &field.other,
             field.zero.as_deref(),
             field.one.as_deref(),
