@@ -68,7 +68,7 @@ pub enum FractionalDigits {
     #[default]
     ShowAll,
     /// Use the given number of fractional digits.
-    /// This value is clamped to the range 0..=9.
+    /// Default [`FractionalDigits::ShowAll`] behavior is used if this value is out of the range 0..=9.
     /// Fractional digits are rounded to zero if necessary.
     Fixed(u8),
 }

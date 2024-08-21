@@ -190,7 +190,9 @@ impl ValidatedDurationFormatterOptions {
         // section 1.2.1
         // 27. Set durationFormat.[[FractionalDigits]] to ? GetNumberOption(options, "fractionalDigits", 0, 9, undefined).
         if let FractionalDigits::Fixed(i) = builder.fractional_digits {
-            builder.fractional_digits = FractionalDigits::Fixed(i.clamp(0, 9));
+            if i > 9 {
+                builder.fractional_digits = FractionalDigits::ShowAll;
+            }
         }
 
         Ok(builder.try_into().unwrap())
@@ -436,6 +438,6 @@ mod tests {
 
         let validated = ValidatedDurationFormatterOptions::validate(options).unwrap();
 
-        assert_eq!(validated.fractional_digits, FractionalDigits::Fixed(9));
+        assert_eq!(validated.fractional_digits, FractionalDigits::ShowAll);
     }
 }
