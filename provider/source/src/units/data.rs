@@ -2,9 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::collections::{BTreeMap, HashSet};
+use std::collections::HashSet;
 
-use crate::cldr_serde::units::data::Patterns;
 use crate::cldr_serde::{self};
 use crate::SourceDataProvider;
 
@@ -42,6 +41,7 @@ impl DataProvider<UnitsDisplayNameV1Marker> for SourceDataProvider {
                     .with_debug_context(length))
             }
         }
+        .units
         .get(unit)
         .ok_or_else(|| {
             DataErrorKind::InvalidRequest
@@ -78,34 +78,6 @@ impl DataProvider<UnitsDisplayNameV1Marker> for SourceDataProvider {
 
 impl crate::IterableDataProviderCached<UnitsDisplayNameV1Marker> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        fn make_request_element(
-            locale: &DataLocale,
-            unit: &str,
-            length: &str,
-        ) -> Result<DataIdentifierCow<'static>, DataError> {
-            let key = length.to_string() + "-" + unit;
-            let attribute = DataMarkerAttributes::try_from_str(key.as_str()).map_err(|_| {
-                DataError::custom("Failed to parse the attribute").with_debug_context(unit)
-            })?;
-            Ok(DataIdentifierCow::from_owned(
-                attribute.to_owned(),
-                locale.clone(),
-            ))
-        }
-
-        fn fill_data_ids(
-            data_locales: &mut HashSet<DataIdentifierCow<'_>>,
-            locale: &DataLocale,
-            length: &str,
-            length_patterns: &BTreeMap<String, Patterns>,
-        ) -> Result<(), DataError> {
-            for truncated_quantity in length_patterns.keys() {
-                data_locales.insert(make_request_element(locale, truncated_quantity, length)?);
-            }
-
-            Ok(())
-        }
-
         let mut data_locales = HashSet::new();
 
         let numbers = self.cldr()?.numbers();
@@ -127,7 +99,17 @@ impl crate::IterableDataProviderCached<UnitsDisplayNameV1Marker> for SourceDataP
                     }
                 };
 
-                fill_data_ids(&mut data_locales, &locale, length, length_patterns)?;
+                for unit in length_patterns.units.keys() {
+                    data_locales.insert(DataIdentifierCow::from_owned(
+                        DataMarkerAttributes::try_from_string(format!("{length}-{unit}")).map_err(
+                            |_| {
+                                DataError::custom("Failed to parse the attribute")
+                                    .with_debug_context(unit)
+                            },
+                        )?,
+                        locale.clone(),
+                    ));
+                }
             }
         }
 
