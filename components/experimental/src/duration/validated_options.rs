@@ -187,6 +187,12 @@ impl ValidatedDurationFormatterOptions {
             prev_style = *style;
         }
 
+        // section 1.2.1
+        // 27. Set durationFormat.[[FractionalDigits]] to ? GetNumberOption(options, "fractionalDigits", 0, 9, undefined).
+        if let FractionalDigits::Fixed(i) = builder.fractional_digits {
+            builder.fractional_digits = FractionalDigits::Fixed(i.clamp(0, 9));
+        }
+
         Ok(builder.try_into().unwrap())
     }
 

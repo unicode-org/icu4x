@@ -68,7 +68,8 @@ pub enum FractionalDigits {
     #[default]
     ShowAll,
     /// Use the given number of fractional digits.
-    /// Rounded to zero if necessary.
+    /// This value is clamped to the range 0..=9.
+    /// Fractional digits are rounded to zero if necessary.
     Fixed(u8),
 }
 
