@@ -1,5 +1,6 @@
 {
-  "unit_patterns": {
-    "Other": "{0} {1}"
+  "patterns": {
+    "specials": [],
+    "other": "\u0002\u0005 "
   }
 }
