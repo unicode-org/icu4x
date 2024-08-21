@@ -81,7 +81,7 @@ pub struct DurationUnits {
 }
 
 // TODO: replace Value with specific structs
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug)]
 pub(crate) struct UnitsData {
     pub(crate) long: BTreeMap<String, Patterns>,
 
@@ -89,8 +89,55 @@ pub(crate) struct UnitsData {
 
     pub(crate) narrow: BTreeMap<String, Patterns>,
 
-    #[serde(flatten)]
     pub(crate) duration: DurationUnits,
+}
+
+impl<'de> Deserialize<'de> for UnitsData {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        #[derive(Deserialize)]
+        struct Raw {
+            long: BTreeMap<String, Patterns>,
+            short: BTreeMap<String, Patterns>,
+            narrow: BTreeMap<String, Patterns>,
+            #[serde(flatten)]
+            duration: DurationUnits,
+        }
+
+        let Raw {
+            long,
+            short,
+            narrow,
+            duration,
+        } = Raw::deserialize(deserializer)?;
+
+        let strip_unit_prefixes = |(k, v): (String, Patterns)| {
+            (
+                if k == "per"
+                    || k == "times"
+                    || k.starts_with("power")
+                    || k.starts_with("10p")
+                    || k.starts_with("2p")
+                {
+                    k
+                } else {
+                    k.split_once('-')
+                        .map(|(_prefix, suffix)| suffix.to_string())
+                        .unwrap_or(k)
+                },
+                v,
+            )
+        };
+
+        Ok(Self {
+            long: long.into_iter().map(strip_unit_prefixes).collect(),
+            short: short.into_iter().map(strip_unit_prefixes).collect(),
+            narrow: narrow.into_iter().map(strip_unit_prefixes).collect(),
+            duration,
+        })
+    }
 }
 
 #[derive(PartialEq, Debug, Deserialize)]

@@ -42,17 +42,7 @@ impl DataProvider<UnitsDisplayNameV1Marker> for SourceDataProvider {
                     .with_debug_context(length))
             }
         }
-        .iter()
-        // get the units which match the key after the `-` in the attribute
-        // For exmple,
-        //          if the unit is meter, the key `length-meter` will match.
-        //          if the unit is millisecond, the key `duration-millisecond` will match.
-        .find_map(|(key, patterns)| {
-            key.split_once('-')
-                .map(|(_, rest)| rest)
-                .filter(|&rest| rest == unit)
-                .map(|_| patterns)
-        })
+        .get(unit)
         .ok_or_else(|| {
             DataErrorKind::InvalidRequest
                 .into_error()
@@ -109,16 +99,7 @@ impl crate::IterableDataProviderCached<UnitsDisplayNameV1Marker> for SourceDataP
             length: &str,
             length_patterns: &BTreeMap<String, Patterns>,
         ) -> Result<(), DataError> {
-            let quantities = length_patterns.keys().filter_map(|key| {
-                // NOTE: any units should have the category as a prefix which is separated by `-`.
-                //       Therefore, if the key does not contain `-`, it is not a valid unit.
-                //       In this case, the result of `key.split_once('-')` will be None.
-                //       Example: `length-meter` is a valid key, but `length` is not.
-                //                `power3` is not a valid unit.
-                key.split_once('-').map(|(_category, unit)| unit)
-            });
-
-            for truncated_quantity in quantities {
+            for truncated_quantity in length_patterns.keys() {
                 data_locales.insert(make_request_element(locale, truncated_quantity, length)?);
             }
 
