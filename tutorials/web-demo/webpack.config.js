@@ -28,6 +28,12 @@ export default {
 				loader: 'sass-loader'
 				}
 			]
+		},
+		{
+			test: /\.(wasm)$/,
+			generator: {
+				filename: '[name].wasm'
+			}
 		}
 	  ]
 	},
