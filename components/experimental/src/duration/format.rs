@@ -589,10 +589,7 @@ impl<'a> FormattedDuration<'a> {
                         category: "unit",
                         value: unit.as_unit_formatter_name(),
                     },
-                    writeable: nf.format_fixed_decimal(
-                        formatted_fixed_decimal,
-                        unit.as_unit_formatter_name(),
-                    ),
+                    writeable: nf.format_fixed_decimal(formatted_fixed_decimal),
                 };
                 Either::Right(formatted_unit)
             }
