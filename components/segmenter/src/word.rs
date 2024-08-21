@@ -15,6 +15,14 @@ use icu_locale_core::subtags::language;
 use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
 
+/// Options to tailor word breaking behavior.
+#[non_exhaustive]
+#[derive(Clone, PartialEq, Eq, Debug, Default)]
+pub struct WordBreakOptions {
+    /// Content locale for word segmenter
+    pub content_locale: Option<DataLocale>,
+}
+
 /// Implements the [`Iterator`] trait over the word boundaries of the given string.
 ///
 /// Lifetimes:
@@ -215,9 +223,9 @@ impl WordSegmenter {
 
     #[cfg(feature = "auto")]
     icu_provider::gen_any_buffer_data_constructors!(
-        (locale) -> error: DataError,
+        () -> error: DataError,
         functions: [
-            try_new_auto,
+            new_auto: skip,
             try_new_auto_with_any_provider,
             try_new_auto_with_buffer_provider,
             try_new_auto_unstable,
@@ -227,7 +235,7 @@ impl WordSegmenter {
 
     #[cfg(feature = "auto")]
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_auto)]
-    pub fn try_new_auto_unstable<D>(provider: &D, locale: &DataLocale) -> Result<Self, DataError>
+    pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<WordBreakDataV2Marker>
             + DataProvider<WordBreakDataOverrideV1Marker>
@@ -236,14 +244,51 @@ impl WordSegmenter {
             + DataProvider<GraphemeClusterBreakDataV2Marker>
             + ?Sized,
     {
-        let payload_locale_override = if !Self::is_default_rule(locale) {
-            match provider.load(Default::default()) {
-                Ok(response) => Ok(Some(response.payload)),
-                Err(DataError {
-                    kind: DataErrorKind::IdentifierNotFound,
-                    ..
-                }) => Ok(None),
-                Err(e) => Err(e),
+        Ok(Self {
+            payload: provider.load(Default::default())?.payload,
+            complex: ComplexPayloads::try_new_auto(provider)?,
+            payload_locale_override: None,
+        })
+    }
+
+    #[cfg(feature = "auto")]
+    icu_provider::gen_any_buffer_data_constructors!(
+        (options: WordBreakOptions) -> error: DataError,
+        functions: [
+            try_new_auto_with_options,
+            try_new_auto_with_options_with_any_provider,
+            try_new_auto_with_options_with_buffer_provider,
+            try_new_auto_with_options_unstable,
+            Self
+        ]
+    );
+
+    #[cfg(feature = "auto")]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_auto)]
+    pub fn try_new_auto_with_options_unstable<D>(
+        provider: &D,
+        options: WordBreakOptions,
+    ) -> Result<Self, DataError>
+    where
+        D: DataProvider<WordBreakDataV2Marker>
+            + DataProvider<WordBreakDataOverrideV1Marker>
+            + DataProvider<DictionaryForWordOnlyAutoV1Marker>
+            + DataProvider<LstmForWordLineAutoV1Marker>
+            + DataProvider<GraphemeClusterBreakDataV2Marker>
+            + ?Sized,
+    {
+        let payload_locale_override = if let Some(locale) = options.content_locale {
+            if !Self::is_default_rule(&locale) {
+                match provider.load(Default::default()) {
+                    Ok(response) => Ok(Some(response.payload)),
+                    Err(DataError {
+                        kind: DataErrorKind::IdentifierNotFound,
+                        ..
+                    }) => Ok(None),
+                    Err(e) => Err(e),
+                }
+            } else {
+                Ok(None)
             }
         } else {
             Ok(None)
@@ -303,9 +348,9 @@ impl WordSegmenter {
 
     #[cfg(feature = "lstm")]
     icu_provider::gen_any_buffer_data_constructors!(
-        (locale) -> error: DataError,
+        () -> error: DataError,
         functions: [
-            try_new_lstm,
+            new_lstm: skip,
             try_new_lstm_with_any_provider,
             try_new_lstm_with_buffer_provider,
             try_new_lstm_unstable,
@@ -315,7 +360,7 @@ impl WordSegmenter {
 
     #[cfg(feature = "lstm")]
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_lstm)]
-    pub fn try_new_lstm_unstable<D>(provider: &D, locale: &DataLocale) -> Result<Self, DataError>
+    pub fn try_new_lstm_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<WordBreakDataV2Marker>
             + DataProvider<WordBreakDataOverrideV1Marker>
@@ -323,14 +368,50 @@ impl WordSegmenter {
             + DataProvider<GraphemeClusterBreakDataV2Marker>
             + ?Sized,
     {
-        let payload_locale_override = if !Self::is_default_rule(locale) {
-            match provider.load(Default::default()) {
-                Ok(response) => Ok(Some(response.payload)),
-                Err(DataError {
-                    kind: DataErrorKind::IdentifierNotFound,
-                    ..
-                }) => Ok(None),
-                Err(e) => Err(e),
+        Ok(Self {
+            payload: provider.load(Default::default())?.payload,
+            complex: ComplexPayloads::try_new_lstm(provider)?,
+            payload_locale_override: None,
+        })
+    }
+
+    #[cfg(feature = "lstm")]
+    icu_provider::gen_any_buffer_data_constructors!(
+        (options: WordBreakOptions) -> error: DataError,
+        functions: [
+            try_new_lstm_with_options,
+            try_new_lstm_with_options_with_any_provider,
+            try_new_lstm_with_options_with_buffer_provider,
+            try_new_lstm_with_options_unstable,
+            Self
+        ]
+    );
+
+    #[cfg(feature = "lstm")]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_lstm)]
+    pub fn try_new_lstm_with_options_unstable<D>(
+        provider: &D,
+        options: WordBreakOptions,
+    ) -> Result<Self, DataError>
+    where
+        D: DataProvider<WordBreakDataV2Marker>
+            + DataProvider<WordBreakDataOverrideV1Marker>
+            + DataProvider<LstmForWordLineAutoV1Marker>
+            + DataProvider<GraphemeClusterBreakDataV2Marker>
+            + ?Sized,
+    {
+        let payload_locale_override = if let Some(locale) = options.content_locale {
+            if !Self::is_default_rule(&locale) {
+                match provider.load(Default::default()) {
+                    Ok(response) => Ok(Some(response.payload)),
+                    Err(DataError {
+                        kind: DataErrorKind::IdentifierNotFound,
+                        ..
+                    }) => Ok(None),
+                    Err(e) => Err(e),
+                }
+            } else {
+                Ok(None)
             }
         } else {
             Ok(None)
@@ -383,9 +464,9 @@ impl WordSegmenter {
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        (locale) -> error: DataError,
+        () -> error: DataError,
         functions: [
-            try_new_dictionary,
+            new_dictionary: skip,
             try_new_dictionary_with_any_provider,
             try_new_dictionary_with_buffer_provider,
             try_new_dictionary_unstable,
@@ -394,9 +475,37 @@ impl WordSegmenter {
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_dictionary)]
-    pub fn try_new_dictionary_unstable<D>(
+    pub fn try_new_dictionary_unstable<D>(provider: &D) -> Result<Self, DataError>
+    where
+        D: DataProvider<WordBreakDataV2Marker>
+            + DataProvider<WordBreakDataOverrideV1Marker>
+            + DataProvider<DictionaryForWordOnlyAutoV1Marker>
+            + DataProvider<DictionaryForWordLineExtendedV1Marker>
+            + DataProvider<GraphemeClusterBreakDataV2Marker>
+            + ?Sized,
+    {
+        Ok(Self {
+            payload: provider.load(Default::default())?.payload,
+            complex: ComplexPayloads::try_new_dict(provider)?,
+            payload_locale_override: None,
+        })
+    }
+
+    icu_provider::gen_any_buffer_data_constructors!(
+        (options: WordBreakOptions) -> error: DataError,
+        functions: [
+            try_new_dictionary_with_options,
+            try_new_dictionary_with_options_with_any_provider,
+            try_new_dictionary_with_options_with_buffer_provider,
+            try_new_dictionary_with_options_unstable,
+            Self
+        ]
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_dictionary)]
+    pub fn try_new_dictionary_with_options_unstable<D>(
         provider: &D,
-        locale: &DataLocale,
+        options: WordBreakOptions,
     ) -> Result<Self, DataError>
     where
         D: DataProvider<WordBreakDataV2Marker>
@@ -406,14 +515,18 @@ impl WordSegmenter {
             + DataProvider<GraphemeClusterBreakDataV2Marker>
             + ?Sized,
     {
-        let payload_locale_override = if !Self::is_default_rule(locale) {
-            match provider.load(Default::default()) {
-                Ok(response) => Ok(Some(response.payload)),
-                Err(DataError {
-                    kind: DataErrorKind::IdentifierNotFound,
-                    ..
-                }) => Ok(None),
-                Err(e) => Err(e),
+        let payload_locale_override = if let Some(locale) = options.content_locale {
+            if !Self::is_default_rule(&locale) {
+                match provider.load(Default::default()) {
+                    Ok(response) => Ok(Some(response.payload)),
+                    Err(DataError {
+                        kind: DataErrorKind::IdentifierNotFound,
+                        ..
+                    }) => Ok(None),
+                    Err(e) => Err(e),
+                }
+            } else {
+                Ok(None)
             }
         } else {
             Ok(None)

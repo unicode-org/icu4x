@@ -12,6 +12,14 @@ use crate::provider::*;
 use crate::rule_segmenter::*;
 use utf8_iter::Utf8CharIndices;
 
+/// Options to tailor sentence breaking behavior.
+#[non_exhaustive]
+#[derive(Clone, PartialEq, Eq, Debug, Default)]
+pub struct SentenceBreakOptions {
+    /// Content locale for sentence segmenter.
+    pub content_locale: Option<DataLocale>,
+}
+
 /// Implements the [`Iterator`] trait over the sentence boundaries of the given string.
 ///
 /// Lifetimes:
@@ -127,30 +135,67 @@ impl SentenceSegmenter {
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!((locale) -> error: DataError,
-        /// Constructs a [`SentenceSegmenter`] for a given locale and using compiled data.
+    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
+        functions: [
+            new: skip,
+            try_new_with_any_provider,
+            try_new_with_buffer_provider,
+            try_new_unstable,
+            Self,
+        ]
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
+    where
+        D: DataProvider<SentenceBreakDataV2Marker> + ?Sized,
+    {
+        let payload = provider.load(Default::default())?.payload;
+        Ok(Self {
+            payload,
+            payload_locale_override: None,
+        })
+    }
+
+    icu_provider::gen_any_buffer_data_constructors!(
+        (options: SentenceBreakOptions) -> error: DataError,
+        /// Constructs a [`SentenceSegmenter`] for a given options and using compiled data.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
+        functions: [
+            try_new_with_options,
+            try_new_with_options_with_any_provider,
+            try_new_with_options_with_buffer_provider,
+            try_new_with_options_unstable,
+            Self
+        ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<D>(provider: &D, locale: &DataLocale) -> Result<Self, DataError>
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_options)]
+    pub fn try_new_with_options_unstable<D>(
+        provider: &D,
+        options: SentenceBreakOptions,
+    ) -> Result<Self, DataError>
     where
         D: DataProvider<SentenceBreakDataV2Marker>
             + DataProvider<SentenceBreakDataOverrideV1Marker>
             + ?Sized,
     {
         let payload = provider.load(Default::default())?.payload;
-        let payload_locale_override = if locale.language == language!("el") {
-            match provider.load(Default::default()) {
-                Ok(response) => Ok(Some(response.payload)),
-                Err(DataError {
-                    kind: DataErrorKind::IdentifierNotFound,
-                    ..
-                }) => Ok(None),
-                Err(e) => Err(e),
+        let payload_locale_override = if let Some(locale) = options.content_locale {
+            if locale.language == language!("el") {
+                match provider.load(Default::default()) {
+                    Ok(response) => Ok(Some(response.payload)),
+                    Err(DataError {
+                        kind: DataErrorKind::IdentifierNotFound,
+                        ..
+                    }) => Ok(None),
+                    Err(e) => Err(e),
+                }
+            } else {
+                Ok(None)
             }
         } else {
             Ok(None)

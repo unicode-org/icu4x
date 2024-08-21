@@ -18,6 +18,22 @@ pub mod ffi {
     pub struct SentenceSegmenter(icu_segmenter::SentenceSegmenter);
 
     #[diplomat::opaque]
+    #[diplomat::rust_link(icu::segmenter::SentenceBreakOptions, Struct)]
+    #[diplomat::attr(supports = non_exhaustive_structs, rename = "SentenceBreakOptions")]
+    pub struct SentenceBreakOptionsV1 {
+        pub content_locale: Box<Locale>,
+    }
+
+    impl SentenceBreakOptionsV1 {
+        #[diplomat::attr(auto, constructor)]
+        pub fn create(locale: &Locale) -> Box<Self> {
+            Box::new(Self {
+                content_locale: locale.clone(),
+            })
+        }
+    }
+
+    #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::SentenceBreakIterator, Struct)]
     #[diplomat::rust_link(
         icu::segmenter::SentenceBreakIteratorPotentiallyIllFormedUtf8,
@@ -41,20 +57,31 @@ pub mod ffi {
 
     impl SentenceSegmenter {
         /// Construct an [`SentenceSegmenter`].
-        #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::new, FnInStruct, hidden)]
-        #[diplomat::attr(supports = fallible_constructors, constructor)]
-        pub fn create(
-            provider: &DataProvider,
-            locale: &Locale,
-        ) -> Result<Box<SentenceSegmenter>, DataError> {
-            let locale = locale.to_datalocale();
+        pub fn create(provider: &DataProvider) -> Result<Box<SentenceSegmenter>, DataError> {
             Ok(Box::new(SentenceSegmenter(call_constructor!(
-                icu_segmenter::SentenceSegmenter::try_new,
+                icu_segmenter::SentenceSegmenter::new [r => Ok(r)],
                 icu_segmenter::SentenceSegmenter::try_new_with_any_provider,
                 icu_segmenter::SentenceSegmenter::try_new_with_buffer_provider,
                 provider,
-                &locale,
+            )?)))
+        }
+
+        /// Construct an [`SentenceSegmenter`].
+        #[diplomat::attr(supports = fallible_constructors, constructor)]
+        #[diplomat::attr(supports = non_exhaustive_structs, rename = "with_options")]
+        pub fn create_with_options_v1(
+            provider: &DataProvider,
+            options: &SentenceBreakOptionsV1,
+        ) -> Result<Box<SentenceSegmenter>, DataError> {
+            //let mut options = icu_segmenter::SentenceBreakOptions::default();
+            //options.content_locale = Some(locale.to_datalocale());
+            Ok(Box::new(SentenceSegmenter(call_constructor!(
+                icu_segmenter::SentenceSegmenter::try_new_with_options,
+                icu_segmenter::SentenceSegmenter::try_new_with_options_with_any_provider,
+                icu_segmenter::SentenceSegmenter::try_new_with_options_with_buffer_provider,
+                provider,
+                options.into(),
             )?)))
         }
 
@@ -147,5 +174,13 @@ pub mod ffi {
                 .and_then(|u| i32::try_from(u).ok())
                 .unwrap_or(-1)
         }
+    }
+}
+
+impl From<&ffi::SentenceBreakOptionsV1> for icu_segmenter::SentenceBreakOptions {
+    fn from(other: &ffi::SentenceBreakOptionsV1) -> Self {
+        let mut options = icu_segmenter::SentenceBreakOptions::default();
+        options.content_locale = Some(other.content_locale.to_datalocale());
+        options
     }
 }
