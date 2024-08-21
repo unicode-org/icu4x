@@ -30,10 +30,13 @@
 extern crate alloc;
 
 use icu_normalizer::properties::CanonicalCombiningClassMap;
+#[cfg(feature = "compiled_data")]
 use icu_normalizer::properties::CanonicalCombiningClassMapBorrowed;
 use icu_normalizer::properties::CanonicalComposition;
+#[cfg(feature = "compiled_data")]
 use icu_normalizer::properties::CanonicalCompositionBorrowed;
 use icu_normalizer::properties::CanonicalDecomposition;
+#[cfg(feature = "compiled_data")]
 use icu_normalizer::properties::CanonicalDecompositionBorrowed;
 use icu_normalizer::properties::Decomposed;
 use icu_normalizer::provider::{
