@@ -116,7 +116,7 @@ fn normalizer_bench_data() -> [BenchDataContent; 15] {
 
 #[cfg(debug_assertions)]
 fn function_under_bench(
-    _canonical_decomposer: &CanonicalDecomposition,
+    _canonical_decomposer: &CanonicalDecompositionBorrowed,
     _decomposable_points: &str,
 ) {
     // using debug assertion fails some test.
