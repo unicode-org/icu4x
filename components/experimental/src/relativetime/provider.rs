@@ -119,8 +119,11 @@ pub struct PluralPattern<'data, B: PatternBackend<Store = str>> {
 impl<'data, B: PatternBackend<Store = str>> PluralPattern<'data, B> {
     /// Creates a [`PluralPattern`] from the given patterns.
     #[cfg(feature = "datagen")]
+    #[allow(clippy::too_many_arguments)] // I didn't make the plural cases
     pub fn try_new(
         other: &str,
+        explicit_zero: Option<&str>,
+        explicit_one: Option<&str>,
         zero: Option<&str>,
         one: Option<&str>,
         two: Option<&str>,
@@ -133,7 +136,6 @@ impl<'data, B: PatternBackend<Store = str>> PluralPattern<'data, B> {
     {
         let optional_convert = |category, pattern: Option<&str>| {
             pattern
-                .filter(|p| *p != other)
                 .map(|s| {
                     Ok(PluralCategoryStr(
                         category,
@@ -148,11 +150,19 @@ impl<'data, B: PatternBackend<Store = str>> PluralPattern<'data, B> {
 
         Ok(Self {
             specials: (&[
-                (optional_convert(PluralCategory::Zero, zero)?),
-                (optional_convert(PluralCategory::One, one)?),
-                (optional_convert(PluralCategory::Two, two)?),
-                (optional_convert(PluralCategory::Few, few)?),
-                (optional_convert(PluralCategory::Many, many)?),
+                optional_convert(
+                    PluralCategory::Explicit0,
+                    explicit_zero.filter(|&p| p != zero.unwrap_or(other)),
+                )?,
+                optional_convert(
+                    PluralCategory::Explicit1,
+                    explicit_one.filter(|&p| p != one.unwrap_or(other)),
+                )?,
+                optional_convert(PluralCategory::Zero, zero.filter(|&p| p != other))?,
+                optional_convert(PluralCategory::One, one.filter(|&p| p != other))?,
+                optional_convert(PluralCategory::Two, two.filter(|&p| p != other))?,
+                optional_convert(PluralCategory::Few, few.filter(|&p| p != other))?,
+                optional_convert(PluralCategory::Many, many.filter(|&p| p != other))?,
             ]
             .into_iter()
             .flatten()
@@ -168,14 +178,21 @@ impl<'data, B: PatternBackend<Store = str>> PluralPattern<'data, B> {
 
     /// Returns the pattern for the given [`PluralCategory`].
     pub fn get(&'data self, c: PluralCategory) -> &'data Pattern<B, str> {
-        Pattern::from_ref_store_unchecked(if c == PluralCategory::Other {
-            &*self.other
-        } else {
+        let lookup = |c: PluralCategory| {
             self.specials
                 .iter()
                 .filter_map(|ule| (ule.0 == c.to_unaligned()).then_some(&ule.1))
                 .next()
-                .unwrap_or(&*self.other)
+        };
+        Pattern::from_ref_store_unchecked(match c {
+            PluralCategory::Other => &*self.other,
+            PluralCategory::Explicit0 => lookup(c)
+                .or_else(|| lookup(PluralCategory::Zero))
+                .unwrap_or(&*self.other),
+            PluralCategory::Explicit1 => lookup(c)
+                .or_else(|| lookup(PluralCategory::One))
+                .unwrap_or(&*self.other),
+            _ => lookup(c).unwrap_or(&*self.other),
         })
     }
 }

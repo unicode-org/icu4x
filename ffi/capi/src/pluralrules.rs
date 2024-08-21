@@ -22,6 +22,8 @@ pub mod ffi {
         Few,
         Many,
         Other,
+        Explicit1,
+        Explicit0,
     }
 
     impl PluralCategory {
@@ -138,8 +140,10 @@ pub mod ffi {
                 },
                 |mut categories, category| {
                     match category {
-                        icu_plurals::PluralCategory::Zero => categories.zero = true,
-                        icu_plurals::PluralCategory::One => categories.one = true,
+                        icu_plurals::PluralCategory::Zero
+                        | icu_plurals::PluralCategory::Explicit0 => categories.zero = true,
+                        icu_plurals::PluralCategory::One
+                        | icu_plurals::PluralCategory::Explicit1 => categories.one = true,
                         icu_plurals::PluralCategory::Two => categories.two = true,
                         icu_plurals::PluralCategory::Few => categories.few = true,
                         icu_plurals::PluralCategory::Many => categories.many = true,

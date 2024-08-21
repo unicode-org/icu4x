@@ -130,6 +130,8 @@ impl TryFrom<&cldr_serde::date_fields::PluralRulesPattern>
     fn try_from(field: &cldr_serde::date_fields::PluralRulesPattern) -> Result<Self, Self::Error> {
         PluralPattern::try_new(
             &field.other,
+            field.explicit_zero.as_deref(),
+            field.explicit_one.as_deref(),
             field.zero.as_deref(),
             field.one.as_deref(),
             field.two.as_deref(),

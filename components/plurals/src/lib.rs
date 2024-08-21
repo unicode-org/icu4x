@@ -208,6 +208,18 @@ pub enum PluralCategory {
     /// - 1 in Japanese (ja), Korean (ko), Chinese (zh), Thai (th), ...
     /// - 2 in English (en), German (de), Spanish (es), ...
     Other = 5,
+    /// The explicit 1 case, see <https://www.unicode.org/reports/tr35/tr35-numbers.html#Explicit_0_1_rules>.
+    ///
+    /// There's exactly one number that has this category: 0.
+    ///
+    /// If no data is available for this category, data for `Zero` needs to be used.
+    Explicit0 = 6,
+    /// The explicit 1 case, see <https://www.unicode.org/reports/tr35/tr35-numbers.html#Explicit_0_1_rules>.
+    ///
+    /// There's exactly one number that has this category: 1.
+    ///
+    /// If no data is available for this category, data for `One` needs to be used.
+    Explicit1 = 7,
 }
 
 impl PluralCategory {
@@ -234,6 +246,8 @@ impl PluralCategory {
     /// [`Plural Categories`]: PluralCategory
     pub fn all() -> impl ExactSizeIterator<Item = Self> {
         [
+            Self::Explicit1,
+            Self::Explicit0,
             Self::Few,
             Self::Many,
             Self::One,
@@ -252,6 +266,8 @@ impl PluralCategory {
     /// Returns the PluralCategory corresponding to given TR35 string as bytes
     pub fn get_for_cldr_bytes(category: &[u8]) -> Option<PluralCategory> {
         match category {
+            b"0" => Some(PluralCategory::Explicit0),
+            b"1" => Some(PluralCategory::Explicit1),
             b"zero" => Some(PluralCategory::Zero),
             b"one" => Some(PluralCategory::One),
             b"two" => Some(PluralCategory::Two),
@@ -489,8 +505,23 @@ impl PluralRules {
     /// [`Plural Category`]: PluralCategory
     /// [`Plural Operands`]: operands::PluralOperands
     pub fn category_for<I: Into<PluralOperands>>(&self, input: I) -> PluralCategory {
-        let rules = self.0.get();
         let input = input.into();
+        if let PluralOperands {
+            i: 0 | 1,
+            v: 0,
+            w: 0,
+            f: 0,
+            t: 0,
+            c: _,
+        } = input
+        {
+            return if input.i == 0 {
+                PluralCategory::Explicit0
+            } else {
+                PluralCategory::Explicit1
+            };
+        }
+        let rules = self.0.get();
 
         macro_rules! test_rule {
             ($rule:ident, $cat:ident) => {

@@ -142,6 +142,10 @@ mod ranges {
         Few = 4,
         /// CLDR "many" plural category.
         Many = 5,
+        /// TODO
+        Explicit1 = 6,
+        /// TODO
+        Explicit0 = 7,
     }
 
     impl RawPluralCategory {
@@ -155,6 +159,8 @@ mod ranges {
                 Self::Two => "two",
                 Self::Few => "few",
                 Self::Many => "many",
+                Self::Explicit1 => "1",
+                Self::Explicit0 => "0",
             }
         }
     }
@@ -168,6 +174,8 @@ mod ranges {
                 RawPluralCategory::Two => PluralCategory::Two,
                 RawPluralCategory::Few => PluralCategory::Few,
                 RawPluralCategory::Many => PluralCategory::Many,
+                RawPluralCategory::Explicit1 => PluralCategory::Explicit1,
+                RawPluralCategory::Explicit0 => PluralCategory::Explicit0,
             }
         }
     }
@@ -181,6 +189,8 @@ mod ranges {
                 PluralCategory::Few => RawPluralCategory::Few,
                 PluralCategory::Many => RawPluralCategory::Many,
                 PluralCategory::Other => RawPluralCategory::Other,
+                PluralCategory::Explicit1 => RawPluralCategory::Explicit1,
+                PluralCategory::Explicit0 => RawPluralCategory::Explicit0,
             }
         }
     }

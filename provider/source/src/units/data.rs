@@ -54,6 +54,8 @@ impl DataProvider<UnitsDisplayNameV1Marker> for SourceDataProvider {
                         .other
                         .as_deref()
                         .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?,
+                    unit_patterns.explicit_zero.as_deref(),
+                    unit_patterns.explicit_one.as_deref(),
                     unit_patterns.zero.as_deref(),
                     unit_patterns.one.as_deref(),
                     unit_patterns.two.as_deref(),

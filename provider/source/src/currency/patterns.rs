@@ -59,6 +59,8 @@ impl DataProvider<CurrencyPatternsDataV1Marker> for SourceDataProvider {
                             .with_debug_context(currency_patterns)
                             .with_debug_context(&req.id)
                     })?,
+                    patterns.pattern_explicit_zero.as_deref(),
+                    patterns.pattern_explicit_one.as_deref(),
                     patterns.pattern_zero.as_deref(),
                     patterns.pattern_one.as_deref(),
                     patterns.pattern_two.as_deref(),

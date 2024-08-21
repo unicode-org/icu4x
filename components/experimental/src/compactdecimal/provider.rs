@@ -110,6 +110,8 @@ impl From<PluralCategory> for Count {
             Few => Count::Few,
             Many => Count::Many,
             Other => Count::Other,
+            Explicit1 => Count::Explicit1,
+            Explicit0 => Count::Zero,
         }
     }
 }

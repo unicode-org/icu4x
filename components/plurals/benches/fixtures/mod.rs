@@ -50,8 +50,8 @@ impl LocalePluralRulesFixture {
     #[allow(dead_code)]
     pub fn get(&self, category: &PluralCategory) -> Option<&String> {
         match category {
-            PluralCategory::Zero => self.zero.as_ref(),
-            PluralCategory::One => self.one.as_ref(),
+            PluralCategory::Zero | PluralCategory::Explicit0 => self.zero.as_ref(),
+            PluralCategory::One | PluralCategory::Explicit1 => self.one.as_ref(),
             PluralCategory::Two => self.two.as_ref(),
             PluralCategory::Few => self.few.as_ref(),
             PluralCategory::Many => self.many.as_ref(),

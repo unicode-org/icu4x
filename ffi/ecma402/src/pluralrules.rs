@@ -127,6 +127,8 @@ pub(crate) mod internal {
             PluralCategory::Other => "other",
             PluralCategory::Two => "two",
             PluralCategory::Zero => "zero",
+            PluralCategory::Explicit1 => "1",
+            PluralCategory::Explicit0 => "0",
         }
     }
 
