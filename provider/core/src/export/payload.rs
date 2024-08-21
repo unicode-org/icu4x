@@ -225,6 +225,39 @@ impl core::hash::Hash for DataPayload<ExportMarker> {
     }
 }
 
+impl DataPayload<ExportMarker> {
+    /// Calculates a payload hash and the postcard size
+    pub fn hash_and_postcard_size<H: core::hash::Hasher>(&self, state: &mut H) -> usize {
+        use postcard::ser_flavors::Flavor;
+
+        struct HashFlavor<'a, H>(&'a mut H, usize);
+        impl<'a, H: core::hash::Hasher> Flavor for HashFlavor<'a, H> {
+            type Output = usize;
+
+            fn try_push(&mut self, data: u8) -> postcard::Result<()> {
+                self.0.write_u8(data);
+                self.1 += 1;
+                Ok(())
+            }
+
+            fn finalize(self) -> postcard::Result<Self::Output> {
+                Ok(self.1)
+            }
+        }
+
+        let mut serializer = postcard::Serializer {
+            output: HashFlavor(state, 0),
+        };
+
+        let _infallible = self
+            .get()
+            .payload
+            .serialize_yoke(&mut <dyn erased_serde::Serializer>::erase(&mut serializer));
+
+        serializer.output.1
+    }
+}
+
 /// Marker type for [`ExportBox`].
 #[allow(clippy::exhaustive_structs)] // marker type
 #[derive(Debug)]
