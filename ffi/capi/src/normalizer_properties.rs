@@ -36,16 +36,16 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(
-            icu::normalizer::properties::CanonicalCombiningClassMap::get,
+            icu::normalizer::properties::CanonicalCombiningClassMapBorrowed::get,
             FnInStruct
         )]
         #[diplomat::rust_link(
-            icu::normalizer::properties::CanonicalCombiningClassMap::get32,
+            icu::normalizer::properties::CanonicalCombiningClassMapBorrowed::get32,
             FnInStruct,
             hidden
         )]
         #[diplomat::rust_link(
-            icu::properties::properties::CanonicalCombiningClass,
+            icu::properties::properties::CanonicalCombiningClassMapBorrowed,
             Struct,
             compact
         )]
@@ -122,7 +122,7 @@ pub mod ffi {
 
         /// Performs non-recursive canonical decomposition (including for Hangul).
         #[diplomat::rust_link(
-            icu::normalizer::properties::CanonicalDecomposition::decompose,
+            icu::normalizer::properties::CanonicalDecompositionBorrowed::decompose,
             FnInStruct
         )]
         pub fn decompose(&self, c: DiplomatChar) -> Decomposed {
