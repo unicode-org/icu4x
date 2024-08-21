@@ -83,3 +83,56 @@ impl IterableDataProviderCached<CurrencyPatternsDataV1Marker> for SourceDataProv
             .collect())
     }
 }
+
+#[test]
+fn test_basic() {
+    use icu::locale::langid;
+
+    let provider = SourceDataProvider::new_testing();
+    let en: DataPayload<CurrencyPatternsDataV1Marker> = provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::from_str_or_panic("USD"),
+                &langid!("en").into(),
+            ),
+            ..Default::default()
+        })
+        .unwrap()
+        .payload;
+    let patterns_en = en.get().to_owned().unit_patterns;
+    assert_eq!(patterns_en.get(&PatternCount::Zero), None);
+    assert_eq!(patterns_en.get(&PatternCount::One), None);
+    assert_eq!(patterns_en.get(&PatternCount::Other), Some("{0} {1}"));
+
+    let ar: DataPayload<CurrencyPatternsDataV1Marker> = provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::from_str_or_panic("USD"),
+                &langid!("ar-EG").into(),
+            ),
+            ..Default::default()
+        })
+        .unwrap()
+        .payload;
+
+    let patterns_ar = ar.get().to_owned().unit_patterns;
+    assert_eq!(patterns_ar.get(&PatternCount::Zero), None);
+    assert_eq!(patterns_ar.get(&PatternCount::One), None);
+    assert_eq!(patterns_ar.get(&PatternCount::Other), Some("{0} {1}"));
+
+    let jp: DataPayload<CurrencyPatternsDataV1Marker> = provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::from_str_or_panic("USD"),
+                &langid!("ja").into(),
+            ),
+            ..Default::default()
+        })
+        .unwrap()
+        .payload;
+
+    let patterns_jp = jp.get().to_owned().unit_patterns;
+    assert_eq!(patterns_jp.get(&PatternCount::Zero), None);
+    assert_eq!(patterns_jp.get(&PatternCount::One), None);
+    assert_eq!(patterns_jp.get(&PatternCount::Other), Some("{0}{1}"));
+}
