@@ -9,8 +9,8 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use crate::relativetime::provider::PluralPattern;
-use icu_pattern::SinglePlaceholder;
+use crate::relativetime::provider::PluralElements;
+use icu_pattern::SinglePlaceholderPattern;
 use icu_provider::prelude::*;
 
 #[icu_provider::data_struct(marker(
@@ -31,5 +31,5 @@ pub struct UnitsDisplayNameV1<'data> {
     // TODO: use `MeasureUnit` for the units key instead of strings.
     /// Contains the long width patterns for the units.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub patterns: PluralPattern<'data, SinglePlaceholder>,
+    pub patterns: PluralElements<'data, SinglePlaceholderPattern<str>>,
 }
