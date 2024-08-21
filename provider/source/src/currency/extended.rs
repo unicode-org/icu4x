@@ -81,12 +81,7 @@ impl crate::IterableDataProviderCached<CurrencyExtendedDataV1Marker> for SourceD
 
             let currencies = &currencies_resource.main.value.numbers.currencies;
             for (currency, patterns) in currencies {
-                if patterns
-                    .display_name
-                    .as_ref()
-                    .or(patterns.other.as_ref())
-                    .is_none()
-                {
+                if patterns.display_name.as_ref().is_none() || patterns.other.as_ref().is_none() {
                     continue;
                 }
                 if let Ok(attributes) = DataMarkerAttributes::try_from_string(currency.clone()) {
