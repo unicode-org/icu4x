@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
-use crate::ule::{AsULE, EncodeAsVarULE, VarULE};
-use crate::{VarZeroVec, ZeroSlice, ZeroVec, ZeroVecError};
+use crate::ule::{AsULE, EncodeAsVarULE, UleError, VarULE};
+use crate::{VarZeroVec, ZeroSlice, ZeroVec};
 use alloc::borrow::Borrow;
 use alloc::boxed::Box;
 use core::cmp::Ordering;
@@ -352,7 +352,7 @@ where
     /// # Panics
     ///
     /// Panics if `K::ULE` and `P::ULE` are not the same size.
-    pub fn try_convert_zv_k_unchecked<P>(self) -> Result<ZeroMap<'a, P, V>, ZeroVecError>
+    pub fn try_convert_zv_k_unchecked<P>(self) -> Result<ZeroMap<'a, P, V>, UleError>
     where
         P: AsULE + ZeroMapKV<'a, Container = ZeroVec<'a, P>>,
     {
@@ -394,7 +394,7 @@ where
     /// # Panics
     ///
     /// Panics if `V::ULE` and `P::ULE` are not the same size.
-    pub fn try_convert_zv_v_unchecked<P>(self) -> Result<ZeroMap<'a, K, P>, ZeroVecError>
+    pub fn try_convert_zv_v_unchecked<P>(self) -> Result<ZeroMap<'a, K, P>, UleError>
     where
         P: AsULE + ZeroMapKV<'a, Container = ZeroVec<'a, P>>,
     {

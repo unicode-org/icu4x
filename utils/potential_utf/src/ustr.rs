@@ -152,7 +152,7 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for PotentialUtf8 {
 #[cfg(feature = "zerovec")]
 unsafe impl zerovec::ule::VarULE for PotentialUtf8 {
     #[inline]
-    fn validate_byte_slice(_: &[u8]) -> Result<(), zerovec::ZeroVecError> {
+    fn validate_byte_slice(_: &[u8]) -> Result<(), zerovec::ule::UleError> {
         Ok(())
     }
     #[inline]

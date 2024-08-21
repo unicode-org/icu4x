@@ -7,8 +7,7 @@
 
 use zerovec::{
     maps::ZeroMapKV,
-    ule::{AsULE, ULE},
-    ZeroVecError,
+    ule::{AsULE, UleError, ULE},
 };
 
 use crate::dimension::provider::units_essentials::CompoundCount;
@@ -81,11 +80,11 @@ pub struct PatternKeyULE(u8);
 //  5. The other ULE methods use the default impl.
 //  6. PatternKeyULE byte equality is semantic equality.
 unsafe impl ULE for PatternKeyULE {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ZeroVecError> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ule::UleError> {
         for &byte in bytes.iter() {
             // Ensure the first two bits (b7 & b6) are not 11.
             if (byte & 0b1100_0000) == 0b1100_0000 {
-                return Err(ZeroVecError::parse::<Self>());
+                return Err(UleError::parse::<Self>());
             }
 
             // For the `Power` variant:
@@ -95,17 +94,17 @@ unsafe impl ULE for PatternKeyULE {
             if (byte & 0b1100_0000) == 0b1000_0000 {
                 // b5 must be 1
                 if (byte & 0b0010_0000) == 0 {
-                    return Err(ZeroVecError::parse::<Self>());
+                    return Err(UleError::parse::<Self>());
                 }
 
                 // b3 must be 0
                 if (byte & 0b0000_1000) != 0 {
-                    return Err(ZeroVecError::parse::<Self>());
+                    return Err(UleError::parse::<Self>());
                 }
 
                 // If b2 is 1, b1 must be 0
                 if (byte & 0b0000_0100) != 0 && (byte & 0b0000_0010) != 0 {
-                    return Err(ZeroVecError::parse::<Self>());
+                    return Err(UleError::parse::<Self>());
                 }
             }
         }
@@ -242,12 +241,12 @@ fn test_pattern_key_ule() {
     let unvalidated_bytes = [0b1100_0000];
     assert_eq!(
         PatternKeyULE::validate_byte_slice(&unvalidated_bytes),
-        Err(ZeroVecError::parse::<PatternKeyULE>())
+        Err(UleError::parse::<PatternKeyULE>())
     );
 
     let unvalidated_bytes = [0b1000_0000];
     assert_eq!(
         PatternKeyULE::validate_byte_slice(&unvalidated_bytes),
-        Err(ZeroVecError::parse::<PatternKeyULE>())
+        Err(UleError::parse::<PatternKeyULE>())
     );
 }

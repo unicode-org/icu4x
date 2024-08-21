@@ -56,7 +56,6 @@ use super::*;
 /// # Example
 ///
 /// ```rust
-/// # use zerovec::ule::ZeroVecError;
 /// use zerovec::VarZeroVec;
 ///
 /// // The little-endian bytes correspond to the list of strings.
@@ -81,13 +80,11 @@ use super::*;
 ///
 /// assert_eq!(deserialized.strings.get(2), Some("文"));
 /// assert_eq!(deserialized.strings, &*strings);
-/// # Ok::<(), ZeroVecError>(())
 /// ```
 ///
 /// Here's another example with `ZeroSlice<T>` (similar to `[T]`):
 ///
 /// ```rust
-/// # use zerovec::ule::ZeroVecError;
 /// use zerovec::VarZeroVec;
 /// use zerovec::ZeroSlice;
 ///
@@ -117,8 +114,6 @@ use super::*;
 ///
 /// assert_eq!(deserialized.vecs[0].get(1).unwrap(), 25);
 /// assert_eq!(deserialized.vecs[1], *numbers[1]);
-///
-/// # Ok::<(), ZeroVecError>(())
 /// ```
 ///
 /// [`VarZeroVec`]s can be nested infinitely via a similar mechanism, see the docs of [`VarZeroSlice`]
@@ -255,7 +250,6 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVec<'a, T, F> {
     /// # Example
     ///
     /// ```rust
-    /// # use zerovec::ule::ZeroVecError;
     /// # use zerovec::VarZeroVec;
     ///
     /// let strings = vec!["foo", "bar", "baz", "quux"];
@@ -265,9 +259,8 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVec<'a, T, F> {
     /// assert_eq!(&vec[1], "bar");
     /// assert_eq!(&vec[2], "baz");
     /// assert_eq!(&vec[3], "quux");
-    /// # Ok::<(), ZeroVecError>(())
     /// ```
-    pub fn parse_byte_slice(slice: &'a [u8]) -> Result<Self, ZeroVecError> {
+    pub fn parse_byte_slice(slice: &'a [u8]) -> Result<Self, UleError> {
         let borrowed = VarZeroSlice::<T, F>::parse_byte_slice(slice)?;
 
         Ok(VarZeroVec::Borrowed(borrowed))
@@ -288,9 +281,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVec<'a, T, F> {
     /// # Example
     ///
     /// ```rust,ignore
-    /// # use zerovec::ule::ZeroVecError;
     /// # use zerovec::VarZeroVec;
-    ///
     /// let strings = vec!["foo", "bar", "baz", "quux"];
     /// let mut vec = VarZeroVec::<str>::from(&strings);
     ///
@@ -303,7 +294,6 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVec<'a, T, F> {
     /// assert_eq!(&vec[2], "dolor sit");
     /// assert_eq!(&vec[3], "quux");
     /// assert_eq!(&vec[4], "lorem ipsum");
-    /// # Ok::<(), ZeroVecError>(())
     /// ```
     //
     // This function is crate-public for now since we don't yet want to stabilize
@@ -325,7 +315,6 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVec<'a, T, F> {
     /// # Example
     ///
     /// ```
-    /// # use zerovec::ule::ZeroVecError;
     /// # use zerovec::VarZeroVec;
     ///
     /// let strings = vec!["foo", "bar", "baz", "quux"];
@@ -334,7 +323,6 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVec<'a, T, F> {
     /// assert_eq!(vec.len(), 4);
     /// // has 'static lifetime
     /// let owned = vec.into_owned();
-    /// # Ok::<(), ZeroVecError>(())
     /// ```
     pub fn into_owned(mut self) -> VarZeroVec<'static, T, F> {
         self.make_mut();
@@ -362,16 +350,13 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVec<'a, T, F> {
     /// # Example
     ///
     /// ```rust
-    /// # use zerovec::ule::ZeroVecError;
     /// # use zerovec::VarZeroVec;
     ///
     /// let strings = vec!["foo", "bar", "baz"];
     /// let bytes = VarZeroVec::<str>::from(&strings).into_bytes();
     ///
-    /// let mut borrowed: VarZeroVec<str> = VarZeroVec::parse_byte_slice(&bytes)?;
+    /// let mut borrowed: VarZeroVec<str> = VarZeroVec::parse_byte_slice(&bytes).unwrap();
     /// assert_eq!(borrowed, &*strings);
-    ///
-    /// # Ok::<(), ZeroVecError>(())
     /// ```
     pub fn into_bytes(self) -> Vec<u8> {
         match self {

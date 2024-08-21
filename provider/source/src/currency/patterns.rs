@@ -10,8 +10,10 @@ use std::collections::HashSet;
 
 use icu::experimental::dimension::provider::currency_patterns::*;
 use icu::experimental::relativetime::provider::PluralPattern;
+use icu::plurals::PluralCategory;
 use icu_provider::prelude::*;
 use icu_provider::DataProvider;
+use writeable::assert_writeable_eq;
 
 impl DataProvider<CurrencyPatternsDataV1Marker> for SourceDataProvider {
     fn load(
@@ -84,4 +86,97 @@ impl IterableDataProviderCached<CurrencyPatternsDataV1Marker> for SourceDataProv
             .map(DataIdentifierCow::from_locale)
             .collect())
     }
+}
+
+#[test]
+fn test_basic() {
+    use icu::locale::langid;
+    use writeable::assert_writeable_eq;
+
+    let provider = SourceDataProvider::new_testing();
+    let en: DataPayload<CurrencyPatternsDataV1Marker> = provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::from_str_or_panic("USD"),
+                &langid!("en").into(),
+            ),
+            ..Default::default()
+        })
+        .unwrap()
+        .payload;
+    let patterns_en = &en.get().patterns;
+    assert_writeable_eq!(
+        patterns_en
+            .get(PluralCategory::Zero)
+            .interpolate((0, "USD")),
+        "0 USD"
+    );
+    assert_writeable_eq!(
+        patterns_en.get(PluralCategory::One).interpolate((1, "USD")),
+        "1 USD"
+    );
+    assert_writeable_eq!(
+        patterns_en
+            .get(PluralCategory::Other)
+            .interpolate((2, "USD")),
+        "2 USD"
+    );
+
+    let ar: DataPayload<CurrencyPatternsDataV1Marker> = provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::from_str_or_panic("USD"),
+                &langid!("ar-EG").into(),
+            ),
+            ..Default::default()
+        })
+        .unwrap()
+        .payload;
+
+    let patterns_ar = &ar.get().patterns;
+    assert_writeable_eq!(
+        patterns_ar
+            .get(PluralCategory::Zero)
+            .interpolate((0, "USD")),
+        "0 USD"
+    );
+    assert_writeable_eq!(
+        patterns_ar.get(PluralCategory::One).interpolate((1, "USD")),
+        "1 USD"
+    );
+    assert_writeable_eq!(
+        patterns_ar
+            .get(PluralCategory::Other)
+            .interpolate((2, "USD")),
+        "2 USD"
+    );
+
+    let jp: DataPayload<CurrencyPatternsDataV1Marker> = provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::from_str_or_panic("USD"),
+                &langid!("ja").into(),
+            ),
+            ..Default::default()
+        })
+        .unwrap()
+        .payload;
+
+    let patterns_jp = &jp.get().patterns;
+    assert_writeable_eq!(
+        patterns_jp
+            .get(PluralCategory::Zero)
+            .interpolate((0, "USD")),
+        "0USD"
+    );
+    assert_writeable_eq!(
+        patterns_jp.get(PluralCategory::One).interpolate((1, "USD")),
+        "1USD"
+    );
+    assert_writeable_eq!(
+        patterns_jp
+            .get(PluralCategory::Other)
+            .interpolate((2, "USD")),
+        "2USD"
+    );
 }

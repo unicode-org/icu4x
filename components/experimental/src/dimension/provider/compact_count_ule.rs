@@ -4,7 +4,7 @@
 
 use crate::dimension::provider::currency_compact::CompactCount;
 use icu_plurals::PluralCategory;
-use zerovec::ule::{AsULE, ZeroVecError, ULE};
+use zerovec::ule::{AsULE, UleError, ULE};
 
 /// [`CompactCountULE`] is a type optimized for efficient storing and
 /// deserialization of [`CompactCount`] using the `ZeroVec` model.
@@ -38,14 +38,14 @@ pub struct CompactCountULE(u8);
 //  5. The other ULE methods use the default impl.
 //  6. CompactCountULE byte equality is semantic equality.
 unsafe impl ULE for CompactCountULE {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
         for byte in bytes {
             if byte & 0b0111_1000 != 0 {
-                return Err(ZeroVecError::parse::<Self>());
+                return Err(UleError::parse::<Self>());
             }
 
             if byte & 0b0000_0111 > 5 {
-                return Err(ZeroVecError::parse::<Self>());
+                return Err(UleError::parse::<Self>());
             }
         }
 

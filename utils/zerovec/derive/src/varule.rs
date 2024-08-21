@@ -101,10 +101,10 @@ pub fn derive_impl(
         const #ule_size: usize = 0 #(+ #sizes)*;
         unsafe impl zerovec::ule::VarULE for #name {
             #[inline]
-            fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ZeroVecError> {
+            fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ule::UleError> {
 
                 if bytes.len() < #ule_size {
-                    return Err(zerovec::ZeroVecError::parse::<Self>());
+                    return Err(zerovec::ule::UleError::parse::<Self>());
                 }
                 #validators
                 debug_assert_eq!(#remaining_offset, #ule_size);

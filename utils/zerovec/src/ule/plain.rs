@@ -42,12 +42,12 @@ impl<const N: usize> RawBytesULE<N> {
 //  6. RawBytesULE byte equality is semantic equality
 unsafe impl<const N: usize> ULE for RawBytesULE<N> {
     #[inline]
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
         if bytes.len() % N == 0 {
             // Safe because Self is transparent over [u8; N]
             Ok(())
         } else {
-            Err(ZeroVecError::length::<Self>(bytes.len()))
+            Err(UleError::length::<Self>(bytes.len()))
         }
     }
 }
@@ -94,13 +94,13 @@ macro_rules! impl_const_constructors {
             /// instead.
             ///
             /// See [`ZeroSlice::cast()`] for an example.
-            pub const fn try_from_bytes(bytes: &[u8]) -> Result<&Self, ZeroVecError> {
+            pub const fn try_from_bytes(bytes: &[u8]) -> Result<&Self, UleError> {
                 let len = bytes.len();
                 #[allow(clippy::modulo_one)]
                 if len % $size == 0 {
                     Ok(unsafe { Self::from_bytes_unchecked(bytes) })
                 } else {
-                    Err(ZeroVecError::InvalidLength {
+                    Err(UleError::InvalidLength {
                         ty: concat!("<const construct: ", $size, ">"),
                         len,
                     })
@@ -188,7 +188,7 @@ impl_const_constructors!(bool, 1);
 //  6. u8 byte equality is semantic equality
 unsafe impl ULE for u8 {
     #[inline]
-    fn validate_byte_slice(_bytes: &[u8]) -> Result<(), ZeroVecError> {
+    fn validate_byte_slice(_bytes: &[u8]) -> Result<(), UleError> {
         Ok(())
     }
 }
@@ -217,10 +217,10 @@ unsafe impl EqULE for u8 {}
 //  6. NonZeroU8 byte equality is semantic equality
 unsafe impl ULE for NonZeroU8 {
     #[inline]
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
         bytes.iter().try_for_each(|b| {
             if *b == 0x00 {
-                Err(ZeroVecError::parse::<Self>())
+                Err(UleError::parse::<Self>())
             } else {
                 Ok(())
             }
@@ -255,7 +255,7 @@ impl NicheBytes<1> for NonZeroU8 {
 //  6. i8 byte equality is semantic equality
 unsafe impl ULE for i8 {
     #[inline]
-    fn validate_byte_slice(_bytes: &[u8]) -> Result<(), ZeroVecError> {
+    fn validate_byte_slice(_bytes: &[u8]) -> Result<(), UleError> {
         Ok(())
     }
 }
@@ -338,12 +338,12 @@ unsafe impl EqULE for f64 {}
 //  6. bool byte equality is semantic equality
 unsafe impl ULE for bool {
     #[inline]
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
         for byte in bytes {
             // https://doc.rust-lang.org/reference/types/boolean.html
             // Rust booleans are always size 1, align 1 values with valid bit patterns 0x0 or 0x1
             if *byte > 1 {
-                return Err(ZeroVecError::parse::<Self>());
+                return Err(UleError::parse::<Self>());
             }
         }
         Ok(())

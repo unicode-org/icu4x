@@ -135,14 +135,12 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     /// # Example
     ///
     /// ```rust
-    /// # use zerovec::ule::ZeroVecError;
     /// # use zerovec::VarZeroVec;
     ///
     /// let strings = vec!["foo", "bar", "baz", "quux"];
     /// let vec = VarZeroVec::<str>::from(&strings);
     ///
     /// assert_eq!(vec.len(), 4);
-    /// # Ok::<(), ZeroVecError>(())
     /// ```
     pub fn len(&self) -> usize {
         self.as_components().len()
@@ -153,14 +151,12 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     /// # Examples
     ///
     /// ```
-    /// # use zerovec::ule::ZeroVecError;
     /// # use zerovec::VarZeroVec;
     ///
     /// let strings: Vec<String> = vec![];
     /// let vec = VarZeroVec::<str>::from(&strings);
     ///
     /// assert!(vec.is_empty());
-    /// # Ok::<(), ZeroVecError>(())
     /// ```
     pub fn is_empty(&self) -> bool {
         self.as_components().is_empty()
@@ -171,7 +167,6 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     /// # Example
     ///
     /// ```rust
-    /// # use zerovec::ule::ZeroVecError;
     /// # use zerovec::VarZeroVec;
     ///
     /// let strings = vec!["foo", "bar", "baz", "quux"];
@@ -182,7 +177,6 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     /// assert_eq!(iter_results[1], "bar");
     /// assert_eq!(iter_results[2], "baz");
     /// assert_eq!(iter_results[3], "quux");
-    /// # Ok::<(), ZeroVecError>(())
     /// ```
     pub fn iter<'b>(&'b self) -> impl Iterator<Item = &'b T> {
         self.as_components().iter()
@@ -193,7 +187,6 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     /// # Example
     ///
     /// ```rust
-    /// # use zerovec::ule::ZeroVecError;
     /// # use zerovec::VarZeroVec;
     ///
     /// let strings = vec!["foo", "bar", "baz", "quux"];
@@ -205,7 +198,6 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     /// assert_eq!(vec.get(2), Some("baz"));
     /// assert_eq!(vec.get(3), Some("quux"));
     /// assert_eq!(vec.get(4), None);
-    /// # Ok::<(), ZeroVecError>(())
     /// ```
     pub fn get(&self, idx: usize) -> Option<&T> {
         self.as_components().get(idx)
@@ -220,7 +212,6 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     /// # Example
     ///
     /// ```rust
-    /// # use zerovec::ule::ZeroVecError;
     /// # use zerovec::VarZeroVec;
     ///
     /// let strings = vec!["foo", "bar", "baz", "quux"];
@@ -233,7 +224,6 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     ///     assert_eq!(vec.get_unchecked(2), "baz");
     ///     assert_eq!(vec.get_unchecked(3), "quux");
     /// }
-    /// # Ok::<(), ZeroVecError>(())
     /// ```
     pub unsafe fn get_unchecked(&self, idx: usize) -> &T {
         self.as_components().get_unchecked(idx)
@@ -253,15 +243,12 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     /// # Example
     ///
     /// ```rust
-    /// # use zerovec::ule::ZeroVecError;
     /// # use zerovec::VarZeroVec;
     ///
     /// let strings = vec!["foo", "bar", "baz"];
     /// let vzv = VarZeroVec::<str>::from(&strings);
     ///
     /// assert_eq!(vzv, VarZeroVec::parse_byte_slice(vzv.as_bytes()).unwrap());
-    ///
-    /// # Ok::<(), ZeroVecError>(())
     /// ```
     #[inline]
     pub const fn as_bytes(&self) -> &[u8] {
@@ -279,7 +266,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     /// Parse a VarZeroSlice from a slice of the appropriate format
     ///
     /// Slices of the right format can be obtained via [`VarZeroSlice::as_bytes()`]
-    pub fn parse_byte_slice<'a>(slice: &'a [u8]) -> Result<&'a Self, ZeroVecError> {
+    pub fn parse_byte_slice<'a>(slice: &'a [u8]) -> Result<&'a Self, UleError> {
         <Self as VarULE>::parse_byte_slice(slice)
     }
 
@@ -312,7 +299,6 @@ where
     /// # Example
     ///
     /// ```
-    /// # use zerovec::ule::ZeroVecError;
     /// # use zerovec::VarZeroVec;
     ///
     /// let strings = vec!["a", "b", "f", "g"];
@@ -320,7 +306,6 @@ where
     ///
     /// assert_eq!(vec.binary_search("f"), Ok(2));
     /// assert_eq!(vec.binary_search("e"), Err(2));
-    /// # Ok::<(), ZeroVecError>(())
     /// ```
     ///
     /// [`binary_search`]: https://doc.rust-lang.org/std/primitive.slice.html#method.binary_search
@@ -339,9 +324,7 @@ where
     /// # Example
     ///
     /// ```
-    /// # use zerovec::ule::ZeroVecError;
     /// # use zerovec::VarZeroVec;
-    ///
     /// let strings = vec!["a", "b", "f", "g", "m", "n", "q"];
     /// let vec = VarZeroVec::<str>::from(&strings);
     ///
@@ -360,7 +343,6 @@ where
     /// // Will return `None` if the range is out of bounds:
     /// assert_eq!(vec.binary_search_in_range("x", 100..200), None);
     /// assert_eq!(vec.binary_search_in_range("x", 0..200), None);
-    /// # Ok::<(), ZeroVecError>(())
     /// ```
     ///
     /// [`binary_search`]: https://doc.rust-lang.org/std/primitive.slice.html#method.binary_search
@@ -386,15 +368,12 @@ where
     /// # Example
     ///
     /// ```
-    /// # use zerovec::ule::ZeroVecError;
     /// # use zerovec::VarZeroVec;
-    ///
     /// let strings = vec!["a", "b", "f", "g"];
     /// let vec = VarZeroVec::<str>::from(&strings);
     ///
     /// assert_eq!(vec.binary_search_by(|probe| probe.cmp("f")), Ok(2));
     /// assert_eq!(vec.binary_search_by(|probe| probe.cmp("e")), Err(2));
-    /// # Ok::<(), ZeroVecError>(())
     /// ```
     ///
     /// [`binary_search_by`]: https://doc.rust-lang.org/std/primitive.slice.html#method.binary_search_by
@@ -413,9 +392,7 @@ where
     /// # Example
     ///
     /// ```
-    /// # use zerovec::ule::ZeroVecError;
     /// # use zerovec::VarZeroVec;
-    ///
     /// let strings = vec!["a", "b", "f", "g", "m", "n", "q"];
     /// let vec = VarZeroVec::<str>::from(&strings);
     ///
@@ -455,7 +432,6 @@ where
     ///     None
     /// );
     /// assert_eq!(vec.binary_search_in_range_by(|v| v.cmp("x"), 0..200), None);
-    /// # Ok::<(), ZeroVecError>(())
     /// ```
     ///
     /// [`binary_search`]: https://doc.rust-lang.org/std/primitive.slice.html#method.binary_search
@@ -479,8 +455,9 @@ where
 //  6. `as_byte_slice()` is equivalent to a regular transmute of the underlying data
 //  7. VarZeroSlice byte equality is semantic equality (relying on the guideline of the underlying VarULE type)
 unsafe impl<T: VarULE + ?Sized + 'static, F: VarZeroVecFormat> VarULE for VarZeroSlice<T, F> {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
-        let _: VarZeroVecComponents<T, F> = VarZeroVecComponents::parse_byte_slice(bytes)?;
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
+        let _: VarZeroVecComponents<T, F> =
+            VarZeroVecComponents::parse_byte_slice(bytes).map_err(|_| UleError::parse::<Self>())?;
         Ok(())
     }
 

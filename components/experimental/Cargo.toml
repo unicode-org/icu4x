@@ -36,6 +36,7 @@ icu_plurals = { workspace = true }
 icu_properties = { workspace = true }
 
 databake = { workspace = true, optional = true, features = ["derive"] }
+either = { workspace = true }
 fixed_decimal = { workspace = true }
 icu_pattern = { workspace = true , features = ["alloc", "yoke", "zerofrom"]}
 litemap = { workspace = true }
@@ -52,7 +53,7 @@ num-bigint = { workspace = true }
 num-rational = { workspace = true, features = ["num-bigint"]}
 num-traits = { workspace = true }
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
-smallvec = { workspace = true }
+smallvec = { workspace = true, features = ["const_generics"] }
 
 icu_experimental_data = { workspace = true, optional = true }
 

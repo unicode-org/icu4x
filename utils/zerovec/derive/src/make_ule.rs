@@ -206,10 +206,10 @@ fn make_ule_enum_impl(
 
         unsafe impl zerovec::ule::ULE for #ule_name {
             #[inline]
-            fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ZeroVecError> {
+            fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ule::UleError> {
                 for byte in bytes {
                     if *byte < #min || *byte > #max {
-                        return Err(zerovec::ZeroVecError::parse::<Self>())
+                        return Err(zerovec::ule::UleError::parse::<Self>())
                     }
                 }
                 Ok(())
