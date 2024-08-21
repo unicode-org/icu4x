@@ -119,4 +119,20 @@ fn test_basic() {
     assert_eq!(patterns_ar.get(&PatternCount::Zero), None);
     assert_eq!(patterns_ar.get(&PatternCount::One), None);
     assert_eq!(patterns_ar.get(&PatternCount::Other), Some("{0} {1}"));
+
+    let jp: DataPayload<CurrencyPatternsDataV1Marker> = provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::from_str_or_panic("USD"),
+                &langid!("ja").into(),
+            ),
+            ..Default::default()
+        })
+        .unwrap()
+        .payload;
+
+    let patterns_jp = jp.get().to_owned().unit_patterns;
+    assert_eq!(patterns_jp.get(&PatternCount::Zero), None);
+    assert_eq!(patterns_jp.get(&PatternCount::One), None);
+    assert_eq!(patterns_jp.get(&PatternCount::Other), Some("{0}{1}"));
 }
