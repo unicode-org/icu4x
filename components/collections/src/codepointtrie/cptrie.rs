@@ -15,8 +15,8 @@ use core::num::TryFromIntError;
 use core::ops::RangeInclusive;
 use yoke::Yokeable;
 use zerofrom::ZeroFrom;
+use zerovec::ule::UleError;
 use zerovec::ZeroVec;
-use zerovec::ZeroVecError;
 
 /// The type of trie represents whether the trie has an optimization that
 /// would make it smaller or faster.
@@ -431,7 +431,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     ///
     /// assert_eq!(planes_trie_i8.get32(0x30000), 3);
     /// ```
-    pub fn try_into_converted<P>(self) -> Result<CodePointTrie<'trie, P>, ZeroVecError>
+    pub fn try_into_converted<P>(self) -> Result<CodePointTrie<'trie, P>, UleError>
     where
         P: TrieValue,
     {

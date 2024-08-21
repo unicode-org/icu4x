@@ -58,11 +58,11 @@ pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
     quote! {
         unsafe impl zerovec::ule::ULE for #name {
             #[inline]
-            fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ZeroVecError> {
+            fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ule::UleError> {
                 const SIZE: usize = ::core::mem::size_of::<#name>();
                 #[allow(clippy::modulo_one)]
                 if bytes.len() % SIZE != 0 {
-                    return Err(zerovec::ZeroVecError::length::<Self>(bytes.len()));
+                    return Err(zerovec::ule::UleError::length::<Self>(bytes.len()));
                 }
                 // Validate the bytes
                 #[allow(clippy::indexing_slicing)] // We're slicing a chunk of known size

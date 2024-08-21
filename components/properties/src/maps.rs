@@ -19,7 +19,7 @@ use core::marker::PhantomData;
 use core::ops::RangeInclusive;
 use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
-use zerovec::ZeroVecError;
+use zerovec::ule::UleError;
 
 /// A wrapper around code point map data. It is returned by APIs that return Unicode
 /// property data in a map-like form, ex: enumerated property value data keyed
@@ -72,7 +72,7 @@ impl<T: TrieValue> CodePointMapData<T> {
     /// assert_eq!(gc.get('木'), GeneralCategory::OtherLetter as u8);  // U+6728
     /// assert_eq!(gc.get('🎃'), GeneralCategory::OtherSymbol as u8);  // U+1F383 JACK-O-LANTERN
     /// ```
-    pub fn try_into_converted<P>(self) -> Result<CodePointMapData<P>, ZeroVecError>
+    pub fn try_into_converted<P>(self) -> Result<CodePointMapData<P>, UleError>
     where
         P: TrieValue,
     {

@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::FlexZeroVec;
-use crate::ZeroVecError;
+use crate::ule::UleError;
 use alloc::vec::Vec;
 use core::cmp::Ordering;
 use core::fmt;
@@ -92,11 +92,11 @@ impl FlexZeroSlice {
     /// assert_eq!(FZS.get(3), None);
     /// assert_eq!(FZS.last(), Some(0xFFFF));
     /// ```
-    pub const fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, ZeroVecError> {
+    pub const fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, UleError> {
         let (width_u8, data) = match bytes.split_first() {
             Some(v) => v,
             None => {
-                return Err(ZeroVecError::InvalidLength {
+                return Err(UleError::InvalidLength {
                     ty: "FlexZeroSlice",
                     len: 0,
                 })
@@ -104,12 +104,12 @@ impl FlexZeroSlice {
         };
         let width = *width_u8 as usize;
         if width < 1 || width > USIZE_WIDTH {
-            return Err(ZeroVecError::ParseError {
+            return Err(UleError::ParseError {
                 ty: "FlexZeroSlice",
             });
         }
         if data.len() % width != 0 {
-            return Err(ZeroVecError::InvalidLength {
+            return Err(UleError::InvalidLength {
                 ty: "FlexZeroSlice",
                 len: bytes.len(),
             });

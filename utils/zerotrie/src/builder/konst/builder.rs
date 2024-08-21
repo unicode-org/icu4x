@@ -8,7 +8,7 @@ use super::store::const_for_each;
 use super::store::ConstArrayBuilder;
 use super::store::ConstLengthsStack;
 use super::store::ConstSlice;
-use crate::error::Error;
+use crate::error::ZeroTrieBuildError;
 use crate::varint;
 
 /// A low-level builder for ZeroTrieSimpleAscii. Works in const contexts.
@@ -110,7 +110,7 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
     /// Panics if the items are not sorted
     pub const fn from_tuple_slice<'a, const K: usize>(
         items: &[(&'a ByteStr, usize)],
-    ) -> Result<Self, Error> {
+    ) -> Result<Self, ZeroTrieBuildError> {
         let items = ConstSlice::from_slice(items);
         let mut prev: Option<&'a ByteStr> = None;
         const_for_each!(items, (ascii_str, _), {
@@ -135,7 +135,7 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
     /// "AsciiTrie Builder: Need more stack", try increasing `K`.
     pub const fn from_sorted_const_tuple_slice<const K: usize>(
         items: ConstSlice<(&ByteStr, usize)>,
-    ) -> Result<Self, Error> {
+    ) -> Result<Self, ZeroTrieBuildError> {
         let mut result = Self::new();
         let total_size;
         (result, total_size) = result.create_or_panic::<K>(items);

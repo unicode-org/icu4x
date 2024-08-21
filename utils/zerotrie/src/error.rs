@@ -7,12 +7,12 @@ use displaydoc::Display;
 /// Error types for the `zerotrie` crate.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Display)]
 #[non_exhaustive]
-pub enum Error {
-    /// Non-ASCII data was added to an ASCII-only collection.
-    #[displaydoc("Non-ASCII cannot be added to an ASCII-only collection")]
+pub enum ZeroTrieBuildError {
+    /// Non-ASCII data was added to an ASCII-only trie.
+    #[displaydoc("Non-ASCII cannot be added to an ASCII-only trie")]
     NonAsciiError,
-    /// The collection reached its maximum supported capacity.
-    #[displaydoc("Reached maximum capacity of collection")]
+    /// The trie reached its maximum supported capacity.
+    #[displaydoc("Reached maximum capacity of trie")]
     CapacityExceeded,
     /// The builder could not solve the perfect hash function.
     #[displaydoc("Failed to solve the perfect hash function. This is rare! Please report your case to the ICU4X team.")]

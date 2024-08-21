@@ -54,7 +54,7 @@ where
 
     /// Attempt to construct a `&ZeroSlice<T>` from a byte slice, returning an error
     /// if it's not a valid byte sequence
-    pub fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, ZeroVecError> {
+    pub fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, UleError> {
         T::ULE::parse_byte_slice(bytes).map(Self::from_ule_slice)
     }
 
@@ -302,7 +302,7 @@ where
     /// assert_eq!(zs_u8_4.get(0), Some([0x7F, 0xF3, 0x01, 0x00]));
     /// ```
     #[inline]
-    pub fn try_as_converted<P: AsULE>(&self) -> Result<&ZeroSlice<P>, ZeroVecError> {
+    pub fn try_as_converted<P: AsULE>(&self) -> Result<&ZeroSlice<P>, UleError> {
         let new_slice = P::ULE::parse_byte_slice(self.as_bytes())?;
         Ok(ZeroSlice::from_ule_slice(new_slice))
     }
@@ -470,7 +470,7 @@ where
 //  7. `[T::ULE]` byte equality is semantic equality (relying on the guideline of the underlying `ULE` type)
 unsafe impl<T: AsULE + 'static> VarULE for ZeroSlice<T> {
     #[inline]
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
         T::ULE::validate_byte_slice(bytes)
     }
 

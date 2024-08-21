@@ -67,11 +67,11 @@
 //! //  6. The other VarULE methods use the default impl.
 //! //  7. FooULE byte equality is semantic equality
 //! unsafe impl VarULE for FooULE {
-//!     fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+//!     fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
 //!         // validate each field
-//!         <char as AsULE>::ULE::validate_byte_slice(&bytes[0..3]).map_err(|_| ZeroVecError::parse::<Self>())?;
-//!         <u32 as AsULE>::ULE::validate_byte_slice(&bytes[3..7]).map_err(|_| ZeroVecError::parse::<Self>())?;
-//!         let _ = ZeroVec::<u32>::parse_byte_slice(&bytes[7..]).map_err(|_| ZeroVecError::parse::<Self>())?;
+//!         <char as AsULE>::ULE::validate_byte_slice(&bytes[0..3]).map_err(|_| UleError::parse::<Self>())?;
+//!         <u32 as AsULE>::ULE::validate_byte_slice(&bytes[3..7]).map_err(|_| UleError::parse::<Self>())?;
+//!         let _ = ZeroVec::<u32>::parse_byte_slice(&bytes[7..]).map_err(|_| UleError::parse::<Self>())?;
 //!         Ok(())
 //!     }
 //!     unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {

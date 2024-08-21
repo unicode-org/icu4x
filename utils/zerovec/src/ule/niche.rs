@@ -116,7 +116,7 @@ impl<U: NicheBytes<N> + ULE + Eq, const N: usize> Eq for NichedOptionULE<U, N> {
 /// 6. NichedOptionULE equality is based on ULE equality of the subfield, assuming that NicheBytes
 ///    has been implemented correctly (this is a correctness but not a safety guarantee).
 unsafe impl<U: NicheBytes<N> + ULE, const N: usize> ULE for NichedOptionULE<U, N> {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), crate::ZeroVecError> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), crate::ule::UleError> {
         let size = size_of::<Self>();
         // The implemention is only correct if NICHE_BIT_PATTERN has same number of bytes as the
         // type.
@@ -124,7 +124,7 @@ unsafe impl<U: NicheBytes<N> + ULE, const N: usize> ULE for NichedOptionULE<U, N
 
         // The bytes should fully transmute to a collection of Self
         if bytes.len() % size != 0 {
-            return Err(crate::ZeroVecError::length::<Self>(bytes.len()));
+            return Err(crate::ule::UleError::length::<Self>(bytes.len()));
         }
         bytes.chunks(size).try_for_each(|chunk| {
             // Associated const cannot be referenced in a pattern
