@@ -1,6 +1,11 @@
 {
-  "categorized_display_names": {
-    "One": "pound ng Egypt"
-  },
-  "other_display_name": "Egyptian pounds"
+  "display_names": {
+    "specials": [
+      [
+        "One",
+        "pound ng Egypt"
+      ]
+    ],
+    "other": "Egyptian pounds"
+  }
 }

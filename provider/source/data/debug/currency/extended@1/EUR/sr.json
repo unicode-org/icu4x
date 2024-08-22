@@ -1,6 +1,11 @@
 {
-  "categorized_display_names": {
-    "One": "евро"
-  },
-  "other_display_name": "евра"
+  "display_names": {
+    "specials": [
+      [
+        "One",
+        "евро"
+      ]
+    ],
+    "other": "евра"
+  }
 }

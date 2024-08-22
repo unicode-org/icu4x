@@ -1,6 +1,11 @@
 {
-  "categorized_display_names": {
-    "One": "dolyar ng US"
-  },
-  "other_display_name": "dolyares ng US"
+  "display_names": {
+    "specials": [
+      [
+        "One",
+        "dolyar ng US"
+      ]
+    ],
+    "other": "dolyares ng US"
+  }
 }

@@ -1,6 +1,11 @@
 {
-  "categorized_display_names": {
-    "One": "libra egipcia"
-  },
-  "other_display_name": "libras egipcias"
+  "display_names": {
+    "specials": [
+      [
+        "One",
+        "libra egipcia"
+      ]
+    ],
+    "other": "libras egipcias"
+  }
 }

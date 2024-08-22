@@ -1,7 +1,15 @@
 {
-  "categorized_display_names": {
-    "One": "američki dolar",
-    "Few": "američka dolara"
-  },
-  "other_display_name": "američkih dolara"
+  "display_names": {
+    "specials": [
+      [
+        "One",
+        "američki dolar"
+      ],
+      [
+        "Few",
+        "američka dolara"
+      ]
+    ],
+    "other": "američkih dolara"
+  }
 }
