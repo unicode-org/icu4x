@@ -163,7 +163,7 @@ impl LongCurrencyFormatter {
     ) -> LongFormattedCurrency<'l> {
         LongFormattedCurrency {
             value,
-            currency_code,
+            _currency_code: currency_code,
             extended: self.extended.get(),
             patterns: self.patterns.get(),
             fixed_decimal_formatter: &self.fixed_decimal_formatter,

@@ -2,23 +2,21 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::str::FromStr;
-
 use fixed_decimal::FixedDecimal;
 
 use icu_decimal::FixedDecimalFormatter;
-use icu_pattern::DoublePlaceholderPattern;
 use icu_plurals::PluralRules;
 use writeable::Writeable;
 
-use crate::dimension::provider::currency_patterns::{CurrencyPatternsDataV1, PatternCount};
-use crate::dimension::provider::extended_currency::{Count, CurrencyExtendedDataV1};
+use crate::dimension::provider::currency_patterns::CurrencyPatternsDataV1;
+use crate::dimension::provider::extended_currency::CurrencyExtendedDataV1;
 
 use super::CurrencyCode;
 
 pub struct LongFormattedCurrency<'l> {
     pub(crate) value: &'l FixedDecimal,
-    pub(crate) currency_code: CurrencyCode,
+    // TODO: use this if the display name is not exist and make the extended data optional.
+    pub(crate) _currency_code: CurrencyCode,
     pub(crate) extended: &'l CurrencyExtendedDataV1<'l>,
     pub(crate) patterns: &'l CurrencyPatternsDataV1<'l>,
     pub(crate) fixed_decimal_formatter: &'l FixedDecimalFormatter,
@@ -33,31 +31,8 @@ impl<'l> Writeable for LongFormattedCurrency<'l> {
         W: core::fmt::Write + ?Sized,
     {
         let plural_category = self.plural_rules.category_for(self.value);
-        let count = Count::from(plural_category);
-        let pattern_count = PatternCount::from(plural_category);
-
-        let display_names = &self.extended.display_names;
-
-        let display_name = display_names
-            .get(&count)
-            .or_else(|| display_names.get(&Count::Other))
-            // TOOD: check the cases of using `Count::DisplayName`
-            .unwrap_or_else(|| self.currency_code.0.as_str());
-
-        let patterns = &self.patterns.unit_patterns;
-        let pattern = patterns
-            .get(&pattern_count)
-            .or_else(|| patterns.get(&PatternCount::Other))
-            // According to [Unicode Technical Standard #35](https://unicode.org/reports/tr35/tr35-numbers.html),
-            // The `other` pattern must be present in the data.
-            // Also, if the `other` pattern is not present, the datagen will fail.
-            .unwrap();
-
-        // TODO: Remove this line once the pattern is already implemented in the provider.
-        // Parse the pattern string into a DoublePlaceholderPattern
-        // The pattern is expected to be in the form of "{0} {1}"
-        let pattern = DoublePlaceholderPattern::from_str(pattern).unwrap();
-
+        let display_name = self.extended.display_names.get_str(plural_category);
+        let pattern = self.patterns.patterns.get_pattern(plural_category);
         let formatted_value = self.fixed_decimal_formatter.format(self.value);
         let interpolated = pattern.interpolate((formatted_value, display_name));
         interpolated.write_to(sink)
