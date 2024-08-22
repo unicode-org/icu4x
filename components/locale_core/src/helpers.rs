@@ -302,6 +302,11 @@ macro_rules! impl_tinystr_subtag {
         }
 
         #[cfg(feature = "zerovec")]
+        impl zerovec::ule::NicheBytes<$len_end> for $name {
+            const NICHE_BIT_PATTERN: [u8; $len_end] = <tinystr::TinyAsciiStr<$len_end>>::NICHE_BIT_PATTERN;
+        }
+
+        #[cfg(feature = "zerovec")]
         impl zerovec::ule::AsULE for $name {
             type ULE = Self;
             fn to_unaligned(self) -> Self::ULE {
