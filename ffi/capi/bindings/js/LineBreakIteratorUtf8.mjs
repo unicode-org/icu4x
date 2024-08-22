@@ -42,7 +42,8 @@ export class LineBreakIteratorUtf8 {
         return this.#ptr;
     }
 
-    next() {const result = wasm.icu4x_LineBreakIteratorUtf8_next_mv1(this.ffiValue);
+    next() {
+        const result = wasm.icu4x_LineBreakIteratorUtf8_next_mv1(this.ffiValue);
     
         try {
             return result;

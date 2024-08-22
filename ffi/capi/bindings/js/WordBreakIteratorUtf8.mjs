@@ -41,7 +41,8 @@ export class WordBreakIteratorUtf8 {
         return this.#ptr;
     }
 
-    next() {const result = wasm.icu4x_WordBreakIteratorUtf8_next_mv1(this.ffiValue);
+    next() {
+        const result = wasm.icu4x_WordBreakIteratorUtf8_next_mv1(this.ffiValue);
     
         try {
             return result;
@@ -50,7 +51,8 @@ export class WordBreakIteratorUtf8 {
         finally {}
     }
 
-    get wordType() {const result = wasm.icu4x_WordBreakIteratorUtf8_word_type_mv1(this.ffiValue);
+    get wordType() {
+        const result = wasm.icu4x_WordBreakIteratorUtf8_word_type_mv1(this.ffiValue);
     
         try {
             return SegmenterWordType[Array.from(SegmenterWordType.values.keys())[result]];
@@ -59,7 +61,8 @@ export class WordBreakIteratorUtf8 {
         finally {}
     }
 
-    get isWordLike() {const result = wasm.icu4x_WordBreakIteratorUtf8_is_word_like_mv1(this.ffiValue);
+    get isWordLike() {
+        const result = wasm.icu4x_WordBreakIteratorUtf8_is_word_like_mv1(this.ffiValue);
     
         try {
             return result;

@@ -40,7 +40,8 @@ export class DataProvider {
         return this.#ptr;
     }
 
-    static compiled() {const result = wasm.icu4x_DataProvider_compiled_mv1();
+    static compiled() {
+        const result = wasm.icu4x_DataProvider_compiled_mv1();
     
         try {
             return new DataProvider(diplomatRuntime.internalConstructor, result, []);
@@ -49,7 +50,8 @@ export class DataProvider {
         finally {}
     }
 
-    static empty() {const result = wasm.icu4x_DataProvider_empty_mv1();
+    static empty() {
+        const result = wasm.icu4x_DataProvider_empty_mv1();
     
         try {
             return new DataProvider(diplomatRuntime.internalConstructor, result, []);
@@ -60,6 +62,7 @@ export class DataProvider {
 
     forkByKey(other) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_DataProvider_fork_by_key_mv1(diplomatReceive.buffer, this.ffiValue, other.ffiValue);
     
         try {
@@ -77,6 +80,7 @@ export class DataProvider {
 
     forkByLocale(other) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_DataProvider_fork_by_locale_mv1(diplomatReceive.buffer, this.ffiValue, other.ffiValue);
     
         try {
@@ -94,6 +98,7 @@ export class DataProvider {
 
     enableLocaleFallbackWith(fallbacker) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_DataProvider_enable_locale_fallback_with_mv1(diplomatReceive.buffer, this.ffiValue, fallbacker.ffiValue);
     
         try {

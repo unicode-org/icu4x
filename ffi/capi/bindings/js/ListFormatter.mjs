@@ -42,6 +42,7 @@ export class ListFormatter {
 
     static createAndWithLength(provider, locale, length) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_ListFormatter_create_and_with_length_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, length.ffiValue);
     
         try {
@@ -59,6 +60,7 @@ export class ListFormatter {
 
     static createOrWithLength(provider, locale, length) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_ListFormatter_create_or_with_length_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, length.ffiValue);
     
         try {
@@ -76,6 +78,7 @@ export class ListFormatter {
 
     static createUnitWithLength(provider, locale, length) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_ListFormatter_create_unit_with_length_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, length.ffiValue);
     
         try {

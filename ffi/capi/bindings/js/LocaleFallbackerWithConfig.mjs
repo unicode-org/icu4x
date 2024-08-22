@@ -49,6 +49,7 @@ export class LocaleFallbackerWithConfig {
     fallbackForLocale(locale) {
         // This lifetime edge depends on lifetimes 'a, 'b
         let aEdges = [this];
+        
         const result = wasm.icu4x_LocaleFallbackerWithConfig_fallback_for_locale_mv1(this.ffiValue, locale.ffiValue);
     
         try {

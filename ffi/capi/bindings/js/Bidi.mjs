@@ -44,6 +44,7 @@ export class Bidi {
 
     static create(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_Bidi_create_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -65,6 +66,7 @@ export class Bidi {
         
         // This lifetime edge depends on lifetimes 'text
         let textEdges = [textSlice];
+        
         const result = wasm.icu4x_Bidi_for_text_valid_utf8_mv1(this.ffiValue, ...textSlice, defaultLevel);
     
         try {
@@ -80,6 +82,7 @@ export class Bidi {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const levelsSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.slice(wasm, levels, "u8")).splat()];
+        
         const result = wasm.icu4x_Bidi_reorder_visual_mv1(this.ffiValue, ...levelsSlice);
     
         try {
@@ -91,7 +94,8 @@ export class Bidi {
         }
     }
 
-    static levelIsRtl(level) {const result = wasm.icu4x_Bidi_level_is_rtl_mv1(level);
+    static levelIsRtl(level) {
+        const result = wasm.icu4x_Bidi_level_is_rtl_mv1(level);
     
         try {
             return result;
@@ -100,7 +104,8 @@ export class Bidi {
         finally {}
     }
 
-    static levelIsLtr(level) {const result = wasm.icu4x_Bidi_level_is_ltr_mv1(level);
+    static levelIsLtr(level) {
+        const result = wasm.icu4x_Bidi_level_is_ltr_mv1(level);
     
         try {
             return result;
@@ -109,7 +114,8 @@ export class Bidi {
         finally {}
     }
 
-    static levelRtl() {const result = wasm.icu4x_Bidi_level_rtl_mv1();
+    static levelRtl() {
+        const result = wasm.icu4x_Bidi_level_rtl_mv1();
     
         try {
             return result;
@@ -118,7 +124,8 @@ export class Bidi {
         finally {}
     }
 
-    static levelLtr() {const result = wasm.icu4x_Bidi_level_ltr_mv1();
+    static levelLtr() {
+        const result = wasm.icu4x_Bidi_level_ltr_mv1();
     
         try {
             return result;
