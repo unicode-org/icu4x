@@ -38,8 +38,6 @@ pub use crate::provider::Baked;
 #[yoke(prove_covariance_manually)]
 pub struct CurrencyDisplaynameV1<'data> {
     /// The display name for the currency.
-    /// NOTE:
-    ///     If the display name is not found, the `one` count will be used.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub display_name: Cow<'data, str>,
 }

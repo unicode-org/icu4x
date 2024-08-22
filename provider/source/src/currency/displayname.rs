@@ -36,10 +36,7 @@ impl DataProvider<CurrencyDisplaynameV1Marker> for crate::SourceDataProvider {
                     currency
                         .display_name
                         .as_deref()
-                        .or(currency.one.as_deref())
-                        .ok_or(DataError::custom(
-                            "No display name or `one` count found for the currency",
-                        ))?
+                        .ok_or(DataError::custom("No display name found for the currency"))?
                         .to_string(),
                 ),
             }),
@@ -60,14 +57,9 @@ impl crate::IterableDataProviderCached<CurrencyDisplaynameV1Marker> for SourceDa
 
             let currencies = &currencies_resource.main.value.numbers.currencies;
             for (currency, patterns) in currencies {
-                // If the display name is not found, the `one` count will be used.
-                // Therefore, we can skip any currencies that don't have a display name or `one` count.
-                if patterns
-                    .display_name
-                    .as_ref()
-                    .or(patterns.one.as_ref())
-                    .is_none()
-                {
+                // If the currency doesn't have a display name, we can not create `CurrencyDisplaynameV1` for it.
+                // Therefore, we skip it.
+                if patterns.display_name.is_none() {
                     continue;
                 }
                 if let Ok(attributes) = DataMarkerAttributes::try_from_string(currency.clone()) {
