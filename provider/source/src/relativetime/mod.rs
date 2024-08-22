@@ -6,7 +6,7 @@ use crate::cldr_serde;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::experimental::relativetime::provider::*;
-use icu_pattern::SinglePlaceholder;
+use icu_pattern::SinglePlaceholderPattern;
 use icu_provider::prelude::*;
 use std::collections::{HashMap, HashSet};
 use std::sync::OnceLock;
@@ -124,11 +124,11 @@ macro_rules! make_data_provider {
 }
 
 impl TryFrom<&cldr_serde::date_fields::PluralRulesPattern>
-    for PluralPattern<'_, SinglePlaceholder>
+    for PluralElements<'_, SinglePlaceholderPattern<str>>
 {
     type Error = DataError;
     fn try_from(field: &cldr_serde::date_fields::PluralRulesPattern) -> Result<Self, Self::Error> {
-        PluralPattern::try_new(
+        PluralElements::try_new_pattern(
             &field.other,
             field.zero.as_deref(),
             field.one.as_deref(),
@@ -186,15 +186,24 @@ mod tests {
             .payload;
         assert_eq!(data.get().relatives.get(&0).unwrap(), "this qtr.");
         assert_writeable_eq!(
-            data.get().past.get(PluralCategory::One).interpolate([1]),
+            data.get()
+                .past
+                .get_pattern(PluralCategory::One)
+                .interpolate([1]),
             "1 qtr. ago"
         );
         assert_writeable_eq!(
-            data.get().past.get(PluralCategory::Other).interpolate([2]),
+            data.get()
+                .past
+                .get_pattern(PluralCategory::Other)
+                .interpolate([2]),
             "2 qtrs. ago"
         );
         assert_writeable_eq!(
-            data.get().future.get(PluralCategory::One).interpolate([1]),
+            data.get()
+                .future
+                .get_pattern(PluralCategory::One)
+                .interpolate([1]),
             "in 1 qtr."
         );
     }
@@ -213,22 +222,31 @@ mod tests {
 
         // past.one, future.two are without a placeholder.
         assert_writeable_eq!(
-            data.get().past.get(PluralCategory::One).interpolate([1]),
+            data.get()
+                .past
+                .get_pattern(PluralCategory::One)
+                .interpolate([1]),
             "قبل سنة واحدة"
         );
         assert_writeable_eq!(
-            data.get().future.get(PluralCategory::Two).interpolate([2]),
+            data.get()
+                .future
+                .get_pattern(PluralCategory::Two)
+                .interpolate([2]),
             "خلال سنتين"
         );
 
         assert_writeable_eq!(
-            data.get().past.get(PluralCategory::Many).interpolate([5]),
+            data.get()
+                .past
+                .get_pattern(PluralCategory::Many)
+                .interpolate([5]),
             "قبل 5 سنة"
         );
         assert_writeable_eq!(
             data.get()
                 .future
-                .get(PluralCategory::Other)
+                .get_pattern(PluralCategory::Other)
                 .interpolate([6]),
             "خلال 6 سنة"
         );

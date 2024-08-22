@@ -315,15 +315,15 @@ fn tuple() {
     assert_eq!(BakeSize::borrows_size(&("hi", 8u8)), 2);
 }
 
-impl<T> Bake for PhantomData<T> {
+impl<T: ?Sized> Bake for PhantomData<T> {
     fn bake(&self, _ctx: &CrateEnv) -> TokenStream {
         quote! {
-            ::core::marker::PhantomData
+            core::marker::PhantomData
         }
     }
 }
 
-impl<T> BakeSize for PhantomData<T> {
+impl<T: ?Sized> BakeSize for PhantomData<T> {
     fn borrows_size(&self) -> usize {
         0
     }
@@ -331,5 +331,5 @@ impl<T> BakeSize for PhantomData<T> {
 
 #[test]
 fn phantom_data() {
-    test_bake!(PhantomData<usize>, const, ::core::marker::PhantomData);
+    test_bake!(PhantomData<usize>, const, core::marker::PhantomData);
 }

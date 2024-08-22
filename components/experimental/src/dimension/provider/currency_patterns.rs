@@ -9,8 +9,8 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use crate::relativetime::provider::PluralPattern;
-use icu_pattern::DoublePlaceholder;
+use crate::relativetime::provider::PluralElements;
+use icu_pattern::DoublePlaceholderPattern;
 use icu_provider::prelude::*;
 
 /// Currency Extended V1 data struct.
@@ -26,5 +26,5 @@ use icu_provider::prelude::*;
 pub struct CurrencyPatternsDataV1<'data> {
     /// Contains the unit patterns for a currency based on plural rules.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub patterns: PluralPattern<'data, DoublePlaceholder>,
+    pub patterns: PluralElements<'data, DoublePlaceholderPattern<str>>,
 }

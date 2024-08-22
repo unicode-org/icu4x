@@ -1,7 +1,15 @@
 {
-  "categorized_display_names": {
-    "One": "egipatska funta",
-    "Few": "egipatske funte"
-  },
-  "other_display_name": "egipatskih funti"
+  "display_names": {
+    "specials": [
+      [
+        "One",
+        "egipatska funta"
+      ],
+      [
+        "Few",
+        "egipatske funte"
+      ]
+    ],
+    "other": "egipatskih funti"
+  }
 }

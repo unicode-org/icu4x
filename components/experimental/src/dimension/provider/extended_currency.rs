@@ -9,10 +9,8 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use alloc::borrow::Cow;
-use icu_plurals::PluralCategory;
+use crate::relativetime::provider::PluralElements;
 use icu_provider::prelude::*;
-use zerovec::ZeroMap;
 
 #[cfg(feature = "compiled_data")]
 /// Baked data
@@ -30,7 +28,7 @@ pub use crate::provider::Baked;
     "currency/extended@1",
     attributes_domain = "currency",
 ))]
-#[derive(Debug, Clone, Default, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(
     feature = "datagen", 
@@ -48,8 +46,5 @@ pub struct CurrencyExtendedDataV1<'data> {
     ///    Regards to the [Unicode Report TR35](https://unicode.org/reports/tr35/tr35-numbers.html#Currencies),
     ///    If no matching for specific count, the `other` count will be used.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub categorized_display_names: ZeroMap<'data, PluralCategory, str>,
-
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub other_display_name: Cow<'data, str>,
+    pub display_names: PluralElements<'data, str>,
 }

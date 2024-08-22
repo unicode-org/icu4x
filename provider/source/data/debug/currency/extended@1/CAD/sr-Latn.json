@@ -1,7 +1,15 @@
 {
-  "categorized_display_names": {
-    "One": "kanadski dolar",
-    "Few": "kanadska dolara"
-  },
-  "other_display_name": "kanadskih dolara"
+  "display_names": {
+    "specials": [
+      [
+        "One",
+        "kanadski dolar"
+      ],
+      [
+        "Few",
+        "kanadska dolara"
+      ]
+    ],
+    "other": "kanadskih dolara"
+  }
 }
