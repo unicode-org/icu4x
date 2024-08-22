@@ -30,7 +30,7 @@ impl DataProvider<CurrencyDisplaynameV1Marker> for crate::SourceDataProvider {
             .ok_or_else(|| {
                 DataErrorKind::IdentifierNotFound
                     .into_error()
-                    .with_debug_context("No currency associated with the aux key")
+                    .with_debug_context("No data for currency")
             })?;
 
         Ok(DataResponse {
