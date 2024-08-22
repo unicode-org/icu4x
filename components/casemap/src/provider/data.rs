@@ -8,8 +8,7 @@
 use alloc::collections::BTreeMap;
 use core::num::TryFromIntError;
 use icu_collections::codepointtrie::TrieValue;
-use zerovec::ule::{AsULE, RawBytesULE, ULE};
-use zerovec::ZeroVecError;
+use zerovec::ule::{AsULE, RawBytesULE, UleError, ULE};
 
 /// The case of a Unicode character
 ///
@@ -270,7 +269,7 @@ impl CaseMapData {
 
     /// Attempt to construct from ICU-format integer
     #[cfg(any(feature = "datagen", test))]
-    pub(crate) fn try_from_icu_integer(int: u16) -> Result<Self, ZeroVecError> {
+    pub(crate) fn try_from_icu_integer(int: u16) -> Result<Self, UleError> {
         let raw = int.to_unaligned();
         CaseMapDataULE::validate_byte_slice(raw.as_bytes())?;
 
@@ -367,7 +366,7 @@ impl CaseMapDataULE {
 ///    their respective safety guidelines: They have been
 /// 6. The equality invariant is satisfied
 unsafe impl ULE for CaseMapDataULE {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
         let sixteens = RawBytesULE::<2>::parse_byte_slice(bytes)?;
 
         for sixteen in sixteens {
@@ -380,7 +379,7 @@ unsafe impl ULE for CaseMapDataULE {
                     // uncased
                     if sixteen >> Self::DELTA_SHIFT != 0 {
                         // We have some used bits in the reserved zone!
-                        return Err(ZeroVecError::parse::<Self>());
+                        return Err(UleError::parse::<Self>());
                     }
                 }
             }

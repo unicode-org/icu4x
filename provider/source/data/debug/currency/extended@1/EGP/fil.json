@@ -1,7 +1,11 @@
 {
   "display_names": {
-    "One": "pound ng Egypt",
-    "Other": "Egyptian pounds",
-    "DisplayName": "Pound ng Egypt"
+    "specials": [
+      [
+        "One",
+        "pound ng Egypt"
+      ]
+    ],
+    "other": "Egyptian pounds"
   }
 }

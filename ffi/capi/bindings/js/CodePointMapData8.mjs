@@ -17,10 +17,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *See the [Rust documentation for `CodePointMapDataBorrowed`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html) for more information.
 */
-
 const CodePointMapData8_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_CodePointMapData8_destroy_mv1(ptr);
 });
+
 export class CodePointMapData8 {
     // Internal ptr reference:
     #ptr = null;
@@ -29,285 +29,255 @@ export class CodePointMapData8 {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("CodePointMapData8 is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        // Unconditionally register to destroy when this object is ready to garbage collect.
-        CodePointMapData8_box_destroy_registry.register(this, this.#ptr);
+        
+        // Are we being borrowed? If not, we can register.
+        if (this.#selfEdge.length === 0) {
+            CodePointMapData8_box_destroy_registry.register(this, this.#ptr);
+        }
     }
 
     get ffiValue() {
         return this.#ptr;
     }
 
-
-    get(cp) {
-        const result = wasm.icu4x_CodePointMapData8_get_mv1(this.ffiValue, diplomatRuntime.extractCodePoint(cp, 'cp'));
+    get(cp) {const result = wasm.icu4x_CodePointMapData8_get_mv1(this.ffiValue, cp);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
-    static generalCategoryToMask(gc) {
-        const result = wasm.icu4x_CodePointMapData8_general_category_to_mask_mv1(gc);
+    static generalCategoryToMask(gc) {const result = wasm.icu4x_CodePointMapData8_general_category_to_mask_mv1(gc);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     iterRangesForValue(value) {
-        
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this];
         const result = wasm.icu4x_CodePointMapData8_iter_ranges_for_value_mv1(this.ffiValue, value);
     
         try {
-    
-            return new CodePointRangeIterator(result, [], aEdges);
-        } finally {
-        
+            return new CodePointRangeIterator(diplomatRuntime.internalConstructor, result, [], aEdges);
         }
+        
+        finally {}
     }
 
     iterRangesForValueComplemented(value) {
-        
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this];
         const result = wasm.icu4x_CodePointMapData8_iter_ranges_for_value_complemented_mv1(this.ffiValue, value);
     
         try {
-    
-            return new CodePointRangeIterator(result, [], aEdges);
-        } finally {
-        
+            return new CodePointRangeIterator(diplomatRuntime.internalConstructor, result, [], aEdges);
         }
+        
+        finally {}
     }
 
     iterRangesForMask(mask) {
-        
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this];
         const result = wasm.icu4x_CodePointMapData8_iter_ranges_for_mask_mv1(this.ffiValue, mask);
     
         try {
-    
-            return new CodePointRangeIterator(result, [], aEdges);
-        } finally {
-        
+            return new CodePointRangeIterator(diplomatRuntime.internalConstructor, result, [], aEdges);
         }
+        
+        finally {}
     }
 
-    getSetForValue(value) {
-        const result = wasm.icu4x_CodePointMapData8_get_set_for_value_mv1(this.ffiValue, value);
+    getSetForValue(value) {const result = wasm.icu4x_CodePointMapData8_get_set_for_value_mv1(this.ffiValue, value);
     
         try {
-    
-            return new CodePointSetData(result, []);
-        } finally {
-        
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
     static loadGeneralCategory(provider) {
-        
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_CodePointMapData8_load_general_category_mv1(diplomat_receive_buffer, provider.ffiValue);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_CodePointMapData8_load_general_category_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+            if (!diplomatReceive.resultFlag) {
+                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new CodePointMapData8(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new CodePointMapData8(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
     static loadBidiClass(provider) {
-        
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_CodePointMapData8_load_bidi_class_mv1(diplomat_receive_buffer, provider.ffiValue);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_CodePointMapData8_load_bidi_class_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+            if (!diplomatReceive.resultFlag) {
+                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new CodePointMapData8(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new CodePointMapData8(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
     static loadEastAsianWidth(provider) {
-        
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_CodePointMapData8_load_east_asian_width_mv1(diplomat_receive_buffer, provider.ffiValue);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_CodePointMapData8_load_east_asian_width_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+            if (!diplomatReceive.resultFlag) {
+                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new CodePointMapData8(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new CodePointMapData8(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
     static loadHangulSyllableType(provider) {
-        
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_CodePointMapData8_load_hangul_syllable_type_mv1(diplomat_receive_buffer, provider.ffiValue);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_CodePointMapData8_load_hangul_syllable_type_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+            if (!diplomatReceive.resultFlag) {
+                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new CodePointMapData8(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new CodePointMapData8(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
     static loadIndicSyllabicCategory(provider) {
-        
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_CodePointMapData8_load_indic_syllabic_category_mv1(diplomat_receive_buffer, provider.ffiValue);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_CodePointMapData8_load_indic_syllabic_category_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+            if (!diplomatReceive.resultFlag) {
+                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new CodePointMapData8(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new CodePointMapData8(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
     static loadLineBreak(provider) {
-        
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_CodePointMapData8_load_line_break_mv1(diplomat_receive_buffer, provider.ffiValue);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_CodePointMapData8_load_line_break_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+            if (!diplomatReceive.resultFlag) {
+                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new CodePointMapData8(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new CodePointMapData8(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
     static tryGraphemeClusterBreak(provider) {
-        
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_CodePointMapData8_try_grapheme_cluster_break_mv1(diplomat_receive_buffer, provider.ffiValue);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_CodePointMapData8_try_grapheme_cluster_break_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+            if (!diplomatReceive.resultFlag) {
+                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new CodePointMapData8(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new CodePointMapData8(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
     static loadWordBreak(provider) {
-        
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_CodePointMapData8_load_word_break_mv1(diplomat_receive_buffer, provider.ffiValue);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_CodePointMapData8_load_word_break_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+            if (!diplomatReceive.resultFlag) {
+                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new CodePointMapData8(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new CodePointMapData8(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
     static loadSentenceBreak(provider) {
-        
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_CodePointMapData8_load_sentence_break_mv1(diplomat_receive_buffer, provider.ffiValue);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_CodePointMapData8_load_sentence_break_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+            if (!diplomatReceive.resultFlag) {
+                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new CodePointMapData8(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new CodePointMapData8(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
     static loadJoiningType(provider) {
-        
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_CodePointMapData8_load_joining_type_mv1(diplomat_receive_buffer, provider.ffiValue);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_CodePointMapData8_load_joining_type_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+            if (!diplomatReceive.resultFlag) {
+                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new CodePointMapData8(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new CodePointMapData8(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
-
-    
-
 }

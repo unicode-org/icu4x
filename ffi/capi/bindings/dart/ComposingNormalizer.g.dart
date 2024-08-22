@@ -55,11 +55,9 @@ final class ComposingNormalizer implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `normalize_utf8`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.normalize_utf8) for more information.
   String normalize(String s) {
-    final temp = ffi2.Arena();
-    final sView = s.utf8View;
+    final temp = _FinalizedArena();
     final write = _Write();
-    _icu4x_ComposingNormalizer_normalize_mv1(_ffi, sView.allocIn(temp), sView.length, write._ffi);
-    temp.releaseAll();
+    _icu4x_ComposingNormalizer_normalize_mv1(_ffi, s._utf8AllocIn(temp.arena), write._ffi);
     return write.finalize();
   }
 
@@ -70,10 +68,8 @@ final class ComposingNormalizer implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `is_normalized_utf16`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.is_normalized_utf16) for more information.
   bool isNormalized(String s) {
-    final temp = ffi2.Arena();
-    final sView = s.utf16View;
-    final result = _icu4x_ComposingNormalizer_is_normalized_utf16_mv1(_ffi, sView.allocIn(temp), sView.length);
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final result = _icu4x_ComposingNormalizer_is_normalized_utf16_mv1(_ffi, s._utf16AllocIn(temp.arena));
     return result;
   }
 
@@ -81,10 +77,8 @@ final class ComposingNormalizer implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `is_normalized_utf16_up_to`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.is_normalized_utf16_up_to) for more information.
   int isNormalizedUpTo(String s) {
-    final temp = ffi2.Arena();
-    final sView = s.utf16View;
-    final result = _icu4x_ComposingNormalizer_is_normalized_utf16_up_to_mv1(_ffi, sView.allocIn(temp), sView.length);
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final result = _icu4x_ComposingNormalizer_is_normalized_utf16_up_to_mv1(_ffi, s._utf16AllocIn(temp.arena));
     return result;
   }
 }
@@ -105,16 +99,16 @@ external _ResultOpaqueInt32 _icu4x_ComposingNormalizer_create_nfc_mv1(ffi.Pointe
 external _ResultOpaqueInt32 _icu4x_ComposingNormalizer_create_nfkc_mv1(ffi.Pointer<ffi.Opaque> provider);
 
 @meta.ResourceIdentifier('icu4x_ComposingNormalizer_normalize_mv1')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ComposingNormalizer_normalize_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ComposingNormalizer_normalize_mv1')
 // ignore: non_constant_identifier_names
-external void _icu4x_ComposingNormalizer_normalize_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> write);
+external void _icu4x_ComposingNormalizer_normalize_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 s, ffi.Pointer<ffi.Opaque> write);
 
 @meta.ResourceIdentifier('icu4x_ComposingNormalizer_is_normalized_utf16_mv1')
-@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_ComposingNormalizer_is_normalized_utf16_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, _SliceUtf16)>(isLeaf: true, symbol: 'icu4x_ComposingNormalizer_is_normalized_utf16_mv1')
 // ignore: non_constant_identifier_names
-external bool _icu4x_ComposingNormalizer_is_normalized_utf16_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint16> sData, int sLength);
+external bool _icu4x_ComposingNormalizer_is_normalized_utf16_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf16 s);
 
 @meta.ResourceIdentifier('icu4x_ComposingNormalizer_is_normalized_utf16_up_to_mv1')
-@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_ComposingNormalizer_is_normalized_utf16_up_to_mv1')
+@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>, _SliceUtf16)>(isLeaf: true, symbol: 'icu4x_ComposingNormalizer_is_normalized_utf16_up_to_mv1')
 // ignore: non_constant_identifier_names
-external int _icu4x_ComposingNormalizer_is_normalized_utf16_up_to_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint16> sData, int sLength);
+external int _icu4x_ComposingNormalizer_is_normalized_utf16_up_to_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf16 s);

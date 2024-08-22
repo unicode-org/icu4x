@@ -28,9 +28,8 @@ final class Collator implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory Collator(DataProvider provider, Locale locale, CollatorOptions options) {
-    final temp = ffi2.Arena();
-    final result = _icu4x_Collator_create_v1_mv1(provider._ffi, locale._ffi, options._toFfi(temp));
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final result = _icu4x_Collator_create_v1_mv1(provider._ffi, locale._ffi, options._toFfi(temp.arena));
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -44,11 +43,8 @@ final class Collator implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `compare_utf16`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.compare_utf16) for more information.
   int compare(String left, String right) {
-    final temp = ffi2.Arena();
-    final leftView = left.utf16View;
-    final rightView = right.utf16View;
-    final result = _icu4x_Collator_compare_utf16_mv1(_ffi, leftView.allocIn(temp), leftView.length, rightView.allocIn(temp), rightView.length);
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final result = _icu4x_Collator_compare_utf16_mv1(_ffi, left._utf16AllocIn(temp.arena), right._utf16AllocIn(temp.arena));
     return result;
   }
 
@@ -74,9 +70,9 @@ external void _icu4x_Collator_destroy_mv1(ffi.Pointer<ffi.Void> self);
 external _ResultOpaqueInt32 _icu4x_Collator_create_v1_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _CollatorOptionsFfi options);
 
 @meta.ResourceIdentifier('icu4x_Collator_compare_utf16_mv1')
-@ffi.Native<ffi.Int8 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, ffi.Size, ffi.Pointer<ffi.Uint16>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_Collator_compare_utf16_mv1')
+@ffi.Native<ffi.Int8 Function(ffi.Pointer<ffi.Opaque>, _SliceUtf16, _SliceUtf16)>(isLeaf: true, symbol: 'icu4x_Collator_compare_utf16_mv1')
 // ignore: non_constant_identifier_names
-external int _icu4x_Collator_compare_utf16_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint16> leftData, int leftLength, ffi.Pointer<ffi.Uint16> rightData, int rightLength);
+external int _icu4x_Collator_compare_utf16_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf16 left, _SliceUtf16 right);
 
 @meta.ResourceIdentifier('icu4x_Collator_resolved_options_v1_mv1')
 @ffi.Native<_CollatorResolvedOptionsFfi Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Collator_resolved_options_v1_mv1')

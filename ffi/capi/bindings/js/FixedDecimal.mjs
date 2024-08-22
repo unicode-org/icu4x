@@ -11,10 +11,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 /** See the [Rust documentation for `FixedDecimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html) for more information.
 */
-
 const FixedDecimal_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_FixedDecimal_destroy_mv1(ptr);
 });
+
 export class FixedDecimal {
     // Internal ptr reference:
     #ptr = null;
@@ -23,375 +23,292 @@ export class FixedDecimal {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("FixedDecimal is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        // Unconditionally register to destroy when this object is ready to garbage collect.
-        FixedDecimal_box_destroy_registry.register(this, this.#ptr);
+        
+        // Are we being borrowed? If not, we can register.
+        if (this.#selfEdge.length === 0) {
+            FixedDecimal_box_destroy_registry.register(this, this.#ptr);
+        }
     }
 
     get ffiValue() {
         return this.#ptr;
     }
 
-
-    static fromNumber(v) {
-        const result = wasm.icu4x_FixedDecimal_from_int32_mv1(v);
+    static fromNumber(v) {const result = wasm.icu4x_FixedDecimal_from_int32_mv1(v);
     
         try {
-    
-            return new FixedDecimal(result, []);
-        } finally {
-        
+            return new FixedDecimal(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static fromBigInt(v) {
-        const result = wasm.icu4x_FixedDecimal_from_int64_mv1(v);
+    static fromBigInt(v) {const result = wasm.icu4x_FixedDecimal_from_int64_mv1(v);
     
         try {
-    
-            return new FixedDecimal(result, []);
-        } finally {
-        
+            return new FixedDecimal(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
-    static fromNumberWithLowerMagnitude(f, magnitude) {
-        
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_FixedDecimal_from_double_with_lower_magnitude_mv1(diplomat_receive_buffer, f, magnitude);
+    static fromNumberWithLowerMagnitude(f, magnitude) {const result = wasm.icu4x_FixedDecimal_from_double_with_lower_magnitude_mv1(f, magnitude);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = new FixedDecimalLimitError();
-                throw new Error('FixedDecimalLimitError', { cause });
+            if (result !== 1) {
+                const cause = new FixedDecimalLimitError(diplomatRuntime.internalConstructor);
+                throw new globalThis.Error('FixedDecimalLimitError', { cause });
             }
-            return new FixedDecimal(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
-        
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+            return new FixedDecimal(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
+        
+        finally {}
     }
 
-    static fromNumberWithSignificantDigits(f, digits) {
-        
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_FixedDecimal_from_double_with_significant_digits_mv1(diplomat_receive_buffer, f, digits);
+    static fromNumberWithSignificantDigits(f, digits) {const result = wasm.icu4x_FixedDecimal_from_double_with_significant_digits_mv1(f, digits);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = new FixedDecimalLimitError();
-                throw new Error('FixedDecimalLimitError', { cause });
+            if (result !== 1) {
+                const cause = new FixedDecimalLimitError(diplomatRuntime.internalConstructor);
+                throw new globalThis.Error('FixedDecimalLimitError', { cause });
             }
-            return new FixedDecimal(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
-        
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+            return new FixedDecimal(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
+        
+        finally {}
     }
 
-    static fromNumberWithFloatingPrecision(f) {
-        
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_FixedDecimal_from_double_with_floating_precision_mv1(diplomat_receive_buffer, f);
+    static fromNumberWithFloatingPrecision(f) {const result = wasm.icu4x_FixedDecimal_from_double_with_floating_precision_mv1(f);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = new FixedDecimalLimitError();
-                throw new Error('FixedDecimalLimitError', { cause });
+            if (result !== 1) {
+                const cause = new FixedDecimalLimitError(diplomatRuntime.internalConstructor);
+                throw new globalThis.Error('FixedDecimalLimitError', { cause });
             }
-            return new FixedDecimal(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
-        
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+            return new FixedDecimal(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
+        
+        finally {}
     }
 
     static fromString(v) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const vSlice = diplomatRuntime.DiplomatBuf.str8(wasm, v);
+        const vSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, v)).splat()];
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_FixedDecimal_from_string_mv1(diplomat_receive_buffer, vSlice.ptr, vSlice.size);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_FixedDecimal_from_string_mv1(diplomatReceive.buffer, ...vSlice);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = FixedDecimalParseError[Array.from(FixedDecimalParseError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('FixedDecimalParseError: ' + cause.value, { cause });
+            if (!diplomatReceive.resultFlag) {
+                const cause = FixedDecimalParseError[Array.from(FixedDecimalParseError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                throw new globalThis.Error('FixedDecimalParseError: ' + cause.value, { cause });
             }
-            return new FixedDecimal(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new FixedDecimal(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            vSlice.free();
+        finally {
+            functionCleanupArena.free();
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+            diplomatReceive.free();
         }
     }
 
-    digitAt(magnitude) {
-        const result = wasm.icu4x_FixedDecimal_digit_at_mv1(this.ffiValue, magnitude);
+    digitAt(magnitude) {const result = wasm.icu4x_FixedDecimal_digit_at_mv1(this.ffiValue, magnitude);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
-    get magnitudeStart() {
-        const result = wasm.icu4x_FixedDecimal_magnitude_start_mv1(this.ffiValue);
+    get magnitudeStart() {const result = wasm.icu4x_FixedDecimal_magnitude_start_mv1(this.ffiValue);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
-    get magnitudeEnd() {
-        const result = wasm.icu4x_FixedDecimal_magnitude_end_mv1(this.ffiValue);
+    get magnitudeEnd() {const result = wasm.icu4x_FixedDecimal_magnitude_end_mv1(this.ffiValue);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
-    get nonzeroMagnitudeStart() {
-        const result = wasm.icu4x_FixedDecimal_nonzero_magnitude_start_mv1(this.ffiValue);
+    get nonzeroMagnitudeStart() {const result = wasm.icu4x_FixedDecimal_nonzero_magnitude_start_mv1(this.ffiValue);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
-    get nonzeroMagnitudeEnd() {
-        const result = wasm.icu4x_FixedDecimal_nonzero_magnitude_end_mv1(this.ffiValue);
+    get nonzeroMagnitudeEnd() {const result = wasm.icu4x_FixedDecimal_nonzero_magnitude_end_mv1(this.ffiValue);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
-    get isZero() {
-        const result = wasm.icu4x_FixedDecimal_is_zero_mv1(this.ffiValue);
+    get isZero() {const result = wasm.icu4x_FixedDecimal_is_zero_mv1(this.ffiValue);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
-    multiplyPow10(power) {
-        wasm.icu4x_FixedDecimal_multiply_pow10_mv1(this.ffiValue, power);
+    multiplyPow10(power) {wasm.icu4x_FixedDecimal_multiply_pow10_mv1(this.ffiValue, power);
     
-        try {
-    
-        } finally {
+        try {}
         
-        }
+        finally {}
     }
 
-    get sign() {
-        const result = wasm.icu4x_FixedDecimal_sign_mv1(this.ffiValue);
+    get sign() {const result = wasm.icu4x_FixedDecimal_sign_mv1(this.ffiValue);
     
         try {
-    
             return FixedDecimalSign[Array.from(FixedDecimalSign.values.keys())[result]];
-        } finally {
-        
         }
+        
+        finally {}
     }
 
-    set sign(sign) {
-        wasm.icu4x_FixedDecimal_set_sign_mv1(this.ffiValue, sign.ffiValue);
+    set sign(sign) {wasm.icu4x_FixedDecimal_set_sign_mv1(this.ffiValue, sign.ffiValue);
     
-        try {
-    
-        } finally {
+        try {}
         
-        }
+        finally {}
     }
 
-    applySignDisplay(signDisplay) {
-        wasm.icu4x_FixedDecimal_apply_sign_display_mv1(this.ffiValue, signDisplay.ffiValue);
+    applySignDisplay(signDisplay) {wasm.icu4x_FixedDecimal_apply_sign_display_mv1(this.ffiValue, signDisplay.ffiValue);
     
-        try {
-    
-        } finally {
+        try {}
         
-        }
+        finally {}
     }
 
-    trimStart() {
-        wasm.icu4x_FixedDecimal_trim_start_mv1(this.ffiValue);
+    trimStart() {wasm.icu4x_FixedDecimal_trim_start_mv1(this.ffiValue);
     
-        try {
-    
-        } finally {
+        try {}
         
-        }
+        finally {}
     }
 
-    trimEnd() {
-        wasm.icu4x_FixedDecimal_trim_end_mv1(this.ffiValue);
+    trimEnd() {wasm.icu4x_FixedDecimal_trim_end_mv1(this.ffiValue);
     
-        try {
-    
-        } finally {
+        try {}
         
-        }
+        finally {}
     }
 
-    padStart(position) {
-        wasm.icu4x_FixedDecimal_pad_start_mv1(this.ffiValue, position);
+    padStart(position) {wasm.icu4x_FixedDecimal_pad_start_mv1(this.ffiValue, position);
     
-        try {
-    
-        } finally {
+        try {}
         
-        }
+        finally {}
     }
 
-    padEnd(position) {
-        wasm.icu4x_FixedDecimal_pad_end_mv1(this.ffiValue, position);
+    padEnd(position) {wasm.icu4x_FixedDecimal_pad_end_mv1(this.ffiValue, position);
     
-        try {
-    
-        } finally {
+        try {}
         
-        }
+        finally {}
     }
 
-    setMaxPosition(position) {
-        wasm.icu4x_FixedDecimal_set_max_position_mv1(this.ffiValue, position);
+    setMaxPosition(position) {wasm.icu4x_FixedDecimal_set_max_position_mv1(this.ffiValue, position);
     
-        try {
-    
-        } finally {
+        try {}
         
-        }
+        finally {}
     }
 
-    round(position) {
-        wasm.icu4x_FixedDecimal_round_mv1(this.ffiValue, position);
+    round(position) {wasm.icu4x_FixedDecimal_round_mv1(this.ffiValue, position);
     
-        try {
-    
-        } finally {
+        try {}
         
-        }
+        finally {}
     }
 
-    ceil(position) {
-        wasm.icu4x_FixedDecimal_ceil_mv1(this.ffiValue, position);
+    ceil(position) {wasm.icu4x_FixedDecimal_ceil_mv1(this.ffiValue, position);
     
-        try {
-    
-        } finally {
+        try {}
         
-        }
+        finally {}
     }
 
-    expand(position) {
-        wasm.icu4x_FixedDecimal_expand_mv1(this.ffiValue, position);
+    expand(position) {wasm.icu4x_FixedDecimal_expand_mv1(this.ffiValue, position);
     
-        try {
-    
-        } finally {
+        try {}
         
-        }
+        finally {}
     }
 
-    floor(position) {
-        wasm.icu4x_FixedDecimal_floor_mv1(this.ffiValue, position);
+    floor(position) {wasm.icu4x_FixedDecimal_floor_mv1(this.ffiValue, position);
     
-        try {
-    
-        } finally {
+        try {}
         
-        }
+        finally {}
     }
 
-    trunc(position) {
-        wasm.icu4x_FixedDecimal_trunc_mv1(this.ffiValue, position);
+    trunc(position) {wasm.icu4x_FixedDecimal_trunc_mv1(this.ffiValue, position);
     
-        try {
-    
-        } finally {
+        try {}
         
-        }
+        finally {}
     }
 
-    roundWithMode(position, mode) {
-        wasm.icu4x_FixedDecimal_round_with_mode_mv1(this.ffiValue, position, mode.ffiValue);
+    roundWithMode(position, mode) {wasm.icu4x_FixedDecimal_round_with_mode_mv1(this.ffiValue, position, mode.ffiValue);
     
-        try {
-    
-        } finally {
+        try {}
         
-        }
+        finally {}
     }
 
-    roundWithModeAndIncrement(position, mode, increment) {
-        wasm.icu4x_FixedDecimal_round_with_mode_and_increment_mv1(this.ffiValue, position, mode.ffiValue, increment.ffiValue);
+    roundWithModeAndIncrement(position, mode, increment) {wasm.icu4x_FixedDecimal_round_with_mode_and_increment_mv1(this.ffiValue, position, mode.ffiValue, increment.ffiValue);
     
-        try {
-    
-        } finally {
+        try {}
         
-        }
+        finally {}
     }
 
-    concatenateEnd(other) {
-        const result = wasm.icu4x_FixedDecimal_concatenate_end_mv1(this.ffiValue, other.ffiValue);
+    concatenateEnd(other) {const result = wasm.icu4x_FixedDecimal_concatenate_end_mv1(this.ffiValue, other.ffiValue);
     
         try {
-    
-            return result == 1;
-        } finally {
-        
+            return result === 1;
         }
+        
+        finally {}
     }
 
     toString() {
-        
-        const write = wasm.diplomat_buffer_write_create(0);
-        wasm.icu4x_FixedDecimal_to_string_mv1(this.ffiValue, write);
+        const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
+        wasm.icu4x_FixedDecimal_to_string_mv1(this.ffiValue, write.buffer);
     
         try {
-    
-            return diplomatRuntime.readString8(wasm, wasm.diplomat_buffer_write_get_bytes(write), wasm.diplomat_buffer_write_len(write));
-        } finally {
+            return write.readString8();
+        }
         
-            wasm.diplomat_buffer_write_destroy(write);
-        
+        finally {
+            write.free();
         }
     }
-
-    
-
 }

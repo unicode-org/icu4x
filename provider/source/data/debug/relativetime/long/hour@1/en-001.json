@@ -3,31 +3,21 @@
     "0": "this hour"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": " hour ago",
-      "index": 0
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": " hours ago",
-      "index": 0
-    }
+    "specials": [
+      [
+        "One",
+        "\u0001 hour ago"
+      ]
+    ],
+    "other": "\u0001 hours ago"
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "in  hour",
-      "index": 3
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "in  hours",
-      "index": 3
-    }
+    "specials": [
+      [
+        "One",
+        "\u0004in  hour"
+      ]
+    ],
+    "other": "\u0004in  hours"
   }
 }

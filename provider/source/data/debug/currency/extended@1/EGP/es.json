@@ -1,7 +1,11 @@
 {
   "display_names": {
-    "One": "libra egipcia",
-    "Other": "libras egipcias",
-    "DisplayName": "libra egipcia"
+    "specials": [
+      [
+        "One",
+        "libra egipcia"
+      ]
+    ],
+    "other": "libras egipcias"
   }
 }

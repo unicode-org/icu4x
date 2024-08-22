@@ -11,6 +11,15 @@ fn main() -> std::io::Result<()> {
         panic!("Missing argument <language>");
     };
 
+    let path_arg = std::env::args().nth(2);
+    let path = path_arg.clone().unwrap_or_default();
+
+    let library_config = if path_arg.is_some() {
+        Some(Path::new(&path))
+    } else {
+        None
+    };
+
     diplomat_tool::gen(
         &capi.join("src/lib.rs"),
         lang.as_str(),
@@ -21,7 +30,7 @@ fn main() -> std::io::Result<()> {
             include
         },
         &Default::default(),
-        None,
+        library_config,
         false,
     )
 }

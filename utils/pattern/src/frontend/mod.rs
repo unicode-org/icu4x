@@ -132,6 +132,14 @@ impl<Backend, Store> Pattern<Backend, Store> {
     }
 }
 
+impl<Backend, Store: ?Sized> Pattern<Backend, Store> {
+    /// Creates a `&Pattern` from a `&Store` without checking invariants.
+    pub const fn from_ref_store_unchecked(store: &Store) -> &Self {
+        // Safety: Pattern's layout is the same as `Store`'s
+        unsafe { &*(store as *const Store as *const Self) }
+    }
+}
+
 impl<B, Store> Pattern<B, Store>
 where
     B: PatternBackend,

@@ -18,6 +18,8 @@ namespace capi {
       IsoTimeZoneFormat_UtcBasic = 2,
       IsoTimeZoneFormat_UtcExtended = 3,
     };
+    
+    typedef struct IsoTimeZoneFormat_option {union { IsoTimeZoneFormat ok; }; bool is_ok; } IsoTimeZoneFormat_option;
 } // namespace capi
 } // namespace
 

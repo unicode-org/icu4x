@@ -24,11 +24,11 @@ namespace capi {
     typedef struct icu4x_SentenceSegmenter_create_mv1_result {union {icu4x::capi::SentenceSegmenter* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_SentenceSegmenter_create_mv1_result;
     icu4x_SentenceSegmenter_create_mv1_result icu4x_SentenceSegmenter_create_mv1(const icu4x::capi::DataProvider* provider);
     
-    icu4x::capi::SentenceBreakIteratorUtf8* icu4x_SentenceSegmenter_segment_utf8_mv1(const icu4x::capi::SentenceSegmenter* self, const char* input_data, size_t input_len);
+    icu4x::capi::SentenceBreakIteratorUtf8* icu4x_SentenceSegmenter_segment_utf8_mv1(const icu4x::capi::SentenceSegmenter* self, diplomat::capi::DiplomatStringView input);
     
-    icu4x::capi::SentenceBreakIteratorUtf16* icu4x_SentenceSegmenter_segment_utf16_mv1(const icu4x::capi::SentenceSegmenter* self, const char16_t* input_data, size_t input_len);
+    icu4x::capi::SentenceBreakIteratorUtf16* icu4x_SentenceSegmenter_segment_utf16_mv1(const icu4x::capi::SentenceSegmenter* self, diplomat::capi::DiplomatString16View input);
     
-    icu4x::capi::SentenceBreakIteratorLatin1* icu4x_SentenceSegmenter_segment_latin1_mv1(const icu4x::capi::SentenceSegmenter* self, const uint8_t* input_data, size_t input_len);
+    icu4x::capi::SentenceBreakIteratorLatin1* icu4x_SentenceSegmenter_segment_latin1_mv1(const icu4x::capi::SentenceSegmenter* self, diplomat::capi::DiplomatU8View input);
     
     
     void icu4x_SentenceSegmenter_destroy_mv1(SentenceSegmenter* self);
@@ -44,22 +44,19 @@ inline diplomat::result<std::unique_ptr<icu4x::SentenceSegmenter>, icu4x::DataEr
 
 inline std::unique_ptr<icu4x::SentenceBreakIteratorUtf8> icu4x::SentenceSegmenter::segment(std::string_view input) const {
   auto result = icu4x::capi::icu4x_SentenceSegmenter_segment_utf8_mv1(this->AsFFI(),
-    input.data(),
-    input.size());
+    {input.data(), input.size()});
   return std::unique_ptr<icu4x::SentenceBreakIteratorUtf8>(icu4x::SentenceBreakIteratorUtf8::FromFFI(result));
 }
 
 inline std::unique_ptr<icu4x::SentenceBreakIteratorUtf16> icu4x::SentenceSegmenter::segment16(std::u16string_view input) const {
   auto result = icu4x::capi::icu4x_SentenceSegmenter_segment_utf16_mv1(this->AsFFI(),
-    input.data(),
-    input.size());
+    {input.data(), input.size()});
   return std::unique_ptr<icu4x::SentenceBreakIteratorUtf16>(icu4x::SentenceBreakIteratorUtf16::FromFFI(result));
 }
 
 inline std::unique_ptr<icu4x::SentenceBreakIteratorLatin1> icu4x::SentenceSegmenter::segment_latin1(diplomat::span<const uint8_t> input) const {
   auto result = icu4x::capi::icu4x_SentenceSegmenter_segment_latin1_mv1(this->AsFFI(),
-    input.data(),
-    input.size());
+    {input.data(), input.size()});
   return std::unique_ptr<icu4x::SentenceBreakIteratorLatin1>(icu4x::SentenceBreakIteratorLatin1::FromFFI(result));
 }
 

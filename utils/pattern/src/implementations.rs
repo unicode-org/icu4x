@@ -5,7 +5,11 @@
 use crate::{Pattern, SinglePlaceholder, SinglePlaceholderPattern};
 
 use alloc::boxed::Box;
-use zerovec::{maps::ZeroMapKV, ule::VarULE, VarZeroSlice, VarZeroVec, ZeroVecError};
+use zerovec::{
+    maps::ZeroMapKV,
+    ule::{UleError, VarULE},
+    VarZeroSlice, VarZeroVec,
+};
 
 impl<'a> ZeroMapKV<'a> for Pattern<SinglePlaceholder, str> {
     type Container = VarZeroVec<'a, Pattern<SinglePlaceholder, str>>;
@@ -64,9 +68,9 @@ impl<'a> ZeroMapKV<'a> for Pattern<SinglePlaceholder, str> {
 /// assert_writeable_eq!(borrowed_pattern.interpolate([5]), "5 days");
 /// ```
 unsafe impl VarULE for Pattern<SinglePlaceholder, str> {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
         SinglePlaceholderPattern::try_from_utf8_store(bytes)
-            .map_err(|_| ZeroVecError::VarZeroVecFormatError)?;
+            .map_err(|_| UleError::parse::<Self>())?;
         Ok(())
     }
 

@@ -1,5 +1,6 @@
 {
   "patterns": {
-    "Other": "{0} h"
+    "specials": [],
+    "other": "\u0001 h"
   }
 }

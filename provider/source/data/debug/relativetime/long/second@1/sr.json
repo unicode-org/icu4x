@@ -3,37 +3,29 @@
     "0": "сада"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": "пре  секунде",
-      "index": 7
-    },
-    "two": null,
-    "few": {
-      "pattern": "пре  секунде",
-      "index": 7
-    },
-    "many": null,
-    "other": {
-      "pattern": "пре  секунди",
-      "index": 7
-    }
+    "specials": [
+      [
+        "One",
+        "\bпре  секунде"
+      ],
+      [
+        "Few",
+        "\bпре  секунде"
+      ]
+    ],
+    "other": "\bпре  секунди"
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "за  секунду",
-      "index": 5
-    },
-    "two": null,
-    "few": {
-      "pattern": "за  секунде",
-      "index": 5
-    },
-    "many": null,
-    "other": {
-      "pattern": "за  секунди",
-      "index": 5
-    }
+    "specials": [
+      [
+        "One",
+        "\u0006за  секунду"
+      ],
+      [
+        "Few",
+        "\u0006за  секунде"
+      ]
+    ],
+    "other": "\u0006за  секунди"
   }
 }

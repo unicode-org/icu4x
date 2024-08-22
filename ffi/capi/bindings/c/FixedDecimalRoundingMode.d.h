@@ -23,7 +23,7 @@ typedef enum FixedDecimalRoundingMode {
   FixedDecimalRoundingMode_HalfEven = 8,
 } FixedDecimalRoundingMode;
 
-
+typedef struct FixedDecimalRoundingMode_option {union { FixedDecimalRoundingMode ok; }; bool is_ok; } FixedDecimalRoundingMode_option;
 
 
 

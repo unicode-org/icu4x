@@ -9,10 +9,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html) for more information.
 */
-
 const Time_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_Time_destroy_mv1(ptr);
 });
+
 export class Time {
     // Internal ptr reference:
     #ptr = null;
@@ -21,125 +21,115 @@ export class Time {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("Time is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        // Unconditionally register to destroy when this object is ready to garbage collect.
-        Time_box_destroy_registry.register(this, this.#ptr);
+        
+        // Are we being borrowed? If not, we can register.
+        if (this.#selfEdge.length === 0) {
+            Time_box_destroy_registry.register(this, this.#ptr);
+        }
     }
 
     get ffiValue() {
         return this.#ptr;
     }
 
-
     static create(hour, minute, second, nanosecond) {
-        
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_Time_create_mv1(diplomat_receive_buffer, hour, minute, second, nanosecond);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_Time_create_mv1(diplomatReceive.buffer, hour, minute, second, nanosecond);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = CalendarError[Array.from(CalendarError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('CalendarError: ' + cause.value, { cause });
+            if (!diplomatReceive.resultFlag) {
+                const cause = CalendarError[Array.from(CalendarError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                throw new globalThis.Error('CalendarError: ' + cause.value, { cause });
             }
-            return new Time(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new Time(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
     static fromString(v) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const vSlice = diplomatRuntime.DiplomatBuf.str8(wasm, v);
+        const vSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, v)).splat()];
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_Time_from_string_mv1(diplomat_receive_buffer, vSlice.ptr, vSlice.size);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_Time_from_string_mv1(diplomatReceive.buffer, ...vSlice);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = CalendarParseError[Array.from(CalendarParseError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('CalendarParseError: ' + cause.value, { cause });
+            if (!diplomatReceive.resultFlag) {
+                const cause = CalendarParseError[Array.from(CalendarParseError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                throw new globalThis.Error('CalendarParseError: ' + cause.value, { cause });
             }
-            return new Time(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new Time(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            vSlice.free();
+        finally {
+            functionCleanupArena.free();
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+            diplomatReceive.free();
         }
     }
 
     static midnight() {
-        
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_Time_midnight_mv1(diplomat_receive_buffer);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_Time_midnight_mv1(diplomatReceive.buffer);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = CalendarError[Array.from(CalendarError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('CalendarError: ' + cause.value, { cause });
+            if (!diplomatReceive.resultFlag) {
+                const cause = CalendarError[Array.from(CalendarError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                throw new globalThis.Error('CalendarError: ' + cause.value, { cause });
             }
-            return new Time(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new Time(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
-    get hour() {
-        const result = wasm.icu4x_Time_hour_mv1(this.ffiValue);
+    get hour() {const result = wasm.icu4x_Time_hour_mv1(this.ffiValue);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
-    get minute() {
-        const result = wasm.icu4x_Time_minute_mv1(this.ffiValue);
+    get minute() {const result = wasm.icu4x_Time_minute_mv1(this.ffiValue);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
-    get second() {
-        const result = wasm.icu4x_Time_second_mv1(this.ffiValue);
+    get second() {const result = wasm.icu4x_Time_second_mv1(this.ffiValue);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
 
-    get nanosecond() {
-        const result = wasm.icu4x_Time_nanosecond_mv1(this.ffiValue);
+    get nanosecond() {const result = wasm.icu4x_Time_nanosecond_mv1(this.ffiValue);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
-
-    
-
 }

@@ -5,31 +5,21 @@
     "1": "next week"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": " week ago",
-      "index": 0
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": " weeks ago",
-      "index": 0
-    }
+    "specials": [
+      [
+        "One",
+        "\u0001 week ago"
+      ]
+    ],
+    "other": "\u0001 weeks ago"
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "in  week",
-      "index": 3
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "in  weeks",
-      "index": 3
-    }
+    "specials": [
+      [
+        "One",
+        "\u0004in  week"
+      ]
+    ],
+    "other": "\u0004in  weeks"
   }
 }

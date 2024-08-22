@@ -13,10 +13,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *See the [Rust documentation for `TimeZoneIdMapperWithFastCanonicalization`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperWithFastCanonicalization.html) for more information.
 */
-
 const TimeZoneIdMapperWithFastCanonicalization_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_TimeZoneIdMapperWithFastCanonicalization_destroy_mv1(ptr);
 });
+
 export class TimeZoneIdMapperWithFastCanonicalization {
     // Internal ptr reference:
     #ptr = null;
@@ -25,93 +25,85 @@ export class TimeZoneIdMapperWithFastCanonicalization {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("TimeZoneIdMapperWithFastCanonicalization is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        // Unconditionally register to destroy when this object is ready to garbage collect.
-        TimeZoneIdMapperWithFastCanonicalization_box_destroy_registry.register(this, this.#ptr);
+        
+        // Are we being borrowed? If not, we can register.
+        if (this.#selfEdge.length === 0) {
+            TimeZoneIdMapperWithFastCanonicalization_box_destroy_registry.register(this, this.#ptr);
+        }
     }
 
     get ffiValue() {
         return this.#ptr;
     }
 
-
     static create(provider) {
-        
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_TimeZoneIdMapperWithFastCanonicalization_create_mv1(diplomat_receive_buffer, provider.ffiValue);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_TimeZoneIdMapperWithFastCanonicalization_create_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+            if (!diplomatReceive.resultFlag) {
+                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new TimeZoneIdMapperWithFastCanonicalization(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new TimeZoneIdMapperWithFastCanonicalization(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
     canonicalizeIana(value) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const valueSlice = diplomatRuntime.DiplomatBuf.str8(wasm, value);
+        const valueSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, value)).splat()];
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        
-        const write = wasm.diplomat_buffer_write_create(0);
-        const result = wasm.icu4x_TimeZoneIdMapperWithFastCanonicalization_canonicalize_iana_mv1(diplomat_receive_buffer, this.ffiValue, valueSlice.ptr, valueSlice.size, write);
+        const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
+        const result = wasm.icu4x_TimeZoneIdMapperWithFastCanonicalization_canonicalize_iana_mv1(this.ffiValue, ...valueSlice, write.buffer);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = new TimeZoneInvalidIdError();
-                throw new Error('TimeZoneInvalidIdError', { cause });
+            if (result !== 1) {
+                const cause = new TimeZoneInvalidIdError(diplomatRuntime.internalConstructor);
+                throw new globalThis.Error('TimeZoneInvalidIdError', { cause });
             }
-            return diplomatRuntime.readString8(wasm, wasm.diplomat_buffer_write_get_bytes(write), wasm.diplomat_buffer_write_len(write));
-        } finally {
+            return write.readString8();
+        }
         
-            valueSlice.free();
+        finally {
+            functionCleanupArena.free();
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
-            wasm.diplomat_buffer_write_destroy(write);
-        
+            write.free();
         }
     }
 
     canonicalIanaFromBcp47(value) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const valueSlice = diplomatRuntime.DiplomatBuf.str8(wasm, value);
+        const valueSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, value)).splat()];
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        
-        const write = wasm.diplomat_buffer_write_create(0);
-        const result = wasm.icu4x_TimeZoneIdMapperWithFastCanonicalization_canonical_iana_from_bcp47_mv1(diplomat_receive_buffer, this.ffiValue, valueSlice.ptr, valueSlice.size, write);
+        const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
+        const result = wasm.icu4x_TimeZoneIdMapperWithFastCanonicalization_canonical_iana_from_bcp47_mv1(this.ffiValue, ...valueSlice, write.buffer);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = new TimeZoneInvalidIdError();
-                throw new Error('TimeZoneInvalidIdError', { cause });
+            if (result !== 1) {
+                const cause = new TimeZoneInvalidIdError(diplomatRuntime.internalConstructor);
+                throw new globalThis.Error('TimeZoneInvalidIdError', { cause });
             }
-            return diplomatRuntime.readString8(wasm, wasm.diplomat_buffer_write_get_bytes(write), wasm.diplomat_buffer_write_len(write));
-        } finally {
+            return write.readString8();
+        }
         
-            valueSlice.free();
+        finally {
+            functionCleanupArena.free();
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
-            wasm.diplomat_buffer_write_destroy(write);
-        
+            write.free();
         }
     }
-
-    
-
 }

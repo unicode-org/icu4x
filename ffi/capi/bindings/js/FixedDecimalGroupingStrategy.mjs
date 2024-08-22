@@ -14,6 +14,7 @@ export class FixedDecimalGroupingStrategy {
         ["Always", 2],
         ["Min2", 3]
     ]);
+
     constructor(value) {
         if (value instanceof FixedDecimalGroupingStrategy) {
             this.#value = value.value;
@@ -37,14 +38,7 @@ export class FixedDecimalGroupingStrategy {
     }
 
     static Auto = new FixedDecimalGroupingStrategy("Auto");
-
     static Never = new FixedDecimalGroupingStrategy("Never");
-
     static Always = new FixedDecimalGroupingStrategy("Always");
-
     static Min2 = new FixedDecimalGroupingStrategy("Min2");
-
-
-    
-
 }

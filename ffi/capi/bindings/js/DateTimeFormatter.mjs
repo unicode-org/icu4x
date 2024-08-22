@@ -15,10 +15,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *See the [Rust documentation for `DateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html) for more information.
 */
-
 const DateTimeFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_DateTimeFormatter_destroy_mv1(ptr);
 });
+
 export class DateTimeFormatter {
     // Internal ptr reference:
     #ptr = null;
@@ -27,85 +27,81 @@ export class DateTimeFormatter {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("DateTimeFormatter is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        // Unconditionally register to destroy when this object is ready to garbage collect.
-        DateTimeFormatter_box_destroy_registry.register(this, this.#ptr);
+        
+        // Are we being borrowed? If not, we can register.
+        if (this.#selfEdge.length === 0) {
+            DateTimeFormatter_box_destroy_registry.register(this, this.#ptr);
+        }
     }
 
     get ffiValue() {
         return this.#ptr;
     }
 
-
     static createWithLengths(provider, locale, dateLength, timeLength) {
-        
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_DateTimeFormatter_create_with_lengths_mv1(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue, dateLength.ffiValue, timeLength.ffiValue);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_DateTimeFormatter_create_with_lengths_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, dateLength.ffiValue, timeLength.ffiValue);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)) return Error[i[0]]; } return null;})();
-                throw new Error('Error: ' + cause.value, { cause });
+            if (!diplomatReceive.resultFlag) {
+                const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)) return Error[i[0]]; } return null;})();
+                throw new globalThis.Error('Error: ' + cause.value, { cause });
             }
-            return new DateTimeFormatter(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new DateTimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
     formatDatetime(value) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        
-        const write = wasm.diplomat_buffer_write_create(0);
-        const result = wasm.icu4x_DateTimeFormatter_format_datetime_mv1(diplomat_receive_buffer, this.ffiValue, value.ffiValue, write);
+        const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
+        const result = wasm.icu4x_DateTimeFormatter_format_datetime_mv1(diplomatReceive.buffer, this.ffiValue, value.ffiValue, write.buffer);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)) return Error[i[0]]; } return null;})();
-                throw new Error('Error: ' + cause.value, { cause });
+            if (!diplomatReceive.resultFlag) {
+                const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)) return Error[i[0]]; } return null;})();
+                throw new globalThis.Error('Error: ' + cause.value, { cause });
             }
-            return diplomatRuntime.readString8(wasm, wasm.diplomat_buffer_write_get_bytes(write), wasm.diplomat_buffer_write_len(write));
-        } finally {
+            return write.readString8();
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+        finally {
+            diplomatReceive.free();
         
-            wasm.diplomat_buffer_write_destroy(write);
-        
+            write.free();
         }
     }
 
     formatIsoDatetime(value) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        
-        const write = wasm.diplomat_buffer_write_create(0);
-        const result = wasm.icu4x_DateTimeFormatter_format_iso_datetime_mv1(diplomat_receive_buffer, this.ffiValue, value.ffiValue, write);
+        const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
+        const result = wasm.icu4x_DateTimeFormatter_format_iso_datetime_mv1(diplomatReceive.buffer, this.ffiValue, value.ffiValue, write.buffer);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)) return Error[i[0]]; } return null;})();
-                throw new Error('Error: ' + cause.value, { cause });
+            if (!diplomatReceive.resultFlag) {
+                const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)) return Error[i[0]]; } return null;})();
+                throw new globalThis.Error('Error: ' + cause.value, { cause });
             }
-            return diplomatRuntime.readString8(wasm, wasm.diplomat_buffer_write_get_bytes(write), wasm.diplomat_buffer_write_len(write));
-        } finally {
+            return write.readString8();
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+        finally {
+            diplomatReceive.free();
         
-            wasm.diplomat_buffer_write_destroy(write);
-        
+            write.free();
         }
     }
-
-    
-
 }

@@ -49,11 +49,10 @@ final class LocaleFallbacker implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `for_config`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html#method.for_config) for more information.
   LocaleFallbackerWithConfig forConfig(LocaleFallbackConfig config) {
-    final temp = ffi2.Arena();
+    final temp = _FinalizedArena();
     // This lifetime edge depends on lifetimes: 'a
     core.List<Object> aEdges = [this];
-    final result = _icu4x_LocaleFallbacker_for_config_mv1(_ffi, config._toFfi(temp));
-    temp.releaseAll();
+    final result = _icu4x_LocaleFallbacker_for_config_mv1(_ffi, config._toFfi(temp.arena));
     return LocaleFallbackerWithConfig._fromFfi(result, [], aEdges);
   }
 }

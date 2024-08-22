@@ -17,6 +17,8 @@ namespace capi {
       CollatorNumeric_Off = 1,
       CollatorNumeric_On = 2,
     };
+    
+    typedef struct CollatorNumeric_option {union { CollatorNumeric ok; }; bool is_ok; } CollatorNumeric_option;
 } // namespace capi
 } // namespace
 

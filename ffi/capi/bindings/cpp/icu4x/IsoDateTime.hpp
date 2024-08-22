@@ -31,7 +31,7 @@ namespace capi {
     icu4x::capi::IsoDateTime* icu4x_IsoDateTime_from_date_and_time_mv1(const icu4x::capi::IsoDate* date, const icu4x::capi::Time* time);
     
     typedef struct icu4x_IsoDateTime_from_string_mv1_result {union {icu4x::capi::IsoDateTime* ok; icu4x::capi::CalendarParseError err;}; bool is_ok;} icu4x_IsoDateTime_from_string_mv1_result;
-    icu4x_IsoDateTime_from_string_mv1_result icu4x_IsoDateTime_from_string_mv1(const char* v_data, size_t v_len);
+    icu4x_IsoDateTime_from_string_mv1_result icu4x_IsoDateTime_from_string_mv1(diplomat::capi::DiplomatStringView v);
     
     icu4x::capi::IsoDateTime* icu4x_IsoDateTime_local_unix_epoch_mv1(void);
     
@@ -102,8 +102,7 @@ inline std::unique_ptr<icu4x::IsoDateTime> icu4x::IsoDateTime::from_date_and_tim
 }
 
 inline diplomat::result<std::unique_ptr<icu4x::IsoDateTime>, icu4x::CalendarParseError> icu4x::IsoDateTime::from_string(std::string_view v) {
-  auto result = icu4x::capi::icu4x_IsoDateTime_from_string_mv1(v.data(),
-    v.size());
+  auto result = icu4x::capi::icu4x_IsoDateTime_from_string_mv1({v.data(), v.size()});
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::IsoDateTime>, icu4x::CalendarParseError>(diplomat::Ok<std::unique_ptr<icu4x::IsoDateTime>>(std::unique_ptr<icu4x::IsoDateTime>(icu4x::IsoDateTime::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::IsoDateTime>, icu4x::CalendarParseError>(diplomat::Err<icu4x::CalendarParseError>(icu4x::CalendarParseError::FromFFI(result.err)));
 }
 

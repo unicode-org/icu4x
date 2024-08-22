@@ -32,3 +32,18 @@ serde = { workspace = true, features = ["derive"] }
 zerofrom = { path = "../../../utils/zerofrom" }
 bincode = { workspace = true }
 serde_json = { workspace = true }
+
+[[example]]
+name = "derives"
+harness = false
+test = true
+
+[[example]]
+name = "make"
+harness = false
+test = true
+
+[[example]]
+name = "make_var"
+harness = false
+test = true

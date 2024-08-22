@@ -7,7 +7,6 @@ use displaydoc::Display;
 pub mod converter;
 pub mod converter_factory;
 pub mod convertible;
-pub mod measureunit;
 pub mod provider;
 pub mod ratio;
 

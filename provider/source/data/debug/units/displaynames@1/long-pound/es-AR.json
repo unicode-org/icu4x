@@ -1,6 +1,11 @@
 {
   "patterns": {
-    "One": "{0} libra",
-    "Other": "{0} libras"
+    "specials": [
+      [
+        "One",
+        "\u0001 libra"
+      ]
+    ],
+    "other": "\u0001 libras"
   }
 }

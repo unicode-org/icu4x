@@ -18,7 +18,7 @@
 
 
 
-bool icu4x_UnicodeSetData_contains_mv1(const UnicodeSetData* self, const char* s_data, size_t s_len);
+bool icu4x_UnicodeSetData_contains_mv1(const UnicodeSetData* self, DiplomatStringView s);
 
 bool icu4x_UnicodeSetData_contains_char_mv1(const UnicodeSetData* self, char32_t cp);
 

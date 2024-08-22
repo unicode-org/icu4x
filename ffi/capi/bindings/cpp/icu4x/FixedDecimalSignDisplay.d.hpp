@@ -19,6 +19,8 @@ namespace capi {
       FixedDecimalSignDisplay_ExceptZero = 3,
       FixedDecimalSignDisplay_Negative = 4,
     };
+    
+    typedef struct FixedDecimalSignDisplay_option {union { FixedDecimalSignDisplay ok; }; bool is_ok; } FixedDecimalSignDisplay_option;
 } // namespace capi
 } // namespace
 

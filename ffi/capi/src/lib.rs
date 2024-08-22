@@ -63,7 +63,6 @@ pub mod locale_core;
 pub mod logging;
 #[macro_use]
 pub mod provider;
-mod utf;
 
 // Components
 

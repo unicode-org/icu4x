@@ -1,5 +1,6 @@
 {
   "patterns": {
-    "Other": "{0} 時間"
+    "specials": [],
+    "other": "\u0001 時間"
   }
 }

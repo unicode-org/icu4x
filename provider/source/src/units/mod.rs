@@ -6,3 +6,4 @@ pub(crate) mod data;
 pub(crate) mod essentials;
 pub(crate) mod helpers;
 pub(crate) mod info;
+pub(crate) mod trie;

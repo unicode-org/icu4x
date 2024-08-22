@@ -1,6 +1,6 @@
-locale/aliases@2, <singleton>, 8623B, 2c1368fc48eb6158
-locale/likelysubtags_ext@1, <singleton>, 75788B, 681a300516da7f39
-locale/likelysubtags_l@1, <singleton>, 2230B, a7c40445e0c19c21
-locale/likelysubtags_sr@1, <singleton>, 4664B, 9de8f1705a19716a
-locale/parents@1, <singleton>, 2597B, 8f3b5fb7bff27d97
-locale/script_dir@1, <singleton>, 712B, 70fd2cd5dd8c5c20
+locale/aliases@2, <singleton>, 8623B, 8171B, 2c1368fc48eb6158
+locale/likelysubtags_ext@1, <singleton>, 75788B, 75523B, 681a300516da7f39
+locale/likelysubtags_l@1, <singleton>, 2230B, 2091B, a7c40445e0c19c21
+locale/likelysubtags_sr@1, <singleton>, 4664B, 4532B, 9de8f1705a19716a
+locale/parents@1, <singleton>, 2597B, 2553B, 8f3b5fb7bff27d97
+locale/script_dir@1, <singleton>, 712B, 668B, 70fd2cd5dd8c5c20

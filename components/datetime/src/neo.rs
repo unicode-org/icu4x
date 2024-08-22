@@ -157,6 +157,11 @@ pub struct NeoOptions<R: DateTimeMarkers> {
     ///
     /// See [`NeoSkeletonLength`].
     pub length: R::LengthOption,
+    /// Whether fields should be aligned for a column-like layout,
+    /// if required for the chosen field set.
+    ///
+    /// See [`Alignment`](crate::neo_skeleton::Alignment).
+    pub alignment: R::AlignmentOption,
     /// When to display the era field in the formatted string,
     /// if required for the chosen field set.
     ///
@@ -173,6 +178,7 @@ impl<R> From<NeoSkeletonLength> for NeoOptions<R>
 where
     R: DateTimeMarkers,
     R::LengthOption: From<NeoSkeletonLength>,
+    R::AlignmentOption: Default,
     R::EraDisplayOption: Default,
     R::FractionalSecondDigitsOption: Default,
 {
@@ -180,6 +186,7 @@ where
     fn from(value: NeoSkeletonLength) -> Self {
         NeoOptions {
             length: value.into(),
+            alignment: Default::default(),
             era_display: Default::default(),
             fractional_second_digits: Default::default(),
         }
@@ -192,6 +199,7 @@ impl<R> Default for NeoOptions<R>
 where
     R: DateTimeMarkers,
     R::LengthOption: Default,
+    R::AlignmentOption: Default,
     R::EraDisplayOption: Default,
     R::FractionalSecondDigitsOption: Default,
 {
@@ -199,6 +207,7 @@ where
     fn default() -> Self {
         NeoOptions {
             length: Default::default(),
+            alignment: Default::default(),
             era_display: Default::default(),
             fractional_second_digits: Default::default(),
         }
@@ -549,6 +558,7 @@ where
             locale,
             options.length.into(),
             components,
+            options.alignment.into(),
             options.era_display.into(),
             options.fractional_second_digits.into(),
             hour_cycle,
@@ -1256,6 +1266,7 @@ where
             locale,
             options.length.into(),
             components,
+            options.alignment.into(),
             options.era_display.into(),
             options.fractional_second_digits.into(),
             hour_cycle,

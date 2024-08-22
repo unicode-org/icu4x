@@ -30,7 +30,7 @@ icu4x_IsoDateTime_create_mv1_result icu4x_IsoDateTime_create_mv1(int32_t year, u
 IsoDateTime* icu4x_IsoDateTime_from_date_and_time_mv1(const IsoDate* date, const Time* time);
 
 typedef struct icu4x_IsoDateTime_from_string_mv1_result {union {IsoDateTime* ok; CalendarParseError err;}; bool is_ok;} icu4x_IsoDateTime_from_string_mv1_result;
-icu4x_IsoDateTime_from_string_mv1_result icu4x_IsoDateTime_from_string_mv1(const char* v_data, size_t v_len);
+icu4x_IsoDateTime_from_string_mv1_result icu4x_IsoDateTime_from_string_mv1(DiplomatStringView v);
 
 IsoDateTime* icu4x_IsoDateTime_local_unix_epoch_mv1(void);
 

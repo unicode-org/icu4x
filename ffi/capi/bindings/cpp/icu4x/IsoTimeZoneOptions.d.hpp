@@ -26,6 +26,8 @@ namespace capi {
       icu4x::capi::IsoTimeZoneMinuteDisplay minutes;
       icu4x::capi::IsoTimeZoneSecondDisplay seconds;
     };
+    
+    typedef struct IsoTimeZoneOptions_option {union { IsoTimeZoneOptions ok; }; bool is_ok; } IsoTimeZoneOptions_option;
 } // namespace capi
 } // namespace
 

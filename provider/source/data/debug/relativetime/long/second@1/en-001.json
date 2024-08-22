@@ -3,31 +3,21 @@
     "0": "now"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": " second ago",
-      "index": 0
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": " seconds ago",
-      "index": 0
-    }
+    "specials": [
+      [
+        "One",
+        "\u0001 second ago"
+      ]
+    ],
+    "other": "\u0001 seconds ago"
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "in  second",
-      "index": 3
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "in  seconds",
-      "index": 3
-    }
+    "specials": [
+      [
+        "One",
+        "\u0004in  second"
+      ]
+    ],
+    "other": "\u0004in  seconds"
   }
 }

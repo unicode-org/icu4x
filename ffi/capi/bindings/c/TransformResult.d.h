@@ -16,7 +16,7 @@ typedef enum TransformResult {
   TransformResult_Unmodified = 1,
 } TransformResult;
 
-
+typedef struct TransformResult_option {union { TransformResult ok; }; bool is_ok; } TransformResult_option;
 
 
 

@@ -22,8 +22,7 @@
 use displaydoc::Display;
 use icu_collections::codepointtrie::{CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
-use zerovec::ule::{AsULE, CharULE, ULE};
-use zerovec::ZeroVecError;
+use zerovec::ule::{AsULE, CharULE, UleError, ULE};
 
 /// A data provider struct for properties related to Bidi algorithms, including
 /// mirroring and bracket pairing.
@@ -164,9 +163,9 @@ pub struct MirroredPairedBracketDataULE([u8; 3]);
 //     are used, so no unused bits requires no extra work to zero out unused bits
 unsafe impl ULE for MirroredPairedBracketDataULE {
     #[inline]
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
         if bytes.len() % 3 != 0 {
-            return Err(ZeroVecError::length::<Self>(bytes.len()));
+            return Err(UleError::length::<Self>(bytes.len()));
         }
         // Validate the bytes
         #[allow(clippy::indexing_slicing)] // Won't panic because the chunks are always 3 bytes long
@@ -178,14 +177,14 @@ unsafe impl ULE for MirroredPairedBracketDataULE {
             mirroring_glyph_code_point = (mirroring_glyph_code_point << 8) | (byte1 as u32);
             mirroring_glyph_code_point = (mirroring_glyph_code_point << 8) | (byte0 as u32);
             let _mirroring_glyph =
-                char::from_u32(mirroring_glyph_code_point).ok_or(ZeroVecError::parse::<Self>())?;
+                char::from_u32(mirroring_glyph_code_point).ok_or(UleError::parse::<Self>())?;
 
             // skip validating the Bidi_Mirrored boolean since it is always valid
 
             // assert that Bidi_Paired_Bracket_Type cannot have a 4th value because it only
             // has 3 values: Open, Close, None
             if (byte2 & 0xC0) == 0xC0 {
-                return Err(ZeroVecError::parse::<Self>());
+                return Err(UleError::parse::<Self>());
             }
         }
 

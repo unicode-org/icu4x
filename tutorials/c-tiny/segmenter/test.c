@@ -23,7 +23,11 @@ int main(int argc, char *argv[]) {
 
     const char* data = "อักษรไทย เป็นอักษรที่ใช้เขียนภาษาไทยและภาษาของกลุ่มชาติพันธุ์ต่างๆ เช่น คำเมือง, อีสาน, ภาษาไทยใต้, มลายูปัตตานี เป็นต้น ในประเทศไทย มีพยัญชนะ 44 รูป สระ 21 รูป วรรณยุกต์ 4 รูป และเครื่องหมายอื่น ๆ อีกจำนวนหนึ่ง";
 
-    LineBreakIteratorUtf8* iter = icu4x_LineSegmenter_segment_utf8_mv1(segmenter, data, strlen(data));
+    struct DiplomatStringView data_str = {
+        data,
+        strlen(data)
+    };
+    LineBreakIteratorUtf8* iter = icu4x_LineSegmenter_segment_utf8_mv1(segmenter, data_str);
 
     printf("Breakpoints:");
     while (true) {

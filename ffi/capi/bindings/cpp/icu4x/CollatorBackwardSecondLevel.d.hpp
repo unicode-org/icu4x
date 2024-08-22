@@ -17,6 +17,8 @@ namespace capi {
       CollatorBackwardSecondLevel_Off = 1,
       CollatorBackwardSecondLevel_On = 2,
     };
+    
+    typedef struct CollatorBackwardSecondLevel_option {union { CollatorBackwardSecondLevel ok; }; bool is_ok; } CollatorBackwardSecondLevel_option;
 } // namespace capi
 } // namespace
 

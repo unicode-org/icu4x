@@ -213,7 +213,6 @@
 
 extern crate alloc;
 
-mod error;
 mod flexzerovec;
 #[cfg(feature = "hashmap")]
 pub mod hashmap;
@@ -232,7 +231,6 @@ pub mod ule;
 mod yoke_impls;
 mod zerofrom_impls;
 
-pub use crate::error::ZeroVecError;
 #[cfg(feature = "hashmap")]
 pub use crate::hashmap::ZeroHashMap;
 pub use crate::map::map::ZeroMap;

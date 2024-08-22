@@ -17,7 +17,7 @@ typedef enum LocaleDirection {
   LocaleDirection_Unknown = 2,
 } LocaleDirection;
 
-
+typedef struct LocaleDirection_option {union { LocaleDirection ok; }; bool is_ok; } LocaleDirection_option;
 
 
 

@@ -16,6 +16,7 @@ export class PluralCategory {
         ["Many", 4],
         ["Other", 5]
     ]);
+
     constructor(value) {
         if (value instanceof PluralCategory) {
             this.#value = value.value;
@@ -39,40 +40,31 @@ export class PluralCategory {
     }
 
     static Zero = new PluralCategory("Zero");
-
     static One = new PluralCategory("One");
-
     static Two = new PluralCategory("Two");
-
     static Few = new PluralCategory("Few");
-
     static Many = new PluralCategory("Many");
-
     static Other = new PluralCategory("Other");
 
-
     static getForCldrString(s) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
+        const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s)).splat()];
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_PluralCategory_get_for_cldr_string_mv1(diplomat_receive_buffer, sSlice.ptr, sSlice.size);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_PluralCategory_get_for_cldr_string_mv1(diplomatReceive.buffer, ...sSlice);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
+            if (!diplomatReceive.resultFlag) {
                 return null;
             }
-            return PluralCategory[Array.from(PluralCategory.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-        } finally {
+            return PluralCategory[Array.from(PluralCategory.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+        }
         
-            sSlice.free();
+        finally {
+            functionCleanupArena.free();
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+            diplomatReceive.free();
         }
     }
-
-    
-
 }

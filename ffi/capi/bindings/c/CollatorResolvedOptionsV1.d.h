@@ -28,7 +28,7 @@ typedef struct CollatorResolvedOptionsV1 {
   CollatorBackwardSecondLevel backward_second_level;
 } CollatorResolvedOptionsV1;
 
-
+typedef struct CollatorResolvedOptionsV1_option {union { CollatorResolvedOptionsV1 ok; }; bool is_ok; } CollatorResolvedOptionsV1_option;
 
 
 
