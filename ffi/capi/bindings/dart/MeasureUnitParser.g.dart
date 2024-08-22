@@ -5,7 +5,7 @@ part of 'lib.g.dart';
 /// An ICU4X Measurement Unit parser object which is capable of parsing the CLDR unit identifier
 /// (e.g. `meter-per-square-second`) and get the [`MeasureUnit`].
 ///
-/// See the [Rust documentation for `MeasureUnitParser`](https://docs.rs/icu/latest/icu/experimental/units/measureunit/struct.MeasureUnitParser.html) for more information.
+/// See the [Rust documentation for `MeasureUnitParser`](https://docs.rs/icu/latest/icu/experimental/measure/parser/struct.MeasureUnitParser.html) for more information.
 final class MeasureUnitParser implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -30,7 +30,7 @@ final class MeasureUnitParser implements ffi.Finalizable {
   /// Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`MeasureUnit`],
   /// if the identifier is valid.
   ///
-  /// See the [Rust documentation for `parse`](https://docs.rs/icu/latest/icu/experimental/units/measureunit/struct.MeasureUnitParser.html#method.parse) for more information.
+  /// See the [Rust documentation for `parse`](https://docs.rs/icu/latest/icu/experimental/measure/parser/struct.MeasureUnitParser.html#method.parse) for more information.
   MeasureUnit? parse(String unitId) {
     final temp = _FinalizedArena();
     final result = _icu4x_MeasureUnitParser_parse_mv1(_ffi, unitId._utf8AllocIn(temp.arena));

@@ -282,6 +282,7 @@ macro_rules! registry(
             icu::experimental::displaynames::provider::LocaleDisplayNamesV1Marker = "displaynames/locales@1",
             icu::experimental::displaynames::provider::ScriptDisplayNamesV1Marker = "displaynames/scripts@1",
             icu::experimental::displaynames::provider::VariantDisplayNamesV1Marker = "displaynames/variants@1",
+            icu::experimental::measure::provider::trie::UnitsTrieV1Marker = "units/trie@1",
             icu::experimental::relativetime::provider::LongSecondRelativeTimeFormatDataV1Marker = "relativetime/long/second@1",
             icu::experimental::relativetime::provider::ShortSecondRelativeTimeFormatDataV1Marker = "relativetime/short/second@1",
             icu::experimental::relativetime::provider::NarrowSecondRelativeTimeFormatDataV1Marker = "relativetime/narrow/second@1",

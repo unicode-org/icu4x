@@ -85,6 +85,7 @@ pub mod provider {
         impl_short_week_relative_time_format_data_v1_marker!(Baked);
         impl_short_year_relative_time_format_data_v1_marker!(Baked);
         impl_units_info_v1_marker!(Baked);
+        impl_units_trie_v1_marker!(Baked);
     };
 
     #[cfg(feature = "datagen")]
@@ -111,6 +112,7 @@ pub mod provider {
         super::displaynames::provider::RegionDisplayNamesV1Marker::INFO,
         super::displaynames::provider::ScriptDisplayNamesV1Marker::INFO,
         super::displaynames::provider::VariantDisplayNamesV1Marker::INFO,
+        super::measure::provider::trie::UnitsTrieV1Marker::INFO,
         super::personnames::provider::PersonNamesFormatV1Marker::INFO,
         super::relativetime::provider::LongDayRelativeTimeFormatDataV1Marker::INFO,
         super::relativetime::provider::LongHourRelativeTimeFormatDataV1Marker::INFO,
