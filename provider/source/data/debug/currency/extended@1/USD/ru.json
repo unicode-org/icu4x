@@ -1,7 +1,15 @@
 {
-  "categorized_display_names": {
-    "One": "доллар США",
-    "Many": "долларов США"
-  },
-  "other_display_name": "доллара США"
+  "display_names": {
+    "specials": [
+      [
+        "One",
+        "доллар США"
+      ],
+      [
+        "Many",
+        "долларов США"
+      ]
+    ],
+    "other": "доллара США"
+  }
 }

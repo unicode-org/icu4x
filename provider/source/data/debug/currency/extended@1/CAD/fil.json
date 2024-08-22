@@ -1,6 +1,11 @@
 {
-  "categorized_display_names": {
-    "One": "dolyar ng Canada"
-  },
-  "other_display_name": "Dolyares ng Canada"
+  "display_names": {
+    "specials": [
+      [
+        "One",
+        "dolyar ng Canada"
+      ]
+    ],
+    "other": "Dolyares ng Canada"
+  }
 }

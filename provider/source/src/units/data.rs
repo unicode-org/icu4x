@@ -8,7 +8,7 @@ use crate::cldr_serde::{self};
 use crate::SourceDataProvider;
 
 use icu::experimental::dimension::provider::units::{UnitsDisplayNameV1, UnitsDisplayNameV1Marker};
-use icu::experimental::relativetime::provider::PluralPattern;
+use icu::experimental::relativetime::provider::PluralElements;
 use icu_provider::prelude::*;
 use icu_provider::DataMarkerAttributes;
 
@@ -49,7 +49,7 @@ impl DataProvider<UnitsDisplayNameV1Marker> for SourceDataProvider {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(UnitsDisplayNameV1 {
-                patterns: PluralPattern::try_new(
+                patterns: PluralElements::try_new_pattern(
                     unit_patterns
                         .other
                         .as_deref()
@@ -133,7 +133,10 @@ fn test_basic() {
         .payload;
 
     let units_us = us_locale_long_meter.get().to_owned();
-    let long = units_us.patterns.get(PluralCategory::One).interpolate([0]);
+    let long = units_us
+        .patterns
+        .get_pattern(PluralCategory::One)
+        .interpolate([0]);
     assert_writeable_eq!(long, "0 meter");
 
     let us_locale_short_meter: DataPayload<UnitsDisplayNameV1Marker> = provider
@@ -150,7 +153,7 @@ fn test_basic() {
     let units_us_short = us_locale_short_meter.get().to_owned();
     let short = units_us_short
         .patterns
-        .get(PluralCategory::Other)
+        .get_pattern(PluralCategory::Other)
         .interpolate([5]);
     assert_writeable_eq!(short, "5 m");
 
@@ -168,7 +171,7 @@ fn test_basic() {
     let ar_eg_units = ar_eg_locale.get().to_owned();
     let long = ar_eg_units
         .patterns
-        .get(PluralCategory::One)
+        .get_pattern(PluralCategory::One)
         .interpolate([1]);
     assert_writeable_eq!(long, "متر");
 
@@ -186,7 +189,7 @@ fn test_basic() {
     let fr_units = fr_locale.get().to_owned();
     let short = fr_units
         .patterns
-        .get(PluralCategory::Other)
+        .get_pattern(PluralCategory::Other)
         .interpolate([5]);
     assert_writeable_eq!(short, "5 m");
 }

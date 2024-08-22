@@ -5,11 +5,9 @@
 use crate::cldr_serde;
 use crate::SourceDataProvider;
 use icu::experimental::dimension::provider::extended_currency::*;
-use icu::plurals::PluralCategory;
+use icu::experimental::relativetime::provider::PluralElements;
 use icu_provider::prelude::*;
-use std::borrow::Cow;
 use std::collections::HashSet;
-use zerovec::ZeroMap;
 
 impl DataProvider<CurrencyExtendedDataV1Marker> for crate::SourceDataProvider {
     fn load(
@@ -31,33 +29,20 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::SourceDataProvider {
             .get(req.id.marker_attributes.as_str())
             .ok_or(DataError::custom("No currency associated with the aux key"))?;
 
-        let other_display_name = currency.other.clone().ok_or_else(|| {
-            DataErrorKind::IdentifierNotFound
-                .into_error()
-                .with_debug_context(req.id.locale)
-        })?;
-
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(CurrencyExtendedDataV1 {
-                categorized_display_names: ZeroMap::from_iter(
-                    [
-                        (PluralCategory::Zero, currency.zero.as_deref()),
-                        (PluralCategory::One, currency.one.as_deref()),
-                        (PluralCategory::Two, currency.two.as_deref()),
-                        (PluralCategory::Few, currency.few.as_deref()),
-                        (PluralCategory::Many, currency.many.as_deref()),
-                    ]
-                    .into_iter()
-                    .filter_map(|(count, pattern)| match (count, pattern) {
-                        // As per [Unicode TR 35](https://unicode.org/reports/tr35/tr35-numbers.html#Currencies)
-                        //      If the pattern is not found for the associated `Count`, fall back to the `Count::Other` pattern.
-                        //      Therefore, we filter out any patterns that are the same as the `Count::Other` pattern.
-                        (_, p) if p == currency.other.as_deref() => None,
-                        _ => Some((count, pattern?)),
-                    }),
+                display_names: PluralElements::try_new(
+                    currency
+                        .other
+                        .as_deref()
+                        .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?,
+                    currency.zero.as_deref(),
+                    currency.one.as_deref(),
+                    currency.two.as_deref(),
+                    currency.few.as_deref(),
+                    currency.many.as_deref(),
                 ),
-                other_display_name: Cow::Owned(other_display_name.to_owned()),
             }),
         })
     }
@@ -99,6 +84,7 @@ impl crate::IterableDataProviderCached<CurrencyExtendedDataV1Marker> for SourceD
 #[test]
 fn test_basic() {
     use icu::locale::langid;
+    use icu::plurals::PluralCategory;
     let provider = SourceDataProvider::new_testing();
     let en: DataPayload<CurrencyExtendedDataV1Marker> = provider
         .load(DataRequest {
@@ -110,17 +96,30 @@ fn test_basic() {
         })
         .unwrap()
         .payload;
-    let extended_en = en.get().to_owned();
-    let categorized_display_names = extended_en.categorized_display_names;
-    assert_eq!(categorized_display_names.get(&PluralCategory::Zero), None);
     assert_eq!(
-        categorized_display_names.get(&PluralCategory::One).unwrap(),
+        en.get().display_names.get_str(PluralCategory::Zero),
+        "US dollars"
+    );
+    assert_eq!(
+        en.get().display_names.get_str(PluralCategory::One),
         "US dollar"
     );
-    assert_eq!(categorized_display_names.get(&PluralCategory::Two), None);
-    assert_eq!(categorized_display_names.get(&PluralCategory::Few), None);
-    assert_eq!(categorized_display_names.get(&PluralCategory::Many), None);
-    assert_eq!(extended_en.other_display_name, "US dollars");
+    assert_eq!(
+        en.get().display_names.get_str(PluralCategory::Two),
+        "US dollars"
+    );
+    assert_eq!(
+        en.get().display_names.get_str(PluralCategory::Few),
+        "US dollars"
+    );
+    assert_eq!(
+        en.get().display_names.get_str(PluralCategory::Many),
+        "US dollars"
+    );
+    assert_eq!(
+        en.get().display_names.get_str(PluralCategory::Other),
+        "US dollars"
+    );
 
     let fr: DataPayload<CurrencyExtendedDataV1Marker> = provider
         .load(DataRequest {
@@ -133,15 +132,28 @@ fn test_basic() {
         .unwrap()
         .payload;
 
-    let extended_fr = fr.get().to_owned();
-    let categorized_display_names = extended_fr.categorized_display_names;
-    assert_eq!(categorized_display_names.get(&PluralCategory::Zero), None);
     assert_eq!(
-        categorized_display_names.get(&PluralCategory::One),
-        Some("dollar des États-Unis")
+        fr.get().display_names.get_str(PluralCategory::Zero),
+        "dollars des États-Unis"
     );
-    assert_eq!(categorized_display_names.get(&PluralCategory::Two), None);
-    assert_eq!(categorized_display_names.get(&PluralCategory::Few), None);
-    assert_eq!(categorized_display_names.get(&PluralCategory::Many), None);
-    assert_eq!(extended_fr.other_display_name, "dollars des États-Unis");
+    assert_eq!(
+        fr.get().display_names.get_str(PluralCategory::One),
+        "dollar des États-Unis"
+    );
+    assert_eq!(
+        fr.get().display_names.get_str(PluralCategory::Two),
+        "dollars des États-Unis"
+    );
+    assert_eq!(
+        fr.get().display_names.get_str(PluralCategory::Few),
+        "dollars des États-Unis"
+    );
+    assert_eq!(
+        fr.get().display_names.get_str(PluralCategory::Many),
+        "dollars des États-Unis"
+    );
+    assert_eq!(
+        fr.get().display_names.get_str(PluralCategory::Other),
+        "dollars des États-Unis"
+    );
 }
