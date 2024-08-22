@@ -31,11 +31,12 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::SourceDataProvider {
             .get(req.id.marker_attributes.as_str())
             .ok_or(DataError::custom("No currency associated with the aux key"))?;
 
-        let other_display_name = currency.other.clone().ok_or(
+        let other_display_name = currency.other.clone().ok_or_else(|| {
             DataErrorKind::IdentifierNotFound
                 .into_error()
-                .with_debug_context(req.id.locale),
-        )?;
+                .with_debug_context(req.id.locale)
+        })?;
+
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(CurrencyExtendedDataV1 {
