@@ -41,7 +41,6 @@ export class LocaleDisplayNamesFormatter {
     }
 
     static create(provider, locale, options) {
-        
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -63,7 +62,6 @@ export class LocaleDisplayNamesFormatter {
     }
 
     of(locale) {
-        
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         wasm.icu4x_LocaleDisplayNamesFormatter_of_mv1(this.ffiValue, locale.ffiValue, write.buffer);
     

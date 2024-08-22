@@ -43,7 +43,6 @@ export class GraphemeClusterSegmenter {
     }
 
     static create(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         const result = wasm.icu4x_GraphemeClusterSegmenter_create_mv1(diplomatReceive.buffer, provider.ffiValue);
     
@@ -61,19 +60,19 @@ export class GraphemeClusterSegmenter {
     }
 
     segment(input) {
-        
-        const inputSlice = diplomatRuntime.DiplomatBuf.str16(wasm, input);
+        let functionGarbageCollector = new diplomatRuntime.GarbageCollector();
+        const inputSlice = [...functionGarbageCollector.alloc(diplomatRuntime.DiplomatBuf.str16(wasm, input)).splat()];
         
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this, inputSlice];
-        const result = wasm.icu4x_GraphemeClusterSegmenter_segment_utf16_mv1(this.ffiValue, inputSlice.ptr, inputSlice.size);
+        const result = wasm.icu4x_GraphemeClusterSegmenter_segment_utf16_mv1(this.ffiValue, ...inputSlice);
     
         try {
             return new GraphemeClusterBreakIteratorUtf16(diplomatRuntime.internalConstructor, result, [], aEdges);
         }
         
         finally {
-            inputSlice.garbageCollect();
+            functionGarbageCollector.garbageCollect();
         }
     }
 }

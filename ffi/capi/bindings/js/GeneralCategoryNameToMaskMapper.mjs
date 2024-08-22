@@ -43,35 +43,36 @@ export class GeneralCategoryNameToMaskMapper {
     }
 
     getStrict(name) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const nameSlice = diplomatRuntime.DiplomatBuf.str8(wasm, name);
-        const result = wasm.icu4x_GeneralCategoryNameToMaskMapper_get_strict_mv1(this.ffiValue, nameSlice.ptr, nameSlice.size);
+        const nameSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, name)).splat()];
+        const result = wasm.icu4x_GeneralCategoryNameToMaskMapper_get_strict_mv1(this.ffiValue, ...nameSlice);
     
         try {
             return result;
         }
         
         finally {
-            nameSlice.free();
+            functionCleanupArena.free();
         }
     }
 
     getLoose(name) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const nameSlice = diplomatRuntime.DiplomatBuf.str8(wasm, name);
-        const result = wasm.icu4x_GeneralCategoryNameToMaskMapper_get_loose_mv1(this.ffiValue, nameSlice.ptr, nameSlice.size);
+        const nameSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, name)).splat()];
+        const result = wasm.icu4x_GeneralCategoryNameToMaskMapper_get_loose_mv1(this.ffiValue, ...nameSlice);
     
         try {
             return result;
         }
         
         finally {
-            nameSlice.free();
+            functionCleanupArena.free();
         }
     }
 
     static load(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         const result = wasm.icu4x_GeneralCategoryNameToMaskMapper_load_mv1(diplomatReceive.buffer, provider.ffiValue);
     

@@ -40,8 +40,7 @@ export class SentenceBreakIteratorUtf8 {
         return this.#ptr;
     }
 
-    next() {
-        const result = wasm.icu4x_SentenceBreakIteratorUtf8_next_mv1(this.ffiValue);
+    next() {const result = wasm.icu4x_SentenceBreakIteratorUtf8_next_mv1(this.ffiValue);
     
         try {
             return result;

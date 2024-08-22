@@ -41,8 +41,7 @@ export class WordBreakIteratorLatin1 {
         return this.#ptr;
     }
 
-    next() {
-        const result = wasm.icu4x_WordBreakIteratorLatin1_next_mv1(this.ffiValue);
+    next() {const result = wasm.icu4x_WordBreakIteratorLatin1_next_mv1(this.ffiValue);
     
         try {
             return result;
@@ -51,8 +50,7 @@ export class WordBreakIteratorLatin1 {
         finally {}
     }
 
-    get wordType() {
-        const result = wasm.icu4x_WordBreakIteratorLatin1_word_type_mv1(this.ffiValue);
+    get wordType() {const result = wasm.icu4x_WordBreakIteratorLatin1_word_type_mv1(this.ffiValue);
     
         try {
             return SegmenterWordType[Array.from(SegmenterWordType.values.keys())[result]];
@@ -61,8 +59,7 @@ export class WordBreakIteratorLatin1 {
         finally {}
     }
 
-    get isWordLike() {
-        const result = wasm.icu4x_WordBreakIteratorLatin1_is_word_like_mv1(this.ffiValue);
+    get isWordLike() {const result = wasm.icu4x_WordBreakIteratorLatin1_is_word_like_mv1(this.ffiValue);
     
         try {
             return result;

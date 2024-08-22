@@ -40,8 +40,7 @@ export class UnitsConverter {
         return this.#ptr;
     }
 
-    convertNumber(value) {
-        const result = wasm.icu4x_UnitsConverter_convert_double_mv1(this.ffiValue, value);
+    convertNumber(value) {const result = wasm.icu4x_UnitsConverter_convert_double_mv1(this.ffiValue, value);
     
         try {
             return result;
@@ -50,8 +49,7 @@ export class UnitsConverter {
         finally {}
     }
 
-    clone() {
-        const result = wasm.icu4x_UnitsConverter_clone_mv1(this.ffiValue);
+    clone() {const result = wasm.icu4x_UnitsConverter_clone_mv1(this.ffiValue);
     
         try {
             return new UnitsConverter(diplomatRuntime.internalConstructor, result, []);

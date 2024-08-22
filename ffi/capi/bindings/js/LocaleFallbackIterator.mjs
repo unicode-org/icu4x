@@ -43,8 +43,7 @@ export class LocaleFallbackIterator {
         return this.#ptr;
     }
 
-    #iteratorNext() {
-        const result = wasm.icu4x_LocaleFallbackIterator_next_mv1(this.ffiValue);
+    #iteratorNext() {const result = wasm.icu4x_LocaleFallbackIterator_next_mv1(this.ffiValue);
     
         try {
             return result === 0 ? null : new Locale(diplomatRuntime.internalConstructor, result, []);

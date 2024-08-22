@@ -43,7 +43,6 @@ export class LineSegmenter {
     }
 
     static createAuto(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         const result = wasm.icu4x_LineSegmenter_create_auto_mv1(diplomatReceive.buffer, provider.ffiValue);
     
@@ -61,7 +60,6 @@ export class LineSegmenter {
     }
 
     static createLstm(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         const result = wasm.icu4x_LineSegmenter_create_lstm_mv1(diplomatReceive.buffer, provider.ffiValue);
     
@@ -79,7 +77,6 @@ export class LineSegmenter {
     }
 
     static createDictionary(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         const result = wasm.icu4x_LineSegmenter_create_dictionary_mv1(diplomatReceive.buffer, provider.ffiValue);
     
@@ -97,7 +94,6 @@ export class LineSegmenter {
     }
 
     static autoWithOptions(provider, options) {
-        
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -119,7 +115,6 @@ export class LineSegmenter {
     }
 
     static lstmWithOptions(provider, options) {
-        
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -141,7 +136,6 @@ export class LineSegmenter {
     }
 
     static dictionaryWithOptions(provider, options) {
-        
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -163,19 +157,19 @@ export class LineSegmenter {
     }
 
     segment(input) {
-        
-        const inputSlice = diplomatRuntime.DiplomatBuf.str16(wasm, input);
+        let functionGarbageCollector = new diplomatRuntime.GarbageCollector();
+        const inputSlice = [...functionGarbageCollector.alloc(diplomatRuntime.DiplomatBuf.str16(wasm, input)).splat()];
         
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this, inputSlice];
-        const result = wasm.icu4x_LineSegmenter_segment_utf16_mv1(this.ffiValue, inputSlice.ptr, inputSlice.size);
+        const result = wasm.icu4x_LineSegmenter_segment_utf16_mv1(this.ffiValue, ...inputSlice);
     
         try {
             return new LineBreakIteratorUtf16(diplomatRuntime.internalConstructor, result, [], aEdges);
         }
         
         finally {
-            inputSlice.garbageCollect();
+            functionGarbageCollector.garbageCollect();
         }
     }
 }

@@ -48,7 +48,6 @@ export class ZonedDateTimeFormatter {
     }
 
     static createWithLengths(provider, locale, dateLength, timeLength) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         const result = wasm.icu4x_ZonedDateTimeFormatter_create_with_lengths_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, dateLength.ffiValue, timeLength.ffiValue);
     
@@ -66,7 +65,6 @@ export class ZonedDateTimeFormatter {
     }
 
     static createWithLengthsAndIso8601TimeZoneFallback(provider, locale, dateLength, timeLength, zoneOptions) {
-        
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -88,7 +86,6 @@ export class ZonedDateTimeFormatter {
     }
 
     formatDatetimeWithCustomTimeZone(datetime, timeZone) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
@@ -110,7 +107,6 @@ export class ZonedDateTimeFormatter {
     }
 
     formatIsoDatetimeWithCustomTimeZone(datetime, timeZone) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
