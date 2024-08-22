@@ -61,21 +61,39 @@ impl crate::IterableDataProviderCached<UnitsTrieV1Marker> for SourceDataProvider
 #[test]
 fn test_basic() {
     use icu::locale::langid;
+    use icu_experimental::units::provider::UnitsInfoV1Marker;
     use icu_provider::prelude::*;
 
     let provider = SourceDataProvider::new_testing();
 
-    let und: DataResponse<UnitsTrieV1Marker> = provider
+    let und_trie: DataResponse<UnitsTrieV1Marker> = provider
         .load(DataRequest {
             id: DataIdentifierCow::from_locale(langid!("und").into()).as_borrowed(),
             ..Default::default()
         })
         .unwrap();
 
-    let units_info = und.payload.get().to_owned();
+    let units_info = und_trie.payload.get().to_owned();
     let trie = &units_info.trie;
 
-    assert_eq!(trie.get("meter").unwrap(), 84);
+    let und_info: DataResponse<UnitsInfoV1Marker> = provider
+        .load(DataRequest {
+            id: DataIdentifierCow::from_locale(langid!("und").into()).as_borrowed(),
+            ..Default::default()
+        })
+        .unwrap();
 
-    // TODO: add more tests that test the accessing of UnitsInfoV1Marker and get the correct info for each couple of units
+    let units_info = und_info.payload.get().to_owned();
+    let meter_id = trie.get("meter").unwrap();
+    let foot_id = trie.get("foot").unwrap();
+    let convert_infos = &units_info.convert_infos[meter_id];
+    let basic_units = &convert_infos.basic_units();
+
+    // Meter should have the same id as the one in the info because it is the `root` unit for length.
+    assert_eq!(basic_units.first().unwrap().unit_id, meter_id as u16);
+
+    let convert_infos = &units_info.convert_infos[foot_id];
+    let basic_units = &convert_infos.basic_units();
+    // Foot should have the same id as meter because meter is the root unit for length.
+    assert_eq!(basic_units.first().unwrap().unit_id, meter_id as u16);
 }
