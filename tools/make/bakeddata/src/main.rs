@@ -134,7 +134,7 @@ fn main() {
         }
 
         // Crates with non-singleton markers need fallback
-        if markers.iter().any(|m| !m.is_singleton) {
+        if markers.iter().any(|m| !m.is_singleton) && component != "locale" {
             writeln!(
                 &mut crlify::BufWriterWithLineEndingFix::new(
                     std::fs::OpenOptions::new()

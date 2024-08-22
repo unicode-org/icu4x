@@ -74,6 +74,8 @@ export { LocaleDisplayNamesFormatter } from "./LocaleDisplayNamesFormatter.mjs"
 
 export { RegionDisplayNames } from "./RegionDisplayNames.mjs"
 
+export { ExemplarCharacters } from "./ExemplarCharacters.mjs"
+
 export { LocaleFallbackIterator } from "./LocaleFallbackIterator.mjs"
 
 export { LocaleFallbacker } from "./LocaleFallbacker.mjs"

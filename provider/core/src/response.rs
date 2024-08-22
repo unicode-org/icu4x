@@ -454,6 +454,15 @@ where
         }
     }
 
+    #[inline]
+    /// TODO
+    pub fn get_static(&self) -> Option<&'static M::DataStruct> {
+        match &self.0 {
+            DataPayloadInner::Yoke(..) => None,
+            DataPayloadInner::StaticRef(r) => Some(*r),
+        }
+    }
+
     /// Maps `DataPayload<M>` to `DataPayload<M2>` by projecting it with [`Yoke::map_project`].
     ///
     /// This is accomplished by a function that takes `M`'s data type and returns `M2`'s data

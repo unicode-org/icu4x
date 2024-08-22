@@ -87,6 +87,8 @@ pub mod decimal;
 #[cfg(feature = "experimental")]
 pub mod displaynames;
 #[cfg(feature = "locale")]
+pub mod exemplar_chars;
+#[cfg(feature = "locale")]
 pub mod fallbacker;
 #[cfg(feature = "decimal")]
 pub mod fixed_decimal;
