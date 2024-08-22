@@ -21,7 +21,7 @@ If you wish to use custom compiled data for ICU4X, no changes to Cargo.toml are 
 datagen output during your build:
 
 ```command
-icu4x-datagen --format mod --markers all --locales ru --out baked_data
+icu4x-datagen --format baked --markers all --locales ru --out baked_data
 ICU4X_DATA_DIR=$(pwd)/baked_data cargo build --release
 ```
 
@@ -33,8 +33,7 @@ Experimental modules are published in a separate `icu_experimental` crate:
 
 ```toml
 [dependencies]
-icu = "1.5"
-icu_experimental = "0"
+icu = { version = "1.5", features = ["experimental"] }
 ```
 
 In your main.rs, you can now use e.g. the `icu_experimental::displaynames` module.
