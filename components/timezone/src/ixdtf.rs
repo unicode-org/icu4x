@@ -266,7 +266,6 @@ impl CustomTimeZone {
             TimeZoneRecord::Name(iana_identifier) => {
                 let mapper = TimeZoneIdMapper::new();
                 let bcp47_id = mapper
-                    .as_borrowed()
                     .iana_bytes_to_bcp47(iana_identifier)
                     .ok_or(ParseError::InvalidIanaIdentifier)?;
 

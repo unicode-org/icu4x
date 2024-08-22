@@ -97,7 +97,7 @@
 //! time_zone.gmt_offset = "-0600".parse::<GmtOffset>().ok();
 //! let mapper = TimeZoneIdMapper::new();
 //! time_zone.time_zone_id =
-//!     mapper.as_borrowed().iana_to_bcp47("America/Chicago");
+//!     mapper.iana_to_bcp47("America/Chicago");
 //!
 //! // Alternatively, set it directly from the BCP-47 ID
 //! assert_eq!(time_zone.time_zone_id, Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))));
