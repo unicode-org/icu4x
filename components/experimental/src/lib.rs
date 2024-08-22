@@ -47,6 +47,7 @@ pub mod provider {
         impl_short_compact_decimal_format_data_v1_marker!(Baked);
         impl_short_currency_compact_v1_marker!(Baked);
         impl_currency_essentials_v1_marker!(Baked);
+        impl_currency_displayname_v1_marker!(Baked);
         impl_currency_patterns_data_v1_marker!(Baked);
         impl_currency_extended_data_v1_marker!(Baked);
         impl_units_display_name_v1_marker!(Baked);
@@ -97,6 +98,7 @@ pub mod provider {
         super::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker::INFO,
         super::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker::INFO,
         super::dimension::provider::currency_compact::ShortCurrencyCompactV1Marker::INFO,
+        super::dimension::provider::currency_displayname::CurrencyDisplaynameV1Marker::INFO,
         super::dimension::provider::currency::CurrencyEssentialsV1Marker::INFO,
         super::dimension::provider::currency_patterns::CurrencyPatternsDataV1Marker::INFO,
         super::dimension::provider::extended_currency::CurrencyExtendedDataV1Marker::INFO,

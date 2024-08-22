@@ -1,0 +1,114 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+use crate::cldr_serde;
+use crate::SourceDataProvider;
+use icu::experimental::dimension::provider::currency_displayname::*;
+use icu_provider::prelude::*;
+use std::borrow::Cow;
+use std::collections::HashSet;
+
+impl DataProvider<CurrencyDisplaynameV1Marker> for crate::SourceDataProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<CurrencyDisplaynameV1Marker>, DataError> {
+        self.check_req::<CurrencyDisplaynameV1Marker>(req)?;
+
+        let currencies_resource: &cldr_serde::currencies::data::Resource =
+            self.cldr()?
+                .numbers()
+                .read_and_parse(req.id.locale, "currencies.json")?;
+
+        let currency = currencies_resource
+            .main
+            .value
+            .numbers
+            .currencies
+            .get(req.id.marker_attributes.as_str())
+            .ok_or(DataError::custom("No currency associated with the aux key"))?;
+
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(CurrencyDisplaynameV1 {
+                display_name: Cow::Owned(
+                    currency
+                        .display_name
+                        .as_deref()
+                        .or(currency.one.as_deref())
+                        .ok_or(DataError::custom(
+                            "No display name or `one` count found for the currency",
+                        ))?
+                        .to_string(),
+                ),
+            }),
+        })
+    }
+}
+
+impl crate::IterableDataProviderCached<CurrencyDisplaynameV1Marker> for SourceDataProvider {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+        let mut result = HashSet::new();
+        let numbers = self.cldr()?.numbers();
+        let locales = numbers.list_locales()?;
+        for locale in locales {
+            let currencies_resource: &cldr_serde::currencies::data::Resource = self
+                .cldr()?
+                .numbers()
+                .read_and_parse(&locale, "currencies.json")?;
+
+            let currencies = &currencies_resource.main.value.numbers.currencies;
+            for (currency, patterns) in currencies {
+                // If the display name is not found, the `one` count will be used.
+                // Therefore, we can skip any currencies that don't have a display name or `one` count.
+                if patterns
+                    .display_name
+                    .as_ref()
+                    .or(patterns.one.as_ref())
+                    .is_none()
+                {
+                    continue;
+                }
+                if let Ok(attributes) = DataMarkerAttributes::try_from_string(currency.clone()) {
+                    result.insert(DataIdentifierCow::from_owned(attributes, locale.clone()));
+                }
+            }
+        }
+
+        Ok(result)
+    }
+}
+
+#[test]
+fn test_basic() {
+    use icu::locale::langid;
+
+    let provider = SourceDataProvider::new_testing();
+    let en: DataPayload<CurrencyDisplaynameV1Marker> = provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::from_str_or_panic("USD"),
+                &langid!("en").into(),
+            ),
+            ..Default::default()
+        })
+        .unwrap()
+        .payload;
+    let display_name = en.get().to_owned().display_name;
+    assert_eq!(display_name, "US Dollar");
+
+    let fr: DataPayload<CurrencyDisplaynameV1Marker> = provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::from_str_or_panic("USD"),
+                &langid!("fr").into(),
+            ),
+            ..Default::default()
+        })
+        .unwrap()
+        .payload;
+
+    let display_name = fr.get().to_owned().display_name;
+    assert_eq!(display_name, "dollar des États-Unis");
+}
