@@ -51,5 +51,5 @@ pub struct CurrencyExtendedDataV1<'data> {
     pub categorized_display_names: ZeroMap<'data, PluralCategory, str>,
 
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub display_name: Cow<'data, str>,
+    pub other_display_name: Cow<'data, str>,
 }

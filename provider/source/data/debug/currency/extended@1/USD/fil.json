@@ -1,7 +1,6 @@
 {
   "categorized_display_names": {
-    "One": "dolyar ng US",
-    "Other": "dolyares ng US"
+    "One": "dolyar ng US"
   },
-  "display_name": "Dolyar ng US"
+  "other_display_name": "dolyares ng US"
 }

@@ -1,7 +1,6 @@
 {
   "categorized_display_names": {
-    "One": "Canadian dollar",
-    "Other": "Canadian dollars"
+    "One": "Canadian dollar"
   },
-  "display_name": "Canadian Dollar"
+  "other_display_name": "Canadian dollars"
 }

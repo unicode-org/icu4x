@@ -1,7 +1,6 @@
 {
   "categorized_display_names": {
-    "One": "Egyptian pound",
-    "Other": "Egyptian pounds"
+    "One": "Egyptian pound"
   },
-  "display_name": "Egyptian Pound"
+  "other_display_name": "Egyptian pounds"
 }

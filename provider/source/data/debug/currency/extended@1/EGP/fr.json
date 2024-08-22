@@ -1,7 +1,6 @@
 {
   "categorized_display_names": {
-    "One": "livre égyptienne",
-    "Other": "livres égyptiennes"
+    "One": "livre égyptienne"
   },
-  "display_name": "livre égyptienne"
+  "other_display_name": "livres égyptiennes"
 }

@@ -31,7 +31,7 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::SourceDataProvider {
             .get(req.id.marker_attributes.as_str())
             .ok_or(DataError::custom("No currency associated with the aux key"))?;
 
-        let display_name = currency.display_name.clone().ok_or(
+        let other_display_name = currency.other.clone().ok_or(
             DataErrorKind::IdentifierNotFound
                 .into_error()
                 .with_debug_context(req.id.locale),
@@ -46,11 +46,9 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::SourceDataProvider {
                         (PluralCategory::Two, currency.two.as_deref()),
                         (PluralCategory::Few, currency.few.as_deref()),
                         (PluralCategory::Many, currency.many.as_deref()),
-                        (PluralCategory::Other, currency.other.as_deref()),
                     ]
                     .into_iter()
                     .filter_map(|(count, pattern)| match (count, pattern) {
-                        (PluralCategory::Other, Some(p)) => Some((count, p)),
                         // As per [Unicode TR 35](https://unicode.org/reports/tr35/tr35-numbers.html#Currencies)
                         //      If the pattern is not found for the associated `Count`, fall back to the `Count::Other` pattern.
                         //      Therefore, we filter out any patterns that are the same as the `Count::Other` pattern.
@@ -58,7 +56,7 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::SourceDataProvider {
                         _ => Some((count, pattern?)),
                     }),
                 ),
-                display_name: Cow::Owned(display_name.to_owned()),
+                other_display_name: Cow::Owned(other_display_name.to_owned()),
             }),
         })
     }
@@ -77,7 +75,14 @@ impl crate::IterableDataProviderCached<CurrencyExtendedDataV1Marker> for SourceD
 
             let currencies = &currencies_resource.main.value.numbers.currencies;
             for (currency, patterns) in currencies {
-                if patterns.display_name.is_none() || patterns.other.is_none() {
+                // By TR 35 (https://unicode.org/reports/tr35/tr35-numbers.html#Currencies)
+                //      If the pattern is not found for the associated `Count`, fall back to the `Count::Other` pattern.
+                //      And the `other` pattern must be present.
+                //      Therefore, we filter out any currencies that do not have an `other` pattern.
+                //      NOTE:
+                //          In case of `other` pattern does not exist, File a Jira ticket to CLDR:
+                //          https://unicode-org.atlassian.net/browse/CLDR
+                if patterns.other.is_none() {
                     continue;
                 }
                 if let Ok(attributes) = DataMarkerAttributes::try_from_string(currency.clone()) {
@@ -120,7 +125,6 @@ fn test_basic() {
             .unwrap(),
         "US dollars"
     );
-    assert_eq!(extended_en.display_name, "US Dollar");
 
     let fr: DataPayload<CurrencyExtendedDataV1Marker> = provider
         .load(DataRequest {
@@ -149,5 +153,4 @@ fn test_basic() {
             .unwrap(),
         "dollars des États-Unis"
     );
-    assert_eq!(extended_fr.display_name, "dollar des États-Unis");
 }

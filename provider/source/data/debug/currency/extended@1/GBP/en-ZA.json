@@ -1,7 +1,6 @@
 {
   "categorized_display_names": {
-    "One": "British pound",
-    "Other": "British pounds"
+    "One": "British pound"
   },
-  "display_name": "British Pound"
+  "other_display_name": "British pounds"
 }

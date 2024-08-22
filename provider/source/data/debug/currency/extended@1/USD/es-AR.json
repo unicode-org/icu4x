@@ -1,7 +1,6 @@
 {
   "categorized_display_names": {
-    "One": "dólar estadounidense",
-    "Other": "dólares estadounidenses"
+    "One": "dólar estadounidense"
   },
-  "display_name": "dólar estadounidense"
+  "other_display_name": "dólares estadounidenses"
 }

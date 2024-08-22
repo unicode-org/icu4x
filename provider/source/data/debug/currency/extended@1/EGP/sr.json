@@ -1,8 +1,7 @@
 {
   "categorized_display_names": {
     "One": "египатска фунта",
-    "Few": "египатске фунте",
-    "Other": "египатских фунти"
+    "Few": "египатске фунте"
   },
-  "display_name": "египатска фунта"
+  "other_display_name": "египатских фунти"
 }

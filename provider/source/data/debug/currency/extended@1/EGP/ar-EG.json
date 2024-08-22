@@ -2,8 +2,7 @@
   "categorized_display_names": {
     "Two": "جنيهان مصريان",
     "Few": "جنيهات مصرية",
-    "Many": "جنيهًا مصريًا",
-    "Other": "جنيه مصري"
+    "Many": "جنيهًا مصريًا"
   },
-  "display_name": "جنيه مصري"
+  "other_display_name": "جنيه مصري"
 }

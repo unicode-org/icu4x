@@ -1,7 +1,6 @@
 {
   "categorized_display_names": {
-    "One": "US dollar",
-    "Other": "US dollars"
+    "One": "US dollar"
   },
-  "display_name": "US Dollar"
+  "other_display_name": "US dollars"
 }
