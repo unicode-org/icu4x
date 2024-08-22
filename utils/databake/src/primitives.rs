@@ -331,5 +331,5 @@ impl<T: ?Sized> BakeSize for PhantomData<T> {
 
 #[test]
 fn phantom_data() {
-    test_bake!(PhantomData<usize>, const, ::core::marker::PhantomData);
+    test_bake!(PhantomData<usize>, const, core::marker::PhantomData);
 }
