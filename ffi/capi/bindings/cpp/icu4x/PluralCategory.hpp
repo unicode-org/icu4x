@@ -17,7 +17,7 @@ namespace capi {
     extern "C" {
     
     typedef struct icu4x_PluralCategory_get_for_cldr_string_mv1_result {union {icu4x::capi::PluralCategory ok; }; bool is_ok;} icu4x_PluralCategory_get_for_cldr_string_mv1_result;
-    icu4x_PluralCategory_get_for_cldr_string_mv1_result icu4x_PluralCategory_get_for_cldr_string_mv1(const char* s_data, size_t s_len);
+    icu4x_PluralCategory_get_for_cldr_string_mv1_result icu4x_PluralCategory_get_for_cldr_string_mv1(diplomat::capi::DiplomatStringView s);
     
     
     } // extern "C"
@@ -43,8 +43,7 @@ inline icu4x::PluralCategory icu4x::PluralCategory::FromFFI(icu4x::capi::PluralC
 }
 
 inline std::optional<icu4x::PluralCategory> icu4x::PluralCategory::get_for_cldr_string(std::string_view s) {
-  auto result = icu4x::capi::icu4x_PluralCategory_get_for_cldr_string_mv1(s.data(),
-    s.size());
+  auto result = icu4x::capi::icu4x_PluralCategory_get_for_cldr_string_mv1({s.data(), s.size()});
   return result.is_ok ? std::optional<icu4x::PluralCategory>(icu4x::PluralCategory::FromFFI(result.ok)) : std::nullopt;
 }
 #endif // icu4x_PluralCategory_HPP

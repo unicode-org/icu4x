@@ -18,14 +18,14 @@ use zerovec::{ZeroSlice, ZeroVec};
 //  6. TinyAsciiStr byte equality is semantic equality
 unsafe impl<const N: usize> ULE for TinyAsciiStr<N> {
     #[inline]
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
         if bytes.len() % N != 0 {
-            return Err(ZeroVecError::length::<Self>(bytes.len()));
+            return Err(UleError::length::<Self>(bytes.len()));
         }
         // Validate the bytes
         for chunk in bytes.chunks_exact(N) {
             let _ = TinyAsciiStr::<N>::try_from_utf8_inner(chunk, true)
-                .map_err(|_| ZeroVecError::parse::<Self>())?;
+                .map_err(|_| UleError::parse::<Self>())?;
         }
         Ok(())
     }
@@ -63,9 +63,9 @@ impl<'a, const N: usize> ZeroMapKV<'a> for TinyAsciiStr<N> {
 //  6. UnvalidatedTinyAsciiStr byte equality is semantic equality
 unsafe impl<const N: usize> ULE for UnvalidatedTinyAsciiStr<N> {
     #[inline]
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
         if bytes.len() % N != 0 {
-            return Err(ZeroVecError::length::<Self>(bytes.len()));
+            return Err(UleError::length::<Self>(bytes.len()));
         }
         Ok(())
     }

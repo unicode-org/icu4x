@@ -3,43 +3,11 @@
     "0": "сейчас"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": "- с",
-      "index": 1
-    },
-    "two": null,
-    "few": {
-      "pattern": "- с",
-      "index": 1
-    },
-    "many": {
-      "pattern": "- с",
-      "index": 1
-    },
-    "other": {
-      "pattern": "- с",
-      "index": 1
-    }
+    "specials": [],
+    "other": "\u0002- с"
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "+ с",
-      "index": 1
-    },
-    "two": null,
-    "few": {
-      "pattern": "+ с",
-      "index": 1
-    },
-    "many": {
-      "pattern": "+ с",
-      "index": 1
-    },
-    "other": {
-      "pattern": "+ с",
-      "index": 1
-    }
+    "specials": [],
+    "other": "\u0002+ с"
   }
 }

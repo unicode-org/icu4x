@@ -17,7 +17,7 @@ typedef struct WeekOf {
   WeekRelativeUnit unit;
 } WeekOf;
 
-
+typedef struct WeekOf_option {union { WeekOf ok; }; bool is_ok; } WeekOf_option;
 
 
 

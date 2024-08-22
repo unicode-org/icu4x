@@ -13,6 +13,7 @@ export class CollatorBackwardSecondLevel {
         ["Off", 1],
         ["On", 2]
     ]);
+
     constructor(value) {
         if (value instanceof CollatorBackwardSecondLevel) {
             this.#value = value.value;
@@ -36,12 +37,6 @@ export class CollatorBackwardSecondLevel {
     }
 
     static Auto = new CollatorBackwardSecondLevel("Auto");
-
     static Off = new CollatorBackwardSecondLevel("Off");
-
     static On = new CollatorBackwardSecondLevel("On");
-
-
-    
-
 }

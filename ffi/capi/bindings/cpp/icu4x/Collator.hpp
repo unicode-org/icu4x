@@ -24,9 +24,9 @@ namespace capi {
     typedef struct icu4x_Collator_create_v1_mv1_result {union {icu4x::capi::Collator* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_Collator_create_v1_mv1_result;
     icu4x_Collator_create_v1_mv1_result icu4x_Collator_create_v1_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::CollatorOptionsV1 options);
     
-    int8_t icu4x_Collator_compare_utf8_mv1(const icu4x::capi::Collator* self, const char* left_data, size_t left_len, const char* right_data, size_t right_len);
+    int8_t icu4x_Collator_compare_utf8_mv1(const icu4x::capi::Collator* self, diplomat::capi::DiplomatStringView left, diplomat::capi::DiplomatStringView right);
     
-    int8_t icu4x_Collator_compare_utf16_mv1(const icu4x::capi::Collator* self, const char16_t* left_data, size_t left_len, const char16_t* right_data, size_t right_len);
+    int8_t icu4x_Collator_compare_utf16_mv1(const icu4x::capi::Collator* self, diplomat::capi::DiplomatString16View left, diplomat::capi::DiplomatString16View right);
     
     icu4x::capi::CollatorResolvedOptionsV1 icu4x_Collator_resolved_options_v1_mv1(const icu4x::capi::Collator* self);
     
@@ -46,19 +46,15 @@ inline diplomat::result<std::unique_ptr<icu4x::Collator>, icu4x::DataError> icu4
 
 inline int8_t icu4x::Collator::compare(std::string_view left, std::string_view right) const {
   auto result = icu4x::capi::icu4x_Collator_compare_utf8_mv1(this->AsFFI(),
-    left.data(),
-    left.size(),
-    right.data(),
-    right.size());
+    {left.data(), left.size()},
+    {right.data(), right.size()});
   return result;
 }
 
 inline int8_t icu4x::Collator::compare16(std::u16string_view left, std::u16string_view right) const {
   auto result = icu4x::capi::icu4x_Collator_compare_utf16_mv1(this->AsFFI(),
-    left.data(),
-    left.size(),
-    right.data(),
-    right.size());
+    {left.data(), left.size()},
+    {right.data(), right.size()});
   return result;
 }
 

@@ -37,6 +37,7 @@ pub mod ffi {
         /// Creates a new [`TimeFormatter`] from locale data.
         #[diplomat::rust_link(icu::datetime::TimeFormatter::try_new_with_length, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length")]
+        #[diplomat::demo(default_constructor)]
         pub fn create_with_length(
             provider: &DataProvider,
             locale: &Locale,
@@ -105,6 +106,7 @@ pub mod ffi {
         /// Creates a new [`GregorianDateFormatter`] from locale data.
         #[diplomat::rust_link(icu::datetime::TypedDateFormatter::try_new_with_length, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length")]
+        #[diplomat::demo(default_constructor)]
         pub fn create_with_length(
             provider: &DataProvider,
             locale: &Locale,
@@ -166,6 +168,7 @@ pub mod ffi {
         /// Creates a new [`GregorianDateFormatter`] from locale data.
         #[diplomat::rust_link(icu::datetime::TypedDateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_lengths")]
+        #[diplomat::demo(default_constructor)]
         pub fn create_with_lengths(
             provider: &DataProvider,
             locale: &Locale,
@@ -216,6 +219,7 @@ pub mod ffi {
         /// Creates a new [`DateFormatter`] from locale data.
         #[diplomat::rust_link(icu::datetime::DateFormatter::try_new_with_length, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length")]
+        #[diplomat::demo(default_constructor)]
         pub fn create_with_length(
             provider: &DataProvider,
             locale: &Locale,
@@ -299,6 +303,7 @@ pub mod ffi {
         /// Creates a new [`DateTimeFormatter`] from locale data.
         #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_lengths")]
+        #[diplomat::demo(default_constructor)]
         pub fn create_with_lengths(
             provider: &DataProvider,
             locale: &Locale,

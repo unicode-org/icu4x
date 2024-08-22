@@ -15,6 +15,7 @@ export class CalendarParseError {
         ["MissingFields", 3],
         ["UnknownCalendar", 4]
     ]);
+
     constructor(value) {
         if (value instanceof CalendarParseError) {
             this.#value = value.value;
@@ -38,16 +39,8 @@ export class CalendarParseError {
     }
 
     static Unknown = new CalendarParseError("Unknown");
-
     static InvalidSyntax = new CalendarParseError("InvalidSyntax");
-
     static OutOfRange = new CalendarParseError("OutOfRange");
-
     static MissingFields = new CalendarParseError("MissingFields");
-
     static UnknownCalendar = new CalendarParseError("UnknownCalendar");
-
-
-    
-
 }

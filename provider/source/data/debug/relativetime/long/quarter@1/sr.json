@@ -5,37 +5,16 @@
     "1": "следећег квартала"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": "пре  квартала",
-      "index": 7
-    },
-    "two": null,
-    "few": {
-      "pattern": "пре  квартала",
-      "index": 7
-    },
-    "many": null,
-    "other": {
-      "pattern": "пре  квартала",
-      "index": 7
-    }
+    "specials": [],
+    "other": "\bпре  квартала"
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "за  квартал",
-      "index": 5
-    },
-    "two": null,
-    "few": {
-      "pattern": "за  квартала",
-      "index": 5
-    },
-    "many": null,
-    "other": {
-      "pattern": "за  квартала",
-      "index": 5
-    }
+    "specials": [
+      [
+        "One",
+        "\u0006за  квартал"
+      ]
+    ],
+    "other": "\u0006за  квартала"
   }
 }

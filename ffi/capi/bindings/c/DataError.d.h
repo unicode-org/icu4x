@@ -23,7 +23,7 @@ typedef enum DataError {
   DataError_Io = 8,
 } DataError;
 
-
+typedef struct DataError_option {union { DataError ok; }; bool is_ok; } DataError_option;
 
 
 

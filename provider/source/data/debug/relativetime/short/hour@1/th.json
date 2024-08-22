@@ -3,25 +3,11 @@
     "0": "ชั่วโมงนี้"
   },
   "past": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": " ชม. ที่แล้ว",
-      "index": 0
-    }
+    "specials": [],
+    "other": "\u0001 ชม. ที่แล้ว"
   },
   "future": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "ใน  ชม.",
-      "index": 7
-    }
+    "specials": [],
+    "other": "\bใน  ชม."
   }
 }

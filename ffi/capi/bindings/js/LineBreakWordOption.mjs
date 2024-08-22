@@ -13,6 +13,7 @@ export class LineBreakWordOption {
         ["BreakAll", 1],
         ["KeepAll", 2]
     ]);
+
     constructor(value) {
         if (value instanceof LineBreakWordOption) {
             this.#value = value.value;
@@ -36,12 +37,6 @@ export class LineBreakWordOption {
     }
 
     static Normal = new LineBreakWordOption("Normal");
-
     static BreakAll = new LineBreakWordOption("BreakAll");
-
     static KeepAll = new LineBreakWordOption("KeepAll");
-
-
-    
-
 }

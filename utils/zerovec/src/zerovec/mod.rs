@@ -369,7 +369,7 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
     /// assert!(!zerovec.is_owned());
     /// assert_eq!(zerovec.get(2), Some(421));
     /// ```
-    pub fn parse_byte_slice(bytes: &'a [u8]) -> Result<Self, ZeroVecError> {
+    pub fn parse_byte_slice(bytes: &'a [u8]) -> Result<Self, UleError> {
         let slice: &'a [T::ULE] = T::ULE::parse_byte_slice(bytes)?;
         Ok(Self::new_borrowed(slice))
     }
@@ -529,7 +529,7 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
     /// assert!(!zv_u16.is_owned());
     /// assert_eq!(zv_u16.get(0), Some(0xF37F));
     /// ```
-    pub fn try_into_converted<P: AsULE>(self) -> Result<ZeroVec<'a, P>, ZeroVecError> {
+    pub fn try_into_converted<P: AsULE>(self) -> Result<ZeroVec<'a, P>, UleError> {
         assert_eq!(
             core::mem::size_of::<<T as AsULE>::ULE>(),
             core::mem::size_of::<<P as AsULE>::ULE>()
@@ -645,7 +645,7 @@ impl<'a> ZeroVec<'a, u8> {
     /// assert!(zerovec.is_owned());
     /// assert_eq!(zerovec.get(0), Some(211));
     /// ```
-    pub fn try_into_parsed<T: AsULE>(self) -> Result<ZeroVec<'a, T>, ZeroVecError> {
+    pub fn try_into_parsed<T: AsULE>(self) -> Result<ZeroVec<'a, T>, UleError> {
         match self.into_cow() {
             Cow::Borrowed(bytes) => {
                 let slice: &'a [T::ULE] = T::ULE::parse_byte_slice(bytes)?;
@@ -1043,16 +1043,10 @@ impl<T: AsULE> FromIterator<T> for ZeroVec<'_, T> {
 ///
 /// ```
 /// use zerovec::{ZeroSlice, zeroslice, ule::AsULE};
-/// use zerovec::ule::UnvalidatedChar;
 ///
 /// const SIGNATURE: &ZeroSlice<char> = zeroslice!(char; <char as AsULE>::ULE::from_aligned; ['b', 'y', 'e', '✌']);
 /// const EMPTY: &ZeroSlice<u32> = zeroslice![];
-/// const UC: &ZeroSlice<UnvalidatedChar> =
-///     zeroslice!(
-///         UnvalidatedChar;
-///         <UnvalidatedChar as AsULE>::ULE::from_unvalidated_char;
-///         [UnvalidatedChar::from_char('a')]
-///     );
+///
 /// let empty: &ZeroSlice<u32> = zeroslice![];
 /// let nums = zeroslice!(u32; <u32 as AsULE>::ULE::from_unsigned; [1, 2, 3, 4, 5]);
 /// assert_eq!(nums.last().unwrap(), 5);

@@ -9,7 +9,7 @@ use super::store::NonConstLengthsStack;
 use super::store::TrieBuilderStore;
 use crate::builder::bytestr::ByteStr;
 use crate::byte_phf::PerfectByteHashMapCacheOwned;
-use crate::error::Error;
+use crate::error::ZeroTrieBuildError;
 use crate::options::*;
 use crate::varint;
 use alloc::borrow::Cow;
@@ -32,7 +32,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
     /// node is prepended. If it is non-ASCII, if there is already a span node at
     /// the front, we modify the span node to add the new byte; otherwise, we create
     /// a new span node. Returns the delta in length, which is either 1 or 2.
-    fn prepend_ascii(&mut self, ascii: u8) -> Result<usize, Error> {
+    fn prepend_ascii(&mut self, ascii: u8) -> Result<usize, ZeroTrieBuildError> {
         if ascii <= 127 {
             self.data.atbs_push_front(ascii);
             Ok(1)
@@ -61,7 +61,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
             self.data.atbs_push_front(0b10100001);
             Ok(2)
         } else {
-            Err(Error::NonAsciiError)
+            Err(ZeroTrieBuildError::NonAsciiError)
         }
     }
 
@@ -97,7 +97,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
     pub fn from_bytes_iter<K: AsRef<[u8]>, I: IntoIterator<Item = (K, usize)>>(
         iter: I,
         options: ZeroTrieBuilderOptions,
-    ) -> Result<Self, Error> {
+    ) -> Result<Self, ZeroTrieBuildError> {
         let items = Vec::<(K, usize)>::from_iter(iter);
         let mut items = items
             .iter()
@@ -118,7 +118,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
     pub fn from_sorted_tuple_slice(
         items: &[(&ByteStr, usize)],
         options: ZeroTrieBuilderOptions,
-    ) -> Result<Self, Error> {
+    ) -> Result<Self, ZeroTrieBuildError> {
         let mut items = Cow::Borrowed(items);
         if matches!(options.case_sensitivity, CaseSensitivity::IgnoreCase) {
             // We need to re-sort the items with our custom comparator.
@@ -133,7 +133,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
     fn from_sorted_tuple_slice_impl(
         items: &[(&ByteStr, usize)],
         options: ZeroTrieBuilderOptions,
-    ) -> Result<Self, Error> {
+    ) -> Result<Self, ZeroTrieBuildError> {
         for ab in items.windows(2) {
             debug_assert!(cmp_keys_values(
                 &options,
@@ -154,7 +154,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
 
     /// The actual builder algorithm. For an explanation, see [`crate::builder`].
     #[allow(clippy::unwrap_used)] // lots of indexing, but all indexes should be in range
-    fn create(&mut self, all_items: &[(&ByteStr, usize)]) -> Result<usize, Error> {
+    fn create(&mut self, all_items: &[(&ByteStr, usize)]) -> Result<usize, ZeroTrieBuildError> {
         let mut prefix_len = match all_items.last() {
             Some(x) => x.0.len(),
             // Empty slice:
@@ -241,7 +241,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
                     && i == new_i + 2
                 {
                     // This can happen if two strings were picked up, each with a different case
-                    return Err(Error::MixedCase);
+                    return Err(ZeroTrieBuildError::MixedCase);
                 }
                 debug_assert!(
                     i == new_i || i == new_i + 1,
@@ -303,7 +303,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
                     if c.is_ascii_alphabetic() {
                         let i = (c.to_ascii_lowercase() - b'a') as usize;
                         if seen_ascii_alpha[i] {
-                            return Err(Error::MixedCase);
+                            return Err(ZeroTrieBuildError::MixedCase);
                         } else {
                             seen_ascii_alpha[i] = true;
                         }
@@ -355,7 +355,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
             const USIZE_BITS: usize = core::mem::size_of::<usize>() * 8;
             let w = (USIZE_BITS - (total_length.leading_zeros() as usize) - 1) / 8;
             if w > 3 && matches!(self.options.capacity_mode, CapacityMode::Normal) {
-                return Err(Error::CapacityExceeded);
+                return Err(ZeroTrieBuildError::CapacityExceeded);
             }
             let mut k = 0;
             while k <= w {

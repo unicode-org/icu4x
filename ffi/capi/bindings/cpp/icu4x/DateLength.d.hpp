@@ -18,6 +18,8 @@ namespace capi {
       DateLength_Medium = 2,
       DateLength_Short = 3,
     };
+    
+    typedef struct DateLength_option {union { DateLength ok; }; bool is_ok; } DateLength_option;
 } // namespace capi
 } // namespace
 

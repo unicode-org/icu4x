@@ -61,20 +61,35 @@ impl NeoSkeletonLength {
     }
 }
 
+/// The alignment context of the formatted string.
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+#[non_exhaustive]
+pub enum Alignment {
+    /// Align fields as the locale specifies them to be aligned.
+    ///
+    /// This is the default option.
+    Auto,
+    /// Align fields as appropriate for a column layout. For example:
+    ///
+    /// | US Holiday   | Date       |
+    /// |--------------|------------|
+    /// | Memorial Day | 05/26/2025 |
+    /// | Labor Day    | 09/01/2025 |
+    /// | Veterans Day | 11/11/2025 |
+    ///
+    /// This option causes numeric fields to be padded when necessary. It does
+    /// not impact whether a numeric or spelled-out field is chosen.
+    Column,
+}
+
 /// A specification for when to display the era when formatting a year.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
 #[non_exhaustive]
 pub enum EraDisplay {
-    /// Always display the era.
-    ///
-    /// Examples:
-    ///
-    /// - `1000 BC`
-    /// - `77 AD`
-    /// - `2024 AD`
-    Always,
     /// Display the era when needed to disambiguate the year.
     ///
     /// This is the default option.
@@ -85,6 +100,14 @@ pub enum EraDisplay {
     /// - `77 AD`
     /// - `2024`
     Auto,
+    /// Always display the era.
+    ///
+    /// Examples:
+    ///
+    /// - `1000 BC`
+    /// - `77 AD`
+    /// - `2024 AD`
+    Always,
     // TODO(#4478): add Hide and Never options once there is data to back them
 }
 
@@ -864,6 +887,58 @@ impl From<NeoTimeZoneSkeleton> for NeoComponents {
     }
 }
 
+impl NeoComponents {
+    // Attributes for skeleta that span date/time/zone
+    // TODO: Add variants for H, h, and B hours
+    const WEEKDAY_HOUR_MINUTE: &'static DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("ejm");
+    const WEEKDAY_HOUR_MINUTE_SECOND: &'static DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("ejms");
+
+    // For matching
+    const WEEKDAY_HOUR_MINUTE_STR: &'static str = Self::WEEKDAY_HOUR_MINUTE.as_str();
+    const WEEKDAY_HOUR_MINUTE_SECOND_STR: &'static str = Self::WEEKDAY_HOUR_MINUTE_SECOND.as_str();
+
+    #[doc(hidden)] // for datagen
+    pub fn attributes_with_overrides() -> &'static [&'static DataMarkerAttributes] {
+        &[Self::WEEKDAY_HOUR_MINUTE, Self::WEEKDAY_HOUR_MINUTE_SECOND]
+    }
+
+    /// Returns a stable string identifying this field set,
+    /// but only if this set has its own pattern override.
+    ///
+    /// For details, see [`NeoDayComponents::id_str()`].
+    pub const fn id_str(self) -> Option<&'static DataMarkerAttributes> {
+        match self {
+            Self::DateTime(NeoDayComponents::Weekday, NeoTimeComponents::HourMinute) => {
+                Some(Self::WEEKDAY_HOUR_MINUTE)
+            }
+            Self::DateTime(NeoDayComponents::Weekday, NeoTimeComponents::HourMinuteSecond) => {
+                Some(Self::WEEKDAY_HOUR_MINUTE_SECOND)
+            }
+            _ => None,
+        }
+    }
+
+    /// Returns the field set for the given stable string,
+    /// but only if this set has its own pattern override.
+    ///
+    /// For details, see [`NeoDayComponents::from_id_str()`].
+    pub fn from_id_str(id_str: &DataMarkerAttributes) -> Option<Self> {
+        match &**id_str {
+            Self::WEEKDAY_HOUR_MINUTE_STR => Some(Self::DateTime(
+                NeoDayComponents::Weekday,
+                NeoTimeComponents::HourMinute,
+            )),
+            Self::WEEKDAY_HOUR_MINUTE_SECOND_STR => Some(Self::DateTime(
+                NeoDayComponents::Weekday,
+                NeoTimeComponents::HourMinuteSecond,
+            )),
+            _ => None,
+        }
+    }
+}
+
 /// Specification of the time zone display style.
 ///
 /// Time zone names contribute a lot of data size. For resource-constrained
@@ -934,6 +1009,8 @@ pub struct NeoDateSkeleton {
     pub length: NeoSkeletonLength,
     /// Date components of the skeleton.
     pub components: NeoDateComponents,
+    /// Alignment option.
+    pub alignment: Option<Alignment>,
     /// Era display option.
     pub era_display: Option<EraDisplay>,
 }
@@ -947,6 +1024,7 @@ impl NeoDateSkeleton {
         Self {
             length,
             components,
+            alignment: None,
             era_display: None,
         }
     }
@@ -971,6 +1049,7 @@ impl NeoDateSkeleton {
         NeoDateSkeleton {
             length,
             components: NeoDateComponents::Day(day_components),
+            alignment: None,
             era_display: None,
         }
     }
@@ -984,6 +1063,8 @@ pub struct NeoTimeSkeleton {
     pub length: NeoSkeletonLength,
     /// Time components of the skeleton.
     pub components: NeoTimeComponents,
+    /// Alignment option.
+    pub alignment: Option<Alignment>,
     /// Fractional second digits option.
     pub fractional_second_digits: Option<FractionalSecondDigits>,
 }
@@ -997,6 +1078,7 @@ impl NeoTimeSkeleton {
         Self {
             length,
             components,
+            alignment: None,
             fractional_second_digits: None,
         }
     }
@@ -1010,6 +1092,8 @@ pub struct NeoDateTimeSkeleton {
     pub length: NeoSkeletonLength,
     /// Date and time components of the skeleton.
     pub components: NeoDateTimeComponents,
+    /// Alignment option.
+    pub alignment: Option<Alignment>,
     /// Era display option.
     pub era_display: Option<EraDisplay>,
     /// Fractional second digits option.
@@ -1026,6 +1110,7 @@ impl NeoDateTimeSkeleton {
         Self {
             length,
             components: NeoDateTimeComponents::DateTime(date, time),
+            alignment: None,
             era_display: None,
             fractional_second_digits: None,
         }
@@ -1045,6 +1130,8 @@ pub struct NeoSkeleton {
     pub length: NeoSkeletonLength,
     /// Components of the skeleton.
     pub components: NeoComponents,
+    /// Alignment option.
+    pub alignment: Option<Alignment>,
     /// Era display option.
     pub era_display: Option<EraDisplay>,
     /// Fractional second digits option.
@@ -1056,6 +1143,7 @@ impl From<NeoDateSkeleton> for NeoSkeleton {
         NeoSkeleton {
             length: value.length,
             components: value.components.into(),
+            alignment: value.alignment,
             era_display: value.era_display,
             fractional_second_digits: None,
         }
@@ -1067,6 +1155,7 @@ impl From<NeoTimeSkeleton> for NeoSkeleton {
         NeoSkeleton {
             length: value.length,
             components: value.components.into(),
+            alignment: value.alignment,
             era_display: None,
             fractional_second_digits: value.fractional_second_digits,
         }
@@ -1078,6 +1167,7 @@ impl From<NeoDateTimeSkeleton> for NeoSkeleton {
         NeoSkeleton {
             length: value.length,
             components: value.components.into(),
+            alignment: value.alignment,
             era_display: value.era_display,
             fractional_second_digits: value.fractional_second_digits,
         }
@@ -1095,6 +1185,7 @@ impl NeoDateTimeSkeleton {
         NeoDateTimeSkeleton {
             length,
             components: NeoDateTimeComponents::DateTime(day_components, time_components),
+            alignment: None,
             era_display: None,
             fractional_second_digits: None,
         }

@@ -3,37 +3,11 @@
     "0": "овог минута"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": "пре  мин.",
-      "index": 7
-    },
-    "two": null,
-    "few": {
-      "pattern": "пре  мин.",
-      "index": 7
-    },
-    "many": null,
-    "other": {
-      "pattern": "пре  мин.",
-      "index": 7
-    }
+    "specials": [],
+    "other": "\bпре  мин."
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "за  мин.",
-      "index": 5
-    },
-    "two": null,
-    "few": {
-      "pattern": "за  мин.",
-      "index": 5
-    },
-    "many": null,
-    "other": {
-      "pattern": "за  мин.",
-      "index": 5
-    }
+    "specials": [],
+    "other": "\u0006за  мин."
   }
 }

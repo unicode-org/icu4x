@@ -5,7 +5,7 @@
 use core::cmp::{Ord, PartialOrd};
 use core::fmt;
 use displaydoc::Display;
-use zerovec::ule::{AsULE, ZeroVecError, ULE};
+use zerovec::ule::{AsULE, UleError, ULE};
 
 /// An error relating to the length of a field within a date pattern.
 #[derive(Display, Debug, PartialEq, Copy, Clone)]
@@ -164,10 +164,10 @@ impl AsULE for FieldLength {
 
 impl FieldLengthULE {
     #[inline]
-    pub(crate) fn validate_byte(byte: u8) -> Result<(), ZeroVecError> {
+    pub(crate) fn validate_byte(byte: u8) -> Result<(), UleError> {
         FieldLength::from_idx(byte)
             .map(|_| ())
-            .map_err(|_| ZeroVecError::parse::<FieldLength>())
+            .map_err(|_| UleError::parse::<FieldLength>())
     }
 }
 
@@ -181,7 +181,7 @@ impl FieldLengthULE {
 // 5. All other methods must be left with their default impl.
 // 6. Byte equality is semantic equality.
 unsafe impl ULE for FieldLengthULE {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
         for byte in bytes {
             Self::validate_byte(*byte)?;
         }

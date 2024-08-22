@@ -26,7 +26,7 @@ typedef struct icu4x_IsoDate_create_mv1_result {union {IsoDate* ok; CalendarErro
 icu4x_IsoDate_create_mv1_result icu4x_IsoDate_create_mv1(int32_t year, uint8_t month, uint8_t day);
 
 typedef struct icu4x_IsoDate_from_string_mv1_result {union {IsoDate* ok; CalendarParseError err;}; bool is_ok;} icu4x_IsoDate_from_string_mv1_result;
-icu4x_IsoDate_from_string_mv1_result icu4x_IsoDate_from_string_mv1(const char* v_data, size_t v_len);
+icu4x_IsoDate_from_string_mv1_result icu4x_IsoDate_from_string_mv1(DiplomatStringView v);
 
 IsoDate* icu4x_IsoDate_unix_epoch_mv1(void);
 

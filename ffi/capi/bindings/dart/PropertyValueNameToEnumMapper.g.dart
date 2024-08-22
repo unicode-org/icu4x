@@ -32,10 +32,8 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `get_strict`](https://docs.rs/icu/latest/icu/properties/names/struct.PropertyValueNameToEnumMapperBorrowed.html#method.get_strict) for more information.
   int getStrict(String name) {
-    final temp = ffi2.Arena();
-    final nameView = name.utf8View;
-    final result = _icu4x_PropertyValueNameToEnumMapper_get_strict_mv1(_ffi, nameView.allocIn(temp), nameView.length);
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final result = _icu4x_PropertyValueNameToEnumMapper_get_strict_mv1(_ffi, name._utf8AllocIn(temp.arena));
     return result;
   }
 
@@ -45,10 +43,8 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `get_loose`](https://docs.rs/icu/latest/icu/properties/names/struct.PropertyValueNameToEnumMapperBorrowed.html#method.get_loose) for more information.
   int getLoose(String name) {
-    final temp = ffi2.Arena();
-    final nameView = name.utf8View;
-    final result = _icu4x_PropertyValueNameToEnumMapper_get_loose_mv1(_ffi, nameView.allocIn(temp), nameView.length);
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final result = _icu4x_PropertyValueNameToEnumMapper_get_loose_mv1(_ffi, name._utf8AllocIn(temp.arena));
     return result;
   }
 
@@ -169,14 +165,14 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
 external void _icu4x_PropertyValueNameToEnumMapper_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
 @meta.ResourceIdentifier('icu4x_PropertyValueNameToEnumMapper_get_strict_mv1')
-@ffi.Native<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_get_strict_mv1')
+@ffi.Native<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_get_strict_mv1')
 // ignore: non_constant_identifier_names
-external int _icu4x_PropertyValueNameToEnumMapper_get_strict_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> nameData, int nameLength);
+external int _icu4x_PropertyValueNameToEnumMapper_get_strict_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 name);
 
 @meta.ResourceIdentifier('icu4x_PropertyValueNameToEnumMapper_get_loose_mv1')
-@ffi.Native<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_get_loose_mv1')
+@ffi.Native<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_get_loose_mv1')
 // ignore: non_constant_identifier_names
-external int _icu4x_PropertyValueNameToEnumMapper_get_loose_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> nameData, int nameLength);
+external int _icu4x_PropertyValueNameToEnumMapper_get_loose_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 name);
 
 @meta.ResourceIdentifier('icu4x_PropertyValueNameToEnumMapper_load_general_category_mv1')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_load_general_category_mv1')

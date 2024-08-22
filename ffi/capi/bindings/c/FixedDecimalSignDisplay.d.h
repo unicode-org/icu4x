@@ -19,7 +19,7 @@ typedef enum FixedDecimalSignDisplay {
   FixedDecimalSignDisplay_Negative = 4,
 } FixedDecimalSignDisplay;
 
-
+typedef struct FixedDecimalSignDisplay_option {union { FixedDecimalSignDisplay ok; }; bool is_ok; } FixedDecimalSignDisplay_option;
 
 
 

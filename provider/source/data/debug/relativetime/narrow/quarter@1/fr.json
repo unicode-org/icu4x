@@ -5,31 +5,11 @@
     "1": "le trimestre prochain"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": "- trim.",
-      "index": 1
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "- trim.",
-      "index": 1
-    }
+    "specials": [],
+    "other": "\u0002- trim."
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "+ trim.",
-      "index": 1
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "+ trim.",
-      "index": 1
-    }
+    "specials": [],
+    "other": "\u0002+ trim."
   }
 }

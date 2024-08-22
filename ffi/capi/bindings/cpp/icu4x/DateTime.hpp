@@ -29,12 +29,12 @@ namespace capi {
     icu4x_DateTime_from_iso_in_calendar_mv1_result icu4x_DateTime_from_iso_in_calendar_mv1(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const icu4x::capi::Calendar* calendar);
     
     typedef struct icu4x_DateTime_from_codes_in_calendar_mv1_result {union {icu4x::capi::DateTime* ok; icu4x::capi::CalendarError err;}; bool is_ok;} icu4x_DateTime_from_codes_in_calendar_mv1_result;
-    icu4x_DateTime_from_codes_in_calendar_mv1_result icu4x_DateTime_from_codes_in_calendar_mv1(const char* era_code_data, size_t era_code_len, int32_t year, const char* month_code_data, size_t month_code_len, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const icu4x::capi::Calendar* calendar);
+    icu4x_DateTime_from_codes_in_calendar_mv1_result icu4x_DateTime_from_codes_in_calendar_mv1(diplomat::capi::DiplomatStringView era_code, int32_t year, diplomat::capi::DiplomatStringView month_code, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const icu4x::capi::Calendar* calendar);
     
     icu4x::capi::DateTime* icu4x_DateTime_from_date_and_time_mv1(const icu4x::capi::Date* date, const icu4x::capi::Time* time);
     
     typedef struct icu4x_DateTime_from_string_mv1_result {union {icu4x::capi::DateTime* ok; icu4x::capi::CalendarParseError err;}; bool is_ok;} icu4x_DateTime_from_string_mv1_result;
-    icu4x_DateTime_from_string_mv1_result icu4x_DateTime_from_string_mv1(const char* v_data, size_t v_len);
+    icu4x_DateTime_from_string_mv1_result icu4x_DateTime_from_string_mv1(diplomat::capi::DiplomatStringView v);
     
     icu4x::capi::Date* icu4x_DateTime_date_mv1(const icu4x::capi::DateTime* self);
     
@@ -98,11 +98,9 @@ inline diplomat::result<std::unique_ptr<icu4x::DateTime>, icu4x::CalendarError> 
 }
 
 inline diplomat::result<std::unique_ptr<icu4x::DateTime>, icu4x::CalendarError> icu4x::DateTime::from_codes_in_calendar(std::string_view era_code, int32_t year, std::string_view month_code, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const icu4x::Calendar& calendar) {
-  auto result = icu4x::capi::icu4x_DateTime_from_codes_in_calendar_mv1(era_code.data(),
-    era_code.size(),
+  auto result = icu4x::capi::icu4x_DateTime_from_codes_in_calendar_mv1({era_code.data(), era_code.size()},
     year,
-    month_code.data(),
-    month_code.size(),
+    {month_code.data(), month_code.size()},
     day,
     hour,
     minute,
@@ -119,8 +117,7 @@ inline std::unique_ptr<icu4x::DateTime> icu4x::DateTime::from_date_and_time(cons
 }
 
 inline diplomat::result<std::unique_ptr<icu4x::DateTime>, icu4x::CalendarParseError> icu4x::DateTime::from_string(std::string_view v) {
-  auto result = icu4x::capi::icu4x_DateTime_from_string_mv1(v.data(),
-    v.size());
+  auto result = icu4x::capi::icu4x_DateTime_from_string_mv1({v.data(), v.size()});
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::DateTime>, icu4x::CalendarParseError>(diplomat::Ok<std::unique_ptr<icu4x::DateTime>>(std::unique_ptr<icu4x::DateTime>(icu4x::DateTime::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::DateTime>, icu4x::CalendarParseError>(diplomat::Err<icu4x::CalendarParseError>(icu4x::CalendarParseError::FromFFI(result.err)));
 }
 

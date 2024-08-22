@@ -17,7 +17,7 @@ typedef enum CollatorNumeric {
   CollatorNumeric_On = 2,
 } CollatorNumeric;
 
-
+typedef struct CollatorNumeric_option {union { CollatorNumeric ok; }; bool is_ok; } CollatorNumeric_option;
 
 
 

@@ -73,10 +73,10 @@ impl<U: Copy + core::fmt::Debug> core::fmt::Debug for OptionULE<U> {
 //  6. OptionULE byte equality is semantic equality by relying on the ULE equality
 //     invariant on the subfields
 unsafe impl<U: ULE> ULE for OptionULE<U> {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
         let size = mem::size_of::<Self>();
         if bytes.len() % size != 0 {
-            return Err(ZeroVecError::length::<Self>(bytes.len()));
+            return Err(UleError::length::<Self>(bytes.len()));
         }
         for chunk in bytes.chunks(size) {
             #[allow(clippy::indexing_slicing)] // `chunk` will have enough bytes to fit Self
@@ -85,11 +85,11 @@ unsafe impl<U: ULE> ULE for OptionULE<U> {
                 // Rust booleans are always size 1, align 1 values with valid bit patterns 0x0 or 0x1
                 0 => {
                     if !chunk[1..].iter().all(|x| *x == 0) {
-                        return Err(ZeroVecError::parse::<Self>());
+                        return Err(UleError::parse::<Self>());
                     }
                 }
                 1 => U::validate_byte_slice(&chunk[1..])?,
-                _ => return Err(ZeroVecError::parse::<Self>()),
+                _ => return Err(UleError::parse::<Self>()),
             }
         }
         Ok(())
@@ -175,9 +175,9 @@ impl<U: VarULE + ?Sized + core::fmt::Debug> core::fmt::Debug for OptionVarULE<U>
 //  7. OptionVarULE<T> byte equality is semantic equality (achieved by being an aggregate)
 unsafe impl<U: VarULE + ?Sized> VarULE for OptionVarULE<U> {
     #[inline]
-    fn validate_byte_slice(slice: &[u8]) -> Result<(), ZeroVecError> {
+    fn validate_byte_slice(slice: &[u8]) -> Result<(), UleError> {
         if slice.is_empty() {
-            return Err(ZeroVecError::length::<Self>(slice.len()));
+            return Err(UleError::length::<Self>(slice.len()));
         }
         #[allow(clippy::indexing_slicing)] // slice already verified to be nonempty
         match slice[0] {
@@ -185,13 +185,13 @@ unsafe impl<U: VarULE + ?Sized> VarULE for OptionVarULE<U> {
             // Rust booleans are always size 1, align 1 values with valid bit patterns 0x0 or 0x1
             0 => {
                 if slice.len() != 1 {
-                    Err(ZeroVecError::length::<Self>(slice.len()))
+                    Err(UleError::length::<Self>(slice.len()))
                 } else {
                     Ok(())
                 }
             }
             1 => U::validate_byte_slice(&slice[1..]),
-            _ => Err(ZeroVecError::parse::<Self>()),
+            _ => Err(UleError::parse::<Self>()),
         }
     }
 

@@ -16,7 +16,7 @@ typedef struct LocaleFallbackConfig {
   LocaleFallbackPriority priority;
 } LocaleFallbackConfig;
 
-
+typedef struct LocaleFallbackConfig_option {union { LocaleFallbackConfig ok; }; bool is_ok; } LocaleFallbackConfig_option;
 
 
 

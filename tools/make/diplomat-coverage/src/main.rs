@@ -200,7 +200,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                     if let Some(item) = import
                         .source
                         .as_str()
-                        .strip_prefix("icu_provider::_internal::")
+                        .strip_prefix("icu_provider::fallback::")
                     {
                         insert_ty(
                             types,

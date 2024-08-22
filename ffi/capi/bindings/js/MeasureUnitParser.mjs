@@ -9,10 +9,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *See the [Rust documentation for `MeasureUnitParser`](https://docs.rs/icu/latest/icu/experimental/measure/parser/struct.MeasureUnitParser.html) for more information.
 */
-
 const MeasureUnitParser_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_MeasureUnitParser_destroy_mv1(ptr);
 });
+
 export class MeasureUnitParser {
     // Internal ptr reference:
     #ptr = null;
@@ -20,25 +20,29 @@ export class MeasureUnitParser {
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
     #aEdge = [];
     
-    
-    constructor(ptr, selfEdge, aEdge) {
+    constructor(symbol, ptr, selfEdge, aEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("MeasureUnitParser is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         
         this.#aEdge = aEdge;
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        // Unconditionally register to destroy when this object is ready to garbage collect.
-        MeasureUnitParser_box_destroy_registry.register(this, this.#ptr);
+        
+        // Are we being borrowed? If not, we can register.
+        if (this.#selfEdge.length === 0) {
+            MeasureUnitParser_box_destroy_registry.register(this, this.#ptr);
+        }
     }
 
     get ffiValue() {
         return this.#ptr;
     }
-
 
     parse(unitId) {
         
@@ -46,15 +50,11 @@ export class MeasureUnitParser {
         const result = wasm.icu4x_MeasureUnitParser_parse_mv1(this.ffiValue, unitIdSlice.ptr, unitIdSlice.size);
     
         try {
-    
-            return result == 0 ? null : new MeasureUnit(result, []);
-        } finally {
+            return result === 0 ? null : new MeasureUnit(diplomatRuntime.internalConstructor, result, []);
+        }
         
+        finally {
             unitIdSlice.free();
-        
         }
     }
-
-    
-
 }

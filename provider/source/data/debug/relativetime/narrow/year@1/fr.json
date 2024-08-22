@@ -5,31 +5,11 @@
     "1": "l’année prochaine"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": "- a",
-      "index": 1
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "- a",
-      "index": 1
-    }
+    "specials": [],
+    "other": "\u0002- a"
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "+ a",
-      "index": 1
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "+ a",
-      "index": 1
-    }
+    "specials": [],
+    "other": "\u0002+ a"
   }
 }

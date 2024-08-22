@@ -29,11 +29,11 @@ export class SegmenterDemo {
 
     #updateSegmenter(): void {
         if (this.#model === "Auto") {
-            this.#segmenter = WordSegmenter.create_auto(this.#dataProvider);
+            this.#segmenter = WordSegmenter.createAuto(this.#dataProvider);
         } else if (this.#model === "LSTM") {
-            this.#segmenter = WordSegmenter.create_lstm(this.#dataProvider);
+            this.#segmenter = WordSegmenter.createLstm(this.#dataProvider);
         } else if (this.#model === "Dictionary") {
-            this.#segmenter = WordSegmenter.create_dictionary(this.#dataProvider);
+            this.#segmenter = WordSegmenter.createDictionary(this.#dataProvider);
         } else {
             console.error("Unknown model: " + this.#model);
         }
@@ -45,7 +45,7 @@ export class SegmenterDemo {
 
         let utf8Index = 0;
         let utf16Index = 0;
-        const iter8 = this.#segmenter.segment_utf8(this.#text);
+        const iter8 = this.#segmenter.segment(this.#text);
         while (true) {
             const next = iter8.next();
 

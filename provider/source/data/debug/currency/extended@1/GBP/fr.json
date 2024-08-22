@@ -1,7 +1,6 @@
 {
-  "display_names": {
-    "One": "livre sterling",
-    "Other": "livres sterling",
-    "DisplayName": "livre sterling"
-  }
+  "categorized_display_names": {
+    "One": "livre sterling"
+  },
+  "other_display_name": "livres sterling"
 }

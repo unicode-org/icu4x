@@ -9,10 +9,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 /** See the [Rust documentation for `TitlecaseMapper`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html) for more information.
 */
-
 const TitlecaseMapper_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_TitlecaseMapper_destroy_mv1(ptr);
 });
+
 export class TitlecaseMapper {
     // Internal ptr reference:
     #ptr = null;
@@ -21,64 +21,62 @@ export class TitlecaseMapper {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("TitlecaseMapper is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        // Unconditionally register to destroy when this object is ready to garbage collect.
-        TitlecaseMapper_box_destroy_registry.register(this, this.#ptr);
+        
+        // Are we being borrowed? If not, we can register.
+        if (this.#selfEdge.length === 0) {
+            TitlecaseMapper_box_destroy_registry.register(this, this.#ptr);
+        }
     }
 
     get ffiValue() {
         return this.#ptr;
     }
 
-
     static create(provider) {
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_TitlecaseMapper_create_mv1(diplomat_receive_buffer, provider.ffiValue);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const result = wasm.icu4x_TitlecaseMapper_create_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+            if (!diplomatReceive.resultFlag) {
+                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new TitlecaseMapper(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new TitlecaseMapper(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
     titlecaseSegment(s, locale, options) {
         
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
         
-        let slice_cleanup_callbacks = [];
-        
-        const write = wasm.diplomat_buffer_write_create(0);
-        wasm.icu4x_TitlecaseMapper_titlecase_segment_v1_mv1(this.ffiValue, sSlice.ptr, sSlice.size, locale.ffiValue, ...options._intoFFI(slice_cleanup_callbacks, {}), write);
+        const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
+        wasm.icu4x_TitlecaseMapper_titlecase_segment_v1_mv1(this.ffiValue, sSlice.ptr, sSlice.size, locale.ffiValue, ...options._intoFFI(functionCleanupArena, {}), write.buffer);
     
         try {
-    
-            return diplomatRuntime.readString8(wasm, wasm.diplomat_buffer_write_get_bytes(write), wasm.diplomat_buffer_write_len(write));
-        } finally {
+            return write.readString8();
+        }
         
-            for (let cleanup of slice_cleanup_callbacks) {
-                cleanup();
-            }
+        finally {
+            functionCleanupArena.free();
         
             sSlice.free();
         
-            wasm.diplomat_buffer_write_destroy(write);
-        
+            write.free();
         }
     }
-
-    
-
 }

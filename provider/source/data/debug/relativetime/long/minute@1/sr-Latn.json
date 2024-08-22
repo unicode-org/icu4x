@@ -3,37 +3,16 @@
     "0": "ovog minuta"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": "pre  minuta",
-      "index": 4
-    },
-    "two": null,
-    "few": {
-      "pattern": "pre  minuta",
-      "index": 4
-    },
-    "many": null,
-    "other": {
-      "pattern": "pre  minuta",
-      "index": 4
-    }
+    "specials": [],
+    "other": "\u0005pre  minuta"
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "za  minut",
-      "index": 3
-    },
-    "two": null,
-    "few": {
-      "pattern": "za  minuta",
-      "index": 3
-    },
-    "many": null,
-    "other": {
-      "pattern": "za  minuta",
-      "index": 3
-    }
+    "specials": [
+      [
+        "One",
+        "\u0004za  minut"
+      ]
+    ],
+    "other": "\u0004za  minuta"
   }
 }

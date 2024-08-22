@@ -32,7 +32,7 @@ typedef enum AnyCalendarKind {
   AnyCalendarKind_Roc = 17,
 } AnyCalendarKind;
 
-
+typedef struct AnyCalendarKind_option {union { AnyCalendarKind ok; }; bool is_ok; } AnyCalendarKind_option;
 
 
 

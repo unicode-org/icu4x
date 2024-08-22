@@ -24,6 +24,8 @@ namespace capi {
       PluralCategory_Many = 4,
       PluralCategory_Other = 5,
     };
+    
+    typedef struct PluralCategory_option {union { PluralCategory ok; }; bool is_ok; } PluralCategory_option;
 } // namespace capi
 } // namespace
 

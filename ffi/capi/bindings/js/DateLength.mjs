@@ -14,6 +14,7 @@ export class DateLength {
         ["Medium", 2],
         ["Short", 3]
     ]);
+
     constructor(value) {
         if (value instanceof DateLength) {
             this.#value = value.value;
@@ -37,14 +38,7 @@ export class DateLength {
     }
 
     static Full = new DateLength("Full");
-
     static Long = new DateLength("Long");
-
     static Medium = new DateLength("Medium");
-
     static Short = new DateLength("Short");
-
-
-    
-
 }

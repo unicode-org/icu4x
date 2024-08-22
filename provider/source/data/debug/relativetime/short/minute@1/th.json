@@ -3,25 +3,11 @@
     "0": "นาทีนี้"
   },
   "past": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": " นาทีที่แล้ว",
-      "index": 0
-    }
+    "specials": [],
+    "other": "\u0001 นาทีที่แล้ว"
   },
   "future": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "ใน  นาที",
-      "index": 7
-    }
+    "specials": [],
+    "other": "\bใน  นาที"
   }
 }

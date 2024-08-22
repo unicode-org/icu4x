@@ -15,6 +15,7 @@ export class CollatorMaxVariable {
         ["Symbol", 3],
         ["Currency", 4]
     ]);
+
     constructor(value) {
         if (value instanceof CollatorMaxVariable) {
             this.#value = value.value;
@@ -38,16 +39,8 @@ export class CollatorMaxVariable {
     }
 
     static Auto = new CollatorMaxVariable("Auto");
-
     static Space = new CollatorMaxVariable("Space");
-
     static Punctuation = new CollatorMaxVariable("Punctuation");
-
     static Symbol = new CollatorMaxVariable("Symbol");
-
     static Currency = new CollatorMaxVariable("Currency");
-
-
-    
-
 }

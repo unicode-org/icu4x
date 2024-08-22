@@ -8,9 +8,9 @@ use crate::SourceDataProvider;
 use icu::locale::provider::*;
 use icu::locale::subtags::{Language, Region, Script};
 use icu_provider::prelude::*;
+use potential_utf::PotentialUtf8;
 use std::collections::{BTreeMap, HashSet};
 use writeable::Writeable;
-use zerovec::ule::UnvalidatedStr;
 
 impl DataProvider<ParentsV1Marker> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<ParentsV1Marker>, DataError> {
@@ -50,7 +50,7 @@ impl From<&cldr_serde::parent_locales::Resource> for ParentsV1<'static> {
         ParentsV1 {
             parents: parents
                 .iter()
-                .map(|(k, v)| (<&UnvalidatedStr>::from(k.as_ref()), v))
+                .map(|(k, v)| (<&PotentialUtf8>::from(k.as_ref()), v))
                 .collect(),
         }
     }

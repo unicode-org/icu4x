@@ -24,7 +24,7 @@ namespace capi {
     icu4x_RegionDisplayNames_create_mv1_result icu4x_RegionDisplayNames_create_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale);
     
     typedef struct icu4x_RegionDisplayNames_of_mv1_result {union { icu4x::capi::LocaleParseError err;}; bool is_ok;} icu4x_RegionDisplayNames_of_mv1_result;
-    icu4x_RegionDisplayNames_of_mv1_result icu4x_RegionDisplayNames_of_mv1(const icu4x::capi::RegionDisplayNames* self, const char* region_data, size_t region_len, diplomat::capi::DiplomatWrite* write);
+    icu4x_RegionDisplayNames_of_mv1_result icu4x_RegionDisplayNames_of_mv1(const icu4x::capi::RegionDisplayNames* self, diplomat::capi::DiplomatStringView region, diplomat::capi::DiplomatWrite* write);
     
     
     void icu4x_RegionDisplayNames_destroy_mv1(RegionDisplayNames* self);
@@ -43,8 +43,7 @@ inline diplomat::result<std::string, icu4x::LocaleParseError> icu4x::RegionDispl
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
   auto result = icu4x::capi::icu4x_RegionDisplayNames_of_mv1(this->AsFFI(),
-    region.data(),
-    region.size(),
+    {region.data(), region.size()},
     &write);
   return result.is_ok ? diplomat::result<std::string, icu4x::LocaleParseError>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, icu4x::LocaleParseError>(diplomat::Err<icu4x::LocaleParseError>(icu4x::LocaleParseError::FromFFI(result.err)));
 }

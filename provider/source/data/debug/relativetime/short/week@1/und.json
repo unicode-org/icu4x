@@ -5,25 +5,11 @@
     "1": "next week"
   },
   "past": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "- w",
-      "index": 1
-    }
+    "specials": [],
+    "other": "\u0002- w"
   },
   "future": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "+ w",
-      "index": 1
-    }
+    "specials": [],
+    "other": "\u0002+ w"
   }
 }

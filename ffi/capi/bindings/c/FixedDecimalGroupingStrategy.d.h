@@ -18,7 +18,7 @@ typedef enum FixedDecimalGroupingStrategy {
   FixedDecimalGroupingStrategy_Min2 = 3,
 } FixedDecimalGroupingStrategy;
 
-
+typedef struct FixedDecimalGroupingStrategy_option {union { FixedDecimalGroupingStrategy ok; }; bool is_ok; } FixedDecimalGroupingStrategy_option;
 
 
 

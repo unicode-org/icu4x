@@ -26,6 +26,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::GmtOffset::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::timezone::GmtOffset::from_str, FnInStruct, hidden)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::demo(default_constructor)]
         pub fn from_string(
             s: &DiplomatStr,
         ) -> Result<Box<CustomTimeZone>, TimeZoneInvalidOffsetError> {
@@ -314,7 +315,7 @@ pub mod ffi {
             FnInStruct,
             compact
         )]
-        #[cfg(feature = "icu_timezone")]
+        #[cfg(feature = "timezone")]
         pub fn maybe_calculate_metazone(
             &mut self,
             metazone_calculator: &crate::metazone_calculator::ffi::MetazoneCalculator,
