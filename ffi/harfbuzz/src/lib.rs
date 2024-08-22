@@ -41,14 +41,13 @@ use icu_properties::bidi_data;
 use icu_properties::bidi_data::BidiAuxiliaryProperties;
 use icu_properties::maps;
 use icu_properties::maps::CodePointMapData;
-use icu_properties::names::PropertyEnumToValueNameLinearTiny4Mapper;
+use icu_properties::names::PropertyScriptToIcuScriptMapper;
 use icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker;
 use icu_properties::provider::{
     GeneralCategoryV1Marker, ScriptV1Marker, ScriptValueToShortNameV1Marker,
 };
 use icu_properties::{GeneralCategory, Script};
 use icu_provider::prelude::*;
-use tinystr::tinystr;
 
 use harfbuzz_traits::{
     CombiningClassFunc, ComposeFunc, DecomposeFunc, GeneralCategoryFunc, MirroringFunc, ScriptFunc,
@@ -103,10 +102,10 @@ impl ScriptFunc for AllUnicodeFuncs {
     #[inline]
     fn script(&self, ch: char) -> [u8; 4] {
         let script = maps::script().get(ch);
-        let name = Script::enum_to_short_name_mapper()
+        Script::enum_to_icu_script_mapper()
             .get(script)
-            .unwrap_or(tinystr!(4, "Zzzz"));
-        *name.all_bytes()
+            .unwrap_or(icu_locale_core::subtags::script!("Zzzz"))
+            .into_raw()
     }
 }
 
@@ -299,7 +298,7 @@ impl MirroringFunc for MirroringData {
 #[derive(Debug)]
 pub struct ScriptData {
     script: CodePointMapData<Script>,
-    script_name: PropertyEnumToValueNameLinearTiny4Mapper<Script>,
+    script_name: PropertyScriptToIcuScriptMapper<Script>,
 }
 
 impl ScriptData {
@@ -309,7 +308,7 @@ impl ScriptData {
         D: DataProvider<ScriptValueToShortNameV1Marker> + DataProvider<ScriptV1Marker> + ?Sized,
     {
         let script = maps::load_script(provider)?;
-        let script_name = Script::get_enum_to_short_name_mapper(provider)?;
+        let script_name = Script::get_enum_to_icu_script_mapper(provider)?;
         Ok(Self {
             script,
             script_name,
@@ -335,12 +334,11 @@ impl ScriptFunc for ScriptData {
     #[inline]
     fn script(&self, ch: char) -> [u8; 4] {
         let script = self.script.as_borrowed().get(ch);
-        let name = self
-            .script_name
+        self.script_name
             .as_borrowed()
             .get(script)
-            .unwrap_or(tinystr!(4, "Zzzz"));
-        *name.all_bytes()
+            .unwrap_or(icu_locale_core::subtags::script!("Zzzz"))
+            .into_raw()
     }
 }
 
