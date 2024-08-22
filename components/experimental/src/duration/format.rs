@@ -748,14 +748,14 @@ mod tests {
                 .format(&positive_duration)
                 .write_to_string()
                 .into_owned(),
-            "0 years"
+            "0 yrs"
         );
         assert_eq!(
             formatter
                 .format(&negative_duration)
                 .write_to_string()
                 .into_owned(),
-            "0 years"
+            "0 yrs"
         );
     }
 }
