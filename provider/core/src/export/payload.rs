@@ -198,30 +198,7 @@ impl DataPayload<ExportMarker> {
 
 impl core::hash::Hash for DataPayload<ExportMarker> {
     fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
-        use postcard::ser_flavors::Flavor;
-
-        struct HashFlavor<'a, H>(&'a mut H);
-        impl<'a, H: core::hash::Hasher> Flavor for HashFlavor<'a, H> {
-            type Output = ();
-
-            fn try_push(&mut self, data: u8) -> postcard::Result<()> {
-                self.0.write_u8(data);
-                Ok(())
-            }
-
-            fn finalize(self) -> postcard::Result<Self::Output> {
-                Ok(())
-            }
-        }
-
-        let _infallible =
-            self.get()
-                .payload
-                .serialize_yoke(&mut <dyn erased_serde::Serializer>::erase(
-                    &mut postcard::Serializer {
-                        output: HashFlavor(state),
-                    },
-                ));
+        self.hash_and_postcard_size(state);
     }
 }
 
