@@ -20,6 +20,7 @@
 #[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Duration {
     /// Whether the duration is positive.
+    /// Use [`Duration::get_sign`] to find the zero-aware sign.
     pub sign: DurationSign,
     /// The number of years in the duration.
     pub years: u64,

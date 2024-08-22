@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::{options::*, Duration, DurationFormatter, DurationSign};
+use super::{options::*, Duration, DurationFormatter};
 
 use super::validated_options::Unit;
 use core::fmt;
@@ -528,7 +528,7 @@ impl<'a> FormattedDuration<'a> {
                         // a. Set signDisplayed to false.
                         sign_displayed = false;
                         // b. If value is 0 and DurationSign(duration.[[Years]], duration.[[Months]], duration.[[Weeks]], duration.[[Days]], duration.[[Hours]], duration.[[Minutes]], duration.[[Seconds]], duration.[[Milliseconds]], duration.[[Microseconds]], duration.[[Nanoseconds]]) is -1, then
-                        if value == 0 && self.duration.sign == DurationSign::Negative {
+                        if value == 0 && self.duration.get_sign() == fixed_decimal::Sign::Negative {
                             // i. Set value to negative-zero.
                             formatted_value.apply_sign_display(SignDisplay::Always);
                         }
@@ -731,7 +731,7 @@ mod tests {
         };
 
         let negative_duration = Duration {
-            sign: DurationSign::Positive,
+            sign: DurationSign::Negative,
             ..Default::default()
         };
 
