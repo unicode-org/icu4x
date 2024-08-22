@@ -27,11 +27,11 @@ impl DataProvider<CurrencyDisplaynameV1Marker> for crate::SourceDataProvider {
             .numbers
             .currencies
             .get(req.id.marker_attributes.as_str())
-            .ok_or(
+            .ok_or_else(|| {
                 DataErrorKind::IdentifierNotFound
                     .into_error()
-                    .with_debug_context("No currency associated with the aux key"),
-            )?;
+                    .with_debug_context("No currency associated with the aux key")
+            })?;
 
         Ok(DataResponse {
             metadata: Default::default(),
