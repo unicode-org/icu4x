@@ -47,7 +47,7 @@ criterion = { workspace = true }
 std = []
 databake = ["dep:databake"]
 serde = ["dep:serde", "tinystr/serde"]
-zerovec = ["dep:zerovec"]
+zerovec = ["dep:zerovec", "tinystr/zerovec"]
 bench = ["serde"]
 
 [lib]
