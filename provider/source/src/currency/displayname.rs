@@ -40,7 +40,11 @@ impl DataProvider<CurrencyDisplaynameV1Marker> for crate::SourceDataProvider {
                     currency
                         .display_name
                         .as_deref()
-                        .ok_or(DataError::custom("No display name found for the currency"))?
+                        .ok_or(
+                            DataErrorKind::IdentifierNotFound
+                                .into_error()
+                                .with_debug_context("No display name found for the currency"),
+                        )?
                         .to_string(),
                 ),
             }),
