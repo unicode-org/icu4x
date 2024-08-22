@@ -428,6 +428,11 @@ export class CleanupArena {
     constructor() {
     }
     
+    /**
+     * When this arena is freed, call .free() on the given item.
+     * @param {DiplomatBuf} item 
+     * @returns {DiplomatBuf}
+     */
     alloc(item) {
         this.#items.push(item);
         return item;
@@ -442,6 +447,30 @@ export class CleanupArena {
         this.#items.forEach((i) => {
             i.free();
         });
+
+        this.#items.length = 0;
+    }
+}
+
+/**
+ * Same as {@link CleanupArena}, but for calling `garbageCollect` on {@link DiplomatBuf}s.
+ * 
+ * This is when you may want to use a slice longer than the body of the method.
+ */
+export class GarbageCollector {
+    #items = [];
+
+    alloc(item) {
+        this.#items.push(item);
+        return item;
+    }
+
+    garbageCollect() {
+        this.#items.forEach((i) => {
+            i.garbageCollect();
+        });
+
+        this.#items.length = 0;
     }
 }
 

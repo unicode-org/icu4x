@@ -42,7 +42,6 @@ export class LocaleDirectionality {
     }
 
     static create(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         const result = wasm.icu4x_LocaleDirectionality_create_mv1(diplomatReceive.buffer, provider.ffiValue);
     
@@ -60,7 +59,6 @@ export class LocaleDirectionality {
     }
 
     static createWithExpander(provider, expander) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         const result = wasm.icu4x_LocaleDirectionality_create_with_expander_mv1(diplomatReceive.buffer, provider.ffiValue, expander.ffiValue);
     
@@ -77,8 +75,7 @@ export class LocaleDirectionality {
         }
     }
 
-    get(locale) {
-        const result = wasm.icu4x_LocaleDirectionality_get_mv1(this.ffiValue, locale.ffiValue);
+    get(locale) {const result = wasm.icu4x_LocaleDirectionality_get_mv1(this.ffiValue, locale.ffiValue);
     
         try {
             return LocaleDirection[Array.from(LocaleDirection.values.keys())[result]];
@@ -87,8 +84,7 @@ export class LocaleDirectionality {
         finally {}
     }
 
-    isLeftToRight(locale) {
-        const result = wasm.icu4x_LocaleDirectionality_is_left_to_right_mv1(this.ffiValue, locale.ffiValue);
+    isLeftToRight(locale) {const result = wasm.icu4x_LocaleDirectionality_is_left_to_right_mv1(this.ffiValue, locale.ffiValue);
     
         try {
             return result;
@@ -97,8 +93,7 @@ export class LocaleDirectionality {
         finally {}
     }
 
-    isRightToLeft(locale) {
-        const result = wasm.icu4x_LocaleDirectionality_is_right_to_left_mv1(this.ffiValue, locale.ffiValue);
+    isRightToLeft(locale) {const result = wasm.icu4x_LocaleDirectionality_is_right_to_left_mv1(this.ffiValue, locale.ffiValue);
     
         try {
             return result;

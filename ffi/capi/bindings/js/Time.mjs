@@ -41,7 +41,6 @@ export class Time {
     }
 
     static create(hour, minute, second, nanosecond) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         const result = wasm.icu4x_Time_create_mv1(diplomatReceive.buffer, hour, minute, second, nanosecond);
     
@@ -59,11 +58,12 @@ export class Time {
     }
 
     static fromString(v) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const vSlice = diplomatRuntime.DiplomatBuf.str8(wasm, v);
+        const vSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, v)).splat()];
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        const result = wasm.icu4x_Time_from_string_mv1(diplomatReceive.buffer, vSlice.ptr, vSlice.size);
+        const result = wasm.icu4x_Time_from_string_mv1(diplomatReceive.buffer, ...vSlice);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -74,14 +74,13 @@ export class Time {
         }
         
         finally {
-            vSlice.free();
+            functionCleanupArena.free();
         
             diplomatReceive.free();
         }
     }
 
     static midnight() {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         const result = wasm.icu4x_Time_midnight_mv1(diplomatReceive.buffer);
     
@@ -98,8 +97,7 @@ export class Time {
         }
     }
 
-    get hour() {
-        const result = wasm.icu4x_Time_hour_mv1(this.ffiValue);
+    get hour() {const result = wasm.icu4x_Time_hour_mv1(this.ffiValue);
     
         try {
             return result;
@@ -108,8 +106,7 @@ export class Time {
         finally {}
     }
 
-    get minute() {
-        const result = wasm.icu4x_Time_minute_mv1(this.ffiValue);
+    get minute() {const result = wasm.icu4x_Time_minute_mv1(this.ffiValue);
     
         try {
             return result;
@@ -118,8 +115,7 @@ export class Time {
         finally {}
     }
 
-    get second() {
-        const result = wasm.icu4x_Time_second_mv1(this.ffiValue);
+    get second() {const result = wasm.icu4x_Time_second_mv1(this.ffiValue);
     
         try {
             return result;
@@ -128,8 +124,7 @@ export class Time {
         finally {}
     }
 
-    get nanosecond() {
-        const result = wasm.icu4x_Time_nanosecond_mv1(this.ffiValue);
+    get nanosecond() {const result = wasm.icu4x_Time_nanosecond_mv1(this.ffiValue);
     
         try {
             return result;

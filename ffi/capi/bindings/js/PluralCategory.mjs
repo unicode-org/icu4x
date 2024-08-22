@@ -47,11 +47,12 @@ export class PluralCategory {
     static Other = new PluralCategory("Other");
 
     static getForCldrString(s) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
+        const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s)).splat()];
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        const result = wasm.icu4x_PluralCategory_get_for_cldr_string_mv1(diplomatReceive.buffer, sSlice.ptr, sSlice.size);
+        const result = wasm.icu4x_PluralCategory_get_for_cldr_string_mv1(diplomatReceive.buffer, ...sSlice);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -61,7 +62,7 @@ export class PluralCategory {
         }
         
         finally {
-            sSlice.free();
+            functionCleanupArena.free();
         
             diplomatReceive.free();
         }

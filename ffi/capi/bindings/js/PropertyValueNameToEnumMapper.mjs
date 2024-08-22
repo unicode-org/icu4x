@@ -43,35 +43,36 @@ export class PropertyValueNameToEnumMapper {
     }
 
     getStrict(name) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const nameSlice = diplomatRuntime.DiplomatBuf.str8(wasm, name);
-        const result = wasm.icu4x_PropertyValueNameToEnumMapper_get_strict_mv1(this.ffiValue, nameSlice.ptr, nameSlice.size);
+        const nameSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, name)).splat()];
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_get_strict_mv1(this.ffiValue, ...nameSlice);
     
         try {
             return result;
         }
         
         finally {
-            nameSlice.free();
+            functionCleanupArena.free();
         }
     }
 
     getLoose(name) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const nameSlice = diplomatRuntime.DiplomatBuf.str8(wasm, name);
-        const result = wasm.icu4x_PropertyValueNameToEnumMapper_get_loose_mv1(this.ffiValue, nameSlice.ptr, nameSlice.size);
+        const nameSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, name)).splat()];
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_get_loose_mv1(this.ffiValue, ...nameSlice);
     
         try {
             return result;
         }
         
         finally {
-            nameSlice.free();
+            functionCleanupArena.free();
         }
     }
 
     static loadGeneralCategory(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         const result = wasm.icu4x_PropertyValueNameToEnumMapper_load_general_category_mv1(diplomatReceive.buffer, provider.ffiValue);
     
@@ -89,7 +90,6 @@ export class PropertyValueNameToEnumMapper {
     }
 
     static loadHangulSyllableType(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         const result = wasm.icu4x_PropertyValueNameToEnumMapper_load_hangul_syllable_type_mv1(diplomatReceive.buffer, provider.ffiValue);
     
@@ -107,7 +107,6 @@ export class PropertyValueNameToEnumMapper {
     }
 
     static loadEastAsianWidth(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         const result = wasm.icu4x_PropertyValueNameToEnumMapper_load_east_asian_width_mv1(diplomatReceive.buffer, provider.ffiValue);
     
@@ -125,7 +124,6 @@ export class PropertyValueNameToEnumMapper {
     }
 
     static loadBidiClass(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         const result = wasm.icu4x_PropertyValueNameToEnumMapper_load_bidi_class_mv1(diplomatReceive.buffer, provider.ffiValue);
     
@@ -143,7 +141,6 @@ export class PropertyValueNameToEnumMapper {
     }
 
     static loadIndicSyllabicCategory(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         const result = wasm.icu4x_PropertyValueNameToEnumMapper_load_indic_syllabic_category_mv1(diplomatReceive.buffer, provider.ffiValue);
     
@@ -161,7 +158,6 @@ export class PropertyValueNameToEnumMapper {
     }
 
     static loadLineBreak(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         const result = wasm.icu4x_PropertyValueNameToEnumMapper_load_line_break_mv1(diplomatReceive.buffer, provider.ffiValue);
     
@@ -179,7 +175,6 @@ export class PropertyValueNameToEnumMapper {
     }
 
     static loadGraphemeClusterBreak(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         const result = wasm.icu4x_PropertyValueNameToEnumMapper_load_grapheme_cluster_break_mv1(diplomatReceive.buffer, provider.ffiValue);
     
@@ -197,7 +192,6 @@ export class PropertyValueNameToEnumMapper {
     }
 
     static loadWordBreak(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         const result = wasm.icu4x_PropertyValueNameToEnumMapper_load_word_break_mv1(diplomatReceive.buffer, provider.ffiValue);
     
@@ -215,7 +209,6 @@ export class PropertyValueNameToEnumMapper {
     }
 
     static loadSentenceBreak(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         const result = wasm.icu4x_PropertyValueNameToEnumMapper_load_sentence_break_mv1(diplomatReceive.buffer, provider.ffiValue);
     
@@ -233,7 +226,6 @@ export class PropertyValueNameToEnumMapper {
     }
 
     static loadScript(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         const result = wasm.icu4x_PropertyValueNameToEnumMapper_load_script_mv1(diplomatReceive.buffer, provider.ffiValue);
     

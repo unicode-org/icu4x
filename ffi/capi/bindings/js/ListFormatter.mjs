@@ -41,7 +41,6 @@ export class ListFormatter {
     }
 
     static createAndWithLength(provider, locale, length) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         const result = wasm.icu4x_ListFormatter_create_and_with_length_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, length.ffiValue);
     
@@ -59,7 +58,6 @@ export class ListFormatter {
     }
 
     static createOrWithLength(provider, locale, length) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         const result = wasm.icu4x_ListFormatter_create_or_with_length_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, length.ffiValue);
     
@@ -77,7 +75,6 @@ export class ListFormatter {
     }
 
     static createUnitWithLength(provider, locale, length) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         const result = wasm.icu4x_ListFormatter_create_unit_with_length_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, length.ffiValue);
     
@@ -95,18 +92,19 @@ export class ListFormatter {
     }
 
     format(list) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const listSlice = diplomatRuntime.DiplomatBuf.strs(wasm, list, "string16");
+        const listSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.strs(wasm, list, "string16")).splat()];
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        wasm.icu4x_ListFormatter_format_utf16_mv1(this.ffiValue, listSlice.ptr, listSlice.size, write.buffer);
+        wasm.icu4x_ListFormatter_format_utf16_mv1(this.ffiValue, ...listSlice, write.buffer);
     
         try {
             return write.readString8();
         }
         
         finally {
-            listSlice.free();
+            functionCleanupArena.free();
         
             write.free();
         }

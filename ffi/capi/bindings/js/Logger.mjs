@@ -36,8 +36,7 @@ export class Logger {
         return this.#ptr;
     }
 
-    static initSimpleLogger() {
-        const result = wasm.icu4x_Logger_init_simple_logger_mv1();
+    static initSimpleLogger() {const result = wasm.icu4x_Logger_init_simple_logger_mv1();
     
         try {
             return result;
