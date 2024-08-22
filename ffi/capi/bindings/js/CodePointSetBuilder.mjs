@@ -37,8 +37,7 @@ export class CodePointSetBuilder {
         return this.#ptr;
     }
 
-    static create() {
-        const result = wasm.icu4x_CodePointSetBuilder_create_mv1();
+    static create() {const result = wasm.icu4x_CodePointSetBuilder_create_mv1();
     
         try {
             return new CodePointSetBuilder(diplomatRuntime.internalConstructor, result, []);
@@ -47,8 +46,7 @@ export class CodePointSetBuilder {
         finally {}
     }
 
-    build() {
-        const result = wasm.icu4x_CodePointSetBuilder_build_mv1(this.ffiValue);
+    build() {const result = wasm.icu4x_CodePointSetBuilder_build_mv1(this.ffiValue);
     
         try {
             return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
@@ -57,16 +55,14 @@ export class CodePointSetBuilder {
         finally {}
     }
 
-    complement() {
-        wasm.icu4x_CodePointSetBuilder_complement_mv1(this.ffiValue);
+    complement() {wasm.icu4x_CodePointSetBuilder_complement_mv1(this.ffiValue);
     
         try {}
         
         finally {}
     }
 
-    get isEmpty() {
-        const result = wasm.icu4x_CodePointSetBuilder_is_empty_mv1(this.ffiValue);
+    get isEmpty() {const result = wasm.icu4x_CodePointSetBuilder_is_empty_mv1(this.ffiValue);
     
         try {
             return result;
@@ -75,96 +71,84 @@ export class CodePointSetBuilder {
         finally {}
     }
 
-    addChar(ch) {
-        wasm.icu4x_CodePointSetBuilder_add_char_mv1(this.ffiValue, ch);
+    addChar(ch) {wasm.icu4x_CodePointSetBuilder_add_char_mv1(this.ffiValue, ch);
     
         try {}
         
         finally {}
     }
 
-    addInclusiveRange(start, end) {
-        wasm.icu4x_CodePointSetBuilder_add_inclusive_range_mv1(this.ffiValue, start, end);
+    addInclusiveRange(start, end) {wasm.icu4x_CodePointSetBuilder_add_inclusive_range_mv1(this.ffiValue, start, end);
     
         try {}
         
         finally {}
     }
 
-    addSet(data) {
-        wasm.icu4x_CodePointSetBuilder_add_set_mv1(this.ffiValue, data.ffiValue);
+    addSet(data) {wasm.icu4x_CodePointSetBuilder_add_set_mv1(this.ffiValue, data.ffiValue);
     
         try {}
         
         finally {}
     }
 
-    removeChar(ch) {
-        wasm.icu4x_CodePointSetBuilder_remove_char_mv1(this.ffiValue, ch);
+    removeChar(ch) {wasm.icu4x_CodePointSetBuilder_remove_char_mv1(this.ffiValue, ch);
     
         try {}
         
         finally {}
     }
 
-    removeInclusiveRange(start, end) {
-        wasm.icu4x_CodePointSetBuilder_remove_inclusive_range_mv1(this.ffiValue, start, end);
+    removeInclusiveRange(start, end) {wasm.icu4x_CodePointSetBuilder_remove_inclusive_range_mv1(this.ffiValue, start, end);
     
         try {}
         
         finally {}
     }
 
-    removeSet(data) {
-        wasm.icu4x_CodePointSetBuilder_remove_set_mv1(this.ffiValue, data.ffiValue);
+    removeSet(data) {wasm.icu4x_CodePointSetBuilder_remove_set_mv1(this.ffiValue, data.ffiValue);
     
         try {}
         
         finally {}
     }
 
-    retainChar(ch) {
-        wasm.icu4x_CodePointSetBuilder_retain_char_mv1(this.ffiValue, ch);
+    retainChar(ch) {wasm.icu4x_CodePointSetBuilder_retain_char_mv1(this.ffiValue, ch);
     
         try {}
         
         finally {}
     }
 
-    retainInclusiveRange(start, end) {
-        wasm.icu4x_CodePointSetBuilder_retain_inclusive_range_mv1(this.ffiValue, start, end);
+    retainInclusiveRange(start, end) {wasm.icu4x_CodePointSetBuilder_retain_inclusive_range_mv1(this.ffiValue, start, end);
     
         try {}
         
         finally {}
     }
 
-    retainSet(data) {
-        wasm.icu4x_CodePointSetBuilder_retain_set_mv1(this.ffiValue, data.ffiValue);
+    retainSet(data) {wasm.icu4x_CodePointSetBuilder_retain_set_mv1(this.ffiValue, data.ffiValue);
     
         try {}
         
         finally {}
     }
 
-    complementChar(ch) {
-        wasm.icu4x_CodePointSetBuilder_complement_char_mv1(this.ffiValue, ch);
+    complementChar(ch) {wasm.icu4x_CodePointSetBuilder_complement_char_mv1(this.ffiValue, ch);
     
         try {}
         
         finally {}
     }
 
-    complementInclusiveRange(start, end) {
-        wasm.icu4x_CodePointSetBuilder_complement_inclusive_range_mv1(this.ffiValue, start, end);
+    complementInclusiveRange(start, end) {wasm.icu4x_CodePointSetBuilder_complement_inclusive_range_mv1(this.ffiValue, start, end);
     
         try {}
         
         finally {}
     }
 
-    complementSet(data) {
-        wasm.icu4x_CodePointSetBuilder_complement_set_mv1(this.ffiValue, data.ffiValue);
+    complementSet(data) {wasm.icu4x_CodePointSetBuilder_complement_set_mv1(this.ffiValue, data.ffiValue);
     
         try {}
         

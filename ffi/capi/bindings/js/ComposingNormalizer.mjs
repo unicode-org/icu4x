@@ -39,7 +39,6 @@ export class ComposingNormalizer {
     }
 
     static createNfc(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         const result = wasm.icu4x_ComposingNormalizer_create_nfc_mv1(diplomatReceive.buffer, provider.ffiValue);
     
@@ -57,7 +56,6 @@ export class ComposingNormalizer {
     }
 
     static createNfkc(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         const result = wasm.icu4x_ComposingNormalizer_create_nfkc_mv1(diplomatReceive.buffer, provider.ffiValue);
     
@@ -75,48 +73,51 @@ export class ComposingNormalizer {
     }
 
     normalize(s) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
+        const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s)).splat()];
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        wasm.icu4x_ComposingNormalizer_normalize_mv1(this.ffiValue, sSlice.ptr, sSlice.size, write.buffer);
+        wasm.icu4x_ComposingNormalizer_normalize_mv1(this.ffiValue, ...sSlice, write.buffer);
     
         try {
             return write.readString8();
         }
         
         finally {
-            sSlice.free();
+            functionCleanupArena.free();
         
             write.free();
         }
     }
 
     isNormalized(s) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = diplomatRuntime.DiplomatBuf.str16(wasm, s);
-        const result = wasm.icu4x_ComposingNormalizer_is_normalized_utf16_mv1(this.ffiValue, sSlice.ptr, sSlice.size);
+        const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str16(wasm, s)).splat()];
+        const result = wasm.icu4x_ComposingNormalizer_is_normalized_utf16_mv1(this.ffiValue, ...sSlice);
     
         try {
             return result;
         }
         
         finally {
-            sSlice.free();
+            functionCleanupArena.free();
         }
     }
 
     isNormalizedUpTo(s) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = diplomatRuntime.DiplomatBuf.str16(wasm, s);
-        const result = wasm.icu4x_ComposingNormalizer_is_normalized_utf16_up_to_mv1(this.ffiValue, sSlice.ptr, sSlice.size);
+        const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str16(wasm, s)).splat()];
+        const result = wasm.icu4x_ComposingNormalizer_is_normalized_utf16_up_to_mv1(this.ffiValue, ...sSlice);
     
         try {
             return result;
         }
         
         finally {
-            sSlice.free();
+            functionCleanupArena.free();
         }
     }
 }

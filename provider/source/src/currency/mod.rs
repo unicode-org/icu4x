@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 pub(crate) mod compact;
+pub(crate) mod displayname;
 pub(crate) mod essentials;
 pub(crate) mod extended;
 pub(crate) mod patterns;

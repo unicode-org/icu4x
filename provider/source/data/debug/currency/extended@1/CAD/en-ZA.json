@@ -1,7 +1,11 @@
 {
   "display_names": {
-    "One": "Canadian dollar",
-    "Other": "Canadian dollars",
-    "DisplayName": "Canadian Dollar"
+    "specials": [
+      [
+        "One",
+        "Canadian dollar"
+      ]
+    ],
+    "other": "Canadian dollars"
   }
 }

@@ -43,7 +43,6 @@ export class LocaleExpander {
     }
 
     static create(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         const result = wasm.icu4x_LocaleExpander_create_mv1(diplomatReceive.buffer, provider.ffiValue);
     
@@ -61,7 +60,6 @@ export class LocaleExpander {
     }
 
     static createExtended(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         const result = wasm.icu4x_LocaleExpander_create_extended_mv1(diplomatReceive.buffer, provider.ffiValue);
     
@@ -78,8 +76,7 @@ export class LocaleExpander {
         }
     }
 
-    maximize(locale) {
-        const result = wasm.icu4x_LocaleExpander_maximize_mv1(this.ffiValue, locale.ffiValue);
+    maximize(locale) {const result = wasm.icu4x_LocaleExpander_maximize_mv1(this.ffiValue, locale.ffiValue);
     
         try {
             return TransformResult[Array.from(TransformResult.values.keys())[result]];
@@ -88,8 +85,7 @@ export class LocaleExpander {
         finally {}
     }
 
-    minimize(locale) {
-        const result = wasm.icu4x_LocaleExpander_minimize_mv1(this.ffiValue, locale.ffiValue);
+    minimize(locale) {const result = wasm.icu4x_LocaleExpander_minimize_mv1(this.ffiValue, locale.ffiValue);
     
         try {
             return TransformResult[Array.from(TransformResult.values.keys())[result]];
@@ -98,8 +94,7 @@ export class LocaleExpander {
         finally {}
     }
 
-    minimizeFavorScript(locale) {
-        const result = wasm.icu4x_LocaleExpander_minimize_favor_script_mv1(this.ffiValue, locale.ffiValue);
+    minimizeFavorScript(locale) {const result = wasm.icu4x_LocaleExpander_minimize_favor_script_mv1(this.ffiValue, locale.ffiValue);
     
         try {
             return TransformResult[Array.from(TransformResult.values.keys())[result]];

@@ -90,7 +90,7 @@ impl SourceDataProvider {
                 return Err(DataError::custom(
                     "Era data has changed! This can be for two reasons: Either the CLDR locale data for Japanese eras has \
                     changed in an incompatible way, or there is a new Japanese era. Run \
-                    `ICU4X_SKIP_JAPANESE_INTEGRITY_CHECK=1 cargo run -p icu4x-datagen -- --markers JapaneseExtendedErasV1Marker --format dir --syntax json \
+                    `ICU4X_SKIP_JAPANESE_INTEGRITY_CHECK=1 cargo run -p icu4x-datagen -- --markers JapaneseExtendedErasV1Marker --format fs --syntax json \
                     --out provider/source/data/japanese-golden --pretty --overwrite` in the icu4x repo and inspect the diff to \
                     check which situation it is. If a new era has been introduced, commit the diff, if not, it's likely that japanese.rs \
                     in icu_provider_source will need to be updated to handle the data changes."

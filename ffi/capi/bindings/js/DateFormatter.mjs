@@ -48,7 +48,6 @@ export class DateFormatter {
     }
 
     static createWithLength(provider, locale, dateLength) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         const result = wasm.icu4x_DateFormatter_create_with_length_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, dateLength.ffiValue);
     
@@ -66,7 +65,6 @@ export class DateFormatter {
     }
 
     formatDate(value) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
@@ -88,7 +86,6 @@ export class DateFormatter {
     }
 
     formatIsoDate(value) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
@@ -110,7 +107,6 @@ export class DateFormatter {
     }
 
     formatDatetime(value) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
@@ -132,7 +128,6 @@ export class DateFormatter {
     }
 
     formatIsoDatetime(value) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);

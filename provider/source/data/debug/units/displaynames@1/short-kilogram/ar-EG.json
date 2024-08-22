@@ -1,5 +1,6 @@
 {
   "patterns": {
-    "Other": "{0} كغم"
+    "specials": [],
+    "other": "\u0001 كغم"
   }
 }

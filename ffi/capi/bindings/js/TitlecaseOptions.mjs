@@ -57,7 +57,6 @@ export class TitlecaseOptions {
     }
 
     static defaultOptions() {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 8, 4, false);
         const result = wasm.icu4x_TitlecaseOptionsV1_default_mv1(diplomatReceive.buffer);
     

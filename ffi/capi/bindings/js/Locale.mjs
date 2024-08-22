@@ -40,11 +40,12 @@ export class Locale {
     }
 
     static fromString(name) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const nameSlice = diplomatRuntime.DiplomatBuf.str8(wasm, name);
+        const nameSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, name)).splat()];
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        const result = wasm.icu4x_Locale_from_string_mv1(diplomatReceive.buffer, nameSlice.ptr, nameSlice.size);
+        const result = wasm.icu4x_Locale_from_string_mv1(diplomatReceive.buffer, ...nameSlice);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -55,14 +56,13 @@ export class Locale {
         }
         
         finally {
-            nameSlice.free();
+            functionCleanupArena.free();
         
             diplomatReceive.free();
         }
     }
 
-    static und() {
-        const result = wasm.icu4x_Locale_und_mv1();
+    static und() {const result = wasm.icu4x_Locale_und_mv1();
     
         try {
             return new Locale(diplomatRuntime.internalConstructor, result, []);
@@ -71,8 +71,7 @@ export class Locale {
         finally {}
     }
 
-    clone() {
-        const result = wasm.icu4x_Locale_clone_mv1(this.ffiValue);
+    clone() {const result = wasm.icu4x_Locale_clone_mv1(this.ffiValue);
     
         try {
             return new Locale(diplomatRuntime.internalConstructor, result, []);
@@ -82,7 +81,6 @@ export class Locale {
     }
 
     get basename() {
-        
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         wasm.icu4x_Locale_basename_mv1(this.ffiValue, write.buffer);
     
@@ -96,25 +94,25 @@ export class Locale {
     }
 
     getUnicodeExtension(s) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
+        const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s)).splat()];
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        const result = wasm.icu4x_Locale_get_unicode_extension_mv1(this.ffiValue, sSlice.ptr, sSlice.size, write.buffer);
+        const result = wasm.icu4x_Locale_get_unicode_extension_mv1(this.ffiValue, ...sSlice, write.buffer);
     
         try {
             return result === 0 ? null : write.readString8();
         }
         
         finally {
-            sSlice.free();
+            functionCleanupArena.free();
         
             write.free();
         }
     }
 
     get language() {
-        
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         wasm.icu4x_Locale_language_mv1(this.ffiValue, write.buffer);
     
@@ -128,11 +126,12 @@ export class Locale {
     }
 
     set language(s) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
+        const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s)).splat()];
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        const result = wasm.icu4x_Locale_set_language_mv1(diplomatReceive.buffer, this.ffiValue, sSlice.ptr, sSlice.size);
+        const result = wasm.icu4x_Locale_set_language_mv1(diplomatReceive.buffer, this.ffiValue, ...sSlice);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -143,14 +142,13 @@ export class Locale {
         }
         
         finally {
-            sSlice.free();
+            functionCleanupArena.free();
         
             diplomatReceive.free();
         }
     }
 
     get region() {
-        
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         const result = wasm.icu4x_Locale_region_mv1(this.ffiValue, write.buffer);
     
@@ -164,11 +162,12 @@ export class Locale {
     }
 
     set region(s) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
+        const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s)).splat()];
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        const result = wasm.icu4x_Locale_set_region_mv1(diplomatReceive.buffer, this.ffiValue, sSlice.ptr, sSlice.size);
+        const result = wasm.icu4x_Locale_set_region_mv1(diplomatReceive.buffer, this.ffiValue, ...sSlice);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -179,14 +178,13 @@ export class Locale {
         }
         
         finally {
-            sSlice.free();
+            functionCleanupArena.free();
         
             diplomatReceive.free();
         }
     }
 
     get script() {
-        
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         const result = wasm.icu4x_Locale_script_mv1(this.ffiValue, write.buffer);
     
@@ -200,11 +198,12 @@ export class Locale {
     }
 
     set script(s) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
+        const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s)).splat()];
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        const result = wasm.icu4x_Locale_set_script_mv1(diplomatReceive.buffer, this.ffiValue, sSlice.ptr, sSlice.size);
+        const result = wasm.icu4x_Locale_set_script_mv1(diplomatReceive.buffer, this.ffiValue, ...sSlice);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -215,20 +214,21 @@ export class Locale {
         }
         
         finally {
-            sSlice.free();
+            functionCleanupArena.free();
         
             diplomatReceive.free();
         }
     }
 
     static canonicalize(s) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
+        const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s)).splat()];
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        const result = wasm.icu4x_Locale_canonicalize_mv1(diplomatReceive.buffer, sSlice.ptr, sSlice.size, write.buffer);
+        const result = wasm.icu4x_Locale_canonicalize_mv1(diplomatReceive.buffer, ...sSlice, write.buffer);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -239,7 +239,7 @@ export class Locale {
         }
         
         finally {
-            sSlice.free();
+            functionCleanupArena.free();
         
             diplomatReceive.free();
         
@@ -248,7 +248,6 @@ export class Locale {
     }
 
     toString() {
-        
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         wasm.icu4x_Locale_to_string_mv1(this.ffiValue, write.buffer);
     
@@ -262,35 +261,36 @@ export class Locale {
     }
 
     normalizingEq(other) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const otherSlice = diplomatRuntime.DiplomatBuf.str8(wasm, other);
-        const result = wasm.icu4x_Locale_normalizing_eq_mv1(this.ffiValue, otherSlice.ptr, otherSlice.size);
+        const otherSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, other)).splat()];
+        const result = wasm.icu4x_Locale_normalizing_eq_mv1(this.ffiValue, ...otherSlice);
     
         try {
             return result;
         }
         
         finally {
-            otherSlice.free();
+            functionCleanupArena.free();
         }
     }
 
     compareToString(other) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const otherSlice = diplomatRuntime.DiplomatBuf.str8(wasm, other);
-        const result = wasm.icu4x_Locale_compare_to_string_mv1(this.ffiValue, otherSlice.ptr, otherSlice.size);
+        const otherSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, other)).splat()];
+        const result = wasm.icu4x_Locale_compare_to_string_mv1(this.ffiValue, ...otherSlice);
     
         try {
             return result;
         }
         
         finally {
-            otherSlice.free();
+            functionCleanupArena.free();
         }
     }
 
-    compareTo(other) {
-        const result = wasm.icu4x_Locale_compare_to_mv1(this.ffiValue, other.ffiValue);
+    compareTo(other) {const result = wasm.icu4x_Locale_compare_to_mv1(this.ffiValue, other.ffiValue);
     
         try {
             return result;

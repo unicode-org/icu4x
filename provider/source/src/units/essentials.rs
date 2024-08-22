@@ -33,14 +33,16 @@ impl DataProvider<UnitsEssentialsV1Marker> for SourceDataProvider {
             _ => return Err(DataError::custom("Failed to get length data")),
         };
         let per = length_data
-            .get("per")
-            .and_then(|unit| unit.compound_unit_pattern.as_ref())
+            .per
+            .compound_unit_pattern
+            .as_ref()
             .ok_or_else(|| DataError::custom("Failed to get per"))?
             .clone();
 
         let times = length_data
-            .get("times")
-            .and_then(|unit| unit.compound_unit_pattern.as_ref())
+            .times
+            .compound_unit_pattern
+            .as_ref()
             .ok_or_else(|| DataError::custom("Failed to get times"))?
             .clone();
 
@@ -48,8 +50,8 @@ impl DataProvider<UnitsEssentialsV1Marker> for SourceDataProvider {
 
         // Fill powers
         for (powers, power_value) in [
-            (length_data.get("power2"), PowerValue::Two),
-            (length_data.get("power3"), PowerValue::Three),
+            (length_data.powers.get(&2), PowerValue::Two),
+            (length_data.powers.get(&3), PowerValue::Three),
         ] {
             let powers = powers
                 .as_ref()
@@ -94,31 +96,25 @@ impl DataProvider<UnitsEssentialsV1Marker> for SourceDataProvider {
             });
         }
 
-        /// Fills the prefixes map with the SI prefixes (binary and decimal)
-        const BINARY_PREFIX: &str = "1024p";
-        const DECIMAL_PREFIX: &str = "10p";
-
-        for (key, patterns) in length_data {
-            let pattern_key = if let Some(trimmed_key) = key.strip_prefix(BINARY_PREFIX) {
-                trimmed_key.parse::<u8>().map(PatternKey::Binary)
-            } else if let Some(trimmed_key) = key.strip_prefix(DECIMAL_PREFIX) {
-                trimmed_key.parse::<i8>().map(PatternKey::Decimal)
-            } else {
-                // Skip keys that don't start with the binary or decimal prefixes
-                // NOTE:
-                //      In case there are other prefixes will be added in the future,
-                //      we should update this code to handle them.
-                continue;
-            }
-            .map_err(|_| {
-                DataError::custom("Failed to parse pattern key").with_debug_context(&key)
-            })?;
-
-            if let Some(pattern) = patterns.unit_prefix_pattern.as_ref() {
-                prefixes.insert(pattern_key, pattern.to_string());
-            } else {
-                return Err(DataError::custom("Failed to get pattern").with_debug_context(&key));
-            }
+        for (power, patterns) in &length_data.binary {
+            prefixes.insert(
+                PatternKey::Binary(*power),
+                patterns
+                    .unit_prefix_pattern
+                    .as_ref()
+                    .ok_or_else(|| DataError::custom("Failed to get binary pattern"))?
+                    .clone(),
+            );
+        }
+        for (power, patterns) in &length_data.decimal {
+            prefixes.insert(
+                PatternKey::Decimal(*power),
+                patterns
+                    .unit_prefix_pattern
+                    .as_ref()
+                    .ok_or_else(|| DataError::custom("Failed to get decimal pattern"))?
+                    .clone(),
+            );
         }
 
         let result = UnitsEssentialsV1 {

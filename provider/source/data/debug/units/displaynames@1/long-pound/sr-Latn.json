@@ -1,7 +1,15 @@
 {
   "patterns": {
-    "One": "{0} funta",
-    "Few": "{0} funte",
-    "Other": "{0} funti"
+    "specials": [
+      [
+        "One",
+        "\u0001 funta"
+      ],
+      [
+        "Few",
+        "\u0001 funte"
+      ]
+    ],
+    "other": "\u0001 funti"
   }
 }

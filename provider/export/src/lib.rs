@@ -32,22 +32,14 @@
 //!
 //! # Cargo features
 //!
-//! This crate has a lot of dependencies, some of which are not required for all operating modes. These default Cargo features
-//! can be disabled to reduce dependencies:
 //! * `baked_exporter`
 //!   * enables the [`baked_exporter`] module, a reexport of [`icu_provider_baked::export`]
-//!   * enables the `--format mod` CLI argument
 //! * `blob_exporter`
 //!   * enables the [`blob_exporter`] module, a reexport of [`icu_provider_blob::export`]
-//!   * enables the `--format blob` CLI argument
 //! * `fs_exporter`
 //!   * enables the [`fs_exporter`] module, a reexport of [`icu_provider_fs::export`]
-//!   * enables the `--format dir` CLI argument
 //! * `rayon`
 //!   * enables parallelism during export
-//! * `experimental`
-//!   * enables data generation for markers defined in the unstable `icu_experimental` crate
-//!   * note that this features affects the behaviour of `all_markers`
 
 #![cfg_attr(
     not(test),

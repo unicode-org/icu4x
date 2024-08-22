@@ -42,7 +42,6 @@ export class Collator {
     }
 
     static create(provider, locale, options) {
-        
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -64,25 +63,23 @@ export class Collator {
     }
 
     compare(left, right) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const leftSlice = diplomatRuntime.DiplomatBuf.str16(wasm, left);
+        const leftSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str16(wasm, left)).splat()];
         
-        const rightSlice = diplomatRuntime.DiplomatBuf.str16(wasm, right);
-        const result = wasm.icu4x_Collator_compare_utf16_mv1(this.ffiValue, leftSlice.ptr, leftSlice.size, rightSlice.ptr, rightSlice.size);
+        const rightSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str16(wasm, right)).splat()];
+        const result = wasm.icu4x_Collator_compare_utf16_mv1(this.ffiValue, ...leftSlice, ...rightSlice);
     
         try {
             return result;
         }
         
         finally {
-            leftSlice.free();
-        
-            rightSlice.free();
+            functionCleanupArena.free();
         }
     }
 
     get resolvedOptions() {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 28, 4, false);
         const result = wasm.icu4x_Collator_resolved_options_v1_mv1(diplomatReceive.buffer, this.ffiValue);
     

@@ -444,4 +444,56 @@ mod tests {
             Err(DurationFormatterOptionsError::FractionalDigitsOutOfRange)
         );
     }
+
+    #[test]
+    fn test_invalid_style_after_two_digit() {
+        let options = DurationFormatterOptions {
+            hour: Some(HourStyle::TwoDigit),
+            minute: Some(MinuteStyle::Long),
+            ..Default::default()
+        };
+
+        assert_eq!(
+            ValidatedDurationFormatterOptions::validate(options),
+            Err(DurationFormatterOptionsError::PreviousNumeric)
+        );
+
+        let options = DurationFormatterOptions {
+            hour: Some(HourStyle::TwoDigit),
+            ..options
+        };
+
+        assert_eq!(
+            ValidatedDurationFormatterOptions::validate(options),
+            Err(DurationFormatterOptionsError::PreviousNumeric)
+        );
+    }
+
+    #[test]
+    fn test_display_always_fractional_style() {
+        let options = DurationFormatterOptions {
+            millisecond: Some(MilliSecondStyle::Numeric),
+            millisecond_visibility: Some(FieldDisplay::Always),
+            ..Default::default()
+        };
+
+        assert_eq!(
+            ValidatedDurationFormatterOptions::validate(options),
+            Err(DurationFormatterOptionsError::DisplayAlwaysFractional)
+        );
+    }
+
+    #[test]
+    fn test_previous_fractional() {
+        let options = DurationFormatterOptions {
+            millisecond: Some(MilliSecondStyle::Numeric),
+            nanosecond: Some(NanoSecondStyle::Long),
+            ..Default::default()
+        };
+
+        assert_eq!(
+            ValidatedDurationFormatterOptions::validate(options),
+            Err(DurationFormatterOptionsError::PreviousFractional)
+        );
+    }
 }

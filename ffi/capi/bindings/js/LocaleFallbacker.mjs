@@ -43,7 +43,6 @@ export class LocaleFallbacker {
     }
 
     static create(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         const result = wasm.icu4x_LocaleFallbacker_create_mv1(diplomatReceive.buffer, provider.ffiValue);
     
@@ -60,8 +59,7 @@ export class LocaleFallbacker {
         }
     }
 
-    static withoutData() {
-        const result = wasm.icu4x_LocaleFallbacker_without_data_mv1();
+    static withoutData() {const result = wasm.icu4x_LocaleFallbacker_without_data_mv1();
     
         try {
             return new LocaleFallbacker(diplomatRuntime.internalConstructor, result, []);
@@ -71,7 +69,6 @@ export class LocaleFallbacker {
     }
 
     forConfig(config) {
-        
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         // This lifetime edge depends on lifetimes 'a

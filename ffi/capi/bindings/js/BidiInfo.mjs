@@ -43,8 +43,7 @@ export class BidiInfo {
         return this.#ptr;
     }
 
-    get paragraphCount() {
-        const result = wasm.icu4x_BidiInfo_paragraph_count_mv1(this.ffiValue);
+    get paragraphCount() {const result = wasm.icu4x_BidiInfo_paragraph_count_mv1(this.ffiValue);
     
         try {
             return result;
@@ -54,7 +53,6 @@ export class BidiInfo {
     }
 
     paragraphAt(n) {
-        
         // This lifetime edge depends on lifetimes 'text
         let textEdges = [this];
         const result = wasm.icu4x_BidiInfo_paragraph_at_mv1(this.ffiValue, n);
@@ -66,8 +64,7 @@ export class BidiInfo {
         finally {}
     }
 
-    get size() {
-        const result = wasm.icu4x_BidiInfo_size_mv1(this.ffiValue);
+    get size() {const result = wasm.icu4x_BidiInfo_size_mv1(this.ffiValue);
     
         try {
             return result;
@@ -76,8 +73,7 @@ export class BidiInfo {
         finally {}
     }
 
-    levelAt(pos) {
-        const result = wasm.icu4x_BidiInfo_level_at_mv1(this.ffiValue, pos);
+    levelAt(pos) {const result = wasm.icu4x_BidiInfo_level_at_mv1(this.ffiValue, pos);
     
         try {
             return result;

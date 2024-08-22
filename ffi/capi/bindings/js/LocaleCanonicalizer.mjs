@@ -43,7 +43,6 @@ export class LocaleCanonicalizer {
     }
 
     static create(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         const result = wasm.icu4x_LocaleCanonicalizer_create_mv1(diplomatReceive.buffer, provider.ffiValue);
     
@@ -61,7 +60,6 @@ export class LocaleCanonicalizer {
     }
 
     static createExtended(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         const result = wasm.icu4x_LocaleCanonicalizer_create_extended_mv1(diplomatReceive.buffer, provider.ffiValue);
     
@@ -78,8 +76,7 @@ export class LocaleCanonicalizer {
         }
     }
 
-    canonicalize(locale) {
-        const result = wasm.icu4x_LocaleCanonicalizer_canonicalize_mv1(this.ffiValue, locale.ffiValue);
+    canonicalize(locale) {const result = wasm.icu4x_LocaleCanonicalizer_canonicalize_mv1(this.ffiValue, locale.ffiValue);
     
         try {
             return TransformResult[Array.from(TransformResult.values.keys())[result]];
