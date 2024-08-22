@@ -1,5 +1,6 @@
 {
   "patterns": {
-    "Other": "{0} ч"
+    "specials": [],
+    "other": "\u0001 ч"
   }
 }

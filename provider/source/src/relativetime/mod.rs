@@ -6,13 +6,9 @@ use crate::cldr_serde;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::experimental::relativetime::provider::*;
-use icu::plurals::PluralCategory;
-use icu_pattern::Error as PatternError;
-use icu_pattern::SinglePlaceholderPattern;
+use icu_pattern::SinglePlaceholder;
 use icu_provider::prelude::*;
-use std::borrow::Cow;
-use std::collections::{BTreeMap, HashMap, HashSet};
-use std::str::FromStr;
+use std::collections::{HashMap, HashSet};
 use std::sync::OnceLock;
 
 pub(crate) static MARKER_FILTERS: OnceLock<HashMap<DataMarkerInfo, &'static str>> = OnceLock::new();
@@ -103,8 +99,12 @@ macro_rules! make_data_provider {
                     ))?;
 
                     Ok(DataResponse {
-            metadata: Default::default(),
-                        payload: DataPayload::from_owned(data.try_into().map_err(|_| DataError::custom("Invalid pattern"))?),
+                        metadata: Default::default(),
+                        payload: DataPayload::from_owned(RelativeTimePatternDataV1 {
+                            relatives: data.relatives.iter().map(|r| (&r.count, r.pattern.as_ref())).collect(),
+                            past: (&data.past).try_into()?,
+                            future: (&data.future).try_into()?,
+                        }),
                     })
                 }
             }
@@ -123,58 +123,20 @@ macro_rules! make_data_provider {
     };
 }
 
-impl TryFrom<&cldr_serde::date_fields::Field> for RelativeTimePatternDataV1<'_> {
-    type Error = PatternError;
-    fn try_from(field: &cldr_serde::date_fields::Field) -> Result<Self, Self::Error> {
-        let mut relatives = BTreeMap::new();
-        for relative in &field.relatives {
-            relatives.insert(&relative.count, relative.pattern.as_ref());
-        }
-        Ok(Self {
-            relatives: relatives.into_iter().collect(),
-            past: SinglePlaceholderPluralPattern::try_from(&field.past)?,
-            future: SinglePlaceholderPluralPattern::try_from(&field.future)?,
-        })
-    }
-}
-
-/// Try to convert an `&Option<String>` to [`SinglePlaceholderPattern`].
-/// If pattern is `None`, we return `None`
-/// If pattern is `Some(pattern)`, we try to parse the pattern as [`SinglePlaceholderPattern`] failing
-/// if an error is encountered
-fn optional_convert(
-    pattern: &Option<String>,
-) -> Result<Option<SinglePlaceholderPattern<Cow<'static, str>>>, PatternError> {
-    pattern
-        .as_deref()
-        .map(|s| {
-            SinglePlaceholderPattern::from_str(s)
-                .map(|p| SinglePlaceholderPattern::from_store_unchecked(p.take_store().into()))
-        })
-        .transpose()
-}
-
-impl TryFrom<&cldr_serde::date_fields::PluralRulesPattern> for SinglePlaceholderPluralPattern<'_> {
-    type Error = PatternError;
-    fn try_from(
-        pattern: &cldr_serde::date_fields::PluralRulesPattern,
-    ) -> Result<Self, Self::Error> {
-        Ok(Self {
-            specials: (&[
-                (PluralCategory::Zero, optional_convert(&pattern.zero)?),
-                (PluralCategory::One, optional_convert(&pattern.one)?),
-                (PluralCategory::Two, optional_convert(&pattern.two)?),
-                (PluralCategory::Few, optional_convert(&pattern.few)?),
-                (PluralCategory::Many, optional_convert(&pattern.many)?),
-            ]
-            .into_iter()
-            .filter_map(|(c, s)| Some(PluralCategoryStr(c, s?.take_store())))
-            .collect::<Vec<_>>())
-                .into(),
-            other: SinglePlaceholderPattern::from_str(&pattern.other)?
-                .take_store()
-                .into(),
-        })
+impl TryFrom<&cldr_serde::date_fields::PluralRulesPattern>
+    for PluralPattern<'_, SinglePlaceholder>
+{
+    type Error = DataError;
+    fn try_from(field: &cldr_serde::date_fields::PluralRulesPattern) -> Result<Self, Self::Error> {
+        PluralPattern::try_new(
+            &field.other,
+            field.zero.as_deref(),
+            field.one.as_deref(),
+            field.two.as_deref(),
+            field.few.as_deref(),
+            field.many.as_deref(),
+        )
+        .map_err(|_| DataError::custom("Invalid pattern"))
     }
 }
 
@@ -209,6 +171,7 @@ make_data_provider!(
 mod tests {
     use super::*;
     use icu::locale::langid;
+    use icu::plurals::PluralCategory;
     use writeable::assert_writeable_eq;
 
     #[test]

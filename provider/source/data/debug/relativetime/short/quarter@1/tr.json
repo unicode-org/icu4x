@@ -5,21 +5,11 @@
     "1": "gelecek çyr."
   },
   "past": {
-    "specials": [
-      [
-        "One",
-        "\u0001 çyr. önce"
-      ]
-    ],
+    "specials": [],
     "other": "\u0001 çyr. önce"
   },
   "future": {
-    "specials": [
-      [
-        "One",
-        "\u0001 çyr. sonra"
-      ]
-    ],
+    "specials": [],
     "other": "\u0001 çyr. sonra"
   }
 }

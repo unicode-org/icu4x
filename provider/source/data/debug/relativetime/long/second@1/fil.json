@@ -3,21 +3,11 @@
     "0": "ngayon"
   },
   "past": {
-    "specials": [
-      [
-        "One",
-        "\u0001 segundo ang nakalipas"
-      ]
-    ],
+    "specials": [],
     "other": "\u0001 segundo ang nakalipas"
   },
   "future": {
-    "specials": [
-      [
-        "One",
-        "\u0004sa  segundo"
-      ]
-    ],
+    "specials": [],
     "other": "\u0004sa  segundo"
   }
 }

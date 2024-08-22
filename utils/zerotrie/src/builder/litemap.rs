@@ -6,7 +6,7 @@
 
 use super::konst::*;
 use crate::builder::bytestr::ByteStr;
-use crate::error::Error;
+use crate::error::ZeroTrieBuildError;
 use crate::zerotrie::ZeroTrieSimpleAscii;
 use crate::ZeroTrie;
 use alloc::borrow::Borrow;
@@ -17,7 +17,7 @@ impl ZeroTrieSimpleAscii<Vec<u8>> {
     #[doc(hidden)]
     pub fn try_from_litemap_with_const_builder<'a, S>(
         items: &LiteMap<&'a [u8], usize, S>,
-    ) -> Result<Self, Error>
+    ) -> Result<Self, ZeroTrieBuildError>
     where
         S: litemap::store::StoreSlice<&'a [u8], usize, Slice = [(&'a [u8], usize)]>,
     {
@@ -37,8 +37,8 @@ where
     K: Borrow<[u8]>,
     S: litemap::store::StoreSlice<K, usize, Slice = [(K, usize)]>,
 {
-    type Error = Error;
-    fn try_from(items: &LiteMap<K, usize, S>) -> Result<Self, Error> {
+    type Error = ZeroTrieBuildError;
+    fn try_from(items: &LiteMap<K, usize, S>) -> Result<Self, ZeroTrieBuildError> {
         let byte_litemap = items.to_borrowed_keys::<[u8], Vec<_>>();
         let byte_slice = byte_litemap.as_slice();
         let byte_str_slice = ByteStr::from_byte_slice_with_value(byte_slice);

@@ -45,11 +45,11 @@ macro_rules! tuple_ule {
         //  6. TupleULE byte equality is semantic equality by relying on the ULE equality
         //     invariant on the subfields
         unsafe impl<$($t: ULE),+> ULE for $name<$($t),+> {
-            fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+            fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
                 // expands to: 0size + mem::size_of::<A>() + mem::size_of::<B>();
                 let ule_bytes = 0usize $(+ mem::size_of::<$t>())+;
                 if bytes.len() % ule_bytes != 0 {
-                    return Err(ZeroVecError::length::<Self>(bytes.len()));
+                    return Err(UleError::length::<Self>(bytes.len()));
                 }
                 for chunk in bytes.chunks(ule_bytes) {
                     let mut i = 0;

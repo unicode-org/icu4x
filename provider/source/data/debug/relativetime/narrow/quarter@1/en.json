@@ -5,21 +5,11 @@
     "1": "next qtr."
   },
   "past": {
-    "specials": [
-      [
-        "One",
-        "\u0001q ago"
-      ]
-    ],
+    "specials": [],
     "other": "\u0001q ago"
   },
   "future": {
-    "specials": [
-      [
-        "One",
-        "\u0004in q"
-      ]
-    ],
+    "specials": [],
     "other": "\u0004in q"
   }
 }

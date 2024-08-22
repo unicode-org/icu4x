@@ -5,16 +5,7 @@
     "1": "sledećeg kvartala"
   },
   "past": {
-    "specials": [
-      [
-        "One",
-        "\u0005pre  kvartala"
-      ],
-      [
-        "Few",
-        "\u0005pre  kvartala"
-      ]
-    ],
+    "specials": [],
     "other": "\u0005pre  kvartala"
   },
   "future": {
@@ -22,10 +13,6 @@
       [
         "One",
         "\u0004za  kvartal"
-      ],
-      [
-        "Few",
-        "\u0004za  kvartala"
       ]
     ],
     "other": "\u0004za  kvartala"

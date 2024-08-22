@@ -11,4 +11,4 @@ clippy-all = "clippy --all-features --all-targets -- -D warnings"
 [unstable]
 msrv-policy = true
 [resolver]
-something-like-precedence = 'something-like-rust-version'
+incompatible-rust-versions = 'fallback'

@@ -4,7 +4,7 @@
 
 #[cfg(feature = "alloc")]
 use alloc::borrow::{Cow, ToOwned};
-use core::mem;
+use core::{marker::PhantomData, mem};
 
 /// The `Yokeable<'a>` trait is implemented on the `'static` version of any zero-copy type; for
 /// example, `Cow<'static, T>` implements `Yokeable<'a>` (for all `'a`). One can use
@@ -341,6 +341,31 @@ unsafe impl<'a, T: 'static> Yokeable<'a> for alloc::vec::Vec<T> {
     #[inline]
     fn transform_mut<F>(&'a mut self, f: F)
     where
+        F: 'static + for<'b> FnOnce(&'b mut Self::Output),
+    {
+        f(self)
+    }
+}
+
+// Safety: PhantomData is a ZST.
+unsafe impl<'a, T: ?Sized + 'static> Yokeable<'a> for PhantomData<T> {
+    type Output = PhantomData<T>;
+
+    fn transform(&'a self) -> &'a Self::Output {
+        self
+    }
+
+    fn transform_owned(self) -> Self::Output {
+        self
+    }
+
+    unsafe fn make(from: Self::Output) -> Self {
+        from
+    }
+
+    fn transform_mut<F>(&'a mut self, f: F)
+    where
+        // be VERY CAREFUL changing this signature, it is very nuanced (see above)
         F: 'static + for<'b> FnOnce(&'b mut Self::Output),
     {
         f(self)

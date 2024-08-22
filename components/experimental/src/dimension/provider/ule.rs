@@ -4,7 +4,7 @@
 
 use zerovec::{
     maps::ZeroMapKV,
-    ule::{AsULE, ZeroVecError, ULE},
+    ule::{AsULE, UleError, ULE},
 };
 
 use crate::dimension::provider::currency::{
@@ -44,9 +44,9 @@ pub struct CurrencyPatternConfigULE([u8; 3]);
 //  5. The other ULE methods use the default impl.
 //  6. CurrencyPatternConfigULE byte equality is semantic equality.
 unsafe impl ULE for CurrencyPatternConfigULE {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
         if bytes.len() % 3 != 0 {
-            return Err(ZeroVecError::length::<Self>(bytes.len()));
+            return Err(UleError::length::<Self>(bytes.len()));
         }
 
         Ok(())

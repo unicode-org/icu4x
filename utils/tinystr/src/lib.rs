@@ -87,7 +87,7 @@ mod ule;
 extern crate alloc;
 
 pub use ascii::TinyAsciiStr;
-pub use error::TinyStrError;
+pub use error::ParseError;
 pub use unvalidated::UnvalidatedTinyAsciiStr;
 
 /// These are temporary compatability reexports that will be removed
@@ -111,8 +111,3 @@ fn test_size() {
         core::mem::size_of::<Option<TinyStr8>>()
     );
 }
-// /// Allows unit tests to use the macro
-// #[cfg(test)]
-// mod tinystr {
-//     pub use super::{TinyAsciiStr, TinyStrError};
-// }
