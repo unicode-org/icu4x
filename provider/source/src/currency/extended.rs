@@ -120,12 +120,7 @@ fn test_basic() {
     assert_eq!(categorized_display_names.get(&PluralCategory::Two), None);
     assert_eq!(categorized_display_names.get(&PluralCategory::Few), None);
     assert_eq!(categorized_display_names.get(&PluralCategory::Many), None);
-    assert_eq!(
-        categorized_display_names
-            .get(&PluralCategory::Other)
-            .unwrap(),
-        "US dollars"
-    );
+    assert_eq!(extended_en.other_display_name, "US dollars");
 
     let fr: DataPayload<CurrencyExtendedDataV1Marker> = provider
         .load(DataRequest {
@@ -148,10 +143,5 @@ fn test_basic() {
     assert_eq!(categorized_display_names.get(&PluralCategory::Two), None);
     assert_eq!(categorized_display_names.get(&PluralCategory::Few), None);
     assert_eq!(categorized_display_names.get(&PluralCategory::Many), None);
-    assert_eq!(
-        categorized_display_names
-            .get(&PluralCategory::Other)
-            .unwrap(),
-        "dollars des États-Unis"
-    );
+    assert_eq!(extended_fr.other_display_name, "dollars des États-Unis");
 }
