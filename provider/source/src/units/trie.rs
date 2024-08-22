@@ -60,8 +60,8 @@ impl crate::IterableDataProviderCached<UnitsTrieV1Marker> for SourceDataProvider
 
 #[test]
 fn test_basic() {
+    use icu::experimental::units::provider::UnitsInfoV1Marker;
     use icu::locale::langid;
-    use icu_experimental::units::provider::UnitsInfoV1Marker;
     use icu_provider::prelude::*;
 
     let provider = SourceDataProvider::new_testing();
