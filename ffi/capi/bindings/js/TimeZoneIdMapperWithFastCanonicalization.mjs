@@ -46,6 +46,7 @@ export class TimeZoneIdMapperWithFastCanonicalization {
 
     static create(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_TimeZoneIdMapperWithFastCanonicalization_create_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -67,6 +68,7 @@ export class TimeZoneIdMapperWithFastCanonicalization {
         const valueSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, value)).splat()];
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
+        
         const result = wasm.icu4x_TimeZoneIdMapperWithFastCanonicalization_canonicalize_iana_mv1(this.ffiValue, ...valueSlice, write.buffer);
     
         try {
@@ -90,6 +92,7 @@ export class TimeZoneIdMapperWithFastCanonicalization {
         const valueSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, value)).splat()];
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
+        
         const result = wasm.icu4x_TimeZoneIdMapperWithFastCanonicalization_canonical_iana_from_bcp47_mv1(this.ffiValue, ...valueSlice, write.buffer);
     
         try {

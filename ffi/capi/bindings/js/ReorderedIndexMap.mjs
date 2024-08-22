@@ -45,6 +45,7 @@ export class ReorderedIndexMap {
         
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this];
+        
         const result = wasm.icu4x_ReorderedIndexMap_as_slice_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {
@@ -56,7 +57,8 @@ export class ReorderedIndexMap {
         }
     }
 
-    get length() {const result = wasm.icu4x_ReorderedIndexMap_len_mv1(this.ffiValue);
+    get length() {
+        const result = wasm.icu4x_ReorderedIndexMap_len_mv1(this.ffiValue);
     
         try {
             return result;
@@ -65,7 +67,8 @@ export class ReorderedIndexMap {
         finally {}
     }
 
-    get isEmpty() {const result = wasm.icu4x_ReorderedIndexMap_is_empty_mv1(this.ffiValue);
+    get isEmpty() {
+        const result = wasm.icu4x_ReorderedIndexMap_is_empty_mv1(this.ffiValue);
     
         try {
             return result;
@@ -74,7 +77,8 @@ export class ReorderedIndexMap {
         finally {}
     }
 
-    get(index) {const result = wasm.icu4x_ReorderedIndexMap_get_mv1(this.ffiValue, index);
+    get(index) {
+        const result = wasm.icu4x_ReorderedIndexMap_get_mv1(this.ffiValue, index);
     
         try {
             return result;

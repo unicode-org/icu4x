@@ -44,6 +44,7 @@ export class GraphemeClusterSegmenter {
 
     static create(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_GraphemeClusterSegmenter_create_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -65,6 +66,7 @@ export class GraphemeClusterSegmenter {
         
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this, inputSlice];
+        
         const result = wasm.icu4x_GraphemeClusterSegmenter_segment_utf16_mv1(this.ffiValue, ...inputSlice);
     
         try {

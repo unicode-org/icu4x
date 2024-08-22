@@ -42,7 +42,8 @@ export class ScriptExtensionsSet {
         return this.#ptr;
     }
 
-    contains(script) {const result = wasm.icu4x_ScriptExtensionsSet_contains_mv1(this.ffiValue, script);
+    contains(script) {
+        const result = wasm.icu4x_ScriptExtensionsSet_contains_mv1(this.ffiValue, script);
     
         try {
             return result;
@@ -51,7 +52,8 @@ export class ScriptExtensionsSet {
         finally {}
     }
 
-    get count() {const result = wasm.icu4x_ScriptExtensionsSet_count_mv1(this.ffiValue);
+    get count() {
+        const result = wasm.icu4x_ScriptExtensionsSet_count_mv1(this.ffiValue);
     
         try {
             return result;
@@ -62,6 +64,7 @@ export class ScriptExtensionsSet {
 
     scriptAt(index) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 3, 2, true);
+        
         const result = wasm.icu4x_ScriptExtensionsSet_script_at_mv1(diplomatReceive.buffer, this.ffiValue, index);
     
         try {

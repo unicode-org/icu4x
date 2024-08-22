@@ -43,6 +43,7 @@ export class CaseMapper {
 
     static create(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CaseMapper_create_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -160,7 +161,8 @@ export class CaseMapper {
         finally {}
     }
 
-    simpleLowercase(ch) {const result = wasm.icu4x_CaseMapper_simple_lowercase_mv1(this.ffiValue, ch);
+    simpleLowercase(ch) {
+        const result = wasm.icu4x_CaseMapper_simple_lowercase_mv1(this.ffiValue, ch);
     
         try {
             return result;
@@ -169,7 +171,8 @@ export class CaseMapper {
         finally {}
     }
 
-    simpleUppercase(ch) {const result = wasm.icu4x_CaseMapper_simple_uppercase_mv1(this.ffiValue, ch);
+    simpleUppercase(ch) {
+        const result = wasm.icu4x_CaseMapper_simple_uppercase_mv1(this.ffiValue, ch);
     
         try {
             return result;
@@ -178,7 +181,8 @@ export class CaseMapper {
         finally {}
     }
 
-    simpleTitlecase(ch) {const result = wasm.icu4x_CaseMapper_simple_titlecase_mv1(this.ffiValue, ch);
+    simpleTitlecase(ch) {
+        const result = wasm.icu4x_CaseMapper_simple_titlecase_mv1(this.ffiValue, ch);
     
         try {
             return result;
@@ -187,7 +191,8 @@ export class CaseMapper {
         finally {}
     }
 
-    simpleFold(ch) {const result = wasm.icu4x_CaseMapper_simple_fold_mv1(this.ffiValue, ch);
+    simpleFold(ch) {
+        const result = wasm.icu4x_CaseMapper_simple_fold_mv1(this.ffiValue, ch);
     
         try {
             return result;
@@ -196,7 +201,8 @@ export class CaseMapper {
         finally {}
     }
 
-    simpleFoldTurkic(ch) {const result = wasm.icu4x_CaseMapper_simple_fold_turkic_mv1(this.ffiValue, ch);
+    simpleFoldTurkic(ch) {
+        const result = wasm.icu4x_CaseMapper_simple_fold_turkic_mv1(this.ffiValue, ch);
     
         try {
             return result;

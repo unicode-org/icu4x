@@ -45,6 +45,7 @@ export class FixedDecimalFormatter {
 
     static createWithGroupingStrategy(provider, locale, groupingStrategy) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, groupingStrategy.ffiValue);
     
         try {
@@ -78,6 +79,7 @@ export class FixedDecimalFormatter {
         const digitsSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.slice(wasm, digits, "u16")).splat()];
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_FixedDecimalFormatter_create_with_manual_data_mv1(diplomatReceive.buffer, ...plusSignPrefixSlice, ...plusSignSuffixSlice, ...minusSignPrefixSlice, ...minusSignSuffixSlice, ...decimalSeparatorSlice, ...groupingSeparatorSlice, primaryGroupSize, secondaryGroupSize, minGroupSize, ...digitsSlice, groupingStrategy.ffiValue);
     
         try {

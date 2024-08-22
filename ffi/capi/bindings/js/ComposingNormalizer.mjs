@@ -40,6 +40,7 @@ export class ComposingNormalizer {
 
     static createNfc(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_ComposingNormalizer_create_nfc_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -57,6 +58,7 @@ export class ComposingNormalizer {
 
     static createNfkc(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_ComposingNormalizer_create_nfkc_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -95,6 +97,7 @@ export class ComposingNormalizer {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str16(wasm, s)).splat()];
+        
         const result = wasm.icu4x_ComposingNormalizer_is_normalized_utf16_mv1(this.ffiValue, ...sSlice);
     
         try {
@@ -110,6 +113,7 @@ export class ComposingNormalizer {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str16(wasm, s)).splat()];
+        
         const result = wasm.icu4x_ComposingNormalizer_is_normalized_utf16_up_to_mv1(this.ffiValue, ...sSlice);
     
         try {

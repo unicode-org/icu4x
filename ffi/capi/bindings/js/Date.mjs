@@ -47,6 +47,7 @@ export class Date {
 
     static fromIsoInCalendar(year, month, day, calendar) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_Date_from_iso_in_calendar_mv1(diplomatReceive.buffer, year, month, day, calendar.ffiValue);
     
         try {
@@ -70,6 +71,7 @@ export class Date {
         const monthCodeSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, monthCode)).splat()];
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_Date_from_codes_in_calendar_mv1(diplomatReceive.buffer, ...eraCodeSlice, year, ...monthCodeSlice, day, calendar.ffiValue);
     
         try {
@@ -93,6 +95,7 @@ export class Date {
         const vSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, v)).splat()];
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_Date_from_string_mv1(diplomatReceive.buffer, ...vSlice);
     
         try {
@@ -110,7 +113,8 @@ export class Date {
         }
     }
 
-    toCalendar(calendar) {const result = wasm.icu4x_Date_to_calendar_mv1(this.ffiValue, calendar.ffiValue);
+    toCalendar(calendar) {
+        const result = wasm.icu4x_Date_to_calendar_mv1(this.ffiValue, calendar.ffiValue);
     
         try {
             return new Date(diplomatRuntime.internalConstructor, result, []);
@@ -119,7 +123,8 @@ export class Date {
         finally {}
     }
 
-    toIso() {const result = wasm.icu4x_Date_to_iso_mv1(this.ffiValue);
+    toIso() {
+        const result = wasm.icu4x_Date_to_iso_mv1(this.ffiValue);
     
         try {
             return new IsoDate(diplomatRuntime.internalConstructor, result, []);
@@ -128,7 +133,8 @@ export class Date {
         finally {}
     }
 
-    get dayOfYear() {const result = wasm.icu4x_Date_day_of_year_mv1(this.ffiValue);
+    get dayOfYear() {
+        const result = wasm.icu4x_Date_day_of_year_mv1(this.ffiValue);
     
         try {
             return result;
@@ -137,7 +143,8 @@ export class Date {
         finally {}
     }
 
-    get dayOfMonth() {const result = wasm.icu4x_Date_day_of_month_mv1(this.ffiValue);
+    get dayOfMonth() {
+        const result = wasm.icu4x_Date_day_of_month_mv1(this.ffiValue);
     
         try {
             return result;
@@ -146,7 +153,8 @@ export class Date {
         finally {}
     }
 
-    get dayOfWeek() {const result = wasm.icu4x_Date_day_of_week_mv1(this.ffiValue);
+    get dayOfWeek() {
+        const result = wasm.icu4x_Date_day_of_week_mv1(this.ffiValue);
     
         try {
             return (() => {for (let i of IsoWeekday.values) { if(i[1] === result) return IsoWeekday[i[0]]; } return null;})();
@@ -155,7 +163,8 @@ export class Date {
         finally {}
     }
 
-    weekOfMonth(firstWeekday) {const result = wasm.icu4x_Date_week_of_month_mv1(this.ffiValue, firstWeekday.ffiValue);
+    weekOfMonth(firstWeekday) {
+        const result = wasm.icu4x_Date_week_of_month_mv1(this.ffiValue, firstWeekday.ffiValue);
     
         try {
             return result;
@@ -166,6 +175,7 @@ export class Date {
 
     weekOfYear(calculator) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 8, 4, false);
+        
         const result = wasm.icu4x_Date_week_of_year_mv1(diplomatReceive.buffer, this.ffiValue, calculator.ffiValue);
     
         try {
@@ -177,7 +187,8 @@ export class Date {
         }
     }
 
-    get ordinalMonth() {const result = wasm.icu4x_Date_ordinal_month_mv1(this.ffiValue);
+    get ordinalMonth() {
+        const result = wasm.icu4x_Date_ordinal_month_mv1(this.ffiValue);
     
         try {
             return result;
@@ -199,7 +210,8 @@ export class Date {
         }
     }
 
-    get yearInEra() {const result = wasm.icu4x_Date_year_in_era_mv1(this.ffiValue);
+    get yearInEra() {
+        const result = wasm.icu4x_Date_year_in_era_mv1(this.ffiValue);
     
         try {
             return result;
@@ -221,7 +233,8 @@ export class Date {
         }
     }
 
-    get monthsInYear() {const result = wasm.icu4x_Date_months_in_year_mv1(this.ffiValue);
+    get monthsInYear() {
+        const result = wasm.icu4x_Date_months_in_year_mv1(this.ffiValue);
     
         try {
             return result;
@@ -230,7 +243,8 @@ export class Date {
         finally {}
     }
 
-    get daysInMonth() {const result = wasm.icu4x_Date_days_in_month_mv1(this.ffiValue);
+    get daysInMonth() {
+        const result = wasm.icu4x_Date_days_in_month_mv1(this.ffiValue);
     
         try {
             return result;
@@ -239,7 +253,8 @@ export class Date {
         finally {}
     }
 
-    get daysInYear() {const result = wasm.icu4x_Date_days_in_year_mv1(this.ffiValue);
+    get daysInYear() {
+        const result = wasm.icu4x_Date_days_in_year_mv1(this.ffiValue);
     
         try {
             return result;
@@ -248,7 +263,8 @@ export class Date {
         finally {}
     }
 
-    get calendar() {const result = wasm.icu4x_Date_calendar_mv1(this.ffiValue);
+    get calendar() {
+        const result = wasm.icu4x_Date_calendar_mv1(this.ffiValue);
     
         try {
             return new Calendar(diplomatRuntime.internalConstructor, result, []);

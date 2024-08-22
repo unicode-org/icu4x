@@ -37,7 +37,8 @@ export class CodePointSetBuilder {
         return this.#ptr;
     }
 
-    static create() {const result = wasm.icu4x_CodePointSetBuilder_create_mv1();
+    static create() {
+        const result = wasm.icu4x_CodePointSetBuilder_create_mv1();
     
         try {
             return new CodePointSetBuilder(diplomatRuntime.internalConstructor, result, []);
@@ -46,7 +47,8 @@ export class CodePointSetBuilder {
         finally {}
     }
 
-    build() {const result = wasm.icu4x_CodePointSetBuilder_build_mv1(this.ffiValue);
+    build() {
+        const result = wasm.icu4x_CodePointSetBuilder_build_mv1(this.ffiValue);
     
         try {
             return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
@@ -62,7 +64,8 @@ export class CodePointSetBuilder {
         finally {}
     }
 
-    get isEmpty() {const result = wasm.icu4x_CodePointSetBuilder_is_empty_mv1(this.ffiValue);
+    get isEmpty() {
+        const result = wasm.icu4x_CodePointSetBuilder_is_empty_mv1(this.ffiValue);
     
         try {
             return result;

@@ -41,6 +41,7 @@ export class CaseMapCloser {
 
     static create(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CaseMapCloser_create_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -67,6 +68,7 @@ export class CaseMapCloser {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s)).splat()];
+        
         const result = wasm.icu4x_CaseMapCloser_add_string_case_closure_to_mv1(this.ffiValue, ...sSlice, builder.ffiValue);
     
         try {
