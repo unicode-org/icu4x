@@ -1,8 +1,7 @@
 {
-  "display_names": {
+  "categorized_display_names": {
     "One": "britanska funta",
-    "Few": "britanske funte",
-    "Other": "britanskih funti",
-    "DisplayName": "britanska funta"
-  }
+    "Few": "britanske funte"
+  },
+  "other_display_name": "britanskih funti"
 }
