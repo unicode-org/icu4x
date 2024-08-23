@@ -4,6 +4,7 @@ import { MetazoneCalculator } from "./MetazoneCalculator.mjs"
 import { TimeZoneIdMapper } from "./TimeZoneIdMapper.mjs"
 import { TimeZoneInvalidIdError } from "./TimeZoneInvalidIdError.mjs"
 import { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError.mjs"
+import { TimeZoneUnknownError } from "./TimeZoneUnknownError.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
@@ -49,8 +50,8 @@ export class CustomTimeZone {
     
         try {
             if (result !== 1) {
-                const cause = new TimeZoneInvalidOffsetError(diplomatRuntime.internalConstructor);
-                throw new globalThis.Error('TimeZoneInvalidOffsetError', { cause });
+                const cause = new TimeZoneUnknownError(diplomatRuntime.internalConstructor);
+                throw new globalThis.Error('TimeZoneUnknownError', { cause });
             }
             return new CustomTimeZone(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
