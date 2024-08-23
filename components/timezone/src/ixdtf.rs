@@ -34,8 +34,8 @@ pub enum ParseError {
     InconsistentTimeZoneOffsets,
     /// There was an invalid Offset.
     InvalidOffsetError,
-    /// An unknown time zone was provided.
-    UnknownTimeZone,
+    /// There was an invalid IANA identifier provided.
+    InvalidIanaIdentifier,
     /// An unknown calendar was provided.
     UnknownCalendar,
 }
@@ -139,7 +139,7 @@ impl CustomTimeZone {
                 let bcp47_id = mapper
                     .as_borrowed()
                     .iana_bytes_to_bcp47(iana_identifier)
-                    .ok_or(ParseError::UnknownTimeZone)?;
+                    .ok_or(ParseError::InvalidIanaIdentifier)?;
 
                 let mut tz = Self::new_with_bcp47_id(bcp47_id);
 
