@@ -137,7 +137,7 @@ impl CustomTimeZone {
     /// This is a convenience constructor that uses compiled data. For a custom data provider,
     /// use [`GmtOffset`] or [`TimeZoneIdMapper`] directly.
     ///
-    /// To parse from an IXDTF string, use [`CustomZonedDateTime::try_from_str`].
+    /// To parse from an IXDTF string, use [`CustomZonedDateTime::try_iso_from_str`].
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -161,6 +161,8 @@ impl CustomTimeZone {
     /// assert_eq!(tz2.gmt_offset.map(GmtOffset::offset_seconds), Some(-9000));
     /// assert_eq!(tz3.gmt_offset.map(GmtOffset::offset_seconds), Some(9000));
     /// ```
+    ///
+    /// [`CustomZonedDateTime::try_iso_from_str`]: crate::CustomZonedDateTime::try_iso_from_str
     #[cfg(feature = "compiled_data")]
     #[inline]
     pub fn try_from_str(s: &str) -> Result<Self, UnknownTimeZoneError> {
