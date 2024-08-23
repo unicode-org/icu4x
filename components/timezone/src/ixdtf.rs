@@ -197,7 +197,8 @@ impl CustomZonedDateTime<Iso> {
     ///
     /// ```
     ///
-    /// For more information on time zone parsing, see [`CustomTimeZone::try_from_str`].
+    /// For more information on date, time, and time zone parsing,
+    /// see [`CustomZonedDateTime::try_from_str`].
     pub fn try_iso_from_str(ixdtf_str: &str) -> Result<Self, ParseError> {
         Self::try_iso_from_utf8(ixdtf_str.as_bytes())
     }
@@ -243,6 +244,11 @@ impl FromStr for CustomZonedDateTime<Iso> {
 
 impl CustomZonedDateTime<AnyCalendar> {
     /// Create a [`CustomZonedDateTime`] in any calendar from an IXDTF syntax string.
+    /// 
+    /// For more information on IXDTF, see the [`ixdtf`] crate.
+    /// 
+    /// This is a convenience constructor that uses compiled data. For custom data providers,
+    /// use [`ixdtf`] and/or the other primitives in this crate such as [`TimeZoneIdMapper`].
     ///
     /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
     ///
