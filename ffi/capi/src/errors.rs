@@ -83,6 +83,10 @@ pub mod ffi {
     pub struct TimeZoneInvalidIdError;
 
     #[derive(Debug, PartialEq, Eq)]
+    #[cfg(any(feature = "datetime", feature = "timezone"))]
+    pub struct TimeZoneUnknownError;
+
+    #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
     /// Legacy error
     // TODO(2.0): remove
@@ -270,6 +274,13 @@ impl From<icu_locale_core::ParseError> for LocaleParseError {
 #[cfg(any(feature = "timezone", feature = "datetime"))]
 impl From<icu_timezone::InvalidOffsetError> for TimeZoneInvalidOffsetError {
     fn from(_: icu_timezone::InvalidOffsetError) -> Self {
+        Self
+    }
+}
+
+#[cfg(any(feature = "timezone", feature = "datetime"))]
+impl From<icu_timezone::UnknownTimeZoneError> for TimeZoneUnknownError {
+    fn from(_: icu_timezone::UnknownTimeZoneError) -> Self {
         Self
     }
 }

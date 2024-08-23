@@ -79,7 +79,6 @@ impl GmtOffset {
 // ==== CustomTimeZone methods and traits ====
 
 impl CustomTimeZone {
-
     fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, ParseError> {
         match ixdtf_record {
             IxdtfParseRecord {

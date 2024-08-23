@@ -6,6 +6,8 @@ use crate::provider::{MetazoneId, TimeZoneBcp47Id};
 
 use crate::metazone::MetazoneCalculator;
 use crate::{GmtOffset, ZoneVariant};
+#[cfg(feature = "compiled_data")]
+use crate::{TimeZoneIdMapper, UnknownTimeZoneError};
 use icu_calendar::{DateTime, Iso};
 use tinystr::{tinystr, TinyAsciiStr};
 
@@ -44,12 +46,6 @@ pub struct CustomTimeZone {
     /// The time variant e.g. daylight or standard
     pub zone_variant: Option<ZoneVariant>,
 }
-
-/// An error when the time zone was invalid or unknown.
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
-#[cfg(feature = "compiled_data")]
-#[non_exhaustive]
-pub struct UnknownTimeZoneError;
 
 impl CustomTimeZone {
     /// Creates a new [`CustomTimeZone`] with the given GMT offset.
@@ -138,6 +134,9 @@ impl CustomTimeZone {
     /// Parse a [`CustomTimeZone`] from a UTF-8 string representing a GMT Offset
     /// or an IANA time zone identifier.
     ///
+    /// This is a convenience constructor that uses compiled data. For a custom data provider,
+    /// use [`GmtOffset`] or [`TimeZoneIdMapper`] directly.
+    ///
     /// To parse from an IXDTF string, use [`CustomZonedDateTime::try_from_str`].
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -179,7 +178,7 @@ impl CustomTimeZone {
                 zone_variant: None,
             });
         }
-        let mapper = crate::TimeZoneIdMapper::new();
+        let mapper = TimeZoneIdMapper::new();
         if let Some(bcp47_id) = mapper.as_borrowed().iana_bytes_to_bcp47(code_units) {
             return Ok(Self {
                 gmt_offset: None,
