@@ -449,10 +449,10 @@ impl<'a> FormattedDuration<'a> {
         &self,
         sink: &mut V,
     ) -> core::fmt::Result {
-        // We can have a maximum of 9 writeables (one FormattedUnit for each unit).
+        // We can have a maximum of 10 writeables (one FormattedUnit for each unit).
         // In the digital case, one or more unit is represented by the FormattedDigitalDuration,
         // which is a single writeable.
-        let mut parts_list: SmallVec<[HeterogenousToFormatter; 9]> = SmallVec::new();
+        let mut parts_list: SmallVec<[HeterogenousToFormatter; 10]> = SmallVec::new();
 
         // 2. Let signDisplayed be true.
         let mut sign_displayed = true;
