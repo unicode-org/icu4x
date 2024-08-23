@@ -79,57 +79,6 @@ impl GmtOffset {
 // ==== CustomTimeZone methods and traits ====
 
 impl CustomTimeZone {
-    /// Parse a [`CustomTimeZone`] from a UTF-8 string representing a GMT Offset
-    /// or an IANA time zone identifier.
-    ///
-    /// To parse from an IXDTF string, use [`CustomZonedDateTime::try_from_str`].
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::timezone::CustomTimeZone;
-    /// use icu::timezone::GmtOffset;
-    ///
-    /// let tz0: CustomTimeZone = CustomTimeZone::try_from_str("Z")
-    ///     .expect("Failed to parse a time zone");
-    /// let tz1: CustomTimeZone = CustomTimeZone::try_from_str("+02")
-    ///     .expect("Failed to parse a time zone");
-    /// let tz2: CustomTimeZone = CustomTimeZone::try_from_str("-0230")
-    ///     .expect("Failed to parse a time zone");
-    /// let tz3: CustomTimeZone = CustomTimeZone::try_from_str("+02:30")
-    ///     .expect("Failed to parse a time zone");
-    ///
-    /// assert_eq!(tz0.gmt_offset.map(GmtOffset::offset_seconds), Some(0));
-    /// assert_eq!(tz1.gmt_offset.map(GmtOffset::offset_seconds), Some(7200));
-    /// assert_eq!(tz2.gmt_offset.map(GmtOffset::offset_seconds), Some(-9000));
-    /// assert_eq!(tz3.gmt_offset.map(GmtOffset::offset_seconds), Some(9000));
-    /// ```
-    #[inline]
-    pub fn try_from_str(s: &str) -> Result<Self, ParseError> {
-        Self::try_from_utf8(s.as_bytes())
-    }
-
-    /// See [`Self::try_from_str`]
-    pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
-        if let Ok(gmt_offset) = GmtOffset::try_from_utf8(code_units) {
-            return Ok(Self {
-                gmt_offset: Some(gmt_offset),
-                time_zone_id: None,
-                metazone_id: None,
-                zone_variant: None,
-            });
-        }
-        let mapper = TimeZoneIdMapper::new();
-        if let Some(bcp47_id) = mapper.as_borrowed().iana_bytes_to_bcp47(code_units) {
-            return Ok(Self {
-                gmt_offset: None,
-                time_zone_id: Some(bcp47_id),
-                metazone_id: None,
-                zone_variant: None,
-            });
-        }
-        Err(ParseError::UnknownTimeZone)
-    }
 
     fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, ParseError> {
         match ixdtf_record {
@@ -215,15 +164,6 @@ impl CustomTimeZone {
     }
 }
 
-impl FromStr for CustomTimeZone {
-    type Err = ParseError;
-
-    #[inline]
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Self::try_from_str(s)
-    }
-}
-
 // ==== CustomZonedDateTime methods and traits ====
 
 impl CustomZonedDateTime<Iso> {
@@ -290,6 +230,15 @@ impl CustomZonedDateTime<Iso> {
             time,
             zone: time_zone,
         })
+    }
+}
+
+impl FromStr for CustomZonedDateTime<Iso> {
+    type Err = ParseError;
+
+    #[inline]
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Self::try_iso_from_str(s)
     }
 }
 
@@ -462,6 +411,15 @@ impl CustomZonedDateTime<AnyCalendar> {
             time: iso_zdt.time,
             zone: iso_zdt.zone,
         })
+    }
+}
+
+impl FromStr for CustomZonedDateTime<AnyCalendar> {
+    type Err = ParseError;
+
+    #[inline]
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Self::try_from_str(s)
     }
 }
 

@@ -45,6 +45,12 @@ pub struct CustomTimeZone {
     pub zone_variant: Option<ZoneVariant>,
 }
 
+/// An error when the time zone was invalid or unknown.
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[cfg(feature = "compiled_data")]
+#[non_exhaustive]
+pub struct UnknownTimeZoneError;
+
 impl CustomTimeZone {
     /// Creates a new [`CustomTimeZone`] with the given GMT offset.
     pub const fn new_with_offset(gmt_offset: GmtOffset) -> Self {
@@ -129,6 +135,62 @@ impl CustomTimeZone {
         }
     }
 
+    /// Parse a [`CustomTimeZone`] from a UTF-8 string representing a GMT Offset
+    /// or an IANA time zone identifier.
+    ///
+    /// To parse from an IXDTF string, use [`CustomZonedDateTime::try_from_str`].
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::timezone::CustomTimeZone;
+    /// use icu::timezone::GmtOffset;
+    ///
+    /// let tz0: CustomTimeZone = CustomTimeZone::try_from_str("Z")
+    ///     .expect("Failed to parse a time zone");
+    /// let tz1: CustomTimeZone = CustomTimeZone::try_from_str("+02")
+    ///     .expect("Failed to parse a time zone");
+    /// let tz2: CustomTimeZone = CustomTimeZone::try_from_str("-0230")
+    ///     .expect("Failed to parse a time zone");
+    /// let tz3: CustomTimeZone = CustomTimeZone::try_from_str("+02:30")
+    ///     .expect("Failed to parse a time zone");
+    ///
+    /// assert_eq!(tz0.gmt_offset.map(GmtOffset::offset_seconds), Some(0));
+    /// assert_eq!(tz1.gmt_offset.map(GmtOffset::offset_seconds), Some(7200));
+    /// assert_eq!(tz2.gmt_offset.map(GmtOffset::offset_seconds), Some(-9000));
+    /// assert_eq!(tz3.gmt_offset.map(GmtOffset::offset_seconds), Some(9000));
+    /// ```
+    #[cfg(feature = "compiled_data")]
+    #[inline]
+    pub fn try_from_str(s: &str) -> Result<Self, UnknownTimeZoneError> {
+        Self::try_from_utf8(s.as_bytes())
+    }
+
+    /// See [`Self::try_from_str`]
+    #[cfg(feature = "compiled_data")]
+    pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, UnknownTimeZoneError> {
+        if let Ok(gmt_offset) = GmtOffset::try_from_utf8(code_units) {
+            return Ok(Self {
+                gmt_offset: Some(gmt_offset),
+                time_zone_id: None,
+                metazone_id: None,
+                zone_variant: None,
+            });
+        }
+        let mapper = crate::TimeZoneIdMapper::new();
+        if let Some(bcp47_id) = mapper.as_borrowed().iana_bytes_to_bcp47(code_units) {
+            return Ok(Self {
+                gmt_offset: None,
+                time_zone_id: Some(bcp47_id),
+                metazone_id: None,
+                zone_variant: None,
+            });
+        }
+        Err(UnknownTimeZoneError)
+    }
+
     /// Overwrite the metazone id in MockTimeZone.
     ///
     /// # Examples
@@ -163,5 +225,15 @@ impl CustomTimeZone {
                 metazone_calculator.compute_metazone_from_time_zone(time_zone_id, local_datetime);
         }
         self
+    }
+}
+
+#[cfg(feature = "compiled_data")]
+impl core::str::FromStr for CustomTimeZone {
+    type Err = UnknownTimeZoneError;
+
+    #[inline]
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Self::try_from_str(s)
     }
 }
