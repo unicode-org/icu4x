@@ -2,12 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::InvalidOffsetError;
 use crate::provider::{MetazoneId, TimeZoneBcp47Id};
 
 use crate::metazone::MetazoneCalculator;
 use crate::{GmtOffset, ZoneVariant};
-use core::str::FromStr;
 use icu_calendar::{DateTime, Iso};
 use tinystr::{tinystr, TinyAsciiStr};
 
@@ -131,45 +129,6 @@ impl CustomTimeZone {
         }
     }
 
-    /// Parse a [`CustomTimeZone`] from a UTF-8 string representing a GMT Offset. See also [`GmtOffset`].
-    ///
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::timezone::CustomTimeZone;
-    /// use icu::timezone::GmtOffset;
-    ///
-    /// let tz0: CustomTimeZone = CustomTimeZone::try_from_str("Z")
-    ///     .expect("Failed to parse a time zone");
-    /// let tz1: CustomTimeZone = CustomTimeZone::try_from_str("+02")
-    ///     .expect("Failed to parse a time zone");
-    /// let tz2: CustomTimeZone = CustomTimeZone::try_from_str("-0230")
-    ///     .expect("Failed to parse a time zone");
-    /// let tz3: CustomTimeZone = CustomTimeZone::try_from_str("+02:30")
-    ///     .expect("Failed to parse a time zone");
-    ///
-    /// assert_eq!(tz0.gmt_offset.map(GmtOffset::offset_seconds), Some(0));
-    /// assert_eq!(tz1.gmt_offset.map(GmtOffset::offset_seconds), Some(7200));
-    /// assert_eq!(tz2.gmt_offset.map(GmtOffset::offset_seconds), Some(-9000));
-    /// assert_eq!(tz3.gmt_offset.map(GmtOffset::offset_seconds), Some(9000));
-    /// ```
-    #[inline]
-    pub fn try_from_str(s: &str) -> Result<Self, InvalidOffsetError> {
-        Self::try_from_utf8(s.as_bytes())
-    }
-
-    /// See [`Self::try_from_str`]
-    pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, InvalidOffsetError> {
-        let gmt_offset = GmtOffset::try_from_utf8(code_units)?;
-        Ok(Self {
-            gmt_offset: Some(gmt_offset),
-            time_zone_id: None,
-            metazone_id: None,
-            zone_variant: None,
-        })
-    }
-
     /// Overwrite the metazone id in MockTimeZone.
     ///
     /// # Examples
@@ -204,14 +163,5 @@ impl CustomTimeZone {
                 metazone_calculator.compute_metazone_from_time_zone(time_zone_id, local_datetime);
         }
         self
-    }
-}
-
-impl FromStr for CustomTimeZone {
-    type Err = InvalidOffsetError;
-
-    #[inline]
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Self::try_from_str(s)
     }
 }
