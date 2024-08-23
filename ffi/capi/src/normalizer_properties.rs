@@ -36,22 +36,22 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(
-            icu::normalizer::properties::CanonicalCombiningClassMap::get,
+            icu::normalizer::properties::CanonicalCombiningClassMapBorrowed::get,
             FnInStruct
         )]
         #[diplomat::rust_link(
-            icu::normalizer::properties::CanonicalCombiningClassMap::get32,
+            icu::normalizer::properties::CanonicalCombiningClassMapBorrowed::get32,
             FnInStruct,
             hidden
         )]
         #[diplomat::rust_link(
-            icu::properties::properties::CanonicalCombiningClass,
+            icu::properties::properties::CanonicalCombiningClassMapBorrowed,
             Struct,
             compact
         )]
         #[diplomat::attr(auto, indexer)]
         pub fn get(&self, ch: DiplomatChar) -> u8 {
-            self.0.get32(ch).0
+            self.0.as_borrowed().get32(ch).0
         }
     }
 
@@ -83,7 +83,7 @@ pub mod ffi {
         )]
         pub fn compose(&self, starter: DiplomatChar, second: DiplomatChar) -> DiplomatChar {
             match (char::from_u32(starter), char::from_u32(second)) {
-                (Some(starter), Some(second)) => self.0.compose(starter, second),
+                (Some(starter), Some(second)) => self.0.as_borrowed().compose(starter, second),
                 _ => None,
             }
             .unwrap_or('\0') as DiplomatChar
@@ -122,12 +122,12 @@ pub mod ffi {
 
         /// Performs non-recursive canonical decomposition (including for Hangul).
         #[diplomat::rust_link(
-            icu::normalizer::properties::CanonicalDecomposition::decompose,
+            icu::normalizer::properties::CanonicalDecompositionBorrowed::decompose,
             FnInStruct
         )]
         pub fn decompose(&self, c: DiplomatChar) -> Decomposed {
             match char::from_u32(c) {
-                Some(c) => match self.0.decompose(c) {
+                Some(c) => match self.0.as_borrowed().decompose(c) {
                     icu_normalizer::properties::Decomposed::Default => Decomposed {
                         first: c as DiplomatChar,
                         second: '\0' as DiplomatChar,

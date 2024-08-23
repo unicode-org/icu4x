@@ -41,7 +41,7 @@ final class CanonicalDecomposition implements ffi.Finalizable {
 
   /// Performs non-recursive canonical decomposition (including for Hangul).
   ///
-  /// See the [Rust documentation for `decompose`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.decompose) for more information.
+  /// See the [Rust documentation for `decompose`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecompositionBorrowed.html#method.decompose) for more information.
   Decomposed decompose(Rune c) {
     final result = _icu4x_CanonicalDecomposition_decompose_mv1(_ffi, c);
     return Decomposed._fromFfi(result);

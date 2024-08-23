@@ -48,7 +48,8 @@ export class CodePointMapData16 {
         return this.#ptr;
     }
 
-    get(cp) {const result = wasm.icu4x_CodePointMapData16_get_mv1(this.ffiValue, cp);
+    get(cp) {
+        const result = wasm.icu4x_CodePointMapData16_get_mv1(this.ffiValue, cp);
     
         try {
             return result;
@@ -60,6 +61,7 @@ export class CodePointMapData16 {
     iterRangesForValue(value) {
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this];
+        
         const result = wasm.icu4x_CodePointMapData16_iter_ranges_for_value_mv1(this.ffiValue, value);
     
         try {
@@ -72,6 +74,7 @@ export class CodePointMapData16 {
     iterRangesForValueComplemented(value) {
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this];
+        
         const result = wasm.icu4x_CodePointMapData16_iter_ranges_for_value_complemented_mv1(this.ffiValue, value);
     
         try {
@@ -81,7 +84,8 @@ export class CodePointMapData16 {
         finally {}
     }
 
-    getSetForValue(value) {const result = wasm.icu4x_CodePointMapData16_get_set_for_value_mv1(this.ffiValue, value);
+    getSetForValue(value) {
+        const result = wasm.icu4x_CodePointMapData16_get_set_for_value_mv1(this.ffiValue, value);
     
         try {
             return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
@@ -92,6 +96,7 @@ export class CodePointMapData16 {
 
     static loadScript(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointMapData16_load_script_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {

@@ -40,7 +40,8 @@ export class SegmenterWordType {
     static Number = new SegmenterWordType("Number");
     static Letter = new SegmenterWordType("Letter");
 
-    get isWordLike() {const result = wasm.icu4x_SegmenterWordType_is_word_like_mv1(this.ffiValue);
+    get isWordLike() {
+        const result = wasm.icu4x_SegmenterWordType_is_word_like_mv1(this.ffiValue);
     
         try {
             return result;

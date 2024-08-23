@@ -42,7 +42,8 @@ export class FixedDecimal {
         return this.#ptr;
     }
 
-    static fromNumber(v) {const result = wasm.icu4x_FixedDecimal_from_int32_mv1(v);
+    static fromNumber(v) {
+        const result = wasm.icu4x_FixedDecimal_from_int32_mv1(v);
     
         try {
             return new FixedDecimal(diplomatRuntime.internalConstructor, result, []);
@@ -51,7 +52,8 @@ export class FixedDecimal {
         finally {}
     }
 
-    static fromBigInt(v) {const result = wasm.icu4x_FixedDecimal_from_int64_mv1(v);
+    static fromBigInt(v) {
+        const result = wasm.icu4x_FixedDecimal_from_int64_mv1(v);
     
         try {
             return new FixedDecimal(diplomatRuntime.internalConstructor, result, []);
@@ -60,43 +62,58 @@ export class FixedDecimal {
         finally {}
     }
 
-    static fromNumberWithLowerMagnitude(f, magnitude) {const result = wasm.icu4x_FixedDecimal_from_double_with_lower_magnitude_mv1(f, magnitude);
+    static fromNumberWithLowerMagnitude(f, magnitude) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
+        const result = wasm.icu4x_FixedDecimal_from_double_with_lower_magnitude_mv1(diplomatReceive.buffer, f, magnitude);
     
         try {
-            if (result !== 1) {
+            if (!diplomatReceive.resultFlag) {
                 const cause = new FixedDecimalLimitError(diplomatRuntime.internalConstructor);
                 throw new globalThis.Error('FixedDecimalLimitError', { cause });
             }
             return new FixedDecimal(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
-        finally {}
+        finally {
+            diplomatReceive.free();
+        }
     }
 
-    static fromNumberWithSignificantDigits(f, digits) {const result = wasm.icu4x_FixedDecimal_from_double_with_significant_digits_mv1(f, digits);
+    static fromNumberWithSignificantDigits(f, digits) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
+        const result = wasm.icu4x_FixedDecimal_from_double_with_significant_digits_mv1(diplomatReceive.buffer, f, digits);
     
         try {
-            if (result !== 1) {
+            if (!diplomatReceive.resultFlag) {
                 const cause = new FixedDecimalLimitError(diplomatRuntime.internalConstructor);
                 throw new globalThis.Error('FixedDecimalLimitError', { cause });
             }
             return new FixedDecimal(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
-        finally {}
+        finally {
+            diplomatReceive.free();
+        }
     }
 
-    static fromNumberWithFloatingPrecision(f) {const result = wasm.icu4x_FixedDecimal_from_double_with_floating_precision_mv1(f);
+    static fromNumberWithFloatingPrecision(f) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
+        const result = wasm.icu4x_FixedDecimal_from_double_with_floating_precision_mv1(diplomatReceive.buffer, f);
     
         try {
-            if (result !== 1) {
+            if (!diplomatReceive.resultFlag) {
                 const cause = new FixedDecimalLimitError(diplomatRuntime.internalConstructor);
                 throw new globalThis.Error('FixedDecimalLimitError', { cause });
             }
             return new FixedDecimal(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
-        finally {}
+        finally {
+            diplomatReceive.free();
+        }
     }
 
     static fromString(v) {
@@ -105,6 +122,7 @@ export class FixedDecimal {
         const vSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, v)).splat()];
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_FixedDecimal_from_string_mv1(diplomatReceive.buffer, ...vSlice);
     
         try {
@@ -122,7 +140,8 @@ export class FixedDecimal {
         }
     }
 
-    digitAt(magnitude) {const result = wasm.icu4x_FixedDecimal_digit_at_mv1(this.ffiValue, magnitude);
+    digitAt(magnitude) {
+        const result = wasm.icu4x_FixedDecimal_digit_at_mv1(this.ffiValue, magnitude);
     
         try {
             return result;
@@ -131,7 +150,8 @@ export class FixedDecimal {
         finally {}
     }
 
-    get magnitudeStart() {const result = wasm.icu4x_FixedDecimal_magnitude_start_mv1(this.ffiValue);
+    get magnitudeStart() {
+        const result = wasm.icu4x_FixedDecimal_magnitude_start_mv1(this.ffiValue);
     
         try {
             return result;
@@ -140,7 +160,8 @@ export class FixedDecimal {
         finally {}
     }
 
-    get magnitudeEnd() {const result = wasm.icu4x_FixedDecimal_magnitude_end_mv1(this.ffiValue);
+    get magnitudeEnd() {
+        const result = wasm.icu4x_FixedDecimal_magnitude_end_mv1(this.ffiValue);
     
         try {
             return result;
@@ -149,7 +170,8 @@ export class FixedDecimal {
         finally {}
     }
 
-    get nonzeroMagnitudeStart() {const result = wasm.icu4x_FixedDecimal_nonzero_magnitude_start_mv1(this.ffiValue);
+    get nonzeroMagnitudeStart() {
+        const result = wasm.icu4x_FixedDecimal_nonzero_magnitude_start_mv1(this.ffiValue);
     
         try {
             return result;
@@ -158,7 +180,8 @@ export class FixedDecimal {
         finally {}
     }
 
-    get nonzeroMagnitudeEnd() {const result = wasm.icu4x_FixedDecimal_nonzero_magnitude_end_mv1(this.ffiValue);
+    get nonzeroMagnitudeEnd() {
+        const result = wasm.icu4x_FixedDecimal_nonzero_magnitude_end_mv1(this.ffiValue);
     
         try {
             return result;
@@ -167,7 +190,8 @@ export class FixedDecimal {
         finally {}
     }
 
-    get isZero() {const result = wasm.icu4x_FixedDecimal_is_zero_mv1(this.ffiValue);
+    get isZero() {
+        const result = wasm.icu4x_FixedDecimal_is_zero_mv1(this.ffiValue);
     
         try {
             return result;
@@ -183,7 +207,8 @@ export class FixedDecimal {
         finally {}
     }
 
-    get sign() {const result = wasm.icu4x_FixedDecimal_sign_mv1(this.ffiValue);
+    get sign() {
+        const result = wasm.icu4x_FixedDecimal_sign_mv1(this.ffiValue);
     
         try {
             return FixedDecimalSign[Array.from(FixedDecimalSign.values.keys())[result]];
@@ -290,7 +315,8 @@ export class FixedDecimal {
         finally {}
     }
 
-    concatenateEnd(other) {const result = wasm.icu4x_FixedDecimal_concatenate_end_mv1(this.ffiValue, other.ffiValue);
+    concatenateEnd(other) {
+        const result = wasm.icu4x_FixedDecimal_concatenate_end_mv1(this.ffiValue, other.ffiValue);
     
         try {
             return result === 1;

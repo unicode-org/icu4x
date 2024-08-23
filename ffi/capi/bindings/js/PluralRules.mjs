@@ -44,6 +44,7 @@ export class PluralRules {
 
     static createCardinal(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_PluralRules_create_cardinal_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
     
         try {
@@ -61,6 +62,7 @@ export class PluralRules {
 
     static createOrdinal(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_PluralRules_create_ordinal_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
     
         try {
@@ -76,7 +78,8 @@ export class PluralRules {
         }
     }
 
-    categoryFor(op) {const result = wasm.icu4x_PluralRules_category_for_mv1(this.ffiValue, op.ffiValue);
+    categoryFor(op) {
+        const result = wasm.icu4x_PluralRules_category_for_mv1(this.ffiValue, op.ffiValue);
     
         try {
             return PluralCategory[Array.from(PluralCategory.values.keys())[result]];
@@ -87,6 +90,7 @@ export class PluralRules {
 
     get categories() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 6, 1, false);
+        
         const result = wasm.icu4x_PluralRules_categories_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {

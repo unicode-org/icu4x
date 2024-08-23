@@ -45,6 +45,7 @@ export class WeekCalculator {
 
     static create(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_WeekCalculator_create_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
     
         try {
@@ -60,7 +61,8 @@ export class WeekCalculator {
         }
     }
 
-    static fromFirstDayOfWeekAndMinWeekDays(firstWeekday, minWeekDays) {const result = wasm.icu4x_WeekCalculator_from_first_day_of_week_and_min_week_days_mv1(firstWeekday.ffiValue, minWeekDays);
+    static fromFirstDayOfWeekAndMinWeekDays(firstWeekday, minWeekDays) {
+        const result = wasm.icu4x_WeekCalculator_from_first_day_of_week_and_min_week_days_mv1(firstWeekday.ffiValue, minWeekDays);
     
         try {
             return new WeekCalculator(diplomatRuntime.internalConstructor, result, []);
@@ -69,7 +71,8 @@ export class WeekCalculator {
         finally {}
     }
 
-    get firstWeekday() {const result = wasm.icu4x_WeekCalculator_first_weekday_mv1(this.ffiValue);
+    get firstWeekday() {
+        const result = wasm.icu4x_WeekCalculator_first_weekday_mv1(this.ffiValue);
     
         try {
             return (() => {for (let i of IsoWeekday.values) { if(i[1] === result) return IsoWeekday[i[0]]; } return null;})();
@@ -78,7 +81,8 @@ export class WeekCalculator {
         finally {}
     }
 
-    get minWeekDays() {const result = wasm.icu4x_WeekCalculator_min_week_days_mv1(this.ffiValue);
+    get minWeekDays() {
+        const result = wasm.icu4x_WeekCalculator_min_week_days_mv1(this.ffiValue);
     
         try {
             return result;
@@ -89,6 +93,7 @@ export class WeekCalculator {
 
     get weekend() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 7, 1, false);
+        
         const result = wasm.icu4x_WeekCalculator_weekend_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {

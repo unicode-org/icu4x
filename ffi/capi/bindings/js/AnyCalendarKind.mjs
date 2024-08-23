@@ -75,6 +75,7 @@ export class AnyCalendarKind {
 
     static getForLocale(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_AnyCalendarKind_get_for_locale_mv1(diplomatReceive.buffer, locale.ffiValue);
     
         try {
@@ -95,6 +96,7 @@ export class AnyCalendarKind {
         const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s)).splat()];
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_AnyCalendarKind_get_for_bcp47_mv1(diplomatReceive.buffer, ...sSlice);
     
         try {

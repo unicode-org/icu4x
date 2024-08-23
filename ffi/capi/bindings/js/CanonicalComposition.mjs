@@ -44,6 +44,7 @@ export class CanonicalComposition {
 
     static create(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CanonicalComposition_create_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -59,7 +60,8 @@ export class CanonicalComposition {
         }
     }
 
-    compose(starter, second) {const result = wasm.icu4x_CanonicalComposition_compose_mv1(this.ffiValue, starter, second);
+    compose(starter, second) {
+        const result = wasm.icu4x_CanonicalComposition_compose_mv1(this.ffiValue, starter, second);
     
         try {
             return result;
