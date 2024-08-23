@@ -14,6 +14,37 @@
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 
+icu::normalizer::ComposingNormalizer::as_borrowed#FnInStruct
+icu::normalizer::ComposingNormalizerBorrowed#Struct
+icu::normalizer::ComposingNormalizerBorrowed::is_normalized#FnInStruct
+icu::normalizer::ComposingNormalizerBorrowed::new_nfc#FnInStruct
+icu::normalizer::ComposingNormalizerBorrowed::new_nfkc#FnInStruct
+icu::normalizer::ComposingNormalizerBorrowed::normalize_iter#FnInStruct
+icu::normalizer::ComposingNormalizerBorrowed::normalize_to#FnInStruct
+icu::normalizer::ComposingNormalizerBorrowed::normalize_utf16#FnInStruct
+icu::normalizer::ComposingNormalizerBorrowed::normalize_utf16_to#FnInStruct
+icu::normalizer::ComposingNormalizerBorrowed::normalize_utf8_to#FnInStruct
+icu::normalizer::DecomposingNormalizer::as_borrowed#FnInStruct
+icu::normalizer::DecomposingNormalizerBorrowed#Struct
+icu::normalizer::DecomposingNormalizerBorrowed::new_nfd#FnInStruct
+icu::normalizer::DecomposingNormalizerBorrowed::new_nfkd#FnInStruct
+icu::normalizer::DecomposingNormalizerBorrowed::normalize_iter#FnInStruct
+icu::normalizer::DecomposingNormalizerBorrowed::normalize_utf16#FnInStruct
+icu::normalizer::DecomposingNormalizerBorrowed::normalize_utf16_to#FnInStruct
+icu::normalizer::properties::CanonicalCombiningClassMap::as_borrowed#FnInStruct
+icu::normalizer::properties::CanonicalCombiningClassMapBorrowed#Struct
+icu::normalizer::properties::CanonicalCombiningClassMapBorrowed::new#FnInStruct
+icu::normalizer::properties::CanonicalComposition::as_borrowed#FnInStruct
+icu::normalizer::properties::CanonicalCompositionBorrowed#Struct
+icu::normalizer::properties::CanonicalCompositionBorrowed::compose#FnInStruct
+icu::normalizer::properties::CanonicalCompositionBorrowed::new#FnInStruct
+icu::normalizer::properties::CanonicalDecomposition::as_borrowed#FnInStruct
+icu::normalizer::properties::CanonicalDecompositionBorrowed#Struct
+icu::normalizer::properties::CanonicalDecompositionBorrowed::new#FnInStruct
+icu::normalizer::uts46::Uts46MapperBorrowed#Struct
+icu::normalizer::uts46::Uts46MapperBorrowed::map_normalize#FnInStruct
+icu::normalizer::uts46::Uts46MapperBorrowed::new#FnInStruct
+icu::normalizer::uts46::Uts46MapperBorrowed::normalize_validate#FnInStruct
 icu::properties::BidiClass#Struct
 icu::properties::BidiClass::ArabicLetter#AssociatedConstantInStruct
 icu::properties::BidiClass::ArabicNumber#AssociatedConstantInStruct
