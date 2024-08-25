@@ -138,8 +138,9 @@ fn parse_tz_iana_name<'a>(cursor: &mut Cursor<'a>) -> ParserResult<TimeZoneRecor
 pub(crate) fn parse_date_time_utc(cursor: &mut Cursor) -> ParserResult<UTCOffsetRecord> {
     if cursor.check_or(false, is_utc_designator) {
         cursor.advance();
+        // NOTE: RFC9557 -> "Z" == "-00:00"
         return Ok(UTCOffsetRecord {
-            sign: Sign::Positive,
+            sign: Sign::Negative,
             hour: 0,
             minute: 0,
             second: 0,
