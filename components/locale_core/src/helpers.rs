@@ -284,21 +284,26 @@ macro_rules! impl_tinystr_subtag {
         // 6. Byte equality is semantic equality.
         #[cfg(feature = "zerovec")]
         unsafe impl zerovec::ule::ULE for $name {
-            fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ZeroVecError> {
+            fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ule::UleError> {
                 let it = bytes.chunks_exact(core::mem::size_of::<Self>());
                 if !it.remainder().is_empty() {
-                    return Err(zerovec::ZeroVecError::length::<Self>(bytes.len()));
+                    return Err(zerovec::ule::UleError::length::<Self>(bytes.len()));
                 }
                 for v in it {
                     // The following can be removed once `array_chunks` is stabilized.
                     let mut a = [0; core::mem::size_of::<Self>()];
                     a.copy_from_slice(v);
                     if Self::try_from_raw(a).is_err() {
-                        return Err(zerovec::ZeroVecError::parse::<Self>());
+                        return Err(zerovec::ule::UleError::parse::<Self>());
                     }
                 }
                 Ok(())
             }
+        }
+
+        #[cfg(feature = "zerovec")]
+        impl zerovec::ule::NicheBytes<$len_end> for $name {
+            const NICHE_BIT_PATTERN: [u8; $len_end] = <tinystr::TinyAsciiStr<$len_end>>::NICHE_BIT_PATTERN;
         }
 
         #[cfg(feature = "zerovec")]

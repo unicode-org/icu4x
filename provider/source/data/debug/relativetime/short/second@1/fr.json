@@ -3,31 +3,11 @@
     "0": "maintenant"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": "il y a  s",
-      "index": 7
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "il y a  s",
-      "index": 7
-    }
+    "specials": [],
+    "other": "\bil y a  s"
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "dans  s",
-      "index": 5
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "dans  s",
-      "index": 5
-    }
+    "specials": [],
+    "other": "\u0006dans  s"
   }
 }

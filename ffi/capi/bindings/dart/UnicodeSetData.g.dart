@@ -32,10 +32,8 @@ final class UnicodeSetData implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `contains`](https://docs.rs/icu/latest/icu/properties/sets/struct.UnicodeSetDataBorrowed.html#method.contains) for more information.
   bool contains(String s) {
-    final temp = ffi2.Arena();
-    final sView = s.utf8View;
-    final result = _icu4x_UnicodeSetData_contains_mv1(_ffi, sView.allocIn(temp), sView.length);
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final result = _icu4x_UnicodeSetData_contains_mv1(_ffi, s._utf8AllocIn(temp.arena));
     return result;
   }
 
@@ -120,9 +118,9 @@ final class UnicodeSetData implements ffi.Finalizable {
 external void _icu4x_UnicodeSetData_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
 @meta.ResourceIdentifier('icu4x_UnicodeSetData_contains_mv1')
-@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_UnicodeSetData_contains_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_UnicodeSetData_contains_mv1')
 // ignore: non_constant_identifier_names
-external bool _icu4x_UnicodeSetData_contains_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength);
+external bool _icu4x_UnicodeSetData_contains_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 s);
 
 @meta.ResourceIdentifier('icu4x_UnicodeSetData_contains_char_mv1')
 @ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_UnicodeSetData_contains_char_mv1')

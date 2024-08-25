@@ -74,10 +74,7 @@ impl MultiFieldsULE {
     ///
     /// - `index` must be in range
     #[inline]
-    pub unsafe fn validate_field<T: VarULE + ?Sized>(
-        &self,
-        index: usize,
-    ) -> Result<(), ZeroVecError> {
+    pub unsafe fn validate_field<T: VarULE + ?Sized>(&self, index: usize) -> Result<(), UleError> {
         T::validate_byte_slice(self.0.get_unchecked(index))
     }
 
@@ -140,7 +137,7 @@ unsafe impl VarULE for MultiFieldsULE {
     ///
     /// This impl exists so that EncodeAsVarULE can work.
     #[inline]
-    fn validate_byte_slice(slice: &[u8]) -> Result<(), ZeroVecError> {
+    fn validate_byte_slice(slice: &[u8]) -> Result<(), UleError> {
         <VarZeroSlice<[u8], Index32>>::validate_byte_slice(slice)
     }
 

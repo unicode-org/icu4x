@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
-use crate::error::Error;
+use crate::error::ZeroTrieBuildError;
 use alloc::vec;
 use alloc::vec::Vec;
 
@@ -17,7 +17,7 @@ const MAX_L2_SEARCH_MISSES: usize = 24;
 ///
 /// Returns `(p, [q_0, q_1, ..., q_(N-1)])`, or an error if the PHF could not be computed.
 #[allow(unused_labels)] // for readability
-pub fn find(bytes: &[u8]) -> Result<(u8, Vec<u8>), Error> {
+pub fn find(bytes: &[u8]) -> Result<(u8, Vec<u8>), ZeroTrieBuildError> {
     let n_usize = bytes.len();
 
     let mut p = 0u8;
@@ -87,7 +87,7 @@ pub fn find(bytes: &[u8]) -> Result<(u8, Vec<u8>), Error> {
                                 // and re-run the loop with a higher `max_allowable_p`.
                                 debug_assert_eq!(max_allowable_p, P_REAL_MAX);
                                 // println!("Could not solve PHF function");
-                                return Err(Error::CouldNotSolvePerfectHash);
+                                return Err(ZeroTrieBuildError::CouldNotSolvePerfectHash);
                             } else {
                                 p += 1;
                                 continue 'p_loop;
@@ -117,7 +117,7 @@ impl PerfectByteHashMap<Vec<u8>> {
     /// Computes a new [`PerfectByteHashMap`].
     ///
     /// (this is a doc-hidden API)
-    pub fn try_new(keys: &[u8]) -> Result<Self, Error> {
+    pub fn try_new(keys: &[u8]) -> Result<Self, ZeroTrieBuildError> {
         let n_usize = keys.len();
         let n = n_usize as u8;
         let (p, mut qq) = find(keys)?;

@@ -3,31 +3,11 @@
     "0": "এই ঘণ্টায়"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": " ঘন্টা আগে",
-      "index": 0
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": " ঘন্টা আগে",
-      "index": 0
-    }
+    "specials": [],
+    "other": "\u0001 ঘন্টা আগে"
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": " ঘন্টায়",
-      "index": 0
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": " ঘন্টায়",
-      "index": 0
-    }
+    "specials": [],
+    "other": "\u0001 ঘন্টায়"
   }
 }

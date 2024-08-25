@@ -88,6 +88,7 @@
 //! use icu::timezone::CustomTimeZone;
 //! use icu::timezone::GmtOffset;
 //! use icu::timezone::MetazoneCalculator;
+//! use icu::timezone::TimeZoneBcp47Id;
 //! use icu::timezone::TimeZoneIdMapper;
 //! use tinystr::{tinystr, TinyAsciiStr};
 //!
@@ -99,7 +100,7 @@
 //!     mapper.as_borrowed().iana_to_bcp47("America/Chicago");
 //!
 //! // Alternatively, set it directly from the BCP-47 ID
-//! assert_eq!(time_zone.time_zone_id, Some(tinystr!(8, "uschi").into()));
+//! assert_eq!(time_zone.time_zone_id, Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))));
 //!
 //! // Compute the metazone at January 1, 2022:
 //! let mzc = MetazoneCalculator::new();
@@ -135,6 +136,9 @@ mod time_zone;
 mod types;
 mod zoned_datetime;
 
+#[cfg(all(feature = "ixdtf", feature = "compiled_data"))]
+mod ixdtf;
+
 pub use error::InvalidOffsetError;
 pub use ids::{
     TimeZoneIdMapper, TimeZoneIdMapperBorrowed, TimeZoneIdMapperWithFastCanonicalization,
@@ -145,3 +149,6 @@ pub use provider::{MetazoneId, TimeZoneBcp47Id};
 pub use time_zone::CustomTimeZone;
 pub use types::{GmtOffset, ZoneVariant};
 pub use zoned_datetime::CustomZonedDateTime;
+
+#[cfg(all(feature = "ixdtf", feature = "compiled_data"))]
+pub use crate::ixdtf::ParseError;

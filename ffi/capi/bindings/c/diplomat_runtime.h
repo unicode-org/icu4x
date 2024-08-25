@@ -46,20 +46,24 @@ bool diplomat_is_str(const char* buf, size_t len);
         size_t len; \
     } Diplomat##name##Array;
 
-MAKE_SLICES(I8, int8_t)
-MAKE_SLICES(U8, uint8_t)
-MAKE_SLICES(I16, int16_t)
-MAKE_SLICES(U16, uint16_t)
-MAKE_SLICES(I32, int32_t)
-MAKE_SLICES(U32, uint32_t)
-MAKE_SLICES(I64, int64_t)
-MAKE_SLICES(U64, uint64_t)
-MAKE_SLICES(Isize, intptr_t)
-MAKE_SLICES(Usize, size_t)
-MAKE_SLICES(F32, float)
-MAKE_SLICES(F64, double)
-MAKE_SLICES(Bool, bool)
-MAKE_SLICES(Char, char32_t)
+#define MAKE_SLICES_AND_OPTIONS(name, c_ty) \
+    MAKE_SLICES(name, c_ty) \
+    typedef struct Option##name {union { c_ty ok; }; bool is_ok; } Option##name;
+
+MAKE_SLICES_AND_OPTIONS(I8, int8_t)
+MAKE_SLICES_AND_OPTIONS(U8, uint8_t)
+MAKE_SLICES_AND_OPTIONS(I16, int16_t)
+MAKE_SLICES_AND_OPTIONS(U16, uint16_t)
+MAKE_SLICES_AND_OPTIONS(I32, int32_t)
+MAKE_SLICES_AND_OPTIONS(U32, uint32_t)
+MAKE_SLICES_AND_OPTIONS(I64, int64_t)
+MAKE_SLICES_AND_OPTIONS(U64, uint64_t)
+MAKE_SLICES_AND_OPTIONS(Isize, intptr_t)
+MAKE_SLICES_AND_OPTIONS(Usize, size_t)
+MAKE_SLICES_AND_OPTIONS(F32, float)
+MAKE_SLICES_AND_OPTIONS(F64, double)
+MAKE_SLICES_AND_OPTIONS(Bool, bool)
+MAKE_SLICES_AND_OPTIONS(Char, char32_t)
 MAKE_SLICES(String, char)
 MAKE_SLICES(String16, char16_t)
 MAKE_SLICES(Strings, DiplomatStringView)

@@ -17,7 +17,7 @@ typedef enum BidiDirection {
   BidiDirection_Mixed = 2,
 } BidiDirection;
 
-
+typedef struct BidiDirection_option {union { BidiDirection ok; }; bool is_ok; } BidiDirection_option;
 
 
 

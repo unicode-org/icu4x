@@ -14,6 +14,7 @@ export class LineBreakStrictness {
         ["Strict", 2],
         ["Anywhere", 3]
     ]);
+
     constructor(value) {
         if (value instanceof LineBreakStrictness) {
             this.#value = value.value;
@@ -37,14 +38,7 @@ export class LineBreakStrictness {
     }
 
     static Loose = new LineBreakStrictness("Loose");
-
     static Normal = new LineBreakStrictness("Normal");
-
     static Strict = new LineBreakStrictness("Strict");
-
     static Anywhere = new LineBreakStrictness("Anywhere");
-
-
-    
-
 }

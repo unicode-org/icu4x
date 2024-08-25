@@ -57,9 +57,8 @@ mod tests;
 /// # pub mod icu {
 /// #   pub mod locale {
 /// #     pub mod fallback {
-/// #       pub use icu_provider::_internal::LocaleFallbackPriority;
+/// #       pub use icu_provider::fallback::LocaleFallbackPriority;
 /// #     }
-/// #     pub use icu_provider::_internal::locale_core::*;
 /// #   }
 /// # }
 /// use icu::locale::fallback::*;
@@ -323,18 +322,18 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
             let fallback_by_expr = if let Some(fallback_by_lit) = fallback_by {
                 match fallback_by_lit.value().as_str() {
                     "region" => {
-                        quote! {icu_provider::_internal::LocaleFallbackPriority::Region}
+                        quote! {icu_provider::fallback::LocaleFallbackPriority::Region}
                     }
                     "script" => {
-                        quote! {icu_provider::_internal::LocaleFallbackPriority::Script}
+                        quote! {icu_provider::fallback::LocaleFallbackPriority::Script}
                     }
                     "language" => {
-                        quote! {icu_provider::_internal::LocaleFallbackPriority::Language}
+                        quote! {icu_provider::fallback::LocaleFallbackPriority::Language}
                     }
                     _ => panic!("Invalid value for fallback_by"),
                 }
             } else {
-                quote! {icu_provider::_internal::LocaleFallbackPriority::const_default()}
+                quote! {icu_provider::fallback::LocaleFallbackPriority::default()}
             };
             let attributes_domain_setter = if let Some(attributes_domain_lit) = attributes_domain {
                 quote! { info.attributes_domain = #attributes_domain_lit; }

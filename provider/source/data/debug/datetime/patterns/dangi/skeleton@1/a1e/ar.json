@@ -8,8 +8,6 @@
   "patterns": [
     "r(U) MMMM d, EEEE",
     "r MMM d, E",
-    "r MMM d, E",
-    "r-M-d, E",
-    "r MMM d, E"
+    "r-MM-dd, E"
   ]
 }

@@ -15,10 +15,11 @@
 use alloc::boxed::Box;
 use core::cmp::Ordering;
 
+use icu_locale_core::subtags::Script;
 use icu_provider::prelude::*;
 
-use tinystr::TinyStr4;
-use zerovec::ule::{UnvalidatedStr, VarULE};
+use potential_utf::PotentialUtf8;
+use zerovec::ule::{NichedOption, VarULE};
 use zerovec::{maps::ZeroMapKV, VarZeroSlice, VarZeroVec, ZeroMap, ZeroVec};
 
 /// This is a property name that can be "loose matched" as according to
@@ -69,7 +70,7 @@ use zerovec::{maps::ZeroMapKV, VarZeroSlice, VarZeroVec, ZeroMap, ZeroVec};
 #[derive(Debug, VarULE)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize))]
 #[repr(transparent)]
-pub struct NormalizedPropertyNameStr(UnvalidatedStr);
+pub struct NormalizedPropertyNameStr(PotentialUtf8);
 
 /// This impl requires enabling the optional `serde` Cargo feature of the `icu::properties` crate
 #[cfg(feature = "serde")]
@@ -78,7 +79,7 @@ impl<'de> serde::Deserialize<'de> for Box<NormalizedPropertyNameStr> {
     where
         D: serde::Deserializer<'de>,
     {
-        <Box<UnvalidatedStr>>::deserialize(deserializer).map(NormalizedPropertyNameStr::cast_box)
+        <Box<PotentialUtf8>>::deserialize(deserializer).map(NormalizedPropertyNameStr::cast_box)
     }
 }
 
@@ -92,7 +93,7 @@ where
     where
         D: serde::Deserializer<'de>,
     {
-        <&UnvalidatedStr>::deserialize(deserializer).map(NormalizedPropertyNameStr::cast_ref)
+        <&PotentialUtf8>::deserialize(deserializer).map(NormalizedPropertyNameStr::cast_ref)
     }
 }
 
@@ -156,24 +157,24 @@ impl NormalizedPropertyNameStr {
 
     /// Convert a string reference to a [`NormalizedPropertyNameStr`].
     pub const fn from_str(s: &str) -> &Self {
-        Self::cast_ref(UnvalidatedStr::from_str(s))
+        Self::cast_ref(PotentialUtf8::from_str(s))
     }
 
-    /// Convert a [`UnvalidatedStr`] reference to a [`NormalizedPropertyNameStr`] reference.
-    pub const fn cast_ref(value: &UnvalidatedStr) -> &Self {
+    /// Convert a [`PotentialUtf8`] reference to a [`NormalizedPropertyNameStr`] reference.
+    pub const fn cast_ref(value: &PotentialUtf8) -> &Self {
         // Safety: repr(transparent)
         unsafe { core::mem::transmute(value) }
     }
 
-    /// Convert a [`UnvalidatedStr`] box to a [`NormalizedPropertyNameStr`] box.
-    pub const fn cast_box(value: Box<UnvalidatedStr>) -> Box<Self> {
+    /// Convert a [`PotentialUtf8`] box to a [`NormalizedPropertyNameStr`] box.
+    pub const fn cast_box(value: Box<PotentialUtf8>) -> Box<Self> {
         // Safety: repr(transparent)
         unsafe { core::mem::transmute(value) }
     }
 
     /// Get a [`NormalizedPropertyNameStr`] box from a byte slice.
     pub fn boxed_from_bytes(b: &[u8]) -> Box<Self> {
-        Self::cast_box(UnvalidatedStr::from_boxed_bytes(b.into()))
+        Self::cast_box(PotentialUtf8::from_boxed_bytes(b.into()))
     }
 }
 
@@ -418,9 +419,9 @@ pub struct PropertyEnumToValueNameLinearMapV1<'data> {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct PropertyEnumToValueNameLinearTiny4MapV1<'data> {
+pub struct PropertyScriptToIcuScriptMapV1<'data> {
     /// A map from the value discriminant (the index) to the names, for mostly
     /// contiguous data. Empty strings count as missing.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub map: ZeroVec<'data, TinyStr4>,
+    pub map: ZeroVec<'data, NichedOption<Script, 4>>,
 }

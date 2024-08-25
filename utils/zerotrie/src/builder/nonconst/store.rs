@@ -147,7 +147,7 @@ impl NonConstLengthsStack {
     /// Removes many [`BranchMeta`]s from the stack, returning them in a [`ConstArrayBuilder`].
     pub fn pop_many_or_panic(&mut self, len: usize) -> ConstArrayBuilder<256, BranchMeta> {
         debug_assert!(len <= 256);
-        let mut result = ConstArrayBuilder::new_empty([BranchMeta::const_default(); 256], 256);
+        let mut result = ConstArrayBuilder::new_empty([BranchMeta::default(); 256], 256);
         let mut ix = 0;
         loop {
             if ix == len {

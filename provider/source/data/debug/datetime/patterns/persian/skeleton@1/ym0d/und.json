@@ -3,14 +3,11 @@
     "has_long": true,
     "has_medium": true,
     "has_plurals": false,
-    "has_eras": true
+    "has_eras": false
   },
   "patterns": [
-    "G y MMMM d",
     "GGG y MMMM d",
-    "G y MMM d",
     "GGG y MMM d",
-    "GGGGG y-M-d",
-    "GGG y-M-d"
+    "GGGGG y-MM-dd"
   ]
 }

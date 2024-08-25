@@ -1,7 +1,11 @@
 {
   "display_names": {
-    "One": "British pound",
-    "Other": "British pounds",
-    "DisplayName": "British Pound"
+    "specials": [
+      [
+        "One",
+        "British pound"
+      ]
+    ],
+    "other": "British pounds"
   }
 }

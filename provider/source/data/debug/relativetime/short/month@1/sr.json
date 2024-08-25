@@ -5,37 +5,11 @@
     "1": "следећег мес."
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": "пре  мес.",
-      "index": 7
-    },
-    "two": null,
-    "few": {
-      "pattern": "пре  мес.",
-      "index": 7
-    },
-    "many": null,
-    "other": {
-      "pattern": "пре  мес.",
-      "index": 7
-    }
+    "specials": [],
+    "other": "\bпре  мес."
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "за  мес.",
-      "index": 5
-    },
-    "two": null,
-    "few": {
-      "pattern": "за  мес.",
-      "index": 5
-    },
-    "many": null,
-    "other": {
-      "pattern": "за  мес.",
-      "index": 5
-    }
+    "specials": [],
+    "other": "\u0006за  мес."
   }
 }

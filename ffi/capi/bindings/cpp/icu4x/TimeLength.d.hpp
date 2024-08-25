@@ -18,6 +18,8 @@ namespace capi {
       TimeLength_Medium = 2,
       TimeLength_Short = 3,
     };
+    
+    typedef struct TimeLength_option {union { TimeLength ok; }; bool is_ok; } TimeLength_option;
 } // namespace capi
 } // namespace
 

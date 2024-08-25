@@ -84,7 +84,11 @@
 
 use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
-    pattern::{runtime::PatternPlurals, PatternItem},
+    neo_skeleton::FractionalSecondDigits,
+    pattern::{
+        runtime::{Pattern, PatternPlurals},
+        PatternItem,
+    },
 };
 
 use super::preferences;
@@ -123,7 +127,7 @@ pub struct Bag {
     /// Include the second such as "3" or "03".
     pub second: Option<Numeric>,
     /// Specify the number of fractional second digits such as 1 (".3") or 3 (".003").
-    pub fractional_second: Option<u8>,
+    pub fractional_second: Option<FractionalSecondDigits>,
 
     /// Include the time zone, such as "GMT+05:00".
     pub time_zone_name: Option<TimeZoneName>,
@@ -347,24 +351,23 @@ impl Bag {
         }
 
         if let Some(second) = self.second {
+            let symbol = match self.fractional_second {
+                None => FieldSymbol::Second(fields::Second::Second),
+                Some(fractional_second) => {
+                    FieldSymbol::from_fractional_second_digits(fractional_second)
+                }
+            };
             // s    8, 12    Numeric: minimum digits
             // ss  08, 12    Numeric: 2 digits, zero pad if needed
             fields.push(Field {
-                symbol: FieldSymbol::Second(fields::Second::Second),
+                symbol,
                 length: match second {
                     Numeric::Numeric => FieldLength::One,
                     Numeric::TwoDigit => FieldLength::TwoDigit,
                 },
             });
+            // S - Fractional seconds. Represented as DecimalSecond.
             // A - Milliseconds in day. Not used in skeletons.
-        }
-
-        if let Some(precision) = self.fractional_second {
-            // S - Fractional seconds.
-            fields.push(Field {
-                symbol: FieldSymbol::Second(fields::Second::FractionalSecond),
-                length: FieldLength::Fixed(precision),
-            });
         }
 
         if self.time_zone_name.is_some() {
@@ -632,7 +635,12 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
             PatternPlurals::SinglePattern(pattern) => pattern,
             PatternPlurals::MultipleVariants(plural_pattern) => &plural_pattern.other,
         };
+        Self::from(pattern)
+    }
+}
 
+impl<'data> From<&Pattern<'data>> for Bag {
+    fn from(pattern: &Pattern) -> Self {
         let mut bag: Bag = Default::default();
 
         // Transform the fields into components per:
@@ -649,14 +657,8 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                         | FieldLength::NumericOverride(_)
                         | FieldLength::TwoDigit
                         | FieldLength::Abbreviated => Text::Short,
-                        FieldLength::TimeZoneFallbackOverride(_) => {
-                            debug_assert!(false, "unexpected length for era field");
-                            Text::Short
-                        }
                         FieldLength::Wide => Text::Long,
-                        FieldLength::Narrow | FieldLength::Six | FieldLength::Fixed(_) => {
-                            Text::Narrow
-                        }
+                        FieldLength::Narrow | FieldLength::Six => Text::Narrow,
                     });
                 }
                 FieldSymbol::Year(year) => {
@@ -669,7 +671,8 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                             FieldLength::TwoDigit => Year::TwoDigitWeekOf,
                             _ => Year::NumericWeekOf,
                         },
-                        _ => todo!("TODO(#3762): Add support for U and r"),
+                        // TODO(#3762): Add support for U and r
+                        _ => Year::Numeric,
                     });
                 }
                 FieldSymbol::Month(_) => {
@@ -678,16 +681,10 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                     bag.month = Some(match field.length {
                         FieldLength::One => Month::Numeric,
                         FieldLength::NumericOverride(_) => Month::Numeric,
-                        FieldLength::TimeZoneFallbackOverride(_) => {
-                            debug_assert!(false, "unexpected length for month field");
-                            Month::Numeric
-                        }
                         FieldLength::TwoDigit => Month::TwoDigit,
                         FieldLength::Abbreviated => Month::Short,
                         FieldLength::Wide => Month::Long,
-                        FieldLength::Narrow | FieldLength::Six | FieldLength::Fixed(_) => {
-                            Month::Narrow
-                        }
+                        FieldLength::Narrow | FieldLength::Six => Month::Narrow,
                     });
                 }
                 FieldSymbol::Week(week) => {
@@ -748,15 +745,9 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                                 //     'ccc, MMM d. y'
                                 unimplemented!("Numeric stand-alone fields are not supported.")
                             }
-                            FieldLength::TimeZoneFallbackOverride(_) => {
-                                debug_assert!(false, "unexpected length for weekday field");
-                                Text::Short
-                            }
                             FieldLength::Abbreviated => Text::Short,
                             FieldLength::Wide => Text::Long,
-                            FieldLength::Narrow | FieldLength::Six | FieldLength::Fixed(_) => {
-                                Text::Narrow
-                            }
+                            FieldLength::Narrow | FieldLength::Six => Text::Narrow,
                         },
                         fields::Weekday::Local => unimplemented!("fields::Weekday::Local"),
                     });
@@ -792,17 +783,28 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                                 _ => Numeric::Numeric,
                             });
                         }
-                        fields::Second::FractionalSecond => {
-                            if let FieldLength::Fixed(p) = field.length {
-                                if p > 0 {
-                                    bag.fractional_second = Some(p);
-                                }
-                            }
-                        }
                         fields::Second::Millisecond => {
                             // fields::Second::Millisecond is not implemented (#1834)
                         }
                     }
+                }
+                FieldSymbol::DecimalSecond(decimal_second) => {
+                    use FractionalSecondDigits::*;
+                    bag.second = Some(match field.length {
+                        FieldLength::TwoDigit => Numeric::TwoDigit,
+                        _ => Numeric::Numeric,
+                    });
+                    bag.fractional_second = Some(match decimal_second {
+                        fields::DecimalSecond::SecondF1 => F1,
+                        fields::DecimalSecond::SecondF2 => F2,
+                        fields::DecimalSecond::SecondF3 => F3,
+                        fields::DecimalSecond::SecondF4 => F4,
+                        fields::DecimalSecond::SecondF5 => F5,
+                        fields::DecimalSecond::SecondF6 => F6,
+                        fields::DecimalSecond::SecondF7 => F7,
+                        fields::DecimalSecond::SecondF8 => F8,
+                        fields::DecimalSecond::SecondF9 => F9,
+                    });
                 }
                 FieldSymbol::TimeZone(time_zone_name) => {
                     bag.time_zone_name = Some(match time_zone_name {
@@ -847,7 +849,7 @@ mod test {
             hour: Some(Numeric::Numeric),
             minute: Some(Numeric::Numeric),
             second: Some(Numeric::Numeric),
-            fractional_second: Some(3),
+            fractional_second: Some(FractionalSecondDigits::F3),
 
             ..Default::default()
         };
@@ -860,10 +862,9 @@ mod test {
                 (Symbol::Day(fields::Day::DayOfMonth), Length::One).into(),
                 (Symbol::Hour(fields::Hour::H23), Length::One).into(),
                 (Symbol::Minute, Length::One).into(),
-                (Symbol::Second(fields::Second::Second), Length::One).into(),
                 (
-                    Symbol::Second(fields::Second::FractionalSecond),
-                    Length::Fixed(3)
+                    Symbol::DecimalSecond(fields::DecimalSecond::SecondF3),
+                    Length::One
                 )
                     .into(),
             ]

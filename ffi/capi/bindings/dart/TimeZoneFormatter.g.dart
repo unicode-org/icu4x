@@ -51,9 +51,8 @@ final class TimeZoneFormatter implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   factory TimeZoneFormatter.withIso8601Fallback(DataProvider provider, Locale locale, IsoTimeZoneOptions options) {
-    final temp = ffi2.Arena();
-    final result = _icu4x_TimeZoneFormatter_create_with_iso_8601_fallback_mv1(provider._ffi, locale._ffi, options._toFfi(temp));
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final result = _icu4x_TimeZoneFormatter_create_with_iso_8601_fallback_mv1(provider._ffi, locale._ffi, options._toFfi(temp.arena));
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -144,9 +143,8 @@ final class TimeZoneFormatter implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   void loadIso8601Format(IsoTimeZoneOptions options) {
-    final temp = ffi2.Arena();
-    final result = _icu4x_TimeZoneFormatter_load_iso_8601_format_mv1(_ffi, options._toFfi(temp));
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final result = _icu4x_TimeZoneFormatter_load_iso_8601_format_mv1(_ffi, options._toFfi(temp.arena));
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }

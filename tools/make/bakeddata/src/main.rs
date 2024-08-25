@@ -240,8 +240,8 @@ struct StatisticsExporter<F> {
 
 #[derive(Default)]
 struct Data {
-    size_hash: HashMap<DataIdentifierCow<'static>, (usize, u64)>,
-    struct_sizes: HashMap<u64, usize>,
+    size_hash: HashMap<DataIdentifierCow<'static>, ((usize, usize), u64)>,
+    struct_sizes: HashMap<u64, (usize, usize)>,
     identifiers: HashSet<DataIdentifierCow<'static>>,
 }
 
@@ -252,21 +252,22 @@ impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
         id: DataIdentifierBorrowed,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        let size = payload.baked_size();
+        let baked_size = payload.baked_size();
 
         // We're using SipHash, which is deprecated, but we want a stable hasher
         // (we're fine with it not being cryptographically secure since we're just using it to track diffs)
         #[allow(deprecated)]
-        use std::hash::{Hash, Hasher, SipHasher};
+        use std::hash::{Hasher, SipHasher};
         #[allow(deprecated)]
         let mut hasher = SipHasher::new();
-        payload.hash(&mut hasher);
+        let postcard_size = payload.hash_and_postcard_size(&mut hasher);
         let hash = hasher.finish();
 
         let mut data = self.data.lock().expect("poison");
         let data = data.entry(marker).or_default();
-        data.size_hash.insert(id.into_owned(), (size, hash));
-        data.struct_sizes.insert(hash, size);
+        data.size_hash
+            .insert(id.into_owned(), ((baked_size, postcard_size), hash));
+        data.struct_sizes.insert(hash, (baked_size, postcard_size));
         data.identifiers.insert(id.into_owned());
 
         Ok(())
@@ -284,9 +285,11 @@ impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
         for (marker, data) in data.into_iter() {
             if !marker.is_singleton {
                 let structs_count = data.struct_sizes.len();
-                let structs_size = data.struct_sizes.values().sum::<usize>();
+                let baked_structs_size = data.struct_sizes.values().map(|(x, _)| x).sum::<usize>();
+                let postcard_structs_size =
+                    data.struct_sizes.values().map(|(_, x)| x).sum::<usize>();
                 lines.push(format!(
-                    "{marker:?}, <total>, {structs_size}B, {structs_count} unique payloads",
+                    "{marker:?}, <total>, {baked_structs_size}B, {postcard_structs_size}B, {structs_count} unique payloads",
                 ));
             }
 
@@ -295,7 +298,7 @@ impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
                 .into_iter()
                 .map(|(id, (size, hash))| {
                     (
-                        if marker.is_singleton && id.locale.is_und() {
+                        if marker.is_singleton && id.locale.is_default() {
                             "<singleton>".to_string()
                         } else if !id.marker_attributes.is_empty() {
                             format!(
@@ -312,11 +315,13 @@ impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
                 .collect::<BTreeMap<_, _>>();
 
             let mut seen = HashMap::new();
-            for (id, (size, hash)) in sorted.into_iter() {
+            for (id, ((baked_size, postcard_size), hash)) in sorted.into_iter() {
                 if let Some(deduped_req) = seen.get(&hash) {
-                    lines.push(format!("{marker:?}, {id}, {size}B, -> {deduped_req}",));
+                    lines.push(format!("{marker:?}, {id}, -> {deduped_req}",));
                 } else {
-                    lines.push(format!("{marker:?}, {id}, {size}B, {hash:x}",));
+                    lines.push(format!(
+                        "{marker:?}, {id}, {baked_size}B, {postcard_size}B, {hash:x}",
+                    ));
                     seen.insert(hash, id.clone());
                 }
             }

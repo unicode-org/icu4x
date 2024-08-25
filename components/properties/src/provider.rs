@@ -28,7 +28,7 @@ use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue
 use icu_provider::prelude::*;
 use zerofrom::ZeroFrom;
 
-use zerovec::{VarZeroVec, ZeroSlice, ZeroVecError};
+use zerovec::{ule::UleError, VarZeroVec, ZeroSlice};
 
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
@@ -674,9 +674,7 @@ impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
     }
 
     #[inline]
-    pub(crate) fn try_into_converted<P>(
-        self,
-    ) -> Result<PropertyCodePointMapV1<'data, P>, ZeroVecError>
+    pub(crate) fn try_into_converted<P>(self) -> Result<PropertyCodePointMapV1<'data, P>, UleError>
     where
         P: TrieValue,
     {

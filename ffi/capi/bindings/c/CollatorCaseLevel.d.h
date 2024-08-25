@@ -17,7 +17,7 @@ typedef enum CollatorCaseLevel {
   CollatorCaseLevel_On = 2,
 } CollatorCaseLevel;
 
-
+typedef struct CollatorCaseLevel_option {union { CollatorCaseLevel ok; }; bool is_ok; } CollatorCaseLevel_option;
 
 
 

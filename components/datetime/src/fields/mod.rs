@@ -10,7 +10,7 @@ mod length;
 pub(crate) mod symbols;
 
 use displaydoc::Display;
-pub use length::{FieldLength, FieldNumericOverrides, LengthError, TimeZoneFallbackOverride};
+pub use length::{FieldLength, FieldNumericOverrides, LengthError};
 pub use symbols::*;
 
 use core::{
@@ -69,13 +69,14 @@ impl Field {
             FieldSymbol::Minute => TextOrNumeric::Numeric,
             FieldSymbol::Second(second) => second.get_length_type(self.length),
             FieldSymbol::TimeZone(zone) => zone.get_length_type(self.length),
+            FieldSymbol::DecimalSecond(_) => TextOrNumeric::Numeric,
         }
     }
 }
 
 impl FieldULE {
     #[inline]
-    pub(crate) fn validate_bytes(bytes: (u8, u8)) -> Result<(), zerovec::ZeroVecError> {
+    pub(crate) fn validate_bytes(bytes: (u8, u8)) -> Result<(), zerovec::ule::UleError> {
         symbols::FieldSymbolULE::validate_byte(bytes.0)?;
         length::FieldLengthULE::validate_byte(bytes.1)?;
         Ok(())
@@ -94,14 +95,8 @@ impl From<(FieldSymbol, FieldLength)> for Field {
 impl TryFrom<(FieldSymbol, usize)> for Field {
     type Error = Error;
     fn try_from(input: (FieldSymbol, usize)) -> Result<Self, Self::Error> {
-        let length = if input.0 != FieldSymbol::Second(crate::fields::Second::FractionalSecond) {
-            FieldLength::from_idx(input.1 as u8).map_err(|_| Self::Error::InvalidLength(input.0))?
-        } else if input.1 <= 127 {
-            FieldLength::from_idx(128 + input.1 as u8)
-                .map_err(|_| Self::Error::InvalidLength(input.0))?
-        } else {
-            return Err(Self::Error::InvalidLength(input.0));
-        };
+        let length = FieldLength::from_idx(input.1 as u8)
+            .map_err(|_| Self::Error::InvalidLength(input.0))?;
         Ok(Self {
             symbol: input.0,
             length,

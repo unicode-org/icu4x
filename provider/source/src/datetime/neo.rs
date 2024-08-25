@@ -13,10 +13,10 @@ use icu::datetime::provider::neo::marker_attrs::{self, Context, Length, PatternL
 use icu::datetime::provider::neo::*;
 use icu::locale::extensions::unicode::{value, Value};
 use icu_provider::prelude::*;
+use potential_utf::PotentialUtf8;
 use std::borrow::Cow;
 use std::collections::{BTreeMap, HashSet};
 use tinystr::TinyAsciiStr;
-use zerovec::ule::UnvalidatedStr;
 
 /// Most keys don't have short symbols (except weekdays)
 ///
@@ -351,7 +351,7 @@ fn eras_convert(
     Ok(YearNamesV1::Eras(
         out_eras
             .iter()
-            .map(|(k, v)| (UnvalidatedStr::from_str(k), &**v))
+            .map(|(k, v)| (PotentialUtf8::from_str(k), &**v))
             .collect(),
     ))
 }
@@ -459,9 +459,17 @@ fn months_convert(
             // So we need to handle the 6 and 7 cases as leap months, and everything after 6 needs to
             // be offset by 1
             let index = if k == "7-yeartype-leap" {
-                7 + 11
+                // Adar II => M06L:
+                // * 12 months in a year
+                // * M06 is the 6th month
+                // * -1 because the data is zero-indexed
+                12 + 6 - 1
             } else if k == "6" {
-                6 + 11
+                // Adar I => M05L:
+                // * 12 months in a year
+                // * M05 is the 5th month
+                // * -1 because the data is zero-indexed
+                12 + 5 - 1
             } else {
                 let mut index: usize = k
                     .parse()
@@ -820,6 +828,9 @@ impl_symbols_datagen!(
 );
 
 // Datetime patterns
+// TODO: This is modeled with glue patterns that are the same across calendar
+// systems, but CLDR has some instances where the glue patterns differ, such
+// as in French (Gregorian has a comma but other calendars do not).
 impl_pattern_datagen!(
     GluePatternV1Marker,
     "gregory",

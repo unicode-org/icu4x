@@ -1,386 +1,1005 @@
-list/and@2, <lookup>, 663B, 135 identifiers
-list/and@2, <total>, 176692B, 118 unique payloads
-list/and@2, af, 1378B, 177f30fc0537cd07
-list/and@2, am, 1423B, 14751ee07af8ce24
-list/and@2, ar, 1380B, 82ed6c556b40aa1e
-list/and@2, as, 1404B, bc3470bb91f75d48
-list/and@2, ast, 1374B, e99c3aea63449dd0
-list/and@2, az, 1380B, 5e3bb9ec62923fae
-list/and@2, be, 1380B, cb1ace7c262d0af6
-list/and@2, bg, 1378B, 11f53c4c05e744f9
-list/and@2, blo, 1376B, 26282dbec0594fb7
-list/and@2, bn, 1404B, 19758d48131799f1
-list/and@2, br, 1376B, 60707fab8cf67422
-list/and@2, brx, 1425B, 5b409e2618450b25
-list/and@2, bs, 1374B, 58b0dcc30cdabe1d
-list/and@2, bs-Cyrl, 1380B, 3ed8301e7e2208a0
-list/and@2, ca, 1374B, -> bs
-list/and@2, ceb, 1378B, 4996bba9ce38c40a
-list/and@2, chr, 1386B, 1fb3b5daca1d8f3c
-list/and@2, cs, 1376B, cd02d57985d9daf5
-list/and@2, cv, 1400B, 90a2d808574c65a3
-list/and@2, cy, 1386B, afed7de64aa16506
-list/and@2, da, 1380B, 32914f71c9d587ff
-list/and@2, de, 1386B, a0118012fae3e0a1
-list/and@2, doi, 1407B, 1b95db885132a257
-list/and@2, dsb, 1374B, 3bb37689fa2614f8
-list/and@2, el, 1392B, 35c2f2f0277a33c8
-list/and@2, en, 1378B, d5c0db9263bf647e
-list/and@2, en-001, 1380B, b8523b7cd574b5b
-list/and@2, en-CA, 1380B, -> en-001
-list/and@2, en-IN, 1384B, 61f7e3861df4623e
-list/and@2, es, 7392B, d4359196e97c8a45
-list/and@2, et, 1376B, 56305a514cbe7bfd
-list/and@2, eu, 1380B, acd4c590f11d8805
-list/and@2, fa, 1412B, 7ce7cadd70af8d4c
-list/and@2, ff-Adlm, 1400B, 639b78d4c2615975
-list/and@2, fi, 1380B, 699dc4fca2b8cc87
-list/and@2, fil, 1378B, a5e76c3001991194
-list/and@2, fo, 1376B, 910d968200796314
-list/and@2, fr, 1376B, e7d22c80fdb46995
-list/and@2, fy, 1380B, d28356d40bb45872
-list/and@2, ga, 1384B, 6e2000cf0446bf80
-list/and@2, gd, 1382B, 3a34122013e286c
-list/and@2, gl, 1374B, fbc347f90f14c92e
-list/and@2, gu, 1404B, 5d7e493095be3841
-list/and@2, ha, 1383B, 9f66b694b10f5d0a
-list/and@2, he, 7896B, 7ef1549e6d5f667
-list/and@2, hi, 1405B, 9d7018b5adc50de1
-list/and@2, hi-Latn, 1385B, 2a3d8f306a5951e
-list/and@2, hr, 1374B, -> bs
-list/and@2, hsb, 1374B, -> dsb
-list/and@2, hu, 1386B, 2d9cd0be1a35b1be
-list/and@2, hy, 1376B, 44e29c6af4bb82b4
-list/and@2, ia, 1372B, bb65c82b6b92a243
-list/and@2, id, 1382B, e91badb6ad3b91ae
-list/and@2, ig, 1381B, 23164709b3073afd
-list/and@2, is, 1376B, 634be5555fa0bcd8
-list/and@2, it, 1374B, -> gl
-list/and@2, ja, 1380B, 63f62f90d59a7cc5
-list/and@2, jv, 1382B, f8fd0c4c53b3458f
-list/and@2, ka, 1404B, f8dcb31444960d6c
-list/and@2, kea, 1374B, -> bs
-list/and@2, kgp, 1380B, 2b82c6ba7d085436
-list/and@2, kk, 1392B, 11dff1bc1a9c23a5
-list/and@2, km, 1406B, 1e7b5872cf0f03ee
-list/and@2, kn, 1430B, 850a0d7dd9720d19
-list/and@2, ko, 1386B, 253c8bd716ad988e
-list/and@2, kok, 1371B, c69682cca46dba03
-list/and@2, ks, 1416B, 65acbf4a1b18ae0d
-list/and@2, ks-Deva, 1407B, 6fa43478ae4c9ca
-list/and@2, ku, 1380B, e576f662ae2f915b
-list/and@2, kxv, 1401B, 8ad1923ebc7df4e8
-list/and@2, ky, 1416B, b86135704910c894
-list/and@2, lb, 1392B, 498bd9acbf3a33af
-list/and@2, lo, 1404B, 8ff6a9e2f5601bcf
-list/and@2, lt, 1380B, 46bba9842e4a4c02
-list/and@2, lv, 1380B, 478f376df4fc13a6
-list/and@2, mai, 1407B, 9d7d1b4c5f2fe05e
-list/and@2, mi, 1371B, -> kok
-list/and@2, mk, 1380B, -> bs-Cyrl
-list/and@2, ml, 1461B, ebcb5addd42f25fe
-list/and@2, mni, 1458B, 43d80f3868995b85
-list/and@2, mr, 1422B, 8c16634d4887534a
-list/and@2, ms, 1380B, d0a87c39de59a6ce
-list/and@2, mt, 1377B, a582ab86e5f8fd9d
-list/and@2, my, 1458B, 5eefbe853aab729d
-list/and@2, ne, 1377B, e94f80ad32969347
-list/and@2, nl, 1374B, 16b33eb92acc99c2
-list/and@2, no, 1380B, -> da
-list/and@2, or, 1389B, ac05a328c94dbffa
-list/and@2, pa, 1404B, 9b4eb77302ac0b91
-list/and@2, pcm, 1380B, 3e459e98eaae3b33
-list/and@2, pl, 1374B, -> bs
-list/and@2, ps, 1401B, 8c789bce94751d29
-list/and@2, pt, 1372B, -> ia
-list/and@2, rm, 1374B, -> gl
-list/and@2, ro, 1380B, 28a7bb709415b740
-list/and@2, ru, 1376B, 6da70da3b8a81c68
-list/and@2, sa, 1425B, f34a7c9f4fc77f86
-list/and@2, sah, 1428B, a9c1b13116f870d5
-list/and@2, sc, 1374B, -> gl
-list/and@2, sd, 1380B, 1c7860ac0de63ee4
-list/and@2, si, 1407B, 98beb0a0883f6fdb
-list/and@2, sk, 1377B, 9e48117d81da968c
-list/and@2, sl, 1380B, 648a182016ff2887
-list/and@2, so, 1376B, 31d8e33376d8e407
-list/and@2, sq, 1386B, ee34c4e2eb521181
-list/and@2, sr, 1380B, -> bs-Cyrl
-list/and@2, sr-Latn, 1374B, -> bs
-list/and@2, su, 1407B, f71496632930aba0
-list/and@2, sv, 1380B, ba7f92fde5aaf857
-list/and@2, sw, 1378B, c2d9a66b9140f627
-list/and@2, syr, 1380B, cc45ef7002f5f7f2
-list/and@2, ta, 1494B, b1fa8d8352b5e7ae
-list/and@2, te, 1428B, 49d5ff89a2e6c9
-list/and@2, th, 1407B, 294a0ede8a0d2015
-list/and@2, ti, 1410B, e216051da14b60fb
-list/and@2, tk, 1376B, fed2547089754d14
-list/and@2, to, 1392B, b377523816206332
-list/and@2, tr, 1376B, 1215513b46817e60
-list/and@2, tt, 1404B, c50a7526dc58c855
-list/and@2, ug, 1389B, 35c139f801b2bcb9
-list/and@2, uk, 1376B, a1a55eeb21d183d5
-list/and@2, und, 1368B, 924e2d2be2336604
-list/and@2, ur, 1404B, b153327e261b3730
-list/and@2, uz, 1376B, 79487c123a9a09c1
-list/and@2, vec, 1373B, a210d8057c121705
-list/and@2, vi, 1380B, f003e25560fff4
-list/and@2, xnr, 1423B, e9842f47a7acdc11
-list/and@2, yrl, 1388B, f22af065ee4bf781
-list/and@2, yue, 1380B, daf7cc40f308f624
-list/and@2, yue-Hans, 1380B, -> yue
-list/and@2, zh, 1380B, 9f266195fc94673c
-list/and@2, zh-HK, 1380B, 13320f3318004eea
-list/and@2, zh-Hant, 1380B, 24c8fd6c3ed6f2cc
-list/and@2, zh-MO, 1380B, -> zh-HK
-list/and@2, zu, 1378B, f280d533aa349025
-list/or@2, <lookup>, 587B, 119 identifiers
-list/or@2, <total>, 141356B, 95 unique payloads
-list/or@2, af, 1380B, 8912e928094584a4
-list/or@2, am, 1443B, 76f0c5245302d4b1
-list/or@2, ar, 1416B, 5806d35693c39ceb
-list/or@2, as, 1404B, 4058e73723db4377
-list/or@2, ast, 1374B, 35cea0d8ac5956e2
-list/or@2, az, 1403B, 206176eb0c755f1d
-list/or@2, be, 1392B, 7413ab06c8f547a6
-list/or@2, bg, 1404B, 3ea21a1724b77445
-list/or@2, blo, 1386B, 92ed5e3ca39cd5ab
-list/or@2, bn, 1407B, b5a6ed26ff506478
-list/or@2, br, 1380B, 688a41194836d6eb
-list/or@2, bs, 1386B, a8e1945fae979592
-list/or@2, ca, 1374B, -> ast
-list/or@2, ceb, 1377B, c6a68505ae96b455
-list/or@2, chr, 1443B, e5eb1763cbe304e
-list/or@2, cs, 1392B, 85b283db66ddafec
-list/or@2, cv, 1380B, 3870edeeb0775467
-list/or@2, cy, 1386B, 536f109d8b544993
-list/or@2, da, 1390B, 5f9ae8420d2c49ea
-list/or@2, de, 1392B, 55fbf73736ca2d66
-list/or@2, dsb, 1386B, 6c6336f4f9cfbf48
-list/or@2, el, 1380B, 6f18e7275f46fb03
-list/or@2, en-001, 1380B, 8fea1d255f87e636
-list/or@2, en-CA, 1380B, -> en-001
-list/or@2, es, 9150B, 111d925abff3030a
-list/or@2, et, 1392B, 7c1d760a85bea3f
-list/or@2, eu, 1386B, 71a1b47bd8e71860
-list/or@2, fa, 1422B, 72d328acc87911c4
-list/or@2, ff-Adlm, 1533B, 3c239c8c3d3af4e9
-list/or@2, fi, 1386B, 8defbfe947f6aa3a
-list/or@2, fil, 1377B, -> ceb
-list/or@2, fo, 1395B, 6e596363e6fd504b
-list/or@2, fr, 1380B, ef0beb53438de196
-list/or@2, ga, 1386B, 65212518e4f362a7
-list/or@2, gd, 1380B, 316af7a227d124c8
-list/or@2, gl, 1380B, -> fr
-list/or@2, gu, 1441B, 46f547086f6f3673
-list/or@2, ha, 1380B, 330dc648f5a5516f
-list/or@2, he, 1392B, 6ff819fff927e117
-list/or@2, hi, 1404B, a86a8884d81ba740
-list/or@2, hi-Latn, 1386B, 84534ad85af5ee2
-list/or@2, hr, 1386B, -> bs
-list/or@2, hsb, 1386B, -> dsb
-list/or@2, hu, 1392B, 8fad01ae3fcfae0a
-list/or@2, hy, 1404B, 546e2434d409694d
-list/or@2, ia, 1374B, -> ast
-list/or@2, id, 1395B, 6ab9d387e8b146c7
-list/or@2, is, 1392B, c46fc8df48a0e6bc
-list/or@2, it, 1374B, -> ast
-list/or@2, ja, 1425B, de30e5aa548f8dec
-list/or@2, jv, 1401B, 6a2593ed262f02b1
-list/or@2, ka, 1404B, 176a8219b3ab31bf
-list/or@2, kea, 1374B, -> ast
-list/or@2, kgp, 1428B, a05d872969a8e207
-list/or@2, kk, 1440B, ba986f8b0b644940
-list/or@2, km, 1386B, f9587d310b612b32
-list/or@2, kn, 1443B, 6ada73cff13c990
-list/or@2, ko, 1404B, 9aba832eeae91361
-list/or@2, kok, 1407B, 2d323e9cbbb50325
-list/or@2, ku, 1380B, e4438503bcb24722
-list/or@2, kxv, 1416B, 1245b15510b0fc19
-list/or@2, ky, 1392B, b641ad2eb7fe688d
-list/or@2, lo, 1422B, ef3057ba2604950d
-list/or@2, lt, 1380B, 2a413806b3d95c7d
-list/or@2, lv, 1386B, 60002dab14038bc4
-list/or@2, mi, 1407B, 2279a38f38276d5b
-list/or@2, mk, 1404B, -> bg
-list/or@2, ml, 1551B, c6edd447f2b8500
-list/or@2, mn, 1485B, 1cda0695da5042c3
-list/or@2, mr, 1459B, fa44875bfc7b708c
-list/or@2, ms, 1395B, -> id
-list/or@2, my, 1536B, 778cebb7f20baf03
-list/or@2, ne, 1407B, -> kok
-list/or@2, nl, 1380B, -> af
-list/or@2, no, 1398B, a19d158c68fc4a6c
-list/or@2, or, 1476B, 8ef9acb0940bb5f8
-list/or@2, pa, 1424B, db379f7d5b770516
-list/or@2, pcm, 1387B, e183a7de42f1d80a
-list/or@2, pl, 1386B, 39cd2b6655c3c3d4
-list/or@2, ps, 1389B, 2ed16fe0acb0f188
-list/or@2, pt, 1380B, -> fr
-list/or@2, qu, 1395B, d2bcb75e881984a7
-list/or@2, rm, 1374B, 23a7a2cb78c1f0c2
-list/or@2, ro, 1386B, e088bb808f3d8929
-list/or@2, ru, 1404B, -> bg
-list/or@2, sc, 1374B, -> ast
-list/or@2, sd, 1395B, 38dfa0a77ff28f2a
-list/or@2, si, 1407B, 8976780f17304463
-list/or@2, sk, 1398B, 3c9965d043acea23
-list/or@2, sl, 1386B, 3f1140a98c000197
-list/or@2, so, 1386B, 10da7628678313d7
-list/or@2, sq, 1386B, a1c99ea17f56a192
-list/or@2, sr, 1404B, -> bg
-list/or@2, sr-Latn, 1386B, -> bs
-list/or@2, sv, 1398B, -> no
-list/or@2, sw, 1382B, 825e487e45de0b9d
-list/or@2, syr, 1416B, cffa599302047890
-list/or@2, ta, 1476B, 2e2bd1ee0529e032
-list/or@2, te, 1440B, b4555f255351c67c
-list/or@2, th, 1436B, c4e45f8366d47ee5
-list/or@2, ti, 1416B, 7ec4708f134d7837
-list/or@2, tk, 1404B, b0d2708e76640c4a
-list/or@2, to, 1389B, 2293a14a7c957e1b
-list/or@2, tr, 1392B, b191a110ef6202d6
-list/or@2, uk, 1404B, cd65bf4ae6e7d4c8
-list/or@2, und, 1383B, cc5700af8e3ffef8
-list/or@2, ur, 1404B, 237881f70c9375e6
-list/or@2, uz, 1392B, dd252e2955372bdb
-list/or@2, vec, 1377B, -> ceb
-list/or@2, vi, 1404B, 153e66c6507cc057
-list/or@2, xh, 1391B, 43055230d5c46da2
-list/or@2, xnr, 1404B, -> hi
-list/or@2, yo, 1428B, 3dce423c7525031c
-list/or@2, yo-BJ, 1425B, 644c10020b9f768b
-list/or@2, yrl, 1374B, -> rm
-list/or@2, yue, 1392B, 34a6b378f2e22e73
-list/or@2, yue-Hans, 1392B, -> yue
-list/or@2, zh, 1380B, 2e2b9ef825abc769
-list/or@2, zh-Hant, 1380B, -> zh
-list/unit@2, <lookup>, 594B, 126 identifiers
-list/unit@2, <total>, 122527B, 80 unique payloads
-list/unit@2, af, 1380B, d28356d40bb45872
-list/unit@2, am, 1386B, 8dcf442ea8ed6356
-list/unit@2, ar, 1392B, e14608e5cd3e4ce0
-list/unit@2, as, 1364B, a8ec4c1b87c10d93
-list/unit@2, ast, 1374B, e99c3aea63449dd0
-list/unit@2, be, 1356B, 375096409d6f0946
-list/unit@2, bg, 1376B, 265af9d5161141f4
-list/unit@2, blo, 1376B, 2ddaebc8fd468b9
-list/unit@2, brx, 1425B, 5b409e2618450b25
-list/unit@2, bs, 1374B, 58b0dcc30cdabe1d
-list/unit@2, bs-Cyrl, 1380B, 3ed8301e7e2208a0
-list/unit@2, ca, 1374B, -> bs
-list/unit@2, ceb, 1364B, -> as
-list/unit@2, chr, 1364B, -> as
-list/unit@2, cs, 1370B, a606e2914b597a70
-list/unit@2, cv, 1356B, -> be
-list/unit@2, da, 1380B, 32914f71c9d587ff
-list/unit@2, de, 1377B, 88ac208f771140cb
-list/unit@2, doi, 1407B, 1b95db885132a257
-list/unit@2, dsb, 1371B, 99ffd40ccfab19d6
-list/unit@2, el, 1364B, -> as
-list/unit@2, en, 1364B, -> as
-list/unit@2, es, 4376B, c87ae0db0636d63
-list/unit@2, es-DO, 6385B, 39788744ae60629
-list/unit@2, es-PY, 5380B, 1bf33f76dd40e0b0
-list/unit@2, es-US, 5380B, -> es-PY
-list/unit@2, et, 1364B, -> as
-list/unit@2, eu, 1386B, b46a29e76c01f0ac
-list/unit@2, fa, 1394B, bf7a6b4acbdca1ce
-list/unit@2, ff-Adlm, 1380B, a915927ec590bcf
-list/unit@2, fi, 1368B, 5ebe9dd4223a68d1
-list/unit@2, fil, 1364B, -> as
-list/unit@2, fo, 1366B, a62b4e305f75c1b1
-list/unit@2, fr, 1372B, a0505c62ffabb87a
-list/unit@2, fy, 1370B, f426ea466dbb2244
-list/unit@2, ga, 1372B, 3eaea6e0edbe7d9
-list/unit@2, gd, 1380B, 2baa05868b954e5e
-list/unit@2, gl, 1370B, 9aebc9ebe365d42b
-list/unit@2, gu, 1377B, b9de0f93b13837da
-list/unit@2, he, 1366B, 76e20d95ce23083d
-list/unit@2, hi, 1379B, f172cff9d7baf9c3
-list/unit@2, hi-Latn, 1375B, 31e2ac91d711cc71
-list/unit@2, hr, 1368B, 19a1f47c4a70645b
-list/unit@2, hsb, 1371B, -> dsb
-list/unit@2, hu, 1386B, 2d9cd0be1a35b1be
-list/unit@2, hy, 1370B, 6c9b501fa0541401
-list/unit@2, ia, 1364B, -> as
-list/unit@2, ig, 1383B, 50a9adc7b4c6a28b
-list/unit@2, is, 1378B, 6e3f7c2064cf079a
-list/unit@2, it, 1368B, 5fa739ce28987955
-list/unit@2, ja, 1352B, 5d679b8a8d264625
-list/unit@2, jv, 1364B, -> as
-list/unit@2, kea, 1370B, 37d6d34c32e75245
-list/unit@2, kgp, 1376B, e24ecc3b00e68f0d
-list/unit@2, kk, 1356B, -> be
-list/unit@2, km, 1356B, -> be
-list/unit@2, kn, 1367B, 2cb11ac2b35a34ad
-list/unit@2, ko, 1356B, -> be
-list/unit@2, kok, 1364B, -> as
-list/unit@2, ks, 1416B, 65acbf4a1b18ae0d
-list/unit@2, ks-Deva, 1407B, 6fa43478ae4c9ca
-list/unit@2, ku, 1372B, e805f0ffad369693
-list/unit@2, kxv, 1364B, -> as
-list/unit@2, ky, 1364B, -> as
-list/unit@2, lb, 1364B, -> as
-list/unit@2, lo, 1364B, -> as
-list/unit@2, lt, 1362B, bd60ee39ff6c5f41
-list/unit@2, lv, 1372B, fe102e31b56895bb
-list/unit@2, mai, 1407B, 9d7d1b4c5f2fe05e
-list/unit@2, mi, 1364B, -> as
-list/unit@2, mk, 1380B, -> bs-Cyrl
-list/unit@2, ml, 1365B, f986f4b361ed7d92
-list/unit@2, mn, 1356B, -> be
-list/unit@2, mni, 1458B, 43d80f3868995b85
-list/unit@2, mr, 1364B, -> as
-list/unit@2, ms, 1370B, c22e8ca50f17f821
-list/unit@2, mt, 1374B, b5768c3cf6ab2be0
-list/unit@2, my, 1452B, 98a6cfcd9842ecab
-list/unit@2, ne, 1357B, e5817d6b83385ea0
-list/unit@2, nl, 1372B, ad668c721c0bc675
-list/unit@2, nn, 1364B, -> as
-list/unit@2, no, 1372B, a2d30287718b13df
-list/unit@2, or, 1364B, -> as
-list/unit@2, pa, 1364B, -> as
-list/unit@2, pcm, 1364B, -> as
-list/unit@2, pl, 1374B, -> bs
-list/unit@2, ps, 1370B, 4b3e17ded11d6483
-list/unit@2, pt, 1368B, -> it
-list/unit@2, pt-PT, 1374B, fbc347f90f14c92e
-list/unit@2, rm, 1368B, -> it
-list/unit@2, ro, 1371B, a7f7ca3d0ea8b619
-list/unit@2, ru, 1356B, -> be
-list/unit@2, sa, 1425B, f34a7c9f4fc77f86
-list/unit@2, sah, 1428B, a9c1b13116f870d5
-list/unit@2, sc, 1368B, -> it
-list/unit@2, si, 1407B, 98beb0a0883f6fdb
-list/unit@2, sl, 1380B, 648a182016ff2887
-list/unit@2, so, 1371B, a44cf38ba21358a0
-list/unit@2, sq, 1374B, -> pt-PT
-list/unit@2, sr, 1380B, -> bs-Cyrl
-list/unit@2, sr-Latn, 1374B, -> bs
-list/unit@2, su, 1407B, f71496632930aba0
-list/unit@2, sv, 1364B, -> as
-list/unit@2, sw, 1380B, 306477c695c8cea1
-list/unit@2, syr, 1380B, cc45ef7002f5f7f2
-list/unit@2, ta, 1364B, -> as
-list/unit@2, th, 1386B, 3634af6f27539959
-list/unit@2, ti, 1389B, 51e44db4390c0322
-list/unit@2, tk, 1364B, -> as
-list/unit@2, to, 1390B, 647c23b950566c92
-list/unit@2, tr, 1356B, -> be
-list/unit@2, tt, 1404B, c50a7526dc58c855
-list/unit@2, ug, 1389B, 35c139f801b2bcb9
-list/unit@2, uk, 1380B, cb1ace7c262d0af6
-list/unit@2, und, 1368B, 924e2d2be2336604
-list/unit@2, ur, 1409B, b92dbfa5baac3d9c
-list/unit@2, uz, 1356B, -> be
-list/unit@2, vec, 1368B, -> it
-list/unit@2, vi, 1364B, -> as
-list/unit@2, xnr, 1366B, 5f6f58501e522c14
-list/unit@2, yrl, 1384B, fcc6d6177fc86427
-list/unit@2, yue, 1352B, -> ja
-list/unit@2, yue-Hans, 1352B, -> ja
-list/unit@2, zh, 1344B, 16c295fb252e0c3
-list/unit@2, zh-Hant, 1352B, -> ja
-list/unit@2, zu, 1367B, 6202988c3f3e90c9
+list/and@2, <lookup>, 1916B, 355 identifiers
+list/and@2, <total>, 39389B, 4885B, 127 unique payloads
+list/and@2, af/N, 290B, 20B, d2846cc3cf177584
+list/and@2, af/S, 288B, 15B, abf92122ab812de
+list/and@2, af/W, -> af/S
+list/and@2, am/N, 305B, 35B, ac2eece6141c505b
+list/and@2, am/S, 307B, 37B, d968196b6e126206
+list/and@2, am/W, -> am/S
+list/and@2, ar/N, 289B, 16B, 5c18e45cf0fdf2b0
+list/and@2, ar/S, -> ar/N
+list/and@2, ar/W, -> ar/N
+list/and@2, as/S, 295B, 22B, a97a1cd36166644b
+list/and@2, as/W, -> as/S
+list/and@2, ast/N, 287B, 14B, 79fdba0de5182d4
+list/and@2, ast/S, -> ast/N
+list/and@2, ast/W, -> ast/N
+list/and@2, az/S, 289B, 16B, 9570a9ca698b963
+list/and@2, az/W, -> az/S
+list/and@2, be/N, 288B, 15B, 8669f23220900030
+list/and@2, be/S, -> be/N
+list/and@2, be/W, -> be/N
+list/and@2, bg/N, 290B, 20B, 4db7bd0e15944df0
+list/and@2, bg/S, 288B, 15B, 7b91f5b572698798
+list/and@2, bg/W, -> bg/S
+list/and@2, blo/N, 287B, 14B, fcfdc97904dccecd
+list/and@2, blo/S, -> blo/N
+list/and@2, blo/W, 288B, 15B, 68497e3f35c3bf
+list/and@2, bn/S, 295B, 22B, 98993b65c207e5f6
+list/and@2, bn/W, -> bn/S
+list/and@2, br/N, -> blo/N
+list/and@2, br/S, -> blo/N
+list/and@2, br/W, 288B, 15B, 39f47233dba649b3
+list/and@2, brx/N, 307B, 37B, 23a028827ec444d5
+list/and@2, brx/S, -> brx/N
+list/and@2, brx/W, -> brx/N
+list/and@2, bs-Cyrl/N, -> bg/S
+list/and@2, bs-Cyrl/S, -> bg/S
+list/and@2, bs-Cyrl/W, -> bg/S
+list/and@2, bs/N, 287B, 14B, 28562bd19409e173
+list/and@2, bs/S, -> bs/N
+list/and@2, bs/W, -> bs/N
+list/and@2, ca/N, -> bs/N
+list/and@2, ca/S, -> bs/N
+list/and@2, ca/W, -> bs/N
+list/and@2, ceb/S, 293B, 23B, c612cf6b6c167a52
+list/and@2, ceb/W, -> ceb/S
+list/and@2, chr/N, 290B, 20B, 365c41497b8a5494
+list/and@2, chr/S, 291B, 21B, 78e8e9485edf8975
+list/and@2, chr/W, 301B, 31B, 17e741e46bcd1846
+list/and@2, cs/S, 288B, 15B, f815f2a5597345a5
+list/and@2, cs/W, -> cs/S
+list/and@2, cv/S, 294B, 21B, 7bc2366068e82a67
+list/and@2, cv/W, -> cv/S
+list/and@2, cy/S, 297B, 27B, a5823ca6855e02f
+list/and@2, cy/W, -> cy/S
+list/and@2, da/N, 288B, 15B, 139f0ed37d94d13
+list/and@2, da/S, -> da/N
+list/and@2, da/W, -> da/N
+list/and@2, de/N, 289B, 16B, 614da3e36a14e18f
+list/and@2, de/S, -> de/N
+list/and@2, de/W, -> de/N
+list/and@2, doi/N, 301B, 31B, 3e3b8f424d6f6714
+list/and@2, doi/S, -> doi/N
+list/and@2, doi/W, -> doi/N
+list/and@2, dsb/N, 287B, 14B, 6b30c064929f2d03
+list/and@2, dsb/S, -> dsb/N
+list/and@2, dsb/W, -> dsb/N
+list/and@2, el/S, 292B, 19B, 58199c9170260a1f
+list/and@2, el/W, -> el/S
+list/and@2, en-001/S, 289B, 16B, 74ac101ca997cce4
+list/and@2, en-001/W, -> en-001/S
+list/and@2, en-CA/S, -> en-001/S
+list/and@2, en-CA/W, -> en-001/S
+list/and@2, en-IN/N, 292B, 22B, ee71a27a0068803c
+list/and@2, en/S, -> chr/S
+list/and@2, en/W, 295B, 25B, 3950f21ab734a978
+list/and@2, es/N, 1290B, 1021B, 58945fe7830785e
+list/and@2, es/S, -> es/N
+list/and@2, es/W, -> es/N
+list/and@2, et/S, 288B, 15B, 72326c49bce9b8aa
+list/and@2, et/W, -> et/S
+list/and@2, eu/S, 289B, 16B, 6869307ba313e5b6
+list/and@2, eu/W, -> eu/S
+list/and@2, fa/N, 298B, 25B, 65cb9698f5e681c5
+list/and@2, fa/S, 302B, 32B, ea753dadcf0627d2
+list/and@2, fa/W, -> fa/S
+list/and@2, ff-Adlm/N, 292B, 19B, 1d936a305afdd5b0
+list/and@2, ff-Adlm/S, 297B, 27B, dddb802ef8b471d2
+list/and@2, ff-Adlm/W, 303B, 33B, b6d0b62f03ba4858
+list/and@2, fi/N, -> et/S
+list/and@2, fi/S, -> et/S
+list/and@2, fi/W, -> et/S
+list/and@2, fil/S, 293B, 23B, 7fad3a6f140ad5c1
+list/and@2, fil/W, -> fil/S
+list/and@2, fo/S, -> chr/S
+list/and@2, fo/W, 293B, 23B, 5970c0b771f73e47
+list/and@2, fr/S, 288B, 15B, bec819240ecc4415
+list/and@2, fr/W, -> fr/S
+list/and@2, fy/N, -> af/S
+list/and@2, fy/S, -> af/S
+list/and@2, fy/W, -> af/S
+list/and@2, ga/S, 290B, 17B, 7f31ec31b4d1e927
+list/and@2, ga/W, -> ga/S
+list/and@2, gd/S, 289B, 16B, ffb833529805b6f3
+list/and@2, gd/W, -> ga/S
+list/and@2, gl/N, 287B, 14B, 39e94d6814a5bad0
+list/and@2, gl/S, -> gl/N
+list/and@2, gl/W, -> gl/N
+list/and@2, gu/S, 295B, 22B, 8c38834d84a81702
+list/and@2, gu/W, -> gu/S
+list/and@2, ha/N, 293B, 23B, f9af5c2bb97e481d
+list/and@2, ha/S, -> ha/N
+list/and@2, ha/W, -> ha/N
+list/and@2, he/N, 1374B, 1105B, 4e9ad2964c0b706d
+list/and@2, he/S, -> he/N
+list/and@2, he/W, -> he/N
+list/and@2, hi-Latn/N, 291B, 21B, 846f8de82e79c4a6
+list/and@2, hi-Latn/S, 295B, 25B, aaf830429b365db4
+list/and@2, hi-Latn/W, -> hi-Latn/S
+list/and@2, hi/N, 292B, 19B, 57f0fed8c4b90f67
+list/and@2, hi/S, -> hi/N
+list/and@2, hi/W, 301B, 31B, 60022cf5ceae356b
+list/and@2, hr/N, -> bs/N
+list/and@2, hr/S, -> bs/N
+list/and@2, hr/W, -> bs/N
+list/and@2, hsb/N, -> dsb/N
+list/and@2, hsb/S, -> dsb/N
+list/and@2, hsb/W, -> dsb/N
+list/and@2, hu/N, 289B, 16B, cfcf29aaf5936fe0
+list/and@2, hu/S, -> hu/N
+list/and@2, hu/W, -> hu/N
+list/and@2, hy/S, 288B, 15B, 1842da171c10ab40
+list/and@2, hy/W, -> hy/S
+list/and@2, ia/S, -> gl/N
+list/and@2, ia/W, -> gl/N
+list/and@2, id/S, 295B, 25B, 2324b315036ba443
+list/and@2, id/W, -> id/S
+list/and@2, ig/N, 291B, 21B, 1fec4d8d0f00871
+list/and@2, ig/S, 293B, 23B, 86935e1175ae4fbe
+list/and@2, ig/W, -> ig/S
+list/and@2, is/S, -> da/N
+list/and@2, is/W, -> da/N
+list/and@2, it/N, -> gl/N
+list/and@2, it/S, -> gl/N
+list/and@2, it/W, -> gl/N
+list/and@2, ja/N, 289B, 16B, e33ec69defaaf323
+list/and@2, ja/S, -> ja/N
+list/and@2, ja/W, -> ja/N
+list/and@2, jv/S, 295B, 25B, cd1cc7483692ce58
+list/and@2, jv/W, -> jv/S
+list/and@2, ka/N, 292B, 19B, d031c67c3cf6e341
+list/and@2, ka/S, -> ka/N
+list/and@2, ka/W, -> ka/N
+list/and@2, kea/N, -> bs/N
+list/and@2, kea/S, -> bs/N
+list/and@2, kea/W, -> bs/N
+list/and@2, kgp/S, 289B, 16B, 801bcdf9f4b5f30d
+list/and@2, kgp/W, -> kgp/S
+list/and@2, kk/N, 296B, 26B, 6dc9a62292a7310d
+list/and@2, kk/S, -> kk/N
+list/and@2, kk/W, -> kk/N
+list/and@2, km/S, 295B, 22B, a20a50075ff6b186
+list/and@2, km/W, 308B, 38B, 35bd0202ea6d620f
+list/and@2, kn/S, 319B, 49B, 35e035422e4e4f5
+list/and@2, kn/W, -> kn/S
+list/and@2, ko/N, 289B, 16B, b013df42715415f3
+list/and@2, ko/S, -> ko/N
+list/and@2, ko/W, -> ko/N
+list/and@2, kok/S, -> chr/S
+list/and@2, ks-Deva/N, 301B, 31B, 8fb6c1a67cd19b7a
+list/and@2, ks-Deva/S, -> ks-Deva/N
+list/and@2, ks-Deva/W, -> ks-Deva/N
+list/and@2, ks/N, 304B, 34B, 4f97ade9c4ef104b
+list/and@2, ks/S, -> ks/N
+list/and@2, ks/W, -> ks/N
+list/and@2, ku/N, 288B, 15B, 9d85dac04950253b
+list/and@2, ku/S, -> ku/N
+list/and@2, ku/W, -> ku/N
+list/and@2, kxv/N, 299B, 29B, bd6f33a31bfb1bf2
+list/and@2, kxv/S, -> kxv/N
+list/and@2, kxv/W, -> kxv/N
+list/and@2, ky/N, 294B, 21B, 8390f6856b7bc548
+list/and@2, ky/S, -> ky/N
+list/and@2, ky/W, -> ky/N
+list/and@2, lb/N, 290B, 17B, 28b28d8c90104534
+list/and@2, lb/S, -> lb/N
+list/and@2, lb/W, -> lb/N
+list/and@2, lo/N, 297B, 27B, 8f83b72fb7a4c062
+list/and@2, lo/S, 295B, 22B, 2c96af7fad9e3547
+list/and@2, lo/W, -> lo/N
+list/and@2, lt/N, 288B, 15B, a013834841424a3e
+list/and@2, lt/S, -> lt/N
+list/and@2, lt/W, -> lt/N
+list/and@2, lv/N, 288B, 15B, a19faae623a843ab
+list/and@2, lv/S, -> lv/N
+list/and@2, lv/W, -> lv/N
+list/and@2, mai/N, -> hi/W
+list/and@2, mai/S, -> hi/W
+list/and@2, mai/W, -> hi/W
+list/and@2, mi/S, -> chr/S
+list/and@2, mk/N, -> bg/S
+list/and@2, mk/S, -> bg/S
+list/and@2, mk/W, -> bg/S
+list/and@2, ml/N, 307B, 37B, 21dbbcaf7ffc337a
+list/and@2, ml/S, 325B, 55B, d1d962a68c3a7197
+list/and@2, ml/W, -> ml/S
+list/and@2, mni/N, 301B, 28B, fb68ac1d7b05c08e
+list/and@2, mni/S, -> mni/N
+list/and@2, mni/W, -> mni/N
+list/and@2, mr/N, 295B, 22B, a269cf6b61aa1384
+list/and@2, mr/S, -> mr/N
+list/and@2, mr/W, -> mr/N
+list/and@2, ms/S, 289B, 16B, 4c5a8dff5583b809
+list/and@2, ms/W, -> ms/S
+list/and@2, mt/N, 291B, 21B, e8d23ec7985ffe41
+list/and@2, mt/S, -> mt/N
+list/and@2, mt/W, -> mt/N
+list/and@2, my/N, 302B, 29B, f8f106567810dfe9
+list/and@2, my/S, -> my/N
+list/and@2, my/W, -> my/N
+list/and@2, ne/N, 285B, 12B, 5824e00cb529485a
+list/and@2, ne/S, 288B, 15B, ac494b1e6e2e8cb2
+list/and@2, ne/W, -> ne/S
+list/and@2, nl/S, -> blo/N
+list/and@2, nl/W, -> af/S
+list/and@2, no/N, -> da/N
+list/and@2, no/S, -> da/N
+list/and@2, no/W, -> da/N
+list/and@2, or/N, 295B, 25B, b0ebda74daa63411
+list/and@2, or/S, -> or/N
+list/and@2, or/W, -> or/N
+list/and@2, pa/S, 295B, 22B, b92e155bcf35359b
+list/and@2, pa/W, -> pa/S
+list/and@2, pcm/N, 292B, 22B, f0f038b8d98a38c4
+list/and@2, pcm/S, -> chr/S
+list/and@2, pcm/W, 293B, 23B, 80d5a729de5be869
+list/and@2, pl/N, -> bs/N
+list/and@2, pl/S, -> bs/N
+list/and@2, pl/W, -> bs/N
+list/and@2, ps/N, 297B, 27B, d02513b336d9e879
+list/and@2, ps/S, 300B, 30B, 7ec78927997b8b52
+list/and@2, ps/W, -> ps/S
+list/and@2, pt/S, -> gl/N
+list/and@2, pt/W, -> gl/N
+list/and@2, rm/N, -> gl/N
+list/and@2, rm/S, -> gl/N
+list/and@2, rm/W, -> gl/N
+list/and@2, ro/S, 289B, 16B, 7d300d9476681478
+list/and@2, ro/W, -> ro/S
+list/and@2, ru/S, -> bg/S
+list/and@2, ru/W, -> bg/S
+list/and@2, sa/N, 307B, 37B, 224b8af0a5eb2afb
+list/and@2, sa/S, -> sa/N
+list/and@2, sa/W, -> sa/N
+list/and@2, sah/N, 296B, 23B, 17609cc665025ed7
+list/and@2, sah/S, -> sah/N
+list/and@2, sah/W, -> sah/N
+list/and@2, sc/N, -> gl/N
+list/and@2, sc/S, -> gl/N
+list/and@2, sc/W, -> gl/N
+list/and@2, sd/S, 294B, 24B, e37161f9d7baa054
+list/and@2, sd/W, -> sd/S
+list/and@2, si/N, 301B, 31B, 400cef8fdeea80e2
+list/and@2, si/S, -> si/N
+list/and@2, si/W, -> si/N
+list/and@2, sk/N, 291B, 21B, 3b0c1e58aa6c15a4
+list/and@2, sk/S, -> sk/N
+list/and@2, sk/W, -> sk/N
+list/and@2, sl/N, 288B, 15B, 94e0e0a6bbc425df
+list/and@2, sl/S, -> sl/N
+list/and@2, sl/W, -> sl/N
+list/and@2, so/S, -> blo/N
+list/and@2, so/W, 289B, 16B, 3fc80665edc7b077
+list/and@2, sq/N, 289B, 16B, 9299d64e6c3b71ba
+list/and@2, sq/S, -> sq/N
+list/and@2, sq/W, -> sq/N
+list/and@2, sr-Latn/N, -> bs/N
+list/and@2, sr-Latn/S, -> bs/N
+list/and@2, sr-Latn/W, -> bs/N
+list/and@2, sr/N, -> bg/S
+list/and@2, sr/S, -> bg/S
+list/and@2, sr/W, -> bg/S
+list/and@2, su/N, 301B, 31B, abb703b00ad0fe1d
+list/and@2, su/S, -> su/N
+list/and@2, su/W, -> su/N
+list/and@2, sv/S, 289B, 16B, 23fe56e256626a5a
+list/and@2, sv/W, -> sv/S
+list/and@2, sw/N, 290B, 20B, 29e98eb17acdc5d8
+list/and@2, sw/S, -> blo/W
+list/and@2, sw/W, -> blo/W
+list/and@2, syr/N, 289B, 16B, 4118279a2525f215
+list/and@2, syr/S, -> syr/N
+list/and@2, syr/W, -> syr/N
+list/and@2, ta/N, 307B, 34B, ae4567acac0637d8
+list/and@2, ta/S, -> ta/N
+list/and@2, ta/W, -> ta/N
+list/and@2, te/S, 301B, 28B, 8828954387596970
+list/and@2, te/W, -> te/S
+list/and@2, th/N, 301B, 31B, 71fc053fb2d27945
+list/and@2, th/S, -> th/N
+list/and@2, th/W, -> th/N
+list/and@2, ti/N, 295B, 22B, 8de48dca0f6e2dff
+list/and@2, ti/S, -> ti/N
+list/and@2, ti/W, -> ti/N
+list/and@2, tk/S, 288B, 15B, abb1d37ac0f5a92b
+list/and@2, tk/W, -> tk/S
+list/and@2, to/N, 292B, 19B, 9ea737794f8a9c9b
+list/and@2, to/S, -> to/N
+list/and@2, to/W, -> to/N
+list/and@2, tr/S, 288B, 15B, fed7f09b2c35f744
+list/and@2, tr/W, -> tr/S
+list/and@2, tt/N, 292B, 19B, dc0828a46237eeef
+list/and@2, tt/S, -> tt/N
+list/and@2, tt/W, -> tt/N
+list/and@2, ug/N, -> en/W
+list/and@2, ug/S, -> en/W
+list/and@2, ug/W, -> en/W
+list/and@2, uk/S, -> be/N
+list/and@2, uk/W, -> be/N
+list/and@2, und/N, 286B, 13B, b133df8e47cece80
+list/and@2, und/S, -> und/N
+list/and@2, und/W, -> und/N
+list/and@2, ur/N, 289B, 16B, 8a246beb63162e8c
+list/and@2, ur/S, 304B, 34B, 773b52ee8e12e8a4
+list/and@2, ur/W, -> ur/S
+list/and@2, uz/S, 288B, 15B, 7d76f5b4d41748df
+list/and@2, uz/W, -> uz/S
+list/and@2, vec/N, 289B, 19B, 2c7b8042a3826f2a
+list/and@2, vec/S, -> gl/N
+list/and@2, vec/W, -> gl/N
+list/and@2, vi/S, 289B, 16B, 8b01c7fda87170a6
+list/and@2, vi/W, -> vi/S
+list/and@2, xnr/N, 295B, 22B, 7487a351028a1c9c
+list/and@2, xnr/S, -> xnr/N
+list/and@2, xnr/W, 307B, 37B, e0911966fb3deb26
+list/and@2, yrl/S, 291B, 18B, 3bf0daf77cd7fe1c
+list/and@2, yrl/W, -> yrl/S
+list/and@2, yue-Hans/N, 289B, 16B, e4772e0649d93281
+list/and@2, yue-Hans/S, -> yue-Hans/N
+list/and@2, yue-Hans/W, -> yue-Hans/N
+list/and@2, yue/N, -> yue-Hans/N
+list/and@2, yue/S, -> yue-Hans/N
+list/and@2, yue/W, -> yue-Hans/N
+list/and@2, zh-HK/N, 289B, 16B, 16dca9facf5d6508
+list/and@2, zh-HK/S, -> zh-HK/N
+list/and@2, zh-HK/W, -> zh-HK/N
+list/and@2, zh-Hant/N, 292B, 22B, fca005a5a7ef1d2e
+list/and@2, zh-Hant/S, 289B, 16B, 7725f102b8ad94a5
+list/and@2, zh-Hant/W, -> zh-Hant/S
+list/and@2, zh-MO/N, -> zh-HK/N
+list/and@2, zh-MO/S, -> zh-HK/N
+list/and@2, zh-MO/W, -> zh-HK/N
+list/and@2, zh/N, -> ja/N
+list/and@2, zh/S, -> zh-Hant/S
+list/and@2, zh/W, -> zh-Hant/S
+list/and@2, zu/S, 293B, 23B, 59bfdd1b7f5c1e5a
+list/and@2, zu/W, -> zu/S
+list/or@2, <lookup>, 1846B, 355 identifiers
+list/or@2, <total>, 31520B, 3780B, 102 unique payloads
+list/or@2, af/N, 288B, 15B, 2ebffe2edb844a58
+list/or@2, af/S, -> af/N
+list/or@2, af/W, -> af/N
+list/or@2, am/N, 313B, 43B, 963b990512eac587
+list/or@2, am/S, -> am/N
+list/or@2, am/W, -> am/N
+list/or@2, ar/N, 298B, 25B, d260bef179d9195a
+list/or@2, ar/S, -> ar/N
+list/or@2, ar/W, -> ar/N
+list/or@2, as/N, 292B, 19B, 2b2c482a8b11af86
+list/or@2, as/S, -> as/N
+list/or@2, as/W, -> as/N
+list/or@2, ast/N, 287B, 14B, b9631af2d1c9f73b
+list/or@2, ast/S, -> ast/N
+list/or@2, ast/W, -> ast/N
+list/or@2, az/N, 292B, 19B, 1caa8cce65f57cc3
+list/or@2, az/S, -> az/N
+list/or@2, az/W, 299B, 29B, 909a62c10f04860e
+list/or@2, be/N, 290B, 17B, bf77e50c3bd9472e
+list/or@2, be/S, -> be/N
+list/or@2, be/W, -> be/N
+list/or@2, bg/N, 292B, 19B, c948d136fde6064f
+list/or@2, bg/S, -> bg/N
+list/or@2, bg/W, -> bg/N
+list/or@2, blo/N, 289B, 16B, 1f52f1bfb63274e4
+list/or@2, blo/S, -> blo/N
+list/or@2, blo/W, -> blo/N
+list/or@2, bn/N, 301B, 31B, eb5f82b7b9f46f58
+list/or@2, bn/S, -> bn/N
+list/or@2, bn/W, -> bn/N
+list/or@2, br/N, 288B, 15B, ba1ff18861e9d0b5
+list/or@2, br/S, -> br/N
+list/or@2, br/W, -> br/N
+list/or@2, bs/N, 289B, 16B, 3ecdc3d35879e98c
+list/or@2, bs/S, -> bs/N
+list/or@2, bs/W, -> bs/N
+list/or@2, ca/N, -> ast/N
+list/or@2, ca/S, -> ast/N
+list/or@2, ca/W, -> ast/N
+list/or@2, ceb/N, 291B, 21B, cff0a5155075ad45
+list/or@2, ceb/S, -> ceb/N
+list/or@2, ceb/W, -> ceb/N
+list/or@2, chr/N, 313B, 43B, 5f3b374b1f95e65
+list/or@2, chr/S, -> chr/N
+list/or@2, chr/W, -> chr/N
+list/or@2, cs/N, 290B, 17B, 1bed654fc281871f
+list/or@2, cs/S, -> cs/N
+list/or@2, cs/W, -> cs/N
+list/or@2, cv/N, 288B, 15B, 40366288f0dcb5a6
+list/or@2, cv/S, -> cv/N
+list/or@2, cv/W, -> cv/N
+list/or@2, cy/N, 289B, 16B, c25a3147c7af80a8
+list/or@2, cy/S, -> cy/N
+list/or@2, cy/W, -> cy/N
+list/or@2, da/N, 289B, 16B, 33d02e39f8bab811
+list/or@2, da/S, -> da/N
+list/or@2, da/W, 291B, 18B, d3eb9299a0d045cb
+list/or@2, de/N, 290B, 17B, 2d5d49d86f5cdcb7
+list/or@2, de/S, -> de/N
+list/or@2, de/W, -> de/N
+list/or@2, dsb/N, 289B, 16B, 97c5462566881700
+list/or@2, dsb/S, -> dsb/N
+list/or@2, dsb/W, -> dsb/N
+list/or@2, el/N, 288B, 15B, 2c295eafb7a1c126
+list/or@2, el/S, -> el/N
+list/or@2, el/W, -> el/N
+list/or@2, en-001/N, 288B, 15B, c2d4ab5e5bb5af3d
+list/or@2, en-001/S, -> en-001/N
+list/or@2, en-001/W, -> en-001/N
+list/or@2, en-CA/N, -> en-001/N
+list/or@2, en-CA/S, -> en-001/N
+list/or@2, en-CA/W, -> en-001/N
+list/or@2, es/N, 1583B, 1314B, f6111f97ee2cc20e
+list/or@2, es/S, -> es/N
+list/or@2, es/W, -> es/N
+list/or@2, et/N, 290B, 17B, c579aed1ecbf264c
+list/or@2, et/S, -> et/N
+list/or@2, et/W, -> et/N
+list/or@2, eu/N, 289B, 16B, d31b294ac9fcc6db
+list/or@2, eu/S, -> eu/N
+list/or@2, eu/W, -> eu/N
+list/or@2, fa/N, 306B, 36B, 89059fd385d5bbd2
+list/or@2, fa/S, -> fa/N
+list/or@2, fa/W, -> fa/N
+list/or@2, ff-Adlm/N, 343B, 73B, f08e1cdbf608443
+list/or@2, ff-Adlm/S, -> ff-Adlm/N
+list/or@2, ff-Adlm/W, -> ff-Adlm/N
+list/or@2, fi/N, 289B, 16B, a8df32dd1408f0e7
+list/or@2, fi/S, -> fi/N
+list/or@2, fi/W, -> fi/N
+list/or@2, fil/N, -> ceb/N
+list/or@2, fil/S, -> ceb/N
+list/or@2, fil/W, -> ceb/N
+list/or@2, fo/N, 297B, 27B, ed1ac465e96a66e6
+list/or@2, fo/S, -> fo/N
+list/or@2, fo/W, -> fo/N
+list/or@2, fr/N, 288B, 15B, 3eaa75d9701fc901
+list/or@2, fr/S, -> fr/N
+list/or@2, fr/W, -> fr/N
+list/or@2, ga/N, 289B, 16B, b661b233486f905c
+list/or@2, ga/S, -> ga/N
+list/or@2, ga/W, -> ga/N
+list/or@2, gd/N, 288B, 15B, d493b6b9afdd66cb
+list/or@2, gd/S, -> gd/N
+list/or@2, gd/W, -> gd/N
+list/or@2, gl/N, -> fr/N
+list/or@2, gl/S, -> fr/N
+list/or@2, gl/W, -> fr/N
+list/or@2, gu/N, 298B, 25B, f4db3241e9706d5f
+list/or@2, gu/S, -> gu/N
+list/or@2, gu/W, 313B, 43B, b069641ae642cae5
+list/or@2, ha/N, 288B, 15B, a04f819b34dfd8
+list/or@2, ha/S, -> ha/N
+list/or@2, ha/W, -> ha/N
+list/or@2, he/N, 290B, 17B, fe62bdb1548f8c0
+list/or@2, he/S, -> he/N
+list/or@2, he/W, -> he/N
+list/or@2, hi-Latn/N, 289B, 16B, da74649e415429d9
+list/or@2, hi-Latn/S, -> hi-Latn/N
+list/or@2, hi-Latn/W, -> hi-Latn/N
+list/or@2, hi/N, 292B, 19B, c4fb931a01be66d4
+list/or@2, hi/S, -> hi/N
+list/or@2, hi/W, -> hi/N
+list/or@2, hr/N, -> bs/N
+list/or@2, hr/S, -> bs/N
+list/or@2, hr/W, -> bs/N
+list/or@2, hsb/N, -> dsb/N
+list/or@2, hsb/S, -> dsb/N
+list/or@2, hsb/W, -> dsb/N
+list/or@2, hu/N, 290B, 17B, 218d2b0741826125
+list/or@2, hu/S, -> hu/N
+list/or@2, hu/W, -> hu/N
+list/or@2, hy/N, 292B, 19B, f05d6bc3e2f97699
+list/or@2, hy/S, -> hy/N
+list/or@2, hy/W, -> hy/N
+list/or@2, ia/N, -> ast/N
+list/or@2, ia/S, -> ast/N
+list/or@2, ia/W, -> ast/N
+list/or@2, id/N, 297B, 27B, b002658153eef90
+list/or@2, id/S, -> id/N
+list/or@2, id/W, -> id/N
+list/or@2, is/N, 290B, 17B, 6c7940bf0f2a7d3f
+list/or@2, is/S, -> is/N
+list/or@2, is/W, -> is/N
+list/or@2, it/N, -> ast/N
+list/or@2, it/S, -> ast/N
+list/or@2, it/W, -> ast/N
+list/or@2, ja/N, 307B, 37B, 9652abb10d897cb7
+list/or@2, ja/S, -> ja/N
+list/or@2, ja/W, -> ja/N
+list/or@2, jv/N, 299B, 29B, b2e8aafcf5003232
+list/or@2, jv/S, -> jv/N
+list/or@2, jv/W, -> jv/N
+list/or@2, ka/N, 292B, 19B, 6e2f3b7b0861d3c6
+list/or@2, ka/S, -> ka/N
+list/or@2, ka/W, -> ka/N
+list/or@2, kea/N, -> ast/N
+list/or@2, kea/S, -> ast/N
+list/or@2, kea/W, -> ast/N
+list/or@2, kgp/N, 296B, 23B, 39aca1cf891874f9
+list/or@2, kgp/S, -> kgp/N
+list/or@2, kgp/W, -> kgp/N
+list/or@2, kk/N, 312B, 42B, eaf341d1ba6fb662
+list/or@2, kk/S, -> kk/N
+list/or@2, kk/W, -> kk/N
+list/or@2, km/N, 289B, 16B, 1160f107ddaf7e2c
+list/or@2, km/S, -> km/N
+list/or@2, km/W, -> km/N
+list/or@2, kn/N, 313B, 43B, 1d4b924a0c7d1d83
+list/or@2, kn/S, -> kn/N
+list/or@2, kn/W, -> kn/N
+list/or@2, ko/N, 292B, 19B, 4142fa7703d6f007
+list/or@2, ko/S, -> ko/N
+list/or@2, ko/W, -> ko/N
+list/or@2, kok/N, 301B, 31B, ac2a4c79729d4ad1
+list/or@2, kok/S, -> kok/N
+list/or@2, kok/W, -> kok/N
+list/or@2, ku/N, 288B, 15B, b98284b01e2fb128
+list/or@2, ku/S, -> ku/N
+list/or@2, ku/W, -> ku/N
+list/or@2, kxv/N, 304B, 34B, 137f29084e5a8cf2
+list/or@2, kxv/S, -> kxv/N
+list/or@2, kxv/W, -> kxv/N
+list/or@2, ky/N, 290B, 17B, 62da9e5abd4f79dd
+list/or@2, ky/S, -> ky/N
+list/or@2, ky/W, -> ky/N
+list/or@2, lo/N, 295B, 22B, a0b29cff6eb8c977
+list/or@2, lo/S, -> lo/N
+list/or@2, lo/W, -> lo/N
+list/or@2, lt/N, 288B, 15B, bbb16d480f36271f
+list/or@2, lt/S, -> lt/N
+list/or@2, lt/W, -> lt/N
+list/or@2, lv/N, 289B, 16B, 20e9e83196d94695
+list/or@2, lv/S, -> lv/N
+list/or@2, lv/W, -> lv/N
+list/or@2, mi/N, 301B, 31B, e8f7384f4b1ebe21
+list/or@2, mi/S, -> mi/N
+list/or@2, mi/W, -> mi/N
+list/or@2, mk/N, -> bg/N
+list/or@2, mk/S, -> bg/N
+list/or@2, mk/W, -> bg/N
+list/or@2, ml/N, 349B, 79B, 3c5d9f6feb00ff35
+list/or@2, ml/S, -> ml/N
+list/or@2, ml/W, -> ml/N
+list/or@2, mn/N, 327B, 57B, 270033435576e4c3
+list/or@2, mn/S, -> mn/N
+list/or@2, mn/W, -> mn/N
+list/or@2, mr/N, 301B, 28B, c9ced650da795bdf
+list/or@2, mr/S, -> mr/N
+list/or@2, mr/W, 319B, 49B, 182639a695f58896
+list/or@2, ms/N, -> id/N
+list/or@2, ms/S, -> id/N
+list/or@2, ms/W, -> id/N
+list/or@2, my/N, 315B, 42B, c231632f25dfb6bf
+list/or@2, my/S, -> my/N
+list/or@2, my/W, -> my/N
+list/or@2, ne/N, -> kok/N
+list/or@2, ne/S, -> kok/N
+list/or@2, ne/W, -> kok/N
+list/or@2, nl/N, -> af/N
+list/or@2, nl/S, -> af/N
+list/or@2, nl/W, -> af/N
+list/or@2, no/N, -> da/W
+list/or@2, no/S, -> da/W
+list/or@2, no/W, -> da/W
+list/or@2, or/N, 304B, 31B, 8eeeb207b0032978
+list/or@2, or/S, -> or/N
+list/or@2, or/W, -> or/N
+list/or@2, pa/N, 307B, 37B, 20dce7064e120836
+list/or@2, pa/S, -> pa/N
+list/or@2, pa/W, 295B, 22B, 427ca3405d8e8cc6
+list/or@2, pcm/N, 289B, 16B, 1b9b29621aa09f29
+list/or@2, pcm/S, 295B, 25B, e5026129264cd000
+list/or@2, pcm/W, -> pcm/N
+list/or@2, pl/N, 289B, 16B, 9c891529c9ab93a1
+list/or@2, pl/S, -> pl/N
+list/or@2, pl/W, -> pl/N
+list/or@2, ps/N, 295B, 25B, cb50e53a13c706aa
+list/or@2, ps/S, -> ps/N
+list/or@2, ps/W, -> ps/N
+list/or@2, pt/N, -> fr/N
+list/or@2, pt/S, -> fr/N
+list/or@2, pt/W, -> fr/N
+list/or@2, qu/N, 297B, 27B, 36614dfd70e0f6a5
+list/or@2, qu/S, -> qu/N
+list/or@2, qu/W, -> qu/N
+list/or@2, rm/N, 287B, 14B, fad59d480d5a36aa
+list/or@2, rm/S, -> rm/N
+list/or@2, rm/W, -> rm/N
+list/or@2, ro/N, 289B, 16B, 782f264acad13ab
+list/or@2, ro/S, -> ro/N
+list/or@2, ro/W, -> ro/N
+list/or@2, ru/N, -> bg/N
+list/or@2, ru/S, -> bg/N
+list/or@2, ru/W, -> bg/N
+list/or@2, sc/N, -> ast/N
+list/or@2, sc/S, -> ast/N
+list/or@2, sc/W, -> ast/N
+list/or@2, sd/N, 297B, 27B, 383f0d10485aa9b9
+list/or@2, sd/S, -> sd/N
+list/or@2, sd/W, -> sd/N
+list/or@2, si/N, 301B, 31B, 3be51aac2add8f09
+list/or@2, si/S, -> si/N
+list/or@2, si/W, -> si/N
+list/or@2, sk/N, 291B, 18B, c71c75dcf1e9c56c
+list/or@2, sk/S, -> sk/N
+list/or@2, sk/W, -> sk/N
+list/or@2, sl/N, 289B, 16B, 1e48d3ddd4370638
+list/or@2, sl/S, -> sl/N
+list/or@2, sl/W, -> sl/N
+list/or@2, so/N, 289B, 16B, ec310ba77492f8b4
+list/or@2, so/S, -> so/N
+list/or@2, so/W, -> so/N
+list/or@2, sq/N, 289B, 16B, bc9b1a2364ce9524
+list/or@2, sq/S, -> sq/N
+list/or@2, sq/W, -> sq/N
+list/or@2, sr-Latn/N, -> bs/N
+list/or@2, sr-Latn/S, -> bs/N
+list/or@2, sr-Latn/W, -> bs/N
+list/or@2, sr/N, -> bg/N
+list/or@2, sr/S, -> bg/N
+list/or@2, sr/W, -> bg/N
+list/or@2, sv/N, -> da/W
+list/or@2, sv/S, -> da/W
+list/or@2, sv/W, -> da/W
+list/or@2, sw/N, 293B, 23B, 2fbb154e5af915ca
+list/or@2, sw/S, -> sw/N
+list/or@2, sw/W, 288B, 15B, 407adb102d49188c
+list/or@2, syr/N, 298B, 25B, 3e07fe76efa269a4
+list/or@2, syr/S, -> syr/N
+list/or@2, syr/W, -> syr/N
+list/or@2, ta/N, 304B, 31B, 45304c89b64c4a9f
+list/or@2, ta/S, -> ta/N
+list/or@2, ta/W, -> ta/N
+list/or@2, te/N, 298B, 25B, 50ee0a6135d203b7
+list/or@2, te/S, -> te/N
+list/or@2, te/W, -> te/N
+list/or@2, th/N, 310B, 40B, 90473787c83f580f
+list/or@2, th/S, -> th/N
+list/or@2, th/W, 298B, 25B, fc98c9b4261694c3
+list/or@2, ti/N, 296B, 23B, cd0a9e9d5f8a78ef
+list/or@2, ti/S, -> ti/N
+list/or@2, ti/W, -> ti/N
+list/or@2, tk/N, 292B, 19B, f50a438df39b7e4f
+list/or@2, tk/S, -> tk/N
+list/or@2, tk/W, -> tk/N
+list/or@2, to/N, 295B, 25B, fb598bfbc8b8e7aa
+list/or@2, to/S, -> to/N
+list/or@2, to/W, -> to/N
+list/or@2, tr/N, 290B, 17B, 81153a5cc124d29d
+list/or@2, tr/S, -> tr/N
+list/or@2, tr/W, -> tr/N
+list/or@2, uk/N, 292B, 19B, 9d30168972ee4aa4
+list/or@2, uk/S, -> uk/N
+list/or@2, uk/W, -> uk/N
+list/or@2, und/N, 293B, 23B, 9814f3fda7e0be82
+list/or@2, und/S, -> und/N
+list/or@2, und/W, -> und/N
+list/or@2, ur/N, 300B, 30B, 79fff57a50bfc28b
+list/or@2, ur/S, -> ur/N
+list/or@2, ur/W, -> ur/N
+list/or@2, uz/N, 290B, 17B, 5b52ca3b9a2609d8
+list/or@2, uz/S, -> uz/N
+list/or@2, uz/W, -> uz/N
+list/or@2, vec/N, -> ceb/N
+list/or@2, vec/S, -> ceb/N
+list/or@2, vec/W, -> ceb/N
+list/or@2, vi/N, 292B, 19B, 83abc7a37733cbdd
+list/or@2, vi/S, -> vi/N
+list/or@2, vi/W, -> vi/N
+list/or@2, xh/N, 301B, 31B, 218261d446b3ae33
+list/or@2, xnr/N, -> hi/N
+list/or@2, xnr/S, -> hi/N
+list/or@2, xnr/W, -> hi/N
+list/or@2, yo-BJ/N, 307B, 37B, 92da74b3c530c48
+list/or@2, yo-BJ/S, -> yo-BJ/N
+list/or@2, yo-BJ/W, -> yo-BJ/N
+list/or@2, yo/N, 308B, 38B, e39cd1b7c3a44152
+list/or@2, yo/S, -> yo/N
+list/or@2, yo/W, -> yo/N
+list/or@2, yrl/N, -> rm/N
+list/or@2, yrl/S, -> rm/N
+list/or@2, yrl/W, -> rm/N
+list/or@2, yue-Hans/N, 291B, 18B, 880c5b11944435c7
+list/or@2, yue-Hans/S, -> yue-Hans/N
+list/or@2, yue-Hans/W, -> yue-Hans/N
+list/or@2, yue/N, -> yue-Hans/N
+list/or@2, yue/S, -> yue-Hans/N
+list/or@2, yue/W, -> yue-Hans/N
+list/or@2, zh-Hant/N, 289B, 16B, d672304fae121575
+list/or@2, zh-Hant/S, -> zh-Hant/N
+list/or@2, zh-Hant/W, -> zh-Hant/N
+list/or@2, zh/N, -> zh-Hant/N
+list/or@2, zh/S, -> zh-Hant/N
+list/or@2, zh/W, -> zh-Hant/N
+list/unit@2, <lookup>, 1517B, 289 identifiers
+list/unit@2, <total>, 28090B, 4738B, 86 unique payloads
+list/unit@2, af/N, 288B, 15B, abf92122ab812de
+list/unit@2, af/S, -> af/N
+list/unit@2, af/W, -> af/N
+list/unit@2, am/N, 289B, 16B, 102373aafa7ae97f
+list/unit@2, am/S, 292B, 19B, 8281753590ef958c
+list/unit@2, am/W, -> am/S
+list/unit@2, ar/N, 289B, 16B, 5c18e45cf0fdf2b0
+list/unit@2, ar/S, 298B, 28B, ecd488ee816f1c1e
+list/unit@2, ar/W, -> ar/S
+list/unit@2, as/N, 283B, 10B, 65599aa2ed9d8617
+list/unit@2, ast/N, 287B, 14B, 79fdba0de5182d4
+list/unit@2, ast/S, -> ast/N
+list/unit@2, ast/W, -> ast/N
+list/unit@2, be/N, -> as/N
+list/unit@2, be/S, -> as/N
+list/unit@2, be/W, -> as/N
+list/unit@2, bg/N, 290B, 20B, baacef7a71d2d1c6
+list/unit@2, bg/S, -> bg/N
+list/unit@2, bg/W, 288B, 15B, 7b91f5b572698798
+list/unit@2, blo/S, 288B, 15B, 68497e3f35c3bf
+list/unit@2, blo/W, -> blo/S
+list/unit@2, brx/N, 307B, 37B, 23a028827ec444d5
+list/unit@2, brx/S, -> brx/N
+list/unit@2, brx/W, -> brx/N
+list/unit@2, bs-Cyrl/N, -> bg/W
+list/unit@2, bs-Cyrl/S, -> bg/W
+list/unit@2, bs-Cyrl/W, -> bg/W
+list/unit@2, bs/N, 287B, 14B, 28562bd19409e173
+list/unit@2, bs/S, -> bs/N
+list/unit@2, bs/W, -> bs/N
+list/unit@2, ca/N, -> bs/N
+list/unit@2, ca/S, -> bs/N
+list/unit@2, ca/W, -> bs/N
+list/unit@2, ceb/N, -> as/N
+list/unit@2, chr/N, -> as/N
+list/unit@2, cs/N, -> as/N
+list/unit@2, cs/S, 290B, 20B, e2214fa9e315943d
+list/unit@2, cs/W, 288B, 15B, f815f2a5597345a5
+list/unit@2, cv/N, -> as/N
+list/unit@2, cv/S, -> as/N
+list/unit@2, cv/W, -> as/N
+list/unit@2, da/N, 288B, 15B, 139f0ed37d94d13
+list/unit@2, da/S, -> da/N
+list/unit@2, da/W, -> da/N
+list/unit@2, de/N, 291B, 21B, 33e750dcf09179ee
+list/unit@2, de/S, -> de/N
+list/unit@2, de/W, -> de/N
+list/unit@2, doi/N, 301B, 31B, 3e3b8f424d6f6714
+list/unit@2, doi/S, -> doi/N
+list/unit@2, doi/W, -> doi/N
+list/unit@2, dsb/S, 289B, 19B, 1eef7eda1d3671fe
+list/unit@2, dsb/W, 287B, 14B, 6b30c064929f2d03
+list/unit@2, el/N, -> as/N
+list/unit@2, en/N, -> as/N
+list/unit@2, es-DO/N, 1289B, 1023B, dcd965b6b291c020
+list/unit@2, es-DO/S, 1290B, 1021B, 58945fe7830785e
+list/unit@2, es-PY/S, -> es-DO/S
+list/unit@2, es-US/S, -> es-DO/S
+list/unit@2, es/N, -> as/N
+list/unit@2, es/S, 1292B, 1026B, 2e14180a8853718f
+list/unit@2, es/W, -> es-DO/S
+list/unit@2, et/N, -> as/N
+list/unit@2, eu/N, 289B, 16B, 6869307ba313e5b6
+list/unit@2, eu/S, -> eu/N
+list/unit@2, eu/W, -> eu/N
+list/unit@2, fa/N, -> as/N
+list/unit@2, fa/S, 304B, 34B, 5472d25024e0ba4a
+list/unit@2, fa/W, 302B, 32B, ea753dadcf0627d2
+list/unit@2, ff-Adlm/N, -> as/N
+list/unit@2, ff-Adlm/S, 294B, 24B, 142f6a30e67d1d92
+list/unit@2, ff-Adlm/W, 292B, 19B, c4f75d44e77a5b5e
+list/unit@2, fi/N, -> as/N
+list/unit@2, fi/W, 288B, 15B, 72326c49bce9b8aa
+list/unit@2, fil/N, -> as/N
+list/unit@2, fo/N, -> as/N
+list/unit@2, fo/W, 290B, 20B, cd126e140a10732d
+list/unit@2, fr/N, -> as/N
+list/unit@2, fr/S, 288B, 15B, bec819240ecc4415
+list/unit@2, fr/W, -> fr/S
+list/unit@2, fy/W, 290B, 20B, d2846cc3cf177584
+list/unit@2, ga/N, -> as/N
+list/unit@2, ga/W, 290B, 17B, 7f31ec31b4d1e927
+list/unit@2, gd/N, -> as/N
+list/unit@2, gd/S, 290B, 17B, 319019cd5ca54910
+list/unit@2, gd/W, -> ga/W
+list/unit@2, gl/W, 287B, 14B, 39e94d6814a5bad0
+list/unit@2, gu/W, 297B, 27B, 5ceea97a33fa8767
+list/unit@2, he/N, -> as/N
+list/unit@2, he/W, 290B, 20B, 589b54eb9567652a
+list/unit@2, hi-Latn/N, 286B, 13B, b133df8e47cece80
+list/unit@2, hi-Latn/W, 295B, 25B, aaf830429b365db4
+list/unit@2, hi/N, 285B, 12B, feb550a0af7a08a2
+list/unit@2, hi/W, 301B, 31B, 60022cf5ceae356b
+list/unit@2, hr/N, -> as/N
+list/unit@2, hr/S, -> bs/N
+list/unit@2, hr/W, -> bs/N
+list/unit@2, hsb/S, -> dsb/S
+list/unit@2, hsb/W, -> dsb/W
+list/unit@2, hu/N, 289B, 16B, cfcf29aaf5936fe0
+list/unit@2, hu/S, -> hu/N
+list/unit@2, hu/W, -> hu/N
+list/unit@2, hy/N, -> as/N
+list/unit@2, hy/S, 286B, 13B, b32ab6608760fec9
+list/unit@2, hy/W, 288B, 15B, 1842da171c10ab40
+list/unit@2, ia/N, -> as/N
+list/unit@2, ig/N, 293B, 23B, 86935e1175ae4fbe
+list/unit@2, ig/S, -> ig/N
+list/unit@2, ig/W, -> ig/N
+list/unit@2, is/N, 286B, 13B, 8e40c5acb894cba9
+list/unit@2, is/S, -> da/N
+list/unit@2, is/W, -> da/N
+list/unit@2, it/N, -> as/N
+list/unit@2, it/S, -> gl/W
+list/unit@2, it/W, -> gl/W
+list/unit@2, ja/N, 280B, 7B, 85f896b6040a13ec
+list/unit@2, ja/S, -> as/N
+list/unit@2, ja/W, -> as/N
+list/unit@2, jv/N, -> as/N
+list/unit@2, kea/W, -> bs/N
+list/unit@2, kgp/N, -> as/N
+list/unit@2, kgp/S, 289B, 16B, 801bcdf9f4b5f30d
+list/unit@2, kgp/W, -> kgp/S
+list/unit@2, kk/N, -> as/N
+list/unit@2, kk/S, -> as/N
+list/unit@2, kk/W, -> as/N
+list/unit@2, km/N, -> as/N
+list/unit@2, km/S, -> as/N
+list/unit@2, km/W, -> as/N
+list/unit@2, kn/N, 287B, 17B, ca3d16bfaceb50d4
+list/unit@2, ko/N, -> as/N
+list/unit@2, ko/S, -> as/N
+list/unit@2, ko/W, -> as/N
+list/unit@2, kok/N, -> as/N
+list/unit@2, ks-Deva/N, 301B, 31B, 8fb6c1a67cd19b7a
+list/unit@2, ks-Deva/S, -> ks-Deva/N
+list/unit@2, ks-Deva/W, -> ks-Deva/N
+list/unit@2, ks/N, 304B, 34B, 4f97ade9c4ef104b
+list/unit@2, ks/S, -> ks/N
+list/unit@2, ks/W, -> ks/N
+list/unit@2, ku/N, -> as/N
+list/unit@2, ku/S, 288B, 15B, 9d85dac04950253b
+list/unit@2, ku/W, -> ku/S
+list/unit@2, kxv/N, -> as/N
+list/unit@2, ky/N, -> as/N
+list/unit@2, lb/N, -> as/N
+list/unit@2, lo/N, -> as/N
+list/unit@2, lt/N, -> as/N
+list/unit@2, lt/S, -> as/N
+list/unit@2, lt/W, 286B, 13B, da34c94e8ec8b671
+list/unit@2, lv/N, -> as/N
+list/unit@2, lv/S, 288B, 15B, a19faae623a843ab
+list/unit@2, lv/W, -> lv/S
+list/unit@2, mai/N, -> hi/W
+list/unit@2, mai/S, -> hi/W
+list/unit@2, mai/W, -> hi/W
+list/unit@2, mi/N, -> as/N
+list/unit@2, mk/N, -> bg/W
+list/unit@2, mk/S, -> bg/W
+list/unit@2, mk/W, -> bg/W
+list/unit@2, ml/N, 285B, 15B, dd1a87bd0a9710bb
+list/unit@2, mn/N, -> as/N
+list/unit@2, mn/S, -> as/N
+list/unit@2, mn/W, -> as/N
+list/unit@2, mni/N, 301B, 28B, fb68ac1d7b05c08e
+list/unit@2, mni/S, -> mni/N
+list/unit@2, mni/W, -> mni/N
+list/unit@2, mr/N, -> as/N
+list/unit@2, ms/N, -> as/N
+list/unit@2, ms/S, 289B, 16B, 4c5a8dff5583b809
+list/unit@2, mt/S, 291B, 21B, e8d23ec7985ffe41
+list/unit@2, mt/W, -> mt/S
+list/unit@2, my/N, 298B, 25B, 357d51c14429b0c0
+list/unit@2, my/S, 302B, 29B, f8f106567810dfe9
+list/unit@2, my/W, 300B, 27B, f7c572578fa48186
+list/unit@2, ne/N, 282B, 9B, 2c5f201e301c66b2
+list/unit@2, ne/S, 285B, 15B, 30a87972b0be1666
+list/unit@2, ne/W, 284B, 11B, ef0626e9ddfbe8f9
+list/unit@2, nl/W, -> af/N
+list/unit@2, nn/N, -> as/N
+list/unit@2, nn/W, -> hi-Latn/N
+list/unit@2, no/W, -> da/N
+list/unit@2, or/N, -> as/N
+list/unit@2, pa/N, -> as/N
+list/unit@2, pcm/N, -> as/N
+list/unit@2, pl/N, -> bs/N
+list/unit@2, pl/S, -> bs/N
+list/unit@2, pl/W, -> bs/N
+list/unit@2, ps/N, -> as/N
+list/unit@2, ps/S, 290B, 20B, 3148407c9c9880c8
+list/unit@2, ps/W, 292B, 22B, 21c1b7215c15e393
+list/unit@2, pt-PT/N, -> gl/W
+list/unit@2, pt/N, -> as/N
+list/unit@2, pt/S, -> gl/W
+list/unit@2, pt/W, -> gl/W
+list/unit@2, rm/N, -> as/N
+list/unit@2, rm/S, -> gl/W
+list/unit@2, rm/W, -> gl/W
+list/unit@2, ro/W, 291B, 21B, 5df60778b2282b66
+list/unit@2, ru/N, -> as/N
+list/unit@2, ru/S, -> as/N
+list/unit@2, ru/W, -> as/N
+list/unit@2, sa/N, 307B, 37B, 224b8af0a5eb2afb
+list/unit@2, sa/S, -> sa/N
+list/unit@2, sa/W, -> sa/N
+list/unit@2, sah/N, 296B, 23B, 17609cc665025ed7
+list/unit@2, sah/S, -> sah/N
+list/unit@2, sah/W, -> sah/N
+list/unit@2, sc/N, -> as/N
+list/unit@2, sc/S, -> gl/W
+list/unit@2, sc/W, -> gl/W
+list/unit@2, si/N, 301B, 31B, 400cef8fdeea80e2
+list/unit@2, si/S, -> si/N
+list/unit@2, si/W, -> si/N
+list/unit@2, sl/N, 288B, 15B, 94e0e0a6bbc425df
+list/unit@2, sl/S, -> sl/N
+list/unit@2, sl/W, -> sl/N
+list/unit@2, so/W, 291B, 21B, 4ad7bc7bfcf8b66a
+list/unit@2, sq/N, -> gl/W
+list/unit@2, sq/S, -> gl/W
+list/unit@2, sq/W, -> gl/W
+list/unit@2, sr-Latn/N, -> bs/N
+list/unit@2, sr-Latn/S, -> bs/N
+list/unit@2, sr-Latn/W, -> bs/N
+list/unit@2, sr/N, -> bg/W
+list/unit@2, sr/S, -> bg/W
+list/unit@2, sr/W, -> bg/W
+list/unit@2, su/N, 301B, 31B, abb703b00ad0fe1d
+list/unit@2, su/S, -> su/N
+list/unit@2, su/W, -> su/N
+list/unit@2, sv/N, -> as/N
+list/unit@2, sw/N, -> blo/S
+list/unit@2, sw/S, -> blo/S
+list/unit@2, sw/W, -> blo/S
+list/unit@2, syr/N, 289B, 16B, 4118279a2525f215
+list/unit@2, syr/S, -> syr/N
+list/unit@2, syr/W, -> syr/N
+list/unit@2, ta/N, -> as/N
+list/unit@2, th/N, -> as/N
+list/unit@2, th/S, 294B, 24B, 7df6ea5dbdd64877
+list/unit@2, th/W, 293B, 20B, ab5e4efbffbb9354
+list/unit@2, ti/N, -> as/N
+list/unit@2, ti/S, 299B, 29B, 1bc2b693ac7d347d
+list/unit@2, ti/W, 295B, 22B, 8de48dca0f6e2dff
+list/unit@2, tk/N, -> as/N
+list/unit@2, to/N, 288B, 15B, 2bbff62b563eef59
+list/unit@2, to/S, 290B, 17B, 28fc65b690256987
+list/unit@2, to/W, -> to/S
+list/unit@2, tr/N, -> as/N
+list/unit@2, tr/S, -> as/N
+list/unit@2, tr/W, -> as/N
+list/unit@2, tt/N, 292B, 19B, dc0828a46237eeef
+list/unit@2, tt/S, -> tt/N
+list/unit@2, tt/W, -> tt/N
+list/unit@2, ug/N, 295B, 25B, 3950f21ab734a978
+list/unit@2, ug/S, -> ug/N
+list/unit@2, ug/W, -> ug/N
+list/unit@2, uk/N, 288B, 15B, 8669f23220900030
+list/unit@2, uk/S, -> uk/N
+list/unit@2, uk/W, -> uk/N
+list/unit@2, und/N, -> hi-Latn/N
+list/unit@2, und/S, -> hi-Latn/N
+list/unit@2, und/W, -> hi-Latn/N
+list/unit@2, ur/N, 304B, 34B, 773b52ee8e12e8a4
+list/unit@2, ur/S, -> ur/N
+list/unit@2, ur/W, 297B, 27B, 56f0392b190e52c7
+list/unit@2, uz/N, -> as/N
+list/unit@2, uz/S, -> as/N
+list/unit@2, uz/W, -> as/N
+list/unit@2, vec/N, -> as/N
+list/unit@2, vec/S, -> gl/W
+list/unit@2, vec/W, -> gl/W
+list/unit@2, vi/N, -> as/N
+list/unit@2, xnr/N, -> hi/N
+list/unit@2, yrl/N, -> as/N
+list/unit@2, yrl/S, 291B, 18B, 3bf0daf77cd7fe1c
+list/unit@2, yrl/W, -> yrl/S
+list/unit@2, yue-Hans/N, -> ja/N
+list/unit@2, yue-Hans/S, -> as/N
+list/unit@2, yue-Hans/W, -> as/N
+list/unit@2, yue/N, -> ja/N
+list/unit@2, yue/S, -> as/N
+list/unit@2, yue/W, -> as/N
+list/unit@2, zh-Hant/N, -> ja/N
+list/unit@2, zh-Hant/S, -> as/N
+list/unit@2, zh-Hant/W, -> as/N
+list/unit@2, zh/N, -> ja/N
+list/unit@2, zh/S, -> ja/N
+list/unit@2, zh/W, -> ja/N
+list/unit@2, zu/N, 287B, 17B, f9fe558102a7657a

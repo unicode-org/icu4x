@@ -28,7 +28,7 @@ zerofrom = { workspace = true }
 zerovec-derive = { workspace = true, optional = true}
 
 databake = { workspace = true, features = ["derive"], optional = true }
-serde = { workspace = true, features = ["alloc"], optional = true }
+serde = { workspace = true, features = ["alloc", "derive"], optional = true }
 
 # Special dep for yoke: avoid non-breaking zerovec bumps requiring breaking yoke bumps
 # Can be reset on next zerovec breaking if necessary
@@ -50,6 +50,7 @@ rand_pcg = { workspace = true }
 rmp-serde = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
+potential_utf = { workspace = true, features = ["zerovec"] }
 yoke = { path = "../../utils/yoke", features = ["derive"] }
 zerofrom = { path = "../../utils/zerofrom", features = ["derive"] }
 

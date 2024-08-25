@@ -7,7 +7,7 @@
   },
   "patterns": [
     "EEEE، d MMMM",
-    "E، d MMM",
+    "E، dd‏/MM",
     "E، d‏/M"
   ]
 }

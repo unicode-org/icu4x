@@ -9,8 +9,8 @@ use crate::SourceDataProvider;
 use icu::experimental::displaynames::provider::*;
 use icu::locale::subtags::Language;
 use icu_provider::prelude::*;
+use potential_utf::PotentialUtf8;
 use std::collections::{BTreeMap, HashSet};
-use zerovec::ule::UnvalidatedStr;
 
 impl DataProvider<LanguageDisplayNamesV1Marker> for SourceDataProvider {
     fn load(
@@ -175,22 +175,22 @@ impl From<&cldr_serde::displaynames::language::Resource> for LocaleDisplayNamesV
             names: names
                 .into_iter()
                 .filter(|&(k, v)| k != v)
-                .map(|(k, v)| (UnvalidatedStr::from_str(k), v))
+                .map(|(k, v)| (PotentialUtf8::from_str(k), v))
                 .collect(),
             short_names: short_names
                 .into_iter()
                 .filter(|&(k, v)| k != v)
-                .map(|(k, v)| (UnvalidatedStr::from_str(k), v))
+                .map(|(k, v)| (PotentialUtf8::from_str(k), v))
                 .collect(),
             long_names: long_names
                 .into_iter()
                 .filter(|&(k, v)| k != v)
-                .map(|(k, v)| (UnvalidatedStr::from_str(k), v))
+                .map(|(k, v)| (PotentialUtf8::from_str(k), v))
                 .collect(),
             menu_names: menu_names
                 .into_iter()
                 .filter(|&(k, v)| k != v)
-                .map(|(k, v)| (UnvalidatedStr::from_str(k), v))
+                .map(|(k, v)| (PotentialUtf8::from_str(k), v))
                 .collect(),
         }
     }
@@ -300,7 +300,7 @@ mod tests {
         assert_eq!(
             data.get()
                 .names
-                .get(UnvalidatedStr::from_str("de-CH"))
+                .get(PotentialUtf8::from_str("de-CH"))
                 .unwrap(),
             "Swiss High German"
         );

@@ -7,43 +7,11 @@
     "2": "послезавтра"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": " дн. назад",
-      "index": 0
-    },
-    "two": null,
-    "few": {
-      "pattern": " дн. назад",
-      "index": 0
-    },
-    "many": {
-      "pattern": " дн. назад",
-      "index": 0
-    },
-    "other": {
-      "pattern": " дн. назад",
-      "index": 0
-    }
+    "specials": [],
+    "other": "\u0001 дн. назад"
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "через  дн.",
-      "index": 11
-    },
-    "two": null,
-    "few": {
-      "pattern": "через  дн.",
-      "index": 11
-    },
-    "many": {
-      "pattern": "через  дн.",
-      "index": 11
-    },
-    "other": {
-      "pattern": "через  дн.",
-      "index": 11
-    }
+    "specials": [],
+    "other": "\fчерез  дн."
   }
 }

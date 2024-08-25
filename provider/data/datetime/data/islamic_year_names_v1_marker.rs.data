@@ -204,7 +204,7 @@ macro_rules! __impl_islamic_year_names_v1_marker {
                             metadata.locale = Some(fallback_iterator.take());
                             break payload;
                         }
-                        if fallback_iterator.get().is_und() {
+                        if fallback_iterator.get().is_default() {
                             return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::datetime::provider::neo::IslamicYearNamesV1Marker as icu_provider::DataMarker>::INFO, req));
                         }
                         fallback_iterator.step();
@@ -214,8 +214,32 @@ macro_rules! __impl_islamic_year_names_v1_marker {
             }
         }
     };
+    ($ provider : ty , DRY) => {
+        __impl_islamic_year_names_v1_marker!($provider);
+        #[clippy::msrv = "1.70"]
+        impl icu_provider::DryDataProvider<icu::datetime::provider::neo::IslamicYearNamesV1Marker> for $provider {
+            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
+                icu_provider::DataProvider::<icu::datetime::provider::neo::IslamicYearNamesV1Marker>::load(self, req).map(|r| r.metadata)
+            }
+        }
+    };
     ($ provider : ty , ITER) => {
         __impl_islamic_year_names_v1_marker!($provider);
+        #[clippy::msrv = "1.70"]
+        impl icu_provider::IterableDataProvider<icu::datetime::provider::neo::IslamicYearNamesV1Marker> for $provider {
+            fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
+                Ok(icu_provider_baked::DataStore::iter(&Self::DATA_ISLAMIC_YEAR_NAMES_V1_MARKER).collect())
+            }
+        }
+    };
+    ($ provider : ty , DRY , ITER) => {
+        __impl_islamic_year_names_v1_marker!($provider);
+        #[clippy::msrv = "1.70"]
+        impl icu_provider::DryDataProvider<icu::datetime::provider::neo::IslamicYearNamesV1Marker> for $provider {
+            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
+                icu_provider::DataProvider::<icu::datetime::provider::neo::IslamicYearNamesV1Marker>::load(self, req).map(|r| r.metadata)
+            }
+        }
         #[clippy::msrv = "1.70"]
         impl icu_provider::IterableDataProvider<icu::datetime::provider::neo::IslamicYearNamesV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {

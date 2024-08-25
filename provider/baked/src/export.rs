@@ -39,7 +39,7 @@
 //! data and lazily loading more data from the network.
 //!
 //! ```
-//! # use icu_provider::_internal::locale_core as icu_locale_core;
+//! # use icu_provider::prelude::icu_locale_core;
 //! use icu_locale_core::locale;
 //! use icu_provider::hello_world::*;
 //!
@@ -79,7 +79,7 @@
 //! ```
 //!
 //! ```
-//! # use icu_provider::_internal::locale_core as icu_locale_core;
+//! # use icu_provider::prelude::icu_locale_core;
 //! use icu_locale_core::locale;
 //! use icu_provider::hello_world::*;
 //!
@@ -309,6 +309,7 @@ impl BakedExporter {
         marker: DataMarkerInfo,
         stats: Statistics,
         body: TokenStream,
+        dry_body: TokenStream,
         iterable_body: TokenStream,
     ) -> Result<(), DataError> {
         let marker_unqualified = bake_marker(marker).into_iter().last().unwrap().to_string();
@@ -367,8 +368,17 @@ impl BakedExporter {
                         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
                         #body
                     };
+                    ($provider:ty, DRY) => {
+                        #prefixed_macro_ident!($provider);
+                        #dry_body
+                    };
                     ($provider:ty, ITER) => {
                         #prefixed_macro_ident!($provider);
+                        #iterable_body
+                    };
+                    ($provider:ty, DRY, ITER) => {
+                        #prefixed_macro_ident!($provider);
+                        #dry_body
                         #iterable_body
                     };
                 }
@@ -448,7 +458,7 @@ impl DataExporter for BakedExporter {
                     &self,
                     req: icu_provider::DataRequest,
                 ) -> Result<icu_provider::DataResponse<#marker_bake>, icu_provider::DataError> {
-                    if req.id.locale.is_und() {
+                    if req.id.locale.is_default() {
                         Ok(icu_provider::DataResponse {
                             payload: icu_provider::DataPayload::from_static_ref(Self::#singleton_ident),
                             metadata: Default::default(),
@@ -458,7 +468,20 @@ impl DataExporter for BakedExporter {
                     }
                 }
             }
-        }, quote! {
+        },
+        quote! {
+            #maybe_msrv
+            impl icu_provider::DryDataProvider<#marker_bake> for $provider {
+                fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
+                    if req.id.locale.is_default() {
+                        Ok(Default::default())
+                    } else {
+                        Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<#marker_bake as icu_provider::DataMarker>::INFO, req))
+                    }
+                }
+            }
+        },
+        quote! {
             #maybe_msrv
             impl icu_provider::IterableDataProvider<#marker_bake> for $provider {
                 fn iter_ids(&self) -> Result<std::collections::BtreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
@@ -497,6 +520,14 @@ impl DataExporter for BakedExporter {
                 },
                 quote! {
                     #maybe_msrv
+                    impl icu_provider::DryDataProvider<#marker_bake> for $provider {
+                        fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
+                            Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<#marker_bake as icu_provider::DataMarker>::INFO, req))
+                        }
+                    }
+                },
+                quote! {
+                    #maybe_msrv
                     impl icu_provider::IterableDataProvider<#marker_bake> for $provider {
                         fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                             Ok(Default::default())
@@ -510,7 +541,7 @@ impl DataExporter for BakedExporter {
             let needs_fallback = self.use_internal_fallback
                 && deduplicated_values
                     .iter()
-                    .any(|(_, ids)| ids.iter().any(|id| !id.locale.is_und()));
+                    .any(|(_, ids)| ids.iter().any(|id| !id.locale.is_default()));
 
             let mut baked_values = deduplicated_values
                 .into_iter()
@@ -569,7 +600,7 @@ impl DataExporter for BakedExporter {
                                 metadata.locale = Some(fallback_iterator.take());
                                 break payload;
                             }
-                            if fallback_iterator.get().is_und() {
+                            if fallback_iterator.get().is_default() {
                                 return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<#marker_bake as icu_provider::DataMarker>::INFO, req));
                             }
                             fallback_iterator.step();
@@ -599,6 +630,14 @@ impl DataExporter for BakedExporter {
                                 payload: icu_provider::DataPayload::from_static_ref(payload),
                                 metadata
                             })
+                        }
+                    }
+                },
+                quote! {
+                    #maybe_msrv
+                    impl icu_provider::DryDataProvider<#marker_bake> for $provider {
+                        fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
+                            icu_provider::DataProvider::<#marker_bake>::load(self, req).map(|r| r.metadata)
                         }
                     }
                 },

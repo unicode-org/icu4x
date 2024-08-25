@@ -24,7 +24,7 @@ namespace capi {
     
     void icu4x_CaseMapCloser_add_case_closure_to_mv1(const icu4x::capi::CaseMapCloser* self, char32_t c, icu4x::capi::CodePointSetBuilder* builder);
     
-    bool icu4x_CaseMapCloser_add_string_case_closure_to_mv1(const icu4x::capi::CaseMapCloser* self, const char* s_data, size_t s_len, icu4x::capi::CodePointSetBuilder* builder);
+    bool icu4x_CaseMapCloser_add_string_case_closure_to_mv1(const icu4x::capi::CaseMapCloser* self, diplomat::capi::DiplomatStringView s, icu4x::capi::CodePointSetBuilder* builder);
     
     
     void icu4x_CaseMapCloser_destroy_mv1(CaseMapCloser* self);
@@ -46,8 +46,7 @@ inline void icu4x::CaseMapCloser::add_case_closure_to(char32_t c, icu4x::CodePoi
 
 inline bool icu4x::CaseMapCloser::add_string_case_closure_to(std::string_view s, icu4x::CodePointSetBuilder& builder) const {
   auto result = icu4x::capi::icu4x_CaseMapCloser_add_string_case_closure_to_mv1(this->AsFFI(),
-    s.data(),
-    s.size(),
+    {s.data(), s.size()},
     builder.AsFFI());
   return result;
 }

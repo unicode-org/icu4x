@@ -24,8 +24,21 @@ macro_rules! __impl_bidi_control_v1_marker {
         #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::properties::provider::BidiControlV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::properties::provider::BidiControlV1Marker>, icu_provider::DataError> {
-                if req.id.locale.is_und() {
+                if req.id.locale.is_default() {
                     Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(Self::SINGLETON_BIDI_CONTROL_V1_MARKER), metadata: Default::default() })
+                } else {
+                    Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::properties::provider::BidiControlV1Marker as icu_provider::DataMarker>::INFO, req))
+                }
+            }
+        }
+    };
+    ($ provider : ty , DRY) => {
+        __impl_bidi_control_v1_marker!($provider);
+        #[clippy::msrv = "1.70"]
+        impl icu_provider::DryDataProvider<icu::properties::provider::BidiControlV1Marker> for $provider {
+            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
+                if req.id.locale.is_default() {
+                    Ok(Default::default())
                 } else {
                     Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::properties::provider::BidiControlV1Marker as icu_provider::DataMarker>::INFO, req))
                 }
@@ -34,6 +47,25 @@ macro_rules! __impl_bidi_control_v1_marker {
     };
     ($ provider : ty , ITER) => {
         __impl_bidi_control_v1_marker!($provider);
+        #[clippy::msrv = "1.70"]
+        impl icu_provider::IterableDataProvider<icu::properties::provider::BidiControlV1Marker> for $provider {
+            fn iter_ids(&self) -> Result<std::collections::BtreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
+                Ok([Default::default()].into_iter().collect())
+            }
+        }
+    };
+    ($ provider : ty , DRY , ITER) => {
+        __impl_bidi_control_v1_marker!($provider);
+        #[clippy::msrv = "1.70"]
+        impl icu_provider::DryDataProvider<icu::properties::provider::BidiControlV1Marker> for $provider {
+            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
+                if req.id.locale.is_default() {
+                    Ok(Default::default())
+                } else {
+                    Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::properties::provider::BidiControlV1Marker as icu_provider::DataMarker>::INFO, req))
+                }
+            }
+        }
         #[clippy::msrv = "1.70"]
         impl icu_provider::IterableDataProvider<icu::properties::provider::BidiControlV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BtreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {

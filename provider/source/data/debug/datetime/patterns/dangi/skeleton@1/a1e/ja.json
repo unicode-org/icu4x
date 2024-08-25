@@ -8,8 +8,6 @@
   "patterns": [
     "U年MMMd日EEEE",
     "U年MMMd日(E)",
-    "U年MMMd日(E)",
-    "U年M月d日(E)",
-    "U年MMMd日(E)"
+    "U年M月d日(E)"
   ]
 }

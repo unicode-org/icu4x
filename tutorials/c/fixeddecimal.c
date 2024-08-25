@@ -12,7 +12,12 @@
 
 int main() {
     icu4x_Logger_init_simple_logger_mv1();
-    icu4x_Locale_from_string_mv1_result locale_result = icu4x_Locale_from_string_mv1("bn", 2);
+
+    struct DiplomatStringView locale_str = {
+        "bn",
+        2
+    };
+    icu4x_Locale_from_string_mv1_result locale_result = icu4x_Locale_from_string_mv1(locale_str);
     if (!locale_result.is_ok) {
         return 1;
     }
@@ -66,7 +71,12 @@ int main() {
 
     icu4x_FixedDecimal_destroy_mv1(decimal);
 
-    icu4x_FixedDecimal_from_string_mv1_result fd_result = icu4x_FixedDecimal_from_string_mv1("1000007.070", 11);
+    struct DiplomatStringView fixed_decimal_str = {
+        "1000007.070",
+        11
+    };
+
+    icu4x_FixedDecimal_from_string_mv1_result fd_result = icu4x_FixedDecimal_from_string_mv1(fixed_decimal_str);
     if (!fd_result.is_ok) {
         printf("Failed to create FixedDecimal from string.\n");
         return 1;

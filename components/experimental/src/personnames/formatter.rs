@@ -5,7 +5,7 @@
 use alloc::string::String;
 use alloc::vec::Vec;
 use icu_locale::LocaleFallbacker;
-use icu_properties::names::PropertyEnumToValueNameLinearTiny4Mapper;
+use icu_properties::names::PropertyScriptToIcuScriptMapper;
 use icu_properties::script::ScriptWithExtensions;
 
 use super::api::{
@@ -24,7 +24,7 @@ use zerofrom::ZeroFrom;
 pub struct PersonNamesFormatter {
     pub(crate) default_options: PersonNamesFormatterOptions,
     swe: ScriptWithExtensions,
-    scripts: PropertyEnumToValueNameLinearTiny4Mapper<icu_properties::Script>,
+    scripts: PropertyScriptToIcuScriptMapper<icu_properties::Script>,
     fallbacker: LocaleFallbacker,
 }
 
@@ -47,10 +47,10 @@ impl PersonNamesFormatter {
             + DataProvider<icu_properties::provider::ScriptWithExtensionsPropertyV1Marker>
             + DataProvider<icu_properties::provider::ScriptValueToShortNameV1Marker>
             + DataProvider<icu_locale::provider::LikelySubtagsForLanguageV1Marker>
-            + DataProvider<icu_locale::provider::LocaleFallbackParentsV1Marker>,
+            + DataProvider<icu_locale::provider::ParentsV1Marker>,
     {
         let swe = icu_properties::script::load_script_with_extensions_unstable(provider)?;
-        let scripts = icu_properties::Script::get_enum_to_short_name_mapper(provider)?;
+        let scripts = icu_properties::Script::get_enum_to_icu_script_mapper(provider)?;
         let fallbacker = LocaleFallbacker::try_new_unstable(provider)?;
         Ok(PersonNamesFormatter {
             default_options: options,

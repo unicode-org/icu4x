@@ -4,6 +4,7 @@
 
 use crate::fields::{self, Field, FieldLength, FieldSymbol, Second, Week, Year};
 use crate::input::{DateInput, ExtractedDateTimeInput, ExtractedTimeZoneInput, IsoTimeInput};
+use crate::options::preferences::HourCycle;
 use crate::pattern::runtime::{PatternBorrowed, PatternMetadata};
 use crate::pattern::{
     runtime::{Pattern, PatternPlurals},
@@ -17,7 +18,6 @@ use crate::provider::date_time::{
     DateSymbols, GetSymbolForEraError, GetSymbolForMonthError, GetSymbolForWeekdayError,
     MonthPlaceholderValue, TimeSymbols, ZoneSymbols,
 };
-use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
 use crate::time_zone::{
     Bcp47IdFormat, ExemplarCityFormat, FallbackTimeZoneFormatterUnit, FormatTimeZone,
     FormatTimeZoneError, GenericLocationFormat, GenericNonLocationLongFormat,
@@ -25,10 +25,10 @@ use crate::time_zone::{
     SpecificNonLocationLongFormat, SpecificNonLocationShortFormat, TimeZoneDataPayloadsBorrowed,
     TimeZoneFormatterUnit,
 };
+use crate::time_zone::{IsoFormat, IsoMinutes, IsoSeconds, ResolvedNeoTimeZoneSkeleton};
 
 use super::FormattingOptions;
 use core::fmt::{self, Write};
-use core::iter::Peekable;
 use fixed_decimal::FixedDecimal;
 use icu_calendar::types::{
     Era, {DayOfWeekInMonth, IsoWeekday, MonthCode},
@@ -157,7 +157,7 @@ impl<'l> fmt::Display for FormattedDateTime<'l> {
     }
 }
 
-// Apply length to input number and write to result using fixed_decimal_format.
+/// Apply length to input number and write to result using fixed_decimal_format.
 fn try_write_number<W>(
     result: &mut W,
     fixed_decimal_format: Option<&FixedDecimalFormatter>,
@@ -169,9 +169,7 @@ where
 {
     if let Some(fdf) = fixed_decimal_format {
         match length {
-            FieldLength::One
-            | FieldLength::NumericOverride(_)
-            | FieldLength::TimeZoneFallbackOverride(_) => {}
+            FieldLength::One | FieldLength::NumericOverride(_) => {}
             FieldLength::TwoDigit => {
                 num.pad_start(2);
                 num.set_max_position(2);
@@ -187,10 +185,6 @@ where
             }
             FieldLength::Six => {
                 num.pad_start(6);
-            }
-            FieldLength::Fixed(p) => {
-                num.pad_start(p as i16);
-                num.set_max_position(p as i16);
             }
         }
 
@@ -254,8 +248,7 @@ where
     ZS: ZoneSymbols<'data>,
 {
     let mut r = Ok(());
-    let mut iter = pattern_items.peekable();
-    while let Some(item) = iter.next() {
+    for item in pattern_items {
         match item {
             PatternItem::Literal(ch) => w.write_char(ch)?,
             PatternItem::Field(Field {
@@ -274,7 +267,6 @@ where
             PatternItem::Field(field) => {
                 r = r.and(try_write_field(
                     field,
-                    &mut iter,
                     pattern_metadata,
                     formatting_options,
                     datetime,
@@ -358,7 +350,6 @@ pub enum DateTimeWriteError {
 #[allow(clippy::too_many_arguments)]
 pub(crate) fn try_write_field<'data, W, DS, TS>(
     field: fields::Field,
-    iter: &mut Peekable<impl Iterator<Item = PatternItem>>,
     pattern_metadata: PatternMetadata,
     formatting_options: FormattingOptions,
     datetime: &ExtractedDateTimeInput,
@@ -385,7 +376,33 @@ where
         })
     }
 
-    Ok(match (field.symbol, field.length) {
+    #[cfg_attr(not(feature = "experimental"), allow(unused_mut))]
+    let mut field_symbol = field.symbol;
+    #[cfg(feature = "experimental")]
+    if let Some(fractional_second_digits) = formatting_options.fractional_second_digits {
+        if matches!(
+            field_symbol,
+            FieldSymbol::Second(fields::Second::Second) | FieldSymbol::DecimalSecond(_)
+        ) {
+            field_symbol = FieldSymbol::from_fractional_second_digits(fractional_second_digits);
+        }
+    }
+
+    let mut field_length = field.length;
+    if formatting_options.force_2_digit_month_day_week_hour
+        && field_length == FieldLength::One
+        && matches!(
+            field_symbol,
+            FieldSymbol::Month(_)
+                | FieldSymbol::Day(_)
+                | FieldSymbol::Week(_)
+                | FieldSymbol::Hour(_)
+        )
+    {
+        field_length = FieldLength::TwoDigit;
+    }
+
+    Ok(match (field_symbol, field_length) {
         (FieldSymbol::Era, l) => match datetime.year() {
             None => {
                 write_value_missing(w, field)?;
@@ -646,9 +663,9 @@ where
             }
             Some(h) => {
                 let h = usize::from(h) as isize;
-                let h = match hour {
-                    fields::Hour::H11 => h % 12,
-                    fields::Hour::H12 => {
+                let h = match (hour, formatting_options.hour_cycle) {
+                    (fields::Hour::H11, None) | (_, Some(HourCycle::H11)) => h % 12,
+                    (fields::Hour::H12, None) | (_, Some(HourCycle::H12)) => {
                         let v = h % 12;
                         if v == 0 {
                             12
@@ -656,8 +673,8 @@ where
                             v
                         }
                     }
-                    fields::Hour::H23 => h,
-                    fields::Hour::H24 => {
+                    (fields::Hour::H23, None) | (_, Some(HourCycle::H23)) => h,
+                    (fields::Hour::H24, None) | (_, Some(HourCycle::H24)) => {
                         if h == 0 {
                             24
                         } else {
@@ -681,62 +698,28 @@ where
                 Err(DateTimeWriteError::MissingInputField("second"))
             }
             Some(second) => {
-                match match (iter.peek(), formatting_options.fractional_second_digits) {
-                    (
-                        Some(&PatternItem::Field(
-                            next_field @ Field {
-                                symbol: FieldSymbol::Second(Second::FractionalSecond),
-                                length: FieldLength::Fixed(p),
-                            },
-                        )),
-                        _,
-                    ) => {
-                        // Fractional second digits via field symbol
-                        iter.next(); // Advance over nanosecond symbol
-                        Some((-(p as i16), Some(next_field), datetime.nanosecond()))
-                    }
-                    (_, Some(p)) => {
-                        // Fractional second digits via semantic option
-                        Some((-(p as i16), None, datetime.nanosecond()))
-                    }
-                    _ => None,
-                } {
-                    Some((_, maybe_next_field, None)) => {
-                        // Request to format nanoseconds but we don't have nanoseconds
-                        let seconds_result =
-                            try_write_number(w, fdf, usize::from(second).into(), l)?;
-                        if let Some(next_field) = maybe_next_field {
-                            write_value_missing(w, next_field)?;
-                        }
-                        // Return the earlier error
-                        seconds_result.and(Err(DateTimeWriteError::MissingInputField("nanosecond")))
-                    }
-                    Some((position, maybe_next_field, Some(ns))) => {
-                        // Formatting with fractional seconds
-                        let mut s = FixedDecimal::from(usize::from(second));
-                        let _infallible = s.concatenate_end(
-                            FixedDecimal::from(usize::from(ns)).multiplied_pow10(-9),
-                        );
-                        debug_assert!(_infallible.is_ok());
-                        s.pad_end(position);
-                        if maybe_next_field.is_none() {
-                            // Truncate on semantic option but not "S" field
-                            // TODO: Does this make sense?
-                            s.trunc(position);
-                        }
-                        try_write_number(w, fdf, s, l)?
-                    }
-                    None => {
-                        // Normal seconds formatting with no fractional second digits
-                        try_write_number(w, fdf, usize::from(second).into(), l)?
-                    }
-                }
+                // Normal seconds formatting with no fractional second digits
+                try_write_number(w, fdf, usize::from(second).into(), l)?
             }
         },
-        (FieldSymbol::Second(Second::FractionalSecond), _) => {
-            // Fractional second not following second or with invalid length
-            write_value_missing(w, field)?;
-            Err(DateTimeWriteError::UnsupportedField(field))
+        (FieldSymbol::DecimalSecond(decimal_second), l) => {
+            match (datetime.second(), datetime.nanosecond()) {
+                (None, _) | (_, None) => {
+                    write_value_missing(w, field)?;
+                    Err(DateTimeWriteError::MissingInputField("second"))
+                }
+                (Some(second), Some(ns)) => {
+                    // Formatting with fractional seconds
+                    let mut s = FixedDecimal::from(usize::from(second));
+                    let _infallible =
+                        s.concatenate_end(FixedDecimal::from(usize::from(ns)).multiplied_pow10(-9));
+                    debug_assert!(_infallible.is_ok());
+                    let position = -(decimal_second as i16);
+                    s.trunc(position);
+                    s.pad_end(position);
+                    try_write_number(w, fdf, s, l)?
+                }
+            }
         }
         (FieldSymbol::DayPeriod(period), l) => match datetime.hour() {
             None => {
@@ -914,18 +897,109 @@ fn select_zone_units(time_zone: ResolvedNeoTimeZoneSkeleton) -> [Option<TimeZone
         ResolvedNeoTimeZoneSkeleton::GmtLong => {
             // no-op
         }
+        // 'V'
         ResolvedNeoTimeZoneSkeleton::Bcp47Id => {
-            formatters.0 = Some(TimeZoneFormatterUnit::Bcp47Id(Bcp47IdFormat {}))
+            formatters.0 = Some(TimeZoneFormatterUnit::Bcp47Id(Bcp47IdFormat {}));
         }
-        ResolvedNeoTimeZoneSkeleton::IsoBasic => {
+        // 'X'
+        ResolvedNeoTimeZoneSkeleton::IsoX => {
             formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(
-                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format::basic()),
-            ))
+                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format {
+                    format: IsoFormat::UtcBasic,
+                    minutes: IsoMinutes::Optional,
+                    seconds: IsoSeconds::Never,
+                }),
+            ));
         }
-        ResolvedNeoTimeZoneSkeleton::IsoExtended => {
+        // 'XX'
+        ResolvedNeoTimeZoneSkeleton::IsoXX => {
             formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(
-                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format::extended()),
-            ))
+                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format {
+                    format: IsoFormat::UtcBasic,
+                    minutes: IsoMinutes::Required,
+                    seconds: IsoSeconds::Never,
+                }),
+            ));
+        }
+        // 'XXX'
+        ResolvedNeoTimeZoneSkeleton::IsoXXX => {
+            formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(
+                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format {
+                    format: IsoFormat::UtcExtended,
+                    minutes: IsoMinutes::Required,
+                    seconds: IsoSeconds::Never,
+                }),
+            ));
+        }
+        // 'XXXX'
+        ResolvedNeoTimeZoneSkeleton::IsoXXXX => {
+            formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(
+                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format {
+                    format: IsoFormat::UtcBasic,
+                    minutes: IsoMinutes::Required,
+                    seconds: IsoSeconds::Optional,
+                }),
+            ));
+        }
+        // 'XXXXX', 'ZZZZZ'
+        ResolvedNeoTimeZoneSkeleton::IsoXXXXX => {
+            formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(
+                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format {
+                    format: IsoFormat::UtcExtended,
+                    minutes: IsoMinutes::Required,
+                    seconds: IsoSeconds::Optional,
+                }),
+            ));
+        }
+        // 'x'
+        ResolvedNeoTimeZoneSkeleton::Isox => {
+            formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(
+                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format {
+                    format: IsoFormat::Basic,
+                    minutes: IsoMinutes::Optional,
+                    seconds: IsoSeconds::Never,
+                }),
+            ));
+        }
+        // 'xx'
+        ResolvedNeoTimeZoneSkeleton::Isoxx => {
+            formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(
+                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format {
+                    format: IsoFormat::Basic,
+                    minutes: IsoMinutes::Required,
+                    seconds: IsoSeconds::Never,
+                }),
+            ));
+        }
+        // 'xxx'
+        ResolvedNeoTimeZoneSkeleton::Isoxxx => {
+            formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(
+                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format {
+                    format: IsoFormat::Extended,
+                    minutes: IsoMinutes::Required,
+                    seconds: IsoSeconds::Never,
+                }),
+            ));
+        }
+        // 'xxxx', 'Z', 'ZZ', 'ZZZ'
+        ResolvedNeoTimeZoneSkeleton::Isoxxxx => {
+            formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(
+                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format {
+                    format: IsoFormat::Basic,
+                    minutes: IsoMinutes::Required,
+                    seconds: IsoSeconds::Optional,
+                }),
+            ));
+        }
+        // 'xxxxx', 'ZZZZZ'
+        ResolvedNeoTimeZoneSkeleton::Isoxxxxx => {
+            formatters.2 = Some(TimeZoneFormatterUnit::WithFallback(
+                FallbackTimeZoneFormatterUnit::Iso8601(Iso8601Format {
+                    format: IsoFormat::Extended,
+                    minutes: IsoMinutes::Required,
+                    seconds: IsoSeconds::Optional,
+                }),
+            ));
         }
     };
     // TODO:

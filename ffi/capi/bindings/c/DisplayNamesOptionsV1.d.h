@@ -20,7 +20,7 @@ typedef struct DisplayNamesOptionsV1 {
   LanguageDisplay language_display;
 } DisplayNamesOptionsV1;
 
-
+typedef struct DisplayNamesOptionsV1_option {union { DisplayNamesOptionsV1 ok; }; bool is_ok; } DisplayNamesOptionsV1_option;
 
 
 

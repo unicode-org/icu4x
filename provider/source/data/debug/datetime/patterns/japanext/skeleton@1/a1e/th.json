@@ -7,9 +7,7 @@
   },
   "patterns": [
     "EEEEที่ d MMMM ปีGที่ y",
-    "E d MMM G y",
     "E d MMM GGG y",
-    "E d/M/GGGGG y",
-    "E d MMM GGG y"
+    "E d MMM GGG yy"
   ]
 }

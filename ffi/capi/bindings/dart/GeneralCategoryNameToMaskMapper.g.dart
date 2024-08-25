@@ -30,10 +30,8 @@ final class GeneralCategoryNameToMaskMapper implements ffi.Finalizable {
   ///
   /// Returns 0 if the name is unknown for this property
   int getStrict(String name) {
-    final temp = ffi2.Arena();
-    final nameView = name.utf8View;
-    final result = _icu4x_GeneralCategoryNameToMaskMapper_get_strict_mv1(_ffi, nameView.allocIn(temp), nameView.length);
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final result = _icu4x_GeneralCategoryNameToMaskMapper_get_strict_mv1(_ffi, name._utf8AllocIn(temp.arena));
     return result;
   }
 
@@ -41,10 +39,8 @@ final class GeneralCategoryNameToMaskMapper implements ffi.Finalizable {
   ///
   /// Returns 0 if the name is unknown for this property
   int getLoose(String name) {
-    final temp = ffi2.Arena();
-    final nameView = name.utf8View;
-    final result = _icu4x_GeneralCategoryNameToMaskMapper_get_loose_mv1(_ffi, nameView.allocIn(temp), nameView.length);
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final result = _icu4x_GeneralCategoryNameToMaskMapper_get_loose_mv1(_ffi, name._utf8AllocIn(temp.arena));
     return result;
   }
 
@@ -66,14 +62,14 @@ final class GeneralCategoryNameToMaskMapper implements ffi.Finalizable {
 external void _icu4x_GeneralCategoryNameToMaskMapper_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
 @meta.ResourceIdentifier('icu4x_GeneralCategoryNameToMaskMapper_get_strict_mv1')
-@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_GeneralCategoryNameToMaskMapper_get_strict_mv1')
+@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_GeneralCategoryNameToMaskMapper_get_strict_mv1')
 // ignore: non_constant_identifier_names
-external int _icu4x_GeneralCategoryNameToMaskMapper_get_strict_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> nameData, int nameLength);
+external int _icu4x_GeneralCategoryNameToMaskMapper_get_strict_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 name);
 
 @meta.ResourceIdentifier('icu4x_GeneralCategoryNameToMaskMapper_get_loose_mv1')
-@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_GeneralCategoryNameToMaskMapper_get_loose_mv1')
+@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_GeneralCategoryNameToMaskMapper_get_loose_mv1')
 // ignore: non_constant_identifier_names
-external int _icu4x_GeneralCategoryNameToMaskMapper_get_loose_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> nameData, int nameLength);
+external int _icu4x_GeneralCategoryNameToMaskMapper_get_loose_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 name);
 
 @meta.ResourceIdentifier('icu4x_GeneralCategoryNameToMaskMapper_load_mv1')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_GeneralCategoryNameToMaskMapper_load_mv1')

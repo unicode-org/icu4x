@@ -5,37 +5,29 @@
     "1": "sledeće nedelje"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": "pre  nedelje",
-      "index": 4
-    },
-    "two": null,
-    "few": {
-      "pattern": "pre  nedelje",
-      "index": 4
-    },
-    "many": null,
-    "other": {
-      "pattern": "pre  nedelja",
-      "index": 4
-    }
+    "specials": [
+      [
+        "One",
+        "\u0005pre  nedelje"
+      ],
+      [
+        "Few",
+        "\u0005pre  nedelje"
+      ]
+    ],
+    "other": "\u0005pre  nedelja"
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "za  nedelju",
-      "index": 3
-    },
-    "two": null,
-    "few": {
-      "pattern": "za  nedelje",
-      "index": 3
-    },
-    "many": null,
-    "other": {
-      "pattern": "za  nedelja",
-      "index": 3
-    }
+    "specials": [
+      [
+        "One",
+        "\u0004za  nedelju"
+      ],
+      [
+        "Few",
+        "\u0004za  nedelje"
+      ]
+    ],
+    "other": "\u0004za  nedelja"
   }
 }

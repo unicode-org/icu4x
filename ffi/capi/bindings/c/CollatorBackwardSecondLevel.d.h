@@ -17,7 +17,7 @@ typedef enum CollatorBackwardSecondLevel {
   CollatorBackwardSecondLevel_On = 2,
 } CollatorBackwardSecondLevel;
 
-
+typedef struct CollatorBackwardSecondLevel_option {union { CollatorBackwardSecondLevel ok; }; bool is_ok; } CollatorBackwardSecondLevel_option;
 
 
 

@@ -269,19 +269,16 @@ jobs:
     - name: Init packages
       run: |
         npm -C ffi/npm ci
-        npm -C tutorials/npm ci
+        npm -C tutorials/web-demo ci
+      env: 
+        PINNED_CI_NIGHTLY: nightly-2024-07-23
 
     - name: Run Webpack
-      run: npm -C tutorials/npm run build
-
-    - name: Put index.html in dist for temp URL
-      run: |
-        cp tutorials/npm/index.html tutorials/npm/dist/index.html
-        printf "const gcs=document.createElement('script');gcs.setAttribute('src','./bundle.js');document.body.appendChild(gcs);" > tutorials/npm/dist/index.js
+      run: npm -C tutorials/web-demo run build
 
     - name: Upload wasm-demo bundle to Google Cloud Storage
       run: |
-        gsutil -m cp -r tutorials/npm/dist/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/wasm-demo
+        gsutil -m cp -r tutorials/web-demo/public/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/wasm-demo
 
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |

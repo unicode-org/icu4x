@@ -34,6 +34,8 @@ namespace capi {
       Error_DateTimeFixedDecimalError = 2055,
       Error_DateTimeMismatchedCalendarError = 2056,
     };
+    
+    typedef struct Error_option {union { Error ok; }; bool is_ok; } Error_option;
 } // namespace capi
 } // namespace
 

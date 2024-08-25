@@ -13,6 +13,7 @@ export class SegmenterWordType {
         ["Number", 1],
         ["Letter", 2]
     ]);
+
     constructor(value) {
         if (value instanceof SegmenterWordType) {
             this.#value = value.value;
@@ -36,23 +37,16 @@ export class SegmenterWordType {
     }
 
     static None = new SegmenterWordType("None");
-
     static Number = new SegmenterWordType("Number");
-
     static Letter = new SegmenterWordType("Letter");
-
 
     get isWordLike() {
         const result = wasm.icu4x_SegmenterWordType_is_word_like_mv1(this.ffiValue);
     
         try {
-    
             return result;
-        } finally {
-        
         }
+        
+        finally {}
     }
-
-    
-
 }

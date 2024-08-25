@@ -10,10 +10,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *See the [Rust documentation for `SentenceSegmenter`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html) for more information.
 */
-
 const SentenceSegmenter_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_SentenceSegmenter_destroy_mv1(ptr);
 });
+
 export class SentenceSegmenter {
     // Internal ptr reference:
     #ptr = null;
@@ -22,57 +22,58 @@ export class SentenceSegmenter {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("SentenceSegmenter is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        // Unconditionally register to destroy when this object is ready to garbage collect.
-        SentenceSegmenter_box_destroy_registry.register(this, this.#ptr);
+        
+        // Are we being borrowed? If not, we can register.
+        if (this.#selfEdge.length === 0) {
+            SentenceSegmenter_box_destroy_registry.register(this, this.#ptr);
+        }
     }
 
     get ffiValue() {
         return this.#ptr;
     }
 
-
     static create(provider) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_SentenceSegmenter_create_mv1(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_SentenceSegmenter_create_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+            if (!diplomatReceive.resultFlag) {
+                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new SentenceSegmenter(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new SentenceSegmenter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
     segment(input) {
-        
-        const inputSlice = diplomatRuntime.DiplomatBuf.str16(wasm, input);
+        let functionGarbageCollector = new diplomatRuntime.GarbageCollector();
+        const inputSlice = [...functionGarbageCollector.alloc(diplomatRuntime.DiplomatBuf.str16(wasm, input)).splat()];
         
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this, inputSlice];
-        const result = wasm.icu4x_SentenceSegmenter_segment_utf16_mv1(this.ffiValue, inputSlice.ptr, inputSlice.size);
+        
+        const result = wasm.icu4x_SentenceSegmenter_segment_utf16_mv1(this.ffiValue, ...inputSlice);
     
         try {
-    
-            return new SentenceBreakIteratorUtf16(result, [], aEdges);
-        } finally {
+            return new SentenceBreakIteratorUtf16(diplomatRuntime.internalConstructor, result, [], aEdges);
+        }
         
-            inputSlice.garbageCollect();
-        
+        finally {
+            functionGarbageCollector.garbageCollect();
         }
     }
-
-    
-
 }

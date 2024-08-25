@@ -19,6 +19,7 @@ export class DataError {
         ["Custom", 7],
         ["Io", 8]
     ]);
+
     constructor(value) {
         if (value instanceof DataError) {
             this.#value = value.value;
@@ -42,24 +43,12 @@ export class DataError {
     }
 
     static Unknown = new DataError("Unknown");
-
     static MarkerNotFound = new DataError("MarkerNotFound");
-
     static IdentifierNotFound = new DataError("IdentifierNotFound");
-
     static InvalidRequest = new DataError("InvalidRequest");
-
     static InconsistentData = new DataError("InconsistentData");
-
     static Downcast = new DataError("Downcast");
-
     static Deserialize = new DataError("Deserialize");
-
     static Custom = new DataError("Custom");
-
     static Io = new DataError("Io");
-
-
-    
-
 }

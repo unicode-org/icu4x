@@ -18,7 +18,7 @@ typedef enum DateLength {
   DateLength_Short = 3,
 } DateLength;
 
-
+typedef struct DateLength_option {union { DateLength ok; }; bool is_ok; } DateLength_option;
 
 
 

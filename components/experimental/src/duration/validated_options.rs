@@ -392,12 +392,84 @@ impl Unit {
             Unit::Month => MonthStyle::Short.into(),
             Unit::Week => WeekStyle::Short.into(),
             Unit::Day => DayStyle::Short.into(),
-            Unit::Hour => HourStyle::Short.into(),
+            Unit::Hour => HourStyle::Numeric.into(),
             Unit::Minute => MinuteStyle::Numeric.into(),
             Unit::Second => SecondStyle::Numeric.into(),
             Unit::Millisecond => MilliSecondStyle::Numeric.into(),
             Unit::Microsecond => MicroSecondStyle::Numeric.into(),
             Unit::Nanosecond => NanoSecondStyle::Numeric.into(),
         }
+    }
+
+    pub(crate) const fn as_unit_formatter_name(&self) -> &'static str {
+        match self {
+            Unit::Year => "year",
+            Unit::Month => "month",
+            Unit::Week => "week",
+            Unit::Day => "day",
+            Unit::Hour => "hour",
+            Unit::Minute => "minute",
+            Unit::Second => "second",
+            Unit::Millisecond => "millisecond",
+            Unit::Microsecond => "microsecond",
+            Unit::Nanosecond => "nanosecond",
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_invalid_style_after_two_digit() {
+        let options = DurationFormatterOptions {
+            hour: Some(HourStyle::TwoDigit),
+            minute: Some(MinuteStyle::Long),
+            ..Default::default()
+        };
+
+        assert_eq!(
+            ValidatedDurationFormatterOptions::validate(options),
+            Err(DurationFormatterOptionsError::PreviousNumeric)
+        );
+
+        let options = DurationFormatterOptions {
+            hour: Some(HourStyle::TwoDigit),
+            ..options
+        };
+
+        assert_eq!(
+            ValidatedDurationFormatterOptions::validate(options),
+            Err(DurationFormatterOptionsError::PreviousNumeric)
+        );
+    }
+
+    #[test]
+    fn test_display_always_fractional_style() {
+        let options = DurationFormatterOptions {
+            millisecond: Some(MilliSecondStyle::Numeric),
+            millisecond_visibility: Some(FieldDisplay::Always),
+            ..Default::default()
+        };
+
+        assert_eq!(
+            ValidatedDurationFormatterOptions::validate(options),
+            Err(DurationFormatterOptionsError::DisplayAlwaysFractional)
+        );
+    }
+
+    #[test]
+    fn test_previous_fractional() {
+        let options = DurationFormatterOptions {
+            millisecond: Some(MilliSecondStyle::Numeric),
+            nanosecond: Some(NanoSecondStyle::Long),
+            ..Default::default()
+        };
+
+        assert_eq!(
+            ValidatedDurationFormatterOptions::validate(options),
+            Err(DurationFormatterOptionsError::PreviousFractional)
+        );
     }
 }

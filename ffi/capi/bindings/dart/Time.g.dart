@@ -43,10 +43,8 @@ final class Time implements ffi.Finalizable {
   ///
   /// Throws [CalendarParseError] on failure.
   factory Time.fromString(String v) {
-    final temp = ffi2.Arena();
-    final vView = v.utf8View;
-    final result = _icu4x_Time_from_string_mv1(vView.allocIn(temp), vView.length);
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final result = _icu4x_Time_from_string_mv1(v._utf8AllocIn(temp.arena));
     if (!result.isOk) {
       throw CalendarParseError.values[result.union.err];
     }
@@ -110,9 +108,9 @@ external void _icu4x_Time_destroy_mv1(ffi.Pointer<ffi.Void> self);
 external _ResultOpaqueInt32 _icu4x_Time_create_mv1(int hour, int minute, int second, int nanosecond);
 
 @meta.ResourceIdentifier('icu4x_Time_from_string_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_Time_from_string_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_Time_from_string_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_Time_from_string_mv1(ffi.Pointer<ffi.Uint8> vData, int vLength);
+external _ResultOpaqueInt32 _icu4x_Time_from_string_mv1(_SliceUtf8 v);
 
 @meta.ResourceIdentifier('icu4x_Time_midnight_mv1')
 @ffi.Native<_ResultOpaqueInt32 Function()>(isLeaf: true, symbol: 'icu4x_Time_midnight_mv1')

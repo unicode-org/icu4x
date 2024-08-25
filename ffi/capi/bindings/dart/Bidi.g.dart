@@ -43,11 +43,10 @@ final class Bidi implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new_with_data_source`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html#method.new_with_data_source) for more information.
   BidiInfo forText(String text, int defaultLevel) {
-    final textView = text.utf8View;
     final textArena = _FinalizedArena();
     // This lifetime edge depends on lifetimes: 'text
     core.List<Object> textEdges = [textArena];
-    final result = _icu4x_Bidi_for_text_valid_utf8_mv1(_ffi, textView.allocIn(textArena.arena), textView.length, defaultLevel);
+    final result = _icu4x_Bidi_for_text_valid_utf8_mv1(_ffi, text._utf8AllocIn(textArena.arena), defaultLevel);
     return BidiInfo._fromFfi(result, [], textEdges);
   }
 
@@ -62,10 +61,8 @@ final class Bidi implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `reorder_visual`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html#method.reorder_visual) for more information.
   ReorderedIndexMap reorderVisual(core.List<int> levels) {
-    final temp = ffi2.Arena();
-    final levelsView = levels.uint8View;
-    final result = _icu4x_Bidi_reorder_visual_mv1(_ffi, levelsView.allocIn(temp), levelsView.length);
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final result = _icu4x_Bidi_reorder_visual_mv1(_ffi, levels._uint8AllocIn(temp.arena));
     return ReorderedIndexMap._fromFfi(result, []);
   }
 
@@ -117,14 +114,14 @@ external void _icu4x_Bidi_destroy_mv1(ffi.Pointer<ffi.Void> self);
 external _ResultOpaqueInt32 _icu4x_Bidi_create_mv1(ffi.Pointer<ffi.Opaque> provider);
 
 @meta.ResourceIdentifier('icu4x_Bidi_for_text_valid_utf8_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_Bidi_for_text_valid_utf8_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_Bidi_for_text_valid_utf8_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_Bidi_for_text_valid_utf8_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> textData, int textLength, int defaultLevel);
+external ffi.Pointer<ffi.Opaque> _icu4x_Bidi_for_text_valid_utf8_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 text, int defaultLevel);
 
 @meta.ResourceIdentifier('icu4x_Bidi_reorder_visual_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_Bidi_reorder_visual_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, _SliceUint8)>(isLeaf: true, symbol: 'icu4x_Bidi_reorder_visual_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_Bidi_reorder_visual_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> levelsData, int levelsLength);
+external ffi.Pointer<ffi.Opaque> _icu4x_Bidi_reorder_visual_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUint8 levels);
 
 @meta.ResourceIdentifier('icu4x_Bidi_level_is_rtl_mv1')
 @ffi.Native<ffi.Bool Function(ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_Bidi_level_is_rtl_mv1')

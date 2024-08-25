@@ -28,9 +28,8 @@ final class LocaleDisplayNamesFormatter implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory LocaleDisplayNamesFormatter(DataProvider provider, Locale locale, DisplayNamesOptions options) {
-    final temp = ffi2.Arena();
-    final result = _icu4x_LocaleDisplayNamesFormatter_create_v1_mv1(provider._ffi, locale._ffi, options._toFfi(temp));
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final result = _icu4x_LocaleDisplayNamesFormatter_create_v1_mv1(provider._ffi, locale._ffi, options._toFfi(temp.arena));
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }

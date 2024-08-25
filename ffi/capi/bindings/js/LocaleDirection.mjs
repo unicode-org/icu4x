@@ -13,6 +13,7 @@ export class LocaleDirection {
         ["RightToLeft", 1],
         ["Unknown", 2]
     ]);
+
     constructor(value) {
         if (value instanceof LocaleDirection) {
             this.#value = value.value;
@@ -36,12 +37,6 @@ export class LocaleDirection {
     }
 
     static LeftToRight = new LocaleDirection("LeftToRight");
-
     static RightToLeft = new LocaleDirection("RightToLeft");
-
     static Unknown = new LocaleDirection("Unknown");
-
-
-    
-
 }

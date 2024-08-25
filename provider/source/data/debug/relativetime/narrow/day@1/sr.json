@@ -7,37 +7,11 @@
     "2": "прекосутра"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": "пре  д.",
-      "index": 7
-    },
-    "two": null,
-    "few": {
-      "pattern": "пре  д.",
-      "index": 7
-    },
-    "many": null,
-    "other": {
-      "pattern": "пре  д.",
-      "index": 7
-    }
+    "specials": [],
+    "other": "\bпре  д."
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "за  д.",
-      "index": 5
-    },
-    "two": null,
-    "few": {
-      "pattern": "за  д.",
-      "index": 5
-    },
-    "many": null,
-    "other": {
-      "pattern": "за  д.",
-      "index": 5
-    }
+    "specials": [],
+    "other": "\u0006за  д."
   }
 }

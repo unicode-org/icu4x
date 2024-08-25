@@ -18,6 +18,10 @@ pub enum LocaleFallbackPriority {
     ///
     /// For example, `"en-US"` should go to `"en"` and then `"und"`.
     Language,
+    /// Prioritize the script.
+    ///
+    /// For example, `"en-US"` should go to `"en"` and then `"und-Latn"` and then `"und"`.
+    Script,
     /// Prioritize the region.
     ///
     /// For example, `"en-US"` should go to `"und-US"` and then `"und"`.
@@ -26,14 +30,14 @@ pub enum LocaleFallbackPriority {
 
 impl LocaleFallbackPriority {
     /// Const-friendly version of [`Default::default`].
-    pub const fn const_default() -> Self {
+    pub const fn default() -> Self {
         Self::Language
     }
 }
 
 impl Default for LocaleFallbackPriority {
     fn default() -> Self {
-        Self::const_default()
+        Self::default()
     }
 }
 
@@ -105,15 +109,15 @@ pub struct LocaleFallbackConfig {
 
 impl LocaleFallbackConfig {
     /// Const version of [`Default::default`].
-    pub const fn const_default() -> Self {
+    pub const fn default() -> Self {
         Self {
-            priority: LocaleFallbackPriority::const_default(),
+            priority: LocaleFallbackPriority::default(),
         }
     }
 }
 
 impl Default for LocaleFallbackConfig {
     fn default() -> Self {
-        Self::const_default()
+        Self::default()
     }
 }

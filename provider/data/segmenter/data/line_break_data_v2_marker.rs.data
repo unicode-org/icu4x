@@ -21,8 +21,21 @@ macro_rules! __impl_line_break_data_v2_marker {
         #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::segmenter::provider::LineBreakDataV2Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::segmenter::provider::LineBreakDataV2Marker>, icu_provider::DataError> {
-                if req.id.locale.is_und() {
+                if req.id.locale.is_default() {
                     Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(Self::SINGLETON_LINE_BREAK_DATA_V2_MARKER), metadata: Default::default() })
+                } else {
+                    Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::segmenter::provider::LineBreakDataV2Marker as icu_provider::DataMarker>::INFO, req))
+                }
+            }
+        }
+    };
+    ($ provider : ty , DRY) => {
+        __impl_line_break_data_v2_marker!($provider);
+        #[clippy::msrv = "1.70"]
+        impl icu_provider::DryDataProvider<icu::segmenter::provider::LineBreakDataV2Marker> for $provider {
+            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
+                if req.id.locale.is_default() {
+                    Ok(Default::default())
                 } else {
                     Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::segmenter::provider::LineBreakDataV2Marker as icu_provider::DataMarker>::INFO, req))
                 }
@@ -31,6 +44,25 @@ macro_rules! __impl_line_break_data_v2_marker {
     };
     ($ provider : ty , ITER) => {
         __impl_line_break_data_v2_marker!($provider);
+        #[clippy::msrv = "1.70"]
+        impl icu_provider::IterableDataProvider<icu::segmenter::provider::LineBreakDataV2Marker> for $provider {
+            fn iter_ids(&self) -> Result<std::collections::BtreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
+                Ok([Default::default()].into_iter().collect())
+            }
+        }
+    };
+    ($ provider : ty , DRY , ITER) => {
+        __impl_line_break_data_v2_marker!($provider);
+        #[clippy::msrv = "1.70"]
+        impl icu_provider::DryDataProvider<icu::segmenter::provider::LineBreakDataV2Marker> for $provider {
+            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
+                if req.id.locale.is_default() {
+                    Ok(Default::default())
+                } else {
+                    Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::segmenter::provider::LineBreakDataV2Marker as icu_provider::DataMarker>::INFO, req))
+                }
+            }
+        }
         #[clippy::msrv = "1.70"]
         impl icu_provider::IterableDataProvider<icu::segmenter::provider::LineBreakDataV2Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BtreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {

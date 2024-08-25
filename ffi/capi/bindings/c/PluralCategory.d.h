@@ -20,7 +20,7 @@ typedef enum PluralCategory {
   PluralCategory_Other = 5,
 } PluralCategory;
 
-
+typedef struct PluralCategory_option {union { PluralCategory ok; }; bool is_ok; } PluralCategory_option;
 
 
 

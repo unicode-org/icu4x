@@ -39,6 +39,7 @@ pub mod ffi {
         /// for the time zone.
         #[diplomat::rust_link(icu::datetime::TypedZonedDateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_lengths")]
+        #[diplomat::demo(default_constructor)]
         pub fn create_with_lengths(
             provider: &DataProvider,
             locale: &Locale,
@@ -121,6 +122,7 @@ pub mod ffi {
         /// for the time zone.
         #[diplomat::rust_link(icu::datetime::ZonedDateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_lengths")]
+        #[diplomat::demo(default_constructor)]
         pub fn create_with_lengths(
             provider: &DataProvider,
             locale: &Locale,
