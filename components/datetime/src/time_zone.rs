@@ -34,9 +34,17 @@ pub(crate) enum ResolvedNeoTimeZoneSkeleton {
     SpecificLong,
     GmtShort,
     GmtLong,
-    IsoBasic,
-    IsoExtended,
     Bcp47Id,
+    Isox,
+    Isoxx,
+    Isoxxx,
+    Isoxxxx,
+    Isoxxxxx,
+    IsoX,
+    IsoXX,
+    IsoXXX,
+    IsoXXXX,
+    IsoXXXXX,
 }
 
 impl ResolvedNeoTimeZoneSkeleton {
@@ -770,28 +778,16 @@ pub(super) struct LocalizedGmtFormat {}
 
 // -07:00
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub(super) struct Iso8601Format {
-    format: IsoFormat,
-    minutes: IsoMinutes,
-    seconds: IsoSeconds,
+pub(crate) struct Iso8601Format {
+    pub(crate) format: IsoFormat,
+    pub(crate) minutes: IsoMinutes,
+    pub(crate) seconds: IsoSeconds,
 }
 
 impl Iso8601Format {
     pub(crate) fn default_for_fallback() -> Self {
-        Self::basic()
-    }
-    // 'Z'
-    pub(crate) fn basic() -> Self {
         Self {
             format: IsoFormat::Basic,
-            minutes: IsoMinutes::Required,
-            seconds: IsoSeconds::Optional,
-        }
-    }
-    // 'ZZZZZ'
-    pub(crate) fn extended() -> Self {
-        Self {
-            format: IsoFormat::UtcExtended,
             minutes: IsoMinutes::Required,
             seconds: IsoSeconds::Optional,
         }

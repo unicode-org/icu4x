@@ -19,6 +19,4 @@ pub(crate) struct FormattingOptions {
     pub(crate) force_2_digit_month_day_week_hour: bool,
     #[cfg(feature = "experimental")]
     pub(crate) fractional_second_digits: Option<FractionalSecondDigits>,
-    #[cfg(not(feature = "experimental"))]
-    pub(crate) fractional_second_digits: Option<u8>,
 }

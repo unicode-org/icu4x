@@ -6,7 +6,7 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use icu_casemap::CaseMapper;
 use icu_locale_core::langid;
 #[cfg(feature = "bench")]
-use icu_normalizer::DecomposingNormalizer;
+use icu_normalizer::DecomposingNormalizerBorrowed;
 
 const TEST_STRING_EN: &str = "One of the key design principles of ICU4X is to make locale data small and portable, allowing it to be pulled from multiple sources depending on the needs of the application.  This document explains how that goal can be achieved.";
 
@@ -59,7 +59,7 @@ fn greek_uppercasing(_c: &mut Criterion) {
         let el = langid!("el");
 
         let iliad_lowercase = casemapper.lowercase_to_string(ILIAD, &root);
-        let decomposer = DecomposingNormalizer::new_nfd();
+        let decomposer = DecomposingNormalizerBorrowed::new_nfd();
         let nfd = decomposer.normalize_utf8(ILIAD.as_bytes());
         let nfd_lowercase = decomposer.normalize_utf8(iliad_lowercase.as_bytes());
 

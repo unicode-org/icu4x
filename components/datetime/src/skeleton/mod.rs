@@ -414,7 +414,6 @@ mod test {
         assert_pattern_to_skeleton("LLL", "MMM", "Remove standalone months.");
 
         assert_pattern_to_skeleton("s", "s", "Seconds pass through");
-        assert_pattern_to_skeleton("S", "S", "Seconds pass through");
         assert_pattern_to_skeleton("A", "A", "Seconds pass through");
 
         assert_pattern_to_skeleton("z", "z", "Time zones get passed through");

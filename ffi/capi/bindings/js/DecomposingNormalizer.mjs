@@ -40,6 +40,7 @@ export class DecomposingNormalizer {
 
     static createNfd(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_DecomposingNormalizer_create_nfd_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -57,6 +58,7 @@ export class DecomposingNormalizer {
 
     static createNfkd(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_DecomposingNormalizer_create_nfkd_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -95,6 +97,7 @@ export class DecomposingNormalizer {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s)).splat()];
+        
         const result = wasm.icu4x_DecomposingNormalizer_is_normalized_mv1(this.ffiValue, ...sSlice);
     
         try {
@@ -110,6 +113,7 @@ export class DecomposingNormalizer {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str16(wasm, s)).splat()];
+        
         const result = wasm.icu4x_DecomposingNormalizer_is_normalized_utf16_mv1(this.ffiValue, ...sSlice);
     
         try {
@@ -125,6 +129,7 @@ export class DecomposingNormalizer {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s)).splat()];
+        
         const result = wasm.icu4x_DecomposingNormalizer_is_normalized_up_to_mv1(this.ffiValue, ...sSlice);
     
         try {
@@ -140,6 +145,7 @@ export class DecomposingNormalizer {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str16(wasm, s)).splat()];
+        
         const result = wasm.icu4x_DecomposingNormalizer_is_normalized_utf16_up_to_mv1(this.ffiValue, ...sSlice);
     
         try {

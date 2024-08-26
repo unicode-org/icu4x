@@ -44,6 +44,7 @@ export class LineSegmenter {
 
     static createAuto(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_LineSegmenter_create_auto_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -61,6 +62,7 @@ export class LineSegmenter {
 
     static createLstm(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_LineSegmenter_create_lstm_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -78,6 +80,7 @@ export class LineSegmenter {
 
     static createDictionary(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_LineSegmenter_create_dictionary_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -97,6 +100,7 @@ export class LineSegmenter {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_LineSegmenter_create_auto_with_options_v1_mv1(diplomatReceive.buffer, provider.ffiValue, ...options._intoFFI(functionCleanupArena, {}));
     
         try {
@@ -118,6 +122,7 @@ export class LineSegmenter {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_LineSegmenter_create_lstm_with_options_v1_mv1(diplomatReceive.buffer, provider.ffiValue, ...options._intoFFI(functionCleanupArena, {}));
     
         try {
@@ -139,6 +144,7 @@ export class LineSegmenter {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_LineSegmenter_create_dictionary_with_options_v1_mv1(diplomatReceive.buffer, provider.ffiValue, ...options._intoFFI(functionCleanupArena, {}));
     
         try {
@@ -162,6 +168,7 @@ export class LineSegmenter {
         
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this, inputSlice];
+        
         const result = wasm.icu4x_LineSegmenter_segment_utf16_mv1(this.ffiValue, ...inputSlice);
     
         try {

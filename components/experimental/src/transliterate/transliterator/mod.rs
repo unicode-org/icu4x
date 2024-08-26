@@ -78,7 +78,7 @@ impl ComposingTransliterator {
         // would be cool to use `normalize_to` and pass Insertable, but we need to know the
         // input string, which gets replaced by the normalized string.
 
-        let buf = self.0.normalize(rep.as_str_modifiable());
+        let buf = self.0.as_borrowed().normalize(rep.as_str_modifiable());
         rep.replace_modifiable_with_str(&buf);
     }
 }
@@ -115,7 +115,7 @@ impl DecomposingTransliterator {
         // would be cool to use `normalize_to` and pass Insertable, but we need to know the
         // input string, which gets replaced by the normalized string.
 
-        let buf = self.0.normalize(rep.as_str_modifiable());
+        let buf = self.0.as_borrowed().normalize(rep.as_str_modifiable());
         rep.replace_modifiable_with_str(&buf);
     }
 }

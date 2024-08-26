@@ -44,6 +44,7 @@ export class PluralOperands {
         const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s)).splat()];
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_PluralOperands_from_string_mv1(diplomatReceive.buffer, ...sSlice);
     
         try {
@@ -61,7 +62,8 @@ export class PluralOperands {
         }
     }
 
-    static fromFixedDecimal(x) {const result = wasm.icu4x_PluralOperands_from_fixed_decimal_mv1(x.ffiValue);
+    static fromFixedDecimal(x) {
+        const result = wasm.icu4x_PluralOperands_from_fixed_decimal_mv1(x.ffiValue);
     
         try {
             return new PluralOperands(diplomatRuntime.internalConstructor, result, []);

@@ -45,6 +45,7 @@ export class TimeZoneFormatter {
 
     static createWithLocalizedGmtFallback(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_TimeZoneFormatter_create_with_localized_gmt_fallback_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
     
         try {
@@ -64,6 +65,7 @@ export class TimeZoneFormatter {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_TimeZoneFormatter_create_with_iso_8601_fallback_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...options._intoFFI(functionCleanupArena, {}));
     
         try {
@@ -83,6 +85,7 @@ export class TimeZoneFormatter {
 
     loadGenericNonLocationLong(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_TimeZoneFormatter_load_generic_non_location_long_mv1(diplomatReceive.buffer, this.ffiValue, provider.ffiValue);
     
         try {
@@ -100,6 +103,7 @@ export class TimeZoneFormatter {
 
     loadGenericNonLocationShort(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_TimeZoneFormatter_load_generic_non_location_short_mv1(diplomatReceive.buffer, this.ffiValue, provider.ffiValue);
     
         try {
@@ -117,6 +121,7 @@ export class TimeZoneFormatter {
 
     loadSpecificNonLocationLong(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_TimeZoneFormatter_load_specific_non_location_long_mv1(diplomatReceive.buffer, this.ffiValue, provider.ffiValue);
     
         try {
@@ -134,6 +139,7 @@ export class TimeZoneFormatter {
 
     loadSpecificNonLocationShort(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_TimeZoneFormatter_load_specific_non_location_short_mv1(diplomatReceive.buffer, this.ffiValue, provider.ffiValue);
     
         try {
@@ -151,6 +157,7 @@ export class TimeZoneFormatter {
 
     loadGenericLocationFormat(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_TimeZoneFormatter_load_generic_location_format_mv1(diplomatReceive.buffer, this.ffiValue, provider.ffiValue);
     
         try {
@@ -168,6 +175,7 @@ export class TimeZoneFormatter {
 
     includeLocalizedGmtFormat() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_TimeZoneFormatter_include_localized_gmt_format_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {
@@ -187,6 +195,7 @@ export class TimeZoneFormatter {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_TimeZoneFormatter_load_iso_8601_format_mv1(diplomatReceive.buffer, this.ffiValue, ...options._intoFFI(functionCleanupArena, {}));
     
         try {
@@ -221,6 +230,7 @@ export class TimeZoneFormatter {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
+        
         const result = wasm.icu4x_TimeZoneFormatter_format_custom_time_zone_no_fallback_mv1(diplomatReceive.buffer, this.ffiValue, value.ffiValue, write.buffer);
     
         try {

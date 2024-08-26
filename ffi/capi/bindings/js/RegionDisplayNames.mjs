@@ -42,6 +42,7 @@ export class RegionDisplayNames {
 
     static create(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_RegionDisplayNames_create_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
     
         try {
@@ -65,6 +66,7 @@ export class RegionDisplayNames {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
+        
         const result = wasm.icu4x_RegionDisplayNames_of_mv1(diplomatReceive.buffer, this.ffiValue, ...regionSlice, write.buffer);
     
         try {

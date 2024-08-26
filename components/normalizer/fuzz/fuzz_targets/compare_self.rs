@@ -4,8 +4,8 @@
 
 #![no_main]
 use libfuzzer_sys::fuzz_target;
-use icu_normalizer::ComposingNormalizer;
-use icu_normalizer::DecomposingNormalizer;
+use icu_normalizer::ComposingNormalizerBorrowed;
+use icu_normalizer::DecomposingNormalizerBorrowed;
 use utf16_iter::Utf16CharsEx;
 use utf8_iter::Utf8CharsEx;
 
@@ -13,10 +13,10 @@ fuzz_target!(|data: &[u8]| {
     let well_formed = String::from_utf8_lossy(data);
     let utf16: Vec<u16> = well_formed.encode_utf16().collect();
 
-    let nfd = DecomposingNormalizer::new_nfd();
-    let nfkd = DecomposingNormalizer::new_nfkd();
-    let nfc = ComposingNormalizer::new_nfc();
-    let nfkc = ComposingNormalizer::new_nfkc();
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    let nfkd = DecomposingNormalizerBorrowed::new_nfkd();
+    let nfc = ComposingNormalizerBorrowed::new_nfc();
+    let nfkc = ComposingNormalizerBorrowed::new_nfkc();
 
     // Not macroizing these to get nice line numbers by default.
 

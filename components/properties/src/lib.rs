@@ -102,10 +102,10 @@ pub mod names {
         PropertyEnumToValueNameLinearMapper, PropertyEnumToValueNameLinearMapperBorrowed,
     };
     pub use crate::props::{
-        PropertyEnumToValueNameLinearTiny4Mapper, PropertyEnumToValueNameLinearTiny4MapperBorrowed,
+        PropertyEnumToValueNameSparseMapper, PropertyEnumToValueNameSparseMapperBorrowed,
     };
     pub use crate::props::{
-        PropertyEnumToValueNameSparseMapper, PropertyEnumToValueNameSparseMapperBorrowed,
+        PropertyScriptToIcuScriptMapper, PropertyScriptToIcuScriptMapperBorrowed,
     };
     pub use crate::props::{PropertyValueNameToEnumMapper, PropertyValueNameToEnumMapperBorrowed};
 }

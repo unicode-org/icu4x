@@ -15,11 +15,11 @@
 use alloc::boxed::Box;
 use core::cmp::Ordering;
 
+use icu_locale_core::subtags::Script;
 use icu_provider::prelude::*;
 
 use potential_utf::PotentialUtf8;
-use tinystr::TinyStr4;
-use zerovec::ule::VarULE;
+use zerovec::ule::{NichedOption, VarULE};
 use zerovec::{maps::ZeroMapKV, VarZeroSlice, VarZeroVec, ZeroMap, ZeroVec};
 
 /// This is a property name that can be "loose matched" as according to
@@ -419,9 +419,9 @@ pub struct PropertyEnumToValueNameLinearMapV1<'data> {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct PropertyEnumToValueNameLinearTiny4MapV1<'data> {
+pub struct PropertyScriptToIcuScriptMapV1<'data> {
     /// A map from the value discriminant (the index) to the names, for mostly
     /// contiguous data. Empty strings count as missing.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub map: ZeroVec<'data, TinyStr4>,
+    pub map: ZeroVec<'data, NichedOption<Script, 4>>,
 }

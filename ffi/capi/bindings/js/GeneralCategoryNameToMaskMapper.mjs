@@ -46,6 +46,7 @@ export class GeneralCategoryNameToMaskMapper {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const nameSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, name)).splat()];
+        
         const result = wasm.icu4x_GeneralCategoryNameToMaskMapper_get_strict_mv1(this.ffiValue, ...nameSlice);
     
         try {
@@ -61,6 +62,7 @@ export class GeneralCategoryNameToMaskMapper {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const nameSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, name)).splat()];
+        
         const result = wasm.icu4x_GeneralCategoryNameToMaskMapper_get_loose_mv1(this.ffiValue, ...nameSlice);
     
         try {
@@ -74,6 +76,7 @@ export class GeneralCategoryNameToMaskMapper {
 
     static load(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_GeneralCategoryNameToMaskMapper_load_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {

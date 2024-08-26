@@ -139,28 +139,17 @@ unsafe impl<U: NicheBytes<N> + ULE, const N: usize> ULE for NichedOptionULE<U, N
 }
 
 /// Optional type which uses [`NichedOptionULE<U,N>`] as ULE type.
-/// The implementors guarantee that `N == core::mem::sizeo_of::<Self>()`
+/// The implementors guarantee that `N == core::mem::size_of::<Self>()`
 /// [`repr(transparent)`] guarantees that the layout is same as [`Option<U>`]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[repr(transparent)]
-#[non_exhaustive]
+#[allow(clippy::exhaustive_structs)] // newtype
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct NichedOption<U, const N: usize>(pub Option<U>);
-
-impl<U, const N: usize> NichedOption<U, N> {
-    pub const fn new(o: Option<U>) -> Self {
-        Self(o)
-    }
-}
 
 impl<U, const N: usize> Default for NichedOption<U, N> {
     fn default() -> Self {
         Self(None)
-    }
-}
-
-impl<U, const N: usize> From<Option<U>> for NichedOption<U, N> {
-    fn from(o: Option<U>) -> Self {
-        Self(o)
     }
 }
 

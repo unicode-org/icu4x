@@ -145,55 +145,19 @@
                     "hour": "numeric",
                     "minute": "numeric",
                     "second": "two-digit",
-                    "fractional_second": 8
+                    "fractional_second": 9
                 },
                 "semantic": {
                     "fieldSet": ["hour", "minute", "second"],
                     "length": "short",
-                    "fractionalSecondDigits": 8
+                    "fractionalSecondDigits": 9
                 },
                 "preferences": { "hourCycle": "h23" }
             }
         },
         "output": {
             "values": {
-                "en": "14:15:07.01230000"
-            }
-        }
-    },
-    {
-        "input": {
-            "value": "2022-05-03T14:15:07.123",
-            "options": {
-                "components": {
-                    "hour": "numeric",
-                    "minute": "numeric",
-                    "second": "two-digit",
-                    "fractional_second": 127
-                }
-            }
-        },
-        "output": {
-            "values": {
-                "en": "14:15:07.1230000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
-            }
-        }
-    },
-    {
-        "input": {
-            "value": "2022-05-03T14:15:07.123",
-            "options": {
-                "components": {
-                    "hour": "numeric",
-                    "minute": "numeric",
-                    "second": "two-digit",
-                    "fractional_second": 255
-                }
-            }
-        },
-        "output": {
-            "values": {
-                "en": "14:15:07.1230000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+                "en": "14:15:07.012300000"
             }
         }
     }
