@@ -69,7 +69,7 @@ pub enum FractionalDigits {
     ShowAll,
     /// Use the given number of fractional digits.
     /// This value must be in the range 0..=9.
-    /// Fractional digits are rounded to zero if necessary.
+    /// Fractional digits are truncated if necessary.
     Fixed(u8),
 }
 
