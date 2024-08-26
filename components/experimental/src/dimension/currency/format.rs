@@ -7,9 +7,9 @@ use fixed_decimal::FixedDecimal;
 use icu_decimal::FixedDecimalFormatter;
 use writeable::Writeable;
 
-use crate::dimension::currency::formatter::CurrencyCode;
 use crate::dimension::currency::options::CurrencyFormatterOptions;
 use crate::dimension::currency::options::Width;
+use crate::dimension::currency::CurrencyCode;
 use crate::dimension::provider::currency;
 use crate::dimension::provider::currency::CurrencyEssentialsV1;
 
@@ -78,7 +78,7 @@ mod tests {
     use tinystr::*;
     use writeable::assert_writeable_eq;
 
-    use crate::dimension::currency::formatter::{CurrencyCode, CurrencyFormatter};
+    use crate::dimension::currency::{formatter::CurrencyFormatter, CurrencyCode};
 
     #[test]
     pub fn test_en_us() {
