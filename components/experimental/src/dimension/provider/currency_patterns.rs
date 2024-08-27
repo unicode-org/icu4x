@@ -17,11 +17,8 @@ use icu_provider::prelude::*;
 #[icu_provider::data_struct(marker(CurrencyPatternsDataV1Marker, "currency/patterns@1"))]
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::dimension::provider::currency_patterns)
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency_patterns))]
 #[yoke(prove_covariance_manually)]
 pub struct CurrencyPatternsDataV1<'data> {
     /// Contains the unit patterns for a currency based on plural rules.
