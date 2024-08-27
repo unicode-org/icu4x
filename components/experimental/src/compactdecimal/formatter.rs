@@ -2,17 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::borrow::Cow;
-use core::convert::TryFrom;
-use fixed_decimal::{CompactDecimal, FixedDecimal};
-use icu_decimal::{
-    options::{FixedDecimalFormatterOptions, GroupingStrategy},
-    FixedDecimalFormatter,
-};
-use icu_plurals::PluralRules;
-use icu_provider::prelude::*;
-use zerovec::maps::ZeroMap2dCursor;
-
+use super::options::CompactDecimalFormatterOptions;
 use crate::compactdecimal::{
     format::FormattedCompactDecimal,
     provider::{
@@ -21,40 +11,14 @@ use crate::compactdecimal::{
     },
     ExponentError,
 };
+use alloc::borrow::Cow;
+use core::convert::TryFrom;
+use fixed_decimal::{CompactDecimal, FixedDecimal};
+use icu_decimal::FixedDecimalFormatter;
+use icu_plurals::PluralRules;
+use icu_provider::prelude::*;
 use icu_provider::DataError;
-
-/// A bag of options defining how numbers will be formatted by
-/// [`CompactDecimalFormatter`](super::CompactDecimalFormatter).
-#[derive(Debug, Eq, PartialEq, Clone)]
-#[non_exhaustive]
-pub struct CompactDecimalFormatterOptions {
-    /// Options to configure the inner [`FixedDecimalFormatter`].
-    pub fixed_decimal_formatter_options: FixedDecimalFormatterOptions,
-}
-
-impl Default for CompactDecimalFormatterOptions {
-    fn default() -> Self {
-        Self {
-            fixed_decimal_formatter_options: GroupingStrategy::Min2.into(),
-        }
-    }
-}
-
-impl From<FixedDecimalFormatterOptions> for CompactDecimalFormatterOptions {
-    fn from(fixed_decimal_formatter_options: FixedDecimalFormatterOptions) -> Self {
-        Self {
-            fixed_decimal_formatter_options,
-        }
-    }
-}
-
-impl From<GroupingStrategy> for CompactDecimalFormatterOptions {
-    fn from(grouping_strategy: GroupingStrategy) -> Self {
-        Self {
-            fixed_decimal_formatter_options: grouping_strategy.into(),
-        }
-    }
-}
+use zerovec::maps::ZeroMap2dCursor;
 
 /// A formatter that renders locale-sensitive compact numbers.
 ///
@@ -94,7 +58,7 @@ impl From<GroupingStrategy> for CompactDecimalFormatterOptions {
 #[derive(Debug)]
 pub struct CompactDecimalFormatter {
     pub(crate) plural_rules: PluralRules,
-    pub(crate) fixed_decimal_format: FixedDecimalFormatter,
+    pub(crate) fixed_decimal_formatter: FixedDecimalFormatter,
     pub(crate) compact_data: DataPayload<ErasedCompactDecimalFormatDataV1Marker>,
 }
 
@@ -124,7 +88,7 @@ impl CompactDecimalFormatter {
         options: CompactDecimalFormatterOptions,
     ) -> Result<Self, DataError> {
         Ok(Self {
-            fixed_decimal_format: FixedDecimalFormatter::try_new(
+            fixed_decimal_formatter: FixedDecimalFormatter::try_new(
                 locale,
                 options.fixed_decimal_formatter_options,
             )?,
@@ -165,7 +129,7 @@ impl CompactDecimalFormatter {
             + ?Sized,
     {
         Ok(Self {
-            fixed_decimal_format: FixedDecimalFormatter::try_new_unstable(
+            fixed_decimal_formatter: FixedDecimalFormatter::try_new_unstable(
                 provider,
                 locale,
                 options.fixed_decimal_formatter_options,
@@ -208,7 +172,7 @@ impl CompactDecimalFormatter {
         options: CompactDecimalFormatterOptions,
     ) -> Result<Self, DataError> {
         Ok(Self {
-            fixed_decimal_format: FixedDecimalFormatter::try_new(
+            fixed_decimal_formatter: FixedDecimalFormatter::try_new(
                 locale,
                 options.fixed_decimal_formatter_options,
             )?,
@@ -249,7 +213,7 @@ impl CompactDecimalFormatter {
             + ?Sized,
     {
         Ok(Self {
-            fixed_decimal_format: FixedDecimalFormatter::try_new_unstable(
+            fixed_decimal_formatter: FixedDecimalFormatter::try_new_unstable(
                 provider,
                 locale,
                 options.fixed_decimal_formatter_options,
@@ -699,6 +663,7 @@ impl CompactDecimalFormatter {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use icu_decimal::options::GroupingStrategy;
     use icu_locale_core::locale;
     use writeable::assert_writeable_eq;
 
