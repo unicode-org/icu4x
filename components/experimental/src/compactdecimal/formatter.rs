@@ -58,7 +58,7 @@ use zerovec::maps::ZeroMap2dCursor;
 #[derive(Debug)]
 pub struct CompactDecimalFormatter {
     pub(crate) plural_rules: PluralRules,
-    pub(crate) fixed_decimal_format: FixedDecimalFormatter,
+    pub(crate) fixed_decimal_formatter: FixedDecimalFormatter,
     pub(crate) compact_data: DataPayload<ErasedCompactDecimalFormatDataV1Marker>,
 }
 
@@ -88,7 +88,7 @@ impl CompactDecimalFormatter {
         options: CompactDecimalFormatterOptions,
     ) -> Result<Self, DataError> {
         Ok(Self {
-            fixed_decimal_format: FixedDecimalFormatter::try_new(
+            fixed_decimal_formatter: FixedDecimalFormatter::try_new(
                 locale,
                 options.fixed_decimal_formatter_options,
             )?,
@@ -129,7 +129,7 @@ impl CompactDecimalFormatter {
             + ?Sized,
     {
         Ok(Self {
-            fixed_decimal_format: FixedDecimalFormatter::try_new_unstable(
+            fixed_decimal_formatter: FixedDecimalFormatter::try_new_unstable(
                 provider,
                 locale,
                 options.fixed_decimal_formatter_options,
@@ -172,7 +172,7 @@ impl CompactDecimalFormatter {
         options: CompactDecimalFormatterOptions,
     ) -> Result<Self, DataError> {
         Ok(Self {
-            fixed_decimal_format: FixedDecimalFormatter::try_new(
+            fixed_decimal_formatter: FixedDecimalFormatter::try_new(
                 locale,
                 options.fixed_decimal_formatter_options,
             )?,
@@ -213,7 +213,7 @@ impl CompactDecimalFormatter {
             + ?Sized,
     {
         Ok(Self {
-            fixed_decimal_format: FixedDecimalFormatter::try_new_unstable(
+            fixed_decimal_formatter: FixedDecimalFormatter::try_new_unstable(
                 provider,
                 locale,
                 options.fixed_decimal_formatter_options,
