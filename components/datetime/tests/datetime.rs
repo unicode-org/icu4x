@@ -20,37 +20,30 @@ use icu_calendar::{
     islamic::IslamicUmmAlQura,
     japanese::{Japanese, JapaneseExtended},
     persian::Persian,
-    provider::WeekDataV1Marker,
     roc::Roc,
     AsCalendar, Calendar, DateTime, Gregorian, Iso,
 };
 use icu_datetime::{
     neo::{NeoFormatter, NeoOptions, TypedNeoFormatter},
     neo_pattern::DateTimePattern,
-    neo_skeleton::{NeoSkeleton, NeoSkeletonLength, NeoTimeZoneSkeleton},
+    neo_skeleton::{NeoDateTimeComponents, NeoSkeleton, NeoSkeletonLength, NeoTimeZoneSkeleton},
     options::preferences::{self, HourCycle},
     provider::time_zones::{MetazoneId, TimeZoneBcp47Id},
     TypedDateTimeNames,
 };
-use icu_datetime::{
-    pattern::runtime, provider::calendar::*, time_zone::TimeZoneFormatter, CldrCalendar,
-    TypedDateTimeFormatter,
-};
-use icu_decimal::provider::DecimalSymbolsV1Marker;
+use icu_datetime::{time_zone::TimeZoneFormatter, CldrCalendar, TypedDateTimeFormatter};
 use icu_locale_core::{
     extensions::unicode::{key, value, Value},
     locale, LanguageIdentifier, Locale,
 };
 use icu_provider::prelude::*;
-use icu_provider_adapters::any_payload::AnyPayloadProvider;
-use icu_provider_adapters::fork::MultiForkByMarkerProvider;
 use icu_timezone::{CustomTimeZone, CustomZonedDateTime, ZoneVariant};
 use patterns::{
     dayperiods::{DayPeriodExpectation, DayPeriodTests},
     time_zones::{TimeZoneConfig, TimeZoneExpectation, TimeZoneFormatterConfig, TimeZoneTests},
 };
 use tinystr::tinystr;
-use writeable::{assert_try_writeable_eq, assert_writeable_eq};
+use writeable::assert_try_writeable_eq;
 
 mod mock;
 
@@ -406,88 +399,26 @@ fn test_dayperiod_patterns() {
             .0
     {
         let locale: Locale = test.locale.parse().unwrap();
-        let data_locale = DataLocale::from(&locale);
-        let req = DataRequest {
-            id: DataIdentifierBorrowed::for_locale(&data_locale),
-            ..Default::default()
-        };
-        let mut date_patterns_data: DataResponse<GregorianDateLengthsV1Marker> =
-            icu_datetime::provider::Baked.load(req).unwrap();
-        date_patterns_data.payload.with_mut(|data| {
-            data.length_combinations.medium = "{0}".parse().unwrap();
-        });
-        let mut time_patterns_data: DataResponse<TimeLengthsV1Marker> =
-            icu_datetime::provider::Baked.load(req).unwrap();
-        date_patterns_data.payload.with_mut(|data| {
-            data.length_combinations.medium = "{0}".parse().unwrap();
-        });
-        let date_symbols_data: DataResponse<GregorianDateSymbolsV1Marker> =
-            icu_datetime::provider::Baked.load(req).unwrap();
-        let time_symbols_data: DataResponse<TimeSymbolsV1Marker> =
-            icu_datetime::provider::Baked.load(req).unwrap();
-        #[cfg(feature = "experimental")]
-        let skeleton_data: DataResponse<DateSkeletonPatternsV1Marker> =
-            icu_datetime::provider::Baked
-                .load(DataRequest {
-                    id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                        DataMarkerAttributes::from_str_or_panic("gregory"),
-                        &data_locale,
-                    ),
-                    ..Default::default()
-                })
-                .unwrap();
-        let week_data: DataResponse<WeekDataV1Marker> =
-            icu_calendar::provider::Baked.load(req).unwrap();
-        let decimal_data: DataResponse<DecimalSymbolsV1Marker> = icu_decimal::provider::Baked
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&data_locale),
-                ..Default::default()
-            })
-            .unwrap();
         for test_case in &test.test_cases {
             for dt_input in &test_case.datetimes {
                 let datetime = mock::parse_gregorian_from_str(dt_input);
                 for DayPeriodExpectation { patterns, expected } in &test_case.expectations {
                     for pattern_input in patterns {
-                        let new_pattern1: runtime::Pattern = pattern_input.parse().unwrap();
-                        let new_pattern2: runtime::Pattern = pattern_input.parse().unwrap();
-                        time_patterns_data.payload.with_mut(move |data| {
-                            data.time_h11_h12.medium = new_pattern1;
-                            data.time_h23_h24.medium = new_pattern2;
-                        });
-                        let local_provider = MultiForkByMarkerProvider::new(vec![
-                            AnyPayloadProvider::from_payload::<GregorianDateSymbolsV1Marker>(
-                                date_symbols_data.payload.clone(), //
-                            ),
-                            AnyPayloadProvider::from_payload::<TimeSymbolsV1Marker>(
-                                time_symbols_data.payload.clone(), //
-                            ),
-                            #[cfg(feature = "experimental")]
-                            AnyPayloadProvider::from_payload::<DateSkeletonPatternsV1Marker>(
-                                skeleton_data.payload.clone(), //
-                            ),
-                            AnyPayloadProvider::from_payload::<GregorianDateLengthsV1Marker>(
-                                date_patterns_data.payload.clone(), //
-                            ),
-                            AnyPayloadProvider::from_payload::<TimeLengthsV1Marker>(
-                                time_patterns_data.payload.clone(), //
-                            ),
-                            AnyPayloadProvider::from_payload::<WeekDataV1Marker>(
-                                week_data.payload.clone(), //
-                            ),
-                            AnyPayloadProvider::from_payload::<DecimalSymbolsV1Marker>(
-                                decimal_data.payload.clone(), //
-                            ),
-                        ]);
-                        let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
-                            &local_provider.as_downcasting(),
-                            &data_locale,
-                            Default::default(),
-                        )
-                        .unwrap();
-                        assert_writeable_eq!(
-                            dtf.format(&datetime),
+                        let parsed_pattern =
+                            DateTimePattern::try_from_pattern_str(pattern_input).unwrap();
+                        let mut pattern_formatter =
+                            TypedDateTimeNames::<Gregorian, NeoDateTimeComponents>::try_new(
+                                &(&locale).into(),
+                            )
+                            .unwrap();
+                        let formatted_datetime = pattern_formatter
+                            .include_for_pattern(&parsed_pattern)
+                            .unwrap()
+                            .format(&datetime);
+                        assert_try_writeable_eq!(
+                            formatted_datetime,
                             *expected,
+                            Ok(()),
                             "\n\
                             locale:   `{}`,\n\
                             datetime: `{}`,\n\
