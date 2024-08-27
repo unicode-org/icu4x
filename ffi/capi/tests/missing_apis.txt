@@ -620,6 +620,8 @@ icu::timezone::CustomTimeZone::new_with_bcp47_id#FnInStruct
 icu::timezone::CustomTimeZone::try_from_ixdtf_str#FnInStruct
 icu::timezone::CustomTimeZone::try_from_ixdtf_utf8#FnInStruct
 icu::timezone::CustomZonedDateTime#Struct
+icu::timezone::CustomZonedDateTime::to_calendar#FnInStruct
+icu::timezone::CustomZonedDateTime::to_iso#FnInStruct
 icu::timezone::CustomZonedDateTime::try_from_ixdtf_str#FnInStruct
 icu::timezone::CustomZonedDateTime::try_from_ixdtf_utf8#FnInStruct
 icu::timezone::CustomZonedDateTime::try_iso_from_ixdtf_str#FnInStruct

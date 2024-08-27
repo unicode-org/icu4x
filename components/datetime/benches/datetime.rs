@@ -21,7 +21,7 @@ use icu_datetime::DateTimeFormatterOptions;
 use icu_datetime::TypedDateTimeFormatter;
 use icu_datetime::{time_zone::TimeZoneFormatterOptions, TypedZonedDateTimeFormatter};
 use icu_locale_core::Locale;
-use icu_timezone::CustomTimeZone;
+use icu_timezone::CustomZonedDateTime;
 #[cfg(feature = "experimental")]
 use writeable::TryWriteable;
 
@@ -160,7 +160,7 @@ fn datetime_benches(c: &mut Criterion) {
     group.bench_function("zoned_datetime_overview", |b| {
         b.iter(|| {
             for fx in &fxs.0 {
-                let datetimes: Vec<(DateTime<Gregorian>, CustomTimeZone)> = fx
+                let datetimes: Vec<CustomZonedDateTime<Gregorian>> = fx
                     .values
                     .iter()
                     .map(|value| mock::parse_zoned_gregorian_from_str(value))
@@ -177,8 +177,12 @@ fn datetime_benches(c: &mut Criterion) {
 
                     let mut result = String::new();
 
-                    for dt in &datetimes {
-                        let fdt = dtf.format(&dt.0, &dt.1);
+                    for zdt in &datetimes {
+                        let dt = DateTime {
+                            date: zdt.date,
+                            time: zdt.time,
+                        };
+                        let fdt = dtf.format(&dt, &zdt.zone);
                         write!(result, "{fdt}").unwrap();
                         result.clear();
                     }
@@ -334,7 +338,7 @@ fn datetime_benches(c: &mut Criterion) {
         group.bench_function("TypedZonedDateTimeFormatter/format_to_write", |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
-                    let datetimes: Vec<(DateTime<Gregorian>, CustomTimeZone)> = fx
+                    let datetimes: Vec<CustomZonedDateTime<Gregorian>> = fx
                         .values
                         .iter()
                         .map(|value| mock::parse_zoned_gregorian_from_str(value))
@@ -352,8 +356,12 @@ fn datetime_benches(c: &mut Criterion) {
 
                         let mut scratch = String::new();
 
-                        for dt in &datetimes {
-                            let _ = dtf.format(&dt.0, &dt.1).write_to(&mut scratch);
+                        for zdt in &datetimes {
+                            let dt = DateTime {
+                                date: zdt.date,
+                                time: zdt.time,
+                            };
+                            let _ = dtf.format(&dt, &zdt.zone).write_to(&mut scratch);
                             scratch.clear();
                         }
                     }
@@ -364,7 +372,7 @@ fn datetime_benches(c: &mut Criterion) {
         group.bench_function("TypedZonedDateTimeFormatter/format_to_string", |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
-                    let datetimes: Vec<(DateTime<Gregorian>, CustomTimeZone)> = fx
+                    let datetimes: Vec<CustomZonedDateTime<Gregorian>> = fx
                         .values
                         .iter()
                         .map(|value| mock::parse_zoned_gregorian_from_str(value))
@@ -380,8 +388,12 @@ fn datetime_benches(c: &mut Criterion) {
                         )
                         .unwrap();
 
-                        for dt in &datetimes {
-                            let _ = dtf.format_to_string(&dt.0, &dt.1);
+                        for zdt in &datetimes {
+                            let dt = DateTime {
+                                date: zdt.date,
+                                time: zdt.time,
+                            };
+                            let _ = dtf.format_to_string(&dt, &zdt.zone);
                         }
                     }
                 }
@@ -391,7 +403,7 @@ fn datetime_benches(c: &mut Criterion) {
         group.bench_function("FormattedZonedDateTime/format", |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
-                    let datetimes: Vec<(DateTime<Gregorian>, CustomTimeZone)> = fx
+                    let datetimes: Vec<CustomZonedDateTime<Gregorian>> = fx
                         .values
                         .iter()
                         .map(|value| mock::parse_zoned_gregorian_from_str(value))
@@ -409,8 +421,12 @@ fn datetime_benches(c: &mut Criterion) {
 
                         let mut result = String::new();
 
-                        for dt in &datetimes {
-                            let fdt = dtf.format(&dt.0, &dt.1);
+                        for zdt in &datetimes {
+                            let dt = DateTime {
+                                date: zdt.date,
+                                time: zdt.time,
+                            };
+                            let fdt = dtf.format(&dt, &zdt.zone);
                             write!(result, "{fdt}").unwrap();
                             result.clear();
                         }
@@ -422,7 +438,7 @@ fn datetime_benches(c: &mut Criterion) {
         group.bench_function("FormattedZonedDateTime/to_string", |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
-                    let datetimes: Vec<(DateTime<Gregorian>, CustomTimeZone)> = fx
+                    let datetimes: Vec<CustomZonedDateTime<Gregorian>> = fx
                         .values
                         .iter()
                         .map(|value| mock::parse_zoned_gregorian_from_str(value))
@@ -438,8 +454,12 @@ fn datetime_benches(c: &mut Criterion) {
                         )
                         .unwrap();
 
-                        for dt in &datetimes {
-                            let fdt = dtf.format(&dt.0, &dt.1);
+                        for zdt in &datetimes {
+                            let dt = DateTime {
+                                date: zdt.date,
+                                time: zdt.time,
+                            };
+                            let fdt = dtf.format(&dt, &zdt.zone);
                             let _ = fdt.to_string();
                         }
                     }
@@ -450,7 +470,7 @@ fn datetime_benches(c: &mut Criterion) {
         group.bench_function("FormattedZonedDateTime/write_to_string", |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
-                    let datetimes: Vec<(DateTime<Gregorian>, CustomTimeZone)> = fx
+                    let datetimes: Vec<CustomZonedDateTime<Gregorian>> = fx
                         .values
                         .iter()
                         .map(|value| mock::parse_zoned_gregorian_from_str(value))
@@ -466,8 +486,12 @@ fn datetime_benches(c: &mut Criterion) {
                         )
                         .unwrap();
 
-                        for dt in &datetimes {
-                            let fdt = dtf.format(&dt.0, &dt.1);
+                        for zdt in &datetimes {
+                            let dt = DateTime {
+                                date: zdt.date,
+                                time: zdt.time,
+                            };
+                            let fdt = dtf.format(&dt, &zdt.zone);
                             let _ = fdt.write_to_string();
                         }
                     }
