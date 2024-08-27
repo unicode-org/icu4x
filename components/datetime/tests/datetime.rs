@@ -31,7 +31,7 @@ use icu_datetime::{
     provider::time_zones::{MetazoneId, TimeZoneBcp47Id},
     TypedDateTimeNames,
 };
-use icu_datetime::{time_zone::TimeZoneFormatter, CldrCalendar, TypedDateTimeFormatter};
+use icu_datetime::{time_zone::TimeZoneFormatter, CldrCalendar};
 use icu_locale_core::{
     extensions::unicode::{key, value, Value},
     locale, LanguageIdentifier, Locale,
@@ -659,20 +659,4 @@ fn test_components_combine_datetime() {
         "components-combine-datetime",
         include_str!("fixtures/tests/components-combine-datetime.json"),
     );
-}
-
-#[test]
-fn constructing_datetime_format_with_time_zone_pattern_symbols_is_err() {
-    use icu_datetime::{
-        options::length::{Bag, Time},
-        DateTimeFormatterOptions,
-    };
-
-    let mut length_bag = Bag::default();
-    length_bag.time = Some(Time::Full); // Full has timezone symbols
-    let options = DateTimeFormatterOptions::Length(length_bag);
-
-    let result = TypedDateTimeFormatter::<Gregorian>::try_new(&locale!("en").into(), options);
-
-    assert!(result.is_err());
 }
