@@ -55,9 +55,18 @@ pub struct UnitsInfoV1<'data> {
 /// Which includes the base unit (the unit which the unit is converted to), the conversion factor, and the offset.
 #[zerovec::make_varule(ConversionInfoULE)]
 #[derive(Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::units::provider))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize),
+    zerovec::derive(Serialize)
+)]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde::Deserialize),
+    zerovec::derive(Deserialize)
+)]
 #[zerovec::derive(Debug)]
 pub struct ConversionInfo<'data> {
     /// Contains the base unit (after parsing) which what the unit is converted to.
