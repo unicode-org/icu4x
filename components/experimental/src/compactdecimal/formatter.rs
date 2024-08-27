@@ -2,17 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::borrow::Cow;
-use core::convert::TryFrom;
-use fixed_decimal::{CompactDecimal, FixedDecimal};
-use icu_decimal::{
-    options::{FixedDecimalFormatterOptions, GroupingStrategy},
-    FixedDecimalFormatter,
-};
-use icu_plurals::PluralRules;
-use icu_provider::prelude::*;
-use zerovec::maps::ZeroMap2dCursor;
-
+use super::options::CompactDecimalFormatterOptions;
 use crate::compactdecimal::{
     format::FormattedCompactDecimal,
     provider::{
@@ -21,7 +11,14 @@ use crate::compactdecimal::{
     },
     ExponentError,
 };
+use alloc::borrow::Cow;
+use core::convert::TryFrom;
+use fixed_decimal::{CompactDecimal, FixedDecimal};
+use icu_decimal::FixedDecimalFormatter;
+use icu_plurals::PluralRules;
+use icu_provider::prelude::*;
 use icu_provider::DataError;
+use zerovec::maps::ZeroMap2dCursor;
 
 /// A formatter that renders locale-sensitive compact numbers.
 ///
@@ -666,6 +663,7 @@ impl CompactDecimalFormatter {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use icu_decimal::options::GroupingStrategy;
     use icu_locale_core::locale;
     use writeable::assert_writeable_eq;
 
