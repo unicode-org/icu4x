@@ -17,11 +17,8 @@ use zerovec::ZeroMap;
 #[icu_provider::data_struct(marker(ShortCurrencyCompactV1Marker, "currency/compact@1"))]
 #[derive(Debug, Clone, Default, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::dimension::provider::currency_compact)
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency_compact))]
 #[yoke(prove_covariance_manually)]
 pub struct ShortCurrencyCompactV1<'data> {
     // TODO: this map should include a `DoublePattern` as a value.
@@ -39,11 +36,8 @@ pub struct ShortCurrencyCompactV1<'data> {
 
 #[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::dimension::provider::currency_compact)
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency_compact))]
 #[repr(u8)]
 pub enum CompactCount {
     Standard(PluralCategory),
