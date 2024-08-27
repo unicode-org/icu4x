@@ -175,7 +175,87 @@ impl TimeZoneFormatterConfig {
                 skeleton.length = Some(NeoSkeletonLength::Long);
                 skeleton.style = NeoTimeZoneStyle::Offset;
             }
-            TimeZoneFormatterConfig::Iso8601(format, minutes, seconds) => {
+            TimeZoneFormatterConfig::Iso8601(
+                IsoFormat::UtcBasic,
+                IsoMinutes::Optional,
+                IsoSeconds::Never,
+            ) => {
+                // TODO: X
+                todo!()
+            }
+            TimeZoneFormatterConfig::Iso8601(
+                IsoFormat::UtcBasic,
+                IsoMinutes::Required,
+                IsoSeconds::Never,
+            ) => {
+                // TODO: XX
+                todo!()
+            }
+            TimeZoneFormatterConfig::Iso8601(
+                IsoFormat::UtcExtended,
+                IsoMinutes::Required,
+                IsoSeconds::Never,
+            ) => {
+                // TODO: XXX
+                todo!()
+            }
+            TimeZoneFormatterConfig::Iso8601(
+                IsoFormat::UtcBasic,
+                IsoMinutes::Required,
+                IsoSeconds::Optional,
+            ) => {
+                // TODO: XXXX
+                todo!()
+            }
+            TimeZoneFormatterConfig::Iso8601(
+                IsoFormat::UtcExtended,
+                IsoMinutes::Required,
+                IsoSeconds::Optional,
+            ) => {
+                // TODO: XXXXX
+                todo!()
+            }
+            TimeZoneFormatterConfig::Iso8601(
+                IsoFormat::Basic,
+                IsoMinutes::Optional,
+                IsoSeconds::Never,
+            ) => {
+                // TODO: x
+                todo!()
+            }
+            TimeZoneFormatterConfig::Iso8601(
+                IsoFormat::Basic,
+                IsoMinutes::Required,
+                IsoSeconds::Never,
+            ) => {
+                // TODO: xx
+                todo!()
+            }
+            TimeZoneFormatterConfig::Iso8601(
+                IsoFormat::Extended,
+                IsoMinutes::Required,
+                IsoSeconds::Never,
+            ) => {
+                // TODO: xxx
+                todo!()
+            }
+            TimeZoneFormatterConfig::Iso8601(
+                IsoFormat::Basic,
+                IsoMinutes::Required,
+                IsoSeconds::Optional,
+            ) => {
+                // TODO: xxxx
+                todo!()
+            }
+            TimeZoneFormatterConfig::Iso8601(
+                IsoFormat::Extended,
+                IsoMinutes::Required,
+                IsoSeconds::Optional,
+            ) => {
+                // TODO: xxxxx
+                todo!()
+            }
+            TimeZoneFormatterConfig::Iso8601(_, _, _) => {
                 todo!()
             }
         }

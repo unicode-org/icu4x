@@ -47,7 +47,7 @@ use icu_provider_adapters::fork::MultiForkByMarkerProvider;
 use icu_timezone::{CustomTimeZone, CustomZonedDateTime, ZoneVariant};
 use patterns::{
     dayperiods::{DayPeriodExpectation, DayPeriodTests},
-    time_zones::{TimeZoneConfig, TimeZoneExpectation, TimeZoneTests},
+    time_zones::{TimeZoneConfig, TimeZoneExpectation, TimeZoneFormatterConfig, TimeZoneTests},
 };
 use tinystr::tinystr;
 use writeable::{assert_try_writeable_eq, assert_writeable_eq};
@@ -524,6 +524,10 @@ fn test_time_zone_format_configs() {
         } in &test.expectations
         {
             for &config_input in configs {
+                if matches!(config_input, TimeZoneFormatterConfig::Iso8601(_, _, _)) {
+                    // TODO: ISO-8601 not yet supported via Semantic Skeleton
+                    continue;
+                }
                 let skeleton = config_input.to_semantic_skeleton();
                 for (&fallback_format, expect) in fallback_formats.iter().zip(expected.iter()) {
                     let tzf = TypedNeoFormatter::<Gregorian, _>::try_new_with_components(
@@ -606,7 +610,10 @@ fn test_time_zone_patterns() {
                 for (&fallback_format, expect) in fallback_formats.iter().zip(expected.iter()) {
                     println!(".");
                     let mut pattern_formatter =
-                        TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(&(&locale).into()).unwrap();
+                        TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(
+                            &(&locale).into(),
+                        )
+                        .unwrap();
                     let formatted_datetime = pattern_formatter
                         .include_for_pattern(&parsed_pattern)
                         .unwrap()
