@@ -244,9 +244,9 @@ impl FromStr for CustomZonedDateTime<Iso> {
 
 impl CustomZonedDateTime<AnyCalendar> {
     /// Create a [`CustomZonedDateTime`] in any calendar from an IXDTF syntax string.
-    /// 
+    ///
     /// For more information on IXDTF, see the [`ixdtf`] crate.
-    /// 
+    ///
     /// This is a convenience constructor that uses compiled data. For custom data providers,
     /// use [`ixdtf`] and/or the other primitives in this crate such as [`TimeZoneIdMapper`].
     ///
