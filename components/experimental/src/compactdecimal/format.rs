@@ -7,7 +7,7 @@ use fixed_decimal::{CompactDecimal, FixedDecimal};
 use writeable::Writeable;
 use zerovec::maps::ZeroMap2dCursor;
 
-use crate::compactdecimal::compactdecimal::CompactDecimalFormatter;
+use crate::compactdecimal::formatter::CompactDecimalFormatter;
 use crate::compactdecimal::provider::{Count, PatternULE};
 
 /// An intermediate structure returned by [`CompactDecimalFormatter`](super::CompactDecimalFormatter).

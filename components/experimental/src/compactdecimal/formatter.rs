@@ -23,39 +23,6 @@ use crate::compactdecimal::{
 };
 use icu_provider::DataError;
 
-/// A bag of options defining how numbers will be formatted by
-/// [`CompactDecimalFormatter`](super::CompactDecimalFormatter).
-#[derive(Debug, Eq, PartialEq, Clone)]
-#[non_exhaustive]
-pub struct CompactDecimalFormatterOptions {
-    /// Options to configure the inner [`FixedDecimalFormatter`].
-    pub fixed_decimal_formatter_options: FixedDecimalFormatterOptions,
-}
-
-impl Default for CompactDecimalFormatterOptions {
-    fn default() -> Self {
-        Self {
-            fixed_decimal_formatter_options: GroupingStrategy::Min2.into(),
-        }
-    }
-}
-
-impl From<FixedDecimalFormatterOptions> for CompactDecimalFormatterOptions {
-    fn from(fixed_decimal_formatter_options: FixedDecimalFormatterOptions) -> Self {
-        Self {
-            fixed_decimal_formatter_options,
-        }
-    }
-}
-
-impl From<GroupingStrategy> for CompactDecimalFormatterOptions {
-    fn from(grouping_strategy: GroupingStrategy) -> Self {
-        Self {
-            fixed_decimal_formatter_options: grouping_strategy.into(),
-        }
-    }
-}
-
 /// A formatter that renders locale-sensitive compact numbers.
 ///
 /// # Examples
