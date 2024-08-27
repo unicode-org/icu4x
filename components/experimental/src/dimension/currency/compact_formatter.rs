@@ -124,4 +124,39 @@ impl CompactCurrencyFormatter {
             options,
         })
     }
+
+    /// Formats in the compact format a [`FixedDecimal`] value for the given currency code.
+    ///
+    /// # Examples
+    /// ```
+    /// use icu::experimental::dimension::currency::compact_formatter::CompactCurrencyFormatter;
+    /// use icu::experimental::dimension::currency::CurrencyCode;
+    /// use icu::locale::locale;
+    /// use tinystr::*;
+    /// use writeable::Writeable;
+    ///
+    /// let locale = locale!("en-US").into();
+    /// let currency_code = CurrencyCode(tinystr!(3, "USD"));
+    /// let fmt = CompactCurrencyFormatter::try_new(&locale, &currency_code).unwrap();
+    /// let value = "12345.67".parse().unwrap();
+    /// let formatted_currency = fmt.format_fixed_decimal(&value, currency_code);
+    /// let mut sink = String::new();
+    /// formatted_currency.write_to(&mut sink).unwrap();
+    /// assert_eq!(sink.as_str(), "12,345.67 US dollars");
+    /// ```
+    pub fn format_fixed_decimal<'l>(
+        &'l self,
+        value: &'l FixedDecimal,
+        currency_code: CurrencyCode,
+    ) -> CompactFormattedCurrency<'l> {
+        CompactFormattedCurrency {
+            value,
+            currency_code,
+            options: &self.options,
+            essential: self.essential.get(),
+            short_currency_compact: self.short_currency_compact.get(),
+            fixed_decimal_formatter: &self.fixed_decimal_formatter,
+            plural_rules: &self.plural_rules,
+        }
+    }
 }
