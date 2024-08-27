@@ -11,6 +11,7 @@ pub mod ffi {
 
     use crate::errors::ffi::TimeZoneInvalidIdError;
     use crate::errors::ffi::TimeZoneInvalidOffsetError;
+    #[cfg(feature = "compiled_data")]
     use crate::errors::ffi::TimeZoneUnknownError;
 
     #[diplomat::opaque]
