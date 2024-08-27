@@ -11,7 +11,7 @@ use serde::Deserialize;
 use std::collections::BTreeMap;
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub(crate) struct CurrencyPatterns {
+pub(crate) struct CurrencyDisplaynames {
     #[serde(rename = "symbol")]
     pub(crate) short: Option<String>,
 
@@ -42,7 +42,7 @@ pub(crate) struct CurrencyPatterns {
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub(crate) struct Numbers {
-    pub(crate) currencies: BTreeMap<String, CurrencyPatterns>,
+    pub(crate) currencies: BTreeMap<String, CurrencyDisplaynames>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
