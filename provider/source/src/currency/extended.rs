@@ -60,15 +60,15 @@ impl crate::IterableDataProviderCached<CurrencyExtendedDataV1Marker> for SourceD
                 .read_and_parse(&locale, "currencies.json")?;
 
             let currencies = &currencies_resource.main.value.numbers.currencies;
-            for (currency, patterns) in currencies {
+            for (currency, displaynames) in currencies {
                 // By TR 35 (https://unicode.org/reports/tr35/tr35-numbers.html#Currencies)
-                //      If the pattern is not found for the associated `Count`, fall back to the `Count::Other` pattern.
-                //      And the `other` pattern must be present.
-                //      Therefore, we filter out any currencies that do not have an `other` pattern.
+                //      If the displayname is not found for the associated `Count`, fall back to the `Count::Other` displayname.
+                //      And the `other` displayname must be present.
+                //      Therefore, we filter out any currencies that do not have an `other` displayname.
                 //      NOTE:
-                //          In case of `other` pattern does not exist, File a Jira ticket to CLDR:
+                //          In case of `other` displayname does not exist, File a Jira ticket to CLDR:
                 //          https://unicode-org.atlassian.net/browse/CLDR
-                if patterns.other.is_none() {
+                if displaynames.other.is_none() {
                     continue;
                 }
                 if let Ok(attributes) = DataMarkerAttributes::try_from_string(currency.clone()) {
