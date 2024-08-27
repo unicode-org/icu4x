@@ -36,11 +36,8 @@ use super::ratio::IcuRatio;
 /// </div>
 #[icu_provider::data_struct(marker(UnitsInfoV1Marker, "units/info@1", singleton))]
 #[derive(Clone, PartialEq, Debug)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::units::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::units::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct UnitsInfoV1<'data> {
     // TODO: remove this field once we are using this map from `measure/provider::UnitsTrie`.
@@ -58,21 +55,9 @@ pub struct UnitsInfoV1<'data> {
 /// Which includes the base unit (the unit which the unit is converted to), the conversion factor, and the offset.
 #[zerovec::make_varule(ConversionInfoULE)]
 #[derive(Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(databake::Bake),
-    databake(path = icu_experimental::units::provider),
-)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize),
-    zerovec::derive(Serialize)
-)]
-#[cfg_attr(
-    feature = "serde",
-    derive(serde::Deserialize),
-    zerovec::derive(Deserialize)
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::units::provider))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[zerovec::derive(Debug)]
 pub struct ConversionInfo<'data> {
     /// Contains the base unit (after parsing) which what the unit is converted to.
@@ -109,11 +94,8 @@ pub struct ConversionInfo<'data> {
 
 /// This enum is used to represent the sign of a constant value.
 #[zerovec::make_ule(SignULE)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::units::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::units::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
 #[repr(u8)]
@@ -125,11 +107,8 @@ pub enum Sign {
 
 /// This enum is used to represent the exactness of a factor
 #[zerovec::make_ule(ExactnessULE)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::units::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::units::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
 #[repr(u8)]

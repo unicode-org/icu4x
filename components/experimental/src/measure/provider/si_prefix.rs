@@ -11,11 +11,8 @@
 
 /// Represents the base of an si prefix.
 #[zerovec::make_ule(BaseULE)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::units::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::units::provider::si_prefix))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
 #[repr(u8)]
@@ -32,11 +29,8 @@ pub enum Base {
 /// Represents the SI prefix.
 #[zerovec::make_ule(SiPrefixULE)]
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::units::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::measure::provider::si_prefix))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct SiPrefix {
     /// The absolute value of the power of the si prefix.
