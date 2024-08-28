@@ -44,7 +44,7 @@ use patterns::{
     time_zones::{TimeZoneConfig, TimeZoneExpectation, TimeZoneFormatterConfig, TimeZoneTests},
 };
 use tinystr::tinystr;
-use writeable::assert_try_writeable_eq;
+use writeable::{assert_try_writeable_eq, assert_writeable_eq};
 
 mod mock;
 
