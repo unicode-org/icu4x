@@ -13,11 +13,12 @@ use super::{
 use crate::fields::FieldSymbol;
 use alloc::string::String;
 use core::fmt::{self, Write};
+use writeable::{impl_display_with_writeable, Writeable};
 
 /// A helper function optimized to dump string buffers into `Pattern`
 /// serialization wrapping minimal chunks of the buffer in escaping `'`
 /// literals to produce valid UTF35 pattern string.
-fn dump_buffer_into_formatter(literal: &str, formatter: &mut fmt::Formatter) -> fmt::Result {
+fn dump_buffer_into_formatter<W: Write + ?Sized>(literal: &str, formatter: &mut W) -> fmt::Result {
     if literal.is_empty() {
         return Ok(());
     }
@@ -69,12 +70,9 @@ fn dump_buffer_into_formatter(literal: &str, formatter: &mut fmt::Formatter) -> 
 }
 
 /// This trait is implemented in order to provide the machinery to convert a [`Pattern`] to a UTS 35
-/// pattern string. It could also be implemented as the Writeable trait, but at the time of writing
-/// this was not done, as this code would need to implement the [`writeable_length_hint()`] method,
-/// which would need to duplicate the branching logic of the [`fmt`](std::fmt) method here. This code
-/// is used in generating the data providers and is not as performance sensitive.
-impl fmt::Display for Pattern {
-    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+/// pattern string.
+impl Writeable for Pattern<'_> {
+    fn write_to<W: Write + ?Sized>(&self, formatter: &mut W) -> fmt::Result {
         let mut buffer = String::new();
         for pattern_item in self.items.iter() {
             match pattern_item {
@@ -93,7 +91,7 @@ impl fmt::Display for Pattern {
                     }
                 }
                 PatternItem::Literal(ch) => {
-                    buffer.push(*ch);
+                    buffer.push(ch);
                 }
             }
         }
@@ -103,8 +101,10 @@ impl fmt::Display for Pattern {
     }
 }
 
-impl fmt::Display for GenericPattern {
-    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+impl_display_with_writeable!(Pattern<'_>);
+
+impl Writeable for GenericPattern<'_> {
+    fn write_to<W: Write + ?Sized>(&self, formatter: &mut W) -> fmt::Result {
         let mut buffer = alloc::string::String::new();
         for pattern_item in self.items.iter() {
             match pattern_item {
@@ -114,7 +114,7 @@ impl fmt::Display for GenericPattern {
                     write!(formatter, "{{{idx}}}")?;
                 }
                 GenericPatternItem::Literal(ch) => {
-                    buffer.push(*ch);
+                    buffer.push(ch);
                 }
             }
         }
@@ -123,3 +123,5 @@ impl fmt::Display for GenericPattern {
         Ok(())
     }
 }
+
+impl_display_with_writeable!(GenericPattern<'_>);

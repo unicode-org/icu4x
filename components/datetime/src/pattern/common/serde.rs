@@ -85,7 +85,7 @@ mod reference {
             S: ser::Serializer,
         {
             if serializer.is_human_readable() {
-                serializer.serialize_str(&self.to_string())
+                serializer.serialize_str(&self.to_runtime_pattern().to_string())
             } else {
                 let pfs = PatternForSerde::from(self);
                 pfs.serialize(serializer)
