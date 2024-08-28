@@ -30,11 +30,8 @@ pub use crate::provider::Baked;
 ))]
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::dimension::provider::extended_currency)
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::extended_currency))]
 #[yoke(prove_covariance_manually)]
 pub struct CurrencyExtendedDataV1<'data> {
     /// Contains the localized display names for a currency based on plural rules.

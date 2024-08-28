@@ -139,7 +139,7 @@ mod zoned_datetime;
 #[cfg(all(feature = "ixdtf", feature = "compiled_data"))]
 mod ixdtf;
 
-pub use error::InvalidOffsetError;
+pub use error::{InvalidOffsetError, UnknownTimeZoneError};
 pub use ids::{
     TimeZoneIdMapper, TimeZoneIdMapperBorrowed, TimeZoneIdMapperWithFastCanonicalization,
     TimeZoneIdMapperWithFastCanonicalizationBorrowed,

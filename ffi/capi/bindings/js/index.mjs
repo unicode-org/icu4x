@@ -12,6 +12,8 @@ export { TimeZoneInvalidIdError } from "./TimeZoneInvalidIdError.mjs"
 
 export { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError.mjs"
 
+export { TimeZoneUnknownError } from "./TimeZoneUnknownError.mjs"
+
 export { LocaleFallbackConfig } from "./LocaleFallbackConfig.mjs"
 
 export { LineBreakOptions } from "./LineBreakOptions.mjs"

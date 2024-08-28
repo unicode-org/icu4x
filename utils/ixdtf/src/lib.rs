@@ -4,10 +4,11 @@
 
 //! Parsers for extended date time string and Duration parsing.
 //!
-//! The [Internet Extended Date/Time Fmt (IXDTF)][rfc-9557] is laid out by RFC 9557. RFC 9557
-//! builds on RFC3339's time stamp specification and ISO8601 to provide an optional extension
-//! syntax for date/time strings. RFC 9557 also updates RFC3339 "in the specific interpretation
-//! of the local offset Z".
+//! The [Internet Extended Date/Time Fmt (IXDTF)][rfc9557] is laid out by RFC 9557. RFC 9557
+//! builds on RFC 3339's time stamp specification and ISO 8601 to provide an optional extension
+//! syntax for date/time strings.
+//!
+//! RFC 9557 also updates the interpretation of `Z` from RFC 3339.
 //!
 //! # Date Time Extended Examples
 //!
@@ -40,6 +41,8 @@
 //! assert_eq!(offset.sign, Sign::Negative);
 //! assert_eq!(offset.hour, 5);
 //! assert_eq!(offset.minute, 0);
+//! assert_eq!(offset.second, 0);
+//! assert_eq!(offset.nanosecond, 0);
 //! assert!(!tz_annotation.critical);
 //! assert_eq!(tz_annotation.tz, TimeZoneRecord::Name("America/New_York".as_bytes()));
 //! ```
@@ -58,6 +61,48 @@
 //! - `2024-03-02T08:48:00`
 //! - `2024-03-02T08:48:00`
 //!
+//! ## Updates to Zulu interpretation from RFC 3339
+//!
+//! RFC 3339 interpreted both `+00:00` and `Z` "UTC is the preferred reference point for the
+//! specified time"; meanwhile, `-00:00` expressed "the time in UTC is known, but the local
+//! time is unknown".
+//!
+//! RFC 9557 updates the interpretation of `Z` to align with `-00:00`.
+//!
+//! ```rust
+//! use ixdtf::parsers::{
+//!     records::{Sign, TimeZoneRecord},
+//!     IxdtfParser,
+//! };
+//!
+//! let ixdtf_str = "2024-03-02T08:48:00Z[America/New_York]";
+//!
+//! let result = IxdtfParser::from_str(ixdtf_str).parse().unwrap();
+//!
+//! let date = result.date.unwrap();
+//! let time = result.time.unwrap();
+//! let offset = result.offset.unwrap();
+//! let tz_annotation = result.tz.unwrap();
+//!
+//! assert_eq!(date.year, 2024);
+//! assert_eq!(date.month, 3);
+//! assert_eq!(date.day, 2);
+//! assert_eq!(time.hour, 8);
+//! assert_eq!(time.minute, 48);
+//! assert_eq!(offset.sign, Sign::Negative);
+//! assert_eq!(offset.hour, 0);
+//! assert_eq!(offset.minute, 0);
+//! assert_eq!(offset.second, 0);
+//! assert_eq!(offset.nanosecond, 0);
+//! assert!(!tz_annotation.critical);
+//! assert_eq!(tz_annotation.tz, TimeZoneRecord::Name("America/New_York".as_bytes()));
+//! ```
+//!
+//! For more information on the update to RFC 3339, please see RFC 9557, Section 2.
+//!
+//! For more information on `Z` along with time zone annotations, please see the Annotations
+//! with Application Defined Behavior section below.
+//!
 //! ## IXDTF Extensions: A Deeper Look
 //!
 //! The suffix extensions come in two primary kinds: a time zone annotation and a key-value
@@ -73,6 +118,35 @@
 //!
 //! - `2024-03-02T08:48:00-5:00[America/New_York]`
 //! - `2024-03-02T08:48:00-5:00[-05:00]`
+//! - `2024-03-02T08:48:00Z[America/New_York]`
+//!
+//! ##### Time Zone Consistency
+//!
+//! With the update to RFC 3339, when `Z` is provided as a datetime offset along side a time zone
+//! annotation, the IXDTF string is not considered inconsistent as `Z` does not assert any local
+//! time. Instead, an application may decide to calculate the time with the rules of the time
+//! zone annotation if it is provided.
+//!
+//! ```rust
+//! use ixdtf::parsers::{IxdtfParser, records::{TimeZoneRecord, Sign}};
+//!
+//! let zulu_offset = "2024-03-02T08:48:00Z[!America/New_York]";
+//!
+//! let result = IxdtfParser::from_str(zulu_offset).parse().unwrap();
+//!
+//! let tz_annotation = result.tz.unwrap();
+//! let offset = result.offset.unwrap();
+//!
+//! // The offset is `Z`/`-00:00`, so the application can use the rules of
+//! // "America/New_York" to calculate the time for IXDTF string.
+//! assert_eq!(offset.sign, Sign::Negative);
+//! assert_eq!(offset.hour, 0);
+//! assert_eq!(offset.minute, 0);
+//! assert_eq!(offset.second, 0);
+//! assert_eq!(offset.nanosecond, 0);
+//! assert!(tz_annotation.critical);
+//! assert_eq!(tz_annotation.tz, TimeZoneRecord::Name("America/New_York".as_bytes()));
+//! ```
 //!
 //! ### Key-Value Annotations
 //!
@@ -98,7 +172,7 @@
 //! - (4) `2024-03-02T08:48:00-05:00[u-ca=iso8601][answer-to-universe=fortytwo]`
 //!
 //! ##### Example 1
-
+//!
 //! This is a basic annotation string that has a Time Zone and calendar annotation.
 //!
 //! ##### Example 2
@@ -283,7 +357,7 @@
 //! the `duration` feature flag. The API for `IsoDurationParser` is the same as `IxdtfParser`, but
 //! parses duration strings over date/time strings.
 //!
-//! [rfc-9557]: https://datatracker.ietf.org/doc/rfc9557/
+//! [rfc9557]: https://datatracker.ietf.org/doc/rfc9557/
 //! [rfc3339]: https://datatracker.ietf.org/doc/html/rfc3339
 //! [temporal-grammar]: https://tc39.es/proposal-temporal/#sec-temporal-iso8601grammar
 
