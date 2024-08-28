@@ -155,11 +155,8 @@ impl DynamicDataMarker for UCharDictionaryBreakDataV1Marker {
 }
 
 #[derive(Clone, Copy, PartialEq, Debug)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(databake::Bake),
-    databake(path = icu_segmenter::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_segmenter::provider))]
 /// Break state
 ///
 /// <div class="stab unstable">

@@ -135,11 +135,8 @@ impl<'data> ChineseBasedCacheV1<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ULE)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(databake::Bake),
-    databake(path = icu_calendar::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
 #[repr(C, packed)]
 pub struct PackedChineseBasedYearInfo(pub u8, pub u8, pub u8);
 

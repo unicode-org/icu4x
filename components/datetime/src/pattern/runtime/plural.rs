@@ -133,11 +133,8 @@ impl<'data> PluralPattern<'data> {
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[allow(clippy::large_enum_variant)]
 #[allow(clippy::exhaustive_enums)] // this type is stable
-#[cfg_attr(
-    feature = "datagen",
-    derive(databake::Bake),
-    databake(path = icu_datetime::pattern::runtime),
-)]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::pattern::runtime))]
 pub enum PatternPlurals<'data> {
     /// A collection of pattern variants for when plurals differ.
     MultipleVariants(PluralPattern<'data>),
