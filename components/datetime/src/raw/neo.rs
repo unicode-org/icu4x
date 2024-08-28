@@ -254,8 +254,8 @@ impl<'a> DatePatternDataBorrowed<'a> {
         let Self::Resolved(pattern, alignment) = self;
         ItemsAndOptions {
             items: &pattern.items,
-                alignment,
-                ..Default::default()
+            alignment,
+            ..Default::default()
         }
     }
 }
@@ -438,9 +438,9 @@ impl<'a> TimePatternDataBorrowed<'a> {
         let Self::Resolved(pattern, alignment, hour_cycle, fractional_second_digits) = self;
         ItemsAndOptions {
             items: &pattern.items,
-                alignment,
-                hour_cycle,
-                fractional_second_digits,
+            alignment,
+            hour_cycle,
+            fractional_second_digits,
         }
     }
 }
@@ -908,14 +908,16 @@ impl<'a> ItemsAndOptions<'a> {
                     if let Some(fractional_second_digits) = self.fractional_second_digits {
                         if matches!(
                             field.symbol,
-                            FieldSymbol::Second(fields::Second::Second) | FieldSymbol::DecimalSecond(_)
+                            FieldSymbol::Second(fields::Second::Second)
+                                | FieldSymbol::DecimalSecond(_)
                         ) {
-                            field.symbol =
-                                FieldSymbol::from_fractional_second_digits(fractional_second_digits);
+                            field.symbol = FieldSymbol::from_fractional_second_digits(
+                                fractional_second_digits,
+                            );
                         }
                     }
                 }
-                _ => ()
+                _ => (),
             }
             pattern_item
         })
