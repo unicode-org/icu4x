@@ -21,7 +21,7 @@ use icu_datetime::DateTimeFormatterOptions;
 use icu_datetime::TypedDateTimeFormatter;
 use icu_datetime::{time_zone::TimeZoneFormatterOptions, TypedZonedDateTimeFormatter};
 use icu_locale_core::Locale;
-use icu_timezone::CustomZonedDateTime;
+use icu_timezone::{CustomTimeZone, CustomZonedDateTime};
 #[cfg(feature = "experimental")]
 use writeable::TryWriteable;
 
@@ -77,60 +77,37 @@ fn datetime_benches(c: &mut Criterion) {
     bench_datetime_with_fixture("components", include_str!("fixtures/tests/components.json"));
 
     #[cfg(feature = "experimental")]
-    let mut bench_neoneo_datetime_with_fixture = |name, file| {
+    let mut bench_neoneo_datetime_with_fixture = |name, file, has_zones| {
         let fxs = serde_json::from_str::<fixtures::Fixture>(file).unwrap();
         group.bench_function(&format!("neoneo/datetime_{name}"), |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
-                    let datetimes: Vec<DateTime<Gregorian>> = fx
+                    let datetimes: Vec<CustomZonedDateTime<Gregorian>> = fx
                         .values
                         .iter()
-                        .map(|value| mock::parse_gregorian_from_str(value))
+                        .map(move |value| {
+                            if has_zones {
+                                mock::parse_zoned_gregorian_from_str(value)
+                            } else {
+                                let DateTime { date, time } = mock::parse_gregorian_from_str(value);
+                                CustomZonedDateTime {
+                                    date,
+                                    time,
+                                    // zone is unused but we need to make the types match
+                                    zone: CustomTimeZone::utc(),
+                                }
+                            }
+                        })
                         .collect();
                     for setup in &fx.setups {
                         let locale: Locale = setup.locale.parse().expect("Failed to parse locale.");
-                        let options = fixtures::get_options(&setup.options).unwrap();
-
-                        let (neo_components, length) = match options {
-                            DateTimeFormatterOptions::Length(length::Bag {
-                                date: Some(date),
-                                time: Some(time),
-                                ..
-                            }) => {
-                                let neo_skeleton =
-                                    NeoDateTimeSkeleton::from_date_time_length(date, time);
-                                (neo_skeleton.components, neo_skeleton.length)
-                            }
-                            DateTimeFormatterOptions::Length(length::Bag {
-                                date: Some(date),
-                                time: None,
-                                ..
-                            }) => {
-                                let neo_skeleton = NeoDateSkeleton::from_date_length(date);
-                                (
-                                    NeoDateTimeComponents::Date(neo_skeleton.components),
-                                    NeoSkeletonLength::Short,
-                                )
-                            }
-                            DateTimeFormatterOptions::Length(length::Bag {
-                                date: None,
-                                time: Some(time),
-                                ..
-                            }) => {
-                                let neo_time_components = NeoTimeComponents::from_time_length(time);
-                                (
-                                    NeoDateTimeComponents::Time(neo_time_components),
-                                    NeoSkeletonLength::Short,
-                                )
-                            }
-                            _ => todo!(), // Err(LoadError::UnsupportedOptions),
-                        };
+                        let skeleton = setup.options.semantic.unwrap();
 
                         let dtf = {
                             TypedNeoFormatter::<Gregorian, _>::try_new_with_components(
                                 &locale.into(),
-                                neo_components,
-                                length.into(),
+                                skeleton.components,
+                                skeleton.length.into(),
                             )
                             .expect("Failed to create TypedNeoFormatter.")
                         };
@@ -151,7 +128,25 @@ fn datetime_benches(c: &mut Criterion) {
     };
 
     #[cfg(feature = "experimental")]
-    bench_neoneo_datetime_with_fixture("lengths", include_str!("fixtures/tests/lengths.json"));
+    bench_neoneo_datetime_with_fixture(
+        "lengths",
+        include_str!("fixtures/tests/lengths.json"),
+        false,
+    );
+
+    #[cfg(feature = "experimental")]
+    bench_neoneo_datetime_with_fixture(
+        "components",
+        include_str!("fixtures/tests/components.json"),
+        false,
+    );
+
+    #[cfg(feature = "experimental")]
+    bench_neoneo_datetime_with_fixture(
+        "zoned_datetime_overview",
+        include_str!("fixtures/tests/lengths_with_zones.json"),
+        true,
+    );
 
     let fxs = serde_json::from_str::<fixtures::Fixture>(include_str!(
         "fixtures/tests/lengths_with_zones.json"
