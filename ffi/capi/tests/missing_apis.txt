@@ -618,9 +618,9 @@ icu::properties::names::PropertyScriptToIcuScriptMapperBorrowed#Struct
 icu::properties::names::PropertyScriptToIcuScriptMapperBorrowed::get#FnInStruct
 icu::timezone::CustomTimeZone::new_with_bcp47_id#FnInStruct
 icu::timezone::CustomZonedDateTime#Struct
+icu::timezone::CustomZonedDateTime::from_str#FnInStruct
 icu::timezone::CustomZonedDateTime::to_calendar#FnInStruct
 icu::timezone::CustomZonedDateTime::to_iso#FnInStruct
-icu::timezone::CustomZonedDateTime::from_str#FnInStruct
 icu::timezone::CustomZonedDateTime::try_from_str#FnInStruct
 icu::timezone::CustomZonedDateTime::try_from_utf8#FnInStruct
 icu::timezone::CustomZonedDateTime::try_iso_from_str#FnInStruct
