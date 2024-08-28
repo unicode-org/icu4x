@@ -83,11 +83,8 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 #[derive(
     Copy, Clone, PartialEq, PartialOrd, Eq, Ord, Hash, Debug, yoke::Yokeable, zerofrom::ZeroFrom,
 )]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_calendar::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct EraStartDate {
     /// The year the era started in
@@ -111,11 +108,8 @@ pub struct EraStartDate {
     marker(JapaneseExtendedErasV1Marker, "calendar/japanext@1", singleton)
 )]
 #[derive(Debug, PartialEq, Clone, Default)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_calendar::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct JapaneseErasV1<'data> {
     /// A map from era start dates to their era codes
@@ -137,11 +131,8 @@ pub struct JapaneseErasV1<'data> {
     fallback_by = "region"
 ))]
 #[derive(Clone, Copy, Debug, PartialEq)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_calendar::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_structs)] // used in data provider
 pub struct WeekDataV1 {
@@ -165,7 +156,8 @@ pub struct WeekDataV1 {
     fallback_by = "region"
 ))]
 #[derive(Clone, Copy, Debug, PartialEq)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_calendar::provider))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_structs)] // used in data provider
 pub struct WeekDataV2 {

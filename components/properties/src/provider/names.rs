@@ -221,11 +221,8 @@ impl NormalizedPropertyNameStr {
     marker(SentenceBreakNameToValueV1Marker, "propnames/from/SB@1", singleton),
     marker(WordBreakNameToValueV1Marker, "propnames/from/WB@1", singleton)
 )]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_properties::provider::names),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties::provider::names))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct PropertyValueNameToEnumMapV1<'data> {
@@ -255,11 +252,8 @@ pub struct PropertyValueNameToEnumMapV1<'data> {
         singleton
     )
 )]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_properties::provider::names),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties::provider::names))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct PropertyEnumToValueNameSparseMapV1<'data> {
@@ -384,11 +378,8 @@ pub struct PropertyEnumToValueNameSparseMapV1<'data> {
         singleton
     )
 )]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_properties::provider::names),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties::provider::names))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct PropertyEnumToValueNameLinearMapV1<'data> {
@@ -412,11 +403,8 @@ pub struct PropertyEnumToValueNameLinearMapV1<'data> {
     "propnames/to/short/linear4/sc@1",
     singleton
 ))]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_properties::provider::names),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties::provider::names))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct PropertyScriptToIcuScriptMapV1<'data> {

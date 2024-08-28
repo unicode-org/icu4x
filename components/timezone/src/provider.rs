@@ -64,7 +64,8 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 /// </div>
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE, Hash)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_timezone::provider))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_timezone::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct TimeZoneBcp47Id(pub TinyAsciiStr<8>);
 
@@ -106,7 +107,8 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZoneBcp47Id {
 /// </div>
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE, Hash)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_timezone::provider))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_timezone::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct MetazoneId(pub TinyAsciiStr<4>);
 
@@ -145,11 +147,8 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for MetazoneId {
     singleton
 ))]
 #[derive(PartialEq, Debug, Clone, Default)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_timezone::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_timezone::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct MetazonePeriodV1<'data>(

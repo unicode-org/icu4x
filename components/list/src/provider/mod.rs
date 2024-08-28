@@ -68,11 +68,8 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     UnitListV2Marker = "list/unit@2"
 )]
 #[derive(Clone, Debug, PartialEq)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_list::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_list::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct ListFormatterPatternsV2<'data> {
     /// The start pattern
@@ -119,11 +116,8 @@ impl DynamicDataMarker for ErasedListV2Marker {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_list::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_list::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct ConditionalListJoinerPattern<'data> {
     /// The default pattern
@@ -145,11 +139,8 @@ pub struct ConditionalListJoinerPattern<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_list::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_list::provider))]
 pub struct SpecialCasePattern<'data> {
     /// The condition on the following element
     pub condition: SerdeDFA<'data>,

@@ -101,11 +101,8 @@ lstm_matrix!(LstmMatrix2, 2);
 lstm_matrix!(LstmMatrix3, 3);
 
 #[derive(PartialEq, Debug, Clone, Copy)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize,databake::Bake),
-    databake(path = icu_segmenter::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_segmenter::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 /// The type of LSTM model
 ///
@@ -364,11 +361,8 @@ impl databake::BakeSize for LstmDataFloat32<'_> {
     attributes_domain = "segmenter"
 ))]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_segmenter::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_segmenter::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 #[non_exhaustive]
