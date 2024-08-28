@@ -489,7 +489,6 @@ fn test_time_zone_format_configs() {
 }
 
 #[test]
-#[cfg(debug_assertions)]
 fn test_time_zone_format_gmt_offset_not_set_debug_assert_panic() {
     use icu_datetime::{neo_marker::NeoTimeZoneGmtShortMarker, DateTimeWriteError, NeverCalendar};
 
@@ -509,25 +508,6 @@ fn test_time_zone_format_gmt_offset_not_set_debug_assert_panic() {
         "{GMT+?}",
         Err(DateTimeWriteError::MissingZoneSymbols)
     );
-}
-
-#[test]
-#[cfg(not(debug_assertions))]
-fn test_time_zone_format_gmt_offset_not_set_no_debug_assert() {
-    use icu_datetime::{neo_marker::NeoTimeZoneGmtShortMarker, NeverCalendar};
-
-    let time_zone = CustomTimeZone {
-        gmt_offset: None,
-        time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "uslax"))),
-        metazone_id: Some(MetazoneId(tinystr!(4, "ampa"))),
-        zone_variant: Some(ZoneVariant::daylight()),
-    };
-    let tzf = TypedNeoFormatter::<NeverCalendar, NeoTimeZoneGmtShortMarker>::try_new(
-        &locale!("en").into(),
-        Default::default(),
-    )
-    .unwrap();
-    assert_try_writeable_eq!(tzf.format(&time_zone), "{GMT+?}");
 }
 
 #[test]
