@@ -56,6 +56,6 @@ pub fn parse_gregorian_from_str(input: &str) -> DateTime<Gregorian> {
 ///         .expect("Failed to parse a zoned datetime.");
 /// ```
 pub fn parse_zoned_gregorian_from_str(input: &str) -> CustomZonedDateTime<Gregorian> {
-    let datetime_iso = CustomZonedDateTime::try_iso_from_ixdtf_str(input).unwrap();
+    let datetime_iso = CustomZonedDateTime::try_iso_from_str(input).unwrap();
     datetime_iso.to_calendar(Gregorian)
 }

@@ -4,8 +4,6 @@
 
 use icu_datetime::neo_skeleton::{NeoSkeletonLength, NeoTimeZoneSkeleton, NeoTimeZoneStyle};
 use icu_datetime::time_zone;
-use icu_datetime::time_zone::TimeZoneFormatter;
-use icu_datetime::DateTimeError;
 use serde::{Deserialize, Serialize};
 use tinystr::TinyAsciiStr;
 
@@ -125,29 +123,6 @@ pub enum TimeZoneFormatterConfig {
 }
 
 impl TimeZoneFormatterConfig {
-    pub fn set_on_formatter(self, tzf: &mut TimeZoneFormatter) -> Result<(), DateTimeError> {
-        match self {
-            TimeZoneFormatterConfig::GenericNonLocationLong => {
-                tzf.include_generic_non_location_long()
-            }
-            TimeZoneFormatterConfig::GenericNonLocationShort => {
-                tzf.include_generic_non_location_short()
-            }
-            TimeZoneFormatterConfig::GenericLocation => tzf.include_generic_location_format(),
-            TimeZoneFormatterConfig::SpecificNonLocationLong => {
-                tzf.include_specific_non_location_long()
-            }
-            TimeZoneFormatterConfig::SpecificNonLocationShort => {
-                tzf.include_specific_non_location_short()
-            }
-            TimeZoneFormatterConfig::LocalizedGMT => tzf.include_localized_gmt_format(),
-            TimeZoneFormatterConfig::Iso8601(format, minutes, seconds) => {
-                tzf.include_iso_8601_format(format.into(), minutes.into(), seconds.into())
-            }
-        }
-        .map(|_| ())
-    }
-
     pub fn to_semantic_skeleton(self) -> NeoTimeZoneSkeleton {
         let mut skeleton = NeoTimeZoneSkeleton::default();
         match self {
