@@ -115,12 +115,9 @@ impl From<PluralCategory> for Count {
 )]
 #[zerovec::make_varule(PatternULE)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::compactdecimal::provider),
-    zerovec::derive(Serialize),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::compactdecimal::provider))]
+#[cfg_attr(feature = "datagen", zerovec::derive(Serialize))]
 #[zerovec::derive(Debug)]
 #[cfg_attr(feature = "serde", zerovec::derive(Deserialize))]
 pub struct Pattern<'data> {

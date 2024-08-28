@@ -164,11 +164,9 @@ pub type PersonNamesFormattingAttributesMask = u32;
 /// <https://www.unicode.org/reports/tr35/tr35-personNames.html#personname-element>
 #[zerovec::make_varule(PersonNamesFormattingDataVarULE)]
 #[zerovec::skip_derive(ZeroMapKV, Ord)]
-#[cfg_attr(feature = "datagen",
-derive(serde::Serialize, databake::Bake),
-databake(path = icu_experimental::personnames::provider),
-zerovec::derive(Serialize))
-]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::personnames::provider))]
+#[cfg_attr(feature = "datagen", zerovec::derive(Serialize))]
 #[cfg_attr(
     feature = "serde",
     derive(serde::Deserialize),
