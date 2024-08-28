@@ -253,7 +253,7 @@ impl<'a> DatePatternDataBorrowed<'a> {
     pub(crate) fn items_and_options(self) -> ItemsAndOptions<'a> {
         let Self::Resolved(pattern, alignment) = self;
         ItemsAndOptions {
-            items: &pattern.items,
+            items: pattern.items,
             alignment,
             ..Default::default()
         }
@@ -437,7 +437,7 @@ impl<'a> TimePatternDataBorrowed<'a> {
     pub(crate) fn items_and_options(self) -> ItemsAndOptions<'a> {
         let Self::Resolved(pattern, alignment, hour_cycle, fractional_second_digits) = self;
         ItemsAndOptions {
-            items: &pattern.items,
+            items: pattern.items,
             alignment,
             hour_cycle,
             fractional_second_digits,
@@ -889,6 +889,7 @@ impl<'a> DateTimeZonePatternDataBorrowed<'a> {
 impl<'a> ItemsAndOptions<'a> {
     pub(crate) fn iter_items(self) -> impl Iterator<Item = PatternItem> + 'a {
         self.items.iter().map(move |mut pattern_item| {
+            #[allow(clippy::single_match)] // need `ref mut`, which doesn't work in `if let`?
             match &mut pattern_item {
                 PatternItem::Field(ref mut field) => {
                     if matches!(self.alignment, Some(Alignment::Column))

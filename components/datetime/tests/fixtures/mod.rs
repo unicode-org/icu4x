@@ -52,14 +52,14 @@ impl TestOutputItem {
     pub fn expectation(&self) -> &str {
         match self {
             Self::ExpectedString(s) => s,
-            Self::ExpectedStringAndPattern { formatted, .. } => &formatted,
+            Self::ExpectedStringAndPattern { formatted, .. } => formatted,
         }
     }
 
     pub fn pattern(&self) -> Option<&str> {
         match self {
             Self::ExpectedString(_) => None,
-            Self::ExpectedStringAndPattern { pattern, .. } => Some(&pattern),
+            Self::ExpectedStringAndPattern { pattern, .. } => Some(pattern),
         }
     }
 }
