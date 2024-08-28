@@ -23,6 +23,7 @@ use icu_calendar::{
     roc::Roc,
     AsCalendar, Calendar, DateTime, Gregorian, Iso,
 };
+use icu_datetime::CldrCalendar;
 use icu_datetime::{
     neo::{NeoFormatter, NeoOptions, TypedNeoFormatter},
     neo_pattern::DateTimePattern,
@@ -31,7 +32,6 @@ use icu_datetime::{
     provider::time_zones::{MetazoneId, TimeZoneBcp47Id},
     TypedDateTimeNames,
 };
-use icu_datetime::{time_zone::TimeZoneFormatter, CldrCalendar};
 use icu_locale_core::{
     extensions::unicode::{key, value, Value},
     locale, LanguageIdentifier, Locale,
@@ -490,29 +490,44 @@ fn test_time_zone_format_configs() {
 
 #[test]
 #[cfg(debug_assertions)]
-#[should_panic(expected = "Err(MissingInputField(\"gmt_offset\"))")]
 fn test_time_zone_format_gmt_offset_not_set_debug_assert_panic() {
+    use icu_datetime::{neo_marker::NeoTimeZoneGmtShortMarker, DateTimeWriteError, NeverCalendar};
+
     let time_zone = CustomTimeZone {
         gmt_offset: None,
         time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "uslax"))),
         metazone_id: Some(MetazoneId(tinystr!(4, "ampa"))),
         zone_variant: Some(ZoneVariant::daylight()),
     };
-    let tzf = TimeZoneFormatter::try_new(&locale!("en").into(), Default::default()).unwrap();
-    tzf.format_to_string(&time_zone);
+    let tzf = TypedNeoFormatter::<NeverCalendar, NeoTimeZoneGmtShortMarker>::try_new(
+        &locale!("en").into(),
+        Default::default(),
+    )
+    .unwrap();
+    assert_try_writeable_eq!(
+        tzf.format(&time_zone),
+        "{GMT+?}",
+        Err(DateTimeWriteError::MissingZoneSymbols)
+    );
 }
 
 #[test]
 #[cfg(not(debug_assertions))]
 fn test_time_zone_format_gmt_offset_not_set_no_debug_assert() {
+    use icu_datetime::{neo_marker::NeoTimeZoneGmtShortMarker, NeverCalendar};
+
     let time_zone = CustomTimeZone {
         gmt_offset: None,
         time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "uslax"))),
         metazone_id: Some(MetazoneId(tinystr!(4, "ampa"))),
         zone_variant: Some(ZoneVariant::daylight()),
     };
-    let tzf = TimeZoneFormatter::try_new(&locale!("en").into(), Default::default()).unwrap();
-    assert_writeable_eq!(tzf.format(&time_zone), "GMT+?");
+    let tzf = TypedNeoFormatter::<NeverCalendar, NeoTimeZoneGmtShortMarker>::try_new(
+        &locale!("en").into(),
+        Default::default(),
+    )
+    .unwrap();
+    assert_try_writeable_eq!(tzf.format(&time_zone), "{GMT+?}");
 }
 
 #[test]
