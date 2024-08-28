@@ -1469,7 +1469,6 @@ impl<'a> TryWriteable for FormattedNeoDateTime<'a> {
         try_write_pattern_items(
             self.pattern.metadata(),
             self.pattern.iter_items(),
-            self.pattern.formatting_options(),
             &self.datetime,
             Some(&self.names),
             Some(&self.names),
