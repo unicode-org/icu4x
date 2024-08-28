@@ -20,6 +20,7 @@ namespace capi { struct TimeZoneIdMapper; }
 class TimeZoneIdMapper;
 struct TimeZoneInvalidIdError;
 struct TimeZoneInvalidOffsetError;
+struct TimeZoneUnknownError;
 }
 
 
@@ -33,7 +34,7 @@ namespace icu4x {
 class CustomTimeZone {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CustomTimeZone>, icu4x::TimeZoneInvalidOffsetError> from_string(std::string_view s);
+  inline static diplomat::result<std::unique_ptr<icu4x::CustomTimeZone>, icu4x::TimeZoneUnknownError> from_string(std::string_view s);
 
   inline static std::unique_ptr<icu4x::CustomTimeZone> empty();
 

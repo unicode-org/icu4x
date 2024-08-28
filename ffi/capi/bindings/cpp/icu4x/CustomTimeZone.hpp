@@ -15,6 +15,7 @@
 #include "TimeZoneIdMapper.hpp"
 #include "TimeZoneInvalidIdError.hpp"
 #include "TimeZoneInvalidOffsetError.hpp"
+#include "TimeZoneUnknownError.hpp"
 
 
 namespace icu4x {
@@ -100,9 +101,9 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline diplomat::result<std::unique_ptr<icu4x::CustomTimeZone>, icu4x::TimeZoneInvalidOffsetError> icu4x::CustomTimeZone::from_string(std::string_view s) {
+inline diplomat::result<std::unique_ptr<icu4x::CustomTimeZone>, icu4x::TimeZoneUnknownError> icu4x::CustomTimeZone::from_string(std::string_view s) {
   auto result = icu4x::capi::icu4x_CustomTimeZone_from_string_mv1({s.data(), s.size()});
-  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::CustomTimeZone>, icu4x::TimeZoneInvalidOffsetError>(diplomat::Ok<std::unique_ptr<icu4x::CustomTimeZone>>(std::unique_ptr<icu4x::CustomTimeZone>(icu4x::CustomTimeZone::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::CustomTimeZone>, icu4x::TimeZoneInvalidOffsetError>(diplomat::Err<icu4x::TimeZoneInvalidOffsetError>(icu4x::TimeZoneInvalidOffsetError {}));
+  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::CustomTimeZone>, icu4x::TimeZoneUnknownError>(diplomat::Ok<std::unique_ptr<icu4x::CustomTimeZone>>(std::unique_ptr<icu4x::CustomTimeZone>(icu4x::CustomTimeZone::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::CustomTimeZone>, icu4x::TimeZoneUnknownError>(diplomat::Err<icu4x::TimeZoneUnknownError>(icu4x::TimeZoneUnknownError {}));
 }
 
 inline std::unique_ptr<icu4x::CustomTimeZone> icu4x::CustomTimeZone::empty() {
