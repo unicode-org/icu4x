@@ -420,11 +420,8 @@ pub enum MonthNamesV1<'data> {
 /// Represents a simple substitution pattern;
 /// i.e. a string with a single placeholder
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(
- feature = "datagen",
- derive(serde::Serialize, databake::Bake),
- databake(path = icu_datetime::provider::neo),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct SimpleSubstitutionPattern<'data> {
     /// The pattern
