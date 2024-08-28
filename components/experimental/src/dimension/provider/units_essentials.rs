@@ -64,7 +64,7 @@ pub struct UnitsEssentialsV1<'data> {
 #[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::extended_currency))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::units_essentials))]
 #[repr(u8)]
 pub enum CompoundCount {
     /// The CLDR keyword `zero`.
