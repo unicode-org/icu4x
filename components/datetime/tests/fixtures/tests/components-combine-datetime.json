@@ -22,7 +22,10 @@
         },
         "output": {
             "values": {
-                "en": "Tue, Jan 7, 2020, 8:25\u202fAM"
+                "en": {
+                    "formatted": "Tue, Jan 7, 2020, 8:25\u202fAM",
+                    "pattern": "E, MMM d, y, h:mm\u202fa"
+                }
             }
         }
     },
@@ -49,7 +52,10 @@
         },
         "output": {
             "values": {
-                "en": "Tuesday, January 7, 2020, 8:25\u202fAM"
+                "en": {
+                    "formatted": "Tuesday, January 7, 2020, 8:25\u202fAM",
+                    "pattern": "EEEE, MMMM d, y, h:mm\u202fa"
+                }
             }
         }
     }
