@@ -144,11 +144,8 @@ macro_rules! symbols {
             use super::*;
 
             #[derive(Debug, PartialEq, Clone, zerofrom::ZeroFrom, yoke::Yokeable)]
-            #[cfg_attr(
-                feature = "datagen",
-                derive(serde::Serialize, databake::Bake),
-                databake(path = icu_datetime::provider::calendar::$name),
-            )]
+            #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+            #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar::$name))]
             #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
             #[yoke(prove_covariance_manually)]
             #[doc = concat!("Locale data for ", stringify!($field_id), " corresponding to the symbols.")]
@@ -163,11 +160,8 @@ macro_rules! symbols {
             // UTS 35 specifies that `format` widths are mandatory,
             // except for `short`.
             #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-            #[cfg_attr(
-                feature = "datagen",
-                derive(serde::Serialize, databake::Bake),
-                databake(path = icu_datetime::provider::calendar::$name),
-            )]
+            #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+            #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar::$name))]
             #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
             #[yoke(prove_covariance_manually)]
             #[doc = concat!("Symbol data for the \"format\" style formatting of ", stringify!($field_id),
@@ -196,11 +190,8 @@ macro_rules! symbols {
 
             // UTS 35 specifies that `stand_alone` widths are optional
             #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-            #[cfg_attr(
-                feature = "datagen",
-                derive(serde::Serialize, databake::Bake),
-                databake(path = icu_datetime::provider::calendar::$name),
-            )]
+            #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+            #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar::$name))]
             #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
             #[yoke(prove_covariance_manually)]
             #[doc = concat!("Symbol data for the \"stand-alone\" style formatting of ", stringify!($field_id),
@@ -227,11 +218,8 @@ macro_rules! symbols {
             }
 
             #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-            #[cfg_attr(
-                feature = "datagen",
-                derive(serde::Serialize, databake::Bake),
-                databake(path = icu_datetime::provider::calendar::$name),
-            )]
+            #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+            #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar::$name))]
             #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
             #[yoke(prove_covariance_manually)]
             #[doc = concat!("The struct containing the symbol data for ", stringify!($field_id),

@@ -105,11 +105,8 @@ pub mod patterns {
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
     #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-    #[cfg_attr(
-        feature = "datagen",
-        derive(serde::Serialize, databake::Bake),
-        databake(path = icu_datetime::provider::calendar::patterns),
-    )]
+    #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+    #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar::patterns))]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
     pub struct LengthPatternsV1<'data> {
         /// A full length date/time pattern.
@@ -134,11 +131,8 @@ pub mod patterns {
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
     #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-    #[cfg_attr(
-        feature = "datagen",
-        derive(serde::Serialize, databake::Bake),
-        databake(path = icu_datetime::provider::calendar::patterns),
-    )]
+    #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+    #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar::patterns))]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
     pub struct GenericLengthPatternsV1<'data> {
         /// A full length glue pattern of other formatted elements.

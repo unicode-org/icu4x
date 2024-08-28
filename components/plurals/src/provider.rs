@@ -114,11 +114,8 @@ mod ranges {
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
     #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Ord, PartialOrd)]
-    #[cfg_attr(
-        feature = "datagen",
-        derive(serde::Serialize, databake::Bake),
-        databake(path = icu_plurals::provider),
-    )]
+    #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+    #[cfg_attr(feature = "datagen", databake(path = icu_plurals::provider))]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
     #[zerovec::make_ule(RawPluralCategoryULE)]
     #[repr(u8)]
@@ -190,11 +187,8 @@ mod ranges {
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
     #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Ord, PartialOrd)]
-    #[cfg_attr(
-        feature = "datagen",
-        derive(databake::Bake),
-        databake(path = icu_plurals::provider),
-    )]
+    #[cfg_attr(feature = "datagen", derive(databake::Bake))]
+    #[cfg_attr(feature = "datagen", databake(path = icu_plurals::provider))]
     #[zerovec::make_ule(UnvalidatedPluralRangeULE)]
     pub struct UnvalidatedPluralRange(pub u8);
 
@@ -311,11 +305,8 @@ mod ranges {
     /// </div>
     #[icu_provider::data_struct(PluralRangesV1Marker = "plurals/ranges@1")]
     #[derive(Clone, PartialEq, Debug)]
-    #[cfg_attr(
-        feature = "datagen",
-        derive(serde::Serialize, databake::Bake),
-        databake(path = icu_plurals::provider),
-    )]
+    #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+    #[cfg_attr(feature = "datagen", databake(path = icu_plurals::provider))]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
     #[yoke(prove_covariance_manually)]
     pub struct PluralRangesV1<'data> {

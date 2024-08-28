@@ -422,11 +422,8 @@ macro_rules! data_struct_generic {
         $(
             #[doc = core::concat!("Data marker for the '", stringify!($ty), "' Unicode property")]
             #[derive(Debug, Default)]
-            #[cfg_attr(
-                feature = "datagen",
-                derive(databake::Bake),
-                databake(path = icu_properties::provider),
-            )]
+            #[cfg_attr(feature = "datagen", derive(databake::Bake))]
+            #[cfg_attr(feature = "datagen", databake(path = icu_properties::provider))]
             pub struct $marker;
             impl icu_provider::DynamicDataMarker for $marker {
                 type DataStruct = PropertyCodePointMapV1<'static, crate::$ty>;

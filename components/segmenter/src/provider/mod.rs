@@ -79,11 +79,8 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     marker(SentenceBreakDataV2Marker, "segmenter/sentence@2", singleton)
 )]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize,databake::Bake),
-    databake(path = icu_segmenter::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_segmenter::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct RuleBreakDataV2<'data> {
     /// Property table.
@@ -136,11 +133,8 @@ pub struct RuleBreakDataV2<'data> {
     )
 )]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize,databake::Bake),
-    databake(path = icu_segmenter::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_segmenter::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct UCharDictionaryBreakDataV1<'data> {
     /// Dictionary data of char16trie.

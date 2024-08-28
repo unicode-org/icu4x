@@ -57,11 +57,8 @@ pub use crate::provider::Baked;
 )]
 #[derive(Debug, Clone, Default, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::compactdecimal::provider)
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::compactdecimal::provider))]
 #[yoke(prove_covariance_manually)]
 pub struct CompactDecimalPatternDataV1<'data> {
     /// A map keyed on log10 of the CLDR `type` attribute and the CLDR `count` attribute.
@@ -75,11 +72,8 @@ pub struct CompactDecimalPatternDataV1<'data> {
 #[zerovec::derive(Debug)]
 #[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::compactdecimal::provider)
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::compactdecimal::provider))]
 #[repr(u8)]
 pub enum Count {
     /// The CLDR keyword `zero`.
