@@ -68,6 +68,7 @@ pub mod ffi {
         }
 
         /// Construct an [`SentenceSegmenter`].
+        #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::try_new_with_options, FnInStruct, hidden)]
         #[diplomat::attr(supports = fallible_constructors, constructor)]
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "with_options")]
         pub fn create_with_options_v1(
