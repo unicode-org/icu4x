@@ -2,9 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_datetime::neo_skeleton::{NeoSkeletonLength, NeoTimeZoneSkeleton, NeoTimeZoneStyle};
 use icu_datetime::time_zone;
-use icu_datetime::time_zone::TimeZoneFormatter;
-use icu_datetime::DateTimeError;
 use serde::{Deserialize, Serialize};
 use tinystr::TinyAsciiStr;
 
@@ -124,26 +123,117 @@ pub enum TimeZoneFormatterConfig {
 }
 
 impl TimeZoneFormatterConfig {
-    pub fn set_on_formatter(self, tzf: &mut TimeZoneFormatter) -> Result<(), DateTimeError> {
+    pub fn to_semantic_skeleton(self) -> NeoTimeZoneSkeleton {
+        let mut skeleton = NeoTimeZoneSkeleton::default();
         match self {
             TimeZoneFormatterConfig::GenericNonLocationLong => {
-                tzf.include_generic_non_location_long()
+                skeleton.length = Some(NeoSkeletonLength::Long);
+                skeleton.style = NeoTimeZoneStyle::NonLocation;
             }
             TimeZoneFormatterConfig::GenericNonLocationShort => {
-                tzf.include_generic_non_location_short()
+                skeleton.length = Some(NeoSkeletonLength::Short);
+                skeleton.style = NeoTimeZoneStyle::NonLocation;
             }
-            TimeZoneFormatterConfig::GenericLocation => tzf.include_generic_location_format(),
+            TimeZoneFormatterConfig::GenericLocation => {
+                skeleton.length = Some(NeoSkeletonLength::Long);
+                skeleton.style = NeoTimeZoneStyle::Location;
+            }
             TimeZoneFormatterConfig::SpecificNonLocationLong => {
-                tzf.include_specific_non_location_long()
+                skeleton.length = Some(NeoSkeletonLength::Long);
+                skeleton.style = NeoTimeZoneStyle::SpecificNonLocation;
             }
             TimeZoneFormatterConfig::SpecificNonLocationShort => {
-                tzf.include_specific_non_location_short()
+                skeleton.length = Some(NeoSkeletonLength::Short);
+                skeleton.style = NeoTimeZoneStyle::SpecificNonLocation;
             }
-            TimeZoneFormatterConfig::LocalizedGMT => tzf.include_localized_gmt_format(),
-            TimeZoneFormatterConfig::Iso8601(format, minutes, seconds) => {
-                tzf.include_iso_8601_format(format.into(), minutes.into(), seconds.into())
+            TimeZoneFormatterConfig::LocalizedGMT => {
+                skeleton.length = Some(NeoSkeletonLength::Long);
+                skeleton.style = NeoTimeZoneStyle::Offset;
+            }
+            TimeZoneFormatterConfig::Iso8601(
+                IsoFormat::UtcBasic,
+                IsoMinutes::Optional,
+                IsoSeconds::Never,
+            ) => {
+                // TODO: X
+                todo!()
+            }
+            TimeZoneFormatterConfig::Iso8601(
+                IsoFormat::UtcBasic,
+                IsoMinutes::Required,
+                IsoSeconds::Never,
+            ) => {
+                // TODO: XX
+                todo!()
+            }
+            TimeZoneFormatterConfig::Iso8601(
+                IsoFormat::UtcExtended,
+                IsoMinutes::Required,
+                IsoSeconds::Never,
+            ) => {
+                // TODO: XXX
+                todo!()
+            }
+            TimeZoneFormatterConfig::Iso8601(
+                IsoFormat::UtcBasic,
+                IsoMinutes::Required,
+                IsoSeconds::Optional,
+            ) => {
+                // TODO: XXXX
+                todo!()
+            }
+            TimeZoneFormatterConfig::Iso8601(
+                IsoFormat::UtcExtended,
+                IsoMinutes::Required,
+                IsoSeconds::Optional,
+            ) => {
+                // TODO: XXXXX
+                todo!()
+            }
+            TimeZoneFormatterConfig::Iso8601(
+                IsoFormat::Basic,
+                IsoMinutes::Optional,
+                IsoSeconds::Never,
+            ) => {
+                // TODO: x
+                todo!()
+            }
+            TimeZoneFormatterConfig::Iso8601(
+                IsoFormat::Basic,
+                IsoMinutes::Required,
+                IsoSeconds::Never,
+            ) => {
+                // TODO: xx
+                todo!()
+            }
+            TimeZoneFormatterConfig::Iso8601(
+                IsoFormat::Extended,
+                IsoMinutes::Required,
+                IsoSeconds::Never,
+            ) => {
+                // TODO: xxx
+                todo!()
+            }
+            TimeZoneFormatterConfig::Iso8601(
+                IsoFormat::Basic,
+                IsoMinutes::Required,
+                IsoSeconds::Optional,
+            ) => {
+                // TODO: xxxx
+                todo!()
+            }
+            TimeZoneFormatterConfig::Iso8601(
+                IsoFormat::Extended,
+                IsoMinutes::Required,
+                IsoSeconds::Optional,
+            ) => {
+                // TODO: xxxxx
+                todo!()
+            }
+            TimeZoneFormatterConfig::Iso8601(_, _, _) => {
+                todo!()
             }
         }
-        .map(|_| ())
+        skeleton
     }
 }

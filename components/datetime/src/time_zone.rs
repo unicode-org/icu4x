@@ -35,6 +35,9 @@ pub(crate) enum ResolvedNeoTimeZoneSkeleton {
     GmtShort,
     GmtLong,
     Bcp47Id,
+    // UTS 35 defines 10 variants of ISO-8601-style time zone formats.
+    // They don't have their own names, so they are identified here by
+    // their datetime pattern strings.
     Isox,
     Isoxx,
     Isoxxx,

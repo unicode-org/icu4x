@@ -4,7 +4,6 @@
 
 #![cfg(feature = "serde")]
 
-use icu_datetime::DateTimeFormatterOptions;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
@@ -39,16 +38,4 @@ pub struct TestOptions {
 pub struct TestOutput {
     // Key is locale, and value is expected test output.
     pub values: HashMap<String, String>,
-}
-
-pub fn get_options(input: &TestOptions) -> Option<DateTimeFormatterOptions> {
-    if let Some(bag) = input.length {
-        return Some(bag.into());
-    }
-    #[cfg(feature = "experimental")]
-    if let Some(mut bag) = input.components {
-        bag.preferences = input.preferences;
-        return Some(bag.into());
-    }
-    None
 }

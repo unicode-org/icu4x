@@ -652,7 +652,7 @@
           "GenericNonLocationShort"
         ],
         "fallback_formats": ["LocalizedGmt"],
-        "expected": ["GMT"]
+        "expected": ["Тролль"]
       },
       {
         "patterns": [
@@ -684,7 +684,7 @@
       },
       {
         "patterns": [
-          "x"
+          "X"
         ],
         "configs": [
           {
@@ -700,7 +700,7 @@
       },
       {
         "patterns": [
-          "X"
+          "x"
         ],
         "configs": [
           {
@@ -716,8 +716,8 @@
       },
       {
         "patterns": [
-          "xx",
-          "xxxx"
+          "XX",
+          "XXXX"
         ],
         "configs": [
           {
@@ -733,8 +733,8 @@
       },
       {
         "patterns": [
-          "XX",
-          "XXXX"
+          "xx",
+          "xxxx"
         ],
         "configs": [
           {
@@ -750,8 +750,8 @@
       },
       {
         "patterns": [
-          "xxx",
-          "xxxxx"
+          "XXX",
+          "XXXXX"
         ],
         "configs": [
           {
@@ -767,8 +767,8 @@
       },
       {
         "patterns": [
-          "XXX",
-          "XXXXX"
+          "xxx",
+          "xxxxx"
         ],
         "configs": [
           {
@@ -869,7 +869,7 @@
           "GenericNonLocationShort"
         ],
         "fallback_formats": ["LocalizedGmt"],
-        "expected": ["GMT+05:45"]
+        "expected": ["Катманду"]
       },
       {
         "patterns": [
