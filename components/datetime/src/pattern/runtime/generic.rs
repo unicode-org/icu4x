@@ -108,14 +108,6 @@ impl From<&GenericPattern<'_>> for reference::GenericPattern {
     }
 }
 
-#[cfg(feature = "datagen")]
-impl core::fmt::Display for GenericPattern<'_> {
-    fn fmt(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
-        let reference = reference::GenericPattern::from(self);
-        reference.fmt(formatter)
-    }
-}
-
 impl FromStr for GenericPattern<'_> {
     type Err = PatternError;
 
@@ -143,7 +135,6 @@ mod test {
         let pattern = pattern
             .combined(date, time)
             .expect("Failed to combine date and time.");
-        let pattern = reference::Pattern::from(pattern.items.to_vec());
 
         assert_eq!(pattern.to_string(), "Y/m/d 'at' HH:mm");
     }

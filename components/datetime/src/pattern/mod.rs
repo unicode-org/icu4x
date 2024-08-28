@@ -77,10 +77,10 @@ impl TimeGranularity {
     }
 }
 
-impl From<&PatternItem> for TimeGranularity {
+impl From<PatternItem> for TimeGranularity {
     /// Retrieves the granularity of time represented by a [`PatternItem`].
     /// If the [`PatternItem`] is not time-related, returns [`None`].
-    fn from(item: &PatternItem) -> Self {
+    fn from(item: PatternItem) -> Self {
         match item {
             PatternItem::Field(field) => match field.symbol {
                 fields::FieldSymbol::Hour(_) => Self::Hours,

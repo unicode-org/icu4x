@@ -15,7 +15,10 @@
         },
         "output": {
             "values": {
-                "en": "20"
+                "en": {
+                    "formatted": "20",
+                    "pattern": "yy"
+                }
             }
         }
     },

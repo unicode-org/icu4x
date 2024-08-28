@@ -5,6 +5,7 @@
 mod fixtures;
 mod patterns;
 
+use fixtures::TestOutputItem;
 use icu_calendar::{
     any_calendar::{AnyCalendarKind, IntoAnyCalendar},
     buddhist::Buddhist,
@@ -43,7 +44,7 @@ use patterns::{
     time_zones::{TimeZoneConfig, TimeZoneExpectation, TimeZoneFormatterConfig, TimeZoneTests},
 };
 use tinystr::tinystr;
-use writeable::assert_try_writeable_eq;
+use writeable::{assert_try_writeable_eq, assert_writeable_eq};
 
 mod mock;
 
@@ -261,7 +262,7 @@ fn assert_fixture_element<A>(
     locale: &Locale,
     input_value: &DateTime<A>,
     input_iso: &DateTime<Iso>,
-    output_value: &str,
+    output_value: &TestOutputItem,
     skeleton: NeoSkeleton,
     description: &str,
 ) where
@@ -313,29 +314,40 @@ fn assert_fixture_element<A>(
         NeoFormatter::try_new_with_components(&locale.into(), skeleton.components, options)
             .expect(description);
 
+    let actual1 = dtf.format(&input_value);
     assert_try_writeable_eq!(
-        dtf.format(&input_value),
-        output_value,
+        actual1,
+        output_value.expectation(),
         Ok(()),
         "{}",
         description
     );
 
+    let actual2 = any_dtf.strict_format(&any_input).unwrap();
     assert_try_writeable_eq!(
-        any_dtf.strict_format(&any_input).unwrap(),
-        output_value,
+        actual2,
+        output_value.expectation(),
         Ok(()),
         "(DateTimeFormatter) {}",
         description
     );
 
+    let actual3 = any_dtf.convert_and_format(&iso_any_input);
     assert_try_writeable_eq!(
-        any_dtf.convert_and_format(&iso_any_input),
-        output_value,
+        actual3,
+        output_value.expectation(),
         Ok(()),
         "(DateTimeFormatter iso conversion) {}",
         description
     );
+
+    let pattern = actual1.pattern();
+    assert_eq!(pattern, actual2.pattern());
+    assert_eq!(pattern, actual3.pattern());
+
+    if let Some(expected_pattern) = output_value.pattern() {
+        assert_writeable_eq!(pattern, expected_pattern);
+    }
 }
 
 fn test_fixture_with_time_zones(fixture_name: &str, file: &str, config: TimeZoneConfig) {
@@ -382,7 +394,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, file: &str, config: TimeZone
             };
             assert_try_writeable_eq!(
                 dtf.format(&zoned_datetime),
-                output_value,
+                output_value.expectation(),
                 Ok(()),
                 "{}",
                 description

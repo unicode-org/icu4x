@@ -37,5 +37,28 @@ pub struct TestOptions {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TestOutput {
     // Key is locale, and value is expected test output.
-    pub values: HashMap<String, String>,
+    pub values: HashMap<String, TestOutputItem>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum TestOutputItem {
+    ExpectedString(String),
+    ExpectedStringAndPattern { formatted: String, pattern: String },
+}
+
+impl TestOutputItem {
+    pub fn expectation(&self) -> &str {
+        match self {
+            Self::ExpectedString(s) => s,
+            Self::ExpectedStringAndPattern { formatted, .. } => formatted,
+        }
+    }
+
+    pub fn pattern(&self) -> Option<&str> {
+        match self {
+            Self::ExpectedString(_) => None,
+            Self::ExpectedStringAndPattern { pattern, .. } => Some(pattern),
+        }
+    }
 }

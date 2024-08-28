@@ -92,7 +92,6 @@ impl FieldLength {
     }
 
     #[inline]
-    #[cfg(feature = "datagen")]
     pub(crate) fn to_len(self) -> usize {
         match self {
             FieldLength::One => 1,
