@@ -40,11 +40,8 @@ size_test!(DateLengthsV1, date_lengths_v1_size, 224);
     marker(RocDateLengthsV1Marker, "datetime/roc/datelengths@1")
 )]
 #[derive(Debug, PartialEq, Clone, Default)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::calendar),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct DateLengthsV1<'data> {
     /// Date pattern data, broken down by pattern length.
@@ -74,11 +71,8 @@ size_test!(TimeLengthsV1, time_lengths_v1_size, 264);
 /// </div>
 #[icu_provider::data_struct(marker(TimeLengthsV1Marker, "datetime/timelengths@1",))]
 #[derive(Debug, PartialEq, Clone, Default)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::calendar),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct TimeLengthsV1<'data> {
     /// These patterns are common uses of time formatting, broken down by the length of the

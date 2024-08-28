@@ -40,11 +40,8 @@ size_test!(DateSymbolsV1, date_symbols_v1_size, 3792);
     marker(RocDateSymbolsV1Marker, "datetime/roc/datesymbols@1")
 )]
 #[derive(Debug, PartialEq, Clone, Default)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::calendar),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct DateSymbolsV1<'data> {
@@ -82,11 +79,8 @@ size_test!(TimeSymbolsV1, time_symbols_v1_size, 768);
 /// </div>
 #[icu_provider::data_struct(marker(TimeSymbolsV1Marker, "datetime/timesymbols@1",))]
 #[derive(Debug, PartialEq, Clone, Default)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::calendar),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct TimeSymbolsV1<'data> {
@@ -112,11 +106,8 @@ pub struct TimeSymbolsV1<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::calendar),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct Eras<'data> {

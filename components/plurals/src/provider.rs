@@ -70,11 +70,8 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     OrdinalV1Marker = "plurals/ordinal@1"
 )]
 #[derive(Default, Clone, PartialEq, Debug)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_plurals::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_plurals::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct PluralRulesV1<'data> {
     /// Rule that matches [`PluralCategory::Zero`](super::PluralCategory::Zero), or `None` if not present.
