@@ -30,11 +30,8 @@ use zerovec::ZeroVec;
     marker(DangiCacheV1Marker, "calendar/dangicache@1", singleton)
 )]
 #[derive(Debug, PartialEq, Clone, Default)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_calendar::provider::chinese_based),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider::chinese_based))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct ChineseBasedCacheV1<'data> {
     /// The extended year corresponding to the first data entry for this year
@@ -138,11 +135,8 @@ impl<'data> ChineseBasedCacheV1<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ULE)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(databake::Bake),
-    databake(path = icu_calendar::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
 #[repr(C, packed)]
 pub struct PackedChineseBasedYearInfo(pub u8, pub u8, pub u8);
 

@@ -14,11 +14,8 @@ use zerovec::{
 };
 
 #[derive(yoke::Yokeable, zerofrom::ZeroFrom, Clone, PartialEq, Debug)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(databake::Bake),
-    databake(path = icu_plurals::rules::runtime::ast),
-)]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_plurals::rules::runtime::ast))]
 #[allow(clippy::exhaustive_structs)] // Reference AST is non-public and this type is stable
 pub struct Rule<'data>(pub VarZeroVec<'data, RelationULE>);
 

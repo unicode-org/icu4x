@@ -11,11 +11,8 @@ use icu_provider::prelude::*;
 use zerovec::{ule::AsULE, ZeroSlice, ZeroVec};
 
 #[derive(Debug, PartialEq, Eq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(databake::Bake),
-    databake(path = icu_datetime::pattern::runtime),
-)]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::pattern::runtime))]
 #[zerovec::make_varule(PatternULE)]
 #[zerovec::derive(Debug)]
 #[zerovec::skip_derive(Ord)]

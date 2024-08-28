@@ -39,11 +39,8 @@ pub(crate) mod tz {
 /// </div>
 #[icu_provider::data_struct(TimeZoneFormatsV1Marker = "time_zone/formats@1")]
 #[derive(PartialEq, Debug, Clone, Default)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::time_zones),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 // TODO: Consider renaming to "TimeZoneEssentialsV1"
@@ -86,11 +83,8 @@ pub struct TimeZoneFormatsV1<'data> {
 /// </div>
 #[icu_provider::data_struct(ExemplarCitiesV1Marker = "time_zone/exemplar_cities@1")]
 #[derive(PartialEq, Debug, Clone, Default)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::time_zones),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct ExemplarCitiesV1<'data>(
@@ -107,11 +101,8 @@ pub struct ExemplarCitiesV1<'data>(
 /// </div>
 #[icu_provider::data_struct(MetazoneGenericNamesLongV1Marker = "time_zone/generic_long@1")]
 #[derive(PartialEq, Debug, Clone, Default)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::time_zones),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct MetazoneGenericNamesLongV1<'data> {
@@ -133,11 +124,8 @@ pub struct MetazoneGenericNamesLongV1<'data> {
 /// </div>
 #[icu_provider::data_struct(MetazoneGenericNamesShortV1Marker = "time_zone/generic_short@1")]
 #[derive(PartialEq, Debug, Clone, Default)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::time_zones),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct MetazoneGenericNamesShortV1<'data> {
@@ -160,11 +148,8 @@ pub struct MetazoneGenericNamesShortV1<'data> {
 /// </div>
 #[icu_provider::data_struct(MetazoneSpecificNamesLongV1Marker = "time_zone/specific_long@1")]
 #[derive(PartialEq, Debug, Clone, Default)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::time_zones),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct MetazoneSpecificNamesLongV1<'data> {
@@ -187,11 +172,8 @@ pub struct MetazoneSpecificNamesLongV1<'data> {
 /// </div>
 #[icu_provider::data_struct(MetazoneSpecificNamesShortV1Marker = "time_zone/specific_short@1")]
 #[derive(PartialEq, Debug, Clone, Default)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::time_zones),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct MetazoneSpecificNamesShortV1<'data> {

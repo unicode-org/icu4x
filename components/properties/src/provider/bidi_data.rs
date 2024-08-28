@@ -38,11 +38,8 @@ use zerovec::ule::{AsULE, CharULE, UleError, ULE};
     singleton
 ))]
 #[derive(Debug, Eq, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_properties::provider::bidi_data),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties::provider::bidi_data))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct BidiAuxiliaryPropertiesV1<'data> {
     /// A `CodePointTrie` efficiently storing the data from which property values

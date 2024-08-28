@@ -35,7 +35,8 @@ impl std::error::Error for SymbolError {}
 /// [`Hour::H24`]. Each field symbol is represented within the date formatting pattern string
 /// by a distinct character from the set of `A..Z` and `a..z`.
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_datetime::fields))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::fields))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_enums)] // part of data struct
 pub enum FieldSymbol {
@@ -401,11 +402,8 @@ macro_rules! field_type {
         #[derive(Debug, Eq, PartialEq, Ord, PartialOrd, Clone, Copy, yoke::Yokeable, zerofrom::ZeroFrom)]
         // FIXME: This should be replaced with a custom derive.
         // See: https://github.com/unicode-org/icu4x/issues/1044
-        #[cfg_attr(
-            feature = "datagen",
-            derive(serde::Serialize, databake::Bake),
-            databake(path = icu_datetime::fields),
-        )]
+        #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+        #[cfg_attr(feature = "datagen", databake(path = icu_datetime::fields))]
         #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
         #[allow(clippy::enum_variant_names)]
         #[repr(u8)]
@@ -736,11 +734,8 @@ impl LengthType for TimeZone {
 #[derive(
     Debug, Eq, PartialEq, Ord, PartialOrd, Clone, Copy, yoke::Yokeable, zerofrom::ZeroFrom,
 )]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::fields),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::fields))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::enum_variant_names)]
 #[repr(u8)]
