@@ -74,19 +74,17 @@ pub mod ffi {
             hidden
         )]
         #[diplomat::attr(supports = fallible_constructors, constructor)]
-        #[diplomat::attr(supports = non_exhaustive_structs, rename = "with_options")]
-        pub fn create_with_options_v1(
+        #[diplomat::attr(supports = non_exhaustive_structs, rename = "with_content_locale")]
+        pub fn create_with_content_locale(
             provider: &DataProvider,
-            options: &SentenceBreakOptionsV1,
+            locale: &Locale,
         ) -> Result<Box<SentenceSegmenter>, DataError> {
-            //let mut options = icu_segmenter::SentenceBreakOptions::default();
-            //options.content_locale = Some(locale.to_datalocale());
             Ok(Box::new(SentenceSegmenter(call_constructor!(
                 icu_segmenter::SentenceSegmenter::try_new_with_options,
                 icu_segmenter::SentenceSegmenter::try_new_with_options_with_any_provider,
                 icu_segmenter::SentenceSegmenter::try_new_with_options_with_buffer_provider,
                 provider,
-                options.into(),
+                locale.into(),
             )?)))
         }
 
@@ -182,10 +180,10 @@ pub mod ffi {
     }
 }
 
-impl From<&ffi::SentenceBreakOptionsV1> for icu_segmenter::SentenceBreakOptions {
-    fn from(other: &ffi::SentenceBreakOptionsV1) -> Self {
+impl From<&crate::locale_core::ffi::Locale> for icu_segmenter::SentenceBreakOptions {
+    fn from(other: &crate::locale_core::ffi::Locale) -> Self {
         let mut options = icu_segmenter::SentenceBreakOptions::default();
-        options.content_locale = Some(other.content_locale.to_datalocale());
+        options.content_locale = Some(other.to_datalocale());
         options
     }
 }

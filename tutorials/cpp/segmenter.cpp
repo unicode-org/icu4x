@@ -129,13 +129,12 @@ void test_word(const std::string_view& str) {
 void test_word_with_options(const std::string_view& str) {
     const auto provider = DataProvider::compiled();
     std::unique_ptr<Locale> locale = Locale::from_string("sv").ok().value();
-    std::unique_ptr<WordBreakOptionsV1> options = WordBreakOptionsV1::create(*locale.get());
     const auto segmenter_auto =
-        WordSegmenter::create_auto_with_options_v1(*provider.get(), *options.get()).ok().value();
+        WordSegmenter::create_auto_with_content_locale(*provider.get(), *locale.get()).ok().value();
     const auto segmenter_lstm =
-        WordSegmenter::create_lstm_with_options_v1(*provider.get(), *options.get()).ok().value();
+        WordSegmenter::create_lstm_with_content_locale(*provider.get(), *locale.get()).ok().value();
     const auto segmenter_dictionary =
-        WordSegmenter::create_dictionary_with_options_v1(*provider.get(), *options.get()).ok().value();
+        WordSegmenter::create_dictionary_with_content_locale(*provider.get(), *locale.get()).ok().value();
 
     const WordSegmenter* segmenters[] = {segmenter_auto.get(), segmenter_lstm.get(),
                                               segmenter_dictionary.get()};
@@ -164,10 +163,8 @@ void test_sentence(const std::string_view& str) {
 void test_sentence_with_options(const std::string_view& str) {
     const auto provider = DataProvider::compiled();
     std::unique_ptr<Locale> locale = Locale::from_string("el").ok().value();
-    std::unique_ptr<SentenceBreakOptionsV1> options =
-        SentenceBreakOptionsV1::create(*locale.get());
     const auto segmenter =
-        SentenceSegmenter::create_with_options_v1(*provider.get(), *options.get()).ok().value();
+        SentenceSegmenter::create_with_content_locale(*provider.get(), *locale.get()).ok().value();
     cout << "Finding sentence breakpoints for el in string:" << endl
          << str << endl;
     print_ruler(str.size());
