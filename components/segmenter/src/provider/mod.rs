@@ -41,6 +41,7 @@ const _: () = {
     pub mod icu {
         pub use crate as segmenter;
         pub use icu_collections as collections;
+        pub use icu_segmenter_data::icu_locale as locale;
     }
     make_provider!(Baked);
     impl_dictionary_for_word_only_auto_v1_marker!(Baked);
@@ -160,12 +161,8 @@ impl DynamicDataMarker for UCharDictionaryBreakDataV1Marker {
 
 /// codepoint trie data that the difference by specific locale
 #[icu_provider::data_struct(
-    marker(
-        SentenceBreakDataOverrideV1Marker,
-        "segmenter/sentence/override@1",
-        singleton
-    ),
-    marker(WordBreakDataOverrideV1Marker, "segmenter/word/override@1", singleton)
+    marker(SentenceBreakDataOverrideV1Marker, "segmenter/sentence/override@1",),
+    marker(WordBreakDataOverrideV1Marker, "segmenter/word/override@1")
 )]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(

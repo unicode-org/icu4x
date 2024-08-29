@@ -11,7 +11,6 @@ use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
 use core::str::CharIndices;
-use icu_locale_core::subtags::language;
 use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
 
@@ -278,17 +277,17 @@ impl WordSegmenter {
             + ?Sized,
     {
         let payload_locale_override = if let Some(locale) = options.content_locale {
-            if !Self::is_default_rule(&locale) {
-                match provider.load(Default::default()) {
-                    Ok(response) => Ok(Some(response.payload)),
-                    Err(DataError {
-                        kind: DataErrorKind::IdentifierNotFound,
-                        ..
-                    }) => Ok(None),
-                    Err(e) => Err(e),
-                }
-            } else {
-                Ok(None)
+            let req = DataRequest {
+                id: DataIdentifierBorrowed::for_locale(&locale),
+                ..Default::default()
+            };
+            match provider.load(req) {
+                Ok(response) => Ok(Some(response.payload)),
+                Err(DataError {
+                    kind: DataErrorKind::IdentifierNotFound,
+                    ..
+                }) => Ok(None),
+                Err(e) => Err(e),
             }
         } else {
             Ok(None)
@@ -401,17 +400,17 @@ impl WordSegmenter {
             + ?Sized,
     {
         let payload_locale_override = if let Some(locale) = options.content_locale {
-            if !Self::is_default_rule(&locale) {
-                match provider.load(Default::default()) {
-                    Ok(response) => Ok(Some(response.payload)),
-                    Err(DataError {
-                        kind: DataErrorKind::IdentifierNotFound,
-                        ..
-                    }) => Ok(None),
-                    Err(e) => Err(e),
-                }
-            } else {
-                Ok(None)
+            let req = DataRequest {
+                id: DataIdentifierBorrowed::for_locale(&locale),
+                ..Default::default()
+            };
+            match provider.load(req) {
+                Ok(response) => Ok(Some(response.payload)),
+                Err(DataError {
+                    kind: DataErrorKind::IdentifierNotFound,
+                    ..
+                }) => Ok(None),
+                Err(e) => Err(e),
             }
         } else {
             Ok(None)
@@ -516,17 +515,17 @@ impl WordSegmenter {
             + ?Sized,
     {
         let payload_locale_override = if let Some(locale) = options.content_locale {
-            if !Self::is_default_rule(&locale) {
-                match provider.load(Default::default()) {
-                    Ok(response) => Ok(Some(response.payload)),
-                    Err(DataError {
-                        kind: DataErrorKind::IdentifierNotFound,
-                        ..
-                    }) => Ok(None),
-                    Err(e) => Err(e),
-                }
-            } else {
-                Ok(None)
+            let req = DataRequest {
+                id: DataIdentifierBorrowed::for_locale(&locale),
+                ..Default::default()
+            };
+            match provider.load(req) {
+                Ok(response) => Ok(Some(response.payload)),
+                Err(DataError {
+                    kind: DataErrorKind::IdentifierNotFound,
+                    ..
+                }) => Ok(None),
+                Err(e) => Err(e),
             }
         } else {
             Ok(None)
@@ -622,11 +621,6 @@ impl WordSegmenter {
             boundary_property: 0,
             locale_override,
         })
-    }
-
-    fn is_default_rule(locale: &DataLocale) -> bool {
-        let lang = locale.language;
-        lang != language!("fi") && lang != language!("sv")
     }
 }
 

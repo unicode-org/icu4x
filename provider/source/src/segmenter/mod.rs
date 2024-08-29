@@ -692,7 +692,7 @@ macro_rules! implement {
 }
 
 macro_rules! implement_override {
-    ($marker:ident, $rules:literal) => {
+    ($marker:ident, $rules:literal, [$($supported:expr),*]) => {
         impl DataProvider<$marker> for SourceDataProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
@@ -719,7 +719,11 @@ macro_rules! implement_override {
 
         impl crate::IterableDataProviderCached<$marker> for SourceDataProvider {
             fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-                Ok(HashSet::from_iter([Default::default()]))
+                const SUPPORTED: &[&str] = &[$($supported),*];
+                Ok(SUPPORTED
+                   .iter()
+                   .map(|l|DataIdentifierCow::from_locale(DataLocale::try_from_str(l).unwrap()))
+                   .collect())
             }
         }
     }
@@ -809,8 +813,16 @@ implement!(LineBreakDataV2Marker, "segmenter/line.toml");
 implement!(GraphemeClusterBreakDataV2Marker, "segmenter/grapheme.toml");
 implement!(WordBreakDataV2Marker, "segmenter/word.toml");
 implement!(SentenceBreakDataV2Marker, "segmenter/sentence.toml");
-implement_override!(WordBreakDataOverrideV1Marker, "segmenter/word.toml");
-implement_override!(SentenceBreakDataOverrideV1Marker, "segmenter/sentence.toml");
+implement_override!(
+    WordBreakDataOverrideV1Marker,
+    "segmenter/word.toml",
+    ["fi", "sv"]
+);
+implement_override!(
+    SentenceBreakDataOverrideV1Marker,
+    "segmenter/sentence.toml",
+    ["el"]
+);
 
 #[cfg(test)]
 mod tests {
@@ -859,46 +871,14 @@ mod tests {
     }
 
     #[test]
-    fn locale_data() {
+    #[should_panic]
+    fn missing_locale_data() {
         let provider = SourceDataProvider::new_testing();
-        let response: DataResponse<SentenceBreakDataV2Marker> = provider
-            .load(Default::default())
-            .expect("Loading should succeed!");
-        let data = response.payload.get();
         let response: DataResponse<SentenceBreakDataOverrideV1Marker> = provider
             .load(Default::default())
             .expect("Loading should succeed!");
-        let data_diff = response.payload.get();
-        // STerm
-        assert_eq!(
-            data_diff.property_table_override.get32(0x003b),
-            data.property_table.get32(0x0021)
-        );
-        assert_eq!(
-            data_diff.property_table_override.get32(0x37e),
-            data.property_table.get32(0x0021)
-        );
-
-        let response: DataResponse<WordBreakDataV2Marker> = provider
-            .load(Default::default())
-            .expect("Loading should succeed!");
-        let data = response.payload.get();
-        let response: DataResponse<WordBreakDataOverrideV1Marker> = provider
-            .load(Default::default())
-            .expect("Loading should succeed!");
-        let data_diff = response.payload.get();
-        // MidLetter
-        assert_eq!(
-            data_diff.property_table_override.get32(0x003a),
-            data.property_table.get32(0x00b7)
-        );
-        assert_eq!(
-            data_diff.property_table_override.get32(0xfe55),
-            data.property_table.get32(0x00b7)
-        );
-        assert_eq!(
-            data_diff.property_table_override.get32(0xff1a),
-            data.property_table.get32(0x00b7)
-        );
+        response.payload.get();
     }
+
+    // TODO: Add loading override table data. But no locales in testdata.
 }

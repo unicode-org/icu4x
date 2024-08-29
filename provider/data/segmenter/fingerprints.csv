@@ -15,7 +15,12 @@ segmenter/lstm/wl_auto@1, und/Burmese_codepoints_exclusive_model4_heavy, 91369B,
 segmenter/lstm/wl_auto@1, und/Khmer_codepoints_exclusive_model4_heavy, 74669B, 74372B, b25f5219c4b970f2
 segmenter/lstm/wl_auto@1, und/Lao_codepoints_exclusive_model4_heavy, 72164B, 71867B, 7e0c3ea7801791bd
 segmenter/lstm/wl_auto@1, und/Thai_codepoints_exclusive_model4_heavy, 72331B, 72034B, c46e2e0c098c1fc1
-segmenter/sentence/override@1, <singleton>, 332B, 273B, 745d858a06d47385
+segmenter/sentence/override@1, <lookup>, 35B, 1 identifiers
+segmenter/sentence/override@1, <total>, 332B, 273B, 1 unique payloads
+segmenter/sentence/override@1, el, 332B, 273B, 745d858a06d47385
 segmenter/sentence@2, <singleton>, 14528B, 14422B, da95c51c93946d95
-segmenter/word/override@1, <singleton>, 556B, 496B, e523305ca615559e
+segmenter/word/override@1, <lookup>, 40B, 2 identifiers
+segmenter/word/override@1, <total>, 556B, 496B, 1 unique payloads
+segmenter/word/override@1, fi, 556B, 496B, e523305ca615559e
+segmenter/word/override@1, sv, -> fi
 segmenter/word@2, <singleton>, 14768B, 14663B, ca0e9def272a3e47

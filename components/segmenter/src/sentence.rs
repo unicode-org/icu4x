@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::vec::Vec;
-use icu_locale_core::subtags::language;
 use icu_provider::prelude::*;
 
 use crate::indices::{Latin1Indices, Utf16Indices};
@@ -185,17 +184,17 @@ impl SentenceSegmenter {
     {
         let payload = provider.load(Default::default())?.payload;
         let payload_locale_override = if let Some(locale) = options.content_locale {
-            if locale.language == language!("el") {
-                match provider.load(Default::default()) {
-                    Ok(response) => Ok(Some(response.payload)),
-                    Err(DataError {
-                        kind: DataErrorKind::IdentifierNotFound,
-                        ..
-                    }) => Ok(None),
-                    Err(e) => Err(e),
-                }
-            } else {
-                Ok(None)
+            let req = DataRequest {
+                id: DataIdentifierBorrowed::for_locale(&locale),
+                ..Default::default()
+            };
+            match provider.load(req) {
+                Ok(response) => Ok(Some(response.payload)),
+                Err(DataError {
+                    kind: DataErrorKind::IdentifierNotFound,
+                    ..
+                }) => Ok(None),
+                Err(e) => Err(e),
             }
         } else {
             Ok(None)
