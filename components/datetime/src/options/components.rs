@@ -84,6 +84,7 @@
 
 use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
+    neo_pattern::DateTimePattern,
     neo_skeleton::FractionalSecondDigits,
     pattern::{
         runtime::{Pattern, PatternPlurals},
@@ -636,6 +637,12 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
             PatternPlurals::MultipleVariants(plural_pattern) => &plural_pattern.other,
         };
         Self::from(pattern)
+    }
+}
+
+impl From<&DateTimePattern> for Bag {
+    fn from(value: &DateTimePattern) -> Self {
+        Self::from(value.as_borrowed().0)
     }
 }
 
