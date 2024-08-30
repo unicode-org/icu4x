@@ -30,3 +30,4 @@ mod transliterator;
 pub use transliterator::*;
 
 pub use compile::RuleCollection;
+pub use compile::RuleCollectionProvider;
