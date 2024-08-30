@@ -251,6 +251,10 @@ let formatter = FixedDecimalFormatter::try_new_unstable(
 assert_eq!(formatter.format_to_string(&100007i64.into()), "100🐮007");
 ```
 
+## Forking Data Providers
+
+Forking providers can be implemented using `DataPayload::dynamic_cast`. For an example, see that function's documentation.
+
 ## Accessing the Resolved Locale
 
 ICU4X objects do not store their "resolved locale" because that is not a well-defined concept. Components can load data from many sources, and fallbacks to parent locales or root does not necessarily mean that a locale is not supported.
