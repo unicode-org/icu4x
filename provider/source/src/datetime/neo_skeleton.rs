@@ -245,6 +245,149 @@ impl SourceDataProvider {
     }
 }
 
+fn gen_time_components<'a>(
+    length: NeoSkeletonLength,
+    neo_components: &NeoTimeComponents,
+    _: &DateLengthsV1<'a>,
+) -> DateTimeFormatterOptions {
+    // TODO: Should this use timeSkeletons?
+    // "full": "ahmmsszzzz",
+    // "long": "ahmmssz",
+    // "medium": "ahmmss",
+    // "short": "ahmm"
+    //
+    // Probably depends on CLDR data being higher quality.
+    // <https://unicode-org.atlassian.net/browse/CLDR-14993>
+    if matches!(neo_components, NeoTimeComponents::Auto) {
+        return DateTimeFormatterOptions::Length(length::Bag::from_time_style(
+            length.to_time_style(),
+        ));
+    }
+    let mut filtered_components = components::Bag::empty();
+    if neo_components.has_hour() {
+        filtered_components.hour = Some(components::Numeric::Numeric);
+    }
+    if neo_components.has_minute() {
+        filtered_components.minute = Some(components::Numeric::Numeric);
+    }
+    if neo_components.has_second() {
+        filtered_components.second = Some(components::Numeric::Numeric);
+    }
+    // Select the correct hour cycle
+    filtered_components.preferences = match neo_components {
+        NeoTimeComponents::Hour12
+        | NeoTimeComponents::Hour12Minute
+        | NeoTimeComponents::Hour12MinuteSecond => Some(preferences::Bag::from_hour_cycle(
+            preferences::HourCycle::H12,
+        )),
+        NeoTimeComponents::Hour24
+        | NeoTimeComponents::Hour24Minute
+        | NeoTimeComponents::Hour24MinuteSecond => Some(preferences::Bag::from_hour_cycle(
+            preferences::HourCycle::H23,
+        )),
+        _ => None,
+    };
+    DateTimeFormatterOptions::Components(filtered_components)
+}
+
+fn gen_date_components<'a>(
+    length: NeoSkeletonLength,
+    neo_components: &NeoComponents,
+    date_lengths_v1: &DateLengthsV1<'a>,
+) -> DateTimeFormatterOptions {
+    let (date_components, time_components) = match neo_components {
+        NeoComponents::Date(date_components) => (*date_components, None),
+        NeoComponents::DateTime(day_components, time_components) => (
+            NeoDateComponents::Day(*day_components),
+            Some(*time_components),
+        ),
+        _ => unreachable!("available attributes only Date or DateTime"),
+    };
+    // Pull the field lengths from the date length patterns, and then use
+    // those lengths for classical skeleton datetime pattern generation.
+    //
+    // TODO: Should this use dateSkeletons?
+    // "full": "yMMMMEEEEd",
+    // "long": "yMMMMd",
+    // "medium": "yMMMd",
+    // "short": "yMMdd"
+    //
+    // Probably depends on CLDR data being higher quality.
+    // <https://unicode-org.atlassian.net/browse/CLDR-14993>
+    if matches!(
+        date_components,
+        NeoDateComponents::Day(NeoDayComponents::Auto)
+    ) {
+        return DateTimeFormatterOptions::Length(length::Bag::from_date_style(
+            length.to_date_style(),
+        ));
+    }
+    if length == NeoSkeletonLength::Long
+        && matches!(
+            date_components,
+            NeoDateComponents::Day(NeoDayComponents::AutoWeekday)
+        )
+    {
+        return DateTimeFormatterOptions::Length(length::Bag::from_date_style(length::Date::Full));
+    }
+    let date_pattern = match length {
+        NeoSkeletonLength::Long => &date_lengths_v1.date.long,
+        NeoSkeletonLength::Medium => &date_lengths_v1.date.medium,
+        NeoSkeletonLength::Short => &date_lengths_v1.date.short,
+        _ => unreachable!(),
+    };
+    let date_bag = components::Bag::from(date_pattern);
+    let mut filtered_components = components::Bag::empty();
+    if date_components.has_year() {
+        filtered_components.era = date_bag.era;
+        filtered_components.year = date_bag.year;
+    }
+    if date_components.has_full_year() {
+        // override the year field to be a full year
+        filtered_components.year = Some(components::Year::Numeric);
+    }
+    if date_components.has_month() {
+        filtered_components.month = date_bag.month;
+    }
+    if date_components.has_month() && !date_components.has_year() && !date_components.has_day() {
+        // standalone month: use the skeleton length
+        filtered_components.month = match length {
+            NeoSkeletonLength::Long => Some(components::Month::Long),
+            NeoSkeletonLength::Medium => Some(components::Month::Short),
+            NeoSkeletonLength::Short => Some(components::Month::Numeric),
+            _ => unreachable!(),
+        };
+    }
+    if date_components.has_day() {
+        filtered_components.day = date_bag.day;
+    }
+    if date_components.has_day() && !date_components.has_month() {
+        // override the day field to use the skeleton day length
+        filtered_components.day = Some(components::Day::NumericDayOfMonth);
+    }
+    if date_components.has_weekday() {
+        // Not all length patterns have the weekday
+        filtered_components.weekday = match length {
+            NeoSkeletonLength::Long => Some(components::Text::Long),
+            NeoSkeletonLength::Medium => Some(components::Text::Short),
+            NeoSkeletonLength::Short => Some(components::Text::Short),
+            _ => unreachable!(),
+        };
+    }
+    if let Some(time_components) = time_components {
+        if time_components.has_hour() {
+            filtered_components.hour = Some(components::Numeric::Numeric);
+        }
+        if time_components.has_minute() {
+            filtered_components.minute = Some(components::Numeric::Numeric);
+        }
+        if time_components.has_second() {
+            filtered_components.second = Some(components::Numeric::Numeric);
+        }
+    }
+    DateTimeFormatterOptions::Components(filtered_components)
+}
+
 impl DataProvider<TimeNeoSkeletonPatternsV1Marker> for SourceDataProvider {
     fn load(
         &self,
@@ -254,46 +397,7 @@ impl DataProvider<TimeNeoSkeletonPatternsV1Marker> for SourceDataProvider {
             req,
             Either::Right("generic"),
             NeoTimeComponents::from_id_str,
-            |length, neo_components, _date_lengths_v1| {
-                // TODO: Should this use timeSkeletons?
-                // "full": "ahmmsszzzz",
-                // "long": "ahmmssz",
-                // "medium": "ahmmss",
-                // "short": "ahmm"
-                //
-                // Probably depends on CLDR data being higher quality.
-                // <https://unicode-org.atlassian.net/browse/CLDR-14993>
-                if matches!(neo_components, NeoTimeComponents::Auto) {
-                    return DateTimeFormatterOptions::Length(length::Bag::from_time_style(
-                        length.to_time_style(),
-                    ));
-                }
-                let mut filtered_components = components::Bag::empty();
-                if neo_components.has_hour() {
-                    filtered_components.hour = Some(components::Numeric::Numeric);
-                }
-                if neo_components.has_minute() {
-                    filtered_components.minute = Some(components::Numeric::Numeric);
-                }
-                if neo_components.has_second() {
-                    filtered_components.second = Some(components::Numeric::Numeric);
-                }
-                // Select the correct hour cycle
-                filtered_components.preferences = match neo_components {
-                    NeoTimeComponents::Hour12
-                    | NeoTimeComponents::Hour12Minute
-                    | NeoTimeComponents::Hour12MinuteSecond => Some(
-                        preferences::Bag::from_hour_cycle(preferences::HourCycle::H12),
-                    ),
-                    NeoTimeComponents::Hour24
-                    | NeoTimeComponents::Hour24Minute
-                    | NeoTimeComponents::Hour24MinuteSecond => Some(
-                        preferences::Bag::from_hour_cycle(preferences::HourCycle::H23),
-                    ),
-                    _ => None,
-                };
-                DateTimeFormatterOptions::Components(filtered_components)
-            },
+            gen_time_components,
             |_| false,
         )
     }
@@ -317,104 +421,7 @@ macro_rules! impl_neo_skeleton_datagen {
                             NeoDateComponents::from_id_str(id_str).map(NeoComponents::Date)
                         })
                     },
-                    |length, neo_components, date_lengths_v1| {
-                        let (date_components, time_components) = match neo_components {
-                            NeoComponents::Date(date_components) => (*date_components, None),
-                            NeoComponents::DateTime(day_components, time_components) => (
-                                NeoDateComponents::Day(*day_components),
-                                Some(*time_components),
-                            ),
-                            _ => unreachable!("available attributes only Date or DateTime"),
-                        };
-                        // Pull the field lengths from the date length patterns, and then use
-                        // those lengths for classical skeleton datetime pattern generation.
-                        //
-                        // TODO: Should this use dateSkeletons?
-                        // "full": "yMMMMEEEEd",
-                        // "long": "yMMMMd",
-                        // "medium": "yMMMd",
-                        // "short": "yMMdd"
-                        //
-                        // Probably depends on CLDR data being higher quality.
-                        // <https://unicode-org.atlassian.net/browse/CLDR-14993>
-                        if matches!(
-                            date_components,
-                            NeoDateComponents::Day(NeoDayComponents::Auto)
-                        ) {
-                            return DateTimeFormatterOptions::Length(length::Bag::from_date_style(
-                                length.to_date_style(),
-                            ));
-                        }
-                        if length == NeoSkeletonLength::Long
-                            && matches!(
-                                date_components,
-                                NeoDateComponents::Day(NeoDayComponents::AutoWeekday)
-                            )
-                        {
-                            return DateTimeFormatterOptions::Length(length::Bag::from_date_style(
-                                length::Date::Full,
-                            ));
-                        }
-                        let date_pattern = match length {
-                            NeoSkeletonLength::Long => &date_lengths_v1.date.long,
-                            NeoSkeletonLength::Medium => &date_lengths_v1.date.medium,
-                            NeoSkeletonLength::Short => &date_lengths_v1.date.short,
-                            _ => unreachable!(),
-                        };
-                        let date_bag = components::Bag::from(date_pattern);
-                        let mut filtered_components = components::Bag::empty();
-                        if date_components.has_year() {
-                            filtered_components.era = date_bag.era;
-                            filtered_components.year = date_bag.year;
-                        }
-                        if date_components.has_full_year() {
-                            // override the year field to be a full year
-                            filtered_components.year = Some(components::Year::Numeric);
-                        }
-                        if date_components.has_month() {
-                            filtered_components.month = date_bag.month;
-                        }
-                        if date_components.has_month()
-                            && !date_components.has_year()
-                            && !date_components.has_day()
-                        {
-                            // standalone month: use the skeleton length
-                            filtered_components.month = match length {
-                                NeoSkeletonLength::Long => Some(components::Month::Long),
-                                NeoSkeletonLength::Medium => Some(components::Month::Short),
-                                NeoSkeletonLength::Short => Some(components::Month::Numeric),
-                                _ => unreachable!(),
-                            };
-                        }
-                        if date_components.has_day() {
-                            filtered_components.day = date_bag.day;
-                        }
-                        if date_components.has_day() && !date_components.has_month() {
-                            // override the day field to use the skeleton day length
-                            filtered_components.day = Some(components::Day::NumericDayOfMonth);
-                        }
-                        if date_components.has_weekday() {
-                            // Not all length patterns have the weekday
-                            filtered_components.weekday = match length {
-                                NeoSkeletonLength::Long => Some(components::Text::Long),
-                                NeoSkeletonLength::Medium => Some(components::Text::Short),
-                                NeoSkeletonLength::Short => Some(components::Text::Short),
-                                _ => unreachable!(),
-                            };
-                        }
-                        if let Some(time_components) = time_components {
-                            if time_components.has_hour() {
-                                filtered_components.hour = Some(components::Numeric::Numeric);
-                            }
-                            if time_components.has_minute() {
-                                filtered_components.minute = Some(components::Numeric::Numeric);
-                            }
-                            if time_components.has_second() {
-                                filtered_components.second = Some(components::Numeric::Numeric);
-                            }
-                        }
-                        DateTimeFormatterOptions::Components(filtered_components)
-                    },
+                    gen_date_components,
                     |neo_components| match neo_components {
                         NeoComponents::Date(date_components) => date_components.has_full_year(),
                         NeoComponents::DateTime(day_components, _) => {
