@@ -18,22 +18,6 @@ pub mod ffi {
     pub struct SentenceSegmenter(icu_segmenter::SentenceSegmenter);
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::segmenter::SentenceBreakOptions, Struct)]
-    #[diplomat::attr(supports = non_exhaustive_structs, rename = "SentenceBreakOptions")]
-    pub struct SentenceBreakOptionsV1 {
-        pub content_locale: Box<Locale>,
-    }
-
-    impl SentenceBreakOptionsV1 {
-        #[diplomat::attr(auto, constructor)]
-        pub fn create(locale: &Locale) -> Box<Self> {
-            Box::new(Self {
-                content_locale: locale.clone(),
-            })
-        }
-    }
-
-    #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::SentenceBreakIterator, Struct)]
     #[diplomat::rust_link(
         icu::segmenter::SentenceBreakIteratorPotentiallyIllFormedUtf8,

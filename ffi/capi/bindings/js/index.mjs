@@ -154,8 +154,6 @@ export { SentenceBreakIteratorUtf16 } from "./SentenceBreakIteratorUtf16.mjs"
 
 export { SentenceBreakIteratorUtf8 } from "./SentenceBreakIteratorUtf8.mjs"
 
-export { SentenceBreakOptions } from "./SentenceBreakOptions.mjs"
-
 export { SentenceSegmenter } from "./SentenceSegmenter.mjs"
 
 export { WordBreakIteratorLatin1 } from "./WordBreakIteratorLatin1.mjs"
@@ -163,8 +161,6 @@ export { WordBreakIteratorLatin1 } from "./WordBreakIteratorLatin1.mjs"
 export { WordBreakIteratorUtf16 } from "./WordBreakIteratorUtf16.mjs"
 
 export { WordBreakIteratorUtf8 } from "./WordBreakIteratorUtf8.mjs"
-
-export { WordBreakOptions } from "./WordBreakOptions.mjs"
 
 export { WordSegmenter } from "./WordSegmenter.mjs"
 

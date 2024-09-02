@@ -12,22 +12,6 @@ pub mod ffi {
     use crate::locale_core::ffi::Locale;
     use crate::provider::ffi::DataProvider;
 
-    #[diplomat::opaque]
-    #[diplomat::rust_link(icu::segmenter::WordBreakOptions, Struct)]
-    #[diplomat::attr(supports = non_exhaustive_structs, rename = "WordBreakOptions")]
-    pub struct WordBreakOptionsV1 {
-        pub content_locale: Box<Locale>,
-    }
-
-    impl WordBreakOptionsV1 {
-        #[diplomat::attr(auto, constructor)]
-        pub fn create(locale: &Locale) -> Box<Self> {
-            Box::new(Self {
-                content_locale: locale.clone(),
-            })
-        }
-    }
-
     #[diplomat::enum_convert(icu_segmenter::WordType, needs_wildcard)]
     #[diplomat::rust_link(icu::segmenter::WordType, Enum)]
     pub enum SegmenterWordType {

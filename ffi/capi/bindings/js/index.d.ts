@@ -156,8 +156,6 @@ export { SentenceBreakIteratorUtf16 } from "./SentenceBreakIteratorUtf16"
 
 export { SentenceBreakIteratorUtf8 } from "./SentenceBreakIteratorUtf8"
 
-export { SentenceBreakOptions } from "./SentenceBreakOptions"
-
 export { SentenceSegmenter } from "./SentenceSegmenter"
 
 export { WordBreakIteratorLatin1 } from "./WordBreakIteratorLatin1"
@@ -165,8 +163,6 @@ export { WordBreakIteratorLatin1 } from "./WordBreakIteratorLatin1"
 export { WordBreakIteratorUtf16 } from "./WordBreakIteratorUtf16"
 
 export { WordBreakIteratorUtf8 } from "./WordBreakIteratorUtf8"
-
-export { WordBreakOptions } from "./WordBreakOptions"
 
 export { WordSegmenter } from "./WordSegmenter"
 
