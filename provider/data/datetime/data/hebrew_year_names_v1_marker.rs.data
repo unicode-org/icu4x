@@ -12,9 +12,9 @@
 #[macro_export]
 macro_rules! __impl_hebrew_year_names_v1_marker {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl $provider {
             const DATA_HEBREW_YEAR_NAMES_V1_MARKER: icu_provider_baked::zerotrie::Data<icu::datetime::provider::neo::HebrewYearNamesV1Marker> = icu_provider_baked::zerotrie::Data {
                 trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xCDafhiklmrstuyz\x0BEVZ^bgy\x8B\x96\xA2\xBFr\x1E\xC3345\x01\x02\x80\x80\x80\xC4afir\n\x19\x1C\x1E\xC3345\x01\x02\x81\x81\x81-Adlm\x1E\xC3345\x01\x02\x82\x82\x82\x1E5\x8C\xC2\x1E-\t\xC3345\x01\x02\x83\x83\x8CCA\x1E\xC234\x01\x84\x84\xC2eu\x03\x1E5\x8D\x1E\xC3345\x01\x02\x85\x85\x85s\x1E5\x8Co\x1E5\x8Ev\x1E5\x8Fr\x1E5\x90\0\xC2ou\n\x1E\xC3345\x01\x02\x86\x86\x86\x1E5\x90\x01\xC2cv\x0B\x1E\xC3345\x01\x02\x87\x87\x90\x02\x1E5\x8Ch\x1E\xC3345\x01\x02\x88\x88\x88nd\x1E\xC3345\x01\x02\x84\x84\x84ue\xC2\x1E-\t\xC3345\x01\x02\x89\x89\x89Hans\x1E\xC3345\x01\x02\x8A\x8A\x8Ah\xC2\x1E-\t\xC3345\x01\x02\x8B\x8B\x8BHant\x1E\xC3345\x01\x02\x89\x89\x89" },
@@ -98,7 +98,7 @@ macro_rules! __impl_hebrew_year_names_v1_marker {
                 ],
             };
         }
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DataProvider<icu::datetime::provider::neo::HebrewYearNamesV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::neo::HebrewYearNamesV1Marker>, icu_provider::DataError> {
                 let mut metadata = icu_provider::DataResponseMetadata::default();
@@ -124,7 +124,7 @@ macro_rules! __impl_hebrew_year_names_v1_marker {
     };
     ($ provider : ty , DRY) => {
         __impl_hebrew_year_names_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::datetime::provider::neo::HebrewYearNamesV1Marker> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 icu_provider::DataProvider::<icu::datetime::provider::neo::HebrewYearNamesV1Marker>::load(self, req).map(|r| r.metadata)
@@ -133,7 +133,7 @@ macro_rules! __impl_hebrew_year_names_v1_marker {
     };
     ($ provider : ty , ITER) => {
         __impl_hebrew_year_names_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::IterableDataProvider<icu::datetime::provider::neo::HebrewYearNamesV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_HEBREW_YEAR_NAMES_V1_MARKER).collect())
@@ -142,13 +142,13 @@ macro_rules! __impl_hebrew_year_names_v1_marker {
     };
     ($ provider : ty , DRY , ITER) => {
         __impl_hebrew_year_names_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::datetime::provider::neo::HebrewYearNamesV1Marker> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 icu_provider::DataProvider::<icu::datetime::provider::neo::HebrewYearNamesV1Marker>::load(self, req).map(|r| r.metadata)
             }
         }
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::IterableDataProvider<icu::datetime::provider::neo::HebrewYearNamesV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_HEBREW_YEAR_NAMES_V1_MARKER).collect())

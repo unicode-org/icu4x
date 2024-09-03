@@ -12,9 +12,9 @@
 #[macro_export]
 macro_rules! __impl_short_currency_compact_v1_marker {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl $provider {
             const DATA_SHORT_CURRENCY_COMPACT_V1_MARKER: icu_provider_baked::zerotrie::Data<icu::experimental::dimension::provider::currency_compact::ShortCurrencyCompactV1Marker> = icu_provider_baked::zerotrie::Data {
                 trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1wabcdefghijklmnoprstuvyz\0\0\0\0\0\0\0\0\0\0\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01*AO\\\x8F\xAF\xBF\xDC\xF0\xF8\x18$;GJcj\xA4\xC4\xD5\xD8\xED\xC5fmrsz\x01\x02\x1C\x1F\x80\x81\x82-\xC6ADELMT\x02\x04\x06\x08\nE\x83Z\x83H\x83Y\x83A\x83N\x83\x84t\x85\x85\xC5egnrs\x01\x02\x03\x06\x86\x87\x88\x89x\x8A\x8B-Cyrl\x8C\xC4ahsy\x01\x03\x04\x8Dr\x8E\x8F\x90\0\xC3aes\x02\x04\x90\x01\x90\x02b\x90\x03\xC5lnstu\x02\x08%'\x90\x04\x8E-IN\x90\x05\x90\x06-\xC54GMPU\x04\x07\n\r19\x90\x07T\x90\x08X\x90\tE\x90\nS\x90\x0B\x90\x0C\x90\r\xC5afior\x02\t\r\x0F\x90\x0E-Adlm\x90\x0F\x90\x10l\x8E\x90\x11\x90\x12-CA\x90\x13\xC4adlu\x02\x04\x06\x90\x14\x90\x15\x90\x16\x90\x17\xC7aeirsuy\x02\x04\x06\x08\x0B\r\x90\x18\x90\x19\x90\x1A\x90\x1Bb\x90\x03\x90\x1C\x90\x1D\xC5adgst\x02\x04\x06\x08\x90\x1E\x90\x1F\x90 \x90!\x90\"\xC2av\x02\x90#\x90$\xC7agkmnoy\x02\x05\x07\t\x0B\x10\x90%p\x90&\x90'\x90(\x90)\x90*k\x90+\x90,\xC3otv\x02\x04\x90-\x90.\x90/\xC6klnrsy\x02\x03\x05\x07\t\x900\x8E\x901\x902\x903\x904\xC3elo\x02\x04\x905\x906\x907r\x908\xC5aclst\x02\x04\x06\x08\x909m\x8E\x90:\x90;\x90<-PT\x90=\xC2ou\x02\x90>\x86\xCBacdikloqrvw\x08\n\x0B\r\x0E\x10\x11\x13\x1B\x1D\xC2ht\x02\x90?\x90@\x90A\x82\x90B\x8F\x90C\x8E\x90D\x90E-Latn\x8B\x90F\x90G-KE\x90H\xC8aeghikor\x02\x04\x06\x08\n\x0C\x0E\x90I\x90J\x90K\x90+\x90L\x90M\x90N\x90O\xC4knrz\x02\x05\x07\x90Pd\x90Q\x90R\x90Si\x90T\xC3oru\x02\x05\x90+l\x90Ue\x90V-Hans\x90W\xC2hu\x14\x90X-\xC2HM\n\xC2Ka\x02\x90Ynt\x90ZO\x90Y\x90[" },
@@ -670,7 +670,7 @@ macro_rules! __impl_short_currency_compact_v1_marker {
                 ],
             };
         }
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DataProvider<icu::experimental::dimension::provider::currency_compact::ShortCurrencyCompactV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::experimental::dimension::provider::currency_compact::ShortCurrencyCompactV1Marker>, icu_provider::DataError> {
                 let mut metadata = icu_provider::DataResponseMetadata::default();
@@ -696,7 +696,7 @@ macro_rules! __impl_short_currency_compact_v1_marker {
     };
     ($ provider : ty , DRY) => {
         __impl_short_currency_compact_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::experimental::dimension::provider::currency_compact::ShortCurrencyCompactV1Marker> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 icu_provider::DataProvider::<icu::experimental::dimension::provider::currency_compact::ShortCurrencyCompactV1Marker>::load(self, req).map(|r| r.metadata)
@@ -705,7 +705,7 @@ macro_rules! __impl_short_currency_compact_v1_marker {
     };
     ($ provider : ty , ITER) => {
         __impl_short_currency_compact_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::IterableDataProvider<icu::experimental::dimension::provider::currency_compact::ShortCurrencyCompactV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_SHORT_CURRENCY_COMPACT_V1_MARKER).collect())
@@ -714,13 +714,13 @@ macro_rules! __impl_short_currency_compact_v1_marker {
     };
     ($ provider : ty , DRY , ITER) => {
         __impl_short_currency_compact_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::experimental::dimension::provider::currency_compact::ShortCurrencyCompactV1Marker> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 icu_provider::DataProvider::<icu::experimental::dimension::provider::currency_compact::ShortCurrencyCompactV1Marker>::load(self, req).map(|r| r.metadata)
             }
         }
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::IterableDataProvider<icu::experimental::dimension::provider::currency_compact::ShortCurrencyCompactV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_SHORT_CURRENCY_COMPACT_V1_MARKER).collect())

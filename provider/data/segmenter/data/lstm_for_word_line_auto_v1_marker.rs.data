@@ -12,9 +12,9 @@
 #[macro_export]
 macro_rules! __impl_lstm_for_word_line_auto_v1_marker {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl $provider {
             const DATA_LSTM_FOR_WORD_LINE_AUTO_V1_MARKER: icu_provider_baked::zerotrie::Data<icu::segmenter::provider::LstmForWordLineAutoV1Marker> = icu_provider_baked::zerotrie::Data {
                 trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"und\x1E\xC4BKLT)Puurmese_codepoints_exclusive_model4_heavy\x80hmer_codepoints_exclusive_model4_heavy\x81ao_codepoints_exclusive_model4_heavy\x82hai_codepoints_exclusive_model4_heavy\x83" },
@@ -86,7 +86,7 @@ macro_rules! __impl_lstm_for_word_line_auto_v1_marker {
                 ],
             };
         }
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DataProvider<icu::segmenter::provider::LstmForWordLineAutoV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::segmenter::provider::LstmForWordLineAutoV1Marker>, icu_provider::DataError> {
                 let metadata = Default::default();
@@ -97,7 +97,7 @@ macro_rules! __impl_lstm_for_word_line_auto_v1_marker {
     };
     ($ provider : ty , DRY) => {
         __impl_lstm_for_word_line_auto_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::segmenter::provider::LstmForWordLineAutoV1Marker> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 icu_provider::DataProvider::<icu::segmenter::provider::LstmForWordLineAutoV1Marker>::load(self, req).map(|r| r.metadata)
@@ -106,7 +106,7 @@ macro_rules! __impl_lstm_for_word_line_auto_v1_marker {
     };
     ($ provider : ty , ITER) => {
         __impl_lstm_for_word_line_auto_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::IterableDataProvider<icu::segmenter::provider::LstmForWordLineAutoV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_LSTM_FOR_WORD_LINE_AUTO_V1_MARKER).collect())
@@ -115,13 +115,13 @@ macro_rules! __impl_lstm_for_word_line_auto_v1_marker {
     };
     ($ provider : ty , DRY , ITER) => {
         __impl_lstm_for_word_line_auto_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::segmenter::provider::LstmForWordLineAutoV1Marker> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 icu_provider::DataProvider::<icu::segmenter::provider::LstmForWordLineAutoV1Marker>::load(self, req).map(|r| r.metadata)
             }
         }
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::IterableDataProvider<icu::segmenter::provider::LstmForWordLineAutoV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_LSTM_FOR_WORD_LINE_AUTO_V1_MARKER).collect())

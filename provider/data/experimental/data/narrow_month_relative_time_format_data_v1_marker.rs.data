@@ -12,9 +12,9 @@
 #[macro_export]
 macro_rules! __impl_narrow_month_relative_time_format_data_v1_marker {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl $provider {
             const DATA_NARROW_MONTH_RELATIVE_TIME_FORMAT_DATA_V1_MARKER: icu_provider_baked::zerotrie::Data<icu::experimental::relativetime::provider::NarrowMonthRelativeTimeFormatDataV1Marker> = icu_provider_baked::zerotrie::Data {
                 trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1zabcdefghijklmnopqrstuvwxyz\0\0\0\0\0\0\0\0\0\0\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x02\x02\x02\x02\x02\x11.GTy\x99\xA9\xCD\xE1\xE9\x16&K[^x{\x88\xCC\xF0\x11\x1A\x1D&@\xC5fmrsz\x01\x02\x03\x06\x80\x81\x82\x83t\x84\x85\xC6eglnrs\x01\x04\x06\x07\n\x86\x87c\x88o\x89\x8A\x8Bx\x8C\x8D-Cyrl\x8E\xC6aehsvy\x01\x04\x07\t\x0B\x8Fb\x90\0r\x90\x01\x90\x02\x90\x03\x90\x04\xC3aes\x02\x04\x90\x05\x90\x06b\x90\x07\xC5lnstu\x02\x10\x17\x19\x90\x08\x90\t-\xC20C\x0401\x90\nA\x90\x0B\x90\x0C-MX\x90\r\x90\x0E\x90\x0F\xC6afiory\x02\t\x0E\x10\x12\x90\x10-Adlm\x90\x11\x90\x12l\x90\x13\x90\x14\x90\x15\x90\x16\xC4adlu\x02\x04\x06\x90\x17\x90\x18\x90\x19\x90\x1A\xC7aeirsuy\x02\x04\r\x0F\x12\x14\x90\x1B\x90\x1C\x90\x1D-Latn\x90\x1E\x90\x1Fb\x90 \x90!\x90\"\xC5adgst\x02\x04\x06\x08\x90#\x90$\x90%\x90&\x90'\xC2av\x02\x90(\x90)\xCAaegkmnosuy\x02\x05\x08\n\x0C\x0E\x13\x15\x17\x90*a\x90+p\x90,\x90-\x90.\x90/\x900k\x901\x902\x903\x904\xC4botv\x02\x04\x06\x905\x906\x907\x908\xC9aiklnrsty\x03\x05\x07\t\x0B\r\x0F\x11i\x909\x90:\x90;\x90<\x90=\x90>\x90?\x90@\x90A\xC4elno\x02\x04\x06\x90B\x90C\x90D\x90Er\x90F\xC5aclst\x02\x05\x07\t\x90Gm\x90H\x90I\x90J\x90K-PT\x90Lu\x90M\xC3aou\x03\x05j\x90N\x90O\x90P\xCCacdikloqrvwy\x03\x05\x07\t\x0B\r\x0F\x11%')h\x90Q\x90R\x90S\x90T\x90U\x90V\x90W\x90X\x90Y-\xC2BL\x03A\x90Zatn\x90[-BA\x90\\\x90]\x90^r\x90_\xC9aeghikort\x02\x04\x06\x08\n\x0C\x0E\x10\x90`\x90a\x90b\x90c\x90d\x90e\x90f\x90g\x90h\xC5gknrz\x02\x04\x07\x0E\x90i\x90jd\x90k\x90l-IN\x90m\x90n-Cyrl\x90o\xC2ei\x03c\x90p\x90qo\x90r\xC2hn\x02\x90sr\x90t\xC3oru\x07\n\x90u-BJ\x90vl\x90we\x90x-Hans\x90y\xC2hu\x14\x90z-\xC2HM\n\xC2Ka\x02\x90{nt\x90|O\x90{\x90}" },
@@ -1158,7 +1158,7 @@ macro_rules! __impl_narrow_month_relative_time_format_data_v1_marker {
                 ],
             };
         }
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DataProvider<icu::experimental::relativetime::provider::NarrowMonthRelativeTimeFormatDataV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::experimental::relativetime::provider::NarrowMonthRelativeTimeFormatDataV1Marker>, icu_provider::DataError> {
                 let mut metadata = icu_provider::DataResponseMetadata::default();
@@ -1184,7 +1184,7 @@ macro_rules! __impl_narrow_month_relative_time_format_data_v1_marker {
     };
     ($ provider : ty , DRY) => {
         __impl_narrow_month_relative_time_format_data_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::experimental::relativetime::provider::NarrowMonthRelativeTimeFormatDataV1Marker> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 icu_provider::DataProvider::<icu::experimental::relativetime::provider::NarrowMonthRelativeTimeFormatDataV1Marker>::load(self, req).map(|r| r.metadata)
@@ -1193,7 +1193,7 @@ macro_rules! __impl_narrow_month_relative_time_format_data_v1_marker {
     };
     ($ provider : ty , ITER) => {
         __impl_narrow_month_relative_time_format_data_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::IterableDataProvider<icu::experimental::relativetime::provider::NarrowMonthRelativeTimeFormatDataV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_NARROW_MONTH_RELATIVE_TIME_FORMAT_DATA_V1_MARKER).collect())
@@ -1202,13 +1202,13 @@ macro_rules! __impl_narrow_month_relative_time_format_data_v1_marker {
     };
     ($ provider : ty , DRY , ITER) => {
         __impl_narrow_month_relative_time_format_data_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::experimental::relativetime::provider::NarrowMonthRelativeTimeFormatDataV1Marker> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 icu_provider::DataProvider::<icu::experimental::relativetime::provider::NarrowMonthRelativeTimeFormatDataV1Marker>::load(self, req).map(|r| r.metadata)
             }
         }
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::IterableDataProvider<icu::experimental::relativetime::provider::NarrowMonthRelativeTimeFormatDataV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_NARROW_MONTH_RELATIVE_TIME_FORMAT_DATA_V1_MARKER).collect())
