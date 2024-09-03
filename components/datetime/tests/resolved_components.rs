@@ -6,7 +6,8 @@ use icu_calendar::{DateTime, Gregorian};
 use icu_datetime::{
     neo::{NeoOptions, TypedNeoFormatter},
     neo_skeleton::{
-        Alignment, EraDisplay, FractionalSecondDigits, NeoDateComponents, NeoDateTimeComponents, NeoDayComponents, NeoSkeletonLength, NeoTimeComponents
+        Alignment, EraDisplay, FractionalSecondDigits, NeoDateComponents, NeoDateTimeComponents,
+        NeoDayComponents, NeoSkeletonLength, NeoTimeComponents,
     },
     options::{components, preferences},
 };
@@ -88,8 +89,10 @@ fn test_length_time_preferences() {
 
 #[test]
 fn test_date_and_time() {
-    let field_set =
-        NeoDateTimeComponents::DateTime(NeoDayComponents::EraYearMonthDayWeekday, NeoTimeComponents::Auto);
+    let field_set = NeoDateTimeComponents::DateTime(
+        NeoDayComponents::EraYearMonthDayWeekday,
+        NeoTimeComponents::Auto,
+    );
     let mut options = NeoOptions::from(NeoSkeletonLength::Medium);
     options.era_display = Some(EraDisplay::Always);
     options.fractional_second_digits = Some(FractionalSecondDigits::F4);

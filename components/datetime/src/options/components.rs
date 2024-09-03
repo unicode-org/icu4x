@@ -92,10 +92,10 @@ use crate::{
 };
 
 use super::preferences;
-#[cfg(feature = "serde")]
-use serde::{Deserialize, Serialize};
 #[cfg(feature = "experimental")]
 use crate::neo_pattern::DateTimePattern;
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 
 /// See the [module-level](./index.html) docs for more information.
 ///
