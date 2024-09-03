@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! 🚧 \[Unstable\] Windows Zones to IANA data for this component
+//! A provider for mapping Windows Zones to IANA identifiers.
 //!
 //! <div class="stab unstable">
 //! 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -41,12 +41,12 @@ use zerovec::{
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_timezone::provider::windows))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[yoke(prove_covariance_manually)] // TODO: Prove
-pub struct WindowsZonesToIanaMapV1<'data> {
+#[yoke(prove_covariance_manually)]
+pub struct WindowsZonesToIanaMapV1<'data>(
     /// A map from a `WindowsZoneIdentifier` and `WindowsGeoName` to IANA identifier(s).
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub map: ZeroMap2d<'data, WindowsZoneIdentifier, WindowsGeoName, str>,
-}
+    pub ZeroMap2d<'data, WindowsZoneIdentifier, WindowsGeoName, str>,
+);
 
 /// The `WindowsGeoName` is a value that is either a two-letter ISO 3166-1 code or a numeric UN M49 code.
 #[repr(transparent)]

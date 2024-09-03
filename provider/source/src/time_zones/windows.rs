@@ -2,8 +2,7 @@ use std::collections::HashSet;
 
 use crate::{cldr_serde, SourceDataProvider};
 use icu::timezone::provider::windows::{
-    WindowsGeoName, WindowsZoneIdentifier, WindowsZonesToIanaMapV1,
-    WindowsZonesToIanaMapV1Marker,
+    WindowsGeoName, WindowsZoneIdentifier, WindowsZonesToIanaMapV1, WindowsZonesToIanaMapV1Marker,
 };
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
@@ -41,7 +40,7 @@ impl DataProvider<WindowsZonesToIanaMapV1Marker> for SourceDataProvider {
             );
         }
 
-        let data_struct = WindowsZonesToIanaMapV1 { map };
+        let data_struct = WindowsZonesToIanaMapV1(map);
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -73,37 +72,37 @@ mod tests {
             provider.load(DataRequest::default()).unwrap();
         let windows_zones = provider_response.payload.get();
 
-        let result = windows_zones.map.get_2d(
+        let result = windows_zones.0.get_2d(
             &tinystr!(32, "Eastern Standard Time").into(),
             &WindowsGeoName::default(),
         );
         assert_eq!(result, Some("America/New_York"));
 
-        let result = windows_zones.map.get_2d(
+        let result = windows_zones.0.get_2d(
             &tinystr!(32, "Central Standard Time").into(),
             &WindowsGeoName::default(),
         );
         assert_eq!(result, Some("America/Chicago"));
 
-        let result = windows_zones.map.get_2d(
+        let result = windows_zones.0.get_2d(
             &tinystr!(32, "Hawaiian Standard Time").into(),
             &WindowsGeoName::default(),
         );
         assert_eq!(result, Some("Pacific/Honolulu"));
 
-        let result = windows_zones.map.get_2d(
+        let result = windows_zones.0.get_2d(
             &tinystr!(32, "Central Europe Standard Time").into(),
             &WindowsGeoName::default(),
         );
         assert_eq!(result, Some("Europe/Budapest"));
 
-        let result = windows_zones.map.get_2d(
+        let result = windows_zones.0.get_2d(
             &tinystr!(32, "GMT Standard Time").into(),
             &WindowsGeoName::default(),
         );
         assert_eq!(result, Some("Europe/London"));
 
-        let result = windows_zones.map.get_2d(
+        let result = windows_zones.0.get_2d(
             &tinystr!(32, "SE Asia Standard Time").into(),
             &WindowsGeoName::default(),
         );
@@ -117,43 +116,43 @@ mod tests {
             provider.load(DataRequest::default()).unwrap();
         let windows_zones = provider_response.payload.get();
 
-        let result = windows_zones.map.get_2d(
+        let result = windows_zones.0.get_2d(
             &tinystr!(32, "Eastern Standard Time").into(),
             &WindowsGeoName(tinystr!(3, "BS")),
         );
         assert_eq!(result, Some("America/Nassau"));
 
-        let result = windows_zones.map.get_2d(
+        let result = windows_zones.0.get_2d(
             &tinystr!(32, "Central Standard Time").into(),
             &WindowsGeoName(tinystr!(3, "MX")),
         );
         assert_eq!(result, Some("America/Matamoros America/Ojinaga"));
 
-        let result = windows_zones.map.get_2d(
+        let result = windows_zones.0.get_2d(
             &tinystr!(32, "Central Europe Standard Time").into(),
             &WindowsGeoName(tinystr!(3, "CZ")),
         );
         assert_eq!(result, Some("Europe/Prague"));
 
-        let result = windows_zones.map.get_2d(
+        let result = windows_zones.0.get_2d(
             &tinystr!(32, "GMT Standard Time").into(),
             &WindowsGeoName(tinystr!(3, "IE")),
         );
         assert_eq!(result, Some("Europe/Dublin"));
 
-        let result = windows_zones.map.get_2d(
+        let result = windows_zones.0.get_2d(
             &tinystr!(32, "SE Asia Standard Time").into(),
             &WindowsGeoName(tinystr!(3, "AQ")),
         );
         assert_eq!(result, Some("Antarctica/Davis"));
 
-        let result = windows_zones.map.get_2d(
+        let result = windows_zones.0.get_2d(
             &tinystr!(32, "SE Asia Standard Time").into(),
             &WindowsGeoName(tinystr!(3, "KH")),
         );
         assert_eq!(result, Some("Asia/Phnom_Penh"));
 
-        let result = windows_zones.map.get_2d(
+        let result = windows_zones.0.get_2d(
             &tinystr!(32, "SE Asia Standard Time").into(),
             &WindowsGeoName(tinystr!(3, "VN")),
         );
