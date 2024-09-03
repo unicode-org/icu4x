@@ -45,6 +45,17 @@ icu::normalizer::uts46::Uts46MapperBorrowed#Struct
 icu::normalizer::uts46::Uts46MapperBorrowed::map_normalize#FnInStruct
 icu::normalizer::uts46::Uts46MapperBorrowed::new#FnInStruct
 icu::normalizer::uts46::Uts46MapperBorrowed::normalize_validate#FnInStruct
+icu::plurals::PluralElements#Struct
+icu::plurals::PluralElements::new#FnInStruct
+icu::plurals::PluralElements::with_explicit_one_value#FnInStruct
+icu::plurals::PluralElements::with_explicit_zero_value#FnInStruct
+icu::plurals::PluralElements::with_few_value#FnInStruct
+icu::plurals::PluralElements::with_many_value#FnInStruct
+icu::plurals::PluralElements::with_one_value#FnInStruct
+icu::plurals::PluralElements::with_two_value#FnInStruct
+icu::plurals::PluralElements::with_zero_value#FnInStruct
+icu::plurals::PluralOperands::is_exactly_one#FnInStruct
+icu::plurals::PluralOperands::is_exactly_zero#FnInStruct
 icu::properties::BidiClass#Struct
 icu::properties::BidiClass::ArabicLetter#AssociatedConstantInStruct
 icu::properties::BidiClass::ArabicNumber#AssociatedConstantInStruct
