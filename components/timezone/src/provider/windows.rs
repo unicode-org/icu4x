@@ -21,9 +21,9 @@ use zerovec::{
 
 /// A mapping from Windows Timezone names to the corresponding IANA identifier(s).
 ///
-/// Windows Timezones may map to multiple IANA identifiers so providing a windows territory/region
+/// Windows Timezones may map to multiple IANA identifiers so providing a [`WindowsGeoName`]
 /// code is required to differentiate IANA identifiers.
-/// 
+///
 /// Not all return values are guaranteed to be a single value. The return may be a space delimited
 /// string of IANA identifier values.
 ///
@@ -43,31 +43,32 @@ use zerovec::{
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)] // TODO: Prove
 pub struct WindowsZonesToIanaMapV1<'data> {
-    /// A map from a `WindowsZoneIdentifier` and `WindowsRegionCode` to IANA identifier(s).
+    /// A map from a `WindowsZoneIdentifier` and `WindowsGeoName` to IANA identifier(s).
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub map: ZeroMap2d<'data, WindowsZoneIdentifier, WindowsRegionCode, str>,
+    pub map: ZeroMap2d<'data, WindowsZoneIdentifier, WindowsGeoName, str>,
 }
 
+/// The `WindowsGeoName` is a value that is either a two-letter ISO 3166-1 code or a numeric UN M49 code.
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE, Hash)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_timezone::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct WindowsRegionCode(pub TinyAsciiStr<3>);
+pub struct WindowsGeoName(pub TinyAsciiStr<3>);
 
-impl Default for WindowsRegionCode {
+impl Default for WindowsGeoName {
     fn default() -> Self {
         Self(tinystr!(3, "001"))
     }
 }
 
-impl From<TinyAsciiStr<3>> for WindowsRegionCode {
+impl From<TinyAsciiStr<3>> for WindowsGeoName {
     fn from(value: TinyAsciiStr<3>) -> Self {
         Self(value)
     }
 }
 
-impl AsULE for WindowsRegionCode {
+impl AsULE for WindowsGeoName {
     type ULE = Self;
 
     #[inline]
@@ -81,13 +82,14 @@ impl AsULE for WindowsRegionCode {
     }
 }
 
-impl<'a> zerovec::maps::ZeroMapKV<'a> for WindowsRegionCode {
-    type Container = ZeroVec<'a, WindowsRegionCode>;
-    type Slice = ZeroSlice<WindowsRegionCode>;
-    type GetType = WindowsRegionCode;
-    type OwnedType = WindowsRegionCode;
+impl<'a> zerovec::maps::ZeroMapKV<'a> for WindowsGeoName {
+    type Container = ZeroVec<'a, WindowsGeoName>;
+    type Slice = ZeroSlice<WindowsGeoName>;
+    type GetType = WindowsGeoName;
+    type OwnedType = WindowsGeoName;
 }
 
+/// The designated Windows standard name identifier for a certain time zone.
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE, Hash)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
