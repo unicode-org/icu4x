@@ -12,9 +12,9 @@
 #[macro_export]
 macro_rules! __impl_exemplar_characters_main_v1_marker {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl $provider {
             const DATA_EXEMPLAR_CHARACTERS_MAIN_V1_MARKER: icu_provider_baked::zerotrie::Data<icu::properties::provider::ExemplarCharactersMainV1Marker> = icu_provider_baked::zerotrie::Data {
                 trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1zabcdefghijklmnopqrstuvwxyz\0\0\0\0\0\0\0\0\0\0\x01\x01\x01\x01\x01\x01\x01\x01\x02\x02\x02\x02\x02\x02\x02\x112Of\x88\xA8\xB8\xD4\xEC\xF4C]\x85\xA0\xA8\xC7\xCA\xDB4Xt\x82\x85\x8E\xA8\xC5fmrsz\x01\x02\x03\x06\x80\x81\x82\x83t\x84\x85\xC7eghlnrs\x01\x04\x06\x08\t\x0C\x86\x87c\x88o\x89o\x8A\x8B\x8Cx\x8D\x8E-Cyrl\x8F\xC6aehsvy\x02\x05\x08\r\x0F\x90\0b\x90\x01r\x90\x02\x90\x03w\x90\x04\x90\x05\x90\x06\xC4aeos\x02\t\x0C\x90\x07\x90\x08-CH\x90\ti\x90\nb\x90\x0B\xC6lnostu\x0C\x0E\x10\x12\x14\x90\x0C-polyton\x90\r\x90\x0E\x90\x0F\x90\x10\x90\x11\x90\x12\xC6afiory\x02\t\x0E\x10\x12\x90\x13-Adlm\x90\x14\x90\x15l\x90\x16\x90\x17\x90\x18\x90\x19\xC4adlu\x02\x04\x06\x90\x1A\x90\x1B\x90\x1C\x90\x1D\xC7aeirsuy\x02\x04\x06\x07\n\x0C\x90\x1E\x90\x1F\x90 \x8Eb\x90!\x90\"\x90#\xC6adegst\x02\x04\x06\x08\n\x90\x0E\x90\x0E\x90$\x90%\x90&\x90'\xC2av\x02\x90(\x90)\xCBaegkmnosuxy\x02\x05\x08\n\x0C\x0E\x13\x1C\x1E7\x90*a\x90+p\x90,\x90-\x90.\x90/\x900k\x901\x902-Deva\x903\x904v\x905-\xC3DOT\x05\neva\x906rya\x907elu\x908\x909\xC6bimotv\x02\x05\x08\n\x0C\x90:j\x90;o\x90\x0E\x90<\x90=\x90>\xC9aiklnrsty\x03\x05\x07\t\x0E\x10\x12\x14i\x90?\x90@\x90A\x90B\x90Ci\x90D\x90E\x90\x0E\x90F\x90G\xC5deloq\x08\n\x0C\x0Es\x90H-NL\x90\x0E\x90 \x90I\x90Jo\x90K\xC2cr\x02\x90L\x90M\xC6aclrst\x02\x05\x07\n\x11\x90Nm\x90O\x90Pg\x90Q\x90R-PK\x90S\x90Tu\x90U\xC4amou\x03\x05\x07j\x90V\x90W\x90X\x90Y\xCEacdikloqruvwyz\n\x0C\x15\x17\x19\x1B\x1D\x1F&(*7:\x90Z\xC2ht\x02\x90[\x90\\\x90]\x90^-Deva\x90_\x90`\x90a\x90b\x90c\x90d\x8F-Latn\x8E\x90e\x90f\x90g-\xC2CK\x03D\x90hE\x90\x0Er\x90il\x90j\xC9aeghikort\x02\x04\x06\x08\n\x0C\x0E\x10\x90k\x90l\x90m\x90n\x90o\x90p\x90q\x90r\x90s\xC5gknrz\x02\x04\x07\t\x90t\x90ud\x90v\x90w\x90x-Cyrl\x90y\xC3eim\x03\x05c\x90z\x90{w\x90|o\x90}\xC2hn\x02\x90\x0Er\x90~\xC3oru\x07\n\x90\x7F-BJ\x91\0l\x91\x01e\x91\x02-Hans\x91\x03\xC3ahu\x02\x0B\x90\x0E\x91\x04-Hant\x91\x05\x91\x06" },
@@ -1079,7 +1079,7 @@ macro_rules! __impl_exemplar_characters_main_v1_marker {
                 ],
             };
         }
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DataProvider<icu::properties::provider::ExemplarCharactersMainV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::properties::provider::ExemplarCharactersMainV1Marker>, icu_provider::DataError> {
                 let mut metadata = icu_provider::DataResponseMetadata::default();
@@ -1105,7 +1105,7 @@ macro_rules! __impl_exemplar_characters_main_v1_marker {
     };
     ($ provider : ty , DRY) => {
         __impl_exemplar_characters_main_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::properties::provider::ExemplarCharactersMainV1Marker> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 icu_provider::DataProvider::<icu::properties::provider::ExemplarCharactersMainV1Marker>::load(self, req).map(|r| r.metadata)
@@ -1114,7 +1114,7 @@ macro_rules! __impl_exemplar_characters_main_v1_marker {
     };
     ($ provider : ty , ITER) => {
         __impl_exemplar_characters_main_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::IterableDataProvider<icu::properties::provider::ExemplarCharactersMainV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_EXEMPLAR_CHARACTERS_MAIN_V1_MARKER).collect())
@@ -1123,13 +1123,13 @@ macro_rules! __impl_exemplar_characters_main_v1_marker {
     };
     ($ provider : ty , DRY , ITER) => {
         __impl_exemplar_characters_main_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::properties::provider::ExemplarCharactersMainV1Marker> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 icu_provider::DataProvider::<icu::properties::provider::ExemplarCharactersMainV1Marker>::load(self, req).map(|r| r.metadata)
             }
         }
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::IterableDataProvider<icu::properties::provider::ExemplarCharactersMainV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_EXEMPLAR_CHARACTERS_MAIN_V1_MARKER).collect())

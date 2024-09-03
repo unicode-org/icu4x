@@ -21,7 +21,7 @@ include!("word_break_data_v2_marker.rs.data");
 #[macro_export]
 macro_rules! __make_provider {
     ($ name : ty) => {
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl $name {
             #[allow(dead_code)]
             pub(crate) const MUST_USE_MAKE_PROVIDER_MACRO: () = ();
@@ -47,7 +47,7 @@ macro_rules! impl_data_provider {
 #[allow(unused_macros)]
 macro_rules! impl_any_provider {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::any::AnyProvider for $provider {
             fn load_any(&self, marker: icu_provider::DataMarkerInfo, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
                 match marker.path.hashed() {

@@ -12,13 +12,13 @@
 #[macro_export]
 macro_rules! __impl_currency_patterns_data_v1_marker {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl $provider {
             const DATA_CURRENCY_PATTERNS_DATA_V1_MARKER: icu_provider_baked::zerotrie::Data<icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1Marker> = icu_provider_baked::zerotrie::Data { trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xCBbcejmrstuvz\x03\x06\x0B\r\x0F\x11\x17\x19\x1C\x1Flo\x80eb\x81s-GT\x81a\x82y\x83o\x84\xC2iw\x01\x85\x81o\x83nd\x86ec\x87h\x82-SG\x86" }, values: &[icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1 { patterns: icu::experimental::relativetime::provider::PluralElements { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x04\0\0\x02\x05 \x01\x02\x05 ") }, other: alloc::borrow::Cow::Borrowed("\u{3}\u{4} "), _phantom: core::marker::PhantomData } }, icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1 { patterns: icu::experimental::relativetime::provider::PluralElements { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x02\x05 ") }, other: alloc::borrow::Cow::Borrowed("\u{3}\u{4} "), _phantom: core::marker::PhantomData } }, icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1 { patterns: icu::experimental::relativetime::provider::PluralElements { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{2}\u{3}"), _phantom: core::marker::PhantomData } }, icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1 { patterns: icu::experimental::relativetime::provider::PluralElements { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{3}\u{4} "), _phantom: core::marker::PhantomData } }, icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1 { patterns: icu::experimental::relativetime::provider::PluralElements { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x04\0\x01\x02\x05 \x03\x02\x05 ") }, other: alloc::borrow::Cow::Borrowed("\u{2}\u{b} de "), _phantom: core::marker::PhantomData } }, icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1 { patterns: icu::experimental::relativetime::provider::PluralElements { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x02\x05 ") }, other: alloc::borrow::Cow::Borrowed("\u{3}\u{2}"), _phantom: core::marker::PhantomData } }, icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1 { patterns: icu::experimental::relativetime::provider::PluralElements { specials: zerovec::VarZeroVec::new(), other: alloc::borrow::Cow::Borrowed("\u{2}\u{5} "), _phantom: core::marker::PhantomData } }, icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1 { patterns: icu::experimental::relativetime::provider::PluralElements { specials: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\x02\x05 ") }, other: alloc::borrow::Cow::Borrowed("\u{2}\t\u{202f}"), _phantom: core::marker::PhantomData } }] };
         }
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DataProvider<icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1Marker>, icu_provider::DataError> {
                 let mut metadata = icu_provider::DataResponseMetadata::default();
@@ -44,7 +44,7 @@ macro_rules! __impl_currency_patterns_data_v1_marker {
     };
     ($ provider : ty , DRY) => {
         __impl_currency_patterns_data_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1Marker> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 icu_provider::DataProvider::<icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1Marker>::load(self, req).map(|r| r.metadata)
@@ -53,7 +53,7 @@ macro_rules! __impl_currency_patterns_data_v1_marker {
     };
     ($ provider : ty , ITER) => {
         __impl_currency_patterns_data_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::IterableDataProvider<icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_CURRENCY_PATTERNS_DATA_V1_MARKER).collect())
@@ -62,13 +62,13 @@ macro_rules! __impl_currency_patterns_data_v1_marker {
     };
     ($ provider : ty , DRY , ITER) => {
         __impl_currency_patterns_data_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1Marker> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 icu_provider::DataProvider::<icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1Marker>::load(self, req).map(|r| r.metadata)
             }
         }
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::IterableDataProvider<icu::experimental::dimension::provider::currency_patterns::CurrencyPatternsDataV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_CURRENCY_PATTERNS_DATA_V1_MARKER).collect())
