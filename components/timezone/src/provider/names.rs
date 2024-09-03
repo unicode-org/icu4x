@@ -32,11 +32,8 @@ use zerovec::{VarZeroVec, ZeroVec};
     "time_zone/iana_to_bcp47@1",
     singleton
 ))]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_timezone::provider::names),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_timezone::provider::names))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct IanaToBcp47MapV1<'data> {
@@ -68,11 +65,8 @@ pub struct IanaToBcp47MapV1<'data> {
     "time_zone/iana_to_bcp47@2",
     singleton
 ))]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_timezone::provider::names),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_timezone::provider::names))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct IanaToBcp47MapV2<'data> {
     /// A map from normal-case IANA time zone identifiers to indexes of BCP-47 time zone
@@ -111,11 +105,8 @@ pub struct IanaToBcp47MapV2<'data> {
     "time_zone/bcp47_to_iana@1",
     singleton
 ))]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_timezone::provider::names),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_timezone::provider::names))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct Bcp47ToIanaMapV1<'data> {

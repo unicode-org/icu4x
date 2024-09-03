@@ -6,6 +6,7 @@ use crate::{
     CustomTimeZone, CustomZonedDateTime, GmtOffset, InvalidOffsetError, MetazoneCalculator,
     TimeZoneIdMapper,
 };
+use alloc::str::FromStr;
 use icu_calendar::{AnyCalendar, Date, DateError, DateTime, Iso, RangeError, Time};
 use ixdtf::{
     parsers::{
@@ -78,137 +79,6 @@ impl GmtOffset {
 // ==== CustomTimeZone methods and traits ====
 
 impl CustomTimeZone {
-    /// Create a [`CustomTimeZone`] from an IXDTF syntax string.
-    ///
-    /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
-    ///
-    /// # Examples
-    ///
-    /// An IXDTF string can provide a time zone in two parts: the DateTime UTC Offset or the Time Zone
-    /// Annotation. A DateTime UTC Offset is the time offset as laid out by RFC3339; meanwhile, the Time
-    /// Zone Annotation is the annotation laid out by RFC9557 and is defined as a UTC offset or IANA Time
-    /// Zone identifier.
-    ///
-    /// ## DateTime UTC Offsets
-    ///
-    /// Below is an example of a time zone from a DateTime UTC Offset. The syntax here is familiar to a RFC3339
-    /// DateTime string.
-    ///
-    /// ```
-    /// use icu_timezone::{CustomTimeZone, GmtOffset};
-    ///
-    /// let tz_from_offset = CustomTimeZone::try_from_ixdtf_str("2024-08-08T12:08:19-05:00").unwrap();
-    ///
-    /// assert_eq!(tz_from_offset, CustomTimeZone {
-    ///     gmt_offset: Some(GmtOffset::try_from_offset_seconds(-18000).unwrap()),
-    ///     time_zone_id: None,
-    ///     metazone_id: None,
-    ///     zone_variant: None,
-    /// });
-    ///
-    /// ```
-    ///
-    /// ## Time Zone Annotations
-    ///
-    /// Below is an example of a time zone being provided by a time zone annotation.
-    ///
-    /// ```
-    /// use icu_timezone::{CustomTimeZone, GmtOffset, TimeZoneBcp47Id};
-    /// use icu_timezone::provider::MetazoneId;
-    /// use tinystr::tinystr;
-    ///
-    /// let tz_from_offset_annotation = CustomTimeZone::try_from_ixdtf_str("2024-08-08T12:08:19[-05:00]").unwrap();
-    /// let tz_from_iana_annotation = CustomTimeZone::try_from_ixdtf_str("2024-08-08T12:08:19[America/Chicago]").unwrap();
-    ///
-    /// assert_eq!(tz_from_offset_annotation, CustomTimeZone {
-    ///     gmt_offset: Some(GmtOffset::try_from_offset_seconds(-18000).unwrap()),
-    ///     time_zone_id: None,
-    ///     metazone_id: None,
-    ///     zone_variant: None,
-    /// });
-    ///
-    /// assert_eq!(tz_from_iana_annotation, CustomTimeZone {
-    ///     gmt_offset: None,
-    ///     time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))),
-    ///     metazone_id: Some(MetazoneId(tinystr!(4, "amce"))),
-    ///     zone_variant: None,
-    /// });
-    ///
-    /// ```
-    ///
-    /// ## DateTime UTC Offset and Time Zone Annotations.
-    ///
-    /// An IXDTF string may contain both a DateTime UTC Offset and Time Zone Annotation. This is fine as long as
-    /// the time zone parts can be deemed as inconsistent or unknown consistency.
-    ///
-    /// ### DateTime UTC Offset with IANA identifier annotation
-    ///
-    /// In cases where the DateTime UTC Offset is provided and the IANA identifier, these will be returned without
-    /// verifying internal consistency.
-    ///
-    /// ```
-    /// use icu_timezone::{CustomTimeZone, GmtOffset, TimeZoneBcp47Id};
-    /// use icu_timezone::provider::MetazoneId;
-    /// use tinystr::tinystr;
-    ///
-    /// let consistent_tz_from_both = CustomTimeZone::try_from_ixdtf_str("2024-08-08T12:08:19-05:00[America/Chicago]").unwrap();
-    ///
-    /// assert_eq!(consistent_tz_from_both, CustomTimeZone {
-    ///     gmt_offset: Some(GmtOffset::try_from_offset_seconds(-18000).unwrap()),
-    ///     time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))),
-    ///     metazone_id: Some(MetazoneId(tinystr!(4, "amce"))),
-    ///     zone_variant: None,
-    /// });
-    ///
-    /// let inconsistent_tz_from_both = CustomTimeZone::try_from_ixdtf_str("2024-08-08T12:08:19-05:00[America/Los_Angeles]").unwrap();
-    ///
-    /// assert_eq!(inconsistent_tz_from_both, CustomTimeZone {
-    ///     gmt_offset: Some(GmtOffset::try_from_offset_seconds(-18000).unwrap()),
-    ///     time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "uslax"))),
-    ///     metazone_id: Some(MetazoneId(tinystr!(4, "ampa"))),
-    ///     zone_variant: None,
-    /// });
-    ///
-    /// ```
-    ///
-    /// ### DateTime UTC offset with UTC Offset annotation.
-    ///
-    /// These annotations must always be consistent as they should be either the same value or are inconsistent.
-    ///
-    /// ```
-    /// use icu_timezone::{ParseError, CustomTimeZone, GmtOffset, TimeZoneBcp47Id};
-    /// use tinystr::tinystr;
-    ///
-    /// let consistent_tz_from_both = CustomTimeZone::try_from_ixdtf_str("2024-08-08T12:08:19-05:00[-05:00]").unwrap();
-    ///
-    /// assert_eq!(consistent_tz_from_both, CustomTimeZone {
-    ///     gmt_offset: Some(GmtOffset::try_from_offset_seconds(-18000).unwrap()),
-    ///     time_zone_id: None,
-    ///     metazone_id: None,
-    ///     zone_variant: None,
-    /// });
-    ///
-    ///
-    /// let inconsistent_tz_from_both = CustomTimeZone::try_from_ixdtf_str("2024-08-08T12:08:19-05:00[+05:00]");
-    ///
-    /// assert_eq!(inconsistent_tz_from_both, Err(ParseError::InconsistentTimeZoneOffsets));
-    ///
-    /// ```
-    ///
-    pub fn try_from_ixdtf_str(ixdtf_str: &str) -> Result<Self, ParseError> {
-        Self::try_from_ixdtf_utf8(ixdtf_str.as_bytes())
-    }
-
-    /// Create a [`CustomTimeZone`] from IXDTF syntax utf8 bytes.
-    ///
-    /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
-    ///
-    /// See [`Self::try_from_ixdtf_str`].
-    pub fn try_from_ixdtf_utf8(ixdtf_str: &[u8]) -> Result<Self, ParseError> {
-        let ixdtf_record = IxdtfParser::from_utf8(ixdtf_str).parse()?;
-        Self::try_from_ixdtf_record(&ixdtf_record)
-    }
-
     fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, ParseError> {
         match ixdtf_record {
             IxdtfParseRecord {
@@ -305,7 +175,7 @@ impl CustomZonedDateTime<Iso> {
     /// use icu_timezone::provider::MetazoneId;
     /// use tinystr::tinystr;
     ///
-    /// let zoneddatetime = CustomZonedDateTime::try_iso_from_ixdtf_str("2024-08-08T12:08:19-05:00[America/Chicago]").unwrap();
+    /// let zoneddatetime = CustomZonedDateTime::try_iso_from_str("2024-08-08T12:08:19-05:00[America/Chicago]").unwrap();
     ///
     /// assert_eq!(zoneddatetime.date.year().number, 2024);
     /// assert_eq!(
@@ -327,17 +197,18 @@ impl CustomZonedDateTime<Iso> {
     ///
     /// ```
     ///
-    /// For more information on time zone parsing, see [`CustomTimeZone::try_from_ixdtf_str`].
-    pub fn try_iso_from_ixdtf_str(ixdtf_str: &str) -> Result<Self, ParseError> {
-        Self::try_iso_from_ixdtf_utf8(ixdtf_str.as_bytes())
+    /// For more information on date, time, and time zone parsing,
+    /// see [`CustomZonedDateTime::try_from_str`].
+    pub fn try_iso_from_str(ixdtf_str: &str) -> Result<Self, ParseError> {
+        Self::try_iso_from_utf8(ixdtf_str.as_bytes())
     }
 
     /// Create a [`CustomZonedDateTime`] in ISO-8601 calendar from IXDTF syntax utf8 bytes.
     ///
     /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
     ///
-    /// See [`Self::try_iso_from_ixdtf_str`].
-    pub fn try_iso_from_ixdtf_utf8(ixdtf_str: &[u8]) -> Result<Self, ParseError> {
+    /// See [`Self::try_iso_from_str`].
+    pub fn try_iso_from_utf8(ixdtf_str: &[u8]) -> Result<Self, ParseError> {
         let ixdtf_record = IxdtfParser::from_utf8(ixdtf_str).parse()?;
         Self::try_iso_from_ixdtf_record(&ixdtf_record)
     }
@@ -362,17 +233,35 @@ impl CustomZonedDateTime<Iso> {
     }
 }
 
+impl FromStr for CustomZonedDateTime<Iso> {
+    type Err = ParseError;
+
+    #[inline]
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Self::try_iso_from_str(s)
+    }
+}
+
 impl CustomZonedDateTime<AnyCalendar> {
     /// Create a [`CustomZonedDateTime`] in any calendar from an IXDTF syntax string.
     ///
+    /// For more information on IXDTF, see the [`ixdtf`] crate.
+    ///
+    /// This is a convenience constructor that uses compiled data. For custom data providers,
+    /// use [`ixdtf`] and/or the other primitives in this crate such as [`TimeZoneIdMapper`].
+    ///
     /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
+    ///
+    /// # Examples
+    ///
+    /// Basic usage:
     ///
     /// ```
     /// use icu_timezone::{CustomZonedDateTime, CustomTimeZone, GmtOffset, TimeZoneBcp47Id};
     /// use icu_timezone::provider::MetazoneId;
     /// use tinystr::tinystr;
     ///
-    /// let zoneddatetime = CustomZonedDateTime::try_from_ixdtf_str("2024-08-08T12:08:19-05:00[America/Chicago][u-ca=hebrew]").unwrap();
+    /// let zoneddatetime = CustomZonedDateTime::try_from_str("2024-08-08T12:08:19-05:00[America/Chicago][u-ca=hebrew]").unwrap();
     ///
     /// assert_eq!(zoneddatetime.date.year().number, 5784);
     /// assert_eq!(
@@ -391,20 +280,124 @@ impl CustomZonedDateTime<AnyCalendar> {
     ///     metazone_id: Some(MetazoneId(tinystr!(4, "amce"))),
     ///     zone_variant: None,
     /// });
-    ///
     /// ```
     ///
-    /// For more information on time zone parsing, see [`CustomTimeZone::try_from_ixdtf_str`].
-    pub fn try_from_ixdtf_str(ixdtf_str: &str) -> Result<Self, ParseError> {
-        Self::try_from_ixdtf_utf8(ixdtf_str.as_bytes())
+    /// An IXDTF string can provide a time zone in two parts: the DateTime UTC Offset or the Time Zone
+    /// Annotation. A DateTime UTC Offset is the time offset as laid out by RFC3339; meanwhile, the Time
+    /// Zone Annotation is the annotation laid out by RFC9557 and is defined as a UTC offset or IANA Time
+    /// Zone identifier.
+    ///
+    /// ## DateTime UTC Offsets
+    ///
+    /// Below is an example of a time zone from a DateTime UTC Offset. The syntax here is familiar to a RFC3339
+    /// DateTime string.
+    ///
+    /// ```
+    /// use icu_timezone::{CustomTimeZone, CustomZonedDateTime, GmtOffset};
+    ///
+    /// let tz_from_offset = CustomZonedDateTime::try_from_str("2024-08-08T12:08:19-05:00").unwrap();
+    ///
+    /// assert_eq!(tz_from_offset.zone, CustomTimeZone {
+    ///     gmt_offset: Some(GmtOffset::try_from_offset_seconds(-18000).unwrap()),
+    ///     time_zone_id: None,
+    ///     metazone_id: None,
+    ///     zone_variant: None,
+    /// });
+    /// ```
+    ///
+    /// ## Time Zone Annotations
+    ///
+    /// Below is an example of a time zone being provided by a time zone annotation.
+    ///
+    /// ```
+    /// use icu_timezone::{CustomTimeZone, CustomZonedDateTime, GmtOffset, TimeZoneBcp47Id};
+    /// use icu_timezone::provider::MetazoneId;
+    /// use tinystr::tinystr;
+    ///
+    /// let tz_from_offset_annotation = CustomZonedDateTime::try_from_str("2024-08-08T12:08:19[-05:00]").unwrap();
+    /// let tz_from_iana_annotation = CustomZonedDateTime::try_from_str("2024-08-08T12:08:19[America/Chicago]").unwrap();
+    ///
+    /// assert_eq!(tz_from_offset_annotation.zone, CustomTimeZone {
+    ///     gmt_offset: Some(GmtOffset::try_from_offset_seconds(-18000).unwrap()),
+    ///     time_zone_id: None,
+    ///     metazone_id: None,
+    ///     zone_variant: None,
+    /// });
+    ///
+    /// assert_eq!(tz_from_iana_annotation.zone, CustomTimeZone {
+    ///     gmt_offset: None,
+    ///     time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))),
+    ///     metazone_id: Some(MetazoneId(tinystr!(4, "amce"))),
+    ///     zone_variant: None,
+    /// });
+    /// ```
+    ///
+    /// ## DateTime UTC Offset and Time Zone Annotations.
+    ///
+    /// An IXDTF string may contain both a DateTime UTC Offset and Time Zone Annotation. This is fine as long as
+    /// the time zone parts can be deemed as inconsistent or unknown consistency.
+    ///
+    /// ### DateTime UTC Offset with IANA identifier annotation
+    ///
+    /// In cases where the DateTime UTC Offset is provided and the IANA identifier, these will be returned without
+    /// verifying internal consistency.
+    ///
+    /// ```
+    /// use icu_timezone::{CustomTimeZone, CustomZonedDateTime, GmtOffset, TimeZoneBcp47Id};
+    /// use icu_timezone::provider::MetazoneId;
+    /// use tinystr::tinystr;
+    ///
+    /// let consistent_tz_from_both = CustomZonedDateTime::try_from_str("2024-08-08T12:08:19-05:00[America/Chicago]").unwrap();
+    ///
+    /// assert_eq!(consistent_tz_from_both.zone, CustomTimeZone {
+    ///     gmt_offset: Some(GmtOffset::try_from_offset_seconds(-18000).unwrap()),
+    ///     time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))),
+    ///     metazone_id: Some(MetazoneId(tinystr!(4, "amce"))),
+    ///     zone_variant: None,
+    /// });
+    ///
+    /// let inconsistent_tz_from_both = CustomZonedDateTime::try_from_str("2024-08-08T12:08:19-05:00[America/Los_Angeles]").unwrap();
+    ///
+    /// assert_eq!(inconsistent_tz_from_both.zone, CustomTimeZone {
+    ///     gmt_offset: Some(GmtOffset::try_from_offset_seconds(-18000).unwrap()),
+    ///     time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "uslax"))),
+    ///     metazone_id: Some(MetazoneId(tinystr!(4, "ampa"))),
+    ///     zone_variant: None,
+    /// });
+    /// ```
+    ///
+    /// ### DateTime UTC offset with UTC Offset annotation.
+    ///
+    /// These annotations must always be consistent as they should be either the same value or are inconsistent.
+    ///
+    /// ```
+    /// use icu_timezone::{ParseError, CustomTimeZone, CustomZonedDateTime, GmtOffset, TimeZoneBcp47Id};
+    /// use tinystr::tinystr;
+    ///
+    /// let consistent_tz_from_both = CustomZonedDateTime::try_from_str("2024-08-08T12:08:19-05:00[-05:00]").unwrap();
+    ///
+    /// assert_eq!(consistent_tz_from_both.zone, CustomTimeZone {
+    ///     gmt_offset: Some(GmtOffset::try_from_offset_seconds(-18000).unwrap()),
+    ///     time_zone_id: None,
+    ///     metazone_id: None,
+    ///     zone_variant: None,
+    /// });
+    ///
+    ///
+    /// let inconsistent_tz_from_both = CustomZonedDateTime::try_from_str("2024-08-08T12:08:19-05:00[+05:00]");
+    ///
+    /// assert!(matches!(inconsistent_tz_from_both, Err(ParseError::InconsistentTimeZoneOffsets)));
+    /// ```
+    pub fn try_from_str(ixdtf_str: &str) -> Result<Self, ParseError> {
+        Self::try_from_utf8(ixdtf_str.as_bytes())
     }
 
     /// Create a [`CustomZonedDateTime`] in any calendar from IXDTF syntax utf8 bytes.
     ///
     /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
     ///
-    /// See [`Self::try_from_ixdtf_str`].
-    pub fn try_from_ixdtf_utf8(ixdtf_str: &[u8]) -> Result<Self, ParseError> {
+    /// See [`Self::try_from_str`].
+    pub fn try_from_utf8(ixdtf_str: &[u8]) -> Result<Self, ParseError> {
         let ixdtf_record = IxdtfParser::from_utf8(ixdtf_str).parse()?;
         Self::try_from_ixdtf_record(&ixdtf_record)
     }
@@ -423,6 +416,15 @@ impl CustomZonedDateTime<AnyCalendar> {
             time: iso_zdt.time,
             zone: iso_zdt.zone,
         })
+    }
+}
+
+impl FromStr for CustomZonedDateTime<AnyCalendar> {
+    type Err = ParseError;
+
+    #[inline]
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Self::try_from_str(s)
     }
 }
 

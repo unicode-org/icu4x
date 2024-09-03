@@ -65,13 +65,13 @@
 //! To generate the data required for [`FsDataProvider`], run the following:
 //!
 //! ```bash
-//! icu4x-datagen --markers all --locales full --format dir
+//! icu4x-datagen --markers all --locales full --format fs
 //! ```
 //!
 //! To export `postcard` format, use
 //!
 //! ```bash
-//! icu4x-datagen --markers all --locales full --format dir --syntax postcard
+//! icu4x-datagen --markers all --locales full --format fs --syntax postcard
 //! ```
 //!
 //! [`ICU4X`]: ../icu/index.html

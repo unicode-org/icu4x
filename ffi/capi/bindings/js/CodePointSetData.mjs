@@ -57,9 +57,9 @@ export class CodePointSetData {
     }
 
     iterRanges() {
-        
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this];
+        
         const result = wasm.icu4x_CodePointSetData_iter_ranges_mv1(this.ffiValue);
     
         try {
@@ -70,9 +70,9 @@ export class CodePointSetData {
     }
 
     iterRangesComplemented() {
-        
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this];
+        
         const result = wasm.icu4x_CodePointSetData_iter_ranges_complemented_mv1(this.ffiValue);
     
         try {
@@ -83,8 +83,8 @@ export class CodePointSetData {
     }
 
     static loadForGeneralCategoryGroup(provider, group) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_for_general_category_group_mv1(diplomatReceive.buffer, provider.ffiValue, group);
     
         try {
@@ -101,8 +101,8 @@ export class CodePointSetData {
     }
 
     static loadAsciiHexDigit(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_ascii_hex_digit_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -119,8 +119,8 @@ export class CodePointSetData {
     }
 
     static loadAlnum(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_alnum_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -137,8 +137,8 @@ export class CodePointSetData {
     }
 
     static loadAlphabetic(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_alphabetic_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -155,8 +155,8 @@ export class CodePointSetData {
     }
 
     static loadBidiControl(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_bidi_control_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -173,8 +173,8 @@ export class CodePointSetData {
     }
 
     static loadBidiMirrored(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_bidi_mirrored_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -191,8 +191,8 @@ export class CodePointSetData {
     }
 
     static loadBlank(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_blank_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -209,8 +209,8 @@ export class CodePointSetData {
     }
 
     static loadCased(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_cased_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -227,8 +227,8 @@ export class CodePointSetData {
     }
 
     static loadCaseIgnorable(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_case_ignorable_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -245,8 +245,8 @@ export class CodePointSetData {
     }
 
     static loadFullCompositionExclusion(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_full_composition_exclusion_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -263,8 +263,8 @@ export class CodePointSetData {
     }
 
     static loadChangesWhenCasefolded(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_changes_when_casefolded_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -281,8 +281,8 @@ export class CodePointSetData {
     }
 
     static loadChangesWhenCasemapped(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_changes_when_casemapped_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -299,8 +299,8 @@ export class CodePointSetData {
     }
 
     static loadChangesWhenNfkcCasefolded(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_changes_when_nfkc_casefolded_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -317,8 +317,8 @@ export class CodePointSetData {
     }
 
     static loadChangesWhenLowercased(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_changes_when_lowercased_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -335,8 +335,8 @@ export class CodePointSetData {
     }
 
     static loadChangesWhenTitlecased(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_changes_when_titlecased_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -353,8 +353,8 @@ export class CodePointSetData {
     }
 
     static loadChangesWhenUppercased(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_changes_when_uppercased_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -371,8 +371,8 @@ export class CodePointSetData {
     }
 
     static loadDash(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_dash_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -389,8 +389,8 @@ export class CodePointSetData {
     }
 
     static loadDeprecated(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_deprecated_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -407,8 +407,8 @@ export class CodePointSetData {
     }
 
     static loadDefaultIgnorableCodePoint(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_default_ignorable_code_point_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -425,8 +425,8 @@ export class CodePointSetData {
     }
 
     static loadDiacritic(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_diacritic_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -443,8 +443,8 @@ export class CodePointSetData {
     }
 
     static loadEmojiModifierBase(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_emoji_modifier_base_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -461,8 +461,8 @@ export class CodePointSetData {
     }
 
     static loadEmojiComponent(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_emoji_component_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -479,8 +479,8 @@ export class CodePointSetData {
     }
 
     static loadEmojiModifier(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_emoji_modifier_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -497,8 +497,8 @@ export class CodePointSetData {
     }
 
     static loadEmoji(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_emoji_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -515,8 +515,8 @@ export class CodePointSetData {
     }
 
     static loadEmojiPresentation(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_emoji_presentation_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -533,8 +533,8 @@ export class CodePointSetData {
     }
 
     static loadExtender(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_extender_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -551,8 +551,8 @@ export class CodePointSetData {
     }
 
     static loadExtendedPictographic(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_extended_pictographic_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -569,8 +569,8 @@ export class CodePointSetData {
     }
 
     static loadGraph(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_graph_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -587,8 +587,8 @@ export class CodePointSetData {
     }
 
     static loadGraphemeBase(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_grapheme_base_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -605,8 +605,8 @@ export class CodePointSetData {
     }
 
     static loadGraphemeExtend(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_grapheme_extend_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -623,8 +623,8 @@ export class CodePointSetData {
     }
 
     static loadGraphemeLink(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_grapheme_link_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -641,8 +641,8 @@ export class CodePointSetData {
     }
 
     static loadHexDigit(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_hex_digit_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -659,8 +659,8 @@ export class CodePointSetData {
     }
 
     static loadHyphen(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_hyphen_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -677,8 +677,8 @@ export class CodePointSetData {
     }
 
     static loadIdContinue(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_id_continue_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -695,8 +695,8 @@ export class CodePointSetData {
     }
 
     static loadIdeographic(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_ideographic_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -713,8 +713,8 @@ export class CodePointSetData {
     }
 
     static loadIdStart(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_id_start_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -731,8 +731,8 @@ export class CodePointSetData {
     }
 
     static loadIdsBinaryOperator(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_ids_binary_operator_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -749,8 +749,8 @@ export class CodePointSetData {
     }
 
     static loadIdsTrinaryOperator(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_ids_trinary_operator_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -767,8 +767,8 @@ export class CodePointSetData {
     }
 
     static loadJoinControl(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_join_control_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -785,8 +785,8 @@ export class CodePointSetData {
     }
 
     static loadLogicalOrderException(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_logical_order_exception_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -803,8 +803,8 @@ export class CodePointSetData {
     }
 
     static loadLowercase(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_lowercase_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -821,8 +821,8 @@ export class CodePointSetData {
     }
 
     static loadMath(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_math_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -839,8 +839,8 @@ export class CodePointSetData {
     }
 
     static loadNoncharacterCodePoint(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_noncharacter_code_point_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -857,8 +857,8 @@ export class CodePointSetData {
     }
 
     static loadNfcInert(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_nfc_inert_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -875,8 +875,8 @@ export class CodePointSetData {
     }
 
     static loadNfdInert(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_nfd_inert_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -893,8 +893,8 @@ export class CodePointSetData {
     }
 
     static loadNfkcInert(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_nfkc_inert_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -911,8 +911,8 @@ export class CodePointSetData {
     }
 
     static loadNfkdInert(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_nfkd_inert_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -929,8 +929,8 @@ export class CodePointSetData {
     }
 
     static loadPatternSyntax(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_pattern_syntax_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -947,8 +947,8 @@ export class CodePointSetData {
     }
 
     static loadPatternWhiteSpace(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_pattern_white_space_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -965,8 +965,8 @@ export class CodePointSetData {
     }
 
     static loadPrependedConcatenationMark(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_prepended_concatenation_mark_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -983,8 +983,8 @@ export class CodePointSetData {
     }
 
     static loadPrint(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_print_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -1001,8 +1001,8 @@ export class CodePointSetData {
     }
 
     static loadQuotationMark(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_quotation_mark_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -1019,8 +1019,8 @@ export class CodePointSetData {
     }
 
     static loadRadical(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_radical_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -1037,8 +1037,8 @@ export class CodePointSetData {
     }
 
     static loadRegionalIndicator(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_regional_indicator_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -1055,8 +1055,8 @@ export class CodePointSetData {
     }
 
     static loadSoftDotted(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_soft_dotted_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -1073,8 +1073,8 @@ export class CodePointSetData {
     }
 
     static loadSegmentStarter(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_segment_starter_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -1091,8 +1091,8 @@ export class CodePointSetData {
     }
 
     static loadCaseSensitive(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_case_sensitive_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -1109,8 +1109,8 @@ export class CodePointSetData {
     }
 
     static loadSentenceTerminal(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_sentence_terminal_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -1127,8 +1127,8 @@ export class CodePointSetData {
     }
 
     static loadTerminalPunctuation(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_terminal_punctuation_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -1145,8 +1145,8 @@ export class CodePointSetData {
     }
 
     static loadUnifiedIdeograph(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_unified_ideograph_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -1163,8 +1163,8 @@ export class CodePointSetData {
     }
 
     static loadUppercase(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_uppercase_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -1181,8 +1181,8 @@ export class CodePointSetData {
     }
 
     static loadVariationSelector(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_variation_selector_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -1199,8 +1199,8 @@ export class CodePointSetData {
     }
 
     static loadWhiteSpace(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_white_space_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -1217,8 +1217,8 @@ export class CodePointSetData {
     }
 
     static loadXdigit(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_xdigit_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -1235,8 +1235,8 @@ export class CodePointSetData {
     }
 
     static loadXidContinue(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_xid_continue_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -1253,8 +1253,8 @@ export class CodePointSetData {
     }
 
     static loadXidStart(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CodePointSetData_load_xid_start_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -1271,11 +1271,13 @@ export class CodePointSetData {
     }
 
     static loadForEcma262(provider, propertyName) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const propertyNameSlice = diplomatRuntime.DiplomatBuf.str8(wasm, propertyName);
+        const propertyNameSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, propertyName)).splat()];
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        const result = wasm.icu4x_CodePointSetData_load_for_ecma262_mv1(diplomatReceive.buffer, provider.ffiValue, propertyNameSlice.ptr, propertyNameSlice.size);
+        
+        const result = wasm.icu4x_CodePointSetData_load_for_ecma262_mv1(diplomatReceive.buffer, provider.ffiValue, ...propertyNameSlice);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -1286,7 +1288,7 @@ export class CodePointSetData {
         }
         
         finally {
-            propertyNameSlice.free();
+            functionCleanupArena.free();
         
             diplomatReceive.free();
         }

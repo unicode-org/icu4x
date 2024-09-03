@@ -17,7 +17,10 @@
         },
         "output": {
             "values": {
-                "en": "0:25\u202fAM"
+                "en": {
+                    "formatted": "0:25\u202fAM",
+                    "pattern": "K:mm\u202fa"
+                }
             }
         }
     },
@@ -39,7 +42,10 @@
         },
         "output": {
             "values": {
-                "en": "12:25\u202fAM"
+                "en": {
+                    "formatted": "12:25\u202fAM",
+                    "pattern": "h:mm\u202fa"
+                }
             }
         }
     },
@@ -61,7 +67,10 @@
         },
         "output": {
             "values": {
-                "en": "00:25"
+                "en": {
+                    "formatted": "00:25",
+                    "pattern": "HH:mm"
+                }
             }
         }
     },
@@ -83,7 +92,10 @@
         },
         "output": {
             "values": {
-                "en": "24:25"
+                "en": {
+                    "formatted": "24:25",
+                    "pattern": "kk:mm"
+                }
             }
         }
     },

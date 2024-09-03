@@ -4,7 +4,7 @@
 
 use criterion::{black_box, BenchmarkId, Criterion};
 
-use icu_normalizer::{ComposingNormalizer, DecomposingNormalizer};
+use icu_normalizer::{ComposingNormalizerBorrowed, DecomposingNormalizerBorrowed};
 
 struct BenchDataContent {
     pub file_name: String,
@@ -28,10 +28,10 @@ fn strip_headers(content: &str) -> String {
 }
 
 fn normalizer_bench_data() -> [BenchDataContent; 15] {
-    let nfc_normalizer: ComposingNormalizer = ComposingNormalizer::new_nfc();
-    let nfd_normalizer: DecomposingNormalizer = DecomposingNormalizer::new_nfd();
-    let nfkc_normalizer: ComposingNormalizer = ComposingNormalizer::new_nfkc();
-    let nfkd_normalizer: DecomposingNormalizer = DecomposingNormalizer::new_nfkd();
+    let nfc_normalizer = ComposingNormalizerBorrowed::new_nfc();
+    let nfd_normalizer = DecomposingNormalizerBorrowed::new_nfd();
+    let nfkc_normalizer = ComposingNormalizerBorrowed::new_nfkc();
+    let nfkd_normalizer = DecomposingNormalizerBorrowed::new_nfkd();
 
     let content_latin: (&str, &str) = (
         "TestNames_Latin",
@@ -127,18 +127,18 @@ fn normalizer_bench_data() -> [BenchDataContent; 15] {
     })
 }
 
-fn function_under_bench(normalizer: &DecomposingNormalizer, text: &str) {
+fn function_under_bench(normalizer: &DecomposingNormalizerBorrowed, text: &str) {
     normalizer.normalize(text);
 }
 
-fn function_under_bench_u16(normalizer: &DecomposingNormalizer, text: &[u16]) {
+fn function_under_bench_u16(normalizer: &DecomposingNormalizerBorrowed, text: &[u16]) {
     normalizer.normalize_utf16(text);
 }
 
 pub fn criterion_benchmark(criterion: &mut Criterion) {
     let group_name = "decomposing_normalizer_nfkd";
 
-    let normalizer_under_bench: DecomposingNormalizer = DecomposingNormalizer::new_nfkd();
+    let normalizer_under_bench = DecomposingNormalizerBorrowed::new_nfkd();
 
     let mut group = criterion.benchmark_group(group_name);
     for bench_data_content in black_box(normalizer_bench_data()) {

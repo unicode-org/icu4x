@@ -44,8 +44,8 @@ export class CanonicalDecomposition {
     }
 
     static create(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CanonicalDecomposition_create_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -62,8 +62,8 @@ export class CanonicalDecomposition {
     }
 
     decompose(c) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 8, 4, false);
+        
         const result = wasm.icu4x_CanonicalDecomposition_decompose_mv1(diplomatReceive.buffer, this.ffiValue, c);
     
         try {

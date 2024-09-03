@@ -41,11 +41,11 @@ export class ReorderedIndexMap {
     }
 
     get asSlice() {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 8, 4, false);
         
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this];
+        
         const result = wasm.icu4x_ReorderedIndexMap_as_slice_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {

@@ -63,8 +63,8 @@ export class ScriptExtensionsSet {
     }
 
     scriptAt(index) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 3, 2, true);
+        
         const result = wasm.icu4x_ScriptExtensionsSet_script_at_mv1(diplomatReceive.buffer, this.ffiValue, index);
     
         try {

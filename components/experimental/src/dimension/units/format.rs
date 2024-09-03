@@ -27,7 +27,7 @@ impl<'l> Writeable for FormattedUnit<'l> {
     {
         self.display_name
             .patterns
-            .get(self.plural_rules.category_for(self.value))
+            .get_pattern(self.plural_rules.category_for(self.value))
             .interpolate((self.fixed_decimal_formatter.format(self.value),))
             .write_to(sink)
     }

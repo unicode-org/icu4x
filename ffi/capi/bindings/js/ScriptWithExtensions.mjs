@@ -43,8 +43,8 @@ export class ScriptWithExtensions {
     }
 
     static create(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_ScriptWithExtensions_create_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -81,9 +81,9 @@ export class ScriptWithExtensions {
     }
 
     get asBorrowed() {
-        
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this];
+        
         const result = wasm.icu4x_ScriptWithExtensions_as_borrowed_mv1(this.ffiValue);
     
         try {
@@ -94,9 +94,9 @@ export class ScriptWithExtensions {
     }
 
     iterRangesForScript(script) {
-        
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this];
+        
         const result = wasm.icu4x_ScriptWithExtensions_iter_ranges_for_script_mv1(this.ffiValue, script);
     
         try {

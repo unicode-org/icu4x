@@ -43,8 +43,8 @@ export class Bidi {
     }
 
     static create(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_Bidi_create_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -61,33 +61,36 @@ export class Bidi {
     }
 
     forText(text, defaultLevel) {
-        
-        const textSlice = diplomatRuntime.DiplomatBuf.str8(wasm, text);
+        let functionGarbageCollector = new diplomatRuntime.GarbageCollector();
+        const textSlice = [...functionGarbageCollector.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, text)).splat()];
         
         // This lifetime edge depends on lifetimes 'text
         let textEdges = [textSlice];
-        const result = wasm.icu4x_Bidi_for_text_valid_utf8_mv1(this.ffiValue, textSlice.ptr, textSlice.size, defaultLevel);
+        
+        const result = wasm.icu4x_Bidi_for_text_valid_utf8_mv1(this.ffiValue, ...textSlice, defaultLevel);
     
         try {
             return new BidiInfo(diplomatRuntime.internalConstructor, result, [], textEdges);
         }
         
         finally {
-            textSlice.garbageCollect();
+            functionGarbageCollector.garbageCollect();
         }
     }
 
     reorderVisual(levels) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const levelsSlice = diplomatRuntime.DiplomatBuf.slice(wasm, levels, "u8");
-        const result = wasm.icu4x_Bidi_reorder_visual_mv1(this.ffiValue, levelsSlice.ptr, levelsSlice.size);
+        const levelsSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.slice(wasm, levels, "u8")).splat()];
+        
+        const result = wasm.icu4x_Bidi_reorder_visual_mv1(this.ffiValue, ...levelsSlice);
     
         try {
             return new ReorderedIndexMap(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {
-            levelsSlice.free();
+            functionCleanupArena.free();
         }
     }
 

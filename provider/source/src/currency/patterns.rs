@@ -9,7 +9,7 @@ use crate::SourceDataProvider;
 use std::collections::HashSet;
 
 use icu::experimental::dimension::provider::currency_patterns::*;
-use icu::experimental::relativetime::provider::PluralPattern;
+use icu::experimental::relativetime::provider::PluralElements;
 use icu_provider::prelude::*;
 use icu_provider::DataProvider;
 
@@ -47,13 +47,19 @@ impl DataProvider<CurrencyPatternsDataV1Marker> for SourceDataProvider {
             .get(default_system)
             .ok_or(DataErrorKind::IdentifierNotFound.into_error())?;
 
+        //  According to [Unicode Technical Standard #35](https://unicode.org/reports/tr35/tr35-numbers.html),
+        //  The `other` pattern must be present in the data.
+        if patterns.pattern_other.is_none() {
+            return Err(DataErrorKind::IdentifierNotFound.into_error());
+        }
+
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(CurrencyPatternsDataV1 {
                 // TODO(#5334):
                 //      Before graduating the currency crate,
                 //      Check that the .json data files are completed and no need to fallback chain up to the root.
-                patterns: PluralPattern::try_new(
+                patterns: PluralElements::try_new_pattern(
                     patterns.pattern_other.as_deref().ok_or_else(|| {
                         DataError::custom("Missing patterns")
                             .with_debug_context(currency_patterns)
@@ -106,17 +112,19 @@ fn test_basic() {
     let patterns_en = &en.get().patterns;
     assert_writeable_eq!(
         patterns_en
-            .get(PluralCategory::Zero)
+            .get_pattern(PluralCategory::Zero)
             .interpolate((0, "USD")),
         "0 USD"
     );
     assert_writeable_eq!(
-        patterns_en.get(PluralCategory::One).interpolate((1, "USD")),
+        patterns_en
+            .get_pattern(PluralCategory::One)
+            .interpolate((1, "USD")),
         "1 USD"
     );
     assert_writeable_eq!(
         patterns_en
-            .get(PluralCategory::Other)
+            .get_pattern(PluralCategory::Other)
             .interpolate((2, "USD")),
         "2 USD"
     );
@@ -135,17 +143,19 @@ fn test_basic() {
     let patterns_ar = &ar.get().patterns;
     assert_writeable_eq!(
         patterns_ar
-            .get(PluralCategory::Zero)
+            .get_pattern(PluralCategory::Zero)
             .interpolate((0, "USD")),
         "0 USD"
     );
     assert_writeable_eq!(
-        patterns_ar.get(PluralCategory::One).interpolate((1, "USD")),
+        patterns_ar
+            .get_pattern(PluralCategory::One)
+            .interpolate((1, "USD")),
         "1 USD"
     );
     assert_writeable_eq!(
         patterns_ar
-            .get(PluralCategory::Other)
+            .get_pattern(PluralCategory::Other)
             .interpolate((2, "USD")),
         "2 USD"
     );
@@ -164,17 +174,19 @@ fn test_basic() {
     let patterns_jp = &jp.get().patterns;
     assert_writeable_eq!(
         patterns_jp
-            .get(PluralCategory::Zero)
+            .get_pattern(PluralCategory::Zero)
             .interpolate((0, "USD")),
         "0USD"
     );
     assert_writeable_eq!(
-        patterns_jp.get(PluralCategory::One).interpolate((1, "USD")),
+        patterns_jp
+            .get_pattern(PluralCategory::One)
+            .interpolate((1, "USD")),
         "1USD"
     );
     assert_writeable_eq!(
         patterns_jp
-            .get(PluralCategory::Other)
+            .get_pattern(PluralCategory::Other)
             .interpolate((2, "USD")),
         "2USD"
     );

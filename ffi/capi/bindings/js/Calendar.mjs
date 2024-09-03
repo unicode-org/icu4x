@@ -41,8 +41,8 @@ export class Calendar {
     }
 
     static createForLocale(provider, locale) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_Calendar_create_for_locale_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
     
         try {
@@ -59,8 +59,8 @@ export class Calendar {
     }
 
     static createForKind(provider, kind) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_Calendar_create_for_kind_mv1(diplomatReceive.buffer, provider.ffiValue, kind.ffiValue);
     
         try {

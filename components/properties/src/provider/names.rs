@@ -15,11 +15,11 @@
 use alloc::boxed::Box;
 use core::cmp::Ordering;
 
+use icu_locale_core::subtags::Script;
 use icu_provider::prelude::*;
 
 use potential_utf::PotentialUtf8;
-use tinystr::TinyStr4;
-use zerovec::ule::VarULE;
+use zerovec::ule::{NichedOption, VarULE};
 use zerovec::{maps::ZeroMapKV, VarZeroSlice, VarZeroVec, ZeroMap, ZeroVec};
 
 /// This is a property name that can be "loose matched" as according to
@@ -221,11 +221,8 @@ impl NormalizedPropertyNameStr {
     marker(SentenceBreakNameToValueV1Marker, "propnames/from/SB@1", singleton),
     marker(WordBreakNameToValueV1Marker, "propnames/from/WB@1", singleton)
 )]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_properties::provider::names),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties::provider::names))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct PropertyValueNameToEnumMapV1<'data> {
@@ -255,11 +252,8 @@ pub struct PropertyValueNameToEnumMapV1<'data> {
         singleton
     )
 )]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_properties::provider::names),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties::provider::names))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct PropertyEnumToValueNameSparseMapV1<'data> {
@@ -384,11 +378,8 @@ pub struct PropertyEnumToValueNameSparseMapV1<'data> {
         singleton
     )
 )]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_properties::provider::names),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties::provider::names))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct PropertyEnumToValueNameLinearMapV1<'data> {
@@ -412,16 +403,13 @@ pub struct PropertyEnumToValueNameLinearMapV1<'data> {
     "propnames/to/short/linear4/sc@1",
     singleton
 ))]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_properties::provider::names),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties::provider::names))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct PropertyEnumToValueNameLinearTiny4MapV1<'data> {
+pub struct PropertyScriptToIcuScriptMapV1<'data> {
     /// A map from the value discriminant (the index) to the names, for mostly
     /// contiguous data. Empty strings count as missing.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub map: ZeroVec<'data, TinyStr4>,
+    pub map: ZeroVec<'data, NichedOption<Script, 4>>,
 }

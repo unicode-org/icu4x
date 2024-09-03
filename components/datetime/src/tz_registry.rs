@@ -41,19 +41,31 @@ macro_rules! time_zone_style_registry {
                 (Default, Long, SpecificLong),
             ],
             // Field to resolved (not already covered)
+            // Note: 'Z', 'ZZ', 'ZZZ', and 'xxxx' are the same. We use 'Z' as canonical.
+            // Note: 'ZZZZZ' and 'XXXXX' are the same. We use 'ZZZZZ' as canonical.
             [
-                (GenericShort, LowerZ, TwoDigit), // 'zz'
-                (GenericShort, LowerZ, Abbreviated), // 'zzz'
-                (IsoBasic, UpperZ, TwoDigit), // 'ZZ'
-                (IsoBasic, UpperZ, Abbreviated), // 'ZZZ'
+                (SpecificShort, LowerZ, TwoDigit), // 'zz'
+                (SpecificShort, LowerZ, Abbreviated), // 'zzz'
+                (Isoxxxx, UpperZ, TwoDigit), // 'ZZ'
+                (Isoxxxx, UpperZ, Abbreviated), // 'ZZZ'
                 (GmtShort, UpperZ, Wide), // 'ZZZZ'
+                (Isoxxxx, LowerX, Wide), // 'xxxx'
+                (IsoXXXXX, UpperX, Narrow), // 'XXXXX'
             ],
-            // Styles that can appear in patterns but have no API
+            // Resolved to field (not already covered)
             [
                 (Bcp47Id, UpperV, One), // 'V'
                 (City, UpperV, Abbreviated), // 'VVV'
-                (IsoBasic, UpperZ, One), // 'Z'
-                (IsoExtended, UpperZ, Narrow), // 'ZZZZZ'
+                (Isoxxxx, UpperZ, One), // 'Z'
+                (IsoXXXXX, UpperZ, Narrow), // 'ZZZZZ'
+                (IsoX, UpperX, One), // 'X'
+                (IsoXX, UpperX, TwoDigit), // 'XX'
+                (IsoXXX, UpperX, Abbreviated), // 'XXX'
+                (IsoXXXX, UpperX, Wide), // 'XXXX'
+                (Isox, LowerX, One), // 'x'
+                (Isoxx, LowerX, TwoDigit), // 'xx'
+                (Isoxxx, LowerX, Abbreviated), // 'xxx'
+                (Isoxxxxx, LowerX, Narrow), // 'xxxxx'
             ],
         }
     };
@@ -98,7 +110,7 @@ time_zone_style_registry!(make_constructors);
 macro_rules! make_resolved_to_field_match {
     (
         [$(($fn:ident, $style:ident, $length:ident, $resolved:ident, $field_symbol:ident, $field_length:ident)),+,],
-        [$(($fn1:ident, $resolved1:ident)),+,],
+        [$(($fn1:ident, $style1:ident)),+,],
         [$(($style2:ident, $length2:ident, $resolved2:ident)),+,],
         [$(($resolved3:ident, $field_symbol3:ident, $field_length3:ident)),+,],
         [$(($resolved4:ident, $field_symbol4:ident, $field_length4:ident)),+,],
@@ -129,7 +141,7 @@ time_zone_style_registry!(make_resolved_to_field_match);
 macro_rules! make_skeleton_to_resolved_match {
     (
         [$(($fn:ident, $style:ident, $length:ident, $resolved:ident, $field_symbol:ident, $field_length:ident)),+,],
-        [$(($fn1:ident, $resolved1:ident)),+,],
+        [$(($fn1:ident, $style1:ident)),+,],
         [$(($style2:ident, $length2:ident, $resolved2:ident)),+,],
         [$(($resolved3:ident, $field_symbol3:ident, $field_length3:ident)),+,],
         [$(($resolved4:ident, $field_symbol4:ident, $field_length4:ident)),+,],
@@ -153,7 +165,7 @@ time_zone_style_registry!(make_skeleton_to_resolved_match);
 macro_rules! make_field_to_skeleton_match {
     (
         [$(($fn:ident, $style:ident, $length:ident, $resolved:ident, $field_symbol:ident, $field_length:ident)),+,],
-        [$(($fn1:ident, $resolved1:ident)),+,],
+        [$(($fn1:ident, $style1:ident)),+,],
         [$(($style2:ident, $length2:ident, $resolved2:ident)),+,],
         [$(($resolved3:ident, $field_symbol3:ident, $field_length3:ident)),+,],
         [$(($resolved4:ident, $field_symbol4:ident, $field_length4:ident)),+,],

@@ -45,8 +45,8 @@ export class TimeZoneIdMapper {
     }
 
     static create(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_TimeZoneIdMapper_create_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -63,16 +63,16 @@ export class TimeZoneIdMapper {
     }
 
     ianaToBcp47(value) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const valueSlice = diplomatRuntime.DiplomatBuf.str8(wasm, value);
-        
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const valueSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, value)).splat()];
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        const result = wasm.icu4x_TimeZoneIdMapper_iana_to_bcp47_mv1(diplomatReceive.buffer, this.ffiValue, valueSlice.ptr, valueSlice.size, write.buffer);
+        
+        const result = wasm.icu4x_TimeZoneIdMapper_iana_to_bcp47_mv1(this.ffiValue, ...valueSlice, write.buffer);
     
         try {
-            if (!diplomatReceive.resultFlag) {
+            if (result !== 1) {
                 const cause = new TimeZoneInvalidIdError(diplomatRuntime.internalConstructor);
                 throw new globalThis.Error('TimeZoneInvalidIdError', { cause });
             }
@@ -80,25 +80,23 @@ export class TimeZoneIdMapper {
         }
         
         finally {
-            valueSlice.free();
-        
-            diplomatReceive.free();
+            functionCleanupArena.free();
         
             write.free();
         }
     }
 
     normalizeIana(value) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const valueSlice = diplomatRuntime.DiplomatBuf.str8(wasm, value);
-        
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const valueSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, value)).splat()];
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        const result = wasm.icu4x_TimeZoneIdMapper_normalize_iana_mv1(diplomatReceive.buffer, this.ffiValue, valueSlice.ptr, valueSlice.size, write.buffer);
+        
+        const result = wasm.icu4x_TimeZoneIdMapper_normalize_iana_mv1(this.ffiValue, ...valueSlice, write.buffer);
     
         try {
-            if (!diplomatReceive.resultFlag) {
+            if (result !== 1) {
                 const cause = new TimeZoneInvalidIdError(diplomatRuntime.internalConstructor);
                 throw new globalThis.Error('TimeZoneInvalidIdError', { cause });
             }
@@ -106,25 +104,23 @@ export class TimeZoneIdMapper {
         }
         
         finally {
-            valueSlice.free();
-        
-            diplomatReceive.free();
+            functionCleanupArena.free();
         
             write.free();
         }
     }
 
     canonicalizeIana(value) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const valueSlice = diplomatRuntime.DiplomatBuf.str8(wasm, value);
-        
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const valueSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, value)).splat()];
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        const result = wasm.icu4x_TimeZoneIdMapper_canonicalize_iana_mv1(diplomatReceive.buffer, this.ffiValue, valueSlice.ptr, valueSlice.size, write.buffer);
+        
+        const result = wasm.icu4x_TimeZoneIdMapper_canonicalize_iana_mv1(this.ffiValue, ...valueSlice, write.buffer);
     
         try {
-            if (!diplomatReceive.resultFlag) {
+            if (result !== 1) {
                 const cause = new TimeZoneInvalidIdError(diplomatRuntime.internalConstructor);
                 throw new globalThis.Error('TimeZoneInvalidIdError', { cause });
             }
@@ -132,25 +128,23 @@ export class TimeZoneIdMapper {
         }
         
         finally {
-            valueSlice.free();
-        
-            diplomatReceive.free();
+            functionCleanupArena.free();
         
             write.free();
         }
     }
 
     findCanonicalIanaFromBcp47(value) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const valueSlice = diplomatRuntime.DiplomatBuf.str8(wasm, value);
-        
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        const valueSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, value)).splat()];
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        const result = wasm.icu4x_TimeZoneIdMapper_find_canonical_iana_from_bcp47_mv1(diplomatReceive.buffer, this.ffiValue, valueSlice.ptr, valueSlice.size, write.buffer);
+        
+        const result = wasm.icu4x_TimeZoneIdMapper_find_canonical_iana_from_bcp47_mv1(this.ffiValue, ...valueSlice, write.buffer);
     
         try {
-            if (!diplomatReceive.resultFlag) {
+            if (result !== 1) {
                 const cause = new TimeZoneInvalidIdError(diplomatRuntime.internalConstructor);
                 throw new globalThis.Error('TimeZoneInvalidIdError', { cause });
             }
@@ -158,9 +152,7 @@ export class TimeZoneIdMapper {
         }
         
         finally {
-            valueSlice.free();
-        
-            diplomatReceive.free();
+            functionCleanupArena.free();
         
             write.free();
         }

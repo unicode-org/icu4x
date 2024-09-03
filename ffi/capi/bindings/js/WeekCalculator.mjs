@@ -44,8 +44,8 @@ export class WeekCalculator {
     }
 
     static create(provider, locale) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_WeekCalculator_create_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
     
         try {
@@ -92,8 +92,8 @@ export class WeekCalculator {
     }
 
     get weekend() {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 7, 1, false);
+        
         const result = wasm.icu4x_WeekCalculator_weekend_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {

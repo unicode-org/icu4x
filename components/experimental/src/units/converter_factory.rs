@@ -2,15 +2,16 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::measure::measureunit::MeasureUnit;
+use crate::measure::parser::MeasureUnitParser;
+use crate::measure::provider::single_unit::SingleUnit;
 use crate::units::provider;
-use crate::units::provider::MeasureUnitItem;
 use crate::units::ratio::IcuRatio;
 use crate::units::{
     converter::{
         OffsetConverter, ProportionalConverter, ReciprocalConverter, UnitsConverter,
         UnitsConverterInner,
     },
-    measureunit::{MeasureUnit, MeasureUnitParser},
     provider::Sign,
 };
 
@@ -175,7 +176,7 @@ impl ConverterFactory {
         ///     For example, `newton` has the basic units:  `gram`, `meter`, and `second` (each one has it is own power and si prefix).
         fn insert_non_basic_units(
             factory: &ConverterFactory,
-            units: &[MeasureUnitItem],
+            units: &[SingleUnit],
             sign: i16,
             map: &mut LiteMap<u16, PowersInfo>,
         ) -> Option<()> {
@@ -200,7 +201,7 @@ impl ConverterFactory {
         ///     For example, `square-foot` , the base unit is `meter` with power 1.
         ///     Thus, the inserted power should be `1 * 2 = 2`.
         fn insert_base_units(
-            basic_units: &ZeroSlice<MeasureUnitItem>,
+            basic_units: &ZeroSlice<SingleUnit>,
             original_power: i16,
             sign: i16,
             map: &mut LiteMap<u16, PowersInfo>,
@@ -248,7 +249,7 @@ impl ConverterFactory {
         }
     }
 
-    fn compute_conversion_term(&self, unit_item: &MeasureUnitItem, sign: i8) -> Option<IcuRatio> {
+    fn compute_conversion_term(&self, unit_item: &SingleUnit, sign: i8) -> Option<IcuRatio> {
         let conversion_info = self
             .payload
             .get()

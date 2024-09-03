@@ -42,8 +42,8 @@ export class CaseMapper {
     }
 
     static create(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CaseMapper_create_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -60,49 +60,12 @@ export class CaseMapper {
     }
 
     lowercase(s, locale) {
-        
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
-        
-        const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        wasm.icu4x_CaseMapper_lowercase_mv1(this.ffiValue, sSlice.ptr, sSlice.size, locale.ffiValue, write.buffer);
-    
-        try {
-            return write.readString8();
-        }
-        
-        finally {
-            sSlice.free();
-        
-            write.free();
-        }
-    }
-
-    uppercase(s, locale) {
-        
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
-        
-        const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        wasm.icu4x_CaseMapper_uppercase_mv1(this.ffiValue, sSlice.ptr, sSlice.size, locale.ffiValue, write.buffer);
-    
-        try {
-            return write.readString8();
-        }
-        
-        finally {
-            sSlice.free();
-        
-            write.free();
-        }
-    }
-
-    titlecaseSegmentWithOnlyCaseData(s, locale, options) {
-        
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
+        const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s)).splat()];
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        wasm.icu4x_CaseMapper_titlecase_segment_with_only_case_data_v1_mv1(this.ffiValue, sSlice.ptr, sSlice.size, locale.ffiValue, ...options._intoFFI(functionCleanupArena, {}), write.buffer);
+        wasm.icu4x_CaseMapper_lowercase_mv1(this.ffiValue, ...sSlice, locale.ffiValue, write.buffer);
     
         try {
             return write.readString8();
@@ -111,50 +74,87 @@ export class CaseMapper {
         finally {
             functionCleanupArena.free();
         
-            sSlice.free();
+            write.free();
+        }
+    }
+
+    uppercase(s, locale) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
+        const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s)).splat()];
+        
+        const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
+        wasm.icu4x_CaseMapper_uppercase_mv1(this.ffiValue, ...sSlice, locale.ffiValue, write.buffer);
+    
+        try {
+            return write.readString8();
+        }
+        
+        finally {
+            functionCleanupArena.free();
+        
+            write.free();
+        }
+    }
+
+    titlecaseSegmentWithOnlyCaseData(s, locale, options) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
+        const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s)).splat()];
+        
+        const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
+        wasm.icu4x_CaseMapper_titlecase_segment_with_only_case_data_v1_mv1(this.ffiValue, ...sSlice, locale.ffiValue, ...options._intoFFI(functionCleanupArena, {}), write.buffer);
+    
+        try {
+            return write.readString8();
+        }
+        
+        finally {
+            functionCleanupArena.free();
         
             write.free();
         }
     }
 
     fold(s) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
+        const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s)).splat()];
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        wasm.icu4x_CaseMapper_fold_mv1(this.ffiValue, sSlice.ptr, sSlice.size, write.buffer);
+        wasm.icu4x_CaseMapper_fold_mv1(this.ffiValue, ...sSlice, write.buffer);
     
         try {
             return write.readString8();
         }
         
         finally {
-            sSlice.free();
+            functionCleanupArena.free();
         
             write.free();
         }
     }
 
     foldTurkic(s) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
+        const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s)).splat()];
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        wasm.icu4x_CaseMapper_fold_turkic_mv1(this.ffiValue, sSlice.ptr, sSlice.size, write.buffer);
+        wasm.icu4x_CaseMapper_fold_turkic_mv1(this.ffiValue, ...sSlice, write.buffer);
     
         try {
             return write.readString8();
         }
         
         finally {
-            sSlice.free();
+            functionCleanupArena.free();
         
             write.free();
         }
     }
 
-    addCaseClosureTo(c, builder) {
-        wasm.icu4x_CaseMapper_add_case_closure_to_mv1(this.ffiValue, c, builder.ffiValue);
+    addCaseClosureTo(c, builder) {wasm.icu4x_CaseMapper_add_case_closure_to_mv1(this.ffiValue, c, builder.ffiValue);
     
         try {}
         

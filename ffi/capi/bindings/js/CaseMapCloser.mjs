@@ -40,8 +40,8 @@ export class CaseMapCloser {
     }
 
     static create(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CaseMapCloser_create_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -57,8 +57,7 @@ export class CaseMapCloser {
         }
     }
 
-    addCaseClosureTo(c, builder) {
-        wasm.icu4x_CaseMapCloser_add_case_closure_to_mv1(this.ffiValue, c, builder.ffiValue);
+    addCaseClosureTo(c, builder) {wasm.icu4x_CaseMapCloser_add_case_closure_to_mv1(this.ffiValue, c, builder.ffiValue);
     
         try {}
         
@@ -66,16 +65,18 @@ export class CaseMapCloser {
     }
 
     addStringCaseClosureTo(s, builder) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
-        const result = wasm.icu4x_CaseMapCloser_add_string_case_closure_to_mv1(this.ffiValue, sSlice.ptr, sSlice.size, builder.ffiValue);
+        const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s)).splat()];
+        
+        const result = wasm.icu4x_CaseMapCloser_add_string_case_closure_to_mv1(this.ffiValue, ...sSlice, builder.ffiValue);
     
         try {
             return result;
         }
         
         finally {
-            sSlice.free();
+            functionCleanupArena.free();
         }
     }
 }

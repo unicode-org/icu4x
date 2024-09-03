@@ -44,8 +44,8 @@ export class FixedDecimalFormatter {
     }
 
     static createWithGroupingStrategy(provider, locale, groupingStrategy) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, groupingStrategy.ffiValue);
     
         try {
@@ -62,23 +62,25 @@ export class FixedDecimalFormatter {
     }
 
     static createWithManualData(plusSignPrefix, plusSignSuffix, minusSignPrefix, minusSignSuffix, decimalSeparator, groupingSeparator, primaryGroupSize, secondaryGroupSize, minGroupSize, digits, groupingStrategy) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const plusSignPrefixSlice = diplomatRuntime.DiplomatBuf.str8(wasm, plusSignPrefix);
+        const plusSignPrefixSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, plusSignPrefix)).splat()];
         
-        const plusSignSuffixSlice = diplomatRuntime.DiplomatBuf.str8(wasm, plusSignSuffix);
+        const plusSignSuffixSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, plusSignSuffix)).splat()];
         
-        const minusSignPrefixSlice = diplomatRuntime.DiplomatBuf.str8(wasm, minusSignPrefix);
+        const minusSignPrefixSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, minusSignPrefix)).splat()];
         
-        const minusSignSuffixSlice = diplomatRuntime.DiplomatBuf.str8(wasm, minusSignSuffix);
+        const minusSignSuffixSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, minusSignSuffix)).splat()];
         
-        const decimalSeparatorSlice = diplomatRuntime.DiplomatBuf.str8(wasm, decimalSeparator);
+        const decimalSeparatorSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, decimalSeparator)).splat()];
         
-        const groupingSeparatorSlice = diplomatRuntime.DiplomatBuf.str8(wasm, groupingSeparator);
+        const groupingSeparatorSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, groupingSeparator)).splat()];
         
-        const digitsSlice = diplomatRuntime.DiplomatBuf.slice(wasm, digits, "u16");
+        const digitsSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.slice(wasm, digits, "u16")).splat()];
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        const result = wasm.icu4x_FixedDecimalFormatter_create_with_manual_data_mv1(diplomatReceive.buffer, plusSignPrefixSlice.ptr, plusSignPrefixSlice.size, plusSignSuffixSlice.ptr, plusSignSuffixSlice.size, minusSignPrefixSlice.ptr, minusSignPrefixSlice.size, minusSignSuffixSlice.ptr, minusSignSuffixSlice.size, decimalSeparatorSlice.ptr, decimalSeparatorSlice.size, groupingSeparatorSlice.ptr, groupingSeparatorSlice.size, primaryGroupSize, secondaryGroupSize, minGroupSize, digitsSlice.ptr, digitsSlice.size, groupingStrategy.ffiValue);
+        
+        const result = wasm.icu4x_FixedDecimalFormatter_create_with_manual_data_mv1(diplomatReceive.buffer, ...plusSignPrefixSlice, ...plusSignSuffixSlice, ...minusSignPrefixSlice, ...minusSignSuffixSlice, ...decimalSeparatorSlice, ...groupingSeparatorSlice, primaryGroupSize, secondaryGroupSize, minGroupSize, ...digitsSlice, groupingStrategy.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -89,26 +91,13 @@ export class FixedDecimalFormatter {
         }
         
         finally {
-            plusSignPrefixSlice.free();
-        
-            plusSignSuffixSlice.free();
-        
-            minusSignPrefixSlice.free();
-        
-            minusSignSuffixSlice.free();
-        
-            decimalSeparatorSlice.free();
-        
-            groupingSeparatorSlice.free();
-        
-            digitsSlice.free();
+            functionCleanupArena.free();
         
             diplomatReceive.free();
         }
     }
 
     format(value) {
-        
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         wasm.icu4x_FixedDecimalFormatter_format_mv1(this.ffiValue, value.ffiValue, write.buffer);
     

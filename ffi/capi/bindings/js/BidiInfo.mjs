@@ -54,9 +54,9 @@ export class BidiInfo {
     }
 
     paragraphAt(n) {
-        
         // This lifetime edge depends on lifetimes 'text
         let textEdges = [this];
+        
         const result = wasm.icu4x_BidiInfo_paragraph_at_mv1(this.ffiValue, n);
     
         try {

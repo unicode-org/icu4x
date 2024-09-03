@@ -30,8 +30,14 @@
 extern crate alloc;
 
 use icu_normalizer::properties::CanonicalCombiningClassMap;
+#[cfg(feature = "compiled_data")]
+use icu_normalizer::properties::CanonicalCombiningClassMapBorrowed;
 use icu_normalizer::properties::CanonicalComposition;
+#[cfg(feature = "compiled_data")]
+use icu_normalizer::properties::CanonicalCompositionBorrowed;
 use icu_normalizer::properties::CanonicalDecomposition;
+#[cfg(feature = "compiled_data")]
+use icu_normalizer::properties::CanonicalDecompositionBorrowed;
 use icu_normalizer::properties::Decomposed;
 use icu_normalizer::provider::{
     CanonicalCompositionsV1Marker, CanonicalDecompositionDataV1Marker,
@@ -41,14 +47,13 @@ use icu_properties::bidi_data;
 use icu_properties::bidi_data::BidiAuxiliaryProperties;
 use icu_properties::maps;
 use icu_properties::maps::CodePointMapData;
-use icu_properties::names::PropertyEnumToValueNameLinearTiny4Mapper;
+use icu_properties::names::PropertyScriptToIcuScriptMapper;
 use icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker;
 use icu_properties::provider::{
     GeneralCategoryV1Marker, ScriptV1Marker, ScriptValueToShortNameV1Marker,
 };
 use icu_properties::{GeneralCategory, Script};
 use icu_provider::prelude::*;
-use tinystr::tinystr;
 
 use harfbuzz_traits::{
     CombiningClassFunc, ComposeFunc, DecomposeFunc, GeneralCategoryFunc, MirroringFunc, ScriptFunc,
@@ -83,7 +88,7 @@ impl GeneralCategoryFunc for AllUnicodeFuncs {
 impl CombiningClassFunc for AllUnicodeFuncs {
     #[inline]
     fn combining_class(&self, ch: char) -> u8 {
-        CanonicalCombiningClassMap::new().get(ch).0
+        CanonicalCombiningClassMapBorrowed::new().get(ch).0
     }
 }
 
@@ -103,10 +108,10 @@ impl ScriptFunc for AllUnicodeFuncs {
     #[inline]
     fn script(&self, ch: char) -> [u8; 4] {
         let script = maps::script().get(ch);
-        let name = Script::enum_to_short_name_mapper()
+        Script::enum_to_icu_script_mapper()
             .get(script)
-            .unwrap_or(tinystr!(4, "Zzzz"));
-        *name.all_bytes()
+            .unwrap_or(icu_locale_core::subtags::script!("Zzzz"))
+            .into_raw()
     }
 }
 
@@ -114,14 +119,14 @@ impl ScriptFunc for AllUnicodeFuncs {
 impl ComposeFunc for AllUnicodeFuncs {
     #[inline]
     fn compose(&self, a: char, b: char) -> Option<char> {
-        CanonicalComposition::new().compose(a, b)
+        CanonicalCompositionBorrowed::new().compose(a, b)
     }
 }
 #[cfg(feature = "compiled_data")]
 impl DecomposeFunc for AllUnicodeFuncs {
     #[inline]
     fn decompose(&self, ab: char) -> Option<(char, char)> {
-        match CanonicalDecomposition::new().decompose(ab) {
+        match CanonicalDecompositionBorrowed::new().decompose(ab) {
             Decomposed::Default => None,
             Decomposed::Expansion(first, second) => Some((first, second)),
             Decomposed::Singleton(single) => Some((single, '\0')),
@@ -244,7 +249,7 @@ impl CombiningClassData {
 impl CombiningClassFunc for CombiningClassData {
     #[inline]
     fn combining_class(&self, ch: char) -> u8 {
-        self.ccc.get(ch).0
+        self.ccc.as_borrowed().get(ch).0
     }
 }
 
@@ -299,7 +304,7 @@ impl MirroringFunc for MirroringData {
 #[derive(Debug)]
 pub struct ScriptData {
     script: CodePointMapData<Script>,
-    script_name: PropertyEnumToValueNameLinearTiny4Mapper<Script>,
+    script_name: PropertyScriptToIcuScriptMapper<Script>,
 }
 
 impl ScriptData {
@@ -309,7 +314,7 @@ impl ScriptData {
         D: DataProvider<ScriptValueToShortNameV1Marker> + DataProvider<ScriptV1Marker> + ?Sized,
     {
         let script = maps::load_script(provider)?;
-        let script_name = Script::get_enum_to_short_name_mapper(provider)?;
+        let script_name = Script::get_enum_to_icu_script_mapper(provider)?;
         Ok(Self {
             script,
             script_name,
@@ -335,12 +340,11 @@ impl ScriptFunc for ScriptData {
     #[inline]
     fn script(&self, ch: char) -> [u8; 4] {
         let script = self.script.as_borrowed().get(ch);
-        let name = self
-            .script_name
+        self.script_name
             .as_borrowed()
             .get(script)
-            .unwrap_or(tinystr!(4, "Zzzz"));
-        *name.all_bytes()
+            .unwrap_or(icu_locale_core::subtags::script!("Zzzz"))
+            .into_raw()
     }
 }
 
@@ -381,7 +385,7 @@ impl ComposeData {
 impl ComposeFunc for ComposeData {
     #[inline]
     fn compose(&self, a: char, b: char) -> Option<char> {
-        self.comp.compose(a, b)
+        self.comp.as_borrowed().compose(a, b)
     }
 }
 
@@ -425,7 +429,7 @@ impl DecomposeData {
 impl DecomposeFunc for DecomposeData {
     #[inline]
     fn decompose(&self, ab: char) -> Option<(char, char)> {
-        match self.decomp.decompose(ab) {
+        match self.decomp.as_borrowed().decompose(ab) {
             Decomposed::Default => None,
             Decomposed::Expansion(first, second) => Some((first, second)),
             Decomposed::Singleton(single) => Some((single, '\0')),

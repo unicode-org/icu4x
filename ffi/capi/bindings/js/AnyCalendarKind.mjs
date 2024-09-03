@@ -74,8 +74,8 @@ export class AnyCalendarKind {
     static Roc = new AnyCalendarKind("Roc");
 
     static getForLocale(locale) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_AnyCalendarKind_get_for_locale_mv1(diplomatReceive.buffer, locale.ffiValue);
     
         try {
@@ -91,11 +91,13 @@ export class AnyCalendarKind {
     }
 
     static getForBcp47(s) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
+        const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s)).splat()];
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        const result = wasm.icu4x_AnyCalendarKind_get_for_bcp47_mv1(diplomatReceive.buffer, sSlice.ptr, sSlice.size);
+        
+        const result = wasm.icu4x_AnyCalendarKind_get_for_bcp47_mv1(diplomatReceive.buffer, ...sSlice);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -105,14 +107,13 @@ export class AnyCalendarKind {
         }
         
         finally {
-            sSlice.free();
+            functionCleanupArena.free();
         
             diplomatReceive.free();
         }
     }
 
     get bcp47() {
-        
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         wasm.icu4x_AnyCalendarKind_bcp47_mv1(this.ffiValue, write.buffer);
     

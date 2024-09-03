@@ -46,8 +46,8 @@ export class UnitsConverterFactory {
     }
 
     static create(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_UnitsConverterFactory_create_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -74,9 +74,9 @@ export class UnitsConverterFactory {
     }
 
     parser() {
-        
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this];
+        
         const result = wasm.icu4x_UnitsConverterFactory_parser_mv1(this.ffiValue);
     
         try {

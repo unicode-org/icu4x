@@ -42,8 +42,8 @@ export class LocaleDirectionality {
     }
 
     static create(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_LocaleDirectionality_create_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -60,8 +60,8 @@ export class LocaleDirectionality {
     }
 
     static createWithExpander(provider, expander) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_LocaleDirectionality_create_with_expander_mv1(diplomatReceive.buffer, provider.ffiValue, expander.ffiValue);
     
         try {

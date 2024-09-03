@@ -619,7 +619,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=291371b020d9c3cd5abbd1f96f6dfe4f8fac3b5c#291371b020d9c3cd5abbd1f96f6dfe4f8fac3b5c"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=0183677b4bc25fc762ec06a4665c4f384998fb50#0183677b4bc25fc762ec06a4665c4f384998fb50"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -649,7 +649,7 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.8.1"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=291371b020d9c3cd5abbd1f96f6dfe4f8fac3b5c#291371b020d9c3cd5abbd1f96f6dfe4f8fac3b5c"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=0183677b4bc25fc762ec06a4665c4f384998fb50#0183677b4bc25fc762ec06a4665c4f384998fb50"
 dependencies = [
  "log",
 ]
@@ -657,7 +657,7 @@ dependencies = [
 [[package]]
 name = "diplomat-tool"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=291371b020d9c3cd5abbd1f96f6dfe4f8fac3b5c#291371b020d9c3cd5abbd1f96f6dfe4f8fac3b5c"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=0183677b4bc25fc762ec06a4665c4f384998fb50#0183677b4bc25fc762ec06a4665c4f384998fb50"
 dependencies = [
  "askama",
  "clap",
@@ -677,7 +677,7 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=291371b020d9c3cd5abbd1f96f6dfe4f8fac3b5c#291371b020d9c3cd5abbd1f96f6dfe4f8fac3b5c"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=0183677b4bc25fc762ec06a4665c4f384998fb50#0183677b4bc25fc762ec06a4665c4f384998fb50"
 dependencies = [
  "displaydoc",
  "either",
@@ -1312,7 +1312,6 @@ dependencies = [
  "icu_normalizer",
  "icu_properties",
  "icu_provider",
- "tinystr",
 ]
 
 [[package]]
@@ -1480,11 +1479,11 @@ dependencies = [
  "displaydoc",
  "icu",
  "icu_collections",
+ "icu_locale_core",
  "icu_properties_data",
  "icu_provider",
  "potential_utf",
  "serde",
- "tinystr",
  "unicode-bidi",
  "zerovec",
 ]
@@ -1508,6 +1507,7 @@ dependencies = [
  "icu",
  "icu_locale",
  "icu_locale_core",
+ "icu_provider_adapters",
  "icu_provider_macros",
  "log",
  "postcard",

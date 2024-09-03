@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_calendar::{AsCalendar, Date, Time};
+use icu_calendar::{AsCalendar, Date, Iso, Time};
 
 use crate::CustomTimeZone;
 
@@ -16,4 +16,26 @@ pub struct CustomZonedDateTime<A: AsCalendar> {
     pub time: Time,
     /// The time zone
     pub zone: CustomTimeZone,
+}
+
+impl<A: AsCalendar> CustomZonedDateTime<A> {
+    /// Convert the CustomZonedDateTime to an ISO CustomZonedDateTime
+    #[inline]
+    pub fn to_iso(&self) -> CustomZonedDateTime<Iso> {
+        CustomZonedDateTime {
+            date: self.date.to_iso(),
+            time: self.time,
+            zone: self.zone,
+        }
+    }
+
+    /// Convert the CustomZonedDateTime to a CustomZonedDateTime in a different calendar
+    #[inline]
+    pub fn to_calendar<A2: AsCalendar>(&self, calendar: A2) -> CustomZonedDateTime<A2> {
+        CustomZonedDateTime {
+            date: self.date.to_calendar(calendar),
+            time: self.time,
+            zone: self.zone,
+        }
+    }
 }

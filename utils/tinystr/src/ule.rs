@@ -31,6 +31,11 @@ unsafe impl<const N: usize> ULE for TinyAsciiStr<N> {
     }
 }
 
+impl<const N: usize> NicheBytes<N> for TinyAsciiStr<N> {
+    // AsciiByte is 0..128
+    const NICHE_BIT_PATTERN: [u8; N] = [255; N];
+}
+
 impl<const N: usize> AsULE for TinyAsciiStr<N> {
     type ULE = Self;
 

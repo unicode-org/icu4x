@@ -46,16 +46,18 @@ export class ExemplarCharacters {
     }
 
     contains(s) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
-        const result = wasm.icu4x_ExemplarCharacters_contains_mv1(this.ffiValue, sSlice.ptr, sSlice.size);
+        const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s)).splat()];
+        
+        const result = wasm.icu4x_ExemplarCharacters_contains_mv1(this.ffiValue, ...sSlice);
     
         try {
             return result;
         }
         
         finally {
-            sSlice.free();
+            functionCleanupArena.free();
         }
     }
 
@@ -70,8 +72,8 @@ export class ExemplarCharacters {
     }
 
     static tryNewMain(provider, locale) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_ExemplarCharacters_try_new_main_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
     
         try {
@@ -88,8 +90,8 @@ export class ExemplarCharacters {
     }
 
     static tryNewAuxiliary(provider, locale) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_ExemplarCharacters_try_new_auxiliary_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
     
         try {
@@ -106,8 +108,8 @@ export class ExemplarCharacters {
     }
 
     static tryNewPunctuation(provider, locale) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_ExemplarCharacters_try_new_punctuation_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
     
         try {
@@ -124,8 +126,8 @@ export class ExemplarCharacters {
     }
 
     static tryNewNumbers(provider, locale) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_ExemplarCharacters_try_new_numbers_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
     
         try {
@@ -142,8 +144,8 @@ export class ExemplarCharacters {
     }
 
     static tryNewIndex(provider, locale) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_ExemplarCharacters_try_new_index_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
     
         try {

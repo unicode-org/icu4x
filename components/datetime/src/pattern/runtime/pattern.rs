@@ -11,11 +11,8 @@ use icu_provider::prelude::*;
 use zerovec::{ule::AsULE, ZeroSlice, ZeroVec};
 
 #[derive(Debug, PartialEq, Eq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(databake::Bake),
-    databake(path = icu_datetime::pattern::runtime),
-)]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::pattern::runtime))]
 #[zerovec::make_varule(PatternULE)]
 #[zerovec::derive(Debug)]
 #[zerovec::skip_derive(Ord)]
@@ -48,8 +45,12 @@ impl PatternMetadata {
     }
 
     pub(crate) fn from_items(items: &[PatternItem]) -> Self {
+        Self::from_iter_items(items.iter().copied())
+    }
+
+    pub(crate) fn from_iter_items(iter_items: impl Iterator<Item = PatternItem>) -> Self {
         let time_granularity: TimeGranularity =
-            items.iter().map(Into::into).max().unwrap_or_default();
+            iter_items.map(Into::into).max().unwrap_or_default();
         Self::from_time_granularity(time_granularity)
     }
 
@@ -133,6 +134,16 @@ impl From<Vec<PatternItem>> for Pattern<'_> {
     }
 }
 
+impl FromIterator<PatternItem> for Pattern<'_> {
+    fn from_iter<T: IntoIterator<Item = PatternItem>>(iter: T) -> Self {
+        let items = iter.into_iter().collect::<ZeroVec<PatternItem>>();
+        Self {
+            metadata: PatternMetadata::from_iter_items(items.iter()),
+            items,
+        }
+    }
+}
+
 impl From<&reference::Pattern> for Pattern<'_> {
     fn from(input: &reference::Pattern) -> Self {
         Self {
@@ -166,14 +177,6 @@ impl Default for Pattern<'_> {
             items: ZeroVec::new(),
             metadata: PatternMetadata::default(),
         }
-    }
-}
-
-#[cfg(feature = "datagen")]
-impl core::fmt::Display for Pattern<'_> {
-    fn fmt(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
-        let reference = crate::pattern::reference::Pattern::from(self);
-        reference.fmt(formatter)
     }
 }
 

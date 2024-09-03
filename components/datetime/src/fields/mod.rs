@@ -10,7 +10,7 @@ mod length;
 pub(crate) mod symbols;
 
 use displaydoc::Display;
-pub use length::{FieldLength, FieldNumericOverrides, LengthError, TimeZoneFallbackOverride};
+pub use length::{FieldLength, FieldNumericOverrides, LengthError};
 pub use symbols::*;
 
 use core::{
@@ -38,11 +38,8 @@ impl std::error::Error for Error {}
 /// repetition of a specific pattern character one or more times within the pattern string.
 /// The pattern character is known as the field symbol, which indicates the particular meaning for the field.
 #[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::fields),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::fields))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[zerovec::make_ule(FieldULE)]
 pub struct Field {
@@ -69,6 +66,7 @@ impl Field {
             FieldSymbol::Minute => TextOrNumeric::Numeric,
             FieldSymbol::Second(second) => second.get_length_type(self.length),
             FieldSymbol::TimeZone(zone) => zone.get_length_type(self.length),
+            FieldSymbol::DecimalSecond(_) => TextOrNumeric::Numeric,
         }
     }
 }
@@ -94,14 +92,8 @@ impl From<(FieldSymbol, FieldLength)> for Field {
 impl TryFrom<(FieldSymbol, usize)> for Field {
     type Error = Error;
     fn try_from(input: (FieldSymbol, usize)) -> Result<Self, Self::Error> {
-        let length = if input.0 != FieldSymbol::Second(crate::fields::Second::FractionalSecond) {
-            FieldLength::from_idx(input.1 as u8).map_err(|_| Self::Error::InvalidLength(input.0))?
-        } else if input.1 <= 127 {
-            FieldLength::from_idx(128 + input.1 as u8)
-                .map_err(|_| Self::Error::InvalidLength(input.0))?
-        } else {
-            return Err(Self::Error::InvalidLength(input.0));
-        };
+        let length = FieldLength::from_idx(input.1 as u8)
+            .map_err(|_| Self::Error::InvalidLength(input.0))?;
         Ok(Self {
             symbol: input.0,
             length,

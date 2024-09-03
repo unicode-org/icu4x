@@ -41,8 +41,8 @@ export class CanonicalCombiningClassMap {
     }
 
     static create(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_CanonicalCombiningClassMap_create_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {

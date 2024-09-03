@@ -14,13 +14,11 @@
               "aaa",
               "aaaa",
               "aaaaa",
-              "aaaaaa",
               "b",
               "bb",
               "bbb",
               "bbbb",
-              "bbbbb",
-              "bbbbbb"
+              "bbbbb"
             ],
             "expected": "م"
           }
@@ -38,13 +36,11 @@
               "aaa",
               "aaaa",
               "aaaaa",
-              "aaaaaa",
               "b",
               "bb",
               "bbb",
               "bbbb",
-              "bbbbb",
-              "bbbbbb"
+              "bbbbb"
             ],
             "expected": "ص"
           }
@@ -84,8 +80,7 @@
               "aa",
               "aaa",
               "aaaa",
-              "aaaaa",
-              "aaaaaa"
+              "aaaaa"
             ],
             "expected": "PM"
           },
@@ -94,8 +89,7 @@
               "b",
               "bb",
               "bbb",
-              "bbbbb",
-              "bbbbbb"
+              "bbbbb"
             ],
             "expected": "полд."
           },
@@ -124,8 +118,7 @@
               "a",
               "aa",
               "aaa",
-              "aaaa",
-              "aaaaaa"
+              "aaaa"
             ],
             "expected": "AM"
           },
@@ -134,8 +127,7 @@
               "b",
               "bb",
               "bbb",
-              "bbbb",
-              "bbbbbb"
+              "bbbb"
             ],
             "expected": "midnight"
           },
@@ -165,8 +157,7 @@
               "a",
               "aa",
               "aaa",
-              "aaaa",
-              "aaaaaa"
+              "aaaa"
             ],
             "expected": "PM"
           },
@@ -175,8 +166,7 @@
               "b",
               "bb",
               "bbb",
-              "bbbb",
-              "bbbbbb"
+              "bbbb"
             ],
             "expected": "noon"
           },

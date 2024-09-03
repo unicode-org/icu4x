@@ -12,11 +12,8 @@ use icu_provider::prelude::*;
 
 #[icu_provider::data_struct(DigitalDurationDataV1Marker = "duration/digital@1")]
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::duration::provider)
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::duration::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 
 /// A struct containing digital duration data (durationUnit-type-* patterns).
@@ -39,11 +36,8 @@ pub struct DigitalDurationDataV1<'data> {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::duration::provider)
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::duration::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 /// A struct containing the number of digits to pad hours, minutes, and seconds.
 pub struct HmsPadding {
@@ -56,11 +50,8 @@ pub struct HmsPadding {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::duration::provider)
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::duration::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 /// A struct containing the number of digits to pad minutes, and seconds.
 pub struct MsPadding {
@@ -71,11 +62,8 @@ pub struct MsPadding {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::duration::provider)
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::duration::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 /// A struct containing the number of digits to pad hours and minutes.
 pub struct HmPadding {

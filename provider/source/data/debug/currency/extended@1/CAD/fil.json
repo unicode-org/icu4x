@@ -1,7 +1,11 @@
 {
   "display_names": {
-    "One": "dolyar ng Canada",
-    "Other": "Dolyares ng Canada",
-    "DisplayName": "Dolyar ng Canada"
+    "specials": [
+      [
+        "One",
+        "dolyar ng Canada"
+      ]
+    ],
+    "other": "Dolyares ng Canada"
   }
 }

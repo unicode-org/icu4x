@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::pattern::runtime;
+
 use super::{
     super::{PatternError, PatternItem, TimeGranularity},
     Parser,
@@ -23,12 +25,21 @@ impl Pattern {
     pub fn items_mut(&mut self) -> &mut [PatternItem] {
         &mut self.items
     }
+
+    pub fn to_runtime_pattern(&self) -> runtime::Pattern<'static> {
+        runtime::Pattern::from(self)
+    }
 }
 
 impl From<Vec<PatternItem>> for Pattern {
     fn from(items: Vec<PatternItem>) -> Self {
         Self {
-            time_granularity: items.iter().map(Into::into).max().unwrap_or_default(),
+            time_granularity: items
+                .iter()
+                .copied()
+                .map(Into::into)
+                .max()
+                .unwrap_or_default(),
             items,
         }
     }

@@ -46,8 +46,8 @@ export class GregorianDateFormatter {
     }
 
     static createWithLength(provider, locale, length) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_GregorianDateFormatter_create_with_length_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, length.ffiValue);
     
         try {
@@ -64,7 +64,6 @@ export class GregorianDateFormatter {
     }
 
     formatIsoDate(value) {
-        
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         wasm.icu4x_GregorianDateFormatter_format_iso_date_mv1(this.ffiValue, value.ffiValue, write.buffer);
     
@@ -78,7 +77,6 @@ export class GregorianDateFormatter {
     }
 
     formatIsoDatetime(value) {
-        
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         wasm.icu4x_GregorianDateFormatter_format_iso_datetime_mv1(this.ffiValue, value.ffiValue, write.buffer);
     

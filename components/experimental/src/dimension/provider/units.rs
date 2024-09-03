@@ -9,8 +9,8 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use crate::relativetime::provider::PluralPattern;
-use icu_pattern::SinglePlaceholder;
+use crate::relativetime::provider::PluralElements;
+use icu_pattern::SinglePlaceholderPattern;
 use icu_provider::prelude::*;
 
 #[icu_provider::data_struct(marker(
@@ -19,11 +19,8 @@ use icu_provider::prelude::*;
     attributes_domain = "units"
 ))]
 #[derive(Clone, PartialEq, Debug)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::dimension::provider::units),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::units))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct UnitsDisplayNameV1<'data> {
@@ -31,5 +28,5 @@ pub struct UnitsDisplayNameV1<'data> {
     // TODO: use `MeasureUnit` for the units key instead of strings.
     /// Contains the long width patterns for the units.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub patterns: PluralPattern<'data, SinglePlaceholder>,
+    pub patterns: PluralElements<'data, SinglePlaceholderPattern<str>>,
 }

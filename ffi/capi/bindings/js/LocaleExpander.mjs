@@ -43,8 +43,8 @@ export class LocaleExpander {
     }
 
     static create(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_LocaleExpander_create_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
@@ -61,8 +61,8 @@ export class LocaleExpander {
     }
 
     static createExtended(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_LocaleExpander_create_extended_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {

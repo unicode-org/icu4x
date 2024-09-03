@@ -727,6 +727,81 @@ where
         })
     }
 
+    /// Convert a [`DataPayload`] to one of the same type with runtime type checking.
+    ///
+    /// Primarily useful to convert from a generic to a concrete marker type.
+    ///
+    /// If the `M2` type argument does not match the true marker type, a `DataError` is returned.
+    ///
+    /// For compile-time static casting, use [`DataPayload::cast()`].
+    ///
+    /// # Examples
+    ///
+    /// Short-circuit a data request request based on the marker, returning
+    /// a result from a different data provider:
+    ///
+    /// ```
+    /// use std::any::TypeId;
+    /// use std::borrow::Cow;
+    /// use icu_locale_core::locale;
+    /// use icu_provider::hello_world::*;
+    /// use icu_provider::prelude::*;
+    /// use icu_provider_adapters::empty::EmptyDataProvider;
+    ///
+    /// struct MyForkingProvider<P0, P1> {
+    ///     fallback_provider: P0,
+    ///     hello_world_provider: P1,
+    /// }
+    ///
+    /// impl<M, P0, P1> DataProvider<M> for MyForkingProvider<P0, P1>
+    /// where
+    ///     M: DataMarker,
+    ///     P0: DataProvider<M>,
+    ///     P1: DataProvider<HelloWorldV1Marker>,
+    /// {
+    ///     #[inline]
+    ///     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+    ///         if TypeId::of::<HelloWorldV1Marker>() == TypeId::of::<M>() {
+    ///             let response = DataProvider::<HelloWorldV1Marker>::load(&self.hello_world_provider, req)?;
+    ///             Ok(DataResponse {
+    ///                 metadata: response.metadata,
+    ///                 payload: response.payload.dynamic_cast()?,
+    ///             })
+    ///         } else {
+    ///             self.fallback_provider.load(req)
+    ///         }
+    ///     }
+    /// }
+    ///
+    /// let provider = MyForkingProvider {
+    ///     fallback_provider: EmptyDataProvider::new(),
+    ///     hello_world_provider: HelloWorldProvider,
+    /// };
+    ///
+    /// let formatter =
+    ///     HelloWorldFormatter::try_new_unstable(&provider, &locale!("de").into())
+    ///         .unwrap();
+    ///
+    /// // This succeeds because the data was loaded from HelloWorldProvider
+    /// // rather than the empty fallback provider.
+    /// assert_eq!(formatter.format_to_string(), "Hallo Welt");
+    /// ```
+    pub fn dynamic_cast<M2>(self) -> Result<DataPayload<M2>, DataError>
+    where
+        M2: DynamicDataMarker,
+    {
+        let mut option_self = Some(self);
+        let mut option_out = None::<DataPayload<M2>>;
+        if let Some(x) = (&mut option_out as &mut dyn core::any::Any).downcast_mut() {
+            core::mem::swap(&mut option_self, x);
+            debug_assert!(option_out.is_some());
+            if let Some(out) = option_out {
+                return Ok(out);
+            }
+        }
+        Err(DataError::for_type::<M2>().with_str_context(core::any::type_name::<M>()))
+    }
+
     /// Convert a mutable reference of a [`DataPayload`] to another mutable reference
     /// of the same type with runtime type checking.
     ///

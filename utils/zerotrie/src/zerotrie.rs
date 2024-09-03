@@ -111,7 +111,8 @@ pub(crate) enum ZeroTrieFlavor<Store> {
 /// ```
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
-#[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerotrie))]
+#[cfg_attr(feature = "databake", derive(databake::Bake))]
+#[cfg_attr(feature = "databake", databake(path = zerotrie))]
 #[allow(clippy::exhaustive_structs)] // databake hidden fields
 pub struct ZeroTrieSimpleAscii<Store: ?Sized> {
     #[doc(hidden)] // for databake, but there are no invariants
@@ -168,7 +169,8 @@ impl<Store> ZeroTrieSimpleAscii<Store> {
 /// ```
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
-#[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerotrie))]
+#[cfg_attr(feature = "databake", derive(databake::Bake))]
+#[cfg_attr(feature = "databake", databake(path = zerotrie))]
 #[allow(clippy::exhaustive_structs)] // databake hidden fields
 pub struct ZeroAsciiIgnoreCaseTrie<Store: ?Sized> {
     #[doc(hidden)] // for databake, but there are no invariants
@@ -203,7 +205,8 @@ pub struct ZeroAsciiIgnoreCaseTrie<Store: ?Sized> {
 /// ```
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
-#[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerotrie))]
+#[cfg_attr(feature = "databake", derive(databake::Bake))]
+#[cfg_attr(feature = "databake", databake(path = zerotrie))]
 #[allow(clippy::exhaustive_structs)] // databake hidden fields
 pub struct ZeroTriePerfectHash<Store: ?Sized> {
     #[doc(hidden)] // for databake, but there are no invariants
@@ -223,7 +226,8 @@ impl<Store> ZeroTriePerfectHash<Store> {
 /// For more information, see [`ZeroTrie`].
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
-#[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerotrie))]
+#[cfg_attr(feature = "databake", derive(databake::Bake))]
+#[cfg_attr(feature = "databake", databake(path = zerotrie))]
 #[allow(clippy::exhaustive_structs)] // databake hidden fields
 pub struct ZeroTrieExtendedCapacity<Store: ?Sized> {
     #[doc(hidden)] // for databake, but there are no invariants

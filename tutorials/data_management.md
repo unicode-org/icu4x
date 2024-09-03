@@ -23,7 +23,7 @@ Get a coffee, this might take a while ☕.
 Once installed, run:
 
 ```console
-$ icu4x-datagen --markers all --locales ja --format mod --out my_data
+$ icu4x-datagen --markers all --locales ja --format baked --out my_data
 ```
 
 This will generate a `my_data` directory containing the data for all components in the `ja` locale.

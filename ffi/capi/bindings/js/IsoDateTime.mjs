@@ -48,8 +48,8 @@ export class IsoDateTime {
     }
 
     static create(year, month, day, hour, minute, second, nanosecond) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_IsoDateTime_create_mv1(diplomatReceive.buffer, year, month, day, hour, minute, second, nanosecond);
     
         try {
@@ -76,11 +76,13 @@ export class IsoDateTime {
     }
 
     static fromString(v) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const vSlice = diplomatRuntime.DiplomatBuf.str8(wasm, v);
+        const vSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, v)).splat()];
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        const result = wasm.icu4x_IsoDateTime_from_string_mv1(diplomatReceive.buffer, vSlice.ptr, vSlice.size);
+        
+        const result = wasm.icu4x_IsoDateTime_from_string_mv1(diplomatReceive.buffer, ...vSlice);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -91,7 +93,7 @@ export class IsoDateTime {
         }
         
         finally {
-            vSlice.free();
+            functionCleanupArena.free();
         
             diplomatReceive.free();
         }
@@ -248,8 +250,8 @@ export class IsoDateTime {
     }
 
     weekOfYear(calculator) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 8, 4, false);
+        
         const result = wasm.icu4x_IsoDateTime_week_of_year_mv1(diplomatReceive.buffer, this.ffiValue, calculator.ffiValue);
     
         try {

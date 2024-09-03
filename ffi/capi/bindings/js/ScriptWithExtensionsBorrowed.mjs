@@ -55,9 +55,9 @@ export class ScriptWithExtensionsBorrowed {
     }
 
     getScriptExtensionsVal(codePoint) {
-        
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this];
+        
         const result = wasm.icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_val_mv1(this.ffiValue, codePoint);
     
         try {

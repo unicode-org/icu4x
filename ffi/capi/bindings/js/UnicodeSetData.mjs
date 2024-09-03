@@ -45,16 +45,18 @@ export class UnicodeSetData {
     }
 
     contains(s) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
-        const result = wasm.icu4x_UnicodeSetData_contains_mv1(this.ffiValue, sSlice.ptr, sSlice.size);
+        const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s)).splat()];
+        
+        const result = wasm.icu4x_UnicodeSetData_contains_mv1(this.ffiValue, ...sSlice);
     
         try {
             return result;
         }
         
         finally {
-            sSlice.free();
+            functionCleanupArena.free();
         }
     }
 
@@ -69,8 +71,8 @@ export class UnicodeSetData {
     }
 
     static loadBasicEmoji(provider) {
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
         const result = wasm.icu4x_UnicodeSetData_load_basic_emoji_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {

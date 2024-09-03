@@ -7,7 +7,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 /** An ICU4X Measurement Unit parser object which is capable of parsing the CLDR unit identifier
 *(e.g. `meter-per-square-second`) and get the [`MeasureUnit`].
 *
-*See the [Rust documentation for `MeasureUnitParser`](https://docs.rs/icu/latest/icu/experimental/units/measureunit/struct.MeasureUnitParser.html) for more information.
+*See the [Rust documentation for `MeasureUnitParser`](https://docs.rs/icu/latest/icu/experimental/measure/parser/struct.MeasureUnitParser.html) for more information.
 */
 const MeasureUnitParser_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_MeasureUnitParser_destroy_mv1(ptr);
@@ -45,16 +45,18 @@ export class MeasureUnitParser {
     }
 
     parse(unitId) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const unitIdSlice = diplomatRuntime.DiplomatBuf.str8(wasm, unitId);
-        const result = wasm.icu4x_MeasureUnitParser_parse_mv1(this.ffiValue, unitIdSlice.ptr, unitIdSlice.size);
+        const unitIdSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, unitId)).splat()];
+        
+        const result = wasm.icu4x_MeasureUnitParser_parse_mv1(this.ffiValue, ...unitIdSlice);
     
         try {
             return result === 0 ? null : new MeasureUnit(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {
-            unitIdSlice.free();
+            functionCleanupArena.free();
         }
     }
 }

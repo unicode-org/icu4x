@@ -14,6 +14,8 @@ export { TimeZoneInvalidIdError } from "./TimeZoneInvalidIdError"
 
 export { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError"
 
+export { TimeZoneUnknownError } from "./TimeZoneUnknownError"
+
 export { LocaleFallbackConfig } from "./LocaleFallbackConfig"
 
 export { LineBreakOptions } from "./LineBreakOptions"

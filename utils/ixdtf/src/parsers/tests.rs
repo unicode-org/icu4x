@@ -8,8 +8,8 @@ use alloc::vec::Vec;
 use crate::{
     parsers::{
         records::{
-            Annotation, DateRecord, IxdtfParseRecord, TimeRecord, TimeZoneAnnotation,
-            TimeZoneRecord,
+            Annotation, DateRecord, IxdtfParseRecord, Sign, TimeRecord, TimeZoneAnnotation,
+            TimeZoneRecord, UTCOffsetRecord,
         },
         IxdtfParser,
     },
@@ -898,4 +898,92 @@ fn test_bad_time_spec_separator() {
     let dt = "2022-06-05 03:42:22;000";
     let err = IxdtfParser::from_str(dt).parse();
     assert_eq!(err, Err(ParseError::InvalidEnd));
+}
+
+#[test]
+fn test_hour_utc_offset() {
+    let tz_test = "2024-08-24T14:00:00-05[-05]";
+    let result = IxdtfParser::from_str(tz_test).parse();
+    assert!(result.is_ok());
+
+    let tz_test = "2024-08-24T14:00:00-05";
+    let result = IxdtfParser::from_str(tz_test).parse();
+    assert!(result.is_ok());
+}
+
+#[test]
+fn test_offset_annotation() {
+    let zdt = "2024-08-24T14:00:00-05:00[-05:00.123456789]";
+    let err = IxdtfParser::from_str(zdt).parse();
+    assert_eq!(err, Err(ParseError::AnnotationClose));
+
+    let zdt = "2024-08-24T14:00:00-05:00[-05:00.123456]";
+    let err = IxdtfParser::from_str(zdt).parse();
+    assert_eq!(err, Err(ParseError::AnnotationClose));
+
+    let zdt = "2024-08-24T14:00:00-05:00[-05:00.1]";
+    let err = IxdtfParser::from_str(zdt).parse();
+    assert_eq!(err, Err(ParseError::AnnotationClose));
+}
+
+#[test]
+fn test_zulu_offset() {
+    let zdt = "2024-08-24T14:00:00Z[America/Chicago]";
+    let result = IxdtfParser::from_str(zdt).parse();
+    assert_eq!(
+        result,
+        Ok(IxdtfParseRecord {
+            date: Some(DateRecord {
+                year: 2024,
+                month: 8,
+                day: 24,
+            }),
+            time: Some(TimeRecord {
+                hour: 14,
+                minute: 0,
+                second: 0,
+                nanosecond: 0,
+            }),
+            offset: Some(UTCOffsetRecord {
+                sign: Sign::Negative,
+                hour: 0,
+                minute: 0,
+                second: 0,
+                nanosecond: 0,
+            }),
+            tz: Some(TimeZoneAnnotation {
+                critical: false,
+                tz: TimeZoneRecord::Name("America/Chicago".as_bytes())
+            }),
+            calendar: None,
+        })
+    );
+
+    let zdt = "2024-08-24T14:00:00Z";
+    let result = IxdtfParser::from_str(zdt).parse();
+    assert_eq!(
+        result,
+        Ok(IxdtfParseRecord {
+            date: Some(DateRecord {
+                year: 2024,
+                month: 8,
+                day: 24,
+            }),
+            time: Some(TimeRecord {
+                hour: 14,
+                minute: 0,
+                second: 0,
+                nanosecond: 0,
+            }),
+            offset: Some(UTCOffsetRecord {
+                sign: Sign::Negative,
+                hour: 0,
+                minute: 0,
+                second: 0,
+                nanosecond: 0,
+            }),
+            tz: None,
+            calendar: None,
+        })
+    );
 }

@@ -92,8 +92,8 @@ export class BidiParagraph {
     }
 
     reorderLine(rangeStart, rangeEnd) {
-        
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
+        
         const result = wasm.icu4x_BidiParagraph_reorder_line_mv1(this.ffiValue, rangeStart, rangeEnd, write.buffer);
     
         try {
