@@ -234,7 +234,7 @@ impl<'a> FromIterator<&'a str> for CodePointInversionListAndStringList<'_> {
         }
 
         // Ensure that the string list is sorted. If not, the binary search that
-        // is used for `.contains(&str)` will return garbase otuput.
+        // is used for `.contains(&str)` will return garbage output.
         strings.sort_unstable();
         strings.dedup();
 
