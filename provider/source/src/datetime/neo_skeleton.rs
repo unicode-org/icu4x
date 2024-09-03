@@ -245,10 +245,11 @@ impl SourceDataProvider {
     }
 }
 
-fn gen_time_components<'a>(
+/// Convert from a semantic time field set to classical component options for calculating the pattern.
+fn gen_time_components(
     length: NeoSkeletonLength,
     neo_components: &NeoTimeComponents,
-    _: &DateLengthsV1<'a>,
+    _: &DateLengthsV1<'_>,
 ) -> DateTimeFormatterOptions {
     // TODO: Should this use timeSkeletons?
     // "full": "ahmmsszzzz",
@@ -290,10 +291,11 @@ fn gen_time_components<'a>(
     DateTimeFormatterOptions::Components(filtered_components)
 }
 
-fn gen_date_components<'a>(
+/// Convert from a semantic date field set to classical component options for calculating the pattern.
+fn gen_date_components(
     length: NeoSkeletonLength,
     neo_components: &NeoComponents,
-    date_lengths_v1: &DateLengthsV1<'a>,
+    date_lengths_v1: &DateLengthsV1<'_>,
 ) -> DateTimeFormatterOptions {
     let (date_components, time_components) = match neo_components {
         NeoComponents::Date(date_components) => (*date_components, None),
