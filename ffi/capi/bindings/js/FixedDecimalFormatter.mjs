@@ -50,7 +50,7 @@ export class FixedDecimalFormatter {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new FixedDecimalFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -64,27 +64,27 @@ export class FixedDecimalFormatter {
     static createWithManualData(plusSignPrefix, plusSignSuffix, minusSignPrefix, minusSignSuffix, decimalSeparator, groupingSeparator, primaryGroupSize, secondaryGroupSize, minGroupSize, digits, groupingStrategy) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const plusSignPrefixSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, plusSignPrefix)).splat()];
+        const plusSignPrefixSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, plusSignPrefix));
         
-        const plusSignSuffixSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, plusSignSuffix)).splat()];
+        const plusSignSuffixSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, plusSignSuffix));
         
-        const minusSignPrefixSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, minusSignPrefix)).splat()];
+        const minusSignPrefixSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, minusSignPrefix));
         
-        const minusSignSuffixSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, minusSignSuffix)).splat()];
+        const minusSignSuffixSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, minusSignSuffix));
         
-        const decimalSeparatorSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, decimalSeparator)).splat()];
+        const decimalSeparatorSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, decimalSeparator));
         
-        const groupingSeparatorSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, groupingSeparator)).splat()];
+        const groupingSeparatorSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, groupingSeparator));
         
-        const digitsSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.slice(wasm, digits, "u16")).splat()];
+        const digitsSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.slice(wasm, digits, "u16"));
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_FixedDecimalFormatter_create_with_manual_data_mv1(diplomatReceive.buffer, ...plusSignPrefixSlice, ...plusSignSuffixSlice, ...minusSignPrefixSlice, ...minusSignSuffixSlice, ...decimalSeparatorSlice, ...groupingSeparatorSlice, primaryGroupSize, secondaryGroupSize, minGroupSize, ...digitsSlice, groupingStrategy.ffiValue);
+        const result = wasm.icu4x_FixedDecimalFormatter_create_with_manual_data_mv1(diplomatReceive.buffer, ...plusSignPrefixSlice.splat(), ...plusSignSuffixSlice.splat(), ...minusSignPrefixSlice.splat(), ...minusSignSuffixSlice.splat(), ...decimalSeparatorSlice.splat(), ...groupingSeparatorSlice.splat(), primaryGroupSize, secondaryGroupSize, minGroupSize, ...digitsSlice.splat(), groupingStrategy.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new FixedDecimalFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);

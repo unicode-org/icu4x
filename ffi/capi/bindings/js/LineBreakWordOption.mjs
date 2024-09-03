@@ -8,35 +8,51 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 export class LineBreakWordOption {
     #value = undefined;
 
-    static values = new Map([
+    static #values = new Map([
         ["Normal", 0],
         ["BreakAll", 1],
         ["KeepAll", 2]
     ]);
 
     constructor(value) {
-        if (value instanceof LineBreakWordOption) {
-            this.#value = value.value;
-            return;
+        if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
+            // We pass in two internalConstructor arguments to create *new*
+            // instances of this type, otherwise the enums are treated as singletons.
+            if (arguments[1] === diplomatRuntime.internalConstructor ) {
+                this.#value = arguments[2];
+                return;
+            }
+            return LineBreakWordOption.#objectValues[arguments[1]];
         }
 
-        if (LineBreakWordOption.values.has(value)) {
-            this.#value = value;
-            return;
+        if (value instanceof LineBreakWordOption) {
+            return value;
+        }
+
+        let intVal = LineBreakWordOption.#values.get(value);
+
+        // Nullish check, checks for null or undefined
+        if (intVal == null) {
+            return LineBreakWordOption.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a LineBreakWordOption and does not correspond to any of its enumerator values.");
     }
 
     get value() {
-        return this.#value;
+        return [...LineBreakWordOption.#values.keys()][this.#value];
     }
 
     get ffiValue() {
-        return LineBreakWordOption.values.get(this.#value);
+        return this.#value;
     }
+    static #objectValues = [
+        new LineBreakWordOption(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
+        new LineBreakWordOption(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
+        new LineBreakWordOption(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
+    ];
 
-    static Normal = new LineBreakWordOption("Normal");
-    static BreakAll = new LineBreakWordOption("BreakAll");
-    static KeepAll = new LineBreakWordOption("KeepAll");
+    static Normal = LineBreakWordOption.#objectValues[0];
+    static BreakAll = LineBreakWordOption.#objectValues[1];
+    static KeepAll = LineBreakWordOption.#objectValues[2];
 }

@@ -8,33 +8,48 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 export class TransformResult {
     #value = undefined;
 
-    static values = new Map([
+    static #values = new Map([
         ["Modified", 0],
         ["Unmodified", 1]
     ]);
 
     constructor(value) {
-        if (value instanceof TransformResult) {
-            this.#value = value.value;
-            return;
+        if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
+            // We pass in two internalConstructor arguments to create *new*
+            // instances of this type, otherwise the enums are treated as singletons.
+            if (arguments[1] === diplomatRuntime.internalConstructor ) {
+                this.#value = arguments[2];
+                return;
+            }
+            return TransformResult.#objectValues[arguments[1]];
         }
 
-        if (TransformResult.values.has(value)) {
-            this.#value = value;
-            return;
+        if (value instanceof TransformResult) {
+            return value;
+        }
+
+        let intVal = TransformResult.#values.get(value);
+
+        // Nullish check, checks for null or undefined
+        if (intVal == null) {
+            return TransformResult.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a TransformResult and does not correspond to any of its enumerator values.");
     }
 
     get value() {
-        return this.#value;
+        return [...TransformResult.#values.keys()][this.#value];
     }
 
     get ffiValue() {
-        return TransformResult.values.get(this.#value);
+        return this.#value;
     }
+    static #objectValues = [
+        new TransformResult(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
+        new TransformResult(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
+    ];
 
-    static Modified = new TransformResult("Modified");
-    static Unmodified = new TransformResult("Unmodified");
+    static Modified = TransformResult.#objectValues[0];
+    static Unmodified = TransformResult.#objectValues[1];
 }

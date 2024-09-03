@@ -54,6 +54,17 @@ export class DisplayNamesOptions {
         return [this.#style.ffiValue, this.#fallback.ffiValue, this.#languageDisplay.ffiValue]
     }
 
+    _writeToArrayBuffer(
+        arrayBuffer,
+        offset,
+        functionCleanupArena,
+        appendArrayMap
+    ) {
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, this.#style.ffiValue, Int32Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 4, this.#fallback.ffiValue, Int32Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 8, this.#languageDisplay.ffiValue, Int32Array);
+    }
+
     // This struct contains borrowed fields, so this takes in a list of
     // "edges" corresponding to where each lifetime's data may have been borrowed from
     // and passes it down to individual fields containing the borrow.
@@ -61,10 +72,10 @@ export class DisplayNamesOptions {
     // should handle this when constructing edge arrays.
     #fromFFI(ptr) {
         const styleDeref = diplomatRuntime.enumDiscriminant(wasm, ptr);
-        this.#style = DisplayNamesStyle[Array.from(DisplayNamesStyle.values.keys())[styleDeref]];
+        this.#style = new DisplayNamesStyle(diplomatRuntime.internalConstructor, styleDeref);
         const fallbackDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 4);
-        this.#fallback = DisplayNamesFallback[Array.from(DisplayNamesFallback.values.keys())[fallbackDeref]];
+        this.#fallback = new DisplayNamesFallback(diplomatRuntime.internalConstructor, fallbackDeref);
         const languageDisplayDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 8);
-        this.#languageDisplay = LanguageDisplay[Array.from(LanguageDisplay.values.keys())[languageDisplayDeref]];
+        this.#languageDisplay = new LanguageDisplay(diplomatRuntime.internalConstructor, languageDisplayDeref);
     }
 }

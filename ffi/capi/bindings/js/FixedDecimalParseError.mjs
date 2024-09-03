@@ -8,35 +8,51 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 export class FixedDecimalParseError {
     #value = undefined;
 
-    static values = new Map([
+    static #values = new Map([
         ["Unknown", 0],
         ["Limit", 1],
         ["Syntax", 2]
     ]);
 
     constructor(value) {
-        if (value instanceof FixedDecimalParseError) {
-            this.#value = value.value;
-            return;
+        if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
+            // We pass in two internalConstructor arguments to create *new*
+            // instances of this type, otherwise the enums are treated as singletons.
+            if (arguments[1] === diplomatRuntime.internalConstructor ) {
+                this.#value = arguments[2];
+                return;
+            }
+            return FixedDecimalParseError.#objectValues[arguments[1]];
         }
 
-        if (FixedDecimalParseError.values.has(value)) {
-            this.#value = value;
-            return;
+        if (value instanceof FixedDecimalParseError) {
+            return value;
+        }
+
+        let intVal = FixedDecimalParseError.#values.get(value);
+
+        // Nullish check, checks for null or undefined
+        if (intVal == null) {
+            return FixedDecimalParseError.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a FixedDecimalParseError and does not correspond to any of its enumerator values.");
     }
 
     get value() {
-        return this.#value;
+        return [...FixedDecimalParseError.#values.keys()][this.#value];
     }
 
     get ffiValue() {
-        return FixedDecimalParseError.values.get(this.#value);
+        return this.#value;
     }
+    static #objectValues = [
+        new FixedDecimalParseError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
+        new FixedDecimalParseError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
+        new FixedDecimalParseError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
+    ];
 
-    static Unknown = new FixedDecimalParseError("Unknown");
-    static Limit = new FixedDecimalParseError("Limit");
-    static Syntax = new FixedDecimalParseError("Syntax");
+    static Unknown = FixedDecimalParseError.#objectValues[0];
+    static Limit = FixedDecimalParseError.#objectValues[1];
+    static Syntax = FixedDecimalParseError.#objectValues[2];
 }

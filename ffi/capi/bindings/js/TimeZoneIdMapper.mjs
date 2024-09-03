@@ -51,7 +51,7 @@ export class TimeZoneIdMapper {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new TimeZoneIdMapper(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -65,11 +65,11 @@ export class TimeZoneIdMapper {
     ianaToBcp47(value) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const valueSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, value)).splat()];
+        const valueSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, value));
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         
-        const result = wasm.icu4x_TimeZoneIdMapper_iana_to_bcp47_mv1(this.ffiValue, ...valueSlice, write.buffer);
+        const result = wasm.icu4x_TimeZoneIdMapper_iana_to_bcp47_mv1(this.ffiValue, ...valueSlice.splat(), write.buffer);
     
         try {
             if (result !== 1) {
@@ -89,11 +89,11 @@ export class TimeZoneIdMapper {
     normalizeIana(value) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const valueSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, value)).splat()];
+        const valueSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, value));
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         
-        const result = wasm.icu4x_TimeZoneIdMapper_normalize_iana_mv1(this.ffiValue, ...valueSlice, write.buffer);
+        const result = wasm.icu4x_TimeZoneIdMapper_normalize_iana_mv1(this.ffiValue, ...valueSlice.splat(), write.buffer);
     
         try {
             if (result !== 1) {
@@ -113,11 +113,11 @@ export class TimeZoneIdMapper {
     canonicalizeIana(value) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const valueSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, value)).splat()];
+        const valueSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, value));
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         
-        const result = wasm.icu4x_TimeZoneIdMapper_canonicalize_iana_mv1(this.ffiValue, ...valueSlice, write.buffer);
+        const result = wasm.icu4x_TimeZoneIdMapper_canonicalize_iana_mv1(this.ffiValue, ...valueSlice.splat(), write.buffer);
     
         try {
             if (result !== 1) {
@@ -137,11 +137,11 @@ export class TimeZoneIdMapper {
     findCanonicalIanaFromBcp47(value) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const valueSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, value)).splat()];
+        const valueSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, value));
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         
-        const result = wasm.icu4x_TimeZoneIdMapper_find_canonical_iana_from_bcp47_mv1(this.ffiValue, ...valueSlice, write.buffer);
+        const result = wasm.icu4x_TimeZoneIdMapper_find_canonical_iana_from_bcp47_mv1(this.ffiValue, ...valueSlice.splat(), write.buffer);
     
         try {
             if (result !== 1) {

@@ -8,7 +8,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 export class IsoTimeZoneFormat {
     #value = undefined;
 
-    static values = new Map([
+    static #values = new Map([
         ["Basic", 0],
         ["Extended", 1],
         ["UtcBasic", 2],
@@ -16,29 +16,46 @@ export class IsoTimeZoneFormat {
     ]);
 
     constructor(value) {
-        if (value instanceof IsoTimeZoneFormat) {
-            this.#value = value.value;
-            return;
+        if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
+            // We pass in two internalConstructor arguments to create *new*
+            // instances of this type, otherwise the enums are treated as singletons.
+            if (arguments[1] === diplomatRuntime.internalConstructor ) {
+                this.#value = arguments[2];
+                return;
+            }
+            return IsoTimeZoneFormat.#objectValues[arguments[1]];
         }
 
-        if (IsoTimeZoneFormat.values.has(value)) {
-            this.#value = value;
-            return;
+        if (value instanceof IsoTimeZoneFormat) {
+            return value;
+        }
+
+        let intVal = IsoTimeZoneFormat.#values.get(value);
+
+        // Nullish check, checks for null or undefined
+        if (intVal == null) {
+            return IsoTimeZoneFormat.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a IsoTimeZoneFormat and does not correspond to any of its enumerator values.");
     }
 
     get value() {
-        return this.#value;
+        return [...IsoTimeZoneFormat.#values.keys()][this.#value];
     }
 
     get ffiValue() {
-        return IsoTimeZoneFormat.values.get(this.#value);
+        return this.#value;
     }
+    static #objectValues = [
+        new IsoTimeZoneFormat(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
+        new IsoTimeZoneFormat(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
+        new IsoTimeZoneFormat(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
+        new IsoTimeZoneFormat(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 3),
+    ];
 
-    static Basic = new IsoTimeZoneFormat("Basic");
-    static Extended = new IsoTimeZoneFormat("Extended");
-    static UtcBasic = new IsoTimeZoneFormat("UtcBasic");
-    static UtcExtended = new IsoTimeZoneFormat("UtcExtended");
+    static Basic = IsoTimeZoneFormat.#objectValues[0];
+    static Extended = IsoTimeZoneFormat.#objectValues[1];
+    static UtcBasic = IsoTimeZoneFormat.#objectValues[2];
+    static UtcExtended = IsoTimeZoneFormat.#objectValues[3];
 }

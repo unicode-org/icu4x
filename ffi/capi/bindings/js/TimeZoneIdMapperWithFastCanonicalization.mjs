@@ -51,7 +51,7 @@ export class TimeZoneIdMapperWithFastCanonicalization {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new TimeZoneIdMapperWithFastCanonicalization(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -65,11 +65,11 @@ export class TimeZoneIdMapperWithFastCanonicalization {
     canonicalizeIana(value) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const valueSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, value)).splat()];
+        const valueSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, value));
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         
-        const result = wasm.icu4x_TimeZoneIdMapperWithFastCanonicalization_canonicalize_iana_mv1(this.ffiValue, ...valueSlice, write.buffer);
+        const result = wasm.icu4x_TimeZoneIdMapperWithFastCanonicalization_canonicalize_iana_mv1(this.ffiValue, ...valueSlice.splat(), write.buffer);
     
         try {
             if (result !== 1) {
@@ -89,11 +89,11 @@ export class TimeZoneIdMapperWithFastCanonicalization {
     canonicalIanaFromBcp47(value) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const valueSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, value)).splat()];
+        const valueSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, value));
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         
-        const result = wasm.icu4x_TimeZoneIdMapperWithFastCanonicalization_canonical_iana_from_bcp47_mv1(this.ffiValue, ...valueSlice, write.buffer);
+        const result = wasm.icu4x_TimeZoneIdMapperWithFastCanonicalization_canonical_iana_from_bcp47_mv1(this.ffiValue, ...valueSlice.splat(), write.buffer);
     
         try {
             if (result !== 1) {
