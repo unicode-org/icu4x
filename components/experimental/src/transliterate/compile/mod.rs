@@ -120,6 +120,18 @@ impl RuleCollection {
         }
     }
 
+    /// Add transliteration ID aliases without registering a source.
+    pub fn register_aliases<'a>(
+        &mut self,
+        id: &icu_locale_core::Locale,
+        aliases: impl IntoIterator<Item = &'a str>,
+    ) {
+        for alias in aliases.into_iter() {
+            self.id_mapping
+                .insert(alias.to_ascii_lowercase(), id.clone());
+        }
+    }
+
     /// Returns a provider that is usable by [`Transliterator::try_new_unstable`](crate::transliterate::Transliterator::try_new_unstable).
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
