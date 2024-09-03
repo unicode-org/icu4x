@@ -342,6 +342,7 @@ jobs:
         mkdir -p benchmarks/perf/${{ matrix.component }}
 
     - name: Run benchmark
+      shell: /usr/bin/bash -o pipefail -e {0}
       run: |
         cargo bench --features bench --manifest-path ${{ matrix.component }}/Cargo.toml -- --output-format bencher | tee benchmarks/perf/${{ matrix.component }}/output.txt;
 
@@ -505,10 +506,12 @@ jobs:
         mkdir -p benchmarks/binsize/gz
 
     - name: Measure size of executables (wasm)
+      shell: /usr/bin/bash -o pipefail -e {0}
       run: |
         cargo run --package icu_benchmark_binsize  -- wasmpkg/wasm-opt wasm | tee benchmarks/binsize/wasm/output.txt
 
     - name: Measure size of executables (gz)
+      shell: /usr/bin/bash -o pipefail -e {0}
       run: |
         cargo run --package icu_benchmark_binsize  -- wasmpkg/wasm-opt gz | tee benchmarks/binsize/gz/output.txt
 
