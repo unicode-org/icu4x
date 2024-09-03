@@ -616,6 +616,8 @@ icu::properties::names::PropertyEnumToValueNameSparseMapperBorrowed::get#FnInStr
 icu::properties::names::PropertyScriptToIcuScriptMapper#Struct
 icu::properties::names::PropertyScriptToIcuScriptMapperBorrowed#Struct
 icu::properties::names::PropertyScriptToIcuScriptMapperBorrowed::get#FnInStruct
+icu::segmenter::SentenceBreakOptions#Struct
+icu::segmenter::WordBreakOptions#Struct
 icu::timezone::CustomTimeZone::new_with_bcp47_id#FnInStruct
 icu::timezone::CustomZonedDateTime#Struct
 icu::timezone::CustomZonedDateTime::from_str#FnInStruct
