@@ -12,13 +12,13 @@
 #[macro_export]
 macro_rules! __impl_sentence_break_data_override_v1_marker {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl $provider {
             const DATA_SENTENCE_BREAK_DATA_OVERRIDE_V1_MARKER: icu_provider_baked::zerotrie::Data<icu::segmenter::provider::SentenceBreakDataOverrideV1Marker> = icu_provider_baked::zerotrie::Data { trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"el\x80" }, values: &[icu::segmenter::provider::RuleBreakDataOverrideV1 { property_table_override: icu::collections::codepointtrie::CodePointTrie::from_parts(icu::collections::codepointtrie::CodePointTrieHeader { high_start: 1024u32, shifted12_high_start: 1u16, index3_null_offset: 32767u16, data_null_offset: 64u32, null_value: 0u32, trie_type: icu::collections::codepointtrie::TrieType::Small }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0B\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0@\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\r\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\r\0\0\0") }, 0u8) }] };
         }
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DataProvider<icu::segmenter::provider::SentenceBreakDataOverrideV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::segmenter::provider::SentenceBreakDataOverrideV1Marker>, icu_provider::DataError> {
                 let mut metadata = icu_provider::DataResponseMetadata::default();
@@ -44,7 +44,7 @@ macro_rules! __impl_sentence_break_data_override_v1_marker {
     };
     ($ provider : ty , DRY) => {
         __impl_sentence_break_data_override_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::segmenter::provider::SentenceBreakDataOverrideV1Marker> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 icu_provider::DataProvider::<icu::segmenter::provider::SentenceBreakDataOverrideV1Marker>::load(self, req).map(|r| r.metadata)
@@ -53,7 +53,7 @@ macro_rules! __impl_sentence_break_data_override_v1_marker {
     };
     ($ provider : ty , ITER) => {
         __impl_sentence_break_data_override_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::IterableDataProvider<icu::segmenter::provider::SentenceBreakDataOverrideV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_SENTENCE_BREAK_DATA_OVERRIDE_V1_MARKER).collect())
@@ -62,13 +62,13 @@ macro_rules! __impl_sentence_break_data_override_v1_marker {
     };
     ($ provider : ty , DRY , ITER) => {
         __impl_sentence_break_data_override_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::segmenter::provider::SentenceBreakDataOverrideV1Marker> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 icu_provider::DataProvider::<icu::segmenter::provider::SentenceBreakDataOverrideV1Marker>::load(self, req).map(|r| r.metadata)
             }
         }
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::IterableDataProvider<icu::segmenter::provider::SentenceBreakDataOverrideV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_SENTENCE_BREAK_DATA_OVERRIDE_V1_MARKER).collect())
