@@ -162,10 +162,10 @@ type Env = LiteMap<String, InternalTransliterator>;
 /// use icu::experimental::transliterate::{Transliterator, CustomTransliterator, RuleCollection};
 /// use icu::locale::Locale;
 ///
-/// // Set up a transliterator with 3 custom rules:
+/// // Set up a transliterator with 3 custom rules.
+/// // Note: These rules are for demonstration purposes only! Do not use.
 ///
 /// // 1. Main entrypoint: a chain of several transliterators
-/// // Note: These rules are for demonstration purposes only! Do not use.
 /// let mut collection = RuleCollection::default();
 /// collection.register_source(
 ///     &"und-t-und-x0-custom".parse().unwrap(),
@@ -217,6 +217,9 @@ type Env = LiteMap<String, InternalTransliterator>;
 /// .unwrap();
 ///
 /// // Test the behavior:
+/// // - The uppercase 'Ü' is stripped of its umlaut
+/// // - The lowercase 'ä' is expanded to "ae"
+/// // - All ASCII characters are uppercased: not 'ß', which is not ASCII
 /// let r = t.transliterate("Übermäßig".to_string());
 /// assert_eq!(r, "UBERMAEßIG");
 /// ```
