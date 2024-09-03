@@ -84,7 +84,6 @@
 
 use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
-    neo_pattern::DateTimePattern,
     neo_skeleton::FractionalSecondDigits,
     pattern::{
         runtime::{Pattern, PatternPlurals},
@@ -95,6 +94,8 @@ use crate::{
 use super::preferences;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
+#[cfg(feature = "experimental")]
+use crate::neo_pattern::DateTimePattern;
 
 /// See the [module-level](./index.html) docs for more information.
 ///
@@ -640,6 +641,7 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
     }
 }
 
+#[cfg(feature = "experimental")]
 impl From<&DateTimePattern> for Bag {
     fn from(value: &DateTimePattern) -> Self {
         Self::from(value.as_borrowed().0)
