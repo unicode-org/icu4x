@@ -85,3 +85,12 @@ pub mod _internal {
     pub use crate::byte_phf::f2;
     pub use crate::byte_phf::PerfectByteHashMap;
 }
+
+#[test]
+fn foo() {
+    ZeroAsciiIgnoreCaseTrie::try_from(&std::collections::BTreeMap::from_iter([
+        ("Mexico".to_string().into_bytes(), 1),
+        ("MET".to_string().into_bytes(), 2),
+    ]))
+    .unwrap();
+}
