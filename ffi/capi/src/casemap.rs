@@ -11,6 +11,7 @@ pub mod ffi {
     use alloc::boxed::Box;
 
     use crate::{errors::ffi::DataError, locale_core::ffi::Locale, provider::ffi::DataProvider};
+    use diplomat_runtime::DiplomatOption;
 
     use writeable::Writeable;
 
@@ -32,8 +33,8 @@ pub mod ffi {
     #[diplomat::rust_link(icu::casemap::titlecase::TitlecaseOptions, Struct)]
     #[diplomat::attr(supports = non_exhaustive_structs, rename = "TitlecaseOptions")]
     pub struct TitlecaseOptionsV1 {
-        pub leading_adjustment: LeadingAdjustment,
-        pub trailing_case: TrailingCase,
+        pub leading_adjustment: DiplomatOption<LeadingAdjustment>,
+        pub trailing_case: DiplomatOption<TrailingCase>,
     }
 
     impl TitlecaseOptionsV1 {
@@ -42,8 +43,8 @@ pub mod ffi {
         #[diplomat::attr(any(cpp, js), rename = "default_options")]
         pub fn default() -> TitlecaseOptionsV1 {
             Self {
-                leading_adjustment: LeadingAdjustment::Auto,
-                trailing_case: TrailingCase::Lower,
+                leading_adjustment: None.into(),
+                trailing_case: None.into(),
             }
         }
     }
@@ -300,8 +301,12 @@ impl From<ffi::TitlecaseOptionsV1> for TitlecaseOptions {
     fn from(other: ffi::TitlecaseOptionsV1) -> Self {
         let mut ret = Self::default();
 
-        ret.leading_adjustment = other.leading_adjustment.into();
-        ret.trailing_case = other.trailing_case.into();
+        if let Some(l) = other.leading_adjustment.into_converted_option() {
+            ret.leading_adjustment = l;
+        }
+        if let Some(t) = other.trailing_case.into_converted_option() {
+            ret.trailing_case = t;
+        }
         ret
     }
 }
