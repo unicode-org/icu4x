@@ -883,8 +883,7 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
         }
 
         // The state prior to a sequence of CM and ZWJ affected by rule LB9.
-        // Also, this is used by LB15a. It have to fetch the one before last property.
-        let mut override_left: Option<u8> = None;
+        let mut lb9_left: Option<u8> = None;
         // Whether LB9 was applied to a ZWJ, so that breaks at the current
         // position must be suppressed.
         let mut lb8a_after_lb9 = false;
@@ -893,15 +892,14 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
             debug_assert!(!self.is_eof());
             let left_codepoint = self.get_current_codepoint()?;
             let mut left_prop =
-                override_left.unwrap_or_else(|| self.get_linebreak_property(left_codepoint));
-            let after_zwj = lb8a_after_lb9 || (override_left.is_none() && left_prop == ZWJ);
+                lb9_left.unwrap_or_else(|| self.get_linebreak_property(left_codepoint));
+            let after_zwj = lb8a_after_lb9 || (lb9_left.is_none() && left_prop == ZWJ);
             self.advance_iter();
 
             let Some(right_codepoint) = self.get_current_codepoint() else {
                 return Some(self.len);
             };
-            let mut right_prop = self.get_linebreak_property(right_codepoint);
-
+            let right_prop = self.get_linebreak_property(right_codepoint);
             // NOTE(egg): The special-casing of `LineBreakStrictness::Anywhere` allows us to pass
             // a test, but eventually that option should just be simplified to call the extended
             // grapheme cluster segmenter.
@@ -914,24 +912,24 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                 && left_prop != SP
                 && left_prop != ZW
             {
-                override_left = Some(left_prop);
+                lb9_left = Some(left_prop);
                 lb8a_after_lb9 = right_prop == ZWJ;
                 continue;
             } else {
-                override_left = None;
+                lb9_left = None;
                 lb8a_after_lb9 = false;
             }
 
             // CSS word-break property handling
             match (self.options.word_option, left_prop, right_prop) {
-                (LineBreakWordOption::BreakAll, AL | AL_DOTTED_CIRCLE | NU | SA, _) => {
+                (LineBreakWordOption::BreakAll, AL | NU | SA, _) => {
                     left_prop = ID;
                 }
                 //  typographic letter units shouldn't be break
                 (
                     LineBreakWordOption::KeepAll,
-                    AI | AL | AL_DOTTED_CIRCLE | ID | NU | HY | H2 | H3 | JL | JV | JT | CJ,
-                    AI | AL | AL_DOTTED_CIRCLE | ID | NU | HY | H2 | H3 | JL | JV | JT | CJ,
+                    AI | AL | ID | NU | HY | H2 | H3 | JL | JV | JT | CJ,
+                    AI | AL | ID | NU | HY | H2 | H3 | JL | JV | JT | CJ,
                 ) => {
                     continue;
                 }
@@ -979,25 +977,6 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                 // I may have to fetch text until non-SA character?.
             }
 
-            // LB15a has to read previous data before.
-            // If not matched, override as QU instead of QU and PI
-            if right_prop == QU_PI
-                && left_prop != BK
-                && left_prop != CR
-                && left_prop != LF
-                && left_prop != NL
-                && left_prop != OP_EA
-                && left_prop != OP_OP30
-                && left_prop != QU
-                && left_prop != QU_PF
-                && left_prop != GL
-                && left_prop != SP
-                && left_prop != ZW
-            {
-                right_prop = QU;
-                override_left = Some(QU);
-            }
-
             // If break_state is equals or grater than 0, it is alias of property.
             match self.data.get_break_state_from_table(left_prop, right_prop) {
                 BreakState::Break | BreakState::NoMatch => {
@@ -1009,8 +988,6 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                 }
                 BreakState::Keep => continue,
                 BreakState::Index(mut index) | BreakState::Intermediate(mut index) => {
-                    override_left = None;
-
                     let mut previous_iter = self.iter.clone();
                     let mut previous_pos_data = self.current_pos_data;
                     let previous_is_after_zwj = after_zwj;
@@ -1586,6 +1563,24 @@ mod tests {
         let mut iter_u16 = segmenter.segment_utf16(&input);
         assert_eq!(Some(0), iter_u16.next());
         assert_eq!(Some(7), iter_u16.next());
+        assert_eq!(Some(10), iter_u16.next());
+        assert_eq!(None, iter_u16.next());
+
+        // LB15
+        iter = segmenter.segment_str("abc\u{0022}  (def");
+        assert_eq!(Some(0), iter.next());
+        assert_eq!(Some(10), iter.next());
+        assert_eq!(None, iter.next());
+
+        let input: [u8; 10] = [0x61, 0x62, 0x63, 0x22, 0x20, 0x20, 0x28, 0x64, 0x65, 0x66];
+        let mut iter_u8 = segmenter.segment_latin1(&input);
+        assert_eq!(Some(0), iter_u8.next());
+        assert_eq!(Some(10), iter_u8.next());
+        assert_eq!(None, iter_u8.next());
+
+        let input: [u16; 10] = [0x61, 0x62, 0x63, 0x22, 0x20, 0x20, 0x28, 0x64, 0x65, 0x66];
+        let mut iter_u16 = segmenter.segment_utf16(&input);
+        assert_eq!(Some(0), iter_u16.next());
         assert_eq!(Some(10), iter_u16.next());
         assert_eq!(None, iter_u16.next());
 

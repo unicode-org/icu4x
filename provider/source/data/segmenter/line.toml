@@ -208,6 +208,313 @@ name = "QU_SP_LB15A"
 left = "QU_PI"
 right = "SP"
 
+# TODO comment
+[[tables]]
+# LB15a
+name = "QU"
+left = "AI"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "AK"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "AL"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "AL_DOTTED_CIRCLE"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "AP"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "AS"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "B2"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "BA"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "BB"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "CB"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "CJ"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "CL"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "CM"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "CP"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "EB"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "EM"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "EX"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "H2"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "H3"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "HL"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "HY"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "ID"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "ID_CN"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "IN"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "IS"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "JL"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "JT"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "JV"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "NS"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "NU"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "PO"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "PO_EAW"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "PR"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "PR_EAW"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "RI"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "SA"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "SY"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "VF"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "VI"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "WJ"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "XX"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "ZWJ"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "HL_HY"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "QU_PF"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "QU_PI"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "AK_VI"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "AK_AK"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "AL_DOTTED_CIRCLE_LB28A"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "AK_AK"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "RI_RI"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU_SP_LB15A"
+left = "QU_PI"
+right = "SP"
+
 [[tables]]
 # LB15a
 name = "QU_SP_LB15A"
