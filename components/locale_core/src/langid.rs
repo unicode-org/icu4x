@@ -28,8 +28,8 @@ use writeable::Writeable;
 ///
 /// Any syntactically invalid subtags will cause the parsing to fail with an error.
 ///
-/// This operation normalizes syntax only. No legacy subtag replacements is performed.
-/// For data validation and subtag canonicalization, see `LocaleCanonicalizer`.
+/// This operation normalizes syntax to be well-formed. No legacy subtag replacements is performed.
+/// For validation and canonicalization, see LocaleCanonicalizer.
 ///
 /// # Ordering
 ///
