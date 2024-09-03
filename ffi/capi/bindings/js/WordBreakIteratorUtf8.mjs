@@ -55,7 +55,7 @@ export class WordBreakIteratorUtf8 {
         const result = wasm.icu4x_WordBreakIteratorUtf8_word_type_mv1(this.ffiValue);
     
         try {
-            return SegmenterWordType[Array.from(SegmenterWordType.values.keys())[result]];
+            return new SegmenterWordType(diplomatRuntime.internalConstructor, result);
         }
         
         finally {}

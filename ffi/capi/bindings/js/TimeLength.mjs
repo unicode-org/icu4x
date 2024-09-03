@@ -8,7 +8,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 export class TimeLength {
     #value = undefined;
 
-    static values = new Map([
+    static #values = new Map([
         ["Full", 0],
         ["Long", 1],
         ["Medium", 2],
@@ -16,29 +16,46 @@ export class TimeLength {
     ]);
 
     constructor(value) {
-        if (value instanceof TimeLength) {
-            this.#value = value.value;
-            return;
+        if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
+            // We pass in two internalConstructor arguments to create *new*
+            // instances of this type, otherwise the enums are treated as singletons.
+            if (arguments[1] === diplomatRuntime.internalConstructor ) {
+                this.#value = arguments[2];
+                return;
+            }
+            return TimeLength.#objectValues[arguments[1]];
         }
 
-        if (TimeLength.values.has(value)) {
-            this.#value = value;
-            return;
+        if (value instanceof TimeLength) {
+            return value;
+        }
+
+        let intVal = TimeLength.#values.get(value);
+
+        // Nullish check, checks for null or undefined
+        if (intVal == null) {
+            return TimeLength.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a TimeLength and does not correspond to any of its enumerator values.");
     }
 
     get value() {
-        return this.#value;
+        return [...TimeLength.#values.keys()][this.#value];
     }
 
     get ffiValue() {
-        return TimeLength.values.get(this.#value);
+        return this.#value;
     }
+    static #objectValues = [
+        new TimeLength(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
+        new TimeLength(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
+        new TimeLength(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
+        new TimeLength(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 3),
+    ];
 
-    static Full = new TimeLength("Full");
-    static Long = new TimeLength("Long");
-    static Medium = new TimeLength("Medium");
-    static Short = new TimeLength("Short");
+    static Full = TimeLength.#objectValues[0];
+    static Long = TimeLength.#objectValues[1];
+    static Medium = TimeLength.#objectValues[2];
+    static Short = TimeLength.#objectValues[3];
 }

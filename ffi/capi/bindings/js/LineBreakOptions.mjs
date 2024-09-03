@@ -50,7 +50,18 @@ export class LineBreakOptions {
         functionCleanupArena,
         appendArrayMap
     ) {
-        return [this.#strictness.ffiValue, this.#wordOption.ffiValue, this.#jaZh]
+        return [this.#strictness.ffiValue, this.#wordOption.ffiValue, this.#jaZh, /* [3 x i8] padding */ 0, 0, 0 /* end padding */]
+    }
+
+    _writeToArrayBuffer(
+        arrayBuffer,
+        offset,
+        functionCleanupArena,
+        appendArrayMap
+    ) {
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, this.#strictness.ffiValue, Int32Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 4, this.#wordOption.ffiValue, Int32Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 8, this.#jaZh, Uint8Array);
     }
 
     // This struct contains borrowed fields, so this takes in a list of
@@ -60,9 +71,9 @@ export class LineBreakOptions {
     // should handle this when constructing edge arrays.
     #fromFFI(ptr) {
         const strictnessDeref = diplomatRuntime.enumDiscriminant(wasm, ptr);
-        this.#strictness = LineBreakStrictness[Array.from(LineBreakStrictness.values.keys())[strictnessDeref]];
+        this.#strictness = new LineBreakStrictness(diplomatRuntime.internalConstructor, strictnessDeref);
         const wordOptionDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 4);
-        this.#wordOption = LineBreakWordOption[Array.from(LineBreakWordOption.values.keys())[wordOptionDeref]];
+        this.#wordOption = new LineBreakWordOption(diplomatRuntime.internalConstructor, wordOptionDeref);
         const jaZhDeref = (new Uint8Array(wasm.memory.buffer, ptr + 8, 1))[0] === 1;
         this.#jaZh = jaZhDeref;
     }

@@ -8,35 +8,51 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 export class CollatorAlternateHandling {
     #value = undefined;
 
-    static values = new Map([
+    static #values = new Map([
         ["Auto", 0],
         ["NonIgnorable", 1],
         ["Shifted", 2]
     ]);
 
     constructor(value) {
-        if (value instanceof CollatorAlternateHandling) {
-            this.#value = value.value;
-            return;
+        if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
+            // We pass in two internalConstructor arguments to create *new*
+            // instances of this type, otherwise the enums are treated as singletons.
+            if (arguments[1] === diplomatRuntime.internalConstructor ) {
+                this.#value = arguments[2];
+                return;
+            }
+            return CollatorAlternateHandling.#objectValues[arguments[1]];
         }
 
-        if (CollatorAlternateHandling.values.has(value)) {
-            this.#value = value;
-            return;
+        if (value instanceof CollatorAlternateHandling) {
+            return value;
+        }
+
+        let intVal = CollatorAlternateHandling.#values.get(value);
+
+        // Nullish check, checks for null or undefined
+        if (intVal == null) {
+            return CollatorAlternateHandling.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a CollatorAlternateHandling and does not correspond to any of its enumerator values.");
     }
 
     get value() {
-        return this.#value;
+        return [...CollatorAlternateHandling.#values.keys()][this.#value];
     }
 
     get ffiValue() {
-        return CollatorAlternateHandling.values.get(this.#value);
+        return this.#value;
     }
+    static #objectValues = [
+        new CollatorAlternateHandling(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
+        new CollatorAlternateHandling(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
+        new CollatorAlternateHandling(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
+    ];
 
-    static Auto = new CollatorAlternateHandling("Auto");
-    static NonIgnorable = new CollatorAlternateHandling("NonIgnorable");
-    static Shifted = new CollatorAlternateHandling("Shifted");
+    static Auto = CollatorAlternateHandling.#objectValues[0];
+    static NonIgnorable = CollatorAlternateHandling.#objectValues[1];
+    static Shifted = CollatorAlternateHandling.#objectValues[2];
 }

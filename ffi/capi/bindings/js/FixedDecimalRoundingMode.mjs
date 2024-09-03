@@ -10,7 +10,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 export class FixedDecimalRoundingMode {
     #value = undefined;
 
-    static values = new Map([
+    static #values = new Map([
         ["Ceil", 0],
         ["Expand", 1],
         ["Floor", 2],
@@ -23,34 +23,56 @@ export class FixedDecimalRoundingMode {
     ]);
 
     constructor(value) {
-        if (value instanceof FixedDecimalRoundingMode) {
-            this.#value = value.value;
-            return;
+        if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
+            // We pass in two internalConstructor arguments to create *new*
+            // instances of this type, otherwise the enums are treated as singletons.
+            if (arguments[1] === diplomatRuntime.internalConstructor ) {
+                this.#value = arguments[2];
+                return;
+            }
+            return FixedDecimalRoundingMode.#objectValues[arguments[1]];
         }
 
-        if (FixedDecimalRoundingMode.values.has(value)) {
-            this.#value = value;
-            return;
+        if (value instanceof FixedDecimalRoundingMode) {
+            return value;
+        }
+
+        let intVal = FixedDecimalRoundingMode.#values.get(value);
+
+        // Nullish check, checks for null or undefined
+        if (intVal == null) {
+            return FixedDecimalRoundingMode.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a FixedDecimalRoundingMode and does not correspond to any of its enumerator values.");
     }
 
     get value() {
-        return this.#value;
+        return [...FixedDecimalRoundingMode.#values.keys()][this.#value];
     }
 
     get ffiValue() {
-        return FixedDecimalRoundingMode.values.get(this.#value);
+        return this.#value;
     }
+    static #objectValues = [
+        new FixedDecimalRoundingMode(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
+        new FixedDecimalRoundingMode(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
+        new FixedDecimalRoundingMode(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
+        new FixedDecimalRoundingMode(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 3),
+        new FixedDecimalRoundingMode(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 4),
+        new FixedDecimalRoundingMode(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 5),
+        new FixedDecimalRoundingMode(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 6),
+        new FixedDecimalRoundingMode(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 7),
+        new FixedDecimalRoundingMode(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 8),
+    ];
 
-    static Ceil = new FixedDecimalRoundingMode("Ceil");
-    static Expand = new FixedDecimalRoundingMode("Expand");
-    static Floor = new FixedDecimalRoundingMode("Floor");
-    static Trunc = new FixedDecimalRoundingMode("Trunc");
-    static HalfCeil = new FixedDecimalRoundingMode("HalfCeil");
-    static HalfExpand = new FixedDecimalRoundingMode("HalfExpand");
-    static HalfFloor = new FixedDecimalRoundingMode("HalfFloor");
-    static HalfTrunc = new FixedDecimalRoundingMode("HalfTrunc");
-    static HalfEven = new FixedDecimalRoundingMode("HalfEven");
+    static Ceil = FixedDecimalRoundingMode.#objectValues[0];
+    static Expand = FixedDecimalRoundingMode.#objectValues[1];
+    static Floor = FixedDecimalRoundingMode.#objectValues[2];
+    static Trunc = FixedDecimalRoundingMode.#objectValues[3];
+    static HalfCeil = FixedDecimalRoundingMode.#objectValues[4];
+    static HalfExpand = FixedDecimalRoundingMode.#objectValues[5];
+    static HalfFloor = FixedDecimalRoundingMode.#objectValues[6];
+    static HalfTrunc = FixedDecimalRoundingMode.#objectValues[7];
+    static HalfEven = FixedDecimalRoundingMode.#objectValues[8];
 }

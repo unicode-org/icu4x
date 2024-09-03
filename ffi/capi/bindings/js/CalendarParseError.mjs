@@ -8,7 +8,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 export class CalendarParseError {
     #value = undefined;
 
-    static values = new Map([
+    static #values = new Map([
         ["Unknown", 0],
         ["InvalidSyntax", 1],
         ["OutOfRange", 2],
@@ -17,30 +17,48 @@ export class CalendarParseError {
     ]);
 
     constructor(value) {
-        if (value instanceof CalendarParseError) {
-            this.#value = value.value;
-            return;
+        if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
+            // We pass in two internalConstructor arguments to create *new*
+            // instances of this type, otherwise the enums are treated as singletons.
+            if (arguments[1] === diplomatRuntime.internalConstructor ) {
+                this.#value = arguments[2];
+                return;
+            }
+            return CalendarParseError.#objectValues[arguments[1]];
         }
 
-        if (CalendarParseError.values.has(value)) {
-            this.#value = value;
-            return;
+        if (value instanceof CalendarParseError) {
+            return value;
+        }
+
+        let intVal = CalendarParseError.#values.get(value);
+
+        // Nullish check, checks for null or undefined
+        if (intVal == null) {
+            return CalendarParseError.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a CalendarParseError and does not correspond to any of its enumerator values.");
     }
 
     get value() {
-        return this.#value;
+        return [...CalendarParseError.#values.keys()][this.#value];
     }
 
     get ffiValue() {
-        return CalendarParseError.values.get(this.#value);
+        return this.#value;
     }
+    static #objectValues = [
+        new CalendarParseError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
+        new CalendarParseError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
+        new CalendarParseError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
+        new CalendarParseError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 3),
+        new CalendarParseError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 4),
+    ];
 
-    static Unknown = new CalendarParseError("Unknown");
-    static InvalidSyntax = new CalendarParseError("InvalidSyntax");
-    static OutOfRange = new CalendarParseError("OutOfRange");
-    static MissingFields = new CalendarParseError("MissingFields");
-    static UnknownCalendar = new CalendarParseError("UnknownCalendar");
+    static Unknown = CalendarParseError.#objectValues[0];
+    static InvalidSyntax = CalendarParseError.#objectValues[1];
+    static OutOfRange = CalendarParseError.#objectValues[2];
+    static MissingFields = CalendarParseError.#objectValues[3];
+    static UnknownCalendar = CalendarParseError.#objectValues[4];
 }
