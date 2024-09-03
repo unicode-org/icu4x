@@ -5,11 +5,15 @@
     "1": "来月"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001か月前"
+    "strings": {
+      "specials": [],
+      "other": "\u0001か月前"
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u0001か月後"
+    "strings": {
+      "specials": [],
+      "other": "\u0001か月後"
+    }
   }
 }

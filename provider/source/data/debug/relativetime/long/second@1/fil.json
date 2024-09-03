@@ -3,11 +3,15 @@
     "0": "ngayon"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 segundo ang nakalipas"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 segundo ang nakalipas"
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u0004sa  segundo"
+    "strings": {
+      "specials": [],
+      "other": "\u0004sa  segundo"
+    }
   }
 }

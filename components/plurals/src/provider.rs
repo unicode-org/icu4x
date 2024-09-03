@@ -319,3 +319,167 @@ mod ranges {
         pub ranges: ZeroMap<'data, UnvalidatedPluralRange, RawPluralCategory>,
     }
 }
+
+#[cfg(any(doc, feature = "datagen"))]
+use crate::PluralElements;
+use crate::{PluralCategory, PluralOperands, PluralRules};
+use alloc::borrow::Cow;
+use zerovec::ule::AsULE;
+use zerovec::VarZeroVec;
+
+#[derive(Debug, Clone, Copy)]
+#[zerovec::make_ule(PluralCategoryV1ULE)]
+#[repr(u8)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+/// Keys for the different fields of [`PluralElements`].
+pub enum PluralElementsKeysV1 {
+    /// Key for [`PluralElements::zero`]
+    Zero = 0,
+    /// Key for [`PluralElements::one`]
+    One = 1,
+    /// Key for [`PluralElements::two`]
+    Two = 2,
+    /// Key for [`PluralElements::few`]
+    Few = 3,
+    /// Key for [`PluralElements::many`]
+    Many = 4,
+    /// Key for [`PluralElements::explicit_zero`]
+    ExplicitZero = 5,
+    /// Key for [`PluralElements::explicit_one`]
+    ExplicitOne = 6,
+}
+
+#[derive(Debug)]
+#[zerovec::make_varule(PluralElementsFieldV1ULE)]
+#[zerovec::skip_derive(Ord)]
+#[zerovec::derive(Debug)]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde::Deserialize),
+    zerovec::derive(Deserialize)
+)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize),
+    zerovec::derive(Serialize)
+)]
+/// A tuple of [`PluralElementsKeysV1`] and [`str`].
+// TODO: Make the str generic
+pub struct PluralElementsFieldV1<'data>(pub PluralElementsKeysV1, pub Cow<'data, str>);
+
+// TODO: Make the str generic
+#[derive(Debug, Clone, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_plurals::provider))]
+#[yoke(prove_covariance_manually)]
+/// A data-struct-optimized representation of [`PluralElements`].
+pub struct PluralElementsV1<'data> {
+    /// Optional entries for categories other than PluralCategory::Other
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub specials: VarZeroVec<'data, PluralElementsFieldV1ULE>,
+    /// The entry for PluralCategory::Other
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub other: Cow<'data, str>,
+}
+
+impl<'a> PluralElementsV1<'a> {
+    /// Returns the string for the given [`PluralOperands`] and [`PluralRules`].
+    pub fn get(&'a self, op: PluralOperands, rules: &PluralRules) -> &'a str {
+        let category = rules.category_for(op);
+
+        if op.is_exactly_zero() {
+            if let Some(value) = self
+                .specials
+                .iter()
+                .filter_map(|ule| {
+                    (ule.0 == PluralElementsKeysV1::ExplicitZero.to_unaligned()).then_some(&ule.1)
+                })
+                .next()
+            {
+                return value;
+            }
+        }
+
+        if op.is_exactly_one() {
+            if let Some(value) = self
+                .specials
+                .iter()
+                .filter_map(|ule| {
+                    (ule.0 == PluralElementsKeysV1::ExplicitZero.to_unaligned()).then_some(&ule.1)
+                })
+                .next()
+            {
+                return value;
+            }
+        }
+
+        let category = match category {
+            PluralCategory::Zero => PluralElementsKeysV1::Zero,
+            PluralCategory::One => PluralElementsKeysV1::One,
+            PluralCategory::Two => PluralElementsKeysV1::Two,
+            PluralCategory::Few => PluralElementsKeysV1::Few,
+            PluralCategory::Many => PluralElementsKeysV1::Many,
+            PluralCategory::Other => return &self.other,
+        }
+        .to_unaligned();
+        self.specials
+            .iter()
+            .filter_map(|ule| (ule.0 == category).then_some(&ule.1))
+            .next()
+            .unwrap_or(&*self.other)
+    }
+}
+
+#[cfg(feature = "datagen")]
+impl<'a, 'b> From<PluralElements<'b, str>> for PluralElementsV1<'a> {
+    fn from(value: PluralElements<'b, str>) -> Self {
+        use alloc::borrow::ToOwned;
+        use alloc::vec::Vec;
+
+        Self {
+            specials: (&[
+                value
+                    .zero
+                    .filter(|p| *p != value.other)
+                    .map(|s| PluralElementsFieldV1(PluralElementsKeysV1::Zero, s.into())),
+                value
+                    .one
+                    .filter(|p| *p != value.other)
+                    .map(|s| PluralElementsFieldV1(PluralElementsKeysV1::One, s.into())),
+                value
+                    .two
+                    .filter(|p| *p != value.other)
+                    .map(|s| PluralElementsFieldV1(PluralElementsKeysV1::Two, s.into())),
+                value
+                    .few
+                    .filter(|p| *p != value.other)
+                    .map(|s| PluralElementsFieldV1(PluralElementsKeysV1::Few, s.into())),
+                value
+                    .many
+                    .filter(|p| *p != value.other)
+                    .map(|s| PluralElementsFieldV1(PluralElementsKeysV1::Many, s.into())),
+                value
+                    .explicit_zero
+                    .filter(|p| *p != value.other)
+                    .map(|s| PluralElementsFieldV1(PluralElementsKeysV1::ExplicitZero, s.into())),
+                value
+                    .explicit_one
+                    .filter(|p| *p != value.other)
+                    .map(|s| PluralElementsFieldV1(PluralElementsKeysV1::ExplicitOne, s.into())),
+            ]
+            .into_iter()
+            .flatten()
+            .collect::<Vec<_>>())
+                .into(),
+            other: value.other.to_owned().into(),
+        }
+    }
+}
+
+#[test]
+fn plural_elements_niche() {
+    assert_eq!(core::mem::size_of::<PluralElementsV1>(), 48);
+    assert_eq!(core::mem::size_of::<Option<PluralElementsV1>>(), 48);
+}

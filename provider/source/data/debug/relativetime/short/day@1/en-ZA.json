@@ -5,21 +5,25 @@
     "1": "tomorrow"
   },
   "past": {
-    "specials": [
-      [
-        "One",
-        "\u0001 day ago"
-      ]
-    ],
-    "other": "\u0001 days ago"
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0001 day ago"
+        ]
+      ],
+      "other": "\u0001 days ago"
+    }
   },
   "future": {
-    "specials": [
-      [
-        "One",
-        "\u0004in  day"
-      ]
-    ],
-    "other": "\u0004in  days"
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0004in  day"
+        ]
+      ],
+      "other": "\u0004in  days"
+    }
   }
 }

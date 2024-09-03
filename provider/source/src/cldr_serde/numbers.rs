@@ -120,6 +120,12 @@ pub(crate) struct CurrencyFormattingPatterns {
     #[serde(rename = "standard-alphaNextToNumber")]
     pub(crate) standard_alpha_next_to_number: Option<String>,
 
+    #[serde(rename = "unitPattern-count-0")]
+    pub(crate) pattern_explicit_zero: Option<String>,
+
+    #[serde(rename = "unitPattern-count-1")]
+    pub(crate) pattern_explicit_one: Option<String>,
+
     #[serde(rename = "unitPattern-count-zero")]
     pub(crate) pattern_zero: Option<String>,
 

@@ -3,11 +3,15 @@
     "0": "bu dakika"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 dk. önce"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 dk. önce"
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u0001 dk. sonra"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 dk. sonra"
+    }
   }
 }

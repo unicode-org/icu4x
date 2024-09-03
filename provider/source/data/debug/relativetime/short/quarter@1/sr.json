@@ -5,11 +5,15 @@
     "1": "следећег квартала"
   },
   "past": {
-    "specials": [],
-    "other": "\bпре  кв."
+    "strings": {
+      "specials": [],
+      "other": "\bпре  кв."
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u0006за  кв."
+    "strings": {
+      "specials": [],
+      "other": "\u0006за  кв."
+    }
   }
 }

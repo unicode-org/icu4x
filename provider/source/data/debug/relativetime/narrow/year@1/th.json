@@ -5,11 +5,15 @@
     "1": "ปีหน้า"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 ปีที่แล้ว"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 ปีที่แล้ว"
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\bใน  ปี"
+    "strings": {
+      "specials": [],
+      "other": "\bใน  ปี"
+    }
   }
 }

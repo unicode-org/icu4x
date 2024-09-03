@@ -3,11 +3,15 @@
     "0": "сада"
   },
   "past": {
-    "specials": [],
-    "other": "\bпре  сек."
+    "strings": {
+      "specials": [],
+      "other": "\bпре  сек."
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u0006за  сек."
+    "strings": {
+      "specials": [],
+      "other": "\u0006за  сек."
+    }
   }
 }
