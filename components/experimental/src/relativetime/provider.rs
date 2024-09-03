@@ -123,6 +123,7 @@ impl<'data, B: PatternBackend<Store = str>> PluralPatterns<'data, B> {
     }
 }
 
+#[cfg(feature = "datagen")]
 impl<'data, B: PatternBackend<Store = str>> TryFrom<PluralElements<'data, str>>
     for PluralPatterns<'static, B>
 where

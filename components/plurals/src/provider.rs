@@ -435,9 +435,6 @@ impl<'a> PluralElementsV1<'a> {
 #[cfg(feature = "datagen")]
 impl<'a, 'b> From<PluralElements<'b, str>> for PluralElementsV1<'a> {
     fn from(value: PluralElements<'b, str>) -> Self {
-        use alloc::borrow::ToOwned;
-        use alloc::vec::Vec;
-
         Self {
             specials: (&[
                 value
