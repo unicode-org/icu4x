@@ -1,6 +1,11 @@
 {
   "patterns": {
-    "One": "{0} mètre",
-    "Other": "{0} mètres"
+    "specials": [
+      [
+        "One",
+        "\u0001 mètre"
+      ]
+    ],
+    "other": "\u0001 mètres"
   }
 }

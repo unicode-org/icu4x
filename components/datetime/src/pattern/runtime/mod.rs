@@ -9,6 +9,8 @@
 //! all runtime performance optimizations `ICU4X` needs.
 //!
 //! For all spec compliant behaviors see `reference::Pattern` equivalent.
+
+mod display;
 mod generic;
 pub(crate) mod helpers;
 mod pattern;

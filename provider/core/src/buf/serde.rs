@@ -58,19 +58,19 @@ fn deserialize_impl<'data, M>(
     // Allow `bytes` to be unused in case all buffer formats are disabled
     #[allow(unused_variables)] bytes: &'data [u8],
     buffer_format: BufferFormat,
-) -> Result<<M::Yokeable as Yokeable<'data>>::Output, DataError>
+) -> Result<<M::DataStruct as Yokeable<'data>>::Output, DataError>
 where
     M: DynamicDataMarker,
     // Actual bound:
-    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Deserialize<'de>,
+    //     for<'de> <M::DataStruct as Yokeable<'de>>::Output: Deserialize<'de>,
     // Necessary workaround bound (see `yoke::trait_hack` docs):
-    for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: Deserialize<'de>,
+    for<'de> YokeTraitHack<<M::DataStruct as Yokeable<'de>>::Output>: Deserialize<'de>,
 {
     match buffer_format {
         #[cfg(feature = "deserialize_json")]
         BufferFormat::Json => {
             let mut d = serde_json::Deserializer::from_slice(bytes);
-            let data = YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)?;
+            let data = YokeTraitHack::<<M::DataStruct as Yokeable>::Output>::deserialize(&mut d)?;
             Ok(data.0)
         }
 
@@ -81,14 +81,14 @@ where
                 .with_fixint_encoding()
                 .allow_trailing_bytes();
             let mut d = bincode::de::Deserializer::from_slice(bytes, options);
-            let data = YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)?;
+            let data = YokeTraitHack::<<M::DataStruct as Yokeable>::Output>::deserialize(&mut d)?;
             Ok(data.0)
         }
 
         #[cfg(feature = "deserialize_postcard_1")]
         BufferFormat::Postcard1 => {
             let mut d = postcard::Deserializer::from_bytes(bytes);
-            let data = YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)?;
+            let data = YokeTraitHack::<<M::DataStruct as Yokeable>::Output>::deserialize(&mut d)?;
             Ok(data.0)
         }
 
@@ -140,9 +140,9 @@ impl DataPayload<BufferMarker> {
     where
         M: DynamicDataMarker,
         // Actual bound:
-        //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Deserialize<'de>,
+        //     for<'de> <M::DataStruct as Yokeable<'de>>::Output: Deserialize<'de>,
         // Necessary workaround bound (see `yoke::trait_hack` docs):
-        for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: Deserialize<'de>,
+        for<'de> YokeTraitHack<<M::DataStruct as Yokeable<'de>>::Output>: Deserialize<'de>,
     {
         self.try_map_project(|bytes, _| deserialize_impl::<M>(bytes, buffer_format))
     }
@@ -153,9 +153,9 @@ where
     M: DynamicDataMarker,
     P: DynamicDataProvider<BufferMarker> + ?Sized,
     // Actual bound:
-    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
+    //     for<'de> <M::DataStruct as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
     // Necessary workaround bound (see `yoke::trait_hack` docs):
-    for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: Deserialize<'de>,
+    for<'de> YokeTraitHack<<M::DataStruct as Yokeable<'de>>::Output>: Deserialize<'de>,
 {
     /// Converts a buffer into a concrete type by deserializing from a supported buffer format.
     ///
@@ -191,9 +191,9 @@ where
     M: DynamicDataMarker,
     P: DynamicDryDataProvider<BufferMarker> + ?Sized,
     // Actual bound:
-    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
+    //     for<'de> <M::DataStruct as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
     // Necessary workaround bound (see `yoke::trait_hack` docs):
-    for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: Deserialize<'de>,
+    for<'de> YokeTraitHack<<M::DataStruct as Yokeable<'de>>::Output>: Deserialize<'de>,
 {
     fn dry_load_data(
         &self,
@@ -209,9 +209,9 @@ where
     M: DataMarker,
     P: DynamicDataProvider<BufferMarker> + ?Sized,
     // Actual bound:
-    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Deserialize<'de>,
+    //     for<'de> <M::DataStruct as Yokeable<'de>>::Output: Deserialize<'de>,
     // Necessary workaround bound (see `yoke::trait_hack` docs):
-    for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: Deserialize<'de>,
+    for<'de> YokeTraitHack<<M::DataStruct as Yokeable<'de>>::Output>: Deserialize<'de>,
 {
     /// Converts a buffer into a concrete type by deserializing from a supported buffer format.
     ///
@@ -231,9 +231,9 @@ where
     M: DataMarker,
     P: DynamicDryDataProvider<BufferMarker> + ?Sized,
     // Actual bound:
-    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Deserialize<'de>,
+    //     for<'de> <M::DataStruct as Yokeable<'de>>::Output: Deserialize<'de>,
     // Necessary workaround bound (see `yoke::trait_hack` docs):
-    for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: Deserialize<'de>,
+    for<'de> YokeTraitHack<<M::DataStruct as Yokeable<'de>>::Output>: Deserialize<'de>,
 {
     fn dry_load(&self, req: DataRequest) -> Result<DataResponseMetadata, DataError> {
         self.0.dry_load_data(M::INFO, req)

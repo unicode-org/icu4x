@@ -109,16 +109,22 @@ impl DataExporter for FilesystemExporter {
         if !id.marker_attributes.is_empty() {
             path_buf.push(id.marker_attributes.as_str());
         }
-        let mut path_buf = path_buf.into_os_string();
-        write!(&mut path_buf, "/{}", id.locale).expect("infallible");
-        let mut path_buf = PathBuf::from(path_buf);
-        path_buf.set_extension(self.manifest.file_extension);
 
         #[allow(clippy::unwrap_used)] // has parent by construction
         let parent_dir = path_buf.parent().unwrap();
 
         fs::create_dir_all(parent_dir)
             .map_err(|e| DataError::from(e).with_path_context(parent_dir))?;
+
+        if !marker.is_singleton {
+            fs::create_dir_all(&path_buf)
+                .map_err(|e| DataError::from(e).with_path_context(&path_buf))?;
+            let mut string_path = path_buf.into_os_string();
+            write!(&mut string_path, "/{}", id.locale).expect("infallible");
+            path_buf = PathBuf::from(string_path);
+        }
+
+        path_buf.set_extension(self.manifest.file_extension);
 
         let mut file: Box<dyn std::io::Write> = if self.serializer.is_text_format() {
             Box::new(crlify::BufWriterWithLineEndingFix::new(
@@ -141,7 +147,7 @@ impl DataExporter for FilesystemExporter {
     fn flush(&self, marker: DataMarkerInfo) -> Result<(), DataError> {
         let mut path_buf = self.root.join(marker.path.as_str());
 
-        if !path_buf.exists() {
+        if !marker.is_singleton && !path_buf.exists() {
             fs::create_dir_all(&path_buf)
                 .map_err(|e| DataError::from(e).with_path_context(&path_buf))?;
             path_buf.push(".empty");

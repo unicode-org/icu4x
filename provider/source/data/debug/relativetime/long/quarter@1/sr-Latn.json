@@ -5,37 +5,16 @@
     "1": "sledećeg kvartala"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": "pre  kvartala",
-      "index": 4
-    },
-    "two": null,
-    "few": {
-      "pattern": "pre  kvartala",
-      "index": 4
-    },
-    "many": null,
-    "other": {
-      "pattern": "pre  kvartala",
-      "index": 4
-    }
+    "specials": [],
+    "other": "\u0005pre  kvartala"
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "za  kvartal",
-      "index": 3
-    },
-    "two": null,
-    "few": {
-      "pattern": "za  kvartala",
-      "index": 3
-    },
-    "many": null,
-    "other": {
-      "pattern": "za  kvartala",
-      "index": 3
-    }
+    "specials": [
+      [
+        "One",
+        "\u0004za  kvartal"
+      ]
+    ],
+    "other": "\u0004za  kvartala"
   }
 }

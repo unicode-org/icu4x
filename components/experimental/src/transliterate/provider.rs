@@ -32,7 +32,8 @@ use zerovec::*;
 #[icu_provider::data_struct(TransliteratorRulesV1Marker = "transliterator/rules@1")]
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_experimental::transliterate::provider))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::transliterate::provider))]
 pub struct RuleBasedTransliterator<'a> {
     /// Whether this transliterator is accessible directly through the constructor.
     /// Hidden transliterators are intended as dependencies for visible transliterators,
@@ -129,7 +130,8 @@ pub struct Rule<'a> {
 /// The special matchers and replacers used by this transliterator.
 #[derive(Debug, Clone, zerofrom::ZeroFrom, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_experimental::transliterate::provider))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::transliterate::provider))]
 pub struct VarTable<'a> {
     /// Variable definitions.
     #[cfg_attr(feature = "serde", serde(borrow))]

@@ -15,6 +15,7 @@ export class IsoWeekday {
         ["Saturday", 6],
         ["Sunday", 7]
     ]);
+
     constructor(value) {
         if (value instanceof IsoWeekday) {
             this.#value = value.value;
@@ -38,20 +39,10 @@ export class IsoWeekday {
     }
 
     static Monday = new IsoWeekday("Monday");
-
     static Tuesday = new IsoWeekday("Tuesday");
-
     static Wednesday = new IsoWeekday("Wednesday");
-
     static Thursday = new IsoWeekday("Thursday");
-
     static Friday = new IsoWeekday("Friday");
-
     static Saturday = new IsoWeekday("Saturday");
-
     static Sunday = new IsoWeekday("Sunday");
-
-
-    
-
 }

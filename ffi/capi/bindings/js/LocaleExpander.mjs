@@ -11,10 +11,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *See the [Rust documentation for `LocaleExpander`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html) for more information.
 */
-
 const LocaleExpander_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_LocaleExpander_destroy_mv1(ptr);
 });
+
 export class LocaleExpander {
     // Internal ptr reference:
     #ptr = null;
@@ -23,55 +23,58 @@ export class LocaleExpander {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("LocaleExpander is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        // Unconditionally register to destroy when this object is ready to garbage collect.
-        LocaleExpander_box_destroy_registry.register(this, this.#ptr);
+        
+        // Are we being borrowed? If not, we can register.
+        if (this.#selfEdge.length === 0) {
+            LocaleExpander_box_destroy_registry.register(this, this.#ptr);
+        }
     }
 
     get ffiValue() {
         return this.#ptr;
     }
 
-
     static create(provider) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_LocaleExpander_create_mv1(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_LocaleExpander_create_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)) return Error[i[0]]; } return null;})();
-                throw new Error('Error: ' + cause.value, { cause });
+            if (!diplomatReceive.resultFlag) {
+                const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)) return Error[i[0]]; } return null;})();
+                throw new globalThis.Error('Error: ' + cause.value, { cause });
             }
-            return new LocaleExpander(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new LocaleExpander(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
     static createExtended(provider) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_LocaleExpander_create_extended_mv1(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_LocaleExpander_create_extended_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)) return Error[i[0]]; } return null;})();
-                throw new Error('Error: ' + cause.value, { cause });
+            if (!diplomatReceive.resultFlag) {
+                const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)) return Error[i[0]]; } return null;})();
+                throw new globalThis.Error('Error: ' + cause.value, { cause });
             }
-            return new LocaleExpander(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new LocaleExpander(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
@@ -79,35 +82,29 @@ export class LocaleExpander {
         const result = wasm.icu4x_LocaleExpander_maximize_mv1(this.ffiValue, locale.ffiValue);
     
         try {
-    
             return TransformResult[Array.from(TransformResult.values.keys())[result]];
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     minimize(locale) {
         const result = wasm.icu4x_LocaleExpander_minimize_mv1(this.ffiValue, locale.ffiValue);
     
         try {
-    
             return TransformResult[Array.from(TransformResult.values.keys())[result]];
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     minimizeFavorScript(locale) {
         const result = wasm.icu4x_LocaleExpander_minimize_favor_script_mv1(this.ffiValue, locale.ffiValue);
     
         try {
-    
             return TransformResult[Array.from(TransformResult.values.keys())[result]];
-        } finally {
-        
         }
+        
+        finally {}
     }
-
-    
-
 }

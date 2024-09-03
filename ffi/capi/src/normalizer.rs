@@ -18,6 +18,7 @@ pub mod ffi {
         /// Construct a new ComposingNormalizer instance for NFC
         #[diplomat::rust_link(icu::normalizer::ComposingNormalizer::new_nfc, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "nfc")]
+        #[diplomat::demo(default_constructor)]
         pub fn create_nfc(provider: &DataProvider) -> Result<Box<ComposingNormalizer>, DataError> {
             Ok(Box::new(ComposingNormalizer(call_constructor!(
                 icu_normalizer::ComposingNormalizer::new_nfc [r => Ok(r)],
@@ -43,8 +44,15 @@ pub mod ffi {
         ///
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
-        #[diplomat::rust_link(icu::normalizer::ComposingNormalizer::normalize_utf8, FnInStruct)]
-        #[diplomat::rust_link(icu::normalizer::ComposingNormalizer::normalize, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::normalizer::ComposingNormalizerBorrowed::normalize_utf8,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::normalizer::ComposingNormalizerBorrowed::normalize,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::rust_link(
             icu::normalizer::ComposingNormalizer::normalize_to,
             FnInStruct,
@@ -56,14 +64,17 @@ pub mod ffi {
             hidden
         )]
         pub fn normalize(&self, s: &DiplomatStr, write: &mut DiplomatWrite) {
-            let _infallible = self.0.normalize_utf8_to(s, write);
+            let _infallible = self.0.as_borrowed().normalize_utf8_to(s, write);
         }
 
         /// Check if a string is normalized
         ///
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
-        #[diplomat::rust_link(icu::normalizer::ComposingNormalizer::is_normalized_utf8, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::normalizer::ComposingNormalizerBorrowed::is_normalized_utf8,
+            FnInStruct
+        )]
         #[diplomat::rust_link(
             icu::normalizer::ComposingNormalizer::is_normalized,
             FnInStruct,
@@ -72,7 +83,7 @@ pub mod ffi {
         #[diplomat::attr(not(supports = utf8_strings), disable)]
         #[diplomat::attr(*, rename = "is_normalized")]
         pub fn is_normalized_utf8(&self, s: &DiplomatStr) -> bool {
-            self.0.is_normalized_utf8(s)
+            self.0.as_borrowed().is_normalized_utf8(s)
         }
 
         /// Check if a string is normalized
@@ -80,40 +91,40 @@ pub mod ffi {
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(
-            icu::normalizer::ComposingNormalizer::is_normalized_utf16,
+            icu::normalizer::ComposingNormalizerBorrowed::is_normalized_utf16,
             FnInStruct
         )]
         #[diplomat::attr(not(supports = utf8_strings), rename = "is_normalized")]
         #[diplomat::attr(supports = utf8_strings, rename = "is_normalized16")]
         pub fn is_normalized_utf16(&self, s: &DiplomatStr16) -> bool {
-            self.0.is_normalized_utf16(s)
+            self.0.as_borrowed().is_normalized_utf16(s)
         }
 
         /// Return the index a slice of potentially-invalid UTF-8 is normalized up to
         #[diplomat::rust_link(
-            icu::normalizer::ComposingNormalizer::is_normalized_utf8_up_to,
+            icu::normalizer::ComposingNormalizerBorrowed::is_normalized_utf8_up_to,
             FnInStruct
         )]
         #[diplomat::rust_link(
-            icu::normalizer::ComposingNormalizer::is_normalized_up_to,
+            icu::normalizer::ComposingNormalizerBorrowed::is_normalized_up_to,
             FnInStruct,
             hidden
         )]
         #[diplomat::attr(not(supports = utf8_strings), disable)]
         #[diplomat::attr(*, rename = "is_normalized_up_to")]
         pub fn is_normalized_utf8_up_to(&self, s: &DiplomatStr) -> usize {
-            self.0.is_normalized_utf8_up_to(s)
+            self.0.as_borrowed().is_normalized_utf8_up_to(s)
         }
 
         /// Return the index a slice of potentially-invalid UTF-8 is normalized up to
         #[diplomat::rust_link(
-            icu::normalizer::ComposingNormalizer::is_normalized_utf16_up_to,
+            icu::normalizer::ComposingNormalizerBorrowed::is_normalized_utf16_up_to,
             FnInStruct
         )]
         #[diplomat::attr(not(supports = utf8_strings), rename = "is_normalized_up_to")]
         #[diplomat::attr(supports = utf8_strings, rename = "is_normalized16_up_to")]
         pub fn is_normalized_utf16_up_to(&self, s: &DiplomatStr16) -> usize {
-            self.0.is_normalized_utf16_up_to(s)
+            self.0.as_borrowed().is_normalized_utf16_up_to(s)
         }
     }
 
@@ -125,6 +136,7 @@ pub mod ffi {
         /// Construct a new DecomposingNormalizer instance for NFC
         #[diplomat::rust_link(icu::normalizer::DecomposingNormalizer::new_nfd, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "nfd")]
+        #[diplomat::demo(default_constructor)]
         pub fn create_nfd(
             provider: &DataProvider,
         ) -> Result<Box<DecomposingNormalizer>, DataError> {
@@ -154,24 +166,27 @@ pub mod ffi {
         ///
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
-        #[diplomat::rust_link(icu::normalizer::DecomposingNormalizer::normalize_utf8, FnInStruct)]
         #[diplomat::rust_link(
-            icu::normalizer::DecomposingNormalizer::normalize,
+            icu::normalizer::DecomposingNormalizerBorrowed::normalize_utf8,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::normalizer::DecomposingNormalizerBorrowed::normalize,
             FnInStruct,
             hidden
         )]
         #[diplomat::rust_link(
-            icu::normalizer::DecomposingNormalizer::normalize_to,
+            icu::normalizer::DecomposingNormalizerBorrowed::normalize_to,
             FnInStruct,
             hidden
         )]
         #[diplomat::rust_link(
-            icu::normalizer::DecomposingNormalizer::normalize_utf8_to,
+            icu::normalizer::DecomposingNormalizerBorrowed::normalize_utf8_to,
             FnInStruct,
             hidden
         )]
         pub fn normalize(&self, s: &DiplomatStr, write: &mut DiplomatWrite) {
-            let _infallible = self.0.normalize_utf8_to(s, write);
+            let _infallible = self.0.as_borrowed().normalize_utf8_to(s, write);
         }
 
         /// Check if a string is normalized
@@ -179,16 +194,16 @@ pub mod ffi {
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(
-            icu::normalizer::DecomposingNormalizer::is_normalized_utf8,
+            icu::normalizer::DecomposingNormalizerBorrowed::is_normalized_utf8,
             FnInStruct
         )]
         #[diplomat::rust_link(
-            icu::normalizer::DecomposingNormalizer::is_normalized,
+            icu::normalizer::DecomposingNormalizerBorrowed::is_normalized,
             FnInStruct,
             hidden
         )]
         pub fn is_normalized(&self, s: &DiplomatStr) -> bool {
-            self.0.is_normalized_utf8(s)
+            self.0.as_borrowed().is_normalized_utf8(s)
         }
 
         /// Check if a string is normalized
@@ -196,34 +211,34 @@ pub mod ffi {
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(
-            icu::normalizer::DecomposingNormalizer::is_normalized_utf16,
+            icu::normalizer::DecomposingNormalizerBorrowed::is_normalized_utf16,
             FnInStruct
         )]
         pub fn is_normalized_utf16(&self, s: &DiplomatStr16) -> bool {
-            self.0.is_normalized_utf16(s)
+            self.0.as_borrowed().is_normalized_utf16(s)
         }
 
         /// Return the index a slice of potentially-invalid UTF-8 is normalized up to
         #[diplomat::rust_link(
-            icu::normalizer::DecomposingNormalizer::is_normalized_utf8_up_to,
+            icu::normalizer::DecomposingNormalizerBorrowed::is_normalized_utf8_up_to,
             FnInStruct
         )]
         #[diplomat::rust_link(
-            icu::normalizer::DecomposingNormalizer::is_normalized_up_to,
+            icu::normalizer::DecomposingNormalizerBorrowed::is_normalized_up_to,
             FnInStruct,
             hidden
         )]
         pub fn is_normalized_up_to(&self, s: &DiplomatStr) -> usize {
-            self.0.is_normalized_utf8_up_to(s)
+            self.0.as_borrowed().is_normalized_utf8_up_to(s)
         }
 
         /// Return the index a slice of potentially-invalid UTF-8 is normalized up to
         #[diplomat::rust_link(
-            icu::normalizer::DecomposingNormalizer::is_normalized_utf16_up_to,
+            icu::normalizer::DecomposingNormalizerBorrowed::is_normalized_utf16_up_to,
             FnInStruct
         )]
         pub fn is_normalized_utf16_up_to(&self, s: &DiplomatStr16) -> usize {
-            self.0.is_normalized_utf16_up_to(s)
+            self.0.as_borrowed().is_normalized_utf16_up_to(s)
         }
     }
 }

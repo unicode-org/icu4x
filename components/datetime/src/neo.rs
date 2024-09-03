@@ -19,6 +19,7 @@ use crate::neo_marker::{
 };
 use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::{NeoComponents, NeoSkeletonLength};
+use crate::options::preferences::HourCycle;
 use crate::provider::neo::*;
 use crate::raw::neo::*;
 use crate::CldrCalendar;
@@ -156,17 +157,38 @@ pub struct NeoOptions<R: DateTimeMarkers> {
     ///
     /// See [`NeoSkeletonLength`].
     pub length: R::LengthOption,
+    /// Whether fields should be aligned for a column-like layout,
+    /// if required for the chosen field set.
+    ///
+    /// See [`Alignment`](crate::neo_skeleton::Alignment).
+    pub alignment: R::AlignmentOption,
+    /// When to display the era field in the formatted string,
+    /// if required for the chosen field set.
+    ///
+    /// See [`EraDisplay`](crate::neo_skeleton::EraDisplay).
+    pub era_display: R::EraDisplayOption,
+    /// How many fractional seconds to display,
+    /// if seconds are included in the field set.
+    ///
+    /// See [`FractionalSecondDigits`](crate::neo_skeleton::FractionalSecondDigits).
+    pub fractional_second_digits: R::FractionalSecondDigitsOption,
 }
 
 impl<R> From<NeoSkeletonLength> for NeoOptions<R>
 where
     R: DateTimeMarkers,
     R::LengthOption: From<NeoSkeletonLength>,
+    R::AlignmentOption: Default,
+    R::EraDisplayOption: Default,
+    R::FractionalSecondDigitsOption: Default,
 {
     #[inline]
     fn from(value: NeoSkeletonLength) -> Self {
         NeoOptions {
             length: value.into(),
+            alignment: Default::default(),
+            era_display: Default::default(),
+            fractional_second_digits: Default::default(),
         }
     }
 }
@@ -177,11 +199,17 @@ impl<R> Default for NeoOptions<R>
 where
     R: DateTimeMarkers,
     R::LengthOption: Default,
+    R::AlignmentOption: Default,
+    R::EraDisplayOption: Default,
+    R::FractionalSecondDigitsOption: Default,
 {
     #[inline]
     fn default() -> Self {
         NeoOptions {
             length: Default::default(),
+            alignment: Default::default(),
+            era_display: Default::default(),
+            fractional_second_digits: Default::default(),
         }
     }
 }
@@ -351,13 +379,13 @@ where
     ///
     /// let fmt = TypedNeoFormatter::<Gregorian, _>::try_new_with_components(
     ///     &locale!("es-MX").into(),
-    ///     NeoDateComponents::EraYearMonth,
+    ///     NeoDateComponents::YearMonth,
     ///     NeoSkeletonLength::Medium.into(),
     /// )
     /// .unwrap();
     /// let dt = Date::try_new_gregorian_date(2024, 1, 10).unwrap();
     ///
-    /// assert_try_writeable_eq!(fmt.format(&dt), "ene 2024 d.C.");
+    /// assert_try_writeable_eq!(fmt.format(&dt), "ene 2024");
     /// ```
     ///
     /// Time components:
@@ -407,7 +435,7 @@ where
     /// let dt =
     ///     DateTime::try_new_gregorian_datetime(2024, 1, 10, 16, 20, 0).unwrap();
     ///
-    /// assert_try_writeable_eq!(fmt.format(&dt), "miércoles, 04:20 p.m.");
+    /// assert_try_writeable_eq!(fmt.format(&dt), "miércoles 4:20 p.m.");
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_components(
@@ -519,6 +547,10 @@ where
             + DataProvider<R::GluePatternV1Marker>,
         L: FixedDecimalFormatterLoader + WeekCalculatorLoader,
     {
+        let hour_cycle = locale
+            .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
+            .as_ref()
+            .and_then(HourCycle::from_locale_value);
         let selection = DateTimeZonePatternSelectionData::try_new_with_skeleton(
             &<R::D as TypedDateDataMarkers<C>>::DateSkeletonPatternsV1Marker::bind(provider),
             &<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker::bind(provider),
@@ -526,6 +558,10 @@ where
             locale,
             options.length.into(),
             components,
+            options.alignment.into(),
+            options.era_display.into(),
+            options.fractional_second_digits.into(),
+            hour_cycle,
         )
         .map_err(LoadError::Data)?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();
@@ -902,13 +938,13 @@ where
     ///
     /// let fmt = NeoFormatter::try_new_with_components(
     ///     &locale!("es-MX").into(),
-    ///     NeoDateComponents::EraYearMonth,
+    ///     NeoDateComponents::YearMonth,
     ///     NeoSkeletonLength::Medium.into(),
     /// )
     /// .unwrap();
     /// let dt = Date::try_new_iso_date(2024, 1, 10).unwrap();
     ///
-    /// assert_try_writeable_eq!(fmt.convert_and_format(&dt), "ene 2024 d.C.");
+    /// assert_try_writeable_eq!(fmt.convert_and_format(&dt), "ene 2024");
     /// ```
     ///
     /// Time components:
@@ -957,7 +993,7 @@ where
     ///
     /// assert_try_writeable_eq!(
     ///     fmt.convert_and_format(&dt),
-    ///     "miércoles, 04:20 p.m."
+    ///     "miércoles 4:20 p.m."
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
@@ -1219,6 +1255,10 @@ where
     {
         let calendar = AnyCalendarLoader::load(loader, locale).map_err(LoadError::Data)?;
         let kind = calendar.kind();
+        let hour_cycle = locale
+            .get_unicode_ext(&icu_locale_core::extensions::unicode::key!("hc"))
+            .as_ref()
+            .and_then(HourCycle::from_locale_value);
         let selection = DateTimeZonePatternSelectionData::try_new_with_skeleton(
             &AnyCalendarProvider::<<R::D as DateDataMarkers>::Skel, _>::new(provider, kind),
             &<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker::bind(provider),
@@ -1226,6 +1266,10 @@ where
             locale,
             options.length.into(),
             components,
+            options.alignment.into(),
+            options.era_display.into(),
+            options.fractional_second_digits.into(),
+            hour_cycle,
         )
         .map_err(LoadError::Data)?;
         let mut names = RawDateTimeNames::new_without_fixed_decimal_formatter();

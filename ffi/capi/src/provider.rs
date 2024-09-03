@@ -43,6 +43,7 @@ pub mod ffi {
         /// `enabled_fallback_with`, `fork_by_locale`, and `fork_by_key` will return `Err`s.
         #[cfg(feature = "compiled_data")]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::demo(default_constructor)]
         pub fn compiled() -> Box<DataProvider> {
             Box::new(Self(DataProviderInner::Compiled))
         }
@@ -72,6 +73,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu_provider_blob::BlobDataProvider, Struct)]
         #[cfg(feature = "buffer_provider")]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::attr(not(supports = static_slices), disable)]
         pub fn from_byte_slice(
             blob: &'static [DiplomatByte],
         ) -> Result<Box<DataProvider>, DataError> {
@@ -175,7 +177,7 @@ pub mod ffi {
             compact
         )]
         #[allow(unused_variables)] // feature-gated
-        #[cfg(feature = "icu_locale")]
+        #[cfg(feature = "locale")]
         pub fn enable_locale_fallback_with(
             &mut self,
             fallbacker: &crate::fallbacker::ffi::LocaleFallbacker,
@@ -232,9 +234,9 @@ impl<M> DataProvider<M> for DataProviderInner
 where
     M: DataMarker,
     // Actual bound:
-    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Deserialize<'de>,
+    //     for<'de> <M::DataStruct as DataStruct<'de>>::Output: Deserialize<'de>,
     // Necessary workaround bound (see `yoke::trait_hack` docs):
-    for<'de> yoke::trait_hack::YokeTraitHack<<M::Yokeable as yoke::Yokeable<'de>>::Output>:
+    for<'de> yoke::trait_hack::YokeTraitHack<<M::DataStruct as yoke::Yokeable<'de>>::Output>:
         serde::Deserialize<'de>,
 {
     load!();

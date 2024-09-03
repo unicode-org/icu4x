@@ -69,6 +69,6 @@ mod test {
         let pattern = pattern
             .combined(vec![date, time])
             .expect("Failed to combine date and time.");
-        assert_eq!(pattern.to_string(), "Y/m/d 'at' HH:mm");
+        assert_eq!(pattern.to_runtime_pattern().to_string(), "Y/m/d 'at' HH:mm");
     }
 }

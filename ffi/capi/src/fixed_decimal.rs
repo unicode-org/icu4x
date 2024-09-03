@@ -125,6 +125,7 @@ pub mod ffi {
         #[diplomat::rust_link(fixed_decimal::DoublePrecision, Enum, hidden)]
         #[diplomat::attr(js, rename = "from_number_with_lower_magnitude")]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::demo(default_constructor)]
         pub fn from_double_with_lower_magnitude(
             f: f64,
             magnitude: i16,
@@ -168,11 +169,13 @@ pub mod ffi {
         }
 
         /// Construct an [`FixedDecimal`] from a string.
-        #[diplomat::rust_link(fixed_decimal::FixedDecimal::from_str, FnInStruct)]
+        #[diplomat::rust_link(fixed_decimal::FixedDecimal::try_from_str, FnInStruct)]
+        #[diplomat::rust_link(fixed_decimal::FixedDecimal::try_from_utf8, FnInStruct, hidden)]
+        #[diplomat::rust_link(fixed_decimal::FixedDecimal::from_str, FnInStruct, hidden)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
         pub fn from_string(v: &DiplomatStr) -> Result<Box<FixedDecimal>, FixedDecimalParseError> {
             Ok(Box::new(FixedDecimal(
-                fixed_decimal::FixedDecimal::try_from(v)?,
+                fixed_decimal::FixedDecimal::try_from_utf8(v)?,
             )))
         }
 

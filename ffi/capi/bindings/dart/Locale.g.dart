@@ -34,10 +34,8 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
   ///
   /// Throws [LocaleParseError] on failure.
   factory Locale.fromString(String name) {
-    final temp = ffi2.Arena();
-    final nameView = name.utf8View;
-    final result = _icu4x_Locale_from_string_mv1(nameView.allocIn(temp), nameView.length);
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final result = _icu4x_Locale_from_string_mv1(name._utf8AllocIn(temp.arena));
     if (!result.isOk) {
       throw LocaleParseError.values[result.union.err];
     }
@@ -46,7 +44,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
 
   /// Construct a default undefined [`Locale`] "und".
   ///
-  /// See the [Rust documentation for `UND`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#associatedconstant.UND) for more information.
+  /// See the [Rust documentation for `default`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.default) for more information.
   factory Locale.und() {
     final result = _icu4x_Locale_und_mv1();
     return Locale._fromFfi(result, []);
@@ -74,11 +72,9 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
   ///
   /// See the [Rust documentation for `extensions`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#structfield.extensions) for more information.
   String? getUnicodeExtension(String s) {
-    final temp = ffi2.Arena();
-    final sView = s.utf8View;
+    final temp = _FinalizedArena();
     final write = _Write();
-    final result = _icu4x_Locale_get_unicode_extension_mv1(_ffi, sView.allocIn(temp), sView.length, write._ffi);
-    temp.releaseAll();
+    final result = _icu4x_Locale_get_unicode_extension_mv1(_ffi, s._utf8AllocIn(temp.arena), write._ffi);
     if (!result.isOk) {
       return null;
     }
@@ -100,10 +96,8 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
   ///
   /// Throws [LocaleParseError] on failure.
   set language(String s) {
-    final temp = ffi2.Arena();
-    final sView = s.utf8View;
-    final result = _icu4x_Locale_set_language_mv1(_ffi, sView.allocIn(temp), sView.length);
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final result = _icu4x_Locale_set_language_mv1(_ffi, s._utf8AllocIn(temp.arena));
     if (!result.isOk) {
       throw LocaleParseError.values[result.union.err];
     }
@@ -128,10 +122,8 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
   ///
   /// Throws [LocaleParseError] on failure.
   void setRegion(String s) {
-    final temp = ffi2.Arena();
-    final sView = s.utf8View;
-    final result = _icu4x_Locale_set_region_mv1(_ffi, sView.allocIn(temp), sView.length);
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final result = _icu4x_Locale_set_region_mv1(_ffi, s._utf8AllocIn(temp.arena));
     if (!result.isOk) {
       throw LocaleParseError.values[result.union.err];
     }
@@ -156,10 +148,8 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
   ///
   /// Throws [LocaleParseError] on failure.
   void setScript(String s) {
-    final temp = ffi2.Arena();
-    final sView = s.utf8View;
-    final result = _icu4x_Locale_set_script_mv1(_ffi, sView.allocIn(temp), sView.length);
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final result = _icu4x_Locale_set_script_mv1(_ffi, s._utf8AllocIn(temp.arena));
     if (!result.isOk) {
       throw LocaleParseError.values[result.union.err];
     }
@@ -174,11 +164,9 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
   ///
   /// Throws [LocaleParseError] on failure.
   static String canonicalize(String s) {
-    final temp = ffi2.Arena();
-    final sView = s.utf8View;
+    final temp = _FinalizedArena();
     final write = _Write();
-    final result = _icu4x_Locale_canonicalize_mv1(sView.allocIn(temp), sView.length, write._ffi);
-    temp.releaseAll();
+    final result = _icu4x_Locale_canonicalize_mv1(s._utf8AllocIn(temp.arena), write._ffi);
     if (!result.isOk) {
       throw LocaleParseError.values[result.union.err];
     }
@@ -188,7 +176,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
   /// Returns a string representation of [`Locale`].
   ///
   /// See the [Rust documentation for `write_to`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.write_to) for more information.
-  @override
+  @core.override
   String toString() {
     final write = _Write();
     _icu4x_Locale_to_string_mv1(_ffi, write._ffi);
@@ -197,19 +185,15 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
 
   /// See the [Rust documentation for `normalizing_eq`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.normalizing_eq) for more information.
   bool normalizingEq(String other) {
-    final temp = ffi2.Arena();
-    final otherView = other.utf8View;
-    final result = _icu4x_Locale_normalizing_eq_mv1(_ffi, otherView.allocIn(temp), otherView.length);
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final result = _icu4x_Locale_normalizing_eq_mv1(_ffi, other._utf8AllocIn(temp.arena));
     return result;
   }
 
   /// See the [Rust documentation for `strict_cmp`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.strict_cmp) for more information.
   int compareToString(String other) {
-    final temp = ffi2.Arena();
-    final otherView = other.utf8View;
-    final result = _icu4x_Locale_compare_to_string_mv1(_ffi, otherView.allocIn(temp), otherView.length);
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final result = _icu4x_Locale_compare_to_string_mv1(_ffi, other._utf8AllocIn(temp.arena));
     return result;
   }
 
@@ -231,9 +215,9 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
 external void _icu4x_Locale_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
 @meta.ResourceIdentifier('icu4x_Locale_from_string_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_Locale_from_string_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_Locale_from_string_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_Locale_from_string_mv1(ffi.Pointer<ffi.Uint8> nameData, int nameLength);
+external _ResultOpaqueInt32 _icu4x_Locale_from_string_mv1(_SliceUtf8 name);
 
 @meta.ResourceIdentifier('icu4x_Locale_und_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_Locale_und_mv1')
@@ -251,9 +235,9 @@ external ffi.Pointer<ffi.Opaque> _icu4x_Locale_clone_mv1(ffi.Pointer<ffi.Opaque>
 external void _icu4x_Locale_basename_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);
 
 @meta.ResourceIdentifier('icu4x_Locale_get_unicode_extension_mv1')
-@ffi.Native<_ResultVoidVoid Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Locale_get_unicode_extension_mv1')
+@ffi.Native<_ResultVoidVoid Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Locale_get_unicode_extension_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidVoid _icu4x_Locale_get_unicode_extension_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> write);
+external _ResultVoidVoid _icu4x_Locale_get_unicode_extension_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 s, ffi.Pointer<ffi.Opaque> write);
 
 @meta.ResourceIdentifier('icu4x_Locale_language_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Locale_language_mv1')
@@ -261,9 +245,9 @@ external _ResultVoidVoid _icu4x_Locale_get_unicode_extension_mv1(ffi.Pointer<ffi
 external void _icu4x_Locale_language_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);
 
 @meta.ResourceIdentifier('icu4x_Locale_set_language_mv1')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_Locale_set_language_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_Locale_set_language_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_Locale_set_language_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength);
+external _ResultVoidInt32 _icu4x_Locale_set_language_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 s);
 
 @meta.ResourceIdentifier('icu4x_Locale_region_mv1')
 @ffi.Native<_ResultVoidVoid Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Locale_region_mv1')
@@ -271,9 +255,9 @@ external _ResultVoidInt32 _icu4x_Locale_set_language_mv1(ffi.Pointer<ffi.Opaque>
 external _ResultVoidVoid _icu4x_Locale_region_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);
 
 @meta.ResourceIdentifier('icu4x_Locale_set_region_mv1')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_Locale_set_region_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_Locale_set_region_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_Locale_set_region_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength);
+external _ResultVoidInt32 _icu4x_Locale_set_region_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 s);
 
 @meta.ResourceIdentifier('icu4x_Locale_script_mv1')
 @ffi.Native<_ResultVoidVoid Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Locale_script_mv1')
@@ -281,14 +265,14 @@ external _ResultVoidInt32 _icu4x_Locale_set_region_mv1(ffi.Pointer<ffi.Opaque> s
 external _ResultVoidVoid _icu4x_Locale_script_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);
 
 @meta.ResourceIdentifier('icu4x_Locale_set_script_mv1')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_Locale_set_script_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_Locale_set_script_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_Locale_set_script_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength);
+external _ResultVoidInt32 _icu4x_Locale_set_script_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 s);
 
 @meta.ResourceIdentifier('icu4x_Locale_canonicalize_mv1')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Locale_canonicalize_mv1')
+@ffi.Native<_ResultVoidInt32 Function(_SliceUtf8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Locale_canonicalize_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_Locale_canonicalize_mv1(ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> write);
+external _ResultVoidInt32 _icu4x_Locale_canonicalize_mv1(_SliceUtf8 s, ffi.Pointer<ffi.Opaque> write);
 
 @meta.ResourceIdentifier('icu4x_Locale_to_string_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Locale_to_string_mv1')
@@ -296,14 +280,14 @@ external _ResultVoidInt32 _icu4x_Locale_canonicalize_mv1(ffi.Pointer<ffi.Uint8> 
 external void _icu4x_Locale_to_string_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);
 
 @meta.ResourceIdentifier('icu4x_Locale_normalizing_eq_mv1')
-@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_Locale_normalizing_eq_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_Locale_normalizing_eq_mv1')
 // ignore: non_constant_identifier_names
-external bool _icu4x_Locale_normalizing_eq_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> otherData, int otherLength);
+external bool _icu4x_Locale_normalizing_eq_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 other);
 
 @meta.ResourceIdentifier('icu4x_Locale_compare_to_string_mv1')
-@ffi.Native<ffi.Int8 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_Locale_compare_to_string_mv1')
+@ffi.Native<ffi.Int8 Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_Locale_compare_to_string_mv1')
 // ignore: non_constant_identifier_names
-external int _icu4x_Locale_compare_to_string_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> otherData, int otherLength);
+external int _icu4x_Locale_compare_to_string_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 other);
 
 @meta.ResourceIdentifier('icu4x_Locale_compare_to_mv1')
 @ffi.Native<ffi.Int8 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Locale_compare_to_mv1')

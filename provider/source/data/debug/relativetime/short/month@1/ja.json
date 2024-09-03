@@ -5,25 +5,11 @@
     "1": "来月"
   },
   "past": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": " か月前",
-      "index": 0
-    }
+    "specials": [],
+    "other": "\u0001 か月前"
   },
   "future": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": " か月後",
-      "index": 0
-    }
+    "specials": [],
+    "other": "\u0001 か月後"
   }
 }

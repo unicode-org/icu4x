@@ -12,6 +12,8 @@ export { TimeZoneInvalidIdError } from "./TimeZoneInvalidIdError.mjs"
 
 export { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError.mjs"
 
+export { TimeZoneUnknownError } from "./TimeZoneUnknownError.mjs"
+
 export { LocaleFallbackConfig } from "./LocaleFallbackConfig.mjs"
 
 export { LineBreakOptions } from "./LineBreakOptions.mjs"
@@ -237,8 +239,6 @@ export { FixedDecimalParseError } from "./FixedDecimalParseError.mjs"
 export { LocaleParseError } from "./LocaleParseError.mjs"
 
 export { LocaleFallbackPriority } from "./LocaleFallbackPriority.mjs"
-
-export { LocaleFallbackSupplement } from "./LocaleFallbackSupplement.mjs"
 
 export { FixedDecimalRoundingIncrement } from "./FixedDecimalRoundingIncrement.mjs"
 

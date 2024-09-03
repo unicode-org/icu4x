@@ -5,37 +5,11 @@
     "1": "sledeće g."
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": "pre  g.",
-      "index": 4
-    },
-    "two": null,
-    "few": {
-      "pattern": "pre  g.",
-      "index": 4
-    },
-    "many": null,
-    "other": {
-      "pattern": "pre  g.",
-      "index": 4
-    }
+    "specials": [],
+    "other": "\u0005pre  g."
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "za  g.",
-      "index": 3
-    },
-    "two": null,
-    "few": {
-      "pattern": "za  g.",
-      "index": 3
-    },
-    "many": null,
-    "other": {
-      "pattern": "za  g.",
-      "index": 3
-    }
+    "specials": [],
+    "other": "\u0004za  g."
   }
 }

@@ -15,6 +15,8 @@ use std::collections::HashMap;
 #[derive(PartialEq, Debug, Deserialize)]
 pub(crate) struct Symbols {
     // This list is not comprehensive; add more fields when needed
+    #[serde(rename = "approximatelySign")]
+    pub(crate) approximately_sign: String,
     pub(crate) decimal: String,
     pub(crate) group: String,
     #[serde(rename = "minusSign")]
@@ -45,8 +47,22 @@ pub(crate) struct DecimalFormat {
 
 #[derive(PartialEq, Debug, Default)]
 pub(crate) struct CompactDecimalPattern {
-    pub(crate) compact_decimal_type: String,
-    pub(crate) compact_decimal_count: String,
+    /// The magnitude part of the pattern key.
+    ///
+    /// Examples:
+    /// - "1000000-count-zero" --> "1000000"
+    pub(crate) magnitude: String,
+
+    /// The count part of the pattern key.
+    ///
+    /// Examples:
+    /// - "1000000-count-zero" --> "zero"
+    pub(crate) count: String,
+
+    /// The pattern value.
+    ///
+    /// Examples:
+    /// - "1000-count-one": "¤0K" --> "¤0K"
     pub(crate) pattern: String,
 }
 
@@ -73,13 +89,12 @@ impl<'de> Visitor<'de> for DecimalFormatVisitor {
     {
         let mut result = DecimalFormat::default();
         while let Some(key) = access.next_key::<String>()? {
-            let (compact_decimal_type, compact_decimal_count) =
-                key.split("-count-").next_tuple().ok_or_else(|| {
-                    M::Error::invalid_value(Unexpected::Str(&key), &"key to contain -count-")
-                })?;
+            let (magnitude, count) = key.split("-count-").next_tuple().ok_or_else(|| {
+                M::Error::invalid_value(Unexpected::Str(&key), &"key to contain -count-")
+            })?;
             result.patterns.push(CompactDecimalPattern {
-                compact_decimal_type: compact_decimal_type.to_string(),
-                compact_decimal_count: compact_decimal_count.to_string(),
+                magnitude: magnitude.to_string(),
+                count: count.to_string(),
                 pattern: access.next_value()?,
             })
         }
@@ -88,13 +103,40 @@ impl<'de> Visitor<'de> for DecimalFormatVisitor {
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
+pub(crate) struct ShortCompactCurrencyPatterns {
+    pub(crate) standard: DecimalFormat,
+}
+
+#[derive(PartialEq, Debug, Deserialize)]
 pub(crate) struct CurrencyFormattingPatterns {
     /// Standard pattern
     pub(crate) standard: String,
 
+    /// Contains the compact currency patterns for short compact currency formatting
+    #[serde(rename = "short")]
+    pub(crate) compact_short: Option<ShortCompactCurrencyPatterns>,
+
     /// Standard alphaNextToNumber pattern
     #[serde(rename = "standard-alphaNextToNumber")]
     pub(crate) standard_alpha_next_to_number: Option<String>,
+
+    #[serde(rename = "unitPattern-count-zero")]
+    pub(crate) pattern_zero: Option<String>,
+
+    #[serde(rename = "unitPattern-count-one")]
+    pub(crate) pattern_one: Option<String>,
+
+    #[serde(rename = "unitPattern-count-two")]
+    pub(crate) pattern_two: Option<String>,
+
+    #[serde(rename = "unitPattern-count-few")]
+    pub(crate) pattern_few: Option<String>,
+
+    #[serde(rename = "unitPattern-count-many")]
+    pub(crate) pattern_many: Option<String>,
+
+    #[serde(rename = "unitPattern-count-other")]
+    pub(crate) pattern_other: Option<String>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]

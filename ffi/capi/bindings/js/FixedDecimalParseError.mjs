@@ -13,6 +13,7 @@ export class FixedDecimalParseError {
         ["Limit", 1],
         ["Syntax", 2]
     ]);
+
     constructor(value) {
         if (value instanceof FixedDecimalParseError) {
             this.#value = value.value;
@@ -36,12 +37,6 @@ export class FixedDecimalParseError {
     }
 
     static Unknown = new FixedDecimalParseError("Unknown");
-
     static Limit = new FixedDecimalParseError("Limit");
-
     static Syntax = new FixedDecimalParseError("Syntax");
-
-
-    
-
 }

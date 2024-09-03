@@ -79,9 +79,9 @@ fn test_langid_subtag_language() {
     let mut lang: subtags::Language = "en".parse().expect("Failed to parse a language.");
     assert_eq!(lang.as_str(), "en");
 
-    lang.clear();
+    lang = Default::default();
     assert_eq!(lang, subtags::Language::UND);
-    assert!(lang.is_empty());
+    assert!(lang.is_default());
 
     assert_writeable_eq!(lang, "und");
 }

@@ -23,15 +23,15 @@ icu4x_DecomposingNormalizer_create_nfd_mv1_result icu4x_DecomposingNormalizer_cr
 typedef struct icu4x_DecomposingNormalizer_create_nfkd_mv1_result {union {DecomposingNormalizer* ok; DataError err;}; bool is_ok;} icu4x_DecomposingNormalizer_create_nfkd_mv1_result;
 icu4x_DecomposingNormalizer_create_nfkd_mv1_result icu4x_DecomposingNormalizer_create_nfkd_mv1(const DataProvider* provider);
 
-void icu4x_DecomposingNormalizer_normalize_mv1(const DecomposingNormalizer* self, const char* s_data, size_t s_len, DiplomatWrite* write);
+void icu4x_DecomposingNormalizer_normalize_mv1(const DecomposingNormalizer* self, DiplomatStringView s, DiplomatWrite* write);
 
-bool icu4x_DecomposingNormalizer_is_normalized_mv1(const DecomposingNormalizer* self, const char* s_data, size_t s_len);
+bool icu4x_DecomposingNormalizer_is_normalized_mv1(const DecomposingNormalizer* self, DiplomatStringView s);
 
-bool icu4x_DecomposingNormalizer_is_normalized_utf16_mv1(const DecomposingNormalizer* self, const char16_t* s_data, size_t s_len);
+bool icu4x_DecomposingNormalizer_is_normalized_utf16_mv1(const DecomposingNormalizer* self, DiplomatString16View s);
 
-size_t icu4x_DecomposingNormalizer_is_normalized_up_to_mv1(const DecomposingNormalizer* self, const char* s_data, size_t s_len);
+size_t icu4x_DecomposingNormalizer_is_normalized_up_to_mv1(const DecomposingNormalizer* self, DiplomatStringView s);
 
-size_t icu4x_DecomposingNormalizer_is_normalized_utf16_up_to_mv1(const DecomposingNormalizer* self, const char16_t* s_data, size_t s_len);
+size_t icu4x_DecomposingNormalizer_is_normalized_utf16_up_to_mv1(const DecomposingNormalizer* self, DiplomatString16View s);
 
 
 void icu4x_DecomposingNormalizer_destroy_mv1(DecomposingNormalizer* self);

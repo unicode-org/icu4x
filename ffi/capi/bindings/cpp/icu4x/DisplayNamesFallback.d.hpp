@@ -16,6 +16,8 @@ namespace capi {
       DisplayNamesFallback_Code = 0,
       DisplayNamesFallback_None = 1,
     };
+    
+    typedef struct DisplayNamesFallback_option {union { DisplayNamesFallback ok; }; bool is_ok; } DisplayNamesFallback_option;
 } // namespace capi
 } // namespace
 

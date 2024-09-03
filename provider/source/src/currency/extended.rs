@@ -4,16 +4,10 @@
 
 use crate::cldr_serde;
 use crate::SourceDataProvider;
-
-use std::borrow::Cow;
-use std::collections::BTreeMap;
-use std::collections::HashSet;
-
-use icu::experimental::dimension::provider::extended_currency::Count;
-
 use icu::experimental::dimension::provider::extended_currency::*;
+use icu::experimental::relativetime::provider::PluralElements;
 use icu_provider::prelude::*;
-use icu_provider::DataProvider;
+use std::collections::HashSet;
 
 impl DataProvider<CurrencyExtendedDataV1Marker> for crate::SourceDataProvider {
     fn load(
@@ -22,11 +16,10 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::SourceDataProvider {
     ) -> Result<DataResponse<CurrencyExtendedDataV1Marker>, DataError> {
         self.check_req::<CurrencyExtendedDataV1Marker>(req)?;
 
-        let langid = req.id.locale.get_langid();
         let currencies_resource: &cldr_serde::currencies::data::Resource =
             self.cldr()?
                 .numbers()
-                .read_and_parse(&langid, "currencies.json")?;
+                .read_and_parse(req.id.locale, "currencies.json")?;
 
         let currency = currencies_resource
             .main
@@ -36,70 +29,50 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::SourceDataProvider {
             .get(req.id.marker_attributes.as_str())
             .ok_or(DataError::custom("No currency associated with the aux key"))?;
 
-        let mut placeholders: BTreeMap<Count, String> = BTreeMap::new();
-
-        fn add_placeholder(
-            placeholders: &mut BTreeMap<Count, String>,
-            key: Count,
-            value: Option<String>,
-        ) {
-            if let Some(val) = value {
-                placeholders.insert(key, val);
-            }
-        }
-
-        add_placeholder(&mut placeholders, Count::Zero, currency.zero.clone());
-        add_placeholder(&mut placeholders, Count::One, currency.one.clone());
-        add_placeholder(&mut placeholders, Count::Two, currency.two.clone());
-        add_placeholder(&mut placeholders, Count::Few, currency.few.clone());
-        add_placeholder(&mut placeholders, Count::Many, currency.many.clone());
-        add_placeholder(&mut placeholders, Count::Other, currency.other.clone());
-        add_placeholder(
-            &mut placeholders,
-            Count::DisplayName,
-            currency.display_name.clone(),
-        );
-
-        let data = CurrencyExtendedDataV1 {
-            display_names: placeholders
-                .into_iter()
-                .map(|(k, v)| (k, Cow::Owned(v)))
-                .collect(),
-        };
-
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(data),
+            payload: DataPayload::from_owned(CurrencyExtendedDataV1 {
+                display_names: PluralElements::try_new(
+                    currency
+                        .other
+                        .as_deref()
+                        .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?,
+                    currency.zero.as_deref(),
+                    currency.one.as_deref(),
+                    currency.two.as_deref(),
+                    currency.few.as_deref(),
+                    currency.many.as_deref(),
+                ),
+            }),
         })
     }
 }
 
 impl crate::IterableDataProviderCached<CurrencyExtendedDataV1Marker> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        // TODO: This is a temporary implementation until we have a better way to handle large number of json files.
-        let currencies_to_support: HashSet<_> =
-            ["USD", "CAD", "EUR", "GBP", "EGP"].into_iter().collect();
-
         let mut result = HashSet::new();
         let numbers = self.cldr()?.numbers();
-        let langids = numbers.list_langs()?;
-        for langid in langids {
+        let locales = numbers.list_locales()?;
+        for locale in locales {
             let currencies_resource: &cldr_serde::currencies::data::Resource = self
                 .cldr()?
                 .numbers()
-                .read_and_parse(&langid, "currencies.json")?;
+                .read_and_parse(&locale, "currencies.json")?;
 
             let currencies = &currencies_resource.main.value.numbers.currencies;
-            for key in currencies.keys() {
-                if !currencies_to_support.contains(key.as_str()) {
+            for (currency, displaynames) in currencies {
+                // By TR 35 (https://unicode.org/reports/tr35/tr35-numbers.html#Currencies)
+                //      If the displayname is not found for the associated `Count`, fall back to the `Count::Other` displayname.
+                //      And the `other` displayname must be present.
+                //      Therefore, we filter out any currencies that do not have an `other` displayname.
+                //      NOTE:
+                //          In case of `other` displayname does not exist, File a Jira ticket to CLDR:
+                //          https://unicode-org.atlassian.net/browse/CLDR
+                if displaynames.other.is_none() {
                     continue;
                 }
-
-                if let Ok(attributes) = DataMarkerAttributes::try_from_string(key.clone()) {
-                    result.insert(DataIdentifierCow::from_owned(
-                        attributes,
-                        DataLocale::from(langid.clone()),
-                    ));
+                if let Ok(attributes) = DataMarkerAttributes::try_from_string(currency.clone()) {
+                    result.insert(DataIdentifierCow::from_owned(attributes, locale.clone()));
                 }
             }
         }
@@ -111,7 +84,7 @@ impl crate::IterableDataProviderCached<CurrencyExtendedDataV1Marker> for SourceD
 #[test]
 fn test_basic() {
     use icu::locale::langid;
-
+    use icu::plurals::PluralCategory;
     let provider = SourceDataProvider::new_testing();
     let en: DataPayload<CurrencyExtendedDataV1Marker> = provider
         .load(DataRequest {
@@ -123,14 +96,30 @@ fn test_basic() {
         })
         .unwrap()
         .payload;
-    let display_names = en.get().to_owned().display_names;
-    assert_eq!(display_names.get(&Count::Zero), None);
-    assert_eq!(display_names.get(&Count::One).unwrap(), "US dollar");
-    assert_eq!(display_names.get(&Count::Two), None);
-    assert_eq!(display_names.get(&Count::Few), None);
-    assert_eq!(display_names.get(&Count::Many), None);
-    assert_eq!(display_names.get(&Count::Other).unwrap(), "US dollars");
-    assert_eq!(display_names.get(&Count::DisplayName).unwrap(), "US Dollar");
+    assert_eq!(
+        en.get().display_names.get_str(PluralCategory::Zero),
+        "US dollars"
+    );
+    assert_eq!(
+        en.get().display_names.get_str(PluralCategory::One),
+        "US dollar"
+    );
+    assert_eq!(
+        en.get().display_names.get_str(PluralCategory::Two),
+        "US dollars"
+    );
+    assert_eq!(
+        en.get().display_names.get_str(PluralCategory::Few),
+        "US dollars"
+    );
+    assert_eq!(
+        en.get().display_names.get_str(PluralCategory::Many),
+        "US dollars"
+    );
+    assert_eq!(
+        en.get().display_names.get_str(PluralCategory::Other),
+        "US dollars"
+    );
 
     let fr: DataPayload<CurrencyExtendedDataV1Marker> = provider
         .load(DataRequest {
@@ -143,21 +132,28 @@ fn test_basic() {
         .unwrap()
         .payload;
 
-    let display_names = fr.get().to_owned().display_names;
-    assert_eq!(display_names.get(&Count::Zero), None);
     assert_eq!(
-        display_names.get(&Count::One).unwrap(),
-        "dollar des États-Unis"
-    );
-    assert_eq!(display_names.get(&Count::Two), None);
-    assert_eq!(display_names.get(&Count::Few), None);
-    assert_eq!(display_names.get(&Count::Many), None);
-    assert_eq!(
-        display_names.get(&Count::Other).unwrap(),
+        fr.get().display_names.get_str(PluralCategory::Zero),
         "dollars des États-Unis"
     );
     assert_eq!(
-        display_names.get(&Count::DisplayName).unwrap(),
+        fr.get().display_names.get_str(PluralCategory::One),
         "dollar des États-Unis"
+    );
+    assert_eq!(
+        fr.get().display_names.get_str(PluralCategory::Two),
+        "dollars des États-Unis"
+    );
+    assert_eq!(
+        fr.get().display_names.get_str(PluralCategory::Few),
+        "dollars des États-Unis"
+    );
+    assert_eq!(
+        fr.get().display_names.get_str(PluralCategory::Many),
+        "dollars des États-Unis"
+    );
+    assert_eq!(
+        fr.get().display_names.get_str(PluralCategory::Other),
+        "dollars des États-Unis"
     );
 }

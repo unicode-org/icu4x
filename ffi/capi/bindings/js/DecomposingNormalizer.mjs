@@ -7,10 +7,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 /** See the [Rust documentation for `DecomposingNormalizer`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html) for more information.
 */
-
 const DecomposingNormalizer_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_DecomposingNormalizer_destroy_mv1(ptr);
 });
+
 export class DecomposingNormalizer {
     // Internal ptr reference:
     #ptr = null;
@@ -19,137 +19,141 @@ export class DecomposingNormalizer {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("DecomposingNormalizer is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        // Unconditionally register to destroy when this object is ready to garbage collect.
-        DecomposingNormalizer_box_destroy_registry.register(this, this.#ptr);
+        
+        // Are we being borrowed? If not, we can register.
+        if (this.#selfEdge.length === 0) {
+            DecomposingNormalizer_box_destroy_registry.register(this, this.#ptr);
+        }
     }
 
     get ffiValue() {
         return this.#ptr;
     }
 
-
     static createNfd(provider) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_DecomposingNormalizer_create_nfd_mv1(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_DecomposingNormalizer_create_nfd_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+            if (!diplomatReceive.resultFlag) {
+                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new DecomposingNormalizer(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new DecomposingNormalizer(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
     static createNfkd(provider) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_DecomposingNormalizer_create_nfkd_mv1(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_DecomposingNormalizer_create_nfkd_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+            if (!diplomatReceive.resultFlag) {
+                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new DecomposingNormalizer(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new DecomposingNormalizer(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
     normalize(s) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
+        const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s)).splat()];
         
-        const write = wasm.diplomat_buffer_write_create(0);
-        wasm.icu4x_DecomposingNormalizer_normalize_mv1(this.ffiValue, sSlice.ptr, sSlice.size, write);
+        const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
+        wasm.icu4x_DecomposingNormalizer_normalize_mv1(this.ffiValue, ...sSlice, write.buffer);
     
         try {
-    
-            return diplomatRuntime.readString8(wasm, wasm.diplomat_buffer_write_get_bytes(write), wasm.diplomat_buffer_write_len(write));
-        } finally {
+            return write.readString8();
+        }
         
-            sSlice.free();
+        finally {
+            functionCleanupArena.free();
         
-            wasm.diplomat_buffer_write_destroy(write);
-        
+            write.free();
         }
     }
 
     isNormalized(s) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
-        const result = wasm.icu4x_DecomposingNormalizer_is_normalized_mv1(this.ffiValue, sSlice.ptr, sSlice.size);
+        const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s)).splat()];
+        
+        const result = wasm.icu4x_DecomposingNormalizer_is_normalized_mv1(this.ffiValue, ...sSlice);
     
         try {
-    
             return result;
-        } finally {
+        }
         
-            sSlice.free();
-        
+        finally {
+            functionCleanupArena.free();
         }
     }
 
     isNormalizedUtf16(s) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = diplomatRuntime.DiplomatBuf.str16(wasm, s);
-        const result = wasm.icu4x_DecomposingNormalizer_is_normalized_utf16_mv1(this.ffiValue, sSlice.ptr, sSlice.size);
+        const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str16(wasm, s)).splat()];
+        
+        const result = wasm.icu4x_DecomposingNormalizer_is_normalized_utf16_mv1(this.ffiValue, ...sSlice);
     
         try {
-    
             return result;
-        } finally {
+        }
         
-            sSlice.free();
-        
+        finally {
+            functionCleanupArena.free();
         }
     }
 
     isNormalizedUpTo(s) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
-        const result = wasm.icu4x_DecomposingNormalizer_is_normalized_up_to_mv1(this.ffiValue, sSlice.ptr, sSlice.size);
+        const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s)).splat()];
+        
+        const result = wasm.icu4x_DecomposingNormalizer_is_normalized_up_to_mv1(this.ffiValue, ...sSlice);
     
         try {
-    
             return result;
-        } finally {
+        }
         
-            sSlice.free();
-        
+        finally {
+            functionCleanupArena.free();
         }
     }
 
     isNormalizedUtf16UpTo(s) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = diplomatRuntime.DiplomatBuf.str16(wasm, s);
-        const result = wasm.icu4x_DecomposingNormalizer_is_normalized_utf16_up_to_mv1(this.ffiValue, sSlice.ptr, sSlice.size);
+        const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str16(wasm, s)).splat()];
+        
+        const result = wasm.icu4x_DecomposingNormalizer_is_normalized_utf16_up_to_mv1(this.ffiValue, ...sSlice);
     
         try {
-    
             return result;
-        } finally {
+        }
         
-            sSlice.free();
-        
+        finally {
+            functionCleanupArena.free();
         }
     }
-
-    
-
 }

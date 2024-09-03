@@ -18,7 +18,7 @@ typedef enum CalendarError {
   CalendarError_UnknownMonthCode = 3,
 } CalendarError;
 
-
+typedef struct CalendarError_option {union { CalendarError ok; }; bool is_ok; } CalendarError_option;
 
 
 

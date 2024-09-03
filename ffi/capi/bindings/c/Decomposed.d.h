@@ -16,7 +16,7 @@ typedef struct Decomposed {
   char32_t second;
 } Decomposed;
 
-
+typedef struct Decomposed_option {union { Decomposed ok; }; bool is_ok; } Decomposed_option;
 
 
 

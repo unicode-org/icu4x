@@ -3,43 +3,11 @@
     "0": "в этот час"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": "- ч",
-      "index": 1
-    },
-    "two": null,
-    "few": {
-      "pattern": "- ч",
-      "index": 1
-    },
-    "many": {
-      "pattern": "- ч",
-      "index": 1
-    },
-    "other": {
-      "pattern": "- ч",
-      "index": 1
-    }
+    "specials": [],
+    "other": "\u0002- ч"
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "+ ч",
-      "index": 1
-    },
-    "two": null,
-    "few": {
-      "pattern": "+ ч",
-      "index": 1
-    },
-    "many": {
-      "pattern": "+ ч",
-      "index": 1
-    },
-    "other": {
-      "pattern": "+ ч",
-      "index": 1
-    }
+    "specials": [],
+    "other": "\u0002+ ч"
   }
 }

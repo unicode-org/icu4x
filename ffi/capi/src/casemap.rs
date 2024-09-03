@@ -132,7 +132,7 @@ pub mod ffi {
         ///
         /// Identical to the similarly named method on `CaseMapCloser`, use that if you
         /// plan on using string case closure mappings too.
-        #[cfg(feature = "icu_properties")]
+        #[cfg(feature = "properties")]
         #[diplomat::rust_link(icu::casemap::CaseMapper::add_case_closure_to, FnInStruct)]
         #[diplomat::rust_link(icu::casemap::ClosureSink, Trait, hidden)]
         #[diplomat::rust_link(icu::casemap::ClosureSink::add_char, FnInTrait, hidden)]
@@ -225,7 +225,7 @@ pub mod ffi {
 
         /// Adds all simple case mappings and the full case folding for `c` to `builder`.
         /// Also adds special case closure mappings.
-        #[cfg(feature = "icu_properties")]
+        #[cfg(feature = "properties")]
         #[diplomat::rust_link(icu::casemap::CaseMapCloser::add_case_closure_to, FnInStruct)]
         pub fn add_case_closure_to(
             &self,
@@ -241,7 +241,7 @@ pub mod ffi {
         /// and adds them to the set.
         ///
         /// Returns true if the string was found
-        #[cfg(feature = "icu_properties")]
+        #[cfg(feature = "properties")]
         #[diplomat::rust_link(icu::casemap::CaseMapCloser::add_string_case_closure_to, FnInStruct)]
         pub fn add_string_case_closure_to(
             &self,

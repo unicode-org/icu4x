@@ -17,12 +17,11 @@ impl DataProvider<VariantDisplayNamesV1Marker> for SourceDataProvider {
         req: DataRequest,
     ) -> Result<DataResponse<VariantDisplayNamesV1Marker>, DataError> {
         self.check_req::<VariantDisplayNamesV1Marker>(req)?;
-        let langid = req.id.locale.get_langid();
 
         let data: &cldr_serde::displaynames::variant::Resource = self
             .cldr()?
             .displaynames()
-            .read_and_parse(&langid, "variants.json")?;
+            .read_and_parse(req.id.locale, "variants.json")?;
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -38,16 +37,16 @@ impl IterableDataProviderCached<VariantDisplayNamesV1Marker> for SourceDataProvi
         Ok(self
             .cldr()?
             .displaynames()
-            .list_langs()?
-            .filter(|langid| {
+            .list_locales()?
+            .filter(|locale| {
                 // The directory might exist without variants.json
                 self.cldr()
                     .unwrap()
                     .displaynames()
-                    .file_exists(langid, "variants.json")
+                    .file_exists(locale, "variants.json")
                     .unwrap_or_default()
             })
-            .map(|l| DataIdentifierCow::from_locale(DataLocale::from(l)))
+            .map(DataIdentifierCow::from_locale)
             .collect())
     }
 }

@@ -3,7 +3,6 @@ import { DataError } from "./DataError.mjs"
 import { DataProvider } from "./DataProvider.mjs"
 import { LocaleFallbackConfig } from "./LocaleFallbackConfig.mjs"
 import { LocaleFallbackerWithConfig } from "./LocaleFallbackerWithConfig.mjs"
-import { LocaleParseError } from "./LocaleParseError.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
@@ -12,10 +11,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *See the [Rust documentation for `LocaleFallbacker`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html) for more information.
 */
-
 const LocaleFallbacker_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_LocaleFallbacker_destroy_mv1(ptr);
 });
+
 export class LocaleFallbacker {
     // Internal ptr reference:
     #ptr = null;
@@ -24,36 +23,40 @@ export class LocaleFallbacker {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("LocaleFallbacker is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        // Unconditionally register to destroy when this object is ready to garbage collect.
-        LocaleFallbacker_box_destroy_registry.register(this, this.#ptr);
+        
+        // Are we being borrowed? If not, we can register.
+        if (this.#selfEdge.length === 0) {
+            LocaleFallbacker_box_destroy_registry.register(this, this.#ptr);
+        }
     }
 
     get ffiValue() {
         return this.#ptr;
     }
 
-
     static create(provider) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_LocaleFallbacker_create_mv1(diplomat_receive_buffer, provider.ffiValue);
+        const result = wasm.icu4x_LocaleFallbacker_create_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+            if (!diplomatReceive.resultFlag) {
+                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new LocaleFallbacker(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new LocaleFallbacker(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
@@ -61,41 +64,26 @@ export class LocaleFallbacker {
         const result = wasm.icu4x_LocaleFallbacker_without_data_mv1();
     
         try {
-    
-            return new LocaleFallbacker(result, []);
-        } finally {
-        
+            return new LocaleFallbacker(diplomatRuntime.internalConstructor, result, []);
         }
+        
+        finally {}
     }
 
     forConfig(config) {
-        
-        let slice_cleanup_callbacks = [];
-        
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this];
-        const result = wasm.icu4x_LocaleFallbacker_for_config_mv1(diplomat_receive_buffer, this.ffiValue, ...config._intoFFI(slice_cleanup_callbacks, {}));
+        
+        const result = wasm.icu4x_LocaleFallbacker_for_config_mv1(this.ffiValue, ...config._intoFFI(functionCleanupArena, {}));
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = LocaleParseError[Array.from(LocaleParseError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('LocaleParseError: ' + cause.value, { cause });
-            }
-            return new LocaleFallbackerWithConfig(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), [], aEdges);
-        } finally {
+            return new LocaleFallbackerWithConfig(diplomatRuntime.internalConstructor, result, [], aEdges);
+        }
         
-            for (let cleanup of slice_cleanup_callbacks) {
-                cleanup();
-            }
-        
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            functionCleanupArena.free();
         }
     }
-
-    
-
 }

@@ -16,7 +16,6 @@
 //! Read more about data providers: [`icu_provider`]
 
 use core::ops::Deref;
-use core::str::FromStr;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
 use zerovec::ule::{AsULE, ULE};
@@ -65,28 +64,10 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 /// </div>
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE, Hash)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_timezone::provider))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_timezone::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct TimeZoneBcp47Id(pub TinyAsciiStr<8>);
-
-impl FromStr for TimeZoneBcp47Id {
-    type Err = tinystr::TinyStrError;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        TinyAsciiStr::try_from_str(s).map(Into::into)
-    }
-}
-
-impl From<TinyAsciiStr<8>> for TimeZoneBcp47Id {
-    fn from(s: TinyAsciiStr<8>) -> Self {
-        Self(s)
-    }
-}
-
-impl From<TimeZoneBcp47Id> for TinyAsciiStr<8> {
-    fn from(other: TimeZoneBcp47Id) -> Self {
-        other.0
-    }
-}
 
 impl Deref for TimeZoneBcp47Id {
     type Target = TinyAsciiStr<8>;
@@ -126,28 +107,10 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZoneBcp47Id {
 /// </div>
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE, Hash)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_timezone::provider))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_timezone::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct MetazoneId(pub TinyAsciiStr<4>);
-
-impl From<TinyAsciiStr<4>> for MetazoneId {
-    fn from(s: TinyAsciiStr<4>) -> Self {
-        Self(s)
-    }
-}
-
-impl From<MetazoneId> for TinyAsciiStr<4> {
-    fn from(other: MetazoneId) -> Self {
-        other.0
-    }
-}
-
-impl FromStr for MetazoneId {
-    type Err = tinystr::TinyStrError;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        TinyAsciiStr::try_from_str(s).map(Into::into)
-    }
-}
 
 impl AsULE for MetazoneId {
     type ULE = Self;
@@ -184,11 +147,8 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for MetazoneId {
     singleton
 ))]
 #[derive(PartialEq, Debug, Clone, Default)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_timezone::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_timezone::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct MetazonePeriodV1<'data>(

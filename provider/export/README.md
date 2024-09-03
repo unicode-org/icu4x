@@ -18,7 +18,7 @@ use std::fs::File;
 
 let provider = SourceDataProvider::new_latest_tested();
 
-ExportDriver::new([LocaleFamily::FULL], DeduplicationStrategy::None.into(), LocaleFallbacker::try_new_unstable(&provider).unwrap())
+ExportDriver::new([DataLocaleFamily::FULL], DeduplicationStrategy::None.into(), LocaleFallbacker::try_new_unstable(&provider).unwrap())
     .with_markers([icu::list::provider::AndListV2Marker::INFO])
     .export(
         &provider,
@@ -31,22 +31,14 @@ ExportDriver::new([LocaleFamily::FULL], DeduplicationStrategy::None.into(), Loca
 
 ## Cargo features
 
-This crate has a lot of dependencies, some of which are not required for all operating modes. These default Cargo features
-can be disabled to reduce dependencies:
 * `baked_exporter`
   * enables the [`baked_exporter`] module, a reexport of [`icu_provider_baked::export`]
-  * enables the `--format mod` CLI argument
 * `blob_exporter`
   * enables the [`blob_exporter`] module, a reexport of [`icu_provider_blob::export`]
-  * enables the `--format blob` CLI argument
 * `fs_exporter`
   * enables the [`fs_exporter`] module, a reexport of [`icu_provider_fs::export`]
-  * enables the `--format dir` CLI argument
 * `rayon`
   * enables parallelism during export
-* `experimental`
-  * enables data generation for markers defined in the unstable `icu_experimental` crate
-  * note that this features affects the behaviour of `all_markers`
 
 <!-- cargo-rdme end -->
 

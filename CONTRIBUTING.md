@@ -30,10 +30,10 @@ ICU4X can be edited using any text editor capable of editing Rust code.
 
 Many ICU4X engineers use [Visual Studio Code](https://code.visualstudio.com/) with the [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer) extension.
 
-To build all code paths, improve build times in VSCode, and prevent locking the target directory from command-line builds, we recommend the following settings. To add them, choose "Preferences: Open Workspace Settings (JSON)" from the command palette (Ctrl+Shift+P):
+To build all code paths, improve build times in VSCode, and prevent locking the target directory from command-line builds, we recommend the following settings. To add them, choose "Preferences: Open Workspace Settings (JSON)" from the command palette (Ctrl+Shift+P) or (CMD+Shift+P) in mac:
 
 ```json
-"settings": {
+{
 	"rust-analyzer.cargo.features": "all",
 	"rust-analyzer.cargo.extraEnv": {
 		"CARGO_TARGET_DIR": "${workspaceFolder}/target/vscode",
@@ -78,7 +78,9 @@ See the [Testing](#testing) section below for more information on the various te
 There are various files that auto-generated across the ICU4X repository.  Here are some of the commands that you may
 need to run in order to recreate them.  These files may be run in more comprehensive tests such as those included in `cargo make ci-job-test` or `cargo make ci-all`.
 
-- `cargo make testdata` - regenerates all test data in the `provider/testdata` directory.
+- `cargo make testdata` - regenerates all test data in the `provider/source/debug` directory.
+	- `cargo make bakeddata` - regenerates baked data in the `provider/data` directory.
+		- `cargo make bakeddata foo` can be used to generate data in `provider/data/foo` only.
 - `cargo make generate-readmes` - generates README files according to Rust docs. Output files must be committed in git for check to pass.
 - `cargo make diplomat-gen` - recreates the Diplomat generated files in the `ffi/capi` directory.
 

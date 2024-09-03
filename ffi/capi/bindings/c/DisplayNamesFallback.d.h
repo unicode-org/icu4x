@@ -16,7 +16,7 @@ typedef enum DisplayNamesFallback {
   DisplayNamesFallback_None = 1,
 } DisplayNamesFallback;
 
-
+typedef struct DisplayNamesFallback_option {union { DisplayNamesFallback ok; }; bool is_ok; } DisplayNamesFallback_option;
 
 
 

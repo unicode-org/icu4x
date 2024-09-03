@@ -5,31 +5,21 @@
     "1": "next quarter"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": " quarter ago",
-      "index": 0
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": " quarters ago",
-      "index": 0
-    }
+    "specials": [
+      [
+        "One",
+        "\u0001 quarter ago"
+      ]
+    ],
+    "other": "\u0001 quarters ago"
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "in  quarter",
-      "index": 3
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "in  quarters",
-      "index": 3
-    }
+    "specials": [
+      [
+        "One",
+        "\u0004in  quarter"
+      ]
+    ],
+    "other": "\u0004in  quarters"
   }
 }

@@ -18,9 +18,9 @@ namespace icu4x {
 namespace capi {
     extern "C" {
     
-    uint32_t icu4x_GeneralCategoryNameToMaskMapper_get_strict_mv1(const icu4x::capi::GeneralCategoryNameToMaskMapper* self, const char* name_data, size_t name_len);
+    uint32_t icu4x_GeneralCategoryNameToMaskMapper_get_strict_mv1(const icu4x::capi::GeneralCategoryNameToMaskMapper* self, diplomat::capi::DiplomatStringView name);
     
-    uint32_t icu4x_GeneralCategoryNameToMaskMapper_get_loose_mv1(const icu4x::capi::GeneralCategoryNameToMaskMapper* self, const char* name_data, size_t name_len);
+    uint32_t icu4x_GeneralCategoryNameToMaskMapper_get_loose_mv1(const icu4x::capi::GeneralCategoryNameToMaskMapper* self, diplomat::capi::DiplomatStringView name);
     
     typedef struct icu4x_GeneralCategoryNameToMaskMapper_load_mv1_result {union {icu4x::capi::GeneralCategoryNameToMaskMapper* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_GeneralCategoryNameToMaskMapper_load_mv1_result;
     icu4x_GeneralCategoryNameToMaskMapper_load_mv1_result icu4x_GeneralCategoryNameToMaskMapper_load_mv1(const icu4x::capi::DataProvider* provider);
@@ -34,15 +34,13 @@ namespace capi {
 
 inline uint32_t icu4x::GeneralCategoryNameToMaskMapper::get_strict(std::string_view name) const {
   auto result = icu4x::capi::icu4x_GeneralCategoryNameToMaskMapper_get_strict_mv1(this->AsFFI(),
-    name.data(),
-    name.size());
+    {name.data(), name.size()});
   return result;
 }
 
 inline uint32_t icu4x::GeneralCategoryNameToMaskMapper::get_loose(std::string_view name) const {
   auto result = icu4x::capi::icu4x_GeneralCategoryNameToMaskMapper_get_loose_mv1(this->AsFFI(),
-    name.data(),
-    name.size());
+    {name.data(), name.size()});
   return result;
 }
 

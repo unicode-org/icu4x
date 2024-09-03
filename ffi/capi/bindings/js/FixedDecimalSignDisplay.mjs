@@ -17,6 +17,7 @@ export class FixedDecimalSignDisplay {
         ["ExceptZero", 3],
         ["Negative", 4]
     ]);
+
     constructor(value) {
         if (value instanceof FixedDecimalSignDisplay) {
             this.#value = value.value;
@@ -40,16 +41,8 @@ export class FixedDecimalSignDisplay {
     }
 
     static Auto = new FixedDecimalSignDisplay("Auto");
-
     static Never = new FixedDecimalSignDisplay("Never");
-
     static Always = new FixedDecimalSignDisplay("Always");
-
     static ExceptZero = new FixedDecimalSignDisplay("ExceptZero");
-
     static Negative = new FixedDecimalSignDisplay("Negative");
-
-
-    
-
 }

@@ -23,7 +23,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub(crate) struct ErasedNameToEnumMapV1Marker;
 impl DynamicDataMarker for ErasedNameToEnumMapV1Marker {
-    type Yokeable = PropertyValueNameToEnumMapV1<'static>;
+    type DataStruct = PropertyValueNameToEnumMapV1<'static>;
 }
 
 /// A struct capable of looking up a property value from a string name.
@@ -100,7 +100,7 @@ impl<T: TrieValue> PropertyValueNameToEnumMapper<T> {
 
     pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
     where
-        M: DynamicDataMarker<Yokeable = PropertyValueNameToEnumMapV1<'static>>,
+        M: DynamicDataMarker<DataStruct = PropertyValueNameToEnumMapV1<'static>>,
     {
         Self {
             map: data.cast(),
@@ -261,7 +261,7 @@ fn get_loose_u16(payload: &PropertyValueNameToEnumMapV1<'_>, name: &str) -> Opti
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub(crate) struct ErasedEnumToValueNameSparseMapV1Marker;
 impl DynamicDataMarker for ErasedEnumToValueNameSparseMapV1Marker {
-    type Yokeable = PropertyEnumToValueNameSparseMapV1<'static>;
+    type DataStruct = PropertyEnumToValueNameSparseMapV1<'static>;
 }
 
 /// A struct capable of looking up a property name from a value
@@ -322,7 +322,7 @@ impl<T: TrieValue> PropertyEnumToValueNameSparseMapper<T> {
     /// (like [`Script::TBD()`]) instead.
     pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
     where
-        M: DynamicDataMarker<Yokeable = PropertyEnumToValueNameSparseMapV1<'static>>,
+        M: DynamicDataMarker<DataStruct = PropertyEnumToValueNameSparseMapV1<'static>>,
     {
         Self {
             map: data.cast(),
@@ -374,7 +374,7 @@ impl<T: TrieValue> PropertyEnumToValueNameSparseMapperBorrowed<'static, T> {
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub(crate) struct ErasedEnumToValueNameLinearMapV1Marker;
 impl DynamicDataMarker for ErasedEnumToValueNameLinearMapV1Marker {
-    type Yokeable = PropertyEnumToValueNameLinearMapV1<'static>;
+    type DataStruct = PropertyEnumToValueNameLinearMapV1<'static>;
 }
 
 /// A struct capable of looking up a property name from a value
@@ -435,7 +435,7 @@ impl<T: TrieValue> PropertyEnumToValueNameLinearMapper<T> {
     /// (like [`Script::TBD()`]) instead.
     pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
     where
-        M: DynamicDataMarker<Yokeable = PropertyEnumToValueNameLinearMapV1<'static>>,
+        M: DynamicDataMarker<DataStruct = PropertyEnumToValueNameLinearMapV1<'static>>,
     {
         Self {
             map: data.cast(),
@@ -476,54 +476,53 @@ impl<T: TrieValue> PropertyEnumToValueNameLinearMapperBorrowed<'static, T> {
     }
 }
 
-/// Private marker type for PropertyEnumToValueNameLinearTiny4Mapper
+/// Private marker type for PropertyScriptToIcuScriptMapper
 /// to work for all properties at once
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub(crate) struct ErasedEnumToValueNameLinearTiny4MapV1Marker;
 impl DynamicDataMarker for ErasedEnumToValueNameLinearTiny4MapV1Marker {
-    type Yokeable = PropertyEnumToValueNameLinearTiny4MapV1<'static>;
+    type DataStruct = PropertyScriptToIcuScriptMapV1<'static>;
 }
 
 /// A struct capable of looking up a property name from a value
 /// Access its data by calling [`Self::as_borrowed()`] and using the methods on
-/// [`PropertyEnumToValueNameLinearTiny4MapperBorrowed`].
+/// [`PropertyScriptToIcuScriptMapperBorrowed`].
 ///
-/// This mapper is used for properties with sequential values and names with four or fewer characters,
-/// like the [`Script`] short names.
-/// It may be obtained using methods like [`Script::get_enum_to_short_name_mapper()`].
+/// This mapper is used for the [`Script`] property.
+/// It may be obtained using methods like [`Script::get_enum_to_icu_script_mapper()`].
 ///
 /// # Example
 ///
 /// ```
 /// use icu::properties::Script;
-/// use tinystr::tinystr;
+/// use icu::locale::subtags::script;
 ///
-/// let lookup = Script::enum_to_short_name_mapper();
-/// assert_eq!(lookup.get(Script::Brahmi), Some(tinystr!(4, "Brah")));
-/// assert_eq!(lookup.get(Script::Hangul), Some(tinystr!(4, "Hang")));
+/// let lookup = Script::enum_to_icu_script_mapper();
+/// assert_eq!(lookup.get(Script::Brahmi), Some(script!("Brah")));
+/// assert_eq!(lookup.get(Script::Hangul), Some(script!("Hang")));
 /// ```
 #[derive(Debug)]
-pub struct PropertyEnumToValueNameLinearTiny4Mapper<T> {
+pub struct PropertyScriptToIcuScriptMapper<T> {
     map: DataPayload<ErasedEnumToValueNameLinearTiny4MapV1Marker>,
     markers: PhantomData<fn(T) -> ()>,
 }
 
 /// A borrowed wrapper around property value name-to-enum data, returned by
-/// [`PropertyEnumToValueNameLinearTiny4Mapper::as_borrowed()`]. More efficient to query.
+/// [`PropertyScriptToIcuScriptMapper::as_borrowed()`]. More efficient to query.
 #[derive(Debug, Copy, Clone)]
-pub struct PropertyEnumToValueNameLinearTiny4MapperBorrowed<'a, T> {
-    map: &'a PropertyEnumToValueNameLinearTiny4MapV1<'a>,
+pub struct PropertyScriptToIcuScriptMapperBorrowed<'a, T> {
+    map: &'a PropertyScriptToIcuScriptMapV1<'a>,
     markers: PhantomData<fn(T) -> ()>,
 }
 
-impl<T: TrieValue> PropertyEnumToValueNameLinearTiny4Mapper<T> {
+impl<T: TrieValue> PropertyScriptToIcuScriptMapper<T> {
     /// Construct a borrowed version of this type that can be queried.
     ///
     /// This avoids a potential small underlying cost per API call (like `get_static()`) by consolidating it
     /// up front.
     #[inline]
-    pub fn as_borrowed(&self) -> PropertyEnumToValueNameLinearTiny4MapperBorrowed<'_, T> {
-        PropertyEnumToValueNameLinearTiny4MapperBorrowed {
+    pub fn as_borrowed(&self) -> PropertyScriptToIcuScriptMapperBorrowed<'_, T> {
+        PropertyScriptToIcuScriptMapperBorrowed {
             map: self.map.get(),
             markers: PhantomData,
         }
@@ -535,7 +534,7 @@ impl<T: TrieValue> PropertyEnumToValueNameLinearTiny4Mapper<T> {
     /// (like [`Script::TBD()`]) instead.
     pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
     where
-        M: DynamicDataMarker<Yokeable = PropertyEnumToValueNameLinearTiny4MapV1<'static>>,
+        M: DynamicDataMarker<DataStruct = PropertyScriptToIcuScriptMapV1<'static>>,
     {
         Self {
             map: data.cast(),
@@ -544,33 +543,33 @@ impl<T: TrieValue> PropertyEnumToValueNameLinearTiny4Mapper<T> {
     }
 }
 
-impl<T: TrieValue> PropertyEnumToValueNameLinearTiny4MapperBorrowed<'_, T> {
+impl<T: TrieValue> PropertyScriptToIcuScriptMapperBorrowed<'_, T> {
     /// Get the property name given a value
     ///
     /// # Example
     ///
     /// ```rust
     /// use icu::properties::Script;
-    /// use tinystr::tinystr;
+    /// use icu::locale::subtags::script;
     ///
-    /// let lookup = Script::enum_to_short_name_mapper();
-    /// assert_eq!(lookup.get(Script::Brahmi), Some(tinystr!(4, "Brah")));
-    /// assert_eq!(lookup.get(Script::Hangul), Some(tinystr!(4, "Hang")));
+    /// let lookup = Script::enum_to_icu_script_mapper();
+    /// assert_eq!(lookup.get(Script::Brahmi), Some(script!("Brah")));
+    /// assert_eq!(lookup.get(Script::Hangul), Some(script!("Hang")));
     /// ```
     #[inline]
-    pub fn get(&self, property: T) -> Option<tinystr::TinyStr4> {
+    pub fn get(&self, property: T) -> Option<icu_locale_core::subtags::Script> {
         let prop = usize::try_from(property.to_u32()).ok()?;
-        self.map.map.get(prop).filter(|x| !x.is_empty())
+        self.map.map.get(prop).and_then(|o| o.0)
     }
 }
 
-impl<T: TrieValue> PropertyEnumToValueNameLinearTiny4MapperBorrowed<'static, T> {
-    /// Cheaply converts a [`PropertyEnumToValueNameLinearTiny4MapperBorrowed<'static>`] into a [`PropertyEnumToValueNameLinearTiny4Mapper`].
+impl<T: TrieValue> PropertyScriptToIcuScriptMapperBorrowed<'static, T> {
+    /// Cheaply converts a [`PropertyScriptToIcuScriptMapperBorrowed<'static>`] into a [`PropertyScriptToIcuScriptMapper`].
     ///
-    /// Note: Due to branching and indirection, using [`PropertyEnumToValueNameLinearTiny4Mapper`] might inhibit some
-    /// compile-time optimizations that are possible with [`PropertyEnumToValueNameLinearTiny4MapperBorrowed`].
-    pub const fn static_to_owned(self) -> PropertyEnumToValueNameLinearTiny4Mapper<T> {
-        PropertyEnumToValueNameLinearTiny4Mapper {
+    /// Note: Due to branching and indirection, using [`PropertyScriptToIcuScriptMapper`] might inhibit some
+    /// compile-time optimizations that are possible with [`PropertyScriptToIcuScriptMapperBorrowed`].
+    pub const fn static_to_owned(self) -> PropertyScriptToIcuScriptMapper<T> {
+        PropertyScriptToIcuScriptMapper {
             map: DataPayload::from_static_ref(self.map),
             markers: PhantomData,
         }
@@ -1550,14 +1549,14 @@ impl_value_getter! {
         ///
         /// ```
         /// use icu::properties::Script;
-        /// use tinystr::tinystr;
+        /// use icu::locale::subtags::script;
         ///
-        /// let lookup = Script::enum_to_short_name_mapper();
-        /// assert_eq!(lookup.get(Script::Brahmi), Some(tinystr!(4, "Brah")));
-        /// assert_eq!(lookup.get(Script::Hangul), Some(tinystr!(4, "Hang")));
+        /// let lookup = Script::enum_to_icu_script_mapper();
+        /// assert_eq!(lookup.get(Script::Brahmi), Some(script!("Brah")));
+        /// assert_eq!(lookup.get(Script::Hangul), Some(script!("Hang")));
         /// ```
-        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearTiny4Mapper / PropertyEnumToValueNameLinearTiny4MapperBorrowed;
-        /// Return a [`PropertyEnumToValueNameLinearTiny4Mapper`], capable of looking up long names
+        pub fn get_enum_to_icu_script_mapper() / enum_to_icu_script_mapper() -> PropertyScriptToIcuScriptMapper / PropertyScriptToIcuScriptMapperBorrowed;
+        /// Return a [`PropertyScriptToIcuScriptMapper`], capable of looking up long names
         /// for values of the `Script` enumerated property.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*

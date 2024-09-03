@@ -11,10 +11,10 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 /** See the [Rust documentation for `PluralRules`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html) for more information.
 */
-
 const PluralRules_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_PluralRules_destroy_mv1(ptr);
 });
+
 export class PluralRules {
     // Internal ptr reference:
     #ptr = null;
@@ -23,55 +23,58 @@ export class PluralRules {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    
-    constructor(ptr, selfEdge) {
+    constructor(symbol, ptr, selfEdge) {
+        if (symbol !== diplomatRuntime.internalConstructor) {
+            console.error("PluralRules is an Opaque type. You cannot call its constructor.");
+            return;
+        }
         
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        // Unconditionally register to destroy when this object is ready to garbage collect.
-        PluralRules_box_destroy_registry.register(this, this.#ptr);
+        
+        // Are we being borrowed? If not, we can register.
+        if (this.#selfEdge.length === 0) {
+            PluralRules_box_destroy_registry.register(this, this.#ptr);
+        }
     }
 
     get ffiValue() {
         return this.#ptr;
     }
 
-
     static createCardinal(provider, locale) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_PluralRules_create_cardinal_mv1(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_PluralRules_create_cardinal_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+            if (!diplomatReceive.resultFlag) {
+                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new PluralRules(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new PluralRules(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
     static createOrdinal(provider, locale) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        const result = wasm.icu4x_PluralRules_create_ordinal_mv1(diplomat_receive_buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_PluralRules_create_ordinal_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
     
         try {
-    
-            if (!diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4)) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)]];
-                throw new Error('DataError: ' + cause.value, { cause });
+            if (!diplomatReceive.resultFlag) {
+                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new PluralRules(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), []);
-        } finally {
+            return new PluralRules(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
 
@@ -79,28 +82,23 @@ export class PluralRules {
         const result = wasm.icu4x_PluralRules_category_for_mv1(this.ffiValue, op.ffiValue);
     
         try {
-    
             return PluralCategory[Array.from(PluralCategory.values.keys())[result]];
-        } finally {
-        
         }
+        
+        finally {}
     }
 
     get categories() {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 6, 1, false);
         
-        const diplomat_receive_buffer = wasm.diplomat_alloc(6, 1);
-        const result = wasm.icu4x_PluralRules_categories_mv1(diplomat_receive_buffer, this.ffiValue);
+        const result = wasm.icu4x_PluralRules_categories_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {
-    
-            return new PluralCategories(diplomat_receive_buffer);
-        } finally {
+            return new PluralCategories(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+        }
         
-            wasm.diplomat_free(diplomat_receive_buffer, 6, 1);
-        
+        finally {
+            diplomatReceive.free();
         }
     }
-
-    
-
 }

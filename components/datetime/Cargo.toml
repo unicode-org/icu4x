@@ -31,6 +31,7 @@ icu_provider = { workspace = true, features = ["macros"] }
 icu_timezone = { workspace = true }
 smallvec = { workspace = true }
 tinystr = { workspace = true, features = ["alloc", "zerovec"] }
+potential_utf = { workspace = true, features = ["zerovec"] }
 writeable = { workspace = true }
 zerovec = { workspace = true, features = ["yoke"] }
 
@@ -48,6 +49,7 @@ icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 icu_calendar = { path = "../calendar", features = ["ixdtf"] }
 icu_provider_adapters = { path = "../../provider/adapters" }
 icu_provider_blob = { path = "../../provider/blob" }
+icu_timezone = { path = "../timezone", features = ["ixdtf"] }
 litemap = { path = "../../utils/litemap" }
 
 serde = { workspace = true, features = ["derive"] }
@@ -78,6 +80,7 @@ serde = [
     "litemap?/serde",
     "smallvec/serde",
     "tinystr/serde",
+    "potential_utf/serde",
     "zerovec/serde",
 ]
 datagen = [
@@ -116,7 +119,7 @@ required-features = ["bench"]
 
 [[test]]
 name = "datetime"
-required-features = ["compiled_data"]
+required-features = ["experimental", "compiled_data"]
 
 [[test]]
 name = "resolved_components"

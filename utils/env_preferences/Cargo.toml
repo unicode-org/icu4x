@@ -1,0 +1,35 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "env_preferences"
+version.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+homepage.workspace = true
+license.workspace = true
+categories.workspace = true
+include.workspace = true
+
+[dependencies]
+core-foundation-sys = "0.8.6"
+libc = "0.2.155"
+
+[dependencies.windows]
+version = "0.56.0"
+features = [
+    "System",
+    "Foundation",
+    "System_UserProfile",
+    "Foundation_Collections",
+    "Globalization",
+    "Globalization_DateTimeFormatting",
+    "Win32",
+    "Win32_Globalization"
+]
+
+[dev-dependencies]
+icu_locale = { path = "../../components/locale" }

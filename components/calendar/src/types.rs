@@ -9,7 +9,6 @@ use core::convert::TryFrom;
 use core::convert::TryInto;
 use core::fmt;
 use core::num::NonZeroU8;
-use core::str::FromStr;
 use tinystr::TinyAsciiStr;
 use tinystr::{TinyStr16, TinyStr4};
 use zerovec::maps::ZeroMapKV;
@@ -26,19 +25,6 @@ use zerovec::ule::AsULE;
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this is a newtype
 pub struct Era(pub TinyStr16);
-
-impl From<TinyStr16> for Era {
-    fn from(x: TinyStr16) -> Self {
-        Self(x)
-    }
-}
-
-impl FromStr for Era {
-    type Err = <TinyStr16 as FromStr>::Err;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        s.parse().map(Self)
-    }
-}
 
 /// Representation of a formattable year.
 ///
@@ -98,11 +84,8 @@ impl FormattableYear {
 /// [era-proposal]: https://tc39.es/proposal-intl-era-monthcode/
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[allow(clippy::exhaustive_structs)] // this is a newtype
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_calendar::types),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_calendar::types))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct MonthCode(pub TinyStr4);
 
@@ -189,18 +172,6 @@ impl<'a> ZeroMapKV<'a> for MonthCode {
 impl fmt::Display for MonthCode {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}", self.0)
-    }
-}
-
-impl From<TinyStr4> for MonthCode {
-    fn from(x: TinyStr4) -> Self {
-        Self(x)
-    }
-}
-impl FromStr for MonthCode {
-    type Err = <TinyStr4 as FromStr>::Err;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        s.parse().map(Self)
     }
 }
 
@@ -738,11 +709,8 @@ fn test_from_minute_with_remainder_days() {
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 #[allow(missing_docs)] // The weekday variants should be self-obvious.
 #[repr(i8)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_calendar::types),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_calendar::types))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_enums)] // This is stable
 pub enum IsoWeekday {

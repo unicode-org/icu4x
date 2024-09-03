@@ -23,9 +23,9 @@ namespace capi {
     typedef struct icu4x_Bidi_create_mv1_result {union {icu4x::capi::Bidi* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_Bidi_create_mv1_result;
     icu4x_Bidi_create_mv1_result icu4x_Bidi_create_mv1(const icu4x::capi::DataProvider* provider);
     
-    icu4x::capi::BidiInfo* icu4x_Bidi_for_text_utf8_mv1(const icu4x::capi::Bidi* self, const char* text_data, size_t text_len, uint8_t default_level);
+    icu4x::capi::BidiInfo* icu4x_Bidi_for_text_utf8_mv1(const icu4x::capi::Bidi* self, diplomat::capi::DiplomatStringView text, uint8_t default_level);
     
-    icu4x::capi::ReorderedIndexMap* icu4x_Bidi_reorder_visual_mv1(const icu4x::capi::Bidi* self, const uint8_t* levels_data, size_t levels_len);
+    icu4x::capi::ReorderedIndexMap* icu4x_Bidi_reorder_visual_mv1(const icu4x::capi::Bidi* self, diplomat::capi::DiplomatU8View levels);
     
     bool icu4x_Bidi_level_is_rtl_mv1(uint8_t level);
     
@@ -49,16 +49,14 @@ inline diplomat::result<std::unique_ptr<icu4x::Bidi>, icu4x::DataError> icu4x::B
 
 inline std::unique_ptr<icu4x::BidiInfo> icu4x::Bidi::for_text(std::string_view text, uint8_t default_level) const {
   auto result = icu4x::capi::icu4x_Bidi_for_text_utf8_mv1(this->AsFFI(),
-    text.data(),
-    text.size(),
+    {text.data(), text.size()},
     default_level);
   return std::unique_ptr<icu4x::BidiInfo>(icu4x::BidiInfo::FromFFI(result));
 }
 
 inline std::unique_ptr<icu4x::ReorderedIndexMap> icu4x::Bidi::reorder_visual(diplomat::span<const uint8_t> levels) const {
   auto result = icu4x::capi::icu4x_Bidi_reorder_visual_mv1(this->AsFFI(),
-    levels.data(),
-    levels.size());
+    {levels.data(), levels.size()});
   return std::unique_ptr<icu4x::ReorderedIndexMap>(icu4x::ReorderedIndexMap::FromFFI(result));
 }
 

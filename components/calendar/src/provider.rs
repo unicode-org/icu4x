@@ -21,7 +21,6 @@ pub use chinese_based::{ChineseCacheV1Marker, DangiCacheV1Marker};
 pub use islamic::{IslamicObservationalCacheV1Marker, IslamicUmmAlQuraCacheV1Marker};
 
 use crate::types::IsoWeekday;
-use core::str::FromStr;
 use icu_provider::prelude::*;
 use tinystr::TinyStr16;
 use zerovec::ZeroVec;
@@ -84,11 +83,8 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 #[derive(
     Copy, Clone, PartialEq, PartialOrd, Eq, Ord, Hash, Debug, yoke::Yokeable, zerofrom::ZeroFrom,
 )]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_calendar::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct EraStartDate {
     /// The year the era started in
@@ -112,35 +108,13 @@ pub struct EraStartDate {
     marker(JapaneseExtendedErasV1Marker, "calendar/japanext@1", singleton)
 )]
 #[derive(Debug, PartialEq, Clone, Default)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_calendar::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct JapaneseErasV1<'data> {
     /// A map from era start dates to their era codes
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub dates_to_eras: ZeroVec<'data, (EraStartDate, TinyStr16)>,
-}
-
-impl FromStr for EraStartDate {
-    type Err = ();
-    fn from_str(mut s: &str) -> Result<Self, Self::Err> {
-        let sign = if let Some(suffix) = s.strip_prefix('-') {
-            s = suffix;
-            -1
-        } else {
-            1
-        };
-
-        let mut split = s.split('-');
-        let year = split.next().ok_or(())?.parse::<i32>().map_err(|_| ())? * sign;
-        let month = split.next().ok_or(())?.parse().map_err(|_| ())?;
-        let day = split.next().ok_or(())?.parse().map_err(|_| ())?;
-
-        Ok(EraStartDate { year, month, day })
-    }
 }
 
 /// An ICU4X mapping to a subset of CLDR weekData.
@@ -157,11 +131,8 @@ impl FromStr for EraStartDate {
     fallback_by = "region"
 ))]
 #[derive(Clone, Copy, Debug, PartialEq)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_calendar::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_structs)] // used in data provider
 pub struct WeekDataV1 {
@@ -185,7 +156,8 @@ pub struct WeekDataV1 {
     fallback_by = "region"
 ))]
 #[derive(Clone, Copy, Debug, PartialEq)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_calendar::provider))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_structs)] // used in data provider
 pub struct WeekDataV2 {

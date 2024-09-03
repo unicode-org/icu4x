@@ -14,7 +14,7 @@ struct DefaultPrefs {
 
 const DEFAULT_PREFS: DefaultPrefs = DefaultPrefs {
     und: DateTimeFormatResolvedPreferences {
-        lid: LanguageIdentifier::UND,
+        lid: LanguageIdentifier::default(),
         hour_cycle: keywords::HourCycle::H23,
         calendar: keywords::CalendarAlgorithm::Gregory,
         numbering_system: keywords::NumberingSystem(subtag!("latn")),

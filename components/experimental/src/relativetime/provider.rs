@@ -10,11 +10,13 @@
 //! Read more about data providers: [`icu_provider`]
 
 use alloc::borrow::Cow;
-use alloc::format;
-use alloc::string::ToString;
-use core::str::FromStr;
+use core::marker::PhantomData;
+#[cfg(feature = "datagen")]
+use core::{fmt::Debug, str::FromStr};
+use icu_pattern::{Pattern, PatternBackend, SinglePlaceholderPattern};
+use icu_plurals::PluralCategory;
 use icu_provider::prelude::*;
-use zerovec::ZeroMap;
+use zerovec::{ule::AsULE, VarZeroVec, ZeroMap};
 
 #[cfg(feature = "compiled_data")]
 /// Baked data
@@ -54,13 +56,10 @@ pub use crate::provider::Baked;
     ShortYearRelativeTimeFormatDataV1Marker = "relativetime/short/year@1",
     NarrowYearRelativeTimeFormatDataV1Marker = "relativetime/narrow/year@1"
 )]
-#[derive(Debug, Clone, Default, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::relativetime::provider)
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::relativetime::provider))]
 #[yoke(prove_covariance_manually)]
 pub struct RelativeTimePatternDataV1<'data> {
     /// Mapping for relative times with unique names.
@@ -70,80 +69,183 @@ pub struct RelativeTimePatternDataV1<'data> {
     pub relatives: ZeroMap<'data, i8, str>,
     /// How to display times in the past.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub past: PluralRulesCategoryMapping<'data>,
+    pub past: PluralElements<'data, SinglePlaceholderPattern<str>>,
     /// How to display times in the future.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub future: PluralRulesCategoryMapping<'data>,
+    pub future: PluralElements<'data, SinglePlaceholderPattern<str>>,
 }
+
+#[derive(Debug)]
+#[zerovec::make_varule(PluralCategoryStrULE)]
+#[zerovec::skip_derive(Ord)]
+#[zerovec::derive(Debug)]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde::Deserialize),
+    zerovec::derive(Deserialize)
+)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize),
+    zerovec::derive(Serialize)
+)]
+/// A tuple of [`PluralCategory`] and [`str`].
+pub struct PluralCategoryStr<'data>(pub PluralCategory, pub Cow<'data, str>);
 
 /// Display specification for relative times, split over potential plural patterns.
-#[derive(Debug, Clone, Default, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::relativetime::provider)
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::relativetime::provider))]
 #[yoke(prove_covariance_manually)]
-pub struct PluralRulesCategoryMapping<'data> {
-    /// Mapping for PluralCategory::Zero or `None` if not present.
+pub struct PluralElements<'data, T: ?Sized> {
+    /// Optional entries for categories other than PluralCategory::Other
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub zero: Option<SingularSubPattern<'data>>,
-    /// Mapping for PluralCategory::One or `None` if not present.
+    pub specials: VarZeroVec<'data, PluralCategoryStrULE>,
+    /// The entry for PluralCategory::Other
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub one: Option<SingularSubPattern<'data>>,
-    /// Mapping for PluralCategory::Two or `None` if not present.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub two: Option<SingularSubPattern<'data>>,
-    /// Mapping for PluralCategory::Few or `None` if not present.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub few: Option<SingularSubPattern<'data>>,
-    /// Mapping for PluralCategory::Many or `None` if not present.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub many: Option<SingularSubPattern<'data>>,
-    /// Mapping for PluralCategory::Other
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub other: SingularSubPattern<'data>,
+    pub other: Cow<'data, str>,
+    /// Keeps track of T
+    #[cfg_attr(feature = "serde", serde(skip))]
+    pub _phantom: PhantomData<T>,
 }
 
-/// Singular substitution for pattern that optionally uses "{0}" as a placeholder.
-#[derive(Debug, Clone, Default, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::relativetime::provider)
-)]
-pub struct SingularSubPattern<'data> {
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    /// The underlying pattern with the placeholder "{0}" removed.
-    pub pattern: Cow<'data, str>,
-    /// Denotes the substitution position in the pattern.
-    /// Equals 255 if the pattern does not have a placeholder.
-    pub index: u8,
+impl<'data, T: ?Sized> Clone for PluralElements<'data, T> {
+    fn clone(&self) -> Self {
+        Self {
+            specials: self.specials.clone(),
+            other: self.other.clone(),
+            _phantom: self._phantom,
+        }
+    }
 }
 
-impl FromStr for SingularSubPattern<'_> {
-    type Err = DataError;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let (pattern, index) = if let Some(index) = s.find("{0}") {
-            if index >= 255 {
-                return Err(DataError::custom("Placeholder index too large to store."));
-            }
-            (format!("{}{}", &s[..index], &s[index + 3..]), index as u8)
-        } else {
-            (s.to_string(), 255u8)
+impl<'data, B: PatternBackend<Store = str>> PluralElements<'data, Pattern<B, str>> {
+    /// Creates a [`PluralElements`] from the given patterns.
+    #[cfg(feature = "datagen")]
+    pub fn try_new_pattern(
+        other: &str,
+        zero: Option<&str>,
+        one: Option<&str>,
+        two: Option<&str>,
+        few: Option<&str>,
+        many: Option<&str>,
+    ) -> Result<Self, icu_pattern::PatternError>
+    where
+        B::PlaceholderKeyCow<'data>: FromStr,
+        <B::PlaceholderKeyCow<'data> as FromStr>::Err: Debug,
+    {
+        let optional_convert = |category, pattern: Option<&str>| {
+            pattern
+                .filter(|p| *p != other)
+                .map(|s| {
+                    Ok(PluralCategoryStr(
+                        category,
+                        // TODO: Make pattern support apostrophes
+                        Pattern::<B, String>::from_str(&s.replace('\'', "''"))
+                            .map(|p| Pattern::<B, _>::from_store_unchecked(p.take_store().into()))?
+                            .take_store(),
+                    ))
+                })
+                .transpose()
         };
+
         Ok(Self {
-            pattern: Cow::Owned(pattern),
-            index,
+            specials: (&[
+                (optional_convert(PluralCategory::Zero, zero)?),
+                (optional_convert(PluralCategory::One, one)?),
+                (optional_convert(PluralCategory::Two, two)?),
+                (optional_convert(PluralCategory::Few, few)?),
+                (optional_convert(PluralCategory::Many, many)?),
+            ]
+            .into_iter()
+            .flatten()
+            .collect::<Vec<_>>())
+                .into(),
+            // TODO: Make pattern support apostrophes
+            other: Pattern::<B, String>::from_str(&other.replace('\'', "''"))?
+                .take_store()
+                .into(),
+            _phantom: PhantomData::<Pattern<B, str>>,
         })
     }
+
+    /// Returns the pattern for the given [`PluralCategory`].
+    pub fn get_pattern(&'data self, c: PluralCategory) -> &'data Pattern<B, str> {
+        Pattern::from_ref_store_unchecked(if c == PluralCategory::Other {
+            &*self.other
+        } else {
+            self.specials
+                .iter()
+                .filter_map(|ule| (ule.0 == c.to_unaligned()).then_some(&ule.1))
+                .next()
+                .unwrap_or(&*self.other)
+        })
+    }
+}
+
+impl<'data> PluralElements<'data, str> {
+    /// Creates a [`PluralElements`] from the given strings.
+    #[cfg(feature = "datagen")]
+    pub fn try_new(
+        other: &str,
+        zero: Option<&str>,
+        one: Option<&str>,
+        two: Option<&str>,
+        few: Option<&str>,
+        many: Option<&str>,
+    ) -> Self
+where {
+        Self {
+            specials: (&[
+                zero.filter(|p| *p != other)
+                    .map(|s| PluralCategoryStr(PluralCategory::Zero, s.into())),
+                one.filter(|p| *p != other)
+                    .map(|s| PluralCategoryStr(PluralCategory::One, s.into())),
+                two.filter(|p| *p != other)
+                    .map(|s| PluralCategoryStr(PluralCategory::Two, s.into())),
+                few.filter(|p| *p != other)
+                    .map(|s| PluralCategoryStr(PluralCategory::Few, s.into())),
+                many.filter(|p| *p != other)
+                    .map(|s| PluralCategoryStr(PluralCategory::Many, s.into())),
+            ]
+            .into_iter()
+            .flatten()
+            .collect::<Vec<_>>())
+                .into(),
+            other: other.to_owned().into(),
+            _phantom: PhantomData::<str>,
+        }
+    }
+
+    /// Returns the string for the given [`PluralCategory`].
+    pub fn get_str(&'data self, c: PluralCategory) -> &'data str {
+        if c == PluralCategory::Other {
+            &self.other
+        } else {
+            self.specials
+                .iter()
+                .filter_map(|ule| (ule.0 == c.to_unaligned()).then_some(&ule.1))
+                .next()
+                .unwrap_or(&*self.other)
+        }
+    }
+}
+
+#[test]
+fn plural_patterns_niche() {
+    assert_eq!(
+        core::mem::size_of::<PluralElements<SinglePlaceholderPattern<str>>>(),
+        48
+    );
+    assert_eq!(
+        core::mem::size_of::<Option<PluralElements<SinglePlaceholderPattern<str>>>>(),
+        48
+    );
 }
 
 pub(crate) struct ErasedRelativeTimeFormatV1Marker;
 
 impl DynamicDataMarker for ErasedRelativeTimeFormatV1Marker {
-    type Yokeable = RelativeTimePatternDataV1<'static>;
+    type DataStruct = RelativeTimePatternDataV1<'static>;
 }

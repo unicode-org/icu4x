@@ -13,6 +13,7 @@ use crate::CanonicalDecompositionDataV1Marker;
 use crate::CanonicalDecompositionTablesV1Marker;
 use crate::CompatibilityDecompositionTablesV1Marker;
 use crate::ComposingNormalizer;
+use crate::ComposingNormalizerBorrowed;
 use crate::Uts46DecompositionSupplementV1Marker;
 use icu_provider::DataError;
 use icu_provider::DataProvider;
@@ -27,44 +28,27 @@ use icu_provider::DataProvider;
 //    writing this, it looked like such processing was needed but
 //    now isn't needed after all.)
 
-/// A mapper that knows how to performs the subsets of UTS 46 processing
-/// documented on the methods.
+/// A borrowed version of a mapper that knows how to performs the
+/// subsets of UTS 46 processing documented on the methods.
 #[derive(Debug)]
-pub struct Uts46Mapper {
-    normalizer: ComposingNormalizer,
+pub struct Uts46MapperBorrowed<'a> {
+    normalizer: ComposingNormalizerBorrowed<'a>,
 }
 
 #[cfg(feature = "compiled_data")]
-impl Default for Uts46Mapper {
+impl<'a> Default for Uts46MapperBorrowed<'a> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl Uts46Mapper {
+impl<'a> Uts46MapperBorrowed<'a> {
     /// Construct with compiled data.
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
-        Uts46Mapper {
-            normalizer: ComposingNormalizer::new_uts46(),
+        Uts46MapperBorrowed {
+            normalizer: ComposingNormalizerBorrowed::new_uts46(),
         }
-    }
-
-    /// Construct with provider.
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
-    where
-        D: DataProvider<CanonicalDecompositionDataV1Marker>
-            + DataProvider<Uts46DecompositionSupplementV1Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
-            + DataProvider<CompatibilityDecompositionTablesV1Marker>
-            // UTS 46 tables merged into CompatibilityDecompositionTablesV1Marker
-            + DataProvider<CanonicalCompositionsV1Marker>
-            + ?Sized,
-    {
-        let normalizer = ComposingNormalizer::try_new_uts46_unstable(provider)?;
-
-        Ok(Uts46Mapper { normalizer })
     }
 
     /// Returns an iterator adaptor that turns an `Iterator` over `char`
@@ -132,5 +116,53 @@ impl Uts46Mapper {
     ) -> impl Iterator<Item = char> + 'delegate {
         self.normalizer
             .normalize_iter_private(iter, crate::IgnorableBehavior::ReplacementCharacter)
+    }
+}
+
+/// A mapper that knows how to performs the subsets of UTS 46 processing
+/// documented on the methods.
+#[derive(Debug)]
+pub struct Uts46Mapper {
+    normalizer: ComposingNormalizer,
+}
+
+#[cfg(feature = "compiled_data")]
+impl Default for Uts46Mapper {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl Uts46Mapper {
+    /// Constructs a borrowed version of this type for more efficient querying.
+    pub fn as_borrowed(&self) -> Uts46MapperBorrowed<'_> {
+        Uts46MapperBorrowed {
+            normalizer: self.normalizer.as_borrowed(),
+        }
+    }
+
+    /// Construct with compiled data.
+    #[cfg(feature = "compiled_data")]
+    pub const fn new() -> Self {
+        Uts46Mapper {
+            normalizer: ComposingNormalizer::new_uts46(),
+        }
+    }
+
+    /// Construct with provider.
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
+    where
+        D: DataProvider<CanonicalDecompositionDataV1Marker>
+            + DataProvider<Uts46DecompositionSupplementV1Marker>
+            + DataProvider<CanonicalDecompositionTablesV1Marker>
+            + DataProvider<CompatibilityDecompositionTablesV1Marker>
+            // UTS 46 tables merged into CompatibilityDecompositionTablesV1Marker
+            + DataProvider<CanonicalCompositionsV1Marker>
+            + ?Sized,
+    {
+        let normalizer = ComposingNormalizer::try_new_uts46_unstable(provider)?;
+
+        Ok(Uts46Mapper { normalizer })
     }
 }

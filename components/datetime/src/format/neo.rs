@@ -123,7 +123,7 @@ impl<M: DynamicDataMarker, Variables> DateTimeNamesData2<M, Variables> {
 }
 
 pub struct DateTimeNamesData2Borrowed<'data, M: DynamicDataMarker, Variables> {
-    inner: OptionalNames<Variables, &'data <M::Yokeable as Yokeable<'data>>::Output>,
+    inner: OptionalNames<Variables, &'data <M::DataStruct as Yokeable<'data>>::Output>,
 }
 
 impl<M: DynamicDataMarker, Variables> MaybePayload2<M, Variables>
@@ -251,7 +251,7 @@ where
     #[inline]
     pub(crate) fn as_borrowed<'a>(
         &'a self,
-    ) -> OptionalNames<Variables, &'a <M::Yokeable as Yokeable<'a>>::Output> {
+    ) -> OptionalNames<Variables, &'a <M::DataStruct as Yokeable<'a>>::Output> {
         match self {
             Self::None => OptionalNames::None,
             Self::SingleLength { variables, payload } => OptionalNames::SingleLength {
@@ -315,13 +315,13 @@ size_test!(
 ///     .include_day_period_names(FieldLength::Abbreviated)
 ///     .unwrap();
 ///
-/// // Create a pattern from a pattern string:
-/// let pattern_str = "E MMM d y -- h:mm a";
+/// // Create a pattern from a pattern string (note: K is the hour with h11 hour cycle):
+/// let pattern_str = "E MMM d y -- K:mm a";
 /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
 ///
 /// // Test it:
-/// let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 20, 11, 35, 3).unwrap();
-/// assert_try_writeable_eq!(names.with_pattern(&pattern).format(&datetime), "пн лист. 20 2023 -- 11:35 дп");
+/// let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 20, 12, 35, 3).unwrap();
+/// assert_try_writeable_eq!(names.with_pattern(&pattern).format(&datetime), "пн лист. 20 2023 -- 0:35 пп");
 /// ```
 ///
 /// If the correct data is not loaded, and error will occur:
@@ -394,7 +394,7 @@ size_test!(
 /// // Missing data is filled in on a best-effort basis, and an error is signaled.
 /// assert_try_writeable_parts_eq!(
 ///     names.with_pattern(&pattern).format(&CustomTimeZone::new_empty()),
-///     "It is: {E} {M} {d} {y} {G} at {h}:{m}:{s}{S} {a} {GMT+?}",
+///     "It is: {E} {M} {d} {y} {G} at {h}:{m}:{s} {a} {GMT+?}",
 ///     Err(DateTimeWriteError::MissingInputField("iso_weekday")),
 ///     [
 ///         (7, 10, Part::ERROR), // {E}
@@ -405,9 +405,8 @@ size_test!(
 ///         (30, 33, Part::ERROR), // {h}
 ///         (34, 37, Part::ERROR), // {m}
 ///         (38, 41, Part::ERROR), // {s}
-///         (41, 44, Part::ERROR), // {S}
-///         (45, 48, Part::ERROR), // {a}
-///         (49, 56, Part::ERROR), // {GMT+?}
+///         (42, 45, Part::ERROR), // {a}
+///         (46, 53, Part::ERROR), // {GMT+?}
 ///     ]
 /// );
 /// ```
@@ -2046,8 +2045,16 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                         }
                         ResolvedNeoTimeZoneSkeleton::GmtShort
                         | ResolvedNeoTimeZoneSkeleton::GmtLong
-                        | ResolvedNeoTimeZoneSkeleton::IsoBasic
-                        | ResolvedNeoTimeZoneSkeleton::IsoExtended
+                        | ResolvedNeoTimeZoneSkeleton::Isox
+                        | ResolvedNeoTimeZoneSkeleton::Isoxx
+                        | ResolvedNeoTimeZoneSkeleton::Isoxxx
+                        | ResolvedNeoTimeZoneSkeleton::Isoxxxx
+                        | ResolvedNeoTimeZoneSkeleton::Isoxxxxx
+                        | ResolvedNeoTimeZoneSkeleton::IsoX
+                        | ResolvedNeoTimeZoneSkeleton::IsoXX
+                        | ResolvedNeoTimeZoneSkeleton::IsoXXX
+                        | ResolvedNeoTimeZoneSkeleton::IsoXXXX
+                        | ResolvedNeoTimeZoneSkeleton::IsoXXXXX
                         | ResolvedNeoTimeZoneSkeleton::Bcp47Id => {
                             // all data needed for this is in time zone essentials
                         }
@@ -2094,6 +2101,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 FieldSymbol::Hour(_) => numeric_field = Some(field),
                 FieldSymbol::Minute => numeric_field = Some(field),
                 FieldSymbol::Second(_) => numeric_field = Some(field),
+                FieldSymbol::DecimalSecond(_) => numeric_field = Some(field),
             };
         }
 

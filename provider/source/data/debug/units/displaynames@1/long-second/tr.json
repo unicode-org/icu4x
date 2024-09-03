@@ -1,5 +1,6 @@
 {
   "patterns": {
-    "Other": "{0} saniye"
+    "specials": [],
+    "other": "\u0001 saniye"
   }
 }

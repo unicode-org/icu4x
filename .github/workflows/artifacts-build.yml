@@ -178,7 +178,7 @@ jobs:
       run: |
         cd ffi/npm
         make lib/index.mjs
-        npm install typedoc
+        npm install typedoc@0.26.5 --exact
         node_modules/typedoc/bin/typedoc lib/index.d.ts --out docs --readme ../../tutorials/js.md --basePath lib
         cd ../..
         
@@ -269,19 +269,16 @@ jobs:
     - name: Init packages
       run: |
         npm -C ffi/npm ci
-        npm -C tutorials/npm ci
+        npm -C tutorials/web-demo ci
+      env: 
+        PINNED_CI_NIGHTLY: nightly-2024-07-23
 
     - name: Run Webpack
-      run: npm -C tutorials/npm run build
-
-    - name: Put index.html in dist for temp URL
-      run: |
-        cp tutorials/npm/index.html tutorials/npm/dist/index.html
-        printf "const gcs=document.createElement('script');gcs.setAttribute('src','./bundle.js');document.body.appendChild(gcs);" > tutorials/npm/dist/index.js
+      run: npm -C tutorials/web-demo run build
 
     - name: Upload wasm-demo bundle to Google Cloud Storage
       run: |
-        gsutil -m cp -r tutorials/npm/dist/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/wasm-demo
+        gsutil -m cp -r tutorials/web-demo/public/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/wasm-demo
 
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
@@ -345,6 +342,7 @@ jobs:
         mkdir -p benchmarks/perf/${{ matrix.component }}
 
     - name: Run benchmark
+      shell: /usr/bin/bash -o pipefail -e {0}
       run: |
         cargo bench --features bench --manifest-path ${{ matrix.component }}/Cargo.toml -- --output-format bencher | tee benchmarks/perf/${{ matrix.component }}/output.txt;
 
@@ -490,7 +488,7 @@ jobs:
     # Job-specific dependencies
     - name: Install npm tools
       run: |
-        npm install -g wasm-opt
+        npm install -g wasm-opt@1.4.0 --exact
     
     # Actual job
     - name: Build wasm executables
@@ -508,10 +506,12 @@ jobs:
         mkdir -p benchmarks/binsize/gz
 
     - name: Measure size of executables (wasm)
+      shell: /usr/bin/bash -o pipefail -e {0}
       run: |
         cargo run --package icu_benchmark_binsize  -- wasmpkg/wasm-opt wasm | tee benchmarks/binsize/wasm/output.txt
 
     - name: Measure size of executables (gz)
+      shell: /usr/bin/bash -o pipefail -e {0}
       run: |
         cargo run --package icu_benchmark_binsize  -- wasmpkg/wasm-opt gz | tee benchmarks/binsize/gz/output.txt
 

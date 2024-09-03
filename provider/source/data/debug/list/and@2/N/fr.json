@@ -1,0 +1,15 @@
+{
+  "start": {
+    "string": ", ",
+    "index_1": 2
+  },
+  "middle": ", ",
+  "end": {
+    "default": {
+      "string": ", ",
+      "index_1": 2
+    },
+    "special_case": null
+  },
+  "pair": null
+}

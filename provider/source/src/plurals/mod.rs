@@ -60,7 +60,11 @@ macro_rules! implement {
                     payload: DataPayload::from_owned(PluralRulesV1::from(
                         self.get_rules_for(<$marker>::INFO)?
                             .0
-                            .get(&req.id.locale.get_langid())
+                            .get(&icu::locale::LanguageIdentifier::from((
+                                req.id.locale.language,
+                                req.id.locale.script,
+                                req.id.locale.region,
+                            )))
                             .ok_or(DataErrorKind::IdentifierNotFound.into_error())?,
                     )),
                 })
@@ -103,7 +107,7 @@ impl From<&cldr_serde::plurals::LocalePluralRules> for PluralRulesV1<'static> {
 impl DataProvider<PluralRangesV1Marker> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<PluralRangesV1Marker>, DataError> {
         self.check_req::<PluralRangesV1Marker>(req)?;
-        if req.id.locale.is_und() {
+        if req.id.locale.is_default() {
             Ok(DataResponse {
                 metadata: Default::default(),
                 payload: DataPayload::from_owned(PluralRangesV1 {
@@ -116,7 +120,11 @@ impl DataProvider<PluralRangesV1Marker> for SourceDataProvider {
                 payload: DataPayload::from_owned(PluralRangesV1::from(
                     self.get_plural_ranges()?
                         .0
-                        .get(&req.id.locale.get_langid())
+                        .get(&icu::locale::LanguageIdentifier::from((
+                            req.id.locale.language,
+                            req.id.locale.script,
+                            req.id.locale.region,
+                        )))
                         .ok_or(DataErrorKind::IdentifierNotFound.into_error())?,
                 )),
             })

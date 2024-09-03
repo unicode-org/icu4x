@@ -7,31 +7,11 @@
     "2": "après-demain"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": "- j",
-      "index": 1
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "- j",
-      "index": 1
-    }
+    "specials": [],
+    "other": "\u0002- j"
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "+ j",
-      "index": 1
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "+ j",
-      "index": 1
-    }
+    "specials": [],
+    "other": "\u0002+ j"
   }
 }

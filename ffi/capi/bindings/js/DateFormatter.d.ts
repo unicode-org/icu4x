@@ -3,10 +3,11 @@ import type { DataProvider } from "./DataProvider"
 import type { Date } from "./Date"
 import type { DateLength } from "./DateLength"
 import type { DateTime } from "./DateTime"
+import type { Error } from "./Error"
 import type { IsoDate } from "./IsoDate"
 import type { IsoDateTime } from "./IsoDateTime"
 import type { Locale } from "./Locale"
-import type { pointer, char } from "./diplomat-runtime.d.ts";
+import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 /** An ICU4X DateFormatter object capable of formatting a [`Date`] as a string,
@@ -19,7 +20,6 @@ export class DateFormatter {
 
     get ffiValue(): pointer;
 
-
     static createWithLength(provider: DataProvider, locale: Locale, dateLength: DateLength): DateFormatter;
 
     formatDate(value: Date): string;
@@ -29,7 +29,4 @@ export class DateFormatter {
     formatDatetime(value: DateTime): string;
 
     formatIsoDatetime(value: IsoDateTime): string;
-
-    
-
 }

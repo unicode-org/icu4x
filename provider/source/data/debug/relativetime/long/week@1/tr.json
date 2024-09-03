@@ -5,31 +5,11 @@
     "1": "gelecek hafta"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": " hafta önce",
-      "index": 0
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": " hafta önce",
-      "index": 0
-    }
+    "specials": [],
+    "other": "\u0001 hafta önce"
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": " hafta sonra",
-      "index": 0
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": " hafta sonra",
-      "index": 0
-    }
+    "specials": [],
+    "other": "\u0001 hafta sonra"
   }
 }

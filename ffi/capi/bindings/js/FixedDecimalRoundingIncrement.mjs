@@ -16,6 +16,7 @@ export class FixedDecimalRoundingIncrement {
         ["MultiplesOf5", 2],
         ["MultiplesOf25", 3]
     ]);
+
     constructor(value) {
         if (value instanceof FixedDecimalRoundingIncrement) {
             this.#value = value.value;
@@ -39,14 +40,7 @@ export class FixedDecimalRoundingIncrement {
     }
 
     static MultiplesOf1 = new FixedDecimalRoundingIncrement("MultiplesOf1");
-
     static MultiplesOf2 = new FixedDecimalRoundingIncrement("MultiplesOf2");
-
     static MultiplesOf5 = new FixedDecimalRoundingIncrement("MultiplesOf5");
-
     static MultiplesOf25 = new FixedDecimalRoundingIncrement("MultiplesOf25");
-
-
-    
-
 }

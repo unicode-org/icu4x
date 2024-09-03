@@ -1,5 +1,5 @@
 
-export { char } from './diplomat-runtime';
+export { codepoint } from './diplomat-runtime';
 
 
 export { TitlecaseOptions } from "./TitlecaseOptions"
@@ -13,6 +13,8 @@ export { FixedDecimalLimitError } from "./FixedDecimalLimitError"
 export { TimeZoneInvalidIdError } from "./TimeZoneInvalidIdError"
 
 export { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError"
+
+export { TimeZoneUnknownError } from "./TimeZoneUnknownError"
 
 export { LocaleFallbackConfig } from "./LocaleFallbackConfig"
 
@@ -239,8 +241,6 @@ export { FixedDecimalParseError } from "./FixedDecimalParseError"
 export { LocaleParseError } from "./LocaleParseError"
 
 export { LocaleFallbackPriority } from "./LocaleFallbackPriority"
-
-export { LocaleFallbackSupplement } from "./LocaleFallbackSupplement"
 
 export { FixedDecimalRoundingIncrement } from "./FixedDecimalRoundingIncrement"
 

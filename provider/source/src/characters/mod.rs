@@ -24,12 +24,11 @@ macro_rules! exemplar_chars_impls {
         impl DataProvider<$data_marker_name> for SourceDataProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$data_marker_name>, DataError> {
                 self.check_req::<$data_marker_name>(req)?;
-                let langid = req.id.locale.get_langid();
 
                 let data: &cldr_serde::exemplar_chars::Resource = self
                     .cldr()?
                     .misc()
-                    .read_and_parse(&langid, "characters.json")?;
+                    .read_and_parse(req.id.locale, "characters.json")?;
 
                 Ok(DataResponse {
                     metadata: Default::default(),
@@ -52,8 +51,8 @@ macro_rules! exemplar_chars_impls {
                 Ok(self
                     .cldr()?
                     .misc()
-                    .list_langs()?
-                    .map(|l| DataIdentifierCow::from_locale(DataLocale::from(l)))
+                    .list_locales()?
+                    .map(DataIdentifierCow::from_locale)
                     .collect())
             }
         }

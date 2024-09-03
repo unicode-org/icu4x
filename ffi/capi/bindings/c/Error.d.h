@@ -34,7 +34,7 @@ typedef enum Error {
   Error_DateTimeMismatchedCalendarError = 2056,
 } Error;
 
-
+typedef struct Error_option {union { Error ok; }; bool is_ok; } Error_option;
 
 
 

@@ -16,12 +16,11 @@ impl DataProvider<ShortCompactDecimalFormatDataV1Marker> for SourceDataProvider 
         req: DataRequest,
     ) -> Result<DataResponse<ShortCompactDecimalFormatDataV1Marker>, DataError> {
         self.check_req::<ShortCompactDecimalFormatDataV1Marker>(req)?;
-        let langid = req.id.locale.get_langid();
 
         let resource: &cldr_serde::numbers::Resource = self
             .cldr()?
             .numbers()
-            .read_and_parse(&langid, "numbers.json")?;
+            .read_and_parse(req.id.locale, "numbers.json")?;
 
         let numbers = &resource.main.value.numbers;
 
@@ -62,12 +61,11 @@ impl DataProvider<LongCompactDecimalFormatDataV1Marker> for SourceDataProvider {
         req: DataRequest,
     ) -> Result<DataResponse<LongCompactDecimalFormatDataV1Marker>, DataError> {
         self.check_req::<LongCompactDecimalFormatDataV1Marker>(req)?;
-        let langid = req.id.locale.get_langid();
 
         let resource: &cldr_serde::numbers::Resource = self
             .cldr()?
             .numbers()
-            .read_and_parse(&langid, "numbers.json")?;
+            .read_and_parse(req.id.locale, "numbers.json")?;
 
         let numbers = &resource.main.value.numbers;
 

@@ -2,7 +2,10 @@
 import type { IsoDateTime } from "./IsoDateTime"
 import type { MetazoneCalculator } from "./MetazoneCalculator"
 import type { TimeZoneIdMapper } from "./TimeZoneIdMapper"
-import type { pointer, char } from "./diplomat-runtime.d.ts";
+import type { TimeZoneInvalidIdError } from "./TimeZoneInvalidIdError"
+import type { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError"
+import type { TimeZoneUnknownError } from "./TimeZoneUnknownError"
+import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 /** See the [Rust documentation for `CustomTimeZone`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html) for more information.
@@ -11,7 +14,6 @@ export class CustomTimeZone {
     
 
     get ffiValue(): pointer;
-
 
     static fromString(s: string): CustomTimeZone;
 
@@ -68,7 +70,4 @@ export class CustomTimeZone {
     get isDaylightTime(): boolean | null;
 
     maybeCalculateMetazone(metazoneCalculator: MetazoneCalculator, localDatetime: IsoDateTime): void;
-
-    
-
 }

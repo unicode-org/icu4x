@@ -4,7 +4,7 @@
 
 use super::FlexZeroSlice;
 use super::FlexZeroVecOwned;
-use crate::ZeroVecError;
+use crate::ule::UleError;
 use core::cmp::Ordering;
 use core::iter::FromIterator;
 use core::ops::Deref;
@@ -164,7 +164,7 @@ impl<'a> FlexZeroVec<'a> {
     /// assert!(matches!(zv, FlexZeroVec::Borrowed(_)));
     /// assert_eq!(zv.get(2), Some(421));
     /// ```
-    pub fn parse_byte_slice(bytes: &'a [u8]) -> Result<Self, ZeroVecError> {
+    pub fn parse_byte_slice(bytes: &'a [u8]) -> Result<Self, UleError> {
         let slice: &'a FlexZeroSlice = FlexZeroSlice::parse_byte_slice(bytes)?;
         Ok(Self::Borrowed(slice))
     }

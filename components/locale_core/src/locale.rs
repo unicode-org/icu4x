@@ -144,19 +144,13 @@ impl Locale {
         parse_locale(code_units)
     }
 
-    /// The default undefined locale "und". Same as [`default()`](Default::default()).
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::locale::Locale;
-    ///
-    /// assert_eq!(Locale::default(), Locale::UND);
-    /// ```
-    pub const UND: Self = Self {
-        id: LanguageIdentifier::UND,
-        extensions: extensions::Extensions::new(),
-    };
+    /// Const-friendly version of [`Default::default`].
+    pub const fn default() -> Self {
+        Self {
+            id: LanguageIdentifier::default(),
+            extensions: extensions::Extensions::new(),
+        }
+    }
 
     /// This is a best-effort operation that performs all available levels of canonicalization.
     ///
@@ -428,7 +422,7 @@ impl_writeable_for_each_subtag_str_no_test!(Locale, selff, selff.extensions.is_e
 #[test]
 fn test_writeable() {
     use writeable::assert_writeable_eq;
-    assert_writeable_eq!(Locale::UND, "und");
+    assert_writeable_eq!(Locale::default(), "und");
     assert_writeable_eq!("und-001".parse::<Locale>().unwrap(), "und-001");
     assert_writeable_eq!("und-Mymr".parse::<Locale>().unwrap(), "und-Mymr");
     assert_writeable_eq!("my-Mymr-MM".parse::<Locale>().unwrap(), "my-Mymr-MM");

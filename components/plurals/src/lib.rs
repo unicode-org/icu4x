@@ -144,7 +144,8 @@ pub enum PluralRuleType {
 /// assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
 /// ```
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Ord, PartialOrd)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_plurals))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[repr(u8)]
 #[zerovec::make_ule(PluralCategoryULE)]

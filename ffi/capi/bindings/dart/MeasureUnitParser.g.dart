@@ -5,7 +5,7 @@ part of 'lib.g.dart';
 /// An ICU4X Measurement Unit parser object which is capable of parsing the CLDR unit identifier
 /// (e.g. `meter-per-square-second`) and get the [`MeasureUnit`].
 ///
-/// See the [Rust documentation for `MeasureUnitParser`](https://docs.rs/icu/latest/icu/experimental/units/measureunit/struct.MeasureUnitParser.html) for more information.
+/// See the [Rust documentation for `MeasureUnitParser`](https://docs.rs/icu/latest/icu/experimental/measure/parser/struct.MeasureUnitParser.html) for more information.
 final class MeasureUnitParser implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -30,12 +30,10 @@ final class MeasureUnitParser implements ffi.Finalizable {
   /// Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`MeasureUnit`],
   /// if the identifier is valid.
   ///
-  /// See the [Rust documentation for `parse`](https://docs.rs/icu/latest/icu/experimental/units/measureunit/struct.MeasureUnitParser.html#method.parse) for more information.
+  /// See the [Rust documentation for `parse`](https://docs.rs/icu/latest/icu/experimental/measure/parser/struct.MeasureUnitParser.html#method.parse) for more information.
   MeasureUnit? parse(String unitId) {
-    final temp = ffi2.Arena();
-    final unitIdView = unitId.utf8View;
-    final result = _icu4x_MeasureUnitParser_parse_mv1(_ffi, unitIdView.allocIn(temp), unitIdView.length);
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final result = _icu4x_MeasureUnitParser_parse_mv1(_ffi, unitId._utf8AllocIn(temp.arena));
     return result.address == 0 ? null : MeasureUnit._fromFfi(result, []);
   }
 }
@@ -46,6 +44,6 @@ final class MeasureUnitParser implements ffi.Finalizable {
 external void _icu4x_MeasureUnitParser_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
 @meta.ResourceIdentifier('icu4x_MeasureUnitParser_parse_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'icu4x_MeasureUnitParser_parse_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_MeasureUnitParser_parse_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_MeasureUnitParser_parse_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> unitIdData, int unitIdLength);
+external ffi.Pointer<ffi.Opaque> _icu4x_MeasureUnitParser_parse_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 unitId);

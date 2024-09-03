@@ -13,7 +13,8 @@ use icu_pattern::{Pattern, SinglePlaceholder};
 #[cfg_attr(feature = "yoke", derive(yoke::Yokeable))]
 #[cfg_attr(feature = "zerofrom", derive(zerofrom::ZeroFrom))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-#[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = crate))]
+#[cfg_attr(feature = "databake", derive(databake::Bake))]
+#[cfg_attr(feature = "databake", databake(path = crate))]
 #[derive(Debug, PartialEq)]
 struct DeriveTest_SinglePlaceholderPattern_Cow<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]

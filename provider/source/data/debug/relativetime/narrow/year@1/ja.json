@@ -5,25 +5,11 @@
     "1": "来年"
   },
   "past": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "年前",
-      "index": 0
-    }
+    "specials": [],
+    "other": "\u0001年前"
   },
   "future": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "年後",
-      "index": 0
-    }
+    "specials": [],
+    "other": "\u0001年後"
   }
 }

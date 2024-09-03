@@ -7,37 +7,16 @@
     "2": "prekosutra"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": "pre  dana",
-      "index": 4
-    },
-    "two": null,
-    "few": {
-      "pattern": "pre  dana",
-      "index": 4
-    },
-    "many": null,
-    "other": {
-      "pattern": "pre  dana",
-      "index": 4
-    }
+    "specials": [],
+    "other": "\u0005pre  dana"
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "za  dan",
-      "index": 3
-    },
-    "two": null,
-    "few": {
-      "pattern": "za  dana",
-      "index": 3
-    },
-    "many": null,
-    "other": {
-      "pattern": "za  dana",
-      "index": 3
-    }
+    "specials": [
+      [
+        "One",
+        "\u0004za  dan"
+      ]
+    ],
+    "other": "\u0004za  dana"
   }
 }

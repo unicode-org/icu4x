@@ -16,7 +16,7 @@ macro_rules! __impl_likely_subtags_for_language_v1_marker {
         #[clippy::msrv = "1.70"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_LIKELY_SUBTAGS_FOR_LANGUAGE_V1_MARKER: &'static <icu::locale::provider::LikelySubtagsForLanguageV1Marker as icu_provider::DynamicDataMarker>::Yokeable = &icu::locale::provider::LikelySubtagsForLanguageV1 {
+            pub const SINGLETON_LIKELY_SUBTAGS_FOR_LANGUAGE_V1_MARKER: &'static <icu::locale::provider::LikelySubtagsForLanguageV1Marker as icu_provider::DynamicDataMarker>::DataStruct = &icu::locale::provider::LikelySubtagsForLanguageV1 {
                 language_script: unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"az\0Araben\0Shawff\0Adlmkk\0Arabku\0Arabku\0Yeziky\0Arabky\0Latnmn\0Mongpa\0Arabsd\0Devasd\0Khojsd\0Sindtg\0Arabug\0Cyrluz\0ArabyueHanszh\0Bopozh\0Hanbzh\0Hant") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"IR\0GB\0GN\0CN\0IQ\0GE\0CN\0TR\0CN\0PK\0IN\0IN\0IN\0PK\0KZ\0AF\0CN\0TW\0TW\0TW\0") })
@@ -35,8 +35,21 @@ macro_rules! __impl_likely_subtags_for_language_v1_marker {
         #[clippy::msrv = "1.70"]
         impl icu_provider::DataProvider<icu::locale::provider::LikelySubtagsForLanguageV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::locale::provider::LikelySubtagsForLanguageV1Marker>, icu_provider::DataError> {
-                if req.id.locale.is_und() {
+                if req.id.locale.is_default() {
                     Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(Self::SINGLETON_LIKELY_SUBTAGS_FOR_LANGUAGE_V1_MARKER), metadata: Default::default() })
+                } else {
+                    Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::locale::provider::LikelySubtagsForLanguageV1Marker as icu_provider::DataMarker>::INFO, req))
+                }
+            }
+        }
+    };
+    ($ provider : ty , DRY) => {
+        __impl_likely_subtags_for_language_v1_marker!($provider);
+        #[clippy::msrv = "1.70"]
+        impl icu_provider::DryDataProvider<icu::locale::provider::LikelySubtagsForLanguageV1Marker> for $provider {
+            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
+                if req.id.locale.is_default() {
+                    Ok(Default::default())
                 } else {
                     Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::locale::provider::LikelySubtagsForLanguageV1Marker as icu_provider::DataMarker>::INFO, req))
                 }
@@ -45,6 +58,25 @@ macro_rules! __impl_likely_subtags_for_language_v1_marker {
     };
     ($ provider : ty , ITER) => {
         __impl_likely_subtags_for_language_v1_marker!($provider);
+        #[clippy::msrv = "1.70"]
+        impl icu_provider::IterableDataProvider<icu::locale::provider::LikelySubtagsForLanguageV1Marker> for $provider {
+            fn iter_ids(&self) -> Result<std::collections::BtreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
+                Ok([Default::default()].into_iter().collect())
+            }
+        }
+    };
+    ($ provider : ty , DRY , ITER) => {
+        __impl_likely_subtags_for_language_v1_marker!($provider);
+        #[clippy::msrv = "1.70"]
+        impl icu_provider::DryDataProvider<icu::locale::provider::LikelySubtagsForLanguageV1Marker> for $provider {
+            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
+                if req.id.locale.is_default() {
+                    Ok(Default::default())
+                } else {
+                    Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::locale::provider::LikelySubtagsForLanguageV1Marker as icu_provider::DataMarker>::INFO, req))
+                }
+            }
+        }
         #[clippy::msrv = "1.70"]
         impl icu_provider::IterableDataProvider<icu::locale::provider::LikelySubtagsForLanguageV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BtreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {

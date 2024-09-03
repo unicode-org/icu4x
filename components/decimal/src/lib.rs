@@ -40,7 +40,7 @@
 //! use writeable::assert_writeable_eq;
 //!
 //! let fdf =
-//!     FixedDecimalFormatter::try_new(&Locale::UND.into(), Default::default())
+//!     FixedDecimalFormatter::try_new(&Default::default(), Default::default())
 //!         .expect("locale should be present");
 //!
 //! let fixed_decimal = FixedDecimal::from(200050).multiplied_pow10(-2);
@@ -119,6 +119,12 @@ pub struct FixedDecimalFormatter {
     symbols: DataPayload<provider::DecimalSymbolsV1Marker>,
 }
 
+impl AsRef<FixedDecimalFormatter> for FixedDecimalFormatter {
+    fn as_ref(&self) -> &FixedDecimalFormatter {
+        self
+    }
+}
+
 impl FixedDecimalFormatter {
     icu_provider::gen_any_buffer_data_constructors!(
 
@@ -142,7 +148,7 @@ impl FixedDecimalFormatter {
                     DataMarkerAttributes::from_str_or_panic(
                         locale.get_single_unicode_ext("nu").unwrap_or_default(),
                     ),
-                    &locale.get_langid().into(),
+                    locale,
                 ),
                 ..Default::default()
             })?

@@ -5,31 +5,11 @@
     "1": "próx. sem."
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": "hace  sem.",
-      "index": 5
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "hace  sem.",
-      "index": 5
-    }
+    "specials": [],
+    "other": "\u0006hace  sem."
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "dentro de  sem.",
-      "index": 10
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "dentro de  sem.",
-      "index": 10
-    }
+    "specials": [],
+    "other": "\u000bdentro de  sem."
   }
 }

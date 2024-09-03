@@ -79,6 +79,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::time_zone::FallbackFormat, Enum, compact)]
         #[diplomat::rust_link(icu::datetime::time_zone::TimeZoneFormatterOptions, Struct, hidden)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_localized_gmt_fallback")]
+        #[diplomat::demo(default_constructor)]
         pub fn create_with_localized_gmt_fallback(
             provider: &DataProvider,
             locale: &Locale,

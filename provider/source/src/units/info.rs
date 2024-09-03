@@ -6,10 +6,8 @@ use std::collections::{BTreeMap, HashSet};
 
 use crate::SourceDataProvider;
 use crate::{cldr_serde, units::helpers::ScientificNumber};
-use icu::experimental::units::{
-    measureunit::MeasureUnitParser,
-    provider::{ConversionInfo, UnitsInfoV1, UnitsInfoV1Marker},
-};
+use icu::experimental::measure::parser::MeasureUnitParser;
+use icu::experimental::units::provider::{ConversionInfo, UnitsInfoV1, UnitsInfoV1Marker};
 use icu_provider::prelude::*;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::VarZeroVec;
@@ -102,6 +100,8 @@ impl crate::IterableDataProviderCached<UnitsInfoV1Marker> for SourceDataProvider
 
 #[test]
 fn test_basic() {
+    use icu::experimental::measure::provider::si_prefix::{Base, SiPrefix};
+    use icu::experimental::measure::provider::single_unit::SingleUnit;
     use icu::experimental::units::provider::*;
     use icu::locale::langid;
     use icu_provider::prelude::*;
@@ -149,7 +149,7 @@ fn test_basic() {
         meter_convert,
         ConversionInfo {
             basic_units: {
-                let base_unit = vec![MeasureUnitItem {
+                let base_unit = vec![SingleUnit {
                     power: 1,
                     si_prefix: SiPrefix {
                         power: 0,
@@ -178,7 +178,7 @@ fn test_basic() {
         foot_convert,
         ConversionInfo {
             basic_units: {
-                let base_unit = vec![MeasureUnitItem {
+                let base_unit = vec![SingleUnit {
                     power: 1,
                     si_prefix: SiPrefix {
                         power: 0,

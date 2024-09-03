@@ -3,43 +3,29 @@
     "0": "сейчас"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": " секунду назад",
-      "index": 0
-    },
-    "two": null,
-    "few": {
-      "pattern": " секунды назад",
-      "index": 0
-    },
-    "many": {
-      "pattern": " секунд назад",
-      "index": 0
-    },
-    "other": {
-      "pattern": " секунды назад",
-      "index": 0
-    }
+    "specials": [
+      [
+        "One",
+        "\u0001 секунду назад"
+      ],
+      [
+        "Many",
+        "\u0001 секунд назад"
+      ]
+    ],
+    "other": "\u0001 секунды назад"
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "через  секунду",
-      "index": 11
-    },
-    "two": null,
-    "few": {
-      "pattern": "через  секунды",
-      "index": 11
-    },
-    "many": {
-      "pattern": "через  секунд",
-      "index": 11
-    },
-    "other": {
-      "pattern": "через  секунды",
-      "index": 11
-    }
+    "specials": [
+      [
+        "One",
+        "\fчерез  секунду"
+      ],
+      [
+        "Many",
+        "\fчерез  секунд"
+      ]
+    ],
+    "other": "\fчерез  секунды"
   }
 }

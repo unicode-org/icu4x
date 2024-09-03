@@ -7,11 +7,11 @@
 use fixed_decimal::FixedDecimal;
 use icu_decimal::{options::FixedDecimalFormatterOptions, FixedDecimalFormatter};
 use icu_provider::prelude::*;
-use tinystr::TinyAsciiStr;
 
 use super::super::provider::currency::CurrencyEssentialsV1Marker;
 use super::format::FormattedCurrency;
 use super::options::CurrencyFormatterOptions;
+use super::CurrencyCode;
 
 extern crate alloc;
 
@@ -30,15 +30,9 @@ pub struct CurrencyFormatter {
     /// Essential data for the currency formatter.
     essential: DataPayload<CurrencyEssentialsV1Marker>,
 
-    // TODO: Remove this allow once the `fixed_decimal_formatter` is used.
-    #[allow(dead_code)]
     /// A [`FixedDecimalFormatter`] to format the currency value.
     fixed_decimal_formatter: FixedDecimalFormatter,
 }
-
-/// A currency code, such as "USD" or "EUR".
-#[derive(Clone, Copy)]
-pub struct CurrencyCode(pub TinyAsciiStr<3>);
 
 impl CurrencyFormatter {
     icu_provider::gen_any_buffer_data_constructors!(
@@ -112,9 +106,8 @@ impl CurrencyFormatter {
     ///
     /// # Examples
     /// ```
-    /// use icu::experimental::dimension::currency::formatter::{
-    ///     CurrencyCode, CurrencyFormatter,
-    /// };
+    /// use icu::experimental::dimension::currency::formatter::CurrencyFormatter;
+    /// use icu::experimental::dimension::currency::CurrencyCode;
     /// use icu::locale::locale;
     /// use tinystr::*;
     /// use writeable::Writeable;
@@ -126,7 +119,7 @@ impl CurrencyFormatter {
     /// let formatted_currency = fmt.format_fixed_decimal(&value, currency_code);
     /// let mut sink = String::new();
     /// formatted_currency.write_to(&mut sink).unwrap();
-    /// assert_eq!(sink.as_str(), "$12345.67");
+    /// assert_eq!(sink.as_str(), "$12,345.67");
     /// ```
     pub fn format_fixed_decimal<'l>(
         &'l self,
@@ -138,6 +131,7 @@ impl CurrencyFormatter {
             currency_code,
             options: &self.options,
             essential: self.essential.get(),
+            fixed_decimal_formatter: &self.fixed_decimal_formatter,
         }
     }
 }
