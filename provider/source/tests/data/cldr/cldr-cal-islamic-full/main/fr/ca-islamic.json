@@ -2,9 +2,6 @@
   "main": {
     "fr": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "fr"
       },
       "dates": {

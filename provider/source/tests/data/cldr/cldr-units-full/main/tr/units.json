@@ -2,9 +2,6 @@
   "main": {
     "tr": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "tr"
       },
       "units": {
@@ -1061,6 +1058,22 @@
             "unitPattern-count-one": "{0} İng. quart",
             "unitPattern-count-other": "{0} İng. quart"
           },
+          "speed-light-speed": {
+            "displayName": "ışık",
+            "unitPattern-count-one": "{0} ışık",
+            "unitPattern-count-other": "{0} ışık"
+          },
+          "concentr-portion-per-1e9": {
+            "displayName": "parça/milyar",
+            "unitPattern-count-one": "{0} parça/milyar",
+            "unitPattern-count-other": "{0} parça/milyar"
+          },
+          "duration-night": {
+            "displayName": "gece",
+            "unitPattern-count-one": "{0} gece",
+            "unitPattern-count-other": "{0} gece",
+            "perUnitPattern": "{0}/gece"
+          },
           "coordinateUnit": {
             "displayName": "ana yön",
             "east": "{0}Doğu",
@@ -2015,6 +2028,21 @@
             "displayName": "İng quart",
             "unitPattern-count-one": "{0} İng. quart",
             "unitPattern-count-other": "{0} İng. quart"
+          },
+          "speed-light-speed": {
+            "displayName": "ışık",
+            "unitPattern-count-one": "{0} ışık",
+            "unitPattern-count-other": "{0} ışık"
+          },
+          "concentr-portion-per-1e9": {
+            "displayName": "parça/milyar",
+            "unitPattern-count-other": "{0} ppb"
+          },
+          "duration-night": {
+            "displayName": "gece",
+            "unitPattern-count-one": "{0} gece",
+            "unitPattern-count-other": "{0} gece",
+            "perUnitPattern": "{0}/gece"
           },
           "coordinateUnit": {
             "displayName": "yön",
@@ -2973,6 +3001,21 @@
             "displayName": "İng. qt",
             "unitPattern-count-one": "{0} İng. qt.",
             "unitPattern-count-other": "{0} İng. qt."
+          },
+          "speed-light-speed": {
+            "displayName": "ışık",
+            "unitPattern-count-one": "{0} ışık",
+            "unitPattern-count-other": "{0} ışık"
+          },
+          "concentr-portion-per-1e9": {
+            "displayName": "parça/milyar",
+            "unitPattern-count-other": "{0} ppb"
+          },
+          "duration-night": {
+            "displayName": "gece",
+            "unitPattern-count-one": "{0} gece",
+            "unitPattern-count-other": "{0} gece",
+            "perUnitPattern": "{0}/gece"
           },
           "coordinateUnit": {
             "displayName": "yön",

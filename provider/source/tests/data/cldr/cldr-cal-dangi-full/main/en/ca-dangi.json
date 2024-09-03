@@ -2,9 +2,6 @@
   "main": {
     "en": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "en"
       },
       "dates": {
@@ -1150,7 +1147,6 @@
                 "UMMM": "MMM U",
                 "UMMMd": "MMM d, U",
                 "y": "r(U)",
-                "yMd": "r-MM-dd",
                 "yyyy": "r(U)",
                 "yyyyM": "M/r",
                 "yyyyMd": "M/d/r",

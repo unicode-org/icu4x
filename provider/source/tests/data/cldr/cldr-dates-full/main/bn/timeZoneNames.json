@@ -2,9 +2,6 @@
   "main": {
     "bn": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "bn"
       },
       "dates": {
@@ -1805,6 +1802,11 @@
                 "generic": "পিত্রেপ্যাভলস্ক- ক্যামচ্যাটস্কি সময়",
                 "standard": "পিত্রেপ্যাভলস্ক- ক্যামচ্যাটস্কি মান সময়",
                 "daylight": "পিত্রেপ্যাভলস্ক- ক্যামচ্যাটস্কি গৃষ্মকালীন সময়"
+              }
+            },
+            "Kazakhstan": {
+              "long": {
+                "standard": "কাজাখাস্তান সময়"
               }
             },
             "Kazakhstan_Eastern": {

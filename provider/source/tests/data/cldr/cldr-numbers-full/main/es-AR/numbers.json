@@ -2,9 +2,6 @@
   "main": {
     "es-AR": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "es",
         "territory": "AR"
       },
@@ -52,7 +49,7 @@
               "100000000000-count-one": "000 mil millones",
               "100000000000-count-other": "000 mil millones",
               "1000000000000-count-one": "0 billón",
-              "1000000000000-count-other": "0 billón",
+              "1000000000000-count-other": "0 billones",
               "10000000000000-count-one": "00 billones",
               "10000000000000-count-other": "00 billones",
               "100000000000000-count-one": "000 billones",
@@ -164,7 +161,6 @@
             }
           },
           "currencyPatternAppendISO": "{0} ¤¤",
-          "unitPattern-count-one": "{0} {1}",
           "unitPattern-count-other": "{0} {1}"
         },
         "miscPatterns-numberSystem-latn": {

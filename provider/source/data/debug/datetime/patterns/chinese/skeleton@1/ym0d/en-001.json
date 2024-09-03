@@ -8,6 +8,6 @@
   "patterns": [
     "d MMMM r(U)",
     "d MMM r",
-    "r-MM-dd"
+    "dd/MM/r"
   ]
 }

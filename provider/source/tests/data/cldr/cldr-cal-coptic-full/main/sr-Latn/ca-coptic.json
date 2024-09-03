@@ -2,9 +2,6 @@
   "main": {
     "sr-Latn": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "sr",
         "script": "Latn"
       },
@@ -234,7 +231,7 @@
                   "am": "AM",
                   "noon": "podne",
                   "pm": "PM",
-                  "morning1": "ujutro",
+                  "morning1": "ujutru",
                   "afternoon1": "po podne",
                   "evening1": "uveče",
                   "night1": "noću"
@@ -254,7 +251,7 @@
                   "am": "AM",
                   "noon": "podne",
                   "pm": "PM",
-                  "morning1": "ujutro",
+                  "morning1": "ujutru",
                   "afternoon1": "po podne",
                   "evening1": "uveče",
                   "night1": "noću"
@@ -273,9 +270,9 @@
                 },
                 "narrow": {
                   "midnight": "ponoć",
-                  "am": "pre podne",
+                  "am": "AM",
                   "noon": "podne",
-                  "pm": "po podne",
+                  "pm": "PM",
                   "morning1": "jutro",
                   "afternoon1": "popodne",
                   "evening1": "veče",

@@ -2,9 +2,6 @@
   "main": {
     "fil": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "fil"
       },
       "dates": {
@@ -160,7 +157,7 @@
                 "exemplarCity": "Kostanay"
               },
               "Rangoon": {
-                "exemplarCity": "Rangoon"
+                "exemplarCity": "Yangon"
               },
               "Saigon": {
                 "exemplarCity": "Lungsod ng Ho Chi Minh"
@@ -332,23 +329,23 @@
             },
             "Australia_CentralWestern": {
               "long": {
-                "generic": "Oras ng Gitnang Kanluran ng Australya",
-                "standard": "Standard Time ng Gitnang Kanluran ng Australya",
-                "daylight": "Daylight Time sa Gitnang Kanlurang Australya"
+                "generic": "Oras ng Gitnang Kanluran ng Australia",
+                "standard": "Standard Time ng Gitnang Kanluran ng Australia",
+                "daylight": "Daylight Time sa Gitnang Kanlurang Australia"
               }
             },
             "Australia_Eastern": {
               "long": {
-                "generic": "Oras sa Silangang Australya",
-                "standard": "Standard na Oras sa Silangang Australya",
-                "daylight": "Daylight Time sa Silangang Australya"
+                "generic": "Oras sa Silangang Australia",
+                "standard": "Standard na Oras sa Silangang Australia",
+                "daylight": "Daylight Time sa Silangang Australia"
               }
             },
             "Australia_Western": {
               "long": {
-                "generic": "Oras sa Kanlurang Australya",
-                "standard": "Standard na Oras sa Kanlurang Australya",
-                "daylight": "Daylight Time sa Kanlurang Australya"
+                "generic": "Oras sa Kanlurang Australia",
+                "standard": "Standard na Oras sa Kanlurang Australia",
+                "daylight": "Daylight Time sa Kanlurang Australia"
               }
             },
             "Azerbaijan": {
@@ -677,6 +674,11 @@
                 "generic": "Oras sa Petropavlovsk-Kamchatski",
                 "standard": "Standard Time sa Petropavlovsk-Kamchatski",
                 "daylight": "Summer Time sa Petropavlovsk-Kamchatski"
+              }
+            },
+            "Kazakhstan": {
+              "long": {
+                "standard": "Oras ng Kazakhstan"
               }
             },
             "Kazakhstan_Eastern": {

@@ -4,8 +4,8 @@
 /// `icu`'s `_unstable` constructors.
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
-/// * 796B for the lookup data structure (160 data identifiers)
-/// * 52918B[^1] for the actual data (157 unique structs)
+/// * 826B for the lookup data structure (167 data identifiers)
+/// * 55243B[^1] for the actual data (164 unique structs)
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
 #[doc(hidden)]
@@ -17,7 +17,7 @@ macro_rules! __impl_time_zone_formats_v1_marker {
         #[clippy::msrv = "1.71.1"]
         impl $provider {
             const DATA_TIME_ZONE_FORMATS_V1_MARKER: icu_provider_baked::zerotrie::Data<icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker> = icu_provider_baked::zerotrie::Data {
-                trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1xabcdefghijklmnoprstuvxyz\0\0\0\0\0\0\0\0\0\0\x01\x01\x01\x01\x01\x01\x01\x02\x02\x02\x02\x02\x02\x112Oa\x84\xA9\xB9\xD2\xEA\xF2AV\x83\x9D\xA5\xC4\xD0\"Fes|\x96\xC5fmrsz\x01\x02\x03\x06\x80\x81\x82\x83t\x84\x85\xC7eghlnrs\x01\x04\x06\x08\t\x0C\x86\x87c\x88o\x89o\x8A\x8B\x8Cx\x8D\x8E-Cyrl\x8F\xC6aehsvy\x02\x05\x08\r\x0F\x90\0b\x90\x01r\x90\x02\x90\x03w\x90\x04\x90\x05\x90\x06\xC4aeos\x02\x04\x07\x90\x07\x90\x08i\x90\tb\x90\n\xC6lnostu\x02\t\x0B\x13\x15\x90\x0B\x90\x0C-CA\x90\r\x90\x0E\x90\x0F-419\x90\x10\x90\x11\x90\x12\xC6afiory\x02\t\x0E\x10\x17\x90\x13-Adlm\x90\x14\x90\x15l\x90\x16\x90\x17\x90\x18-CA\x90\x19\x90\x1A\xC4adlu\x02\x04\x06\x90\x1B\x90\x1C\x90\x1D\x90\x1E\xC6aeirsu\x02\x04\x06\x08\x0B\x90\x1F\x90 \x90!\x90\"b\x90#\x90$\xC6adegst\x02\x04\x06\x08\n\x90%\x90&\x90'\x90(\x90)\x90*\xC2av\x02\x90+\x90,\xCBaegkmnosuxy\x02\x05\x08\n\x0C\x0E\x13\x1C\x1E7\x90-a\x90.p\x90/\x900\x901\x902\x903k\x904\x905-Deva\x906\x907v\x908-\xC3DOT\x05\neva\x909rya\x90:elu\x90;\x90<\xC5biotv\x02\x05\x07\t\x90=j\x90>\x90?\x90@\x90A\xC9aiklnrsty\x03\x05\x07\t\x0E\x10\x17\x19i\x90B\x90C\x90D\x90E\x90Fi\x90G\x90H\x90I-ID\x90J\x90K\x90L\xC6delnoq\x03\x05\x07\t\x0Bs\x90M\x90N\x90O\x90P\x90Qo\x90R\xC2cr\x02\x90S\x90T\xC6aclrst\x02\x05\x07\n\x0C\x90Um\x90V\x90Wg\x90X\x90Y\x90Z-PT\x90[\xC3mou\x02\x04\x90\\\x90]\x90^\xCDacdikloqrvwyz\x05\x07\x10\x12\x14\x16\x18\x1A.025\x90_t\x90`\x90a\x90b-Deva\x90c\x90d\x90e\x90f\x90g\x90h\x90i-\xC2BL\x03A\x90jatn\x90k-BA\x90l\x90m\x90nr\x90ol\x90p\xC9aeghikort\x02\x04\x06\x08\n\x0C\x0E\x10\x90q\x90;\x90r\x90s\x90t\x90u\x90v\x90w\x90x\xC5gknrz\x02\x04\x07\x0E\x90y\x90zd\x90{\x90|-IN\x90}-Cyrl\x90~\xC3eim\x03\x05c\x90\x7F\x91\0w\x91\x01\xC2hn\x02\x90\x0Cr\x91\x02\xC3oru\x07\n\x91\x03-BJ\x91\x04l\x91\x05e\x91\x06-Hans\x91\x07\xC3ahu\x02\x16\x91\x08\x91\t-\xC2HM\n\xC2Ka\x02\x91\nnt\x91\x0BO\x91\n\x91\x0C" },
+                trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1xabcdefghijklmnoprstuvxyz\0\0\0\0\0\0\0\0\0\x01\x01\x01\x01\x01\x01\x01\x01\x02\x02\x02\x02\x02\x02\x146Se\x8C\xB1\xC4\xDD\xF9\x01Wl\x99\xB3\xBF\xDE\xEA@d\x83\x91\x9A\xB4\xC6fkmrsz\x01\x02\x03\x04\x07\x80\x81\x82\x83\x84t\x85\x86\xC7eghlnrs\x01\x04\x06\x08\t\x0C\x87\x88c\x89o\x8Ao\x8B\x8C\x8Dx\x8E\x8F-Cyrl\x90\0\xC6aehsvy\x02\x05\x08\r\x0F\x90\x01b\x90\x02r\x90\x03\x90\x04w\x90\x05\x90\x06\x90\x07\xC4aeos\x02\x04\x07\x90\x08\x90\ti\x90\nb\x90\x0B\xC7elnostu\x02\x04\x0B\r\x15\x17\x90\x0C\x90\r\x90\x0E-CA\x90\x0F\x90\x10\x90\x11-419\x90\x12\x90\x13\x90\x14\xC6afiory\x02\t\x0E\x10\x17\x90\x15-Adlm\x90\x16\x90\x17l\x90\x18\x90\x19\x90\x1A-CA\x90\x1B\x90\x1C\xC4adlu\x05\x07\t\x90\x1Da\x90\x1E\x90\x1F\x90 \x90!\xC6aeirsu\x02\x04\x06\x08\x0B\x90\"\x90#\x90$\x90%b\x90&\x90'\xC7adegist\x02\x04\x06\x08\n\x0C\x90(\x90)\x90*\x90+\x90,\x90-\x90.\xC2av\x02\x90/\x900\xCBaegkmnosuxy\x02\x05\x08\n\x0C\x0E\x1A#%>\x901a\x902p\x903\x904\x905\x906\x907k\x908-Latn\x909\x90:-Deva\x90;\x90<v\x90=-\xC3DOT\x05\neva\x90>rya\x90?elu\x90@\x90A\xC5biotv\x02\x05\x07\t\x90Bj\x90C\x90D\x90E\x90F\xC9aiklnrsty\x03\x05\x07\t\x0E\x10\x17\x19i\x90G\x90H\x90I\x90J\x90Ki\x90L\x90M\x90N-ID\x90O\x90P\x90Q\xC6delnoq\x03\x05\x07\t\x0Bs\x90R\x90S\x90T\x90U\x90Vo\x90W\xC3cmr\x02\x04\x90X\x90Y\x90Z\xC6aclrst\x02\x05\x07\n\x0C\x90[m\x90\\\x90]g\x90^\x90_\x90`-PT\x90a\xC3mou\x02\x04\x90b\x90c\x90d\xCEacdikloqrtvwyz\x05\x07\x10\x12\x14\x16\x18\x1A.0247\x90et\x90f\x90g\x90h-Deva\x90i\x90j\x90k\x90l\x90m\x90n\x90o-\xC2BL\x03A\x90patn\x90q-BA\x90r\x90s\x90t\x90ur\x90vl\x90w\xC9aeghikort\x02\x04\x06\x08\n\x0C\x0E\x10\x90x\x90@\x90y\x90z\x90{\x90|\x90}\x90~\x90\x7F\xC5gknrz\x02\x04\x07\x0E\x91\0\x91\x01d\x91\x02\x91\x03-IN\x91\x04-Cyrl\x91\x05\xC3eim\x03\x05c\x91\x06\x91\x07w\x91\x08\xC2hn\x02\x90\x0Er\x91\t\xC3oru\x07\n\x91\n-BJ\x91\x0Bl\x91\x0Ce\x91\r-Hans\x91\x0E\xC3ahu\x02\x16\x91\x0F\x91\x10-\xC2HM\n\xC2Ka\x02\x91\x11nt\x91\x12O\x91\x11\x91\x13" },
                 values: &[
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
@@ -32,10 +32,22 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                         gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
+                        hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
+                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        region_format: alloc::borrow::Cow::Borrowed("Berɛ {0}"),
+                        region_format_variants: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"daylightstandard") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x0C\0Awia ber {0}Ber\xC9\x9B susudua {0}") })
+                        },
+                        fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
+                        gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
+                    },
+                    icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HHmm"), alloc::borrow::Cow::Borrowed("-HHmm")),
                         gmt_format: alloc::borrow::Cow::Borrowed("ጂ ኤም ቲ{0}"),
                         gmt_zero_format: alloc::borrow::Cow::Borrowed("ጂ ኤም ቲ"),
-                        region_format: alloc::borrow::Cow::Borrowed("{0} ጊዜ"),
+                        region_format: alloc::borrow::Cow::Borrowed("{0} ሰዓት"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"daylightstandard") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0$\0{0} \xE1\x8B\xA8\xE1\x89\x80\xE1\x8A\x95 \xE1\x89\xA5\xE1\x88\xAD\xE1\x88\x83\xE1\x8A\x95 \xE1\x88\xB0\xE1\x8B\x93\xE1\x89\xB5{0} \xE1\x88\x98\xE1\x8B\xB0\xE1\x89\xA0\xE1\x8A\x9B \xE1\x88\xB0\xE1\x8B\x93\xE1\x89\xB5") })
@@ -230,7 +242,7 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                         region_format: alloc::borrow::Cow::Borrowed("Oras sa {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"daylightstandard") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x14\0Daylight Time sa {0}Tamdanang Oras sa {0}") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"daylightstandard") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x18\0Daylight nga Oras sa {0}Standard nga Oras sa {0}") })
                         },
                         fallback_format: alloc::borrow::Cow::Borrowed("{1} {0}"),
                         gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
@@ -263,10 +275,10 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                         gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                         gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
-                        region_format: alloc::borrow::Cow::Borrowed("{0} ᐁᐃᐢᐸᓂᐟ"),
+                        region_format: alloc::borrow::Cow::Borrowed("{0} ᐁᐃᐢᐸᓂᐠ"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"daylightstandard") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0#\0{0} \xE1\x91\xAE\xE1\x93\xAF\xE1\x91\xB3\xE1\x90\xA4 \xE1\x90\x81\xE1\x90\x83\xE1\x90\xA2\xE1\x90\xB8\xE1\x93\x82\xE1\x90\x9F{0} \xE1\x90\xAF\xE1\x94\xAD\xE1\x91\xAF\xE1\x90\xA6\xE1\x91\x95\xE1\x90\x83\xE1\x90\xA7\xE1\x90\xA3 \xE1\x90\x81\xE1\x90\x83\xE1\x90\xA2\xE1\x90\xB8\xE1\x93\x82\xE1\x90\x9F") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"daylightstandard") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0#\0{0} \xE1\x91\xAE\xE1\x93\xAF\xE1\x91\xB3\xE1\x90\xA4 \xE1\x90\x81\xE1\x90\x83\xE1\x90\xA2\xE1\x90\xB8\xE1\x93\x82\xE1\x90\xA0{0} \xE1\x90\xAF\xE1\x94\xAD\xE1\x91\xAF\xE1\x90\xA6\xE1\x91\x96\xE1\x90\x8F\xE1\x90\xA3 \xE1\x90\x81\xE1\x90\x83\xE1\x90\xA2\xE1\x90\xB8\xE1\x93\x82\xE1\x90\xA0") })
                         },
                         fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                         gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
@@ -339,6 +351,18 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"daylightstandard") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x12\0{0} l\xC4\x9B\xC5\x9Bojski cas{0} zymski cas") })
+                        },
+                        fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
+                        gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
+                    },
+                    icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
+                        hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
+                        gmt_format: alloc::borrow::Cow::Borrowed("{0} GMT"),
+                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        region_format: alloc::borrow::Cow::Borrowed("{0} game"),
+                        region_format_variants: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"daylightstandard") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x14\0{0} \xC5\x8Bkekeme\xC9\xA3eyi\xC9\xA3i{0} game \xC9\x96o\xC9\x96oea") })
                         },
                         fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                         gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
@@ -428,7 +452,7 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                         gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
-                        hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("−HH:mm")),
+                        hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("–HH:mm")),
                         gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                         gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} aldeko ordua"),
@@ -543,6 +567,18 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"daylightstandard") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x08\0{0} (+1){0} (+0)") })
+                        },
+                        fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
+                        gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
+                    },
+                    icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
+                        hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
+                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        region_format: alloc::borrow::Cow::Borrowed("{0} Be"),
+                        region_format_variants: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"daylightstandard") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x17\0{0} Be Y\xC9\x9B Latsa Beia\xC5\x8B{0} Be Y\xC9\x9B F\xC9\x9Bi Beia\xC5\x8B") })
                         },
                         fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                         gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
@@ -705,6 +741,18 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
+                        gmt_format: alloc::borrow::Cow::Borrowed("ꋧꃅꎕꏦꄮꈉ{0}"),
+                        gmt_zero_format: alloc::borrow::Cow::Borrowed("ꋧꃅꎕꏦꄮꈉ"),
+                        region_format: alloc::borrow::Cow::Borrowed("{0}ꄮꈉ"),
+                        region_format_variants: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"daylightstandard") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x0F\0{0}\xEA\x83\x85\xEA\x8E\xB8\xEA\x84\xAE\xEA\x88\x89{0}\xEA\x8E\x95\xEA\x8F\xA6\xEA\x84\xAE\xEA\x88\x89") })
+                        },
+                        fallback_format: alloc::borrow::Cow::Borrowed("{1}（{0}）"),
+                        gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
+                    },
+                    icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
+                        hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                         gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                         gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0}"),
@@ -850,6 +898,18 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                         gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        region_format: alloc::borrow::Cow::Borrowed("{0} Vell"),
+                        region_format_variants: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"daylightstandard") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x1B\0{0} Dis-uzvadd vachovp Vell{0} Promann Vell") })
+                        },
+                        fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
+                        gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
+                    },
+                    icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
+                        hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
+                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                         gmt_zero_format: alloc::borrow::Cow::Borrowed("جی ایم ٹی"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} و\u{64e}کھ"),
                         region_format_variants: unsafe {
@@ -878,7 +938,7 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                         region_format: alloc::borrow::Cow::Borrowed("Saeta {0}(y)ê"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"daylightstandard") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x1A\0Saeta Hav\xC3\xAEn\xC3\xAA ya {0}(y)\xC3\xAASaeta Standard ya {0}(y)\xC3\xAA") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"daylightstandard") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x1A\0Saeta Hav\xC3\xAEn\xC3\xAA ya {0}(y)\xC3\xAASaeta Standard a {0}(y)\xC3\xAA") })
                         },
                         fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                         gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
@@ -1223,6 +1283,18 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                         gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                         gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        region_format: alloc::borrow::Cow::Borrowed("Sa’aatii {0}"),
+                        region_format_variants: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"daylightstandard") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x15\0Sa\xE2\x80\x99aatii Guyyaa {0}Sa\xE2\x80\x99aatii Istaandardii {0}") })
+                        },
+                        fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
+                        gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
+                    },
+                    icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
+                        hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
+                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} ସମୟ"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1403,10 +1475,10 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                         gmt_format: alloc::borrow::Cow::Borrowed("जीएमटी{0}"),
                         gmt_zero_format: alloc::borrow::Cow::Borrowed("जीएमटी"),
-                        region_format: alloc::borrow::Cow::Borrowed("{0} वक\u{94d}त"),
+                        region_format: alloc::borrow::Cow::Borrowed("{0} वक\u{93c}\u{94d}त\u{941}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"daylightstandard") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0'\0{0} \xE0\xA4\xA6\xE0\xA5\x80\xE0\xA4\x82\xE0\xA5\x92\xE0\xA4\xB9 \xE0\xA4\x9C\xE0\xA5\x8B \xE0\xA4\xB5\xE0\xA4\x95\xE0\xA5\x8D\xE0\xA4\xA4{0} \xE0\xA4\xAE\xE0\xA4\x85\xE0\xA4\xAF\xE0\xA4\xBE\xE0\xA4\xB0\xE0\xA5\x80 \xE0\xA4\xB5\xE0\xA4\x95\xE0\xA5\x8D\xE0\xA4\xA4") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"daylightstandard") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0'\0{0} \xE0\xA4\xA6\xE0\xA5\x80\xE0\xA4\x82\xE0\xA5\x92\xE0\xA4\xB9 \xE0\xA4\x9C\xE0\xA5\x8B \xE0\xA4\xB5\xE0\xA4\x95\xE0\xA5\x8D\xE0\xA4\xA4{0} \xE0\xA4\xAE\xE0\xA4\x87\xE0\xA4\xAF\xE0\xA4\xBE\xE0\xA4\xB0\xE0\xA5\x80 \xE0\xA4\xB5\xE0\xA4\x95\xE0\xA4\xBC\xE0\xA5\x8D\xE0\xA4\xA4\xE0\xA5\x81") })
                         },
                         fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                         gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
@@ -1520,6 +1592,18 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                         gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
+                        hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
+                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        region_format: alloc::borrow::Cow::Borrowed("{0} Nako"),
+                        region_format_variants: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"daylightstandard") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x16\0{0} Nako ya Motshehare{0} Nako ya Tlwaelo") })
+                        },
+                        fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
+                        gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
+                    },
+                    icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("−HH:mm")),
                         gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                         gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
@@ -1582,7 +1666,7 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                         gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("Вақти GMT"),
+                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("Вақти {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1607,10 +1691,10 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
                         gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
                         gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
-                        region_format: alloc::borrow::Cow::Borrowed("ግዜ {0}"),
+                        region_format: alloc::borrow::Cow::Borrowed("ግዘ {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"daylightstandard") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x17\0\xE1\x8C\x8D\xE1\x8B\x9C \xE1\x8A\xAD\xE1\x88\xA8\xE1\x88\x9D\xE1\x89\xB2 {0}\xE1\x88\x9D\xE1\x8B\xB1\xE1\x89\xA5 \xE1\x8C\x8D\xE1\x8B\x9C {0}") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"daylightstandard") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x1E\0\xE1\x8A\x93\xE1\x8B\xAD {0} \xE1\x88\x98\xE1\x8B\x93\xE1\x88\x8D\xE1\x89\xB2 \xE1\x8C\x8D\xE1\x8B\x98\xE1\x8A\x93\xE1\x8B\xAD \xE1\x88\x98\xE1\x8B\xB0\xE1\x89\xA0\xE1\x8A\x9B \xE1\x8C\x8A\xE1\x8B\x9C {0} \xE1\x8C\x8D\xE1\x8B\x98") })
                         },
                         fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
                         gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),

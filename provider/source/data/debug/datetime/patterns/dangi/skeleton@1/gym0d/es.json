@@ -6,7 +6,7 @@
     "has_eras": true
   },
   "patterns": [
-    "r-MM-dd",
+    "d-M-r",
     "d-M-r"
   ]
 }
