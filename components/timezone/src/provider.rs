@@ -22,6 +22,7 @@ use zerovec::ule::{AsULE, ULE};
 use zerovec::{ZeroMap2d, ZeroSlice, ZeroVec};
 
 pub mod names;
+pub mod windows;
 
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]

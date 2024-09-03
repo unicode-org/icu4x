@@ -240,6 +240,7 @@ impl SourceDataProvider {
                         ("cldr-core/supplemental/units.json", include_bytes!("../../tests/data/cldr/cldr-core/supplemental/units.json").as_slice()),
                         ("cldr-core/supplemental/likelySubtags.json", include_bytes!("../../tests/data/cldr/cldr-core/supplemental/likelySubtags.json").as_slice()),
                         ("cldr-core/supplemental/metaZones.json", include_bytes!("../../tests/data/cldr/cldr-core/supplemental/metaZones.json").as_slice()),
+                        ("cldr-core/supplemental/windowsZones.json", include_bytes!("../../tests/data/cldr/cldr-core/supplemental/windowsZones.json").as_slice()),
                         ("cldr-core/supplemental/numberingSystems.json", include_bytes!("../../tests/data/cldr/cldr-core/supplemental/numberingSystems.json").as_slice()),
                         ("cldr-core/supplemental/ordinals.json", include_bytes!("../../tests/data/cldr/cldr-core/supplemental/ordinals.json").as_slice()),
                         ("cldr-core/supplemental/parentLocales.json", include_bytes!("../../tests/data/cldr/cldr-core/supplemental/parentLocales.json").as_slice()),
