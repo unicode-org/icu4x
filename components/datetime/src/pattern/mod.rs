@@ -20,11 +20,8 @@ pub use item::{GenericPatternItem, PatternItem};
 #[derive(
     Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, yoke::Yokeable, zerofrom::ZeroFrom,
 )]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::pattern),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::pattern))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[non_exhaustive]
 pub enum TimeGranularity {
@@ -80,10 +77,10 @@ impl TimeGranularity {
     }
 }
 
-impl From<&PatternItem> for TimeGranularity {
+impl From<PatternItem> for TimeGranularity {
     /// Retrieves the granularity of time represented by a [`PatternItem`].
     /// If the [`PatternItem`] is not time-related, returns [`None`].
-    fn from(item: &PatternItem) -> Self {
+    fn from(item: PatternItem) -> Self {
         match item {
             PatternItem::Field(field) => match field.symbol {
                 fields::FieldSymbol::Hour(_) => Self::Hours,

@@ -4,7 +4,6 @@
 
 use crate::fields::{self, Field, FieldLength, FieldSymbol, Second, Week, Year};
 use crate::input::{DateInput, ExtractedDateTimeInput, ExtractedTimeZoneInput, IsoTimeInput};
-use crate::options::preferences::HourCycle;
 use crate::pattern::runtime::{PatternBorrowed, PatternMetadata};
 use crate::pattern::{
     runtime::{Pattern, PatternPlurals},
@@ -27,7 +26,6 @@ use crate::time_zone::{
 };
 use crate::time_zone::{IsoFormat, IsoMinutes, IsoSeconds, ResolvedNeoTimeZoneSkeleton};
 
-use super::FormattingOptions;
 use core::fmt::{self, Write};
 use fixed_decimal::FixedDecimal;
 use icu_calendar::types::{
@@ -134,7 +132,6 @@ impl<'l> Writeable for FormattedDateTime<'l> {
 
         r = r.and(try_write_pattern(
             pattern.as_borrowed(),
-            Default::default(),
             &self.datetime,
             self.date_symbols,
             self.time_symbols,
@@ -199,7 +196,6 @@ where
 #[allow(clippy::too_many_arguments)]
 pub(crate) fn try_write_pattern<'data, W, DS, TS, ZS>(
     pattern: PatternBorrowed<'data>,
-    formatting_options: FormattingOptions,
     datetime: &ExtractedDateTimeInput,
     date_symbols: Option<&DS>,
     time_symbols: Option<&TS>,
@@ -217,7 +213,6 @@ where
     try_write_pattern_items(
         pattern.metadata,
         pattern.items.iter(),
-        formatting_options,
         datetime,
         date_symbols,
         time_symbols,
@@ -232,7 +227,6 @@ where
 pub(crate) fn try_write_pattern_items<'data, W, DS, TS, ZS>(
     pattern_metadata: PatternMetadata,
     pattern_items: impl Iterator<Item = PatternItem>,
-    formatting_options: FormattingOptions,
     datetime: &ExtractedDateTimeInput,
     date_symbols: Option<&DS>,
     time_symbols: Option<&TS>,
@@ -268,7 +262,6 @@ where
                 r = r.and(try_write_field(
                     field,
                     pattern_metadata,
-                    formatting_options,
                     datetime,
                     date_symbols,
                     time_symbols,
@@ -351,7 +344,6 @@ pub enum DateTimeWriteError {
 pub(crate) fn try_write_field<'data, W, DS, TS>(
     field: fields::Field,
     pattern_metadata: PatternMetadata,
-    formatting_options: FormattingOptions,
     datetime: &ExtractedDateTimeInput,
     date_symbols: Option<&DS>,
     time_symbols: Option<&TS>,
@@ -376,33 +368,7 @@ where
         })
     }
 
-    #[cfg_attr(not(feature = "experimental"), allow(unused_mut))]
-    let mut field_symbol = field.symbol;
-    #[cfg(feature = "experimental")]
-    if let Some(fractional_second_digits) = formatting_options.fractional_second_digits {
-        if matches!(
-            field_symbol,
-            FieldSymbol::Second(fields::Second::Second) | FieldSymbol::DecimalSecond(_)
-        ) {
-            field_symbol = FieldSymbol::from_fractional_second_digits(fractional_second_digits);
-        }
-    }
-
-    let mut field_length = field.length;
-    if formatting_options.force_2_digit_month_day_week_hour
-        && field_length == FieldLength::One
-        && matches!(
-            field_symbol,
-            FieldSymbol::Month(_)
-                | FieldSymbol::Day(_)
-                | FieldSymbol::Week(_)
-                | FieldSymbol::Hour(_)
-        )
-    {
-        field_length = FieldLength::TwoDigit;
-    }
-
-    Ok(match (field_symbol, field_length) {
+    Ok(match (field.symbol, field.length) {
         (FieldSymbol::Era, l) => match datetime.year() {
             None => {
                 write_value_missing(w, field)?;
@@ -663,9 +629,9 @@ where
             }
             Some(h) => {
                 let h = usize::from(h) as isize;
-                let h = match (hour, formatting_options.hour_cycle) {
-                    (fields::Hour::H11, None) | (_, Some(HourCycle::H11)) => h % 12,
-                    (fields::Hour::H12, None) | (_, Some(HourCycle::H12)) => {
+                let h = match hour {
+                    fields::Hour::H11 => h % 12,
+                    fields::Hour::H12 => {
                         let v = h % 12;
                         if v == 0 {
                             12
@@ -673,8 +639,8 @@ where
                             v
                         }
                     }
-                    (fields::Hour::H23, None) | (_, Some(HourCycle::H23)) => h,
-                    (fields::Hour::H24, None) | (_, Some(HourCycle::H24)) => {
+                    fields::Hour::H23 => h,
+                    fields::Hour::H24 => {
                         if h == 0 {
                             24
                         } else {
@@ -1192,7 +1158,6 @@ mod tests {
         let mut sink = String::new();
         try_write_pattern(
             pattern.as_borrowed(),
-            Default::default(),
             &ExtractedDateTimeInput::extract_from(&datetime),
             Some(date_data.payload.get()),
             Some(time_data.payload.get()),

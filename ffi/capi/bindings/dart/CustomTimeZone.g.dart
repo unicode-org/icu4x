@@ -26,12 +26,12 @@ final class CustomTimeZone implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.try_from_str) for more information.
   ///
-  /// Throws [TimeZoneInvalidOffsetError] on failure.
+  /// Throws [TimeZoneUnknownError] on failure.
   factory CustomTimeZone.fromString(String s) {
     final temp = _FinalizedArena();
     final result = _icu4x_CustomTimeZone_from_string_mv1(s._utf8AllocIn(temp.arena));
     if (!result.isOk) {
-      throw TimeZoneInvalidOffsetError();
+      throw TimeZoneUnknownError();
     }
     return CustomTimeZone._fromFfi(result.union.ok, []);
   }
@@ -373,9 +373,9 @@ final class CustomTimeZone implements ffi.Finalizable {
 external void _icu4x_CustomTimeZone_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
 @meta.ResourceIdentifier('icu4x_CustomTimeZone_from_string_mv1')
-@ffi.Native<_ResultOpaqueTimeZoneInvalidOffsetErrorFfi Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_from_string_mv1')
+@ffi.Native<_ResultOpaqueTimeZoneUnknownErrorFfi Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_from_string_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueTimeZoneInvalidOffsetErrorFfi _icu4x_CustomTimeZone_from_string_mv1(_SliceUtf8 s);
+external _ResultOpaqueTimeZoneUnknownErrorFfi _icu4x_CustomTimeZone_from_string_mv1(_SliceUtf8 s);
 
 @meta.ResourceIdentifier('icu4x_CustomTimeZone_empty_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_empty_mv1')

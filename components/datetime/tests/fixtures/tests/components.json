@@ -157,7 +157,10 @@
         },
         "output": {
             "values": {
-                "en": "14:15:07.012300000"
+                "en": {
+                    "formatted": "14:15:07.012300000",
+                    "pattern": "HH:mm:ss.SSSSSSSSS"
+                }
             }
         }
     }

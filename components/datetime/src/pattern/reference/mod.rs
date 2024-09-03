@@ -7,7 +7,7 @@
 //! for parsing/inspecting/modifying and serialization.
 //!
 //! The runtime `Pattern` uses parsing/serialization from this module.
-mod display;
+
 mod generic;
 mod parser;
 pub(crate) mod pattern;

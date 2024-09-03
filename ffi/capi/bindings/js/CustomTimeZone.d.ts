@@ -4,6 +4,7 @@ import type { MetazoneCalculator } from "./MetazoneCalculator"
 import type { TimeZoneIdMapper } from "./TimeZoneIdMapper"
 import type { TimeZoneInvalidIdError } from "./TimeZoneInvalidIdError"
 import type { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError"
+import type { TimeZoneUnknownError } from "./TimeZoneUnknownError"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 

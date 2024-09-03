@@ -75,14 +75,11 @@ impl GmtOffset {
     /// ```
     /// use icu::timezone::GmtOffset;
     ///
-    /// let offset0: GmtOffset =
-    ///     GmtOffset::try_from_str("Z").expect("Failed to parse a time zone");
-    /// let offset1: GmtOffset =
-    ///     GmtOffset::try_from_str("+05").expect("Failed to parse a time zone");
-    /// let offset2: GmtOffset = GmtOffset::try_from_str("+0500")
-    ///     .expect("Failed to parse a time zone");
-    /// let offset3: GmtOffset = GmtOffset::try_from_str("-05:00")
-    ///     .expect("Failed to parse a time zone");
+    /// let offset0: GmtOffset = GmtOffset::try_from_str("Z").unwrap();
+    /// let offset1: GmtOffset = GmtOffset::try_from_str("+05").unwrap();
+    /// let offset2: GmtOffset = GmtOffset::try_from_str("+0500").unwrap();
+    /// let offset3: GmtOffset = GmtOffset::try_from_str("-05:00").unwrap();
+    ///
     /// let offset_err0 =
     ///     GmtOffset::try_from_str("0500").expect_err("Invalid input");
     /// let offset_err1 =
@@ -188,7 +185,8 @@ impl FromStr for GmtOffset {
 /// such as Standard time, Daylight time, Summer time, or Ramadan time.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, ULE)]
 #[repr(transparent)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_timezone))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_timezone))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_structs)] // newtype
 pub struct ZoneVariant(pub TinyAsciiStr<2>);

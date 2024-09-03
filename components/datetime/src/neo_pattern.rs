@@ -6,6 +6,8 @@
 
 use core::str::FromStr;
 
+use writeable::{impl_display_with_writeable, Writeable};
+
 use crate::helpers::size_test;
 use crate::pattern::{runtime, PatternError, PatternItem};
 
@@ -20,6 +22,12 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 ///
 /// 1. From a custom pattern string: [`DateTimePattern::try_from_pattern_str`]
 /// 2. From a formatted datetime: [`FormattedNeoDateTime::pattern`]
+///
+/// There are two things you can do with one of these:
+///
+/// 1. Use it to directly format a datetime via [`TypedDateTimeNames`]
+/// 2. Convert it to a string pattern via [`Writeable`]
+///
 #[doc = date_time_pattern_size!()]
 ///
 /// # Examples
@@ -34,9 +42,12 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// use icu::datetime::neo_pattern::DateTimePattern;
 /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
 /// use icu::locale::locale;
+/// use writeable::assert_writeable_eq;
 ///
+/// let pattern_str = "d MMM y";
 /// let custom_pattern =
-///     DateTimePattern::try_from_pattern_str("d MMM y").unwrap();
+///     DateTimePattern::try_from_pattern_str(pattern_str).unwrap();
+/// assert_writeable_eq!(custom_pattern, pattern_str);
 ///
 /// let data_pattern =
 ///     TypedNeoFormatter::<Gregorian, NeoYearMonthDayMarker>::try_new(
@@ -49,11 +60,13 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 ///     .format(&DateTime::local_unix_epoch().to_calendar(Gregorian))
 ///     .pattern();
 ///
+/// assert_writeable_eq!(data_pattern, pattern_str);
 /// assert_eq!(custom_pattern, data_pattern);
 /// ```
 ///
 /// [`DateTimeFormatter`]: crate::DateTimeFormatter
 /// [`FormattedNeoDateTime::pattern`]: crate::neo::FormattedNeoDateTime::pattern
+/// [`TypedDateTimeNames`]: crate::TypedDateTimeNames
 #[derive(Debug)]
 pub struct DateTimePattern {
     pattern: runtime::Pattern<'static>,
@@ -99,6 +112,14 @@ impl PartialEq for DateTimePattern {
 }
 
 impl Eq for DateTimePattern {}
+
+impl Writeable for DateTimePattern {
+    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
+        self.pattern.write_to(sink)
+    }
+}
+
+impl_display_with_writeable!(DateTimePattern);
 
 // Not clear if this needs to be public. For now, make it private.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]

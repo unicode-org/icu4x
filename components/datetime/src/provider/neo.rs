@@ -349,11 +349,8 @@ size_test!(YearNamesV1, year_names_v1_size, 48);
     marker(RocYearNamesV1Marker, "datetime/symbols/roc/years@1")
 )]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::neo),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub enum YearNamesV1<'data> {
@@ -396,11 +393,8 @@ size_test!(MonthNamesV1, month_names_v1_size, 32);
     marker(RocMonthNamesV1Marker, "datetime/symbols/roc/months@1")
 )]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::neo),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub enum MonthNamesV1<'data> {
@@ -426,11 +420,8 @@ pub enum MonthNamesV1<'data> {
 /// Represents a simple substitution pattern;
 /// i.e. a string with a single placeholder
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(
- feature = "datagen",
- derive(serde::Serialize, databake::Bake),
- databake(path = icu_datetime::provider::neo),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct SimpleSubstitutionPattern<'data> {
     /// The pattern
@@ -489,11 +480,8 @@ size_test!(LinearNamesV1, linear_names_v1_size, 24);
     marker(PlaceholderDaySymbolsV1Marker, "datetime/symbols/placeholder/days@1"),
 )]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::neo),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct LinearNamesV1<'data> {
@@ -547,11 +535,8 @@ size_test!(GluePatternV1, glue_pattern_v1_size, 24);
 /// </div>
 #[icu_provider::data_struct(marker(GluePatternV1Marker, "datetime/patterns/glue@1"))]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::neo),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct GluePatternV1<'data> {
@@ -569,11 +554,8 @@ pub struct GluePatternV1<'data> {
 // }
 #[allow(missing_docs)] // TODO
 #[derive(Debug, Copy, Clone, PartialEq)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::neo),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct SkeletonDataIndex {
     /// If true, the first pattern is for `Long`.
@@ -672,11 +654,8 @@ impl AsULE for SkeletonDataIndex {
     marker(TimeNeoSkeletonPatternsV1Marker, "datetime/patterns/time_skeleton@1")
 )]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::neo),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(missing_docs)] // TODO
 pub struct PackedSkeletonDataV1<'data> {
@@ -711,11 +690,8 @@ impl<'data> PackedSkeletonDataV1<'data> {
     "datetime/patterns/datetime_skeleton@1"
 ))]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::neo),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 #[allow(missing_docs)] // TODO

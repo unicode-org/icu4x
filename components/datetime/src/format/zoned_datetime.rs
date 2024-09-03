@@ -88,7 +88,6 @@ where
                 r = r.and(datetime::try_write_field(
                     field,
                     pattern.metadata,
-                    Default::default(),
                     datetime,
                     date_symbols,
                     time_symbols,

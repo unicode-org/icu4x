@@ -6,6 +6,10 @@
                 "options": {
                     "components": {
                         "year": "numeric"
+                    },
+                    "semantic": {
+                        "fieldSet": ["year"],
+                        "length": "short"
                     }
                 }
             },
@@ -15,6 +19,10 @@
                     "components": {
                         "year": "numeric",
                         "month": "numeric"
+                    },
+                    "semantic": {
+                        "fieldSet": ["year", "month"],
+                        "length": "short"
                     }
                 }
             },
@@ -25,6 +33,10 @@
                         "year": "numeric",
                         "month": "numeric",
                         "day": "numeric-day-of-month"
+                    },
+                    "semantic": {
+                        "fieldSet": ["year", "month", "day"],
+                        "length": "short"
                     }
                 }
             },
@@ -36,6 +48,10 @@
                         "month": "numeric",
                         "day": "numeric-day-of-month",
                         "weekday": "short"
+                    },
+                    "semantic": {
+                        "fieldSet": ["year", "month", "day", "weekday"],
+                        "length": "short"
                     }
                 }
             },
@@ -45,6 +61,10 @@
                     "components": {
                         "year": "numeric",
                         "month": "short"
+                    },
+                    "semantic": {
+                        "fieldSet": ["year", "month"],
+                        "length": "medium"
                     }
                 }
             },
@@ -55,6 +75,10 @@
                         "year": "numeric",
                         "month": "short",
                         "day": "numeric-day-of-month"
+                    },
+                    "semantic": {
+                        "fieldSet": ["year", "month", "day"],
+                        "length": "medium"
                     }
                 }
             },
@@ -66,6 +90,10 @@
                         "month": "short",
                         "day": "numeric-day-of-month",
                         "weekday": "short"
+                    },
+                    "semantic": {
+                        "fieldSet": ["year", "month", "day", "weekday"],
+                        "length": "medium"
                     }
                 }
             },
@@ -75,6 +103,10 @@
                     "components": {
                         "year": "numeric",
                         "month": "long"
+                    },
+                    "semantic": {
+                        "fieldSet": ["year", "month"],
+                        "length": "long"
                     }
                 }
             },
@@ -82,7 +114,13 @@
                 "locale": "en",
                 "options": {
                     "components": {
-                        "month": "short"
+                        "year": "numeric",
+                        "month": "long",
+                        "day": "numeric-day-of-month"
+                    },
+                    "semantic": {
+                        "fieldSet": ["year", "month", "day"],
+                        "length": "long"
                     }
                 }
             },
@@ -92,6 +130,10 @@
                     "components": {
                         "month": "numeric",
                         "day": "numeric-day-of-month"
+                    },
+                    "semantic": {
+                        "fieldSet": ["month", "day"],
+                        "length": "short"
                     }
                 }
             },
@@ -102,6 +144,10 @@
                         "month": "numeric",
                         "day": "numeric-day-of-month",
                         "weekday": "short"
+                    },
+                    "semantic": {
+                        "fieldSet": ["month", "day", "weekday"],
+                        "length": "short"
                     }
                 }
             },
@@ -110,6 +156,10 @@
                 "options": {
                     "components": {
                         "month": "short"
+                    },
+                    "semantic": {
+                        "fieldSet": ["month"],
+                        "length": "medium"
                     }
                 }
             },
@@ -119,6 +169,10 @@
                     "components": {
                         "month": "short",
                         "day": "numeric-day-of-month"
+                    },
+                    "semantic": {
+                        "fieldSet": ["month", "day"],
+                        "length": "medium"
                     }
                 }
             },
@@ -129,6 +183,10 @@
                         "month": "short",
                         "day": "numeric-day-of-month",
                         "weekday": "short"
+                    },
+                    "semantic": {
+                        "fieldSet": ["month", "day", "weekday"],
+                        "length": "medium"
                     }
                 }
             },
@@ -138,6 +196,10 @@
                     "components": {
                         "month": "long",
                         "day": "numeric-day-of-month"
+                    },
+                    "semantic": {
+                        "fieldSet": ["month", "day"],
+                        "length": "long"
                     }
                 }
             },
@@ -146,6 +208,10 @@
                 "options": {
                     "components": {
                         "day": "numeric-day-of-month"
+                    },
+                    "semantic": {
+                        "fieldSet": ["day"],
+                        "length": "short"
                     }
                 }
             },
@@ -155,6 +221,10 @@
                     "components": {
                         "day": "numeric-day-of-month",
                         "weekday": "short"
+                    },
+                    "semantic": {
+                        "fieldSet": ["day", "weekday"],
+                        "length": "medium"
                     }
                 }
             },
@@ -163,6 +233,10 @@
                 "options": {
                     "components": {
                         "weekday": "short"
+                    },
+                    "semantic": {
+                        "fieldSet": ["weekday"],
+                        "length": "medium"
                     }
                 }
             },
@@ -172,9 +246,13 @@
                     "components": {
                         "weekday": "short",
                         "hour": "numeric",
-                        "minute": "numeric",
-                        "preferences": { "hourCycle": "h12" }
-                    }
+                        "minute": "numeric"
+                    },
+                    "semantic": {
+                        "fieldSet": ["weekday", "hour", "minute"],
+                        "length": "medium"
+                    },
+                    "preferences": { "hourCycle": "h12" }
                 }
             },
             {
@@ -184,9 +262,28 @@
                         "weekday": "short",
                         "hour": "numeric",
                         "minute": "numeric",
-                        "second": "numeric",
-                        "preferences": { "hourCycle": "h12" }
-                    }
+                        "second": "numeric"
+                    },
+                    "semantic": {
+                        "fieldSet": ["weekday", "hour", "minute", "second"],
+                        "length": "medium"
+                    },
+                    "preferences": { "hourCycle": "h12" }
+                }
+            },
+            {
+                "locale": "en",
+                "options": {
+                    "components": {
+                        "weekday": "short",
+                        "hour": "numeric",
+                        "minute": "numeric"
+                    },
+                    "semantic": {
+                        "fieldSet": ["weekday", "hour", "minute"],
+                        "length": "medium"
+                    },
+                    "preferences": { "hourCycle": "h23" }
                 }
             },
             {
@@ -196,39 +293,26 @@
                         "weekday": "short",
                         "hour": "numeric",
                         "minute": "numeric",
-                        "preferences": { "hourCycle": "h23" }
-                    }
+                        "second": "numeric"
+                    },
+                    "semantic": {
+                        "fieldSet": ["weekday", "hour", "minute", "second"],
+                        "length": "medium"
+                    },
+                    "preferences": { "hourCycle": "h23" }
                 }
             },
             {
                 "locale": "en",
                 "options": {
                     "components": {
-                        "weekday": "short",
-                        "hour": "numeric",
-                        "minute": "numeric",
-                        "second": "numeric",
-                        "preferences": { "hourCycle": "h23" }
-                    }
-                }
-            },
-            {
-                "locale": "en",
-                "options": {
-                    "components": {
-                        "hour": "numeric",
-                        "preferences": { "hourCycle": "h12" }
-                    }
-                }
-            },
-            {
-                "locale": "en",
-                "options": {
-                    "components": {
-                        "hour": "numeric",
-                        "minute": "numeric",
-                        "preferences": { "hourCycle": "h12" }
-                    }
+                        "hour": "numeric"
+                    },
+                    "semantic": {
+                        "fieldSet": ["hour"],
+                        "length": "medium"
+                    },
+                    "preferences": { "hourCycle": "h12" }
                 }
             },
             {
@@ -236,19 +320,13 @@
                 "options": {
                     "components": {
                         "hour": "numeric",
-                        "minute": "numeric",
-                        "second": "numeric",
-                        "preferences": { "hourCycle": "h12" }
-                    }
-                }
-            },
-            {
-                "locale": "en",
-                "options": {
-                    "components": {
-                        "hour": "numeric",
-                        "preferences": { "hourCycle": "h23" }
-                    }
+                        "minute": "numeric"
+                    },
+                    "semantic": {
+                        "fieldSet": ["hour", "minute"],
+                        "length": "medium"
+                    },
+                    "preferences": { "hourCycle": "h12" }
                 }
             },
             {
@@ -257,8 +335,40 @@
                     "components": {
                         "hour": "numeric",
                         "minute": "numeric",
-                        "preferences": { "hourCycle": "h23" }
-                    }
+                        "second": "numeric"
+                    },
+                    "semantic": {
+                        "fieldSet": ["hour", "minute", "second"],
+                        "length": "medium"
+                    },
+                    "preferences": { "hourCycle": "h12" }
+                }
+            },
+            {
+                "locale": "en",
+                "options": {
+                    "components": {
+                        "hour": "numeric"
+                    },
+                    "semantic": {
+                        "fieldSet": ["hour"],
+                        "length": "medium"
+                    },
+                    "preferences": { "hourCycle": "h23" }
+                }
+            },
+            {
+                "locale": "en",
+                "options": {
+                    "components": {
+                        "hour": "numeric",
+                        "minute": "numeric"
+                    },
+                    "semantic": {
+                        "fieldSet": ["hour", "minute"],
+                        "length": "medium"
+                    },
+                    "preferences": { "hourCycle": "h23" }
                 }
             },
             {
@@ -267,9 +377,13 @@
                     "components": {
                         "hour": "numeric",
                         "minute": "numeric",
-                        "second": "numeric",
-                        "preferences": { "hourCycle": "h23" }
-                    }
+                        "second": "numeric"
+                    },
+                    "semantic": {
+                        "fieldSet": ["hour", "minute", "second"],
+                        "length": "medium"
+                    },
+                    "preferences": { "hourCycle": "h23" }
                 }
             },
             {
@@ -278,6 +392,10 @@
                     "components": {
                         "minute": "numeric",
                         "second": "numeric"
+                    },
+                    "semantic": {
+                        "fieldSet": ["hour", "minute"],
+                        "length": "medium"
                     }
                 }
             },
@@ -286,16 +404,10 @@
                 "options": {
                     "components": {
                         "year": "two-digit"
-                    }
-                }
-            },
-            {
-                "locale": "en",
-                "options": {
-                    "components": {
-                        "year": "numeric",
-                        "month": "numeric",
-                        "day": "numeric-day-of-month"
+                    },
+                    "semantic": {
+                        "fieldSet": ["year"],
+                        "length": "short"
                     }
                 }
             },
@@ -306,36 +418,11 @@
                         "year": "numeric",
                         "month": "two-digit",
                         "day": "numeric-day-of-month"
-                    }
-                }
-            },
-            {
-                "locale": "en",
-                "options": {
-                    "components": {
-                        "year": "numeric",
-                        "month": "short",
-                        "day": "numeric-day-of-month"
-                    }
-                }
-            },
-            {
-                "locale": "en",
-                "options": {
-                    "components": {
-                        "year": "numeric",
-                        "month": "long",
-                        "day": "numeric-day-of-month"
-                    }
-                }
-            },
-            {
-                "locale": "en",
-                "options": {
-                    "components": {
-                        "year": "numeric",
-                        "month": "narrow",
-                        "day": "numeric-day-of-month"
+                    },
+                    "semantic": {
+                        "fieldSet": ["year"],
+                        "length": "short",
+                        "alignment": "column"
                     }
                 }
             },
@@ -349,9 +436,13 @@
 
                         "weekday": "short",
                         "hour": "numeric",
-                        "minute": "numeric",
-                        "preferences": { "hourCycle": "h12" }
-                    }
+                        "minute": "numeric"
+                    },
+                    "semantic": {
+                        "fieldSet": ["year", "month", "day", "weekday", "hour", "minute"],
+                        "length": "medium"
+                    },
+                    "preferences": { "hourCycle": "h12" }
                 }
             },
             {
@@ -364,9 +455,13 @@
 
                         "weekday": "long",
                         "hour": "numeric",
-                        "minute": "numeric",
-                        "preferences": { "hourCycle": "h12" }
-                    }
+                        "minute": "numeric"
+                    },
+                    "semantic": {
+                        "fieldSet": ["year", "month", "day", "weekday", "hour", "minute"],
+                        "length": "long"
+                    },
+                    "preferences": { "hourCycle": "h12" }
                 }
             },
             {
@@ -374,9 +469,13 @@
                 "options": {
                     "components": {
                         "hour": "numeric",
-                        "minute": "numeric",
-                        "preferences": { "hourCycle": "h11" }
-                    }
+                        "minute": "numeric"
+                    },
+                    "semantic": {
+                        "fieldSet": ["hour", "minute"],
+                        "length": "short"
+                    },
+                    "preferences": { "hourCycle": "h11" }
                 }
             },
             {
@@ -384,39 +483,13 @@
                 "options": {
                     "components": {
                         "hour": "numeric",
-                        "minute": "numeric",
-                        "preferences": { "hourCycle": "h12" }
-                    }
-                }
-            },
-            {
-                  "locale": "en",
-                  "options": {
-                      "components": {
-                          "hour": "numeric",
-                          "minute": "numeric",
-                          "preferences": { "hourCycle": "h23" }
-                      }
-                  }
-            },
-            {
-                  "locale": "en",
-                  "options": {
-                      "components": {
-                          "hour": "numeric",
-                          "minute": "numeric",
-                          "preferences": { "hourCycle": "h24" }
-                      }
-                  }
-            },
-            {
-                "locale": "ar",
-                "options": {
-                    "components": {
-                        "hour": "numeric",
-                        "minute": "numeric",
-                        "preferences": { "hourCycle": "h11" }
-                    }
+                        "minute": "numeric"
+                    },
+                    "semantic": {
+                        "fieldSet": ["hour", "minute"],
+                        "length": "short"
+                    },
+                    "preferences": { "hourCycle": "h24" }
                 }
             },
             {
@@ -424,29 +497,55 @@
                 "options": {
                     "components": {
                         "hour": "numeric",
-                        "minute": "numeric",
-                        "preferences": { "hourCycle": "h12" }
-                    }
+                        "minute": "numeric"
+                    },
+                    "semantic": {
+                        "fieldSet": ["hour", "minute"],
+                        "length": "short"
+                    },
+                    "preferences": { "hourCycle": "h11" }
                 }
-            },
-            {
-                  "locale": "ar",
-                  "options": {
-                      "components": {
-                          "hour": "numeric",
-                          "minute": "numeric",
-                          "preferences": { "hourCycle": "h23" }
-                      }
-                  }
             },
             {
                 "locale": "ar",
                 "options": {
                     "components": {
                         "hour": "numeric",
-                        "minute": "numeric",
-                        "preferences": { "hourCycle": "h24" }
-                    }
+                        "minute": "numeric"
+                    },
+                    "semantic": {
+                        "fieldSet": ["hour", "minute"],
+                        "length": "short"
+                    },
+                    "preferences": { "hourCycle": "h12" }
+                }
+            },
+            {
+                "locale": "ar",
+                "options": {
+                    "components": {
+                        "hour": "numeric",
+                        "minute": "numeric"
+                    },
+                    "semantic": {
+                        "fieldSet": ["hour", "minute"],
+                        "length": "short"
+                    },
+                    "preferences": { "hourCycle": "h23" }
+                }
+            },
+            {
+                "locale": "ar",
+                "options": {
+                    "components": {
+                        "hour": "numeric",
+                        "minute": "numeric"
+                    },
+                    "semantic": {
+                        "fieldSet": ["hour", "minute"],
+                        "length": "short"
+                    },
+                    "preferences": { "hourCycle": "h24" }
                 }
             }
         ],

@@ -72,6 +72,9 @@ pub enum DurationFormatterOptionsError {
     /// Returned when a previous unit's style is set to [`FieldStyle::Numeric`] or [`FieldStyle::TwoDigit`] and the following unit's style is not
     /// [`FieldStyle::Fractional`], [`FieldStyle::Numeric`], or [`FieldStyle::TwoDigit`].
     PreviousNumeric,
+
+    /// Returned when the number of fractional digits is out of acceptable range. See [`FractionalDigits::Fixed`].
+    FractionalDigitsOutOfRange,
 }
 
 impl ValidatedDurationFormatterOptions {
@@ -185,6 +188,14 @@ impl ValidatedDurationFormatterOptions {
             // for displaying hours with two digits.
 
             prev_style = *style;
+        }
+
+        // section 1.2.1
+        // 27. Set durationFormat.[[FractionalDigits]] to ? GetNumberOption(options, "fractionalDigits", 0, 9, undefined).
+        if let FractionalDigits::Fixed(i) = builder.fractional_digits {
+            if i > 9 {
+                return Err(DurationFormatterOptionsError::FractionalDigitsOutOfRange);
+            }
         }
 
         Ok(builder.try_into().unwrap())
@@ -420,6 +431,19 @@ impl Unit {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_fractional_digit_error() {
+        let options = DurationFormatterOptions {
+            fractional_digits: FractionalDigits::Fixed(10),
+            ..Default::default()
+        };
+
+        assert_eq!(
+            ValidatedDurationFormatterOptions::validate(options),
+            Err(DurationFormatterOptionsError::FractionalDigitsOutOfRange)
+        );
+    }
 
     #[test]
     fn test_invalid_style_after_two_digit() {

@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::fields::{self, FieldLength, FieldSymbol};
 use crate::format::neo::FieldForDataLoading;
-use crate::format::FormattingOptions;
 use crate::input::ExtractedDateTimeInput;
 use crate::neo_pattern::DateTimePattern;
 use crate::neo_skeleton::{Alignment, FractionalSecondDigits};
@@ -97,6 +97,23 @@ pub(crate) enum ZonePatternSelectionData {
 #[derive(Debug, Copy, Clone)]
 pub(crate) enum ZonePatternDataBorrowed<'a> {
     SinglePatternItem(&'a <PatternItem as AsULE>::ULE),
+}
+
+#[derive(Debug, Copy, Clone, Default)]
+pub(crate) struct ItemsAndOptions<'a> {
+    pub(crate) items: &'a ZeroSlice<PatternItem>,
+    pub(crate) alignment: Option<Alignment>,
+    pub(crate) hour_cycle: Option<HourCycle>,
+    pub(crate) fractional_second_digits: Option<FractionalSecondDigits>,
+}
+
+impl<'a> ItemsAndOptions<'a> {
+    fn new_empty() -> Self {
+        Self {
+            items: ZeroSlice::new_empty(),
+            ..Default::default()
+        }
+    }
 }
 
 // TODO: Use markers instead of an enum for NeoFormatter pattern storage.
@@ -228,6 +245,17 @@ impl DatePatternSelectionData {
                     skeleton.alignment,
                 )
             }
+        }
+    }
+}
+
+impl<'a> DatePatternDataBorrowed<'a> {
+    pub(crate) fn items_and_options(self) -> ItemsAndOptions<'a> {
+        let Self::Resolved(pattern, alignment) = self;
+        ItemsAndOptions {
+            items: pattern.items,
+            alignment,
+            ..Default::default()
         }
     }
 }
@@ -405,6 +433,18 @@ impl TimePatternSelectionData {
     }
 }
 
+impl<'a> TimePatternDataBorrowed<'a> {
+    pub(crate) fn items_and_options(self) -> ItemsAndOptions<'a> {
+        let Self::Resolved(pattern, alignment, hour_cycle, fractional_second_digits) = self;
+        ItemsAndOptions {
+            items: pattern.items,
+            alignment,
+            hour_cycle,
+            fractional_second_digits,
+        }
+    }
+}
+
 impl ZonePatternSelectionData {
     pub(crate) fn new_with_skeleton(length: MaybeLength, components: NeoTimeZoneSkeleton) -> Self {
         let time_zone = components.resolve(length);
@@ -425,6 +465,16 @@ impl ZonePatternSelectionData {
     pub(crate) fn select(&self, _datetime: &ExtractedDateTimeInput) -> ZonePatternDataBorrowed {
         let Self::SinglePatternItem(_, pattern_item) = self;
         ZonePatternDataBorrowed::SinglePatternItem(pattern_item)
+    }
+}
+
+impl<'a> ZonePatternDataBorrowed<'a> {
+    pub(crate) fn items_and_options(self) -> ItemsAndOptions<'a> {
+        let Self::SinglePatternItem(item) = self;
+        ItemsAndOptions {
+            items: ZeroSlice::from_ule_slice(core::slice::from_ref(item)),
+            ..Default::default()
+        }
     }
 }
 
@@ -799,25 +849,6 @@ impl<'a> DateTimeZonePatternDataBorrowed<'a> {
         }
     }
 
-    #[inline]
-    pub(crate) fn formatting_options(self) -> FormattingOptions {
-        let date_alignment = match self.date_pattern() {
-            Some(DatePatternDataBorrowed::Resolved(_, a)) => a,
-            _ => None,
-        };
-        let (time_alignment, hour_cycle, fractional_second_digits) = match self.time_pattern() {
-            Some(TimePatternDataBorrowed::Resolved(_, a, b, c)) => (a, b, c),
-            _ => (None, None, None),
-        };
-        let force_2_digit_month_day_week_hour = matches!(date_alignment, Some(Alignment::Column))
-            || matches!(time_alignment, Some(Alignment::Column));
-        FormattingOptions {
-            hour_cycle,
-            force_2_digit_month_day_week_hour,
-            fractional_second_digits,
-        }
-    }
-
     pub(crate) fn iter_items(self) -> impl Iterator<Item = PatternItem> + 'a {
         let glue_pattern_slice = match self.glue_pattern() {
             Some(glue) => glue.as_ule_slice(),
@@ -825,43 +856,71 @@ impl<'a> DateTimeZonePatternDataBorrowed<'a> {
         };
         glue_pattern_slice
             .iter()
-            .flat_map(
+            .map(
                 move |generic_item_ule| match generic_item_ule.as_pattern_item_ule() {
-                    Ok(pattern_item_ule) => core::slice::from_ref(pattern_item_ule),
+                    Ok(pattern_item_ule) => ItemsAndOptions {
+                        items: ZeroSlice::from_ule_slice(core::slice::from_ref(pattern_item_ule)),
+                        ..Default::default()
+                    },
                     Err(1) => self
                         .date_pattern()
-                        .map(|data| match data {
-                            DatePatternDataBorrowed::Resolved(pb, _) => pb.items.as_ule_slice(),
-                        })
-                        .unwrap_or(&[]),
+                        .map(|p| p.items_and_options())
+                        .unwrap_or(ItemsAndOptions::new_empty()),
                     Err(0) => self
                         .time_pattern()
-                        .map(|data| match data {
-                            TimePatternDataBorrowed::Resolved(pb, _, _, _) => {
-                                pb.items.as_ule_slice()
-                            }
-                        })
-                        .unwrap_or(&[]),
+                        .map(|p| p.items_and_options())
+                        .unwrap_or(ItemsAndOptions::new_empty()),
                     Err(2) => self
                         .zone_pattern()
-                        .map(|data| match data {
-                            ZonePatternDataBorrowed::SinglePatternItem(item) => {
-                                core::slice::from_ref(item)
-                            }
-                        })
-                        .unwrap_or(&[]),
-                    _ => &[],
+                        .map(|p| p.items_and_options())
+                        .unwrap_or(ItemsAndOptions::new_empty()),
+                    _ => ItemsAndOptions::new_empty(),
                 },
             )
-            .map(|unaligned| PatternItem::from_unaligned(*unaligned))
+            .flat_map(|items_and_options| items_and_options.iter_items())
     }
 
     pub(crate) fn to_pattern(self) -> DateTimePattern {
-        let pb = match self {
-            Self::Date(DatePatternDataBorrowed::Resolved(pb, _)) => pb,
-            Self::Time(TimePatternDataBorrowed::Resolved(pb, _, _, _)) => pb,
-            _ => todo!(),
-        };
-        DateTimePattern::from_runtime_pattern(pb.as_pattern().into_owned())
+        let pattern = self.iter_items().collect::<runtime::Pattern>();
+        DateTimePattern::from_runtime_pattern(pattern)
+    }
+}
+
+impl<'a> ItemsAndOptions<'a> {
+    pub(crate) fn iter_items(self) -> impl Iterator<Item = PatternItem> + 'a {
+        self.items.iter().map(move |mut pattern_item| {
+            #[allow(clippy::single_match)] // need `ref mut`, which doesn't work in `if let`?
+            match &mut pattern_item {
+                PatternItem::Field(ref mut field) => {
+                    if matches!(self.alignment, Some(Alignment::Column))
+                        && field.length == FieldLength::One
+                        && matches!(
+                            field.symbol,
+                            FieldSymbol::Month(_) | FieldSymbol::Day(_) | FieldSymbol::Week(_)
+                        )
+                    {
+                        field.length = FieldLength::TwoDigit;
+                    }
+                    if let Some(hour_cycle) = self.hour_cycle {
+                        if let FieldSymbol::Hour(_) = field.symbol {
+                            field.symbol = FieldSymbol::Hour(hour_cycle.field());
+                        }
+                    }
+                    if let Some(fractional_second_digits) = self.fractional_second_digits {
+                        if matches!(
+                            field.symbol,
+                            FieldSymbol::Second(fields::Second::Second)
+                                | FieldSymbol::DecimalSecond(_)
+                        ) {
+                            field.symbol = FieldSymbol::from_fractional_second_digits(
+                                fractional_second_digits,
+                            );
+                        }
+                    }
+                }
+                _ => (),
+            }
+            pattern_item
+        })
     }
 }
