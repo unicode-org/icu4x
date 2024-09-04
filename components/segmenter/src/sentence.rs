@@ -186,23 +186,26 @@ impl SentenceSegmenter {
         let payload_locale_override = if let Some(locale) = options.content_locale {
             let req = DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),
-                ..Default::default()
-            };
+                metadata: {
+                    let mut metadata = DataRequestMetadata::default();
+                    metadata.silent = true;
+                    metadata
+                },            };
             match provider.load(req) {
-                Ok(response) => Ok(Some(response.payload)),
+                Ok(response) => Some(response.payload),
                 Err(DataError {
                     kind: DataErrorKind::IdentifierNotFound,
                     ..
-                }) => Ok(None),
-                Err(e) => Err(e),
+                }) => None,
+                Err(e) => return Err(e),
             }
         } else {
-            Ok(None)
+            None
         };
 
         Ok(Self {
             payload,
-            payload_locale_override: payload_locale_override?,
+            payload_locale_override,
         })
     }
 
