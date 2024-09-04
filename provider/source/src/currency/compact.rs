@@ -6,13 +6,13 @@ use crate::cldr_serde;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 
+use std::collections::BTreeMap;
 use std::collections::HashSet;
 
 use icu::experimental::dimension::provider::currency_compact::*;
 use icu::plurals::PluralCategory;
 use icu_provider::prelude::*;
 use icu_provider::DataProvider;
-use zerovec::ZeroMap;
 
 impl DataProvider<ShortCurrencyCompactV1Marker> for SourceDataProvider {
     fn load(
@@ -38,8 +38,6 @@ impl DataProvider<ShortCurrencyCompactV1Marker> for SourceDataProvider {
             .numsys_data
             .currency_patterns;
 
-        let mut result = ZeroMap::new();
-
         let compact_patterns = match currency_patterns
             .get(default_system)
             .and_then(|patterns| patterns.compact_short.as_ref())
@@ -50,7 +48,7 @@ impl DataProvider<ShortCurrencyCompactV1Marker> for SourceDataProvider {
                 return Ok(DataResponse {
                     metadata: Default::default(),
                     payload: DataPayload::from_owned(ShortCurrencyCompactV1 {
-                        compact_patterns: result,
+                        compact_patterns: Default::default(),
                     }),
                 })
             }
@@ -80,6 +78,8 @@ impl DataProvider<ShortCurrencyCompactV1Marker> for SourceDataProvider {
             })
         }
 
+        let mut result = BTreeMap::new();
+
         for pattern in compact_patterns {
             let lg10 = pattern.magnitude.chars().filter(|&c| c == '0').count() as i8;
 
@@ -91,14 +91,33 @@ impl DataProvider<ShortCurrencyCompactV1Marker> for SourceDataProvider {
 
             let count = try_parse_count_from_str(pattern.count.as_str())?;
 
-            result.insert(&(lg10, count), pattern.pattern.as_str());
+            result.insert((lg10, count), pattern.pattern.as_str());
         }
+
+        // Deduplicate against `::Other`
+        let compact_patterns = result
+            .iter()
+            .filter(|(&(lg10, count), pattern)| {
+                let (CompactCount::AlphaNextToNumber(p) | CompactCount::Standard(p)) = count;
+                p == PluralCategory::Other
+                    || result.get(&(
+                        lg10,
+                        match count {
+                            CompactCount::AlphaNextToNumber(_) => {
+                                CompactCount::AlphaNextToNumber(PluralCategory::Other)
+                            }
+                            CompactCount::Standard(_) => {
+                                CompactCount::Standard(PluralCategory::Other)
+                            }
+                        },
+                    )) != Some(pattern)
+            })
+            .map(|(k, v)| (*k, *v))
+            .collect();
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(ShortCurrencyCompactV1 {
-                compact_patterns: result,
-            }),
+            payload: DataPayload::from_owned(ShortCurrencyCompactV1 { compact_patterns }),
         })
     }
 }
@@ -131,10 +150,19 @@ fn test_basic() {
 
     assert_eq!(
         en_patterns.get(&(3, CompactCount::Standard(PluralCategory::One))),
-        Some("¤0K")
+        None
     );
     assert_eq!(
         en_patterns.get(&(3, CompactCount::AlphaNextToNumber(PluralCategory::One))),
+        None
+    );
+
+    assert_eq!(
+        en_patterns.get(&(3, CompactCount::Standard(PluralCategory::Other))),
+        Some("¤0K")
+    );
+    assert_eq!(
+        en_patterns.get(&(3, CompactCount::AlphaNextToNumber(PluralCategory::Other))),
         Some("¤ 0K")
     );
 
