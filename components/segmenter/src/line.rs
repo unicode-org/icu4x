@@ -990,7 +990,7 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                 BreakState::Index(mut index) | BreakState::Intermediate(mut index) => {
                     let mut previous_iter = self.iter.clone();
                     let mut previous_pos_data = self.current_pos_data;
-                    let previous_is_after_zwj = after_zwj;
+                    let mut previous_is_after_zwj = after_zwj;
 
                     // Since we are building up a state in this inner loop, we do not
                     // need an analogue of lb9_left; continuing the inner loop preserves
@@ -1071,12 +1071,14 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                                 index = i;
                                 previous_iter = self.iter.clone();
                                 previous_pos_data = self.current_pos_data;
+                                previous_is_after_zwj = after_zwj;
                             }
                             BreakState::Index(i) => {
                                 index = i;
                                 if previous_break_state_is_cp_prop {
                                     previous_iter = self.iter.clone();
                                     previous_pos_data = self.current_pos_data;
+                                    previous_is_after_zwj = after_zwj;
                                 }
                             }
                         }
