@@ -208,7 +208,12 @@ name = "QU_SP_LB15A"
 left = "QU_PI"
 right = "SP"
 
-# TODO comment
+# The following transitions are X QU_PI → QU unless X is a state that
+# implies we are after (sot | BK | CR | LF | NL | OP | QU | GL | SP | ZW).
+# We therefore reach the state QU_PI only if we match the initial
+# context
+#   (sot | BK | CR | LF | NL | OP | QU | GL | SP | ZW) [\p{Pi}&QU]
+# of LB15a.
 [[tables]]
 # LB15a
 name = "QU"
@@ -508,6 +513,7 @@ right = "QU_PI"
 name = "QU"
 left = "RI_RI"
 right = "QU_PI"
+# End of the X QU_PI → QU transitions.
 
 [[tables]]
 # LB15a
