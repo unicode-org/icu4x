@@ -809,7 +809,7 @@ break_state = false
 [[rules]]
 # LB15b
 left = [ "QU_PF", "QU_LB15B", "CB_QU_LB15B" ]
-right = [ "SP", "GL", "WJ", "CL", "QU", "QU_PI", "CP", "EX", "IS", "SY", "BK", "CR", "LF", "NL", "ZW" ]
+right = [ "SP", "GL", "WJ", "CL", "QU", "QU_PI", "QU_PF", "CP", "EX", "IS", "SY", "BK", "CR", "LF", "NL", "ZW" ]
 break_state = false
 
 [[rules]]

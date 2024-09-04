@@ -8,7 +8,7 @@ segmenter/dictionary/wl_ext@1, und/khmerdict, 798398B, e1da910a05c02674
 segmenter/dictionary/wl_ext@1, und/laodict, 292484B, 13c58c252d049c90
 segmenter/dictionary/wl_ext@1, und/thaidict, 225002B, f2d574736bb1a754
 segmenter/grapheme@2, <singleton>, 9836B, 48b8793855ce3f6f
-segmenter/line@2, <singleton>, 19872B, beeb1c8ad2fae36f
+segmenter/line@2, <singleton>, 19872B, 765afed5083e597f
 segmenter/lstm/wl_auto@1, <lookup>, 199B, 4 identifiers
 segmenter/lstm/wl_auto@1, <total>, 310533B, 4 unique payloads
 segmenter/lstm/wl_auto@1, und/Burmese_codepoints_exclusive_model4_heavy, 91369B, eec2f7a1f6819f91
