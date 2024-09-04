@@ -14,9 +14,9 @@ use core::marker::PhantomData;
 #[cfg(feature = "datagen")]
 use core::{fmt::Debug, str::FromStr};
 use icu_pattern::{Pattern, PatternBackend, SinglePlaceholder};
-use icu_plurals::{PluralCategory, PluralOperands, PluralRules};
 #[cfg(feature = "datagen")]
 use icu_plurals::PluralElements;
+use icu_plurals::{PluralCategory, PluralOperands, PluralRules};
 use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 
@@ -140,22 +140,52 @@ where
             Pattern::<B, String>::from_str(&s.replace('\'', "''")).map(|p| p.take_store());
 
         Ok(Self {
-            strings: PluralElements::new(make_pattern(elements.other)?.as_str())
-                .with_zero_value(elements.zero.map(make_pattern).transpose()?.as_deref())
-                .with_one_value(elements.one.map(make_pattern).transpose()?.as_deref())
-                .with_two_value(elements.two.map(make_pattern).transpose()?.as_deref())
-                .with_few_value(elements.few.map(make_pattern).transpose()?.as_deref())
-                .with_many_value(elements.many.map(make_pattern).transpose()?.as_deref())
+            strings: PluralElements::new(make_pattern(elements.other())?.as_str())
+                .with_zero_value(
+                    Some(elements.zero())
+                        .filter(|&e| e != elements.other())
+                        .map(make_pattern)
+                        .transpose()?
+                        .as_deref(),
+                )
+                .with_one_value(
+                    Some(elements.one())
+                        .filter(|&e| e != elements.other())
+                        .map(make_pattern)
+                        .transpose()?
+                        .as_deref(),
+                )
+                .with_two_value(
+                    Some(elements.two())
+                        .filter(|&e| e != elements.other())
+                        .map(make_pattern)
+                        .transpose()?
+                        .as_deref(),
+                )
+                .with_few_value(
+                    Some(elements.few())
+                        .filter(|&e| e != elements.other())
+                        .map(make_pattern)
+                        .transpose()?
+                        .as_deref(),
+                )
+                .with_many_value(
+                    Some(elements.many())
+                        .filter(|&e| e != elements.other())
+                        .map(make_pattern)
+                        .transpose()?
+                        .as_deref(),
+                )
                 .with_explicit_zero_value(
                     elements
-                        .explicit_zero
+                        .explicit_zero()
                         .map(make_pattern)
                         .transpose()?
                         .as_deref(),
                 )
                 .with_explicit_one_value(
                     elements
-                        .explicit_one
+                        .explicit_one()
                         .map(make_pattern)
                         .transpose()?
                         .as_deref(),

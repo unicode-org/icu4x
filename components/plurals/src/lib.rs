@@ -877,25 +877,16 @@ where
 }
 
 #[derive(Debug)]
-#[non_exhaustive]
 /// A bag of values for different plural cases.
 pub struct PluralElements<'a, T: ?Sized> {
-    /// The value used for the [`PluralCategory::Zero`] case
-    pub zero: Option<&'a T>,
-    /// The value used for the [`PluralCategory::One`] case
-    pub one: Option<&'a T>,
-    /// The value used for the [`PluralCategory::Two`] case
-    pub two: Option<&'a T>,
-    /// The value used for the [`PluralCategory::Few`] case
-    pub few: Option<&'a T>,
-    /// The value used for the [`PluralCategory::Many`] case
-    pub many: Option<&'a T>,
-    /// The value used for the [`PluralCategory::Other`] case
-    pub other: &'a T,
-    /// The value used when the [`PluralOperands`] are exactly 0.
-    pub explicit_zero: Option<&'a T>,
-    /// The value used when the [`PluralOperands`] are exactly 1.
-    pub explicit_one: Option<&'a T>,
+    zero: Option<&'a T>,
+    one: Option<&'a T>,
+    two: Option<&'a T>,
+    few: Option<&'a T>,
+    many: Option<&'a T>,
+    other: &'a T,
+    explicit_zero: Option<&'a T>,
+    explicit_one: Option<&'a T>,
 }
 
 impl<'a, T: ?Sized + PartialEq> PluralElements<'a, T> {
@@ -967,5 +958,45 @@ impl<'a, T: ?Sized + PartialEq> PluralElements<'a, T> {
             explicit_one,
             ..self
         }
+    }
+
+    /// The value for [`PluralCategory::Zero`]
+    pub fn zero(&self) -> &'a T {
+        self.zero.unwrap_or(self.other)
+    }
+
+    /// The value for [`PluralCategory::One`]
+    pub fn one(&self) -> &'a T {
+        self.one.unwrap_or(self.other)
+    }
+
+    /// The value for [`PluralCategory::Two`]
+    pub fn two(&self) -> &'a T {
+        self.two.unwrap_or(self.other)
+    }
+
+    /// The value for [`PluralCategory::Few`]
+    pub fn few(&self) -> &'a T {
+        self.few.unwrap_or(self.other)
+    }
+
+    /// The value for [`PluralCategory::Many`]
+    pub fn many(&self) -> &'a T {
+        self.many.unwrap_or(self.other)
+    }
+
+    /// The value for [`PluralCategory::Other`]
+    pub fn other(&self) -> &'a T {
+        self.other
+    }
+
+    /// The value used when the [`PluralOperands`] are exactly 0.
+    pub fn explicit_zero(&self) -> Option<&'a T> {
+        self.explicit_zero
+    }
+
+    /// The value used when the [`PluralOperands`] are exactly 1.
+    pub fn explicit_one(&self) -> Option<&'a T> {
+        self.explicit_one
     }
 }
