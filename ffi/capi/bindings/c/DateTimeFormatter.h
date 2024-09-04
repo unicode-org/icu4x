@@ -23,7 +23,7 @@
 
 
 typedef struct icu4x_DateTimeFormatter_create_with_lengths_mv1_result {union {DateTimeFormatter* ok; Error err;}; bool is_ok;} icu4x_DateTimeFormatter_create_with_lengths_mv1_result;
-icu4x_DateTimeFormatter_create_with_lengths_mv1_result icu4x_DateTimeFormatter_create_with_lengths_mv1(const DataProvider* provider, const Locale* locale, DateLength date_length, TimeLength time_length);
+icu4x_DateTimeFormatter_create_with_lengths_mv1_result icu4x_DateTimeFormatter_create_with_lengths_mv1(const DataProvider* provider, const Locale* locale, DateLength_option date_length, TimeLength_option time_length);
 
 typedef struct icu4x_DateTimeFormatter_format_datetime_mv1_result {union { Error err;}; bool is_ok;} icu4x_DateTimeFormatter_format_datetime_mv1_result;
 icu4x_DateTimeFormatter_format_datetime_mv1_result icu4x_DateTimeFormatter_format_datetime_mv1(const DateTimeFormatter* self, const DateTime* value, DiplomatWrite* write);

@@ -36,7 +36,7 @@ namespace icu4x {
 class DateTimeFormatter {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::Error> create_with_lengths(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateLength date_length, icu4x::TimeLength time_length);
+  inline static diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::Error> create_with_lengths(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::optional<icu4x::DateLength> date_length, std::optional<icu4x::TimeLength> time_length);
 
   inline diplomat::result<std::string, icu4x::Error> format_datetime(const icu4x::DateTime& value) const;
 

@@ -39,9 +39,9 @@ namespace icu4x {
 class ZonedDateTimeFormatter {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::ZonedDateTimeFormatter>, icu4x::Error> create_with_lengths(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateLength date_length, icu4x::TimeLength time_length);
+  inline static diplomat::result<std::unique_ptr<icu4x::ZonedDateTimeFormatter>, icu4x::Error> create_with_lengths(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::optional<icu4x::DateLength> date_length, std::optional<icu4x::TimeLength> time_length);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::ZonedDateTimeFormatter>, icu4x::Error> create_with_lengths_and_iso_8601_time_zone_fallback(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateLength date_length, icu4x::TimeLength time_length, icu4x::IsoTimeZoneOptions zone_options);
+  inline static diplomat::result<std::unique_ptr<icu4x::ZonedDateTimeFormatter>, icu4x::Error> create_with_lengths_and_iso_8601_time_zone_fallback(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::optional<icu4x::DateLength> date_length, std::optional<icu4x::TimeLength> time_length, icu4x::IsoTimeZoneOptions zone_options);
 
   inline diplomat::result<std::string, icu4x::Error> format_datetime_with_custom_time_zone(const icu4x::DateTime& datetime, const icu4x::CustomTimeZone& time_zone) const;
 
