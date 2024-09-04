@@ -113,11 +113,7 @@ impl RuleCollection {
             id.to_string().to_ascii_lowercase(),
             (source, reverse, visible),
         );
-
-        for alias in aliases.into_iter() {
-            self.id_mapping
-                .insert(alias.to_ascii_lowercase(), id.clone());
-        }
+        self.register_aliases(id, aliases)
     }
 
     /// Add transliteration ID aliases without registering a source.
@@ -126,10 +122,11 @@ impl RuleCollection {
         id: &icu_locale_core::Locale,
         aliases: impl IntoIterator<Item = &'a str>,
     ) {
-        for alias in aliases.into_iter() {
-            self.id_mapping
-                .insert(alias.to_ascii_lowercase(), id.clone());
-        }
+        self.id_mapping.extend(
+            aliases
+                .into_iter()
+                .map(|alias| (alias.to_ascii_lowercase(), id.clone())),
+        )
     }
 
     /// Returns a provider that is usable by [`Transliterator::try_new_unstable`](crate::transliterate::Transliterator::try_new_unstable).
