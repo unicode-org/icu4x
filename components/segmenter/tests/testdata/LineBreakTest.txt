@@ -10,8 +10,9 @@
 # specifically
 # https://github.com/makotokato/unicodetools/tree/8272504caeb7a417f312daefecf092709c93f66a.
 #
-# Unicode Character Database
-#   For documentation, see https://www.unicode.org/reports/tr44/
+# Note that starting with Unicode 16.0, the UCD LineBreakTest.txt will test an
+# untailored version of the algorithm, so it will no longer be necessary to
+# generate it in this fashion.
 #
 # Default Line_Break Test
 #
