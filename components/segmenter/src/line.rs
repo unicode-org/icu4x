@@ -1047,16 +1047,14 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                                 self.iter = previous_iter;
                                 self.current_pos_data = previous_pos_data;
                                 if after_zwj {
-                                    // Example, [AK] [AS] [ZWJ] [XX] should be break after [AK]
-                                    if is_intermediate_rule_no_match {
+                                    // Break [AK] ÷ [AS] [ZWJ] [XX],
+                                    // but not [AK] [ZWJ] ÷ [AS] [ZWJ] [XX].
+                                    if is_intermediate_rule_no_match && !previous_is_after_zwj {
                                         return self.get_current_position();
                                     }
-                                    //if previous_break_state_is_cp_prop {
                                     continue 'a;
-                                    //}
-                                    //return self.get_current_position();
                                 } else if previous_is_after_zwj {
-                                    // [AK] [ZWJ] [AS] [XX] shouldn't break beteen ZWJ
+                                    // Do not break [AK] [ZWJ] ÷ [AS] [XX].
                                     continue 'a;
                                 } else {
                                     return self.get_current_position();
