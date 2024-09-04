@@ -309,7 +309,7 @@ impl Transliterator {
                 let internal_t = dep
                     // a) hardcoded specials
                     .strip_prefix("x-")
-                    .map(|special| Transliterator::load_special(special, normalizer_provider))
+                    .and_then(|special| Transliterator::load_special(special, normalizer_provider))
                     // b) the user-provided override
                     .or_else(|| Transliterator::load_with_override(&dep, lookup?).transpose())
                     // c) the data
@@ -341,7 +341,7 @@ impl Transliterator {
     fn load_special<P>(
         special: &str,
         normalizer_provider: &P,
-    ) -> Result<InternalTransliterator, DataError>
+    ) -> Option<Result<InternalTransliterator, DataError>>
     where
         P: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<CompatibilityDecompositionSupplementV1Marker>
@@ -352,36 +352,40 @@ impl Transliterator {
     {
         // TODO(#3909, #3910): add more
         match special {
-            "any-nfc" => Ok(InternalTransliterator::Composing(
-                ComposingTransliterator::try_nfc(normalizer_provider)?,
-            )),
-            "any-nfkc" => Ok(InternalTransliterator::Composing(
-                ComposingTransliterator::try_nfkc(normalizer_provider)?,
-            )),
-            "any-nfd" => Ok(InternalTransliterator::Decomposing(
-                DecomposingTransliterator::try_nfd(normalizer_provider)?,
-            )),
-            "any-nfkd" => Ok(InternalTransliterator::Decomposing(
-                DecomposingTransliterator::try_nfkd(normalizer_provider)?,
-            )),
-            "any-null" => Ok(InternalTransliterator::Null),
-            "any-remove" => Ok(InternalTransliterator::Remove),
-            "any-hex/unicode" => Ok(InternalTransliterator::Hex(
+            "any-nfc" => Some(
+                ComposingTransliterator::try_nfc(normalizer_provider)
+                    .map(InternalTransliterator::Composing),
+            ),
+            "any-nfkc" => Some(
+                ComposingTransliterator::try_nfkc(normalizer_provider)
+                    .map(InternalTransliterator::Composing),
+            ),
+            "any-nfd" => Some(
+                DecomposingTransliterator::try_nfd(normalizer_provider)
+                    .map(InternalTransliterator::Decomposing),
+            ),
+            "any-nfkd" => Some(
+                DecomposingTransliterator::try_nfkd(normalizer_provider)
+                    .map(InternalTransliterator::Decomposing),
+            ),
+            "any-null" => Some(Ok(InternalTransliterator::Null)),
+            "any-remove" => Some(Ok(InternalTransliterator::Remove)),
+            "any-hex/unicode" => Some(Ok(InternalTransliterator::Hex(
                 hardcoded::HexTransliterator::new("U+", "", 4, Case::Upper),
-            )),
-            "any-hex/rust" => Ok(InternalTransliterator::Hex(
+            ))),
+            "any-hex/rust" => Some(Ok(InternalTransliterator::Hex(
                 hardcoded::HexTransliterator::new("\\u{", "}", 2, Case::Lower),
-            )),
-            "any-hex/xml" => Ok(InternalTransliterator::Hex(
+            ))),
+            "any-hex/xml" => Some(Ok(InternalTransliterator::Hex(
                 hardcoded::HexTransliterator::new("&#x", ";", 1, Case::Upper),
-            )),
-            "any-hex/perl" => Ok(InternalTransliterator::Hex(
+            ))),
+            "any-hex/perl" => Some(Ok(InternalTransliterator::Hex(
                 hardcoded::HexTransliterator::new("\\x{", "}", 1, Case::Upper),
-            )),
-            "any-hex/plain" => Ok(InternalTransliterator::Hex(
+            ))),
+            "any-hex/plain" => Some(Ok(InternalTransliterator::Hex(
                 hardcoded::HexTransliterator::new("", "", 4, Case::Upper),
-            )),
-            s => Err(DataError::custom("unavailable transliterator").with_debug_context(s)),
+            ))),
+            _ => None,
         }
     }
 
