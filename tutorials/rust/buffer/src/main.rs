@@ -37,6 +37,6 @@ fn main() {
 
     let result = formatter.format_to_string(&datetime);
 
-    assert_eq!(result, "၂၀၂၂၊ ဒီ ၂၃ ၁၂:၅၄:၂၉");
+    assert_eq!(result, "၂၀၂၂ ဒီ ၂၃ ၁၂:၅၄:၂၉");
     println!("{result}");
 }
