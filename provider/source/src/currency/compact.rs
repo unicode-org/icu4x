@@ -150,10 +150,19 @@ fn test_basic() {
 
     assert_eq!(
         en_patterns.get(&(3, CompactCount::Standard(PluralCategory::One))),
-        Some("¤0K")
+        None
     );
     assert_eq!(
         en_patterns.get(&(3, CompactCount::AlphaNextToNumber(PluralCategory::One))),
+        None
+    );
+
+    assert_eq!(
+        en_patterns.get(&(3, CompactCount::Standard(PluralCategory::Other))),
+        Some("¤0K")
+    );
+    assert_eq!(
+        en_patterns.get(&(3, CompactCount::AlphaNextToNumber(PluralCategory::Other))),
         Some("¤ 0K")
     );
 
