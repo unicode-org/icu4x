@@ -8,12 +8,12 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 */
 export class TitlecaseOptions {
 
-    get leadingAdjustment() : LeadingAdjustment;
-    set leadingAdjustment(value: LeadingAdjustment); 
+    get leadingAdjustment() : LeadingAdjustment | null;
+    set leadingAdjustment(value: LeadingAdjustment | null); 
 
-    get trailingCase() : TrailingCase;
-    set trailingCase(value: TrailingCase); 
-    constructor(leadingAdjustment: LeadingAdjustment, trailingCase: TrailingCase);
+    get trailingCase() : TrailingCase | null;
+    set trailingCase(value: TrailingCase | null); 
+    constructor(leadingAdjustment: LeadingAdjustment | null, trailingCase: TrailingCase | null);
 
     static defaultOptions(): TitlecaseOptions;
 }

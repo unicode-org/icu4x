@@ -9,9 +9,8 @@ export class CollatorBackwardSecondLevel {
     #value = undefined;
 
     static #values = new Map([
-        ["Auto", 0],
-        ["Off", 1],
-        ["On", 2]
+        ["Off", 0],
+        ["On", 1]
     ]);
 
     constructor(value) {
@@ -49,10 +48,8 @@ export class CollatorBackwardSecondLevel {
     static #objectValues = [
         new CollatorBackwardSecondLevel(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
         new CollatorBackwardSecondLevel(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
-        new CollatorBackwardSecondLevel(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
     ];
 
-    static Auto = CollatorBackwardSecondLevel.#objectValues[0];
-    static Off = CollatorBackwardSecondLevel.#objectValues[1];
-    static On = CollatorBackwardSecondLevel.#objectValues[2];
+    static Off = CollatorBackwardSecondLevel.#objectValues[0];
+    static On = CollatorBackwardSecondLevel.#objectValues[1];
 }

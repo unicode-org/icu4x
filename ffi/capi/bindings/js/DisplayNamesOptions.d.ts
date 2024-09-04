@@ -9,13 +9,13 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 */
 export class DisplayNamesOptions {
 
-    get style() : DisplayNamesStyle;
-    set style(value: DisplayNamesStyle); 
+    get style() : DisplayNamesStyle | null;
+    set style(value: DisplayNamesStyle | null); 
 
-    get fallback() : DisplayNamesFallback;
-    set fallback(value: DisplayNamesFallback); 
+    get fallback() : DisplayNamesFallback | null;
+    set fallback(value: DisplayNamesFallback | null); 
 
-    get languageDisplay() : LanguageDisplay;
-    set languageDisplay(value: LanguageDisplay); 
-    constructor(style: DisplayNamesStyle, fallback: DisplayNamesFallback, languageDisplay: LanguageDisplay);
+    get languageDisplay() : LanguageDisplay | null;
+    set languageDisplay(value: LanguageDisplay | null); 
+    constructor(style: DisplayNamesStyle | null, fallback: DisplayNamesFallback | null, languageDisplay: LanguageDisplay | null);
 }

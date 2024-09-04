@@ -9,9 +9,8 @@ export class CollatorNumeric {
     #value = undefined;
 
     static #values = new Map([
-        ["Auto", 0],
-        ["Off", 1],
-        ["On", 2]
+        ["Off", 0],
+        ["On", 1]
     ]);
 
     constructor(value) {
@@ -49,10 +48,8 @@ export class CollatorNumeric {
     static #objectValues = [
         new CollatorNumeric(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
         new CollatorNumeric(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
-        new CollatorNumeric(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
     ];
 
-    static Auto = CollatorNumeric.#objectValues[0];
-    static Off = CollatorNumeric.#objectValues[1];
-    static On = CollatorNumeric.#objectValues[2];
+    static Off = CollatorNumeric.#objectValues[0];
+    static On = CollatorNumeric.#objectValues[1];
 }

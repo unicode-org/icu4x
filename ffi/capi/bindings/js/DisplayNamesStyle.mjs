@@ -9,11 +9,10 @@ export class DisplayNamesStyle {
     #value = undefined;
 
     static #values = new Map([
-        ["Auto", 0],
-        ["Narrow", 1],
-        ["Short", 2],
-        ["Long", 3],
-        ["Menu", 4]
+        ["Narrow", 0],
+        ["Short", 1],
+        ["Long", 2],
+        ["Menu", 3]
     ]);
 
     constructor(value) {
@@ -53,12 +52,10 @@ export class DisplayNamesStyle {
         new DisplayNamesStyle(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
         new DisplayNamesStyle(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
         new DisplayNamesStyle(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 3),
-        new DisplayNamesStyle(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 4),
     ];
 
-    static Auto = DisplayNamesStyle.#objectValues[0];
-    static Narrow = DisplayNamesStyle.#objectValues[1];
-    static Short = DisplayNamesStyle.#objectValues[2];
-    static Long = DisplayNamesStyle.#objectValues[3];
-    static Menu = DisplayNamesStyle.#objectValues[4];
+    static Narrow = DisplayNamesStyle.#objectValues[0];
+    static Short = DisplayNamesStyle.#objectValues[1];
+    static Long = DisplayNamesStyle.#objectValues[2];
+    static Menu = DisplayNamesStyle.#objectValues[3];
 }

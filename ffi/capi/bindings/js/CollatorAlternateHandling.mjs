@@ -9,9 +9,8 @@ export class CollatorAlternateHandling {
     #value = undefined;
 
     static #values = new Map([
-        ["Auto", 0],
-        ["NonIgnorable", 1],
-        ["Shifted", 2]
+        ["NonIgnorable", 0],
+        ["Shifted", 1]
     ]);
 
     constructor(value) {
@@ -49,10 +48,8 @@ export class CollatorAlternateHandling {
     static #objectValues = [
         new CollatorAlternateHandling(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
         new CollatorAlternateHandling(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
-        new CollatorAlternateHandling(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
     ];
 
-    static Auto = CollatorAlternateHandling.#objectValues[0];
-    static NonIgnorable = CollatorAlternateHandling.#objectValues[1];
-    static Shifted = CollatorAlternateHandling.#objectValues[2];
+    static NonIgnorable = CollatorAlternateHandling.#objectValues[0];
+    static Shifted = CollatorAlternateHandling.#objectValues[1];
 }

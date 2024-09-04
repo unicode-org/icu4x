@@ -27,7 +27,6 @@ inline icu4x::capi::CollatorAlternateHandling icu4x::CollatorAlternateHandling::
 
 inline icu4x::CollatorAlternateHandling icu4x::CollatorAlternateHandling::FromFFI(icu4x::capi::CollatorAlternateHandling c_enum) {
   switch (c_enum) {
-    case icu4x::capi::CollatorAlternateHandling_Auto:
     case icu4x::capi::CollatorAlternateHandling_NonIgnorable:
     case icu4x::capi::CollatorAlternateHandling_Shifted:
       return static_cast<icu4x::CollatorAlternateHandling::Value>(c_enum);

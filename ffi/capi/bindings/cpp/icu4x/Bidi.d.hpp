@@ -34,7 +34,7 @@ public:
 
   inline static diplomat::result<std::unique_ptr<icu4x::Bidi>, icu4x::DataError> create(const icu4x::DataProvider& provider);
 
-  inline std::unique_ptr<icu4x::BidiInfo> for_text(std::string_view text, uint8_t default_level) const;
+  inline std::unique_ptr<icu4x::BidiInfo> for_text(std::string_view text, std::optional<uint8_t> default_level) const;
 
   inline std::unique_ptr<icu4x::ReorderedIndexMap> reorder_visual(diplomat::span<const uint8_t> levels) const;
 

@@ -8,13 +8,13 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 */
 export class LineBreakOptions {
 
-    get strictness() : LineBreakStrictness;
-    set strictness(value: LineBreakStrictness); 
+    get strictness() : LineBreakStrictness | null;
+    set strictness(value: LineBreakStrictness | null); 
 
-    get wordOption() : LineBreakWordOption;
-    set wordOption(value: LineBreakWordOption); 
+    get wordOption() : LineBreakWordOption | null;
+    set wordOption(value: LineBreakWordOption | null); 
 
-    get jaZh() : boolean;
-    set jaZh(value: boolean); 
-    constructor(strictness: LineBreakStrictness, wordOption: LineBreakWordOption, jaZh: boolean);
+    get jaZh() : boolean | null;
+    set jaZh(value: boolean | null); 
+    constructor(strictness: LineBreakStrictness | null, wordOption: LineBreakWordOption | null, jaZh: boolean | null);
 }

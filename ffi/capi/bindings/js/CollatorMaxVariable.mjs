@@ -9,11 +9,10 @@ export class CollatorMaxVariable {
     #value = undefined;
 
     static #values = new Map([
-        ["Auto", 0],
-        ["Space", 1],
-        ["Punctuation", 2],
-        ["Symbol", 3],
-        ["Currency", 4]
+        ["Space", 0],
+        ["Punctuation", 1],
+        ["Symbol", 2],
+        ["Currency", 3]
     ]);
 
     constructor(value) {
@@ -53,12 +52,10 @@ export class CollatorMaxVariable {
         new CollatorMaxVariable(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
         new CollatorMaxVariable(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
         new CollatorMaxVariable(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 3),
-        new CollatorMaxVariable(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 4),
     ];
 
-    static Auto = CollatorMaxVariable.#objectValues[0];
-    static Space = CollatorMaxVariable.#objectValues[1];
-    static Punctuation = CollatorMaxVariable.#objectValues[2];
-    static Symbol = CollatorMaxVariable.#objectValues[3];
-    static Currency = CollatorMaxVariable.#objectValues[4];
+    static Space = CollatorMaxVariable.#objectValues[0];
+    static Punctuation = CollatorMaxVariable.#objectValues[1];
+    static Symbol = CollatorMaxVariable.#objectValues[2];
+    static Currency = CollatorMaxVariable.#objectValues[3];
 }

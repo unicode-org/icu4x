@@ -50,7 +50,7 @@ export class LineBreakOptions {
         functionCleanupArena,
         appendArrayMap
     ) {
-        return [this.#strictness.ffiValue, this.#wordOption.ffiValue, this.#jaZh, /* [3 x i8] padding */ 0, 0, 0 /* end padding */]
+        return [...diplomatRuntime.optionToArgsForCalling(this.#strictness, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#wordOption, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#jaZh, 1, 1, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue, Uint8Array)]), /* [2 x i8] padding */ 0, 0 /* end padding */]
     }
 
     _writeToArrayBuffer(
@@ -59,9 +59,9 @@ export class LineBreakOptions {
         functionCleanupArena,
         appendArrayMap
     ) {
-        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, this.#strictness.ffiValue, Int32Array);
-        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 4, this.#wordOption.ffiValue, Int32Array);
-        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 8, this.#jaZh, Uint8Array);
+        diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 0, this.#strictness, 4, 4, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array));
+        diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 8, this.#wordOption, 4, 4, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array));
+        diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 16, this.#jaZh, 1, 1, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue, Uint8Array));
     }
 
     // This struct contains borrowed fields, so this takes in a list of
@@ -70,11 +70,11 @@ export class LineBreakOptions {
     // This method does not attempt to handle any dependencies between lifetimes, the caller
     // should handle this when constructing edge arrays.
     #fromFFI(ptr) {
-        const strictnessDeref = diplomatRuntime.enumDiscriminant(wasm, ptr);
-        this.#strictness = new LineBreakStrictness(diplomatRuntime.internalConstructor, strictnessDeref);
-        const wordOptionDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 4);
-        this.#wordOption = new LineBreakWordOption(diplomatRuntime.internalConstructor, wordOptionDeref);
-        const jaZhDeref = (new Uint8Array(wasm.memory.buffer, ptr + 8, 1))[0] === 1;
-        this.#jaZh = jaZhDeref;
+        const strictnessDeref = ptr;
+        this.#strictness = diplomatRuntime.readOption(wasm, strictnessDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new LineBreakStrictness(diplomatRuntime.internalConstructor, deref) });
+        const wordOptionDeref = ptr + 8;
+        this.#wordOption = diplomatRuntime.readOption(wasm, wordOptionDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new LineBreakWordOption(diplomatRuntime.internalConstructor, deref) });
+        const jaZhDeref = ptr + 16;
+        this.#jaZh = diplomatRuntime.readOption(wasm, jaZhDeref, 1, (wasm, offset) => { const deref = (new Uint8Array(wasm.memory.buffer, offset, 1))[0] === 1; return deref });
     }
 }

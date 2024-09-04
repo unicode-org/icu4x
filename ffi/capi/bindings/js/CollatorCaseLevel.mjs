@@ -9,9 +9,8 @@ export class CollatorCaseLevel {
     #value = undefined;
 
     static #values = new Map([
-        ["Auto", 0],
-        ["Off", 1],
-        ["On", 2]
+        ["Off", 0],
+        ["On", 1]
     ]);
 
     constructor(value) {
@@ -49,10 +48,8 @@ export class CollatorCaseLevel {
     static #objectValues = [
         new CollatorCaseLevel(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
         new CollatorCaseLevel(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
-        new CollatorCaseLevel(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
     ];
 
-    static Auto = CollatorCaseLevel.#objectValues[0];
-    static Off = CollatorCaseLevel.#objectValues[1];
-    static On = CollatorCaseLevel.#objectValues[2];
+    static Off = CollatorCaseLevel.#objectValues[0];
+    static On = CollatorCaseLevel.#objectValues[1];
 }
