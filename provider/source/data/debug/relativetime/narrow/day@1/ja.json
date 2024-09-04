@@ -7,11 +7,15 @@
     "2": "明後日"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001日前"
+    "strings": {
+      "specials": [],
+      "other": "\u0001日前"
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u0001日後"
+    "strings": {
+      "specials": [],
+      "other": "\u0001日後"
+    }
   }
 }

@@ -16,6 +16,10 @@ use serde::{
 
 #[derive(Debug, Deserialize, Default)]
 pub(crate) struct PluralRulesPattern {
+    #[serde(rename = "relativeTimePattern-count-0")]
+    pub(crate) explicit_zero: Option<String>,
+    #[serde(rename = "relativeTimePattern-count-1")]
+    pub(crate) explicit_one: Option<String>,
     #[serde(rename = "relativeTimePattern-count-zero")]
     pub(crate) zero: Option<String>,
     #[serde(rename = "relativeTimePattern-count-one")]

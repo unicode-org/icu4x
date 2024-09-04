@@ -1,6 +1,8 @@
 {
   "patterns": {
-    "specials": [],
-    "other": "\u0001วิ"
+    "strings": {
+      "specials": [],
+      "other": "\u0001วิ"
+    }
   }
 }

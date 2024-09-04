@@ -3,21 +3,25 @@
     "0": "esta hora"
   },
   "past": {
-    "specials": [
-      [
-        "One",
-        "\u0006hace  hora"
-      ]
-    ],
-    "other": "\u0006hace  horas"
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0006hace  hora"
+        ]
+      ],
+      "other": "\u0006hace  horas"
+    }
   },
   "future": {
-    "specials": [
-      [
-        "One",
-        "\u000bdentro de  hora"
-      ]
-    ],
-    "other": "\u000bdentro de  horas"
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u000bdentro de  hora"
+        ]
+      ],
+      "other": "\u000bdentro de  horas"
+    }
   }
 }

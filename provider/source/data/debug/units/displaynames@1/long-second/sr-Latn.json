@@ -1,15 +1,17 @@
 {
   "patterns": {
-    "specials": [
-      [
-        "One",
-        "\u0001 sekunda"
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0001 sekunda"
+        ],
+        [
+          "Few",
+          "\u0001 sekunde"
+        ]
       ],
-      [
-        "Few",
-        "\u0001 sekunde"
-      ]
-    ],
-    "other": "\u0001 sekundi"
+      "other": "\u0001 sekundi"
+    }
   }
 }

@@ -5,11 +5,15 @@
     "1": "পরের মাস"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 মাস আগে"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 মাস আগে"
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u0001 মাসে"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 মাসে"
+    }
   }
 }

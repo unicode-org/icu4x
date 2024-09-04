@@ -5,11 +5,15 @@
     "1": "sledećeg mes."
   },
   "past": {
-    "specials": [],
-    "other": "\u0005pre  mes."
+    "strings": {
+      "specials": [],
+      "other": "\u0005pre  mes."
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u0004za  mes."
+    "strings": {
+      "specials": [],
+      "other": "\u0004za  mes."
+    }
   }
 }

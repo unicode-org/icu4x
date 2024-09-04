@@ -5,11 +5,15 @@
     "1": "ไตรมาสหน้า"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 ไตรมาสที่แล้ว"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 ไตรมาสที่แล้ว"
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\bใน  ไตรมาส"
+    "strings": {
+      "specials": [],
+      "other": "\bใน  ไตรมาส"
+    }
   }
 }

@@ -30,9 +30,9 @@ impl<'l> Writeable for LongFormattedCurrency<'l> {
     where
         W: core::fmt::Write + ?Sized,
     {
-        let plural_category = self.plural_rules.category_for(self.value);
-        let display_name = self.extended.display_names.get_str(plural_category);
-        let pattern = self.patterns.patterns.get_pattern(plural_category);
+        let operands = self.value.into();
+        let display_name = self.extended.display_names.get(operands, self.plural_rules);
+        let pattern = self.patterns.patterns.get(operands, self.plural_rules);
         let formatted_value = self.fixed_decimal_formatter.format(self.value);
         let interpolated = pattern.interpolate((formatted_value, display_name));
         interpolated.write_to(sink)

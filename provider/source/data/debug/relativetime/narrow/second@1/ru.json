@@ -3,11 +3,15 @@
     "0": "сейчас"
   },
   "past": {
-    "specials": [],
-    "other": "\u0002- с"
+    "strings": {
+      "specials": [],
+      "other": "\u0002- с"
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u0002+ с"
+    "strings": {
+      "specials": [],
+      "other": "\u0002+ с"
+    }
   }
 }

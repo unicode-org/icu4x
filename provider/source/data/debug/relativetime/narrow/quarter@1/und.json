@@ -5,11 +5,15 @@
     "1": "next quarter"
   },
   "past": {
-    "specials": [],
-    "other": "\u0002- Q"
+    "strings": {
+      "specials": [],
+      "other": "\u0002- Q"
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u0002+ Q"
+    "strings": {
+      "specials": [],
+      "other": "\u0002+ Q"
+    }
   }
 }

@@ -1,6 +1,8 @@
 {
   "patterns": {
-    "specials": [],
-    "other": "\u0001 kg"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 kg"
+    }
   }
 }

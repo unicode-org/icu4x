@@ -5,11 +5,15 @@
     "1": "susunod na taon"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 taon ang nakalipas"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 taon ang nakalipas"
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u0004sa  taon"
+    "strings": {
+      "specials": [],
+      "other": "\u0004sa  taon"
+    }
   }
 }
