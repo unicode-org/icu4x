@@ -5,43 +5,15 @@
     "1": "на след. нед."
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": "- нед.",
-      "index": 1
-    },
-    "two": null,
-    "few": {
-      "pattern": "- нед.",
-      "index": 1
-    },
-    "many": {
-      "pattern": "- нед.",
-      "index": 1
-    },
-    "other": {
-      "pattern": "- нед.",
-      "index": 1
+    "strings": {
+      "specials": [],
+      "other": "\u0002- нед."
     }
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "+ нед.",
-      "index": 1
-    },
-    "two": null,
-    "few": {
-      "pattern": "+ нед.",
-      "index": 1
-    },
-    "many": {
-      "pattern": "+ нед.",
-      "index": 1
-    },
-    "other": {
-      "pattern": "+ нед.",
-      "index": 1
+    "strings": {
+      "specials": [],
+      "other": "\u0002+ нед."
     }
   }
 }

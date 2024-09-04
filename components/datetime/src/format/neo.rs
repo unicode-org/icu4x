@@ -12,7 +12,8 @@ use crate::input::DateInput;
 use crate::input::ExtractedDateTimeInput;
 use crate::input::IsoTimeInput;
 use crate::neo_marker::{
-    NeoGetField, TimeMarkers, TypedDateMarkers, TypedDateTimeMarkers, ZoneMarkers,
+    AllInputMarkers, DateInputMarkers, DateTimeMarkers, IsInCalendar, TimeMarkers,
+    TypedDateDataMarkers, ZoneMarkers,
 };
 use crate::neo_pattern::{DateTimePattern, DateTimePatternBorrowed};
 use crate::neo_skeleton::NeoDateTimeComponents;
@@ -23,6 +24,7 @@ use crate::provider::date_time::{
 };
 use crate::provider::neo::*;
 use crate::provider::time_zones::tz;
+use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
 use crate::time_zone::TimeZoneDataPayloadsBorrowed;
 use core::fmt;
 use core::marker::PhantomData;
@@ -121,7 +123,7 @@ impl<M: DynamicDataMarker, Variables> DateTimeNamesData2<M, Variables> {
 }
 
 pub struct DateTimeNamesData2Borrowed<'data, M: DynamicDataMarker, Variables> {
-    inner: OptionalNames<Variables, &'data <M::Yokeable as Yokeable<'data>>::Output>,
+    inner: OptionalNames<Variables, &'data <M::DataStruct as Yokeable<'data>>::Output>,
 }
 
 impl<M: DynamicDataMarker, Variables> MaybePayload2<M, Variables>
@@ -249,7 +251,7 @@ where
     #[inline]
     pub(crate) fn as_borrowed<'a>(
         &'a self,
-    ) -> OptionalNames<Variables, &'a <M::Yokeable as Yokeable<'a>>::Output> {
+    ) -> OptionalNames<Variables, &'a <M::DataStruct as Yokeable<'a>>::Output> {
         match self {
             Self::None => OptionalNames::None,
             Self::SingleLength { variables, payload } => OptionalNames::SingleLength {
@@ -313,13 +315,13 @@ size_test!(
 ///     .include_day_period_names(FieldLength::Abbreviated)
 ///     .unwrap();
 ///
-/// // Create a pattern from a pattern string:
-/// let pattern_str = "E MMM d y -- h:mm a";
+/// // Create a pattern from a pattern string (note: K is the hour with h11 hour cycle):
+/// let pattern_str = "E MMM d y -- K:mm a";
 /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
 ///
 /// // Test it:
-/// let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 20, 11, 35, 3).unwrap();
-/// assert_try_writeable_eq!(names.with_pattern(&pattern).format(&datetime), "пн лист. 20 2023 -- 11:35 дп");
+/// let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 20, 12, 35, 3).unwrap();
+/// assert_try_writeable_eq!(names.with_pattern(&pattern).format(&datetime), "пн лист. 20 2023 -- 0:35 пп");
 /// ```
 ///
 /// If the correct data is not loaded, and error will occur:
@@ -392,7 +394,7 @@ size_test!(
 /// // Missing data is filled in on a best-effort basis, and an error is signaled.
 /// assert_try_writeable_parts_eq!(
 ///     names.with_pattern(&pattern).format(&CustomTimeZone::new_empty()),
-///     "It is: {E} {M} {d} {y} {G} at {h}:{m}:{s}{S} {a} {GMT+?}",
+///     "It is: {E} {M} {d} {y} {G} at {h}:{m}:{s} {a} {GMT+?}",
 ///     Err(DateTimeWriteError::MissingInputField("iso_weekday")),
 ///     [
 ///         (7, 10, Part::ERROR), // {E}
@@ -403,9 +405,8 @@ size_test!(
 ///         (30, 33, Part::ERROR), // {h}
 ///         (34, 37, Part::ERROR), // {m}
 ///         (38, 41, Part::ERROR), // {s}
-///         (41, 44, Part::ERROR), // {S}
-///         (45, 48, Part::ERROR), // {a}
-///         (49, 56, Part::ERROR), // {GMT+?}
+///         (42, 45, Part::ERROR), // {a}
+///         (46, 53, Part::ERROR), // {GMT+?}
 ///     ]
 /// );
 /// ```
@@ -947,6 +948,37 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     ///     names.with_pattern(&pattern).format(&CustomTimeZone::bst()),
     ///     "Your time zone is: GMT+01:00",
     /// );
+    ///
+    /// // Now try `V`:
+    /// let pattern_str = "'Your time zone is:' V";
+    /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
+    ///
+    /// assert_try_writeable_eq!(
+    ///     names.with_pattern(&pattern).format(&CustomTimeZone::gmt()),
+    ///     "Your time zone is: gblon",
+    /// );
+    ///
+    /// // Now try `Z`:
+    /// let pattern_str = "'Your time zone is:' Z";
+    /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
+    ///
+    /// assert_try_writeable_eq!(
+    ///     names.with_pattern(&pattern).format(&CustomTimeZone::gmt()),
+    ///     "Your time zone is: +0000",
+    /// );
+    ///
+    /// // Now try `ZZZZZ`:
+    /// let pattern_str = "'Your time zone is:' ZZZZZ";
+    /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
+    ///
+    /// assert_try_writeable_eq!(
+    ///     names.with_pattern(&pattern).format(&CustomTimeZone::gmt()),
+    ///     "Your time zone is: Z",
+    /// );
+    /// assert_try_writeable_eq!(
+    ///     names.with_pattern(&pattern).format(&CustomTimeZone::bst()),
+    ///     "Your time zone is: +01:00",
+    /// );
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn include_time_zone_essentials(&mut self) -> Result<&mut Self, SingleLoadError>
@@ -1402,7 +1434,9 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
             Some(&ExternalLoaderUnstable(provider)),
             Some(&ExternalLoaderUnstable(provider)),
             locale,
-            pattern.iter_items(),
+            pattern
+                .iter_items()
+                .filter_map(FieldForDataLoading::try_from_pattern_item),
         )?;
         Ok(DateTimePatternFormatter {
             inner: self.inner.with_pattern(pattern.as_borrowed()),
@@ -1473,7 +1507,9 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
             Some(&ExternalLoaderCompiledData),
             Some(&ExternalLoaderCompiledData),
             locale,
-            pattern.iter_items(),
+            pattern
+                .iter_items()
+                .filter_map(FieldForDataLoading::try_from_pattern_item),
         )?;
         Ok(DateTimePatternFormatter {
             inner: self.inner.with_pattern(pattern.as_borrowed()),
@@ -1520,6 +1556,20 @@ impl From<SingleLoadError> for LoadError {
             SingleLoadError::UnsupportedField(f) => LoadError::UnsupportedField(f),
             SingleLoadError::TypeTooNarrow(f) => LoadError::TypeTooNarrow(f),
             SingleLoadError::DuplicateField(f) => LoadError::DuplicateField(f),
+        }
+    }
+}
+
+pub(crate) enum FieldForDataLoading {
+    Field(Field),
+    TimeZone(ResolvedNeoTimeZoneSkeleton),
+}
+
+impl FieldForDataLoading {
+    pub(crate) fn try_from_pattern_item(pattern_item: PatternItem) -> Option<Self> {
+        match pattern_item {
+            PatternItem::Field(field) => Some(Self::Field(field)),
+            PatternItem::Literal(_) => None,
         }
     }
 }
@@ -1922,16 +1972,96 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         fixed_decimal_formatter_loader: Option<&impl FixedDecimalFormatterLoader>,
         week_calculator_loader: Option<&impl WeekCalculatorLoader>,
         locale: &DataLocale,
-        pattern_items: impl Iterator<Item = PatternItem>,
+        pattern_items: impl Iterator<Item = FieldForDataLoading>,
     ) -> Result<(), LoadError> {
-        let fields = pattern_items.filter_map(|p| match p {
-            PatternItem::Field(field) => Some(field),
-            _ => None,
-        });
-
         let mut numeric_field = None;
         let mut week_field = None;
-        for field in fields {
+        for item in pattern_items {
+            let item = match item {
+                FieldForDataLoading::Field(Field {
+                    symbol: FieldSymbol::TimeZone(field_symbol),
+                    length,
+                }) => {
+                    match ResolvedNeoTimeZoneSkeleton::from_field(field_symbol, length) {
+                        Some(time_zone) => FieldForDataLoading::TimeZone(time_zone),
+                        None => {
+                            // Unknown time zone field: ignore for data loading
+                            continue;
+                        }
+                    }
+                }
+                _ => item,
+            };
+            let field = match item {
+                FieldForDataLoading::Field(field) => field,
+                FieldForDataLoading::TimeZone(time_zone) => {
+                    self.load_time_zone_essentials(zone_essentials_provider, locale)?;
+                    match time_zone {
+                        // `z..zzz`
+                        ResolvedNeoTimeZoneSkeleton::SpecificShort => {
+                            self.load_time_zone_specific_short_names(
+                                mz_specific_short_provider,
+                                locale,
+                            )?;
+                        }
+                        // `zzzz`
+                        ResolvedNeoTimeZoneSkeleton::SpecificLong => {
+                            self.load_time_zone_specific_long_names(
+                                mz_specific_long_provider,
+                                locale,
+                            )?;
+                        }
+                        // 'v'
+                        ResolvedNeoTimeZoneSkeleton::GenericShort => {
+                            self.load_time_zone_generic_short_names(
+                                mz_generic_short_provider,
+                                locale,
+                            )?;
+                            // For fallback:
+                            self.load_time_zone_exemplar_city_names(
+                                exemplar_cities_provider,
+                                locale,
+                            )?;
+                        }
+                        // 'vvvv'
+                        ResolvedNeoTimeZoneSkeleton::GenericLong => {
+                            self.load_time_zone_generic_long_names(
+                                mz_generic_long_provider,
+                                locale,
+                            )?;
+                            // For fallback:
+                            self.load_time_zone_exemplar_city_names(
+                                exemplar_cities_provider,
+                                locale,
+                            )?;
+                        }
+                        // 'VVV..VVVV' (note: `V..VV` are for identifiers only)
+                        ResolvedNeoTimeZoneSkeleton::City
+                        | ResolvedNeoTimeZoneSkeleton::Location => {
+                            self.load_time_zone_exemplar_city_names(
+                                exemplar_cities_provider,
+                                locale,
+                            )?;
+                        }
+                        ResolvedNeoTimeZoneSkeleton::GmtShort
+                        | ResolvedNeoTimeZoneSkeleton::GmtLong
+                        | ResolvedNeoTimeZoneSkeleton::Isox
+                        | ResolvedNeoTimeZoneSkeleton::Isoxx
+                        | ResolvedNeoTimeZoneSkeleton::Isoxxx
+                        | ResolvedNeoTimeZoneSkeleton::Isoxxxx
+                        | ResolvedNeoTimeZoneSkeleton::Isoxxxxx
+                        | ResolvedNeoTimeZoneSkeleton::IsoX
+                        | ResolvedNeoTimeZoneSkeleton::IsoXX
+                        | ResolvedNeoTimeZoneSkeleton::IsoXXX
+                        | ResolvedNeoTimeZoneSkeleton::IsoXXXX
+                        | ResolvedNeoTimeZoneSkeleton::IsoXXXXX
+                        | ResolvedNeoTimeZoneSkeleton::Bcp47Id => {
+                            // all data needed for this is in time zone essentials
+                        }
+                    };
+                    continue;
+                }
+            };
             match field.symbol {
                 ///// Textual symbols /////
                 FieldSymbol::Era => {
@@ -1959,55 +2089,8 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 FieldSymbol::DayPeriod(_) => {
                     self.load_day_period_names(dayperiod_provider, locale, field.length)?;
                 }
-                FieldSymbol::TimeZone(time_zone_symbol) => {
-                    self.load_time_zone_essentials(zone_essentials_provider, locale)?;
-                    // TODO: Load fallback names, too
-                    match (time_zone_symbol, field.length) {
-                        // `z..zzz`
-                        (
-                            fields::TimeZone::LowerZ,
-                            FieldLength::One | FieldLength::TwoDigit | FieldLength::Abbreviated,
-                        ) => {
-                            self.load_time_zone_specific_short_names(
-                                mz_specific_short_provider,
-                                locale,
-                            )?;
-                        }
-                        // `zzzz`
-                        (fields::TimeZone::LowerZ, FieldLength::Wide) => {
-                            self.load_time_zone_specific_long_names(
-                                mz_specific_long_provider,
-                                locale,
-                            )?;
-                        }
-                        // 'v'
-                        (fields::TimeZone::LowerV, FieldLength::One) => {
-                            self.load_time_zone_generic_short_names(
-                                mz_generic_short_provider,
-                                locale,
-                            )?;
-                        }
-                        // 'vvvv'
-                        (fields::TimeZone::LowerV, FieldLength::Wide) => {
-                            self.load_time_zone_generic_long_names(
-                                mz_generic_long_provider,
-                                locale,
-                            )?;
-                        }
-                        // 'VVV..VVVV' (note: `V..VV` are for identifiers only)
-                        (
-                            fields::TimeZone::UpperV,
-                            FieldLength::Abbreviated | FieldLength::Wide,
-                        ) => {
-                            self.load_time_zone_exemplar_city_names(
-                                exemplar_cities_provider,
-                                locale,
-                            )?;
-                        }
-                        _ => {
-                            // Assume other time zone fields don't need extra data
-                        }
-                    };
+                FieldSymbol::TimeZone(_) => {
+                    debug_assert!(false, "handled above");
                 }
 
                 ///// Numeric symbols /////
@@ -2018,6 +2101,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                 FieldSymbol::Hour(_) => numeric_field = Some(field),
                 FieldSymbol::Minute => numeric_field = Some(field),
                 FieldSymbol::Second(_) => numeric_field = Some(field),
+                FieldSymbol::DecimalSecond(_) => numeric_field = Some(field),
             };
         }
 
@@ -2056,29 +2140,21 @@ pub(crate) struct RawDateTimePatternFormatter<'a> {
     names: RawDateTimeNamesBorrowed<'a>,
 }
 
-impl<'a, C: CldrCalendar, R: TypedDateTimeMarkers<C>> DateTimePatternFormatter<'a, C, R> {
+impl<'a, C: CldrCalendar, R: DateTimeMarkers> DateTimePatternFormatter<'a, C, R>
+where
+    R::D: TypedDateDataMarkers<C> + DateInputMarkers,
+    R::T: TimeMarkers,
+    R::Z: ZoneMarkers,
+{
     /// Formats a date and time of day.
     ///
     /// For an example, see [`TypedDateTimeNames`].
     pub fn format<I>(&self, datetime: &I) -> FormattedDateTimePattern<'a>
     where
-        I: ?Sized
-            + NeoGetField<<R::D as TypedDateMarkers<C>>::TypedInputMarker>
-            + NeoGetField<<R::D as TypedDateMarkers<C>>::YearInput>
-            + NeoGetField<<R::D as TypedDateMarkers<C>>::MonthInput>
-            + NeoGetField<<R::D as TypedDateMarkers<C>>::DayOfMonthInput>
-            + NeoGetField<<R::D as TypedDateMarkers<C>>::DayOfWeekInput>
-            + NeoGetField<<R::D as TypedDateMarkers<C>>::DayOfYearInput>
-            + NeoGetField<<R::D as TypedDateMarkers<C>>::AnyCalendarKindInput>
-            + NeoGetField<<R::T as TimeMarkers>::HourInput>
-            + NeoGetField<<R::T as TimeMarkers>::MinuteInput>
-            + NeoGetField<<R::T as TimeMarkers>::SecondInput>
-            + NeoGetField<<R::T as TimeMarkers>::NanoSecondInput>
-            + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneInput>,
+        I: ?Sized + IsInCalendar<C> + AllInputMarkers<R>,
     {
-        let datetime = ExtractedDateTimeInput::extract_from_typed_neo_input::<C, R::D, R::T, R::Z, I>(
-            datetime,
-        );
+        let datetime =
+            ExtractedDateTimeInput::extract_from_neo_input::<R::D, R::T, R::Z, I>(datetime);
         FormattedDateTimePattern {
             pattern: self.inner.pattern,
             datetime,

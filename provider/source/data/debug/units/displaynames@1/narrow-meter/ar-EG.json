@@ -1,9 +1,8 @@
 {
   "patterns": {
-    "One": "{0} م",
-    "Two": "{0} م",
-    "Few": "{0} م",
-    "Many": "{0} م",
-    "Other": "{0} م"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 م"
+    }
   }
 }

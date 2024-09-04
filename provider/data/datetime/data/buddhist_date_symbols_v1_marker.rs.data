@@ -12,9 +12,9 @@
 #[macro_export]
 macro_rules! __impl_buddhist_date_symbols_v1_marker {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl $provider {
             const DATA_BUDDHIST_DATE_SYMBOLS_V1_MARKER: icu_provider_baked::zerotrie::Data<icu::datetime::provider::calendar::BuddhistDateSymbolsV1Marker> = icu_provider_baked::zerotrie::Data {
                 trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1zabcdefghijklmnopqrstuvwxyz\0\0\0\0\0\x01\x01\x01\x01\x01\x01\x01\x02\x02\x02\x02\x02\x02\x02\x02\x03\x03\x03\x03\x036a~\xA0\xF8(8ay\x81\xD0\xEA\x12,4SVl\xD7\xFB\x17%(1K\xC5fmrsz\x01\x02(+\x80\x81\x82-\xC8DIJLMPST\x02\x04\x06\x08\x0E\x10\x12Z\x83Q\x84O\x85B\x85\xC2AR\x01\x86\x87S\x85Y\x85N\x83\x88t\x89\x8A\xC7eghlnrs\x01\x04\x06\x08\x0F\x14\x8B\x8Cc\x8Do\x8Eo\x8F\x90\0-IN\x90\x01\x90\x02x\x90\x03\x90\x04-Cyrl\x90\x05\xC6aehsvy\x02\x05\x08\r\x0F\x90\x06b\x90\x07r\x90\x08\x90\tw\x90\n\x90\x0B\x90\x0C\xC4aeos\x02\x14\x17\x90\r\x90\x0E-\xC3ACI\x03\x06T\x90\x0FH\x90\x10T\x90\x0Fi\x90\x11b\x90\x12\xC6lnostu\x0C\x1A\x1CHJ\x90\x13-polyton\x90\x14\x90\x15-\xC20A\x0401\x90\x16U\x90\x17\x90\x18\x90\x19-\xC64CMPUV\x04\x0C\x0F\x17\x1A19\x90\x1A\xC2LO\x02\x90\x1B\x90\x1CX\x90\x1D\xC2EY\x02\x90\x1E\x90\x1FY\x90\x1EE\x90 \x90!\x90\"\xC6afiory\x07\x0E\x13\x15\"\x90#-AF\x90$-Adlm\x90%\x90&l\x90'\x90(\x90)-\xC2CM\x03A\x90*A\x90+\x90,\xC4adlu\x02\x04\x06\x90-\x90.\x90/\x900\xC7aeirsuy\x02\x04\r\x14\x17\x19\x901\x902\x903-Latn\x904\x905-BA\x906b\x907\x908\x909\xC6adegst\x02\x04\x06\x08\n\x90:\x90;\x90<\x90=\x90>\x90?\xC2av\x02\x90@\x90A\xCBaegkmnosuxy\x02\x05\x08\n\x0C\x0E\x13\x1C\x1E7\x90Ba\x90Cp\x90D\x90E\x90F\x90G\x90Hk\x90I\x90J-Deva\x90K\x90Lv\x90M-\xC3DOT\x05\neva\x90Nrya\x90Oelu\x90P\x90Q\xC6bimotv\x02\x05\x08\n\x0C\x90Rj\x90So\x90T\x90U\x90V\x90W\xC9aiklnrsty\x03\x05\x07\t\x0E\x10\x12\x14i\x90X\x90Y\x90Z\x90[\x90\\i\x90]\x90^\x90_\x90`\x90a\xC6delnoq\x03\x05\x07\t\x0Bs\x90b\x90c\x90d\x90e\x90fo\x90g\xC2cr\x02\x90h\x90i\xC6aclrst\x02\x05\x07\n\x0C\x90jm\x90k\x90lg\x90m\x90n\x90o-PT\x90pu\x90q\xC4amou\x03\x05\x0Cj\x90r\x90s\x90t-MD\x90u\x90v\xCEacdikloqruvwyz\n\x0C\x15\x17\x19\x1B\x1D\x1FCEGIL\x90w\xC2ht\x02\x90x\x90y\x90z\x90{-Deva\x90|\x90}\x90~\x90\x7F\x91\0\x91\x01\x91\x02-\xC4BLMX\x03\x13\x16A\x91\x03atn\x91\x06-\xC2BX\x03A\x91\x07K\x91\x08E\x91\x04K\x91\x05\x91\t\x91\n\x91\x0Br\x91\x0Cl\x91\r\xC9aeghikort\x02\x04\x06\x08\n\x0C\x0E\x10\x91\x0E\x91\x0F\x91\x10\x91\x11\x91\x12\x91\x13\x91\x14\x91\x15\x91\x16\xC5gknrz\x02\x04\x07\t\x91\x17\x91\x18d\x91\x19\x91\x1A\x91\x1B-Cyrl\x91\x1C\xC3eim\x03\x05c\x91\x1D\x91\x1Ew\x91\x1Fo\x91 \xC2hn\x02\x91!r\x91\"\xC3oru\x07\n\x91#-BJ\x91$l\x91%e\x91&-Hans\x91'\xC3ahu\x02\x0B\x91(\x91'-Hant\x91)\x91*" },
@@ -3388,21 +3388,21 @@ macro_rules! __impl_buddhist_date_symbols_v1_marker {
                 ],
             };
         }
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DataProvider<icu::datetime::provider::calendar::BuddhistDateSymbolsV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::calendar::BuddhistDateSymbolsV1Marker>, icu_provider::DataError> {
                 let mut metadata = icu_provider::DataResponseMetadata::default();
-                let payload = if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_BUDDHIST_DATE_SYMBOLS_V1_MARKER, req.id) {
+                let payload = if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_BUDDHIST_DATE_SYMBOLS_V1_MARKER, req.id, req.metadata.attributes_prefix_match) {
                     payload
                 } else {
                     const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::datetime::provider::calendar::BuddhistDateSymbolsV1Marker as icu_provider::DataMarker>::INFO.fallback_config);
                     let mut fallback_iterator = FALLBACKER.fallback_for(req.id.locale.clone());
                     loop {
-                        if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_BUDDHIST_DATE_SYMBOLS_V1_MARKER, icu_provider::DataIdentifierBorrowed::for_marker_attributes_and_locale(req.id.marker_attributes, fallback_iterator.get())) {
+                        if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_BUDDHIST_DATE_SYMBOLS_V1_MARKER, icu_provider::DataIdentifierBorrowed::for_marker_attributes_and_locale(req.id.marker_attributes, fallback_iterator.get()), req.metadata.attributes_prefix_match) {
                             metadata.locale = Some(fallback_iterator.take());
                             break payload;
                         }
-                        if fallback_iterator.get().is_und() {
+                        if fallback_iterator.get().is_default() {
                             return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::datetime::provider::calendar::BuddhistDateSymbolsV1Marker as icu_provider::DataMarker>::INFO, req));
                         }
                         fallback_iterator.step();
@@ -3412,9 +3412,33 @@ macro_rules! __impl_buddhist_date_symbols_v1_marker {
             }
         }
     };
+    ($ provider : ty , DRY) => {
+        __impl_buddhist_date_symbols_v1_marker!($provider);
+        #[clippy::msrv = "1.71.1"]
+        impl icu_provider::DryDataProvider<icu::datetime::provider::calendar::BuddhistDateSymbolsV1Marker> for $provider {
+            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
+                icu_provider::DataProvider::<icu::datetime::provider::calendar::BuddhistDateSymbolsV1Marker>::load(self, req).map(|r| r.metadata)
+            }
+        }
+    };
     ($ provider : ty , ITER) => {
         __impl_buddhist_date_symbols_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
+        impl icu_provider::IterableDataProvider<icu::datetime::provider::calendar::BuddhistDateSymbolsV1Marker> for $provider {
+            fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
+                Ok(icu_provider_baked::DataStore::iter(&Self::DATA_BUDDHIST_DATE_SYMBOLS_V1_MARKER).collect())
+            }
+        }
+    };
+    ($ provider : ty , DRY , ITER) => {
+        __impl_buddhist_date_symbols_v1_marker!($provider);
+        #[clippy::msrv = "1.71.1"]
+        impl icu_provider::DryDataProvider<icu::datetime::provider::calendar::BuddhistDateSymbolsV1Marker> for $provider {
+            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
+                icu_provider::DataProvider::<icu::datetime::provider::calendar::BuddhistDateSymbolsV1Marker>::load(self, req).map(|r| r.metadata)
+            }
+        }
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::IterableDataProvider<icu::datetime::provider::calendar::BuddhistDateSymbolsV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_BUDDHIST_DATE_SYMBOLS_V1_MARKER).collect())

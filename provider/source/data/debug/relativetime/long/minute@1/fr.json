@@ -3,31 +3,25 @@
     "0": "cette minute-ci"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": "il y a  minute",
-      "index": 7
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "il y a  minutes",
-      "index": 7
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\bil y a  minute"
+        ]
+      ],
+      "other": "\bil y a  minutes"
     }
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "dans  minute",
-      "index": 5
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "dans  minutes",
-      "index": 5
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0006dans  minute"
+        ]
+      ],
+      "other": "\u0006dans  minutes"
     }
   }
 }

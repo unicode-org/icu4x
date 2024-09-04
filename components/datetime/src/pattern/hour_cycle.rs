@@ -3,7 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::{reference, runtime, PatternItem};
-use crate::{fields, options::preferences};
+use crate::{
+    fields,
+    options::preferences::{self, HourCycle},
+};
 #[cfg(feature = "datagen")]
 use crate::{provider, skeleton};
 use icu_provider::prelude::*;
@@ -11,11 +14,8 @@ use icu_provider::prelude::*;
 /// Used to represent either H11/H12, or H23/H24. Skeletons only store these
 /// hour cycles as H12 or H23.
 #[derive(Debug, PartialEq, Clone, Copy, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::pattern),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::pattern))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum CoarseHourCycle {
@@ -30,6 +30,17 @@ pub enum CoarseHourCycle {
 impl Default for CoarseHourCycle {
     fn default() -> Self {
         CoarseHourCycle::H23H24
+    }
+}
+
+impl From<HourCycle> for CoarseHourCycle {
+    fn from(value: HourCycle) -> Self {
+        match value {
+            HourCycle::H11 => CoarseHourCycle::H11H12,
+            HourCycle::H12 => CoarseHourCycle::H11H12,
+            HourCycle::H23 => CoarseHourCycle::H23H24,
+            HourCycle::H24 => CoarseHourCycle::H23H24,
+        }
     }
 }
 

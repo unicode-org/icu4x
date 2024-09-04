@@ -1,7 +1,13 @@
 {
   "patterns": {
-    "One": "{0} stopa",
-    "Few": "{0} stope",
-    "Other": "{0} stopa"
+    "strings": {
+      "specials": [
+        [
+          "Few",
+          "\u0001 stope"
+        ]
+      ],
+      "other": "\u0001 stopa"
+    }
   }
 }

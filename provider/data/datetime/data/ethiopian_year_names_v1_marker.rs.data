@@ -12,9 +12,9 @@
 #[macro_export]
 macro_rules! __impl_ethiopian_year_names_v1_marker {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl $provider {
             const DATA_ETHIOPIAN_YEAR_NAMES_V1_MARKER: icu_provider_baked::zerotrie::Data<icu::datetime::provider::neo::EthiopianYearNamesV1Marker> = icu_provider_baked::zerotrie::Data {
                 trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1oabdfghilmnprsuz\0\0\0\0\0\0\0\0\0\0\0\0\0\0\x0E\x19&EPU`l\x90\xAB\xB6\xD0\xDE\xFDst\x1E\xC3345\x01\x03\x80\x90\x04\x90\x07n\x1E\xC3345\x01\x02\x81\x81\x81a\x1E\xC3345\x01\x03\x82\x90\x05\x90\x08\xC2fr\x10-Adlm\x1E\xC3345\x01\x02\x83\x83\x90\t\x1E\xC3345\x01\x02\x84\x84\x90\nu\x1E\xC3345\x01\x02\x85\x85\x85e\x1E5\x90\x0Bs\x1E\xC3345\x01\x02\x86\x86\x86v\x1E\xC3345\x01\x02\x87\x87\x90\x0C\xC3klr\n\x14\x1E\xC3345\x01\x02\x88\x88\x88\x1E\xC3345\x01\x02\x89\x89\x89\x1E\xC3345\x01\x02\x8A\x8A\x8A\xC2lo\x0B\x1E\xC3345\x01\x02\x8B\x8B\x90\r\x1E\xC3345\x01\x03\x8C\x90\x06\x90\x0Ea\x1E\xC3345\x01\x02\x8D\x8D\x8D\xC2ou\x0B\x1E\xC3345\x01\x02\x8E\x8E\x90\x0F\x1E\xC3345\x01\x02\x8F\x8F\x90\x10c\x1E\xC3345\x02\x04\x90\0\x90\0\x90\x11\xC2nr\x0Ed\x1E\xC3345\x02\x04\x90\x01\x90\x01\x90\x01\x1E\xC3345\x02\x04\x90\x02\x90\x02\x90\x02h\x1E\xC3345\x02\x04\x90\x03\x90\x03\x90\x12" },
@@ -162,21 +162,21 @@ macro_rules! __impl_ethiopian_year_names_v1_marker {
                 ],
             };
         }
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DataProvider<icu::datetime::provider::neo::EthiopianYearNamesV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::neo::EthiopianYearNamesV1Marker>, icu_provider::DataError> {
                 let mut metadata = icu_provider::DataResponseMetadata::default();
-                let payload = if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_ETHIOPIAN_YEAR_NAMES_V1_MARKER, req.id) {
+                let payload = if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_ETHIOPIAN_YEAR_NAMES_V1_MARKER, req.id, req.metadata.attributes_prefix_match) {
                     payload
                 } else {
                     const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::datetime::provider::neo::EthiopianYearNamesV1Marker as icu_provider::DataMarker>::INFO.fallback_config);
                     let mut fallback_iterator = FALLBACKER.fallback_for(req.id.locale.clone());
                     loop {
-                        if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_ETHIOPIAN_YEAR_NAMES_V1_MARKER, icu_provider::DataIdentifierBorrowed::for_marker_attributes_and_locale(req.id.marker_attributes, fallback_iterator.get())) {
+                        if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_ETHIOPIAN_YEAR_NAMES_V1_MARKER, icu_provider::DataIdentifierBorrowed::for_marker_attributes_and_locale(req.id.marker_attributes, fallback_iterator.get()), req.metadata.attributes_prefix_match) {
                             metadata.locale = Some(fallback_iterator.take());
                             break payload;
                         }
-                        if fallback_iterator.get().is_und() {
+                        if fallback_iterator.get().is_default() {
                             return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::datetime::provider::neo::EthiopianYearNamesV1Marker as icu_provider::DataMarker>::INFO, req));
                         }
                         fallback_iterator.step();
@@ -186,9 +186,33 @@ macro_rules! __impl_ethiopian_year_names_v1_marker {
             }
         }
     };
+    ($ provider : ty , DRY) => {
+        __impl_ethiopian_year_names_v1_marker!($provider);
+        #[clippy::msrv = "1.71.1"]
+        impl icu_provider::DryDataProvider<icu::datetime::provider::neo::EthiopianYearNamesV1Marker> for $provider {
+            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
+                icu_provider::DataProvider::<icu::datetime::provider::neo::EthiopianYearNamesV1Marker>::load(self, req).map(|r| r.metadata)
+            }
+        }
+    };
     ($ provider : ty , ITER) => {
         __impl_ethiopian_year_names_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
+        impl icu_provider::IterableDataProvider<icu::datetime::provider::neo::EthiopianYearNamesV1Marker> for $provider {
+            fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
+                Ok(icu_provider_baked::DataStore::iter(&Self::DATA_ETHIOPIAN_YEAR_NAMES_V1_MARKER).collect())
+            }
+        }
+    };
+    ($ provider : ty , DRY , ITER) => {
+        __impl_ethiopian_year_names_v1_marker!($provider);
+        #[clippy::msrv = "1.71.1"]
+        impl icu_provider::DryDataProvider<icu::datetime::provider::neo::EthiopianYearNamesV1Marker> for $provider {
+            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
+                icu_provider::DataProvider::<icu::datetime::provider::neo::EthiopianYearNamesV1Marker>::load(self, req).map(|r| r.metadata)
+            }
+        }
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::IterableDataProvider<icu::datetime::provider::neo::EthiopianYearNamesV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_ETHIOPIAN_YEAR_NAMES_V1_MARKER).collect())

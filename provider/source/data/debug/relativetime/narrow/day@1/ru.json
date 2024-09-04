@@ -7,43 +7,15 @@
     "2": "послезавтра"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": "- дн.",
-      "index": 1
-    },
-    "two": null,
-    "few": {
-      "pattern": "- дн.",
-      "index": 1
-    },
-    "many": {
-      "pattern": "- дн.",
-      "index": 1
-    },
-    "other": {
-      "pattern": "- дн.",
-      "index": 1
+    "strings": {
+      "specials": [],
+      "other": "\u0002- дн."
     }
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "+ дн.",
-      "index": 1
-    },
-    "two": null,
-    "few": {
-      "pattern": "+ дн.",
-      "index": 1
-    },
-    "many": {
-      "pattern": "+ дн.",
-      "index": 1
-    },
-    "other": {
-      "pattern": "+ дн.",
-      "index": 1
+    "strings": {
+      "specials": [],
+      "other": "\u0002+ дн."
     }
   }
 }

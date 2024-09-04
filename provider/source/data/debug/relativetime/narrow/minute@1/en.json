@@ -3,31 +3,15 @@
     "0": "this minute"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": "m ago",
-      "index": 0
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "m ago",
-      "index": 0
+    "strings": {
+      "specials": [],
+      "other": "\u0001m ago"
     }
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "in m",
-      "index": 3
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "in m",
-      "index": 3
+    "strings": {
+      "specials": [],
+      "other": "\u0004in m"
     }
   }
 }

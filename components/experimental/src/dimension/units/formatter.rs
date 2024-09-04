@@ -152,14 +152,9 @@ impl UnitsFormatter {
     }
 
     /// Formats a [`FixedDecimal`] value for the given unit.
-    pub fn format_fixed_decimal<'l>(
-        &'l self,
-        value: &'l FixedDecimal,
-        unit: &'l str,
-    ) -> FormattedUnit<'l> {
+    pub fn format_fixed_decimal<'l>(&'l self, value: &'l FixedDecimal) -> FormattedUnit<'l> {
         FormattedUnit {
             value,
-            unit,
             display_name: self.display_name.get(),
             fixed_decimal_formatter: &self.fixed_decimal_formatter,
             plural_rules: &self.plural_rules,

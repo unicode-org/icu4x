@@ -136,10 +136,7 @@ impl FromStr for NameFieldKind {
             "credentials" => Ok(NameFieldKind::Credentials),
 
             _ => {
-                icu_provider::_internal::log::warn!(
-                    "Invalid NameFieldKind value matched [{}]",
-                    value
-                );
+                icu_provider::log::warn!("Invalid NameFieldKind value matched [{}]", value);
                 Err(PersonNamesFormatterError::InvalidCldrData)
             }
         }
@@ -159,10 +156,7 @@ impl FromStr for FieldModifier {
             "initial" => Ok(FieldModifier::Initial),
             "monogram" => Ok(FieldModifier::Monogram),
             _ => {
-                icu_provider::_internal::log::warn!(
-                    "Invalid FieldModifier value matched [{}]",
-                    value
-                );
+                icu_provider::log::warn!("Invalid FieldModifier value matched [{}]", value);
                 Err(PersonNamesFormatterError::InvalidCldrData)
             }
         }
@@ -178,7 +172,7 @@ impl FromStr for NameField {
             .next()
             .map(NameFieldKind::from_str)
             .unwrap_or_else(|| {
-                icu_provider::_internal::log::warn!("unable to match");
+                icu_provider::log::warn!("unable to match");
                 Err(PersonNamesFormatterError::InvalidCldrData)
             })?;
 

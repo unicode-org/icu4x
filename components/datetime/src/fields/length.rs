@@ -5,7 +5,7 @@
 use core::cmp::{Ord, PartialOrd};
 use core::fmt;
 use displaydoc::Display;
-use zerovec::ule::{AsULE, ZeroVecError, ULE};
+use zerovec::ule::{AsULE, UleError, ULE};
 
 /// An error relating to the length of a field within a date pattern.
 #[derive(Display, Debug, PartialEq, Copy, Clone)]
@@ -26,11 +26,8 @@ impl std::error::Error for LengthError {}
 /// [LDML documentation in UTS 35](https://unicode.org/reports/tr35/tr35-dates.html#Date_Format_Patterns)
 /// for more details.
 #[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::fields),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::fields))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_enums)] // part of data struct
 pub enum FieldLength {
@@ -50,12 +47,8 @@ pub enum FieldLength {
     /// [LDML documentation in UTS 35](https://unicode.org/reports/tr35/tr35-dates.html#Date_Format_Patterns)
     /// for more details.
     Six,
-    /// A fixed size format for numeric-only fields that is at most 127 digits.
-    Fixed(u8),
     /// FieldLength::One (numeric), but overridden with a different numbering system
     NumericOverride(FieldNumericOverrides),
-    /// A time zone field with non-standard rules.
-    TimeZoneFallbackOverride(TimeZoneFallbackOverride),
 }
 
 /// First index used for numeric overrides in compact FieldLength representation
@@ -65,12 +58,6 @@ pub enum FieldLength {
 const FIRST_NUMERIC_OVERRIDE: u8 = 17;
 /// Last index used for numeric overrides
 const LAST_NUMERIC_OVERRIDE: u8 = 31;
-/// First index used for time zone fallback overrides
-const FIRST_TIME_ZONE_FALLBACK_OVERRIDE: u8 = 32;
-/// Last index used for time zone fallback overrides
-const LAST_TIME_ZONE_FALLBACK_OVERRIDE: u8 = 40;
-/// First index used for fixed size formats in compact FieldLength representation
-const FIRST_FIXED: u8 = 128;
 
 impl FieldLength {
     #[inline]
@@ -85,10 +72,6 @@ impl FieldLength {
             FieldLength::NumericOverride(o) => FIRST_NUMERIC_OVERRIDE
                 .saturating_add(*o as u8)
                 .min(LAST_NUMERIC_OVERRIDE),
-            FieldLength::TimeZoneFallbackOverride(o) => FIRST_TIME_ZONE_FALLBACK_OVERRIDE
-                .saturating_add(*o as u8)
-                .min(LAST_TIME_ZONE_FALLBACK_OVERRIDE),
-            FieldLength::Fixed(p) => FIRST_FIXED.saturating_add(*p), /* truncate to at most 127 digits to avoid overflow */
         }
     }
 
@@ -104,20 +87,11 @@ impl FieldLength {
             idx if (FIRST_NUMERIC_OVERRIDE..=LAST_NUMERIC_OVERRIDE).contains(&idx) => {
                 Self::NumericOverride((idx - FIRST_NUMERIC_OVERRIDE).try_into()?)
             }
-            idx if (FIRST_TIME_ZONE_FALLBACK_OVERRIDE..=LAST_TIME_ZONE_FALLBACK_OVERRIDE)
-                .contains(&idx) =>
-            {
-                Self::TimeZoneFallbackOverride(
-                    (idx - FIRST_TIME_ZONE_FALLBACK_OVERRIDE).try_into()?,
-                )
-            }
-            idx if idx >= FIRST_FIXED => Self::Fixed(idx - FIRST_FIXED),
             _ => return Err(LengthError::InvalidLength),
         })
     }
 
     #[inline]
-    #[cfg(feature = "datagen")]
     pub(crate) fn to_len(self) -> usize {
         match self {
             FieldLength::One => 1,
@@ -127,10 +101,6 @@ impl FieldLength {
             FieldLength::Narrow => 5,
             FieldLength::Six => 6,
             FieldLength::NumericOverride(o) => FIRST_NUMERIC_OVERRIDE as usize + o as usize,
-            FieldLength::TimeZoneFallbackOverride(o) => {
-                FIRST_TIME_ZONE_FALLBACK_OVERRIDE as usize + o as usize
-            }
-            FieldLength::Fixed(p) => p as usize,
         }
     }
 
@@ -164,10 +134,10 @@ impl AsULE for FieldLength {
 
 impl FieldLengthULE {
     #[inline]
-    pub(crate) fn validate_byte(byte: u8) -> Result<(), ZeroVecError> {
+    pub(crate) fn validate_byte(byte: u8) -> Result<(), UleError> {
         FieldLength::from_idx(byte)
             .map(|_| ())
-            .map_err(|_| ZeroVecError::parse::<FieldLength>())
+            .map_err(|_| UleError::parse::<FieldLength>())
     }
 }
 
@@ -181,7 +151,7 @@ impl FieldLengthULE {
 // 5. All other methods must be left with their default impl.
 // 6. Byte equality is semantic equality.
 unsafe impl ULE for FieldLengthULE {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
         for byte in bytes {
             Self::validate_byte(*byte)?;
         }
@@ -192,11 +162,8 @@ unsafe impl ULE for FieldLengthULE {
 /// Various numeric overrides for datetime patterns
 /// as found in CLDR
 #[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::fields),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::fields))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[non_exhaustive]
 pub enum FieldNumericOverrides {
@@ -244,44 +211,3 @@ impl fmt::Display for FieldNumericOverrides {
         self.as_str().fmt(f)
     }
 }
-
-/// Time zone fallback overrides to support configurations not found
-/// in the CLDR datetime field symbol table.
-#[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::fields),
-)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[non_exhaustive]
-pub enum TimeZoneFallbackOverride {
-    /// The short form of this time zone field,
-    /// but fall back directly to GMT.
-    ShortOrGmt = 0,
-}
-
-impl TryFrom<u8> for TimeZoneFallbackOverride {
-    type Error = LengthError;
-    fn try_from(other: u8) -> Result<Self, LengthError> {
-        Ok(match other {
-            0 => Self::ShortOrGmt,
-            _ => return Err(LengthError::InvalidLength),
-        })
-    }
-}
-
-// impl TimeZoneFallbackOverride {
-//     /// Convert this to the corresponding string code
-//     pub fn as_str(self) -> &'static str {
-//         match self {
-//             Self::ShortOrGmt => "ShortOrGmt",
-//         }
-//     }
-// }
-
-// impl fmt::Display for TimeZoneFallbackOverride {
-//     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-//         self.as_str().fmt(f)
-//     }
-// }

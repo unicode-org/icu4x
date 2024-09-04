@@ -7,19 +7,14 @@
 // amounts, also while retaining trailing zeros.
 
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
-
-icu_benchmark_macros::static_setup!();
+icu_benchmark_macros::instrument!();
 
 use fixed_decimal::FixedDecimal;
 use writeable::Writeable;
 
-#[no_mangle]
-fn main(_argc: isize, _argv: *const *const u8) -> isize {
-    icu_benchmark_macros::main_setup!();
+fn main() {
     let monetary_int = 19_9500;
     let fixed_decimal = FixedDecimal::from(monetary_int).multiplied_pow10(-4);
 
     assert_eq!(fixed_decimal.write_to_string(), "19.9500");
-
-    0
 }

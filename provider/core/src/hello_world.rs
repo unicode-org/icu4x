@@ -45,7 +45,7 @@ impl Default for HelloWorldV1<'_> {
 pub struct HelloWorldV1Marker;
 
 impl DynamicDataMarker for HelloWorldV1Marker {
-    type Yokeable = HelloWorldV1<'static>;
+    type DataStruct = HelloWorldV1<'static>;
 }
 
 impl DataMarker for HelloWorldV1Marker {

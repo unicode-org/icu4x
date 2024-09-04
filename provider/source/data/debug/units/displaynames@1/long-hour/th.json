@@ -1,5 +1,8 @@
 {
   "patterns": {
-    "Other": "{0} ชั่วโมง"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 ชั่วโมง"
+    }
   }
 }

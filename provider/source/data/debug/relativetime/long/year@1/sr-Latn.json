@@ -5,37 +5,33 @@
     "1": "sledeće godine"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": "pre  godine",
-      "index": 4
-    },
-    "two": null,
-    "few": {
-      "pattern": "pre  godine",
-      "index": 4
-    },
-    "many": null,
-    "other": {
-      "pattern": "pre  godina",
-      "index": 4
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0005pre  godine"
+        ],
+        [
+          "Few",
+          "\u0005pre  godine"
+        ]
+      ],
+      "other": "\u0005pre  godina"
     }
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "za  godinu",
-      "index": 3
-    },
-    "two": null,
-    "few": {
-      "pattern": "za  godine",
-      "index": 3
-    },
-    "many": null,
-    "other": {
-      "pattern": "za  godina",
-      "index": 3
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0004za  godinu"
+        ],
+        [
+          "Few",
+          "\u0004za  godine"
+        ]
+      ],
+      "other": "\u0004za  godina"
     }
   }
 }

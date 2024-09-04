@@ -4,11 +4,16 @@
 
 //! Temporary module for neo datetime skeletons (Semantic Skeleta)
 
-#[cfg(feature = "experimental")]
-use crate::fields::{self, Field, FieldLength, FieldSymbol};
-use crate::options::components;
+#[cfg(feature = "serde")]
+use crate::neo_serde::*;
+use crate::options;
 use crate::options::length;
-use crate::DateTimeFormatterOptions;
+#[cfg(feature = "experimental")]
+use crate::pattern::CoarseHourCycle;
+#[cfg(feature = "experimental")]
+use crate::raw::neo::MaybeLength;
+#[cfg(feature = "experimental")]
+use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
 use icu_provider::DataMarkerAttributes;
 
 /// A specification for the length of a date or component of a date.
@@ -17,61 +22,176 @@ use icu_provider::DataMarkerAttributes;
 /// [`crate::options::length::Date`], this has only three levels, with no
 /// `Full`; this is because `Full` corresponds to additional components,
 /// rather than to making the components wider than in `Long`.
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+#[repr(u8)] // discriminants come from symbol count in UTS 35
 #[non_exhaustive]
 pub enum NeoSkeletonLength {
     /// A long date, typically spelled-out, as in “January 1, 2000”.
-    Long,
+    Long = 4,
     /// A medium-sized date; typically abbreviated, as in “Jan. 1, 2000”.
-    Medium,
+    Medium = 3,
     /// A short date; typically numeric, as in “1/1/2000”.
-    Short,
+    Short = 1,
 }
 
 impl NeoSkeletonLength {
     /// All values of this enum.
     pub const VALUES: &'static [Self] = &[Self::Long, Self::Medium, Self::Short];
 
-    fn to_components_text(self) -> components::Text {
+    /// Returns the date style corresponding to this length.
+    pub fn to_date_style(self) -> options::length::Date {
         match self {
-            Self::Long => components::Text::Long,
-            Self::Medium => components::Text::Short,
-            // Note: Do not use narrow in skeleton. It may still appear in patterns.
-            Self::Short => components::Text::Short,
+            Self::Long => options::length::Date::Long,
+            Self::Medium => options::length::Date::Medium,
+            Self::Short => options::length::Date::Short,
         }
     }
 
-    fn to_components_numeric(self) -> components::Numeric {
-        components::Numeric::Numeric
-    }
-
-    fn to_components_day(self) -> components::Day {
-        components::Day::NumericDayOfMonth
-    }
-
-    fn to_components_month(self) -> components::Month {
+    /// Returns the time style corresponding to this length.
+    pub fn to_time_style(self) -> options::length::Time {
+        // Note: For now, make "long" and "medium" both map to "medium".
+        // This could be improved in light of additional data.
         match self {
-            Self::Long => components::Month::Long,
-            Self::Medium => components::Month::Short,
-            Self::Short => components::Month::Numeric,
+            Self::Long => options::length::Time::Medium,
+            Self::Medium => options::length::Time::Medium,
+            Self::Short => options::length::Time::Short,
         }
     }
+}
 
-    fn to_components_year(self) -> components::Year {
-        components::Year::Numeric
+/// The alignment context of the formatted string.
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+#[non_exhaustive]
+pub enum Alignment {
+    /// Align fields as the locale specifies them to be aligned.
+    ///
+    /// This is the default option.
+    Auto,
+    /// Align fields as appropriate for a column layout. For example:
+    ///
+    /// | US Holiday   | Date       |
+    /// |--------------|------------|
+    /// | Memorial Day | 05/26/2025 |
+    /// | Labor Day    | 09/01/2025 |
+    /// | Veterans Day | 11/11/2025 |
+    ///
+    /// This option causes numeric fields to be padded when necessary. It does
+    /// not impact whether a numeric or spelled-out field is chosen.
+    Column,
+}
+
+/// A specification for when to display the era when formatting a year.
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+#[non_exhaustive]
+pub enum EraDisplay {
+    /// Display the era when needed to disambiguate the year.
+    ///
+    /// This is the default option.
+    ///
+    /// Examples:
+    ///
+    /// - `1000 BC`
+    /// - `77 AD`
+    /// - `2024`
+    Auto,
+    /// Always display the era.
+    ///
+    /// Examples:
+    ///
+    /// - `1000 BC`
+    /// - `77 AD`
+    /// - `2024 AD`
+    Always,
+    // TODO(#4478): add Hide and Never options once there is data to back them
+}
+
+/// A specification for how many fractional second digits to display.
+///
+/// For example, to display the time with millisecond precision, use
+/// [`FractionalSecondDigits::F3`].
+///
+/// Lower-precision digits will be truncated.
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(try_from = "u8", into = "u8"))]
+#[non_exhaustive]
+pub enum FractionalSecondDigits {
+    /// Zero fractional digits. This is the default.
+    F0,
+    /// One fractional digit (tenths of a second).
+    F1,
+    /// Two fractional digits (hundredths of a second).
+    F2,
+    /// Three fractional digits (thousandths of a second).
+    F3,
+    /// Four fractional digits.
+    F4,
+    /// Five fractional digits.
+    F5,
+    /// Six fractional digits.
+    F6,
+    /// Seven fractional digits.
+    F7,
+    /// Eight fractional digits.
+    F8,
+    /// Nine fractional digits.
+    F9,
+}
+
+/// An error from constructing [`FractionalSecondDigits`].
+#[derive(Debug, Copy, Clone, PartialEq, Eq, displaydoc::Display)]
+#[non_exhaustive]
+pub enum FractionalSecondError {
+    /// The provided value is out of range (0-9).
+    OutOfRange,
+}
+
+impl From<FractionalSecondDigits> for u8 {
+    fn from(value: FractionalSecondDigits) -> u8 {
+        use FractionalSecondDigits::*;
+        match value {
+            F0 => 0,
+            F1 => 1,
+            F2 => 2,
+            F3 => 3,
+            F4 => 4,
+            F5 => 5,
+            F6 => 6,
+            F7 => 7,
+            F8 => 8,
+            F9 => 9,
+        }
     }
+}
 
-    fn to_components_year_of_week(self) -> components::Year {
-        components::Year::NumericWeekOf
-    }
-
-    fn to_components_week_of_year(self) -> components::Week {
-        components::Week::NumericWeekOfYear
+impl TryFrom<u8> for FractionalSecondDigits {
+    type Error = FractionalSecondError;
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        use FractionalSecondDigits::*;
+        match value {
+            0 => Ok(F0),
+            1 => Ok(F1),
+            2 => Ok(F2),
+            3 => Ok(F3),
+            4 => Ok(F4),
+            5 => Ok(F5),
+            6 => Ok(F6),
+            7 => Ok(F7),
+            8 => Ok(F8),
+            9 => Ok(F9),
+            _ => Err(FractionalSecondError::OutOfRange),
+        }
     }
 }
 
 /// A specification for a set of parts of a date that specifies a single day (as
-/// opposed to a whole month, week, or quarter).
+/// opposed to a whole month or a week).
 /// Only sets that yield “sensible” dates are allowed: this type cannot
 /// describe a date such as “some Tuesday in 2023”.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
@@ -88,6 +208,7 @@ pub enum NeoDayComponents {
     YearMonthDay,
     /// The era, year, month, and day of the month, as in
     /// “January 1st, 2000 A.D.”.
+    // TODO: Remove the explicit era field; superseded by eraDisplay
     EraYearMonthDay,
     /// The day of the month and day of the week, as in
     /// “Saturday 1st”.
@@ -243,96 +364,95 @@ impl NeoDayComponents {
         }
     }
 
-    fn to_components_bag_with_length(self, length: NeoSkeletonLength) -> DateTimeFormatterOptions {
+    /// Whether this field set contains the full year / eras.
+    pub fn has_full_year(self) -> bool {
         match self {
-            Self::Day => DateTimeFormatterOptions::Components(components::Bag {
-                day: Some(length.to_components_day()),
-                ..Default::default()
-            }),
-            Self::MonthDay => DateTimeFormatterOptions::Components(components::Bag {
-                month: Some(length.to_components_month()),
-                day: Some(length.to_components_day()),
-                ..Default::default()
-            }),
-            Self::YearMonthDay => DateTimeFormatterOptions::Components(components::Bag {
-                year: Some(length.to_components_year()),
-                month: Some(length.to_components_month()),
-                day: Some(length.to_components_day()),
-                ..Default::default()
-            }),
-            Self::EraYearMonthDay => DateTimeFormatterOptions::Components(components::Bag {
-                era: Some(length.to_components_text()),
-                year: Some(length.to_components_year()),
-                month: Some(length.to_components_month()),
-                day: Some(length.to_components_day()),
-                ..Default::default()
-            }),
-            Self::DayWeekday => DateTimeFormatterOptions::Components(components::Bag {
-                day: Some(length.to_components_day()),
-                weekday: Some(length.to_components_text()),
-                ..Default::default()
-            }),
-            Self::MonthDayWeekday => DateTimeFormatterOptions::Components(components::Bag {
-                month: Some(length.to_components_month()),
-                day: Some(length.to_components_day()),
-                weekday: Some(length.to_components_text()),
-                ..Default::default()
-            }),
-            Self::YearMonthDayWeekday => DateTimeFormatterOptions::Components(components::Bag {
-                year: Some(length.to_components_year()),
-                month: Some(length.to_components_month()),
-                day: Some(length.to_components_day()),
-                weekday: Some(length.to_components_text()),
-                ..Default::default()
-            }),
-            Self::EraYearMonthDayWeekday => DateTimeFormatterOptions::Components(components::Bag {
-                era: Some(length.to_components_text()),
-                year: Some(length.to_components_year()),
-                month: Some(length.to_components_month()),
-                day: Some(length.to_components_day()),
-                weekday: Some(length.to_components_text()),
-                ..Default::default()
-            }),
-            Self::Weekday => DateTimeFormatterOptions::Components(components::Bag {
-                weekday: Some(length.to_components_text()),
-                ..Default::default()
-            }),
-            Self::Auto => match length {
-                NeoSkeletonLength::Long => DateTimeFormatterOptions::Length(length::Bag {
-                    date: Some(length::Date::Long),
-                    time: None,
-                }),
-                NeoSkeletonLength::Medium => DateTimeFormatterOptions::Length(length::Bag {
-                    date: Some(length::Date::Medium),
-                    time: None,
-                }),
-                NeoSkeletonLength::Short => DateTimeFormatterOptions::Length(length::Bag {
-                    date: Some(length::Date::Short),
-                    time: None,
-                }),
-            },
-            Self::AutoWeekday => match length {
-                NeoSkeletonLength::Long => DateTimeFormatterOptions::Length(length::Bag {
-                    date: Some(length::Date::Full),
-                    time: None,
-                }),
-                // Note: This could be improved to use length patterns if
-                // they become available for lengths other than Full.
-                _ => DateTimeFormatterOptions::Components(components::Bag {
-                    year: Some(length.to_components_year()),
-                    month: Some(length.to_components_month()),
-                    day: Some(length.to_components_day()),
-                    weekday: Some(length.to_components_text()),
-                    ..Default::default()
-                }),
-            },
+            Self::Day => false,
+            Self::MonthDay => false,
+            Self::YearMonthDay => false,
+            Self::EraYearMonthDay => true,
+            Self::DayWeekday => false,
+            Self::MonthDayWeekday => false,
+            Self::YearMonthDayWeekday => false,
+            Self::EraYearMonthDayWeekday => true,
+            Self::Weekday => false,
+            Self::Auto => false,
+            Self::AutoWeekday => false,
+        }
+    }
+
+    /// Whether this field set contains the year.
+    pub fn has_year(self) -> bool {
+        match self {
+            Self::Day => false,
+            Self::MonthDay => false,
+            Self::YearMonthDay => true,
+            Self::EraYearMonthDay => true,
+            Self::DayWeekday => false,
+            Self::MonthDayWeekday => false,
+            Self::YearMonthDayWeekday => true,
+            Self::EraYearMonthDayWeekday => true,
+            Self::Weekday => false,
+            Self::Auto => true,
+            Self::AutoWeekday => true,
+        }
+    }
+
+    /// Whether this field set contains the month.
+    pub fn has_month(self) -> bool {
+        match self {
+            Self::Day => false,
+            Self::MonthDay => true,
+            Self::YearMonthDay => true,
+            Self::EraYearMonthDay => true,
+            Self::DayWeekday => false,
+            Self::MonthDayWeekday => true,
+            Self::YearMonthDayWeekday => true,
+            Self::EraYearMonthDayWeekday => true,
+            Self::Weekday => false,
+            Self::Auto => true,
+            Self::AutoWeekday => true,
+        }
+    }
+
+    /// Whether this field set contains the day of the month.
+    pub fn has_day(self) -> bool {
+        match self {
+            Self::Day => true,
+            Self::MonthDay => true,
+            Self::YearMonthDay => true,
+            Self::EraYearMonthDay => true,
+            Self::DayWeekday => true,
+            Self::MonthDayWeekday => true,
+            Self::YearMonthDayWeekday => true,
+            Self::EraYearMonthDayWeekday => true,
+            Self::Weekday => false,
+            Self::Auto => true,
+            Self::AutoWeekday => true,
+        }
+    }
+
+    /// Whether this field set contains the weekday.
+    pub fn has_weekday(self) -> bool {
+        match self {
+            Self::Day => false,
+            Self::MonthDay => false,
+            Self::YearMonthDay => false,
+            Self::EraYearMonthDay => false,
+            Self::DayWeekday => true,
+            Self::MonthDayWeekday => true,
+            Self::YearMonthDayWeekday => true,
+            Self::EraYearMonthDayWeekday => true,
+            Self::Weekday => true,
+            Self::Auto => false,
+            Self::AutoWeekday => true,
         }
     }
 }
 
 /// A specification for a set of parts of a date.
 /// Only sets that yield “sensible” dates are allowed: this type cannot describe
-/// a date such as “fourth quarter, Anno Domini”.
+/// a date such as “August, Anno Domini”.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[non_exhaustive]
 pub enum NeoDateComponents {
@@ -356,12 +476,7 @@ pub enum NeoDateComponents {
     /// The year and week of the year, as in
     /// “52nd week of 1999”.
     YearWeek,
-    /// The quarter of the year, as in
-    /// “1st quarter”.
-    Quarter,
-    /// The year and quarter of the year, as in
-    /// “1st quarter of 2000”.
-    YearQuarter,
+    // TODO(#501): Consider adding support for Quarter and YearQuarter.
 }
 
 impl NeoDateComponents {
@@ -384,8 +499,6 @@ impl NeoDateComponents {
         Self::Year,
         Self::EraYear,
         Self::YearWeek,
-        Self::Quarter,
-        Self::YearQuarter,
     ];
 
     const MONTH: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("m0");
@@ -396,9 +509,6 @@ impl NeoDateComponents {
     const YEAR: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("y");
     const ERA_YEAR: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("gy");
     const YEAR_WEEK: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("y0w");
-    const QUARTER: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("q");
-    const YEAR_QUARTER: &'static DataMarkerAttributes =
-        DataMarkerAttributes::from_str_or_panic("yq");
 
     // For matching
     const MONTH_STR: &'static str = Self::MONTH.as_str();
@@ -407,8 +517,6 @@ impl NeoDateComponents {
     const YEAR_STR: &'static str = Self::YEAR.as_str();
     const ERA_YEAR_STR: &'static str = Self::ERA_YEAR.as_str();
     const YEAR_WEEK_STR: &'static str = Self::YEAR_WEEK.as_str();
-    const QUARTER_STR: &'static str = Self::QUARTER.as_str();
-    const YEAR_QUARTER_STR: &'static str = Self::YEAR_QUARTER.as_str();
 
     /// Returns a stable string identifying this set of components.
     ///
@@ -422,8 +530,6 @@ impl NeoDateComponents {
             Self::Year => Self::YEAR,
             Self::EraYear => Self::ERA_YEAR,
             Self::YearWeek => Self::YEAR_WEEK,
-            Self::Quarter => Self::QUARTER,
-            Self::YearQuarter => Self::YEAR_QUARTER,
         }
     }
 
@@ -438,46 +544,62 @@ impl NeoDateComponents {
             Self::YEAR_STR => Some(Self::Year),
             Self::ERA_YEAR_STR => Some(Self::EraYear),
             Self::YEAR_WEEK_STR => Some(Self::YearWeek),
-            Self::QUARTER_STR => Some(Self::Quarter),
-            Self::YEAR_QUARTER_STR => Some(Self::YearQuarter),
             _ => NeoDayComponents::from_id_str(id_str).map(Self::Day),
         }
     }
 
-    fn to_components_bag_with_length(self, length: NeoSkeletonLength) -> DateTimeFormatterOptions {
+    /// Whether this field set contains the full year / eras.
+    pub fn has_full_year(self) -> bool {
         match self {
-            Self::Day(day_components) => day_components.to_components_bag_with_length(length),
-            Self::Month => DateTimeFormatterOptions::Components(components::Bag {
-                month: Some(length.to_components_month()),
-                ..Default::default()
-            }),
-            Self::YearMonth => DateTimeFormatterOptions::Components(components::Bag {
-                year: Some(length.to_components_year()),
-                month: Some(length.to_components_month()),
-                ..Default::default()
-            }),
-            Self::EraYearMonth => DateTimeFormatterOptions::Components(components::Bag {
-                era: Some(length.to_components_text()),
-                year: Some(length.to_components_year()),
-                month: Some(length.to_components_month()),
-                ..Default::default()
-            }),
-            Self::Year => DateTimeFormatterOptions::Components(components::Bag {
-                year: Some(length.to_components_year()),
-                ..Default::default()
-            }),
-            Self::EraYear => DateTimeFormatterOptions::Components(components::Bag {
-                era: Some(length.to_components_text()),
-                year: Some(length.to_components_year()),
-                ..Default::default()
-            }),
-            Self::YearWeek => DateTimeFormatterOptions::Components(components::Bag {
-                year: Some(length.to_components_year_of_week()),
-                week: Some(length.to_components_week_of_year()),
-                ..Default::default()
-            }),
-            Self::Quarter => todo!(),
-            Self::YearQuarter => todo!(),
+            Self::Day(day_components) => day_components.has_full_year(),
+            Self::Month => false,
+            Self::YearMonth => false,
+            Self::EraYearMonth => true,
+            Self::Year => false,
+            Self::EraYear => true,
+            Self::YearWeek => false,
+        }
+    }
+
+    /// Whether this field set contains the year.
+    pub fn has_year(self) -> bool {
+        match self {
+            Self::Day(day_components) => day_components.has_year(),
+            Self::Month => false,
+            Self::YearMonth => true,
+            Self::EraYearMonth => true,
+            Self::Year => true,
+            Self::EraYear => true,
+            Self::YearWeek => true,
+        }
+    }
+
+    /// Whether this field set contains the month.
+    pub fn has_month(self) -> bool {
+        match self {
+            Self::Day(day_components) => day_components.has_month(),
+            Self::Month => true,
+            Self::YearMonth => true,
+            Self::EraYearMonth => true,
+            Self::Year => false,
+            Self::EraYear => false,
+            Self::YearWeek => false,
+        }
+    }
+
+    /// Whether this field set contains the day of the month.
+    pub fn has_day(self) -> bool {
+        match self {
+            Self::Day(day_components) => day_components.has_day(),
+            _ => false,
+        }
+    }
+
+    /// Whether this field set contains the weekday.
+    pub fn has_weekday(self) -> bool {
+        match self {
+            Self::Day(day_components) => day_components.has_weekday(),
+            _ => false,
         }
     }
 }
@@ -634,6 +756,20 @@ impl NeoTimeComponents {
         }
     }
 
+    #[cfg(feature = "experimental")]
+    pub(crate) fn with_hour_cycle(self, hour_cycle: CoarseHourCycle) -> Self {
+        use CoarseHourCycle::*;
+        match (self, hour_cycle) {
+            (Self::Hour, H11H12) => Self::Hour12,
+            (Self::HourMinute, H11H12) => Self::Hour12Minute,
+            (Self::HourMinuteSecond, H11H12) => Self::Hour12MinuteSecond,
+            (Self::Hour, H23H24) => Self::Hour24,
+            (Self::HourMinute, H23H24) => Self::Hour24Minute,
+            (Self::HourMinuteSecond, H23H24) => Self::Hour24MinuteSecond,
+            _ => self,
+        }
+    }
+
     /// Converts a [`length::Time`] to its nearest [`NeoTimeComponents`].
     #[doc(hidden)] // the types involved in this mapping may change
     pub fn from_time_length(time_length: length::Time) -> Self {
@@ -645,54 +781,37 @@ impl NeoTimeComponents {
         }
     }
 
-    fn to_components_bag_with_length(self, length: NeoSkeletonLength) -> DateTimeFormatterOptions {
-        match self {
-            Self::Hour => DateTimeFormatterOptions::Components(components::Bag {
-                hour: Some(length.to_components_numeric()),
-                ..Default::default()
-            }),
-            Self::HourMinute => DateTimeFormatterOptions::Components(components::Bag {
-                hour: Some(length.to_components_numeric()),
-                minute: Some(length.to_components_numeric()),
-                ..Default::default()
-            }),
-            Self::HourMinuteSecond => DateTimeFormatterOptions::Components(components::Bag {
-                hour: Some(length.to_components_numeric()),
-                minute: Some(length.to_components_numeric()),
-                second: Some(length.to_components_numeric()),
-                ..Default::default()
-            }),
-            Self::DayPeriodHour12 => todo!(),
-            Self::Hour12 => todo!(),
-            Self::DayPeriodHour12Minute => todo!(),
-            Self::Hour12Minute => todo!(),
-            Self::DayPeriodHour12MinuteSecond => todo!(),
-            Self::Hour12MinuteSecond => todo!(),
-            Self::Hour24 => todo!(),
-            Self::Hour24Minute => todo!(),
-            Self::Hour24MinuteSecond => todo!(),
-            Self::Auto => match length {
-                // Note: For now, make "long" and "medium" both map to "medium".
-                // This could be improved in light of additional data.
-                NeoSkeletonLength::Long => DateTimeFormatterOptions::Length(length::Bag {
-                    date: None,
-                    time: Some(length::Time::Medium),
-                }),
-                NeoSkeletonLength::Medium => DateTimeFormatterOptions::Length(length::Bag {
-                    date: None,
-                    time: Some(length::Time::Medium),
-                }),
-                NeoSkeletonLength::Short => DateTimeFormatterOptions::Length(length::Bag {
-                    date: None,
-                    time: Some(length::Time::Short),
-                }),
-            },
-        }
+    /// Whether this field set contains the hour.
+    pub fn has_hour(self) -> bool {
+        true
+    }
+
+    /// Whether this field set contains the minute.
+    pub fn has_minute(self) -> bool {
+        matches!(
+            self,
+            NeoTimeComponents::HourMinute
+                | NeoTimeComponents::Hour12Minute
+                | NeoTimeComponents::Hour24Minute
+                | NeoTimeComponents::HourMinuteSecond
+                | NeoTimeComponents::Hour12MinuteSecond
+                | NeoTimeComponents::Hour24MinuteSecond
+        )
+    }
+
+    /// Whether this field set contains the second.
+    pub fn has_second(self) -> bool {
+        matches!(
+            self,
+            NeoTimeComponents::HourMinuteSecond
+                | NeoTimeComponents::Hour12MinuteSecond
+                | NeoTimeComponents::Hour24MinuteSecond
+        )
     }
 }
 
 /// A specification of components for parts of a datetime.
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[non_exhaustive]
 pub enum NeoDateTimeComponents {
     /// Components for parts of a date.
@@ -716,19 +835,28 @@ impl From<NeoTimeComponents> for NeoDateTimeComponents {
 }
 
 /// A specification of components for parts of a datetime and/or time zone.
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    serde(try_from = "FieldSetSerde", into = "FieldSetSerde")
+)]
 #[non_exhaustive]
 pub enum NeoComponents {
-    /// Components for parts of a date.
+    /// Components for a date.
     Date(NeoDateComponents),
-    /// Components for parts of a time.
+    /// Components for a time.
     Time(NeoTimeComponents),
-    /// Components for a time zone by itself.
+    /// Components for a time zone.
     Zone(NeoTimeZoneSkeleton),
-    /// Components for parts of a date and time together.
+    /// Components for a date and a time together.
     DateTime(NeoDayComponents, NeoTimeComponents),
-    /// Components for a date/time with a time zone.
-    DateTimeZone(NeoDateTimeComponents, NeoTimeZoneSkeleton),
+    /// Components for a date and a time zone together.
+    DateZone(NeoDateComponents, NeoTimeZoneSkeleton),
+    /// Components for a time and a time zone together.
+    TimeZone(NeoTimeComponents, NeoTimeZoneSkeleton),
+    /// Components for a date, a time, and a time zone together.
+    DateTimeZone(NeoDayComponents, NeoTimeComponents, NeoTimeZoneSkeleton),
 }
 
 impl From<NeoDateComponents> for NeoComponents {
@@ -759,8 +887,66 @@ impl From<NeoTimeZoneSkeleton> for NeoComponents {
     }
 }
 
-/// Specification of the time zone display style
-#[derive(Debug, Copy, Clone, Default)]
+impl NeoComponents {
+    // Attributes for skeleta that span date/time/zone
+    // TODO: Add variants for H, h, and B hours
+    const WEEKDAY_HOUR_MINUTE: &'static DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("ejm");
+    const WEEKDAY_HOUR_MINUTE_SECOND: &'static DataMarkerAttributes =
+        DataMarkerAttributes::from_str_or_panic("ejms");
+
+    // For matching
+    const WEEKDAY_HOUR_MINUTE_STR: &'static str = Self::WEEKDAY_HOUR_MINUTE.as_str();
+    const WEEKDAY_HOUR_MINUTE_SECOND_STR: &'static str = Self::WEEKDAY_HOUR_MINUTE_SECOND.as_str();
+
+    #[doc(hidden)] // for datagen
+    pub fn attributes_with_overrides() -> &'static [&'static DataMarkerAttributes] {
+        &[Self::WEEKDAY_HOUR_MINUTE, Self::WEEKDAY_HOUR_MINUTE_SECOND]
+    }
+
+    /// Returns a stable string identifying this field set,
+    /// but only if this set has its own pattern override.
+    ///
+    /// For details, see [`NeoDayComponents::id_str()`].
+    pub const fn id_str(self) -> Option<&'static DataMarkerAttributes> {
+        match self {
+            Self::DateTime(NeoDayComponents::Weekday, NeoTimeComponents::HourMinute) => {
+                Some(Self::WEEKDAY_HOUR_MINUTE)
+            }
+            Self::DateTime(NeoDayComponents::Weekday, NeoTimeComponents::HourMinuteSecond) => {
+                Some(Self::WEEKDAY_HOUR_MINUTE_SECOND)
+            }
+            _ => None,
+        }
+    }
+
+    /// Returns the field set for the given stable string,
+    /// but only if this set has its own pattern override.
+    ///
+    /// For details, see [`NeoDayComponents::from_id_str()`].
+    pub fn from_id_str(id_str: &DataMarkerAttributes) -> Option<Self> {
+        match &**id_str {
+            Self::WEEKDAY_HOUR_MINUTE_STR => Some(Self::DateTime(
+                NeoDayComponents::Weekday,
+                NeoTimeComponents::HourMinute,
+            )),
+            Self::WEEKDAY_HOUR_MINUTE_SECOND_STR => Some(Self::DateTime(
+                NeoDayComponents::Weekday,
+                NeoTimeComponents::HourMinuteSecond,
+            )),
+            _ => None,
+        }
+    }
+}
+
+/// Specification of the time zone display style.
+///
+/// Time zone names contribute a lot of data size. For resource-constrained
+/// environments, the following formats require the least amount of data:
+///
+/// - [`NeoTimeZoneStyle::SpecificNonLocation`] + [`NeoSkeletonLength::Short`]
+/// - [`NeoTimeZoneStyle::Offset`]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Default)]
 #[non_exhaustive]
 pub enum NeoTimeZoneStyle {
     /// The location format, e.g., “Los Angeles time” or specific non-location
@@ -774,17 +960,23 @@ pub enum NeoTimeZoneStyle {
     #[default]
     Default,
     /// The location format, e.g., “Los Angeles time”.
+    ///
+    /// When unavailable, falls back to [`NeoTimeZoneStyle::Offset`].
     Location,
     /// The generic non-location format, e.g., “Pacific Time”.
+    ///
+    /// When unavailable, falls back to [`NeoTimeZoneStyle::Location`].
     NonLocation,
     /// The specific non-location format, e.g., “Pacific Daylight Time”.
+    ///
+    /// When unavailable, falls back to [`NeoTimeZoneStyle::Offset`].
     SpecificNonLocation,
     /// The offset from UTC format, e.g., “GMT−8”.
     Offset,
 }
 
 /// A skeleton for formatting a time zone.
-#[derive(Debug, Copy, Clone, Default)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Default)]
 #[non_exhaustive]
 pub struct NeoTimeZoneSkeleton {
     /// The length of the time zone format, _i.e._, with
@@ -799,27 +991,13 @@ pub struct NeoTimeZoneSkeleton {
     pub style: NeoTimeZoneStyle,
 }
 
+#[cfg(feature = "experimental")]
 impl NeoTimeZoneSkeleton {
-    #[cfg(feature = "experimental")]
-    pub(crate) const fn non_location_short() -> Self {
-        Self {
-            length: Some(NeoSkeletonLength::Short),
-            style: NeoTimeZoneStyle::NonLocation,
-        }
-    }
-
-    #[cfg(feature = "experimental")]
-    pub(crate) fn to_field(self, length: NeoSkeletonLength) -> Field {
-        use NeoSkeletonLength::*;
-        use NeoTimeZoneStyle::*;
-        let length = self.length.unwrap_or(length);
-        match (self.style, length) {
-            (NonLocation, Short) => Field {
-                symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerV),
-                length: FieldLength::One,
-            },
-            (_, _) => todo!(),
-        }
+    pub(crate) fn resolve(self, length: MaybeLength) -> ResolvedNeoTimeZoneSkeleton {
+        crate::tz_registry::skeleton_to_resolved(
+            self.style,
+            self.length.unwrap_or_else(|| length.get::<Self>()),
+        )
     }
 }
 
@@ -831,6 +1009,10 @@ pub struct NeoDateSkeleton {
     pub length: NeoSkeletonLength,
     /// Date components of the skeleton.
     pub components: NeoDateComponents,
+    /// Alignment option.
+    pub alignment: Option<Alignment>,
+    /// Era display option.
+    pub era_display: Option<EraDisplay>,
 }
 
 impl NeoDateSkeleton {
@@ -839,7 +1021,12 @@ impl NeoDateSkeleton {
         length: NeoSkeletonLength,
         components: NeoDateComponents,
     ) -> Self {
-        Self { length, components }
+        Self {
+            length,
+            components,
+            alignment: None,
+            era_display: None,
+        }
     }
 
     /// Converts a [`length::Date`] to a [`NeoDayComponents`] and [`NeoSkeletonLength`].
@@ -862,12 +1049,9 @@ impl NeoDateSkeleton {
         NeoDateSkeleton {
             length,
             components: NeoDateComponents::Day(day_components),
+            alignment: None,
+            era_display: None,
         }
-    }
-
-    /// Converts this [`NeoDateSkeleton`] to a [`components::Bag`].
-    pub fn to_components_bag(self) -> DateTimeFormatterOptions {
-        self.components.to_components_bag_with_length(self.length)
     }
 }
 
@@ -879,6 +1063,10 @@ pub struct NeoTimeSkeleton {
     pub length: NeoSkeletonLength,
     /// Time components of the skeleton.
     pub components: NeoTimeComponents,
+    /// Alignment option.
+    pub alignment: Option<Alignment>,
+    /// Fractional second digits option.
+    pub fractional_second_digits: Option<FractionalSecondDigits>,
 }
 
 impl NeoTimeSkeleton {
@@ -887,12 +1075,12 @@ impl NeoTimeSkeleton {
         length: NeoSkeletonLength,
         components: NeoTimeComponents,
     ) -> Self {
-        Self { length, components }
-    }
-
-    /// Converts this [`NeoTimeSkeleton`] to a [`components::Bag`].
-    pub fn to_components_bag(self) -> DateTimeFormatterOptions {
-        self.components.to_components_bag_with_length(self.length)
+        Self {
+            length,
+            components,
+            alignment: None,
+            fractional_second_digits: None,
+        }
     }
 }
 
@@ -904,6 +1092,12 @@ pub struct NeoDateTimeSkeleton {
     pub length: NeoSkeletonLength,
     /// Date and time components of the skeleton.
     pub components: NeoDateTimeComponents,
+    /// Alignment option.
+    pub alignment: Option<Alignment>,
+    /// Era display option.
+    pub era_display: Option<EraDisplay>,
+    /// Fractional second digits option.
+    pub fractional_second_digits: Option<FractionalSecondDigits>,
 }
 
 impl NeoDateTimeSkeleton {
@@ -916,18 +1110,32 @@ impl NeoDateTimeSkeleton {
         Self {
             length,
             components: NeoDateTimeComponents::DateTime(date, time),
+            alignment: None,
+            era_display: None,
+            fractional_second_digits: None,
         }
     }
 }
 
 /// A skeleton for formatting parts of a date, time, and optional time zone.
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    serde(try_from = "SemanticSkeletonSerde", into = "SemanticSkeletonSerde")
+)]
 #[non_exhaustive]
 pub struct NeoSkeleton {
     /// Desired formatting length.
     pub length: NeoSkeletonLength,
     /// Components of the skeleton.
     pub components: NeoComponents,
+    /// Alignment option.
+    pub alignment: Option<Alignment>,
+    /// Era display option.
+    pub era_display: Option<EraDisplay>,
+    /// Fractional second digits option.
+    pub fractional_second_digits: Option<FractionalSecondDigits>,
 }
 
 impl From<NeoDateSkeleton> for NeoSkeleton {
@@ -935,6 +1143,9 @@ impl From<NeoDateSkeleton> for NeoSkeleton {
         NeoSkeleton {
             length: value.length,
             components: value.components.into(),
+            alignment: value.alignment,
+            era_display: value.era_display,
+            fractional_second_digits: None,
         }
     }
 }
@@ -944,6 +1155,9 @@ impl From<NeoTimeSkeleton> for NeoSkeleton {
         NeoSkeleton {
             length: value.length,
             components: value.components.into(),
+            alignment: value.alignment,
+            era_display: None,
+            fractional_second_digits: value.fractional_second_digits,
         }
     }
 }
@@ -953,6 +1167,9 @@ impl From<NeoDateTimeSkeleton> for NeoSkeleton {
         NeoSkeleton {
             length: value.length,
             components: value.components.into(),
+            alignment: value.alignment,
+            era_display: value.era_display,
+            fractional_second_digits: value.fractional_second_digits,
         }
     }
 }
@@ -968,6 +1185,9 @@ impl NeoDateTimeSkeleton {
         NeoDateTimeSkeleton {
             length,
             components: NeoDateTimeComponents::DateTime(day_components, time_components),
+            alignment: None,
+            era_display: None,
+            fractional_second_digits: None,
         }
     }
 }

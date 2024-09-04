@@ -3,31 +3,15 @@
     "0": "bu saat"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": " sa. önce",
-      "index": 0
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": " sa. önce",
-      "index": 0
+    "strings": {
+      "specials": [],
+      "other": "\u0001 sa. önce"
     }
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": " sa. sonra",
-      "index": 0
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": " sa. sonra",
-      "index": 0
+    "strings": {
+      "specials": [],
+      "other": "\u0001 sa. sonra"
     }
   }
 }

@@ -1,5 +1,8 @@
 {
   "patterns": {
-    "Other": "{0} นาที"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 นาที"
+    }
   }
 }

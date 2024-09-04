@@ -36,8 +36,6 @@ icu_normalizer = { workspace = true }
 icu_properties = { workspace = true }
 icu_provider = {workspace = true, features = ["macros"] }
 displaydoc = { workspace = true }
-tinystr = { workspace = true }
-
 
 [features]
 default = []

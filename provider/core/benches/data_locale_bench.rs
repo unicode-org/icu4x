@@ -12,20 +12,13 @@ use writeable::Writeable;
 static BCP47_STRINGS: &[&str] = &[
     "ca",
     "ca-ES",
-    "ca-ES-u-ca-buddhist",
+    "ca-ES-u-sd-esar",
     "ca-ES-valencia",
-    "ca-ES-x-gbp",
-    "ca-ES-x-gbp-short",
-    "ca-ES-x-usd",
     "ca-ES-xyzabc",
-    "ca-x-eur",
     "cat",
     "pl-Latn-PL",
     "und",
     "und-fonipa",
-    "und-u-ca-hebrew",
-    "und-u-ca-japanese",
-    "und-x-mxn",
     "zh",
 ];
 

@@ -26,13 +26,13 @@ final class CodePointSetData implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XCodePointSetData_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_CodePointSetData_destroy_mv1));
 
   /// Checks whether the code point is in the set.
   ///
   /// See the [Rust documentation for `contains`](https://docs.rs/icu/latest/icu/properties/sets/struct.CodePointSetDataBorrowed.html#method.contains) for more information.
   bool contains(Rune cp) {
-    final result = _ICU4XCodePointSetData_contains(_ffi, cp);
+    final result = _icu4x_CodePointSetData_contains_mv1(_ffi, cp);
     return result;
   }
 
@@ -42,7 +42,7 @@ final class CodePointSetData implements ffi.Finalizable {
   CodePointRangeIterator iterRanges() {
     // This lifetime edge depends on lifetimes: 'a
     core.List<Object> aEdges = [this];
-    final result = _ICU4XCodePointSetData_iter_ranges(_ffi);
+    final result = _icu4x_CodePointSetData_iter_ranges_mv1(_ffi);
     return CodePointRangeIterator._fromFfi(result, [], aEdges);
   }
 
@@ -52,7 +52,7 @@ final class CodePointSetData implements ffi.Finalizable {
   CodePointRangeIterator iterRangesComplemented() {
     // This lifetime edge depends on lifetimes: 'a
     core.List<Object> aEdges = [this];
-    final result = _ICU4XCodePointSetData_iter_ranges_complemented(_ffi);
+    final result = _icu4x_CodePointSetData_iter_ranges_complemented_mv1(_ffi);
     return CodePointRangeIterator._fromFfi(result, [], aEdges);
   }
 
@@ -62,7 +62,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.forGeneralCategoryGroup(DataProvider provider, int group) {
-    final result = _ICU4XCodePointSetData_load_for_general_category_group(provider._ffi, group);
+    final result = _icu4x_CodePointSetData_load_for_general_category_group_mv1(provider._ffi, group);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -73,7 +73,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.asciiHexDigit(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_ascii_hex_digit(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_ascii_hex_digit_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -84,7 +84,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.alnum(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_alnum(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_alnum_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -95,7 +95,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.alphabetic(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_alphabetic(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_alphabetic_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -106,7 +106,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.bidiControl(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_bidi_control(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_bidi_control_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -117,7 +117,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.bidiMirrored(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_bidi_mirrored(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_bidi_mirrored_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -128,7 +128,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.blank(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_blank(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_blank_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -139,7 +139,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.cased(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_cased(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_cased_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -150,7 +150,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.caseIgnorable(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_case_ignorable(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_case_ignorable_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -161,7 +161,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.fullCompositionExclusion(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_full_composition_exclusion(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_full_composition_exclusion_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -172,7 +172,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.changesWhenCasefolded(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_changes_when_casefolded(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_changes_when_casefolded_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -183,7 +183,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.changesWhenCasemapped(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_changes_when_casemapped(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_changes_when_casemapped_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -194,7 +194,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.changesWhenNfkcCasefolded(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_changes_when_nfkc_casefolded(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_changes_when_nfkc_casefolded_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -205,7 +205,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.changesWhenLowercased(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_changes_when_lowercased(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_changes_when_lowercased_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -216,7 +216,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.changesWhenTitlecased(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_changes_when_titlecased(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_changes_when_titlecased_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -227,7 +227,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.changesWhenUppercased(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_changes_when_uppercased(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_changes_when_uppercased_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -238,7 +238,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.dash(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_dash(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_dash_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -249,7 +249,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.deprecated(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_deprecated(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_deprecated_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -260,7 +260,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.defaultIgnorableCodePoint(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_default_ignorable_code_point(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_default_ignorable_code_point_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -271,7 +271,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.diacritic(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_diacritic(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_diacritic_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -282,7 +282,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.emojiModifierBase(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_emoji_modifier_base(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_emoji_modifier_base_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -293,7 +293,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.emojiComponent(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_emoji_component(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_emoji_component_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -304,7 +304,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.emojiModifier(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_emoji_modifier(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_emoji_modifier_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -315,7 +315,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.emoji(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_emoji(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_emoji_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -326,7 +326,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.emojiPresentation(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_emoji_presentation(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_emoji_presentation_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -337,7 +337,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.extender(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_extender(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_extender_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -348,7 +348,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.extendedPictographic(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_extended_pictographic(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_extended_pictographic_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -359,7 +359,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.graph(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_graph(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_graph_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -370,7 +370,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.graphemeBase(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_grapheme_base(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_grapheme_base_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -381,7 +381,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.graphemeExtend(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_grapheme_extend(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_grapheme_extend_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -392,7 +392,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.graphemeLink(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_grapheme_link(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_grapheme_link_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -403,7 +403,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.hexDigit(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_hex_digit(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_hex_digit_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -414,7 +414,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.hyphen(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_hyphen(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_hyphen_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -425,7 +425,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.idContinue(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_id_continue(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_id_continue_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -436,7 +436,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.ideographic(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_ideographic(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_ideographic_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -447,7 +447,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.idStart(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_id_start(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_id_start_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -458,7 +458,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.idsBinaryOperator(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_ids_binary_operator(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_ids_binary_operator_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -469,7 +469,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.idsTrinaryOperator(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_ids_trinary_operator(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_ids_trinary_operator_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -480,7 +480,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.joinControl(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_join_control(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_join_control_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -491,7 +491,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.logicalOrderException(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_logical_order_exception(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_logical_order_exception_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -502,7 +502,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.lowercase(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_lowercase(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_lowercase_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -513,7 +513,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.math(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_math(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_math_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -524,7 +524,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.noncharacterCodePoint(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_noncharacter_code_point(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_noncharacter_code_point_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -535,7 +535,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.nfcInert(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_nfc_inert(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_nfc_inert_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -546,7 +546,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.nfdInert(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_nfd_inert(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_nfd_inert_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -557,7 +557,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.nfkcInert(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_nfkc_inert(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_nfkc_inert_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -568,7 +568,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.nfkdInert(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_nfkd_inert(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_nfkd_inert_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -579,7 +579,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.patternSyntax(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_pattern_syntax(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_pattern_syntax_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -590,7 +590,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.patternWhiteSpace(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_pattern_white_space(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_pattern_white_space_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -601,7 +601,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.prependedConcatenationMark(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_prepended_concatenation_mark(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_prepended_concatenation_mark_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -612,7 +612,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.print(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_print(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_print_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -623,7 +623,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.quotationMark(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_quotation_mark(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_quotation_mark_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -634,7 +634,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.radical(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_radical(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_radical_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -645,7 +645,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.regionalIndicator(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_regional_indicator(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_regional_indicator_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -656,7 +656,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.softDotted(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_soft_dotted(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_soft_dotted_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -667,7 +667,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.segmentStarter(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_segment_starter(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_segment_starter_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -678,7 +678,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.caseSensitive(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_case_sensitive(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_case_sensitive_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -689,7 +689,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.sentenceTerminal(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_sentence_terminal(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_sentence_terminal_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -700,7 +700,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.terminalPunctuation(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_terminal_punctuation(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_terminal_punctuation_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -711,7 +711,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.unifiedIdeograph(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_unified_ideograph(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_unified_ideograph_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -722,7 +722,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.uppercase(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_uppercase(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_uppercase_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -733,7 +733,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.variationSelector(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_variation_selector(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_variation_selector_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -744,7 +744,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.whiteSpace(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_white_space(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_white_space_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -755,7 +755,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.xdigit(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_xdigit(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_xdigit_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -766,7 +766,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.xidContinue(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_xid_continue(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_xid_continue_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -777,7 +777,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.xidStart(DataProvider provider) {
-    final result = _ICU4XCodePointSetData_load_xid_start(provider._ffi);
+    final result = _icu4x_CodePointSetData_load_xid_start_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -796,10 +796,8 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   factory CodePointSetData.forEcma262(DataProvider provider, String propertyName) {
-    final temp = ffi2.Arena();
-    final propertyNameView = propertyName.utf8View;
-    final result = _ICU4XCodePointSetData_load_for_ecma262(provider._ffi, propertyNameView.allocIn(temp), propertyNameView.length);
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final result = _icu4x_CodePointSetData_load_for_ecma262_mv1(provider._ffi, propertyName._utf8AllocIn(temp.arena));
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -807,357 +805,357 @@ final class CodePointSetData implements ffi.Finalizable {
   }
 }
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_destroy')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_destroy_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XCodePointSetData_destroy(ffi.Pointer<ffi.Void> self);
+external void _icu4x_CodePointSetData_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_contains')
-@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_contains')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_contains_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_contains_mv1')
 // ignore: non_constant_identifier_names
-external bool _ICU4XCodePointSetData_contains(ffi.Pointer<ffi.Opaque> self, Rune cp);
+external bool _icu4x_CodePointSetData_contains_mv1(ffi.Pointer<ffi.Opaque> self, Rune cp);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_iter_ranges')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_iter_ranges')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_iter_ranges_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_iter_ranges_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _ICU4XCodePointSetData_iter_ranges(ffi.Pointer<ffi.Opaque> self);
+external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_iter_ranges_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_iter_ranges_complemented')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_iter_ranges_complemented')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_iter_ranges_complemented_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_iter_ranges_complemented_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _ICU4XCodePointSetData_iter_ranges_complemented(ffi.Pointer<ffi.Opaque> self);
+external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_iter_ranges_complemented_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_for_general_category_group')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_for_general_category_group')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_for_general_category_group_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_for_general_category_group_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_for_general_category_group(ffi.Pointer<ffi.Opaque> provider, int group);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_for_general_category_group_mv1(ffi.Pointer<ffi.Opaque> provider, int group);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_ascii_hex_digit')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_ascii_hex_digit')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_ascii_hex_digit_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_ascii_hex_digit_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_ascii_hex_digit(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_ascii_hex_digit_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_alnum')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_alnum')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_alnum_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_alnum_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_alnum(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_alnum_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_alphabetic')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_alphabetic')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_alphabetic_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_alphabetic_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_alphabetic(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_alphabetic_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_bidi_control')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_bidi_control')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_bidi_control_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_bidi_control_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_bidi_control(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_bidi_control_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_bidi_mirrored')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_bidi_mirrored')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_bidi_mirrored_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_bidi_mirrored_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_bidi_mirrored(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_bidi_mirrored_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_blank')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_blank')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_blank_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_blank_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_blank(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_blank_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_cased')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_cased')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_cased_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_cased_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_cased(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_cased_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_case_ignorable')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_case_ignorable')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_case_ignorable_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_case_ignorable_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_case_ignorable(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_case_ignorable_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_full_composition_exclusion')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_full_composition_exclusion')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_full_composition_exclusion_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_full_composition_exclusion_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_full_composition_exclusion(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_full_composition_exclusion_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_changes_when_casefolded')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_changes_when_casefolded')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_changes_when_casefolded_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_changes_when_casefolded_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_changes_when_casefolded(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_changes_when_casefolded_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_changes_when_casemapped')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_changes_when_casemapped')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_changes_when_casemapped_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_changes_when_casemapped_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_changes_when_casemapped(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_changes_when_casemapped_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_changes_when_nfkc_casefolded')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_changes_when_nfkc_casefolded')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_changes_when_nfkc_casefolded_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_changes_when_nfkc_casefolded_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_changes_when_nfkc_casefolded(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_changes_when_nfkc_casefolded_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_changes_when_lowercased')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_changes_when_lowercased')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_changes_when_lowercased_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_changes_when_lowercased_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_changes_when_lowercased(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_changes_when_lowercased_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_changes_when_titlecased')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_changes_when_titlecased')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_changes_when_titlecased_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_changes_when_titlecased_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_changes_when_titlecased(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_changes_when_titlecased_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_changes_when_uppercased')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_changes_when_uppercased')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_changes_when_uppercased_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_changes_when_uppercased_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_changes_when_uppercased(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_changes_when_uppercased_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_dash')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_dash')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_dash_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_dash_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_dash(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_dash_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_deprecated')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_deprecated')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_deprecated_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_deprecated_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_deprecated(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_deprecated_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_default_ignorable_code_point')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_default_ignorable_code_point')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_default_ignorable_code_point_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_default_ignorable_code_point_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_default_ignorable_code_point(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_default_ignorable_code_point_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_diacritic')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_diacritic')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_diacritic_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_diacritic_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_diacritic(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_diacritic_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_emoji_modifier_base')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_emoji_modifier_base')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_emoji_modifier_base_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_emoji_modifier_base_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_emoji_modifier_base(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_emoji_modifier_base_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_emoji_component')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_emoji_component')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_emoji_component_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_emoji_component_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_emoji_component(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_emoji_component_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_emoji_modifier')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_emoji_modifier')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_emoji_modifier_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_emoji_modifier_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_emoji_modifier(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_emoji_modifier_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_emoji')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_emoji')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_emoji_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_emoji_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_emoji(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_emoji_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_emoji_presentation')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_emoji_presentation')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_emoji_presentation_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_emoji_presentation_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_emoji_presentation(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_emoji_presentation_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_extender')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_extender')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_extender_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_extender_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_extender(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_extender_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_extended_pictographic')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_extended_pictographic')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_extended_pictographic_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_extended_pictographic_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_extended_pictographic(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_extended_pictographic_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_graph')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_graph')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_graph_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_graph_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_graph(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_graph_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_grapheme_base')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_grapheme_base')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_grapheme_base_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_grapheme_base_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_grapheme_base(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_grapheme_base_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_grapheme_extend')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_grapheme_extend')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_grapheme_extend_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_grapheme_extend_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_grapheme_extend(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_grapheme_extend_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_grapheme_link')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_grapheme_link')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_grapheme_link_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_grapheme_link_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_grapheme_link(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_grapheme_link_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_hex_digit')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_hex_digit')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_hex_digit_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_hex_digit_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_hex_digit(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_hex_digit_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_hyphen')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_hyphen')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_hyphen_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_hyphen_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_hyphen(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_hyphen_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_id_continue')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_id_continue')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_id_continue_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_id_continue_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_id_continue(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_id_continue_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_ideographic')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_ideographic')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_ideographic_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_ideographic_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_ideographic(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_ideographic_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_id_start')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_id_start')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_id_start_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_id_start_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_id_start(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_id_start_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_ids_binary_operator')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_ids_binary_operator')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_ids_binary_operator_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_ids_binary_operator_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_ids_binary_operator(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_ids_binary_operator_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_ids_trinary_operator')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_ids_trinary_operator')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_ids_trinary_operator_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_ids_trinary_operator_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_ids_trinary_operator(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_ids_trinary_operator_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_join_control')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_join_control')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_join_control_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_join_control_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_join_control(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_join_control_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_logical_order_exception')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_logical_order_exception')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_logical_order_exception_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_logical_order_exception_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_logical_order_exception(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_logical_order_exception_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_lowercase')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_lowercase')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_lowercase_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_lowercase_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_lowercase(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_lowercase_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_math')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_math')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_math_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_math_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_math(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_math_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_noncharacter_code_point')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_noncharacter_code_point')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_noncharacter_code_point_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_noncharacter_code_point_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_noncharacter_code_point(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_noncharacter_code_point_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_nfc_inert')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_nfc_inert')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_nfc_inert_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_nfc_inert_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_nfc_inert(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_nfc_inert_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_nfd_inert')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_nfd_inert')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_nfd_inert_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_nfd_inert_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_nfd_inert(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_nfd_inert_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_nfkc_inert')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_nfkc_inert')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_nfkc_inert_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_nfkc_inert_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_nfkc_inert(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_nfkc_inert_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_nfkd_inert')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_nfkd_inert')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_nfkd_inert_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_nfkd_inert_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_nfkd_inert(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_nfkd_inert_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_pattern_syntax')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_pattern_syntax')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_pattern_syntax_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_pattern_syntax_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_pattern_syntax(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_pattern_syntax_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_pattern_white_space')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_pattern_white_space')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_pattern_white_space_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_pattern_white_space_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_pattern_white_space(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_pattern_white_space_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_prepended_concatenation_mark')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_prepended_concatenation_mark')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_prepended_concatenation_mark_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_prepended_concatenation_mark_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_prepended_concatenation_mark(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_prepended_concatenation_mark_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_print')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_print')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_print_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_print_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_print(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_print_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_quotation_mark')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_quotation_mark')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_quotation_mark_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_quotation_mark_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_quotation_mark(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_quotation_mark_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_radical')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_radical')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_radical_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_radical_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_radical(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_radical_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_regional_indicator')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_regional_indicator')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_regional_indicator_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_regional_indicator_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_regional_indicator(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_regional_indicator_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_soft_dotted')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_soft_dotted')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_soft_dotted_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_soft_dotted_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_soft_dotted(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_soft_dotted_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_segment_starter')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_segment_starter')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_segment_starter_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_segment_starter_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_segment_starter(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_segment_starter_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_case_sensitive')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_case_sensitive')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_case_sensitive_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_case_sensitive_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_case_sensitive(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_case_sensitive_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_sentence_terminal')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_sentence_terminal')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_sentence_terminal_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_sentence_terminal_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_sentence_terminal(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_sentence_terminal_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_terminal_punctuation')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_terminal_punctuation')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_terminal_punctuation_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_terminal_punctuation_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_terminal_punctuation(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_terminal_punctuation_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_unified_ideograph')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_unified_ideograph')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_unified_ideograph_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_unified_ideograph_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_unified_ideograph(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_unified_ideograph_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_uppercase')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_uppercase')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_uppercase_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_uppercase_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_uppercase(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_uppercase_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_variation_selector')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_variation_selector')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_variation_selector_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_variation_selector_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_variation_selector(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_variation_selector_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_white_space')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_white_space')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_white_space_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_white_space_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_white_space(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_white_space_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_xdigit')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_xdigit')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_xdigit_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_xdigit_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_xdigit(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_xdigit_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_xid_continue')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_xid_continue')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_xid_continue_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_xid_continue_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_xid_continue(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_xid_continue_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_xid_start')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_xid_start')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_xid_start_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_xid_start_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_xid_start(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_xid_start_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XCodePointSetData_load_for_ecma262')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XCodePointSetData_load_for_ecma262')
+@meta.ResourceIdentifier('icu4x_CodePointSetData_load_for_ecma262_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_load_for_ecma262_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointSetData_load_for_ecma262(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Uint8> propertyNameData, int propertyNameLength);
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_load_for_ecma262_mv1(ffi.Pointer<ffi.Opaque> provider, _SliceUtf8 propertyName);

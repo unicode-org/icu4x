@@ -15,8 +15,8 @@ use core::num::TryFromIntError;
 use core::ops::RangeInclusive;
 use yoke::Yokeable;
 use zerofrom::ZeroFrom;
+use zerovec::ule::UleError;
 use zerovec::ZeroVec;
-use zerovec::ZeroVecError;
 
 /// The type of trie represents whether the trie has an optimization that
 /// would make it smaller or faster.
@@ -36,7 +36,8 @@ use zerovec::ZeroVecError;
 /// Also see [`UCPTrieType`](https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/ucptrie_8h.html) in ICU4C.
 #[derive(Clone, Copy, PartialEq, Debug, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-#[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = icu_collections::codepointtrie))]
+#[cfg_attr(feature = "databake", derive(databake::Bake))]
+#[cfg_attr(feature = "databake", databake(path = icu_collections::codepointtrie))]
 pub enum TrieType {
     /// Represents the "fast" type code point tries for the
     /// [`TrieType`] trait. The "fast max" limit is set to `0xffff`.
@@ -135,7 +136,8 @@ pub struct CodePointTrie<'trie, T: TrieValue> {
 
 /// This struct contains the fixed-length header fields of a [`CodePointTrie`].
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-#[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = icu_collections::codepointtrie))]
+#[cfg_attr(feature = "databake", derive(databake::Bake))]
+#[cfg_attr(feature = "databake", databake(path = icu_collections::codepointtrie))]
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Yokeable, ZeroFrom)]
 pub struct CodePointTrieHeader {
     /// The code point of the start of the last range of the trie. A
@@ -431,7 +433,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     ///
     /// assert_eq!(planes_trie_i8.get32(0x30000), 3);
     /// ```
-    pub fn try_into_converted<P>(self) -> Result<CodePointTrie<'trie, P>, ZeroVecError>
+    pub fn try_into_converted<P>(self) -> Result<CodePointTrie<'trie, P>, UleError>
     where
         P: TrieValue,
     {

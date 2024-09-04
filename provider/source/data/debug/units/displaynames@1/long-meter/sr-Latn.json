@@ -1,7 +1,17 @@
 {
   "patterns": {
-    "One": "{0} metar",
-    "Few": "{0} metra",
-    "Other": "{0} metara"
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0001 metar"
+        ],
+        [
+          "Few",
+          "\u0001 metra"
+        ]
+      ],
+      "other": "\u0001 metara"
+    }
   }
 }

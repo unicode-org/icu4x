@@ -2,11 +2,12 @@
   "index_info": {
     "has_long": true,
     "has_medium": true,
-    "has_plurals": false
+    "has_plurals": false,
+    "has_eras": false
   },
   "patterns": [
-    "EEEE, MMMM d, y G",
-    "E, MMM d, y G",
-    "E, M/d/y GGGGG"
+    "EEEE, MMMM d, y GGG",
+    "E, MMM d, y GGG",
+    "E, MMM d, y GGGGG"
   ]
 }

@@ -20,7 +20,7 @@ final class PluralOperands implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XPluralOperands_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_PluralOperands_destroy_mv1));
 
   /// Construct for a given string representing a number
   ///
@@ -28,10 +28,8 @@ final class PluralOperands implements ffi.Finalizable {
   ///
   /// Throws [FixedDecimalParseError] on failure.
   factory PluralOperands.fromString(String s) {
-    final temp = ffi2.Arena();
-    final sView = s.utf8View;
-    final result = _ICU4XPluralOperands_create_from_string(sView.allocIn(temp), sView.length);
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final result = _icu4x_PluralOperands_from_string_mv1(s._utf8AllocIn(temp.arena));
     if (!result.isOk) {
       throw FixedDecimalParseError.values[result.union.err];
     }
@@ -42,22 +40,22 @@ final class PluralOperands implements ffi.Finalizable {
   ///
   /// Retains at most 18 digits each from the integer and fraction parts.
   factory PluralOperands.fromFixedDecimal(FixedDecimal x) {
-    final result = _ICU4XPluralOperands_create_from_fixed_decimal(x._ffi);
+    final result = _icu4x_PluralOperands_from_fixed_decimal_mv1(x._ffi);
     return PluralOperands._fromFfi(result, []);
   }
 }
 
-@meta.ResourceIdentifier('ICU4XPluralOperands_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XPluralOperands_destroy')
+@meta.ResourceIdentifier('icu4x_PluralOperands_destroy_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_PluralOperands_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XPluralOperands_destroy(ffi.Pointer<ffi.Void> self);
+external void _icu4x_PluralOperands_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XPluralOperands_create_from_string')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XPluralOperands_create_from_string')
+@meta.ResourceIdentifier('icu4x_PluralOperands_from_string_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_PluralOperands_from_string_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XPluralOperands_create_from_string(ffi.Pointer<ffi.Uint8> sData, int sLength);
+external _ResultOpaqueInt32 _icu4x_PluralOperands_from_string_mv1(_SliceUtf8 s);
 
-@meta.ResourceIdentifier('ICU4XPluralOperands_create_from_fixed_decimal')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XPluralOperands_create_from_fixed_decimal')
+@meta.ResourceIdentifier('icu4x_PluralOperands_from_fixed_decimal_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PluralOperands_from_fixed_decimal_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _ICU4XPluralOperands_create_from_fixed_decimal(ffi.Pointer<ffi.Opaque> x);
+external ffi.Pointer<ffi.Opaque> _icu4x_PluralOperands_from_fixed_decimal_mv1(ffi.Pointer<ffi.Opaque> x);

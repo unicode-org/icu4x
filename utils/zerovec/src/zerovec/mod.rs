@@ -22,7 +22,7 @@ use core::marker::PhantomData;
 use core::mem;
 use core::num::NonZeroUsize;
 use core::ops::Deref;
-use core::ptr::{self, NonNull};
+use core::ptr::NonNull;
 
 /// A zero-copy, byte-aligned vector for fixed-width types.
 ///
@@ -310,16 +310,13 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
         let capacity = vec.capacity();
         let len = vec.len();
         let ptr = mem::ManuallyDrop::new(vec).as_mut_ptr();
-        // Note: starting in 1.70 we can use NonNull::slice_from_raw_parts
-        let slice = ptr::slice_from_raw_parts_mut(ptr, len);
+        // Safety: `ptr` comes from Vec::as_mut_ptr, which says:
+        // "Returns an unsafe mutable pointer to the vector’s buffer,
+        // or a dangling raw pointer valid for zero sized reads"
+        let ptr = unsafe { NonNull::new_unchecked(ptr) };
+        let buf = NonNull::slice_from_raw_parts(ptr, len);
         Self {
-            vector: EyepatchHackVector {
-                // Safety: `ptr` comes from Vec::as_mut_ptr, which says:
-                // "Returns an unsafe mutable pointer to the vector’s buffer,
-                // or a dangling raw pointer valid for zero sized reads"
-                buf: unsafe { NonNull::new_unchecked(slice) },
-                capacity,
-            },
+            vector: EyepatchHackVector { buf, capacity },
             marker: PhantomData,
         }
     }
@@ -369,7 +366,7 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
     /// assert!(!zerovec.is_owned());
     /// assert_eq!(zerovec.get(2), Some(421));
     /// ```
-    pub fn parse_byte_slice(bytes: &'a [u8]) -> Result<Self, ZeroVecError> {
+    pub fn parse_byte_slice(bytes: &'a [u8]) -> Result<Self, UleError> {
         let slice: &'a [T::ULE] = T::ULE::parse_byte_slice(bytes)?;
         Ok(Self::new_borrowed(slice))
     }
@@ -529,7 +526,7 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
     /// assert!(!zv_u16.is_owned());
     /// assert_eq!(zv_u16.get(0), Some(0xF37F));
     /// ```
-    pub fn try_into_converted<P: AsULE>(self) -> Result<ZeroVec<'a, P>, ZeroVecError> {
+    pub fn try_into_converted<P: AsULE>(self) -> Result<ZeroVec<'a, P>, UleError> {
         assert_eq!(
             core::mem::size_of::<<T as AsULE>::ULE>(),
             core::mem::size_of::<<P as AsULE>::ULE>()
@@ -645,7 +642,7 @@ impl<'a> ZeroVec<'a, u8> {
     /// assert!(zerovec.is_owned());
     /// assert_eq!(zerovec.get(0), Some(211));
     /// ```
-    pub fn try_into_parsed<T: AsULE>(self) -> Result<ZeroVec<'a, T>, ZeroVecError> {
+    pub fn try_into_parsed<T: AsULE>(self) -> Result<ZeroVec<'a, T>, UleError> {
         match self.into_cow() {
             Cow::Borrowed(bytes) => {
                 let slice: &'a [T::ULE] = T::ULE::parse_byte_slice(bytes)?;
@@ -1043,16 +1040,10 @@ impl<T: AsULE> FromIterator<T> for ZeroVec<'_, T> {
 ///
 /// ```
 /// use zerovec::{ZeroSlice, zeroslice, ule::AsULE};
-/// use zerovec::ule::UnvalidatedChar;
 ///
 /// const SIGNATURE: &ZeroSlice<char> = zeroslice!(char; <char as AsULE>::ULE::from_aligned; ['b', 'y', 'e', '✌']);
 /// const EMPTY: &ZeroSlice<u32> = zeroslice![];
-/// const UC: &ZeroSlice<UnvalidatedChar> =
-///     zeroslice!(
-///         UnvalidatedChar;
-///         <UnvalidatedChar as AsULE>::ULE::from_unvalidated_char;
-///         [UnvalidatedChar::from_char('a')]
-///     );
+///
 /// let empty: &ZeroSlice<u32> = zeroslice![];
 /// let nums = zeroslice!(u32; <u32 as AsULE>::ULE::from_unsigned; [1, 2, 3, 4, 5]);
 /// assert_eq!(nums.last().unwrap(), 5);

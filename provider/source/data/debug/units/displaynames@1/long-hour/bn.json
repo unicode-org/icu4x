@@ -1,6 +1,8 @@
 {
   "patterns": {
-    "One": "{0} ঘন্টা",
-    "Other": "{0} ঘন্টা"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 ঘন্টা"
+    }
   }
 }

@@ -243,6 +243,17 @@ fn generate_rule_break_data(
                         .expect("property name should be valid!");
                     for c in 0..(CODEPOINT_TABLE_LEN as u32) {
                         if wb.get32(c) == prop {
+                            // UAX29 defines the colon as MidLetter, but ICU4C's
+                            // English data doesn't.
+                            // See https://unicode-org.atlassian.net/browse/ICU-22112
+                            //
+                            // TODO: We have to consider this definition from CLDR instead.
+                            if (c == 0x003a || c == 0xfe55 || c == 0xff1a) && p.name == "MidLetter"
+                            {
+                                // Default (en etc) is undefined class.
+                                continue;
+                            }
+
                             properties_map[c as usize] = property_index;
                         }
                     }
@@ -611,6 +622,76 @@ fn generate_rule_break_data(
     }
 }
 
+#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+fn generate_rule_break_data_override(
+    provider: &SourceDataProvider,
+    rules_file: &str,
+    trie_type: crate::TrieType,
+) -> RuleBreakDataOverrideV1<'static> {
+    let segmenter = provider
+        .icuexport()
+        .unwrap()
+        .read_and_parse_toml::<SegmenterRuleTable>(rules_file)
+        .expect("The data should be valid!");
+
+    const CODEPOINT_TABLE_LEN: usize = 0xE1000;
+    let mut properties_map = vec![0; CODEPOINT_TABLE_LEN];
+    let mut properties_names = Vec::<String>::new();
+
+    properties_names.push("Unknown".to_string());
+
+    for p in &segmenter.tables {
+        let property_index = if !properties_names.contains(&p.name) {
+            properties_names.push(p.name.clone());
+            (properties_names.len() - 1).try_into().unwrap()
+        } else {
+            continue;
+        };
+
+        if p.left.is_none() && p.right.is_none() && p.codepoint.is_none() {
+            // If any values aren't set, this is builtin type.
+            match &*segmenter.segmenter_type {
+                "word" => {
+                    // UAX29 defines the colon as MidLetter, but ICU4C's
+                    // English data doesn't.
+                    // See https://unicode-org.atlassian.net/browse/ICU-22112
+                    //
+                    // TODO: We have to consider this definition from CLDR instead.
+                    if p.name == "MidLetter" {
+                        properties_map[0x003a] = property_index;
+                        properties_map[0xfe55] = property_index;
+                        properties_map[0xff1a] = property_index;
+                    }
+                }
+                "sentence" => {
+                    // UAX#29 doesn't define the 2 characters as STerm, but ICU4C's
+                    // Greek data does.
+                    //
+                    // TODO: We have to consider this definition from CLDR instead.
+                    if p.name == "STerm" {
+                        properties_map[0x003b] = property_index;
+                        properties_map[0x037e] = property_index;
+                    }
+                }
+                _ => {}
+            }
+        }
+    }
+
+    RuleBreakDataOverrideV1 {
+        property_table_override: CodePointTrieBuilder {
+            data: CodePointTrieBuilderData::ValuesByCodePoint(&properties_map),
+            default_value: 0,
+            error_value: 0,
+            trie_type: match trie_type {
+                crate::TrieType::Fast => codepointtrie::TrieType::Fast,
+                crate::TrieType::Small => codepointtrie::TrieType::Small,
+            },
+        }
+        .build(),
+    }
+}
+
 macro_rules! implement {
     ($marker:ident, $rules:literal) => {
         impl DataProvider<$marker> for SourceDataProvider {
@@ -640,6 +721,44 @@ macro_rules! implement {
         impl crate::IterableDataProviderCached<$marker> for SourceDataProvider {
             fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
                 Ok(HashSet::from_iter([Default::default()]))
+            }
+        }
+    }
+}
+
+macro_rules! implement_override {
+    ($marker:ident, $rules:literal, [$($supported:expr),*]) => {
+        impl DataProvider<$marker> for SourceDataProvider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+                return Err(DataError::custom(
+                    "icu_provider_source must be built with use_icu4c or use_wasm to build segmentation rules",
+                )
+                .with_req($marker::INFO, req));
+                #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+                return {
+                    self.check_req::<$marker>(req)?;
+                    let data = generate_rule_break_data_override(
+                        &hardcoded_segmenter_provider(),
+                        $rules,
+                        self.trie_type(),
+                    );
+
+                    Ok(DataResponse {
+                        metadata: Default::default(),
+                        payload: DataPayload::from_owned(data),
+                    })
+                };
+            }
+        }
+
+        impl crate::IterableDataProviderCached<$marker> for SourceDataProvider {
+            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+                const SUPPORTED: &[&str] = &[$($supported),*];
+                Ok(SUPPORTED
+                   .iter()
+                   .map(|l|DataIdentifierCow::from_locale(DataLocale::try_from_str(l).unwrap()))
+                   .collect())
             }
         }
     }
@@ -729,6 +848,16 @@ implement!(LineBreakDataV2Marker, "segmenter/line.toml");
 implement!(GraphemeClusterBreakDataV2Marker, "segmenter/grapheme.toml");
 implement!(WordBreakDataV2Marker, "segmenter/word.toml");
 implement!(SentenceBreakDataV2Marker, "segmenter/sentence.toml");
+implement_override!(
+    WordBreakDataOverrideV1Marker,
+    "segmenter/word.toml",
+    ["fi", "sv"]
+);
+implement_override!(
+    SentenceBreakDataOverrideV1Marker,
+    "segmenter/sentence.toml",
+    ["el"]
+);
 
 #[cfg(test)]
 mod tests {
@@ -775,4 +904,16 @@ mod tests {
         assert_eq!(data.property_table.get32(0xe0001), CM);
         assert_eq!(data.property_table.get32(0xe0020), CM);
     }
+
+    #[test]
+    #[should_panic]
+    fn missing_locale_data() {
+        let provider = SourceDataProvider::new_testing();
+        let response: DataResponse<SentenceBreakDataOverrideV1Marker> = provider
+            .load(Default::default())
+            .expect("Loading should succeed!");
+        response.payload.get();
+    }
+
+    // TODO: Add loading override table data. But no locales in testdata.
 }

@@ -7,25 +7,15 @@
     "2": "มะรืนนี้"
   },
   "past": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": " วันที่ผ่านมา",
-      "index": 0
+    "strings": {
+      "specials": [],
+      "other": "\u0001 วันที่ผ่านมา"
     }
   },
   "future": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "ในอีก  วัน",
-      "index": 16
+    "strings": {
+      "specials": [],
+      "other": "\u0011ในอีก  วัน"
     }
   }
 }

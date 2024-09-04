@@ -3,16 +3,40 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_normalizer::properties::CanonicalCombiningClassMap;
+use icu_normalizer::properties::CanonicalCombiningClassMapBorrowed;
 use icu_normalizer::properties::CanonicalComposition;
+use icu_normalizer::properties::CanonicalCompositionBorrowed;
 use icu_normalizer::properties::CanonicalDecomposition;
+use icu_normalizer::properties::CanonicalDecompositionBorrowed;
 use icu_normalizer::properties::Decomposed;
 use icu_normalizer::uts46::Uts46Mapper;
+use icu_normalizer::uts46::Uts46MapperBorrowed;
 use icu_normalizer::ComposingNormalizer;
+use icu_normalizer::ComposingNormalizerBorrowed;
 use icu_normalizer::DecomposingNormalizer;
+use icu_normalizer::DecomposingNormalizerBorrowed;
 
 #[test]
 fn test_nfd_basic() {
-    let normalizer: DecomposingNormalizer = DecomposingNormalizer::new_nfd();
+    let normalizer = DecomposingNormalizerBorrowed::new_nfd();
+    assert_eq!(normalizer.normalize("ä"), "a\u{0308}");
+    assert_eq!(normalizer.normalize("Ä"), "A\u{0308}");
+    assert_eq!(normalizer.normalize("ệ"), "e\u{0323}\u{0302}");
+    assert_eq!(normalizer.normalize("Ệ"), "E\u{0323}\u{0302}");
+    assert_eq!(normalizer.normalize("𝅗𝅥"), "𝅗\u{1D165}");
+    assert_eq!(normalizer.normalize("\u{2126}"), "Ω"); // ohm sign
+    assert_eq!(normalizer.normalize("ﾍﾞ"), "ﾍﾞ"); // half-width unchanged
+    assert_eq!(normalizer.normalize("ﾍﾟ"), "ﾍﾟ"); // half-width unchanged
+    assert_eq!(normalizer.normalize("ﬁ"), "ﬁ"); // ligature unchanged
+    assert_eq!(normalizer.normalize("\u{FDFA}"), "\u{FDFA}"); // ligature unchanged
+    assert_eq!(normalizer.normalize("㈎"), "㈎"); // parenthetical unchanged
+    assert_eq!(normalizer.normalize("\u{0345}"), "\u{0345}"); // Iota subscript
+}
+
+#[test]
+fn test_nfd_owned() {
+    let owned = DecomposingNormalizer::new_nfd();
+    let normalizer = owned.as_borrowed();
     assert_eq!(normalizer.normalize("ä"), "a\u{0308}");
     assert_eq!(normalizer.normalize("Ä"), "A\u{0308}");
     assert_eq!(normalizer.normalize("ệ"), "e\u{0323}\u{0302}");
@@ -29,7 +53,26 @@ fn test_nfd_basic() {
 
 #[test]
 fn test_nfkd_basic() {
-    let normalizer: DecomposingNormalizer = DecomposingNormalizer::new_nfkd();
+    let normalizer = DecomposingNormalizerBorrowed::new_nfkd();
+    assert_eq!(normalizer.normalize("ä"), "a\u{0308}");
+    assert_eq!(normalizer.normalize("Ä"), "A\u{0308}");
+    assert_eq!(normalizer.normalize("ệ"), "e\u{0323}\u{0302}");
+    assert_eq!(normalizer.normalize("Ệ"), "E\u{0323}\u{0302}");
+    assert_eq!(normalizer.normalize("𝅗𝅥"), "𝅗\u{1D165}");
+    assert_eq!(normalizer.normalize("\u{2126}"), "Ω"); // ohm sign
+    assert_eq!(normalizer.normalize("ﾍﾞ"), "ヘ\u{3099}"); // half-width to full-width
+    assert_eq!(normalizer.normalize("ﾍﾟ"), "ヘ\u{309A}"); // half-width to full-width
+    assert_eq!(normalizer.normalize("ﬁ"), "fi"); // ligature expanded
+    assert_eq!(normalizer.normalize("\u{FDFA}"), "\u{635}\u{644}\u{649} \u{627}\u{644}\u{644}\u{647} \u{639}\u{644}\u{64A}\u{647} \u{648}\u{633}\u{644}\u{645}");
+    // ligature expanded
+    assert_eq!(normalizer.normalize("㈎"), "(\u{1100}\u{1161})"); // parenthetical expanded
+    assert_eq!(normalizer.normalize("\u{0345}"), "\u{0345}"); // Iota subscript
+}
+
+#[test]
+fn test_nfkd_owned() {
+    let owned = DecomposingNormalizer::new_nfkd();
+    let normalizer = owned.as_borrowed();
     assert_eq!(normalizer.normalize("ä"), "a\u{0308}");
     assert_eq!(normalizer.normalize("Ä"), "A\u{0308}");
     assert_eq!(normalizer.normalize("ệ"), "e\u{0323}\u{0302}");
@@ -47,7 +90,26 @@ fn test_nfkd_basic() {
 
 #[test]
 fn test_nfc_basic() {
-    let normalizer: ComposingNormalizer = ComposingNormalizer::new_nfc();
+    let normalizer = ComposingNormalizerBorrowed::new_nfc();
+    assert_eq!(normalizer.normalize("a\u{0308}"), "ä");
+    assert_eq!(normalizer.normalize("A\u{0308}"), "Ä");
+    assert_eq!(normalizer.normalize("e\u{0323}\u{0302}"), "ệ");
+    assert_eq!(normalizer.normalize("E\u{0323}\u{0302}"), "Ệ");
+    assert_eq!(normalizer.normalize("𝅗𝅥"), "𝅗\u{1D165}"); // Composition exclusion
+
+    assert_eq!(normalizer.normalize("\u{2126}"), "Ω"); // ohm sign
+    assert_eq!(normalizer.normalize("ﾍﾞ"), "ﾍﾞ"); // half-width unchanged
+    assert_eq!(normalizer.normalize("ﾍﾟ"), "ﾍﾟ"); // half-width unchanged
+    assert_eq!(normalizer.normalize("ﬁ"), "ﬁ"); // ligature unchanged
+    assert_eq!(normalizer.normalize("\u{FDFA}"), "\u{FDFA}"); // ligature unchanged
+    assert_eq!(normalizer.normalize("㈎"), "㈎"); // parenthetical unchanged
+    assert_eq!(normalizer.normalize("\u{0345}"), "\u{0345}"); // Iota subscript
+}
+
+#[test]
+fn test_nfc_owned() {
+    let owned = ComposingNormalizer::new_nfc();
+    let normalizer = owned.as_borrowed();
     assert_eq!(normalizer.normalize("a\u{0308}"), "ä");
     assert_eq!(normalizer.normalize("A\u{0308}"), "Ä");
     assert_eq!(normalizer.normalize("e\u{0323}\u{0302}"), "ệ");
@@ -65,7 +127,27 @@ fn test_nfc_basic() {
 
 #[test]
 fn test_nfkc_basic() {
-    let normalizer: ComposingNormalizer = ComposingNormalizer::new_nfkc();
+    let normalizer = ComposingNormalizerBorrowed::new_nfkc();
+    assert_eq!(normalizer.normalize("a\u{0308}"), "ä");
+    assert_eq!(normalizer.normalize("A\u{0308}"), "Ä");
+    assert_eq!(normalizer.normalize("e\u{0323}\u{0302}"), "ệ");
+    assert_eq!(normalizer.normalize("E\u{0323}\u{0302}"), "Ệ");
+    assert_eq!(normalizer.normalize("𝅗𝅥"), "𝅗\u{1D165}"); // Composition exclusion
+
+    assert_eq!(normalizer.normalize("\u{2126}"), "Ω"); // ohm sign
+    assert_eq!(normalizer.normalize("ﾍﾞ"), "ベ"); // half-width to full-width, the compose
+    assert_eq!(normalizer.normalize("ﾍﾟ"), "ペ"); // half-width to full-width, the compose
+    assert_eq!(normalizer.normalize("ﬁ"), "fi"); // ligature expanded
+    assert_eq!(normalizer.normalize("\u{FDFA}"), "\u{0635}\u{0644}\u{0649} \u{0627}\u{0644}\u{0644}\u{0647} \u{0639}\u{0644}\u{064A}\u{0647} \u{0648}\u{0633}\u{0644}\u{0645}");
+    // ligature expanded
+    assert_eq!(normalizer.normalize("㈎"), "(가)"); // parenthetical expanded and partially recomposed
+    assert_eq!(normalizer.normalize("\u{0345}"), "\u{0345}"); // Iota subscript
+}
+
+#[test]
+fn test_nfkc_owned() {
+    let owned = ComposingNormalizer::new_nfkc();
+    let normalizer = owned.as_borrowed();
     assert_eq!(normalizer.normalize("a\u{0308}"), "ä");
     assert_eq!(normalizer.normalize("A\u{0308}"), "Ä");
     assert_eq!(normalizer.normalize("e\u{0323}\u{0302}"), "ệ");
@@ -84,7 +166,87 @@ fn test_nfkc_basic() {
 
 #[test]
 fn test_uts46_map_normalize() {
-    let mapper: Uts46Mapper = Uts46Mapper::new();
+    let mapper = Uts46MapperBorrowed::new();
+    assert_eq!(
+        mapper
+            .map_normalize("a\u{0308}".chars())
+            .collect::<String>(),
+        "ä"
+    );
+    assert_eq!(
+        mapper
+            .map_normalize("A\u{0308}".chars())
+            .collect::<String>(),
+        "ä"
+    );
+    assert_eq!(
+        mapper
+            .map_normalize("e\u{0323}\u{0302}".chars())
+            .collect::<String>(),
+        "ệ"
+    );
+    assert_eq!(
+        mapper
+            .map_normalize("E\u{0323}\u{0302}".chars())
+            .collect::<String>(),
+        "ệ"
+    );
+    assert_eq!(
+        mapper.map_normalize("𝅗𝅥".chars()).collect::<String>(),
+        "𝅗\u{1D165}"
+    ); // Composition exclusion
+
+    assert_eq!(
+        mapper.map_normalize("\u{2126}".chars()).collect::<String>(),
+        "ω"
+    ); // ohm sign
+    assert_eq!(mapper.map_normalize("ﾍﾞ".chars()).collect::<String>(), "ベ"); // half-width to full-width, the compose
+    assert_eq!(mapper.map_normalize("ﾍﾟ".chars()).collect::<String>(), "ペ"); // half-width to full-width, the compose
+    assert_eq!(mapper.map_normalize("ﬁ".chars()).collect::<String>(), "fi"); // ligature expanded
+    assert_eq!(mapper.map_normalize("\u{FDFA}".chars()).collect::<String>(), "\u{0635}\u{0644}\u{0649} \u{0627}\u{0644}\u{0644}\u{0647} \u{0639}\u{0644}\u{064A}\u{0647} \u{0648}\u{0633}\u{0644}\u{0645}");
+    // ligature expanded
+    assert_eq!(
+        mapper.map_normalize("㈎".chars()).collect::<String>(),
+        "(가)"
+    ); // parenthetical expanded and partially recomposed
+
+    // Deviations (UTS 46, 6 Mapping Table Derivation, Step 4)
+    assert_eq!(
+        mapper.map_normalize("\u{200C}".chars()).collect::<String>(),
+        "\u{200C}"
+    );
+    assert_eq!(
+        mapper.map_normalize("\u{200D}".chars()).collect::<String>(),
+        "\u{200D}"
+    );
+    assert_eq!(mapper.map_normalize("ß".chars()).collect::<String>(), "ß");
+    assert_eq!(mapper.map_normalize("ς".chars()).collect::<String>(), "ς");
+
+    // Iota subscript
+    assert_eq!(
+        mapper.map_normalize("\u{0345}".chars()).collect::<String>(),
+        "ι"
+    );
+
+    // Disallowed
+    assert_eq!(
+        mapper.map_normalize("\u{061C}".chars()).collect::<String>(),
+        "\u{FFFD}"
+    );
+
+    // Ignored
+    assert_eq!(
+        mapper
+            .map_normalize("a\u{180B}b".chars())
+            .collect::<String>(),
+        "ab"
+    );
+}
+
+#[test]
+fn test_uts46_owned() {
+    let owned = Uts46Mapper::new();
+    let mapper = owned.as_borrowed();
     assert_eq!(
         mapper
             .map_normalize("a\u{0308}".chars())
@@ -163,7 +325,7 @@ fn test_uts46_map_normalize() {
 
 #[test]
 fn test_uts46_normalize_validate() {
-    let mapper: Uts46Mapper = Uts46Mapper::new();
+    let mapper = Uts46MapperBorrowed::new();
     assert_eq!(
         mapper
             .normalize_validate("a\u{0308}".chars())
@@ -269,7 +431,7 @@ type StackString = arraystring::ArrayString<arraystring::typenum::U48>;
 
 #[test]
 fn test_nfd_str_to() {
-    let normalizer: DecomposingNormalizer = DecomposingNormalizer::new_nfd();
+    let normalizer = DecomposingNormalizerBorrowed::new_nfd();
 
     let mut buf = StackString::new();
     assert!(normalizer.normalize_to("ä", &mut buf).is_ok());
@@ -282,7 +444,7 @@ fn test_nfd_str_to() {
 
 #[test]
 fn test_nfd_utf8_to() {
-    let normalizer: DecomposingNormalizer = DecomposingNormalizer::new_nfd();
+    let normalizer = DecomposingNormalizerBorrowed::new_nfd();
 
     let mut buf = StackString::new();
     assert!(normalizer
@@ -301,7 +463,7 @@ type StackVec = arrayvec::ArrayVec<u16, 32>;
 
 #[test]
 fn test_nfd_utf16_to() {
-    let normalizer: DecomposingNormalizer = DecomposingNormalizer::new_nfd();
+    let normalizer = DecomposingNormalizerBorrowed::new_nfd();
 
     let mut buf = StackVec::new();
     assert!(normalizer
@@ -318,7 +480,7 @@ fn test_nfd_utf16_to() {
 
 #[test]
 fn test_nfc_str_to() {
-    let normalizer: ComposingNormalizer = ComposingNormalizer::new_nfc();
+    let normalizer = ComposingNormalizerBorrowed::new_nfc();
 
     let mut buf = StackString::new();
     assert!(normalizer.normalize_to("a\u{0308}", &mut buf).is_ok());
@@ -333,7 +495,7 @@ fn test_nfc_str_to() {
 
 #[test]
 fn test_nfc_utf8_to() {
-    let normalizer: ComposingNormalizer = ComposingNormalizer::new_nfc();
+    let normalizer = ComposingNormalizerBorrowed::new_nfc();
 
     let mut buf = StackString::new();
     assert!(normalizer
@@ -350,7 +512,7 @@ fn test_nfc_utf8_to() {
 
 #[test]
 fn test_nfc_utf16_to() {
-    let normalizer: ComposingNormalizer = ComposingNormalizer::new_nfc();
+    let normalizer = ComposingNormalizerBorrowed::new_nfc();
 
     let mut buf = StackVec::new();
     assert!(normalizer
@@ -367,7 +529,7 @@ fn test_nfc_utf16_to() {
 
 #[test]
 fn test_nfc_utf8_to_errors() {
-    let normalizer: ComposingNormalizer = ComposingNormalizer::new_nfc();
+    let normalizer = ComposingNormalizerBorrowed::new_nfc();
 
     let mut buf = StackString::new();
     assert!(normalizer
@@ -396,7 +558,7 @@ fn test_nfc_utf8_to_errors() {
 
 #[test]
 fn test_nfd_utf8_to_errors() {
-    let normalizer: DecomposingNormalizer = DecomposingNormalizer::new_nfd();
+    let normalizer = DecomposingNormalizerBorrowed::new_nfd();
 
     let mut buf = StackString::new();
     assert!(normalizer
@@ -425,7 +587,7 @@ fn test_nfd_utf8_to_errors() {
 
 #[test]
 fn test_nfc_utf16_to_errors() {
-    let normalizer: ComposingNormalizer = ComposingNormalizer::new_nfc();
+    let normalizer = ComposingNormalizerBorrowed::new_nfc();
 
     let mut buf = StackVec::new();
     assert!(normalizer
@@ -532,7 +694,7 @@ fn test_nfc_utf16_to_errors() {
 
 #[test]
 fn test_nfd_utf16_to_errors() {
-    let normalizer: DecomposingNormalizer = DecomposingNormalizer::new_nfd();
+    let normalizer = DecomposingNormalizerBorrowed::new_nfd();
 
     let mut buf = StackVec::new();
     assert!(normalizer
@@ -674,10 +836,10 @@ fn parse_hex(mut hexes: &[u8]) -> [StackString; 5] {
 
 #[test]
 fn test_conformance() {
-    let nfd: DecomposingNormalizer = DecomposingNormalizer::new_nfd();
-    let nfkd: DecomposingNormalizer = DecomposingNormalizer::new_nfkd();
-    let nfc: ComposingNormalizer = ComposingNormalizer::new_nfc();
-    let nfkc: ComposingNormalizer = ComposingNormalizer::new_nfkc();
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    let nfkd = DecomposingNormalizerBorrowed::new_nfkd();
+    let nfc = ComposingNormalizerBorrowed::new_nfc();
+    let nfkc = ComposingNormalizerBorrowed::new_nfkc();
 
     let mut prev = 0u32;
     let mut part = 0u8;
@@ -821,7 +983,7 @@ fn test_conformance() {
 //     let builder = CodePointSetBuilder::new();
 //     let set: CodePointSet = builder.build();
 
-//     let normalizer: ComposingNormalizer = ComposingNormalizer::new_nfc();
+//     let normalizer: ComposingNormalizer = ComposingNormalizerBorrowed::new_nfc();
 //     {
 //         let mut norm_iter = normalizer.normalize_iter("A\u{AC00}\u{11A7}".chars());
 //         // Pessimize passthrough to avoid hiding bugs.
@@ -868,10 +1030,10 @@ fn char_to_str(c: char, sink: &mut StackString) {
 
 #[test]
 fn test_conformance_utf16() {
-    let nfd: DecomposingNormalizer = DecomposingNormalizer::new_nfd();
-    let nfkd: DecomposingNormalizer = DecomposingNormalizer::new_nfkd();
-    let nfc: ComposingNormalizer = ComposingNormalizer::new_nfc();
-    let nfkc: ComposingNormalizer = ComposingNormalizer::new_nfkc();
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    let nfkd = DecomposingNormalizerBorrowed::new_nfkd();
+    let nfc = ComposingNormalizerBorrowed::new_nfc();
+    let nfkc = ComposingNormalizerBorrowed::new_nfkc();
 
     let mut input = StackVec::new();
     let mut normalized = StackVec::new();
@@ -1081,10 +1243,10 @@ fn test_conformance_utf16() {
 
 #[test]
 fn test_conformance_utf8() {
-    let nfd: DecomposingNormalizer = DecomposingNormalizer::new_nfd();
-    let nfkd: DecomposingNormalizer = DecomposingNormalizer::new_nfkd();
-    let nfc: ComposingNormalizer = ComposingNormalizer::new_nfc();
-    let nfkc: ComposingNormalizer = ComposingNormalizer::new_nfkc();
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    let nfkd = DecomposingNormalizerBorrowed::new_nfkd();
+    let nfc = ComposingNormalizerBorrowed::new_nfc();
+    let nfkc = ComposingNormalizerBorrowed::new_nfkc();
 
     let mut input = StackString::new();
     let mut normalized = StackString::new();
@@ -1350,7 +1512,27 @@ fn test_conformance_utf8() {
 
 #[test]
 fn test_canonical_composition() {
-    let comp = CanonicalComposition::new();
+    let comp = CanonicalCompositionBorrowed::new();
+
+    assert_eq!(comp.compose('a', 'b'), None); // Just two starters
+
+    assert_eq!(comp.compose('a', '\u{0308}'), Some('ä'));
+    assert_eq!(comp.compose('A', '\u{0308}'), Some('Ä'));
+    assert_eq!(comp.compose('ẹ', '\u{0302}'), Some('ệ'));
+    assert_eq!(comp.compose('Ẹ', '\u{0302}'), Some('Ệ'));
+    assert_eq!(comp.compose('\u{1D157}', '\u{1D165}'), None); // Composition exclusion
+
+    assert_eq!(comp.compose('ে', 'া'), Some('ো')); // Second is starter; BMP
+    assert_eq!(comp.compose('𑄱', '𑄧'), Some('𑄮')); // Second is starter; non-BMP
+
+    assert_eq!(comp.compose('ᄀ', 'ᅡ'), Some('가')); // Hangul LV
+    assert_eq!(comp.compose('가', 'ᆨ'), Some('각')); // Hangul LVT
+}
+
+#[test]
+fn test_canonical_composition_owned() {
+    let owned = CanonicalComposition::new();
+    let comp = owned.as_borrowed();
 
     assert_eq!(comp.compose('a', 'b'), None); // Just two starters
 
@@ -1369,7 +1551,51 @@ fn test_canonical_composition() {
 
 #[test]
 fn test_canonical_decomposition() {
-    let decomp = CanonicalDecomposition::new();
+    let decomp = CanonicalDecompositionBorrowed::new();
+
+    assert_eq!(
+        decomp.decompose('ä'),
+        Decomposed::Expansion('a', '\u{0308}')
+    );
+    assert_eq!(
+        decomp.decompose('Ä'),
+        Decomposed::Expansion('A', '\u{0308}')
+    );
+    assert_eq!(
+        decomp.decompose('ệ'),
+        Decomposed::Expansion('ẹ', '\u{0302}')
+    );
+    assert_eq!(
+        decomp.decompose('Ệ'),
+        Decomposed::Expansion('Ẹ', '\u{0302}')
+    );
+    assert_eq!(
+        decomp.decompose('\u{1D15E}'),
+        Decomposed::Expansion('\u{1D157}', '\u{1D165}')
+    );
+    assert_eq!(decomp.decompose('ো'), Decomposed::Expansion('ে', 'া'));
+    assert_eq!(decomp.decompose('𑄮'), Decomposed::Expansion('𑄱', '𑄧'));
+    assert_eq!(decomp.decompose('가'), Decomposed::Expansion('ᄀ', 'ᅡ'));
+    assert_eq!(decomp.decompose('각'), Decomposed::Expansion('가', 'ᆨ'));
+
+    assert_eq!(decomp.decompose('\u{212B}'), Decomposed::Singleton('Å')); // ANGSTROM SIGN
+    assert_eq!(decomp.decompose('\u{2126}'), Decomposed::Singleton('Ω')); // OHM SIGN
+
+    assert_eq!(decomp.decompose('\u{1F71}'), Decomposed::Singleton('ά')); // oxia
+    assert_eq!(
+        decomp.decompose('\u{1F72}'),
+        Decomposed::Expansion('ε', '\u{0300}')
+    ); // not oxia but in the oxia range
+    assert_eq!(
+        decomp.decompose('ά'),
+        Decomposed::Expansion('α', '\u{0301}')
+    ); // tonos
+}
+
+#[test]
+fn test_canonical_decomposition_owned() {
+    let owned = CanonicalDecomposition::new();
+    let decomp = owned.as_borrowed();
 
     assert_eq!(
         decomp.decompose('ä'),
@@ -1412,7 +1638,19 @@ fn test_canonical_decomposition() {
 
 #[test]
 fn test_ccc() {
-    let map = CanonicalCombiningClassMap::new();
+    let map = CanonicalCombiningClassMapBorrowed::new();
+    for u in 0..=0x10FFFF {
+        assert_eq!(
+            map.get32(u),
+            icu_properties::maps::canonical_combining_class().get32(u)
+        );
+    }
+}
+
+#[test]
+fn test_ccc_owned() {
+    let owned = CanonicalCombiningClassMap::new();
+    let map = owned.as_borrowed();
     for u in 0..=0x10FFFF {
         assert_eq!(
             map.get32(u),
@@ -1423,7 +1661,7 @@ fn test_ccc() {
 
 #[test]
 fn test_utf16_basic() {
-    let normalizer: ComposingNormalizer = ComposingNormalizer::new_nfc();
+    let normalizer = ComposingNormalizerBorrowed::new_nfc();
 
     assert_eq!(
         normalizer.normalize_utf16(&[0x0061]).as_slice(),
@@ -1437,7 +1675,7 @@ fn test_utf16_basic() {
 
 #[test]
 fn test_accented_digraph() {
-    let normalizer: DecomposingNormalizer = DecomposingNormalizer::new_nfkd();
+    let normalizer = DecomposingNormalizerBorrowed::new_nfkd();
     assert_eq!(
         normalizer.normalize("\u{01C4}\u{0323}"),
         "DZ\u{0323}\u{030C}"
@@ -1450,7 +1688,7 @@ fn test_accented_digraph() {
 
 #[test]
 fn test_ddd() {
-    let normalizer: DecomposingNormalizer = DecomposingNormalizer::new_nfd();
+    let normalizer = DecomposingNormalizerBorrowed::new_nfd();
     assert_eq!(
         normalizer.normalize("\u{0DDD}\u{0334}"),
         "\u{0DD9}\u{0DCF}\u{0334}\u{0DCA}"
@@ -1459,10 +1697,10 @@ fn test_ddd() {
 
 #[test]
 fn test_is_normalized() {
-    let nfd: DecomposingNormalizer = DecomposingNormalizer::new_nfd();
-    let nfkd: DecomposingNormalizer = DecomposingNormalizer::new_nfkd();
-    let nfc: ComposingNormalizer = ComposingNormalizer::new_nfc();
-    let nfkc: ComposingNormalizer = ComposingNormalizer::new_nfkc();
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    let nfkd = DecomposingNormalizerBorrowed::new_nfkd();
+    let nfc = ComposingNormalizerBorrowed::new_nfc();
+    let nfkc = ComposingNormalizerBorrowed::new_nfkc();
 
     let aaa = "aaa";
     assert!(nfd.is_normalized(aaa));
@@ -1546,4 +1784,256 @@ fn test_is_normalized() {
     assert!(!nfkd.is_normalized_utf16(fraction16));
     assert!(nfc.is_normalized_utf16(fraction16));
     assert!(!nfkc.is_normalized_utf16(fraction16));
+}
+
+#[test]
+fn test_is_normalized_up_to() {
+    let nfd = DecomposingNormalizerBorrowed::new_nfd();
+    let nfkd = DecomposingNormalizerBorrowed::new_nfkd();
+    let nfc = ComposingNormalizerBorrowed::new_nfc();
+    let nfkc = ComposingNormalizerBorrowed::new_nfkc();
+
+    // Check a string slice is normalized up to where is_normalized_up_to reports
+    let check_str = |input: &str| {
+        // Check nfd
+        let up_to = nfd.is_normalized_up_to(input);
+        let (head, tail) = input.split_at(up_to);
+        let mut normalized = String::from(head);
+        let _ = nfd.normalize_to(tail, &mut normalized);
+        assert!(nfd.is_normalized(&normalized));
+
+        // Check nfkd
+        let up_to = nfkd.is_normalized_up_to(input);
+        let (head, tail) = input.split_at(up_to);
+        let mut normalized = String::from(head);
+        let _ = nfkd.normalize_to(tail, &mut normalized);
+        assert!(nfkd.is_normalized(&normalized));
+
+        // Check nfc
+        let up_to = nfc.is_normalized_up_to(input);
+        let (head, tail) = input.split_at(up_to);
+        let mut normalized = String::from(head);
+        let _ = nfc.normalize_to(tail, &mut normalized);
+        assert!(nfc.is_normalized(&normalized));
+
+        // Check nfkc
+        let up_to = nfkc.is_normalized_up_to(input);
+        let (head, tail) = input.split_at(up_to);
+        let mut normalized = String::from(head);
+        let _ = nfkc.normalize_to(tail, &mut normalized);
+        assert!(nfkc.is_normalized(&normalized));
+    };
+
+    // Check a string of UTF8 bytes is normalized up to where is_normalized_up_to reports
+    // note: from_utf8 can panic with invalid UTF8 input
+    let check_utf8 = |input: &[u8]| {
+        // Check nfd
+        let up_to = nfd.is_normalized_utf8_up_to(input);
+        let (head, tail) = input.split_at(up_to);
+        let mut normalized = String::from_utf8(head.to_vec()).unwrap();
+        let _ = nfd.normalize_utf8_to(tail, &mut normalized);
+        assert!(nfd.is_normalized(&normalized));
+
+        // Check nfkd
+        let up_to = nfkd.is_normalized_utf8_up_to(input);
+        let (head, tail) = input.split_at(up_to);
+        let mut normalized = String::from_utf8(head.to_vec()).unwrap();
+        let _ = nfkd.normalize_utf8_to(tail, &mut normalized);
+        assert!(nfkd.is_normalized(&normalized));
+
+        // Check nfc
+        let up_to = nfc.is_normalized_utf8_up_to(input);
+        let (head, tail) = input.split_at(up_to);
+        let mut normalized = String::from_utf8(head.to_vec()).unwrap();
+        let _ = nfc.normalize_utf8_to(tail, &mut normalized);
+        assert!(nfc.is_normalized(&normalized));
+
+        // Check nfkc
+        let up_to = nfkc.is_normalized_utf8_up_to(input);
+        let (head, tail) = input.split_at(up_to);
+        let mut normalized = String::from_utf8(head.to_vec()).unwrap();
+        let _ = nfkc.normalize_utf8_to(tail, &mut normalized);
+        assert!(nfkc.is_normalized(&normalized));
+    };
+
+    // Check a string of UTF-16 code units is normalized up to where is_normalized_up_to reports
+    let check_utf16 = |input: &[u16]| {
+        // Check nfd
+        let up_to = nfd.is_normalized_utf16_up_to(input);
+        let (head, tail) = input.split_at(up_to);
+        let mut normalized = head.to_vec();
+        let _ = nfd.normalize_utf16_to(tail, &mut normalized);
+        assert!(nfd.is_normalized_utf16(&normalized));
+
+        // Check nfkd
+        let up_to = nfkd.is_normalized_utf16_up_to(input);
+        let (head, tail) = input.split_at(up_to);
+        let mut normalized = head.to_vec();
+        let _ = nfkd.normalize_utf16_to(tail, &mut normalized);
+        assert!(nfkd.is_normalized_utf16(&normalized));
+
+        // Check nfc
+        let up_to = nfc.is_normalized_utf16_up_to(input);
+        let (head, tail) = input.split_at(up_to);
+        let mut normalized = head.to_vec();
+        let _ = nfc.normalize_utf16_to(tail, &mut normalized);
+        assert!(nfc.is_normalized_utf16(&normalized));
+
+        // Check nfkc
+        let up_to = nfkc.is_normalized_utf16_up_to(input);
+        let (head, tail) = input.split_at(up_to);
+        let mut normalized = head.to_vec();
+        let _ = nfkc.normalize_utf16_to(tail, &mut normalized);
+        assert!(nfkc.is_normalized_utf16(&normalized));
+    };
+
+    let aaa = "aaa";
+    check_str(aaa);
+
+    let aaa_utf8 = aaa.as_bytes();
+    check_utf8(aaa_utf8);
+
+    let aaa_utf16: Vec<u16> = aaa.encode_utf16().collect();
+    check_utf16(&aaa_utf16);
+
+    assert!(nfd.is_normalized_up_to(aaa) == aaa.len());
+    assert!(nfkd.is_normalized_up_to(aaa) == aaa.len());
+    assert!(nfc.is_normalized_up_to(aaa) == aaa.len());
+    assert!(nfkc.is_normalized_up_to(aaa) == aaa.len());
+    assert!(nfd.is_normalized_utf8_up_to(aaa_utf8) == aaa_utf8.len());
+    assert!(nfkd.is_normalized_utf8_up_to(aaa_utf8) == aaa_utf8.len());
+    assert!(nfc.is_normalized_utf8_up_to(aaa_utf8) == aaa_utf8.len());
+    assert!(nfkc.is_normalized_utf8_up_to(aaa_utf8) == aaa_utf8.len());
+    assert!(nfd.is_normalized_utf16_up_to(&aaa_utf16) == aaa_utf16.len());
+    assert!(nfkd.is_normalized_utf16_up_to(&aaa_utf16) == aaa_utf16.len());
+    assert!(nfc.is_normalized_utf16_up_to(&aaa_utf16) == aaa_utf16.len());
+    assert!(nfkc.is_normalized_utf16_up_to(&aaa_utf16) == aaa_utf16.len());
+
+    let note = "a𝅗\u{1D165}a";
+    check_str(note);
+
+    let note_utf8 = note.as_bytes();
+    check_utf8(note_utf8);
+
+    let note_utf16: Vec<u16> = note.encode_utf16().collect();
+    check_utf16(&note_utf16);
+
+    assert!(nfd.is_normalized_up_to(note) == note.len());
+    assert!(nfkd.is_normalized_up_to(note) == note.len());
+    assert!(nfc.is_normalized_up_to(note) == note.len());
+    assert!(nfkc.is_normalized_up_to(note) == note.len());
+    assert!(nfd.is_normalized_utf8_up_to(note_utf8) == note_utf8.len());
+    assert!(nfkd.is_normalized_utf8_up_to(note_utf8) == note_utf8.len());
+    assert!(nfc.is_normalized_utf8_up_to(note_utf8) == note_utf8.len());
+    assert!(nfkc.is_normalized_utf8_up_to(note_utf8) == note_utf8.len());
+    assert!(nfd.is_normalized_utf16_up_to(&note_utf16) == note_utf16.len());
+    assert!(nfkd.is_normalized_utf16_up_to(&note_utf16) == note_utf16.len());
+    assert!(nfc.is_normalized_utf16_up_to(&note_utf16) == note_utf16.len());
+    assert!(nfkc.is_normalized_utf16_up_to(&note_utf16) == note_utf16.len());
+
+    let umlaut = "aäa";
+    check_str(umlaut);
+
+    let umlaut_utf8 = umlaut.as_bytes();
+    check_utf8(umlaut_utf8);
+
+    let umlaut_utf16: Vec<u16> = umlaut.encode_utf16().collect();
+    check_utf16(&umlaut_utf16);
+
+    assert_eq!(nfd.is_normalized_up_to(umlaut), 1);
+    assert_eq!(nfkd.is_normalized_up_to(umlaut), 1);
+    assert_eq!(nfc.is_normalized_up_to(umlaut), 4);
+    assert_eq!(nfkc.is_normalized_up_to(umlaut), 4);
+    assert_eq!(nfd.is_normalized_utf8_up_to(umlaut_utf8), 1);
+    assert_eq!(nfkd.is_normalized_utf8_up_to(umlaut_utf8), 1);
+    assert_eq!(nfc.is_normalized_utf8_up_to(umlaut_utf8), 4);
+    assert_eq!(nfkc.is_normalized_utf8_up_to(umlaut_utf8), 4);
+    assert_eq!(nfd.is_normalized_utf16_up_to(&umlaut_utf16), 1);
+    assert_eq!(nfkd.is_normalized_utf16_up_to(&umlaut_utf16), 1);
+    assert_eq!(nfc.is_normalized_utf16_up_to(&umlaut_utf16), 3);
+    assert_eq!(nfkc.is_normalized_utf16_up_to(&umlaut_utf16), 3);
+
+    let fraction = "a½a";
+    check_str(fraction);
+
+    let fraction_utf8 = fraction.as_bytes();
+    check_utf8(fraction_utf8);
+
+    let fraction_utf16: Vec<u16> = fraction.encode_utf16().collect();
+    check_utf16(&fraction_utf16);
+
+    assert_eq!(nfd.is_normalized_up_to(fraction), 4);
+    assert_eq!(nfkd.is_normalized_up_to(fraction), 1);
+    assert_eq!(nfc.is_normalized_up_to(fraction), 4);
+    assert_eq!(nfkc.is_normalized_up_to(fraction), 1);
+    assert_eq!(nfd.is_normalized_utf8_up_to(fraction_utf8), 4);
+    assert_eq!(nfkd.is_normalized_utf8_up_to(fraction_utf8), 1);
+    assert_eq!(nfc.is_normalized_utf8_up_to(fraction_utf8), 4);
+    assert_eq!(nfkc.is_normalized_utf8_up_to(fraction_utf8), 1);
+    assert_eq!(nfd.is_normalized_utf16_up_to(&fraction_utf16), 3);
+    assert_eq!(nfkd.is_normalized_utf16_up_to(&fraction_utf16), 1);
+    assert_eq!(nfc.is_normalized_utf16_up_to(&fraction_utf16), 3);
+    assert_eq!(nfkc.is_normalized_utf16_up_to(&fraction_utf16), 1);
+
+    let reversed_vietnamese = "e\u{0302}\u{0323}";
+    check_str(reversed_vietnamese);
+
+    let reversed_vietnamese_utf8 = reversed_vietnamese.as_bytes();
+    check_utf8(reversed_vietnamese_utf8);
+
+    let reversed_vietnamese_utf16: Vec<u16> = reversed_vietnamese.encode_utf16().collect();
+    check_utf16(&reversed_vietnamese_utf16);
+
+    assert_eq!(nfd.is_normalized_up_to(reversed_vietnamese), 1);
+    assert_eq!(nfkd.is_normalized_up_to(reversed_vietnamese), 1);
+    assert_eq!(nfc.is_normalized_up_to(reversed_vietnamese), 0);
+    assert_eq!(nfkc.is_normalized_up_to(reversed_vietnamese), 0);
+    assert_eq!(nfd.is_normalized_utf8_up_to(reversed_vietnamese_utf8), 1);
+    assert_eq!(nfkd.is_normalized_utf8_up_to(reversed_vietnamese_utf8), 1);
+    assert_eq!(nfc.is_normalized_utf8_up_to(reversed_vietnamese_utf8), 0);
+    assert_eq!(nfkc.is_normalized_utf8_up_to(reversed_vietnamese_utf8), 0);
+    assert_eq!(nfd.is_normalized_utf16_up_to(&reversed_vietnamese_utf16), 1);
+    assert_eq!(
+        nfkd.is_normalized_utf16_up_to(&reversed_vietnamese_utf16),
+        1
+    );
+    assert_eq!(nfc.is_normalized_utf16_up_to(&reversed_vietnamese_utf16), 0);
+    assert_eq!(
+        nfkc.is_normalized_utf16_up_to(&reversed_vietnamese_utf16),
+        0
+    );
+
+    let truncated_vietnamese = "e\u{0302}";
+    check_str(truncated_vietnamese);
+
+    let truncated_vietnamese_utf8 = truncated_vietnamese.as_bytes();
+    check_utf8(truncated_vietnamese_utf8);
+
+    let truncated_vietnamese_utf16: Vec<u16> = truncated_vietnamese.encode_utf16().collect();
+    check_utf16(&truncated_vietnamese_utf16);
+
+    assert_eq!(nfd.is_normalized_up_to(truncated_vietnamese), 3);
+    assert_eq!(nfkd.is_normalized_up_to(truncated_vietnamese), 3);
+    assert_eq!(nfc.is_normalized_up_to(truncated_vietnamese), 0);
+    assert_eq!(nfkc.is_normalized_up_to(truncated_vietnamese), 0);
+    assert_eq!(nfd.is_normalized_utf8_up_to(truncated_vietnamese_utf8), 3);
+    assert_eq!(nfkd.is_normalized_utf8_up_to(truncated_vietnamese_utf8), 3);
+    assert_eq!(nfc.is_normalized_utf8_up_to(truncated_vietnamese_utf8), 0);
+    assert_eq!(nfkc.is_normalized_utf8_up_to(truncated_vietnamese_utf8), 0);
+    assert_eq!(
+        nfd.is_normalized_utf16_up_to(&truncated_vietnamese_utf16),
+        2
+    );
+    assert_eq!(
+        nfkd.is_normalized_utf16_up_to(&truncated_vietnamese_utf16),
+        2
+    );
+    assert_eq!(
+        nfc.is_normalized_utf16_up_to(&truncated_vietnamese_utf16),
+        0
+    );
+    assert_eq!(
+        nfkc.is_normalized_utf16_up_to(&truncated_vietnamese_utf16),
+        0
+    );
 }

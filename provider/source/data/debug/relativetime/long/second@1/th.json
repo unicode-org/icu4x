@@ -3,25 +3,15 @@
     "0": "ขณะนี้"
   },
   "past": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": " วินาทีที่ผ่านมา",
-      "index": 0
+    "strings": {
+      "specials": [],
+      "other": "\u0001 วินาทีที่ผ่านมา"
     }
   },
   "future": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "ในอีก  วินาที",
-      "index": 16
+    "strings": {
+      "specials": [],
+      "other": "\u0011ในอีก  วินาที"
     }
   }
 }

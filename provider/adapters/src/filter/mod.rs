@@ -17,7 +17,7 @@
 //!
 //! // Only return German data from a HelloWorldProvider:
 //! FilterDataProvider::new(HelloWorldProvider, "Demo German-only filter")
-//!     .with_filter(|id| id.locale.language() == language!("de"));
+//!     .with_filter(|id| id.locale.language == language!("de"));
 //! ```
 
 mod impls;

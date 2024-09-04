@@ -1,6 +1,8 @@
 {
   "patterns": {
-    "One": "{0} sa.",
-    "Other": "{0} sa."
+    "strings": {
+      "specials": [],
+      "other": "\u0001 sa."
+    }
   }
 }

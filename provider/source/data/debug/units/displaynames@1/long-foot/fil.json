@@ -1,6 +1,13 @@
 {
   "patterns": {
-    "One": "{0} talampakan",
-    "Other": "{0} na talampakan"
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0001 talampakan"
+        ]
+      ],
+      "other": "\u0001 na talampakan"
+    }
   }
 }

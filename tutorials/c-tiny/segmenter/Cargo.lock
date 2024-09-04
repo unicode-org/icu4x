@@ -5,7 +5,7 @@ version = 3
 [[package]]
 name = "diplomat"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=bcf0fc679266bb5ee0c7b25a371398158e81a7e1#bcf0fc679266bb5ee0c7b25a371398158e81a7e1"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=8744ac97162341f347b63131969ad736e1047f6d#8744ac97162341f347b63131969ad736e1047f6d"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -15,15 +15,14 @@ dependencies = [
 
 [[package]]
 name = "diplomat-runtime"
-version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=bcf0fc679266bb5ee0c7b25a371398158e81a7e1#bcf0fc679266bb5ee0c7b25a371398158e81a7e1"
+version = "0.8.1"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=8744ac97162341f347b63131969ad736e1047f6d#8744ac97162341f347b63131969ad736e1047f6d"
 
 [[package]]
 name = "diplomat_core"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=bcf0fc679266bb5ee0c7b25a371398158e81a7e1#bcf0fc679266bb5ee0c7b25a371398158e81a7e1"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=8744ac97162341f347b63131969ad736e1047f6d#8744ac97162341f347b63131969ad736e1047f6d"
 dependencies = [
- "lazy_static",
  "proc-macro2",
  "quote",
  "serde",
@@ -49,7 +48,7 @@ version = "1.5.0"
 dependencies = [
  "diplomat",
  "diplomat-runtime",
- "icu_locid",
+ "icu_locale_core",
  "icu_provider",
  "icu_provider_adapters",
  "tinystr",
@@ -57,7 +56,18 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_locid"
+name = "icu_locale"
+version = "1.5.0"
+dependencies = [
+ "displaydoc",
+ "icu_locale_core",
+ "icu_provider",
+ "tinystr",
+ "zerovec",
+]
+
+[[package]]
+name = "icu_locale_core"
 version = "1.5.0"
 dependencies = [
  "displaydoc",
@@ -68,22 +78,11 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_locid_transform"
-version = "1.5.0"
-dependencies = [
- "displaydoc",
- "icu_locid",
- "icu_provider",
- "tinystr",
- "zerovec",
-]
-
-[[package]]
 name = "icu_provider"
 version = "1.5.0"
 dependencies = [
  "displaydoc",
- "icu_locid",
+ "icu_locale_core",
  "icu_provider_macros",
  "stable_deref_trait",
  "tinystr",
@@ -97,8 +96,7 @@ dependencies = [
 name = "icu_provider_adapters"
 version = "1.5.0"
 dependencies = [
- "icu_locid",
- "icu_locid_transform",
+ "icu_locale",
  "icu_provider",
  "tinystr",
  "zerovec",
@@ -112,12 +110,6 @@ dependencies = [
  "quote",
  "syn",
 ]
-
-[[package]]
-name = "lazy_static"
-version = "1.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
 name = "litemap"
@@ -275,7 +267,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec"
-version = "0.10.2"
+version = "0.10.4"
 dependencies = [
  "yoke",
  "zerofrom",
@@ -284,7 +276,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec-derive"
-version = "0.10.2"
+version = "0.10.3"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -317,6 +309,10 @@ version = "0.5.6"
 
 [[patch.unused]]
 name = "icu"
+version = "1.5.0"
+
+[[patch.unused]]
+name = "icu4x-datagen"
 version = "1.5.0"
 
 [[patch.unused]]
@@ -360,10 +356,6 @@ name = "icu_collections"
 version = "1.5.0"
 
 [[patch.unused]]
-name = "icu_datagen"
-version = "1.5.0"
-
-[[patch.unused]]
 name = "icu_datetime"
 version = "1.5.0"
 
@@ -404,7 +396,7 @@ name = "icu_list_data"
 version = "1.5.0"
 
 [[patch.unused]]
-name = "icu_locid_transform_data"
+name = "icu_locale_data"
 version = "1.5.0"
 
 [[patch.unused]]
@@ -436,11 +428,27 @@ name = "icu_properties_data"
 version = "1.5.0"
 
 [[patch.unused]]
+name = "icu_provider_baked"
+version = "1.5.0"
+
+[[patch.unused]]
 name = "icu_provider_blob"
 version = "1.5.0"
 
 [[patch.unused]]
+name = "icu_provider_export"
+version = "1.5.0"
+
+[[patch.unused]]
 name = "icu_provider_fs"
+version = "1.5.0"
+
+[[patch.unused]]
+name = "icu_provider_registry"
+version = "1.5.0"
+
+[[patch.unused]]
+name = "icu_provider_source"
 version = "1.5.0"
 
 [[patch.unused]]

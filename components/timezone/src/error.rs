@@ -8,3 +8,8 @@ use displaydoc::Display;
 #[derive(Display, Debug, Copy, Clone, PartialEq)]
 #[allow(clippy::exhaustive_structs)]
 pub struct InvalidOffsetError;
+
+/// An error when the time zone was invalid or unknown.
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[non_exhaustive]
+pub struct UnknownTimeZoneError;

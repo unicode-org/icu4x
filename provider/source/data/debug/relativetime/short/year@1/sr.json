@@ -5,37 +5,15 @@
     "1": "следеће год."
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": "пре  год.",
-      "index": 7
-    },
-    "two": null,
-    "few": {
-      "pattern": "пре  год.",
-      "index": 7
-    },
-    "many": null,
-    "other": {
-      "pattern": "пре  год.",
-      "index": 7
+    "strings": {
+      "specials": [],
+      "other": "\bпре  год."
     }
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "за  год.",
-      "index": 5
-    },
-    "two": null,
-    "few": {
-      "pattern": "за  год.",
-      "index": 5
-    },
-    "many": null,
-    "other": {
-      "pattern": "за  год.",
-      "index": 5
+    "strings": {
+      "specials": [],
+      "other": "\u0006за  год."
     }
   }
 }

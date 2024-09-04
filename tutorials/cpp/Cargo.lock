@@ -42,13 +42,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "deduplicating_array"
-version = "0.1.6"
-dependencies = [
- "serde",
-]
-
-[[package]]
 name = "deranged"
 version = "0.3.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -60,7 +53,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=dbb32938c2d0176474f44907df057afd1df2dea7#dbb32938c2d0176474f44907df057afd1df2dea7"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=9e91151698bc5df511c42d95f57ea8133478b24e#9e91151698bc5df511c42d95f57ea8133478b24e"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -70,8 +63,8 @@ dependencies = [
 
 [[package]]
 name = "diplomat-runtime"
-version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=dbb32938c2d0176474f44907df057afd1df2dea7#dbb32938c2d0176474f44907df057afd1df2dea7"
+version = "0.8.1"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=9e91151698bc5df511c42d95f57ea8133478b24e#9e91151698bc5df511c42d95f57ea8133478b24e"
 dependencies = [
  "log",
 ]
@@ -79,9 +72,8 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=dbb32938c2d0176474f44907df057afd1df2dea7#dbb32938c2d0176474f44907df057afd1df2dea7"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=9e91151698bc5df511c42d95f57ea8133478b24e#9e91151698bc5df511c42d95f57ea8133478b24e"
 dependencies = [
- "lazy_static",
  "proc-macro2",
  "quote",
  "serde",
@@ -130,9 +122,9 @@ dependencies = [
  "calendrical_calculations",
  "displaydoc",
  "icu_calendar_data",
- "icu_locale",
  "icu_locale_core",
  "icu_provider",
+ "ixdtf",
  "serde",
  "tinystr",
  "writeable",
@@ -142,6 +134,10 @@ dependencies = [
 [[package]]
 name = "icu_calendar_data"
 version = "1.5.0"
+dependencies = [
+ "icu_locale",
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_capi"
@@ -170,6 +166,7 @@ dependencies = [
  "icu_segmenter",
  "icu_timezone",
  "log",
+ "potential_utf",
  "serde",
  "simple_logger",
  "tinystr",
@@ -187,6 +184,7 @@ dependencies = [
  "icu_locale_core",
  "icu_properties",
  "icu_provider",
+ "potential_utf",
  "serde",
  "writeable",
  "zerovec",
@@ -195,6 +193,9 @@ dependencies = [
 [[package]]
 name = "icu_casemap_data"
 version = "1.5.0"
+dependencies = [
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_collator"
@@ -203,7 +204,6 @@ dependencies = [
  "displaydoc",
  "icu_collator_data",
  "icu_collections",
- "icu_locale",
  "icu_normalizer",
  "icu_properties",
  "icu_provider",
@@ -217,6 +217,10 @@ dependencies = [
 [[package]]
 name = "icu_collator_data"
 version = "1.5.0"
+dependencies = [
+ "icu_locale",
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_collections"
@@ -239,12 +243,12 @@ dependencies = [
  "icu_calendar",
  "icu_datetime_data",
  "icu_decimal",
- "icu_locale",
  "icu_locale_core",
  "icu_plurals",
  "icu_provider",
  "icu_timezone",
  "litemap",
+ "potential_utf",
  "serde",
  "smallvec",
  "tinystr",
@@ -255,6 +259,10 @@ dependencies = [
 [[package]]
 name = "icu_datetime_data"
 version = "1.5.0"
+dependencies = [
+ "icu_locale",
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_decimal"
@@ -263,7 +271,6 @@ dependencies = [
  "displaydoc",
  "fixed_decimal",
  "icu_decimal_data",
- "icu_locale",
  "icu_provider",
  "serde",
  "writeable",
@@ -272,16 +279,22 @@ dependencies = [
 [[package]]
 name = "icu_decimal_data"
 version = "1.5.0"
+dependencies = [
+ "icu_locale",
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_experimental"
 version = "0.1.0"
 dependencies = [
  "displaydoc",
+ "either",
  "fixed_decimal",
  "icu_collections",
  "icu_decimal",
  "icu_experimental_data",
+ "icu_list",
  "icu_locale",
  "icu_locale_core",
  "icu_normalizer",
@@ -293,6 +306,7 @@ dependencies = [
  "num-bigint",
  "num-rational",
  "num-traits",
+ "potential_utf",
  "serde",
  "smallvec",
  "tinystr",
@@ -305,15 +319,17 @@ dependencies = [
 [[package]]
 name = "icu_experimental_data"
 version = "0.1.0"
+dependencies = [
+ "icu_locale",
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_list"
 version = "1.5.0"
 dependencies = [
- "deduplicating_array",
  "displaydoc",
  "icu_list_data",
- "icu_locale",
  "icu_provider",
  "regex-automata",
  "serde",
@@ -323,6 +339,10 @@ dependencies = [
 [[package]]
 name = "icu_list_data"
 version = "1.5.0"
+dependencies = [
+ "icu_locale",
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_locale"
@@ -332,6 +352,7 @@ dependencies = [
  "icu_locale_core",
  "icu_locale_data",
  "icu_provider",
+ "potential_utf",
  "serde",
  "tinystr",
  "zerovec",
@@ -352,6 +373,9 @@ dependencies = [
 [[package]]
 name = "icu_locale_data"
 version = "1.5.0"
+dependencies = [
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_normalizer"
@@ -373,6 +397,9 @@ dependencies = [
 [[package]]
 name = "icu_normalizer_data"
 version = "1.5.0"
+dependencies = [
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_pattern"
@@ -392,7 +419,6 @@ version = "1.5.0"
 dependencies = [
  "displaydoc",
  "fixed_decimal",
- "icu_locale",
  "icu_plurals_data",
  "icu_provider",
  "serde",
@@ -402,6 +428,10 @@ dependencies = [
 [[package]]
 name = "icu_plurals_data"
 version = "1.5.0"
+dependencies = [
+ "icu_locale",
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_properties"
@@ -409,11 +439,11 @@ version = "1.5.0"
 dependencies = [
  "displaydoc",
  "icu_collections",
- "icu_locale",
+ "icu_locale_core",
  "icu_properties_data",
  "icu_provider",
+ "potential_utf",
  "serde",
- "tinystr",
  "unicode-bidi",
  "zerovec",
 ]
@@ -421,6 +451,10 @@ dependencies = [
 [[package]]
 name = "icu_properties_data"
 version = "1.5.0"
+dependencies = [
+ "icu_locale",
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_provider"
@@ -446,11 +480,19 @@ name = "icu_provider_adapters"
 version = "1.5.0"
 dependencies = [
  "icu_locale",
- "icu_locale_core",
  "icu_provider",
  "serde",
  "tinystr",
  "zerovec",
+]
+
+[[package]]
+name = "icu_provider_baked"
+version = "1.5.0"
+dependencies = [
+ "icu_provider",
+ "writeable",
+ "zerotrie",
 ]
 
 [[package]]
@@ -494,6 +536,7 @@ dependencies = [
  "icu_locale_core",
  "icu_provider",
  "icu_segmenter_data",
+ "potential_utf",
  "serde",
  "utf8_iter",
  "zerovec",
@@ -502,6 +545,10 @@ dependencies = [
 [[package]]
 name = "icu_segmenter_data"
 version = "1.5.0"
+dependencies = [
+ "icu_locale",
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "icu_timezone"
@@ -520,12 +567,23 @@ dependencies = [
 [[package]]
 name = "icu_timezone_data"
 version = "1.5.0"
+dependencies = [
+ "icu_provider_baked",
+]
 
 [[package]]
 name = "itoa"
 version = "1.0.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "49f1f14873335454500d59611f1cf4a4b0f786f9ac11f4312a78e4cf2566695b"
+
+[[package]]
+name = "ixdtf"
+version = "0.2.0"
+dependencies = [
+ "displaydoc",
+ "utf8_iter",
+]
 
 [[package]]
 name = "lazy_static"
@@ -557,12 +615,6 @@ name = "log"
 version = "0.4.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "90ed8c1e510134f979dbc4f070f87d4313098b704861a105fe34231c70a3901c"
-
-[[package]]
-name = "memchr"
-version = "2.7.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6c8640c5d730cb13ebd907d8d04b52f55ac9a2eec55b440c8892f40d56c76c1d"
 
 [[package]]
 name = "num-bigint"
@@ -630,6 +682,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "potential_utf"
+version = "0.0.0"
+dependencies = [
+ "serde",
+ "writeable",
+ "zerovec",
+]
+
+[[package]]
 name = "powerfmt"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -655,12 +716,9 @@ dependencies = [
 
 [[package]]
 name = "regex-automata"
-version = "0.2.0"
+version = "0.4.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e9368763f5a9b804326f3af749e16f9abf378d227bcdee7634b13d8f17793782"
-dependencies = [
- "memchr",
-]
+checksum = "38caf58cc5ef2fed281f89292ef23f6365465ed9a41b7a7754eb4e26496c92df"
 
 [[package]]
 name = "ryu"
@@ -978,7 +1036,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec"
-version = "0.10.2"
+version = "0.10.4"
 dependencies = [
  "serde",
  "yoke",
@@ -988,7 +1046,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec-derive"
-version = "0.10.2"
+version = "0.10.3"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1012,7 +1070,15 @@ name = "databake-derive"
 version = "0.1.8"
 
 [[patch.unused]]
+name = "deduplicating_array"
+version = "0.1.6"
+
+[[patch.unused]]
 name = "icu"
+version = "1.5.0"
+
+[[patch.unused]]
+name = "icu4x-datagen"
 version = "1.5.0"
 
 [[patch.unused]]
@@ -1028,10 +1094,6 @@ name = "icu_codepointtrie_builder"
 version = "0.3.8"
 
 [[patch.unused]]
-name = "icu_datagen"
-version = "1.5.0"
-
-[[patch.unused]]
 name = "icu_freertos"
 version = "1.5.0"
 
@@ -1040,8 +1102,16 @@ name = "icu_harfbuzz"
 version = "0.2.0"
 
 [[patch.unused]]
-name = "ixdtf"
-version = "0.2.0"
+name = "icu_provider_export"
+version = "1.5.0"
+
+[[patch.unused]]
+name = "icu_provider_registry"
+version = "1.5.0"
+
+[[patch.unused]]
+name = "icu_provider_source"
+version = "1.5.0"
 
 [[patch.unused]]
 name = "tzif"

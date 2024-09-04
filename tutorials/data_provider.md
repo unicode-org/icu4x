@@ -106,9 +106,9 @@ impl<'a> Borrow<CacheKey<'a>> for lru::KeyRef<CacheKeyWrap> {
 impl<M, P> DataProvider<M> for LruDataCache<P>
 where
     M: DataMarker,
-    M::Yokeable: ZeroFrom<'static, M::Yokeable>,
-    M::Yokeable: icu_provider::any::MaybeSendSync,
-    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
+    M::DataStruct: ZeroFrom<'static, M::DataStruct>,
+    M::DataStruct: icu_provider::any::MaybeSendSync,
+    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: Clone,
     P: DataProvider<M>,
 {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
@@ -200,7 +200,7 @@ use icu::decimal::provider::DecimalSymbolsV1Marker;
 use icu_provider::prelude::*;
 use icu_provider_adapters::any_payload::AnyPayloadProvider;
 use icu::locale::locale;
-use icu::locale::{subtags_region as region};
+use icu::locale::subtags::region;
 use std::borrow::Cow;
 use tinystr::tinystr;
 
@@ -214,10 +214,8 @@ where
     #[inline]
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         let mut res = self.0.load(req)?;
-        // Cast from `DataPayload<M>` to `DataPayload<DecimalSymbolsV1Marker>`
-        let mut any_payload = (&mut res.payload) as &mut dyn Any;
-        if let Some(mut decimal_payload) = any_payload.downcast_mut::<DataPayload<DecimalSymbolsV1Marker>>() {
-            if req.id.locale.region() == Some(region!("CH")) {
+        if req.id.locale.region == Some(region!("CH")) {
+            if let Ok(mut decimal_payload) = res.payload.dynamic_cast_mut::<DecimalSymbolsV1Marker>() {
                 decimal_payload.with_mut(|data| {
                     // Change the grouping separator for all Swiss locales to '🐮'
                     data.grouping_separator = Cow::Borrowed("🐮");
@@ -250,6 +248,10 @@ let formatter = FixedDecimalFormatter::try_new_unstable(
 
 assert_eq!(formatter.format_to_string(&100007i64.into()), "100🐮007");
 ```
+
+## Forking Data Providers
+
+Forking providers can be implemented using `DataPayload::dynamic_cast`. For an example, see that function's documentation.
 
 ## Accessing the Resolved Locale
 

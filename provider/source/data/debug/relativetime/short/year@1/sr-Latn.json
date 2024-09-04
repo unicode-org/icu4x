@@ -5,37 +5,15 @@
     "1": "sledeće god."
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": "pre  god.",
-      "index": 4
-    },
-    "two": null,
-    "few": {
-      "pattern": "pre  god.",
-      "index": 4
-    },
-    "many": null,
-    "other": {
-      "pattern": "pre  god.",
-      "index": 4
+    "strings": {
+      "specials": [],
+      "other": "\u0005pre  god."
     }
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "za  god.",
-      "index": 3
-    },
-    "two": null,
-    "few": {
-      "pattern": "za  god.",
-      "index": 3
-    },
-    "many": null,
-    "other": {
-      "pattern": "za  god.",
-      "index": 3
+    "strings": {
+      "specials": [],
+      "other": "\u0004za  god."
     }
   }
 }

@@ -19,22 +19,22 @@
 //! To perform lookup, store the stringified locale in a canonical BCP-47 form as a byte array,
 //! and then use [`Locale::strict_cmp()`] to perform an efficient, zero-allocation lookup.
 //!
-//! To produce more human-readable serialized output, you can use `UnvalidatedStr`.
+//! To produce more human-readable serialized output, you can use `PotentialUtf8`.
 //!
 //! ```
 //! use icu::locale::Locale;
-//! use zerovec::ule::UnvalidatedStr;
+//! use potential_utf::PotentialUtf8;
 //! use zerovec::ZeroMap;
 //!
 //! // ZeroMap from locales to integers
-//! let data: &[(&UnvalidatedStr, u32)] = &[
+//! let data: &[(&PotentialUtf8, u32)] = &[
 //!     ("de-DE-u-hc-h12".into(), 5),
 //!     ("en-US-u-ca-buddhist".into(), 10),
 //!     ("my-MM".into(), 15),
 //!     ("sr-Cyrl-ME".into(), 20),
 //!     ("zh-TW".into(), 25),
 //! ];
-//! let zm: ZeroMap<UnvalidatedStr, u32> = data.iter().copied().collect();
+//! let zm: ZeroMap<PotentialUtf8, u32> = data.iter().copied().collect();
 //!
 //! // Get the value associated with a locale
 //! let loc: Locale = "en-US-u-ca-buddhist".parse().unwrap();
@@ -96,16 +96,16 @@
 //! for a discussion on potential data models that could ensure that the locale is valid during
 //! deserialization.
 //!
-//! As above, to produce more human-readable serialized output, you can use `UnvalidatedStr`.
+//! As above, to produce more human-readable serialized output, you can use `PotentialUtf8`.
 //!
 //! ```
 //! use icu::locale::langid;
 //! use icu::locale::Locale;
-//! use zerovec::ule::UnvalidatedStr;
+//! use potential_utf::PotentialUtf8;
 //! use zerovec::ZeroMap;
 //!
 //! // ZeroMap from integer to locale string
-//! let data: &[(u32, &UnvalidatedStr)] = &[
+//! let data: &[(u32, &PotentialUtf8)] = &[
 //!     (5, "de-DE-u-hc-h12".into()),
 //!     (10, "en-US-u-ca-buddhist".into()),
 //!     (15, "my-MM".into()),
@@ -113,7 +113,7 @@
 //!     (25, "zh-TW".into()),
 //!     (30, "INVALID".into()),
 //! ];
-//! let zm: ZeroMap<u32, UnvalidatedStr> = data.iter().copied().collect();
+//! let zm: ZeroMap<u32, PotentialUtf8> = data.iter().copied().collect();
 //!
 //! // Construct a Locale by parsing the string.
 //! let value = zm.get(&25).expect("element is present");

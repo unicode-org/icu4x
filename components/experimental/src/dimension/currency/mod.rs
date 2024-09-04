@@ -4,6 +4,14 @@
 
 //! Experimental.
 
+use tinystr::TinyAsciiStr;
+
 pub mod format;
 pub mod formatter;
+pub mod long_format;
+pub mod long_formatter;
 pub mod options;
+
+/// A currency code, such as "USD" or "EUR".
+#[derive(Clone, Copy)]
+pub struct CurrencyCode(pub TinyAsciiStr<3>);

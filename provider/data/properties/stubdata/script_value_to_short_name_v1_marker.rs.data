@@ -11,18 +11,31 @@
 #[macro_export]
 macro_rules! __impl_script_value_to_short_name_v1_marker {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_SCRIPT_VALUE_TO_SHORT_NAME_V1_MARKER: &'static <icu::properties::provider::names::ScriptValueToShortNameV1Marker as icu_provider::DynamicDataMarker>::Yokeable = &icu::properties::provider::names::PropertyEnumToValueNameLinearTiny4MapV1 { map: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ZyyyZinhArabArmnBengBopoCherCoptCyrlDsrtDevaEthiGeorGothGrekGujrGuruHaniHangHebrHiraKndaKanaKhmrLaooLatnMlymMongMymrOgamItalOryaRunrSinhSyrcTamlTeluThaaThaiTibtCansYiiiTglgHanoBuhdTagbBraiCprtLimbLinbOsmaShawTaleUgarHrktBugiGlagKharSyloTaluTfngXpeoBaliBatkBlisBrahChamCirtCyrsEgydEgyhEgypGeokHansHantHmngHungIndsJavaKaliLatfLatgLepcLinaMandMayaMeroNkooOrkhPermPhagPhnxPlrdRoroSaraSyreSyrjSyrnTengVaiiVispXsuxZxxxZzzzCariJpanLanaLyciLydiOlckRjngSaurSgnwSundMoonMteiArmiAvstCakmKoreKthiManiPhliPhlpPhlvPrtiSamrTavtZmthZsymBamuLisuNkgbSarbBassDuplElbaGranKpelLomaMendMercNarbNbatPalmSindWaraAfakJurcMrooNshuShrdSoraTakrTangWoleHluwKhojTirhAghbMahjAhomHatrModiMultPaucSiddAdlmBhksMarcNewaOsgeHanbJamoZsyeGonmSoyoZanbDogrGongMakaMedfRohgSogdSogoElymHmnpNandWchoChrsDiakKitsYeziCpmnOugrTnsaTotoVithKawiNagmAran") } };
+            pub const SINGLETON_SCRIPT_VALUE_TO_SHORT_NAME_V1_MARKER: &'static <icu::properties::provider::names::ScriptValueToShortNameV1Marker as icu_provider::DynamicDataMarker>::DataStruct = &icu::properties::provider::names::PropertyScriptToIcuScriptMapV1 { map: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ZyyyZinhArabArmnBengBopoCherCoptCyrlDsrtDevaEthiGeorGothGrekGujrGuruHaniHangHebrHiraKndaKanaKhmrLaooLatnMlymMongMymrOgamItalOryaRunrSinhSyrcTamlTeluThaaThaiTibtCansYiiiTglgHanoBuhdTagbBraiCprtLimbLinbOsmaShawTaleUgarHrktBugiGlagKharSyloTaluTfngXpeoBaliBatkBlisBrahChamCirtCyrsEgydEgyhEgypGeokHansHantHmngHungIndsJavaKaliLatfLatgLepcLinaMandMayaMeroNkooOrkhPermPhagPhnxPlrdRoroSaraSyreSyrjSyrnTengVaiiVispXsuxZxxxZzzzCariJpanLanaLyciLydiOlckRjngSaurSgnwSundMoonMteiArmiAvstCakmKoreKthiManiPhliPhlpPhlvPrtiSamrTavtZmthZsymBamuLisuNkgbSarbBassDuplElbaGranKpelLomaMendMercNarbNbatPalmSindWaraAfakJurcMrooNshuShrdSoraTakrTangWoleHluwKhojTirhAghbMahjAhomHatrModiMultPaucSiddAdlmBhksMarcNewaOsgeHanbJamoZsyeGonmSoyoZanbDogrGongMakaMedfRohgSogdSogoElymHmnpNandWchoChrsDiakKitsYeziCpmnOugrTnsaTotoVithKawiNagmAran") } };
         }
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DataProvider<icu::properties::provider::names::ScriptValueToShortNameV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::properties::provider::names::ScriptValueToShortNameV1Marker>, icu_provider::DataError> {
-                if req.id.locale.is_und() {
+                if req.id.locale.is_default() {
                     Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(Self::SINGLETON_SCRIPT_VALUE_TO_SHORT_NAME_V1_MARKER), metadata: Default::default() })
+                } else {
+                    Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::properties::provider::names::ScriptValueToShortNameV1Marker as icu_provider::DataMarker>::INFO, req))
+                }
+            }
+        }
+    };
+    ($ provider : ty , DRY) => {
+        __impl_script_value_to_short_name_v1_marker!($provider);
+        #[clippy::msrv = "1.71.1"]
+        impl icu_provider::DryDataProvider<icu::properties::provider::names::ScriptValueToShortNameV1Marker> for $provider {
+            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
+                if req.id.locale.is_default() {
+                    Ok(Default::default())
                 } else {
                     Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::properties::provider::names::ScriptValueToShortNameV1Marker as icu_provider::DataMarker>::INFO, req))
                 }
@@ -31,7 +44,26 @@ macro_rules! __impl_script_value_to_short_name_v1_marker {
     };
     ($ provider : ty , ITER) => {
         __impl_script_value_to_short_name_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
+        impl icu_provider::IterableDataProvider<icu::properties::provider::names::ScriptValueToShortNameV1Marker> for $provider {
+            fn iter_ids(&self) -> Result<std::collections::BtreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
+                Ok([Default::default()].into_iter().collect())
+            }
+        }
+    };
+    ($ provider : ty , DRY , ITER) => {
+        __impl_script_value_to_short_name_v1_marker!($provider);
+        #[clippy::msrv = "1.71.1"]
+        impl icu_provider::DryDataProvider<icu::properties::provider::names::ScriptValueToShortNameV1Marker> for $provider {
+            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
+                if req.id.locale.is_default() {
+                    Ok(Default::default())
+                } else {
+                    Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::properties::provider::names::ScriptValueToShortNameV1Marker as icu_provider::DataMarker>::INFO, req))
+                }
+            }
+        }
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::IterableDataProvider<icu::properties::provider::names::ScriptValueToShortNameV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BtreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok([Default::default()].into_iter().collect())

@@ -14,9 +14,9 @@
 // If no exporter feature is enabled this all doesn't make sense
 #![cfg_attr(
     not(any(
+        feature = "baked_exporter",
         feature = "blob_exporter",
         feature = "fs_exporter",
-        feature = "baked_exporter"
     )),
     allow(unused_assignments, unreachable_code, unused_variables)
 )]
@@ -48,7 +48,7 @@ struct Cli {
 
     #[arg(long, value_enum)]
     #[arg(
-        help = "Select the output format: a directory tree of files, a single blob, or a Rust module."
+        help = "Select the output format: a directory tree of files (fs), a single blob (blob), or a Rust module (baked)."
     )]
     format: Format,
 
@@ -57,11 +57,11 @@ struct Cli {
     overwrite: bool,
 
     #[arg(short, long, value_enum, default_value_t = Syntax::Json)]
-    #[arg(help = "--format=dir only: serde serialization format.")]
+    #[arg(help = "--format=fs only: serde serialization format.")]
     syntax: Syntax,
 
     #[arg(short, long)]
-    #[arg(help = "--format=mod, --format=dir only: pretty-print the Rust or JSON output files.")]
+    #[arg(help = "--format=baked, --format=fs only: pretty-print the Rust or JSON output files.")]
     pretty: bool,
 
     #[arg(short = 't', long, value_name = "TAG", default_value = "latest")]
@@ -170,19 +170,19 @@ struct Cli {
 
     #[arg(long)]
     #[arg(
-        help = "--format=mod only: use types from individual `icu_*` crates instead of the `icu` meta-crate."
+        help = "--format=baked only: use types from individual `icu_*` crates instead of the `icu` meta-crate."
     )]
     use_separate_crates: bool,
 
     #[arg(long)]
-    #[arg(help = "--format=mod only: don't include fallback code inside the baked provider")]
+    #[arg(help = "--format=baked only: don't include fallback code inside the baked provider")]
     no_internal_fallback: bool,
 
     #[arg(long, value_enum)]
     #[arg(
         help = "configures the deduplication of locales for exported data payloads. \
                 If not set, determined by the export format: \
-                if --format=mod, a more aggressive deduplication strategy is used."
+                if --format=baked, a more aggressive deduplication strategy is used."
     )]
     deduplication: Option<Deduplication>,
 
@@ -201,10 +201,10 @@ struct Cli {
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
 enum Format {
-    Dir,
+    Fs,
     Blob,
     Blob2,
-    Mod,
+    Baked,
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
@@ -313,13 +313,13 @@ fn main() -> eyre::Result<()> {
     };
 
     enum PreprocessedLocales {
-        LanguageIdentifiers(Vec<LanguageIdentifier>),
+        Locales(Vec<DataLocale>),
         Full,
     }
 
     #[allow(unused_mut)]
     let mut preprocessed_locales = if cli.locales.as_slice() == ["none"] {
-        Some(PreprocessedLocales::LanguageIdentifiers(vec![]))
+        Some(PreprocessedLocales::Locales(vec![]))
     } else if cli.locales.as_slice() == ["full"] {
         Some(PreprocessedLocales::Full)
     } else {
@@ -349,7 +349,7 @@ fn main() -> eyre::Result<()> {
             (Box::new(ReexportableBlobDataProvider(provider)), fallbacker)
         },
 
-        #[cfg(all(not(feature = "provider"), feature = "input_blob"))]
+        #[cfg(all(not(feature = "provider"), feature = "blob_input"))]
         () => eyre::bail!("--input-blob is required without the `provider` Cargo feature"),
 
         #[cfg(feature = "provider")]
@@ -414,7 +414,7 @@ fn main() -> eyre::Result<()> {
             };
 
             if cli.locales.as_slice() == ["recommended"] {
-                preprocessed_locales = Some(PreprocessedLocales::LanguageIdentifiers(
+                preprocessed_locales = Some(PreprocessedLocales::Locales(
                     p.locales_for_coverage_levels([
                         icu_provider_source::CoverageLevel::Modern,
                         icu_provider_source::CoverageLevel::Moderate,
@@ -434,7 +434,7 @@ fn main() -> eyre::Result<()> {
                 })
                 .collect::<Option<Vec<_>>>()
             {
-                preprocessed_locales = Some(PreprocessedLocales::LanguageIdentifiers(
+                preprocessed_locales = Some(PreprocessedLocales::Locales(
                     p.locales_for_coverage_levels(locale_subsets.into_iter())?
                         .into_iter()
                         .collect(),
@@ -445,15 +445,15 @@ fn main() -> eyre::Result<()> {
             (Box::new(p), fallbacker)
         }
 
-        #[cfg(not(feature = "provider"))]
+        #[cfg(not(any(feature = "provider", feature = "blob_input")))]
         () => eyre::bail!("Only the `HelloWorldV1 marker is supported without Cargo features `blob_input` or `provider`"),
     };
 
     let locale_families = match preprocessed_locales {
-        Some(PreprocessedLocales::Full) => vec![LocaleFamily::FULL],
-        Some(PreprocessedLocales::LanguageIdentifiers(lids)) => lids
+        Some(PreprocessedLocales::Full) => vec![DataLocaleFamily::FULL],
+        Some(PreprocessedLocales::Locales(locales)) => locales
             .into_iter()
-            .map(LocaleFamily::with_descendants)
+            .map(DataLocaleFamily::with_descendants)
             .collect(),
         None => cli
             .locales
@@ -469,11 +469,11 @@ fn main() -> eyre::Result<()> {
         }
         Some(Deduplication::None) => icu_provider_export::DeduplicationStrategy::None,
         None => match cli.format {
-            Format::Dir | Format::Blob | Format::Blob2 => DeduplicationStrategy::None,
-            Format::Mod if cli.no_internal_fallback && cli.deduplication.is_none() =>
+            Format::Fs | Format::Blob | Format::Blob2 => DeduplicationStrategy::None,
+            Format::Baked if cli.no_internal_fallback && cli.deduplication.is_none() =>
                 eyre::bail!("--no-internal-fallback requires an explicit --deduplication value. Baked exporter would default to maximal deduplication, which might not be intended"),
             // TODO(2.0): Default to RetainBaseLanguages here
-            Format::Mod => DeduplicationStrategy::Maximal,
+            Format::Baked => DeduplicationStrategy::Maximal,
         }
     };
 
@@ -506,11 +506,11 @@ fn main() -> eyre::Result<()> {
 
     match cli.format {
         #[cfg(not(feature = "fs_exporter"))]
-        Format::Dir => {
+        Format::Fs => {
             eyre::bail!("Exporting to an FsProvider requires the `fs_exporter` Cargo feature")
         }
         #[cfg(feature = "fs_exporter")]
-        Format::Dir => driver.export(&provider, {
+        Format::Fs => driver.export(&provider, {
             use icu_provider_export::fs_exporter::*;
 
             FilesystemExporter::try_new(
@@ -556,11 +556,11 @@ fn main() -> eyre::Result<()> {
             }
         })?,
         #[cfg(not(feature = "baked_exporter"))]
-        Format::Mod => {
+        Format::Baked => {
             eyre::bail!("Exporting to a baked provider requires the `baked_exporter` Cargo feature")
         }
         #[cfg(feature = "baked_exporter")]
-        Format::Mod => driver.export(&provider, {
+        Format::Baked => driver.export(&provider, {
             icu_provider_export::baked_exporter::BakedExporter::new(
                 cli.output.unwrap_or_else(|| PathBuf::from("icu4x_data")),
                 {

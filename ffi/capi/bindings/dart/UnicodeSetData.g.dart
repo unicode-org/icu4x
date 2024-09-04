@@ -26,16 +26,14 @@ final class UnicodeSetData implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XUnicodeSetData_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_UnicodeSetData_destroy_mv1));
 
   /// Checks whether the string is in the set.
   ///
   /// See the [Rust documentation for `contains`](https://docs.rs/icu/latest/icu/properties/sets/struct.UnicodeSetDataBorrowed.html#method.contains) for more information.
   bool contains(String s) {
-    final temp = ffi2.Arena();
-    final sView = s.utf8View;
-    final result = _ICU4XUnicodeSetData_contains(_ffi, sView.allocIn(temp), sView.length);
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final result = _icu4x_UnicodeSetData_contains_mv1(_ffi, s._utf8AllocIn(temp.arena));
     return result;
   }
 
@@ -43,7 +41,7 @@ final class UnicodeSetData implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `contains_char`](https://docs.rs/icu/latest/icu/properties/sets/struct.UnicodeSetDataBorrowed.html#method.contains_char) for more information.
   bool containsChar(Rune cp) {
-    final result = _ICU4XUnicodeSetData_contains_char(_ffi, cp);
+    final result = _icu4x_UnicodeSetData_contains_char_mv1(_ffi, cp);
     return result;
   }
 
@@ -51,7 +49,7 @@ final class UnicodeSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory UnicodeSetData.basicEmoji(DataProvider provider) {
-    final result = _ICU4XUnicodeSetData_load_basic_emoji(provider._ffi);
+    final result = _icu4x_UnicodeSetData_load_basic_emoji_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -62,7 +60,7 @@ final class UnicodeSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory UnicodeSetData.exemplarsMain(DataProvider provider, Locale locale) {
-    final result = _ICU4XUnicodeSetData_load_exemplars_main(provider._ffi, locale._ffi);
+    final result = _icu4x_UnicodeSetData_load_exemplars_main_mv1(provider._ffi, locale._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -73,7 +71,7 @@ final class UnicodeSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory UnicodeSetData.exemplarsAuxiliary(DataProvider provider, Locale locale) {
-    final result = _ICU4XUnicodeSetData_load_exemplars_auxiliary(provider._ffi, locale._ffi);
+    final result = _icu4x_UnicodeSetData_load_exemplars_auxiliary_mv1(provider._ffi, locale._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -84,7 +82,7 @@ final class UnicodeSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory UnicodeSetData.exemplarsPunctuation(DataProvider provider, Locale locale) {
-    final result = _ICU4XUnicodeSetData_load_exemplars_punctuation(provider._ffi, locale._ffi);
+    final result = _icu4x_UnicodeSetData_load_exemplars_punctuation_mv1(provider._ffi, locale._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -95,7 +93,7 @@ final class UnicodeSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory UnicodeSetData.exemplarsNumbers(DataProvider provider, Locale locale) {
-    final result = _ICU4XUnicodeSetData_load_exemplars_numbers(provider._ffi, locale._ffi);
+    final result = _icu4x_UnicodeSetData_load_exemplars_numbers_mv1(provider._ffi, locale._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -106,7 +104,7 @@ final class UnicodeSetData implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory UnicodeSetData.exemplarsIndex(DataProvider provider, Locale locale) {
-    final result = _ICU4XUnicodeSetData_load_exemplars_index(provider._ffi, locale._ffi);
+    final result = _icu4x_UnicodeSetData_load_exemplars_index_mv1(provider._ffi, locale._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -114,47 +112,47 @@ final class UnicodeSetData implements ffi.Finalizable {
   }
 }
 
-@meta.ResourceIdentifier('ICU4XUnicodeSetData_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XUnicodeSetData_destroy')
+@meta.ResourceIdentifier('icu4x_UnicodeSetData_destroy_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_UnicodeSetData_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XUnicodeSetData_destroy(ffi.Pointer<ffi.Void> self);
+external void _icu4x_UnicodeSetData_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XUnicodeSetData_contains')
-@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XUnicodeSetData_contains')
+@meta.ResourceIdentifier('icu4x_UnicodeSetData_contains_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_UnicodeSetData_contains_mv1')
 // ignore: non_constant_identifier_names
-external bool _ICU4XUnicodeSetData_contains(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength);
+external bool _icu4x_UnicodeSetData_contains_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 s);
 
-@meta.ResourceIdentifier('ICU4XUnicodeSetData_contains_char')
-@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'ICU4XUnicodeSetData_contains_char')
+@meta.ResourceIdentifier('icu4x_UnicodeSetData_contains_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_UnicodeSetData_contains_char_mv1')
 // ignore: non_constant_identifier_names
-external bool _ICU4XUnicodeSetData_contains_char(ffi.Pointer<ffi.Opaque> self, Rune cp);
+external bool _icu4x_UnicodeSetData_contains_char_mv1(ffi.Pointer<ffi.Opaque> self, Rune cp);
 
-@meta.ResourceIdentifier('ICU4XUnicodeSetData_load_basic_emoji')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XUnicodeSetData_load_basic_emoji')
+@meta.ResourceIdentifier('icu4x_UnicodeSetData_load_basic_emoji_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_UnicodeSetData_load_basic_emoji_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XUnicodeSetData_load_basic_emoji(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_UnicodeSetData_load_basic_emoji_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XUnicodeSetData_load_exemplars_main')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XUnicodeSetData_load_exemplars_main')
+@meta.ResourceIdentifier('icu4x_UnicodeSetData_load_exemplars_main_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_UnicodeSetData_load_exemplars_main_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XUnicodeSetData_load_exemplars_main(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
+external _ResultOpaqueInt32 _icu4x_UnicodeSetData_load_exemplars_main_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
-@meta.ResourceIdentifier('ICU4XUnicodeSetData_load_exemplars_auxiliary')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XUnicodeSetData_load_exemplars_auxiliary')
+@meta.ResourceIdentifier('icu4x_UnicodeSetData_load_exemplars_auxiliary_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_UnicodeSetData_load_exemplars_auxiliary_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XUnicodeSetData_load_exemplars_auxiliary(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
+external _ResultOpaqueInt32 _icu4x_UnicodeSetData_load_exemplars_auxiliary_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
-@meta.ResourceIdentifier('ICU4XUnicodeSetData_load_exemplars_punctuation')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XUnicodeSetData_load_exemplars_punctuation')
+@meta.ResourceIdentifier('icu4x_UnicodeSetData_load_exemplars_punctuation_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_UnicodeSetData_load_exemplars_punctuation_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XUnicodeSetData_load_exemplars_punctuation(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
+external _ResultOpaqueInt32 _icu4x_UnicodeSetData_load_exemplars_punctuation_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
-@meta.ResourceIdentifier('ICU4XUnicodeSetData_load_exemplars_numbers')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XUnicodeSetData_load_exemplars_numbers')
+@meta.ResourceIdentifier('icu4x_UnicodeSetData_load_exemplars_numbers_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_UnicodeSetData_load_exemplars_numbers_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XUnicodeSetData_load_exemplars_numbers(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
+external _ResultOpaqueInt32 _icu4x_UnicodeSetData_load_exemplars_numbers_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
-@meta.ResourceIdentifier('ICU4XUnicodeSetData_load_exemplars_index')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XUnicodeSetData_load_exemplars_index')
+@meta.ResourceIdentifier('icu4x_UnicodeSetData_load_exemplars_index_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_UnicodeSetData_load_exemplars_index_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XUnicodeSetData_load_exemplars_index(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
+external _ResultOpaqueInt32 _icu4x_UnicodeSetData_load_exemplars_index_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);

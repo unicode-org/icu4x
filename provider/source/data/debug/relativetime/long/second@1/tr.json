@@ -3,31 +3,15 @@
     "0": "şimdi"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": " saniye önce",
-      "index": 0
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": " saniye önce",
-      "index": 0
+    "strings": {
+      "specials": [],
+      "other": "\u0001 saniye önce"
     }
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": " saniye sonra",
-      "index": 0
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": " saniye sonra",
-      "index": 0
+    "strings": {
+      "specials": [],
+      "other": "\u0001 saniye sonra"
     }
   }
 }

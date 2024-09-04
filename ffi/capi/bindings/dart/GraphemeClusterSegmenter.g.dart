@@ -23,7 +23,7 @@ final class GraphemeClusterSegmenter implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XGraphemeClusterSegmenter_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_GraphemeClusterSegmenter_destroy_mv1));
 
   /// Construct an [`GraphemeClusterSegmenter`].
   ///
@@ -31,7 +31,7 @@ final class GraphemeClusterSegmenter implements ffi.Finalizable {
   ///
   /// Throws [DataError] on failure.
   factory GraphemeClusterSegmenter(DataProvider provider) {
-    final result = _ICU4XGraphemeClusterSegmenter_create(provider._ffi);
+    final result = _icu4x_GraphemeClusterSegmenter_create_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -45,26 +45,25 @@ final class GraphemeClusterSegmenter implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.segment_utf16) for more information.
   GraphemeClusterBreakIteratorUtf16 segment(String input) {
-    final inputView = input.utf16View;
     final inputArena = _FinalizedArena();
     // This lifetime edge depends on lifetimes: 'a
     core.List<Object> aEdges = [this, inputArena];
-    final result = _ICU4XGraphemeClusterSegmenter_segment_utf16(_ffi, inputView.allocIn(inputArena.arena), inputView.length);
+    final result = _icu4x_GraphemeClusterSegmenter_segment_utf16_mv1(_ffi, input._utf16AllocIn(inputArena.arena));
     return GraphemeClusterBreakIteratorUtf16._fromFfi(result, [], aEdges);
   }
 }
 
-@meta.ResourceIdentifier('ICU4XGraphemeClusterSegmenter_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XGraphemeClusterSegmenter_destroy')
+@meta.ResourceIdentifier('icu4x_GraphemeClusterSegmenter_destroy_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_GraphemeClusterSegmenter_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XGraphemeClusterSegmenter_destroy(ffi.Pointer<ffi.Void> self);
+external void _icu4x_GraphemeClusterSegmenter_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XGraphemeClusterSegmenter_create')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XGraphemeClusterSegmenter_create')
+@meta.ResourceIdentifier('icu4x_GraphemeClusterSegmenter_create_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_GraphemeClusterSegmenter_create_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XGraphemeClusterSegmenter_create(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_GraphemeClusterSegmenter_create_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XGraphemeClusterSegmenter_segment_utf16')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XGraphemeClusterSegmenter_segment_utf16')
+@meta.ResourceIdentifier('icu4x_GraphemeClusterSegmenter_segment_utf16_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, _SliceUtf16)>(isLeaf: true, symbol: 'icu4x_GraphemeClusterSegmenter_segment_utf16_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _ICU4XGraphemeClusterSegmenter_segment_utf16(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint16> inputData, int inputLength);
+external ffi.Pointer<ffi.Opaque> _icu4x_GraphemeClusterSegmenter_segment_utf16_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf16 input);

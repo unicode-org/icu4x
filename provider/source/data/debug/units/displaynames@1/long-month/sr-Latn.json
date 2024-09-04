@@ -1,7 +1,0 @@
-{
-  "patterns": {
-    "One": "{0} mesec",
-    "Few": "{0} meseca",
-    "Other": "{0} meseci"
-  }
-}

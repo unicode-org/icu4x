@@ -38,7 +38,10 @@ where
     exporter.close().unwrap();
 }
 
-fn check_hello_world(blob_provider: impl DataProvider<HelloWorldV1Marker>) {
+fn check_hello_world(
+    blob_provider: impl DataProvider<HelloWorldV1Marker>,
+    test_prefix_match: bool,
+) {
     let hello_world_provider = HelloWorldProvider;
     for id in hello_world_provider.iter_ids().unwrap() {
         let blob_result = blob_provider
@@ -57,6 +60,46 @@ fn check_hello_world(blob_provider: impl DataProvider<HelloWorldV1Marker>) {
             .payload;
         assert_eq!(blob_result, expected_result, "{:?}", id);
     }
+
+    if test_prefix_match {
+        let id = DataIdentifierCow::from_owned(
+            DataMarkerAttributes::from_str_or_panic("reve").to_owned(),
+            "ja".parse().unwrap(),
+        );
+        assert!(blob_provider
+            .load(DataRequest {
+                id: id.as_borrowed(),
+                ..Default::default()
+            })
+            .is_err());
+
+        assert!(blob_provider
+            .load(DataRequest {
+                id: id.as_borrowed(),
+                metadata: {
+                    let mut metadata = DataRequestMetadata::default();
+                    metadata.attributes_prefix_match = true;
+                    metadata
+                }
+            })
+            .is_ok());
+
+        let id = DataIdentifierCow::from_owned(
+            DataMarkerAttributes::from_str_or_panic("non-existent").to_owned(),
+            "ja".parse().unwrap(),
+        );
+
+        assert!(blob_provider
+            .load(DataRequest {
+                id: id.as_borrowed(),
+                metadata: {
+                    let mut metadata = DataRequestMetadata::default();
+                    metadata.attributes_prefix_match = true;
+                    metadata
+                }
+            })
+            .is_err());
+    }
 }
 
 #[test]
@@ -67,7 +110,7 @@ fn test_v1() {
     assert_eq!(BLOB_V1, blob.as_slice());
 
     let blob_provider = BlobDataProvider::try_new_from_blob(blob.into_boxed_slice()).unwrap();
-    check_hello_world(blob_provider.as_deserializing());
+    check_hello_world(blob_provider.as_deserializing(), false);
 }
 
 #[test]
@@ -82,7 +125,7 @@ fn test_v2() {
         !blob_provider.internal_is_using_v2_bigger_format(),
         "Should have exported to smaller V2 format"
     );
-    check_hello_world(blob_provider.as_deserializing());
+    check_hello_world(blob_provider.as_deserializing(), true);
 }
 
 // This tests that the V2Bigger format works by attempting to export something with 26^4 = 456976 data entries

@@ -5,25 +5,15 @@
     "1": "tomorrow"
   },
   "past": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "- d",
-      "index": 1
+    "strings": {
+      "specials": [],
+      "other": "\u0002- d"
     }
   },
   "future": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "+ d",
-      "index": 1
+    "strings": {
+      "specials": [],
+      "other": "\u0002+ d"
     }
   }
 }

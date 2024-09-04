@@ -14,11 +14,8 @@ use zerovec::ZeroVec;
 
 #[derive(Debug, PartialEq, Eq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
-#[cfg_attr(
-    feature = "datagen",
-    derive(databake::Bake),
-    databake(path = icu_datetime::pattern::runtime),
-)]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::pattern::runtime))]
 pub struct GenericPattern<'data> {
     pub items: ZeroVec<'data, GenericPatternItem>,
 }
@@ -111,14 +108,6 @@ impl From<&GenericPattern<'_>> for reference::GenericPattern {
     }
 }
 
-#[cfg(feature = "datagen")]
-impl core::fmt::Display for GenericPattern<'_> {
-    fn fmt(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
-        let reference = reference::GenericPattern::from(self);
-        reference.fmt(formatter)
-    }
-}
-
 impl FromStr for GenericPattern<'_> {
     type Err = PatternError;
 
@@ -146,7 +135,6 @@ mod test {
         let pattern = pattern
             .combined(date, time)
             .expect("Failed to combine date and time.");
-        let pattern = reference::Pattern::from(pattern.items.to_vec());
 
         assert_eq!(pattern.to_string(), "Y/m/d 'at' HH:mm");
     }

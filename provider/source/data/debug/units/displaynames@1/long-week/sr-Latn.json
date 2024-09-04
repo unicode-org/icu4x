@@ -1,7 +1,0 @@
-{
-  "patterns": {
-    "One": "{0} nedelja",
-    "Few": "{0} nedelje",
-    "Other": "{0} nedelja"
-  }
-}

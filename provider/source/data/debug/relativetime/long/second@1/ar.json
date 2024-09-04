@@ -3,55 +3,41 @@
     "0": "الآن"
   },
   "past": {
-    "zero": {
-      "pattern": "قبل  ثانية",
-      "index": 7
-    },
-    "one": {
-      "pattern": "قبل ثانية واحدة",
-      "index": 255
-    },
-    "two": {
-      "pattern": "قبل ثانيتين",
-      "index": 255
-    },
-    "few": {
-      "pattern": "قبل  ثوانِ",
-      "index": 7
-    },
-    "many": {
-      "pattern": "قبل  ثانية",
-      "index": 7
-    },
-    "other": {
-      "pattern": "قبل  ثانية",
-      "index": 7
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0000قبل ثانية واحدة"
+        ],
+        [
+          "Two",
+          "\u0000قبل ثانيتين"
+        ],
+        [
+          "Few",
+          "\bقبل  ثوانِ"
+        ]
+      ],
+      "other": "\bقبل  ثانية"
     }
   },
   "future": {
-    "zero": {
-      "pattern": "خلال  ثانية",
-      "index": 9
-    },
-    "one": {
-      "pattern": "خلال ثانية واحدة",
-      "index": 255
-    },
-    "two": {
-      "pattern": "خلال ثانيتين",
-      "index": 255
-    },
-    "few": {
-      "pattern": "خلال  ثوانٍ",
-      "index": 9
-    },
-    "many": {
-      "pattern": "خلال  ثانية",
-      "index": 9
-    },
-    "other": {
-      "pattern": "خلال  ثانية",
-      "index": 9
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0000خلال ثانية واحدة"
+        ],
+        [
+          "Two",
+          "\u0000خلال ثانيتين"
+        ],
+        [
+          "Few",
+          "\nخلال  ثوانٍ"
+        ]
+      ],
+      "other": "\nخلال  ثانية"
     }
   }
 }

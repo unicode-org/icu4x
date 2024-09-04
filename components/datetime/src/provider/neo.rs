@@ -7,8 +7,11 @@ mod adapter;
 use crate::pattern::runtime::{self, PatternULE};
 use alloc::borrow::Cow;
 use icu_provider::prelude::*;
-use zerovec::ule::{AsULE, UnvalidatedStr, ULE};
-use zerovec::{VarZeroVec, ZeroMap};
+use potential_utf::PotentialUtf8;
+use zerovec::{
+    ule::{AsULE, ULE},
+    VarZeroVec, ZeroMap,
+};
 
 #[cfg(feature = "experimental")]
 use crate::neo_skeleton::NeoSkeletonLength;
@@ -346,17 +349,14 @@ size_test!(YearNamesV1, year_names_v1_size, 48);
     marker(RocYearNamesV1Marker, "datetime/symbols/roc/years@1")
 )]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::neo),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub enum YearNamesV1<'data> {
     /// This calendar uses eras with numeric years, this stores the era names mapped from
     /// era code to the name
-    Eras(#[cfg_attr(feature = "serde", serde(borrow))] ZeroMap<'data, UnvalidatedStr, str>),
+    Eras(#[cfg_attr(feature = "serde", serde(borrow))] ZeroMap<'data, PotentialUtf8, str>),
     /// This calendar is cyclic (Chinese, Dangi), so it uses cyclic year names without any eras
     Cyclic(#[cfg_attr(feature = "serde", serde(borrow))] VarZeroVec<'data, str>),
 }
@@ -393,11 +393,8 @@ size_test!(MonthNamesV1, month_names_v1_size, 32);
     marker(RocMonthNamesV1Marker, "datetime/symbols/roc/months@1")
 )]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::neo),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub enum MonthNamesV1<'data> {
@@ -423,11 +420,8 @@ pub enum MonthNamesV1<'data> {
 /// Represents a simple substitution pattern;
 /// i.e. a string with a single placeholder
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(
- feature = "datagen",
- derive(serde::Serialize, databake::Bake),
- databake(path = icu_datetime::provider::neo),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct SimpleSubstitutionPattern<'data> {
     /// The pattern
@@ -486,11 +480,8 @@ size_test!(LinearNamesV1, linear_names_v1_size, 24);
     marker(PlaceholderDaySymbolsV1Marker, "datetime/symbols/placeholder/days@1"),
 )]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::neo),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct LinearNamesV1<'data> {
@@ -544,11 +535,8 @@ size_test!(GluePatternV1, glue_pattern_v1_size, 24);
 /// </div>
 #[icu_provider::data_struct(marker(GluePatternV1Marker, "datetime/patterns/glue@1"))]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::neo),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct GluePatternV1<'data> {
@@ -566,11 +554,8 @@ pub struct GluePatternV1<'data> {
 // }
 #[allow(missing_docs)] // TODO
 #[derive(Debug, Copy, Clone, PartialEq)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::neo),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct SkeletonDataIndex {
     /// If true, the first pattern is for `Long`.
@@ -582,13 +567,24 @@ pub struct SkeletonDataIndex {
     /// If true, there are 6 plural variants for each pattern.
     /// If false, it is just a single variant.
     pub has_plurals: bool,
+    /// If true, there are 2 era variants for each pattern.
+    /// The first does not have an era, and the second has an era.
+    /// if false, there is no era variant.
+    pub has_eras: bool,
+}
+
+#[cfg(feature = "experimental")]
+#[derive(Debug, Copy, Clone)]
+pub(crate) struct PatternSelectionOptions {
+    pub(crate) length: NeoSkeletonLength,
+    pub(crate) should_display_era: Option<bool>,
 }
 
 impl SkeletonDataIndex {
     // TODO: This should handle plurals
     #[cfg(feature = "experimental")]
-    pub(crate) fn index_for(self, length: NeoSkeletonLength) -> u8 {
-        match (length, self.has_long, self.has_medium) {
+    pub(crate) fn index_for(self, options: PatternSelectionOptions) -> u8 {
+        let chunk_number = match (options.length, self.has_long, self.has_medium) {
             (NeoSkeletonLength::Long, _, _) => 0,
             (NeoSkeletonLength::Medium, true, _) => 1,
             (NeoSkeletonLength::Medium, false, _) => 0,
@@ -596,7 +592,17 @@ impl SkeletonDataIndex {
             (NeoSkeletonLength::Short, true, false) => 1,
             (NeoSkeletonLength::Short, false, true) => 1,
             (NeoSkeletonLength::Short, false, false) => 0,
+        };
+        if !self.has_eras {
+            // chunks are size 1
+            return chunk_number;
         }
+        let offset = match options.should_display_era {
+            Some(false) => 0,
+            Some(true) | None => 1,
+        };
+        let chunk_size = 2;
+        offset + chunk_number * chunk_size
     }
 }
 
@@ -613,6 +619,7 @@ impl AsULE for SkeletonDataIndex {
         flags |= (self.has_long as u8) << 7;
         flags |= (self.has_medium as u8) << 6;
         flags |= (self.has_plurals as u8) << 5;
+        flags |= (self.has_eras as u8) << 4;
         SkeletonDataIndexULE(flags)
     }
 
@@ -623,6 +630,7 @@ impl AsULE for SkeletonDataIndex {
             has_long: (flags & (1 << 7)) != 0,
             has_medium: (flags & (1 << 6)) != 0,
             has_plurals: (flags & (1 << 5)) != 0,
+            has_eras: (flags & (1 << 4)) != 0,
         }
     }
 }
@@ -646,11 +654,8 @@ impl AsULE for SkeletonDataIndex {
     marker(TimeNeoSkeletonPatternsV1Marker, "datetime/patterns/time_skeleton@1")
 )]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::neo),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(missing_docs)] // TODO
 pub struct PackedSkeletonDataV1<'data> {
@@ -665,15 +670,15 @@ pub struct PackedSkeletonDataV1<'data> {
 
 impl<'data> PackedSkeletonDataV1<'data> {
     #[cfg(feature = "experimental")]
-    // TODO: Handle plurals
-    pub(crate) fn get_pattern(&self, length: NeoSkeletonLength) -> PatternBorrowed {
+    /// Gets a pattern according to a length and a numeric variant.
+    pub(crate) fn get_pattern(&self, options: PatternSelectionOptions) -> PatternBorrowed {
         match self
             .patterns
-            .get(self.index_info.index_for(length) as usize)
+            .get(self.index_info.index_for(options) as usize)
         {
             Some(pattern_ule) => pattern_ule.as_borrowed(),
             None => {
-                debug_assert!(false, "failed to load a pattern for length {length:?}");
+                debug_assert!(false, "failed to load a pattern for {options:?}");
                 PatternBorrowed::DEFAULT
             }
         }
@@ -685,11 +690,8 @@ impl<'data> PackedSkeletonDataV1<'data> {
     "datetime/patterns/datetime_skeleton@1"
 ))]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::neo),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 #[allow(missing_docs)] // TODO
@@ -706,19 +708,19 @@ pub struct DateTimeSkeletonsV1<'data> {
 #[derive(Debug)]
 pub struct YearNamesV1Marker;
 impl DynamicDataMarker for YearNamesV1Marker {
-    type Yokeable = YearNamesV1<'static>;
+    type DataStruct = YearNamesV1<'static>;
 }
 
 /// Calendar-agnostic month name data marker
 #[derive(Debug)]
 pub struct MonthNamesV1Marker;
 impl DynamicDataMarker for MonthNamesV1Marker {
-    type Yokeable = MonthNamesV1<'static>;
+    type DataStruct = MonthNamesV1<'static>;
 }
 
 /// Calendar-agnostic date/time skeleta data marker
 #[derive(Debug)]
 pub struct SkeletaV1Marker;
 impl DynamicDataMarker for SkeletaV1Marker {
-    type Yokeable = PackedSkeletonDataV1<'static>;
+    type DataStruct = PackedSkeletonDataV1<'static>;
 }

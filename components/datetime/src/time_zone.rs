@@ -6,7 +6,7 @@
 
 use crate::{
     error::DateTimeError,
-    fields::{FieldSymbol, TimeZone},
+    fields::{FieldLength, FieldSymbol, TimeZone},
     format::time_zone::FormattedTimeZone,
     input::{ExtractedTimeZoneInput, TimeZoneInput},
     pattern::{PatternError, PatternItem},
@@ -22,6 +22,43 @@ use icu_timezone::TimeZoneBcp47Id;
 use smallvec::SmallVec;
 use tinystr::tinystr;
 use writeable::{adapters::CoreWriteAsPartsWrite, Part, Writeable};
+
+/// All time zone styles that this crate can format
+#[derive(Debug, Copy, Clone)]
+pub(crate) enum ResolvedNeoTimeZoneSkeleton {
+    City,
+    Location,
+    GenericShort,
+    GenericLong,
+    SpecificShort,
+    SpecificLong,
+    GmtShort,
+    GmtLong,
+    Bcp47Id,
+    // UTS 35 defines 10 variants of ISO-8601-style time zone formats.
+    // They don't have their own names, so they are identified here by
+    // their datetime pattern strings.
+    Isox,
+    Isoxx,
+    Isoxxx,
+    Isoxxxx,
+    Isoxxxxx,
+    IsoX,
+    IsoXX,
+    IsoXXX,
+    IsoXXXX,
+    IsoXXXXX,
+}
+
+impl ResolvedNeoTimeZoneSkeleton {
+    pub(crate) fn from_field(field_symbol: TimeZone, field_length: FieldLength) -> Option<Self> {
+        crate::tz_registry::field_to_resolved(field_symbol, field_length)
+    }
+    #[cfg(feature = "experimental")]
+    pub(crate) fn to_field(self) -> crate::fields::Field {
+        crate::tz_registry::resolved_to_field(self)
+    }
+}
 
 /// Loads a resource into its destination if the destination has not already been filled.
 fn load<D, P>(
@@ -62,80 +99,6 @@ where
 /// of the time-zone data using the instance.
 ///
 /// [`CustomTimeZone`](icu_timezone::CustomTimeZone) can be used as formatting input.
-///
-/// # Examples
-///
-/// Here, we configure the [`TimeZoneFormatter`] to first look for time zone formatting symbol
-/// data for `generic_non_location_short`, and if it does not exist, to subsequently check
-/// for `generic_non_location_long` data.
-///
-/// ```
-/// use icu::calendar::DateTime;
-/// use icu::timezone::{CustomTimeZone, MetazoneCalculator, TimeZoneIdMapper};
-/// use icu::datetime::{DateTimeError, time_zone::TimeZoneFormatter};
-/// use icu::locale::locale;
-/// use tinystr::tinystr;
-/// use writeable::assert_writeable_eq;
-///
-/// // Set up the time zone. Note: the inputs here are
-/// //   1. The GMT offset
-/// //   2. The IANA time zone ID
-/// //   3. A datetime (for metazone resolution)
-/// //   4. Note: we do not need the zone variant because of `load_generic_*()`
-///
-/// // Set up the Metazone calculator, time zone ID mapper,
-/// // and the DateTime to use in calculation
-/// let mzc = MetazoneCalculator::new();
-/// let mapper = TimeZoneIdMapper::new();
-/// let datetime = DateTime::try_new_iso_datetime(2022, 8, 29, 0, 0, 0)
-///     .unwrap();
-///
-/// // Set up the formatter
-/// let mut tzf = TimeZoneFormatter::try_new(
-///     &locale!("en").into(),
-///     Default::default(),
-/// )
-/// .unwrap();
-/// tzf.include_generic_non_location_short()?
-///     .include_generic_non_location_long()?;
-///
-/// // "uschi" - has metazone symbol data for generic_non_location_short
-/// let mut time_zone = "-0600".parse::<CustomTimeZone>().unwrap();
-/// time_zone.time_zone_id = mapper.as_borrowed().iana_to_bcp47("America/Chicago");
-/// time_zone.maybe_calculate_metazone(&mzc, &datetime);
-/// assert_writeable_eq!(
-///     tzf.format(&time_zone),
-///     "CT"
-/// );
-///
-/// // "ushnl" - has time zone override symbol data for generic_non_location_short
-/// let mut time_zone = "-1000".parse::<CustomTimeZone>().unwrap();
-/// time_zone.time_zone_id = Some(tinystr!(8, "ushnl").into());
-/// time_zone.maybe_calculate_metazone(&mzc, &datetime);
-/// assert_writeable_eq!(
-///     tzf.format(&time_zone),
-///     "HST"
-/// );
-///
-/// // "frpar" - does not have symbol data for generic_non_location_short, so falls
-/// //           back to generic_non_location_long
-/// let mut time_zone = "+0100".parse::<CustomTimeZone>().unwrap();
-/// time_zone.time_zone_id = Some(tinystr!(8, "frpar").into());
-/// time_zone.maybe_calculate_metazone(&mzc, &datetime);
-/// assert_writeable_eq!(
-///     tzf.format(&time_zone),
-///     "Central European Time"
-/// );
-///
-/// // GMT with offset - used when metazone is not available
-/// let mut time_zone = "+0530".parse::<CustomTimeZone>().unwrap();
-/// assert_writeable_eq!(
-///     tzf.format(&time_zone),
-///     "GMT+05:30"
-/// );
-///
-/// # Ok::<(), DateTimeError>(())
-/// ```
 ///
 /// [data provider]: icu_provider
 #[derive(Debug)]
@@ -451,29 +414,6 @@ impl TimeZoneFormatter {
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Examples
-        ///
-        /// Default format is Localized GMT:
-        ///
-        /// ```
-        /// use icu::datetime::time_zone::{
-        ///     TimeZoneFormatter, TimeZoneFormatterOptions,
-        /// };
-        /// use icu::locale::locale;
-        /// use icu::timezone::CustomTimeZone;
-        /// use writeable::assert_writeable_eq;
-        ///
-        /// let tzf = TimeZoneFormatter::try_new(
-        ///     &locale!("es").into(),
-        ///     TimeZoneFormatterOptions::default(),
-        /// )
-        /// .unwrap();
-        ///
-        /// let time_zone = "-0700".parse::<CustomTimeZone>().unwrap();
-        ///
-        /// assert_writeable_eq!(tzf.format(&time_zone), "GMT-07:00");
-        /// ```
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
@@ -706,27 +646,6 @@ impl TimeZoneFormatter {
 
     /// Takes a [`TimeZoneInput`] implementer and returns an instance of a [`FormattedTimeZone`]
     /// that contains all information necessary to display a formatted time zone and operate on it.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::datetime::time_zone::{
-    ///     TimeZoneFormatter, TimeZoneFormatterOptions,
-    /// };
-    /// use icu::locale::locale;
-    /// use icu::timezone::CustomTimeZone;
-    /// use writeable::assert_writeable_eq;
-    ///
-    /// let tzf = TimeZoneFormatter::try_new(
-    ///     &locale!("en").into(),
-    ///     TimeZoneFormatterOptions::default(),
-    /// )
-    /// .expect("Failed to create TimeZoneFormatter");
-    ///
-    /// let time_zone = CustomTimeZone::utc();
-    ///
-    /// assert_writeable_eq!(tzf.format(&time_zone), "GMT");
-    /// ```
     pub fn format<'l, T>(&'l self, value: &T) -> FormattedTimeZone<'l>
     where
         T: TimeZoneInput,
@@ -862,10 +781,10 @@ pub(super) struct LocalizedGmtFormat {}
 
 // -07:00
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub(super) struct Iso8601Format {
-    format: IsoFormat,
-    minutes: IsoMinutes,
-    seconds: IsoSeconds,
+pub(crate) struct Iso8601Format {
+    pub(crate) format: IsoFormat,
+    pub(crate) minutes: IsoMinutes,
+    pub(crate) seconds: IsoSeconds,
 }
 
 impl Iso8601Format {
@@ -882,6 +801,10 @@ impl Iso8601Format {
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub(super) struct ExemplarCityFormat {}
 
+// It is only used for pattern in special case and not public to users.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub(super) struct Bcp47IdFormat {}
+
 // An enum for time zone format unit.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub(super) enum TimeZoneFormatterUnit {
@@ -891,6 +814,7 @@ pub(super) enum TimeZoneFormatterUnit {
     SpecificNonLocationShort(SpecificNonLocationShortFormat),
     GenericLocation(GenericLocationFormat),
     ExemplarCity(ExemplarCityFormat),
+    Bcp47Id(Bcp47IdFormat),
     WithFallback(FallbackTimeZoneFormatterUnit),
 }
 
@@ -986,6 +910,7 @@ impl FormatTimeZone for TimeZoneFormatterUnit {
             Self::GenericLocation(unit) => unit.format(sink, time_zone, data_payloads),
             Self::WithFallback(unit) => unit.format(sink, time_zone, data_payloads),
             Self::ExemplarCity(unit) => unit.format(sink, time_zone, data_payloads),
+            Self::Bcp47Id(unit) => unit.format(sink, time_zone, data_payloads),
         }
     }
 }
@@ -1297,10 +1222,20 @@ impl FormatTimeZoneWithFallback for Iso8601Format {
         gmt_offset: GmtOffset,
         _data_payloads: TimeZoneDataPayloadsBorrowed,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
+        self.format_infallible(sink, gmt_offset).map(|()| Ok(()))
+    }
+}
+
+impl Iso8601Format {
+    pub(crate) fn format_infallible<W: writeable::PartsWrite + ?Sized>(
+        &self,
+        sink: &mut W,
+        gmt_offset: GmtOffset,
+    ) -> Result<(), fmt::Error> {
         if gmt_offset.is_zero()
             && matches!(self.format, IsoFormat::UtcBasic | IsoFormat::UtcExtended)
         {
-            sink.write_char('Z')?;
+            return sink.write_char('Z');
         }
 
         let extended_format = matches!(self.format, IsoFormat::Extended | IsoFormat::UtcExtended);
@@ -1325,7 +1260,7 @@ impl FormatTimeZoneWithFallback for Iso8601Format {
             format_offset_seconds(sink, gmt_offset)?;
         }
 
-        Ok(Ok(()))
+        Ok(())
     }
 }
 
@@ -1376,6 +1311,23 @@ impl FormatTimeZone for ExemplarCityFormat {
                     .unwrap_or(&Cow::Borrowed("Unknown"));
                 Ok(sink.write_str(formatted_unknown_city)?)
             }
+        })
+    }
+}
+
+impl FormatTimeZone for Bcp47IdFormat {
+    fn format<W: writeable::PartsWrite + ?Sized>(
+        &self,
+        sink: &mut W,
+        time_zone: &ExtractedTimeZoneInput,
+        _data_payloads: TimeZoneDataPayloadsBorrowed,
+    ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
+        Ok(match time_zone.time_zone_id() {
+            Some(bcp47_id) => {
+                sink.write_str(&bcp47_id)?;
+                Ok(())
+            }
+            None => Err(FormatTimeZoneError::MissingInputField("time_zone_id")),
         })
     }
 }

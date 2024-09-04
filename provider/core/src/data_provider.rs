@@ -320,8 +320,8 @@ where
 
 impl<M, M0, Y, P> BoundDataProvider<M0> for DataProviderWithMarker<M, P>
 where
-    M: DataMarker<Yokeable = Y>,
-    M0: DynamicDataMarker<Yokeable = Y>,
+    M: DataMarker<DataStruct = Y>,
+    M0: DynamicDataMarker<DataStruct = Y>,
     Y: for<'a> Yokeable<'a>,
     P: DataProvider<M>,
 {
@@ -365,7 +365,7 @@ mod test {
     struct HelloAltMarker {}
 
     impl DynamicDataMarker for HelloAltMarker {
-        type Yokeable = HelloAlt;
+        type DataStruct = HelloAlt;
     }
 
     impl DataMarker for HelloAltMarker {

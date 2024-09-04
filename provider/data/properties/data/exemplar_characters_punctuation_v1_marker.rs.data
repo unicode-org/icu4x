@@ -12,9 +12,9 @@
 #[macro_export]
 macro_rules! __impl_exemplar_characters_punctuation_v1_marker {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl $provider {
             const DATA_EXEMPLAR_CHARACTERS_PUNCTUATION_V1_MARKER: icu_provider_baked::zerotrie::Data<icu::properties::provider::ExemplarCharactersPunctuationV1Marker> = icu_provider_baked::zerotrie::Data {
                 trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1yabcdefghijklmnopqrstuvxyz\0\0\0\0\0\0\0\0\0\0\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x02\x02\x02\x02\x11+?Mb\x80\x8D\xA9\xBF\xC2\x07\x1F?Wc\x80\x82\x8E\xD3\xF0\0\r\x15)\xC5fmrsz\x01\x02\x03\x06\x80\x81\x82\x83t\x84\x80\xC7eghlnrs\x01\x04\x06\x08\t\x0B\x85\x86c\x87o\x80o\x88\x80x\x80\x89\xC6aehsvy\x01\x03\x05\x06\x07\x84b\x8Ar\x80\x8B\x8C\x80\xC4aeos\x01\x02\x04\x8D\x8Ci\x8Eb\x8F\xC6lnostu\x02\x03\x05\x06\x08\x90\0\x80\x90\x01\x84\x90\x02\x80\xC6afiory\x02\t\x0E\x0F\x11\x90\x03-Adlm\x90\x04\x90\x05l\x90\x06\x8D\x90\x07\x80\xC4adlu\x01\x03\x04\x80\x90\x08\x84\x80\xC7aeirsuy\x02\x04\x06\x08\n\x0C\x90\t\x90\n\x90\x0B\x90\x0Cb\x8F\x90\r\x90\x0E\xC6adegst\x01\x02\x04\x06\x08\x80\x80\x90\x0F\x90\x10\x90\x11\x90\x12a\x90\x13\xCBaegkmnosuxy\x02\x05\x07\t\x0B\r\x11\x18\x19.\x90\x14a\x90\x15p\x80\x90\x16\x90\x17\x90\x18\x90\x19k\x80\x80-Deva\x80\x80v\x80-\xC3DOT\x04\x08eva\x80rya\x80elu\x80\x8C\xC6bimotv\x01\x04\x07\x08\n\x8Cj\x90\x07o\x90\x12\x80\x90\x1A\x90\x1B\xC8aklnrsty\x03\x05\x06\t\x0B\x0C\x0Ei\x90\x1C\x90\x1D\x80\x80i\x80\x90\x18\x80\x90\x1E\x90\x1F\xC5deloq\x06\x08\t\x0Bs\x8C-NL\x80\x90 \x80\x90!o\x90\"\xC2cr\x07\x90#-ES\x90$\x80\xC6aclrst\x02\x04\x06\t\x0B\x90%m\x80\x90&g\x90\x1A\x90'\x80-PT\x90(u\x80\xC3aou\x03\x05j\x90)\x90*\x8C\xCEacdikloqruvwyz\x05\x07\x0F\x10\x11\x13\x14\x16\x1F !#&\x90\x1Ch\x90+\x90,\x90--Deva\x80\x80\x8B\x90.\x80\x90/\x900-Latn\x900\x80\x80\x901r\x902l\x90&\xC8aeghkort\x01\x03\x05\x07\t\n\x0B\x80\x90\x1E\x903\x904\x905\x80\x80\x906\xC4knrz\x02\x05\x07\x907d\x908\x909\x80\xC3eim\x03\x04c\x90:\x80w\x90;\xC2hn\x01\x80r\x90<\xC3oru\x02\x04\x90=l\x84e\x90>-Hans\x90?\xC2ah\x01\x80\x90?-Hant\x90>" },
@@ -582,21 +582,21 @@ macro_rules! __impl_exemplar_characters_punctuation_v1_marker {
                 ],
             };
         }
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DataProvider<icu::properties::provider::ExemplarCharactersPunctuationV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::properties::provider::ExemplarCharactersPunctuationV1Marker>, icu_provider::DataError> {
                 let mut metadata = icu_provider::DataResponseMetadata::default();
-                let payload = if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_EXEMPLAR_CHARACTERS_PUNCTUATION_V1_MARKER, req.id) {
+                let payload = if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_EXEMPLAR_CHARACTERS_PUNCTUATION_V1_MARKER, req.id, req.metadata.attributes_prefix_match) {
                     payload
                 } else {
                     const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::properties::provider::ExemplarCharactersPunctuationV1Marker as icu_provider::DataMarker>::INFO.fallback_config);
                     let mut fallback_iterator = FALLBACKER.fallback_for(req.id.locale.clone());
                     loop {
-                        if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_EXEMPLAR_CHARACTERS_PUNCTUATION_V1_MARKER, icu_provider::DataIdentifierBorrowed::for_marker_attributes_and_locale(req.id.marker_attributes, fallback_iterator.get())) {
+                        if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_EXEMPLAR_CHARACTERS_PUNCTUATION_V1_MARKER, icu_provider::DataIdentifierBorrowed::for_marker_attributes_and_locale(req.id.marker_attributes, fallback_iterator.get()), req.metadata.attributes_prefix_match) {
                             metadata.locale = Some(fallback_iterator.take());
                             break payload;
                         }
-                        if fallback_iterator.get().is_und() {
+                        if fallback_iterator.get().is_default() {
                             return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::properties::provider::ExemplarCharactersPunctuationV1Marker as icu_provider::DataMarker>::INFO, req));
                         }
                         fallback_iterator.step();
@@ -606,9 +606,33 @@ macro_rules! __impl_exemplar_characters_punctuation_v1_marker {
             }
         }
     };
+    ($ provider : ty , DRY) => {
+        __impl_exemplar_characters_punctuation_v1_marker!($provider);
+        #[clippy::msrv = "1.71.1"]
+        impl icu_provider::DryDataProvider<icu::properties::provider::ExemplarCharactersPunctuationV1Marker> for $provider {
+            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
+                icu_provider::DataProvider::<icu::properties::provider::ExemplarCharactersPunctuationV1Marker>::load(self, req).map(|r| r.metadata)
+            }
+        }
+    };
     ($ provider : ty , ITER) => {
         __impl_exemplar_characters_punctuation_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
+        impl icu_provider::IterableDataProvider<icu::properties::provider::ExemplarCharactersPunctuationV1Marker> for $provider {
+            fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
+                Ok(icu_provider_baked::DataStore::iter(&Self::DATA_EXEMPLAR_CHARACTERS_PUNCTUATION_V1_MARKER).collect())
+            }
+        }
+    };
+    ($ provider : ty , DRY , ITER) => {
+        __impl_exemplar_characters_punctuation_v1_marker!($provider);
+        #[clippy::msrv = "1.71.1"]
+        impl icu_provider::DryDataProvider<icu::properties::provider::ExemplarCharactersPunctuationV1Marker> for $provider {
+            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
+                icu_provider::DataProvider::<icu::properties::provider::ExemplarCharactersPunctuationV1Marker>::load(self, req).map(|r| r.metadata)
+            }
+        }
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::IterableDataProvider<icu::properties::provider::ExemplarCharactersPunctuationV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_EXEMPLAR_CHARACTERS_PUNCTUATION_V1_MARKER).collect())

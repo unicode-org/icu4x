@@ -17,7 +17,7 @@ all: clean baked_data/mod.rs
 
 baked_data/mod.rs: ../bin/icu4x-datagen
 	../bin/icu4x-datagen \
-		--format mod \
+		--format baked \
 		--markers all \
 		--locales ru \
 		--overwrite \

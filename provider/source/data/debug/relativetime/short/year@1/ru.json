@@ -5,43 +5,25 @@
     "1": "в след. г."
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": " г. назад",
-      "index": 0
-    },
-    "two": null,
-    "few": {
-      "pattern": " г. назад",
-      "index": 0
-    },
-    "many": {
-      "pattern": " л. назад",
-      "index": 0
-    },
-    "other": {
-      "pattern": " г. назад",
-      "index": 0
+    "strings": {
+      "specials": [
+        [
+          "Many",
+          "\u0001 л. назад"
+        ]
+      ],
+      "other": "\u0001 г. назад"
     }
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "через  г.",
-      "index": 11
-    },
-    "two": null,
-    "few": {
-      "pattern": "через  г.",
-      "index": 11
-    },
-    "many": {
-      "pattern": "через  л.",
-      "index": 11
-    },
-    "other": {
-      "pattern": "через  г.",
-      "index": 11
+    "strings": {
+      "specials": [
+        [
+          "Many",
+          "\fчерез  л."
+        ]
+      ],
+      "other": "\fчерез  г."
     }
   }
 }

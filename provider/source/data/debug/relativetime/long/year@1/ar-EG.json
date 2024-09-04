@@ -5,55 +5,41 @@
     "1": "السنة القادمة"
   },
   "past": {
-    "zero": {
-      "pattern": "قبل  سنة",
-      "index": 7
-    },
-    "one": {
-      "pattern": "قبل سنة واحدة",
-      "index": 255
-    },
-    "two": {
-      "pattern": "قبل سنتين",
-      "index": 255
-    },
-    "few": {
-      "pattern": "قبل  سنوات",
-      "index": 7
-    },
-    "many": {
-      "pattern": "قبل  سنة",
-      "index": 7
-    },
-    "other": {
-      "pattern": "قبل  سنة",
-      "index": 7
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0000قبل سنة واحدة"
+        ],
+        [
+          "Two",
+          "\u0000قبل سنتين"
+        ],
+        [
+          "Few",
+          "\bقبل  سنوات"
+        ]
+      ],
+      "other": "\bقبل  سنة"
     }
   },
   "future": {
-    "zero": {
-      "pattern": "خلال  سنة",
-      "index": 9
-    },
-    "one": {
-      "pattern": "خلال سنة واحدة",
-      "index": 255
-    },
-    "two": {
-      "pattern": "خلال سنتين",
-      "index": 255
-    },
-    "few": {
-      "pattern": "خلال  سنوات",
-      "index": 9
-    },
-    "many": {
-      "pattern": "خلال  سنة",
-      "index": 9
-    },
-    "other": {
-      "pattern": "خلال  سنة",
-      "index": 9
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0000خلال سنة واحدة"
+        ],
+        [
+          "Two",
+          "\u0000خلال سنتين"
+        ],
+        [
+          "Few",
+          "\nخلال  سنوات"
+        ]
+      ],
+      "other": "\nخلال  سنة"
     }
   }
 }

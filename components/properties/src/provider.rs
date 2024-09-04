@@ -28,7 +28,7 @@ use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue
 use icu_provider::prelude::*;
 use zerofrom::ZeroFrom;
 
-use zerovec::{VarZeroVec, ZeroSlice, ZeroVecError};
+use zerovec::{ule::UleError, VarZeroVec, ZeroSlice};
 
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
@@ -383,11 +383,8 @@ pub mod bidi_data;
     marker(XidStartV1Marker, "props/XIDS@1", singleton)
 )]
 #[derive(Debug, Eq, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_properties::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[non_exhaustive]
 pub enum PropertyCodePointSetV1<'data> {
@@ -409,11 +406,8 @@ pub enum PropertyCodePointSetV1<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Clone, Debug, Eq, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_properties::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[non_exhaustive]
 pub enum PropertyCodePointMapV1<'data, T: TrieValue> {
@@ -428,14 +422,11 @@ macro_rules! data_struct_generic {
         $(
             #[doc = core::concat!("Data marker for the '", stringify!($ty), "' Unicode property")]
             #[derive(Debug, Default)]
-            #[cfg_attr(
-                feature = "datagen",
-                derive(databake::Bake),
-                databake(path = icu_properties::provider),
-            )]
+            #[cfg_attr(feature = "datagen", derive(databake::Bake))]
+            #[cfg_attr(feature = "datagen", databake(path = icu_properties::provider))]
             pub struct $marker;
             impl icu_provider::DynamicDataMarker for $marker {
-                type Yokeable = PropertyCodePointMapV1<'static, crate::$ty>;
+                type DataStruct = PropertyCodePointMapV1<'static, crate::$ty>;
             }
             impl icu_provider::DataMarker for $marker {
                 const INFO: icu_provider::DataMarkerInfo = {
@@ -497,11 +488,8 @@ data_struct_generic!(
     )
 )]
 #[derive(Debug, Eq, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_properties::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[non_exhaustive]
 pub enum PropertyUnicodeSetV1<'data> {
@@ -576,11 +564,8 @@ impl<'data> PropertyUnicodeSetV1<'data> {
     singleton
 ))]
 #[derive(Debug, Eq, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_properties::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct ScriptWithExtensionsPropertyV1<'data> {
     /// Note: The `ScriptWithExt` values in this array will assume a 12-bit layout. The 2
@@ -674,9 +659,7 @@ impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
     }
 
     #[inline]
-    pub(crate) fn try_into_converted<P>(
-        self,
-    ) -> Result<PropertyCodePointMapV1<'data, P>, ZeroVecError>
+    pub(crate) fn try_into_converted<P>(self) -> Result<PropertyCodePointMapV1<'data, P>, UleError>
     where
         P: TrieValue,
     {

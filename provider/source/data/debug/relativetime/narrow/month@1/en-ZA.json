@@ -5,31 +5,15 @@
     "1": "next mo"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": " mo ago",
-      "index": 0
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": " mo ago",
-      "index": 0
+    "strings": {
+      "specials": [],
+      "other": "\u0001 mo ago"
     }
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "in  mo",
-      "index": 3
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "in  mo",
-      "index": 3
+    "strings": {
+      "specials": [],
+      "other": "\u0004in  mo"
     }
   }
 }

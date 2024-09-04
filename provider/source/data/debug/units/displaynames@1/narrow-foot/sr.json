@@ -1,5 +1,8 @@
 {
   "patterns": {
-    "Other": "{0} ft"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 ft"
+    }
   }
 }

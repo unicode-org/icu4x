@@ -106,12 +106,12 @@ use predicates::MarkerNotFoundPredicate;
 ///         HelloWorldProvider.into_json_provider(),
 ///         "Chinese"
 ///     )
-///     .with_filter(|id| id.locale.language() == language!("zh")),
+///     .with_filter(|id| id.locale.language == language!("zh")),
 ///     FilterDataProvider::new(
 ///         HelloWorldProvider.into_json_provider(),
 ///         "German"
 ///     )
-///     .with_filter(|id| id.locale.language() == language!("de")),
+///     .with_filter(|id| id.locale.language == language!("de")),
 /// );
 ///
 /// let provider: &dyn DataProvider<HelloWorldV1Marker> =
@@ -176,12 +176,12 @@ impl<P0, P1> ForkByMarkerProvider<P0, P1> {
 ///             HelloWorldProvider.into_json_provider(),
 ///             "Chinese"
 ///         )
-///         .with_filter(|id| id.locale.language() == language!("zh")),
+///         .with_filter(|id| id.locale.language == language!("zh")),
 ///         FilterDataProvider::new(
 ///             HelloWorldProvider.into_json_provider(),
 ///             "German"
 ///         )
-///         .with_filter(|id| id.locale.language() == language!("de")),
+///         .with_filter(|id| id.locale.language == language!("de")),
 ///     ],
 /// );
 ///

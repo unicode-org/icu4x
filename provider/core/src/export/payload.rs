@@ -24,15 +24,15 @@ trait ExportableDataPayload {
 
 impl<M: DynamicDataMarker> ExportableDataPayload for DataPayload<M>
 where
-    for<'a> <M::Yokeable as Yokeable<'a>>::Output: Bake + BakeSize + serde::Serialize,
-    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: PartialEq,
+    for<'a> <M::DataStruct as Yokeable<'a>>::Output: Bake + BakeSize + serde::Serialize,
+    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: PartialEq,
 {
     fn bake_yoke(&self, ctx: &CrateEnv) -> TokenStream {
         self.get().bake(ctx)
     }
 
     fn bake_size(&self) -> usize {
-        core::mem::size_of::<<M::Yokeable as Yokeable>::Output>() + self.get().borrows_size()
+        core::mem::size_of::<<M::DataStruct as Yokeable>::Output>() + self.get().borrows_size()
     }
 
     fn serialize_yoke(
@@ -91,9 +91,9 @@ impl core::fmt::Debug for ExportBox {
 impl<M> UpcastDataPayload<M> for ExportMarker
 where
     M: DynamicDataMarker,
-    M::Yokeable: Sync + Send,
-    for<'a> <M::Yokeable as Yokeable<'a>>::Output: Bake + BakeSize + serde::Serialize,
-    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: PartialEq,
+    M::DataStruct: Sync + Send,
+    for<'a> <M::DataStruct as Yokeable<'a>>::Output: Bake + BakeSize + serde::Serialize,
+    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: PartialEq,
 {
     fn upcast(other: DataPayload<M>) -> DataPayload<ExportMarker> {
         DataPayload::from_owned(ExportBox {
@@ -198,30 +198,40 @@ impl DataPayload<ExportMarker> {
 
 impl core::hash::Hash for DataPayload<ExportMarker> {
     fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
+        self.hash_and_postcard_size(state);
+    }
+}
+
+impl DataPayload<ExportMarker> {
+    /// Calculates a payload hash and the postcard size
+    pub fn hash_and_postcard_size<H: core::hash::Hasher>(&self, state: &mut H) -> usize {
         use postcard::ser_flavors::Flavor;
 
-        struct HashFlavor<'a, H>(&'a mut H);
+        struct HashFlavor<'a, H>(&'a mut H, usize);
         impl<'a, H: core::hash::Hasher> Flavor for HashFlavor<'a, H> {
-            type Output = ();
+            type Output = usize;
 
             fn try_push(&mut self, data: u8) -> postcard::Result<()> {
                 self.0.write_u8(data);
+                self.1 += 1;
                 Ok(())
             }
 
             fn finalize(self) -> postcard::Result<Self::Output> {
-                Ok(())
+                Ok(self.1)
             }
         }
 
-        let _infallible =
-            self.get()
-                .payload
-                .serialize_yoke(&mut <dyn erased_serde::Serializer>::erase(
-                    &mut postcard::Serializer {
-                        output: HashFlavor(state),
-                    },
-                ));
+        let mut serializer = postcard::Serializer {
+            output: HashFlavor(state, 0),
+        };
+
+        let _infallible = self
+            .get()
+            .payload
+            .serialize_yoke(&mut <dyn erased_serde::Serializer>::erase(&mut serializer));
+
+        serializer.output.1
     }
 }
 
@@ -231,7 +241,7 @@ impl core::hash::Hash for DataPayload<ExportMarker> {
 pub struct ExportMarker {}
 
 impl DynamicDataMarker for ExportMarker {
-    type Yokeable = ExportBox;
+    type DataStruct = ExportBox;
 }
 
 #[cfg(test)]

@@ -5,43 +5,33 @@
     "1": "в следующем месяце"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": " месяц назад",
-      "index": 0
-    },
-    "two": null,
-    "few": {
-      "pattern": " месяца назад",
-      "index": 0
-    },
-    "many": {
-      "pattern": " месяцев назад",
-      "index": 0
-    },
-    "other": {
-      "pattern": " месяца назад",
-      "index": 0
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0001 месяц назад"
+        ],
+        [
+          "Many",
+          "\u0001 месяцев назад"
+        ]
+      ],
+      "other": "\u0001 месяца назад"
     }
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "через  месяц",
-      "index": 11
-    },
-    "two": null,
-    "few": {
-      "pattern": "через  месяца",
-      "index": 11
-    },
-    "many": {
-      "pattern": "через  месяцев",
-      "index": 11
-    },
-    "other": {
-      "pattern": "через  месяца",
-      "index": 11
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\fчерез  месяц"
+        ],
+        [
+          "Many",
+          "\fчерез  месяцев"
+        ]
+      ],
+      "other": "\fчерез  месяца"
     }
   }
 }

@@ -3,43 +3,15 @@
     "0": "в эту минуту"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": " мин. назад",
-      "index": 0
-    },
-    "two": null,
-    "few": {
-      "pattern": " мин. назад",
-      "index": 0
-    },
-    "many": {
-      "pattern": " мин. назад",
-      "index": 0
-    },
-    "other": {
-      "pattern": " мин. назад",
-      "index": 0
+    "strings": {
+      "specials": [],
+      "other": "\u0001 мин. назад"
     }
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "через  мин.",
-      "index": 11
-    },
-    "two": null,
-    "few": {
-      "pattern": "через  мин.",
-      "index": 11
-    },
-    "many": {
-      "pattern": "через  мин.",
-      "index": 11
-    },
-    "other": {
-      "pattern": "через  мин.",
-      "index": 11
+    "strings": {
+      "specials": [],
+      "other": "\fчерез  мин."
     }
   }
 }

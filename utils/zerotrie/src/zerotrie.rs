@@ -7,7 +7,9 @@ use crate::reader;
 use core::borrow::Borrow;
 
 #[cfg(feature = "alloc")]
-use crate::{builder::bytestr::ByteStr, builder::nonconst::ZeroTrieBuilder, error::Error};
+use crate::{
+    builder::bytestr::ByteStr, builder::nonconst::ZeroTrieBuilder, error::ZeroTrieBuildError,
+};
 #[cfg(feature = "alloc")]
 use alloc::{boxed::Box, collections::BTreeMap, collections::VecDeque, string::String, vec::Vec};
 #[cfg(feature = "litemap")]
@@ -58,7 +60,7 @@ use litemap::LiteMap;
 /// assert_eq!(trie.get("bazzoo"), Some(3));
 /// assert_eq!(trie.get("unknown"), None);
 ///
-/// # Ok::<_, zerotrie::ZeroTrieError>(())
+/// # Ok::<_, zerotrie::ZeroTrieBuildError>(())
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 // Note: The absence of the following derive does not cause any test failures in this crate
@@ -94,7 +96,7 @@ pub(crate) enum ZeroTrieFlavor<Store> {
 /// assert_eq!(trie.get(b"bazzoo"), Some(3));
 /// assert_eq!(trie.get(b"unknown"), None);
 ///
-/// # Ok::<_, zerotrie::ZeroTrieError>(())
+/// # Ok::<_, zerotrie::ZeroTrieBuildError>(())
 /// ```
 ///
 /// The trie can only store ASCII bytes; a string with non-ASCII always returns None:
@@ -109,7 +111,8 @@ pub(crate) enum ZeroTrieFlavor<Store> {
 /// ```
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
-#[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerotrie))]
+#[cfg_attr(feature = "databake", derive(databake::Bake))]
+#[cfg_attr(feature = "databake", databake(path = zerotrie))]
 #[allow(clippy::exhaustive_structs)] // databake hidden fields
 pub struct ZeroTrieSimpleAscii<Store: ?Sized> {
     #[doc(hidden)] // for databake, but there are no invariants
@@ -146,7 +149,7 @@ impl<Store> ZeroTrieSimpleAscii<Store> {
 /// assert_eq!(trie.get(b"bazzoo"), Some(3));
 /// assert_eq!(trie.get(b"unknown"), None);
 ///
-/// # Ok::<_, zerotrie::ZeroTrieError>(())
+/// # Ok::<_, zerotrie::ZeroTrieBuildError>(())
 /// ```
 ///
 /// Strings with different cases of the same character at the same offset are not allowed:
@@ -166,7 +169,8 @@ impl<Store> ZeroTrieSimpleAscii<Store> {
 /// ```
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
-#[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerotrie))]
+#[cfg_attr(feature = "databake", derive(databake::Bake))]
+#[cfg_attr(feature = "databake", databake(path = zerotrie))]
 #[allow(clippy::exhaustive_structs)] // databake hidden fields
 pub struct ZeroAsciiIgnoreCaseTrie<Store: ?Sized> {
     #[doc(hidden)] // for databake, but there are no invariants
@@ -197,11 +201,12 @@ pub struct ZeroAsciiIgnoreCaseTrie<Store: ?Sized> {
 /// assert_eq!(trie.get("båzzøø".as_bytes()), Some(3));
 /// assert_eq!(trie.get("bazzoo".as_bytes()), None);
 ///
-/// # Ok::<_, zerotrie::ZeroTrieError>(())
+/// # Ok::<_, zerotrie::ZeroTrieBuildError>(())
 /// ```
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
-#[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerotrie))]
+#[cfg_attr(feature = "databake", derive(databake::Bake))]
+#[cfg_attr(feature = "databake", databake(path = zerotrie))]
 #[allow(clippy::exhaustive_structs)] // databake hidden fields
 pub struct ZeroTriePerfectHash<Store: ?Sized> {
     #[doc(hidden)] // for databake, but there are no invariants
@@ -221,7 +226,8 @@ impl<Store> ZeroTriePerfectHash<Store> {
 /// For more information, see [`ZeroTrie`].
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
-#[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerotrie))]
+#[cfg_attr(feature = "databake", derive(databake::Bake))]
+#[cfg_attr(feature = "databake", databake(path = zerotrie))]
 #[allow(clippy::exhaustive_structs)] // databake hidden fields
 pub struct ZeroTrieExtendedCapacity<Store: ?Sized> {
     #[doc(hidden)] // for databake, but there are no invariants
@@ -387,7 +393,7 @@ macro_rules! impl_zerotrie_subtype {
         }
         #[cfg(feature = "alloc")]
         impl $name<Vec<u8>> {
-            pub(crate) fn try_from_tuple_slice(items: &[(&ByteStr, usize)]) -> Result<Self, Error> {
+            pub(crate) fn try_from_tuple_slice(items: &[(&ByteStr, usize)]) -> Result<Self, ZeroTrieBuildError> {
                 use crate::options::ZeroTrieWithOptions;
                 ZeroTrieBuilder::<VecDeque<u8>>::from_sorted_tuple_slice(
                     items,
@@ -421,7 +427,7 @@ macro_rules! impl_zerotrie_subtype {
         where
             K: Borrow<[u8]>
         {
-            type Error = crate::error::Error;
+            type Error = crate::error::ZeroTrieBuildError;
             fn try_from(map: &'a BTreeMap<K, usize>) -> Result<Self, Self::Error> {
                 let tuples: Vec<(&[u8], usize)> = map
                     .iter()
@@ -480,7 +486,7 @@ macro_rules! impl_zerotrie_subtype {
             K: Borrow<[u8]>,
             S: litemap::store::StoreIterable<'a, K, usize>,
         {
-            type Error = crate::error::Error;
+            type Error = crate::error::ZeroTrieBuildError;
             fn try_from(map: &'a LiteMap<K, usize, S>) -> Result<Self, Self::Error> {
                 let tuples: Vec<(&[u8], usize)> = map
                     .iter()
@@ -538,7 +544,7 @@ macro_rules! impl_zerotrie_subtype {
         impl $name<Vec<u8>>
         {
             #[cfg(feature = "serde")]
-            pub(crate) fn try_from_serde_litemap(items: &LiteMap<Box<ByteStr>, usize>) -> Result<Self, Error> {
+            pub(crate) fn try_from_serde_litemap(items: &LiteMap<Box<ByteStr>, usize>) -> Result<Self, ZeroTrieBuildError> {
                 let lm_borrowed: LiteMap<&ByteStr, usize> = items.to_borrowed_keys();
                 Self::try_from_tuple_slice(lm_borrowed.as_slice())
             }
@@ -599,7 +605,7 @@ macro_rules! impl_zerotrie_subtype {
             Store: zerovec::ule::VarULE,
         {
             #[inline]
-            fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ZeroVecError> {
+            fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ule::UleError> {
                 Store::validate_byte_slice(bytes)
             }
             #[inline]
@@ -773,7 +779,9 @@ where
 
 #[cfg(feature = "alloc")]
 impl ZeroTrie<Vec<u8>> {
-    pub(crate) fn try_from_tuple_slice(items: &[(&ByteStr, usize)]) -> Result<Self, Error> {
+    pub(crate) fn try_from_tuple_slice(
+        items: &[(&ByteStr, usize)],
+    ) -> Result<Self, ZeroTrieBuildError> {
         let is_all_ascii = items.iter().all(|(s, _)| s.is_all_ascii());
         if is_all_ascii && items.len() < 512 {
             ZeroTrieSimpleAscii::try_from_tuple_slice(items).map(|x| x.into_zerotrie())

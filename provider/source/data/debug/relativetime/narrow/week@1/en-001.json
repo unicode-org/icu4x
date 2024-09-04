@@ -5,31 +5,15 @@
     "1": "next wk"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": " wk ago",
-      "index": 0
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": " wk ago",
-      "index": 0
+    "strings": {
+      "specials": [],
+      "other": "\u0001 wk ago"
     }
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "in  wk",
-      "index": 3
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "in  wk",
-      "index": 3
+    "strings": {
+      "specials": [],
+      "other": "\u0004in  wk"
     }
   }
 }

@@ -69,7 +69,7 @@ fn test_errors() {
 
         struct WrongV1Marker;
         impl DynamicDataMarker for WrongV1Marker {
-            type Yokeable = HelloWorldV1<'static>;
+            type DataStruct = HelloWorldV1<'static>;
         }
         impl DataMarker for WrongV1Marker {
             const INFO: DataMarkerInfo =
@@ -89,5 +89,57 @@ fn test_errors() {
             ),
             "{err:?}"
         );
+    }
+}
+
+#[test]
+fn prefix_match() {
+    for path in PATHS {
+        let provider = FsDataProvider::try_new(path.into()).unwrap();
+
+        let id = DataIdentifierCow::from_owned(
+            DataMarkerAttributes::from_str_or_panic("reve").to_owned(),
+            "ja".parse().unwrap(),
+        );
+
+        assert!(DataProvider::<HelloWorldV1Marker>::load(
+            &provider.as_deserializing(),
+            DataRequest {
+                id: id.as_borrowed(),
+                ..Default::default()
+            }
+        )
+        .is_err());
+
+        assert!(DataProvider::<HelloWorldV1Marker>::load(
+            &provider.as_deserializing(),
+            DataRequest {
+                id: id.as_borrowed(),
+                metadata: {
+                    let mut metadata = DataRequestMetadata::default();
+                    metadata.attributes_prefix_match = true;
+                    metadata
+                }
+            }
+        )
+        .is_ok());
+
+        let id = DataIdentifierCow::from_owned(
+            DataMarkerAttributes::from_str_or_panic("non-existent").to_owned(),
+            "ja".parse().unwrap(),
+        );
+
+        assert!(DataProvider::<HelloWorldV1Marker>::load(
+            &provider.as_deserializing(),
+            DataRequest {
+                id: id.as_borrowed(),
+                metadata: {
+                    let mut metadata = DataRequestMetadata::default();
+                    metadata.attributes_prefix_match = true;
+                    metadata
+                }
+            }
+        )
+        .is_err());
     }
 }

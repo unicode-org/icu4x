@@ -1,6 +1,8 @@
 {
   "patterns": {
-    "One": "{0} dakika",
-    "Other": "{0} dakika"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 dakika"
+    }
   }
 }

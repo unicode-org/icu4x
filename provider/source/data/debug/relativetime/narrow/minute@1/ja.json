@@ -3,25 +3,15 @@
     "0": "1 分以内"
   },
   "past": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "分前",
-      "index": 0
+    "strings": {
+      "specials": [],
+      "other": "\u0001分前"
     }
   },
   "future": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "分後",
-      "index": 0
+    "strings": {
+      "specials": [],
+      "other": "\u0001分後"
     }
   }
 }

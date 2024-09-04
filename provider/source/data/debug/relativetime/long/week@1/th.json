@@ -5,25 +5,15 @@
     "1": "สัปดาห์หน้า"
   },
   "past": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": " สัปดาห์ที่ผ่านมา",
-      "index": 0
+    "strings": {
+      "specials": [],
+      "other": "\u0001 สัปดาห์ที่ผ่านมา"
     }
   },
   "future": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "ในอีก  สัปดาห์",
-      "index": 16
+    "strings": {
+      "specials": [],
+      "other": "\u0011ในอีก  สัปดาห์"
     }
   }
 }

@@ -12,9 +12,9 @@
 #[macro_export]
 macro_rules! __impl_exemplar_cities_v1_marker {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl $provider {
             const DATA_EXEMPLAR_CITIES_V1_MARKER: icu_provider_baked::zerotrie::Data<icu::datetime::provider::time_zones::ExemplarCitiesV1Marker> = icu_provider_baked::zerotrie::Data {
                 trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1zabcdefghijklmnopqrstuvwxyz\0\0\0\0\0\0\0\0\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x02\x02\x02\x02\x02\x02\x02\x11,D[\x96\xBB\xCB\xEF\x03\x0BDT|\x91\x94\xB3\xB6\xC2\x1DAbknq\x96\xC5fmrsz\x01\x02\x03\x06\x80\x81\x82\x83t\x84\x85\xC6eglnrs\x01\x02\x04\x05\x08\x86\x87o\x88\x89\x8Ax\x8B\x8C-Cyrl\x8D\xC6aehsvy\x01\x03\x06\x08\n\x8Eb\x8Fr\x90\0\x90\x01\x90\x02\x90\x03\xC4aeos\x02\t\x0C\x90\x04\x90\x05-CH\x90\x06i\x90\x07b\x90\x08\xC5lnstu\x02\x1A-/\x90\t\x90\n-\xC40CGI\x04\x07\n01\x90\x0BA\x90\x0CB\x90\rN\x90\x0E\x90\x0F-\xC34MU\x04\x0719\x90\x10X\x90\x11S\x90\x12\x90\x13\x90\x14\xC6afiory\x02\t\x0E\x10\x17\x90\x15-Adlm\x90\x16\x90\x17l\x90\x18\x90\x19\x90\x1A-CA\x90\x1B\x90\x1C\xC4adlu\x02\x04\x06\x90\x1D\x90\x1E\x90\x1F\x90 \xC7aeirsuy\x02\x04\r\x0F\x12\x14\x90!\x90\"\x90#-Latn\x90$\x90%b\x90&\x90'\x90(\xC5adgst\x02\x04\x06\x08\x90)\x90*\x90+\x90,\x90-\xC2av\x02\x90.\x90/\xCBaegkmnosuxy\x02\x05\x08\n\x0C\x0E\x13\x1C\x1E!\x900a\x901p\x902\x903\x904\x905\x906k\x907\x908-Deva\x909\x90:v\x90;\x90<\xC4botv\x02\x04\x06\x90=\x90>\x90?\x90@\xC9aiklnrsty\x03\x05\x07\t\x0E\x10\x12\x14i\x90A\x90B\x90C\x90D\x90Ei\x90F\x90G\x90H\x90I\x90J\xC5elnoq\x02\x04\x06\x08\x90K\x90L\x90M\x90No\x90Or\x90P\xC5aclst\x02\x05\x07\x0E\x90Qm\x90R\x90S\x90T-PK\x90U\x90V-PT\x90Wu\x90X\xC3mou\x02\x04\x90Y\x90Z\x90[\xCDacdikloqruvwy\n\x0C\x15\x17\x19\x1B\x1D\x1F357>\x90\\\xC2ht\x02\x90]\x90^\x90_\x90`-Deva\x90a\x90b\x90c\x90d\x90e\x90f\x90g-\xC2BL\x03A\x90hatn\x90i-BA\x90j\x90k\x90l\x90m-KE\x90nr\x90o\xC9aeghikort\x02\x04\x06\x08\n\x0C\x0E\x10\x90p\x90q\x90r\x90s\x90t\x90u\x90v\x90w\x90x\xC5gknrz\x02\x04\x07\x0E\x90y\x90zd\x90{\x90|-IN\x90}\x90~-Cyrl\x90\x7F\xC2ei\x03c\x91\0\x91\x01o\x91\x02h\x91\x03\xC3oru\x07\x15\x91\x04-BJ\x91\x05l\x91\x06-\xC2CV\x03O\x91\x07E\x91\x07e\x91\x08-Hans\x91\t\xC2hu\x19\x91\n-\xC3HMS\n\r\xC2Ka\x02\x91\x0Bnt\x91\rO\x91\x0BG\x91\x0C\x91\x0E" },
@@ -658,21 +658,21 @@ macro_rules! __impl_exemplar_cities_v1_marker {
                 ],
             };
         }
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DataProvider<icu::datetime::provider::time_zones::ExemplarCitiesV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::time_zones::ExemplarCitiesV1Marker>, icu_provider::DataError> {
                 let mut metadata = icu_provider::DataResponseMetadata::default();
-                let payload = if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_EXEMPLAR_CITIES_V1_MARKER, req.id) {
+                let payload = if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_EXEMPLAR_CITIES_V1_MARKER, req.id, req.metadata.attributes_prefix_match) {
                     payload
                 } else {
                     const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::datetime::provider::time_zones::ExemplarCitiesV1Marker as icu_provider::DataMarker>::INFO.fallback_config);
                     let mut fallback_iterator = FALLBACKER.fallback_for(req.id.locale.clone());
                     loop {
-                        if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_EXEMPLAR_CITIES_V1_MARKER, icu_provider::DataIdentifierBorrowed::for_marker_attributes_and_locale(req.id.marker_attributes, fallback_iterator.get())) {
+                        if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_EXEMPLAR_CITIES_V1_MARKER, icu_provider::DataIdentifierBorrowed::for_marker_attributes_and_locale(req.id.marker_attributes, fallback_iterator.get()), req.metadata.attributes_prefix_match) {
                             metadata.locale = Some(fallback_iterator.take());
                             break payload;
                         }
-                        if fallback_iterator.get().is_und() {
+                        if fallback_iterator.get().is_default() {
                             return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::datetime::provider::time_zones::ExemplarCitiesV1Marker as icu_provider::DataMarker>::INFO, req));
                         }
                         fallback_iterator.step();
@@ -682,9 +682,33 @@ macro_rules! __impl_exemplar_cities_v1_marker {
             }
         }
     };
+    ($ provider : ty , DRY) => {
+        __impl_exemplar_cities_v1_marker!($provider);
+        #[clippy::msrv = "1.71.1"]
+        impl icu_provider::DryDataProvider<icu::datetime::provider::time_zones::ExemplarCitiesV1Marker> for $provider {
+            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
+                icu_provider::DataProvider::<icu::datetime::provider::time_zones::ExemplarCitiesV1Marker>::load(self, req).map(|r| r.metadata)
+            }
+        }
+    };
     ($ provider : ty , ITER) => {
         __impl_exemplar_cities_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
+        impl icu_provider::IterableDataProvider<icu::datetime::provider::time_zones::ExemplarCitiesV1Marker> for $provider {
+            fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
+                Ok(icu_provider_baked::DataStore::iter(&Self::DATA_EXEMPLAR_CITIES_V1_MARKER).collect())
+            }
+        }
+    };
+    ($ provider : ty , DRY , ITER) => {
+        __impl_exemplar_cities_v1_marker!($provider);
+        #[clippy::msrv = "1.71.1"]
+        impl icu_provider::DryDataProvider<icu::datetime::provider::time_zones::ExemplarCitiesV1Marker> for $provider {
+            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
+                icu_provider::DataProvider::<icu::datetime::provider::time_zones::ExemplarCitiesV1Marker>::load(self, req).map(|r| r.metadata)
+            }
+        }
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::IterableDataProvider<icu::datetime::provider::time_zones::ExemplarCitiesV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_EXEMPLAR_CITIES_V1_MARKER).collect())

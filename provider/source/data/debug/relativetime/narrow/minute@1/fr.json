@@ -3,31 +3,15 @@
     "0": "cette minute-ci"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": "- min",
-      "index": 1
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "- min",
-      "index": 1
+    "strings": {
+      "specials": [],
+      "other": "\u0002- min"
     }
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "+ min",
-      "index": 1
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "+ min",
-      "index": 1
+    "strings": {
+      "specials": [],
+      "other": "\u0002+ min"
     }
   }
 }

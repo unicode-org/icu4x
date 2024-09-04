@@ -19,7 +19,7 @@ use core::marker::PhantomData;
 use core::ops::RangeInclusive;
 use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
-use zerovec::ZeroVecError;
+use zerovec::ule::UleError;
 
 /// A wrapper around code point map data. It is returned by APIs that return Unicode
 /// property data in a map-like form, ex: enumerated property value data keyed
@@ -35,7 +35,7 @@ pub struct CodePointMapData<T: TrieValue> {
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 struct ErasedMaplikeMarker<T>(PhantomData<T>);
 impl<T: TrieValue> DynamicDataMarker for ErasedMaplikeMarker<T> {
-    type Yokeable = PropertyCodePointMapV1<'static, T>;
+    type DataStruct = PropertyCodePointMapV1<'static, T>;
 }
 
 impl<T: TrieValue> CodePointMapData<T> {
@@ -72,7 +72,7 @@ impl<T: TrieValue> CodePointMapData<T> {
     /// assert_eq!(gc.get('木'), GeneralCategory::OtherLetter as u8);  // U+6728
     /// assert_eq!(gc.get('🎃'), GeneralCategory::OtherSymbol as u8);  // U+1F383 JACK-O-LANTERN
     /// ```
-    pub fn try_into_converted<P>(self) -> Result<CodePointMapData<P>, ZeroVecError>
+    pub fn try_into_converted<P>(self) -> Result<CodePointMapData<P>, UleError>
     where
         P: TrieValue,
     {
@@ -88,7 +88,7 @@ impl<T: TrieValue> CodePointMapData<T> {
     /// Typically it is preferable to use getters like [`load_general_category()`] instead
     pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
     where
-        M: DynamicDataMarker<Yokeable = PropertyCodePointMapV1<'static, T>>,
+        M: DynamicDataMarker<DataStruct = PropertyCodePointMapV1<'static, T>>,
     {
         Self { data: data.cast() }
     }

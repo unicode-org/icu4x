@@ -21,6 +21,7 @@ pub mod compactdecimal;
 pub mod dimension;
 pub mod displaynames;
 pub mod duration;
+pub mod measure;
 pub mod personnames;
 pub mod relativetime;
 pub mod transliterate;
@@ -39,15 +40,21 @@ pub mod provider {
         pub mod icu {
             pub use crate as experimental;
             pub use icu_experimental_data::icu_locale as locale;
+            pub use icu_plurals as plurals;
         }
         make_provider!(Baked);
 
         impl_long_compact_decimal_format_data_v1_marker!(Baked);
         impl_short_compact_decimal_format_data_v1_marker!(Baked);
+        impl_short_currency_compact_v1_marker!(Baked);
         impl_currency_essentials_v1_marker!(Baked);
+        impl_currency_displayname_v1_marker!(Baked);
+        impl_currency_patterns_data_v1_marker!(Baked);
+        impl_currency_extended_data_v1_marker!(Baked);
         impl_units_display_name_v1_marker!(Baked);
         impl_units_essentials_v1_marker!(Baked);
         impl_language_display_names_v1_marker!(Baked);
+        impl_digital_duration_data_v1_marker!(Baked);
         impl_locale_display_names_v1_marker!(Baked);
         impl_region_display_names_v1_marker!(Baked);
         impl_script_display_names_v1_marker!(Baked);
@@ -79,6 +86,7 @@ pub mod provider {
         impl_short_week_relative_time_format_data_v1_marker!(Baked);
         impl_short_year_relative_time_format_data_v1_marker!(Baked);
         impl_units_info_v1_marker!(Baked);
+        impl_units_trie_v1_marker!(Baked);
     };
 
     #[cfg(feature = "datagen")]
@@ -91,15 +99,21 @@ pub mod provider {
         super::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker::INFO,
         super::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker::INFO,
         super::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker::INFO,
+        super::dimension::provider::currency_compact::ShortCurrencyCompactV1Marker::INFO,
+        super::dimension::provider::currency_displayname::CurrencyDisplaynameV1Marker::INFO,
         super::dimension::provider::currency::CurrencyEssentialsV1Marker::INFO,
+        super::dimension::provider::currency_patterns::CurrencyPatternsDataV1Marker::INFO,
+        super::dimension::provider::extended_currency::CurrencyExtendedDataV1Marker::INFO,
         super::dimension::provider::percent::PercentEssentialsV1Marker::INFO,
         super::dimension::provider::units_essentials::UnitsEssentialsV1Marker::INFO,
         super::dimension::provider::units::UnitsDisplayNameV1Marker::INFO,
         super::displaynames::provider::LanguageDisplayNamesV1Marker::INFO,
+        super::duration::provider::DigitalDurationDataV1Marker::INFO,
         super::displaynames::provider::LocaleDisplayNamesV1Marker::INFO,
         super::displaynames::provider::RegionDisplayNamesV1Marker::INFO,
         super::displaynames::provider::ScriptDisplayNamesV1Marker::INFO,
         super::displaynames::provider::VariantDisplayNamesV1Marker::INFO,
+        super::measure::provider::trie::UnitsTrieV1Marker::INFO,
         super::personnames::provider::PersonNamesFormatV1Marker::INFO,
         super::relativetime::provider::LongDayRelativeTimeFormatDataV1Marker::INFO,
         super::relativetime::provider::LongHourRelativeTimeFormatDataV1Marker::INFO,

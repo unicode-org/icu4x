@@ -12,9 +12,9 @@
 #[macro_export]
 macro_rules! __impl_script_display_names_v1_marker {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl $provider {
             const DATA_SCRIPT_DISPLAY_NAMES_V1_MARKER: icu_provider_baked::zerotrie::Data<icu::experimental::displaynames::provider::ScriptDisplayNamesV1Marker> = icu_provider_baked::zerotrie::Data {
                 trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1zabcdefghijklmnopqrstuvwxyz\0\0\0\0\0\0\0\0\x01\x01\x01\x01\x01\x01\x01\x01\x01\x02\x02\x02\x02\x02\x02\x02\x02\x112N`\x99\xC3\xD3\xFC\x14\x1Ck\x85\xAD\xC7\xCF\xEE\xF1\x02W{\x92\xA0\xA3\xAC\xD1\xC5fmrsz\x01\x02\x03\x06\x80\x81\x82\x83t\x84\x85\xC7eghlnrs\x01\x04\x06\x08\t\x0C\x86\x87c\x88o\x88o\x89\x8A\x8Bx\x8C\x8D-Cyrl\x8E\xC6aehsvy\x01\x04\x07\x0C\x0E\x8Fb\x90\0r\x90\x01\x90\x02w\x90\x03\x90\x04\x90\x05\xC4aeos\x02\x04\x07\x90\x06\x90\x07i\x90\x08b\x90\t\xC6lnostu\x0C\x19\x1B)+\x90\n-polyton\x90\x0B\x90\x0C-\xC2AI\x03U\x90\rN\x90\x0E\x90\x0F\x90\x10-\xC24U\x0419\x90\x11S\x90\x12\x90\x13\x90\x14\xC6afiory\x07\x0E\x13\x15\x1C\x90\x15-AF\x90\x16-Adlm\x90\x17\x90\x18l\x90\x19\x90\x1A\x90\x1B-CA\x90\x1C\x90\x1D\xC4adlu\x02\x04\x06\x90\x1E\x90\x1F\x90 \x90!\xC7aeirsuy\x07\t\x12\x14\x17\x19\x90\"-NE\x90#\x90$\x90%-Latn\x90&\x90'b\x90(\x90)\x90*\xC6adegst\x02\x04\x06\x08\n\x90+\x90,\x90-\x90.\x90/\x900\xC2av\x02\x901\x902\xCBaegkmnosuxy\x02\x05\x08\n\x0C\x0E\x13\x1C\x1E7\x903a\x904p\x905\x906\x907\x908\x909k\x90:\x90;-Deva\x90<\x90=v\x90>-\xC3DOT\x05\neva\x90?rya\x90@elu\x90A\x90B\xC6bimotv\x02\x05\x08\n\x0C\x90Cj\x90Do\x90E\x90F\x90G\x90H\xC9aiklnrsty\x03\x05\x07\t\x0E\x10\x12\x14i\x90I\x90J\x90K\x90L\x90Mi\x90N\x90O\x90P\x90Q\x90R\xC6delnoq\x03\x05\x07\t\x0Bs\x90S\x90T\x90U\x90V\x90Wo\x90X\xC2cr\x02\x90D\x90Y\xC6aclrst\x02\x05\x07\n\x0C\x90Zm\x90[\x90\\g\x90]\x90^\x90_-PT\x90`u\x90a\xC4amou\x03\x05\x07j\x90b\x90c\x90d\x90e\xCEacdikloqruvwyz\n\x0C\x15\x17\x19\x1B\x1D\x1F(*,36\x90f\xC2ht\x02\x90g\x90h\x90i\x90j-Deva\x90k\x90l\x90m\x90n\x90o\x90p\x90q-Latn\x90r\x90s\x90t\x90u-KE\x90vr\x90wl\x90x\xC9aeghikort\x02\x04\x06\x08\n\x0C\x0E\x10\x90y\x90z\x90{\x90|\x90}\x90~\x90\x7F\x91\0\x91\x01\xC4gkrz\x02\x04\x06\x91\x02\x91\x03\x91\x04\x91\x05-Cyrl\x91\x06\xC3eim\x03\x05c\x91\x07\x91\x08w\x91\to\x91\n\xC2hn\x02\x91\x0Br\x91\x0C\xC3oru\x07\x15\x91\r-BJ\x91\x0El\x91\x0F-\xC2CV\x03O\x91\x10E\x91\x10e\x91\x11-Hans\x91\x12\xC3ahu\x02\x16\x91\x13\x91\x14-\xC2HM\n\xC2Ka\x02\x91\x15nt\x91\x16O\x91\x15\x91\x17" },
@@ -1702,21 +1702,21 @@ macro_rules! __impl_script_display_names_v1_marker {
                 ],
             };
         }
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DataProvider<icu::experimental::displaynames::provider::ScriptDisplayNamesV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::experimental::displaynames::provider::ScriptDisplayNamesV1Marker>, icu_provider::DataError> {
                 let mut metadata = icu_provider::DataResponseMetadata::default();
-                let payload = if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_SCRIPT_DISPLAY_NAMES_V1_MARKER, req.id) {
+                let payload = if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_SCRIPT_DISPLAY_NAMES_V1_MARKER, req.id, req.metadata.attributes_prefix_match) {
                     payload
                 } else {
                     const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::experimental::displaynames::provider::ScriptDisplayNamesV1Marker as icu_provider::DataMarker>::INFO.fallback_config);
                     let mut fallback_iterator = FALLBACKER.fallback_for(req.id.locale.clone());
                     loop {
-                        if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_SCRIPT_DISPLAY_NAMES_V1_MARKER, icu_provider::DataIdentifierBorrowed::for_marker_attributes_and_locale(req.id.marker_attributes, fallback_iterator.get())) {
+                        if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_SCRIPT_DISPLAY_NAMES_V1_MARKER, icu_provider::DataIdentifierBorrowed::for_marker_attributes_and_locale(req.id.marker_attributes, fallback_iterator.get()), req.metadata.attributes_prefix_match) {
                             metadata.locale = Some(fallback_iterator.take());
                             break payload;
                         }
-                        if fallback_iterator.get().is_und() {
+                        if fallback_iterator.get().is_default() {
                             return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::experimental::displaynames::provider::ScriptDisplayNamesV1Marker as icu_provider::DataMarker>::INFO, req));
                         }
                         fallback_iterator.step();
@@ -1726,9 +1726,33 @@ macro_rules! __impl_script_display_names_v1_marker {
             }
         }
     };
+    ($ provider : ty , DRY) => {
+        __impl_script_display_names_v1_marker!($provider);
+        #[clippy::msrv = "1.71.1"]
+        impl icu_provider::DryDataProvider<icu::experimental::displaynames::provider::ScriptDisplayNamesV1Marker> for $provider {
+            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
+                icu_provider::DataProvider::<icu::experimental::displaynames::provider::ScriptDisplayNamesV1Marker>::load(self, req).map(|r| r.metadata)
+            }
+        }
+    };
     ($ provider : ty , ITER) => {
         __impl_script_display_names_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
+        impl icu_provider::IterableDataProvider<icu::experimental::displaynames::provider::ScriptDisplayNamesV1Marker> for $provider {
+            fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
+                Ok(icu_provider_baked::DataStore::iter(&Self::DATA_SCRIPT_DISPLAY_NAMES_V1_MARKER).collect())
+            }
+        }
+    };
+    ($ provider : ty , DRY , ITER) => {
+        __impl_script_display_names_v1_marker!($provider);
+        #[clippy::msrv = "1.71.1"]
+        impl icu_provider::DryDataProvider<icu::experimental::displaynames::provider::ScriptDisplayNamesV1Marker> for $provider {
+            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
+                icu_provider::DataProvider::<icu::experimental::displaynames::provider::ScriptDisplayNamesV1Marker>::load(self, req).map(|r| r.metadata)
+            }
+        }
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::IterableDataProvider<icu::experimental::displaynames::provider::ScriptDisplayNamesV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_SCRIPT_DISPLAY_NAMES_V1_MARKER).collect())

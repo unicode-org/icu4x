@@ -2,14 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::InvalidOffsetError;
 use crate::provider::{MetazoneId, TimeZoneBcp47Id};
 
 use crate::metazone::MetazoneCalculator;
 use crate::{GmtOffset, ZoneVariant};
-use core::str::FromStr;
+#[cfg(feature = "compiled_data")]
+use crate::{TimeZoneIdMapper, UnknownTimeZoneError};
 use icu_calendar::{DateTime, Iso};
-use tinystr::tinystr;
+use tinystr::{tinystr, TinyAsciiStr};
 
 /// A utility type that can hold time zone information.
 ///
@@ -58,6 +58,16 @@ impl CustomTimeZone {
         }
     }
 
+    /// Creates a new [`CustomTimeZone`] with a given BCP47 time zone identifier.
+    pub const fn new_with_bcp47_id(time_zone_id: TimeZoneBcp47Id) -> Self {
+        Self {
+            gmt_offset: None,
+            time_zone_id: Some(time_zone_id),
+            metazone_id: None,
+            zone_variant: None,
+        }
+    }
+
     /// Creates a time zone with no information.
     ///
     /// One or more fields must be specified before this time zone is usable.
@@ -67,6 +77,23 @@ impl CustomTimeZone {
             time_zone_id: None,
             metazone_id: None,
             zone_variant: None,
+        }
+    }
+
+    /// Creates a time zone infallibly from raw parts.
+    pub const fn from_parts(
+        offset_eighths_of_hour: i8,
+        time_zone_id: TinyAsciiStr<8>,
+        metazone_id: TinyAsciiStr<4>,
+        zone_variant: TinyAsciiStr<2>,
+    ) -> Self {
+        Self {
+            gmt_offset: Some(GmtOffset::from_offset_eighths_of_hour(
+                offset_eighths_of_hour,
+            )),
+            time_zone_id: Some(TimeZoneBcp47Id(time_zone_id)),
+            metazone_id: Some(MetazoneId(metazone_id)),
+            zone_variant: Some(ZoneVariant(zone_variant)),
         }
     }
 
@@ -104,8 +131,15 @@ impl CustomTimeZone {
         }
     }
 
-    /// Parse a [`CustomTimeZone`] from a UTF-8 string representing a GMT Offset. See also [`GmtOffset`].
+    /// Parse a [`CustomTimeZone`] from a UTF-8 string representing a GMT Offset
+    /// or an IANA time zone identifier.
     ///
+    /// This is a convenience constructor that uses compiled data. For a custom data provider,
+    /// use [`GmtOffset`] or [`TimeZoneIdMapper`] directly.
+    ///
+    /// To parse from an IXDTF string, use [`CustomZonedDateTime::try_iso_from_str`].
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// # Examples
     ///
@@ -127,20 +161,35 @@ impl CustomTimeZone {
     /// assert_eq!(tz2.gmt_offset.map(GmtOffset::offset_seconds), Some(-9000));
     /// assert_eq!(tz3.gmt_offset.map(GmtOffset::offset_seconds), Some(9000));
     /// ```
+    ///
+    /// [`CustomZonedDateTime::try_iso_from_str`]: crate::CustomZonedDateTime::try_iso_from_str
+    #[cfg(feature = "compiled_data")]
     #[inline]
-    pub fn try_from_str(s: &str) -> Result<Self, InvalidOffsetError> {
+    pub fn try_from_str(s: &str) -> Result<Self, UnknownTimeZoneError> {
         Self::try_from_utf8(s.as_bytes())
     }
 
     /// See [`Self::try_from_str`]
-    pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, InvalidOffsetError> {
-        let gmt_offset = GmtOffset::try_from_utf8(code_units)?;
-        Ok(Self {
-            gmt_offset: Some(gmt_offset),
-            time_zone_id: None,
-            metazone_id: None,
-            zone_variant: None,
-        })
+    #[cfg(feature = "compiled_data")]
+    pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, UnknownTimeZoneError> {
+        if let Ok(gmt_offset) = GmtOffset::try_from_utf8(code_units) {
+            return Ok(Self {
+                gmt_offset: Some(gmt_offset),
+                time_zone_id: None,
+                metazone_id: None,
+                zone_variant: None,
+            });
+        }
+        let mapper = TimeZoneIdMapper::new();
+        if let Some(bcp47_id) = mapper.as_borrowed().iana_bytes_to_bcp47(code_units) {
+            return Ok(Self {
+                gmt_offset: None,
+                time_zone_id: Some(bcp47_id),
+                metazone_id: None,
+                zone_variant: None,
+            });
+        }
+        Err(UnknownTimeZoneError)
     }
 
     /// Overwrite the metazone id in MockTimeZone.
@@ -180,8 +229,9 @@ impl CustomTimeZone {
     }
 }
 
-impl FromStr for CustomTimeZone {
-    type Err = InvalidOffsetError;
+#[cfg(feature = "compiled_data")]
+impl core::str::FromStr for CustomTimeZone {
+    type Err = UnknownTimeZoneError;
 
     #[inline]
     fn from_str(s: &str) -> Result<Self, Self::Err> {

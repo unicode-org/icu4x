@@ -3,31 +3,15 @@
     "0": "ngayon"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": " segundo ang nakalipas",
-      "index": 0
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": " segundo ang nakalipas",
-      "index": 0
+    "strings": {
+      "specials": [],
+      "other": "\u0001 segundo ang nakalipas"
     }
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "sa  segundo",
-      "index": 3
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "sa  segundo",
-      "index": 3
+    "strings": {
+      "specials": [],
+      "other": "\u0004sa  segundo"
     }
   }
 }

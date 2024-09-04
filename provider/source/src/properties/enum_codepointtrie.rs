@@ -9,7 +9,7 @@ use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use std::collections::HashSet;
 use std::convert::TryFrom;
-use tinystr::TinyStr4;
+use zerovec::ule::NichedOption;
 
 impl SourceDataProvider {
     pub(super) fn get_enumerated_prop<'a>(
@@ -152,7 +152,7 @@ fn load_values_to_names_sparse<M>(
     is_short: bool,
 ) -> Result<DataResponse<M>, DataError>
 where
-    M: DynamicDataMarker<Yokeable = PropertyEnumToValueNameSparseMapV1<'static>>,
+    M: DynamicDataMarker<DataStruct = PropertyEnumToValueNameSparseMapV1<'static>>,
 {
     let data = p.get_enumerated_prop(prop_name)
         .map_err(|_| DataError::custom("Loading icuexport property data failed: \
@@ -173,7 +173,7 @@ fn load_values_to_names_linear<M>(
     is_short: bool,
 ) -> Result<DataResponse<M>, DataError>
 where
-    M: DynamicDataMarker<Yokeable = PropertyEnumToValueNameLinearMapV1<'static>>,
+    M: DynamicDataMarker<DataStruct = PropertyEnumToValueNameLinearMapV1<'static>>,
 {
     let data = p.get_enumerated_prop(prop_name)
         .map_err(|_| DataError::custom("Loading icuexport property data failed: \
@@ -195,20 +195,27 @@ fn load_values_to_names_linear4<M>(
     is_short: bool,
 ) -> Result<DataResponse<M>, DataError>
 where
-    M: DynamicDataMarker<Yokeable = PropertyEnumToValueNameLinearTiny4MapV1<'static>>,
+    M: DynamicDataMarker<DataStruct = PropertyScriptToIcuScriptMapV1<'static>>,
 {
     let data = p.get_enumerated_prop(prop_name)
         .map_err(|_| DataError::custom("Loading icuexport property data failed: \
                                         Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)"))?;
     let map = load_values_to_names(data, is_short)?;
     let vec = map_to_vec(&map, prop_name)?;
-    let vec: Result<Vec<_>, _> = vec.into_iter().map(TinyStr4::try_from_str).collect();
+    let vec: Result<Vec<_>, _> = vec
+        .into_iter()
+        .map(|s| {
+            if s.is_empty() {
+                Ok(None)
+            } else {
+                icu::locale::subtags::Script::try_from_str(s).map(Some)
+            }
+        })
+        .collect();
 
-    let vec = vec.map_err(|_| {
-        DataError::custom("Found property value longer than 4 characters for linear4 property")
-    })?;
-    let zerovec = vec.into_iter().collect();
-    let data_struct = PropertyEnumToValueNameLinearTiny4MapV1 { map: zerovec };
+    let vec = vec.map_err(|_| DataError::custom("Found invalid script tag"))?;
+    let zerovec = vec.into_iter().map(NichedOption).collect();
+    let data_struct = PropertyScriptToIcuScriptMapV1 { map: zerovec };
     Ok(DataResponse {
         metadata: Default::default(),
         payload: DataPayload::from_owned(data_struct),

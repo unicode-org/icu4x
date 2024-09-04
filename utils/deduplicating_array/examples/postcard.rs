@@ -4,8 +4,6 @@
 
 // This example demonstrates how to use deduplicating_array
 
-#![no_main] // https://github.com/unicode-org/icu4x/issues/395
-
 #[derive(serde::Serialize, serde::Deserialize)]
 struct DataStruct {
     #[serde(with = "deduplicating_array")]
@@ -25,8 +23,7 @@ const COORDINATES: [(f64, f64); 5] = [
     (0.829_340_572_304_598_1, 0.720_345_720_319_574_8),
 ];
 
-#[no_mangle]
-fn main(_argc: isize, _argv: *const *const u8) -> isize {
+fn main() {
     let bytes = postcard::to_allocvec(&DataStruct {
         coordinates: COORDINATES,
     })
@@ -47,6 +44,4 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
     assert_eq!(data.coordinates, COORDINATES);
     assert_eq!(also_data.coordinates, COORDINATES);
-
-    0
 }

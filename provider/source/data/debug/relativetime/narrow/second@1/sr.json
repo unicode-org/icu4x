@@ -3,37 +3,15 @@
     "0": "сада"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": "пре  с.",
-      "index": 7
-    },
-    "two": null,
-    "few": {
-      "pattern": "пре  с.",
-      "index": 7
-    },
-    "many": null,
-    "other": {
-      "pattern": "пре  с.",
-      "index": 7
+    "strings": {
+      "specials": [],
+      "other": "\bпре  с."
     }
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "за  с.",
-      "index": 5
-    },
-    "two": null,
-    "few": {
-      "pattern": "за  с.",
-      "index": 5
-    },
-    "many": null,
-    "other": {
-      "pattern": "за  с.",
-      "index": 5
+    "strings": {
+      "specials": [],
+      "other": "\u0006за  с."
     }
   }
 }

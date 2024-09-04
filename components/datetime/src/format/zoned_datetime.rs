@@ -73,8 +73,7 @@ where
     TS: TimeSymbols,
 {
     let mut r = Ok(());
-    let mut iter = pattern.items.iter().peekable();
-    while let Some(item) = iter.next() {
+    for item in pattern.items.iter() {
         match item {
             PatternItem::Literal(ch) => w.write_char(ch)?,
             PatternItem::Field(Field {
@@ -88,7 +87,6 @@ where
             PatternItem::Field(field) => {
                 r = r.and(datetime::try_write_field(
                     field,
-                    &mut iter,
                     pattern.metadata,
                     datetime,
                     date_symbols,

@@ -42,26 +42,15 @@ macro_rules! impl_tinystr_subtag {
             }
 
             /// See [`Self::try_from_str`]
-            #[inline]
-            pub const fn try_from_utf8(code_units: &[u8]) -> Result<Self, crate::parser::errors::ParseError> {
-                Self::try_from_utf8_manual_slice(code_units, 0, code_units.len())
-            }
-
-            /// Equivalent to [`try_from_utf8(bytes[start..end])`](Self::try_from_utf8),
-            /// but callable in a `const` context (which range indexing is not).
-            pub const fn try_from_utf8_manual_slice(
+            pub const fn try_from_utf8(
                 code_units: &[u8],
-                start: usize,
-                end: usize,
             ) -> Result<Self, crate::parser::errors::ParseError> {
-                let slen = end - start;
-
-                #[allow(clippy::double_comparisons)] // if len_start == len_end
-                if slen < $len_start || slen > $len_end {
+                #[allow(clippy::double_comparisons)] // if code_units.len() === 0
+                if code_units.len() < $len_start || code_units.len() > $len_end {
                     return Err(crate::parser::errors::ParseError::$error);
                 }
 
-                match tinystr::TinyAsciiStr::try_from_utf8_manual_slice(code_units, start, end) {
+                match tinystr::TinyAsciiStr::try_from_utf8(code_units) {
                     Ok($tinystr_ident) if $validate => Ok(Self($normalize)),
                     _ => Err(crate::parser::errors::ParseError::$error),
                 }
@@ -295,21 +284,26 @@ macro_rules! impl_tinystr_subtag {
         // 6. Byte equality is semantic equality.
         #[cfg(feature = "zerovec")]
         unsafe impl zerovec::ule::ULE for $name {
-            fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ZeroVecError> {
+            fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ule::UleError> {
                 let it = bytes.chunks_exact(core::mem::size_of::<Self>());
                 if !it.remainder().is_empty() {
-                    return Err(zerovec::ZeroVecError::length::<Self>(bytes.len()));
+                    return Err(zerovec::ule::UleError::length::<Self>(bytes.len()));
                 }
                 for v in it {
                     // The following can be removed once `array_chunks` is stabilized.
                     let mut a = [0; core::mem::size_of::<Self>()];
                     a.copy_from_slice(v);
                     if Self::try_from_raw(a).is_err() {
-                        return Err(zerovec::ZeroVecError::parse::<Self>());
+                        return Err(zerovec::ule::UleError::parse::<Self>());
                     }
                 }
                 Ok(())
             }
+        }
+
+        #[cfg(feature = "zerovec")]
+        impl zerovec::ule::NicheBytes<$len_end> for $name {
+            const NICHE_BIT_PATTERN: [u8; $len_end] = <tinystr::TinyAsciiStr<$len_end>>::NICHE_BIT_PATTERN;
         }
 
         #[cfg(feature = "zerovec")]
@@ -333,6 +327,8 @@ macro_rules! impl_tinystr_subtag {
     };
 }
 
+#[macro_export]
+#[doc(hidden)]
 macro_rules! impl_writeable_for_each_subtag_str_no_test {
     ($type:tt $(, $self:ident, $borrow_cond:expr => $borrow:expr)?) => {
         impl writeable::Writeable for $type {

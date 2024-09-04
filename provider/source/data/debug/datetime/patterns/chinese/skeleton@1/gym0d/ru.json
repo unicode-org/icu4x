@@ -2,10 +2,13 @@
   "index_info": {
     "has_long": true,
     "has_medium": false,
-    "has_plurals": false
+    "has_plurals": false,
+    "has_eras": true
   },
   "patterns": [
     "r(U) MMMM d",
-    "d MMM U"
+    "r(U) MMMM d",
+    "r-MM-dd",
+    "dd MMM U"
   ]
 }

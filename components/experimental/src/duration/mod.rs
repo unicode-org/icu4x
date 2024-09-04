@@ -7,10 +7,13 @@
 #![warn(missing_docs)]
 
 mod duration;
+mod format;
 mod formatter;
 pub mod provider;
 
 pub mod options;
+mod validated_options;
 
 pub use duration::{Duration, DurationSign};
+pub use format::FormattedDuration;
 pub use formatter::DurationFormatter;

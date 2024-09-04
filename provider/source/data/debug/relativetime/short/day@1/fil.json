@@ -7,31 +7,25 @@
     "2": "Samakalawa"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": " araw ang nakalipas",
-      "index": 0
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": " (na) araw ang nakalipas",
-      "index": 0
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0001 araw ang nakalipas"
+        ]
+      ],
+      "other": "\u0001 (na) araw ang nakalipas"
     }
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "sa  (na) araw",
-      "index": 3
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "sa  araw",
-      "index": 3
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0004sa  (na) araw"
+        ]
+      ],
+      "other": "\u0004sa  araw"
     }
   }
 }

@@ -3,31 +3,25 @@
     "0": "esta hora"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": "hace  hora",
-      "index": 5
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "hace  horas",
-      "index": 5
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0006hace  hora"
+        ]
+      ],
+      "other": "\u0006hace  horas"
     }
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "dentro de  hora",
-      "index": 10
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "dentro de  horas",
-      "index": 10
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u000bdentro de  hora"
+        ]
+      ],
+      "other": "\u000bdentro de  horas"
     }
   }
 }

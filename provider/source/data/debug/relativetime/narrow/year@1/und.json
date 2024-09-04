@@ -5,25 +5,15 @@
     "1": "next year"
   },
   "past": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "- y",
-      "index": 1
+    "strings": {
+      "specials": [],
+      "other": "\u0002- y"
     }
   },
   "future": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "+ y",
-      "index": 1
+    "strings": {
+      "specials": [],
+      "other": "\u0002+ y"
     }
   }
 }

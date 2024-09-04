@@ -1,7 +1,8 @@
 {
   "patterns": {
-    "One": "{0} č",
-    "Few": "{0} č",
-    "Other": "{0} č"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 č"
+    }
   }
 }

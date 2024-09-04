@@ -3,31 +3,25 @@
     "0": "ahora"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": "hace  segundo",
-      "index": 5
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "hace  segundos",
-      "index": 5
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0006hace  segundo"
+        ]
+      ],
+      "other": "\u0006hace  segundos"
     }
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "dentro de  segundo",
-      "index": 10
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "dentro de  segundos",
-      "index": 10
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u000bdentro de  segundo"
+        ]
+      ],
+      "other": "\u000bdentro de  segundos"
     }
   }
 }

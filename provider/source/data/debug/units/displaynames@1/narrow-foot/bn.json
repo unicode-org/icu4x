@@ -1,6 +1,8 @@
 {
   "patterns": {
-    "One": "{0} ফুট",
-    "Other": "{0} ফুট"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 ফুট"
+    }
   }
 }

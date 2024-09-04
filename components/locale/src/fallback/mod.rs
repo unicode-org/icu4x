@@ -6,14 +6,11 @@
 //! locale with data.
 
 use crate::provider::*;
-use icu_locale_core::extensions::unicode::Value;
-use icu_locale_core::subtags::Variants;
+use icu_locale_core::subtags::*;
 use icu_provider::prelude::*;
 
 #[doc(inline)]
-pub use icu_provider::_internal::{
-    LocaleFallbackConfig, LocaleFallbackPriority, LocaleFallbackSupplement,
-};
+pub use icu_provider::fallback::{LocaleFallbackConfig, LocaleFallbackPriority};
 
 mod algorithms;
 
@@ -23,7 +20,7 @@ mod algorithms;
 /// algorithm. See *[the design doc]* for a detailed description and [#2243](
 /// https://github.com/unicode-org/icu4x/issues/2243) to track alignment with *UTS #35*.
 ///
-/// If running fallback in a loop, use [`DataLocale::is_und()`] to break from the loop.
+/// If running fallback in a loop, use [`DataLocale::is_default()`] to break from the loop.
 ///
 /// # Examples
 ///
@@ -35,7 +32,7 @@ mod algorithms;
 /// let fallbacker = LocaleFallbacker::new();
 ///
 /// // Create a LocaleFallbackerIterator with a default configuration.
-/// // By default, uses language priority with no additional extension keywords.
+/// // By default, uses language priority.
 /// let mut fallback_iterator = fallbacker
 ///     .for_config(Default::default())
 ///     .fallback_for(locale!("hi-Latn-IN").into());
@@ -60,38 +57,35 @@ mod algorithms;
 #[doc(hidden)] // canonical location in super
 #[derive(Debug, Clone, PartialEq)]
 pub struct LocaleFallbacker {
-    likely_subtags: DataPayload<LocaleFallbackLikelySubtagsV1Marker>,
-    parents: DataPayload<LocaleFallbackParentsV1Marker>,
-    collation_supplement: Option<DataPayload<CollationFallbackSupplementV1Marker>>,
+    likely_subtags: DataPayload<LikelySubtagsForLanguageV1Marker>,
+    parents: DataPayload<ParentsV1Marker>,
 }
 
 /// Borrowed version of [`LocaleFallbacker`].
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct LocaleFallbackerBorrowed<'a> {
-    likely_subtags: &'a LocaleFallbackLikelySubtagsV1<'a>,
-    parents: &'a LocaleFallbackParentsV1<'a>,
-    collation_supplement: Option<&'a LocaleFallbackSupplementV1<'a>>,
+    likely_subtags: &'a LikelySubtagsForLanguageV1<'a>,
+    parents: &'a ParentsV1<'a>,
 }
 
 /// A [`LocaleFallbackerBorrowed`] with an associated [`LocaleFallbackConfig`].
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct LocaleFallbackerWithConfig<'a> {
-    likely_subtags: &'a LocaleFallbackLikelySubtagsV1<'a>,
-    parents: &'a LocaleFallbackParentsV1<'a>,
-    supplement: Option<&'a LocaleFallbackSupplementV1<'a>>,
+    likely_subtags: &'a LikelySubtagsForLanguageV1<'a>,
+    parents: &'a ParentsV1<'a>,
     config: LocaleFallbackConfig,
 }
 
 /// Inner iteration type. Does not own the item under fallback.
 #[derive(Debug)]
 struct LocaleFallbackIteratorInner<'a> {
-    likely_subtags: &'a LocaleFallbackLikelySubtagsV1<'a>,
-    parents: &'a LocaleFallbackParentsV1<'a>,
-    supplement: Option<&'a LocaleFallbackSupplementV1<'a>>,
+    likely_subtags: &'a LikelySubtagsForLanguageV1<'a>,
+    parents: &'a ParentsV1<'a>,
     config: LocaleFallbackConfig,
-    backup_extension: Option<Value>,
-    backup_subdivision: Option<Value>,
-    backup_variants: Option<Variants>,
+    backup_subdivision: Option<Subtag>,
+    backup_variant: Option<Variant>,
+    backup_region: Option<Region>,
+    max_script: Option<Script>,
 }
 
 /// Iteration type for locale fallback operations.
@@ -115,12 +109,8 @@ impl LocaleFallbacker {
     #[allow(clippy::new_ret_no_self)] // keeping constructors together
     pub const fn new<'a>() -> LocaleFallbackerBorrowed<'a> {
         let tickstatic = LocaleFallbackerBorrowed {
-            likely_subtags:
-                crate::provider::Baked::SINGLETON_LOCALE_FALLBACK_LIKELY_SUBTAGS_V1_MARKER,
-            parents: crate::provider::Baked::SINGLETON_LOCALE_FALLBACK_PARENTS_V1_MARKER,
-            collation_supplement: Some(
-                crate::provider::Baked::SINGLETON_COLLATION_FALLBACK_SUPPLEMENT_V1_MARKER,
-            ),
+            likely_subtags: crate::provider::Baked::SINGLETON_LIKELY_SUBTAGS_FOR_LANGUAGE_V1_MARKER,
+            parents: crate::provider::Baked::SINGLETON_PARENTS_V1_MARKER,
         };
         // Safety: we're transmuting down from LocaleFallbackerBorrowed<'static> to LocaleFallbackerBorrowed<'a>
         // ZeroMaps use associated types in a way that confuse the compiler which gives up and marks them
@@ -142,29 +132,13 @@ impl LocaleFallbacker {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
-        P: DataProvider<LocaleFallbackLikelySubtagsV1Marker>
-            + DataProvider<LocaleFallbackParentsV1Marker>
-            + DataProvider<CollationFallbackSupplementV1Marker>
-            + ?Sized,
+        P: DataProvider<LikelySubtagsForLanguageV1Marker> + DataProvider<ParentsV1Marker> + ?Sized,
     {
         let likely_subtags = provider.load(Default::default())?.payload;
         let parents = provider.load(Default::default())?.payload;
-        let collation_supplement = match DataProvider::<CollationFallbackSupplementV1Marker>::load(
-            provider,
-            Default::default(),
-        ) {
-            Ok(response) => Some(response.payload),
-            // It is expected that not all keys are present
-            Err(DataError {
-                kind: DataErrorKind::MarkerNotFound,
-                ..
-            }) => None,
-            Err(e) => return Err(e),
-        };
         Ok(LocaleFallbacker {
             likely_subtags,
             parents,
-            collation_supplement,
         })
     }
 
@@ -172,9 +146,18 @@ impl LocaleFallbacker {
     /// surprising behavior, especially in multi-script languages.
     pub fn new_without_data() -> Self {
         LocaleFallbacker {
-            likely_subtags: DataPayload::from_owned(Default::default()),
+            likely_subtags: DataPayload::from_owned(LikelySubtagsForLanguageV1 {
+                language: Default::default(),
+                language_region: Default::default(),
+                language_script: Default::default(),
+                // Unused
+                und: (
+                    Default::default(),
+                    crate::subtags::script!("Zzzz"),
+                    crate::subtags::region!("ZZ"),
+                ),
+            }),
             parents: DataPayload::from_owned(Default::default()),
-            collation_supplement: None,
         }
     }
 
@@ -189,7 +172,6 @@ impl LocaleFallbacker {
         LocaleFallbackerBorrowed {
             likely_subtags: self.likely_subtags.get(),
             parents: self.parents.get(),
-            collation_supplement: self.collation_supplement.as_ref().map(|p| p.get()),
         }
     }
 }
@@ -201,10 +183,6 @@ impl<'a> LocaleFallbackerBorrowed<'a> {
         LocaleFallbackerWithConfig {
             likely_subtags: self.likely_subtags,
             parents: self.parents,
-            supplement: match config.fallback_supplement {
-                Some(LocaleFallbackSupplement::Collation) => self.collation_supplement,
-                _ => None,
-            },
             config,
         }
     }
@@ -219,10 +197,6 @@ impl LocaleFallbackerBorrowed<'static> {
         LocaleFallbacker {
             likely_subtags: DataPayload::from_static_ref(self.likely_subtags),
             parents: DataPayload::from_static_ref(self.parents),
-            collation_supplement: match self.collation_supplement {
-                None => None,
-                Some(x) => Some(DataPayload::from_static_ref(x)),
-            },
         }
     }
 }
@@ -234,17 +208,19 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
     ///
     /// When first initialized, the locale is normalized according to the fallback algorithm.
     pub fn fallback_for(&self, mut locale: DataLocale) -> LocaleFallbackIterator<'a, 'static> {
-        self.normalize(&mut locale);
+        let mut default_script = None;
+        self.normalize(&mut locale, &mut default_script);
+        let max_script = locale.script.or(default_script);
         LocaleFallbackIterator {
             current: locale,
             inner: LocaleFallbackIteratorInner {
                 likely_subtags: self.likely_subtags,
                 parents: self.parents,
-                supplement: self.supplement,
                 config: self.config,
-                backup_extension: None,
                 backup_subdivision: None,
-                backup_variants: None,
+                backup_variant: None,
+                backup_region: None,
+                max_script,
             },
             phantom: core::marker::PhantomData,
         }
@@ -264,7 +240,7 @@ impl LocaleFallbackIterator<'_, '_> {
 
     /// Performs one step of the locale fallback algorithm.
     ///
-    /// The fallback is completed once the inner [`DataLocale`] becomes `und`.
+    /// The fallback is completed once the inner [`DataLocale`] becomes [`DataLocale::default()`].
     pub fn step(&mut self) -> &mut Self {
         self.inner.step(&mut self.current);
         self

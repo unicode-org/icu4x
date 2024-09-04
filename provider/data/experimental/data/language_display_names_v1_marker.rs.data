@@ -12,9 +12,9 @@
 #[macro_export]
 macro_rules! __impl_language_display_names_v1_marker {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl $provider {
             const DATA_LANGUAGE_DISPLAY_NAMES_V1_MARKER: icu_provider_baked::zerotrie::Data<icu::experimental::displaynames::provider::LanguageDisplayNamesV1Marker> = icu_provider_baked::zerotrie::Data {
                 trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1zabcdefghijklmnopqrstuvwxyz\0\0\0\0\x01\x01\x01\x01\x01\x01\x01\x02\x02\x02\x02\x02\x02\x02\x03\x03\x03\x03\x03\x03\x03\x1EGd\x81\x1CQa\x85\x9D\xA5\xF4\x0E6PX|\x7F\x95\x0B4P^aj\x8F\xC5fmrsz\x01\x02\x10\x13\x80\x81\x82-\xC3ELS\x02\x04G\x83Y\x84A\x85\x86t\x87\x88\xC7eghlnrs\x01\x04\x06\x08\r\x12\x89\x8Ac\x8Bo\x8Co\x8D\x8E-IN\x8F\x90\0x\x90\x01\x90\x02-Cyrl\x90\x03\xC6aehsvy\x02\x05\x08\r\x0F\x90\x04b\x90\x05r\x90\x06\x90\x07w\x90\x08\x90\t\x90\n\xC4aeos\x02\x0F\x12\x90\x0B\x90\x0C-\xC2AC\x03T\x90\rH\x90\x0Ei\x90\x0Fb\x90\x10\xC6lnostu\x0C)+\x8B\x8D\x90\x11-polyton\x90\x12\x90\x13-\xC50ACGI\x04\x07\n\r01\x90\x14U\x90\x15A\x90\x16B\x90\x17N\x90\x18\x90\x19\x90\x1A-\xCE4ABCDEGHMNPSUV\x04\x07\n\x16\x19\x1C\x1F\"%(8;>19\x90\x1BR\x90\x1CO\x90\x1C\xC3LOR\x02\x04\x90\x1C\x90\x1C\x90\x1CO\x90\x1CC\x90\x1CT\x90\x1CN\x90\x1CX\x90\x1DI\x90\x1C\xC4AERY\x02\x04\x06\x90\x1C\x90\x1C\x90\x1E\x90\x1CV\x90\x1ES\x90\x1FE\x90\x1C\x90 \x90!\xC6afiory\x07\x0E\x13\x15'\x90\"-AF\x90#-Adlm\x90$\x90%l\x90&\x90'\x90(-\xC2BC\x03E\x90)\xC2AH\x02\x90*\x90+\x90,\xC4adlu\x02\x04\x06\x90-\x90.\x90/\x900\xC7aeirsuy\x02\x04\r\x0F\x12\x14\x901\x902\x903-Latn\x904\x905b\x906\x907\x908\xC6adegst\x02\x04\x06\x08\n\x909\x90:\x90;\x90<\x90=\x90>\xC2av\x02\x90?\x90@\xCBaegkmnosuxy\x02\x05\x08\n\x0C\x0E\x13\x1C\x1E7\x90Aa\x90Bp\x90C\x90D\x90E\x90F\x90Gk\x90H\x90I-Deva\x90J\x90Kv\x90L-\xC3DOT\x05\neva\x90Mrya\x90Nelu\x90O\x90P\xC6bimotv\x02\x05\x08\n\x0C\x90Qj\x90Ro\x90S\x90T\x90U\x90V\xC9aiklnrsty\x03\x05\x07\t\x0E\x10\x12\x14i\x90W\x90X\x90Y\x90Z\x90[i\x90\\\x90]\x90^\x90_\x90`\xC6delnoq\x03\x05\x07\t\x0Bs\x90a\x90b\x90c\x90d\x90eo\x90f\xC2cr\x02\x90g\x90h\xC6aclrst\x02\x05\x07\n\x11\x90im\x90j\x90kg\x90l\x90m-PK\x90n\x90o-PT\x90pu\x90q\xC4amou\x03\x05\x0Cj\x90r\x90s\x90t-MD\x90u\x90v\xCEacdikloqruvwyz\n\x0C\x15\x17\x19\x1B\x1D\x1FCEGTW\x90w\xC2ht\x02\x90x\x90y\x90z\x90{-Deva\x90|\x90}\x90~\x90\x7F\x91\0\x91\x01\x91\x02-\xC4BLMX\x03\x13\x16A\x91\x03atn\x91\x06-\xC2BX\x03A\x91\x07K\x91\x08E\x91\x04K\x91\x05\x91\t\x91\n\x91\x0B-\xC2CK\x03D\x91\x0CE\x91\rr\x91\x0El\x91\x0F\xC9aeghikort\x02\x04\x06\x08\x0F\x11\x13\x15\x91\x10\x91\x11\x91\x12\x91\x13\x91\x14-ER\x91\x15\x91\x16\x91\x17\x91\x18\x91\x19\xC4gkrz\x02\x04\x0B\x91\x1A\x91\x1B\x91\x1C-IN\x91\x1D\x91\x1E-Cyrl\x91\x1F\xC3eim\x03\x05c\x91 \x91!w\x91\"o\x91#\xC2hn\x02\x91$r\x91%\xC3oru\x07\x15\x91&-BJ\x91'l\x91(-\xC2CV\x03O\x91)E\x91)e\x91*-Hans\x91+\xC3ahu\x02\x16\x91,\x91--\xC2HM\n\xC2Ka\x02\x91.nt\x910O\x91/\x911" },
@@ -3514,21 +3514,21 @@ macro_rules! __impl_language_display_names_v1_marker {
                 ],
             };
         }
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DataProvider<icu::experimental::displaynames::provider::LanguageDisplayNamesV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::experimental::displaynames::provider::LanguageDisplayNamesV1Marker>, icu_provider::DataError> {
                 let mut metadata = icu_provider::DataResponseMetadata::default();
-                let payload = if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_LANGUAGE_DISPLAY_NAMES_V1_MARKER, req.id) {
+                let payload = if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_LANGUAGE_DISPLAY_NAMES_V1_MARKER, req.id, req.metadata.attributes_prefix_match) {
                     payload
                 } else {
                     const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::experimental::displaynames::provider::LanguageDisplayNamesV1Marker as icu_provider::DataMarker>::INFO.fallback_config);
                     let mut fallback_iterator = FALLBACKER.fallback_for(req.id.locale.clone());
                     loop {
-                        if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_LANGUAGE_DISPLAY_NAMES_V1_MARKER, icu_provider::DataIdentifierBorrowed::for_marker_attributes_and_locale(req.id.marker_attributes, fallback_iterator.get())) {
+                        if let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_LANGUAGE_DISPLAY_NAMES_V1_MARKER, icu_provider::DataIdentifierBorrowed::for_marker_attributes_and_locale(req.id.marker_attributes, fallback_iterator.get()), req.metadata.attributes_prefix_match) {
                             metadata.locale = Some(fallback_iterator.take());
                             break payload;
                         }
-                        if fallback_iterator.get().is_und() {
+                        if fallback_iterator.get().is_default() {
                             return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::experimental::displaynames::provider::LanguageDisplayNamesV1Marker as icu_provider::DataMarker>::INFO, req));
                         }
                         fallback_iterator.step();
@@ -3538,9 +3538,33 @@ macro_rules! __impl_language_display_names_v1_marker {
             }
         }
     };
+    ($ provider : ty , DRY) => {
+        __impl_language_display_names_v1_marker!($provider);
+        #[clippy::msrv = "1.71.1"]
+        impl icu_provider::DryDataProvider<icu::experimental::displaynames::provider::LanguageDisplayNamesV1Marker> for $provider {
+            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
+                icu_provider::DataProvider::<icu::experimental::displaynames::provider::LanguageDisplayNamesV1Marker>::load(self, req).map(|r| r.metadata)
+            }
+        }
+    };
     ($ provider : ty , ITER) => {
         __impl_language_display_names_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
+        impl icu_provider::IterableDataProvider<icu::experimental::displaynames::provider::LanguageDisplayNamesV1Marker> for $provider {
+            fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
+                Ok(icu_provider_baked::DataStore::iter(&Self::DATA_LANGUAGE_DISPLAY_NAMES_V1_MARKER).collect())
+            }
+        }
+    };
+    ($ provider : ty , DRY , ITER) => {
+        __impl_language_display_names_v1_marker!($provider);
+        #[clippy::msrv = "1.71.1"]
+        impl icu_provider::DryDataProvider<icu::experimental::displaynames::provider::LanguageDisplayNamesV1Marker> for $provider {
+            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
+                icu_provider::DataProvider::<icu::experimental::displaynames::provider::LanguageDisplayNamesV1Marker>::load(self, req).map(|r| r.metadata)
+            }
+        }
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::IterableDataProvider<icu::experimental::displaynames::provider::LanguageDisplayNamesV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_LANGUAGE_DISPLAY_NAMES_V1_MARKER).collect())

@@ -51,21 +51,33 @@ pub(crate) fn bake(
 
 pub struct Data<M: DataMarker> {
     pub trie: ZeroTrieSimpleAscii<&'static [u8]>,
-    pub values: &'static [M::Yokeable],
+    pub values: &'static [M::DataStruct],
 }
 
 impl<M: DataMarker> super::DataStore<M> for Data<M> {
-    fn get(&self, id: DataIdentifierBorrowed) -> Option<&'static <M>::Yokeable> {
+    fn get(
+        &self,
+        id: DataIdentifierBorrowed,
+        attributes_prefix_match: bool,
+    ) -> Option<&'static <M>::DataStruct> {
         use writeable::Writeable;
         let mut cursor = self.trie.cursor();
         let _is_ascii = id.locale.write_to(&mut cursor);
         if !id.marker_attributes.is_empty() {
             cursor.step(ID_SEPARATOR);
             id.marker_attributes.write_to(&mut cursor).ok()?;
+            loop {
+                if let Some(v) = cursor.take_value() {
+                    break Some(v);
+                }
+                if !attributes_prefix_match || cursor.probe(0).is_none() {
+                    break None;
+                }
+            }
+        } else {
+            cursor.take_value()
         }
-        cursor
-            .take_value()
-            .map(|i| unsafe { self.values.get_unchecked(i) })
+        .map(|i| unsafe { self.values.get_unchecked(i) })
     }
 
     type IterReturn = core::iter::FilterMap<

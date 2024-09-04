@@ -74,7 +74,7 @@ fn operands(c: &mut Criterion) {
             }
         }
         c.bench_function("plurals/operands/eq/mostly_unequal", |b| {
-            let p: PluralOperands = "1".parse().expect("Parse successful");
+            let p: PluralOperands = 1.into();
             b.iter(|| {
                 for s in &data.isize {
                     let q: PluralOperands = black_box(*s).into();

@@ -95,13 +95,10 @@ use icu_provider::prelude::*;
 use icu::decimal::provider::{ AffixesV1, GroupingSizesV1 };
 
 /// Symbols and metadata required for formatting a [`FixedDecimal`](crate::FixedDecimal).
-#[icu_provider::data_struct(marker(DecimalSymbolsV1Marker, "decimal/symbols@1", extension_key = "nu" ))]
+#[icu_provider::data_struct(DecimalSymbolsV1Marker = "decimal/symbols@1")]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_decimal::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_decimal::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct DecimalSymbolsV1<'data> {
     /// Prefix and suffix to apply when a negative sign is needed.

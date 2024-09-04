@@ -3,31 +3,15 @@
     "0": "bu dakika"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": " dakika önce",
-      "index": 0
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": " dakika önce",
-      "index": 0
+    "strings": {
+      "specials": [],
+      "other": "\u0001 dakika önce"
     }
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": " dakika sonra",
-      "index": 0
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": " dakika sonra",
-      "index": 0
+    "strings": {
+      "specials": [],
+      "other": "\u0001 dakika sonra"
     }
   }
 }

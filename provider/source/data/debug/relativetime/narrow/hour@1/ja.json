@@ -3,25 +3,15 @@
     "0": "1 時間以内"
   },
   "past": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "時間前",
-      "index": 0
+    "strings": {
+      "specials": [],
+      "other": "\u0001時間前"
     }
   },
   "future": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": "時間後",
-      "index": 0
+    "strings": {
+      "specials": [],
+      "other": "\u0001時間後"
     }
   }
 }

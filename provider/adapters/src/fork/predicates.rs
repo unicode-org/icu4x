@@ -68,18 +68,18 @@ impl ForkByErrorPredicate for MarkerNotFoundPredicate {
 /// use icu_provider::hello_world::*;
 /// use icu_locale::langid;
 ///
-/// struct SingleLocaleProvider(icu_locale::LanguageIdentifier);
+/// struct SingleLocaleProvider(DataLocale);
 /// impl DataProvider<HelloWorldV1Marker> for SingleLocaleProvider {
 ///     fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
-///         if req.id.locale.get_langid() != self.0 {
+///         if *req.id.locale != self.0 {
 ///             return Err(DataErrorKind::IdentifierNotFound.with_req(HelloWorldV1Marker::INFO, req));
 ///         }
 ///         HelloWorldProvider.load(req)
 ///     }
 /// }
 ///
-/// let provider_de = SingleLocaleProvider(langid!("de"));
-/// let provider_ro = SingleLocaleProvider(langid!("ro"));
+/// let provider_de = SingleLocaleProvider(langid!("de").into());
+/// let provider_ro = SingleLocaleProvider(langid!("ro").into());
 ///
 /// // Create the forking provider:
 /// let provider = ForkByErrorProvider::new_with_predicate(

@@ -5,37 +5,33 @@
     "1": "sledećeg meseca"
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": "pre  meseca",
-      "index": 4
-    },
-    "two": null,
-    "few": {
-      "pattern": "pre  meseca",
-      "index": 4
-    },
-    "many": null,
-    "other": {
-      "pattern": "pre  meseci",
-      "index": 4
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0005pre  meseca"
+        ],
+        [
+          "Few",
+          "\u0005pre  meseca"
+        ]
+      ],
+      "other": "\u0005pre  meseci"
     }
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": "za  mesec",
-      "index": 3
-    },
-    "two": null,
-    "few": {
-      "pattern": "za  meseca",
-      "index": 3
-    },
-    "many": null,
-    "other": {
-      "pattern": "za  meseci",
-      "index": 3
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0004za  mesec"
+        ],
+        [
+          "Few",
+          "\u0004za  meseca"
+        ]
+      ],
+      "other": "\u0004za  meseci"
     }
   }
 }

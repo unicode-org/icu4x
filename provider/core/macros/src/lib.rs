@@ -57,12 +57,10 @@ mod tests;
 /// # pub mod icu {
 /// #   pub mod locale {
 /// #     pub mod fallback {
-/// #       pub use icu_provider::_internal::LocaleFallbackPriority;
+/// #       pub use icu_provider::fallback::LocaleFallbackPriority;
 /// #     }
-/// #     pub use icu_provider::_internal::locale_core::*;
 /// #   }
 /// # }
-/// use icu::locale::extensions::unicode::key;
 /// use icu::locale::fallback::*;
 /// use icu_provider::prelude::*;
 /// use std::borrow::Cow;
@@ -74,7 +72,6 @@ mod tests;
 ///         BazV1Marker,
 ///         "demo/baz@1",
 ///         fallback_by = "region",
-///         extension_key = "ca"
 ///     )
 /// )]
 /// pub struct FooV1<'data> {
@@ -89,14 +86,12 @@ mod tests;
 ///     BarV1Marker::INFO.fallback_config.priority,
 ///     LocaleFallbackPriority::Language
 /// );
-/// assert_eq!(BarV1Marker::INFO.fallback_config.extension_key, None);
 ///
 /// assert_eq!(BazV1Marker::INFO.path.as_str(), "demo/baz@1");
 /// assert_eq!(
 ///     BazV1Marker::INFO.fallback_config.priority,
 ///     LocaleFallbackPriority::Region
 /// );
-/// assert_eq!(BazV1Marker::INFO.fallback_config.extension_key, Some(key!("ca")));
 /// ```
 pub fn data_struct(attr: TokenStream, item: TokenStream) -> TokenStream {
     TokenStream::from(data_struct_impl(
@@ -119,8 +114,7 @@ struct DataStructArg {
     marker_name: Path,
     path_lit: Option<LitStr>,
     fallback_by: Option<LitStr>,
-    extension_key: Option<LitStr>,
-    fallback_supplement: Option<LitStr>,
+    attributes_domain: Option<LitStr>,
     singleton: bool,
 }
 
@@ -130,8 +124,7 @@ impl DataStructArg {
             marker_name,
             path_lit: None,
             fallback_by: None,
-            extension_key: None,
-            fallback_supplement: None,
+            attributes_domain: None,
             singleton: false,
         }
     }
@@ -163,8 +156,7 @@ impl Parse for DataStructArg {
             let mut marker_name: Option<Path> = None;
             let mut path_lit: Option<LitStr> = None;
             let mut fallback_by: Option<LitStr> = None;
-            let mut extension_key: Option<LitStr> = None;
-            let mut fallback_supplement: Option<LitStr> = None;
+            let mut attributes_domain: Option<LitStr> = None;
             let mut singleton = false;
             let punct = content.parse_terminated(DataStructMarkerArg::parse, Token![,])?;
 
@@ -181,18 +173,11 @@ impl Parse for DataStructArg {
                                 "fallback_by",
                                 paren.span.join(),
                             )?;
-                        } else if name == "extension_key" {
+                        } else if name == "attributes_domain" {
                             at_most_one_option(
-                                &mut extension_key,
+                                &mut attributes_domain,
                                 value,
-                                "extension_key",
-                                paren.span.join(),
-                            )?;
-                        } else if name == "fallback_supplement" {
-                            at_most_one_option(
-                                &mut fallback_supplement,
-                                value,
-                                "fallback_supplement",
+                                "attributes_domain",
                                 paren.span.join(),
                             )?;
                         } else {
@@ -223,8 +208,7 @@ impl Parse for DataStructArg {
                 marker_name,
                 path_lit,
                 fallback_by,
-                extension_key,
-                fallback_supplement,
+                attributes_domain,
                 singleton,
             })
         } else {
@@ -308,8 +292,7 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
             marker_name,
             path_lit,
             fallback_by,
-            extension_key,
-            fallback_supplement,
+            attributes_domain,
             singleton,
         } = single_attr;
 
@@ -318,11 +301,10 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
                 Some(ref fallback_by) => fallback_by.value(),
                 None => "language (default)".to_string(),
             };
-            let extension_key_docs_str = match extension_key {
-                Some(ref extension_key) => extension_key.value(),
-                None => "none (default)".to_string(),
-            };
-            format!("Marker type for [`{}`]: \"{}\"\n\n- Fallback priority: {}\n- Extension keyword: {}", name, path_lit.value(), fallback_by_docs_str, extension_key_docs_str)
+            format!(
+                "Marker type for [`{name}`]: \"{}\"\n\n- Fallback priority: {fallback_by_docs_str}",
+                path_lit.value()
+            )
         } else {
             format!("Marker type for [`{name}`]")
         };
@@ -331,7 +313,7 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
             #[doc = #docs]
             pub struct #marker_name;
             impl icu_provider::DynamicDataMarker for #marker_name {
-                type Yokeable = #name_with_lt;
+                type DataStruct = #name_with_lt;
             }
         ));
 
@@ -340,35 +322,23 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
             let fallback_by_expr = if let Some(fallback_by_lit) = fallback_by {
                 match fallback_by_lit.value().as_str() {
                     "region" => {
-                        quote! {icu_provider::_internal::LocaleFallbackPriority::Region}
+                        quote! {icu_provider::fallback::LocaleFallbackPriority::Region}
                     }
-                    "collation" => {
-                        quote! {icu_provider::_internal::LocaleFallbackPriority::Collation}
+                    "script" => {
+                        quote! {icu_provider::fallback::LocaleFallbackPriority::Script}
                     }
                     "language" => {
-                        quote! {icu_provider::_internal::LocaleFallbackPriority::Language}
+                        quote! {icu_provider::fallback::LocaleFallbackPriority::Language}
                     }
                     _ => panic!("Invalid value for fallback_by"),
                 }
             } else {
-                quote! {icu_provider::_internal::LocaleFallbackPriority::const_default()}
+                quote! {icu_provider::fallback::LocaleFallbackPriority::default()}
             };
-            let extension_key_expr = if let Some(extension_path_lit) = extension_key {
-                quote! {Some(icu_provider::_internal::locale_core::extensions::unicode::key!(#extension_path_lit))}
+            let attributes_domain_setter = if let Some(attributes_domain_lit) = attributes_domain {
+                quote! { info.attributes_domain = #attributes_domain_lit; }
             } else {
-                quote! {None}
-            };
-            let fallback_supplement_expr = if let Some(fallback_supplement_lit) =
-                fallback_supplement
-            {
-                match fallback_supplement_lit.value().as_str() {
-                    "collation" => {
-                        quote! {Some(icu_provider::_internal::LocaleFallbackSupplement::Collation)}
-                    }
-                    _ => panic!("Invalid value for fallback_supplement"),
-                }
-            } else {
-                quote! {None}
+                quote!()
             };
             result.extend(quote!(
                 impl icu_provider::DataMarker for #marker_name {
@@ -376,8 +346,7 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
                         let mut info = icu_provider::DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!(#path_str));
                         info.is_singleton = #singleton;
                         info.fallback_config.priority = #fallback_by_expr;
-                        info.fallback_config.extension_key = #extension_key_expr;
-                        info.fallback_config.fallback_supplement = #fallback_supplement_expr;
+                        #attributes_domain_setter
                         info
                     };
                 }

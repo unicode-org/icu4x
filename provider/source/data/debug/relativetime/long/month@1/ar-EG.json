@@ -5,55 +5,49 @@
     "1": "الشهر القادم"
   },
   "past": {
-    "zero": {
-      "pattern": "قبل  شهر",
-      "index": 7
-    },
-    "one": {
-      "pattern": "قبل شهر واحد",
-      "index": 255
-    },
-    "two": {
-      "pattern": "قبل شهرين",
-      "index": 255
-    },
-    "few": {
-      "pattern": "قبل  أشهر",
-      "index": 7
-    },
-    "many": {
-      "pattern": "قبل  شهرًا",
-      "index": 7
-    },
-    "other": {
-      "pattern": "قبل  شهر",
-      "index": 7
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0000قبل شهر واحد"
+        ],
+        [
+          "Two",
+          "\u0000قبل شهرين"
+        ],
+        [
+          "Few",
+          "\bقبل  أشهر"
+        ],
+        [
+          "Many",
+          "\bقبل  شهرًا"
+        ]
+      ],
+      "other": "\bقبل  شهر"
     }
   },
   "future": {
-    "zero": {
-      "pattern": "خلال  شهر",
-      "index": 9
-    },
-    "one": {
-      "pattern": "خلال شهر واحد",
-      "index": 255
-    },
-    "two": {
-      "pattern": "خلال شهرين",
-      "index": 255
-    },
-    "few": {
-      "pattern": "خلال  أشهر",
-      "index": 9
-    },
-    "many": {
-      "pattern": "خلال  شهرًا",
-      "index": 9
-    },
-    "other": {
-      "pattern": "خلال  شهر",
-      "index": 9
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0000خلال شهر واحد"
+        ],
+        [
+          "Two",
+          "\u0000خلال شهرين"
+        ],
+        [
+          "Few",
+          "\nخلال  أشهر"
+        ],
+        [
+          "Many",
+          "\nخلال  شهرًا"
+        ]
+      ],
+      "other": "\nخلال  شهر"
     }
   }
 }

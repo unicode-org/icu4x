@@ -3,25 +3,15 @@
     "0": "𑄃𑄳𑄆𑄬 𑄊𑄮𑄚𑄴𑄓𑄠𑄴"
   },
   "past": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": " 𑄊𑄮𑄚𑄴𑄓 𑄃𑄉𑄬",
-      "index": 0
+    "strings": {
+      "specials": [],
+      "other": "\u0001 𑄊𑄮𑄚𑄴𑄓 𑄃𑄉𑄬"
     }
   },
   "future": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": " 𑄊𑄮𑄚𑄴𑄓𑄠𑄴",
-      "index": 0
+    "strings": {
+      "specials": [],
+      "other": "\u0001 𑄊𑄮𑄚𑄴𑄓𑄠𑄴"
     }
   }
 }

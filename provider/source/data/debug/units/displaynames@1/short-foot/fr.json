@@ -1,6 +1,8 @@
 {
   "patterns": {
-    "One": "{0} pi",
-    "Other": "{0} pi"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 pi"
+    }
   }
 }

@@ -5,31 +5,15 @@
     "1": "gelecek hf."
   },
   "past": {
-    "zero": null,
-    "one": {
-      "pattern": " hf. önce",
-      "index": 0
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": " hf. önce",
-      "index": 0
+    "strings": {
+      "specials": [],
+      "other": "\u0001 hf. önce"
     }
   },
   "future": {
-    "zero": null,
-    "one": {
-      "pattern": " hf. sonra",
-      "index": 0
-    },
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": {
-      "pattern": " hf. sonra",
-      "index": 0
+    "strings": {
+      "specials": [],
+      "other": "\u0001 hf. sonra"
     }
   }
 }
