@@ -88,7 +88,18 @@ impl DataProvider<IanaToBcp47MapV2Marker> for SourceDataProvider {
                 let is_canonical = bcp2iana.get(bcp) == Some(iana);
                 let index = bcp47_ids.binary_search(bcp).unwrap();
                 (
-                    iana.as_bytes().to_vec(),
+                    if iana.contains('/') {
+                        iana.to_owned()
+                    } else {
+                        format!(
+                            "{}{iana}",
+                            char::from_u32(
+                                icu::timezone::provider::names::NON_REGION_CITY_PREFIX as u32
+                            )
+                            .unwrap()
+                        )
+                    }
+                    .into_bytes(),
                     (index << 1) | (is_canonical as usize),
                 )
             })

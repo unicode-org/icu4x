@@ -50,6 +50,14 @@ pub struct IanaToBcp47MapV1<'data> {
     pub bcp47_ids_checksum: u64,
 }
 
+/// [`IanaToBcp47MapV2`]'s trie cannot handle differently-cased prefixes, like `Mexico/BajaSur`` and `MET`.
+/// Therefore, any ID that is not of the shape `{region}/{city}` gets prefixed with this character
+/// inside the trie.
+///
+/// During lookup, if the input is not of the shape `{region}/{city}`, the trie cursor has to be advanced over
+/// this byte.
+pub const NON_REGION_CITY_PREFIX: u8 = b'_';
+
 /// A mapping from normal-case IANA time zone identifiers to BCP-47 time zone identifiers.
 ///
 /// Multiple IANA time zone IDs can map to the same BCP-47 time zone ID.

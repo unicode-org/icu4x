@@ -11,6 +11,7 @@ use zerotrie::cursor::ZeroAsciiIgnoreCaseTrieCursor;
 use crate::{
     provider::names::{
         Bcp47ToIanaMapV1, Bcp47ToIanaMapV1Marker, IanaToBcp47MapV2, IanaToBcp47MapV2Marker,
+        NON_REGION_CITY_PREFIX,
     },
     TimeZoneBcp47Id,
 };
@@ -269,7 +270,7 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
         // nearby the input IANA identifier. This should improve lookup time since
         // most renames share the same prefix like "Asia" or "Europe".
         let mut stack = Vec::with_capacity(iana_id.len());
-        let (trie_value, string) = self.iana_lookup_with_normalization(iana_id, |cursor| {
+        let (trie_value, mut string) = self.iana_lookup_with_normalization(iana_id, |cursor| {
             stack.push((cursor.clone(), 0, 1));
         })?;
         let Some(bcp47_id) = self.data.bcp47_ids.get(trie_value.index()) else {
@@ -281,6 +282,9 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
         }
         // If we get here, we need to walk the trie to find the canonical IANA ID.
         let needle = trie_value.to_canonical();
+        if !string.contains('/') {
+            string.to_mut().insert(0, '_');
+        }
         let Some(string) = self.iana_search(needle, string.into_owned(), stack) else {
             debug_assert!(false, "every time zone should have a canonical IANA ID");
             return None;
@@ -332,7 +336,15 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
     /// Queries the data for `iana_id` without recording the normalized string.
     /// This is a fast, no-alloc lookup.
     fn iana_lookup_quick(&self, iana_id: impl AsRef<[u8]>) -> Option<IanaTrieValue> {
-        self.data.map.get(iana_id).map(IanaTrieValue)
+        let mut cursor = self.data.map.cursor();
+        let iana_id = iana_id.as_ref();
+        if !iana_id.contains(&b'/') {
+            cursor.step(NON_REGION_CITY_PREFIX);
+        }
+        for &b in iana_id {
+            cursor.step(b);
+        }
+        cursor.take_value().map(IanaTrieValue)
     }
 
     /// Queries the data for `iana_id` while keeping track of the normalized string.
@@ -343,6 +355,10 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
         mut cursor_fn: impl FnMut(&ZeroAsciiIgnoreCaseTrieCursor<'l>),
     ) -> Option<(IanaTrieValue, Cow<'s, str>)> {
         let mut cursor = self.data.map.cursor();
+        if !iana_id.contains('/') {
+            cursor_fn(&cursor);
+            cursor.step(NON_REGION_CITY_PREFIX);
+        }
         let mut string = Cow::Borrowed(iana_id);
         let mut i = 0;
         let trie_value = loop {
