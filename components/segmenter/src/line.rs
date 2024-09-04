@@ -1023,7 +1023,12 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                             if break_state == BreakState::NoMatch {
                                 self.iter = previous_iter;
                                 self.current_pos_data = previous_pos_data;
-                                return self.get_current_position();
+                                if previous_is_after_zwj {
+                                    // Do not break [AK] [ZWJ] ÷ [AS] (eot).
+                                    continue 'a;
+                                } else {
+                                    return self.get_current_position();
+                                }
                             }
                             // EOF
                             return Some(self.len);
