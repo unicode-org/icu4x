@@ -7,11 +7,12 @@ use icu_segmenter::LineSegmenter;
 use icu_segmenter::SentenceSegmenter;
 use icu_segmenter::WordSegmenter;
 use std::char;
+use std::io::BufRead;
 
-struct TestContentIterator(core::str::Split<'static, char>);
+struct TestContentIterator<LineIterator>(LineIterator);
 
 struct TestData {
-    original_line: &'static str,
+    original_line: String,
     utf8_vec: Vec<char>,
     utf16_vec: Vec<u16>,
     latin1_vec: Vec<u8>,
@@ -20,18 +21,21 @@ struct TestData {
     break_result_latin1: Option<Vec<usize>>,
 }
 
-impl TestContentIterator {
+impl TestContentIterator<core::str::Split<'static, char>> {
     pub fn new(file: &'static str) -> Self {
         Self(file.split('\n'))
     }
 }
 
-impl Iterator for TestContentIterator {
+impl<LineIterator: std::iter::Iterator> Iterator for TestContentIterator<LineIterator>
+where
+    LineIterator::Item: Into<String>,
+{
     type Item = TestData;
 
     fn next(&mut self) -> Option<Self::Item> {
         loop {
-            let line = self.0.next()?;
+            let line: String = self.0.next()?.into();
             if line.is_empty() {
                 // EOF
                 return None;
@@ -94,7 +98,11 @@ impl Iterator for TestContentIterator {
 }
 
 fn line_break_test(file: &'static str) {
-    let test_iter = TestContentIterator::new(file);
+    let test_iter = TestContentIterator(
+        std::io::BufReader::new(std::fs::File::open(file).unwrap())
+            .lines()
+            .map(|l| l.unwrap()),
+    );
     let segmenter = LineSegmenter::new_dictionary();
     for (i, mut test) in test_iter.enumerate() {
         let s: String = test.utf8_vec.into_iter().collect();
@@ -172,17 +180,17 @@ fn line_break_test(file: &'static str) {
 
 #[test]
 fn run_line_break_test() {
-    line_break_test(include_str!("testdata/LineBreakTest.txt"));
+    line_break_test("./tests/testdata/LineBreakTest.txt");
 }
 
 #[test]
 fn run_line_break_extra_test() {
-    line_break_test(include_str!("testdata/LineBreakExtraTest.txt"));
+    line_break_test("./tests/testdata/LineBreakExtraTest.txt");
 }
 
 #[test]
 fn run_line_break_random_test() {
-    line_break_test(include_str!("testdata/LineBreakRandomTest.txt"));
+    line_break_test("./tests/testdata/LineBreakRandomTest.txt");
 }
 
 fn word_break_test(file: &'static str) {
