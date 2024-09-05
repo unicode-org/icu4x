@@ -9,7 +9,5 @@
   "region_format_variants": {
     "daylight": "{0}, letnje vreme",
     "standard": "{0}, standardno vreme"
-  },
-  "fallback_format": "{1} ({0})",
-  "gmt_offset_fallback": "GMT+?"
+  }
 }

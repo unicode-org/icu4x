@@ -9,7 +9,5 @@
   "region_format_variants": {
     "daylight": "เวลาออมแสง{0}",
     "standard": "เวลามาตรฐาน{0}"
-  },
-  "fallback_format": "{1} ({0})",
-  "gmt_offset_fallback": "GMT+?"
+  }
 }

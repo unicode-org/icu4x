@@ -119,8 +119,6 @@ impl From<CldrTimeZonesData<'_>> for TimeZoneFormatsV1<'static> {
                 })
                 .collect(),
             fallback_format: data.fallback_format.clone().into(),
-            // TODO(#2256): Have a better timezone offset_fallback.
-            gmt_offset_fallback: "GMT+?".to_string().into(),
         }
     }
 }
