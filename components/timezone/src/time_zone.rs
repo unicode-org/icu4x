@@ -102,29 +102,27 @@ impl CustomTimeZone {
     /// All other fields are left empty.
     pub const fn utc() -> Self {
         Self {
-            gmt_offset: Some(GmtOffset::utc()),
+            gmt_offset: Some(GmtOffset::zero()),
             time_zone_id: None,
             metazone_id: None,
             zone_variant: None,
         }
     }
 
-    /// Creates a new [`CustomTimeZone`] representing Greenwich Mean Time
-    /// (London Time as observed in the winter).
+    #[doc(hidden)] // unstable, test-only
     pub const fn gmt() -> Self {
         Self {
-            gmt_offset: Some(GmtOffset::utc()),
+            gmt_offset: Some(GmtOffset::zero()),
             time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "gblon"))),
             metazone_id: Some(MetazoneId(tinystr!(4, "mgmt"))),
             zone_variant: Some(ZoneVariant::standard()),
         }
     }
 
-    /// Creates a new [`CustomTimeZone`] representing British Summer Time
-    /// (London Time as observed in the summer).
+    #[doc(hidden)] // unstable, test-only
     pub const fn bst() -> Self {
         Self {
-            gmt_offset: Some(GmtOffset::utc_plus_1()),
+            gmt_offset: Some(GmtOffset::from_offset_eighths_of_hour(8)),
             time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "gblon"))),
             metazone_id: Some(MetazoneId(tinystr!(4, "mgmt"))),
             zone_variant: Some(ZoneVariant::daylight()),
@@ -192,7 +190,7 @@ impl CustomTimeZone {
         Err(UnknownTimeZoneError)
     }
 
-    /// Overwrite the metazone id in MockTimeZone.
+    /// Overwrite the metazone ID.
     ///
     /// # Examples
     ///
