@@ -349,3 +349,18 @@ where
         Err(last_error)
     }
 }
+
+#[cfg(feature = "std")]
+impl<P, F> ExportableProvider for MultiForkByErrorProvider<P, F>
+where
+    P: ExportableProvider,
+    F: ForkByErrorPredicate + Sync,
+{
+    fn supported_markers(&self) -> std::collections::HashSet<DataMarkerInfo> {
+        let mut markers = std::collections::HashSet::new();
+        for provider in self.providers.iter() {
+            markers.extend(provider.supported_markers());
+        }
+        markers
+    }
+}
