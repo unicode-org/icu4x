@@ -153,6 +153,76 @@ type Env = LiteMap<String, InternalTransliterator>;
 
 /// A `Transliterator` allows transliteration based on [UTS #35 transform rules](https://unicode.org/reports/tr35/tr35-general.html#Transforms),
 /// including overrides with custom implementations.
+///
+/// # Examples
+///
+/// A transliterator with a custom alias referenced by another:
+///
+/// ```
+/// use icu::experimental::transliterate::{Transliterator, CustomTransliterator, RuleCollection};
+/// use icu::locale::Locale;
+///
+/// // Set up a transliterator with 3 custom rules.
+/// // Note: These rules are for demonstration purposes only! Do not use.
+///
+/// // 1. Main entrypoint: a chain of several transliterators
+/// let mut collection = RuleCollection::default();
+/// collection.register_source(
+///     &"und-t-und-x0-custom".parse().unwrap(),
+///     "::NFD; ::FlattenLowerUmlaut; ::[:Nonspacing Mark:] Remove; ::AsciiUpper; ::NFC;".to_string(),
+///     [],
+///     false,
+///     true,
+/// );
+///
+/// // 2. A custom ruleset that expands lowercase umlauts
+/// collection.register_source(
+///     &"und-t-und-x0-dep1".parse().unwrap(),
+///     r#"
+///       [ä {a \u0308}] → ae;
+///       [ö {o \u0308}] → oe;
+///       [ü {u \u0308}] → ue;
+///     "#.to_string(),
+///     ["Any-FlattenLowerUmlaut"],
+///     false,
+///     true,
+/// );
+///
+/// // 3. A custom transliterator that uppercases all ASCII characters
+/// #[derive(Debug)]
+/// struct AsciiUpperTransliterator;
+/// impl CustomTransliterator for AsciiUpperTransliterator {
+///     fn transliterate(&self, input: &str, range: std::ops::Range<usize>) -> String {
+///         input.to_ascii_uppercase()
+///     }
+/// }
+/// collection.register_aliases(
+///     &"und-t-und-x0-dep2".parse().unwrap(),
+///     ["Any-AsciiUpper"],
+/// );
+///
+/// // Create a transliterator from the main entrypoint:
+/// let provider = collection.as_provider();
+/// let t = Transliterator::try_new_with_override_unstable(
+///     "und-t-und-x0-custom".parse().unwrap(),
+///     |locale| {
+///         if locale.normalizing_eq("und-t-und-x0-dep2") {
+///             Some(Box::new(AsciiUpperTransliterator))
+///         } else {
+///             None
+///         }
+///     },
+///     &provider,
+/// )
+/// .unwrap();
+///
+/// // Test the behavior:
+/// // - The uppercase 'Ü' is stripped of its umlaut
+/// // - The lowercase 'ä' is expanded to "ae"
+/// // - All ASCII characters are uppercased: not 'ß', which is not ASCII
+/// let r = t.transliterate("Übermäßig".to_string());
+/// assert_eq!(r, "UBERMAEßIG");
+/// ```
 #[derive(Debug)]
 pub struct Transliterator {
     transliterator: DataPayload<TransliteratorRulesV1Marker>,
