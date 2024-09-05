@@ -4,6 +4,7 @@
 
 use super::ForkByErrorPredicate;
 use alloc::{collections::BTreeSet, vec::Vec};
+#[cfg(feature = "std")]
 use icu_provider::export::ExportableProvider;
 use icu_provider::prelude::*;
 
