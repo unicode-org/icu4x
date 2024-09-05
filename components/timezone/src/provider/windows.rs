@@ -13,15 +13,12 @@
 //! Read more about data providers: [`icu_provider`]
 
 use icu_provider::prelude::*;
-use tinystr::{tinystr, TinyAsciiStr};
-use zerovec::{
-    ule::{AsULE, ULE},
-    ZeroMap2d, ZeroSlice, ZeroVec,
-};
+use tinystr::TinyAsciiStr;
+use zerovec::ZeroMap2d;
 
 /// A mapping from Windows Timezone names to the corresponding IANA identifier(s).
 ///
-/// Windows Timezones may map to multiple IANA identifiers so providing a [`WindowsGeoName`]
+/// Windows Timezones may map to multiple IANA identifiers so providing a [`WindowsRegion`]
 /// code is required to differentiate IANA identifiers.
 ///
 /// Not all return values are guaranteed to be a single value. The return may be a space delimited
@@ -43,32 +40,34 @@ use zerovec::{
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct WindowsZonesToIanaMapV1<'data>(
-    /// A map from a `WindowsZoneIdentifier` and `WindowsGeoName` to IANA identifier(s).
+    /// A map from a `WindowsZoneIdentifier` and `WindowsRegion` to IANA identifier(s).
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub ZeroMap2d<'data, WindowsZoneIdentifier, WindowsGeoName, str>,
+    pub ZeroMap2d<'data, str, TinyAsciiStr<3>, str>,
 );
 
-/// The `WindowsGeoName` is a value that is either a two-letter ISO 3166-1 code or a numeric UN M49 code.
+/* 
+/// The `WindowsRegion` is a value that is either a two-letter ISO 3166-1
+/// code or a numeric UN M49 code.
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE, Hash)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_timezone::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct WindowsGeoName(pub TinyAsciiStr<3>);
+pub struct WindowsRegion(pub TinyAsciiStr<3>);
 
-impl Default for WindowsGeoName {
+impl Default for WindowsRegion {
     fn default() -> Self {
         Self(tinystr!(3, "001"))
     }
 }
 
-impl From<TinyAsciiStr<3>> for WindowsGeoName {
+impl From<TinyAsciiStr<3>> for WindowsRegion {
     fn from(value: TinyAsciiStr<3>) -> Self {
         Self(value)
     }
 }
 
-impl AsULE for WindowsGeoName {
+impl AsULE for WindowsRegion {
     type ULE = Self;
 
     #[inline]
@@ -82,11 +81,11 @@ impl AsULE for WindowsGeoName {
     }
 }
 
-impl<'a> zerovec::maps::ZeroMapKV<'a> for WindowsGeoName {
-    type Container = ZeroVec<'a, WindowsGeoName>;
-    type Slice = ZeroSlice<WindowsGeoName>;
-    type GetType = WindowsGeoName;
-    type OwnedType = WindowsGeoName;
+impl<'a> zerovec::maps::ZeroMapKV<'a> for WindowsRegion {
+    type Container = ZeroVec<'a, WindowsRegion>;
+    type Slice = ZeroSlice<WindowsRegion>;
+    type GetType = WindowsRegion;
+    type OwnedType = WindowsRegion;
 }
 
 /// The designated Windows standard name identifier for a certain time zone.
@@ -123,3 +122,5 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for WindowsZoneIdentifier {
     type GetType = WindowsZoneIdentifier;
     type OwnedType = WindowsZoneIdentifier;
 }
+
+*/
