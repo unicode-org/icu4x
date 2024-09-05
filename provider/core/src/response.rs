@@ -718,6 +718,38 @@ where
         })
     }
 
+    /// Convert between two [`DynamicDataMarker`] types that are compatible with each other
+    /// with compile-time type checking.
+    ///
+    /// This happens if they both have the same [`DynamicDataMarker::DataStruct`] type.
+    ///
+    /// Can be used to erase the marker of a data payload in cases where multiple markers correspond
+    /// to the same data struct.
+    ///
+    /// For runtime dynamic casting, use [`DataPayload::dynamic_cast_mut()`].
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use icu_provider::hello_world::*;
+    /// use icu_provider::prelude::*;
+    ///
+    /// struct CustomHelloWorldV1Marker;
+    /// impl DynamicDataMarker for CustomHelloWorldV1Marker {
+    ///     type DataStruct = HelloWorldV1<'static>;
+    /// }
+    ///
+    /// let hello_world: DataPayload<HelloWorldV1Marker> = todo!();
+    /// let custom: DataPayload<CustomHelloWorldV1Marker> = hello_world.cast();
+    /// ```
+    #[inline]
+    pub fn cast_ref<M2>(&self) -> &DataPayload<M2>
+    where
+        M2: DynamicDataMarker<DataStruct = M::DataStruct>,
+    {
+        unsafe { core::mem::transmute(self) }
+    }
+
     /// Convert a [`DataPayload`] to one of the same type with runtime type checking.
     ///
     /// Primarily useful to convert from a generic to a concrete marker type.
