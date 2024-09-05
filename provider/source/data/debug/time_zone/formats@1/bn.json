@@ -9,5 +9,6 @@
   "region_format_variants": {
     "daylight": "{0} দিবালোক সময়",
     "standard": "{0} মানক সময়"
-  }
+  },
+  "fallback_format": "{1} ({0})"
 }

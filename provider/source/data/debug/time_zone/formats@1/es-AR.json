@@ -9,5 +9,6 @@
   "region_format_variants": {
     "daylight": "hora de verano de {0}",
     "standard": "hora estándar de {0}"
-  }
+  },
+  "fallback_format": "{1} ({0})"
 }

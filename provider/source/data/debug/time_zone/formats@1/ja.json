@@ -9,5 +9,6 @@
   "region_format_variants": {
     "daylight": "{0}夏時間",
     "standard": "{0}標準時"
-  }
+  },
+  "fallback_format": "{1}（{0}）"
 }

@@ -9,5 +9,6 @@
   "region_format_variants": {
     "daylight": "{0}, летње време",
     "standard": "{0}, стандардно време"
-  }
+  },
+  "fallback_format": "{1} ({0})"
 }
