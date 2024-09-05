@@ -178,8 +178,14 @@ impl Calendar for Julian {
 
     /// The calendar-specific year represented by `date`
     /// Julian has the same era scheme as Gregorian
-    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
+    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
         year_as_gregorian(date.0.year)
+    }
+
+    /// The calendar-specific year represented by `date`
+    /// Julian has the same era scheme as Gregorian
+    fn formattable_year(&self, date: &Self::DateInner) -> types::FormattableYear {
+        year_as_gregorian(date.0.year).into()
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -202,9 +208,9 @@ impl Calendar for Julian {
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
-            prev_year: crate::gregorian::year_as_gregorian(prev_year),
+            prev_year: crate::gregorian::year_as_gregorian(prev_year).into(),
             days_in_prev_year: Julian::days_in_year_direct(prev_year),
-            next_year: crate::gregorian::year_as_gregorian(next_year),
+            next_year: crate::gregorian::year_as_gregorian(next_year).into(),
         }
     }
 

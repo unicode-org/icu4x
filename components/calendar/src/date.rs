@@ -205,8 +205,15 @@ impl<A: AsCalendar> Date<A> {
 
     /// The calendar-specific year represented by `self`
     #[inline]
-    pub fn year(&self) -> types::FormattableYear {
+    pub fn year(&self) -> types::YearInfo {
         self.calendar.as_calendar().year(&self.inner)
+    }
+
+    /// The calendar-specific year represented by `self`, with information needed
+    /// for formatting
+    #[inline]
+    pub fn formattable_year(&self) -> types::FormattableYear {
+        self.calendar.as_calendar().formattable_year(&self.inner)
     }
 
     /// Returns whether `self` is in a calendar-specific leap year

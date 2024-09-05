@@ -152,10 +152,12 @@ impl Calendar for Roc {
         "ROC"
     }
 
-    fn year(&self, date: &Self::DateInner) -> crate::types::FormattableYear {
+    fn year(&self, date: &Self::DateInner) -> crate::types::YearInfo {
         year_as_roc(date.0 .0.year as i64)
     }
-
+    fn formattable_year(&self, date: &Self::DateInner) -> crate::types::FormattableYear {
+        year_as_roc(date.0 .0.year as i64).into()
+    }
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
         Iso.is_in_leap_year(&date.0)
     }
@@ -174,9 +176,9 @@ impl Calendar for Roc {
         types::DayOfYearInfo {
             day_of_year: Iso::day_of_year(date.0),
             days_in_year: Iso::days_in_year_direct(date.0 .0.year),
-            prev_year: year_as_roc(prev_year as i64),
+            prev_year: year_as_roc(prev_year as i64).into(),
             days_in_prev_year: Iso::days_in_year_direct(prev_year),
-            next_year: year_as_roc(next_year as i64),
+            next_year: year_as_roc(next_year as i64).into(),
         }
     }
 
@@ -262,23 +264,21 @@ impl DateTime<Roc> {
     }
 }
 
-pub(crate) fn year_as_roc(year: i64) -> types::FormattableYear {
+pub(crate) fn year_as_roc(year: i64) -> types::YearInfo {
     let year_i32 = i64_to_saturated_i32(year);
     let offset_i64 = ROC_ERA_OFFSET as i64;
     if year > offset_i64 {
-        types::FormattableYear {
-            era: types::Era(tinystr!(16, "roc")),
-            number: year_i32.saturating_sub(ROC_ERA_OFFSET),
-            cyclic: None,
-            related_iso: Some(year_i32),
-        }
+        types::YearInfo::new(
+            year_i32,
+            tinystr!(16, "roc"),
+            year_i32.saturating_sub(ROC_ERA_OFFSET),
+        )
     } else {
-        types::FormattableYear {
-            era: types::Era(tinystr!(16, "roc-inverse")),
-            number: (ROC_ERA_OFFSET + 1).saturating_sub(year_i32),
-            cyclic: None,
-            related_iso: Some(year_i32),
-        }
+        types::YearInfo::new(
+            year_i32,
+            tinystr!(16, "roc-inverse"),
+            (ROC_ERA_OFFSET + 1).saturating_sub(year_i32),
+        )
     }
 }
 

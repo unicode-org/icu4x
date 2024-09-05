@@ -270,14 +270,12 @@ impl Calendar for Japanese {
         .cast_unit()
     }
 
-    /// The calendar-specific year represented by `date`
-    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
-        types::FormattableYear {
-            era: types::Era(date.era),
-            number: date.adjusted_year,
-            cyclic: None,
-            related_iso: None,
-        }
+    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
+        types::YearInfo::new(date.inner.0.year, date.era, date.adjusted_year)
+    }
+
+    fn formattable_year(&self, date: &Self::DateInner) -> types::FormattableYear {
+        self.year(date).into()
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -304,9 +302,9 @@ impl Calendar for Japanese {
         types::DayOfYearInfo {
             day_of_year: Iso::days_in_year_direct(date.inner.0.year),
             days_in_year: Iso::days_in_year_direct(date.inner.0.year),
-            prev_year: self.year(&prev_dec_31),
+            prev_year: self.formattable_year(&prev_dec_31),
             days_in_prev_year: Iso::days_in_year_direct(prev_dec_31.inner.0.year),
-            next_year: self.year(&next_jan_1),
+            next_year: self.formattable_year(&next_jan_1),
         }
     }
 
@@ -375,9 +373,12 @@ impl Calendar for JapaneseExtended {
         .cast_unit()
     }
 
-    /// The calendar-specific year represented by `date`
-    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
+    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
         Japanese::year(&self.0, date)
+    }
+
+    fn formattable_year(&self, date: &Self::DateInner) -> types::FormattableYear {
+        Japanese::formattable_year(&self.0, date)
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {

@@ -206,8 +206,11 @@ impl Calendar for Ethiopian {
         date1.0.until(date2.0, _largest_unit, _smallest_unit)
     }
 
-    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
+    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
         Self::year_as_ethiopian(date.0.year, self.0)
+    }
+    fn formattable_year(&self, date: &Self::DateInner) -> types::FormattableYear {
+        Self::year_as_ethiopian(date.0.year, self.0).into()
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -228,9 +231,9 @@ impl Calendar for Ethiopian {
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
-            prev_year: Self::year_as_ethiopian(prev_year, self.0),
+            prev_year: Self::year_as_ethiopian(prev_year, self.0).into(),
             days_in_prev_year: Ethiopian::days_in_year_direct(prev_year),
-            next_year: Self::year_as_ethiopian(next_year, self.0),
+            next_year: Self::year_as_ethiopian(next_year, self.0).into(),
         }
     }
 
@@ -291,29 +294,13 @@ impl Ethiopian {
             365
         }
     }
-
-    fn year_as_ethiopian(year: i32, amete_alem: bool) -> types::FormattableYear {
+    fn year_as_ethiopian(year: i32, amete_alem: bool) -> types::YearInfo {
         if amete_alem {
-            types::FormattableYear {
-                era: types::Era(tinystr!(16, "mundi")),
-                number: year + AMETE_ALEM_OFFSET,
-                cyclic: None,
-                related_iso: None,
-            }
+            types::YearInfo::new(year, tinystr!(16, "mundi"), year + AMETE_ALEM_OFFSET)
         } else if year > 0 {
-            types::FormattableYear {
-                era: types::Era(tinystr!(16, "incar")),
-                number: year,
-                cyclic: None,
-                related_iso: None,
-            }
+            types::YearInfo::new(year, tinystr!(16, "incar"), year)
         } else {
-            types::FormattableYear {
-                era: types::Era(tinystr!(16, "pre-incar")),
-                number: 1 - year,
-                cyclic: None,
-                related_iso: None,
-            }
+            types::YearInfo::new(year, tinystr!(16, "pre-incar"), 1 - year)
         }
     }
 }

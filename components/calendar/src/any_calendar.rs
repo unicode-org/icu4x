@@ -508,11 +508,12 @@ impl Calendar for AnyCalendar {
         }
     }
 
-    /// The calendar-specific year represented by `date`
-    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
+    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
         match_cal_and_date!(match (self, date): (c, d) => c.year(d))
     }
-
+    fn formattable_year(&self, date: &Self::DateInner) -> types::FormattableYear {
+        match_cal_and_date!(match (self, date): (c, d) => c.formattable_year(d))
+    }
     /// The calendar-specific check if `date` is in a leap year
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
         match_cal_and_date!(match (self, date): (c, d) => c.is_in_leap_year(d))

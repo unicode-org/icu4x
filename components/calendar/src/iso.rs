@@ -193,11 +193,13 @@ impl Calendar for Iso {
         date1.0.until(date2.0, _largest_unit, _smallest_unit)
     }
 
-    /// The calendar-specific year represented by `date`
-    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
+    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
         Self::year_as_iso(date.0.year)
     }
-
+    /// The calendar-specific year represented by `date`
+    fn formattable_year(&self, date: &Self::DateInner) -> types::FormattableYear {
+        Self::year_as_iso(date.0.year).into()
+    }
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
         Self::is_leap_year(date.0.year, ())
     }
@@ -218,9 +220,9 @@ impl Calendar for Iso {
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
-            prev_year: Self::year_as_iso(prev_year),
+            prev_year: Self::year_as_iso(prev_year).into(),
             days_in_prev_year: Iso::days_in_year_direct(prev_year),
-            next_year: Self::year_as_iso(next_year),
+            next_year: Self::year_as_iso(next_year).into(),
         }
     }
 
@@ -444,13 +446,8 @@ impl Iso {
     }
 
     /// Wrap the year in the appropriate era code
-    fn year_as_iso(year: i32) -> types::FormattableYear {
-        types::FormattableYear {
-            era: types::Era(tinystr!(16, "default")),
-            number: year,
-            cyclic: None,
-            related_iso: None,
-        }
+    fn year_as_iso(year: i32) -> types::YearInfo {
+        types::YearInfo::new(year, tinystr!(16, "default"), year)
     }
 }
 

@@ -73,8 +73,11 @@ pub trait Calendar {
     fn debug_name(&self) -> &'static str;
     // fn since(&self, from: &Date<Self>, to: &Date<Self>) -> Duration<Self>, Error;
 
-    /// The calendar-specific year represented by `date`
-    fn year(&self, date: &Self::DateInner) -> types::FormattableYear;
+    /// Information about the year
+    fn year(&self, date: &Self::DateInner) -> types::YearInfo;
+
+    /// Information about the calendar-specific year as needed for formatting
+    fn formattable_year(&self, date: &Self::DateInner) -> types::FormattableYear;
 
     /// Calculate if a date is in a leap year
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool;

@@ -161,10 +161,12 @@ impl Calendar for Persian {
         date1.0.until(date2.0, _largest_unit, _smallest_unit)
     }
 
-    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
+    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
         Self::year_as_persian(date.0.year)
     }
-
+    fn formattable_year(&self, date: &Self::DateInner) -> types::FormattableYear {
+        Self::year_as_persian(date.0.year).into()
+    }
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
         Self::is_leap_year(date.0.year, ())
     }
@@ -183,9 +185,9 @@ impl Calendar for Persian {
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
-            prev_year: Persian::year_as_persian(prev_year),
+            prev_year: Persian::year_as_persian(prev_year).into(),
             days_in_prev_year: Persian::days_in_provided_year(prev_year, ()),
-            next_year: Persian::year_as_persian(next_year),
+            next_year: Persian::year_as_persian(next_year).into(),
         }
     }
 
@@ -222,13 +224,8 @@ impl Persian {
         PersianDateInner(ArithmeticDate::new_unchecked(year, month, day))
     }
 
-    fn year_as_persian(year: i32) -> types::FormattableYear {
-        types::FormattableYear {
-            era: types::Era(tinystr!(16, "ah")),
-            number: year,
-            cyclic: None,
-            related_iso: None,
-        }
+    fn year_as_persian(year: i32) -> types::YearInfo {
+        types::YearInfo::new(year, tinystr!(16, "ah"), year)
     }
 }
 
@@ -520,8 +517,18 @@ mod tests {
             let date = Date::try_new_persian_date(case.input, 1, 1).unwrap();
             let info = Persian::day_of_year_info(&Persian, date.inner());
 
-            assert_eq!(info.prev_year.number, case.expected_prev, "{:?}", case);
-            assert_eq!(info.next_year.number, case.expected_next, "{:?}", case);
+            assert_eq!(
+                info.prev_year.era_year_or_extended(),
+                case.expected_prev,
+                "{:?}",
+                case
+            );
+            assert_eq!(
+                info.next_year.era_year_or_extended(),
+                case.expected_next,
+                "{:?}",
+                case
+            );
         }
     }
 

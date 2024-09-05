@@ -119,8 +119,13 @@ impl Calendar for Buddhist {
     }
 
     /// The calendar-specific year represented by `date`
-    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
+    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
         iso_year_as_buddhist(date.0.year)
+    }
+
+    /// The calendar-specific year represented by `date`
+    fn formattable_year(&self, date: &Self::DateInner) -> types::FormattableYear {
+        iso_year_as_buddhist(date.0.year).into()
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -144,9 +149,9 @@ impl Calendar for Buddhist {
         types::DayOfYearInfo {
             day_of_year: Iso::day_of_year(*date),
             days_in_year: Iso::days_in_year_direct(date.0.year),
-            prev_year: iso_year_as_buddhist(prev_year),
+            prev_year: iso_year_as_buddhist(prev_year).into(),
             days_in_prev_year: Iso::days_in_year_direct(prev_year),
-            next_year: iso_year_as_buddhist(next_year),
+            next_year: iso_year_as_buddhist(next_year).into(),
         }
     }
 
@@ -218,14 +223,9 @@ impl DateTime<Buddhist> {
     }
 }
 
-fn iso_year_as_buddhist(year: i32) -> types::FormattableYear {
+fn iso_year_as_buddhist(year: i32) -> types::YearInfo {
     let buddhist_year = year + BUDDHIST_ERA_OFFSET;
-    types::FormattableYear {
-        era: types::Era(tinystr!(16, "be")),
-        number: buddhist_year,
-        cyclic: None,
-        related_iso: None,
-    }
+    types::YearInfo::new(buddhist_year, tinystr!(16, "be"), buddhist_year)
 }
 
 #[cfg(test)]

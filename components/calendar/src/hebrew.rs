@@ -259,8 +259,12 @@ impl Calendar for Hebrew {
         "Hebrew"
     }
 
-    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
+    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
         Self::year_as_hebrew(date.0.year)
+    }
+
+    fn formattable_year(&self, date: &Self::DateInner) -> types::FormattableYear {
+        Self::year_as_hebrew(date.0.year).into()
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -321,9 +325,9 @@ impl Calendar for Hebrew {
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
-            prev_year: Self::year_as_hebrew(prev_year),
+            prev_year: Self::year_as_hebrew(prev_year).into(),
             days_in_prev_year: date.0.year_info.prev_keviyah.year_length(),
-            next_year: Self::year_as_hebrew(next_year),
+            next_year: Self::year_as_hebrew(next_year).into(),
         }
     }
 
@@ -333,13 +337,8 @@ impl Calendar for Hebrew {
 }
 
 impl Hebrew {
-    fn year_as_hebrew(civil_year: i32) -> types::FormattableYear {
-        types::FormattableYear {
-            era: types::Era(tinystr!(16, "hebrew")),
-            number: civil_year,
-            cyclic: None,
-            related_iso: None,
-        }
+    fn year_as_hebrew(civil_year: i32) -> types::YearInfo {
+        types::YearInfo::new(civil_year, tinystr!(16, "hebrew"), civil_year)
     }
 }
 

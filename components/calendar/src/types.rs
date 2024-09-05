@@ -26,12 +26,22 @@ use zerovec::ule::AsULE;
 #[allow(clippy::exhaustive_structs)] // this is a newtype
 pub struct Era(pub TinyStr16);
 
-/// Representation of a formattable year.
+impl Era {
+    /// Construct an unknown era for GIGO behavior during
+    pub const fn unknown() -> Self {
+        Era(tinystr::tinystr!(16, "unknown"))
+    }
+}
+
+/// General information about a year, needed by Temporal.
 ///
 /// More fields may be added in the future for things like extended year
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[non_exhaustive]
-pub struct FormattableYear {
+pub struct YearInfo {
+    /// The "extended year", typically anchored with year 1 as the year 1 of either the most modern or
+    /// otherwise some "major" era for the calendar
+    pub extended_year: i32,
     /// The era containing the year.
     ///
     /// This may not always be the canonical era for the calendar and could be an alias,
@@ -41,34 +51,96 @@ pub struct FormattableYear {
 
     /// The year number in the current era (usually 1-based).
     pub number: i32,
+}
 
-    /// The year in the current cycle for cyclic calendars (1-indexed)
-    /// can be set to `None` for non-cyclic calendars
-    ///
-    /// For chinese and dangi it will be
-    /// a number between 1 and 60, for hypothetical other calendars it may be something else.
-    pub cyclic: Option<NonZeroU8>,
+/// Representation of a year as needed for formatting
+#[derive(Copy, Clone, Debug, PartialEq)]
+#[non_exhaustive]
+pub struct FormattableYear {
+    /// The "extended year", typically anchored with year 1 as the year 1 of either the most modern or
+    /// otherwise some "major" era for the calendar
+    pub extended_year: i32,
+    /// The rest of the details about the year.
+    pub kind: FormattableYearKind,
+}
 
-    /// The related ISO year. This is normally the ISO (proleptic Gregorian) year having the greatest
-    /// overlap with the calendar year. It is used in certain date formatting patterns.
+/// The type of year: Calendars like Chinese don't have an era and instead format with cyclic years.
+#[derive(Copy, Clone, Debug, PartialEq)]
+#[allow(clippy::exhaustive_enums)] // Only two kinds of years
+pub enum FormattableYearKind {
+    /// An Era and a numeric year in that era.
+    EraYear(Era, i32),
+    /// A cyclic year, and the related ISO year
     ///
-    /// Can be `None` if the calendar does not typically use `related_iso` (and CLDR does not contain patterns
-    /// using it)
-    pub related_iso: Option<i32>,
+    /// Knowing the cyclic year is typically not enough to pinpoint a date, however cyclic calendars
+    /// don't typically use eras, so disambiguation can be done by saying things like "Year 甲辰 (2024)"
+    Cyclic(NonZeroU8, i32),
+}
+
+impl YearInfo {
+    /// Construct a new Year given an era and number
+    pub fn new(extended_year: i32, era: TinyStr16, number: i32) -> Self {
+        Self {
+            extended_year,
+            era: Era(era),
+            number,
+        }
+    }
 }
 
 impl FormattableYear {
     /// Construct a new Year given an era and number
-    ///
-    /// Other fields can be set mutably after construction
-    /// as needed
-    pub fn new(era: Era, number: i32, cyclic: Option<NonZeroU8>) -> Self {
+    pub fn new_era(extended_year: i32, era: TinyStr16, number: i32) -> Self {
         Self {
-            era,
-            number,
-            cyclic,
-            related_iso: None,
+            extended_year,
+            kind: FormattableYearKind::EraYear(Era(era), number),
         }
+    }
+    /// Construct a new cyclic Year given a cycle and a related_iso
+    pub fn new_cyclic(extended_year: i32, cycle: NonZeroU8, related_iso: i32) -> Self {
+        Self {
+            extended_year,
+            kind: FormattableYearKind::Cyclic(cycle, related_iso),
+        }
+    }
+
+    /// Get *some* year number that can be displayed
+    ///
+    /// Gets the eraYear for era dates, otherwise falls back to Extended Year
+    pub fn era_year_or_extended(self) -> i32 {
+        match self.kind {
+            FormattableYearKind::EraYear(_, y) => y,
+            FormattableYearKind::Cyclic(..) => self.extended_year,
+        }
+    }
+
+    /// Return the cyclic year, if any
+    pub fn cyclic(self) -> Option<NonZeroU8> {
+        match self.kind {
+            FormattableYearKind::EraYear(..) => None,
+            FormattableYearKind::Cyclic(cy, _) => Some(cy),
+        }
+    }
+    /// Return the Related ISO year, if any
+    pub fn related_iso(self) -> Option<i32> {
+        match self.kind {
+            FormattableYearKind::EraYear(..) => None,
+            FormattableYearKind::Cyclic(_, i) => Some(i),
+        }
+    }
+    /// Return the era, or "unknown" for cyclic years
+    pub fn era_or_unknown(self) -> Era {
+        match self.kind {
+            FormattableYearKind::EraYear(e, _) => e,
+            FormattableYearKind::Cyclic(..) => Era::unknown(),
+        }
+    }
+}
+
+impl From<YearInfo> for FormattableYear {
+    #[inline]
+    fn from(x: YearInfo) -> FormattableYear {
+        FormattableYear::new_era(x.extended_year, x.era.0, x.number)
     }
 }
 

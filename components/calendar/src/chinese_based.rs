@@ -12,8 +12,7 @@
 //! let chinese_date = Date::new_from_iso(iso_date, Chinese::new());
 //!
 //! assert_eq!(chinese_date.year().number, 4660);
-//! assert_eq!(chinese_date.year().related_iso, Some(2023));
-//! assert_eq!(chinese_date.year().cyclic.unwrap().get(), 40);
+//! assert_eq!(chinese_date.formattable_year().cyclic().unwrap().get(), 40);
 //! assert_eq!(chinese_date.month().ordinal, 6);
 //! assert_eq!(chinese_date.day_of_month().0, 6);
 //! ```

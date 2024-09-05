@@ -23,15 +23,13 @@
 //!
 //! // `Date` checks
 //! assert_eq!(dangi_date.year().number, 4356);
-//! assert_eq!(dangi_date.year().related_iso, Some(2023));
-//! assert_eq!(dangi_date.year().cyclic.unwrap().get(), 40);
+//! assert_eq!(dangi_date.formattable_year().cyclic().unwrap().get(), 40);
 //! assert_eq!(dangi_date.month().ordinal, 6);
 //! assert_eq!(dangi_date.day_of_month().0, 6);
 //!
 //! // `DateTime` checks
 //! assert_eq!(dangi_datetime.date.year().number, 4356);
-//! assert_eq!(dangi_datetime.date.year().related_iso, Some(2023));
-//! assert_eq!(dangi_datetime.date.year().cyclic.unwrap().get(), 40);
+//! assert_eq!(dangi_datetime.date.formattable_year().cyclic().unwrap().get(), 40);
 //! assert_eq!(dangi_datetime.date.month().ordinal, 6);
 //! assert_eq!(dangi_datetime.date.day_of_month().0, 6);
 //! assert_eq!(dangi_datetime.time.hour.number(), 13);
@@ -50,7 +48,7 @@ use crate::provider::chinese_based::DangiCacheV1Marker;
 use crate::AsCalendar;
 use crate::{
     chinese_based::ChineseBasedDateInner,
-    types::{self, Era, FormattableYear},
+    types::{self, FormattableYear},
     Calendar, Date, DateTime, Iso, Time,
 };
 use core::cmp::Ordering;
@@ -252,7 +250,10 @@ impl Calendar for Dangi {
         Self::DEBUG_NAME
     }
 
-    fn year(&self, date: &Self::DateInner) -> crate::types::FormattableYear {
+    fn year(&self, date: &Self::DateInner) -> crate::types::YearInfo {
+        types::YearInfo::new(date.0 .0.year, tinystr!(16, "dangi"), date.0 .0.year)
+    }
+    fn formattable_year(&self, date: &Self::DateInner) -> crate::types::FormattableYear {
         Self::format_dangi_year(date.0 .0.year, Some(date.0 .0.year_info))
     }
 
@@ -308,8 +309,7 @@ impl<A: AsCalendar<Calendar = Dangi>> Date<A> {
     ///     .expect("Failed to initialize Dangi Date instance.");
     ///
     /// assert_eq!(date_dangi.year().number, 4356);
-    /// assert_eq!(date_dangi.year().cyclic.unwrap().get(), 40);
-    /// assert_eq!(date_dangi.year().related_iso, Some(2023));
+    /// assert_eq!(date_dangi.formattable_year().cyclic().unwrap().get(), 40);
     /// assert_eq!(date_dangi.month().ordinal, 6);
     /// assert_eq!(date_dangi.day_of_month().0, 18);
     /// ```
@@ -349,8 +349,7 @@ impl<A: AsCalendar<Calendar = Dangi>> DateTime<A> {
     /// .expect("Failed to initialize Dangi DateTime instance.");
     ///
     /// assert_eq!(dangi_datetime.date.year().number, 4356);
-    /// assert_eq!(dangi_datetime.date.year().related_iso, Some(2023));
-    /// assert_eq!(dangi_datetime.date.year().cyclic.unwrap().get(), 40);
+    /// assert_eq!(dangi_datetime.date.formattable_year().cyclic().unwrap().get(), 40);
     /// assert_eq!(dangi_datetime.date.month().ordinal, 6);
     /// assert_eq!(dangi_datetime.date.day_of_month().0, 6);
     /// assert_eq!(dangi_datetime.time.hour.number(), 13);
@@ -388,24 +387,17 @@ impl Dangi {
         year: i32,
         year_info_option: Option<ChineseBasedYearInfo>,
     ) -> FormattableYear {
-        let era = Era(tinystr!(16, "dangi"));
-        let number = year;
         // constant 364 from https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5704
-        let cyclic = (number as i64 - 1 + 364).rem_euclid(60) as u8;
-        let cyclic = NonZeroU8::new(cyclic + 1); // 1-indexed
+        let cyclic = (year as i64 - 1 + 364).rem_euclid(60) as u8;
+        let cyclic = NonZeroU8::new(cyclic + 1).unwrap_or(NonZeroU8::MIN); // 1-indexed
         let rata_die_in_year = if let Some(info) = year_info_option {
             info.new_year::<DangiCB>(year)
         } else {
-            Inner::fixed_mid_year_from_year(number)
+            Inner::fixed_mid_year_from_year(year)
         };
         let iso_formattable_year = Iso::iso_from_fixed(rata_die_in_year).year();
-        let related_iso = Some(iso_formattable_year.number);
-        types::FormattableYear {
-            era,
-            number,
-            cyclic,
-            related_iso,
-        }
+        let related_iso = iso_formattable_year.number;
+        types::FormattableYear::new_cyclic(year, cyclic, related_iso)
     }
 }
 
@@ -430,14 +422,14 @@ mod test {
         let iso = Date::try_new_iso_date(year, 6, 6).unwrap();
         let chinese = iso.to_calendar(Chinese::new_always_calculating());
         let dangi = iso.to_calendar(Dangi::new_always_calculating());
-        let chinese_year = chinese.year().cyclic;
-        let korean_year = dangi.year().cyclic;
+        let chinese_year = chinese.formattable_year().cyclic();
+        let korean_year = dangi.formattable_year().cyclic();
         assert_eq!(
             chinese_year, korean_year,
             "Cyclic year failed for year: {year}"
         );
-        let chinese_rel_iso = chinese.year().related_iso;
-        let korean_rel_iso = dangi.year().related_iso;
+        let chinese_rel_iso = chinese.formattable_year().related_iso();
+        let korean_rel_iso = dangi.formattable_year().related_iso();
         assert_eq!(
             chinese_rel_iso, korean_rel_iso,
             "Rel. ISO year equality failed for year: {year}"
@@ -998,8 +990,8 @@ mod test {
             let iso = Date::try_new_iso_date(case.iso_year, case.iso_month, case.iso_day).unwrap();
             do_twice(&dangi_calculating, &dangi_cached, |dangi, calendar_type| {
                 let dangi = iso.to_calendar(dangi);
-                let dangi_rel_iso = dangi.year().related_iso;
-                let dangi_cyclic = dangi.year().cyclic;
+                let dangi_rel_iso = dangi.formattable_year().related_iso();
+                let dangi_cyclic = dangi.formattable_year().cyclic();
                 let dangi_month = dangi.month().ordinal;
                 let dangi_day = dangi.day_of_month().0;
 

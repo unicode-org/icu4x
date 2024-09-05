@@ -184,8 +184,12 @@ impl Calendar for Coptic {
         date1.0.until(date2.0, _largest_unit, _smallest_unit)
     }
 
-    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
+    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
         year_as_coptic(date.0.year)
+    }
+
+    fn formattable_year(&self, date: &Self::DateInner) -> types::FormattableYear {
+        year_as_coptic(date.0.year).into()
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -206,9 +210,9 @@ impl Calendar for Coptic {
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
-            prev_year: year_as_coptic(prev_year),
+            prev_year: year_as_coptic(prev_year).into(),
             days_in_prev_year: Coptic::days_in_year_direct(prev_year),
-            next_year: year_as_coptic(next_year),
+            next_year: year_as_coptic(next_year).into(),
         }
     }
 
@@ -301,24 +305,13 @@ impl DateTime<Coptic> {
     }
 }
 
-fn year_as_coptic(year: i32) -> types::FormattableYear {
+fn year_as_coptic(year: i32) -> types::YearInfo {
     if year > 0 {
-        types::FormattableYear {
-            era: types::Era(tinystr!(16, "ad")),
-            number: year,
-            cyclic: None,
-            related_iso: None,
-        }
+        types::YearInfo::new(year, tinystr!(16, "ad"), year)
     } else {
-        types::FormattableYear {
-            era: types::Era(tinystr!(16, "bd")),
-            number: 1 - year,
-            cyclic: None,
-            related_iso: None,
-        }
+        types::YearInfo::new(year, tinystr!(16, "bd"), 1 - year)
     }
 }
-
 #[cfg(test)]
 mod tests {
     use super::*;

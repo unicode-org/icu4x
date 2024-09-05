@@ -54,6 +54,10 @@ use core::marker::PhantomData;
 use icu_provider::prelude::*;
 use tinystr::tinystr;
 
+fn year_as_islamic(year: i32) -> types::YearInfo {
+    types::YearInfo::new(year, tinystr!(16, "islamic"), year)
+}
+
 /// Islamic Observational Calendar (Default)
 ///
 /// # Era codes
@@ -505,8 +509,11 @@ impl Calendar for IslamicObservational {
         Self::DEBUG_NAME
     }
 
-    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
-        Self::year_as_islamic(date.0.year)
+    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
+        year_as_islamic(date.0.year)
+    }
+    fn formattable_year(&self, date: &Self::DateInner) -> types::FormattableYear {
+        year_as_islamic(date.0.year).into()
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -527,9 +534,9 @@ impl Calendar for IslamicObservational {
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
-            prev_year: Self::year_as_islamic(prev_year),
+            prev_year: year_as_islamic(prev_year).into(),
             days_in_prev_year: date.0.year_info.days_in_prev_year(),
-            next_year: Self::year_as_islamic(next_year),
+            next_year: year_as_islamic(next_year).into(),
         }
     }
 
@@ -543,14 +550,6 @@ impl IslamicObservational {
         IslamicPrecomputedData::new(self.data.as_ref().map(|x| x.get()))
     }
 
-    fn year_as_islamic(year: i32) -> types::FormattableYear {
-        types::FormattableYear {
-            era: types::Era(tinystr!(16, "islamic")),
-            number: year,
-            cyclic: None,
-            related_iso: None,
-        }
-    }
     pub(crate) const DEBUG_NAME: &'static str = "Islamic (observational)";
 }
 
@@ -738,8 +737,11 @@ impl Calendar for IslamicUmmAlQura {
         Self::DEBUG_NAME
     }
 
-    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
-        Self::year_as_islamic(date.0.year)
+    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
+        year_as_islamic(date.0.year)
+    }
+    fn formattable_year(&self, date: &Self::DateInner) -> types::FormattableYear {
+        year_as_islamic(date.0.year).into()
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -760,9 +762,9 @@ impl Calendar for IslamicUmmAlQura {
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
-            prev_year: Self::year_as_islamic(prev_year),
+            prev_year: year_as_islamic(prev_year).into(),
             days_in_prev_year: date.0.year_info.days_in_prev_year(),
-            next_year: Self::year_as_islamic(next_year),
+            next_year: year_as_islamic(next_year).into(),
         }
     }
 
@@ -776,14 +778,6 @@ impl IslamicUmmAlQura {
         IslamicPrecomputedData::new(self.data.as_ref().map(|x| x.get()))
     }
 
-    fn year_as_islamic(year: i32) -> types::FormattableYear {
-        types::FormattableYear {
-            era: types::Era(tinystr!(16, "islamic")),
-            number: year,
-            cyclic: None,
-            related_iso: None,
-        }
-    }
     pub(crate) const DEBUG_NAME: &'static str = "Islamic (Umm al-Qura)";
 }
 
@@ -972,8 +966,11 @@ impl Calendar for IslamicCivil {
         "Islamic (civil)"
     }
 
-    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
-        Self::year_as_islamic(date.0.year)
+    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
+        year_as_islamic(date.0.year)
+    }
+    fn formattable_year(&self, date: &Self::DateInner) -> types::FormattableYear {
+        year_as_islamic(date.0.year).into()
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -994,9 +991,9 @@ impl Calendar for IslamicCivil {
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
-            prev_year: Self::year_as_islamic(prev_year),
+            prev_year: year_as_islamic(prev_year).into(),
             days_in_prev_year: Self::days_in_provided_year(prev_year, ()),
-            next_year: Self::year_as_islamic(next_year),
+            next_year: year_as_islamic(next_year).into(),
         }
     }
 
@@ -1024,15 +1021,6 @@ impl IslamicCivil {
             IslamicCivilDateInner(ArithmeticDate::new_unchecked(y, m, d)),
             IslamicCivil,
         )
-    }
-
-    fn year_as_islamic(year: i32) -> types::FormattableYear {
-        types::FormattableYear {
-            era: types::Era(tinystr!(16, "islamic")),
-            number: year,
-            cyclic: None,
-            related_iso: None,
-        }
     }
 }
 
@@ -1215,8 +1203,11 @@ impl Calendar for IslamicTabular {
         "Islamic (tabular)"
     }
 
-    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
-        Self::year_as_islamic(date.0.year)
+    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
+        year_as_islamic(date.0.year)
+    }
+    fn formattable_year(&self, date: &Self::DateInner) -> types::FormattableYear {
+        year_as_islamic(date.0.year).into()
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -1237,9 +1228,9 @@ impl Calendar for IslamicTabular {
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
-            prev_year: Self::year_as_islamic(prev_year),
+            prev_year: year_as_islamic(prev_year).into(),
             days_in_prev_year: Self::days_in_provided_year(prev_year, ()),
-            next_year: Self::year_as_islamic(next_year),
+            next_year: year_as_islamic(next_year).into(),
         }
     }
 
@@ -1267,15 +1258,6 @@ impl IslamicTabular {
             IslamicTabularDateInner(ArithmeticDate::new_unchecked(y, m, d)),
             IslamicTabular,
         )
-    }
-
-    fn year_as_islamic(year: i32) -> types::FormattableYear {
-        types::FormattableYear {
-            era: types::Era(tinystr!(16, "islamic")),
-            number: year,
-            cyclic: None,
-            related_iso: None,
-        }
     }
 }
 

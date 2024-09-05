@@ -130,10 +130,14 @@ impl Calendar for Gregorian {
         Iso.until(&date1.0, &date2.0, &Iso, largest_unit, smallest_unit)
             .cast_unit()
     }
+    /// The calendar-specific year represented by `date`
+    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
+        year_as_gregorian(date.0 .0.year)
+    }
 
     /// The calendar-specific year represented by `date`
-    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
-        year_as_gregorian(date.0 .0.year)
+    fn formattable_year(&self, date: &Self::DateInner) -> types::FormattableYear {
+        year_as_gregorian(date.0 .0.year).into()
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -157,9 +161,9 @@ impl Calendar for Gregorian {
         types::DayOfYearInfo {
             day_of_year: Iso::day_of_year(date.0),
             days_in_year: Iso::days_in_year_direct(date.0 .0.year),
-            prev_year: year_as_gregorian(prev_year),
+            prev_year: year_as_gregorian(prev_year).into(),
             days_in_prev_year: Iso::days_in_year_direct(prev_year),
-            next_year: year_as_gregorian(next_year),
+            next_year: year_as_gregorian(next_year).into(),
         }
     }
 
@@ -231,21 +235,11 @@ impl DateTime<Gregorian> {
     }
 }
 
-pub(crate) fn year_as_gregorian(year: i32) -> types::FormattableYear {
+pub(crate) fn year_as_gregorian(year: i32) -> types::YearInfo {
     if year > 0 {
-        types::FormattableYear {
-            era: types::Era(tinystr!(16, "ce")),
-            number: year,
-            cyclic: None,
-            related_iso: None,
-        }
+        types::YearInfo::new(year, tinystr!(16, "ce"), year)
     } else {
-        types::FormattableYear {
-            era: types::Era(tinystr!(16, "bce")),
-            number: 1_i32.saturating_sub(year),
-            cyclic: None,
-            related_iso: None,
-        }
+        types::YearInfo::new(year, tinystr!(16, "bce"), 1_i32.saturating_sub(year))
     }
 }
 
@@ -345,14 +339,14 @@ mod test {
             assert_eq!(
                 Calendar::day_of_year_info(&Gregorian, &date.inner)
                     .next_year
-                    .number,
+                    .era_year_or_extended(),
                 case.next_era_year,
                 "{case:?}",
             );
             assert_eq!(
                 Calendar::day_of_year_info(&Gregorian, &date.inner)
                     .next_year
-                    .era
+                    .era_or_unknown()
                     .0,
                 case.era,
                 "{case:?}",
@@ -553,14 +547,14 @@ mod test {
             assert_eq!(
                 Calendar::day_of_year_info(&Gregorian, &date.inner)
                     .prev_year
-                    .number,
+                    .era_year_or_extended(),
                 case.prev_era_year,
                 "{case:?}",
             );
             assert_eq!(
                 Calendar::day_of_year_info(&Gregorian, &date.inner)
                     .prev_year
-                    .era
+                    .era_or_unknown()
                     .0,
                 case.era,
                 "{case:?}",

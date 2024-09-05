@@ -232,8 +232,8 @@ impl ExtractedDateTimeInput {
             | Some(AnyCalendarKind::Iso) => false,
             Some(AnyCalendarKind::Gregorian) => match self.year() {
                 None => true,
-                Some(year) if year.number < 1000 => true,
-                Some(year) if year.era.0 != tinystr::tinystr!(16, "ce") => true,
+                Some(year) if year.era_year_or_extended() < 1000 => true,
+                Some(year) if year.era_or_unknown().0 != tinystr::tinystr!(16, "ce") => true,
                 Some(_) => false,
             },
             Some(_) => {
@@ -363,7 +363,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> DateInput for Date<A> {
     type Calendar = C;
     /// Gets the era and year input.
     fn year(&self) -> Option<FormattableYear> {
-        Some(self.year())
+        Some(self.formattable_year())
     }
 
     /// Gets the month input.
@@ -399,7 +399,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> DateInput for DateTime<A> {
     type Calendar = C;
     /// Gets the era and year input.
     fn year(&self) -> Option<FormattableYear> {
-        Some(self.date.year())
+        Some(self.date.formattable_year())
     }
 
     /// Gets the month input.
