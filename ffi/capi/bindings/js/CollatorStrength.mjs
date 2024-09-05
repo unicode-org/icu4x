@@ -9,12 +9,11 @@ export class CollatorStrength {
     #value = undefined;
 
     static #values = new Map([
-        ["Auto", 0],
-        ["Primary", 1],
-        ["Secondary", 2],
-        ["Tertiary", 3],
-        ["Quaternary", 4],
-        ["Identical", 5]
+        ["Primary", 0],
+        ["Secondary", 1],
+        ["Tertiary", 2],
+        ["Quaternary", 3],
+        ["Identical", 4]
     ]);
 
     constructor(value) {
@@ -55,13 +54,11 @@ export class CollatorStrength {
         new CollatorStrength(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
         new CollatorStrength(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 3),
         new CollatorStrength(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 4),
-        new CollatorStrength(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 5),
     ];
 
-    static Auto = CollatorStrength.#objectValues[0];
-    static Primary = CollatorStrength.#objectValues[1];
-    static Secondary = CollatorStrength.#objectValues[2];
-    static Tertiary = CollatorStrength.#objectValues[3];
-    static Quaternary = CollatorStrength.#objectValues[4];
-    static Identical = CollatorStrength.#objectValues[5];
+    static Primary = CollatorStrength.#objectValues[0];
+    static Secondary = CollatorStrength.#objectValues[1];
+    static Tertiary = CollatorStrength.#objectValues[2];
+    static Quaternary = CollatorStrength.#objectValues[3];
+    static Identical = CollatorStrength.#objectValues[4];
 }

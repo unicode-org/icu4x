@@ -42,11 +42,11 @@ final class Bidi implements ffi.Finalizable {
   /// Takes in a Level for the default level, if it is an invalid value it will default to LTR
   ///
   /// See the [Rust documentation for `new_with_data_source`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html#method.new_with_data_source) for more information.
-  BidiInfo forText(String text, int defaultLevel) {
+  BidiInfo forText(String text, int? defaultLevel) {
     final textArena = _FinalizedArena();
     // This lifetime edge depends on lifetimes: 'text
     core.List<Object> textEdges = [textArena];
-    final result = _icu4x_Bidi_for_text_valid_utf8_mv1(_ffi, text._utf8AllocIn(textArena.arena), defaultLevel);
+    final result = _icu4x_Bidi_for_text_valid_utf8_mv1(_ffi, text._utf8AllocIn(textArena.arena), defaultLevel != null ? _ResultUint8Void.ok(defaultLevel) : _ResultUint8Void.err());
     return BidiInfo._fromFfi(result, [], textEdges);
   }
 
@@ -114,9 +114,9 @@ external void _icu4x_Bidi_destroy_mv1(ffi.Pointer<ffi.Void> self);
 external _ResultOpaqueInt32 _icu4x_Bidi_create_mv1(ffi.Pointer<ffi.Opaque> provider);
 
 @meta.ResourceIdentifier('icu4x_Bidi_for_text_valid_utf8_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_Bidi_for_text_valid_utf8_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, _ResultUint8Void)>(isLeaf: true, symbol: 'icu4x_Bidi_for_text_valid_utf8_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_Bidi_for_text_valid_utf8_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 text, int defaultLevel);
+external ffi.Pointer<ffi.Opaque> _icu4x_Bidi_for_text_valid_utf8_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 text, _ResultUint8Void defaultLevel);
 
 @meta.ResourceIdentifier('icu4x_Bidi_reorder_visual_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, _SliceUint8)>(isLeaf: true, symbol: 'icu4x_Bidi_reorder_visual_mv1')

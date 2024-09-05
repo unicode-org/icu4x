@@ -27,7 +27,6 @@ inline icu4x::capi::CollatorStrength icu4x::CollatorStrength::AsFFI() const {
 
 inline icu4x::CollatorStrength icu4x::CollatorStrength::FromFFI(icu4x::capi::CollatorStrength c_enum) {
   switch (c_enum) {
-    case icu4x::capi::CollatorStrength_Auto:
     case icu4x::capi::CollatorStrength_Primary:
     case icu4x::capi::CollatorStrength_Secondary:
     case icu4x::capi::CollatorStrength_Tertiary:

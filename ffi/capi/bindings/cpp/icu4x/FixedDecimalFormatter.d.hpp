@@ -33,9 +33,9 @@ namespace icu4x {
 class FixedDecimalFormatter {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::FixedDecimalFormatter>, icu4x::DataError> create_with_grouping_strategy(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::FixedDecimalGroupingStrategy grouping_strategy);
+  inline static diplomat::result<std::unique_ptr<icu4x::FixedDecimalFormatter>, icu4x::DataError> create_with_grouping_strategy(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::optional<icu4x::FixedDecimalGroupingStrategy> grouping_strategy);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::FixedDecimalFormatter>, icu4x::DataError> create_with_manual_data(std::string_view plus_sign_prefix, std::string_view plus_sign_suffix, std::string_view minus_sign_prefix, std::string_view minus_sign_suffix, std::string_view decimal_separator, std::string_view grouping_separator, uint8_t primary_group_size, uint8_t secondary_group_size, uint8_t min_group_size, diplomat::span<const char32_t> digits, icu4x::FixedDecimalGroupingStrategy grouping_strategy);
+  inline static diplomat::result<std::unique_ptr<icu4x::FixedDecimalFormatter>, icu4x::DataError> create_with_manual_data(std::string_view plus_sign_prefix, std::string_view plus_sign_suffix, std::string_view minus_sign_prefix, std::string_view minus_sign_suffix, std::string_view decimal_separator, std::string_view grouping_separator, uint8_t primary_group_size, uint8_t secondary_group_size, uint8_t min_group_size, diplomat::span<const char32_t> digits, std::optional<icu4x::FixedDecimalGroupingStrategy> grouping_strategy);
 
   inline std::string format(const icu4x::FixedDecimal& value) const;
 

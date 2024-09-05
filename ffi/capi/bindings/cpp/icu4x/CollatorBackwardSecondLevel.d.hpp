@@ -13,9 +13,8 @@
 namespace icu4x {
 namespace capi {
     enum CollatorBackwardSecondLevel {
-      CollatorBackwardSecondLevel_Auto = 0,
-      CollatorBackwardSecondLevel_Off = 1,
-      CollatorBackwardSecondLevel_On = 2,
+      CollatorBackwardSecondLevel_Off = 0,
+      CollatorBackwardSecondLevel_On = 1,
     };
     
     typedef struct CollatorBackwardSecondLevel_option {union { CollatorBackwardSecondLevel ok; }; bool is_ok; } CollatorBackwardSecondLevel_option;
@@ -26,9 +25,8 @@ namespace icu4x {
 class CollatorBackwardSecondLevel {
 public:
   enum Value {
-    Auto = 0,
-    Off = 1,
-    On = 2,
+    Off = 0,
+    On = 1,
   };
 
   CollatorBackwardSecondLevel() = default;

@@ -91,7 +91,7 @@ export class CollatorOptions {
         functionCleanupArena,
         appendArrayMap
     ) {
-        return [this.#strength.ffiValue, this.#alternateHandling.ffiValue, this.#caseFirst.ffiValue, this.#maxVariable.ffiValue, this.#caseLevel.ffiValue, this.#numeric.ffiValue, this.#backwardSecondLevel.ffiValue]
+        return [...diplomatRuntime.optionToArgsForCalling(this.#strength, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#alternateHandling, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#caseFirst, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#maxVariable, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#caseLevel, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#numeric, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#backwardSecondLevel, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)])]
     }
 
     _writeToArrayBuffer(
@@ -100,13 +100,13 @@ export class CollatorOptions {
         functionCleanupArena,
         appendArrayMap
     ) {
-        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, this.#strength.ffiValue, Int32Array);
-        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 4, this.#alternateHandling.ffiValue, Int32Array);
-        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 8, this.#caseFirst.ffiValue, Int32Array);
-        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 12, this.#maxVariable.ffiValue, Int32Array);
-        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 16, this.#caseLevel.ffiValue, Int32Array);
-        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 20, this.#numeric.ffiValue, Int32Array);
-        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 24, this.#backwardSecondLevel.ffiValue, Int32Array);
+        diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 0, this.#strength, 4, 4, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array));
+        diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 8, this.#alternateHandling, 4, 4, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array));
+        diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 16, this.#caseFirst, 4, 4, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array));
+        diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 24, this.#maxVariable, 4, 4, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array));
+        diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 32, this.#caseLevel, 4, 4, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array));
+        diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 40, this.#numeric, 4, 4, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array));
+        diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 48, this.#backwardSecondLevel, 4, 4, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array));
     }
 
     // This struct contains borrowed fields, so this takes in a list of
@@ -115,19 +115,19 @@ export class CollatorOptions {
     // This method does not attempt to handle any dependencies between lifetimes, the caller
     // should handle this when constructing edge arrays.
     #fromFFI(ptr) {
-        const strengthDeref = diplomatRuntime.enumDiscriminant(wasm, ptr);
-        this.#strength = new CollatorStrength(diplomatRuntime.internalConstructor, strengthDeref);
-        const alternateHandlingDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 4);
-        this.#alternateHandling = new CollatorAlternateHandling(diplomatRuntime.internalConstructor, alternateHandlingDeref);
-        const caseFirstDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 8);
-        this.#caseFirst = new CollatorCaseFirst(diplomatRuntime.internalConstructor, caseFirstDeref);
-        const maxVariableDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 12);
-        this.#maxVariable = new CollatorMaxVariable(diplomatRuntime.internalConstructor, maxVariableDeref);
-        const caseLevelDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 16);
-        this.#caseLevel = new CollatorCaseLevel(diplomatRuntime.internalConstructor, caseLevelDeref);
-        const numericDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 20);
-        this.#numeric = new CollatorNumeric(diplomatRuntime.internalConstructor, numericDeref);
-        const backwardSecondLevelDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 24);
-        this.#backwardSecondLevel = new CollatorBackwardSecondLevel(diplomatRuntime.internalConstructor, backwardSecondLevelDeref);
+        const strengthDeref = ptr;
+        this.#strength = diplomatRuntime.readOption(wasm, strengthDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new CollatorStrength(diplomatRuntime.internalConstructor, deref) });
+        const alternateHandlingDeref = ptr + 8;
+        this.#alternateHandling = diplomatRuntime.readOption(wasm, alternateHandlingDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new CollatorAlternateHandling(diplomatRuntime.internalConstructor, deref) });
+        const caseFirstDeref = ptr + 16;
+        this.#caseFirst = diplomatRuntime.readOption(wasm, caseFirstDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new CollatorCaseFirst(diplomatRuntime.internalConstructor, deref) });
+        const maxVariableDeref = ptr + 24;
+        this.#maxVariable = diplomatRuntime.readOption(wasm, maxVariableDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new CollatorMaxVariable(diplomatRuntime.internalConstructor, deref) });
+        const caseLevelDeref = ptr + 32;
+        this.#caseLevel = diplomatRuntime.readOption(wasm, caseLevelDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new CollatorCaseLevel(diplomatRuntime.internalConstructor, deref) });
+        const numericDeref = ptr + 40;
+        this.#numeric = diplomatRuntime.readOption(wasm, numericDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new CollatorNumeric(diplomatRuntime.internalConstructor, deref) });
+        const backwardSecondLevelDeref = ptr + 48;
+        this.#backwardSecondLevel = diplomatRuntime.readOption(wasm, backwardSecondLevelDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new CollatorBackwardSecondLevel(diplomatRuntime.internalConstructor, deref) });
     }
 }

@@ -27,7 +27,6 @@ inline icu4x::capi::CollatorNumeric icu4x::CollatorNumeric::AsFFI() const {
 
 inline icu4x::CollatorNumeric icu4x::CollatorNumeric::FromFFI(icu4x::capi::CollatorNumeric c_enum) {
   switch (c_enum) {
-    case icu4x::capi::CollatorNumeric_Auto:
     case icu4x::capi::CollatorNumeric_Off:
     case icu4x::capi::CollatorNumeric_On:
       return static_cast<icu4x::CollatorNumeric::Value>(c_enum);

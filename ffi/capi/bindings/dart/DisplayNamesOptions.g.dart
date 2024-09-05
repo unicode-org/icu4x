@@ -3,19 +3,16 @@
 part of 'lib.g.dart';
 
 final class _DisplayNamesOptionsFfi extends ffi.Struct {
-  @ffi.Int32()
-  external int style;
-  @ffi.Int32()
-  external int fallback;
-  @ffi.Int32()
-  external int languageDisplay;
+  external _ResultInt32Void style;
+  external _ResultInt32Void fallback;
+  external _ResultInt32Void languageDisplay;
 }
 
 /// See the [Rust documentation for `DisplayNamesOptions`](https://docs.rs/icu/latest/icu/displaynames/options/struct.DisplayNamesOptions.html) for more information.
 final class DisplayNamesOptions {
-  DisplayNamesStyle style;
-  DisplayNamesFallback fallback;
-  LanguageDisplay languageDisplay;
+  DisplayNamesStyle? style;
+  DisplayNamesFallback? fallback;
+  LanguageDisplay? languageDisplay;
 
   DisplayNamesOptions({required this.style, required this.fallback, required this.languageDisplay});
 
@@ -26,16 +23,19 @@ final class DisplayNamesOptions {
   // should handle this when constructing edge arrays.
   // ignore: unused_element
   DisplayNamesOptions._fromFfi(_DisplayNamesOptionsFfi ffi) :
-    style = DisplayNamesStyle.values[ffi.style],
-    fallback = DisplayNamesFallback.values[ffi.fallback],
-    languageDisplay = LanguageDisplay.values[ffi.languageDisplay];
+    style = ffi.style.isOk ? DisplayNamesStyle.values[ffi.style.union.ok] : null,
+    fallback = ffi.fallback.isOk ? DisplayNamesFallback.values[ffi.fallback.union.ok] : null,
+    languageDisplay = ffi.languageDisplay.isOk ? LanguageDisplay.values[ffi.languageDisplay.union.ok] : null;
 
   // ignore: unused_element
   _DisplayNamesOptionsFfi _toFfi(ffi.Allocator temp) {
     final struct = ffi.Struct.create<_DisplayNamesOptionsFfi>();
-    struct.style = style.index;
-    struct.fallback = fallback.index;
-    struct.languageDisplay = languageDisplay.index;
+    DisplayNamesStyle? style = this.style;
+    struct.style = style != null ? _ResultInt32Void.ok(style.index) : _ResultInt32Void.err();
+    DisplayNamesFallback? fallback = this.fallback;
+    struct.fallback = fallback != null ? _ResultInt32Void.ok(fallback.index) : _ResultInt32Void.err();
+    LanguageDisplay? languageDisplay = this.languageDisplay;
+    struct.languageDisplay = languageDisplay != null ? _ResultInt32Void.ok(languageDisplay.index) : _ResultInt32Void.err();
     return struct;
   }
 

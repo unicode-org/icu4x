@@ -26,8 +26,10 @@ int main() {
 
     FixedDecimal* decimal = icu4x_FixedDecimal_from_uint64_mv1(1000007);
 
+    FixedDecimalGroupingStrategy_option o = {.ok = FixedDecimalGroupingStrategy_Auto, .is_ok = true};
+
     icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1_result fdf_result =
-        icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1(provider, locale, FixedDecimalGroupingStrategy_Auto);
+        icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1(provider, locale, o);
     if (!fdf_result.is_ok)  {
         printf("Failed to create FixedDecimalFormatter\n");
         return 1;
