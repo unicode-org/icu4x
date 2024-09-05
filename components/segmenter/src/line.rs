@@ -1391,8 +1391,6 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf16 {
 #[cfg(test)]
 #[cfg(feature = "serde")]
 mod tests {
-    use itertools::Itertools;
-
     use super::*;
     use crate::LineSegmenter;
 
