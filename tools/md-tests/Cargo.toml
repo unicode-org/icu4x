@@ -10,9 +10,10 @@ edition = "2021"
 
 [dev-dependencies]
 icu = { workspace = true, features = ["compiled_data", "serde"] }
-icu_provider_export = { workspace = true }
+icu_provider_export = { workspace = true, features = ["blob_exporter"] }
+icu_provider_source = { workspace = true, features = ["networking"] }
 icu_provider = { workspace = true, features = ["deserialize_json"] }
-icu_provider_adapters = { workspace = true, features = ["serde"] }
+icu_provider_adapters = { workspace = true, features = ["serde", "std"] }
 icu_provider_blob = { workspace = true }
 icu_provider_fs = { workspace = true }
 

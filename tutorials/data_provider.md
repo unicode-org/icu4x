@@ -253,6 +253,79 @@ assert_eq!(formatter.format_to_string(&100007i64.into()), "100🐮007");
 
 Forking providers can be implemented using `DataPayload::dynamic_cast`. For an example, see that function's documentation.
 
+## Exporting Custom Data Markers
+
+To add custom data markers to your baked data or postcard file, create a forking exportable provider:
+
+```rust
+use icu::plurals::provider::CardinalV1Marker;
+use icu::locale::locale;
+use icu_provider_adapters::fork::ForkByMarkerProvider;
+use icu_provider_blob::BlobDataProvider;
+use icu_provider_export::blob_exporter::BlobExporter;
+use icu_provider_export::prelude::*;
+use icu_provider_source::SourceDataProvider;
+use icu_provider::prelude::*;
+use icu_provider::DataMarker;
+use std::borrow::Cow;
+use std::collections::BTreeSet;
+
+#[icu_provider::data_struct(marker(CustomMarker, "x/custom@1"))]
+#[derive(Debug, PartialEq)]
+#[derive(serde::Deserialize, serde::Serialize, databake::Bake)]
+#[databake(path = crate)]
+pub struct Custom<'data> {
+    message: Cow<'data, str>,
+};
+
+struct CustomProvider;
+impl DataProvider<CustomMarker> for CustomProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<CustomMarker>, DataError> {
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(Custom {
+                message: format!("Custom data for locale {}!", req.id.locale).into(),
+            }),
+        })
+    }
+}
+
+impl IterableDataProvider<CustomMarker> for CustomProvider {
+    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+        Ok([locale!("es"), locale!("ja")].into_iter().map(DataLocale::from).map(DataIdentifierCow::from_locale).collect())
+    }
+}
+
+icu_provider::export::make_exportable_provider!(CustomProvider, [CustomMarker,]);
+
+let icu4x_source_provider = SourceDataProvider::new_latest_tested();
+let custom_source_provider = CustomProvider;
+
+let mut buffer = Vec::<u8>::new();
+
+ExportDriver::new([DataLocaleFamily::FULL], DeduplicationStrategy::None.into(), LocaleFallbacker::try_new_unstable(&icu4x_source_provider).unwrap())
+    .with_markers([CardinalV1Marker::INFO, CustomMarker::INFO])
+    .export(
+        &ForkByMarkerProvider::new(
+            icu4x_source_provider,
+            custom_source_provider
+        ),
+        BlobExporter::new_v2_with_sink(Box::new(&mut buffer)),
+    )
+    .unwrap();
+
+let blob_provider = BlobDataProvider::try_new_from_blob(buffer.into()).unwrap();
+
+let locale = DataLocale::from(&locale!("ja"));
+let req = DataRequest {
+    id: DataIdentifierBorrowed::for_locale(&locale),
+    metadata: Default::default()
+};
+
+assert!(blob_provider.load_data(CardinalV1Marker::INFO, req).is_ok());
+assert!(blob_provider.load_data(CustomMarker::INFO, req).is_ok());
+```
+
 ## Accessing the Resolved Locale
 
 ICU4X objects do not store their "resolved locale" because that is not a well-defined concept. Components can load data from many sources, and fallbacks to parent locales or root does not necessarily mean that a locale is not supported.

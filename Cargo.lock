@@ -1893,6 +1893,7 @@ dependencies = [
  "icu_provider_blob",
  "icu_provider_export",
  "icu_provider_fs",
+ "icu_provider_source",
  "itertools",
  "litemap",
  "lru",

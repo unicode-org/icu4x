@@ -29,3 +29,6 @@ serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 icu_provider = { path = "../../provider/core", features = ["macros", "deserialize_json"] }
 icu_locale = { path = "../../components/locale" }
 writeable = { path = "../../utils/writeable" }
+
+[features]
+std = []
