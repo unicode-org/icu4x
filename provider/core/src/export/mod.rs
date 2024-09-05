@@ -10,9 +10,45 @@
 mod payload;
 
 pub use payload::{ExportBox, ExportMarker};
+use zerofrom::ZeroFrom;
 
 use crate::prelude::*;
 use std::collections::HashSet;
+
+/// Choices for determining the deduplication of locales for exported data payloads.
+///
+/// Deduplication affects the lookup table from locales to data payloads. If a child locale
+/// points to the same payload as its parent locale, then the child locale can be removed from
+/// the lookup table. Therefore, all deduplication strategies guarantee that data requests for
+/// selected locales will succeed so long as fallback is enabled at runtime (either internally
+/// or externally). They also do not impact which _payloads_ are included: only the lookup table.
+///
+/// Comparison of the deduplication strategies:
+///
+/// | Name | Data file size | Supported locale queries? | Needs runtime fallback? |
+/// |---|---|---|---|
+/// | [`Maximal`] | Smallest | No | Yes |
+/// | [`RetainBaseLanguages`] | Small | Yes | Yes |
+/// | [`None`] | Medium/Small | Yes | No |
+///
+/// [`Maximal`]: DeduplicationStrategy::Maximal
+/// [`RetainBaseLanguages`]: DeduplicationStrategy::RetainBaseLanguages
+/// [`None`]: DeduplicationStrategy::None
+#[non_exhaustive]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, ZeroFrom)]
+#[cfg_attr(feature = "export", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "export", databake(path = icu_provider))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "camelCase"))]
+pub enum DeduplicationStrategy {
+    /// Removes from the lookup table any locale whose parent maps to the same data.
+    Maximal,
+    /// Removes from the lookup table any locale whose parent maps to the same data, except if
+    /// the parent is `und`.
+    RetainBaseLanguages,
+    /// Keeps all selected locales in the lookup table.
+    None,
+}
 
 /// An object capable of exporting data payloads in some form.
 pub trait DataExporter: Sync {

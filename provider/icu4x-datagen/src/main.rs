@@ -463,11 +463,11 @@ fn main() -> eyre::Result<()> {
     };
 
     let deduplication_strategy = match cli.deduplication {
-        Some(Deduplication::Maximal) => icu_provider_export::DeduplicationStrategy::Maximal,
+        Some(Deduplication::Maximal) => icu_provider::export::DeduplicationStrategy::Maximal,
         Some(Deduplication::RetainBaseLanguages) => {
-            icu_provider_export::DeduplicationStrategy::RetainBaseLanguages
+            icu_provider::export::DeduplicationStrategy::RetainBaseLanguages
         }
-        Some(Deduplication::None) => icu_provider_export::DeduplicationStrategy::None,
+        Some(Deduplication::None) => icu_provider::export::DeduplicationStrategy::None,
         None => match cli.format {
             Format::Fs | Format::Blob | Format::Blob2 => DeduplicationStrategy::None,
             Format::Baked if cli.no_internal_fallback && cli.deduplication.is_none() =>
