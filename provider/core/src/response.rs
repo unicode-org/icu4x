@@ -725,28 +725,12 @@ where
     ///
     /// Can be used to erase the marker of a data payload in cases where multiple markers correspond
     /// to the same data struct.
-    ///
-    /// For runtime dynamic casting, use [`DataPayload::dynamic_cast_mut()`].
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// use icu_provider::hello_world::*;
-    /// use icu_provider::prelude::*;
-    ///
-    /// struct CustomHelloWorldV1Marker;
-    /// impl DynamicDataMarker for CustomHelloWorldV1Marker {
-    ///     type DataStruct = HelloWorldV1<'static>;
-    /// }
-    ///
-    /// let hello_world: DataPayload<HelloWorldV1Marker> = todo!();
-    /// let custom: DataPayload<CustomHelloWorldV1Marker> = hello_world.cast();
-    /// ```
     #[inline]
     pub fn cast_ref<M2>(&self) -> &DataPayload<M2>
     where
         M2: DynamicDataMarker<DataStruct = M::DataStruct>,
     {
+        // SAFETY: As seen in the implementation of `cast`, the struct is the same, it's just the generic that changes.
         unsafe { core::mem::transmute(self) }
     }
 
