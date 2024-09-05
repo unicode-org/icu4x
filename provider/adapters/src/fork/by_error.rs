@@ -4,7 +4,7 @@
 
 use super::ForkByErrorPredicate;
 use alloc::{collections::BTreeSet, vec::Vec};
-#[cfg(feature = "std")]
+#[cfg(feature = "export")]
 use icu_provider::export::ExportableProvider;
 use icu_provider::prelude::*;
 
@@ -161,7 +161,7 @@ where
     }
 }
 
-#[cfg(feature = "std")]
+#[cfg(feature = "export")]
 impl<P0, P1, F> ExportableProvider for ForkByErrorProvider<P0, P1, F>
 where
     P0: ExportableProvider,
@@ -351,7 +351,7 @@ where
     }
 }
 
-#[cfg(feature = "std")]
+#[cfg(feature = "export")]
 impl<P, F> ExportableProvider for MultiForkByErrorProvider<P, F>
 where
     P: ExportableProvider,
