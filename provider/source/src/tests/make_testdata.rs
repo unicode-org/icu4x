@@ -65,6 +65,7 @@ fn make_testdata() {
         DeduplicationStrategy::None.into(),
         LocaleFallbacker::try_new_unstable(&provider).unwrap(),
     )
+    .with_source_info(true)
     .with_segmenter_models([
         "thaidict".into(),
         "Thai_codepoints_exclusive_model4_heavy".into(),
@@ -140,6 +141,10 @@ impl DataExporter for ZeroCopyCheckExporter {
                 ((allocated, deallocated), payload_after) = match marker {
                     k if k == icu_provider::hello_world::HelloWorldV1Marker::INFO => {
                         let deserialized: DataPayload<icu_provider::hello_world::HelloWorldV1Marker> = buffer_payload.into_deserialized(icu_provider::buf::BufferFormat::Postcard1).unwrap();
+                        (MeasuringAllocator::end_measure(), UpcastDataPayload::upcast(deserialized))
+                    }
+                    k if k == icu_provider::SourceInfoMarker::INFO => {
+                        let deserialized: DataPayload<icu_provider::SourceInfoMarker> = buffer_payload.into_deserialized(icu_provider::buf::BufferFormat::Postcard1).unwrap();
                         (MeasuringAllocator::end_measure(), UpcastDataPayload::upcast(deserialized))
                     }
                     $(

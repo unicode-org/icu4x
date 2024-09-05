@@ -154,6 +154,11 @@ pub mod marker {
     };
 }
 
+#[cfg(feature = "macros")]
+mod source_info;
+#[cfg(feature = "macros")]
+pub use source_info::{SourceInfo, SourceInfoMarker};
+
 /// Core selection of APIs and structures for the ICU4X data provider.
 pub mod prelude {
     #[doc(no_inline)]

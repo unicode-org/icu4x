@@ -120,6 +120,7 @@ pub struct ExportDriver {
     fallbacker: LocaleFallbacker,
     include_full: bool,
     deduplication_strategy: DeduplicationStrategy,
+    with_source_info: bool,
 }
 
 impl core::fmt::Debug for ExportDriver {
@@ -171,6 +172,7 @@ impl ExportDriver {
             include_full,
             fallbacker,
             deduplication_strategy: options.deduplication_strategy,
+            with_source_info: false,
         }
         .with_recommended_segmenter_models()
         .with_additional_collations([])
@@ -193,6 +195,13 @@ impl ExportDriver {
     pub fn with_markers(self, markers: impl IntoIterator<Item = DataMarkerInfo>) -> Self {
         Self {
             markers: Some(markers.into_iter().collect()),
+            ..self
+        }
+    }
+
+    pub fn with_source_info(self, with_source_info: bool) -> Self {
+        Self {
+            with_source_info,
             ..self
         }
     }

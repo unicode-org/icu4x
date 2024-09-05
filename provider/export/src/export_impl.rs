@@ -5,8 +5,12 @@
 use crate::{DataLocaleFamilyAnnotations, DeduplicationStrategy, ExportDriver};
 use icu_locale::fallback::LocaleFallbackIterator;
 use icu_locale::LocaleFallbacker;
+use icu_provider::dynutil::UpcastDataPayload;
 use icu_provider::export::*;
 use icu_provider::prelude::*;
+use icu_provider::SourceInfo;
+use icu_provider::SourceInfoMarker;
+use std::borrow::Cow;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::fmt;
@@ -55,12 +59,17 @@ impl ExportDriver {
             fallbacker,
             deduplication_strategy,
             attributes_filters,
+            with_source_info,
         } = self;
 
-        let markers = markers.unwrap_or_else(|| provider.supported_markers());
+        let mut markers = markers.unwrap_or_else(|| provider.supported_markers());
 
         if markers.is_empty() {
             log::warn!("No markers selected");
+        }
+
+        if with_source_info {
+            markers.insert(SourceInfoMarker::INFO);
         }
 
         log::info!(
@@ -70,6 +79,10 @@ impl ExportDriver {
                 DeduplicationStrategy::RetainBaseLanguages =>
                     "deduplication retaining base languages",
                 DeduplicationStrategy::None => "no deduplication",
+                _ => {
+                    return Err(DataError::custom("Unsupported deduplication strategy")
+                        .with_debug_context(&deduplication_strategy));
+                }
             },
             if include_full {
                 vec!["<all>".to_string()]
@@ -137,6 +150,18 @@ impl ExportDriver {
         markers.clone().into_par_iter().try_for_each(|marker| {
             log::trace!("Generating marker {marker:?}");
             let instant1 = Instant::now();
+
+            if marker == SourceInfoMarker::INFO {
+                let payload = UpcastDataPayload::upcast(
+                    DataPayload::<SourceInfoMarker>::from_owned(SourceInfo::V001 {
+                        deduplication: self.deduplication_strategy,
+                        lifetime_holder: Cow::Borrowed(&()),
+                    }),
+                );
+                sink.flush_singleton(marker, &payload)
+                    .map_err(|e| e.with_req(marker, Default::default()))?;
+                return Ok(());
+            }
 
             if marker.is_singleton {
                 let supported = provider.iter_ids_for_marker(marker)?;
@@ -231,6 +256,10 @@ impl ExportDriver {
                     .collect::<Result<Vec<_>, DataError>>()?
                     .into_iter()
                     .max(),
+                _ => {
+                    return Err(DataError::custom("Unsupported deduplication strategy")
+                        .with_debug_context(&deduplication_strategy));
+                }
             }
             .unwrap_or_default();
 
