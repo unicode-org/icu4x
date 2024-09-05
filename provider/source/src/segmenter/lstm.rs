@@ -228,7 +228,7 @@ impl IterableDataProviderCached<LstmForWordLineAutoV1Marker> for SourceDataProvi
 mod tests {
     use super::*;
     use icu::segmenter::LineSegmenter;
-    use icu_provider_adapters::any_payload::AnyPayloadProvider;
+    use icu_provider_adapters::fixed::FixedProvider;
     use icu_provider_adapters::fork::ForkByMarkerProvider;
 
     #[test]
@@ -240,7 +240,7 @@ mod tests {
             .read_and_parse_json::<RawLstmData>("Thai_graphclust_model4_heavy/weights.json")
             .unwrap();
         let provider = ForkByMarkerProvider::new(
-            AnyPayloadProvider::from_owned::<LstmForWordLineAutoV1Marker>(
+            FixedProvider::<LstmForWordLineAutoV1Marker>::from_owned(
                 raw_data.try_convert().unwrap(),
             ),
             provider.as_any_provider(),

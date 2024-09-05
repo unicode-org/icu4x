@@ -282,7 +282,7 @@ lazy_static::lazy_static! {
 
         // We should add this once we have a better story for FFI custom data structs
         // and callbacks
-        "icu_provider_adapters::any_payload::AnyPayloadProvider",
+        "icu_provider_adapters::fixed::FixedProvider",
 
         // Not planned for 2.0
         // FilterDataProvider::with_filter needs callbacks.

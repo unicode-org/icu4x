@@ -1,5 +1,45 @@
 # Changelog
 
+## icu4x 2.0
+
+- Components
+  - General
+    - Compiled data updated to CLDR 45 and ICU 75 (unicode-org#4782)
+  - `icu_calendar`
+  - `icu_collections`
+  - `icu_normalizer`
+  - `icu_datetime`
+  - `icu_experimental`
+  - `icu_locid`
+  - `icu_locid_transform`
+  - `icu_plurals`
+  - `icu_properties`
+  - `icu_segmenter`
+  - `icu_timezone`
+- Data model and providers
+  - `icu_datagen`
+  - `icu_provider`
+  - `icu_provider_blob`
+  - `icu_provider_adapters`
+    - Replace `AnyPayloadProvider` with `FixedProvider<M>`
+- FFI:
+    - All languages
+    - JS
+    - C++
+    - `icu_harfbuzz`
+- Utilities
+    - `calendrical_calculations`:
+    - `databake`
+    - `fixed_decimal`
+    - `icu_pattern`
+    - `litemap`
+    - `yoke`
+    - `zerofrom`
+    - `zerotrie`
+    - `zerovec`
+    - `writeable`
+
+
 ## icu4x 1.5.x
 
 
