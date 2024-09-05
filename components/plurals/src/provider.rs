@@ -40,7 +40,7 @@ const _: () = {
     }
 
     make_provider!(Baked);
-    impl_cardinal_v1_marker!(Baked);
+    impl_cardinal_v1_marker!(Baked, DRY);
     impl_ordinal_v1_marker!(Baked);
     #[cfg(feature = "experimental")]
     impl_plural_ranges_v1_marker!(Baked);
