@@ -1391,6 +1391,8 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf16 {
 #[cfg(test)]
 #[cfg(feature = "serde")]
 mod tests {
+    use itertools::Itertools;
+
     use super::*;
     use crate::LineSegmenter;
 
@@ -1571,22 +1573,79 @@ mod tests {
         assert_eq!(Some(10), iter_u16.next());
         assert_eq!(None, iter_u16.next());
 
-        // LB15
+        // LB15 used to prevent the break at 6, but has been removed in Unicode 15.1.
         iter = segmenter.segment_str("abc\u{0022}  (def");
         assert_eq!(Some(0), iter.next());
+        assert_eq!(Some(6), iter.next());
         assert_eq!(Some(10), iter.next());
         assert_eq!(None, iter.next());
 
         let input: [u8; 10] = [0x61, 0x62, 0x63, 0x22, 0x20, 0x20, 0x28, 0x64, 0x65, 0x66];
         let mut iter_u8 = segmenter.segment_latin1(&input);
         assert_eq!(Some(0), iter_u8.next());
+        assert_eq!(Some(6), iter_u8.next());
         assert_eq!(Some(10), iter_u8.next());
         assert_eq!(None, iter_u8.next());
 
         let input: [u16; 10] = [0x61, 0x62, 0x63, 0x22, 0x20, 0x20, 0x28, 0x64, 0x65, 0x66];
         let mut iter_u16 = segmenter.segment_utf16(&input);
         assert_eq!(Some(0), iter_u16.next());
+        assert_eq!(Some(6), iter_u16.next());
         assert_eq!(Some(10), iter_u16.next());
+        assert_eq!(None, iter_u16.next());
+
+        // Instead, in Unicode 15.1, LB15a and LB15b prevent these breaks.
+        iter = segmenter.segment_str("« miaou »");
+        assert_eq!(Some(0), iter.next());
+        assert_eq!(Some(11), iter.next());
+        assert_eq!(None, iter.next());
+
+        let input: Vec<u8> = "« miaou »"
+            .chars()
+            .map(|c| u8::try_from(u32::from(c)).unwrap())
+            .collect();
+        let mut iter_u8 = segmenter.segment_latin1(&input);
+        assert_eq!(Some(0), iter_u8.next());
+        assert_eq!(Some(9), iter_u8.next());
+        assert_eq!(None, iter_u8.next());
+
+        let input: Vec<u16> = "« miaou »".encode_utf16().collect();
+        let mut iter_u16 = segmenter.segment_utf16(&input);
+        assert_eq!(Some(0), iter_u16.next());
+        assert_eq!(Some(9), iter_u16.next());
+        assert_eq!(None, iter_u16.next());
+
+        // But not these:
+        iter = segmenter.segment_str("Die Katze hat »miau« gesagt.");
+        assert_eq!(Some(0), iter.next());
+        assert_eq!(Some(4), iter.next());
+        assert_eq!(Some(10), iter.next());
+        assert_eq!(Some(14), iter.next());
+        assert_eq!(Some(23), iter.next());
+        assert_eq!(Some(30), iter.next());
+        assert_eq!(None, iter.next());
+
+        let input: Vec<u8> = "Die Katze hat »miau« gesagt."
+            .chars()
+            .map(|c| u8::try_from(u32::from(c)).unwrap())
+            .collect();
+        let mut iter_u8 = segmenter.segment_latin1(&input);
+        assert_eq!(Some(0), iter_u8.next());
+        assert_eq!(Some(4), iter_u8.next());
+        assert_eq!(Some(10), iter_u8.next());
+        assert_eq!(Some(14), iter_u8.next());
+        assert_eq!(Some(21), iter_u8.next());
+        assert_eq!(Some(28), iter_u8.next());
+        assert_eq!(None, iter_u8.next());
+
+        let input: Vec<u16> = "Die Katze hat »miau« gesagt.".encode_utf16().collect();
+        let mut iter_u16 = segmenter.segment_utf16(&input);
+        assert_eq!(Some(0), iter_u16.next());
+        assert_eq!(Some(4), iter_u16.next());
+        assert_eq!(Some(10), iter_u16.next());
+        assert_eq!(Some(14), iter_u16.next());
+        assert_eq!(Some(21), iter_u16.next());
+        assert_eq!(Some(28), iter_u16.next());
         assert_eq!(None, iter_u16.next());
 
         // LB16
