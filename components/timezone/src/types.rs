@@ -14,7 +14,7 @@ pub struct GmtOffset(i32);
 
 impl Default for GmtOffset {
     fn default() -> Self {
-        Self::utc()
+        Self::zero()
     }
 }
 
@@ -52,13 +52,9 @@ impl GmtOffset {
         Self(eighths_of_hour as i32 * 450)
     }
 
-    /// Creates a [`GmtOffset`] at UTC.
-    pub const fn utc() -> Self {
+    /// Creates a [`GmtOffset`] of 0.
+    pub const fn zero() -> Self {
         Self(0)
-    }
-
-    pub(crate) const fn utc_plus_1() -> Self {
-        Self(3600)
     }
 
     /// Parse a [`GmtOffset`] from bytes.

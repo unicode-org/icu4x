@@ -52,22 +52,6 @@ final class CustomTimeZone implements ffi.Finalizable {
     return CustomTimeZone._fromFfi(result, []);
   }
 
-  /// Creates a time zone for GMT (London winter time).
-  ///
-  /// See the [Rust documentation for `gmt`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.gmt) for more information.
-  factory CustomTimeZone.gmt() {
-    final result = _icu4x_CustomTimeZone_gmt_mv1();
-    return CustomTimeZone._fromFfi(result, []);
-  }
-
-  /// Creates a time zone for BST (London summer time).
-  ///
-  /// See the [Rust documentation for `bst`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.bst) for more information.
-  factory CustomTimeZone.bst() {
-    final result = _icu4x_CustomTimeZone_bst_mv1();
-    return CustomTimeZone._fromFfi(result, []);
-  }
-
   /// Sets the `gmt_offset` field from offset seconds.
   ///
   /// Errors if the offset seconds are out of range.
@@ -386,16 +370,6 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CustomTimeZone_empty_mv1();
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_utc_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_CustomTimeZone_utc_mv1();
-
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_gmt_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_gmt_mv1')
-// ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_CustomTimeZone_gmt_mv1();
-
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_bst_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_bst_mv1')
-// ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_CustomTimeZone_bst_mv1();
 
 @meta.ResourceIdentifier('icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1')
 @ffi.Native<_ResultVoidTimeZoneInvalidOffsetErrorFfi Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1')

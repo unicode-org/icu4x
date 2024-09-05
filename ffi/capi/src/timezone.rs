@@ -51,20 +51,6 @@ pub mod ffi {
             Box::new(icu_timezone::CustomTimeZone::utc().into())
         }
 
-        /// Creates a time zone for GMT (London winter time).
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::gmt, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
-        pub fn gmt() -> Box<CustomTimeZone> {
-            Box::new(icu_timezone::CustomTimeZone::gmt().into())
-        }
-
-        /// Creates a time zone for BST (London summer time).
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::bst, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
-        pub fn bst() -> Box<CustomTimeZone> {
-            Box::new(icu_timezone::CustomTimeZone::bst().into())
-        }
-
         /// Sets the `gmt_offset` field from offset seconds.
         ///
         /// Errors if the offset seconds are out of range.

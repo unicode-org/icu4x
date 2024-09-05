@@ -86,26 +86,6 @@ export class CustomTimeZone {
         finally {}
     }
 
-    static gmt() {
-        const result = wasm.icu4x_CustomTimeZone_gmt_mv1();
-    
-        try {
-            return new CustomTimeZone(diplomatRuntime.internalConstructor, result, []);
-        }
-        
-        finally {}
-    }
-
-    static bst() {
-        const result = wasm.icu4x_CustomTimeZone_bst_mv1();
-    
-        try {
-            return new CustomTimeZone(diplomatRuntime.internalConstructor, result, []);
-        }
-        
-        finally {}
-    }
-
     trySetGmtOffsetSeconds(offsetSeconds) {
         const result = wasm.icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1(this.ffiValue, offsetSeconds);
     

@@ -40,10 +40,6 @@ public:
 
   inline static std::unique_ptr<icu4x::CustomTimeZone> utc();
 
-  inline static std::unique_ptr<icu4x::CustomTimeZone> gmt();
-
-  inline static std::unique_ptr<icu4x::CustomTimeZone> bst();
-
   inline diplomat::result<std::monostate, icu4x::TimeZoneInvalidOffsetError> try_set_gmt_offset_seconds(int32_t offset_seconds);
 
   inline void set_gmt_offset_eighths_of_hour(int8_t offset_eighths_of_hour);
