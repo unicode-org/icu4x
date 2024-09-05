@@ -184,7 +184,7 @@ impl Transliterator {
     {
         Self::internal_try_new_with_override_unstable(
             locale,
-            None::<&fn(&Locale) -> Option<Box<dyn CustomTransliterator>>>,
+            None::<&fn(&Locale) -> Option<Result<Box<dyn CustomTransliterator>, DataError>>>,
             provider,
             provider,
         )
@@ -237,7 +237,7 @@ impl Transliterator {
             + DataProvider<CompatibilityDecompositionTablesV1Marker>
             + DataProvider<CanonicalCompositionsV1Marker>
             + ?Sized,
-        F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
+        F: Fn(&Locale) -> Option<Result<Box<dyn CustomTransliterator>, DataError>>,
     {
         Self::internal_try_new_with_override_unstable(locale, Some(&lookup), provider, provider)
     }
@@ -256,7 +256,7 @@ impl Transliterator {
             + DataProvider<CompatibilityDecompositionTablesV1Marker>
             + DataProvider<CanonicalCompositionsV1Marker>
             + ?Sized,
-        F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
+        F: Fn(&Locale) -> Option<Result<Box<dyn CustomTransliterator>, DataError>>,
     {
         let payload = Transliterator::load_rbt(
             #[allow(clippy::unwrap_used)] // infallible
@@ -299,19 +299,18 @@ impl Transliterator {
             + DataProvider<CompatibilityDecompositionTablesV1Marker>
             + DataProvider<CanonicalCompositionsV1Marker>
             + ?Sized,
-        F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
+        F: Fn(&Locale) -> Option<Result<Box<dyn CustomTransliterator>, DataError>>,
     {
         for dep in rbt.deps() {
             if !env.contains_key(&*dep) {
                 // 1. Insert a placeholder to avoid infinite recursion.
                 env.insert(dep.to_string(), InternalTransliterator::Null);
                 // 2. Load the transliterator, by checking
-                let internal_t = dep
+                let internal_t =
                     // a) hardcoded specials
-                    .strip_prefix("x-")
-                    .and_then(|special| Transliterator::load_special(special, normalizer_provider))
+                    dep.strip_prefix("x-").and_then(|special| Transliterator::load_special(special, normalizer_provider))
                     // b) the user-provided override
-                    .or_else(|| Transliterator::load_with_override(&dep, lookup?).transpose())
+                    .or_else(|| Some(lookup?(&dep.parse().ok()?)?.map(InternalTransliterator::Dyn)))
                     // c) the data
                     .unwrap_or_else(|| {
                         let rbt = Transliterator::load_rbt(
@@ -387,20 +386,6 @@ impl Transliterator {
             ))),
             _ => None,
         }
-    }
-
-    fn load_with_override<F>(
-        id: &str,
-        lookup: &F,
-    ) -> Result<Option<InternalTransliterator>, DataError>
-    where
-        F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
-    {
-        let locale: Locale = id.parse().map_err(|e| {
-            DataError::custom("invalid data: transliterator dependency is not a valid Locale")
-                .with_debug_context(&e)
-        })?;
-        Ok(lookup(&locale).map(InternalTransliterator::Dyn))
     }
 
     fn load_rbt<P>(
@@ -1352,7 +1337,7 @@ mod tests {
         let want_locale = "und-t-und-latn-d0-ascii".parse().unwrap();
         let t = Transliterator::try_new_with_override_unstable(
             "de-t-de-d0-ascii".parse().unwrap(),
-            |locale| locale.eq(&want_locale).then_some(Box::new(MaoamTranslit)),
+            |locale| locale.eq(&want_locale).then_some(Ok(Box::new(MaoamTranslit))),
             &TestingProvider,
         )
         .unwrap();
