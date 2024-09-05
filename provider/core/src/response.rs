@@ -454,12 +454,15 @@ where
         }
     }
 
+    /// Borrows the underlying data statically if possible.
+    ///
+    /// This will succeed if [`DataPayload`] is constructed with [`DataPayload::from_static_ref`], which is used by
+    /// baked providers.
     #[inline]
-    /// TODO
-    pub fn get_static(&self) -> Option<&'static M::DataStruct> {
+    pub fn get_static(&self) -> Option<&'static <M::DataStruct as Yokeable<'static>>::Output> {
         match &self.0 {
-            DataPayloadInner::Yoke(..) => None,
-            DataPayloadInner::StaticRef(r) => Some(*r),
+            DataPayloadInner::Yoke(_) => None,
+            DataPayloadInner::StaticRef(r) => Some(Yokeable::transform(*r)),
         }
     }
 

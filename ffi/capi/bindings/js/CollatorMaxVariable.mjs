@@ -8,7 +8,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 export class CollatorMaxVariable {
     #value = undefined;
 
-    static values = new Map([
+    static #values = new Map([
         ["Auto", 0],
         ["Space", 1],
         ["Punctuation", 2],
@@ -17,30 +17,48 @@ export class CollatorMaxVariable {
     ]);
 
     constructor(value) {
-        if (value instanceof CollatorMaxVariable) {
-            this.#value = value.value;
-            return;
+        if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
+            // We pass in two internalConstructor arguments to create *new*
+            // instances of this type, otherwise the enums are treated as singletons.
+            if (arguments[1] === diplomatRuntime.internalConstructor ) {
+                this.#value = arguments[2];
+                return;
+            }
+            return CollatorMaxVariable.#objectValues[arguments[1]];
         }
 
-        if (CollatorMaxVariable.values.has(value)) {
-            this.#value = value;
-            return;
+        if (value instanceof CollatorMaxVariable) {
+            return value;
+        }
+
+        let intVal = CollatorMaxVariable.#values.get(value);
+
+        // Nullish check, checks for null or undefined
+        if (intVal == null) {
+            return CollatorMaxVariable.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a CollatorMaxVariable and does not correspond to any of its enumerator values.");
     }
 
     get value() {
-        return this.#value;
+        return [...CollatorMaxVariable.#values.keys()][this.#value];
     }
 
     get ffiValue() {
-        return CollatorMaxVariable.values.get(this.#value);
+        return this.#value;
     }
+    static #objectValues = [
+        new CollatorMaxVariable(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
+        new CollatorMaxVariable(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
+        new CollatorMaxVariable(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
+        new CollatorMaxVariable(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 3),
+        new CollatorMaxVariable(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 4),
+    ];
 
-    static Auto = new CollatorMaxVariable("Auto");
-    static Space = new CollatorMaxVariable("Space");
-    static Punctuation = new CollatorMaxVariable("Punctuation");
-    static Symbol = new CollatorMaxVariable("Symbol");
-    static Currency = new CollatorMaxVariable("Currency");
+    static Auto = CollatorMaxVariable.#objectValues[0];
+    static Space = CollatorMaxVariable.#objectValues[1];
+    static Punctuation = CollatorMaxVariable.#objectValues[2];
+    static Symbol = CollatorMaxVariable.#objectValues[3];
+    static Currency = CollatorMaxVariable.#objectValues[4];
 }

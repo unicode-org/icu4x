@@ -16,6 +16,12 @@ use std::collections::BTreeMap;
 ///     https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules
 #[derive(PartialEq, Debug, Deserialize, Clone)]
 pub(crate) struct Patterns {
+    #[serde(rename = "displayName-count-0")]
+    pub(crate) explicit_zero: Option<String>,
+
+    #[serde(rename = "displayName-count-1")]
+    pub(crate) explicit_one: Option<String>,
+
     #[serde(rename = "unitPattern-count-zero")]
     pub(crate) zero: Option<String>,
 
@@ -42,6 +48,12 @@ pub(crate) struct Patterns {
 
     #[serde(rename = "compoundUnitPattern1")]
     pub(crate) compound_unit_pattern1: Option<String>,
+
+    #[serde(rename = "compountUnitPattern1-count-0")]
+    pub(crate) explicit_zero_compound_unit_pattern1: Option<String>,
+
+    #[serde(rename = "compountUnitPattern1-count-1")]
+    pub(crate) explicit_one_compound_unit_pattern1: Option<String>,
 
     #[serde(rename = "compoundUnitPattern1-count-zero")]
     pub(crate) zero_compound_unit_pattern1: Option<String>,

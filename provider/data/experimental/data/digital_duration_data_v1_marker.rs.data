@@ -12,13 +12,13 @@
 #[macro_export]
 macro_rules! __impl_digital_duration_data_v1_marker {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl $provider {
             const DATA_DIGITAL_DURATION_DATA_V1_MARKER: icu_provider_baked::zerotrie::Data<icu::experimental::duration::provider::DigitalDurationDataV1Marker> = icu_provider_baked::zerotrie::Data { trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xCBabdefilmstu\x02\x04\x06\x0B\r\x13\x15\x17)+f\x80e\x80a\x81s-CL\x82i\x81\xC2ad\x01\x80\x81t\x80n\x83\xC4ilru\x01\x02\t\x81\x81\x81-Latn\x81\x81k\x84nd\x85" }, values: &[icu::experimental::duration::provider::DigitalDurationDataV1 { separator: alloc::borrow::Cow::Borrowed(":"), hms_padding: icu::experimental::duration::provider::HmsPadding { h: 2u8, m: 2u8, s: 2u8 }, hm_padding: icu::experimental::duration::provider::HmPadding { h: 2u8, m: 2u8 }, ms_padding: icu::experimental::duration::provider::MsPadding { m: 2u8, s: 2u8 } }, icu::experimental::duration::provider::DigitalDurationDataV1 { separator: alloc::borrow::Cow::Borrowed("."), hms_padding: icu::experimental::duration::provider::HmsPadding { h: 1u8, m: 2u8, s: 2u8 }, hm_padding: icu::experimental::duration::provider::HmPadding { h: 1u8, m: 2u8 }, ms_padding: icu::experimental::duration::provider::MsPadding { m: 1u8, s: 2u8 } }, icu::experimental::duration::provider::DigitalDurationDataV1 { separator: alloc::borrow::Cow::Borrowed(":"), hms_padding: icu::experimental::duration::provider::HmsPadding { h: 2u8, m: 2u8, s: 2u8 }, hm_padding: icu::experimental::duration::provider::HmPadding { h: 1u8, m: 2u8 }, ms_padding: icu::experimental::duration::provider::MsPadding { m: 2u8, s: 2u8 } }, icu::experimental::duration::provider::DigitalDurationDataV1 { separator: alloc::borrow::Cow::Borrowed(":"), hms_padding: icu::experimental::duration::provider::HmsPadding { h: 2u8, m: 2u8, s: 2u8 }, hm_padding: icu::experimental::duration::provider::HmPadding { h: 2u8, m: 2u8 }, ms_padding: icu::experimental::duration::provider::MsPadding { m: 1u8, s: 2u8 } }, icu::experimental::duration::provider::DigitalDurationDataV1 { separator: alloc::borrow::Cow::Borrowed(":"), hms_padding: icu::experimental::duration::provider::HmsPadding { h: 2u8, m: 2u8, s: 2u8 }, hm_padding: icu::experimental::duration::provider::HmPadding { h: 1u8, m: 2u8 }, ms_padding: icu::experimental::duration::provider::MsPadding { m: 1u8, s: 2u8 } }, icu::experimental::duration::provider::DigitalDurationDataV1 { separator: alloc::borrow::Cow::Borrowed(":"), hms_padding: icu::experimental::duration::provider::HmsPadding { h: 1u8, m: 2u8, s: 2u8 }, hm_padding: icu::experimental::duration::provider::HmPadding { h: 1u8, m: 2u8 }, ms_padding: icu::experimental::duration::provider::MsPadding { m: 1u8, s: 2u8 } }] };
         }
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DataProvider<icu::experimental::duration::provider::DigitalDurationDataV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::experimental::duration::provider::DigitalDurationDataV1Marker>, icu_provider::DataError> {
                 let mut metadata = icu_provider::DataResponseMetadata::default();
@@ -44,7 +44,7 @@ macro_rules! __impl_digital_duration_data_v1_marker {
     };
     ($ provider : ty , DRY) => {
         __impl_digital_duration_data_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::experimental::duration::provider::DigitalDurationDataV1Marker> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 icu_provider::DataProvider::<icu::experimental::duration::provider::DigitalDurationDataV1Marker>::load(self, req).map(|r| r.metadata)
@@ -53,7 +53,7 @@ macro_rules! __impl_digital_duration_data_v1_marker {
     };
     ($ provider : ty , ITER) => {
         __impl_digital_duration_data_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::IterableDataProvider<icu::experimental::duration::provider::DigitalDurationDataV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_DIGITAL_DURATION_DATA_V1_MARKER).collect())
@@ -62,13 +62,13 @@ macro_rules! __impl_digital_duration_data_v1_marker {
     };
     ($ provider : ty , DRY , ITER) => {
         __impl_digital_duration_data_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::experimental::duration::provider::DigitalDurationDataV1Marker> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 icu_provider::DataProvider::<icu::experimental::duration::provider::DigitalDurationDataV1Marker>::load(self, req).map(|r| r.metadata)
             }
         }
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::IterableDataProvider<icu::experimental::duration::provider::DigitalDurationDataV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_DIGITAL_DURATION_DATA_V1_MARKER).collect())

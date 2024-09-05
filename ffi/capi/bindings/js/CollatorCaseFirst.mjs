@@ -8,7 +8,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 export class CollatorCaseFirst {
     #value = undefined;
 
-    static values = new Map([
+    static #values = new Map([
         ["Auto", 0],
         ["Off", 1],
         ["LowerFirst", 2],
@@ -16,29 +16,46 @@ export class CollatorCaseFirst {
     ]);
 
     constructor(value) {
-        if (value instanceof CollatorCaseFirst) {
-            this.#value = value.value;
-            return;
+        if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
+            // We pass in two internalConstructor arguments to create *new*
+            // instances of this type, otherwise the enums are treated as singletons.
+            if (arguments[1] === diplomatRuntime.internalConstructor ) {
+                this.#value = arguments[2];
+                return;
+            }
+            return CollatorCaseFirst.#objectValues[arguments[1]];
         }
 
-        if (CollatorCaseFirst.values.has(value)) {
-            this.#value = value;
-            return;
+        if (value instanceof CollatorCaseFirst) {
+            return value;
+        }
+
+        let intVal = CollatorCaseFirst.#values.get(value);
+
+        // Nullish check, checks for null or undefined
+        if (intVal == null) {
+            return CollatorCaseFirst.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a CollatorCaseFirst and does not correspond to any of its enumerator values.");
     }
 
     get value() {
-        return this.#value;
+        return [...CollatorCaseFirst.#values.keys()][this.#value];
     }
 
     get ffiValue() {
-        return CollatorCaseFirst.values.get(this.#value);
+        return this.#value;
     }
+    static #objectValues = [
+        new CollatorCaseFirst(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
+        new CollatorCaseFirst(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
+        new CollatorCaseFirst(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
+        new CollatorCaseFirst(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 3),
+    ];
 
-    static Auto = new CollatorCaseFirst("Auto");
-    static Off = new CollatorCaseFirst("Off");
-    static LowerFirst = new CollatorCaseFirst("LowerFirst");
-    static UpperFirst = new CollatorCaseFirst("UpperFirst");
+    static Auto = CollatorCaseFirst.#objectValues[0];
+    static Off = CollatorCaseFirst.#objectValues[1];
+    static LowerFirst = CollatorCaseFirst.#objectValues[2];
+    static UpperFirst = CollatorCaseFirst.#objectValues[3];
 }

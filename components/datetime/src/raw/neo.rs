@@ -896,7 +896,10 @@ impl<'a> ItemsAndOptions<'a> {
                         && field.length == FieldLength::One
                         && matches!(
                             field.symbol,
-                            FieldSymbol::Month(_) | FieldSymbol::Day(_) | FieldSymbol::Week(_)
+                            FieldSymbol::Month(_)
+                                | FieldSymbol::Day(_)
+                                | FieldSymbol::Week(_)
+                                | FieldSymbol::Hour(_)
                         )
                     {
                         field.length = FieldLength::TwoDigit;

@@ -3,11 +3,15 @@
     "0": "сейчас"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 сек. назад"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 сек. назад"
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\fчерез  сек."
+    "strings": {
+      "specials": [],
+      "other": "\fчерез  сек."
+    }
   }
 }

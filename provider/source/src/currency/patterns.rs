@@ -9,7 +9,7 @@ use crate::SourceDataProvider;
 use std::collections::HashSet;
 
 use icu::experimental::dimension::provider::currency_patterns::*;
-use icu::experimental::relativetime::provider::PluralElements;
+use icu::plurals::PluralElements;
 use icu_provider::prelude::*;
 use icu_provider::DataProvider;
 
@@ -59,18 +59,21 @@ impl DataProvider<CurrencyPatternsDataV1Marker> for SourceDataProvider {
                 // TODO(#5334):
                 //      Before graduating the currency crate,
                 //      Check that the .json data files are completed and no need to fallback chain up to the root.
-                patterns: PluralElements::try_new_pattern(
-                    patterns.pattern_other.as_deref().ok_or_else(|| {
+                patterns: PluralElements::new(patterns.pattern_other.as_deref().ok_or_else(
+                    || {
                         DataError::custom("Missing patterns")
                             .with_debug_context(currency_patterns)
                             .with_debug_context(&req.id)
-                    })?,
-                    patterns.pattern_zero.as_deref(),
-                    patterns.pattern_one.as_deref(),
-                    patterns.pattern_two.as_deref(),
-                    patterns.pattern_few.as_deref(),
-                    patterns.pattern_many.as_deref(),
-                )
+                    },
+                )?)
+                .with_zero_value(patterns.pattern_zero.as_deref())
+                .with_one_value(patterns.pattern_one.as_deref())
+                .with_two_value(patterns.pattern_two.as_deref())
+                .with_few_value(patterns.pattern_few.as_deref())
+                .with_many_value(patterns.pattern_many.as_deref())
+                .with_explicit_one_value(patterns.pattern_explicit_one.as_deref())
+                .with_explicit_zero_value(patterns.pattern_explicit_zero.as_deref())
+                .try_into()
                 .map_err(|_| {
                     DataError::custom("Invalid patterns")
                         .with_debug_context(patterns)
@@ -95,7 +98,6 @@ impl IterableDataProviderCached<CurrencyPatternsDataV1Marker> for SourceDataProv
 #[test]
 fn test_basic() {
     use icu::locale::langid;
-    use icu::plurals::PluralCategory;
     use writeable::assert_writeable_eq;
 
     let provider = SourceDataProvider::new_testing();
@@ -109,22 +111,25 @@ fn test_basic() {
         })
         .unwrap()
         .payload;
+    let plural_rules =
+        icu::plurals::PluralRules::try_new_cardinal_unstable(&provider, &langid!("en").into())
+            .unwrap();
     let patterns_en = &en.get().patterns;
     assert_writeable_eq!(
         patterns_en
-            .get_pattern(PluralCategory::Zero)
+            .get(0.into(), &plural_rules)
             .interpolate((0, "USD")),
         "0 USD"
     );
     assert_writeable_eq!(
         patterns_en
-            .get_pattern(PluralCategory::One)
+            .get(1.into(), &plural_rules)
             .interpolate((1, "USD")),
         "1 USD"
     );
     assert_writeable_eq!(
         patterns_en
-            .get_pattern(PluralCategory::Other)
+            .get(2.into(), &plural_rules)
             .interpolate((2, "USD")),
         "2 USD"
     );
@@ -143,19 +148,19 @@ fn test_basic() {
     let patterns_ar = &ar.get().patterns;
     assert_writeable_eq!(
         patterns_ar
-            .get_pattern(PluralCategory::Zero)
+            .get(0.into(), &plural_rules)
             .interpolate((0, "USD")),
         "0 USD"
     );
     assert_writeable_eq!(
         patterns_ar
-            .get_pattern(PluralCategory::One)
+            .get(1.into(), &plural_rules)
             .interpolate((1, "USD")),
         "1 USD"
     );
     assert_writeable_eq!(
         patterns_ar
-            .get_pattern(PluralCategory::Other)
+            .get(2.into(), &plural_rules)
             .interpolate((2, "USD")),
         "2 USD"
     );
@@ -174,19 +179,19 @@ fn test_basic() {
     let patterns_jp = &jp.get().patterns;
     assert_writeable_eq!(
         patterns_jp
-            .get_pattern(PluralCategory::Zero)
+            .get(0.into(), &plural_rules)
             .interpolate((0, "USD")),
         "0USD"
     );
     assert_writeable_eq!(
         patterns_jp
-            .get_pattern(PluralCategory::One)
+            .get(1.into(), &plural_rules)
             .interpolate((1, "USD")),
         "1USD"
     );
     assert_writeable_eq!(
         patterns_jp
-            .get_pattern(PluralCategory::Other)
+            .get(2.into(), &plural_rules)
             .interpolate((2, "USD")),
         "2USD"
     );

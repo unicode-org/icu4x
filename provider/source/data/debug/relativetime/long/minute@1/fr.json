@@ -3,21 +3,25 @@
     "0": "cette minute-ci"
   },
   "past": {
-    "specials": [
-      [
-        "One",
-        "\bil y a  minute"
-      ]
-    ],
-    "other": "\bil y a  minutes"
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\bil y a  minute"
+        ]
+      ],
+      "other": "\bil y a  minutes"
+    }
   },
   "future": {
-    "specials": [
-      [
-        "One",
-        "\u0006dans  minute"
-      ]
-    ],
-    "other": "\u0006dans  minutes"
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0006dans  minute"
+        ]
+      ],
+      "other": "\u0006dans  minutes"
+    }
   }
 }

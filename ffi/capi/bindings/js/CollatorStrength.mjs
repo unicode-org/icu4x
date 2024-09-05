@@ -8,7 +8,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 export class CollatorStrength {
     #value = undefined;
 
-    static values = new Map([
+    static #values = new Map([
         ["Auto", 0],
         ["Primary", 1],
         ["Secondary", 2],
@@ -18,31 +18,50 @@ export class CollatorStrength {
     ]);
 
     constructor(value) {
-        if (value instanceof CollatorStrength) {
-            this.#value = value.value;
-            return;
+        if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
+            // We pass in two internalConstructor arguments to create *new*
+            // instances of this type, otherwise the enums are treated as singletons.
+            if (arguments[1] === diplomatRuntime.internalConstructor ) {
+                this.#value = arguments[2];
+                return;
+            }
+            return CollatorStrength.#objectValues[arguments[1]];
         }
 
-        if (CollatorStrength.values.has(value)) {
-            this.#value = value;
-            return;
+        if (value instanceof CollatorStrength) {
+            return value;
+        }
+
+        let intVal = CollatorStrength.#values.get(value);
+
+        // Nullish check, checks for null or undefined
+        if (intVal == null) {
+            return CollatorStrength.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a CollatorStrength and does not correspond to any of its enumerator values.");
     }
 
     get value() {
-        return this.#value;
+        return [...CollatorStrength.#values.keys()][this.#value];
     }
 
     get ffiValue() {
-        return CollatorStrength.values.get(this.#value);
+        return this.#value;
     }
+    static #objectValues = [
+        new CollatorStrength(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
+        new CollatorStrength(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
+        new CollatorStrength(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
+        new CollatorStrength(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 3),
+        new CollatorStrength(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 4),
+        new CollatorStrength(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 5),
+    ];
 
-    static Auto = new CollatorStrength("Auto");
-    static Primary = new CollatorStrength("Primary");
-    static Secondary = new CollatorStrength("Secondary");
-    static Tertiary = new CollatorStrength("Tertiary");
-    static Quaternary = new CollatorStrength("Quaternary");
-    static Identical = new CollatorStrength("Identical");
+    static Auto = CollatorStrength.#objectValues[0];
+    static Primary = CollatorStrength.#objectValues[1];
+    static Secondary = CollatorStrength.#objectValues[2];
+    static Tertiary = CollatorStrength.#objectValues[3];
+    static Quaternary = CollatorStrength.#objectValues[4];
+    static Identical = CollatorStrength.#objectValues[5];
 }

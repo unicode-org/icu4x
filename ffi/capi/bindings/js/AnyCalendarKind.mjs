@@ -11,7 +11,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 export class AnyCalendarKind {
     #value = undefined;
 
-    static values = new Map([
+    static #values = new Map([
         ["Iso", 0],
         ["Gregorian", 1],
         ["Buddhist", 2],
@@ -33,45 +33,76 @@ export class AnyCalendarKind {
     ]);
 
     constructor(value) {
-        if (value instanceof AnyCalendarKind) {
-            this.#value = value.value;
-            return;
+        if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
+            // We pass in two internalConstructor arguments to create *new*
+            // instances of this type, otherwise the enums are treated as singletons.
+            if (arguments[1] === diplomatRuntime.internalConstructor ) {
+                this.#value = arguments[2];
+                return;
+            }
+            return AnyCalendarKind.#objectValues[arguments[1]];
         }
 
-        if (AnyCalendarKind.values.has(value)) {
-            this.#value = value;
-            return;
+        if (value instanceof AnyCalendarKind) {
+            return value;
+        }
+
+        let intVal = AnyCalendarKind.#values.get(value);
+
+        // Nullish check, checks for null or undefined
+        if (intVal == null) {
+            return AnyCalendarKind.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a AnyCalendarKind and does not correspond to any of its enumerator values.");
     }
 
     get value() {
-        return this.#value;
+        return [...AnyCalendarKind.#values.keys()][this.#value];
     }
 
     get ffiValue() {
-        return AnyCalendarKind.values.get(this.#value);
+        return this.#value;
     }
+    static #objectValues = [
+        new AnyCalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
+        new AnyCalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
+        new AnyCalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
+        new AnyCalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 3),
+        new AnyCalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 4),
+        new AnyCalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 5),
+        new AnyCalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 6),
+        new AnyCalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 7),
+        new AnyCalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 8),
+        new AnyCalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 9),
+        new AnyCalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 10),
+        new AnyCalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 11),
+        new AnyCalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 12),
+        new AnyCalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 13),
+        new AnyCalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 14),
+        new AnyCalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 15),
+        new AnyCalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 16),
+        new AnyCalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 17),
+    ];
 
-    static Iso = new AnyCalendarKind("Iso");
-    static Gregorian = new AnyCalendarKind("Gregorian");
-    static Buddhist = new AnyCalendarKind("Buddhist");
-    static Japanese = new AnyCalendarKind("Japanese");
-    static JapaneseExtended = new AnyCalendarKind("JapaneseExtended");
-    static Ethiopian = new AnyCalendarKind("Ethiopian");
-    static EthiopianAmeteAlem = new AnyCalendarKind("EthiopianAmeteAlem");
-    static Indian = new AnyCalendarKind("Indian");
-    static Coptic = new AnyCalendarKind("Coptic");
-    static Dangi = new AnyCalendarKind("Dangi");
-    static Chinese = new AnyCalendarKind("Chinese");
-    static Hebrew = new AnyCalendarKind("Hebrew");
-    static IslamicCivil = new AnyCalendarKind("IslamicCivil");
-    static IslamicObservational = new AnyCalendarKind("IslamicObservational");
-    static IslamicTabular = new AnyCalendarKind("IslamicTabular");
-    static IslamicUmmAlQura = new AnyCalendarKind("IslamicUmmAlQura");
-    static Persian = new AnyCalendarKind("Persian");
-    static Roc = new AnyCalendarKind("Roc");
+    static Iso = AnyCalendarKind.#objectValues[0];
+    static Gregorian = AnyCalendarKind.#objectValues[1];
+    static Buddhist = AnyCalendarKind.#objectValues[2];
+    static Japanese = AnyCalendarKind.#objectValues[3];
+    static JapaneseExtended = AnyCalendarKind.#objectValues[4];
+    static Ethiopian = AnyCalendarKind.#objectValues[5];
+    static EthiopianAmeteAlem = AnyCalendarKind.#objectValues[6];
+    static Indian = AnyCalendarKind.#objectValues[7];
+    static Coptic = AnyCalendarKind.#objectValues[8];
+    static Dangi = AnyCalendarKind.#objectValues[9];
+    static Chinese = AnyCalendarKind.#objectValues[10];
+    static Hebrew = AnyCalendarKind.#objectValues[11];
+    static IslamicCivil = AnyCalendarKind.#objectValues[12];
+    static IslamicObservational = AnyCalendarKind.#objectValues[13];
+    static IslamicTabular = AnyCalendarKind.#objectValues[14];
+    static IslamicUmmAlQura = AnyCalendarKind.#objectValues[15];
+    static Persian = AnyCalendarKind.#objectValues[16];
+    static Roc = AnyCalendarKind.#objectValues[17];
 
     static getForLocale(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -82,7 +113,7 @@ export class AnyCalendarKind {
             if (!diplomatReceive.resultFlag) {
                 return null;
             }
-            return AnyCalendarKind[Array.from(AnyCalendarKind.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+            return new AnyCalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
         }
         
         finally {
@@ -93,17 +124,17 @@ export class AnyCalendarKind {
     static getForBcp47(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s)).splat()];
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s));
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_AnyCalendarKind_get_for_bcp47_mv1(diplomatReceive.buffer, ...sSlice);
+        const result = wasm.icu4x_AnyCalendarKind_get_for_bcp47_mv1(diplomatReceive.buffer, ...sSlice.splat());
     
         try {
             if (!diplomatReceive.resultFlag) {
                 return null;
             }
-            return AnyCalendarKind[Array.from(AnyCalendarKind.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+            return new AnyCalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
         }
         
         finally {

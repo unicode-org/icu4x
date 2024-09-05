@@ -172,15 +172,10 @@ pub mod ffi {
         pub fn create_with_lengths(
             provider: &DataProvider,
             locale: &Locale,
-            date_length: DateLength,
-            time_length: TimeLength,
+            date_length: Option<DateLength>,
+            time_length: Option<TimeLength>,
         ) -> Result<Box<GregorianDateTimeFormatter>, Error> {
             let locale = locale.to_datalocale();
-
-            let options = icu_datetime::options::length::Bag::from_date_time_style(
-                date_length.into(),
-                time_length.into(),
-            );
 
             Ok(Box::new(GregorianDateTimeFormatter(call_constructor!(
                 icu_datetime::TypedDateTimeFormatter::try_new,
@@ -188,7 +183,13 @@ pub mod ffi {
                 icu_datetime::TypedDateTimeFormatter::try_new_with_buffer_provider,
                 provider,
                 &locale,
-                options.into()
+                {
+                    let mut bag = icu_datetime::options::length::Bag::empty();
+                    bag.date = date_length.map(Into::into);
+                    bag.time = time_length.map(Into::into);
+                    bag
+                }
+                .into()
             )?)))
         }
 
@@ -307,14 +308,10 @@ pub mod ffi {
         pub fn create_with_lengths(
             provider: &DataProvider,
             locale: &Locale,
-            date_length: DateLength,
-            time_length: TimeLength,
+            date_length: Option<DateLength>,
+            time_length: Option<TimeLength>,
         ) -> Result<Box<DateTimeFormatter>, Error> {
             let locale = locale.to_datalocale();
-            let options = icu_datetime::options::length::Bag::from_date_time_style(
-                date_length.into(),
-                time_length.into(),
-            );
 
             Ok(Box::new(DateTimeFormatter(call_constructor!(
                 icu_datetime::DateTimeFormatter::try_new,
@@ -322,7 +319,13 @@ pub mod ffi {
                 icu_datetime::DateTimeFormatter::try_new_with_buffer_provider,
                 provider,
                 &locale,
-                options.into()
+                {
+                    let mut bag = icu_datetime::options::length::Bag::empty();
+                    bag.date = date_length.map(Into::into);
+                    bag.time = time_length.map(Into::into);
+                    bag
+                }
+                .into()
             )?)))
         }
 

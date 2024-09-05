@@ -7,11 +7,15 @@
     "2": "послезавтра"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 дн. назад"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 дн. назад"
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\fчерез  дн."
+    "strings": {
+      "specials": [],
+      "other": "\fчерез  дн."
+    }
   }
 }

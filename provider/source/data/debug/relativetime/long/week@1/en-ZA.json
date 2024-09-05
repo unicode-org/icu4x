@@ -5,21 +5,25 @@
     "1": "next week"
   },
   "past": {
-    "specials": [
-      [
-        "One",
-        "\u0001 week ago"
-      ]
-    ],
-    "other": "\u0001 weeks ago"
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0001 week ago"
+        ]
+      ],
+      "other": "\u0001 weeks ago"
+    }
   },
   "future": {
-    "specials": [
-      [
-        "One",
-        "\u0004in  week"
-      ]
-    ],
-    "other": "\u0004in  weeks"
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0004in  week"
+        ]
+      ],
+      "other": "\u0004in  weeks"
+    }
   }
 }

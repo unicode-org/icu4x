@@ -7,21 +7,25 @@
     "2": "après-demain"
   },
   "past": {
-    "specials": [
-      [
-        "One",
-        "\bil y a  jour"
-      ]
-    ],
-    "other": "\bil y a  jours"
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\bil y a  jour"
+        ]
+      ],
+      "other": "\bil y a  jours"
+    }
   },
   "future": {
-    "specials": [
-      [
-        "One",
-        "\u0006dans  jour"
-      ]
-    ],
-    "other": "\u0006dans  jours"
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0006dans  jour"
+        ]
+      ],
+      "other": "\u0006dans  jours"
+    }
   }
 }

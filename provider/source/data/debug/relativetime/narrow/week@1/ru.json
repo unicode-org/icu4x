@@ -5,11 +5,15 @@
     "1": "на след. нед."
   },
   "past": {
-    "specials": [],
-    "other": "\u0002- нед."
+    "strings": {
+      "specials": [],
+      "other": "\u0002- нед."
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u0002+ нед."
+    "strings": {
+      "specials": [],
+      "other": "\u0002+ нед."
+    }
   }
 }

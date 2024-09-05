@@ -44,6 +44,16 @@ export class TitlecaseOptions {
         return [this.#leadingAdjustment.ffiValue, this.#trailingCase.ffiValue]
     }
 
+    _writeToArrayBuffer(
+        arrayBuffer,
+        offset,
+        functionCleanupArena,
+        appendArrayMap
+    ) {
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, this.#leadingAdjustment.ffiValue, Int32Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 4, this.#trailingCase.ffiValue, Int32Array);
+    }
+
     // This struct contains borrowed fields, so this takes in a list of
     // "edges" corresponding to where each lifetime's data may have been borrowed from
     // and passes it down to individual fields containing the borrow.
@@ -51,9 +61,9 @@ export class TitlecaseOptions {
     // should handle this when constructing edge arrays.
     #fromFFI(ptr) {
         const leadingAdjustmentDeref = diplomatRuntime.enumDiscriminant(wasm, ptr);
-        this.#leadingAdjustment = LeadingAdjustment[Array.from(LeadingAdjustment.values.keys())[leadingAdjustmentDeref]];
+        this.#leadingAdjustment = new LeadingAdjustment(diplomatRuntime.internalConstructor, leadingAdjustmentDeref);
         const trailingCaseDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 4);
-        this.#trailingCase = TrailingCase[Array.from(TrailingCase.values.keys())[trailingCaseDeref]];
+        this.#trailingCase = new TrailingCase(diplomatRuntime.internalConstructor, trailingCaseDeref);
     }
 
     static defaultOptions() {

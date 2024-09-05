@@ -12,9 +12,9 @@
 #[macro_export]
 macro_rules! __impl_collation_data_v1_marker {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl $provider {
             const DATA_COLLATION_DATA_V1_MARKER: icu_provider_baked::zerotrie::Data<icu::collator::provider::CollationDataV1Marker> = icu_provider_baked::zerotrie::Data {
                 trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1xabcdefghijklmnoprstuvwyz\0\0\0\0\0\0\0\0\0\0\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x15.8Zx\xA1\xA9\xC1\xC9\xD5\x02\n\x1E!$03^v\x99\xA3\xA6\xA9\xC4frsz\x01\x0B\x0C\x80\x81\x1Ecompat\x908\x82\x83\xC4enrs\x01\t\n\x84\x85\x1Etrad\x90?\x86\x87-Cyrl\x88\xC3esy\x02\x03b\x89\x8A\x8B\xC3aes\x01\x1A\x8C\xC2\x1E-\tphonebk\x90<AT\x1Ephonebk\x90=b\x8D\xC4nost\n\x0B\x14-US-posix\x8E\x8F\x90\0\x1Etrad\x90@\x90\x01\xC5afioy\x07\x0E\x1B\x1D\x90\x02-AF\x90\x03-Adlm\x90\x04\x90\x05\xC2\x1El\x06trad\x90A\x89\x90\x06\x90\x07\xC2lu\x02\x90\0\x90\x08\xC6airsuy\x02\x04\x05\x08\n\x90\t\x90\n\x87b\x90\x0B\x90\x0C\x90\r\xC2gs\x02\x90\x0E\x90\x0Fa\x90\x10\x1Eunihan\x90E\xC6kmnouy\x02\x04\r\x1D\x1F\x90\x11\x90\x12\x90\x13\x1Etrad\x90B\x90\x14\xC2\x1Ek\x08unihan\x90F\x90\x15\x90\x16\x90\x17\xC2tv\x02\x90\x18\x90\x19\xC5klrty\x02\x04\x06\x08\x90\x1A\x90\x1B\x90\x1C\x90\x1D\x90\x1Eo\x90\x1Fr\x90 \xC3als\x02\x04\x90!\x90\"\x90\x03o\x90#\xC6iklqrv\t\x0B\r\x0F\x16\x90$\x1Edict\x909\x90%\x90&\x90'\x88-Latn\x87\x90(\x1Etrad\x90C\xC6aehkor\x02\x04\x06\x08\n\x90)\x90*\x90+\x90,\x90-\x90.\xC5gknrz\x02\x04\x15\x17\x90/\x900d\x901\x1Ee\xC2mo\x05oji\x90:r\x90;\x902\x903i\x904\x1Etrad\x90Do\x905o\x906h\x907\x1E\xC3suz\x07\x0Etroke\x90>nihan\x90Ghuyin\x90H" },
@@ -111,7 +111,7 @@ macro_rules! __impl_collation_data_v1_marker {
                 ],
             };
         }
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DataProvider<icu::collator::provider::CollationDataV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::collator::provider::CollationDataV1Marker>, icu_provider::DataError> {
                 let mut metadata = icu_provider::DataResponseMetadata::default();
@@ -137,7 +137,7 @@ macro_rules! __impl_collation_data_v1_marker {
     };
     ($ provider : ty , DRY) => {
         __impl_collation_data_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::collator::provider::CollationDataV1Marker> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 icu_provider::DataProvider::<icu::collator::provider::CollationDataV1Marker>::load(self, req).map(|r| r.metadata)
@@ -146,7 +146,7 @@ macro_rules! __impl_collation_data_v1_marker {
     };
     ($ provider : ty , ITER) => {
         __impl_collation_data_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::IterableDataProvider<icu::collator::provider::CollationDataV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_COLLATION_DATA_V1_MARKER).collect())
@@ -155,13 +155,13 @@ macro_rules! __impl_collation_data_v1_marker {
     };
     ($ provider : ty , DRY , ITER) => {
         __impl_collation_data_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::collator::provider::CollationDataV1Marker> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 icu_provider::DataProvider::<icu::collator::provider::CollationDataV1Marker>::load(self, req).map(|r| r.metadata)
             }
         }
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::IterableDataProvider<icu::collator::provider::CollationDataV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_COLLATION_DATA_V1_MARKER).collect())

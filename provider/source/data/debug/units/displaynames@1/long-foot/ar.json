@@ -1,11 +1,13 @@
 {
   "patterns": {
-    "specials": [
-      [
-        "One",
-        "\u0000قدم"
-      ]
-    ],
-    "other": "\u0001 قدم"
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0000قدم"
+        ]
+      ],
+      "other": "\u0001 قدم"
+    }
   }
 }

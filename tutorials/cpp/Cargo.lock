@@ -42,13 +42,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "deduplicating_array"
-version = "0.1.6"
-dependencies = [
- "serde",
-]
-
-[[package]]
 name = "deranged"
 version = "0.3.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -60,7 +53,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=8744ac97162341f347b63131969ad736e1047f6d#8744ac97162341f347b63131969ad736e1047f6d"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=9e91151698bc5df511c42d95f57ea8133478b24e#9e91151698bc5df511c42d95f57ea8133478b24e"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -71,7 +64,7 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.8.1"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=8744ac97162341f347b63131969ad736e1047f6d#8744ac97162341f347b63131969ad736e1047f6d"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=9e91151698bc5df511c42d95f57ea8133478b24e#9e91151698bc5df511c42d95f57ea8133478b24e"
 dependencies = [
  "log",
 ]
@@ -79,7 +72,7 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=8744ac97162341f347b63131969ad736e1047f6d#8744ac97162341f347b63131969ad736e1047f6d"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=9e91151698bc5df511c42d95f57ea8133478b24e#9e91151698bc5df511c42d95f57ea8133478b24e"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -296,6 +289,7 @@ name = "icu_experimental"
 version = "0.1.0"
 dependencies = [
  "displaydoc",
+ "either",
  "fixed_decimal",
  "icu_collections",
  "icu_decimal",
@@ -334,7 +328,6 @@ dependencies = [
 name = "icu_list"
 version = "1.5.0"
 dependencies = [
- "deduplicating_array",
  "displaydoc",
  "icu_list_data",
  "icu_provider",
@@ -446,11 +439,11 @@ version = "1.5.0"
 dependencies = [
  "displaydoc",
  "icu_collections",
+ "icu_locale_core",
  "icu_properties_data",
  "icu_provider",
  "potential_utf",
  "serde",
- "tinystr",
  "unicode-bidi",
  "zerovec",
 ]
@@ -1075,6 +1068,10 @@ version = "0.1.8"
 [[patch.unused]]
 name = "databake-derive"
 version = "0.1.8"
+
+[[patch.unused]]
+name = "deduplicating_array"
+version = "0.1.6"
 
 [[patch.unused]]
 name = "icu"

@@ -1,6 +1,8 @@
 {
   "patterns": {
-    "specials": [],
-    "other": "\u0001 সেকেন্ড"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 সেকেন্ড"
+    }
   }
 }

@@ -22,7 +22,7 @@ use core::marker::PhantomData;
 use core::mem;
 use core::num::NonZeroUsize;
 use core::ops::Deref;
-use core::ptr::{self, NonNull};
+use core::ptr::NonNull;
 
 /// A zero-copy, byte-aligned vector for fixed-width types.
 ///
@@ -310,16 +310,13 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
         let capacity = vec.capacity();
         let len = vec.len();
         let ptr = mem::ManuallyDrop::new(vec).as_mut_ptr();
-        // Note: starting in 1.70 we can use NonNull::slice_from_raw_parts
-        let slice = ptr::slice_from_raw_parts_mut(ptr, len);
+        // Safety: `ptr` comes from Vec::as_mut_ptr, which says:
+        // "Returns an unsafe mutable pointer to the vector’s buffer,
+        // or a dangling raw pointer valid for zero sized reads"
+        let ptr = unsafe { NonNull::new_unchecked(ptr) };
+        let buf = NonNull::slice_from_raw_parts(ptr, len);
         Self {
-            vector: EyepatchHackVector {
-                // Safety: `ptr` comes from Vec::as_mut_ptr, which says:
-                // "Returns an unsafe mutable pointer to the vector’s buffer,
-                // or a dangling raw pointer valid for zero sized reads"
-                buf: unsafe { NonNull::new_unchecked(slice) },
-                capacity,
-            },
+            vector: EyepatchHackVector { buf, capacity },
             marker: PhantomData,
         }
     }
