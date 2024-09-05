@@ -3,8 +3,8 @@
     "+HH:mm",
     "-HH:mm"
   ],
-  "gmt_format": "غرينتش{0}",
-  "gmt_zero_format": "غرينتش",
+  "offset_format": "غرينتش{0}",
+  "offset_zero_format": "غرينتش",
   "region_format": "توقيت {0}",
   "region_format_variants": {
     "daylight": "توقيت {0} الصيفي",

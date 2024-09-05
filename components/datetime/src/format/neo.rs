@@ -915,7 +915,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// Includes shared essential patterns for time zone formatting.
     ///
     /// This data should always be loaded when performing time zone formatting.
-    /// By itself, it allows localized GMT formats.
+    /// By itself, it allows localized offset formats.
     ///
     /// # Examples
     ///
@@ -2082,8 +2082,8 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                                 locale,
                             )?;
                         }
-                        ResolvedNeoTimeZoneSkeleton::GmtShort
-                        | ResolvedNeoTimeZoneSkeleton::GmtLong
+                        ResolvedNeoTimeZoneSkeleton::OffsetShort
+                        | ResolvedNeoTimeZoneSkeleton::OffsetLong
                         | ResolvedNeoTimeZoneSkeleton::Isox
                         | ResolvedNeoTimeZoneSkeleton::Isoxx
                         | ResolvedNeoTimeZoneSkeleton::Isoxxx

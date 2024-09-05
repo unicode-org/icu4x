@@ -36,7 +36,7 @@ pub struct TimeZoneExpectation {
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub enum FallbackFormat {
     Iso8601(IsoFormat, IsoMinutes, IsoSeconds),
-    LocalizedGmt,
+    LocalizedOffset,
 }
 
 impl From<FallbackFormat> for time_zone::TimeZoneFormatterOptions {
@@ -50,7 +50,7 @@ impl From<FallbackFormat> for time_zone::TimeZoneFormatterOptions {
                     iso_seconds.into(),
                 )
             }
-            FallbackFormat::LocalizedGmt => time_zone::FallbackFormat::LocalizedGmt,
+            FallbackFormat::LocalizedOffset => time_zone::FallbackFormat::LocalizedOffset,
         };
         options
     }
@@ -118,7 +118,7 @@ pub enum TimeZoneFormatterConfig {
     GenericLocation,
     SpecificNonLocationLong,
     SpecificNonLocationShort,
-    LocalizedGMT,
+    LocalizedOffset,
     Iso8601(IsoFormat, IsoMinutes, IsoSeconds),
 }
 
@@ -146,7 +146,7 @@ impl TimeZoneFormatterConfig {
                 skeleton.length = Some(NeoSkeletonLength::Short);
                 skeleton.style = NeoTimeZoneStyle::SpecificNonLocation;
             }
-            TimeZoneFormatterConfig::LocalizedGMT => {
+            TimeZoneFormatterConfig::LocalizedOffset => {
                 skeleton.length = Some(NeoSkeletonLength::Long);
                 skeleton.style = NeoTimeZoneStyle::Offset;
             }

@@ -124,7 +124,7 @@
                     "hour": "two-digit",
                     "minute": "two-digit",
                     "second": "two-digit",
-                    "time_zone_name": "gmt-offset"
+                    "time_zone_name": "offset"
                 },
                 "semantic": {
                     "fieldSet": ["year", "month", "day", "weekday", "hour", "minute", "second", "zoneOffset"],
@@ -151,7 +151,7 @@
                     "hour": "two-digit",
                     "minute": "two-digit",
                     "second": "two-digit",
-                    "time_zone_name": "gmt-offset"
+                    "time_zone_name": "offset"
                 }
             }
         },

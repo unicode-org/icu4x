@@ -33,7 +33,7 @@ namespace icu4x {
 class TimeZoneFormatter {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::TimeZoneFormatter>, icu4x::Error> create_with_localized_gmt_fallback(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
+  inline static diplomat::result<std::unique_ptr<icu4x::TimeZoneFormatter>, icu4x::Error> create_with_localized_offset_fallback(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
 
   inline static diplomat::result<std::unique_ptr<icu4x::TimeZoneFormatter>, icu4x::Error> create_with_iso_8601_fallback(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::IsoTimeZoneOptions options);
 
@@ -47,7 +47,7 @@ public:
 
   inline diplomat::result<std::monostate, icu4x::Error> load_generic_location_format(const icu4x::DataProvider& provider);
 
-  inline diplomat::result<std::monostate, icu4x::Error> include_localized_gmt_format();
+  inline diplomat::result<std::monostate, icu4x::Error> include_localized_offset_format();
 
   inline diplomat::result<std::monostate, icu4x::Error> load_iso_8601_format(icu4x::IsoTimeZoneOptions options);
 

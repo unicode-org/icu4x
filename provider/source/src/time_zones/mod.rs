@@ -118,7 +118,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap();
-        assert_eq!("GMT", time_zone_formats.payload.get().gmt_zero_format);
+        assert_eq!("GMT", time_zone_formats.payload.get().offset_zero_format);
 
         let exemplar_cities: DataResponse<ExemplarCitiesV1Marker> = provider
             .load(DataRequest {

@@ -501,16 +501,18 @@ fn test_time_zone_format_configs() {
 }
 
 #[test]
-fn test_time_zone_format_gmt_offset_not_set_debug_assert_panic() {
-    use icu_datetime::{neo_marker::NeoTimeZoneGmtShortMarker, DateTimeWriteError, NeverCalendar};
+fn test_time_zone_format_offset_not_set_debug_assert_panic() {
+    use icu_datetime::{
+        neo_marker::NeoTimeZoneOffsetShortMarker, DateTimeWriteError, NeverCalendar,
+    };
 
     let time_zone = CustomTimeZone {
-        gmt_offset: None,
+        offset: None,
         time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "uslax"))),
         metazone_id: Some(MetazoneId(tinystr!(4, "ampa"))),
         zone_variant: Some(ZoneVariant::daylight()),
     };
-    let tzf = TypedNeoFormatter::<NeverCalendar, NeoTimeZoneGmtShortMarker>::try_new(
+    let tzf = TypedNeoFormatter::<NeverCalendar, NeoTimeZoneOffsetShortMarker>::try_new(
         &locale!("en").into(),
         Default::default(),
     )

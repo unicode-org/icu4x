@@ -45,19 +45,19 @@ pub(crate) mod tz {
 #[yoke(prove_covariance_manually)]
 // TODO: Consider renaming to "TimeZoneEssentialsV1"
 pub struct TimeZoneFormatsV1<'data> {
-    /// The hour format for displaying GMT offsets.
+    /// The hour format for displaying offsets.
     #[cfg_attr(feature = "serde", serde(borrow))]
     #[cfg_attr(
         feature = "serde",
         serde(deserialize_with = "icu_provider::serde_borrow_de_utils::tuple_of_cow")
     )]
     pub hour_format: (Cow<'data, str>, Cow<'data, str>),
-    /// The localized GMT-offset format.
+    /// The localized offset format.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub gmt_format: Cow<'data, str>,
-    /// The localized GMT format with no offset.
+    pub offset_format: Cow<'data, str>,
+    /// The localized zero-offset format.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub gmt_zero_format: Cow<'data, str>,
+    pub offset_zero_format: Cow<'data, str>,
     /// The format string for a region.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub region_format: Cow<'data, str>,

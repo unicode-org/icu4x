@@ -21,8 +21,8 @@ namespace icu4x {
 namespace capi {
     extern "C" {
     
-    typedef struct icu4x_TimeZoneFormatter_create_with_localized_gmt_fallback_mv1_result {union {icu4x::capi::TimeZoneFormatter* ok; icu4x::capi::Error err;}; bool is_ok;} icu4x_TimeZoneFormatter_create_with_localized_gmt_fallback_mv1_result;
-    icu4x_TimeZoneFormatter_create_with_localized_gmt_fallback_mv1_result icu4x_TimeZoneFormatter_create_with_localized_gmt_fallback_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale);
+    typedef struct icu4x_TimeZoneFormatter_create_with_localized_offset_fallback_mv1_result {union {icu4x::capi::TimeZoneFormatter* ok; icu4x::capi::Error err;}; bool is_ok;} icu4x_TimeZoneFormatter_create_with_localized_offset_fallback_mv1_result;
+    icu4x_TimeZoneFormatter_create_with_localized_offset_fallback_mv1_result icu4x_TimeZoneFormatter_create_with_localized_offset_fallback_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale);
     
     typedef struct icu4x_TimeZoneFormatter_create_with_iso_8601_fallback_mv1_result {union {icu4x::capi::TimeZoneFormatter* ok; icu4x::capi::Error err;}; bool is_ok;} icu4x_TimeZoneFormatter_create_with_iso_8601_fallback_mv1_result;
     icu4x_TimeZoneFormatter_create_with_iso_8601_fallback_mv1_result icu4x_TimeZoneFormatter_create_with_iso_8601_fallback_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::IsoTimeZoneOptions options);
@@ -42,8 +42,8 @@ namespace capi {
     typedef struct icu4x_TimeZoneFormatter_load_generic_location_format_mv1_result {union { icu4x::capi::Error err;}; bool is_ok;} icu4x_TimeZoneFormatter_load_generic_location_format_mv1_result;
     icu4x_TimeZoneFormatter_load_generic_location_format_mv1_result icu4x_TimeZoneFormatter_load_generic_location_format_mv1(icu4x::capi::TimeZoneFormatter* self, const icu4x::capi::DataProvider* provider);
     
-    typedef struct icu4x_TimeZoneFormatter_include_localized_gmt_format_mv1_result {union { icu4x::capi::Error err;}; bool is_ok;} icu4x_TimeZoneFormatter_include_localized_gmt_format_mv1_result;
-    icu4x_TimeZoneFormatter_include_localized_gmt_format_mv1_result icu4x_TimeZoneFormatter_include_localized_gmt_format_mv1(icu4x::capi::TimeZoneFormatter* self);
+    typedef struct icu4x_TimeZoneFormatter_include_localized_offset_format_mv1_result {union { icu4x::capi::Error err;}; bool is_ok;} icu4x_TimeZoneFormatter_include_localized_offset_format_mv1_result;
+    icu4x_TimeZoneFormatter_include_localized_offset_format_mv1_result icu4x_TimeZoneFormatter_include_localized_offset_format_mv1(icu4x::capi::TimeZoneFormatter* self);
     
     typedef struct icu4x_TimeZoneFormatter_load_iso_8601_format_mv1_result {union { icu4x::capi::Error err;}; bool is_ok;} icu4x_TimeZoneFormatter_load_iso_8601_format_mv1_result;
     icu4x_TimeZoneFormatter_load_iso_8601_format_mv1_result icu4x_TimeZoneFormatter_load_iso_8601_format_mv1(icu4x::capi::TimeZoneFormatter* self, icu4x::capi::IsoTimeZoneOptions options);
@@ -60,8 +60,8 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline diplomat::result<std::unique_ptr<icu4x::TimeZoneFormatter>, icu4x::Error> icu4x::TimeZoneFormatter::create_with_localized_gmt_fallback(const icu4x::DataProvider& provider, const icu4x::Locale& locale) {
-  auto result = icu4x::capi::icu4x_TimeZoneFormatter_create_with_localized_gmt_fallback_mv1(provider.AsFFI(),
+inline diplomat::result<std::unique_ptr<icu4x::TimeZoneFormatter>, icu4x::Error> icu4x::TimeZoneFormatter::create_with_localized_offset_fallback(const icu4x::DataProvider& provider, const icu4x::Locale& locale) {
+  auto result = icu4x::capi::icu4x_TimeZoneFormatter_create_with_localized_offset_fallback_mv1(provider.AsFFI(),
     locale.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::TimeZoneFormatter>, icu4x::Error>(diplomat::Ok<std::unique_ptr<icu4x::TimeZoneFormatter>>(std::unique_ptr<icu4x::TimeZoneFormatter>(icu4x::TimeZoneFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::TimeZoneFormatter>, icu4x::Error>(diplomat::Err<icu4x::Error>(icu4x::Error::FromFFI(result.err)));
 }
@@ -103,8 +103,8 @@ inline diplomat::result<std::monostate, icu4x::Error> icu4x::TimeZoneFormatter::
   return result.is_ok ? diplomat::result<std::monostate, icu4x::Error>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, icu4x::Error>(diplomat::Err<icu4x::Error>(icu4x::Error::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::monostate, icu4x::Error> icu4x::TimeZoneFormatter::include_localized_gmt_format() {
-  auto result = icu4x::capi::icu4x_TimeZoneFormatter_include_localized_gmt_format_mv1(this->AsFFI());
+inline diplomat::result<std::monostate, icu4x::Error> icu4x::TimeZoneFormatter::include_localized_offset_format() {
+  auto result = icu4x::capi::icu4x_TimeZoneFormatter_include_localized_offset_format_mv1(this->AsFFI());
   return result.is_ok ? diplomat::result<std::monostate, icu4x::Error>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, icu4x::Error>(diplomat::Err<icu4x::Error>(icu4x::Error::FromFFI(result.err)));
 }
 

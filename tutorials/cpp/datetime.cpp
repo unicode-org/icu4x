@@ -63,7 +63,7 @@ int main() {
     }
 
     std::unique_ptr<CustomTimeZone> time_zone = CustomTimeZone::from_string("-06:00").ok().value();
-    int32_t offset = time_zone->gmt_offset_seconds().value();
+    int32_t offset = time_zone->offset_seconds().value();
     if (offset != -21600) {
         std::cout << "GMT offset doesn't parse" << std::endl;
         return 1;

@@ -8,17 +8,18 @@ Types for resolving and manipulating time zones.
 
 In ICU4X, a [formattable time zone](CustomTimeZone) consists of four different fields:
 
-1. The offset from GMT
+1. The offset from UTC
 2. The time zone ID
 3. The metazone ID
 4. The zone variant, representing concepts such as Standard, Summer, Daylight, and Ramadan time
 
-### GMT Offset
+### UTC Offset
 
-The GMT offset precisely states the time difference between the time zone in question and
-Greenwich Mean Time (GMT) or Coordinated Universal Time (UTC).
+The UTC offset precisely states the time difference between the time zone in question and
+Coordinated Universal Time (UTC).
 
-In localized strings, it is often rendered as "GMT-6", meaning 6 hours less than GMT.
+In localized strings, it is often rendered as "UTC-6", meaning 6 hours less than UTC (some locales
+use the term "GMT" instead of "UTC").
 
 ### Time Zone
 
@@ -86,15 +87,15 @@ the metazone based on a certain local datetime:
 ```rust
 use icu::calendar::DateTime;
 use icu::timezone::CustomTimeZone;
-use icu::timezone::GmtOffset;
+use icu::timezone::UtcOffset;
 use icu::timezone::MetazoneCalculator;
 use icu::timezone::TimeZoneBcp47Id;
 use icu::timezone::TimeZoneIdMapper;
 use tinystr::{tinystr, TinyAsciiStr};
 
-// Create a time zone for America/Chicago at GMT-6:
+// Create a time zone for America/Chicago at UTC-6:
 let mut time_zone = CustomTimeZone::new_empty();
-time_zone.gmt_offset = "-0600".parse::<GmtOffset>().ok();
+time_zone.offset = "-0600".parse().ok();
 let mapper = TimeZoneIdMapper::new();
 time_zone.time_zone_id =
     mapper.as_borrowed().iana_to_bcp47("America/Chicago");
