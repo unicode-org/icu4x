@@ -1337,7 +1337,11 @@ mod tests {
         let want_locale = "und-t-und-latn-d0-ascii".parse().unwrap();
         let t = Transliterator::try_new_with_override_unstable(
             "de-t-de-d0-ascii".parse().unwrap(),
-            |locale| locale.eq(&want_locale).then_some(Ok(Box::new(MaoamTranslit))),
+            |locale| {
+                locale
+                    .eq(&want_locale)
+                    .then_some(Ok(Box::new(MaoamTranslit)))
+            },
             &TestingProvider,
         )
         .unwrap();
