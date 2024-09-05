@@ -301,12 +301,16 @@ impl From<ffi::TitlecaseOptionsV1> for TitlecaseOptions {
     fn from(other: ffi::TitlecaseOptionsV1) -> Self {
         let mut ret = Self::default();
 
-        if let Some(l) = other.leading_adjustment.into_converted_option() {
-            ret.leading_adjustment = l;
-        }
-        if let Some(t) = other.trailing_case.into_converted_option() {
-            ret.trailing_case = t;
-        }
+        ret.leading_adjustment = other
+            .leading_adjustment
+            .into_converted_option()
+            .unwrap_or(ret.leading_adjustment);
+
+        ret.trailing_case = other
+            .trailing_case
+            .into_converted_option()
+            .unwrap_or(ret.trailing_case);
+
         ret
     }
 }
