@@ -10,6 +10,5 @@
     "daylight": "{0} (heure d’été)",
     "standard": "{0} (heure standard)"
   },
-  "fallback_format": "{1} ({0})",
-  "gmt_offset_fallback": "GMT+?"
+  "fallback_format": "{1} ({0})"
 }

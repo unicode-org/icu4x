@@ -63,14 +63,13 @@ pub struct TimeZoneFormatsV1<'data> {
     pub region_format: Cow<'data, str>,
     /// The format strings for region format variants
     /// e.g. daylight, standard.
+    // CURRENLY UNUSED
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub region_format_variants: ZeroMap<'data, TinyStr8, str>,
     /// The format string to fall back to if data is unavailable.
+    // CURRENLY UNUSED
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub fallback_format: Cow<'data, str>,
-    /// The fallback of GMT-offset.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub gmt_offset_fallback: Cow<'data, str>,
 }
 
 /// An ICU4X mapping to the CLDR timeZoneNames exemplar cities.

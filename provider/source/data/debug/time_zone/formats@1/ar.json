@@ -10,6 +10,5 @@
     "daylight": "توقيت {0} الصيفي",
     "standard": "توقيت {0} الرسمي"
   },
-  "fallback_format": "{1} ({0})",
-  "gmt_offset_fallback": "GMT+?"
+  "fallback_format": "{1} ({0})"
 }

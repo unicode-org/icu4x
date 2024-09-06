@@ -10,6 +10,5 @@
     "daylight": "Daylight Time ng {0}",
     "standard": "Standard na Oras sa {0}"
   },
-  "fallback_format": "{1} ({0})",
-  "gmt_offset_fallback": "GMT+?"
+  "fallback_format": "{1} ({0})"
 }

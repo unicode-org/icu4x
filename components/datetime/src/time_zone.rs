@@ -888,7 +888,7 @@ pub(super) trait FormatTimeZoneWithFallback {
             self.format_gmt_offset(sink, gmt_offset, data_payloads)?
         } else {
             sink.with_part(Part::ERROR, |sink| {
-                sink.write_str(&zone_formats.gmt_offset_fallback)
+                sink.write_str(&zone_formats.gmt_format.replace("{0}", "+?"))
             })?;
             Err(FormatTimeZoneError::MissingInputField("gmt_offset"))
         })

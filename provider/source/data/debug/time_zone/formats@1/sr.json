@@ -10,6 +10,5 @@
     "daylight": "{0}, летње време",
     "standard": "{0}, стандардно време"
   },
-  "fallback_format": "{1} ({0})",
-  "gmt_offset_fallback": "GMT+?"
+  "fallback_format": "{1} ({0})"
 }
