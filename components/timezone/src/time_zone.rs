@@ -9,7 +9,7 @@ use crate::{GmtOffset, ZoneVariant};
 #[cfg(feature = "compiled_data")]
 use crate::{TimeZoneIdMapper, UnknownTimeZoneError};
 use icu_calendar::{DateTime, Iso};
-use tinystr::{tinystr, TinyAsciiStr};
+use tinystr::TinyAsciiStr;
 
 /// A utility type that can hold time zone information.
 ///
@@ -106,26 +106,6 @@ impl CustomTimeZone {
             time_zone_id: None,
             metazone_id: None,
             zone_variant: None,
-        }
-    }
-
-    #[doc(hidden)] // unstable, test-only
-    pub const fn gmt() -> Self {
-        Self {
-            gmt_offset: Some(GmtOffset::zero()),
-            time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "gblon"))),
-            metazone_id: Some(MetazoneId(tinystr!(4, "mgmt"))),
-            zone_variant: Some(ZoneVariant::standard()),
-        }
-    }
-
-    #[doc(hidden)] // unstable, test-only
-    pub const fn bst() -> Self {
-        Self {
-            gmt_offset: Some(GmtOffset::from_offset_eighths_of_hour(8)),
-            time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "gblon"))),
-            metazone_id: Some(MetazoneId(tinystr!(4, "mgmt"))),
-            zone_variant: Some(ZoneVariant::daylight()),
         }
     }
 

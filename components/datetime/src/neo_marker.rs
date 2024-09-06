@@ -1962,11 +1962,10 @@ macro_rules! impl_zoneddatetime_marker {
         #[doc = concat!("    ", length_option_helper!($sample_length), ",")]
         /// )
         /// .unwrap();
-        /// let dtz = CustomZonedDateTime {
-        ///     date: Date::try_new_iso_date(2024, 5, 17).unwrap(),
-        ///     time: Time::try_new(15, 47, 50, 0).unwrap(),
-        ///     zone: CustomTimeZone::gmt()
-        /// };
+        ///
+        /// let mut dtz = CustomZonedDateTime::try_from_str("2024-05-17T15:47:50+01:00[Europe/London]").unwrap();
+        /// // TODO(#5466): Set the zone variant automatically
+        /// dtz.zone.zone_variant = Some(icu_timezone::ZoneVariant::daylight());
         ///
         /// assert_try_writeable_eq!(
         ///     fmt.convert_and_format(&dtz),
@@ -1991,11 +1990,12 @@ macro_rules! impl_zoneddatetime_marker {
         #[doc = concat!("    ", length_option_helper!($sample_length), ",")]
         /// )
         /// .unwrap();
-        /// let dtz = CustomZonedDateTime {
-        ///     date: Date::try_new_gregorian_date(2024, 5, 17).unwrap(),
-        ///     time: Time::try_new(15, 47, 50, 0).unwrap(),
-        ///     zone: CustomTimeZone::gmt()
-        /// };
+        ///
+        /// let mut dtz = CustomZonedDateTime::try_from_str("2024-05-17T15:47:50+01:00[Europe/London]")
+        ///     .unwrap()
+        ///     .to_calendar(Gregorian);
+        /// // TODO(#5466): Set the zone variant automatically
+        /// dtz.zone.zone_variant = Some(icu_timezone::ZoneVariant::daylight());
         ///
         /// assert_try_writeable_eq!(
         ///     fmt.format(&dtz),
