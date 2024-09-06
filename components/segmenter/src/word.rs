@@ -276,27 +276,29 @@ impl WordSegmenter {
             + DataProvider<GraphemeClusterBreakDataV2Marker>
             + ?Sized,
     {
-        let payload_locale_override = if let Some(locale) = options.content_locale {
-            let req = DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&locale),
-                ..Default::default()
-            };
-            match provider.load(req) {
-                Ok(response) => Ok(Some(response.payload)),
-                Err(DataError {
-                    kind: DataErrorKind::IdentifierNotFound,
-                    ..
-                }) => Ok(None),
-                Err(e) => Err(e),
-            }
-        } else {
-            Ok(None)
-        };
-
         Ok(Self {
             payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new_auto(provider)?,
-            payload_locale_override: payload_locale_override?,
+            payload_locale_override: if let Some(locale) = options.content_locale {
+                let req = DataRequest {
+                    id: DataIdentifierBorrowed::for_locale(&locale),
+                    metadata: {
+                        let mut metadata = DataRequestMetadata::default();
+                        metadata.silent = true;
+                        metadata
+                    },
+                };
+                match provider.load(req) {
+                    Ok(response) => Some(response.payload),
+                    Err(DataError {
+                        kind: DataErrorKind::IdentifierNotFound,
+                        ..
+                    }) => None,
+                    Err(e) => return Err(e),
+                }
+            } else {
+                None
+            },
         })
     }
 
@@ -399,27 +401,29 @@ impl WordSegmenter {
             + DataProvider<GraphemeClusterBreakDataV2Marker>
             + ?Sized,
     {
-        let payload_locale_override = if let Some(locale) = options.content_locale {
-            let req = DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&locale),
-                ..Default::default()
-            };
-            match provider.load(req) {
-                Ok(response) => Ok(Some(response.payload)),
-                Err(DataError {
-                    kind: DataErrorKind::IdentifierNotFound,
-                    ..
-                }) => Ok(None),
-                Err(e) => Err(e),
-            }
-        } else {
-            Ok(None)
-        };
-
         Ok(Self {
             payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new_lstm(provider)?,
-            payload_locale_override: payload_locale_override?,
+            payload_locale_override: if let Some(locale) = options.content_locale {
+                let req = DataRequest {
+                    id: DataIdentifierBorrowed::for_locale(&locale),
+                    metadata: {
+                        let mut metadata = DataRequestMetadata::default();
+                        metadata.silent = true;
+                        metadata
+                    },
+                };
+                match provider.load(req) {
+                    Ok(response) => Some(response.payload),
+                    Err(DataError {
+                        kind: DataErrorKind::IdentifierNotFound,
+                        ..
+                    }) => None,
+                    Err(e) => return Err(e),
+                }
+            } else {
+                None
+            },
         })
     }
 
@@ -514,27 +518,29 @@ impl WordSegmenter {
             + DataProvider<GraphemeClusterBreakDataV2Marker>
             + ?Sized,
     {
-        let payload_locale_override = if let Some(locale) = options.content_locale {
-            let req = DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&locale),
-                ..Default::default()
-            };
-            match provider.load(req) {
-                Ok(response) => Ok(Some(response.payload)),
-                Err(DataError {
-                    kind: DataErrorKind::IdentifierNotFound,
-                    ..
-                }) => Ok(None),
-                Err(e) => Err(e),
-            }
-        } else {
-            Ok(None)
-        };
-
         Ok(Self {
             payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new_dict(provider)?,
-            payload_locale_override: payload_locale_override?,
+            payload_locale_override: if let Some(locale) = options.content_locale {
+                let req = DataRequest {
+                    id: DataIdentifierBorrowed::for_locale(&locale),
+                    metadata: {
+                        let mut metadata = DataRequestMetadata::default();
+                        metadata.silent = true;
+                        metadata
+                    },
+                };
+                match provider.load(req) {
+                    Ok(response) => Some(response.payload),
+                    Err(DataError {
+                        kind: DataErrorKind::IdentifierNotFound,
+                        ..
+                    }) => None,
+                    Err(e) => return Err(e),
+                }
+            } else {
+                None
+            },
         })
     }
 
