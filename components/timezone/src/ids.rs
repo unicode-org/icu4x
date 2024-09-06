@@ -61,7 +61,6 @@ use crate::{
 /// use tinystr::tinystr;
 ///
 /// let mapper = TimeZoneIdMapper::new();
-/// let mapper = mapper.as_borrowed();
 ///
 /// // The IANA zone "Australia/Melbourne" is the BCP-47 zone "aumel":
 /// assert_eq!(
@@ -95,12 +94,16 @@ pub struct TimeZoneIdMapper {
 #[cfg(feature = "compiled_data")]
 impl Default for TimeZoneIdMapper {
     fn default() -> Self {
-        Self::new()
+        Self {
+            data: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_IANA_TO_BCP47_MAP_V2_MARKER,
+            ),
+        }
     }
 }
 
 impl TimeZoneIdMapper {
-    /// Creates a new [`TimeZoneIdMapper`] using compiled data.
+    /// Creates a new [`TimeZoneIdMapperBorrowed`] using compiled data.
     ///
     /// See [`TimeZoneIdMapper`] for an example.
     ///
@@ -108,11 +111,9 @@ impl TimeZoneIdMapper {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn new() -> Self {
-        Self {
-            data: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_IANA_TO_BCP47_MAP_V2_MARKER,
-            ),
+    pub fn new() -> TimeZoneIdMapperBorrowed<'static> {
+        TimeZoneIdMapperBorrowed {
+            data: crate::provider::Baked::SINGLETON_IANA_TO_BCP47_MAP_V2_MARKER,
         }
     }
 
@@ -138,6 +139,19 @@ impl TimeZoneIdMapper {
     /// Returns a borrowed version of the mapper that can be queried.
     ///
     /// This avoids a small potential indirection cost when querying the mapper.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::timezone::TimeZoneIdMapper;
+    ///
+    /// let provider = // ...
+    /// # icu::timezone::provider::Baked;
+    /// let mapper = TimeZoneIdMapper::try_new_unstable(&provider).unwrap();
+    /// let mapper = mapper.as_borrowed();
+    ///
+    /// println!("{:?}", mapper.iana_to_bcp47("Australia/Melbourne"));
+    /// ```
     pub fn as_borrowed(&self) -> TimeZoneIdMapperBorrowed {
         TimeZoneIdMapperBorrowed {
             data: self.data.get(),
@@ -172,7 +186,6 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
     /// use icu_timezone::TimeZoneIdMapper;
     ///
     /// let mapper = TimeZoneIdMapper::new();
-    /// let mapper = mapper.as_borrowed();
     ///
     /// let result = mapper.iana_to_bcp47("Asia/CALCUTTA").unwrap();
     ///
@@ -206,7 +219,6 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
     /// use std::borrow::Cow;
     ///
     /// let mapper = TimeZoneIdMapper::new();
-    /// let mapper = mapper.as_borrowed();
     ///
     /// let result = mapper.normalize_iana("Asia/CALCUTTA").unwrap();
     ///
@@ -245,7 +257,6 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
     /// use std::borrow::Cow;
     ///
     /// let mapper = TimeZoneIdMapper::new();
-    /// let mapper = mapper.as_borrowed();
     ///
     /// let result = mapper.canonicalize_iana("Asia/CALCUTTA").unwrap();
     ///
@@ -310,7 +321,6 @@ impl<'a> TimeZoneIdMapperBorrowed<'a> {
     /// use tinystr::tinystr;
     ///
     /// let mapper = TimeZoneIdMapper::new();
-    /// let mapper = mapper.as_borrowed();
     ///
     /// let bcp47_id = TimeZoneBcp47Id(tinystr!(8, "inccu"));
     /// let result = mapper.find_canonical_iana_from_bcp47(bcp47_id).unwrap();
