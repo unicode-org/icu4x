@@ -66,7 +66,6 @@ pub struct FormattableYear {
 
 /// The type of year: Calendars like Chinese don't have an era and instead format with cyclic years.
 #[derive(Copy, Clone, Debug, PartialEq)]
-#[allow(clippy::exhaustive_enums)] // Only two kinds of years
 pub enum FormattableYearKind {
     /// An Era and a numeric year in that era.
     EraYear(Era, i32),
