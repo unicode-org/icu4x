@@ -102,11 +102,6 @@ include!("bidi_auxiliary_properties_v1_marker.rs.data");
 include!("blank_v1_marker.rs.data");
 include!("canonical_combining_class_v1_marker.rs.data");
 include!("east_asian_width_v1_marker.rs.data");
-include!("exemplar_characters_auxiliary_v1_marker.rs.data");
-include!("exemplar_characters_index_v1_marker.rs.data");
-include!("exemplar_characters_main_v1_marker.rs.data");
-include!("exemplar_characters_numbers_v1_marker.rs.data");
-include!("exemplar_characters_punctuation_v1_marker.rs.data");
 include!("general_category_v1_marker.rs.data");
 include!("graph_v1_marker.rs.data");
 include!("hangul_syllable_type_v1_marker.rs.data");
@@ -253,11 +248,6 @@ macro_rules! impl_data_provider {
         impl_blank_v1_marker!($provider);
         impl_canonical_combining_class_v1_marker!($provider);
         impl_east_asian_width_v1_marker!($provider);
-        impl_exemplar_characters_auxiliary_v1_marker!($provider);
-        impl_exemplar_characters_index_v1_marker!($provider);
-        impl_exemplar_characters_main_v1_marker!($provider);
-        impl_exemplar_characters_numbers_v1_marker!($provider);
-        impl_exemplar_characters_punctuation_v1_marker!($provider);
         impl_general_category_v1_marker!($provider);
         impl_graph_v1_marker!($provider);
         impl_hangul_syllable_type_v1_marker!($provider);
@@ -384,11 +374,6 @@ macro_rules! impl_any_provider {
                     h if h == <icu::properties::provider::BlankV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::BlankV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::CanonicalCombiningClassV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::CanonicalCombiningClassV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::EastAsianWidthV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::EastAsianWidthV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::properties::provider::ExemplarCharactersAuxiliaryV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::ExemplarCharactersAuxiliaryV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::properties::provider::ExemplarCharactersIndexV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::ExemplarCharactersIndexV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::properties::provider::ExemplarCharactersMainV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::ExemplarCharactersMainV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::properties::provider::ExemplarCharactersNumbersV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::ExemplarCharactersNumbersV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::properties::provider::ExemplarCharactersPunctuationV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::ExemplarCharactersPunctuationV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::GeneralCategoryV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::GeneralCategoryV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::GraphV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::GraphV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::HangulSyllableTypeV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::properties::provider::HangulSyllableTypeV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),

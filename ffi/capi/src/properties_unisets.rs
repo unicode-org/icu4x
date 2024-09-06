@@ -9,7 +9,6 @@ pub mod ffi {
     use alloc::boxed::Box;
 
     use crate::errors::ffi::DataError;
-    use crate::locale_core::ffi::Locale;
     use crate::provider::ffi::DataProvider;
 
     #[diplomat::opaque]
@@ -50,94 +49,6 @@ pub mod ffi {
                 icu_properties::sets::basic_emoji [r => Ok(r.static_to_owned())],
                 icu_properties::sets::load_basic_emoji,
                 provider,
-            )?)))
-        }
-
-        #[diplomat::rust_link(icu::properties::exemplar_chars::exemplars_main, Fn)]
-        #[diplomat::rust_link(icu::properties::exemplar_chars::load_exemplars_main, Fn, hidden)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "exemplars_main")]
-        pub fn load_exemplars_main(
-            provider: &DataProvider,
-            locale: &Locale,
-        ) -> Result<Box<UnicodeSetData>, DataError> {
-            let locale = locale.to_datalocale();
-            Ok(Box::new(UnicodeSetData(call_constructor_unstable!(
-                icu_properties::exemplar_chars::exemplars_main,
-                icu_properties::exemplar_chars::load_exemplars_main,
-                provider,
-                &locale
-            )?)))
-        }
-
-        #[diplomat::rust_link(icu::properties::exemplar_chars::exemplars_auxiliary, Fn)]
-        #[diplomat::rust_link(
-            icu::properties::exemplar_chars::load_exemplars_auxiliary,
-            Fn,
-            hidden
-        )]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "exemplars_auxiliary")]
-        pub fn load_exemplars_auxiliary(
-            provider: &DataProvider,
-            locale: &Locale,
-        ) -> Result<Box<UnicodeSetData>, DataError> {
-            let locale = locale.to_datalocale();
-            Ok(Box::new(UnicodeSetData(call_constructor_unstable!(
-                icu_properties::exemplar_chars::exemplars_auxiliary,
-                icu_properties::exemplar_chars::load_exemplars_auxiliary,
-                provider,
-                &locale
-            )?)))
-        }
-
-        #[diplomat::rust_link(icu::properties::exemplar_chars::exemplars_punctuation, Fn)]
-        #[diplomat::rust_link(
-            icu::properties::exemplar_chars::load_exemplars_punctuation,
-            Fn,
-            hidden
-        )]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "exemplars_punctuation")]
-        pub fn load_exemplars_punctuation(
-            provider: &DataProvider,
-            locale: &Locale,
-        ) -> Result<Box<UnicodeSetData>, DataError> {
-            let locale = locale.to_datalocale();
-            Ok(Box::new(UnicodeSetData(call_constructor_unstable!(
-                icu_properties::exemplar_chars::exemplars_punctuation,
-                icu_properties::exemplar_chars::load_exemplars_punctuation,
-                provider,
-                &locale
-            )?)))
-        }
-
-        #[diplomat::rust_link(icu::properties::exemplar_chars::exemplars_numbers, Fn)]
-        #[diplomat::rust_link(icu::properties::exemplar_chars::load_exemplars_numbers, Fn, hidden)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "exemplars_numbers")]
-        pub fn load_exemplars_numbers(
-            provider: &DataProvider,
-            locale: &Locale,
-        ) -> Result<Box<UnicodeSetData>, DataError> {
-            let locale = locale.to_datalocale();
-            Ok(Box::new(UnicodeSetData(call_constructor_unstable!(
-                icu_properties::exemplar_chars::exemplars_numbers,
-                icu_properties::exemplar_chars::load_exemplars_numbers,
-                provider,
-                &locale
-            )?)))
-        }
-
-        #[diplomat::rust_link(icu::properties::exemplar_chars::exemplars_index, Fn)]
-        #[diplomat::rust_link(icu::properties::exemplar_chars::load_exemplars_index, Fn, hidden)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "exemplars_index")]
-        pub fn load_exemplars_index(
-            provider: &DataProvider,
-            locale: &Locale,
-        ) -> Result<Box<UnicodeSetData>, DataError> {
-            let locale = locale.to_datalocale();
-            Ok(Box::new(UnicodeSetData(call_constructor_unstable!(
-                icu_properties::exemplar_chars::exemplars_index,
-                icu_properties::exemplar_chars::load_exemplars_index,
-                provider,
-                &locale
             )?)))
         }
     }

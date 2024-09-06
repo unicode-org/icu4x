@@ -54,6 +54,7 @@ part 'DisplayNamesFallback.g.dart';
 part 'DisplayNamesOptions.g.dart';
 part 'DisplayNamesStyle.g.dart';
 part 'Error.g.dart';
+part 'ExemplarCharacters.g.dart';
 part 'FixedDecimal.g.dart';
 part 'FixedDecimalFormatter.g.dart';
 part 'FixedDecimalGroupingStrategy.g.dart';

@@ -2,13 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#include <icu4x/CodePointSetData.hpp>
-#include <icu4x/UnicodeSetData.hpp>
 #include <icu4x/CodePointMapData16.hpp>
 #include <icu4x/CodePointMapData8.hpp>
-#include <icu4x/PropertyValueNameToEnumMapper.hpp>
+#include <icu4x/CodePointSetData.hpp>
+#include <icu4x/ExemplarCharacters.hpp>
 #include <icu4x/GeneralCategoryNameToMaskMapper.hpp>
 #include <icu4x/Logger.hpp>
+#include <icu4x/PropertyValueNameToEnumMapper.hpp>
+#include <icu4x/UnicodeSetData.hpp>
 
 #include <iostream>
 
@@ -120,7 +121,7 @@ int main() {
         std::cout << "Basic_Emoji set contains appropriate characters" << std::endl;
     }
     std::unique_ptr<Locale> locale = Locale::from_string("bn").ok().value();
-    std::unique_ptr<UnicodeSetData> exemplars = UnicodeSetData::load_exemplars_main(*dp.get(), *locale.get()).ok().value();
+    std::unique_ptr<ExemplarCharacters> exemplars = ExemplarCharacters::try_new_main(*dp.get(), *locale.get()).ok().value();
     if (!exemplars->contains_char(U'ব')) {
         std::cout << "Character 'ব' not found in Bangla exemplar chars set" << std::endl;
         result = 1;
