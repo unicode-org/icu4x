@@ -376,31 +376,21 @@ impl Transliterator {
                 // 1. Insert a placeholder to avoid infinite recursion.
                 env.insert(dep.to_string(), InternalTransliterator::Null);
                 // 2. Load the transliterator, by checking
-                let mut internal_t = None;
-                // a) hardcoded specials
-                if let Some(special) = dep.strip_prefix("x-") {
-                    internal_t = Transliterator::load_special(special, normalizer_provider)?;
-                }
-                // b) the user-provided override
-                if let Some(lookup) = lookup {
-                    if internal_t.is_none() {
-                        if let Ok(locale) = dep.parse() {
-                            internal_t = Transliterator::load_with_override(&locale, lookup)?;
-                        }
-                    }
-                }
-                // c) the data
-                let internal_t = match internal_t {
-                    Some(t) => t,
-                    None => {
+                let internal_t = dep
+                    // a) hardcoded specials
+                    .strip_prefix("x-")
+                    .map(|special| Transliterator::load_special(special, normalizer_provider))
+                    // b) the user-provided override
+                    .or_else(|| Transliterator::load_with_override(&dep, lookup?).transpose())
+                    // c) the data
+                    .unwrap_or_else(|| {
                         let rbt = Transliterator::load_rbt(
                             #[allow(clippy::unwrap_used)] // infallible
                             DataMarkerAttributes::try_from_str(&dep.to_ascii_lowercase()).unwrap(),
                             transliterator_provider,
                         )?;
-                        InternalTransliterator::RuleBased(rbt)
-                    }
-                };
+                        Ok(InternalTransliterator::RuleBased(rbt))
+                    })?;
                 if let InternalTransliterator::RuleBased(rbt) = &internal_t {
                     // 3. Recursively load the dependencies of the dependency.
                     Self::load_dependencies_recursive(
@@ -421,7 +411,7 @@ impl Transliterator {
     fn load_special<P>(
         special: &str,
         normalizer_provider: &P,
-    ) -> Result<Option<InternalTransliterator>, DataError>
+    ) -> Result<InternalTransliterator, DataError>
     where
         P: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<CompatibilityDecompositionSupplementV1Marker>
@@ -432,47 +422,51 @@ impl Transliterator {
     {
         // TODO(#3909, #3910): add more
         match special {
-            "any-nfc" => Ok(Some(InternalTransliterator::Composing(
+            "any-nfc" => Ok(InternalTransliterator::Composing(
                 ComposingTransliterator::try_nfc(normalizer_provider)?,
-            ))),
-            "any-nfkc" => Ok(Some(InternalTransliterator::Composing(
+            )),
+            "any-nfkc" => Ok(InternalTransliterator::Composing(
                 ComposingTransliterator::try_nfkc(normalizer_provider)?,
-            ))),
-            "any-nfd" => Ok(Some(InternalTransliterator::Decomposing(
+            )),
+            "any-nfd" => Ok(InternalTransliterator::Decomposing(
                 DecomposingTransliterator::try_nfd(normalizer_provider)?,
-            ))),
-            "any-nfkd" => Ok(Some(InternalTransliterator::Decomposing(
+            )),
+            "any-nfkd" => Ok(InternalTransliterator::Decomposing(
                 DecomposingTransliterator::try_nfkd(normalizer_provider)?,
-            ))),
-            "any-null" => Ok(Some(InternalTransliterator::Null)),
-            "any-remove" => Ok(Some(InternalTransliterator::Remove)),
-            "any-hex/unicode" => Ok(Some(InternalTransliterator::Hex(
+            )),
+            "any-null" => Ok(InternalTransliterator::Null),
+            "any-remove" => Ok(InternalTransliterator::Remove),
+            "any-hex/unicode" => Ok(InternalTransliterator::Hex(
                 hardcoded::HexTransliterator::new("U+", "", 4, Case::Upper),
-            ))),
-            "any-hex/rust" => Ok(Some(InternalTransliterator::Hex(
+            )),
+            "any-hex/rust" => Ok(InternalTransliterator::Hex(
                 hardcoded::HexTransliterator::new("\\u{", "}", 2, Case::Lower),
-            ))),
-            "any-hex/xml" => Ok(Some(InternalTransliterator::Hex(
+            )),
+            "any-hex/xml" => Ok(InternalTransliterator::Hex(
                 hardcoded::HexTransliterator::new("&#x", ";", 1, Case::Upper),
-            ))),
-            "any-hex/perl" => Ok(Some(InternalTransliterator::Hex(
+            )),
+            "any-hex/perl" => Ok(InternalTransliterator::Hex(
                 hardcoded::HexTransliterator::new("\\x{", "}", 1, Case::Upper),
-            ))),
-            "any-hex/plain" => Ok(Some(InternalTransliterator::Hex(
+            )),
+            "any-hex/plain" => Ok(InternalTransliterator::Hex(
                 hardcoded::HexTransliterator::new("", "", 4, Case::Upper),
-            ))),
-            _ => Ok(None),
+            )),
+            s => Err(DataError::custom("unavailable transliterator").with_debug_context(s)),
         }
     }
 
     fn load_with_override<F>(
-        locale: &Locale,
+        id: &str,
         lookup: &F,
     ) -> Result<Option<InternalTransliterator>, DataError>
     where
         F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
     {
-        Ok(lookup(locale).map(InternalTransliterator::Dyn))
+        let locale: Locale = id.parse().map_err(|e| {
+            DataError::custom("invalid data: transliterator dependency is not a valid Locale")
+                .with_debug_context(&e)
+        })?;
+        Ok(lookup(&locale).map(InternalTransliterator::Dyn))
     }
 
     fn load_rbt<P>(
