@@ -117,6 +117,7 @@ lazy_static::lazy_static! {
         // Largely for use by datetimeformat, not generally useful
         "icu::calendar::AnyCalendar::convert_any_date",
         "icu::calendar::AnyCalendar::convert_any_datetime",
+        "icu::calendar::Date::formattable_year",
 
         // Individual calendars: Currently the main entry point is AnyCalendar
         // We have chosen to not do individual calendars (except Iso) over FFI
@@ -179,6 +180,8 @@ lazy_static::lazy_static! {
         // useful information to clients.
         "icu::calendar::types::FormattableMonth",
         "icu::calendar::types::FormattableYear",
+        "icu::calendar::types::FormattableYearKind",
+        "icu::calendar::types::YearInfo",
         "icu::calendar::types::DayOfYearInfo",
 
         // Punted post 1.0: not strongly needed yet and don't want to lock in a solution
