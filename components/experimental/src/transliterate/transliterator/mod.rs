@@ -205,13 +205,7 @@ type Env = LiteMap<String, InternalTransliterator>;
 /// let provider = collection.as_provider();
 /// let t = Transliterator::try_new_with_override_unstable(
 ///     "und-t-und-x0-custom".parse().unwrap(),
-///     |locale| {
-///         if locale.normalizing_eq("und-t-und-x0-dep2") {
-///             Some(Box::new(AsciiUpperTransliterator))
-///         } else {
-///             None
-///         }
-///     },
+///     |locale| locale.normalizing_eq("und-t-und-x0-dep2").then_some(Ok(Box::new(AsciiUpperTransliterator))),
 ///     &provider,
 /// )
 /// .unwrap();
