@@ -197,10 +197,6 @@ impl Calendar for Indian {
         types::YearInfo::new(date.0.year, tinystr!(16, "saka"), date.0.year)
     }
 
-    fn formattable_year(&self, date: &Self::DateInner) -> types::FormattableYear {
-        self.year(date).into()
-    }
-
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
         Self::is_leap_year(date.0.year, ())
     }
@@ -215,9 +211,9 @@ impl Calendar for Indian {
 
     fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
         let prev_year =
-            types::FormattableYear::new_era(date.0.year - 1, tinystr!(16, "saka"), date.0.year - 1);
+            types::YearInfo::new(date.0.year - 1, tinystr!(16, "saka"), date.0.year - 1);
         let next_year =
-            types::FormattableYear::new_era(date.0.year + 1, tinystr!(16, "saka"), date.0.year + 1);
+            types::YearInfo::new(date.0.year + 1, tinystr!(16, "saka"), date.0.year + 1);
 
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),

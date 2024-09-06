@@ -196,10 +196,7 @@ impl Calendar for Iso {
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
         Self::year_as_iso(date.0.year)
     }
-    /// The calendar-specific year represented by `date`
-    fn formattable_year(&self, date: &Self::DateInner) -> types::FormattableYear {
-        Self::year_as_iso(date.0.year).into()
-    }
+
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
         Self::is_leap_year(date.0.year, ())
     }

@@ -474,7 +474,7 @@ where
 impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<FormattableYear> for Date<A> {
     #[inline]
     fn get_field(&self) -> FormattableYear {
-        self.formattable_year()
+        self.year()
     }
 }
 
@@ -544,7 +544,7 @@ impl NeoGetField<NanoSecond> for Time {
 impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<FormattableYear> for DateTime<A> {
     #[inline]
     fn get_field(&self) -> FormattableYear {
-        self.date.formattable_year()
+        self.date.year()
     }
 }
 
@@ -616,7 +616,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<FormattableYear>
 {
     #[inline]
     fn get_field(&self) -> FormattableYear {
-        self.date.formattable_year()
+        self.date.year()
     }
 }
 

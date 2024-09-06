@@ -33,40 +33,20 @@ impl Era {
     }
 }
 
-/// General information about a year, needed by Temporal.
-///
-/// More fields may be added in the future for things like extended year
+/// General information about a year
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[non_exhaustive]
 pub struct YearInfo {
     /// The "extended year", typically anchored with year 1 as the year 1 of either the most modern or
     /// otherwise some "major" era for the calendar
     pub extended_year: i32,
-    /// The era containing the year.
-    ///
-    /// This may not always be the canonical era for the calendar and could be an alias,
-    /// for example all `islamic` calendars return `islamic` as the formattable era code
-    /// which allows them to share data.
-    pub era: Era,
-
-    /// The year number in the current era (usually 1-based).
-    pub number: i32,
-}
-
-/// Representation of a year as needed for formatting
-#[derive(Copy, Clone, Debug, PartialEq)]
-#[non_exhaustive]
-pub struct FormattableYear {
-    /// The "extended year", typically anchored with year 1 as the year 1 of either the most modern or
-    /// otherwise some "major" era for the calendar
-    pub extended_year: i32,
-    /// The rest of the details about the year.
-    pub kind: FormattableYearKind,
+    /// The rest of the details about the year
+    pub kind: YearKind,
 }
 
 /// The type of year: Calendars like Chinese don't have an era and instead format with cyclic years.
 #[derive(Copy, Clone, Debug, PartialEq)]
-pub enum FormattableYearKind {
+pub enum YearKind {
     /// An era and a year in that era
     EraYear {
         /// The era
@@ -91,18 +71,7 @@ impl YearInfo {
     pub fn new(extended_year: i32, era: TinyStr16, number: i32) -> Self {
         Self {
             extended_year,
-            era: Era(era),
-            number,
-        }
-    }
-}
-
-impl FormattableYear {
-    /// Construct a new Year given an era and number
-    pub fn new_era(extended_year: i32, era: TinyStr16, number: i32) -> Self {
-        Self {
-            extended_year,
-            kind: FormattableYearKind::EraYear {
+            kind: YearKind::EraYear {
                 era: Era(era),
                 era_year: number,
             },
@@ -112,50 +81,42 @@ impl FormattableYear {
     pub fn new_cyclic(extended_year: i32, cycle: NonZeroU8, related_iso: i32) -> Self {
         Self {
             extended_year,
-            kind: FormattableYearKind::Cyclic {
+            kind: YearKind::Cyclic {
                 year: cycle,
                 related_iso,
             },
         }
     }
-
     /// Get *some* year number that can be displayed
     ///
     /// Gets the eraYear for era dates, otherwise falls back to Extended Year
     pub fn era_year_or_extended(self) -> i32 {
         match self.kind {
-            FormattableYearKind::EraYear { era_year, .. } => era_year,
-            FormattableYearKind::Cyclic { .. } => self.extended_year,
+            YearKind::EraYear { era_year, .. } => era_year,
+            YearKind::Cyclic { .. } => self.extended_year,
         }
     }
 
     /// Return the cyclic year, if any
     pub fn cyclic(self) -> Option<NonZeroU8> {
         match self.kind {
-            FormattableYearKind::EraYear { .. } => None,
-            FormattableYearKind::Cyclic { year, .. } => Some(year),
+            YearKind::EraYear { .. } => None,
+            YearKind::Cyclic { year, .. } => Some(year),
         }
     }
     /// Return the Related ISO year, if any
     pub fn related_iso(self) -> Option<i32> {
         match self.kind {
-            FormattableYearKind::EraYear { .. } => None,
-            FormattableYearKind::Cyclic { related_iso, .. } => Some(related_iso),
+            YearKind::EraYear { .. } => None,
+            YearKind::Cyclic { related_iso, .. } => Some(related_iso),
         }
     }
     /// Return the era, or "unknown" for cyclic years
     pub fn era_or_unknown(self) -> Era {
         match self.kind {
-            FormattableYearKind::EraYear { era, .. } => era,
-            FormattableYearKind::Cyclic { .. } => Era::unknown(),
+            YearKind::EraYear { era, .. } => era,
+            YearKind::Cyclic { .. } => Era::unknown(),
         }
-    }
-}
-
-impl From<YearInfo> for FormattableYear {
-    #[inline]
-    fn from(x: YearInfo) -> FormattableYear {
-        FormattableYear::new_era(x.extended_year, x.era.0, x.number)
     }
 }
 
@@ -292,11 +253,11 @@ pub struct DayOfYearInfo {
     /// The number of days in a year.
     pub days_in_year: u16,
     /// The previous year.
-    pub prev_year: FormattableYear,
+    pub prev_year: YearInfo,
     /// The number of days in the previous year.
     pub days_in_prev_year: u16,
     /// The next year.
-    pub next_year: FormattableYear,
+    pub next_year: YearInfo,
 }
 
 /// A day number in a month. Usually 1-based.

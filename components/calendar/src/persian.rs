@@ -164,9 +164,6 @@ impl Calendar for Persian {
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
         Self::year_as_persian(date.0.year)
     }
-    fn formattable_year(&self, date: &Self::DateInner) -> types::FormattableYear {
-        Self::year_as_persian(date.0.year).into()
-    }
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
         Self::is_leap_year(date.0.year, ())
     }

@@ -155,9 +155,6 @@ impl Calendar for Roc {
     fn year(&self, date: &Self::DateInner) -> crate::types::YearInfo {
         year_as_roc(date.0 .0.year as i64)
     }
-    fn formattable_year(&self, date: &Self::DateInner) -> crate::types::FormattableYear {
-        year_as_roc(date.0 .0.year as i64).into()
-    }
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
         Iso.is_in_leap_year(&date.0)
     }

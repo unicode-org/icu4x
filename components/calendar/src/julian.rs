@@ -182,12 +182,6 @@ impl Calendar for Julian {
         year_as_gregorian(date.0.year)
     }
 
-    /// The calendar-specific year represented by `date`
-    /// Julian has the same era scheme as Gregorian
-    fn formattable_year(&self, date: &Self::DateInner) -> types::FormattableYear {
-        year_as_gregorian(date.0.year).into()
-    }
-
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
         Self::is_leap_year(date.0.year, ())
     }

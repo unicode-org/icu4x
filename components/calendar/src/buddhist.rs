@@ -123,11 +123,6 @@ impl Calendar for Buddhist {
         iso_year_as_buddhist(date.0.year)
     }
 
-    /// The calendar-specific year represented by `date`
-    fn formattable_year(&self, date: &Self::DateInner) -> types::FormattableYear {
-        iso_year_as_buddhist(date.0.year).into()
-    }
-
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
         Iso.is_in_leap_year(date)
     }

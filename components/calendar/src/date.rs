@@ -209,13 +209,6 @@ impl<A: AsCalendar> Date<A> {
         self.calendar.as_calendar().year(&self.inner)
     }
 
-    /// The calendar-specific year represented by `self`, with information needed
-    /// for formatting
-    #[inline]
-    pub fn formattable_year(&self) -> types::FormattableYear {
-        self.calendar.as_calendar().formattable_year(&self.inner)
-    }
-
     /// Returns whether `self` is in a calendar-specific leap year
     #[inline]
     pub fn is_in_leap_year(&self) -> bool {
@@ -393,15 +386,24 @@ where
 
 impl<A: AsCalendar> fmt::Debug for Date<A> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
-        write!(
-            f,
-            "Date({}-{}-{}, {} era, for calendar {})",
-            self.year().number,
-            self.month().ordinal,
-            self.day_of_month().0,
-            self.year().era.0,
-            self.calendar.as_calendar().debug_name()
-        )
+        let month = self.month().ordinal;
+        let day = self.day_of_month().0;
+        let calendar = self.calendar.as_calendar().debug_name();
+        match self.year().kind {
+            types::YearKind::EraYear { era, era_year } => {
+                let era = era.0;
+                write!(
+                    f,
+                    "Date({era_year}-{month}-{day}, {era} era, for calendar {calendar})"
+                )
+            }
+            types::YearKind::Cyclic { year, related_iso } => {
+                write!(
+                    f,
+                    "Date({year}-{month}-{day}, ISO year {related_iso}, for calendar {calendar})"
+                )
+            }
+        }
     }
 }
 

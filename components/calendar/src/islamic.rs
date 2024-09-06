@@ -512,9 +512,6 @@ impl Calendar for IslamicObservational {
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
         year_as_islamic(date.0.year)
     }
-    fn formattable_year(&self, date: &Self::DateInner) -> types::FormattableYear {
-        year_as_islamic(date.0.year).into()
-    }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
         Self::is_leap_year(date.0.year, date.0.year_info)
@@ -739,9 +736,6 @@ impl Calendar for IslamicUmmAlQura {
 
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
         year_as_islamic(date.0.year)
-    }
-    fn formattable_year(&self, date: &Self::DateInner) -> types::FormattableYear {
-        year_as_islamic(date.0.year).into()
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -968,9 +962,6 @@ impl Calendar for IslamicCivil {
 
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
         year_as_islamic(date.0.year)
-    }
-    fn formattable_year(&self, date: &Self::DateInner) -> types::FormattableYear {
-        year_as_islamic(date.0.year).into()
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -1205,9 +1196,6 @@ impl Calendar for IslamicTabular {
 
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
         year_as_islamic(date.0.year)
-    }
-    fn formattable_year(&self, date: &Self::DateInner) -> types::FormattableYear {
-        year_as_islamic(date.0.year).into()
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {

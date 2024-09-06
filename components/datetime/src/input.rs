@@ -363,7 +363,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> DateInput for Date<A> {
     type Calendar = C;
     /// Gets the era and year input.
     fn year(&self) -> Option<FormattableYear> {
-        Some(self.formattable_year())
+        Some(self.year())
     }
 
     /// Gets the month input.
@@ -399,7 +399,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> DateInput for DateTime<A> {
     type Calendar = C;
     /// Gets the era and year input.
     fn year(&self) -> Option<FormattableYear> {
-        Some(self.date.formattable_year())
+        Some(self.date.year())
     }
 
     /// Gets the month input.
