@@ -118,24 +118,33 @@ where
     }
 
     unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
-        // Safety: The DST of VarTupleULE is a pointer to the `sized` element and has a metadata
-        // equal to the metadata of the `variable` field.
         #[allow(clippy::panic)] // panic is documented in function contract
         if bytes.len() < size_of::<A::ULE>() {
             panic!("from_byte_slice_unchecked called with short slice")
         }
         let (_sized_chunk, variable_chunk) = bytes.split_at(size_of::<A::ULE>());
+        // Safety: variable_chunk is a valid V because of this function's precondition: bytes is a valid Self,
+        // and a valid Self contains a valid V after the space needed for A::ULE.
         let variable_ref = V::from_byte_slice_unchecked(variable_chunk);
         let variable_ptr: *const V = variable_ref;
+
+        // Safety: The DST of VarTupleULE is a pointer to the `sized` element and has a metadata
+        // equal to the metadata of the `variable` field (see "Representation" comments on the impl).
+
         // We should use the pointer metadata APIs here when they are stable: https://github.com/rust-lang/rust/issues/81513
-        // For now we rely on all DST metadata being a usize to extract it via a fake slice pointer
+        // For now we rely on all DST metadata being a usize.
+
+        // Extract metadata from V's DST
         // Rust doesn't know that `&V` is a fat pointer so we have to use transmute_copy
-        debug_assert_eq!(size_of::<*const V>(), size_of::<*const [u8]>());
-        let variable_fat_ptr: *const [u8] = core::mem::transmute_copy(&variable_ptr);
-        let (_ptr, metadata): (usize, usize) = core::mem::transmute(variable_fat_ptr);
-        let composed_fat_ptr: *const [u8] = core::slice::from_raw_parts(bytes.as_ptr(), metadata);
-        debug_assert_eq!(size_of::<*const Self>(), size_of::<*const [u8]>());
-        let composed_ref: *const Self = core::mem::transmute_copy(&composed_fat_ptr);
+        assert_eq!(size_of::<*const V>(), size_of::<(*const u8, usize)>());
+        // Safety: We have asserted that the transmute Src and Dst are the same size. Furthermore,
+        // DST pointers are a pointer and usize length metadata
+        let (_v_ptr, metadata) = core::mem::transmute_copy::<*const V, (*const u8, usize)>(&variable_ptr);
+
+        // Construct a new DST with the same metadata as V
+        assert_eq!(size_of::<*const Self>(), size_of::<(*const u8, usize)>());
+        // Safety: Same as above but in the other direction.
+        let composed_ptr = core::mem::transmute_copy::<(*const u8, usize), *const Self>(&(bytes.as_ptr(), metadata));
         &*(composed_ref)
     }
 }
