@@ -133,19 +133,19 @@ pub mod ffi {
         ///
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
-        #[diplomat::rust_link(icu::collator::Collator::compare_utf8, FnInStruct)]
-        #[diplomat::rust_link(icu::collator::Collator::compare, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::collator::CollatorBorrowed::compare_utf8, FnInStruct)]
+        #[diplomat::rust_link(icu::collator::CollatorBorrowed::compare, FnInStruct, hidden)]
         #[diplomat::attr(not(supports = utf8_strings), disable)]
         #[diplomat::attr(supports = utf8_strings, rename = "compare")]
         pub fn compare_utf8(&self, left: &DiplomatStr, right: &DiplomatStr) -> core::cmp::Ordering {
-            self.0.compare_utf8(left, right)
+            self.0.as_borrowed().compare_utf8(left, right)
         }
 
         /// Compare two strings.
         ///
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
-        #[diplomat::rust_link(icu::collator::Collator::compare_utf16, FnInStruct)]
+        #[diplomat::rust_link(icu::collator::CollatorBorrowed::compare_utf16, FnInStruct)]
         #[diplomat::attr(not(supports = utf8_strings), rename = "compare")]
         #[diplomat::attr(supports = utf8_strings, rename = "compare16")]
         pub fn compare_utf16(
@@ -153,17 +153,17 @@ pub mod ffi {
             left: &DiplomatStr16,
             right: &DiplomatStr16,
         ) -> core::cmp::Ordering {
-            self.0.compare_utf16(left, right)
+            self.0.as_borrowed().compare_utf16(left, right)
         }
 
         /// The resolved options showing how the default options, the requested options,
         /// and the options from locale data were combined. None of the struct fields
         /// will have `Auto` as the value.
-        #[diplomat::rust_link(icu::collator::Collator::resolved_options, FnInStruct)]
+        #[diplomat::rust_link(icu::collator::CollatorBorrowed::resolved_options, FnInStruct)]
         #[diplomat::attr(auto, getter)]
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "resolved_options")]
         pub fn resolved_options_v1(&self) -> CollatorResolvedOptionsV1 {
-            self.0.resolved_options().into()
+            self.0.as_borrowed().resolved_options().into()
         }
     }
 }
