@@ -57,6 +57,7 @@ use super::{AsULE, EncodeAsVarULE, UleError, VarULE, ULE};
 ///
 /// See the module for examples.
 #[derive(Debug)]
+#[allow(clippy::exhaustive_structs)] // well-defined type
 pub struct VarTuple<A, B> {
     pub sized: A,
     pub variable: B,
@@ -66,6 +67,7 @@ pub struct VarTuple<A, B> {
 ///
 /// See the module for examples.
 #[derive(Debug)]
+#[allow(clippy::exhaustive_structs)] // well-defined type
 pub struct VarTupleULE<A: AsULE, V: ?Sized> {
     pub sized: A::ULE,
     pub variable: V,
@@ -143,7 +145,7 @@ where
     fn encode_var_ule_write(&self, dst: &mut [u8]) {
         // TODO: use split_first_chunk_mut in 1.77
         let (sized_chunk, variable_chunk) = dst.split_at_mut(size_of::<A::ULE>());
-        sized_chunk.clone_from_slice(&[self.sized.to_unaligned()].as_byte_slice());
+        sized_chunk.clone_from_slice([self.sized.to_unaligned()].as_byte_slice());
         self.variable.encode_var_ule_write(variable_chunk);
     }
 }
