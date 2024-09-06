@@ -244,7 +244,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// options.month = Some(components::Month::Long);
     /// options.hour = Some(components::Numeric::Numeric);
     /// options.minute = Some(components::Numeric::Numeric);
-    /// options.time_zone_name = Some(components::TimeZoneName::GmtOffset);
+    /// options.time_zone_name = Some(components::TimeZoneName::Offset);
     ///
     /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_experimental(
     ///     &locale!("en").into(),

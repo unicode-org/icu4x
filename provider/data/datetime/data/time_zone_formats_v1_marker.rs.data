@@ -21,8 +21,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                 values: &[
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0}-tyd"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -32,8 +32,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HHmm"), alloc::borrow::Cow::Borrowed("-HHmm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("ጂ ኤም ቲ{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("ጂ ኤም ቲ"),
+                        offset_format: alloc::borrow::Cow::Borrowed("ጂ ኤም ቲ{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("ጂ ኤም ቲ"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} ጊዜ"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -43,8 +43,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("غرينتش{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("غرينتش"),
+                        offset_format: alloc::borrow::Cow::Borrowed("غرينتش{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("غرينتش"),
                         region_format: alloc::borrow::Cow::Borrowed("توقيت {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -54,8 +54,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} সময\u{9bc}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -65,8 +65,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("Hora de {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -76,8 +76,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} Vaxtı"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -87,8 +87,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("Час: {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -98,8 +98,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("Гринуич{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("Гринуич"),
+                        offset_format: alloc::borrow::Cow::Borrowed("Гринуич{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("Гринуич"),
                         region_format: alloc::borrow::Cow::Borrowed("{0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -109,8 +109,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} समय"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -120,8 +120,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} टाइम"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -131,8 +131,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("{0} Gk"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("Gk"),
+                        offset_format: alloc::borrow::Cow::Borrowed("{0} Gk"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("Gk"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} kaakɔŋkɔŋɔ\u{300}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -142,8 +142,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT {0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT {0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} সময\u{9bc}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -153,8 +153,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("eur {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -164,8 +164,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("जि.एम.ति {0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("जि.एम.ति"),
+                        offset_format: alloc::borrow::Cow::Borrowed("जि.एम.ति {0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("जि.एम.ति"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} सम"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -175,8 +175,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed(" -HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT {0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT {0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -186,8 +186,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("Време: {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -197,8 +197,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("Hora de: {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -208,8 +208,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT {0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT {0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("Oras sa {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -219,8 +219,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} ᎠᏟᎢᎵᏒ"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -230,8 +230,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+H:mm"), alloc::borrow::Cow::Borrowed("-H:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("časové pásmo {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -241,8 +241,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} ᐁᐃᐢᐸᓂᐟ"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -252,8 +252,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -263,8 +263,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("Amser {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -274,8 +274,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH.mm"), alloc::borrow::Cow::Borrowed("-HH.mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0}-tid"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -285,8 +285,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} (Ortszeit)"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -296,8 +296,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} समा\u{902}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -307,8 +307,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("Casowe pasmo {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -318,8 +318,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("Ώρα ({0})"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -329,8 +329,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} Time"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -340,8 +340,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} Time"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -351,8 +351,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("UTC{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("UTC"),
+                        offset_format: alloc::borrow::Cow::Borrowed("UTC{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("UTC"),
                         region_format: alloc::borrow::Cow::Borrowed("tempo de {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -362,8 +362,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("hora de {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -373,8 +373,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("hora de {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -384,8 +384,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("−HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT {0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT {0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("({0})"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -395,8 +395,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("−HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} aldeko ordua"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -406,8 +406,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("\u{200e}+HH:mm"), alloc::borrow::Cow::Borrowed("\u{200e}−HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("{0} گرینویچ"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("گرینویچ"),
+                        offset_format: alloc::borrow::Cow::Borrowed("{0} گرینویچ"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("گرینویچ"),
                         region_format: alloc::borrow::Cow::Borrowed("وقت {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -417,8 +417,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("𞤑𞤖𞤘{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("𞤑𞤖𞤘"),
+                        offset_format: alloc::borrow::Cow::Borrowed("𞤑𞤖𞤘{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("𞤑𞤖𞤘"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} 𞤑𞤭𞤶𞤮\u{1e945}𞤪𞤫"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -428,8 +428,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+H.mm"), alloc::borrow::Cow::Borrowed("-H.mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("UTC{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("UTC"),
+                        offset_format: alloc::borrow::Cow::Borrowed("UTC{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("UTC"),
                         region_format: alloc::borrow::Cow::Borrowed("aikavyöhyke: {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -439,8 +439,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("Oras sa {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -450,8 +450,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} tíð"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -461,8 +461,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("−HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("UTC{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("UTC"),
+                        offset_format: alloc::borrow::Cow::Borrowed("UTC{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("UTC"),
                         region_format: alloc::borrow::Cow::Borrowed("heure : {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -472,8 +472,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("−HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("UTC{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("UTC"),
+                        offset_format: alloc::borrow::Cow::Borrowed("UTC{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("UTC"),
                         region_format: alloc::borrow::Cow::Borrowed("heure : {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -483,8 +483,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0}-tiid"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -494,8 +494,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("MAG{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("MAG"),
+                        offset_format: alloc::borrow::Cow::Borrowed("MAG{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("MAG"),
                         region_format: alloc::borrow::Cow::Borrowed("{0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -505,8 +505,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -516,8 +516,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("hora de: {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -527,8 +527,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} સમય"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -538,8 +538,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} Lokaci"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -549,8 +549,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("\u{200e}+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm\u{200e}")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}\u{200e}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}\u{200e}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("שעון {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -560,8 +560,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} समय"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -571,8 +571,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed(" -HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -582,8 +582,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("časowe pasmo {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -593,8 +593,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} idő"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -604,8 +604,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("hora de {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -615,8 +615,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH.mm"), alloc::borrow::Cow::Borrowed("-HH.mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("Waktu {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -626,8 +626,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("TMG{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("TMG"),
+                        offset_format: alloc::borrow::Cow::Borrowed("TMG{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("TMG"),
                         region_format: alloc::borrow::Cow::Borrowed("témpor de {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -637,8 +637,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("Oge {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -648,8 +648,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -659,8 +659,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("Ora {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -670,8 +670,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0}時間"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -681,8 +681,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("Wektu {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -692,8 +692,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("დრო: {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -703,8 +703,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("Ora di {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -714,8 +714,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("Óra kar {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -725,8 +725,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} уақыты"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -736,8 +736,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("ម\u{17c9}ោង\u{200b}សកល {0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("ម\u{17c9}ោង\u{200b}សកល"),
+                        offset_format: alloc::borrow::Cow::Borrowed("ម\u{17c9}ោង\u{200b}សកល {0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("ម\u{17c9}ោង\u{200b}សកល"),
                         region_format: alloc::borrow::Cow::Borrowed("ម\u{17c9}ោង\u{200b}នៅ\u{200b} {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -747,8 +747,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} ಸಮಯ"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -758,8 +758,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} 시간"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -769,8 +769,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} व\u{947}ळ"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -780,8 +780,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("جی ایم ٹی"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("جی ایم ٹی"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} و\u{64e}کھ"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -791,8 +791,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("जी एम टी {0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("जी एम टी"),
+                        offset_format: alloc::borrow::Cow::Borrowed("जी एम टी {0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("जी एम टी"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} वख"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -802,8 +802,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("Saeta {0}(y)ê"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -813,8 +813,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} belā"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -824,8 +824,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} ब\u{947}ला"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -835,8 +835,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} ବେଲ\u{b3e}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -846,8 +846,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} సమయం"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -857,8 +857,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} убактысы"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -868,8 +868,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} Zäit"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -879,8 +879,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("−HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("UTC{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("UTC"),
+                        offset_format: alloc::borrow::Cow::Borrowed("UTC{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("UTC"),
                         region_format: alloc::borrow::Cow::Borrowed("oa: {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -890,8 +890,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("ເວລາ {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -901,8 +901,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("−HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("Laikas: {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -912,8 +912,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("Laika josla: {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -923,8 +923,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("जीएमटी{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("जीएमटी"),
+                        offset_format: alloc::borrow::Cow::Borrowed("जीएमटी{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("जीएमटी"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} समय"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -934,8 +934,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} Wā"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -945,8 +945,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("Време во {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -956,8 +956,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("ജിഎംടി {0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("ജിഎംടി"),
+                        offset_format: alloc::borrow::Cow::Borrowed("ജിഎംടി {0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("ജിഎംടി"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} സമയം"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -967,8 +967,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0}-н цаг"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -978,8 +978,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("জি এম টি {0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("জি এম টি"),
+                        offset_format: alloc::borrow::Cow::Borrowed("জি এম টি {0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("জি এম টি"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} ট\u{9be}ইম"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -989,8 +989,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("[GMT]{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("[GMT]"),
+                        offset_format: alloc::borrow::Cow::Borrowed("[GMT]{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("[GMT]"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} व\u{947}ळ"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1000,8 +1000,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("Waktu {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1011,8 +1011,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH.mm"), alloc::borrow::Cow::Borrowed("-HH.mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("Waktu {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1022,8 +1022,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("Ħin ta’ {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1033,8 +1033,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} အချ\u{102d}န\u{103a}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1044,8 +1044,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH.mm"), alloc::borrow::Cow::Borrowed("-HH.mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("UTC{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("UTC"),
+                        offset_format: alloc::borrow::Cow::Borrowed("UTC{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("UTC"),
                         region_format: alloc::borrow::Cow::Borrowed("{0}-Tiet"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1055,8 +1055,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} समय"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1066,8 +1066,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("tijd in {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1077,8 +1077,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("tidssone for {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1088,8 +1088,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("tidssone for {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1099,8 +1099,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("ߜ\u{7ed}ߕߖ{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("ߜ\u{7ed}ߕߖ"),
+                        offset_format: alloc::borrow::Cow::Borrowed("ߜ\u{7ed}ߕߖ{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("ߜ\u{7ed}ߕߖ"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} ߕߎ\u{7ec}ߡߊ"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1110,8 +1110,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("UTC{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("UTC"),
+                        offset_format: alloc::borrow::Cow::Borrowed("UTC{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("UTC"),
                         region_format: alloc::borrow::Cow::Borrowed("ora de {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1121,8 +1121,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} ସମୟ"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1132,8 +1132,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} ਵ\u{a47}ਲਾ"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1143,8 +1143,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} Taim"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1154,8 +1154,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("czas: {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1165,8 +1165,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("Kerdā: {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1176,8 +1176,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("د {0} په وخت"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1187,8 +1187,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("Horário {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1198,8 +1198,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("Hora de {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1209,8 +1209,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("temp: {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1220,8 +1220,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("Ora din {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1231,8 +1231,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1242,8 +1242,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("जी.एम.टी. {0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("जी.एम.टी."),
+                        offset_format: alloc::borrow::Cow::Borrowed("जी.एम.टी. {0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("जी.एम.टी."),
                         region_format: alloc::borrow::Cow::Borrowed("{0} समय:"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1253,8 +1253,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("ᱡᱤᱮᱢᱴᱤ{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("ᱡᱤᱮᱢᱴᱤ"),
+                        offset_format: alloc::borrow::Cow::Borrowed("ᱡᱤᱮᱢᱴᱤ{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("ᱡᱤᱮᱢᱴᱤ"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} ᱚᱠᱛᱚ"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1264,8 +1264,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("Ora {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1275,8 +1275,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} وقت"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1286,8 +1286,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("जीएमटी{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("जीएमटी"),
+                        offset_format: alloc::borrow::Cow::Borrowed("जीएमटी{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("जीएमटी"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} वक\u{94d}त"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1297,8 +1297,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH.mm"), alloc::borrow::Cow::Borrowed("-HH.mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("ග\u{dca}\u{200d}ර\u{dd2}මවේ{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("ග\u{dca}\u{200d}ර\u{dd2}මවේ"),
+                        offset_format: alloc::borrow::Cow::Borrowed("ග\u{dca}\u{200d}ර\u{dd2}මවේ{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("ග\u{dca}\u{200d}ර\u{dd2}මවේ"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} වේල\u{dcf}ව"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1308,8 +1308,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("časové pásmo {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1319,8 +1319,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH.mm"), alloc::borrow::Cow::Borrowed("-HH.mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT {0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT {0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} čas"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1330,8 +1330,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("Waqtiga {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1341,8 +1341,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("Ora: {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1352,8 +1352,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1363,8 +1363,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1374,8 +1374,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1385,8 +1385,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1396,8 +1396,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("−HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0}tid"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1407,8 +1407,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT {0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT {0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("Saa za {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1418,8 +1418,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("ܥܕܢܐ {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1429,8 +1429,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("czas: {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1440,8 +1440,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} நேரம\u{bcd}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1451,8 +1451,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("Вақти GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("Вақти GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("Вақти {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1462,8 +1462,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("เวลา{0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1473,8 +1473,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("ግዜ {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1484,8 +1484,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} wagty"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1495,8 +1495,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("Taimi {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1506,8 +1506,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} Saati"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1517,8 +1517,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} вакыты"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1528,8 +1528,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} ۋاقتى"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1539,8 +1539,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("час: {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1550,8 +1550,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1561,8 +1561,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT {0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT {0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} وقت"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1572,8 +1572,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} وقت"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1583,8 +1583,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} вақти"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1594,8 +1594,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("UTC{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("UTC"),
+                        offset_format: alloc::borrow::Cow::Borrowed("UTC{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("UTC"),
                         region_format: alloc::borrow::Cow::Borrowed("Ora {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1605,8 +1605,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("Giờ {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1616,8 +1616,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+H:mm"), alloc::borrow::Cow::Borrowed("-H:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("okathi wa {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1627,8 +1627,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("ग\u{94d}री॰ म\u{948}॰ ट\u{948}॰{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("ग\u{94d}री॰ म\u{948}॰ ट\u{948}॰{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} ट\u{948}म"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1638,8 +1638,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("WAT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("WAT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("WAT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("WAT"),
                         region_format: alloc::borrow::Cow::Borrowed("Ìgbà {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1649,8 +1649,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("WAT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("WAT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("WAT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("WAT"),
                         region_format: alloc::borrow::Cow::Borrowed("Ìgbà {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1660,8 +1660,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("Hurariyu {0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1671,8 +1671,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0}時間"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1682,8 +1682,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0}时间"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1693,8 +1693,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0} Sizgenh"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1704,8 +1704,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0}时间"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1715,8 +1715,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0}時間"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1726,8 +1726,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("{0}時間"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]
@@ -1737,8 +1737,8 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                     },
                     icu::datetime::provider::time_zones::TimeZoneFormatsV1 {
                         hour_format: (alloc::borrow::Cow::Borrowed("+HH:mm"), alloc::borrow::Cow::Borrowed("-HH:mm")),
-                        gmt_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
-                        gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+                        offset_format: alloc::borrow::Cow::Borrowed("GMT{0}"),
+                        offset_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
                         region_format: alloc::borrow::Cow::Borrowed("Isikhathi sase-{0}"),
                         region_format_variants: unsafe {
                             #[allow(unused_unsafe)]

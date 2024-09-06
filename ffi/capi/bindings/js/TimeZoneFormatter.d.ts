@@ -16,7 +16,7 @@ export class TimeZoneFormatter {
 
     get ffiValue(): pointer;
 
-    static createWithLocalizedGmtFallback(provider: DataProvider, locale: Locale): TimeZoneFormatter;
+    static createWithLocalizedOffsetFallback(provider: DataProvider, locale: Locale): TimeZoneFormatter;
 
     static createWithIso8601Fallback(provider: DataProvider, locale: Locale, options: IsoTimeZoneOptions): TimeZoneFormatter;
 
@@ -30,7 +30,7 @@ export class TimeZoneFormatter {
 
     loadGenericLocationFormat(provider: DataProvider): void;
 
-    includeLocalizedGmtFormat(): void;
+    includeLocalizedOffsetFormat(): void;
 
     loadIso8601Format(options: IsoTimeZoneOptions): void;
 

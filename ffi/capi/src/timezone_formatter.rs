@@ -74,13 +74,13 @@ pub mod ffi {
     impl TimeZoneFormatter {
         /// Creates a new [`TimeZoneFormatter`] from locale data.
         ///
-        /// Uses localized GMT as the fallback format.
+        /// Uses localized offset as the fallback format.
         #[diplomat::rust_link(icu::datetime::time_zone::TimeZoneFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::time_zone::FallbackFormat, Enum, compact)]
         #[diplomat::rust_link(icu::datetime::time_zone::TimeZoneFormatterOptions, Struct, hidden)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_localized_gmt_fallback")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_localized_offset_fallback")]
         #[diplomat::demo(default_constructor)]
-        pub fn create_with_localized_gmt_fallback(
+        pub fn create_with_localized_offset_fallback(
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<TimeZoneFormatter>, Error> {
@@ -92,7 +92,7 @@ pub mod ffi {
                 icu_datetime::time_zone::TimeZoneFormatter::try_new_with_buffer_provider,
                 provider,
                 &locale,
-                icu_datetime::time_zone::FallbackFormat::LocalizedGmt.into(),
+                icu_datetime::time_zone::FallbackFormat::LocalizedOffset.into(),
             )?)))
         }
 
@@ -235,18 +235,18 @@ pub mod ffi {
             Ok(())
         }
 
-        /// Loads localized GMT format. Example: "GMT-07:00"
+        /// Loads localized offset format. Example: "GMT-07:00"
         #[diplomat::rust_link(
-            icu::datetime::time_zone::TimeZoneFormatter::include_localized_gmt_format,
+            icu::datetime::time_zone::TimeZoneFormatter::include_localized_offset_format,
             FnInStruct
         )]
         #[diplomat::rust_link(
-            icu::datetime::time_zone::TimeZoneFormatter::load_localized_gmt_format,
+            icu::datetime::time_zone::TimeZoneFormatter::load_localized_offset_format,
             FnInStruct,
             hidden
         )]
-        pub fn include_localized_gmt_format(&mut self) -> Result<(), Error> {
-            self.0.include_localized_gmt_format()?;
+        pub fn include_localized_offset_format(&mut self) -> Result<(), Error> {
+            self.0.include_localized_offset_format()?;
             Ok(())
         }
 

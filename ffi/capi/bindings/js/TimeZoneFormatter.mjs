@@ -43,10 +43,10 @@ export class TimeZoneFormatter {
         return this.#ptr;
     }
 
-    static createWithLocalizedGmtFallback(provider, locale) {
+    static createWithLocalizedOffsetFallback(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_TimeZoneFormatter_create_with_localized_gmt_fallback_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_TimeZoneFormatter_create_with_localized_offset_fallback_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -173,10 +173,10 @@ export class TimeZoneFormatter {
         }
     }
 
-    includeLocalizedGmtFormat() {
+    includeLocalizedOffsetFormat() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_TimeZoneFormatter_include_localized_gmt_format_mv1(diplomatReceive.buffer, this.ffiValue);
+        const result = wasm.icu4x_TimeZoneFormatter_include_localized_offset_format_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {

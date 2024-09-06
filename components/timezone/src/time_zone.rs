@@ -5,15 +5,15 @@
 use crate::provider::{MetazoneId, TimeZoneBcp47Id};
 
 use crate::metazone::MetazoneCalculator;
-use crate::{GmtOffset, ZoneVariant};
 #[cfg(feature = "compiled_data")]
 use crate::{TimeZoneIdMapper, UnknownTimeZoneError};
+use crate::{UtcOffset, ZoneVariant};
 use icu_calendar::{DateTime, Iso};
 use tinystr::TinyAsciiStr;
 
 /// A utility type that can hold time zone information.
 ///
-/// The GMT offset is used as a final fallback for formatting. The other three fields are used
+/// The UTC offset is used as a final fallback for formatting. The other three fields are used
 /// for more human-friendly rendering of the time zone.
 ///
 /// This type does not enforce that the four fields are consistent with each other. If they do not
@@ -22,10 +22,10 @@ use tinystr::TinyAsciiStr;
 /// # Examples
 ///
 /// ```
-/// use icu::timezone::{CustomTimeZone, GmtOffset};
+/// use icu::timezone::{CustomTimeZone, UtcOffset};
 ///
 /// let tz1 = CustomTimeZone {
-///     gmt_offset: Some(GmtOffset::default()),
+///     offset: Some(UtcOffset::default()),
 ///     time_zone_id: None,
 ///     metazone_id: None,
 ///     zone_variant: None,
@@ -37,8 +37,8 @@ use tinystr::TinyAsciiStr;
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[allow(clippy::exhaustive_structs)] // these four fields fully cover the needs of UTS 35
 pub struct CustomTimeZone {
-    /// The GMT offset in seconds.
-    pub gmt_offset: Option<GmtOffset>,
+    /// The UTC offset.
+    pub offset: Option<UtcOffset>,
     /// The BCP47 time-zone identifier
     pub time_zone_id: Option<TimeZoneBcp47Id>,
     /// The CLDR metazone identifier
@@ -48,10 +48,10 @@ pub struct CustomTimeZone {
 }
 
 impl CustomTimeZone {
-    /// Creates a new [`CustomTimeZone`] with the given GMT offset.
-    pub const fn new_with_offset(gmt_offset: GmtOffset) -> Self {
+    /// Creates a new [`CustomTimeZone`] with the given UTC offset.
+    pub const fn new_with_offset(offset: UtcOffset) -> Self {
         Self {
-            gmt_offset: Some(gmt_offset),
+            offset: Some(offset),
             time_zone_id: None,
             metazone_id: None,
             zone_variant: None,
@@ -61,7 +61,7 @@ impl CustomTimeZone {
     /// Creates a new [`CustomTimeZone`] with a given BCP47 time zone identifier.
     pub const fn new_with_bcp47_id(time_zone_id: TimeZoneBcp47Id) -> Self {
         Self {
-            gmt_offset: None,
+            offset: None,
             time_zone_id: Some(time_zone_id),
             metazone_id: None,
             zone_variant: None,
@@ -73,7 +73,7 @@ impl CustomTimeZone {
     /// One or more fields must be specified before this time zone is usable.
     pub const fn new_empty() -> Self {
         Self {
-            gmt_offset: None,
+            offset: None,
             time_zone_id: None,
             metazone_id: None,
             zone_variant: None,
@@ -88,7 +88,7 @@ impl CustomTimeZone {
         zone_variant: TinyAsciiStr<2>,
     ) -> Self {
         Self {
-            gmt_offset: Some(GmtOffset::from_offset_eighths_of_hour(
+            offset: Some(UtcOffset::from_offset_eighths_of_hour(
                 offset_eighths_of_hour,
             )),
             time_zone_id: Some(TimeZoneBcp47Id(time_zone_id)),
@@ -97,23 +97,21 @@ impl CustomTimeZone {
         }
     }
 
-    /// Creates a new [`CustomTimeZone`] with the GMT offset set to UTC.
-    ///
-    /// All other fields are left empty.
+    /// Creates a new [`CustomTimeZone`] for the UTC time zone.
     pub const fn utc() -> Self {
         Self {
-            gmt_offset: Some(GmtOffset::zero()),
-            time_zone_id: None,
-            metazone_id: None,
-            zone_variant: None,
+            offset: Some(UtcOffset::zero()),
+            time_zone_id: Some(TimeZoneBcp47Id(tinystr::tinystr!(8, "Etc/UTC"))),
+            metazone_id: Some(MetazoneId(tinystr::tinystr!(4, "utc"))),
+            zone_variant: Some(ZoneVariant::standard()),
         }
     }
 
-    /// Parse a [`CustomTimeZone`] from a UTF-8 string representing a GMT Offset
+    /// Parse a [`CustomTimeZone`] from a UTF-8 string representing a UTC offset
     /// or an IANA time zone identifier.
     ///
     /// This is a convenience constructor that uses compiled data. For a custom data provider,
-    /// use [`GmtOffset`] or [`TimeZoneIdMapper`] directly.
+    /// use [`UtcOffset`] or [`TimeZoneIdMapper`] directly.
     ///
     /// To parse from an IXDTF string, use [`CustomZonedDateTime::try_iso_from_str`].
     ///
@@ -123,7 +121,7 @@ impl CustomTimeZone {
     ///
     /// ```
     /// use icu::timezone::CustomTimeZone;
-    /// use icu::timezone::GmtOffset;
+    /// use icu::timezone::UtcOffset;
     ///
     /// let tz0: CustomTimeZone = CustomTimeZone::try_from_str("Z")
     ///     .expect("Failed to parse a time zone");
@@ -134,10 +132,10 @@ impl CustomTimeZone {
     /// let tz3: CustomTimeZone = CustomTimeZone::try_from_str("+02:30")
     ///     .expect("Failed to parse a time zone");
     ///
-    /// assert_eq!(tz0.gmt_offset.map(GmtOffset::offset_seconds), Some(0));
-    /// assert_eq!(tz1.gmt_offset.map(GmtOffset::offset_seconds), Some(7200));
-    /// assert_eq!(tz2.gmt_offset.map(GmtOffset::offset_seconds), Some(-9000));
-    /// assert_eq!(tz3.gmt_offset.map(GmtOffset::offset_seconds), Some(9000));
+    /// assert_eq!(tz0.offset.map(UtcOffset::offset_seconds), Some(0));
+    /// assert_eq!(tz1.offset.map(UtcOffset::offset_seconds), Some(7200));
+    /// assert_eq!(tz2.offset.map(UtcOffset::offset_seconds), Some(-9000));
+    /// assert_eq!(tz3.offset.map(UtcOffset::offset_seconds), Some(9000));
     /// ```
     ///
     /// [`CustomZonedDateTime::try_iso_from_str`]: crate::CustomZonedDateTime::try_iso_from_str
@@ -150,9 +148,9 @@ impl CustomTimeZone {
     /// See [`Self::try_from_str`]
     #[cfg(feature = "compiled_data")]
     pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, UnknownTimeZoneError> {
-        if let Ok(gmt_offset) = GmtOffset::try_from_utf8(code_units) {
+        if let Ok(offset) = UtcOffset::try_from_utf8(code_units) {
             return Ok(Self {
-                gmt_offset: Some(gmt_offset),
+                offset: Some(offset),
                 time_zone_id: None,
                 metazone_id: None,
                 zone_variant: None,
@@ -161,7 +159,7 @@ impl CustomTimeZone {
         let mapper = TimeZoneIdMapper::new();
         if let Some(bcp47_id) = mapper.as_borrowed().iana_bytes_to_bcp47(code_units) {
             return Ok(Self {
-                gmt_offset: None,
+                offset: None,
                 time_zone_id: Some(bcp47_id),
                 metazone_id: None,
                 zone_variant: None,
@@ -183,7 +181,7 @@ impl CustomTimeZone {
     ///
     /// let mzc = MetazoneCalculator::new();
     /// let mut tz = CustomTimeZone {
-    ///     gmt_offset: Some("+11".parse().expect("Failed to parse a GMT offset.")),
+    ///     offset: Some("+11".parse().expect("Failed to parse a UTC offset.")),
     ///     time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "gugum"))),
     ///     metazone_id: None,
     ///     zone_variant: None,

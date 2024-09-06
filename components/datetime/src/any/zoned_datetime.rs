@@ -49,7 +49,7 @@ size_test!(ZonedDateTimeFormatter, zoned_date_time_formatter_size, 6200);
 ///
 /// # Examples
 ///
-/// Using a GMT time zone:
+/// Using the UTC time zone:
 ///
 /// ```
 /// use icu::calendar::DateTime;
@@ -82,13 +82,13 @@ size_test!(ZonedDateTimeFormatter, zoned_date_time_formatter_size, 6200);
 /// );
 /// ```
 ///
-/// Using a non-GMT time zone, specified by id:
+/// Using a custom time zone, specified by id:
 ///
 /// ```
 /// use icu::calendar::DateTime;
 /// use icu::datetime::{options::length, ZonedDateTimeFormatter};
 /// use icu::locale::locale;
-/// use icu::timezone::{CustomTimeZone, GmtOffset, MetazoneCalculator, ZoneVariant, TimeZoneBcp47Id};
+/// use icu::timezone::{CustomTimeZone, UtcOffset, MetazoneCalculator, ZoneVariant, TimeZoneBcp47Id};
 /// use tinystr::tinystr;
 /// use writeable::assert_writeable_eq;
 ///
@@ -108,9 +108,9 @@ size_test!(ZonedDateTimeFormatter, zoned_date_time_formatter_size, 6200);
 ///     .expect("Failed to construct DateTime.");
 /// let any_datetime = datetime.to_any();
 ///
-/// // Create a time zone for America/Chicago at GMT-6:
+/// // Create a time zone for America/Chicago at UTC-6:
 /// let mut time_zone = CustomTimeZone::new_empty();
-/// time_zone.gmt_offset = "-06:00".parse::<GmtOffset>().ok();
+/// time_zone.offset = "-06:00".parse().ok();
 /// time_zone.time_zone_id = Some(TimeZoneBcp47Id(tinystr!(8, "uschi")));
 /// time_zone.zone_variant = Some(ZoneVariant::daylight());
 ///
@@ -162,7 +162,7 @@ impl ZonedDateTimeFormatter {
     /// options.month = Some(components::Month::Long);
     /// options.hour = Some(components::Numeric::Numeric);
     /// options.minute = Some(components::Numeric::Numeric);
-    /// options.time_zone_name = Some(components::TimeZoneName::GmtOffset);
+    /// options.time_zone_name = Some(components::TimeZoneName::Offset);
     ///
     /// let zdtf = ZonedDateTimeFormatter::try_new_experimental(
     ///     &locale!("en-u-ca-gregory").into(),
