@@ -68,18 +68,34 @@ pub struct VarTuple<A, B> {
 /// See the module for examples.
 #[derive(Debug)]
 #[allow(clippy::exhaustive_structs)] // well-defined type
-#[repr(C, packed)]
-pub struct VarTupleULE<A: AsULE, V: ?Sized> {
+#[repr(C)]
+pub struct VarTupleULE<A: AsULE, V: VarULE + ?Sized> {
     pub sized: A::ULE,
     pub variable: V,
 }
 
 // # Safety
 //
+// ## Representation
+//
+// The type `VarTupleULE` is align(1) because it is repr(C) and its fields
+// are all align(1), since they are themselves ULE and VarULE, which have
+// this same safety constraint. Further, there is no padding, because repr(C)
+// does not add padding when all fields are align(1).
+//
+// <https://doc.rust-lang.org/reference/type-layout.html#the-c-representation>
+//
+// Pointers to `VarTupleULE` are fat pointers with metadata equal to the
+// metadata of the inner DST field V.
+//
+// <https://doc.rust-lang.org/stable/std/ptr/trait.Pointee.html>
+//
+// ## Checklist
+//
 // Safety checklist for `VarULE`:
 //
-// 1. Two ULEs are stored back to back with no padding: repr(C, packed)
-// 2. The two ULEs are align 1 by being ULEs.
+// 1. align(1): see "Representation" above.
+// 2. No padding: see "Representation" above.
 // 3. `validate_byte_slice` checks length and defers to the inner ULEs.
 // 4. `validate_byte_slice` checks length and defers to the inner ULEs.
 // 5. `from_byte_slice_unchecked` returns a fat pointer to the bytes.
