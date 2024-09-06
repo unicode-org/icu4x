@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 mod adapter;
+mod packed_pattern;
 
 use crate::pattern::runtime::{self, PatternULE};
 use alloc::borrow::Cow;
