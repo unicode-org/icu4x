@@ -126,14 +126,17 @@ where
         }
         let (_sized_chunk, variable_chunk) = bytes.split_at(size_of::<A::ULE>());
         let variable_ref = V::from_byte_slice_unchecked(variable_chunk);
+        let variable_ptr: *const V = core::ptr::from_ref(variable_ref);
         // We should use the pointer metadata APIs here when they are stable: https://github.com/rust-lang/rust/issues/81513
         // For now we rely on all DST metadata being a usize to extract it via a fake slice pointer
         // Rust doesn't know that `&V` is a fat pointer so we have to use transmute_copy
-        let (_ptr, metadata): (usize, usize) = core::mem::transmute_copy(&variable_ref);
-        let entire_struct_as_slice: *const [u8] =
-            core::slice::from_raw_parts(bytes.as_ptr(), metadata);
-        let entire_struct_ref: *const Self = core::mem::transmute_copy(&entire_struct_as_slice);
-        &*(entire_struct_ref)
+        debug_assert_eq!(size_of::<*const V>(), size_of::<*const [u8]>());
+        let variable_fat_ptr: *const [u8] = core::mem::transmute_copy(&variable_ptr);
+        let (_ptr, metadata): (usize, usize) = core::mem::transmute(variable_fat_ptr);
+        let composed_fat_ptr: *const [u8] = core::slice::from_raw_parts(bytes.as_ptr(), metadata);
+        debug_assert_eq!(size_of::<*const Self>(), size_of::<*const [u8]>());
+        let composed_ref: *const Self = core::mem::transmute_copy(&composed_fat_ptr);
+        &*(composed_ref)
     }
 }
 
