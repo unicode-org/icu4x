@@ -145,7 +145,7 @@ where
         assert_eq!(size_of::<*const Self>(), size_of::<(*const u8, usize)>());
         // Safety: Same as above but in the other direction.
         let composed_ptr = core::mem::transmute_copy::<(*const u8, usize), *const Self>(&(bytes.as_ptr(), metadata));
-        &*(composed_ref)
+        &*(composed_ptr)
     }
 }
 
