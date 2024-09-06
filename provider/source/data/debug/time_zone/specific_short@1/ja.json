@@ -1,13 +1,12 @@
 {
   "defaults": {
     "japa": {
-      "dt": "JDT",
-      "st": "JST"
+      "72": "JST"
     }
   },
   "overrides": {
     "utc": {
-      "st": "UTC"
+      "0": "UTC"
     }
   }
 }

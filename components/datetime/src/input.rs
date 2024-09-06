@@ -12,7 +12,7 @@ use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::week::{RelativeUnit, WeekCalculator};
 use icu_calendar::Calendar;
 use icu_calendar::{AsCalendar, Date, DateTime, Iso};
-use icu_timezone::{CustomTimeZone, UtcOffset, ZoneVariant};
+use icu_timezone::{CustomTimeZone, UtcOffset};
 
 // TODO(#2630) fix up imports to directly import from icu_calendar
 pub(crate) use icu_calendar::types::{
@@ -90,9 +90,6 @@ pub trait TimeZoneInput {
 
     /// The metazone identifier.
     fn metazone_id(&self) -> Option<MetazoneId>;
-
-    /// The time variant (e.g. "daylight", "standard")
-    fn zone_variant(&self) -> Option<ZoneVariant>;
 }
 
 /// A combination of a formattable calendar date and ISO time.
@@ -126,7 +123,6 @@ pub(crate) struct ExtractedTimeZoneInput {
     offset: Option<UtcOffset>,
     time_zone_id: Option<TimeZoneBcp47Id>,
     metazone_id: Option<MetazoneId>,
-    zone_variant: Option<ZoneVariant>,
 }
 
 impl ExtractedDateTimeInput {
@@ -251,27 +247,6 @@ impl ExtractedTimeZoneInput {
             offset: input.offset(),
             time_zone_id: input.time_zone_id(),
             metazone_id: input.metazone_id(),
-            zone_variant: input.zone_variant(),
-        }
-    }
-
-    pub(crate) fn to_custom_time_zone(self) -> CustomTimeZone {
-        CustomTimeZone {
-            offset: self.offset,
-            time_zone_id: self.time_zone_id,
-            metazone_id: self.metazone_id,
-            zone_variant: self.zone_variant,
-        }
-    }
-}
-
-impl From<CustomTimeZone> for ExtractedTimeZoneInput {
-    fn from(value: CustomTimeZone) -> Self {
-        Self {
-            offset: value.offset,
-            time_zone_id: value.time_zone_id,
-            metazone_id: value.metazone_id,
-            zone_variant: value.zone_variant,
         }
     }
 }
@@ -327,9 +302,6 @@ impl TimeZoneInput for ExtractedTimeZoneInput {
     }
     fn metazone_id(&self) -> Option<MetazoneId> {
         self.metazone_id
-    }
-    fn zone_variant(&self) -> Option<ZoneVariant> {
-        self.zone_variant
     }
 }
 
@@ -463,10 +435,6 @@ impl TimeZoneInput for CustomTimeZone {
 
     fn metazone_id(&self) -> Option<MetazoneId> {
         self.metazone_id
-    }
-
-    fn zone_variant(&self) -> Option<ZoneVariant> {
-        self.zone_variant
     }
 }
 

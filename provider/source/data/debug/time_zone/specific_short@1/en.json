@@ -1,44 +1,42 @@
 {
   "defaults": {
     "alas": {
-      "dt": "AKDT",
-      "st": "AKST"
+      "-72": "AKST",
+      "-64": "AKDT"
     },
     "amce": {
-      "dt": "CDT",
-      "st": "CST"
+      "-48": "CST",
+      "-40": "CDT"
     },
     "amea": {
-      "dt": "EDT",
-      "st": "EST"
+      "-40": "EST",
+      "-32": "EDT"
     },
     "ammo": {
-      "dt": "MDT",
-      "st": "MST"
+      "-56": "MST",
+      "-48": "MDT"
     },
     "ampa": {
-      "dt": "PDT",
-      "st": "PST"
+      "-64": "PST",
+      "-56": "PDT"
     },
     "atla": {
-      "dt": "ADT",
-      "st": "AST"
+      "-32": "AST",
+      "-24": "ADT"
     },
     "haal": {
-      "dt": "HADT",
-      "st": "HAST"
+      "-80": "HAST"
     },
     "mgmt": {
-      "st": "GMT"
+      "0": "GMT"
     }
   },
   "overrides": {
     "ushnl": {
-      "dt": "HDT",
-      "st": "HST"
+      "-80": "HST"
     },
     "utc": {
-      "st": "UTC"
+      "0": "UTC"
     }
   }
 }

@@ -1641,6 +1641,7 @@ dependencies = [
  "icu_provider_registry",
  "icu_segmenter",
  "itertools",
+ "jiff-tzdb",
  "litemap",
  "log",
  "ndarray",
@@ -1656,6 +1657,7 @@ dependencies = [
  "tinystr",
  "toml",
  "twox-hash",
+ "tzif",
  "ureq",
  "writeable",
  "zerotrie",
@@ -1790,6 +1792,12 @@ dependencies = [
  "serde-json-core",
  "utf8_iter",
 ]
+
+[[package]]
+name = "jiff-tzdb"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "05fac328b3df1c0f18a3c2ab6cb7e06e4e549f366017d796e3e66b6d6889abe6"
 
 [[package]]
 name = "js-sys"

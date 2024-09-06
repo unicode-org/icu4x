@@ -107,6 +107,23 @@ export class CustomTimeZone {
         finally {}
     }
 
+    offsetEighthsOfHour() {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 2, 1, true);
+        
+        const result = wasm.icu4x_CustomTimeZone_offset_eighths_of_hour_mv1(diplomatReceive.buffer, this.ffiValue);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                return null;
+            }
+            return (new Int8Array(wasm.memory.buffer, diplomatReceive.buffer, 1))[0];
+        }
+        
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
     clearOffset() {wasm.icu4x_CustomTimeZone_clear_offset_mv1(this.ffiValue);
     
         try {}
@@ -298,91 +315,6 @@ export class CustomTimeZone {
         
         finally {
             write.free();
-        }
-    }
-
-    trySetZoneVariant(id) {
-        let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
-        const idSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, id));
-        
-        const result = wasm.icu4x_CustomTimeZone_try_set_zone_variant_mv1(this.ffiValue, ...idSlice.splat());
-    
-        try {
-            return result === 1;
-        }
-        
-        finally {
-            functionCleanupArena.free();
-        }
-    }
-
-    clearZoneVariant() {wasm.icu4x_CustomTimeZone_clear_zone_variant_mv1(this.ffiValue);
-    
-        try {}
-        
-        finally {}
-    }
-
-    get zoneVariant() {
-        const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        
-        const result = wasm.icu4x_CustomTimeZone_zone_variant_mv1(this.ffiValue, write.buffer);
-    
-        try {
-            return result === 0 ? null : write.readString8();
-        }
-        
-        finally {
-            write.free();
-        }
-    }
-
-    setStandardTime() {wasm.icu4x_CustomTimeZone_set_standard_time_mv1(this.ffiValue);
-    
-        try {}
-        
-        finally {}
-    }
-
-    setDaylightTime() {wasm.icu4x_CustomTimeZone_set_daylight_time_mv1(this.ffiValue);
-    
-        try {}
-        
-        finally {}
-    }
-
-    get isStandardTime() {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 2, 1, true);
-        
-        const result = wasm.icu4x_CustomTimeZone_is_standard_time_mv1(diplomatReceive.buffer, this.ffiValue);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
-                return null;
-            }
-            return (new Uint8Array(wasm.memory.buffer, diplomatReceive.buffer, 1))[0] === 1;
-        }
-        
-        finally {
-            diplomatReceive.free();
-        }
-    }
-
-    get isDaylightTime() {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 2, 1, true);
-        
-        const result = wasm.icu4x_CustomTimeZone_is_daylight_time_mv1(diplomatReceive.buffer, this.ffiValue);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
-                return null;
-            }
-            return (new Uint8Array(wasm.memory.buffer, diplomatReceive.buffer, 1))[0] === 1;
-        }
-        
-        finally {
-            diplomatReceive.free();
         }
     }
 

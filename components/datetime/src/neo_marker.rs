@@ -1783,7 +1783,6 @@ macro_rules! impl_zone_marker {
         ///     -40, // offset eighths of hour
         ///     tinystr!(8, "uschi"), // time zone ID
         ///     tinystr!(4, "amce"), // metazone ID
-        ///     tinystr!(2, "dt"), // zone variant: daylight time
         /// );
         ///
         /// assert_try_writeable_eq!(
@@ -1816,7 +1815,6 @@ macro_rules! impl_zone_marker {
         ///     -40, // offset eighths of hour
         ///     tinystr!(8, "uschi"), // time zone ID
         ///     tinystr!(4, "amce"), // metazone ID
-        ///     tinystr!(2, "dt"), // zone variant: daylight time
         /// );
         ///
         /// assert_try_writeable_eq!(
@@ -1964,8 +1962,6 @@ macro_rules! impl_zoneddatetime_marker {
         /// .unwrap();
         ///
         /// let mut dtz = CustomZonedDateTime::try_from_str("2024-05-17T15:47:50+01:00[Europe/London]").unwrap();
-        /// // TODO(#5466): Set the zone variant automatically
-        /// dtz.zone.zone_variant = Some(icu_timezone::ZoneVariant::daylight());
         ///
         /// assert_try_writeable_eq!(
         ///     fmt.convert_and_format(&dtz),
@@ -1994,8 +1990,6 @@ macro_rules! impl_zoneddatetime_marker {
         /// let mut dtz = CustomZonedDateTime::try_from_str("2024-05-17T15:47:50+01:00[Europe/London]")
         ///     .unwrap()
         ///     .to_calendar(Gregorian);
-        /// // TODO(#5466): Set the zone variant automatically
-        /// dtz.zone.zone_variant = Some(icu_timezone::ZoneVariant::daylight());
         ///
         /// assert_try_writeable_eq!(
         ///     fmt.format(&dtz),
@@ -2171,7 +2165,6 @@ impl_zone_marker!(
     ///     -24, // offset eighths of hour
     ///     tinystr!(8, "brsao"), // time zone ID
     ///     tinystr!(4, "bras"), // metazone ID
-    ///     tinystr!(2, "st"), // zone variant: standard time
     /// );
     ///
     /// assert_try_writeable_eq!(
@@ -2287,7 +2280,6 @@ impl_zone_marker!(
     ///     -24, // offset eighths of hour
     ///     tinystr!(8, "brsao"), // time zone ID
     ///     tinystr!(4, "bras"), // metazone ID
-    ///     tinystr!(2, "st"), // zone variant: standard time
     /// );
     ///
     /// assert_try_writeable_eq!(

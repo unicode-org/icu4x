@@ -34,6 +34,9 @@ namespace capi {
     
     void icu4x_CustomTimeZone_set_offset_eighths_of_hour_mv1(icu4x::capi::CustomTimeZone* self, int8_t offset_eighths_of_hour);
     
+    typedef struct icu4x_CustomTimeZone_offset_eighths_of_hour_mv1_result {union {int8_t ok; }; bool is_ok;} icu4x_CustomTimeZone_offset_eighths_of_hour_mv1_result;
+    icu4x_CustomTimeZone_offset_eighths_of_hour_mv1_result icu4x_CustomTimeZone_offset_eighths_of_hour_mv1(const icu4x::capi::CustomTimeZone* self);
+    
     void icu4x_CustomTimeZone_clear_offset_mv1(icu4x::capi::CustomTimeZone* self);
     
     typedef struct icu4x_CustomTimeZone_offset_seconds_mv1_result {union {int32_t ok; }; bool is_ok;} icu4x_CustomTimeZone_offset_seconds_mv1_result;
@@ -70,24 +73,6 @@ namespace capi {
     typedef struct icu4x_CustomTimeZone_metazone_id_mv1_result { bool is_ok;} icu4x_CustomTimeZone_metazone_id_mv1_result;
     icu4x_CustomTimeZone_metazone_id_mv1_result icu4x_CustomTimeZone_metazone_id_mv1(const icu4x::capi::CustomTimeZone* self, diplomat::capi::DiplomatWrite* write);
     
-    typedef struct icu4x_CustomTimeZone_try_set_zone_variant_mv1_result { bool is_ok;} icu4x_CustomTimeZone_try_set_zone_variant_mv1_result;
-    icu4x_CustomTimeZone_try_set_zone_variant_mv1_result icu4x_CustomTimeZone_try_set_zone_variant_mv1(icu4x::capi::CustomTimeZone* self, diplomat::capi::DiplomatStringView id);
-    
-    void icu4x_CustomTimeZone_clear_zone_variant_mv1(icu4x::capi::CustomTimeZone* self);
-    
-    typedef struct icu4x_CustomTimeZone_zone_variant_mv1_result { bool is_ok;} icu4x_CustomTimeZone_zone_variant_mv1_result;
-    icu4x_CustomTimeZone_zone_variant_mv1_result icu4x_CustomTimeZone_zone_variant_mv1(const icu4x::capi::CustomTimeZone* self, diplomat::capi::DiplomatWrite* write);
-    
-    void icu4x_CustomTimeZone_set_standard_time_mv1(icu4x::capi::CustomTimeZone* self);
-    
-    void icu4x_CustomTimeZone_set_daylight_time_mv1(icu4x::capi::CustomTimeZone* self);
-    
-    typedef struct icu4x_CustomTimeZone_is_standard_time_mv1_result {union {bool ok; }; bool is_ok;} icu4x_CustomTimeZone_is_standard_time_mv1_result;
-    icu4x_CustomTimeZone_is_standard_time_mv1_result icu4x_CustomTimeZone_is_standard_time_mv1(const icu4x::capi::CustomTimeZone* self);
-    
-    typedef struct icu4x_CustomTimeZone_is_daylight_time_mv1_result {union {bool ok; }; bool is_ok;} icu4x_CustomTimeZone_is_daylight_time_mv1_result;
-    icu4x_CustomTimeZone_is_daylight_time_mv1_result icu4x_CustomTimeZone_is_daylight_time_mv1(const icu4x::capi::CustomTimeZone* self);
-    
     void icu4x_CustomTimeZone_maybe_calculate_metazone_mv1(icu4x::capi::CustomTimeZone* self, const icu4x::capi::MetazoneCalculator* metazone_calculator, const icu4x::capi::IsoDateTime* local_datetime);
     
     
@@ -121,6 +106,11 @@ inline diplomat::result<std::monostate, icu4x::TimeZoneInvalidOffsetError> icu4x
 inline void icu4x::CustomTimeZone::set_offset_eighths_of_hour(int8_t offset_eighths_of_hour) {
   icu4x::capi::icu4x_CustomTimeZone_set_offset_eighths_of_hour_mv1(this->AsFFI(),
     offset_eighths_of_hour);
+}
+
+inline std::optional<int8_t> icu4x::CustomTimeZone::offset_eighths_of_hour() const {
+  auto result = icu4x::capi::icu4x_CustomTimeZone_offset_eighths_of_hour_mv1(this->AsFFI());
+  return result.is_ok ? std::optional<int8_t>(result.ok) : std::nullopt;
 }
 
 inline void icu4x::CustomTimeZone::clear_offset() {
@@ -193,42 +183,6 @@ inline std::optional<std::string> icu4x::CustomTimeZone::metazone_id() const {
   auto result = icu4x::capi::icu4x_CustomTimeZone_metazone_id_mv1(this->AsFFI(),
     &write);
   return result.is_ok ? std::optional<std::string>(std::move(output)) : std::nullopt;
-}
-
-inline std::optional<std::monostate> icu4x::CustomTimeZone::try_set_zone_variant(std::string_view id) {
-  auto result = icu4x::capi::icu4x_CustomTimeZone_try_set_zone_variant_mv1(this->AsFFI(),
-    {id.data(), id.size()});
-  return result.is_ok ? std::optional<std::monostate>() : std::nullopt;
-}
-
-inline void icu4x::CustomTimeZone::clear_zone_variant() {
-  icu4x::capi::icu4x_CustomTimeZone_clear_zone_variant_mv1(this->AsFFI());
-}
-
-inline std::optional<std::string> icu4x::CustomTimeZone::zone_variant() const {
-  std::string output;
-  diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
-  auto result = icu4x::capi::icu4x_CustomTimeZone_zone_variant_mv1(this->AsFFI(),
-    &write);
-  return result.is_ok ? std::optional<std::string>(std::move(output)) : std::nullopt;
-}
-
-inline void icu4x::CustomTimeZone::set_standard_time() {
-  icu4x::capi::icu4x_CustomTimeZone_set_standard_time_mv1(this->AsFFI());
-}
-
-inline void icu4x::CustomTimeZone::set_daylight_time() {
-  icu4x::capi::icu4x_CustomTimeZone_set_daylight_time_mv1(this->AsFFI());
-}
-
-inline std::optional<bool> icu4x::CustomTimeZone::is_standard_time() const {
-  auto result = icu4x::capi::icu4x_CustomTimeZone_is_standard_time_mv1(this->AsFFI());
-  return result.is_ok ? std::optional<bool>(result.ok) : std::nullopt;
-}
-
-inline std::optional<bool> icu4x::CustomTimeZone::is_daylight_time() const {
-  auto result = icu4x::capi::icu4x_CustomTimeZone_is_daylight_time_mv1(this->AsFFI());
-  return result.is_ok ? std::optional<bool>(result.ok) : std::nullopt;
 }
 
 inline void icu4x::CustomTimeZone::maybe_calculate_metazone(const icu4x::MetazoneCalculator& metazone_calculator, const icu4x::IsoDateTime& local_datetime) {

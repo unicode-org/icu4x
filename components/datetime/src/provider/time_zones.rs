@@ -10,7 +10,6 @@ use tinystr::TinyStr8;
 use zerovec::{ZeroMap, ZeroMap2d};
 
 pub use icu_timezone::provider::{MetazoneId, TimeZoneBcp47Id};
-use icu_timezone::ZoneVariant;
 
 /// Time zone type aliases for cleaner code
 #[cfg(feature = "experimental")]
@@ -136,6 +135,9 @@ pub struct MetazoneGenericNamesShortV1<'data> {
     pub overrides: ZeroMap<'data, TimeZoneBcp47Id, str>,
 }
 
+/// Storage type for storing UTC offsets as eights of an hour.
+pub type EightsOfHourOffset = i8;
+
 /// An ICU4X mapping to the long-form specific metazone names.
 /// Specific names include time variants such as "daylight."
 /// See CLDR-JSON timeZoneNames.json for more context.
@@ -154,10 +156,10 @@ pub struct MetazoneGenericNamesShortV1<'data> {
 pub struct MetazoneSpecificNamesLongV1<'data> {
     /// The default mapping between metazone id and localized metazone name.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub defaults: ZeroMap2d<'data, MetazoneId, ZoneVariant, str>,
+    pub defaults: ZeroMap2d<'data, MetazoneId, EightsOfHourOffset, str>,
     /// The override mapping between timezone id and localized metazone name.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub overrides: ZeroMap2d<'data, TimeZoneBcp47Id, ZoneVariant, str>,
+    pub overrides: ZeroMap2d<'data, TimeZoneBcp47Id, EightsOfHourOffset, str>,
 }
 
 /// An ICU4X mapping to the short-form specific metazone names.
@@ -178,8 +180,8 @@ pub struct MetazoneSpecificNamesLongV1<'data> {
 pub struct MetazoneSpecificNamesShortV1<'data> {
     /// The default mapping between metazone id and localized metazone name.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub defaults: ZeroMap2d<'data, MetazoneId, ZoneVariant, str>,
+    pub defaults: ZeroMap2d<'data, MetazoneId, EightsOfHourOffset, str>,
     /// The override mapping between timezone id and localized metazone name.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub overrides: ZeroMap2d<'data, TimeZoneBcp47Id, ZoneVariant, str>,
+    pub overrides: ZeroMap2d<'data, TimeZoneBcp47Id, EightsOfHourOffset, str>,
 }

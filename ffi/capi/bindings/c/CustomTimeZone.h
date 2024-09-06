@@ -30,6 +30,9 @@ icu4x_CustomTimeZone_try_set_offset_seconds_mv1_result icu4x_CustomTimeZone_try_
 
 void icu4x_CustomTimeZone_set_offset_eighths_of_hour_mv1(CustomTimeZone* self, int8_t offset_eighths_of_hour);
 
+typedef struct icu4x_CustomTimeZone_offset_eighths_of_hour_mv1_result {union {int8_t ok; }; bool is_ok;} icu4x_CustomTimeZone_offset_eighths_of_hour_mv1_result;
+icu4x_CustomTimeZone_offset_eighths_of_hour_mv1_result icu4x_CustomTimeZone_offset_eighths_of_hour_mv1(const CustomTimeZone* self);
+
 void icu4x_CustomTimeZone_clear_offset_mv1(CustomTimeZone* self);
 
 typedef struct icu4x_CustomTimeZone_offset_seconds_mv1_result {union {int32_t ok; }; bool is_ok;} icu4x_CustomTimeZone_offset_seconds_mv1_result;
@@ -65,24 +68,6 @@ void icu4x_CustomTimeZone_clear_metazone_id_mv1(CustomTimeZone* self);
 
 typedef struct icu4x_CustomTimeZone_metazone_id_mv1_result { bool is_ok;} icu4x_CustomTimeZone_metazone_id_mv1_result;
 icu4x_CustomTimeZone_metazone_id_mv1_result icu4x_CustomTimeZone_metazone_id_mv1(const CustomTimeZone* self, DiplomatWrite* write);
-
-typedef struct icu4x_CustomTimeZone_try_set_zone_variant_mv1_result { bool is_ok;} icu4x_CustomTimeZone_try_set_zone_variant_mv1_result;
-icu4x_CustomTimeZone_try_set_zone_variant_mv1_result icu4x_CustomTimeZone_try_set_zone_variant_mv1(CustomTimeZone* self, DiplomatStringView id);
-
-void icu4x_CustomTimeZone_clear_zone_variant_mv1(CustomTimeZone* self);
-
-typedef struct icu4x_CustomTimeZone_zone_variant_mv1_result { bool is_ok;} icu4x_CustomTimeZone_zone_variant_mv1_result;
-icu4x_CustomTimeZone_zone_variant_mv1_result icu4x_CustomTimeZone_zone_variant_mv1(const CustomTimeZone* self, DiplomatWrite* write);
-
-void icu4x_CustomTimeZone_set_standard_time_mv1(CustomTimeZone* self);
-
-void icu4x_CustomTimeZone_set_daylight_time_mv1(CustomTimeZone* self);
-
-typedef struct icu4x_CustomTimeZone_is_standard_time_mv1_result {union {bool ok; }; bool is_ok;} icu4x_CustomTimeZone_is_standard_time_mv1_result;
-icu4x_CustomTimeZone_is_standard_time_mv1_result icu4x_CustomTimeZone_is_standard_time_mv1(const CustomTimeZone* self);
-
-typedef struct icu4x_CustomTimeZone_is_daylight_time_mv1_result {union {bool ok; }; bool is_ok;} icu4x_CustomTimeZone_is_daylight_time_mv1_result;
-icu4x_CustomTimeZone_is_daylight_time_mv1_result icu4x_CustomTimeZone_is_daylight_time_mv1(const CustomTimeZone* self);
 
 void icu4x_CustomTimeZone_maybe_calculate_metazone_mv1(CustomTimeZone* self, const MetazoneCalculator* metazone_calculator, const IsoDateTime* local_datetime);
 

@@ -1,17 +1,15 @@
 {
   "defaults": {
     "arge": {
-      "dt": "ARST",
-      "st": "ART"
+      "-24": "ART"
     },
     "arwe": {
-      "dt": "WARST",
-      "st": "WART"
+      "-24": "WART"
     }
   },
   "overrides": {
     "utc": {
-      "st": "UTC"
+      "0": "UTC"
     }
   }
 }

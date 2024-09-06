@@ -1,12 +1,7 @@
 [
   {
     "locale": "en",
-    "config": {
-      "time_zone_id": "uslax",
-      "metazone_id": "ampa",
-      "zone_variant": "dt"
-    },
-    "datetime": "2021-01-11T12:00:00.000-07:00",
+    "datetime": "2021-01-11T12:00:00.000-07:00[America/Los_Angeles]",
     "expectations": [
       {
         "patterns": [
@@ -167,12 +162,7 @@
   },
   {
     "locale": "en",
-    "config": {
-      "time_zone_id": "gblon",
-      "metazone_id": "mgmt",
-      "zone_variant": "dt"
-    },
-    "datetime": "2021-01-11T12:00:00.000-07:00",
+    "datetime": "2021-01-11T12:00:00.000+01:00[Europe/London]",
     "expectations": [
       {
         "patterns": [],
@@ -180,7 +170,7 @@
           "SpecificNonLocationShort"
         ],
         "fallback_formats": ["LocalizedOffset"],
-        "expected": ["GMT-07:00"]
+        "expected": ["GMT+01:00"]
       },
       {
         "patterns": [],
@@ -196,7 +186,7 @@
           "LocalizedOffset"
         ],
         "fallback_formats": ["LocalizedOffset"],
-        "expected": ["GMT-07:00"]
+        "expected": ["GMT+01:00"]
       },
       {
         "patterns": [],
@@ -210,7 +200,7 @@
           }
         ],
         "fallback_formats": ["LocalizedOffset"],
-        "expected": ["-07:00"]
+        "expected": ["+01:00"]
       },
       {
         "patterns": [],
@@ -248,7 +238,7 @@
           }
         ],
         "fallback_formats": ["LocalizedOffset"],
-        "expected": ["-07"]
+        "expected": ["+01"]
       },
       {
         "patterns": [],
@@ -262,7 +252,7 @@
           }
         ],
         "fallback_formats": ["LocalizedOffset"],
-        "expected": ["-0700"]
+        "expected": ["+0100"]
       },
       {
         "patterns": [],
@@ -276,18 +266,13 @@
           }
         ],
         "fallback_formats": ["LocalizedOffset"],
-        "expected": ["-07:00"]
+        "expected": ["+01:00"]
       }
     ]
   },
   {
     "locale": "en",
-    "config": {
-      "time_zone_id": "iedub",
-      "metazone_id": "mgmt",
-      "zone_variant": "dt"
-    },
-    "datetime": "2021-01-11T12:00:00.000-07:00",
+    "datetime": "2021-01-11T12:00:00.000+00:00[Europe/Dublin]",
     "expectations": [
       {
         "patterns": [],
@@ -295,7 +280,7 @@
           "SpecificNonLocationShort"
         ],
         "fallback_formats": ["LocalizedOffset"],
-        "expected": ["GMT-07:00"]
+        "expected": ["GMT"]
       },
       {
         "patterns": [],
@@ -311,7 +296,7 @@
           "LocalizedOffset"
         ],
         "fallback_formats": ["LocalizedOffset"],
-        "expected": ["GMT-07:00"]
+        "expected": ["GMT"]
       },
       {
         "patterns": [],
@@ -325,7 +310,7 @@
           }
         ],
         "fallback_formats": ["LocalizedOffset"],
-        "expected": ["-07:00"]
+        "expected": ["+00:00"]
       },
       {
         "patterns": [],
@@ -363,7 +348,7 @@
           }
         ],
         "fallback_formats": ["LocalizedOffset"],
-        "expected": ["-07"]
+        "expected": ["+00"]
       },
       {
         "patterns": [],
@@ -377,7 +362,7 @@
           }
         ],
         "fallback_formats": ["LocalizedOffset"],
-        "expected": ["-0700"]
+        "expected": ["+0000"]
       },
       {
         "patterns": [],
@@ -391,18 +376,13 @@
           }
         ],
         "fallback_formats": ["LocalizedOffset"],
-        "expected": ["-07:00"]
+        "expected": ["+00:00"]
       }
     ]
   },
   {
     "locale": "ja",
-    "config": {
-      "time_zone_id": "jptyo",
-      "metazone_id": "japa",
-      "zone_variant": null
-    },
-    "datetime": "2021-01-11T12:00:00.000+09:00",
+    "datetime": "2021-01-11T12:00:00.000+09:00[Asia/Tokyo]",
     "expectations": [
       {
         "patterns": [
@@ -414,7 +394,7 @@
           "SpecificNonLocationShort"
         ],
         "fallback_formats": ["LocalizedOffset"],
-        "expected": ["GMT+09:00"]
+        "expected": ["JST"]
       },
       {
         "patterns": [
@@ -424,7 +404,7 @@
           "SpecificNonLocationLong"
         ],
         "fallback_formats": ["LocalizedOffset"],
-        "expected": ["GMT+09:00"]
+        "expected": ["日本標準時"]
       },
       {
         "patterns": [
@@ -569,12 +549,7 @@
   },
   {
     "locale": "ru",
-    "config": {
-      "time_zone_id": "aqtrl",
-      "metazone_id": "mgmt",
-      "zone_variant": null
-    },
-    "datetime": "2021-01-11T12:00:00.000Z",
+    "datetime": "2021-01-11T12:00:00.000Z[Antarctica/Troll]",
     "expectations": [
       {
         "patterns": [
@@ -596,7 +571,7 @@
           "SpecificNonLocationLong"
         ],
         "fallback_formats": ["LocalizedOffset"],
-        "expected": ["GMT"]
+        "expected": ["Среднее время по Гринвичу"]
       },
       {
         "patterns": [
@@ -786,12 +761,7 @@
   },
   {
     "locale": "sr-Cyrl",
-    "config": {
-      "time_zone_id": "npktm",
-      "metazone_id": "nepa",
-      "zone_variant": null
-    },
-    "datetime": "2021-01-11T12:00:00.000+05:45",
+    "datetime": "2021-01-11T12:00:00.000+05:45[Asia/Kathmandu]",
     "expectations": [
       {
         "patterns": [
@@ -813,7 +783,7 @@
           "SpecificNonLocationLong"
         ],
         "fallback_formats": ["LocalizedOffset"],
-        "expected": ["GMT+05:45"]
+        "expected": ["Непал време"]
       },
       {
         "patterns": [

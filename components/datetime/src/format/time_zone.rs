@@ -6,7 +6,7 @@ use core::fmt;
 
 use crate::format::datetime::DateTimeWriteError;
 use crate::{
-    input::ExtractedTimeZoneInput,
+    input::{ExtractedTimeZoneInput, TimeZoneInput},
     time_zone::{
         FormatTimeZone, FormatTimeZoneError, FormatTimeZoneWithFallback, TimeZoneFormatter,
     },
@@ -74,7 +74,7 @@ impl<'l> FormattedTimeZone<'l> {
     /// // There are no non-fallback formats enabled:
     /// assert!(matches!(
     ///     tzf.format(&time_zone).write_no_fallback(&mut buf),
-    ///     Ok(Err(DateTimeWriteError::MissingTimeZoneSymbol(_)))
+    ///     Ok(Err(DateTimeWriteError::MissingTimeZoneSymbol(..)))
     /// ));
     /// assert!(buf.is_empty());
     ///
@@ -91,7 +91,7 @@ impl<'l> FormattedTimeZone<'l> {
     /// time_zone.time_zone_id = Some(TimeZoneBcp47Id(tinystr!(8, "zzzzz")));
     /// assert!(matches!(
     ///     tzf.format(&time_zone).write_no_fallback(&mut buf),
-    ///     Ok(Err(DateTimeWriteError::MissingTimeZoneSymbol(_)))
+    ///     Ok(Err(DateTimeWriteError::MissingTimeZoneSymbol(..)))
     /// ));
     ///
     /// // Use the `Writable` trait instead to enable infallible formatting:
@@ -121,7 +121,8 @@ impl<'l> FormattedTimeZone<'l> {
             }
         }
         Ok(Err(DateTimeWriteError::MissingTimeZoneSymbol(
-            self.time_zone.to_custom_time_zone(),
+            self.time_zone.time_zone_id(),
+            self.time_zone.metazone_id(),
         )))
     }
 }

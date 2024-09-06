@@ -2,7 +2,7 @@
   "defaults": {},
   "overrides": {
     "utc": {
-      "st": "UTC"
+      "0": "UTC"
     }
   }
 }

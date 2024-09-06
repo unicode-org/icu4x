@@ -88,7 +88,7 @@ size_test!(ZonedDateTimeFormatter, zoned_date_time_formatter_size, 6200);
 /// use icu::calendar::DateTime;
 /// use icu::datetime::{options::length, ZonedDateTimeFormatter};
 /// use icu::locale::locale;
-/// use icu::timezone::{CustomTimeZone, UtcOffset, MetazoneCalculator, ZoneVariant, TimeZoneBcp47Id};
+/// use icu::timezone::{CustomTimeZone, UtcOffset, MetazoneCalculator, TimeZoneBcp47Id};
 /// use tinystr::tinystr;
 /// use writeable::assert_writeable_eq;
 ///
@@ -110,9 +110,8 @@ size_test!(ZonedDateTimeFormatter, zoned_date_time_formatter_size, 6200);
 ///
 /// // Create a time zone for America/Chicago at UTC-6:
 /// let mut time_zone = CustomTimeZone::new_empty();
-/// time_zone.offset = "-06:00".parse().ok();
+/// time_zone.offset = "-05:00".parse().ok(); // UTC-5 because it's daylight time
 /// time_zone.time_zone_id = Some(TimeZoneBcp47Id(tinystr!(8, "uschi")));
-/// time_zone.zone_variant = Some(ZoneVariant::daylight());
 ///
 /// // Compute the metazone during `datetime` (September 1, 2020 at 12:34:28 PM):
 /// let mzc = MetazoneCalculator::new();

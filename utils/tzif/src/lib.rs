@@ -14,8 +14,8 @@
 //!
 //! ### Parse TZif Files
 //! ```no_run
-//! # use std::path::Path;
-//! let data = tzif::parse_tzif_file(Path::new("path_to_file")).unwrap();
+//! # let bytes = [];
+//! let data = tzif::parse_tzif(&bytes).unwrap();
 //! ```
 //!
 //! ### Parse POSIX time-zone strings
@@ -29,8 +29,6 @@
 use combine::{stream, Parser};
 use data::{posix::PosixTzString, tzif::TzifData};
 use error::Error;
-use std::fs::File;
-use std::path::Path;
 /// The parsed data representations.
 pub mod data;
 
@@ -40,11 +38,10 @@ pub mod parse;
 /// Error types an implementations.
 pub mod error;
 
-/// Parses a `TZif` file at the provided `path`.
-pub fn parse_tzif_file(path: &Path) -> Result<TzifData, Error> {
-    let file = File::open(path)?;
+/// Parses a `TZif` file.
+pub fn parse_tzif(data: &[u8]) -> Result<TzifData, Error> {
     let stream = stream::buffered::Stream::new(
-        stream::position::Stream::new(stream::read::Stream::new(file)),
+        stream::position::Stream::new(stream::read::Stream::new(data)),
         0, /* lookahead */
     );
     Ok(parse::tzif::tzif().parse(stream)?.0)

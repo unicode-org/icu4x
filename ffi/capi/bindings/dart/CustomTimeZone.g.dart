@@ -69,11 +69,22 @@ final class CustomTimeZone implements ffi.Finalizable {
     
   }
 
-  /// Sets the `offset` field from offset eighths of an hour.
+  /// Sets the `offset` field from offset as eighths of an hour.
   ///
   /// See the [Rust documentation for `from_offset_eighths_of_hour`](https://docs.rs/icu/latest/icu/timezone/struct.UtcOffset.html#method.from_offset_eighths_of_hour) for more information.
   void setOffsetEighthsOfHour(int offsetEighthsOfHour) {
     _icu4x_CustomTimeZone_set_offset_eighths_of_hour_mv1(_ffi, offsetEighthsOfHour);
+  }
+
+  /// Gets the `offset` field from offset as eighths of an hour.
+  ///
+  /// See the [Rust documentation for `offset_eighths_of_hour`](https://docs.rs/icu/latest/icu/timezone/struct.UtcOffset.html#method.offset_eighths_of_hour) for more information.
+  int? offsetEighthsOfHour() {
+    final result = _icu4x_CustomTimeZone_offset_eighths_of_hour_mv1(_ffi);
+    if (!result.isOk) {
+      return null;
+    }
+    return result.union.ok;
   }
 
   /// Clears the `offset` field.
@@ -253,94 +264,6 @@ final class CustomTimeZone implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// Sets the `zone_variant` field from a string.
-  ///
-  /// Returns null if the string is not a valid zone variant.
-  ///
-  /// See the [Rust documentation for `zone_variant`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant) for more information.
-  ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html)
-  bool trySetZoneVariant(String id) {
-    final temp = _FinalizedArena();
-    final result = _icu4x_CustomTimeZone_try_set_zone_variant_mv1(_ffi, id._utf8AllocIn(temp.arena));
-    return result.isOk;
-  }
-
-  /// Clears the `zone_variant` field.
-  ///
-  /// See the [Rust documentation for `zone_variant`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant) for more information.
-  ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html)
-  void clearZoneVariant() {
-    _icu4x_CustomTimeZone_clear_zone_variant_mv1(_ffi);
-  }
-
-  /// Writes the value of the `zone_variant` field as a string.
-  ///
-  /// Returns null if the `zone_variant` field is empty.
-  ///
-  /// See the [Rust documentation for `zone_variant`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant) for more information.
-  ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html)
-  String? get zoneVariant {
-    final write = _Write();
-    final result = _icu4x_CustomTimeZone_zone_variant_mv1(_ffi, write._ffi);
-    if (!result.isOk) {
-      return null;
-    }
-    return write.finalize();
-  }
-
-  /// Sets the `zone_variant` field to "standard" time, which may or may
-  /// not correspond to a display name with "Standard" in its name.
-  ///
-  /// See the [Rust documentation for `standard`](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html#method.standard) for more information.
-  ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant)
-  void setStandardTime() {
-    _icu4x_CustomTimeZone_set_standard_time_mv1(_ffi);
-  }
-
-  /// Sets the `zone_variant` field to "daylight" time, which may or may
-  /// not correspond to a display name with "Daylight" in its name.
-  ///
-  /// See the [Rust documentation for `daylight`](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html#method.daylight) for more information.
-  ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant)
-  void setDaylightTime() {
-    _icu4x_CustomTimeZone_set_daylight_time_mv1(_ffi);
-  }
-
-  /// Returns whether the `zone_variant` field is standard time.
-  ///
-  /// Returns null if the `zone_variant` field is empty.
-  ///
-  /// See the [Rust documentation for `standard`](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html#method.standard) for more information.
-  ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant)
-  bool? get isStandardTime {
-    final result = _icu4x_CustomTimeZone_is_standard_time_mv1(_ffi);
-    if (!result.isOk) {
-      return null;
-    }
-    return result.union.ok;
-  }
-
-  /// Returns whether the `zone_variant` field is daylight time.
-  ///
-  /// Returns null if the `zone_variant` field is empty.
-  ///
-  /// See the [Rust documentation for `daylight`](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html#method.daylight) for more information.
-  ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant)
-  bool? get isDaylightTime {
-    final result = _icu4x_CustomTimeZone_is_daylight_time_mv1(_ffi);
-    if (!result.isOk) {
-      return null;
-    }
-    return result.union.ok;
-  }
-
   /// Sets the metazone based on the time zone and the local timestamp.
   ///
   /// See the [Rust documentation for `maybe_calculate_metazone`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.maybe_calculate_metazone) for more information.
@@ -380,6 +303,11 @@ external _ResultVoidTimeZoneInvalidOffsetErrorFfi _icu4x_CustomTimeZone_try_set_
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int8)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_set_offset_eighths_of_hour_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CustomTimeZone_set_offset_eighths_of_hour_mv1(ffi.Pointer<ffi.Opaque> self, int offsetEighthsOfHour);
+
+@meta.ResourceIdentifier('icu4x_CustomTimeZone_offset_eighths_of_hour_mv1')
+@ffi.Native<_ResultInt8Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_offset_eighths_of_hour_mv1')
+// ignore: non_constant_identifier_names
+external _ResultInt8Void _icu4x_CustomTimeZone_offset_eighths_of_hour_mv1(ffi.Pointer<ffi.Opaque> self);
 
 @meta.ResourceIdentifier('icu4x_CustomTimeZone_clear_offset_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_clear_offset_mv1')
@@ -445,41 +373,6 @@ external void _icu4x_CustomTimeZone_clear_metazone_id_mv1(ffi.Pointer<ffi.Opaque
 @ffi.Native<_ResultVoidVoid Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_metazone_id_mv1')
 // ignore: non_constant_identifier_names
 external _ResultVoidVoid _icu4x_CustomTimeZone_metazone_id_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);
-
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_try_set_zone_variant_mv1')
-@ffi.Native<_ResultVoidVoid Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_try_set_zone_variant_mv1')
-// ignore: non_constant_identifier_names
-external _ResultVoidVoid _icu4x_CustomTimeZone_try_set_zone_variant_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 id);
-
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_clear_zone_variant_mv1')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_clear_zone_variant_mv1')
-// ignore: non_constant_identifier_names
-external void _icu4x_CustomTimeZone_clear_zone_variant_mv1(ffi.Pointer<ffi.Opaque> self);
-
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_zone_variant_mv1')
-@ffi.Native<_ResultVoidVoid Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_zone_variant_mv1')
-// ignore: non_constant_identifier_names
-external _ResultVoidVoid _icu4x_CustomTimeZone_zone_variant_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);
-
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_set_standard_time_mv1')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_set_standard_time_mv1')
-// ignore: non_constant_identifier_names
-external void _icu4x_CustomTimeZone_set_standard_time_mv1(ffi.Pointer<ffi.Opaque> self);
-
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_set_daylight_time_mv1')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_set_daylight_time_mv1')
-// ignore: non_constant_identifier_names
-external void _icu4x_CustomTimeZone_set_daylight_time_mv1(ffi.Pointer<ffi.Opaque> self);
-
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_is_standard_time_mv1')
-@ffi.Native<_ResultBoolVoid Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_is_standard_time_mv1')
-// ignore: non_constant_identifier_names
-external _ResultBoolVoid _icu4x_CustomTimeZone_is_standard_time_mv1(ffi.Pointer<ffi.Opaque> self);
-
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_is_daylight_time_mv1')
-@ffi.Native<_ResultBoolVoid Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_is_daylight_time_mv1')
-// ignore: non_constant_identifier_names
-external _ResultBoolVoid _icu4x_CustomTimeZone_is_daylight_time_mv1(ffi.Pointer<ffi.Opaque> self);
 
 @meta.ResourceIdentifier('icu4x_CustomTimeZone_maybe_calculate_metazone_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_maybe_calculate_metazone_mv1')

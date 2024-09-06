@@ -72,12 +72,20 @@ pub mod ffi {
             Ok(())
         }
 
-        /// Sets the `offset` field from offset eighths of an hour.
+        /// Sets the `offset` field from offset as eighths of an hour.
         #[diplomat::rust_link(icu::timezone::UtcOffset::from_offset_eighths_of_hour, FnInStruct)]
         pub fn set_offset_eighths_of_hour(&mut self, offset_eighths_of_hour: i8) {
             self.0.offset = Some(icu_timezone::UtcOffset::from_offset_eighths_of_hour(
                 offset_eighths_of_hour,
             ));
+        }
+
+        /// Gets the `offset` field from offset as eighths of an hour.
+        #[diplomat::rust_link(icu::timezone::UtcOffset::offset_eighths_of_hour, FnInStruct)]
+        pub fn offset_eighths_of_hour(&self) -> Option<i8> {
+            self.0
+                .offset
+                .map(icu_timezone::UtcOffset::offset_eighths_of_hour)
         }
 
         /// Clears the `offset` field.
@@ -224,73 +232,6 @@ pub mod ffi {
         pub fn metazone_id(&self, write: &mut diplomat_runtime::DiplomatWrite) -> Option<()> {
             let _infallible = write.write_str(self.0.metazone_id?.0.as_str());
             Some(())
-        }
-
-        /// Sets the `zone_variant` field from a string.
-        ///
-        /// Returns null if the string is not a valid zone variant.
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::zone_variant, StructField)]
-        #[diplomat::rust_link(icu::timezone::ZoneVariant, Struct, compact)]
-        #[diplomat::rust_link(icu::timezone::ZoneVariant::from_str, FnInStruct, hidden)]
-        pub fn try_set_zone_variant(&mut self, id: &DiplomatStr) -> Option<()> {
-            self.0.zone_variant = Some(icu_timezone::ZoneVariant(
-                tinystr::TinyAsciiStr::try_from_utf8(id).ok()?,
-            ));
-            Some(())
-        }
-
-        /// Clears the `zone_variant` field.
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::zone_variant, StructField)]
-        #[diplomat::rust_link(icu::timezone::ZoneVariant, Struct, compact)]
-        pub fn clear_zone_variant(&mut self) {
-            self.0.zone_variant.take();
-        }
-
-        /// Writes the value of the `zone_variant` field as a string.
-        ///
-        /// Returns null if the `zone_variant` field is empty.
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::zone_variant, StructField)]
-        #[diplomat::rust_link(icu::timezone::ZoneVariant, Struct, compact)]
-        #[diplomat::attr(auto, getter)]
-        pub fn zone_variant(&self, write: &mut diplomat_runtime::DiplomatWrite) -> Option<()> {
-            let _infallible = write.write_str(self.0.zone_variant?.0.as_str());
-            Some(())
-        }
-
-        /// Sets the `zone_variant` field to "standard" time, which may or may
-        /// not correspond to a display name with "Standard" in its name.
-        #[diplomat::rust_link(icu::timezone::ZoneVariant::standard, FnInStruct)]
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::zone_variant, StructField, compact)]
-        pub fn set_standard_time(&mut self) {
-            self.0.zone_variant = Some(icu_timezone::ZoneVariant::standard())
-        }
-
-        /// Sets the `zone_variant` field to "daylight" time, which may or may
-        /// not correspond to a display name with "Daylight" in its name.
-        #[diplomat::rust_link(icu::timezone::ZoneVariant::daylight, FnInStruct)]
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::zone_variant, StructField, compact)]
-        pub fn set_daylight_time(&mut self) {
-            self.0.zone_variant = Some(icu_timezone::ZoneVariant::daylight())
-        }
-
-        /// Returns whether the `zone_variant` field is standard time.
-        ///
-        /// Returns null if the `zone_variant` field is empty.
-        #[diplomat::rust_link(icu::timezone::ZoneVariant::standard, FnInStruct)]
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::zone_variant, StructField, compact)]
-        #[diplomat::attr(auto, getter)]
-        pub fn is_standard_time(&self) -> Option<bool> {
-            Some(self.0.zone_variant? == icu_timezone::ZoneVariant::standard())
-        }
-
-        /// Returns whether the `zone_variant` field is daylight time.
-        ///
-        /// Returns null if the `zone_variant` field is empty.
-        #[diplomat::rust_link(icu::timezone::ZoneVariant::daylight, FnInStruct)]
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::zone_variant, StructField, compact)]
-        #[diplomat::attr(auto, getter)]
-        pub fn is_daylight_time(&self) -> Option<bool> {
-            Some(self.0.zone_variant? == icu_timezone::ZoneVariant::daylight())
         }
 
         /// Sets the metazone based on the time zone and the local timestamp.

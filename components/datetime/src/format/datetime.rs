@@ -36,7 +36,7 @@ use icu_calendar::AnyCalendarKind;
 use icu_decimal::FixedDecimalFormatter;
 use icu_plurals::PluralRules;
 use icu_provider::DataPayload;
-use icu_timezone::{CustomTimeZone, UtcOffset};
+use icu_timezone::{MetazoneId, TimeZoneBcp47Id, UtcOffset};
 use writeable::{Part, Writeable};
 
 /// [`FormattedDateTime`] is a intermediate structure which can be retrieved as
@@ -315,8 +315,8 @@ pub enum DateTimeWriteError {
     #[displaydoc("Cannot find symbol for weekday {0:?}")]
     MissingWeekdaySymbol(IsoWeekday),
     /// Missing time zone symbol
-    #[displaydoc("Cannot find symbol for time zone {0:?}")]
-    MissingTimeZoneSymbol(CustomTimeZone),
+    #[displaydoc("Cannot find symbol for time zone {0:?} {1:?}")]
+    MissingTimeZoneSymbol(Option<TimeZoneBcp47Id>, Option<MetazoneId>),
 
     // Invalid input
     /// Incomplete input
@@ -787,7 +787,7 @@ where
                 }
                 Some(time_zone) => {
                     let payloads = zs.get_payloads();
-                    let zone_input = custom_time_zone.into();
+                    let zone_input = ExtractedTimeZoneInput::extract_from(&custom_time_zone);
                     let units = select_zone_units(time_zone);
                     match do_write_zone(units, &zone_input, payloads, w)? {
                         Ok(()) => Ok(()),

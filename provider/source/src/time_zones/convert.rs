@@ -4,6 +4,7 @@
 
 use super::CldrTimeZonesData;
 use crate::cldr_serde;
+use crate::cldr_serde::time_zones::meta_zones::MetazoneTerritory;
 use cldr_serde::time_zones::bcp47_tzid::Bcp47TzidAliasData;
 use cldr_serde::time_zones::meta_zones::MetaLocationOrSubRegion;
 use cldr_serde::time_zones::meta_zones::MetazoneAliasData;
@@ -12,13 +13,14 @@ use cldr_serde::time_zones::meta_zones::ZonePeriod;
 use cldr_serde::time_zones::time_zone_names::*;
 use icu::calendar::DateTime;
 use icu::datetime::provider::time_zones::{
-    ExemplarCitiesV1, MetazoneGenericNamesLongV1, MetazoneGenericNamesShortV1, MetazoneId,
-    MetazoneSpecificNamesLongV1, MetazoneSpecificNamesShortV1, TimeZoneBcp47Id, TimeZoneFormatsV1,
+    EightsOfHourOffset, ExemplarCitiesV1, MetazoneGenericNamesLongV1, MetazoneGenericNamesShortV1,
+    MetazoneId, MetazoneSpecificNamesLongV1, MetazoneSpecificNamesShortV1, TimeZoneBcp47Id,
+    TimeZoneFormatsV1,
 };
 use icu::timezone::provider::MetazonePeriodV1;
-use icu::timezone::ZoneVariant;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
+use tinystr::tinystr;
 use tinystr::TinyStr8;
 
 /// Performs part 1 of type fallback as specified in the UTS-35 spec for TimeZone Goals:
@@ -96,7 +98,77 @@ fn compute_meta_zone_ids_btreemap(
     for (meta_zone_id, meta_zone_id_data) in meta_zone_ids_resource.iter() {
         meta_zone_ids.insert(meta_zone_id_data.long_id.to_string(), *meta_zone_id);
     }
+    // TODO(#1781): Remove this special case once the short id is updated in CLDR
+    meta_zone_ids.insert("Yukon".to_owned(), MetazoneId(tinystr!(4, "yuko")));
     meta_zone_ids
+}
+
+type Offsets = (EightsOfHourOffset, Option<EightsOfHourOffset>);
+
+// TODO: load this from a better source. Ideally this data would be in CLDR
+fn offsets_for_meta(meta_zones_territory: &Vec<MetazoneTerritory>, meta: &str) -> Option<Offsets> {
+    let (mut standard, mut daylight) = (None, None);
+    let mut first_zone = "";
+    for m in meta_zones_territory {
+        if m.map_zone.other != meta {
+            continue;
+        }
+        if m.map_zone.zone_type == "Europe/Minsk" {
+            // Minsk has an incorrect metazone, so ignore it
+            // https://unicode-org.atlassian.net/browse/CLDR-17927
+            continue;
+        }
+        let Some((new_standard, new_daylight)) = offsets_for_iana(&m.map_zone.zone_type) else {
+            continue;
+        };
+        if let Some(standard) = standard {
+            match (standard, daylight, new_standard, new_daylight) {
+                // Same standard times, no DST, allowed
+                (s1, None, s2, None) if s1 == s2 => {}
+                // Same standard times, one DST, allowed
+                (s1, Some(_), s2, None) | (s1, None, s2, Some(_)) if s1 == s2 => {}
+                // Same standard times, same DST times, allowed
+                (s1, Some(d1), s2, Some(d2)) if s1 == s2 && d1 == d2 => {}
+                // One tz has DST, and it's the other's standard time, sketchy but allowed
+                (s, None, _, Some(d)) | (_, Some(d), s, None) if s == d => {}
+                // Both tzs have DST but swapped, sketchy but allowed
+                (s1, Some(d1), s2, Some(d2)) if s1 == d2 && d1 == s2 => {}
+                // all other cases
+                _ => {
+                    log::warn!(
+                        "{:?} has different offsets from {first_zone:?}: standard {} vs {}, daylight {:?} vs {:?}",
+                        m.map_zone.zone_type,
+                        new_standard as f32 / 8.0,
+                        standard as f32 / 8.0,
+                        new_daylight.map(|o| o as f32 / 8.0),
+                        daylight.map(|o| o as f32 / 8.0),
+                    )
+                }
+            }
+            if daylight.is_none() && standard == new_standard {
+                // Only set daylight if standards agree
+                daylight = new_daylight;
+            }
+        } else {
+            first_zone = &m.map_zone.zone_type;
+            standard = Some(new_standard);
+            daylight = new_daylight;
+        }
+    }
+    Some((standard?, daylight))
+}
+
+// TODO: load this from a better source. Ideally this data would be in CLDR
+fn offsets_for_iana(iana: &str) -> Option<Offsets> {
+    let tz = tzif::parse_tzif(jiff_tzdb::get(iana)?.1).ok()?;
+    let posix = tz.footer?;
+
+    Some((
+        (-posix.std_info.offset.0 / 450) as EightsOfHourOffset,
+        posix
+            .dst_info
+            .map(|i| (-i.variant_info.offset.0 / 450) as EightsOfHourOffset),
+    ))
 }
 
 impl From<CldrTimeZonesData<'_>> for TimeZoneFormatsV1<'static> {
@@ -257,30 +329,13 @@ macro_rules! long_short_impls {
                         Some(metazones) => metazones
                             .0
                             .iter()
-                            .filter_map(|(key, metazone)| {
-                                match meta_zone_id_data.get(key) {
-                                    Some(meta_zone_short_id) => {
-                                        metazone.$field.as_ref().and_then(type_fallback).map(
-                                            |format| (meta_zone_short_id.clone(), format.clone()),
-                                        )
-                                    }
-                                    None => {
-                                        // TODO(#1781): Remove this special case once the short id is updated in CLDR
-                                        if key == "Yukon" {
-                                            metazone.$field.as_ref().and_then(type_fallback).map(
-                                                |format| {
-                                                    const TINYSTR_YUKO: tinystr::TinyAsciiStr<4> =
-                                                        tinystr::tinystr!(4, "yuko");
-                                                    (MetazoneId(TINYSTR_YUKO), format.clone())
-                                                },
-                                            )
-                                        } else {
-                                            panic!(
-                                                "Cannot find short id of meta zone for {key:?}."
-                                            )
-                                        }
-                                    }
-                                }
+                            .filter_map(|(key, metazone)| match meta_zone_id_data.get(key) {
+                                Some(meta_zone_short_id) => metazone
+                                    .$field
+                                    .as_ref()
+                                    .and_then(type_fallback)
+                                    .map(|format| (meta_zone_short_id.clone(), format.clone())),
+                                None => panic!("Cannot find short id of meta zone for {key:?}."),
                             })
                             .collect(),
                     },
@@ -344,27 +399,15 @@ macro_rules! long_short_impls {
                         Some(metazones) => metazones
                             .0
                             .iter()
-                            .filter_map(|(key, metazone)| {
-                                match meta_zone_id_data.get(key) {
-                                    Some(meta_zone_short_id) => metazone
-                                        .$field
-                                        .as_ref()
-                                        .map(|value| (meta_zone_short_id.clone(), value.clone())),
-                                    None => {
-                                        // TODO(#1781): Remove this special case once the short id is updated in CLDR
-                                        if key == "Yukon" {
-                                            metazone.$field.as_ref().map(|value| {
-                                                const TINYSTR_YUKO: tinystr::TinyAsciiStr<4> =
-                                                    tinystr::tinystr!(4, "yuko");
-                                                (MetazoneId(TINYSTR_YUKO), value.clone())
-                                            })
-                                        } else {
-                                            panic!(
-                                                "Cannot find short id of meta zone for {key:?}."
-                                            )
-                                        }
-                                    }
-                                }
+                            .filter_map(|(key, metazone)| match meta_zone_id_data.get(key) {
+                                Some(meta_zone_short_id) => metazone.$field.as_ref().map(|value| {
+                                    (
+                                        meta_zone_short_id.clone(),
+                                        offsets_for_meta(other.meta_zones_territory, key),
+                                        value.clone(),
+                                    )
+                                }),
+                                None => panic!("Cannot find short id of meta zone for {key:?}."),
                             })
                             .flat_map(iterate_zone_format_for_meta_zone_id)
                             .collect(),
@@ -387,9 +430,15 @@ macro_rules! long_short_impls {
                                                 Some(bcp47) => [place]
                                                     .into_iter()
                                                     .filter_map(|inner_place| {
-                                                        inner_place
-                                                            .$metazones_name()
-                                                            .map(|format| (bcp47.clone(), format))
+                                                        inner_place.$metazones_name().map(
+                                                            |format| {
+                                                                (
+                                                                    bcp47.clone(),
+                                                                    offsets_for_iana(&key),
+                                                                    format,
+                                                                )
+                                                            },
+                                                        )
                                                     })
                                                     .collect::<Vec<_>>(),
                                                 None => panic!("Cannot find bcp47 for {key:?}."),
@@ -402,9 +451,15 @@ macro_rules! long_short_impls {
                                                 key.push('/');
                                                 key.push_str(&inner_key);
                                                 match bcp47_tzid_data.get(&key) {
-                                                    Some(bcp47) => place
-                                                        .$metazones_name()
-                                                        .map(|format| (bcp47.clone(), format)),
+                                                    Some(bcp47) => {
+                                                        place.$metazones_name().map(|format| {
+                                                            (
+                                                                bcp47.clone(),
+                                                                offsets_for_iana(&key),
+                                                                format,
+                                                            )
+                                                        })
+                                                    }
                                                     None => {
                                                         panic!("Cannot find bcp47 for {key:?}.")
                                                     }
@@ -436,30 +491,37 @@ long_short_impls!(
     short_metazone_names
 );
 
-fn convert_cldr_zone_variant(cldr_zone_variant: &str) -> ZoneVariant {
+fn convert_cldr_zone_variant(
+    cldr_zone_variant: &str,
+    offsets: Option<Offsets>,
+) -> Option<EightsOfHourOffset> {
     match cldr_zone_variant {
-        "standard" => ZoneVariant::standard(),
-        "daylight" => ZoneVariant::daylight(),
-        _ => panic!("Time-zone variant was not compatible with ZoneVariant: {cldr_zone_variant}"),
+        "standard" => Some(offsets?.0),
+        "daylight" => offsets?.1,
+        _ => panic!("Unknown time-zone variant: {cldr_zone_variant}"),
     }
 }
 
 fn iterate_zone_format_for_meta_zone_id(
-    pair: (MetazoneId, ZoneFormat),
-) -> impl Iterator<Item = (MetazoneId, ZoneVariant, String)> {
-    let (key1, zf) = pair;
+    pair: (MetazoneId, Option<Offsets>, ZoneFormat),
+) -> impl Iterator<Item = (MetazoneId, EightsOfHourOffset, String)> {
+    let (key1, offsets, zf) = pair;
     zf.0.into_iter()
         .filter(|(key, _)| !key.eq("generic"))
-        .map(move |(key, value)| (key1, convert_cldr_zone_variant(&key), value))
+        .filter_map(move |(key, value)| {
+            Some((key1, convert_cldr_zone_variant(&key, offsets)?, value))
+        })
 }
 
 fn iterate_zone_format_for_time_zone_id(
-    pair: (TimeZoneBcp47Id, ZoneFormat),
-) -> impl Iterator<Item = (TimeZoneBcp47Id, ZoneVariant, String)> {
-    let (key1, zf) = pair;
+    pair: (TimeZoneBcp47Id, Option<Offsets>, ZoneFormat),
+) -> impl Iterator<Item = (TimeZoneBcp47Id, EightsOfHourOffset, String)> {
+    let (key1, offsets, zf) = pair;
     zf.0.into_iter()
         .filter(|(key, _)| !key.eq("generic"))
-        .map(move |(key, value)| (key1, convert_cldr_zone_variant(&key), value))
+        .filter_map(move |(key, value)| {
+            Some((key1, convert_cldr_zone_variant(&key, offsets)?, value))
+        })
 }
 
 fn metazone_periods_iter<'a>(
@@ -489,40 +551,20 @@ fn metazone_periods_iter<'a>(
                     DateTime::try_new_iso_datetime(year, month, day, hour, minute, 0).unwrap();
                 let minutes = iso.minutes_since_local_unix_epoch();
 
-                match meta_zone_id_data.get(&period.uses_meta_zone.mzone) {
-                    Some(meta_zone_short_id) => (time_zone_key, minutes, Some(*meta_zone_short_id)),
-                    None => {
-                        // TODO(#1781): Remove this special case once the short id is updated in CLDR
-                        if &period.uses_meta_zone.mzone == "Yukon" {
-                            (
-                                time_zone_key,
-                                minutes,
-                                Some(MetazoneId(tinystr::tinystr!(4, "yuko"))),
-                            )
-                        } else {
-                            (time_zone_key, minutes, None)
-                        }
-                    }
-                }
+                (
+                    time_zone_key,
+                    minutes,
+                    meta_zone_id_data.get(&period.uses_meta_zone.mzone).copied(),
+                )
             }
             None => {
                 let iso = DateTime::try_new_iso_datetime(1970, 1, 1, 0, 0, 0).unwrap();
                 let minutes = iso.minutes_since_local_unix_epoch();
-                match meta_zone_id_data.get(&period.uses_meta_zone.mzone) {
-                    Some(meta_zone_short_id) => (time_zone_key, minutes, Some(*meta_zone_short_id)),
-                    None => {
-                        // TODO(#1781): Remove this special case once the short id is updated in CLDR
-                        if &period.uses_meta_zone.mzone == "Yukon" {
-                            (
-                                time_zone_key,
-                                minutes,
-                                Some(MetazoneId(tinystr::tinystr!(4, "yuko"))),
-                            )
-                        } else {
-                            (time_zone_key, minutes, None)
-                        }
-                    }
-                }
+                (
+                    time_zone_key,
+                    minutes,
+                    meta_zone_id_data.get(&period.uses_meta_zone.mzone).copied(),
+                )
             }
         })
 }

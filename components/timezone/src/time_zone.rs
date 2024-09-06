@@ -5,9 +5,9 @@
 use crate::provider::{MetazoneId, TimeZoneBcp47Id};
 
 use crate::metazone::MetazoneCalculator;
+use crate::UtcOffset;
 #[cfg(feature = "compiled_data")]
 use crate::{TimeZoneIdMapper, UnknownTimeZoneError};
-use crate::{UtcOffset, ZoneVariant};
 use icu_calendar::{DateTime, Iso};
 use tinystr::TinyAsciiStr;
 
@@ -28,7 +28,6 @@ use tinystr::TinyAsciiStr;
 ///     offset: Some(UtcOffset::default()),
 ///     time_zone_id: None,
 ///     metazone_id: None,
-///     zone_variant: None,
 /// };
 ///
 /// let tz2: CustomTimeZone =
@@ -43,8 +42,6 @@ pub struct CustomTimeZone {
     pub time_zone_id: Option<TimeZoneBcp47Id>,
     /// The CLDR metazone identifier
     pub metazone_id: Option<MetazoneId>,
-    /// The time variant e.g. daylight or standard
-    pub zone_variant: Option<ZoneVariant>,
 }
 
 impl CustomTimeZone {
@@ -54,7 +51,6 @@ impl CustomTimeZone {
             offset: Some(offset),
             time_zone_id: None,
             metazone_id: None,
-            zone_variant: None,
         }
     }
 
@@ -64,7 +60,6 @@ impl CustomTimeZone {
             offset: None,
             time_zone_id: Some(time_zone_id),
             metazone_id: None,
-            zone_variant: None,
         }
     }
 
@@ -76,7 +71,6 @@ impl CustomTimeZone {
             offset: None,
             time_zone_id: None,
             metazone_id: None,
-            zone_variant: None,
         }
     }
 
@@ -85,7 +79,6 @@ impl CustomTimeZone {
         offset_eighths_of_hour: i8,
         time_zone_id: TinyAsciiStr<8>,
         metazone_id: TinyAsciiStr<4>,
-        zone_variant: TinyAsciiStr<2>,
     ) -> Self {
         Self {
             offset: Some(UtcOffset::from_offset_eighths_of_hour(
@@ -93,7 +86,6 @@ impl CustomTimeZone {
             )),
             time_zone_id: Some(TimeZoneBcp47Id(time_zone_id)),
             metazone_id: Some(MetazoneId(metazone_id)),
-            zone_variant: Some(ZoneVariant(zone_variant)),
         }
     }
 
@@ -103,7 +95,6 @@ impl CustomTimeZone {
             offset: Some(UtcOffset::zero()),
             time_zone_id: Some(TimeZoneBcp47Id(tinystr::tinystr!(8, "Etc/UTC"))),
             metazone_id: Some(MetazoneId(tinystr::tinystr!(4, "utc"))),
-            zone_variant: Some(ZoneVariant::standard()),
         }
     }
 
@@ -153,7 +144,6 @@ impl CustomTimeZone {
                 offset: Some(offset),
                 time_zone_id: None,
                 metazone_id: None,
-                zone_variant: None,
             });
         }
         let mapper = TimeZoneIdMapper::new();
@@ -162,7 +152,6 @@ impl CustomTimeZone {
                 offset: None,
                 time_zone_id: Some(bcp47_id),
                 metazone_id: None,
-                zone_variant: None,
             });
         }
         Err(UnknownTimeZoneError)
@@ -184,7 +173,6 @@ impl CustomTimeZone {
     ///     offset: Some("+11".parse().expect("Failed to parse a UTC offset.")),
     ///     time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "gugum"))),
     ///     metazone_id: None,
-    ///     zone_variant: None,
     /// };
     /// tz.maybe_calculate_metazone(
     ///     &mzc,

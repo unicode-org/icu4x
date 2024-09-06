@@ -25,6 +25,8 @@ export class CustomTimeZone {
 
     setOffsetEighthsOfHour(offsetEighthsOfHour: number): void;
 
+    offsetEighthsOfHour(): number | null;
+
     clearOffset(): void;
 
     get offsetSeconds(): number | null;
@@ -50,20 +52,6 @@ export class CustomTimeZone {
     clearMetazoneId(): void;
 
     get metazoneId(): string | null;
-
-    trySetZoneVariant(id: string): boolean;
-
-    clearZoneVariant(): void;
-
-    get zoneVariant(): string | null;
-
-    setStandardTime(): void;
-
-    setDaylightTime(): void;
-
-    get isStandardTime(): boolean | null;
-
-    get isDaylightTime(): boolean | null;
 
     maybeCalculateMetazone(metazoneCalculator: MetazoneCalculator, localDatetime: IsoDateTime): void;
 }

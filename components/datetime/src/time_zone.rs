@@ -1030,9 +1030,11 @@ impl FormatTimeZone for SpecificNonLocationShortFormat {
             .as_ref()
             .and_then(|metazones| {
                 time_zone.time_zone_id().and_then(|tz| {
-                    time_zone
-                        .zone_variant()
-                        .and_then(|variant| metazones.overrides.get_2d(&tz, &variant))
+                    time_zone.offset().and_then(|offset| {
+                        metazones
+                            .overrides
+                            .get_2d(&tz, &offset.offset_eighths_of_hour())
+                    })
                 })
             })
             .or_else(|| {
@@ -1041,9 +1043,11 @@ impl FormatTimeZone for SpecificNonLocationShortFormat {
                     .as_ref()
                     .and_then(|metazones| {
                         time_zone.metazone_id().and_then(|mz| {
-                            time_zone
-                                .zone_variant()
-                                .and_then(|variant| metazones.defaults.get_2d(&mz, &variant))
+                            time_zone.offset().and_then(|offset| {
+                                metazones
+                                    .defaults
+                                    .get_2d(&mz, &offset.offset_eighths_of_hour())
+                            })
                         })
                     })
             });
@@ -1070,9 +1074,11 @@ impl FormatTimeZone for SpecificNonLocationLongFormat {
             .as_ref()
             .and_then(|metazones| {
                 time_zone.time_zone_id().and_then(|tz| {
-                    time_zone
-                        .zone_variant()
-                        .and_then(|variant| metazones.overrides.get_2d(&tz, &variant))
+                    time_zone.offset().and_then(|offset| {
+                        metazones
+                            .overrides
+                            .get_2d(&tz, &offset.offset_eighths_of_hour())
+                    })
                 })
             })
             .or_else(|| {
@@ -1081,9 +1087,11 @@ impl FormatTimeZone for SpecificNonLocationLongFormat {
                     .as_ref()
                     .and_then(|metazones| {
                         time_zone.metazone_id().and_then(|mz| {
-                            time_zone
-                                .zone_variant()
-                                .and_then(|variant| metazones.defaults.get_2d(&mz, &variant))
+                            time_zone.offset().and_then(|offset| {
+                                metazones
+                                    .defaults
+                                    .get_2d(&mz, &offset.offset_eighths_of_hour())
+                            })
                         })
                     })
             });

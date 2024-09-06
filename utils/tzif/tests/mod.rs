@@ -2,22 +2,16 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::path::Path;
 use walkdir::WalkDir;
-
-fn parse_tzif_file(path: &Path) -> Result<(), tzif::error::Error> {
-    println!("parsing {:?}", path);
-    let parsed = tzif::parse_tzif_file(path)?;
-    println!("{parsed:#?}");
-    Ok(())
-}
 
 #[test]
 fn parse_tzif_testdata() -> Result<(), tzif::error::Error> {
     for entry in WalkDir::new("testdata").follow_links(true) {
         let entry = entry.unwrap();
         if entry.file_type().is_file() {
-            parse_tzif_file(entry.path())?
+            println!("parsing {:?}", entry.path());
+            let parsed = tzif::parse_tzif(&std::fs::read(entry.path()).unwrap());
+            println!("{parsed:#?}");
         }
     }
     Ok(())

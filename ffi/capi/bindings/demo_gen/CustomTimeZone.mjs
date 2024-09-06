@@ -27,17 +27,3 @@ export function metazoneId() {
         ]
     );
 }
-export function zoneVariant() {
-    var terminusArgs = arguments;
-    return (function (...args) { return args[0].zoneVariant }).apply(
-        null,
-        [
-            CustomTimeZone.fromString.apply(
-                null,
-                [
-                    terminusArgs[0]
-                ]
-            )
-        ]
-    );
-}

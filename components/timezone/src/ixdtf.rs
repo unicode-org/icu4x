@@ -114,7 +114,6 @@ impl CustomTimeZone {
                     offset: custom_from_offset.offset,
                     time_zone_id: custom_from_annotation.time_zone_id,
                     metazone_id: custom_from_annotation.metazone_id,
-                    zone_variant: None,
                 })
             }
             _ => Err(ParseError::MissingTimeZone),
@@ -192,7 +191,6 @@ impl CustomZonedDateTime<Iso> {
     ///     offset: Some(UtcOffset::try_from_offset_seconds(-18000).unwrap()),
     ///     time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))),
     ///     metazone_id: Some(MetazoneId(tinystr!(4, "amce"))),
-    ///     zone_variant: None,
     /// });
     ///
     /// ```
@@ -278,7 +276,6 @@ impl CustomZonedDateTime<AnyCalendar> {
     ///     offset: Some(UtcOffset::try_from_offset_seconds(-18000).unwrap()),
     ///     time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))),
     ///     metazone_id: Some(MetazoneId(tinystr!(4, "amce"))),
-    ///     zone_variant: None,
     /// });
     /// ```
     ///
@@ -301,7 +298,6 @@ impl CustomZonedDateTime<AnyCalendar> {
     ///     offset: Some(UtcOffset::try_from_offset_seconds(-18000).unwrap()),
     ///     time_zone_id: None,
     ///     metazone_id: None,
-    ///     zone_variant: None,
     /// });
     /// ```
     ///
@@ -321,14 +317,12 @@ impl CustomZonedDateTime<AnyCalendar> {
     ///     offset: Some(UtcOffset::try_from_offset_seconds(-18000).unwrap()),
     ///     time_zone_id: None,
     ///     metazone_id: None,
-    ///     zone_variant: None,
     /// });
     ///
     /// assert_eq!(tz_from_iana_annotation.zone, CustomTimeZone {
     ///     offset: None,
     ///     time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))),
     ///     metazone_id: Some(MetazoneId(tinystr!(4, "amce"))),
-    ///     zone_variant: None,
     /// });
     /// ```
     ///
@@ -353,7 +347,6 @@ impl CustomZonedDateTime<AnyCalendar> {
     ///     offset: Some(UtcOffset::try_from_offset_seconds(-18000).unwrap()),
     ///     time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))),
     ///     metazone_id: Some(MetazoneId(tinystr!(4, "amce"))),
-    ///     zone_variant: None,
     /// });
     ///
     /// let inconsistent_tz_from_both = CustomZonedDateTime::try_from_str("2024-08-08T12:08:19-05:00[America/Los_Angeles]").unwrap();
@@ -362,7 +355,6 @@ impl CustomZonedDateTime<AnyCalendar> {
     ///     offset: Some(UtcOffset::try_from_offset_seconds(-18000).unwrap()),
     ///     time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "uslax"))),
     ///     metazone_id: Some(MetazoneId(tinystr!(4, "ampa"))),
-    ///     zone_variant: None,
     /// });
     /// ```
     ///
@@ -380,7 +372,6 @@ impl CustomZonedDateTime<AnyCalendar> {
     ///     offset: Some(UtcOffset::try_from_offset_seconds(-18000).unwrap()),
     ///     time_zone_id: None,
     ///     metazone_id: None,
-    ///     zone_variant: None,
     /// });
     ///
     ///

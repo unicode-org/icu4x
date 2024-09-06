@@ -1166,20 +1166,6 @@ export const RenderInfo = {
             ]
         },
         
-        "CustomTimeZone.zoneVariant": {
-            func: CustomTimeZoneDemo.zoneVariant,
-            // For avoiding webpacking minifying issues:
-            funcName: "CustomTimeZone.zoneVariant",
-            parameters: [
-                
-                {
-                    name: "S",
-                    type: "string"
-                }
-                
-            ]
-        },
-        
         "TimeZoneFormatter.formatCustomTimeZone": {
             func: TimeZoneFormatterDemo.formatCustomTimeZone,
             // For avoiding webpacking minifying issues:

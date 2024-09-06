@@ -44,6 +44,8 @@ public:
 
   inline void set_offset_eighths_of_hour(int8_t offset_eighths_of_hour);
 
+  inline std::optional<int8_t> offset_eighths_of_hour() const;
+
   inline void clear_offset();
 
   inline std::optional<int32_t> offset_seconds() const;
@@ -69,20 +71,6 @@ public:
   inline void clear_metazone_id();
 
   inline std::optional<std::string> metazone_id() const;
-
-  inline std::optional<std::monostate> try_set_zone_variant(std::string_view id);
-
-  inline void clear_zone_variant();
-
-  inline std::optional<std::string> zone_variant() const;
-
-  inline void set_standard_time();
-
-  inline void set_daylight_time();
-
-  inline std::optional<bool> is_standard_time() const;
-
-  inline std::optional<bool> is_daylight_time() const;
 
   inline void maybe_calculate_metazone(const icu4x::MetazoneCalculator& metazone_calculator, const icu4x::IsoDateTime& local_datetime);
 
