@@ -5,21 +5,25 @@
     "1": "next month"
   },
   "past": {
-    "specials": [
-      [
-        "One",
-        "\u0001 month ago"
-      ]
-    ],
-    "other": "\u0001 months ago"
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0001 month ago"
+        ]
+      ],
+      "other": "\u0001 months ago"
+    }
   },
   "future": {
-    "specials": [
-      [
-        "One",
-        "\u0004in  month"
-      ]
-    ],
-    "other": "\u0004in  months"
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0004in  month"
+        ]
+      ],
+      "other": "\u0004in  months"
+    }
   }
 }

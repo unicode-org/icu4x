@@ -8,35 +8,51 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 export class WeekRelativeUnit {
     #value = undefined;
 
-    static values = new Map([
+    static #values = new Map([
         ["Previous", 0],
         ["Current", 1],
         ["Next", 2]
     ]);
 
     constructor(value) {
-        if (value instanceof WeekRelativeUnit) {
-            this.#value = value.value;
-            return;
+        if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
+            // We pass in two internalConstructor arguments to create *new*
+            // instances of this type, otherwise the enums are treated as singletons.
+            if (arguments[1] === diplomatRuntime.internalConstructor ) {
+                this.#value = arguments[2];
+                return;
+            }
+            return WeekRelativeUnit.#objectValues[arguments[1]];
         }
 
-        if (WeekRelativeUnit.values.has(value)) {
-            this.#value = value;
-            return;
+        if (value instanceof WeekRelativeUnit) {
+            return value;
+        }
+
+        let intVal = WeekRelativeUnit.#values.get(value);
+
+        // Nullish check, checks for null or undefined
+        if (intVal == null) {
+            return WeekRelativeUnit.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a WeekRelativeUnit and does not correspond to any of its enumerator values.");
     }
 
     get value() {
-        return this.#value;
+        return [...WeekRelativeUnit.#values.keys()][this.#value];
     }
 
     get ffiValue() {
-        return WeekRelativeUnit.values.get(this.#value);
+        return this.#value;
     }
+    static #objectValues = [
+        new WeekRelativeUnit(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
+        new WeekRelativeUnit(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
+        new WeekRelativeUnit(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
+    ];
 
-    static Previous = new WeekRelativeUnit("Previous");
-    static Current = new WeekRelativeUnit("Current");
-    static Next = new WeekRelativeUnit("Next");
+    static Previous = WeekRelativeUnit.#objectValues[0];
+    static Current = WeekRelativeUnit.#objectValues[1];
+    static Next = WeekRelativeUnit.#objectValues[2];
 }

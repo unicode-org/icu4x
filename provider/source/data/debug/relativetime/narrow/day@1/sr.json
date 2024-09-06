@@ -7,11 +7,15 @@
     "2": "прекосутра"
   },
   "past": {
-    "specials": [],
-    "other": "\bпре  д."
+    "strings": {
+      "specials": [],
+      "other": "\bпре  д."
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u0006за  д."
+    "strings": {
+      "specials": [],
+      "other": "\u0006за  д."
+    }
   }
 }

@@ -22,7 +22,7 @@
 
 
 typedef struct icu4x_GregorianDateTimeFormatter_create_with_lengths_mv1_result {union {GregorianDateTimeFormatter* ok; Error err;}; bool is_ok;} icu4x_GregorianDateTimeFormatter_create_with_lengths_mv1_result;
-icu4x_GregorianDateTimeFormatter_create_with_lengths_mv1_result icu4x_GregorianDateTimeFormatter_create_with_lengths_mv1(const DataProvider* provider, const Locale* locale, DateLength date_length, TimeLength time_length);
+icu4x_GregorianDateTimeFormatter_create_with_lengths_mv1_result icu4x_GregorianDateTimeFormatter_create_with_lengths_mv1(const DataProvider* provider, const Locale* locale, DateLength_option date_length, TimeLength_option time_length);
 
 void icu4x_GregorianDateTimeFormatter_format_iso_datetime_mv1(const GregorianDateTimeFormatter* self, const IsoDateTime* value, DiplomatWrite* write);
 

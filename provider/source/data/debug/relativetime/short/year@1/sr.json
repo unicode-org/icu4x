@@ -5,11 +5,15 @@
     "1": "следеће год."
   },
   "past": {
-    "specials": [],
-    "other": "\bпре  год."
+    "strings": {
+      "specials": [],
+      "other": "\bпре  год."
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u0006за  год."
+    "strings": {
+      "specials": [],
+      "other": "\u0006за  год."
+    }
   }
 }

@@ -454,6 +454,18 @@ where
         }
     }
 
+    /// Borrows the underlying data statically if possible.
+    ///
+    /// This will succeed if [`DataPayload`] is constructed with [`DataPayload::from_static_ref`], which is used by
+    /// baked providers.
+    #[inline]
+    pub fn get_static(&self) -> Option<&'static <M::DataStruct as Yokeable<'static>>::Output> {
+        match &self.0 {
+            DataPayloadInner::Yoke(_) => None,
+            DataPayloadInner::StaticRef(r) => Some(Yokeable::transform(*r)),
+        }
+    }
+
     /// Maps `DataPayload<M>` to `DataPayload<M2>` by projecting it with [`Yoke::map_project`].
     ///
     /// This is accomplished by a function that takes `M`'s data type and returns `M2`'s data

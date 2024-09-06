@@ -8,33 +8,48 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 export class DisplayNamesFallback {
     #value = undefined;
 
-    static values = new Map([
+    static #values = new Map([
         ["Code", 0],
         ["None", 1]
     ]);
 
     constructor(value) {
-        if (value instanceof DisplayNamesFallback) {
-            this.#value = value.value;
-            return;
+        if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
+            // We pass in two internalConstructor arguments to create *new*
+            // instances of this type, otherwise the enums are treated as singletons.
+            if (arguments[1] === diplomatRuntime.internalConstructor ) {
+                this.#value = arguments[2];
+                return;
+            }
+            return DisplayNamesFallback.#objectValues[arguments[1]];
         }
 
-        if (DisplayNamesFallback.values.has(value)) {
-            this.#value = value;
-            return;
+        if (value instanceof DisplayNamesFallback) {
+            return value;
+        }
+
+        let intVal = DisplayNamesFallback.#values.get(value);
+
+        // Nullish check, checks for null or undefined
+        if (intVal == null) {
+            return DisplayNamesFallback.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a DisplayNamesFallback and does not correspond to any of its enumerator values.");
     }
 
     get value() {
-        return this.#value;
+        return [...DisplayNamesFallback.#values.keys()][this.#value];
     }
 
     get ffiValue() {
-        return DisplayNamesFallback.values.get(this.#value);
+        return this.#value;
     }
+    static #objectValues = [
+        new DisplayNamesFallback(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
+        new DisplayNamesFallback(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
+    ];
 
-    static Code = new DisplayNamesFallback("Code");
-    static None = new DisplayNamesFallback("None");
+    static Code = DisplayNamesFallback.#objectValues[0];
+    static None = DisplayNamesFallback.#objectValues[1];
 }

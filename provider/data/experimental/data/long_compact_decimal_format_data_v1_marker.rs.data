@@ -12,9 +12,9 @@
 #[macro_export]
 macro_rules! __impl_long_compact_decimal_format_data_v1_marker {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl $provider {
             const DATA_LONG_COMPACT_DECIMAL_FORMAT_DATA_V1_MARKER: icu_provider_baked::zerotrie::Data<icu::experimental::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker> = icu_provider_baked::zerotrie::Data {
                 trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1xabcdefghijklmnoprstuvxyz\0\0\0\0\0\x01\x01\x01\x01\x01\x01\x01\x02\x02\x02\x02\x02\x02\x03\x03\x03\x03\x03X\x8D\x9B\xB2\xD2\x05\x1C@P_\xCA\xE1 AKs\x85\xD1\tEHQ\x8C\xC5fmrsz\x01\x02BM\x80\x81\x82\xC2\x1E-\x05latn\x82\xC6ADELMT\x07\x0E\x15\x1C#E\x1Earab\x82Z\x1Earab\x82H\x1Earab\x82Y\x1Earab\x82A\x1Earab\x82N\x1Earab\x82\x83\xC2\x1Et\x05latn\x83\x84\x85\xC6eghnrs\x01\n\x12\x19\"\x86\x87c\x1Elatn\x90Xo\x1Elatn\x90X\x88\x1Elatn\x88\x89x\x8A\x1Edeva\x8A\x8B-Cyrl\x8C\xC4ahsy\x01\x03\x04\x8Dr\x8E\x8F\x90\0\xC4aeos\x02\x04\x0C\x90\x01\x90\x02i\x1Edeva\x90Xb\x90\x03\xC5lnstu\x02\x04\x12\x14\x90\x04\x90\x05\x90\x06-\xC24M\x0419\x90\x07X\x90\x06\x90\x08\x90\t\xC6afiory\t\x17\x1C\x1E%\x90\n\x1Elatn\x90\n-Adlm\x90\x0B\x1Elatn\x90\x0B\x90\x0Cl\x90\r\x90\x0E\x90\x0F-CA\x90\x10\x90\x11\xC4adlu\x02\x04\x06\x90\x12\x90\x13\x90\x14\x90\x15\x1Egujr\x90\x15\xC7aeirsuy\x02\x04\r\x0F\x12\x14\x90\x16\x90\x17\x90\x18\x1Edeva\x90\x18\x90\x19b\x90\x1A\x90\x1B\x90\x1C\xC4adst\x02\x04\x06\x90\x1D\x90\x1E\x90\x1F\x90 \xC2av\x02\x90!\x90\"\x1Ejava\x90\"\xCAaegkmnosxy\x02\x05\x08\n\x13\x1C(/U\x90#a\x90$p\x90%\x90&\x90'\x1Ekhmr\x90'\x90(\x1Eknda\x90(\x90)k\x90*\x1Edeva\x90*\x1Elatn\x90Xv-\xC3DOT\n\x14eva\x1Edeva\x90Xrya\x1Eorya\x90Xelu\x1Etelu\x90X\x90+\xC4botv\x02\x0B\r\x90,\x90-\x1Elaoo\x90g\x90.\x90/\xC7aklnrsy\x08\n\x13\x1D&(i\x1Edeva\x90X\x900\x901\x1Emlym\x901\x902i\x1Elatn\x90X\x903\x1Elatn\x903\x904\x905\x1Elatn\x905\xC5elnoq\t\x0B\r\x0F\x906\x1Elatn\x906\x907\x908\x909o\x1Elatn\x90Xr\x90:\x1Eorya\x90:\xC5aclst\t\x0C\x0E\x17\x90;\x1Eguru\x90;m\x90<\x90=\x90>\x1Elatn\x90>\x90?-PT\x90@\xC3aou\x08\nj\x1Elatn\x90X\x90A\x90B\xCBacdikloqrvw\x15\x17 \"$&(*24\xC3\x1Eht\x06\x08latn\x90X\x90C\x1Elatn\x90X\x90D\x90E\x1Elatn\x90E\x90F\x90G\x90H\x90I\x90J\x90K-Latn\x8B\x90L\x90M\xC8aeghikor\x0C\x15\x17 \"$&\x90N\x1Etamldec\x90N\x90O\x1Etelu\x90O\x90P\x90Q\x1Ethai\x90Q\x90R\x90S\x90T\x90U\xC5gknrz\x0C\x0E\x11)\x90V\x1Earabext\x90V\x90Wd\x90X\x90Y\xC2\x1E-\tarabext\x90YIN\x1Elatn\x90Y\x90Z-Cyrl\x90[i\x90\\nr\x1Edeva\x90X\xC3oru\x07\x15\x90]-BJ\x90^l\x90_-\xC2CV\x03O\x90`E\x90`e\x90a\xC2\x1E-\thanidec\x90aHans\x90b\x1Ehanidec\x90b\xC2hu>\x90c\xC2\x1E-\thanidec\x90c\xC2HM\x1E\xC2Ka\x0C\x90d\x1Ehanidec\x90dnt\x90e\x1Ehanidec\x90eO\x90d\x1Ehanidec\x90d\x90f" },
@@ -742,7 +742,7 @@ macro_rules! __impl_long_compact_decimal_format_data_v1_marker {
                 ],
             };
         }
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DataProvider<icu::experimental::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::experimental::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker>, icu_provider::DataError> {
                 let mut metadata = icu_provider::DataResponseMetadata::default();
@@ -768,7 +768,7 @@ macro_rules! __impl_long_compact_decimal_format_data_v1_marker {
     };
     ($ provider : ty , DRY) => {
         __impl_long_compact_decimal_format_data_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::experimental::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 icu_provider::DataProvider::<icu::experimental::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker>::load(self, req).map(|r| r.metadata)
@@ -777,7 +777,7 @@ macro_rules! __impl_long_compact_decimal_format_data_v1_marker {
     };
     ($ provider : ty , ITER) => {
         __impl_long_compact_decimal_format_data_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::IterableDataProvider<icu::experimental::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_LONG_COMPACT_DECIMAL_FORMAT_DATA_V1_MARKER).collect())
@@ -786,13 +786,13 @@ macro_rules! __impl_long_compact_decimal_format_data_v1_marker {
     };
     ($ provider : ty , DRY , ITER) => {
         __impl_long_compact_decimal_format_data_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::experimental::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 icu_provider::DataProvider::<icu::experimental::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker>::load(self, req).map(|r| r.metadata)
             }
         }
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::IterableDataProvider<icu::experimental::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_LONG_COMPACT_DECIMAL_FORMAT_DATA_V1_MARKER).collect())

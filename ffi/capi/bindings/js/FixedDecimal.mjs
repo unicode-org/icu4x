@@ -119,15 +119,15 @@ export class FixedDecimal {
     static fromString(v) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const vSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, v)).splat()];
+        const vSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, v));
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_FixedDecimal_from_string_mv1(diplomatReceive.buffer, ...vSlice);
+        const result = wasm.icu4x_FixedDecimal_from_string_mv1(diplomatReceive.buffer, ...vSlice.splat());
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = FixedDecimalParseError[Array.from(FixedDecimalParseError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                const cause = new FixedDecimalParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('FixedDecimalParseError: ' + cause.value, { cause });
             }
             return new FixedDecimal(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -211,7 +211,7 @@ export class FixedDecimal {
         const result = wasm.icu4x_FixedDecimal_sign_mv1(this.ffiValue);
     
         try {
-            return FixedDecimalSign[Array.from(FixedDecimalSign.values.keys())[result]];
+            return new FixedDecimalSign(diplomatRuntime.internalConstructor, result);
         }
         
         finally {}

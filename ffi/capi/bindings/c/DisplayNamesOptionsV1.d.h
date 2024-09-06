@@ -15,9 +15,9 @@
 
 
 typedef struct DisplayNamesOptionsV1 {
-  DisplayNamesStyle style;
-  DisplayNamesFallback fallback;
-  LanguageDisplay language_display;
+  DisplayNamesStyle_option style;
+  DisplayNamesFallback_option fallback;
+  LanguageDisplay_option language_display;
 } DisplayNamesOptionsV1;
 
 typedef struct DisplayNamesOptionsV1_option {union { DisplayNamesOptionsV1 ok; }; bool is_ok; } DisplayNamesOptionsV1_option;

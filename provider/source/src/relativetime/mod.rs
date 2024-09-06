@@ -6,7 +6,8 @@ use crate::cldr_serde;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::experimental::relativetime::provider::*;
-use icu_pattern::SinglePlaceholderPattern;
+use icu::plurals::PluralElements;
+use icu_pattern::SinglePlaceholder;
 use icu_provider::prelude::*;
 use std::collections::{HashMap, HashSet};
 use std::sync::OnceLock;
@@ -124,19 +125,20 @@ macro_rules! make_data_provider {
 }
 
 impl TryFrom<&cldr_serde::date_fields::PluralRulesPattern>
-    for PluralElements<'_, SinglePlaceholderPattern<str>>
+    for PluralPatterns<'_, SinglePlaceholder>
 {
     type Error = DataError;
     fn try_from(field: &cldr_serde::date_fields::PluralRulesPattern) -> Result<Self, Self::Error> {
-        PluralElements::try_new_pattern(
-            &field.other,
-            field.zero.as_deref(),
-            field.one.as_deref(),
-            field.two.as_deref(),
-            field.few.as_deref(),
-            field.many.as_deref(),
-        )
-        .map_err(|_| DataError::custom("Invalid pattern"))
+        PluralElements::new(field.other.as_str())
+            .with_zero_value(field.zero.as_deref())
+            .with_one_value(field.one.as_deref())
+            .with_two_value(field.two.as_deref())
+            .with_few_value(field.few.as_deref())
+            .with_many_value(field.many.as_deref())
+            .with_explicit_one_value(field.explicit_one.as_deref())
+            .with_explicit_zero_value(field.explicit_zero.as_deref())
+            .try_into()
+            .map_err(|_| DataError::custom("Invalid pattern"))
     }
 }
 
@@ -171,7 +173,7 @@ make_data_provider!(
 mod tests {
     use super::*;
     use icu::locale::langid;
-    use icu::plurals::PluralCategory;
+    use icu::plurals::PluralRules;
     use writeable::assert_writeable_eq;
 
     #[test]
@@ -184,26 +186,19 @@ mod tests {
             })
             .unwrap()
             .payload;
+        let rules =
+            PluralRules::try_new_cardinal_unstable(&provider, &langid!("en").into()).unwrap();
         assert_eq!(data.get().relatives.get(&0).unwrap(), "this qtr.");
         assert_writeable_eq!(
-            data.get()
-                .past
-                .get_pattern(PluralCategory::One)
-                .interpolate([1]),
+            data.get().past.get(1.into(), &rules).interpolate([1]),
             "1 qtr. ago"
         );
         assert_writeable_eq!(
-            data.get()
-                .past
-                .get_pattern(PluralCategory::Other)
-                .interpolate([2]),
+            data.get().past.get(2.into(), &rules).interpolate([2]),
             "2 qtrs. ago"
         );
         assert_writeable_eq!(
-            data.get()
-                .future
-                .get_pattern(PluralCategory::One)
-                .interpolate([1]),
+            data.get().future.get(1.into(), &rules).interpolate([1]),
             "in 1 qtr."
         );
     }
@@ -218,37 +213,27 @@ mod tests {
             })
             .unwrap()
             .payload;
+        let rules =
+            PluralRules::try_new_cardinal_unstable(&provider, &langid!("ar").into()).unwrap();
         assert_eq!(data.get().relatives.get(&-1).unwrap(), "السنة الماضية");
 
         // past.one, future.two are without a placeholder.
         assert_writeable_eq!(
-            data.get()
-                .past
-                .get_pattern(PluralCategory::One)
-                .interpolate([1]),
+            data.get().past.get(1.into(), &rules).interpolate([1]),
             "قبل سنة واحدة"
         );
         assert_writeable_eq!(
-            data.get()
-                .future
-                .get_pattern(PluralCategory::Two)
-                .interpolate([2]),
+            data.get().future.get(2.into(), &rules).interpolate([2]),
             "خلال سنتين"
         );
 
         assert_writeable_eq!(
-            data.get()
-                .past
-                .get_pattern(PluralCategory::Many)
-                .interpolate([5]),
-            "قبل 5 سنة"
+            data.get().past.get(15.into(), &rules).interpolate([15]),
+            "قبل 15 سنة"
         );
         assert_writeable_eq!(
-            data.get()
-                .future
-                .get_pattern(PluralCategory::Other)
-                .interpolate([6]),
-            "خلال 6 سنة"
+            data.get().future.get(100.into(), &rules).interpolate([100]),
+            "خلال 100 سنة"
         );
     }
 }

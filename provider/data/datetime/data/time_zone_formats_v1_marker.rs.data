@@ -12,9 +12,9 @@
 #[macro_export]
 macro_rules! __impl_time_zone_formats_v1_marker {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl $provider {
             const DATA_TIME_ZONE_FORMATS_V1_MARKER: icu_provider_baked::zerotrie::Data<icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker> = icu_provider_baked::zerotrie::Data {
                 trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1xabcdefghijklmnoprstuvxyz\0\0\0\0\0\0\0\0\0\0\x01\x01\x01\x01\x01\x01\x01\x02\x02\x02\x02\x02\x02\x112Oa\x84\xA9\xB9\xD2\xEA\xF2AV\x83\x9D\xA5\xC4\xD0\"Fes|\x96\xC5fmrsz\x01\x02\x03\x06\x80\x81\x82\x83t\x84\x85\xC7eghlnrs\x01\x04\x06\x08\t\x0C\x86\x87c\x88o\x89o\x8A\x8B\x8Cx\x8D\x8E-Cyrl\x8F\xC6aehsvy\x02\x05\x08\r\x0F\x90\0b\x90\x01r\x90\x02\x90\x03w\x90\x04\x90\x05\x90\x06\xC4aeos\x02\x04\x07\x90\x07\x90\x08i\x90\tb\x90\n\xC6lnostu\x02\t\x0B\x13\x15\x90\x0B\x90\x0C-CA\x90\r\x90\x0E\x90\x0F-419\x90\x10\x90\x11\x90\x12\xC6afiory\x02\t\x0E\x10\x17\x90\x13-Adlm\x90\x14\x90\x15l\x90\x16\x90\x17\x90\x18-CA\x90\x19\x90\x1A\xC4adlu\x02\x04\x06\x90\x1B\x90\x1C\x90\x1D\x90\x1E\xC6aeirsu\x02\x04\x06\x08\x0B\x90\x1F\x90 \x90!\x90\"b\x90#\x90$\xC6adegst\x02\x04\x06\x08\n\x90%\x90&\x90'\x90(\x90)\x90*\xC2av\x02\x90+\x90,\xCBaegkmnosuxy\x02\x05\x08\n\x0C\x0E\x13\x1C\x1E7\x90-a\x90.p\x90/\x900\x901\x902\x903k\x904\x905-Deva\x906\x907v\x908-\xC3DOT\x05\neva\x909rya\x90:elu\x90;\x90<\xC5biotv\x02\x05\x07\t\x90=j\x90>\x90?\x90@\x90A\xC9aiklnrsty\x03\x05\x07\t\x0E\x10\x17\x19i\x90B\x90C\x90D\x90E\x90Fi\x90G\x90H\x90I-ID\x90J\x90K\x90L\xC6delnoq\x03\x05\x07\t\x0Bs\x90M\x90N\x90O\x90P\x90Qo\x90R\xC2cr\x02\x90S\x90T\xC6aclrst\x02\x05\x07\n\x0C\x90Um\x90V\x90Wg\x90X\x90Y\x90Z-PT\x90[\xC3mou\x02\x04\x90\\\x90]\x90^\xCDacdikloqrvwyz\x05\x07\x10\x12\x14\x16\x18\x1A.025\x90_t\x90`\x90a\x90b-Deva\x90c\x90d\x90e\x90f\x90g\x90h\x90i-\xC2BL\x03A\x90jatn\x90k-BA\x90l\x90m\x90nr\x90ol\x90p\xC9aeghikort\x02\x04\x06\x08\n\x0C\x0E\x10\x90q\x90;\x90r\x90s\x90t\x90u\x90v\x90w\x90x\xC5gknrz\x02\x04\x07\x0E\x90y\x90zd\x90{\x90|-IN\x90}-Cyrl\x90~\xC3eim\x03\x05c\x90\x7F\x91\0w\x91\x01\xC2hn\x02\x90\x0Cr\x91\x02\xC3oru\x07\n\x91\x03-BJ\x91\x04l\x91\x05e\x91\x06-Hans\x91\x07\xC3ahu\x02\x16\x91\x08\x91\t-\xC2HM\n\xC2Ka\x02\x91\nnt\x91\x0BO\x91\n\x91\x0C" },
@@ -1906,7 +1906,7 @@ macro_rules! __impl_time_zone_formats_v1_marker {
                 ],
             };
         }
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DataProvider<icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker>, icu_provider::DataError> {
                 let mut metadata = icu_provider::DataResponseMetadata::default();
@@ -1932,7 +1932,7 @@ macro_rules! __impl_time_zone_formats_v1_marker {
     };
     ($ provider : ty , DRY) => {
         __impl_time_zone_formats_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 icu_provider::DataProvider::<icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker>::load(self, req).map(|r| r.metadata)
@@ -1941,7 +1941,7 @@ macro_rules! __impl_time_zone_formats_v1_marker {
     };
     ($ provider : ty , ITER) => {
         __impl_time_zone_formats_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::IterableDataProvider<icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_TIME_ZONE_FORMATS_V1_MARKER).collect())
@@ -1950,13 +1950,13 @@ macro_rules! __impl_time_zone_formats_v1_marker {
     };
     ($ provider : ty , DRY , ITER) => {
         __impl_time_zone_formats_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 icu_provider::DataProvider::<icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker>::load(self, req).map(|r| r.metadata)
             }
         }
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::IterableDataProvider<icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_TIME_ZONE_FORMATS_V1_MARKER).collect())

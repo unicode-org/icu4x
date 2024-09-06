@@ -8,33 +8,48 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 export class TrailingCase {
     #value = undefined;
 
-    static values = new Map([
+    static #values = new Map([
         ["Lower", 0],
         ["Unchanged", 1]
     ]);
 
     constructor(value) {
-        if (value instanceof TrailingCase) {
-            this.#value = value.value;
-            return;
+        if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
+            // We pass in two internalConstructor arguments to create *new*
+            // instances of this type, otherwise the enums are treated as singletons.
+            if (arguments[1] === diplomatRuntime.internalConstructor ) {
+                this.#value = arguments[2];
+                return;
+            }
+            return TrailingCase.#objectValues[arguments[1]];
         }
 
-        if (TrailingCase.values.has(value)) {
-            this.#value = value;
-            return;
+        if (value instanceof TrailingCase) {
+            return value;
+        }
+
+        let intVal = TrailingCase.#values.get(value);
+
+        // Nullish check, checks for null or undefined
+        if (intVal == null) {
+            return TrailingCase.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a TrailingCase and does not correspond to any of its enumerator values.");
     }
 
     get value() {
-        return this.#value;
+        return [...TrailingCase.#values.keys()][this.#value];
     }
 
     get ffiValue() {
-        return TrailingCase.values.get(this.#value);
+        return this.#value;
     }
+    static #objectValues = [
+        new TrailingCase(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
+        new TrailingCase(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
+    ];
 
-    static Lower = new TrailingCase("Lower");
-    static Unchanged = new TrailingCase("Unchanged");
+    static Lower = TrailingCase.#objectValues[0];
+    static Unchanged = TrailingCase.#objectValues[1];
 }

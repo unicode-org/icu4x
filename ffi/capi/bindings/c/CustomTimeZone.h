@@ -25,10 +25,6 @@ CustomTimeZone* icu4x_CustomTimeZone_empty_mv1(void);
 
 CustomTimeZone* icu4x_CustomTimeZone_utc_mv1(void);
 
-CustomTimeZone* icu4x_CustomTimeZone_gmt_mv1(void);
-
-CustomTimeZone* icu4x_CustomTimeZone_bst_mv1(void);
-
 typedef struct icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1_result { bool is_ok;} icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1_result;
 icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1_result icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1(CustomTimeZone* self, int32_t offset_seconds);
 

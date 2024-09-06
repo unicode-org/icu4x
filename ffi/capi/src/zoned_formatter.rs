@@ -43,8 +43,8 @@ pub mod ffi {
         pub fn create_with_lengths(
             provider: &DataProvider,
             locale: &Locale,
-            date_length: DateLength,
-            time_length: TimeLength,
+            date_length: Option<DateLength>,
+            time_length: Option<TimeLength>,
         ) -> Result<Box<GregorianZonedDateTimeFormatter>, Error> {
             let locale = locale.to_datalocale();
 
@@ -55,8 +55,13 @@ pub mod ffi {
                     icu_datetime::TypedZonedDateTimeFormatter::<icu_calendar::Gregorian>::try_new_with_buffer_provider,
                     provider,
                     &locale,
-                    icu_datetime::options::length::Bag::from_date_time_style(date_length.into(), time_length.into())
-                        .into(),
+                    {
+                        let mut bag = icu_datetime::options::length::Bag::empty();
+                        bag.date = date_length.map(Into::into);
+                        bag.time = time_length.map(Into::into);
+                        bag
+                    }
+                    .into(),
                     Default::default(),
                 )?,
             )))
@@ -71,8 +76,8 @@ pub mod ffi {
         pub fn create_with_lengths_and_iso_8601_time_zone_fallback(
             provider: &DataProvider,
             locale: &Locale,
-            date_length: DateLength,
-            time_length: TimeLength,
+            date_length: Option<DateLength>,
+            time_length: Option<TimeLength>,
             zone_options: IsoTimeZoneOptions,
         ) -> Result<Box<GregorianZonedDateTimeFormatter>, Error> {
             let locale = locale.to_datalocale();
@@ -84,8 +89,13 @@ pub mod ffi {
                     icu_datetime::TypedZonedDateTimeFormatter::<icu_calendar::Gregorian>::try_new_with_buffer_provider,
                     provider,
                     &locale,
-                    icu_datetime::options::length::Bag::from_date_time_style(date_length.into(), time_length.into())
-                        .into(),
+                    {
+                        let mut bag = icu_datetime::options::length::Bag::empty();
+                        bag.date = date_length.map(Into::into);
+                        bag.time = time_length.map(Into::into);
+                        bag
+                    }
+                    .into(),
                     zone_options.into(),
                 )?,
             )))
@@ -126,8 +136,8 @@ pub mod ffi {
         pub fn create_with_lengths(
             provider: &DataProvider,
             locale: &Locale,
-            date_length: DateLength,
-            time_length: TimeLength,
+            date_length: Option<DateLength>,
+            time_length: Option<TimeLength>,
         ) -> Result<Box<ZonedDateTimeFormatter>, Error> {
             let locale = locale.to_datalocale();
 
@@ -137,10 +147,12 @@ pub mod ffi {
                 icu_datetime::ZonedDateTimeFormatter::try_new_with_buffer_provider,
                 provider,
                 &locale,
-                icu_datetime::options::length::Bag::from_date_time_style(
-                    date_length.into(),
-                    time_length.into()
-                )
+                {
+                    let mut bag = icu_datetime::options::length::Bag::empty();
+                    bag.date = date_length.map(Into::into);
+                    bag.time = time_length.map(Into::into);
+                    bag
+                }
                 .into(),
                 Default::default(),
             )?)))
@@ -155,8 +167,8 @@ pub mod ffi {
         pub fn create_with_lengths_and_iso_8601_time_zone_fallback(
             provider: &DataProvider,
             locale: &Locale,
-            date_length: DateLength,
-            time_length: TimeLength,
+            date_length: Option<DateLength>,
+            time_length: Option<TimeLength>,
             zone_options: IsoTimeZoneOptions,
         ) -> Result<Box<ZonedDateTimeFormatter>, Error> {
             let locale = locale.to_datalocale();
@@ -167,10 +179,12 @@ pub mod ffi {
                 icu_datetime::ZonedDateTimeFormatter::try_new_with_buffer_provider,
                 provider,
                 &locale,
-                icu_datetime::options::length::Bag::from_date_time_style(
-                    date_length.into(),
-                    time_length.into()
-                )
+                {
+                    let mut bag = icu_datetime::options::length::Bag::empty();
+                    bag.date = date_length.map(Into::into);
+                    bag.time = time_length.map(Into::into);
+                    bag
+                }
                 .into(),
                 zone_options.into(),
             )?)))

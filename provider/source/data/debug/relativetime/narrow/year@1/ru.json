@@ -5,21 +5,25 @@
     "1": "в сл. г."
   },
   "past": {
-    "specials": [
-      [
-        "Many",
-        "\u0002- л."
-      ]
-    ],
-    "other": "\u0002- г."
+    "strings": {
+      "specials": [
+        [
+          "Many",
+          "\u0002- л."
+        ]
+      ],
+      "other": "\u0002- г."
+    }
   },
   "future": {
-    "specials": [
-      [
-        "Many",
-        "\u0002+ л."
-      ]
-    ],
-    "other": "\u0002+ г."
+    "strings": {
+      "specials": [
+        [
+          "Many",
+          "\u0002+ л."
+        ]
+      ],
+      "other": "\u0002+ г."
+    }
   }
 }

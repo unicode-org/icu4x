@@ -8,7 +8,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 export class DataError {
     #value = undefined;
 
-    static values = new Map([
+    static #values = new Map([
         ["Unknown", 0],
         ["MarkerNotFound", 1],
         ["IdentifierNotFound", 2],
@@ -21,34 +21,56 @@ export class DataError {
     ]);
 
     constructor(value) {
-        if (value instanceof DataError) {
-            this.#value = value.value;
-            return;
+        if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
+            // We pass in two internalConstructor arguments to create *new*
+            // instances of this type, otherwise the enums are treated as singletons.
+            if (arguments[1] === diplomatRuntime.internalConstructor ) {
+                this.#value = arguments[2];
+                return;
+            }
+            return DataError.#objectValues[arguments[1]];
         }
 
-        if (DataError.values.has(value)) {
-            this.#value = value;
-            return;
+        if (value instanceof DataError) {
+            return value;
+        }
+
+        let intVal = DataError.#values.get(value);
+
+        // Nullish check, checks for null or undefined
+        if (intVal == null) {
+            return DataError.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a DataError and does not correspond to any of its enumerator values.");
     }
 
     get value() {
-        return this.#value;
+        return [...DataError.#values.keys()][this.#value];
     }
 
     get ffiValue() {
-        return DataError.values.get(this.#value);
+        return this.#value;
     }
+    static #objectValues = [
+        new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
+        new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
+        new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
+        new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 3),
+        new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 4),
+        new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 5),
+        new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 6),
+        new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 7),
+        new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 8),
+    ];
 
-    static Unknown = new DataError("Unknown");
-    static MarkerNotFound = new DataError("MarkerNotFound");
-    static IdentifierNotFound = new DataError("IdentifierNotFound");
-    static InvalidRequest = new DataError("InvalidRequest");
-    static InconsistentData = new DataError("InconsistentData");
-    static Downcast = new DataError("Downcast");
-    static Deserialize = new DataError("Deserialize");
-    static Custom = new DataError("Custom");
-    static Io = new DataError("Io");
+    static Unknown = DataError.#objectValues[0];
+    static MarkerNotFound = DataError.#objectValues[1];
+    static IdentifierNotFound = DataError.#objectValues[2];
+    static InvalidRequest = DataError.#objectValues[3];
+    static InconsistentData = DataError.#objectValues[4];
+    static Downcast = DataError.#objectValues[5];
+    static Deserialize = DataError.#objectValues[6];
+    static Custom = DataError.#objectValues[7];
+    static Io = DataError.#objectValues[8];
 }

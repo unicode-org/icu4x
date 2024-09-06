@@ -21,8 +21,8 @@ class TrailingCase;
 namespace icu4x {
 namespace capi {
     struct TitlecaseOptionsV1 {
-      icu4x::capi::LeadingAdjustment leading_adjustment;
-      icu4x::capi::TrailingCase trailing_case;
+      icu4x::capi::LeadingAdjustment_option leading_adjustment;
+      icu4x::capi::TrailingCase_option trailing_case;
     };
     
     typedef struct TitlecaseOptionsV1_option {union { TitlecaseOptionsV1 ok; }; bool is_ok; } TitlecaseOptionsV1_option;
@@ -32,8 +32,8 @@ namespace capi {
 
 namespace icu4x {
 struct TitlecaseOptionsV1 {
-  icu4x::LeadingAdjustment leading_adjustment;
-  icu4x::TrailingCase trailing_case;
+  std::optional<icu4x::LeadingAdjustment> leading_adjustment;
+  std::optional<icu4x::TrailingCase> trailing_case;
 
   inline static icu4x::TitlecaseOptionsV1 default_options();
 

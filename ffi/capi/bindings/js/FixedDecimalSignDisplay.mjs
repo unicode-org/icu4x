@@ -10,7 +10,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 export class FixedDecimalSignDisplay {
     #value = undefined;
 
-    static values = new Map([
+    static #values = new Map([
         ["Auto", 0],
         ["Never", 1],
         ["Always", 2],
@@ -19,30 +19,48 @@ export class FixedDecimalSignDisplay {
     ]);
 
     constructor(value) {
-        if (value instanceof FixedDecimalSignDisplay) {
-            this.#value = value.value;
-            return;
+        if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
+            // We pass in two internalConstructor arguments to create *new*
+            // instances of this type, otherwise the enums are treated as singletons.
+            if (arguments[1] === diplomatRuntime.internalConstructor ) {
+                this.#value = arguments[2];
+                return;
+            }
+            return FixedDecimalSignDisplay.#objectValues[arguments[1]];
         }
 
-        if (FixedDecimalSignDisplay.values.has(value)) {
-            this.#value = value;
-            return;
+        if (value instanceof FixedDecimalSignDisplay) {
+            return value;
+        }
+
+        let intVal = FixedDecimalSignDisplay.#values.get(value);
+
+        // Nullish check, checks for null or undefined
+        if (intVal == null) {
+            return FixedDecimalSignDisplay.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a FixedDecimalSignDisplay and does not correspond to any of its enumerator values.");
     }
 
     get value() {
-        return this.#value;
+        return [...FixedDecimalSignDisplay.#values.keys()][this.#value];
     }
 
     get ffiValue() {
-        return FixedDecimalSignDisplay.values.get(this.#value);
+        return this.#value;
     }
+    static #objectValues = [
+        new FixedDecimalSignDisplay(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
+        new FixedDecimalSignDisplay(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
+        new FixedDecimalSignDisplay(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
+        new FixedDecimalSignDisplay(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 3),
+        new FixedDecimalSignDisplay(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 4),
+    ];
 
-    static Auto = new FixedDecimalSignDisplay("Auto");
-    static Never = new FixedDecimalSignDisplay("Never");
-    static Always = new FixedDecimalSignDisplay("Always");
-    static ExceptZero = new FixedDecimalSignDisplay("ExceptZero");
-    static Negative = new FixedDecimalSignDisplay("Negative");
+    static Auto = FixedDecimalSignDisplay.#objectValues[0];
+    static Never = FixedDecimalSignDisplay.#objectValues[1];
+    static Always = FixedDecimalSignDisplay.#objectValues[2];
+    static ExceptZero = FixedDecimalSignDisplay.#objectValues[3];
+    static Negative = FixedDecimalSignDisplay.#objectValues[4];
 }

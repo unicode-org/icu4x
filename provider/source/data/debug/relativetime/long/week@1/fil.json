@@ -5,11 +5,15 @@
     "1": "susunod na linggo"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 linggo ang nakalipas"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 linggo ang nakalipas"
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u0004sa  linggo"
+    "strings": {
+      "specials": [],
+      "other": "\u0004sa  linggo"
+    }
   }
 }

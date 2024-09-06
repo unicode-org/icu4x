@@ -27,7 +27,6 @@ inline icu4x::capi::DisplayNamesStyle icu4x::DisplayNamesStyle::AsFFI() const {
 
 inline icu4x::DisplayNamesStyle icu4x::DisplayNamesStyle::FromFFI(icu4x::capi::DisplayNamesStyle c_enum) {
   switch (c_enum) {
-    case icu4x::capi::DisplayNamesStyle_Auto:
     case icu4x::capi::DisplayNamesStyle_Narrow:
     case icu4x::capi::DisplayNamesStyle_Short:
     case icu4x::capi::DisplayNamesStyle_Long:

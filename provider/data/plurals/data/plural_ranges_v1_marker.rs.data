@@ -12,9 +12,9 @@
 #[macro_export]
 macro_rules! __impl_plural_ranges_v1_marker {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl $provider {
             const DATA_PLURAL_RANGES_V1_MARKER: icu_provider_baked::zerotrie::Data<icu::plurals::provider::PluralRangesV1Marker> = icu_provider_baked::zerotrie::Data {
                 trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xD0abcefhiklmnoprsu\x06\x08\n\x16\x1C\x1E \"$&(*-/;\xC2fr\x01\x80\x81g\x80a\x80\xC4nstu\x01\x02\x03\x80\x80\x80\x80\xC2ai\x01\x82\x80e\x83a\x80a\x84v\x85k\x86o\x80r\x82cm\x80o\x87\xC4dilv\x01\x02\x03\x82\x80\x88\x80\xC2nr\x02d\x89\x80" },
@@ -82,7 +82,7 @@ macro_rules! __impl_plural_ranges_v1_marker {
                 ],
             };
         }
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DataProvider<icu::plurals::provider::PluralRangesV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::plurals::provider::PluralRangesV1Marker>, icu_provider::DataError> {
                 let mut metadata = icu_provider::DataResponseMetadata::default();
@@ -108,7 +108,7 @@ macro_rules! __impl_plural_ranges_v1_marker {
     };
     ($ provider : ty , DRY) => {
         __impl_plural_ranges_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::plurals::provider::PluralRangesV1Marker> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 icu_provider::DataProvider::<icu::plurals::provider::PluralRangesV1Marker>::load(self, req).map(|r| r.metadata)
@@ -117,7 +117,7 @@ macro_rules! __impl_plural_ranges_v1_marker {
     };
     ($ provider : ty , ITER) => {
         __impl_plural_ranges_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::IterableDataProvider<icu::plurals::provider::PluralRangesV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_PLURAL_RANGES_V1_MARKER).collect())
@@ -126,13 +126,13 @@ macro_rules! __impl_plural_ranges_v1_marker {
     };
     ($ provider : ty , DRY , ITER) => {
         __impl_plural_ranges_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::plurals::provider::PluralRangesV1Marker> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 icu_provider::DataProvider::<icu::plurals::provider::PluralRangesV1Marker>::load(self, req).map(|r| r.metadata)
             }
         }
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::IterableDataProvider<icu::plurals::provider::PluralRangesV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_PLURAL_RANGES_V1_MARKER).collect())

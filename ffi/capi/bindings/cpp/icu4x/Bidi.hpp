@@ -23,7 +23,7 @@ namespace capi {
     typedef struct icu4x_Bidi_create_mv1_result {union {icu4x::capi::Bidi* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_Bidi_create_mv1_result;
     icu4x_Bidi_create_mv1_result icu4x_Bidi_create_mv1(const icu4x::capi::DataProvider* provider);
     
-    icu4x::capi::BidiInfo* icu4x_Bidi_for_text_utf8_mv1(const icu4x::capi::Bidi* self, diplomat::capi::DiplomatStringView text, uint8_t default_level);
+    icu4x::capi::BidiInfo* icu4x_Bidi_for_text_utf8_mv1(const icu4x::capi::Bidi* self, diplomat::capi::DiplomatStringView text, diplomat::capi::OptionU8 default_level);
     
     icu4x::capi::ReorderedIndexMap* icu4x_Bidi_reorder_visual_mv1(const icu4x::capi::Bidi* self, diplomat::capi::DiplomatU8View levels);
     
@@ -47,10 +47,10 @@ inline diplomat::result<std::unique_ptr<icu4x::Bidi>, icu4x::DataError> icu4x::B
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::Bidi>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::Bidi>>(std::unique_ptr<icu4x::Bidi>(icu4x::Bidi::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::Bidi>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
-inline std::unique_ptr<icu4x::BidiInfo> icu4x::Bidi::for_text(std::string_view text, uint8_t default_level) const {
+inline std::unique_ptr<icu4x::BidiInfo> icu4x::Bidi::for_text(std::string_view text, std::optional<uint8_t> default_level) const {
   auto result = icu4x::capi::icu4x_Bidi_for_text_utf8_mv1(this->AsFFI(),
     {text.data(), text.size()},
-    default_level);
+    default_level.has_value() ? (diplomat::capi::OptionU8{ { default_level.value() }, true }) : (diplomat::capi::OptionU8{ {}, false }));
   return std::unique_ptr<icu4x::BidiInfo>(icu4x::BidiInfo::FromFFI(result));
 }
 

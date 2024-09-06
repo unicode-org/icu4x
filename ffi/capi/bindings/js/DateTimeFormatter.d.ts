@@ -19,7 +19,7 @@ export class DateTimeFormatter {
 
     get ffiValue(): pointer;
 
-    static createWithLengths(provider: DataProvider, locale: Locale, dateLength: DateLength, timeLength: TimeLength): DateTimeFormatter;
+    static createWithLengths(provider: DataProvider, locale: Locale, dateLength: DateLength | null, timeLength: TimeLength | null): DateTimeFormatter;
 
     formatDatetime(value: DateTime): string;
 

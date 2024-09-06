@@ -92,6 +92,8 @@ use crate::{
 };
 
 use super::preferences;
+#[cfg(feature = "experimental")]
+use crate::neo_pattern::DateTimePattern;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -636,6 +638,13 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
             PatternPlurals::MultipleVariants(plural_pattern) => &plural_pattern.other,
         };
         Self::from(pattern)
+    }
+}
+
+#[cfg(feature = "experimental")]
+impl From<&DateTimePattern> for Bag {
+    fn from(value: &DateTimePattern) -> Self {
+        Self::from(value.as_borrowed().0)
     }
 }
 

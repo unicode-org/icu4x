@@ -5,11 +5,15 @@
     "1": "পরের সপ্তাহ"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 সপ্তাহ আগে"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 সপ্তাহ আগে"
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u0001 সপ্তাহে"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 সপ্তাহে"
+    }
   }
 }

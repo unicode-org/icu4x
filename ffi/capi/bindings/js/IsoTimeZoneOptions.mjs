@@ -51,6 +51,17 @@ export class IsoTimeZoneOptions {
         return [this.#format.ffiValue, this.#minutes.ffiValue, this.#seconds.ffiValue]
     }
 
+    _writeToArrayBuffer(
+        arrayBuffer,
+        offset,
+        functionCleanupArena,
+        appendArrayMap
+    ) {
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, this.#format.ffiValue, Int32Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 4, this.#minutes.ffiValue, Int32Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 8, this.#seconds.ffiValue, Int32Array);
+    }
+
     // This struct contains borrowed fields, so this takes in a list of
     // "edges" corresponding to where each lifetime's data may have been borrowed from
     // and passes it down to individual fields containing the borrow.
@@ -58,10 +69,10 @@ export class IsoTimeZoneOptions {
     // should handle this when constructing edge arrays.
     #fromFFI(ptr) {
         const formatDeref = diplomatRuntime.enumDiscriminant(wasm, ptr);
-        this.#format = IsoTimeZoneFormat[Array.from(IsoTimeZoneFormat.values.keys())[formatDeref]];
+        this.#format = new IsoTimeZoneFormat(diplomatRuntime.internalConstructor, formatDeref);
         const minutesDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 4);
-        this.#minutes = IsoTimeZoneMinuteDisplay[Array.from(IsoTimeZoneMinuteDisplay.values.keys())[minutesDeref]];
+        this.#minutes = new IsoTimeZoneMinuteDisplay(diplomatRuntime.internalConstructor, minutesDeref);
         const secondsDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 8);
-        this.#seconds = IsoTimeZoneSecondDisplay[Array.from(IsoTimeZoneSecondDisplay.values.keys())[secondsDeref]];
+        this.#seconds = new IsoTimeZoneSecondDisplay(diplomatRuntime.internalConstructor, secondsDeref);
     }
 }

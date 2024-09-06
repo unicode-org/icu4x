@@ -3,11 +3,15 @@
     "0": "ovog sata"
   },
   "past": {
-    "specials": [],
-    "other": "\u0005pre  č."
+    "strings": {
+      "specials": [],
+      "other": "\u0005pre  č."
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u0004za  č."
+    "strings": {
+      "specials": [],
+      "other": "\u0004za  č."
+    }
   }
 }
