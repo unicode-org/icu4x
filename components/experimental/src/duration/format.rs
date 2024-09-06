@@ -757,5 +757,20 @@ mod tests {
                 .into_owned(),
             "0 yrs"
         );
+
+        let negative_non_zero_duration = Duration {
+            sign: DurationSign::Negative,
+            years: 0,
+            months: 1,
+            ..Default::default()
+        };
+
+        assert_eq!(
+            formatter
+                .format(&negative_non_zero_duration)
+                .write_to_string()
+                .into_owned(),
+            "-0 yrs, 1 mth"
+        );
     }
 }
