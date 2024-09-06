@@ -186,7 +186,7 @@ impl LocaleSpecificDataHolder {
         Ok(LocaleSpecificDataHolder {
             tailoring,
             diacritics,
-            merged_options: merged_options,
+            merged_options,
             reordering,
             lithuanian_dot_above: metadata.lithuanian_dot_above(),
         })
@@ -391,6 +391,7 @@ impl CollatorBorrowed<'static> {
 
     /// This method has only single caller, but it's not inlined into its caller in
     /// order to keep the structure easy to compare with the corresponding owned case.
+    #[allow(clippy::too_many_arguments)]
     fn try_new_unstable_internal(
         provider: &'static crate::provider::Baked,
         decompositions: &'static DecompositionDataV1<'static>,
@@ -428,6 +429,9 @@ impl CollatorBorrowed<'static> {
             None
         };
 
+        // Attribute belongs closer to `unwrap`, but
+        // https://github.com/rust-lang/rust/issues/15701
+        #[allow(clippy::unwrap_used)]
         Ok(CollatorBorrowed {
             special_primaries,
             root,
