@@ -13,6 +13,7 @@ use icu_locale::LanguageIdentifier;
 use icu_provider::prelude::*;
 
 #[allow(unused_imports)]
+#[allow(clippy::single_component_path_imports)]
 mod provider {
     use icu_experimental;
     include!("data/provider.rs");
