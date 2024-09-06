@@ -18,12 +18,12 @@
 //! let datetime_julian = DateTime::new_from_iso(datetime_iso, Julian);
 //!
 //! // `Date` checks
-//! assert_eq!(date_julian.year().number, 1969);
+//! assert_eq!(date_julian.year().era_year_or_extended(), 1969);
 //! assert_eq!(date_julian.month().ordinal, 12);
 //! assert_eq!(date_julian.day_of_month().0, 20);
 //!
 //! // `DateTime` type
-//! assert_eq!(datetime_julian.date.year().number, 1969);
+//! assert_eq!(datetime_julian.date.year().era_year_or_extended(), 1969);
 //! assert_eq!(datetime_julian.date.month().ordinal, 12);
 //! assert_eq!(datetime_julian.date.day_of_month().0, 20);
 //! assert_eq!(datetime_julian.time.hour.number(), 13);
@@ -259,7 +259,7 @@ impl Date<Julian> {
     /// let date_julian = Date::try_new_julian_date(1969, 12, 20)
     ///     .expect("Failed to initialize Julian Date instance.");
     ///
-    /// assert_eq!(date_julian.year().number, 1969);
+    /// assert_eq!(date_julian.year().era_year_or_extended(), 1969);
     /// assert_eq!(date_julian.month().ordinal, 12);
     /// assert_eq!(date_julian.day_of_month().0, 20);
     /// ```
@@ -282,7 +282,7 @@ impl DateTime<Julian> {
     ///     DateTime::try_new_julian_datetime(1969, 12, 20, 13, 1, 0)
     ///         .expect("Failed to initialize Julian DateTime instance.");
     ///
-    /// assert_eq!(datetime_julian.date.year().number, 1969);
+    /// assert_eq!(datetime_julian.date.year().era_year_or_extended(), 1969);
     /// assert_eq!(datetime_julian.date.month().ordinal, 12);
     /// assert_eq!(datetime_julian.date.day_of_month().0, 20);
     /// assert_eq!(datetime_julian.time.hour.number(), 13);
@@ -495,9 +495,9 @@ mod test {
         for case in cases {
             let iso_from_fixed: Date<Iso> = Iso::iso_from_fixed(RataDie::new(case.fixed_date));
             let julian_from_fixed: Date<Julian> = Date::new_from_iso(iso_from_fixed, Julian);
-            assert_eq!(julian_from_fixed.year().number, case.expected_year,
+            assert_eq!(julian_from_fixed.year().era_year().unwrap(), case.expected_year,
                 "Failed year check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nJulian: {julian_from_fixed:?}");
-            assert_eq!(julian_from_fixed.year().era, case.expected_era,
+            assert_eq!(julian_from_fixed.year().era().unwrap(), case.expected_era,
                 "Failed era check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nJulian: {julian_from_fixed:?}");
             assert_eq!(julian_from_fixed.month().ordinal, case.expected_month,
                 "Failed month check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nJulian: {julian_from_fixed:?}");

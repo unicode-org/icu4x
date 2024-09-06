@@ -60,7 +60,7 @@ impl Date<Iso> {
     ///
     /// let date = Date::try_iso_from_str("2024-07-17").unwrap();
     ///
-    /// assert_eq!(date.year().number, 2024);
+    /// assert_eq!(date.year().era_year_or_extended(), 2024);
     /// assert_eq!(
     ///     date.month().code,
     ///     icu::calendar::types::MonthCode(tinystr::tinystr!(4, "M07"))
@@ -107,7 +107,7 @@ impl Date<AnyCalendar> {
     ///
     /// let date = Date::try_from_str("2024-07-17[u-ca=hebrew]").unwrap();
     ///
-    /// assert_eq!(date.year().number, 5784);
+    /// assert_eq!(date.year().era_year_or_extended(), 5784);
     /// assert_eq!(
     ///     date.month().code,
     ///     icu::calendar::types::MonthCode(tinystr::tinystr!(4, "M10"))
@@ -208,7 +208,7 @@ impl DateTime<Iso> {
     ///
     /// let datetime = DateTime::try_iso_from_str("2024-07-17T16:01:17.045").unwrap();
     ///
-    /// assert_eq!(datetime.date.year().number, 2024);
+    /// assert_eq!(datetime.date.year().era_year_or_extended(), 2024);
     /// assert_eq!(
     ///     datetime.date.month().code,
     ///     icu::calendar::types::MonthCode(tinystr::tinystr!(4, "M07"))
@@ -260,7 +260,7 @@ impl DateTime<AnyCalendar> {
     ///
     /// let datetime = DateTime::try_from_str("2024-07-17T16:01:17.045[u-ca=hebrew]").unwrap();
     ///
-    /// assert_eq!(datetime.date.year().number, 5784);
+    /// assert_eq!(datetime.date.year().era_year_or_extended(), 5784);
     /// assert_eq!(
     ///     datetime.date.month().code,
     ///     icu::calendar::types::MonthCode(tinystr::tinystr!(4, "M10"))

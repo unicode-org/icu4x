@@ -87,16 +87,34 @@ impl YearInfo {
             },
         }
     }
+    /// Get the year in the era if this is a non-cyclic calendar
+    ///
+    /// Gets the eraYear for era dates, otherwise falls back to Extended Year
+    pub fn era_year(self) -> Option<i32> {
+        match self.kind {
+            YearKind::EraYear { era_year, .. } => Some(era_year),
+            YearKind::Cyclic { .. } => None,
+        }
+    }
+
     /// Get *some* year number that can be displayed
     ///
     /// Gets the eraYear for era dates, otherwise falls back to Extended Year
     pub fn era_year_or_extended(self) -> i32 {
-        match self.kind {
-            YearKind::EraYear { era_year, .. } => era_year,
-            YearKind::Cyclic { .. } => self.extended_year,
-        }
+        self.era_year().unwrap_or(self.extended_year)
     }
 
+    /// Get the era, if available
+    pub fn era(self) -> Option<Era> {
+        match self.kind {
+            YearKind::EraYear { era, .. } => Some(era),
+            YearKind::Cyclic { .. } => None,
+        }
+    }
+    /// Return the era, or "unknown" for cyclic years
+    pub fn era_or_unknown(self) -> Era {
+        self.era().unwrap_or(Era::unknown())
+    }
     /// Return the cyclic year, if any
     pub fn cyclic(self) -> Option<NonZeroU8> {
         match self.kind {
@@ -109,13 +127,6 @@ impl YearInfo {
         match self.kind {
             YearKind::EraYear { .. } => None,
             YearKind::Cyclic { related_iso, .. } => Some(related_iso),
-        }
-    }
-    /// Return the era, or "unknown" for cyclic years
-    pub fn era_or_unknown(self) -> Era {
-        match self.kind {
-            YearKind::EraYear { era, .. } => era,
-            YearKind::Cyclic { .. } => Era::unknown(),
         }
     }
 }

@@ -23,13 +23,13 @@
 //!     DateTime::new_from_iso(datetime_iso, japanese_calendar.clone());
 //!
 //! // `Date` checks
-//! assert_eq!(date_japanese.year().number, 45);
+//! assert_eq!(date_japanese.year().era_year_or_extended(), 45);
 //! assert_eq!(date_japanese.month().ordinal, 1);
 //! assert_eq!(date_japanese.day_of_month().0, 2);
 //! assert_eq!(date_japanese.year().era, Era(tinystr!(16, "showa")));
 //!
 //! // `DateTime` type
-//! assert_eq!(datetime_japanese.date.year().number, 45);
+//! assert_eq!(datetime_japanese.date.year().era_year_or_extended(), 45);
 //! assert_eq!(datetime_japanese.date.month().ordinal, 1);
 //! assert_eq!(datetime_japanese.date.day_of_month().0, 2);
 //! assert_eq!(
@@ -425,7 +425,7 @@ impl Date<Japanese> {
     ///     .expect("Constructing a date should succeed");
     ///
     /// assert_eq!(date.year().era, era);
-    /// assert_eq!(date.year().number, 14);
+    /// assert_eq!(date.year().era_year_or_extended(), 14);
     /// assert_eq!(date.month().ordinal, 1);
     /// assert_eq!(date.day_of_month().0, 2);
     ///
@@ -480,7 +480,7 @@ impl Date<JapaneseExtended> {
     ///         .expect("Constructing a date should succeed");
     ///
     /// assert_eq!(date.year().era, era);
-    /// assert_eq!(date.year().number, 7);
+    /// assert_eq!(date.year().era_year_or_extended(), 7);
     /// assert_eq!(date.month().ordinal, 1);
     /// assert_eq!(date.day_of_month().0, 2);
     /// ```
@@ -531,7 +531,7 @@ impl DateTime<Japanese> {
     /// .expect("Constructing a date should succeed");
     ///
     /// assert_eq!(datetime.date.year().era, era);
-    /// assert_eq!(datetime.date.year().number, 14);
+    /// assert_eq!(datetime.date.year().era_year_or_extended(), 14);
     /// assert_eq!(datetime.date.month().ordinal, 1);
     /// assert_eq!(datetime.date.day_of_month().0, 2);
     /// assert_eq!(datetime.time.hour.number(), 13);
@@ -585,7 +585,7 @@ impl DateTime<JapaneseExtended> {
     /// .expect("Constructing a date should succeed");
     ///
     /// assert_eq!(datetime.date.year().era, era);
-    /// assert_eq!(datetime.date.year().number, 7);
+    /// assert_eq!(datetime.date.year().era_year_or_extended(), 7);
     /// assert_eq!(datetime.date.month().ordinal, 1);
     /// assert_eq!(datetime.date.day_of_month().0, 2);
     /// assert_eq!(datetime.time.hour.number(), 13);
@@ -878,7 +878,7 @@ mod tests {
 
         // Extra coverage for https://github.com/unicode-org/icu4x/issues/4968
         assert_eq!(reconstructed.year().era, era);
-        assert_eq!(reconstructed.year().number, year);
+        assert_eq!(reconstructed.year().era_year_or_extended(), year);
     }
 
     fn single_test_roundtrip_ext(

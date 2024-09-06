@@ -18,12 +18,12 @@
 //! let datetime_gregorian = DateTime::new_from_iso(datetime_iso, Gregorian);
 //!
 //! // `Date` checks
-//! assert_eq!(date_gregorian.year().number, 1970);
+//! assert_eq!(date_gregorian.year().era_year_or_extended(), 1970);
 //! assert_eq!(date_gregorian.month().ordinal, 1);
 //! assert_eq!(date_gregorian.day_of_month().0, 2);
 //!
 //! // `DateTime` checks
-//! assert_eq!(datetime_gregorian.date.year().number, 1970);
+//! assert_eq!(datetime_gregorian.date.year().era_year_or_extended(), 1970);
 //! assert_eq!(datetime_gregorian.date.month().ordinal, 1);
 //! assert_eq!(datetime_gregorian.date.day_of_month().0, 2);
 //! assert_eq!(datetime_gregorian.time.hour.number(), 13);
@@ -183,7 +183,7 @@ impl Date<Gregorian> {
     /// let date_gregorian = Date::try_new_gregorian_date(1970, 1, 2)
     ///     .expect("Failed to initialize Gregorian Date instance.");
     ///
-    /// assert_eq!(date_gregorian.year().number, 1970);
+    /// assert_eq!(date_gregorian.year().era_year_or_extended(), 1970);
     /// assert_eq!(date_gregorian.month().ordinal, 1);
     /// assert_eq!(date_gregorian.day_of_month().0, 2);
     /// ```
@@ -208,7 +208,7 @@ impl DateTime<Gregorian> {
     ///     DateTime::try_new_gregorian_datetime(1970, 1, 2, 13, 1, 0)
     ///         .expect("Failed to initialize Gregorian DateTime instance.");
     ///
-    /// assert_eq!(datetime_gregorian.date.year().number, 1970);
+    /// assert_eq!(datetime_gregorian.date.year().era_year_or_extended(), 1970);
     /// assert_eq!(datetime_gregorian.date.month().ordinal, 1);
     /// assert_eq!(datetime_gregorian.date.day_of_month().0, 2);
     /// assert_eq!(datetime_gregorian.time.hour.number(), 13);
@@ -364,9 +364,9 @@ mod test {
     fn check_test_case(case: TestCase) {
         let iso_from_fixed: Date<Iso> = Iso::iso_from_fixed(case.fixed_date);
         let greg_date_from_fixed: Date<Gregorian> = Date::new_from_iso(iso_from_fixed, Gregorian);
-        assert_eq!(greg_date_from_fixed.year().number, case.expected_year,
+        assert_eq!(greg_date_from_fixed.year().era_year_or_extended(), case.expected_year,
             "Failed year check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nGreg: {greg_date_from_fixed:?}");
-        assert_eq!(greg_date_from_fixed.year().era, case.expected_era,
+        assert_eq!(greg_date_from_fixed.year().era().unwrap(), case.expected_era,
             "Failed era check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nGreg: {greg_date_from_fixed:?}");
         assert_eq!(greg_date_from_fixed.month().ordinal, case.expected_month,
             "Failed month check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nGreg: {greg_date_from_fixed:?}");

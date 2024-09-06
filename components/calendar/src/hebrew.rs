@@ -17,12 +17,12 @@
 //!         .expect("Failed to initialize hebrew DateTime instance.");
 //!
 //! // `Date` checks
-//! assert_eq!(hebrew_date.year().number, 3425);
+//! assert_eq!(hebrew_date.year().era_year_or_extended(), 3425);
 //! assert_eq!(hebrew_date.month().ordinal, 10);
 //! assert_eq!(hebrew_date.day_of_month().0, 11);
 //!
 //! // `DateTime` checks
-//! assert_eq!(hebrew_datetime.date.year().number, 3425);
+//! assert_eq!(hebrew_datetime.date.year().era_year_or_extended(), 3425);
 //! assert_eq!(hebrew_datetime.date.month().ordinal, 10);
 //! assert_eq!(hebrew_datetime.date.day_of_month().0, 11);
 //! assert_eq!(hebrew_datetime.time.hour.number(), 13);
@@ -351,7 +351,7 @@ impl Date<Hebrew> {
     /// let date_hebrew = Date::try_new_hebrew_date(3425, 4, 25)
     ///     .expect("Failed to initialize Hebrew Date instance.");
     ///
-    /// assert_eq!(date_hebrew.year().number, 3425);
+    /// assert_eq!(date_hebrew.year().era_year_or_extended(), 3425);
     /// assert_eq!(date_hebrew.month().ordinal, 4);
     /// assert_eq!(date_hebrew.day_of_month().0, 25);
     /// ```
@@ -374,7 +374,7 @@ impl DateTime<Hebrew> {
     ///     DateTime::try_new_hebrew_datetime(4201, 10, 11, 13, 1, 0)
     ///         .expect("Failed to initialize Hebrew DateTime instance");
     ///
-    /// assert_eq!(datetime_hebrew.date.year().number, 4201);
+    /// assert_eq!(datetime_hebrew.date.year().era_year_or_extended(), 4201);
     /// assert_eq!(datetime_hebrew.date.month().ordinal, 10);
     /// assert_eq!(datetime_hebrew.date.day_of_month().0, 11);
     /// assert_eq!(datetime_hebrew.time.hour.number(), 13);
@@ -525,14 +525,14 @@ mod tests {
         // Era year is accessible via the public getter.
         // TODO(#3962): Make extended year publicly accessible.
         assert_eq!(greg_date.inner.0 .0.year, -5000);
-        assert_eq!(greg_date.year().era.0, "bce");
+        assert_eq!(greg_date.year().era().unwrap().0, "bce");
         // In Gregorian, era year is 1 - extended year
-        assert_eq!(greg_date.year().number, 5001);
+        assert_eq!(greg_date.year().era_year().unwrap(), 5001);
         let hebr_date = greg_date.to_calendar(Hebrew);
         assert_eq!(hebr_date.inner.0.year, -1240);
-        assert_eq!(hebr_date.year().era.0, "hebrew");
+        assert_eq!(hebr_date.year().era().unwrap().0, "hebrew");
         // In Hebrew, there is no inverse era, so negative extended years are negative era years
-        assert_eq!(hebr_date.year().number, -1240);
+        assert_eq!(hebr_date.year().era_year_or_extended(), -1240);
     }
 
     #[test]

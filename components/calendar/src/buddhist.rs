@@ -18,12 +18,12 @@
 //! let datetime_buddhist = DateTime::new_from_iso(datetime_iso, Buddhist);
 //!
 //! // `Date` checks
-//! assert_eq!(date_buddhist.year().number, 2513);
+//! assert_eq!(date_buddhist.year().era_year_or_extended(), 2513);
 //! assert_eq!(date_buddhist.month().ordinal, 1);
 //! assert_eq!(date_buddhist.day_of_month().0, 2);
 //!
 //! // `DateTime` type
-//! assert_eq!(datetime_buddhist.date.year().number, 2513);
+//! assert_eq!(datetime_buddhist.date.year().era_year_or_extended(), 2513);
 //! assert_eq!(datetime_buddhist.date.month().ordinal, 1);
 //! assert_eq!(datetime_buddhist.date.day_of_month().0, 2);
 //! assert_eq!(datetime_buddhist.time.hour.number(), 13);
@@ -170,7 +170,7 @@ impl Date<Buddhist> {
     /// let date_buddhist = Date::try_new_buddhist_date(1970, 1, 2)
     ///     .expect("Failed to initialize Buddhist Date instance.");
     ///
-    /// assert_eq!(date_buddhist.year().number, 1970);
+    /// assert_eq!(date_buddhist.year().era_year_or_extended(), 1970);
     /// assert_eq!(date_buddhist.month().ordinal, 1);
     /// assert_eq!(date_buddhist.day_of_month().0, 2);
     /// ```
@@ -196,7 +196,7 @@ impl DateTime<Buddhist> {
     ///     DateTime::try_new_buddhist_datetime(1970, 1, 2, 13, 1, 0)
     ///         .expect("Failed to initialize Buddhist DateTime instance.");
     ///
-    /// assert_eq!(datetime_buddhist.date.year().number, 1970);
+    /// assert_eq!(datetime_buddhist.date.year().era_year_or_extended(), 1970);
     /// assert_eq!(datetime_buddhist.date.month().ordinal, 1);
     /// assert_eq!(datetime_buddhist.date.day_of_month().0, 2);
     /// assert_eq!(datetime_buddhist.time.hour.number(), 13);
@@ -326,7 +326,7 @@ mod test {
         let iso1 = Date::try_new_iso_date(iso_year, iso_month, iso_day).unwrap();
         let buddhist1 = iso1.to_calendar(Buddhist);
         assert_eq!(
-            buddhist1.year().number,
+            buddhist1.year().era_year_or_extended(),
             buddhist_year,
             "Iso -> Buddhist year check failed for case: {case:?}"
         );
@@ -345,7 +345,7 @@ mod test {
             Date::try_new_buddhist_date(buddhist_year, buddhist_month, buddhist_day).unwrap();
         let iso2 = buddhist2.to_calendar(Iso);
         assert_eq!(
-            iso2.year().number,
+            iso2.year().era_year_or_extended(),
             iso_year,
             "Buddhist -> Iso year check failed for case: {case:?}"
         );

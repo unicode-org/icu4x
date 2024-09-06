@@ -22,13 +22,13 @@
 //! .expect("Failed to initialize Dangi DateTime instance.");
 //!
 //! // `Date` checks
-//! assert_eq!(dangi_date.year().number, 4356);
+//! assert_eq!(dangi_date.year().era_year_or_extended(), 4356);
 //! assert_eq!(dangi_date.year().cyclic().unwrap().get(), 40);
 //! assert_eq!(dangi_date.month().ordinal, 6);
 //! assert_eq!(dangi_date.day_of_month().0, 6);
 //!
 //! // `DateTime` checks
-//! assert_eq!(dangi_datetime.date.year().number, 4356);
+//! assert_eq!(dangi_datetime.date.year().era_year_or_extended(), 4356);
 //! assert_eq!(dangi_datetime.date.year().cyclic().unwrap().get(), 40);
 //! assert_eq!(dangi_datetime.date.month().ordinal, 6);
 //! assert_eq!(dangi_datetime.date.day_of_month().0, 6);
@@ -305,7 +305,7 @@ impl<A: AsCalendar<Calendar = Dangi>> Date<A> {
     /// let date_dangi = Date::try_new_dangi_date_with_calendar(4356, 6, 18, dangi)
     ///     .expect("Failed to initialize Dangi Date instance.");
     ///
-    /// assert_eq!(date_dangi.year().number, 4356);
+    /// assert_eq!(date_dangi.year().era_year_or_extended(), 4356);
     /// assert_eq!(date_dangi.year().cyclic().unwrap().get(), 40);
     /// assert_eq!(date_dangi.month().ordinal, 6);
     /// assert_eq!(date_dangi.day_of_month().0, 18);
@@ -345,7 +345,7 @@ impl<A: AsCalendar<Calendar = Dangi>> DateTime<A> {
     /// )
     /// .expect("Failed to initialize Dangi DateTime instance.");
     ///
-    /// assert_eq!(dangi_datetime.date.year().number, 4356);
+    /// assert_eq!(dangi_datetime.date.year().era_year_or_extended(), 4356);
     /// assert_eq!(dangi_datetime.date.year().cyclic().unwrap().get(), 40);
     /// assert_eq!(dangi_datetime.date.month().ordinal, 6);
     /// assert_eq!(dangi_datetime.date.day_of_month().0, 6);

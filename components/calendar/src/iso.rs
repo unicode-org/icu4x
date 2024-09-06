@@ -16,12 +16,12 @@
 //!     .expect("Failed to initialize ISO DateTime instance.");
 //!
 //! // `Date` checks
-//! assert_eq!(date_iso.year().number, 1970);
+//! assert_eq!(date_iso.year().era_year_or_extended(), 1970);
 //! assert_eq!(date_iso.month().ordinal, 1);
 //! assert_eq!(date_iso.day_of_month().0, 2);
 //!
 //! // `DateTime` type
-//! assert_eq!(datetime_iso.date.year().number, 1970);
+//! assert_eq!(datetime_iso.date.year().era_year_or_extended(), 1970);
 //! assert_eq!(datetime_iso.date.month().ordinal, 1);
 //! assert_eq!(datetime_iso.date.day_of_month().0, 2);
 //! assert_eq!(datetime_iso.time.hour.number(), 13);
@@ -241,7 +241,7 @@ impl Date<Iso> {
     /// let date_iso = Date::try_new_iso_date(1970, 1, 2)
     ///     .expect("Failed to initialize ISO Date instance.");
     ///
-    /// assert_eq!(date_iso.year().number, 1970);
+    /// assert_eq!(date_iso.year().era_year_or_extended(), 1970);
     /// assert_eq!(date_iso.month().ordinal, 1);
     /// assert_eq!(date_iso.day_of_month().0, 2);
     /// ```
@@ -266,7 +266,7 @@ impl DateTime<Iso> {
     /// let datetime_iso = DateTime::try_new_iso_datetime(1970, 1, 2, 13, 1, 0)
     ///     .expect("Failed to initialize ISO DateTime instance.");
     ///
-    /// assert_eq!(datetime_iso.date.year().number, 1970);
+    /// assert_eq!(datetime_iso.date.year().era_year_or_extended(), 1970);
     /// assert_eq!(datetime_iso.date.month().ordinal, 1);
     /// assert_eq!(datetime_iso.date.day_of_month().0, 2);
     /// assert_eq!(datetime_iso.time.hour.number(), 13);
@@ -485,7 +485,8 @@ mod test {
         // Calculates the max possible year representable using i32::MAX as the fixed date
         let max_year = Iso::iso_from_fixed(RataDie::new(i32::MAX as i64))
             .year()
-            .number;
+            .era_year()
+            .unwrap();
 
         // Calculates the minimum possible year representable using i32::MIN as the fixed date
         // *Cannot be tested yet due to hard coded date not being available yet (see line 436)
@@ -621,7 +622,9 @@ mod test {
     #[test]
     fn min_year() {
         assert_eq!(
-            Iso::iso_from_fixed(RataDie::big_negative()).year().number,
+            Iso::iso_from_fixed(RataDie::big_negative())
+                .year()
+                .era_year_or_extended(),
             i32::MIN
         );
     }

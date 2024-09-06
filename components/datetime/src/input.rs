@@ -16,7 +16,7 @@ use icu_timezone::{CustomTimeZone, GmtOffset, ZoneVariant};
 
 // TODO(#2630) fix up imports to directly import from icu_calendar
 pub(crate) use icu_calendar::types::{
-    DayOfMonth, DayOfYearInfo, FormattableMonth, FormattableYear, IsoHour, IsoMinute, IsoSecond,
+    DayOfMonth, DayOfYearInfo, FormattableMonth, YearInfo, IsoHour, IsoMinute, IsoSecond,
     IsoWeekday, NanoSecond, Time, WeekOfMonth, WeekOfYear,
 };
 
@@ -31,7 +31,7 @@ pub trait DateInput {
     /// The calendar this date relates to
     type Calendar: Calendar;
     /// Gets the era and year input.
-    fn year(&self) -> Option<FormattableYear>;
+    fn year(&self) -> Option<YearInfo>;
 
     /// Gets the month input.
     fn month(&self) -> Option<FormattableMonth>;
@@ -105,7 +105,7 @@ impl<T> DateTimeInput for T where T: DateInput + IsoTimeInput {}
 /// See [`DateTimeInput`] for documentation on individual fields
 #[derive(Default, Debug, Copy, Clone)]
 pub(crate) struct ExtractedDateTimeInput {
-    year: Option<FormattableYear>,
+    year: Option<YearInfo>,
     month: Option<FormattableMonth>,
     day_of_month: Option<DayOfMonth>,
     iso_weekday: Option<IsoWeekday>,
@@ -280,7 +280,7 @@ impl DateInput for ExtractedDateTimeInput {
     /// This actually doesn't matter, by the time we use this
     /// it's purely internal raw code where calendars are irrelevant
     type Calendar = icu_calendar::any_calendar::AnyCalendar;
-    fn year(&self) -> Option<FormattableYear> {
+    fn year(&self) -> Option<YearInfo> {
         self.year
     }
     fn month(&self) -> Option<FormattableMonth> {
@@ -346,7 +346,7 @@ impl ExtractedDateTimeInput {
     pub(crate) fn week_of_year(
         &self,
         calculator: &WeekCalculator,
-    ) -> Result<(FormattableYear, WeekOfYear), &'static str> {
+    ) -> Result<(YearInfo, WeekOfYear), &'static str> {
         let day_of_year_info = self.day_of_year_info().ok_or("day_of_year_info")?;
         let iso_weekday = self.iso_weekday().ok_or("iso_weekday")?;
         let week_of = calculator.week_of_year(day_of_year_info, iso_weekday);
@@ -362,7 +362,7 @@ impl ExtractedDateTimeInput {
 impl<C: Calendar, A: AsCalendar<Calendar = C>> DateInput for Date<A> {
     type Calendar = C;
     /// Gets the era and year input.
-    fn year(&self) -> Option<FormattableYear> {
+    fn year(&self) -> Option<YearInfo> {
         Some(self.year())
     }
 
@@ -398,7 +398,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> DateInput for Date<A> {
 impl<C: Calendar, A: AsCalendar<Calendar = C>> DateInput for DateTime<A> {
     type Calendar = C;
     /// Gets the era and year input.
-    fn year(&self) -> Option<FormattableYear> {
+    fn year(&self) -> Option<YearInfo> {
         Some(self.date.year())
     }
 

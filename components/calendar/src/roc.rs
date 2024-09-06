@@ -18,12 +18,12 @@
 //! let datetime_roc = DateTime::new_from_iso(datetime_iso, Roc);
 //!
 //! // `Date` checks
-//! assert_eq!(date_roc.year().number, 59);
+//! assert_eq!(date_roc.year().era_year_or_extended(), 59);
 //! assert_eq!(date_roc.month().ordinal, 1);
 //! assert_eq!(date_roc.day_of_month().0, 2);
 //!
 //! // `DateTime` checks
-//! assert_eq!(datetime_roc.date.year().number, 59);
+//! assert_eq!(datetime_roc.date.year().era_year_or_extended(), 59);
 //! assert_eq!(datetime_roc.date.month().ordinal, 1);
 //! assert_eq!(datetime_roc.date.day_of_month().0, 2);
 //! assert_eq!(datetime_roc.time.hour.number(), 13);
@@ -201,14 +201,14 @@ impl Date<Roc> {
     ///     .expect("Failed to initialize ROC Date instance.");
     ///
     /// assert_eq!(date_roc.year().era.0, tinystr!(16, "roc"));
-    /// assert_eq!(date_roc.year().number, 1, "ROC year check failed!");
+    /// assert_eq!(date_roc.year().era_year_or_extended(), 1, "ROC year check failed!");
     /// assert_eq!(date_roc.month().ordinal, 2, "ROC month check failed!");
     /// assert_eq!(date_roc.day_of_month().0, 3, "ROC day of month check failed!");
     ///
     /// // Convert to an equivalent Gregorian date
     /// let date_gregorian = date_roc.to_calendar(Gregorian);
     ///
-    /// assert_eq!(date_gregorian.year().number, 1912, "Gregorian from ROC year check failed!");
+    /// assert_eq!(date_gregorian.year().era_year_or_extended(), 1912, "Gregorian from ROC year check failed!");
     /// assert_eq!(date_gregorian.month().ordinal, 2, "Gregorian from ROC month check failed!");
     /// assert_eq!(date_gregorian.day_of_month().0, 3, "Gregorian from ROC day of month check failed!");
     pub fn try_new_roc_date(year: i32, month: u8, day: u8) -> Result<Date<Roc>, RangeError> {
@@ -231,7 +231,7 @@ impl DateTime<Roc> {
     ///     .expect("Failed to initialize ROC DateTime instance.");
     ///
     /// assert_eq!(datetime_roc.date.year().era.0, tinystr!(16, "roc"));
-    /// assert_eq!(datetime_roc.date.year().number, 1, "ROC year check failed!");
+    /// assert_eq!(datetime_roc.date.year().era_year_or_extended(), 1, "ROC year check failed!");
     /// assert_eq!(
     ///     datetime_roc.date.month().ordinal,
     ///     2,
@@ -301,9 +301,9 @@ mod test {
     fn check_test_case(case: TestCase) {
         let iso_from_fixed = Iso::iso_from_fixed(case.fixed_date);
         let roc_from_fixed = Date::new_from_iso(iso_from_fixed, Roc);
-        assert_eq!(roc_from_fixed.year().number, case.expected_year,
+        assert_eq!(roc_from_fixed.year().era_year().unwrap(), case.expected_year,
             "Failed year check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nROC: {roc_from_fixed:?}");
-        assert_eq!(roc_from_fixed.year().era, case.expected_era,
+        assert_eq!(roc_from_fixed.year().era().unwrap(), case.expected_era,
             "Failed era check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nROC: {roc_from_fixed:?}");
         assert_eq!(roc_from_fixed.month().ordinal, case.expected_month,
             "Failed month check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nROC: {roc_from_fixed:?}");
