@@ -9,7 +9,7 @@ use crate::{GmtOffset, ZoneVariant};
 #[cfg(feature = "compiled_data")]
 use crate::{TimeZoneIdMapper, UnknownTimeZoneError};
 use icu_calendar::{DateTime, Iso};
-use tinystr::{tinystr, TinyAsciiStr};
+use tinystr::TinyAsciiStr;
 
 /// A utility type that can hold time zone information.
 ///
