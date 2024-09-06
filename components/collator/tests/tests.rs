@@ -1286,7 +1286,7 @@ fn test_nb_nn_no() {
     strs.sort_by(|a, b| collator.compare(a, b));
     assert_eq!(strs, expected);
     assert_eq!(
-        DataProvider::<CollationDataV1Marker>::load(
+        DataProvider::<CollationTailoringV1Marker>::load(
             &icu_collator::provider::Baked,
             DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),
@@ -1306,7 +1306,7 @@ fn test_nb_nn_no() {
     strs.sort_by(|a, b| collator.compare(a, b));
     assert_eq!(strs, expected);
     assert_eq!(
-        DataProvider::<CollationDataV1Marker>::load(
+        DataProvider::<CollationTailoringV1Marker>::load(
             &icu_collator::provider::Baked,
             DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),
@@ -1326,7 +1326,7 @@ fn test_nb_nn_no() {
     strs.sort_by(|a, b| collator.compare(a, b));
     assert_eq!(strs, expected);
     assert_eq!(
-        DataProvider::<CollationDataV1Marker>::load(
+        DataProvider::<CollationTailoringV1Marker>::load(
             &icu_collator::provider::Baked,
             DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),
