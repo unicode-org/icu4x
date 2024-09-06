@@ -109,26 +109,6 @@ impl CustomTimeZone {
         }
     }
 
-    #[doc(hidden)] // unstable, test-only
-    pub const fn gmt() -> Self {
-        Self {
-            gmt_offset: Some(GmtOffset::zero()),
-            time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "gblon"))),
-            metazone_id: Some(MetazoneId(tinystr!(4, "mgmt"))),
-            zone_variant: Some(ZoneVariant::standard()),
-        }
-    }
-
-    #[doc(hidden)] // unstable, test-only
-    pub const fn bst() -> Self {
-        Self {
-            gmt_offset: Some(GmtOffset::from_offset_eighths_of_hour(8)),
-            time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "gblon"))),
-            metazone_id: Some(MetazoneId(tinystr!(4, "mgmt"))),
-            zone_variant: Some(ZoneVariant::daylight()),
-        }
-    }
-
     /// Parse a [`CustomTimeZone`] from a UTF-8 string representing a GMT Offset
     /// or an IANA time zone identifier.
     ///
