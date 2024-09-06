@@ -5,11 +5,15 @@
     "1": "สัปดาห์หน้า"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 สัปดาห์ที่แล้ว"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 สัปดาห์ที่แล้ว"
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\bใน  สัปดาห์"
+    "strings": {
+      "specials": [],
+      "other": "\bใน  สัปดาห์"
+    }
   }
 }

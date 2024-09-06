@@ -40,6 +40,7 @@ pub mod provider {
         pub mod icu {
             pub use crate as experimental;
             pub use icu_experimental_data::icu_locale as locale;
+            pub use icu_plurals as plurals;
         }
         make_provider!(Baked);
 

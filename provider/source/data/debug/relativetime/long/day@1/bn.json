@@ -7,11 +7,15 @@
     "2": "আগামী পরশু"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 দিন আগে"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 দিন আগে"
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u0001 দিনের মধ্যে"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 দিনের মধ্যে"
+    }
   }
 }

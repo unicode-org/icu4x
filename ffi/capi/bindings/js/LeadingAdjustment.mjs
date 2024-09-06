@@ -8,35 +8,51 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 export class LeadingAdjustment {
     #value = undefined;
 
-    static values = new Map([
+    static #values = new Map([
         ["Auto", 0],
         ["None", 1],
         ["ToCased", 2]
     ]);
 
     constructor(value) {
-        if (value instanceof LeadingAdjustment) {
-            this.#value = value.value;
-            return;
+        if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
+            // We pass in two internalConstructor arguments to create *new*
+            // instances of this type, otherwise the enums are treated as singletons.
+            if (arguments[1] === diplomatRuntime.internalConstructor ) {
+                this.#value = arguments[2];
+                return;
+            }
+            return LeadingAdjustment.#objectValues[arguments[1]];
         }
 
-        if (LeadingAdjustment.values.has(value)) {
-            this.#value = value;
-            return;
+        if (value instanceof LeadingAdjustment) {
+            return value;
+        }
+
+        let intVal = LeadingAdjustment.#values.get(value);
+
+        // Nullish check, checks for null or undefined
+        if (intVal == null) {
+            return LeadingAdjustment.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a LeadingAdjustment and does not correspond to any of its enumerator values.");
     }
 
     get value() {
-        return this.#value;
+        return [...LeadingAdjustment.#values.keys()][this.#value];
     }
 
     get ffiValue() {
-        return LeadingAdjustment.values.get(this.#value);
+        return this.#value;
     }
+    static #objectValues = [
+        new LeadingAdjustment(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
+        new LeadingAdjustment(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
+        new LeadingAdjustment(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
+    ];
 
-    static Auto = new LeadingAdjustment("Auto");
-    static None = new LeadingAdjustment("None");
-    static ToCased = new LeadingAdjustment("ToCased");
+    static Auto = LeadingAdjustment.#objectValues[0];
+    static None = LeadingAdjustment.#objectValues[1];
+    static ToCased = LeadingAdjustment.#objectValues[2];
 }

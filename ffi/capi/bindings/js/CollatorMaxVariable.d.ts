@@ -11,7 +11,6 @@ export class CollatorMaxVariable {
 
     get ffiValue() : number;
 
-    static Auto : CollatorMaxVariable;
     static Space : CollatorMaxVariable;
     static Punctuation : CollatorMaxVariable;
     static Symbol : CollatorMaxVariable;

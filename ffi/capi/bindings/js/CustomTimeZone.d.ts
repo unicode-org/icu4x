@@ -21,10 +21,6 @@ export class CustomTimeZone {
 
     static utc(): CustomTimeZone;
 
-    static gmt(): CustomTimeZone;
-
-    static bst(): CustomTimeZone;
-
     trySetGmtOffsetSeconds(offsetSeconds: number): void;
 
     setGmtOffsetEighthsOfHour(offsetEighthsOfHour: number): void;

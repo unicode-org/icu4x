@@ -875,3 +875,128 @@ where
             .unwrap_or(end)
     }
 }
+
+#[derive(Debug)]
+/// A bag of values for different plural cases.
+pub struct PluralElements<'a, T: ?Sized> {
+    zero: Option<&'a T>,
+    one: Option<&'a T>,
+    two: Option<&'a T>,
+    few: Option<&'a T>,
+    many: Option<&'a T>,
+    other: &'a T,
+    explicit_zero: Option<&'a T>,
+    explicit_one: Option<&'a T>,
+}
+
+impl<'a, T: ?Sized + PartialEq> PluralElements<'a, T> {
+    /// Creates a new [`PluralElements`] with the given default value.
+    pub fn new(other: &'a T) -> Self {
+        Self {
+            other,
+            zero: None,
+            one: None,
+            two: None,
+            few: None,
+            many: None,
+            explicit_zero: None,
+            explicit_one: None,
+        }
+    }
+
+    /// Sets the value for [`PluralCategory::Zero`].
+    pub fn with_zero_value(self, zero: Option<&'a T>) -> Self {
+        Self {
+            zero: zero.filter(|&t| t != self.other),
+            ..self
+        }
+    }
+
+    /// Sets the value for [`PluralCategory::One`].
+    pub fn with_one_value(self, one: Option<&'a T>) -> Self {
+        Self {
+            one: one.filter(|&t| t != self.other),
+            ..self
+        }
+    }
+
+    /// Sets the value for [`PluralCategory::Two`].
+    pub fn with_two_value(self, two: Option<&'a T>) -> Self {
+        Self {
+            two: two.filter(|&t| t != self.other),
+            ..self
+        }
+    }
+
+    /// Sets the value for [`PluralCategory::Few`].
+    pub fn with_few_value(self, few: Option<&'a T>) -> Self {
+        Self {
+            few: few.filter(|&t| t != self.other),
+            ..self
+        }
+    }
+
+    /// Sets the value for [`PluralCategory::Many`].
+    pub fn with_many_value(self, many: Option<&'a T>) -> Self {
+        Self {
+            many: many.filter(|&t| t != self.other),
+            ..self
+        }
+    }
+
+    /// Sets the value for explicit 0.
+    pub fn with_explicit_zero_value(self, explicit_zero: Option<&'a T>) -> Self {
+        Self {
+            explicit_zero,
+            ..self
+        }
+    }
+
+    /// Sets the value for explicit 1.
+    pub fn with_explicit_one_value(self, explicit_one: Option<&'a T>) -> Self {
+        Self {
+            explicit_one,
+            ..self
+        }
+    }
+
+    /// The value for [`PluralCategory::Zero`]
+    pub fn zero(&self) -> &'a T {
+        self.zero.unwrap_or(self.other)
+    }
+
+    /// The value for [`PluralCategory::One`]
+    pub fn one(&self) -> &'a T {
+        self.one.unwrap_or(self.other)
+    }
+
+    /// The value for [`PluralCategory::Two`]
+    pub fn two(&self) -> &'a T {
+        self.two.unwrap_or(self.other)
+    }
+
+    /// The value for [`PluralCategory::Few`]
+    pub fn few(&self) -> &'a T {
+        self.few.unwrap_or(self.other)
+    }
+
+    /// The value for [`PluralCategory::Many`]
+    pub fn many(&self) -> &'a T {
+        self.many.unwrap_or(self.other)
+    }
+
+    /// The value for [`PluralCategory::Other`]
+    pub fn other(&self) -> &'a T {
+        self.other
+    }
+
+    /// The value used when the [`PluralOperands`] are exactly 0.
+    pub fn explicit_zero(&self) -> Option<&'a T> {
+        self.explicit_zero
+    }
+
+    /// The value used when the [`PluralOperands`] are exactly 1.
+    pub fn explicit_one(&self) -> Option<&'a T> {
+        self.explicit_one
+    }
+}

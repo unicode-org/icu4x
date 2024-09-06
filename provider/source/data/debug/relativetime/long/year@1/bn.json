@@ -5,11 +5,15 @@
     "1": "পরের বছর"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 বছর পূর্বে"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 বছর পূর্বে"
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u0001 বছরে"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 বছরে"
+    }
   }
 }

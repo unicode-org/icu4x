@@ -1,11 +1,13 @@
 {
   "patterns": {
-    "specials": [
-      [
-        "One",
-        "\u0001 metro"
-      ]
-    ],
-    "other": "\u0001 na metro"
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0001 metro"
+        ]
+      ],
+      "other": "\u0001 na metro"
+    }
   }
 }

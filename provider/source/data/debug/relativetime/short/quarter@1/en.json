@@ -5,21 +5,25 @@
     "1": "next qtr."
   },
   "past": {
-    "specials": [
-      [
-        "One",
-        "\u0001 qtr. ago"
-      ]
-    ],
-    "other": "\u0001 qtrs. ago"
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0001 qtr. ago"
+        ]
+      ],
+      "other": "\u0001 qtrs. ago"
+    }
   },
   "future": {
-    "specials": [
-      [
-        "One",
-        "\u0004in  qtr."
-      ]
-    ],
-    "other": "\u0004in  qtrs."
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0004in  qtr."
+        ]
+      ],
+      "other": "\u0004in  qtrs."
+    }
   }
 }

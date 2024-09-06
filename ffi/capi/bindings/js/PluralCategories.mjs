@@ -57,6 +57,20 @@ export class PluralCategories {
         return [this.#zero, this.#one, this.#two, this.#few, this.#many, this.#other]
     }
 
+    _writeToArrayBuffer(
+        arrayBuffer,
+        offset,
+        functionCleanupArena,
+        appendArrayMap
+    ) {
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, this.#zero, Uint8Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 1, this.#one, Uint8Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 2, this.#two, Uint8Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 3, this.#few, Uint8Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 4, this.#many, Uint8Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 5, this.#other, Uint8Array);
+    }
+
     // This struct contains borrowed fields, so this takes in a list of
     // "edges" corresponding to where each lifetime's data may have been borrowed from
     // and passes it down to individual fields containing the borrow.

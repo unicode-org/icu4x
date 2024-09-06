@@ -54,7 +54,7 @@ export class DateTime {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = CalendarError[Array.from(CalendarError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                const cause = new CalendarError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('CalendarError: ' + cause.value, { cause });
             }
             return new DateTime(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -68,17 +68,17 @@ export class DateTime {
     static fromCodesInCalendar(eraCode, year, monthCode, day, hour, minute, second, nanosecond, calendar) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const eraCodeSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, eraCode)).splat()];
+        const eraCodeSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, eraCode));
         
-        const monthCodeSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, monthCode)).splat()];
+        const monthCodeSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, monthCode));
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_DateTime_from_codes_in_calendar_mv1(diplomatReceive.buffer, ...eraCodeSlice, year, ...monthCodeSlice, day, hour, minute, second, nanosecond, calendar.ffiValue);
+        const result = wasm.icu4x_DateTime_from_codes_in_calendar_mv1(diplomatReceive.buffer, ...eraCodeSlice.splat(), year, ...monthCodeSlice.splat(), day, hour, minute, second, nanosecond, calendar.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = CalendarError[Array.from(CalendarError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                const cause = new CalendarError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('CalendarError: ' + cause.value, { cause });
             }
             return new DateTime(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -104,15 +104,15 @@ export class DateTime {
     static fromString(v) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const vSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, v)).splat()];
+        const vSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, v));
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_DateTime_from_string_mv1(diplomatReceive.buffer, ...vSlice);
+        const result = wasm.icu4x_DateTime_from_string_mv1(diplomatReceive.buffer, ...vSlice.splat());
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = CalendarParseError[Array.from(CalendarParseError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                const cause = new CalendarParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('CalendarParseError: ' + cause.value, { cause });
             }
             return new DateTime(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -229,7 +229,7 @@ export class DateTime {
         const result = wasm.icu4x_DateTime_day_of_week_mv1(this.ffiValue);
     
         try {
-            return (() => {for (let i of IsoWeekday.values) { if(i[1] === result) return IsoWeekday[i[0]]; } return null;})();
+            return new IsoWeekday(diplomatRuntime.internalConstructor, result);
         }
         
         finally {}

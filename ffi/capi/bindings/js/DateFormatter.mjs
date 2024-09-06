@@ -54,7 +54,7 @@ export class DateFormatter {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)) return Error[i[0]]; } return null;})();
+                const cause = new Error(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('Error: ' + cause.value, { cause });
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -74,7 +74,7 @@ export class DateFormatter {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)) return Error[i[0]]; } return null;})();
+                const cause = new Error(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('Error: ' + cause.value, { cause });
             }
             return write.readString8();
@@ -96,7 +96,7 @@ export class DateFormatter {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)) return Error[i[0]]; } return null;})();
+                const cause = new Error(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('Error: ' + cause.value, { cause });
             }
             return write.readString8();
@@ -118,7 +118,7 @@ export class DateFormatter {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)) return Error[i[0]]; } return null;})();
+                const cause = new Error(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('Error: ' + cause.value, { cause });
             }
             return write.readString8();
@@ -140,7 +140,7 @@ export class DateFormatter {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)) return Error[i[0]]; } return null;})();
+                const cause = new Error(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('Error: ' + cause.value, { cause });
             }
             return write.readString8();

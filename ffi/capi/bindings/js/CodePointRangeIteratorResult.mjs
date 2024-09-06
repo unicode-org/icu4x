@@ -45,7 +45,18 @@ export class CodePointRangeIteratorResult {
         functionCleanupArena,
         appendArrayMap
     ) {
-        return [this.#start, this.#end, this.#done]
+        return [this.#start, this.#end, this.#done, /* [3 x i8] padding */ 0, 0, 0 /* end padding */]
+    }
+
+    _writeToArrayBuffer(
+        arrayBuffer,
+        offset,
+        functionCleanupArena,
+        appendArrayMap
+    ) {
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, this.#start, Uint32Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 4, this.#end, Uint32Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 8, this.#done, Uint8Array);
     }
 
     // This struct contains borrowed fields, so this takes in a list of

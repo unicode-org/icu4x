@@ -14,9 +14,9 @@
 
 
 typedef struct LineBreakOptionsV1 {
-  LineBreakStrictness strictness;
-  LineBreakWordOption word_option;
-  bool ja_zh;
+  LineBreakStrictness_option strictness;
+  LineBreakWordOption_option word_option;
+  OptionBool ja_zh;
 } LineBreakOptionsV1;
 
 typedef struct LineBreakOptionsV1_option {union { LineBreakOptionsV1 ok; }; bool is_ok; } LineBreakOptionsV1_option;

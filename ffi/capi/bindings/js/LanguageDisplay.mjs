@@ -8,33 +8,48 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 export class LanguageDisplay {
     #value = undefined;
 
-    static values = new Map([
+    static #values = new Map([
         ["Dialect", 0],
         ["Standard", 1]
     ]);
 
     constructor(value) {
-        if (value instanceof LanguageDisplay) {
-            this.#value = value.value;
-            return;
+        if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
+            // We pass in two internalConstructor arguments to create *new*
+            // instances of this type, otherwise the enums are treated as singletons.
+            if (arguments[1] === diplomatRuntime.internalConstructor ) {
+                this.#value = arguments[2];
+                return;
+            }
+            return LanguageDisplay.#objectValues[arguments[1]];
         }
 
-        if (LanguageDisplay.values.has(value)) {
-            this.#value = value;
-            return;
+        if (value instanceof LanguageDisplay) {
+            return value;
+        }
+
+        let intVal = LanguageDisplay.#values.get(value);
+
+        // Nullish check, checks for null or undefined
+        if (intVal == null) {
+            return LanguageDisplay.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a LanguageDisplay and does not correspond to any of its enumerator values.");
     }
 
     get value() {
-        return this.#value;
+        return [...LanguageDisplay.#values.keys()][this.#value];
     }
 
     get ffiValue() {
-        return LanguageDisplay.values.get(this.#value);
+        return this.#value;
     }
+    static #objectValues = [
+        new LanguageDisplay(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
+        new LanguageDisplay(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
+    ];
 
-    static Dialect = new LanguageDisplay("Dialect");
-    static Standard = new LanguageDisplay("Standard");
+    static Dialect = LanguageDisplay.#objectValues[0];
+    static Standard = LanguageDisplay.#objectValues[1];
 }

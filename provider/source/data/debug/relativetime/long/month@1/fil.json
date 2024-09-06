@@ -5,11 +5,15 @@
     "1": "susunod na buwan"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 buwan ang nakalipas"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 buwan ang nakalipas"
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u0004sa  buwan"
+    "strings": {
+      "specials": [],
+      "other": "\u0004sa  buwan"
+    }
   }
 }

@@ -5,21 +5,25 @@
     "1": "next quarter"
   },
   "past": {
-    "specials": [
-      [
-        "One",
-        "\u0001 quarter ago"
-      ]
-    ],
-    "other": "\u0001 quarters ago"
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0001 quarter ago"
+        ]
+      ],
+      "other": "\u0001 quarters ago"
+    }
   },
   "future": {
-    "specials": [
-      [
-        "One",
-        "\u0004in  quarter"
-      ]
-    ],
-    "other": "\u0004in  quarters"
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0004in  quarter"
+        ]
+      ],
+      "other": "\u0004in  quarters"
+    }
   }
 }

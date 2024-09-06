@@ -5,11 +5,15 @@
     "1": "susunod na quarter"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 quarter ang nakalipas"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 quarter ang nakalipas"
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u0004sa  quarter"
+    "strings": {
+      "specials": [],
+      "other": "\u0004sa  quarter"
+    }
   }
 }

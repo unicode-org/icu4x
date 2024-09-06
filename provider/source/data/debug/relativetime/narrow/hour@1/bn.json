@@ -3,11 +3,15 @@
     "0": "এই ঘণ্টায়"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 ঘন্টা আগে"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 ঘন্টা আগে"
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u0001 ঘন্টায়"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 ঘন্টায়"
+    }
   }
 }

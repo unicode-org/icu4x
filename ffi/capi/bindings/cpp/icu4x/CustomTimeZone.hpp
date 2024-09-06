@@ -29,10 +29,6 @@ namespace capi {
     
     icu4x::capi::CustomTimeZone* icu4x_CustomTimeZone_utc_mv1(void);
     
-    icu4x::capi::CustomTimeZone* icu4x_CustomTimeZone_gmt_mv1(void);
-    
-    icu4x::capi::CustomTimeZone* icu4x_CustomTimeZone_bst_mv1(void);
-    
     typedef struct icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1_result { bool is_ok;} icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1_result;
     icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1_result icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1(icu4x::capi::CustomTimeZone* self, int32_t offset_seconds);
     
@@ -113,16 +109,6 @@ inline std::unique_ptr<icu4x::CustomTimeZone> icu4x::CustomTimeZone::empty() {
 
 inline std::unique_ptr<icu4x::CustomTimeZone> icu4x::CustomTimeZone::utc() {
   auto result = icu4x::capi::icu4x_CustomTimeZone_utc_mv1();
-  return std::unique_ptr<icu4x::CustomTimeZone>(icu4x::CustomTimeZone::FromFFI(result));
-}
-
-inline std::unique_ptr<icu4x::CustomTimeZone> icu4x::CustomTimeZone::gmt() {
-  auto result = icu4x::capi::icu4x_CustomTimeZone_gmt_mv1();
-  return std::unique_ptr<icu4x::CustomTimeZone>(icu4x::CustomTimeZone::FromFFI(result));
-}
-
-inline std::unique_ptr<icu4x::CustomTimeZone> icu4x::CustomTimeZone::bst() {
-  auto result = icu4x::capi::icu4x_CustomTimeZone_bst_mv1();
   return std::unique_ptr<icu4x::CustomTimeZone>(icu4x::CustomTimeZone::FromFFI(result));
 }
 

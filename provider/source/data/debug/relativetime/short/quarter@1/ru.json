@@ -5,11 +5,15 @@
     "1": "следующий кв."
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 кв. назад"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 кв. назад"
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\fчерез  кв."
+    "strings": {
+      "specials": [],
+      "other": "\fчерез  кв."
+    }
   }
 }

@@ -1,11 +1,13 @@
 {
   "patterns": {
-    "specials": [
-      [
-        "One",
-        "\u0001 heure"
-      ]
-    ],
-    "other": "\u0001 heures"
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0001 heure"
+        ]
+      ],
+      "other": "\u0001 heures"
+    }
   }
 }

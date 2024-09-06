@@ -7,11 +7,15 @@
     "2": "après-demain"
   },
   "past": {
-    "specials": [],
-    "other": "\bil y a  j"
+    "strings": {
+      "specials": [],
+      "other": "\bil y a  j"
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u0006dans  j"
+    "strings": {
+      "specials": [],
+      "other": "\u0006dans  j"
+    }
   }
 }

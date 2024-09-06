@@ -104,6 +104,13 @@ pub mod adapters {
             self.0.writeable_length_hint()
         }
     }
+
+    impl<T: TryWriteable> fmt::Display for LossyWrap<T> {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            let _ = self.0.try_write_to(f)?;
+            Ok(())
+        }
+    }
 }
 
 #[doc(hidden)] // for testing

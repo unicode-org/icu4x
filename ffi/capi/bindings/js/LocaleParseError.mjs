@@ -8,7 +8,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 export class LocaleParseError {
     #value = undefined;
 
-    static values = new Map([
+    static #values = new Map([
         ["Unknown", 0],
         ["Language", 1],
         ["Subtag", 2],
@@ -16,29 +16,46 @@ export class LocaleParseError {
     ]);
 
     constructor(value) {
-        if (value instanceof LocaleParseError) {
-            this.#value = value.value;
-            return;
+        if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
+            // We pass in two internalConstructor arguments to create *new*
+            // instances of this type, otherwise the enums are treated as singletons.
+            if (arguments[1] === diplomatRuntime.internalConstructor ) {
+                this.#value = arguments[2];
+                return;
+            }
+            return LocaleParseError.#objectValues[arguments[1]];
         }
 
-        if (LocaleParseError.values.has(value)) {
-            this.#value = value;
-            return;
+        if (value instanceof LocaleParseError) {
+            return value;
+        }
+
+        let intVal = LocaleParseError.#values.get(value);
+
+        // Nullish check, checks for null or undefined
+        if (intVal == null) {
+            return LocaleParseError.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a LocaleParseError and does not correspond to any of its enumerator values.");
     }
 
     get value() {
-        return this.#value;
+        return [...LocaleParseError.#values.keys()][this.#value];
     }
 
     get ffiValue() {
-        return LocaleParseError.values.get(this.#value);
+        return this.#value;
     }
+    static #objectValues = [
+        new LocaleParseError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
+        new LocaleParseError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
+        new LocaleParseError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
+        new LocaleParseError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 3),
+    ];
 
-    static Unknown = new LocaleParseError("Unknown");
-    static Language = new LocaleParseError("Language");
-    static Subtag = new LocaleParseError("Subtag");
-    static Extension = new LocaleParseError("Extension");
+    static Unknown = LocaleParseError.#objectValues[0];
+    static Language = LocaleParseError.#objectValues[1];
+    static Subtag = LocaleParseError.#objectValues[2];
+    static Extension = LocaleParseError.#objectValues[3];
 }

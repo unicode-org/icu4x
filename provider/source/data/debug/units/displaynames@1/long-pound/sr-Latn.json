@@ -1,15 +1,17 @@
 {
   "patterns": {
-    "specials": [
-      [
-        "One",
-        "\u0001 funta"
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0001 funta"
+        ],
+        [
+          "Few",
+          "\u0001 funte"
+        ]
       ],
-      [
-        "Few",
-        "\u0001 funte"
-      ]
-    ],
-    "other": "\u0001 funti"
+      "other": "\u0001 funti"
+    }
   }
 }

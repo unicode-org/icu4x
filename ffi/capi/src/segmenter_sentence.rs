@@ -9,6 +9,7 @@ pub mod ffi {
     use alloc::boxed::Box;
 
     use crate::errors::ffi::DataError;
+    use crate::locale_core::ffi::Locale;
     use crate::provider::ffi::DataProvider;
 
     #[diplomat::opaque]
@@ -40,14 +41,34 @@ pub mod ffi {
 
     impl SentenceSegmenter {
         /// Construct an [`SentenceSegmenter`].
-        #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::new, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, constructor)]
+        #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::new, FnInStruct, hidden)]
         pub fn create(provider: &DataProvider) -> Result<Box<SentenceSegmenter>, DataError> {
             Ok(Box::new(SentenceSegmenter(call_constructor!(
                 icu_segmenter::SentenceSegmenter::new [r => Ok(r)],
                 icu_segmenter::SentenceSegmenter::try_new_with_any_provider,
                 icu_segmenter::SentenceSegmenter::try_new_with_buffer_provider,
                 provider,
+            )?)))
+        }
+
+        /// Construct an [`SentenceSegmenter`].
+        #[diplomat::rust_link(
+            icu::segmenter::SentenceSegmenter::try_new_with_options,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::attr(supports = fallible_constructors, constructor)]
+        #[diplomat::attr(supports = non_exhaustive_structs, rename = "with_content_locale")]
+        pub fn create_with_content_locale(
+            provider: &DataProvider,
+            locale: &Locale,
+        ) -> Result<Box<SentenceSegmenter>, DataError> {
+            Ok(Box::new(SentenceSegmenter(call_constructor!(
+                icu_segmenter::SentenceSegmenter::try_new_with_options,
+                icu_segmenter::SentenceSegmenter::try_new_with_options_with_any_provider,
+                icu_segmenter::SentenceSegmenter::try_new_with_options_with_buffer_provider,
+                provider,
+                locale.into(),
             )?)))
         }
 
@@ -140,5 +161,13 @@ pub mod ffi {
                 .and_then(|u| i32::try_from(u).ok())
                 .unwrap_or(-1)
         }
+    }
+}
+
+impl From<&crate::locale_core::ffi::Locale> for icu_segmenter::SentenceBreakOptions {
+    fn from(other: &crate::locale_core::ffi::Locale) -> Self {
+        let mut options = icu_segmenter::SentenceBreakOptions::default();
+        options.content_locale = Some(other.to_datalocale());
+        options
     }
 }

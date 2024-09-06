@@ -10,7 +10,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 export class FixedDecimalRoundingIncrement {
     #value = undefined;
 
-    static values = new Map([
+    static #values = new Map([
         ["MultiplesOf1", 0],
         ["MultiplesOf2", 1],
         ["MultiplesOf5", 2],
@@ -18,29 +18,46 @@ export class FixedDecimalRoundingIncrement {
     ]);
 
     constructor(value) {
-        if (value instanceof FixedDecimalRoundingIncrement) {
-            this.#value = value.value;
-            return;
+        if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
+            // We pass in two internalConstructor arguments to create *new*
+            // instances of this type, otherwise the enums are treated as singletons.
+            if (arguments[1] === diplomatRuntime.internalConstructor ) {
+                this.#value = arguments[2];
+                return;
+            }
+            return FixedDecimalRoundingIncrement.#objectValues[arguments[1]];
         }
 
-        if (FixedDecimalRoundingIncrement.values.has(value)) {
-            this.#value = value;
-            return;
+        if (value instanceof FixedDecimalRoundingIncrement) {
+            return value;
+        }
+
+        let intVal = FixedDecimalRoundingIncrement.#values.get(value);
+
+        // Nullish check, checks for null or undefined
+        if (intVal == null) {
+            return FixedDecimalRoundingIncrement.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a FixedDecimalRoundingIncrement and does not correspond to any of its enumerator values.");
     }
 
     get value() {
-        return this.#value;
+        return [...FixedDecimalRoundingIncrement.#values.keys()][this.#value];
     }
 
     get ffiValue() {
-        return FixedDecimalRoundingIncrement.values.get(this.#value);
+        return this.#value;
     }
+    static #objectValues = [
+        new FixedDecimalRoundingIncrement(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
+        new FixedDecimalRoundingIncrement(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
+        new FixedDecimalRoundingIncrement(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
+        new FixedDecimalRoundingIncrement(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 3),
+    ];
 
-    static MultiplesOf1 = new FixedDecimalRoundingIncrement("MultiplesOf1");
-    static MultiplesOf2 = new FixedDecimalRoundingIncrement("MultiplesOf2");
-    static MultiplesOf5 = new FixedDecimalRoundingIncrement("MultiplesOf5");
-    static MultiplesOf25 = new FixedDecimalRoundingIncrement("MultiplesOf25");
+    static MultiplesOf1 = FixedDecimalRoundingIncrement.#objectValues[0];
+    static MultiplesOf2 = FixedDecimalRoundingIncrement.#objectValues[1];
+    static MultiplesOf5 = FixedDecimalRoundingIncrement.#objectValues[2];
+    static MultiplesOf25 = FixedDecimalRoundingIncrement.#objectValues[3];
 }

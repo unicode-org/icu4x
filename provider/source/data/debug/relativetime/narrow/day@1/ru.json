@@ -7,11 +7,15 @@
     "2": "послезавтра"
   },
   "past": {
-    "specials": [],
-    "other": "\u0002- дн."
+    "strings": {
+      "specials": [],
+      "other": "\u0002- дн."
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u0002+ дн."
+    "strings": {
+      "specials": [],
+      "other": "\u0002+ дн."
+    }
   }
 }

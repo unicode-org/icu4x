@@ -7,11 +7,15 @@
     "2": "pasado mañana"
   },
   "past": {
-    "specials": [],
-    "other": "\u0006hace  días"
+    "strings": {
+      "specials": [],
+      "other": "\u0006hace  días"
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u000bdentro de  días"
+    "strings": {
+      "specials": [],
+      "other": "\u000bdentro de  días"
+    }
   }
 }

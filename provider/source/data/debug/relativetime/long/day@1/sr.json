@@ -7,16 +7,20 @@
     "2": "прекосутра"
   },
   "past": {
-    "specials": [],
-    "other": "\bпре  дана"
+    "strings": {
+      "specials": [],
+      "other": "\bпре  дана"
+    }
   },
   "future": {
-    "specials": [
-      [
-        "One",
-        "\u0006за  дан"
-      ]
-    ],
-    "other": "\u0006за  дана"
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0006за  дан"
+        ]
+      ],
+      "other": "\u0006за  дана"
+    }
   }
 }

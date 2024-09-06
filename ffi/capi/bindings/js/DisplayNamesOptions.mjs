@@ -51,7 +51,18 @@ export class DisplayNamesOptions {
         functionCleanupArena,
         appendArrayMap
     ) {
-        return [this.#style.ffiValue, this.#fallback.ffiValue, this.#languageDisplay.ffiValue]
+        return [...diplomatRuntime.optionToArgsForCalling(this.#style, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#fallback, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#languageDisplay, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)])]
+    }
+
+    _writeToArrayBuffer(
+        arrayBuffer,
+        offset,
+        functionCleanupArena,
+        appendArrayMap
+    ) {
+        diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 0, this.#style, 4, 4, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array));
+        diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 8, this.#fallback, 4, 4, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array));
+        diplomatRuntime.writeOptionToArrayBuffer(arrayBuffer, offset + 16, this.#languageDisplay, 4, 4, (arrayBuffer, offset, jsValue) => diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array));
     }
 
     // This struct contains borrowed fields, so this takes in a list of
@@ -60,11 +71,11 @@ export class DisplayNamesOptions {
     // This method does not attempt to handle any dependencies between lifetimes, the caller
     // should handle this when constructing edge arrays.
     #fromFFI(ptr) {
-        const styleDeref = diplomatRuntime.enumDiscriminant(wasm, ptr);
-        this.#style = DisplayNamesStyle[Array.from(DisplayNamesStyle.values.keys())[styleDeref]];
-        const fallbackDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 4);
-        this.#fallback = DisplayNamesFallback[Array.from(DisplayNamesFallback.values.keys())[fallbackDeref]];
-        const languageDisplayDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 8);
-        this.#languageDisplay = LanguageDisplay[Array.from(LanguageDisplay.values.keys())[languageDisplayDeref]];
+        const styleDeref = ptr;
+        this.#style = diplomatRuntime.readOption(wasm, styleDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new DisplayNamesStyle(diplomatRuntime.internalConstructor, deref) });
+        const fallbackDeref = ptr + 8;
+        this.#fallback = diplomatRuntime.readOption(wasm, fallbackDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new DisplayNamesFallback(diplomatRuntime.internalConstructor, deref) });
+        const languageDisplayDeref = ptr + 16;
+        this.#languageDisplay = diplomatRuntime.readOption(wasm, languageDisplayDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new LanguageDisplay(diplomatRuntime.internalConstructor, deref) });
     }
 }

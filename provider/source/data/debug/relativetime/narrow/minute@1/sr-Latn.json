@@ -3,11 +3,15 @@
     "0": "ovog minuta"
   },
   "past": {
-    "specials": [],
-    "other": "\u0005pre  min."
+    "strings": {
+      "specials": [],
+      "other": "\u0005pre  min."
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u0004za  min."
+    "strings": {
+      "specials": [],
+      "other": "\u0004za  min."
+    }
   }
 }

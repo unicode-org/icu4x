@@ -10,6 +10,7 @@ pub mod ffi {
 
     use crate::errors::ffi::DataError;
     use crate::provider::ffi::DataProvider;
+    use diplomat_runtime::DiplomatOption;
 
     #[diplomat::opaque]
     /// An ICU4X line-break segmenter, capable of finding breakpoints in strings.
@@ -17,6 +18,7 @@ pub mod ffi {
     pub struct LineSegmenter(icu_segmenter::LineSegmenter);
 
     #[diplomat::rust_link(icu::segmenter::LineBreakStrictness, Enum)]
+    #[diplomat::enum_convert(icu_segmenter::LineBreakStrictness, needs_wildcard)]
     pub enum LineBreakStrictness {
         Loose,
         Normal,
@@ -25,6 +27,7 @@ pub mod ffi {
     }
 
     #[diplomat::rust_link(icu::segmenter::LineBreakWordOption, Enum)]
+    #[diplomat::enum_convert(icu_segmenter::LineBreakWordOption, needs_wildcard)]
     pub enum LineBreakWordOption {
         Normal,
         BreakAll,
@@ -34,9 +37,9 @@ pub mod ffi {
     #[diplomat::rust_link(icu::segmenter::LineBreakOptions, Struct)]
     #[diplomat::attr(supports = non_exhaustive_structs, rename = "LineBreakOptions")]
     pub struct LineBreakOptionsV1 {
-        pub strictness: LineBreakStrictness,
-        pub word_option: LineBreakWordOption,
-        pub ja_zh: bool,
+        pub strictness: DiplomatOption<LineBreakStrictness>,
+        pub word_option: DiplomatOption<LineBreakWordOption>,
+        pub ja_zh: DiplomatOption<bool>,
     }
 
     #[diplomat::opaque]
@@ -247,33 +250,18 @@ pub mod ffi {
     }
 }
 
-impl From<ffi::LineBreakStrictness> for icu_segmenter::LineBreakStrictness {
-    fn from(other: ffi::LineBreakStrictness) -> Self {
-        match other {
-            ffi::LineBreakStrictness::Loose => Self::Loose,
-            ffi::LineBreakStrictness::Normal => Self::Normal,
-            ffi::LineBreakStrictness::Strict => Self::Strict,
-            ffi::LineBreakStrictness::Anywhere => Self::Anywhere,
-        }
-    }
-}
-
-impl From<ffi::LineBreakWordOption> for icu_segmenter::LineBreakWordOption {
-    fn from(other: ffi::LineBreakWordOption) -> Self {
-        match other {
-            ffi::LineBreakWordOption::Normal => Self::Normal,
-            ffi::LineBreakWordOption::BreakAll => Self::BreakAll,
-            ffi::LineBreakWordOption::KeepAll => Self::KeepAll,
-        }
-    }
-}
-
 impl From<ffi::LineBreakOptionsV1> for icu_segmenter::LineBreakOptions {
     fn from(other: ffi::LineBreakOptionsV1) -> Self {
         let mut options = icu_segmenter::LineBreakOptions::default();
-        options.strictness = other.strictness.into();
-        options.word_option = other.word_option.into();
-        options.ja_zh = other.ja_zh;
+        options.strictness = other
+            .strictness
+            .into_converted_option()
+            .unwrap_or(options.strictness);
+        options.word_option = other
+            .word_option
+            .into_converted_option()
+            .unwrap_or(options.word_option);
+        options.ja_zh = other.ja_zh.into_option().unwrap_or(options.ja_zh);
         options
     }
 }

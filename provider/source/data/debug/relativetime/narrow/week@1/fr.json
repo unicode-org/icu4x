@@ -5,11 +5,15 @@
     "1": "la semaine prochaine"
   },
   "past": {
-    "specials": [],
-    "other": "\u0002- sem."
+    "strings": {
+      "specials": [],
+      "other": "\u0002- sem."
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u0002+ sem."
+    "strings": {
+      "specials": [],
+      "other": "\u0002+ sem."
+    }
   }
 }

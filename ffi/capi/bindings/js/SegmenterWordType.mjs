@@ -8,37 +8,53 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 export class SegmenterWordType {
     #value = undefined;
 
-    static values = new Map([
+    static #values = new Map([
         ["None", 0],
         ["Number", 1],
         ["Letter", 2]
     ]);
 
     constructor(value) {
-        if (value instanceof SegmenterWordType) {
-            this.#value = value.value;
-            return;
+        if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
+            // We pass in two internalConstructor arguments to create *new*
+            // instances of this type, otherwise the enums are treated as singletons.
+            if (arguments[1] === diplomatRuntime.internalConstructor ) {
+                this.#value = arguments[2];
+                return;
+            }
+            return SegmenterWordType.#objectValues[arguments[1]];
         }
 
-        if (SegmenterWordType.values.has(value)) {
-            this.#value = value;
-            return;
+        if (value instanceof SegmenterWordType) {
+            return value;
+        }
+
+        let intVal = SegmenterWordType.#values.get(value);
+
+        // Nullish check, checks for null or undefined
+        if (intVal == null) {
+            return SegmenterWordType.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a SegmenterWordType and does not correspond to any of its enumerator values.");
     }
 
     get value() {
-        return this.#value;
+        return [...SegmenterWordType.#values.keys()][this.#value];
     }
 
     get ffiValue() {
-        return SegmenterWordType.values.get(this.#value);
+        return this.#value;
     }
+    static #objectValues = [
+        new SegmenterWordType(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
+        new SegmenterWordType(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
+        new SegmenterWordType(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
+    ];
 
-    static None = new SegmenterWordType("None");
-    static Number = new SegmenterWordType("Number");
-    static Letter = new SegmenterWordType("Letter");
+    static None = SegmenterWordType.#objectValues[0];
+    static Number = SegmenterWordType.#objectValues[1];
+    static Letter = SegmenterWordType.#objectValues[2];
 
     get isWordLike() {
         const result = wasm.icu4x_SegmenterWordType_is_word_like_mv1(this.ffiValue);

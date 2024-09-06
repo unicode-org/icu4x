@@ -10,7 +10,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 export class Error {
     #value = undefined;
 
-    static values = new Map([
+    static #values = new Map([
         ["UnknownError", 0],
         ["DataMissingDataMarkerError", 256],
         ["DataMissingLocaleError", 258],
@@ -34,45 +34,82 @@ export class Error {
     ]);
 
     constructor(value) {
-        if (value instanceof Error) {
-            this.#value = value.value;
-            return;
+        if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
+            // We pass in two internalConstructor arguments to create *new*
+            // instances of this type, otherwise the enums are treated as singletons.
+            if (arguments[1] === diplomatRuntime.internalConstructor ) {
+                this.#value = arguments[2];
+                return;
+            }
+            return Error.#objectValues[arguments[1]];
         }
 
-        if (Error.values.has(value)) {
-            this.#value = value;
-            return;
+        if (value instanceof Error) {
+            return value;
+        }
+
+        let intVal = Error.#values.get(value);
+
+        // Nullish check, checks for null or undefined
+        if (intVal == null) {
+            return Error.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a Error and does not correspond to any of its enumerator values.");
     }
 
     get value() {
-        return this.#value;
+        for (let entry of Error.#values) {
+            if (entry[1] == this.#value) {
+                return entry[0];
+            }
+        }
     }
 
     get ffiValue() {
-        return Error.values.get(this.#value);
+        return this.#value;
     }
+    static #objectValues = {
+        [0]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
+        [256]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 256),
+        [258]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 258),
+        [260]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 260),
+        [261]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 261),
+        [262]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 262),
+        [263]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 263),
+        [266]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 266),
+        [267]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 267),
+        [268]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 268),
+        [1026]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1026),
+        [2048]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2048),
+        [2049]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2049),
+        [2050]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2050),
+        [2051]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2051),
+        [2052]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2052),
+        [2053]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2053),
+        [2054]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2054),
+        [2055]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2055),
+        [2056]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2056),
+    };
 
-    static UnknownError = new Error("UnknownError");
-    static DataMissingDataMarkerError = new Error("DataMissingDataMarkerError");
-    static DataMissingLocaleError = new Error("DataMissingLocaleError");
-    static DataNeedsLocaleError = new Error("DataNeedsLocaleError");
-    static DataExtraneousLocaleError = new Error("DataExtraneousLocaleError");
-    static DataFilteredResourceError = new Error("DataFilteredResourceError");
-    static DataMismatchedTypeError = new Error("DataMismatchedTypeError");
-    static DataCustomError = new Error("DataCustomError");
-    static DataIoError = new Error("DataIoError");
-    static DataUnavailableBufferFormatError = new Error("DataUnavailableBufferFormatError");
-    static PropertyUnexpectedPropertyNameError = new Error("PropertyUnexpectedPropertyNameError");
-    static DateTimePatternError = new Error("DateTimePatternError");
-    static DateTimeMissingInputFieldError = new Error("DateTimeMissingInputFieldError");
-    static DateTimeSkeletonError = new Error("DateTimeSkeletonError");
-    static DateTimeUnsupportedFieldError = new Error("DateTimeUnsupportedFieldError");
-    static DateTimeUnsupportedOptionsError = new Error("DateTimeUnsupportedOptionsError");
-    static DateTimeMissingWeekdaySymbolError = new Error("DateTimeMissingWeekdaySymbolError");
-    static DateTimeMissingMonthSymbolError = new Error("DateTimeMissingMonthSymbolError");
-    static DateTimeFixedDecimalError = new Error("DateTimeFixedDecimalError");
-    static DateTimeMismatchedCalendarError = new Error("DateTimeMismatchedCalendarError");
+    static UnknownError = Error.#objectValues[0];
+    static DataMissingDataMarkerError = Error.#objectValues[256];
+    static DataMissingLocaleError = Error.#objectValues[258];
+    static DataNeedsLocaleError = Error.#objectValues[260];
+    static DataExtraneousLocaleError = Error.#objectValues[261];
+    static DataFilteredResourceError = Error.#objectValues[262];
+    static DataMismatchedTypeError = Error.#objectValues[263];
+    static DataCustomError = Error.#objectValues[266];
+    static DataIoError = Error.#objectValues[267];
+    static DataUnavailableBufferFormatError = Error.#objectValues[268];
+    static PropertyUnexpectedPropertyNameError = Error.#objectValues[1026];
+    static DateTimePatternError = Error.#objectValues[2048];
+    static DateTimeMissingInputFieldError = Error.#objectValues[2049];
+    static DateTimeSkeletonError = Error.#objectValues[2050];
+    static DateTimeUnsupportedFieldError = Error.#objectValues[2051];
+    static DateTimeUnsupportedOptionsError = Error.#objectValues[2052];
+    static DateTimeMissingWeekdaySymbolError = Error.#objectValues[2053];
+    static DateTimeMissingMonthSymbolError = Error.#objectValues[2054];
+    static DateTimeFixedDecimalError = Error.#objectValues[2055];
+    static DateTimeMismatchedCalendarError = Error.#objectValues[2056];
 }

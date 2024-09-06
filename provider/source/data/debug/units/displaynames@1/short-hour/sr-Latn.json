@@ -1,15 +1,17 @@
 {
   "patterns": {
-    "specials": [
-      [
-        "One",
-        "\u0001 sat"
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0001 sat"
+        ],
+        [
+          "Few",
+          "\u0001 sata"
+        ]
       ],
-      [
-        "Few",
-        "\u0001 sata"
-      ]
-    ],
-    "other": "\u0001 sati"
+      "other": "\u0001 sati"
+    }
   }
 }

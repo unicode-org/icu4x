@@ -12,9 +12,9 @@
 #[macro_export]
 macro_rules! __impl_variant_display_names_v1_marker {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl $provider {
             const DATA_VARIANT_DISPLAY_NAMES_V1_MARKER: icu_provider_baked::zerotrie::Data<icu::experimental::displaynames::provider::VariantDisplayNamesV1Marker> = icu_provider_baked::zerotrie::Data {
                 trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1wabcdefghijklmnoprstuvyz\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\x01\x01\x01\x01\x01\x07\x18!'7Wcw\x7F\x82\x9B\xAB\xC3\xD3\xD6\xE3\xEF\x12&.7S\xC2rs\x01\x80t\x81\xC3grs\x01\x04\x82\x83x\x84\x85-Cyrl\x86\xC3asy\x01\x02\x87\x88\x89\xC2ae\x01\x8A\x8B\xC5lnstu\x01\x02\x03\x04\x8C\x8D\x8E\x8F\x90\0\xC6afiory\x02\t\x0E\x10\x12\x90\x01-Adlm\x90\x02\x90\x03l\x90\x04\x90\x05\x90\x06\x90\x07\xC3adu\x02\x04\x90\x08\x90\t\x90\n\xC5eiruy\x02\x04\x06\x08\x90\x0B\x90\x0C\x90\r\x90\x0E\x90\x0F\xC2dt\x02\x90\x10\x90\x11a\x90\x12\xC6gknosu\x03\x05\x07\t\x0Bp\x90\x13\x90\x14\x90\x15\x90\x16\x90\x17\x90\x18\xC4botv\x02\x04\x06\x90\x19\x90\x1A\x90\x1B\x90\x1C\xC6klrsty\x02\x04\x06\x08\n\x90\x1D\x90\x1E\x90\x1F\x90 \x90!\x90\"\xC4elno\x02\x04\x06\x90#\x90$\x90%\x90&r\x90'\xC2lt\x02\x90(\x90)-PT\x90*\xC3mou\x02\x04\x90+\x90,\x90-\xC7cdklorv\x02\x04\x06\x08\n\x13\x90.\x90/\x900\x901\x902\x903-Latn\x904\x905\xC5aehir\x02\x04\x06\x08\x906\x907\x908\x909\x90:\xC2gk\x02\x90;\x90<\xC2ei\x03c\x90=\x90>\xC2ru\x0El\x90?-\xC2CV\x03O\x90@E\x90@e\x90A-Hans\x90B\xC2hu\x14\x90C-\xC2HM\n\xC2Ka\x02\x90Dnt\x90EO\x90D\x90F" },
@@ -544,7 +544,7 @@ macro_rules! __impl_variant_display_names_v1_marker {
                 ],
             };
         }
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DataProvider<icu::experimental::displaynames::provider::VariantDisplayNamesV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::experimental::displaynames::provider::VariantDisplayNamesV1Marker>, icu_provider::DataError> {
                 let mut metadata = icu_provider::DataResponseMetadata::default();
@@ -570,7 +570,7 @@ macro_rules! __impl_variant_display_names_v1_marker {
     };
     ($ provider : ty , DRY) => {
         __impl_variant_display_names_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::experimental::displaynames::provider::VariantDisplayNamesV1Marker> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 icu_provider::DataProvider::<icu::experimental::displaynames::provider::VariantDisplayNamesV1Marker>::load(self, req).map(|r| r.metadata)
@@ -579,7 +579,7 @@ macro_rules! __impl_variant_display_names_v1_marker {
     };
     ($ provider : ty , ITER) => {
         __impl_variant_display_names_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::IterableDataProvider<icu::experimental::displaynames::provider::VariantDisplayNamesV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_VARIANT_DISPLAY_NAMES_V1_MARKER).collect())
@@ -588,13 +588,13 @@ macro_rules! __impl_variant_display_names_v1_marker {
     };
     ($ provider : ty , DRY , ITER) => {
         __impl_variant_display_names_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::experimental::displaynames::provider::VariantDisplayNamesV1Marker> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 icu_provider::DataProvider::<icu::experimental::displaynames::provider::VariantDisplayNamesV1Marker>::load(self, req).map(|r| r.metadata)
             }
         }
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::IterableDataProvider<icu::experimental::displaynames::provider::VariantDisplayNamesV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_VARIANT_DISPLAY_NAMES_V1_MARKER).collect())

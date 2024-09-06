@@ -3,11 +3,15 @@
     "0": "в эту минуту"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 мин. назад"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 мин. назад"
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\fчерез  мин."
+    "strings": {
+      "specials": [],
+      "other": "\fчерез  мин."
+    }
   }
 }

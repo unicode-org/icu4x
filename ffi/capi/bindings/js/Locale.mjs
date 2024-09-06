@@ -42,15 +42,15 @@ export class Locale {
     static fromString(name) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const nameSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, name)).splat()];
+        const nameSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, name));
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_Locale_from_string_mv1(diplomatReceive.buffer, ...nameSlice);
+        const result = wasm.icu4x_Locale_from_string_mv1(diplomatReceive.buffer, ...nameSlice.splat());
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = LocaleParseError[Array.from(LocaleParseError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                const cause = new LocaleParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('LocaleParseError: ' + cause.value, { cause });
             }
             return new Locale(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -99,11 +99,11 @@ export class Locale {
     getUnicodeExtension(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s)).splat()];
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s));
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         
-        const result = wasm.icu4x_Locale_get_unicode_extension_mv1(this.ffiValue, ...sSlice, write.buffer);
+        const result = wasm.icu4x_Locale_get_unicode_extension_mv1(this.ffiValue, ...sSlice.splat(), write.buffer);
     
         try {
             return result === 0 ? null : write.readString8();
@@ -132,15 +132,15 @@ export class Locale {
     set language(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s)).splat()];
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s));
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_Locale_set_language_mv1(diplomatReceive.buffer, this.ffiValue, ...sSlice);
+        const result = wasm.icu4x_Locale_set_language_mv1(diplomatReceive.buffer, this.ffiValue, ...sSlice.splat());
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = LocaleParseError[Array.from(LocaleParseError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                const cause = new LocaleParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('LocaleParseError: ' + cause.value, { cause });
             }
     
@@ -170,15 +170,15 @@ export class Locale {
     set region(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s)).splat()];
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s));
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_Locale_set_region_mv1(diplomatReceive.buffer, this.ffiValue, ...sSlice);
+        const result = wasm.icu4x_Locale_set_region_mv1(diplomatReceive.buffer, this.ffiValue, ...sSlice.splat());
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = LocaleParseError[Array.from(LocaleParseError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                const cause = new LocaleParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('LocaleParseError: ' + cause.value, { cause });
             }
     
@@ -208,15 +208,15 @@ export class Locale {
     set script(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s)).splat()];
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s));
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_Locale_set_script_mv1(diplomatReceive.buffer, this.ffiValue, ...sSlice);
+        const result = wasm.icu4x_Locale_set_script_mv1(diplomatReceive.buffer, this.ffiValue, ...sSlice.splat());
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = LocaleParseError[Array.from(LocaleParseError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                const cause = new LocaleParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('LocaleParseError: ' + cause.value, { cause });
             }
     
@@ -232,17 +232,17 @@ export class Locale {
     static canonicalize(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s)).splat()];
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s));
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         
-        const result = wasm.icu4x_Locale_canonicalize_mv1(diplomatReceive.buffer, ...sSlice, write.buffer);
+        const result = wasm.icu4x_Locale_canonicalize_mv1(diplomatReceive.buffer, ...sSlice.splat(), write.buffer);
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = LocaleParseError[Array.from(LocaleParseError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                const cause = new LocaleParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('LocaleParseError: ' + cause.value, { cause });
             }
             return write.readString8();
@@ -273,9 +273,9 @@ export class Locale {
     normalizingEq(other) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const otherSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, other)).splat()];
+        const otherSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, other));
         
-        const result = wasm.icu4x_Locale_normalizing_eq_mv1(this.ffiValue, ...otherSlice);
+        const result = wasm.icu4x_Locale_normalizing_eq_mv1(this.ffiValue, ...otherSlice.splat());
     
         try {
             return result;
@@ -289,9 +289,9 @@ export class Locale {
     compareToString(other) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const otherSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, other)).splat()];
+        const otherSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, other));
         
-        const result = wasm.icu4x_Locale_compare_to_string_mv1(this.ffiValue, ...otherSlice);
+        const result = wasm.icu4x_Locale_compare_to_string_mv1(this.ffiValue, ...otherSlice.splat());
     
         try {
             return result;

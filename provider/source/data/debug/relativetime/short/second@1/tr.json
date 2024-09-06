@@ -3,11 +3,15 @@
     "0": "şimdi"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 sn. önce"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 sn. önce"
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u0001 sn. sonra"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 sn. sonra"
+    }
   }
 }

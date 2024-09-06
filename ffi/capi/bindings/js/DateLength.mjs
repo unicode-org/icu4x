@@ -8,7 +8,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 export class DateLength {
     #value = undefined;
 
-    static values = new Map([
+    static #values = new Map([
         ["Full", 0],
         ["Long", 1],
         ["Medium", 2],
@@ -16,29 +16,46 @@ export class DateLength {
     ]);
 
     constructor(value) {
-        if (value instanceof DateLength) {
-            this.#value = value.value;
-            return;
+        if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
+            // We pass in two internalConstructor arguments to create *new*
+            // instances of this type, otherwise the enums are treated as singletons.
+            if (arguments[1] === diplomatRuntime.internalConstructor ) {
+                this.#value = arguments[2];
+                return;
+            }
+            return DateLength.#objectValues[arguments[1]];
         }
 
-        if (DateLength.values.has(value)) {
-            this.#value = value;
-            return;
+        if (value instanceof DateLength) {
+            return value;
+        }
+
+        let intVal = DateLength.#values.get(value);
+
+        // Nullish check, checks for null or undefined
+        if (intVal == null) {
+            return DateLength.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a DateLength and does not correspond to any of its enumerator values.");
     }
 
     get value() {
-        return this.#value;
+        return [...DateLength.#values.keys()][this.#value];
     }
 
     get ffiValue() {
-        return DateLength.values.get(this.#value);
+        return this.#value;
     }
+    static #objectValues = [
+        new DateLength(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
+        new DateLength(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
+        new DateLength(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
+        new DateLength(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 3),
+    ];
 
-    static Full = new DateLength("Full");
-    static Long = new DateLength("Long");
-    static Medium = new DateLength("Medium");
-    static Short = new DateLength("Short");
+    static Full = DateLength.#objectValues[0];
+    static Long = DateLength.#objectValues[1];
+    static Medium = DateLength.#objectValues[2];
+    static Short = DateLength.#objectValues[3];
 }
