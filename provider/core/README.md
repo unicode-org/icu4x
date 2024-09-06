@@ -78,7 +78,7 @@ associated with a marker type implementing [`DynamicDataMarker`].
 Data structs should generally have one lifetime argument: `'data`. This lifetime allows data
 structs to borrow zero-copy data.
 
-[`FixedProvider`]: https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fixed/struct.FixedProvider.html
+[`FixedProvider`]: https://docs.rs/icu_provider_adapters/latest/fixed/any_payload/struct.FixedProvider.html
 [`HelloWorldProvider`]: hello_world::HelloWorldProvider
 [`AnyProvider`]: any::AnyProvider
 [`Yokeable`]: yoke::Yokeable
