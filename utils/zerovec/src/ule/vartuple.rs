@@ -68,6 +68,7 @@ pub struct VarTuple<A, B> {
 /// See the module for examples.
 #[derive(Debug)]
 #[allow(clippy::exhaustive_structs)] // well-defined type
+#[repr(C, packed)]
 pub struct VarTupleULE<A: AsULE, V: ?Sized> {
     pub sized: A::ULE,
     pub variable: V,
@@ -77,7 +78,7 @@ pub struct VarTupleULE<A: AsULE, V: ?Sized> {
 //
 // Safety checklist for `VarULE`:
 //
-// 1. Two ULEs are stored back to back with no padding.
+// 1. Two ULEs are stored back to back with no padding: repr(C, packed)
 // 2. The two ULEs are align 1 by being ULEs.
 // 3. `validate_byte_slice` checks length and defers to the inner ULEs.
 // 4. `validate_byte_slice` checks length and defers to the inner ULEs.
