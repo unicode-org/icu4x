@@ -4,8 +4,11 @@
 
 //! Data provider always serving the same struct.
 
+use core::fmt;
 use icu_provider::any::MaybeSendSync;
 use icu_provider::prelude::*;
+use yoke::trait_hack::YokeTraitHack;
+use yoke::Yokeable;
 
 /// A data provider that returns clones of a fixed type-erased payload.
 ///
@@ -49,20 +52,30 @@ use icu_provider::prelude::*;
 ///     })
 /// ))
 /// ```
-#[derive(Debug)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct FixedProvider<M: DataMarker> {
-    /// The [`AnyPayload`] to return on matching requests.
-    data: M::DataStruct,
+    data: DataPayload<M>,
 }
 
 impl<M: DataMarker> FixedProvider<M> {
-    /// Creates an `FixedProvider` with an owned (allocated) payload of the given data.
+    /// Creates a `FixedProvider` with an owned (allocated) payload of the given data.
     pub fn from_owned(data: M::DataStruct) -> Self {
-        Self { data }
+        Self::from_payload(DataPayload::from_owned(data))
     }
 
-    /// Creates an `FixedProvider` with the default (allocated) version of the data struct.
+    /// Creates a `FixedProvider` with a statically borrowed payload of the given data.
+    pub fn from_static(data: &'static M::DataStruct) -> Self {
+        FixedProvider {
+            data: DataPayload::from_static_ref(data),
+        }
+    }
+
+    /// Creates a `FixedProvider` from an existing [`DataPayload`].
+    pub fn from_payload(data: DataPayload<M>) -> Self {
+        FixedProvider { data }
+    }
+
+    /// Creates a `FixedProvider` with the default (allocated) version of the data struct.
     pub fn new_default() -> Self
     where
         M::DataStruct: Default,
@@ -73,14 +86,14 @@ impl<M: DataMarker> FixedProvider<M> {
 
 impl<M: DataMarker> AnyProvider for FixedProvider<M>
 where
-    M::DataStruct: Clone,
+    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: Clone,
     M::DataStruct: MaybeSendSync,
 {
     fn load_any(&self, marker: DataMarkerInfo, _: DataRequest) -> Result<AnyResponse, DataError> {
         marker.match_marker(M::INFO)?;
         Ok(AnyResponse {
             metadata: DataResponseMetadata::default(),
-            payload: DataPayload::<M>::from_owned(self.data.clone()).wrap_into_any_payload(),
+            payload: self.data.clone().wrap_into_any_payload(),
         })
     }
 }
@@ -88,12 +101,23 @@ where
 impl<M> DataProvider<M> for FixedProvider<M>
 where
     M: DataMarker,
-    M::DataStruct: Clone,
+    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: Clone,
 {
     fn load(&self, _: DataRequest) -> Result<DataResponse<M>, DataError> {
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(self.data.clone()),
+            payload: self.data.clone(),
         })
+    }
+}
+
+impl<M> fmt::Debug for FixedProvider<M>
+where
+    M: DynamicDataMarker,
+    M: DataMarker,
+    for<'a> &'a <M::DataStruct as Yokeable<'a>>::Output: fmt::Debug,
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.data.fmt(f)
     }
 }
