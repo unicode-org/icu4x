@@ -124,7 +124,7 @@ fn offsets_for_meta(meta_zones_territory: &Vec<MetazoneTerritory>, meta: &str) -
         if let Some(d) = new_daylight.as_mut() {
             // Some time zones, like Europe/Dublin use DST the wrong way
             // around. Don't let this weirdness leak into meta zones.
-            if d < new_standard {
+            if *d < new_standard {
                 core::mem::swap(d, &mut new_standard);
             }
         }
