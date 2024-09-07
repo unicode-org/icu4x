@@ -98,7 +98,7 @@ fn test_lower_ascii() {
         "und-t-und-x0-lowascii".parse().unwrap(),
         |locale| {
             if locale.normalizing_eq("und-t-und-x0-lower") {
-                Some(Box::new(LowercaseTransliterator(CaseMapper::new())))
+                Some(Ok(Box::new(LowercaseTransliterator(CaseMapper::new()))))
             } else {
                 None
             }
