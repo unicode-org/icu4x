@@ -121,6 +121,13 @@ fn offsets_for_meta(meta_zones_territory: &Vec<MetazoneTerritory>, meta: &str) -
         let Some((new_standard, new_daylight)) = offsets_for_iana(&m.map_zone.zone_type) else {
             continue;
         };
+        if let Some(d) = new_daylight.as_mut() {
+            // Some time zones, like Europe/Dublin use DST the wrong way
+            // around. Don't let this weirdness leak into meta zones.
+            if d < new_standard {
+                core::mem::swap(d, &mut new_standard);
+            }
+        }
         if let Some(standard) = standard {
             match (standard, daylight, new_standard, new_daylight) {
                 // Same standard times, no DST, allowed
@@ -129,10 +136,6 @@ fn offsets_for_meta(meta_zones_territory: &Vec<MetazoneTerritory>, meta: &str) -
                 (s1, Some(_), s2, None) | (s1, None, s2, Some(_)) if s1 == s2 => {}
                 // Same standard times, same DST times, allowed
                 (s1, Some(d1), s2, Some(d2)) if s1 == s2 && d1 == d2 => {}
-                // One tz has DST, and it's the other's standard time, sketchy but allowed
-                (s, None, _, Some(d)) | (_, Some(d), s, None) if s == d => {}
-                // Both tzs have DST but swapped, sketchy but allowed
-                (s1, Some(d1), s2, Some(d2)) if s1 == d2 && d1 == s2 => {}
                 // all other cases
                 _ => {
                     log::warn!(
