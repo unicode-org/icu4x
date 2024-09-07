@@ -118,7 +118,7 @@ fn offsets_for_meta(meta_zones_territory: &Vec<MetazoneTerritory>, meta: &str) -
             // https://unicode-org.atlassian.net/browse/CLDR-17927
             continue;
         }
-        let Some((new_standard, new_daylight)) = offsets_for_iana(&m.map_zone.zone_type) else {
+        let Some((mut new_standard, mut new_daylight)) = offsets_for_iana(&m.map_zone.zone_type) else {
             continue;
         };
         if let Some(d) = new_daylight.as_mut() {
