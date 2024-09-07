@@ -49,7 +49,7 @@
 //! assert_eq!(&employees_vzv.get(1).unwrap().variable, "John Doe");
 //! ```
 
-use core::mem::size_of;
+use core::mem::{size_of, transmute_copy};
 
 use super::{AsULE, EncodeAsVarULE, UleError, VarULE, ULE};
 
@@ -139,12 +139,13 @@ where
         assert_eq!(size_of::<*const V>(), size_of::<(*const u8, usize)>());
         // Safety: We have asserted that the transmute Src and Dst are the same size. Furthermore,
         // DST pointers are a pointer and usize length metadata
-        let (_v_ptr, metadata) = core::mem::transmute_copy::<*const V, (*const u8, usize)>(&variable_ptr);
+        let (_v_ptr, metadata) = transmute_copy::<*const V, (*const u8, usize)>(&variable_ptr);
 
         // Construct a new DST with the same metadata as V
         assert_eq!(size_of::<*const Self>(), size_of::<(*const u8, usize)>());
         // Safety: Same as above but in the other direction.
-        let composed_ptr = core::mem::transmute_copy::<(*const u8, usize), *const Self>(&(bytes.as_ptr(), metadata));
+        let composed_ptr =
+            transmute_copy::<(*const u8, usize), *const Self>(&(bytes.as_ptr(), metadata));
         &*(composed_ptr)
     }
 }
