@@ -19,97 +19,111 @@ const UNKNOWN: u8 = 0;
 #[allow(dead_code)]
 const AI: u8 = 1;
 #[allow(dead_code)]
-const AL: u8 = 2;
+const AK: u8 = 2;
 #[allow(dead_code)]
-const B2: u8 = 3;
+const AL: u8 = 3;
 #[allow(dead_code)]
-const BA: u8 = 4;
+const AL_DOTTED_CIRCLE: u8 = 4;
 #[allow(dead_code)]
-const BB: u8 = 5;
+const AP: u8 = 5;
 #[allow(dead_code)]
-const BK: u8 = 6;
+const AS: u8 = 6;
 #[allow(dead_code)]
-const CB: u8 = 7;
+const B2: u8 = 7;
 #[allow(dead_code)]
-const CJ: u8 = 8;
+const BA: u8 = 8;
 #[allow(dead_code)]
-const CL: u8 = 9;
+const BB: u8 = 9;
 #[allow(dead_code)]
-const CM: u8 = 10;
+const BK: u8 = 10;
 #[allow(dead_code)]
-const CP: u8 = 11;
+const CB: u8 = 11;
 #[allow(dead_code)]
-const CR: u8 = 12;
+const CJ: u8 = 12;
 #[allow(dead_code)]
-const EB: u8 = 13;
+const CL: u8 = 13;
 #[allow(dead_code)]
-const EM: u8 = 14;
+const CM: u8 = 14;
 #[allow(dead_code)]
-const EX: u8 = 15;
+const CP: u8 = 15;
 #[allow(dead_code)]
-const GL: u8 = 16;
+const CR: u8 = 16;
 #[allow(dead_code)]
-const H2: u8 = 17;
+const EB: u8 = 17;
 #[allow(dead_code)]
-const H3: u8 = 18;
+const EM: u8 = 18;
 #[allow(dead_code)]
-const HL: u8 = 19;
+const EX: u8 = 19;
 #[allow(dead_code)]
-const HY: u8 = 20;
+const GL: u8 = 20;
 #[allow(dead_code)]
-const ID: u8 = 21;
+const H2: u8 = 21;
 #[allow(dead_code)]
-const ID_CN: u8 = 22;
+const H3: u8 = 22;
 #[allow(dead_code)]
-const IN: u8 = 23;
+const HL: u8 = 23;
 #[allow(dead_code)]
-const IS: u8 = 24;
+const HY: u8 = 24;
 #[allow(dead_code)]
-const JL: u8 = 25;
+const ID: u8 = 25;
 #[allow(dead_code)]
-const JT: u8 = 26;
+const ID_CN: u8 = 26;
 #[allow(dead_code)]
-const JV: u8 = 27;
+const IN: u8 = 27;
 #[allow(dead_code)]
-const LF: u8 = 28;
+const IS: u8 = 28;
 #[allow(dead_code)]
-const NL: u8 = 29;
+const JL: u8 = 29;
 #[allow(dead_code)]
-const NS: u8 = 30;
+const JT: u8 = 30;
 #[allow(dead_code)]
-const NU: u8 = 31;
+const JV: u8 = 31;
 #[allow(dead_code)]
-const OP_EA: u8 = 32;
+const LF: u8 = 32;
 #[allow(dead_code)]
-const OP_OP30: u8 = 33;
+const NL: u8 = 33;
 #[allow(dead_code)]
-const PO: u8 = 34;
+const NS: u8 = 34;
 #[allow(dead_code)]
-const PO_EAW: u8 = 35;
+const NU: u8 = 35;
 #[allow(dead_code)]
-const PR: u8 = 36;
+const OP_EA: u8 = 36;
 #[allow(dead_code)]
-const PR_EAW: u8 = 37;
+const OP_OP30: u8 = 37;
 #[allow(dead_code)]
-const QU: u8 = 38;
+const PO: u8 = 38;
 #[allow(dead_code)]
-const RI: u8 = 39;
+const PO_EAW: u8 = 39;
 #[allow(dead_code)]
-const SA: u8 = 40;
+const PR: u8 = 40;
 #[allow(dead_code)]
-const SG: u8 = 41;
+const PR_EAW: u8 = 41;
 #[allow(dead_code)]
-const SP: u8 = 42;
+const QU: u8 = 42;
 #[allow(dead_code)]
-const SY: u8 = 43;
+const QU_PF: u8 = 43;
 #[allow(dead_code)]
-const WJ: u8 = 44;
+const QU_PI: u8 = 44;
 #[allow(dead_code)]
-const XX: u8 = 45;
+const RI: u8 = 45;
 #[allow(dead_code)]
-const ZW: u8 = 46;
+const SA: u8 = 46;
 #[allow(dead_code)]
-const ZWJ: u8 = 47;
+const SP: u8 = 47;
+#[allow(dead_code)]
+const SY: u8 = 48;
+#[allow(dead_code)]
+const VF: u8 = 49;
+#[allow(dead_code)]
+const VI: u8 = 50;
+#[allow(dead_code)]
+const WJ: u8 = 51;
+#[allow(dead_code)]
+const XX: u8 = 52;
+#[allow(dead_code)]
+const ZW: u8 = 53;
+#[allow(dead_code)]
+const ZWJ: u8 = 54;
 
 /// An enum specifies the strictness of line-breaking rules. It can be passed as
 /// an argument when creating a line segmenter.
@@ -976,12 +990,24 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                 BreakState::Index(mut index) | BreakState::Intermediate(mut index) => {
                     let mut previous_iter = self.iter.clone();
                     let mut previous_pos_data = self.current_pos_data;
+                    let mut previous_is_after_zwj = after_zwj;
 
                     // Since we are building up a state in this inner loop, we do not
                     // need an analogue of lb9_left; continuing the inner loop preserves
                     // `index` which is the current state, and thus implements the
                     // “treat as” rule.
                     let mut left_prop_pre_lb9 = right_prop;
+
+                    // current state isn't resolved due to intermediating.
+                    // Example, [AK] [AS] is processing LB28a, but if not matched after fetching
+                    // data, we should break after [AK].
+                    let is_intermediate_rule_no_match = if lb8a_after_lb9 {
+                        // left was ZWJ so we don't break between ZWJ.
+                        true
+                    } else {
+                        index > self.data.last_codepoint_property
+                    };
+
                     loop {
                         self.advance_iter();
                         let after_zwj = left_prop_pre_lb9 == ZWJ;
@@ -997,7 +1023,12 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                             if break_state == BreakState::NoMatch {
                                 self.iter = previous_iter;
                                 self.current_pos_data = previous_pos_data;
-                                return self.get_current_position();
+                                if previous_is_after_zwj {
+                                    // Do not break [AK] [ZWJ] ÷ [AS] (eot).
+                                    continue 'a;
+                                } else {
+                                    return self.get_current_position();
+                                }
                             }
                             // EOF
                             return Some(self.len);
@@ -1021,6 +1052,14 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                                 self.iter = previous_iter;
                                 self.current_pos_data = previous_pos_data;
                                 if after_zwj {
+                                    // Break [AK] ÷ [AS] [ZWJ] [XX],
+                                    // but not [AK] [ZWJ] ÷ [AS] [ZWJ] [XX].
+                                    if is_intermediate_rule_no_match && !previous_is_after_zwj {
+                                        return self.get_current_position();
+                                    }
+                                    continue 'a;
+                                } else if previous_is_after_zwj {
+                                    // Do not break [AK] [ZWJ] ÷ [AS] [XX].
                                     continue 'a;
                                 } else {
                                     return self.get_current_position();
@@ -1037,12 +1076,14 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                                 index = i;
                                 previous_iter = self.iter.clone();
                                 previous_pos_data = self.current_pos_data;
+                                previous_is_after_zwj = after_zwj;
                             }
                             BreakState::Index(i) => {
                                 index = i;
                                 if previous_break_state_is_cp_prop {
                                     previous_iter = self.iter.clone();
                                     previous_pos_data = self.current_pos_data;
+                                    previous_is_after_zwj = after_zwj;
                                 }
                             }
                         }
@@ -1530,22 +1571,79 @@ mod tests {
         assert_eq!(Some(10), iter_u16.next());
         assert_eq!(None, iter_u16.next());
 
-        // LB15
+        // LB15 used to prevent the break at 6, but has been removed in Unicode 15.1.
         iter = segmenter.segment_str("abc\u{0022}  (def");
         assert_eq!(Some(0), iter.next());
+        assert_eq!(Some(6), iter.next());
         assert_eq!(Some(10), iter.next());
         assert_eq!(None, iter.next());
 
         let input: [u8; 10] = [0x61, 0x62, 0x63, 0x22, 0x20, 0x20, 0x28, 0x64, 0x65, 0x66];
         let mut iter_u8 = segmenter.segment_latin1(&input);
         assert_eq!(Some(0), iter_u8.next());
+        assert_eq!(Some(6), iter_u8.next());
         assert_eq!(Some(10), iter_u8.next());
         assert_eq!(None, iter_u8.next());
 
         let input: [u16; 10] = [0x61, 0x62, 0x63, 0x22, 0x20, 0x20, 0x28, 0x64, 0x65, 0x66];
         let mut iter_u16 = segmenter.segment_utf16(&input);
         assert_eq!(Some(0), iter_u16.next());
+        assert_eq!(Some(6), iter_u16.next());
         assert_eq!(Some(10), iter_u16.next());
+        assert_eq!(None, iter_u16.next());
+
+        // Instead, in Unicode 15.1, LB15a and LB15b prevent these breaks.
+        iter = segmenter.segment_str("« miaou »");
+        assert_eq!(Some(0), iter.next());
+        assert_eq!(Some(11), iter.next());
+        assert_eq!(None, iter.next());
+
+        let input: Vec<u8> = "« miaou »"
+            .chars()
+            .map(|c| u8::try_from(u32::from(c)).unwrap())
+            .collect();
+        let mut iter_u8 = segmenter.segment_latin1(&input);
+        assert_eq!(Some(0), iter_u8.next());
+        assert_eq!(Some(9), iter_u8.next());
+        assert_eq!(None, iter_u8.next());
+
+        let input: Vec<u16> = "« miaou »".encode_utf16().collect();
+        let mut iter_u16 = segmenter.segment_utf16(&input);
+        assert_eq!(Some(0), iter_u16.next());
+        assert_eq!(Some(9), iter_u16.next());
+        assert_eq!(None, iter_u16.next());
+
+        // But not these:
+        iter = segmenter.segment_str("Die Katze hat »miau« gesagt.");
+        assert_eq!(Some(0), iter.next());
+        assert_eq!(Some(4), iter.next());
+        assert_eq!(Some(10), iter.next());
+        assert_eq!(Some(14), iter.next());
+        assert_eq!(Some(23), iter.next());
+        assert_eq!(Some(30), iter.next());
+        assert_eq!(None, iter.next());
+
+        let input: Vec<u8> = "Die Katze hat »miau« gesagt."
+            .chars()
+            .map(|c| u8::try_from(u32::from(c)).unwrap())
+            .collect();
+        let mut iter_u8 = segmenter.segment_latin1(&input);
+        assert_eq!(Some(0), iter_u8.next());
+        assert_eq!(Some(4), iter_u8.next());
+        assert_eq!(Some(10), iter_u8.next());
+        assert_eq!(Some(14), iter_u8.next());
+        assert_eq!(Some(21), iter_u8.next());
+        assert_eq!(Some(28), iter_u8.next());
+        assert_eq!(None, iter_u8.next());
+
+        let input: Vec<u16> = "Die Katze hat »miau« gesagt.".encode_utf16().collect();
+        let mut iter_u16 = segmenter.segment_utf16(&input);
+        assert_eq!(Some(0), iter_u16.next());
+        assert_eq!(Some(4), iter_u16.next());
+        assert_eq!(Some(10), iter_u16.next());
+        assert_eq!(Some(14), iter_u16.next());
+        assert_eq!(Some(21), iter_u16.next());
+        assert_eq!(Some(28), iter_u16.next());
         assert_eq!(None, iter_u16.next());
 
         // LB16

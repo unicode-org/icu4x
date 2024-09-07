@@ -26,15 +26,15 @@ final class TimeZoneFormatter implements ffi.Finalizable {
 
   /// Creates a new [`TimeZoneFormatter`] from locale data.
   ///
-  /// Uses localized GMT as the fallback format.
+  /// Uses localized offset as the fallback format.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.try_new) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/time_zone/enum.FallbackFormat.html)
   ///
   /// Throws [Error] on failure.
-  factory TimeZoneFormatter.withLocalizedGmtFallback(DataProvider provider, Locale locale) {
-    final result = _icu4x_TimeZoneFormatter_create_with_localized_gmt_fallback_mv1(provider._ffi, locale._ffi);
+  factory TimeZoneFormatter.withLocalizedOffsetFallback(DataProvider provider, Locale locale) {
+    final result = _icu4x_TimeZoneFormatter_create_with_localized_offset_fallback_mv1(provider._ffi, locale._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -124,13 +124,13 @@ final class TimeZoneFormatter implements ffi.Finalizable {
     
   }
 
-  /// Loads localized GMT format. Example: "GMT-07:00"
+  /// Loads localized offset format. Example: "GMT-07:00"
   ///
-  /// See the [Rust documentation for `include_localized_gmt_format`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_localized_gmt_format) for more information.
+  /// See the [Rust documentation for `include_localized_offset_format`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_localized_offset_format) for more information.
   ///
   /// Throws [Error] on failure.
-  void includeLocalizedGmtFormat() {
-    final result = _icu4x_TimeZoneFormatter_include_localized_gmt_format_mv1(_ffi);
+  void includeLocalizedOffsetFormat() {
+    final result = _icu4x_TimeZoneFormatter_include_localized_offset_format_mv1(_ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -182,10 +182,10 @@ final class TimeZoneFormatter implements ffi.Finalizable {
 // ignore: non_constant_identifier_names
 external void _icu4x_TimeZoneFormatter_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('icu4x_TimeZoneFormatter_create_with_localized_gmt_fallback_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneFormatter_create_with_localized_gmt_fallback_mv1')
+@meta.ResourceIdentifier('icu4x_TimeZoneFormatter_create_with_localized_offset_fallback_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneFormatter_create_with_localized_offset_fallback_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_TimeZoneFormatter_create_with_localized_gmt_fallback_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
+external _ResultOpaqueInt32 _icu4x_TimeZoneFormatter_create_with_localized_offset_fallback_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
 @meta.ResourceIdentifier('icu4x_TimeZoneFormatter_create_with_iso_8601_fallback_mv1')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _IsoTimeZoneOptionsFfi)>(isLeaf: true, symbol: 'icu4x_TimeZoneFormatter_create_with_iso_8601_fallback_mv1')
@@ -217,10 +217,10 @@ external _ResultVoidInt32 _icu4x_TimeZoneFormatter_load_specific_non_location_sh
 // ignore: non_constant_identifier_names
 external _ResultVoidInt32 _icu4x_TimeZoneFormatter_load_generic_location_format_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('icu4x_TimeZoneFormatter_include_localized_gmt_format_mv1')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneFormatter_include_localized_gmt_format_mv1')
+@meta.ResourceIdentifier('icu4x_TimeZoneFormatter_include_localized_offset_format_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneFormatter_include_localized_offset_format_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_TimeZoneFormatter_include_localized_gmt_format_mv1(ffi.Pointer<ffi.Opaque> self);
+external _ResultVoidInt32 _icu4x_TimeZoneFormatter_include_localized_offset_format_mv1(ffi.Pointer<ffi.Opaque> self);
 
 @meta.ResourceIdentifier('icu4x_TimeZoneFormatter_load_iso_8601_format_mv1')
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, _IsoTimeZoneOptionsFfi)>(isLeaf: true, symbol: 'icu4x_TimeZoneFormatter_load_iso_8601_format_mv1')

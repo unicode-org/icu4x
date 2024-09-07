@@ -490,17 +490,17 @@ fn test_collation_filtering() {
 
     struct Provider;
 
-    impl DataProvider<icu::collator::provider::CollationDataV1Marker> for Provider {
+    impl DataProvider<icu::collator::provider::CollationTailoringV1Marker> for Provider {
         fn load(
             &self,
             _req: DataRequest,
-        ) -> Result<DataResponse<icu::collator::provider::CollationDataV1Marker>, DataError>
+        ) -> Result<DataResponse<icu::collator::provider::CollationTailoringV1Marker>, DataError>
         {
             unreachable!()
         }
     }
 
-    impl IterableDataProvider<icu::collator::provider::CollationDataV1Marker> for Provider {
+    impl IterableDataProvider<icu::collator::provider::CollationTailoringV1Marker> for Provider {
         fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
             Ok(BTreeSet::from_iter(
                 [
@@ -532,7 +532,7 @@ fn test_collation_filtering() {
 
     icu_provider::export::make_exportable_provider!(
         Provider,
-        [icu::collator::provider::CollationDataV1Marker,]
+        [icu::collator::provider::CollationTailoringV1Marker,]
     );
 
     #[derive(Debug)]
@@ -602,7 +602,7 @@ fn test_collation_filtering() {
         .with_additional_collations(cas.include_collations.iter().copied().map(String::from));
         let resolved_locales = select_locales_for_marker(
             &Provider,
-            icu::collator::provider::CollationDataV1Marker::INFO,
+            icu::collator::provider::CollationTailoringV1Marker::INFO,
             &driver.requested_families,
             &driver.attributes_filters,
             false,

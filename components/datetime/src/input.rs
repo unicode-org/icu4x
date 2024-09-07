@@ -12,7 +12,7 @@ use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::week::{RelativeUnit, WeekCalculator};
 use icu_calendar::Calendar;
 use icu_calendar::{AsCalendar, Date, DateTime, Iso};
-use icu_timezone::{CustomTimeZone, GmtOffset, ZoneVariant};
+use icu_timezone::{CustomTimeZone, UtcOffset, ZoneVariant};
 
 // TODO(#2630) fix up imports to directly import from icu_calendar
 pub(crate) use icu_calendar::types::{
@@ -78,12 +78,12 @@ pub trait IsoTimeInput {
 
 /// Representation of a formattable time zone.
 ///
-/// Only the [`GmtOffset`] is required, since it is the final format fallback.
+/// Only the [`UtcOffset`] is required, since it is the final format fallback.
 ///
 /// All data represented in [`TimeZoneInput`] should be locale-agnostic.
 pub trait TimeZoneInput {
-    /// The GMT offset in Nanoseconds.
-    fn gmt_offset(&self) -> Option<GmtOffset>;
+    /// The UTC offset.
+    fn offset(&self) -> Option<UtcOffset>;
 
     /// The IANA time-zone identifier.
     fn time_zone_id(&self) -> Option<TimeZoneBcp47Id>;
@@ -123,7 +123,7 @@ pub(crate) struct ExtractedDateTimeInput {
 /// See [`TimeZoneInput`] for documentation on individual fields
 #[derive(Debug, Copy, Clone)]
 pub(crate) struct ExtractedTimeZoneInput {
-    gmt_offset: Option<GmtOffset>,
+    offset: Option<UtcOffset>,
     time_zone_id: Option<TimeZoneBcp47Id>,
     metazone_id: Option<MetazoneId>,
     zone_variant: Option<ZoneVariant>,
@@ -248,7 +248,7 @@ impl ExtractedTimeZoneInput {
     /// Construct given an instance of a [`ZonedDateTimeInput`].
     pub(crate) fn extract_from<T: TimeZoneInput>(input: &T) -> Self {
         Self {
-            gmt_offset: input.gmt_offset(),
+            offset: input.offset(),
             time_zone_id: input.time_zone_id(),
             metazone_id: input.metazone_id(),
             zone_variant: input.zone_variant(),
@@ -257,7 +257,7 @@ impl ExtractedTimeZoneInput {
 
     pub(crate) fn to_custom_time_zone(self) -> CustomTimeZone {
         CustomTimeZone {
-            gmt_offset: self.gmt_offset,
+            offset: self.offset,
             time_zone_id: self.time_zone_id,
             metazone_id: self.metazone_id,
             zone_variant: self.zone_variant,
@@ -268,7 +268,7 @@ impl ExtractedTimeZoneInput {
 impl From<CustomTimeZone> for ExtractedTimeZoneInput {
     fn from(value: CustomTimeZone) -> Self {
         Self {
-            gmt_offset: value.gmt_offset,
+            offset: value.offset,
             time_zone_id: value.time_zone_id,
             metazone_id: value.metazone_id,
             zone_variant: value.zone_variant,
@@ -319,8 +319,8 @@ impl IsoTimeInput for ExtractedDateTimeInput {
 }
 
 impl TimeZoneInput for ExtractedTimeZoneInput {
-    fn gmt_offset(&self) -> Option<GmtOffset> {
-        self.gmt_offset
+    fn offset(&self) -> Option<UtcOffset> {
+        self.offset
     }
     fn time_zone_id(&self) -> Option<TimeZoneBcp47Id> {
         self.time_zone_id
@@ -453,8 +453,8 @@ impl<A: AsCalendar> IsoTimeInput for DateTime<A> {
 }
 
 impl TimeZoneInput for CustomTimeZone {
-    fn gmt_offset(&self) -> Option<GmtOffset> {
-        self.gmt_offset
+    fn offset(&self) -> Option<UtcOffset> {
+        self.offset
     }
 
     fn time_zone_id(&self) -> Option<TimeZoneBcp47Id> {

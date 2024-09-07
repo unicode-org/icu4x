@@ -13,7 +13,20 @@ segmenter_type = "line"
 name = "AI"
 
 [[tables]]
+name = "AK"
+
+[[tables]]
 name = "AL"
+
+[[tables]]
+# LB28a
+name = "AL_DOTTED_CIRCLE"
+
+[[tables]]
+name = "AP"
+
+[[tables]]
+name = "AS"
 
 [[tables]]
 name = "B2"
@@ -128,19 +141,30 @@ name = "PR_EAW"
 name = "QU"
 
 [[tables]]
+# LB15b
+name = "QU_PF"
+
+[[tables]]
+# LB15a
+name = "QU_PI"
+
+[[tables]]
 name = "RI"
 
 [[tables]]
 name = "SA"
 
 [[tables]]
-name = "SG"
-
-[[tables]]
 name = "SP"
 
 [[tables]]
 name = "SY"
+
+[[tables]]
+name = "VF"
+
+[[tables]]
+name = "VI"
 
 [[tables]]
 name = "WJ"
@@ -179,16 +203,338 @@ left = "OP_SP"
 right = "SP"
 
 [[tables]]
-# LB15
-name = "QU_SP"
-left = "QU"
+# LB15a
+name = "QU_SP_LB15A"
+left = "QU_PI"
+right = "SP"
+
+# The following transitions are X QU_PI → QU unless X is a state that
+# implies we are after (sot | BK | CR | LF | NL | OP | QU | GL | SP | ZW).
+# We therefore reach the state QU_PI only if we match the initial
+# context
+#   (sot | BK | CR | LF | NL | OP | QU | GL | SP | ZW) [\p{Pi}&QU]
+# of LB15a.
+[[tables]]
+# LB15a
+name = "QU"
+left = "AI"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "AK"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "AL"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "AL_DOTTED_CIRCLE"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "AP"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "AS"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "B2"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "BA"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "BB"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "CB"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "CJ"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "CL"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "CM"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "CP"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "EB"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "EM"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "EX"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "H2"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "H3"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "HL"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "HY"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "ID"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "ID_CN"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "IN"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "IS"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "JL"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "JT"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "JV"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "NS"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "NU"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "PO"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "PO_EAW"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "PR"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "PR_EAW"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "RI"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "SA"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "SY"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "VF"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "VI"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "WJ"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "XX"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "ZWJ"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "HL_HY"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "AK_VI"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "AL_DOTTED_CIRCLE_LB28A"
+right = "QU_PI"
+
+[[tables]]
+# LB15a
+name = "QU"
+left = "RI_RI"
+right = "QU_PI"
+# End of the X QU_PI → QU transitions.
+
+[[tables]]
+# LB15a
+name = "QU_SP_LB15A"
+left = "QU_PI"
 right = "SP"
 
 [[tables]]
-# LB15
-name = "QU_SP"
-left = "QU_SP"
+# LB15a
+name = "QU_SP_LB15A"
+left = "QU_SP_LB15A"
 right = "SP"
+
+[[tables]]
+# LB15b
+name = "QU_LB15B"
+left = "SP"
+right = "QU_PF"
+
+[[tables]]
+# LB15b / LB18
+name = "QU_LB15B"
+left = "B2_SP"
+right = "QU_PF"
+interm_break_state = true
+
+[[tables]]
+# LB15b / LB20
+name = "CB_QU_LB15B"
+left = "CB"
+right = "QU_PF"
+interm_break_state = true
+
+[[tables]]
+# LB15b / LB18
+name = "QU_LB15B"
+left = "CL_CP_SP"
+right = "QU_PF"
+interm_break_state = true
+
+[[tables]]
+# LB14 / LB15b / LB19
+name = "QU_PF"
+left = "OP_SP"
+right = "QU_PF"
 
 [[tables]]
 # LB16
@@ -233,6 +579,96 @@ left = "HL"
 right = "BA"
 
 [[tables]]
+# LB9
+name = "QU_PF"
+left = "QU_PF"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "QU_PI"
+left = "QU_PI"
+right = "CM"
+
+[[tables]]
+# LB28a
+name = "AK_VI"
+left = "AK"
+right = "VI"
+
+[[tables]]
+# LB28a
+name = "AK_VI"
+left = "AL_DOTTED_CIRCLE"
+right = "VI"
+
+[[tables]]
+# LB28a
+name = "AK_VI"
+left = "AS"
+right = "VI"
+
+[[tables]]
+# LB28a
+name = "AK_AK"
+left = "AK"
+right = "AK"
+
+[[tables]]
+# LB28a
+name = "AK_AK"
+left = "AK"
+right = "AL_DOTTED_CIRCLE"
+
+[[tables]]
+# LB28a
+name = "AK_AK"
+left = "AK"
+right = "AS"
+
+[[tables]]
+# LB28a
+name = "AK_AK"
+left = "AL_DOTTED_CIRCLE"
+right = "AK"
+
+[[tables]]
+# LB28a
+name = "AL_DOTTED_CIRCLE_LB28A"
+left = "AL_DOTTED_CIRCLE"
+right = "AL_DOTTED_CIRCLE"
+
+[[tables]]
+# LB28a
+name = "AK_AK"
+left = "AL_DOTTED_CIRCLE"
+right = "AS"
+
+[[tables]]
+# LB28a
+name = "AK_AK"
+left = "AS"
+right = "AK"
+
+[[tables]]
+# LB28a
+name = "AK_AK"
+left = "AS"
+right = "AL_DOTTED_CIRCLE"
+
+[[tables]]
+# LB28a
+name = "AK_AK"
+left = "AS"
+right = "AS"
+
+[[tables]]
+# LB28a
+name = "AK_AK"
+left = "AS"
+right = "AL_DOTTED_CIRCLE"
+
+[[tables]]
 # LB30a
 name = "RI_RI"
 left = "RI"
@@ -246,7 +682,7 @@ break_state = true
 
 [[rules]]
 # LB3
-left = [ "B2_SP", "CL_CP_SP", "HL_HY", "OP_SP", "QU_SP", "RI_RI" ]
+left = [ "B2_SP", "CL_CP_SP", "HL_HY", "OP_SP", "QU_SP_LB15A", "CB_QU_LB15B", "QU_LB15B", "RI_RI" ]
 right = [ "eot" ]
 break_state = true
 
@@ -276,7 +712,7 @@ break_state = false
 
 [[rules]]
 # LB6
-left = [ "B2_SP", "CL_CP_SP", "HL_HY", "OP_SP", "QU_SP", "RI_RI" ]
+left = [ "B2_SP", "CL_CP_SP", "HL_HY", "OP_SP", "QU_SP_LB15A", "RI_RI", "AK_VI" ]
 right = [ "BK", "CR", "LF", "NL" ]
 break_state = false
 
@@ -288,13 +724,13 @@ break_state = false
 
 [[rules]]
 # LB7
-left = [ "HL_HY", "RI_RI" ]
+left = [ "HL_HY", "RI_RI", "AK_VI" ]
 right = [ "SP" ]
 break_state = false
 
 [[rules]]
 # LB7
-left = [ "B2_SP", "CL_CP_SP", "HL_HY", "OP_SP", "QU_SP", "RI_RI" ]
+left = [ "B2_SP", "CL_CP_SP", "HL_HY", "OP_SP", "QU_SP_LB15A", "RI_RI", "AK_VI" ]
 right = [ "ZW" ]
 break_state = false
 
@@ -318,7 +754,7 @@ break_state = false
 
 [[rules]]
 # LB11
-left = [ "B2_SP", "CL_CP_SP", "HL_HY", "OP_SP", "QU_SP", "RI_RI" ]
+left = [ "B2_SP", "CL_CP_SP", "HL_HY", "OP_SP", "QU_SP_LB15A", "RI_RI", "AK_VI" ]
 right = [ "WJ" ]
 break_state = false
 
@@ -330,13 +766,13 @@ break_state = false
 
 [[rules]]
 # LB12a
-left = [ "HL_HY", "OP_SP", "RI_RI" ]
+left = [ "HL_HY", "OP_SP", "RI_RI", "AK_VI" ]
 right = [ "GL" ]
 break_state = false
 
 [[rules]]
 # LB12a
-left = [ "B2_SP", "CL_CP_SP", "QU_SP", "SP", "BA", "HY" ]
+left = [ "B2_SP", "CL_CP_SP", "SP", "BA", "HY" ]
 right = [ "GL" ]
 break_state = true
 
@@ -354,7 +790,7 @@ break_state = false
 
 [[rules]]
 # LB13
-left = [ "B2_SP", "CL_CP_SP", "QU_SP" ]
+left = [ "B2_SP", "CL_CP_SP", "QU_SP_LB15A", "AK_VI" ]
 right = [ "CL", "CP", "EX", "IS", "SY" ]
 break_state = false
 
@@ -365,10 +801,22 @@ right = [ "Any" ]
 break_state = false
 
 [[rules]]
-# LB15
-left = [ "QU", "QU_SP" ]
-right = [ "OP_OP30", "OP_EA" ]
+# LB15a
+left = [ "QU_SP_LB15A" ]
+right = [ "Any" ]
 break_state = false
+
+[[rules]]
+# LB15b
+left = [ "QU_PF", "QU_LB15B", "CB_QU_LB15B" ]
+right = [ "SP", "GL", "WJ", "CL", "QU", "QU_PI", "QU_PF", "CP", "EX", "IS", "SY", "BK", "CR", "LF", "NL", "ZW" ]
+break_state = false
+
+[[rules]]
+# LB15b
+left = [ "QU_PF", "QU_LB15B", "CB_QU_LB15B" ]
+right = [ "eot" ]
+break_state = true
 
 [[rules]]
 # LB16
@@ -390,19 +838,25 @@ break_state = true
 
 [[rules]]
 # LB18
-left = [ "QU_SP", "B2_SP", "CL_CP_SP" ] # LB15
+left = [ "B2_SP", "CL_CP_SP" ]
 right = [ "Any" ]
 break_state = true
 
 [[rules]]
 # LB19
-left = [ "Any", "RI_RI" ]
-right = [ "QU" ]
+left = [ "Any", "RI_RI", "AK_VI" ]
+right = [ "QU", "QU_PF", "QU_PI" ]
 break_state = false
 
 [[rules]]
 # LB19
-left = [ "QU" ]
+left = [ "QU", "QU_PF", "QU_PI" ]
+right = [ "Any" ]
+break_state = false
+
+[[rules]]
+# LB19
+left = [ "CB_QU_LB15B" ]
 right = [ "Any" ]
 break_state = false
 
@@ -420,7 +874,7 @@ break_state = true
 
 [[rules]]
 # LB21
-left = [ "Any", "RI_RI" ]
+left = [ "Any", "RI_RI", "AK_VI" ]
 right = [ "BA", "HY", "CJ", "NS" ] # NS = CJ or NS
 break_state = false
 
@@ -444,7 +898,7 @@ break_state = false
 
 [[rules]]
 # LB22
-left = [ "Any", "RI_RI" ]
+left = [ "Any", "RI_RI", "AK_VI" ]
 right = [ "IN" ]
 break_state = false
 
@@ -452,7 +906,7 @@ break_state = false
 # LB23
 # (LB1 AL = AI, AL, SA or XX)
 # (LB10 AL = CM)
-left = [ "AI", "AL", "SA", "XX", "HL", "CM", "ZWJ" ]
+left = [ "AI", "AL", "AL_DOTTED_CIRCLE", "SA", "XX", "HL", "CM", "ZWJ" ]
 right = [ "NU" ]
 break_state = false
 
@@ -460,7 +914,7 @@ break_state = false
 # LB23
 # (LB1 AL = AI, AL, SA or XX)
 left = [ "NU" ]
-right = [ "AI", "AL", "SA", "XX", "HL" ]
+right = [ "AI", "AL", "AL_DOTTED_CIRCLE", "SA", "XX", "HL" ]
 break_state = false
 
 [[rules]]
@@ -480,14 +934,14 @@ break_state = false
 # (LB1 AL = AI, AL, SA or XX)
 # (LB10 AL = CM)
 left = [ "PR", "PO", "PR_EAW", "PO_EAW" ]
-right = [ "AI", "AL", "SA", "XX", "HL" ]
+right = [ "AI", "AL", "AL_DOTTED_CIRCLE", "SA", "XX", "HL" ]
 break_state = false
 
 [[rules]]
 # LB24
 # (LB1 AL = AI, AL, SA or XX)
 # (LB10 AL = CM)
-left = [ "AI", "AL", "SA", "XX", "HL", "CM", "ZWJ" ]
+left = [ "AI", "AL", "AL_DOTTED_CIRCLE", "SA", "XX", "HL", "CM", "ZWJ" ]
 right = [ "PR", "PO", "PR_EAW", "PO_EAW" ]
 break_state = false
 
@@ -544,21 +998,51 @@ break_state = false
 # (LB1 AL = AI, AL, SA or XX)
 # (LB10 AL = CM)
 left = [ "AL", "HL", "AI", "XX", "SA", "CM", "ZWJ" ]
+right = [ "AL", "AL_DOTTED_CIRCLE", "HL", "AI", "XX", "SA" ]
+break_state = false
+
+[[rules]]
+# LB28
+left = [ "AL_DOTTED_CIRCLE", "AL_DOTTED_CIRCLE_LB28A" ]
 right = [ "AL", "HL", "AI", "XX", "SA" ]
+break_state = false
+
+[[rules]]
+# LB28a
+left = [ "AP" ]
+right = [ "AK", "AL_DOTTED_CIRCLE", "AS" ]
+break_state = false
+
+[[rules]]
+# LB28a
+left = [ "AK", "AL_DOTTED_CIRCLE", "AS" ]
+right = [ "VF" ]
+break_state = false
+
+[[rules]]
+# LB28a
+left = [ "AK_VI" ]
+right = [ "AK", "AL_DOTTED_CIRCLE" ]
+break_state = false
+
+[[rules]]
+# LB28a
+left = [ "AK_AK", "AL_DOTTED_CIRCLE_LB28A" ]
+right = [ "VF" ]
 break_state = false
 
 [[rules]]
 # LB29
 # (LB1 AL = AI, AL, SA or XX)
 left = [ "IS" ]
-right = [ "AL", "HL", "AI", "SA", "XX" ]
+right = [ "AL", "HL", "AI", "SA", "XX", "AL_DOTTED_CIRCLE" ]
 break_state = false
 
 [[rules]]
 # LB30
 # (LB1 AL = AI, AL, SA or XX)
 # (LB10 AL = CM)
-left = [ "AL", "HL", "NU", "AI", "XX", "SA", "CM", "ZWJ" ]
+left = [ "AL", "HL", "NU", "AI", "XX", "SA", "CM", "ZWJ", "AL_DOTTED_CIRCLE", "AL_DOTTED_CIRCLE_LB28A" ]
 right = [ "OP_OP30" ]
 break_state = false
 
@@ -566,7 +1050,7 @@ break_state = false
 # LB30
 # (LB1 AL = AI, AL, SA or XX)
 left = [ "CP" ]
-right = [ "AL", "HL", "NU", "AI", "XX", "SA" ]
+right = [ "AL", "HL", "NU", "AI", "XX", "SA", "AL_DOTTED_CIRCLE" ]
 break_state = false
 
 [[rules]]
@@ -586,6 +1070,18 @@ break_state = true
 left = [ "EB", "ID_CN" ]
 right = [ "EM" ]
 break_state = false
+
+[[rules]]
+# LB31
+left = [ "AK_VI" ]
+right = [ "Any" ]
+break_state = true
+
+[[rules]]
+# LB31
+left = [ "AL_DOTTED_CIRCLE_LB28A" ]
+right = [ "Any" ]
+break_state = true
 
 [[rules]]
 # LB31

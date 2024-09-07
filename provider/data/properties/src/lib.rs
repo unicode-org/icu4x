@@ -18,4 +18,3 @@ include!("../data/mod.rs");
 
 #[rustfmt::skip]
 pub use icu_provider_baked;
-pub use icu_locale;
