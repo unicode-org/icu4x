@@ -407,7 +407,7 @@ impl<'a> PluralElementsV1<'a> {
                 .specials
                 .iter()
                 .filter_map(|ule| {
-                    (ule.0 == PluralElementsKeysV1::ExplicitZero.to_unaligned()).then_some(&ule.1)
+                    (ule.0 == PluralElementsKeysV1::ExplicitOne.to_unaligned()).then_some(&ule.1)
                 })
                 .next()
             {
