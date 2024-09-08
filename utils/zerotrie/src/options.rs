@@ -118,6 +118,7 @@ impl<S: ?Sized> ZeroTrieWithOptions for crate::ZeroTrieSimpleAscii<S> {
 
 impl<S: ?Sized> crate::ZeroTrieSimpleAscii<S> {
     #[cfg(feature = "serde")]
+    #[allow(const_evaluatable_unchecked)]
     pub(crate) const FLAGS: u8 = Self::OPTIONS.to_u8_flags();
 }
 
@@ -134,6 +135,7 @@ impl<S: ?Sized> ZeroTrieWithOptions for crate::ZeroAsciiIgnoreCaseTrie<S> {
 
 impl<S: ?Sized> crate::ZeroAsciiIgnoreCaseTrie<S> {
     #[cfg(feature = "serde")]
+    #[allow(const_evaluatable_unchecked)]
     pub(crate) const FLAGS: u8 = Self::OPTIONS.to_u8_flags();
 }
 
@@ -149,6 +151,7 @@ impl<S: ?Sized> ZeroTrieWithOptions for crate::ZeroTriePerfectHash<S> {
 
 impl<S: ?Sized> crate::ZeroTriePerfectHash<S> {
     #[cfg(feature = "serde")]
+    #[allow(const_evaluatable_unchecked)]
     pub(crate) const FLAGS: u8 = Self::OPTIONS.to_u8_flags();
 }
 
@@ -164,5 +167,6 @@ impl<S: ?Sized> ZeroTrieWithOptions for crate::ZeroTrieExtendedCapacity<S> {
 
 impl<S: ?Sized> crate::ZeroTrieExtendedCapacity<S> {
     #[cfg(feature = "serde")]
+    #[allow(const_evaluatable_unchecked)]
     pub(crate) const FLAGS: u8 = Self::OPTIONS.to_u8_flags();
 }

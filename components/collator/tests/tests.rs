@@ -1546,7 +1546,7 @@ fn test_conformance_shifted() {
             if line.is_empty() {
                 continue;
             }
-            if line.starts_with(&[b'#']) {
+            if line.starts_with(b"#") {
                 continue;
             }
             if let Some(parsed) = parse_hex(line) {
@@ -1589,7 +1589,7 @@ fn test_conformance_non_ignorable() {
             if line.is_empty() {
                 continue;
             }
-            if line.starts_with(&[b'#']) {
+            if line.starts_with(b"#") {
                 continue;
             }
             if let Some(parsed) = parse_hex(line) {
