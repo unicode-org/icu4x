@@ -27,9 +27,7 @@ const fn skip_before_separator(slice: &[u8]) -> &[u8] {
     }
 
     // Notice: this slice may be empty for cases like `"en-"` or `"en--US"`
-    // MSRV 1.71/1.79: Use split_at/split_at_unchecked
-    // SAFETY: end < slice.len() by while loop
-    unsafe { core::slice::from_raw_parts(slice.as_ptr(), end) }
+    slice.split_at(end).0
 }
 
 // `SubtagIterator` is a helper iterator for [`LanguageIdentifier`] and [`Locale`] parsing.
@@ -66,14 +64,7 @@ impl<'a> SubtagIterator<'a> {
 
         self.current = if result.len() < self.remaining.len() {
             // If there is more after `result`, by construction `current` starts with a separator
-            // MSRV 1.79: Use split_at_unchecked
-            // SAFETY: `self.remaining` is strictly longer than `result`
-            self.remaining = unsafe {
-                core::slice::from_raw_parts(
-                    self.remaining.as_ptr().add(result.len() + 1),
-                    self.remaining.len() - (result.len() + 1),
-                )
-            };
+            self.remaining = self.remaining.split_at(result.len() + 1).0;
             Some(skip_before_separator(self.remaining))
         } else {
             None

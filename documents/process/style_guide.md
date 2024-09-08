@@ -803,7 +803,9 @@ See also: the [Panics](#Panics--required) section of this document.
 
 The standard library functions such as `slice::split_at` are panicky, but they are not covered by our Clippy lints.
 
-Instead of using `slice::split_at` directly, it is recommended to use a helper function, which can be saved in the file in which it is being used. Example:
+Since Rust 1.77, `slice::split_first_chunk` is available as a non-panicky alternative if the chunk length is known at compile-time. In Rust 1.80, `slice::split_at_checked` will also become available.
+
+In the mean time, instead of using `slice::split_at` directly, it is recommended to use a helper function, which can be saved in the file in which it is being used. Example:
 
 ```rust
 /// Like slice::split_at but returns an Option instead of panicking
