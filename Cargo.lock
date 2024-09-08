@@ -1443,6 +1443,7 @@ dependencies = [
  "icu_locale_core",
  "icu_plurals_data",
  "icu_provider",
+ "postcard",
  "serde",
  "serde_json",
  "zerovec",

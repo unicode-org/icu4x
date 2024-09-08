@@ -16,7 +16,10 @@ use core::{fmt::Debug, str::FromStr};
 use icu_pattern::{Pattern, PatternBackend, SinglePlaceholder};
 #[cfg(feature = "datagen")]
 use icu_plurals::PluralElements;
-use icu_plurals::{PluralCategory, PluralOperands, PluralRules};
+use icu_plurals::{
+    provider::{FourBitMetadata, PluralElementsPackedULE},
+    PluralCategory, PluralOperands, PluralRules,
+};
 use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 
@@ -103,7 +106,7 @@ pub struct PluralCategoryStr<'data>(pub PluralCategory, pub Cow<'data, str>);
 pub struct PluralPatterns<'data, B> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     #[doc(hidden)] // databake only
-    pub strings: icu_plurals::provider::PluralElementsV1<'data>,
+    pub strings: Cow<'data, icu_plurals::provider::PluralElementsPackedULE<str>>,
     #[cfg_attr(feature = "serde", serde(skip))]
     #[doc(hidden)] // databake only
     pub _phantom: PhantomData<B>,
@@ -121,12 +124,12 @@ impl<'data, B> Clone for PluralPatterns<'data, B> {
 impl<'data, B: PatternBackend<Store = str>> PluralPatterns<'data, B> {
     /// Returns the pattern for the given [`PluralCategory`].
     pub fn get(&'data self, op: PluralOperands, rules: &PluralRules) -> &'data Pattern<B, str> {
-        Pattern::from_ref_store_unchecked(self.strings.get(op, rules))
+        Pattern::from_ref_store_unchecked(self.strings.get(op, rules).1)
     }
 }
 
 #[cfg(feature = "datagen")]
-impl<'data, B: PatternBackend<Store = str>> TryFrom<PluralElements<'data, str>>
+impl<'data, B: PatternBackend<Store = str>> TryFrom<PluralElements<&'data str>>
     for PluralPatterns<'static, B>
 where
     B::PlaceholderKeyCow<'data>: FromStr,
@@ -134,63 +137,50 @@ where
 {
     type Error = icu_pattern::PatternError;
 
-    fn try_from(elements: PluralElements<str>) -> Result<Self, Self::Error> {
-        let make_pattern = |s: &str|
+    fn try_from(elements: PluralElements<&'data str>) -> Result<Self, Self::Error> {
+        let make_pattern = |s: &&str|
             // TODO: Make pattern support apostrophes
-            Pattern::<B, String>::from_str(&s.replace('\'', "''")).map(|p| p.take_store());
+            Pattern::<B, String>::from_str(&s.replace('\'', "''")).map(|p| (FourBitMetadata::zero(), p.take_store()));
+
+        let plural_elements = PluralElements::new(make_pattern(elements.other())?)
+            .with_zero_value(
+                Some(elements.zero())
+                    .filter(|&e| e != elements.other())
+                    .map(make_pattern)
+                    .transpose()?,
+            )
+            .with_one_value(
+                Some(elements.one())
+                    .filter(|&e| e != elements.other())
+                    .map(make_pattern)
+                    .transpose()?,
+            )
+            .with_two_value(
+                Some(elements.two())
+                    .filter(|&e| e != elements.other())
+                    .map(make_pattern)
+                    .transpose()?,
+            )
+            .with_few_value(
+                Some(elements.few())
+                    .filter(|&e| e != elements.other())
+                    .map(make_pattern)
+                    .transpose()?,
+            )
+            .with_many_value(
+                Some(elements.many())
+                    .filter(|&e| e != elements.other())
+                    .map(make_pattern)
+                    .transpose()?,
+            )
+            .with_explicit_zero_value(elements.explicit_zero().map(make_pattern).transpose()?)
+            .with_explicit_one_value(elements.explicit_one().map(make_pattern).transpose()?);
+
+        let packed_pattern_box =
+            zerovec::ule::encode_varule_to_box::<_, PluralElementsPackedULE<str>>(&plural_elements);
 
         Ok(Self {
-            strings: PluralElements::new(make_pattern(elements.other())?.as_str())
-                .with_zero_value(
-                    Some(elements.zero())
-                        .filter(|&e| e != elements.other())
-                        .map(make_pattern)
-                        .transpose()?
-                        .as_deref(),
-                )
-                .with_one_value(
-                    Some(elements.one())
-                        .filter(|&e| e != elements.other())
-                        .map(make_pattern)
-                        .transpose()?
-                        .as_deref(),
-                )
-                .with_two_value(
-                    Some(elements.two())
-                        .filter(|&e| e != elements.other())
-                        .map(make_pattern)
-                        .transpose()?
-                        .as_deref(),
-                )
-                .with_few_value(
-                    Some(elements.few())
-                        .filter(|&e| e != elements.other())
-                        .map(make_pattern)
-                        .transpose()?
-                        .as_deref(),
-                )
-                .with_many_value(
-                    Some(elements.many())
-                        .filter(|&e| e != elements.other())
-                        .map(make_pattern)
-                        .transpose()?
-                        .as_deref(),
-                )
-                .with_explicit_zero_value(
-                    elements
-                        .explicit_zero()
-                        .map(make_pattern)
-                        .transpose()?
-                        .as_deref(),
-                )
-                .with_explicit_one_value(
-                    elements
-                        .explicit_one()
-                        .map(make_pattern)
-                        .transpose()?
-                        .as_deref(),
-                )
-                .into(),
+            strings: Cow::Owned(packed_pattern_box),
             _phantom: PhantomData,
         })
     }
