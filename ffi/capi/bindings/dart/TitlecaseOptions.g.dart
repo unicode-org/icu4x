@@ -3,16 +3,14 @@
 part of 'lib.g.dart';
 
 final class _TitlecaseOptionsFfi extends ffi.Struct {
-  @ffi.Int32()
-  external int leadingAdjustment;
-  @ffi.Int32()
-  external int trailingCase;
+  external _ResultInt32Void leadingAdjustment;
+  external _ResultInt32Void trailingCase;
 }
 
 /// See the [Rust documentation for `TitlecaseOptions`](https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html) for more information.
 final class TitlecaseOptions {
-  LeadingAdjustment leadingAdjustment;
-  TrailingCase trailingCase;
+  LeadingAdjustment? leadingAdjustment;
+  TrailingCase? trailingCase;
 
   // This struct contains borrowed fields, so this takes in a list of
   // "edges" corresponding to where each lifetime's data may have been borrowed from
@@ -21,14 +19,16 @@ final class TitlecaseOptions {
   // should handle this when constructing edge arrays.
   // ignore: unused_element
   TitlecaseOptions._fromFfi(_TitlecaseOptionsFfi ffi) :
-    leadingAdjustment = LeadingAdjustment.values[ffi.leadingAdjustment],
-    trailingCase = TrailingCase.values[ffi.trailingCase];
+    leadingAdjustment = ffi.leadingAdjustment.isOk ? LeadingAdjustment.values[ffi.leadingAdjustment.union.ok] : null,
+    trailingCase = ffi.trailingCase.isOk ? TrailingCase.values[ffi.trailingCase.union.ok] : null;
 
   // ignore: unused_element
   _TitlecaseOptionsFfi _toFfi(ffi.Allocator temp) {
     final struct = ffi.Struct.create<_TitlecaseOptionsFfi>();
-    struct.leadingAdjustment = leadingAdjustment.index;
-    struct.trailingCase = trailingCase.index;
+    LeadingAdjustment? leadingAdjustment = this.leadingAdjustment;
+    struct.leadingAdjustment = leadingAdjustment != null ? _ResultInt32Void.ok(leadingAdjustment.index) : _ResultInt32Void.err();
+    TrailingCase? trailingCase = this.trailingCase;
+    struct.trailingCase = trailingCase != null ? _ResultInt32Void.ok(trailingCase.index) : _ResultInt32Void.err();
     return struct;
   }
 

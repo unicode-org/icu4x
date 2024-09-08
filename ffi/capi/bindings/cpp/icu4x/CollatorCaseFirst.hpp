@@ -27,7 +27,6 @@ inline icu4x::capi::CollatorCaseFirst icu4x::CollatorCaseFirst::AsFFI() const {
 
 inline icu4x::CollatorCaseFirst icu4x::CollatorCaseFirst::FromFFI(icu4x::capi::CollatorCaseFirst c_enum) {
   switch (c_enum) {
-    case icu4x::capi::CollatorCaseFirst_Auto:
     case icu4x::capi::CollatorCaseFirst_Off:
     case icu4x::capi::CollatorCaseFirst_LowerFirst:
     case icu4x::capi::CollatorCaseFirst_UpperFirst:

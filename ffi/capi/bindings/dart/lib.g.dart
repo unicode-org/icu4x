@@ -54,6 +54,7 @@ part 'DisplayNamesFallback.g.dart';
 part 'DisplayNamesOptions.g.dart';
 part 'DisplayNamesStyle.g.dart';
 part 'Error.g.dart';
+part 'ExemplarCharacters.g.dart';
 part 'FixedDecimal.g.dart';
 part 'FixedDecimalFormatter.g.dart';
 part 'FixedDecimalGroupingStrategy.g.dart';
@@ -362,6 +363,32 @@ final class _ResultUint16Void extends ffi.Struct {
   }
   factory _ResultUint16Void.err() {
     final struct = ffi.Struct.create<_ResultUint16Void>();
+    struct.isOk = false;
+    return struct;
+  }
+}
+
+final class _ResultUint8VoidUnion extends ffi.Union {
+  @ffi.Uint8()
+  external int ok;
+
+}
+
+final class _ResultUint8Void extends ffi.Struct {
+  external _ResultUint8VoidUnion union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  
+  factory _ResultUint8Void.ok(int val) {
+    final struct = ffi.Struct.create<_ResultUint8Void>();
+    struct.isOk = true;
+    struct.union.ok = val;
+    return struct;
+  }
+  factory _ResultUint8Void.err() {
+    final struct = ffi.Struct.create<_ResultUint8Void>();
     struct.isOk = false;
     return struct;
   }

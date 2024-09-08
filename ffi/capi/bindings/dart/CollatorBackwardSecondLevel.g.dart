@@ -4,8 +4,6 @@ part of 'lib.g.dart';
 
 /// See the [Rust documentation for `BackwardSecondLevel`](https://docs.rs/icu/latest/icu/collator/enum.BackwardSecondLevel.html) for more information.
 enum CollatorBackwardSecondLevel {
-  auto,
-
   off,
 
   on;

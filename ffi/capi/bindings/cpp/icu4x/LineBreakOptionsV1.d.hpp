@@ -20,9 +20,9 @@ class LineBreakWordOption;
 namespace icu4x {
 namespace capi {
     struct LineBreakOptionsV1 {
-      icu4x::capi::LineBreakStrictness strictness;
-      icu4x::capi::LineBreakWordOption word_option;
-      bool ja_zh;
+      icu4x::capi::LineBreakStrictness_option strictness;
+      icu4x::capi::LineBreakWordOption_option word_option;
+      diplomat::capi::OptionBool ja_zh;
     };
     
     typedef struct LineBreakOptionsV1_option {union { LineBreakOptionsV1 ok; }; bool is_ok; } LineBreakOptionsV1_option;
@@ -32,9 +32,9 @@ namespace capi {
 
 namespace icu4x {
 struct LineBreakOptionsV1 {
-  icu4x::LineBreakStrictness strictness;
-  icu4x::LineBreakWordOption word_option;
-  bool ja_zh;
+  std::optional<icu4x::LineBreakStrictness> strictness;
+  std::optional<icu4x::LineBreakWordOption> word_option;
+  std::optional<bool> ja_zh;
 
   inline icu4x::capi::LineBreakOptionsV1 AsFFI() const;
   inline static icu4x::LineBreakOptionsV1 FromFFI(icu4x::capi::LineBreakOptionsV1 c_struct);

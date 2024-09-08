@@ -20,7 +20,7 @@ use crate::provider::date_time::{
 use crate::time_zone::{
     Bcp47IdFormat, ExemplarCityFormat, FallbackTimeZoneFormatterUnit, FormatTimeZone,
     FormatTimeZoneError, GenericLocationFormat, GenericNonLocationLongFormat,
-    GenericNonLocationShortFormat, Iso8601Format, LocalizedGmtFormat,
+    GenericNonLocationShortFormat, Iso8601Format, LocalizedOffsetFormat,
     SpecificNonLocationLongFormat, SpecificNonLocationShortFormat, TimeZoneDataPayloadsBorrowed,
     TimeZoneFormatterUnit,
 };
@@ -36,7 +36,7 @@ use icu_calendar::AnyCalendarKind;
 use icu_decimal::FixedDecimalFormatter;
 use icu_plurals::PluralRules;
 use icu_provider::DataPayload;
-use icu_timezone::{CustomTimeZone, GmtOffset};
+use icu_timezone::{CustomTimeZone, UtcOffset};
 use writeable::{Part, Writeable};
 
 /// [`FormattedDateTime`] is a intermediate structure which can be retrieved as
@@ -752,12 +752,12 @@ where
     ZS: ZoneSymbols<'data>,
 {
     fn write_time_zone_missing(
-        gmt_offset: Option<GmtOffset>,
+        offset: Option<UtcOffset>,
         w: &mut (impl writeable::PartsWrite + ?Sized),
     ) -> fmt::Result {
-        match gmt_offset {
-            Some(gmt_offset) => w.with_part(Part::ERROR, |w| {
-                Iso8601Format::default_for_fallback().format_infallible(w, gmt_offset)
+        match offset {
+            Some(offset) => w.with_part(Part::ERROR, |w| {
+                Iso8601Format::default_for_fallback().format_infallible(w, offset)
             }),
             None => w.with_part(Part::ERROR, |w| "{GMT+?}".write_to(w)),
         }
@@ -777,12 +777,12 @@ where
         }
         Some(custom_time_zone) => match zone_symbols {
             None => {
-                write_time_zone_missing(custom_time_zone.gmt_offset, w)?;
+                write_time_zone_missing(custom_time_zone.offset, w)?;
                 Err(DateTimeWriteError::MissingZoneSymbols)
             }
             Some(zs) => match ResolvedNeoTimeZoneSkeleton::from_field(field_symbol, field_length) {
                 None => {
-                    write_time_zone_missing(custom_time_zone.gmt_offset, w)?;
+                    write_time_zone_missing(custom_time_zone.offset, w)?;
                     Err(DateTimeWriteError::UnsupportedField(field))
                 }
                 Some(time_zone) => {
@@ -792,8 +792,8 @@ where
                     match do_write_zone(units, &zone_input, payloads, w)? {
                         Ok(()) => Ok(()),
                         Err(()) => {
-                            write_time_zone_missing(custom_time_zone.gmt_offset, w)?;
-                            // Return an error since GMT data was missing
+                            write_time_zone_missing(custom_time_zone.offset, w)?;
+                            // Return an error since offset data was missing
                             Err(DateTimeWriteError::MissingZoneSymbols)
                         }
                     }
@@ -809,9 +809,9 @@ fn select_zone_units(time_zone: ResolvedNeoTimeZoneSkeleton) -> [Option<TimeZone
     let mut formatters = (
         None,
         None,
-        // Friendly Localized GMT Format (requires "essentials" data)
+        // Friendly Localized offset Format (requires "essentials" data)
         Some(TimeZoneFormatterUnit::WithFallback(
-            FallbackTimeZoneFormatterUnit::LocalizedGmt(LocalizedGmtFormat {}),
+            FallbackTimeZoneFormatterUnit::LocalizedOffset(LocalizedOffsetFormat {}),
         )),
     );
     match time_zone {
@@ -856,11 +856,11 @@ fn select_zone_units(time_zone: ResolvedNeoTimeZoneSkeleton) -> [Option<TimeZone
             ));
         }
         // `O`
-        ResolvedNeoTimeZoneSkeleton::GmtShort => {
+        ResolvedNeoTimeZoneSkeleton::OffsetShort => {
             // TODO: For now, use the long format. This should be GMT-8
         }
         // `OOOO`, `ZZZZ`
-        ResolvedNeoTimeZoneSkeleton::GmtLong => {
+        ResolvedNeoTimeZoneSkeleton::OffsetLong => {
             // no-op
         }
         // 'V'

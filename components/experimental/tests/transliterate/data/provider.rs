@@ -1,6 +1,6 @@
 include!("baked/macros.rs");
 
-struct TestingProvider;
+pub struct TestingProvider;
 
 const _: () = { 
     use icu_normalizer_data::*;

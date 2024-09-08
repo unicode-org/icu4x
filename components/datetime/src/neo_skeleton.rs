@@ -971,7 +971,7 @@ pub enum NeoTimeZoneStyle {
     ///
     /// When unavailable, falls back to [`NeoTimeZoneStyle::Offset`].
     SpecificNonLocation,
-    /// The offset from UTC format, e.g., “GMT−8”.
+    /// The offset format, e.g., “GMT−8”.
     Offset,
 }
 

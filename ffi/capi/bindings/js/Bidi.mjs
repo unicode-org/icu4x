@@ -67,7 +67,7 @@ export class Bidi {
         // This lifetime edge depends on lifetimes 'text
         let textEdges = [textSlice];
         
-        const result = wasm.icu4x_Bidi_for_text_valid_utf8_mv1(this.ffiValue, ...textSlice.splat(), defaultLevel);
+        const result = wasm.icu4x_Bidi_for_text_valid_utf8_mv1(this.ffiValue, ...textSlice.splat(), ...diplomatRuntime.optionToArgsForCalling(defaultLevel, 1, 1, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue, Uint8Array)]));
     
         try {
             return new BidiInfo(diplomatRuntime.internalConstructor, result, [], textEdges);

@@ -13,9 +13,8 @@
 namespace icu4x {
 namespace capi {
     enum CollatorCaseLevel {
-      CollatorCaseLevel_Auto = 0,
-      CollatorCaseLevel_Off = 1,
-      CollatorCaseLevel_On = 2,
+      CollatorCaseLevel_Off = 0,
+      CollatorCaseLevel_On = 1,
     };
     
     typedef struct CollatorCaseLevel_option {union { CollatorCaseLevel ok; }; bool is_ok; } CollatorCaseLevel_option;
@@ -26,9 +25,8 @@ namespace icu4x {
 class CollatorCaseLevel {
 public:
   enum Value {
-    Auto = 0,
-    Off = 1,
-    On = 2,
+    Off = 0,
+    On = 1,
   };
 
   CollatorCaseLevel() = default;

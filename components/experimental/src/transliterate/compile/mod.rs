@@ -113,11 +113,20 @@ impl RuleCollection {
             id.to_string().to_ascii_lowercase(),
             (source, reverse, visible),
         );
+        self.register_aliases(id, aliases)
+    }
 
-        for alias in aliases.into_iter() {
-            self.id_mapping
-                .insert(alias.to_ascii_lowercase(), id.clone());
-        }
+    /// Add transliteration ID aliases without registering a source.
+    pub fn register_aliases<'a>(
+        &mut self,
+        id: &icu_locale_core::Locale,
+        aliases: impl IntoIterator<Item = &'a str>,
+    ) {
+        self.id_mapping.extend(
+            aliases
+                .into_iter()
+                .map(|alias| (alias.to_ascii_lowercase(), id.clone())),
+        )
     }
 
     /// Returns a provider that is usable by [`Transliterator::try_new_unstable`](crate::transliterate::Transliterator::try_new_unstable).
@@ -225,7 +234,7 @@ impl RuleCollection {
     }
 }
 
-/// A provider that is usable by [`Transliterator::try_new_unstable`](crate::Transliterator::try_new_unstable).
+/// A provider that is usable by [`Transliterator::try_new_unstable`](crate::transliterate::Transliterator::try_new_unstable).
 #[derive(Debug)]
 pub struct RuleCollectionProvider<'a, PP: ?Sized, NP: ?Sized> {
     collection: &'a RuleCollection,

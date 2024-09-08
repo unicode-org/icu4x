@@ -20,9 +20,9 @@ export class ZonedDateTimeFormatter {
 
     get ffiValue(): pointer;
 
-    static createWithLengths(provider: DataProvider, locale: Locale, dateLength: DateLength, timeLength: TimeLength): ZonedDateTimeFormatter;
+    static createWithLengths(provider: DataProvider, locale: Locale, dateLength: DateLength | null, timeLength: TimeLength | null): ZonedDateTimeFormatter;
 
-    static createWithLengthsAndIso8601TimeZoneFallback(provider: DataProvider, locale: Locale, dateLength: DateLength, timeLength: TimeLength, zoneOptions: IsoTimeZoneOptions): ZonedDateTimeFormatter;
+    static createWithLengthsAndIso8601TimeZoneFallback(provider: DataProvider, locale: Locale, dateLength: DateLength | null, timeLength: TimeLength | null, zoneOptions: IsoTimeZoneOptions): ZonedDateTimeFormatter;
 
     formatDatetimeWithCustomTimeZone(datetime: DateTime, timeZone: CustomTimeZone): string;
 

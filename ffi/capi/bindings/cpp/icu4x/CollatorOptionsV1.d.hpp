@@ -30,13 +30,13 @@ class CollatorStrength;
 namespace icu4x {
 namespace capi {
     struct CollatorOptionsV1 {
-      icu4x::capi::CollatorStrength strength;
-      icu4x::capi::CollatorAlternateHandling alternate_handling;
-      icu4x::capi::CollatorCaseFirst case_first;
-      icu4x::capi::CollatorMaxVariable max_variable;
-      icu4x::capi::CollatorCaseLevel case_level;
-      icu4x::capi::CollatorNumeric numeric;
-      icu4x::capi::CollatorBackwardSecondLevel backward_second_level;
+      icu4x::capi::CollatorStrength_option strength;
+      icu4x::capi::CollatorAlternateHandling_option alternate_handling;
+      icu4x::capi::CollatorCaseFirst_option case_first;
+      icu4x::capi::CollatorMaxVariable_option max_variable;
+      icu4x::capi::CollatorCaseLevel_option case_level;
+      icu4x::capi::CollatorNumeric_option numeric;
+      icu4x::capi::CollatorBackwardSecondLevel_option backward_second_level;
     };
     
     typedef struct CollatorOptionsV1_option {union { CollatorOptionsV1 ok; }; bool is_ok; } CollatorOptionsV1_option;
@@ -46,13 +46,13 @@ namespace capi {
 
 namespace icu4x {
 struct CollatorOptionsV1 {
-  icu4x::CollatorStrength strength;
-  icu4x::CollatorAlternateHandling alternate_handling;
-  icu4x::CollatorCaseFirst case_first;
-  icu4x::CollatorMaxVariable max_variable;
-  icu4x::CollatorCaseLevel case_level;
-  icu4x::CollatorNumeric numeric;
-  icu4x::CollatorBackwardSecondLevel backward_second_level;
+  std::optional<icu4x::CollatorStrength> strength;
+  std::optional<icu4x::CollatorAlternateHandling> alternate_handling;
+  std::optional<icu4x::CollatorCaseFirst> case_first;
+  std::optional<icu4x::CollatorMaxVariable> max_variable;
+  std::optional<icu4x::CollatorCaseLevel> case_level;
+  std::optional<icu4x::CollatorNumeric> numeric;
+  std::optional<icu4x::CollatorBackwardSecondLevel> backward_second_level;
 
   inline icu4x::capi::CollatorOptionsV1 AsFFI() const;
   inline static icu4x::CollatorOptionsV1 FromFFI(icu4x::capi::CollatorOptionsV1 c_struct);

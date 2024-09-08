@@ -3,19 +3,16 @@
 part of 'lib.g.dart';
 
 final class _LineBreakOptionsFfi extends ffi.Struct {
-  @ffi.Int32()
-  external int strictness;
-  @ffi.Int32()
-  external int wordOption;
-  @ffi.Bool()
-  external bool jaZh;
+  external _ResultInt32Void strictness;
+  external _ResultInt32Void wordOption;
+  external _ResultBoolVoid jaZh;
 }
 
 /// See the [Rust documentation for `LineBreakOptions`](https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakOptions.html) for more information.
 final class LineBreakOptions {
-  LineBreakStrictness strictness;
-  LineBreakWordOption wordOption;
-  bool jaZh;
+  LineBreakStrictness? strictness;
+  LineBreakWordOption? wordOption;
+  bool? jaZh;
 
   LineBreakOptions({required this.strictness, required this.wordOption, required this.jaZh});
 
@@ -26,16 +23,19 @@ final class LineBreakOptions {
   // should handle this when constructing edge arrays.
   // ignore: unused_element
   LineBreakOptions._fromFfi(_LineBreakOptionsFfi ffi) :
-    strictness = LineBreakStrictness.values[ffi.strictness],
-    wordOption = LineBreakWordOption.values[ffi.wordOption],
-    jaZh = ffi.jaZh;
+    strictness = ffi.strictness.isOk ? LineBreakStrictness.values[ffi.strictness.union.ok] : null,
+    wordOption = ffi.wordOption.isOk ? LineBreakWordOption.values[ffi.wordOption.union.ok] : null,
+    jaZh = ffi.jaZh.isOk ? ffi.jaZh.union.ok : null;
 
   // ignore: unused_element
   _LineBreakOptionsFfi _toFfi(ffi.Allocator temp) {
     final struct = ffi.Struct.create<_LineBreakOptionsFfi>();
-    struct.strictness = strictness.index;
-    struct.wordOption = wordOption.index;
-    struct.jaZh = jaZh;
+    LineBreakStrictness? strictness = this.strictness;
+    struct.strictness = strictness != null ? _ResultInt32Void.ok(strictness.index) : _ResultInt32Void.err();
+    LineBreakWordOption? wordOption = this.wordOption;
+    struct.wordOption = wordOption != null ? _ResultInt32Void.ok(wordOption.index) : _ResultInt32Void.err();
+    bool? jaZh = this.jaZh;
+    struct.jaZh = jaZh != null ? _ResultBoolVoid.ok(jaZh) : _ResultBoolVoid.err();
     return struct;
   }
 

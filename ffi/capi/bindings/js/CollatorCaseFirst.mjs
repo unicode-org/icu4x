@@ -9,10 +9,9 @@ export class CollatorCaseFirst {
     #value = undefined;
 
     static #values = new Map([
-        ["Auto", 0],
-        ["Off", 1],
-        ["LowerFirst", 2],
-        ["UpperFirst", 3]
+        ["Off", 0],
+        ["LowerFirst", 1],
+        ["UpperFirst", 2]
     ]);
 
     constructor(value) {
@@ -51,11 +50,9 @@ export class CollatorCaseFirst {
         new CollatorCaseFirst(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
         new CollatorCaseFirst(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
         new CollatorCaseFirst(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
-        new CollatorCaseFirst(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 3),
     ];
 
-    static Auto = CollatorCaseFirst.#objectValues[0];
-    static Off = CollatorCaseFirst.#objectValues[1];
-    static LowerFirst = CollatorCaseFirst.#objectValues[2];
-    static UpperFirst = CollatorCaseFirst.#objectValues[3];
+    static Off = CollatorCaseFirst.#objectValues[0];
+    static LowerFirst = CollatorCaseFirst.#objectValues[1];
+    static UpperFirst = CollatorCaseFirst.#objectValues[2];
 }
