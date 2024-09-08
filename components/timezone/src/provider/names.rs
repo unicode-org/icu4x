@@ -69,14 +69,14 @@ pub const NON_REGION_CITY_PREFIX: u8 = b'_';
 /// </div>
 #[derive(Debug, Clone, PartialEq)]
 #[icu_provider::data_struct(marker(
-    IanaToBcp47MapV2Marker,
-    "time_zone/iana_to_bcp47@2",
+    IanaToBcp47MapV3Marker,
+    "time_zone/iana_to_bcp47@3",
     singleton
 ))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_timezone::provider::names))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct IanaToBcp47MapV2<'data> {
+pub struct IanaToBcp47MapV3<'data> {
     /// A map from normal-case IANA time zone identifiers to indexes of BCP-47 time zone
     /// identifiers along with a canonical flag. The IANA identifiers are normal-case.
     ///

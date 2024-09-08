@@ -63,8 +63,8 @@ impl crate::IterableDataProviderCached<IanaToBcp47MapV1Marker> for SourceDataPro
     }
 }
 
-impl DataProvider<IanaToBcp47MapV2Marker> for SourceDataProvider {
-    fn load(&self, _: DataRequest) -> Result<DataResponse<IanaToBcp47MapV2Marker>, DataError> {
+impl DataProvider<IanaToBcp47MapV3Marker> for SourceDataProvider {
+    fn load(&self, _: DataRequest) -> Result<DataResponse<IanaToBcp47MapV3Marker>, DataError> {
         let resource: &cldr_serde::time_zones::bcp47_tzid::Resource =
             self.cldr()?.bcp47().read_and_parse("timezone.json")?;
 
@@ -105,7 +105,7 @@ impl DataProvider<IanaToBcp47MapV2Marker> for SourceDataProvider {
             })
             .collect();
 
-        let data_struct = IanaToBcp47MapV2 {
+        let data_struct = IanaToBcp47MapV3 {
             map: ZeroAsciiIgnoreCaseTrie::try_from(&map)
                 .map_err(|e| {
                     DataError::custom("Could not create ZeroTrie from timezone.json data")
@@ -122,7 +122,7 @@ impl DataProvider<IanaToBcp47MapV2Marker> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<IanaToBcp47MapV2Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<IanaToBcp47MapV3Marker> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
