@@ -951,16 +951,6 @@ impl<T> PluralElements<T> {
     pub fn explicit_one(&self) -> Option<&T> {
         self.explicit_one.as_ref()
     }
-
-    pub(crate) fn has_specials(&self) -> bool {
-        self.zero.is_some()
-            || self.one.is_some()
-            || self.two.is_some()
-            || self.few.is_some()
-            || self.many.is_some()
-            || self.explicit_zero.is_some()
-            || self.explicit_one.is_some()
-    }
 }
 
 impl<T: PartialEq> PluralElements<T> {

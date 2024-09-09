@@ -591,11 +591,11 @@ pub struct PluralElementsPackedULE<V: VarULE + ?Sized> {
     /// - `mmmm` = [`FourBitMetadata`] for the default value
     ///
     /// If d is 0:
-    /// - Remainder: `V`
+    /// - Remainder: the default (plural "other") value `V`
     ///
     /// If d is 1:
     /// - Second byte: L = the length of `V`
-    /// - Bytes 2..(2+L): `V`
+    /// - Bytes 2..(2+L): the default (plural "other") value `V`
     /// - Remainder: [`PluralElementsTupleSliceVarULE`]
     bytes: [u8],
 }
@@ -604,30 +604,25 @@ pub struct PluralElementsPackedULE<V: VarULE + ?Sized> {
 type PluralElementsTupleSliceVarULE<V> = VarZeroSlice<VarTupleULE<PluralCategoryAndMetadata, V>>;
 
 /// The type of the default value.
-type PluralElementWithMetadata<'a, V> = (FourBitMetadata, &'a V);
+type PluralElementWithMetadata<'a, T> = (FourBitMetadata, &'a T);
 
 /// Internal intermediate type that can be converted into a [`PluralElementsPackedULE`].
-enum PluralElementsPackedBuilder<'a, T> {
-    /// A singleton. The value can be converted to `V`.
-    Singleton(PluralElementWithMetadata<'a, T>),
-    /// Non-singleton. The value can be converted to `V` and [`PluralElementsTupleSliceVarULE`]
-    Multi(
-        PluralElementWithMetadata<'a, T>,
-        Vec<VarTuple<PluralCategoryAndMetadata, &'a T>>,
-    ),
+struct PluralElementsPackedBuilder<'a, T> {
+    pub default: PluralElementWithMetadata<'a, T>,
+    pub specials: Option<Vec<VarTuple<PluralCategoryAndMetadata, &'a T>>>,
 }
 
-/// Unpacked bytes from a [`PluralElementsPackedULE`].
+/// Internal unpacked and deserialized values from a [`PluralElementsPackedULE`].
+struct PluralElementsUnpacked<'a, V: VarULE + ?Sized> {
+    pub default: PluralElementWithMetadata<'a, V>,
+    pub specials: Option<&'a PluralElementsTupleSliceVarULE<V>>,
+}
+
+/// Internal unpacked bytes from a [`PluralElementsPackedULE`].
 struct PluralElementsUnpackedBytes<'a> {
     pub lead_byte: u8,
     pub v_bytes: &'a [u8],
     pub specials_bytes: Option<&'a [u8]>,
-}
-
-/// Unpacked and deserialized values from a [`PluralElementsPackedULE`].
-struct PluralElementsUnpacked<'a, V: VarULE + ?Sized> {
-    pub default: PluralElementWithMetadata<'a, V>,
-    pub specials: Option<&'a PluralElementsTupleSliceVarULE<V>>,
 }
 
 /// Helper function to access a value from [`PluralElementsTupleSliceVarULE`]
@@ -808,18 +803,20 @@ where
         &'a T: EncodeAsVarULE<V>,
         V: VarULE + ?Sized,
     {
-        if self.has_specials() {
-            PluralElementsPackedBuilder::Multi(
-                (self.other().0, &self.other.1),
-                self.get_specials_tuple_vec()
-                    .map(|(key, (metadata, t))| VarTuple {
-                        sized: PluralCategoryAndMetadata::new(key, *metadata),
-                        variable: t,
-                    })
-                    .collect::<Vec<_>>(),
-            )
-        } else {
-            PluralElementsPackedBuilder::Singleton((self.other().0, &self.other.1))
+        let specials = self
+            .get_specials_tuple_vec()
+            .map(|(key, (metadata, t))| VarTuple {
+                sized: PluralCategoryAndMetadata::new(key, *metadata),
+                variable: t,
+            })
+            .collect::<Vec<_>>();
+        PluralElementsPackedBuilder {
+            default: (self.other().0, &self.other.1),
+            specials: if specials.is_empty() {
+                None
+            } else {
+                Some(specials)
+            },
         }
     }
 }
@@ -837,44 +834,43 @@ where
     }
 
     fn encode_var_ule_len(&self) -> usize {
-        match self.to_packed_builder::<V>() {
-            PluralElementsPackedBuilder::Singleton(v) => 1 + v.1.encode_var_ule_len(),
-            PluralElementsPackedBuilder::Multi(v, specials) => {
-                2 + v.1.encode_var_ule_len()
-                    + EncodeAsVarULE::<PluralElementsTupleSliceVarULE<V>>::encode_var_ule_len(
+        let builder = self.to_packed_builder();
+        1 + builder.default.1.encode_var_ule_len()
+            + match builder.specials {
+                Some(specials) => {
+                    1 + EncodeAsVarULE::<PluralElementsTupleSliceVarULE<V>>::encode_var_ule_len(
                         &specials,
                     )
+                }
+                None => 0,
             }
-        }
     }
 
     fn encode_var_ule_write(&self, dst: &mut [u8]) {
+        let builder = self.to_packed_builder();
         #[allow(clippy::unwrap_used)] // by trait invariant
         let (lead_byte, remainder) = dst.split_first_mut().unwrap();
-        match self.to_packed_builder::<V>() {
-            PluralElementsPackedBuilder::Singleton(v) => {
-                *lead_byte = v.0.get();
-                v.1.encode_var_ule_write(remainder);
-            }
-            PluralElementsPackedBuilder::Multi(v, specials) => {
-                *lead_byte = 0x80 | v.0.get();
-                #[allow(clippy::unwrap_used)] // by trait invariant
-                let (second_byte, remainder) = remainder.split_first_mut().unwrap();
-                *second_byte = match u8::try_from(v.1.encode_var_ule_len()) {
-                    Ok(x) => x,
-                    Err(_) => {
-                        // TODO: Inform the user more nicely that their data doesn't fit in our packed structure
-                        panic!("other value too long to be packed: {self:?}")
-                    }
-                };
-                let (v_bytes, specials_bytes) = remainder.split_at_mut(*second_byte as usize);
-                v.1.encode_var_ule_write(v_bytes);
-                EncodeAsVarULE::<PluralElementsTupleSliceVarULE<V>>::encode_var_ule_write(
-                    &specials,
-                    specials_bytes,
-                );
-            }
-        }
+        *lead_byte = builder.default.0.get();
+        if let Some(specials) = builder.specials {
+            *lead_byte |= 0x80;
+            #[allow(clippy::unwrap_used)] // by trait invariant
+            let (second_byte, remainder) = remainder.split_first_mut().unwrap();
+            *second_byte = match u8::try_from(builder.default.1.encode_var_ule_len()) {
+                Ok(x) => x,
+                Err(_) => {
+                    // TODO: Inform the user more nicely that their data doesn't fit in our packed structure
+                    panic!("other value too long to be packed: {self:?}")
+                }
+            };
+            let (v_bytes, specials_bytes) = remainder.split_at_mut(*second_byte as usize);
+            builder.default.1.encode_var_ule_write(v_bytes);
+            EncodeAsVarULE::<PluralElementsTupleSliceVarULE<V>>::encode_var_ule_write(
+                &specials,
+                specials_bytes,
+            );
+        } else {
+            builder.default.1.encode_var_ule_write(remainder)
+        };
     }
 }
 
