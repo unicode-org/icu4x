@@ -49,16 +49,14 @@
       "-56": "Pacific Daylight Time"
     },
     "anad": {
-      "96": "Anadyr Standard Time",
-      "104": "Anadyr Summer Time"
+      "96": "Anadyr Standard Time"
     },
     "apia": {
       "104": "Apia Standard Time",
       "112": "Apia Daylight Time"
     },
     "aqta": {
-      "40": "Aqtau Standard Time",
-      "48": "Aqtau Summer Time"
+      "40": "Aqtau Standard Time"
     },
     "aqto": {
       "40": "Aqtobe Standard Time",
@@ -77,8 +75,7 @@
       "40": "Armenia Summer Time"
     },
     "arwe": {
-      "-24": "Western Argentina Standard Time",
-      "-16": "Western Argentina Summer Time"
+      "-24": "Western Argentina Standard Time"
     },
     "atla": {
       "-32": "Atlantic Standard Time",
@@ -200,8 +197,7 @@
       "8": "Western European Summer Time"
     },
     "falk": {
-      "-24": "Falkland Islands Standard Time",
-      "-16": "Falkland Islands Summer Time"
+      "-24": "Falkland Islands Standard Time"
     },
     "fiji": {
       "96": "Fiji Standard Time",
@@ -220,8 +216,7 @@
       "-72": "Gambier Time"
     },
     "geor": {
-      "32": "Georgia Standard Time",
-      "40": "Georgia Summer Time"
+      "32": "Georgia Standard Time"
     },
     "giis": {
       "96": "Gilbert Islands Time"
@@ -297,8 +292,7 @@
       "40": "East Kazakhstan Time"
     },
     "kamc": {
-      "96": "Petropavlovsk-Kamchatski Standard Time",
-      "104": "Petropavlovsk-Kamchatski Summer Time"
+      "96": "Petropavlovsk-Kamchatski Standard Time"
     },
     "kawe": {
       "40": "West Kazakhstan Time"
@@ -408,8 +402,7 @@
       "-8": "Fernando de Noronha Summer Time"
     },
     "novo": {
-      "56": "Novosibirsk Standard Time",
-      "64": "Novosibirsk Summer Time"
+      "56": "Novosibirsk Standard Time"
     },
     "omsk": {
       "48": "Omsk Standard Time",
@@ -464,12 +457,10 @@
       "-24": "Rothera Time"
     },
     "sakh": {
-      "88": "Sakhalin Standard Time",
-      "96": "Sakhalin Summer Time"
+      "88": "Sakhalin Standard Time"
     },
     "sama": {
-      "32": "Samara Standard Time",
-      "40": "Samara Summer Time"
+      "32": "Samara Standard Time"
     },
     "samo": {
       "-88": "Samoa Standard Time"
@@ -513,8 +504,7 @@
       "80": "Chuuk Time"
     },
     "turk": {
-      "40": "Turkmenistan Standard Time",
-      "48": "Turkmenistan Summer Time"
+      "40": "Turkmenistan Standard Time"
     },
     "tuva": {
       "96": "Tuvalu Time"
@@ -560,7 +550,7 @@
       "48": "Yekaterinburg Summer Time"
     },
     "yuko": {
-      "-64": "Yukon Time"
+      "-56": "Yukon Time"
     }
   },
   "overrides": {

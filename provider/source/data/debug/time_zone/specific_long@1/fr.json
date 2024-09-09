@@ -49,16 +49,14 @@
       "-56": "heure d’été du Pacifique nord-américain"
     },
     "anad": {
-      "96": "heure normale d’Anadyr",
-      "104": "heure d’été d’Anadyr"
+      "96": "heure normale d’Anadyr"
     },
     "apia": {
       "104": "heure normale d’Apia",
       "112": "heure d’été d’Apia"
     },
     "aqta": {
-      "40": "heure normale d’Aktaou",
-      "48": "heure d’été d’Aktaou"
+      "40": "heure normale d’Aktaou"
     },
     "aqto": {
       "40": "heure normale d’Aqtöbe",
@@ -77,8 +75,7 @@
       "40": "heure d’été d’Arménie"
     },
     "arwe": {
-      "-24": "heure normale de l’Ouest argentin",
-      "-16": "heure d’été de l’Ouest argentin"
+      "-24": "heure normale de l’Ouest argentin"
     },
     "atla": {
       "-32": "heure normale de l’Atlantique",
@@ -197,8 +194,7 @@
       "8": "heure d’été d’Europe de l’Ouest"
     },
     "falk": {
-      "-24": "heure normale des îles Malouines",
-      "-16": "heure d’été des îles Malouines"
+      "-24": "heure normale des îles Malouines"
     },
     "fiji": {
       "96": "heure normale des îles Fidji",
@@ -217,8 +213,7 @@
       "-72": "heure des îles Gambier"
     },
     "geor": {
-      "32": "heure normale de la Géorgie",
-      "40": "heure d’été de Géorgie"
+      "32": "heure normale de la Géorgie"
     },
     "giis": {
       "96": "heure des îles Gilbert"
@@ -290,8 +285,7 @@
       "40": "heure de l’Est du Kazakhstan"
     },
     "kamc": {
-      "96": "heure normale de Petropavlovsk-Kamchatski",
-      "104": "heure d’été de Petropavlovsk-Kamchatski"
+      "96": "heure normale de Petropavlovsk-Kamchatski"
     },
     "kawe": {
       "40": "heure de l’Ouest du Kazakhstan"
@@ -394,8 +388,7 @@
       "-8": "heure d’été de Fernando de Noronha"
     },
     "novo": {
-      "56": "heure normale de Novossibirsk",
-      "64": "heure d’été de Novossibirsk"
+      "56": "heure normale de Novossibirsk"
     },
     "omsk": {
       "48": "heure normale de Omsk",
@@ -446,12 +439,10 @@
       "-24": "heure de Rothera"
     },
     "sakh": {
-      "88": "heure normale de Sakhaline",
-      "96": "heure d’été de Sakhaline"
+      "88": "heure normale de Sakhaline"
     },
     "sama": {
-      "32": "heure normale de Samara",
-      "40": "heure d’été de Samara"
+      "32": "heure normale de Samara"
     },
     "samo": {
       "-88": "heure normale des Samoa"
@@ -495,8 +486,7 @@
       "80": "heure de Chuuk"
     },
     "turk": {
-      "40": "heure normale du Turkménistan",
-      "48": "heure d’été du Turkménistan"
+      "40": "heure normale du Turkménistan"
     },
     "tuva": {
       "96": "heure des Tuvalu"
@@ -542,7 +532,7 @@
       "48": "heure d’été d’Ekaterinbourg"
     },
     "yuko": {
-      "-64": "heure normale du Yukon"
+      "-56": "heure normale du Yukon"
     }
   },
   "overrides": {

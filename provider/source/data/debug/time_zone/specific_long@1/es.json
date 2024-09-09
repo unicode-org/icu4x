@@ -45,16 +45,14 @@
       "-56": "hora de verano del Pacífico"
     },
     "anad": {
-      "96": "hora estándar de Anadyr",
-      "104": "hora de verano de Anadyr"
+      "96": "hora estándar de Anadyr"
     },
     "apia": {
       "104": "hora estándar de Apia",
       "112": "horario de verano de Apia"
     },
     "aqta": {
-      "40": "Hora estándar de Aktau",
-      "48": "Hora de verano de Aktau"
+      "40": "Hora estándar de Aktau"
     },
     "aqto": {
       "40": "Hora estándar de Aktobe",
@@ -73,8 +71,7 @@
       "40": "hora de verano de Armenia"
     },
     "arwe": {
-      "-24": "hora estándar de Argentina occidental",
-      "-16": "hora de verano de Argentina occidental"
+      "-24": "hora estándar de Argentina occidental"
     },
     "atla": {
       "-32": "hora estándar del Atlántico",
@@ -193,8 +190,7 @@
       "8": "hora de verano de Europa occidental"
     },
     "falk": {
-      "-24": "hora estándar de las islas Malvinas",
-      "-16": "hora de verano de las islas Malvinas"
+      "-24": "hora estándar de las islas Malvinas"
     },
     "fiji": {
       "96": "hora estándar de Fiyi",
@@ -213,8 +209,7 @@
       "-72": "hora de Gambier"
     },
     "geor": {
-      "32": "hora estándar de Georgia",
-      "40": "hora de verano de Georgia"
+      "32": "hora estándar de Georgia"
     },
     "giis": {
       "96": "hora de las islas Gilbert"
@@ -286,8 +281,7 @@
       "40": "hora de Kazajistán oriental"
     },
     "kamc": {
-      "96": "hora estándar de Kamchatka",
-      "104": "hora de verano de Kamchatka"
+      "96": "hora estándar de Kamchatka"
     },
     "kawe": {
       "40": "hora de Kazajistán occidental"
@@ -397,8 +391,7 @@
       "-8": "hora de verano de Fernando de Noronha"
     },
     "novo": {
-      "56": "hora estándar de Novosibirsk",
-      "64": "hora de verano de Novosibirsk"
+      "56": "hora estándar de Novosibirsk"
     },
     "omsk": {
       "48": "hora estándar de Omsk",
@@ -453,12 +446,10 @@
       "-24": "hora de Rothera"
     },
     "sakh": {
-      "88": "hora estándar de Sajalín",
-      "96": "hora de verano de Sajalín"
+      "88": "hora estándar de Sajalín"
     },
     "sama": {
-      "32": "hora estándar de Samara",
-      "40": "hora de verano de Samara"
+      "32": "hora estándar de Samara"
     },
     "samo": {
       "-88": "hora estándar de Samoa"
@@ -502,8 +493,7 @@
       "80": "hora de Chuuk"
     },
     "turk": {
-      "40": "hora estándar de Turkmenistán",
-      "48": "hora de verano de Turkmenistán"
+      "40": "hora estándar de Turkmenistán"
     },
     "tuva": {
       "96": "hora de Tuvalu"
@@ -549,7 +539,7 @@
       "48": "hora de verano de Ekaterimburgo"
     },
     "yuko": {
-      "-64": "hora de Yukón"
+      "-56": "hora de Yukón"
     }
   },
   "overrides": {

@@ -179,8 +179,8 @@ fn offsets_for_iana(iana: &str, tzdb: &parse_zoneinfo::table::Table) -> Option<O
     let last_dst = timespans
         .clone()
         .rev()
-        // Use the most recent DST offset, even if it's not used anymore, unless it collides with the current standard offset
-        .find(|ts| ts.dst_offset != 0 && ts.dst_offset + ts.utc_offset != current.utc_offset);
+        // Use the most recent DST offset, even if it's not used anymore
+        .find(|ts| ts.dst_offset != 0);
 
     Some((
         (current.utc_offset / 450) as EightsOfHourOffset,
@@ -529,7 +529,16 @@ fn convert_cldr_zone_variant(
 fn iterate_zone_format_for_meta_zone_id(
     pair: (MetazoneId, Option<Offsets>, ZoneFormat),
 ) -> impl Iterator<Item = (MetazoneId, EightsOfHourOffset, String)> {
-    let (key1, offsets, zf) = pair;
+    let (key1, mut offsets, zf) = pair;
+    if let Some(offsets) = offsets.as_mut() {
+        if offsets.1.is_none() && zf.0.contains_key("daylight") {
+            log::warn!("{key1:?} has a DST display name, but the time zone has never used DST");
+        }
+        if offsets.1 == Some(offsets.0) {
+            log::warn!("{key1:?}'s last historical DST offset is the same as its current standard offset, so it cannot be stored");
+            offsets.1 = None;
+        }
+    }
     zf.0.into_iter()
         .filter(|(key, _)| !key.eq("generic"))
         .filter_map(move |(key, value)| {
@@ -540,7 +549,16 @@ fn iterate_zone_format_for_meta_zone_id(
 fn iterate_zone_format_for_time_zone_id(
     pair: (TimeZoneBcp47Id, Option<Offsets>, ZoneFormat),
 ) -> impl Iterator<Item = (TimeZoneBcp47Id, EightsOfHourOffset, String)> {
-    let (key1, offsets, zf) = pair;
+    let (key1, mut offsets, zf) = pair;
+    if let Some(offsets) = offsets.as_mut() {
+        if offsets.1.is_none() && zf.0.contains_key("daylight") {
+            log::warn!("{key1:?} has a DST display name, but the time zone has never used DST");
+        }
+        if offsets.1 == Some(offsets.0) {
+            log::warn!("{key1:?}'s last historical DST offset is the same as its current standard offset, so it cannot be stored");
+            offsets.1 = None;
+        }
+    }
     zf.0.into_iter()
         .filter(|(key, _)| !key.eq("generic"))
         .filter_map(move |(key, value)| {

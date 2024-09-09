@@ -49,16 +49,14 @@
       "-56": "Kuzey Amerika Pasifik Yaz Saati"
     },
     "anad": {
-      "96": "Anadır Standart Saati",
-      "104": "Anadır Yaz Saati"
+      "96": "Anadır Standart Saati"
     },
     "apia": {
       "104": "Apia Standart Saati",
       "112": "Apia Yaz Saati"
     },
     "aqta": {
-      "40": "Aktav Standart Saati",
-      "48": "Aktav Yaz Saati"
+      "40": "Aktav Standart Saati"
     },
     "aqto": {
       "40": "Aktöbe Standart Saati",
@@ -77,8 +75,7 @@
       "40": "Ermenistan Yaz Saati"
     },
     "arwe": {
-      "-24": "Batı Arjantin Standart Saati",
-      "-16": "Batı Arjantin Yaz Saati"
+      "-24": "Batı Arjantin Standart Saati"
     },
     "atla": {
       "-32": "Atlantik Standart Saati",
@@ -200,8 +197,7 @@
       "8": "Batı Avrupa Yaz Saati"
     },
     "falk": {
-      "-24": "Falkland Adaları Standart Saati",
-      "-16": "Falkland Adaları Yaz Saati"
+      "-24": "Falkland Adaları Standart Saati"
     },
     "fiji": {
       "96": "Fiji Standart Saati",
@@ -220,8 +216,7 @@
       "-72": "Gambier Saati"
     },
     "geor": {
-      "32": "Gürcistan Standart Saati",
-      "40": "Gürcistan Yaz Saati"
+      "32": "Gürcistan Standart Saati"
     },
     "giis": {
       "96": "Gilbert Adaları Saati"
@@ -293,8 +288,7 @@
       "40": "Doğu Kazakistan Saati"
     },
     "kamc": {
-      "96": "Petropavlovsk-Kamçatski Standart Saati",
-      "104": "Petropavlovsk-Kamçatski Yaz Saati"
+      "96": "Petropavlovsk-Kamçatski Standart Saati"
     },
     "kawe": {
       "40": "Batı Kazakistan Saati"
@@ -404,8 +398,7 @@
       "-8": "Fernando de Noronha Yaz Saati"
     },
     "novo": {
-      "56": "Novosibirsk Standart Saati",
-      "64": "Novosibirsk Yaz Saati"
+      "56": "Novosibirsk Standart Saati"
     },
     "omsk": {
       "48": "Omsk Standart Saati",
@@ -460,12 +453,10 @@
       "-24": "Rothera Saati"
     },
     "sakh": {
-      "88": "Sahalin Standart Saati",
-      "96": "Sahalin Yaz Saati"
+      "88": "Sahalin Standart Saati"
     },
     "sama": {
-      "32": "Samara Standart Saati",
-      "40": "Samara Yaz Saati"
+      "32": "Samara Standart Saati"
     },
     "samo": {
       "-88": "Samoa Standart Saati"
@@ -509,8 +500,7 @@
       "80": "Chuuk Saati"
     },
     "turk": {
-      "40": "Türkmenistan Standart Saati",
-      "48": "Türkmenistan Yaz Saati"
+      "40": "Türkmenistan Standart Saati"
     },
     "tuva": {
       "96": "Tuvalu Saati"
@@ -556,7 +546,7 @@
       "48": "Yekaterinburg Yaz Saati"
     },
     "yuko": {
-      "-64": "Yukon Saati"
+      "-56": "Yukon Saati"
     }
   },
   "overrides": {

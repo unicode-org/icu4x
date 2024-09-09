@@ -49,16 +49,14 @@
       "-56": "Severnoameričko pacifičko letnje vreme"
     },
     "anad": {
-      "96": "Anadir standardno vreme",
-      "104": "Anadir letnje računanje vremena"
+      "96": "Anadir standardno vreme"
     },
     "apia": {
       "104": "Apija, standardno vreme",
       "112": "Apija, letnje vreme"
     },
     "aqta": {
-      "40": "Akvatau standardno vreme",
-      "48": "Akvatau letnje računanje vremena"
+      "40": "Akvatau standardno vreme"
     },
     "aqto": {
       "40": "Akutobe standardno vreme",
@@ -77,8 +75,7 @@
       "40": "Jermenija, letnje vreme"
     },
     "arwe": {
-      "-24": "Zapadna Argentina, standardno vreme",
-      "-16": "Zapadna Argentina, letnje vreme"
+      "-24": "Zapadna Argentina, standardno vreme"
     },
     "atla": {
       "-32": "Atlantsko standardno vreme",
@@ -197,8 +194,7 @@
       "8": "Zapadnoevropsko letnje vreme"
     },
     "falk": {
-      "-24": "Folklandska Ostrva, standardno vreme",
-      "-16": "Folklandska Ostrva, letnje vreme"
+      "-24": "Folklandska Ostrva, standardno vreme"
     },
     "fiji": {
       "96": "Fidži, standardno vreme",
@@ -217,8 +213,7 @@
       "-72": "Gambije vreme"
     },
     "geor": {
-      "32": "Gruzija, standardno vreme",
-      "40": "Gruzija, letnje vreme"
+      "32": "Gruzija, standardno vreme"
     },
     "giis": {
       "96": "Gilbert ostrva vreme"
@@ -290,8 +285,7 @@
       "40": "Istočno-kazahstansko vreme"
     },
     "kamc": {
-      "96": "Petropavlovsko-kamčatsko standardno vreme",
-      "104": "Petropavlovsko-kamčatsko letnje računanje vremena"
+      "96": "Petropavlovsko-kamčatsko standardno vreme"
     },
     "kawe": {
       "40": "Zapadno-kazahstansko vreme"
@@ -401,8 +395,7 @@
       "-8": "Fernando de Noronja, letnje vreme"
     },
     "novo": {
-      "56": "Novosibirsk, standardno vreme",
-      "64": "Novosibirsk, letnje vreme"
+      "56": "Novosibirsk, standardno vreme"
     },
     "omsk": {
       "48": "Omsk, standardno vreme",
@@ -457,12 +450,10 @@
       "-24": "Rotera vreme"
     },
     "sakh": {
-      "88": "Sahalin, standardno vreme",
-      "96": "Sahalin, letnje vreme"
+      "88": "Sahalin, standardno vreme"
     },
     "sama": {
-      "32": "Samara standardno vreme",
-      "40": "Samara letnje računanje vremena"
+      "32": "Samara standardno vreme"
     },
     "samo": {
       "-88": "Samoa, standardno vreme"
@@ -506,8 +497,7 @@
       "80": "Čuuk vreme"
     },
     "turk": {
-      "40": "Turkmenistan, standardno vreme",
-      "48": "Turkmenistan, letnje vreme"
+      "40": "Turkmenistan, standardno vreme"
     },
     "tuva": {
       "96": "Tuvalu vreme"
@@ -553,7 +543,7 @@
       "48": "Jekaterinburg, letnje vreme"
     },
     "yuko": {
-      "-64": "Jukon"
+      "-56": "Jukon"
     }
   },
   "overrides": {

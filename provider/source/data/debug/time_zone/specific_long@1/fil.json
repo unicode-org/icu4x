@@ -41,8 +41,7 @@
       "-56": "Daylight na Oras sa Pasipiko sa Hilagang Amerika"
     },
     "anad": {
-      "96": "Standard Time sa Anadyr",
-      "104": "Summer Time sa Anadyr"
+      "96": "Standard Time sa Anadyr"
     },
     "apia": {
       "104": "Standard na Oras sa Apia",
@@ -61,8 +60,7 @@
       "40": "Oras sa Tag-init ng Armenia"
     },
     "arwe": {
-      "-24": "Standard na Oras sa Kanlurang Argentina",
-      "-16": "Oras sa Tag-init ng Kanlurang Argentina"
+      "-24": "Standard na Oras sa Kanlurang Argentina"
     },
     "atla": {
       "-32": "Standard na Oras sa Atlantiko",
@@ -181,8 +179,7 @@
       "8": "Oras sa Tag-init ng Kanlurang Europe"
     },
     "falk": {
-      "-24": "Standard na Oras sa Falkland Islands",
-      "-16": "Oras sa Tag-init ng Falkland Islands"
+      "-24": "Standard na Oras sa Falkland Islands"
     },
     "fiji": {
       "96": "Standard na Oras sa Fiji",
@@ -201,8 +198,7 @@
       "-72": "Oras sa Gambier"
     },
     "geor": {
-      "32": "Standard na Oras sa Georgia",
-      "40": "Oras sa Tag-init ng Georgia"
+      "32": "Standard na Oras sa Georgia"
     },
     "giis": {
       "96": "Oras sa Gilbert Islands"
@@ -271,8 +267,7 @@
       "40": "Oras sa Silangang Kazakhstan"
     },
     "kamc": {
-      "96": "Standard Time sa Petropavlovsk-Kamchatski",
-      "104": "Summer Time sa Petropavlovsk-Kamchatski"
+      "96": "Standard Time sa Petropavlovsk-Kamchatski"
     },
     "kawe": {
       "40": "Oras sa Kanlurang Kazakhstan"
@@ -372,8 +367,7 @@
       "-8": "Oras sa Tag-init ng Fernando de Noronha"
     },
     "novo": {
-      "56": "Standard na Oras sa Novosibirsk",
-      "64": "Oras sa Tag-init ng Novosibirsk"
+      "56": "Standard na Oras sa Novosibirsk"
     },
     "omsk": {
       "48": "Standard na Oras sa Omsk",
@@ -424,12 +418,10 @@
       "-24": "Oras sa Rothera"
     },
     "sakh": {
-      "88": "Standard na Oras sa Sakhalin",
-      "96": "Oras sa Tag-init ng Sakhalin"
+      "88": "Standard na Oras sa Sakhalin"
     },
     "sama": {
-      "32": "Standard Time sa Samara",
-      "40": "Samara Daylight"
+      "32": "Standard Time sa Samara"
     },
     "samo": {
       "-88": "Standard na Oras sa Samoa"
@@ -473,8 +465,7 @@
       "80": "Oras sa Chuuk"
     },
     "turk": {
-      "40": "Standard na Oras sa Turkmenistan",
-      "48": "Oras sa Tag-init ng Turkmenistan"
+      "40": "Standard na Oras sa Turkmenistan"
     },
     "tuva": {
       "96": "Oras sa Tuvalu"
@@ -520,7 +511,7 @@
       "48": "Oras sa Tag-init ng Yekaterinburg"
     },
     "yuko": {
-      "-64": "Oras sa Yukon"
+      "-56": "Oras sa Yukon"
     }
   },
   "overrides": {
