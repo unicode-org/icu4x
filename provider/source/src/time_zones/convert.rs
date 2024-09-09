@@ -13,11 +13,11 @@ use cldr_serde::time_zones::meta_zones::ZonePeriod;
 use cldr_serde::time_zones::time_zone_names::*;
 use icu::calendar::DateTime;
 use icu::datetime::provider::time_zones::{
-    EightsOfHourOffset, ExemplarCitiesV1, MetazoneGenericNamesLongV1, MetazoneGenericNamesShortV1,
-    MetazoneId, MetazoneSpecificNamesLongV1, MetazoneSpecificNamesShortV1, TimeZoneBcp47Id,
-    TimeZoneFormatsV1,
+    ExemplarCitiesV1, MetazoneGenericNamesLongV1, MetazoneGenericNamesShortV1, MetazoneId,
+    MetazoneSpecificNamesLongV1, MetazoneSpecificNamesShortV1, TimeZoneBcp47Id, TimeZoneFormatsV1,
 };
 use icu::timezone::provider::MetazonePeriodV1;
+use icu::timezone::UtcOffset;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
 use tinystr::tinystr;
@@ -103,33 +103,28 @@ fn compute_meta_zone_ids_btreemap(
     meta_zone_ids
 }
 
-type Offsets = (EightsOfHourOffset, Option<EightsOfHourOffset>);
-
 fn offsets_for_meta(
     meta_zones_territory: &Vec<MetazoneTerritory>,
     meta: &str,
     tzdb: &parse_zoneinfo::table::Table,
-) -> Option<Offsets> {
+) -> (UtcOffset, Option<UtcOffset>) {
     let (mut standard, mut daylight) = (None, None);
-    let mut first_zone = "";
+    let mut first_iana = "";
     for m in meta_zones_territory {
         if m.map_zone.other != meta {
             continue;
         }
-        if m.map_zone.zone_type == "Europe/Minsk" {
+        let iana = &m.map_zone.zone_type;
+        if iana == "Europe/Minsk" {
             // Minsk has an incorrect metazone, so ignore it
             // https://unicode-org.atlassian.net/browse/CLDR-17927
             continue;
         }
-        let Some((mut new_standard, mut new_daylight)) =
-            offsets_for_iana(&m.map_zone.zone_type, tzdb)
-        else {
-            continue;
-        };
+        let (mut new_standard, mut new_daylight) = offsets_for_iana(iana, tzdb);
         if let Some(d) = new_daylight.as_mut() {
             // Some time zones, like Europe/Dublin use DST the wrong way
             // around. Don't let this weirdness leak into meta zones.
-            if *d < new_standard {
+            if d.offset_seconds() < new_standard.offset_seconds() {
                 core::mem::swap(d, &mut new_standard);
             }
         }
@@ -144,12 +139,7 @@ fn offsets_for_meta(
                 // all other cases
                 _ => {
                     log::warn!(
-                        "{:?} has different offsets from {first_zone:?}: standard {} vs {}, daylight {:?} vs {:?}",
-                        m.map_zone.zone_type,
-                        new_standard as f32 / 8.0,
-                        standard as f32 / 8.0,
-                        new_daylight.map(|o| o as f32 / 8.0),
-                        daylight.map(|o| o as f32 / 8.0),
+                        "{iana:?} has different offsets from {first_iana:?}: standard {standard:?} vs {new_standard:?}, daylight {daylight:?} vs {new_daylight:?}",
                     )
                 }
             }
@@ -158,15 +148,18 @@ fn offsets_for_meta(
                 daylight = new_daylight;
             }
         } else {
-            first_zone = &m.map_zone.zone_type;
+            first_iana = iana;
             standard = Some(new_standard);
             daylight = new_daylight;
         }
     }
-    Some((standard?, daylight))
+    (standard.unwrap(), daylight)
 }
 
-fn offsets_for_iana(iana: &str, tzdb: &parse_zoneinfo::table::Table) -> Option<Offsets> {
+fn offsets_for_iana(
+    iana: &str,
+    tzdb: &parse_zoneinfo::table::Table,
+) -> (UtcOffset, Option<UtcOffset>) {
     use parse_zoneinfo::transitions::TableTransitions;
 
     let timespans = tzdb.timespans(iana).unwrap();
@@ -182,10 +175,12 @@ fn offsets_for_iana(iana: &str, tzdb: &parse_zoneinfo::table::Table) -> Option<O
         // Use the most recent DST offset, even if it's not used anymore
         .find(|ts| ts.dst_offset != 0);
 
-    Some((
-        (current.utc_offset / 450) as EightsOfHourOffset,
-        last_dst.map(|ts| ((ts.utc_offset + ts.dst_offset) / 450) as EightsOfHourOffset),
-    ))
+    (
+        UtcOffset::try_from_offset_seconds(current.utc_offset as i32).unwrap(),
+        last_dst.map(|ts| {
+            UtcOffset::try_from_offset_seconds((ts.utc_offset + ts.dst_offset) as i32).unwrap()
+        }),
+    )
 }
 
 impl From<CldrTimeZonesData<'_>> for TimeZoneFormatsV1<'static> {
@@ -430,7 +425,10 @@ macro_rules! long_short_impls {
                                 }),
                                 None => panic!("Cannot find short id of meta zone for {key:?}."),
                             })
-                            .flat_map(iterate_zone_format_for_meta_zone_id)
+                            .flat_map(|(z, os, zf)| {
+                                convert_cldr_zone_variant(zf.0, &z, os)
+                                    .map(move |(o, v)| (z, o.offset_eighths_of_hour(), v))
+                            })
                             .collect(),
                     },
                     overrides: data
@@ -493,7 +491,10 @@ macro_rules! long_short_impls {
                                     }
                                 })
                         })
-                        .flat_map(iterate_zone_format_for_time_zone_id)
+                        .flat_map(|(z, os, zf)| {
+                            convert_cldr_zone_variant(zf.0, &z, os)
+                                .map(move |(o, v)| (z, o.offset_eighths_of_hour(), v))
+                        })
                         .collect(),
                 }
             }
@@ -516,53 +517,28 @@ long_short_impls!(
 );
 
 fn convert_cldr_zone_variant(
-    cldr_zone_variant: &str,
-    offsets: Option<Offsets>,
-) -> Option<EightsOfHourOffset> {
-    match cldr_zone_variant {
-        "standard" => Some(offsets?.0),
-        "daylight" => offsets?.1,
-        _ => panic!("Unknown time-zone variant: {cldr_zone_variant}"),
+    kvs: BTreeMap<String, String>,
+    debug_name: &impl std::fmt::Debug,
+    (std_offset, mut dst_offset): (UtcOffset, Option<UtcOffset>),
+) -> impl Iterator<Item = (UtcOffset, String)> {
+    if dst_offset.is_none() && kvs.contains_key("daylight") {
+        log::warn!("{debug_name:?} has a DST display name, but the time zone has never used DST");
     }
-}
-
-fn iterate_zone_format_for_meta_zone_id(
-    pair: (MetazoneId, Option<Offsets>, ZoneFormat),
-) -> impl Iterator<Item = (MetazoneId, EightsOfHourOffset, String)> {
-    let (key1, mut offsets, zf) = pair;
-    if let Some(offsets) = offsets.as_mut() {
-        if offsets.1.is_none() && zf.0.contains_key("daylight") {
-            log::warn!("{key1:?} has a DST display name, but the time zone has never used DST");
-        }
-        if offsets.1 == Some(offsets.0) {
-            log::warn!("{key1:?}'s last historical DST offset is the same as its current standard offset, so it cannot be stored");
-            offsets.1 = None;
-        }
+    if dst_offset.is_some() && !kvs.contains_key("daylight") {
+        log::warn!("{debug_name:?} has used DST ({}), in the past (or still is), but doesn't have a DST display name", dst_offset.unwrap().offset_seconds() as f32 / 3600.0);
     }
-    zf.0.into_iter()
-        .filter(|(key, _)| !key.eq("generic"))
-        .filter_map(move |(key, value)| {
-            Some((key1, convert_cldr_zone_variant(&key, offsets)?, value))
-        })
-}
-
-fn iterate_zone_format_for_time_zone_id(
-    pair: (TimeZoneBcp47Id, Option<Offsets>, ZoneFormat),
-) -> impl Iterator<Item = (TimeZoneBcp47Id, EightsOfHourOffset, String)> {
-    let (key1, mut offsets, zf) = pair;
-    if let Some(offsets) = offsets.as_mut() {
-        if offsets.1.is_none() && zf.0.contains_key("daylight") {
-            log::warn!("{key1:?} has a DST display name, but the time zone has never used DST");
-        }
-        if offsets.1 == Some(offsets.0) {
-            log::warn!("{key1:?}'s last historical DST offset is the same as its current standard offset, so it cannot be stored");
-            offsets.1 = None;
-        }
+    if dst_offset == Some(std_offset) && kvs.contains_key("daylight") {
+        log::warn!("{debug_name:?}'s last historical DST offset is the same as its current standard offset ({}), so it cannot be stored", std_offset.offset_seconds() as f32 / 3600.0);
+        dst_offset = None;
     }
-    zf.0.into_iter()
-        .filter(|(key, _)| !key.eq("generic"))
-        .filter_map(move |(key, value)| {
-            Some((key1, convert_cldr_zone_variant(&key, offsets)?, value))
+    kvs.into_iter()
+        .filter(|(variant, _)| variant != "generic")
+        .filter_map(move |(variant, value)| {
+            Some(match variant.as_str() {
+                "standard" => (std_offset, value),
+                "daylight" => (dst_offset?, value),
+                _ => panic!("Unknown time-zone variant: {variant}"),
+            })
         })
 }
 
