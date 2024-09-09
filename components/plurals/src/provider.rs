@@ -501,7 +501,7 @@ fn plural_elements_niche() {
 }
 
 /// Four bits of metadata that are stored and retrieved with the plural elements.
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[repr(transparent)]
 pub struct FourBitMetadata(u8);
@@ -527,52 +527,96 @@ impl FourBitMetadata {
     }
 }
 
-/// Representation: `ppppmmmm`
-/// - `pppp` = plural category (including explicit value)
-/// - `mmmm` = [`FourBitMetadata`]
+/// A pair of [`PluralElementsKeysV1`] and [`FourBitMetadata`].
+#[derive(Debug, Copy, Clone)]
+struct PluralCategoryAndMetadata {
+    pub plural_category: PluralElementsKeysV1,
+    pub metadata: FourBitMetadata,
+}
+
+struct PluralCategoryAndMetadataUnpacked {
+    pub plural_category_byte: u8,
+    pub metadata_byte: u8,
+}
+
+/// Bitpacked struct for [`PluralCategoryAndMetadata`].
 #[derive(Debug, Copy, Clone)]
 #[repr(transparent)]
-struct PluralCategoryAndMetadata(
-    // Invariant: representation is as stated in the struct docs
+struct PluralCategoryAndMetadataPackedULE(
+    /// Representation: `ppppmmmm`
+    /// - `pppp` = [`PluralElementsKeysV1`]
+    /// - `mmmm` = [`FourBitMetadata`]
+    ///
+    /// The valid values are determined by the respective types.
     u8,
 );
 
-impl PluralCategoryAndMetadata {
-    fn new(key: PluralElementsKeysV1, metadata: FourBitMetadata) -> Self {
-        Self(((key as u8) << 4) | metadata.0)
-    }
-    fn get(self) -> (PluralElementsKeysV1, FourBitMetadata) {
-        let plural_category_byte = (self.0 & 0xF0) >> 4;
-        // Safety: by invariant
-        let plural_category =
-            unsafe { PluralElementsKeysV1::new_from_u8(plural_category_byte).unwrap_unchecked() };
-        let metadata = FourBitMetadata(self.0 & 0x0F);
-        (plural_category, metadata)
+impl From<PluralCategoryAndMetadata> for PluralCategoryAndMetadataPackedULE {
+    fn from(value: PluralCategoryAndMetadata) -> Self {
+        Self(((value.plural_category as u8) << 4) | value.metadata.get())
     }
 }
 
-unsafe impl ULE for PluralCategoryAndMetadata {
+// # Safety
+//
+// Safety checklist for `ULE`:
+//
+// 1. The type is a single byte, not padding.
+// 2. The type is a single byte, so it has align(1).
+// 3. `validate_byte_slice` checks the validity of every byte.
+// 4. `validate_byte_slice` checks the validity of every byte.
+// 5. All other methods are be left with their default impl.
+// 6. The represented enums implement Eq by byte equality.
+unsafe impl ULE for PluralCategoryAndMetadataPackedULE {
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ule::UleError> {
         bytes
             .iter()
             .all(|byte| {
-                let plural_category_byte = (byte & 0xF0) >> 4;
-                PluralElementsKeysV1::new_from_u8(plural_category_byte).is_some()
+                let unpacked = Self::unpack_byte(*byte);
+                PluralCategoryAndMetadata::try_from_unpacked(unpacked).is_some()
             })
             .then_some(())
             .ok_or_else(UleError::parse::<Self>)
     }
 }
 
+impl PluralCategoryAndMetadataPackedULE {
+    fn unpack_byte(byte: u8) -> PluralCategoryAndMetadataUnpacked {
+        let plural_category_byte = (byte & 0xF0) >> 4;
+        let metadata_byte = byte & 0x0F;
+        PluralCategoryAndMetadataUnpacked {
+            plural_category_byte,
+            metadata_byte,
+        }
+    }
+
+    fn get(self) -> PluralCategoryAndMetadata {
+        let unpacked = Self::unpack_byte(self.0);
+        // Safety: by invariant
+        unsafe { PluralCategoryAndMetadata::try_from_unpacked(unpacked).unwrap_unchecked() }
+    }
+}
+
+impl PluralCategoryAndMetadata {
+    fn try_from_unpacked(unpacked: PluralCategoryAndMetadataUnpacked) -> Option<Self> {
+        let plural_category = PluralElementsKeysV1::new_from_u8(unpacked.plural_category_byte)?;
+        let metadata = FourBitMetadata::try_from_byte(unpacked.metadata_byte)?;
+        Some(Self {
+            plural_category,
+            metadata,
+        })
+    }
+}
+
 impl AsULE for PluralCategoryAndMetadata {
-    type ULE = Self;
+    type ULE = PluralCategoryAndMetadataPackedULE;
     #[inline]
     fn to_unaligned(self) -> Self::ULE {
-        self
+        PluralCategoryAndMetadataPackedULE::from(self)
     }
     #[inline]
     fn from_unaligned(unaligned: Self::ULE) -> Self {
-        unaligned
+        unaligned.get()
     }
 }
 
@@ -632,8 +676,11 @@ fn get_special<V: VarULE + ?Sized>(
 ) -> Option<(FourBitMetadata, &V)> {
     data.iter()
         .filter_map(|ule| {
-            let (current_key, metadata) = ule.sized.get();
-            (current_key == key).then_some((metadata, &ule.variable))
+            let PluralCategoryAndMetadata {
+                plural_category,
+                metadata,
+            } = ule.sized.get();
+            (plural_category == key).then_some((metadata, &ule.variable))
         })
         .next()
 }
@@ -778,9 +825,12 @@ where
         let mut elements = PluralElements::new(parts.default);
         if let Some(specials) = parts.specials {
             for special in specials.iter() {
-                let (key, metadata) = special.sized.get();
+                let PluralCategoryAndMetadata {
+                    plural_category,
+                    metadata,
+                } = special.sized.get();
                 let value = (metadata, &special.variable);
-                match key {
+                match plural_category {
                     PluralElementsKeysV1::Zero => elements.zero = Some(value),
                     PluralElementsKeysV1::One => elements.one = Some(value),
                     PluralElementsKeysV1::Two => elements.two = Some(value),
@@ -806,8 +856,11 @@ where
     {
         let specials = self
             .get_specials_tuple_vec()
-            .map(|(key, (metadata, t))| VarTuple {
-                sized: PluralCategoryAndMetadata::new(key, *metadata),
+            .map(|(plural_category, (metadata, t))| VarTuple {
+                sized: PluralCategoryAndMetadata {
+                    plural_category,
+                    metadata: *metadata,
+                },
                 variable: t,
             })
             .collect::<Vec<_>>();
