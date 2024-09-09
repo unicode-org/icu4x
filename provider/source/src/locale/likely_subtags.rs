@@ -291,7 +291,9 @@ pub(crate) fn transform<'x>(
             }
         } else if let Some(scr) = entry.0.script {
             if let Some(region) = entry.0.region {
-                with_diff!((language, None, None) => script_region.insert((scr.into_tinystr(), region.into_tinystr()), language));
+                // Some of the target regions here are not equal to the source, such as und-Latn-001 -> en-Latn-US.
+                // However in the `maximize` method we do not replace tags, so we don't need to store the region.
+                with_diff!((language, None, _) => script_region.insert((scr.into_tinystr(), region.into_tinystr()), language));
             } else {
                 with_diff!((language, None, Some(region)) => script.insert(scr.into_tinystr(), (language, region)));
             }

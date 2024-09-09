@@ -2,9 +2,6 @@
   "main": {
     "en-001": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "en",
         "territory": "001"
       },
@@ -1655,10 +1652,15 @@
             "displayName-count-one": "Zimbabwean dollar (1980–2008)",
             "displayName-count-other": "Zimbabwean dollars (1980–2008)"
           },
+          "ZWG": {
+            "displayName": "Zimbabwean Gold",
+            "displayName-count-one": "Zimbabwean gold",
+            "displayName-count-other": "Zimbabwean gold"
+          },
           "ZWL": {
-            "displayName": "Zimbabwean Dollar (2009)",
-            "displayName-count-one": "Zimbabwean dollar (2009)",
-            "displayName-count-other": "Zimbabwean dollars (2009)"
+            "displayName": "Zimbabwean Dollar (2009–2024)",
+            "displayName-count-one": "Zimbabwean dollar (2009–2024)",
+            "displayName-count-other": "Zimbabwean dollars (2009–2024)"
           },
           "ZWR": {
             "displayName": "Zimbabwean Dollar (2008)",

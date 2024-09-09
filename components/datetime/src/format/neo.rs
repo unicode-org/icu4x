@@ -2676,7 +2676,7 @@ mod tests {
                 pattern: "<EEEE>",
                 field_symbol: fields::Weekday::Format,
                 field_length: FieldLength::Wide,
-                expected: "<пʼятницю>",
+                expected: "<пʼятниця>",
             },
             TestCase {
                 pattern: "<EEEEE>",
@@ -2701,7 +2701,7 @@ mod tests {
                 pattern: "<eeee>",
                 field_symbol: fields::Weekday::Format,
                 field_length: FieldLength::Wide,
-                expected: "<пʼятницю>",
+                expected: "<пʼятниця>",
             },
             TestCase {
                 pattern: "<eeeee>",

@@ -4,7 +4,7 @@
 /// `icu`'s `_unstable` constructors.
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
-/// * 130B for the lookup data structure (25 data identifiers)
+/// * 133B for the lookup data structure (26 data identifiers)
 /// * 524B[^1] for the actual data (10 unique structs)
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
@@ -17,7 +17,7 @@ macro_rules! __impl_plural_ranges_v1_marker {
         #[clippy::msrv = "1.71.1"]
         impl $provider {
             const DATA_PLURAL_RANGES_V1_MARKER: icu_provider_baked::zerotrie::Data<icu::plurals::provider::PluralRangesV1Marker> = icu_provider_baked::zerotrie::Data {
-                trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xD0abcefhiklmnoprsu\x06\x08\n\x16\x1C\x1E \"$&(*-/;\xC2fr\x01\x80\x81g\x80a\x80\xC4nstu\x01\x02\x03\x80\x80\x80\x80\xC2ai\x01\x82\x80e\x83a\x80a\x84v\x85k\x86o\x80r\x82cm\x80o\x87\xC4dilv\x01\x02\x03\x82\x80\x88\x80\xC2nr\x02d\x89\x80" },
+                trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xD0abcefhiklmnoprsu\t\x0B\r\x19\x1F!#%')+-02>\xC3fkr\x01\x02\x80\x81\x82g\x80a\x80\xC4nstu\x01\x02\x03\x80\x80\x80\x80\xC2ai\x01\x81\x80e\x83a\x80a\x84v\x85k\x86o\x80r\x81cm\x80o\x87\xC4dilv\x01\x02\x03\x81\x80\x88\x80\xC2nr\x02d\x89\x80" },
                 values: &[
                     icu::plurals::provider::PluralRangesV1 {
                         ranges: unsafe {
@@ -28,13 +28,13 @@ macro_rules! __impl_plural_ranges_v1_marker {
                     icu::plurals::provider::PluralRangesV1 {
                         ranges: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\x03\x12\x13#") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\x01\x01\0") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\"") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") })
                         },
                     },
                     icu::plurals::provider::PluralRangesV1 {
                         ranges: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\"") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\x03\x12\x13#") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\x01\x01\0") })
                         },
                     },
                     icu::plurals::provider::PluralRangesV1 {

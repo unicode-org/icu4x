@@ -2,9 +2,6 @@
   "main": {
     "es": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "es"
       },
       "numbers": {
@@ -23,20 +20,20 @@
             "displayName": "afgani (1927–2002)"
           },
           "AFN": {
-            "displayName": "afgani",
-            "displayName-count-one": "afgani",
-            "displayName-count-other": "afganis",
+            "displayName": "afgani afgano",
+            "displayName-count-one": "afgani afgano",
+            "displayName-count-other": "afganis afganos",
             "symbol-alt-narrow": "؋"
           },
           "ALL": {
-            "displayName": "lek",
-            "displayName-count-one": "lek",
-            "displayName-count-other": "leks"
+            "displayName": "lek albanés",
+            "displayName-count-one": "lek albanés",
+            "displayName-count-other": "leks albaneses"
           },
           "AMD": {
-            "displayName": "dram",
-            "displayName-count-one": "dram",
-            "displayName-count-other": "drams",
+            "displayName": "dram armenio",
+            "displayName-count-one": "dram armenio",
+            "displayName-count-other": "drams armenios",
             "symbol-alt-narrow": "֏"
           },
           "ANG": {
@@ -45,9 +42,9 @@
             "displayName-count-other": "florines antillanos"
           },
           "AOA": {
-            "displayName": "kuanza",
-            "displayName-count-one": "kuanza",
-            "displayName-count-other": "kuanzas",
+            "displayName": "kuanza angoleño",
+            "displayName-count-one": "kuanza angoleño",
+            "displayName-count-other": "kuanzas angoleños",
             "symbol-alt-narrow": "Kz"
           },
           "AOK": {
@@ -119,9 +116,9 @@
             "symbol-alt-narrow": "$"
           },
           "BDT": {
-            "displayName": "taka",
-            "displayName-count-one": "taka",
-            "displayName-count-other": "takas",
+            "displayName": "taka bangladesí",
+            "displayName-count-one": "taka bangladesí",
+            "displayName-count-other": "takas bangladesíes",
             "symbol-alt-narrow": "৳"
           },
           "BEC": {
@@ -226,9 +223,9 @@
             "symbol-alt-narrow": "$"
           },
           "BTN": {
-            "displayName": "gultrum",
-            "displayName-count-one": "gultrum",
-            "displayName-count-other": "gultrums"
+            "displayName": "gultrum butanés",
+            "displayName-count-one": "gultrum butanés",
+            "displayName-count-other": "gultrums butaneses"
           },
           "BUK": {
             "displayName": "kyat birmano",
@@ -236,9 +233,9 @@
             "displayName-count-other": "kyat birmanos"
           },
           "BWP": {
-            "displayName": "pula",
-            "displayName-count-one": "pula",
-            "displayName-count-other": "pulas",
+            "displayName": "pula botsuano",
+            "displayName-count-one": "pula botsuano",
+            "displayName-count-other": "pulas botsuanos",
             "symbol-alt-narrow": "P"
           },
           "BYB": {
@@ -307,9 +304,9 @@
             "displayName-count-other": "yuanes chinos (extracontinentales)"
           },
           "CNY": {
-            "displayName": "yuan",
-            "displayName-count-one": "yuan",
-            "displayName-count-other": "yuanes",
+            "displayName": "yuan renminbi",
+            "displayName-count-one": "yuan renminbi",
+            "displayName-count-other": "yuanes renminbi",
             "symbol": "CNY",
             "symbol-alt-narrow": "¥"
           },
@@ -422,9 +419,9 @@
             "symbol-alt-narrow": "EGP"
           },
           "ERN": {
-            "displayName": "nakfa",
-            "displayName-count-one": "nakfa",
-            "displayName-count-other": "nakfas"
+            "displayName": "nakfa eritreo",
+            "displayName-count-one": "nakfa eritreo",
+            "displayName-count-other": "nakfas eritreos"
           },
           "ESA": {
             "displayName": "peseta española (cuenta A)",
@@ -444,9 +441,9 @@
             "symbol-alt-narrow": "₧"
           },
           "ETB": {
-            "displayName": "bir",
-            "displayName-count-one": "bir",
-            "displayName-count-other": "bires"
+            "displayName": "bir etíope",
+            "displayName-count-one": "bir etíope",
+            "displayName-count-other": "bires etíopes"
           },
           "EUR": {
             "displayName": "euro",
@@ -488,18 +485,18 @@
             "displayName": "kupon larit georgiano"
           },
           "GEL": {
-            "displayName": "lari",
-            "displayName-count-one": "lari",
-            "displayName-count-other": "laris",
+            "displayName": "lari georgiano",
+            "displayName-count-one": "lari georgiano",
+            "displayName-count-other": "laris georgianos",
             "symbol-alt-narrow": "₾"
           },
           "GHC": {
             "displayName": "cedi ghanés (1979–2007)"
           },
           "GHS": {
-            "displayName": "cedi",
-            "displayName-count-one": "cedi",
-            "displayName-count-other": "cedis",
+            "displayName": "cedi ghanés",
+            "displayName-count-one": "cedi ghanés",
+            "displayName-count-other": "cedis ghaneses",
             "symbol-alt-narrow": "GH₵"
           },
           "GIP": {
@@ -509,9 +506,9 @@
             "symbol-alt-narrow": "£"
           },
           "GMD": {
-            "displayName": "dalasi",
-            "displayName-count-one": "dalasi",
-            "displayName-count-other": "dalasis"
+            "displayName": "dalasi gambiano",
+            "displayName-count-one": "dalasi gambiano",
+            "displayName-count-other": "dalasis gambianos"
           },
           "GNF": {
             "displayName": "franco guineano",
@@ -569,9 +566,9 @@
             "displayName-count-other": "dinares croatas"
           },
           "HRK": {
-            "displayName": "kuna",
-            "displayName-count-one": "kuna",
-            "displayName-count-other": "kunas",
+            "displayName": "kuna croata",
+            "displayName-count-one": "kuna croata",
+            "displayName-count-other": "kunas croatas",
             "symbol-alt-narrow": "kn"
           },
           "HTG": {
@@ -648,9 +645,9 @@
             "displayName-count-other": "dinares jordanos"
           },
           "JPY": {
-            "displayName": "yen",
-            "displayName-count-one": "yen",
-            "displayName-count-other": "yenes",
+            "displayName": "yen japonés",
+            "displayName-count-one": "yen japonés",
+            "displayName-count-other": "yenes japoneses",
             "symbol": "JPY",
             "symbol-alt-narrow": "¥"
           },
@@ -660,15 +657,15 @@
             "displayName-count-other": "chelines kenianos"
           },
           "KGS": {
-            "displayName": "som",
-            "displayName-count-one": "som",
-            "displayName-count-other": "soms",
+            "displayName": "som kirguís",
+            "displayName-count-one": "som kirguís",
+            "displayName-count-other": "soms kirguises",
             "symbol-alt-narrow": "⃀"
           },
           "KHR": {
-            "displayName": "riel",
-            "displayName-count-one": "riel",
-            "displayName-count-other": "rieles",
+            "displayName": "riel camboyano",
+            "displayName-count-one": "riel camboyano",
+            "displayName-count-other": "rieles camboyanos",
             "symbol-alt-narrow": "៛"
           },
           "KMF": {
@@ -708,9 +705,9 @@
             "symbol-alt-narrow": "₸"
           },
           "LAK": {
-            "displayName": "kip",
-            "displayName-count-one": "kip",
-            "displayName-count-other": "kips",
+            "displayName": "kip laosiano",
+            "displayName-count-one": "kip laosiano",
+            "displayName-count-other": "kips laosianos",
             "symbol-alt-narrow": "₭"
           },
           "LBP": {
@@ -794,9 +791,9 @@
             "displayName-count-other": "leus moldavos"
           },
           "MGA": {
-            "displayName": "ariari",
-            "displayName-count-one": "ariari",
-            "displayName-count-other": "ariaris",
+            "displayName": "ariari malgache",
+            "displayName-count-one": "ariari malgache",
+            "displayName-count-other": "ariaris malgaches",
             "symbol-alt-narrow": "Ar"
           },
           "MGF": {
@@ -811,21 +808,21 @@
             "displayName": "franco malí"
           },
           "MMK": {
-            "displayName": "kiat",
-            "displayName-count-one": "kiat",
-            "displayName-count-other": "kiats",
+            "displayName": "kiat de Myanmar",
+            "displayName-count-one": "kiat de Myanmar",
+            "displayName-count-other": "kiats de Myanmar",
             "symbol-alt-narrow": "K"
           },
           "MNT": {
-            "displayName": "tugrik",
-            "displayName-count-one": "tugrik",
-            "displayName-count-other": "tugriks",
+            "displayName": "tugrik mongol",
+            "displayName-count-one": "tugrik mongol",
+            "displayName-count-other": "tugriks mongoles",
             "symbol-alt-narrow": "₮"
           },
           "MOP": {
-            "displayName": "pataca de Macao",
-            "displayName-count-one": "pataca de Macao",
-            "displayName-count-other": "patacas de Macao"
+            "displayName": "pataca macaense",
+            "displayName-count-one": "pataca macaense",
+            "displayName-count-other": "patacas macaenses"
           },
           "MRO": {
             "displayName": "uguiya (1973–2017)",
@@ -833,9 +830,9 @@
             "displayName-count-other": "uguiyas (1973–2017)"
           },
           "MRU": {
-            "displayName": "uguiya",
-            "displayName-count-one": "uguiya",
-            "displayName-count-other": "uguiyas"
+            "displayName": "uguiya mauritano",
+            "displayName-count-one": "uguiya mauritano",
+            "displayName-count-other": "uguiyas mauritanos"
           },
           "MTL": {
             "displayName": "lira maltesa",
@@ -854,9 +851,9 @@
             "symbol-alt-narrow": "Rs"
           },
           "MVR": {
-            "displayName": "rufiya",
-            "displayName-count-one": "rufiya",
-            "displayName-count-other": "rufiyas"
+            "displayName": "rufiya maldiva",
+            "displayName-count-one": "rufiya maldiva",
+            "displayName-count-other": "rufiyas maldivas"
           },
           "MWK": {
             "displayName": "kuacha malauí",
@@ -881,9 +878,9 @@
             "displayName-count-other": "unidades de inversión (UDI) mexicanas"
           },
           "MYR": {
-            "displayName": "ringit",
-            "displayName-count-one": "ringit",
-            "displayName-count-other": "ringits",
+            "displayName": "ringit malasio",
+            "displayName-count-one": "ringit malasio",
+            "displayName-count-other": "ringits malasios",
             "symbol-alt-narrow": "RM"
           },
           "MZE": {
@@ -895,9 +892,9 @@
             "displayName": "antiguo metical mozambiqueño"
           },
           "MZN": {
-            "displayName": "metical",
-            "displayName-count-one": "metical",
-            "displayName-count-other": "meticales"
+            "displayName": "metical mozambiqueño",
+            "displayName-count-one": "metical mozambiqueño",
+            "displayName-count-other": "meticales mozambiqueños"
           },
           "NAD": {
             "displayName": "dólar namibio",
@@ -906,9 +903,9 @@
             "symbol-alt-narrow": "$"
           },
           "NGN": {
-            "displayName": "naira",
-            "displayName-count-one": "naira",
-            "displayName-count-other": "nairas",
+            "displayName": "naira nigeriano",
+            "displayName-count-one": "naira nigeriano",
+            "displayName-count-other": "nairas nigerianos",
             "symbol-alt-narrow": "₦"
           },
           "NIC": {
@@ -972,9 +969,9 @@
             "displayName-count-other": "soles peruanos (1863–1965)"
           },
           "PGK": {
-            "displayName": "kina",
-            "displayName-count-one": "kina",
-            "displayName-count-other": "kinas"
+            "displayName": "kina papú",
+            "displayName-count-one": "kina papú",
+            "displayName-count-other": "kinas papúes"
           },
           "PHP": {
             "displayName": "peso filipino",
@@ -990,9 +987,9 @@
             "symbol-alt-narrow": "Rs"
           },
           "PLN": {
-            "displayName": "esloti",
-            "displayName-count-one": "esloti",
-            "displayName-count-other": "eslotis",
+            "displayName": "esloti polaco",
+            "displayName-count-one": "esloti polaco",
+            "displayName-count-other": "eslotis polacos",
             "symbol-alt-narrow": "zł"
           },
           "PLZ": {
@@ -1112,14 +1109,14 @@
             "displayName-count-other": "coronas eslovacas"
           },
           "SLE": {
-            "displayName": "leona",
-            "displayName-count-one": "leona",
-            "displayName-count-other": "leonas"
+            "displayName": "leona sierraleonesa",
+            "displayName-count-one": "leona sierraleonesa",
+            "displayName-count-other": "leonas sierraleonesas"
           },
           "SLL": {
-            "displayName": "leona (1964—2022)",
-            "displayName-count-one": "leona (1964—2022)",
-            "displayName-count-other": "leonas (1964—2022)"
+            "displayName": "leona sierraleonesa (1964–2022)",
+            "displayName-count-one": "leona sierraleonesa (1964–2022)",
+            "displayName-count-other": "leonas sierraleonesas (1964–2022)"
           },
           "SOS": {
             "displayName": "chelín somalí",
@@ -1147,9 +1144,9 @@
             "displayName-count-other": "dobras (1977–2017)"
           },
           "STN": {
-            "displayName": "dobra",
-            "displayName-count-one": "dobra",
-            "displayName-count-other": "dobras",
+            "displayName": "dobra santotomense",
+            "displayName-count-one": "dobra santotomense",
+            "displayName-count-other": "dobras santotomenses",
             "symbol-alt-narrow": "Db"
           },
           "SUR": {
@@ -1169,14 +1166,14 @@
             "symbol-alt-narrow": "£"
           },
           "SZL": {
-            "displayName": "lilangeni",
-            "displayName-count-one": "lilangeni",
-            "displayName-count-other": "lilangenis"
+            "displayName": "lilangeni esuatiní",
+            "displayName-count-one": "lilangeni esuatiní",
+            "displayName-count-other": "lilangenis esuatiníes"
           },
           "THB": {
-            "displayName": "bat",
-            "displayName-count-one": "bat",
-            "displayName-count-other": "bats",
+            "displayName": "bat tailandés",
+            "displayName-count-one": "bat tailandés",
+            "displayName-count-other": "bats tailandeses",
             "symbol": "฿",
             "symbol-alt-narrow": "฿"
           },
@@ -1204,9 +1201,9 @@
             "displayName-count-other": "dinares tunecinos"
           },
           "TOP": {
-            "displayName": "paanga",
-            "displayName-count-one": "paanga",
-            "displayName-count-other": "paangas",
+            "displayName": "paanga tongano",
+            "displayName-count-one": "paanga tongano",
+            "displayName-count-other": "paangas tonganos",
             "symbol-alt-narrow": "T$"
           },
           "TPE": {
@@ -1243,9 +1240,9 @@
             "displayName-count-other": "chelines tanzanos"
           },
           "UAH": {
-            "displayName": "grivna",
-            "displayName-count-one": "grivna",
-            "displayName-count-other": "grivnas",
+            "displayName": "grivna ucraniana",
+            "displayName-count-one": "grivna ucraniana",
+            "displayName-count-other": "grivnas ucranianas",
             "symbol-alt-narrow": "₴"
           },
           "UAK": {
@@ -1300,9 +1297,9 @@
             "displayName-count-other": "unidades previsionales uruguayos"
           },
           "UZS": {
-            "displayName": "sum",
-            "displayName-count-one": "sum",
-            "displayName-count-other": "sums"
+            "displayName": "sum uzbeko",
+            "displayName-count-one": "sum uzbeko",
+            "displayName-count-other": "sums uzbekos"
           },
           "VEB": {
             "displayName": "bolívar venezolano (1871–2008)",
@@ -1321,21 +1318,21 @@
             "displayName-count-other": "bolívares venezolanos"
           },
           "VND": {
-            "displayName": "dong",
-            "displayName-count-one": "dong",
-            "displayName-count-other": "dongs",
+            "displayName": "dong vietnamita",
+            "displayName-count-one": "dong vietnamita",
+            "displayName-count-other": "dongs vietnamitas",
             "symbol": "₫",
             "symbol-alt-narrow": "₫"
           },
           "VUV": {
-            "displayName": "vatu",
-            "displayName-count-one": "vatu",
-            "displayName-count-other": "vatus"
+            "displayName": "vatu vanuatense",
+            "displayName-count-one": "vatu vanuatense",
+            "displayName-count-other": "vatus vanuatenses"
           },
           "WST": {
-            "displayName": "tala",
-            "displayName-count-one": "tala",
-            "displayName-count-other": "talas"
+            "displayName": "tala samoano",
+            "displayName-count-one": "tala samoano",
+            "displayName-count-other": "talas samoanos"
           },
           "XAF": {
             "displayName": "franco CFA de África Central",
@@ -1453,9 +1450,9 @@
             "displayName": "rand sudafricano (financiero)"
           },
           "ZAR": {
-            "displayName": "rand",
-            "displayName-count-one": "rand",
-            "displayName-count-other": "rands",
+            "displayName": "rand sudafricano",
+            "displayName-count-one": "rand sudafricano",
+            "displayName-count-other": "rands sudafricanos",
             "symbol-alt-narrow": "R"
           },
           "ZMK": {

@@ -65,14 +65,14 @@
       "84": "Daylight Time sa Gitnang Australya"
     },
     "aucw": {
-      "70": "Standard Time ng Gitnang Kanluran ng Australya"
+      "70": "Standard Time ng Gitnang Kanluran ng Australia"
     },
     "auea": {
-      "80": "Standard na Oras sa Silangang Australya",
-      "88": "Daylight Time sa Silangang Australya"
+      "80": "Standard na Oras sa Silangang Australia",
+      "88": "Daylight Time sa Silangang Australia"
     },
     "auwe": {
-      "64": "Standard na Oras sa Kanlurang Australya"
+      "64": "Standard na Oras sa Kanlurang Australia"
     },
     "azer": {
       "32": "Standard na Oras sa Azerbaijan"
@@ -249,6 +249,9 @@
     },
     "kawe": {
       "40": "Oras sa Kanlurang Kazakhstan"
+    },
+    "kaza": {
+      "40": "Oras ng Kazakhstan"
     },
     "kore": {
       "72": "Standard na Oras sa Korea"

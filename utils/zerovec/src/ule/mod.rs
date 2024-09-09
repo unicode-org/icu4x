@@ -22,6 +22,7 @@ mod plain;
 mod slices;
 
 pub mod tuple;
+pub mod vartuple;
 pub use chars::CharULE;
 pub use encode::{encode_varule_to_box, EncodeAsVarULE};
 pub use multi::MultiFieldsULE;

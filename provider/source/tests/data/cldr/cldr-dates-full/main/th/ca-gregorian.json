@@ -2,9 +2,6 @@
   "main": {
     "th": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "th"
       },
       "dates": {
@@ -517,7 +514,7 @@
                   "M": "MMM – MMM"
                 },
                 "MMMd": {
-                  "d": "MMM d–d",
+                  "d": "d–d MMM",
                   "M": "d MMM – d MMM"
                 },
                 "MMMEd": {
