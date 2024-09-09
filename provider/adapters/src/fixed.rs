@@ -19,12 +19,12 @@ use yoke::Yokeable;
 /// ```
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
-/// use icu_provider_adapters::any_payload::FixedProvider;
+/// use icu_provider_adapters::fixed::FixedProvider;
 /// use std::borrow::Cow;
 /// use writeable::assert_writeable_eq;
 ///
 /// let provider =
-///     FixedProvider::from_static::<HelloWorldV1Marker>(&HelloWorldV1 {
+///     FixedProvider::<HelloWorldV1Marker>::from_static(&HelloWorldV1 {
 ///         message: Cow::Borrowed("custom hello world"),
 ///     });
 ///
