@@ -719,6 +719,7 @@ where
         let metadata = FourBitMetadata(unpacked_bytes.lead_byte & 0x0F);
         // Safety: the bytes are valid by invariant
         let default = unsafe { V::from_byte_slice_unchecked(unpacked_bytes.v_bytes) };
+        #[allow(clippy::manual_map)] // more explicit with the unsafe code
         let specials = if let Some(specials_bytes) = unpacked_bytes.specials_bytes {
             // Safety: the bytes are valid by invariant
             Some(unsafe {
@@ -857,8 +858,9 @@ where
             let (second_byte, remainder) = remainder.split_first_mut().unwrap();
             *second_byte = match u8::try_from(builder.default.1.encode_var_ule_len()) {
                 Ok(x) => x,
+                // TODO: Inform the user more nicely that their data doesn't fit in our packed structure
+                #[allow(clippy::panic)] // for now okay since it is mostly only during datagen
                 Err(_) => {
-                    // TODO: Inform the user more nicely that their data doesn't fit in our packed structure
                     panic!("other value too long to be packed: {self:?}")
                 }
             };
