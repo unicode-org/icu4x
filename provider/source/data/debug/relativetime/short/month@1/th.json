@@ -6,14 +6,18 @@
   },
   "past": {
     "strings": {
-      "specials": [],
-      "other": "\u0001 เดือนที่แล้ว"
+      "other": [
+        0,
+        "\u0001 เดือนที่แล้ว"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [],
-      "other": "\bใน  เดือน"
+      "other": [
+        0,
+        "\bใน  เดือน"
+      ]
     }
   }
 }

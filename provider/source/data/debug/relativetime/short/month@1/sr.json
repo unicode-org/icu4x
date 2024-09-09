@@ -6,14 +6,18 @@
   },
   "past": {
     "strings": {
-      "specials": [],
-      "other": "\bпре  мес."
+      "other": [
+        0,
+        "\bпре  мес."
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [],
-      "other": "\u0006за  мес."
+      "other": [
+        0,
+        "\u0006за  мес."
+      ]
     }
   }
 }

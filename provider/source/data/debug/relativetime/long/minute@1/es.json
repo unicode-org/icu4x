@@ -4,24 +4,26 @@
   },
   "past": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\u0006hace  minuto"
-        ]
+      "one": [
+        0,
+        "\u0006hace  minuto"
       ],
-      "other": "\u0006hace  minutos"
+      "other": [
+        0,
+        "\u0006hace  minutos"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\u000bdentro de  minuto"
-        ]
+      "one": [
+        0,
+        "\u000bdentro de  minuto"
       ],
-      "other": "\u000bdentro de  minutos"
+      "other": [
+        0,
+        "\u000bdentro de  minutos"
+      ]
     }
   }
 }

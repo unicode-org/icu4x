@@ -8,14 +8,18 @@
   },
   "past": {
     "strings": {
-      "specials": [],
-      "other": "\u0001 дн. назад"
+      "other": [
+        0,
+        "\u0001 дн. назад"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [],
-      "other": "\fчерез  дн."
+      "other": [
+        0,
+        "\fчерез  дн."
+      ]
     }
   }
 }

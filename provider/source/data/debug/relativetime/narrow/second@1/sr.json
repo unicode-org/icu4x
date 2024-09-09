@@ -4,14 +4,18 @@
   },
   "past": {
     "strings": {
-      "specials": [],
-      "other": "\bпре  с."
+      "other": [
+        0,
+        "\bпре  с."
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [],
-      "other": "\u0006за  с."
+      "other": [
+        0,
+        "\u0006за  с."
+      ]
     }
   }
 }

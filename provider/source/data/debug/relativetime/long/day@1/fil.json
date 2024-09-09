@@ -8,14 +8,18 @@
   },
   "past": {
     "strings": {
-      "specials": [],
-      "other": "\u0001 araw ang nakalipas"
+      "other": [
+        0,
+        "\u0001 araw ang nakalipas"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [],
-      "other": "\u0004sa  araw"
+      "other": [
+        0,
+        "\u0004sa  araw"
+      ]
     }
   }
 }

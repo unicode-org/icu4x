@@ -6,14 +6,18 @@
   },
   "past": {
     "strings": {
-      "specials": [],
-      "other": "\u0001 кв. назад"
+      "other": [
+        0,
+        "\u0001 кв. назад"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [],
-      "other": "\fчерез  кв."
+      "other": [
+        0,
+        "\fчерез  кв."
+      ]
     }
   }
 }

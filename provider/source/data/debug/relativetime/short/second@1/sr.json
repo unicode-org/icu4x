@@ -4,14 +4,18 @@
   },
   "past": {
     "strings": {
-      "specials": [],
-      "other": "\bпре  сек."
+      "other": [
+        0,
+        "\bпре  сек."
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [],
-      "other": "\u0006за  сек."
+      "other": [
+        0,
+        "\u0006за  сек."
+      ]
     }
   }
 }

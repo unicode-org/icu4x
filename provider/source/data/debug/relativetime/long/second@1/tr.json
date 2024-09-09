@@ -4,14 +4,18 @@
   },
   "past": {
     "strings": {
-      "specials": [],
-      "other": "\u0001 saniye önce"
+      "other": [
+        0,
+        "\u0001 saniye önce"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [],
-      "other": "\u0001 saniye sonra"
+      "other": [
+        0,
+        "\u0001 saniye sonra"
+      ]
     }
   }
 }
