@@ -224,7 +224,7 @@ macro_rules! registry(
             icu::segmenter::provider::WordBreakDataV2Marker = "segmenter/word@2",
             icu::timezone::provider::MetazonePeriodV1Marker = "time_zone/metazone_period@1",
             icu::timezone::provider::names::Bcp47ToIanaMapV1Marker = "time_zone/bcp47_to_iana@1",
-            icu::timezone::provider::names::IanaToBcp47MapV2Marker = "time_zone/iana_to_bcp47@2",
+            icu::timezone::provider::names::IanaToBcp47MapV3Marker = "time_zone/iana_to_bcp47@3",
             #[experimental]
             icu::datetime::provider::neo::WeekdayNamesV1Marker = "datetime/symbols/weekdays@1",
             icu::datetime::provider::neo::DayPeriodNamesV1Marker = "datetime/symbols/dayperiods@1",

@@ -10,7 +10,7 @@
     "d MMMM r(U)",
     "d MMM r",
     "d MMM r",
-    "r-MM-dd",
+    "dd/MM/r",
     "dd MMM r"
   ]
 }

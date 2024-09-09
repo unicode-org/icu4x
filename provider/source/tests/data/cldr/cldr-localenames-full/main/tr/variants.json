@@ -2,9 +2,6 @@
   "main": {
     "tr": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "tr"
       },
       "localeDisplayNames": {

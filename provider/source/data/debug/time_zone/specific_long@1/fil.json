@@ -73,16 +73,16 @@
       "st": "Standard na Oras sa Gitnang Australya"
     },
     "aucw": {
-      "dt": "Daylight Time sa Gitnang Kanlurang Australya",
-      "st": "Standard Time ng Gitnang Kanluran ng Australya"
+      "dt": "Daylight Time sa Gitnang Kanlurang Australia",
+      "st": "Standard Time ng Gitnang Kanluran ng Australia"
     },
     "auea": {
-      "dt": "Daylight Time sa Silangang Australya",
-      "st": "Standard na Oras sa Silangang Australya"
+      "dt": "Daylight Time sa Silangang Australia",
+      "st": "Standard na Oras sa Silangang Australia"
     },
     "auwe": {
-      "dt": "Daylight Time sa Kanlurang Australya",
-      "st": "Standard na Oras sa Kanlurang Australya"
+      "dt": "Daylight Time sa Kanlurang Australia",
+      "st": "Standard na Oras sa Kanlurang Australia"
     },
     "azer": {
       "dt": "Oras sa Tag-init ng Azerbaijan",
@@ -277,6 +277,9 @@
     },
     "kawe": {
       "st": "Oras sa Kanlurang Kazakhstan"
+    },
+    "kaza": {
+      "st": "Oras ng Kazakhstan"
     },
     "kore": {
       "dt": "Daylight Time sa Korea",

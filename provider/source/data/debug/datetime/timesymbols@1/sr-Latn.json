@@ -21,16 +21,6 @@
         "midnight": "ponoć"
       }
     },
-    "stand_alone": {
-      "abbreviated": null,
-      "narrow": {
-        "am": "pre podne",
-        "pm": "po podne",
-        "noon": "podne",
-        "midnight": "ponoć"
-      },
-      "short": null,
-      "wide": null
-    }
+    "stand_alone": null
   }
 }

@@ -2,9 +2,6 @@
   "main": {
     "cs": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "cs"
       },
       "dates": {
@@ -1119,6 +1116,11 @@
                 "generic": "petropavlovsko-kamčatský čas",
                 "standard": "petropavlovsko-kamčatský standardní čas",
                 "daylight": "petropavlovsko-kamčatský letní čas"
+              }
+            },
+            "Kazakhstan": {
+              "long": {
+                "standard": "kazachstánský čas"
               }
             },
             "Kazakhstan_Eastern": {

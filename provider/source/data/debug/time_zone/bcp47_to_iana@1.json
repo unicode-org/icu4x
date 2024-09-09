@@ -1,5 +1,5 @@
 {
-  "bcp47_ids_checksum": 4342095620703458995,
+  "bcp47_ids_checksum": 13140615178425157499,
   "canonical_iana_ids": [
     "Europe/Andorra",
     "Asia/Dubai",
@@ -121,7 +121,6 @@
     "Asia/Urumqi",
     "America/Bogota",
     "America/Costa_Rica",
-    "CST6CDT",
     "America/Havana",
     "Atlantic/Cape_Verde",
     "Indian/Christmas",
@@ -144,7 +143,6 @@
     "Africa/Ceuta",
     "Atlantic/Canary",
     "Europe/Madrid",
-    "EST5EDT",
     "Africa/Addis_Ababa",
     "Europe/Helsinki",
     "Europe/Mariehamn",
@@ -252,7 +250,6 @@
     "America/Martinique",
     "Africa/Nouakchott",
     "America/Montserrat",
-    "MST7MDT",
     "Europe/Malta",
     "Indian/Mauritius",
     "Indian/Maldives",
@@ -299,7 +296,6 @@
     "America/Miquelon",
     "Pacific/Pitcairn",
     "America/Puerto_Rico",
-    "PST8PDT",
     "Atlantic/Madeira",
     "Europe/Lisbon",
     "Atlantic/Azores",

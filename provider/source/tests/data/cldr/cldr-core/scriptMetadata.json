@@ -29,8 +29,8 @@
       "shapingReq": "NO",
       "ime": "NO",
       "density": 1,
-      "originCountry": "RU",
-      "likelyLanguage": "udi"
+      "originCountry": "AZ",
+      "likelyLanguage": "xag"
     },
     "Ahom": {
       "rank": 33,
@@ -592,6 +592,22 @@
       "originCountry": "ET",
       "likelyLanguage": "am"
     },
+    "Gara": {
+      "rank": 33,
+      "age": {
+        "m_version_": 268435456
+      },
+      "sampleChar": "𐵝",
+      "idUsage": "EXCLUSION",
+      "rtl": "YES",
+      "lbLetters": "NO",
+      "hasCase": "YES",
+      "shapingReq": "YES",
+      "ime": "NO",
+      "density": 1,
+      "originCountry": "SN",
+      "likelyLanguage": "wo"
+    },
     "Geor": {
       "rank": 15,
       "age": {
@@ -720,6 +736,22 @@
       "originCountry": "IN",
       "likelyLanguage": "gu"
     },
+    "Gukh": {
+      "rank": 33,
+      "age": {
+        "m_version_": 268435456
+      },
+      "sampleChar": "𖄜",
+      "idUsage": "EXCLUSION",
+      "rtl": "NO",
+      "lbLetters": "NO",
+      "hasCase": "NO",
+      "shapingReq": "YES",
+      "ime": "NO",
+      "density": 1,
+      "originCountry": "NP",
+      "likelyLanguage": "gvr"
+    },
     "Guru": {
       "rank": 22,
       "age": {
@@ -846,7 +878,7 @@
       "ime": "NO",
       "density": 1,
       "originCountry": "IQ",
-      "likelyLanguage": "mis"
+      "likelyLanguage": "arc"
     },
     "Hebr": {
       "rank": 12,
@@ -1151,6 +1183,22 @@
       "density": 3,
       "originCountry": "KR",
       "likelyLanguage": "ko"
+    },
+    "Krai": {
+      "rank": 33,
+      "age": {
+        "m_version_": 268435456
+      },
+      "sampleChar": "𖵅",
+      "idUsage": "EXCLUSION",
+      "rtl": "NO",
+      "lbLetters": "NO",
+      "hasCase": "NO",
+      "shapingReq": "NO",
+      "ime": "NO",
+      "density": 1,
+      "originCountry": "IN",
+      "likelyLanguage": "bap"
     },
     "Kthi": {
       "rank": 33,
@@ -1728,6 +1776,22 @@
       "originCountry": "IN",
       "likelyLanguage": "sat"
     },
+    "Onao": {
+      "rank": 33,
+      "age": {
+        "m_version_": 268435456
+      },
+      "sampleChar": "𞗐",
+      "idUsage": "EXCLUSION",
+      "rtl": "NO",
+      "lbLetters": "NO",
+      "hasCase": "NO",
+      "shapingReq": "MIN",
+      "ime": "NO",
+      "density": 1,
+      "originCountry": "IN",
+      "likelyLanguage": "unr"
+    },
     "Orkh": {
       "rank": 33,
       "age": {
@@ -1805,7 +1869,7 @@
       "shapingReq": "YES",
       "ime": "NO",
       "density": 1,
-      "originCountry": "143",
+      "originCountry": "CN",
       "likelyLanguage": "oui"
     },
     "Palm": {
@@ -2224,6 +2288,22 @@
       "originCountry": "ID",
       "likelyLanguage": "su"
     },
+    "Sunu": {
+      "rank": 33,
+      "age": {
+        "m_version_": 268435456
+      },
+      "sampleChar": "𑯄",
+      "idUsage": "EXCLUSION",
+      "rtl": "NO",
+      "lbLetters": "NO",
+      "hasCase": "NO",
+      "shapingReq": "NO",
+      "ime": "NO",
+      "density": 1,
+      "originCountry": "NP",
+      "likelyLanguage": "suz"
+    },
     "Sylo": {
       "rank": 33,
       "age": {
@@ -2496,6 +2576,22 @@
       "originCountry": "IN",
       "likelyLanguage": "nst"
     },
+    "Todr": {
+      "rank": 33,
+      "age": {
+        "m_version_": 268435456
+      },
+      "sampleChar": "𐗂",
+      "idUsage": "EXCLUSION",
+      "rtl": "NO",
+      "lbLetters": "NO",
+      "hasCase": "NO",
+      "shapingReq": "NO",
+      "ime": "NO",
+      "density": 1,
+      "originCountry": "AL",
+      "likelyLanguage": "sq"
+    },
     "Toto": {
       "rank": 33,
       "age": {
@@ -2511,6 +2607,22 @@
       "density": 1,
       "originCountry": "IN",
       "likelyLanguage": "txo"
+    },
+    "Tutg": {
+      "rank": 33,
+      "age": {
+        "m_version_": 268435456
+      },
+      "sampleChar": "𑎒",
+      "idUsage": "EXCLUSION",
+      "rtl": "NO",
+      "lbLetters": "NO",
+      "hasCase": "NO",
+      "shapingReq": "YES",
+      "ime": "NO",
+      "density": 1,
+      "originCountry": "IN",
+      "likelyLanguage": "sa"
     },
     "Ugar": {
       "rank": 33,
@@ -2677,7 +2789,7 @@
       "age": {
         "m_version_": 16842752
       },
-      "sampleChar": "̈",
+      "sampleChar": "̏",
       "idUsage": "RECOMMENDED",
       "rtl": "UNKNOWN",
       "lbLetters": "UNKNOWN",

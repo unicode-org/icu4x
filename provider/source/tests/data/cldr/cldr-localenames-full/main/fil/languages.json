@@ -2,9 +2,6 @@
   "main": {
     "fil": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "fil"
       },
       "localeDisplayNames": {
@@ -52,6 +49,7 @@
           "bi": "Bislama",
           "bin": "Bini",
           "bla": "Siksika",
+          "blo": "Anii",
           "bm": "Bambara",
           "bn": "Bangla",
           "bo": "Tibetan",
@@ -95,6 +93,7 @@
           "dar": "Dargwa",
           "dav": "Taita",
           "de": "German",
+          "de-AT": "Austrian German",
           "de-CH": "Swiss High German",
           "dgr": "Dogrib",
           "dje": "Zarma",
@@ -135,7 +134,7 @@
           "frc": "Cajun French",
           "frr": "Hilagang Frisian",
           "fur": "Friulian",
-          "fy": "Kanlurang Frisian",
+          "fy": "Western Frisian",
           "ga": "Irish",
           "gaa": "Ga",
           "gag": "Gagauz",
@@ -226,6 +225,7 @@
           "kv": "Komi",
           "kw": "Cornish",
           "kwk": "Kwakʼwala",
+          "kxv": "Kuvi",
           "ky": "Kirghiz",
           "la": "Latin",
           "lad": "Ladino",
@@ -234,6 +234,7 @@
           "lez": "Lezghian",
           "lg": "Ganda",
           "li": "Limburgish",
+          "lij": "Ligurian",
           "lil": "Lillooet",
           "lkt": "Lakota",
           "lmo": "Lombard",
@@ -351,7 +352,7 @@
           "rwk": "Rwa",
           "sa": "Sanskrit",
           "sad": "Sandawe",
-          "sah": "Sakha",
+          "sah": "Yakut",
           "saq": "Samburu",
           "sat": "Santali",
           "sba": "Ngambay",
@@ -394,6 +395,7 @@
           "sw-CD": "Congo Swahili",
           "swb": "Comorian",
           "syr": "Syriac",
+          "szl": "Silesian",
           "ta": "Tamil",
           "tce": "Katimugang Tutchone",
           "te": "Telugu",
@@ -436,7 +438,9 @@
           "uz": "Uzbek",
           "vai": "Vai",
           "ve": "Venda",
+          "vec": "Venetian",
           "vi": "Vietnamese",
+          "vmw": "Makhuwa",
           "vo": "Volapük",
           "vun": "Vunjo",
           "wa": "Walloon",
@@ -448,6 +452,7 @@
           "wuu": "Wu Chinese",
           "xal": "Kalmyk",
           "xh": "Xhosa",
+          "xnr": "Kangri",
           "xog": "Soga",
           "yav": "Yangben",
           "ybb": "Yemba",
@@ -456,6 +461,7 @@
           "yrl": "Nheengatu",
           "yue": "Cantonese",
           "yue-alt-menu": "Chinese, Cantonese",
+          "za": "Zhuang",
           "zgh": "Standard Moroccan Tamazight",
           "zh": "Chinese",
           "zh-alt-menu": "Chinese, Mandarin",

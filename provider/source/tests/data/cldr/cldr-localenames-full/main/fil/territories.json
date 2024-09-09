@@ -2,9 +2,6 @@
   "main": {
     "fil": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "fil"
       },
       "localeDisplayNames": {
@@ -159,8 +156,8 @@
           "IL": "Israel",
           "IM": "Isle of Man",
           "IN": "India",
-          "IO": "Teritoryo sa Karagatan ng British Indian",
-          "IO-alt-biot": "Teritoryo sa Karagatan ng British Indian",
+          "IO": "British Indian Ocean Territory",
+          "IO-alt-biot": "British Indian Ocean Territory",
           "IO-alt-chagos": "Chagos Archipelago",
           "IQ": "Iraq",
           "IR": "Iran",

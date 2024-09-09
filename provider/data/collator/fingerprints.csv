@@ -1,10 +1,11 @@
-collator/dia@1, <lookup>, 47B, 3 identifiers
-collator/dia@1, <total>, 364B, 320B, 2 unique payloads
+collator/dia@1, <lookup>, 51B, 4 identifiers
+collator/dia@1, <total>, 546B, 480B, 3 unique payloads
+collator/dia@1, ee, 182B, 160B, 9582e3496759ed34
 collator/dia@1, und, 182B, 160B, 8ace760351a33687
 collator/dia@1, vi, 182B, 160B, 6b057eec42bee512
 collator/dia@1, vi/trad, -> vi
 collator/jamo@1, <singleton>, 1048B, 1026B, 8554e65df2b9cfbb
-collator/meta@1, <lookup>, 506B, 104 identifiers
+collator/meta@1, <lookup>, 513B, 106 identifiers
 collator/meta@1, <total>, 36B, 12B, 9 unique payloads
 collator/meta@1, af, 4B, 1B, 9aab82d56f3b362e
 collator/meta@1, am, 4B, 1B, d1dcef7af54c8272
@@ -26,6 +27,7 @@ collator/meta@1, cy, -> af
 collator/meta@1, da, 4B, 2B, b4d85e6a550ed91b
 collator/meta@1, de/phonebk, -> af
 collator/meta@1, dsb, -> af
+collator/meta@1, ee, 4B, 1B, ed0e600a85b6c191
 collator/meta@1, el, -> am
 collator/meta@1, en-US-posix, -> af
 collator/meta@1, eo, -> af
@@ -74,6 +76,7 @@ collator/meta@1, mt, -> da
 collator/meta@1, my, -> ar
 collator/meta@1, ne, -> am
 collator/meta@1, no, -> af
+collator/meta@1, om, -> af
 collator/meta@1, or, -> ar
 collator/meta@1, pa, -> ar
 collator/meta@1, pl, -> af
@@ -102,8 +105,8 @@ collator/meta@1, und/emoji, -> und
 collator/meta@1, und/eor, -> und
 collator/meta@1, ur, -> ar
 collator/meta@1, uz, -> af
-collator/meta@1, vi, 4B, 1B, ed0e600a85b6c191
-collator/meta@1, vi/trad, -> vi
+collator/meta@1, vi, -> ee
+collator/meta@1, vi/trad, -> ee
 collator/meta@1, wo, -> af
 collator/meta@1, yo, -> af
 collator/meta@1, zh, -> ar
@@ -170,8 +173,8 @@ collator/reord@1, zh/stroke, 324B, 276B, e723757dca38382
 collator/reord@1, zh/unihan, -> zh/stroke
 collator/reord@1, zh/zhuyin, -> zh/stroke
 collator/root@1, <singleton>, 126916B, 126799B, a0ea0e0eecc34e27
-collator/tailoring@1, <lookup>, 558B, 94 identifiers
-collator/tailoring@1, <total>, 946512B, 935326B, 88 unique payloads
+collator/tailoring@1, <lookup>, 567B, 96 identifiers
+collator/tailoring@1, <total>, 950176B, 938736B, 90 unique payloads
 collator/tailoring@1, af, 1416B, 1288B, 6cfbf331f81f0e7c
 collator/tailoring@1, ar, 8392B, 8267B, fce742b37324adbe
 collator/tailoring@1, ar/compat, 2016B, 1888B, e7b7e3fda37b8565
@@ -190,6 +193,7 @@ collator/tailoring@1, da, 2124B, 1997B, 3b082567c769a834
 collator/tailoring@1, de-AT/phonebk, 1580B, 1452B, d86c66118ade07f2
 collator/tailoring@1, de/phonebk, 1282B, 1154B, 51be2ca58ff917fe
 collator/tailoring@1, dsb, 1676B, 1549B, fe44db49428c33dd
+collator/tailoring@1, ee, 2266B, 2139B, 131695ff8e4d6c5b
 collator/tailoring@1, en-US-posix, 1668B, 1542B, 6089779a1d6973d6
 collator/tailoring@1, eo, 1316B, 1189B, 3aeee382d9e46f4a
 collator/tailoring@1, es, 1192B, 1064B, 53d5d15868ead10a
@@ -232,6 +236,7 @@ collator/tailoring@1, mr, 1488B, 1360B, b4533f286aed71b5
 collator/tailoring@1, mt, 1524B, 1396B, 97a156088aaba07
 collator/tailoring@1, my, 20396B, 20270B, 5e8cbcc1cf6a7899
 collator/tailoring@1, no, 2164B, 2038B, 3e9ef18cb5dedda0
+collator/tailoring@1, om, 1398B, 1271B, bd5e765dd8cbe54e
 collator/tailoring@1, or, 1596B, 1468B, e02213164e57d936
 collator/tailoring@1, pa, 1724B, 1596B, 664189ea648e7727
 collator/tailoring@1, pl, 1648B, 1521B, 9de80886d8ba3987

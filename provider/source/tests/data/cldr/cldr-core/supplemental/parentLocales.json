@@ -1,8 +1,8 @@
 {
   "supplemental": {
     "version": {
-      "_unicodeVersion": "15.1.0",
-      "_cldrVersion": "45"
+      "_unicodeVersion": "16.0.0",
+      "_cldrVersion": "46"
     },
     "parentLocales": {
       "parentLocale": {
@@ -155,7 +155,9 @@
         "ff-Arab": "und",
         "ha-Arab": "und",
         "iu-Latn": "und",
+        "kaa-Latn": "und",
         "kk-Arab": "und",
+        "kok-Latn": "und",
         "ks-Deva": "und",
         "ku-Arab": "und",
         "kxv-Deva": "und",

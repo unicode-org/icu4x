@@ -8,7 +8,7 @@
   "patterns": [
     "r(U) MMMM d",
     "r(U) MMMM d",
-    "r-MM-dd",
+    "dd.MM.y",
     "dd MMM U"
   ]
 }

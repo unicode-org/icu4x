@@ -1,8 +1,8 @@
 {
   "supplemental": {
     "version": {
-      "_unicodeVersion": "15.1.0",
-      "_cldrVersion": "45"
+      "_unicodeVersion": "16.0.0",
+      "_cldrVersion": "46"
     },
     "plurals-type-ordinal": {
       "af": {
@@ -48,7 +48,7 @@
         "pluralRule-count-zero": "i = 0 @integer 0",
         "pluralRule-count-one": "i = 1 @integer 1",
         "pluralRule-count-few": "i = 2,3,4,5,6 @integer 2~6",
-        "pluralRule-count-other": " @integer 7~19, 100, 1000, 10000, 100000, 1000000, …"
+        "pluralRule-count-other": " @integer 7~22, 100, 1000, 10000, 100000, 1000000, …"
       },
       "bn": {
         "pluralRule-count-one": "n = 1,5,7,8,9,10 @integer 1, 5, 7~10",
@@ -215,6 +215,10 @@
       },
       "lij": {
         "pluralRule-count-many": "n = 11,8,80..89,800..899 @integer 8, 11, 80~89, 800~803",
+        "pluralRule-count-other": " @integer 0~7, 9, 10, 12~17, 100, 1000, 10000, 100000, 1000000, …"
+      },
+      "lld": {
+        "pluralRule-count-many": "n = 11,8,80,800 @integer 8, 11, 80, 800",
         "pluralRule-count-other": " @integer 0~7, 9, 10, 12~17, 100, 1000, 10000, 100000, 1000000, …"
       },
       "lo": {
