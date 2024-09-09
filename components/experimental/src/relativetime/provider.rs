@@ -15,11 +15,11 @@ use core::marker::PhantomData;
 use core::{fmt::Debug, str::FromStr};
 use icu_pattern::{Pattern, PatternBackend, SinglePlaceholder};
 #[cfg(feature = "datagen")]
-use icu_plurals::PluralElements;
 use icu_plurals::{
     provider::{FourBitMetadata, PluralElementsPackedULE},
-    PluralCategory, PluralOperands, PluralRules,
+    PluralElements,
 };
+use icu_plurals::{PluralCategory, PluralOperands, PluralRules};
 use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 
