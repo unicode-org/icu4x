@@ -603,12 +603,31 @@ pub struct PluralElementsPackedULE<V: VarULE + ?Sized> {
 /// The type of the special patterns list.
 type PluralElementsTupleSliceVarULE<V> = VarZeroSlice<VarTupleULE<PluralCategoryAndMetadata, V>>;
 
+/// The type of the default value.
+type PluralElementWithMetadata<'a, V> = (FourBitMetadata, &'a V);
+
 /// Internal intermediate type that can be converted into a [`PluralElementsPackedULE`].
 enum PluralElementsPackedBuilder<'a, T> {
     /// A singleton. The value can be converted to `V`.
-    Singleton(&'a T),
+    Singleton(PluralElementWithMetadata<'a, T>),
     /// Non-singleton. The value can be converted to `V` and [`PluralElementsTupleSliceVarULE`]
-    Multi(&'a T, Vec<VarTuple<PluralCategoryAndMetadata, &'a T>>),
+    Multi(
+        PluralElementWithMetadata<'a, T>,
+        Vec<VarTuple<PluralCategoryAndMetadata, &'a T>>,
+    ),
+}
+
+/// Unpacked bytes from a [`PluralElementsPackedULE`].
+struct PluralElementsUnpackedBytes<'a> {
+    pub lead_byte: u8,
+    pub v_bytes: &'a [u8],
+    pub specials_bytes: Option<&'a [u8]>,
+}
+
+/// Unpacked and deserialized values from a [`PluralElementsPackedULE`].
+struct PluralElementsUnpacked<'a, V: VarULE + ?Sized> {
+    pub default: PluralElementWithMetadata<'a, V>,
+    pub specials: Option<&'a PluralElementsTupleSliceVarULE<V>>,
 }
 
 /// Helper function to access a value from [`PluralElementsTupleSliceVarULE`]
@@ -636,14 +655,14 @@ where
     V: VarULE + ?Sized,
 {
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
-        let (lead_byte, v_bytes, specials_bytes) =
-            Self::byte_parts(bytes).ok_or_else(|| UleError::length::<Self>(bytes.len()))?;
-        if lead_byte & 0x70 != 0 {
+        let unpacked_bytes =
+            Self::unpack_bytes(bytes).ok_or_else(|| UleError::length::<Self>(bytes.len()))?;
+        if unpacked_bytes.lead_byte & 0x70 != 0 {
             // We expect bits 4-6 to be padding
             return Err(UleError::parse::<Self>());
         }
-        V::validate_byte_slice(v_bytes)?;
-        if let Some(specials_bytes) = specials_bytes {
+        V::validate_byte_slice(unpacked_bytes.v_bytes)?;
+        if let Some(specials_bytes) = unpacked_bytes.specials_bytes {
             PluralElementsTupleSliceVarULE::<V>::validate_byte_slice(specials_bytes)?;
         }
         Ok(())
@@ -674,10 +693,14 @@ where
     /// 2. Bytes corresponding to the default V
     /// 3. Bytes corresponding to the specials slice, if present
     #[inline]
-    fn byte_parts(bytes: &[u8]) -> Option<(u8, &[u8], Option<&[u8]>)> {
+    fn unpack_bytes(bytes: &[u8]) -> Option<PluralElementsUnpackedBytes> {
         let (lead_byte, remainder) = bytes.split_first()?;
         if lead_byte & 0x80 == 0 {
-            Some((*lead_byte, remainder, None))
+            Some(PluralElementsUnpackedBytes {
+                lead_byte: *lead_byte,
+                v_bytes: remainder,
+                specials_bytes: None,
+            })
         } else {
             let (second_byte, remainder) = remainder.split_first()?;
             // TODO in Rust 1.80: use split_at_checked
@@ -686,24 +709,22 @@ where
                 return None;
             }
             let (v_bytes, remainder) = remainder.split_at(v_length);
-            Some((*lead_byte, v_bytes, Some(remainder)))
+            Some(PluralElementsUnpackedBytes {
+                lead_byte: *lead_byte,
+                v_bytes,
+                specials_bytes: Some(remainder),
+            })
         }
     }
 
     /// Unpacks this structure into the default value and the optional list of specials.
-    fn as_parts(
-        &self,
-    ) -> (
-        (FourBitMetadata, &V),
-        Option<&PluralElementsTupleSliceVarULE<V>>,
-    ) {
+    fn as_parts(&self) -> PluralElementsUnpacked<V> {
         // Safety: the bytes are valid by invariant
-        let (lead_byte, v_bytes, specials_bytes) =
-            unsafe { Self::byte_parts(&self.bytes).unwrap_unchecked() };
-        let metadata = FourBitMetadata(lead_byte & 0x0F);
+        let unpacked_bytes = unsafe { Self::unpack_bytes(&self.bytes).unwrap_unchecked() };
+        let metadata = FourBitMetadata(unpacked_bytes.lead_byte & 0x0F);
         // Safety: the bytes are valid by invariant
-        let default = unsafe { V::from_byte_slice_unchecked(v_bytes) };
-        let specials = if let Some(specials_bytes) = specials_bytes {
+        let default = unsafe { V::from_byte_slice_unchecked(unpacked_bytes.v_bytes) };
+        let specials = if let Some(specials_bytes) = unpacked_bytes.specials_bytes {
             // Safety: the bytes are valid by invariant
             Some(unsafe {
                 PluralElementsTupleSliceVarULE::<V>::from_byte_slice_unchecked(specials_bytes)
@@ -711,16 +732,19 @@ where
         } else {
             None
         };
-        ((metadata, default), specials)
+        PluralElementsUnpacked {
+            default: (metadata, default),
+            specials,
+        }
     }
 
     /// Returns the value for the given [`PluralOperands`] and [`PluralRules`].
     pub fn get<'a>(&'a self, op: PluralOperands, rules: &PluralRules) -> (FourBitMetadata, &'a V) {
-        let (default, specials) = self.as_parts();
+        let parts = self.as_parts();
 
         let category = rules.category_for(op);
 
-        match specials {
+        match parts.specials {
             Some(specials) => {
                 if op.is_exactly_zero() {
                     if let Some(value) = get_special(specials, PluralElementsKeysV1::ExplicitZero) {
@@ -744,7 +768,7 @@ where
             }
             None => None,
         }
-        .unwrap_or(default)
+        .unwrap_or(parts.default)
     }
 }
 
@@ -754,9 +778,9 @@ where
 {
     #[cfg(feature = "datagen")]
     fn to_plural_elements(&self) -> PluralElements<(FourBitMetadata, &V)> {
-        let (default, specials) = self.as_parts();
-        let mut elements = PluralElements::new(default);
-        if let Some(specials) = specials {
+        let parts = self.as_parts();
+        let mut elements = PluralElements::new(parts.default);
+        if let Some(specials) = parts.specials {
             for special in specials.iter() {
                 let (key, metadata) = special.sized.get();
                 let value = (metadata, &special.variable);
@@ -779,29 +803,23 @@ impl<T> PluralElements<(FourBitMetadata, T)>
 where
     T: PartialEq,
 {
-    fn to_packed_builder<'a, V>(&'a self) -> (FourBitMetadata, PluralElementsPackedBuilder<'a, T>)
+    fn to_packed_builder<'a, V>(&'a self) -> PluralElementsPackedBuilder<'a, T>
     where
         &'a T: EncodeAsVarULE<V>,
         V: VarULE + ?Sized,
     {
         if self.has_specials() {
-            (
-                self.other().0,
-                PluralElementsPackedBuilder::Multi(
-                    &self.other().1,
-                    self.get_specials_tuple_vec()
-                        .map(|(key, (metadata, t))| VarTuple {
-                            sized: PluralCategoryAndMetadata::new(key, *metadata),
-                            variable: t,
-                        })
-                        .collect::<Vec<_>>(),
-                ),
+            PluralElementsPackedBuilder::Multi(
+                (self.other().0, &self.other.1),
+                self.get_specials_tuple_vec()
+                    .map(|(key, (metadata, t))| VarTuple {
+                        sized: PluralCategoryAndMetadata::new(key, *metadata),
+                        variable: t,
+                    })
+                    .collect::<Vec<_>>(),
             )
         } else {
-            (
-                self.other().0,
-                PluralElementsPackedBuilder::Singleton(&self.other().1),
-            )
+            PluralElementsPackedBuilder::Singleton((self.other().0, &self.other.1))
         }
     }
 }
@@ -820,9 +838,9 @@ where
 
     fn encode_var_ule_len(&self) -> usize {
         match self.to_packed_builder::<V>() {
-            (_, PluralElementsPackedBuilder::Singleton(v)) => 1 + v.encode_var_ule_len(),
-            (_, PluralElementsPackedBuilder::Multi(v, specials)) => {
-                2 + v.encode_var_ule_len()
+            PluralElementsPackedBuilder::Singleton(v) => 1 + v.1.encode_var_ule_len(),
+            PluralElementsPackedBuilder::Multi(v, specials) => {
+                2 + v.1.encode_var_ule_len()
                     + EncodeAsVarULE::<PluralElementsTupleSliceVarULE<V>>::encode_var_ule_len(
                         &specials,
                     )
@@ -834,15 +852,15 @@ where
         #[allow(clippy::unwrap_used)] // by trait invariant
         let (lead_byte, remainder) = dst.split_first_mut().unwrap();
         match self.to_packed_builder::<V>() {
-            (metadata, PluralElementsPackedBuilder::Singleton(v)) => {
-                *lead_byte = metadata.get();
-                v.encode_var_ule_write(remainder);
+            PluralElementsPackedBuilder::Singleton(v) => {
+                *lead_byte = v.0.get();
+                v.1.encode_var_ule_write(remainder);
             }
-            (metadata, PluralElementsPackedBuilder::Multi(v, specials)) => {
-                *lead_byte = 0x80 | metadata.get();
+            PluralElementsPackedBuilder::Multi(v, specials) => {
+                *lead_byte = 0x80 | v.0.get();
                 #[allow(clippy::unwrap_used)] // by trait invariant
                 let (second_byte, remainder) = remainder.split_first_mut().unwrap();
-                *second_byte = match u8::try_from(v.encode_var_ule_len()) {
+                *second_byte = match u8::try_from(v.1.encode_var_ule_len()) {
                     Ok(x) => x,
                     Err(_) => {
                         // TODO: Inform the user more nicely that their data doesn't fit in our packed structure
@@ -850,7 +868,7 @@ where
                     }
                 };
                 let (v_bytes, specials_bytes) = remainder.split_at_mut(*second_byte as usize);
-                v.encode_var_ule_write(v_bytes);
+                v.1.encode_var_ule_write(v_bytes);
                 EncodeAsVarULE::<PluralElementsTupleSliceVarULE<V>>::encode_var_ule_write(
                     &specials,
                     specials_bytes,
