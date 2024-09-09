@@ -949,7 +949,8 @@ where
         ctx.insert("icu_plurals");
         let bytes = (&self.bytes).bake(ctx);
         databake::quote! {
-            icu_plurals::provider::PluralElementsPackedULE::from_byte_slice_unchecked(#bytes)
+            // Safety: the bytes came directly from self.bytes on the previous line.
+            unsafe { icu_plurals::provider::PluralElementsPackedULE::from_byte_slice_unchecked(#bytes) }
         }
     }
 }
