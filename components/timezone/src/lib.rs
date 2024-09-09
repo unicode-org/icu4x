@@ -6,12 +6,11 @@
 //!
 //! # Fields
 //!
-//! In ICU4X, a [formattable time zone](CustomTimeZone) consists of four different fields:
+//! In ICU4X, a [formattable time zone](CustomTimeZone) consists of three different fields:
 //!
 //! 1. The offset from UTC
 //! 2. The time zone ID
 //! 3. The metazone ID
-//! 4. The zone variant, representing concepts such as Standard, Summer, Daylight, and Ramadan time
 //!
 //! ## UTC Offset
 //!
@@ -56,19 +55,6 @@
 //! and module name, where "timezone" is used with no separators. See
 //! <https://github.com/unicode-org/icu4x/issues/2507>.
 //!
-//! ## Zone Variant
-//!
-//! Many metazones use different names and offsets in the summer than in the winter. In ICU4X,
-//! this is called the _zone variant_.
-//!
-//! CLDR has two zone variants, named `"standard"` and `"daylight"`. However, the mapping of these
-//! variants to specific observed offsets varies from time zone to time zone, and they may not
-//! consistently represent winter versus summer time.
-//!
-//! Note: It is optional (not required) to set the zone variant when constructing a
-//! [`CustomTimeZone`]. Therefore, the list of possible variants does not include a generic variant
-//! to represent the lack of a preference.
-//!
 //! # Calculations
 //!
 //! In date/time processing, normally only a subset of information is available, and the other
@@ -77,7 +63,7 @@
 //! The following calculations are currently supported or will be supported:
 //!
 //! 1. Time Zone + Local DateTime → Meta Zone ([`MetazoneCalculator`])
-//! 2. Time Zone + Absolute Time → Offset + Zone Variant (not yet supported)
+//! 2. Time Zone + Absolute Time → Offset (not yet supported)
 //!
 //! # Examples
 //!
