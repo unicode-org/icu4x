@@ -1,7 +1,8 @@
 {
   "defaults": {
     "japa": {
-      "72": "JST"
+      "72": "JST",
+      "80": "JDT"
     }
   },
   "overrides": {

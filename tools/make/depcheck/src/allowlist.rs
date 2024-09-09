@@ -148,8 +148,6 @@ pub const EXTRA_FS_DEPS: &[&str] = &["icu_provider_fs", "serde-json-core"];
 /// Dependencies needed by datagen provider (not counting `log` and `zip` deps)
 /// This might change semi frequently but we should try and keep this small.
 pub const EXTRA_SOURCE_DEPS: &[&str] = &[
-    "bytes",
-    "combine",
     "databake",
     "databake-derive",
     "elsa",
@@ -159,11 +157,12 @@ pub const EXTRA_SOURCE_DEPS: &[&str] = &[
     "icu_provider_registry",
     "itertools",
     "itoa",
-    "jiff-tzdb",
     "matrixmultiply",
     "ndarray",
     "num-complex",
+    "parse-zoneinfo",
     "rawpointer",
+    "regex",
     "regex-syntax",
     "ryu",
     "serde-aux",
@@ -171,7 +170,6 @@ pub const EXTRA_SOURCE_DEPS: &[&str] = &[
     "static_assertions",
     "toml",
     "twox-hash",
-    "tzif",
 ];
 
 /// Dependencies needed by datagen (not counting `log` and `rayon` deps)

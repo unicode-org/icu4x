@@ -1,10 +1,12 @@
 {
   "defaults": {
     "arge": {
-      "-24": "ART"
+      "-24": "ART",
+      "-16": "ARST"
     },
     "arwe": {
-      "-24": "WART"
+      "-24": "WART",
+      "-16": "WARST"
     }
   },
   "overrides": {

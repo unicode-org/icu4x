@@ -1,7 +1,8 @@
 {
   "defaults": {
     "acre": {
-      "-40": "heure normale de l’Acre"
+      "-40": "heure normale de l’Acre",
+      "-32": "heure d’été de l’Acre"
     },
     "afce": {
       "16": "heure normale d’Afrique centrale"
@@ -16,17 +17,20 @@
       "16": "heure normale d’Afrique méridionale"
     },
     "afwe": {
-      "8": "heure normale d’Afrique de l’Ouest"
+      "8": "heure normale d’Afrique de l’Ouest",
+      "16": "heure d’été d’Afrique de l’Ouest"
     },
     "alam": {
-      "40": "heure normale d’Alma Ata"
+      "40": "heure normale d’Alma Ata",
+      "56": "heure d’été d’Alma Ata"
     },
     "alas": {
       "-72": "heure normale de l’Alaska",
       "-64": "heure d’été de l’Alaska"
     },
     "amaz": {
-      "-32": "heure normale de l’Amazonie"
+      "-32": "heure normale de l’Amazonie",
+      "-24": "heure d’été de l’Amazonie"
     },
     "amce": {
       "-48": "heure normale du centre nord-américain",
@@ -45,28 +49,36 @@
       "-56": "heure d’été du Pacifique nord-américain"
     },
     "anad": {
-      "96": "heure normale d’Anadyr"
+      "96": "heure normale d’Anadyr",
+      "104": "heure d’été d’Anadyr"
     },
     "apia": {
-      "104": "heure normale d’Apia"
+      "104": "heure normale d’Apia",
+      "112": "heure d’été d’Apia"
     },
     "aqta": {
-      "40": "heure normale d’Aktaou"
+      "40": "heure normale d’Aktaou",
+      "48": "heure d’été d’Aktaou"
     },
     "aqto": {
-      "40": "heure normale d’Aqtöbe"
+      "40": "heure normale d’Aqtöbe",
+      "48": "heure d’été d’Aqtöbe"
     },
     "arab": {
-      "24": "heure normale de l’Arabie"
+      "24": "heure normale de l’Arabie",
+      "32": "heure d’été de l’Arabie"
     },
     "arge": {
-      "-24": "heure normale d’Argentine"
+      "-24": "heure normale d’Argentine",
+      "-16": "heure d’été de l’Argentine"
     },
     "arme": {
-      "32": "heure normale de l’Arménie"
+      "32": "heure normale de l’Arménie",
+      "40": "heure d’été d’Arménie"
     },
     "arwe": {
-      "-24": "heure normale de l’Ouest argentin"
+      "-24": "heure normale de l’Ouest argentin",
+      "-16": "heure d’été de l’Ouest argentin"
     },
     "atla": {
       "-32": "heure normale de l’Atlantique",
@@ -77,24 +89,28 @@
       "84": "heure d’été du centre de l’Australie"
     },
     "aucw": {
-      "70": "heure normale du centre-ouest de l’Australie"
+      "70": "heure normale du centre-ouest de l’Australie",
+      "78": "heure d’été du centre-ouest de l’Australie"
     },
     "auea": {
       "80": "heure normale de l’Est de l’Australie",
       "88": "heure d’été de l’Est de l’Australie"
     },
     "auwe": {
-      "64": "heure normale de l’Ouest de l’Australie"
+      "64": "heure normale de l’Ouest de l’Australie",
+      "72": "heure d’été de l’Ouest de l’Australie"
     },
     "azer": {
-      "32": "heure normale de l’Azerbaïdjan"
+      "32": "heure normale de l’Azerbaïdjan",
+      "40": "heure d’été d’Azerbaïdjan"
     },
     "azor": {
       "-8": "heure normale des Açores",
       "0": "heure d’été des Açores"
     },
     "bang": {
-      "48": "heure normale du Bangladesh"
+      "48": "heure normale du Bangladesh",
+      "56": "heure d’été du Bangladesh"
     },
     "bhut": {
       "48": "heure du Bhoutan"
@@ -103,7 +119,8 @@
       "-32": "heure de Bolivie"
     },
     "bras": {
-      "-24": "heure normale de Brasilia"
+      "-24": "heure normale de Brasilia",
+      "-16": "heure d’été de Brasilia"
     },
     "brun": {
       "64": "heure du Brunei"
@@ -123,10 +140,12 @@
       "-24": "heure d’été du Chili"
     },
     "chin": {
-      "64": "heure normale de la Chine"
+      "64": "heure normale de la Chine",
+      "72": "heure d’été de Chine"
     },
     "choi": {
-      "64": "heure normale de Choibalsan"
+      "64": "heure normale de Choibalsan",
+      "72": "heure d’été de Choibalsan"
     },
     "chri": {
       "56": "heure de l’île Christmas"
@@ -135,10 +154,12 @@
       "52": "heure des îles Cocos"
     },
     "colo": {
-      "-40": "heure normale de Colombie"
+      "-40": "heure normale de Colombie",
+      "-32": "heure d’été de Colombie"
     },
     "cook": {
-      "-80": "heure normale des îles Cook"
+      "-80": "heure normale des îles Cook",
+      "-76": "heure d’été des îles Cook"
     },
     "cuba": {
       "-40": "heure normale de Cuba",
@@ -176,10 +197,12 @@
       "8": "heure d’été d’Europe de l’Ouest"
     },
     "falk": {
-      "-24": "heure normale des îles Malouines"
+      "-24": "heure normale des îles Malouines",
+      "-16": "heure d’été des îles Malouines"
     },
     "fiji": {
-      "96": "heure normale des îles Fidji"
+      "96": "heure normale des îles Fidji",
+      "104": "heure d’été des îles Fidji"
     },
     "frgu": {
       "-24": "heure de la Guyane française"
@@ -194,7 +217,8 @@
       "-72": "heure des îles Gambier"
     },
     "geor": {
-      "32": "heure normale de la Géorgie"
+      "32": "heure normale de la Géorgie",
+      "40": "heure d’été de Géorgie"
     },
     "giis": {
       "96": "heure des îles Gilbert"
@@ -217,13 +241,16 @@
       "-32": "heure du Guyana"
     },
     "haal": {
-      "-80": "heure normale d’Hawaï - Aléoutiennes"
+      "-80": "heure normale d’Hawaï - Aléoutiennes",
+      "-76": "heure d’été d’Hawaï - Aléoutiennes"
     },
     "hoko": {
-      "64": "heure normale de Hong Kong"
+      "64": "heure normale de Hong Kong",
+      "72": "heure d’été de Hong Kong"
     },
     "hovd": {
-      "56": "heure normale de Hovd"
+      "56": "heure normale de Hovd",
+      "64": "heure d’été de Hovd"
     },
     "ince": {
       "64": "heure du Centre indonésien"
@@ -244,23 +271,27 @@
       "56": "heure de l’Ouest indonésien"
     },
     "iran": {
-      "28": "heure normale d’Iran"
+      "28": "heure normale d’Iran",
+      "36": "heure d’été d’Iran"
     },
     "irku": {
-      "64": "heure normale d’Irkoutsk"
+      "64": "heure normale d’Irkoutsk",
+      "72": "heure d’été d’Irkoutsk"
     },
     "isra": {
       "16": "heure normale d’Israël",
       "24": "heure d’été d’Israël"
     },
     "japa": {
-      "72": "heure normale du Japon"
+      "72": "heure normale du Japon",
+      "80": "heure d’été du Japon"
     },
     "kaea": {
       "40": "heure de l’Est du Kazakhstan"
     },
     "kamc": {
-      "96": "heure normale de Petropavlovsk-Kamchatski"
+      "96": "heure normale de Petropavlovsk-Kamchatski",
+      "104": "heure d’été de Petropavlovsk-Kamchatski"
     },
     "kawe": {
       "40": "heure de l’Ouest du Kazakhstan"
@@ -269,13 +300,15 @@
       "40": "heure du Kazakhstan"
     },
     "kore": {
-      "72": "heure normale de la Corée"
+      "72": "heure normale de la Corée",
+      "80": "heure d’été de Corée"
     },
     "kosr": {
       "88": "heure de Kosrae"
     },
     "kras": {
-      "56": "heure normale de Krasnoïarsk"
+      "56": "heure normale de Krasnoïarsk",
+      "64": "heure d’été de Krasnoïarsk"
     },
     "kyrg": {
       "48": "heure du Kirghizistan"
@@ -288,7 +321,8 @@
       "88": "heure d’été de Lord Howe"
     },
     "maga": {
-      "88": "heure normale de Magadan"
+      "88": "heure normale de Magadan",
+      "96": "heure d’été de Magadan"
     },
     "mais": {
       "96": "heure des îles Marshall"
@@ -303,22 +337,26 @@
       "-76": "heure des îles Marquises"
     },
     "maur": {
-      "32": "heure normale de Maurice"
+      "32": "heure normale de Maurice",
+      "40": "heure d’été de Maurice"
     },
     "maws": {
       "40": "heure de Mawson"
     },
     "mepa": {
-      "-56": "heure normale du Pacifique mexicain"
+      "-56": "heure normale du Pacifique mexicain",
+      "-48": "heure d’été du Pacifique mexicain"
     },
     "mgmt": {
       "0": "heure moyenne de Greenwich"
     },
     "mong": {
-      "64": "heure normale d’Oulan-Bator"
+      "64": "heure normale d’Oulan-Bator",
+      "72": "heure d’été d’Oulan-Bator"
     },
     "mosc": {
-      "24": "heure normale de Moscou"
+      "24": "heure normale de Moscou",
+      "32": "heure d’été de Moscou"
     },
     "myan": {
       "52": "heure du Myanmar"
@@ -327,7 +365,8 @@
       "96": "heure de Nauru"
     },
     "neca": {
-      "88": "heure normale de la Nouvelle-Calédonie"
+      "88": "heure normale de la Nouvelle-Calédonie",
+      "96": "heure d’été de Nouvelle-Calédonie"
     },
     "nepa": {
       "46": "heure du Népal"
@@ -351,16 +390,20 @@
       "96": "heure d’été de l’île Norfolk"
     },
     "noro": {
-      "-16": "heure normale de Fernando de Noronha"
+      "-16": "heure normale de Fernando de Noronha",
+      "-8": "heure d’été de Fernando de Noronha"
     },
     "novo": {
-      "56": "heure normale de Novossibirsk"
+      "56": "heure normale de Novossibirsk",
+      "64": "heure d’été de Novossibirsk"
     },
     "omsk": {
-      "48": "heure normale de Omsk"
+      "48": "heure normale de Omsk",
+      "56": "heure d’été de Omsk"
     },
     "paki": {
-      "40": "heure normale du Pakistan"
+      "40": "heure normale du Pakistan",
+      "48": "heure d’été du Pakistan"
     },
     "pala": {
       "72": "heure des Palaos"
@@ -373,10 +416,12 @@
       "-24": "heure d’été du Paraguay"
     },
     "peru": {
-      "-40": "heure normale du Pérou"
+      "-40": "heure normale du Pérou",
+      "-32": "heure d’été du Pérou"
     },
     "phil": {
-      "64": "heure normale des Philippines"
+      "64": "heure normale des Philippines",
+      "72": "heure d’été des Philippines"
     },
     "phis": {
       "104": "heure des îles Phoenix"
@@ -401,10 +446,12 @@
       "-24": "heure de Rothera"
     },
     "sakh": {
-      "88": "heure normale de Sakhaline"
+      "88": "heure normale de Sakhaline",
+      "96": "heure d’été de Sakhaline"
     },
     "sama": {
-      "32": "heure normale de Samara"
+      "32": "heure normale de Samara",
+      "40": "heure d’été de Samara"
     },
     "samo": {
       "-88": "heure normale des Samoa"
@@ -413,7 +460,7 @@
       "32": "heure des Seychelles"
     },
     "sing": {
-      "64": "heure de Singapour"
+      "58": "heure de Singapour"
     },
     "soge": {
       "-16": "heure de Géorgie du Sud"
@@ -431,7 +478,8 @@
       "-80": "heure de Tahiti"
     },
     "taip": {
-      "64": "heure normale de Taipei"
+      "64": "heure normale de Taipei",
+      "72": "heure d’été de Taipei"
     },
     "taji": {
       "40": "heure du Tadjikistan"
@@ -440,34 +488,41 @@
       "104": "heure de Tokelau"
     },
     "tong": {
-      "104": "heure normale des Tonga"
+      "104": "heure normale des Tonga",
+      "112": "heure d’été de Tonga"
     },
     "truk": {
       "80": "heure de Chuuk"
     },
     "turk": {
-      "40": "heure normale du Turkménistan"
+      "40": "heure normale du Turkménistan",
+      "48": "heure d’été du Turkménistan"
     },
     "tuva": {
       "96": "heure des Tuvalu"
     },
     "urug": {
-      "-24": "heure normale de l’Uruguay"
+      "-24": "heure normale de l’Uruguay",
+      "-16": "heure d’été de l’Uruguay"
     },
     "uzbe": {
-      "40": "heure normale de l’Ouzbékistan"
+      "40": "heure normale de l’Ouzbékistan",
+      "48": "heure d’été de l’Ouzbékistan"
     },
     "vanu": {
-      "88": "heure normale du Vanuatu"
+      "88": "heure normale du Vanuatu",
+      "96": "heure d’été de Vanuatu"
     },
     "vene": {
       "-32": "heure du Venezuela"
     },
     "vlad": {
-      "80": "heure normale de Vladivostok"
+      "80": "heure normale de Vladivostok",
+      "88": "heure d’été de Vladivostok"
     },
     "volg": {
-      "24": "heure normale de Volgograd"
+      "24": "heure normale de Volgograd",
+      "32": "heure d’été de Volgograd"
     },
     "vost": {
       "40": "heure de Vostok"
@@ -479,13 +534,15 @@
       "96": "heure de Wallis-et-Futuna"
     },
     "yaku": {
-      "72": "heure normale de Iakoutsk"
+      "72": "heure normale de Iakoutsk",
+      "80": "heure d’été de Iakoutsk"
     },
     "yeka": {
-      "40": "heure normale d’Ekaterinbourg"
+      "40": "heure normale d’Ekaterinbourg",
+      "48": "heure d’été d’Ekaterinbourg"
     },
     "yuko": {
-      "-56": "heure normale du Yukon"
+      "-64": "heure normale du Yukon"
     }
   },
   "overrides": {

@@ -20,7 +20,7 @@
 use cldr_cache::CldrCache;
 use elsa::sync::FrozenMap;
 use icu_provider::prelude::*;
-use source::{AbstractFs, SerdeCache};
+use source::{AbstractFs, SerdeCache, TzdbCache};
 use std::collections::{BTreeSet, HashSet};
 use std::fmt::Debug;
 use std::path::Path;
@@ -79,6 +79,7 @@ pub struct SourceDataProvider {
     cldr_paths: Option<Arc<CldrCache>>,
     icuexport_paths: Option<Arc<SerdeCache>>,
     segmenter_lstm_paths: Option<Arc<SerdeCache>>,
+    tzdb_paths: Arc<TzdbCache>,
     trie_type: TrieType,
     collation_han_database: CollationHanDatabase,
     #[allow(clippy::type_complexity)] // not as complex as it appears
@@ -149,6 +150,45 @@ impl SourceDataProvider {
             cldr_paths: None,
             icuexport_paths: None,
             segmenter_lstm_paths: None,
+            tzdb_paths: Arc::new(TzdbCache {
+                root: AbstractFs::Memory(
+                    [
+                        (
+                            "tz-packaged/africa",
+                            include_bytes!("../data/tzdb/africa").as_slice(),
+                        ),
+                        (
+                            "tz-packaged/antarctica",
+                            include_bytes!("../data/tzdb/antarctica"),
+                        ),
+                        ("tz-packaged/asia", include_bytes!("../data/tzdb/asia")),
+                        (
+                            "tz-packaged/australasia",
+                            include_bytes!("../data/tzdb/australasia"),
+                        ),
+                        (
+                            "tz-packaged/backward",
+                            include_bytes!("../data/tzdb/backward"),
+                        ),
+                        ("tz-packaged/europe", include_bytes!("../data/tzdb/europe")),
+                        (
+                            "tz-packaged/etcetera",
+                            include_bytes!("../data/tzdb/etcetera"),
+                        ),
+                        (
+                            "tz-packaged/northamerica",
+                            include_bytes!("../data/tzdb/northamerica"),
+                        ),
+                        (
+                            "tz-packaged/southamerica",
+                            include_bytes!("../data/tzdb/southamerica"),
+                        ),
+                    ]
+                    .into_iter()
+                    .collect(),
+                ),
+                cache: Default::default(),
+            }),
             trie_type: Default::default(),
             collation_han_database: Default::default(),
             requests_cache: Default::default(),
@@ -183,6 +223,17 @@ impl SourceDataProvider {
     pub fn with_segmenter_lstm(self, root: &Path) -> Result<Self, DataError> {
         Ok(Self {
             segmenter_lstm_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new(root)?))),
+            ..self
+        })
+    }
+
+    /// TODO
+    pub fn with_tzdb(self, root: &Path) -> Result<Self, DataError> {
+        Ok(Self {
+            tzdb_paths: Arc::new(TzdbCache {
+                root: AbstractFs::new(root)?,
+                cache: Default::default(),
+            }),
             ..self
         })
     }
@@ -239,6 +290,22 @@ impl SourceDataProvider {
         }
     }
 
+    /// TODO
+    ///
+    /// ✨ *Enabled with the `networking` Cargo feature.*
+    #[cfg(feature = "networking")]
+    pub fn with_tzdb_for_tag(self, tag: &str) -> Self {
+        Self {
+            tzdb_paths: Arc::new(TzdbCache {
+                root: AbstractFs::new_from_url(dbg!(format!(
+                    "https://github.com/eggert/tz/archive/refs/tags/{tag}.zip",
+                ))),
+                cache: Default::default(),
+            }),
+            ..self
+        }
+    }
+
     const MISSING_CLDR_ERROR: DataError =
         DataError::custom("Missing CLDR data. Use `.with_cldr[_for_tag]` to set CLDR data.");
 
@@ -281,6 +348,10 @@ impl SourceDataProvider {
         self.segmenter_lstm_paths
             .as_deref()
             .ok_or(Self::MISSING_SEGMENTER_LSTM_ERROR)
+    }
+
+    fn tzdb(&self) -> &TzdbCache {
+        &self.tzdb_paths
     }
 
     /// Set this to use tries optimized for speed instead of data size

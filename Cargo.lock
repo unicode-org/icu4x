@@ -1641,13 +1641,13 @@ dependencies = [
  "icu_provider_registry",
  "icu_segmenter",
  "itertools",
- "jiff-tzdb",
  "litemap",
  "log",
  "ndarray",
  "num-bigint",
  "num-rational",
  "num-traits",
+ "parse-zoneinfo",
  "postcard",
  "potential_utf",
  "serde",
@@ -1657,7 +1657,6 @@ dependencies = [
  "tinystr",
  "toml",
  "twox-hash",
- "tzif",
  "ureq",
  "writeable",
  "zerotrie",
@@ -1792,12 +1791,6 @@ dependencies = [
  "serde-json-core",
  "utf8_iter",
 ]
-
-[[package]]
-name = "jiff-tzdb"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "05fac328b3df1c0f18a3c2ab6cb7e06e4e549f366017d796e3e66b6d6889abe6"
 
 [[package]]
 name = "js-sys"
@@ -2107,6 +2100,15 @@ dependencies = [
  "redox_syscall",
  "smallvec",
  "windows-targets 0.52.6",
+]
+
+[[package]]
+name = "parse-zoneinfo"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1f2a05b18d44e2957b88f96ba460715e295bc1d7510468a2f3d3b44535d26c24"
+dependencies = [
+ "regex",
 ]
 
 [[package]]

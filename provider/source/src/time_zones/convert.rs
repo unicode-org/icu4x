@@ -105,8 +105,11 @@ fn compute_meta_zone_ids_btreemap(
 
 type Offsets = (EightsOfHourOffset, Option<EightsOfHourOffset>);
 
-// TODO: load this from a better source. Ideally this data would be in CLDR
-fn offsets_for_meta(meta_zones_territory: &Vec<MetazoneTerritory>, meta: &str) -> Option<Offsets> {
+fn offsets_for_meta(
+    meta_zones_territory: &Vec<MetazoneTerritory>,
+    meta: &str,
+    tzdb: &parse_zoneinfo::table::Table,
+) -> Option<Offsets> {
     let (mut standard, mut daylight) = (None, None);
     let mut first_zone = "";
     for m in meta_zones_territory {
@@ -118,7 +121,8 @@ fn offsets_for_meta(meta_zones_territory: &Vec<MetazoneTerritory>, meta: &str) -
             // https://unicode-org.atlassian.net/browse/CLDR-17927
             continue;
         }
-        let Some((mut new_standard, mut new_daylight)) = offsets_for_iana(&m.map_zone.zone_type)
+        let Some((mut new_standard, mut new_daylight)) =
+            offsets_for_iana(&m.map_zone.zone_type, tzdb)
         else {
             continue;
         };
@@ -162,16 +166,25 @@ fn offsets_for_meta(meta_zones_territory: &Vec<MetazoneTerritory>, meta: &str) -
     Some((standard?, daylight))
 }
 
-// TODO: load this from a better source. Ideally this data would be in CLDR
-fn offsets_for_iana(iana: &str) -> Option<Offsets> {
-    let tz = tzif::parse_tzif(jiff_tzdb::get(iana)?.1).ok()?;
-    let posix = tz.footer?;
+fn offsets_for_iana(iana: &str, tzdb: &parse_zoneinfo::table::Table) -> Option<Offsets> {
+    use parse_zoneinfo::transitions::TableTransitions;
+
+    let timespans = tzdb.timespans(iana).unwrap();
+    let timespans = [&timespans.first]
+        .into_iter()
+        .chain(timespans.rest.iter().map(|(_, s)| s));
+
+    let current = timespans.clone().last().unwrap();
+
+    let last_dst = timespans
+        .clone()
+        .rev()
+        // Use the most recent DST offset, even if it's not used anymore, unless it collides with the current standard offset
+        .find(|ts| ts.dst_offset != 0 && ts.dst_offset + ts.utc_offset != current.utc_offset);
 
     Some((
-        (-posix.std_info.offset.0 / 450) as EightsOfHourOffset,
-        posix
-            .dst_info
-            .map(|i| (-i.variant_info.offset.0 / 450) as EightsOfHourOffset),
+        (current.utc_offset / 450) as EightsOfHourOffset,
+        last_dst.map(|ts| ((ts.utc_offset + ts.dst_offset) / 450) as EightsOfHourOffset),
     ))
 }
 
@@ -407,7 +420,11 @@ macro_rules! long_short_impls {
                                 Some(meta_zone_short_id) => metazone.$field.as_ref().map(|value| {
                                     (
                                         meta_zone_short_id.clone(),
-                                        offsets_for_meta(other.meta_zones_territory, key),
+                                        offsets_for_meta(
+                                            other.meta_zones_territory,
+                                            key,
+                                            &other.tzdb,
+                                        ),
                                         value.clone(),
                                     )
                                 }),
@@ -438,7 +455,10 @@ macro_rules! long_short_impls {
                                                             |format| {
                                                                 (
                                                                     bcp47.clone(),
-                                                                    offsets_for_iana(&key),
+                                                                    offsets_for_iana(
+                                                                        &key,
+                                                                        &other.tzdb,
+                                                                    ),
                                                                     format,
                                                                 )
                                                             },
@@ -459,7 +479,7 @@ macro_rules! long_short_impls {
                                                         place.$metazones_name().map(|format| {
                                                             (
                                                                 bcp47.clone(),
-                                                                offsets_for_iana(&key),
+                                                                offsets_for_iana(&key, &other.tzdb),
                                                                 format,
                                                             )
                                                         })

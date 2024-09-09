@@ -27,6 +27,7 @@ struct CldrTimeZonesData<'a> {
     pub(crate) meta_zone_ids_resource: &'a BTreeMap<MetazoneId, MetazoneAliasData>,
     pub(crate) meta_zone_periods_resource: &'a BTreeMap<String, ZonePeriod>,
     pub(crate) meta_zones_territory: &'a Vec<MetazoneTerritory>,
+    pub(crate) tzdb: &'a parse_zoneinfo::table::Table,
 }
 
 macro_rules! impl_data_provider {
@@ -60,8 +61,10 @@ macro_rules! impl_data_provider {
 
                     let meta_zones_territory = &resource.supplemental.meta_zones.meta_zones_territory.0;
 
+                    let tzdb = self.tzdb().get()?;
+
                     Ok(DataResponse {
-            metadata: Default::default(),
+                        metadata: Default::default(),
                         payload: DataPayload::from_owned(
                             <$marker as DynamicDataMarker>::DataStruct::from(CldrTimeZonesData {
                                 time_zone_names_resource,
@@ -69,6 +72,7 @@ macro_rules! impl_data_provider {
                                 meta_zone_ids_resource,
                                 meta_zone_periods_resource,
                                 meta_zones_territory,
+                                tzdb,
                             }),
                         ),
                     })
