@@ -52,6 +52,17 @@ impl CharULE {
         Self([u0, u1, u2])
     }
 
+    /// Converts this [`CharULE`] to a [`char`]. This is equivalent to calling
+    /// [`AsULE::from_unaligned`]
+    ///
+    /// See the type-level documentation for [`CharULE`] for more information.
+    #[inline]
+    pub fn to_char(self) -> char {
+        let [b0, b1, b2] = self.0;
+        // Safe because the bytes of CharULE are defined to represent a valid Unicode scalar value.
+        unsafe { char::from_u32_unchecked(u32::from_le_bytes([b0, b1, b2, 0])) }
+    }
+
     impl_ule_from_array!(char, CharULE, Self([0; 3]));
 }
 
@@ -92,15 +103,7 @@ impl AsULE for char {
 
     #[inline]
     fn from_unaligned(unaligned: Self::ULE) -> Self {
-        // Safe because the bytes of CharULE are defined to represent a valid Unicode scalar value.
-        unsafe {
-            Self::from_u32_unchecked(u32::from_le_bytes([
-                unaligned.0[0],
-                unaligned.0[1],
-                unaligned.0[2],
-                0,
-            ]))
-        }
+        unaligned.to_char()
     }
 }
 
