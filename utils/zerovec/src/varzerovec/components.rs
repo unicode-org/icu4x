@@ -30,6 +30,9 @@ pub(super) const MAX_INDEX: usize = u32::MAX as usize;
 /// and all of its associated items are hidden from the docs.
 #[allow(clippy::missing_safety_doc)] // no safety section for you, don't implement this trait period
 pub unsafe trait VarZeroVecFormat: 'static + Sized {
+    /// The error to show when unable to construct a vec
+    #[doc(hidden)]
+    const TOO_LARGE_ERROR: &'static str;
     #[doc(hidden)]
     const INDEX_WIDTH: usize;
     #[doc(hidden)]
@@ -75,6 +78,8 @@ pub struct Index16;
 pub struct Index32;
 
 unsafe impl VarZeroVecFormat for Index8 {
+    const TOO_LARGE_ERROR: &'static str = "Attempted to build VarZeroVec out of elements that \
+                                     cumulatively are larger than a u8 in size";
     const INDEX_WIDTH: usize = 1;
     const MAX_VALUE: u32 = u8::MAX as u32;
     type RawBytes = u8;
@@ -93,6 +98,8 @@ unsafe impl VarZeroVecFormat for Index8 {
 }
 
 unsafe impl VarZeroVecFormat for Index16 {
+    const TOO_LARGE_ERROR: &'static str = "Attempted to build VarZeroVec out of elements that \
+                                     cumulatively are larger than a u16 in size";
     const INDEX_WIDTH: usize = 2;
     const MAX_VALUE: u32 = u16::MAX as u32;
     type RawBytes = RawBytesULE<2>;
@@ -111,6 +118,8 @@ unsafe impl VarZeroVecFormat for Index16 {
 }
 
 unsafe impl VarZeroVecFormat for Index32 {
+    const TOO_LARGE_ERROR: &'static str = "Attempted to build VarZeroVec out of elements that \
+                                     cumulatively are larger than a u32 in size";
     const INDEX_WIDTH: usize = 4;
     const MAX_VALUE: u32 = u32::MAX;
     type RawBytes = RawBytesULE<4>;
