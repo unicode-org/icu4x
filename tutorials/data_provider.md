@@ -227,7 +227,7 @@ where
 }
 
 let provider = CustomDecimalSymbolsProvider(
-    FixedProvider::new_default::<DecimalSymbolsV1Marker>()
+    FixedProvider::<DecimalSymbolsV1Marker>::new_default()
 );
 
 let formatter = FixedDecimalFormatter::try_new_unstable(
