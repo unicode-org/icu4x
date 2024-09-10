@@ -20,12 +20,12 @@ use crate::{PluralCategory, PluralElements, PluralOperands, PluralRules};
 use alloc::borrow::{Cow, ToOwned};
 use alloc::boxed::Box;
 use alloc::vec::Vec;
-use yoke::Yokeable;
-use zerofrom::ZeroFrom;
 use core::fmt;
 use core::marker::PhantomData;
 use icu_provider::prelude::*;
 use icu_provider::DynamicDataMarker;
+use yoke::Yokeable;
+use zerofrom::ZeroFrom;
 use zerovec::ule::vartuple::VarTuple;
 use zerovec::ule::vartuple::VarTupleULE;
 use zerovec::ule::AsULE;
@@ -543,7 +543,7 @@ impl AsULE for PluralCategoryAndMetadata {
 
 /// A bitpacked DST for [`PluralElements`].
 ///
-/// Can be put in a [`Cow`] or a [`VarZeroVec`].
+/// Can be put in a [`Cow`] or a [`VarZeroSlice`].
 #[derive(Debug, PartialEq, Eq)]
 #[repr(transparent)]
 pub struct PluralElementsPackedULE<V: VarULE + ?Sized> {
@@ -975,7 +975,7 @@ where
 /// This type has the following limitations:
 ///
 /// 1. It only supports `str`
-/// 2. It does not implement [`VarULE`] so it can't be used in a [`VarZeroVec`]
+/// 2. It does not implement [`VarULE`] so it can't be used in a [`VarZeroSlice`]
 /// 3. It always serializes the [`FourBitMetadata`] as 0
 ///
 /// Use [`PluralElementsPackedULE`] directly if you need these additional features.
