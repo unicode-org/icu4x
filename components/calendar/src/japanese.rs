@@ -877,8 +877,8 @@ mod tests {
         );
 
         // Extra coverage for https://github.com/unicode-org/icu4x/issues/4968
-        assert_eq!(reconstructed.year().era, era);
-        assert_eq!(reconstructed.year().era_year_or_extended(), year);
+        assert_eq!(reconstructed.year().era().unwrap(), era);
+        assert_eq!(reconstructed.year().era_year().unwrap(), year);
     }
 
     fn single_test_roundtrip_ext(

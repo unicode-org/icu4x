@@ -1593,8 +1593,9 @@ mod tests {
         });
 
         let roundtrip_year = date.year();
-        let roundtrip_era = roundtrip_year.era;
-        let roundtrip_year = roundtrip_year.number;
+        // FIXME: these APIs should be improved
+        let roundtrip_era = roundtrip_year.era_or_unknown();
+        let roundtrip_year = roundtrip_year.era_year_or_extended();
         let roundtrip_month = date.month().code;
         let roundtrip_day = date.day_of_month().0.try_into().expect("Must fit in u8");
 
