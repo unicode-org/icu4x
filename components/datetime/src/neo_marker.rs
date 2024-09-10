@@ -329,7 +329,7 @@ use crate::{
 use icu_calendar::{
     any_calendar::IntoAnyCalendar,
     types::{
-        DayOfMonth, DayOfYearInfo, FormattableMonth, FormattableYear, IsoHour, IsoMinute,
+        DayOfMonth, DayOfYearInfo, FormattableMonth, YearInfo, IsoHour, IsoMinute,
         IsoSecond, IsoWeekday, NanoSecond,
     },
     AnyCalendar, AnyCalendarKind, AsCalendar, Calendar, Date, DateTime, Ref, Time,

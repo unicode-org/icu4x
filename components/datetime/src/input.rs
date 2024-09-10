@@ -233,7 +233,7 @@ impl ExtractedDateTimeInput {
             Some(AnyCalendarKind::Gregorian) => match self.year() {
                 None => true,
                 Some(year) if year.era_year_or_extended() < 1000 => true,
-                Some(year) if year.era_or_unknown().0 != tinystr::tinystr!(16, "ce") => true,
+                Some(year) if year.formatting_era_or_unknown().0 != tinystr::tinystr!(16, "ce") => true,
                 Some(_) => false,
             },
             Some(_) => {
