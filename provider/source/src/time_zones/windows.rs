@@ -13,7 +13,7 @@ use icu_provider::prelude::*;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::ZeroVec;
 
-use super::{convert::compute_bcp47_tzids_btreemap, names::compute_bcp47_ids_hash};
+use super::convert::compute_bcp47_tzids_btreemap;
 
 impl DataProvider<WindowsZonesToBcp47MapV1Marker> for SourceDataProvider {
     fn load(
@@ -31,13 +31,10 @@ impl DataProvider<WindowsZonesToBcp47MapV1Marker> for SourceDataProvider {
 
         let iana2bcp = compute_bcp47_tzids_btreemap(&bcp_resource.keyword.u.time_zones.values);
 
-        let bcp47_set: BTreeSet<TimeZoneBcp47Id> = iana2bcp.values().copied().collect();
-        let bcp47_ids: ZeroVec<TimeZoneBcp47Id> = bcp47_set.iter().copied().collect();
-        let bcp47_ids_checksum = compute_bcp47_ids_hash(&bcp47_ids);
-
         let windows_zones = &resource.supplemental.windows_zones;
 
-        let windows2bcp_map: BTreeMap<Vec<u8>, usize> = windows_zones
+        let mut bcp47_set: BTreeSet<TimeZoneBcp47Id> = BTreeSet::default();
+        let intermediary: Vec<(String, TimeZoneBcp47Id)> = windows_zones
             .mapped_zones
             .iter()
             .map(|zone| {
@@ -49,12 +46,23 @@ impl DataProvider<WindowsZonesToBcp47MapV1Marker> for SourceDataProvider {
                     .unwrap_or(&zone.map_zone.iana_identifier);
 
                 let bcp_47 = iana2bcp.get(primary_iana_id).unwrap();
+                let _ = bcp47_set.insert(*bcp_47);
 
                 (
-                    (zone.map_zone.windows_id.clone() + "/" + &zone.map_zone.territory)
-                        .as_bytes()
-                        .to_vec(),
-                    bcp47_ids.binary_search(bcp_47).unwrap(),
+                    (zone.map_zone.windows_id.clone() + "/" + &zone.map_zone.territory),
+                    *bcp_47,
+                )
+            })
+            .collect();
+
+        let bcp47_ids: ZeroVec<TimeZoneBcp47Id> = bcp47_set.iter().copied().collect();
+
+        let windows2bcp_map: BTreeMap<Vec<u8>, usize> = intermediary
+            .iter()
+            .map(|(name, id)| {
+                (
+                    name.as_bytes().to_vec(),
+                    bcp47_ids.binary_search(id).unwrap(),
                 )
             })
             .collect();
@@ -67,7 +75,6 @@ impl DataProvider<WindowsZonesToBcp47MapV1Marker> for SourceDataProvider {
                 })?
                 .convert_store(),
             bcp47_ids,
-            bcp47_ids_checksum,
         };
 
         Ok(DataResponse {

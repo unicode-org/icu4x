@@ -44,7 +44,7 @@ impl Default for WindowsTimeZoneMapper {
 }
 
 impl WindowsTimeZoneMapper {
-    /// Creates a new [`WindowsTimeZoneToBcp47Mapper`].
+    /// Creates a new [`WindowsTimeZoneMapper`].
     #[cfg(feature = "compiled_data")]
     pub fn new() -> Self {
         Self {

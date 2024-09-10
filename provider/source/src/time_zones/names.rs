@@ -164,7 +164,7 @@ fn create_hasher() -> impl std::hash::Hasher {
     twox_hash::XxHash64::with_seed(0)
 }
 
-pub(crate) fn compute_bcp47_ids_hash(bcp47_ids: &ZeroSlice<TimeZoneBcp47Id>) -> u64 {
+fn compute_bcp47_ids_hash(bcp47_ids: &ZeroSlice<TimeZoneBcp47Id>) -> u64 {
     let mut hasher = create_hasher();
     hasher.write(bcp47_ids.as_bytes());
     hasher.finish()
