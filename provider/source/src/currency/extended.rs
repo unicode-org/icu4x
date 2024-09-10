@@ -5,10 +5,8 @@
 use crate::cldr_serde;
 use crate::SourceDataProvider;
 use icu::experimental::dimension::provider::extended_currency::*;
-use icu::plurals::provider::FourBitMetadata;
 use icu::plurals::PluralElements;
 use icu_provider::prelude::*;
-use std::borrow::Cow;
 use std::collections::HashSet;
 
 impl DataProvider<CurrencyExtendedDataV1Marker> for crate::SourceDataProvider {
@@ -31,60 +29,23 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::SourceDataProvider {
             .get(req.id.marker_attributes.as_str())
             .ok_or(DataError::custom("No currency associated with the aux key"))?;
 
-        let plural_elements = PluralElements::new((
-            FourBitMetadata::zero(),
-            currency
-                .other
-                .as_deref()
-                .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?,
-        ))
-        .with_zero_value(
-            currency
-                .zero
-                .as_deref()
-                .map(|v| (FourBitMetadata::zero(), v)),
-        )
-        .with_one_value(
-            currency
-                .one
-                .as_deref()
-                .map(|v| (FourBitMetadata::zero(), v)),
-        )
-        .with_two_value(
-            currency
-                .two
-                .as_deref()
-                .map(|v| (FourBitMetadata::zero(), v)),
-        )
-        .with_few_value(
-            currency
-                .few
-                .as_deref()
-                .map(|v| (FourBitMetadata::zero(), v)),
-        )
-        .with_many_value(
-            currency
-                .many
-                .as_deref()
-                .map(|v| (FourBitMetadata::zero(), v)),
-        )
-        .with_explicit_one_value(
-            currency
-                .explicit_one
-                .as_deref()
-                .map(|v| (FourBitMetadata::zero(), v)),
-        )
-        .with_explicit_zero_value(
-            currency
-                .explicit_zero
-                .as_deref()
-                .map(|v| (FourBitMetadata::zero(), v)),
-        );
-
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(CurrencyExtendedDataV1 {
-                display_names: Cow::Owned(zerovec::ule::encode_varule_to_box(&plural_elements)),
+                display_names: PluralElements::new(
+                    currency
+                        .other
+                        .as_deref()
+                        .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?,
+                )
+                .with_zero_value(currency.zero.as_deref())
+                .with_one_value(currency.one.as_deref())
+                .with_two_value(currency.two.as_deref())
+                .with_few_value(currency.few.as_deref())
+                .with_many_value(currency.many.as_deref())
+                .with_explicit_one_value(currency.explicit_one.as_deref())
+                .with_explicit_zero_value(currency.explicit_zero.as_deref())
+                .into(),
             }),
         })
     }
@@ -140,12 +101,9 @@ fn test_basic() {
         .payload;
     let en_rules =
         PluralRules::try_new_cardinal_unstable(&provider, &langid!("en").into()).unwrap();
+    assert_eq!(en.get().display_names.get(1.into(), &en_rules), "US dollar");
     assert_eq!(
-        en.get().display_names.get(1.into(), &en_rules).1,
-        "US dollar"
-    );
-    assert_eq!(
-        en.get().display_names.get(10.into(), &en_rules).1,
+        en.get().display_names.get(10.into(), &en_rules),
         "US dollars"
     );
 
@@ -163,15 +121,15 @@ fn test_basic() {
         PluralRules::try_new_cardinal_unstable(&provider, &langid!("fr").into()).unwrap();
 
     assert_eq!(
-        fr.get().display_names.get(0.into(), &fr_rules).1,
+        fr.get().display_names.get(0.into(), &fr_rules),
         "dollar des États-Unis"
     );
     assert_eq!(
-        fr.get().display_names.get(1.into(), &fr_rules).1,
+        fr.get().display_names.get(1.into(), &fr_rules),
         "dollar des États-Unis"
     );
     assert_eq!(
-        fr.get().display_names.get(10.into(), &fr_rules).1,
+        fr.get().display_names.get(10.into(), &fr_rules),
         "dollars des États-Unis"
     );
 }
