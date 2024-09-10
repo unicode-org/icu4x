@@ -9,8 +9,6 @@
 
 use serde::Deserialize;
 
-// TODO: Confirm whether it would be preferred to merge windowsZones with metaZones.
-
 #[derive(Deserialize)]
 pub(crate) struct WindowsResource {
     pub(crate) supplemental: WindowsSupplemental,
@@ -34,7 +32,6 @@ pub(crate) struct MappedWindowsTimeZone {
     pub(crate) map_zone: MapZone,
 }
 
-// NOTE(nekevss): Territory can most likely be TinyAsciiStr<3>
 #[derive(Debug, Deserialize)]
 pub(crate) struct MapZone {
     #[serde(rename = "_other")]
