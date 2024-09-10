@@ -32,7 +32,6 @@ use zerovec::ule::UleError;
 use zerovec::ule::VarULE;
 use zerovec::ule::ULE;
 use zerovec::VarZeroSlice;
-use zerovec::VarZeroVec;
 
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
@@ -376,84 +375,6 @@ pub enum PluralElementsKeysV1 {
 // TODO: Make the str generic
 pub struct PluralElementsFieldV1<'data>(pub PluralElementsKeysV1, pub Cow<'data, str>);
 
-// TODO: Make the str generic
-#[derive(Debug, Clone, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_plurals::provider))]
-#[yoke(prove_covariance_manually)]
-/// A data-struct-optimized representation of [`PluralElements`].
-pub struct PluralElementsV1<'data> {
-    /// Optional entries for categories other than PluralCategory::Other
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub specials: VarZeroVec<'data, PluralElementsFieldV1ULE>,
-    /// The entry for PluralCategory::Other
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub other: Cow<'data, str>,
-}
-
-impl<'a> PluralElementsV1<'a> {
-    /// Returns the string for the given [`PluralOperands`] and [`PluralRules`].
-    pub fn get(&'a self, op: PluralOperands, rules: &PluralRules) -> &'a str {
-        let category = rules.category_for(op);
-
-        if op.is_exactly_zero() {
-            if let Some(value) = self
-                .specials
-                .iter()
-                .filter_map(|ule| {
-                    (ule.0 == PluralElementsKeysV1::ExplicitZero.to_unaligned()).then_some(&ule.1)
-                })
-                .next()
-            {
-                return value;
-            }
-        }
-
-        if op.is_exactly_one() {
-            if let Some(value) = self
-                .specials
-                .iter()
-                .filter_map(|ule| {
-                    (ule.0 == PluralElementsKeysV1::ExplicitOne.to_unaligned()).then_some(&ule.1)
-                })
-                .next()
-            {
-                return value;
-            }
-        }
-
-        let category = match category {
-            PluralCategory::Zero => PluralElementsKeysV1::Zero,
-            PluralCategory::One => PluralElementsKeysV1::One,
-            PluralCategory::Two => PluralElementsKeysV1::Two,
-            PluralCategory::Few => PluralElementsKeysV1::Few,
-            PluralCategory::Many => PluralElementsKeysV1::Many,
-            PluralCategory::Other => return &self.other,
-        }
-        .to_unaligned();
-        self.specials
-            .iter()
-            .filter_map(|ule| (ule.0 == category).then_some(&ule.1))
-            .next()
-            .unwrap_or(&*self.other)
-    }
-}
-
-#[cfg(feature = "datagen")]
-impl<'a, 'b> From<PluralElements<&'b str>> for PluralElementsV1<'a> {
-    fn from(value: PluralElements<&'b str>) -> Self {
-        Self {
-            specials: (&value
-                .get_specials_tuple_slice()
-                .map(|(key, s)| PluralElementsFieldV1(key, (*s).into()))
-                .collect::<Vec<_>>())
-                .into(),
-            other: value.other.to_owned().into(),
-        }
-    }
-}
-
 impl<T> PluralElements<T>
 where
     T: PartialEq,
@@ -492,12 +413,6 @@ where
         .into_iter()
         .flatten()
     }
-}
-
-#[test]
-fn plural_elements_niche() {
-    assert_eq!(core::mem::size_of::<PluralElementsV1>(), 48);
-    assert_eq!(core::mem::size_of::<Option<PluralElementsV1>>(), 48);
 }
 
 /// Four bits of metadata that are stored and retrieved with the plural elements.

@@ -31,7 +31,11 @@ impl<'l> Writeable for LongFormattedCurrency<'l> {
         W: core::fmt::Write + ?Sized,
     {
         let operands = self.value.into();
-        let display_name = self.extended.display_names.get(operands, self.plural_rules);
+        let display_name = self
+            .extended
+            .display_names
+            .get(operands, self.plural_rules)
+            .1;
         let pattern = self.patterns.patterns.get(operands, self.plural_rules);
         let formatted_value = self.fixed_decimal_formatter.format(self.value);
         let interpolated = pattern.interpolate((formatted_value, display_name));

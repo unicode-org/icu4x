@@ -9,7 +9,9 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use icu_plurals::provider::PluralElementsV1;
+use alloc::borrow::Cow;
+
+use icu_plurals::provider::PluralElementsPackedULE;
 use icu_provider::prelude::*;
 
 #[cfg(feature = "compiled_data")]
@@ -42,6 +44,13 @@ pub struct CurrencyExtendedDataV1<'data> {
     /// # NOTE
     ///    Regards to the [Unicode Report TR35](https://unicode.org/reports/tr35/tr35-numbers.html#Currencies),
     ///    If no matching for specific count, the `other` count will be used.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub display_names: PluralElementsV1<'data>,
+    #[cfg_attr(
+        feature = "serde",
+        serde(borrow),
+        serde(
+            // Explicit disambiguation due to https://github.com/rust-lang/rust/issues/130180
+            deserialize_with = "icu_plurals::provider::deserialize_plural_elements_packed_cow::<_, str>"
+        )
+    )]
+    pub display_names: Cow<'data, PluralElementsPackedULE<str>>,
 }
