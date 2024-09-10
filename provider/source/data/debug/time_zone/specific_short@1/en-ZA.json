@@ -1,20 +1,19 @@
 {
   "defaults": {
     "afce": {
-      "16": "CAT"
+      "17": "CAT"
     },
     "afea": {
-      "24": "EAT"
+      "19": "EAT"
     },
     "afso": {
-      "16": "SAST"
+      "14": "SAST"
     },
     "afwe": {
-      "8": "WAT",
-      "16": "WAST"
+      "1": "WAT"
     },
     "mgmt": {
-      "0": "GMT"
+      "-2": "GMT"
     }
   },
   "overrides": {

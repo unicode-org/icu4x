@@ -7,7 +7,6 @@ use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use cldr_serde::time_zones::bcp47_tzid::Bcp47TzidAliasData;
 use cldr_serde::time_zones::meta_zones::MetazoneAliasData;
-use cldr_serde::time_zones::meta_zones::MetazoneTerritory;
 use cldr_serde::time_zones::meta_zones::ZonePeriod;
 use cldr_serde::time_zones::time_zone_names::TimeZoneNames;
 use icu::datetime::provider::time_zones::*;
@@ -26,7 +25,6 @@ struct CldrTimeZonesData<'a> {
     pub(crate) bcp47_tzids_resource: &'a BTreeMap<TimeZoneBcp47Id, Bcp47TzidAliasData>,
     pub(crate) meta_zone_ids_resource: &'a BTreeMap<MetazoneId, MetazoneAliasData>,
     pub(crate) meta_zone_periods_resource: &'a BTreeMap<String, ZonePeriod>,
-    pub(crate) meta_zones_territory: &'a Vec<MetazoneTerritory>,
     pub(crate) tzdb: &'a parse_zoneinfo::table::Table,
 }
 
@@ -59,8 +57,6 @@ macro_rules! impl_data_provider {
                     let meta_zone_periods_resource =
                         &resource.supplemental.meta_zones.meta_zone_info.time_zone.0;
 
-                    let meta_zones_territory = &resource.supplemental.meta_zones.meta_zones_territory.0;
-
                     let tzdb = self.tzdb()?.get()?;
 
                     Ok(DataResponse {
@@ -71,7 +67,6 @@ macro_rules! impl_data_provider {
                                 bcp47_tzids_resource,
                                 meta_zone_ids_resource,
                                 meta_zone_periods_resource,
-                                meta_zones_territory,
                                 tzdb,
                             }),
                         ),

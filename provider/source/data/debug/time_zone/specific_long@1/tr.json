@@ -5,23 +5,22 @@
       "-32": "Acre Yaz Saati"
     },
     "afce": {
-      "16": "Orta Afrika Saati"
+      "17": "Orta Afrika Saati"
     },
     "afea": {
-      "24": "Doğu Afrika Saati"
+      "19": "Doğu Afrika Saati"
     },
     "afgh": {
       "36": "Afganistan Saati"
     },
     "afso": {
-      "16": "Güney Afrika Standart Saati"
+      "14": "Güney Afrika Standart Saati"
     },
     "afwe": {
-      "8": "Batı Afrika Standart Saati",
-      "16": "Batı Afrika Yaz Saati"
+      "1": "Batı Afrika Standart Saati"
     },
     "alam": {
-      "40": "Almatı Standart Saati",
+      "48": "Almatı Standart Saati",
       "56": "Almatı Yaz Saati"
     },
     "alas": {
@@ -37,8 +36,7 @@
       "-40": "Kuzey Amerika Merkezi Yaz Saati"
     },
     "amea": {
-      "-40": "Kuzey Amerika Doğu Standart Saati",
-      "-32": "Kuzey Amerika Doğu Yaz Saati"
+      "-42": "Kuzey Amerika Doğu Standart Saati"
     },
     "ammo": {
       "-56": "Kuzey Amerika Dağ Standart Saati",
@@ -49,7 +47,8 @@
       "-56": "Kuzey Amerika Pasifik Yaz Saati"
     },
     "anad": {
-      "96": "Anadır Standart Saati"
+      "96": "Anadır Standart Saati",
+      "104": "Anadır Yaz Saati"
     },
     "apia": {
       "104": "Apia Standart Saati",
@@ -63,8 +62,7 @@
       "48": "Aktöbe Yaz Saati"
     },
     "arab": {
-      "24": "Arabistan Standart Saati",
-      "32": "Arabistan Yaz Saati"
+      "24": "Arabistan Standart Saati"
     },
     "arge": {
       "-24": "Arjantin Standart Saati",
@@ -75,11 +73,11 @@
       "40": "Ermenistan Yaz Saati"
     },
     "arwe": {
-      "-24": "Batı Arjantin Standart Saati"
+      "-32": "Batı Arjantin Standart Saati",
+      "-24": "Batı Arjantin Yaz Saati"
     },
     "atla": {
-      "-32": "Atlantik Standart Saati",
-      "-24": "Atlantik Yaz Saati"
+      "-35": "Atlantik Standart Saati"
     },
     "auce": {
       "76": "Orta Avustralya Standart Saati",
@@ -113,17 +111,17 @@
       "48": "Butan Saati"
     },
     "boli": {
-      "-32": "Bolivya Saati"
+      "-36": "Bolivya Saati"
     },
     "bras": {
       "-24": "Brasilia Standart Saati",
       "-16": "Brasilia Yaz Saati"
     },
     "brun": {
-      "64": "Brunei Darü’s-Selam Saati"
+      "58": "Brunei Darü’s-Selam Saati"
     },
     "case": {
-      "64": "Casey Saati"
+      "88": "Casey Saati"
     },
     "cave": {
       "-8": "Cape Verde Standart Saati"
@@ -148,10 +146,10 @@
       "72": "Çoybalsan Yaz Saati"
     },
     "chri": {
-      "56": "Christmas Adası Saati"
+      "53": "Christmas Adası Saati"
     },
     "coco": {
-      "52": "Cocos Adaları Saati"
+      "51": "Cocos Adaları Saati"
     },
     "colo": {
       "-40": "Kolombiya Standart Saati",
@@ -169,14 +167,14 @@
       "56": "Davis Saati"
     },
     "dumo": {
-      "80": "Dumont-d’Urville Saati"
+      "78": "Dumont-d’Urville Saati"
     },
     "east": {
       "-48": "Paskalya Adası Standart Saati",
       "-40": "Paskalya Adası Yaz Saati"
     },
     "eati": {
-      "72": "Doğu Timor Saati"
+      "66": "Doğu Timor Saati"
     },
     "ecua": {
       "-40": "Ekvador Saati"
@@ -190,11 +188,11 @@
       "24": "Doğu Avrupa Yaz Saati"
     },
     "eufe": {
-      "16": "İleri Doğu Avrupa Saati"
+      "24": "İleri Doğu Avrupa Saati"
     },
     "euwe": {
-      "0": "Batı Avrupa Standart Saati",
-      "8": "Batı Avrupa Yaz Saati"
+      "8": "Batı Avrupa Standart Saati",
+      "16": "Batı Avrupa Yaz Saati"
     },
     "falk": {
       "-24": "Falkland Adaları Standart Saati"
@@ -204,43 +202,42 @@
       "104": "Fiji Yaz Saati"
     },
     "frgu": {
-      "-24": "Fransız Guyanası Saati"
+      "-27": "Fransız Guyanası Saati"
     },
     "frso": {
-      "40": "Fransız Güney ve Antarktika Saati"
+      "39": "Fransız Güney ve Antarktika Saati"
     },
     "gala": {
       "-48": "Galapagos Saati"
     },
     "gamb": {
-      "-72": "Gambier Saati"
+      "-71": "Gambier Saati"
     },
     "geor": {
       "32": "Gürcistan Standart Saati"
     },
     "giis": {
-      "96": "Gilbert Adaları Saati"
+      "92": "Gilbert Adaları Saati"
     },
     "grea": {
-      "-16": "Doğu Grönland Standart Saati",
-      "-8": "Doğu Grönland Yaz Saati"
+      "-8": "Doğu Grönland Standart Saati",
+      "0": "Doğu Grönland Yaz Saati"
     },
     "grwe": {
-      "-16": "Batı Grönland Standart Saati",
-      "-8": "Batı Grönland Yaz Saati"
+      "-24": "Batı Grönland Standart Saati",
+      "-16": "Batı Grönland Yaz Saati"
     },
     "guam": {
       "80": "Guam Standart Saati"
     },
     "gulf": {
-      "32": "Körfez Saati"
+      "29": "Körfez Saati"
     },
     "guya": {
       "-32": "Guyana Saati"
     },
     "haal": {
-      "-80": "Hawaii-Aleut Standart Saati",
-      "-76": "Hawaii-Aleut Yaz Saati"
+      "-84": "Hawaii-Aleut Standart Saati"
     },
     "hoko": {
       "64": "Hong Kong Standart Saati",
@@ -251,16 +248,16 @@
       "64": "Hovd Yaz Saati"
     },
     "ince": {
-      "64": "Orta Endonezya Saati"
+      "63": "Orta Endonezya Saati"
     },
     "indi": {
-      "44": "Hindistan Standart Saati"
+      "47": "Hindistan Standart Saati"
     },
     "indo": {
-      "56": "Hindiçin Saati"
+      "53": "Hindiçin Saati"
     },
     "inea": {
-      "72": "Doğu Endonezya Saati"
+      "75": "Doğu Endonezya Saati"
     },
     "inoc": {
       "48": "Hint Okyanusu Saati"
@@ -281,11 +278,10 @@
       "24": "İsrail Yaz Saati"
     },
     "japa": {
-      "72": "Japonya Standart Saati",
-      "80": "Japonya Yaz Saati"
+      "74": "Japonya Standart Saati"
     },
     "kaea": {
-      "40": "Doğu Kazakistan Saati"
+      "48": "Doğu Kazakistan Saati"
     },
     "kamc": {
       "96": "Petropavlovsk-Kamçatski Standart Saati"
@@ -311,7 +307,7 @@
       "48": "Kırgızistan Saati"
     },
     "lank": {
-      "44": "Lanka Saati"
+      "48": "Lanka Saati"
     },
     "liis": {
       "112": "Line Adaları Saati"
@@ -329,16 +325,16 @@
       "96": "Magadan Yaz Saati"
     },
     "mais": {
-      "96": "Marshall Adaları Saati"
+      "92": "Marshall Adaları Saati"
     },
     "mala": {
       "64": "Malezya Saati"
     },
     "mald": {
-      "40": "Maldivler Saati"
+      "39": "Maldivler Saati"
     },
     "marq": {
-      "-76": "Markiz Adaları Saati"
+      "-74": "Markiz Adaları Saati"
     },
     "maur": {
       "32": "Mauritius Standart Saati",
@@ -352,7 +348,7 @@
       "-48": "Meksika Pasifik Kıyısı Yaz Saati"
     },
     "mgmt": {
-      "0": "Greenwich Ortalama Saati"
+      "-2": "Greenwich Ortalama Saati"
     },
     "mong": {
       "64": "Ulan Batur Standart Saati",
@@ -363,7 +359,7 @@
       "32": "Moskova Yaz Saati"
     },
     "myan": {
-      "52": "Myanmar Saati"
+      "51": "Myanmar Saati"
     },
     "naur": {
       "96": "Nauru Saati"
@@ -384,7 +380,7 @@
       "104": "Yeni Zelanda Yaz Saati"
     },
     "niue": {
-      "-88": "Niue Saati"
+      "-90": "Niue Saati"
     },
     "noma": {
       "80": "Kuzey Mariana Adaları Saati"
@@ -409,10 +405,10 @@
       "48": "Pakistan Yaz Saati"
     },
     "pala": {
-      "72": "Palau Saati"
+      "-120": "Palau Saati"
     },
     "pang": {
-      "80": "Papua Yeni Gine Saati"
+      "78": "Papua Yeni Gine Saati"
     },
     "para": {
       "-32": "Paraguay Standart Saati",
@@ -437,17 +433,16 @@
       "-64": "Pitcairn Saati"
     },
     "pona": {
-      "88": "Ponape Saati"
+      "85": "Ponape Saati"
     },
     "pyon": {
-      "72": "Pyongyang Saati"
+      "68": "Pyongyang Saati"
     },
     "qyzy": {
-      "40": "Kızılorda Standart Saati",
-      "48": "Kızılorda Yaz Saati"
+      "48": "Kızılorda Standart Saati"
     },
     "reun": {
-      "32": "Reunion Saati"
+      "29": "Reunion Saati"
     },
     "roth": {
       "-24": "Rothera Saati"
@@ -459,19 +454,19 @@
       "32": "Samara Standart Saati"
     },
     "samo": {
-      "-88": "Samoa Standart Saati"
+      "100": "Samoa Standart Saati"
     },
     "seyc": {
-      "32": "Seyşeller Saati"
+      "29": "Seyşeller Saati"
     },
     "sing": {
-      "58": "Singapur Standart Saati"
+      "64": "Singapur Standart Saati"
     },
     "soge": {
-      "-16": "Güney Georgia Saati"
+      "-19": "Güney Georgia Saati"
     },
     "solo": {
-      "88": "Solomon Adaları Saati"
+      "85": "Solomon Adaları Saati"
     },
     "suri": {
       "-24": "Surinam Saati"
@@ -480,7 +475,7 @@
       "24": "Showa Saati"
     },
     "tahi": {
-      "-80": "Tahiti Saati"
+      "-79": "Tahiti Saati"
     },
     "taip": {
       "64": "Taipei Standart Saati",
@@ -497,13 +492,13 @@
       "112": "Tonga Yaz Saati"
     },
     "truk": {
-      "80": "Chuuk Saati"
+      "78": "Chuuk Saati"
     },
     "turk": {
       "40": "Türkmenistan Standart Saati"
     },
     "tuva": {
-      "96": "Tuvalu Saati"
+      "92": "Tuvalu Saati"
     },
     "urug": {
       "-24": "Uruguay Standart Saati",
@@ -532,10 +527,10 @@
       "40": "Vostok Saati"
     },
     "wake": {
-      "96": "Wake Adası Saati"
+      "92": "Wake Adası Saati"
     },
     "wall": {
-      "96": "Wallis ve Futuna Saati"
+      "92": "Wallis ve Futuna Saati"
     },
     "yaku": {
       "72": "Yakutsk Standart Saati",

@@ -5,23 +5,22 @@
       "-32": "Akre letnje računanje vremena"
     },
     "afce": {
-      "16": "Centralno-afričko vreme"
+      "17": "Centralno-afričko vreme"
     },
     "afea": {
-      "24": "Istočno-afričko vreme"
+      "19": "Istočno-afričko vreme"
     },
     "afgh": {
       "36": "Avganistan vreme"
     },
     "afso": {
-      "16": "Južno-afričko vreme"
+      "14": "Južno-afričko vreme"
     },
     "afwe": {
-      "8": "Zapadno-afričko standardno vreme",
-      "16": "Zapadno-afričko letnje vreme"
+      "1": "Zapadno-afričko standardno vreme"
     },
     "alam": {
-      "40": "Almati standardno vreme",
+      "48": "Almati standardno vreme",
       "56": "Almati letnje računanje vremena"
     },
     "alas": {
@@ -37,8 +36,7 @@
       "-40": "Severnoameričko centralno letnje vreme"
     },
     "amea": {
-      "-40": "Severnoameričko istočno standardno vreme",
-      "-32": "Severnoameričko istočno letnje vreme"
+      "-42": "Severnoameričko istočno standardno vreme"
     },
     "ammo": {
       "-56": "Severnoameričko planinsko standardno vreme",
@@ -49,7 +47,8 @@
       "-56": "Severnoameričko pacifičko letnje vreme"
     },
     "anad": {
-      "96": "Anadir standardno vreme"
+      "96": "Anadir standardno vreme",
+      "104": "Anadir letnje računanje vremena"
     },
     "apia": {
       "104": "Apija, standardno vreme",
@@ -63,8 +62,7 @@
       "48": "Akutobe letnje računanje vremena"
     },
     "arab": {
-      "24": "Arabijsko standardno vreme",
-      "32": "Arabijsko letnje vreme"
+      "24": "Arabijsko standardno vreme"
     },
     "arge": {
       "-24": "Argentina, standardno vreme",
@@ -75,11 +73,11 @@
       "40": "Jermenija, letnje vreme"
     },
     "arwe": {
-      "-24": "Zapadna Argentina, standardno vreme"
+      "-32": "Zapadna Argentina, standardno vreme",
+      "-24": "Zapadna Argentina, letnje vreme"
     },
     "atla": {
-      "-32": "Atlantsko standardno vreme",
-      "-24": "Atlantsko letnje vreme"
+      "-35": "Atlantsko standardno vreme"
     },
     "auce": {
       "76": "Australijsko centralno standardno vreme",
@@ -113,14 +111,14 @@
       "48": "Butan vreme"
     },
     "boli": {
-      "-32": "Bolivija vreme"
+      "-36": "Bolivija vreme"
     },
     "bras": {
       "-24": "Brazilija, standardno vreme",
       "-16": "Brazilija, letnje vreme"
     },
     "brun": {
-      "64": "Brunej Darusalum vreme"
+      "58": "Brunej Darusalum vreme"
     },
     "cave": {
       "-8": "Zelenortska Ostrva, standardno vreme"
@@ -145,10 +143,10 @@
       "72": "Čojbalsan, letnje vreme"
     },
     "chri": {
-      "56": "Božićno ostrvo vreme"
+      "53": "Božićno ostrvo vreme"
     },
     "coco": {
-      "52": "Kokos (Keling) Ostrva vreme"
+      "51": "Kokos (Keling) Ostrva vreme"
     },
     "colo": {
       "-40": "Kolumbija, standardno vreme",
@@ -166,14 +164,14 @@
       "56": "Dejvis vreme"
     },
     "dumo": {
-      "80": "Dimon d’Urvil vreme"
+      "78": "Dimon d’Urvil vreme"
     },
     "east": {
       "-48": "Uskršnja ostrva, standardno vreme",
       "-40": "Uskršnja ostrva, letnje vreme"
     },
     "eati": {
-      "72": "Istočni timor vreme"
+      "66": "Istočni timor vreme"
     },
     "ecua": {
       "-40": "Ekvador vreme"
@@ -187,11 +185,11 @@
       "24": "Istočnoevropsko letnje vreme"
     },
     "eufe": {
-      "16": "Vreme daljeg istoka Evrope"
+      "24": "Vreme daljeg istoka Evrope"
     },
     "euwe": {
-      "0": "Zapadnoevropsko standardno vreme",
-      "8": "Zapadnoevropsko letnje vreme"
+      "8": "Zapadnoevropsko standardno vreme",
+      "16": "Zapadnoevropsko letnje vreme"
     },
     "falk": {
       "-24": "Folklandska Ostrva, standardno vreme"
@@ -201,43 +199,42 @@
       "104": "Fidži, letnje vreme"
     },
     "frgu": {
-      "-24": "Francuska Gvajana vreme"
+      "-27": "Francuska Gvajana vreme"
     },
     "frso": {
-      "40": "Francusko južno i antarktičko vreme"
+      "39": "Francusko južno i antarktičko vreme"
     },
     "gala": {
       "-48": "Galapagos vreme"
     },
     "gamb": {
-      "-72": "Gambije vreme"
+      "-71": "Gambije vreme"
     },
     "geor": {
       "32": "Gruzija, standardno vreme"
     },
     "giis": {
-      "96": "Gilbert ostrva vreme"
+      "92": "Gilbert ostrva vreme"
     },
     "grea": {
-      "-16": "Istočni Grenland, standardno vreme",
-      "-8": "Istočni Grenland, letnje vreme"
+      "-8": "Istočni Grenland, standardno vreme",
+      "0": "Istočni Grenland, letnje vreme"
     },
     "grwe": {
-      "-16": "Zapadni Grenland, standardno vreme",
-      "-8": "Zapadni Grenland, letnje vreme"
+      "-24": "Zapadni Grenland, standardno vreme",
+      "-16": "Zapadni Grenland, letnje vreme"
     },
     "guam": {
       "80": "Guam standardno vreme"
     },
     "gulf": {
-      "32": "Zalivsko vreme"
+      "29": "Zalivsko vreme"
     },
     "guya": {
       "-32": "Gvajana vreme"
     },
     "haal": {
-      "-80": "Havajsko-aleutsko standardno vreme",
-      "-76": "Havajsko-aleutsko letnje vreme"
+      "-84": "Havajsko-aleutsko standardno vreme"
     },
     "hoko": {
       "64": "Hong Kong, standardno vreme",
@@ -248,16 +245,16 @@
       "64": "Hovd, letnje vreme"
     },
     "ince": {
-      "64": "Centralno-indonezijsko vreme"
+      "63": "Centralno-indonezijsko vreme"
     },
     "indi": {
-      "44": "Indijsko standardno vreme"
+      "47": "Indijsko standardno vreme"
     },
     "indo": {
-      "56": "Indokina vreme"
+      "53": "Indokina vreme"
     },
     "inea": {
-      "72": "Istočno-indonezijsko vreme"
+      "75": "Istočno-indonezijsko vreme"
     },
     "inoc": {
       "48": "Indijsko okeansko vreme"
@@ -278,11 +275,10 @@
       "24": "Izraelsko letnje vreme"
     },
     "japa": {
-      "72": "Japansko standardno vreme",
-      "80": "Japansko letnje vreme"
+      "74": "Japansko standardno vreme"
     },
     "kaea": {
-      "40": "Istočno-kazahstansko vreme"
+      "48": "Istočno-kazahstansko vreme"
     },
     "kamc": {
       "96": "Petropavlovsko-kamčatsko standardno vreme"
@@ -308,7 +304,7 @@
       "48": "Kirgistan vreme"
     },
     "lank": {
-      "44": "Šri Lanka vreme"
+      "48": "Šri Lanka vreme"
     },
     "liis": {
       "112": "Ostrva Lajn vreme"
@@ -326,16 +322,16 @@
       "96": "Magadan, letnje vreme"
     },
     "mais": {
-      "96": "Maršalska Ostrva vreme"
+      "92": "Maršalska Ostrva vreme"
     },
     "mala": {
       "64": "Malezija vreme"
     },
     "mald": {
-      "40": "Maldivi vreme"
+      "39": "Maldivi vreme"
     },
     "marq": {
-      "-76": "Markiz vreme"
+      "-74": "Markiz vreme"
     },
     "maur": {
       "32": "Mauricijus, standardno vreme",
@@ -349,7 +345,7 @@
       "-48": "Meksički Pacifik, letnje vreme"
     },
     "mgmt": {
-      "0": "Srednje vreme po Griniču"
+      "-2": "Srednje vreme po Griniču"
     },
     "mong": {
       "64": "Ulan Bator, standardno vreme",
@@ -360,7 +356,7 @@
       "32": "Moskva, letnje vreme"
     },
     "myan": {
-      "52": "Mijanmar vreme"
+      "51": "Mijanmar vreme"
     },
     "naur": {
       "96": "Nauru vreme"
@@ -381,7 +377,7 @@
       "104": "Novi Zeland, letnje vreme"
     },
     "niue": {
-      "-88": "Niue vreme"
+      "-90": "Niue vreme"
     },
     "noma": {
       "80": "Severna Marijanska Ostrva vreme"
@@ -406,10 +402,10 @@
       "48": "Pakistan, letnje vreme"
     },
     "pala": {
-      "72": "Palau vreme"
+      "-120": "Palau vreme"
     },
     "pang": {
-      "80": "Papua Nova Gvineja vreme"
+      "78": "Papua Nova Gvineja vreme"
     },
     "para": {
       "-32": "Paragvaj, standardno vreme",
@@ -434,17 +430,16 @@
       "-64": "Pitkern vreme"
     },
     "pona": {
-      "88": "Ponpej vreme"
+      "85": "Ponpej vreme"
     },
     "pyon": {
-      "72": "Pjongjanško vreme"
+      "68": "Pjongjanško vreme"
     },
     "qyzy": {
-      "40": "Kizilorda standardno vreme",
-      "48": "Kizilorda letnje računanje vremena"
+      "48": "Kizilorda standardno vreme"
     },
     "reun": {
-      "32": "Reinion vreme"
+      "29": "Reinion vreme"
     },
     "roth": {
       "-24": "Rotera vreme"
@@ -456,19 +451,19 @@
       "32": "Samara standardno vreme"
     },
     "samo": {
-      "-88": "Samoa, standardno vreme"
+      "100": "Samoa, standardno vreme"
     },
     "seyc": {
-      "32": "Sejšeli vreme"
+      "29": "Sejšeli vreme"
     },
     "sing": {
-      "58": "Singapur, standardno vreme"
+      "64": "Singapur, standardno vreme"
     },
     "soge": {
-      "-16": "Južna Džordžija vreme"
+      "-19": "Južna Džordžija vreme"
     },
     "solo": {
-      "88": "Solomonska Ostrva vreme"
+      "85": "Solomonska Ostrva vreme"
     },
     "suri": {
       "-24": "Surinam vreme"
@@ -477,7 +472,7 @@
       "24": "Šova vreme"
     },
     "tahi": {
-      "-80": "Tahiti vreme"
+      "-79": "Tahiti vreme"
     },
     "taip": {
       "64": "Tajpej, standardno vreme",
@@ -494,13 +489,13 @@
       "112": "Tonga, letnje vreme"
     },
     "truk": {
-      "80": "Čuuk vreme"
+      "78": "Čuuk vreme"
     },
     "turk": {
       "40": "Turkmenistan, standardno vreme"
     },
     "tuva": {
-      "96": "Tuvalu vreme"
+      "92": "Tuvalu vreme"
     },
     "urug": {
       "-24": "Urugvaj, standardno vreme",
@@ -529,10 +524,10 @@
       "40": "Vostok vreme"
     },
     "wake": {
-      "96": "Vejk ostrvo vreme"
+      "92": "Vejk ostrvo vreme"
     },
     "wall": {
-      "96": "Valis i Futuna Ostrva vreme"
+      "92": "Valis i Futuna Ostrva vreme"
     },
     "yaku": {
       "72": "Jakutsk, standardno vreme",

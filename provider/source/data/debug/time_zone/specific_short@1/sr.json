@@ -9,11 +9,11 @@
       "24": "EEST"
     },
     "euwe": {
-      "0": "WET",
-      "8": "WEST"
+      "8": "WET",
+      "16": "WEST"
     },
     "mgmt": {
-      "0": "GMT"
+      "-2": "GMT"
     }
   },
   "overrides": {

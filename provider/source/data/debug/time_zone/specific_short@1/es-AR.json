@@ -5,7 +5,8 @@
       "-16": "ARST"
     },
     "arwe": {
-      "-24": "WART"
+      "-32": "WART",
+      "-24": "WARST"
     }
   },
   "overrides": {

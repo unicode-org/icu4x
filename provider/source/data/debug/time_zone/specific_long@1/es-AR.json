@@ -5,20 +5,19 @@
       "-32": "Hora de verano de Acre"
     },
     "afce": {
-      "16": "hora de África central"
+      "17": "hora de África central"
     },
     "afea": {
-      "24": "hora de África oriental"
+      "19": "hora de África oriental"
     },
     "afgh": {
       "36": "hora de Afganistán"
     },
     "afso": {
-      "16": "hora de Sudáfrica"
+      "14": "hora de Sudáfrica"
     },
     "afwe": {
-      "8": "hora estándar de África occidental",
-      "16": "hora de verano de África occidental"
+      "1": "hora estándar de África occidental"
     },
     "alas": {
       "-72": "hora estándar de Alaska",
@@ -33,8 +32,7 @@
       "-40": "hora de verano central"
     },
     "amea": {
-      "-40": "hora estándar oriental",
-      "-32": "hora de verano oriental"
+      "-42": "hora estándar oriental"
     },
     "ammo": {
       "-56": "hora estándar de la montaña",
@@ -45,7 +43,8 @@
       "-56": "hora de verano del Pacífico"
     },
     "anad": {
-      "96": "hora estándar de Anadyr"
+      "96": "hora estándar de Anadyr",
+      "104": "hora de verano de Anadyr"
     },
     "apia": {
       "104": "hora estándar de Apia",
@@ -59,8 +58,7 @@
       "48": "Hora de verano de Aktobe"
     },
     "arab": {
-      "24": "hora estándar de Arabia",
-      "32": "hora de verano de Arabia"
+      "24": "hora estándar de Arabia"
     },
     "arge": {
       "-24": "hora estándar de Argentina",
@@ -71,11 +69,11 @@
       "40": "hora de verano de Armenia"
     },
     "arwe": {
-      "-24": "hora estándar de Argentina occidental"
+      "-32": "hora estándar de Argentina occidental",
+      "-24": "hora de verano de Argentina occidental"
     },
     "atla": {
-      "-32": "hora estándar del Atlántico",
-      "-24": "hora de verano del Atlántico"
+      "-35": "hora estándar del Atlántico"
     },
     "auce": {
       "76": "hora estándar de Australia central",
@@ -109,14 +107,14 @@
       "48": "hora de Bután"
     },
     "boli": {
-      "-32": "hora de Bolivia"
+      "-36": "hora de Bolivia"
     },
     "bras": {
       "-24": "hora estándar de Brasilia",
       "-16": "hora de verano de Brasilia"
     },
     "brun": {
-      "64": "hora de Brunéi"
+      "58": "hora de Brunéi"
     },
     "cave": {
       "-8": "hora estándar de Cabo Verde"
@@ -141,10 +139,10 @@
       "72": "hora de verano de Choibalsan"
     },
     "chri": {
-      "56": "hora de la Isla de Navidad"
+      "53": "hora de la Isla de Navidad"
     },
     "coco": {
-      "52": "hora de Islas Cocos"
+      "51": "hora de Islas Cocos"
     },
     "colo": {
       "-40": "hora estándar de Colombia",
@@ -162,14 +160,14 @@
       "56": "hora de Davis"
     },
     "dumo": {
-      "80": "hora de Dumont-d’Urville"
+      "78": "hora de Dumont-d’Urville"
     },
     "east": {
       "-48": "hora estándar de Isla de Pascua",
       "-40": "hora de verano de la Isla de Pascua"
     },
     "eati": {
-      "72": "hora de Timor Oriental"
+      "66": "hora de Timor Oriental"
     },
     "ecua": {
       "-40": "hora de Ecuador"
@@ -183,11 +181,11 @@
       "24": "hora de verano de Europa del Este"
     },
     "eufe": {
-      "16": "horario del lejano este de Europa"
+      "24": "horario del lejano este de Europa"
     },
     "euwe": {
-      "0": "hora estándar de Europa del Oeste",
-      "8": "hora de verano de Europa del Oeste"
+      "8": "hora estándar de Europa del Oeste",
+      "16": "hora de verano de Europa del Oeste"
     },
     "falk": {
       "-24": "hora estándar de las Islas Malvinas"
@@ -197,43 +195,42 @@
       "104": "hora de verano de Fiyi"
     },
     "frgu": {
-      "-24": "hora de la Guayana Francesa"
+      "-27": "hora de la Guayana Francesa"
     },
     "frso": {
-      "40": "hora de las Tierras Australes y Antárticas Francesas"
+      "39": "hora de las Tierras Australes y Antárticas Francesas"
     },
     "gala": {
       "-48": "hora de Galápagos"
     },
     "gamb": {
-      "-72": "hora de Gambier"
+      "-71": "hora de Gambier"
     },
     "geor": {
       "32": "hora estándar de Georgia"
     },
     "giis": {
-      "96": "hora de Islas Gilbert"
+      "92": "hora de Islas Gilbert"
     },
     "grea": {
-      "-16": "hora estándar de Groenlandia oriental",
-      "-8": "hora de verano de Groenlandia oriental"
+      "-8": "hora estándar de Groenlandia oriental",
+      "0": "hora de verano de Groenlandia oriental"
     },
     "grwe": {
-      "-16": "hora estándar de Groenlandia occidental",
-      "-8": "hora de verano de Groenlandia occidental"
+      "-24": "hora estándar de Groenlandia occidental",
+      "-16": "hora de verano de Groenlandia occidental"
     },
     "guam": {
       "80": "Hora estándar de Guam"
     },
     "gulf": {
-      "32": "hora estándar del Golfo"
+      "29": "hora estándar del Golfo"
     },
     "guya": {
       "-32": "hora de Guyana"
     },
     "haal": {
-      "-80": "hora estándar de Hawái-Aleutianas",
-      "-76": "hora de verano de Hawái-Aleutianas"
+      "-84": "hora estándar de Hawái-Aleutianas"
     },
     "hoko": {
       "64": "hora estándar de Hong Kong",
@@ -244,16 +241,16 @@
       "64": "hora de verano de Hovd"
     },
     "ince": {
-      "64": "hora de Indonesia central"
+      "63": "hora de Indonesia central"
     },
     "indi": {
-      "44": "hora de India"
+      "47": "hora de India"
     },
     "indo": {
-      "56": "hora de Indochina"
+      "53": "hora de Indochina"
     },
     "inea": {
-      "72": "hora de Indonesia oriental"
+      "75": "hora de Indonesia oriental"
     },
     "inoc": {
       "48": "hora del océano Índico"
@@ -274,11 +271,10 @@
       "24": "hora de verano de Israel"
     },
     "japa": {
-      "72": "hora estándar de Japón",
-      "80": "hora de verano de Japón"
+      "74": "hora estándar de Japón"
     },
     "kaea": {
-      "40": "hora de Kazajistán oriental"
+      "48": "hora de Kazajistán oriental"
     },
     "kamc": {
       "96": "hora estándar de Kamchatka"
@@ -304,7 +300,7 @@
       "48": "hora de Kirguistán"
     },
     "lank": {
-      "44": "Hora de Sri Lanka"
+      "48": "Hora de Sri Lanka"
     },
     "liis": {
       "112": "hora de las Espóradas Ecuatoriales"
@@ -322,16 +318,16 @@
       "96": "hora de verano de Magadán"
     },
     "mais": {
-      "96": "hora de Islas Marshall"
+      "92": "hora de Islas Marshall"
     },
     "mala": {
       "64": "hora de Malasia"
     },
     "mald": {
-      "40": "hora de Maldivas"
+      "39": "hora de Maldivas"
     },
     "marq": {
-      "-76": "hora de Marquesas"
+      "-74": "hora de Marquesas"
     },
     "maur": {
       "32": "hora estándar de Mauricio",
@@ -345,7 +341,7 @@
       "-48": "hora de verano del Pacífico de México"
     },
     "mgmt": {
-      "0": "hora del meridiano de Greenwich"
+      "-2": "hora del meridiano de Greenwich"
     },
     "mong": {
       "64": "hora estándar de Ulán Bator",
@@ -356,7 +352,7 @@
       "32": "hora de verano de Moscú"
     },
     "myan": {
-      "52": "hora de Myanmar (Birmania)"
+      "51": "hora de Myanmar (Birmania)"
     },
     "naur": {
       "96": "hora de Nauru"
@@ -377,7 +373,7 @@
       "104": "hora de verano de Nueva Zelanda"
     },
     "niue": {
-      "-88": "hora de Niue"
+      "-90": "hora de Niue"
     },
     "noma": {
       "80": "Hora de las Islas Marianas del Norte"
@@ -402,10 +398,10 @@
       "48": "hora de verano de Pakistán"
     },
     "pala": {
-      "72": "hora de Palaos"
+      "-120": "hora de Palaos"
     },
     "pang": {
-      "80": "hora de Papúa Nueva Guinea"
+      "78": "hora de Papúa Nueva Guinea"
     },
     "para": {
       "-32": "hora estándar de Paraguay",
@@ -430,17 +426,16 @@
       "-64": "hora de Pitcairn"
     },
     "pona": {
-      "88": "hora de Pohnpei"
+      "85": "hora de Pohnpei"
     },
     "pyon": {
-      "72": "hora de Pionyang"
+      "68": "hora de Pionyang"
     },
     "qyzy": {
-      "40": "Hora estándar de Qyzylorda",
-      "48": "Hora de verano de Qyzylorda"
+      "48": "Hora estándar de Qyzylorda"
     },
     "reun": {
-      "32": "hora de Reunión"
+      "29": "hora de Reunión"
     },
     "roth": {
       "-24": "hora de Rothera"
@@ -452,19 +447,19 @@
       "32": "hora estándar de Samara"
     },
     "samo": {
-      "-88": "hora estándar de Samoa"
+      "100": "hora estándar de Samoa"
     },
     "seyc": {
-      "32": "hora de Seychelles"
+      "29": "hora de Seychelles"
     },
     "sing": {
-      "58": "hora de Singapur"
+      "64": "hora de Singapur"
     },
     "soge": {
-      "-16": "hora de Georgia del Sur"
+      "-19": "hora de Georgia del Sur"
     },
     "solo": {
-      "88": "hora de Islas Salomón"
+      "85": "hora de Islas Salomón"
     },
     "suri": {
       "-24": "hora de Surinam"
@@ -473,7 +468,7 @@
       "24": "hora de Syowa"
     },
     "tahi": {
-      "-80": "hora de Tahití"
+      "-79": "hora de Tahití"
     },
     "taip": {
       "64": "hora estándar de Taipéi",
@@ -490,13 +485,13 @@
       "112": "hora de verano de Tonga"
     },
     "truk": {
-      "80": "hora de Chuuk"
+      "78": "hora de Chuuk"
     },
     "turk": {
       "40": "hora estándar de Turkmenistán"
     },
     "tuva": {
-      "96": "hora de Tuvalu"
+      "92": "hora de Tuvalu"
     },
     "urug": {
       "-24": "hora estándar de Uruguay",
@@ -525,10 +520,10 @@
       "40": "hora de Vostok"
     },
     "wake": {
-      "96": "hora de Isla Wake"
+      "92": "hora de Isla Wake"
     },
     "wall": {
-      "96": "hora de Wallis y Futuna"
+      "92": "hora de Wallis y Futuna"
     },
     "yaku": {
       "72": "hora estándar de Yakutsk",

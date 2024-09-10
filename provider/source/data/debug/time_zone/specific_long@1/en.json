@@ -5,23 +5,22 @@
       "-32": "Acre Summer Time"
     },
     "afce": {
-      "16": "Central Africa Time"
+      "17": "Central Africa Time"
     },
     "afea": {
-      "24": "East Africa Time"
+      "19": "East Africa Time"
     },
     "afgh": {
       "36": "Afghanistan Time"
     },
     "afso": {
-      "16": "South Africa Standard Time"
+      "14": "South Africa Standard Time"
     },
     "afwe": {
-      "8": "West Africa Standard Time",
-      "16": "West Africa Summer Time"
+      "1": "West Africa Standard Time"
     },
     "alam": {
-      "40": "Almaty Standard Time",
+      "48": "Almaty Standard Time",
       "56": "Almaty Summer Time"
     },
     "alas": {
@@ -37,8 +36,7 @@
       "-40": "Central Daylight Time"
     },
     "amea": {
-      "-40": "Eastern Standard Time",
-      "-32": "Eastern Daylight Time"
+      "-42": "Eastern Standard Time"
     },
     "ammo": {
       "-56": "Mountain Standard Time",
@@ -49,7 +47,8 @@
       "-56": "Pacific Daylight Time"
     },
     "anad": {
-      "96": "Anadyr Standard Time"
+      "96": "Anadyr Standard Time",
+      "104": "Anadyr Summer Time"
     },
     "apia": {
       "104": "Apia Standard Time",
@@ -63,8 +62,7 @@
       "48": "Aqtobe Summer Time"
     },
     "arab": {
-      "24": "Arabian Standard Time",
-      "32": "Arabian Daylight Time"
+      "24": "Arabian Standard Time"
     },
     "arge": {
       "-24": "Argentina Standard Time",
@@ -75,11 +73,11 @@
       "40": "Armenia Summer Time"
     },
     "arwe": {
-      "-24": "Western Argentina Standard Time"
+      "-32": "Western Argentina Standard Time",
+      "-24": "Western Argentina Summer Time"
     },
     "atla": {
-      "-32": "Atlantic Standard Time",
-      "-24": "Atlantic Daylight Time"
+      "-35": "Atlantic Standard Time"
     },
     "auce": {
       "76": "Australian Central Standard Time",
@@ -113,17 +111,17 @@
       "48": "Bhutan Time"
     },
     "boli": {
-      "-32": "Bolivia Time"
+      "-36": "Bolivia Time"
     },
     "bras": {
       "-24": "Brasilia Standard Time",
       "-16": "Brasilia Summer Time"
     },
     "brun": {
-      "64": "Brunei Darussalam Time"
+      "58": "Brunei Darussalam Time"
     },
     "case": {
-      "64": "Casey Time"
+      "88": "Casey Time"
     },
     "cave": {
       "-8": "Cape Verde Standard Time"
@@ -148,10 +146,10 @@
       "72": "Choibalsan Summer Time"
     },
     "chri": {
-      "56": "Christmas Island Time"
+      "53": "Christmas Island Time"
     },
     "coco": {
-      "52": "Cocos Islands Time"
+      "51": "Cocos Islands Time"
     },
     "colo": {
       "-40": "Colombia Standard Time",
@@ -169,14 +167,14 @@
       "56": "Davis Time"
     },
     "dumo": {
-      "80": "Dumont-d’Urville Time"
+      "78": "Dumont-d’Urville Time"
     },
     "east": {
       "-48": "Easter Island Standard Time",
       "-40": "Easter Island Summer Time"
     },
     "eati": {
-      "72": "East Timor Time"
+      "66": "East Timor Time"
     },
     "ecua": {
       "-40": "Ecuador Time"
@@ -190,11 +188,11 @@
       "24": "Eastern European Summer Time"
     },
     "eufe": {
-      "16": "Further-eastern European Time"
+      "24": "Further-eastern European Time"
     },
     "euwe": {
-      "0": "Western European Standard Time",
-      "8": "Western European Summer Time"
+      "8": "Western European Standard Time",
+      "16": "Western European Summer Time"
     },
     "falk": {
       "-24": "Falkland Islands Standard Time"
@@ -204,47 +202,46 @@
       "104": "Fiji Summer Time"
     },
     "frgu": {
-      "-24": "French Guiana Time"
+      "-27": "French Guiana Time"
     },
     "frso": {
-      "40": "French Southern & Antarctic Time"
+      "39": "French Southern & Antarctic Time"
     },
     "gala": {
       "-48": "Galapagos Time"
     },
     "gamb": {
-      "-72": "Gambier Time"
+      "-71": "Gambier Time"
     },
     "geor": {
       "32": "Georgia Standard Time"
     },
     "giis": {
-      "96": "Gilbert Islands Time"
+      "92": "Gilbert Islands Time"
     },
     "grea": {
-      "-16": "East Greenland Standard Time",
-      "-8": "East Greenland Summer Time"
+      "-8": "East Greenland Standard Time",
+      "0": "East Greenland Summer Time"
     },
     "gree": {
       "-16": "Greenland Standard Time",
       "-8": "Greenland Summer Time"
     },
     "grwe": {
-      "-16": "West Greenland Standard Time",
-      "-8": "West Greenland Summer Time"
+      "-24": "West Greenland Standard Time",
+      "-16": "West Greenland Summer Time"
     },
     "guam": {
       "80": "Guam Standard Time"
     },
     "gulf": {
-      "32": "Gulf Standard Time"
+      "29": "Gulf Standard Time"
     },
     "guya": {
       "-32": "Guyana Time"
     },
     "haal": {
-      "-80": "Hawaii-Aleutian Standard Time",
-      "-76": "Hawaii-Aleutian Daylight Time"
+      "-84": "Hawaii-Aleutian Standard Time"
     },
     "hoko": {
       "64": "Hong Kong Standard Time",
@@ -255,16 +252,16 @@
       "64": "Hovd Summer Time"
     },
     "ince": {
-      "64": "Central Indonesia Time"
+      "63": "Central Indonesia Time"
     },
     "indi": {
-      "44": "India Standard Time"
+      "47": "India Standard Time"
     },
     "indo": {
-      "56": "Indochina Time"
+      "53": "Indochina Time"
     },
     "inea": {
-      "72": "Eastern Indonesia Time"
+      "75": "Eastern Indonesia Time"
     },
     "inoc": {
       "48": "Indian Ocean Time"
@@ -285,11 +282,10 @@
       "24": "Israel Daylight Time"
     },
     "japa": {
-      "72": "Japan Standard Time",
-      "80": "Japan Daylight Time"
+      "74": "Japan Standard Time"
     },
     "kaea": {
-      "40": "East Kazakhstan Time"
+      "48": "East Kazakhstan Time"
     },
     "kamc": {
       "96": "Petropavlovsk-Kamchatski Standard Time"
@@ -315,7 +311,7 @@
       "48": "Kyrgyzstan Time"
     },
     "lank": {
-      "44": "Lanka Time"
+      "48": "Lanka Time"
     },
     "liis": {
       "112": "Line Islands Time"
@@ -333,16 +329,16 @@
       "96": "Magadan Summer Time"
     },
     "mais": {
-      "96": "Marshall Islands Time"
+      "92": "Marshall Islands Time"
     },
     "mala": {
       "64": "Malaysia Time"
     },
     "mald": {
-      "40": "Maldives Time"
+      "39": "Maldives Time"
     },
     "marq": {
-      "-76": "Marquesas Time"
+      "-74": "Marquesas Time"
     },
     "maur": {
       "32": "Mauritius Standard Time",
@@ -356,7 +352,7 @@
       "-48": "Mexican Pacific Daylight Time"
     },
     "mgmt": {
-      "0": "Greenwich Mean Time"
+      "-2": "Greenwich Mean Time"
     },
     "mong": {
       "64": "Ulaanbaatar Standard Time",
@@ -367,7 +363,7 @@
       "32": "Moscow Summer Time"
     },
     "myan": {
-      "52": "Myanmar Time"
+      "51": "Myanmar Time"
     },
     "naur": {
       "96": "Nauru Time"
@@ -388,7 +384,7 @@
       "104": "New Zealand Daylight Time"
     },
     "niue": {
-      "-88": "Niue Time"
+      "-90": "Niue Time"
     },
     "noma": {
       "80": "North Mariana Islands Time"
@@ -413,10 +409,10 @@
       "48": "Pakistan Summer Time"
     },
     "pala": {
-      "72": "Palau Time"
+      "-120": "Palau Time"
     },
     "pang": {
-      "80": "Papua New Guinea Time"
+      "78": "Papua New Guinea Time"
     },
     "para": {
       "-32": "Paraguay Standard Time",
@@ -441,17 +437,16 @@
       "-64": "Pitcairn Time"
     },
     "pona": {
-      "88": "Ponape Time"
+      "85": "Ponape Time"
     },
     "pyon": {
-      "72": "Pyongyang Time"
+      "68": "Pyongyang Time"
     },
     "qyzy": {
-      "40": "Qyzylorda Standard Time",
-      "48": "Qyzylorda Summer Time"
+      "48": "Qyzylorda Standard Time"
     },
     "reun": {
-      "32": "Réunion Time"
+      "29": "Réunion Time"
     },
     "roth": {
       "-24": "Rothera Time"
@@ -463,19 +458,19 @@
       "32": "Samara Standard Time"
     },
     "samo": {
-      "-88": "Samoa Standard Time"
+      "100": "Samoa Standard Time"
     },
     "seyc": {
-      "32": "Seychelles Time"
+      "29": "Seychelles Time"
     },
     "sing": {
-      "58": "Singapore Standard Time"
+      "64": "Singapore Standard Time"
     },
     "soge": {
-      "-16": "South Georgia Time"
+      "-19": "South Georgia Time"
     },
     "solo": {
-      "88": "Solomon Islands Time"
+      "85": "Solomon Islands Time"
     },
     "suri": {
       "-24": "Suriname Time"
@@ -484,7 +479,7 @@
       "24": "Syowa Time"
     },
     "tahi": {
-      "-80": "Tahiti Time"
+      "-79": "Tahiti Time"
     },
     "taip": {
       "64": "Taipei Standard Time",
@@ -501,13 +496,13 @@
       "112": "Tonga Summer Time"
     },
     "truk": {
-      "80": "Chuuk Time"
+      "78": "Chuuk Time"
     },
     "turk": {
       "40": "Turkmenistan Standard Time"
     },
     "tuva": {
-      "96": "Tuvalu Time"
+      "92": "Tuvalu Time"
     },
     "urug": {
       "-24": "Uruguay Standard Time",
@@ -536,10 +531,10 @@
       "40": "Vostok Time"
     },
     "wake": {
-      "96": "Wake Island Time"
+      "92": "Wake Island Time"
     },
     "wall": {
-      "96": "Wallis & Futuna Time"
+      "92": "Wallis & Futuna Time"
     },
     "yaku": {
       "72": "Yakutsk Standard Time",

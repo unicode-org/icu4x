@@ -510,7 +510,7 @@
             "Tunis": [
               {
                 "usesMetazone": {
-                  "_mzone": "Europe_Central"
+                  "_mzone": "Europe_Western"
                 }
               }
             ],
@@ -5949,7 +5949,7 @@
         },
         {
           "mapZone": {
-            "_other": "Europe_Central",
+            "_other": "Europe_Western",
             "_type": "Africa/Tunis",
             "_territory": "TN"
           }
