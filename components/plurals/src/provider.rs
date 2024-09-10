@@ -20,6 +20,8 @@ use crate::{PluralCategory, PluralElements, PluralOperands, PluralRules};
 use alloc::borrow::{Cow, ToOwned};
 use alloc::boxed::Box;
 use alloc::vec::Vec;
+use yoke::Yokeable;
+use zerofrom::ZeroFrom;
 use core::fmt;
 use core::marker::PhantomData;
 use icu_provider::prelude::*;
@@ -977,7 +979,7 @@ where
 /// 3. It always serializes the [`FourBitMetadata`] as 0
 ///
 /// Use [`PluralElementsPackedULE`] directly if you need these additional features.
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Yokeable, ZeroFrom, Clone)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_plurals::provider))]
