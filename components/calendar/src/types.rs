@@ -92,15 +92,27 @@ impl YearInfo {
     }
 
     /// Get the era, if available
-    pub fn era(self) -> Option<Era> {
+    pub fn formatting_era(self) -> Option<Era> {
         match self.kind {
-            YearKind::Era(e) => Some(e.era),
+            YearKind::Era(e) => Some(e.formatting_era),
             YearKind::Cyclic(..) => None,
         }
     }
     /// Return the era, or "unknown" for cyclic years
-    pub fn era_or_unknown(self) -> Era {
-        self.era().unwrap_or(Era::unknown())
+    pub fn formatting_era_or_unknown(self) -> Era {
+        self.formatting_era().unwrap_or(Era::unknown())
+    }
+
+    /// Get the era, if available
+    pub fn temporal_era(self) -> Option<Era> {
+        match self.kind {
+            YearKind::Era(e) => Some(e.temporal_era),
+            YearKind::Cyclic(..) => None,
+        }
+    }
+    /// Return the era, or "unknown" for cyclic years
+    pub fn temporal_era_or_unknown(self) -> Era {
+        self.temporal_era().unwrap_or(Era::unknown())
     }
     /// Return the cyclic year, if any
     pub fn cyclic(self) -> Option<NonZeroU8> {
@@ -121,8 +133,17 @@ impl YearInfo {
 /// Year information for a year that is specified with an era
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct EraYear {
-    /// The era
-    pub era: Era,
+    /// The era code as used in formatting. This era code is not necessarily unique for the calendar, and
+    /// is whatever ICU4X datetime datagen uses for this era.
+    ///
+    /// It will typically be a valid era alias
+    /// <https://tc39.es/proposal-intl-era-monthcode/#table-eras>
+    pub formatting_era: Era,
+    /// The era code as expected by Temporal. This era code is unique for the calendar
+    /// and follows a particular scheme.
+    ///
+    /// <https://tc39.es/proposal-intl-era-monthcode/#table-eras>
+    pub temporal_era: Era,
     /// The numeric year in that era
     pub era_year: i32,
 }
@@ -131,11 +152,23 @@ impl EraYear {
     /// Construct an EraYear given the era and the year in the era
     ///
     /// The era is assumed to be both the Temporal and the Formatting era code.
-    pub fn new(era: TinyStr16, era_year: i32) -> Self {
+    pub fn new_with_temporal_and_formatting(
+        temporal_era: TinyStr16,
+        formatting_era: TinyStr16,
+        era_year: i32,
+    ) -> Self {
         Self {
-            era: Era(era),
+            formatting_era: Era(formatting_era),
+            temporal_era: Era(temporal_era),
             era_year,
         }
+    }
+
+    /// Construct an EraYear given the era and the year in the era
+    ///
+    /// The era is assumed to be both the Temporal and the Formatting era code.
+    pub fn new(era: TinyStr16, era_year: i32) -> Self {
+        Self::new_with_temporal_and_formatting(era, era, era_year)
     }
 }
 
