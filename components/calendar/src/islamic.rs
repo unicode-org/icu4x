@@ -54,8 +54,11 @@ use core::marker::PhantomData;
 use icu_provider::prelude::*;
 use tinystr::tinystr;
 
-fn year_as_islamic(year: i32) -> types::YearInfo {
-    types::YearInfo::new(year, types::EraYear::new(tinystr!(16, "islamic"), year))
+fn year_as_islamic(temporal_era: tinystr::TinyStr16, year: i32) -> types::YearInfo {
+    types::YearInfo::new(
+        year,
+        types::EraYear::new_with_temporal_and_formatting(temporal_era, tinystr!(16, "ah"), year),
+    )
 }
 
 /// Islamic Observational Calendar (Default)
@@ -510,7 +513,7 @@ impl Calendar for IslamicObservational {
     }
 
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        year_as_islamic(date.0.year)
+        year_as_islamic(tinystr!(16, "islamic"), date.0.year)
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -531,9 +534,9 @@ impl Calendar for IslamicObservational {
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
-            prev_year: year_as_islamic(prev_year).into(),
+            prev_year: year_as_islamic(tinystr!(16, "islamic"), prev_year).into(),
             days_in_prev_year: date.0.year_info.days_in_prev_year(),
-            next_year: year_as_islamic(next_year).into(),
+            next_year: year_as_islamic(tinystr!(16, "islamic"), next_year).into(),
         }
     }
 
@@ -735,7 +738,7 @@ impl Calendar for IslamicUmmAlQura {
     }
 
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        year_as_islamic(date.0.year)
+        year_as_islamic(tinystr!(16, "islamic-umalqura"), date.0.year)
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -756,9 +759,9 @@ impl Calendar for IslamicUmmAlQura {
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
-            prev_year: year_as_islamic(prev_year).into(),
+            prev_year: year_as_islamic(tinystr!(16, "islamic-umalqura"), prev_year).into(),
             days_in_prev_year: date.0.year_info.days_in_prev_year(),
-            next_year: year_as_islamic(next_year).into(),
+            next_year: year_as_islamic(tinystr!(16, "islamic-umalqura"), next_year).into(),
         }
     }
 
@@ -961,7 +964,7 @@ impl Calendar for IslamicCivil {
     }
 
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        year_as_islamic(date.0.year)
+        year_as_islamic(tinystr!(16, "islamic-civil"), date.0.year)
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -982,9 +985,9 @@ impl Calendar for IslamicCivil {
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
-            prev_year: year_as_islamic(prev_year).into(),
+            prev_year: year_as_islamic(tinystr!(16, "islamic-civil"), prev_year).into(),
             days_in_prev_year: Self::days_in_provided_year(prev_year, ()),
-            next_year: year_as_islamic(next_year).into(),
+            next_year: year_as_islamic(tinystr!(16, "islamic-civil"), next_year).into(),
         }
     }
 
@@ -1195,7 +1198,7 @@ impl Calendar for IslamicTabular {
     }
 
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        year_as_islamic(date.0.year)
+        year_as_islamic(tinystr!(16, "islamic-tbla"), date.0.year)
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -1216,9 +1219,9 @@ impl Calendar for IslamicTabular {
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
-            prev_year: year_as_islamic(prev_year).into(),
+            prev_year: year_as_islamic(tinystr!(16, "islamic-tbla"), prev_year).into(),
             days_in_prev_year: Self::days_in_provided_year(prev_year, ()),
-            next_year: year_as_islamic(next_year).into(),
+            next_year: year_as_islamic(tinystr!(16, "islamic-tbla"), next_year).into(),
         }
     }
 

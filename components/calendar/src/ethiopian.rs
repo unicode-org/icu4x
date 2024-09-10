@@ -136,7 +136,7 @@ impl Calendar for Ethiopian {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        let year = if era.0 == tinystr!(16, "incar") {
+        let year = if era.0 == tinystr!(16, "incar") || era.0 == tinystr!(16, "ethiopic") {
             if year <= 0 {
                 return Err(DateError::Range {
                     field: "year",
@@ -146,7 +146,7 @@ impl Calendar for Ethiopian {
                 });
             }
             year
-        } else if era.0 == tinystr!(16, "pre-incar") {
+        } else if era.0 == tinystr!(16, "pre-incar") || era.0 == tinystr!(16, "ethiopic-inverse") {
             if year <= 0 {
                 return Err(DateError::Range {
                     field: "year",
@@ -156,7 +156,7 @@ impl Calendar for Ethiopian {
                 });
             }
             1 - year
-        } else if era.0 == tinystr!(16, "mundi") {
+        } else if era.0 == tinystr!(16, "mundi") || era.0 == tinystr!(16, "ethiopicaa") {
             year - AMETE_ALEM_OFFSET
         } else {
             return Err(DateError::UnknownEra(era));
@@ -295,14 +295,29 @@ impl Ethiopian {
         if amete_alem {
             types::YearInfo::new(
                 year,
-                types::EraYear::new(tinystr!(16, "mundi"), year + AMETE_ALEM_OFFSET),
+                types::EraYear::new_with_temporal_and_formatting(
+                    tinystr!(16, "ethiopicaa"),
+                    tinystr!(16, "mundi"),
+                    year + AMETE_ALEM_OFFSET,
+                ),
             )
         } else if year > 0 {
-            types::YearInfo::new(year, types::EraYear::new(tinystr!(16, "incar"), year))
+            types::YearInfo::new(
+                year,
+                types::EraYear::new_with_temporal_and_formatting(
+                    tinystr!(16, "ethiopic"),
+                    tinystr!(16, "incar"),
+                    year,
+                ),
+            )
         } else {
             types::YearInfo::new(
                 year,
-                types::EraYear::new(tinystr!(16, "pre-incar"), 1 - year),
+                types::EraYear::new_with_temporal_and_formatting(
+                    tinystr!(16, "ethiopic-inverse"),
+                    tinystr!(16, "pre-incar"),
+                    1 - year,
+                ),
             )
         }
     }
