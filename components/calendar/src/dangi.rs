@@ -251,7 +251,7 @@ impl Calendar for Dangi {
     }
 
     fn year(&self, date: &Self::DateInner) -> crate::types::YearInfo {
-        types::YearInfo::new(date.0 .0.year, tinystr!(16, "dangi"), date.0 .0.year)
+        Self::format_dangi_year(date.0 .0.year, Some(date.0 .0.year_info))
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {

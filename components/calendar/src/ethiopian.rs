@@ -293,11 +293,17 @@ impl Ethiopian {
     }
     fn year_as_ethiopian(year: i32, amete_alem: bool) -> types::YearInfo {
         if amete_alem {
-            types::YearInfo::new(year, tinystr!(16, "mundi"), year + AMETE_ALEM_OFFSET)
+            types::YearInfo::new(
+                year,
+                types::EraYear::new(tinystr!(16, "mundi"), year + AMETE_ALEM_OFFSET),
+            )
         } else if year > 0 {
-            types::YearInfo::new(year, tinystr!(16, "incar"), year)
+            types::YearInfo::new(year, types::EraYear::new(tinystr!(16, "incar"), year))
         } else {
-            types::YearInfo::new(year, tinystr!(16, "pre-incar"), 1 - year)
+            types::YearInfo::new(
+                year,
+                types::EraYear::new(tinystr!(16, "pre-incar"), 1 - year),
+            )
         }
     }
 }

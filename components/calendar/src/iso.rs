@@ -444,7 +444,7 @@ impl Iso {
 
     /// Wrap the year in the appropriate era code
     fn year_as_iso(year: i32) -> types::YearInfo {
-        types::YearInfo::new(year, tinystr!(16, "default"), year)
+        types::YearInfo::new(year, types::EraYear::new(tinystr!(16, "default"), year))
     }
 }
 

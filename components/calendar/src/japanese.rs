@@ -271,7 +271,10 @@ impl Calendar for Japanese {
     }
 
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        types::YearInfo::new(date.inner.0.year, date.era, date.adjusted_year)
+        types::YearInfo::new(
+            date.inner.0.year,
+            types::EraYear::new(date.era, date.adjusted_year),
+        )
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {

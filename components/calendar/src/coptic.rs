@@ -303,9 +303,9 @@ impl DateTime<Coptic> {
 
 fn year_as_coptic(year: i32) -> types::YearInfo {
     if year > 0 {
-        types::YearInfo::new(year, tinystr!(16, "ad"), year)
+        types::YearInfo::new(year, types::EraYear::new(tinystr!(16, "ad"), year))
     } else {
-        types::YearInfo::new(year, tinystr!(16, "bd"), 1 - year)
+        types::YearInfo::new(year, types::EraYear::new(tinystr!(16, "bd"), 1 - year))
     }
 }
 #[cfg(test)]

@@ -58,13 +58,10 @@ pub enum YearKind {
 
 impl YearInfo {
     /// Construct a new Year given an era and number
-    pub fn new(extended_year: i32, era: TinyStr16, number: i32) -> Self {
+    pub fn new(extended_year: i32, era: EraYear) -> Self {
         Self {
             extended_year,
-            kind: YearKind::Era(EraYear {
-                era: Era(era),
-                era_year: number,
-            }),
+            kind: YearKind::Era(era),
         }
     }
     /// Construct a new cyclic Year given a cycle and a related_iso
@@ -128,6 +125,18 @@ pub struct EraYear {
     pub era: Era,
     /// The numeric year in that era
     pub era_year: i32,
+}
+
+impl EraYear {
+    /// Construct an EraYear given the era and the year in the era
+    ///
+    /// The era is assumed to be both the Temporal and the Formatting era code.
+    pub fn new(era: TinyStr16, era_year: i32) -> Self {
+        Self {
+            era: Era(era),
+            era_year,
+        }
+    }
 }
 
 /// Year information for a year that is specified as a cyclic year

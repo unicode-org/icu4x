@@ -334,7 +334,10 @@ impl Calendar for Hebrew {
 
 impl Hebrew {
     fn year_as_hebrew(civil_year: i32) -> types::YearInfo {
-        types::YearInfo::new(civil_year, tinystr!(16, "hebrew"), civil_year)
+        types::YearInfo::new(
+            civil_year,
+            types::EraYear::new(tinystr!(16, "hebrew"), civil_year),
+        )
     }
 }
 

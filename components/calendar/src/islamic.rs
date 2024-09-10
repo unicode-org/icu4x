@@ -55,7 +55,7 @@ use icu_provider::prelude::*;
 use tinystr::tinystr;
 
 fn year_as_islamic(year: i32) -> types::YearInfo {
-    types::YearInfo::new(year, tinystr!(16, "islamic"), year)
+    types::YearInfo::new(year, types::EraYear::new(tinystr!(16, "islamic"), year))
 }
 
 /// Islamic Observational Calendar (Default)

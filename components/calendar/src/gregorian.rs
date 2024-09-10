@@ -232,9 +232,12 @@ impl DateTime<Gregorian> {
 
 pub(crate) fn year_as_gregorian(year: i32) -> types::YearInfo {
     if year > 0 {
-        types::YearInfo::new(year, tinystr!(16, "ce"), year)
+        types::YearInfo::new(year, types::EraYear::new(tinystr!(16, "ce"), year))
     } else {
-        types::YearInfo::new(year, tinystr!(16, "bce"), 1_i32.saturating_sub(year))
+        types::YearInfo::new(
+            year,
+            types::EraYear::new(tinystr!(16, "bce"), 1_i32.saturating_sub(year)),
+        )
     }
 }
 

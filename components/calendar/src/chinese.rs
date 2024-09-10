@@ -266,7 +266,7 @@ impl Calendar for Chinese {
     }
 
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        types::YearInfo::new(date.0 .0.year, tinystr!(16, "chinese"), date.0 .0.year)
+        Self::format_chinese_year(date.0 .0.year, Some(date.0 .0.year_info))
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
