@@ -48,22 +48,12 @@ pub struct YearInfo {
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum YearKind {
     /// An era and a year in that era
-    EraYear {
-        /// The era
-        era: Era,
-        /// The numeric year in that era
-        era_year: i32,
-    },
+    Era(EraYear),
     /// A cyclic year, and the related ISO year
     ///
     /// Knowing the cyclic year is typically not enough to pinpoint a date, however cyclic calendars
     /// don't typically use eras, so disambiguation can be done by saying things like "Year 甲辰 (2024)"
-    Cyclic {
-        /// The year in the cycle.
-        year: NonZeroU8,
-        /// The ISO year corresponding to this year
-        related_iso: i32,
-    },
+    Cyclic(CyclicYear),
 }
 
 impl YearInfo {
@@ -71,20 +61,20 @@ impl YearInfo {
     pub fn new(extended_year: i32, era: TinyStr16, number: i32) -> Self {
         Self {
             extended_year,
-            kind: YearKind::EraYear {
+            kind: YearKind::Era(EraYear {
                 era: Era(era),
                 era_year: number,
-            },
+            }),
         }
     }
     /// Construct a new cyclic Year given a cycle and a related_iso
     pub fn new_cyclic(extended_year: i32, cycle: NonZeroU8, related_iso: i32) -> Self {
         Self {
             extended_year,
-            kind: YearKind::Cyclic {
+            kind: YearKind::Cyclic(CyclicYear {
                 year: cycle,
                 related_iso,
-            },
+            }),
         }
     }
     /// Get the year in the era if this is a non-cyclic calendar
@@ -92,8 +82,8 @@ impl YearInfo {
     /// Gets the eraYear for era dates, otherwise falls back to Extended Year
     pub fn era_year(self) -> Option<i32> {
         match self.kind {
-            YearKind::EraYear { era_year, .. } => Some(era_year),
-            YearKind::Cyclic { .. } => None,
+            YearKind::Era(e) => Some(e.era_year),
+            YearKind::Cyclic(..) => None,
         }
     }
 
@@ -107,8 +97,8 @@ impl YearInfo {
     /// Get the era, if available
     pub fn era(self) -> Option<Era> {
         match self.kind {
-            YearKind::EraYear { era, .. } => Some(era),
-            YearKind::Cyclic { .. } => None,
+            YearKind::Era(e) => Some(e.era),
+            YearKind::Cyclic(..) => None,
         }
     }
     /// Return the era, or "unknown" for cyclic years
@@ -118,17 +108,35 @@ impl YearInfo {
     /// Return the cyclic year, if any
     pub fn cyclic(self) -> Option<NonZeroU8> {
         match self.kind {
-            YearKind::EraYear { .. } => None,
-            YearKind::Cyclic { year, .. } => Some(year),
+            YearKind::Era(..) => None,
+            YearKind::Cyclic(cy) => Some(cy.year),
         }
     }
     /// Return the Related ISO year, if any
     pub fn related_iso(self) -> Option<i32> {
         match self.kind {
-            YearKind::EraYear { .. } => None,
-            YearKind::Cyclic { related_iso, .. } => Some(related_iso),
+            YearKind::Era(..) => None,
+            YearKind::Cyclic(cy) => Some(cy.related_iso),
         }
     }
+}
+
+/// Year information for a year that is specified with an era
+#[derive(Copy, Clone, Debug, PartialEq)]
+pub struct EraYear {
+    /// The era
+    pub era: Era,
+    /// The numeric year in that era
+    pub era_year: i32,
+}
+
+/// Year information for a year that is specified as a cyclic year
+#[derive(Copy, Clone, Debug, PartialEq)]
+pub struct CyclicYear {
+    /// The year in the cycle.
+    pub year: NonZeroU8,
+    /// The ISO year corresponding to this year
+    pub related_iso: i32,
 }
 
 /// Representation of a month in a year
