@@ -16,7 +16,7 @@
 //! Read more about data providers: [`icu_provider`]
 
 use crate::rules::runtime::ast::Rule;
-use crate::{PluralCategory, PluralElements, PluralOperands, PluralRules};
+use crate::{PluralCategory, PluralElements, PluralElementsInner, PluralOperands, PluralRules};
 use alloc::borrow::{Cow, ToOwned};
 use alloc::boxed::Box;
 use alloc::vec::Vec;
@@ -377,7 +377,7 @@ pub enum PluralElementsKeysV1 {
 // TODO: Make the str generic
 pub struct PluralElementsFieldV1<'data>(pub PluralElementsKeysV1, pub Cow<'data, str>);
 
-impl<T> PluralElements<T>
+impl<T> PluralElementsInner<T>
 where
     T: PartialEq,
 {
@@ -739,37 +739,7 @@ where
     }
 }
 
-impl<V> PluralElementsPackedULE<V>
-where
-    V: VarULE + PartialEq + ?Sized,
-{
-    #[cfg(feature = "datagen")]
-    fn to_plural_elements(&self) -> PluralElements<(FourBitMetadata, &V)> {
-        let parts = self.as_parts();
-        let mut elements = PluralElements::new(parts.default);
-        if let Some(specials) = parts.specials {
-            for special in specials.iter() {
-                let PluralCategoryAndMetadata {
-                    plural_category,
-                    metadata,
-                } = special.sized.get();
-                let value = (metadata, &special.variable);
-                match plural_category {
-                    PluralElementsKeysV1::Zero => elements.zero = Some(value),
-                    PluralElementsKeysV1::One => elements.one = Some(value),
-                    PluralElementsKeysV1::Two => elements.two = Some(value),
-                    PluralElementsKeysV1::Few => elements.few = Some(value),
-                    PluralElementsKeysV1::Many => elements.many = Some(value),
-                    PluralElementsKeysV1::ExplicitZero => elements.explicit_zero = Some(value),
-                    PluralElementsKeysV1::ExplicitOne => elements.explicit_one = Some(value),
-                }
-            }
-        }
-        elements
-    }
-}
-
-impl<T> PluralElements<(FourBitMetadata, T)>
+impl<T> PluralElementsInner<(FourBitMetadata, T)>
 where
     T: PartialEq,
 {
@@ -789,7 +759,7 @@ where
             })
             .collect::<Vec<_>>();
         PluralElementsPackedBuilder {
-            default: (self.other().0, &self.other.1),
+            default: (self.other.0, &self.other.1),
             specials: if specials.is_empty() {
                 None
             } else {
@@ -812,7 +782,7 @@ where
     }
 
     fn encode_var_ule_len(&self) -> usize {
-        let builder = self.to_packed_builder();
+        let builder = self.0.to_packed_builder();
         1 + builder.default.1.encode_var_ule_len()
             + match builder.specials {
                 Some(specials) => {
@@ -825,7 +795,7 @@ where
     }
 
     fn encode_var_ule_write(&self, dst: &mut [u8]) {
-        let builder = self.to_packed_builder();
+        let builder = self.0.to_packed_builder();
         #[allow(clippy::unwrap_used)] // by trait invariant
         let (lead_byte, remainder) = dst.split_first_mut().unwrap();
         *lead_byte = builder.default.0.get();
@@ -850,6 +820,52 @@ where
         } else {
             builder.default.1.encode_var_ule_write(remainder)
         };
+    }
+}
+
+#[cfg(feature = "datagen")]
+impl<'a, V> PluralElementsInner<(FourBitMetadata, &'a V)>
+where
+    V: VarULE + ?Sized,
+{
+    fn from_packed(packed: &'a PluralElementsPackedULE<V>) -> Self {
+        let parts = packed.as_parts();
+        PluralElementsInner {
+            other: parts.default,
+            zero: parts
+                .specials
+                .and_then(|specials| get_special(specials, PluralElementsKeysV1::Zero)),
+            one: parts
+                .specials
+                .and_then(|specials| get_special(specials, PluralElementsKeysV1::One)),
+            two: parts
+                .specials
+                .and_then(|specials| get_special(specials, PluralElementsKeysV1::Two)),
+            few: parts
+                .specials
+                .and_then(|specials| get_special(specials, PluralElementsKeysV1::Few)),
+            many: parts
+                .specials
+                .and_then(|specials| get_special(specials, PluralElementsKeysV1::Many)),
+            explicit_zero: parts
+                .specials
+                .and_then(|specials| get_special(specials, PluralElementsKeysV1::ExplicitZero)),
+            explicit_one: parts
+                .specials
+                .and_then(|specials| get_special(specials, PluralElementsKeysV1::ExplicitOne)),
+        }
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<T> PluralElementsInner<(FourBitMetadata, T)> {
+    fn to_packed<V>(self) -> Box<PluralElementsPackedULE<V>>
+    where
+        T: PartialEq + fmt::Debug,
+        for<'a> &'a T: EncodeAsVarULE<V>,
+        V: VarULE + ?Sized,
+    {
+        zerovec::ule::encode_varule_to_box(&PluralElements(self))
     }
 }
 
@@ -885,9 +901,9 @@ where
         D: serde::Deserializer<'de>,
     {
         if deserializer.is_human_readable() {
-            let plural_elements =
-                PluralElements::<(FourBitMetadata, Box<V>)>::deserialize(deserializer)?;
-            Ok(zerovec::ule::encode_varule_to_box(&plural_elements))
+            let plural_elements: PluralElementsInner<(FourBitMetadata, Box<V>)> =
+                PluralElementsInner::deserialize(deserializer)?;
+            Ok(plural_elements.to_packed())
         } else {
             let bytes = <&[u8]>::deserialize(deserializer)?;
             PluralElementsPackedULE::<V>::parse_byte_slice(bytes)
@@ -907,7 +923,8 @@ where
         S: serde::Serializer,
     {
         if serializer.is_human_readable() {
-            let plural_elements = self.to_plural_elements();
+            let plural_elements: PluralElementsInner<(FourBitMetadata, &V)> =
+                PluralElementsInner::from_packed(&self);
             plural_elements.serialize(serializer)
         } else {
             serializer.serialize_bytes(self.as_byte_slice())
