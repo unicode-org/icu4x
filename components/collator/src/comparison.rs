@@ -377,34 +377,18 @@ pub struct CollatorBorrowed<'a> {
 impl CollatorBorrowed<'static> {
     /// Creates a collator for the given locale and options from compiled data.
     pub fn try_new(locale: &DataLocale, options: CollatorOptions) -> Result<Self, DataError> {
-        Self::try_new_unstable_internal(
-            &crate::provider::Baked,
-            icu_normalizer::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V1_MARKER,
-            icu_normalizer::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER,
-            crate::provider::Baked::SINGLETON_COLLATION_ROOT_V1_MARKER,
-            crate::provider::Baked::SINGLETON_COLLATION_JAMO_V1_MARKER,
-            || Ok(crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1_MARKER),
-            locale,
-            options,
-        )
-    }
+        // These are assigned to locals in order to keep the code after these assignments
+        // copypaste-compatible with `Collator::try_new_unstable_internal`.
+        let provider = &crate::provider::Baked;
+        let decompositions =
+            icu_normalizer::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V1_MARKER;
+        let tables =
+            icu_normalizer::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER;
+        let root = crate::provider::Baked::SINGLETON_COLLATION_ROOT_V1_MARKER;
+        let jamo = crate::provider::Baked::SINGLETON_COLLATION_JAMO_V1_MARKER;
+        let special_primaries =
+            || Ok(crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1_MARKER);
 
-    /// This method has only single caller, but it's not inlined into its caller in
-    /// order to keep the structure easy to compare with the corresponding owned case.
-    #[allow(clippy::too_many_arguments)]
-    fn try_new_unstable_internal(
-        provider: &'static crate::provider::Baked,
-        decompositions: &'static DecompositionDataV1<'static>,
-        tables: &'static DecompositionTablesV1<'static>,
-        root: &'static CollationDataV1<'static>,
-        jamo: &'static CollationJamoV1<'static>,
-        special_primaries: impl FnOnce() -> Result<
-            &'static CollationSpecialPrimariesV1<'static>,
-            DataError,
-        >,
-        locale: &DataLocale,
-        options: CollatorOptions,
-    ) -> Result<Self, DataError> {
         let locale_dependent =
             LocaleSpecificDataHolder::try_new_unstable_internal(provider, locale, options)?;
 
