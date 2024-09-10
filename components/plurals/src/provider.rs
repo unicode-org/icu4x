@@ -962,7 +962,6 @@ impl<'de, V> serde::Deserialize<'de> for Box<PluralElementsPackedULE<V>>
 where
     V: VarULE + ?Sized,
     Box<V>: serde::Deserialize<'de> + PartialEq + fmt::Debug,
-    for<'a> &'a Box<V>: EncodeAsVarULE<V>,
 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
