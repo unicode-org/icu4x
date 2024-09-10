@@ -968,6 +968,53 @@ where
     }
 }
 
+/// A sized packed [`PluralElements`] suitable for use in data structs.
+///
+/// This type has the following limitations:
+///
+/// 1. It only supports `str`
+/// 2. It does not implement [`VarULE`] so it can't be used in a [`VarZeroVec`]
+/// 3. It always serializes the [`FourBitMetadata`] as 0
+///
+/// Use [`PluralElementsPackedULE`] directly if you need these additional features.
+#[derive(Debug)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_plurals::provider))]
+#[cfg_attr(feature = "serde", serde(transparent))]
+pub struct PluralElementsPackedCowStr<'data> {
+    /// The encoded elements.
+    #[cfg_attr(
+        feature = "serde",
+        serde(
+            borrow,
+            deserialize_with = "deserialize_plural_elements_packed_cow::<_, str>"
+        )
+    )]
+    pub elements: Cow<'data, PluralElementsPackedULE<str>>,
+}
+
+impl<T> From<PluralElements<T>> for PluralElementsPackedCowStr<'static>
+where
+    T: PartialEq + fmt::Debug,
+    for<'a> &'a T: EncodeAsVarULE<str>,
+{
+    fn from(value: PluralElements<T>) -> Self {
+        let elements =
+            zerovec::ule::encode_varule_to_box(&value.map(|s| (FourBitMetadata::zero(), s)));
+        Self {
+            elements: Cow::Owned(elements),
+        }
+    }
+}
+
+impl PluralElementsPackedCowStr<'_> {
+    /// Returns the value for the given [`PluralOperands`] and [`PluralRules`].
+    pub fn get<'a>(&'a self, op: PluralOperands, rules: &PluralRules) -> &'a str {
+        self.elements.get(op, rules).1
+    }
+}
+
 #[test]
 fn test_serde_singleton_roundtrip() {
     let plural_elements = PluralElements::new((FourBitMetadata::zero(), "abc"));
@@ -991,18 +1038,9 @@ fn test_serde_singleton_roundtrip() {
         postcard::from_bytes(&postcard_bytes).unwrap();
     assert_eq!(&*ule, postcard_borrowed);
 
-    #[derive(serde::Deserialize)]
-    #[serde(transparent)]
-    struct CowWrap<'a> {
-        #[serde(borrow)]
-        // Explicit disambiguation due to https://github.com/rust-lang/rust/issues/130180
-        #[serde(deserialize_with = "deserialize_plural_elements_packed_cow::<_, str>")]
-        cow: Cow<'a, PluralElementsPackedULE<str>>,
-    }
-
-    let postcard_cow: CowWrap = postcard::from_bytes(&postcard_bytes).unwrap();
-    assert_eq!(&*ule, &*postcard_cow.cow);
-    assert!(matches!(postcard_cow.cow, Cow::Borrowed(_)));
+    let postcard_cow: PluralElementsPackedCowStr = postcard::from_bytes(&postcard_bytes).unwrap();
+    assert_eq!(&*ule, &*postcard_cow.elements);
+    assert!(matches!(postcard_cow.elements, Cow::Borrowed(_)));
 
     let json_str = serde_json::to_string(&ule).unwrap();
     let json_ule: Box<PluralElementsPackedULE<str>> = serde_json::from_str(&json_str).unwrap();

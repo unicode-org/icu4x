@@ -951,6 +951,21 @@ impl<T> PluralElements<T> {
     pub fn explicit_one(&self) -> Option<&T> {
         self.explicit_one.as_ref()
     }
+
+    /// Applies a function `f` to map all values to another type.
+    pub fn map<B, F: Fn(T) -> B>(self, f: F) -> PluralElements<B> {
+        let f = &f;
+        PluralElements {
+            other: f(self.other),
+            zero: self.zero.map(f),
+            one: self.one.map(f),
+            two: self.two.map(f),
+            few: self.few.map(f),
+            many: self.many.map(f),
+            explicit_zero: self.explicit_zero.map(f),
+            explicit_one: self.explicit_one.map(f),
+        }
+    }
 }
 
 impl<T: PartialEq> PluralElements<T> {
