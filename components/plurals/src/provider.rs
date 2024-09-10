@@ -1026,6 +1026,11 @@ where
 }
 
 /// Helper function to property deserialize a `Cow<PluralElementsPackedULE<V>>`
+///
+/// Due to <https://github.com/rust-lang/rust/issues/130180>, you may need to qualify
+/// `V` when invoking this, like so:
+/// 
+/// `#[serde(deserialize_with = "deserialize_plural_elements_packed_cow::<_, str>")]`
 /// 
 /// See <https://github.com/unicode-org/icu4x/pull/1556>
 #[cfg(feature = "serde")]
@@ -1075,6 +1080,7 @@ fn test_serde_singleton_roundtrip() {
     #[serde(transparent)]
     struct CowWrap<'a> {
         #[serde(borrow)]
+        // Explicit disambiguation due to https://github.com/rust-lang/rust/issues/130180
         #[serde(deserialize_with = "deserialize_plural_elements_packed_cow::<_, str>")]
         cow: Cow<'a, PluralElementsPackedULE<str>>,
     }
