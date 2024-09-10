@@ -867,7 +867,7 @@ where
 
 #[cfg(feature = "serde")]
 impl<T> PluralElementsInner<(FourBitMetadata, T)> {
-    fn to_packed<V>(self) -> Box<PluralElementsPackedULE<V>>
+    fn into_packed<V>(self) -> Box<PluralElementsPackedULE<V>>
     where
         T: PartialEq + fmt::Debug,
         for<'a> &'a T: EncodeAsVarULE<V>,
@@ -911,7 +911,7 @@ where
         if deserializer.is_human_readable() {
             let plural_elements: PluralElementsInner<(FourBitMetadata, Box<V>)> =
                 PluralElementsInner::deserialize(deserializer)?;
-            Ok(plural_elements.to_packed())
+            Ok(plural_elements.into_packed())
         } else {
             let bytes = <&[u8]>::deserialize(deserializer)?;
             PluralElementsPackedULE::<V>::parse_byte_slice(bytes)
@@ -932,7 +932,7 @@ where
     {
         if serializer.is_human_readable() {
             let plural_elements: PluralElementsInner<(FourBitMetadata, &V)> =
-                PluralElementsInner::from_packed(&self);
+                PluralElementsInner::from_packed(self);
             plural_elements.serialize(serializer)
         } else {
             serializer.serialize_bytes(self.as_byte_slice())
