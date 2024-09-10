@@ -1026,6 +1026,28 @@ where
     }
 }
 
+/// Helper function to property deserialize a `Cow<PluralElementsPackedULE<V>>`
+/// 
+/// See <https://github.com/unicode-org/icu4x/pull/1556>
+pub fn deserialize_plural_elements_packed_cow<'de, 'data, D, V>(
+    deserializer: D,
+) -> Result<Cow<'data, PluralElementsPackedULE<V>>, D::Error>
+where
+    'de: 'data,
+    D: serde::Deserializer<'de>,
+    V: VarULE + ?Sized,
+    Box<PluralElementsPackedULE<V>>: serde::Deserialize<'de>,
+{
+    use serde::Deserialize;
+    if deserializer.is_human_readable() {
+        let value = Box::<PluralElementsPackedULE<V>>::deserialize(deserializer)?;
+        Ok(Cow::Owned(value))
+    } else {
+        let value = <&'data PluralElementsPackedULE<V>>::deserialize(deserializer)?;
+        Ok(Cow::Borrowed(value))
+    }
+}
+
 #[test]
 fn test_serde_singleton_roundtrip() {
     let plural_elements = PluralElements::new((FourBitMetadata::zero(), "abc"));
@@ -1053,6 +1075,7 @@ fn test_serde_singleton_roundtrip() {
     #[serde(transparent)]
     struct CowWrap<'a> {
         #[serde(borrow)]
+        #[serde(deserialize_with = "deserialize_plural_elements_packed_cow")]
         cow: Cow<'a, PluralElementsPackedULE<str>>,
     }
 
