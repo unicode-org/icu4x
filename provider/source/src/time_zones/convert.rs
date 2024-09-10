@@ -120,7 +120,7 @@ fn offsets_for_meta(
             // https://unicode-org.atlassian.net/browse/CLDR-17927
             continue;
         }
-        let (mut new_standard, mut new_daylight) = offsets_for_iana(iana, tzdb);
+        let (mut new_standard, mut new_daylight) = offsets_for_iana(iana, tzdb, i64::MIN);
         if let Some(d) = new_daylight.as_mut() {
             // Some time zones, like Europe/Dublin use DST the wrong way
             // around. Don't let this weirdness leak into meta zones.
@@ -159,27 +159,37 @@ fn offsets_for_meta(
 fn offsets_for_iana(
     iana: &str,
     tzdb: &parse_zoneinfo::table::Table,
+    until: i64, // UNIX timestamp
 ) -> (UtcOffset, Option<UtcOffset>) {
     use parse_zoneinfo::transitions::TableTransitions;
 
     let timespans = tzdb.timespans(iana).unwrap();
-    let timespans = [&timespans.first]
+
+    let timespans_reverse = [(i64::MIN, &timespans.first)]
         .into_iter()
-        .chain(timespans.rest.iter().map(|(_, s)| s));
+        .chain(timespans.rest.iter().map(|(since, ts)| (*since, ts)));
 
-    let current = timespans.clone().last().unwrap();
-
-    let last_dst = timespans
+    let num_applicable_timespans = 1 + timespans_reverse
         .clone()
         .rev()
-        // Use the most recent DST offset, even if it's not used anymore
-        .find(|ts| ts.dst_offset != 0);
+        .position(|(since, _)| since <= until)
+        .unwrap();
+
+    let mut applicable_timespans_reverse = timespans_reverse
+        .rev()
+        .take(num_applicable_timespans)
+        .map(|(_, ts)| ts)
+        .peekable();
+
+    let current = applicable_timespans_reverse.peek().unwrap().utc_offset;
+
+    // Use the most recent DST offset, even if it's not used anymore
+    let last_dst = applicable_timespans_reverse
+        .find_map(|ts| (ts.dst_offset != 0).then_some(ts.utc_offset + ts.dst_offset));
 
     (
-        UtcOffset::try_from_offset_seconds(current.utc_offset as i32).unwrap(),
-        last_dst.map(|ts| {
-            UtcOffset::try_from_offset_seconds((ts.utc_offset + ts.dst_offset) as i32).unwrap()
-        }),
+        UtcOffset::try_from_offset_seconds(current as i32).unwrap(),
+        last_dst.map(|last_dst| UtcOffset::try_from_offset_seconds(last_dst as i32).unwrap()),
     )
 }
 
@@ -456,6 +466,7 @@ macro_rules! long_short_impls {
                                                                     offsets_for_iana(
                                                                         &key,
                                                                         &other.tzdb,
+                                                                        i64::MIN,
                                                                     ),
                                                                     format,
                                                                 )
@@ -477,7 +488,11 @@ macro_rules! long_short_impls {
                                                         place.$metazones_name().map(|format| {
                                                             (
                                                                 bcp47.clone(),
-                                                                offsets_for_iana(&key, &other.tzdb),
+                                                                offsets_for_iana(
+                                                                    &key,
+                                                                    &other.tzdb,
+                                                                    i64::MIN,
+                                                                ),
                                                                 format,
                                                             )
                                                         })
