@@ -1029,6 +1029,7 @@ where
 /// Helper function to property deserialize a `Cow<PluralElementsPackedULE<V>>`
 /// 
 /// See <https://github.com/unicode-org/icu4x/pull/1556>
+#[cfg(feature = "serde")]
 pub fn deserialize_plural_elements_packed_cow<'de, 'data, D, V>(
     deserializer: D,
 ) -> Result<Cow<'data, PluralElementsPackedULE<V>>, D::Error>
