@@ -572,6 +572,32 @@ struct PluralElementsUnpackedBytes<'a> {
     pub specials_bytes: Option<&'a [u8]>,
 }
 
+/// A sized packed [`PluralElements`] suitable for use in data structs.
+///
+/// This type has the following limitations:
+///
+/// 1. It only supports `str`
+/// 2. It does not implement [`VarULE`] so it can't be used in a [`VarZeroSlice`]
+/// 3. It always serializes the [`FourBitMetadata`] as 0
+///
+/// Use [`PluralElementsPackedULE`] directly if you need these additional features.
+#[derive(Debug, PartialEq, Yokeable, ZeroFrom, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_plurals::provider))]
+#[cfg_attr(feature = "serde", serde(transparent))]
+pub struct PluralElementsPackedCowStr<'data> {
+    /// The encoded elements.
+    #[cfg_attr(
+        feature = "serde",
+        serde(
+            borrow,
+            deserialize_with = "deserialize_plural_elements_packed_cow::<_, str>"
+        )
+    )]
+    pub elements: Cow<'data, PluralElementsPackedULE<str>>,
+}
+
 /// Helper function to access a value from [`PluralElementsTupleSliceVarULE`]
 fn get_special<V: VarULE + ?Sized>(
     data: &PluralElementsTupleSliceVarULE<V>,
@@ -967,32 +993,6 @@ where
         let value = <&'data PluralElementsPackedULE<V>>::deserialize(deserializer)?;
         Ok(Cow::Borrowed(value))
     }
-}
-
-/// A sized packed [`PluralElements`] suitable for use in data structs.
-///
-/// This type has the following limitations:
-///
-/// 1. It only supports `str`
-/// 2. It does not implement [`VarULE`] so it can't be used in a [`VarZeroSlice`]
-/// 3. It always serializes the [`FourBitMetadata`] as 0
-///
-/// Use [`PluralElementsPackedULE`] directly if you need these additional features.
-#[derive(Debug, PartialEq, Yokeable, ZeroFrom, Clone)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_plurals::provider))]
-#[cfg_attr(feature = "serde", serde(transparent))]
-pub struct PluralElementsPackedCowStr<'data> {
-    /// The encoded elements.
-    #[cfg_attr(
-        feature = "serde",
-        serde(
-            borrow,
-            deserialize_with = "deserialize_plural_elements_packed_cow::<_, str>"
-        )
-    )]
-    pub elements: Cow<'data, PluralElementsPackedULE<str>>,
 }
 
 impl<T> From<PluralElements<T>> for PluralElementsPackedCowStr<'static>
