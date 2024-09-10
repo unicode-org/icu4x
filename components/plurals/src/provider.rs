@@ -1075,7 +1075,7 @@ fn test_serde_singleton_roundtrip() {
     #[serde(transparent)]
     struct CowWrap<'a> {
         #[serde(borrow)]
-        #[serde(deserialize_with = "deserialize_plural_elements_packed_cow")]
+        #[serde(deserialize_with = "deserialize_plural_elements_packed_cow::<_, str>")]
         cow: Cow<'a, PluralElementsPackedULE<str>>,
     }
 
