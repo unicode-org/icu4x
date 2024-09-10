@@ -386,8 +386,6 @@ impl CollatorBorrowed<'static> {
             icu_normalizer::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER;
         let root = crate::provider::Baked::SINGLETON_COLLATION_ROOT_V1_MARKER;
         let jamo = crate::provider::Baked::SINGLETON_COLLATION_JAMO_V1_MARKER;
-        let special_primaries =
-            || Ok(crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1_MARKER);
 
         let locale_dependent =
             LocaleSpecificDataHolder::try_new_unstable_internal(provider, locale, options)?;
@@ -401,7 +399,8 @@ impl CollatorBorrowed<'static> {
             == AlternateHandling::Shifted
             || locale_dependent.merged_options.numeric()
         {
-            let special_primaries = special_primaries()?;
+            let special_primaries =
+                crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1_MARKER;
             // `variant_count` isn't stable yet:
             // https://github.com/rust-lang/rust/issues/73662
             if special_primaries.last_primaries.len() <= (MaxVariable::Currency as usize) {
