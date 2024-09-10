@@ -101,7 +101,7 @@ impl<'a> WindowsTimeZoneMapperBorrowed<'a> {
     /// use tinystr::tinystr;
     ///
     /// let windows_tz_mapper_owned = WindowsTimeZoneMapper::new();
-    /// let windows_tz_mapper = mapper_owned.as_borrowed();
+    /// let windows_tz_mapper = windows_tz_mapper_owned.as_borrowed();
     ///
     /// let bcp47_id = windows_tz_mapper.windows_tz_to_bcp47_id("Central Standard Time");
     /// assert_eq!(bcp47_id, Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))));
@@ -123,8 +123,8 @@ impl<'a> WindowsTimeZoneMapperBorrowed<'a> {
     /// use icu_provider::prelude::icu_locale_core::subtags::Region;
     /// use tinystr::tinystr;
     ///
-    /// let win_tz_mapper_owned = WindowsTimeZoneToBcp47Mapper::new();
-    /// let win_tz_mapper = mapper_owned.as_borrowed();
+    /// let win_tz_mapper_owned = WindowsTimeZoneMapper::new();
+    /// let win_tz_mapper = win_tz_mapper_owned.as_borrowed();
     ///
     /// let region = None;
     /// let bcp47_id = win_tz_mapper.windows_tz_to_bcp47_id_with_region("Central Standard Time", region);
