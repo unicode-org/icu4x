@@ -22,6 +22,7 @@ lazy_static::lazy_static! {
         "Copy",
         "Debug",
         "Default", // We expose this when we see fit
+        "Deref", // We expose this when we see fit
         "Deserialize",
         "DeserializeOwned",
         "Display",
@@ -282,7 +283,7 @@ lazy_static::lazy_static! {
 
         // We should add this once we have a better story for FFI custom data structs
         // and callbacks
-        "icu_provider_adapters::any_payload::AnyPayloadProvider",
+        "icu_provider_adapters::fixed::FixedProvider",
 
         // Not planned for 2.0
         // FilterDataProvider::with_filter needs callbacks.
@@ -297,6 +298,8 @@ lazy_static::lazy_static! {
         // Not planned for 2.0 but would be nice to return 'static refs
         // with Diplomat support.
         // Borrowed <-> owned converters
+        "icu::locale::exemplar_chars::ExemplarCharacters::as_borrowed",
+        "icu::locale::exemplar_chars::ExemplarCharactersBorrowed::static_to_owned",
         "icu::locale::fallback::LocaleFallbacker::as_borrowed",
         "icu::locale::fallback::LocaleFallbackerBorrowed::static_to_owned",
         "icu::properties::bidi_data::BidiAuxiliaryProperties::as_borrowed",

@@ -5,11 +5,15 @@
     "1": "เดือนหน้า"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 เดือนที่แล้ว"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 เดือนที่แล้ว"
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\bใน  เดือน"
+    "strings": {
+      "specials": [],
+      "other": "\bใน  เดือน"
+    }
   }
 }

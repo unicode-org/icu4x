@@ -12,9 +12,9 @@
 #[macro_export]
 macro_rules! __impl_persian_year_names_v1_marker {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl $provider {
             const DATA_PERSIAN_YEAR_NAMES_V1_MARKER: icu_provider_baked::zerotrie::Data<icu::datetime::provider::neo::PersianYearNamesV1Marker> = icu_provider_baked::zerotrie::Data {
                 trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xCBafhlmrstuyz\x0BJOhs\x8D\xA0\xAB\xC4\xE1r\x1E\xC3345\x01\x02\x80\x80\x80\xC4afir\n\x19\x1D\x1E\xC3345\x01\x02\x81\x81\x8F-Adlm\x1E\xC3345\x01\x02\x82\x82\x82\x1E5\x90\0\xC2\x1E-\n\xC3345\x01\x02\x83\x83\x90\0CA\x1E\xC3345\x01\x02\x84\x84\x84e\x1E5\x90\x01\xC2ov\n\x1E\xC3345\x01\x02\x85\x85\x85\x1E\xC3345\x01\x02\x86\x86\x90\x02k\x1E\xC3345\x01\x02\x87\x87\x87\xC2ou\x0B\x1E\xC3345\x01\x02\x88\x88\x90\0\x1E\xC3345\x01\x02\x89\x89\x90\x03\xC2cv\x0B\x1E\xC3345\x01\x02\x8A\x8A\x90\x04\x1E5\x90\x05h\x1E\xC3345\x01\x02\x8B\x8B\x8B\xC2nz\x0Bd\x1E\xC3345\x01\x02\x84\x84\x84\x1E\xC3345\x01\x02\x8C\x8C\x8Cue\xC2\x1E-\t\xC3345\x01\x02\x8D\x8D\x8DHans\x1E\xC3345\x01\x02\x8E\x8E\x8Eh\xC2\x1E-\t\xC3345\x01\x02\x8E\x8E\x8EHant\x1E\xC3345\x01\x02\x8D\x8D\x8D" },
@@ -110,7 +110,7 @@ macro_rules! __impl_persian_year_names_v1_marker {
                 ],
             };
         }
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DataProvider<icu::datetime::provider::neo::PersianYearNamesV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::neo::PersianYearNamesV1Marker>, icu_provider::DataError> {
                 let mut metadata = icu_provider::DataResponseMetadata::default();
@@ -136,7 +136,7 @@ macro_rules! __impl_persian_year_names_v1_marker {
     };
     ($ provider : ty , DRY) => {
         __impl_persian_year_names_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::datetime::provider::neo::PersianYearNamesV1Marker> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 icu_provider::DataProvider::<icu::datetime::provider::neo::PersianYearNamesV1Marker>::load(self, req).map(|r| r.metadata)
@@ -145,7 +145,7 @@ macro_rules! __impl_persian_year_names_v1_marker {
     };
     ($ provider : ty , ITER) => {
         __impl_persian_year_names_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::IterableDataProvider<icu::datetime::provider::neo::PersianYearNamesV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_PERSIAN_YEAR_NAMES_V1_MARKER).collect())
@@ -154,13 +154,13 @@ macro_rules! __impl_persian_year_names_v1_marker {
     };
     ($ provider : ty , DRY , ITER) => {
         __impl_persian_year_names_v1_marker!($provider);
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::datetime::provider::neo::PersianYearNamesV1Marker> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 icu_provider::DataProvider::<icu::datetime::provider::neo::PersianYearNamesV1Marker>::load(self, req).map(|r| r.metadata)
             }
         }
-        #[clippy::msrv = "1.70"]
+        #[clippy::msrv = "1.71.1"]
         impl icu_provider::IterableDataProvider<icu::datetime::provider::neo::PersianYearNamesV1Marker> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider_baked::DataStore::iter(&Self::DATA_PERSIAN_YEAR_NAMES_V1_MARKER).collect())

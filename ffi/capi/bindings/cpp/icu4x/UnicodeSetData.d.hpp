@@ -12,8 +12,6 @@
 namespace icu4x {
 namespace capi { struct DataProvider; }
 class DataProvider;
-namespace capi { struct Locale; }
-class Locale;
 namespace capi { struct UnicodeSetData; }
 class UnicodeSetData;
 class DataError;
@@ -35,16 +33,6 @@ public:
   inline bool contains_char(char32_t cp) const;
 
   inline static diplomat::result<std::unique_ptr<icu4x::UnicodeSetData>, icu4x::DataError> load_basic_emoji(const icu4x::DataProvider& provider);
-
-  inline static diplomat::result<std::unique_ptr<icu4x::UnicodeSetData>, icu4x::DataError> load_exemplars_main(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
-
-  inline static diplomat::result<std::unique_ptr<icu4x::UnicodeSetData>, icu4x::DataError> load_exemplars_auxiliary(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
-
-  inline static diplomat::result<std::unique_ptr<icu4x::UnicodeSetData>, icu4x::DataError> load_exemplars_punctuation(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
-
-  inline static diplomat::result<std::unique_ptr<icu4x::UnicodeSetData>, icu4x::DataError> load_exemplars_numbers(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
-
-  inline static diplomat::result<std::unique_ptr<icu4x::UnicodeSetData>, icu4x::DataError> load_exemplars_index(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
 
   inline const icu4x::capi::UnicodeSetData* AsFFI() const;
   inline icu4x::capi::UnicodeSetData* AsFFI();

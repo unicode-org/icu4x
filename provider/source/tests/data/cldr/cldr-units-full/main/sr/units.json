@@ -2,9 +2,6 @@
   "main": {
     "sr": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "sr"
       },
       "units": {
@@ -114,7 +111,7 @@
             "compoundUnitPattern1-count-one-case-accusative": "квадратни {0}",
             "compoundUnitPattern1-count-one-case-genitive": "квадратни {0}",
             "compoundUnitPattern1-count-one-case-instrumental": "квадратни {0}",
-            "compoundUnitPattern1-gender-feminine-count-one": "квадратни {0}",
+            "compoundUnitPattern1-gender-feminine-count-one": "квадратна {0}",
             "compoundUnitPattern1-gender-feminine-count-one-case-accusative": "квадратни {0}",
             "compoundUnitPattern1-gender-feminine-count-one-case-genitive": "квадратни {0}",
             "compoundUnitPattern1-gender-feminine-count-one-case-instrumental": "квадратни {0}",
@@ -423,10 +420,20 @@
             "instrumental-count-other": "{0} карата"
           },
           "concentr-milligram-ofglucose-per-deciliter": {
+            "gender": "inanimate",
             "displayName": "милиграми по децилитру",
             "unitPattern-count-one": "{0} милиграм по децилитру",
+            "accusative-count-one": "{0} милиграм по децилитру",
+            "genitive-count-one": "{0} милиграма по децилитру",
+            "instrumental-count-one": "{0} милиграмом по децилитру",
             "unitPattern-count-few": "{0} милиграма по децилитру",
-            "unitPattern-count-other": "{0} милиграма по децилитру"
+            "accusative-count-few": "{0} милиграма по децилитру",
+            "genitive-count-few": "{0} милиграма по децилитру",
+            "instrumental-count-few": "{0} милиграма по децилитру",
+            "unitPattern-count-other": "{0} милиграма по децилитру",
+            "accusative-count-other": "{0} милиграма по децилитру",
+            "genitive-count-other": "{0} милиграма по децилитру",
+            "instrumental-count-other": "{0} милиграма по децилитру"
           },
           "concentr-millimole-per-liter": {
             "gender": "inanimate",
@@ -775,7 +782,7 @@
             "unitPattern-count-few": "{0} деценије",
             "accusative-count-few": "{0} деценије",
             "genitive-count-few": "{0} деценије",
-            "instrumental-count-few": "{0} деценије",
+            "instrumental-count-few": "{0} деценијом",
             "unitPattern-count-other": "{0} деценија",
             "accusative-count-other": "{0} деценија",
             "genitive-count-other": "{0} деценија",
@@ -1030,10 +1037,20 @@
             "instrumental-count-other": "{0} волти"
           },
           "energy-kilocalorie": {
+            "gender": "feminine",
             "displayName": "килокалорије",
             "unitPattern-count-one": "{0} килокалорија",
+            "accusative-count-one": "{0} килокалорију",
+            "genitive-count-one": "{0} килокалорије",
+            "instrumental-count-one": "{0} килокалоријом",
             "unitPattern-count-few": "{0} килокалорије",
-            "unitPattern-count-other": "{0} килокалорија"
+            "accusative-count-few": "{0} килокалорије",
+            "genitive-count-few": "{0} килокалорије",
+            "instrumental-count-few": "{0} килокалорије",
+            "unitPattern-count-other": "{0} килокалорија",
+            "accusative-count-other": "{0} килокалорија",
+            "genitive-count-other": "{0} килокалорија",
+            "instrumental-count-other": "{0} килокалорија"
           },
           "energy-calorie": {
             "gender": "feminine",
@@ -1145,8 +1162,19 @@
           },
           "force-kilowatt-hour-per-100-kilometer": {
             "gender": "inanimate",
-            "displayName": "kWh/100km",
-            "unitPattern-count-other": "{0} kWh/100km"
+            "displayName": "киловат-сати на 100 километара",
+            "unitPattern-count-one": "{0} киловат-сат на 100 километара",
+            "accusative-count-one": "{0} киловат-сат на 100 километара",
+            "genitive-count-one": "{0} киловат-сата на 100 километара",
+            "instrumental-count-one": "{0} киловат-сатом на 100 километара",
+            "unitPattern-count-few": "{0} киловат-сата на 100 километара",
+            "accusative-count-few": "{0} киловат-сата на 100 километара",
+            "genitive-count-few": "{0} киловат-сата на 100 километара",
+            "instrumental-count-few": "{0} киловат-сата на 100 километара",
+            "unitPattern-count-other": "{0} киловат-сати на 100 километара",
+            "accusative-count-other": "{0} киловат-сати на 100 километара",
+            "genitive-count-other": "{0} киловат-сати на 100 километара",
+            "instrumental-count-other": "{0} киловат-сати на 100 километара"
           },
           "frequency-gigahertz": {
             "gender": "inanimate",
@@ -1505,8 +1533,20 @@
             "instrumental-count-other": "{0} скандинавских миља"
           },
           "length-point": {
-            "displayName": "pt",
-            "unitPattern-count-other": "{0} pt"
+            "gender": "feminine",
+            "displayName": "типографске тачке",
+            "unitPattern-count-one": "{0} типографска тачка",
+            "accusative-count-one": "{0} типографску тачку",
+            "genitive-count-one": "{0} типографске тачке",
+            "instrumental-count-one": "{0} типографском тачком",
+            "unitPattern-count-few": "{0} типографске тачке",
+            "accusative-count-few": "{0} типографске тачке",
+            "genitive-count-few": "{0} типографских тачака",
+            "instrumental-count-few": "{0} типографске тачке",
+            "unitPattern-count-other": "{0} типографских тачака",
+            "accusative-count-other": "{0} типографских тачака",
+            "genitive-count-other": "{0} типографских тачака",
+            "instrumental-count-other": "{0} типографских тачака"
           },
           "length-solar-radius": {
             "displayName": "сунчеви полупречници",
@@ -1807,10 +1847,20 @@
             "unitPattern-count-other": "{0} коњских снага"
           },
           "pressure-millimeter-ofhg": {
+            "gender": "inanimate",
             "displayName": "милиметри живиног стуба",
             "unitPattern-count-one": "{0} милиметар живиног стуба",
+            "accusative-count-one": "{0} милиметар живиног стуба",
+            "genitive-count-one": "{0} милиметра живиног стуба",
+            "instrumental-count-one": "{0} милиметром живиног стуба",
             "unitPattern-count-few": "{0} милиметра живиног стуба",
-            "unitPattern-count-other": "{0} милиметара живиног стуба"
+            "accusative-count-few": "{0} милиметра живиног стуба",
+            "genitive-count-few": "{0} милиметра живиног стуба",
+            "instrumental-count-few": "{0} милиметра живиног стуба",
+            "unitPattern-count-other": "{0} милиметара живиног стуба",
+            "accusative-count-other": "{0} милиметара живиног стуба",
+            "genitive-count-other": "{0} милиметара живиног стуба",
+            "instrumental-count-other": "{0} милиметара живиног стуба"
           },
           "pressure-pound-force-per-square-inch": {
             "displayName": "фунте по квадратном инчу",
@@ -2370,12 +2420,61 @@
             "unitPattern-count-few": "{0} империјске четвртине",
             "unitPattern-count-other": "{0} империјских четвртина"
           },
+          "speed-light-speed": {
+            "gender": "neuter",
+            "displayName": "светло",
+            "unitPattern-count-one": "{0} светло",
+            "accusative-count-one": "{0} светло",
+            "genitive-count-one": "{0} светла",
+            "instrumental-count-one": "{0} светлом",
+            "unitPattern-count-few": "{0} светла",
+            "accusative-count-few": "{0} светла",
+            "genitive-count-few": "{0} светла",
+            "instrumental-count-few": "{0} светла",
+            "unitPattern-count-other": "{0} светала",
+            "accusative-count-other": "{0} светала",
+            "genitive-count-other": "{0} светала",
+            "instrumental-count-other": "{0} светала"
+          },
+          "concentr-portion-per-1e9": {
+            "gender": "inanimate",
+            "displayName": "делови на милијарду",
+            "unitPattern-count-one": "{0} део на милијарду",
+            "accusative-count-one": "{0} део на милијарду",
+            "genitive-count-one": "{0} дела на милијарду",
+            "instrumental-count-one": "{0} делом на милијарду",
+            "unitPattern-count-few": "{0} дела на милијарду",
+            "accusative-count-few": "{0} дела на милијарду",
+            "genitive-count-few": "{0} дела на милијарду",
+            "instrumental-count-few": "{0} дела на милијарду",
+            "unitPattern-count-other": "{0} делова на милијарду",
+            "accusative-count-other": "{0} делова на милијарду",
+            "genitive-count-other": "{0} делова на милијарду",
+            "instrumental-count-other": "{0} делова на милијарду"
+          },
+          "duration-night": {
+            "gender": "feminine",
+            "displayName": "ноћ",
+            "unitPattern-count-one": "{0} ноћ",
+            "accusative-count-one": "{0} ноћ",
+            "genitive-count-one": "{0} ноћи",
+            "instrumental-count-one": "{0} ноћи",
+            "unitPattern-count-few": "{0} ноћи",
+            "accusative-count-few": "{0} ноћи",
+            "genitive-count-few": "{0} ноћи",
+            "instrumental-count-few": "{0} ноћи",
+            "unitPattern-count-other": "{0} ноћи",
+            "accusative-count-other": "{0} ноћи",
+            "genitive-count-other": "{0} ноћи",
+            "instrumental-count-other": "{0} ноћи",
+            "perUnitPattern": "{0}/ноћ"
+          },
           "coordinateUnit": {
-            "displayName": "главни правац",
-            "east": "{0}И",
-            "north": "{0}С",
-            "south": "{0}Ј",
-            "west": "{0}З"
+            "displayName": "страна света",
+            "east": "{0} E",
+            "north": "{0} N",
+            "south": "{0} S",
+            "west": "{0} W"
           }
         },
         "short": {
@@ -2966,7 +3065,7 @@
             "unitPattern-count-other": "{0} smi"
           },
           "length-point": {
-            "displayName": "pt",
+            "displayName": "типографске тачке",
             "unitPattern-count-other": "{0} pt"
           },
           "length-solar-radius": {
@@ -3324,12 +3423,29 @@
             "displayName": "qt Imp",
             "unitPattern-count-other": "{0} qt Imp."
           },
+          "speed-light-speed": {
+            "displayName": "светло",
+            "unitPattern-count-one": "{0} светло",
+            "unitPattern-count-few": "{0} светла",
+            "unitPattern-count-other": "{0} светала"
+          },
+          "concentr-portion-per-1e9": {
+            "displayName": "делови/милијарда",
+            "unitPattern-count-other": "{0} ppb"
+          },
+          "duration-night": {
+            "displayName": "ноћ",
+            "unitPattern-count-one": "{0} ноћ",
+            "unitPattern-count-few": "{0} ноћи",
+            "unitPattern-count-other": "{0} ноћи",
+            "perUnitPattern": "{0}/ноћ"
+          },
           "coordinateUnit": {
             "displayName": "правац",
-            "east": "{0}И",
-            "north": "{0}С",
-            "south": "{0}Ј",
-            "west": "{0}З"
+            "east": "{0} E",
+            "north": "{0} N",
+            "south": "{0} S",
+            "west": "{0} W"
           }
         },
         "narrow": {
@@ -3924,7 +4040,7 @@
             "unitPattern-count-other": "{0} smi"
           },
           "length-point": {
-            "displayName": "pt",
+            "displayName": "типографске тачке",
             "unitPattern-count-other": "{0} pt"
           },
           "length-solar-radius": {
@@ -4292,12 +4408,29 @@
             "unitPattern-count-few": "{0} qt Imp",
             "unitPattern-count-other": "{0} qt Imp"
           },
+          "speed-light-speed": {
+            "displayName": "светло",
+            "unitPattern-count-one": "{0} светло",
+            "unitPattern-count-few": "{0} светла",
+            "unitPattern-count-other": "{0} светала"
+          },
+          "concentr-portion-per-1e9": {
+            "displayName": "делови/милијарда",
+            "unitPattern-count-other": "{0} ppb"
+          },
+          "duration-night": {
+            "displayName": "ноћ",
+            "unitPattern-count-one": "{0} ноћ",
+            "unitPattern-count-few": "{0} ноћи",
+            "unitPattern-count-other": "{0} ноћи",
+            "perUnitPattern": "{0}/ноћ"
+          },
           "coordinateUnit": {
             "displayName": "правац",
-            "east": "{0}И",
-            "north": "{0}С",
-            "south": "{0}Ј",
-            "west": "{0}З"
+            "east": "{0}E",
+            "north": "{0}N",
+            "south": "{0}S",
+            "west": "{0}W"
           }
         },
         "durationUnit-type-hm": {

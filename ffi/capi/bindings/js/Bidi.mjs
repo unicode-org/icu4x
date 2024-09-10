@@ -49,7 +49,7 @@ export class Bidi {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new Bidi(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -61,29 +61,29 @@ export class Bidi {
     }
 
     forText(text, defaultLevel) {
-        let functionGarbageCollector = new diplomatRuntime.GarbageCollector();
-        const textSlice = [...functionGarbageCollector.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, text)).splat()];
+        let functionGarbageCollectorGrip = new diplomatRuntime.GarbageCollectorGrip();
+        const textSlice = functionGarbageCollectorGrip.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, text));
         
         // This lifetime edge depends on lifetimes 'text
         let textEdges = [textSlice];
         
-        const result = wasm.icu4x_Bidi_for_text_valid_utf8_mv1(this.ffiValue, ...textSlice, defaultLevel);
+        const result = wasm.icu4x_Bidi_for_text_valid_utf8_mv1(this.ffiValue, ...textSlice.splat(), ...diplomatRuntime.optionToArgsForCalling(defaultLevel, 1, 1, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue, Uint8Array)]));
     
         try {
             return new BidiInfo(diplomatRuntime.internalConstructor, result, [], textEdges);
         }
         
         finally {
-            functionGarbageCollector.garbageCollect();
+            functionGarbageCollectorGrip.releaseToGarbageCollector();
         }
     }
 
     reorderVisual(levels) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const levelsSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.slice(wasm, levels, "u8")).splat()];
+        const levelsSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.slice(wasm, levels, "u8"));
         
-        const result = wasm.icu4x_Bidi_reorder_visual_mv1(this.ffiValue, ...levelsSlice);
+        const result = wasm.icu4x_Bidi_reorder_visual_mv1(this.ffiValue, ...levelsSlice.splat());
     
         try {
             return new ReorderedIndexMap(diplomatRuntime.internalConstructor, result, []);

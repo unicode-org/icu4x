@@ -5,11 +5,15 @@
     "1": "следеће нед."
   },
   "past": {
-    "specials": [],
-    "other": "\bпре  нед."
+    "strings": {
+      "specials": [],
+      "other": "\bпре  нед."
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u0006за  нед."
+    "strings": {
+      "specials": [],
+      "other": "\u0006за  нед."
+    }
   }
 }

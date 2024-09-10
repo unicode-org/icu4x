@@ -30,6 +30,9 @@ pub(super) const MAX_INDEX: usize = u32::MAX as usize;
 /// and all of its associated items are hidden from the docs.
 #[allow(clippy::missing_safety_doc)] // no safety section for you, don't implement this trait period
 pub unsafe trait VarZeroVecFormat: 'static + Sized {
+    /// The error to show when unable to construct a vec
+    #[doc(hidden)]
+    const TOO_LARGE_ERROR: &'static str;
     #[doc(hidden)]
     const INDEX_WIDTH: usize;
     #[doc(hidden)]
@@ -50,6 +53,14 @@ pub unsafe trait VarZeroVecFormat: 'static + Sized {
     fn rawbytes_from_byte_slice_unchecked_mut(bytes: &mut [u8]) -> &mut [Self::RawBytes];
 }
 
+/// This is a [`VarZeroVecFormat`] that stores u8s in the index array.
+/// Will have a smaller data size, but it's *extremely* likely for larger arrays
+/// to be unrepresentable (and error on construction). Should probably be used
+/// for known-small arrays, where all but the last field are known-small.
+#[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
+#[allow(clippy::exhaustive_structs)] // marker
+pub struct Index8;
+
 /// This is a [`VarZeroVecFormat`] that stores u16s in the index array.
 /// Will have a smaller data size, but it's more likely for larger arrays
 /// to be unrepresentable (and error on construction)
@@ -66,7 +77,29 @@ pub struct Index16;
 #[allow(clippy::exhaustive_structs)] // marker
 pub struct Index32;
 
+unsafe impl VarZeroVecFormat for Index8 {
+    const TOO_LARGE_ERROR: &'static str = "Attempted to build VarZeroVec out of elements that \
+                                     cumulatively are larger than a u8 in size";
+    const INDEX_WIDTH: usize = 1;
+    const MAX_VALUE: u32 = u8::MAX as u32;
+    type RawBytes = u8;
+    #[inline]
+    fn rawbytes_to_usize(raw: Self::RawBytes) -> usize {
+        raw as usize
+    }
+    #[inline]
+    fn usize_to_rawbytes(u: usize) -> Self::RawBytes {
+        u as u8
+    }
+    #[inline]
+    fn rawbytes_from_byte_slice_unchecked_mut(bytes: &mut [u8]) -> &mut [Self::RawBytes] {
+        bytes
+    }
+}
+
 unsafe impl VarZeroVecFormat for Index16 {
+    const TOO_LARGE_ERROR: &'static str = "Attempted to build VarZeroVec out of elements that \
+                                     cumulatively are larger than a u16 in size";
     const INDEX_WIDTH: usize = 2;
     const MAX_VALUE: u32 = u16::MAX as u32;
     type RawBytes = RawBytesULE<2>;
@@ -85,6 +118,8 @@ unsafe impl VarZeroVecFormat for Index16 {
 }
 
 unsafe impl VarZeroVecFormat for Index32 {
+    const TOO_LARGE_ERROR: &'static str = "Attempted to build VarZeroVec out of elements that \
+                                     cumulatively are larger than a u32 in size";
     const INDEX_WIDTH: usize = 4;
     const MAX_VALUE: u32 = u32::MAX;
     type RawBytes = RawBytesULE<4>;

@@ -5,11 +5,15 @@
     "1": "sledeće n."
   },
   "past": {
-    "specials": [],
-    "other": "\u0005pre  n."
+    "strings": {
+      "specials": [],
+      "other": "\u0005pre  n."
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u0004za  n."
+    "strings": {
+      "specials": [],
+      "other": "\u0004za  n."
+    }
   }
 }

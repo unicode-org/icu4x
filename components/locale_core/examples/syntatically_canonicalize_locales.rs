@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 // A sample application which takes a comma separated list of locales,
-// makes them syntatically canonical and serializes the list back into a comma separated list.
+// makes them syntactically canonical and serializes the list back into a comma separated list.
 
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
 icu_benchmark_macros::instrument!();

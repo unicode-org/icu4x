@@ -3,11 +3,15 @@
     "0": "now"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 sec ago"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 sec ago"
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u0004in  sec"
+    "strings": {
+      "specials": [],
+      "other": "\u0004in  sec"
+    }
   }
 }

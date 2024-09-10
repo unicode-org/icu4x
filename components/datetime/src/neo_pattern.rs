@@ -23,16 +23,18 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// 1. From a custom pattern string: [`DateTimePattern::try_from_pattern_str`]
 /// 2. From a formatted datetime: [`FormattedNeoDateTime::pattern`]
 ///
-/// There are two things you can do with one of these:
+/// Things you can do with one of these:
 ///
 /// 1. Use it to directly format a datetime via [`TypedDateTimeNames`]
 /// 2. Convert it to a string pattern via [`Writeable`]
+/// 3. Get the resolved components
 ///
 #[doc = date_time_pattern_size!()]
 ///
 /// # Examples
 ///
-/// Create a pattern from a custom string and compare it to one from data:
+/// Create a pattern from a custom string and compare it to one from data,
+/// then check the resolved components:
 ///
 /// ```
 /// use icu::calendar::DateTime;
@@ -41,14 +43,17 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
 /// use icu::datetime::neo_pattern::DateTimePattern;
 /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+/// use icu::datetime::options::components;
 /// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
 ///
+/// // Create the pattern from a string:
 /// let pattern_str = "d MMM y";
 /// let custom_pattern =
 ///     DateTimePattern::try_from_pattern_str(pattern_str).unwrap();
 /// assert_writeable_eq!(custom_pattern, pattern_str);
 ///
+/// // Load data that resolves to the same pattern:
 /// let data_pattern =
 ///     TypedNeoFormatter::<Gregorian, NeoYearMonthDayMarker>::try_new(
 ///         &locale!("es-MX").into(),
@@ -59,9 +64,16 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 ///     // For this example, we'll choose the local Unix epoch.
 ///     .format(&DateTime::local_unix_epoch().to_calendar(Gregorian))
 ///     .pattern();
-///
 /// assert_writeable_eq!(data_pattern, pattern_str);
 /// assert_eq!(custom_pattern, data_pattern);
+///
+/// // Check the resolved components:
+/// let mut expected_components_bag = components::Bag::default();
+/// expected_components_bag.year = Some(components::Year::Numeric);
+/// expected_components_bag.month = Some(components::Month::Short);
+/// expected_components_bag.day = Some(components::Day::NumericDayOfMonth);
+/// let actual_components_bag = components::Bag::from(&data_pattern);
+/// assert_eq!(actual_components_bag, expected_components_bag);
 /// ```
 ///
 /// [`DateTimeFormatter`]: crate::DateTimeFormatter

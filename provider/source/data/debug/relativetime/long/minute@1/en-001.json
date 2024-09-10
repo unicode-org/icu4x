@@ -3,21 +3,25 @@
     "0": "this minute"
   },
   "past": {
-    "specials": [
-      [
-        "One",
-        "\u0001 minute ago"
-      ]
-    ],
-    "other": "\u0001 minutes ago"
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0001 minute ago"
+        ]
+      ],
+      "other": "\u0001 minutes ago"
+    }
   },
   "future": {
-    "specials": [
-      [
-        "One",
-        "\u0004in  minute"
-      ]
-    ],
-    "other": "\u0004in  minutes"
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0004in  minute"
+        ]
+      ],
+      "other": "\u0004in  minutes"
+    }
   }
 }

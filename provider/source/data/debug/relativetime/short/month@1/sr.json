@@ -5,11 +5,15 @@
     "1": "следећег мес."
   },
   "past": {
-    "specials": [],
-    "other": "\bпре  мес."
+    "strings": {
+      "specials": [],
+      "other": "\bпре  мес."
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u0006за  мес."
+    "strings": {
+      "specials": [],
+      "other": "\u0006за  мес."
+    }
   }
 }

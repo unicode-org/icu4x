@@ -8,35 +8,48 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 export class CollatorBackwardSecondLevel {
     #value = undefined;
 
-    static values = new Map([
-        ["Auto", 0],
-        ["Off", 1],
-        ["On", 2]
+    static #values = new Map([
+        ["Off", 0],
+        ["On", 1]
     ]);
 
     constructor(value) {
-        if (value instanceof CollatorBackwardSecondLevel) {
-            this.#value = value.value;
-            return;
+        if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
+            // We pass in two internalConstructor arguments to create *new*
+            // instances of this type, otherwise the enums are treated as singletons.
+            if (arguments[1] === diplomatRuntime.internalConstructor ) {
+                this.#value = arguments[2];
+                return;
+            }
+            return CollatorBackwardSecondLevel.#objectValues[arguments[1]];
         }
 
-        if (CollatorBackwardSecondLevel.values.has(value)) {
-            this.#value = value;
-            return;
+        if (value instanceof CollatorBackwardSecondLevel) {
+            return value;
+        }
+
+        let intVal = CollatorBackwardSecondLevel.#values.get(value);
+
+        // Nullish check, checks for null or undefined
+        if (intVal == null) {
+            return CollatorBackwardSecondLevel.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a CollatorBackwardSecondLevel and does not correspond to any of its enumerator values.");
     }
 
     get value() {
-        return this.#value;
+        return [...CollatorBackwardSecondLevel.#values.keys()][this.#value];
     }
 
     get ffiValue() {
-        return CollatorBackwardSecondLevel.values.get(this.#value);
+        return this.#value;
     }
+    static #objectValues = [
+        new CollatorBackwardSecondLevel(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
+        new CollatorBackwardSecondLevel(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
+    ];
 
-    static Auto = new CollatorBackwardSecondLevel("Auto");
-    static Off = new CollatorBackwardSecondLevel("Off");
-    static On = new CollatorBackwardSecondLevel("On");
+    static Off = CollatorBackwardSecondLevel.#objectValues[0];
+    static On = CollatorBackwardSecondLevel.#objectValues[1];
 }

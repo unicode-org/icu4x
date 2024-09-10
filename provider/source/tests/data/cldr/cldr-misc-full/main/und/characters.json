@@ -2,9 +2,6 @@
   "main": {
     "und": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "root"
       },
       "characters": {
@@ -34,7 +31,7 @@
           "£": "[£￡ ₤]",
           "¥": "[¥￥]",
           "₩": "[₩￦]",
-          "₹": "[₹ ₨ {Rp} {Rs}]"
+          "₹": "[₹ {Rp} {Rs}₨]"
         },
         "lenient-scope-number": {
           "-": "[\\-－﹣ ‐‑ ‒ – −⁻₋ ➖]",

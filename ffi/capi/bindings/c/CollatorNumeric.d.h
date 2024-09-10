@@ -12,9 +12,8 @@
 
 
 typedef enum CollatorNumeric {
-  CollatorNumeric_Auto = 0,
-  CollatorNumeric_Off = 1,
-  CollatorNumeric_On = 2,
+  CollatorNumeric_Off = 0,
+  CollatorNumeric_On = 1,
 } CollatorNumeric;
 
 typedef struct CollatorNumeric_option {union { CollatorNumeric ok; }; bool is_ok; } CollatorNumeric_option;

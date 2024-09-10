@@ -7,8 +7,10 @@ function generateTemplate(className, variable, selector) {
 class ParameterTemplate extends HTMLElement {
     default = null;
 
+    inputElement = null;
+
     static baseTemplate;
-    constructor(className, selector, ...args) {
+    constructor(options = {}, className, selector, ...args) {
         super();
         generateTemplate(ParameterTemplate, "baseTemplate", "#parameter");
         generateTemplate(className, "template", selector);
@@ -18,9 +20,9 @@ class ParameterTemplate extends HTMLElement {
 
         this.initialize(clone, ...args);
 
-        let input = clone.querySelector("*[data-oninput]");
-        if (input !== null) {
-            input.addEventListener("input", this.input.bind(this));
+        this.inputElement = clone.querySelector("*[data-oninput]");
+        if (this.inputElement !== null) {
+            this.inputElement.addEventListener("input", this.input.bind(this));
         }
         
         clone.slot = "parameter";
@@ -28,6 +30,17 @@ class ParameterTemplate extends HTMLElement {
 
         const shadowRoot = this.attachShadow({ mode: "open" });
         shadowRoot.appendChild(baseClone);
+
+        if ("defaultValue" in options) {
+            this.default = options.defaultValue;
+            this.setValue(options.defaultValue);
+        }
+    }
+
+    setValue(v) {
+        if (this.inputElement !== null) {
+            this.inputElement.value = v;
+        }
     }
 
     getEventValue(event) {
@@ -50,8 +63,16 @@ customElements.define("terminus-param", ParameterTemplate);
 class BooleanTemplate extends ParameterTemplate {
     default = false;
     static template;
-    constructor() {
-        super(BooleanTemplate, "template#boolean");
+    constructor(options) {
+        super(options, BooleanTemplate, "template#boolean");
+    }
+
+    getEventValue(event) {
+        return event.target.checked;
+    }
+
+    setValue(v) {
+        this.inputElement.checked = v;
     }
 }
 
@@ -60,8 +81,8 @@ customElements.define("terminus-param-boolean", BooleanTemplate);
 class NumberTemplate extends ParameterTemplate {
     default = 0;
     static template;
-    constructor() {
-        super(NumberTemplate, "template#number");
+    constructor(options) {
+        super(options, NumberTemplate, "template#number");
     }
     
     getEventValue(event) {
@@ -74,8 +95,8 @@ customElements.define("terminus-param-number", NumberTemplate);
 class StringTemplate extends ParameterTemplate {
     default = "";
     static template;
-    constructor() {
-        super(StringTemplate, "template#string");
+    constructor(options) {
+        super(options, StringTemplate, "template#string");
     }
 }
 
@@ -84,8 +105,8 @@ customElements.define("terminus-param-string", StringTemplate);
 class StringArrayTemplate extends ParameterTemplate {
     default = [];
     static template;
-    constructor() {
-        super(StringArrayTemplate, "template#string-array");
+    constructor(options) {
+        super(options, StringArrayTemplate, "template#string-array");
     }
 
     getEventValue(event) {
@@ -114,18 +135,20 @@ class EnumTemplate extends ParameterTemplate {
     static template;
 
     #enumType;
-    constructor(enumType) {
-        super(EnumTemplate, "template#enum", enumType);
+    constructor(options, enumType) {
+        super(options, EnumTemplate, "template#enum", enumType);
         this.#enumType = enumType;
     }
 
     initialize(clone, enumType) {
         let options = clone.querySelector("*[data-options]");
 
-        this.default = enumType.values.values().next().value;
+        if (this.default === null) {
+            this.default = enumType.values.values().next().value;
 
-        for (let value of enumType.values) {
-            options.append(...(new EnumOption(value[0])).children);
+            for (let value of enumType.values) {
+                options.append(...(new EnumOption(value[0])).children);
+            }
         }
     }
 
@@ -152,24 +175,24 @@ class TerminusParams extends HTMLElement {
 
             switch (param.type) {
                 case "string":
-                    newChild = new StringTemplate();
+                    newChild = new StringTemplate(param);
                     this.#params[i] = "";
                     break;
                 case "boolean":
-                    newChild = new BooleanTemplate();
+                    newChild = new BooleanTemplate(param);
                     this.#params[i] = false;
                     break;
                 case "number":
-                    newChild = new NumberTemplate();
+                    newChild = new NumberTemplate(param);
                     this.#params[i] = 0;
                     break;
                 case "Array<string>":
-                    newChild = new StringArrayTemplate();
+                    newChild = new StringArrayTemplate(param);
                     this.#params[i] = [];
                     break;
                 default:
                     if (param.type in library && "values" in library[param.type]) {
-                        newChild = new EnumTemplate(library[param.type]);
+                        newChild = new EnumTemplate(param, library[param.type]);
                         this.#params[i] = newChild.default
                     } else {
                         let updateParamEvent = (value) => {

@@ -104,8 +104,8 @@ impl From<CldrTimeZonesData<'_>> for TimeZoneFormatsV1<'static> {
         let data = other.time_zone_names_resource;
         Self {
             hour_format: parse_hour_format(&data.hour_format),
-            gmt_format: data.gmt_format.clone().into(),
-            gmt_zero_format: data.gmt_zero_format.clone().into(),
+            offset_format: data.gmt_format.clone().into(),
+            offset_zero_format: data.gmt_zero_format.clone().into(),
             region_format: data.region_format.clone().into(),
             region_format_variants: data
                 .region_format_variants
@@ -119,8 +119,6 @@ impl From<CldrTimeZonesData<'_>> for TimeZoneFormatsV1<'static> {
                 })
                 .collect(),
             fallback_format: data.fallback_format.clone().into(),
-            // TODO(#2256): Have a better timezone offset_fallback.
-            gmt_offset_fallback: "GMT+?".to_string().into(),
         }
     }
 }

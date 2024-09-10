@@ -39,7 +39,7 @@ pub mod ffi {
 
         /// Use the data loaded in this object to process a string and calculate bidi information
         ///
-        /// Takes in a Level for the default level, if it is an invalid value it will default to LTR
+        /// Takes in a Level for the default level, if it is an invalid value or None it will default to Auto.
         ///
         /// Returns nothing if `text` is invalid UTF-8.
         #[diplomat::rust_link(unicode_bidi::BidiInfo::new_with_data_source, FnInStruct)]
@@ -53,7 +53,7 @@ pub mod ffi {
         pub fn for_text_utf8<'text>(
             &self,
             text: &'text DiplomatStr,
-            default_level: u8,
+            default_level: Option<u8>,
         ) -> Option<Box<BidiInfo<'text>>> {
             let text = core::str::from_utf8(text).ok()?;
 
@@ -64,7 +64,7 @@ pub mod ffi {
                 unicode_bidi::BidiInfo::new_with_data_source(
                     &adapter,
                     text,
-                    unicode_bidi::Level::new(default_level).ok(),
+                    default_level.and_then(|l| unicode_bidi::Level::new(l).ok()),
                 ),
             )))
         }
@@ -84,7 +84,7 @@ pub mod ffi {
         pub fn for_text_valid_utf8<'text>(
             &self,
             text: &'text str,
-            default_level: u8,
+            default_level: Option<u8>,
         ) -> Box<BidiInfo<'text>> {
             let data = self.0.as_borrowed();
             let adapter = icu_properties::bidi::BidiClassAdapter::new(data);
@@ -92,7 +92,7 @@ pub mod ffi {
             Box::new(BidiInfo(unicode_bidi::BidiInfo::new_with_data_source(
                 &adapter,
                 text,
-                unicode_bidi::Level::new(default_level).ok(),
+                default_level.and_then(|l| unicode_bidi::Level::new(l).ok()),
             )))
         }
 

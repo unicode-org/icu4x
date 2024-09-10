@@ -5,11 +5,15 @@
     "1": "পরের ত্রৈমাসিক"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 ত্রৈমাসিক আগে"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 ত্রৈমাসিক আগে"
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u0001 ত্রৈমাসিকে"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 ত্রৈমাসিকে"
+    }
   }
 }

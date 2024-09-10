@@ -43,14 +43,14 @@ export class TimeZoneFormatter {
         return this.#ptr;
     }
 
-    static createWithLocalizedGmtFallback(provider, locale) {
+    static createWithLocalizedOffsetFallback(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_TimeZoneFormatter_create_with_localized_gmt_fallback_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_TimeZoneFormatter_create_with_localized_offset_fallback_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)) return Error[i[0]]; } return null;})();
+                const cause = new Error(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('Error: ' + cause.value, { cause });
             }
             return new TimeZoneFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -70,7 +70,7 @@ export class TimeZoneFormatter {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)) return Error[i[0]]; } return null;})();
+                const cause = new Error(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('Error: ' + cause.value, { cause });
             }
             return new TimeZoneFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -90,7 +90,7 @@ export class TimeZoneFormatter {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)) return Error[i[0]]; } return null;})();
+                const cause = new Error(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('Error: ' + cause.value, { cause });
             }
     
@@ -108,7 +108,7 @@ export class TimeZoneFormatter {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)) return Error[i[0]]; } return null;})();
+                const cause = new Error(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('Error: ' + cause.value, { cause });
             }
     
@@ -126,7 +126,7 @@ export class TimeZoneFormatter {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)) return Error[i[0]]; } return null;})();
+                const cause = new Error(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('Error: ' + cause.value, { cause });
             }
     
@@ -144,7 +144,7 @@ export class TimeZoneFormatter {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)) return Error[i[0]]; } return null;})();
+                const cause = new Error(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('Error: ' + cause.value, { cause });
             }
     
@@ -162,7 +162,7 @@ export class TimeZoneFormatter {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)) return Error[i[0]]; } return null;})();
+                const cause = new Error(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('Error: ' + cause.value, { cause });
             }
     
@@ -173,14 +173,14 @@ export class TimeZoneFormatter {
         }
     }
 
-    includeLocalizedGmtFormat() {
+    includeLocalizedOffsetFormat() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_TimeZoneFormatter_include_localized_gmt_format_mv1(diplomatReceive.buffer, this.ffiValue);
+        const result = wasm.icu4x_TimeZoneFormatter_include_localized_offset_format_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)) return Error[i[0]]; } return null;})();
+                const cause = new Error(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('Error: ' + cause.value, { cause });
             }
     
@@ -200,7 +200,7 @@ export class TimeZoneFormatter {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)) return Error[i[0]]; } return null;})();
+                const cause = new Error(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('Error: ' + cause.value, { cause });
             }
     
@@ -235,7 +235,7 @@ export class TimeZoneFormatter {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)) return Error[i[0]]; } return null;})();
+                const cause = new Error(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('Error: ' + cause.value, { cause });
             }
             return write.readString8();

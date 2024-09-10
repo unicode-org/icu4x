@@ -14,12 +14,13 @@ use crate::elements::{
     NO_CE_SECONDARY, NO_CE_TERTIARY, OPTIMIZED_DIACRITICS_MAX_COUNT, QUATERNARY_MASK,
 };
 use crate::options::CollatorOptionsBitField;
-use crate::provider::CollationDataV1Marker;
 use crate::provider::CollationDiacriticsV1Marker;
 use crate::provider::CollationJamoV1Marker;
 use crate::provider::CollationMetadataV1Marker;
 use crate::provider::CollationReorderingV1Marker;
+use crate::provider::CollationRootV1Marker;
 use crate::provider::CollationSpecialPrimariesV1Marker;
+use crate::provider::CollationTailoringV1Marker;
 use crate::{AlternateHandling, CollatorOptions, MaxVariable, ResolvedCollatorOptions, Strength};
 use core::cmp::Ordering;
 use core::convert::TryFrom;
@@ -55,8 +56,8 @@ impl AnyQuaternaryAccumulator {
 #[derive(Debug)]
 pub struct Collator {
     special_primaries: Option<DataPayload<CollationSpecialPrimariesV1Marker>>,
-    root: DataPayload<CollationDataV1Marker>,
-    tailoring: Option<DataPayload<CollationDataV1Marker>>,
+    root: DataPayload<CollationRootV1Marker>,
+    tailoring: Option<DataPayload<CollationTailoringV1Marker>>,
     jamo: DataPayload<CollationJamoV1Marker>,
     diacritics: DataPayload<CollationDiacriticsV1Marker>,
     options: CollatorOptionsBitField,
@@ -72,6 +73,9 @@ impl Collator {
     pub fn try_new(locale: &DataLocale, options: CollatorOptions) -> Result<Self, DataError> {
         Self::try_new_unstable_internal(
             &crate::provider::Baked,
+            DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_COLLATION_ROOT_V1_MARKER,
+            ),
             DataPayload::from_static_ref(
                 icu_normalizer::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V1_MARKER,
             ),
@@ -110,7 +114,8 @@ impl Collator {
     ) -> Result<Self, DataError>
     where
         D: DataProvider<CollationSpecialPrimariesV1Marker>
-            + DataProvider<CollationDataV1Marker>
+            + DataProvider<CollationRootV1Marker>
+            + DataProvider<CollationTailoringV1Marker>
             + DataProvider<CollationDiacriticsV1Marker>
             + DataProvider<CollationJamoV1Marker>
             + DataProvider<CollationMetadataV1Marker>
@@ -124,14 +129,17 @@ impl Collator {
             provider.load(Default::default())?.payload,
             provider.load(Default::default())?.payload,
             provider.load(Default::default())?.payload,
+            provider.load(Default::default())?.payload,
             || provider.load(Default::default()).map(|r| r.payload),
             locale,
             options,
         )
     }
 
+    #[allow(clippy::too_many_arguments)]
     fn try_new_unstable_internal<D>(
         provider: &D,
+        root: DataPayload<CollationRootV1Marker>,
         decompositions: DataPayload<CanonicalDecompositionDataV1Marker>,
         tables: DataPayload<CanonicalDecompositionTablesV1Marker>,
         jamo: DataPayload<CollationJamoV1Marker>,
@@ -143,7 +151,8 @@ impl Collator {
         options: CollatorOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<CollationDataV1Marker>
+        D: DataProvider<CollationRootV1Marker>
+            + DataProvider<CollationTailoringV1Marker>
             + DataProvider<CollationDiacriticsV1Marker>
             + DataProvider<CollationMetadataV1Marker>
             + DataProvider<CollationReorderingV1Marker>
@@ -177,7 +186,7 @@ impl Collator {
 
         let metadata = metadata_payload.get();
 
-        let tailoring: Option<DataPayload<crate::provider::CollationDataV1Marker>> =
+        let tailoring: Option<DataPayload<crate::provider::CollationTailoringV1Marker>> =
             if metadata.tailored() {
                 Some(
                     provider
@@ -208,8 +217,6 @@ impl Collator {
                 );
             }
         }
-
-        let root: DataPayload<CollationDataV1Marker> = provider.load(Default::default())?.payload;
 
         let tailored_diacritics = metadata.tailored_diacritics();
         let diacritics: DataPayload<CollationDiacriticsV1Marker> = provider
@@ -339,7 +346,7 @@ impl Collator {
     }
 
     fn compare_impl<I: Iterator<Item = char>>(&self, left_chars: I, right_chars: I) -> Ordering {
-        let tailoring: &DataPayload<CollationDataV1Marker> =
+        let tailoring: &DataPayload<CollationTailoringV1Marker> =
             if let Some(tailoring) = &self.tailoring {
                 tailoring
             } else {
@@ -356,7 +363,7 @@ impl Collator {
                 // should we have a no-op tailoring that contains a
                 // specially-crafted CodePointTrie that always returns
                 // a FALLBACK_CE32 after a single branch?
-                &self.root
+                self.root.cast_ref()
             };
 
         // Sadly, it looks like variable CEs and backward second level

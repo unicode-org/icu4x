@@ -16,8 +16,8 @@ macro_rules! time_zone_style_registry {
             [
                 (specific_short, SpecificNonLocation, Short, SpecificShort, LowerZ, One), // 'z'
                 (specific_long, SpecificNonLocation, Long, SpecificLong, LowerZ, Wide), // 'zzzz'
-                (gmt_short, Offset, Short, GmtShort, UpperO, One), // 'O'
-                (gmt_long, Offset, Long, GmtLong, UpperO, Wide), // 'OOOO'
+                (offset_short, Offset, Short, OffsetShort, UpperO, One), // 'O'
+                (offset_long, Offset, Long, OffsetLong, UpperO, Wide), // 'OOOO'
                 (generic_short, NonLocation, Short, GenericShort, LowerV, One), // 'v'
                 (generic_long, NonLocation, Long, GenericLong, LowerV, Wide), // 'vvvv'
                 (location, Location, Long, Location, UpperV, Wide), // 'VVVV'
@@ -25,13 +25,13 @@ macro_rules! time_zone_style_registry {
             // Styles with function only for None-length
             [
                 (specific, SpecificNonLocation),
-                (gmt, Offset),
+                (offset, Offset),
                 (generic, NonLocation),
             ],
             // Skeleton to resolved (for exhaustive match)
             [
                 (SpecificNonLocation, Medium, SpecificShort),
-                (Offset, Medium, GmtShort),
+                (Offset, Medium, OffsetShort),
                 (NonLocation, Medium, GenericShort),
                 (Location, Short, Location),
                 (Location, Medium, Location),
@@ -48,7 +48,7 @@ macro_rules! time_zone_style_registry {
                 (SpecificShort, LowerZ, Abbreviated), // 'zzz'
                 (Isoxxxx, UpperZ, TwoDigit), // 'ZZ'
                 (Isoxxxx, UpperZ, Abbreviated), // 'ZZZ'
-                (GmtShort, UpperZ, Wide), // 'ZZZZ'
+                (OffsetShort, UpperZ, Wide), // 'ZZZZ'
                 (Isoxxxx, LowerX, Wide), // 'xxxx'
                 (IsoXXXXX, UpperX, Narrow), // 'XXXXX'
             ],

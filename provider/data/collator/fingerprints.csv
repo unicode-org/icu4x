@@ -1,107 +1,11 @@
-collator/data@1, <lookup>, 560B, 95 identifiers
-collator/data@1, <total>, 1073428B, 1062125B, 89 unique payloads
-collator/data@1, af, 1416B, 1288B, 6cfbf331f81f0e7c
-collator/data@1, ar, 8392B, 8267B, fce742b37324adbe
-collator/data@1, ar/compat, 2016B, 1888B, e7b7e3fda37b8565
-collator/data@1, as, 1664B, 1536B, fecf788918cf6eb1
-collator/data@1, az, 1948B, 1821B, e21b67c398f6cff6
-collator/data@1, be, 1700B, 1572B, 33037c50e110575b
-collator/data@1, bn, 1432B, 1304B, 4b0a44d6a365bcd1
-collator/data@1, bn/trad, 11208B, 11083B, 1d78781818d5ec49
-collator/data@1, br, 1236B, 1108B, fb236d90974aa569
-collator/data@1, bs, 1894B, 1767B, 20686a7999a1b37c
-collator/data@1, bs-Cyrl, 1388B, 1260B, d4d3ed781cac6b11
-collator/data@1, ceb, 1216B, 1088B, f4b69509fc410230
-collator/data@1, cs, 1296B, 1169B, b038366936c51e5e
-collator/data@1, cy, 1428B, 1301B, b1af7f9fd78ee6f5
-collator/data@1, da, 2124B, 1997B, 3b082567c769a834
-collator/data@1, de-AT/phonebk, 1580B, 1452B, d86c66118ade07f2
-collator/data@1, de/phonebk, 1282B, 1154B, 51be2ca58ff917fe
-collator/data@1, dsb, 1676B, 1549B, fe44db49428c33dd
-collator/data@1, en-US-posix, 1668B, 1542B, 6089779a1d6973d6
-collator/data@1, eo, 1316B, 1189B, 3aeee382d9e46f4a
-collator/data@1, es, 1192B, 1064B, 53d5d15868ead10a
-collator/data@1, es/trad, 1258B, 1130B, 7f0603bad1cbb60d
-collator/data@1, et, 1320B, 1193B, 5e19a22070e94bec
-collator/data@1, fa, 2202B, 2074B, 99e0b362c4b74bcb
-collator/data@1, fa-AF, 2328B, 2201B, bf9dff00fe5fbf
-collator/data@1, ff-Adlm, 3540B, 3414B, 5326597443c62235
-collator/data@1, fi, 2706B, 2578B, 3c52f76378d335e1
-collator/data@1, fi/trad, 2146B, 2019B, ab00dc6120011f48
-collator/data@1, fil, -> ceb
-collator/data@1, fo, 2164B, 2038B, 1ad108e7e50ad44f
-collator/data@1, fy, 1164B, 1036B, e1318fcb059be296
-collator/data@1, gl, -> es
-collator/data@1, gu, 1472B, 1344B, 51f571782f47fcad
-collator/data@1, ha, 2116B, 1988B, 3e0247b3ad4efe8e
-collator/data@1, hi, 1456B, 1328B, 2d309d6f7abfaf02
-collator/data@1, hr, -> bs
-collator/data@1, hsb, 1632B, 1505B, 2882715f426a3bb7
-collator/data@1, hu, 2064B, 1938B, 34a23579cc18bedc
-collator/data@1, hy, 1416B, 1288B, e23d9d278f44d314
-collator/data@1, ig, 1504B, 1377B, e8f160f68816f50d
-collator/data@1, is, 1896B, 1769B, 248dfc0508a19951
-collator/data@1, ja, 84670B, 84545B, c47ef2a97531a2ff
-collator/data@1, ja/unihan, 10198B, 10072B, 653804a2e2c7ed83
-collator/data@1, kk, 1796B, 1668B, 71b991eca427b26e
-collator/data@1, km, 2790B, 2664B, 53b0b52ff87037cf
-collator/data@1, kn, 1520B, 1392B, c4d1817a4862d407
-collator/data@1, kn/trad, 11506B, 11380B, 9985545791d4129a
-collator/data@1, ko, 221084B, 220960B, db4043e79fb80541
-collator/data@1, ko/unihan, 3536B, 3409B, 6fdf0480332ae7fb
-collator/data@1, kok, 1472B, 1344B, 7c053ed453aff0d5
-collator/data@1, ku, 1348B, 1221B, 6b681052289bf5e4
-collator/data@1, ky, 1428B, 1300B, d20218d1e790879d
-collator/data@1, lt, 1396B, 1269B, 82703d62d78882e5
-collator/data@1, lv, 1504B, 1377B, 6bef1938172eb89e
-collator/data@1, mk, 1464B, 1336B, db700441e827bbff
-collator/data@1, ml, 1900B, 1772B, 3e2036d20762a83e
-collator/data@1, mr, 1488B, 1360B, b4533f286aed71b5
-collator/data@1, mt, 1524B, 1396B, 97a156088aaba07
-collator/data@1, my, 20396B, 20270B, 5e8cbcc1cf6a7899
-collator/data@1, no, 2164B, 2038B, 3e9ef18cb5dedda0
-collator/data@1, or, 1596B, 1468B, e02213164e57d936
-collator/data@1, pa, 1724B, 1596B, 664189ea648e7727
-collator/data@1, pl, 1648B, 1521B, 9de80886d8ba3987
-collator/data@1, ps, -> fa-AF
-collator/data@1, ro, 1312B, 1185B, 44a088a04b3a54c9
-collator/data@1, si, 1428B, 1300B, 332b793f8a15b5a9
-collator/data@1, si/dict, 1440B, 1312B, 8a37b05aab93a835
-collator/data@1, sk, 1348B, 1221B, 64c4c4ac9bb23bb7
-collator/data@1, sl, 1516B, 1388B, 30d7855da01eb415
-collator/data@1, sq, 1524B, 1397B, a38be47b3de5b88b
-collator/data@1, sr, -> bs-Cyrl
-collator/data@1, sr-Latn, -> bs
-collator/data@1, sv, 2154B, 2027B, 49b966ea801bb7cb
-collator/data@1, sv/trad, 2154B, 2027B, 5f03651ba7df4f14
-collator/data@1, ta, 1766B, 1639B, 277dbb2a43984100
-collator/data@1, te, 1480B, 1352B, ef7cdafa27853cb5
-collator/data@1, th, 1574B, 1446B, cde7f22f6db5fc85
-collator/data@1, tk, 1376B, 1249B, 455ad39089c28c3a
-collator/data@1, to, 1716B, 1589B, 85e73ca2a6a39b21
-collator/data@1, tr, 1548B, 1421B, 951f3bb88f3af29f
-collator/data@1, ug, 1900B, 1772B, 21f8e31105057da3
-collator/data@1, uk, 1960B, 1832B, 469c293e431c5df0
-collator/data@1, und, 126916B, 126799B, a0ea0e0eecc34e27
-collator/data@1, und/emoji, 30910B, 30784B, dcbee2da280323a3
-collator/data@1, und/eor, 6268B, 6140B, 2ffd8090484e7a41
-collator/data@1, ur, 2572B, 2445B, 900fdd74bc2b94c2
-collator/data@1, uz, 1380B, 1253B, e9aa28a392b2ba2e
-collator/data@1, vi, 1536B, 1409B, 8288f55eb14fa9b2
-collator/data@1, vi/trad, 1874B, 1747B, 98249069c1f82225
-collator/data@1, wo, 1528B, 1400B, aa4e5fbe46d6c143
-collator/data@1, yo, 1274B, 1146B, cb19ae0dbe6f9e36
-collator/data@1, zh, 104866B, 104742B, 277343ee315024d4
-collator/data@1, zh/stroke, 174942B, 174818B, 59801172e6fa4dca
-collator/data@1, zh/unihan, 4352B, 4226B, 5d3a3feb443aac0
-collator/data@1, zh/zhuyin, 129206B, 129082B, 380c1a1e12ce0f49
-collator/dia@1, <lookup>, 47B, 3 identifiers
-collator/dia@1, <total>, 364B, 320B, 2 unique payloads
+collator/dia@1, <lookup>, 51B, 4 identifiers
+collator/dia@1, <total>, 546B, 480B, 3 unique payloads
+collator/dia@1, ee, 182B, 160B, 9582e3496759ed34
 collator/dia@1, und, 182B, 160B, 8ace760351a33687
 collator/dia@1, vi, 182B, 160B, 6b057eec42bee512
 collator/dia@1, vi/trad, -> vi
 collator/jamo@1, <singleton>, 1048B, 1026B, 8554e65df2b9cfbb
-collator/meta@1, <lookup>, 506B, 104 identifiers
+collator/meta@1, <lookup>, 513B, 106 identifiers
 collator/meta@1, <total>, 36B, 12B, 9 unique payloads
 collator/meta@1, af, 4B, 1B, 9aab82d56f3b362e
 collator/meta@1, am, 4B, 1B, d1dcef7af54c8272
@@ -123,6 +27,7 @@ collator/meta@1, cy, -> af
 collator/meta@1, da, 4B, 2B, b4d85e6a550ed91b
 collator/meta@1, de/phonebk, -> af
 collator/meta@1, dsb, -> af
+collator/meta@1, ee, 4B, 1B, ed0e600a85b6c191
 collator/meta@1, el, -> am
 collator/meta@1, en-US-posix, -> af
 collator/meta@1, eo, -> af
@@ -171,6 +76,7 @@ collator/meta@1, mt, -> da
 collator/meta@1, my, -> ar
 collator/meta@1, ne, -> am
 collator/meta@1, no, -> af
+collator/meta@1, om, -> af
 collator/meta@1, or, -> ar
 collator/meta@1, pa, -> ar
 collator/meta@1, pl, -> af
@@ -199,8 +105,8 @@ collator/meta@1, und/emoji, -> und
 collator/meta@1, und/eor, -> und
 collator/meta@1, ur, -> ar
 collator/meta@1, uz, -> af
-collator/meta@1, vi, 4B, 1B, ed0e600a85b6c191
-collator/meta@1, vi/trad, -> vi
+collator/meta@1, vi, -> ee
+collator/meta@1, vi/trad, -> ee
 collator/meta@1, wo, -> af
 collator/meta@1, yo, -> af
 collator/meta@1, zh, -> ar
@@ -266,3 +172,102 @@ collator/reord@1, zh, 312B, 264B, 86ac1b2d4fd148c8
 collator/reord@1, zh/stroke, 324B, 276B, e723757dca38382
 collator/reord@1, zh/unihan, -> zh/stroke
 collator/reord@1, zh/zhuyin, -> zh/stroke
+collator/root@1, <singleton>, 126916B, 126799B, a0ea0e0eecc34e27
+collator/tailoring@1, <lookup>, 567B, 96 identifiers
+collator/tailoring@1, <total>, 950176B, 938736B, 90 unique payloads
+collator/tailoring@1, af, 1416B, 1288B, 6cfbf331f81f0e7c
+collator/tailoring@1, ar, 8392B, 8267B, fce742b37324adbe
+collator/tailoring@1, ar/compat, 2016B, 1888B, e7b7e3fda37b8565
+collator/tailoring@1, as, 1664B, 1536B, fecf788918cf6eb1
+collator/tailoring@1, az, 1948B, 1821B, e21b67c398f6cff6
+collator/tailoring@1, be, 1700B, 1572B, 33037c50e110575b
+collator/tailoring@1, bn, 1432B, 1304B, 4b0a44d6a365bcd1
+collator/tailoring@1, bn/trad, 11208B, 11083B, 1d78781818d5ec49
+collator/tailoring@1, br, 1236B, 1108B, fb236d90974aa569
+collator/tailoring@1, bs, 1894B, 1767B, 20686a7999a1b37c
+collator/tailoring@1, bs-Cyrl, 1388B, 1260B, d4d3ed781cac6b11
+collator/tailoring@1, ceb, 1216B, 1088B, f4b69509fc410230
+collator/tailoring@1, cs, 1296B, 1169B, b038366936c51e5e
+collator/tailoring@1, cy, 1428B, 1301B, b1af7f9fd78ee6f5
+collator/tailoring@1, da, 2124B, 1997B, 3b082567c769a834
+collator/tailoring@1, de-AT/phonebk, 1580B, 1452B, d86c66118ade07f2
+collator/tailoring@1, de/phonebk, 1282B, 1154B, 51be2ca58ff917fe
+collator/tailoring@1, dsb, 1676B, 1549B, fe44db49428c33dd
+collator/tailoring@1, ee, 2266B, 2139B, 131695ff8e4d6c5b
+collator/tailoring@1, en-US-posix, 1668B, 1542B, 6089779a1d6973d6
+collator/tailoring@1, eo, 1316B, 1189B, 3aeee382d9e46f4a
+collator/tailoring@1, es, 1192B, 1064B, 53d5d15868ead10a
+collator/tailoring@1, es/trad, 1258B, 1130B, 7f0603bad1cbb60d
+collator/tailoring@1, et, 1320B, 1193B, 5e19a22070e94bec
+collator/tailoring@1, fa, 2202B, 2074B, 99e0b362c4b74bcb
+collator/tailoring@1, fa-AF, 2328B, 2201B, bf9dff00fe5fbf
+collator/tailoring@1, ff-Adlm, 3540B, 3414B, 5326597443c62235
+collator/tailoring@1, fi, 2706B, 2578B, 3c52f76378d335e1
+collator/tailoring@1, fi/trad, 2146B, 2019B, ab00dc6120011f48
+collator/tailoring@1, fil, -> ceb
+collator/tailoring@1, fo, 2164B, 2038B, 1ad108e7e50ad44f
+collator/tailoring@1, fy, 1164B, 1036B, e1318fcb059be296
+collator/tailoring@1, gl, -> es
+collator/tailoring@1, gu, 1472B, 1344B, 51f571782f47fcad
+collator/tailoring@1, ha, 2116B, 1988B, 3e0247b3ad4efe8e
+collator/tailoring@1, hi, 1456B, 1328B, 2d309d6f7abfaf02
+collator/tailoring@1, hr, -> bs
+collator/tailoring@1, hsb, 1632B, 1505B, 2882715f426a3bb7
+collator/tailoring@1, hu, 2064B, 1938B, 34a23579cc18bedc
+collator/tailoring@1, hy, 1416B, 1288B, e23d9d278f44d314
+collator/tailoring@1, ig, 1504B, 1377B, e8f160f68816f50d
+collator/tailoring@1, is, 1896B, 1769B, 248dfc0508a19951
+collator/tailoring@1, ja, 84670B, 84545B, c47ef2a97531a2ff
+collator/tailoring@1, ja/unihan, 10198B, 10072B, 653804a2e2c7ed83
+collator/tailoring@1, kk, 1796B, 1668B, 71b991eca427b26e
+collator/tailoring@1, km, 2790B, 2664B, 53b0b52ff87037cf
+collator/tailoring@1, kn, 1520B, 1392B, c4d1817a4862d407
+collator/tailoring@1, kn/trad, 11506B, 11380B, 9985545791d4129a
+collator/tailoring@1, ko, 221084B, 220960B, db4043e79fb80541
+collator/tailoring@1, ko/unihan, 3536B, 3409B, 6fdf0480332ae7fb
+collator/tailoring@1, kok, 1472B, 1344B, 7c053ed453aff0d5
+collator/tailoring@1, ku, 1348B, 1221B, 6b681052289bf5e4
+collator/tailoring@1, ky, 1428B, 1300B, d20218d1e790879d
+collator/tailoring@1, lt, 1396B, 1269B, 82703d62d78882e5
+collator/tailoring@1, lv, 1504B, 1377B, 6bef1938172eb89e
+collator/tailoring@1, mk, 1464B, 1336B, db700441e827bbff
+collator/tailoring@1, ml, 1900B, 1772B, 3e2036d20762a83e
+collator/tailoring@1, mr, 1488B, 1360B, b4533f286aed71b5
+collator/tailoring@1, mt, 1524B, 1396B, 97a156088aaba07
+collator/tailoring@1, my, 20396B, 20270B, 5e8cbcc1cf6a7899
+collator/tailoring@1, no, 2164B, 2038B, 3e9ef18cb5dedda0
+collator/tailoring@1, om, 1398B, 1271B, bd5e765dd8cbe54e
+collator/tailoring@1, or, 1596B, 1468B, e02213164e57d936
+collator/tailoring@1, pa, 1724B, 1596B, 664189ea648e7727
+collator/tailoring@1, pl, 1648B, 1521B, 9de80886d8ba3987
+collator/tailoring@1, ps, -> fa-AF
+collator/tailoring@1, ro, 1312B, 1185B, 44a088a04b3a54c9
+collator/tailoring@1, si, 1428B, 1300B, 332b793f8a15b5a9
+collator/tailoring@1, si/dict, 1440B, 1312B, 8a37b05aab93a835
+collator/tailoring@1, sk, 1348B, 1221B, 64c4c4ac9bb23bb7
+collator/tailoring@1, sl, 1516B, 1388B, 30d7855da01eb415
+collator/tailoring@1, sq, 1524B, 1397B, a38be47b3de5b88b
+collator/tailoring@1, sr, -> bs-Cyrl
+collator/tailoring@1, sr-Latn, -> bs
+collator/tailoring@1, sv, 2154B, 2027B, 49b966ea801bb7cb
+collator/tailoring@1, sv/trad, 2154B, 2027B, 5f03651ba7df4f14
+collator/tailoring@1, ta, 1766B, 1639B, 277dbb2a43984100
+collator/tailoring@1, te, 1480B, 1352B, ef7cdafa27853cb5
+collator/tailoring@1, th, 1574B, 1446B, cde7f22f6db5fc85
+collator/tailoring@1, tk, 1376B, 1249B, 455ad39089c28c3a
+collator/tailoring@1, to, 1716B, 1589B, 85e73ca2a6a39b21
+collator/tailoring@1, tr, 1548B, 1421B, 951f3bb88f3af29f
+collator/tailoring@1, ug, 1900B, 1772B, 21f8e31105057da3
+collator/tailoring@1, uk, 1960B, 1832B, 469c293e431c5df0
+collator/tailoring@1, und/emoji, 30910B, 30784B, dcbee2da280323a3
+collator/tailoring@1, und/eor, 6268B, 6140B, 2ffd8090484e7a41
+collator/tailoring@1, ur, 2572B, 2445B, 900fdd74bc2b94c2
+collator/tailoring@1, uz, 1380B, 1253B, e9aa28a392b2ba2e
+collator/tailoring@1, vi, 1536B, 1409B, 8288f55eb14fa9b2
+collator/tailoring@1, vi/trad, 1874B, 1747B, 98249069c1f82225
+collator/tailoring@1, wo, 1528B, 1400B, aa4e5fbe46d6c143
+collator/tailoring@1, yo, 1274B, 1146B, cb19ae0dbe6f9e36
+collator/tailoring@1, zh, 104866B, 104742B, 277343ee315024d4
+collator/tailoring@1, zh/stroke, 174942B, 174818B, 59801172e6fa4dca
+collator/tailoring@1, zh/unihan, 4352B, 4226B, 5d3a3feb443aac0
+collator/tailoring@1, zh/zhuyin, 129206B, 129082B, 380c1a1e12ce0f49

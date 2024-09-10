@@ -11,7 +11,6 @@ export class CollatorStrength {
 
     get ffiValue() : number;
 
-    static Auto : CollatorStrength;
     static Primary : CollatorStrength;
     static Secondary : CollatorStrength;
     static Tertiary : CollatorStrength;

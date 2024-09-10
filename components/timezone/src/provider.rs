@@ -44,7 +44,7 @@ const _: () = {
     }
     make_provider!(Baked);
     impl_bcp47_to_iana_map_v1_marker!(Baked);
-    impl_iana_to_bcp47_map_v2_marker!(Baked);
+    impl_iana_to_bcp47_map_v3_marker!(Baked);
     impl_metazone_period_v1_marker!(Baked);
     impl_windows_zones_to_bcp47_map_v1_marker!(Baked);
 };
@@ -54,7 +54,7 @@ const _: () = {
 pub const MARKERS: &[DataMarkerInfo] = &[
     MetazonePeriodV1Marker::INFO,
     names::Bcp47ToIanaMapV1Marker::INFO,
-    names::IanaToBcp47MapV2Marker::INFO,
+    names::IanaToBcp47MapV3Marker::INFO,
     windows::WindowsZonesToBcp47MapV1Marker::INFO,
 ];
 

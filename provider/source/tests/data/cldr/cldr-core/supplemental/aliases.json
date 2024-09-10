@@ -1,8 +1,8 @@
 {
   "supplemental": {
     "version": {
-      "_unicodeVersion": "15.1.0",
-      "_cldrVersion": "45"
+      "_unicodeVersion": "16.0.0",
+      "_cldrVersion": "46"
     },
     "metadata": {
       "alias": {
@@ -555,6 +555,10 @@
             "_reason": "macrolanguage",
             "_replacement": "gon"
           },
+          "gom": {
+            "_reason": "macrolanguage",
+            "_replacement": "kok"
+          },
           "gre": {
             "_reason": "bibliographic",
             "_replacement": "el"
@@ -866,10 +870,6 @@
           "kng": {
             "_reason": "macrolanguage",
             "_replacement": "kg"
-          },
-          "knn": {
-            "_reason": "macrolanguage",
-            "_replacement": "kok"
           },
           "koj": {
             "_reason": "deprecated",
@@ -5229,9 +5229,17 @@
               "_replacement": "Australia/Hobart"
             }
           },
+          "CST6CDT": {
+            "_reason": "deprecated",
+            "_replacement": "America/Chicago"
+          },
           "EST": {
             "_reason": "deprecated",
-            "_replacement": "America/Indianapolis"
+            "_replacement": "America/Panama"
+          },
+          "EST5EDT": {
+            "_reason": "deprecated",
+            "_replacement": "America/New_York"
           },
           "Europe": {
             "Belfast": {
@@ -5255,6 +5263,10 @@
             "_reason": "deprecated",
             "_replacement": "America/Phoenix"
           },
+          "MST7MDT": {
+            "_reason": "deprecated",
+            "_replacement": "America/Denver"
+          },
           "Pacific": {
             "Johnston": {
               "_reason": "deprecated",
@@ -5264,6 +5276,10 @@
               "_reason": "deprecated",
               "_replacement": "Pacific/Truk"
             }
+          },
+          "PST8PDT": {
+            "_reason": "deprecated",
+            "_replacement": "America/Los_Angeles"
           },
           "SystemV": {
             "AST4": {

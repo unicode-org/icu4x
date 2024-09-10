@@ -293,7 +293,7 @@ pub mod vecs {
     #[doc(no_inline)]
     pub use crate::varzerovec::{VarZeroSlice, VarZeroVec};
 
-    pub use crate::varzerovec::{Index16, Index32, VarZeroVecFormat, VarZeroVecOwned};
+    pub use crate::varzerovec::{Index16, Index32, Index8, VarZeroVecFormat, VarZeroVecOwned};
 
     pub use crate::flexzerovec::{FlexZeroSlice, FlexZeroVec, FlexZeroVecOwned};
 }

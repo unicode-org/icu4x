@@ -5,21 +5,25 @@
     "1": "la próxima semana"
   },
   "past": {
-    "specials": [
-      [
-        "One",
-        "\u0006hace  semana"
-      ]
-    ],
-    "other": "\u0006hace  semanas"
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0006hace  semana"
+        ]
+      ],
+      "other": "\u0006hace  semanas"
+    }
   },
   "future": {
-    "specials": [
-      [
-        "One",
-        "\u000bdentro de  semana"
-      ]
-    ],
-    "other": "\u000bdentro de  semanas"
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u000bdentro de  semana"
+        ]
+      ],
+      "other": "\u000bdentro de  semanas"
+    }
   }
 }

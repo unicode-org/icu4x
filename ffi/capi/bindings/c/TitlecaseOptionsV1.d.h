@@ -14,8 +14,8 @@
 
 
 typedef struct TitlecaseOptionsV1 {
-  LeadingAdjustment leading_adjustment;
-  TrailingCase trailing_case;
+  LeadingAdjustment_option leading_adjustment;
+  TrailingCase_option trailing_case;
 } TitlecaseOptionsV1;
 
 typedef struct TitlecaseOptionsV1_option {union { TitlecaseOptionsV1 ok; }; bool is_ok; } TitlecaseOptionsV1_option;

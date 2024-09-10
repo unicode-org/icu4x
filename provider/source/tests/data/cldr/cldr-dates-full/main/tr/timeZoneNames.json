@@ -2,9 +2,6 @@
   "main": {
     "tr": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "tr"
       },
       "dates": {
@@ -1018,6 +1015,11 @@
                 "generic": "Petropavlovsk-Kamçatski Saati",
                 "standard": "Petropavlovsk-Kamçatski Standart Saati",
                 "daylight": "Petropavlovsk-Kamçatski Yaz Saati"
+              }
+            },
+            "Kazakhstan": {
+              "long": {
+                "standard": "Kazakistan Saati"
               }
             },
             "Kazakhstan_Eastern": {

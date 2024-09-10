@@ -2,9 +2,6 @@
   "main": {
     "ru": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "ru"
       },
       "dates": {
@@ -413,8 +410,8 @@
                 },
                 "Bhm": {
                   "B": "h:mm B – h:mm B",
-                  "h": "h:mm – h:mm B",
-                  "m": "h:mm – h:mm B"
+                  "h": "h:mm–h:mm B",
+                  "m": "h:mm–h:mm B"
                 },
                 "d": {
                   "d": "d–d"
@@ -425,14 +422,14 @@
                 },
                 "GyM": {
                   "G": "MM.y G – MM.y G",
-                  "M": "MM.y – MM.y G",
-                  "y": "MM.y – MM.y G"
+                  "M": "MM.y–MM.y G",
+                  "y": "MM.y–MM.y G"
                 },
                 "GyMd": {
-                  "d": "dd.MM.y – dd.MM.y G",
+                  "d": "dd.MM.y–dd.MM.y G",
                   "G": "dd.MM.y G – dd.MM.y G",
-                  "M": "dd.MM.y – dd.MM.y G",
-                  "y": "dd.MM.y – dd.MM.y G"
+                  "M": "dd.MM.y–dd.MM.y G",
+                  "y": "dd.MM.y–dd.MM.y G"
                 },
                 "GyMEd": {
                   "d": "ccc, dd.MM.y – ccc, dd.MM.y G",
@@ -493,8 +490,8 @@
                   "M": "M–M"
                 },
                 "Md": {
-                  "d": "dd.MM – dd.MM",
-                  "M": "dd.MM – dd.MM"
+                  "d": "dd.MM–dd.MM",
+                  "M": "dd.MM–dd.MM"
                 },
                 "MEd": {
                   "d": "E, dd.MM – E, dd.MM",
@@ -518,13 +515,13 @@
                   "y": "y–y"
                 },
                 "yM": {
-                  "M": "MM.y – MM.y",
-                  "y": "MM.y – MM.y"
+                  "M": "MM.y–MM.y",
+                  "y": "MM.y–MM.y"
                 },
                 "yMd": {
-                  "d": "dd.MM.y – dd.MM.y",
-                  "M": "dd.MM.y – dd.MM.y",
-                  "y": "dd.MM.y – dd.MM.y"
+                  "d": "dd.MM.y–dd.MM.y",
+                  "M": "dd.MM.y–dd.MM.y",
+                  "y": "dd.MM.y–dd.MM.y"
                 },
                 "yMEd": {
                   "d": "ccc, dd.MM.y – ccc, dd.MM.y",

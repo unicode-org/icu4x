@@ -99,5 +99,9 @@ name = "transliterate_test"
 path = "tests/transliterate/cldr.rs"
 
 [[test]]
+name = "transliterate_lower_ascii"
+path = "tests/transliterate/lower_ascii.rs"
+
+[[test]]
 name = "units_test"
 path = "tests/units/units_test.rs"

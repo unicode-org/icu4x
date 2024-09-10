@@ -9,6 +9,7 @@ pub mod ffi {
     use alloc::boxed::Box;
 
     use crate::errors::ffi::DataError;
+    use crate::locale_core::ffi::Locale;
     use crate::provider::ffi::DataProvider;
 
     #[diplomat::enum_convert(icu_segmenter::WordType, needs_wildcard)]
@@ -71,6 +72,26 @@ pub mod ffi {
             )?)))
         }
 
+        /// Construct an [`WordSegmenter`] with automatically selecting the best available LSTM
+        /// or dictionary payload data.
+        ///
+        /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
+        /// Khmer, Lao, and Thai.
+        #[diplomat::rust_link(icu::segmenter::WordSegmenter::try_new_auto_with_options, FnInStruct)]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "auto_with_content_locale")]
+        pub fn create_auto_with_content_locale(
+            provider: &DataProvider,
+            locale: &Locale,
+        ) -> Result<Box<WordSegmenter>, DataError> {
+            Ok(Box::new(WordSegmenter(call_constructor!(
+                icu_segmenter::WordSegmenter::try_new_auto_with_options,
+                icu_segmenter::WordSegmenter::try_new_auto_with_options_with_any_provider,
+                icu_segmenter::WordSegmenter::try_new_auto_with_options_with_buffer_provider,
+                provider,
+                locale.into(),
+            )?)))
+        }
+
         /// Construct an [`WordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and
         /// Thai.
         ///
@@ -87,6 +108,26 @@ pub mod ffi {
             )?)))
         }
 
+        /// Construct an [`WordSegmenter`] with given a locale, and LSTM payload data for Burmese,
+        /// Khmer, Lao, and Thai.
+        ///
+        /// Warning: [`WordSegmenter`] created by this function doesn't handle Chinese or
+        /// Japanese.
+        #[diplomat::rust_link(icu::segmenter::WordSegmenter::try_new_lstm_with_options, FnInStruct)]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "lstm_with_content_locale")]
+        pub fn create_lstm_with_content_locale(
+            provider: &DataProvider,
+            locale: &Locale,
+        ) -> Result<Box<WordSegmenter>, DataError> {
+            Ok(Box::new(WordSegmenter(call_constructor!(
+                icu_segmenter::WordSegmenter::try_new_lstm_with_options,
+                icu_segmenter::WordSegmenter::try_new_lstm_with_options_with_any_provider,
+                icu_segmenter::WordSegmenter::try_new_lstm_with_options_with_buffer_provider,
+                provider,
+                locale.into(),
+            )?)))
+        }
+
         /// Construct an [`WordSegmenter`] with dictionary payload data for Chinese, Japanese,
         /// Burmese, Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::new_dictionary, FnInStruct)]
@@ -97,6 +138,26 @@ pub mod ffi {
                 icu_segmenter::WordSegmenter::try_new_dictionary_with_any_provider,
                 icu_segmenter::WordSegmenter::try_new_dictionary_with_buffer_provider,
                 provider,
+            )?)))
+        }
+
+        /// Construct an [`WordSegmenter`] with given a locale, and dictionary payload data for Chinese,
+        /// Japanese, Burmese, Khmer, Lao, and Thai.
+        #[diplomat::rust_link(
+            icu::segmenter::WordSegmenter::try_new_dictionary_with_options,
+            FnInStruct
+        )]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "dictionary_with_content_locale")]
+        pub fn create_dictionary_with_content_locale(
+            provider: &DataProvider,
+            locale: &Locale,
+        ) -> Result<Box<WordSegmenter>, DataError> {
+            Ok(Box::new(WordSegmenter(call_constructor!(
+                icu_segmenter::WordSegmenter::try_new_dictionary_with_options,
+                icu_segmenter::WordSegmenter::try_new_dictionary_with_options_with_any_provider,
+                icu_segmenter::WordSegmenter::try_new_dictionary_with_options_with_buffer_provider,
+                provider,
+                locale.into(),
             )?)))
         }
 
@@ -233,5 +294,13 @@ pub mod ffi {
         pub fn is_word_like(&self) -> bool {
             self.0.is_word_like()
         }
+    }
+}
+
+impl From<&crate::locale_core::ffi::Locale> for icu_segmenter::WordBreakOptions {
+    fn from(other: &crate::locale_core::ffi::Locale) -> Self {
+        let mut options = icu_segmenter::WordBreakOptions::default();
+        options.content_locale = Some(other.to_datalocale());
+        options
     }
 }

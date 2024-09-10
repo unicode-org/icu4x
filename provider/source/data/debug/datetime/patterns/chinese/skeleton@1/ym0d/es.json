@@ -6,6 +6,6 @@
     "has_eras": false
   },
   "patterns": [
-    "r-MM-dd"
+    "d-M-r"
   ]
 }

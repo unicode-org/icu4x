@@ -47,7 +47,7 @@ export class TitlecaseMapper {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = DataError[Array.from(DataError.values.keys())[diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)]];
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new TitlecaseMapper(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -61,10 +61,10 @@ export class TitlecaseMapper {
     titlecaseSegment(s, locale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s)).splat()];
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s));
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        wasm.icu4x_TitlecaseMapper_titlecase_segment_v1_mv1(this.ffiValue, ...sSlice, locale.ffiValue, ...options._intoFFI(functionCleanupArena, {}), write.buffer);
+        wasm.icu4x_TitlecaseMapper_titlecase_segment_v1_mv1(this.ffiValue, ...sSlice.splat(), locale.ffiValue, ...options._intoFFI(functionCleanupArena, {}), write.buffer);
     
         try {
             return write.readString8();

@@ -680,9 +680,9 @@ field_type!(
         /// For example: "Pacific Standard Time"
         'z' => LowerZ = 0,
         /// Field symbol for any of: the ISO8601 basic format with hours, minutes and optional seconds fields, the
-        /// long localized GMT format, or the ISO8601 extended format with hours, minutes and optional seconds fields.
+        /// long localized offset format, or the ISO8601 extended format with hours, minutes and optional seconds fields.
         'Z' => UpperZ = 1,
-        /// Field symbol for the localized GMT format of a time zone.
+        /// Field symbol for the localized offset format of a time zone.
         ///
         /// For example: "GMT-07:00"
         'O' => UpperO = 2,

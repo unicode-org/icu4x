@@ -1,8 +1,8 @@
 {
   "supplemental": {
     "version": {
-      "_unicodeVersion": "15.1.0",
-      "_cldrVersion": "45"
+      "_unicodeVersion": "16.0.0",
+      "_cldrVersion": "46"
     },
     "metaZones": {
       "metazoneInfo": {
@@ -2601,7 +2601,7 @@
               },
               {
                 "usesMetazone": {
-                  "_mzone": "Kazakhstan_Western",
+                  "_mzone": "Kazakhstan",
                   "_from": "2024-02-29 18:00"
                 }
               }
@@ -2652,7 +2652,14 @@
               {
                 "usesMetazone": {
                   "_mzone": "Kazakhstan_Western",
-                  "_from": "2004-10-30 22:00"
+                  "_from": "2004-10-30 22:00",
+                  "_to": "2024-02-29 18:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Kazakhstan",
+                  "_from": "2024-02-29 18:00"
                 }
               }
             ],
@@ -2673,7 +2680,14 @@
               {
                 "usesMetazone": {
                   "_mzone": "Kazakhstan_Western",
-                  "_from": "2004-10-30 21:00"
+                  "_from": "2004-10-30 21:00",
+                  "_to": "2024-02-29 18:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Kazakhstan",
+                  "_from": "2024-02-29 18:00"
                 }
               }
             ],
@@ -2695,7 +2709,14 @@
               {
                 "usesMetazone": {
                   "_mzone": "Kazakhstan_Western",
-                  "_from": "2004-10-30 22:00"
+                  "_from": "2004-10-30 22:00",
+                  "_to": "2024-02-29 18:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Kazakhstan",
+                  "_from": "2024-02-29 18:00"
                 }
               }
             ],
@@ -3048,13 +3069,13 @@
               {
                 "usesMetazone": {
                   "_mzone": "Malaya",
-                  "_to": "1981-12-31 16:30"
+                  "_to": "1981-12-31 16:00"
                 }
               },
               {
                 "usesMetazone": {
                   "_mzone": "Malaysia",
-                  "_from": "1981-12-31 16:30"
+                  "_from": "1981-12-31 16:00"
                 }
               }
             ],
@@ -3180,7 +3201,14 @@
               {
                 "usesMetazone": {
                   "_mzone": "Kazakhstan_Western",
-                  "_from": "2004-10-30 22:00"
+                  "_from": "2004-10-30 22:00",
+                  "_to": "2024-02-29 18:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Kazakhstan",
+                  "_from": "2024-02-29 18:00"
                 }
               }
             ],
@@ -3250,7 +3278,7 @@
               },
               {
                 "usesMetazone": {
-                  "_mzone": "Kazakhstan_Western",
+                  "_mzone": "Kazakhstan",
                   "_from": "2024-02-29 18:00"
                 }
               }
@@ -3279,7 +3307,14 @@
               {
                 "usesMetazone": {
                   "_mzone": "Kazakhstan_Western",
-                  "_from": "2018-12-20 18:00"
+                  "_from": "2018-12-20 18:00",
+                  "_to": "2024-02-29 18:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Kazakhstan",
+                  "_from": "2024-02-29 18:00"
                 }
               }
             ],
@@ -6376,6 +6411,13 @@
         },
         {
           "mapZone": {
+            "_other": "Kazakhstan",
+            "_type": "Asia/Almaty",
+            "_territory": "001"
+          }
+        },
+        {
+          "mapZone": {
             "_other": "Kazakhstan_Eastern",
             "_type": "Asia/Almaty",
             "_territory": "001"
@@ -7347,6 +7389,10 @@
         },
         "kawe": {
           "_longId": "Kazakhstan_Western",
+          "_since": "40"
+        },
+        "kaza": {
+          "_longId": "Kazakhstan",
           "_since": "40"
         },
         "kore": {

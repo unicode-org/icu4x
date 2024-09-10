@@ -8,33 +8,48 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 export class IsoTimeZoneMinuteDisplay {
     #value = undefined;
 
-    static values = new Map([
+    static #values = new Map([
         ["Required", 0],
         ["Optional", 1]
     ]);
 
     constructor(value) {
-        if (value instanceof IsoTimeZoneMinuteDisplay) {
-            this.#value = value.value;
-            return;
+        if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
+            // We pass in two internalConstructor arguments to create *new*
+            // instances of this type, otherwise the enums are treated as singletons.
+            if (arguments[1] === diplomatRuntime.internalConstructor ) {
+                this.#value = arguments[2];
+                return;
+            }
+            return IsoTimeZoneMinuteDisplay.#objectValues[arguments[1]];
         }
 
-        if (IsoTimeZoneMinuteDisplay.values.has(value)) {
-            this.#value = value;
-            return;
+        if (value instanceof IsoTimeZoneMinuteDisplay) {
+            return value;
+        }
+
+        let intVal = IsoTimeZoneMinuteDisplay.#values.get(value);
+
+        // Nullish check, checks for null or undefined
+        if (intVal == null) {
+            return IsoTimeZoneMinuteDisplay.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a IsoTimeZoneMinuteDisplay and does not correspond to any of its enumerator values.");
     }
 
     get value() {
-        return this.#value;
+        return [...IsoTimeZoneMinuteDisplay.#values.keys()][this.#value];
     }
 
     get ffiValue() {
-        return IsoTimeZoneMinuteDisplay.values.get(this.#value);
+        return this.#value;
     }
+    static #objectValues = [
+        new IsoTimeZoneMinuteDisplay(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
+        new IsoTimeZoneMinuteDisplay(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
+    ];
 
-    static Required = new IsoTimeZoneMinuteDisplay("Required");
-    static Optional = new IsoTimeZoneMinuteDisplay("Optional");
+    static Required = IsoTimeZoneMinuteDisplay.#objectValues[0];
+    static Optional = IsoTimeZoneMinuteDisplay.#objectValues[1];
 }

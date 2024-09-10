@@ -2,9 +2,6 @@
   "main": {
     "en-ZA": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "en",
         "territory": "ZA"
       },
@@ -56,6 +53,7 @@
           "Elba": "Elbasan",
           "Elym": "Elymaic",
           "Ethi": "Ethiopic",
+          "Gara": "Garay",
           "Geok": "Georgian Khutsuri",
           "Geor": "Georgian",
           "Glag": "Glagolitic",
@@ -65,6 +63,7 @@
           "Gran": "Grantha",
           "Grek": "Greek",
           "Gujr": "Gujarati",
+          "Gukh": "Gurung Khema",
           "Guru": "Gurmukhi",
           "Hanb": "Han with Bopomofo",
           "Hang": "Hangul",
@@ -98,6 +97,7 @@
           "Knda": "Kannada",
           "Kore": "Korean",
           "Kpel": "Kpelle",
+          "Krai": "Kirat Rai",
           "Kthi": "Kaithi",
           "Lana": "Lanna",
           "Laoo": "Lao",
@@ -140,6 +140,7 @@
           "Nshu": "Nüshu",
           "Ogam": "Ogham",
           "Olck": "Ol Chiki",
+          "Onao": "Ol Onal",
           "Orkh": "Orkhon",
           "Orya": "Odia",
           "Osge": "Osage",
@@ -176,6 +177,7 @@
           "Sora": "Sora Sompeng",
           "Soyo": "Soyombo",
           "Sund": "Sundanese",
+          "Sunu": "Sunuwar",
           "Sylo": "Syloti Nagri",
           "Syrc": "Syriac",
           "Syre": "Estrangelo Syriac",
@@ -197,7 +199,9 @@
           "Tibt": "Tibetan",
           "Tirh": "Tirhuta",
           "Tnsa": "Tangsa",
+          "Todr": "Todhri",
           "Toto": "Toto",
+          "Tutg": "Tulu-Tigalari",
           "Ugar": "Ugaritic",
           "Vaii": "Vai",
           "Visp": "Visible Speech",

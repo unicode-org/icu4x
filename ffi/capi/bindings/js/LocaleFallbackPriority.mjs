@@ -10,33 +10,48 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 export class LocaleFallbackPriority {
     #value = undefined;
 
-    static values = new Map([
+    static #values = new Map([
         ["Language", 0],
         ["Region", 1]
     ]);
 
     constructor(value) {
-        if (value instanceof LocaleFallbackPriority) {
-            this.#value = value.value;
-            return;
+        if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
+            // We pass in two internalConstructor arguments to create *new*
+            // instances of this type, otherwise the enums are treated as singletons.
+            if (arguments[1] === diplomatRuntime.internalConstructor ) {
+                this.#value = arguments[2];
+                return;
+            }
+            return LocaleFallbackPriority.#objectValues[arguments[1]];
         }
 
-        if (LocaleFallbackPriority.values.has(value)) {
-            this.#value = value;
-            return;
+        if (value instanceof LocaleFallbackPriority) {
+            return value;
+        }
+
+        let intVal = LocaleFallbackPriority.#values.get(value);
+
+        // Nullish check, checks for null or undefined
+        if (intVal == null) {
+            return LocaleFallbackPriority.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a LocaleFallbackPriority and does not correspond to any of its enumerator values.");
     }
 
     get value() {
-        return this.#value;
+        return [...LocaleFallbackPriority.#values.keys()][this.#value];
     }
 
     get ffiValue() {
-        return LocaleFallbackPriority.values.get(this.#value);
+        return this.#value;
     }
+    static #objectValues = [
+        new LocaleFallbackPriority(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
+        new LocaleFallbackPriority(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
+    ];
 
-    static Language = new LocaleFallbackPriority("Language");
-    static Region = new LocaleFallbackPriority("Region");
+    static Language = LocaleFallbackPriority.#objectValues[0];
+    static Region = LocaleFallbackPriority.#objectValues[1];
 }

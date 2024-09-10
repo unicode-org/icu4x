@@ -45,11 +45,11 @@ export class CustomTimeZone {
     static fromString(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s)).splat()];
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s));
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CustomTimeZone_from_string_mv1(diplomatReceive.buffer, ...sSlice);
+        const result = wasm.icu4x_CustomTimeZone_from_string_mv1(diplomatReceive.buffer, ...sSlice.splat());
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -86,28 +86,8 @@ export class CustomTimeZone {
         finally {}
     }
 
-    static gmt() {
-        const result = wasm.icu4x_CustomTimeZone_gmt_mv1();
-    
-        try {
-            return new CustomTimeZone(diplomatRuntime.internalConstructor, result, []);
-        }
-        
-        finally {}
-    }
-
-    static bst() {
-        const result = wasm.icu4x_CustomTimeZone_bst_mv1();
-    
-        try {
-            return new CustomTimeZone(diplomatRuntime.internalConstructor, result, []);
-        }
-        
-        finally {}
-    }
-
-    trySetGmtOffsetSeconds(offsetSeconds) {
-        const result = wasm.icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1(this.ffiValue, offsetSeconds);
+    trySetOffsetSeconds(offsetSeconds) {
+        const result = wasm.icu4x_CustomTimeZone_try_set_offset_seconds_mv1(this.ffiValue, offsetSeconds);
     
         try {
             if (result !== 1) {
@@ -120,24 +100,24 @@ export class CustomTimeZone {
         finally {}
     }
 
-    setGmtOffsetEighthsOfHour(offsetEighthsOfHour) {wasm.icu4x_CustomTimeZone_set_gmt_offset_eighths_of_hour_mv1(this.ffiValue, offsetEighthsOfHour);
+    setOffsetEighthsOfHour(offsetEighthsOfHour) {wasm.icu4x_CustomTimeZone_set_offset_eighths_of_hour_mv1(this.ffiValue, offsetEighthsOfHour);
     
         try {}
         
         finally {}
     }
 
-    clearGmtOffset() {wasm.icu4x_CustomTimeZone_clear_gmt_offset_mv1(this.ffiValue);
+    clearOffset() {wasm.icu4x_CustomTimeZone_clear_offset_mv1(this.ffiValue);
     
         try {}
         
         finally {}
     }
 
-    get gmtOffsetSeconds() {
+    get offsetSeconds() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CustomTimeZone_gmt_offset_seconds_mv1(diplomatReceive.buffer, this.ffiValue);
+        const result = wasm.icu4x_CustomTimeZone_offset_seconds_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -151,10 +131,10 @@ export class CustomTimeZone {
         }
     }
 
-    get isGmtOffsetPositive() {
+    get isOffsetPositive() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 2, 1, true);
         
-        const result = wasm.icu4x_CustomTimeZone_is_gmt_offset_positive_mv1(diplomatReceive.buffer, this.ffiValue);
+        const result = wasm.icu4x_CustomTimeZone_is_offset_positive_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -168,10 +148,10 @@ export class CustomTimeZone {
         }
     }
 
-    get isGmtOffsetZero() {
+    get isOffsetZero() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 2, 1, true);
         
-        const result = wasm.icu4x_CustomTimeZone_is_gmt_offset_zero_mv1(diplomatReceive.buffer, this.ffiValue);
+        const result = wasm.icu4x_CustomTimeZone_is_offset_zero_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -185,10 +165,10 @@ export class CustomTimeZone {
         }
     }
 
-    get gmtOffsetHasMinutes() {
+    get offsetHasMinutes() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 2, 1, true);
         
-        const result = wasm.icu4x_CustomTimeZone_gmt_offset_has_minutes_mv1(diplomatReceive.buffer, this.ffiValue);
+        const result = wasm.icu4x_CustomTimeZone_offset_has_minutes_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -202,10 +182,10 @@ export class CustomTimeZone {
         }
     }
 
-    get gmtOffsetHasSeconds() {
+    get offsetHasSeconds() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 2, 1, true);
         
-        const result = wasm.icu4x_CustomTimeZone_gmt_offset_has_seconds_mv1(diplomatReceive.buffer, this.ffiValue);
+        const result = wasm.icu4x_CustomTimeZone_offset_has_seconds_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -222,9 +202,9 @@ export class CustomTimeZone {
     trySetTimeZoneId(id) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const idSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, id)).splat()];
+        const idSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, id));
         
-        const result = wasm.icu4x_CustomTimeZone_try_set_time_zone_id_mv1(this.ffiValue, ...idSlice);
+        const result = wasm.icu4x_CustomTimeZone_try_set_time_zone_id_mv1(this.ffiValue, ...idSlice.splat());
     
         try {
             if (result !== 1) {
@@ -242,9 +222,9 @@ export class CustomTimeZone {
     trySetIanaTimeZoneId(mapper, id) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const idSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, id)).splat()];
+        const idSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, id));
         
-        const result = wasm.icu4x_CustomTimeZone_try_set_iana_time_zone_id_mv1(this.ffiValue, mapper.ffiValue, ...idSlice);
+        const result = wasm.icu4x_CustomTimeZone_try_set_iana_time_zone_id_mv1(this.ffiValue, mapper.ffiValue, ...idSlice.splat());
     
         try {
             if (result !== 1) {
@@ -283,9 +263,9 @@ export class CustomTimeZone {
     trySetMetazoneId(id) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const idSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, id)).splat()];
+        const idSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, id));
         
-        const result = wasm.icu4x_CustomTimeZone_try_set_metazone_id_mv1(this.ffiValue, ...idSlice);
+        const result = wasm.icu4x_CustomTimeZone_try_set_metazone_id_mv1(this.ffiValue, ...idSlice.splat());
     
         try {
             if (result !== 1) {
@@ -324,9 +304,9 @@ export class CustomTimeZone {
     trySetZoneVariant(id) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const idSlice = [...functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, id)).splat()];
+        const idSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, id));
         
-        const result = wasm.icu4x_CustomTimeZone_try_set_zone_variant_mv1(this.ffiValue, ...idSlice);
+        const result = wasm.icu4x_CustomTimeZone_try_set_zone_variant_mv1(this.ffiValue, ...idSlice.splat());
     
         try {
             return result === 1;

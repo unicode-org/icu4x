@@ -3,16 +3,20 @@
     "0": "овог минута"
   },
   "past": {
-    "specials": [],
-    "other": "\bпре  минута"
+    "strings": {
+      "specials": [],
+      "other": "\bпре  минута"
+    }
   },
   "future": {
-    "specials": [
-      [
-        "One",
-        "\u0006за  минут"
-      ]
-    ],
-    "other": "\u0006за  минута"
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0006за  минут"
+        ]
+      ],
+      "other": "\u0006за  минута"
+    }
   }
 }

@@ -13,10 +13,12 @@ use alloc::borrow::Cow;
 use core::marker::PhantomData;
 #[cfg(feature = "datagen")]
 use core::{fmt::Debug, str::FromStr};
-use icu_pattern::{Pattern, PatternBackend, SinglePlaceholderPattern};
-use icu_plurals::PluralCategory;
+use icu_pattern::{Pattern, PatternBackend, SinglePlaceholder};
+#[cfg(feature = "datagen")]
+use icu_plurals::PluralElements;
+use icu_plurals::{PluralCategory, PluralOperands, PluralRules};
 use icu_provider::prelude::*;
-use zerovec::{ule::AsULE, VarZeroVec, ZeroMap};
+use zerovec::ZeroMap;
 
 #[cfg(feature = "compiled_data")]
 /// Baked data
@@ -69,10 +71,10 @@ pub struct RelativeTimePatternDataV1<'data> {
     pub relatives: ZeroMap<'data, i8, str>,
     /// How to display times in the past.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub past: PluralElements<'data, SinglePlaceholderPattern<str>>,
+    pub past: PluralPatterns<'data, SinglePlaceholder>,
     /// How to display times in the future.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub future: PluralElements<'data, SinglePlaceholderPattern<str>>,
+    pub future: PluralPatterns<'data, SinglePlaceholder>,
 }
 
 #[derive(Debug)]
@@ -98,150 +100,100 @@ pub struct PluralCategoryStr<'data>(pub PluralCategory, pub Cow<'data, str>);
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::relativetime::provider))]
 #[yoke(prove_covariance_manually)]
-pub struct PluralElements<'data, T: ?Sized> {
-    /// Optional entries for categories other than PluralCategory::Other
+pub struct PluralPatterns<'data, B> {
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub specials: VarZeroVec<'data, PluralCategoryStrULE>,
-    /// The entry for PluralCategory::Other
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub other: Cow<'data, str>,
-    /// Keeps track of T
+    #[doc(hidden)] // databake only
+    pub strings: icu_plurals::provider::PluralElementsV1<'data>,
     #[cfg_attr(feature = "serde", serde(skip))]
-    pub _phantom: PhantomData<T>,
+    #[doc(hidden)] // databake only
+    pub _phantom: PhantomData<B>,
 }
 
-impl<'data, T: ?Sized> Clone for PluralElements<'data, T> {
+impl<'data, B> Clone for PluralPatterns<'data, B> {
     fn clone(&self) -> Self {
         Self {
-            specials: self.specials.clone(),
-            other: self.other.clone(),
-            _phantom: self._phantom,
+            strings: self.strings.clone(),
+            _phantom: PhantomData,
         }
     }
 }
 
-impl<'data, B: PatternBackend<Store = str>> PluralElements<'data, Pattern<B, str>> {
-    /// Creates a [`PluralElements`] from the given patterns.
-    #[cfg(feature = "datagen")]
-    pub fn try_new_pattern(
-        other: &str,
-        zero: Option<&str>,
-        one: Option<&str>,
-        two: Option<&str>,
-        few: Option<&str>,
-        many: Option<&str>,
-    ) -> Result<Self, icu_pattern::PatternError>
-    where
-        B::PlaceholderKeyCow<'data>: FromStr,
-        <B::PlaceholderKeyCow<'data> as FromStr>::Err: Debug,
-    {
-        let optional_convert = |category, pattern: Option<&str>| {
-            pattern
-                .filter(|p| *p != other)
-                .map(|s| {
-                    Ok(PluralCategoryStr(
-                        category,
-                        // TODO: Make pattern support apostrophes
-                        Pattern::<B, String>::from_str(&s.replace('\'', "''"))
-                            .map(|p| Pattern::<B, _>::from_store_unchecked(p.take_store().into()))?
-                            .take_store(),
-                    ))
-                })
-                .transpose()
-        };
+impl<'data, B: PatternBackend<Store = str>> PluralPatterns<'data, B> {
+    /// Returns the pattern for the given [`PluralCategory`].
+    pub fn get(&'data self, op: PluralOperands, rules: &PluralRules) -> &'data Pattern<B, str> {
+        Pattern::from_ref_store_unchecked(self.strings.get(op, rules))
+    }
+}
+
+#[cfg(feature = "datagen")]
+impl<'data, B: PatternBackend<Store = str>> TryFrom<PluralElements<'data, str>>
+    for PluralPatterns<'static, B>
+where
+    B::PlaceholderKeyCow<'data>: FromStr,
+    <B::PlaceholderKeyCow<'data> as FromStr>::Err: Debug,
+{
+    type Error = icu_pattern::PatternError;
+
+    fn try_from(elements: PluralElements<str>) -> Result<Self, Self::Error> {
+        let make_pattern = |s: &str|
+            // TODO: Make pattern support apostrophes
+            Pattern::<B, String>::from_str(&s.replace('\'', "''")).map(|p| p.take_store());
 
         Ok(Self {
-            specials: (&[
-                (optional_convert(PluralCategory::Zero, zero)?),
-                (optional_convert(PluralCategory::One, one)?),
-                (optional_convert(PluralCategory::Two, two)?),
-                (optional_convert(PluralCategory::Few, few)?),
-                (optional_convert(PluralCategory::Many, many)?),
-            ]
-            .into_iter()
-            .flatten()
-            .collect::<Vec<_>>())
+            strings: PluralElements::new(make_pattern(elements.other())?.as_str())
+                .with_zero_value(
+                    Some(elements.zero())
+                        .filter(|&e| e != elements.other())
+                        .map(make_pattern)
+                        .transpose()?
+                        .as_deref(),
+                )
+                .with_one_value(
+                    Some(elements.one())
+                        .filter(|&e| e != elements.other())
+                        .map(make_pattern)
+                        .transpose()?
+                        .as_deref(),
+                )
+                .with_two_value(
+                    Some(elements.two())
+                        .filter(|&e| e != elements.other())
+                        .map(make_pattern)
+                        .transpose()?
+                        .as_deref(),
+                )
+                .with_few_value(
+                    Some(elements.few())
+                        .filter(|&e| e != elements.other())
+                        .map(make_pattern)
+                        .transpose()?
+                        .as_deref(),
+                )
+                .with_many_value(
+                    Some(elements.many())
+                        .filter(|&e| e != elements.other())
+                        .map(make_pattern)
+                        .transpose()?
+                        .as_deref(),
+                )
+                .with_explicit_zero_value(
+                    elements
+                        .explicit_zero()
+                        .map(make_pattern)
+                        .transpose()?
+                        .as_deref(),
+                )
+                .with_explicit_one_value(
+                    elements
+                        .explicit_one()
+                        .map(make_pattern)
+                        .transpose()?
+                        .as_deref(),
+                )
                 .into(),
-            // TODO: Make pattern support apostrophes
-            other: Pattern::<B, String>::from_str(&other.replace('\'', "''"))?
-                .take_store()
-                .into(),
-            _phantom: PhantomData::<Pattern<B, str>>,
+            _phantom: PhantomData,
         })
     }
-
-    /// Returns the pattern for the given [`PluralCategory`].
-    pub fn get_pattern(&'data self, c: PluralCategory) -> &'data Pattern<B, str> {
-        Pattern::from_ref_store_unchecked(if c == PluralCategory::Other {
-            &*self.other
-        } else {
-            self.specials
-                .iter()
-                .filter_map(|ule| (ule.0 == c.to_unaligned()).then_some(&ule.1))
-                .next()
-                .unwrap_or(&*self.other)
-        })
-    }
-}
-
-impl<'data> PluralElements<'data, str> {
-    /// Creates a [`PluralElements`] from the given strings.
-    #[cfg(feature = "datagen")]
-    pub fn try_new(
-        other: &str,
-        zero: Option<&str>,
-        one: Option<&str>,
-        two: Option<&str>,
-        few: Option<&str>,
-        many: Option<&str>,
-    ) -> Self
-where {
-        Self {
-            specials: (&[
-                zero.filter(|p| *p != other)
-                    .map(|s| PluralCategoryStr(PluralCategory::Zero, s.into())),
-                one.filter(|p| *p != other)
-                    .map(|s| PluralCategoryStr(PluralCategory::One, s.into())),
-                two.filter(|p| *p != other)
-                    .map(|s| PluralCategoryStr(PluralCategory::Two, s.into())),
-                few.filter(|p| *p != other)
-                    .map(|s| PluralCategoryStr(PluralCategory::Few, s.into())),
-                many.filter(|p| *p != other)
-                    .map(|s| PluralCategoryStr(PluralCategory::Many, s.into())),
-            ]
-            .into_iter()
-            .flatten()
-            .collect::<Vec<_>>())
-                .into(),
-            other: other.to_owned().into(),
-            _phantom: PhantomData::<str>,
-        }
-    }
-
-    /// Returns the string for the given [`PluralCategory`].
-    pub fn get_str(&'data self, c: PluralCategory) -> &'data str {
-        if c == PluralCategory::Other {
-            &self.other
-        } else {
-            self.specials
-                .iter()
-                .filter_map(|ule| (ule.0 == c.to_unaligned()).then_some(&ule.1))
-                .next()
-                .unwrap_or(&*self.other)
-        }
-    }
-}
-
-#[test]
-fn plural_patterns_niche() {
-    assert_eq!(
-        core::mem::size_of::<PluralElements<SinglePlaceholderPattern<str>>>(),
-        48
-    );
-    assert_eq!(
-        core::mem::size_of::<Option<PluralElements<SinglePlaceholderPattern<str>>>>(),
-        48
-    );
 }
 
 pub(crate) struct ErasedRelativeTimeFormatV1Marker;

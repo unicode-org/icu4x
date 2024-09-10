@@ -5,21 +5,25 @@
     "1": "el próximo mes"
   },
   "past": {
-    "specials": [
-      [
-        "One",
-        "\u0006hace  mes"
-      ]
-    ],
-    "other": "\u0006hace  meses"
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0006hace  mes"
+        ]
+      ],
+      "other": "\u0006hace  meses"
+    }
   },
   "future": {
-    "specials": [
-      [
-        "One",
-        "\u000bdentro de  mes"
-      ]
-    ],
-    "other": "\u000bdentro de  meses"
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u000bdentro de  mes"
+        ]
+      ],
+      "other": "\u000bdentro de  meses"
+    }
   }
 }

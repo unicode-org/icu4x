@@ -3,11 +3,15 @@
     "0": "今"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001秒前"
+    "strings": {
+      "specials": [],
+      "other": "\u0001秒前"
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u0001秒後"
+    "strings": {
+      "specials": [],
+      "other": "\u0001秒後"
+    }
   }
 }

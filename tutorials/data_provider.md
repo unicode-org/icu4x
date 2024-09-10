@@ -198,9 +198,9 @@ use core::any::Any;
 use icu::decimal::FixedDecimalFormatter;
 use icu::decimal::provider::DecimalSymbolsV1Marker;
 use icu_provider::prelude::*;
-use icu_provider_adapters::any_payload::AnyPayloadProvider;
+use icu_provider_adapters::fixed::FixedProvider;
 use icu::locale::locale;
-use icu::locale::{subtags_region as region};
+use icu::locale::subtags::region;
 use std::borrow::Cow;
 use tinystr::tinystr;
 
@@ -214,10 +214,8 @@ where
     #[inline]
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         let mut res = self.0.load(req)?;
-        // Cast from `DataPayload<M>` to `DataPayload<DecimalSymbolsV1Marker>`
-        let mut any_payload = (&mut res.payload) as &mut dyn Any;
-        if let Some(mut decimal_payload) = any_payload.downcast_mut::<DataPayload<DecimalSymbolsV1Marker>>() {
-            if req.id.locale.region == Some(region!("CH")) {
+        if req.id.locale.region == Some(region!("CH")) {
+            if let Ok(mut decimal_payload) = res.payload.dynamic_cast_mut::<DecimalSymbolsV1Marker>() {
                 decimal_payload.with_mut(|data| {
                     // Change the grouping separator for all Swiss locales to '🐮'
                     data.grouping_separator = Cow::Borrowed("🐮");
@@ -229,7 +227,7 @@ where
 }
 
 let provider = CustomDecimalSymbolsProvider(
-    AnyPayloadProvider::new_default::<DecimalSymbolsV1Marker>()
+    FixedProvider::<DecimalSymbolsV1Marker>::new_default()
 );
 
 let formatter = FixedDecimalFormatter::try_new_unstable(

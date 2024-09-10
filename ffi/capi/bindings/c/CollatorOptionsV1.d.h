@@ -19,13 +19,13 @@
 
 
 typedef struct CollatorOptionsV1 {
-  CollatorStrength strength;
-  CollatorAlternateHandling alternate_handling;
-  CollatorCaseFirst case_first;
-  CollatorMaxVariable max_variable;
-  CollatorCaseLevel case_level;
-  CollatorNumeric numeric;
-  CollatorBackwardSecondLevel backward_second_level;
+  CollatorStrength_option strength;
+  CollatorAlternateHandling_option alternate_handling;
+  CollatorCaseFirst_option case_first;
+  CollatorMaxVariable_option max_variable;
+  CollatorCaseLevel_option case_level;
+  CollatorNumeric_option numeric;
+  CollatorBackwardSecondLevel_option backward_second_level;
 } CollatorOptionsV1;
 
 typedef struct CollatorOptionsV1_option {union { CollatorOptionsV1 ok; }; bool is_ok; } CollatorOptionsV1_option;

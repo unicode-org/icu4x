@@ -2,9 +2,6 @@
   "main": {
     "es-AR": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "es",
         "territory": "AR"
       },
@@ -491,8 +488,8 @@
               "relativeTimePattern-count-other": "dentro de {0} vie."
             },
             "relativeTime-type-past": {
-              "relativeTimePattern-count-one": "hace {0} viernes",
-              "relativeTimePattern-count-other": "hace {0} viernes"
+              "relativeTimePattern-count-one": "hace {0} vie.",
+              "relativeTimePattern-count-other": "hace {0} vie."
             }
           },
           "fri-narrow": {
@@ -504,8 +501,8 @@
               "relativeTimePattern-count-other": "dentro de {0} VI"
             },
             "relativeTime-type-past": {
-              "relativeTimePattern-count-one": "hace {0} viernes",
-              "relativeTimePattern-count-other": "hace {0} viernes"
+              "relativeTimePattern-count-one": "hace {0} VI",
+              "relativeTimePattern-count-other": "hace {0} VI"
             }
           },
           "sat": {
@@ -543,8 +540,8 @@
               "relativeTimePattern-count-other": "dentro de {0} SA"
             },
             "relativeTime-type-past": {
-              "relativeTimePattern-count-one": "hace {0} sábados",
-              "relativeTimePattern-count-other": "hace {0} sábados"
+              "relativeTimePattern-count-one": "hace {0} SA",
+              "relativeTimePattern-count-other": "hace {0} SA"
             }
           },
           "dayperiod-short": {

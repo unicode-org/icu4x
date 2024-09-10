@@ -1579,7 +1579,7 @@ impl_value_getter! {
 /// Enumerated property Hangul_Syllable_Type
 ///
 /// The Unicode standard provides both precomposed Hangul syllables and conjoining Jamo to compose
-/// arbitrary Hangul syllables. This property provies that ontology of Hangul code points.
+/// arbitrary Hangul syllables. This property provides that ontology of Hangul code points.
 ///
 /// For more information, see the [Unicode Korean FAQ](https://www.unicode.org/faq/korean.html).
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
@@ -1600,7 +1600,7 @@ impl HangulSyllableType {
     pub const LeadingJamo: HangulSyllableType = HangulSyllableType(1);
     /// (`V`) a conjoining vowel Jamo.
     pub const VowelJamo: HangulSyllableType = HangulSyllableType(2);
-    /// (`T`) a conjoining trailing consonent Jamo.
+    /// (`T`) a conjoining trailing consonant Jamo.
     pub const TrailingJamo: HangulSyllableType = HangulSyllableType(3);
     /// (`LV`) a precomposed syllable with a leading consonant and a vowel.
     pub const LeadingVowelSyllable: HangulSyllableType = HangulSyllableType(4);

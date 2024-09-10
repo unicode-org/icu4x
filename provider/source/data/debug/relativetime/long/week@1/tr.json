@@ -5,11 +5,15 @@
     "1": "gelecek hafta"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 hafta önce"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 hafta önce"
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u0001 hafta sonra"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 hafta sonra"
+    }
   }
 }

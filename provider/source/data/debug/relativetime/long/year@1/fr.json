@@ -5,21 +5,25 @@
     "1": "l’année prochaine"
   },
   "past": {
-    "specials": [
-      [
-        "One",
-        "\bil y a  an"
-      ]
-    ],
-    "other": "\bil y a  ans"
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\bil y a  an"
+        ]
+      ],
+      "other": "\bil y a  ans"
+    }
   },
   "future": {
-    "specials": [
-      [
-        "One",
-        "\u0006dans  an"
-      ]
-    ],
-    "other": "\u0006dans  ans"
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0006dans  an"
+        ]
+      ],
+      "other": "\u0006dans  ans"
+    }
   }
 }

@@ -49,7 +49,7 @@ export class LocaleExpander {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)) return Error[i[0]]; } return null;})();
+                const cause = new Error(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('Error: ' + cause.value, { cause });
             }
             return new LocaleExpander(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -67,7 +67,7 @@ export class LocaleExpander {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = (() => {for (let i of Error.values) { if(i[1] === diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer)) return Error[i[0]]; } return null;})();
+                const cause = new Error(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('Error: ' + cause.value, { cause });
             }
             return new LocaleExpander(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -82,7 +82,7 @@ export class LocaleExpander {
         const result = wasm.icu4x_LocaleExpander_maximize_mv1(this.ffiValue, locale.ffiValue);
     
         try {
-            return TransformResult[Array.from(TransformResult.values.keys())[result]];
+            return new TransformResult(diplomatRuntime.internalConstructor, result);
         }
         
         finally {}
@@ -92,7 +92,7 @@ export class LocaleExpander {
         const result = wasm.icu4x_LocaleExpander_minimize_mv1(this.ffiValue, locale.ffiValue);
     
         try {
-            return TransformResult[Array.from(TransformResult.values.keys())[result]];
+            return new TransformResult(diplomatRuntime.internalConstructor, result);
         }
         
         finally {}
@@ -102,7 +102,7 @@ export class LocaleExpander {
         const result = wasm.icu4x_LocaleExpander_minimize_favor_script_mv1(this.ffiValue, locale.ffiValue);
     
         try {
-            return TransformResult[Array.from(TransformResult.values.keys())[result]];
+            return new TransformResult(diplomatRuntime.internalConstructor, result);
         }
         
         finally {}

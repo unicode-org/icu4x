@@ -5,11 +5,15 @@
     "1": "翌四半期"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 四半期前"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 四半期前"
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u0001 四半期後"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 四半期後"
+    }
   }
 }

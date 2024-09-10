@@ -5,11 +5,15 @@
     "1": "gelecek ay"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 ay önce"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 ay önce"
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u0001 ay sonra"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 ay sonra"
+    }
   }
 }

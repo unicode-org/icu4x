@@ -3,11 +3,20 @@
     "0": "এখন"
   },
   "past": {
-    "specials": [],
-    "other": "\u0001 সেকেন্ড পূর্বে"
+    "strings": {
+      "specials": [
+        [
+          "One",
+          "\u0001 সেকেন্ড আগে"
+        ]
+      ],
+      "other": "\u0001 সেকেন্ড পূর্বে"
+    }
   },
   "future": {
-    "specials": [],
-    "other": "\u0001 সেকেন্ডে"
+    "strings": {
+      "specials": [],
+      "other": "\u0001 সেকেন্ডে"
+    }
   }
 }

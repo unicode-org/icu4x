@@ -8,39 +8,54 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 export class DisplayNamesStyle {
     #value = undefined;
 
-    static values = new Map([
-        ["Auto", 0],
-        ["Narrow", 1],
-        ["Short", 2],
-        ["Long", 3],
-        ["Menu", 4]
+    static #values = new Map([
+        ["Narrow", 0],
+        ["Short", 1],
+        ["Long", 2],
+        ["Menu", 3]
     ]);
 
     constructor(value) {
-        if (value instanceof DisplayNamesStyle) {
-            this.#value = value.value;
-            return;
+        if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
+            // We pass in two internalConstructor arguments to create *new*
+            // instances of this type, otherwise the enums are treated as singletons.
+            if (arguments[1] === diplomatRuntime.internalConstructor ) {
+                this.#value = arguments[2];
+                return;
+            }
+            return DisplayNamesStyle.#objectValues[arguments[1]];
         }
 
-        if (DisplayNamesStyle.values.has(value)) {
-            this.#value = value;
-            return;
+        if (value instanceof DisplayNamesStyle) {
+            return value;
+        }
+
+        let intVal = DisplayNamesStyle.#values.get(value);
+
+        // Nullish check, checks for null or undefined
+        if (intVal == null) {
+            return DisplayNamesStyle.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a DisplayNamesStyle and does not correspond to any of its enumerator values.");
     }
 
     get value() {
-        return this.#value;
+        return [...DisplayNamesStyle.#values.keys()][this.#value];
     }
 
     get ffiValue() {
-        return DisplayNamesStyle.values.get(this.#value);
+        return this.#value;
     }
+    static #objectValues = [
+        new DisplayNamesStyle(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
+        new DisplayNamesStyle(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
+        new DisplayNamesStyle(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
+        new DisplayNamesStyle(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 3),
+    ];
 
-    static Auto = new DisplayNamesStyle("Auto");
-    static Narrow = new DisplayNamesStyle("Narrow");
-    static Short = new DisplayNamesStyle("Short");
-    static Long = new DisplayNamesStyle("Long");
-    static Menu = new DisplayNamesStyle("Menu");
+    static Narrow = DisplayNamesStyle.#objectValues[0];
+    static Short = DisplayNamesStyle.#objectValues[1];
+    static Long = DisplayNamesStyle.#objectValues[2];
+    static Menu = DisplayNamesStyle.#objectValues[3];
 }

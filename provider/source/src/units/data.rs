@@ -8,7 +8,7 @@ use crate::cldr_serde::{self};
 use crate::SourceDataProvider;
 
 use icu::experimental::dimension::provider::units::{UnitsDisplayNameV1, UnitsDisplayNameV1Marker};
-use icu::experimental::relativetime::provider::PluralElements;
+use icu::plurals::PluralElements;
 use icu_provider::prelude::*;
 use icu_provider::DataMarkerAttributes;
 
@@ -49,17 +49,20 @@ impl DataProvider<UnitsDisplayNameV1Marker> for SourceDataProvider {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(UnitsDisplayNameV1 {
-                patterns: PluralElements::try_new_pattern(
+                patterns: PluralElements::new(
                     unit_patterns
                         .other
                         .as_deref()
                         .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?,
-                    unit_patterns.zero.as_deref(),
-                    unit_patterns.one.as_deref(),
-                    unit_patterns.two.as_deref(),
-                    unit_patterns.few.as_deref(),
-                    unit_patterns.many.as_deref(),
                 )
+                .with_zero_value(unit_patterns.zero.as_deref())
+                .with_one_value(unit_patterns.one.as_deref())
+                .with_two_value(unit_patterns.two.as_deref())
+                .with_few_value(unit_patterns.few.as_deref())
+                .with_many_value(unit_patterns.many.as_deref())
+                .with_explicit_one_value(unit_patterns.explicit_one.as_deref())
+                .with_explicit_zero_value(unit_patterns.explicit_zero.as_deref())
+                .try_into()
                 .map_err(|_| {
                     DataError::custom("Invalid pattern").with_debug_context(&unit_patterns)
                 })?,
@@ -115,7 +118,7 @@ impl crate::IterableDataProviderCached<UnitsDisplayNameV1Marker> for SourceDataP
 #[test]
 fn test_basic() {
     use icu::locale::langid;
-    use icu::plurals::PluralCategory;
+    use icu::plurals::PluralRules;
     use icu_provider::prelude::*;
     use writeable::assert_writeable_eq;
 
@@ -133,11 +136,11 @@ fn test_basic() {
         .payload;
 
     let units_us = us_locale_long_meter.get().to_owned();
-    let long = units_us
-        .patterns
-        .get_pattern(PluralCategory::One)
-        .interpolate([0]);
-    assert_writeable_eq!(long, "0 meter");
+
+    let en_rules =
+        PluralRules::try_new_cardinal_unstable(&provider, &langid!("en").into()).unwrap();
+    let long = units_us.patterns.get(1.into(), &en_rules).interpolate([1]);
+    assert_writeable_eq!(long, "1 meter");
 
     let us_locale_short_meter: DataPayload<UnitsDisplayNameV1Marker> = provider
         .load(DataRequest {
@@ -153,7 +156,7 @@ fn test_basic() {
     let units_us_short = us_locale_short_meter.get().to_owned();
     let short = units_us_short
         .patterns
-        .get_pattern(PluralCategory::Other)
+        .get(5.into(), &en_rules)
         .interpolate([5]);
     assert_writeable_eq!(short, "5 m");
 
@@ -169,9 +172,11 @@ fn test_basic() {
         .payload;
 
     let ar_eg_units = ar_eg_locale.get().to_owned();
+    let ar_rules =
+        PluralRules::try_new_cardinal_unstable(&provider, &langid!("ar").into()).unwrap();
     let long = ar_eg_units
         .patterns
-        .get_pattern(PluralCategory::One)
+        .get(1.into(), &ar_rules)
         .interpolate([1]);
     assert_writeable_eq!(long, "متر");
 
@@ -187,9 +192,8 @@ fn test_basic() {
         .payload;
 
     let fr_units = fr_locale.get().to_owned();
-    let short = fr_units
-        .patterns
-        .get_pattern(PluralCategory::Other)
-        .interpolate([5]);
+    let fr_rules =
+        PluralRules::try_new_cardinal_unstable(&provider, &langid!("fr").into()).unwrap();
+    let short = fr_units.patterns.get(5.into(), &fr_rules).interpolate([5]);
     assert_writeable_eq!(short, "5 m");
 }

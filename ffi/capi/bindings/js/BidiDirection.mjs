@@ -6,35 +6,51 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 export class BidiDirection {
     #value = undefined;
 
-    static values = new Map([
+    static #values = new Map([
         ["Ltr", 0],
         ["Rtl", 1],
         ["Mixed", 2]
     ]);
 
     constructor(value) {
-        if (value instanceof BidiDirection) {
-            this.#value = value.value;
-            return;
+        if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
+            // We pass in two internalConstructor arguments to create *new*
+            // instances of this type, otherwise the enums are treated as singletons.
+            if (arguments[1] === diplomatRuntime.internalConstructor ) {
+                this.#value = arguments[2];
+                return;
+            }
+            return BidiDirection.#objectValues[arguments[1]];
         }
 
-        if (BidiDirection.values.has(value)) {
-            this.#value = value;
-            return;
+        if (value instanceof BidiDirection) {
+            return value;
+        }
+
+        let intVal = BidiDirection.#values.get(value);
+
+        // Nullish check, checks for null or undefined
+        if (intVal == null) {
+            return BidiDirection.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a BidiDirection and does not correspond to any of its enumerator values.");
     }
 
     get value() {
-        return this.#value;
+        return [...BidiDirection.#values.keys()][this.#value];
     }
 
     get ffiValue() {
-        return BidiDirection.values.get(this.#value);
+        return this.#value;
     }
+    static #objectValues = [
+        new BidiDirection(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
+        new BidiDirection(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
+        new BidiDirection(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
+    ];
 
-    static Ltr = new BidiDirection("Ltr");
-    static Rtl = new BidiDirection("Rtl");
-    static Mixed = new BidiDirection("Mixed");
+    static Ltr = BidiDirection.#objectValues[0];
+    static Rtl = BidiDirection.#objectValues[1];
+    static Mixed = BidiDirection.#objectValues[2];
 }
