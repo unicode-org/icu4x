@@ -1,11 +1,12 @@
 {
   "display_names": {
-    "specials": [
-      [
-        "One",
-        "libra esterlina"
-      ]
+    "one": [
+      0,
+      "libra esterlina"
     ],
-    "other": "libras esterlinas"
+    "other": [
+      0,
+      "libras esterlinas"
+    ]
   }
 }

@@ -1,15 +1,16 @@
 {
   "display_names": {
-    "specials": [
-      [
-        "One",
-        "egipatska funta"
-      ],
-      [
-        "Few",
-        "egipatske funte"
-      ]
+    "one": [
+      0,
+      "egipatska funta"
     ],
-    "other": "egipatskih funti"
+    "few": [
+      0,
+      "egipatske funte"
+    ],
+    "other": [
+      0,
+      "egipatskih funti"
+    ]
   }
 }

@@ -1,11 +1,12 @@
 {
   "display_names": {
-    "specials": [
-      [
-        "One",
-        "dolyar ng US"
-      ]
+    "one": [
+      0,
+      "dolyar ng US"
     ],
-    "other": "dolyares ng US"
+    "other": [
+      0,
+      "dolyares ng US"
+    ]
   }
 }
