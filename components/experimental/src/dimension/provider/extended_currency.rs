@@ -9,7 +9,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use icu_plurals::provider::PluralElementsPackedCowStr;
+use icu_plurals::provider::PluralElementsPackedCow;
 use icu_provider::prelude::*;
 
 #[cfg(feature = "compiled_data")]
@@ -43,5 +43,5 @@ pub struct CurrencyExtendedDataV1<'data> {
     ///    Regards to the [Unicode Report TR35](https://unicode.org/reports/tr35/tr35-numbers.html#Currencies),
     ///    If no matching for specific count, the `other` count will be used.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub display_names: PluralElementsPackedCowStr<'data>,
+    pub display_names: PluralElementsPackedCow<'data, str>,
 }

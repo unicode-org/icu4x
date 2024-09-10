@@ -581,21 +581,30 @@ struct PluralElementsUnpackedBytes<'a> {
 /// 3. It always serializes the [`FourBitMetadata`] as 0
 ///
 /// Use [`PluralElementsPackedULE`] directly if you need these additional features.
-#[derive(Debug, PartialEq, Yokeable, ZeroFrom, Clone)]
+#[derive(Debug, PartialEq, Yokeable, ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_plurals::provider))]
-#[cfg_attr(feature = "serde", serde(transparent))]
-pub struct PluralElementsPackedCowStr<'data> {
+#[cfg_attr(
+    feature = "serde",
+    serde(
+        transparent,
+        bound(
+            serialize = "V: serde::Serialize + PartialEq",
+            deserialize = "Box<PluralElementsPackedULE<V>>: serde::Deserialize<'de>"
+        )
+    )
+)]
+pub struct PluralElementsPackedCow<'data, V: VarULE + ?Sized> {
     /// The encoded elements.
     #[cfg_attr(
         feature = "serde",
         serde(
             borrow,
-            deserialize_with = "deserialize_plural_elements_packed_cow::<_, str>"
+            deserialize_with = "deserialize_plural_elements_packed_cow::<_, V>"
         )
     )]
-    pub elements: Cow<'data, PluralElementsPackedULE<str>>,
+    pub elements: Cow<'data, PluralElementsPackedULE<V>>,
 }
 
 /// Helper function to access a value from [`PluralElementsTupleSliceVarULE`]
@@ -995,10 +1004,23 @@ where
     }
 }
 
-impl<T> From<PluralElements<T>> for PluralElementsPackedCowStr<'static>
+// Need a manual impl because the derive(Clone) impl bounds are wrong
+impl<'data, V> Clone for PluralElementsPackedCow<'data, V>
 where
+    V: VarULE + ?Sized,
+{
+    fn clone(&self) -> Self {
+        Self {
+            elements: self.elements.clone(),
+        }
+    }
+}
+
+impl<T, V> From<PluralElements<T>> for PluralElementsPackedCow<'static, V>
+where
+    V: VarULE + ?Sized,
     T: PartialEq + fmt::Debug,
-    for<'a> &'a T: EncodeAsVarULE<str>,
+    for<'a> &'a T: EncodeAsVarULE<V>,
 {
     fn from(value: PluralElements<T>) -> Self {
         let elements =
@@ -1009,9 +1031,12 @@ where
     }
 }
 
-impl PluralElementsPackedCowStr<'_> {
+impl<V> PluralElementsPackedCow<'_, V>
+where
+    V: VarULE + ?Sized,
+{
     /// Returns the value for the given [`PluralOperands`] and [`PluralRules`].
-    pub fn get<'a>(&'a self, op: PluralOperands, rules: &PluralRules) -> &'a str {
+    pub fn get<'a>(&'a self, op: PluralOperands, rules: &PluralRules) -> &'a V {
         self.elements.get(op, rules).1
     }
 }
@@ -1039,7 +1064,7 @@ fn test_serde_singleton_roundtrip() {
         postcard::from_bytes(&postcard_bytes).unwrap();
     assert_eq!(&*ule, postcard_borrowed);
 
-    let postcard_cow: PluralElementsPackedCowStr = postcard::from_bytes(&postcard_bytes).unwrap();
+    let postcard_cow: PluralElementsPackedCow<str> = postcard::from_bytes(&postcard_bytes).unwrap();
     assert_eq!(&*ule, &*postcard_cow.elements);
     assert!(matches!(postcard_cow.elements, Cow::Borrowed(_)));
 

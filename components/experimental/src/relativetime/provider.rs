@@ -103,7 +103,7 @@ pub struct PluralCategoryStr<'data>(pub PluralCategory, pub Cow<'data, str>);
 pub struct PluralPatterns<'data, B> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     #[doc(hidden)] // databake only
-    pub strings: icu_plurals::provider::PluralElementsPackedCowStr<'data>,
+    pub strings: icu_plurals::provider::PluralElementsPackedCow<'data, str>,
     #[cfg_attr(feature = "serde", serde(skip))]
     #[doc(hidden)] // databake only
     pub _phantom: PhantomData<B>,
