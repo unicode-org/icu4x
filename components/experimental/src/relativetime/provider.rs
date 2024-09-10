@@ -104,7 +104,14 @@ pub struct PluralCategoryStr<'data>(pub PluralCategory, pub Cow<'data, str>);
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::relativetime::provider))]
 #[yoke(prove_covariance_manually)]
 pub struct PluralPatterns<'data, B> {
-    #[cfg_attr(feature = "serde", serde(borrow))]
+    #[cfg_attr(
+        feature = "serde",
+        serde(borrow),
+        serde(
+            // Explicit disambiguation due to https://github.com/rust-lang/rust/issues/130180
+            deserialize_with = "icu_plurals::provider::deserialize_plural_elements_packed_cow::<_, str>"
+        )
+    )]
     #[doc(hidden)] // databake only
     pub strings: Cow<'data, icu_plurals::provider::PluralElementsPackedULE<str>>,
     #[cfg_attr(feature = "serde", serde(skip))]

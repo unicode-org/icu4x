@@ -1029,9 +1029,9 @@ where
 ///
 /// Due to <https://github.com/rust-lang/rust/issues/130180>, you may need to qualify
 /// `V` when invoking this, like so:
-/// 
+///
 /// `#[serde(deserialize_with = "deserialize_plural_elements_packed_cow::<_, str>")]`
-/// 
+///
 /// See <https://github.com/unicode-org/icu4x/pull/1556>
 #[cfg(feature = "serde")]
 pub fn deserialize_plural_elements_packed_cow<'de, 'data, D, V>(
