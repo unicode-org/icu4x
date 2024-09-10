@@ -7,7 +7,7 @@ export function formatCustomTimeZone() {
     return (function (...args) { return args[0].formatCustomTimeZone(...args.slice(1)) }).apply(
         null,
         [
-            TimeZoneFormatter.createWithLocalizedGmtFallback.apply(
+            TimeZoneFormatter.createWithLocalizedOffsetFallback.apply(
                 null,
                 [
                     DataProvider.compiled.apply(
@@ -37,7 +37,7 @@ export function formatCustomTimeZoneNoFallback() {
     return (function (...args) { return args[0].formatCustomTimeZoneNoFallback(...args.slice(1)) }).apply(
         null,
         [
-            TimeZoneFormatter.createWithLocalizedGmtFallback.apply(
+            TimeZoneFormatter.createWithLocalizedOffsetFallback.apply(
                 null,
                 [
                     DataProvider.compiled.apply(

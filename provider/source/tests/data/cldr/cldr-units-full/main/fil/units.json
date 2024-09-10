@@ -2,9 +2,6 @@
   "main": {
     "fil": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "fil"
       },
       "units": {
@@ -349,7 +346,7 @@
           "duration-quarter": {
             "displayName": "mga quarter",
             "unitPattern-count-one": "{0} qtr",
-            "unitPattern-count-other": "{0} qaurter",
+            "unitPattern-count-other": "{0} quarter",
             "perUnitPattern": "{0}/q"
           },
           "duration-month": {
@@ -879,7 +876,7 @@
             "unitPattern-count-other": "{0} degrees kelvin"
           },
           "torque-pound-force-foot": {
-            "displayName": "pound-feet",
+            "displayName": "pound-force-feet",
             "unitPattern-count-one": "{0} pound-force-foot",
             "unitPattern-count-other": "{0} pound-feet"
           },
@@ -1060,6 +1057,21 @@
             "displayName": "Imp. na kuwart",
             "unitPattern-count-one": "{0} Imp. na kuwart",
             "unitPattern-count-other": "{0} Imp. na kuwart"
+          },
+          "speed-light-speed": {
+            "displayName": "light",
+            "unitPattern-count-other": "{0} light"
+          },
+          "concentr-portion-per-1e9": {
+            "displayName": "parts per billion",
+            "unitPattern-count-one": "{0} part per billion",
+            "unitPattern-count-other": "{0} parts per billion"
+          },
+          "duration-night": {
+            "displayName": "mga gabi",
+            "unitPattern-count-one": "{0} gabi",
+            "unitPattern-count-other": "{0} gabi",
+            "perUnitPattern": "{0} kada gabi"
           },
           "coordinateUnit": {
             "displayName": "cardinal direction",
@@ -1983,6 +1995,20 @@
           "volume-quart-imperial": {
             "displayName": "Imp na kuwart",
             "unitPattern-count-other": "{0} qt Imp."
+          },
+          "speed-light-speed": {
+            "displayName": "light",
+            "unitPattern-count-other": "{0} light"
+          },
+          "concentr-portion-per-1e9": {
+            "displayName": "parts/billion",
+            "unitPattern-count-other": "{0} ppb"
+          },
+          "duration-night": {
+            "displayName": "mga gabi",
+            "unitPattern-count-one": "{0} gabi",
+            "unitPattern-count-other": "{0} gabi",
+            "perUnitPattern": "{0}/gabi"
           },
           "coordinateUnit": {
             "displayName": "direction",
@@ -2957,6 +2983,21 @@
             "displayName": "qt Imp",
             "unitPattern-count-one": "{0} qt Imp.",
             "unitPattern-count-other": "{0}qt-Imp."
+          },
+          "speed-light-speed": {
+            "displayName": "light",
+            "unitPattern-count-other": "{0} light"
+          },
+          "concentr-portion-per-1e9": {
+            "displayName": "parts/billion",
+            "unitPattern-count-one": "{0}ppb",
+            "unitPattern-count-other": "{0}ppb"
+          },
+          "duration-night": {
+            "displayName": "mga gabi",
+            "unitPattern-count-one": "{0}gabi",
+            "unitPattern-count-other": "{0}gabi",
+            "perUnitPattern": "{0}/gabi"
           },
           "coordinateUnit": {
             "displayName": "direction",

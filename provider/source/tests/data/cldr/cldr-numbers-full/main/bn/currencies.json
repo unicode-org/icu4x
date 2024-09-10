@@ -2,9 +2,6 @@
   "main": {
     "bn": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "bn"
       },
       "numbers": {
@@ -408,6 +405,8 @@
           },
           "INR": {
             "displayName": "ভারতীয় রুপি",
+            "displayName-count-one": "ভারতীয় টাকা",
+            "displayName-count-other": "ভারতীয় টাকা",
             "symbol": "₹",
             "symbol-alt-narrow": "₹"
           },
@@ -736,10 +735,14 @@
             "displayName": "স্লোভাক কোরুনা"
           },
           "SLE": {
-            "displayName": "সিয়েরালিয়ন লিয়ন"
+            "displayName": "সিয়েরা লিয়নের লিয়ন",
+            "displayName-count-one": "সিয়েরা লিয়নের লিয়ন",
+            "displayName-count-other": "সিয়েরা লিয়নের লিয়ন"
           },
           "SLL": {
-            "displayName": "সিয়েরালিয়ন লিয়ন (1964—2022)"
+            "displayName": "সিয়েরা লিয়নের লিয়ন (1964—2022)",
+            "displayName-count-one": "সিয়েরা লিয়নের লিয়ন (1964—2022)",
+            "displayName-count-other": "সিয়েরা লিয়নের লিয়ন (1964—2022)"
           },
           "SOS": {
             "displayName": "সোমালি শিলিং"

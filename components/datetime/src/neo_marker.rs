@@ -254,7 +254,7 @@
 //! ## Time Zone Formatting
 //!
 //! Here, we configure a [`NeoFormatter`] to format with generic non-location short,
-//! which falls back to GMT when unavailable (see [`NeoTimeZoneGenericShortMarker`]).
+//! which falls back to the offset when unavailable (see [`NeoTimeZoneGenericShortMarker`]).
 //!
 //! ```
 //! use icu::calendar::DateTime;
@@ -267,7 +267,7 @@
 //! use writeable::assert_try_writeable_eq;
 //!
 //! // Set up the time zone. Note: the inputs here are
-//! //   1. The GMT offset
+//! //   1. The offset
 //! //   2. The IANA time zone ID
 //! //   3. A datetime (for metazone resolution)
 //! //   4. Note: we do not need the zone variant because of `load_generic_*()`
@@ -305,7 +305,7 @@
 //!     "HST"
 //! );
 //!
-//! // GMT with offset - used when metazone is not available
+//! // Raw offset - used when metazone is not available
 //! let mut time_zone = "+0530".parse::<CustomTimeZone>().unwrap();
 //! assert_try_writeable_eq!(
 //!     tzf.format(&time_zone),
@@ -1962,11 +1962,10 @@ macro_rules! impl_zoneddatetime_marker {
         #[doc = concat!("    ", length_option_helper!($sample_length), ",")]
         /// )
         /// .unwrap();
-        /// let dtz = CustomZonedDateTime {
-        ///     date: Date::try_new_iso_date(2024, 5, 17).unwrap(),
-        ///     time: Time::try_new(15, 47, 50, 0).unwrap(),
-        ///     zone: CustomTimeZone::gmt()
-        /// };
+        ///
+        /// let mut dtz = CustomZonedDateTime::try_from_str("2024-05-17T15:47:50+01:00[Europe/London]").unwrap();
+        /// // TODO(#5466): Set the zone variant automatically
+        /// dtz.zone.zone_variant = Some(icu_timezone::ZoneVariant::daylight());
         ///
         /// assert_try_writeable_eq!(
         ///     fmt.convert_and_format(&dtz),
@@ -1991,11 +1990,12 @@ macro_rules! impl_zoneddatetime_marker {
         #[doc = concat!("    ", length_option_helper!($sample_length), ",")]
         /// )
         /// .unwrap();
-        /// let dtz = CustomZonedDateTime {
-        ///     date: Date::try_new_gregorian_date(2024, 5, 17).unwrap(),
-        ///     time: Time::try_new(15, 47, 50, 0).unwrap(),
-        ///     zone: CustomTimeZone::gmt()
-        /// };
+        ///
+        /// let mut dtz = CustomZonedDateTime::try_from_str("2024-05-17T15:47:50+01:00[Europe/London]")
+        ///     .unwrap()
+        ///     .to_calendar(Gregorian);
+        /// // TODO(#5466): Set the zone variant automatically
+        /// dtz.zone.zone_variant = Some(icu_timezone::ZoneVariant::daylight());
         ///
         /// assert_try_writeable_eq!(
         ///     fmt.format(&dtz),
@@ -2135,7 +2135,7 @@ impl_date_marker!(
 impl_zone_marker!(
     NeoTimeZoneSpecificMarker,
     NeoTimeZoneSkeleton::specific(),
-    description = "specific time zone with inherited length, or GMT offset if unavailable",
+    description = "specific time zone with inherited length, or raw offset if unavailable",
     sample_length = Medium,
     sample = "CDT",
     zone_essentials = yes,
@@ -2147,7 +2147,7 @@ impl_zone_marker!(
 );
 
 impl_zone_marker!(
-    /// When a display name is unavailable, falls back to the GMT offset format:
+    /// When a display name is unavailable, falls back to the offset format:
     ///
     /// ```
     /// use icu::calendar::{Date, Time};
@@ -2181,7 +2181,7 @@ impl_zone_marker!(
     /// ```
     NeoTimeZoneSpecificShortMarker,
     NeoTimeZoneSkeleton::specific_short(),
-    description = "specific time zone with a shorter length, or GMT offset if unavailable",
+    description = "specific time zone with a shorter length, or raw offset if unavailable",
     sample_length = no,
     sample = "CDT",
     zone_essentials = yes,
@@ -2195,7 +2195,7 @@ impl_zone_marker!(
 impl_zone_marker!(
     NeoTimeZoneSpecificLongMarker,
     NeoTimeZoneSkeleton::specific_long(),
-    description = "specific time zone with a longer length, or GMT offset if unavailable",
+    description = "specific time zone with a longer length, or raw offset if unavailable",
     sample_length = no,
     sample = "Central Daylight Time",
     zone_essentials = yes,
@@ -2207,11 +2207,11 @@ impl_zone_marker!(
 );
 
 impl_zone_marker!(
-    NeoTimeZoneGmtMarker,
-    NeoTimeZoneSkeleton::gmt(),
-    description = "GMT offset with inherited length",
+    NeoTimeZoneOffsetMarker,
+    NeoTimeZoneSkeleton::offset(),
+    description = "UTC offset with inherited length",
     sample_length = Medium,
-    sample = "GMT-05:00", // TODO: Implement short localized GMT
+    sample = "GMT-05:00", // TODO: Implement short localized offset
     zone_essentials = yes,
     zone_exemplar_cities = no,
     zone_generic_long = no,
@@ -2221,11 +2221,11 @@ impl_zone_marker!(
 );
 
 impl_zone_marker!(
-    NeoTimeZoneGmtShortMarker,
-    NeoTimeZoneSkeleton::gmt_short(),
-    description = "GMT offset with a shorter length",
+    NeoTimeZoneOffsetShortMarker,
+    NeoTimeZoneSkeleton::offset_short(),
+    description = "UTC offset with a shorter length",
     sample_length = no,
-    sample = "GMT-05:00", // TODO: Implement short localized GMT
+    sample = "GMT-05:00", // TODO: Implement short localized offset
     zone_essentials = yes,
     zone_exemplar_cities = no,
     zone_generic_long = no,
@@ -2235,9 +2235,9 @@ impl_zone_marker!(
 );
 
 impl_zone_marker!(
-    NeoTimeZoneGmtLongMarker,
-    NeoTimeZoneSkeleton::gmt_long(),
-    description = "GMT offset with a longer length",
+    NeoTimeZoneOffsetLongMarker,
+    NeoTimeZoneSkeleton::offset_long(),
+    description = "UTC offset with a longer length",
     sample_length = no,
     sample = "GMT-05:00",
     zone_essentials = yes,

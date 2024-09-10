@@ -11,6 +11,6 @@
     "d MMM y",
     "GGG d MMM y",
     "d.MM.y",
-    "d/MM/y GGG"
+    "GGG d.MM.y"
   ]
 }

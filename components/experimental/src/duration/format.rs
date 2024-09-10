@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::{options::*, Duration, DurationFormatter, DurationSign};
+use super::{options::*, Duration, DurationFormatter};
 
 use super::validated_options::Unit;
 use core::fmt;
@@ -153,7 +153,7 @@ impl<'a> FormattedDuration<'a> {
         let mut fd = FixedDecimal::from(self.duration.hours);
 
         // Since we construct the FixedDecimal from an unsigned hours value, we need to set the sign manually.
-        fd.set_sign(self.duration.sign.into());
+        fd.set_sign(self.duration.get_sign());
 
         // 7. If hoursStyle is "2-digit", then
         if self.fmt.options.hour == FieldStyle::TwoDigit {
@@ -199,7 +199,7 @@ impl<'a> FormattedDuration<'a> {
         let mut fd = FixedDecimal::from(self.duration.minutes);
 
         // Since we construct the FixedDecimal from an unsigned minutes value, we need to set the sign manually.
-        fd.set_sign(self.duration.sign.into());
+        fd.set_sign(self.duration.get_sign());
 
         // 8. If minutesStyle is "2-digit", then
         if self.fmt.options.minute == FieldStyle::TwoDigit {
@@ -277,7 +277,7 @@ impl<'a> FormattedDuration<'a> {
         }
 
         // Since we construct the FixedDecimal from an unsigned seconds value, we need to set the sign manually.
-        second_fd.set_sign(self.duration.sign.into());
+        second_fd.set_sign(self.duration.get_sign());
 
         // 5. Let nfOpts be OrdinaryObjectCreate(null).
         // 6. Let numberingSystem be durationFormat.[[NumberingSystem]].
@@ -486,7 +486,7 @@ impl<'a> FormattedDuration<'a> {
             // f. Else,
             else {
                 let mut formatted_value = FixedDecimal::from(value);
-                formatted_value.set_sign(self.duration.sign.into());
+                formatted_value.set_sign(self.duration.get_sign());
 
                 // i. Let nfOpts be OrdinaryObjectCreate(null).
                 // ii. If unit is "seconds", "milliseconds", or "microseconds", then
@@ -528,7 +528,7 @@ impl<'a> FormattedDuration<'a> {
                         // a. Set signDisplayed to false.
                         sign_displayed = false;
                         // b. If value is 0 and DurationSign(duration.[[Years]], duration.[[Months]], duration.[[Weeks]], duration.[[Days]], duration.[[Hours]], duration.[[Minutes]], duration.[[Seconds]], duration.[[Milliseconds]], duration.[[Microseconds]], duration.[[Nanoseconds]]) is -1, then
-                        if value == 0 && self.duration.sign == DurationSign::Negative {
+                        if value == 0 && self.duration.get_sign() == fixed_decimal::Sign::Negative {
                             // i. Set value to negative-zero.
                             formatted_value.apply_sign_display(SignDisplay::Always);
                         }
@@ -720,6 +720,57 @@ mod tests {
                 (28, 29, parts::LITERAL),
                 (29, 37, parts::SECOND)
             ]
+        );
+    }
+
+    #[test]
+    fn test_positive_negative_zero() {
+        let positive_duration = Duration {
+            sign: DurationSign::Positive,
+            ..Default::default()
+        };
+
+        let negative_duration = Duration {
+            sign: DurationSign::Negative,
+            ..Default::default()
+        };
+
+        let options = DurationFormatterOptions {
+            year_visibility: Some(FieldDisplay::Always),
+            ..Default::default()
+        };
+
+        let options = ValidatedDurationFormatterOptions::validate(options).unwrap();
+        let formatter = DurationFormatter::try_new(&locale!("en").into(), options).unwrap();
+
+        assert_eq!(
+            formatter
+                .format(&positive_duration)
+                .write_to_string()
+                .into_owned(),
+            "0 yrs"
+        );
+        assert_eq!(
+            formatter
+                .format(&negative_duration)
+                .write_to_string()
+                .into_owned(),
+            "0 yrs"
+        );
+
+        let negative_non_zero_duration = Duration {
+            sign: DurationSign::Negative,
+            years: 0,
+            months: 1,
+            ..Default::default()
+        };
+
+        assert_eq!(
+            formatter
+                .format(&negative_non_zero_duration)
+                .write_to_string()
+                .into_owned(),
+            "-0 yrs, 1 mth"
         );
     }
 }

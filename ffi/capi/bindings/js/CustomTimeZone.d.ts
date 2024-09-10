@@ -21,21 +21,21 @@ export class CustomTimeZone {
 
     static utc(): CustomTimeZone;
 
-    trySetGmtOffsetSeconds(offsetSeconds: number): void;
+    trySetOffsetSeconds(offsetSeconds: number): void;
 
-    setGmtOffsetEighthsOfHour(offsetEighthsOfHour: number): void;
+    setOffsetEighthsOfHour(offsetEighthsOfHour: number): void;
 
-    clearGmtOffset(): void;
+    clearOffset(): void;
 
-    get gmtOffsetSeconds(): number | null;
+    get offsetSeconds(): number | null;
 
-    get isGmtOffsetPositive(): boolean | null;
+    get isOffsetPositive(): boolean | null;
 
-    get isGmtOffsetZero(): boolean | null;
+    get isOffsetZero(): boolean | null;
 
-    get gmtOffsetHasMinutes(): boolean | null;
+    get offsetHasMinutes(): boolean | null;
 
-    get gmtOffsetHasSeconds(): boolean | null;
+    get offsetHasSeconds(): boolean | null;
 
     trySetTimeZoneId(id: string): void;
 

@@ -2,9 +2,6 @@
   "main": {
     "bn": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "bn"
       },
       "units": {
@@ -369,7 +366,7 @@
             "displayName": "দিন",
             "unitPattern-count-one": "{0} দিন",
             "unitPattern-count-other": "{0} দিন",
-            "perUnitPattern": "{0} প্রতি দিন"
+            "perUnitPattern": "{0}/দিন"
           },
           "duration-hour": {
             "displayName": "ঘন্টা",
@@ -1061,6 +1058,22 @@
             "unitPattern-count-one": "{0} Imp. quart",
             "unitPattern-count-other": "{0} Imp. quart"
           },
+          "speed-light-speed": {
+            "displayName": "আঃবঃ",
+            "unitPattern-count-one": "{0} আঃবঃ",
+            "unitPattern-count-other": "{0} আঃবঃ"
+          },
+          "concentr-portion-per-1e9": {
+            "displayName": "পার্ট প্রতি বিলিয়ন",
+            "unitPattern-count-one": "{0} পার্ট প্রতি বিলিয়ন",
+            "unitPattern-count-other": "{0} পার্ট প্রতি বিলিয়ন"
+          },
+          "duration-night": {
+            "displayName": "রাত্রি",
+            "unitPattern-count-one": "{0} রাত্রি",
+            "unitPattern-count-other": "{0} রাত্রি",
+            "perUnitPattern": "{0}/রাত্রি"
+          },
           "coordinateUnit": {
             "displayName": "প্রধান দিকনির্দেশ",
             "east": "{0} পূর্ব",
@@ -1403,7 +1416,7 @@
             "displayName": "দিন",
             "unitPattern-count-one": "{0} দিন",
             "unitPattern-count-other": "{0} দিন",
-            "perUnitPattern": "{0} প্রতি দিন"
+            "perUnitPattern": "{0}/দিন"
           },
           "duration-hour": {
             "displayName": "ঘন্টা",
@@ -2000,6 +2013,21 @@
             "displayName": "qt Imp",
             "unitPattern-count-other": "{0} qt Imp."
           },
+          "speed-light-speed": {
+            "displayName": "আঃবঃ",
+            "unitPattern-count-one": "{0} আঃবঃ",
+            "unitPattern-count-other": "{0} আঃবঃ"
+          },
+          "concentr-portion-per-1e9": {
+            "displayName": "পার্ট/ বিলিয়ন",
+            "unitPattern-count-other": "{0} ppb"
+          },
+          "duration-night": {
+            "displayName": "রাত্রি",
+            "unitPattern-count-one": "{0} রাত্রি",
+            "unitPattern-count-other": "{0} রাত্রি",
+            "perUnitPattern": "{0}/রাত্রি"
+          },
           "coordinateUnit": {
             "displayName": "দিকনির্দেশ",
             "east": "{0}পূ",
@@ -2363,7 +2391,7 @@
             "displayName": "সেকেন্ড",
             "unitPattern-count-one": "{0} সেঃ",
             "unitPattern-count-other": "{0} সেঃ",
-            "perUnitPattern": "{0}/সে:"
+            "perUnitPattern": "{0}/সেঃ"
           },
           "duration-millisecond": {
             "displayName": "মিলিসেকেন্ড",
@@ -2957,6 +2985,22 @@
           "volume-quart-imperial": {
             "displayName": "qt Imp",
             "unitPattern-count-other": "{0} qt Imp."
+          },
+          "speed-light-speed": {
+            "displayName": "আঃবঃ",
+            "unitPattern-count-one": "{0} আঃবঃ",
+            "unitPattern-count-other": "{0} আঃবঃ"
+          },
+          "concentr-portion-per-1e9": {
+            "displayName": "পার্ট/ বিলিয়ন",
+            "unitPattern-count-one": "{0}ppb",
+            "unitPattern-count-other": "{0} ppb"
+          },
+          "duration-night": {
+            "displayName": "রাত্রি",
+            "unitPattern-count-one": "{0}রাত্রি",
+            "unitPattern-count-other": "{0}রাত্রি",
+            "perUnitPattern": "{0}/রাত্রি"
           },
           "coordinateUnit": {
             "displayName": "দিকনির্দেশ",

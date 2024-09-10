@@ -2,9 +2,6 @@
   "main": {
     "ja": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "ja"
       },
       "units": {
@@ -950,9 +947,22 @@
             "displayName": "石",
             "unitPattern-count-other": "{0} 石"
           },
+          "speed-light-speed": {
+            "displayName": "光",
+            "unitPattern-count-other": "{0} 光"
+          },
           "mass-fun": {
             "displayName": "分 - 質量",
             "unitPattern-count-other": "{0} 分 - 質量"
+          },
+          "concentr-portion-per-1e9": {
+            "displayName": "ppb",
+            "unitPattern-count-other": "{0} ppb"
+          },
+          "duration-night": {
+            "displayName": "泊",
+            "unitPattern-count-other": "{0} 泊",
+            "perUnitPattern": "{0}/泊"
           },
           "coordinateUnit": {
             "displayName": "方位",
@@ -1904,9 +1914,22 @@
             "displayName": "石",
             "unitPattern-count-other": "{0} 石"
           },
+          "speed-light-speed": {
+            "displayName": "光",
+            "unitPattern-count-other": "{0} 光"
+          },
           "mass-fun": {
             "displayName": "分 - 質量",
             "unitPattern-count-other": "{0} 分 - 質量"
+          },
+          "concentr-portion-per-1e9": {
+            "displayName": "ppb",
+            "unitPattern-count-other": "{0} ppb"
+          },
+          "duration-night": {
+            "displayName": "泊",
+            "unitPattern-count-other": "{0} 泊",
+            "perUnitPattern": "{0}/泊"
           },
           "coordinateUnit": {
             "displayName": "方位",
@@ -2858,9 +2881,22 @@
             "displayName": "石",
             "unitPattern-count-other": "{0}石"
           },
+          "speed-light-speed": {
+            "displayName": "光",
+            "unitPattern-count-other": "{0}光"
+          },
           "mass-fun": {
             "displayName": "分",
             "unitPattern-count-other": "{0}分"
+          },
+          "concentr-portion-per-1e9": {
+            "displayName": "ppb",
+            "unitPattern-count-other": "{0}ppb"
+          },
+          "duration-night": {
+            "displayName": "泊",
+            "unitPattern-count-other": "{0}泊",
+            "perUnitPattern": "{0}/泊"
           },
           "coordinateUnit": {
             "displayName": "方位",

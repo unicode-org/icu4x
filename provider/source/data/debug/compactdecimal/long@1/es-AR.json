@@ -34,10 +34,15 @@
       }
     },
     "12": {
-      "Other": {
+      "One": {
         "exponent": 12,
         "index": 0,
         "literal_text": " billón"
+      },
+      "Other": {
+        "exponent": 12,
+        "index": 0,
+        "literal_text": " billones"
       }
     },
     "13": {

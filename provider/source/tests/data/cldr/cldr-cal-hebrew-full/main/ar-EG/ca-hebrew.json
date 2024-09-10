@@ -2,9 +2,6 @@
   "main": {
     "ar-EG": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "ar",
         "territory": "EG"
       },

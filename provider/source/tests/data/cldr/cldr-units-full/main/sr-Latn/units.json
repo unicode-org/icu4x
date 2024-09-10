@@ -2,9 +2,6 @@
   "main": {
     "sr-Latn": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "sr",
         "script": "Latn"
       },
@@ -112,8 +109,11 @@
           "power2": {
             "compoundUnitPattern1": "kvadratni {0}",
             "compoundUnitPattern1-count-one": "kvadratni {0}",
+            "compoundUnitPattern1-gender-feminine-count-one": "kvadratna {0}",
             "compoundUnitPattern1-count-few": "kvadratna {0}",
-            "compoundUnitPattern1-count-other": "kvadratnih {0}"
+            "compoundUnitPattern1-gender-feminine-count-few": "kvadratna {0}",
+            "compoundUnitPattern1-count-other": "kvadratnih {0}",
+            "compoundUnitPattern1-gender-feminine-count-other": "kvadratnih {0}"
           },
           "power3": {
             "compoundUnitPattern1": "kubni {0}",
@@ -328,10 +328,17 @@
             "instrumental-count-other": "{0} karata"
           },
           "concentr-milligram-ofglucose-per-deciliter": {
+            "gender": "inanimate",
             "displayName": "miligrami po decilitru",
             "unitPattern-count-one": "{0} miligram po decilitru",
+            "genitive-count-one": "{0} miligrama po decilitru",
+            "instrumental-count-one": "{0} miligramom po decilitru",
             "unitPattern-count-few": "{0} miligrama po decilitru",
-            "unitPattern-count-other": "{0} miligrama po decilitru"
+            "genitive-count-few": "{0} miligrama po decilitru",
+            "instrumental-count-few": "{0} miligrama po decilitru",
+            "unitPattern-count-other": "{0} miligrama po decilitru",
+            "genitive-count-other": "{0} miligrama po decilitru",
+            "instrumental-count-other": "{0} miligrama po decilitru"
           },
           "concentr-millimole-per-liter": {
             "gender": "inanimate",
@@ -629,7 +636,7 @@
             "unitPattern-count-few": "{0} decenije",
             "accusative-count-few": "{0} decenije",
             "genitive-count-few": "{0} decenije",
-            "instrumental-count-few": "{0} decenije",
+            "instrumental-count-few": "{0} decenijom",
             "unitPattern-count-other": "{0} decenija",
             "accusative-count-other": "{0} decenija",
             "genitive-count-other": "{0} decenija",
@@ -854,10 +861,20 @@
             "instrumental-count-other": "{0} volti"
           },
           "energy-kilocalorie": {
+            "gender": "feminine",
             "displayName": "kilokalorije",
             "unitPattern-count-one": "{0} kilokalorija",
+            "accusative-count-one": "{0} kilokaloriju",
+            "genitive-count-one": "{0} kilokalorije",
+            "instrumental-count-one": "{0} kilokalorijom",
             "unitPattern-count-few": "{0} kilokalorije",
-            "unitPattern-count-other": "{0} kilokalorija"
+            "accusative-count-few": "{0} kilokalorije",
+            "genitive-count-few": "{0} kilokalorije",
+            "instrumental-count-few": "{0} kilokalorije",
+            "unitPattern-count-other": "{0} kilokalorija",
+            "accusative-count-other": "{0} kilokalorija",
+            "genitive-count-other": "{0} kilokalorija",
+            "instrumental-count-other": "{0} kilokalorija"
           },
           "energy-calorie": {
             "gender": "feminine",
@@ -957,8 +974,19 @@
           },
           "force-kilowatt-hour-per-100-kilometer": {
             "gender": "inanimate",
-            "displayName": "kWh/100km",
-            "unitPattern-count-other": "{0} kWh/100km"
+            "displayName": "kilovat-sati na 100 kilometara",
+            "unitPattern-count-one": "{0} kilovat-sat na 100 kilometara",
+            "accusative-count-one": "{0} kilovat-sat na 100 kilometara",
+            "genitive-count-one": "{0} kilovat-sata na 100 kilometara",
+            "instrumental-count-one": "{0} kilovat-satom na 100 kilometara",
+            "unitPattern-count-few": "{0} kilovat-sata na 100 kilometara",
+            "accusative-count-few": "{0} kilovat-sata na 100 kilometara",
+            "genitive-count-few": "{0} kilovat-sata na 100 kilometara",
+            "instrumental-count-few": "{0} kilovat-sata na 100 kilometara",
+            "unitPattern-count-other": "{0} kilovat-sati na 100 kilometara",
+            "accusative-count-other": "{0} kilovat-sati na 100 kilometara",
+            "genitive-count-other": "{0} kilovat-sati na 100 kilometara",
+            "instrumental-count-other": "{0} kilovat-sati na 100 kilometara"
           },
           "frequency-gigahertz": {
             "gender": "inanimate",
@@ -1272,8 +1300,20 @@
             "instrumental-count-other": "{0} skandinavskih milja"
           },
           "length-point": {
-            "displayName": "pt",
-            "unitPattern-count-other": "{0} pt"
+            "gender": "feminine",
+            "displayName": "tipografske tačke",
+            "unitPattern-count-one": "{0} tipografska tačka",
+            "accusative-count-one": "{0} tipografsku tačku",
+            "genitive-count-one": "{0} tipografske tačke",
+            "instrumental-count-one": "{0} tipografskom tačkom",
+            "unitPattern-count-few": "{0} tipografske tačke",
+            "accusative-count-few": "{0} tipografske tačke",
+            "genitive-count-few": "{0} tipografskih tačaka",
+            "instrumental-count-few": "{0} tipografske tačke",
+            "unitPattern-count-other": "{0} tipografskih tačaka",
+            "accusative-count-other": "{0} tipografskih tačaka",
+            "genitive-count-other": "{0} tipografskih tačaka",
+            "instrumental-count-other": "{0} tipografskih tačaka"
           },
           "length-solar-radius": {
             "displayName": "sunčevi poluprečnici",
@@ -1544,10 +1584,17 @@
             "unitPattern-count-other": "{0} konjskih snaga"
           },
           "pressure-millimeter-ofhg": {
+            "gender": "inanimate",
             "displayName": "milimetri živinog stuba",
             "unitPattern-count-one": "{0} milimetar živinog stuba",
+            "genitive-count-one": "{0} milimetra živinog stuba",
+            "instrumental-count-one": "{0} milimetrom živinog stuba",
             "unitPattern-count-few": "{0} milimetra živinog stuba",
-            "unitPattern-count-other": "{0} milimetara živinog stuba"
+            "genitive-count-few": "{0} milimetra živinog stuba",
+            "instrumental-count-few": "{0} milimetra živinog stuba",
+            "unitPattern-count-other": "{0} milimetara živinog stuba",
+            "genitive-count-other": "{0} milimetara živinog stuba",
+            "instrumental-count-other": "{0} milimetara živinog stuba"
           },
           "pressure-pound-force-per-square-inch": {
             "displayName": "funte po kvadratnom inču",
@@ -2047,12 +2094,61 @@
             "unitPattern-count-few": "{0} imperijske četvrtine",
             "unitPattern-count-other": "{0} imperijskih četvrtina"
           },
+          "speed-light-speed": {
+            "gender": "neuter",
+            "displayName": "svetlo",
+            "unitPattern-count-one": "{0} svetlo",
+            "accusative-count-one": "{0} svetlo",
+            "genitive-count-one": "{0} svetla",
+            "instrumental-count-one": "{0} svetlom",
+            "unitPattern-count-few": "{0} svetla",
+            "accusative-count-few": "{0} svetla",
+            "genitive-count-few": "{0} svetla",
+            "instrumental-count-few": "{0} svetla",
+            "unitPattern-count-other": "{0} svetala",
+            "accusative-count-other": "{0} svetala",
+            "genitive-count-other": "{0} svetala",
+            "instrumental-count-other": "{0} svetala"
+          },
+          "concentr-portion-per-1e9": {
+            "gender": "inanimate",
+            "displayName": "delovi na milijardu",
+            "unitPattern-count-one": "{0} deo na milijardu",
+            "accusative-count-one": "{0} deo na milijardu",
+            "genitive-count-one": "{0} dela na milijardu",
+            "instrumental-count-one": "{0} delom na milijardu",
+            "unitPattern-count-few": "{0} dela na milijardu",
+            "accusative-count-few": "{0} dela na milijardu",
+            "genitive-count-few": "{0} dela na milijardu",
+            "instrumental-count-few": "{0} dela na milijardu",
+            "unitPattern-count-other": "{0} delova na milijardu",
+            "accusative-count-other": "{0} delova na milijardu",
+            "genitive-count-other": "{0} delova na milijardu",
+            "instrumental-count-other": "{0} delova na milijardu"
+          },
+          "duration-night": {
+            "gender": "feminine",
+            "displayName": "noć",
+            "unitPattern-count-one": "{0} noć",
+            "accusative-count-one": "{0} noć",
+            "genitive-count-one": "{0} noći",
+            "instrumental-count-one": "{0} noći",
+            "unitPattern-count-few": "{0} noći",
+            "accusative-count-few": "{0} noći",
+            "genitive-count-few": "{0} noći",
+            "instrumental-count-few": "{0} noći",
+            "unitPattern-count-other": "{0} noći",
+            "accusative-count-other": "{0} noći",
+            "genitive-count-other": "{0} noći",
+            "instrumental-count-other": "{0} noći",
+            "perUnitPattern": "{0}/noć"
+          },
           "coordinateUnit": {
-            "displayName": "glavni pravac",
-            "east": "{0}I",
-            "north": "{0}S",
-            "south": "{0}J",
-            "west": "{0}Z"
+            "displayName": "strana sveta",
+            "east": "{0} E",
+            "north": "{0} N",
+            "south": "{0} S",
+            "west": "{0} W"
           }
         },
         "short": {
@@ -2643,7 +2739,7 @@
             "unitPattern-count-other": "{0} smi"
           },
           "length-point": {
-            "displayName": "pt",
+            "displayName": "tipografske tačke",
             "unitPattern-count-other": "{0} pt"
           },
           "length-solar-radius": {
@@ -3001,12 +3097,29 @@
             "displayName": "qt Imp",
             "unitPattern-count-other": "{0} qt Imp."
           },
+          "speed-light-speed": {
+            "displayName": "svetlo",
+            "unitPattern-count-one": "{0} svetlo",
+            "unitPattern-count-few": "{0} svetla",
+            "unitPattern-count-other": "{0} svetala"
+          },
+          "concentr-portion-per-1e9": {
+            "displayName": "delovi/milijarda",
+            "unitPattern-count-other": "{0} ppb"
+          },
+          "duration-night": {
+            "displayName": "noć",
+            "unitPattern-count-one": "{0} noć",
+            "unitPattern-count-few": "{0} noći",
+            "unitPattern-count-other": "{0} noći",
+            "perUnitPattern": "{0}/noć"
+          },
           "coordinateUnit": {
             "displayName": "pravac",
-            "east": "{0}I",
-            "north": "{0}S",
-            "south": "{0}J",
-            "west": "{0}Z"
+            "east": "{0} E",
+            "north": "{0} N",
+            "south": "{0} S",
+            "west": "{0} W"
           }
         },
         "narrow": {
@@ -3601,7 +3714,7 @@
             "unitPattern-count-other": "{0} smi"
           },
           "length-point": {
-            "displayName": "pt",
+            "displayName": "tipografske tačke",
             "unitPattern-count-other": "{0} pt"
           },
           "length-solar-radius": {
@@ -3969,12 +4082,29 @@
             "unitPattern-count-few": "{0} qt Imp",
             "unitPattern-count-other": "{0} qt Imp"
           },
+          "speed-light-speed": {
+            "displayName": "svetlo",
+            "unitPattern-count-one": "{0} svetlo",
+            "unitPattern-count-few": "{0} svetla",
+            "unitPattern-count-other": "{0} svetala"
+          },
+          "concentr-portion-per-1e9": {
+            "displayName": "delovi/milijarda",
+            "unitPattern-count-other": "{0} ppb"
+          },
+          "duration-night": {
+            "displayName": "noć",
+            "unitPattern-count-one": "{0} noć",
+            "unitPattern-count-few": "{0} noći",
+            "unitPattern-count-other": "{0} noći",
+            "perUnitPattern": "{0}/noć"
+          },
           "coordinateUnit": {
             "displayName": "pravac",
-            "east": "{0}I",
-            "north": "{0}S",
-            "south": "{0}J",
-            "west": "{0}Z"
+            "east": "{0}E",
+            "north": "{0}N",
+            "south": "{0}S",
+            "west": "{0}W"
           }
         },
         "durationUnit-type-hm": {

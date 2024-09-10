@@ -82,7 +82,6 @@ pub mod maps;
 mod props;
 
 pub mod bidi_data;
-pub mod exemplar_chars;
 pub mod provider;
 pub(crate) mod runtime;
 #[allow(clippy::exhaustive_structs)] // TODO
