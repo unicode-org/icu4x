@@ -445,7 +445,7 @@ impl<'a, 'b> From<PluralElements<&'b str>> for PluralElementsV1<'a> {
     fn from(value: PluralElements<&'b str>) -> Self {
         Self {
             specials: (&value
-                .get_specials_tuple_vec()
+                .get_specials_tuple_slice()
                 .map(|(key, s)| PluralElementsFieldV1(key, (*s).into()))
                 .collect::<Vec<_>>())
                 .into(),
@@ -458,35 +458,35 @@ impl<T> PluralElements<T>
 where
     T: PartialEq,
 {
-    fn get_specials_tuple_vec(&self) -> impl Iterator<Item = (PluralElementsKeysV1, &T)> {
+    fn get_specials_tuple_slice(&self) -> impl Iterator<Item = (PluralElementsKeysV1, &T)> {
         [
             self.zero
                 .as_ref()
-                .filter(|p| **p != self.other)
+                .filter(|&p| *p != self.other)
                 .map(|s| (PluralElementsKeysV1::Zero, s)),
             self.one
                 .as_ref()
-                .filter(|p| **p != self.other)
+                .filter(|&p| *p != self.other)
                 .map(|s| (PluralElementsKeysV1::One, s)),
             self.two
                 .as_ref()
-                .filter(|p| **p != self.other)
+                .filter(|&p| *p != self.other)
                 .map(|s| (PluralElementsKeysV1::Two, s)),
             self.few
                 .as_ref()
-                .filter(|p| **p != self.other)
+                .filter(|&p| *p != self.other)
                 .map(|s| (PluralElementsKeysV1::Few, s)),
             self.many
                 .as_ref()
-                .filter(|p| **p != self.other)
+                .filter(|&p| *p != self.other)
                 .map(|s| (PluralElementsKeysV1::Many, s)),
             self.explicit_zero
                 .as_ref()
-                .filter(|p| **p != self.other)
+                .filter(|&p| *p != self.other)
                 .map(|s| (PluralElementsKeysV1::ExplicitZero, s)),
             self.explicit_one
                 .as_ref()
-                .filter(|p| **p != self.other)
+                .filter(|&p| *p != self.other)
                 .map(|s| (PluralElementsKeysV1::ExplicitOne, s)),
         ]
         .into_iter()
@@ -862,7 +862,7 @@ where
         V: VarULE + ?Sized,
     {
         let specials = self
-            .get_specials_tuple_vec()
+            .get_specials_tuple_slice()
             .map(|(plural_category, (metadata, t))| VarTuple {
                 sized: PluralCategoryAndMetadata {
                     plural_category,
