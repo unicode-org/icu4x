@@ -359,24 +359,6 @@ pub enum PluralElementsKeysV1 {
     ExplicitOne = 6,
 }
 
-#[derive(Debug)]
-#[zerovec::make_varule(PluralElementsFieldV1ULE)]
-#[zerovec::skip_derive(Ord)]
-#[zerovec::derive(Debug)]
-#[cfg_attr(
-    feature = "serde",
-    derive(serde::Deserialize),
-    zerovec::derive(Deserialize)
-)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize),
-    zerovec::derive(Serialize)
-)]
-/// A tuple of [`PluralElementsKeysV1`] and [`str`].
-// TODO: Make the str generic
-pub struct PluralElementsFieldV1<'data>(pub PluralElementsKeysV1, pub Cow<'data, str>);
-
 impl<T> PluralElementsInner<T>
 where
     T: PartialEq,
