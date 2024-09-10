@@ -379,7 +379,7 @@ impl<T> PluralElements<T>
 where
     T: PartialEq,
 {
-    fn get_specials_tuple_slice(&self) -> impl Iterator<Item = (PluralElementsKeysV1, &T)> {
+    fn get_specials_tuples(&self) -> impl Iterator<Item = (PluralElementsKeysV1, &T)> {
         [
             self.zero
                 .as_ref()
@@ -777,7 +777,7 @@ where
         V: VarULE + ?Sized,
     {
         let specials = self
-            .get_specials_tuple_slice()
+            .get_specials_tuples()
             .map(|(plural_category, (metadata, t))| VarTuple {
                 sized: PluralCategoryAndMetadata {
                     plural_category,
