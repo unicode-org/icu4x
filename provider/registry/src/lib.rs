@@ -222,7 +222,7 @@ macro_rules! registry(
             icu::timezone::provider::MetazonePeriodV1Marker = "time_zone/metazone_period@1",
             icu::timezone::provider::names::Bcp47ToIanaMapV1Marker = "time_zone/bcp47_to_iana@1",
             icu::timezone::provider::names::IanaToBcp47MapV2Marker = "time_zone/iana_to_bcp47@2",
-            icu::timezone::provider::windows::WindowsZonesToIanaMapV1Marker = "time_zone/windows_zones_to_iana@1",
+            icu::timezone::provider::windows::WindowsZonesToBcp47MapV1Marker = "time_zone/windows_zones_to_bcp47@1",
             #[experimental]
             icu::datetime::provider::neo::WeekdayNamesV1Marker = "datetime/symbols/weekdays@1",
             icu::datetime::provider::neo::DayPeriodNamesV1Marker = "datetime/symbols/dayperiods@1",

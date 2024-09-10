@@ -1,41 +1,70 @@
-use std::collections::HashSet;
+use std::collections::{BTreeMap, BTreeSet, HashSet};
 
 use crate::{cldr_serde, SourceDataProvider};
-use icu::timezone::provider::windows::{
-    WindowsZonesToIanaMapV1, WindowsZonesToIanaMapV1Marker,
+use icu::timezone::{
+    provider::windows::{WindowsZonesToBcp47MapV1, WindowsZonesToBcp47MapV1Marker},
+    TimeZoneBcp47Id,
 };
 use icu_provider::prelude::*;
-use tinystr::TinyAsciiStr;
-use zerovec::ZeroMap2d;
+use zerotrie::ZeroTrieSimpleAscii;
+use zerovec::ZeroVec;
 
-impl DataProvider<WindowsZonesToIanaMapV1Marker> for SourceDataProvider {
+use super::{convert::compute_bcp47_tzids_btreemap, names::compute_bcp47_ids_hash};
+
+impl DataProvider<WindowsZonesToBcp47MapV1Marker> for SourceDataProvider {
     fn load(
         &self,
         _: DataRequest,
-    ) -> Result<DataResponse<WindowsZonesToIanaMapV1Marker>, DataError> {
+    ) -> Result<DataResponse<WindowsZonesToBcp47MapV1Marker>, DataError> {
         let resource: &cldr_serde::time_zones::windows_zones::WindowsResource = self
             .cldr()?
             .core()
             .read_and_parse("supplemental/windowsZones.json")?;
 
+        // Read and handle BCP-47 IDs the same as IanaToBcp
+        let bcp_resource: &cldr_serde::time_zones::bcp47_tzid::Resource =
+            self.cldr()?.bcp47().read_and_parse("timezone.json")?;
+
+        let iana2bcp = compute_bcp47_tzids_btreemap(&bcp_resource.keyword.u.time_zones.values);
+
+        let bcp47_set: BTreeSet<TimeZoneBcp47Id> = iana2bcp.values().copied().collect();
+        let bcp47_ids: ZeroVec<TimeZoneBcp47Id> = bcp47_set.iter().copied().collect();
+        let bcp47_ids_checksum = compute_bcp47_ids_hash(&bcp47_ids);
+
         let windows_zones = &resource.supplemental.windows_zones;
 
-        let mut map: ZeroMap2d<'_, str, TinyAsciiStr<3>, str> =
-            ZeroMap2d::default();
-        for zone in &windows_zones.mapped_zones {
-            let region =
-                TinyAsciiStr::<3>::try_from_str(&zone.map_zone.territory).map_err(|e| {
-                    DataError::custom("Could not create windows territory id")
-                        .with_display_context(&e)
-                })?;
-            let _ = map.insert(
-                zone.map_zone.windows_id.as_str(),
-                &region,
-                zone.map_zone.iana_identifier.as_str(),
-            );
-        }
+        let windows2bcp_map: BTreeMap<Vec<u8>, usize> = windows_zones
+            .mapped_zones
+            .iter()
+            .map(|zone| {
+                let primary_iana_id = zone
+                    .map_zone
+                    .iana_identifier
+                    .split_ascii_whitespace()
+                    .next()
+                    .unwrap_or(&zone.map_zone.iana_identifier);
 
-        let data_struct = WindowsZonesToIanaMapV1(map);
+                let bcp_47 = iana2bcp.get(primary_iana_id).unwrap();
+
+                (
+                    (zone.map_zone.windows_id.clone() + "/" + &zone.map_zone.territory)
+                        .as_bytes()
+                        .to_vec(),
+                    bcp47_ids.binary_search(bcp_47).unwrap(),
+                )
+            })
+            .collect();
+
+        let data_struct = WindowsZonesToBcp47MapV1 {
+            map: ZeroTrieSimpleAscii::try_from(&windows2bcp_map)
+                .map_err(|e| {
+                    DataError::custom("Could not map windowsZones.json data")
+                        .with_display_context(&e)
+                })?
+                .convert_store(),
+            bcp47_ids,
+            bcp47_ids_checksum,
+        };
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -44,7 +73,7 @@ impl DataProvider<WindowsZonesToIanaMapV1Marker> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<WindowsZonesToIanaMapV1Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<WindowsZonesToBcp47MapV1Marker> for SourceDataProvider {
     fn iter_ids_cached(
         &self,
     ) -> Result<std::collections::HashSet<DataIdentifierCow<'static>>, DataError> {
@@ -54,7 +83,7 @@ impl crate::IterableDataProviderCached<WindowsZonesToIanaMapV1Marker> for Source
 
 #[cfg(test)]
 mod tests {
-    use icu::timezone::provider::windows::WindowsZonesToIanaMapV1Marker;
+    use icu::timezone::{provider::windows::WindowsZonesToBcp47MapV1Marker, TimeZoneBcp47Id};
     use icu_provider::{DataProvider, DataRequest, DataResponse};
     use tinystr::tinystr;
 
@@ -63,94 +92,74 @@ mod tests {
     #[test]
     fn windows_to_iana_basic_test() {
         let provider = SourceDataProvider::new_testing();
-        let provider_response: DataResponse<WindowsZonesToIanaMapV1Marker> =
+        let provider_response: DataResponse<WindowsZonesToBcp47MapV1Marker> =
             provider.load(DataRequest::default()).unwrap();
         let windows_zones = provider_response.payload.get();
 
-        let result = windows_zones.0.get_2d(
-            "Eastern Standard Time",
-            &tinystr!(3, "001"),
-        );
-        assert_eq!(result, Some("America/New_York"));
+        let index = windows_zones.map.get("Eastern Standard Time/001").unwrap();
+        let result = windows_zones.bcp47_ids.get(index);
+        assert_eq!(result, Some(TimeZoneBcp47Id(tinystr!(8, "usnyc"))));
 
-        let result = windows_zones.0.get_2d(
-            "Central Standard Time",
-            &tinystr!(3, "001"),
-        );
-        assert_eq!(result, Some("America/Chicago"));
+        let index = windows_zones.map.get("Central Standard Time/001").unwrap();
+        let result = windows_zones.bcp47_ids.get(index);
+        assert_eq!(result, Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))));
 
-        let result = windows_zones.0.get_2d(
-            "Hawaiian Standard Time",
-            &tinystr!(3, "001"),
-        );
-        assert_eq!(result, Some("Pacific/Honolulu"));
+        let index = windows_zones.map.get("Hawaiian Standard Time/001").unwrap();
+        let result = windows_zones.bcp47_ids.get(index);
+        assert_eq!(result, Some(TimeZoneBcp47Id(tinystr!(8, "ushnl"))));
 
-        let result = windows_zones.0.get_2d(
-            "Central Europe Standard Time",
-            &tinystr!(3, "001"),
-        );
-        assert_eq!(result, Some("Europe/Budapest"));
+        let index = windows_zones
+            .map
+            .get("Central Europe Standard Time/001")
+            .unwrap();
+        let result = windows_zones.bcp47_ids.get(index);
+        assert_eq!(result, Some(TimeZoneBcp47Id(tinystr!(8, "hubud"))));
 
-        let result = windows_zones.0.get_2d(
-            "GMT Standard Time",
-            &tinystr!(3, "001"),
-        );
-        assert_eq!(result, Some("Europe/London"));
+        let index = windows_zones.map.get("GMT Standard Time/001").unwrap();
+        let result = windows_zones.bcp47_ids.get(index);
+        assert_eq!(result, Some(TimeZoneBcp47Id(tinystr!(8, "gblon"))));
 
-        let result = windows_zones.0.get_2d(
-            "SE Asia Standard Time",
-            &tinystr!(3, "001"),
-        );
-        assert_eq!(result, Some("Asia/Bangkok"));
+        let index = windows_zones.map.get("SE Asia Standard Time/001").unwrap();
+        let result = windows_zones.bcp47_ids.get(index);
+        assert_eq!(result, Some(TimeZoneBcp47Id(tinystr!(8, "thbkk"))));
     }
 
     #[test]
     fn windows_to_iana_with_territories() {
         let provider = SourceDataProvider::new_testing();
-        let provider_response: DataResponse<WindowsZonesToIanaMapV1Marker> =
+        let provider_response: DataResponse<WindowsZonesToBcp47MapV1Marker> =
             provider.load(DataRequest::default()).unwrap();
         let windows_zones = provider_response.payload.get();
 
-        let result = windows_zones.0.get_2d(
-            "Eastern Standard Time",
-            &tinystr!(3, "BS"),
-        );
-        assert_eq!(result, Some("America/Nassau"));
+        let index = windows_zones.map.get("Eastern Standard Time/BS").unwrap();
+        let result = windows_zones.bcp47_ids.get(index);
+        assert_eq!(result, Some(TimeZoneBcp47Id(tinystr!(8, "bsnas"))));
 
-        let result = windows_zones.0.get_2d(
-            "Central Standard Time",
-            &tinystr!(3, "MX"),
-        );
-        assert_eq!(result, Some("America/Matamoros America/Ojinaga"));
+        let index = windows_zones.map.get("Central Standard Time/MX").unwrap();
+        let result = windows_zones.bcp47_ids.get(index);
+        assert_eq!(result, Some(TimeZoneBcp47Id(tinystr!(8, "mxmam"))));
 
-        let result = windows_zones.0.get_2d(
-            "Central Europe Standard Time",
-            &tinystr!(3, "CZ"),
-        );
-        assert_eq!(result, Some("Europe/Prague"));
+        let index = windows_zones
+            .map
+            .get("Central Europe Standard Time/CZ")
+            .unwrap();
+        let result = windows_zones.bcp47_ids.get(index);
+        assert_eq!(result, Some(TimeZoneBcp47Id(tinystr!(8, "czprg"))));
 
-        let result = windows_zones.0.get_2d(
-            "GMT Standard Time",
-            &tinystr!(3, "IE"),
-        );
-        assert_eq!(result, Some("Europe/Dublin"));
+        let index = windows_zones.map.get("GMT Standard Time/IE").unwrap();
+        let result = windows_zones.bcp47_ids.get(index);
+        assert_eq!(result, Some(TimeZoneBcp47Id(tinystr!(8, "iedub"))));
 
-        let result = windows_zones.0.get_2d(
-            "SE Asia Standard Time",
-            &tinystr!(3, "AQ"),
-        );
-        assert_eq!(result, Some("Antarctica/Davis"));
+        let index = windows_zones.map.get("SE Asia Standard Time/AQ").unwrap();
+        let result = windows_zones.bcp47_ids.get(index);
+        assert_eq!(result, Some(TimeZoneBcp47Id(tinystr!(8, "aqdav"))));
 
-        let result = windows_zones.0.get_2d(
-            "SE Asia Standard Time",
-            &tinystr!(3, "KH"),
-        );
-        assert_eq!(result, Some("Asia/Phnom_Penh"));
+        let index = windows_zones.map.get("SE Asia Standard Time/KH").unwrap();
+        let result = windows_zones.bcp47_ids.get(index);
+        assert_eq!(result, Some(TimeZoneBcp47Id(tinystr!(8, "khpnh"))));
 
-        let result = windows_zones.0.get_2d(
-           "SE Asia Standard Time",
-            &tinystr!(3, "VN"),
-        );
-        assert_eq!(result, Some("Asia/Saigon"));
+        let index = windows_zones.map.get("SE Asia Standard Time/VN").unwrap();
+        let result = windows_zones.bcp47_ids.get(index);
+        assert_eq!(result, Some(TimeZoneBcp47Id(tinystr!(8, "vnsgn"))));
     }
 }
