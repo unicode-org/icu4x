@@ -544,16 +544,18 @@ struct PluralCategoryAndMetadataUnpacked {
 #[repr(transparent)]
 struct PluralCategoryAndMetadataPackedULE(
     /// Representation: `ppppmmmm`
-    /// - `pppp` = [`PluralElementsKeysV1`]
-    /// - `mmmm` = [`FourBitMetadata`]
+    /// - `pppp` are a valid [`PluralElementsKeysV1`]
+    /// - `mmmm` are a valid [`FourBitMetadata`]
     ///
-    /// The valid values are determined by the respective types.
+    /// The valid values are determined by their respective types.
     u8,
 );
 
 impl From<PluralCategoryAndMetadata> for PluralCategoryAndMetadataPackedULE {
     fn from(value: PluralCategoryAndMetadata) -> Self {
-        Self(((value.plural_category as u8) << 4) | value.metadata.get())
+        let byte = ((value.plural_category as u8) << 4) | value.metadata.get();
+        debug_assert!(PluralCategoryAndMetadata::try_from_unpacked(Self::unpack_byte(byte)).is_some());
+        Self(byte)
     }
 }
 
@@ -592,7 +594,7 @@ impl PluralCategoryAndMetadataPackedULE {
 
     fn get(self) -> PluralCategoryAndMetadata {
         let unpacked = Self::unpack_byte(self.0);
-        // Safety: by invariant
+        // Safety: by invariant, `self.0` contains valid values for PluralCategoryAndMetadata
         unsafe { PluralCategoryAndMetadata::try_from_unpacked(unpacked).unwrap_unchecked() }
     }
 }
@@ -699,10 +701,13 @@ where
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
         let unpacked_bytes =
             Self::unpack_bytes(bytes).ok_or_else(|| UleError::length::<Self>(bytes.len()))?;
+        // The high bit of lead_byte was read in unpack_bytes.
+        // Bits 0-3 are FourBitMetadata.
+        // We expect bits 4-6 to be padding.
         if unpacked_bytes.lead_byte & 0x70 != 0 {
-            // We expect bits 4-6 to be padding
             return Err(UleError::parse::<Self>());
         }
+        // Now validate the two variable-length slices.
         V::validate_byte_slice(unpacked_bytes.v_bytes)?;
         if let Some(specials_bytes) = unpacked_bytes.specials_bytes {
             PluralElementsTupleSliceVarULE::<V>::validate_byte_slice(specials_bytes)?;
