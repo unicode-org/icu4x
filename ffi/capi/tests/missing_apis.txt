@@ -14,9 +14,6 @@
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 
-icu::collator::Collator::as_borrowed#FnInStruct
-icu::collator::CollatorBorrowed#Struct
-icu::collator::CollatorBorrowed::try_new#FnInStruct
 icu::normalizer::ComposingNormalizer::as_borrowed#FnInStruct
 icu::normalizer::ComposingNormalizerBorrowed#Struct
 icu::normalizer::ComposingNormalizerBorrowed::is_normalized#FnInStruct

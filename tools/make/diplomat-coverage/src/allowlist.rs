@@ -295,9 +295,14 @@ lazy_static::lazy_static! {
         "icu_provider_adapters::fork::ForkByErrorProvider",
         "icu_provider_adapters::fork::predicates::ForkByErrorPredicate",
 
+        // Borrowed types
+        "icu::collator::CollatorBorrowed",
+        "icu::collator::CollatorBorrowed::try_new",
+
         // Not planned for 2.0 but would be nice to return 'static refs
         // with Diplomat support.
         // Borrowed <-> owned converters
+        "icu::collator::Collator::as_borrowed",
         "icu::locale::exemplar_chars::ExemplarCharacters::as_borrowed",
         "icu::locale::exemplar_chars::ExemplarCharactersBorrowed::static_to_owned",
         "icu::locale::fallback::LocaleFallbacker::as_borrowed",
