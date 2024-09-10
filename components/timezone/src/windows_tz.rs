@@ -99,11 +99,11 @@ impl<'a> WindowsTimeZoneMapperBorrowed<'a> {
     /// let windows_tz_mapper_owned = WindowsTimeZoneMapper::new();
     /// let windows_tz_mapper = mapper_owned.as_borrowed();
     ///
-    /// let bcp47_id = windows_tz_mapper.to_bcp47_id("Central Standard Time");
+    /// let bcp47_id = windows_tz_mapper.windows_tz_to_bcp47_id("Central Standard Time");
     /// assert_eq!(bcp47_id, Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))));
     /// ```
-    pub fn to_bcp47_id(&self, windows_tz: &str) -> Option<TimeZoneBcp47Id> {
-        self.to_bcp47_id_with_region(windows_tz, None)
+    pub fn windows_tz_to_bcp47_id(&self, windows_tz: &str) -> Option<TimeZoneBcp47Id> {
+        self.windows_tz_to_bcp47_id_with_region(windows_tz, None)
     }
 
     /// Returns the IANA identifier(s) for a provided windows zone bytes and an
@@ -123,22 +123,22 @@ impl<'a> WindowsTimeZoneMapperBorrowed<'a> {
     /// let win_tz_mapper = mapper_owned.as_borrowed();
     ///
     /// let region = None;
-    /// let bcp47_id = win_tz_mapper.to_bcp47_id_with_region("Central Standard Time", region);
+    /// let bcp47_id = win_tz_mapper.windows_tz_to_bcp47_id_with_region("Central Standard Time", region);
     /// assert_eq!(bcp47_id, Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))));
     ///  
     /// let region = Some(Region::try_from_str("US").unwrap());
-    /// let bcp47_id = win_tz_mapper.to_bcp47_id_with_region("Central Standard Time", region);
+    /// let bcp47_id = win_tz_mapper.windows_tz_to_bcp47_id_with_region("Central Standard Time", region);
     /// assert_eq!(bcp47_id, Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))));
     ///  
     /// let region = Some(Region::try_from_str("CA").unwrap());
-    /// let bcp47_id = win_tz_mapper.to_bcp47_id_with_region("Central Standard Time", region);
+    /// let bcp47_id = win_tz_mapper.windows_tz_to_bcp47_id_with_region("Central Standard Time", region);
     /// assert_eq!(bcp47_id, Some(TimeZoneBcp47Id(tinystr!(8, "cawnp"))));
     ///   
     /// let region = Some(Region::try_from_str("ZZ").unwrap());
-    /// let bcp47_id = win_tz_mapper.to_bcp47_id_with_region("Central Standard Time", region);
+    /// let bcp47_id = win_tz_mapper.windows_tz_to_bcp47_id_with_region("Central Standard Time", region);
     /// assert_eq!(bcp47_id, Some(TimeZoneBcp47Id(tinystr!(8, "cst6cdt"))));
     /// ```
-    pub fn to_bcp47_id_with_region(
+    pub fn windows_tz_to_bcp47_id_with_region(
         &self,
         windows_tz: &str,
         region: Option<Region>,
@@ -184,13 +184,13 @@ mod tests {
         let win_map = WindowsTimeZoneMapper::new();
         let win_map_borrowed = win_map.as_borrowed();
 
-        let result = win_map_borrowed.to_bcp47_id("Central Standard Time");
+        let result = win_map_borrowed.windows_tz_to_bcp47_id("Central Standard Time");
         assert_eq!(result, Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))));
 
-        let result = win_map_borrowed.to_bcp47_id("Eastern Standard Time");
+        let result = win_map_borrowed.windows_tz_to_bcp47_id("Eastern Standard Time");
         assert_eq!(result, Some(TimeZoneBcp47Id(tinystr!(8, "usnyc"))));
 
-        let result = win_map_borrowed.to_bcp47_id("GMT Standard Time");
+        let result = win_map_borrowed.windows_tz_to_bcp47_id("GMT Standard Time");
         assert_eq!(result, Some(TimeZoneBcp47Id(tinystr!(8, "gblon"))));
     }
 }
