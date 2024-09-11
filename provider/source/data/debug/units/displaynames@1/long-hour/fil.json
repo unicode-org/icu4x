@@ -1,13 +1,14 @@
 {
   "patterns": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\u0001 oras"
-        ]
+      "one": [
+        0,
+        "\u0001 oras"
       ],
-      "other": "\u0001 na oras"
+      "other": [
+        0,
+        "\u0001 na oras"
+      ]
     }
   }
 }

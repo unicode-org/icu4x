@@ -1,13 +1,14 @@
 {
   "patterns": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\u0001 meter"
-        ]
+      "one": [
+        0,
+        "\u0001 meter"
       ],
-      "other": "\u0001 meters"
+      "other": [
+        0,
+        "\u0001 meters"
+      ]
     }
   }
 }

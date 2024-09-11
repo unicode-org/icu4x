@@ -6,14 +6,18 @@
   },
   "past": {
     "strings": {
-      "specials": [],
-      "other": "\u0005pre  god."
+      "other": [
+        0,
+        "\u0005pre  god."
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [],
-      "other": "\u0004za  god."
+      "other": [
+        0,
+        "\u0004za  god."
+      ]
     }
   }
 }

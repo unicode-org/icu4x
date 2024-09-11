@@ -1,13 +1,14 @@
 {
   "patterns": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\u0001 kilogramo"
-        ]
+      "one": [
+        0,
+        "\u0001 kilogramo"
       ],
-      "other": "\u0001 kilogramos"
+      "other": [
+        0,
+        "\u0001 kilogramos"
+      ]
     }
   }
 }

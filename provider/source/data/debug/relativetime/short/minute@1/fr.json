@@ -4,14 +4,18 @@
   },
   "past": {
     "strings": {
-      "specials": [],
-      "other": "\bil y a  min"
+      "other": [
+        0,
+        "\bil y a  min"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [],
-      "other": "\u0006dans  min"
+      "other": [
+        0,
+        "\u0006dans  min"
+      ]
     }
   }
 }

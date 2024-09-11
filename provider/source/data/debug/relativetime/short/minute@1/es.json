@@ -4,14 +4,18 @@
   },
   "past": {
     "strings": {
-      "specials": [],
-      "other": "\u0006hace  min"
+      "other": [
+        0,
+        "\u0006hace  min"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [],
-      "other": "\u000bdentro de  min"
+      "other": [
+        0,
+        "\u000bdentro de  min"
+      ]
     }
   }
 }

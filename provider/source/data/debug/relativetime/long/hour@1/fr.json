@@ -4,24 +4,26 @@
   },
   "past": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\bil y a  heure"
-        ]
+      "one": [
+        0,
+        "\bil y a  heure"
       ],
-      "other": "\bil y a  heures"
+      "other": [
+        0,
+        "\bil y a  heures"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\u0006dans  heure"
-        ]
+      "one": [
+        0,
+        "\u0006dans  heure"
       ],
-      "other": "\u0006dans  heures"
+      "other": [
+        0,
+        "\u0006dans  heures"
+      ]
     }
   }
 }

@@ -8,14 +8,18 @@
   },
   "past": {
     "strings": {
-      "specials": [],
-      "other": "\u0001 দিন আগে"
+      "other": [
+        0,
+        "\u0001 দিন আগে"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [],
-      "other": "\u0001 দিনের মধ্যে"
+      "other": [
+        0,
+        "\u0001 দিনের মধ্যে"
+      ]
     }
   }
 }

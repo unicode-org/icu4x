@@ -6,24 +6,26 @@
   },
   "past": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\bil y a  semaine"
-        ]
+      "one": [
+        0,
+        "\bil y a  semaine"
       ],
-      "other": "\bil y a  semaines"
+      "other": [
+        0,
+        "\bil y a  semaines"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\u0006dans  semaine"
-        ]
+      "one": [
+        0,
+        "\u0006dans  semaine"
       ],
-      "other": "\u0006dans  semaines"
+      "other": [
+        0,
+        "\u0006dans  semaines"
+      ]
     }
   }
 }

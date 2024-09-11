@@ -8,14 +8,18 @@
   },
   "past": {
     "strings": {
-      "specials": [],
-      "other": "\u0001日前"
+      "other": [
+        0,
+        "\u0001日前"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [],
-      "other": "\u0001日後"
+      "other": [
+        0,
+        "\u0001日後"
+      ]
     }
   }
 }

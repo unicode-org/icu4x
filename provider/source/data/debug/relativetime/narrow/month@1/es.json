@@ -6,14 +6,18 @@
   },
   "past": {
     "strings": {
-      "specials": [],
-      "other": "\u0006hace  m"
+      "other": [
+        0,
+        "\u0006hace  m"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [],
-      "other": "\u000bdentro de  m"
+      "other": [
+        0,
+        "\u000bdentro de  m"
+      ]
     }
   }
 }

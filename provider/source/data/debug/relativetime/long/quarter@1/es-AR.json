@@ -6,24 +6,26 @@
   },
   "past": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\u0006hace  trimestre"
-        ]
+      "one": [
+        0,
+        "\u0006hace  trimestre"
       ],
-      "other": "\u0006hace  trimestres"
+      "other": [
+        0,
+        "\u0006hace  trimestres"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\u000bdentro de  trimestre"
-        ]
+      "one": [
+        0,
+        "\u000bdentro de  trimestre"
       ],
-      "other": "\u000bdentro de  trimestres"
+      "other": [
+        0,
+        "\u000bdentro de  trimestres"
+      ]
     }
   }
 }
