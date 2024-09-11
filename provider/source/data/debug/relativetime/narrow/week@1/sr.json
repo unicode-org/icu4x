@@ -5,19 +5,35 @@
     "1": "следеће н."
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\bпре  н."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " н."
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0006за  н."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " н."
+        }
       ]
-    }
+    ]
   }
 }

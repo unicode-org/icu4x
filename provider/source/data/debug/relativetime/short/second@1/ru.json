@@ -3,19 +3,32 @@
     "0": "сейчас"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 сек. назад"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " сек. назад"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\fчерез  сек."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " сек."
+        }
       ]
-    }
+    ]
   }
 }

@@ -3,35 +3,91 @@
     "0": "сада"
   },
   "past": {
-    "strings": {
-      "one": [
-        0,
-        "\bпре  секунде"
-      ],
-      "few": [
-        0,
-        "\bпре  секунде"
-      ],
-      "other": [
-        0,
-        "\bпре  секунди"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " секунде"
+        }
       ]
-    }
+    ],
+    "few": [
+      0,
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " секунде"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " секунди"
+        }
+      ]
+    ]
   },
   "future": {
-    "strings": {
-      "one": [
-        0,
-        "\u0006за  секунду"
-      ],
-      "few": [
-        0,
-        "\u0006за  секунде"
-      ],
-      "other": [
-        0,
-        "\u0006за  секунди"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " секунду"
+        }
       ]
-    }
+    ],
+    "few": [
+      0,
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " секунде"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " секунди"
+        }
+      ]
+    ]
   }
 }

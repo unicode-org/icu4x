@@ -3,27 +3,63 @@
     "0": "ahora"
   },
   "past": {
-    "strings": {
-      "one": [
-        0,
-        "\u0006hace  segundo"
-      ],
-      "other": [
-        0,
-        "\u0006hace  segundos"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "hace "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " segundo"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "hace "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " segundos"
+        }
+      ]
+    ]
   },
   "future": {
-    "strings": {
-      "one": [
-        0,
-        "\u000bdentro de  segundo"
-      ],
-      "other": [
-        0,
-        "\u000bdentro de  segundos"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "dentro de "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " segundo"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "dentro de "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " segundos"
+        }
+      ]
+    ]
   }
 }

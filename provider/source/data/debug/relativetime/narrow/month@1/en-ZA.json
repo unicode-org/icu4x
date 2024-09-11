@@ -5,19 +5,32 @@
     "1": "next mo"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 mo ago"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " mo ago"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0004in  mo"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " mo"
+        }
       ]
-    }
+    ]
   }
 }

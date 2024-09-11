@@ -5,19 +5,32 @@
     "1": "next qtr."
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 qtr ago"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " qtr ago"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0004in  qtr"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " qtr"
+        }
       ]
-    }
+    ]
   }
 }

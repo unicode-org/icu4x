@@ -3,19 +3,32 @@
     "0": "ngayon"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 seg. ang nakalipas"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " seg. ang nakalipas"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0004sa  seg."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "sa "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " seg."
+        }
       ]
-    }
+    ]
   }
 }

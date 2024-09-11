@@ -5,19 +5,35 @@
     "1": "le mois prochain"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\bil y a  m."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "il y a "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " m."
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0006dans  m."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "dans "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " m."
+        }
       ]
-    }
+    ]
   }
 }

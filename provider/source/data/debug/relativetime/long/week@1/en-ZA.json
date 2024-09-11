@@ -5,27 +5,57 @@
     "1": "next week"
   },
   "past": {
-    "strings": {
-      "one": [
-        0,
-        "\u0001 week ago"
-      ],
-      "other": [
-        0,
-        "\u0001 weeks ago"
+    "one": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " week ago"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " weeks ago"
+        }
+      ]
+    ]
   },
   "future": {
-    "strings": {
-      "one": [
-        0,
-        "\u0004in  week"
-      ],
-      "other": [
-        0,
-        "\u0004in  weeks"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " week"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " weeks"
+        }
+      ]
+    ]
   }
 }

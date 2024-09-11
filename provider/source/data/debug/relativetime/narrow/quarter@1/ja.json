@@ -5,19 +5,29 @@
     "1": "翌四半期"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001四半期前"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": "四半期前"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001四半期後"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": "四半期後"
+        }
       ]
-    }
+    ]
   }
 }

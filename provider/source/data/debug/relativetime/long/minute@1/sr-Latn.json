@@ -3,23 +3,49 @@
     "0": "ovog minuta"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0005pre  minuta"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " minuta"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "one": [
-        0,
-        "\u0004za  minut"
-      ],
-      "other": [
-        0,
-        "\u0004za  minuta"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " minut"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " minuta"
+        }
+      ]
+    ]
   }
 }

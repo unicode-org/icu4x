@@ -5,27 +5,63 @@
     "1": "la próxima semana"
   },
   "past": {
-    "strings": {
-      "one": [
-        0,
-        "\u0006hace  semana"
-      ],
-      "other": [
-        0,
-        "\u0006hace  semanas"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "hace "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " semana"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "hace "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " semanas"
+        }
+      ]
+    ]
   },
   "future": {
-    "strings": {
-      "one": [
-        0,
-        "\u000bdentro de  semana"
-      ],
-      "other": [
-        0,
-        "\u000bdentro de  semanas"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "dentro de "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " semana"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "dentro de "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " semanas"
+        }
+      ]
+    ]
   }
 }

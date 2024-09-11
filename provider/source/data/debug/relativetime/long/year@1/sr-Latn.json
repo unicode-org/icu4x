@@ -5,35 +5,91 @@
     "1": "sledeće godine"
   },
   "past": {
-    "strings": {
-      "one": [
-        0,
-        "\u0005pre  godine"
-      ],
-      "few": [
-        0,
-        "\u0005pre  godine"
-      ],
-      "other": [
-        0,
-        "\u0005pre  godina"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " godine"
+        }
       ]
-    }
+    ],
+    "few": [
+      0,
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " godine"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " godina"
+        }
+      ]
+    ]
   },
   "future": {
-    "strings": {
-      "one": [
-        0,
-        "\u0004za  godinu"
-      ],
-      "few": [
-        0,
-        "\u0004za  godine"
-      ],
-      "other": [
-        0,
-        "\u0004za  godina"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " godinu"
+        }
       ]
-    }
+    ],
+    "few": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " godine"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " godina"
+        }
+      ]
+    ]
   }
 }

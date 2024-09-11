@@ -7,19 +7,29 @@
     "2": "明後日"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001日前"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": "日前"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001日後"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": "日後"
+        }
       ]
-    }
+    ]
   }
 }
