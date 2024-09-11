@@ -43,33 +43,35 @@ macro_rules! handle_literal {
 /// Options passed to the constructor of [`Parser`].
 ///
 /// ✨ *Enabled with the `alloc` Cargo feature.*
-#[derive(Debug)]
+#[derive(Debug, Default)]
 #[non_exhaustive]
 pub struct ParserOptions {
-    /// Controls whether ASCII letters can appear in the raw
-    /// pattern.
-    ///
-    /// If set to `true`, ASCII letters can be used directly in the pattern,
-    /// like "{0} days".
-    ///
-    /// If set to `false`, ASCII letters can only appear in quoted literals,
-    /// like "{0} 'days'".
-    ///
-    /// Default is `true`.
-    pub allow_raw_letters: bool,
-
-    /// Controls whether quotes are interpreted as quotes, or as quoting ASCII letters.
-    pub treat_quotes_as_quotes: bool,
+    /// Controls how quotes (`'`) are interpreted.
+    pub quote_mode: QuoteMode,
 }
 
-impl Default for ParserOptions {
-    fn default() -> Self {
-        Self {
-            allow_raw_letters: true,
-            treat_quotes_as_quotes: true,
-        }
+/// Controls how quotes (`'`) are interpreted.
+#[derive(Debug, Default, PartialEq)]
+pub enum QuoteMode {
+    /// Quotes are interpreted as literals, i.e. `{0} o'clock` will interpolate to `5 o'clock`.
+    #[default]
+    QuotesAreLiterals,
+    /// Quotes can be used to quote literals, i.e. both `{0} World` and `{0} 'World'` will interpolate to `Hello World`.
+    /// 
+    /// A double quote can be used to create a quote literal, i.e. `{0} o''clock`.
+    QuotingSupported,
+    /// Quotes are required to quote literals, i.e. `{0} 'World'` will interpolate to `Hello World`, while `{0} World` is an error.
+    /// 
+    /// A double quote can be used to create a quote literal, i.e. `{0} o''clock`.
+    QuotingRequired,
+}
+
+impl From<QuoteMode> for ParserOptions {
+    fn from(quote_mode: QuoteMode) -> Self {
+        Self { quote_mode }
     }
 }
+
 
 /// Placeholder pattern parser.
 ///
@@ -184,13 +186,11 @@ impl Default for ParserOptions {
 ///
 /// ### Examples
 /// ```
-/// use icu_pattern::{ParsedPatternItem, Parser, ParserOptions};
+/// use icu_pattern::{ParsedPatternItem, Parser, QuoteMode};
 ///
 /// let input = "{0} 'and' {1}";
 ///
-/// let mut options = ParserOptions::default();
-/// options.treat_quotes_as_quotes = false;
-/// let mut parser = Parser::new(input, options);
+/// let mut parser = Parser::new(input, QuoteMode::QuotingSupported.into());
 ///
 /// let mut result = vec![];
 ///
@@ -261,8 +261,7 @@ pub struct Parser<'p, P> {
     input: &'p str,
     len: usize,
 
-    allow_raw_letters: bool,
-    treat_quotes_as_quotes: bool,
+    quote_mode: QuoteMode,
 
     start_idx: usize,
     idx: usize,
@@ -287,8 +286,7 @@ impl<'p, P> Parser<'p, P> {
             input,
             len: input.len(),
 
-            allow_raw_letters: options.allow_raw_letters,
-            treat_quotes_as_quotes: options.treat_quotes_as_quotes,
+            quote_mode: options.quote_mode,
 
             start_idx: 0,
             idx: 0,
@@ -345,7 +343,7 @@ impl<'p, P> Parser<'p, P> {
                         .map(|ret| Some(ParsedPatternItem::Placeholder(ret)))
                         .map_err(ParserError::InvalidPlaceholder);
                 }
-                ParserState::QuotedLiteral if *b == b'\'' && !self.treat_quotes_as_quotes => {
+                ParserState::QuotedLiteral if *b == b'\'' && self.quote_mode != QuoteMode::QuotesAreLiterals => {
                     if self.input.as_bytes().get(self.idx + 1) == Some(&b'\'') {
                         handle_literal!(self, true, ParserState::Apostrophe { quoted: true })
                     } else {
@@ -355,14 +353,14 @@ impl<'p, P> Parser<'p, P> {
                 ParserState::Default if *b == b'{' => {
                     handle_literal!(self, false, ParserState::Placeholder)
                 }
-                ParserState::Default if *b == b'\'' && !self.treat_quotes_as_quotes => {
+                ParserState::Default if *b == b'\'' && self.quote_mode != QuoteMode::QuotesAreLiterals => {
                     if self.input.as_bytes().get(self.idx + 1) == Some(&b'\'') {
                         handle_literal!(self, false, ParserState::Apostrophe { quoted: false })
                     } else {
                         handle_literal!(self, false, ParserState::QuotedLiteral)
                     }
                 }
-                ParserState::Default if !self.allow_raw_letters && b.is_ascii_alphabetic() => {
+                ParserState::Default if self.quote_mode == QuoteMode::QuotingRequired && b.is_ascii_alphabetic() => {
                     return Err(ParserError::IllegalCharacter(*b as char));
                 }
                 ParserState::Apostrophe { quoted } => {
@@ -562,10 +560,7 @@ mod tests {
         for (input, expected) in samples {
             let parser = Parser::new(
                 input,
-                ParserOptions {
-                    allow_raw_letters: true,
-                    treat_quotes_as_quotes: false,
-                },
+                QuoteMode::QuotingSupported.into(),
             );
             let result = parser
                 .try_collect_into_vec()
@@ -600,10 +595,7 @@ mod tests {
         for (input, error) in broken {
             let parser = Parser::<usize>::new(
                 input,
-                ParserOptions {
-                    allow_raw_letters: false,
-                    treat_quotes_as_quotes: false,
-                },
+                QuoteMode::QuotingRequired.into(),
             );
             let result = parser.try_collect_into_vec();
             if let Some(error) = error {
