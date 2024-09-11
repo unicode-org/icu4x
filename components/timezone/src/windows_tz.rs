@@ -33,6 +33,7 @@ use crate::{
 /// As such, a [`Region`] may be provided to further specify a desired territory/region when
 /// querying a BCP-47 identifier. If no region is provided or the specificity is not required,
 /// then the territory will default to the M49 World Code, 001.
+#[allow(dead_code)]
 #[derive(Debug)]
 pub struct WindowsTimeZoneMapperOwned {
     data: DataPayload<WindowsZonesToBcp47MapV1Marker>,
@@ -137,10 +138,10 @@ impl<'a> WindowsTimeZoneMapper<'a> {
     }
 
     /// Returns the IANA identifier(s) for a provided windows zone bytes and an
-    /// optional geo_name bytes representing a [`WindowsRegion`]. If not provided,
-    /// geo_name will be set to the default of `WindowsRegion`.
+    /// optional geo_name bytes representing a [`Region`]. If not provided,
+    /// geo_name will be set to the default of "001", the M49 world code.
     ///
-    /// If a `WindowsRegion` is provided, then the returned is not guaranteed to
+    /// If a `Region` is provided, then the returned is not guaranteed to
     /// be a single identifier. The value may be a space delimited list of IANA
     /// identifiers for the designated region.
     ///
