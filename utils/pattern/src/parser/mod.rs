@@ -52,16 +52,17 @@ pub struct ParserOptions {
 
 /// Controls how quotes (`'`) are interpreted.
 #[derive(Debug, Default, PartialEq)]
+#[non_exhaustive]
 pub enum QuoteMode {
     /// Quotes are interpreted as literals, i.e. `{0} o'clock` will interpolate to `5 o'clock`.
     #[default]
     QuotesAreLiterals,
     /// Quotes can be used to quote literals, i.e. both `{0} World` and `{0} 'World'` will interpolate to `Hello World`.
-    /// 
+    ///
     /// A double quote can be used to create a quote literal, i.e. `{0} o''clock`.
     QuotingSupported,
     /// Quotes are required to quote literals, i.e. `{0} 'World'` will interpolate to `Hello World`, while `{0} World` is an error.
-    /// 
+    ///
     /// A double quote can be used to create a quote literal, i.e. `{0} 'o''clock'`.
     QuotingRequired,
 }
@@ -71,7 +72,6 @@ impl From<QuoteMode> for ParserOptions {
         Self { quote_mode }
     }
 }
-
 
 /// Placeholder pattern parser.
 ///
@@ -343,7 +343,9 @@ impl<'p, P> Parser<'p, P> {
                         .map(|ret| Some(ParsedPatternItem::Placeholder(ret)))
                         .map_err(ParserError::InvalidPlaceholder);
                 }
-                ParserState::QuotedLiteral if *b == b'\'' && self.quote_mode != QuoteMode::QuotesAreLiterals => {
+                ParserState::QuotedLiteral
+                    if *b == b'\'' && self.quote_mode != QuoteMode::QuotesAreLiterals =>
+                {
                     if self.input.as_bytes().get(self.idx + 1) == Some(&b'\'') {
                         handle_literal!(self, true, ParserState::Apostrophe { quoted: true })
                     } else {
@@ -353,14 +355,18 @@ impl<'p, P> Parser<'p, P> {
                 ParserState::Default if *b == b'{' => {
                     handle_literal!(self, false, ParserState::Placeholder)
                 }
-                ParserState::Default if *b == b'\'' && self.quote_mode != QuoteMode::QuotesAreLiterals => {
+                ParserState::Default
+                    if *b == b'\'' && self.quote_mode != QuoteMode::QuotesAreLiterals =>
+                {
                     if self.input.as_bytes().get(self.idx + 1) == Some(&b'\'') {
                         handle_literal!(self, false, ParserState::Apostrophe { quoted: false })
                     } else {
                         handle_literal!(self, false, ParserState::QuotedLiteral)
                     }
                 }
-                ParserState::Default if self.quote_mode == QuoteMode::QuotingRequired && b.is_ascii_alphabetic() => {
+                ParserState::Default
+                    if self.quote_mode == QuoteMode::QuotingRequired && b.is_ascii_alphabetic() =>
+                {
                     return Err(ParserError::IllegalCharacter(*b as char));
                 }
                 ParserState::Apostrophe { quoted } => {
@@ -558,10 +564,7 @@ mod tests {
         ];
 
         for (input, expected) in samples {
-            let parser = Parser::new(
-                input,
-                QuoteMode::QuotingSupported.into(),
-            );
+            let parser = Parser::new(input, QuoteMode::QuotingSupported.into());
             let result = parser
                 .try_collect_into_vec()
                 .expect("Failed to parse a pattern");
@@ -593,10 +596,7 @@ mod tests {
         ];
 
         for (input, error) in broken {
-            let parser = Parser::<usize>::new(
-                input,
-                QuoteMode::QuotingRequired.into(),
-            );
+            let parser = Parser::<usize>::new(input, QuoteMode::QuotingRequired.into());
             let result = parser.try_collect_into_vec();
             if let Some(error) = error {
                 assert_eq!(result.expect_err("Should have failed."), error,);
