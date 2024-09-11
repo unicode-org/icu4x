@@ -94,6 +94,7 @@ pub struct WindowsTimeZoneMapper<'a> {
     data: &'a WindowsZonesToBcp47MapV1<'a>,
 }
 
+#[cfg(feature = "compiled_data")]
 impl<'a> Default for WindowsTimeZoneMapper<'a> {
     fn default() -> Self {
         Self::new()
