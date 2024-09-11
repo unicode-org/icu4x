@@ -188,7 +188,7 @@ impl Calendar for Chinese {
     // Construct a date from era/month codes and fields
     fn date_from_codes(
         &self,
-        era: types::Era,
+        era: Option<types::Era>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
@@ -203,8 +203,10 @@ impl Calendar for Chinese {
             return Err(DateError::UnknownMonthCode(month_code));
         };
 
-        if era.0 != tinystr!(16, "chinese") {
-            return Err(DateError::UnknownEra(era));
+        if let Some(era) = era {
+            if era.0 != tinystr!(16, "chinese") {
+                return Err(DateError::UnknownEra(era));
+            }
         }
 
         Inner::new_from_ordinals(year, month, day, year_info)

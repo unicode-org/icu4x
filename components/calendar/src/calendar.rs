@@ -21,9 +21,11 @@ pub trait Calendar {
     /// The internal type used to represent dates
     type DateInner: PartialEq + Eq + Clone + fmt::Debug;
     /// Construct a date from era/month codes and fields
+    ///
+    /// The year is extended_year if no era is provided
     fn date_from_codes(
         &self,
-        era: types::Era,
+        era: Option<types::Era>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,

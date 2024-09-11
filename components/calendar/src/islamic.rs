@@ -434,16 +434,16 @@ impl Calendar for IslamicObservational {
     type DateInner = IslamicDateInner;
     fn date_from_codes(
         &self,
-        era: types::Era,
+        era: Option<types::Era>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        let year = if era.0 == tinystr!(16, "islamic") || era.0 == tinystr!(16, "ah") {
-            year
-        } else {
-            return Err(DateError::UnknownEra(era));
-        };
+        if let Some(era) = era {
+            if era.0 != tinystr!(16, "islamic") && era.0 != tinystr!(16, "ah") {
+                return Err(DateError::UnknownEra(era));
+            }
+        }
         let month = if let Some((ordinal, false)) = month_code.parsed() {
             ordinal
         } else {
@@ -660,19 +660,19 @@ impl Calendar for IslamicUmmAlQura {
     type DateInner = IslamicUmmAlQuraDateInner;
     fn date_from_codes(
         &self,
-        era: types::Era,
+        era: Option<types::Era>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        let year = if era.0 == tinystr!(16, "islamic-umalqura")
-            || era.0 == tinystr!(16, "islamic")
-            || era.0 == tinystr!(16, "ah")
-        {
-            year
-        } else {
-            return Err(DateError::UnknownEra(era));
-        };
+        if let Some(era) = era {
+            if era.0 != tinystr!(16, "islamic-umalqura")
+                && era.0 != tinystr!(16, "islamic")
+                && era.0 != tinystr!(16, "ah")
+            {
+                return Err(DateError::UnknownEra(era));
+            }
+        }
 
         let month = if let Some((ordinal, false)) = month_code.parsed() {
             ordinal
@@ -899,21 +899,20 @@ impl Calendar for IslamicCivil {
 
     fn date_from_codes(
         &self,
-        era: types::Era,
+        era: Option<types::Era>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        let year = if era.0 == tinystr!(16, "islamic-civil")
-            || era.0 == tinystr!(16, "islamicc")
-            || era.0 == tinystr!(16, "islamic")
-            || era.0 == tinystr!(16, "ah")
-        {
-            // TODO: Check name and alias
-            year
-        } else {
-            return Err(DateError::UnknownEra(era));
-        };
+        if let Some(era) = era {
+            if era.0 != tinystr!(16, "islamic-civil")
+                && era.0 != tinystr!(16, "islamicc")
+                && era.0 != tinystr!(16, "islamic")
+                && era.0 != tinystr!(16, "ah")
+            {
+                return Err(DateError::UnknownEra(era));
+            }
+        }
 
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(IslamicCivilDateInner)
     }
@@ -1135,19 +1134,19 @@ impl Calendar for IslamicTabular {
 
     fn date_from_codes(
         &self,
-        era: types::Era,
+        era: Option<types::Era>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        let year = if era.0 == tinystr!(16, "islamic-tbla")
-            || era.0 == tinystr!(16, "islamic")
-            || era.0 == tinystr!(16, "ah")
-        {
-            year
-        } else {
-            return Err(DateError::UnknownEra(era));
-        };
+        if let Some(era) = era {
+            if era.0 != tinystr!(16, "islamic-tbla")
+                && era.0 != tinystr!(16, "islamic")
+                && era.0 != tinystr!(16, "ah")
+            {
+                return Err(DateError::UnknownEra(era));
+            }
+        }
 
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(IslamicTabularDateInner)
     }
@@ -2197,7 +2196,7 @@ mod test {
         let era = Era(tinystr!(16, "ah"));
         let year = -6823;
         let month_code = MonthCode(tinystr!(4, "M01"));
-        let dt = cal.date_from_codes(era, year, month_code, 1).unwrap();
+        let dt = cal.date_from_codes(Some(era), year, month_code, 1).unwrap();
         assert_eq!(dt.0.day, 1);
         assert_eq!(dt.0.month, 1);
         assert_eq!(dt.0.year, -6823);

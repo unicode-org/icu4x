@@ -60,33 +60,37 @@ impl Calendar for Gregorian {
     type DateInner = GregorianDateInner;
     fn date_from_codes(
         &self,
-        era: types::Era,
+        era: Option<types::Era>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        let year = if era.0 == tinystr!(16, "ce") {
-            if year <= 0 {
-                return Err(DateError::Range {
-                    field: "year",
-                    value: year,
-                    min: 1,
-                    max: i32::MAX,
-                });
+        let year = if let Some(era) = era {
+            if era.0 == tinystr!(16, "ce") {
+                if year <= 0 {
+                    return Err(DateError::Range {
+                        field: "year",
+                        value: year,
+                        min: 1,
+                        max: i32::MAX,
+                    });
+                }
+                year
+            } else if era.0 == tinystr!(16, "bce") {
+                if year <= 0 {
+                    return Err(DateError::Range {
+                        field: "year",
+                        value: year,
+                        min: 1,
+                        max: i32::MAX,
+                    });
+                }
+                1 - year
+            } else {
+                return Err(DateError::UnknownEra(era));
             }
-            year
-        } else if era.0 == tinystr!(16, "bce") {
-            if year <= 0 {
-                return Err(DateError::Range {
-                    field: "year",
-                    value: year,
-                    min: 1,
-                    max: i32::MAX,
-                });
-            }
-            1 - year
         } else {
-            return Err(DateError::UnknownEra(era));
+            year
         };
 
         ArithmeticDate::new_from_codes(self, year, month_code, day)
@@ -275,70 +279,70 @@ mod test {
                 month: 7,
                 day: 11,
                 next_era_year: i32::MAX,
-                era: "ce",
+                era: "gregory",
             },
             MaxCase {
                 year: i32::MAX,
                 month: 7,
                 day: 12,
                 next_era_year: i32::MAX,
-                era: "ce",
+                era: "gregory",
             },
             MaxCase {
                 year: i32::MAX,
                 month: 8,
                 day: 10,
                 next_era_year: i32::MAX,
-                era: "ce",
+                era: "gregory",
             },
             MaxCase {
                 year: i32::MAX - 1,
                 month: 7,
                 day: 11,
                 next_era_year: i32::MAX,
-                era: "ce",
+                era: "gregory",
             },
             MaxCase {
                 year: -2,
                 month: 1,
                 day: 1,
                 next_era_year: 2,
-                era: "bce",
+                era: "gregory-inverse",
             },
             MaxCase {
                 year: -1,
                 month: 1,
                 day: 1,
                 next_era_year: 1,
-                era: "bce",
+                era: "gregory-inverse",
             },
             MaxCase {
                 year: 0,
                 month: 1,
                 day: 1,
                 next_era_year: 1,
-                era: "ce",
+                era: "gregory",
             },
             MaxCase {
                 year: 1,
                 month: 1,
                 day: 1,
                 next_era_year: 2,
-                era: "ce",
+                era: "gregory",
             },
             MaxCase {
                 year: 2000,
                 month: 6,
                 day: 15,
                 next_era_year: 2001,
-                era: "ce",
+                era: "gregory",
             },
             MaxCase {
                 year: 2020,
                 month: 12,
                 day: 31,
                 next_era_year: 2021,
-                era: "ce",
+                era: "gregory",
             },
         ];
 
@@ -382,7 +386,7 @@ mod test {
         let greg_date_from_fixed: Date<Gregorian> = Date::new_from_iso(iso_from_fixed, Gregorian);
         assert_eq!(greg_date_from_fixed.year().era_year_or_extended(), case.expected_year,
             "Failed year check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nGreg: {greg_date_from_fixed:?}");
-        assert_eq!(greg_date_from_fixed.year().era().unwrap(), case.expected_era,
+        assert_eq!(greg_date_from_fixed.year().temporal_era().unwrap(), case.expected_era,
             "Failed era check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nGreg: {greg_date_from_fixed:?}");
         assert_eq!(greg_date_from_fixed.month().ordinal, case.expected_month,
             "Failed month check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nGreg: {greg_date_from_fixed:?}");
@@ -411,7 +415,7 @@ mod test {
                 iso_month: 1,
                 iso_day: 1,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "ce")),
+                expected_era: Era(tinystr!(16, "gregory")),
                 expected_month: 1,
                 expected_day: 1,
             },
@@ -421,7 +425,7 @@ mod test {
                 iso_month: 6,
                 iso_day: 30,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "ce")),
+                expected_era: Era(tinystr!(16, "gregory")),
                 expected_month: 6,
                 expected_day: 30,
             },
@@ -431,7 +435,7 @@ mod test {
                 iso_month: 2,
                 iso_day: 29,
                 expected_year: 4,
-                expected_era: Era(tinystr!(16, "ce")),
+                expected_era: Era(tinystr!(16, "gregory")),
                 expected_month: 2,
                 expected_day: 29,
             },
@@ -441,7 +445,7 @@ mod test {
                 iso_month: 9,
                 iso_day: 5,
                 expected_year: 4,
-                expected_era: Era(tinystr!(16, "ce")),
+                expected_era: Era(tinystr!(16, "gregory")),
                 expected_month: 9,
                 expected_day: 5,
             },
@@ -451,7 +455,7 @@ mod test {
                 iso_month: 3,
                 iso_day: 1,
                 expected_year: 100,
-                expected_era: Era(tinystr!(16, "ce")),
+                expected_era: Era(tinystr!(16, "gregory")),
                 expected_month: 3,
                 expected_day: 1,
             },
@@ -478,77 +482,77 @@ mod test {
                 month: 1,
                 day: 1,
                 prev_era_year: i32::MAX - 1,
-                era: "bce",
+                era: "gregory-inverse",
             },
             MinCase {
                 year: i32::MIN + 3,
                 month: 12,
                 day: 31,
                 prev_era_year: i32::MAX,
-                era: "bce",
+                era: "gregory-inverse",
             },
             MinCase {
                 year: i32::MIN + 2,
                 month: 2,
                 day: 2,
                 prev_era_year: i32::MAX,
-                era: "bce",
+                era: "gregory-inverse",
             },
             MinCase {
                 year: i32::MIN + 1,
                 month: 1,
                 day: 1,
                 prev_era_year: i32::MAX,
-                era: "bce",
+                era: "gregory-inverse",
             },
             MinCase {
                 year: i32::MIN,
                 month: 1,
                 day: 1,
                 prev_era_year: i32::MAX,
-                era: "bce",
+                era: "gregory-inverse",
             },
             MinCase {
                 year: 3,
                 month: 1,
                 day: 1,
                 prev_era_year: 2,
-                era: "ce",
+                era: "gregory",
             },
             MinCase {
                 year: 2,
                 month: 1,
                 day: 1,
                 prev_era_year: 1,
-                era: "ce",
+                era: "gregory",
             },
             MinCase {
                 year: 1,
                 month: 1,
                 day: 1,
                 prev_era_year: 1,
-                era: "bce",
+                era: "gregory-inverse",
             },
             MinCase {
                 year: 0,
                 month: 1,
                 day: 1,
                 prev_era_year: 2,
-                era: "bce",
+                era: "gregory-inverse",
             },
             MinCase {
                 year: -2000,
                 month: 6,
                 day: 15,
                 prev_era_year: 2002,
-                era: "bce",
+                era: "gregory-inverse",
             },
             MinCase {
                 year: 2020,
                 month: 12,
                 day: 31,
                 prev_era_year: 2019,
-                era: "ce",
+                era: "gregory",
             },
         ];
 
@@ -587,7 +591,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 31,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "bce")),
+                expected_era: Era(tinystr!(16, "gregory-inverse")),
                 expected_month: 12,
                 expected_day: 31,
             },
@@ -597,7 +601,7 @@ mod test {
                 iso_month: 1,
                 iso_day: 1,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "bce")),
+                expected_era: Era(tinystr!(16, "gregory-inverse")),
                 expected_month: 1,
                 expected_day: 1,
             },
@@ -607,7 +611,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 31,
                 expected_year: 2,
-                expected_era: Era(tinystr!(16, "bce")),
+                expected_era: Era(tinystr!(16, "gregory-inverse")),
                 expected_month: 12,
                 expected_day: 31,
             },
@@ -617,7 +621,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 31,
                 expected_year: 5,
-                expected_era: Era(tinystr!(16, "bce")),
+                expected_era: Era(tinystr!(16, "gregory-inverse")),
                 expected_month: 12,
                 expected_day: 31,
             },
@@ -627,7 +631,7 @@ mod test {
                 iso_month: 1,
                 iso_day: 1,
                 expected_year: 5,
-                expected_era: Era(tinystr!(16, "bce")),
+                expected_era: Era(tinystr!(16, "gregory-inverse")),
                 expected_month: 1,
                 expected_day: 1,
             },

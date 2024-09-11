@@ -111,33 +111,37 @@ impl Calendar for Coptic {
     type DateInner = CopticDateInner;
     fn date_from_codes(
         &self,
-        era: types::Era,
+        era: Option<types::Era>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        let year = if era.0 == tinystr!(16, "ad") {
-            if year <= 0 {
-                return Err(DateError::Range {
-                    field: "year",
-                    value: year,
-                    min: 1,
-                    max: i32::MAX,
-                });
+        let year = if let Some(era) = era {
+            if era.0 == tinystr!(16, "ad") || era.0 == tinystr!(16, "coptic") {
+                if year <= 0 {
+                    return Err(DateError::Range {
+                        field: "year",
+                        value: year,
+                        min: 1,
+                        max: i32::MAX,
+                    });
+                }
+                year
+            } else if era.0 == tinystr!(16, "bd") || era.0 == tinystr!(16, "coptic-inverse") {
+                if year <= 0 {
+                    return Err(DateError::Range {
+                        field: "year",
+                        value: year,
+                        min: 1,
+                        max: i32::MAX,
+                    });
+                }
+                1 - year
+            } else {
+                return Err(DateError::UnknownEra(era));
             }
-            year
-        } else if era.0 == tinystr!(16, "bd") {
-            if year <= 0 {
-                return Err(DateError::Range {
-                    field: "year",
-                    value: year,
-                    min: 1,
-                    max: i32::MAX,
-                });
-            }
-            1 - year
         } else {
-            return Err(DateError::UnknownEra(era));
+            year
         };
 
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(CopticDateInner)

@@ -110,13 +110,15 @@ impl Calendar for Indian {
     type DateInner = IndianDateInner;
     fn date_from_codes(
         &self,
-        era: types::Era,
+        era: Option<types::Era>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        if era.0 != tinystr!(16, "saka") && era.0 != tinystr!(16, "indian") {
-            return Err(DateError::UnknownEra(era));
+        if let Some(era) = era {
+            if era.0 != tinystr!(16, "saka") && era.0 != tinystr!(16, "indian") {
+                return Err(DateError::UnknownEra(era));
+            }
         }
 
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(IndianDateInner)

@@ -149,11 +149,12 @@ impl Japanese {
 
     fn japanese_date_from_codes(
         &self,
-        era: types::Era,
+        era: Option<types::Era>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<JapaneseDateInner, DateError> {
+        let era = era.unwrap_or(types::Era(tinystr!(16, "japanese")));
         let month = month_code.parsed();
         let month = if let Some((month, false)) = month {
             month
@@ -212,7 +213,7 @@ impl Calendar for Japanese {
 
     fn date_from_codes(
         &self,
-        era: types::Era,
+        era: Option<types::Era>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
@@ -321,7 +322,7 @@ impl Calendar for JapaneseExtended {
 
     fn date_from_codes(
         &self,
-        era: types::Era,
+        era: Option<types::Era>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
@@ -759,7 +760,7 @@ impl Japanese {
         day: u8,
     ) -> Result<JapaneseDateInner, DateError> {
         let cal = Ref(self);
-        if era.0 == tinystr!(16, "bce") {
+        if era.0 == tinystr!(16, "bce") || era.0 == tinystr!(16, "japanese-inverse") {
             if year <= 0 {
                 return Err(DateError::Range {
                     field: "year",
@@ -771,7 +772,7 @@ impl Japanese {
             return Ok(Date::try_new_iso_date(1 - year, month, day)?
                 .to_calendar(cal)
                 .inner);
-        } else if era.0 == tinystr!(16, "ce") {
+        } else if era.0 == tinystr!(16, "ce") || era.0 == tinystr!(16, "japanese") {
             if year <= 0 {
                 return Err(DateError::Range {
                     field: "year",

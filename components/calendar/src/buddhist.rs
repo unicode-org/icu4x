@@ -69,13 +69,15 @@ impl Calendar for Buddhist {
 
     fn date_from_codes(
         &self,
-        era: types::Era,
+        era: Option<types::Era>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        if era.0 != tinystr!(16, "be") {
-            return Err(DateError::UnknownEra(era));
+        if let Some(era) = era {
+            if era.0 != tinystr!(16, "be") {
+                return Err(DateError::UnknownEra(era));
+            }
         }
         let year = year - BUDDHIST_ERA_OFFSET;
 

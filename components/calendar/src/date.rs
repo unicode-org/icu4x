@@ -109,9 +109,11 @@ pub struct Date<A: AsCalendar> {
 
 impl<A: AsCalendar> Date<A> {
     /// Construct a date from from era/month codes and fields, and some calendar representation
+    ///
+    /// The year is `extended_year` if no era is provided
     #[inline]
     pub fn try_new_from_codes(
-        era: types::Era,
+        era: Option<types::Era>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,

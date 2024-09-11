@@ -103,33 +103,37 @@ impl Calendar for Julian {
     type DateInner = JulianDateInner;
     fn date_from_codes(
         &self,
-        era: types::Era,
+        era: Option<types::Era>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        let year = if era.0 == tinystr!(16, "ce") {
-            if year <= 0 {
-                return Err(DateError::Range {
-                    field: "year",
-                    value: year,
-                    min: 1,
-                    max: i32::MAX,
-                });
+        let year = if let Some(era) = era {
+            if era.0 == tinystr!(16, "ce") || era.0 == tinystr!(16, "julian") {
+                if year <= 0 {
+                    return Err(DateError::Range {
+                        field: "year",
+                        value: year,
+                        min: 1,
+                        max: i32::MAX,
+                    });
+                }
+                year
+            } else if era.0 == tinystr!(16, "bce") || era.0 == tinystr!(16, "julian-inverse") {
+                if year <= 0 {
+                    return Err(DateError::Range {
+                        field: "year",
+                        value: year,
+                        min: 1,
+                        max: i32::MAX,
+                    });
+                }
+                1 - year
+            } else {
+                return Err(DateError::UnknownEra(era));
             }
-            year
-        } else if era.0 == tinystr!(16, "bce") {
-            if year <= 0 {
-                return Err(DateError::Range {
-                    field: "year",
-                    value: year,
-                    min: 1,
-                    max: i32::MAX,
-                });
-            }
-            1 - year
         } else {
-            return Err(DateError::UnknownEra(era));
+            year
         };
 
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(JulianDateInner)

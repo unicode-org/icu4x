@@ -105,16 +105,16 @@ impl Calendar for Persian {
     type DateInner = PersianDateInner;
     fn date_from_codes(
         &self,
-        era: types::Era,
+        era: Option<types::Era>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        let year = if era.0 == tinystr!(16, "ah") || era.0 == tinystr!(16, "persian") {
-            year
-        } else {
-            return Err(DateError::UnknownEra(era));
-        };
+        if let Some(era) = era {
+            if era.0 != tinystr!(16, "ah") && era.0 != tinystr!(16, "persian") {
+                return Err(DateError::UnknownEra(era));
+            }
+        }
 
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(PersianDateInner)
     }

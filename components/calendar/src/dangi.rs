@@ -181,7 +181,7 @@ impl Calendar for Dangi {
 
     fn date_from_codes(
         &self,
-        era: crate::types::Era,
+        era: Option<crate::types::Era>,
         year: i32,
         month_code: crate::types::MonthCode,
         day: u8,
@@ -196,8 +196,10 @@ impl Calendar for Dangi {
             return Err(DateError::UnknownMonthCode(month_code));
         };
 
-        if era.0 != tinystr!(16, "dangi") {
-            return Err(DateError::UnknownEra(era));
+        if let Some(era) = era {
+            if era.0 != tinystr!(16, "dangi") {
+                return Err(DateError::UnknownEra(era));
+            }
         }
 
         Inner::new_from_ordinals(year, month, day, year_info)

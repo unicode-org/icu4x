@@ -131,37 +131,42 @@ impl Calendar for Ethiopian {
     type DateInner = EthiopianDateInner;
     fn date_from_codes(
         &self,
-        era: types::Era,
+        era: Option<types::Era>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        let year = if era.0 == tinystr!(16, "incar") || era.0 == tinystr!(16, "ethiopic") {
-            if year <= 0 {
-                return Err(DateError::Range {
-                    field: "year",
-                    value: year,
-                    min: 1,
-                    max: i32::MAX,
-                });
+        let year = if let Some(era) = era {
+            if era.0 == tinystr!(16, "incar") || era.0 == tinystr!(16, "ethiopic") {
+                if year <= 0 {
+                    return Err(DateError::Range {
+                        field: "year",
+                        value: year,
+                        min: 1,
+                        max: i32::MAX,
+                    });
+                }
+                year
+            } else if era.0 == tinystr!(16, "pre-incar")
+                || era.0 == tinystr!(16, "ethiopic-inverse")
+            {
+                if year <= 0 {
+                    return Err(DateError::Range {
+                        field: "year",
+                        value: year,
+                        min: 1,
+                        max: i32::MAX,
+                    });
+                }
+                1 - year
+            } else if era.0 == tinystr!(16, "mundi") || era.0 == tinystr!(16, "ethiopicaa") {
+                year - AMETE_ALEM_OFFSET
+            } else {
+                return Err(DateError::UnknownEra(era));
             }
-            year
-        } else if era.0 == tinystr!(16, "pre-incar") || era.0 == tinystr!(16, "ethiopic-inverse") {
-            if year <= 0 {
-                return Err(DateError::Range {
-                    field: "year",
-                    value: year,
-                    min: 1,
-                    max: i32::MAX,
-                });
-            }
-            1 - year
-        } else if era.0 == tinystr!(16, "mundi") || era.0 == tinystr!(16, "ethiopicaa") {
-            year - AMETE_ALEM_OFFSET
         } else {
-            return Err(DateError::UnknownEra(era));
+            year
         };
-
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(EthiopianDateInner)
     }
     fn date_from_iso(&self, iso: Date<Iso>) -> EthiopianDateInner {

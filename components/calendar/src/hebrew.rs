@@ -142,16 +142,16 @@ impl Calendar for Hebrew {
 
     fn date_from_codes(
         &self,
-        era: types::Era,
+        era: Option<types::Era>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        let year = if era.0 == tinystr!(16, "hebrew") || era.0 == tinystr!(16, "am") {
-            year
-        } else {
-            return Err(DateError::UnknownEra(era));
-        };
+        if let Some(era) = era {
+            if era.0 != tinystr!(16, "hebrew") && era.0 != tinystr!(16, "am") {
+                return Err(DateError::UnknownEra(era));
+            }
+        }
 
         let year_info = HebrewYearInfo::compute(year);
 
@@ -479,7 +479,7 @@ mod tests {
                 MonthCode::new_normal(m).unwrap()
             };
             let hebrew_date =
-                Date::try_new_from_codes(Era(tinystr!(16, "am")), y, month_code, d, Hebrew)
+                Date::try_new_from_codes(Some(Era(tinystr!(16, "am"))), y, month_code, d, Hebrew)
                     .expect("Date should parse");
 
             let iso_to_hebrew = iso_date.to_calendar(Hebrew);
@@ -544,7 +544,7 @@ mod tests {
         let cal = Hebrew::new();
         let era = Era(tinystr!(16, "am"));
         let month_code = MonthCode(tinystr!(4, "M01"));
-        let dt = cal.date_from_codes(era, 3760, month_code, 1).unwrap();
+        let dt = cal.date_from_codes(Some(era), 3760, month_code, 1).unwrap();
 
         // Should be Saturday per:
         // https://www.hebcal.com/converter?hd=1&hm=Tishrei&hy=3760&h2g=1

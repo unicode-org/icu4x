@@ -52,7 +52,7 @@ impl<A: AsCalendar> DateTime<A> {
     /// and some calendar representation
     #[inline]
     pub fn try_new_from_codes(
-        era: types::Era,
+        era: Option<types::Era>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,

@@ -78,33 +78,37 @@ impl Calendar for Roc {
 
     fn date_from_codes(
         &self,
-        era: crate::types::Era,
+        era: Option<crate::types::Era>,
         year: i32,
         month_code: crate::types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        let year = if era.0 == tinystr!(16, "roc") {
-            if year <= 0 {
-                return Err(DateError::Range {
-                    field: "year",
-                    value: year,
-                    min: 1,
-                    max: i32::MAX,
-                });
+        let year = if let Some(era) = era {
+            if era.0 == tinystr!(16, "roc") {
+                if year <= 0 {
+                    return Err(DateError::Range {
+                        field: "year",
+                        value: year,
+                        min: 1,
+                        max: i32::MAX,
+                    });
+                }
+                year + ROC_ERA_OFFSET
+            } else if era.0 == tinystr!(16, "roc-inverse") {
+                if year <= 0 {
+                    return Err(DateError::Range {
+                        field: "year",
+                        value: year,
+                        min: 1,
+                        max: i32::MAX,
+                    });
+                }
+                1 - year + ROC_ERA_OFFSET
+            } else {
+                return Err(DateError::UnknownEra(era));
             }
-            year + ROC_ERA_OFFSET
-        } else if era.0 == tinystr!(16, "roc-inverse") {
-            if year <= 0 {
-                return Err(DateError::Range {
-                    field: "year",
-                    value: year,
-                    min: 1,
-                    max: i32::MAX,
-                });
-            }
-            1 - year + ROC_ERA_OFFSET
         } else {
-            return Err(DateError::UnknownEra(era));
+            year
         };
 
         ArithmeticDate::new_from_codes(self, year, month_code, day)
