@@ -4,14 +4,18 @@
   },
   "past": {
     "strings": {
-      "specials": [],
-      "other": "\u0002- h"
+      "other": [
+        0,
+        "\u0002- h"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [],
-      "other": "\u0002+ h"
+      "other": [
+        0,
+        "\u0002+ h"
+      ]
     }
   }
 }

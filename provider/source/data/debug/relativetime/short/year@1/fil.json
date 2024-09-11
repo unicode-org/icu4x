@@ -6,14 +6,18 @@
   },
   "past": {
     "strings": {
-      "specials": [],
-      "other": "\u0001 taon ang nakalipas"
+      "other": [
+        0,
+        "\u0001 taon ang nakalipas"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [],
-      "other": "\u0004sa  taon"
+      "other": [
+        0,
+        "\u0004sa  taon"
+      ]
     }
   }
 }

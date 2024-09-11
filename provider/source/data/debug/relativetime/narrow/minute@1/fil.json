@@ -4,14 +4,18 @@
   },
   "past": {
     "strings": {
-      "specials": [],
-      "other": "\u0001 min. ang nakalipas"
+      "other": [
+        0,
+        "\u0001 min. ang nakalipas"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [],
-      "other": "\u0004sa  min."
+      "other": [
+        0,
+        "\u0004sa  min."
+      ]
     }
   }
 }

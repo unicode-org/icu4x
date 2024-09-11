@@ -8,14 +8,18 @@
   },
   "past": {
     "strings": {
-      "specials": [],
-      "other": "\u0006hace  d"
+      "other": [
+        0,
+        "\u0006hace  d"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [],
-      "other": "\u000bdentro de  d"
+      "other": [
+        0,
+        "\u000bdentro de  d"
+      ]
     }
   }
 }
