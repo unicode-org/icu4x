@@ -138,9 +138,11 @@ impl<'a> WindowsTimeZoneMapperBorrowed<'a> {
     /// let bcp47_id = win_tz_mapper.windows_tz_to_bcp47_id_with_region("Central Standard Time", region);
     /// assert_eq!(bcp47_id, Some(TimeZoneBcp47Id(tinystr!(8, "cawnp"))));
     ///   
+    /// // NOTE: Central Standard Time/ZZ may point to "cst6cdt" in older version, but that
+    /// // has been deprecated id has been deprecated and uschi is preferred.
     /// let region = Some(Region::try_from_str("ZZ").unwrap());
     /// let bcp47_id = win_tz_mapper.windows_tz_to_bcp47_id_with_region("Central Standard Time", region);
-    /// assert_eq!(bcp47_id, Some(TimeZoneBcp47Id(tinystr!(8, "cst6cdt"))));
+    /// assert_eq!(bcp47_id, Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))));
     /// ```
     pub fn windows_tz_to_bcp47_id_with_region(
         &self,
