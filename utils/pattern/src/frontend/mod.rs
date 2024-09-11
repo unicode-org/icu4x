@@ -8,9 +8,9 @@ mod databake;
 mod serde;
 use crate::common::*;
 use crate::Error;
-use crate::PatternOrUtf8Error;
 #[cfg(feature = "alloc")]
-use crate::{Parser, ParserOptions};
+use crate::Parser;
+use crate::PatternOrUtf8Error;
 #[cfg(feature = "alloc")]
 use alloc::{borrow::ToOwned, str::FromStr, string::String};
 use core::{
