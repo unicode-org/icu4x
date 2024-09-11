@@ -231,7 +231,7 @@ impl Collator {
         locale: &DataLocale,
         options: CollatorOptions,
     ) -> Result<CollatorBorrowed<'static>, DataError> {
-        CollatorBorrowed::try_new(locale, options)
+        Collator::try_new(locale, options)
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
