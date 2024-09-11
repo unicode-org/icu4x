@@ -40,6 +40,7 @@ atoi = { workspace = true }
 icu = { path = "../../components/icu", default-features = false }
 icu_locale_core = { path = "../../components/locale_core" }
 icu_provider_adapters = { path = "../../provider/adapters" }
+icu_normalizer_data = { workspace = true }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = { workspace = true }
