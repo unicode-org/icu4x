@@ -298,6 +298,8 @@ lazy_static::lazy_static! {
         // Not planned for 2.0 but would be nice to return 'static refs
         // with Diplomat support.
         // Borrowed <-> owned converters
+        "icu::collator::Collator::as_borrowed",
+        "icu::collator::CollatorBorrowed::static_to_owned",
         "icu::locale::exemplar_chars::ExemplarCharacters::as_borrowed",
         "icu::locale::exemplar_chars::ExemplarCharactersBorrowed::static_to_owned",
         "icu::locale::fallback::LocaleFallbacker::as_borrowed",
