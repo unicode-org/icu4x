@@ -234,7 +234,7 @@ impl DateTime<Gregorian> {
     }
 }
 
-pub(crate) fn year_as_gregorian(year: i32) -> types::YearInfo {
+fn year_as_gregorian(year: i32) -> types::YearInfo {
     if year > 0 {
         types::YearInfo::new(
             year,

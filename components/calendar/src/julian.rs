@@ -34,7 +34,6 @@
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
-use crate::gregorian::year_as_gregorian;
 use crate::iso::Iso;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, RangeError, Time};
 use calendrical_calculations::helpers::I32CastError;
@@ -183,7 +182,7 @@ impl Calendar for Julian {
     /// The calendar-specific year represented by `date`
     /// Julian has the same era scheme as Gregorian
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        year_as_gregorian(date.0.year)
+        year_as_julian(date.0.year)
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -206,9 +205,9 @@ impl Calendar for Julian {
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
-            prev_year: crate::gregorian::year_as_gregorian(prev_year).into(),
+            prev_year: year_as_julian(prev_year).into(),
             days_in_prev_year: Julian::days_in_year_direct(prev_year),
-            next_year: crate::gregorian::year_as_gregorian(next_year).into(),
+            next_year: year_as_julian(next_year).into(),
         }
     }
 
@@ -221,6 +220,27 @@ impl Calendar for Julian {
     }
 }
 
+fn year_as_julian(year: i32) -> types::YearInfo {
+    if year > 0 {
+        types::YearInfo::new(
+            year,
+            types::EraYear::new_with_temporal_and_formatting(
+                tinystr!(16, "julian"),
+                tinystr!(16, "ce"),
+                year,
+            ),
+        )
+    } else {
+        types::YearInfo::new(
+            year,
+            types::EraYear::new_with_temporal_and_formatting(
+                tinystr!(16, "julian-inverse"),
+                tinystr!(16, "bce"),
+                1_i32.saturating_sub(year),
+            ),
+        )
+    }
+}
 impl Julian {
     /// Construct a new Julian Calendar
     pub fn new() -> Self {
@@ -410,7 +430,7 @@ mod test {
                 iso_month: 1,
                 iso_day: 1,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "ce")),
+                expected_era: Era(tinystr!(16, "julian")),
                 expected_month: 1,
                 expected_day: 3,
             },
@@ -420,7 +440,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 31,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "ce")),
+                expected_era: Era(tinystr!(16, "julian")),
                 expected_month: 1,
                 expected_day: 2,
             },
@@ -430,7 +450,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 30,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "ce")),
+                expected_era: Era(tinystr!(16, "julian")),
                 expected_month: 1,
                 expected_day: 1,
             },
@@ -440,7 +460,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 29,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "bce")),
+                expected_era: Era(tinystr!(16, "julian-inverse")),
                 expected_month: 12,
                 expected_day: 31,
             },
@@ -450,7 +470,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 28,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "bce")),
+                expected_era: Era(tinystr!(16, "julian-inverse")),
                 expected_month: 12,
                 expected_day: 30,
             },
@@ -460,7 +480,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 30,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "bce")),
+                expected_era: Era(tinystr!(16, "julian-inverse")),
                 expected_month: 1,
                 expected_day: 1,
             },
@@ -470,7 +490,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 29,
                 expected_year: 2,
-                expected_era: Era(tinystr!(16, "bce")),
+                expected_era: Era(tinystr!(16, "julian-inverse")),
                 expected_month: 12,
                 expected_day: 31,
             },
@@ -480,7 +500,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 30,
                 expected_year: 4,
-                expected_era: Era(tinystr!(16, "bce")),
+                expected_era: Era(tinystr!(16, "julian-inverse")),
                 expected_month: 1,
                 expected_day: 1,
             },
@@ -490,7 +510,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 29,
                 expected_year: 5,
-                expected_era: Era(tinystr!(16, "bce")),
+                expected_era: Era(tinystr!(16, "julian-inverse")),
                 expected_month: 12,
                 expected_day: 31,
             },

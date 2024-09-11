@@ -528,7 +528,10 @@ mod tests {
         // Era year is accessible via the public getter.
         // TODO(#3962): Make extended year publicly accessible.
         assert_eq!(greg_date.inner.0 .0.year, -5000);
-        assert_eq!(greg_date.year().temporal_era().unwrap().0, "bce");
+        assert_eq!(
+            greg_date.year().temporal_era().unwrap().0,
+            "gregory-inverse"
+        );
         // In Gregorian, era year is 1 - extended year
         assert_eq!(greg_date.year().era_year().unwrap(), 5001);
         let hebr_date = greg_date.to_calendar(Hebrew);

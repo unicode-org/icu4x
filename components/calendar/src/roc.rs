@@ -204,7 +204,7 @@ impl Date<Roc> {
     /// let date_roc = Date::try_new_roc_date(1, 2, 3)
     ///     .expect("Failed to initialize ROC Date instance.");
     ///
-    /// assert_eq!(date_roc.year().era.0, tinystr!(16, "roc"));
+    /// assert_eq!(date_roc.year().temporal_era().unwrap().0, tinystr!(16, "roc"));
     /// assert_eq!(date_roc.year().era_year_or_extended(), 1, "ROC year check failed!");
     /// assert_eq!(date_roc.month().ordinal, 2, "ROC month check failed!");
     /// assert_eq!(date_roc.day_of_month().0, 3, "ROC day of month check failed!");
@@ -234,7 +234,7 @@ impl DateTime<Roc> {
     /// let datetime_roc = DateTime::try_new_roc_datetime(1, 2, 3, 13, 1, 0)
     ///     .expect("Failed to initialize ROC DateTime instance.");
     ///
-    /// assert_eq!(datetime_roc.date.year().era.0, tinystr!(16, "roc"));
+    /// assert_eq!(datetime_roc.date.year().temporal_era().unwrap().0, tinystr!(16, "roc"));
     /// assert_eq!(datetime_roc.date.year().era_year_or_extended(), 1, "ROC year check failed!");
     /// assert_eq!(
     ///     datetime_roc.date.month().ordinal,
