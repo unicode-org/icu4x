@@ -8,24 +8,26 @@
   },
   "past": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\u0001 araw ang nakalipas"
-        ]
+      "one": [
+        0,
+        "\u0001 araw ang nakalipas"
       ],
-      "other": "\u0001 (na) araw ang nakalipas"
+      "other": [
+        0,
+        "\u0001 (na) araw ang nakalipas"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\u0004sa  (na) araw"
-        ]
+      "one": [
+        0,
+        "\u0004sa  (na) araw"
       ],
-      "other": "\u0004sa  araw"
+      "other": [
+        0,
+        "\u0004sa  araw"
+      ]
     }
   }
 }

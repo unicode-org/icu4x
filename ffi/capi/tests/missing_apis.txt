@@ -48,6 +48,7 @@ icu::plurals::PluralElements::explicit_one#FnInStruct
 icu::plurals::PluralElements::explicit_zero#FnInStruct
 icu::plurals::PluralElements::few#FnInStruct
 icu::plurals::PluralElements::many#FnInStruct
+icu::plurals::PluralElements::map#FnInStruct
 icu::plurals::PluralElements::new#FnInStruct
 icu::plurals::PluralElements::one#FnInStruct
 icu::plurals::PluralElements::other#FnInStruct

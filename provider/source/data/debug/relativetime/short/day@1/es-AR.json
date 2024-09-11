@@ -8,14 +8,18 @@
   },
   "past": {
     "strings": {
-      "specials": [],
-      "other": "\u0006hace  días"
+      "other": [
+        0,
+        "\u0006hace  días"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [],
-      "other": "\u000bdentro de  días"
+      "other": [
+        0,
+        "\u000bdentro de  días"
+      ]
     }
   }
 }

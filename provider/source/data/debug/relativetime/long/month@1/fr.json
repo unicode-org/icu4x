@@ -6,14 +6,18 @@
   },
   "past": {
     "strings": {
-      "specials": [],
-      "other": "\bil y a  mois"
+      "other": [
+        0,
+        "\bil y a  mois"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [],
-      "other": "\u0006dans  mois"
+      "other": [
+        0,
+        "\u0006dans  mois"
+      ]
     }
   }
 }

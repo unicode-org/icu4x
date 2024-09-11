@@ -6,14 +6,18 @@
   },
   "past": {
     "strings": {
-      "specials": [],
-      "other": "\u0002- w"
+      "other": [
+        0,
+        "\u0002- w"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [],
-      "other": "\u0002+ w"
+      "other": [
+        0,
+        "\u0002+ w"
+      ]
     }
   }
 }
