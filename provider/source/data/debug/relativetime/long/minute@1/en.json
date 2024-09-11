@@ -4,24 +4,26 @@
   },
   "past": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\u0001 minute ago"
-        ]
+      "one": [
+        0,
+        "\u0001 minute ago"
       ],
-      "other": "\u0001 minutes ago"
+      "other": [
+        0,
+        "\u0001 minutes ago"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\u0004in  minute"
-        ]
+      "one": [
+        0,
+        "\u0004in  minute"
       ],
-      "other": "\u0004in  minutes"
+      "other": [
+        0,
+        "\u0004in  minutes"
+      ]
     }
   }
 }

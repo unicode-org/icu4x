@@ -6,24 +6,26 @@
   },
   "past": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\u0001 quarter ago"
-        ]
+      "one": [
+        0,
+        "\u0001 quarter ago"
       ],
-      "other": "\u0001 quarters ago"
+      "other": [
+        0,
+        "\u0001 quarters ago"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\u0004in  quarter"
-        ]
+      "one": [
+        0,
+        "\u0004in  quarter"
       ],
-      "other": "\u0004in  quarters"
+      "other": [
+        0,
+        "\u0004in  quarters"
+      ]
     }
   }
 }

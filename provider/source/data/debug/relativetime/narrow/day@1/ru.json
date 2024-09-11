@@ -8,14 +8,18 @@
   },
   "past": {
     "strings": {
-      "specials": [],
-      "other": "\u0002- дн."
+      "other": [
+        0,
+        "\u0002- дн."
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [],
-      "other": "\u0002+ дн."
+      "other": [
+        0,
+        "\u0002+ дн."
+      ]
     }
   }
 }

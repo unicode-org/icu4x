@@ -4,19 +4,22 @@
   },
   "past": {
     "strings": {
-      "specials": [],
-      "other": "\u0005pre  minuta"
+      "other": [
+        0,
+        "\u0005pre  minuta"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\u0004za  minut"
-        ]
+      "one": [
+        0,
+        "\u0004za  minut"
       ],
-      "other": "\u0004za  minuta"
+      "other": [
+        0,
+        "\u0004za  minuta"
+      ]
     }
   }
 }

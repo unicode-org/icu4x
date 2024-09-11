@@ -4,14 +4,18 @@
   },
   "past": {
     "strings": {
-      "specials": [],
-      "other": "\u0001 সেকেন্ড আগে"
+      "other": [
+        0,
+        "\u0001 সেকেন্ড আগে"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [],
-      "other": "\u0001 সেকেন্ডে"
+      "other": [
+        0,
+        "\u0001 সেকেন্ডে"
+      ]
     }
   }
 }

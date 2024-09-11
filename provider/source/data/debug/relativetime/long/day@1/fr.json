@@ -8,24 +8,26 @@
   },
   "past": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\bil y a  jour"
-        ]
+      "one": [
+        0,
+        "\bil y a  jour"
       ],
-      "other": "\bil y a  jours"
+      "other": [
+        0,
+        "\bil y a  jours"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\u0006dans  jour"
-        ]
+      "one": [
+        0,
+        "\u0006dans  jour"
       ],
-      "other": "\u0006dans  jours"
+      "other": [
+        0,
+        "\u0006dans  jours"
+      ]
     }
   }
 }
