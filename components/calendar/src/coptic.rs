@@ -309,7 +309,7 @@ fn year_as_coptic(year: i32) -> types::YearInfo {
     if year > 0 {
         types::YearInfo::new(
             year,
-            types::EraYear::new_with_temporal_and_formatting(
+            types::EraYear::new_with_standard_and_formatting(
                 tinystr!(16, "coptic"),
                 tinystr!(16, "ad"),
                 year,
@@ -318,7 +318,7 @@ fn year_as_coptic(year: i32) -> types::YearInfo {
     } else {
         types::YearInfo::new(
             year,
-            types::EraYear::new_with_temporal_and_formatting(
+            types::EraYear::new_with_standard_and_formatting(
                 tinystr!(16, "coptic-inverse"),
                 tinystr!(16, "bd"),
                 1 - year,

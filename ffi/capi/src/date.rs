@@ -328,7 +328,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::types::Era, Struct, compact)]
         #[diplomat::attr(auto, getter)]
         pub fn era(&self, write: &mut diplomat_runtime::DiplomatWrite) {
-            if let Some(era) = self.0.year().temporal_era() {
+            if let Some(era) = self.0.year().standard_era() {
                 let _infallible = write.write_str(&era.0);
             }
         }

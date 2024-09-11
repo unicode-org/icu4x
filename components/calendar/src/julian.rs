@@ -224,7 +224,7 @@ fn year_as_julian(year: i32) -> types::YearInfo {
     if year > 0 {
         types::YearInfo::new(
             year,
-            types::EraYear::new_with_temporal_and_formatting(
+            types::EraYear::new_with_standard_and_formatting(
                 tinystr!(16, "julian"),
                 tinystr!(16, "ce"),
                 year,
@@ -233,7 +233,7 @@ fn year_as_julian(year: i32) -> types::YearInfo {
     } else {
         types::YearInfo::new(
             year,
-            types::EraYear::new_with_temporal_and_formatting(
+            types::EraYear::new_with_standard_and_formatting(
                 tinystr!(16, "julian-inverse"),
                 tinystr!(16, "bce"),
                 1_i32.saturating_sub(year),
@@ -521,7 +521,7 @@ mod test {
             let julian_from_fixed: Date<Julian> = Date::new_from_iso(iso_from_fixed, Julian);
             assert_eq!(julian_from_fixed.year().era_year().unwrap(), case.expected_year,
                 "Failed year check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nJulian: {julian_from_fixed:?}");
-            assert_eq!(julian_from_fixed.year().temporal_era().unwrap(), case.expected_era,
+            assert_eq!(julian_from_fixed.year().standard_era().unwrap(), case.expected_era,
                 "Failed era check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nJulian: {julian_from_fixed:?}");
             assert_eq!(julian_from_fixed.month().ordinal, case.expected_month,
                 "Failed month check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nJulian: {julian_from_fixed:?}");

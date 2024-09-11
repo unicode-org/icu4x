@@ -54,10 +54,10 @@ use core::marker::PhantomData;
 use icu_provider::prelude::*;
 use tinystr::tinystr;
 
-fn year_as_islamic(temporal_era: tinystr::TinyStr16, year: i32) -> types::YearInfo {
+fn year_as_islamic(standard_era: tinystr::TinyStr16, year: i32) -> types::YearInfo {
     types::YearInfo::new(
         year,
-        types::EraYear::new_with_temporal_and_formatting(temporal_era, tinystr!(16, "ah"), year),
+        types::EraYear::new_with_standard_and_formatting(standard_era, tinystr!(16, "ah"), year),
     )
 }
 
