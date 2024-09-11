@@ -304,7 +304,7 @@ mod test {
         let roc_from_fixed = Date::new_from_iso(iso_from_fixed, Roc);
         assert_eq!(roc_from_fixed.year().era_year().unwrap(), case.expected_year,
             "Failed year check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nROC: {roc_from_fixed:?}");
-        assert_eq!(roc_from_fixed.year().era().unwrap(), case.expected_era,
+        assert_eq!(roc_from_fixed.year().temporal_era().unwrap(), case.expected_era,
             "Failed era check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nROC: {roc_from_fixed:?}");
         assert_eq!(roc_from_fixed.month().ordinal, case.expected_month,
             "Failed month check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nROC: {roc_from_fixed:?}");

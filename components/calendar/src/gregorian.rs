@@ -348,14 +348,16 @@ mod test {
             assert_eq!(
                 Calendar::day_of_year_info(&Gregorian, &date.inner)
                     .next_year
-                    .era_year_or_extended(),
+                    .era_year()
+                    .unwrap(),
                 case.next_era_year,
                 "{case:?}",
             );
             assert_eq!(
                 Calendar::day_of_year_info(&Gregorian, &date.inner)
                     .next_year
-                    .era_or_unknown()
+                    .temporal_era()
+                    .unwrap()
                     .0,
                 case.era,
                 "{case:?}",
@@ -556,14 +558,16 @@ mod test {
             assert_eq!(
                 Calendar::day_of_year_info(&Gregorian, &date.inner)
                     .prev_year
-                    .era_year_or_extended(),
+                    .era_year()
+                    .unwrap(),
                 case.prev_era_year,
                 "{case:?}",
             );
             assert_eq!(
                 Calendar::day_of_year_info(&Gregorian, &date.inner)
                     .prev_year
-                    .era_or_unknown()
+                    .temporal_era()
+                    .unwrap()
                     .0,
                 case.era,
                 "{case:?}",
