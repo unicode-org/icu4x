@@ -277,12 +277,7 @@ where
     ///     .expect_err("mismatched braces");
     /// ```
     fn from_str(pattern: &str) -> Result<Self, Self::Err> {
-        let parser = Parser::new(
-            pattern,
-            ParserOptions {
-                allow_raw_letters: true,
-            },
-        );
+        let parser = Parser::new(pattern, Default::default());
         let store = B::try_from_items(parser)?;
         #[cfg(debug_assertions)]
         match B::validate_store(core::borrow::Borrow::borrow(&store)) {

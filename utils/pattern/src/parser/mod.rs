@@ -57,12 +57,16 @@ pub struct ParserOptions {
     ///
     /// Default is `true`.
     pub allow_raw_letters: bool,
+
+    /// Controls whether quotes are interpreted as quotes, or as quoting ASCII letters.
+    pub treat_quotes_as_quotes: bool,
 }
 
 impl Default for ParserOptions {
     fn default() -> Self {
         Self {
             allow_raw_letters: true,
+            treat_quotes_as_quotes: true,
         }
     }
 }
@@ -256,6 +260,7 @@ pub struct Parser<'p, P> {
     len: usize,
 
     allow_raw_letters: bool,
+    treat_quotes_as_quotes: bool,
 
     start_idx: usize,
     idx: usize,
@@ -281,6 +286,7 @@ impl<'p, P> Parser<'p, P> {
             len: input.len(),
 
             allow_raw_letters: options.allow_raw_letters,
+            treat_quotes_as_quotes: options.treat_quotes_as_quotes,
 
             start_idx: 0,
             idx: 0,
@@ -347,12 +353,13 @@ impl<'p, P> Parser<'p, P> {
                 ParserState::Default if *b == b'{' => {
                     handle_literal!(self, false, ParserState::Placeholder)
                 }
-                ParserState::Default if *b == b'\'' => {
-                    if self.input.as_bytes().get(self.idx + 1) == Some(&b'\'') {
+                // Double quote is always interpreted as single quote
+                ParserState::Default if *b == b'\'' && self.input.as_bytes().get(self.idx + 1) == Some(&b'\'') => {
                         handle_literal!(self, false, ParserState::Apostrophe { quoted: false })
-                    } else {
-                        handle_literal!(self, false, ParserState::QuotedLiteral)
-                    }
+                }
+                // Single quote opens a literal depending on flag
+                ParserState::Default if *b == b'\'' && !self.treat_quotes_as_quotes => {
+                    handle_literal!(self, false, ParserState::QuotedLiteral)
                 }
                 ParserState::Default if !self.allow_raw_letters && b.is_ascii_alphabetic() => {
                     return Err(ParserError::IllegalCharacter(*b as char));
@@ -556,6 +563,7 @@ mod tests {
                 input,
                 ParserOptions {
                     allow_raw_letters: true,
+                    treat_quotes_as_quotes: true,
                 },
             );
             let result = parser
@@ -593,6 +601,7 @@ mod tests {
                 input,
                 ParserOptions {
                     allow_raw_letters: false,
+                    treat_quotes_as_quotes: false,
                 },
             );
             let result = parser.try_collect_into_vec();

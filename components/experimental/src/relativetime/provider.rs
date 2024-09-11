@@ -135,9 +135,7 @@ where
     type Error = icu_pattern::PatternError;
 
     fn try_from(elements: PluralElements<&'data str>) -> Result<Self, Self::Error> {
-        let make_pattern = |s: &&str|
-            // TODO: Make pattern support apostrophes
-            Pattern::<B, String>::from_str(&s.replace('\'', "''")).map(|p| p.take_store());
+        let make_pattern = |s: &&str| Pattern::<B, String>::from_str(s).map(|p| p.take_store());
 
         Ok(Self {
             strings: PluralElements::new(make_pattern(elements.other())?.as_str())
