@@ -6,14 +6,18 @@
   },
   "past": {
     "strings": {
-      "specials": [],
-      "other": "\u0001 çyr. önce"
+      "other": [
+        0,
+        "\u0001 çyr. önce"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [],
-      "other": "\u0001 çyr. sonra"
+      "other": [
+        0,
+        "\u0001 çyr. sonra"
+      ]
     }
   }
 }

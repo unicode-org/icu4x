@@ -78,6 +78,8 @@ export { LocaleDisplayNamesFormatter } from "./LocaleDisplayNamesFormatter"
 
 export { RegionDisplayNames } from "./RegionDisplayNames"
 
+export { ExemplarCharacters } from "./ExemplarCharacters"
+
 export { LocaleFallbackIterator } from "./LocaleFallbackIterator"
 
 export { LocaleFallbacker } from "./LocaleFallbacker"

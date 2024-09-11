@@ -4,19 +4,22 @@
   },
   "past": {
     "strings": {
-      "specials": [],
-      "other": "\u0001 oras ang nakalipas"
+      "other": [
+        0,
+        "\u0001 oras ang nakalipas"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\u0004sa  oras"
-        ]
+      "one": [
+        0,
+        "\u0004sa  oras"
       ],
-      "other": "\u0004sa  (na) oras"
+      "other": [
+        0,
+        "\u0004sa  (na) oras"
+      ]
     }
   }
 }

@@ -1128,7 +1128,7 @@ where
             // There are two possible patterns:
             // BMP: starter, starter, non-starter
             // Plane 1: starter, starter.
-            // However, for forward compatility, support any combination
+            // However, for forward compatibility, support any combination
             // and search for the last starter.
             let mut i = self.upcoming.len() - 1;
             loop {

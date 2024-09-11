@@ -6,14 +6,18 @@
   },
   "past": {
     "strings": {
-      "specials": [],
-      "other": "\bil y a  trim."
+      "other": [
+        0,
+        "\bil y a  trim."
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [],
-      "other": "\u0006dans  trim."
+      "other": [
+        0,
+        "\u0006dans  trim."
+      ]
     }
   }
 }

@@ -2,9 +2,6 @@
   "main": {
     "cs": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "cs"
       },
       "dates": {

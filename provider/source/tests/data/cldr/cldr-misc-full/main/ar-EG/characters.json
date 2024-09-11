@@ -2,9 +2,6 @@
   "main": {
     "ar-EG": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "ar",
         "territory": "EG"
       },
@@ -36,7 +33,7 @@
           "£": "[£￡ ₤]",
           "¥": "[¥￥]",
           "₩": "[₩￦]",
-          "₹": "[₹ ₨ {Rp} {Rs}]"
+          "₹": "[₹ {Rp} {Rs}₨]"
         },
         "lenient-scope-number": {
           "-": "[\\-－﹣ ‑ ‒ −⁻₋ ➖]",

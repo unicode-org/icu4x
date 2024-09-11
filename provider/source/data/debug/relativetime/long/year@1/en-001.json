@@ -6,24 +6,26 @@
   },
   "past": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\u0001 year ago"
-        ]
+      "one": [
+        0,
+        "\u0001 year ago"
       ],
-      "other": "\u0001 years ago"
+      "other": [
+        0,
+        "\u0001 years ago"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\u0004in  year"
-        ]
+      "one": [
+        0,
+        "\u0004in  year"
       ],
-      "other": "\u0004in  years"
+      "other": [
+        0,
+        "\u0004in  years"
+      ]
     }
   }
 }

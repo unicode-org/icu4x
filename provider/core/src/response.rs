@@ -730,6 +730,22 @@ where
         })
     }
 
+    /// Convert between two [`DynamicDataMarker`] types that are compatible with each other
+    /// with compile-time type checking.
+    ///
+    /// This happens if they both have the same [`DynamicDataMarker::DataStruct`] type.
+    ///
+    /// Can be used to erase the marker of a data payload in cases where multiple markers correspond
+    /// to the same data struct.
+    #[inline]
+    pub fn cast_ref<M2>(&self) -> &DataPayload<M2>
+    where
+        M2: DynamicDataMarker<DataStruct = M::DataStruct>,
+    {
+        // SAFETY: As seen in the implementation of `cast`, the struct is the same, it's just the generic that changes.
+        unsafe { core::mem::transmute(self) }
+    }
+
     /// Convert a [`DataPayload`] to one of the same type with runtime type checking.
     ///
     /// Primarily useful to convert from a generic to a concrete marker type.

@@ -2,9 +2,6 @@
   "main": {
     "bn": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "bn"
       },
       "dates": {
@@ -635,7 +632,7 @@
               "relativeTimePattern-count-other": "{0} সেকেন্ডে"
             },
             "relativeTime-type-past": {
-              "relativeTimePattern-count-one": "{0} সেকেন্ড পূর্বে",
+              "relativeTimePattern-count-one": "{0} সেকেন্ড আগে",
               "relativeTimePattern-count-other": "{0} সেকেন্ড পূর্বে"
             }
           },
@@ -647,8 +644,8 @@
               "relativeTimePattern-count-other": "{0} সেকেন্ডে"
             },
             "relativeTime-type-past": {
-              "relativeTimePattern-count-one": "{0} সেকেন্ড পূর্বে",
-              "relativeTimePattern-count-other": "{0} সেকেন্ড পূর্বে"
+              "relativeTimePattern-count-one": "{0} সেকেন্ড আগে",
+              "relativeTimePattern-count-other": "{0} সেকেন্ড আগে"
             }
           },
           "second-narrow": {

@@ -575,29 +575,29 @@ pub enum TimeZoneName {
     ShortSpecific,
 
     // UTS-35 fields: zzzz
-    // Per UTS-35: [long form] specific non-location (falling back to long localized GMT)
+    // Per UTS-35: [long form] specific non-location (falling back to long localized offset)
     /// Long localized form, without the location (e.g., Pacific Standard Time, Nordamerikanische Westküsten-Normalzeit)
     LongSpecific,
 
     // UTS-35 fields: O, OOOO
-    // Per UTS-35: The long localized GMT format. This is equivalent to the "OOOO" specifier
-    // Per UTS-35: Short localized GMT format (e.g., GMT-8)
+    // Per UTS-35: The long localized offset format. This is equivalent to the "OOOO" specifier
+    // Per UTS-35: Short localized offset format (e.g., GMT-8)
     // This enum variant is combining the two types of fields, as the CLDR specifies the preferred
     // hour-format for the locale, and ICU4X uses the preferred one.
     //   e.g.
     //   https://github.com/unicode-org/cldr-json/blob/c23635f13946292e40077fd62aee6a8e122e7689/cldr-json/cldr-dates-full/main/es-MX/timeZoneNames.json#L13
-    /// Localized GMT format, in the locale's preferred hour format. (e.g., GMT-0800),
-    GmtOffset,
+    /// Localized offset format, in the locale's preferred hour format. (e.g., GMT-0800),
+    Offset,
 
     // UTS-35 fields: v
     //   * falling back to generic location (See UTS 35 for more specific rules)
-    //   * falling back to short localized GMT
+    //   * falling back to short localized offset
     /// Short generic non-location format (e.g.: PT, Los Angeles, Zeit).
     ShortGeneric,
 
     // UTS-35 fields: vvvv
     //  * falling back to generic location (See UTS 35 for more specific rules)
-    //  * falling back to long localized GMT
+    //  * falling back to long localized offset
     /// Long generic non-location format (e.g.: Pacific Time, Nordamerikanische Westküstenzeit),
     LongGeneric,
 }
@@ -613,7 +613,7 @@ impl From<TimeZoneName> for Field {
                 symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerZ),
                 length: FieldLength::Wide,
             },
-            TimeZoneName::GmtOffset => Field {
+            TimeZoneName::Offset => Field {
                 symbol: FieldSymbol::TimeZone(fields::TimeZone::UpperO),
                 length: FieldLength::Wide,
             },
@@ -825,7 +825,7 @@ impl<'data> From<&Pattern<'data>> for Bag {
                             FieldLength::One => TimeZoneName::ShortGeneric,
                             _ => TimeZoneName::LongGeneric,
                         },
-                        fields::TimeZone::UpperO => TimeZoneName::GmtOffset,
+                        fields::TimeZone::UpperO => TimeZoneName::Offset,
                         fields::TimeZone::UpperZ => unimplemented!("fields::TimeZone::UpperZ"),
                         fields::TimeZone::UpperV => unimplemented!("fields::TimeZone::UpperV"),
                         fields::TimeZone::LowerX => unimplemented!("fields::TimeZone::LowerX"),

@@ -2,9 +2,6 @@
   "main": {
     "th": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "th"
       },
       "dates": {
@@ -1833,6 +1830,11 @@
                 "generic": "เวลาคัมชัตคา",
                 "standard": "เวลาเปโตรปัฟลอฟสค์-คัมชัตสกี",
                 "daylight": "เวลาฤดูร้อนเปโตรปัฟลอฟสค์-คัมชัตสกี"
+              }
+            },
+            "Kazakhstan": {
+              "long": {
+                "standard": "เวลาคาซัคสถาน"
               }
             },
             "Kazakhstan_Eastern": {

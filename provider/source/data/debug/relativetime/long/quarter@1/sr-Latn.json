@@ -6,19 +6,22 @@
   },
   "past": {
     "strings": {
-      "specials": [],
-      "other": "\u0005pre  kvartala"
+      "other": [
+        0,
+        "\u0005pre  kvartala"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\u0004za  kvartal"
-        ]
+      "one": [
+        0,
+        "\u0004za  kvartal"
       ],
-      "other": "\u0004za  kvartala"
+      "other": [
+        0,
+        "\u0004za  kvartala"
+      ]
     }
   }
 }

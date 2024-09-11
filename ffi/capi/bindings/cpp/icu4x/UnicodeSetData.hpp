@@ -12,7 +12,6 @@
 #include "../diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
-#include "Locale.hpp"
 
 
 namespace icu4x {
@@ -25,21 +24,6 @@ namespace capi {
     
     typedef struct icu4x_UnicodeSetData_load_basic_emoji_mv1_result {union {icu4x::capi::UnicodeSetData* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_UnicodeSetData_load_basic_emoji_mv1_result;
     icu4x_UnicodeSetData_load_basic_emoji_mv1_result icu4x_UnicodeSetData_load_basic_emoji_mv1(const icu4x::capi::DataProvider* provider);
-    
-    typedef struct icu4x_UnicodeSetData_load_exemplars_main_mv1_result {union {icu4x::capi::UnicodeSetData* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_UnicodeSetData_load_exemplars_main_mv1_result;
-    icu4x_UnicodeSetData_load_exemplars_main_mv1_result icu4x_UnicodeSetData_load_exemplars_main_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale);
-    
-    typedef struct icu4x_UnicodeSetData_load_exemplars_auxiliary_mv1_result {union {icu4x::capi::UnicodeSetData* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_UnicodeSetData_load_exemplars_auxiliary_mv1_result;
-    icu4x_UnicodeSetData_load_exemplars_auxiliary_mv1_result icu4x_UnicodeSetData_load_exemplars_auxiliary_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale);
-    
-    typedef struct icu4x_UnicodeSetData_load_exemplars_punctuation_mv1_result {union {icu4x::capi::UnicodeSetData* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_UnicodeSetData_load_exemplars_punctuation_mv1_result;
-    icu4x_UnicodeSetData_load_exemplars_punctuation_mv1_result icu4x_UnicodeSetData_load_exemplars_punctuation_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale);
-    
-    typedef struct icu4x_UnicodeSetData_load_exemplars_numbers_mv1_result {union {icu4x::capi::UnicodeSetData* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_UnicodeSetData_load_exemplars_numbers_mv1_result;
-    icu4x_UnicodeSetData_load_exemplars_numbers_mv1_result icu4x_UnicodeSetData_load_exemplars_numbers_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale);
-    
-    typedef struct icu4x_UnicodeSetData_load_exemplars_index_mv1_result {union {icu4x::capi::UnicodeSetData* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_UnicodeSetData_load_exemplars_index_mv1_result;
-    icu4x_UnicodeSetData_load_exemplars_index_mv1_result icu4x_UnicodeSetData_load_exemplars_index_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale);
     
     
     void icu4x_UnicodeSetData_destroy_mv1(UnicodeSetData* self);
@@ -62,36 +46,6 @@ inline bool icu4x::UnicodeSetData::contains_char(char32_t cp) const {
 
 inline diplomat::result<std::unique_ptr<icu4x::UnicodeSetData>, icu4x::DataError> icu4x::UnicodeSetData::load_basic_emoji(const icu4x::DataProvider& provider) {
   auto result = icu4x::capi::icu4x_UnicodeSetData_load_basic_emoji_mv1(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::UnicodeSetData>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::UnicodeSetData>>(std::unique_ptr<icu4x::UnicodeSetData>(icu4x::UnicodeSetData::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::UnicodeSetData>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
-}
-
-inline diplomat::result<std::unique_ptr<icu4x::UnicodeSetData>, icu4x::DataError> icu4x::UnicodeSetData::load_exemplars_main(const icu4x::DataProvider& provider, const icu4x::Locale& locale) {
-  auto result = icu4x::capi::icu4x_UnicodeSetData_load_exemplars_main_mv1(provider.AsFFI(),
-    locale.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::UnicodeSetData>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::UnicodeSetData>>(std::unique_ptr<icu4x::UnicodeSetData>(icu4x::UnicodeSetData::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::UnicodeSetData>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
-}
-
-inline diplomat::result<std::unique_ptr<icu4x::UnicodeSetData>, icu4x::DataError> icu4x::UnicodeSetData::load_exemplars_auxiliary(const icu4x::DataProvider& provider, const icu4x::Locale& locale) {
-  auto result = icu4x::capi::icu4x_UnicodeSetData_load_exemplars_auxiliary_mv1(provider.AsFFI(),
-    locale.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::UnicodeSetData>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::UnicodeSetData>>(std::unique_ptr<icu4x::UnicodeSetData>(icu4x::UnicodeSetData::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::UnicodeSetData>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
-}
-
-inline diplomat::result<std::unique_ptr<icu4x::UnicodeSetData>, icu4x::DataError> icu4x::UnicodeSetData::load_exemplars_punctuation(const icu4x::DataProvider& provider, const icu4x::Locale& locale) {
-  auto result = icu4x::capi::icu4x_UnicodeSetData_load_exemplars_punctuation_mv1(provider.AsFFI(),
-    locale.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::UnicodeSetData>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::UnicodeSetData>>(std::unique_ptr<icu4x::UnicodeSetData>(icu4x::UnicodeSetData::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::UnicodeSetData>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
-}
-
-inline diplomat::result<std::unique_ptr<icu4x::UnicodeSetData>, icu4x::DataError> icu4x::UnicodeSetData::load_exemplars_numbers(const icu4x::DataProvider& provider, const icu4x::Locale& locale) {
-  auto result = icu4x::capi::icu4x_UnicodeSetData_load_exemplars_numbers_mv1(provider.AsFFI(),
-    locale.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::UnicodeSetData>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::UnicodeSetData>>(std::unique_ptr<icu4x::UnicodeSetData>(icu4x::UnicodeSetData::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::UnicodeSetData>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
-}
-
-inline diplomat::result<std::unique_ptr<icu4x::UnicodeSetData>, icu4x::DataError> icu4x::UnicodeSetData::load_exemplars_index(const icu4x::DataProvider& provider, const icu4x::Locale& locale) {
-  auto result = icu4x::capi::icu4x_UnicodeSetData_load_exemplars_index_mv1(provider.AsFFI(),
-    locale.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::UnicodeSetData>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::UnicodeSetData>>(std::unique_ptr<icu4x::UnicodeSetData>(icu4x::UnicodeSetData::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::UnicodeSetData>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 

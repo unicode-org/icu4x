@@ -522,7 +522,8 @@ impl<'a> UnsizedFields<'a> {
 
             quote!(
                 let lengths = [#(#lengths),*];
-                let mut multi = zerovec::ule::MultiFieldsULE::new_from_lengths_partially_initialized(&lengths, #out);
+                // Todo: index type should be settable by attribute
+                let mut multi = zerovec::ule::MultiFieldsULE::<zerovec::vecs::Index32>::new_from_lengths_partially_initialized(&lengths, #out);
                 unsafe {
                     #(#writers;)*
                 }
@@ -539,7 +540,8 @@ impl<'a> UnsizedFields<'a> {
             for field in self.fields.iter() {
                 lengths.push(field.encode_func(quote!(encode_var_ule_len), quote!()));
             }
-            quote!(zerovec::ule::MultiFieldsULE::compute_encoded_len_for(&[#(#lengths),*]))
+            // Todo: index type should be settable by attribute
+            quote!(zerovec::ule::MultiFieldsULE::<zerovec::vecs::Index32>::compute_encoded_len_for(&[#(#lengths),*]))
         }
     }
 

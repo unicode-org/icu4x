@@ -8,19 +8,22 @@
   },
   "past": {
     "strings": {
-      "specials": [],
-      "other": "\u0005pre  dana"
+      "other": [
+        0,
+        "\u0005pre  dana"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\u0004za  dan"
-        ]
+      "one": [
+        0,
+        "\u0004za  dan"
       ],
-      "other": "\u0004za  dana"
+      "other": [
+        0,
+        "\u0004za  dana"
+      ]
     }
   }
 }

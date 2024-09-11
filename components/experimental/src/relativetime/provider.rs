@@ -103,7 +103,7 @@ pub struct PluralCategoryStr<'data>(pub PluralCategory, pub Cow<'data, str>);
 pub struct PluralPatterns<'data, B> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     #[doc(hidden)] // databake only
-    pub strings: icu_plurals::provider::PluralElementsV1<'data>,
+    pub strings: icu_plurals::provider::PluralElementsPackedCow<'data, str>,
     #[cfg_attr(feature = "serde", serde(skip))]
     #[doc(hidden)] // databake only
     pub _phantom: PhantomData<B>,
@@ -126,7 +126,7 @@ impl<'data, B: PatternBackend<Store = str>> PluralPatterns<'data, B> {
 }
 
 #[cfg(feature = "datagen")]
-impl<'data, B: PatternBackend<Store = str>> TryFrom<PluralElements<'data, str>>
+impl<'data, B: PatternBackend<Store = str>> TryFrom<PluralElements<&'data str>>
     for PluralPatterns<'static, B>
 where
     B::PlaceholderKeyCow<'data>: FromStr,
@@ -134,8 +134,8 @@ where
 {
     type Error = icu_pattern::PatternError;
 
-    fn try_from(elements: PluralElements<str>) -> Result<Self, Self::Error> {
-        let make_pattern = |s: &str|
+    fn try_from(elements: PluralElements<&'data str>) -> Result<Self, Self::Error> {
+        let make_pattern = |s: &&str|
             // TODO: Make pattern support apostrophes
             Pattern::<B, String>::from_str(&s.replace('\'', "''")).map(|p| p.take_store());
 

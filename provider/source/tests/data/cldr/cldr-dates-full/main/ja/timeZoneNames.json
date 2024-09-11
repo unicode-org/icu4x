@@ -2,9 +2,6 @@
   "main": {
     "ja": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "ja"
       },
       "dates": {
@@ -1837,6 +1834,11 @@
                 "generic": "ペトロパブロフスク・カムチャツキー時間",
                 "standard": "ペトロパブロフスク・カムチャツキー標準時",
                 "daylight": "ペトロパブロフスク・カムチャツキー夏時間"
+              }
+            },
+            "Kazakhstan": {
+              "long": {
+                "standard": "カザフスタン時間"
               }
             },
             "Kazakhstan_Eastern": {

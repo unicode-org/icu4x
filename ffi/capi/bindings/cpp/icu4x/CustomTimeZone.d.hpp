@@ -40,25 +40,21 @@ public:
 
   inline static std::unique_ptr<icu4x::CustomTimeZone> utc();
 
-  inline static std::unique_ptr<icu4x::CustomTimeZone> gmt();
+  inline diplomat::result<std::monostate, icu4x::TimeZoneInvalidOffsetError> try_set_offset_seconds(int32_t offset_seconds);
 
-  inline static std::unique_ptr<icu4x::CustomTimeZone> bst();
+  inline void set_offset_eighths_of_hour(int8_t offset_eighths_of_hour);
 
-  inline diplomat::result<std::monostate, icu4x::TimeZoneInvalidOffsetError> try_set_gmt_offset_seconds(int32_t offset_seconds);
+  inline void clear_offset();
 
-  inline void set_gmt_offset_eighths_of_hour(int8_t offset_eighths_of_hour);
+  inline std::optional<int32_t> offset_seconds() const;
 
-  inline void clear_gmt_offset();
+  inline std::optional<bool> is_offset_positive() const;
 
-  inline std::optional<int32_t> gmt_offset_seconds() const;
+  inline std::optional<bool> is_offset_zero() const;
 
-  inline std::optional<bool> is_gmt_offset_positive() const;
+  inline std::optional<bool> offset_has_minutes() const;
 
-  inline std::optional<bool> is_gmt_offset_zero() const;
-
-  inline std::optional<bool> gmt_offset_has_minutes() const;
-
-  inline std::optional<bool> gmt_offset_has_seconds() const;
+  inline std::optional<bool> offset_has_seconds() const;
 
   inline diplomat::result<std::monostate, icu4x::TimeZoneInvalidIdError> try_set_time_zone_id(std::string_view id);
 

@@ -2,9 +2,6 @@
   "main": {
     "sr": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "sr"
       },
       "dates": {
@@ -233,7 +230,7 @@
                   "am": "AM",
                   "noon": "подне",
                   "pm": "PM",
-                  "morning1": "ујутро",
+                  "morning1": "ујутру",
                   "afternoon1": "по подне",
                   "evening1": "увече",
                   "night1": "ноћу"
@@ -253,7 +250,7 @@
                   "am": "AM",
                   "noon": "подне",
                   "pm": "PM",
-                  "morning1": "ујутро",
+                  "morning1": "ујутру",
                   "afternoon1": "по подне",
                   "evening1": "увече",
                   "night1": "ноћу"
@@ -272,9 +269,9 @@
                 },
                 "narrow": {
                   "midnight": "поноћ",
-                  "am": "пре подне",
+                  "am": "AM",
                   "noon": "подне",
-                  "pm": "по подне",
+                  "pm": "PM",
                   "morning1": "јутро",
                   "afternoon1": "поподне",
                   "evening1": "вече",

@@ -7,6 +7,6 @@
   },
   "patterns": [
     "r(U) MMMM d",
-    "r-MM-dd"
+    "dd.MM.y"
   ]
 }

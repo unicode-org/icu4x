@@ -6,24 +6,26 @@
   },
   "past": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\u0006hace  semana"
-        ]
+      "one": [
+        0,
+        "\u0006hace  semana"
       ],
-      "other": "\u0006hace  semanas"
+      "other": [
+        0,
+        "\u0006hace  semanas"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\u000bdentro de  semana"
-        ]
+      "one": [
+        0,
+        "\u000bdentro de  semana"
       ],
-      "other": "\u000bdentro de  semanas"
+      "other": [
+        0,
+        "\u000bdentro de  semanas"
+      ]
     }
   }
 }

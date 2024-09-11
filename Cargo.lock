@@ -1134,8 +1134,10 @@ dependencies = [
  "icu_collections",
  "icu_locale_core",
  "icu_normalizer",
+ "icu_normalizer_data",
  "icu_properties",
  "icu_provider",
+ "icu_provider_adapters",
  "serde",
  "smallvec",
  "utf16_iter",
@@ -1342,6 +1344,7 @@ dependencies = [
  "databake",
  "displaydoc",
  "icu",
+ "icu_collections",
  "icu_locale_core",
  "icu_locale_data",
  "icu_provider",
@@ -1442,6 +1445,7 @@ dependencies = [
  "icu_locale_core",
  "icu_plurals_data",
  "icu_provider",
+ "postcard",
  "serde",
  "serde_json",
  "zerovec",
@@ -1485,7 +1489,6 @@ dependencies = [
 name = "icu_properties_data"
 version = "1.5.0"
 dependencies = [
- "icu_locale",
  "icu_provider_baked",
 ]
 

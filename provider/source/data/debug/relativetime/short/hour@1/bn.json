@@ -4,14 +4,18 @@
   },
   "past": {
     "strings": {
-      "specials": [],
-      "other": "\u0001 ঘন্টা আগে"
+      "other": [
+        0,
+        "\u0001 ঘন্টা আগে"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [],
-      "other": "\u0001 ঘন্টায়"
+      "other": [
+        0,
+        "\u0001 ঘন্টায়"
+      ]
     }
   }
 }

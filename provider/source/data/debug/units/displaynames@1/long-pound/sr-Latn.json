@@ -1,17 +1,18 @@
 {
   "patterns": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\u0001 funta"
-        ],
-        [
-          "Few",
-          "\u0001 funte"
-        ]
+      "one": [
+        0,
+        "\u0001 funta"
       ],
-      "other": "\u0001 funti"
+      "few": [
+        0,
+        "\u0001 funte"
+      ],
+      "other": [
+        0,
+        "\u0001 funti"
+      ]
     }
   }
 }
