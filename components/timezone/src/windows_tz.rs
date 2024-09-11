@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use core::fmt::{self, Write};
+
 use icu_provider::{
     prelude::icu_locale_core::subtags::Region, DataError, DataPayload, DataProvider,
 };
@@ -32,26 +34,27 @@ use crate::{
 /// querying a BCP-47 identifier. If no region is provided or the specificity is not required,
 /// then the territory will default to the M49 World Code, 001.
 #[derive(Debug)]
-pub struct WindowsTimeZoneMapper {
+pub struct WindowsTimeZoneMapperOwned {
     data: DataPayload<WindowsZonesToBcp47MapV1Marker>,
 }
 
 #[cfg(feature = "compiled_data")]
-impl Default for WindowsTimeZoneMapper {
+impl Default for WindowsTimeZoneMapperOwned {
     fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl WindowsTimeZoneMapper {
-    /// Creates a new [`WindowsTimeZoneMapper`].
-    #[cfg(feature = "compiled_data")]
-    pub fn new() -> Self {
         Self {
             data: DataPayload::from_static_ref(
                 crate::provider::Baked::SINGLETON_WINDOWS_ZONES_TO_BCP47_MAP_V1_MARKER,
             ),
         }
+    }
+}
+
+impl WindowsTimeZoneMapperOwned {
+    /// Creates a new static [`WindowsTimeZoneMapper`].
+    #[allow(clippy::new_ret_no_self)]
+    #[cfg(feature = "compiled_data")]
+    pub fn new() -> WindowsTimeZoneMapper<'static> {
+        WindowsTimeZoneMapper::new()
     }
 
     icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
@@ -73,24 +76,44 @@ impl WindowsTimeZoneMapper {
         Ok(Self { data })
     }
 
-    /// Returns a borrowed version of the mapper that can be queried.
+    /// Returns the primary version of the mapper that can be queried from
+    /// the owned mapper.
     ///
-    /// This avoids a small potential indirection cost when querying the mapper.
-    pub fn as_borrowed(&self) -> WindowsTimeZoneMapperBorrowed {
-        WindowsTimeZoneMapperBorrowed {
+    /// Using the primary version allows one to avoid a small potential
+    /// indirection cost when querying the mapper from the owned version.
+    pub fn as_borrowed(&self) -> WindowsTimeZoneMapper {
+        WindowsTimeZoneMapper {
             data: self.data.get(),
         }
     }
 }
 
-/// A borrowed wrapper around the windows time zone mapper, returned by
-/// [`WindowsTimeZoneMapper::as_borrowed()`].
+/// A borrowed wrapper around the windows time zone mapper data.
 #[derive(Debug)]
-pub struct WindowsTimeZoneMapperBorrowed<'a> {
+pub struct WindowsTimeZoneMapper<'a> {
     data: &'a WindowsZonesToBcp47MapV1<'a>,
 }
 
-impl<'a> WindowsTimeZoneMapperBorrowed<'a> {
+impl<'a> Default for WindowsTimeZoneMapper<'a> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl<'a> WindowsTimeZoneMapper<'a> {
+    /// Creates a new static [`WindowsTimeZoneMapper`].
+    #[cfg(feature = "compiled_data")]
+    #[allow(clippy::expect_used)]
+    pub fn new() -> Self {
+        WindowsTimeZoneMapper {
+            data: DataPayload::<WindowsZonesToBcp47MapV1Marker>::from_static_ref(
+                crate::provider::Baked::SINGLETON_WINDOWS_ZONES_TO_BCP47_MAP_V1_MARKER,
+            )
+            .get_static()
+            .expect("The singleton is a DataPayload::StaticRef so this MUST return Some."),
+        }
+    }
+
     /// Returns the BCP-47 id for a provided windows time zone string with a case sensitive query.
     ///
     /// This method will return the canonical identifier for an area as no
@@ -100,13 +123,15 @@ impl<'a> WindowsTimeZoneMapperBorrowed<'a> {
     /// use icu_timezone::{WindowsTimeZoneMapper, TimeZoneBcp47Id};
     /// use tinystr::tinystr;
     ///
-    /// let windows_tz_mapper_owned = WindowsTimeZoneMapper::new();
-    /// let windows_tz_mapper = windows_tz_mapper_owned.as_borrowed();
+    /// let windows_tz_mapper = WindowsTimeZoneMapper::new();
     ///
-    /// let bcp47_id = windows_tz_mapper.windows_tz_to_bcp47_id("Central Standard Time");
+    /// let bcp47_id = windows_tz_mapper.windows_tz_to_bcp47_id("Central Standard Time").unwrap();
     /// assert_eq!(bcp47_id, Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))));
     /// ```
-    pub fn windows_tz_to_bcp47_id(&self, windows_tz: &str) -> Option<TimeZoneBcp47Id> {
+    pub fn windows_tz_to_bcp47_id(
+        &self,
+        windows_tz: &str,
+    ) -> Result<Option<TimeZoneBcp47Id>, fmt::Error> {
         self.windows_tz_to_bcp47_id_with_region(windows_tz, None)
     }
 
@@ -123,57 +148,50 @@ impl<'a> WindowsTimeZoneMapperBorrowed<'a> {
     /// use icu_provider::prelude::icu_locale_core::subtags::Region;
     /// use tinystr::tinystr;
     ///
-    /// let win_tz_mapper_owned = WindowsTimeZoneMapper::new();
-    /// let win_tz_mapper = win_tz_mapper_owned.as_borrowed();
+    /// let win_tz_mapper = WindowsTimeZoneMapper::new();
     ///
     /// let region = None;
-    /// let bcp47_id = win_tz_mapper.windows_tz_to_bcp47_id_with_region("Central Standard Time", region);
+    /// let bcp47_id = win_tz_mapper.windows_tz_to_bcp47_id_with_region("Central Standard Time", region).unwrap();
     /// assert_eq!(bcp47_id, Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))));
     ///  
     /// let region = Some(Region::try_from_str("US").unwrap());
-    /// let bcp47_id = win_tz_mapper.windows_tz_to_bcp47_id_with_region("Central Standard Time", region);
+    /// let bcp47_id = win_tz_mapper.windows_tz_to_bcp47_id_with_region("Central Standard Time", region).unwrap();
     /// assert_eq!(bcp47_id, Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))));
     ///  
     /// let region = Some(Region::try_from_str("CA").unwrap());
-    /// let bcp47_id = win_tz_mapper.windows_tz_to_bcp47_id_with_region("Central Standard Time", region);
+    /// let bcp47_id = win_tz_mapper.windows_tz_to_bcp47_id_with_region("Central Standard Time", region).unwrap();
     /// assert_eq!(bcp47_id, Some(TimeZoneBcp47Id(tinystr!(8, "cawnp"))));
     ///   
     /// // NOTE: Central Standard Time/ZZ may point to "cst6cdt" in older version, but that
     /// // has been deprecated id has been deprecated and uschi is preferred.
     /// let region = Some(Region::try_from_str("ZZ").unwrap());
-    /// let bcp47_id = win_tz_mapper.windows_tz_to_bcp47_id_with_region("Central Standard Time", region);
+    /// let bcp47_id = win_tz_mapper.windows_tz_to_bcp47_id_with_region("Central Standard Time", region).unwrap();
     /// assert_eq!(bcp47_id, Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))));
     /// ```
     pub fn windows_tz_to_bcp47_id_with_region(
         &self,
         windows_tz: &str,
         region: Option<Region>,
-    ) -> Option<TimeZoneBcp47Id> {
-        self.windows_tz_lookup(windows_tz, region)
-            .and_then(|index| self.data.bcp47_ids.get(index))
+    ) -> Result<Option<TimeZoneBcp47Id>, fmt::Error> {
+        Ok(self
+            .windows_tz_lookup(windows_tz, region)?
+            .and_then(|index| self.data.bcp47_ids.get(index)))
     }
 
     /// Look up the index of a windows time zone with a provided windows time zone and region.
-    fn windows_tz_lookup(&self, windows_tz: &str, region: Option<Region>) -> Option<usize> {
+    fn windows_tz_lookup(
+        &self,
+        windows_tz: &str,
+        region: Option<Region>,
+    ) -> Result<Option<usize>, fmt::Error> {
         let mut cursor = self.data.map.cursor();
-        for tz_byte in windows_tz.as_bytes() {
-            cursor.step(*tz_byte);
-        }
-
+        cursor.write_str(windows_tz)?;
         cursor.step(b'/');
-
-        let Some(region) = region else {
-            for byte in "001".as_bytes() {
-                cursor.step(*byte);
-            }
-            return cursor.take_value();
+        match region {
+            Some(region) => cursor.write_str(region.as_str())?,
+            None => cursor.write_str("001")?,
         };
-
-        for byte in region.as_str().as_bytes() {
-            cursor.step(*byte);
-        }
-
-        cursor.take_value()
+        Ok(cursor.take_value())
     }
 }
 
@@ -188,15 +206,18 @@ mod tests {
     #[test]
     fn basic_windows_tz_lookup() {
         let win_map = WindowsTimeZoneMapper::new();
-        let win_map_borrowed = win_map.as_borrowed();
 
-        let result = win_map_borrowed.windows_tz_to_bcp47_id("Central Standard Time");
+        let result = win_map
+            .windows_tz_to_bcp47_id("Central Standard Time")
+            .unwrap();
         assert_eq!(result, Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))));
 
-        let result = win_map_borrowed.windows_tz_to_bcp47_id("Eastern Standard Time");
+        let result = win_map
+            .windows_tz_to_bcp47_id("Eastern Standard Time")
+            .unwrap();
         assert_eq!(result, Some(TimeZoneBcp47Id(tinystr!(8, "usnyc"))));
 
-        let result = win_map_borrowed.windows_tz_to_bcp47_id("GMT Standard Time");
+        let result = win_map.windows_tz_to_bcp47_id("GMT Standard Time").unwrap();
         assert_eq!(result, Some(TimeZoneBcp47Id(tinystr!(8, "gblon"))));
     }
 }

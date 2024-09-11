@@ -649,5 +649,6 @@ icu::timezone::CustomZonedDateTime::try_iso_from_utf8#FnInStruct
 icu::timezone::ParseError#Enum
 icu::timezone::UnknownTimeZoneError#Struct
 icu::timezone::WindowsTimeZoneMapper#Struct
-icu::timezone::WindowsTimeZoneMapper::as_borrowed#FnInStruct
 icu::timezone::WindowsTimeZoneMapper::new#FnInStruct
+icu::timezone::WindowsTimeZoneMapper::windows_tz_to_bcp47_id#FnInStruct
+icu::timezone::WindowsTimeZoneMapper::windows_tz_to_bcp47_id_with_region#FnInStruct
