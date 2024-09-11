@@ -2,52 +2,23 @@
   "patterns": {
     "one": [
       0,
-      [
-        {
-          "Literal": "متر"
-        }
-      ]
+      "متر"
     ],
     "two": [
       0,
-      [
-        {
-          "Literal": "متران"
-        }
-      ]
+      "متران"
     ],
     "few": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " أمتار"
-        }
-      ]
+      "{0} أمتار"
     ],
     "many": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " مترًا"
-        }
-      ]
+      "{0} مترًا"
     ],
     "other": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " متر"
-        }
-      ]
+      "{0} متر"
     ]
   }
 }

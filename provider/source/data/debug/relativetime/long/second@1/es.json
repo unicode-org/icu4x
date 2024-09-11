@@ -5,61 +5,21 @@
   "past": {
     "one": [
       0,
-      [
-        {
-          "Literal": "hace "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " segundo"
-        }
-      ]
+      "hace {0} segundo"
     ],
     "other": [
       0,
-      [
-        {
-          "Literal": "hace "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " segundos"
-        }
-      ]
+      "hace {0} segundos"
     ]
   },
   "future": {
     "one": [
       0,
-      [
-        {
-          "Literal": "dentro de "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " segundo"
-        }
-      ]
+      "dentro de {0} segundo"
     ],
     "other": [
       0,
-      [
-        {
-          "Literal": "dentro de "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " segundos"
-        }
-      ]
+      "dentro de {0} segundos"
     ]
   }
 }

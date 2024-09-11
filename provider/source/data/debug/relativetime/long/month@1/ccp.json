@@ -7,27 +7,13 @@
   "past": {
     "other": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " 𑄟𑄏𑄧 𑄃𑄉𑄬"
-        }
-      ]
+      "{0} 𑄟𑄏𑄧 𑄃𑄉𑄬"
     ]
   },
   "future": {
     "other": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " 𑄟𑄏𑄬"
-        }
-      ]
+      "{0} 𑄟𑄏𑄬"
     ]
   }
 }

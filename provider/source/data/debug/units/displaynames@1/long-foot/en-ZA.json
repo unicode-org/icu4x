@@ -2,25 +2,11 @@
   "patterns": {
     "one": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " foot"
-        }
-      ]
+      "{0} foot"
     ],
     "other": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " feet"
-        }
-      ]
+      "{0} feet"
     ]
   }
 }

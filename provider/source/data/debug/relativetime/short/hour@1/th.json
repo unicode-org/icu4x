@@ -5,30 +5,13 @@
   "past": {
     "other": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " ชม. ที่แล้ว"
-        }
-      ]
+      "{0} ชม. ที่แล้ว"
     ]
   },
   "future": {
     "other": [
       0,
-      [
-        {
-          "Literal": "ใน "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " ชม."
-        }
-      ]
+      "ใน {0} ชม."
     ]
   }
 }

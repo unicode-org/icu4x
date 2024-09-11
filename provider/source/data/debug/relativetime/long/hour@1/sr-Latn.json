@@ -5,89 +5,29 @@
   "past": {
     "one": [
       0,
-      [
-        {
-          "Literal": "pre "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " sata"
-        }
-      ]
+      "pre {0} sata"
     ],
     "few": [
       0,
-      [
-        {
-          "Literal": "pre "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " sata"
-        }
-      ]
+      "pre {0} sata"
     ],
     "other": [
       0,
-      [
-        {
-          "Literal": "pre "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " sati"
-        }
-      ]
+      "pre {0} sati"
     ]
   },
   "future": {
     "one": [
       0,
-      [
-        {
-          "Literal": "za "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " sat"
-        }
-      ]
+      "za {0} sat"
     ],
     "few": [
       0,
-      [
-        {
-          "Literal": "za "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " sata"
-        }
-      ]
+      "za {0} sata"
     ],
     "other": [
       0,
-      [
-        {
-          "Literal": "za "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " sati"
-        }
-      ]
+      "za {0} sati"
     ]
   }
 }

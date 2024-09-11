@@ -7,30 +7,13 @@
   "past": {
     "other": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " ไตรมาสที่แล้ว"
-        }
-      ]
+      "{0} ไตรมาสที่แล้ว"
     ]
   },
   "future": {
     "other": [
       0,
-      [
-        {
-          "Literal": "ใน "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " ไตรมาส"
-        }
-      ]
+      "ใน {0} ไตรมาส"
     ]
   }
 }

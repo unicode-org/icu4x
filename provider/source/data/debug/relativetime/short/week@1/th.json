@@ -7,30 +7,13 @@
   "past": {
     "other": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " สัปดาห์ที่แล้ว"
-        }
-      ]
+      "{0} สัปดาห์ที่แล้ว"
     ]
   },
   "future": {
     "other": [
       0,
-      [
-        {
-          "Literal": "ใน "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " สัปดาห์"
-        }
-      ]
+      "ใน {0} สัปดาห์"
     ]
   }
 }

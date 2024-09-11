@@ -7,121 +7,45 @@
   "past": {
     "one": [
       0,
-      [
-        {
-          "Literal": "قبل أسبوع واحد"
-        }
-      ]
+      "قبل أسبوع واحد"
     ],
     "two": [
       0,
-      [
-        {
-          "Literal": "قبل أسبوعين"
-        }
-      ]
+      "قبل أسبوعين"
     ],
     "few": [
       0,
-      [
-        {
-          "Literal": "قبل "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " أسابيع"
-        }
-      ]
+      "قبل {0} أسابيع"
     ],
     "many": [
       0,
-      [
-        {
-          "Literal": "قبل "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " أسبوعًا"
-        }
-      ]
+      "قبل {0} أسبوعًا"
     ],
     "other": [
       0,
-      [
-        {
-          "Literal": "قبل "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " أسبوع"
-        }
-      ]
+      "قبل {0} أسبوع"
     ]
   },
   "future": {
     "one": [
       0,
-      [
-        {
-          "Literal": "خلال أسبوع واحد"
-        }
-      ]
+      "خلال أسبوع واحد"
     ],
     "two": [
       0,
-      [
-        {
-          "Literal": "خلال أسبوعين"
-        }
-      ]
+      "خلال أسبوعين"
     ],
     "few": [
       0,
-      [
-        {
-          "Literal": "خلال "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " أسابيع"
-        }
-      ]
+      "خلال {0} أسابيع"
     ],
     "many": [
       0,
-      [
-        {
-          "Literal": "خلال "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " أسبوعًا"
-        }
-      ]
+      "خلال {0} أسبوعًا"
     ],
     "other": [
       0,
-      [
-        {
-          "Literal": "خلال "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " أسبوع"
-        }
-      ]
+      "خلال {0} أسبوع"
     ]
   }
 }

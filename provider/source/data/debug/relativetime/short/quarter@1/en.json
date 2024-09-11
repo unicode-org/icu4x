@@ -7,55 +7,21 @@
   "past": {
     "one": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " qtr. ago"
-        }
-      ]
+      "{0} qtr. ago"
     ],
     "other": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " qtrs. ago"
-        }
-      ]
+      "{0} qtrs. ago"
     ]
   },
   "future": {
     "one": [
       0,
-      [
-        {
-          "Literal": "in "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " qtr."
-        }
-      ]
+      "in {0} qtr."
     ],
     "other": [
       0,
-      [
-        {
-          "Literal": "in "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " qtrs."
-        }
-      ]
+      "in {0} qtrs."
     ]
   }
 }

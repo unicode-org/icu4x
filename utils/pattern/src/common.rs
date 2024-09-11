@@ -6,7 +6,7 @@ use crate::Error;
 use writeable::{Part, TryWriteable};
 
 #[cfg(feature = "alloc")]
-use alloc::{borrow::Cow, boxed::Box};
+use alloc::{borrow::Cow, boxed::Box, string::String};
 
 /// A borrowed item in a [`Pattern`]. Items are either string literals or placeholders.
 ///
@@ -111,6 +111,13 @@ pub trait PatternBackend: crate::private::Sealed + 'static + core::fmt::Debug {
     /// Iterates over the pattern items in a store.
     #[doc(hidden)] // TODO(#4467): Should be internal
     fn iter_items(store: &Self::Store) -> Self::Iter<'_>;
+
+    /// Writes the placeholder into the pattern string, the inverse of `Self::PlaceholderKey::from_str`
+    #[cfg(feature = "alloc")]
+    fn escape_placeholder(s: &mut String, placeholder: Self::PlaceholderKey<'_>);
+
+    /// The store for the empty pattern, used to implement `Default`
+    fn empty() -> &'static Self::Store;
 }
 
 /// Default annotation for the literal portion of a pattern.

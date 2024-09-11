@@ -7,61 +7,21 @@
   "past": {
     "many": [
       0,
-      [
-        {
-          "Literal": "-"
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " л."
-        }
-      ]
+      "-{0} л."
     ],
     "other": [
       0,
-      [
-        {
-          "Literal": "-"
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " г."
-        }
-      ]
+      "-{0} г."
     ]
   },
   "future": {
     "many": [
       0,
-      [
-        {
-          "Literal": "+"
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " л."
-        }
-      ]
+      "+{0} л."
     ],
     "other": [
       0,
-      [
-        {
-          "Literal": "+"
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " г."
-        }
-      ]
+      "+{0} г."
     ]
   }
 }

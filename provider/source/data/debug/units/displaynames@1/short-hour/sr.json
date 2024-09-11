@@ -2,36 +2,15 @@
   "patterns": {
     "one": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " сат"
-        }
-      ]
+      "{0} сат"
     ],
     "few": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " сата"
-        }
-      ]
+      "{0} сата"
     ],
     "other": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " сати"
-        }
-      ]
+      "{0} сати"
     ]
   }
 }

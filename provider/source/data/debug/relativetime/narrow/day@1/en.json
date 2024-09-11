@@ -7,30 +7,13 @@
   "past": {
     "other": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": "d ago"
-        }
-      ]
+      "{0}d ago"
     ]
   },
   "future": {
     "other": [
       0,
-      [
-        {
-          "Literal": "in "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": "d"
-        }
-      ]
+      "in {0}d"
     ]
   }
 }

@@ -7,7 +7,7 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/master/cldr-json/cldr-units-full/main/en/units.json>
 
-use icu_pattern::{PatternString, SinglePlaceholder};
+use icu_pattern::SinglePlaceholderPattern;
 use serde::Deserialize;
 use std::collections::BTreeMap;
 
@@ -18,28 +18,28 @@ use std::collections::BTreeMap;
 #[derive(PartialEq, Debug, Deserialize, Clone)]
 pub(crate) struct Patterns {
     #[serde(rename = "displayName-count-0")]
-    pub(crate) explicit_zero: Option<PatternString<SinglePlaceholder>>,
+    pub(crate) explicit_zero: Option<Box<SinglePlaceholderPattern>>,
 
     #[serde(rename = "displayName-count-1")]
-    pub(crate) explicit_one: Option<PatternString<SinglePlaceholder>>,
+    pub(crate) explicit_one: Option<Box<SinglePlaceholderPattern>>,
 
     #[serde(rename = "unitPattern-count-zero")]
-    pub(crate) zero: Option<PatternString<SinglePlaceholder>>,
+    pub(crate) zero: Option<Box<SinglePlaceholderPattern>>,
 
     #[serde(rename = "unitPattern-count-one")]
-    pub(crate) one: Option<PatternString<SinglePlaceholder>>,
+    pub(crate) one: Option<Box<SinglePlaceholderPattern>>,
 
     #[serde(rename = "unitPattern-count-two")]
-    pub(crate) two: Option<PatternString<SinglePlaceholder>>,
+    pub(crate) two: Option<Box<SinglePlaceholderPattern>>,
 
     #[serde(rename = "unitPattern-count-few")]
-    pub(crate) few: Option<PatternString<SinglePlaceholder>>,
+    pub(crate) few: Option<Box<SinglePlaceholderPattern>>,
 
     #[serde(rename = "unitPattern-count-many")]
-    pub(crate) many: Option<PatternString<SinglePlaceholder>>,
+    pub(crate) many: Option<Box<SinglePlaceholderPattern>>,
 
     #[serde(rename = "unitPattern-count-other")]
-    pub(crate) other: Option<PatternString<SinglePlaceholder>>,
+    pub(crate) other: Option<Box<SinglePlaceholderPattern>>,
 
     #[serde(rename = "compoundUnitPattern")]
     pub(crate) compound_unit_pattern: Option<String>,

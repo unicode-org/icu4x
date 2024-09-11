@@ -9,30 +9,13 @@
   "past": {
     "other": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " araw ang nakalipas"
-        }
-      ]
+      "{0} araw ang nakalipas"
     ]
   },
   "future": {
     "other": [
       0,
-      [
-        {
-          "Literal": "sa "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " araw"
-        }
-      ]
+      "sa {0} araw"
     ]
   }
 }

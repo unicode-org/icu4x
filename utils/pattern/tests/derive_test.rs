@@ -43,10 +43,7 @@ fn json_SinglePlaceholderPattern_Cow() {
         data: Cow::Owned(pattern),
     };
     let data_json = serde_json::to_string(&data).unwrap();
-    assert_eq!(
-        data_json,
-        r#"{"data":[{"Literal":"Hello, "},{"Placeholder":"Singleton"},{"Literal":"!"}]}"#
-    );
+    assert_eq!(data_json, r#"{"data":"Hello, {0}!"}"#);
     let data_deserialized: DeriveTest_SinglePlaceholderPattern_Cow =
         serde_json::from_str(&data_json).unwrap();
     assert_eq!(data, data_deserialized);

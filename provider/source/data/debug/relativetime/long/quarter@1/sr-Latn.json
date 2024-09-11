@@ -7,47 +7,17 @@
   "past": {
     "other": [
       0,
-      [
-        {
-          "Literal": "pre "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " kvartala"
-        }
-      ]
+      "pre {0} kvartala"
     ]
   },
   "future": {
     "one": [
       0,
-      [
-        {
-          "Literal": "za "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " kvartal"
-        }
-      ]
+      "za {0} kvartal"
     ],
     "other": [
       0,
-      [
-        {
-          "Literal": "za "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " kvartala"
-        }
-      ]
+      "za {0} kvartala"
     ]
   }
 }

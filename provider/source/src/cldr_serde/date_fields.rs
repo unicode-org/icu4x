@@ -9,7 +9,7 @@
 
 use std::collections::HashMap;
 
-use icu_pattern::{PatternString, SinglePlaceholder};
+use icu_pattern::SinglePlaceholderPattern;
 use serde::{
     de::{Error, IgnoredAny, Visitor},
     Deserialize,
@@ -18,21 +18,21 @@ use serde::{
 #[derive(Debug, Deserialize, Default)]
 pub(crate) struct PluralRulesPattern {
     #[serde(rename = "relativeTimePattern-count-0")]
-    pub(crate) explicit_zero: Option<PatternString<SinglePlaceholder>>,
+    pub(crate) explicit_zero: Option<Box<SinglePlaceholderPattern>>,
     #[serde(rename = "relativeTimePattern-count-1")]
-    pub(crate) explicit_one: Option<PatternString<SinglePlaceholder>>,
+    pub(crate) explicit_one: Option<Box<SinglePlaceholderPattern>>,
     #[serde(rename = "relativeTimePattern-count-zero")]
-    pub(crate) zero: Option<PatternString<SinglePlaceholder>>,
+    pub(crate) zero: Option<Box<SinglePlaceholderPattern>>,
     #[serde(rename = "relativeTimePattern-count-one")]
-    pub(crate) one: Option<PatternString<SinglePlaceholder>>,
+    pub(crate) one: Option<Box<SinglePlaceholderPattern>>,
     #[serde(rename = "relativeTimePattern-count-two")]
-    pub(crate) two: Option<PatternString<SinglePlaceholder>>,
+    pub(crate) two: Option<Box<SinglePlaceholderPattern>>,
     #[serde(rename = "relativeTimePattern-count-few")]
-    pub(crate) few: Option<PatternString<SinglePlaceholder>>,
+    pub(crate) few: Option<Box<SinglePlaceholderPattern>>,
     #[serde(rename = "relativeTimePattern-count-many")]
-    pub(crate) many: Option<PatternString<SinglePlaceholder>>,
+    pub(crate) many: Option<Box<SinglePlaceholderPattern>>,
     #[serde(rename = "relativeTimePattern-count-other")]
-    pub(crate) other: PatternString<SinglePlaceholder>,
+    pub(crate) other: Box<SinglePlaceholderPattern>,
 }
 
 #[derive(Debug)]

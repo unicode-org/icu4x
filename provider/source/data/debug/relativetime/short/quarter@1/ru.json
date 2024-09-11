@@ -7,30 +7,13 @@
   "past": {
     "other": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " кв. назад"
-        }
-      ]
+      "{0} кв. назад"
     ]
   },
   "future": {
     "other": [
       0,
-      [
-        {
-          "Literal": "через "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " кв."
-        }
-      ]
+      "через {0} кв."
     ]
   }
 }

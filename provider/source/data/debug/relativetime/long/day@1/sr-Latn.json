@@ -9,47 +9,17 @@
   "past": {
     "other": [
       0,
-      [
-        {
-          "Literal": "pre "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " dana"
-        }
-      ]
+      "pre {0} dana"
     ]
   },
   "future": {
     "one": [
       0,
-      [
-        {
-          "Literal": "za "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " dan"
-        }
-      ]
+      "za {0} dan"
     ],
     "other": [
       0,
-      [
-        {
-          "Literal": "za "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " dana"
-        }
-      ]
+      "za {0} dana"
     ]
   }
 }

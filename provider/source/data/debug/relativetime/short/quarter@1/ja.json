@@ -7,27 +7,13 @@
   "past": {
     "other": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " 四半期前"
-        }
-      ]
+      "{0} 四半期前"
     ]
   },
   "future": {
     "other": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " 四半期後"
-        }
-      ]
+      "{0} 四半期後"
     ]
   }
 }

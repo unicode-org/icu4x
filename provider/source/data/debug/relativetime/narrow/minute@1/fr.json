@@ -5,33 +5,13 @@
   "past": {
     "other": [
       0,
-      [
-        {
-          "Literal": "-"
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " min"
-        }
-      ]
+      "-{0} min"
     ]
   },
   "future": {
     "other": [
       0,
-      [
-        {
-          "Literal": "+"
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " min"
-        }
-      ]
+      "+{0} min"
     ]
   }
 }

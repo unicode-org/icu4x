@@ -7,27 +7,13 @@
   "past": {
     "other": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " ay önce"
-        }
-      ]
+      "{0} ay önce"
     ]
   },
   "future": {
     "other": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " ay sonra"
-        }
-      ]
+      "{0} ay sonra"
     ]
   }
 }

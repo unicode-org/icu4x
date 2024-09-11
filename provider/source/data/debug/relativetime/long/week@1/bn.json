@@ -7,27 +7,13 @@
   "past": {
     "other": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " সপ্তাহ আগে"
-        }
-      ]
+      "{0} সপ্তাহ আগে"
     ]
   },
   "future": {
     "other": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " সপ্তাহে"
-        }
-      ]
+      "{0} সপ্তাহে"
     ]
   }
 }

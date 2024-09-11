@@ -5,33 +5,13 @@
   "past": {
     "other": [
       0,
-      [
-        {
-          "Literal": "hace "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " seg."
-        }
-      ]
+      "hace {0} seg."
     ]
   },
   "future": {
     "other": [
       0,
-      [
-        {
-          "Literal": "dentro de "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " seg."
-        }
-      ]
+      "dentro de {0} seg."
     ]
   }
 }

@@ -7,93 +7,37 @@
   "past": {
     "one": [
       0,
-      [
-        {
-          "Literal": "قبل سنة واحدة"
-        }
-      ]
+      "قبل سنة واحدة"
     ],
     "two": [
       0,
-      [
-        {
-          "Literal": "قبل سنتين"
-        }
-      ]
+      "قبل سنتين"
     ],
     "few": [
       0,
-      [
-        {
-          "Literal": "قبل "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " سنوات"
-        }
-      ]
+      "قبل {0} سنوات"
     ],
     "other": [
       0,
-      [
-        {
-          "Literal": "قبل "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " سنة"
-        }
-      ]
+      "قبل {0} سنة"
     ]
   },
   "future": {
     "one": [
       0,
-      [
-        {
-          "Literal": "خلال سنة واحدة"
-        }
-      ]
+      "خلال سنة واحدة"
     ],
     "two": [
       0,
-      [
-        {
-          "Literal": "خلال سنتين"
-        }
-      ]
+      "خلال سنتين"
     ],
     "few": [
       0,
-      [
-        {
-          "Literal": "خلال "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " سنوات"
-        }
-      ]
+      "خلال {0} سنوات"
     ],
     "other": [
       0,
-      [
-        {
-          "Literal": "خلال "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " سنة"
-        }
-      ]
+      "خلال {0} سنة"
     ]
   }
 }

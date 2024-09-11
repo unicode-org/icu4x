@@ -5,27 +5,13 @@
   "past": {
     "other": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " সেকেন্ড আগে"
-        }
-      ]
+      "{0} সেকেন্ড আগে"
     ]
   },
   "future": {
     "other": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " সেকেন্ডে"
-        }
-      ]
+      "{0} সেকেন্ডে"
     ]
   }
 }

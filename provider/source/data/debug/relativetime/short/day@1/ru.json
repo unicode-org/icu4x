@@ -9,30 +9,13 @@
   "past": {
     "other": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " дн. назад"
-        }
-      ]
+      "{0} дн. назад"
     ]
   },
   "future": {
     "other": [
       0,
-      [
-        {
-          "Literal": "через "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " дн."
-        }
-      ]
+      "через {0} дн."
     ]
   }
 }

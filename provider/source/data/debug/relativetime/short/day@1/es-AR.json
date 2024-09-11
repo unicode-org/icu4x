@@ -9,33 +9,13 @@
   "past": {
     "other": [
       0,
-      [
-        {
-          "Literal": "hace "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " días"
-        }
-      ]
+      "hace {0} días"
     ]
   },
   "future": {
     "other": [
       0,
-      [
-        {
-          "Literal": "dentro de "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " días"
-        }
-      ]
+      "dentro de {0} días"
     ]
   }
 }

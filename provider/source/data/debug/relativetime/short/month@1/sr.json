@@ -7,33 +7,13 @@
   "past": {
     "other": [
       0,
-      [
-        {
-          "Literal": "пре "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " мес."
-        }
-      ]
+      "пре {0} мес."
     ]
   },
   "future": {
     "other": [
       0,
-      [
-        {
-          "Literal": "за "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " мес."
-        }
-      ]
+      "за {0} мес."
     ]
   }
 }

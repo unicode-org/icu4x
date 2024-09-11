@@ -7,30 +7,13 @@
   "past": {
     "other": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " мес. назад"
-        }
-      ]
+      "{0} мес. назад"
     ]
   },
   "future": {
     "other": [
       0,
-      [
-        {
-          "Literal": "через "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " мес."
-        }
-      ]
+      "через {0} мес."
     ]
   }
 }

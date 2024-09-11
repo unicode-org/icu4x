@@ -2,36 +2,15 @@
   "patterns": {
     "one": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " фут"
-        }
-      ]
+      "{0} фут"
     ],
     "many": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " футов"
-        }
-      ]
+      "{0} футов"
     ],
     "other": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " фута"
-        }
-      ]
+      "{0} фута"
     ]
   }
 }

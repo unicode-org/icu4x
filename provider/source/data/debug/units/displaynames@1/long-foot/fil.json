@@ -2,25 +2,11 @@
   "patterns": {
     "one": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " talampakan"
-        }
-      ]
+      "{0} talampakan"
     ],
     "other": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " na talampakan"
-        }
-      ]
+      "{0} na talampakan"
     ]
   }
 }

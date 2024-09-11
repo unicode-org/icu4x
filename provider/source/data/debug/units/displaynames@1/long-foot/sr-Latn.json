@@ -2,25 +2,11 @@
   "patterns": {
     "few": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " stope"
-        }
-      ]
+      "{0} stope"
     ],
     "other": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " stopa"
-        }
-      ]
+      "{0} stopa"
     ]
   }
 }

@@ -2,25 +2,11 @@
   "patterns": {
     "one": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " 𑄛𑄅𑄪𑄚𑄳𑄓𑄴"
-        }
-      ]
+      "{0} 𑄛𑄅𑄪𑄚𑄳𑄓𑄴"
     ],
     "other": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " lb"
-        }
-      ]
+      "{0} lb"
     ]
   }
 }

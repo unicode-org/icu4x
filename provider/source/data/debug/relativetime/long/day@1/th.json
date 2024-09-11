@@ -9,30 +9,13 @@
   "past": {
     "other": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " วันที่ผ่านมา"
-        }
-      ]
+      "{0} วันที่ผ่านมา"
     ]
   },
   "future": {
     "other": [
       0,
-      [
-        {
-          "Literal": "ในอีก "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " วัน"
-        }
-      ]
+      "ในอีก {0} วัน"
     ]
   }
 }

@@ -244,6 +244,15 @@ impl PatternBackend for SinglePlaceholder {
         }
         Ok(result.into_boxed_str())
     }
+
+    #[cfg(feature = "alloc")]
+    fn escape_placeholder(s: &mut String, _: SinglePlaceholderKey) {
+        s.push_str("{0}");
+    }
+
+    fn empty() -> &'static Self::Store {
+        "\0"
+    }
 }
 
 #[doc(hidden)] // TODO(#4467): Should be internal

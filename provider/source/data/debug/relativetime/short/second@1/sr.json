@@ -5,33 +5,13 @@
   "past": {
     "other": [
       0,
-      [
-        {
-          "Literal": "пре "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " сек."
-        }
-      ]
+      "пре {0} сек."
     ]
   },
   "future": {
     "other": [
       0,
-      [
-        {
-          "Literal": "за "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " сек."
-        }
-      ]
+      "за {0} сек."
     ]
   }
 }

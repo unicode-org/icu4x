@@ -5,30 +5,13 @@
   "past": {
     "other": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " วินาทีที่แล้ว"
-        }
-      ]
+      "{0} วินาทีที่แล้ว"
     ]
   },
   "future": {
     "other": [
       0,
-      [
-        {
-          "Literal": "ใน "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " วินาที"
-        }
-      ]
+      "ใน {0} วินาที"
     ]
   }
 }

@@ -5,89 +5,29 @@
   "past": {
     "one": [
       0,
-      [
-        {
-          "Literal": "pre "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " sekunde"
-        }
-      ]
+      "pre {0} sekunde"
     ],
     "few": [
       0,
-      [
-        {
-          "Literal": "pre "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " sekunde"
-        }
-      ]
+      "pre {0} sekunde"
     ],
     "other": [
       0,
-      [
-        {
-          "Literal": "pre "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " sekundi"
-        }
-      ]
+      "pre {0} sekundi"
     ]
   },
   "future": {
     "one": [
       0,
-      [
-        {
-          "Literal": "za "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " sekundu"
-        }
-      ]
+      "za {0} sekundu"
     ],
     "few": [
       0,
-      [
-        {
-          "Literal": "za "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " sekunde"
-        }
-      ]
+      "za {0} sekunde"
     ],
     "other": [
       0,
-      [
-        {
-          "Literal": "za "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " sekundi"
-        }
-      ]
+      "za {0} sekundi"
     ]
   }
 }

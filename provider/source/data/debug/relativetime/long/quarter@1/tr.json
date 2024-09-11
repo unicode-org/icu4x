@@ -7,27 +7,13 @@
   "past": {
     "other": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " çeyrek önce"
-        }
-      ]
+      "{0} çeyrek önce"
     ]
   },
   "future": {
     "other": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " çeyrek sonra"
-        }
-      ]
+      "{0} çeyrek sonra"
     ]
   }
 }

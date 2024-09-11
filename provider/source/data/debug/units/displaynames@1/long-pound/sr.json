@@ -2,36 +2,15 @@
   "patterns": {
     "one": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " фунта"
-        }
-      ]
+      "{0} фунта"
     ],
     "few": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " фунте"
-        }
-      ]
+      "{0} фунте"
     ],
     "other": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " фунти"
-        }
-      ]
+      "{0} фунти"
     ]
   }
 }

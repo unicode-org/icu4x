@@ -2,36 +2,15 @@
   "patterns": {
     "one": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " sekunda"
-        }
-      ]
+      "{0} sekunda"
     ],
     "few": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " sekunde"
-        }
-      ]
+      "{0} sekunde"
     ],
     "other": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " sekundi"
-        }
-      ]
+      "{0} sekundi"
     ]
   }
 }

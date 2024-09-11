@@ -2,25 +2,11 @@
   "patterns": {
     "one": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " килограм"
-        }
-      ]
+      "{0} килограм"
     ],
     "other": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " килограма"
-        }
-      ]
+      "{0} килограма"
     ]
   }
 }

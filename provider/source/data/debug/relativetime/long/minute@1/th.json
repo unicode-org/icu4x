@@ -5,30 +5,13 @@
   "past": {
     "other": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " นาทีที่ผ่านมา"
-        }
-      ]
+      "{0} นาทีที่ผ่านมา"
     ]
   },
   "future": {
     "other": [
       0,
-      [
-        {
-          "Literal": "ในอีก "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " นาที"
-        }
-      ]
+      "ในอีก {0} นาที"
     ]
   }
 }

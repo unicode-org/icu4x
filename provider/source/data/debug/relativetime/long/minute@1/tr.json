@@ -5,27 +5,13 @@
   "past": {
     "other": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " dakika önce"
-        }
-      ]
+      "{0} dakika önce"
     ]
   },
   "future": {
     "other": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " dakika sonra"
-        }
-      ]
+      "{0} dakika sonra"
     ]
   }
 }

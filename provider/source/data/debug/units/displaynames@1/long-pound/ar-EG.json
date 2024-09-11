@@ -2,33 +2,15 @@
   "patterns": {
     "two": [
       0,
-      [
-        {
-          "Literal": "رطلان"
-        }
-      ]
+      "رطلان"
     ],
     "many": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " رطلًا"
-        }
-      ]
+      "{0} رطلًا"
     ],
     "other": [
       0,
-      [
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " رطل"
-        }
-      ]
+      "{0} رطل"
     ]
   }
 }

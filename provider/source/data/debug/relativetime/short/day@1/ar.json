@@ -9,121 +9,45 @@
   "past": {
     "one": [
       0,
-      [
-        {
-          "Literal": "قبل يوم واحد"
-        }
-      ]
+      "قبل يوم واحد"
     ],
     "two": [
       0,
-      [
-        {
-          "Literal": "قبل يومين"
-        }
-      ]
+      "قبل يومين"
     ],
     "few": [
       0,
-      [
-        {
-          "Literal": "قبل "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " أيام"
-        }
-      ]
+      "قبل {0} أيام"
     ],
     "many": [
       0,
-      [
-        {
-          "Literal": "قبل "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " يومًا"
-        }
-      ]
+      "قبل {0} يومًا"
     ],
     "other": [
       0,
-      [
-        {
-          "Literal": "قبل "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " يوم"
-        }
-      ]
+      "قبل {0} يوم"
     ]
   },
   "future": {
     "one": [
       0,
-      [
-        {
-          "Literal": "خلال يوم واحد"
-        }
-      ]
+      "خلال يوم واحد"
     ],
     "two": [
       0,
-      [
-        {
-          "Literal": "خلال يومين"
-        }
-      ]
+      "خلال يومين"
     ],
     "few": [
       0,
-      [
-        {
-          "Literal": "خلال "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " أيام"
-        }
-      ]
+      "خلال {0} أيام"
     ],
     "many": [
       0,
-      [
-        {
-          "Literal": "خلال "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " يومًا"
-        }
-      ]
+      "خلال {0} يومًا"
     ],
     "other": [
       0,
-      [
-        {
-          "Literal": "خلال "
-        },
-        {
-          "Placeholder": "Singleton"
-        },
-        {
-          "Literal": " يوم"
-        }
-      ]
+      "خلال {0} يوم"
     ]
   }
 }
