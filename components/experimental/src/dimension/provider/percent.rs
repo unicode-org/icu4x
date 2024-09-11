@@ -38,11 +38,11 @@ pub struct PercentEssentialsV1<'data> {
     /// Represents the standard pattern for signed percents.
     /// NOTE: place holder 0 is the place of the percent value.
     ///       place holder 1 is the place of the plus, minus, or approximate signs.
-    pub signed_pattern: DoublePlaceholderPattern<Cow<'data, str>>,
+    pub signed_pattern: Cow<'data, DoublePlaceholderPattern>,
 
     #[cfg_attr(feature = "serde", serde(borrow))]
     /// Represents the standard pattern for unsigned percents.
-    pub unsigned_pattern: SinglePlaceholderPattern<Cow<'data, str>>,
+    pub unsigned_pattern: Cow<'data, SinglePlaceholderPattern>,
 
     #[cfg_attr(feature = "serde", serde(borrow))]
     /// The localize approximate sign.

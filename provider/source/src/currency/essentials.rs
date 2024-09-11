@@ -20,9 +20,7 @@ use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::VarZeroVec;
 use zerovec::ZeroMap;
 
-use icu_pattern::DoublePlaceholder;
 use icu_pattern::DoublePlaceholderKey;
-use icu_pattern::Pattern;
 use icu_pattern::PatternItemCow;
 
 use icu::experimental::dimension::provider::ule::MAX_PLACEHOLDER_INDEX;
@@ -256,7 +254,7 @@ fn extract_currency_essentials<'data>(
     /// Create a `DoublePlaceholderPattern` from a string pattern.
     fn create_pattern<'data>(
         pattern: &str,
-    ) -> Result<Option<DoublePlaceholderPattern<Cow<'data, str>>>, DataError> {
+    ) -> Result<Option<Cow<'data, DoublePlaceholderPattern>>, DataError> {
         if pattern.is_empty() {
             return Ok(None);
         }
@@ -283,16 +281,12 @@ fn extract_currency_essentials<'data>(
                 PatternItemCow::Literal(s) => vec![PatternItemCow::Literal(s)],
             });
 
-        let pattern = Pattern::<DoublePlaceholder, _>::try_from_items(pattern_items.into_iter())
+        DoublePlaceholderPattern::try_from_items(pattern_items.into_iter())
             .map_err(|e| {
                 DataError::custom("Could not parse standard pattern").with_display_context(&e)
-            })?;
-
-        let pattern_store = pattern.take_store();
-        let borrowed_pattern: Pattern<DoublePlaceholder, Cow<'_, str>> =
-            Pattern::from_store_unchecked(Cow::Owned(pattern_store));
-
-        Ok(Some(borrowed_pattern.to_owned()))
+            })
+            .map(Cow::Owned)
+            .map(Some)
     }
 
     Ok(CurrencyEssentialsV1 {
@@ -307,6 +301,8 @@ fn extract_currency_essentials<'data>(
 #[test]
 fn test_basic() {
     use tinystr::tinystr;
+    use writeable::assert_writeable_eq;
+
     fn get_placeholders_of_currency(
         iso_code: UnvalidatedTinyAsciiStr<3>,
         locale: &DataResponse<CurrencyEssentialsV1Marker>,
@@ -357,33 +353,38 @@ fn test_basic() {
         })
         .unwrap();
 
-    let en_placeholders = &en.payload.get().to_owned().placeholders;
-    assert_eq!(
-        en.payload
-            .get()
-            .to_owned()
+    let en_payload = en.payload.get();
+
+    assert_writeable_eq!(
+        en_payload
             .standard_pattern
+            .as_ref()
             .unwrap()
-            .take_store(),
-        "\u{3}\u{2}"
+            .interpolate((3, "$")),
+        "$3"
     );
-    assert_eq!(
-        en.payload
-            .get()
-            .to_owned()
+    assert_writeable_eq!(
+        en_payload
             .standard_alpha_next_to_number_pattern
+            .as_ref()
             .unwrap()
-            .take_store(),
-        "\u{3}\u{6}\u{a0}"
+            .interpolate((3, "$")),
+        "$\u{a0}3"
     );
 
-    let (en_usd_short, en_usd_narrow) =
-        get_placeholders_of_currency(tinystr!(3, "USD").to_unvalidated(), &en, en_placeholders);
+    let (en_usd_short, en_usd_narrow) = get_placeholders_of_currency(
+        tinystr!(3, "USD").to_unvalidated(),
+        &en,
+        &en_payload.placeholders,
+    );
     assert_eq!(en_usd_short, "$");
     assert_eq!(en_usd_narrow, "$");
 
-    let (en_egp_short, en_egp_narrow) =
-        get_placeholders_of_currency(tinystr!(3, "EGP").to_unvalidated(), &en, en_placeholders);
+    let (en_egp_short, en_egp_narrow) = get_placeholders_of_currency(
+        tinystr!(3, "EGP").to_unvalidated(),
+        &en,
+        &en_payload.placeholders,
+    );
     assert_eq!(en_egp_short, "");
     assert_eq!(en_egp_narrow, "E£");
 
@@ -394,29 +395,25 @@ fn test_basic() {
         })
         .unwrap();
 
-    let ar_eg_placeholders = &ar_eg.payload.get().to_owned().placeholders;
-
-    assert_eq!(
-        ar_eg
-            .payload
-            .get()
-            .to_owned()
+    let ar_eg_payload = ar_eg.payload.get();
+    assert_writeable_eq!(
+        ar_eg_payload
             .standard_pattern
+            .as_ref()
             .unwrap()
-            .take_store(),
-        "\u{8}\r\u{200f}\u{a0}"
+            .interpolate((3, "$")),
+        "\u{200f}3\u{a0}$"
     );
     assert!(ar_eg
         .payload
         .get()
-        .to_owned()
         .standard_alpha_next_to_number_pattern
         .is_none());
 
     let (ar_eg_egp_short, ar_eg_egp_narrow) = get_placeholders_of_currency(
         tinystr!(3, "EGP").to_unvalidated(),
         &ar_eg,
-        ar_eg_placeholders,
+        &ar_eg_payload.placeholders,
     );
     assert_eq!(ar_eg_egp_short, "ج.م.\u{200f}");
     assert_eq!(ar_eg_egp_narrow, "E£");
@@ -424,7 +421,7 @@ fn test_basic() {
     let (ar_eg_usd_short, ar_eg_usd_narrow) = get_placeholders_of_currency(
         tinystr!(3, "USD").to_unvalidated(),
         &ar_eg,
-        ar_eg_placeholders,
+        &ar_eg_payload.placeholders,
     );
     assert_eq!(ar_eg_usd_short, "US$");
     assert_eq!(ar_eg_usd_narrow, "US$");

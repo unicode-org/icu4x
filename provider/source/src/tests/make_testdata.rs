@@ -94,7 +94,10 @@ struct ZeroCopyCheckExporter {
 // Such types contain some data that was allocated during deserializations
 //
 // Every entry in this list is a bug that needs to be addressed before stabilization.
-const EXPECTED_VIOLATIONS: &[DataMarkerInfo] = &[];
+const EXPECTED_VIOLATIONS: &[DataMarkerInfo] = &[
+    icu::experimental::dimension::provider::currency::CurrencyEssentialsV1Marker::INFO,
+    icu::experimental::dimension::provider::percent::PercentEssentialsV1Marker::INFO,
+];
 
 // Types in this list can be zero-copy deserialized (and do not contain allocated data),
 // however there is some allocation that occurs during deserialization for validation.

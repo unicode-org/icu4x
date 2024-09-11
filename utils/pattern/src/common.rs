@@ -6,7 +6,7 @@ use crate::Error;
 use writeable::{Part, TryWriteable};
 
 #[cfg(feature = "alloc")]
-use alloc::{borrow::Cow, borrow::ToOwned};
+use alloc::{borrow::Cow, boxed::Box};
 
 /// A borrowed item in a [`Pattern`]. Items are either string literals or placeholders.
 ///
@@ -63,7 +63,8 @@ where
 /// The trait has no public methods and is not implementable outside of this crate.
 ///
 /// [`Pattern`]: crate::Pattern
-pub trait PatternBackend: crate::private::Sealed + 'static {
+// Debug so that `#[derive(Debug)]` on types generic in `PatternBackend` works
+pub trait PatternBackend: crate::private::Sealed + 'static + core::fmt::Debug {
     /// The type to be used as the placeholder key in code.
     type PlaceholderKey<'a>;
 
@@ -75,11 +76,11 @@ pub trait PatternBackend: crate::private::Sealed + 'static {
     /// The type of error that the [`TryWriteable`] for this backend can return.
     type Error<'a>;
 
-    /// The type of error that the [`PatternBackend::try_store_from_utf8`] can return.
+    /// The type of error that the [`PatternBackend::try_store_from_bytes`] can return.
     type StoreFromBytesError;
 
     /// The unsized type of the store required for this backend, usually `str` or `[u8]`.
-    type Store: ?Sized;
+    type Store: ?Sized + PartialEq + core::fmt::Debug;
 
     /// The iterator type returned by [`Self::try_from_items`].
     #[doc(hidden)] // TODO(#4467): Should be internal
@@ -88,7 +89,7 @@ pub trait PatternBackend: crate::private::Sealed + 'static {
     /// Converts a byte slice store to this pattern backend's store.
     /// Does not perform validation of the store.
     #[doc(hidden)] // TODO(#4467): Should be internal
-    fn try_store_from_utf8(bytes: &[u8]) -> Result<&Self::Store, Self::StoreFromBytesError>;
+    fn try_store_from_bytes(bytes: &[u8]) -> Result<&Self::Store, Self::StoreFromBytesError>;
 
     /// Checks a store for validity, returning an error if invalid.
     #[doc(hidden)] // TODO(#4467): Should be internal
@@ -105,9 +106,7 @@ pub trait PatternBackend: crate::private::Sealed + 'static {
         I: Iterator<Item = Result<PatternItemCow<'cow, Self::PlaceholderKeyCow<'ph>>, Error>>,
     >(
         items: I,
-    ) -> Result<<Self::Store as ToOwned>::Owned, Error>
-    where
-        Self::Store: ToOwned;
+    ) -> Result<Box<Self::Store>, Error>;
 
     /// Iterates over the pattern items in a store.
     #[doc(hidden)] // TODO(#4467): Should be internal

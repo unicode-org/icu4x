@@ -15,7 +15,7 @@ use crate::common::*;
 use crate::Error;
 
 #[cfg(feature = "alloc")]
-use alloc::string::String;
+use alloc::{boxed::Box, string::String};
 
 /// A two-value enum for the [`DoublePlaceholder`] pattern backend.
 ///
@@ -28,9 +28,9 @@ use alloc::string::String;
 /// use icu_pattern::DoublePlaceholderPattern;
 /// use icu_pattern::PatternItem;
 ///
-/// // Parse the string syntax and check the resulting data store:
+/// // Parse the string syntax
 /// let pattern =
-///     DoublePlaceholderPattern::from_str("Hello, {0} and {1}!").unwrap();
+///     DoublePlaceholderPattern::try_from_str("Hello, {0} and {1}!", Default::default()).unwrap();
 ///
 /// assert_eq!(
 ///     pattern.iter().cmp(
@@ -198,12 +198,11 @@ impl DoublePlaceholderInfo {
 /// use icu_pattern::Pattern;
 ///
 /// // Parse the string syntax and check the resulting data store:
-/// let store =
-///     Pattern::<DoublePlaceholder, _>::from_str("Hello, {0} and {1}!")
-///         .unwrap()
-///         .take_store();
+/// let pattern =
+///     Pattern::<DoublePlaceholder>::try_from_str("Hello, {0} and {1}!", Default::default())
+///         .unwrap();
 ///
-/// assert_eq!("\x10\x1BHello,  and !", store);
+/// assert_eq!("\x10\x1BHello,  and !", &pattern.store);
 /// ```
 ///
 /// Explanation of the lead code points:
@@ -217,10 +216,11 @@ impl DoublePlaceholderInfo {
 /// use core::str::FromStr;
 /// use icu_pattern::DoublePlaceholder;
 /// use icu_pattern::Pattern;
+/// use icu_pattern::QuoteMode;
 ///
 /// // Single numeric placeholder (note, "5" is used):
 /// assert_eq!(
-///     Pattern::<DoublePlaceholder, _>::from_str("{0} days ago")
+///     Pattern::<DoublePlaceholder>::try_from_str("{0} days ago", Default::default())
 ///         .unwrap()
 ///         .interpolate_to_string([5, 7]),
 ///     "5 days ago",
@@ -228,15 +228,23 @@ impl DoublePlaceholderInfo {
 ///
 /// // No placeholder (note, the placeholder value is never accessed):
 /// assert_eq!(
-///     Pattern::<DoublePlaceholder, _>::from_str("yesterday")
+///     Pattern::<DoublePlaceholder>::try_from_str("yesterday", Default::default())
 ///         .unwrap()
 ///         .interpolate_to_string(["foo", "bar"]),
 ///     "yesterday",
 /// );
 ///
+/// // Escaped placeholder and a placeholder value 1 (note, "bar" is used):
+/// assert_eq!(
+///     Pattern::<DoublePlaceholder>::try_from_str("'{0}' {1}", QuoteMode::QuotingSupported.into())
+///         .unwrap()
+///         .interpolate_to_string(("foo", "bar")),
+///     "{0} bar",
+/// );
+///
 /// // Pattern with the placeholders in the opposite order:
 /// assert_eq!(
-///     Pattern::<DoublePlaceholder, _>::from_str("A {1} B {0} C")
+///     Pattern::<DoublePlaceholder>::try_from_str("A {1} B {0} C", Default::default())
 ///         .unwrap()
 ///         .interpolate_to_string(("D", "E")),
 ///     "A E B D C",
@@ -244,7 +252,7 @@ impl DoublePlaceholderInfo {
 ///
 /// // No literals, only placeholders:
 /// assert_eq!(
-///     Pattern::<DoublePlaceholder, _>::from_str("{1}{0}")
+///     Pattern::<DoublePlaceholder>::try_from_str("{1}{0}", Default::default())
 ///         .unwrap()
 ///         .interpolate_to_string((1, "A")),
 ///     "A1",
@@ -268,7 +276,7 @@ impl PatternBackend for DoublePlaceholder {
     type Iter<'a> = DoublePlaceholderPatternIterator<'a>;
 
     #[inline]
-    fn try_store_from_utf8(bytes: &[u8]) -> Result<&Self::Store, Self::StoreFromBytesError> {
+    fn try_store_from_bytes(bytes: &[u8]) -> Result<&Self::Store, Self::StoreFromBytesError> {
         core::str::from_utf8(bytes)
     }
 
@@ -328,7 +336,7 @@ impl PatternBackend for DoublePlaceholder {
         I: Iterator<Item = Result<PatternItemCow<'cow, Self::PlaceholderKey<'ph>>, Error>>,
     >(
         items: I,
-    ) -> Result<String, Error> {
+    ) -> Result<Box<str>, Error> {
         let mut result = String::new();
         let mut first_ph = None;
         let mut second_ph = None;
@@ -371,7 +379,7 @@ impl PatternBackend for DoublePlaceholder {
         result.insert(0, second_ph.try_to_char()?);
         result.insert(0, first_ph.try_to_char()?);
 
-        Ok(result)
+        Ok(result.into_boxed_str())
     }
 }
 
@@ -697,12 +705,13 @@ mod tests {
                 store,
                 interpolated,
             } = cas;
-            let parsed = DoublePlaceholderPattern::from_str(pattern).unwrap();
+            let parsed =
+                DoublePlaceholderPattern::try_from_str(pattern, Default::default()).unwrap();
             let actual = parsed
                 .interpolate(["apple", "orange"])
                 .write_to_string()
                 .into_owned();
-            assert_eq!(parsed.take_store(), store, "{cas:?}");
+            assert_eq!(&parsed.store, store, "{cas:?}");
             assert_eq!(actual, interpolated, "{cas:?}");
         }
     }
@@ -720,10 +729,7 @@ mod tests {
         let long_str = "0123456789".repeat(1000000);
         for cas in cases {
             let cas = cas.replace('@', &long_str);
-            assert!(
-                DoublePlaceholderPattern::try_from_store(&cas).is_err(),
-                "{cas:?}"
-            );
+            assert!(DoublePlaceholder::validate_store(&cas).is_err(), "{cas:?}");
         }
     }
 }

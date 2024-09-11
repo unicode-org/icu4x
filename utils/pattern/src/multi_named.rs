@@ -5,7 +5,7 @@
 //! Code for the [`MultiNamedPlaceholder`] pattern backend.
 
 #[cfg(feature = "alloc")]
-use alloc::{borrow::Cow, collections::BTreeMap, str::FromStr, string::String};
+use alloc::{borrow::Cow, boxed::Box, collections::BTreeMap, str::FromStr, string::String};
 use core::fmt;
 use core::str::Utf8Error;
 #[cfg(feature = "litemap")]
@@ -27,8 +27,8 @@ use crate::Error;
 /// use icu_pattern::PatternItem;
 ///
 /// // Parse the string syntax and check the resulting data store:
-/// let pattern = MultiNamedPlaceholderPattern::from_str(
-///     "Hello, {person0} and {person1}!",
+/// let pattern = MultiNamedPlaceholderPattern::try_from_str(
+///     "Hello, {person0} and {person1}!", Default::default()
 /// )
 /// .unwrap();
 ///
@@ -166,23 +166,6 @@ where
 ///
 /// # Examples
 ///
-/// Parsing and comparing the pattern store:
-///
-/// ```
-/// use core::str::FromStr;
-/// use icu_pattern::MultiNamedPlaceholder;
-/// use icu_pattern::Pattern;
-///
-/// // Parse the string syntax and check the resulting data store:
-/// let store = Pattern::<MultiNamedPlaceholder, _>::from_str(
-///     "Hello, {user} and {someone_else}!",
-/// )
-/// .unwrap()
-/// .take_store();
-///
-/// assert_eq!("Hello, \x00\x04user and \x01\x04someone_else!", store);
-/// ```
-///
 /// Example patterns supported by this backend:
 ///
 /// ```
@@ -202,7 +185,7 @@ where
 ///
 /// // Single placeholder:
 /// assert_eq!(
-///     Pattern::<MultiNamedPlaceholder, _>::from_str("{num} days ago")
+///     Pattern::<MultiNamedPlaceholder>::try_from_str("{num} days ago", Default::default())
 ///         .unwrap()
 ///         .try_interpolate_to_string(&placeholder_value_map)
 ///         .unwrap(),
@@ -211,7 +194,7 @@ where
 ///
 /// // No placeholder (note, the placeholder value is never accessed):
 /// assert_eq!(
-///     Pattern::<MultiNamedPlaceholder, _>::from_str("yesterday")
+///     Pattern::<MultiNamedPlaceholder>::try_from_str("yesterday", Default::default())
 ///         .unwrap()
 ///         .try_interpolate_to_string(&placeholder_value_map)
 ///         .unwrap(),
@@ -220,7 +203,7 @@ where
 ///
 /// // No literals, only placeholders:
 /// assert_eq!(
-///     Pattern::<MultiNamedPlaceholder, _>::from_str("{letter}{num}{}")
+///     Pattern::<MultiNamedPlaceholder>::try_from_str("{letter}{num}{}", Default::default())
 ///         .unwrap()
 ///         .try_interpolate_to_string(&placeholder_value_map)
 ///         .unwrap(),
@@ -242,7 +225,7 @@ where
 /// // Note: String allocates, but this could be a non-allocating sink
 /// let mut sink = String::new();
 ///
-/// MultiNamedPlaceholderPattern::from_str("{seven}")
+/// MultiNamedPlaceholderPattern::try_from_str("{seven}", Default::default())
 ///     .unwrap()
 ///     .try_interpolate(&placeholder_value_map)
 ///     .try_write_to(&mut sink)
@@ -265,7 +248,7 @@ where
 /// let placeholder_value_map: BTreeMap<&str, &str> =
 ///     [("num", "5"), ("letter", "X")].into_iter().collect();
 ///
-/// Pattern::<MultiNamedPlaceholder, _>::from_str("Your name is {your_name}")
+/// Pattern::<MultiNamedPlaceholder>::try_from_str("Your name is {your_name}", Default::default())
 ///     .unwrap()
 ///     .try_interpolate_to_string(&placeholder_value_map)
 ///     .unwrap();
@@ -285,8 +268,8 @@ where
 /// let placeholder_value_map: BTreeMap<&str, &str> =
 ///     [("num", "5"), ("letter", "X")].into_iter().collect();
 ///
-/// let pattern = Pattern::<MultiNamedPlaceholder, _>::from_str(
-///     "Your name is {your_name}",
+/// let pattern = Pattern::<MultiNamedPlaceholder>::try_from_str(
+///     "Your name is {your_name}", Default::default(),
 /// )
 /// .unwrap();
 ///
@@ -320,7 +303,7 @@ impl PatternBackend for MultiNamedPlaceholder {
     type Iter<'a> = MultiNamedPlaceholderPatternIterator<'a>;
 
     #[inline]
-    fn try_store_from_utf8(bytes: &[u8]) -> Result<&Self::Store, Self::StoreFromBytesError> {
+    fn try_store_from_bytes(bytes: &[u8]) -> Result<&Self::Store, Self::StoreFromBytesError> {
         core::str::from_utf8(bytes)
     }
 
@@ -351,7 +334,7 @@ impl PatternBackend for MultiNamedPlaceholder {
         I: Iterator<Item = Result<PatternItemCow<'cow, Self::PlaceholderKeyCow<'ph>>, Error>>,
     >(
         items: I,
-    ) -> Result<String, Error> {
+    ) -> Result<Box<str>, Error> {
         let mut string = String::new();
         for item in items {
             match item? {
@@ -373,7 +356,7 @@ impl PatternBackend for MultiNamedPlaceholder {
                 }
             }
         }
-        Ok(string)
+        Ok(string.into_boxed_str())
     }
 }
 
@@ -476,8 +459,8 @@ impl<'a> MultiNamedPlaceholderPatternIterator<'a> {
 
 #[cfg(test)]
 mod tests {
-    use crate::MultiNamedPlaceholderPattern;
-    use core::str::FromStr;
+    use super::*;
+    use crate::{MultiNamedPlaceholder, MultiNamedPlaceholderPattern};
 
     #[test]
     fn test_invalid() {
@@ -491,7 +474,7 @@ mod tests {
         for string in strings {
             let string = string.replace('@', &long_str);
             assert!(
-                MultiNamedPlaceholderPattern::from_str(&string).is_err(),
+                MultiNamedPlaceholderPattern::try_from_str(&string, Default::default()).is_err(),
                 "{string:?}"
             );
         }
@@ -502,9 +485,8 @@ mod tests {
             "\x00\x02a", // placeholder name too short
         ];
         for store in stores {
-            let store = store.replace('@', &long_str);
             assert!(
-                MultiNamedPlaceholderPattern::try_from_store(&store).is_err(),
+                MultiNamedPlaceholder::validate_store(store).is_err(),
                 "{store:?}"
             );
         }

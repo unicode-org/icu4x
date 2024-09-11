@@ -14,7 +14,7 @@ use crate::common::*;
 use crate::Error;
 
 #[cfg(feature = "alloc")]
-use alloc::string::String;
+use alloc::{boxed::Box, string::String};
 
 /// A singleton enum for the [`SinglePlaceholder`] pattern backend.
 ///
@@ -29,7 +29,7 @@ use alloc::string::String;
 /// use icu_pattern::SinglePlaceholderPattern;
 ///
 /// // Parse the string syntax and check the resulting data store:
-/// let pattern = SinglePlaceholderPattern::from_str("Hello, {0}!").unwrap();
+/// let pattern = SinglePlaceholderPattern::try_from_str("Hello, {0}!", Default::default()).unwrap();
 ///
 /// assert_eq!(
 ///     pattern.iter().cmp(
@@ -113,11 +113,10 @@ where
 /// use icu_pattern::SinglePlaceholder;
 ///
 /// // Parse the string syntax and check the resulting data store:
-/// let store = Pattern::<SinglePlaceholder, _>::from_str("Hello, {0}!")
-///     .unwrap()
-///     .take_store();
+/// let pattern = Pattern::<SinglePlaceholder>::try_from_str("Hello, {0}!", Default::default())
+///     .unwrap();
 ///
-/// assert_eq!("\u{8}Hello, !", store);
+/// assert_eq!("\u{8}Hello, !", &pattern.store);
 /// ```
 ///
 /// Example patterns supported by this backend:
@@ -126,10 +125,11 @@ where
 /// use core::str::FromStr;
 /// use icu_pattern::Pattern;
 /// use icu_pattern::SinglePlaceholder;
+/// use icu_pattern::QuoteMode;
 ///
 /// // Single numeric placeholder:
 /// assert_eq!(
-///     Pattern::<SinglePlaceholder, _>::from_str("{0} days ago")
+///     Pattern::<SinglePlaceholder>::try_from_str("{0} days ago", Default::default())
 ///         .unwrap()
 ///         .interpolate_to_string([5]),
 ///     "5 days ago",
@@ -137,7 +137,7 @@ where
 ///
 /// // Single named placeholder:
 /// assert_eq!(
-///     Pattern::<SinglePlaceholder, _>::from_str("{name}")
+///     Pattern::<SinglePlaceholder>::try_from_str("{name}", Default::default())
 ///         .unwrap()
 ///         .interpolate_to_string(["Alice"]),
 ///     "Alice",
@@ -145,10 +145,18 @@ where
 ///
 /// // No placeholder (note, the placeholder value is never accessed):
 /// assert_eq!(
-///     Pattern::<SinglePlaceholder, _>::from_str("yesterday")
+///     Pattern::<SinglePlaceholder>::try_from_str("yesterday", Default::default())
 ///         .unwrap()
 ///         .interpolate_to_string(["hi"]),
 ///     "yesterday",
+/// );
+///
+/// // Escaped placeholder and a real placeholder:
+/// assert_eq!(
+///     Pattern::<SinglePlaceholder>::try_from_str("'{0}' {1}", QuoteMode::QuotingSupported.into())
+///         .unwrap()
+///         .interpolate_to_string(("hi",)),
+///     "{0} hi",
 /// );
 /// ```
 ///
@@ -169,7 +177,7 @@ impl PatternBackend for SinglePlaceholder {
     type Iter<'a> = SinglePlaceholderPatternIterator<'a>;
 
     #[inline]
-    fn try_store_from_utf8(utf8: &[u8]) -> Result<&Self::Store, Self::StoreFromBytesError> {
+    fn try_store_from_bytes(utf8: &[u8]) -> Result<&Self::Store, Self::StoreFromBytesError> {
         core::str::from_utf8(utf8)
     }
 
@@ -209,7 +217,7 @@ impl PatternBackend for SinglePlaceholder {
         I: Iterator<Item = Result<PatternItemCow<'cow, Self::PlaceholderKey<'ph>>, Error>>,
     >(
         items: I,
-    ) -> Result<String, Error> {
+    ) -> Result<Box<str>, Error> {
         let mut result = String::new();
         let mut seen_placeholder = false;
         for item in items {
@@ -234,7 +242,7 @@ impl PatternBackend for SinglePlaceholder {
         if !seen_placeholder {
             result.insert(0, '\0');
         }
-        Ok(result)
+        Ok(result.into_boxed_str())
     }
 }
 
