@@ -124,7 +124,9 @@ final class IsoDate implements ffi.Finalizable {
     return result;
   }
 
-  /// Returns the year number for this date
+  /// Returns the year number in the current era for this date
+  ///
+  /// For calendars without an era, returns the extended year
   ///
   /// See the [Rust documentation for `year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year) for more information.
   int get year {

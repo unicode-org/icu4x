@@ -61,6 +61,8 @@ public:
 
   inline int32_t year_in_era() const;
 
+  inline int32_t extended_year() const;
+
   inline std::string era() const;
 
   inline uint8_t months_in_year() const;

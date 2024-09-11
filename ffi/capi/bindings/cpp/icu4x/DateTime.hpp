@@ -68,6 +68,8 @@ namespace capi {
     
     int32_t icu4x_DateTime_year_in_era_mv1(const icu4x::capi::DateTime* self);
     
+    int32_t icu4x_DateTime_extended_year_mv1(const icu4x::capi::DateTime* self);
+    
     void icu4x_DateTime_era_mv1(const icu4x::capi::DateTime* self, diplomat::capi::DiplomatWrite* write);
     
     uint8_t icu4x_DateTime_months_in_year_mv1(const icu4x::capi::DateTime* self);
@@ -204,6 +206,11 @@ inline std::string icu4x::DateTime::month_code() const {
 
 inline int32_t icu4x::DateTime::year_in_era() const {
   auto result = icu4x::capi::icu4x_DateTime_year_in_era_mv1(this->AsFFI());
+  return result;
+}
+
+inline int32_t icu4x::DateTime::extended_year() const {
+  auto result = icu4x::capi::icu4x_DateTime_extended_year_mv1(this->AsFFI());
   return result;
 }
 

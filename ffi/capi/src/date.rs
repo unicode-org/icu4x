@@ -125,11 +125,13 @@ pub mod ffi {
             self.0.month().ordinal
         }
 
-        /// Returns the year number for this date
+        /// Returns the year number in the current era for this date
+        ///
+        /// For calendars without an era, returns the extended year
         #[diplomat::rust_link(icu::calendar::Date::year, FnInStruct)]
         #[diplomat::attr(auto, getter)]
         pub fn year(&self) -> i32 {
-            self.0.year().number
+            self.0.year().extended_year
         }
 
         /// Returns if the year is a leap year for this date
@@ -186,6 +188,8 @@ pub mod ffi {
         }
 
         /// Creates a new [`Date`] from the given codes, which are interpreted in the given calendar system
+        ///
+        /// An empty era code will treat the year as an extended year
         #[diplomat::rust_link(icu::calendar::Date::try_new_from_codes, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
         pub fn from_codes_in_calendar(
@@ -195,9 +199,13 @@ pub mod ffi {
             day: u8,
             calendar: &Calendar,
         ) -> Result<Box<Date>, CalendarError> {
-            let era = icu_calendar::types::Era(
-                TinyAsciiStr::try_from_utf8(era_code).map_err(|_| CalendarError::UnknownEra)?,
-            );
+            let era = if era_code.is_empty() {
+                Some(icu_calendar::types::Era(
+                    TinyAsciiStr::try_from_utf8(era_code).map_err(|_| CalendarError::UnknownEra)?,
+                ))
+            } else {
+                None
+            };
             let month = icu_calendar::types::MonthCode(
                 TinyAsciiStr::try_from_utf8(month_code)
                     .map_err(|_| CalendarError::UnknownMonthCode)?,
@@ -300,10 +308,19 @@ pub mod ffi {
         }
 
         /// Returns the year number in the current era for this date
+        ///
+        /// For calendars without an era, returns the extended year
         #[diplomat::rust_link(icu::calendar::Date::year, FnInStruct)]
         #[diplomat::attr(auto, getter)]
         pub fn year_in_era(&self) -> i32 {
-            self.0.year().number
+            self.0.year().era_year_or_extended()
+        }
+
+        /// Returns the extended year in the Date
+        #[diplomat::rust_link(icu::calendar::types::YearInfo::extended_year, StructField)]
+        #[diplomat::attr(auto, getter)]
+        pub fn extended_year(&self) -> i32 {
+            self.0.year().extended_year
         }
 
         /// Returns the era for this date,
@@ -311,8 +328,9 @@ pub mod ffi {
         #[diplomat::rust_link(icu::types::Era, Struct, compact)]
         #[diplomat::attr(auto, getter)]
         pub fn era(&self, write: &mut diplomat_runtime::DiplomatWrite) {
-            let era = self.0.year().era;
-            let _infallible = write.write_str(&era.0);
+            if let Some(era) = self.0.year().temporal_era() {
+                let _infallible = write.write_str(&era.0);
+            }
         }
 
         /// Returns the number of months in the year represented by this date

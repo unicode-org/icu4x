@@ -40,6 +40,8 @@ final class Date implements ffi.Finalizable {
 
   /// Creates a new [`Date`] from the given codes, which are interpreted in the given calendar system
   ///
+  /// An empty era code will treat the year as an extended year
+  ///
   /// See the [Rust documentation for `try_new_from_codes`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_new_from_codes) for more information.
   ///
   /// Throws [CalendarError] on failure.
@@ -149,9 +151,19 @@ final class Date implements ffi.Finalizable {
 
   /// Returns the year number in the current era for this date
   ///
+  /// For calendars without an era, returns the extended year
+  ///
   /// See the [Rust documentation for `year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year) for more information.
   int get yearInEra {
     final result = _icu4x_Date_year_in_era_mv1(_ffi);
+    return result;
+  }
+
+  /// Returns the extended year in the Date
+  ///
+  /// See the [Rust documentation for `extended_year`](https://docs.rs/icu/latest/icu/calendar/types/struct.YearInfo.html#structfield.extended_year) for more information.
+  int get extendedYear {
+    final result = _icu4x_Date_extended_year_mv1(_ffi);
     return result;
   }
 
@@ -268,6 +280,11 @@ external void _icu4x_Date_month_code_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Point
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_year_in_era_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_Date_year_in_era_mv1(ffi.Pointer<ffi.Opaque> self);
+
+@meta.ResourceIdentifier('icu4x_Date_extended_year_mv1')
+@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_extended_year_mv1')
+// ignore: non_constant_identifier_names
+external int _icu4x_Date_extended_year_mv1(ffi.Pointer<ffi.Opaque> self);
 
 @meta.ResourceIdentifier('icu4x_Date_era_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_era_mv1')

@@ -52,6 +52,8 @@ namespace capi {
     
     int32_t icu4x_Date_year_in_era_mv1(const icu4x::capi::Date* self);
     
+    int32_t icu4x_Date_extended_year_mv1(const icu4x::capi::Date* self);
+    
     void icu4x_Date_era_mv1(const icu4x::capi::Date* self, diplomat::capi::DiplomatWrite* write);
     
     uint8_t icu4x_Date_months_in_year_mv1(const icu4x::capi::Date* self);
@@ -144,6 +146,11 @@ inline std::string icu4x::Date::month_code() const {
 
 inline int32_t icu4x::Date::year_in_era() const {
   auto result = icu4x::capi::icu4x_Date_year_in_era_mv1(this->AsFFI());
+  return result;
+}
+
+inline int32_t icu4x::Date::extended_year() const {
+  auto result = icu4x::capi::icu4x_Date_extended_year_mv1(this->AsFFI());
   return result;
 }
 

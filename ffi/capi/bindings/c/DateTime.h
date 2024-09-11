@@ -67,6 +67,8 @@ void icu4x_DateTime_month_code_mv1(const DateTime* self, DiplomatWrite* write);
 
 int32_t icu4x_DateTime_year_in_era_mv1(const DateTime* self);
 
+int32_t icu4x_DateTime_extended_year_mv1(const DateTime* self);
+
 void icu4x_DateTime_era_mv1(const DateTime* self, DiplomatWrite* write);
 
 uint8_t icu4x_DateTime_months_in_year_mv1(const DateTime* self);
