@@ -379,9 +379,9 @@ where
                 .and_then(|ds| {
                     ds.get_symbol_for_era(l, year.formatting_era_or_unknown())
                         .map_err(|e| match e {
-                            GetSymbolForEraError::Missing => {
-                                DateTimeWriteError::MissingEraSymbol(year.formatting_era_or_unknown())
-                            }
+                            GetSymbolForEraError::Missing => DateTimeWriteError::MissingEraSymbol(
+                                year.formatting_era_or_unknown(),
+                            ),
                             #[cfg(feature = "experimental")]
                             GetSymbolForEraError::MissingNames(f) => {
                                 DateTimeWriteError::MissingNames(f)
@@ -389,7 +389,9 @@ where
                         })
                 }) {
                 Err(e) => {
-                    w.with_part(Part::ERROR, |w| w.write_str(&year.formatting_era_or_unknown().0))?;
+                    w.with_part(Part::ERROR, |w| {
+                        w.write_str(&year.formatting_era_or_unknown().0)
+                    })?;
                     Err(e)
                 }
                 Ok(era) => Ok(w.write_str(era)?),

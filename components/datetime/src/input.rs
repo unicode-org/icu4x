@@ -16,8 +16,8 @@ use icu_timezone::{CustomTimeZone, UtcOffset, ZoneVariant};
 
 // TODO(#2630) fix up imports to directly import from icu_calendar
 pub(crate) use icu_calendar::types::{
-    DayOfMonth, DayOfYearInfo, FormattableMonth, YearInfo, IsoHour, IsoMinute, IsoSecond,
-    IsoWeekday, NanoSecond, Time, WeekOfMonth, WeekOfYear,
+    DayOfMonth, DayOfYearInfo, FormattableMonth, IsoHour, IsoMinute, IsoSecond, IsoWeekday,
+    NanoSecond, Time, WeekOfMonth, WeekOfYear, YearInfo,
 };
 
 /// Representation of a formattable calendar date. Supports dates in any calendar system that uses
@@ -233,7 +233,9 @@ impl ExtractedDateTimeInput {
             Some(AnyCalendarKind::Gregorian) => match self.year() {
                 None => true,
                 Some(year) if year.era_year_or_extended() < 1000 => true,
-                Some(year) if year.formatting_era_or_unknown().0 != tinystr::tinystr!(16, "ce") => true,
+                Some(year) if year.formatting_era_or_unknown().0 != tinystr::tinystr!(16, "ce") => {
+                    true
+                }
                 Some(_) => false,
             },
             Some(_) => {

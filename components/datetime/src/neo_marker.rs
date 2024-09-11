@@ -329,8 +329,8 @@ use crate::{
 use icu_calendar::{
     any_calendar::IntoAnyCalendar,
     types::{
-        DayOfMonth, DayOfYearInfo, FormattableMonth, YearInfo, IsoHour, IsoMinute,
-        IsoSecond, IsoWeekday, NanoSecond,
+        DayOfMonth, DayOfYearInfo, FormattableMonth, IsoHour, IsoMinute, IsoSecond, IsoWeekday,
+        NanoSecond, YearInfo,
     },
     AnyCalendar, AnyCalendarKind, AsCalendar, Calendar, Date, DateTime, Ref, Time,
 };
@@ -611,9 +611,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<NanoSecond> for DateT
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<YearInfo>
-    for CustomZonedDateTime<A>
-{
+impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<YearInfo> for CustomZonedDateTime<A> {
     #[inline]
     fn get_field(&self) -> YearInfo {
         self.date.year()
