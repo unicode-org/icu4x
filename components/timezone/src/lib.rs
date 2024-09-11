@@ -150,7 +150,7 @@ pub use metazone::MetazoneCalculator;
 pub use provider::{MetazoneId, TimeZoneBcp47Id};
 pub use time_zone::CustomTimeZone;
 pub use types::{UtcOffset, ZoneVariant};
-pub use windows_tz::WindowsTimeZoneMapper;
+pub use windows_tz::{WindowsTimeZoneMapper, WindowsTimeZoneMapperBorrowed};
 pub use zoned_datetime::CustomZonedDateTime;
 
 #[cfg(all(feature = "ixdtf", feature = "compiled_data"))]

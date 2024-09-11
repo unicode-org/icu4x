@@ -33,14 +33,13 @@ use crate::{
 /// As such, a [`Region`] may be provided to further specify a desired territory/region when
 /// querying a BCP-47 identifier. If no region is provided or the specificity is not required,
 /// then the territory will default to the M49 World Code, 001.
-#[allow(dead_code)]
 #[derive(Debug)]
-pub struct WindowsTimeZoneMapperOwned {
+pub struct WindowsTimeZoneMapper {
     data: DataPayload<WindowsZonesToBcp47MapV1Marker>,
 }
 
 #[cfg(feature = "compiled_data")]
-impl Default for WindowsTimeZoneMapperOwned {
+impl Default for WindowsTimeZoneMapper {
     fn default() -> Self {
         Self {
             data: DataPayload::from_static_ref(
@@ -50,12 +49,12 @@ impl Default for WindowsTimeZoneMapperOwned {
     }
 }
 
-impl WindowsTimeZoneMapperOwned {
-    /// Creates a new static [`WindowsTimeZoneMapper`].
+impl WindowsTimeZoneMapper {
+    /// Creates a new static [`WindowsTimeZoneMapperBorrowed`].
     #[allow(clippy::new_ret_no_self)]
     #[cfg(feature = "compiled_data")]
-    pub fn new() -> WindowsTimeZoneMapper<'static> {
-        WindowsTimeZoneMapper::new()
+    pub fn new() -> WindowsTimeZoneMapperBorrowed<'static> {
+        WindowsTimeZoneMapperBorrowed::new()
     }
 
     icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
@@ -77,13 +76,13 @@ impl WindowsTimeZoneMapperOwned {
         Ok(Self { data })
     }
 
-    /// Returns the primary version of the mapper that can be queried from
+    /// Returns the borrowed version of the mapper that can be queried from
     /// the owned mapper.
     ///
-    /// Using the primary version allows one to avoid a small potential
+    /// Using the borrowed version allows one to avoid a small potential
     /// indirection cost when querying the mapper from the owned version.
-    pub fn as_borrowed(&self) -> WindowsTimeZoneMapper {
-        WindowsTimeZoneMapper {
+    pub fn as_borrowed(&self) -> WindowsTimeZoneMapperBorrowed {
+        WindowsTimeZoneMapperBorrowed {
             data: self.data.get(),
         }
     }
@@ -91,23 +90,23 @@ impl WindowsTimeZoneMapperOwned {
 
 /// A borrowed wrapper around the windows time zone mapper data.
 #[derive(Debug)]
-pub struct WindowsTimeZoneMapper<'a> {
+pub struct WindowsTimeZoneMapperBorrowed<'a> {
     data: &'a WindowsZonesToBcp47MapV1<'a>,
 }
 
 #[cfg(feature = "compiled_data")]
-impl<'a> Default for WindowsTimeZoneMapper<'a> {
+impl<'a> Default for WindowsTimeZoneMapperBorrowed<'a> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<'a> WindowsTimeZoneMapper<'a> {
-    /// Creates a new static [`WindowsTimeZoneMapper`].
+impl<'a> WindowsTimeZoneMapperBorrowed<'a> {
+    /// Creates a new static [`WindowsTimeZoneMapperBorrowed`].
     #[cfg(feature = "compiled_data")]
     #[allow(clippy::expect_used)]
     pub fn new() -> Self {
-        WindowsTimeZoneMapper {
+        WindowsTimeZoneMapperBorrowed {
             data: DataPayload::<WindowsZonesToBcp47MapV1Marker>::from_static_ref(
                 crate::provider::Baked::SINGLETON_WINDOWS_ZONES_TO_BCP47_MAP_V1_MARKER,
             )
@@ -122,10 +121,10 @@ impl<'a> WindowsTimeZoneMapper<'a> {
     /// territory/geo name was provided, so the mapper will use default the default M49 World code ("001").
     ///
     /// ```rust
-    /// use icu_timezone::{WindowsTimeZoneMapper, TimeZoneBcp47Id};
+    /// use icu_timezone::{WindowsTimeZoneMapperBorrowed, TimeZoneBcp47Id};
     /// use tinystr::tinystr;
     ///
-    /// let windows_tz_mapper = WindowsTimeZoneMapper::new();
+    /// let windows_tz_mapper = WindowsTimeZoneMapperBorrowed::new();
     ///
     /// let bcp47_id = windows_tz_mapper.windows_tz_to_bcp47_id("Central Standard Time").unwrap();
     /// assert_eq!(bcp47_id, Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))));
@@ -146,11 +145,11 @@ impl<'a> WindowsTimeZoneMapper<'a> {
     /// identifiers for the designated region.
     ///
     /// ```rust
-    /// use icu_timezone::{WindowsTimeZoneMapper, TimeZoneBcp47Id};
+    /// use icu_timezone::{WindowsTimeZoneMapperBorrowed, TimeZoneBcp47Id};
     /// use icu_provider::prelude::icu_locale_core::subtags::Region;
     /// use tinystr::tinystr;
     ///
-    /// let win_tz_mapper = WindowsTimeZoneMapper::new();
+    /// let win_tz_mapper = WindowsTimeZoneMapperBorrowed::new();
     ///
     /// let region = None;
     /// let bcp47_id = win_tz_mapper.windows_tz_to_bcp47_id_with_region("Central Standard Time", region).unwrap();
@@ -203,11 +202,11 @@ mod tests {
 
     use crate::TimeZoneBcp47Id;
 
-    use super::WindowsTimeZoneMapper;
+    use super::WindowsTimeZoneMapperBorrowed;
 
     #[test]
     fn basic_windows_tz_lookup() {
-        let win_map = WindowsTimeZoneMapper::new();
+        let win_map = WindowsTimeZoneMapperBorrowed::new();
 
         let result = win_map
             .windows_tz_to_bcp47_id("Central Standard Time")
