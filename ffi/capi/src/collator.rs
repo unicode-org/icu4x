@@ -120,7 +120,7 @@ pub mod ffi {
             let options = icu_collator::CollatorOptions::from(options);
 
             Ok(Box::new(Collator(call_constructor!(
-                icu_collator::Collator::try_new,
+                icu_collator::Collator::try_new [r => Ok(r?.static_to_owned())],
                 icu_collator::Collator::try_new_with_any_provider,
                 icu_collator::Collator::try_new_with_buffer_provider,
                 provider,

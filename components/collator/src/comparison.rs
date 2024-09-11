@@ -225,34 +225,13 @@ impl Collator {
         }
     }
 
-    /// Creates a collator for the given locale and options from compiled data.
-    ///
-    /// Unless you know you need this constructor, it is likely that `CollatorBorrowed::try_new`
-    /// is more appropriate.
+    /// Creates `CollatorBorrowed` for the given locale and options from compiled data.
     #[cfg(feature = "compiled_data")]
-    pub fn try_new(locale: &DataLocale, options: CollatorOptions) -> Result<Self, DataError> {
-        Self::try_new_unstable_internal(
-            &crate::provider::Baked,
-            DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_COLLATION_ROOT_V1_MARKER,
-            ),
-            DataPayload::from_static_ref(
-                icu_normalizer::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V1_MARKER,
-            ),
-            DataPayload::from_static_ref(
-                icu_normalizer::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER,
-            ),
-            DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_COLLATION_JAMO_V1_MARKER,
-            ),
-            || {
-                Ok(DataPayload::from_static_ref(
-                    crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1_MARKER,
-                ))
-            },
-            locale,
-            options,
-        )
+    pub fn try_new(
+        locale: &DataLocale,
+        options: CollatorOptions,
+    ) -> Result<CollatorBorrowed<'static>, DataError> {
+        CollatorBorrowed::try_new(locale, options)
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
@@ -373,9 +352,9 @@ pub struct CollatorBorrowed<'a> {
     lithuanian_dot_above: bool,
 }
 
-#[cfg(feature = "compiled_data")]
 impl CollatorBorrowed<'static> {
     /// Creates a collator for the given locale and options from compiled data.
+    #[cfg(feature = "compiled_data")]
     pub fn try_new(locale: &DataLocale, options: CollatorOptions) -> Result<Self, DataError> {
         // These are assigned to locals in order to keep the code after these assignments
         // copypaste-compatible with `Collator::try_new_unstable_internal`.
@@ -430,6 +409,40 @@ impl CollatorBorrowed<'static> {
             tables,
             lithuanian_dot_above: locale_dependent.lithuanian_dot_above,
         })
+    }
+
+    /// Cheaply converts a [`CollatorBorrowed<'static>`] into a [`Collator`].
+    ///
+    /// Note: Due to branching and indirection, using [`Collator`] might inhibit some
+    /// compile-time optimizations that are possible with [`CollatorBorrowed`].
+    pub const fn static_to_owned(self) -> Collator {
+        Collator {
+            special_primaries: if let Some(s) = self.special_primaries {
+                // `map` not available in const context
+                Some(DataPayload::from_static_ref(s))
+            } else {
+                None
+            },
+            root: DataPayload::from_static_ref(self.root),
+            tailoring: if let Some(s) = self.tailoring {
+                // `map` not available in const context
+                Some(DataPayload::from_static_ref(s))
+            } else {
+                None
+            },
+            jamo: DataPayload::from_static_ref(self.jamo),
+            diacritics: DataPayload::from_static_ref(self.diacritics),
+            options: self.options,
+            reordering: if let Some(s) = self.reordering {
+                // `map` not available in const context
+                Some(DataPayload::from_static_ref(s))
+            } else {
+                None
+            },
+            decompositions: DataPayload::from_static_ref(self.decompositions),
+            tables: DataPayload::from_static_ref(self.tables),
+            lithuanian_dot_above: self.lithuanian_dot_above,
+        }
     }
 }
 
