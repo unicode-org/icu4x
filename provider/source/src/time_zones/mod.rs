@@ -61,7 +61,7 @@ macro_rules! impl_data_provider {
 
                     let meta_zones_territory = &resource.supplemental.meta_zones.meta_zones_territory.0;
 
-                    let tzdb = self.tzdb().get()?;
+                    let tzdb = self.tzdb()?.get()?;
 
                     Ok(DataResponse {
                         metadata: Default::default(),
