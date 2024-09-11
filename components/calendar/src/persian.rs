@@ -224,11 +224,11 @@ impl Persian {
     fn year_as_persian(year: i32) -> types::YearInfo {
         types::YearInfo::new(
             year,
-            types::EraYear::new_with_standard_and_formatting(
-                tinystr!(16, "persian"),
-                tinystr!(16, "ah"),
-                year,
-            ),
+            types::EraYear {
+                standard_era: tinystr!(16, "persian").into(),
+                formatting_era: tinystr!(16, "ah").into(),
+                era_year: year,
+            },
         )
     }
 }

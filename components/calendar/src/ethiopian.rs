@@ -300,29 +300,29 @@ impl Ethiopian {
         if amete_alem {
             types::YearInfo::new(
                 year,
-                types::EraYear::new_with_standard_and_formatting(
-                    tinystr!(16, "ethiopicaa"),
-                    tinystr!(16, "mundi"),
-                    year + AMETE_ALEM_OFFSET,
-                ),
+                types::EraYear {
+                    standard_era: tinystr!(16, "ethiopicaa").into(),
+                    formatting_era: tinystr!(16, "mundi").into(),
+                    era_year: year + AMETE_ALEM_OFFSET,
+                },
             )
         } else if year > 0 {
             types::YearInfo::new(
                 year,
-                types::EraYear::new_with_standard_and_formatting(
-                    tinystr!(16, "ethiopic"),
-                    tinystr!(16, "incar"),
-                    year,
-                ),
+                types::EraYear {
+                    standard_era: tinystr!(16, "ethiopic").into(),
+                    formatting_era: tinystr!(16, "incar").into(),
+                    era_year: year,
+                },
             )
         } else {
             types::YearInfo::new(
                 year,
-                types::EraYear::new_with_standard_and_formatting(
-                    tinystr!(16, "ethiopic-inverse"),
-                    tinystr!(16, "pre-incar"),
-                    1 - year,
-                ),
+                types::EraYear {
+                    standard_era: tinystr!(16, "ethiopic-inverse").into(),
+                    formatting_era: tinystr!(16, "pre-incar").into(),
+                    era_year: 1 - year,
+                },
             )
         }
     }

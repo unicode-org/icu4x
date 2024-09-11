@@ -238,20 +238,20 @@ fn year_as_gregorian(year: i32) -> types::YearInfo {
     if year > 0 {
         types::YearInfo::new(
             year,
-            types::EraYear::new_with_standard_and_formatting(
-                tinystr!(16, "gregory"),
-                tinystr!(16, "ce"),
-                year,
-            ),
+            types::EraYear {
+                standard_era: tinystr!(16, "gregory").into(),
+                formatting_era: tinystr!(16, "ce").into(),
+                era_year: year,
+            },
         )
     } else {
         types::YearInfo::new(
             year,
-            types::EraYear::new_with_standard_and_formatting(
-                tinystr!(16, "gregory-inverse"),
-                tinystr!(16, "bce"),
-                1_i32.saturating_sub(year),
-            ),
+            types::EraYear {
+                standard_era: tinystr!(16, "gregory-inverse").into(),
+                formatting_era: tinystr!(16, "bce").into(),
+                era_year: 1_i32.saturating_sub(year),
+            },
         )
     }
 }

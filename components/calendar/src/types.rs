@@ -33,6 +33,12 @@ impl Era {
     }
 }
 
+impl From<TinyStr16> for Era {
+    fn from(o: TinyStr16) -> Self {
+        Self(o)
+    }
+}
+
 /// General information about a year
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[non_exhaustive]
@@ -150,23 +156,12 @@ impl EraYear {
     /// Construct an EraYear given the era and the year in the era
     ///
     /// The era is assumed to be both the Temporal and the Formatting era code.
-    pub fn new_with_standard_and_formatting(
-        standard_era: TinyStr16,
-        formatting_era: TinyStr16,
-        era_year: i32,
-    ) -> Self {
+    pub(crate) fn new(era: TinyStr16, era_year: i32) -> Self {
         Self {
-            formatting_era: Era(formatting_era),
-            standard_era: Era(standard_era),
+            formatting_era: era.into(),
+            standard_era: era.into(),
             era_year,
         }
-    }
-
-    /// Construct an EraYear given the era and the year in the era
-    ///
-    /// The era is assumed to be both the Temporal and the Formatting era code.
-    pub fn new(era: TinyStr16, era_year: i32) -> Self {
-        Self::new_with_standard_and_formatting(era, era, era_year)
     }
 }
 
