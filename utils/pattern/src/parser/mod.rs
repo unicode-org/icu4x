@@ -354,8 +354,10 @@ impl<'p, P> Parser<'p, P> {
                     handle_literal!(self, false, ParserState::Placeholder)
                 }
                 // Double quote is always interpreted as single quote
-                ParserState::Default if *b == b'\'' && self.input.as_bytes().get(self.idx + 1) == Some(&b'\'') => {
-                        handle_literal!(self, false, ParserState::Apostrophe { quoted: false })
+                ParserState::Default
+                    if *b == b'\'' && self.input.as_bytes().get(self.idx + 1) == Some(&b'\'') =>
+                {
+                    handle_literal!(self, false, ParserState::Apostrophe { quoted: false })
                 }
                 // Single quote opens a literal depending on flag
                 ParserState::Default if *b == b'\'' && !self.treat_quotes_as_quotes => {
