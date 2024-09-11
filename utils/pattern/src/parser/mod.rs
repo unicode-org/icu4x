@@ -188,7 +188,9 @@ impl Default for ParserOptions {
 ///
 /// let input = "{0} 'and' {1}";
 ///
-/// let mut parser = Parser::new(input, ParserOptions::default());
+/// let mut options = ParserOptions::default();
+/// options.treat_quotes_as_quotes = false;
+/// let mut parser = Parser::new(input, options);
 ///
 /// let mut result = vec![];
 ///
@@ -343,7 +345,7 @@ impl<'p, P> Parser<'p, P> {
                         .map(|ret| Some(ParsedPatternItem::Placeholder(ret)))
                         .map_err(ParserError::InvalidPlaceholder);
                 }
-                ParserState::QuotedLiteral if *b == b'\'' => {
+                ParserState::QuotedLiteral if *b == b'\'' && !self.treat_quotes_as_quotes => {
                     if self.input.as_bytes().get(self.idx + 1) == Some(&b'\'') {
                         handle_literal!(self, true, ParserState::Apostrophe { quoted: true })
                     } else {
@@ -353,15 +355,12 @@ impl<'p, P> Parser<'p, P> {
                 ParserState::Default if *b == b'{' => {
                     handle_literal!(self, false, ParserState::Placeholder)
                 }
-                // Double quote is always interpreted as single quote
-                ParserState::Default
-                    if *b == b'\'' && self.input.as_bytes().get(self.idx + 1) == Some(&b'\'') =>
-                {
-                    handle_literal!(self, false, ParserState::Apostrophe { quoted: false })
-                }
-                // Single quote opens a literal depending on flag
                 ParserState::Default if *b == b'\'' && !self.treat_quotes_as_quotes => {
-                    handle_literal!(self, false, ParserState::QuotedLiteral)
+                    if self.input.as_bytes().get(self.idx + 1) == Some(&b'\'') {
+                        handle_literal!(self, false, ParserState::Apostrophe { quoted: false })
+                    } else {
+                        handle_literal!(self, false, ParserState::QuotedLiteral)
+                    }
                 }
                 ParserState::Default if !self.allow_raw_letters && b.is_ascii_alphabetic() => {
                     return Err(ParserError::IllegalCharacter(*b as char));
@@ -565,7 +564,7 @@ mod tests {
                 input,
                 ParserOptions {
                     allow_raw_letters: true,
-                    treat_quotes_as_quotes: true,
+                    treat_quotes_as_quotes: false,
                 },
             );
             let result = parser
