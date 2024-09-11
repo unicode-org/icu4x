@@ -13,6 +13,7 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::collator::Collator, Struct)]
+    #[diplomat::rust_link(icu::collator::CollatorBorrowed, Struct, hidden)]
     pub struct Collator(pub icu_collator::Collator);
 
     #[diplomat::rust_link(icu::collator::CollatorOptions, Struct)]
@@ -109,6 +110,7 @@ pub mod ffi {
     impl Collator {
         /// Construct a new Collator instance.
         #[diplomat::rust_link(icu::collator::Collator::try_new, FnInStruct)]
+        #[diplomat::rust_link(icu::collator::CollatorBorrowed::try_new, FnInStruct, hidden)]
         #[diplomat::attr(supports = fallible_constructors, constructor)]
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "create")]
         pub fn create_v1(
