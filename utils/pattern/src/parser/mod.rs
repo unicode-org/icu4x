@@ -62,7 +62,7 @@ pub enum QuoteMode {
     QuotingSupported,
     /// Quotes are required to quote literals, i.e. `{0} 'World'` will interpolate to `Hello World`, while `{0} World` is an error.
     /// 
-    /// A double quote can be used to create a quote literal, i.e. `{0} o''clock`.
+    /// A double quote can be used to create a quote literal, i.e. `{0} 'o''clock'`.
     QuotingRequired,
 }
 
