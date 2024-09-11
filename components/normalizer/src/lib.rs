@@ -1618,9 +1618,7 @@ impl DecomposingNormalizerBorrowed<'static> {
             composition_passthrough_bound: self.composition_passthrough_bound,
         }
     }
-}
 
-impl<'a> DecomposingNormalizerBorrowed<'a> {
     /// NFD constructor using compiled data.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -1778,7 +1776,9 @@ impl<'a> DecomposingNormalizerBorrowed<'a> {
             composition_passthrough_bound: composition_capped,
         }
     }
+}
 
+impl<'a> DecomposingNormalizerBorrowed<'a> {
     /// Wraps a delegate iterator into a decomposing iterator
     /// adapter by using the data already held by this normalizer.
     pub fn normalize_iter<I: Iterator<Item = char>>(&self, iter: I) -> Decomposition<I> {
