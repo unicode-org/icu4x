@@ -57,11 +57,11 @@ pub enum QuoteMode {
     /// Quotes are interpreted as literals, i.e. `{0} o'clock` will interpolate to `5 o'clock`.
     #[default]
     QuotesAreLiterals,
-    /// Quotes can be used to quote literals, i.e. both `{0} World` and `{0} 'World'` will interpolate to `Hello World`.
+    /// Quotes can be used to quote ASCII characters, i.e. both `{0} World` and `{0} 'World'` will interpolate to `Hello World`.
     ///
     /// A double quote can be used to create a quote literal, i.e. `{0} o''clock`.
     QuotingSupported,
-    /// Quotes are required to quote literals, i.e. `{0} 'World'` will interpolate to `Hello World`, while `{0} World` is an error.
+    /// Quotes are required to quote ASCII characters, i.e. `{0} 'World'` will interpolate to `Hello World`, while `{0} World` is an error.
     ///
     /// A double quote can be used to create a quote literal, i.e. `{0} 'o''clock'`.
     QuotingRequired,
