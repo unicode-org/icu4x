@@ -110,10 +110,7 @@ impl YearInfo {
             YearKind::Cyclic(..) => None,
         }
     }
-    /// Return the era, or "unknown" for cyclic years
-    pub fn temporal_era_or_unknown(self) -> Era {
-        self.temporal_era().unwrap_or(Era::unknown())
-    }
+
     /// Return the cyclic year, if any
     pub fn cyclic(self) -> Option<NonZeroU8> {
         match self.kind {
