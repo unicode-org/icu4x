@@ -318,6 +318,7 @@ pub mod ffi {
 
         /// Returns the extended year in the Date
         #[diplomat::rust_link(icu::calendar::types::YearInfo::extended_year, StructField)]
+        #[diplomat::rust_link(icu::calendar::types::YearInfo, StructField, hidden)]
         #[diplomat::attr(auto, getter)]
         pub fn extended_year(&self) -> i32 {
             self.0.year().extended_year
@@ -326,6 +327,8 @@ pub mod ffi {
         /// Returns the era for this date,
         #[diplomat::rust_link(icu::Date::year, FnInStruct)]
         #[diplomat::rust_link(icu::types::Era, Struct, compact)]
+        #[diplomat::rust_link(icu::types::EraYear, Struct, compact)]
+        #[diplomat::rust_link(icu::types::YearKind, Struct, hidden)]
         #[diplomat::attr(auto, getter)]
         pub fn era(&self, write: &mut diplomat_runtime::DiplomatWrite) {
             if let Some(era) = self.0.year().standard_era() {

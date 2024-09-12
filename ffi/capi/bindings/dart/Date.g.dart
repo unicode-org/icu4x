@@ -171,7 +171,7 @@ final class Date implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `year`](https://docs.rs/icu/latest/icu/struct.Date.html#method.year) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/types/struct.Era.html)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/types/struct.Era.html), [2](https://docs.rs/icu/latest/icu/types/struct.EraYear.html)
   String get era {
     final write = _Write();
     _icu4x_Date_era_mv1(_ffi, write._ffi);
