@@ -98,10 +98,6 @@ impl YearInfo {
             YearKind::Cyclic(..) => None,
         }
     }
-    /// Return the era, or "unknown" for cyclic years
-    pub fn formatting_era_or_unknown(self) -> Era {
-        self.formatting_era().unwrap_or(Era(tinystr::tinystr!(16, "unknown")))
-    }
 
     /// Get the era, if available
     pub fn standard_era(self) -> Option<Era> {
