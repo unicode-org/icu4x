@@ -26,13 +26,6 @@ use zerovec::ule::AsULE;
 #[allow(clippy::exhaustive_structs)] // this is a newtype
 pub struct Era(pub TinyStr16);
 
-impl Era {
-    /// Construct an unknown era for GIGO behavior during
-    pub const fn unknown() -> Self {
-        Era(tinystr::tinystr!(16, "unknown"))
-    }
-}
-
 impl From<TinyStr16> for Era {
     fn from(o: TinyStr16) -> Self {
         Self(o)
@@ -107,7 +100,7 @@ impl YearInfo {
     }
     /// Return the era, or "unknown" for cyclic years
     pub fn formatting_era_or_unknown(self) -> Era {
-        self.formatting_era().unwrap_or(Era::unknown())
+        self.formatting_era().unwrap_or(Era(tinystr::tinystr!(16, "unknown")))
     }
 
     /// Get the era, if available
