@@ -192,7 +192,8 @@ pub mod ffi {
         }
 
         /// Returns 1-indexed number of the month of this date in its year
-        #[diplomat::rust_link(icu::calendar::Date::month, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::types::MonthInfo::ordinal, StructField)]
+        #[diplomat::rust_link(icu::calendar::Date::month, FnInStruct, compact)]
         #[diplomat::attr(auto, getter)]
         pub fn month(&self) -> u32 {
             self.0.date.month().ordinal
@@ -430,6 +431,7 @@ pub mod ffi {
         /// having the same ordinal month across years; use month_code if you care
         /// about month identity.
         #[diplomat::rust_link(icu::calendar::Date::month, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::types::MonthInfo::ordinal, StructField)]
         #[diplomat::attr(auto, getter)]
         pub fn ordinal_month(&self) -> u32 {
             self.0.date.month().ordinal
@@ -437,17 +439,27 @@ pub mod ffi {
 
         /// Returns the month code for this date. Typically something
         /// like "M01", "M02", but can be more complicated for lunar calendars.
-        #[diplomat::rust_link(icu::calendar::Date::month, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::types::MonthInfo::standard_code, StructField)]
+        #[diplomat::rust_link(icu::calendar::Date::month, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::calendar::types::MonthInfo, Struct, hidden)]
+        #[diplomat::rust_link(icu::calendar::types::MonthInfo::formatting_code, StructField, hidden)]
+        #[diplomat::rust_link(icu::calendar::types::MonthInfo, Struct, hidden)]
         #[diplomat::attr(auto, getter)]
         pub fn month_code(&self, write: &mut diplomat_runtime::DiplomatWrite) {
-            let code = self.0.date.month().code;
+            let code = self.0.date.month().standard_code;
             let _infallible = write.write_str(&code.0);
         }
 
         /// Returns the year number in the current era for this date
         ///
         /// For calendars without an era, returns the extended year
-        #[diplomat::rust_link(icu::calendar::Date::year, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::types::YearInfo::era_year_or_extended, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::types::EraYear::era_year, StructField, compact)]
+        #[diplomat::rust_link(icu::calendar::types::YearInfo::era_year, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::calendar::Date::year, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::calendar::types::EraYear, Struct, hidden)]
+        #[diplomat::rust_link(icu::calendar::types::YearKind, Enum, hidden)]
+        #[diplomat::rust_link(icu::calendar::types::YearInfo, Struct, hidden)]
         #[diplomat::attr(auto, getter)]
         pub fn year_in_era(&self) -> i32 {
             self.0.date.year().era_year_or_extended()
@@ -455,13 +467,21 @@ pub mod ffi {
 
         /// Returns the extended year in the Date
         #[diplomat::rust_link(icu::calendar::types::YearInfo::extended_year, StructField)]
+        #[diplomat::rust_link(icu::calendar::types::YearInfo, Struct, hidden)]
         #[diplomat::attr(auto, getter)]
         pub fn extended_year(&self) -> i32 {
             self.0.date.year().extended_year
         }
 
         /// Returns the era for this date, or an empty string
-        #[diplomat::rust_link(icu::calendar::Date::year, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::types::EraYear::standard_era, StructField)]
+        #[diplomat::rust_link(icu::calendar::types::YearInfo::standard_era, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::calendar::Date::year, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::calendar::types::EraYear, Struct, hidden)]
+        #[diplomat::rust_link(icu::calendar::types::YearKind, Enum, hidden)]
+        #[diplomat::rust_link(icu::calendar::types::YearInfo, Struct, hidden)]
+        #[diplomat::rust_link(icu::calendar::types::EraYear::formatting_era, StructField, hidden)]
+        #[diplomat::rust_link(icu::calendar::types::YearInfo::formatting_era, FnInStruct, hidden)]
         #[diplomat::attr(auto, getter)]
         pub fn era(&self, write: &mut diplomat_runtime::DiplomatWrite) {
             if let Some(era) = self.0.date.year().standard_era() {

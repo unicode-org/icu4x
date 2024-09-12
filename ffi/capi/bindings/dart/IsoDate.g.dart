@@ -118,7 +118,9 @@ final class IsoDate implements ffi.Finalizable {
 
   /// Returns 1-indexed number of the month of this date in its year
   ///
-  /// See the [Rust documentation for `month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month) for more information.
+  /// See the [Rust documentation for `ordinal`](https://docs.rs/icu/latest/icu/calendar/types/struct.MonthInfo.html#structfield.ordinal) for more information.
+  ///
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month)
   int get month {
     final result = _icu4x_IsoDate_month_mv1(_ffi);
     return result;

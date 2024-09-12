@@ -58,14 +58,14 @@ pub enum YearKind {
 
 impl YearInfo {
     /// Construct a new Year given an era and number
-    pub fn new(extended_year: i32, era: EraYear) -> Self {
+    pub(crate) fn new(extended_year: i32, era: EraYear) -> Self {
         Self {
             extended_year,
             kind: YearKind::Era(era),
         }
     }
     /// Construct a new cyclic Year given a cycle and a related_iso
-    pub fn new_cyclic(extended_year: i32, cycle: NonZeroU8, related_iso: i32) -> Self {
+    pub(crate) fn new_cyclic(extended_year: i32, cycle: NonZeroU8, related_iso: i32) -> Self {
         Self {
             extended_year,
             kind: YearKind::Cyclic(CyclicYear {

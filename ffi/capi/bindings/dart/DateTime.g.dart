@@ -190,6 +190,8 @@ final class DateTime implements ffi.Finalizable {
   /// about month identity.
   ///
   /// See the [Rust documentation for `month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month) for more information.
+  ///
+  /// See the [Rust documentation for `ordinal`](https://docs.rs/icu/latest/icu/calendar/types/struct.MonthInfo.html#structfield.ordinal) for more information.
   int get ordinalMonth {
     final result = _icu4x_DateTime_ordinal_month_mv1(_ffi);
     return result;
@@ -198,7 +200,9 @@ final class DateTime implements ffi.Finalizable {
   /// Returns the month code for this date. Typically something
   /// like "M01", "M02", but can be more complicated for lunar calendars.
   ///
-  /// See the [Rust documentation for `month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month) for more information.
+  /// See the [Rust documentation for `standard_code`](https://docs.rs/icu/latest/icu/calendar/types/struct.MonthInfo.html#structfield.standard_code) for more information.
+  ///
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month)
   String get monthCode {
     final write = _Write();
     _icu4x_DateTime_month_code_mv1(_ffi, write._ffi);
@@ -209,7 +213,9 @@ final class DateTime implements ffi.Finalizable {
   ///
   /// For calendars without an era, returns the extended year
   ///
-  /// See the [Rust documentation for `year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year) for more information.
+  /// See the [Rust documentation for `era_year_or_extended`](https://docs.rs/icu/latest/icu/calendar/types/struct.YearInfo.html#method.era_year_or_extended) for more information.
+  ///
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/calendar/types/struct.EraYear.html#structfield.era_year), [2](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year)
   int get yearInEra {
     final result = _icu4x_DateTime_year_in_era_mv1(_ffi);
     return result;
@@ -225,7 +231,9 @@ final class DateTime implements ffi.Finalizable {
 
   /// Returns the era for this date, or an empty string
   ///
-  /// See the [Rust documentation for `year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year) for more information.
+  /// See the [Rust documentation for `standard_era`](https://docs.rs/icu/latest/icu/calendar/types/struct.EraYear.html#structfield.standard_era) for more information.
+  ///
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year)
   String get era {
     final write = _Write();
     _icu4x_DateTime_era_mv1(_ffi, write._ffi);
