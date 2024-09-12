@@ -6,14 +6,18 @@
   },
   "past": {
     "strings": {
-      "specials": [],
-      "other": "\u0001 нед. назад"
+      "other": [
+        0,
+        "\u0001 нед. назад"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [],
-      "other": "\fчерез  нед."
+      "other": [
+        0,
+        "\fчерез  нед."
+      ]
     }
   }
 }

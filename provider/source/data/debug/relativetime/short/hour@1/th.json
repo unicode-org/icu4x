@@ -4,14 +4,18 @@
   },
   "past": {
     "strings": {
-      "specials": [],
-      "other": "\u0001 ชม. ที่แล้ว"
+      "other": [
+        0,
+        "\u0001 ชม. ที่แล้ว"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [],
-      "other": "\bใน  ชม."
+      "other": [
+        0,
+        "\bใน  ชม."
+      ]
     }
   }
 }

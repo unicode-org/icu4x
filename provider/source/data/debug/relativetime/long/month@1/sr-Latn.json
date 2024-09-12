@@ -6,32 +6,34 @@
   },
   "past": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\u0005pre  meseca"
-        ],
-        [
-          "Few",
-          "\u0005pre  meseca"
-        ]
+      "one": [
+        0,
+        "\u0005pre  meseca"
       ],
-      "other": "\u0005pre  meseci"
+      "few": [
+        0,
+        "\u0005pre  meseca"
+      ],
+      "other": [
+        0,
+        "\u0005pre  meseci"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\u0004za  mesec"
-        ],
-        [
-          "Few",
-          "\u0004za  meseca"
-        ]
+      "one": [
+        0,
+        "\u0004za  mesec"
       ],
-      "other": "\u0004za  meseci"
+      "few": [
+        0,
+        "\u0004za  meseca"
+      ],
+      "other": [
+        0,
+        "\u0004za  meseci"
+      ]
     }
   }
 }

@@ -21,7 +21,7 @@ pub mod ffi {
         #[diplomat::demo(default_constructor)]
         pub fn create_nfc(provider: &DataProvider) -> Result<Box<ComposingNormalizer>, DataError> {
             Ok(Box::new(ComposingNormalizer(call_constructor!(
-                icu_normalizer::ComposingNormalizer::new_nfc [r => Ok(r)],
+                icu_normalizer::ComposingNormalizer::new_nfc [r => Ok(r.static_to_owned())],
                 icu_normalizer::ComposingNormalizer::try_new_nfc_with_any_provider,
                 icu_normalizer::ComposingNormalizer::try_new_nfc_with_buffer_provider,
                 provider,
@@ -33,7 +33,7 @@ pub mod ffi {
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "nfkc")]
         pub fn create_nfkc(provider: &DataProvider) -> Result<Box<ComposingNormalizer>, DataError> {
             Ok(Box::new(ComposingNormalizer(call_constructor!(
-                icu_normalizer::ComposingNormalizer::new_nfkc [r => Ok(r)],
+                icu_normalizer::ComposingNormalizer::new_nfkc [r => Ok(r.static_to_owned())],
                 icu_normalizer::ComposingNormalizer::try_new_nfkc_with_any_provider,
                 icu_normalizer::ComposingNormalizer::try_new_nfkc_with_buffer_provider,
                 provider,
@@ -141,7 +141,7 @@ pub mod ffi {
             provider: &DataProvider,
         ) -> Result<Box<DecomposingNormalizer>, DataError> {
             Ok(Box::new(DecomposingNormalizer(call_constructor!(
-                icu_normalizer::DecomposingNormalizer::new_nfd [r => Ok(r)],
+                icu_normalizer::DecomposingNormalizer::new_nfd [r => Ok(r.static_to_owned())],
                 icu_normalizer::DecomposingNormalizer::try_new_nfd_with_any_provider,
                 icu_normalizer::DecomposingNormalizer::try_new_nfd_with_buffer_provider,
                 provider,
@@ -155,7 +155,7 @@ pub mod ffi {
             provider: &DataProvider,
         ) -> Result<Box<DecomposingNormalizer>, DataError> {
             Ok(Box::new(DecomposingNormalizer(call_constructor!(
-                icu_normalizer::DecomposingNormalizer::new_nfkd [r => Ok(r)],
+                icu_normalizer::DecomposingNormalizer::new_nfkd [r => Ok(r.static_to_owned())],
                 icu_normalizer::DecomposingNormalizer::try_new_nfkd_with_any_provider,
                 icu_normalizer::DecomposingNormalizer::try_new_nfkd_with_buffer_provider,
                 provider,

@@ -6,32 +6,34 @@
   },
   "past": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\u0005pre  nedelje"
-        ],
-        [
-          "Few",
-          "\u0005pre  nedelje"
-        ]
+      "one": [
+        0,
+        "\u0005pre  nedelje"
       ],
-      "other": "\u0005pre  nedelja"
+      "few": [
+        0,
+        "\u0005pre  nedelje"
+      ],
+      "other": [
+        0,
+        "\u0005pre  nedelja"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\u0004za  nedelju"
-        ],
-        [
-          "Few",
-          "\u0004za  nedelje"
-        ]
+      "one": [
+        0,
+        "\u0004za  nedelju"
       ],
-      "other": "\u0004za  nedelja"
+      "few": [
+        0,
+        "\u0004za  nedelje"
+      ],
+      "other": [
+        0,
+        "\u0004za  nedelja"
+      ]
     }
   }
 }

@@ -542,7 +542,7 @@ make_code_point_set_property! {
     /// let case_ignorable = sets::case_ignorable();
     ///
     /// assert!(case_ignorable.contains(':'));
-    /// assert!(!case_ignorable.contains('λ'));  // U+03BB GREEK SMALL LETTER LAMDA
+    /// assert!(!case_ignorable.contains('λ'));  // U+03BB GREEK SMALL LETTER LAMBDA
     /// ```
 
     pub const fn case_ignorable() => SINGLETON_CASE_IGNORABLE_V1_MARKER;

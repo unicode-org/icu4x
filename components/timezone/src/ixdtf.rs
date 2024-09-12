@@ -26,7 +26,7 @@ pub enum ParseError {
     Range(RangeError),
     /// Parsed date and time records were not a valid ISO date.
     Date(DateError),
-    /// There was no time zone offset or IANA identifer found.
+    /// There was no time zone offset or IANA identifier found.
     MissingTimeZone,
     /// There were missing fields required to parse component.
     MissingFields,

@@ -4,32 +4,34 @@
   },
   "past": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\u0005pre  sata"
-        ],
-        [
-          "Few",
-          "\u0005pre  sata"
-        ]
+      "one": [
+        0,
+        "\u0005pre  sata"
       ],
-      "other": "\u0005pre  sati"
+      "few": [
+        0,
+        "\u0005pre  sata"
+      ],
+      "other": [
+        0,
+        "\u0005pre  sati"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\u0004za  sat"
-        ],
-        [
-          "Few",
-          "\u0004za  sata"
-        ]
+      "one": [
+        0,
+        "\u0004za  sat"
       ],
-      "other": "\u0004za  sati"
+      "few": [
+        0,
+        "\u0004za  sata"
+      ],
+      "other": [
+        0,
+        "\u0004za  sati"
+      ]
     }
   }
 }

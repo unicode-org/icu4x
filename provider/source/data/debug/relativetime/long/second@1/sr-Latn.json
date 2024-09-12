@@ -4,32 +4,34 @@
   },
   "past": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\u0005pre  sekunde"
-        ],
-        [
-          "Few",
-          "\u0005pre  sekunde"
-        ]
+      "one": [
+        0,
+        "\u0005pre  sekunde"
       ],
-      "other": "\u0005pre  sekundi"
+      "few": [
+        0,
+        "\u0005pre  sekunde"
+      ],
+      "other": [
+        0,
+        "\u0005pre  sekundi"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\u0004za  sekundu"
-        ],
-        [
-          "Few",
-          "\u0004za  sekunde"
-        ]
+      "one": [
+        0,
+        "\u0004za  sekundu"
       ],
-      "other": "\u0004za  sekundi"
+      "few": [
+        0,
+        "\u0004za  sekunde"
+      ],
+      "other": [
+        0,
+        "\u0004za  sekundi"
+      ]
     }
   }
 }

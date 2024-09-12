@@ -6,14 +6,18 @@
   },
   "past": {
     "strings": {
-      "specials": [],
-      "other": "\u0001 四半期前"
+      "other": [
+        0,
+        "\u0001 四半期前"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [],
-      "other": "\u0001 四半期後"
+      "other": [
+        0,
+        "\u0001 四半期後"
+      ]
     }
   }
 }

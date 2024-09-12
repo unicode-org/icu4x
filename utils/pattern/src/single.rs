@@ -150,14 +150,6 @@ where
 ///         .interpolate_to_string(["hi"]),
 ///     "yesterday",
 /// );
-///
-/// // Escaped placeholder and a real placeholder:
-/// assert_eq!(
-///     Pattern::<SinglePlaceholder, _>::from_str("'{0}' {1}")
-///         .unwrap()
-///         .interpolate_to_string(("hi",)),
-///     "{0} hi",
-/// );
 /// ```
 ///
 /// [`Pattern::interpolate()`]: crate::Pattern::interpolate

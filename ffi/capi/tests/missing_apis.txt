@@ -14,7 +14,6 @@
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 
-icu::normalizer::ComposingNormalizer::as_borrowed#FnInStruct
 icu::normalizer::ComposingNormalizerBorrowed#Struct
 icu::normalizer::ComposingNormalizerBorrowed::is_normalized#FnInStruct
 icu::normalizer::ComposingNormalizerBorrowed::new_nfc#FnInStruct
@@ -24,7 +23,6 @@ icu::normalizer::ComposingNormalizerBorrowed::normalize_to#FnInStruct
 icu::normalizer::ComposingNormalizerBorrowed::normalize_utf16#FnInStruct
 icu::normalizer::ComposingNormalizerBorrowed::normalize_utf16_to#FnInStruct
 icu::normalizer::ComposingNormalizerBorrowed::normalize_utf8_to#FnInStruct
-icu::normalizer::DecomposingNormalizer::as_borrowed#FnInStruct
 icu::normalizer::DecomposingNormalizerBorrowed#Struct
 icu::normalizer::DecomposingNormalizerBorrowed::new_nfd#FnInStruct
 icu::normalizer::DecomposingNormalizerBorrowed::new_nfkd#FnInStruct
@@ -50,6 +48,7 @@ icu::plurals::PluralElements::explicit_one#FnInStruct
 icu::plurals::PluralElements::explicit_zero#FnInStruct
 icu::plurals::PluralElements::few#FnInStruct
 icu::plurals::PluralElements::many#FnInStruct
+icu::plurals::PluralElements::map#FnInStruct
 icu::plurals::PluralElements::new#FnInStruct
 icu::plurals::PluralElements::one#FnInStruct
 icu::plurals::PluralElements::other#FnInStruct

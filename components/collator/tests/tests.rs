@@ -10,6 +10,35 @@ use icu_collator::*;
 use icu_locale_core::{langid, locale, Locale};
 use icu_provider::prelude::*;
 
+struct TestingProvider;
+
+#[allow(unused_imports)]
+const _: () = {
+    use icu_collator_data::*;
+    pub mod icu {
+        pub use crate as collator;
+        pub use icu_collator_data::icu_locale as locale;
+        pub use icu_collections as collections;
+        pub use icu_normalizer as normalizer;
+    }
+    make_provider!(TestingProvider);
+    impl_collation_root_v1_marker!(TestingProvider);
+    impl_collation_tailoring_v1_marker!(TestingProvider);
+    impl_collation_diacritics_v1_marker!(TestingProvider);
+    impl_collation_jamo_v1_marker!(TestingProvider);
+    impl_collation_metadata_v1_marker!(TestingProvider);
+    impl_collation_special_primaries_v1_marker!(TestingProvider);
+    impl_collation_reordering_v1_marker!(TestingProvider);
+
+    icu_normalizer_data::impl_canonical_compositions_v1_marker!(TestingProvider);
+    icu_normalizer_data::impl_non_recursive_decomposition_supplement_v1_marker!(TestingProvider);
+    icu_normalizer_data::impl_canonical_decomposition_data_v1_marker!(TestingProvider);
+    icu_normalizer_data::impl_canonical_decomposition_tables_v1_marker!(TestingProvider);
+    icu_normalizer_data::impl_compatibility_decomposition_supplement_v1_marker!(TestingProvider);
+    icu_normalizer_data::impl_compatibility_decomposition_tables_v1_marker!(TestingProvider);
+    icu_normalizer_data::impl_uts46_decomposition_supplement_v1_marker!(TestingProvider);
+};
+
 type StackString = arraystring::ArrayString<arraystring::typenum::U32>;
 
 /// Parse a string of space-separated hexadecimal code points (ending in end of input or semicolon)
@@ -54,7 +83,7 @@ fn test_parse_hex() {
 }
 
 fn check_expectations(
-    collator: &Collator,
+    collator: &CollatorBorrowed,
     left: &[&str],
     right: &[&str],
     expectations: &[Ordering],
@@ -771,8 +800,7 @@ fn test_reordering() {
     // ऄ is Devanagari
 
     {
-        let collator: Collator =
-            Collator::try_new(&Default::default(), CollatorOptions::new()).unwrap();
+        let collator = Collator::try_new(&Default::default(), CollatorOptions::new()).unwrap();
         assert_eq!(collator.compare("অ", "a"), Ordering::Greater);
         assert_eq!(collator.compare("ऄ", "a"), Ordering::Greater);
         assert_eq!(collator.compare("অ", "ऄ"), Ordering::Greater);
@@ -780,6 +808,36 @@ fn test_reordering() {
 
     {
         let collator = Collator::try_new(&locale, CollatorOptions::new()).unwrap();
+        assert_eq!(collator.compare("অ", "a"), Ordering::Less);
+        assert_eq!(collator.compare("ऄ", "a"), Ordering::Less);
+        assert_eq!(collator.compare("অ", "ऄ"), Ordering::Less);
+    }
+}
+
+#[test]
+fn test_reordering_owned() {
+    let locale = locale!("bn").into();
+
+    // অ is Bangla
+    // ऄ is Devanagari
+
+    {
+        let owned = Collator::try_new_unstable(
+            &TestingProvider,
+            &Default::default(),
+            CollatorOptions::new(),
+        )
+        .unwrap();
+        let collator = owned.as_borrowed();
+        assert_eq!(collator.compare("অ", "a"), Ordering::Greater);
+        assert_eq!(collator.compare("ऄ", "a"), Ordering::Greater);
+        assert_eq!(collator.compare("অ", "ऄ"), Ordering::Greater);
+    }
+
+    {
+        let owned =
+            Collator::try_new_unstable(&TestingProvider, &locale, CollatorOptions::new()).unwrap();
+        let collator = owned.as_borrowed();
         assert_eq!(collator.compare("অ", "a"), Ordering::Less);
         assert_eq!(collator.compare("ऄ", "a"), Ordering::Less);
         assert_eq!(collator.compare("অ", "ऄ"), Ordering::Less);
@@ -821,13 +879,54 @@ fn test_vi() {
 }
 
 #[test]
+fn test_vi_owned() {
+    {
+        let locale = locale!("vi").into();
+        let owned =
+            Collator::try_new_unstable(&TestingProvider, &locale, CollatorOptions::new()).unwrap();
+        let collator = owned.as_borrowed();
+
+        assert_eq!(collator.compare("a", "b"), Ordering::Less);
+        assert_eq!(collator.compare("a", "á"), Ordering::Less);
+        assert_eq!(collator.compare("à", "á"), Ordering::Less);
+        assert_eq!(collator.compare("ả", "ã"), Ordering::Less);
+        assert_eq!(collator.compare("ạ", "a"), Ordering::Greater);
+        assert_eq!(collator.compare("ê", "ế"), Ordering::Less);
+        assert_eq!(collator.compare("u", "ư"), Ordering::Less);
+        assert_eq!(collator.compare("d", "đ"), Ordering::Less);
+        assert_eq!(collator.compare("ô", "ơ"), Ordering::Less);
+        assert_eq!(collator.compare("â", "ấ"), Ordering::Less); // Similar sounding
+    }
+
+    {
+        let owned = Collator::try_new_unstable(
+            &TestingProvider,
+            &Default::default(),
+            CollatorOptions::new(),
+        )
+        .unwrap();
+        let collator = owned.as_borrowed();
+
+        assert_eq!(collator.compare("a", "b"), Ordering::Less);
+        assert_eq!(collator.compare("a", "á"), Ordering::Less);
+        assert_eq!(collator.compare("à", "á"), Ordering::Greater);
+        assert_eq!(collator.compare("ả", "ã"), Ordering::Greater);
+        assert_eq!(collator.compare("ạ", "a"), Ordering::Greater);
+        assert_eq!(collator.compare("ê", "ế"), Ordering::Less);
+        assert_eq!(collator.compare("u", "ư"), Ordering::Less);
+        assert_eq!(collator.compare("d", "đ"), Ordering::Less);
+        assert_eq!(collator.compare("ô", "ơ"), Ordering::Less);
+        assert_eq!(collator.compare("â", "ấ"), Ordering::Less); // Similar sounding
+    }
+}
+
+#[test]
 // See SourceDataProvider test_zh_non_baked for gb2312 and big5han tests
 fn test_zh() {
     // Note: ㄅ is Bopomofo.
 
     {
-        let collator: Collator =
-            Collator::try_new(&Default::default(), CollatorOptions::new()).unwrap();
+        let collator = Collator::try_new(&Default::default(), CollatorOptions::new()).unwrap();
         assert_eq!(collator.compare("艾", "a"), Ordering::Greater);
         assert_eq!(collator.compare("佰", "a"), Ordering::Greater);
         assert_eq!(collator.compare("ㄅ", "a"), Ordering::Greater);
@@ -1145,6 +1244,24 @@ fn test_tr_primary() {
 }
 
 #[test]
+fn test_tr_primary_owned() {
+    // Adapted from `CollationTurkishTest::TestPrimary` in trcoll.cpp in ICU4C
+    let left = ["üoid", "voıd", "idea"];
+    let right = ["void", "void", "Idea"];
+    let expectations = [Ordering::Less, Ordering::Less, Ordering::Greater];
+    let locale = locale!("tr").into();
+
+    let mut options = CollatorOptions::new();
+    options.strength = Some(Strength::Tertiary);
+
+    {
+        let owned = Collator::try_new_unstable(&TestingProvider, &locale, options).unwrap();
+        let collator = owned.as_borrowed();
+        check_expectations(&collator, &left, &right, &expectations);
+    }
+}
+
+#[test]
 fn test_lt_tertiary() {
     let left = [
         "a\u{0307}\u{0300}a",
@@ -1174,6 +1291,41 @@ fn test_lt_tertiary() {
 
     {
         let collator = Collator::try_new(&locale, options).unwrap();
+        check_expectations(&collator, &left, &right, &expectations);
+    }
+}
+
+#[test]
+fn test_lt_tertiary_owned() {
+    let left = [
+        "a\u{0307}\u{0300}a",
+        "a\u{0307}\u{0301}a",
+        "a\u{0307}\u{0302}a",
+        "a\u{0307}\u{0303}a",
+        "ž",
+    ];
+    let right = [
+        "a\u{0300}a",
+        "a\u{0301}a",
+        "a\u{0302}a",
+        "a\u{0303}a",
+        "z\u{033F}",
+    ];
+    let expectations = [
+        Ordering::Equal,
+        Ordering::Equal,
+        Ordering::Greater,
+        Ordering::Equal,
+        Ordering::Greater,
+    ];
+    let locale = locale!("lt").into();
+
+    let mut options = CollatorOptions::new();
+    options.strength = Some(Strength::Tertiary);
+
+    {
+        let owned = Collator::try_new_unstable(&TestingProvider, &locale, options).unwrap();
+        let collator = owned.as_borrowed();
         check_expectations(&collator, &left, &right, &expectations);
     }
 }

@@ -276,8 +276,9 @@ fn test_zh_non_baked() {
     // Note: ㄅ is Bopomofo.
     {
         let locale: icu::locale::Locale = "zh-u-co-gb2312".parse().unwrap();
-        let collator =
+        let owned =
             Collator::try_new_unstable(&provider, &locale.into(), CollatorOptions::new()).unwrap();
+        let collator = owned.as_borrowed();
         assert_eq!(collator.compare("艾", "a"), Ordering::Greater);
         assert_eq!(collator.compare("佰", "a"), Ordering::Greater);
         assert_eq!(collator.compare("ㄅ", "a"), Ordering::Greater);
@@ -293,8 +294,9 @@ fn test_zh_non_baked() {
     }
     {
         let locale: icu::locale::Locale = "zh-u-co-big5han".parse().unwrap();
-        let collator =
+        let owned =
             Collator::try_new_unstable(&provider, &locale.into(), CollatorOptions::new()).unwrap();
+        let collator = owned.as_borrowed();
         assert_eq!(collator.compare("艾", "a"), Ordering::Greater);
         assert_eq!(collator.compare("佰", "a"), Ordering::Greater);
         assert_eq!(collator.compare("ㄅ", "a"), Ordering::Greater);

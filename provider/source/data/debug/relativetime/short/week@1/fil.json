@@ -6,19 +6,22 @@
   },
   "past": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\u0001 linggo ang nakalipas"
-        ]
+      "one": [
+        0,
+        "\u0001 linggo ang nakalipas"
       ],
-      "other": "\u0001 (na) linggo ang nakalipas"
+      "other": [
+        0,
+        "\u0001 (na) linggo ang nakalipas"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [],
-      "other": "\u0004sa  linggo"
+      "other": [
+        0,
+        "\u0004sa  linggo"
+      ]
     }
   }
 }
