@@ -374,32 +374,37 @@ where
                 write_value_missing(w, field)?;
                 Err(DateTimeWriteError::MissingInputField("year"))
             }
-            Some(year) => match date_symbols
-                .ok_or(DateTimeWriteError::MissingDateSymbols)
-                .and_then(|ds| {
-                    let Some(era) = year.formatting_era() else {
-                        return Err(DateTimeWriteError::MissingInputField("era"));
-                    };
-                    ds.get_symbol_for_era(l, era).map_err(|e| match e {
-                        GetSymbolForEraError::Missing => DateTimeWriteError::MissingEraSymbol(era),
-                        #[cfg(feature = "experimental")]
-                        GetSymbolForEraError::MissingNames(f) => {
-                            DateTimeWriteError::MissingNames(f)
-                        }
-                    })
-                }) {
-                Err(e) => {
-                    w.with_part(Part::ERROR, |w| {
-                        if let Some(era) = year.formatting_era() {
-                            w.write_str(&era.0)
-                        } else {
-                            w.write_str("missing era")
-                        }
-                    })?;
-                    Err(e)
+            Some(year) => {
+                let era_symbol = date_symbols
+                    .ok_or(DateTimeWriteError::MissingDateSymbols)
+                    .and_then(|ds| {
+                        let Some(era) = year.formatting_era() else {
+                            return Err(DateTimeWriteError::MissingInputField("era"));
+                        };
+                        ds.get_symbol_for_era(l, era).map_err(|e| match e {
+                            GetSymbolForEraError::Missing => {
+                                DateTimeWriteError::MissingEraSymbol(era)
+                            }
+                            #[cfg(feature = "experimental")]
+                            GetSymbolForEraError::MissingNames(f) => {
+                                DateTimeWriteError::MissingNames(f)
+                            }
+                        })
+                    });
+                match era_symbol {
+                    Err(e) => {
+                        w.with_part(Part::ERROR, |w| {
+                            if let Some(era) = year.formatting_era() {
+                                w.write_str(&era.0)
+                            } else {
+                                w.write_str("missing era")
+                            }
+                        })?;
+                        Err(e)
+                    }
+                    Ok(era) => Ok(w.write_str(era)?),
                 }
-                Ok(era) => Ok(w.write_str(era)?),
-            },
+            }
         },
         (FieldSymbol::Year(Year::Calendar), l) => match datetime.year() {
             None => {

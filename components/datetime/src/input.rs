@@ -11,7 +11,7 @@ use crate::provider::time_zones::{MetazoneId, TimeZoneBcp47Id};
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::week::{RelativeUnit, WeekCalculator};
 use icu_calendar::Calendar;
-use icu_calendar::{types::Era, AsCalendar, Date, DateTime, Iso};
+use icu_calendar::{AsCalendar, Date, DateTime, Iso};
 use icu_timezone::{CustomTimeZone, UtcOffset, ZoneVariant};
 
 // TODO(#2630) fix up imports to directly import from icu_calendar
@@ -233,7 +233,10 @@ impl ExtractedDateTimeInput {
             Some(AnyCalendarKind::Gregorian) => match self.year() {
                 None => true,
                 Some(year) if year.era_year_or_extended() < 1000 => true,
-                Some(year) if year.formatting_era() != Some(Era(tinystr::tinystr!(16, "ce"))) => {
+                Some(year)
+                    if year.formatting_era()
+                        != Some(icu_calendar::types::Era(tinystr::tinystr!(16, "ce"))) =>
+                {
                     true
                 }
                 Some(_) => false,

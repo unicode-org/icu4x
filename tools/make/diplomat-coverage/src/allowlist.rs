@@ -184,8 +184,11 @@ lazy_static::lazy_static! {
         "icu::calendar::types::FormattableYearKind",
         "icu::calendar::types::DayOfYearInfo",
 
-        // Not yet exposed over FFI, Temporal doesn't need it
+        // Not yet fully exposed over FFI, Temporal doesn't yet need all of the details here
         "icu::calendar::types::CyclicYear",
+        "icu::calendar::types::EraYear",
+        "icu::calendar::types::YearInfo",
+        "icu::calendar::types::YearKind",
 
         // Punted post 1.0: not strongly needed yet and don't want to lock in a solution
         // Potential solutions:
