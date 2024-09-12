@@ -419,7 +419,7 @@ mod test {
             iso_day: u8,
             expected_year: i32,
             expected_era: Era,
-            expected_month: u32,
+            expected_month: u8,
             expected_day: u32,
         }
 

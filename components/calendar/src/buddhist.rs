@@ -341,7 +341,7 @@ mod test {
         );
         assert_eq!(
             buddhist1.month().ordinal,
-            buddhist_month as u32,
+            buddhist_month,
             "Iso -> Buddhist month check failed for case: {case:?}"
         );
         assert_eq!(
@@ -360,7 +360,7 @@ mod test {
         );
         assert_eq!(
             iso2.month().ordinal,
-            iso_month as u32,
+            iso_month,
             "Buddhist -> Iso month check failed for case: {case:?}"
         );
         assert_eq!(
