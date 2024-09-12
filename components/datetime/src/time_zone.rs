@@ -17,8 +17,8 @@ use alloc::string::String;
 use core::fmt;
 use core::fmt::Write;
 use icu_provider::prelude::*;
-use icu_timezone::TimeZoneBcp47Id;
-use icu_timezone::UtcOffset;
+use icu_timezone::{MetazoneCalculator, TimeZoneBcp47Id};
+use icu_timezone::{UtcOffset, ZoneVariant};
 use smallvec::SmallVec;
 use tinystr::tinystr;
 use writeable::{adapters::CoreWriteAsPartsWrite, Part, Writeable};
@@ -116,6 +116,7 @@ pub(super) struct TimeZoneDataPayloads {
     pub(super) zone_formats: DataPayload<provider::time_zones::TimeZoneFormatsV1Marker>,
     /// The exemplar cities for time zones.
     pub(super) exemplar_cities: Option<DataPayload<provider::time_zones::ExemplarCitiesV1Marker>>,
+    pub(super) mz_calc: Option<MetazoneCalculator>,
     /// The generic long metazone names, e.g. Pacific Time
     pub(super) mz_generic_long:
         Option<DataPayload<provider::time_zones::MetazoneGenericNamesLongV1Marker>>,
@@ -138,6 +139,7 @@ pub(crate) struct TimeZoneDataPayloadsBorrowed<'a> {
     /// The exemplar cities for time zones.
     pub(crate) exemplar_cities: Option<&'a provider::time_zones::ExemplarCitiesV1<'a>>,
     /// The generic long metazone names, e.g. Pacific Time
+    pub(super) mz_calc: Option<&'a MetazoneCalculator>,
     pub(crate) mz_generic_long: Option<&'a provider::time_zones::MetazoneGenericNamesLongV1<'a>>,
     /// The generic short metazone names, e.g. PT
     pub(crate) mz_generic_short: Option<&'a provider::time_zones::MetazoneGenericNamesShortV1<'a>>,
@@ -153,6 +155,7 @@ impl TimeZoneDataPayloads {
         TimeZoneDataPayloadsBorrowed {
             zone_formats: Some(self.zone_formats.get()),
             exemplar_cities: self.exemplar_cities.as_ref().map(|x| x.get()),
+            mz_calc: self.mz_calc.as_ref(),
             mz_generic_long: self.mz_generic_long.as_ref().map(|x| x.get()),
             mz_generic_short: self.mz_generic_short.as_ref().map(|x| x.get()),
             mz_specific_long: self.mz_specific_long.as_ref().map(|x| x.get()),
@@ -166,6 +169,7 @@ impl<'a> TimeZoneDataPayloadsBorrowed<'a> {
         TimeZoneDataPayloadsBorrowed {
             zone_formats: None,
             exemplar_cities: None,
+            mz_calc: None,
             mz_generic_long: None,
             mz_generic_short: None,
             mz_specific_long: None,
@@ -190,6 +194,7 @@ impl TimeZoneFormatter {
             + DataProvider<provider::time_zones::MetazoneGenericNamesShortV1Marker>
             + DataProvider<provider::time_zones::MetazoneSpecificNamesLongV1Marker>
             + DataProvider<provider::time_zones::MetazoneSpecificNamesShortV1Marker>
+            + DataProvider<icu_timezone::provider::MetazonePeriodV1Marker>
             + ?Sized,
     {
         let format_units = SmallVec::<[TimeZoneFormatterUnit; 3]>::new();
@@ -201,6 +206,7 @@ impl TimeZoneFormatter {
                 })?
                 .payload,
             exemplar_cities: None,
+            mz_calc: None,
             mz_generic_long: None,
             mz_generic_short: None,
             mz_specific_long: None,
@@ -434,6 +440,7 @@ impl TimeZoneFormatter {
                 })?
                 .payload,
             exemplar_cities: None,
+            mz_calc: None,
             mz_generic_long: None,
             mz_generic_short: None,
             mz_specific_long: None,
@@ -514,14 +521,29 @@ impl TimeZoneFormatter {
         Ok(self)
     }
 
+    fn load_mz_calc_unstable<ZP>(&mut self, zone_provider: &ZP) -> Result<(), DataError>
+    where
+        ZP: DataProvider<icu_timezone::provider::MetazonePeriodV1Marker> + ?Sized,
+    {
+        if self.data_payloads.mz_calc.is_none() {
+            self.data_payloads.mz_calc = Some(icu_timezone::MetazoneCalculator::try_new_unstable(
+                zone_provider,
+            )?);
+        }
+        Ok(())
+    }
+
     /// Load generic-non-location-long format for timezone. For example, "Pacific Time".
     pub fn load_generic_non_location_long<ZP>(
         &mut self,
         zone_provider: &ZP,
     ) -> Result<&mut TimeZoneFormatter, DateTimeError>
     where
-        ZP: DataProvider<provider::time_zones::MetazoneGenericNamesLongV1Marker> + ?Sized,
+        ZP: DataProvider<provider::time_zones::MetazoneGenericNamesLongV1Marker>
+            + DataProvider<icu_timezone::provider::MetazonePeriodV1Marker>
+            + ?Sized,
     {
+        self.load_mz_calc_unstable(zone_provider)?;
         if self.data_payloads.mz_generic_long.is_none() {
             load(
                 &self.locale,
@@ -542,8 +564,11 @@ impl TimeZoneFormatter {
         zone_provider: &ZP,
     ) -> Result<&mut TimeZoneFormatter, DateTimeError>
     where
-        ZP: DataProvider<provider::time_zones::MetazoneGenericNamesShortV1Marker> + ?Sized,
+        ZP: DataProvider<provider::time_zones::MetazoneGenericNamesShortV1Marker>
+            + DataProvider<icu_timezone::provider::MetazonePeriodV1Marker>
+            + ?Sized,
     {
+        self.load_mz_calc_unstable(zone_provider)?;
         if self.data_payloads.mz_generic_short.is_none() {
             load(
                 &self.locale,
@@ -564,8 +589,11 @@ impl TimeZoneFormatter {
         zone_provider: &ZP,
     ) -> Result<&mut TimeZoneFormatter, DateTimeError>
     where
-        ZP: DataProvider<provider::time_zones::MetazoneSpecificNamesLongV1Marker> + ?Sized,
+        ZP: DataProvider<provider::time_zones::MetazoneSpecificNamesLongV1Marker>
+            + DataProvider<icu_timezone::provider::MetazonePeriodV1Marker>
+            + ?Sized,
     {
+        self.load_mz_calc_unstable(zone_provider)?;
         if self.data_payloads.mz_specific_long.is_none() {
             load(
                 &self.locale,
@@ -586,8 +614,11 @@ impl TimeZoneFormatter {
         zone_provider: &ZP,
     ) -> Result<&mut TimeZoneFormatter, DateTimeError>
     where
-        ZP: DataProvider<provider::time_zones::MetazoneSpecificNamesShortV1Marker> + ?Sized,
+        ZP: DataProvider<provider::time_zones::MetazoneSpecificNamesShortV1Marker>
+            + DataProvider<icu_timezone::provider::MetazonePeriodV1Marker>
+            + ?Sized,
     {
+        self.load_mz_calc_unstable(zone_provider)?;
         if self.data_payloads.mz_specific_short.is_none() {
             load(
                 &self.locale,
@@ -953,26 +984,22 @@ impl FormatTimeZone for GenericNonLocationLongFormat {
         time_zone: &ExtractedTimeZoneInput,
         data_payloads: TimeZoneDataPayloadsBorrowed,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
-        let formatted_time_zone: Option<&str> = data_payloads
-            .mz_generic_long
-            .as_ref()
-            .and_then(|metazones| {
-                time_zone
-                    .time_zone_id()
-                    .and_then(|tz| metazones.overrides.get(&tz))
-            })
-            .or_else(|| {
-                data_payloads
-                    .mz_generic_long
-                    .as_ref()
-                    .and_then(|metazones| {
-                        time_zone
-                            .metazone_id()
-                            .and_then(|mz| metazones.defaults.get(&mz))
-                    })
-            });
+        let formatted_time_zone = || -> Option<&str> {
+            let metazones = data_payloads.mz_generic_long?;
 
-        Ok(match formatted_time_zone {
+            let time_zone_id = time_zone.time_zone_id()?;
+            let wall_time = time_zone.wall_time()?;
+
+            metazones.overrides.get(&time_zone_id).or_else(|| {
+                data_payloads
+                    .mz_calc
+                    .unwrap()
+                    .compute_metazone_from_time_zone(time_zone_id, &wall_time)
+                    .and_then(|mz| metazones.defaults.get(&mz))
+            })
+        };
+
+        Ok(match formatted_time_zone() {
             Some(ftz) => Ok(sink.write_str(ftz)?),
             None => Err(FormatTimeZoneError::NameNotFound),
         })
@@ -989,26 +1016,22 @@ impl FormatTimeZone for GenericNonLocationShortFormat {
         time_zone: &ExtractedTimeZoneInput,
         data_payloads: TimeZoneDataPayloadsBorrowed,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
-        let formatted_time_zone: Option<&str> = data_payloads
-            .mz_generic_short
-            .as_ref()
-            .and_then(|metazones| {
-                time_zone
-                    .time_zone_id()
-                    .and_then(|tz| metazones.overrides.get(&tz))
-            })
-            .or_else(|| {
-                data_payloads
-                    .mz_generic_short
-                    .as_ref()
-                    .and_then(|metazones| {
-                        time_zone
-                            .metazone_id()
-                            .and_then(|mz| metazones.defaults.get(&mz))
-                    })
-            });
+        let formatted_time_zone = || -> Option<&str> {
+            let metazones = data_payloads.mz_generic_short?;
 
-        Ok(match formatted_time_zone {
+            let time_zone_id = time_zone.time_zone_id()?;
+            let wall_time = time_zone.wall_time()?;
+
+            metazones.overrides.get(&time_zone_id).or_else(|| {
+                data_payloads
+                    .mz_calc
+                    .unwrap()
+                    .compute_metazone_from_time_zone(time_zone_id, &wall_time)
+                    .and_then(|mz| metazones.defaults.get(&mz))
+            })
+        };
+
+        Ok(match formatted_time_zone() {
             Some(ftz) => Ok(sink.write_str(ftz)?),
             None => Err(FormatTimeZoneError::NameNotFound),
         })
@@ -1025,30 +1048,29 @@ impl FormatTimeZone for SpecificNonLocationShortFormat {
         time_zone: &ExtractedTimeZoneInput,
         data_payloads: TimeZoneDataPayloadsBorrowed,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
-        let formatted_time_zone: Option<&str> = data_payloads
-            .mz_specific_short
-            .as_ref()
-            .and_then(|metazones| {
-                time_zone.time_zone_id().and_then(|tz| {
-                    time_zone
-                        .zone_variant()
-                        .and_then(|variant| metazones.overrides.get_2d(&tz, &variant))
-                })
-            })
-            .or_else(|| {
-                data_payloads
-                    .mz_specific_short
-                    .as_ref()
-                    .and_then(|metazones| {
-                        time_zone.metazone_id().and_then(|mz| {
-                            time_zone
-                                .zone_variant()
-                                .and_then(|variant| metazones.defaults.get_2d(&mz, &variant))
-                        })
-                    })
-            });
+        let formatted_time_zone = || -> Option<&str> {
+            let metazones = data_payloads.mz_specific_long?;
 
-        Ok(match formatted_time_zone {
+            let _offset = time_zone.offset()?;
+            let time_zone_id = time_zone.time_zone_id()?;
+            let wall_time = time_zone.wall_time()?;
+
+            // TODO(#5466): calculate from data, wall_time, and offset
+            let zone_variant = ZoneVariant::standard();
+
+            metazones
+                .overrides
+                .get_2d(&time_zone_id, &zone_variant)
+                .or_else(|| {
+                    data_payloads
+                        .mz_calc
+                        .unwrap()
+                        .compute_metazone_from_time_zone(time_zone_id, &wall_time)
+                        .and_then(|mz| metazones.defaults.get_2d(&mz, &zone_variant))
+                })
+        };
+
+        Ok(match formatted_time_zone() {
             Some(ftz) => Ok(sink.write_str(ftz)?),
             None => Err(FormatTimeZoneError::NameNotFound),
         })
@@ -1065,30 +1087,29 @@ impl FormatTimeZone for SpecificNonLocationLongFormat {
         time_zone: &ExtractedTimeZoneInput,
         data_payloads: TimeZoneDataPayloadsBorrowed,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
-        let formatted_time_zone: Option<&str> = data_payloads
-            .mz_specific_long
-            .as_ref()
-            .and_then(|metazones| {
-                time_zone.time_zone_id().and_then(|tz| {
-                    time_zone
-                        .zone_variant()
-                        .and_then(|variant| metazones.overrides.get_2d(&tz, &variant))
-                })
-            })
-            .or_else(|| {
-                data_payloads
-                    .mz_specific_long
-                    .as_ref()
-                    .and_then(|metazones| {
-                        time_zone.metazone_id().and_then(|mz| {
-                            time_zone
-                                .zone_variant()
-                                .and_then(|variant| metazones.defaults.get_2d(&mz, &variant))
-                        })
-                    })
-            });
+        let formatted_time_zone = || -> Option<&str> {
+            let metazones = data_payloads.mz_specific_short?;
 
-        Ok(match formatted_time_zone {
+            let _offset = time_zone.offset()?;
+            let time_zone_id = time_zone.time_zone_id()?;
+            let wall_time = time_zone.wall_time()?;
+
+            // TODO(#5466): calculate from data, wall_time, and offset
+            let zone_variant = ZoneVariant::standard();
+
+            metazones
+                .overrides
+                .get_2d(&time_zone_id, &zone_variant)
+                .or_else(|| {
+                    data_payloads
+                        .mz_calc
+                        .unwrap()
+                        .compute_metazone_from_time_zone(time_zone_id, &wall_time)
+                        .and_then(|mz| metazones.defaults.get_2d(&mz, &zone_variant))
+                })
+        };
+
+        Ok(match formatted_time_zone() {
             Some(ftz) => Ok(sink.write_str(ftz)?),
             None => Err(FormatTimeZoneError::NameNotFound),
         })

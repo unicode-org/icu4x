@@ -191,6 +191,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
             + DataProvider<provider::time_zones::MetazoneSpecificNamesShortV1Marker>
             + DataProvider<OrdinalV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
+            + DataProvider<icu_timezone::provider::MetazonePeriodV1Marker>
             + ?Sized,
     {
         let patterns = PatternSelector::for_options(

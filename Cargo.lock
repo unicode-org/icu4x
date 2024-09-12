@@ -1194,6 +1194,7 @@ dependencies = [
  "icu_provider_adapters",
  "icu_provider_blob",
  "icu_timezone",
+ "icu_timezone_data",
  "litemap",
  "potential_utf",
  "serde",

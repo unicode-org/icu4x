@@ -54,6 +54,7 @@ const _: () = {
     pub mod icu {
         pub use crate as datetime;
         pub use icu_datetime_data::icu_locale as locale;
+        pub use icu_timezone as timezone;
     }
     make_provider!(Baked);
     impl_buddhist_date_lengths_v1_marker!(Baked);
@@ -89,6 +90,7 @@ const _: () = {
     impl_metazone_generic_names_short_v1_marker!(Baked);
     impl_metazone_specific_names_long_v1_marker!(Baked);
     impl_metazone_specific_names_short_v1_marker!(Baked);
+    icu_timezone_data::impl_metazone_period_v1_marker!(Baked);
     impl_time_zone_formats_v1_marker!(Baked);
 
     #[cfg(feature = "experimental")]

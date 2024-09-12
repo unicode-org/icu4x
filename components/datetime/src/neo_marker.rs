@@ -1014,10 +1014,6 @@ pub trait ZoneMarkers: private::Sealed {
     type TimeZoneOffsetInput: Into<Option<UtcOffset>>;
     /// Marker for resolving the time zone id input field.
     type TimeZoneIdInput: Into<Option<TimeZoneBcp47Id>>;
-    /// Marker for resolving the time zone metazone input field.
-    type TimeZoneMetazoneInput: Into<Option<MetazoneId>>;
-    /// Marker for resolving the time zone variant input field.
-    type TimeZoneVariantInput: Into<Option<ZoneVariant>>;
     /// Marker for loading core time zone data.
     type EssentialsV1Marker: DataMarker<DataStruct = tz::EssentialsV1<'static>>;
     /// Marker for loading exemplar city names for time zone formatting
@@ -1073,8 +1069,6 @@ pub trait AllInputMarkers<R: DateTimeMarkers>:
     + NeoGetField<<R::T as TimeMarkers>::NanoSecondInput>
     + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneOffsetInput>
     + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneIdInput>
-    + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneMetazoneInput>
-    + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneVariantInput>
 where
     R::D: DateInputMarkers,
     R::T: TimeMarkers,
@@ -1099,9 +1093,7 @@ where
         + NeoGetField<<R::T as TimeMarkers>::SecondInput>
         + NeoGetField<<R::T as TimeMarkers>::NanoSecondInput>
         + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneOffsetInput>
-        + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneIdInput>
-        + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneMetazoneInput>
-        + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneVariantInput>,
+        + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneIdInput>,
 {
 }
 
@@ -1147,8 +1139,6 @@ impl TimeMarkers for NeoNeverMarker {
 impl ZoneMarkers for NeoNeverMarker {
     type TimeZoneOffsetInput = NeverField;
     type TimeZoneIdInput = NeverField;
-    type TimeZoneMetazoneInput = NeverField;
-    type TimeZoneVariantInput = NeverField;
     type EssentialsV1Marker = NeverMarker<tz::EssentialsV1<'static>>;
     type ExemplarCitiesV1Marker = NeverMarker<tz::ExemplarCitiesV1<'static>>;
     type GenericLongV1Marker = NeverMarker<tz::MzGenericLongV1<'static>>;
@@ -1472,12 +1462,6 @@ macro_rules! datetime_marker_helper {
     };
     (@input/timezone/id, yes) => {
         Option<TimeZoneBcp47Id>
-    };
-    (@input/timezone/metazone, yes) => {
-        Option<MetazoneId>
-    };
-    (@input/timezone/variant, yes) => {
-        Option<ZoneVariant>
     };
     (@input/$any:ident, no) => {
         NeverField
@@ -1941,8 +1925,6 @@ macro_rules! impl_zone_marker {
         impl ZoneMarkers for $type {
             type TimeZoneOffsetInput = datetime_marker_helper!(@input/timezone/offset, yes);
             type TimeZoneIdInput = datetime_marker_helper!(@input/timezone/id, yes);
-            type TimeZoneMetazoneInput = datetime_marker_helper!(@input/timezone/metazone, yes);
-            type TimeZoneVariantInput = datetime_marker_helper!(@input/timezone/variant, yes);
             type EssentialsV1Marker = datetime_marker_helper!(@data/zone/essentials, $zone_essentials_yesno);
             type ExemplarCitiesV1Marker = datetime_marker_helper!(@data/zone/exemplar_cities, $zone_exemplar_cities_yesno);
             type GenericLongV1Marker = datetime_marker_helper!(@data/zone/generic_long, $zone_generic_long_yesno);
@@ -2555,8 +2537,6 @@ impl DateTimeNamesMarker for NeoTimeZoneSkeleton {
 impl ZoneMarkers for NeoTimeZoneSkeleton {
     type TimeZoneOffsetInput = datetime_marker_helper!(@input/timezone/offset, yes);
     type TimeZoneIdInput = datetime_marker_helper!(@input/timezone/id, yes);
-    type TimeZoneMetazoneInput = datetime_marker_helper!(@input/timezone/metazone, yes);
-    type TimeZoneVariantInput = datetime_marker_helper!(@input/timezone/variant, yes);
     type EssentialsV1Marker = datetime_marker_helper!(@data/zone/essentials, yes);
     type ExemplarCitiesV1Marker = datetime_marker_helper!(@data/zone/exemplar_cities, yes);
     type GenericLongV1Marker = datetime_marker_helper!(@data/zone/generic_long, yes);

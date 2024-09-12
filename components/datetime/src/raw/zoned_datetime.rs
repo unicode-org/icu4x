@@ -127,6 +127,7 @@ impl ZonedDateTimeFormatter {
             + DataProvider<provider::time_zones::MetazoneSpecificNamesShortV1Marker>
             + DataProvider<OrdinalV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
+            + DataProvider<icu_timezone::provider::MetazonePeriodV1Marker>
             + ?Sized,
     {
         let required = datetime::analyze_patterns(&patterns.get().0, true)

@@ -7,12 +7,12 @@
 
 #[cfg(feature = "experimental")]
 use crate::neo_marker::{DateInputMarkers, NeoGetField, TimeMarkers, ZoneMarkers};
-use crate::provider::time_zones::{MetazoneId, TimeZoneBcp47Id};
+use crate::provider::time_zones::TimeZoneBcp47Id;
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::week::{RelativeUnit, WeekCalculator};
 use icu_calendar::Calendar;
 use icu_calendar::{AsCalendar, Date, DateTime, Iso};
-use icu_timezone::{CustomTimeZone, UtcOffset, ZoneVariant};
+use icu_timezone::{CustomTimeZone, UtcOffset};
 
 // TODO(#2630) fix up imports to directly import from icu_calendar
 pub(crate) use icu_calendar::types::{
@@ -88,11 +88,8 @@ pub trait TimeZoneInput {
     /// The IANA time-zone identifier.
     fn time_zone_id(&self) -> Option<TimeZoneBcp47Id>;
 
-    /// The metazone identifier.
-    fn metazone_id(&self) -> Option<MetazoneId>;
-
-    /// The time variant (e.g. "daylight", "standard")
-    fn zone_variant(&self) -> Option<ZoneVariant>;
+    /// The wall time at which to interpret the timezone.
+    fn wall_time(&self) -> Option<DateTime<Iso>>;
 }
 
 /// A combination of a formattable calendar date and ISO time.
@@ -125,8 +122,7 @@ pub(crate) struct ExtractedDateTimeInput {
 pub(crate) struct ExtractedTimeZoneInput {
     pub(crate) offset: Option<UtcOffset>,
     pub(crate) time_zone_id: Option<TimeZoneBcp47Id>,
-    pub(crate) metazone_id: Option<MetazoneId>,
-    pub(crate) zone_variant: Option<ZoneVariant>,
+    pub(crate) wall_time: Option<DateTime<Iso>>,
 }
 
 impl ExtractedDateTimeInput {
@@ -187,9 +183,7 @@ impl ExtractedDateTimeInput {
             + NeoGetField<T::SecondInput>
             + NeoGetField<T::NanoSecondInput>
             + NeoGetField<Z::TimeZoneOffsetInput>
-            + NeoGetField<Z::TimeZoneIdInput>
-            + NeoGetField<Z::TimeZoneMetazoneInput>
-            + NeoGetField<Z::TimeZoneVariantInput>,
+            + NeoGetField<Z::TimeZoneIdInput>,
     {
         Self {
             year: NeoGetField::<D::YearInput>::get_field(input).into(),
@@ -205,8 +199,7 @@ impl ExtractedDateTimeInput {
             time_zone: ExtractedTimeZoneInput {
                 offset: NeoGetField::<Z::TimeZoneOffsetInput>::get_field(input).into(),
                 time_zone_id: NeoGetField::<Z::TimeZoneIdInput>::get_field(input).into(),
-                metazone_id: NeoGetField::<Z::TimeZoneMetazoneInput>::get_field(input).into(),
-                zone_variant: NeoGetField::<Z::TimeZoneVariantInput>::get_field(input).into(),
+                wall_time: None, // This should be computable from the input. Might involve calendrical computations
             },
         }
     }
@@ -258,8 +251,7 @@ impl ExtractedTimeZoneInput {
         Self {
             offset: input.offset(),
             time_zone_id: input.time_zone_id(),
-            metazone_id: input.metazone_id(),
-            zone_variant: input.zone_variant(),
+            wall_time: Some(DateTime::try_new_iso_datetime(2024, 1, 1, 1, 1, 1).unwrap()),
         }
     }
 }
@@ -313,11 +305,8 @@ impl TimeZoneInput for ExtractedTimeZoneInput {
     fn time_zone_id(&self) -> Option<TimeZoneBcp47Id> {
         self.time_zone_id
     }
-    fn metazone_id(&self) -> Option<MetazoneId> {
-        self.metazone_id
-    }
-    fn zone_variant(&self) -> Option<ZoneVariant> {
-        self.zone_variant
+    fn wall_time(&self) -> Option<DateTime<Iso>> {
+        self.wall_time
     }
 }
 
@@ -449,12 +438,8 @@ impl TimeZoneInput for CustomTimeZone {
         self.time_zone_id
     }
 
-    fn metazone_id(&self) -> Option<MetazoneId> {
-        self.metazone_id
-    }
-
-    fn zone_variant(&self) -> Option<ZoneVariant> {
-        self.zone_variant
+    fn wall_time(&self) -> Option<DateTime<Iso>> {
+        None
     }
 }
 

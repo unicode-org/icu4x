@@ -444,6 +444,7 @@ impl ZonedDateTimeFormatter {
             + DataProvider<PersianDateSymbolsV1Marker>
             + DataProvider<RocDateLengthsV1Marker>
             + DataProvider<RocDateSymbolsV1Marker>
+            + DataProvider<icu_timezone::provider::MetazonePeriodV1Marker>
             + ?Sized,
     {
         let calendar = AnyCalendar::try_new_for_locale_unstable(provider, locale)?;

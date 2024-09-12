@@ -1092,14 +1092,17 @@ pub fn analyze_patterns(
 #[cfg(feature = "compiled_data")]
 mod tests {
     use super::*;
-    use crate::{neo_marker::NeoAutoDateMarker, neo_skeleton::NeoSkeletonLength, pattern::runtime};
+    use crate::pattern::runtime;
     use icu_decimal::options::{FixedDecimalFormatterOptions, GroupingStrategy};
     use tinystr::tinystr;
 
     #[test]
+    #[cfg(feature = "experimental")]
     fn test_mixed_calendar_eras() {
-        use crate::neo::NeoFormatter;
         use crate::options::length;
+        use crate::{
+            neo::NeoFormatter, neo_marker::NeoAutoDateMarker, neo_skeleton::NeoSkeletonLength,
+        };
         use icu_calendar::japanese::JapaneseExtended;
         use icu_calendar::Date;
 
