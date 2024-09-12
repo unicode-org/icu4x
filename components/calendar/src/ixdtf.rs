@@ -62,7 +62,7 @@ impl Date<Iso> {
     ///
     /// assert_eq!(date.year().era_year_or_extended(), 2024);
     /// assert_eq!(
-    ///     date.month().code,
+    ///     date.month().standard_code,
     ///     icu::calendar::types::MonthCode(tinystr::tinystr!(4, "M07"))
     /// );
     /// assert_eq!(date.day_of_month().0, 17);
@@ -109,7 +109,7 @@ impl Date<AnyCalendar> {
     ///
     /// assert_eq!(date.year().era_year_or_extended(), 5784);
     /// assert_eq!(
-    ///     date.month().code,
+    ///     date.month().standard_code,
     ///     icu::calendar::types::MonthCode(tinystr::tinystr!(4, "M10"))
     /// );
     /// assert_eq!(date.day_of_month().0, 11);
@@ -210,7 +210,7 @@ impl DateTime<Iso> {
     ///
     /// assert_eq!(datetime.date.year().era_year_or_extended(), 2024);
     /// assert_eq!(
-    ///     datetime.date.month().code,
+    ///     datetime.date.month().standard_code,
     ///     icu::calendar::types::MonthCode(tinystr::tinystr!(4, "M07"))
     /// );
     /// assert_eq!(datetime.date.day_of_month().0, 17);
@@ -262,7 +262,7 @@ impl DateTime<AnyCalendar> {
     ///
     /// assert_eq!(datetime.date.year().era_year_or_extended(), 5784);
     /// assert_eq!(
-    ///     datetime.date.month().code,
+    ///     datetime.date.month().standard_code,
     ///     icu::calendar::types::MonthCode(tinystr::tinystr!(4, "M10"))
     /// );
     /// assert_eq!(datetime.date.day_of_month().0, 11);

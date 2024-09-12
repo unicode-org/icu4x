@@ -509,13 +509,13 @@ where
                 write_value_missing(w, field)?;
                 Err(DateTimeWriteError::MissingInputField("month"))
             }
-            Some(formattable_month) => match date_symbols
+            Some(month_info) => match date_symbols
                 .ok_or(DateTimeWriteError::MissingDateSymbols)
                 .and_then(|ds| {
-                    ds.get_symbol_for_month(month, l, formattable_month.code)
+                    ds.get_symbol_for_month(month, l, month_info.formatting_code)
                         .map_err(|e| match e {
                             GetSymbolForMonthError::Missing => {
-                                DateTimeWriteError::MissingMonthSymbol(formattable_month.code)
+                                DateTimeWriteError::MissingMonthSymbol(month_info.formatting_code)
                             }
                             #[cfg(feature = "experimental")]
                             GetSymbolForMonthError::MissingNames(f) => {
@@ -524,7 +524,7 @@ where
                         })
                 }) {
                 Err(e) => {
-                    w.with_part(Part::ERROR, |w| w.write_str(&formattable_month.code.0))?;
+                    w.with_part(Part::ERROR, |w| w.write_str(&month_info.formatting_code.0))?;
                     Err(e)
                 }
                 Ok(MonthPlaceholderValue::PlainString(symbol)) => {
@@ -544,12 +544,12 @@ where
                 }
                 #[cfg(feature = "experimental")]
                 Ok(MonthPlaceholderValue::Numeric) => {
-                    try_write_number(w, fdf, formattable_month.ordinal.into(), l)?
+                    try_write_number(w, fdf, month_info.ordinal.into(), l)?
                 }
                 #[cfg(feature = "experimental")]
                 Ok(MonthPlaceholderValue::NumericPattern(substitution_pattern)) => {
                     w.write_str(substitution_pattern.get_prefix())?;
-                    let r = try_write_number(w, fdf, formattable_month.ordinal.into(), l)?;
+                    let r = try_write_number(w, fdf, month_info.ordinal.into(), l)?;
                     w.write_str(substitution_pattern.get_suffix())?;
                     r
                 }

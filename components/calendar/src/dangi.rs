@@ -76,15 +76,15 @@ use tinystr::tinystr;
 /// let dangi_a = iso_a.to_calendar(Dangi::new());
 /// let chinese_a = iso_a.to_calendar(Chinese::new());
 ///
-/// assert_eq!(dangi_a.month().code.0, tinystr!(4, "M03L"));
-/// assert_eq!(chinese_a.month().code.0, tinystr!(4, "M04"));
+/// assert_eq!(dangi_a.month().standard_code.0, tinystr!(4, "M03L"));
+/// assert_eq!(chinese_a.month().standard_code.0, tinystr!(4, "M04"));
 ///
 /// let iso_b = Date::try_new_iso_date(2012, 5, 23).unwrap();
 /// let dangi_b = iso_b.to_calendar(Dangi::new());
 /// let chinese_b = iso_b.to_calendar(Chinese::new());
 ///
-/// assert_eq!(dangi_b.month().code.0, tinystr!(4, "M04"));
-/// assert_eq!(chinese_b.month().code.0, tinystr!(4, "M04L"));
+/// assert_eq!(dangi_b.month().standard_code.0, tinystr!(4, "M04"));
+/// assert_eq!(chinese_b.month().standard_code.0, tinystr!(4, "M04L"));
 /// ```
 /// # Era codes
 ///

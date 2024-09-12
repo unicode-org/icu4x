@@ -649,7 +649,7 @@ mod test {
 
                 assert_eq!(chinese.year().era_year_or_extended(), 1);
                 assert_eq!(chinese.month().ordinal, 1);
-                assert_eq!(chinese.month().code.0, "M01");
+                assert_eq!(chinese.month().standard_code.0, "M01");
                 assert_eq!(chinese.day_of_month().0, 1);
                 assert_eq!(chinese.year().cyclic().unwrap().get(), 1);
                 assert_eq!(chinese.year().related_iso(), Some(-2636));
@@ -900,7 +900,7 @@ mod test {
                 &chinese_cached,
                 |chinese, calendar_type| {
                     let chinese = iso.to_calendar(chinese);
-                    let result_code = chinese.month().code.0;
+                    let result_code = chinese.month().standard_code.0;
                     let expected_code = case.expected_code.to_string();
                     assert_eq!(
                         expected_code, result_code,

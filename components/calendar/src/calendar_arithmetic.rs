@@ -331,7 +331,8 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         };
         types::MonthInfo {
             ordinal: self.month as u32,
-            code: types::MonthCode(code),
+            standard_code: types::MonthCode(code),
+            formatting_code: types::MonthCode(code),
         }
     }
 

@@ -21,7 +21,7 @@ use crate::{
     calendar_arithmetic::{ArithmeticDate, CalendarArithmetic, PrecomputedDataSource},
     error::DateError,
     provider::chinese_based::{ChineseBasedCacheV1, PackedChineseBasedYearInfo},
-    types::{MonthInfo, MonthCode},
+    types::{MonthCode, MonthInfo},
     Calendar, Iso,
 };
 
@@ -482,7 +482,8 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
         let code = MonthCode(code_inner);
         MonthInfo {
             ordinal: ordinal as u32,
-            code,
+            standard_code: code,
+            formatting_code: code,
         }
     }
 }
