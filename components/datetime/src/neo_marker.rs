@@ -329,8 +329,8 @@ use crate::{
 use icu_calendar::{
     any_calendar::IntoAnyCalendar,
     types::{
-        DayOfMonth, DayOfYearInfo, FormattableMonth, FormattableYear, IsoHour, IsoMinute,
-        IsoSecond, IsoWeekday, NanoSecond,
+        DayOfMonth, DayOfYearInfo, FormattableMonth, IsoHour, IsoMinute, IsoSecond, IsoWeekday,
+        NanoSecond, YearInfo,
     },
     AnyCalendar, AnyCalendarKind, AsCalendar, Calendar, Date, DateTime, Ref, Time,
 };
@@ -467,9 +467,9 @@ where
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<FormattableYear> for Date<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<YearInfo> for Date<A> {
     #[inline]
-    fn get_field(&self) -> FormattableYear {
+    fn get_field(&self) -> YearInfo {
         self.year()
     }
 }
@@ -537,9 +537,9 @@ impl NeoGetField<NanoSecond> for Time {
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<FormattableYear> for DateTime<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<YearInfo> for DateTime<A> {
     #[inline]
-    fn get_field(&self) -> FormattableYear {
+    fn get_field(&self) -> YearInfo {
         self.date.year()
     }
 }
@@ -607,11 +607,9 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<NanoSecond> for DateT
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<FormattableYear>
-    for CustomZonedDateTime<A>
-{
+impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<YearInfo> for CustomZonedDateTime<A> {
     #[inline]
-    fn get_field(&self) -> FormattableYear {
+    fn get_field(&self) -> YearInfo {
         self.date.year()
     }
 }
@@ -789,7 +787,7 @@ impl NeoGetField<NeverField> for CustomTimeZone {
     }
 }
 
-impl From<NeverField> for Option<FormattableYear> {
+impl From<NeverField> for Option<YearInfo> {
     #[inline]
     fn from(_: NeverField) -> Self {
         None
@@ -951,7 +949,7 @@ pub trait HasConstZoneComponent {
 /// (input types only).
 pub trait DateInputMarkers: private::Sealed {
     /// Marker for resolving the year input field.
-    type YearInput: Into<Option<FormattableYear>>;
+    type YearInput: Into<Option<YearInfo>>;
     /// Marker for resolving the month input field.
     type MonthInput: Into<Option<FormattableMonth>>;
     /// Marker for resolving the day-of-month input field.
@@ -1438,7 +1436,7 @@ macro_rules! datetime_marker_helper {
         NeoSkeletonLength
     };
     (@input/year, yes) => {
-        FormattableYear
+        YearInfo
     };
     (@input/month, yes) => {
         FormattableMonth

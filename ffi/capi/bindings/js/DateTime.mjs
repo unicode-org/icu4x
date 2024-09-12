@@ -292,6 +292,16 @@ export class DateTime {
         finally {}
     }
 
+    get extendedYear() {
+        const result = wasm.icu4x_DateTime_extended_year_mv1(this.ffiValue);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
     get era() {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         wasm.icu4x_DateTime_era_mv1(this.ffiValue, write.buffer);

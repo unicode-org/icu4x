@@ -96,13 +96,13 @@
   },
   "eras": {
     "names": {
-      "islamic": "هـ"
+      "ah": "هـ"
     },
     "abbr": {
-      "islamic": "هـ"
+      "ah": "هـ"
     },
     "narrow": {
-      "islamic": "هـ"
+      "ah": "هـ"
     }
   }
 }

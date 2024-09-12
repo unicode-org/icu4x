@@ -44,6 +44,8 @@ export class Date {
 
     get yearInEra(): number;
 
+    get extendedYear(): number;
+
     get era(): string;
 
     get monthsInYear(): number;

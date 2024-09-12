@@ -22,16 +22,14 @@
 //! .expect("Failed to initialize Chinese DateTime instance");
 //!
 //! // `Date` checks
-//! assert_eq!(chinese_date.year().number, 4660);
-//! assert_eq!(chinese_date.year().related_iso, Some(2023));
-//! assert_eq!(chinese_date.year().cyclic.unwrap().get(), 40);
+//! assert_eq!(chinese_date.year().era_year_or_extended(), 4660);
+//! assert_eq!(chinese_date.year().cyclic().unwrap().get(), 40);
 //! assert_eq!(chinese_date.month().ordinal, 6);
 //! assert_eq!(chinese_date.day_of_month().0, 6);
 //!
 //! // `DateTime` checks
-//! assert_eq!(chinese_datetime.date.year().number, 4660);
-//! assert_eq!(chinese_datetime.date.year().related_iso, Some(2023));
-//! assert_eq!(chinese_datetime.date.year().cyclic.unwrap().get(), 40);
+//! assert_eq!(chinese_datetime.date.year().era_year_or_extended(), 4660);
+//! assert_eq!(chinese_datetime.date.year().cyclic().unwrap().get(), 40);
 //! assert_eq!(chinese_datetime.date.month().ordinal, 6);
 //! assert_eq!(chinese_datetime.date.day_of_month().0, 6);
 //! assert_eq!(chinese_datetime.time.hour.number(), 13);
@@ -48,7 +46,6 @@ use crate::chinese_based::{
 use crate::error::DateError;
 use crate::iso::Iso;
 use crate::provider::chinese_based::ChineseCacheV1Marker;
-use crate::types::{Era, FormattableYear};
 use crate::AsCalendar;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Time};
 use core::cmp::Ordering;
@@ -191,7 +188,7 @@ impl Calendar for Chinese {
     // Construct a date from era/month codes and fields
     fn date_from_codes(
         &self,
-        era: types::Era,
+        era: Option<types::Era>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
@@ -206,8 +203,10 @@ impl Calendar for Chinese {
             return Err(DateError::UnknownMonthCode(month_code));
         };
 
-        if era.0 != tinystr!(16, "chinese") {
-            return Err(DateError::UnknownEra(era));
+        if let Some(era) = era {
+            if era.0 != tinystr!(16, "chinese") {
+                return Err(DateError::UnknownEra(era));
+            }
         }
 
         Inner::new_from_ordinals(year, month, day, year_info)
@@ -268,8 +267,7 @@ impl Calendar for Chinese {
         Self::DEBUG_NAME
     }
 
-    /// The calendar-specific year represented by `date`
-    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
+    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
         Self::format_chinese_year(date.0 .0.year, Some(date.0 .0.year_info))
     }
 
@@ -330,9 +328,9 @@ impl<A: AsCalendar<Calendar = Chinese>> Date<A> {
     ///     Date::try_new_chinese_date_with_calendar(4660, 6, 11, chinese)
     ///         .expect("Failed to initialize Chinese Date instance.");
     ///
-    /// assert_eq!(date_chinese.year().number, 4660);
-    /// assert_eq!(date_chinese.year().cyclic.unwrap().get(), 40);
-    /// assert_eq!(date_chinese.year().related_iso, Some(2023));
+    /// assert_eq!(date_chinese.year().era_year_or_extended(), 4660);
+    /// assert_eq!(date_chinese.year().cyclic().unwrap().get(), 40);
+    /// assert_eq!(date_chinese.year().related_iso(), Some(2023));
     /// assert_eq!(date_chinese.month().ordinal, 6);
     /// assert_eq!(date_chinese.day_of_month().0, 11);
     /// ```
@@ -371,9 +369,8 @@ impl<A: AsCalendar<Calendar = Chinese>> DateTime<A> {
     /// )
     /// .expect("Failed to initialize Chinese DateTime instance.");
     ///
-    /// assert_eq!(chinese_datetime.date.year().number, 4660);
-    /// assert_eq!(chinese_datetime.date.year().related_iso, Some(2023));
-    /// assert_eq!(chinese_datetime.date.year().cyclic.unwrap().get(), 40);
+    /// assert_eq!(chinese_datetime.date.year().era_year_or_extended(), 4660);
+    /// assert_eq!(chinese_datetime.date.year().cyclic().unwrap().get(), 40);
     /// assert_eq!(chinese_datetime.date.month().ordinal, 6);
     /// assert_eq!(chinese_datetime.date.day_of_month().0, 11);
     /// assert_eq!(chinese_datetime.time.hour.number(), 13);
@@ -405,34 +402,22 @@ impl ChineseBasedWithDataLoading for Chinese {
 }
 
 impl Chinese {
-    /// Get a FormattableYear from an integer Chinese year; optionally, a `ChineseBasedYearInfo`
+    /// Get a YearInfo from an integer Chinese year; optionally, a `ChineseBasedYearInfo`
     /// can be passed in for faster results.
-    ///
-    /// `era` is always `Era(tinystr!(16, "chinese"))`
-    /// `number` is the year since the inception of the Chinese calendar (see [`Chinese`])
-    /// `cyclic` is an option with the current year in the sexagesimal cycle (see [`Chinese`])
-    /// `related_iso` is the ISO year in which the given Chinese year begins (see [`Chinese`])
     fn format_chinese_year(
         year: i32,
         year_info_option: Option<ChineseBasedYearInfo>,
-    ) -> FormattableYear {
-        let era = Era(tinystr!(16, "chinese"));
-        let number = year;
-        let cyclic = (number - 1).rem_euclid(60) as u8;
-        let cyclic = NonZeroU8::new(cyclic + 1); // 1-indexed
+    ) -> types::YearInfo {
+        let cyclic = (year - 1).rem_euclid(60) as u8;
+        let cyclic = NonZeroU8::new(cyclic + 1).unwrap_or(NonZeroU8::MIN); // 1-indexed
         let rata_die_in_year = if let Some(info) = year_info_option {
             info.new_year::<ChineseCB>(year)
         } else {
-            Inner::fixed_mid_year_from_year(number)
+            Inner::fixed_mid_year_from_year(year)
         };
-        let iso_formattable_year = Iso::iso_from_fixed(rata_die_in_year).year();
-        let related_iso = Some(iso_formattable_year.number);
-        types::FormattableYear {
-            era,
-            number,
-            cyclic,
-            related_iso,
-        }
+        let iso_year = Iso::iso_from_fixed(rata_die_in_year).year();
+        let related_iso = iso_year.era_year_or_extended();
+        types::YearInfo::new_cyclic(year, cyclic, related_iso)
     }
 }
 
@@ -662,12 +647,12 @@ mod test {
             |chinese, _calendar_type| {
                 let chinese = iso.to_calendar(chinese);
 
-                assert_eq!(chinese.year().number, 1);
+                assert_eq!(chinese.year().era_year_or_extended(), 1);
                 assert_eq!(chinese.month().ordinal, 1);
                 assert_eq!(chinese.month().code.0, "M01");
                 assert_eq!(chinese.day_of_month().0, 1);
-                assert_eq!(chinese.year().cyclic.unwrap().get(), 1);
-                assert_eq!(chinese.year().related_iso, Some(-2636));
+                assert_eq!(chinese.year().cyclic().unwrap().get(), 1);
+                assert_eq!(chinese.year().related_iso(), Some(-2636));
             },
         )
     }
@@ -715,7 +700,7 @@ mod test {
                     let chinese = iso.to_calendar(chinese);
                     assert_eq!(
                         case.expected_year,
-                        chinese.year().number,
+                        chinese.year().era_year_or_extended(),
                         "[{calendar_type}] ISO to Chinese failed for case: {case:?}"
                     );
                     assert_eq!(
@@ -1113,8 +1098,8 @@ mod test {
                 &chinese_cached,
                 |chinese, calendar_type| {
                     let chinese = iso.to_calendar(chinese);
-                    let chinese_rel_iso = chinese.year().related_iso;
-                    let chinese_cyclic = chinese.year().cyclic;
+                    let chinese_rel_iso = chinese.year().related_iso();
+                    let chinese_cyclic = chinese.year().cyclic();
                     let chinese_month = chinese.month().ordinal;
                     let chinese_day = chinese.day_of_month().0;
 

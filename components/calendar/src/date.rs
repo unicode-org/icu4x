@@ -98,7 +98,7 @@ impl<'a, C> Deref for Ref<'a, C> {
 /// let date_iso = Date::try_new_iso_date(1970, 1, 2)
 ///     .expect("Failed to initialize ISO Date instance.");
 ///
-/// assert_eq!(date_iso.year().number, 1970);
+/// assert_eq!(date_iso.year().era_year_or_extended(), 1970);
 /// assert_eq!(date_iso.month().ordinal, 1);
 /// assert_eq!(date_iso.day_of_month().0, 2);
 /// ```
@@ -109,9 +109,11 @@ pub struct Date<A: AsCalendar> {
 
 impl<A: AsCalendar> Date<A> {
     /// Construct a date from from era/month codes and fields, and some calendar representation
+    ///
+    /// The year is `extended_year` if no era is provided
     #[inline]
     pub fn try_new_from_codes(
-        era: types::Era,
+        era: Option<types::Era>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
@@ -205,7 +207,7 @@ impl<A: AsCalendar> Date<A> {
 
     /// The calendar-specific year represented by `self`
     #[inline]
-    pub fn year(&self) -> types::FormattableYear {
+    pub fn year(&self) -> types::YearInfo {
         self.calendar.as_calendar().year(&self.inner)
     }
 
@@ -386,15 +388,27 @@ where
 
 impl<A: AsCalendar> fmt::Debug for Date<A> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
-        write!(
-            f,
-            "Date({}-{}-{}, {} era, for calendar {})",
-            self.year().number,
-            self.month().ordinal,
-            self.day_of_month().0,
-            self.year().era.0,
-            self.calendar.as_calendar().debug_name()
-        )
+        let month = self.month().ordinal;
+        let day = self.day_of_month().0;
+        let calendar = self.calendar.as_calendar().debug_name();
+        match self.year().kind {
+            types::YearKind::Era(e) => {
+                let era = e.formatting_era.0;
+                let era_year = e.era_year;
+                write!(
+                    f,
+                    "Date({era_year}-{month}-{day}, {era} era, for calendar {calendar})"
+                )
+            }
+            types::YearKind::Cyclic(cy) => {
+                let year = cy.year;
+                let related_iso = cy.related_iso;
+                write!(
+                    f,
+                    "Date({year}-{month}-{day}, ISO year {related_iso}, for calendar {calendar})"
+                )
+            }
+        }
     }
 }
 

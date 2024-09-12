@@ -96,13 +96,13 @@
   },
   "eras": {
     "names": {
-      "islamic": "Hicri"
+      "ah": "Hicri"
     },
     "abbr": {
-      "islamic": "Hicri"
+      "ah": "Hicri"
     },
     "narrow": {
-      "islamic": "Hicri"
+      "ah": "Hicri"
     }
   }
 }

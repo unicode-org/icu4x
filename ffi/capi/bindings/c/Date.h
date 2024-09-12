@@ -51,6 +51,8 @@ void icu4x_Date_month_code_mv1(const Date* self, DiplomatWrite* write);
 
 int32_t icu4x_Date_year_in_era_mv1(const Date* self);
 
+int32_t icu4x_Date_extended_year_mv1(const Date* self);
+
 void icu4x_Date_era_mv1(const Date* self, DiplomatWrite* write);
 
 uint8_t icu4x_Date_months_in_year_mv1(const Date* self);

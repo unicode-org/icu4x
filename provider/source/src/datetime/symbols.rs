@@ -117,7 +117,7 @@ pub(crate) fn get_era_code_map(calendar: &str) -> impl Iterator<Item = (&str, Ti
         ],
         "dangi" | "chinese" => &[],
         "indian" => &[("0", tinystr!(16, "saka"))],
-        "islamic" | "islamicc" | "umalqura" | "tbla" => &[("0", tinystr!(16, "islamic"))],
+        "islamic" | "islamicc" | "umalqura" | "tbla" => &[("0", tinystr!(16, "ah"))],
         "persian" => &[("0", tinystr!(16, "ah"))],
         "hebrew" => &[("0", tinystr!(16, "hebrew"))],
         "ethiopic" => &[

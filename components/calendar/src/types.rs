@@ -26,50 +26,144 @@ use zerovec::ule::AsULE;
 #[allow(clippy::exhaustive_structs)] // this is a newtype
 pub struct Era(pub TinyStr16);
 
-/// Representation of a formattable year.
-///
-/// More fields may be added in the future for things like extended year
-#[derive(Copy, Clone, Debug, PartialEq)]
-#[non_exhaustive]
-pub struct FormattableYear {
-    /// The era containing the year.
-    ///
-    /// This may not always be the canonical era for the calendar and could be an alias,
-    /// for example all `islamic` calendars return `islamic` as the formattable era code
-    /// which allows them to share data.
-    pub era: Era,
-
-    /// The year number in the current era (usually 1-based).
-    pub number: i32,
-
-    /// The year in the current cycle for cyclic calendars (1-indexed)
-    /// can be set to `None` for non-cyclic calendars
-    ///
-    /// For chinese and dangi it will be
-    /// a number between 1 and 60, for hypothetical other calendars it may be something else.
-    pub cyclic: Option<NonZeroU8>,
-
-    /// The related ISO year. This is normally the ISO (proleptic Gregorian) year having the greatest
-    /// overlap with the calendar year. It is used in certain date formatting patterns.
-    ///
-    /// Can be `None` if the calendar does not typically use `related_iso` (and CLDR does not contain patterns
-    /// using it)
-    pub related_iso: Option<i32>,
+impl From<TinyStr16> for Era {
+    fn from(o: TinyStr16) -> Self {
+        Self(o)
+    }
 }
 
-impl FormattableYear {
-    /// Construct a new Year given an era and number
+/// General information about a year
+#[derive(Copy, Clone, Debug, PartialEq)]
+#[non_exhaustive]
+pub struct YearInfo {
+    /// The "extended year", typically anchored with year 1 as the year 1 of either the most modern or
+    /// otherwise some "major" era for the calendar
+    pub extended_year: i32,
+    /// The rest of the details about the year
+    pub kind: YearKind,
+}
+
+/// The type of year: Calendars like Chinese don't have an era and instead format with cyclic years.
+#[derive(Copy, Clone, Debug, PartialEq)]
+#[non_exhaustive]
+pub enum YearKind {
+    /// An era and a year in that era
+    Era(EraYear),
+    /// A cyclic year, and the related ISO year
     ///
-    /// Other fields can be set mutably after construction
-    /// as needed
-    pub fn new(era: Era, number: i32, cyclic: Option<NonZeroU8>) -> Self {
+    /// Knowing the cyclic year is typically not enough to pinpoint a date, however cyclic calendars
+    /// don't typically use eras, so disambiguation can be done by saying things like "Year 甲辰 (2024)"
+    Cyclic(CyclicYear),
+}
+
+impl YearInfo {
+    /// Construct a new Year given an era and number
+    pub fn new(extended_year: i32, era: EraYear) -> Self {
         Self {
-            era,
-            number,
-            cyclic,
-            related_iso: None,
+            extended_year,
+            kind: YearKind::Era(era),
         }
     }
+    /// Construct a new cyclic Year given a cycle and a related_iso
+    pub fn new_cyclic(extended_year: i32, cycle: NonZeroU8, related_iso: i32) -> Self {
+        Self {
+            extended_year,
+            kind: YearKind::Cyclic(CyclicYear {
+                year: cycle,
+                related_iso,
+            }),
+        }
+    }
+    /// Get the year in the era if this is a non-cyclic calendar
+    ///
+    /// Gets the eraYear for era dates, otherwise falls back to Extended Year
+    pub fn era_year(self) -> Option<i32> {
+        match self.kind {
+            YearKind::Era(e) => Some(e.era_year),
+            YearKind::Cyclic(..) => None,
+        }
+    }
+
+    /// Get *some* year number that can be displayed
+    ///
+    /// Gets the eraYear for era dates, otherwise falls back to Extended Year
+    pub fn era_year_or_extended(self) -> i32 {
+        self.era_year().unwrap_or(self.extended_year)
+    }
+
+    /// Get the era, if available
+    pub fn formatting_era(self) -> Option<Era> {
+        match self.kind {
+            YearKind::Era(e) => Some(e.formatting_era),
+            YearKind::Cyclic(..) => None,
+        }
+    }
+
+    /// Get the era, if available
+    pub fn standard_era(self) -> Option<Era> {
+        match self.kind {
+            YearKind::Era(e) => Some(e.standard_era),
+            YearKind::Cyclic(..) => None,
+        }
+    }
+
+    /// Return the cyclic year, if any
+    pub fn cyclic(self) -> Option<NonZeroU8> {
+        match self.kind {
+            YearKind::Era(..) => None,
+            YearKind::Cyclic(cy) => Some(cy.year),
+        }
+    }
+    /// Return the Related ISO year, if any
+    pub fn related_iso(self) -> Option<i32> {
+        match self.kind {
+            YearKind::Era(..) => None,
+            YearKind::Cyclic(cy) => Some(cy.related_iso),
+        }
+    }
+}
+
+/// Year information for a year that is specified with an era
+#[derive(Copy, Clone, Debug, PartialEq)]
+#[non_exhaustive]
+pub struct EraYear {
+    /// The era code as used in formatting. This era code is not necessarily unique for the calendar, and
+    /// is whatever ICU4X datetime datagen uses for this era.
+    ///
+    /// It will typically be a valid era alias.
+    ///
+    /// <https://tc39.es/proposal-intl-era-monthcode/#table-eras>
+    pub formatting_era: Era,
+    /// The era code as expected by Temporal/CLDR. This era code is unique for the calendar
+    /// and follows a particular scheme.
+    ///
+    /// <https://tc39.es/proposal-intl-era-monthcode/#table-eras>
+    pub standard_era: Era,
+    /// The numeric year in that era
+    pub era_year: i32,
+}
+
+impl EraYear {
+    /// Construct an EraYear given the era and the year in the era
+    ///
+    /// The era is assumed to be both the Temporal and the Formatting era code.
+    pub(crate) fn new(era: TinyStr16, era_year: i32) -> Self {
+        Self {
+            formatting_era: era.into(),
+            standard_era: era.into(),
+            era_year,
+        }
+    }
+}
+
+/// Year information for a year that is specified as a cyclic year
+#[derive(Copy, Clone, Debug, PartialEq)]
+#[non_exhaustive]
+pub struct CyclicYear {
+    /// The year in the cycle.
+    pub year: NonZeroU8,
+    /// The ISO year corresponding to this year
+    pub related_iso: i32,
 }
 
 /// Representation of a month in a year
@@ -205,11 +299,11 @@ pub struct DayOfYearInfo {
     /// The number of days in a year.
     pub days_in_year: u16,
     /// The previous year.
-    pub prev_year: FormattableYear,
+    pub prev_year: YearInfo,
     /// The number of days in the previous year.
     pub days_in_prev_year: u16,
     /// The next year.
-    pub next_year: FormattableYear,
+    pub next_year: YearInfo,
 }
 
 /// A day number in a month. Usually 1-based.
