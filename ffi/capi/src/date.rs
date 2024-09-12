@@ -122,7 +122,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::types::MonthInfo::ordinal, StructField)]
         #[diplomat::rust_link(icu::calendar::Date::month, FnInStruct, compact)]
         #[diplomat::attr(auto, getter)]
-        pub fn month(&self) -> u32 {
+        pub fn month(&self) -> u8 {
             self.0.month().ordinal
         }
 
@@ -296,7 +296,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::Date::month, FnInStruct)]
         #[diplomat::rust_link(icu::calendar::types::MonthInfo::ordinal, StructField)]
         #[diplomat::attr(auto, getter)]
-        pub fn ordinal_month(&self) -> u32 {
+        pub fn ordinal_month(&self) -> u8 {
             self.0.month().ordinal
         }
 
