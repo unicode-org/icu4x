@@ -159,7 +159,7 @@ impl Calendar for Ethiopian {
                     });
                 }
                 1 - year
-            } else if era.0 == tinystr!(16, "mundi") || era.0 == tinystr!(16, "ethiopicaa") {
+            } else if era.0 == tinystr!(16, "mundi") || era.0 == tinystr!(16, "ethioaa") {
                 year - AMETE_ALEM_OFFSET
             } else {
                 return Err(DateError::UnknownEra(era));
@@ -301,7 +301,7 @@ impl Ethiopian {
             types::YearInfo::new(
                 year,
                 types::EraYear {
-                    standard_era: tinystr!(16, "ethiopicaa").into(),
+                    standard_era: tinystr!(16, "ethioaa").into(),
                     formatting_era: tinystr!(16, "mundi").into(),
                     era_year: year + AMETE_ALEM_OFFSET,
                 },
