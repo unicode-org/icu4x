@@ -283,7 +283,7 @@ impl Calendar for Japanese {
     }
 
     /// The calendar-specific month represented by `date`
-    fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
+    fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
         Iso.month(&date.inner)
     }
 
@@ -382,7 +382,7 @@ impl Calendar for JapaneseExtended {
     }
 
     /// The calendar-specific month represented by `date`
-    fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
+    fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
         Japanese::month(&self.0, date)
     }
 

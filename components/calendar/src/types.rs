@@ -272,7 +272,7 @@ impl fmt::Display for MonthCode {
 /// Representation of a formattable month.
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
-pub struct FormattableMonth {
+pub struct MonthInfo {
     /// The month number in this given year. For calendars with leap months, all months after
     /// the leap month will end up with an incremented number.
     ///

@@ -144,7 +144,7 @@ impl Calendar for Gregorian {
     }
 
     /// The calendar-specific month represented by `date`
-    fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
+    fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
         Iso.month(&date.0)
     }
 

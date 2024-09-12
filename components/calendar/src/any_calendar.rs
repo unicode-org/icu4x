@@ -517,7 +517,7 @@ impl Calendar for AnyCalendar {
     }
 
     /// The calendar-specific month represented by `date`
-    fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
+    fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
         match_cal_and_date!(match (self, date): (c, d) => c.month(d))
     }
 

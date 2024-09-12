@@ -179,7 +179,7 @@ lazy_static::lazy_static! {
 
         // Calendar structs mostly for internal use but which might expose
         // useful information to clients.
-        "icu::calendar::types::FormattableMonth",
+        "icu::calendar::types::MonthInfo",
         "icu::calendar::types::FormattableYear",
         "icu::calendar::types::FormattableYearKind",
         "icu::calendar::types::DayOfYearInfo",
