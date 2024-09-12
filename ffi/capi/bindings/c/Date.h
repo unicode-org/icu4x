@@ -49,6 +49,10 @@ uint32_t icu4x_Date_ordinal_month_mv1(const Date* self);
 
 void icu4x_Date_month_code_mv1(const Date* self, DiplomatWrite* write);
 
+uint8_t icu4x_Date_month_number_mv1(const Date* self);
+
+bool icu4x_Date_month_is_leap_mv1(const Date* self);
+
 int32_t icu4x_Date_year_in_era_mv1(const Date* self);
 
 int32_t icu4x_Date_extended_year_mv1(const Date* self);

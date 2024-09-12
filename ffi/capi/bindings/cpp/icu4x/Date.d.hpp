@@ -59,6 +59,10 @@ public:
 
   inline std::string month_code() const;
 
+  inline uint8_t month_number() const;
+
+  inline bool month_is_leap() const;
+
   inline int32_t year_in_era() const;
 
   inline int32_t extended_year() const;

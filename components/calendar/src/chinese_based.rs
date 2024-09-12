@@ -481,7 +481,7 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
         };
         let code = MonthCode(code_inner);
         MonthInfo {
-            ordinal: ordinal as u32,
+            ordinal: ordinal,
             standard_code: code,
             formatting_code: code,
         }

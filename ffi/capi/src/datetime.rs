@@ -442,12 +442,30 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::types::MonthInfo::standard_code, StructField)]
         #[diplomat::rust_link(icu::calendar::Date::month, FnInStruct, compact)]
         #[diplomat::rust_link(icu::calendar::types::MonthInfo, Struct, hidden)]
-        #[diplomat::rust_link(icu::calendar::types::MonthInfo::formatting_code, StructField, hidden)]
+        #[diplomat::rust_link(
+            icu::calendar::types::MonthInfo::formatting_code,
+            StructField,
+            hidden
+        )]
         #[diplomat::rust_link(icu::calendar::types::MonthInfo, Struct, hidden)]
         #[diplomat::attr(auto, getter)]
         pub fn month_code(&self, write: &mut diplomat_runtime::DiplomatWrite) {
             let code = self.0.date.month().standard_code;
             let _infallible = write.write_str(&code.0);
+        }
+
+        /// Returns the month number of this month.
+        #[diplomat::rust_link(icu::calendar::types::MonthInfo::month_number, FnInStruct)]
+        #[diplomat::attr(auto, getter)]
+        pub fn month_number(&self) -> u8 {
+            self.0.month().month_number()
+        }
+
+        /// Returns whether the month is a leap month.
+        #[diplomat::rust_link(icu::calendar::types::MonthInfo::is_leap, FnInStruct)]
+        #[diplomat::attr(auto, getter)]
+        pub fn month_is_leap(&self) -> bool {
+            self.0.date.month().is_leap()
         }
 
         /// Returns the year number in the current era for this date

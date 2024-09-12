@@ -282,6 +282,26 @@ export class DateTime {
         }
     }
 
+    get monthNumber() {
+        const result = wasm.icu4x_DateTime_month_number_mv1(this.ffiValue);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
+    get monthIsLeap() {
+        const result = wasm.icu4x_DateTime_month_is_leap_mv1(this.ffiValue);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
     get yearInEra() {
         const result = wasm.icu4x_DateTime_year_in_era_mv1(this.ffiValue);
     

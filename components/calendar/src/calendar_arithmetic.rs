@@ -330,7 +330,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
             _ => tinystr!(4, "und"),
         };
         types::MonthInfo {
-            ordinal: self.month as u32,
+            ordinal: self.month,
             standard_code: types::MonthCode(code),
             formatting_code: types::MonthCode(code),
         }

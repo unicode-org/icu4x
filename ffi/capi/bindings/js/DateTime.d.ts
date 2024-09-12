@@ -58,6 +58,10 @@ export class DateTime {
 
     get monthCode(): string;
 
+    get monthNumber(): number;
+
+    get monthIsLeap(): boolean;
+
     get yearInEra(): number;
 
     get extendedYear(): number;

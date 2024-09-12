@@ -277,7 +277,7 @@ pub struct MonthInfo {
     /// the leap month will end up with an incremented number.
     ///
     /// In general, prefer using the month code in generic code.
-    pub ordinal: u32,
+    pub ordinal: u8,
 
     /// The month code, used to distinguish months during leap years.
     ///
@@ -294,6 +294,22 @@ pub struct MonthInfo {
     pub formatting_code: MonthCode,
 }
 
+impl MonthInfo {
+    /// Gets the month number. A month number N is not necessarily the Nth month in the year
+    /// if there are leap months in the year, rather it is associated with the Nth month of a "regular"
+    /// year. There may be multiple month Ns in a year
+    pub fn month_number(self) -> u8 {
+        self.standard_code
+            .parsed()
+            .map(|(i, _)| i)
+            .unwrap_or(self.ordinal)
+    }
+
+    /// Get whether the month is a leap month
+    pub fn is_leap(self) -> bool {
+        self.standard_code.parsed().map(|(_, l)| l).unwrap_or(false)
+    }
+}
 /// A struct containing various details about the position of the day within a year. It is returned
 // by the [`day_of_year_info()`](trait.DateInput.html#tymethod.day_of_year_info) method of the
 // [`DateInput`] trait.
