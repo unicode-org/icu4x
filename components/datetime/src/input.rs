@@ -115,18 +115,18 @@ pub(crate) struct ExtractedDateTimeInput {
     minute: Option<IsoMinute>,
     second: Option<IsoSecond>,
     nanosecond: Option<NanoSecond>,
-    time_zone: Option<CustomTimeZone>,
+    time_zone: ExtractedTimeZoneInput,
 }
 
 /// A [`TimeZoneInput`] type with all of the fields pre-extracted
 ///
 /// See [`TimeZoneInput`] for documentation on individual fields
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Default)]
 pub(crate) struct ExtractedTimeZoneInput {
-    offset: Option<UtcOffset>,
-    time_zone_id: Option<TimeZoneBcp47Id>,
-    metazone_id: Option<MetazoneId>,
-    zone_variant: Option<ZoneVariant>,
+    pub(crate) offset: Option<UtcOffset>,
+    pub(crate) time_zone_id: Option<TimeZoneBcp47Id>,
+    pub(crate) metazone_id: Option<MetazoneId>,
+    pub(crate) zone_variant: Option<ZoneVariant>,
 }
 
 impl ExtractedDateTimeInput {
@@ -143,7 +143,7 @@ impl ExtractedDateTimeInput {
             minute: input.minute(),
             second: input.second(),
             nanosecond: input.nanosecond(),
-            time_zone: None,
+            ..Default::default()
         }
     }
     /// Construct given an instance of a [`DateTimeInput`].
@@ -186,7 +186,10 @@ impl ExtractedDateTimeInput {
             + NeoGetField<T::MinuteInput>
             + NeoGetField<T::SecondInput>
             + NeoGetField<T::NanoSecondInput>
-            + NeoGetField<Z::TimeZoneInput>,
+            + NeoGetField<Z::TimeZoneOffsetInput>
+            + NeoGetField<Z::TimeZoneIdInput>
+            + NeoGetField<Z::TimeZoneMetazoneInput>
+            + NeoGetField<Z::TimeZoneVariantInput>,
     {
         Self {
             year: NeoGetField::<D::YearInput>::get_field(input).into(),
@@ -199,12 +202,17 @@ impl ExtractedDateTimeInput {
             minute: NeoGetField::<T::MinuteInput>::get_field(input).into(),
             second: NeoGetField::<T::SecondInput>::get_field(input).into(),
             nanosecond: NeoGetField::<T::NanoSecondInput>::get_field(input).into(),
-            time_zone: NeoGetField::<Z::TimeZoneInput>::get_field(input).into(),
+            time_zone: ExtractedTimeZoneInput {
+                offset: NeoGetField::<Z::TimeZoneOffsetInput>::get_field(input).into(),
+                time_zone_id: NeoGetField::<Z::TimeZoneIdInput>::get_field(input).into(),
+                metazone_id: NeoGetField::<Z::TimeZoneMetazoneInput>::get_field(input).into(),
+                zone_variant: NeoGetField::<Z::TimeZoneVariantInput>::get_field(input).into(),
+            },
         }
     }
 
-    pub(crate) fn time_zone(&self) -> Option<CustomTimeZone> {
-        self.time_zone
+    pub(crate) fn time_zone(&self) -> &ExtractedTimeZoneInput {
+        &self.time_zone
     }
 
     #[cfg(feature = "experimental")]
@@ -252,26 +260,6 @@ impl ExtractedTimeZoneInput {
             time_zone_id: input.time_zone_id(),
             metazone_id: input.metazone_id(),
             zone_variant: input.zone_variant(),
-        }
-    }
-
-    pub(crate) fn to_custom_time_zone(self) -> CustomTimeZone {
-        CustomTimeZone {
-            offset: self.offset,
-            time_zone_id: self.time_zone_id,
-            metazone_id: self.metazone_id,
-            zone_variant: self.zone_variant,
-        }
-    }
-}
-
-impl From<CustomTimeZone> for ExtractedTimeZoneInput {
-    fn from(value: CustomTimeZone) -> Self {
-        Self {
-            offset: value.offset,
-            time_zone_id: value.time_zone_id,
-            metazone_id: value.metazone_id,
-            zone_variant: value.zone_variant,
         }
     }
 }
