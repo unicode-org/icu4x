@@ -538,9 +538,9 @@ impl Calendar for IslamicObservational {
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
-            prev_year: year_as_islamic(tinystr!(16, "islamic"), prev_year).into(),
+            prev_year: year_as_islamic(tinystr!(16, "islamic"), prev_year),
             days_in_prev_year: date.0.year_info.days_in_prev_year(),
-            next_year: year_as_islamic(tinystr!(16, "islamic"), next_year).into(),
+            next_year: year_as_islamic(tinystr!(16, "islamic"), next_year),
         }
     }
 
@@ -763,9 +763,9 @@ impl Calendar for IslamicUmmAlQura {
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
-            prev_year: year_as_islamic(tinystr!(16, "islamic-umalqura"), prev_year).into(),
+            prev_year: year_as_islamic(tinystr!(16, "islamic-umalqura"), prev_year),
             days_in_prev_year: date.0.year_info.days_in_prev_year(),
-            next_year: year_as_islamic(tinystr!(16, "islamic-umalqura"), next_year).into(),
+            next_year: year_as_islamic(tinystr!(16, "islamic-umalqura"), next_year),
         }
     }
 
@@ -988,9 +988,9 @@ impl Calendar for IslamicCivil {
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
-            prev_year: year_as_islamic(tinystr!(16, "islamic-civil"), prev_year).into(),
+            prev_year: year_as_islamic(tinystr!(16, "islamic-civil"), prev_year),
             days_in_prev_year: Self::days_in_provided_year(prev_year, ()),
-            next_year: year_as_islamic(tinystr!(16, "islamic-civil"), next_year).into(),
+            next_year: year_as_islamic(tinystr!(16, "islamic-civil"), next_year),
         }
     }
 
@@ -1222,9 +1222,9 @@ impl Calendar for IslamicTabular {
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
-            prev_year: year_as_islamic(tinystr!(16, "islamic-tbla"), prev_year).into(),
+            prev_year: year_as_islamic(tinystr!(16, "islamic-tbla"), prev_year),
             days_in_prev_year: Self::days_in_provided_year(prev_year, ()),
-            next_year: year_as_islamic(tinystr!(16, "islamic-tbla"), next_year).into(),
+            next_year: year_as_islamic(tinystr!(16, "islamic-tbla"), next_year),
         }
     }
 

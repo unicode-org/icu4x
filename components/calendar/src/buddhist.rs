@@ -146,9 +146,9 @@ impl Calendar for Buddhist {
         types::DayOfYearInfo {
             day_of_year: Iso::day_of_year(*date),
             days_in_year: Iso::days_in_year_direct(date.0.year),
-            prev_year: iso_year_as_buddhist(prev_year).into(),
+            prev_year: iso_year_as_buddhist(prev_year),
             days_in_prev_year: Iso::days_in_year_direct(prev_year),
-            next_year: iso_year_as_buddhist(next_year).into(),
+            next_year: iso_year_as_buddhist(next_year),
         }
     }
 

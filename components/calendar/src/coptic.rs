@@ -210,9 +210,9 @@ impl Calendar for Coptic {
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
-            prev_year: year_as_coptic(prev_year).into(),
+            prev_year: year_as_coptic(prev_year),
             days_in_prev_year: Coptic::days_in_year_direct(prev_year),
-            next_year: year_as_coptic(next_year).into(),
+            next_year: year_as_coptic(next_year),
         }
     }
 

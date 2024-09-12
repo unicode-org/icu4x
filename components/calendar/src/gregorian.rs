@@ -160,9 +160,9 @@ impl Calendar for Gregorian {
         types::DayOfYearInfo {
             day_of_year: Iso::day_of_year(date.0),
             days_in_year: Iso::days_in_year_direct(date.0 .0.year),
-            prev_year: year_as_gregorian(prev_year).into(),
+            prev_year: year_as_gregorian(prev_year),
             days_in_prev_year: Iso::days_in_year_direct(prev_year),
-            next_year: year_as_gregorian(next_year).into(),
+            next_year: year_as_gregorian(next_year),
         }
     }
 

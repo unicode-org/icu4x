@@ -52,6 +52,7 @@ pub struct YearInfo {
 
 /// The type of year: Calendars like Chinese don't have an era and instead format with cyclic years.
 #[derive(Copy, Clone, Debug, PartialEq)]
+#[non_exhaustive]
 pub enum YearKind {
     /// An era and a year in that era
     Era(EraYear),
@@ -135,6 +136,7 @@ impl YearInfo {
 
 /// Year information for a year that is specified with an era
 #[derive(Copy, Clone, Debug, PartialEq)]
+#[non_exhaustive]
 pub struct EraYear {
     /// The era code as used in formatting. This era code is not necessarily unique for the calendar, and
     /// is whatever ICU4X datetime datagen uses for this era.
@@ -167,6 +169,7 @@ impl EraYear {
 
 /// Year information for a year that is specified as a cyclic year
 #[derive(Copy, Clone, Debug, PartialEq)]
+#[non_exhaustive]
 pub struct CyclicYear {
     /// The year in the cycle.
     pub year: NonZeroU8,

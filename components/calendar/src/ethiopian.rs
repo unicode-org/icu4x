@@ -233,9 +233,9 @@ impl Calendar for Ethiopian {
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
-            prev_year: Self::year_as_ethiopian(prev_year, self.0).into(),
+            prev_year: Self::year_as_ethiopian(prev_year, self.0),
             days_in_prev_year: Ethiopian::days_in_year_direct(prev_year),
-            next_year: Self::year_as_ethiopian(next_year, self.0).into(),
+            next_year: Self::year_as_ethiopian(next_year, self.0),
         }
     }
 

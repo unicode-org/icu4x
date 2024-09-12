@@ -182,9 +182,9 @@ impl Calendar for Persian {
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
-            prev_year: Persian::year_as_persian(prev_year).into(),
+            prev_year: Persian::year_as_persian(prev_year),
             days_in_prev_year: Persian::days_in_provided_year(prev_year, ()),
-            next_year: Persian::year_as_persian(next_year).into(),
+            next_year: Persian::year_as_persian(next_year),
         }
     }
 

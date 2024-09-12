@@ -177,9 +177,9 @@ impl Calendar for Roc {
         types::DayOfYearInfo {
             day_of_year: Iso::day_of_year(date.0),
             days_in_year: Iso::days_in_year_direct(date.0 .0.year),
-            prev_year: year_as_roc(prev_year as i64).into(),
+            prev_year: year_as_roc(prev_year as i64),
             days_in_prev_year: Iso::days_in_year_direct(prev_year),
-            next_year: year_as_roc(next_year as i64).into(),
+            next_year: year_as_roc(next_year as i64),
         }
     }
 

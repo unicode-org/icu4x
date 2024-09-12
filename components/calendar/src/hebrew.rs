@@ -321,9 +321,9 @@ impl Calendar for Hebrew {
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
-            prev_year: Self::year_as_hebrew(prev_year).into(),
+            prev_year: Self::year_as_hebrew(prev_year),
             days_in_prev_year: date.0.year_info.prev_keviyah.year_length(),
-            next_year: Self::year_as_hebrew(next_year).into(),
+            next_year: Self::year_as_hebrew(next_year),
         }
     }
 
