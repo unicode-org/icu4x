@@ -36,7 +36,7 @@ use icu_calendar::AnyCalendarKind;
 use icu_decimal::FixedDecimalFormatter;
 use icu_plurals::PluralRules;
 use icu_provider::DataPayload;
-use icu_timezone::{CustomTimeZone, UtcOffset};
+use icu_timezone::UtcOffset;
 use writeable::{Part, Writeable};
 
 /// [`FormattedDateTime`] is a intermediate structure which can be retrieved as
@@ -315,8 +315,8 @@ pub enum DateTimeWriteError {
     #[displaydoc("Cannot find symbol for weekday {0:?}")]
     MissingWeekdaySymbol(IsoWeekday),
     /// Missing time zone symbol
-    #[displaydoc("Cannot find symbol for time zone {0:?}")]
-    MissingTimeZoneSymbol(CustomTimeZone),
+    #[displaydoc("Not enough time zone information to format anything.")]
+    UnsupportedTimeZone,
 
     // Invalid input
     /// Incomplete input
@@ -770,35 +770,28 @@ where
     };
 
     // TODO: Implement proper formatting logic here
-    Ok(match datetime.time_zone() {
+    Ok(match zone_symbols {
         None => {
-            write_time_zone_missing(None, w)?;
-            Err(DateTimeWriteError::MissingInputField("time_zone"))
+            write_time_zone_missing(datetime.time_zone().offset, w)?;
+            Err(DateTimeWriteError::MissingZoneSymbols)
         }
-        Some(custom_time_zone) => match zone_symbols {
+        Some(zs) => match ResolvedNeoTimeZoneSkeleton::from_field(field_symbol, field_length) {
             None => {
-                write_time_zone_missing(custom_time_zone.offset, w)?;
-                Err(DateTimeWriteError::MissingZoneSymbols)
+                write_time_zone_missing(datetime.time_zone().offset, w)?;
+                Err(DateTimeWriteError::UnsupportedField(field))
             }
-            Some(zs) => match ResolvedNeoTimeZoneSkeleton::from_field(field_symbol, field_length) {
-                None => {
-                    write_time_zone_missing(custom_time_zone.offset, w)?;
-                    Err(DateTimeWriteError::UnsupportedField(field))
-                }
-                Some(time_zone) => {
-                    let payloads = zs.get_payloads();
-                    let zone_input = custom_time_zone.into();
-                    let units = select_zone_units(time_zone);
-                    match do_write_zone(units, &zone_input, payloads, w)? {
-                        Ok(()) => Ok(()),
-                        Err(()) => {
-                            write_time_zone_missing(custom_time_zone.offset, w)?;
-                            // Return an error since offset data was missing
-                            Err(DateTimeWriteError::MissingZoneSymbols)
-                        }
+            Some(time_zone) => {
+                let payloads = zs.get_payloads();
+                let units = select_zone_units(time_zone);
+                match do_write_zone(units, datetime.time_zone(), payloads, w)? {
+                    Ok(()) => Ok(()),
+                    Err(()) => {
+                        write_time_zone_missing(datetime.time_zone().offset, w)?;
+                        // Return an error since offset data was missing
+                        Err(DateTimeWriteError::MissingZoneSymbols)
                     }
                 }
-            },
+            }
         },
     })
 }

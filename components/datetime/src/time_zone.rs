@@ -109,7 +109,7 @@ pub struct TimeZoneFormatter {
     pub(super) fallback_unit: FallbackTimeZoneFormatterUnit,
 }
 
-/// A container contains all data payloads for CustomTimeZone.
+/// A container contains all data payloads for time zone formatting.
 #[derive(Debug)]
 pub(super) struct TimeZoneDataPayloads {
     /// The data that contains meta information about how to display content.
@@ -130,7 +130,7 @@ pub(super) struct TimeZoneDataPayloads {
         Option<DataPayload<provider::time_zones::MetazoneSpecificNamesShortV1Marker>>,
 }
 
-/// A container contains all data payloads for CustomTimeZone (borrowed version).
+/// A container contains all data payloads for time zone formatting (borrowed version).
 #[derive(Debug, Copy, Clone)]
 pub(crate) struct TimeZoneDataPayloadsBorrowed<'a> {
     /// The data that contains meta information about how to display content.
