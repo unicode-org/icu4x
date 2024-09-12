@@ -35,7 +35,8 @@ fn test_nfd_basic() {
 
 #[test]
 fn test_nfd_owned() {
-    let owned = DecomposingNormalizer::new_nfd();
+    let owned =
+        DecomposingNormalizer::try_new_nfd_unstable(&icu_normalizer::provider::Baked).unwrap();
     let normalizer = owned.as_borrowed();
     assert_eq!(normalizer.normalize("ä"), "a\u{0308}");
     assert_eq!(normalizer.normalize("Ä"), "A\u{0308}");
@@ -71,7 +72,8 @@ fn test_nfkd_basic() {
 
 #[test]
 fn test_nfkd_owned() {
-    let owned = DecomposingNormalizer::new_nfkd();
+    let owned =
+        DecomposingNormalizer::try_new_nfkd_unstable(&icu_normalizer::provider::Baked).unwrap();
     let normalizer = owned.as_borrowed();
     assert_eq!(normalizer.normalize("ä"), "a\u{0308}");
     assert_eq!(normalizer.normalize("Ä"), "A\u{0308}");
@@ -108,7 +110,8 @@ fn test_nfc_basic() {
 
 #[test]
 fn test_nfc_owned() {
-    let owned = ComposingNormalizer::new_nfc();
+    let owned =
+        ComposingNormalizer::try_new_nfc_unstable(&icu_normalizer::provider::Baked).unwrap();
     let normalizer = owned.as_borrowed();
     assert_eq!(normalizer.normalize("a\u{0308}"), "ä");
     assert_eq!(normalizer.normalize("A\u{0308}"), "Ä");
@@ -146,7 +149,8 @@ fn test_nfkc_basic() {
 
 #[test]
 fn test_nfkc_owned() {
-    let owned = ComposingNormalizer::new_nfkc();
+    let owned =
+        ComposingNormalizer::try_new_nfkc_unstable(&icu_normalizer::provider::Baked).unwrap();
     let normalizer = owned.as_borrowed();
     assert_eq!(normalizer.normalize("a\u{0308}"), "ä");
     assert_eq!(normalizer.normalize("A\u{0308}"), "Ä");
@@ -245,7 +249,7 @@ fn test_uts46_map_normalize() {
 
 #[test]
 fn test_uts46_owned() {
-    let owned = Uts46Mapper::new();
+    let owned = Uts46Mapper::try_new(&icu_normalizer::provider::Baked).unwrap();
     let mapper = owned.as_borrowed();
     assert_eq!(
         mapper
