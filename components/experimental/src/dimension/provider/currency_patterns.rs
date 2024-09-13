@@ -25,7 +25,6 @@ pub struct CurrencyPatternsDataV1<'data> {
     pub patterns: PluralPatterns<'data, DoublePlaceholder>,
 }
 
-#[cfg(feature = "datagen")]
 impl<'data> CurrencyPatternsDataV1<'data> {
     /// Construct an instance directly from a byte slice.
     ///
@@ -48,6 +47,7 @@ impl<'data> CurrencyPatternsDataV1<'data> {
     }
 
     /// Returns this instance as a byte slice.
+    #[cfg(feature = "datagen")]
     pub fn as_byte_slice(&self) -> &[u8] {
         use zerovec::ule::VarULE;
         self.patterns.strings.elements.as_byte_slice()

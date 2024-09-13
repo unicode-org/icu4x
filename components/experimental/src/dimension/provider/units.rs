@@ -29,7 +29,6 @@ pub struct UnitsDisplayNameV1<'data> {
     pub patterns: PluralPatterns<'data, SinglePlaceholder>,
 }
 
-#[cfg(feature = "datagen")]
 impl<'data> UnitsDisplayNameV1<'data> {
     /// Construct an instance directly from a byte slice.
     ///
@@ -52,6 +51,7 @@ impl<'data> UnitsDisplayNameV1<'data> {
     }
 
     /// Returns this instance as a byte slice.
+    #[cfg(feature = "datagen")]
     pub fn as_byte_slice(&self) -> &[u8] {
         use zerovec::ule::VarULE;
         self.patterns.strings.elements.as_byte_slice()
