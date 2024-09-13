@@ -148,8 +148,6 @@ pub(crate) enum ZeroPadding {
 #[non_exhaustive]
 #[derive(Default)]
 pub enum FallbackFormat {
-    /// The ISO 8601 format for time zone format fallback.
-    Iso8601(IsoFormat, IsoMinutes, IsoSeconds),
     /// The localized offset format for time zone format fallback.
     ///
     /// See [UTS 35 on Dates](https://unicode.org/reports/tr35/tr35-dates.html#71-time-zone-format-terminology) for more information.
@@ -256,11 +254,6 @@ impl From<FallbackFormat> for FallbackTimeZoneFormatterUnit {
     fn from(value: FallbackFormat) -> Self {
         match value {
             FallbackFormat::LocalizedOffset => Self::LocalizedOffset(LocalizedOffsetFormat {}),
-            FallbackFormat::Iso8601(format, minutes, seconds) => Self::Iso8601(Iso8601Format {
-                format,
-                minutes,
-                seconds,
-            }),
         }
     }
 }

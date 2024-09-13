@@ -155,7 +155,7 @@ pub(crate) mod raw;
 #[allow(clippy::exhaustive_structs, clippy::exhaustive_enums)] // private-ish module
 #[cfg(any(feature = "datagen", feature = "experimental"))]
 pub mod skeleton;
-pub mod time_zone;
+mod time_zone;
 mod tz_registry;
 
 pub use any::{DateFormatter, DateTimeFormatter};
