@@ -5,7 +5,7 @@ part of 'lib.g.dart';
 /// An ICU4X DateFormatter object capable of formatting a [`DateTime`] as a string,
 /// using some calendar specified at runtime in the locale.
 ///
-/// See the [Rust documentation for `DateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html) for more information.
+/// See the [Rust documentation for `datetime`](https://docs.rs/icu/latest/icu/datetime/index.html) for more information.
 final class DateTimeFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -27,11 +27,9 @@ final class DateTimeFormatter implements ffi.Finalizable {
 
   /// Creates a new [`DateTimeFormatter`] from locale data.
   ///
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
-  ///
   /// Throws [Error] on failure.
-  factory DateTimeFormatter.withLengths(DataProvider provider, Locale locale, DateLength? dateLength, TimeLength? timeLength) {
-    final result = _icu4x_DateTimeFormatter_create_with_lengths_mv1(provider._ffi, locale._ffi, dateLength != null ? _ResultInt32Void.ok(dateLength.index) : _ResultInt32Void.err(), timeLength != null ? _ResultInt32Void.ok(timeLength.index) : _ResultInt32Void.err());
+  factory DateTimeFormatter.withLength(DataProvider provider, Locale locale, DateTimeLength length) {
+    final result = _icu4x_DateTimeFormatter_create_with_length_mv1(provider._ffi, locale._ffi, length.index);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -39,8 +37,6 @@ final class DateTimeFormatter implements ffi.Finalizable {
   }
 
   /// Formats a [`DateTime`] to a string.
-  ///
-  /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
   ///
   /// Throws [Error] on failure.
   String formatDatetime(DateTime value) {
@@ -55,8 +51,6 @@ final class DateTimeFormatter implements ffi.Finalizable {
   /// Formats a [`IsoDateTime`] to a string.
   ///
   /// Will convert to this formatter's calendar first
-  ///
-  /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
   ///
   /// Throws [Error] on failure.
   String formatIsoDatetime(IsoDateTime value) {
@@ -74,10 +68,10 @@ final class DateTimeFormatter implements ffi.Finalizable {
 // ignore: non_constant_identifier_names
 external void _icu4x_DateTimeFormatter_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('icu4x_DateTimeFormatter_create_with_lengths_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _ResultInt32Void, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatter_create_with_lengths_mv1')
+@meta.ResourceIdentifier('icu4x_DateTimeFormatter_create_with_length_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatter_create_with_length_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_DateTimeFormatter_create_with_lengths_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void dateLength, _ResultInt32Void timeLength);
+external _ResultOpaqueInt32 _icu4x_DateTimeFormatter_create_with_length_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int length);
 
 @meta.ResourceIdentifier('icu4x_DateTimeFormatter_format_datetime_mv1')
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatter_format_datetime_mv1')

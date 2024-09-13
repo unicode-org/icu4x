@@ -339,8 +339,8 @@ export const RenderInfo = {
                 },
                 
                 {
-                    name: "DateLength",
-                    type: "DateLength"
+                    name: "Length",
+                    type: "DateTimeLength"
                 },
                 
                 {
@@ -378,8 +378,8 @@ export const RenderInfo = {
                 },
                 
                 {
-                    name: "DateLength",
-                    type: "DateLength"
+                    name: "Length",
+                    type: "DateTimeLength"
                 },
                 
                 {
@@ -412,8 +412,8 @@ export const RenderInfo = {
                 },
                 
                 {
-                    name: "DateLength",
-                    type: "DateLength"
+                    name: "Length",
+                    type: "DateTimeLength"
                 },
                 
                 {
@@ -471,8 +471,8 @@ export const RenderInfo = {
                 },
                 
                 {
-                    name: "DateLength",
-                    type: "DateLength"
+                    name: "Length",
+                    type: "DateTimeLength"
                 },
                 
                 {
@@ -525,13 +525,8 @@ export const RenderInfo = {
                 },
                 
                 {
-                    name: "DateLength",
-                    type: "DateLength"
-                },
-                
-                {
-                    name: "TimeLength",
-                    type: "TimeLength"
+                    name: "Length",
+                    type: "DateTimeLength"
                 },
                 
                 {
@@ -589,13 +584,8 @@ export const RenderInfo = {
                 },
                 
                 {
-                    name: "DateLength",
-                    type: "DateLength"
-                },
-                
-                {
-                    name: "TimeLength",
-                    type: "TimeLength"
+                    name: "Length",
+                    type: "DateTimeLength"
                 },
                 
                 {
@@ -649,7 +639,7 @@ export const RenderInfo = {
                 
                 {
                     name: "Length",
-                    type: "DateLength"
+                    type: "DateTimeLength"
                 },
                 
                 {
@@ -683,7 +673,7 @@ export const RenderInfo = {
                 
                 {
                     name: "Length",
-                    type: "DateLength"
+                    type: "DateTimeLength"
                 },
                 
                 {
@@ -736,13 +726,8 @@ export const RenderInfo = {
                 },
                 
                 {
-                    name: "DateLength",
-                    type: "DateLength"
-                },
-                
-                {
-                    name: "TimeLength",
-                    type: "TimeLength"
+                    name: "Length",
+                    type: "DateTimeLength"
                 },
                 
                 {
@@ -796,7 +781,7 @@ export const RenderInfo = {
                 
                 {
                     name: "Length",
-                    type: "TimeLength"
+                    type: "DateTimeLength"
                 },
                 
                 {
@@ -835,7 +820,7 @@ export const RenderInfo = {
                 
                 {
                     name: "Length",
-                    type: "TimeLength"
+                    type: "DateTimeLength"
                 },
                 
                 {
@@ -894,7 +879,7 @@ export const RenderInfo = {
                 
                 {
                     name: "Length",
-                    type: "TimeLength"
+                    type: "DateTimeLength"
                 },
                 
                 {
@@ -1314,13 +1299,8 @@ export const RenderInfo = {
                 },
                 
                 {
-                    name: "DateLength",
-                    type: "DateLength"
-                },
-                
-                {
-                    name: "TimeLength",
-                    type: "TimeLength"
+                    name: "Length",
+                    type: "DateTimeLength"
                 },
                 
                 {
@@ -1378,13 +1358,8 @@ export const RenderInfo = {
                 },
                 
                 {
-                    name: "DateLength",
-                    type: "DateLength"
-                },
-                
-                {
-                    name: "TimeLength",
-                    type: "TimeLength"
+                    name: "Length",
+                    type: "DateTimeLength"
                 },
                 
                 {
@@ -1447,13 +1422,8 @@ export const RenderInfo = {
                 },
                 
                 {
-                    name: "DateLength",
-                    type: "DateLength"
-                },
-                
-                {
-                    name: "TimeLength",
-                    type: "TimeLength"
+                    name: "Length",
+                    type: "DateTimeLength"
                 },
                 
                 {

@@ -9,11 +9,11 @@
 
 #include "DataProvider.d.h"
 #include "DateTime.d.h"
+#include "DateTimeLength.d.h"
 #include "Error.d.h"
 #include "IsoDateTime.d.h"
 #include "Locale.d.h"
 #include "Time.d.h"
-#include "TimeLength.d.h"
 
 #include "TimeFormatter.d.h"
 
@@ -23,7 +23,7 @@
 
 
 typedef struct icu4x_TimeFormatter_create_with_length_mv1_result {union {TimeFormatter* ok; Error err;}; bool is_ok;} icu4x_TimeFormatter_create_with_length_mv1_result;
-icu4x_TimeFormatter_create_with_length_mv1_result icu4x_TimeFormatter_create_with_length_mv1(const DataProvider* provider, const Locale* locale, TimeLength length);
+icu4x_TimeFormatter_create_with_length_mv1_result icu4x_TimeFormatter_create_with_length_mv1(const DataProvider* provider, const Locale* locale, DateTimeLength length);
 
 void icu4x_TimeFormatter_format_time_mv1(const TimeFormatter* self, const Time* value, DiplomatWrite* write);
 

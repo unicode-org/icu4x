@@ -11,7 +11,7 @@
 #include <optional>
 #include "../diplomat_runtime.hpp"
 #include "DataProvider.hpp"
-#include "DateLength.hpp"
+#include "DateTimeLength.hpp"
 #include "Error.hpp"
 #include "IsoDate.hpp"
 #include "IsoDateTime.hpp"
@@ -23,7 +23,7 @@ namespace capi {
     extern "C" {
     
     typedef struct icu4x_GregorianDateFormatter_create_with_length_mv1_result {union {icu4x::capi::GregorianDateFormatter* ok; icu4x::capi::Error err;}; bool is_ok;} icu4x_GregorianDateFormatter_create_with_length_mv1_result;
-    icu4x_GregorianDateFormatter_create_with_length_mv1_result icu4x_GregorianDateFormatter_create_with_length_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateLength length);
+    icu4x_GregorianDateFormatter_create_with_length_mv1_result icu4x_GregorianDateFormatter_create_with_length_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength length);
     
     void icu4x_GregorianDateFormatter_format_iso_date_mv1(const icu4x::capi::GregorianDateFormatter* self, const icu4x::capi::IsoDate* value, diplomat::capi::DiplomatWrite* write);
     
@@ -36,7 +36,7 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline diplomat::result<std::unique_ptr<icu4x::GregorianDateFormatter>, icu4x::Error> icu4x::GregorianDateFormatter::create_with_length(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateLength length) {
+inline diplomat::result<std::unique_ptr<icu4x::GregorianDateFormatter>, icu4x::Error> icu4x::GregorianDateFormatter::create_with_length(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeLength length) {
   auto result = icu4x::capi::icu4x_GregorianDateFormatter_create_with_length_mv1(provider.AsFFI(),
     locale.AsFFI(),
     length.AsFFI());

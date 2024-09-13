@@ -10,7 +10,7 @@ export function formatDatetimeWithCustomTimeZone() {
     return (function (...args) { return args[0].formatDatetimeWithCustomTimeZone(...args.slice(1)) }).apply(
         null,
         [
-            ZonedDateTimeFormatter.createWithLengths.apply(
+            ZonedDateTimeFormatter.createWithLength.apply(
                 null,
                 [
                     DataProvider.compiled.apply(
@@ -24,20 +24,19 @@ export function formatDatetimeWithCustomTimeZone() {
                             terminusArgs[0]
                         ]
                     ),
-                    terminusArgs[1],
-                    terminusArgs[2]
+                    terminusArgs[1]
                 ]
             ),
             DateTime.fromIsoInCalendar.apply(
                 null,
                 [
+                    terminusArgs[2],
                     terminusArgs[3],
                     terminusArgs[4],
                     terminusArgs[5],
                     terminusArgs[6],
                     terminusArgs[7],
                     terminusArgs[8],
-                    terminusArgs[9],
                     Calendar.createForLocale.apply(
                         null,
                         [
@@ -49,7 +48,7 @@ export function formatDatetimeWithCustomTimeZone() {
                             Locale.fromString.apply(
                                 null,
                                 [
-                                    terminusArgs[10]
+                                    terminusArgs[9]
                                 ]
                             )
                         ]
@@ -59,7 +58,7 @@ export function formatDatetimeWithCustomTimeZone() {
             CustomTimeZone.fromString.apply(
                 null,
                 [
-                    terminusArgs[11]
+                    terminusArgs[10]
                 ]
             )
         ]
@@ -70,7 +69,7 @@ export function formatIsoDatetimeWithCustomTimeZone() {
     return (function (...args) { return args[0].formatIsoDatetimeWithCustomTimeZone(...args.slice(1)) }).apply(
         null,
         [
-            ZonedDateTimeFormatter.createWithLengths.apply(
+            ZonedDateTimeFormatter.createWithLength.apply(
                 null,
                 [
                     DataProvider.compiled.apply(
@@ -84,26 +83,25 @@ export function formatIsoDatetimeWithCustomTimeZone() {
                             terminusArgs[0]
                         ]
                     ),
-                    terminusArgs[1],
-                    terminusArgs[2]
+                    terminusArgs[1]
                 ]
             ),
             IsoDateTime.create.apply(
                 null,
                 [
+                    terminusArgs[2],
                     terminusArgs[3],
                     terminusArgs[4],
                     terminusArgs[5],
                     terminusArgs[6],
                     terminusArgs[7],
-                    terminusArgs[8],
-                    terminusArgs[9]
+                    terminusArgs[8]
                 ]
             ),
             CustomTimeZone.fromString.apply(
                 null,
                 [
-                    terminusArgs[10]
+                    terminusArgs[9]
                 ]
             )
         ]

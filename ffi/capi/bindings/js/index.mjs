@@ -216,9 +216,7 @@ export { CollatorStrength } from "./CollatorStrength.mjs"
 
 export { IsoWeekday } from "./IsoWeekday.mjs"
 
-export { DateLength } from "./DateLength.mjs"
-
-export { TimeLength } from "./TimeLength.mjs"
+export { DateTimeLength } from "./DateTimeLength.mjs"
 
 export { FixedDecimalGroupingStrategy } from "./FixedDecimalGroupingStrategy.mjs"
 

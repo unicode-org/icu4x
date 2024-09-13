@@ -124,6 +124,9 @@ pub mod ffi {
         DateTimeMissingMonthSymbolError = 0x8_06,
         DateTimeFixedDecimalError = 0x8_07,
         DateTimeMismatchedCalendarError = 0x8_08,
+        DateTimeDuplicateFieldError = 0x8_09,
+        DateTimeTooNarrowError = 0x8_0A,
+        DateTimeMissingNamesError = 0x8_0B,
     }
 }
 
@@ -236,6 +239,19 @@ impl From<icu_datetime::DateTimeError> for Error {
             icu_datetime::DateTimeError::MismatchedAnyCalendar(_, _) => {
                 Error::DateTimeMismatchedCalendarError
             }
+            _ => Error::UnknownError,
+        }
+    }
+}
+
+impl From<icu_datetime::LoadError> for Error {
+    fn from(e: icu_datetime::LoadError) -> Self {
+        match e {
+            icu_datetime::LoadError::DuplicateField(_) => Error::DateTimeDuplicateFieldError,
+            icu_datetime::LoadError::UnsupportedField(_) => Error::DateTimeUnsupportedFieldError,
+            icu_datetime::LoadError::TypeTooNarrow(_) => Error::DateTimeTooNarrowError,
+            icu_datetime::LoadError::Data(data_error) => data_error.into(),
+            icu_datetime::LoadError::MissingNames(_) => Error::DateTimeMissingNamesError,
             _ => Error::UnknownError,
         }
     }

@@ -1,5 +1,5 @@
-#ifndef TimeLength_H
-#define TimeLength_H
+#ifndef DateTimeLength_H
+#define DateTimeLength_H
 
 #include <stdio.h>
 #include <stdint.h>
@@ -8,7 +8,7 @@
 #include "diplomat_runtime.h"
 
 
-#include "TimeLength.d.h"
+#include "DateTimeLength.d.h"
 
 
 
@@ -20,4 +20,4 @@
 
 
 
-#endif // TimeLength_H
+#endif // DateTimeLength_H

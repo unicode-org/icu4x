@@ -2209,6 +2209,16 @@ impl_datetime_marker!(
     time = NeoAutoTimeMarker,
 );
 
+// TODO: Type aliases like this are excessive; make a curated set
+impl_datetime_marker!(
+    NeoYearMonthDayHourMinuteMarker,
+    description = "locale-dependent date and time fields",
+    sample_length = Medium,
+    sample = "May 17, 2024, 3:47 PM",
+    date = NeoYearMonthDayMarker,
+    time = NeoHourMinuteMarker,
+);
+
 impl_date_marker!(
     NeoYearMonthMarker,
     NeoDateComponents::YearMonth,
