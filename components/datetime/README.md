@@ -9,11 +9,7 @@ and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latte
 
 [`TypedDateTimeFormatter`] and [`DateTimeFormatter`] are the main types of the component. They accepts a set of arguments which
 allow it to collect necessary data from the [data provider], and once instantiated, can be
-used to quickly format any date and time provided. There are variants of these types that can format greater or fewer components,
-including [`TypedDateFormatter`] & [`DateFormatter`], [`TypedZonedDateTimeFormatter`] & [`ZonedDateTimeFormatter`], [`TimeFormatter`],
-and [`TimeZoneFormatter`].
-
-There is no `ZonedTimeFormatter`. To format only a time in a time zone, use [`ZonedDateTimeFormatter`].
+used to quickly format any date and time provided. There are variants of these types that can format greater or fewer components.
 
 These formatters work with types from the [`calendar`] module, like [`Date`], [`DateTime`], and [`Time`],
 and [`timezone::CustomTimeZone`], however other types may be used provided they implement the traits from the [`input`] module.
