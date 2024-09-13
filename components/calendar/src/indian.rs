@@ -324,7 +324,7 @@ mod tests {
             "{y}-{m}-{d}: ISO year did not match"
         );
         assert_eq!(
-            iso.month().ordinal as u8,
+            iso.month().ordinal,
             iso_m,
             "{y}-{m}-{d}: ISO month did not match"
         );
