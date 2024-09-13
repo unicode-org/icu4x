@@ -244,6 +244,7 @@ impl From<icu_datetime::DateTimeError> for Error {
     }
 }
 
+#[cfg(feature = "datetime")]
 impl From<icu_datetime::LoadError> for Error {
     fn from(e: icu_datetime::LoadError) -> Self {
         match e {
