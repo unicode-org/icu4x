@@ -6,7 +6,5 @@
 mod datetime;
 #[cfg(feature = "experimental")]
 pub(crate) mod neo;
-mod zoned_datetime;
 
 pub(crate) use datetime::{DateFormatter, DateTimeFormatter, TimeFormatter};
-pub(crate) use zoned_datetime::ZonedDateTimeFormatter;

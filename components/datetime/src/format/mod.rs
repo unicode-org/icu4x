@@ -6,4 +6,3 @@ pub mod datetime;
 #[cfg(feature = "experimental")]
 pub mod neo;
 pub mod time_zone;
-pub mod zoned_datetime;

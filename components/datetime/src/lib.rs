@@ -164,7 +164,7 @@ pub mod skeleton;
 pub mod time_zone;
 mod tz_registry;
 
-pub use any::{DateFormatter, DateTimeFormatter, ZonedDateTimeFormatter};
+pub use any::{DateFormatter, DateTimeFormatter};
 pub use calendar::CldrCalendar;
 #[cfg(feature = "experimental")]
 pub use calendar::{InternalCldrCalendar, NeverCalendar};
@@ -177,7 +177,6 @@ pub use format::datetime::FormattedDateTime;
 #[cfg(feature = "experimental")]
 pub use format::neo::{FormattedDateTimePattern, LoadError, SingleLoadError, TypedDateTimeNames};
 pub use format::time_zone::FormattedTimeZone;
-pub use format::zoned_datetime::FormattedZonedDateTime;
 pub use options::DateTimeFormatterOptions;
 
 #[doc(no_inline)]
