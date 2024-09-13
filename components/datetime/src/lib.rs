@@ -14,8 +14,7 @@
 //! These formatters work with types from the [`calendar`] module, like [`Date`], [`DateTime`], and [`Time`],
 //! and [`timezone::CustomTimeZone`], however other types may be used provided they implement the traits from the [`input`] module.
 //!
-//! Each instance of a date-related formatter (i.e. not [`TimeFormatter`] or [`TimeZoneFormatter`])
-//! is associated with a particular [`Calendar`].
+//! Each instance of a date-related formatter is associated with a particular [`Calendar`].
 //! The "Typed" vs untyped formatter distinction is to help with this. For example, if you know at compile time that you
 //! will only be formatting Gregorian dates, you can use [`TypedDateTimeFormatter<Gregorian>`](TypedDateTimeFormatter) and the
 //! APIs will make sure that only Gregorian [`DateTime`]s are used with the calendar. On the other hand, if you want to be able to select
@@ -107,7 +106,6 @@
 //! [`Calendar`]: calendar::{Calendar}
 //! [`AnyCalendar`]: calendar::any_calendar::{AnyCalendar}
 //! [`timezone::CustomTimeZone`]: icu::timezone::{CustomTimeZone}
-//! [`TimeZoneFormatter`]: time_zone::TimeZoneFormatter
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
@@ -172,7 +170,6 @@ pub use format::datetime::DateTimeWriteError;
 pub use format::datetime::FormattedDateTime;
 #[cfg(feature = "experimental")]
 pub use format::neo::{FormattedDateTimePattern, LoadError, SingleLoadError, TypedDateTimeNames};
-pub use format::time_zone::FormattedTimeZone;
 pub use options::DateTimeFormatterOptions;
 
 #[doc(no_inline)]
