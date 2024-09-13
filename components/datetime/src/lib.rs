@@ -163,7 +163,6 @@ pub(crate) mod raw;
 pub mod skeleton;
 pub mod time_zone;
 mod tz_registry;
-mod zoned_datetime;
 
 pub use any::{DateFormatter, DateTimeFormatter, ZonedDateTimeFormatter};
 pub use calendar::CldrCalendar;
@@ -180,7 +179,6 @@ pub use format::neo::{FormattedDateTimePattern, LoadError, SingleLoadError, Type
 pub use format::time_zone::FormattedTimeZone;
 pub use format::zoned_datetime::FormattedZonedDateTime;
 pub use options::DateTimeFormatterOptions;
-pub use zoned_datetime::TypedZonedDateTimeFormatter;
 
 #[doc(no_inline)]
 pub use DateTimeError as Error;
