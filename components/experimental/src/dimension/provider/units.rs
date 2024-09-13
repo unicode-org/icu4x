@@ -40,6 +40,10 @@ impl<'data> UnitsDisplayNameV1<'data> {
             patterns: PluralPatterns {
                 strings: icu_plurals::provider::PluralElementsPackedCow {
                     elements: alloc::borrow::Cow::Borrowed(
+                        // Safety: from_byte_slice_unchecked requires that the bytes come from a valid
+                        // slice of `PluralElementsPackedULE`, which the caller invariants enforce by
+                        // requiring callers to use as_byte_slice, which guarantees using
+                        // `PluralElementsPackedULE` in its invariants
                         icu_plurals::provider::PluralElementsPackedULE::from_byte_slice_unchecked(
                             bytes,
                         ),
@@ -51,6 +55,8 @@ impl<'data> UnitsDisplayNameV1<'data> {
     }
 
     /// Returns this instance as a byte slice.
+    ///
+    /// Safety usable invariant: returns the slice of the internal `PluralElementsPackedULE`
     #[cfg(feature = "datagen")]
     pub fn as_byte_slice(&self) -> &[u8] {
         use zerovec::ule::VarULE;
