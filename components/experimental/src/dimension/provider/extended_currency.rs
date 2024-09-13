@@ -50,7 +50,8 @@ impl<'data> CurrencyExtendedDataV1<'data> {
     ///
     /// # Safety
     ///
-    /// The bytes must have been returned by [`PluralElementsPackedULE::as_byte_slice`].
+    /// The bytes must have been returned by
+    /// [`icu_plurals::provider::PluralElementsPackedULE::as_byte_slice`]
     pub const unsafe fn from_byte_slice_unchecked(bytes: &'data [u8]) -> Self {
         Self {
             display_names: icu_plurals::provider::PluralElementsPackedCow {
