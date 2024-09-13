@@ -48,17 +48,19 @@ pub struct CurrencyExtendedDataV1<'data> {
 #[cfg(feature = "datagen")]
 impl<'data> CurrencyExtendedDataV1<'data> {
     /// Construct an instance directly from a byte slice.
-    /// 
+    ///
     /// # Safety
-    /// 
+    ///
     /// The bytes must have been returned by [`Self::as_byte_slice`].
     pub const unsafe fn from_byte_slice_unchecked(bytes: &'data [u8]) -> Self {
         Self {
             display_names: icu_plurals::provider::PluralElementsPackedCow {
                 elements: alloc::borrow::Cow::Borrowed(
-                    icu_plurals::provider::PluralElementsPackedULE::from_byte_slice_unchecked(bytes)
-                )
-            }
+                    icu_plurals::provider::PluralElementsPackedULE::from_byte_slice_unchecked(
+                        bytes,
+                    ),
+                ),
+            },
         }
     }
 
