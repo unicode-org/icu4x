@@ -257,18 +257,6 @@ impl ExtractedDateTimeInput {
     }
 }
 
-impl ExtractedTimeZoneInput {
-    /// Construct given an instance of a [`ZonedDateTimeInput`].
-    pub(crate) fn extract_from<T: TimeZoneInput>(input: &T) -> Self {
-        Self {
-            offset: input.offset(),
-            time_zone_id: input.time_zone_id(),
-            metazone_id: input.metazone_id(),
-            zone_variant: input.zone_variant(),
-        }
-    }
-}
-
 impl DateInput for ExtractedDateTimeInput {
     /// This actually doesn't matter, by the time we use this
     /// it's purely internal raw code where calendars are irrelevant

@@ -20,14 +20,6 @@ pub mod ffi {
 
     use writeable::TryWriteable;
 
-    // TODO(https://github.com/rust-diplomat/diplomat/issues/248)
-    #[allow(unused_imports)]
-    use crate::{
-        timezone_formatter::ffi::IsoTimeZoneFormat,
-        timezone_formatter::ffi::IsoTimeZoneMinuteDisplay,
-        timezone_formatter::ffi::IsoTimeZoneSecondDisplay,
-    };
-
     #[diplomat::opaque]
     /// An object capable of formatting a date time with time zone to a string.
     #[diplomat::rust_link(icu::datetime, Mod)]
