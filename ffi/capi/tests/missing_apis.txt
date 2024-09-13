@@ -24,8 +24,6 @@ icu::datetime::DateTimeFormatter::format_to_string#FnInStruct
 icu::datetime::DateTimeFormatter::try_new#FnInStruct
 icu::datetime::FormattedDateTime#Struct
 icu::datetime::FormattedDateTime::write_to#FnInStruct
-icu::datetime::FormattedZonedDateTime#Struct
-icu::datetime::FormattedZonedDateTime::write_to#FnInStruct
 icu::datetime::TimeFormatter#Struct
 icu::datetime::TimeFormatter::format#FnInStruct
 icu::datetime::TimeFormatter::format_to_string#FnInStruct
@@ -38,14 +36,6 @@ icu::datetime::TypedDateTimeFormatter#Struct
 icu::datetime::TypedDateTimeFormatter::format#FnInStruct
 icu::datetime::TypedDateTimeFormatter::format_to_string#FnInStruct
 icu::datetime::TypedDateTimeFormatter::try_new#FnInStruct
-icu::datetime::TypedZonedDateTimeFormatter#Struct
-icu::datetime::TypedZonedDateTimeFormatter::format#FnInStruct
-icu::datetime::TypedZonedDateTimeFormatter::format_to_string#FnInStruct
-icu::datetime::TypedZonedDateTimeFormatter::try_new#FnInStruct
-icu::datetime::ZonedDateTimeFormatter#Struct
-icu::datetime::ZonedDateTimeFormatter::format#FnInStruct
-icu::datetime::ZonedDateTimeFormatter::format_to_string#FnInStruct
-icu::datetime::ZonedDateTimeFormatter::try_new#FnInStruct
 icu::datetime::options::length::Date#Enum
 icu::datetime::options::length::Time#Enum
 icu::normalizer::ComposingNormalizerBorrowed#Struct

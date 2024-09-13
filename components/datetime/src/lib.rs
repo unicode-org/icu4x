@@ -9,11 +9,7 @@
 //!
 //! [`TypedDateTimeFormatter`] and [`DateTimeFormatter`] are the main types of the component. They accepts a set of arguments which
 //! allow it to collect necessary data from the [data provider], and once instantiated, can be
-//! used to quickly format any date and time provided. There are variants of these types that can format greater or fewer components,
-//! including [`TypedDateFormatter`] & [`DateFormatter`], [`TypedZonedDateTimeFormatter`] & [`ZonedDateTimeFormatter`], [`TimeFormatter`],
-//! and [`TimeZoneFormatter`].
-//!
-//! There is no `ZonedTimeFormatter`. To format only a time in a time zone, use [`ZonedDateTimeFormatter`].
+//! used to quickly format any date and time provided. There are variants of these types that can format greater or fewer components.
 //!
 //! These formatters work with types from the [`calendar`] module, like [`Date`], [`DateTime`], and [`Time`],
 //! and [`timezone::CustomTimeZone`], however other types may be used provided they implement the traits from the [`input`] module.
@@ -163,9 +159,8 @@ pub(crate) mod raw;
 pub mod skeleton;
 pub mod time_zone;
 mod tz_registry;
-mod zoned_datetime;
 
-pub use any::{DateFormatter, DateTimeFormatter, ZonedDateTimeFormatter};
+pub use any::{DateFormatter, DateTimeFormatter};
 pub use calendar::CldrCalendar;
 #[cfg(feature = "experimental")]
 pub use calendar::{InternalCldrCalendar, NeverCalendar};
@@ -178,9 +173,7 @@ pub use format::datetime::FormattedDateTime;
 #[cfg(feature = "experimental")]
 pub use format::neo::{FormattedDateTimePattern, LoadError, SingleLoadError, TypedDateTimeNames};
 pub use format::time_zone::FormattedTimeZone;
-pub use format::zoned_datetime::FormattedZonedDateTime;
 pub use options::DateTimeFormatterOptions;
-pub use zoned_datetime::TypedZonedDateTimeFormatter;
 
 #[doc(no_inline)]
 pub use DateTimeError as Error;
