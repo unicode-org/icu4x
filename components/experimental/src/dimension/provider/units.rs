@@ -34,8 +34,7 @@ impl<'data> UnitsDisplayNameV1<'data> {
     ///
     /// # Safety
     ///
-    /// The bytes must have been returned by
-    /// [`icu_plurals::provider::PluralElementsPackedULE::as_byte_slice`]
+    /// The bytes must represent a valid [`icu_plurals::provider::PluralElementsPackedULE`]
     pub const unsafe fn from_byte_slice_unchecked(bytes: &'data [u8]) -> Self {
         Self {
             patterns: PluralPatterns {
