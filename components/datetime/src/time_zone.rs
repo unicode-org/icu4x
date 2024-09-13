@@ -83,7 +83,7 @@ where
 }
 
 /// [`TimeZoneFormatter`] is available for users who need to separately control the formatting of time
-/// zones.  Note: most users might prefer [`ZonedDateTimeFormatter`](super::ZonedDateTimeFormatter), which includes default time zone
+/// zones.  Note: most users might prefer [`NeoFormatter`](super::neo::NeoFormatter), which includes default time zone
 /// formatting according to the calendar.
 ///
 /// [`TimeZoneFormatter`] uses data from the [data provider] and the selected locale
