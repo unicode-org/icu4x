@@ -71,7 +71,7 @@ impl<'data> CurrencyExtendedDataV1<'data> {
     ///
     /// Safety usable invariant: returns the slice of the internal `PluralElementsPackedULE`
     #[cfg(feature = "datagen")]
-    pub fn as_byte_slice(&self) -> &[u8] {
+    fn as_byte_slice(&self) -> &[u8] {
         use zerovec::ule::VarULE;
         self.display_names.elements.as_byte_slice()
     }
