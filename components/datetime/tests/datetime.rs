@@ -30,7 +30,6 @@ use icu_datetime::{
     neo_pattern::DateTimePattern,
     neo_skeleton::{NeoDateTimeComponents, NeoSkeleton, NeoSkeletonLength, NeoTimeZoneSkeleton},
     options::preferences::{self, HourCycle},
-    provider::time_zones::{MetazoneId, TimeZoneBcp47Id},
     TypedDateTimeNames,
 };
 use icu_locale_core::{
@@ -38,12 +37,11 @@ use icu_locale_core::{
     locale, LanguageIdentifier, Locale,
 };
 use icu_provider::prelude::*;
-use icu_timezone::{CustomTimeZone, CustomZonedDateTime, ZoneVariant};
+use icu_timezone::{CustomTimeZone, CustomZonedDateTime};
 use patterns::{
     dayperiods::{DayPeriodExpectation, DayPeriodTests},
-    time_zones::{TimeZoneConfig, TimeZoneExpectation, TimeZoneFormatterConfig, TimeZoneTests},
+    time_zones::{TimeZoneExpectation, TimeZoneFormatterConfig, TimeZoneTests},
 };
-use tinystr::tinystr;
 use writeable::{assert_try_writeable_eq, assert_writeable_eq};
 
 mod mock;
@@ -350,7 +348,7 @@ fn assert_fixture_element<A>(
     }
 }
 
-fn test_fixture_with_time_zones(fixture_name: &str, file: &str, config: TimeZoneConfig) {
+fn test_fixture_with_time_zones(fixture_name: &str, file: &str) {
     for fx in serde_json::from_str::<fixtures::Fixture>(file)
         .expect("Unable to get fixture.")
         .0
@@ -368,10 +366,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, file: &str, config: TimeZone
         options.era_display = skeleton.era_display;
         options.fractional_second_digits = skeleton.fractional_second_digits;
 
-        let mut zoned_datetime = mock::parse_zoned_gregorian_from_str(&fx.input.value);
-        zoned_datetime.zone.time_zone_id = config.time_zone_id.map(TimeZoneBcp47Id);
-        zoned_datetime.zone.metazone_id = config.metazone_id.map(MetazoneId);
-        zoned_datetime.zone.zone_variant = config.zone_variant.map(ZoneVariant);
+        let zoned_datetime = mock::parse_zoned_gregorian_from_str(&fx.input.value);
 
         let description = match fx.description {
             Some(description) => {
@@ -454,11 +449,7 @@ fn test_time_zone_format_configs() {
             .0
     {
         let data_locale: DataLocale = test.locale.parse::<LanguageIdentifier>().unwrap().into();
-        let mut config = test.config;
-        let mut zoned_datetime = mock::parse_zoned_gregorian_from_str(&test.datetime);
-        zoned_datetime.zone.time_zone_id = config.time_zone_id.take().map(TimeZoneBcp47Id);
-        zoned_datetime.zone.metazone_id = config.metazone_id.take().map(MetazoneId);
-        zoned_datetime.zone.zone_variant = config.zone_variant.take().map(ZoneVariant);
+        let zoned_datetime = mock::parse_zoned_gregorian_from_str(&test.datetime);
         for TimeZoneExpectation {
             patterns: _,
             configs,
@@ -506,12 +497,7 @@ fn test_time_zone_format_offset_not_set_debug_assert_panic() {
         neo_marker::NeoTimeZoneOffsetShortMarker, DateTimeWriteError, NeverCalendar,
     };
 
-    let time_zone = CustomTimeZone {
-        offset: None,
-        time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "uslax"))),
-        metazone_id: Some(MetazoneId(tinystr!(4, "ampa"))),
-        zone_variant: Some(ZoneVariant::daylight()),
-    };
+    let time_zone = CustomTimeZone::try_from_str("America/Los_Angeles").unwrap();
     let tzf = TypedNeoFormatter::<NeverCalendar, NeoTimeZoneOffsetShortMarker>::try_new(
         &locale!("en").into(),
         Default::default(),
@@ -532,11 +518,7 @@ fn test_time_zone_patterns() {
             .0
     {
         let locale: Locale = test.locale.parse().unwrap();
-        let mut config = test.config;
-        let mut zoned_datetime = mock::parse_zoned_gregorian_from_str(&test.datetime);
-        zoned_datetime.zone.time_zone_id = config.time_zone_id.take().map(TimeZoneBcp47Id);
-        zoned_datetime.zone.metazone_id = config.metazone_id.take().map(MetazoneId);
-        zoned_datetime.zone.zone_variant = config.zone_variant.take().map(ZoneVariant);
+        let zoned_datetime = mock::parse_zoned_gregorian_from_str(&test.datetime);
 
         for TimeZoneExpectation {
             patterns,
@@ -584,16 +566,10 @@ fn test_length_fixtures() {
     test_fixture_with_time_zones(
         "lengths_with_zones",
         include_str!("fixtures/tests/lengths_with_zones.json"),
-        TimeZoneConfig::default(),
     );
     test_fixture_with_time_zones(
         "lengths_with_zones_from_pdt",
         include_str!("fixtures/tests/lengths_with_zones_from_pdt.json"),
-        TimeZoneConfig {
-            metazone_id: Some(tinystr!(4, "ampa")),
-            zone_variant: Some(tinystr!(2, "dt")),
-            ..TimeZoneConfig::default()
-        },
     );
 }
 
@@ -639,7 +615,6 @@ fn test_components_with_zones() {
     test_fixture_with_time_zones(
         "components_with_zones",
         include_str!("fixtures/tests/components_with_zones.json"),
-        TimeZoneConfig::default(),
     );
 }
 

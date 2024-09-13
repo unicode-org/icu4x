@@ -5,14 +5,6 @@
 use icu_datetime::neo_skeleton::{NeoSkeletonLength, NeoTimeZoneSkeleton, NeoTimeZoneStyle};
 use icu_datetime::time_zone;
 use serde::{Deserialize, Serialize};
-use tinystr::TinyAsciiStr;
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct TimeZoneConfig {
-    pub time_zone_id: Option<TinyAsciiStr<8>>,
-    pub metazone_id: Option<TinyAsciiStr<4>>,
-    pub zone_variant: Option<TinyAsciiStr<2>>,
-}
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TimeZoneTests(pub Vec<TimeZoneTest>);
@@ -20,7 +12,6 @@ pub struct TimeZoneTests(pub Vec<TimeZoneTest>);
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TimeZoneTest {
     pub locale: String,
-    pub config: TimeZoneConfig,
     pub datetime: String,
     pub expectations: Vec<TimeZoneExpectation>,
 }

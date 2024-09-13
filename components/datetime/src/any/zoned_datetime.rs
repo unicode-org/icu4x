@@ -110,7 +110,7 @@ size_test!(ZonedDateTimeFormatter, zoned_date_time_formatter_size, 6200);
 ///
 /// // Create a time zone for America/Chicago at UTC-6:
 /// let mut time_zone = CustomTimeZone::new_empty();
-/// time_zone.offset = "-06:00".parse().ok();
+/// time_zone.offset = "-05:00".parse().ok();
 /// time_zone.time_zone_id = Some(TimeZoneBcp47Id(tinystr!(8, "uschi")));
 /// time_zone.zone_variant = Some(ZoneVariant::daylight());
 ///
