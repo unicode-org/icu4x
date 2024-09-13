@@ -73,9 +73,13 @@ public:
 
   inline icu4x::WeekOf week_of_year(const icu4x::WeekCalculator& calculator) const;
 
-  inline uint32_t ordinal_month() const;
+  inline uint8_t ordinal_month() const;
 
   inline std::string month_code() const;
+
+  inline uint8_t month_number() const;
+
+  inline bool month_is_leap() const;
 
   inline int32_t year_in_era() const;
 

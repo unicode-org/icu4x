@@ -82,7 +82,7 @@ pub trait Calendar {
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool;
 
     /// The calendar-specific month represented by `date`
-    fn month(&self, date: &Self::DateInner) -> types::FormattableMonth;
+    fn month(&self, date: &Self::DateInner) -> types::MonthInfo;
 
     /// The calendar-specific day-of-month represented by `date`
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth;

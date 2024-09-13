@@ -179,16 +179,15 @@ lazy_static::lazy_static! {
 
         // Calendar structs mostly for internal use but which might expose
         // useful information to clients.
-        "icu::calendar::types::FormattableMonth",
+        "icu::calendar::types::MonthInfo",
         "icu::calendar::types::FormattableYear",
         "icu::calendar::types::FormattableYearKind",
         "icu::calendar::types::DayOfYearInfo",
 
-        // Not yet fully exposed over FFI, Temporal doesn't yet need all of the details here
+        // Not yet fully exposed over FFI, Temporal doesn't yet want this.
         "icu::calendar::types::CyclicYear",
-        "icu::calendar::types::EraYear",
-        "icu::calendar::types::YearInfo",
-        "icu::calendar::types::YearKind",
+        "icu::calendar::types::YearInfo::cyclic",
+        "icu::calendar::types::YearInfo::related_iso",
 
         // Punted post 1.0: not strongly needed yet and don't want to lock in a solution
         // Potential solutions:

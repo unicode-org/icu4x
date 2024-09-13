@@ -16,8 +16,8 @@ use icu_timezone::{CustomTimeZone, UtcOffset, ZoneVariant};
 
 // TODO(#2630) fix up imports to directly import from icu_calendar
 pub(crate) use icu_calendar::types::{
-    DayOfMonth, DayOfYearInfo, FormattableMonth, IsoHour, IsoMinute, IsoSecond, IsoWeekday,
-    NanoSecond, Time, WeekOfMonth, WeekOfYear, YearInfo,
+    DayOfMonth, DayOfYearInfo, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo, NanoSecond,
+    Time, WeekOfMonth, WeekOfYear, YearInfo,
 };
 
 /// Representation of a formattable calendar date. Supports dates in any calendar system that uses
@@ -34,7 +34,7 @@ pub trait DateInput {
     fn year(&self) -> Option<YearInfo>;
 
     /// Gets the month input.
-    fn month(&self) -> Option<FormattableMonth>;
+    fn month(&self) -> Option<MonthInfo>;
 
     /// Gets the day input.
     fn day_of_month(&self) -> Option<DayOfMonth>;
@@ -106,7 +106,7 @@ impl<T> DateTimeInput for T where T: DateInput + IsoTimeInput {}
 #[derive(Default, Debug, Copy, Clone)]
 pub(crate) struct ExtractedDateTimeInput {
     year: Option<YearInfo>,
-    month: Option<FormattableMonth>,
+    month: Option<MonthInfo>,
     day_of_month: Option<DayOfMonth>,
     iso_weekday: Option<IsoWeekday>,
     day_of_year_info: Option<DayOfYearInfo>,
@@ -276,7 +276,7 @@ impl DateInput for ExtractedDateTimeInput {
     fn year(&self) -> Option<YearInfo> {
         self.year
     }
-    fn month(&self) -> Option<FormattableMonth> {
+    fn month(&self) -> Option<MonthInfo> {
         self.month
     }
     fn day_of_month(&self) -> Option<DayOfMonth> {
@@ -360,7 +360,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> DateInput for Date<A> {
     }
 
     /// Gets the month input.
-    fn month(&self) -> Option<FormattableMonth> {
+    fn month(&self) -> Option<MonthInfo> {
         Some(self.month())
     }
 
@@ -396,7 +396,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> DateInput for DateTime<A> {
     }
 
     /// Gets the month input.
-    fn month(&self) -> Option<FormattableMonth> {
+    fn month(&self) -> Option<MonthInfo> {
         Some(self.date.month())
     }
 

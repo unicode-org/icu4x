@@ -46,9 +46,13 @@ namespace capi {
     
     icu4x::capi::WeekOf icu4x_Date_week_of_year_mv1(const icu4x::capi::Date* self, const icu4x::capi::WeekCalculator* calculator);
     
-    uint32_t icu4x_Date_ordinal_month_mv1(const icu4x::capi::Date* self);
+    uint8_t icu4x_Date_ordinal_month_mv1(const icu4x::capi::Date* self);
     
     void icu4x_Date_month_code_mv1(const icu4x::capi::Date* self, diplomat::capi::DiplomatWrite* write);
+    
+    uint8_t icu4x_Date_month_number_mv1(const icu4x::capi::Date* self);
+    
+    bool icu4x_Date_month_is_leap_mv1(const icu4x::capi::Date* self);
     
     int32_t icu4x_Date_year_in_era_mv1(const icu4x::capi::Date* self);
     
@@ -131,7 +135,7 @@ inline icu4x::WeekOf icu4x::Date::week_of_year(const icu4x::WeekCalculator& calc
   return icu4x::WeekOf::FromFFI(result);
 }
 
-inline uint32_t icu4x::Date::ordinal_month() const {
+inline uint8_t icu4x::Date::ordinal_month() const {
   auto result = icu4x::capi::icu4x_Date_ordinal_month_mv1(this->AsFFI());
   return result;
 }
@@ -142,6 +146,16 @@ inline std::string icu4x::Date::month_code() const {
   icu4x::capi::icu4x_Date_month_code_mv1(this->AsFFI(),
     &write);
   return output;
+}
+
+inline uint8_t icu4x::Date::month_number() const {
+  auto result = icu4x::capi::icu4x_Date_month_number_mv1(this->AsFFI());
+  return result;
+}
+
+inline bool icu4x::Date::month_is_leap() const {
+  auto result = icu4x::capi::icu4x_Date_month_is_leap_mv1(this->AsFFI());
+  return result;
 }
 
 inline int32_t icu4x::Date::year_in_era() const {

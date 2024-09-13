@@ -65,7 +65,7 @@ namespace capi {
     
     icu4x::capi::WeekOf icu4x_IsoDateTime_week_of_year_mv1(const icu4x::capi::IsoDateTime* self, const icu4x::capi::WeekCalculator* calculator);
     
-    uint32_t icu4x_IsoDateTime_month_mv1(const icu4x::capi::IsoDateTime* self);
+    uint8_t icu4x_IsoDateTime_month_mv1(const icu4x::capi::IsoDateTime* self);
     
     int32_t icu4x_IsoDateTime_year_mv1(const icu4x::capi::IsoDateTime* self);
     
@@ -189,7 +189,7 @@ inline icu4x::WeekOf icu4x::IsoDateTime::week_of_year(const icu4x::WeekCalculato
   return icu4x::WeekOf::FromFFI(result);
 }
 
-inline uint32_t icu4x::IsoDateTime::month() const {
+inline uint8_t icu4x::IsoDateTime::month() const {
   auto result = icu4x::capi::icu4x_IsoDateTime_month_mv1(this->AsFFI());
   return result;
 }

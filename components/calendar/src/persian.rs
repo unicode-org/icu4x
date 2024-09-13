@@ -168,7 +168,7 @@ impl Calendar for Persian {
         Self::is_leap_year(date.0.year, ())
     }
 
-    fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
+    fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
         date.0.month()
     }
 
@@ -538,7 +538,7 @@ mod tests {
 
     // From https://calendar.ut.ac.ir/Fa/News/Data/Doc/KabiseShamsi1206-1498-new.pdf
     // Plain text version at https://github.com/roozbehp/persiancalendar/blob/main/kabise.txt
-    static CALENDAR_UT_AC_IR_TEST_DATA: [(i32, bool, i32, u32, u32); 293] = [
+    static CALENDAR_UT_AC_IR_TEST_DATA: [(i32, bool, i32, u8, u32); 293] = [
         (1206, false, 1827, 3, 22),
         (1207, false, 1828, 3, 21),
         (1208, false, 1829, 3, 21),

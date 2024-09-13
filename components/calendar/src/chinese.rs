@@ -279,7 +279,7 @@ impl Calendar for Chinese {
     /// since the Chinese calendar has leap months, an "L" is appended to the month code for
     /// leap months. For example, in a year where an intercalary month is added after the second
     /// month, the month codes for ordinal months 1, 2, 3, 4, 5 would be "M01", "M02", "M02L", "M03", "M04".
-    fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
+    fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
         date.0.month()
     }
 
@@ -649,7 +649,7 @@ mod test {
 
                 assert_eq!(chinese.year().era_year_or_extended(), 1);
                 assert_eq!(chinese.month().ordinal, 1);
-                assert_eq!(chinese.month().code.0, "M01");
+                assert_eq!(chinese.month().standard_code.0, "M01");
                 assert_eq!(chinese.day_of_month().0, 1);
                 assert_eq!(chinese.year().cyclic().unwrap().get(), 1);
                 assert_eq!(chinese.year().related_iso(), Some(-2636));
@@ -665,7 +665,7 @@ mod test {
             iso_month: u8,
             iso_day: u8,
             expected_year: i32,
-            expected_month: u32,
+            expected_month: u8,
             expected_day: u32,
         }
 
@@ -900,7 +900,7 @@ mod test {
                 &chinese_cached,
                 |chinese, calendar_type| {
                     let chinese = iso.to_calendar(chinese);
-                    let result_code = chinese.month().code.0;
+                    let result_code = chinese.month().standard_code.0;
                     let expected_code = case.expected_code.to_string();
                     assert_eq!(
                         expected_code, result_code,
@@ -1005,7 +1005,7 @@ mod test {
             iso_day: u8,
             expected_rel_iso: i32,
             expected_cyclic: u8,
-            expected_month: u32,
+            expected_month: u8,
             expected_day: u32,
         }
 

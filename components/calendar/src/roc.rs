@@ -163,7 +163,7 @@ impl Calendar for Roc {
         Iso.is_in_leap_year(&date.0)
     }
 
-    fn month(&self, date: &Self::DateInner) -> crate::types::FormattableMonth {
+    fn month(&self, date: &Self::DateInner) -> crate::types::MonthInfo {
         Iso.month(&date.0)
     }
 
@@ -299,7 +299,7 @@ mod test {
         iso_day: u8,
         expected_year: i32,
         expected_era: Era,
-        expected_month: u32,
+        expected_month: u8,
         expected_day: u32,
     }
 

@@ -33,7 +33,7 @@
 use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
-use crate::types::FormattableMonth;
+use crate::types::MonthInfo;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Time};
 use crate::{Iso, RangeError};
 use ::tinystr::tinystr;
@@ -55,8 +55,8 @@ use calendrical_calculations::hebrew_keviyah::{Keviyah, YearInfo};
 /// This calendar is a lunisolar calendar and thus has a leap month. It supports codes `"M01"-"M12"`
 /// for regular months, and the leap month Adar I being coded as `"M05L"`.
 ///
-/// [`FormattableMonth`] has slightly divergent behavior: because the regular month Adar is formatted
-/// as "Adar II" in a leap year, this calendar will produce the special code `"M06L"` in any [`FormattableMonth`]
+/// [`MonthInfo`] has slightly divergent behavior: because the regular month Adar is formatted
+/// as "Adar II" in a leap year, this calendar will produce the special code `"M06L"` in any [`MonthInfo`]
 /// objects it creates.
 ///
 /// [Hebrew calendar]: https://en.wikipedia.org/wiki/Hebrew_calendar
@@ -267,20 +267,23 @@ impl Calendar for Hebrew {
         Self::is_leap_year(date.0.year, date.0.year_info)
     }
 
-    fn month(&self, date: &Self::DateInner) -> FormattableMonth {
+    fn month(&self, date: &Self::DateInner) -> MonthInfo {
         let mut ordinal = date.0.month;
         let is_leap_year = Self::is_leap_year(date.0.year, date.0.year_info);
 
         if is_leap_year {
             if ordinal == 6 {
-                return types::FormattableMonth {
-                    ordinal: ordinal as u32,
-                    code: types::MonthCode(tinystr!(4, "M05L")),
+                return types::MonthInfo {
+                    ordinal,
+                    standard_code: types::MonthCode(tinystr!(4, "M05L")),
+                    formatting_code: types::MonthCode(tinystr!(4, "M05L")),
                 };
             } else if ordinal == 7 {
-                return types::FormattableMonth {
-                    ordinal: ordinal as u32,
-                    code: types::MonthCode(tinystr!(4, "M06L")),
+                return types::MonthInfo {
+                    ordinal,
+                    // Adar II is the same as Adar and has the same code
+                    standard_code: types::MonthCode(tinystr!(4, "M06")),
+                    formatting_code: types::MonthCode(tinystr!(4, "M06L")),
                 };
             }
         }
@@ -305,9 +308,10 @@ impl Calendar for Hebrew {
             _ => tinystr!(4, "und"),
         };
 
-        types::FormattableMonth {
-            ordinal: date.0.month as u32,
-            code: types::MonthCode(code),
+        types::MonthInfo {
+            ordinal: date.0.month,
+            standard_code: types::MonthCode(code),
+            formatting_code: types::MonthCode(code),
         }
     }
 

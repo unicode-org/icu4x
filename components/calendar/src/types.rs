@@ -58,14 +58,14 @@ pub enum YearKind {
 
 impl YearInfo {
     /// Construct a new Year given an era and number
-    pub fn new(extended_year: i32, era: EraYear) -> Self {
+    pub(crate) fn new(extended_year: i32, era: EraYear) -> Self {
         Self {
             extended_year,
             kind: YearKind::Era(era),
         }
     }
     /// Construct a new cyclic Year given a cycle and a related_iso
-    pub fn new_cyclic(extended_year: i32, cycle: NonZeroU8, related_iso: i32) -> Self {
+    pub(crate) fn new_cyclic(extended_year: i32, cycle: NonZeroU8, related_iso: i32) -> Self {
         Self {
             extended_year,
             kind: YearKind::Cyclic(CyclicYear {
@@ -272,22 +272,44 @@ impl fmt::Display for MonthCode {
 /// Representation of a formattable month.
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
-pub struct FormattableMonth {
+pub struct MonthInfo {
     /// The month number in this given year. For calendars with leap months, all months after
     /// the leap month will end up with an incremented number.
     ///
     /// In general, prefer using the month code in generic code.
-    pub ordinal: u32,
+    pub ordinal: u8,
 
     /// The month code, used to distinguish months during leap years.
     ///
+    /// This follows [Temporal's specification](https://tc39.es/proposal-intl-era-monthcode/#table-additional-month-codes).
+    /// Months considered the "same" have the same code: This means that the Hebrew months "Adar" and "Adar II" ("Adar, but during a leap year")
+    /// are considered the same month and have the code M05
+    pub standard_code: MonthCode,
+    /// A month code, useable for formatting
+    ///
     /// This may not necessarily be the canonical month code for a month in cases where a month has different
     /// formatting in a leap year, for example Adar/Adar II in the Hebrew calendar in a leap year has
-    /// the code M06, but for formatting specifically the Hebrew calendar will return M06L since it is formatted
+    /// the standard code M06, but for formatting specifically the Hebrew calendar will return M06L since it is formatted
     /// differently.
-    pub code: MonthCode,
+    pub formatting_code: MonthCode,
 }
 
+impl MonthInfo {
+    /// Gets the month number. A month number N is not necessarily the Nth month in the year
+    /// if there are leap months in the year, rather it is associated with the Nth month of a "regular"
+    /// year. There may be multiple month Ns in a year
+    pub fn month_number(self) -> u8 {
+        self.standard_code
+            .parsed()
+            .map(|(i, _)| i)
+            .unwrap_or(self.ordinal)
+    }
+
+    /// Get whether the month is a leap month
+    pub fn is_leap(self) -> bool {
+        self.standard_code.parsed().map(|(_, l)| l).unwrap_or(false)
+    }
+}
 /// A struct containing various details about the position of the day within a year. It is returned
 // by the [`day_of_year_info()`](trait.DateInput.html#tymethod.day_of_year_info) method of the
 // [`DateInput`] trait.

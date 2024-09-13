@@ -190,7 +190,7 @@ impl Calendar for Julian {
     }
 
     /// The calendar-specific month represented by `date`
-    fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
+    fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
         date.0.month()
     }
 
@@ -419,7 +419,7 @@ mod test {
             iso_day: u8,
             expected_year: i32,
             expected_era: Era,
-            expected_month: u32,
+            expected_month: u8,
             expected_day: u32,
         }
 

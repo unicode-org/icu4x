@@ -206,7 +206,7 @@ impl Calendar for Indian {
         Self::is_leap_year(date.0.year, ())
     }
 
-    fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
+    fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
         date.0.month()
     }
 
@@ -324,7 +324,7 @@ mod tests {
             "{y}-{m}-{d}: ISO year did not match"
         );
         assert_eq!(
-            iso.month().ordinal as u8,
+            iso.month().ordinal,
             iso_m,
             "{y}-{m}-{d}: ISO month did not match"
         );
@@ -375,7 +375,7 @@ mod tests {
         iso_month: u8,
         iso_day: u8,
         expected_year: i32,
-        expected_month: u32,
+        expected_month: u8,
         expected_day: u32,
     }
 

@@ -76,15 +76,15 @@ use tinystr::tinystr;
 /// let dangi_a = iso_a.to_calendar(Dangi::new());
 /// let chinese_a = iso_a.to_calendar(Chinese::new());
 ///
-/// assert_eq!(dangi_a.month().code.0, tinystr!(4, "M03L"));
-/// assert_eq!(chinese_a.month().code.0, tinystr!(4, "M04"));
+/// assert_eq!(dangi_a.month().standard_code.0, tinystr!(4, "M03L"));
+/// assert_eq!(chinese_a.month().standard_code.0, tinystr!(4, "M04"));
 ///
 /// let iso_b = Date::try_new_iso_date(2012, 5, 23).unwrap();
 /// let dangi_b = iso_b.to_calendar(Dangi::new());
 /// let chinese_b = iso_b.to_calendar(Chinese::new());
 ///
-/// assert_eq!(dangi_b.month().code.0, tinystr!(4, "M04"));
-/// assert_eq!(chinese_b.month().code.0, tinystr!(4, "M04L"));
+/// assert_eq!(dangi_b.month().standard_code.0, tinystr!(4, "M04"));
+/// assert_eq!(chinese_b.month().standard_code.0, tinystr!(4, "M04L"));
 /// ```
 /// # Era codes
 ///
@@ -260,7 +260,7 @@ impl Calendar for Dangi {
         Self::is_leap_year(date.0 .0.year, date.0 .0.year_info)
     }
 
-    fn month(&self, date: &Self::DateInner) -> crate::types::FormattableMonth {
+    fn month(&self, date: &Self::DateInner) -> crate::types::MonthInfo {
         date.0.month()
     }
 
@@ -490,7 +490,7 @@ mod test {
             iso_day: u8,
             expected_rel_iso: i32,
             expected_cyclic: u8,
-            expected_month: u32,
+            expected_month: u8,
             expected_day: u32,
         }
 

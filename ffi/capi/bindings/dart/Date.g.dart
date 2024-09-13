@@ -134,6 +134,8 @@ final class Date implements ffi.Finalizable {
   /// about month identity.
   ///
   /// See the [Rust documentation for `month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month) for more information.
+  ///
+  /// See the [Rust documentation for `ordinal`](https://docs.rs/icu/latest/icu/calendar/types/struct.MonthInfo.html#structfield.ordinal) for more information.
   int get ordinalMonth {
     final result = _icu4x_Date_ordinal_month_mv1(_ffi);
     return result;
@@ -142,18 +144,38 @@ final class Date implements ffi.Finalizable {
   /// Returns the month code for this date. Typically something
   /// like "M01", "M02", but can be more complicated for lunar calendars.
   ///
-  /// See the [Rust documentation for `month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month) for more information.
+  /// See the [Rust documentation for `standard_code`](https://docs.rs/icu/latest/icu/calendar/types/struct.MonthInfo.html#structfield.standard_code) for more information.
+  ///
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month)
   String get monthCode {
     final write = _Write();
     _icu4x_Date_month_code_mv1(_ffi, write._ffi);
     return write.finalize();
   }
 
+  /// Returns the month number of this month.
+  ///
+  /// See the [Rust documentation for `month_number`](https://docs.rs/icu/latest/icu/calendar/types/struct.MonthInfo.html#method.month_number) for more information.
+  int get monthNumber {
+    final result = _icu4x_Date_month_number_mv1(_ffi);
+    return result;
+  }
+
+  /// Returns whether the month is a leap month.
+  ///
+  /// See the [Rust documentation for `is_leap`](https://docs.rs/icu/latest/icu/calendar/types/struct.MonthInfo.html#method.is_leap) for more information.
+  bool get monthIsLeap {
+    final result = _icu4x_Date_month_is_leap_mv1(_ffi);
+    return result;
+  }
+
   /// Returns the year number in the current era for this date
   ///
   /// For calendars without an era, returns the extended year
   ///
-  /// See the [Rust documentation for `year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year) for more information.
+  /// See the [Rust documentation for `era_year_or_extended`](https://docs.rs/icu/latest/icu/calendar/types/struct.YearInfo.html#method.era_year_or_extended) for more information.
+  ///
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/calendar/types/struct.EraYear.html#structfield.era_year), [2](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year)
   int get yearInEra {
     final result = _icu4x_Date_year_in_era_mv1(_ffi);
     return result;
@@ -167,11 +189,11 @@ final class Date implements ffi.Finalizable {
     return result;
   }
 
-  /// Returns the era for this date,
+  /// Returns the era for this date, or an empty string
   ///
-  /// See the [Rust documentation for `year`](https://docs.rs/icu/latest/icu/struct.Date.html#method.year) for more information.
+  /// See the [Rust documentation for `standard_era`](https://docs.rs/icu/latest/icu/calendar/types/struct.EraYear.html#structfield.standard_era) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/types/struct.Era.html), [2](https://docs.rs/icu/latest/icu/types/struct.EraYear.html)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year)
   String get era {
     final write = _Write();
     _icu4x_Date_era_mv1(_ffi, write._ffi);
@@ -267,7 +289,7 @@ external int _icu4x_Date_week_of_month_mv1(ffi.Pointer<ffi.Opaque> self, int fir
 external _WeekOfFfi _icu4x_Date_week_of_year_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> calculator);
 
 @meta.ResourceIdentifier('icu4x_Date_ordinal_month_mv1')
-@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_ordinal_month_mv1')
+@ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_ordinal_month_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_Date_ordinal_month_mv1(ffi.Pointer<ffi.Opaque> self);
 
@@ -275,6 +297,16 @@ external int _icu4x_Date_ordinal_month_mv1(ffi.Pointer<ffi.Opaque> self);
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_month_code_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_Date_month_code_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);
+
+@meta.ResourceIdentifier('icu4x_Date_month_number_mv1')
+@ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_month_number_mv1')
+// ignore: non_constant_identifier_names
+external int _icu4x_Date_month_number_mv1(ffi.Pointer<ffi.Opaque> self);
+
+@meta.ResourceIdentifier('icu4x_Date_month_is_leap_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_month_is_leap_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_Date_month_is_leap_mv1(ffi.Pointer<ffi.Opaque> self);
 
 @meta.ResourceIdentifier('icu4x_Date_year_in_era_mv1')
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_year_in_era_mv1')
