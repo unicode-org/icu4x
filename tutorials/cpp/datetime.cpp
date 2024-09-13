@@ -62,13 +62,14 @@ int main() {
         return 1;
     }
 
-    std::unique_ptr<CustomTimeZone> time_zone = CustomTimeZone::from_string("-06:00").ok().value();
+    std::unique_ptr<CustomTimeZone> time_zone = CustomTimeZone::from_string("-05:00").ok().value();
     int32_t offset = time_zone->offset_seconds().value();
-    if (offset != -21600) {
+    if (offset != -18000) {
         std::cout << "GMT offset doesn't parse" << std::endl;
         return 1;
     }
     std::unique_ptr<MetazoneCalculator> mzcalc = MetazoneCalculator::create(*dp.get()).ok().value();
+    std::unique_ptr<ZoneOffsetCalculator> zocalc = ZoneOffsetCalculator::create(*dp.get()).ok().value();
     std::unique_ptr<TimeZoneIdMapper> mapper = TimeZoneIdMapper::create(*dp.get()).ok().value();
     time_zone->try_set_iana_time_zone_id(*mapper.get(), "america/chicago").ok().value();
     std::string time_zone_id_return = time_zone->time_zone_id().value();
@@ -102,6 +103,11 @@ int main() {
     std::string metazone_id_return = time_zone->metazone_id().value();
     if (metazone_id_return != "amce") {
         std::cout << "Metazone ID not calculated correctly; got " << metazone_id_return << std::endl;
+        return 1;
+    }
+    time_zone->maybe_calculate_zone_variant(*zocalc.get(), *local_datetime.get());
+    if (!time_zone->is_daylight_time()) {
+        std::cout << "ZoneVariant not calculated correctly" << std::endl;
         return 1;
     }
     // Note: The daylight time switch should normally come from TZDB calculations.

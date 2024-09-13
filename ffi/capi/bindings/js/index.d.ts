@@ -190,6 +190,8 @@ export { UnitsConverterFactory } from "./UnitsConverterFactory"
 
 export { WeekCalculator } from "./WeekCalculator"
 
+export { ZoneOffsetCalculator } from "./ZoneOffsetCalculator"
+
 export { GregorianZonedDateTimeFormatter } from "./GregorianZonedDateTimeFormatter"
 
 export { ZonedDateTimeFormatter } from "./ZonedDateTimeFormatter"
