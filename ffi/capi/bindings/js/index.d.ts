@@ -218,9 +218,7 @@ export { CollatorStrength } from "./CollatorStrength"
 
 export { IsoWeekday } from "./IsoWeekday"
 
-export { DateLength } from "./DateLength"
-
-export { TimeLength } from "./TimeLength"
+export { DateTimeLength } from "./DateTimeLength"
 
 export { FixedDecimalGroupingStrategy } from "./FixedDecimalGroupingStrategy"
 

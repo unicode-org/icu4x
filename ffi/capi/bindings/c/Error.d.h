@@ -32,6 +32,9 @@ typedef enum Error {
   Error_DateTimeMissingMonthSymbolError = 2054,
   Error_DateTimeFixedDecimalError = 2055,
   Error_DateTimeMismatchedCalendarError = 2056,
+  Error_DateTimeDuplicateFieldError = 2057,
+  Error_DateTimeTooNarrowError = 2058,
+  Error_DateTimeMissingNamesError = 2059,
 } Error;
 
 typedef struct Error_option {union { Error ok; }; bool is_ok; } Error_option;

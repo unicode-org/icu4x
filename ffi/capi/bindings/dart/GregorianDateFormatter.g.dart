@@ -5,7 +5,7 @@ part of 'lib.g.dart';
 /// An ICU4X TypedDateFormatter object capable of formatting a [`IsoDateTime`] as a string,
 /// using the Gregorian Calendar.
 ///
-/// See the [Rust documentation for `TypedDateFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.TypedDateFormatter.html) for more information.
+/// See the [Rust documentation for `datetime`](https://docs.rs/icu/latest/icu/datetime/index.html) for more information.
 final class GregorianDateFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -27,10 +27,8 @@ final class GregorianDateFormatter implements ffi.Finalizable {
 
   /// Creates a new [`GregorianDateFormatter`] from locale data.
   ///
-  /// See the [Rust documentation for `try_new_with_length`](https://docs.rs/icu/latest/icu/datetime/struct.TypedDateFormatter.html#method.try_new_with_length) for more information.
-  ///
   /// Throws [Error] on failure.
-  factory GregorianDateFormatter.withLength(DataProvider provider, Locale locale, DateLength length) {
+  factory GregorianDateFormatter.withLength(DataProvider provider, Locale locale, DateTimeLength length) {
     final result = _icu4x_GregorianDateFormatter_create_with_length_mv1(provider._ffi, locale._ffi, length.index);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -39,8 +37,6 @@ final class GregorianDateFormatter implements ffi.Finalizable {
   }
 
   /// Formats a [`IsoDate`] to a string.
-  ///
-  /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TypedDateFormatter.html#method.format) for more information.
   String formatIsoDate(IsoDate value) {
     final write = _Write();
     _icu4x_GregorianDateFormatter_format_iso_date_mv1(_ffi, value._ffi, write._ffi);
@@ -48,8 +44,6 @@ final class GregorianDateFormatter implements ffi.Finalizable {
   }
 
   /// Formats a [`IsoDateTime`] to a string.
-  ///
-  /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TypedDateFormatter.html#method.format) for more information.
   String formatIsoDatetime(IsoDateTime value) {
     final write = _Write();
     _icu4x_GregorianDateFormatter_format_iso_datetime_mv1(_ffi, value._ffi, write._ffi);

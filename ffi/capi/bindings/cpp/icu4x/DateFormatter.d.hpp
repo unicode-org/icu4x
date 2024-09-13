@@ -24,7 +24,7 @@ namespace capi { struct IsoDateTime; }
 class IsoDateTime;
 namespace capi { struct Locale; }
 class Locale;
-class DateLength;
+class DateTimeLength;
 class Error;
 }
 
@@ -39,7 +39,7 @@ namespace icu4x {
 class DateFormatter {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::DateFormatter>, icu4x::Error> create_with_length(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateLength date_length);
+  inline static diplomat::result<std::unique_ptr<icu4x::DateFormatter>, icu4x::Error> create_with_length(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeLength length);
 
   inline diplomat::result<std::string, icu4x::Error> format_date(const icu4x::Date& value) const;
 

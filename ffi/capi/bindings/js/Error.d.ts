@@ -33,4 +33,7 @@ export class Error {
     static DateTimeMissingMonthSymbolError : Error;
     static DateTimeFixedDecimalError : Error;
     static DateTimeMismatchedCalendarError : Error;
+    static DateTimeDuplicateFieldError : Error;
+    static DateTimeTooNarrowError : Error;
+    static DateTimeMissingNamesError : Error;
 }

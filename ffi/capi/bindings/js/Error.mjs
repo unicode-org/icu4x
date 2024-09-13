@@ -30,7 +30,10 @@ export class Error {
         ["DateTimeMissingWeekdaySymbolError", 2053],
         ["DateTimeMissingMonthSymbolError", 2054],
         ["DateTimeFixedDecimalError", 2055],
-        ["DateTimeMismatchedCalendarError", 2056]
+        ["DateTimeMismatchedCalendarError", 2056],
+        ["DateTimeDuplicateFieldError", 2057],
+        ["DateTimeTooNarrowError", 2058],
+        ["DateTimeMissingNamesError", 2059]
     ]);
 
     constructor(value) {
@@ -90,6 +93,9 @@ export class Error {
         [2054]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2054),
         [2055]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2055),
         [2056]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2056),
+        [2057]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2057),
+        [2058]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2058),
+        [2059]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2059),
     };
 
     static UnknownError = Error.#objectValues[0];
@@ -112,4 +118,7 @@ export class Error {
     static DateTimeMissingMonthSymbolError = Error.#objectValues[2054];
     static DateTimeFixedDecimalError = Error.#objectValues[2055];
     static DateTimeMismatchedCalendarError = Error.#objectValues[2056];
+    static DateTimeDuplicateFieldError = Error.#objectValues[2057];
+    static DateTimeTooNarrowError = Error.#objectValues[2058];
+    static DateTimeMissingNamesError = Error.#objectValues[2059];
 }
