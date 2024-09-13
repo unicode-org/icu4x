@@ -140,7 +140,7 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), Error> {
             let zdt = icu_timezone::CustomZonedDateTime {
-                date: datetime.0.date.clone(),
+                date: datetime.0.date,
                 time: datetime.0.time,
                 zone: time_zone.0,
             };
