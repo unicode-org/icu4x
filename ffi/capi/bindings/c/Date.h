@@ -45,7 +45,7 @@ uint32_t icu4x_Date_week_of_month_mv1(const Date* self, IsoWeekday first_weekday
 
 WeekOf icu4x_Date_week_of_year_mv1(const Date* self, const WeekCalculator* calculator);
 
-uint32_t icu4x_Date_ordinal_month_mv1(const Date* self);
+uint8_t icu4x_Date_ordinal_month_mv1(const Date* self);
 
 void icu4x_Date_month_code_mv1(const Date* self, DiplomatWrite* write);
 

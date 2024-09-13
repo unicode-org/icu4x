@@ -380,7 +380,7 @@ external int _icu4x_DateTime_week_of_month_mv1(ffi.Pointer<ffi.Opaque> self, int
 external _WeekOfFfi _icu4x_DateTime_week_of_year_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> calculator);
 
 @meta.ResourceIdentifier('icu4x_DateTime_ordinal_month_mv1')
-@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateTime_ordinal_month_mv1')
+@ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateTime_ordinal_month_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_DateTime_ordinal_month_mv1(ffi.Pointer<ffi.Opaque> self);
 
