@@ -301,6 +301,7 @@ pub enum DateTimeWriteError {
     MissingWeekCalculator,
     /// TODO
     #[displaydoc("Names for {0:?} not loaded")]
+    #[cfg(feature = "experimental")]
     MissingNames(Field),
 
     // Something not found in data
@@ -316,6 +317,7 @@ pub enum DateTimeWriteError {
     MissingWeekdaySymbol(IsoWeekday),
     /// Missing time zone symbol
     #[displaydoc("Not enough time zone information to format anything.")]
+    #[cfg(feature = "experimental")]
     UnsupportedTimeZone,
 
     // Invalid input
