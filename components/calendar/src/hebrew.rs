@@ -274,13 +274,13 @@ impl Calendar for Hebrew {
         if is_leap_year {
             if ordinal == 6 {
                 return types::MonthInfo {
-                    ordinal: ordinal,
+                    ordinal,
                     standard_code: types::MonthCode(tinystr!(4, "M05L")),
                     formatting_code: types::MonthCode(tinystr!(4, "M05L")),
                 };
             } else if ordinal == 7 {
                 return types::MonthInfo {
-                    ordinal: ordinal,
+                    ordinal,
                     // Adar II is the same as Adar and has the same code
                     standard_code: types::MonthCode(tinystr!(4, "M06")),
                     formatting_code: types::MonthCode(tinystr!(4, "M06L")),
