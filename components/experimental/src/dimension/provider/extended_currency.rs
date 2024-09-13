@@ -30,8 +30,7 @@ pub use crate::provider::Baked;
 ))]
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::extended_currency))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[yoke(prove_covariance_manually)]
 pub struct CurrencyExtendedDataV1<'data> {
     /// Contains the localized display names for a currency based on plural rules.
@@ -44,4 +43,47 @@ pub struct CurrencyExtendedDataV1<'data> {
     ///    If no matching for specific count, the `other` count will be used.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub display_names: PluralElementsPackedCow<'data, str>,
+}
+
+#[cfg(feature = "datagen")]
+impl<'data> CurrencyExtendedDataV1<'data> {
+    /// Construct an instance directly from a byte slice.
+    /// 
+    /// # Safety
+    /// 
+    /// The bytes must have been returned by [`Self::as_byte_slice`].
+    pub const unsafe fn from_byte_slice_unchecked(bytes: &'data [u8]) -> Self {
+        Self {
+            display_names: icu_plurals::provider::PluralElementsPackedCow {
+                elements: alloc::borrow::Cow::Borrowed(
+                    icu_plurals::provider::PluralElementsPackedULE::from_byte_slice_unchecked(bytes)
+                )
+            }
+        }
+    }
+
+    /// Returns this instance as a byte slice.
+    pub fn as_byte_slice(&self) -> &[u8] {
+        use zerovec::ule::VarULE;
+        self.display_names.elements.as_byte_slice()
+    }
+}
+
+#[cfg(feature = "datagen")]
+impl databake::Bake for CurrencyExtendedDataV1<'_> {
+    fn bake(&self, ctx: &databake::CrateEnv) -> databake::TokenStream {
+        ctx.insert("icu_experimental::dimension::provider::extended_currency");
+        let bytes = self.as_byte_slice().bake(ctx);
+        // Safety: The bytes are returned by `self.as_byte_slice()`.
+        databake::quote! { unsafe {
+            icu_experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1::from_byte_slice_unchecked(#bytes)
+        }}
+    }
+}
+
+#[cfg(feature = "datagen")]
+impl databake::BakeSize for CurrencyExtendedDataV1<'_> {
+    fn borrows_size(&self) -> usize {
+        self.display_names.borrows_size()
+    }
 }
