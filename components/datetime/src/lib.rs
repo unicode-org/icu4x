@@ -91,7 +91,6 @@
 extern crate alloc;
 
 mod calendar;
-mod datetime;
 mod error;
 #[cfg(feature = "experimental")]
 mod external_loaders;

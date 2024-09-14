@@ -5,12 +5,7 @@
 use crate::fields::{self, Field, FieldLength, FieldSymbol, Second, Week, Year};
 use crate::input::{DateInput, ExtractedDateTimeInput, ExtractedTimeZoneInput, IsoTimeInput};
 use crate::pattern::runtime::{PatternBorrowed, PatternMetadata};
-use crate::pattern::{
-    runtime::{Pattern, PatternPlurals},
-    PatternItem,
-};
-use crate::provider;
-use crate::provider::calendar::patterns::PatternPluralsFromPatternsV1Marker;
+use crate::pattern::PatternItem;
 #[cfg(feature = "experimental")]
 use crate::provider::date_time::GetSymbolForDayPeriodError;
 use crate::provider::date_time::{
@@ -34,124 +29,8 @@ use icu_calendar::types::{
 use icu_calendar::week::WeekCalculator;
 use icu_calendar::AnyCalendarKind;
 use icu_decimal::FixedDecimalFormatter;
-use icu_plurals::PluralRules;
-use icu_provider::DataPayload;
 use icu_timezone::UtcOffset;
 use writeable::{Part, Writeable};
-
-/// [`FormattedDateTime`] is a intermediate structure.
-///
-/// The structure contains all the information needed to display formatted value,
-/// and it will also contain additional methods allowing the user to introspect
-/// and even manipulate the formatted data.
-///
-/// # Examples
-///
-/// ```no_run
-/// use icu::calendar::{DateTime, Gregorian};
-/// use icu::datetime::TypedDateTimeFormatter;
-/// use icu::locale::locale;
-/// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
-///     &locale!("en").into(),
-///     Default::default(),
-/// )
-/// .expect("Failed to create TypedDateTimeFormatter instance.");
-///
-/// let datetime = DateTime::try_new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
-///     .expect("Failed to construct DateTime.");
-///
-/// let formatted_date = dtf.format(&datetime);
-///
-/// let _ = format!("Date: {}", formatted_date);
-/// ```
-#[derive(Debug, Copy, Clone)]
-pub(crate) struct FormattedDateTime<'l> {
-    pub(crate) datetime: ExtractedDateTimeInput,
-    pub(crate) patterns: &'l DataPayload<PatternPluralsFromPatternsV1Marker>,
-    pub(crate) date_symbols: Option<&'l provider::calendar::DateSymbolsV1<'l>>,
-    pub(crate) time_symbols: Option<&'l provider::calendar::TimeSymbolsV1<'l>>,
-    pub(crate) week_data: Option<&'l WeekCalculator>,
-    pub(crate) ordinal_rules: Option<&'l PluralRules>,
-    pub(crate) fixed_decimal_format: &'l FixedDecimalFormatter,
-}
-
-impl<'l> FormattedDateTime<'l> {
-    pub(crate) fn select_pattern_lossy<'a>(
-        &'a self,
-    ) -> (&'l Pattern<'l>, Result<(), DateTimeWriteError>) {
-        let mut r = Ok(());
-        let pattern = match self.patterns.get().0 {
-            PatternPlurals::SinglePattern(ref pattern) => pattern,
-            PatternPlurals::MultipleVariants(ref plural_pattern) => {
-                let week_number = match plural_pattern.pivot_field() {
-                    Week::WeekOfMonth => self
-                        .week_data
-                        .ok_or(DateTimeWriteError::MissingWeekCalculator)
-                        .and_then(|w| {
-                            self.datetime
-                                .week_of_month(w)
-                                .map_err(DateTimeWriteError::MissingInputField)
-                        })
-                        .map(|w| w.0)
-                        .unwrap_or_else(|e| {
-                            r = r.and(Err(e));
-                            0
-                        }),
-                    Week::WeekOfYear => self
-                        .week_data
-                        .ok_or(DateTimeWriteError::MissingWeekCalculator)
-                        .and_then(|w| {
-                            self.datetime
-                                .week_of_year(w)
-                                .map_err(DateTimeWriteError::MissingInputField)
-                        })
-                        .map(|w| w.1 .0)
-                        .unwrap_or_else(|e| {
-                            r = r.and(Err(e));
-                            0
-                        }),
-                };
-                let category = self
-                    .ordinal_rules
-                    .map(|p| p.category_for(week_number))
-                    .unwrap_or_else(|| {
-                        r = r.and(Err(DateTimeWriteError::MissingOrdinalRules));
-                        icu_plurals::PluralCategory::One
-                    });
-                plural_pattern.variant(category)
-            }
-        };
-        (pattern, r)
-    }
-}
-
-impl<'l> Writeable for FormattedDateTime<'l> {
-    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        let (pattern, mut r) = self.select_pattern_lossy();
-
-        r = r.and(try_write_pattern(
-            pattern.as_borrowed(),
-            &self.datetime,
-            self.date_symbols,
-            self.time_symbols,
-            None::<()>.as_ref(),
-            self.week_data,
-            Some(self.fixed_decimal_format),
-            &mut writeable::adapters::CoreWriteAsPartsWrite(sink),
-        )?);
-
-        debug_assert!(r.is_ok(), "{r:?}");
-        Ok(())
-    }
-
-    // TODO(#489): Implement writeable_length_hint
-}
-
-impl<'l> fmt::Display for FormattedDateTime<'l> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        self.write_to(f)
-    }
-}
 
 /// Apply length to input number and write to result using fixed_decimal_format.
 fn try_write_number<W>(
@@ -1018,87 +897,6 @@ where
             }
         }
     })
-}
-
-/// What data is required to format a given pattern.
-#[derive(Default)]
-pub struct RequiredData {
-    // DateSymbolsV1 is required.
-    pub date_symbols_data: bool,
-    // TimeSymbolsV1 is required.
-    pub time_symbols_data: bool,
-    // WeekDataV1 is required.
-    pub week_data: bool,
-}
-
-impl RequiredData {
-    // Checks if formatting `pattern` would require us to load data & if so adds
-    // them to this struct. Returns true if requirements are saturated and would
-    // not change by any further calls.
-    // Keep it in sync with the `write_field` use of symbols.
-    fn add_requirements_from_pattern(
-        &mut self,
-        pattern: &Pattern,
-        supports_time_zones: bool,
-    ) -> Result<bool, Field> {
-        let fields = pattern.items.iter().filter_map(|p| match p {
-            PatternItem::Field(field) => Some(field),
-            _ => None,
-        });
-
-        for field in fields {
-            if !self.date_symbols_data {
-                self.date_symbols_data = match field.symbol {
-                    FieldSymbol::Era => true,
-                    FieldSymbol::Month(_) => {
-                        !matches!(field.length, FieldLength::One | FieldLength::TwoDigit)
-                    }
-                    FieldSymbol::Weekday(_) => true,
-                    _ => false,
-                }
-            }
-            if !self.time_symbols_data {
-                self.time_symbols_data = matches!(field.symbol, FieldSymbol::DayPeriod(_));
-            }
-
-            if !self.week_data {
-                self.week_data = matches!(
-                    field.symbol,
-                    FieldSymbol::Year(Year::WeekOf) | FieldSymbol::Week(_)
-                )
-            }
-
-            if supports_time_zones {
-                if self.date_symbols_data && self.time_symbols_data && self.week_data {
-                    // If we support time zones, and require everything else, we
-                    // know all we need to return already.
-                    return Ok(true);
-                }
-            } else if matches!(field.symbol, FieldSymbol::TimeZone(_)) {
-                // If we don't support time zones, and encountered a time zone
-                // field, error out.
-                return Err(field);
-            }
-        }
-
-        Ok(false)
-    }
-}
-
-// Determines what optional data needs to be loaded to format `patterns`.
-pub fn analyze_patterns(
-    patterns: &PatternPlurals,
-    supports_time_zones: bool,
-) -> Result<RequiredData, Field> {
-    let mut required = RequiredData::default();
-    for pattern in patterns.patterns_iter() {
-        if required.add_requirements_from_pattern(pattern, supports_time_zones)? {
-            // We can bail early if everything is required & we don't need to
-            // validate the absence of TimeZones.
-            break;
-        }
-    }
-    Ok(required)
 }
 
 #[cfg(test)]

@@ -340,40 +340,6 @@ impl InternalCldrCalendar for JapaneseExtended {}
 impl InternalCldrCalendar for Persian {}
 impl InternalCldrCalendar for Roc {}
 
-pub(crate) fn load_lengths_for_cldr_calendar<C, P>(
-    provider: &P,
-    locale: &DataLocale,
-) -> Result<DataPayload<ErasedDateLengthsV1Marker>, DataError>
-where
-    C: CldrCalendar,
-    P: DataProvider<<C as CldrCalendar>::DateLengthsV1Marker> + ?Sized,
-{
-    let payload = provider
-        .load(DataRequest {
-            id: DataIdentifierBorrowed::for_locale(locale),
-            ..Default::default()
-        })?
-        .payload;
-    Ok(payload.cast())
-}
-
-pub(crate) fn load_symbols_for_cldr_calendar<C, P>(
-    provider: &P,
-    locale: &DataLocale,
-) -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>
-where
-    C: CldrCalendar,
-    P: DataProvider<<C as CldrCalendar>::DateSymbolsV1Marker> + ?Sized,
-{
-    let payload = provider
-        .load(DataRequest {
-            id: DataIdentifierBorrowed::for_locale(locale),
-            ..Default::default()
-        })?
-        .payload;
-    Ok(payload.cast())
-}
-
 #[cfg(feature = "experimental")]
 mod private {
     pub trait Sealed {}

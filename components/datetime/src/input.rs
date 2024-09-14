@@ -131,6 +131,7 @@ pub(crate) struct ExtractedTimeZoneInput {
 
 impl ExtractedDateTimeInput {
     /// Construct given an instance of a [`DateTimeInput`].
+    #[cfg(test)]
     pub(crate) fn extract_from<T: DateTimeInput>(input: &T) -> Self {
         Self {
             year: input.year(),

@@ -39,10 +39,9 @@ use crate::fields;
 use serde::{Deserialize, Serialize};
 
 use icu_locale_core::{
-    extensions::unicode::{key, Value},
+    extensions::unicode::Value,
     subtags::{subtag, Subtag},
 };
-use icu_provider::DataLocale;
 
 /// Stores user preferences which may affect the result of date and time formatting.
 ///
@@ -78,15 +77,6 @@ impl Bag {
         Self {
             hour_cycle: Some(h),
         }
-    }
-
-    /// Construct a [`Bag`] from a given [`DataLocale`]
-    pub(crate) fn from_data_locale(data_locale: &DataLocale) -> Self {
-        let hour_cycle = data_locale
-            .get_unicode_ext(&key!("hc"))
-            .as_ref()
-            .and_then(HourCycle::from_locale_value);
-        Self { hour_cycle }
     }
 }
 

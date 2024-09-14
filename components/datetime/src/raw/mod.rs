@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-/// Untyped versions of TypedDateTimeFormatter and TypedZonedDateTimeFormatter
-mod datetime;
+//! Untyped formatters that underpin the generic ones.
+//!
+//! This allows additional code sharing and reduced code size.
+
 #[cfg(feature = "experimental")]
 pub(crate) mod neo;
-
-pub(crate) use datetime::{DateFormatter, DateTimeFormatter, TimeFormatter};
