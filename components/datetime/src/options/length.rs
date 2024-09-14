@@ -19,7 +19,7 @@
 //!
 //! ```
 //! use icu::datetime::options::length;
-//! use icu::datetime::DateTimeFormatterOptions;
+//! use icu::datetime::options::DateTimeFormatterOptions;
 //!
 //! let bag = length::Bag::from_date_time_style(
 //!     length::Date::Medium, // "medium" date connector will be used
@@ -33,7 +33,7 @@
 //!
 //! ```
 //! use icu::datetime::options::length;
-//! use icu::datetime::DateTimeFormatterOptions;
+//! use icu::datetime::options::DateTimeFormatterOptions;
 //! let options: DateTimeFormatterOptions = length::Bag::default().into();
 //! ```
 //!
@@ -54,7 +54,7 @@ use serde::{Deserialize, Serialize};
 ///
 /// ```
 /// use icu::datetime::options::length;
-/// use icu::datetime::DateTimeFormatterOptions;
+/// use icu::datetime::options::DateTimeFormatterOptions;
 ///
 /// let bag = length::Bag::from_date_time_style(
 ///     length::Date::Medium,
@@ -68,7 +68,7 @@ use serde::{Deserialize, Serialize};
 ///
 /// ```
 /// use icu::datetime::options::length;
-/// use icu::datetime::DateTimeFormatterOptions;
+/// use icu::datetime::options::DateTimeFormatterOptions;
 /// let options: DateTimeFormatterOptions = length::Bag::default().into();
 /// ```
 ///

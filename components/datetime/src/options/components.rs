@@ -56,7 +56,7 @@
 //!
 //! ```
 //! use icu::datetime::options::components;
-//! use icu::datetime::DateTimeFormatterOptions;
+//! use icu::datetime::options::DateTimeFormatterOptions;
 //!
 //! let mut bag = components::Bag::default();
 //! bag.year = Some(components::Year::Numeric);
@@ -74,7 +74,7 @@
 //!
 //! ```
 //! use icu::datetime::options::components;
-//! use icu::datetime::DateTimeFormatterOptions;
+//! use icu::datetime::options::DateTimeFormatterOptions;
 //! let options: DateTimeFormatterOptions = components::Bag::default().into();
 //! ```
 //!

@@ -30,36 +30,35 @@
 //! use icu::calendar::{DateTime, Gregorian};
 //! use icu::datetime::neo::{TypedNeoFormatter, NeoFormatter, NeoOptions};
 //! use icu::datetime::neo_skeleton::NeoSkeletonLength;
+//! use icu::datetime::neo_marker::NeoYearMonthDayHourMinuteMarker;
 //! use icu::locale::{locale, Locale};
 //! use writeable::assert_try_writeable_eq;
 //!
-//! let options = NeoOptions::from(NeoSkeletonLength::Medium);
-//!
 //! // You can work with a formatter that can select the calendar at runtime:
 //! let locale = Locale::try_from_str("en-u-ca-gregory").unwrap();
-//! let dtf = NeoFormatter::try_new(&locale.into(), options.clone())
-//!     .expect("Failed to create NeoFormatter instance.");
+//! let dtf = NeoFormatter::<NeoYearMonthDayHourMinuteMarker>::try_new(
+//!     &locale.into(),
+//!     NeoSkeletonLength::Medium.into()
+//! )
+//! .expect("should successfully create NeoFormatter instance");
 //!
 //! // Or one that selects a calendar at compile time:
-//! let typed_dtf = TypedNeoFormatter::<Gregorian>::try_new(
+//! let typed_dtf = TypedNeoFormatter::<Gregorian, NeoYearMonthDayHourMinuteMarker>::try_new(
 //!     &locale!("en").into(),
-//!     options,
+//!     NeoSkeletonLength::Medium.into(),
 //! )
-//! .expect("Failed to create TypedNeoFormatter instance.");
+//! .expect("should successfully create TypedNeoFormatter instance");
 //!
 //! let typed_date =
 //!     DateTime::try_new_gregorian_datetime(2020, 9, 12, 12, 34, 28).unwrap();
 //! // prefer using ISO dates with DateTimeFormatter
-//! let date = typed_date.to_iso().to_any();
+//! let date = typed_date.to_iso();
 //!
-//! let formatted_date = dtf.strict_format(&date).expect("Calendars should match");
+//! let formatted_date = dtf.convert_and_format(&date);
 //! let typed_formatted_date = typed_dtf.format(&typed_date);
 //!
-//! assert_writeable_eq!(formatted_date, "Sep 12, 2020, 12:34 PM");
-//! assert_writeable_eq!(typed_formatted_date, "Sep 12, 2020, 12:34 PM");
-//!
-//! assert_eq!(formatted_date.to_string(), "Sep 12, 2020, 12:34 PM");
-//! assert_eq!(typed_formatted_date.to_string(), "Sep 12, 2020, 12:34 PM");
+//! assert_try_writeable_eq!(formatted_date, "Sep 12, 2020, 12:34 PM");
+//! assert_try_writeable_eq!(typed_formatted_date, "Sep 12, 2020, 12:34 PM");
 //! ```
 //!
 //! [data provider]: icu_provider

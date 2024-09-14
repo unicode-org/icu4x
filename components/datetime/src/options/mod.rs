@@ -15,7 +15,8 @@
 //! # Examples
 //!
 //! ```
-//! use icu::datetime::{options::length, DateTimeFormatterOptions};
+//! use icu::datetime::options::length;
+//! use icu::datetime::options::DateTimeFormatterOptions;
 //!
 //! let bag = length::Bag::from_date_time_style(
 //!     length::Date::Medium,
