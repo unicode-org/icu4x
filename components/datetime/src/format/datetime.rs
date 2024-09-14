@@ -39,8 +39,7 @@ use icu_provider::DataPayload;
 use icu_timezone::UtcOffset;
 use writeable::{Part, Writeable};
 
-/// [`FormattedDateTime`] is a intermediate structure which can be retrieved as
-/// an output from [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter).
+/// [`FormattedDateTime`] is a intermediate structure.
 ///
 /// The structure contains all the information needed to display formatted value,
 /// and it will also contain additional methods allowing the user to introspect
@@ -66,7 +65,7 @@ use writeable::{Part, Writeable};
 /// let _ = format!("Date: {}", formatted_date);
 /// ```
 #[derive(Debug, Copy, Clone)]
-pub struct FormattedDateTime<'l> {
+pub(crate) struct FormattedDateTime<'l> {
     pub(crate) datetime: ExtractedDateTimeInput,
     pub(crate) patterns: &'l DataPayload<PatternPluralsFromPatternsV1Marker>,
     pub(crate) date_symbols: Option<&'l provider::calendar::DateSymbolsV1<'l>>,

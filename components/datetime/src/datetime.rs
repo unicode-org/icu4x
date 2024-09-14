@@ -25,8 +25,8 @@ use icu_provider::prelude::*;
 use writeable::Writeable;
 
 use crate::{
-    calendar, calendar::CldrCalendar, input::DateInput, input::DateTimeInput, input::IsoTimeInput,
-    DateTimeError, FormattedDateTime,
+    calendar, calendar::CldrCalendar, format::datetime::FormattedDateTime, input::DateInput,
+    input::DateTimeInput, input::IsoTimeInput, DateTimeError,
 };
 
 size_test!(TimeFormatter, time_formatter_size, 1200);

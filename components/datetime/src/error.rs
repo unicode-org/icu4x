@@ -54,7 +54,7 @@ pub enum DateTimeError {
     /// The FixedDecimalFormatter is not loaded
     #[displaydoc("Missing FixedDecimalFormatter")]
     FixedDecimal,
-    /// An error from mixing calendar types in [`DateTimeFormatter`](crate::DateTimeFormatter)
+    /// An error from mixing calendar types in a formatter.
     #[displaydoc("DateTimeFormatter for {0} calendar was given a {1:?} calendar")]
     MismatchedAnyCalendar(AnyCalendarKind, Option<AnyCalendarKind>),
     /// Missing date symbols
@@ -74,7 +74,7 @@ pub enum DateTimeError {
     DuplicateField(Field),
 }
 
-/// An error from mixing calendar types in [`DateTimeFormatter`](crate::DateTimeFormatter)
+/// An error from mixing calendar types in a formatter.
 #[derive(Display, Debug, Copy, Clone, PartialEq)]
 #[displaydoc("DateTimeFormatter for {this_kind} calendar was given a {date_kind:?} calendar")]
 #[non_exhaustive]

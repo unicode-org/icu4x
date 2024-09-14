@@ -9,14 +9,13 @@ use core::cmp::Ordering;
 use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
     neo_skeleton::FractionalSecondDigits,
-    options::{components, length},
+    options::{components, length, DateTimeFormatterOptions},
     pattern::{
         hour_cycle,
         runtime::{self, PatternPlurals},
         PatternItem, TimeGranularity,
     },
     provider::calendar::{patterns::GenericLengthPatternsV1, DateSkeletonPatternsV1},
-    DateTimeFormatterOptions,
 };
 
 #[cfg(feature = "datagen")]

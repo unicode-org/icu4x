@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! [`DateTimeFormatterOptions`] is a bag of options which, together with [`Locale`],
-//! defines how dates will be formatted with a [`TypedDateTimeFormatter`] instance.
+//! defines how dates will be formatted.
 //!
 //! Each variant of the bag is a combination of settings defining how to format
 //! the date, with an optional `Preferences` which represent user preferences and
@@ -36,7 +36,7 @@ pub mod preferences;
 pub(crate) mod preferences;
 
 /// A bag of options which, together with [`Locale`](icu_locale_core::Locale), defines how
-/// dates will be formatted with a [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter) instance.
+/// dates will be formatted with a formatter instance.
 ///
 /// Each variant of the bag is a combination of settings defining how to format
 /// the date, with an optional `Preferences` which represent user preferences and
@@ -56,6 +56,7 @@ pub(crate) mod preferences;
 /// At the moment only the [`length::Bag`] works, and we plan to extend that to support
 /// `ECMA402` like components bag later.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[cfg(feature = "datagen")]
 #[non_exhaustive]
 pub enum DateTimeFormatterOptions {
     /// Bag of lengths for date and time.

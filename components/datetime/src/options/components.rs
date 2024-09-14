@@ -78,7 +78,7 @@
 //! let options: DateTimeFormatterOptions = components::Bag::default().into();
 //! ```
 //!
-//! *Note*: The exact result returned from [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter) is a subject to change over
+//! *Note*: The exact formatted result is a subject to change over
 //! time. Formatted result should be treated as opaque and displayed to the user as-is,
 //! and it is strongly recommended to never write tests that expect a particular formatted output.
 
