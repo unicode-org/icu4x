@@ -7,7 +7,6 @@
 #[cfg(feature = "alloc")]
 use alloc::{borrow::Cow, boxed::Box, collections::BTreeMap, str::FromStr, string::String};
 use core::fmt;
-use core::str::Utf8Error;
 #[cfg(feature = "litemap")]
 use litemap::LiteMap;
 use writeable::Writeable;
@@ -298,14 +297,8 @@ impl PatternBackend for MultiNamedPlaceholder {
     #[cfg(feature = "alloc")]
     type PlaceholderKeyCow<'a> = MultiNamedPlaceholderKeyCow<'a>;
     type Error<'a> = MissingNamedPlaceholderError<'a>;
-    type StoreFromBytesError = Utf8Error;
     type Store = str;
     type Iter<'a> = MultiNamedPlaceholderPatternIterator<'a>;
-
-    #[inline]
-    fn try_store_from_bytes(bytes: &[u8]) -> Result<&Self::Store, Self::StoreFromBytesError> {
-        core::str::from_utf8(bytes)
-    }
 
     fn validate_store(store: &Self::Store) -> Result<(), Error> {
         let mut iter = MultiNamedPlaceholderPatternIterator::new(store);

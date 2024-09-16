@@ -76,9 +76,6 @@ pub trait PatternBackend: crate::private::Sealed + 'static + core::fmt::Debug {
     /// The type of error that the [`TryWriteable`] for this backend can return.
     type Error<'a>;
 
-    /// The type of error that the [`PatternBackend::try_store_from_bytes`] can return.
-    type StoreFromBytesError;
-
     /// The unsized type of the store required for this backend, usually `str` or `[u8]`.
     #[doc(hidden)] // TODO(#4467): Should be internal
     type Store: ?Sized + PartialEq + core::fmt::Debug;
@@ -87,17 +84,13 @@ pub trait PatternBackend: crate::private::Sealed + 'static + core::fmt::Debug {
     #[doc(hidden)] // TODO(#4467): Should be internal
     type Iter<'a>: Iterator<Item = PatternItem<'a, Self::PlaceholderKey<'a>>>;
 
-    /// Converts a byte slice store to this pattern backend's store.
-    /// Does not perform validation of the store.
-    #[doc(hidden)] // TODO(#4467): Should be internal
-    fn try_store_from_bytes(bytes: &[u8]) -> Result<&Self::Store, Self::StoreFromBytesError>;
-
     /// Checks a store for validity, returning an error if invalid.
     #[doc(hidden)] // TODO(#4467): Should be internal
     fn validate_store(store: &Self::Store) -> Result<(), Error>;
 
     /// Constructs a store from pattern items.
-    #[doc(hidden)] // TODO(#4467): Should be internal
+    #[doc(hidden)]
+    // TODO(#4467): Should be internal
     // Note: it is not good practice to feature-gate trait methods, but this trait is sealed
     #[cfg(feature = "alloc")]
     fn try_from_items<

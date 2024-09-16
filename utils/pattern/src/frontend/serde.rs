@@ -9,23 +9,23 @@ use alloc::vec::Vec;
 use ::serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 #[doc(hidden)]
-pub fn deserialize_option_borrowed_cow<'de, D, B>(
+pub fn deserialize_option_borrowed_cow<'de, D: Deserializer<'de>, B>(
     deserializer: D,
 ) -> Result<Option<Cow<'de, Pattern<B>>>, D::Error>
 where
-    D: Deserializer<'de>,
     B: PatternBackend<Store = str>,
-    B::PlaceholderKeyCow<'de>: Deserialize<'de>,
+        Pattern<B>: ToOwned,
+        B::PlaceholderKeyCow<'de>: Deserialize<'de>,
 {
     #[derive(Deserialize)]
     #[serde(transparent, bound = "'data: 'de")]
     // Cows fail to borrow in some situations (array, option), but structs of Cows don't.
-    struct CowPatternWrap<'data, B: PatternBackend<Store = str>>(
+    struct CowPatternWrap<'data, B>(
         #[serde(borrow, deserialize_with = "deserialize_borrowed_cow")] pub Cow<'data, Pattern<B>>,
     )
     where
-        Pattern<B>: ToOwned,
         B: PatternBackend<Store = str>,
+        Pattern<B>: ToOwned,
         B::PlaceholderKeyCow<'data>: Deserialize<'data>;
 
     Option::<CowPatternWrap<'de, B>>::deserialize(deserializer)
@@ -37,7 +37,7 @@ type HumanReadablePattern<'a, B> =
 
 #[derive(Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // newtype
-pub struct PatternString<P: PatternBackend>(pub Box<Pattern<P>>);
+pub struct PatternString<B: PatternBackend>(pub Box<Pattern<B>>);
 
 impl<B: PatternBackend> Clone for PatternString<B>
 where
@@ -48,8 +48,8 @@ where
     }
 }
 
-impl<P: PatternBackend> core::ops::Deref for PatternString<P> {
-    type Target = Pattern<P>;
+impl<B: PatternBackend> core::ops::Deref for PatternString<B> {
+    type Target = Pattern<B>;
 
     fn deref(&self) -> &Self::Target {
         &self.0
@@ -58,7 +58,6 @@ impl<P: PatternBackend> core::ops::Deref for PatternString<P> {
 
 impl<B: PatternBackend> Default for PatternString<B>
 where
-    B: PatternBackend,
     Box<B::Store>: for<'a> From<&'a B::Store>,
 {
     fn default() -> Self {
@@ -69,7 +68,6 @@ where
 #[cfg(feature = "serde")]
 impl<'de, B: PatternBackend> serde::Deserialize<'de> for PatternString<B>
 where
-    B: PatternBackend,
     B::PlaceholderKeyCow<'de>: core::str::FromStr,
     <B::PlaceholderKeyCow<'de> as core::str::FromStr>::Err: core::fmt::Debug,
 {
@@ -85,12 +83,11 @@ where
 }
 
 #[doc(hidden)]
-pub fn deserialize_borrowed_cow<'de, E, B, D>(
+pub fn deserialize_borrowed_cow<'de, B, D: Deserializer<'de>>(
     deserializer: D,
 ) -> Result<Cow<'de, Pattern<B>>, D::Error>
 where
-    D: Deserializer<'de>,
-    B: PatternBackend<StoreFromBytesError = E, Store = str>,
+    B: PatternBackend<Store = str>,
     B::PlaceholderKeyCow<'de>: Deserialize<'de>,
 {
     if deserializer.is_human_readable() {
@@ -100,10 +97,10 @@ where
     }
 }
 
-impl<'de, 'data, B, E> Deserialize<'de> for Box<Pattern<B>>
+impl<'de, 'data, B> Deserialize<'de> for Box<Pattern<B>>
 where
     'de: 'data,
-    B: PatternBackend<StoreFromBytesError = E, Store = str>,
+    B: PatternBackend<Store = str>,
     B::PlaceholderKeyCow<'data>: Deserialize<'de>,
 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
@@ -122,14 +119,13 @@ where
     }
 }
 
-impl<'data, B, E> Deserialize<'data> for &'data Pattern<B>
+impl<'de, B: PatternBackend> Deserialize<'de> for &'de Pattern<B>
 where
-    B: PatternBackend<StoreFromBytesError = E>,
-    for<'a> &'a B::Store: Deserialize<'a>,
+    &'de B::Store: Deserialize<'de>,
 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
-        D: Deserializer<'data>,
+        D: Deserializer<'de>,
     {
         if deserializer.is_human_readable() {
             Err(<D::Error as ::serde::de::Error>::custom(
@@ -143,9 +139,8 @@ where
     }
 }
 
-impl<B> Serialize for Pattern<B>
+impl<B: PatternBackend> Serialize for Pattern<B>
 where
-    B: PatternBackend,
     B::Store: Serialize,
     for<'a> B::PlaceholderKeyCow<'a>: Serialize + From<B::PlaceholderKey<'a>>,
 {
