@@ -12,7 +12,7 @@ use icu_datetime::neo_skeleton::{
 };
 use icu_datetime::options::length;
 use icu_locale_core::{locale, Locale};
-use icu_timezone::{CustomTimeZone, CustomZonedDateTime};
+use icu_timezone::FormattableZonedDateTime;
 use writeable::assert_try_writeable_eq;
 
 const EXPECTED_DATETIME: &[&str] = &[
@@ -144,11 +144,10 @@ fn neo_date_lengths() {
 
 #[test]
 fn overlap_patterns() {
-    let datetime = CustomZonedDateTime {
-        date: Date::try_new_gregorian_date(2024, 8, 9).unwrap(),
-        time: Time::try_new(20, 40, 7, 250).unwrap(),
-        zone: CustomTimeZone::utc(),
-    };
+    let datetime = FormattableZonedDateTime::new_in_utc(
+        Date::try_new_gregorian_date(2024, 8, 9).unwrap(),
+        Time::try_new(20, 40, 7, 250).unwrap(),
+    );
     struct TestCase {
         locale: Locale,
         components: NeoComponents,

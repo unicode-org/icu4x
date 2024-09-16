@@ -8,12 +8,12 @@
 use icu::calendar::{Date, Gregorian, Time};
 use icu::locale::locale;
 use icu::plurals::{PluralCategory, PluralRules};
-use icu::timezone::CustomTimeZone;
+use icu::timezone::FormattableTimeZone;
 use icu_collections::codepointinvlist::CodePointInversionListBuilder;
 use icu_datetime::neo::TypedNeoFormatter;
 use icu_datetime::neo_marker::NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker;
 use icu_datetime::neo_skeleton::NeoSkeletonLength;
-use icu_timezone::CustomZonedDateTime;
+use icu_timezone::{FormattableZonedDateTime, ZonedDateTime};
 use std::env;
 use writeable::adapters::LossyWrap;
 
@@ -47,9 +47,8 @@ fn main() {
         .expect("Failed to create zoned datetime formatter.");
         let date = Date::try_new_gregorian_date(2020, 10, 10).unwrap();
         let time = Time::try_new(18, 56, 0, 0).unwrap();
-        let zone = CustomTimeZone::utc();
 
-        let formatted_dt = dtf.format(&CustomZonedDateTime { date, time, zone });
+        let formatted_dt = dtf.format(&FormattableZonedDateTime::new_in_utc(date, time));
 
         println!("Today is: {}", LossyWrap(formatted_dt));
     }

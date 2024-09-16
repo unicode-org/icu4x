@@ -12,7 +12,7 @@
 //! used to quickly format any date and time provided. There are variants of these types that can format greater or fewer components.
 //!
 //! These formatters work with types from the [`calendar`] module, like [`Date`], [`DateTime`], and [`Time`],
-//! and [`timezone::CustomTimeZone`], however other types may be used provided they implement the traits from the [`input`] module.
+//! and [`timezone::FormattableTimeZone`], however other types may be used provided they implement the traits from the [`input`] module.
 //!
 //! Each instance of a date-related formatter is associated with a particular [`Calendar`].
 //! The "Typed" vs untyped formatter distinction is to help with this. For example, if you know at compile time that you
@@ -69,7 +69,7 @@
 //! [`Time`]: calendar::types::{Time}
 //! [`Calendar`]: calendar::{Calendar}
 //! [`AnyCalendar`]: calendar::any_calendar::{AnyCalendar}
-//! [`timezone::CustomTimeZone`]: icu::timezone::{CustomTimeZone}
+//! [`timezone::FormattableTimeZone`]: icu::timezone::{FormattableTimeZone}
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
