@@ -8,7 +8,7 @@
 use crate::format::datetime::FormattedDateTime;
 use crate::{
     format::datetime,
-    input::{DateInput, DateTimeInput, ExtractedDateTimeInput, IsoTimeInput},
+    input::{DateInput, DateTimeInput, ExtractedInput, IsoTimeInput},
     options::{length, preferences},
     pattern::runtime::PatternPlurals,
     provider::{
@@ -147,7 +147,7 @@ impl TimeFormatter {
             patterns: &self.patterns,
             date_symbols: None,
             time_symbols: self.symbols.as_ref().map(|s| s.get()),
-            datetime: ExtractedDateTimeInput::extract_from_time(value),
+            datetime: ExtractedInput::extract_from_time(value),
             week_data: None,
             ordinal_rules: None,
             fixed_decimal_format: &self.fixed_decimal_format,
@@ -316,7 +316,7 @@ impl DateFormatter {
             patterns: &self.patterns,
             date_symbols: self.symbols.as_ref().map(|s| s.get()),
             time_symbols: None,
-            datetime: ExtractedDateTimeInput::extract_from_date(value),
+            datetime: ExtractedInput::extract_from_date(value),
             week_data: None,
             ordinal_rules: None,
             fixed_decimal_format: &self.fixed_decimal_format,
@@ -539,7 +539,7 @@ impl DateTimeFormatter {
             patterns: &self.patterns,
             date_symbols: self.date_symbols.as_ref().map(|s| s.get()),
             time_symbols: self.time_symbols.as_ref().map(|s| s.get()),
-            datetime: ExtractedDateTimeInput::extract_from(value),
+            datetime: ExtractedInput::extract_from(value),
             week_data: self.week_data.as_ref(),
             ordinal_rules: self.ordinal_rules.as_ref(),
             fixed_decimal_format: &self.fixed_decimal_format,

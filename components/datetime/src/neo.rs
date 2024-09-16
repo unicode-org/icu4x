@@ -9,7 +9,7 @@ use crate::external_loaders::*;
 use crate::format::datetime::try_write_pattern_items;
 use crate::format::datetime::DateTimeWriteError;
 use crate::format::neo::*;
-use crate::input::ExtractedDateTimeInput;
+use crate::input::ExtractedInput;
 use crate::neo_marker::DateInputMarkers;
 use crate::neo_marker::HasConstComponents;
 use crate::neo_marker::{
@@ -641,15 +641,14 @@ where
     /// // is not implemented for `icu::icu_calendar::Time`
     /// formatter.format(&Time::try_new(0, 0, 0, 0).unwrap());
     /// ```
-    pub fn format<I>(&self, datetime: &I) -> FormattedNeoDateTime
+    pub fn format<I>(&self, input: &I) -> FormattedNeoDateTime
     where
         I: ?Sized + IsInCalendar<C> + AllInputMarkers<R>,
     {
-        let datetime =
-            ExtractedDateTimeInput::extract_from_neo_input::<R::D, R::T, R::Z, I>(datetime);
+        let input = ExtractedInput::extract_from_neo_input::<R::D, R::T, R::Z, I>(input);
         FormattedNeoDateTime {
-            pattern: self.selection.select(&datetime),
-            datetime,
+            pattern: self.selection.select(&input),
+            input,
             names: self.names.as_borrowed(),
         }
     }
@@ -1370,11 +1369,10 @@ where
                     .into(),
             });
         }
-        let datetime =
-            ExtractedDateTimeInput::extract_from_neo_input::<R::D, R::T, R::Z, I>(datetime);
+        let datetime = ExtractedInput::extract_from_neo_input::<R::D, R::T, R::Z, I>(datetime);
         Ok(FormattedNeoDateTime {
             pattern: self.selection.select(&datetime),
-            datetime,
+            input: datetime,
             names: self.names.as_borrowed(),
         })
     }
@@ -1435,12 +1433,10 @@ where
     {
         let datetime = datetime.to_calendar(&self.calendar);
         let datetime =
-            ExtractedDateTimeInput::extract_from_neo_input::<R::D, R::T, R::Z, I::Converted<'a>>(
-                &datetime,
-            );
+            ExtractedInput::extract_from_neo_input::<R::D, R::T, R::Z, I::Converted<'a>>(&datetime);
         FormattedNeoDateTime {
             pattern: self.selection.select(&datetime),
-            datetime,
+            input: datetime,
             names: self.names.as_borrowed(),
         }
     }
@@ -1455,7 +1451,7 @@ where
 #[derive(Debug)]
 pub struct FormattedNeoDateTime<'a> {
     pattern: DateTimeZonePatternDataBorrowed<'a>,
-    datetime: ExtractedDateTimeInput,
+    input: ExtractedInput,
     names: RawDateTimeNamesBorrowed<'a>,
 }
 
@@ -1469,7 +1465,7 @@ impl<'a> TryWriteable for FormattedNeoDateTime<'a> {
         try_write_pattern_items(
             self.pattern.metadata(),
             self.pattern.iter_items(),
-            &self.datetime,
+            &self.input,
             Some(&self.names),
             Some(&self.names),
             Some(&self.names),
