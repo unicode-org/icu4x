@@ -7,13 +7,30 @@
   "past": {
     "other": [
       0,
-      "{0} wk. ago"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " wk. ago"
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "in {0} wk."
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " wk."
+        }
+      ]
     ]
   }
 }

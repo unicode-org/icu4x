@@ -381,18 +381,6 @@ impl PatternBackend for DoublePlaceholder {
 
         Ok(result.into_boxed_str())
     }
-
-    #[cfg(feature = "alloc")]
-    fn escape_placeholder(s: &mut String, placeholder: DoublePlaceholderKey) {
-        s.push_str(match placeholder {
-            DoublePlaceholderKey::Place0 => "{0}",
-            DoublePlaceholderKey::Place1 => "{1}",
-        });
-    }
-
-    fn empty() -> &'static Self::Store {
-        "\0\u{1}"
-    }
 }
 
 #[doc(hidden)] // TODO(#4467): Should be internal

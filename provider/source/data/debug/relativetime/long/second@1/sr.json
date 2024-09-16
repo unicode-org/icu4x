@@ -5,29 +5,89 @@
   "past": {
     "one": [
       0,
-      "пре {0} секунде"
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " секунде"
+        }
+      ]
     ],
     "few": [
       0,
-      "пре {0} секунде"
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " секунде"
+        }
+      ]
     ],
     "other": [
       0,
-      "пре {0} секунди"
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " секунди"
+        }
+      ]
     ]
   },
   "future": {
     "one": [
       0,
-      "за {0} секунду"
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " секунду"
+        }
+      ]
     ],
     "few": [
       0,
-      "за {0} секунде"
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " секунде"
+        }
+      ]
     ],
     "other": [
       0,
-      "за {0} секунди"
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " секунди"
+        }
+      ]
     ]
   }
 }

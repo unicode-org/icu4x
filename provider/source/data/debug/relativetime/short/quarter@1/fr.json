@@ -7,13 +7,33 @@
   "past": {
     "other": [
       0,
-      "il y a {0} trim."
+      [
+        {
+          "Literal": "il y a "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " trim."
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "dans {0} trim."
+      [
+        {
+          "Literal": "dans "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " trim."
+        }
+      ]
     ]
   }
 }

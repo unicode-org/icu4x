@@ -7,13 +7,30 @@
   "past": {
     "other": [
       0,
-      "{0} เดือนที่แล้ว"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " เดือนที่แล้ว"
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "ใน {0} เดือน"
+      [
+        {
+          "Literal": "ใน "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " เดือน"
+        }
+      ]
     ]
   }
 }

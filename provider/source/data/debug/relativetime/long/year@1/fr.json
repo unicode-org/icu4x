@@ -7,21 +7,61 @@
   "past": {
     "one": [
       0,
-      "il y a {0} an"
+      [
+        {
+          "Literal": "il y a "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " an"
+        }
+      ]
     ],
     "other": [
       0,
-      "il y a {0} ans"
+      [
+        {
+          "Literal": "il y a "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ans"
+        }
+      ]
     ]
   },
   "future": {
     "one": [
       0,
-      "dans {0} an"
+      [
+        {
+          "Literal": "dans "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " an"
+        }
+      ]
     ],
     "other": [
       0,
-      "dans {0} ans"
+      [
+        {
+          "Literal": "dans "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ans"
+        }
+      ]
     ]
   }
 }

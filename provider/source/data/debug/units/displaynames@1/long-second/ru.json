@@ -2,15 +2,36 @@
   "patterns": {
     "one": [
       0,
-      "{0} секунда"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " секунда"
+        }
+      ]
     ],
     "many": [
       0,
-      "{0} секунд"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " секунд"
+        }
+      ]
     ],
     "other": [
       0,
-      "{0} секунды"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " секунды"
+        }
+      ]
     ]
   }
 }

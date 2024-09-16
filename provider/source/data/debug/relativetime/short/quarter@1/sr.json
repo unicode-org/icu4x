@@ -7,13 +7,33 @@
   "past": {
     "other": [
       0,
-      "пре {0} кв."
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " кв."
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "за {0} кв."
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " кв."
+        }
+      ]
     ]
   }
 }

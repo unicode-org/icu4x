@@ -7,29 +7,89 @@
   "past": {
     "one": [
       0,
-      "пре {0} месеца"
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " месеца"
+        }
+      ]
     ],
     "few": [
       0,
-      "пре {0} месеца"
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " месеца"
+        }
+      ]
     ],
     "other": [
       0,
-      "пре {0} месеци"
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " месеци"
+        }
+      ]
     ]
   },
   "future": {
     "one": [
       0,
-      "за {0} месец"
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " месец"
+        }
+      ]
     ],
     "few": [
       0,
-      "за {0} месеца"
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " месеца"
+        }
+      ]
     ],
     "other": [
       0,
-      "за {0} месеци"
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " месеци"
+        }
+      ]
     ]
   }
 }

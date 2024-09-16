@@ -2,11 +2,25 @@
   "patterns": {
     "one": [
       0,
-      "{0} meter"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " meter"
+        }
+      ]
     ],
     "other": [
       0,
-      "{0} meters"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " meters"
+        }
+      ]
     ]
   }
 }

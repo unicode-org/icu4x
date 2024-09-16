@@ -7,21 +7,61 @@
   "past": {
     "one": [
       0,
-      "hace {0} año"
+      [
+        {
+          "Literal": "hace "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " año"
+        }
+      ]
     ],
     "other": [
       0,
-      "hace {0} años"
+      [
+        {
+          "Literal": "hace "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " años"
+        }
+      ]
     ]
   },
   "future": {
     "one": [
       0,
-      "dentro de {0} año"
+      [
+        {
+          "Literal": "dentro de "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " año"
+        }
+      ]
     ],
     "other": [
       0,
-      "dentro de {0} años"
+      [
+        {
+          "Literal": "dentro de "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " años"
+        }
+      ]
     ]
   }
 }

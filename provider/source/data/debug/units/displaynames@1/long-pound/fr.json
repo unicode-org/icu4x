@@ -2,11 +2,25 @@
   "patterns": {
     "one": [
       0,
-      "{0} livre"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " livre"
+        }
+      ]
     ],
     "other": [
       0,
-      "{0} livres"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " livres"
+        }
+      ]
     ]
   }
 }

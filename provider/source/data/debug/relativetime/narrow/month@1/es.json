@@ -7,13 +7,33 @@
   "past": {
     "other": [
       0,
-      "hace {0} m"
+      [
+        {
+          "Literal": "hace "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " m"
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "dentro de {0} m"
+      [
+        {
+          "Literal": "dentro de "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " m"
+        }
+      ]
     ]
   }
 }

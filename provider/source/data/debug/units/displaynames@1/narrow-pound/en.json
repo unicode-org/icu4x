@@ -2,7 +2,14 @@
   "patterns": {
     "other": [
       0,
-      "{0}#"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": "#"
+        }
+      ]
     ]
   }
 }

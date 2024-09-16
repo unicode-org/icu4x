@@ -7,21 +7,55 @@
   "past": {
     "one": [
       0,
-      "{0} week ago"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " week ago"
+        }
+      ]
     ],
     "other": [
       0,
-      "{0} weeks ago"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " weeks ago"
+        }
+      ]
     ]
   },
   "future": {
     "one": [
       0,
-      "in {0} week"
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " week"
+        }
+      ]
     ],
     "other": [
       0,
-      "in {0} weeks"
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " weeks"
+        }
+      ]
     ]
   }
 }

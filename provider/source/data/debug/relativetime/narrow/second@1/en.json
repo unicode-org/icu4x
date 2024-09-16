@@ -5,13 +5,30 @@
   "past": {
     "other": [
       0,
-      "{0}s ago"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": "s ago"
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "in {0}s"
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": "s"
+        }
+      ]
     ]
   }
 }

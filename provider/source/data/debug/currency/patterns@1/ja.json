@@ -2,7 +2,14 @@
   "patterns": {
     "other": [
       0,
-      "{0}{1}"
+      [
+        {
+          "Placeholder": "Place0"
+        },
+        {
+          "Placeholder": "Place1"
+        }
+      ]
     ]
   }
 }

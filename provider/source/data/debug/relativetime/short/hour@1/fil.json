@@ -5,17 +5,44 @@
   "past": {
     "other": [
       0,
-      "{0} oras ang nakalipas"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " oras ang nakalipas"
+        }
+      ]
     ]
   },
   "future": {
     "one": [
       0,
-      "sa {0} oras"
+      [
+        {
+          "Literal": "sa "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " oras"
+        }
+      ]
     ],
     "other": [
       0,
-      "sa {0} (na) oras"
+      [
+        {
+          "Literal": "sa "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " (na) oras"
+        }
+      ]
     ]
   }
 }

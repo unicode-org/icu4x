@@ -2,11 +2,25 @@
   "patterns": {
     "one": [
       0,
-      "{0} libra"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " libra"
+        }
+      ]
     ],
     "other": [
       0,
-      "{0} na libra"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " na libra"
+        }
+      ]
     ]
   }
 }

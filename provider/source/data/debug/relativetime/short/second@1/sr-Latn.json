@@ -5,13 +5,33 @@
   "past": {
     "other": [
       0,
-      "pre {0} sek."
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sek."
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "za {0} sek."
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sek."
+        }
+      ]
     ]
   }
 }

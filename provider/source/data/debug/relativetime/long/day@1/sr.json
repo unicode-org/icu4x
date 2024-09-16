@@ -9,17 +9,47 @@
   "past": {
     "other": [
       0,
-      "пре {0} дана"
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " дана"
+        }
+      ]
     ]
   },
   "future": {
     "one": [
       0,
-      "за {0} дан"
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " дан"
+        }
+      ]
     ],
     "other": [
       0,
-      "за {0} дана"
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " дана"
+        }
+      ]
     ]
   }
 }

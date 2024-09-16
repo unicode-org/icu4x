@@ -7,13 +7,30 @@
   "past": {
     "other": [
       0,
-      "{0}q ago"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": "q ago"
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "in {0}q"
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": "q"
+        }
+      ]
     ]
   }
 }

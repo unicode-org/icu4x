@@ -5,13 +5,33 @@
   "past": {
     "other": [
       0,
-      "пре {0} ч."
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ч."
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "за {0} ч."
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ч."
+        }
+      ]
     ]
   }
 }

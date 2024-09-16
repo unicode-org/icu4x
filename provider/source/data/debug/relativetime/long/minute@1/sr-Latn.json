@@ -5,17 +5,47 @@
   "past": {
     "other": [
       0,
-      "pre {0} minuta"
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " minuta"
+        }
+      ]
     ]
   },
   "future": {
     "one": [
       0,
-      "za {0} minut"
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " minut"
+        }
+      ]
     ],
     "other": [
       0,
-      "za {0} minuta"
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " minuta"
+        }
+      ]
     ]
   }
 }

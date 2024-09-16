@@ -7,29 +7,80 @@
   "past": {
     "one": [
       0,
-      "{0} месяц назад"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " месяц назад"
+        }
+      ]
     ],
     "many": [
       0,
-      "{0} месяцев назад"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " месяцев назад"
+        }
+      ]
     ],
     "other": [
       0,
-      "{0} месяца назад"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " месяца назад"
+        }
+      ]
     ]
   },
   "future": {
     "one": [
       0,
-      "через {0} месяц"
+      [
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " месяц"
+        }
+      ]
     ],
     "many": [
       0,
-      "через {0} месяцев"
+      [
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " месяцев"
+        }
+      ]
     ],
     "other": [
       0,
-      "через {0} месяца"
+      [
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " месяца"
+        }
+      ]
     ]
   }
 }

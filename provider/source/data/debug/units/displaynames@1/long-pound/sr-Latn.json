@@ -2,15 +2,36 @@
   "patterns": {
     "one": [
       0,
-      "{0} funta"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " funta"
+        }
+      ]
     ],
     "few": [
       0,
-      "{0} funte"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " funte"
+        }
+      ]
     ],
     "other": [
       0,
-      "{0} funti"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " funti"
+        }
+      ]
     ]
   }
 }

@@ -5,21 +5,61 @@
   "past": {
     "one": [
       0,
-      "hace {0} hora"
+      [
+        {
+          "Literal": "hace "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " hora"
+        }
+      ]
     ],
     "other": [
       0,
-      "hace {0} horas"
+      [
+        {
+          "Literal": "hace "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " horas"
+        }
+      ]
     ]
   },
   "future": {
     "one": [
       0,
-      "dentro de {0} hora"
+      [
+        {
+          "Literal": "dentro de "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " hora"
+        }
+      ]
     ],
     "other": [
       0,
-      "dentro de {0} horas"
+      [
+        {
+          "Literal": "dentro de "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " horas"
+        }
+      ]
     ]
   }
 }

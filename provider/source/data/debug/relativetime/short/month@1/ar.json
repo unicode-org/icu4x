@@ -7,45 +7,121 @@
   "past": {
     "one": [
       0,
-      "قبل شهر واحد"
+      [
+        {
+          "Literal": "قبل شهر واحد"
+        }
+      ]
     ],
     "two": [
       0,
-      "قبل شهرين"
+      [
+        {
+          "Literal": "قبل شهرين"
+        }
+      ]
     ],
     "few": [
       0,
-      "خلال {0} أشهر"
+      [
+        {
+          "Literal": "خلال "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " أشهر"
+        }
+      ]
     ],
     "many": [
       0,
-      "قبل {0} شهرًا"
+      [
+        {
+          "Literal": "قبل "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " شهرًا"
+        }
+      ]
     ],
     "other": [
       0,
-      "قبل {0} شهر"
+      [
+        {
+          "Literal": "قبل "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " شهر"
+        }
+      ]
     ]
   },
   "future": {
     "one": [
       0,
-      "خلال شهر واحد"
+      [
+        {
+          "Literal": "خلال شهر واحد"
+        }
+      ]
     ],
     "two": [
       0,
-      "خلال شهرين"
+      [
+        {
+          "Literal": "خلال شهرين"
+        }
+      ]
     ],
     "few": [
       0,
-      "خلال {0} أشهر"
+      [
+        {
+          "Literal": "خلال "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " أشهر"
+        }
+      ]
     ],
     "many": [
       0,
-      "خلال {0} شهرًا"
+      [
+        {
+          "Literal": "خلال "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " شهرًا"
+        }
+      ]
     ],
     "other": [
       0,
-      "خلال {0} شهر"
+      [
+        {
+          "Literal": "خلال "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " شهر"
+        }
+      ]
     ]
   }
 }

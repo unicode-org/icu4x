@@ -2,11 +2,25 @@
   "patterns": {
     "one": [
       0,
-      "{0} pie"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " pie"
+        }
+      ]
     ],
     "other": [
       0,
-      "{0} pies"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " pies"
+        }
+      ]
     ]
   }
 }

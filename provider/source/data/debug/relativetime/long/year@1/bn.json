@@ -7,13 +7,27 @@
   "past": {
     "other": [
       0,
-      "{0} বছর পূর্বে"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " বছর পূর্বে"
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "{0} বছরে"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " বছরে"
+        }
+      ]
     ]
   }
 }

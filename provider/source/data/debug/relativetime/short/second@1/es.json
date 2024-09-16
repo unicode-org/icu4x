@@ -5,13 +5,33 @@
   "past": {
     "other": [
       0,
-      "hace {0} s"
+      [
+        {
+          "Literal": "hace "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " s"
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "dentro de {0} s"
+      [
+        {
+          "Literal": "dentro de "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " s"
+        }
+      ]
     ]
   }
 }

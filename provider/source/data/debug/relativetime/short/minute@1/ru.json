@@ -5,13 +5,30 @@
   "past": {
     "other": [
       0,
-      "{0} мин. назад"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " мин. назад"
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "через {0} мин."
+      [
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " мин."
+        }
+      ]
     ]
   }
 }

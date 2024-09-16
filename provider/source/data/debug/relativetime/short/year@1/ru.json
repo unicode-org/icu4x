@@ -7,21 +7,55 @@
   "past": {
     "many": [
       0,
-      "{0} л. назад"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " л. назад"
+        }
+      ]
     ],
     "other": [
       0,
-      "{0} г. назад"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " г. назад"
+        }
+      ]
     ]
   },
   "future": {
     "many": [
       0,
-      "через {0} л."
+      [
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " л."
+        }
+      ]
     ],
     "other": [
       0,
-      "через {0} г."
+      [
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " г."
+        }
+      ]
     ]
   }
 }

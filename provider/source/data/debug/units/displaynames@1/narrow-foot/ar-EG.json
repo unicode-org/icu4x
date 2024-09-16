@@ -2,15 +2,33 @@
   "patterns": {
     "one": [
       0,
-      "قدم"
+      [
+        {
+          "Literal": "قدم"
+        }
+      ]
     ],
     "many": [
       0,
-      "{0} قدمًا"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " قدمًا"
+        }
+      ]
     ],
     "other": [
       0,
-      "{0} قدم"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " قدم"
+        }
+      ]
     ]
   }
 }

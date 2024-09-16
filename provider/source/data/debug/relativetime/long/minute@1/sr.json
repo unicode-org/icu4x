@@ -5,17 +5,47 @@
   "past": {
     "other": [
       0,
-      "пре {0} минута"
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " минута"
+        }
+      ]
     ]
   },
   "future": {
     "one": [
       0,
-      "за {0} минут"
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " минут"
+        }
+      ]
     ],
     "other": [
       0,
-      "за {0} минута"
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " минута"
+        }
+      ]
     ]
   }
 }

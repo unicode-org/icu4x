@@ -5,21 +5,61 @@
   "past": {
     "one": [
       0,
-      "il y a {0} minute"
+      [
+        {
+          "Literal": "il y a "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " minute"
+        }
+      ]
     ],
     "other": [
       0,
-      "il y a {0} minutes"
+      [
+        {
+          "Literal": "il y a "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " minutes"
+        }
+      ]
     ]
   },
   "future": {
     "one": [
       0,
-      "dans {0} minute"
+      [
+        {
+          "Literal": "dans "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " minute"
+        }
+      ]
     ],
     "other": [
       0,
-      "dans {0} minutes"
+      [
+        {
+          "Literal": "dans "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " minutes"
+        }
+      ]
     ]
   }
 }

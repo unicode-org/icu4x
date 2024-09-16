@@ -2,7 +2,14 @@
   "patterns": {
     "other": [
       0,
-      "{0} メートル"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " メートル"
+        }
+      ]
     ]
   }
 }

@@ -7,13 +7,33 @@
   "past": {
     "other": [
       0,
-      "pre {0} mes."
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " mes."
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "za {0} mes."
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " mes."
+        }
+      ]
     ]
   }
 }

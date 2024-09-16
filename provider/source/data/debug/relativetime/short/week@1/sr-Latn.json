@@ -7,13 +7,33 @@
   "past": {
     "other": [
       0,
-      "pre {0} ned."
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ned."
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "za {0} ned."
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ned."
+        }
+      ]
     ]
   }
 }

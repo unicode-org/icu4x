@@ -2,7 +2,14 @@
   "patterns": {
     "other": [
       0,
-      "{0} นาที"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " นาที"
+        }
+      ]
     ]
   }
 }

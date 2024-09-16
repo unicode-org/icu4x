@@ -7,17 +7,47 @@
   "past": {
     "other": [
       0,
-      "пре {0} квартала"
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " квартала"
+        }
+      ]
     ]
   },
   "future": {
     "one": [
       0,
-      "за {0} квартал"
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " квартал"
+        }
+      ]
     ],
     "other": [
       0,
-      "за {0} квартала"
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " квартала"
+        }
+      ]
     ]
   }
 }

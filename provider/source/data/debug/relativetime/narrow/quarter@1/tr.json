@@ -7,13 +7,27 @@
   "past": {
     "other": [
       0,
-      "{0} çyr. önce"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " çyr. önce"
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "{0} çyr. sonra"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " çyr. sonra"
+        }
+      ]
     ]
   }
 }

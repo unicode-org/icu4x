@@ -2,11 +2,25 @@
   "patterns": {
     "one": [
       0,
-      "{0} পাউন্ড"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " পাউন্ড"
+        }
+      ]
     ],
     "other": [
       0,
-      "{0} lb"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " lb"
+        }
+      ]
     ]
   }
 }

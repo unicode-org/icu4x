@@ -7,13 +7,30 @@
   "past": {
     "other": [
       0,
-      "{0} yr. ago"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " yr. ago"
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "in {0} yr."
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " yr."
+        }
+      ]
     ]
   }
 }

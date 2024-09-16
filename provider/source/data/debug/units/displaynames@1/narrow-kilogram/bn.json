@@ -2,7 +2,14 @@
   "patterns": {
     "other": [
       0,
-      "{0} কেজি"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " কেজি"
+        }
+      ]
     ]
   }
 }

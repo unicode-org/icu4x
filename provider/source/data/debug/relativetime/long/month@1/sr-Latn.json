@@ -7,29 +7,89 @@
   "past": {
     "one": [
       0,
-      "pre {0} meseca"
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " meseca"
+        }
+      ]
     ],
     "few": [
       0,
-      "pre {0} meseca"
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " meseca"
+        }
+      ]
     ],
     "other": [
       0,
-      "pre {0} meseci"
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " meseci"
+        }
+      ]
     ]
   },
   "future": {
     "one": [
       0,
-      "za {0} mesec"
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " mesec"
+        }
+      ]
     ],
     "few": [
       0,
-      "za {0} meseca"
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " meseca"
+        }
+      ]
     ],
     "other": [
       0,
-      "za {0} meseci"
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " meseci"
+        }
+      ]
     ]
   }
 }

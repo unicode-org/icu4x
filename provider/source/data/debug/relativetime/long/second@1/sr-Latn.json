@@ -5,29 +5,89 @@
   "past": {
     "one": [
       0,
-      "pre {0} sekunde"
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sekunde"
+        }
+      ]
     ],
     "few": [
       0,
-      "pre {0} sekunde"
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sekunde"
+        }
+      ]
     ],
     "other": [
       0,
-      "pre {0} sekundi"
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sekundi"
+        }
+      ]
     ]
   },
   "future": {
     "one": [
       0,
-      "za {0} sekundu"
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sekundu"
+        }
+      ]
     ],
     "few": [
       0,
-      "za {0} sekunde"
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sekunde"
+        }
+      ]
     ],
     "other": [
       0,
-      "za {0} sekundi"
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sekundi"
+        }
+      ]
     ]
   }
 }

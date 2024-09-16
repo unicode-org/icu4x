@@ -2,11 +2,25 @@
   "patterns": {
     "one": [
       0,
-      "{0} oras"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " oras"
+        }
+      ]
     ],
     "other": [
       0,
-      "{0} na oras"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " na oras"
+        }
+      ]
     ]
   }
 }

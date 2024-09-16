@@ -9,21 +9,61 @@
   "past": {
     "one": [
       0,
-      "hace {0} día"
+      [
+        {
+          "Literal": "hace "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " día"
+        }
+      ]
     ],
     "other": [
       0,
-      "hace {0} días"
+      [
+        {
+          "Literal": "hace "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " días"
+        }
+      ]
     ]
   },
   "future": {
     "one": [
       0,
-      "dentro de {0} día"
+      [
+        {
+          "Literal": "dentro de "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " día"
+        }
+      ]
     ],
     "other": [
       0,
-      "dentro de {0} días"
+      [
+        {
+          "Literal": "dentro de "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " días"
+        }
+      ]
     ]
   }
 }

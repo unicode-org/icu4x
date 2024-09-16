@@ -5,13 +5,27 @@
   "past": {
     "other": [
       0,
-      "{0} 秒前"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " 秒前"
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "{0} 秒後"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " 秒後"
+        }
+      ]
     ]
   }
 }

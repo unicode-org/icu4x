@@ -7,13 +7,33 @@
   "past": {
     "other": [
       0,
-      "-{0} Q"
+      [
+        {
+          "Literal": "-"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " Q"
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "+{0} Q"
+      [
+        {
+          "Literal": "+"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " Q"
+        }
+      ]
     ]
   }
 }

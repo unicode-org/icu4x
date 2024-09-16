@@ -7,13 +7,33 @@
   "past": {
     "other": [
       0,
-      "пре {0} нед."
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " нед."
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "за {0} нед."
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " нед."
+        }
+      ]
     ]
   }
 }

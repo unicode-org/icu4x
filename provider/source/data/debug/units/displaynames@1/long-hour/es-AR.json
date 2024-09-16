@@ -2,11 +2,25 @@
   "patterns": {
     "one": [
       0,
-      "{0} hora"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " hora"
+        }
+      ]
     ],
     "other": [
       0,
-      "{0} horas"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " horas"
+        }
+      ]
     ]
   }
 }

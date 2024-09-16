@@ -2,11 +2,25 @@
   "patterns": {
     "one": [
       0,
-      "{0} sa"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sa"
+        }
+      ]
     ],
     "other": [
       0,
-      "{0}s"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": "s"
+        }
+      ]
     ]
   }
 }

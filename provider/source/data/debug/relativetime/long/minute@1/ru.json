@@ -5,29 +5,80 @@
   "past": {
     "one": [
       0,
-      "{0} минуту назад"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " минуту назад"
+        }
+      ]
     ],
     "many": [
       0,
-      "{0} минут назад"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " минут назад"
+        }
+      ]
     ],
     "other": [
       0,
-      "{0} минуты назад"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " минуты назад"
+        }
+      ]
     ]
   },
   "future": {
     "one": [
       0,
-      "через {0} минуту"
+      [
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " минуту"
+        }
+      ]
     ],
     "many": [
       0,
-      "через {0} минут"
+      [
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " минут"
+        }
+      ]
     ],
     "other": [
       0,
-      "через {0} минуты"
+      [
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " минуты"
+        }
+      ]
     ]
   }
 }

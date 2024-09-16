@@ -7,13 +7,33 @@
   "past": {
     "other": [
       0,
-      "pre {0} kv."
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " kv."
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "za {0} kv."
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " kv."
+        }
+      ]
     ]
   }
 }

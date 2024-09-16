@@ -7,13 +7,33 @@
   "past": {
     "other": [
       0,
-      "hace {0} trim."
+      [
+        {
+          "Literal": "hace "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " trim."
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "dentro de {0} trim."
+      [
+        {
+          "Literal": "dentro de "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " trim."
+        }
+      ]
     ]
   }
 }

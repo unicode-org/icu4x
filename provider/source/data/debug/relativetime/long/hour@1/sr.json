@@ -5,29 +5,89 @@
   "past": {
     "one": [
       0,
-      "пре {0} сата"
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " сата"
+        }
+      ]
     ],
     "few": [
       0,
-      "пре {0} сата"
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " сата"
+        }
+      ]
     ],
     "other": [
       0,
-      "пре {0} сати"
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " сати"
+        }
+      ]
     ]
   },
   "future": {
     "one": [
       0,
-      "за {0} сат"
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " сат"
+        }
+      ]
     ],
     "few": [
       0,
-      "за {0} сата"
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " сата"
+        }
+      ]
     ],
     "other": [
       0,
-      "за {0} сати"
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " сати"
+        }
+      ]
     ]
   }
 }

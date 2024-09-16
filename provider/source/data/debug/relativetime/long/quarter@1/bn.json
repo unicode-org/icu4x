@@ -7,13 +7,27 @@
   "past": {
     "other": [
       0,
-      "{0} ত্রৈমাসিক আগে"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ত্রৈমাসিক আগে"
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "{0} ত্রৈমাসিকে"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ত্রৈমাসিকে"
+        }
+      ]
     ]
   }
 }

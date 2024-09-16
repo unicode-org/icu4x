@@ -2,11 +2,25 @@
   "patterns": {
     "one": [
       0,
-      "{0} minut"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " minut"
+        }
+      ]
     ],
     "other": [
       0,
-      "{0} minuta"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " minuta"
+        }
+      ]
     ]
   }
 }

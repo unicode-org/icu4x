@@ -7,21 +7,61 @@
   "past": {
     "one": [
       0,
-      "hace {0} semana"
+      [
+        {
+          "Literal": "hace "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " semana"
+        }
+      ]
     ],
     "other": [
       0,
-      "hace {0} semanas"
+      [
+        {
+          "Literal": "hace "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " semanas"
+        }
+      ]
     ]
   },
   "future": {
     "one": [
       0,
-      "dentro de {0} semana"
+      [
+        {
+          "Literal": "dentro de "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " semana"
+        }
+      ]
     ],
     "other": [
       0,
-      "dentro de {0} semanas"
+      [
+        {
+          "Literal": "dentro de "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " semanas"
+        }
+      ]
     ]
   }
 }

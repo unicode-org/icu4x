@@ -2,7 +2,14 @@
   "patterns": {
     "other": [
       0,
-      "{0} 秒"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " 秒"
+        }
+      ]
     ]
   }
 }

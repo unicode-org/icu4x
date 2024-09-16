@@ -5,13 +5,27 @@
   "past": {
     "other": [
       0,
-      "{0} sa. önce"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sa. önce"
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "{0} sa. sonra"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sa. sonra"
+        }
+      ]
     ]
   }
 }

@@ -9,13 +9,33 @@
   "past": {
     "other": [
       0,
-      "-{0} дн."
+      [
+        {
+          "Literal": "-"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " дн."
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "+{0} дн."
+      [
+        {
+          "Literal": "+"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " дн."
+        }
+      ]
     ]
   }
 }

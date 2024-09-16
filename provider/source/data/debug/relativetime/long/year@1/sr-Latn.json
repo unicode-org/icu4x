@@ -7,29 +7,89 @@
   "past": {
     "one": [
       0,
-      "pre {0} godine"
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " godine"
+        }
+      ]
     ],
     "few": [
       0,
-      "pre {0} godine"
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " godine"
+        }
+      ]
     ],
     "other": [
       0,
-      "pre {0} godina"
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " godina"
+        }
+      ]
     ]
   },
   "future": {
     "one": [
       0,
-      "za {0} godinu"
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " godinu"
+        }
+      ]
     ],
     "few": [
       0,
-      "za {0} godine"
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " godine"
+        }
+      ]
     ],
     "other": [
       0,
-      "za {0} godina"
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " godina"
+        }
+      ]
     ]
   }
 }

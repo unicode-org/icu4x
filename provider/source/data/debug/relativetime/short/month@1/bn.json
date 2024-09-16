@@ -7,13 +7,27 @@
   "past": {
     "other": [
       0,
-      "{0} মাস আগে"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " মাস আগে"
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "{0} মাসে"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " মাসে"
+        }
+      ]
     ]
   }
 }

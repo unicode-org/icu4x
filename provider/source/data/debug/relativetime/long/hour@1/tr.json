@@ -5,13 +5,27 @@
   "past": {
     "other": [
       0,
-      "{0} saat önce"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " saat önce"
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "{0} saat sonra"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " saat sonra"
+        }
+      ]
     ]
   }
 }

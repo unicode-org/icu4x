@@ -5,21 +5,55 @@
   "past": {
     "one": [
       0,
-      "{0} hour ago"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " hour ago"
+        }
+      ]
     ],
     "other": [
       0,
-      "{0} hours ago"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " hours ago"
+        }
+      ]
     ]
   },
   "future": {
     "one": [
       0,
-      "in {0} hour"
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " hour"
+        }
+      ]
     ],
     "other": [
       0,
-      "in {0} hours"
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " hours"
+        }
+      ]
     ]
   }
 }

@@ -2,7 +2,14 @@
   "patterns": {
     "other": [
       0,
-      "{0} মি"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " মি"
+        }
+      ]
     ]
   }
 }

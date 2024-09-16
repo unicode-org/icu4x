@@ -2,15 +2,36 @@
   "patterns": {
     "one": [
       0,
-      "{0} метр"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " метр"
+        }
+      ]
     ],
     "many": [
       0,
-      "{0} метров"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " метров"
+        }
+      ]
     ],
     "other": [
       0,
-      "{0} метра"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " метра"
+        }
+      ]
     ]
   }
 }

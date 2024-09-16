@@ -9,21 +9,55 @@
   "past": {
     "one": [
       0,
-      "{0} araw ang nakalipas"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " araw ang nakalipas"
+        }
+      ]
     ],
     "other": [
       0,
-      "{0} (na) araw ang nakalipas"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " (na) araw ang nakalipas"
+        }
+      ]
     ]
   },
   "future": {
     "one": [
       0,
-      "sa {0} (na) araw"
+      [
+        {
+          "Literal": "sa "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " (na) araw"
+        }
+      ]
     ],
     "other": [
       0,
-      "sa {0} araw"
+      [
+        {
+          "Literal": "sa "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " araw"
+        }
+      ]
     ]
   }
 }

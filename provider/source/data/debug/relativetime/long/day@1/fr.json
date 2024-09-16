@@ -9,21 +9,61 @@
   "past": {
     "one": [
       0,
-      "il y a {0} jour"
+      [
+        {
+          "Literal": "il y a "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " jour"
+        }
+      ]
     ],
     "other": [
       0,
-      "il y a {0} jours"
+      [
+        {
+          "Literal": "il y a "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " jours"
+        }
+      ]
     ]
   },
   "future": {
     "one": [
       0,
-      "dans {0} jour"
+      [
+        {
+          "Literal": "dans "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " jour"
+        }
+      ]
     ],
     "other": [
       0,
-      "dans {0} jours"
+      [
+        {
+          "Literal": "dans "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " jours"
+        }
+      ]
     ]
   }
 }

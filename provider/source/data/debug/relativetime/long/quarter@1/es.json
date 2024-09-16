@@ -7,21 +7,61 @@
   "past": {
     "one": [
       0,
-      "hace {0} trimestre"
+      [
+        {
+          "Literal": "hace "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " trimestre"
+        }
+      ]
     ],
     "other": [
       0,
-      "hace {0} trimestres"
+      [
+        {
+          "Literal": "hace "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " trimestres"
+        }
+      ]
     ]
   },
   "future": {
     "one": [
       0,
-      "dentro de {0} trimestre"
+      [
+        {
+          "Literal": "dentro de "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " trimestre"
+        }
+      ]
     ],
     "other": [
       0,
-      "dentro de {0} trimestres"
+      [
+        {
+          "Literal": "dentro de "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " trimestres"
+        }
+      ]
     ]
   }
 }

@@ -2,15 +2,36 @@
   "patterns": {
     "one": [
       0,
-      "{0} час"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " час"
+        }
+      ]
     ],
     "many": [
       0,
-      "{0} часов"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " часов"
+        }
+      ]
     ],
     "other": [
       0,
-      "{0} часа"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " часа"
+        }
+      ]
     ]
   }
 }

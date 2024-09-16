@@ -7,21 +7,55 @@
   "past": {
     "one": [
       0,
-      "{0} quarter ago"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " quarter ago"
+        }
+      ]
     ],
     "other": [
       0,
-      "{0} quarters ago"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " quarters ago"
+        }
+      ]
     ]
   },
   "future": {
     "one": [
       0,
-      "in {0} quarter"
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " quarter"
+        }
+      ]
     ],
     "other": [
       0,
-      "in {0} quarters"
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " quarters"
+        }
+      ]
     ]
   }
 }

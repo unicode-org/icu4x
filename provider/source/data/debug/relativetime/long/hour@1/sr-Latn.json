@@ -5,29 +5,89 @@
   "past": {
     "one": [
       0,
-      "pre {0} sata"
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sata"
+        }
+      ]
     ],
     "few": [
       0,
-      "pre {0} sata"
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sata"
+        }
+      ]
     ],
     "other": [
       0,
-      "pre {0} sati"
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sati"
+        }
+      ]
     ]
   },
   "future": {
     "one": [
       0,
-      "za {0} sat"
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sat"
+        }
+      ]
     ],
     "few": [
       0,
-      "za {0} sata"
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sata"
+        }
+      ]
     ],
     "other": [
       0,
-      "za {0} sati"
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sati"
+        }
+      ]
     ]
   }
 }

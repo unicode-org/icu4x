@@ -7,13 +7,33 @@
   "past": {
     "other": [
       0,
-      "pre {0} m."
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " m."
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "za {0} m."
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " m."
+        }
+      ]
     ]
   }
 }

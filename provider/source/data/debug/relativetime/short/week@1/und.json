@@ -7,13 +7,33 @@
   "past": {
     "other": [
       0,
-      "-{0} w"
+      [
+        {
+          "Literal": "-"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " w"
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "+{0} w"
+      [
+        {
+          "Literal": "+"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " w"
+        }
+      ]
     ]
   }
 }

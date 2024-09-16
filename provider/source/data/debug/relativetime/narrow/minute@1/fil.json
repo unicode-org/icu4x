@@ -5,13 +5,30 @@
   "past": {
     "other": [
       0,
-      "{0} min. ang nakalipas"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " min. ang nakalipas"
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "sa {0} min."
+      [
+        {
+          "Literal": "sa "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " min."
+        }
+      ]
     ]
   }
 }

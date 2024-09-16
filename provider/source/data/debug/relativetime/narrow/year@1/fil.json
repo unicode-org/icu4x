@@ -7,13 +7,30 @@
   "past": {
     "other": [
       0,
-      "{0} taon ang nakalipas"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " taon ang nakalipas"
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "sa {0} taon"
+      [
+        {
+          "Literal": "sa "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " taon"
+        }
+      ]
     ]
   }
 }

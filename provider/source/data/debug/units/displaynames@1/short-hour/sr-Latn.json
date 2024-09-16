@@ -2,15 +2,36 @@
   "patterns": {
     "one": [
       0,
-      "{0} sat"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sat"
+        }
+      ]
     ],
     "few": [
       0,
-      "{0} sata"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sata"
+        }
+      ]
     ],
     "other": [
       0,
-      "{0} sati"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sati"
+        }
+      ]
     ]
   }
 }

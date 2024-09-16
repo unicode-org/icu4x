@@ -9,13 +9,33 @@
   "past": {
     "other": [
       0,
-      "пре {0} д."
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " д."
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "за {0} д."
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " д."
+        }
+      ]
     ]
   }
 }

@@ -7,17 +7,41 @@
   "past": {
     "one": [
       0,
-      "{0} linggo ang nakalipas"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " linggo ang nakalipas"
+        }
+      ]
     ],
     "other": [
       0,
-      "{0} (na) linggo ang nakalipas"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " (na) linggo ang nakalipas"
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "sa {0} linggo"
+      [
+        {
+          "Literal": "sa "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " linggo"
+        }
+      ]
     ]
   }
 }

@@ -9,13 +9,33 @@
   "past": {
     "other": [
       0,
-      "pre {0} d."
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " d."
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "za {0} d."
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " d."
+        }
+      ]
     ]
   }
 }

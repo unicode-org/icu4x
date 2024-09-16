@@ -9,13 +9,27 @@
   "past": {
     "other": [
       0,
-      "{0} দিন আগে"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " দিন আগে"
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "{0} দিনের মধ্যে"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " দিনের মধ্যে"
+        }
+      ]
     ]
   }
 }

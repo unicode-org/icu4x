@@ -7,13 +7,30 @@
   "past": {
     "other": [
       0,
-      "{0} quarter ang nakalipas"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " quarter ang nakalipas"
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "sa {0} quarter"
+      [
+        {
+          "Literal": "sa "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " quarter"
+        }
+      ]
     ]
   }
 }

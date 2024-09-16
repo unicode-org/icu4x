@@ -2,11 +2,25 @@
   "patterns": {
     "one": [
       0,
-      "{0} seconde"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " seconde"
+        }
+      ]
     ],
     "other": [
       0,
-      "{0} secondes"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " secondes"
+        }
+      ]
     ]
   }
 }

@@ -2,7 +2,14 @@
   "patterns": {
     "other": [
       0,
-      "{0} পাউন্ড"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " পাউন্ড"
+        }
+      ]
     ]
   }
 }

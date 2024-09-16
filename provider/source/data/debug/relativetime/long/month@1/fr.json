@@ -7,13 +7,33 @@
   "past": {
     "other": [
       0,
-      "il y a {0} mois"
+      [
+        {
+          "Literal": "il y a "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " mois"
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "dans {0} mois"
+      [
+        {
+          "Literal": "dans "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " mois"
+        }
+      ]
     ]
   }
 }

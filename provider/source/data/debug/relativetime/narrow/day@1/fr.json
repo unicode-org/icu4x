@@ -9,13 +9,33 @@
   "past": {
     "other": [
       0,
-      "-{0} j"
+      [
+        {
+          "Literal": "-"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " j"
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "+{0} j"
+      [
+        {
+          "Literal": "+"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " j"
+        }
+      ]
     ]
   }
 }

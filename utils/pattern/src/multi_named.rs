@@ -358,18 +358,6 @@ impl PatternBackend for MultiNamedPlaceholder {
         }
         Ok(string.into_boxed_str())
     }
-
-    #[cfg(feature = "alloc")]
-    fn escape_placeholder(s: &mut String, placeholder: MultiNamedPlaceholderKey<'_>) {
-        s.reserve(placeholder.0.len() + 2);
-        s.push('{');
-        s.push_str(placeholder.0);
-        s.push('}');
-    }
-
-    fn empty() -> &'static Self::Store {
-        ""
-    }
 }
 
 #[derive(Debug)]

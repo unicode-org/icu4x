@@ -69,7 +69,7 @@ pub use double::DoublePlaceholder;
 pub use double::DoublePlaceholderKey;
 pub use error::PatternError;
 #[cfg(feature = "serde")]
-pub use frontend::serde::deserialize_borrowed_cow;
+pub use frontend::serde::{deserialize_borrowed_cow, PatternString};
 pub use frontend::Pattern;
 pub use multi_named::MissingNamedPlaceholderError;
 pub use multi_named::MultiNamedPlaceholder;

@@ -861,7 +861,17 @@
       }
     }
   },
-  "standard_pattern": "{0} {1}",
+  "standard_pattern": [
+    {
+      "Placeholder": "Place0"
+    },
+    {
+      "Literal": " "
+    },
+    {
+      "Placeholder": "Place1"
+    }
+  ],
   "standard_alpha_next_to_number_pattern": null,
   "placeholders": [
     "؋",

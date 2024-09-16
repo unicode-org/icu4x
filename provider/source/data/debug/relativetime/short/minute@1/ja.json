@@ -5,13 +5,27 @@
   "past": {
     "other": [
       0,
-      "{0} 分前"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " 分前"
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "{0} 分後"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " 分後"
+        }
+      ]
     ]
   }
 }

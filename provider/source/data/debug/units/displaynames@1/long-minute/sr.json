@@ -2,11 +2,25 @@
   "patterns": {
     "one": [
       0,
-      "{0} минут"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " минут"
+        }
+      ]
     ],
     "other": [
       0,
-      "{0} минута"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " минута"
+        }
+      ]
     ]
   }
 }

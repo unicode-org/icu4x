@@ -7,13 +7,33 @@
   "past": {
     "other": [
       0,
-      "pre {0} god."
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " god."
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "za {0} god."
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " god."
+        }
+      ]
     ]
   }
 }

@@ -7,21 +7,61 @@
   "past": {
     "one": [
       0,
-      "il y a {0} trimestre"
+      [
+        {
+          "Literal": "il y a "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " trimestre"
+        }
+      ]
     ],
     "other": [
       0,
-      "il y a {0} trimestres"
+      [
+        {
+          "Literal": "il y a "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " trimestres"
+        }
+      ]
     ]
   },
   "future": {
     "one": [
       0,
-      "dans {0} trimestre"
+      [
+        {
+          "Literal": "dans "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " trimestre"
+        }
+      ]
     ],
     "other": [
       0,
-      "dans {0} trimestres"
+      [
+        {
+          "Literal": "dans "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " trimestres"
+        }
+      ]
     ]
   }
 }

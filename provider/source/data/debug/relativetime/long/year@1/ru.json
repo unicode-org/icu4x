@@ -7,29 +7,80 @@
   "past": {
     "one": [
       0,
-      "{0} год назад"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " год назад"
+        }
+      ]
     ],
     "many": [
       0,
-      "{0} лет назад"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " лет назад"
+        }
+      ]
     ],
     "other": [
       0,
-      "{0} года назад"
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " года назад"
+        }
+      ]
     ]
   },
   "future": {
     "one": [
       0,
-      "через {0} год"
+      [
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " год"
+        }
+      ]
     ],
     "many": [
       0,
-      "через {0} лет"
+      [
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " лет"
+        }
+      ]
     ],
     "other": [
       0,
-      "через {0} года"
+      [
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " года"
+        }
+      ]
     ]
   }
 }

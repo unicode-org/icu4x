@@ -7,13 +7,33 @@
   "past": {
     "other": [
       0,
-      "-{0} trim."
+      [
+        {
+          "Literal": "-"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " trim."
+        }
+      ]
     ]
   },
   "future": {
     "other": [
       0,
-      "+{0} trim."
+      [
+        {
+          "Literal": "+"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " trim."
+        }
+      ]
     ]
   }
 }
