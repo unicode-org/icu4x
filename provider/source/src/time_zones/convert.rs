@@ -247,24 +247,28 @@ impl From<CldrTimeZonesData<'_>> for ZoneOffsetPeriodV1<'static> {
                 .flat_map(|(bcp47, zoneset)| {
                     let mut data = Vec::<(IsoMinutesSinceEpoch, (UtcOffset, UtcOffset))>::new();
 
-                    let store_offsets =
-                        |data: &mut Vec<(IsoMinutesSinceEpoch, (UtcOffset, UtcOffset))>,
-                         end_time: IsoMinutesSinceEpoch,
-                         mut utc_offset: i64,
-                         mut dst_offset_relative: i64| {
-                            if dst_offset_relative < 0 {
-                                utc_offset += dst_offset_relative;
-                                dst_offset_relative = -dst_offset_relative;
-                            }
-                            data.push((
-                                end_time,
-                                (
-                                    UtcOffset::try_from_offset_seconds(utc_offset as i32).unwrap(),
-                                    UtcOffset::try_from_offset_seconds(dst_offset_relative as i32)
-                                        .unwrap(),
-                                ),
-                            ));
-                        };
+                    fn store_offsets(
+                        data: &mut Vec<(IsoMinutesSinceEpoch, (UtcOffset, UtcOffset))>,
+                        end_time: IsoMinutesSinceEpoch,
+                        mut utc_offset: i64,
+                        mut dst_offset_relative: i64,
+                    ) {
+                        // TZDB uses negative DST offsets (i.e. DST in the winter for some zones,
+                        // such as `Europe/Dublin`. In ICU4X, we normalize all time zones to have
+                        // positive DST offsets, during the summer.
+                        if dst_offset_relative < 0 {
+                            utc_offset += dst_offset_relative;
+                            dst_offset_relative = -dst_offset_relative;
+                        }
+                        data.push((
+                            end_time,
+                            (
+                                UtcOffset::try_from_offset_seconds(utc_offset as i32).unwrap(),
+                                UtcOffset::try_from_offset_seconds(dst_offset_relative as i32)
+                                    .unwrap(),
+                            ),
+                        ));
+                    }
 
                     for zone_info in zoneset.iter() {
                         let local_end_time = zone_info
@@ -291,6 +295,7 @@ impl From<CldrTimeZonesData<'_>> for ZoneOffsetPeriodV1<'static> {
                                     // Only want transitions into DST
                                     .filter(|rule| rule.time_to_add != 0)
                                     .filter(|rule| {
+                                        // Use all rules (from year 1800) until the potential end time of the zone_info (or year 2500) 
                                         (1800..zone_info.end_time.map(|e| e.year()).unwrap_or(2500))
                                             .any(|y| rule.applies_to_year(y))
                                     })
@@ -539,8 +544,8 @@ fn convert_cldr_zone_variant(
         .map(move |(variant, value)| {
             (
                 match variant.as_str() {
-                    "standard" => ZoneVariant::standard(),
-                    "daylight" => ZoneVariant::daylight(),
+                    "standard" => ZoneVariant::Standard,
+                    "daylight" => ZoneVariant::Daylight,
                     _ => panic!("Time-zone variant was not compatible with ZoneVariant: {variant}"),
                 },
                 value,
