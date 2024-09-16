@@ -249,7 +249,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
             });
         }
         let indices_bytes = slice
-            .get(METADATA_WIDTH..LENGTH_WIDTH + METADATA_WIDTH + F::INDEX_WIDTH * (len as usize))
+            .get(METADATA_WIDTH..METADATA_WIDTH + F::INDEX_WIDTH * (len as usize))
             .ok_or(VarZeroVecFormatError::Metadata)?;
         let things = slice
             .get(F::INDEX_WIDTH * (len as usize) + METADATA_WIDTH..)
@@ -291,12 +291,37 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
         let len_ule = RawBytesULE::<LENGTH_WIDTH>::from_byte_slice_unchecked(len_bytes);
 
         let len = len_ule.get_unchecked(0).as_unsigned_int();
+
+        // Safety: This method requires the bytes to have passed through `parse_byte_slice()`
+        // whereas we're calling something that asks for `parse_byte_slice_with_length()`.
+        // The two methods perform similar validation, with parse_byte_slice() validating an additional
+        // 4-byte `length` header.
+        Self::from_bytes_unchecked_with_length(len, slice.get_unchecked(LENGTH_WIDTH..))
+    }
+
+    /// Construct a [`VarZeroVecComponents`] from a byte slice that has previously
+    /// successfully returned a [`VarZeroVecComponents`] when passed to
+    /// [`VarZeroVecComponents::parse_byte_slice()`]. Will return the same
+    /// object as one would get from calling [`VarZeroVecComponents::parse_byte_slice()`].
+    ///
+    /// # Safety
+    /// The len,bytes must have previously successfully run through
+    /// [`VarZeroVecComponents::parse_byte_slice_with_length()`]
+    pub unsafe fn from_bytes_unchecked_with_length(len: u32, slice: &'a [u8]) -> Self {
+        // The empty VZV is special-cased to the empty slice
+        if len == 0 {
+            return VarZeroVecComponents {
+                len: 0,
+                indices: &[],
+                things: &[],
+                entire_slice: slice,
+                marker: PhantomData,
+            };
+        }
         let indices_bytes = slice.get_unchecked(
-            LENGTH_WIDTH + METADATA_WIDTH
-                ..LENGTH_WIDTH + METADATA_WIDTH + F::INDEX_WIDTH * (len as usize),
+            METADATA_WIDTH..METADATA_WIDTH + F::INDEX_WIDTH * (len as usize),
         );
-        let things =
-            slice.get_unchecked(LENGTH_WIDTH + METADATA_WIDTH + F::INDEX_WIDTH * (len as usize)..);
+        let things = slice.get_unchecked(METADATA_WIDTH + F::INDEX_WIDTH * (len as usize)..);
 
         VarZeroVecComponents {
             len,
