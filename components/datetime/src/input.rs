@@ -9,15 +9,14 @@
 use crate::neo_marker::{DateInputMarkers, NeoGetField, TimeMarkers, ZoneMarkers};
 use crate::provider::time_zones::{MetazoneId, TimeZoneBcp47Id};
 use icu_calendar::any_calendar::AnyCalendarKind;
-use icu_calendar::week::{RelativeUnit, WeekCalculator};
 use icu_calendar::Calendar;
 use icu_calendar::{AsCalendar, Date, DateTime, Iso};
 use icu_timezone::{CustomTimeZone, UtcOffset, ZoneVariant};
 
 // TODO(#2630) fix up imports to directly import from icu_calendar
 pub(crate) use icu_calendar::types::{
-    DayOfMonth, DayOfYearInfo, FormattableMonth, FormattableYear, IsoHour, IsoMinute, IsoSecond,
-    IsoWeekday, NanoSecond, Time, WeekOfMonth, WeekOfYear,
+    DayOfMonth, DayOfYearInfo, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo, NanoSecond,
+    Time, YearInfo,
 };
 
 /// Representation of a formattable calendar date. Supports dates in any calendar system that uses
@@ -31,10 +30,10 @@ pub trait DateInput {
     /// The calendar this date relates to
     type Calendar: Calendar;
     /// Gets the era and year input.
-    fn year(&self) -> Option<FormattableYear>;
+    fn year(&self) -> Option<YearInfo>;
 
     /// Gets the month input.
-    fn month(&self) -> Option<FormattableMonth>;
+    fn month(&self) -> Option<MonthInfo>;
 
     /// Gets the day input.
     fn day_of_month(&self) -> Option<DayOfMonth>;
@@ -100,36 +99,25 @@ pub trait DateTimeInput: DateInput + IsoTimeInput {}
 
 impl<T> DateTimeInput for T where T: DateInput + IsoTimeInput {}
 
-/// A [`DateTimeInput`] type with all of the fields pre-extracted
-///
-/// See [`DateTimeInput`] for documentation on individual fields
 #[derive(Default, Debug, Copy, Clone)]
-pub(crate) struct ExtractedDateTimeInput {
-    year: Option<FormattableYear>,
-    month: Option<FormattableMonth>,
-    day_of_month: Option<DayOfMonth>,
-    iso_weekday: Option<IsoWeekday>,
-    day_of_year_info: Option<DayOfYearInfo>,
-    any_calendar_kind: Option<AnyCalendarKind>,
-    hour: Option<IsoHour>,
-    minute: Option<IsoMinute>,
-    second: Option<IsoSecond>,
-    nanosecond: Option<NanoSecond>,
-    time_zone: Option<CustomTimeZone>,
+pub(crate) struct ExtractedInput {
+    pub(crate) year: Option<YearInfo>,
+    pub(crate) month: Option<MonthInfo>,
+    pub(crate) day_of_month: Option<DayOfMonth>,
+    pub(crate) iso_weekday: Option<IsoWeekday>,
+    pub(crate) day_of_year_info: Option<DayOfYearInfo>,
+    pub(crate) any_calendar_kind: Option<AnyCalendarKind>,
+    pub(crate) hour: Option<IsoHour>,
+    pub(crate) minute: Option<IsoMinute>,
+    pub(crate) second: Option<IsoSecond>,
+    pub(crate) nanosecond: Option<NanoSecond>,
+    pub(crate) offset: Option<UtcOffset>,
+    pub(crate) time_zone_id: Option<TimeZoneBcp47Id>,
+    pub(crate) metazone_id: Option<MetazoneId>,
+    pub(crate) zone_variant: Option<ZoneVariant>,
 }
 
-/// A [`TimeZoneInput`] type with all of the fields pre-extracted
-///
-/// See [`TimeZoneInput`] for documentation on individual fields
-#[derive(Debug, Copy, Clone)]
-pub(crate) struct ExtractedTimeZoneInput {
-    offset: Option<UtcOffset>,
-    time_zone_id: Option<TimeZoneBcp47Id>,
-    metazone_id: Option<MetazoneId>,
-    zone_variant: Option<ZoneVariant>,
-}
-
-impl ExtractedDateTimeInput {
+impl ExtractedInput {
     /// Construct given an instance of a [`DateTimeInput`].
     pub(crate) fn extract_from<T: DateTimeInput>(input: &T) -> Self {
         Self {
@@ -143,7 +131,7 @@ impl ExtractedDateTimeInput {
             minute: input.minute(),
             second: input.second(),
             nanosecond: input.nanosecond(),
-            time_zone: None,
+            ..Default::default()
         }
     }
     /// Construct given an instance of a [`DateTimeInput`].
@@ -186,7 +174,10 @@ impl ExtractedDateTimeInput {
             + NeoGetField<T::MinuteInput>
             + NeoGetField<T::SecondInput>
             + NeoGetField<T::NanoSecondInput>
-            + NeoGetField<Z::TimeZoneInput>,
+            + NeoGetField<Z::TimeZoneOffsetInput>
+            + NeoGetField<Z::TimeZoneIdInput>
+            + NeoGetField<Z::TimeZoneMetazoneInput>
+            + NeoGetField<Z::TimeZoneVariantInput>,
     {
         Self {
             year: NeoGetField::<D::YearInput>::get_field(input).into(),
@@ -199,175 +190,23 @@ impl ExtractedDateTimeInput {
             minute: NeoGetField::<T::MinuteInput>::get_field(input).into(),
             second: NeoGetField::<T::SecondInput>::get_field(input).into(),
             nanosecond: NeoGetField::<T::NanoSecondInput>::get_field(input).into(),
-            time_zone: NeoGetField::<Z::TimeZoneInput>::get_field(input).into(),
+            offset: NeoGetField::<Z::TimeZoneOffsetInput>::get_field(input).into(),
+            time_zone_id: NeoGetField::<Z::TimeZoneIdInput>::get_field(input).into(),
+            metazone_id: NeoGetField::<Z::TimeZoneMetazoneInput>::get_field(input).into(),
+            zone_variant: NeoGetField::<Z::TimeZoneVariantInput>::get_field(input).into(),
         }
-    }
-
-    pub(crate) fn time_zone(&self) -> Option<CustomTimeZone> {
-        self.time_zone
-    }
-
-    #[cfg(feature = "experimental")]
-    pub(crate) fn should_display_era(&self) -> bool {
-        match self.any_calendar_kind() {
-            // Unknown calendar: always display the era
-            None => true,
-            // TODO(#4478): This is extremely oversimplistic and it should be data-driven.
-            Some(AnyCalendarKind::Buddhist)
-            | Some(AnyCalendarKind::Coptic)
-            | Some(AnyCalendarKind::Ethiopian)
-            | Some(AnyCalendarKind::EthiopianAmeteAlem)
-            | Some(AnyCalendarKind::Hebrew)
-            | Some(AnyCalendarKind::Indian)
-            | Some(AnyCalendarKind::IslamicCivil)
-            | Some(AnyCalendarKind::IslamicObservational)
-            | Some(AnyCalendarKind::IslamicTabular)
-            | Some(AnyCalendarKind::IslamicUmmAlQura)
-            | Some(AnyCalendarKind::Japanese)
-            | Some(AnyCalendarKind::JapaneseExtended)
-            | Some(AnyCalendarKind::Persian)
-            | Some(AnyCalendarKind::Roc) => true,
-            Some(AnyCalendarKind::Chinese)
-            | Some(AnyCalendarKind::Dangi)
-            | Some(AnyCalendarKind::Iso) => false,
-            Some(AnyCalendarKind::Gregorian) => match self.year() {
-                None => true,
-                Some(year) if year.number < 1000 => true,
-                Some(year) if year.era.0 != tinystr::tinystr!(16, "ce") => true,
-                Some(_) => false,
-            },
-            Some(_) => {
-                debug_assert!(false, "unknown calendar during era display resolution");
-                true
-            }
-        }
-    }
-}
-
-impl ExtractedTimeZoneInput {
-    /// Construct given an instance of a [`ZonedDateTimeInput`].
-    pub(crate) fn extract_from<T: TimeZoneInput>(input: &T) -> Self {
-        Self {
-            offset: input.offset(),
-            time_zone_id: input.time_zone_id(),
-            metazone_id: input.metazone_id(),
-            zone_variant: input.zone_variant(),
-        }
-    }
-
-    pub(crate) fn to_custom_time_zone(self) -> CustomTimeZone {
-        CustomTimeZone {
-            offset: self.offset,
-            time_zone_id: self.time_zone_id,
-            metazone_id: self.metazone_id,
-            zone_variant: self.zone_variant,
-        }
-    }
-}
-
-impl From<CustomTimeZone> for ExtractedTimeZoneInput {
-    fn from(value: CustomTimeZone) -> Self {
-        Self {
-            offset: value.offset,
-            time_zone_id: value.time_zone_id,
-            metazone_id: value.metazone_id,
-            zone_variant: value.zone_variant,
-        }
-    }
-}
-
-impl DateInput for ExtractedDateTimeInput {
-    /// This actually doesn't matter, by the time we use this
-    /// it's purely internal raw code where calendars are irrelevant
-    type Calendar = icu_calendar::any_calendar::AnyCalendar;
-    fn year(&self) -> Option<FormattableYear> {
-        self.year
-    }
-    fn month(&self) -> Option<FormattableMonth> {
-        self.month
-    }
-    fn day_of_month(&self) -> Option<DayOfMonth> {
-        self.day_of_month
-    }
-    fn iso_weekday(&self) -> Option<IsoWeekday> {
-        self.iso_weekday
-    }
-    fn day_of_year_info(&self) -> Option<DayOfYearInfo> {
-        self.day_of_year_info
-    }
-    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
-        self.any_calendar_kind
-    }
-    fn to_iso(&self) -> Date<Iso> {
-        unreachable!("ExtractedDateTimeInput should never be directly passed to DateTimeFormatter")
-    }
-}
-
-impl IsoTimeInput for ExtractedDateTimeInput {
-    fn hour(&self) -> Option<IsoHour> {
-        self.hour
-    }
-    fn minute(&self) -> Option<IsoMinute> {
-        self.minute
-    }
-    fn second(&self) -> Option<IsoSecond> {
-        self.second
-    }
-    fn nanosecond(&self) -> Option<NanoSecond> {
-        self.nanosecond
-    }
-}
-
-impl TimeZoneInput for ExtractedTimeZoneInput {
-    fn offset(&self) -> Option<UtcOffset> {
-        self.offset
-    }
-    fn time_zone_id(&self) -> Option<TimeZoneBcp47Id> {
-        self.time_zone_id
-    }
-    fn metazone_id(&self) -> Option<MetazoneId> {
-        self.metazone_id
-    }
-    fn zone_variant(&self) -> Option<ZoneVariant> {
-        self.zone_variant
-    }
-}
-
-impl ExtractedDateTimeInput {
-    pub(crate) fn week_of_month(
-        &self,
-        calculator: &WeekCalculator,
-    ) -> Result<WeekOfMonth, &'static str> {
-        let day_of_month = self.day_of_month().ok_or("day_of_month")?;
-        let iso_weekday = self.iso_weekday().ok_or("iso_weekday")?;
-        Ok(calculator.week_of_month(day_of_month, iso_weekday))
-    }
-
-    pub(crate) fn week_of_year(
-        &self,
-        calculator: &WeekCalculator,
-    ) -> Result<(FormattableYear, WeekOfYear), &'static str> {
-        let day_of_year_info = self.day_of_year_info().ok_or("day_of_year_info")?;
-        let iso_weekday = self.iso_weekday().ok_or("iso_weekday")?;
-        let week_of = calculator.week_of_year(day_of_year_info, iso_weekday);
-        let year = match week_of.unit {
-            RelativeUnit::Previous => day_of_year_info.prev_year,
-            RelativeUnit::Current => self.year().ok_or("year")?,
-            RelativeUnit::Next => day_of_year_info.next_year,
-        };
-        Ok((year, WeekOfYear(week_of.week as u32)))
     }
 }
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> DateInput for Date<A> {
     type Calendar = C;
     /// Gets the era and year input.
-    fn year(&self) -> Option<FormattableYear> {
+    fn year(&self) -> Option<YearInfo> {
         Some(self.year())
     }
 
     /// Gets the month input.
-    fn month(&self) -> Option<FormattableMonth> {
+    fn month(&self) -> Option<MonthInfo> {
         Some(self.month())
     }
 
@@ -398,12 +237,12 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> DateInput for Date<A> {
 impl<C: Calendar, A: AsCalendar<Calendar = C>> DateInput for DateTime<A> {
     type Calendar = C;
     /// Gets the era and year input.
-    fn year(&self) -> Option<FormattableYear> {
+    fn year(&self) -> Option<YearInfo> {
         Some(self.date.year())
     }
 
     /// Gets the month input.
-    fn month(&self) -> Option<FormattableMonth> {
+    fn month(&self) -> Option<MonthInfo> {
         Some(self.date.month())
     }
 

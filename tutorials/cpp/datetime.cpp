@@ -27,7 +27,7 @@ int main() {
 
     std::unique_ptr<IsoDateTime> date = IsoDateTime::create(2022, 07, 11, 13, 06, 42, 0).ok().value();
 
-    std::unique_ptr<TimeFormatter> tf = TimeFormatter::create_with_length(*dp.get(), *locale.get(), TimeLength::Short).ok().value();
+    std::unique_ptr<TimeFormatter> tf = TimeFormatter::create_with_length(*dp.get(), *locale.get(), DateTimeLength::Short).ok().value();
     std::string out = tf->format_iso_datetime(*date.get());
     std::cout << "Formatted value is " << out << std::endl;
     if (out != "13:06") {
@@ -35,15 +35,15 @@ int main() {
         return 1;
     }
 
-    std::unique_ptr<GregorianDateFormatter> df = GregorianDateFormatter::create_with_length(*dp.get(), *locale.get(), DateLength::Full).ok().value();
+    std::unique_ptr<GregorianDateFormatter> df = GregorianDateFormatter::create_with_length(*dp.get(), *locale.get(), DateTimeLength::Long).ok().value();
     out = df->format_iso_datetime(*date.get());
     std::cout << "Formatted value is " << out << std::endl;
-    if (out != "lunes, 11 de julio de 2022") {
+    if (out != "11 de julio de 2022") {
         std::cout << "Output does not match expected output" << std::endl;
         return 1;
     }
 
-    std::unique_ptr<GregorianDateTimeFormatter> dtf = GregorianDateTimeFormatter::create_with_lengths(*dp.get(), *locale.get(), DateLength::Medium, TimeLength::Short).ok().value();
+    std::unique_ptr<GregorianDateTimeFormatter> dtf = GregorianDateTimeFormatter::create_with_length(*dp.get(), *locale.get(), DateTimeLength::Medium).ok().value();
     out = dtf->format_iso_datetime(*date.get());
     std::cout << "Formatted value is " << out << std::endl;
     if (out != "11 jul 2022, 13:06") {
@@ -54,7 +54,7 @@ int main() {
     locale = Locale::from_string("en-u-ca-japanese").ok().value();
     std::unique_ptr<Calendar> cal = Calendar::create_for_locale(*dp.get(), *locale.get()).ok().value();
     std::unique_ptr<DateTime> any_date = DateTime::from_iso_in_calendar(2020, 10, 5, 13, 33, 15, 0, *cal.get()).ok().value();
-    std::unique_ptr<DateTimeFormatter> any_dtf = DateTimeFormatter::create_with_lengths(*dp.get(), *locale.get(), DateLength::Medium, TimeLength::Short).ok().value();
+    std::unique_ptr<DateTimeFormatter> any_dtf = DateTimeFormatter::create_with_length(*dp.get(), *locale.get(), DateTimeLength::Medium).ok().value();
     out = any_dtf->format_datetime(*any_date.get()).ok().value();
     std::cout << "Formatted value is " << out << std::endl;
     if (out != "Oct 5, 2 Reiwa, 1:33\u202fPM") {
@@ -62,13 +62,14 @@ int main() {
         return 1;
     }
 
-    std::unique_ptr<CustomTimeZone> time_zone = CustomTimeZone::from_string("-06:00").ok().value();
+    std::unique_ptr<CustomTimeZone> time_zone = CustomTimeZone::from_string("-05:00").ok().value();
     int32_t offset = time_zone->offset_seconds().value();
-    if (offset != -21600) {
+    if (offset != -18000) {
         std::cout << "GMT offset doesn't parse" << std::endl;
         return 1;
     }
     std::unique_ptr<MetazoneCalculator> mzcalc = MetazoneCalculator::create(*dp.get()).ok().value();
+    std::unique_ptr<ZoneOffsetCalculator> zocalc = ZoneOffsetCalculator::create(*dp.get()).ok().value();
     std::unique_ptr<TimeZoneIdMapper> mapper = TimeZoneIdMapper::create(*dp.get()).ok().value();
     time_zone->try_set_iana_time_zone_id(*mapper.get(), "america/chicago").ok().value();
     std::string time_zone_id_return = time_zone->time_zone_id().value();
@@ -104,6 +105,11 @@ int main() {
         std::cout << "Metazone ID not calculated correctly; got " << metazone_id_return << std::endl;
         return 1;
     }
+    time_zone->maybe_calculate_zone_variant(*zocalc.get(), *local_datetime.get());
+    if (!time_zone->is_daylight_time()) {
+        std::cout << "ZoneVariant not calculated correctly" << std::endl;
+        return 1;
+    }
     // Note: The daylight time switch should normally come from TZDB calculations.
     time_zone->set_daylight_time();
     std::string zone_variant_return = time_zone->zone_variant().value();
@@ -112,18 +118,18 @@ int main() {
         return 1;
     }
 
-    std::unique_ptr<GregorianZonedDateTimeFormatter> gzdtf = GregorianZonedDateTimeFormatter::create_with_lengths(*dp.get(), *locale.get(), DateLength::Full, TimeLength::Full).ok().value();
+    std::unique_ptr<GregorianZonedDateTimeFormatter> gzdtf = GregorianZonedDateTimeFormatter::create_with_length(*dp.get(), *locale.get(), DateTimeLength::Long).ok().value();
     out = gzdtf->format_iso_datetime_with_custom_time_zone(*date.get(), *time_zone.get());
     std::cout << "Formatted value is " << out << std::endl;
-    if (out != "Monday, July 11, 2022, 1:06:42\u202fPM Central Daylight Time") {
+    if (out != "July 11, 2022, 1:06:42\u202fPM CT") {
         std::cout << "Output does not match expected output" << std::endl;
         return 1;
     }
 
-    std::unique_ptr<ZonedDateTimeFormatter> zdtf = ZonedDateTimeFormatter::create_with_lengths(*dp.get(), *locale.get(), DateLength::Full, TimeLength::Full).ok().value();
+    std::unique_ptr<ZonedDateTimeFormatter> zdtf = ZonedDateTimeFormatter::create_with_length(*dp.get(), *locale.get(), DateTimeLength::Long).ok().value();
     out = zdtf->format_datetime_with_custom_time_zone(*any_date.get(), *time_zone.get()).ok().value();
     std::cout << "Formatted value is " << out << std::endl;
-    if (out != "Monday, October 5, 2 Reiwa, 1:33:15\u202fPM Central Daylight Time") {
+    if (out != "October 5, 2 Reiwa, 1:33:15\u202fPM CT") {
         std::cout << "Output does not match expected output" << std::endl;
         return 1;
     }

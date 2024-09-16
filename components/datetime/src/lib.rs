@@ -9,17 +9,12 @@
 //!
 //! [`TypedDateTimeFormatter`] and [`DateTimeFormatter`] are the main types of the component. They accepts a set of arguments which
 //! allow it to collect necessary data from the [data provider], and once instantiated, can be
-//! used to quickly format any date and time provided. There are variants of these types that can format greater or fewer components,
-//! including [`TypedDateFormatter`] & [`DateFormatter`], [`TypedZonedDateTimeFormatter`] & [`ZonedDateTimeFormatter`], [`TimeFormatter`],
-//! and [`TimeZoneFormatter`].
-//!
-//! There is no `ZonedTimeFormatter`. To format only a time in a time zone, use [`ZonedDateTimeFormatter`].
+//! used to quickly format any date and time provided. There are variants of these types that can format greater or fewer components.
 //!
 //! These formatters work with types from the [`calendar`] module, like [`Date`], [`DateTime`], and [`Time`],
 //! and [`timezone::CustomTimeZone`], however other types may be used provided they implement the traits from the [`input`] module.
 //!
-//! Each instance of a date-related formatter (i.e. not [`TimeFormatter`] or [`TimeZoneFormatter`])
-//! is associated with a particular [`Calendar`].
+//! Each instance of a date-related formatter is associated with a particular [`Calendar`].
 //! The "Typed" vs untyped formatter distinction is to help with this. For example, if you know at compile time that you
 //! will only be formatting Gregorian dates, you can use [`TypedDateTimeFormatter<Gregorian>`](TypedDateTimeFormatter) and the
 //! APIs will make sure that only Gregorian [`DateTime`]s are used with the calendar. On the other hand, if you want to be able to select
@@ -111,7 +106,6 @@
 //! [`Calendar`]: calendar::{Calendar}
 //! [`AnyCalendar`]: calendar::any_calendar::{AnyCalendar}
 //! [`timezone::CustomTimeZone`]: icu::timezone::{CustomTimeZone}
-//! [`TimeZoneFormatter`]: time_zone::TimeZoneFormatter
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
@@ -161,11 +155,10 @@ pub(crate) mod raw;
 #[allow(clippy::exhaustive_structs, clippy::exhaustive_enums)] // private-ish module
 #[cfg(any(feature = "datagen", feature = "experimental"))]
 pub mod skeleton;
-pub mod time_zone;
+mod time_zone;
 mod tz_registry;
-mod zoned_datetime;
 
-pub use any::{DateFormatter, DateTimeFormatter, ZonedDateTimeFormatter};
+pub use any::{DateFormatter, DateTimeFormatter};
 pub use calendar::CldrCalendar;
 #[cfg(feature = "experimental")]
 pub use calendar::{InternalCldrCalendar, NeverCalendar};
@@ -177,10 +170,7 @@ pub use format::datetime::DateTimeWriteError;
 pub use format::datetime::FormattedDateTime;
 #[cfg(feature = "experimental")]
 pub use format::neo::{FormattedDateTimePattern, LoadError, SingleLoadError, TypedDateTimeNames};
-pub use format::time_zone::FormattedTimeZone;
-pub use format::zoned_datetime::FormattedZonedDateTime;
 pub use options::DateTimeFormatterOptions;
-pub use zoned_datetime::TypedZonedDateTimeFormatter;
 
 #[doc(no_inline)]
 pub use DateTimeError as Error;

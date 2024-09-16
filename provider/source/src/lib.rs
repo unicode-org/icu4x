@@ -20,7 +20,7 @@
 use cldr_cache::CldrCache;
 use elsa::sync::FrozenMap;
 use icu_provider::prelude::*;
-use source::{AbstractFs, SerdeCache};
+use source::{AbstractFs, SerdeCache, TzdbCache};
 use std::collections::{BTreeSet, HashSet};
 use std::fmt::Debug;
 use std::path::Path;
@@ -79,6 +79,7 @@ pub struct SourceDataProvider {
     cldr_paths: Option<Arc<CldrCache>>,
     icuexport_paths: Option<Arc<SerdeCache>>,
     segmenter_lstm_paths: Option<Arc<SerdeCache>>,
+    tzdb_paths: Option<Arc<TzdbCache>>,
     trie_type: TrieType,
     collation_han_database: CollationHanDatabase,
     #[allow(clippy::type_complexity)] // not as complex as it appears
@@ -118,11 +119,15 @@ impl SourceDataProvider {
     /// The latest segmentation LSTM model tag that has been verified to work with this version of `SourceDataProvider`.
     pub const LATEST_TESTED_SEGMENTER_LSTM_TAG: &'static str = "v0.1.0";
 
+    /// The latest TZDB tag that has been verified to work with this version of `SourceDataProvider`.
+    pub const LATEST_TESTED_TZDB_TAG: &'static str = "2024b";
+
     /// A provider using the latest data that has been verified to work with this version of `SourceDataProvider`.
     ///
     /// See [`LATEST_TESTED_CLDR_TAG`](Self::LATEST_TESTED_CLDR_TAG),
     /// [`LATEST_TESTED_ICUEXPORT_TAG`](Self::LATEST_TESTED_ICUEXPORT_TAG),
-    /// [`LATEST_TESTED_SEGMENTER_LSTM_TAG`](Self::LATEST_TESTED_SEGMENTER_LSTM_TAG).
+    /// [`LATEST_TESTED_SEGMENTER_LSTM_TAG`](Self::LATEST_TESTED_SEGMENTER_LSTM_TAG),
+    /// [`LATEST_TESTED_TZDB_TAG`](Self::LATEST_TESTED_TZDB_TAG).
     ///
     /// ✨ *Enabled with the `networking` Cargo feature.*
     #[cfg(feature = "networking")]
@@ -135,6 +140,7 @@ impl SourceDataProvider {
                     .with_cldr_for_tag(Self::LATEST_TESTED_CLDR_TAG)
                     .with_icuexport_for_tag(Self::LATEST_TESTED_ICUEXPORT_TAG)
                     .with_segmenter_lstm_for_tag(Self::LATEST_TESTED_SEGMENTER_LSTM_TAG)
+                    .with_tzdb_for_tag(Self::LATEST_TESTED_TZDB_TAG)
             })
             .clone()
     }
@@ -149,6 +155,7 @@ impl SourceDataProvider {
             cldr_paths: None,
             icuexport_paths: None,
             segmenter_lstm_paths: None,
+            tzdb_paths: None,
             trie_type: Default::default(),
             collation_han_database: Default::default(),
             requests_cache: Default::default(),
@@ -187,6 +194,18 @@ impl SourceDataProvider {
         })
     }
 
+    /// Adds timezone database source data to the provider. The path should point to a local
+    /// `tz` directory or ZIP file (see [GitHub](https://github.com/eggert/tz)).
+    pub fn with_tzdb(self, root: &Path) -> Result<Self, DataError> {
+        Ok(Self {
+            tzdb_paths: Some(Arc::new(TzdbCache {
+                root: AbstractFs::new(root)?,
+                cache: Default::default(),
+            })),
+            ..self
+        })
+    }
+
     /// Adds CLDR source data to the provider. The data will be downloaded from GitHub
     /// using the given tag (see [GitHub releases](https://github.com/unicode-org/cldr-json/releases)).
     ///
@@ -204,7 +223,7 @@ impl SourceDataProvider {
     }
 
     /// Adds ICU export source data to the provider. The data will be downloaded from GitHub
-    /// using the given tag. (see [GitHub releases](https://github.com/unicode-org/icu/releases)).
+    /// using the given tag (see [GitHub releases](https://github.com/unicode-org/icu/releases)).
     ///
     /// Also see: [`LATEST_TESTED_ICUEXPORT_TAG`](Self::LATEST_TESTED_ICUEXPORT_TAG)
     ///
@@ -224,7 +243,7 @@ impl SourceDataProvider {
     }
 
     /// Adds segmenter LSTM source data to the provider. The data will be downloaded from GitHub
-    /// using the given tag. (see [GitHub releases](https://github.com/unicode-org/lstm_word_segmentation/releases)).
+    /// using the given tag (see [GitHub releases](https://github.com/unicode-org/lstm_word_segmentation/releases)).
     ///
     /// Also see: [`LATEST_TESTED_SEGMENTER_LSTM_TAG`](Self::LATEST_TESTED_SEGMENTER_LSTM_TAG)
     ///
@@ -239,6 +258,25 @@ impl SourceDataProvider {
         }
     }
 
+    /// Adds timezone database source data to the provider. The data will be downloaded from GitHub
+    /// using the given tag (see [GitHub](https://github.com/eggert/tz)).
+    ///
+    /// Also see: [`LATEST_TESTED_SEGMENTER_LSTM_TAG`](Self::LATEST_TESTED_SEGMENTER_LSTM_TAG)
+    ///
+    /// ✨ *Enabled with the `networking` Cargo feature.*
+    #[cfg(feature = "networking")]
+    pub fn with_tzdb_for_tag(self, tag: &str) -> Self {
+        Self {
+            tzdb_paths: Some(Arc::new(TzdbCache {
+                root: AbstractFs::new_from_url(dbg!(format!(
+                    "https://github.com/eggert/tz/archive/refs/tags/{tag}.zip",
+                ))),
+                cache: Default::default(),
+            })),
+            ..self
+        }
+    }
+
     const MISSING_CLDR_ERROR: DataError =
         DataError::custom("Missing CLDR data. Use `.with_cldr[_for_tag]` to set CLDR data.");
 
@@ -248,6 +286,9 @@ impl SourceDataProvider {
     const MISSING_SEGMENTER_LSTM_ERROR: DataError = DataError::custom(
         "Missing segmenter data. Use `.with_segmenter_lstm[_for_tag]` to set segmenter data.",
     );
+
+    const MISSING_TZDB_ERROR: DataError =
+        DataError::custom("Missing tzdb data. Use `.with_tzdb[_for_tag]` to set tzdb data.");
 
     /// Identifies errors that are due to missing CLDR data.
     pub fn is_missing_cldr_error(mut e: DataError) -> bool {
@@ -267,6 +308,12 @@ impl SourceDataProvider {
         e == Self::MISSING_SEGMENTER_LSTM_ERROR
     }
 
+    /// Identifies errors that are due to missing TZDB data.
+    pub fn is_missing_tzdb_error(mut e: DataError) -> bool {
+        e.marker_path = None;
+        e == Self::MISSING_TZDB_ERROR
+    }
+
     fn cldr(&self) -> Result<&CldrCache, DataError> {
         self.cldr_paths.as_deref().ok_or(Self::MISSING_CLDR_ERROR)
     }
@@ -281,6 +328,10 @@ impl SourceDataProvider {
         self.segmenter_lstm_paths
             .as_deref()
             .ok_or(Self::MISSING_SEGMENTER_LSTM_ERROR)
+    }
+
+    fn tzdb(&self) -> Result<&TzdbCache, DataError> {
+        self.tzdb_paths.as_deref().ok_or(Self::MISSING_TZDB_ERROR)
     }
 
     /// Set this to use tries optimized for speed instead of data size

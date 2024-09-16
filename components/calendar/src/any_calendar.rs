@@ -54,7 +54,7 @@ use core::fmt;
 /// let manual_time = Time::try_new(12, 33, 12, 0).expect("failed to construct Time");
 /// // construct from era code, year, month code, day, time, and a calendar
 /// // This is March 28, 15 Heisei
-/// let manual_datetime = DateTime::try_new_from_codes(Era(tinystr!(16, "heisei")), 15, MonthCode(tinystr!(4, "M03")), 28,
+/// let manual_datetime = DateTime::try_new_from_codes(Some(Era(tinystr!(16, "heisei"))), 15, MonthCode(tinystr!(4, "M03")), 28,
 ///                                                manual_time, calendar.clone())
 ///                     .expect("Failed to construct DateTime manually");
 ///
@@ -199,7 +199,7 @@ impl Calendar for AnyCalendar {
     type DateInner = AnyDateInner;
     fn date_from_codes(
         &self,
-        era: types::Era,
+        era: Option<types::Era>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
@@ -508,18 +508,16 @@ impl Calendar for AnyCalendar {
         }
     }
 
-    /// The calendar-specific year represented by `date`
-    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
+    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
         match_cal_and_date!(match (self, date): (c, d) => c.year(d))
     }
-
     /// The calendar-specific check if `date` is in a leap year
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
         match_cal_and_date!(match (self, date): (c, d) => c.is_in_leap_year(d))
     }
 
     /// The calendar-specific month represented by `date`
-    fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
+    fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
         match_cal_and_date!(match (self, date): (c, d) => c.month(d))
     }
 
@@ -1587,17 +1585,19 @@ mod tests {
         let era = types::Era(era.parse().expect("era must parse"));
         let month = types::MonthCode(month_code.parse().expect("month code must parse"));
 
-        let date = Date::try_new_from_codes(era, year, month, day, calendar).unwrap_or_else(|e| {
-            panic!(
-                "Failed to construct date for {} with {era:?}, {year}, {month}, {day}: {e:?}",
-                calendar.debug_name(),
-            )
-        });
+        let date =
+            Date::try_new_from_codes(Some(era), year, month, day, calendar).unwrap_or_else(|e| {
+                panic!(
+                    "Failed to construct date for {} with {era:?}, {year}, {month}, {day}: {e:?}",
+                    calendar.debug_name(),
+                )
+            });
 
         let roundtrip_year = date.year();
-        let roundtrip_era = roundtrip_year.era;
-        let roundtrip_year = roundtrip_year.number;
-        let roundtrip_month = date.month().code;
+        // FIXME: these APIs should be improved
+        let roundtrip_era = roundtrip_year.formatting_era().unwrap_or(era);
+        let roundtrip_year = roundtrip_year.era_year_or_extended();
+        let roundtrip_month = date.month().standard_code;
         let roundtrip_day = date.day_of_month().0.try_into().expect("Must fit in u8");
 
         assert_eq!(
@@ -1631,7 +1631,7 @@ mod tests {
         let era = types::Era(era.parse().expect("era must parse"));
         let month = types::MonthCode(month_code.parse().expect("month code must parse"));
 
-        let date = Date::try_new_from_codes(era, year, month, day, calendar);
+        let date = Date::try_new_from_codes(Some(era), year, month, day, calendar);
         assert_eq!(
             date,
             Err(error),
@@ -1969,48 +1969,48 @@ mod tests {
         single_test_roundtrip(roc, "roc-inverse", 15, "M01", 10);
         single_test_roundtrip(roc, "roc", 100, "M10", 30);
 
-        single_test_roundtrip(islamic_observational, "islamic", 477, "M03", 1);
-        single_test_roundtrip(islamic_observational, "islamic", 2083, "M07", 21);
-        single_test_roundtrip(islamic_observational, "islamic", 1600, "M12", 20);
+        single_test_roundtrip(islamic_observational, "ah", 477, "M03", 1);
+        single_test_roundtrip(islamic_observational, "ah", 2083, "M07", 21);
+        single_test_roundtrip(islamic_observational, "ah", 1600, "M12", 20);
         single_test_error(
             islamic_observational,
-            "islamic",
+            "ah",
             100,
             "M9",
             1,
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M9"))),
         );
 
-        single_test_roundtrip(islamic_civil, "islamic", 477, "M03", 1);
-        single_test_roundtrip(islamic_civil, "islamic", 2083, "M07", 21);
-        single_test_roundtrip(islamic_civil, "islamic", 1600, "M12", 20);
+        single_test_roundtrip(islamic_civil, "ah", 477, "M03", 1);
+        single_test_roundtrip(islamic_civil, "ah", 2083, "M07", 21);
+        single_test_roundtrip(islamic_civil, "ah", 1600, "M12", 20);
         single_test_error(
             islamic_civil,
-            "islamic",
+            "ah",
             100,
             "M9",
             1,
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M9"))),
         );
 
-        single_test_roundtrip(islamic_umm_al_qura, "islamic", 477, "M03", 1);
-        single_test_roundtrip(islamic_umm_al_qura, "islamic", 2083, "M07", 21);
-        single_test_roundtrip(islamic_umm_al_qura, "islamic", 1600, "M12", 20);
+        single_test_roundtrip(islamic_umm_al_qura, "ah", 477, "M03", 1);
+        single_test_roundtrip(islamic_umm_al_qura, "ah", 2083, "M07", 21);
+        single_test_roundtrip(islamic_umm_al_qura, "ah", 1600, "M12", 20);
         single_test_error(
             islamic_umm_al_qura,
-            "islamic",
+            "ah",
             100,
             "M9",
             1,
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M9"))),
         );
 
-        single_test_roundtrip(islamic_tabular, "islamic", 477, "M03", 1);
-        single_test_roundtrip(islamic_tabular, "islamic", 2083, "M07", 21);
-        single_test_roundtrip(islamic_tabular, "islamic", 1600, "M12", 20);
+        single_test_roundtrip(islamic_tabular, "ah", 477, "M03", 1);
+        single_test_roundtrip(islamic_tabular, "ah", 2083, "M07", 21);
+        single_test_roundtrip(islamic_tabular, "ah", 1600, "M12", 20);
         single_test_error(
             islamic_tabular,
-            "islamic",
+            "ah",
             100,
             "M9",
             1,

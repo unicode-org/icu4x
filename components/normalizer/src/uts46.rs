@@ -36,13 +36,23 @@ pub struct Uts46MapperBorrowed<'a> {
 }
 
 #[cfg(feature = "compiled_data")]
-impl<'a> Default for Uts46MapperBorrowed<'a> {
+impl Default for Uts46MapperBorrowed<'static> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<'a> Uts46MapperBorrowed<'a> {
+impl Uts46MapperBorrowed<'static> {
+    /// Cheaply converts a [`Uts46MapperBorrowed<'static>`] into a [`Uts46Mapper`].
+    ///
+    /// Note: Due to branching and indirection, using [`Uts46Mapper`] might inhibit some
+    /// compile-time optimizations that are possible with [`Uts46MapperBorrowed`].
+    pub const fn static_to_owned(self) -> Uts46Mapper {
+        Uts46Mapper {
+            normalizer: self.normalizer.static_to_owned(),
+        }
+    }
+
     /// Construct with compiled data.
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
@@ -50,7 +60,9 @@ impl<'a> Uts46MapperBorrowed<'a> {
             normalizer: ComposingNormalizerBorrowed::new_uts46(),
         }
     }
+}
 
+impl<'a> Uts46MapperBorrowed<'a> {
     /// Returns an iterator adaptor that turns an `Iterator` over `char`
     /// into an iterator yielding a `char` sequence that gets the following
     /// operations from the "Map" and "Normalize" steps of the "Processing"
@@ -129,7 +141,7 @@ pub struct Uts46Mapper {
 #[cfg(feature = "compiled_data")]
 impl Default for Uts46Mapper {
     fn default() -> Self {
-        Self::new()
+        Self::new().static_to_owned()
     }
 }
 
@@ -143,10 +155,9 @@ impl Uts46Mapper {
 
     /// Construct with compiled data.
     #[cfg(feature = "compiled_data")]
-    pub const fn new() -> Self {
-        Uts46Mapper {
-            normalizer: ComposingNormalizer::new_uts46(),
-        }
+    #[allow(clippy::new_ret_no_self)]
+    pub const fn new() -> Uts46MapperBorrowed<'static> {
+        Uts46MapperBorrowed::new()
     }
 
     /// Construct with provider.

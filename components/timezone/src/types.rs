@@ -147,6 +147,11 @@ impl UtcOffset {
         self.0
     }
 
+    /// Returns the raw offset value in eights of an hour (7.5 minute units).
+    pub fn offset_eighths_of_hour(self) -> i8 {
+        (self.0 / 450) as i8
+    }
+
     /// Returns `true` if the [`UtcOffset`] is positive, otherwise `false`.
     pub fn is_positive(self) -> bool {
         self.0 >= 0

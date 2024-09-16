@@ -119,6 +119,21 @@ struct Cli {
     #[cfg(feature = "provider")]
     segmenter_lstm_root: Option<PathBuf>,
 
+    #[arg(long, value_name = "TAG", default_value = "latest")]
+    #[arg(
+        help = "Download tzdb from this GitHub tag (https://github.com/eggert/tzdb)\n\
+                  Use 'latest' for the latest version verified to work with this version of the binary.\n\
+                  Ignored if '--tzdb-root' is present. Requires binary to be built with `networking` Cargo feature (enabled by default)."
+    )]
+    #[cfg_attr(not(feature = "networking"), arg(hide = true))]
+    #[cfg(feature = "provider")]
+    tzdb_tag: String,
+
+    #[arg(long, value_name = "PATH")]
+    #[arg(help = "Path to a local tzdb directory (see https://github.com/eggert/tzdb).")]
+    #[cfg(feature = "provider")]
+    tzdb_root: Option<PathBuf>,
+
     #[arg(long, value_enum, default_value_t = TrieType::Small)]
     #[arg(
         help = "Whether to optimize CodePointTrie data structures for size (\"small\") or speed (\"fast\").\n\
@@ -405,6 +420,22 @@ fn main() -> eyre::Result<()> {
                 }
                 #[cfg(feature = "networking")]
                 (_, tag) => p.with_segmenter_lstm_for_tag(tag),
+                #[cfg(not(feature = "networking"))]
+                (None, _) => {
+                    eyre::bail!(
+                        "Downloading data from tags requires the `networking` Cargo feature"
+                    )
+                }
+            };
+
+            p = match (cli.tzdb_root, cli.tzdb_tag.as_str()) {
+                (Some(path), _) => p.with_tzdb(&path)?,
+                #[cfg(feature = "networking")]
+                (_, "latest") => {
+                    p.with_tzdb_for_tag(SourceDataProvider::LATEST_TESTED_TZDB_TAG)
+                }
+                #[cfg(feature = "networking")]
+                (_, tag) => p.with_tzdb_for_tag(tag),
                 #[cfg(not(feature = "networking"))]
                 (None, _) => {
                     eyre::bail!(

@@ -14,7 +14,30 @@
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 
-icu::normalizer::ComposingNormalizer::as_borrowed#FnInStruct
+icu::datetime::DateFormatter#Struct
+icu::datetime::DateFormatter::format#FnInStruct
+icu::datetime::DateFormatter::format_to_string#FnInStruct
+icu::datetime::DateFormatter::try_new_with_length#FnInStruct
+icu::datetime::DateTimeFormatter#Struct
+icu::datetime::DateTimeFormatter::format#FnInStruct
+icu::datetime::DateTimeFormatter::format_to_string#FnInStruct
+icu::datetime::DateTimeFormatter::try_new#FnInStruct
+icu::datetime::FormattedDateTime#Struct
+icu::datetime::FormattedDateTime::write_to#FnInStruct
+icu::datetime::TimeFormatter#Struct
+icu::datetime::TimeFormatter::format#FnInStruct
+icu::datetime::TimeFormatter::format_to_string#FnInStruct
+icu::datetime::TimeFormatter::try_new_with_length#FnInStruct
+icu::datetime::TypedDateFormatter#Struct
+icu::datetime::TypedDateFormatter::format#FnInStruct
+icu::datetime::TypedDateFormatter::format_to_string#FnInStruct
+icu::datetime::TypedDateFormatter::try_new_with_length#FnInStruct
+icu::datetime::TypedDateTimeFormatter#Struct
+icu::datetime::TypedDateTimeFormatter::format#FnInStruct
+icu::datetime::TypedDateTimeFormatter::format_to_string#FnInStruct
+icu::datetime::TypedDateTimeFormatter::try_new#FnInStruct
+icu::datetime::options::length::Date#Enum
+icu::datetime::options::length::Time#Enum
 icu::normalizer::ComposingNormalizerBorrowed#Struct
 icu::normalizer::ComposingNormalizerBorrowed::is_normalized#FnInStruct
 icu::normalizer::ComposingNormalizerBorrowed::new_nfc#FnInStruct
@@ -24,7 +47,6 @@ icu::normalizer::ComposingNormalizerBorrowed::normalize_to#FnInStruct
 icu::normalizer::ComposingNormalizerBorrowed::normalize_utf16#FnInStruct
 icu::normalizer::ComposingNormalizerBorrowed::normalize_utf16_to#FnInStruct
 icu::normalizer::ComposingNormalizerBorrowed::normalize_utf8_to#FnInStruct
-icu::normalizer::DecomposingNormalizer::as_borrowed#FnInStruct
 icu::normalizer::DecomposingNormalizerBorrowed#Struct
 icu::normalizer::DecomposingNormalizerBorrowed::new_nfd#FnInStruct
 icu::normalizer::DecomposingNormalizerBorrowed::new_nfkd#FnInStruct

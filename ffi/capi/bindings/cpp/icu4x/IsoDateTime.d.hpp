@@ -77,7 +77,7 @@ public:
 
   inline icu4x::WeekOf week_of_year(const icu4x::WeekCalculator& calculator) const;
 
-  inline uint32_t month() const;
+  inline uint8_t month() const;
 
   inline int32_t year() const;
 

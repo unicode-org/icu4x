@@ -99,12 +99,13 @@ where
     /// For an example, see [`ZeroMap2d::iter0()`].
     pub fn iter1(
         &self,
-    ) -> impl Iterator<
+    ) -> impl DoubleEndedIterator<
         Item = (
             &'l <K1 as ZeroMapKV<'a>>::GetType,
             &'l <V as ZeroMapKV<'a>>::GetType,
         ),
-    > + '_ {
+    > + ExactSizeIterator
+           + '_ {
         let range = self.get_range();
         #[allow(clippy::unwrap_used)] // `self.get_range()` returns a valid range
         range.map(move |idx| {
@@ -118,12 +119,12 @@ where
     /// Transform this cursor into an ordered iterator over keys1 for a particular key0.
     pub fn into_iter1(
         self,
-    ) -> impl Iterator<
+    ) -> impl DoubleEndedIterator<
         Item = (
             &'l <K1 as ZeroMapKV<'a>>::GetType,
             &'l <V as ZeroMapKV<'a>>::GetType,
         ),
-    > {
+    > + ExactSizeIterator {
         let range = self.get_range();
         #[allow(clippy::unwrap_used)] // `self.get_range()` returns a valid range
         range.map(move |idx| {
@@ -190,7 +191,8 @@ where
     /// ```
     pub fn iter1_copied(
         &self,
-    ) -> impl Iterator<Item = (&'l <K1 as ZeroMapKV<'a>>::GetType, V)> + '_ {
+    ) -> impl DoubleEndedIterator<Item = (&'l <K1 as ZeroMapKV<'a>>::GetType, V)> + ExactSizeIterator + '_
+    {
         let range = self.get_range();
         #[allow(clippy::unwrap_used)] // `self.get_range()` returns a valid range
         range.map(move |idx| {

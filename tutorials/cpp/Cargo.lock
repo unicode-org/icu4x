@@ -349,6 +349,7 @@ name = "icu_locale"
 version = "1.5.0"
 dependencies = [
  "displaydoc",
+ "icu_collections",
  "icu_locale_core",
  "icu_locale_data",
  "icu_provider",
@@ -452,7 +453,6 @@ dependencies = [
 name = "icu_properties_data"
 version = "1.5.0"
 dependencies = [
- "icu_locale",
  "icu_provider_baked",
 ]
 

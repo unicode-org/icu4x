@@ -44,7 +44,7 @@ uint32_t icu4x_IsoDate_week_of_month_mv1(const IsoDate* self, IsoWeekday first_w
 
 WeekOf icu4x_IsoDate_week_of_year_mv1(const IsoDate* self, const WeekCalculator* calculator);
 
-uint32_t icu4x_IsoDate_month_mv1(const IsoDate* self);
+uint8_t icu4x_IsoDate_month_mv1(const IsoDate* self);
 
 int32_t icu4x_IsoDate_year_mv1(const IsoDate* self);
 

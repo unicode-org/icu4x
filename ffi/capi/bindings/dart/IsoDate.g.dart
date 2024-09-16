@@ -118,13 +118,17 @@ final class IsoDate implements ffi.Finalizable {
 
   /// Returns 1-indexed number of the month of this date in its year
   ///
-  /// See the [Rust documentation for `month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month) for more information.
+  /// See the [Rust documentation for `ordinal`](https://docs.rs/icu/latest/icu/calendar/types/struct.MonthInfo.html#structfield.ordinal) for more information.
+  ///
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month)
   int get month {
     final result = _icu4x_IsoDate_month_mv1(_ffi);
     return result;
   }
 
-  /// Returns the year number for this date
+  /// Returns the year number in the current era for this date
+  ///
+  /// For calendars without an era, returns the extended year
   ///
   /// See the [Rust documentation for `year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year) for more information.
   int get year {
@@ -221,7 +225,7 @@ external int _icu4x_IsoDate_week_of_month_mv1(ffi.Pointer<ffi.Opaque> self, int 
 external _WeekOfFfi _icu4x_IsoDate_week_of_year_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> calculator);
 
 @meta.ResourceIdentifier('icu4x_IsoDate_month_mv1')
-@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDate_month_mv1')
+@ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDate_month_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_IsoDate_month_mv1(ffi.Pointer<ffi.Opaque> self);
 

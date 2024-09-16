@@ -16,6 +16,7 @@
 #include "TimeZoneInvalidIdError.hpp"
 #include "TimeZoneInvalidOffsetError.hpp"
 #include "TimeZoneUnknownError.hpp"
+#include "ZoneOffsetCalculator.hpp"
 
 
 namespace icu4x {
@@ -33,6 +34,9 @@ namespace capi {
     icu4x_CustomTimeZone_try_set_offset_seconds_mv1_result icu4x_CustomTimeZone_try_set_offset_seconds_mv1(icu4x::capi::CustomTimeZone* self, int32_t offset_seconds);
     
     void icu4x_CustomTimeZone_set_offset_eighths_of_hour_mv1(icu4x::capi::CustomTimeZone* self, int8_t offset_eighths_of_hour);
+    
+    typedef struct icu4x_CustomTimeZone_offset_eighths_of_hour_mv1_result {union {int8_t ok; }; bool is_ok;} icu4x_CustomTimeZone_offset_eighths_of_hour_mv1_result;
+    icu4x_CustomTimeZone_offset_eighths_of_hour_mv1_result icu4x_CustomTimeZone_offset_eighths_of_hour_mv1(const icu4x::capi::CustomTimeZone* self);
     
     void icu4x_CustomTimeZone_clear_offset_mv1(icu4x::capi::CustomTimeZone* self);
     
@@ -90,6 +94,8 @@ namespace capi {
     
     void icu4x_CustomTimeZone_maybe_calculate_metazone_mv1(icu4x::capi::CustomTimeZone* self, const icu4x::capi::MetazoneCalculator* metazone_calculator, const icu4x::capi::IsoDateTime* local_datetime);
     
+    void icu4x_CustomTimeZone_maybe_calculate_zone_variant_mv1(icu4x::capi::CustomTimeZone* self, const icu4x::capi::ZoneOffsetCalculator* zone_offset_calculator, const icu4x::capi::IsoDateTime* local_datetime);
+    
     
     void icu4x_CustomTimeZone_destroy_mv1(CustomTimeZone* self);
     
@@ -121,6 +127,11 @@ inline diplomat::result<std::monostate, icu4x::TimeZoneInvalidOffsetError> icu4x
 inline void icu4x::CustomTimeZone::set_offset_eighths_of_hour(int8_t offset_eighths_of_hour) {
   icu4x::capi::icu4x_CustomTimeZone_set_offset_eighths_of_hour_mv1(this->AsFFI(),
     offset_eighths_of_hour);
+}
+
+inline std::optional<int8_t> icu4x::CustomTimeZone::offset_eighths_of_hour() const {
+  auto result = icu4x::capi::icu4x_CustomTimeZone_offset_eighths_of_hour_mv1(this->AsFFI());
+  return result.is_ok ? std::optional<int8_t>(result.ok) : std::nullopt;
 }
 
 inline void icu4x::CustomTimeZone::clear_offset() {
@@ -234,6 +245,12 @@ inline std::optional<bool> icu4x::CustomTimeZone::is_daylight_time() const {
 inline void icu4x::CustomTimeZone::maybe_calculate_metazone(const icu4x::MetazoneCalculator& metazone_calculator, const icu4x::IsoDateTime& local_datetime) {
   icu4x::capi::icu4x_CustomTimeZone_maybe_calculate_metazone_mv1(this->AsFFI(),
     metazone_calculator.AsFFI(),
+    local_datetime.AsFFI());
+}
+
+inline void icu4x::CustomTimeZone::maybe_calculate_zone_variant(const icu4x::ZoneOffsetCalculator& zone_offset_calculator, const icu4x::IsoDateTime& local_datetime) {
+  icu4x::capi::icu4x_CustomTimeZone_maybe_calculate_zone_variant_mv1(this->AsFFI(),
+    zone_offset_calculator.AsFFI(),
     local_datetime.AsFFI());
 }
 

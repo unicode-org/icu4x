@@ -116,13 +116,13 @@
   },
   "eras": {
     "names": {
-      "islamic": "ère de l’Hégire"
+      "ah": "ère de l’Hégire"
     },
     "abbr": {
-      "islamic": "AH"
+      "ah": "AH"
     },
     "narrow": {
-      "islamic": "H"
+      "ah": "H"
     }
   }
 }

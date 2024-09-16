@@ -18,12 +18,12 @@
 //! let datetime_coptic = DateTime::new_from_iso(datetime_iso, Coptic);
 //!
 //! // `Date` checks
-//! assert_eq!(date_coptic.year().number, 1686);
+//! assert_eq!(date_coptic.year().era_year_or_extended(), 1686);
 //! assert_eq!(date_coptic.month().ordinal, 4);
 //! assert_eq!(date_coptic.day_of_month().0, 24);
 //!
 //! // `DateTime` type
-//! assert_eq!(datetime_coptic.date.year().number, 1686);
+//! assert_eq!(datetime_coptic.date.year().era_year_or_extended(), 1686);
 //! assert_eq!(datetime_coptic.date.month().ordinal, 4);
 //! assert_eq!(datetime_coptic.date.day_of_month().0, 24);
 //! assert_eq!(datetime_coptic.time.hour.number(), 13);
@@ -111,33 +111,37 @@ impl Calendar for Coptic {
     type DateInner = CopticDateInner;
     fn date_from_codes(
         &self,
-        era: types::Era,
+        era: Option<types::Era>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        let year = if era.0 == tinystr!(16, "ad") {
-            if year <= 0 {
-                return Err(DateError::Range {
-                    field: "year",
-                    value: year,
-                    min: 1,
-                    max: i32::MAX,
-                });
+        let year = if let Some(era) = era {
+            if era.0 == tinystr!(16, "ad") || era.0 == tinystr!(16, "coptic") {
+                if year <= 0 {
+                    return Err(DateError::Range {
+                        field: "year",
+                        value: year,
+                        min: 1,
+                        max: i32::MAX,
+                    });
+                }
+                year
+            } else if era.0 == tinystr!(16, "bd") || era.0 == tinystr!(16, "coptic-inverse") {
+                if year <= 0 {
+                    return Err(DateError::Range {
+                        field: "year",
+                        value: year,
+                        min: 1,
+                        max: i32::MAX,
+                    });
+                }
+                1 - year
+            } else {
+                return Err(DateError::UnknownEra(era));
             }
-            year
-        } else if era.0 == tinystr!(16, "bd") {
-            if year <= 0 {
-                return Err(DateError::Range {
-                    field: "year",
-                    value: year,
-                    min: 1,
-                    max: i32::MAX,
-                });
-            }
-            1 - year
         } else {
-            return Err(DateError::UnknownEra(era));
+            year
         };
 
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(CopticDateInner)
@@ -184,7 +188,7 @@ impl Calendar for Coptic {
         date1.0.until(date2.0, _largest_unit, _smallest_unit)
     }
 
-    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
+    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
         year_as_coptic(date.0.year)
     }
 
@@ -192,7 +196,7 @@ impl Calendar for Coptic {
         Self::is_leap_year(date.0.year, ())
     }
 
-    fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
+    fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
         date.0.month()
     }
 
@@ -256,7 +260,7 @@ impl Date<Coptic> {
     /// let date_coptic = Date::try_new_coptic_date(1686, 5, 6)
     ///     .expect("Failed to initialize Coptic Date instance.");
     ///
-    /// assert_eq!(date_coptic.year().number, 1686);
+    /// assert_eq!(date_coptic.year().era_year_or_extended(), 1686);
     /// assert_eq!(date_coptic.month().ordinal, 5);
     /// assert_eq!(date_coptic.day_of_month().0, 6);
     /// ```
@@ -279,7 +283,7 @@ impl DateTime<Coptic> {
     ///     DateTime::try_new_coptic_datetime(1686, 5, 6, 13, 1, 0)
     ///         .expect("Failed to initialize Coptic DateTime instance.");
     ///
-    /// assert_eq!(datetime_coptic.date.year().number, 1686);
+    /// assert_eq!(datetime_coptic.date.year().era_year_or_extended(), 1686);
     /// assert_eq!(datetime_coptic.date.month().ordinal, 5);
     /// assert_eq!(datetime_coptic.date.day_of_month().0, 6);
     /// assert_eq!(datetime_coptic.time.hour.number(), 13);
@@ -301,24 +305,27 @@ impl DateTime<Coptic> {
     }
 }
 
-fn year_as_coptic(year: i32) -> types::FormattableYear {
+fn year_as_coptic(year: i32) -> types::YearInfo {
     if year > 0 {
-        types::FormattableYear {
-            era: types::Era(tinystr!(16, "ad")),
-            number: year,
-            cyclic: None,
-            related_iso: None,
-        }
+        types::YearInfo::new(
+            year,
+            types::EraYear {
+                standard_era: tinystr!(16, "coptic").into(),
+                formatting_era: tinystr!(16, "ad").into(),
+                era_year: year,
+            },
+        )
     } else {
-        types::FormattableYear {
-            era: types::Era(tinystr!(16, "bd")),
-            number: 1 - year,
-            cyclic: None,
-            related_iso: None,
-        }
+        types::YearInfo::new(
+            year,
+            types::EraYear {
+                standard_era: tinystr!(16, "coptic-inverse").into(),
+                formatting_era: tinystr!(16, "bd").into(),
+                era_year: 1 - year,
+            },
+        )
     }
 }
-
 #[cfg(test)]
 mod tests {
     use super::*;

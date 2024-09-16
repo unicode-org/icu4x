@@ -4,7 +4,7 @@ part of 'lib.g.dart';
 
 /// An ICU4X TimeFormatter object capable of formatting an [`Time`] type (and others) as a string
 ///
-/// See the [Rust documentation for `TimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html) for more information.
+/// See the [Rust documentation for `datetime`](https://docs.rs/icu/latest/icu/datetime/index.html) for more information.
 final class TimeFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -26,10 +26,8 @@ final class TimeFormatter implements ffi.Finalizable {
 
   /// Creates a new [`TimeFormatter`] from locale data.
   ///
-  /// See the [Rust documentation for `try_new_with_length`](https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html#method.try_new_with_length) for more information.
-  ///
   /// Throws [Error] on failure.
-  factory TimeFormatter.withLength(DataProvider provider, Locale locale, TimeLength length) {
+  factory TimeFormatter.withLength(DataProvider provider, Locale locale, DateTimeLength length) {
     final result = _icu4x_TimeFormatter_create_with_length_mv1(provider._ffi, locale._ffi, length.index);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -38,8 +36,6 @@ final class TimeFormatter implements ffi.Finalizable {
   }
 
   /// Formats a [`Time`] to a string.
-  ///
-  /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html#method.format) for more information.
   String formatTime(Time value) {
     final write = _Write();
     _icu4x_TimeFormatter_format_time_mv1(_ffi, value._ffi, write._ffi);
@@ -47,8 +43,6 @@ final class TimeFormatter implements ffi.Finalizable {
   }
 
   /// Formats a [`DateTime`] to a string.
-  ///
-  /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html#method.format) for more information.
   String formatDatetime(DateTime value) {
     final write = _Write();
     _icu4x_TimeFormatter_format_datetime_mv1(_ffi, value._ffi, write._ffi);
@@ -56,8 +50,6 @@ final class TimeFormatter implements ffi.Finalizable {
   }
 
   /// Formats a [`IsoDateTime`] to a string.
-  ///
-  /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html#method.format) for more information.
   String formatIsoDatetime(IsoDateTime value) {
     final write = _Write();
     _icu4x_TimeFormatter_format_iso_datetime_mv1(_ffi, value._ffi, write._ffi);
