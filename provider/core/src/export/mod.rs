@@ -17,6 +17,7 @@ use std::collections::HashSet;
 /// An object capable of exporting data payloads in some form.
 pub trait DataExporter: Sync {
     /// Save a `payload` corresponding to the given marker and locale.
+    ///
     /// Takes non-mut self as it can be called concurrently.
     fn put_payload(
         &self,
@@ -26,6 +27,7 @@ pub trait DataExporter: Sync {
     ) -> Result<(), DataError>;
 
     /// Function called for singleton markers.
+    ///
     /// Takes non-mut self as it can be called concurrently.
     fn flush_singleton(
         &self,
@@ -33,14 +35,17 @@ pub trait DataExporter: Sync {
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         self.put_payload(marker, Default::default(), payload)?;
-        self.flush(marker)
+        self.flush(marker, DeduplicationStrategy::Maximal)
     }
 
     /// Function called after a non-singleton marker has been fully enumerated.
-    /// Does not include built-in fallback.
     ///
     /// Takes non-mut self as it can be called concurrently.
-    fn flush(&self, _marker: DataMarkerInfo) -> Result<(), DataError> {
+    fn flush(
+        &self,
+        _marker: DataMarkerInfo,
+        _deduplication: DeduplicationStrategy,
+    ) -> Result<(), DataError> {
         Ok(())
     }
 
@@ -70,8 +75,12 @@ impl DataExporter for Box<dyn DataExporter> {
         (**self).flush_singleton(marker, payload)
     }
 
-    fn flush(&self, marker: DataMarkerInfo) -> Result<(), DataError> {
-        (**self).flush(marker)
+    fn flush(
+        &self,
+        marker: DataMarkerInfo,
+        deduplication: DeduplicationStrategy,
+    ) -> Result<(), DataError> {
+        (**self).flush(marker, deduplication)
     }
 
     fn close(&mut self) -> Result<(), DataError> {
@@ -176,11 +185,48 @@ impl DataExporter for MultiExporter {
             .try_for_each(|e| e.flush_singleton(marker, payload))
     }
 
-    fn flush(&self, marker: DataMarkerInfo) -> Result<(), DataError> {
-        self.0.iter().try_for_each(|e| e.flush(marker))
+    fn flush(
+        &self,
+        marker: DataMarkerInfo,
+        deduplication: DeduplicationStrategy,
+    ) -> Result<(), DataError> {
+        self.0
+            .iter()
+            .try_for_each(|e| e.flush(marker, deduplication))
     }
 
     fn close(&mut self) -> Result<(), DataError> {
         self.0.iter_mut().try_for_each(|e| e.close())
     }
+}
+
+/// Choices for determining the deduplication of locales for exported data payloads.
+///
+/// Deduplication affects the lookup table from locales to data payloads. If a child locale
+/// points to the same payload as its parent locale, then the child locale can be removed from
+/// the lookup table. Therefore, all deduplication strategies guarantee that data requests for
+/// selected locales will succeed so long as fallback is enabled at runtime (either internally
+/// or externally). They also do not impact which _payloads_ are included: only the lookup table.
+///
+/// Comparison of the deduplication strategies:
+///
+/// | Name | Data file size | Supported locale queries? | Needs runtime fallback? |
+/// |---|---|---|---|
+/// | [`Maximal`] | Smallest | No | Yes |
+/// | [`RetainBaseLanguages`] | Small | Yes | Yes |
+/// | [`None`] | Medium/Small | Yes | No |
+///
+/// [`Maximal`]: DeduplicationStrategy::Maximal
+/// [`RetainBaseLanguages`]: DeduplicationStrategy::RetainBaseLanguages
+/// [`None`]: DeduplicationStrategy::None
+#[non_exhaustive]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub enum DeduplicationStrategy {
+    /// Removes from the lookup table any locale whose parent maps to the same data.
+    Maximal,
+    /// Removes from the lookup table any locale whose parent maps to the same data, except if
+    /// the parent is `und`.
+    RetainBaseLanguages,
+    /// Keeps all selected locales in the lookup table.
+    None,
 }

@@ -463,16 +463,15 @@ fn main() -> eyre::Result<()> {
     };
 
     let deduplication_strategy = match cli.deduplication {
-        Some(Deduplication::Maximal) => icu_provider_export::DeduplicationStrategy::Maximal,
+        Some(Deduplication::Maximal) => DeduplicationStrategy::Maximal,
         Some(Deduplication::RetainBaseLanguages) => {
-            icu_provider_export::DeduplicationStrategy::RetainBaseLanguages
+            DeduplicationStrategy::RetainBaseLanguages
         }
-        Some(Deduplication::None) => icu_provider_export::DeduplicationStrategy::None,
+        Some(Deduplication::None) => DeduplicationStrategy::None,
         None => match cli.format {
             Format::Fs | Format::Blob | Format::Blob2 => DeduplicationStrategy::None,
             Format::Baked if cli.no_internal_fallback && cli.deduplication.is_none() =>
                 eyre::bail!("--no-internal-fallback requires an explicit --deduplication value. Baked exporter would default to maximal deduplication, which might not be intended"),
-            // TODO(2.0): Default to RetainBaseLanguages here
             Format::Baked => DeduplicationStrategy::Maximal,
         }
     };

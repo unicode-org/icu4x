@@ -3412,15 +3412,6 @@ macro_rules! __impl_islamic_date_symbols_v1_marker {
             }
         }
     };
-    ($ provider : ty , DRY) => {
-        __impl_islamic_date_symbols_v1_marker!($provider);
-        #[clippy::msrv = "1.71.1"]
-        impl icu_provider::DryDataProvider<icu::datetime::provider::calendar::IslamicDateSymbolsV1Marker> for $provider {
-            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
-                icu_provider::DataProvider::<icu::datetime::provider::calendar::IslamicDateSymbolsV1Marker>::load(self, req).map(|r| r.metadata)
-            }
-        }
-    };
     ($ provider : ty , ITER) => {
         __impl_islamic_date_symbols_v1_marker!($provider);
         #[clippy::msrv = "1.71.1"]
@@ -3430,20 +3421,9 @@ macro_rules! __impl_islamic_date_symbols_v1_marker {
             }
         }
     };
-    ($ provider : ty , DRY , ITER) => {
-        __impl_islamic_date_symbols_v1_marker!($provider);
-        #[clippy::msrv = "1.71.1"]
-        impl icu_provider::DryDataProvider<icu::datetime::provider::calendar::IslamicDateSymbolsV1Marker> for $provider {
-            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
-                icu_provider::DataProvider::<icu::datetime::provider::calendar::IslamicDateSymbolsV1Marker>::load(self, req).map(|r| r.metadata)
-            }
-        }
-        #[clippy::msrv = "1.71.1"]
-        impl icu_provider::IterableDataProvider<icu::datetime::provider::calendar::IslamicDateSymbolsV1Marker> for $provider {
-            fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
-                Ok(icu_provider_baked::DataStore::iter(&Self::DATA_ISLAMIC_DATE_SYMBOLS_V1_MARKER).collect())
-            }
-        }
+    ($ provider : ty , DRY_IF_RETAIN) => {};
+    ($ provider : ty , DRY_IF_RETAIN , ITER) => {
+        __impl_islamic_date_symbols_v1_marker!($provider, ITER);
     };
 }
 #[doc(inline)]

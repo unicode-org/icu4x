@@ -309,7 +309,7 @@ impl BakedExporter {
         marker: DataMarkerInfo,
         stats: Statistics,
         body: TokenStream,
-        dry_body: TokenStream,
+        dry_body: Option<TokenStream>,
         iterable_body: TokenStream,
     ) -> Result<(), DataError> {
         let marker_unqualified = bake_marker(marker).into_iter().last().unwrap().to_string();
@@ -356,6 +356,28 @@ impl BakedExporter {
 
         let maybe_msrv = maybe_msrv();
 
+        let dry = if let Some(dry_body) = dry_body {
+            quote! {
+                ($provider:ty, DRY_IF_RETAIN) => {
+                    #prefixed_macro_ident!($provider);
+                    #dry_body
+                };
+                ($provider:ty, DRY_IF_RETAIN, ITER) => {
+                    #prefixed_macro_ident!($provider);
+                    #dry_body
+                    #iterable_body
+                };
+            }
+        } else {
+            quote! {
+                ($provider:ty, DRY_IF_RETAIN) => {
+                };
+                ($provider:ty, DRY_IF_RETAIN, ITER) => {
+                    #prefixed_macro_ident!($provider, ITER);
+                };
+            }
+        };
+
         self.write_to_file(
             Path::new(&format!("{ident}.rs.data")),
             quote! {
@@ -368,19 +390,11 @@ impl BakedExporter {
                         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
                         #body
                     };
-                    ($provider:ty, DRY) => {
-                        #prefixed_macro_ident!($provider);
-                        #dry_body
-                    };
                     ($provider:ty, ITER) => {
                         #prefixed_macro_ident!($provider);
                         #iterable_body
                     };
-                    ($provider:ty, DRY, ITER) => {
-                        #prefixed_macro_ident!($provider);
-                        #dry_body
-                        #iterable_body
-                    };
+                    #dry
                 }
                 #[doc(inline)]
                 pub use #prefixed_macro_ident as #macro_ident;
@@ -469,7 +483,7 @@ impl DataExporter for BakedExporter {
                 }
             }
         },
-        quote! {
+        Some(quote! {
             #maybe_msrv
             impl icu_provider::DryDataProvider<#marker_bake> for $provider {
                 fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
@@ -480,7 +494,7 @@ impl DataExporter for BakedExporter {
                     }
                 }
             }
-        },
+        }),
         quote! {
             #maybe_msrv
             impl icu_provider::IterableDataProvider<#marker_bake> for $provider {
@@ -491,7 +505,11 @@ impl DataExporter for BakedExporter {
         })
     }
 
-    fn flush(&self, marker: DataMarkerInfo) -> Result<(), DataError> {
+    fn flush(
+        &self,
+        marker: DataMarkerInfo,
+        deduplication_mode: DeduplicationStrategy,
+    ) -> Result<(), DataError> {
         let maybe_msrv = maybe_msrv();
 
         let marker_bake = bake_marker(marker);
@@ -518,14 +536,14 @@ impl DataExporter for BakedExporter {
                         }
                     }
                 },
-                quote! {
+                Some(quote! {
                     #maybe_msrv
                     impl icu_provider::DryDataProvider<#marker_bake> for $provider {
                         fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                             Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<#marker_bake as icu_provider::DataMarker>::INFO, req))
                         }
                     }
-                },
+                }),
                 quote! {
                     #maybe_msrv
                     impl icu_provider::IterableDataProvider<#marker_bake> for $provider {
@@ -633,13 +651,17 @@ impl DataExporter for BakedExporter {
                         }
                     }
                 },
-                quote! {
-                    #maybe_msrv
-                    impl icu_provider::DryDataProvider<#marker_bake> for $provider {
-                        fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
-                            icu_provider::DataProvider::<#marker_bake>::load(self, req).map(|r| r.metadata)
+                if deduplication_mode == DeduplicationStrategy::RetainBaseLanguages {
+                    Some(quote! {
+                        #maybe_msrv
+                        impl icu_provider::DryDataProvider<#marker_bake> for $provider {
+                            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
+                                icu_provider::DataProvider::<#marker_bake>::load(self, req).map(|r| r.metadata)
+                            }
                         }
-                    }
+                    })
+                } else {
+                    None
                 },
                 quote! {
                     #maybe_msrv

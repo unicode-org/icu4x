@@ -29,7 +29,16 @@ macro_rules! __impl_line_break_data_v2_marker {
             }
         }
     };
-    ($ provider : ty , DRY) => {
+    ($ provider : ty , ITER) => {
+        __impl_line_break_data_v2_marker!($provider);
+        #[clippy::msrv = "1.71.1"]
+        impl icu_provider::IterableDataProvider<icu::segmenter::provider::LineBreakDataV2Marker> for $provider {
+            fn iter_ids(&self) -> Result<std::collections::BtreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
+                Ok([Default::default()].into_iter().collect())
+            }
+        }
+    };
+    ($ provider : ty , DRY_IF_RETAIN) => {
         __impl_line_break_data_v2_marker!($provider);
         #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::segmenter::provider::LineBreakDataV2Marker> for $provider {
@@ -42,16 +51,7 @@ macro_rules! __impl_line_break_data_v2_marker {
             }
         }
     };
-    ($ provider : ty , ITER) => {
-        __impl_line_break_data_v2_marker!($provider);
-        #[clippy::msrv = "1.71.1"]
-        impl icu_provider::IterableDataProvider<icu::segmenter::provider::LineBreakDataV2Marker> for $provider {
-            fn iter_ids(&self) -> Result<std::collections::BtreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
-                Ok([Default::default()].into_iter().collect())
-            }
-        }
-    };
-    ($ provider : ty , DRY , ITER) => {
+    ($ provider : ty , DRY_IF_RETAIN , ITER) => {
         __impl_line_break_data_v2_marker!($provider);
         #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::segmenter::provider::LineBreakDataV2Marker> for $provider {

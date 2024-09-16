@@ -119,7 +119,11 @@ impl DataExporter for BlobExporter<'_> {
         Ok(())
     }
 
-    fn flush(&self, marker: DataMarkerInfo) -> Result<(), DataError> {
+    fn flush(
+        &self,
+        marker: DataMarkerInfo,
+        _deduplication: DeduplicationStrategy,
+    ) -> Result<(), DataError> {
         self.all_markers
             .lock()
             .expect("poison")

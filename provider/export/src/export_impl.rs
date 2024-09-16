@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{DataLocaleFamilyAnnotations, DeduplicationStrategy, ExportDriver};
+use crate::{DataLocaleFamilyAnnotations, ExportDriver};
 use icu_locale::fallback::LocaleFallbackIterator;
 use icu_locale::LocaleFallbacker;
 use icu_provider::export::*;
@@ -70,6 +70,7 @@ impl ExportDriver {
                 DeduplicationStrategy::RetainBaseLanguages =>
                     "deduplication retaining base languages",
                 DeduplicationStrategy::None => "no deduplication",
+                _ => "unknown deduplication",
             },
             if include_full {
                 vec!["<all>".to_string()]
@@ -205,7 +206,7 @@ impl ExportDriver {
                         .collect::<Result<HashMap<_, _>, _>>()?;
                     deduplicate_payloads::<false>(marker, &payloads, &fallbacker, sink)?
                 }
-                DeduplicationStrategy::None => locales_to_export
+                _ => locales_to_export
                     .into_par_iter()
                     .filter_map(|id| {
                         let instant2 = Instant::now();
@@ -236,7 +237,8 @@ impl ExportDriver {
 
             let transform_duration = instant1.elapsed();
 
-            sink.flush(marker).map_err(|e| e.with_marker(marker))?;
+            sink.flush(marker, deduplication_strategy)
+                .map_err(|e| e.with_marker(marker))?;
 
             let final_duration = instant1.elapsed();
             let flush_duration = final_duration - transform_duration;

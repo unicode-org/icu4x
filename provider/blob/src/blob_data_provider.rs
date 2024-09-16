@@ -181,7 +181,9 @@ mod test {
                     BlobExporter::new_v2_with_sink(Box::new(&mut blob))
                 };
 
-                exporter.flush(HelloWorldV1Marker::INFO).unwrap();
+                exporter
+                    .flush(HelloWorldV1Marker::INFO, DeduplicationStrategy::None)
+                    .unwrap();
 
                 exporter.close().unwrap();
             }
@@ -213,7 +215,9 @@ mod test {
                     BlobExporter::new_v2_with_sink(Box::new(&mut blob))
                 };
 
-                exporter.flush(HelloSingletonV1Marker::INFO).unwrap();
+                exporter
+                    .flush(HelloSingletonV1Marker::INFO, DeduplicationStrategy::None)
+                    .unwrap();
 
                 exporter.close().unwrap();
             }

@@ -34,7 +34,9 @@ where
             )
             .unwrap();
     }
-    exporter.flush(HelloWorldV1Marker::INFO).unwrap();
+    exporter
+        .flush(HelloWorldV1Marker::INFO, DeduplicationStrategy::None)
+        .unwrap();
     exporter.close().unwrap();
 }
 

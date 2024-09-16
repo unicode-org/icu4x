@@ -15,15 +15,6 @@ macro_rules! __impl_coptic_date_symbols_v1_marker {
             }
         }
     };
-    ($ provider : ty , DRY) => {
-        __impl_coptic_date_symbols_v1_marker!($provider);
-        #[clippy::msrv = "1.71.1"]
-        impl icu_provider::DryDataProvider<icu::datetime::provider::calendar::CopticDateSymbolsV1Marker> for $provider {
-            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
-                Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DataMarker>::INFO, req))
-            }
-        }
-    };
     ($ provider : ty , ITER) => {
         __impl_coptic_date_symbols_v1_marker!($provider);
         #[clippy::msrv = "1.71.1"]
@@ -33,7 +24,16 @@ macro_rules! __impl_coptic_date_symbols_v1_marker {
             }
         }
     };
-    ($ provider : ty , DRY , ITER) => {
+    ($ provider : ty , DRY_IF_RETAIN) => {
+        __impl_coptic_date_symbols_v1_marker!($provider);
+        #[clippy::msrv = "1.71.1"]
+        impl icu_provider::DryDataProvider<icu::datetime::provider::calendar::CopticDateSymbolsV1Marker> for $provider {
+            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
+                Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DataMarker>::INFO, req))
+            }
+        }
+    };
+    ($ provider : ty , DRY_IF_RETAIN , ITER) => {
         __impl_coptic_date_symbols_v1_marker!($provider);
         #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::datetime::provider::calendar::CopticDateSymbolsV1Marker> for $provider {

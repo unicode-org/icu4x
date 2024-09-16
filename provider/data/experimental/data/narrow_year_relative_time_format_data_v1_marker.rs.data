@@ -1302,15 +1302,6 @@ macro_rules! __impl_narrow_year_relative_time_format_data_v1_marker {
             }
         }
     };
-    ($ provider : ty , DRY) => {
-        __impl_narrow_year_relative_time_format_data_v1_marker!($provider);
-        #[clippy::msrv = "1.71.1"]
-        impl icu_provider::DryDataProvider<icu::experimental::relativetime::provider::NarrowYearRelativeTimeFormatDataV1Marker> for $provider {
-            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
-                icu_provider::DataProvider::<icu::experimental::relativetime::provider::NarrowYearRelativeTimeFormatDataV1Marker>::load(self, req).map(|r| r.metadata)
-            }
-        }
-    };
     ($ provider : ty , ITER) => {
         __impl_narrow_year_relative_time_format_data_v1_marker!($provider);
         #[clippy::msrv = "1.71.1"]
@@ -1320,20 +1311,9 @@ macro_rules! __impl_narrow_year_relative_time_format_data_v1_marker {
             }
         }
     };
-    ($ provider : ty , DRY , ITER) => {
-        __impl_narrow_year_relative_time_format_data_v1_marker!($provider);
-        #[clippy::msrv = "1.71.1"]
-        impl icu_provider::DryDataProvider<icu::experimental::relativetime::provider::NarrowYearRelativeTimeFormatDataV1Marker> for $provider {
-            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
-                icu_provider::DataProvider::<icu::experimental::relativetime::provider::NarrowYearRelativeTimeFormatDataV1Marker>::load(self, req).map(|r| r.metadata)
-            }
-        }
-        #[clippy::msrv = "1.71.1"]
-        impl icu_provider::IterableDataProvider<icu::experimental::relativetime::provider::NarrowYearRelativeTimeFormatDataV1Marker> for $provider {
-            fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
-                Ok(icu_provider_baked::DataStore::iter(&Self::DATA_NARROW_YEAR_RELATIVE_TIME_FORMAT_DATA_V1_MARKER).collect())
-            }
-        }
+    ($ provider : ty , DRY_IF_RETAIN) => {};
+    ($ provider : ty , DRY_IF_RETAIN , ITER) => {
+        __impl_narrow_year_relative_time_format_data_v1_marker!($provider, ITER);
     };
 }
 #[doc(inline)]

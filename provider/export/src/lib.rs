@@ -70,20 +70,21 @@ pub use icu_provider_fs::export as fs_exporter;
 /// A prelude for using the datagen API
 pub mod prelude {
     #[doc(no_inline)]
-    pub use crate::{
-        DataLocaleFamily, DeduplicationStrategy, ExportDriver, FallbackOptions, NoFallbackOptions,
-    };
+    pub use crate::{DataLocaleFamily, ExportDriver, FallbackOptions, NoFallbackOptions};
     #[doc(no_inline)]
     pub use icu_locale::{locale, LocaleFallbacker};
     #[doc(no_inline)]
-    pub use icu_provider::{export::DataExporter, DataLocale, DataMarker, DataMarkerInfo};
+    pub use icu_provider::{
+        export::{DataExporter, DeduplicationStrategy},
+        DataLocale, DataMarker, DataMarkerInfo,
+    };
 }
 
 use icu_locale::LocaleFallbacker;
+use icu_provider::export::*;
 use icu_provider::prelude::*;
 use std::collections::HashMap;
 use std::collections::HashSet;
-use std::hash::Hash;
 use std::sync::Arc;
 
 /// Configuration for a data export operation.
@@ -269,37 +270,6 @@ impl ExportDriver {
 #[non_exhaustive]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Default)]
 pub struct NoFallbackOptions {}
-
-/// Choices for determining the deduplication of locales for exported data payloads.
-///
-/// Deduplication affects the lookup table from locales to data payloads. If a child locale
-/// points to the same payload as its parent locale, then the child locale can be removed from
-/// the lookup table. Therefore, all deduplication strategies guarantee that data requests for
-/// selected locales will succeed so long as fallback is enabled at runtime (either internally
-/// or externally). They also do not impact which _payloads_ are included: only the lookup table.
-///
-/// Comparison of the deduplication strategies:
-///
-/// | Name | Data file size | Supported locale queries? | Needs runtime fallback? |
-/// |---|---|---|---|
-/// | [`Maximal`] | Smallest | No | Yes |
-/// | [`RetainBaseLanguages`] | Small | Yes | Yes |
-/// | [`None`] | Medium/Small | Yes | No |
-///
-/// [`Maximal`]: DeduplicationStrategy::Maximal
-/// [`RetainBaseLanguages`]: DeduplicationStrategy::RetainBaseLanguages
-/// [`None`]: DeduplicationStrategy::None
-#[non_exhaustive]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum DeduplicationStrategy {
-    /// Removes from the lookup table any locale whose parent maps to the same data.
-    Maximal,
-    /// Removes from the lookup table any locale whose parent maps to the same data, except if
-    /// the parent is `und`.
-    RetainBaseLanguages,
-    /// Keeps all selected locales in the lookup table.
-    None,
-}
 
 /// Options bag configuring locale inclusion and behavior when runtime fallback is enabled.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
