@@ -59,12 +59,10 @@ impl<P: PatternBackend> core::ops::Deref for PatternString<P> {
 impl<B: PatternBackend> Default for PatternString<B>
 where
     B: PatternBackend,
-    for<'a> B::PlaceholderKeyCow<'a>: core::str::FromStr,
-    for<'a> <B::PlaceholderKeyCow<'a> as core::str::FromStr>::Err: core::fmt::Debug,
+    Box<B::Store>: for<'a> From<&'a B::Store>,
 {
     fn default() -> Self {
-        #[allow(clippy::unwrap_used)] // todo does this work?
-        Self(Pattern::<B>::try_from_str("", Default::default()).unwrap())
+        Self(Box::<Pattern<B>>::default())
     }
 }
 

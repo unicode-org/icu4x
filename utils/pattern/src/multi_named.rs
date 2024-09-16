@@ -358,6 +358,10 @@ impl PatternBackend for MultiNamedPlaceholder {
         }
         Ok(string.into_boxed_str())
     }
+
+    fn empty() -> &'static Self::Store {
+        ""
+    }
 }
 
 #[derive(Debug)]

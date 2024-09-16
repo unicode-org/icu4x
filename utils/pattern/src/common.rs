@@ -111,6 +111,9 @@ pub trait PatternBackend: crate::private::Sealed + 'static + core::fmt::Debug {
     /// Iterates over the pattern items in a store.
     #[doc(hidden)] // TODO(#4467): Should be internal
     fn iter_items(store: &Self::Store) -> Self::Iter<'_>;
+
+    /// The store for the empty pattern, used to implement `Default`
+    fn empty() -> &'static Self::Store;
 }
 
 /// Default annotation for the literal portion of a pattern.

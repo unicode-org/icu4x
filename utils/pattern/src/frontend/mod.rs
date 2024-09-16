@@ -94,6 +94,38 @@ impl<B: PatternBackend> core::fmt::Debug for Pattern<B> {
     }
 }
 
+impl<B: PatternBackend> Default for &'static Pattern<B> {
+    fn default() -> Self {
+        Pattern::from_ref_store_unchecked(B::empty())
+    }
+}
+
+#[cfg(feature = "alloc")]
+impl<B: PatternBackend> Default for Box<Pattern<B>>
+where
+    Box<B::Store>: for<'a> From<&'a B::Store>,
+{
+    fn default() -> Self {
+        Pattern::from_ref_store_unchecked(B::empty()).to_owned()
+    }
+}
+
+#[test]
+fn test_defaults() {
+    assert_eq!(
+        Box::<Pattern::<crate::SinglePlaceholder>>::default(),
+        Pattern::try_from_items(core::iter::empty()).unwrap()
+    );
+    assert_eq!(
+        Box::<Pattern::<crate::DoublePlaceholder>>::default(),
+        Pattern::try_from_items(core::iter::empty()).unwrap()
+    );
+    assert_eq!(
+        Box::<Pattern::<crate::MultiNamedPlaceholder>>::default(),
+        Pattern::try_from_items(core::iter::empty()).unwrap()
+    );
+}
+
 #[cfg(feature = "alloc")]
 impl<B: PatternBackend> ToOwned for Pattern<B>
 where
