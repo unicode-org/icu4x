@@ -80,6 +80,7 @@ pub trait PatternBackend: crate::private::Sealed + 'static + core::fmt::Debug {
     type StoreFromBytesError;
 
     /// The unsized type of the store required for this backend, usually `str` or `[u8]`.
+    #[doc(hidden)] // TODO(#4467): Should be internal
     type Store: ?Sized + PartialEq + core::fmt::Debug;
 
     /// The iterator type returned by [`Self::try_from_items`].
@@ -96,8 +97,7 @@ pub trait PatternBackend: crate::private::Sealed + 'static + core::fmt::Debug {
     fn validate_store(store: &Self::Store) -> Result<(), Error>;
 
     /// Constructs a store from pattern items.
-    #[doc(hidden)]
-    // TODO(#4467): Should be internal
+    #[doc(hidden)] // TODO(#4467): Should be internal
     // Note: it is not good practice to feature-gate trait methods, but this trait is sealed
     #[cfg(feature = "alloc")]
     fn try_from_items<
@@ -113,6 +113,7 @@ pub trait PatternBackend: crate::private::Sealed + 'static + core::fmt::Debug {
     fn iter_items(store: &Self::Store) -> Self::Iter<'_>;
 
     /// The store for the empty pattern, used to implement `Default`
+    #[doc(hidden)] // TODO(#4467): Should be internal
     fn empty() -> &'static Self::Store;
 }
 
