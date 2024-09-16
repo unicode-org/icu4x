@@ -69,11 +69,22 @@ final class CustomTimeZone implements ffi.Finalizable {
     
   }
 
-  /// Sets the `offset` field from offset eighths of an hour.
+  /// Sets the `offset` field from offset as eighths of an hour.
   ///
   /// See the [Rust documentation for `from_offset_eighths_of_hour`](https://docs.rs/icu/latest/icu/timezone/struct.UtcOffset.html#method.from_offset_eighths_of_hour) for more information.
   void setOffsetEighthsOfHour(int offsetEighthsOfHour) {
     _icu4x_CustomTimeZone_set_offset_eighths_of_hour_mv1(_ffi, offsetEighthsOfHour);
+  }
+
+  /// Gets the `offset` field from offset as eighths of an hour.
+  ///
+  /// See the [Rust documentation for `offset_eighths_of_hour`](https://docs.rs/icu/latest/icu/timezone/struct.UtcOffset.html#method.offset_eighths_of_hour) for more information.
+  int? offsetEighthsOfHour() {
+    final result = _icu4x_CustomTimeZone_offset_eighths_of_hour_mv1(_ffi);
+    if (!result.isOk) {
+      return null;
+    }
+    return result.union.ok;
   }
 
   /// Clears the `offset` field.
@@ -349,6 +360,15 @@ final class CustomTimeZone implements ffi.Finalizable {
   void maybeCalculateMetazone(MetazoneCalculator metazoneCalculator, IsoDateTime localDatetime) {
     _icu4x_CustomTimeZone_maybe_calculate_metazone_mv1(_ffi, metazoneCalculator._ffi, localDatetime._ffi);
   }
+
+  /// Sets the zone variant based on the time zone and the local timestamp.
+  ///
+  /// See the [Rust documentation for `maybe_calculate_zone_variant`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.maybe_calculate_zone_variant) for more information.
+  ///
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.ZoneOffsetCalculator.html#method.compute_offsets_from_time_zone)
+  void maybeCalculateZoneVariant(ZoneOffsetCalculator zoneOffsetCalculator, IsoDateTime localDatetime) {
+    _icu4x_CustomTimeZone_maybe_calculate_zone_variant_mv1(_ffi, zoneOffsetCalculator._ffi, localDatetime._ffi);
+  }
 }
 
 @meta.ResourceIdentifier('icu4x_CustomTimeZone_destroy_mv1')
@@ -380,6 +400,11 @@ external _ResultVoidTimeZoneInvalidOffsetErrorFfi _icu4x_CustomTimeZone_try_set_
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int8)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_set_offset_eighths_of_hour_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CustomTimeZone_set_offset_eighths_of_hour_mv1(ffi.Pointer<ffi.Opaque> self, int offsetEighthsOfHour);
+
+@meta.ResourceIdentifier('icu4x_CustomTimeZone_offset_eighths_of_hour_mv1')
+@ffi.Native<_ResultInt8Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_offset_eighths_of_hour_mv1')
+// ignore: non_constant_identifier_names
+external _ResultInt8Void _icu4x_CustomTimeZone_offset_eighths_of_hour_mv1(ffi.Pointer<ffi.Opaque> self);
 
 @meta.ResourceIdentifier('icu4x_CustomTimeZone_clear_offset_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_clear_offset_mv1')
@@ -485,3 +510,8 @@ external _ResultBoolVoid _icu4x_CustomTimeZone_is_daylight_time_mv1(ffi.Pointer<
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_maybe_calculate_metazone_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CustomTimeZone_maybe_calculate_metazone_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> metazoneCalculator, ffi.Pointer<ffi.Opaque> localDatetime);
+
+@meta.ResourceIdentifier('icu4x_CustomTimeZone_maybe_calculate_zone_variant_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_maybe_calculate_zone_variant_mv1')
+// ignore: non_constant_identifier_names
+external void _icu4x_CustomTimeZone_maybe_calculate_zone_variant_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> zoneOffsetCalculator, ffi.Pointer<ffi.Opaque> localDatetime);

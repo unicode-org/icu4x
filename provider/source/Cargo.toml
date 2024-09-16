@@ -56,6 +56,7 @@ elsa = { workspace = true }
 itertools = { workspace = true }
 log = { workspace = true }
 ndarray = { workspace = true }
+parse-zoneinfo = { workspace = true }
 serde = { workspace = true, features = ["derive", "alloc"] }
 serde_json = { workspace = true }
 serde-aux = { workspace = true }

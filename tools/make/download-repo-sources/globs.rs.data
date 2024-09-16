@@ -186,3 +186,15 @@ const LSTM_GLOB: &[&str] = &[
     "Thai_codepoints_exclusive_model4_heavy/weights.json",
     "Thai_graphclust_model4_heavy/weights.json",
 ];
+
+const TZDB_GLOB: &[&str] = &[
+    "africa",
+    "antarctica",
+    "asia",
+    "australasia",
+    "backward",
+    "etcetera",
+    "europe",
+    "northamerica",
+    "southamerica",
+];

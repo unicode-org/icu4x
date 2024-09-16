@@ -76,8 +76,8 @@
 //!
 //! The following calculations are currently supported or will be supported:
 //!
-//! 1. Time Zone + Local DateTime → Meta Zone ([`MetazoneCalculator`])
-//! 2. Time Zone + Absolute Time → Offset + Zone Variant (not yet supported)
+//! 1. Time Zone + Local DateTime → Metazone ([`MetazoneCalculator`])
+//! 2. Time Zone + Local DateTime + Offset → Zone Variant ([`ZoneOffsetCalculator`])
 //!
 //! # Examples
 //!
@@ -135,6 +135,7 @@ mod metazone;
 pub mod provider;
 mod time_zone;
 mod types;
+mod zone_offset;
 mod zoned_datetime;
 
 #[cfg(all(feature = "ixdtf", feature = "compiled_data"))]
@@ -149,6 +150,7 @@ pub use metazone::MetazoneCalculator;
 pub use provider::{MetazoneId, TimeZoneBcp47Id};
 pub use time_zone::CustomTimeZone;
 pub use types::{UtcOffset, ZoneVariant};
+pub use zone_offset::ZoneOffsetCalculator;
 pub use zoned_datetime::CustomZonedDateTime;
 
 #[cfg(all(feature = "ixdtf", feature = "compiled_data"))]

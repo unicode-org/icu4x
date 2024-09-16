@@ -16,6 +16,7 @@ use std::io::Cursor;
 use std::io::Read;
 use std::path::Path;
 use std::path::PathBuf;
+use std::sync::OnceLock;
 use std::sync::RwLock;
 use zip::ZipArchive;
 
@@ -262,5 +263,72 @@ impl AbstractFs {
                 .contains(path),
             Self::Memory(map) => map.contains_key(path),
         })
+    }
+}
+
+#[derive(Debug)]
+pub(crate) struct TzdbCache {
+    pub(crate) root: AbstractFs,
+    pub(crate) cache: OnceLock<Result<parse_zoneinfo::table::Table, DataError>>,
+}
+
+impl TzdbCache {
+    pub(crate) fn get(&self) -> Result<&parse_zoneinfo::table::Table, DataError> {
+        use parse_zoneinfo::line::{Line, LineParser};
+        use parse_zoneinfo::table::TableBuilder;
+
+        self.cache
+            .get_or_init(|| {
+                fn strip_comments(mut line: String) -> String {
+                    if let Some(pos) = line.find('#') {
+                        line.truncate(pos);
+                    };
+                    line
+                }
+
+                let singleton_dir = self.root.list("").unwrap().next().unwrap();
+
+                let tzfiles = [
+                    "africa",
+                    "antarctica",
+                    "asia",
+                    "australasia",
+                    "backward",
+                    "etcetera",
+                    "europe",
+                    "northamerica",
+                    "southamerica",
+                ];
+
+                let mut lines = Vec::<String>::new();
+
+                for file in tzfiles {
+                    lines.extend(
+                        self.root
+                            .read_to_string(&format!("{singleton_dir}/{file}"))?
+                            .lines()
+                            .map(ToOwned::to_owned)
+                            .map(strip_comments),
+                    );
+                }
+
+                #[allow(deprecated)] // no alternative?!
+                let parser = LineParser::new();
+                let mut table = TableBuilder::new();
+
+                for line in lines {
+                    match parser.parse_str(&line).unwrap() {
+                        Line::Zone(zone) => table.add_zone_line(zone).unwrap(),
+                        Line::Continuation(cont) => table.add_continuation_line(cont).unwrap(),
+                        Line::Rule(rule) => table.add_rule_line(rule).unwrap(),
+                        Line::Link(link) => table.add_link_line(link).unwrap(),
+                        Line::Space => {}
+                    }
+                }
+
+                Ok(table.build())
+            })
+            .as_ref()
+            .map_err(|&e| e)
     }
 }
