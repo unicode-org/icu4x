@@ -77,7 +77,7 @@ fields must be computed from it.
 The following calculations are currently supported or will be supported:
 
 1. Time Zone + Local DateTime → Metazone ([`MetazoneCalculator`])
-2. Time Zone + Local DateTime + Offset → Zone Variant (`CustomTimeZone::maybe_calculate_zone_variant`)
+2. Time Zone + Local DateTime + Offset → Zone Variant ([`ZoneOffsetCalculator`])
 
 ## Examples
 
