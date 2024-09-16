@@ -193,7 +193,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
     /// - There must be either zero or at least four bytes (if four, this is the "length" parsed as a usize)
     /// - There must be at least `4*length + 4` bytes total, to form the array `indices` of indices
     /// - `indices[i]..indices[i+1]` must index into a valid section of
-    ///   `things`, such that it parses to a `T::VarULE`
+    ///   `things` (the data after `indices`), such that it parses to a `T::VarULE`
     /// - `indices[len - 1]..things.len()` must index into a valid section of
     ///   `things`, such that it parses to a `T::VarULE`
     #[inline]
@@ -218,14 +218,41 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
             .first()
             .ok_or(VarZeroVecFormatError::Metadata)?
             .as_unsigned_int();
+
+        let rest = slice
+            .get(LENGTH_WIDTH..)
+            .ok_or(VarZeroVecFormatError::Metadata)?;
+        // We pass down the rest of the invariants
+        Self::parse_byte_slice_with_length(len, rest)
+    }
+
+    /// Construct a new VarZeroVecComponents, checking invariants about the overall buffer size:
+    ///
+    /// - There must be at least `4*len` bytes total, to form the array `indices` of indices.
+    /// - `indices[i]..indices[i+1]` must index into a valid section of
+    ///   `things` (the data after `indices`), such that it parses to a `T::VarULE`
+    /// - `indices[len - 1]..things.len()` must index into a valid section of
+    ///   `things`, such that it parses to a `T::VarULE`
+    #[inline]
+    pub fn parse_byte_slice_with_length(
+        len: u32,
+        slice: &'a [u8],
+    ) -> Result<Self, VarZeroVecFormatError> {
+        // The empty VZV is special-cased to the empty slice
+        if len == 0 {
+            return Ok(VarZeroVecComponents {
+                len: 0,
+                indices: &[],
+                things: &[],
+                entire_slice: slice,
+                marker: PhantomData,
+            });
+        }
         let indices_bytes = slice
-            .get(
-                LENGTH_WIDTH + METADATA_WIDTH
-                    ..LENGTH_WIDTH + METADATA_WIDTH + F::INDEX_WIDTH * (len as usize),
-            )
+            .get(METADATA_WIDTH..LENGTH_WIDTH + METADATA_WIDTH + F::INDEX_WIDTH * (len as usize))
             .ok_or(VarZeroVecFormatError::Metadata)?;
         let things = slice
-            .get(F::INDEX_WIDTH * (len as usize) + LENGTH_WIDTH + METADATA_WIDTH..)
+            .get(F::INDEX_WIDTH * (len as usize) + METADATA_WIDTH..)
             .ok_or(VarZeroVecFormatError::Metadata)?;
 
         let borrowed = VarZeroVecComponents {
