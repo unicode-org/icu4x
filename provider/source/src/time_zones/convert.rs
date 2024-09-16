@@ -295,7 +295,7 @@ impl From<CldrTimeZonesData<'_>> for ZoneOffsetPeriodV1<'static> {
                                     // Only want transitions into DST
                                     .filter(|rule| rule.time_to_add != 0)
                                     .filter(|rule| {
-                                        // Use all rules (from year 1800) until the potential end time of the zone_info (or year 2500) 
+                                        // Use all rules (from year 1800) until the potential end time of the zone_info (or year 2500)
                                         (1800..zone_info.end_time.map(|e| e.year()).unwrap_or(2500))
                                             .any(|y| rule.applies_to_year(y))
                                     })
@@ -544,8 +544,8 @@ fn convert_cldr_zone_variant(
         .map(move |(variant, value)| {
             (
                 match variant.as_str() {
-                    "standard" => ZoneVariant::Standard,
-                    "daylight" => ZoneVariant::Daylight,
+                    "standard" => ZoneVariant::standard(),
+                    "daylight" => ZoneVariant::daylight(),
                     _ => panic!("Time-zone variant was not compatible with ZoneVariant: {variant}"),
                 },
                 value,
