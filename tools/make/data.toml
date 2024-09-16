@@ -49,7 +49,7 @@ exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1Marker --l
 exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1Marker --locales full --format blob2 --overwrite --out provider/blob/tests/data/v2.postcard
 
 # Baked
-exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1Marker --locales full --format baked --pretty --overwrite --no-internal-fallback --deduplication none --out provider/baked/tests/data
+exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1Marker --locales full --format baked --pretty --overwrite --no-internal-fallback --deduplication retain-base-languages --out provider/baked/tests/data
 '''
 
 [tasks.testdata-check]

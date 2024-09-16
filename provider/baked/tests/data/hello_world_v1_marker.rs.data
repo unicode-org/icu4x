@@ -27,15 +27,6 @@ macro_rules! __impl_hello_world_v1_marker {
             }
         }
     };
-    ($ provider : ty , DRY) => {
-        __impl_hello_world_v1_marker!($provider);
-        #[clippy::msrv = "1.71.1"]
-        impl icu_provider::DryDataProvider<icu_provider::hello_world::HelloWorldV1Marker> for $provider {
-            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
-                icu_provider::DataProvider::<icu_provider::hello_world::HelloWorldV1Marker>::load(self, req).map(|r| r.metadata)
-            }
-        }
-    };
     ($ provider : ty , ITER) => {
         __impl_hello_world_v1_marker!($provider);
         #[clippy::msrv = "1.71.1"]
@@ -45,7 +36,16 @@ macro_rules! __impl_hello_world_v1_marker {
             }
         }
     };
-    ($ provider : ty , DRY , ITER) => {
+    ($ provider : ty , DRY_IF_RETAIN) => {
+        __impl_hello_world_v1_marker!($provider);
+        #[clippy::msrv = "1.71.1"]
+        impl icu_provider::DryDataProvider<icu_provider::hello_world::HelloWorldV1Marker> for $provider {
+            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
+                icu_provider::DataProvider::<icu_provider::hello_world::HelloWorldV1Marker>::load(self, req).map(|r| r.metadata)
+            }
+        }
+    };
+    ($ provider : ty , DRY_IF_RETAIN , ITER) => {
         __impl_hello_world_v1_marker!($provider);
         #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu_provider::hello_world::HelloWorldV1Marker> for $provider {
