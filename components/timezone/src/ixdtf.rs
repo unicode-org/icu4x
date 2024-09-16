@@ -179,9 +179,9 @@ impl CustomZonedDateTime<Iso> {
     ///
     /// let zoneddatetime = CustomZonedDateTime::try_iso_from_str("2024-08-08T12:08:19-05:00[America/Chicago]").unwrap();
     ///
-    /// assert_eq!(zoneddatetime.date.year().number, 2024);
+    /// assert_eq!(zoneddatetime.date.year().extended_year, 2024);
     /// assert_eq!(
-    ///     zoneddatetime.date.month().code,
+    ///     zoneddatetime.date.month().standard_code,
     ///     icu::calendar::types::MonthCode(tinystr::tinystr!(4, "M08"))
     /// );
     /// assert_eq!(zoneddatetime.date.day_of_month().0, 8);
@@ -265,9 +265,9 @@ impl CustomZonedDateTime<AnyCalendar> {
     ///
     /// let zoneddatetime = CustomZonedDateTime::try_from_str("2024-08-08T12:08:19-05:00[America/Chicago][u-ca=hebrew]").unwrap();
     ///
-    /// assert_eq!(zoneddatetime.date.year().number, 5784);
+    /// assert_eq!(zoneddatetime.date.year().extended_year, 5784);
     /// assert_eq!(
-    ///     zoneddatetime.date.month().code,
+    ///     zoneddatetime.date.month().standard_code,
     ///     icu::calendar::types::MonthCode(tinystr::tinystr!(4, "M11"))
     /// );
     /// assert_eq!(zoneddatetime.date.day_of_month().0, 4);

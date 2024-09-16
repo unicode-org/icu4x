@@ -301,6 +301,7 @@ pub enum DateTimeWriteError {
     MissingWeekCalculator,
     /// TODO
     #[displaydoc("Names for {0:?} not loaded")]
+    #[cfg(feature = "experimental")]
     MissingNames(Field),
 
     // Something not found in data
@@ -316,6 +317,7 @@ pub enum DateTimeWriteError {
     MissingWeekdaySymbol(IsoWeekday),
     /// Missing time zone symbol
     #[displaydoc("Not enough time zone information to format anything.")]
+    #[cfg(feature = "experimental")]
     UnsupportedTimeZone,
 
     // Invalid input
@@ -374,32 +376,44 @@ where
                 write_value_missing(w, field)?;
                 Err(DateTimeWriteError::MissingInputField("year"))
             }
-            Some(year) => match date_symbols
-                .ok_or(DateTimeWriteError::MissingDateSymbols)
-                .and_then(|ds| {
-                    ds.get_symbol_for_era(l, &year.era).map_err(|e| match e {
-                        GetSymbolForEraError::Missing => {
-                            DateTimeWriteError::MissingEraSymbol(year.era)
-                        }
-                        #[cfg(feature = "experimental")]
-                        GetSymbolForEraError::MissingNames(f) => {
-                            DateTimeWriteError::MissingNames(f)
-                        }
-                    })
-                }) {
-                Err(e) => {
-                    w.with_part(Part::ERROR, |w| w.write_str(&year.era.0))?;
-                    Err(e)
+            Some(year) => {
+                let era_symbol = date_symbols
+                    .ok_or(DateTimeWriteError::MissingDateSymbols)
+                    .and_then(|ds| {
+                        let Some(era) = year.formatting_era() else {
+                            return Err(DateTimeWriteError::MissingInputField("era"));
+                        };
+                        ds.get_symbol_for_era(l, era).map_err(|e| match e {
+                            GetSymbolForEraError::Missing => {
+                                DateTimeWriteError::MissingEraSymbol(era)
+                            }
+                            #[cfg(feature = "experimental")]
+                            GetSymbolForEraError::MissingNames(f) => {
+                                DateTimeWriteError::MissingNames(f)
+                            }
+                        })
+                    });
+                match era_symbol {
+                    Err(e) => {
+                        w.with_part(Part::ERROR, |w| {
+                            if let Some(era) = year.formatting_era() {
+                                w.write_str(&era.0)
+                            } else {
+                                w.write_str("missing era")
+                            }
+                        })?;
+                        Err(e)
+                    }
+                    Ok(era) => Ok(w.write_str(era)?),
                 }
-                Ok(era) => Ok(w.write_str(era)?),
-            },
+            }
         },
         (FieldSymbol::Year(Year::Calendar), l) => match datetime.year() {
             None => {
                 write_value_missing(w, field)?;
                 Err(DateTimeWriteError::MissingInputField("year"))
             }
-            Some(year) => try_write_number(w, fdf, year.number.into(), l)?,
+            Some(year) => try_write_number(w, fdf, year.era_year_or_extended().into(), l)?,
         },
         (FieldSymbol::Year(Year::WeekOf), l) => match week_data
             .ok_or(DateTimeWriteError::MissingWeekCalculator)
@@ -412,7 +426,7 @@ where
                 write_value_missing(w, field)?;
                 Err(e)
             }
-            Ok((year, _)) => try_write_number(w, fdf, year.number.into(), l)?,
+            Ok((year, _)) => try_write_number(w, fdf, year.era_year_or_extended().into(), l)?,
         },
         (FieldSymbol::Year(Year::Cyclic), l) => match datetime.year() {
             None => {
@@ -421,7 +435,7 @@ where
             }
             Some(year) => {
                 let r = year
-                    .cyclic
+                    .cyclic()
                     .ok_or(DateTimeWriteError::MissingInputField("cyclic"))
                     .and_then(|cyclic| {
                         // TODO(#3761): This is a hack, we should use actual data for cyclic years
@@ -459,7 +473,8 @@ where
                 match r {
                     Err(e) => {
                         w.with_part(Part::ERROR, |w| {
-                            try_write_number(w, fdf, year.number.into(), l).map(|_| ())
+                            try_write_number(w, fdf, year.era_year_or_extended().into(), l)
+                                .map(|_| ())
                         })?;
                         Err(e)
                     }
@@ -472,7 +487,7 @@ where
                 .year()
                 .ok_or(DateTimeWriteError::MissingInputField("year"))
                 .and_then(|year| {
-                    year.related_iso
+                    year.related_iso()
                         .ok_or(DateTimeWriteError::MissingInputField("related_iso"))
                 }) {
                 Err(e) => {
@@ -496,13 +511,13 @@ where
                 write_value_missing(w, field)?;
                 Err(DateTimeWriteError::MissingInputField("month"))
             }
-            Some(formattable_month) => match date_symbols
+            Some(month_info) => match date_symbols
                 .ok_or(DateTimeWriteError::MissingDateSymbols)
                 .and_then(|ds| {
-                    ds.get_symbol_for_month(month, l, formattable_month.code)
+                    ds.get_symbol_for_month(month, l, month_info.formatting_code)
                         .map_err(|e| match e {
                             GetSymbolForMonthError::Missing => {
-                                DateTimeWriteError::MissingMonthSymbol(formattable_month.code)
+                                DateTimeWriteError::MissingMonthSymbol(month_info.formatting_code)
                             }
                             #[cfg(feature = "experimental")]
                             GetSymbolForMonthError::MissingNames(f) => {
@@ -511,7 +526,7 @@ where
                         })
                 }) {
                 Err(e) => {
-                    w.with_part(Part::ERROR, |w| w.write_str(&formattable_month.code.0))?;
+                    w.with_part(Part::ERROR, |w| w.write_str(&month_info.formatting_code.0))?;
                     Err(e)
                 }
                 Ok(MonthPlaceholderValue::PlainString(symbol)) => {
@@ -531,12 +546,12 @@ where
                 }
                 #[cfg(feature = "experimental")]
                 Ok(MonthPlaceholderValue::Numeric) => {
-                    try_write_number(w, fdf, formattable_month.ordinal.into(), l)?
+                    try_write_number(w, fdf, month_info.ordinal.into(), l)?
                 }
                 #[cfg(feature = "experimental")]
                 Ok(MonthPlaceholderValue::NumericPattern(substitution_pattern)) => {
                     w.write_str(substitution_pattern.get_prefix())?;
-                    let r = try_write_number(w, fdf, formattable_month.ordinal.into(), l)?;
+                    let r = try_write_number(w, fdf, month_info.ordinal.into(), l)?;
                     w.write_str(substitution_pattern.get_suffix())?;
                     r
                 }

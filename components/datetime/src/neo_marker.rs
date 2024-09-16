@@ -329,8 +329,8 @@ use crate::{
 use icu_calendar::{
     any_calendar::IntoAnyCalendar,
     types::{
-        DayOfMonth, DayOfYearInfo, FormattableMonth, FormattableYear, IsoHour, IsoMinute,
-        IsoSecond, IsoWeekday, NanoSecond,
+        DayOfMonth, DayOfYearInfo, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo,
+        NanoSecond, YearInfo,
     },
     AnyCalendar, AnyCalendarKind, AsCalendar, Calendar, Date, DateTime, Ref, Time,
 };
@@ -467,16 +467,16 @@ where
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<FormattableYear> for Date<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<YearInfo> for Date<A> {
     #[inline]
-    fn get_field(&self) -> FormattableYear {
+    fn get_field(&self) -> YearInfo {
         self.year()
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<FormattableMonth> for Date<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<MonthInfo> for Date<A> {
     #[inline]
-    fn get_field(&self) -> FormattableMonth {
+    fn get_field(&self) -> MonthInfo {
         self.month()
     }
 }
@@ -537,16 +537,16 @@ impl NeoGetField<NanoSecond> for Time {
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<FormattableYear> for DateTime<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<YearInfo> for DateTime<A> {
     #[inline]
-    fn get_field(&self) -> FormattableYear {
+    fn get_field(&self) -> YearInfo {
         self.date.year()
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<FormattableMonth> for DateTime<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<MonthInfo> for DateTime<A> {
     #[inline]
-    fn get_field(&self) -> FormattableMonth {
+    fn get_field(&self) -> MonthInfo {
         self.date.month()
     }
 }
@@ -607,20 +607,16 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<NanoSecond> for DateT
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<FormattableYear>
-    for CustomZonedDateTime<A>
-{
+impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<YearInfo> for CustomZonedDateTime<A> {
     #[inline]
-    fn get_field(&self) -> FormattableYear {
+    fn get_field(&self) -> YearInfo {
         self.date.year()
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<FormattableMonth>
-    for CustomZonedDateTime<A>
-{
+impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<MonthInfo> for CustomZonedDateTime<A> {
     #[inline]
-    fn get_field(&self) -> FormattableMonth {
+    fn get_field(&self) -> MonthInfo {
         self.date.month()
     }
 }
@@ -789,14 +785,14 @@ impl NeoGetField<NeverField> for CustomTimeZone {
     }
 }
 
-impl From<NeverField> for Option<FormattableYear> {
+impl From<NeverField> for Option<YearInfo> {
     #[inline]
     fn from(_: NeverField) -> Self {
         None
     }
 }
 
-impl From<NeverField> for Option<FormattableMonth> {
+impl From<NeverField> for Option<MonthInfo> {
     #[inline]
     fn from(_: NeverField) -> Self {
         None
@@ -951,9 +947,9 @@ pub trait HasConstZoneComponent {
 /// (input types only).
 pub trait DateInputMarkers: private::Sealed {
     /// Marker for resolving the year input field.
-    type YearInput: Into<Option<FormattableYear>>;
+    type YearInput: Into<Option<YearInfo>>;
     /// Marker for resolving the month input field.
-    type MonthInput: Into<Option<FormattableMonth>>;
+    type MonthInput: Into<Option<MonthInfo>>;
     /// Marker for resolving the day-of-month input field.
     type DayOfMonthInput: Into<Option<DayOfMonth>>;
     /// Marker for resolving the day-of-week input field.
@@ -1438,10 +1434,10 @@ macro_rules! datetime_marker_helper {
         NeoSkeletonLength
     };
     (@input/year, yes) => {
-        FormattableYear
+        YearInfo
     };
     (@input/month, yes) => {
-        FormattableMonth
+        MonthInfo
     };
     (@input/day_of_month, yes) => {
         DayOfMonth
@@ -2205,6 +2201,16 @@ impl_datetime_marker!(
     sample = "May 17, 2024, 3:47:50 PM",
     date = NeoAutoDateMarker,
     time = NeoAutoTimeMarker,
+);
+
+// TODO: Type aliases like this are excessive; make a curated set
+impl_datetime_marker!(
+    NeoYearMonthDayHourMinuteMarker,
+    description = "locale-dependent date and time fields",
+    sample_length = Medium,
+    sample = "May 17, 2024, 3:47 PM",
+    date = NeoYearMonthDayMarker,
+    time = NeoHourMinuteMarker,
 );
 
 impl_date_marker!(

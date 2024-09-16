@@ -42,7 +42,13 @@ export class Date {
 
     get monthCode(): string;
 
+    get monthNumber(): number;
+
+    get monthIsLeap(): boolean;
+
     get yearInEra(): number;
+
+    get extendedYear(): number;
 
     get era(): string;
 

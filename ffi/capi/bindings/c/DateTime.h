@@ -61,11 +61,17 @@ uint32_t icu4x_DateTime_week_of_month_mv1(const DateTime* self, IsoWeekday first
 
 WeekOf icu4x_DateTime_week_of_year_mv1(const DateTime* self, const WeekCalculator* calculator);
 
-uint32_t icu4x_DateTime_ordinal_month_mv1(const DateTime* self);
+uint8_t icu4x_DateTime_ordinal_month_mv1(const DateTime* self);
 
 void icu4x_DateTime_month_code_mv1(const DateTime* self, DiplomatWrite* write);
 
+uint8_t icu4x_DateTime_month_number_mv1(const DateTime* self);
+
+bool icu4x_DateTime_month_is_leap_mv1(const DateTime* self);
+
 int32_t icu4x_DateTime_year_in_era_mv1(const DateTime* self);
+
+int32_t icu4x_DateTime_extended_year_mv1(const DateTime* self);
 
 void icu4x_DateTime_era_mv1(const DateTime* self, DiplomatWrite* write);
 

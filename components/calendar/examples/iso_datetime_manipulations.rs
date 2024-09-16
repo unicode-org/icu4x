@@ -33,7 +33,7 @@ fn main() {
             .expect("datetime should parse");
         println!(
             "Year: {}, Month: {}, Day: {}, Hour: {}, Minute: {}, Second: {}",
-            datetime.date.year().number,
+            datetime.date.year().era_year_or_extended(),
             datetime.date.month().ordinal,
             datetime.date.day_of_month().0,
             u8::from(datetime.time.hour),

@@ -401,10 +401,10 @@ pub(crate) trait DateSymbols<'data> {
     ///
     /// `None` should fall back to the era code directly, if, for example,
     /// a japanext datetime is formatted with a `DateTimeFormat<Japanese>`
-    fn get_symbol_for_era<'a>(
-        &'a self,
+    fn get_symbol_for_era(
+        &self,
         length: fields::FieldLength,
-        era_code: &'a Era,
+        era_code: Era,
     ) -> Result<&str, GetSymbolForEraError>;
 }
 
@@ -515,10 +515,10 @@ impl<'data> DateSymbols<'data> for provider::calendar::DateSymbolsV1<'data> {
         })
     }
 
-    fn get_symbol_for_era<'a>(
-        &'a self,
+    fn get_symbol_for_era(
+        &self,
         length: fields::FieldLength,
-        era_code: &'a Era,
+        era_code: Era,
     ) -> Result<&str, GetSymbolForEraError> {
         let symbols = match length {
             fields::FieldLength::Wide => &self.eras.names,

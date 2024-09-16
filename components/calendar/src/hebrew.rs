@@ -17,12 +17,12 @@
 //!         .expect("Failed to initialize hebrew DateTime instance.");
 //!
 //! // `Date` checks
-//! assert_eq!(hebrew_date.year().number, 3425);
+//! assert_eq!(hebrew_date.year().era_year_or_extended(), 3425);
 //! assert_eq!(hebrew_date.month().ordinal, 10);
 //! assert_eq!(hebrew_date.day_of_month().0, 11);
 //!
 //! // `DateTime` checks
-//! assert_eq!(hebrew_datetime.date.year().number, 3425);
+//! assert_eq!(hebrew_datetime.date.year().era_year_or_extended(), 3425);
 //! assert_eq!(hebrew_datetime.date.month().ordinal, 10);
 //! assert_eq!(hebrew_datetime.date.day_of_month().0, 11);
 //! assert_eq!(hebrew_datetime.time.hour.number(), 13);
@@ -33,7 +33,7 @@
 use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
-use crate::types::FormattableMonth;
+use crate::types::MonthInfo;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Time};
 use crate::{Iso, RangeError};
 use ::tinystr::tinystr;
@@ -55,8 +55,8 @@ use calendrical_calculations::hebrew_keviyah::{Keviyah, YearInfo};
 /// This calendar is a lunisolar calendar and thus has a leap month. It supports codes `"M01"-"M12"`
 /// for regular months, and the leap month Adar I being coded as `"M05L"`.
 ///
-/// [`FormattableMonth`] has slightly divergent behavior: because the regular month Adar is formatted
-/// as "Adar II" in a leap year, this calendar will produce the special code `"M06L"` in any [`FormattableMonth`]
+/// [`MonthInfo`] has slightly divergent behavior: because the regular month Adar is formatted
+/// as "Adar II" in a leap year, this calendar will produce the special code `"M06L"` in any [`MonthInfo`]
 /// objects it creates.
 ///
 /// [Hebrew calendar]: https://en.wikipedia.org/wiki/Hebrew_calendar
@@ -142,16 +142,16 @@ impl Calendar for Hebrew {
 
     fn date_from_codes(
         &self,
-        era: types::Era,
+        era: Option<types::Era>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        let year = if era.0 == tinystr!(16, "hebrew") || era.0 == tinystr!(16, "am") {
-            year
-        } else {
-            return Err(DateError::UnknownEra(era));
-        };
+        if let Some(era) = era {
+            if era.0 != tinystr!(16, "hebrew") && era.0 != tinystr!(16, "am") {
+                return Err(DateError::UnknownEra(era));
+            }
+        }
 
         let year_info = HebrewYearInfo::compute(year);
 
@@ -259,7 +259,7 @@ impl Calendar for Hebrew {
         "Hebrew"
     }
 
-    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
+    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
         Self::year_as_hebrew(date.0.year)
     }
 
@@ -267,20 +267,23 @@ impl Calendar for Hebrew {
         Self::is_leap_year(date.0.year, date.0.year_info)
     }
 
-    fn month(&self, date: &Self::DateInner) -> FormattableMonth {
+    fn month(&self, date: &Self::DateInner) -> MonthInfo {
         let mut ordinal = date.0.month;
         let is_leap_year = Self::is_leap_year(date.0.year, date.0.year_info);
 
         if is_leap_year {
             if ordinal == 6 {
-                return types::FormattableMonth {
-                    ordinal: ordinal as u32,
-                    code: types::MonthCode(tinystr!(4, "M05L")),
+                return types::MonthInfo {
+                    ordinal,
+                    standard_code: types::MonthCode(tinystr!(4, "M05L")),
+                    formatting_code: types::MonthCode(tinystr!(4, "M05L")),
                 };
             } else if ordinal == 7 {
-                return types::FormattableMonth {
-                    ordinal: ordinal as u32,
-                    code: types::MonthCode(tinystr!(4, "M06L")),
+                return types::MonthInfo {
+                    ordinal,
+                    // Adar II is the same as Adar and has the same code
+                    standard_code: types::MonthCode(tinystr!(4, "M06")),
+                    formatting_code: types::MonthCode(tinystr!(4, "M06L")),
                 };
             }
         }
@@ -305,9 +308,10 @@ impl Calendar for Hebrew {
             _ => tinystr!(4, "und"),
         };
 
-        types::FormattableMonth {
-            ordinal: date.0.month as u32,
-            code: types::MonthCode(code),
+        types::MonthInfo {
+            ordinal: date.0.month,
+            standard_code: types::MonthCode(code),
+            formatting_code: types::MonthCode(code),
         }
     }
 
@@ -333,13 +337,11 @@ impl Calendar for Hebrew {
 }
 
 impl Hebrew {
-    fn year_as_hebrew(civil_year: i32) -> types::FormattableYear {
-        types::FormattableYear {
-            era: types::Era(tinystr!(16, "hebrew")),
-            number: civil_year,
-            cyclic: None,
-            related_iso: None,
-        }
+    fn year_as_hebrew(civil_year: i32) -> types::YearInfo {
+        types::YearInfo::new(
+            civil_year,
+            types::EraYear::new(tinystr!(16, "hebrew"), civil_year),
+        )
     }
 }
 
@@ -356,7 +358,7 @@ impl Date<Hebrew> {
     /// let date_hebrew = Date::try_new_hebrew_date(3425, 4, 25)
     ///     .expect("Failed to initialize Hebrew Date instance.");
     ///
-    /// assert_eq!(date_hebrew.year().number, 3425);
+    /// assert_eq!(date_hebrew.year().era_year_or_extended(), 3425);
     /// assert_eq!(date_hebrew.month().ordinal, 4);
     /// assert_eq!(date_hebrew.day_of_month().0, 25);
     /// ```
@@ -379,7 +381,7 @@ impl DateTime<Hebrew> {
     ///     DateTime::try_new_hebrew_datetime(4201, 10, 11, 13, 1, 0)
     ///         .expect("Failed to initialize Hebrew DateTime instance");
     ///
-    /// assert_eq!(datetime_hebrew.date.year().number, 4201);
+    /// assert_eq!(datetime_hebrew.date.year().era_year_or_extended(), 4201);
     /// assert_eq!(datetime_hebrew.date.month().ordinal, 10);
     /// assert_eq!(datetime_hebrew.date.day_of_month().0, 11);
     /// assert_eq!(datetime_hebrew.time.hour.number(), 13);
@@ -481,7 +483,7 @@ mod tests {
                 MonthCode::new_normal(m).unwrap()
             };
             let hebrew_date =
-                Date::try_new_from_codes(Era(tinystr!(16, "am")), y, month_code, d, Hebrew)
+                Date::try_new_from_codes(Some(Era(tinystr!(16, "am"))), y, month_code, d, Hebrew)
                     .expect("Date should parse");
 
             let iso_to_hebrew = iso_date.to_calendar(Hebrew);
@@ -530,14 +532,17 @@ mod tests {
         // Era year is accessible via the public getter.
         // TODO(#3962): Make extended year publicly accessible.
         assert_eq!(greg_date.inner.0 .0.year, -5000);
-        assert_eq!(greg_date.year().era.0, "bce");
+        assert_eq!(
+            greg_date.year().standard_era().unwrap().0,
+            "gregory-inverse"
+        );
         // In Gregorian, era year is 1 - extended year
-        assert_eq!(greg_date.year().number, 5001);
+        assert_eq!(greg_date.year().era_year().unwrap(), 5001);
         let hebr_date = greg_date.to_calendar(Hebrew);
         assert_eq!(hebr_date.inner.0.year, -1240);
-        assert_eq!(hebr_date.year().era.0, "hebrew");
+        assert_eq!(hebr_date.year().standard_era().unwrap().0, "hebrew");
         // In Hebrew, there is no inverse era, so negative extended years are negative era years
-        assert_eq!(hebr_date.year().number, -1240);
+        assert_eq!(hebr_date.year().era_year_or_extended(), -1240);
     }
 
     #[test]
@@ -546,7 +551,7 @@ mod tests {
         let cal = Hebrew::new();
         let era = Era(tinystr!(16, "am"));
         let month_code = MonthCode(tinystr!(4, "M01"));
-        let dt = cal.date_from_codes(era, 3760, month_code, 1).unwrap();
+        let dt = cal.date_from_codes(Some(era), 3760, month_code, 1).unwrap();
 
         // Should be Saturday per:
         // https://www.hebcal.com/converter?hd=1&hm=Tishrei&hy=3760&h2g=1

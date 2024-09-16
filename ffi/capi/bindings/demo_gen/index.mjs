@@ -31,8 +31,6 @@ import * as DecomposingNormalizerDemo from "./DecomposingNormalizer.mjs";
 export * as DecomposingNormalizerDemo from "./DecomposingNormalizer.mjs";
 import * as CustomTimeZoneDemo from "./CustomTimeZone.mjs";
 export * as CustomTimeZoneDemo from "./CustomTimeZone.mjs";
-import * as TimeZoneFormatterDemo from "./TimeZoneFormatter.mjs";
-export * as TimeZoneFormatterDemo from "./TimeZoneFormatter.mjs";
 import * as TimeZoneIdMapperDemo from "./TimeZoneIdMapper.mjs";
 export * as TimeZoneIdMapperDemo from "./TimeZoneIdMapper.mjs";
 import * as TimeZoneIdMapperWithFastCanonicalizationDemo from "./TimeZoneIdMapperWithFastCanonicalization.mjs";
@@ -339,8 +337,8 @@ export const RenderInfo = {
                 },
                 
                 {
-                    name: "DateLength",
-                    type: "DateLength"
+                    name: "Length",
+                    type: "DateTimeLength"
                 },
                 
                 {
@@ -378,8 +376,8 @@ export const RenderInfo = {
                 },
                 
                 {
-                    name: "DateLength",
-                    type: "DateLength"
+                    name: "Length",
+                    type: "DateTimeLength"
                 },
                 
                 {
@@ -412,8 +410,8 @@ export const RenderInfo = {
                 },
                 
                 {
-                    name: "DateLength",
-                    type: "DateLength"
+                    name: "Length",
+                    type: "DateTimeLength"
                 },
                 
                 {
@@ -471,8 +469,8 @@ export const RenderInfo = {
                 },
                 
                 {
-                    name: "DateLength",
-                    type: "DateLength"
+                    name: "Length",
+                    type: "DateTimeLength"
                 },
                 
                 {
@@ -525,13 +523,8 @@ export const RenderInfo = {
                 },
                 
                 {
-                    name: "DateLength",
-                    type: "DateLength"
-                },
-                
-                {
-                    name: "TimeLength",
-                    type: "TimeLength"
+                    name: "Length",
+                    type: "DateTimeLength"
                 },
                 
                 {
@@ -589,13 +582,8 @@ export const RenderInfo = {
                 },
                 
                 {
-                    name: "DateLength",
-                    type: "DateLength"
-                },
-                
-                {
-                    name: "TimeLength",
-                    type: "TimeLength"
+                    name: "Length",
+                    type: "DateTimeLength"
                 },
                 
                 {
@@ -649,7 +637,7 @@ export const RenderInfo = {
                 
                 {
                     name: "Length",
-                    type: "DateLength"
+                    type: "DateTimeLength"
                 },
                 
                 {
@@ -683,7 +671,7 @@ export const RenderInfo = {
                 
                 {
                     name: "Length",
-                    type: "DateLength"
+                    type: "DateTimeLength"
                 },
                 
                 {
@@ -736,13 +724,8 @@ export const RenderInfo = {
                 },
                 
                 {
-                    name: "DateLength",
-                    type: "DateLength"
-                },
-                
-                {
-                    name: "TimeLength",
-                    type: "TimeLength"
+                    name: "Length",
+                    type: "DateTimeLength"
                 },
                 
                 {
@@ -796,7 +779,7 @@ export const RenderInfo = {
                 
                 {
                     name: "Length",
-                    type: "TimeLength"
+                    type: "DateTimeLength"
                 },
                 
                 {
@@ -835,7 +818,7 @@ export const RenderInfo = {
                 
                 {
                     name: "Length",
-                    type: "TimeLength"
+                    type: "DateTimeLength"
                 },
                 
                 {
@@ -894,7 +877,7 @@ export const RenderInfo = {
                 
                 {
                     name: "Length",
-                    type: "TimeLength"
+                    type: "DateTimeLength"
                 },
                 
                 {
@@ -1180,44 +1163,6 @@ export const RenderInfo = {
             ]
         },
         
-        "TimeZoneFormatter.formatCustomTimeZone": {
-            func: TimeZoneFormatterDemo.formatCustomTimeZone,
-            // For avoiding webpacking minifying issues:
-            funcName: "TimeZoneFormatter.formatCustomTimeZone",
-            parameters: [
-                
-                {
-                    name: "Name",
-                    type: "string"
-                },
-                
-                {
-                    name: "S",
-                    type: "string"
-                }
-                
-            ]
-        },
-        
-        "TimeZoneFormatter.formatCustomTimeZoneNoFallback": {
-            func: TimeZoneFormatterDemo.formatCustomTimeZoneNoFallback,
-            // For avoiding webpacking minifying issues:
-            funcName: "TimeZoneFormatter.formatCustomTimeZoneNoFallback",
-            parameters: [
-                
-                {
-                    name: "Name",
-                    type: "string"
-                },
-                
-                {
-                    name: "S",
-                    type: "string"
-                }
-                
-            ]
-        },
-        
         "TimeZoneIdMapper.ianaToBcp47": {
             func: TimeZoneIdMapperDemo.ianaToBcp47,
             // For avoiding webpacking minifying issues:
@@ -1314,13 +1259,8 @@ export const RenderInfo = {
                 },
                 
                 {
-                    name: "DateLength",
-                    type: "DateLength"
-                },
-                
-                {
-                    name: "TimeLength",
-                    type: "TimeLength"
+                    name: "Length",
+                    type: "DateTimeLength"
                 },
                 
                 {
@@ -1378,13 +1318,8 @@ export const RenderInfo = {
                 },
                 
                 {
-                    name: "DateLength",
-                    type: "DateLength"
-                },
-                
-                {
-                    name: "TimeLength",
-                    type: "TimeLength"
+                    name: "Length",
+                    type: "DateTimeLength"
                 },
                 
                 {
@@ -1447,13 +1382,8 @@ export const RenderInfo = {
                 },
                 
                 {
-                    name: "DateLength",
-                    type: "DateLength"
-                },
-                
-                {
-                    name: "TimeLength",
-                    type: "TimeLength"
+                    name: "Length",
+                    type: "DateTimeLength"
                 },
                 
                 {

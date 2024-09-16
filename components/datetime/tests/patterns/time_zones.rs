@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_datetime::neo_skeleton::{NeoSkeletonLength, NeoTimeZoneSkeleton, NeoTimeZoneStyle};
-use icu_datetime::time_zone;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -30,51 +29,16 @@ pub enum FallbackFormat {
     LocalizedOffset,
 }
 
-impl From<FallbackFormat> for time_zone::TimeZoneFormatterOptions {
-    fn from(other: FallbackFormat) -> time_zone::TimeZoneFormatterOptions {
-        let mut options = time_zone::TimeZoneFormatterOptions::default();
-        options.fallback_format = match other {
-            FallbackFormat::Iso8601(iso_format, iso_minutes, iso_seconds) => {
-                time_zone::FallbackFormat::Iso8601(
-                    iso_format.into(),
-                    iso_minutes.into(),
-                    iso_seconds.into(),
-                )
-            }
-            FallbackFormat::LocalizedOffset => time_zone::FallbackFormat::LocalizedOffset,
-        };
-        options
-    }
-}
-
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub enum IsoSeconds {
     Optional,
     Never,
 }
 
-impl From<IsoSeconds> for time_zone::IsoSeconds {
-    fn from(other: IsoSeconds) -> time_zone::IsoSeconds {
-        match other {
-            IsoSeconds::Optional => time_zone::IsoSeconds::Optional,
-            IsoSeconds::Never => time_zone::IsoSeconds::Never,
-        }
-    }
-}
-
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub enum IsoMinutes {
     Required,
     Optional,
-}
-
-impl From<IsoMinutes> for time_zone::IsoMinutes {
-    fn from(other: IsoMinutes) -> time_zone::IsoMinutes {
-        match other {
-            IsoMinutes::Required => time_zone::IsoMinutes::Required,
-            IsoMinutes::Optional => time_zone::IsoMinutes::Optional,
-        }
-    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
@@ -89,17 +53,6 @@ pub enum IsoFormat {
     Extended,
     UtcBasic,
     UtcExtended,
-}
-
-impl From<IsoFormat> for time_zone::IsoFormat {
-    fn from(other: IsoFormat) -> time_zone::IsoFormat {
-        match other {
-            IsoFormat::Basic => time_zone::IsoFormat::Basic,
-            IsoFormat::Extended => time_zone::IsoFormat::Extended,
-            IsoFormat::UtcBasic => time_zone::IsoFormat::UtcBasic,
-            IsoFormat::UtcExtended => time_zone::IsoFormat::UtcExtended,
-        }
-    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]

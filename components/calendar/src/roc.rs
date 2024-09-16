@@ -18,12 +18,12 @@
 //! let datetime_roc = DateTime::new_from_iso(datetime_iso, Roc);
 //!
 //! // `Date` checks
-//! assert_eq!(date_roc.year().number, 59);
+//! assert_eq!(date_roc.year().era_year_or_extended(), 59);
 //! assert_eq!(date_roc.month().ordinal, 1);
 //! assert_eq!(date_roc.day_of_month().0, 2);
 //!
 //! // `DateTime` checks
-//! assert_eq!(datetime_roc.date.year().number, 59);
+//! assert_eq!(datetime_roc.date.year().era_year_or_extended(), 59);
 //! assert_eq!(datetime_roc.date.month().ordinal, 1);
 //! assert_eq!(datetime_roc.date.day_of_month().0, 2);
 //! assert_eq!(datetime_roc.time.hour.number(), 13);
@@ -78,33 +78,37 @@ impl Calendar for Roc {
 
     fn date_from_codes(
         &self,
-        era: crate::types::Era,
+        era: Option<crate::types::Era>,
         year: i32,
         month_code: crate::types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        let year = if era.0 == tinystr!(16, "roc") {
-            if year <= 0 {
-                return Err(DateError::Range {
-                    field: "year",
-                    value: year,
-                    min: 1,
-                    max: i32::MAX,
-                });
+        let year = if let Some(era) = era {
+            if era.0 == tinystr!(16, "roc") {
+                if year <= 0 {
+                    return Err(DateError::Range {
+                        field: "year",
+                        value: year,
+                        min: 1,
+                        max: i32::MAX,
+                    });
+                }
+                year + ROC_ERA_OFFSET
+            } else if era.0 == tinystr!(16, "roc-inverse") {
+                if year <= 0 {
+                    return Err(DateError::Range {
+                        field: "year",
+                        value: year,
+                        min: 1,
+                        max: i32::MAX,
+                    });
+                }
+                1 - year + ROC_ERA_OFFSET
+            } else {
+                return Err(DateError::UnknownEra(era));
             }
-            year + ROC_ERA_OFFSET
-        } else if era.0 == tinystr!(16, "roc-inverse") {
-            if year <= 0 {
-                return Err(DateError::Range {
-                    field: "year",
-                    value: year,
-                    min: 1,
-                    max: i32::MAX,
-                });
-            }
-            1 - year + ROC_ERA_OFFSET
         } else {
-            return Err(DateError::UnknownEra(era));
+            year
         };
 
         ArithmeticDate::new_from_codes(self, year, month_code, day)
@@ -152,15 +156,14 @@ impl Calendar for Roc {
         "ROC"
     }
 
-    fn year(&self, date: &Self::DateInner) -> crate::types::FormattableYear {
+    fn year(&self, date: &Self::DateInner) -> crate::types::YearInfo {
         year_as_roc(date.0 .0.year as i64)
     }
-
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
         Iso.is_in_leap_year(&date.0)
     }
 
-    fn month(&self, date: &Self::DateInner) -> crate::types::FormattableMonth {
+    fn month(&self, date: &Self::DateInner) -> crate::types::MonthInfo {
         Iso.month(&date.0)
     }
 
@@ -201,15 +204,15 @@ impl Date<Roc> {
     /// let date_roc = Date::try_new_roc_date(1, 2, 3)
     ///     .expect("Failed to initialize ROC Date instance.");
     ///
-    /// assert_eq!(date_roc.year().era.0, tinystr!(16, "roc"));
-    /// assert_eq!(date_roc.year().number, 1, "ROC year check failed!");
+    /// assert_eq!(date_roc.year().standard_era().unwrap().0, tinystr!(16, "roc"));
+    /// assert_eq!(date_roc.year().era_year_or_extended(), 1, "ROC year check failed!");
     /// assert_eq!(date_roc.month().ordinal, 2, "ROC month check failed!");
     /// assert_eq!(date_roc.day_of_month().0, 3, "ROC day of month check failed!");
     ///
     /// // Convert to an equivalent Gregorian date
     /// let date_gregorian = date_roc.to_calendar(Gregorian);
     ///
-    /// assert_eq!(date_gregorian.year().number, 1912, "Gregorian from ROC year check failed!");
+    /// assert_eq!(date_gregorian.year().era_year_or_extended(), 1912, "Gregorian from ROC year check failed!");
     /// assert_eq!(date_gregorian.month().ordinal, 2, "Gregorian from ROC month check failed!");
     /// assert_eq!(date_gregorian.day_of_month().0, 3, "Gregorian from ROC day of month check failed!");
     pub fn try_new_roc_date(year: i32, month: u8, day: u8) -> Result<Date<Roc>, RangeError> {
@@ -231,8 +234,8 @@ impl DateTime<Roc> {
     /// let datetime_roc = DateTime::try_new_roc_datetime(1, 2, 3, 13, 1, 0)
     ///     .expect("Failed to initialize ROC DateTime instance.");
     ///
-    /// assert_eq!(datetime_roc.date.year().era.0, tinystr!(16, "roc"));
-    /// assert_eq!(datetime_roc.date.year().number, 1, "ROC year check failed!");
+    /// assert_eq!(datetime_roc.date.year().standard_era().unwrap().0, tinystr!(16, "roc"));
+    /// assert_eq!(datetime_roc.date.year().era_year_or_extended(), 1, "ROC year check failed!");
     /// assert_eq!(
     ///     datetime_roc.date.month().ordinal,
     ///     2,
@@ -262,23 +265,22 @@ impl DateTime<Roc> {
     }
 }
 
-pub(crate) fn year_as_roc(year: i64) -> types::FormattableYear {
+pub(crate) fn year_as_roc(year: i64) -> types::YearInfo {
     let year_i32 = i64_to_saturated_i32(year);
     let offset_i64 = ROC_ERA_OFFSET as i64;
     if year > offset_i64 {
-        types::FormattableYear {
-            era: types::Era(tinystr!(16, "roc")),
-            number: year_i32.saturating_sub(ROC_ERA_OFFSET),
-            cyclic: None,
-            related_iso: Some(year_i32),
-        }
+        types::YearInfo::new(
+            year_i32,
+            types::EraYear::new(tinystr!(16, "roc"), year_i32.saturating_sub(ROC_ERA_OFFSET)),
+        )
     } else {
-        types::FormattableYear {
-            era: types::Era(tinystr!(16, "roc-inverse")),
-            number: (ROC_ERA_OFFSET + 1).saturating_sub(year_i32),
-            cyclic: None,
-            related_iso: Some(year_i32),
-        }
+        types::YearInfo::new(
+            year_i32,
+            types::EraYear::new(
+                tinystr!(16, "roc-inverse"),
+                (ROC_ERA_OFFSET + 1).saturating_sub(year_i32),
+            ),
+        )
     }
 }
 
@@ -297,16 +299,16 @@ mod test {
         iso_day: u8,
         expected_year: i32,
         expected_era: Era,
-        expected_month: u32,
+        expected_month: u8,
         expected_day: u32,
     }
 
     fn check_test_case(case: TestCase) {
         let iso_from_fixed = Iso::iso_from_fixed(case.fixed_date);
         let roc_from_fixed = Date::new_from_iso(iso_from_fixed, Roc);
-        assert_eq!(roc_from_fixed.year().number, case.expected_year,
+        assert_eq!(roc_from_fixed.year().era_year().unwrap(), case.expected_year,
             "Failed year check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nROC: {roc_from_fixed:?}");
-        assert_eq!(roc_from_fixed.year().era, case.expected_era,
+        assert_eq!(roc_from_fixed.year().standard_era().unwrap(), case.expected_era,
             "Failed era check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nROC: {roc_from_fixed:?}");
         assert_eq!(roc_from_fixed.month().ordinal, case.expected_month,
             "Failed month check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nROC: {roc_from_fixed:?}");

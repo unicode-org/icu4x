@@ -9,7 +9,7 @@ export function formatDatetime() {
     return (function (...args) { return args[0].formatDatetime(...args.slice(1)) }).apply(
         null,
         [
-            DateTimeFormatter.createWithLengths.apply(
+            DateTimeFormatter.createWithLength.apply(
                 null,
                 [
                     DataProvider.compiled.apply(
@@ -23,20 +23,19 @@ export function formatDatetime() {
                             terminusArgs[0]
                         ]
                     ),
-                    terminusArgs[1],
-                    terminusArgs[2]
+                    terminusArgs[1]
                 ]
             ),
             DateTime.fromIsoInCalendar.apply(
                 null,
                 [
+                    terminusArgs[2],
                     terminusArgs[3],
                     terminusArgs[4],
                     terminusArgs[5],
                     terminusArgs[6],
                     terminusArgs[7],
                     terminusArgs[8],
-                    terminusArgs[9],
                     Calendar.createForLocale.apply(
                         null,
                         [
@@ -48,7 +47,7 @@ export function formatDatetime() {
                             Locale.fromString.apply(
                                 null,
                                 [
-                                    terminusArgs[10]
+                                    terminusArgs[9]
                                 ]
                             )
                         ]
@@ -63,7 +62,7 @@ export function formatIsoDatetime() {
     return (function (...args) { return args[0].formatIsoDatetime(...args.slice(1)) }).apply(
         null,
         [
-            DateTimeFormatter.createWithLengths.apply(
+            DateTimeFormatter.createWithLength.apply(
                 null,
                 [
                     DataProvider.compiled.apply(
@@ -77,20 +76,19 @@ export function formatIsoDatetime() {
                             terminusArgs[0]
                         ]
                     ),
-                    terminusArgs[1],
-                    terminusArgs[2]
+                    terminusArgs[1]
                 ]
             ),
             IsoDateTime.create.apply(
                 null,
                 [
+                    terminusArgs[2],
                     terminusArgs[3],
                     terminusArgs[4],
                     terminusArgs[5],
                     terminusArgs[6],
                     terminusArgs[7],
-                    terminusArgs[8],
-                    terminusArgs[9]
+                    terminusArgs[8]
                 ]
             )
         ]

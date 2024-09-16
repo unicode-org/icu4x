@@ -130,8 +130,6 @@ pub mod segmenter_word;
 pub mod time;
 #[cfg(any(feature = "datetime", feature = "timezone"))]
 pub mod timezone;
-#[cfg(feature = "datetime")]
-pub mod timezone_formatter;
 #[cfg(any(feature = "datetime", feature = "timezone"))]
 pub mod timezone_mapper;
 #[cfg(feature = "experimental")]

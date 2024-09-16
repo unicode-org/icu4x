@@ -11,9 +11,8 @@
 //! let iso_date = Date::try_new_iso_date(2023, 6, 23).unwrap();
 //! let chinese_date = Date::new_from_iso(iso_date, Chinese::new());
 //!
-//! assert_eq!(chinese_date.year().number, 4660);
-//! assert_eq!(chinese_date.year().related_iso, Some(2023));
-//! assert_eq!(chinese_date.year().cyclic.unwrap().get(), 40);
+//! assert_eq!(chinese_date.year().era_year_or_extended(), 4660);
+//! assert_eq!(chinese_date.year().cyclic().unwrap().get(), 40);
 //! assert_eq!(chinese_date.month().ordinal, 6);
 //! assert_eq!(chinese_date.day_of_month().0, 6);
 //! ```
@@ -22,7 +21,7 @@ use crate::{
     calendar_arithmetic::{ArithmeticDate, CalendarArithmetic, PrecomputedDataSource},
     error::DateError,
     provider::chinese_based::{ChineseBasedCacheV1, PackedChineseBasedYearInfo},
-    types::{FormattableMonth, MonthCode},
+    types::{MonthCode, MonthInfo},
     Calendar, Iso,
 };
 
@@ -421,7 +420,7 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
     /// since the Chinese calendar has leap months, an "L" is appended to the month code for
     /// leap months. For example, in a year where an intercalary month is added after the second
     /// month, the month codes for ordinal months 1, 2, 3, 4, 5 would be "M01", "M02", "M02L", "M03", "M04".
-    pub(crate) fn month(&self) -> FormattableMonth {
+    pub(crate) fn month(&self) -> MonthInfo {
         let ordinal = self.0.month;
         let leap_month_option = self.0.year_info.leap_month();
 
@@ -481,9 +480,10 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
             }
         };
         let code = MonthCode(code_inner);
-        FormattableMonth {
-            ordinal: ordinal as u32,
-            code,
+        MonthInfo {
+            ordinal,
+            standard_code: code,
+            formatting_code: code,
         }
     }
 }

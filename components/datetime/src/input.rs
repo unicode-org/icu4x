@@ -16,8 +16,8 @@ use icu_timezone::{CustomTimeZone, UtcOffset, ZoneVariant};
 
 // TODO(#2630) fix up imports to directly import from icu_calendar
 pub(crate) use icu_calendar::types::{
-    DayOfMonth, DayOfYearInfo, FormattableMonth, FormattableYear, IsoHour, IsoMinute, IsoSecond,
-    IsoWeekday, NanoSecond, Time, WeekOfMonth, WeekOfYear,
+    DayOfMonth, DayOfYearInfo, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo, NanoSecond,
+    Time, WeekOfMonth, WeekOfYear, YearInfo,
 };
 
 /// Representation of a formattable calendar date. Supports dates in any calendar system that uses
@@ -31,10 +31,10 @@ pub trait DateInput {
     /// The calendar this date relates to
     type Calendar: Calendar;
     /// Gets the era and year input.
-    fn year(&self) -> Option<FormattableYear>;
+    fn year(&self) -> Option<YearInfo>;
 
     /// Gets the month input.
-    fn month(&self) -> Option<FormattableMonth>;
+    fn month(&self) -> Option<MonthInfo>;
 
     /// Gets the day input.
     fn day_of_month(&self) -> Option<DayOfMonth>;
@@ -105,8 +105,8 @@ impl<T> DateTimeInput for T where T: DateInput + IsoTimeInput {}
 /// See [`DateTimeInput`] for documentation on individual fields
 #[derive(Default, Debug, Copy, Clone)]
 pub(crate) struct ExtractedDateTimeInput {
-    year: Option<FormattableYear>,
-    month: Option<FormattableMonth>,
+    year: Option<YearInfo>,
+    month: Option<MonthInfo>,
     day_of_month: Option<DayOfMonth>,
     iso_weekday: Option<IsoWeekday>,
     day_of_year_info: Option<DayOfYearInfo>,
@@ -240,8 +240,13 @@ impl ExtractedDateTimeInput {
             | Some(AnyCalendarKind::Iso) => false,
             Some(AnyCalendarKind::Gregorian) => match self.year() {
                 None => true,
-                Some(year) if year.number < 1000 => true,
-                Some(year) if year.era.0 != tinystr::tinystr!(16, "ce") => true,
+                Some(year) if year.era_year_or_extended() < 1000 => true,
+                Some(year)
+                    if year.formatting_era()
+                        != Some(icu_calendar::types::Era(tinystr::tinystr!(16, "ce"))) =>
+                {
+                    true
+                }
                 Some(_) => false,
             },
             Some(_) => {
@@ -252,26 +257,14 @@ impl ExtractedDateTimeInput {
     }
 }
 
-impl ExtractedTimeZoneInput {
-    /// Construct given an instance of a [`ZonedDateTimeInput`].
-    pub(crate) fn extract_from<T: TimeZoneInput>(input: &T) -> Self {
-        Self {
-            offset: input.offset(),
-            time_zone_id: input.time_zone_id(),
-            metazone_id: input.metazone_id(),
-            zone_variant: input.zone_variant(),
-        }
-    }
-}
-
 impl DateInput for ExtractedDateTimeInput {
     /// This actually doesn't matter, by the time we use this
     /// it's purely internal raw code where calendars are irrelevant
     type Calendar = icu_calendar::any_calendar::AnyCalendar;
-    fn year(&self) -> Option<FormattableYear> {
+    fn year(&self) -> Option<YearInfo> {
         self.year
     }
-    fn month(&self) -> Option<FormattableMonth> {
+    fn month(&self) -> Option<MonthInfo> {
         self.month
     }
     fn day_of_month(&self) -> Option<DayOfMonth> {
@@ -334,7 +327,7 @@ impl ExtractedDateTimeInput {
     pub(crate) fn week_of_year(
         &self,
         calculator: &WeekCalculator,
-    ) -> Result<(FormattableYear, WeekOfYear), &'static str> {
+    ) -> Result<(YearInfo, WeekOfYear), &'static str> {
         let day_of_year_info = self.day_of_year_info().ok_or("day_of_year_info")?;
         let iso_weekday = self.iso_weekday().ok_or("iso_weekday")?;
         let week_of = calculator.week_of_year(day_of_year_info, iso_weekday);
@@ -350,12 +343,12 @@ impl ExtractedDateTimeInput {
 impl<C: Calendar, A: AsCalendar<Calendar = C>> DateInput for Date<A> {
     type Calendar = C;
     /// Gets the era and year input.
-    fn year(&self) -> Option<FormattableYear> {
+    fn year(&self) -> Option<YearInfo> {
         Some(self.year())
     }
 
     /// Gets the month input.
-    fn month(&self) -> Option<FormattableMonth> {
+    fn month(&self) -> Option<MonthInfo> {
         Some(self.month())
     }
 
@@ -386,12 +379,12 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> DateInput for Date<A> {
 impl<C: Calendar, A: AsCalendar<Calendar = C>> DateInput for DateTime<A> {
     type Calendar = C;
     /// Gets the era and year input.
-    fn year(&self) -> Option<FormattableYear> {
+    fn year(&self) -> Option<YearInfo> {
         Some(self.date.year())
     }
 
     /// Gets the month input.
-    fn month(&self) -> Option<FormattableMonth> {
+    fn month(&self) -> Option<MonthInfo> {
         Some(self.date.month())
     }
 

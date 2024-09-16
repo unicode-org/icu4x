@@ -2406,10 +2406,10 @@ impl<'data> DateSymbols<'data> for RawDateTimeNamesBorrowed<'data> {
             .ok_or(GetSymbolForWeekdayError::Missing)
     }
 
-    fn get_symbol_for_era<'a>(
-        &'a self,
+    fn get_symbol_for_era(
+        &self,
         field_length: FieldLength,
-        era_code: &'a Era,
+        era_code: Era,
     ) -> Result<&str, GetSymbolForEraError> {
         let field = fields::Field {
             symbol: FieldSymbol::Era,
