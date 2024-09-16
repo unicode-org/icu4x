@@ -8,12 +8,10 @@ use crate::external_loaders::*;
 use crate::fields::{self, Field, FieldLength, FieldSymbol};
 use crate::helpers::size_test;
 use crate::input;
-use crate::input::DateInput;
-use crate::input::ExtractedDateTimeInput;
-use crate::input::IsoTimeInput;
+use crate::input::ExtractedInput;
 use crate::neo_marker::{
-    AllInputMarkers, DateInputMarkers, DateTimeMarkers, IsInCalendar, TimeMarkers,
-    TypedDateDataMarkers, ZoneMarkers,
+    AllInputMarkers, DateInputMarkers, DateTimeMarkers, IsInCalendar, NeoGetField, NeoNeverMarker,
+    NeverField, TimeMarkers, TypedDateDataMarkers, ZoneMarkers,
 };
 use crate::neo_pattern::{DateTimePattern, DateTimePatternBorrowed};
 use crate::neo_skeleton::NeoDateTimeComponents;
@@ -2168,11 +2166,9 @@ where
     where
         I: ?Sized + IsInCalendar<C> + AllInputMarkers<R>,
     {
-        let datetime =
-            ExtractedDateTimeInput::extract_from_neo_input::<R::D, R::T, R::Z, I>(datetime);
         FormattedDateTimePattern {
             pattern: self.inner.pattern,
-            datetime,
+            input: ExtractedInput::extract_from_neo_input::<R::D, R::T, R::Z, I>(datetime),
             names: self.inner.names,
         }
     }
@@ -2217,13 +2213,21 @@ where
     ///     "The date is: November 20, 1700 Anno Domini"
     /// );
     /// ```
-    pub fn format_date<T>(&self, datetime: &'a T) -> FormattedDateTimePattern<'a>
+    pub fn format_date<I>(&self, datetime: &'a I) -> FormattedDateTimePattern<'a>
     where
-        T: DateInput<Calendar = C>,
+        I: ?Sized
+            + IsInCalendar<C>
+            + NeoGetField<<R::D as DateInputMarkers>::YearInput>
+            + NeoGetField<<R::D as DateInputMarkers>::MonthInput>
+            + NeoGetField<<R::D as DateInputMarkers>::DayOfMonthInput>
+            + NeoGetField<<R::D as DateInputMarkers>::DayOfWeekInput>
+            + NeoGetField<<R::D as DateInputMarkers>::DayOfYearInput>
+            + NeoGetField<<R::D as DateInputMarkers>::AnyCalendarKindInput>
+            + NeoGetField<NeverField>,
     {
         FormattedDateTimePattern {
             pattern: self.inner.pattern,
-            datetime: ExtractedDateTimeInput::extract_from_date(datetime),
+            input: ExtractedInput::extract_from_neo_input::<R::D, NeoNeverMarker, NeoNeverMarker, I>(datetime),
             names: self.inner.names,
         }
     }
@@ -2274,13 +2278,77 @@ where
     ///     "The time is: 12:00 midnight"
     /// );
     /// ```
-    pub fn format_time<T>(&self, datetime: &'a T) -> FormattedDateTimePattern<'a>
+    pub fn format_time<I>(&self, datetime: &'a I) -> FormattedDateTimePattern<'a>
     where
-        T: IsoTimeInput,
+        I: ?Sized
+            + IsInCalendar<C>
+            + NeoGetField<<R::T as TimeMarkers>::HourInput>
+            + NeoGetField<<R::T as TimeMarkers>::MinuteInput>
+            + NeoGetField<<R::T as TimeMarkers>::SecondInput>
+            + NeoGetField<<R::T as TimeMarkers>::NanoSecondInput>
+            + NeoGetField<NeverField>,
     {
         FormattedDateTimePattern {
             pattern: self.inner.pattern,
-            datetime: ExtractedDateTimeInput::extract_from_time(datetime),
+            input: ExtractedInput::extract_from_neo_input::<NeoNeverMarker, R::T, NeoNeverMarker, I>(datetime),
+            names: self.inner.names,
+        }
+    }
+
+    /// Formats a timezone without a date or time.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::TypedDateTimeNames;
+    /// use icu::datetime::neo_skeleton::NeoTimeZoneSkeleton;
+    /// use icu::datetime::neo_pattern::DateTimePattern;
+    /// use icu::locale::locale;
+    /// use icu::timezone::CustomZonedDateTime;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let mut london_winter = CustomZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap().to_calendar(Gregorian);
+    /// let mut london_summer = CustomZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]").unwrap().to_calendar(Gregorian);
+    ///
+    /// let mut names =
+    ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(&locale!("en-GB").into())
+    ///         .unwrap();
+    ///
+    /// names
+    ///     .include_time_zone_essentials()
+    ///     .unwrap();
+    /// names
+    ///     .include_time_zone_specific_short_names()
+    ///     .unwrap();
+    ///
+    /// // Create a pattern with symbol `z`:
+    /// let pattern_str = "'Your time zone is:' z";
+    /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
+    ///
+    /// assert_try_writeable_eq!(
+    ///     names.with_pattern(&pattern).format_timezone(&london_winter),
+    ///     "Your time zone is: GMT",
+    /// );
+    /// assert_try_writeable_eq!(
+    ///     names.with_pattern(&pattern).format_timezone(&london_summer),
+    ///     "Your time zone is: BST",
+    /// );
+    /// ```
+
+    pub fn format_timezone<I>(&self, datetime: &'a I) -> FormattedDateTimePattern<'a>
+    where
+        I: ?Sized
+            + IsInCalendar<C>
+            + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneOffsetInput>
+            + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneIdInput>
+            + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneMetazoneInput>
+            + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneVariantInput>
+            + NeoGetField<NeverField>,
+    {
+        FormattedDateTimePattern {
+            pattern: self.inner.pattern,
+            input: ExtractedInput::extract_from_neo_input::<NeoNeverMarker, NeoNeverMarker, R::Z, I>(datetime),
             names: self.inner.names,
         }
     }
@@ -2297,7 +2365,7 @@ where
 #[derive(Debug)]
 pub struct FormattedDateTimePattern<'a> {
     pattern: DateTimePatternBorrowed<'a>,
-    datetime: ExtractedDateTimeInput,
+    input: ExtractedInput,
     names: RawDateTimeNamesBorrowed<'a>,
 }
 
@@ -2309,7 +2377,7 @@ impl<'a> TryWriteable for FormattedDateTimePattern<'a> {
     ) -> Result<Result<(), Self::Error>, fmt::Error> {
         try_write_pattern(
             self.pattern.0.as_borrowed(),
-            &self.datetime,
+            &self.input,
             Some(&self.names),
             Some(&self.names),
             Some(&self.names),
