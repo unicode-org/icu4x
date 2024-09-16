@@ -8,6 +8,30 @@ use alloc::vec::Vec;
 
 use ::serde::{Deserialize, Deserializer, Serialize, Serializer};
 
+#[doc(hidden)]
+pub fn deserialize_option_borrowed_cow<'de, D, B>(
+    deserializer: D,
+) -> Result<Option<Cow<'de, Pattern<B>>>, D::Error>
+where
+    D: Deserializer<'de>,
+    B: PatternBackend<Store = str>,
+    B::PlaceholderKeyCow<'de>: Deserialize<'de>,
+{
+    #[derive(Deserialize)]
+    #[serde(transparent, bound = "'data: 'de")]
+    // Cows fail to borrow in some situations (array, option), but structs of Cows don't.
+    struct CowPatternWrap<'data, B: PatternBackend<Store = str>>(
+        #[serde(borrow, deserialize_with = "deserialize_borrowed_cow")] pub Cow<'data, Pattern<B>>,
+    )
+    where
+        Pattern<B>: ToOwned,
+        B: PatternBackend<Store = str>,
+        B::PlaceholderKeyCow<'data>: Deserialize<'data>;
+
+    Option::<CowPatternWrap<'de, B>>::deserialize(deserializer)
+        .map(|array| array.map(|wrap| wrap.0))
+}
+
 type HumanReadablePattern<'a, B> =
     Vec<PatternItemCow<'a, <B as PatternBackend>::PlaceholderKeyCow<'a>>>;
 
@@ -62,6 +86,7 @@ where
     }
 }
 
+#[doc(hidden)]
 pub fn deserialize_borrowed_cow<'de, E, B, D>(
     deserializer: D,
 ) -> Result<Cow<'de, Pattern<B>>, D::Error>

@@ -34,13 +34,19 @@ pub use crate::provider::Baked;
 /// <https://www.unicode.org/reports/tr35/tr35-numbers.html#approximate-number-formatting>
 /// <https://www.unicode.org/reports/tr35/tr35-numbers.html#explicit-plus-signs>
 pub struct PercentEssentialsV1<'data> {
-    #[cfg_attr(feature = "serde", serde(borrow))]
+    #[cfg_attr(
+        feature = "serde",
+        serde(borrow, deserialize_with = "icu_pattern::deserialize_borrowed_cow")
+    )]
     /// Represents the standard pattern for signed percents.
     /// NOTE: place holder 0 is the place of the percent value.
     ///       place holder 1 is the place of the plus, minus, or approximate signs.
     pub signed_pattern: Cow<'data, DoublePlaceholderPattern>,
 
-    #[cfg_attr(feature = "serde", serde(borrow))]
+    #[cfg_attr(
+        feature = "serde",
+        serde(borrow, deserialize_with = "icu_pattern::deserialize_borrowed_cow")
+    )]
     /// Represents the standard pattern for unsigned percents.
     pub unsigned_pattern: Cow<'data, SinglePlaceholderPattern>,
 

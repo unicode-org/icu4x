@@ -968,7 +968,7 @@ where
     }
 }
 
-/// Helper function to property deserialize a `Cow<PluralElementsPackedULE<V>>`
+/// Helper function to properly deserialize a `Cow<PluralElementsPackedULE<V>>`
 ///
 /// Due to <https://github.com/rust-lang/rust/issues/130180>, you may need to qualify
 /// `V` when invoking this, like so:
@@ -991,7 +991,7 @@ where
         let value = Box::<PluralElementsPackedULE<V>>::deserialize(deserializer)?;
         Ok(Cow::Owned(value))
     } else {
-        let value = <&'data PluralElementsPackedULE<V>>::deserialize(deserializer)?;
+        let value = <&'de PluralElementsPackedULE<V>>::deserialize(deserializer)?;
         Ok(Cow::Borrowed(value))
     }
 }

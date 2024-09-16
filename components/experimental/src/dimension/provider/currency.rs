@@ -50,14 +50,26 @@ pub struct CurrencyEssentialsV1<'data> {
     /// Represents the standard pattern.
     /// NOTE: place holder 0 is the place of the currency value.
     ///       place holder 1 is the place of the currency sign `¤`.
-    #[cfg_attr(feature = "serde", serde(borrow))]
+    #[cfg_attr(
+        feature = "serde",
+        serde(
+            borrow,
+            deserialize_with = "icu_pattern::deserialize_option_borrowed_cow"
+        )
+    )]
     pub standard_pattern: Option<Cow<'data, DoublePlaceholderPattern>>,
 
     // TODO(#4677): Implement the pattern to accept the signed negative and signed positive patterns.
     /// Represents the standard alpha_next_to_number pattern.
     /// NOTE: place holder 0 is the place of the currency value.
     ///       place holder 1 is the place of the currency sign `¤`.
-    #[cfg_attr(feature = "serde", serde(borrow))]
+    #[cfg_attr(
+        feature = "serde",
+        serde(
+            borrow,
+            deserialize_with = "icu_pattern::deserialize_option_borrowed_cow"
+        )
+    )]
     pub standard_alpha_next_to_number_pattern: Option<Cow<'data, DoublePlaceholderPattern>>,
 
     /// Contains all the place holders.
