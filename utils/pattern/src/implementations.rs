@@ -36,7 +36,7 @@ where
 /// 5. The implementation of `from_byte_slice_unchecked()` returns a reference to the same data.
 /// 6. `parse_byte_slice()` is equivalent to `validate_byte_slice()` followed by `from_byte_slice_unchecked()`.
 /// 7. `Pattern<B>` byte equality is semantic equality.
-unsafe impl<B, S: VarULE> VarULE for Pattern<B>
+unsafe impl<B, S: ?Sized + VarULE> VarULE for Pattern<B>
 where
     B: PatternBackend<Store = S>,
 {
