@@ -1432,7 +1432,8 @@ where
         I::Converted<'a>: Sized + AllInputMarkers<R>,
     {
         let datetime = datetime.to_calendar(&self.calendar);
-        let datetime = ExtractedInput::extract_from_neo_input::<R::D, R::T, R::Z, I::Converted<'a>>(&datetime);
+        let datetime =
+            ExtractedInput::extract_from_neo_input::<R::D, R::T, R::Z, I::Converted<'a>>(&datetime);
         FormattedNeoDateTime {
             pattern: self.selection.select(&datetime),
             input: datetime,

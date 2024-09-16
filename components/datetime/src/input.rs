@@ -198,7 +198,6 @@ impl ExtractedInput {
     }
 }
 
-
 impl<C: Calendar, A: AsCalendar<Calendar = C>> DateInput for Date<A> {
     type Calendar = C;
     /// Gets the era and year input.

@@ -357,9 +357,7 @@ impl FormatTimeZone for GenericNonLocationLongFormat {
                     .mz_generic_long
                     .as_ref()
                     .and_then(|metazones| {
-                        input
-                            .metazone_id
-                            .and_then(|mz| metazones.defaults.get(&mz))
+                        input.metazone_id.and_then(|mz| metazones.defaults.get(&mz))
                     })
             });
 
@@ -393,9 +391,7 @@ impl FormatTimeZone for GenericNonLocationShortFormat {
                     .mz_generic_short
                     .as_ref()
                     .and_then(|metazones| {
-                        input
-                            .metazone_id
-                            .and_then(|mz| metazones.defaults.get(&mz))
+                        input.metazone_id.and_then(|mz| metazones.defaults.get(&mz))
                     })
             });
 
