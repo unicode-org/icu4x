@@ -14,8 +14,8 @@ pub fn deserialize_option_borrowed_cow<'de, D: Deserializer<'de>, B>(
 ) -> Result<Option<Cow<'de, Pattern<B>>>, D::Error>
 where
     B: PatternBackend<Store = str>,
-        Pattern<B>: ToOwned,
-        B::PlaceholderKeyCow<'de>: Deserialize<'de>,
+    Pattern<B>: ToOwned,
+    B::PlaceholderKeyCow<'de>: Deserialize<'de>,
 {
     #[derive(Deserialize)]
     #[serde(transparent, bound = "'data: 'de")]
