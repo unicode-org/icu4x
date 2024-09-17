@@ -2,12 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::provider::{MetazoneId, TimeZoneBcp47Id};
-
-use crate::metazone::MetazoneCalculator;
+use crate::{
+    MetazoneCalculator, MetazoneId, TimeZoneBcp47Id, UtcOffset, ZoneOffsetCalculator, ZoneVariant,
+};
 #[cfg(feature = "compiled_data")]
 use crate::{TimeZoneIdMapper, UnknownTimeZoneError};
-use crate::{UtcOffset, ZoneVariant};
 use icu_calendar::{DateTime, Iso};
 use tinystr::TinyAsciiStr;
 
@@ -168,13 +167,14 @@ impl CustomTimeZone {
         Err(UnknownTimeZoneError)
     }
 
-    /// Overwrite the metazone ID.
+    /// Infer the metazone ID.
     ///
     /// # Examples
     ///
     /// ```
     /// use icu::calendar::DateTime;
-    /// use icu::timezone::provider::{MetazoneId, TimeZoneBcp47Id};
+    /// use icu::timezone::MetazoneId;
+    /// use icu::timezone::TimeZoneBcp47Id;
     /// use icu::timezone::CustomTimeZone;
     /// use icu::timezone::MetazoneCalculator;
     /// use tinystr::tinystr;
@@ -200,6 +200,52 @@ impl CustomTimeZone {
         if let Some(time_zone_id) = self.time_zone_id {
             self.metazone_id =
                 metazone_calculator.compute_metazone_from_time_zone(time_zone_id, local_datetime);
+        }
+        self
+    }
+
+    /// Infer the zone variant.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::DateTime;
+    /// use icu::timezone::ZoneVariant;
+    /// use icu::timezone::TimeZoneBcp47Id;
+    /// use icu::timezone::CustomTimeZone;
+    /// use icu::timezone::ZoneOffsetCalculator;
+    /// use tinystr::tinystr;
+    ///
+    /// let zoc = ZoneOffsetCalculator::new();
+    /// let mut tz = CustomTimeZone {
+    ///     offset: Some("+10".parse().expect("Failed to parse a UTC offset.")),
+    ///     time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "gugum"))),
+    ///     metazone_id: None,
+    ///     zone_variant: None,
+    /// };
+    /// tz.maybe_calculate_zone_variant(
+    ///     &zoc,
+    ///     &DateTime::try_new_iso_datetime(1971, 10, 31, 2, 0, 0).unwrap(),
+    /// );
+    /// assert_eq!(tz.zone_variant, Some(ZoneVariant::standard()));
+    /// ```
+    pub fn maybe_calculate_zone_variant(
+        &mut self,
+        zone_offset_calculator: &ZoneOffsetCalculator,
+        local_datetime: &DateTime<Iso>,
+    ) -> &mut Self {
+        if let Some(offset) = self.offset {
+            if let Some(time_zone_id) = self.time_zone_id {
+                if let Some((std, dst)) = zone_offset_calculator
+                    .compute_offsets_from_time_zone(time_zone_id, local_datetime)
+                {
+                    if offset == std {
+                        self.zone_variant = Some(ZoneVariant::standard());
+                    } else if Some(offset) == dst {
+                        self.zone_variant = Some(ZoneVariant::daylight());
+                    }
+                }
+            }
         }
         self
     }

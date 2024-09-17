@@ -72,12 +72,20 @@ pub mod ffi {
             Ok(())
         }
 
-        /// Sets the `offset` field from offset eighths of an hour.
+        /// Sets the `offset` field from offset as eighths of an hour.
         #[diplomat::rust_link(icu::timezone::UtcOffset::from_offset_eighths_of_hour, FnInStruct)]
         pub fn set_offset_eighths_of_hour(&mut self, offset_eighths_of_hour: i8) {
             self.0.offset = Some(icu_timezone::UtcOffset::from_offset_eighths_of_hour(
                 offset_eighths_of_hour,
             ));
+        }
+
+        /// Gets the `offset` field from offset as eighths of an hour.
+        #[diplomat::rust_link(icu::timezone::UtcOffset::offset_eighths_of_hour, FnInStruct)]
+        pub fn offset_eighths_of_hour(&self) -> Option<i8> {
+            self.0
+                .offset
+                .map(icu_timezone::UtcOffset::offset_eighths_of_hour)
         }
 
         /// Clears the `offset` field.
@@ -308,6 +316,26 @@ pub mod ffi {
         ) {
             self.0
                 .maybe_calculate_metazone(&metazone_calculator.0, &local_datetime.0);
+        }
+
+        /// Sets the zone variant based on the time zone and the local timestamp.
+        #[diplomat::rust_link(
+            icu::timezone::CustomTimeZone::maybe_calculate_zone_variant,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::timezone::ZoneOffsetCalculator::compute_offsets_from_time_zone,
+            FnInStruct,
+            compact
+        )]
+        #[cfg(feature = "timezone")]
+        pub fn maybe_calculate_zone_variant(
+            &mut self,
+            zone_offset_calculator: &crate::zone_offset_calculator::ffi::ZoneOffsetCalculator,
+            local_datetime: &crate::datetime::ffi::IsoDateTime,
+        ) {
+            self.0
+                .maybe_calculate_zone_variant(&zone_offset_calculator.0, &local_datetime.0);
         }
     }
 }
