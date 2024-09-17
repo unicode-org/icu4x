@@ -117,7 +117,6 @@ mod tz_registry;
 
 pub use calendar::CldrCalendar;
 pub use calendar::{InternalCldrCalendar, NeverCalendar};
-pub use error::DateTimeError;
 pub use error::MismatchedCalendarError;
 pub use format::datetime::DateTimeWriteError;
 pub use format::neo::{FormattedDateTimePattern, LoadError, SingleLoadError, TypedDateTimeNames};
@@ -125,6 +124,3 @@ pub use format::neo::{FormattedDateTimePattern, LoadError, SingleLoadError, Type
 pub use neo::NeoFormatter;
 pub use neo::TypedNeoFormatter;
 pub use neo_skeleton::NeoSkeletonLength;
-
-#[doc(no_inline)]
-pub use DateTimeError as Error;
