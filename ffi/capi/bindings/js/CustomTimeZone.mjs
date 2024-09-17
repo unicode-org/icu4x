@@ -5,6 +5,7 @@ import { TimeZoneIdMapper } from "./TimeZoneIdMapper.mjs"
 import { TimeZoneInvalidIdError } from "./TimeZoneInvalidIdError.mjs"
 import { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError.mjs"
 import { TimeZoneUnknownError } from "./TimeZoneUnknownError.mjs"
+import { ZoneOffsetCalculator } from "./ZoneOffsetCalculator.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
@@ -105,6 +106,23 @@ export class CustomTimeZone {
         try {}
         
         finally {}
+    }
+
+    offsetEighthsOfHour() {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 2, 1, true);
+        
+        const result = wasm.icu4x_CustomTimeZone_offset_eighths_of_hour_mv1(diplomatReceive.buffer, this.ffiValue);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                return null;
+            }
+            return (new Int8Array(wasm.memory.buffer, diplomatReceive.buffer, 1))[0];
+        }
+        
+        finally {
+            diplomatReceive.free();
+        }
     }
 
     clearOffset() {wasm.icu4x_CustomTimeZone_clear_offset_mv1(this.ffiValue);
@@ -387,6 +405,13 @@ export class CustomTimeZone {
     }
 
     maybeCalculateMetazone(metazoneCalculator, localDatetime) {wasm.icu4x_CustomTimeZone_maybe_calculate_metazone_mv1(this.ffiValue, metazoneCalculator.ffiValue, localDatetime.ffiValue);
+    
+        try {}
+        
+        finally {}
+    }
+
+    maybeCalculateZoneVariant(zoneOffsetCalculator, localDatetime) {wasm.icu4x_CustomTimeZone_maybe_calculate_zone_variant_mv1(this.ffiValue, zoneOffsetCalculator.ffiValue, localDatetime.ffiValue);
     
         try {}
         

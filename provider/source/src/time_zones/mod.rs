@@ -18,6 +18,7 @@ use std::collections::HashSet;
 
 mod convert;
 mod names;
+mod windows;
 
 #[derive(Debug, Copy, Clone)]
 struct CldrTimeZonesData<'a> {
@@ -25,6 +26,7 @@ struct CldrTimeZonesData<'a> {
     pub(crate) bcp47_tzids_resource: &'a BTreeMap<TimeZoneBcp47Id, Bcp47TzidAliasData>,
     pub(crate) meta_zone_ids_resource: &'a BTreeMap<MetazoneId, MetazoneAliasData>,
     pub(crate) meta_zone_periods_resource: &'a BTreeMap<String, ZonePeriod>,
+    pub(crate) tzdb: &'a parse_zoneinfo::table::Table,
 }
 
 macro_rules! impl_data_provider {
@@ -56,14 +58,17 @@ macro_rules! impl_data_provider {
                     let meta_zone_periods_resource =
                         &resource.supplemental.meta_zones.meta_zone_info.time_zone.0;
 
+                    let tzdb = self.tzdb()?.get()?;
+
                     Ok(DataResponse {
-            metadata: Default::default(),
+                        metadata: Default::default(),
                         payload: DataPayload::from_owned(
                             <$marker as DynamicDataMarker>::DataStruct::from(CldrTimeZonesData {
                                 time_zone_names_resource,
                                 bcp47_tzids_resource,
                                 meta_zone_ids_resource,
                                 meta_zone_periods_resource,
+                                tzdb,
                             }),
                         ),
                     })
@@ -96,7 +101,8 @@ impl_data_provider!(
     MetazoneGenericNamesShortV1Marker,
     MetazoneSpecificNamesLongV1Marker,
     MetazoneSpecificNamesShortV1Marker,
-    MetazonePeriodV1Marker
+    MetazonePeriodV1Marker,
+    ZoneOffsetPeriodV1Marker
 );
 
 #[cfg(test)]

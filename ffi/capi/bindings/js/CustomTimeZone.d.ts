@@ -5,6 +5,7 @@ import type { TimeZoneIdMapper } from "./TimeZoneIdMapper"
 import type { TimeZoneInvalidIdError } from "./TimeZoneInvalidIdError"
 import type { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError"
 import type { TimeZoneUnknownError } from "./TimeZoneUnknownError"
+import type { ZoneOffsetCalculator } from "./ZoneOffsetCalculator"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
@@ -24,6 +25,8 @@ export class CustomTimeZone {
     trySetOffsetSeconds(offsetSeconds: number): void;
 
     setOffsetEighthsOfHour(offsetEighthsOfHour: number): void;
+
+    offsetEighthsOfHour(): number | null;
 
     clearOffset(): void;
 
@@ -66,4 +69,6 @@ export class CustomTimeZone {
     get isDaylightTime(): boolean | null;
 
     maybeCalculateMetazone(metazoneCalculator: MetazoneCalculator, localDatetime: IsoDateTime): void;
+
+    maybeCalculateZoneVariant(zoneOffsetCalculator: ZoneOffsetCalculator, localDatetime: IsoDateTime): void;
 }

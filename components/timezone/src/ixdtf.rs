@@ -4,7 +4,7 @@
 
 use crate::{
     CustomTimeZone, CustomZonedDateTime, InvalidOffsetError, MetazoneCalculator, TimeZoneIdMapper,
-    UtcOffset,
+    UtcOffset, ZoneOffsetCalculator,
 };
 use alloc::str::FromStr;
 use icu_calendar::{AnyCalendar, Date, DateError, DateTime, Iso, RangeError, Time};
@@ -92,7 +92,7 @@ impl CustomTimeZone {
                 date,
                 time,
                 ..
-            } => Self::try_from_time_zone_record(&time_zone_annotation.tz, date, time),
+            } => Self::try_from_time_zone_record(&time_zone_annotation.tz, None, date, time),
             IxdtfParseRecord {
                 offset: Some(offset),
                 tz: Some(time_zone_annotation),
@@ -101,21 +101,12 @@ impl CustomTimeZone {
                 ..
             } => {
                 let custom_from_offset = Self::try_from_utc_offset_record(offset)?;
-                let custom_from_annotation =
-                    Self::try_from_time_zone_record(&time_zone_annotation.tz, date, time)?;
-
-                if custom_from_annotation.offset.is_some()
-                    && custom_from_annotation.offset != custom_from_offset.offset
-                {
-                    return Err(ParseError::InconsistentTimeZoneOffsets);
-                }
-
-                Ok(Self {
-                    offset: custom_from_offset.offset,
-                    time_zone_id: custom_from_annotation.time_zone_id,
-                    metazone_id: custom_from_annotation.metazone_id,
-                    zone_variant: None,
-                })
+                Self::try_from_time_zone_record(
+                    &time_zone_annotation.tz,
+                    custom_from_offset.offset,
+                    date,
+                    time,
+                )
             }
             _ => Err(ParseError::MissingTimeZone),
         }
@@ -129,6 +120,7 @@ impl CustomTimeZone {
 
     fn try_from_time_zone_record(
         record: &TimeZoneRecord<'_>,
+        offset: Option<UtcOffset>,
         date: &Option<DateRecord>,
         time: &Option<TimeRecord>,
     ) -> Result<Self, ParseError> {
@@ -140,24 +132,34 @@ impl CustomTimeZone {
                     .iana_bytes_to_bcp47(iana_identifier)
                     .ok_or(ParseError::InvalidIanaIdentifier)?;
 
-                let mut tz = Self::new_with_bcp47_id(bcp47_id);
+                let mut tz = Self {
+                    time_zone_id: Some(bcp47_id),
+                    offset,
+                    metazone_id: None,
+                    zone_variant: None,
+                };
 
                 if let (Some(date), Some(time)) = (date, time) {
-                    let _ = tz.maybe_calculate_metazone(
-                        &MetazoneCalculator::new(),
-                        &DateTime::<Iso>::try_new_iso_datetime(
-                            date.year,
-                            date.month,
-                            date.day,
-                            time.hour,
-                            time.minute,
-                            time.second,
-                        )?,
-                    );
+                    let iso = DateTime::<Iso>::try_new_iso_datetime(
+                        date.year,
+                        date.month,
+                        date.day,
+                        time.hour,
+                        time.minute,
+                        time.second,
+                    )?;
+                    tz.maybe_calculate_metazone(&MetazoneCalculator::new(), &iso);
+                    tz.maybe_calculate_zone_variant(&ZoneOffsetCalculator::new(), &iso);
                 };
                 Ok(tz)
             }
-            TimeZoneRecord::Offset(offset) => Self::try_from_utc_offset_record(offset),
+            TimeZoneRecord::Offset(offset_record) => {
+                let tz = Self::try_from_utc_offset_record(offset_record)?;
+                if offset.is_some() && tz.offset != offset {
+                    return Err(ParseError::InconsistentTimeZoneOffsets);
+                }
+                Ok(tz)
+            }
             _ => Err(ParseError::MissingTimeZone),
         }
     }
@@ -171,7 +173,7 @@ impl CustomZonedDateTime<Iso> {
     /// ✨ *Enabled with the `compiled_data` and `ixdtf` Cargo features.*
     ///
     /// ```
-    /// use icu_timezone::{CustomZonedDateTime, CustomTimeZone, UtcOffset, TimeZoneBcp47Id};
+    /// use icu_timezone::{CustomZonedDateTime, CustomTimeZone, UtcOffset, TimeZoneBcp47Id, ZoneVariant};
     /// use icu_timezone::provider::MetazoneId;
     /// use tinystr::tinystr;
     ///
@@ -192,7 +194,7 @@ impl CustomZonedDateTime<Iso> {
     ///     offset: Some(UtcOffset::try_from_offset_seconds(-18000).unwrap()),
     ///     time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))),
     ///     metazone_id: Some(MetazoneId(tinystr!(4, "amce"))),
-    ///     zone_variant: None,
+    ///     zone_variant: Some(ZoneVariant::daylight()),
     /// });
     ///
     /// ```
@@ -257,7 +259,7 @@ impl CustomZonedDateTime<AnyCalendar> {
     /// Basic usage:
     ///
     /// ```
-    /// use icu_timezone::{CustomZonedDateTime, CustomTimeZone, UtcOffset, TimeZoneBcp47Id};
+    /// use icu_timezone::{CustomZonedDateTime, CustomTimeZone, UtcOffset, TimeZoneBcp47Id, ZoneVariant};
     /// use icu_timezone::provider::MetazoneId;
     /// use tinystr::tinystr;
     ///
@@ -278,7 +280,7 @@ impl CustomZonedDateTime<AnyCalendar> {
     ///     offset: Some(UtcOffset::try_from_offset_seconds(-18000).unwrap()),
     ///     time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))),
     ///     metazone_id: Some(MetazoneId(tinystr!(4, "amce"))),
-    ///     zone_variant: None,
+    ///     zone_variant: Some(ZoneVariant::daylight()),
     /// });
     /// ```
     ///
@@ -343,7 +345,7 @@ impl CustomZonedDateTime<AnyCalendar> {
     /// verifying internal consistency.
     ///
     /// ```
-    /// use icu_timezone::{CustomTimeZone, CustomZonedDateTime, UtcOffset, TimeZoneBcp47Id};
+    /// use icu_timezone::{CustomTimeZone, CustomZonedDateTime, UtcOffset, TimeZoneBcp47Id, ZoneVariant};
     /// use icu_timezone::provider::MetazoneId;
     /// use tinystr::tinystr;
     ///
@@ -353,7 +355,7 @@ impl CustomZonedDateTime<AnyCalendar> {
     ///     offset: Some(UtcOffset::try_from_offset_seconds(-18000).unwrap()),
     ///     time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))),
     ///     metazone_id: Some(MetazoneId(tinystr!(4, "amce"))),
-    ///     zone_variant: None,
+    ///     zone_variant: Some(ZoneVariant::daylight()),
     /// });
     ///
     /// let inconsistent_tz_from_both = CustomZonedDateTime::try_from_str("2024-08-08T12:08:19-05:00[America/Los_Angeles]").unwrap();

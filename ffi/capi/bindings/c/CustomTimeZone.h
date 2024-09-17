@@ -10,6 +10,7 @@
 #include "IsoDateTime.d.h"
 #include "MetazoneCalculator.d.h"
 #include "TimeZoneIdMapper.d.h"
+#include "ZoneOffsetCalculator.d.h"
 
 #include "CustomTimeZone.d.h"
 
@@ -29,6 +30,9 @@ typedef struct icu4x_CustomTimeZone_try_set_offset_seconds_mv1_result { bool is_
 icu4x_CustomTimeZone_try_set_offset_seconds_mv1_result icu4x_CustomTimeZone_try_set_offset_seconds_mv1(CustomTimeZone* self, int32_t offset_seconds);
 
 void icu4x_CustomTimeZone_set_offset_eighths_of_hour_mv1(CustomTimeZone* self, int8_t offset_eighths_of_hour);
+
+typedef struct icu4x_CustomTimeZone_offset_eighths_of_hour_mv1_result {union {int8_t ok; }; bool is_ok;} icu4x_CustomTimeZone_offset_eighths_of_hour_mv1_result;
+icu4x_CustomTimeZone_offset_eighths_of_hour_mv1_result icu4x_CustomTimeZone_offset_eighths_of_hour_mv1(const CustomTimeZone* self);
 
 void icu4x_CustomTimeZone_clear_offset_mv1(CustomTimeZone* self);
 
@@ -85,6 +89,8 @@ typedef struct icu4x_CustomTimeZone_is_daylight_time_mv1_result {union {bool ok;
 icu4x_CustomTimeZone_is_daylight_time_mv1_result icu4x_CustomTimeZone_is_daylight_time_mv1(const CustomTimeZone* self);
 
 void icu4x_CustomTimeZone_maybe_calculate_metazone_mv1(CustomTimeZone* self, const MetazoneCalculator* metazone_calculator, const IsoDateTime* local_datetime);
+
+void icu4x_CustomTimeZone_maybe_calculate_zone_variant_mv1(CustomTimeZone* self, const ZoneOffsetCalculator* zone_offset_calculator, const IsoDateTime* local_datetime);
 
 
 void icu4x_CustomTimeZone_destroy_mv1(CustomTimeZone* self);

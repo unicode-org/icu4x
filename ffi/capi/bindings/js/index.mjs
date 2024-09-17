@@ -184,6 +184,8 @@ export { UnitsConverterFactory } from "./UnitsConverterFactory.mjs"
 
 export { WeekCalculator } from "./WeekCalculator.mjs"
 
+export { ZoneOffsetCalculator } from "./ZoneOffsetCalculator.mjs"
+
 export { GregorianZonedDateTimeFormatter } from "./GregorianZonedDateTimeFormatter.mjs"
 
 export { ZonedDateTimeFormatter } from "./ZonedDateTimeFormatter.mjs"
