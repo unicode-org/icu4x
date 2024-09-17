@@ -103,10 +103,10 @@ impl<B: PatternBackend> Default for &'static Pattern<B> {
 #[cfg(feature = "alloc")]
 impl<B: PatternBackend> Default for Box<Pattern<B>>
 where
-    Box<B::Store>: for<'a> From<&'a B::Store>,
+    Box<B::Store>: From<&'static B::Store>,
 {
     fn default() -> Self {
-        Pattern::from_ref_store_unchecked(B::empty()).to_owned()
+        Pattern::from_boxed_store_unchecked(Box::from(B::empty()))
     }
 }
 
