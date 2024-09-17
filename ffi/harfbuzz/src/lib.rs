@@ -45,14 +45,13 @@ use icu_normalizer::provider::{
 };
 use icu_properties::bidi_data;
 use icu_properties::bidi_data::BidiAuxiliaryProperties;
-use icu_properties::maps;
-use icu_properties::maps::CodePointMapData;
 use icu_properties::names::PropertyScriptToIcuScriptMapper;
+use icu_properties::props::{GeneralCategory, Script};
 use icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker;
 use icu_properties::provider::{
     GeneralCategoryV1Marker, ScriptV1Marker, ScriptValueToShortNameV1Marker,
 };
-use icu_properties::{GeneralCategory, Script};
+use icu_properties::CodePointMapData;
 use icu_provider::prelude::*;
 
 use harfbuzz_traits::{
@@ -80,7 +79,7 @@ impl AllUnicodeFuncs {
 impl GeneralCategoryFunc for AllUnicodeFuncs {
     #[inline]
     fn general_category(&self, ch: char) -> harfbuzz_traits::GeneralCategory {
-        convert_gc(maps::general_category().get(ch))
+        convert_gc(CodePointMapData::<GeneralCategory>::new().get(ch))
     }
 }
 
@@ -107,7 +106,7 @@ impl MirroringFunc for AllUnicodeFuncs {
 impl ScriptFunc for AllUnicodeFuncs {
     #[inline]
     fn script(&self, ch: char) -> [u8; 4] {
-        let script = maps::script().get(ch);
+        let script = CodePointMapData::<Script>::new().get(ch);
         Script::enum_to_icu_script_mapper()
             .get(script)
             .unwrap_or(icu_locale_core::subtags::script!("Zzzz"))
@@ -148,7 +147,7 @@ impl GeneralCategoryData {
     where
         D: DataProvider<GeneralCategoryV1Marker> + ?Sized,
     {
-        let gc = maps::load_general_category(provider)?;
+        let gc = CodePointMapData::<GeneralCategory>::try_new_unstable(provider)?;
 
         Ok(Self { gc })
     }
@@ -313,7 +312,7 @@ impl ScriptData {
     where
         D: DataProvider<ScriptValueToShortNameV1Marker> + DataProvider<ScriptV1Marker> + ?Sized,
     {
-        let script = maps::load_script(provider)?;
+        let script = CodePointMapData::<Script>::try_new_unstable(provider)?;
         let script_name = Script::get_enum_to_icu_script_mapper(provider)?;
         Ok(Self {
             script,

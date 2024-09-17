@@ -8,11 +8,10 @@ retrieving property data in an appropriate data structure.
 This module is published as its own crate ([`icu_properties`](https://docs.rs/icu_properties/latest/icu_properties/))
 and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 
-APIs that return a [`CodePointSetData`] exist for binary properties and certain enumerated
-properties. See the [`sets`] module for more details.
+APIs that return a `CodePointSetData` exist for binary properties and certain enumerated
+properties.
 
-APIs that return a [`CodePointMapData`] exist for certain enumerated properties. See the
-[`maps`] module for more details.
+APIs that return a `CodePointMapData` exist for certain enumerated properties.
 
 ## Examples
 
@@ -47,9 +46,6 @@ assert_eq!(maps::script().get('木'), Script::Han); // U+6728
 
 [`ICU4X`]: ../icu/index.html
 [Unicode Properties]: https://unicode-org.github.io/icu/userguide/strings/properties.html
-[`CodePointSetData`]: https://docs.rs/icu_properties/latest/icu_properties/sets/struct.CodePointSetData.html
-[`CodePointMapData`]: https://docs.rs/icu_properties/latest/icu_properties/maps/struct.CodePointMapData.html
-[`sets`]: https://docs.rs/icu_properties/latest/icu_properties/sets/
 
 <!-- cargo-rdme end -->
 

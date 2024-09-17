@@ -804,6 +804,7 @@ fn test_nfd_utf16_to_errors() {
 }
 
 use atoi::FromRadix16;
+use icu_properties::props::CanonicalCombiningClass;
 
 /// Parse five semicolon-terminated strings consisting of space-separated hexadecimal scalar values
 fn parse_hex(mut hexes: &[u8]) -> [StackString; 5] {
@@ -1646,7 +1647,7 @@ fn test_ccc() {
     for u in 0..=0x10FFFF {
         assert_eq!(
             map.get32(u),
-            icu_properties::maps::canonical_combining_class().get32(u)
+            icu_properties::CodePointMapData::<CanonicalCombiningClass>::new().get32(u)
         );
     }
 }
@@ -1658,7 +1659,7 @@ fn test_ccc_owned() {
     for u in 0..=0x10FFFF {
         assert_eq!(
             map.get32(u),
-            icu_properties::maps::canonical_combining_class().get32(u)
+            icu_properties::CodePointMapData::<CanonicalCombiningClass>::new().get32(u)
         );
     }
 }

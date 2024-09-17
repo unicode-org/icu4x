@@ -36,7 +36,7 @@ use crate::NON_ROUND_TRIP_MARKER;
 use crate::SPECIAL_NON_STARTER_DECOMPOSITION_MARKER_U16;
 /// want access to the underlying properties e.g. for use in a
 /// glyph-availability-guided custom normalizer.
-use icu_properties::CanonicalCombiningClass;
+use icu_properties::props::CanonicalCombiningClass;
 use icu_provider::prelude::*;
 
 /// Borrowed version of the raw canonical composition operation.
@@ -542,7 +542,7 @@ impl CanonicalDecomposition {
 /// # Example
 ///
 /// ```
-/// use icu::properties::CanonicalCombiningClass;
+/// use icu::properties::props::CanonicalCombiningClass;
 /// use icu::normalizer::properties::CanonicalCombiningClassMapBorrowed;
 ///
 /// let map = CanonicalCombiningClassMapBorrowed::new();

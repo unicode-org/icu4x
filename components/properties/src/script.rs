@@ -6,7 +6,7 @@
 //! values in an efficient structure.
 
 use crate::props::Script;
-use crate::props::ScriptULE;
+use crate::provider::props::ScriptULE;
 use crate::provider::*;
 
 use core::iter::FromIterator;

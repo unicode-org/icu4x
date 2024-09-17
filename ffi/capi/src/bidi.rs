@@ -22,8 +22,8 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X Bidi object, containing loaded bidi data
     #[diplomat::rust_link(icu::properties::bidi::BidiClassAdapter, Struct)]
-    // #[diplomat::rust_link(icu::properties::maps::load_bidi_class, Struct)]
-    pub struct Bidi(pub icu_properties::maps::CodePointMapData<icu_properties::BidiClass>);
+    // #[diplomat::rust_link(icu::properties::props::BidiClass, Struct)]
+    pub struct Bidi(pub icu_properties::CodePointMapData<icu_properties::props::BidiClass>);
 
     impl Bidi {
         /// Creates a new [`Bidi`] from locale data.
@@ -31,8 +31,8 @@ pub mod ffi {
         #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn create(provider: &DataProvider) -> Result<Box<Bidi>, DataError> {
             Ok(Box::new(Bidi(call_constructor_unstable!(
-                icu_properties::maps::bidi_class [m => Ok(m.static_to_owned())],
-                icu_properties::maps::load_bidi_class,
+                icu_properties::CodePointMapData::new [m => Ok(m.static_to_owned())],
+                icu_properties::CodePointMapData::try_new_unstable,
                 provider,
             )?)))
         }

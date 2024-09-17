@@ -7,14 +7,17 @@ use icu_casemap::greek_to_me::{
 };
 use icu_casemap::CaseMapper;
 use icu_normalizer::DecomposingNormalizerBorrowed;
-use icu_properties::{maps, GeneralCategoryGroup, Script};
+use icu_properties::{
+    props::{GeneralCategory, GeneralCategoryGroup, Script},
+    CodePointMapData,
+};
 use std::collections::BTreeMap;
 use std::fmt::Write;
 
 fn main() {
     let decomposer = DecomposingNormalizerBorrowed::new_nfd();
-    let script = maps::script();
-    let gc = maps::general_category();
+    let script = CodePointMapData::<Script>::new();
+    let gc = CodePointMapData::<GeneralCategory>::new();
     let cm = CaseMapper::new();
 
     let mut vec_370 = vec![0; 0x400 - 0x370];

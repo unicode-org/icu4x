@@ -14,16 +14,19 @@ use icu_collections::{
     codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder},
     codepointinvliststringlist::CodePointInversionListAndStringList,
 };
-use icu_properties::maps::{
-    load_grapheme_cluster_break, load_script, load_sentence_break, load_word_break,
-};
+use icu_properties::provider::*;
 use icu_properties::script::load_script_with_extensions_unstable;
-use icu_properties::sets::{
-    load_for_ecma262_unstable, load_for_general_category_group, load_pattern_white_space,
-    load_xid_continue, load_xid_start,
+use icu_properties::{
+    props::{
+        GeneralCategory, GeneralCategoryGroup, GraphemeClusterBreak, Script, SentenceBreak,
+        WordBreak,
+    },
+    CodePointMapData,
 };
-use icu_properties::{provider::*, GeneralCategoryGroup};
-use icu_properties::{GraphemeClusterBreak, Script, SentenceBreak, WordBreak};
+use icu_properties::{
+    props::{PatternWhiteSpace, XidContinue, XidStart},
+    CodePointSetData,
+};
 use icu_provider::prelude::*;
 
 /// The kind of error that occurred.
@@ -1329,8 +1332,10 @@ where
             .get_loose(name)
             .ok_or(PEK::UnknownProperty)?;
         // TODO(#3550): This could be cached; does not depend on name.
-        let set = load_for_general_category_group(self.property_provider, gc_value)
-            .map_err(|_| PEK::Internal)?;
+        let set = CodePointMapData::<GeneralCategory>::try_new_unstable(self.property_provider)
+            .map_err(|_| PEK::Internal)?
+            .as_borrowed()
+            .get_set_for_value_group(gc_value);
         self.single_set.add_set(&set.to_code_point_inversion_list());
         Ok(())
     }
@@ -1348,7 +1353,8 @@ where
     fn try_load_script_set(&mut self, name: &str) -> Result<()> {
         let sc_value = self.try_get_script(name)?;
         // TODO(#3550): This could be cached; does not depend on name.
-        let property_map = load_script(self.property_provider).map_err(|_| PEK::Internal)?;
+        let property_map = CodePointMapData::<Script>::try_new_unstable(self.property_provider)
+            .map_err(|_| PEK::Internal)?;
         let set = property_map.as_borrowed().get_set_for_value(sc_value);
         self.single_set.add_set(&set.to_code_point_inversion_list());
         Ok(())
@@ -1365,7 +1371,7 @@ where
     }
 
     fn try_load_ecma262_binary_set(&mut self, name: &str) -> Result<()> {
-        let set = load_for_ecma262_unstable(self.property_provider, name)
+        let set = CodePointSetData::try_new_for_ecma262_unstable(self.property_provider, name)
             .map_err(|_| PEK::UnknownProperty)?;
         self.single_set.add_set(&set.to_code_point_inversion_list());
         Ok(())
@@ -1380,7 +1386,8 @@ where
             .ok_or(PEK::UnknownProperty)?;
         // TODO(#3550): This could be cached; does not depend on name.
         let property_map =
-            load_grapheme_cluster_break(self.property_provider).map_err(|_| PEK::Internal)?;
+            CodePointMapData::<GraphemeClusterBreak>::try_new_unstable(self.property_provider)
+                .map_err(|_| PEK::Internal)?;
         let set = property_map.as_borrowed().get_set_for_value(gcb_value);
         self.single_set.add_set(&set.to_code_point_inversion_list());
         Ok(())
@@ -1395,7 +1402,8 @@ where
             .ok_or(PEK::UnknownProperty)?;
         // TODO(#3550): This could be cached; does not depend on name.
         let property_map =
-            load_sentence_break(self.property_provider).map_err(|_| PEK::Internal)?;
+            CodePointMapData::<SentenceBreak>::try_new_unstable(self.property_provider)
+                .map_err(|_| PEK::Internal)?;
         let set = property_map.as_borrowed().get_set_for_value(sb_value);
         self.single_set.add_set(&set.to_code_point_inversion_list());
         Ok(())
@@ -1409,7 +1417,8 @@ where
             .get_loose(name)
             .ok_or(PEK::UnknownProperty)?;
         // TODO(#3550): This could be cached; does not depend on name.
-        let property_map = load_word_break(self.property_provider).map_err(|_| PEK::Internal)?;
+        let property_map = CodePointMapData::<WordBreak>::try_new_unstable(self.property_provider)
+            .map_err(|_| PEK::Internal)?;
         let set = property_map.as_borrowed().get_set_for_value(wb_value);
         self.single_set.add_set(&set.to_code_point_inversion_list());
         Ok(())
@@ -1611,12 +1620,15 @@ where
 
     let mut iter = source.char_indices().peekable();
 
-    let xid_start = load_xid_start(provider).map_err(|_| PEK::Internal)?;
+    let xid_start =
+        CodePointSetData::try_new_unstable::<XidStart>(provider).map_err(|_| PEK::Internal)?;
     let xid_start_list = xid_start.to_code_point_inversion_list();
-    let xid_continue = load_xid_continue(provider).map_err(|_| PEK::Internal)?;
+    let xid_continue =
+        CodePointSetData::try_new_unstable::<XidContinue>(provider).map_err(|_| PEK::Internal)?;
     let xid_continue_list = xid_continue.to_code_point_inversion_list();
 
-    let pat_ws = load_pattern_white_space(provider).map_err(|_| PEK::Internal)?;
+    let pat_ws = CodePointSetData::try_new_unstable::<PatternWhiteSpace>(provider)
+        .map_err(|_| PEK::Internal)?;
     let pat_ws_list = pat_ws.to_code_point_inversion_list();
 
     let mut builder = UnicodeSetBuilder::new_internal(

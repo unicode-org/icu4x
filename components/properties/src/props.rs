@@ -9,649 +9,6 @@
 //! String properties are represented as newtypes if their
 //! values represent code points.
 
-use crate::provider::names::*;
-use core::marker::PhantomData;
-use icu_collections::codepointtrie::TrieValue;
-use icu_provider::prelude::*;
-use zerovec::ule::VarULE;
-
-#[cfg(feature = "serde")]
-use serde::{Deserialize, Serialize};
-
-/// Private marker type for PropertyValueNameToEnumMapper
-/// to work for all properties at once
-#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
-pub(crate) struct ErasedNameToEnumMapV1Marker;
-impl DynamicDataMarker for ErasedNameToEnumMapV1Marker {
-    type DataStruct = PropertyValueNameToEnumMapV1<'static>;
-}
-
-/// A struct capable of looking up a property value from a string name.
-/// Access its data by calling [`Self::as_borrowed()`] and using the methods on
-/// [`PropertyValueNameToEnumMapperBorrowed`].
-///
-/// The name can be a short name (`Lu`), a long name(`Uppercase_Letter`),
-/// or an alias.
-///
-/// Property names can be looked up using "strict" matching (looking for a name
-/// that matches exactly), or "loose matching", where the name is allowed to deviate
-/// in terms of ASCII casing, whitespace, underscores, and hyphens.
-///
-/// # Example
-///
-/// ```
-/// use icu::properties::GeneralCategory;
-///
-/// let lookup = GeneralCategory::name_to_enum_mapper();
-/// // short name for value
-/// assert_eq!(
-///     lookup.get_strict("Lu"),
-///     Some(GeneralCategory::UppercaseLetter)
-/// );
-/// assert_eq!(
-///     lookup.get_strict("Pd"),
-///     Some(GeneralCategory::DashPunctuation)
-/// );
-/// // long name for value
-/// assert_eq!(
-///     lookup.get_strict("Uppercase_Letter"),
-///     Some(GeneralCategory::UppercaseLetter)
-/// );
-/// assert_eq!(
-///     lookup.get_strict("Dash_Punctuation"),
-///     Some(GeneralCategory::DashPunctuation)
-/// );
-/// // name has incorrect casing
-/// assert_eq!(lookup.get_strict("dashpunctuation"), None);
-/// // loose matching of name
-/// assert_eq!(
-///     lookup.get_loose("dash-punctuation"),
-///     Some(GeneralCategory::DashPunctuation)
-/// );
-/// // fake property
-/// assert_eq!(lookup.get_strict("Animated_Gif"), None);
-/// ```
-#[derive(Debug)]
-pub struct PropertyValueNameToEnumMapper<T> {
-    map: DataPayload<ErasedNameToEnumMapV1Marker>,
-    markers: PhantomData<fn() -> T>,
-}
-
-/// A borrowed wrapper around property value name-to-enum data, returned by
-/// [`PropertyValueNameToEnumMapper::as_borrowed()`]. More efficient to query.
-#[derive(Debug, Copy, Clone)]
-pub struct PropertyValueNameToEnumMapperBorrowed<'a, T> {
-    map: &'a PropertyValueNameToEnumMapV1<'a>,
-    markers: PhantomData<fn() -> T>,
-}
-
-impl<T: TrieValue> PropertyValueNameToEnumMapper<T> {
-    /// Construct a borrowed version of this type that can be queried.
-    ///
-    /// This avoids a potential small underlying cost per API call (like `get_strict()`) by consolidating it
-    /// up front.
-    #[inline]
-    pub fn as_borrowed(&self) -> PropertyValueNameToEnumMapperBorrowed<'_, T> {
-        PropertyValueNameToEnumMapperBorrowed {
-            map: self.map.get(),
-            markers: PhantomData,
-        }
-    }
-
-    pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
-    where
-        M: DynamicDataMarker<DataStruct = PropertyValueNameToEnumMapV1<'static>>,
-    {
-        Self {
-            map: data.cast(),
-            markers: PhantomData,
-        }
-    }
-
-    #[doc(hidden)] // used by FFI code
-    pub fn erase(self) -> PropertyValueNameToEnumMapper<u16> {
-        PropertyValueNameToEnumMapper {
-            map: self.map.cast(),
-            markers: PhantomData,
-        }
-    }
-}
-
-impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'_, T> {
-    /// Get the property value as a u16, doing a strict search looking for
-    /// names that match exactly
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use icu::properties::GeneralCategory;
-    ///
-    /// let lookup = GeneralCategory::name_to_enum_mapper();
-    /// assert_eq!(
-    ///     lookup.get_strict_u16("Lu"),
-    ///     Some(GeneralCategory::UppercaseLetter as u16)
-    /// );
-    /// assert_eq!(
-    ///     lookup.get_strict_u16("Uppercase_Letter"),
-    ///     Some(GeneralCategory::UppercaseLetter as u16)
-    /// );
-    /// // does not do loose matching
-    /// assert_eq!(lookup.get_strict_u16("UppercaseLetter"), None);
-    /// ```
-    #[inline]
-    pub fn get_strict_u16(&self, name: &str) -> Option<u16> {
-        get_strict_u16(self.map, name)
-    }
-
-    /// Get the property value as a `T`, doing a strict search looking for
-    /// names that match exactly
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use icu::properties::GeneralCategory;
-    ///
-    /// let lookup = GeneralCategory::name_to_enum_mapper();
-    /// assert_eq!(
-    ///     lookup.get_strict("Lu"),
-    ///     Some(GeneralCategory::UppercaseLetter)
-    /// );
-    /// assert_eq!(
-    ///     lookup.get_strict("Uppercase_Letter"),
-    ///     Some(GeneralCategory::UppercaseLetter)
-    /// );
-    /// // does not do loose matching
-    /// assert_eq!(lookup.get_strict("UppercaseLetter"), None);
-    /// ```
-    #[inline]
-    pub fn get_strict(&self, name: &str) -> Option<T> {
-        T::try_from_u32(self.get_strict_u16(name)? as u32).ok()
-    }
-
-    /// Get the property value as a u16, doing a loose search looking for
-    /// names that match case-insensitively, ignoring ASCII hyphens, underscores, and
-    /// whitespaces.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use icu::properties::GeneralCategory;
-    ///
-    /// let lookup = GeneralCategory::name_to_enum_mapper();
-    /// assert_eq!(
-    ///     lookup.get_loose_u16("Lu"),
-    ///     Some(GeneralCategory::UppercaseLetter as u16)
-    /// );
-    /// assert_eq!(
-    ///     lookup.get_loose_u16("Uppercase_Letter"),
-    ///     Some(GeneralCategory::UppercaseLetter as u16)
-    /// );
-    /// // does do loose matching
-    /// assert_eq!(
-    ///     lookup.get_loose_u16("UppercaseLetter"),
-    ///     Some(GeneralCategory::UppercaseLetter as u16)
-    /// );
-    /// ```
-    #[inline]
-    pub fn get_loose_u16(&self, name: &str) -> Option<u16> {
-        get_loose_u16(self.map, name)
-    }
-
-    /// Get the property value as a `T`, doing a loose search looking for
-    /// names that match case-insensitively, ignoring ASCII hyphens, underscores, and
-    /// whitespaces.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use icu::properties::GeneralCategory;
-    ///
-    /// let lookup = GeneralCategory::name_to_enum_mapper();
-    /// assert_eq!(
-    ///     lookup.get_loose("Lu"),
-    ///     Some(GeneralCategory::UppercaseLetter)
-    /// );
-    /// assert_eq!(
-    ///     lookup.get_loose("Uppercase_Letter"),
-    ///     Some(GeneralCategory::UppercaseLetter)
-    /// );
-    /// // does do loose matching
-    /// assert_eq!(
-    ///     lookup.get_loose("UppercaseLetter"),
-    ///     Some(GeneralCategory::UppercaseLetter)
-    /// );
-    /// ```
-    #[inline]
-    pub fn get_loose(&self, name: &str) -> Option<T> {
-        T::try_from_u32(self.get_loose_u16(name)? as u32).ok()
-    }
-}
-
-impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'static, T> {
-    /// Cheaply converts a [`PropertyValueNameToEnumMapperBorrowed<'static>`] into a [`PropertyValueNameToEnumMapper`].
-    ///
-    /// Note: Due to branching and indirection, using [`PropertyValueNameToEnumMapper`] might inhibit some
-    /// compile-time optimizations that are possible with [`PropertyValueNameToEnumMapperBorrowed`].
-    pub const fn static_to_owned(self) -> PropertyValueNameToEnumMapper<T> {
-        PropertyValueNameToEnumMapper {
-            map: DataPayload::from_static_ref(self.map),
-            markers: PhantomData,
-        }
-    }
-}
-
-/// Avoid monomorphizing multiple copies of this function
-fn get_strict_u16(payload: &PropertyValueNameToEnumMapV1<'_>, name: &str) -> Option<u16> {
-    // NormalizedPropertyName has no invariants so this should be free, but
-    // avoid introducing a panic regardless
-    let name = NormalizedPropertyNameStr::parse_byte_slice(name.as_bytes()).ok()?;
-    payload.map.get_copied(name)
-}
-
-/// Avoid monomorphizing multiple copies of this function
-fn get_loose_u16(payload: &PropertyValueNameToEnumMapV1<'_>, name: &str) -> Option<u16> {
-    // NormalizedPropertyName has no invariants so this should be free, but
-    // avoid introducing a panic regardless
-    let name = NormalizedPropertyNameStr::parse_byte_slice(name.as_bytes()).ok()?;
-    payload.map.get_copied_by(|p| p.cmp_loose(name))
-}
-
-/// Private marker type for PropertyEnumToValueNameSparseMapper
-/// to work for all properties at once
-#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
-pub(crate) struct ErasedEnumToValueNameSparseMapV1Marker;
-impl DynamicDataMarker for ErasedEnumToValueNameSparseMapV1Marker {
-    type DataStruct = PropertyEnumToValueNameSparseMapV1<'static>;
-}
-
-/// A struct capable of looking up a property name from a value
-/// Access its data by calling [`Self::as_borrowed()`] and using the methods on
-/// [`PropertyEnumToValueNameSparseMapperBorrowed`].
-///
-/// This mapper is used for properties with sparse values, like [`CanonicalCombiningClass`].
-/// It may be obtained using methods like [`CanonicalCombiningClass::get_enum_to_long_name_mapper()`].
-///
-/// The name returned may be a short (`"KV"`) or long (`"Kana_Voicing"`) name, depending
-/// on the constructor used.
-///
-/// # Example
-///
-/// ```
-/// use icu::properties::CanonicalCombiningClass;
-///
-/// let lookup = CanonicalCombiningClass::enum_to_long_name_mapper();
-/// assert_eq!(
-///     lookup.get(CanonicalCombiningClass::KanaVoicing),
-///     Some("Kana_Voicing")
-/// );
-/// assert_eq!(
-///     lookup.get(CanonicalCombiningClass::AboveLeft),
-///     Some("Above_Left")
-/// );
-/// ```
-#[derive(Debug)]
-pub struct PropertyEnumToValueNameSparseMapper<T> {
-    map: DataPayload<ErasedEnumToValueNameSparseMapV1Marker>,
-    markers: PhantomData<fn(T) -> ()>,
-}
-
-/// A borrowed wrapper around property value name-to-enum data, returned by
-/// [`PropertyEnumToValueNameSparseMapper::as_borrowed()`]. More efficient to query.
-#[derive(Debug, Copy, Clone)]
-pub struct PropertyEnumToValueNameSparseMapperBorrowed<'a, T> {
-    map: &'a PropertyEnumToValueNameSparseMapV1<'a>,
-    markers: PhantomData<fn(T) -> ()>,
-}
-
-impl<T: TrieValue> PropertyEnumToValueNameSparseMapper<T> {
-    /// Construct a borrowed version of this type that can be queried.
-    ///
-    /// This avoids a potential small underlying cost per API call (like `get_static()`) by consolidating it
-    /// up front.
-    #[inline]
-    pub fn as_borrowed(&self) -> PropertyEnumToValueNameSparseMapperBorrowed<'_, T> {
-        PropertyEnumToValueNameSparseMapperBorrowed {
-            map: self.map.get(),
-            markers: PhantomData,
-        }
-    }
-
-    /// Construct a new one from loaded data
-    ///
-    /// Typically it is preferable to use methods on individual property value types
-    /// (like [`Script::TBD()`]) instead.
-    pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
-    where
-        M: DynamicDataMarker<DataStruct = PropertyEnumToValueNameSparseMapV1<'static>>,
-    {
-        Self {
-            map: data.cast(),
-            markers: PhantomData,
-        }
-    }
-}
-
-impl<T: TrieValue> PropertyEnumToValueNameSparseMapperBorrowed<'_, T> {
-    /// Get the property name given a value
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// use icu::properties::CanonicalCombiningClass;
-    ///
-    /// let lookup = CanonicalCombiningClass::enum_to_long_name_mapper();
-    /// assert_eq!(
-    ///     lookup.get(CanonicalCombiningClass::KanaVoicing),
-    ///     Some("Kana_Voicing")
-    /// );
-    /// assert_eq!(
-    ///     lookup.get(CanonicalCombiningClass::AboveLeft),
-    ///     Some("Above_Left")
-    /// );
-    /// ```
-    #[inline]
-    pub fn get(&self, property: T) -> Option<&str> {
-        let prop = u16::try_from(property.to_u32()).ok()?;
-        self.map.map.get(&prop)
-    }
-}
-
-impl<T: TrieValue> PropertyEnumToValueNameSparseMapperBorrowed<'static, T> {
-    /// Cheaply converts a [`PropertyEnumToValueNameSparseMapperBorrowed<'static>`] into a [`PropertyEnumToValueNameSparseMapper`].
-    ///
-    /// Note: Due to branching and indirection, using [`PropertyEnumToValueNameSparseMapper`] might inhibit some
-    /// compile-time optimizations that are possible with [`PropertyEnumToValueNameSparseMapperBorrowed`].
-    pub const fn static_to_owned(self) -> PropertyEnumToValueNameSparseMapper<T> {
-        PropertyEnumToValueNameSparseMapper {
-            map: DataPayload::from_static_ref(self.map),
-            markers: PhantomData,
-        }
-    }
-}
-
-/// Private marker type for PropertyEnumToValueNameLinearMapper
-/// to work for all properties at once
-#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
-pub(crate) struct ErasedEnumToValueNameLinearMapV1Marker;
-impl DynamicDataMarker for ErasedEnumToValueNameLinearMapV1Marker {
-    type DataStruct = PropertyEnumToValueNameLinearMapV1<'static>;
-}
-
-/// A struct capable of looking up a property name from a value
-/// Access its data by calling [`Self::as_borrowed()`] and using the methods on
-/// [`PropertyEnumToValueNameLinearMapperBorrowed`].
-///
-/// This mapper is used for properties with sequential values, like [`GeneralCategory`].
-/// It may be obtained using methods like [`GeneralCategory::get_enum_to_long_name_mapper()`].
-///
-/// The name returned may be a short (`"Lu"`) or long (`"Uppercase_Letter"`) name, depending
-/// on the constructor used.
-///
-/// # Example
-///
-/// ```
-/// use icu::properties::GeneralCategory;
-///
-/// let lookup = GeneralCategory::enum_to_long_name_mapper();
-/// assert_eq!(
-///     lookup.get(GeneralCategory::UppercaseLetter),
-///     Some("Uppercase_Letter")
-/// );
-/// assert_eq!(
-///     lookup.get(GeneralCategory::DashPunctuation),
-///     Some("Dash_Punctuation")
-/// );
-/// ```
-#[derive(Debug)]
-pub struct PropertyEnumToValueNameLinearMapper<T> {
-    map: DataPayload<ErasedEnumToValueNameLinearMapV1Marker>,
-    markers: PhantomData<fn(T) -> ()>,
-}
-
-/// A borrowed wrapper around property value name-to-enum data, returned by
-/// [`PropertyEnumToValueNameLinearMapper::as_borrowed()`]. More efficient to query.
-#[derive(Debug, Copy, Clone)]
-pub struct PropertyEnumToValueNameLinearMapperBorrowed<'a, T> {
-    map: &'a PropertyEnumToValueNameLinearMapV1<'a>,
-    markers: PhantomData<fn(T) -> ()>,
-}
-
-impl<T: TrieValue> PropertyEnumToValueNameLinearMapper<T> {
-    /// Construct a borrowed version of this type that can be queried.
-    ///
-    /// This avoids a potential small underlying cost per API call (like `get_static()`) by consolidating it
-    /// up front.
-    #[inline]
-    pub fn as_borrowed(&self) -> PropertyEnumToValueNameLinearMapperBorrowed<'_, T> {
-        PropertyEnumToValueNameLinearMapperBorrowed {
-            map: self.map.get(),
-            markers: PhantomData,
-        }
-    }
-
-    /// Construct a new one from loaded data
-    ///
-    /// Typically it is preferable to use methods on individual property value types
-    /// (like [`Script::TBD()`]) instead.
-    pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
-    where
-        M: DynamicDataMarker<DataStruct = PropertyEnumToValueNameLinearMapV1<'static>>,
-    {
-        Self {
-            map: data.cast(),
-            markers: PhantomData,
-        }
-    }
-}
-
-impl<T: TrieValue> PropertyEnumToValueNameLinearMapperBorrowed<'_, T> {
-    /// Get the property name given a value
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// use icu::properties::GeneralCategory;
-    ///
-    /// let lookup = GeneralCategory::enum_to_short_name_mapper();
-    /// assert_eq!(lookup.get(GeneralCategory::UppercaseLetter), Some("Lu"));
-    /// assert_eq!(lookup.get(GeneralCategory::DashPunctuation), Some("Pd"));
-    /// ```
-    #[inline]
-    pub fn get(&self, property: T) -> Option<&str> {
-        let prop = usize::try_from(property.to_u32()).ok()?;
-        self.map.map.get(prop).filter(|x| !x.is_empty())
-    }
-}
-
-impl<T: TrieValue> PropertyEnumToValueNameLinearMapperBorrowed<'static, T> {
-    /// Cheaply converts a [`PropertyEnumToValueNameLinearMapperBorrowed<'static>`] into a [`PropertyEnumToValueNameLinearMapper`].
-    ///
-    /// Note: Due to branching and indirection, using [`PropertyEnumToValueNameLinearMapper`] might inhibit some
-    /// compile-time optimizations that are possible with [`PropertyEnumToValueNameLinearMapperBorrowed`].
-    pub const fn static_to_owned(self) -> PropertyEnumToValueNameLinearMapper<T> {
-        PropertyEnumToValueNameLinearMapper {
-            map: DataPayload::from_static_ref(self.map),
-            markers: PhantomData,
-        }
-    }
-}
-
-/// Private marker type for PropertyScriptToIcuScriptMapper
-/// to work for all properties at once
-#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
-pub(crate) struct ErasedEnumToValueNameLinearTiny4MapV1Marker;
-impl DynamicDataMarker for ErasedEnumToValueNameLinearTiny4MapV1Marker {
-    type DataStruct = PropertyScriptToIcuScriptMapV1<'static>;
-}
-
-/// A struct capable of looking up a property name from a value
-/// Access its data by calling [`Self::as_borrowed()`] and using the methods on
-/// [`PropertyScriptToIcuScriptMapperBorrowed`].
-///
-/// This mapper is used for the [`Script`] property.
-/// It may be obtained using methods like [`Script::get_enum_to_icu_script_mapper()`].
-///
-/// # Example
-///
-/// ```
-/// use icu::properties::Script;
-/// use icu::locale::subtags::script;
-///
-/// let lookup = Script::enum_to_icu_script_mapper();
-/// assert_eq!(lookup.get(Script::Brahmi), Some(script!("Brah")));
-/// assert_eq!(lookup.get(Script::Hangul), Some(script!("Hang")));
-/// ```
-#[derive(Debug)]
-pub struct PropertyScriptToIcuScriptMapper<T> {
-    map: DataPayload<ErasedEnumToValueNameLinearTiny4MapV1Marker>,
-    markers: PhantomData<fn(T) -> ()>,
-}
-
-/// A borrowed wrapper around property value name-to-enum data, returned by
-/// [`PropertyScriptToIcuScriptMapper::as_borrowed()`]. More efficient to query.
-#[derive(Debug, Copy, Clone)]
-pub struct PropertyScriptToIcuScriptMapperBorrowed<'a, T> {
-    map: &'a PropertyScriptToIcuScriptMapV1<'a>,
-    markers: PhantomData<fn(T) -> ()>,
-}
-
-impl<T: TrieValue> PropertyScriptToIcuScriptMapper<T> {
-    /// Construct a borrowed version of this type that can be queried.
-    ///
-    /// This avoids a potential small underlying cost per API call (like `get_static()`) by consolidating it
-    /// up front.
-    #[inline]
-    pub fn as_borrowed(&self) -> PropertyScriptToIcuScriptMapperBorrowed<'_, T> {
-        PropertyScriptToIcuScriptMapperBorrowed {
-            map: self.map.get(),
-            markers: PhantomData,
-        }
-    }
-
-    /// Construct a new one from loaded data
-    ///
-    /// Typically it is preferable to use methods on individual property value types
-    /// (like [`Script::TBD()`]) instead.
-    pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
-    where
-        M: DynamicDataMarker<DataStruct = PropertyScriptToIcuScriptMapV1<'static>>,
-    {
-        Self {
-            map: data.cast(),
-            markers: PhantomData,
-        }
-    }
-}
-
-impl<T: TrieValue> PropertyScriptToIcuScriptMapperBorrowed<'_, T> {
-    /// Get the property name given a value
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// use icu::properties::Script;
-    /// use icu::locale::subtags::script;
-    ///
-    /// let lookup = Script::enum_to_icu_script_mapper();
-    /// assert_eq!(lookup.get(Script::Brahmi), Some(script!("Brah")));
-    /// assert_eq!(lookup.get(Script::Hangul), Some(script!("Hang")));
-    /// ```
-    #[inline]
-    pub fn get(&self, property: T) -> Option<icu_locale_core::subtags::Script> {
-        let prop = usize::try_from(property.to_u32()).ok()?;
-        self.map.map.get(prop).and_then(|o| o.0)
-    }
-}
-
-impl<T: TrieValue> PropertyScriptToIcuScriptMapperBorrowed<'static, T> {
-    /// Cheaply converts a [`PropertyScriptToIcuScriptMapperBorrowed<'static>`] into a [`PropertyScriptToIcuScriptMapper`].
-    ///
-    /// Note: Due to branching and indirection, using [`PropertyScriptToIcuScriptMapper`] might inhibit some
-    /// compile-time optimizations that are possible with [`PropertyScriptToIcuScriptMapperBorrowed`].
-    pub const fn static_to_owned(self) -> PropertyScriptToIcuScriptMapper<T> {
-        PropertyScriptToIcuScriptMapper {
-            map: DataPayload::from_static_ref(self.map),
-            markers: PhantomData,
-        }
-    }
-}
-
-macro_rules! impl_value_getter {
-    (
-        // the marker type for names lookup (name_to_enum, enum_to_short_name, enum_to_long_name)
-        markers: $marker_n2e:ident / $singleton_n2e:ident $(, $marker_e2sn:ident / $singleton_e2sn:ident, $marker_e2ln:ident / $singleton_e2ln:ident)?;
-        impl $ty:ident {
-            $(#[$attr_n2e:meta])*
-            $vis_n2e:vis fn $name_n2e:ident() / $cname_n2e:ident();
-            $(
-
-                $(#[$attr_e2sn:meta])*
-                $vis_e2sn:vis fn $name_e2sn:ident() / $cname_e2sn:ident() -> $mapper_e2sn:ident / $mapper_e2snb:ident;
-                $(#[$attr_e2ln:meta])*
-                $vis_e2ln:vis fn $name_e2ln:ident() / $cname_e2ln:ident() -> $mapper_e2ln:ident / $mapper_e2lnb:ident;
-            )?
-        }
-    ) => {
-        impl $ty {
-            $(#[$attr_n2e])*
-            #[cfg(feature = "compiled_data")]
-            $vis_n2e const fn $cname_n2e() -> PropertyValueNameToEnumMapperBorrowed<'static, $ty> {
-                PropertyValueNameToEnumMapperBorrowed {
-                    map: crate::provider::Baked::$singleton_n2e,
-                    markers: PhantomData,
-                }
-            }
-
-            #[doc = concat!("A version of [`", stringify!($ty), "::", stringify!($cname_n2e), "()`] that uses custom data provided by a [`DataProvider`].")]
-            ///
-            /// [📚 Help choosing a constructor](icu_provider::constructors)
-            $vis_n2e fn $name_n2e(
-                provider: &(impl DataProvider<$marker_n2e> + ?Sized)
-            ) -> Result<PropertyValueNameToEnumMapper<$ty>, DataError> {
-                Ok(PropertyValueNameToEnumMapper::from_data(provider.load(Default::default())?.payload))
-            }
-
-            $(
-                $(#[$attr_e2sn])*
-                #[cfg(feature = "compiled_data")]
-                $vis_e2sn const fn $cname_e2sn() -> $mapper_e2snb<'static, $ty> {
-                    $mapper_e2snb {
-                        map: crate::provider::Baked::$singleton_e2sn,
-                        markers: PhantomData,
-                    }
-                }
-
-                #[doc = concat!("A version of [`", stringify!($ty), "::", stringify!($cname_e2sn), "()`] that uses custom data provided by a [`DataProvider`].")]
-                ///
-                /// [📚 Help choosing a constructor](icu_provider::constructors)
-                $vis_e2sn fn $name_e2sn(
-                    provider: &(impl DataProvider<$marker_e2sn> + ?Sized)
-                ) -> Result<$mapper_e2sn<$ty>, DataError> {
-                    Ok($mapper_e2sn::from_data(provider.load(Default::default())?.payload))
-                }
-
-                $(#[$attr_e2ln])*
-                #[cfg(feature = "compiled_data")]
-                $vis_e2ln const fn $cname_e2ln() -> $mapper_e2lnb<'static, $ty> {
-                    $mapper_e2lnb {
-                        map: crate::provider::Baked::$singleton_e2ln,
-                        markers: PhantomData,
-                    }
-                }
-
-                #[doc = concat!("A version of [`", stringify!($ty), "::", stringify!($cname_e2ln), "()`] that uses custom data provided by a [`DataProvider`].")]
-                ///
-                /// [📚 Help choosing a constructor](icu_provider::constructors)
-                $vis_e2ln fn $name_e2ln(
-                    provider: &(impl DataProvider<$marker_e2ln> + ?Sized)
-                ) -> Result<$mapper_e2ln<$ty>, DataError> {
-                    Ok($mapper_e2ln::from_data(provider.load(Default::default())?.payload))
-                }
-            )?
-        }
-    }
-}
-
 /// See [`test_enumerated_property_completeness`] for usage.
 /// Example input:
 /// ```ignore
@@ -685,19 +42,31 @@ macro_rules! create_const_array {
     }
 }
 
-/// Enumerated property Bidi_Class
-///
-/// These are the categories required by the Unicode Bidirectional Algorithm.
-/// For the property values, see [Bidirectional Class Values](https://unicode.org/reports/tr44/#Bidi_Class_Values).
-/// For more information, see [Unicode Standard Annex #9](https://unicode.org/reports/tr41/tr41-28.html#UAX9).
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_properties))]
-#[allow(clippy::exhaustive_structs)] // newtype
-#[repr(transparent)]
-#[zerovec::make_ule(BidiClassULE)]
-pub struct BidiClass(pub u8);
+macro_rules! make_map_property {
+    (
+        // currently unused
+        property: $p:expr;
+        // currently unused
+        dyn_marker: $d:ident;
+        value: $value_ty:path;
+        data_marker: $data_marker:ty;
+        func:
+        $(#[$doc:meta])*
+        $vis2:vis const $constname:ident => $singleton:ident;
+        $vis:vis fn $name:ident();
+    ) => {
+        impl crate::private::Sealed for $value_ty {}
+
+        impl crate::code_point_map::CodePointMapProperty for $value_ty {
+            type DataMarker = $data_marker;
+            #[cfg(feature = "compiled_data")]
+            const SINGLETON: &'static crate::provider::PropertyCodePointMapV1<'static, Self> =
+                crate::provider::Baked::$singleton;
+        }
+    };
+}
+
+pub use crate::provider::props::BidiClass;
 
 create_const_array! {
 #[allow(non_upper_case_globals)]
@@ -751,237 +120,60 @@ impl BidiClass {
 }
 }
 
-impl_value_getter! {
-    markers: BidiClassNameToValueV1Marker / SINGLETON_BIDI_CLASS_NAME_TO_VALUE_V1_MARKER, BidiClassValueToShortNameV1Marker / SINGLETON_BIDI_CLASS_VALUE_TO_SHORT_NAME_V1_MARKER, BidiClassValueToLongNameV1Marker / SINGLETON_BIDI_CLASS_VALUE_TO_LONG_NAME_V1_MARKER;
-    impl BidiClass {
-        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
-        /// from strings for the `Bidi_Class` enumerated property
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::BidiClass;
-        ///
-        /// let lookup = BidiClass::name_to_enum_mapper();
-        /// // short name for value
-        /// assert_eq!(lookup.get_strict("AN"), Some(BidiClass::ArabicNumber));
-        /// assert_eq!(lookup.get_strict("NSM"), Some(BidiClass::NonspacingMark));
-        /// // long name for value
-        /// assert_eq!(lookup.get_strict("Arabic_Number"), Some(BidiClass::ArabicNumber));
-        /// assert_eq!(lookup.get_strict("Nonspacing_Mark"), Some(BidiClass::NonspacingMark));
-        /// // name has incorrect casing
-        /// assert_eq!(lookup.get_strict("arabicnumber"), None);
-        /// // loose matching of name
-        /// assert_eq!(lookup.get_loose("arabicnumber"), Some(BidiClass::ArabicNumber));
-        /// // fake property
-        /// assert_eq!(lookup.get_strict("Upside_Down_Vertical_Backwards_Mirrored"), None);
-        /// ```
-        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
-        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
-        /// for values of the `Bidi_Class` enumerated property
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::BidiClass;
-        ///
-        /// let lookup = BidiClass::enum_to_short_name_mapper();
-        /// assert_eq!(lookup.get(BidiClass::ArabicNumber), Some("AN"));
-        /// assert_eq!(lookup.get(BidiClass::NonspacingMark), Some("NSM"));
-        /// ```
-        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
-        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
-        /// for values of the `Bidi_Class` enumerated property
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::BidiClass;
-        ///
-        /// let lookup = BidiClass::enum_to_long_name_mapper();
-        /// assert_eq!(lookup.get(BidiClass::ArabicNumber), Some("Arabic_Number"));
-        /// assert_eq!(lookup.get(BidiClass::NonspacingMark), Some("Nonspacing_Mark"));
-        /// ```
-        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
-    }
+make_map_property! {
+    property: "Bidi_Class";
+    dyn_marker: BidiClass;
+    value:       BidiClass;
+    data_marker: crate::provider::BidiClassV1Marker;
+    func:
+    /// Return a [`CodePointMapDataBorrowed`] for the Bidi_Class Unicode enumerated property. See [`BidiClass`].
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, BidiClass};
+    ///
+    /// assert_eq!(maps::bidi_class().get('y'), BidiClass::LeftToRight);  // U+0079
+    /// assert_eq!(maps::bidi_class().get('ع'), BidiClass::ArabicLetter);  // U+0639
+    /// ```
+    pub const bidi_class => SINGLETON_BIDI_CLASS_V1_MARKER;
+    pub fn load_bidi_class();
 }
 
-/// Enumerated property General_Category.
-///
-/// General_Category specifies the most general classification of a code point, usually
-/// determined based on the primary characteristic of the assigned character. For example, is the
-/// character a letter, a mark, a number, punctuation, or a symbol, and if so, of what type?
-///
-/// GeneralCategory only supports specific subcategories (eg `UppercaseLetter`).
-/// It does not support grouped categories (eg `Letter`). For grouped categories, use [`GeneralCategoryGroup`].
-#[derive(Copy, Clone, PartialEq, Eq, Debug, Ord, PartialOrd, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_properties))]
-#[allow(clippy::exhaustive_enums)] // this type is stable
-#[zerovec::make_ule(GeneralCategoryULE)]
-#[repr(u8)]
-pub enum GeneralCategory {
-    /// (`Cn`) A reserved unassigned code point or a noncharacter
-    Unassigned = 0,
-
-    /// (`Lu`) An uppercase letter
-    UppercaseLetter = 1,
-    /// (`Ll`) A lowercase letter
-    LowercaseLetter = 2,
-    /// (`Lt`) A digraphic letter, with first part uppercase
-    TitlecaseLetter = 3,
-    /// (`Lm`) A modifier letter
-    ModifierLetter = 4,
-    /// (`Lo`) Other letters, including syllables and ideographs
-    OtherLetter = 5,
-
-    /// (`Mn`) A nonspacing combining mark (zero advance width)
-    NonspacingMark = 6,
-    /// (`Mc`) A spacing combining mark (positive advance width)
-    SpacingMark = 8,
-    /// (`Me`) An enclosing combining mark
-    EnclosingMark = 7,
-
-    /// (`Nd`) A decimal digit
-    DecimalNumber = 9,
-    /// (`Nl`) A letterlike numeric character
-    LetterNumber = 10,
-    /// (`No`) A numeric character of other type
-    OtherNumber = 11,
-
-    /// (`Zs`) A space character (of various non-zero widths)
-    SpaceSeparator = 12,
-    /// (`Zl`) U+2028 LINE SEPARATOR only
-    LineSeparator = 13,
-    /// (`Zp`) U+2029 PARAGRAPH SEPARATOR only
-    ParagraphSeparator = 14,
-
-    /// (`Cc`) A C0 or C1 control code
-    Control = 15,
-    /// (`Cf`) A format control character
-    Format = 16,
-    /// (`Co`) A private-use character
-    PrivateUse = 17,
-    /// (`Cs`) A surrogate code point
-    Surrogate = 18,
-
-    /// (`Pd`) A dash or hyphen punctuation mark
-    DashPunctuation = 19,
-    /// (`Ps`) An opening punctuation mark (of a pair)
-    OpenPunctuation = 20,
-    /// (`Pe`) A closing punctuation mark (of a pair)
-    ClosePunctuation = 21,
-    /// (`Pc`) A connecting punctuation mark, like a tie
-    ConnectorPunctuation = 22,
-    /// (`Pi`) An initial quotation mark
-    InitialPunctuation = 28,
-    /// (`Pf`) A final quotation mark
-    FinalPunctuation = 29,
-    /// (`Po`) A punctuation mark of other type
-    OtherPunctuation = 23,
-
-    /// (`Sm`) A symbol of mathematical use
-    MathSymbol = 24,
-    /// (`Sc`) A currency sign
-    CurrencySymbol = 25,
-    /// (`Sk`) A non-letterlike modifier symbol
-    ModifierSymbol = 26,
-    /// (`So`) A symbol of other type
-    OtherSymbol = 27,
-}
-
-impl_value_getter! {
-    markers: GeneralCategoryNameToValueV1Marker / SINGLETON_GENERAL_CATEGORY_NAME_TO_VALUE_V1_MARKER, GeneralCategoryValueToShortNameV1Marker / SINGLETON_GENERAL_CATEGORY_VALUE_TO_SHORT_NAME_V1_MARKER, GeneralCategoryValueToLongNameV1Marker / SINGLETON_GENERAL_CATEGORY_VALUE_TO_LONG_NAME_V1_MARKER;
-    impl GeneralCategory {
-        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
-        /// from strings for the `General_Category` enumerated property.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::GeneralCategory;
-        ///
-        /// let lookup = GeneralCategory::name_to_enum_mapper();
-        /// // short name for value
-        /// assert_eq!(lookup.get_strict("Lu"), Some(GeneralCategory::UppercaseLetter));
-        /// assert_eq!(lookup.get_strict("Pd"), Some(GeneralCategory::DashPunctuation));
-        /// // long name for value
-        /// assert_eq!(lookup.get_strict("Uppercase_Letter"), Some(GeneralCategory::UppercaseLetter));
-        /// assert_eq!(lookup.get_strict("Dash_Punctuation"), Some(GeneralCategory::DashPunctuation));
-        /// // name has incorrect casing
-        /// assert_eq!(lookup.get_strict("dashpunctuation"), None);
-        /// // loose matching of name
-        /// assert_eq!(lookup.get_loose("dash-punctuation"), Some(GeneralCategory::DashPunctuation));
-        /// // fake property
-        /// assert_eq!(lookup.get_loose("Animated_Gif"), None);
-        /// ```
-        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
-        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
-        /// for values of the `General_Category` enumerated property.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::GeneralCategory;
-        ///
-        /// let lookup = GeneralCategory::enum_to_short_name_mapper();
-        /// assert_eq!(lookup.get(GeneralCategory::UppercaseLetter), Some("Lu"));
-        /// assert_eq!(lookup.get(GeneralCategory::DashPunctuation), Some("Pd"));
-        /// assert_eq!(lookup.get(GeneralCategory::FinalPunctuation), Some("Pf"));
-        /// ```
-        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
-        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
-        /// for values of the `General_Category` enumerated property.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::GeneralCategory;
-        ///
-        /// let lookup = GeneralCategory::enum_to_long_name_mapper();
-        /// assert_eq!(lookup.get(GeneralCategory::UppercaseLetter), Some("Uppercase_Letter"));
-        /// assert_eq!(lookup.get(GeneralCategory::DashPunctuation), Some("Dash_Punctuation"));
-        /// assert_eq!(lookup.get(GeneralCategory::FinalPunctuation), Some("Final_Punctuation"));
-        /// ```
-        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
-    }
-}
+pub use crate::provider::props::GeneralCategory;
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Debug, Hash, Default)]
-pub struct GeneralCategoryTryFromError;
+/// Error value for `impl TryFrom<u8> for GeneralCategory`.
+#[non_exhaustive]
+pub struct GeneralCategoryOutOfBoundsError;
 
 impl TryFrom<u8> for GeneralCategory {
-    type Error = GeneralCategoryTryFromError;
+    type Error = GeneralCategoryOutOfBoundsError;
     /// Construct this [`GeneralCategory`] from an integer, returning
     /// an error if it is out of bounds
-    fn try_from(val: u8) -> Result<Self, GeneralCategoryTryFromError> {
-        GeneralCategory::new_from_u8(val).ok_or(GeneralCategoryTryFromError)
+    fn try_from(val: u8) -> Result<Self, GeneralCategoryOutOfBoundsError> {
+        GeneralCategory::new_from_u8(val).ok_or(GeneralCategoryOutOfBoundsError)
     }
+}
+
+make_map_property! {
+    property: "General_Category";
+    dyn_marker: GeneralCategory;
+    value:       GeneralCategory;
+    data_marker: crate::provider::GeneralCategoryV1Marker;
+    func:
+    /// Return a [`CodePointMapDataBorrowed`] for the General_Category Unicode enumerated property. See [`GeneralCategory`].
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, GeneralCategory};
+    ///
+    /// assert_eq!(maps::general_category().get('木'), GeneralCategory::OtherLetter);  // U+6728
+    /// assert_eq!(maps::general_category().get('🎃'), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
+    /// ```
+    pub const general_category => SINGLETON_GENERAL_CATEGORY_V1_MARKER;
+    pub fn load_general_category();
 }
 
 /// Groupings of multiple General_Category property values.
@@ -1263,45 +455,6 @@ impl GeneralCategoryGroup {
     }
 }
 
-impl_value_getter! {
-    markers: GeneralCategoryMaskNameToValueV1Marker / SINGLETON_GENERAL_CATEGORY_MASK_NAME_TO_VALUE_V1_MARKER;
-    impl GeneralCategoryGroup {
-        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
-        /// from strings for the `General_Category_Mask` mask property.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::GeneralCategoryGroup;
-        ///
-        /// let lookup = GeneralCategoryGroup::name_to_enum_mapper();
-        /// // short name for value
-        /// assert_eq!(lookup.get_strict("L"), Some(GeneralCategoryGroup::Letter));
-        /// assert_eq!(lookup.get_strict("LC"), Some(GeneralCategoryGroup::CasedLetter));
-        /// assert_eq!(lookup.get_strict("Lu"), Some(GeneralCategoryGroup::UppercaseLetter));
-        /// assert_eq!(lookup.get_strict("Zp"), Some(GeneralCategoryGroup::ParagraphSeparator));
-        /// assert_eq!(lookup.get_strict("P"), Some(GeneralCategoryGroup::Punctuation));
-        /// // long name for value
-        /// assert_eq!(lookup.get_strict("Letter"), Some(GeneralCategoryGroup::Letter));
-        /// assert_eq!(lookup.get_strict("Cased_Letter"), Some(GeneralCategoryGroup::CasedLetter));
-        /// assert_eq!(lookup.get_strict("Uppercase_Letter"), Some(GeneralCategoryGroup::UppercaseLetter));
-        /// // alias name
-        /// assert_eq!(lookup.get_strict("punct"), Some(GeneralCategoryGroup::Punctuation));
-        /// // name has incorrect casing
-        /// assert_eq!(lookup.get_strict("letter"), None);
-        /// // loose matching of name
-        /// assert_eq!(lookup.get_loose("letter"), Some(GeneralCategoryGroup::Letter));
-        /// // fake property
-        /// assert_eq!(lookup.get_strict("EverythingLol"), None);
-        /// ```
-        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
-    }
-}
-
 impl From<GeneralCategory> for GeneralCategoryGroup {
     fn from(subcategory: GeneralCategory) -> Self {
         GeneralCategoryGroup(1 << (subcategory as u32))
@@ -1319,24 +472,8 @@ impl From<GeneralCategoryGroup> for u32 {
         group.0
     }
 }
-/// Enumerated property Script.
-///
-/// This is used with both the Script and Script_Extensions Unicode properties.
-/// Each character is assigned a single Script, but characters that are used in
-/// a particular subset of scripts will be in more than one Script_Extensions set.
-/// For example, DEVANAGARI DIGIT NINE has Script=Devanagari, but is also in the
-/// Script_Extensions set for Dogra, Kaithi, and Mahajani.
-///
-/// For more information, see UAX #24: <http://www.unicode.org/reports/tr24/>.
-/// See `UScriptCode` in ICU4C.
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_properties))]
-#[allow(clippy::exhaustive_structs)] // newtype
-#[repr(transparent)]
-#[zerovec::make_ule(ScriptULE)]
-pub struct Script(pub u16);
+
+pub use crate::provider::props::Script;
 
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
@@ -1508,88 +645,34 @@ impl Script {
     pub const ZanabazarSquare: Script = Script(177);
 }
 
-impl_value_getter! {
-    markers: ScriptNameToValueV1Marker / SINGLETON_SCRIPT_NAME_TO_VALUE_V1_MARKER, ScriptValueToShortNameV1Marker / SINGLETON_SCRIPT_VALUE_TO_SHORT_NAME_V1_MARKER, ScriptValueToLongNameV1Marker / SINGLETON_SCRIPT_VALUE_TO_LONG_NAME_V1_MARKER;
-    impl Script {
-        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
-        /// from strings for the `Script` enumerated property.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::Script;
-        ///
-        /// let lookup = Script::name_to_enum_mapper();
-        /// // short name for value
-        /// assert_eq!(lookup.get_strict("Brah"), Some(Script::Brahmi));
-        /// assert_eq!(lookup.get_strict("Hang"), Some(Script::Hangul));
-        /// // long name for value
-        /// assert_eq!(lookup.get_strict("Brahmi"), Some(Script::Brahmi));
-        /// assert_eq!(lookup.get_strict("Hangul"), Some(Script::Hangul));
-        /// // name has incorrect casing
-        /// assert_eq!(lookup.get_strict("brahmi"), None);
-        /// // loose matching of name
-        /// assert_eq!(lookup.get_loose("brahmi"), Some(Script::Brahmi));
-        /// // fake property
-        /// assert_eq!(lookup.get_strict("Linear_Z"), None);
-        /// ```
-        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
-        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
-        /// for values of the `Script` enumerated property.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::Script;
-        /// use icu::locale::subtags::script;
-        ///
-        /// let lookup = Script::enum_to_icu_script_mapper();
-        /// assert_eq!(lookup.get(Script::Brahmi), Some(script!("Brah")));
-        /// assert_eq!(lookup.get(Script::Hangul), Some(script!("Hang")));
-        /// ```
-        pub fn get_enum_to_icu_script_mapper() / enum_to_icu_script_mapper() -> PropertyScriptToIcuScriptMapper / PropertyScriptToIcuScriptMapperBorrowed;
-        /// Return a [`PropertyScriptToIcuScriptMapper`], capable of looking up long names
-        /// for values of the `Script` enumerated property.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::Script;
-        ///
-        /// let lookup = Script::enum_to_long_name_mapper();
-        /// assert_eq!(lookup.get(Script::Brahmi), Some("Brahmi"));
-        /// assert_eq!(lookup.get(Script::Hangul), Some("Hangul"));
-        /// ```
-        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
-    }
+make_map_property! {
+    property: "Script";
+    dyn_marker: Script;
+    value:       Script;
+    data_marker: crate::provider::ScriptV1Marker;
+    func:
+    /// Return a [`CodePointMapDataBorrowed`] for the Script Unicode enumerated property. See [`Script`].
+    ///
+    /// **Note:** Some code points are associated with multiple scripts. If you are trying to
+    /// determine whether a code point belongs to a certain script, you should use
+    /// [`load_script_with_extensions_unstable`] and [`ScriptWithExtensionsBorrowed::has_script`]
+    /// instead of this function.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, Script};
+    ///
+    /// assert_eq!(maps::script().get('木'), Script::Han);  // U+6728
+    /// assert_eq!(maps::script().get('🎃'), Script::Common);  // U+1F383 JACK-O-LANTERN
+    /// ```
+    /// [`load_script_with_extensions_unstable`]: crate::script::load_script_with_extensions_unstable
+    /// [`ScriptWithExtensionsBorrowed::has_script`]: crate::script::ScriptWithExtensionsBorrowed::has_script
+    pub const script => SINGLETON_SCRIPT_V1_MARKER;
+    pub fn load_script();
 }
 
-/// Enumerated property Hangul_Syllable_Type
-///
-/// The Unicode standard provides both precomposed Hangul syllables and conjoining Jamo to compose
-/// arbitrary Hangul syllables. This property provides that ontology of Hangul code points.
-///
-/// For more information, see the [Unicode Korean FAQ](https://www.unicode.org/faq/korean.html).
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_properties))]
-#[allow(clippy::exhaustive_structs)] // newtype
-#[repr(transparent)]
-#[zerovec::make_ule(HangulSyllableTypeULE)]
-pub struct HangulSyllableType(pub u8);
+pub use crate::provider::props::HangulSyllableType;
 
 create_const_array! {
 #[allow(non_upper_case_globals)]
@@ -1609,87 +692,29 @@ impl HangulSyllableType {
 }
 }
 
-impl_value_getter! {
-    markers: HangulSyllableTypeNameToValueV1Marker / SINGLETON_HANGUL_SYLLABLE_TYPE_NAME_TO_VALUE_V1_MARKER, HangulSyllableTypeValueToShortNameV1Marker / SINGLETON_HANGUL_SYLLABLE_TYPE_VALUE_TO_SHORT_NAME_V1_MARKER, HangulSyllableTypeValueToLongNameV1Marker / SINGLETON_HANGUL_SYLLABLE_TYPE_VALUE_TO_LONG_NAME_V1_MARKER;
-    impl HangulSyllableType {
-        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
-        /// from strings for the `Bidi_Class` enumerated property
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::HangulSyllableType;
-        ///
-        /// let lookup = HangulSyllableType::name_to_enum_mapper();
-        /// // short name for value
-        /// assert_eq!(lookup.get_strict("L"), Some(HangulSyllableType::LeadingJamo));
-        /// assert_eq!(lookup.get_strict("LV"), Some(HangulSyllableType::LeadingVowelSyllable));
-        /// // long name for value
-        /// assert_eq!(lookup.get_strict("Leading_Jamo"), Some(HangulSyllableType::LeadingJamo));
-        /// assert_eq!(lookup.get_strict("LV_Syllable"), Some(HangulSyllableType::LeadingVowelSyllable));
-        /// // name has incorrect casing
-        /// assert_eq!(lookup.get_strict("lv"), None);
-        /// // loose matching of name
-        /// assert_eq!(lookup.get_loose("lv"), Some(HangulSyllableType::LeadingVowelSyllable));
-        /// // fake property
-        /// assert_eq!(lookup.get_strict("LT_Syllable"), None);
-        /// ```
-        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
-        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
-        /// for values of the `Bidi_Class` enumerated property
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::HangulSyllableType;
-        ///
-        /// let lookup = HangulSyllableType::enum_to_short_name_mapper();
-        /// assert_eq!(lookup.get(HangulSyllableType::LeadingJamo), Some("L"));
-        /// assert_eq!(lookup.get(HangulSyllableType::LeadingVowelSyllable), Some("LV"));
-        /// ```
-        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
-        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
-        /// for values of the `Bidi_Class` enumerated property
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::HangulSyllableType;
-        ///
-        /// let lookup = HangulSyllableType::enum_to_long_name_mapper();
-        /// assert_eq!(lookup.get(HangulSyllableType::LeadingJamo), Some("Leading_Jamo"));
-        /// assert_eq!(lookup.get(HangulSyllableType::LeadingVowelSyllable), Some("LV_Syllable"));
-        /// ```
-        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
-    }
+make_map_property! {
+    property: "Hangul_Syllable_Type";
+    dyn_marker: HangulSyllableType;
+    value:       HangulSyllableType;
+    data_marker: crate::provider::HangulSyllableTypeV1Marker;
+    func:
+    /// Returns a [`CodePointMapDataBorrowed`] for the Hangul_Syllable_Type
+    /// Unicode enumerated property. See [`HangulSyllableType`].
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, HangulSyllableType};
+    ///
+    /// assert_eq!(maps::hangul_syllable_type().get('ᄀ'), HangulSyllableType::LeadingJamo);  // U+1100
+    /// assert_eq!(maps::hangul_syllable_type().get('가'), HangulSyllableType::LeadingVowelSyllable);  // U+AC00
+    /// ```
+
+    pub const hangul_syllable_type => SINGLETON_HANGUL_SYLLABLE_TYPE_V1_MARKER;
+    pub fn load_hangul_syllable_type();
 }
 
-/// Enumerated property East_Asian_Width.
-///
-/// See "Definition" in UAX #11 for the summary of each property value:
-/// <https://www.unicode.org/reports/tr11/#Definitions>
-///
-/// The numeric value is compatible with `UEastAsianWidth` in ICU4C.
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_properties))]
-#[allow(clippy::exhaustive_structs)] // newtype
-#[repr(transparent)]
-#[zerovec::make_ule(EastAsianWidthULE)]
-pub struct EastAsianWidth(pub u8);
+pub use crate::provider::props::EastAsianWidth;
 
 create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
@@ -1704,87 +729,28 @@ impl EastAsianWidth {
 }
 }
 
-impl_value_getter! {
-    markers: EastAsianWidthNameToValueV1Marker / SINGLETON_EAST_ASIAN_WIDTH_NAME_TO_VALUE_V1_MARKER, EastAsianWidthValueToShortNameV1Marker / SINGLETON_EAST_ASIAN_WIDTH_VALUE_TO_SHORT_NAME_V1_MARKER, EastAsianWidthValueToLongNameV1Marker / SINGLETON_EAST_ASIAN_WIDTH_VALUE_TO_LONG_NAME_V1_MARKER;
-    impl EastAsianWidth {
-        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
-        /// from strings for the `East_Asian_Width` enumerated property.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::EastAsianWidth;
-        ///
-        /// let lookup = EastAsianWidth::name_to_enum_mapper();
-        /// // short name for value
-        /// assert_eq!(lookup.get_strict("N"), Some(EastAsianWidth::Neutral));
-        /// assert_eq!(lookup.get_strict("H"), Some(EastAsianWidth::Halfwidth));
-        /// // long name for value
-        /// assert_eq!(lookup.get_strict("Neutral"), Some(EastAsianWidth::Neutral));
-        /// assert_eq!(lookup.get_strict("Halfwidth"), Some(EastAsianWidth::Halfwidth));
-        /// // name has incorrect casing / extra hyphen
-        /// assert_eq!(lookup.get_strict("half-width"), None);
-        /// // loose matching of name
-        /// assert_eq!(lookup.get_loose("half-width"), Some(EastAsianWidth::Halfwidth));
-        /// // fake property
-        /// assert_eq!(lookup.get_strict("TwoPointFiveWidth"), None);
-        /// ```
-        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
-        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
-        /// for values of the `East_Asian_Width` enumerated property.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::EastAsianWidth;
-        ///
-        /// let lookup = EastAsianWidth::enum_to_short_name_mapper();
-        /// assert_eq!(lookup.get(EastAsianWidth::Neutral), Some("N"));
-        /// assert_eq!(lookup.get(EastAsianWidth::Halfwidth), Some("H"));
-        /// ```
-        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
-        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
-        /// for values of the `East_Asian_Width` enumerated property.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::EastAsianWidth;
-        ///
-        /// let lookup = EastAsianWidth::enum_to_long_name_mapper();
-        /// assert_eq!(lookup.get(EastAsianWidth::Neutral), Some("Neutral"));
-        /// assert_eq!(lookup.get(EastAsianWidth::Halfwidth), Some("Halfwidth"));
-        /// ```
-        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
-    }
+make_map_property! {
+    property: "East_Asian_Width";
+    dyn_marker: EastAsianWidth;
+    value:       EastAsianWidth;
+    data_marker: crate::provider::EastAsianWidthV1Marker;
+    func:
+    /// Return a [`CodePointMapDataBorrowed`] for the East_Asian_Width Unicode enumerated
+    /// property. See [`EastAsianWidth`].
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, EastAsianWidth};
+    ///
+    /// assert_eq!(maps::east_asian_width().get('ｱ'), EastAsianWidth::Halfwidth); // U+FF71: Halfwidth Katakana Letter A
+    /// assert_eq!(maps::east_asian_width().get('ア'), EastAsianWidth::Wide); //U+30A2: Katakana Letter A
+    /// ```
+    pub const east_asian_width => SINGLETON_EAST_ASIAN_WIDTH_V1_MARKER;
+    pub fn load_east_asian_width();
 }
 
-/// Enumerated property Line_Break.
-///
-/// See "Line Breaking Properties" in UAX #14 for the summary of each property
-/// value: <https://www.unicode.org/reports/tr14/#Properties>
-///
-/// The numeric value is compatible with `ULineBreak` in ICU4C.
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_properties))]
-#[allow(clippy::exhaustive_structs)] // newtype
-#[repr(transparent)]
-#[zerovec::make_ule(LineBreakULE)]
-pub struct LineBreak(pub u8);
+pub use crate::provider::props::LineBreak;
 
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
@@ -1841,88 +807,30 @@ impl LineBreak {
     pub const Virama: LineBreak = LineBreak(47); // name=VI"
 }
 
-impl_value_getter! {
-    markers: LineBreakNameToValueV1Marker / SINGLETON_LINE_BREAK_NAME_TO_VALUE_V1_MARKER, LineBreakValueToShortNameV1Marker / SINGLETON_LINE_BREAK_VALUE_TO_SHORT_NAME_V1_MARKER, LineBreakValueToLongNameV1Marker / SINGLETON_LINE_BREAK_VALUE_TO_LONG_NAME_V1_MARKER;
-    impl LineBreak {
-        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
-        /// from strings for the `Line_Break` enumerated property.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::LineBreak;
-        ///
-        /// let lookup = LineBreak::name_to_enum_mapper();
-        /// // short name for value
-        /// assert_eq!(lookup.get_strict("BK"), Some(LineBreak::MandatoryBreak));
-        /// assert_eq!(lookup.get_strict("AL"), Some(LineBreak::Alphabetic));
-        /// // long name for value
-        /// assert_eq!(lookup.get_strict("Mandatory_Break"), Some(LineBreak::MandatoryBreak));
-        /// assert_eq!(lookup.get_strict("Alphabetic"), Some(LineBreak::Alphabetic));
-        /// // name has incorrect casing and dash instead of underscore
-        /// assert_eq!(lookup.get_strict("mandatory-Break"), None);
-        /// // loose matching of name
-        /// assert_eq!(lookup.get_loose("mandatory-Break"), Some(LineBreak::MandatoryBreak));
-        /// // fake property
-        /// assert_eq!(lookup.get_strict("Stochastic_Break"), None);
-        /// ```
-        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
-        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
-        /// for values of the `Line_Break` enumerated property.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::LineBreak;
-        ///
-        /// let lookup = LineBreak::enum_to_short_name_mapper();
-        /// assert_eq!(lookup.get(LineBreak::MandatoryBreak), Some("BK"));
-        /// assert_eq!(lookup.get(LineBreak::Alphabetic), Some("AL"));
-        /// ```
-        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
-        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
-        /// for values of the `Line_Break` enumerated property.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::LineBreak;
-        ///
-        /// let lookup = LineBreak::enum_to_long_name_mapper();
-        /// assert_eq!(lookup.get(LineBreak::MandatoryBreak), Some("Mandatory_Break"));
-        /// assert_eq!(lookup.get(LineBreak::Alphabetic), Some("Alphabetic"));
-        /// ```
-        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
-    }
+make_map_property! {
+    property: "Line_Break";
+    dyn_marker: LineBreak;
+    value:       LineBreak;
+    data_marker: crate::provider::LineBreakV1Marker;
+    func:
+    /// Return a [`CodePointMapDataBorrowed`] for the Line_Break Unicode enumerated
+    /// property. See [`LineBreak`].
+    ///
+    /// **Note:** Use `icu::segmenter` for an all-in-one break iterator implementation.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, LineBreak};
+    ///
+    /// assert_eq!(maps::line_break().get(')'), LineBreak::CloseParenthesis); // U+0029: Right Parenthesis
+    /// assert_eq!(maps::line_break().get('ぁ'), LineBreak::ConditionalJapaneseStarter); //U+3041: Hiragana Letter Small A
+    /// ```
+    pub const line_break => SINGLETON_LINE_BREAK_V1_MARKER;
+    pub fn load_line_break();
 }
 
-/// Enumerated property Grapheme_Cluster_Break.
-///
-/// See "Default Grapheme Cluster Boundary Specification" in UAX #29 for the
-/// summary of each property value:
-/// <https://www.unicode.org/reports/tr29/#Default_Grapheme_Cluster_Table>
-///
-/// The numeric value is compatible with `UGraphemeClusterBreak` in ICU4C.
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_properties))]
-#[allow(clippy::exhaustive_structs)] // this type is stable
-#[repr(transparent)]
-#[zerovec::make_ule(GraphemeClusterBreakULE)]
-pub struct GraphemeClusterBreak(pub u8);
+pub use crate::provider::props::GraphemeClusterBreak;
 
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
@@ -1951,88 +859,30 @@ impl GraphemeClusterBreak {
     pub const ZWJ: GraphemeClusterBreak = GraphemeClusterBreak(17); // name="ZWJ"
 }
 
-impl_value_getter! {
-    markers: GraphemeClusterBreakNameToValueV1Marker / SINGLETON_GRAPHEME_CLUSTER_BREAK_NAME_TO_VALUE_V1_MARKER, GraphemeClusterBreakValueToShortNameV1Marker / SINGLETON_GRAPHEME_CLUSTER_BREAK_VALUE_TO_SHORT_NAME_V1_MARKER, GraphemeClusterBreakValueToLongNameV1Marker / SINGLETON_GRAPHEME_CLUSTER_BREAK_VALUE_TO_LONG_NAME_V1_MARKER;
-    impl GraphemeClusterBreak {
-        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
-        /// from strings for the `Grapheme_Cluster_Break` enumerated property.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::GraphemeClusterBreak;
-        ///
-        /// let lookup = GraphemeClusterBreak::name_to_enum_mapper();
-        /// // short name for value
-        /// assert_eq!(lookup.get_strict("EX"), Some(GraphemeClusterBreak::Extend));
-        /// assert_eq!(lookup.get_strict("RI"), Some(GraphemeClusterBreak::RegionalIndicator));
-        /// // long name for value
-        /// assert_eq!(lookup.get_strict("Extend"), Some(GraphemeClusterBreak::Extend));
-        /// assert_eq!(lookup.get_strict("Regional_Indicator"), Some(GraphemeClusterBreak::RegionalIndicator));
-        /// // name has incorrect casing and lacks an underscore
-        /// assert_eq!(lookup.get_strict("regionalindicator"), None);
-        /// // loose matching of name
-        /// assert_eq!(lookup.get_loose("regionalindicator"), Some(GraphemeClusterBreak::RegionalIndicator));
-        /// // fake property
-        /// assert_eq!(lookup.get_strict("Regional_Indicator_Two_Point_Oh"), None);
-        /// ```
-        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
-        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
-        /// for values of the `Grapheme_Cluster_Break` enumerated property.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::GraphemeClusterBreak;
-        ///
-        /// let lookup = GraphemeClusterBreak::enum_to_short_name_mapper();
-        /// assert_eq!(lookup.get(GraphemeClusterBreak::Extend), Some("EX"));
-        /// assert_eq!(lookup.get(GraphemeClusterBreak::RegionalIndicator), Some("RI"));
-        /// ```
-        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
-        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
-        /// for values of the `Grapheme_Cluster_Break` enumerated property.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::GraphemeClusterBreak;
-        ///
-        /// let lookup = GraphemeClusterBreak::enum_to_long_name_mapper();
-        /// assert_eq!(lookup.get(GraphemeClusterBreak::Extend), Some("Extend"));
-        /// assert_eq!(lookup.get(GraphemeClusterBreak::RegionalIndicator), Some("Regional_Indicator"));
-        /// ```
-        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
-    }
+make_map_property! {
+    property: "Grapheme_Cluster_Break";
+    dyn_marker: GraphemeClusterBreak;
+    value:       GraphemeClusterBreak;
+    data_marker: crate::provider::GraphemeClusterBreakV1Marker;
+    func:
+    /// Return a [`CodePointMapDataBorrowed`] for the Grapheme_Cluster_Break Unicode enumerated
+    /// property. See [`GraphemeClusterBreak`].
+    ///
+    /// **Note:** Use `icu::segmenter` for an all-in-one break iterator implementation.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, GraphemeClusterBreak};
+    ///
+    /// assert_eq!(maps::grapheme_cluster_break().get('🇦'), GraphemeClusterBreak::RegionalIndicator); // U+1F1E6: Regional Indicator Symbol Letter A
+    /// assert_eq!(maps::grapheme_cluster_break().get('ำ'), GraphemeClusterBreak::SpacingMark); //U+0E33: Thai Character Sara Am
+    /// ```
+    pub const grapheme_cluster_break => SINGLETON_GRAPHEME_CLUSTER_BREAK_V1_MARKER;
+    pub fn load_grapheme_cluster_break();
 }
 
-/// Enumerated property Word_Break.
-///
-/// See "Default Word Boundary Specification" in UAX #29 for the summary of
-/// each property value:
-/// <https://www.unicode.org/reports/tr29/#Default_Word_Boundaries>.
-///
-/// The numeric value is compatible with `UWordBreakValues` in ICU4C.
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_properties))]
-#[allow(clippy::exhaustive_structs)] // newtype
-#[repr(transparent)]
-#[zerovec::make_ule(WordBreakULE)]
-pub struct WordBreak(pub u8);
+pub use crate::provider::props::WordBreak;
 
 create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
@@ -2068,90 +918,30 @@ impl WordBreak {
 }
 }
 
-impl_value_getter! {
-    markers: WordBreakNameToValueV1Marker / SINGLETON_WORD_BREAK_NAME_TO_VALUE_V1_MARKER, WordBreakValueToShortNameV1Marker / SINGLETON_WORD_BREAK_VALUE_TO_SHORT_NAME_V1_MARKER, WordBreakValueToLongNameV1Marker / SINGLETON_WORD_BREAK_VALUE_TO_LONG_NAME_V1_MARKER;
-    impl WordBreak {
-        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
-        /// from strings for the `Word_Break` enumerated property.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::WordBreak;
-        ///
-        /// let lookup = WordBreak::name_to_enum_mapper();
-        /// // short name for value
-        /// assert_eq!(lookup.get_strict("KA"), Some(WordBreak::Katakana));
-        /// assert_eq!(lookup.get_strict("LE"), Some(WordBreak::ALetter));
-        /// // long name for value
-        /// assert_eq!(lookup.get_strict("Katakana"), Some(WordBreak::Katakana));
-        /// assert_eq!(lookup.get_strict("ALetter"), Some(WordBreak::ALetter));
-        /// // name has incorrect casing
-        /// assert_eq!(lookup.get_strict("Aletter"), None);
-        /// // loose matching of name
-        /// assert_eq!(lookup.get_loose("Aletter"), Some(WordBreak::ALetter));
-        /// assert_eq!(lookup.get_loose("w_seg_space"), Some(WordBreak::WSegSpace));
-        /// // fake property
-        /// assert_eq!(lookup.get_strict("Quadruple_Quote"), None);
-        /// ```
-        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
-        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
-        /// for values of the `Word_Break` enumerated property.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::WordBreak;
-        ///
-        /// let lookup = WordBreak::enum_to_short_name_mapper();
-        /// assert_eq!(lookup.get(WordBreak::Katakana), Some("KA"));
-        /// assert_eq!(lookup.get(WordBreak::ALetter), Some("LE"));
-        /// assert_eq!(lookup.get(WordBreak::WSegSpace), Some("WSegSpace"));
-        /// ```
-        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
-        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
-        /// for values of the `Word_Break` enumerated property.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::WordBreak;
-        ///
-        /// let lookup = WordBreak::enum_to_long_name_mapper();
-        /// assert_eq!(lookup.get(WordBreak::Katakana), Some("Katakana"));
-        /// assert_eq!(lookup.get(WordBreak::ALetter), Some("ALetter"));
-        /// assert_eq!(lookup.get(WordBreak::WSegSpace), Some("WSegSpace"));
-        /// ```
-        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
-    }
+make_map_property! {
+    property: "Word_Break";
+    dyn_marker: WordBreak;
+    value:       WordBreak;
+    data_marker: crate::provider::WordBreakV1Marker;
+    func:
+    /// Return a [`CodePointMapDataBorrowed`] for the Word_Break Unicode enumerated
+    /// property. See [`WordBreak`].
+    ///
+    /// **Note:** Use `icu::segmenter` for an all-in-one break iterator implementation.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, WordBreak};
+    ///
+    /// assert_eq!(maps::word_break().get('.'), WordBreak::MidNumLet); // U+002E: Full Stop
+    /// assert_eq!(maps::word_break().get('，'), WordBreak::MidNum); // U+FF0C: Fullwidth Comma
+    /// ```
+    pub const word_break => SINGLETON_WORD_BREAK_V1_MARKER;
+    pub fn load_word_break();
 }
 
-/// Enumerated property Sentence_Break.
-/// See "Default Sentence Boundary Specification" in UAX #29 for the summary of
-/// each property value:
-/// <https://www.unicode.org/reports/tr29/#Default_Word_Boundaries>.
-///
-/// The numeric value is compatible with `USentenceBreak` in ICU4C.
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_properties))]
-#[allow(clippy::exhaustive_structs)] // newtype
-#[repr(transparent)]
-#[zerovec::make_ule(SentenceBreakULE)]
-pub struct SentenceBreak(pub u8);
+pub use crate::provider::props::SentenceBreak;
 
 create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
@@ -2175,92 +965,30 @@ impl SentenceBreak {
 }
 }
 
-impl_value_getter! {
-    markers: SentenceBreakNameToValueV1Marker / SINGLETON_SENTENCE_BREAK_NAME_TO_VALUE_V1_MARKER, SentenceBreakValueToShortNameV1Marker / SINGLETON_SENTENCE_BREAK_VALUE_TO_SHORT_NAME_V1_MARKER, SentenceBreakValueToLongNameV1Marker / SINGLETON_SENTENCE_BREAK_VALUE_TO_LONG_NAME_V1_MARKER;
-    impl SentenceBreak {
-        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
-        /// from strings for the `Sentence_Break` enumerated property.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::SentenceBreak;
-        ///
-        /// let lookup = SentenceBreak::name_to_enum_mapper();
-        /// // short name for value
-        /// assert_eq!(lookup.get_strict("FO"), Some(SentenceBreak::Format));
-        /// assert_eq!(lookup.get_strict("NU"), Some(SentenceBreak::Numeric));
-        /// // long name for value
-        /// assert_eq!(lookup.get_strict("Format"), Some(SentenceBreak::Format));
-        /// assert_eq!(lookup.get_strict("Numeric"), Some(SentenceBreak::Numeric));
-        /// // name has incorrect casing
-        /// assert_eq!(lookup.get_strict("fOrmat"), None);
-        /// // loose matching of name
-        /// assert_eq!(lookup.get_loose("fOrmat"), Some(SentenceBreak::Format));
-        /// // fake property
-        /// assert_eq!(lookup.get_strict("Fixer_Upper"), None);
-        /// ```
-        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
-        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
-        /// for values of the `Sentence_Break` enumerated property.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::SentenceBreak;
-        ///
-        /// let lookup = SentenceBreak::enum_to_short_name_mapper();
-        /// assert_eq!(lookup.get(SentenceBreak::Format), Some("FO"));
-        /// assert_eq!(lookup.get(SentenceBreak::Numeric), Some("NU"));
-        /// ```
-        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
-        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
-        /// for values of the `Sentence_Break` enumerated property.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::SentenceBreak;
-        ///
-        /// let lookup = SentenceBreak::enum_to_long_name_mapper();
-        /// assert_eq!(lookup.get(SentenceBreak::Format), Some("Format"));
-        /// assert_eq!(lookup.get(SentenceBreak::Numeric), Some("Numeric"));
-        /// assert_eq!(lookup.get(SentenceBreak::SContinue), Some("SContinue"));
-        /// ```
-        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
-    }
+make_map_property! {
+    property: "Sentence_Break";
+    dyn_marker: SentenceBreak;
+    value:       SentenceBreak;
+    data_marker: crate::provider::SentenceBreakV1Marker;
+    func:
+    /// Return a [`CodePointMapDataBorrowed`] for the Sentence_Break Unicode enumerated
+    /// property. See [`SentenceBreak`].
+    ///
+    /// **Note:** Use `icu::segmenter` for an all-in-one break iterator implementation.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, SentenceBreak};
+    ///
+    /// assert_eq!(maps::sentence_break().get('９'), SentenceBreak::Numeric); // U+FF19: Fullwidth Digit Nine
+    /// assert_eq!(maps::sentence_break().get(','), SentenceBreak::SContinue); // U+002C: Comma
+    /// ```
+    pub const sentence_break => SINGLETON_SENTENCE_BREAK_V1_MARKER;
+    pub fn load_sentence_break();
 }
-/// Property Canonical_Combining_Class.
-/// See UAX #15:
-/// <https://www.unicode.org/reports/tr15/>.
-///
-/// See `icu::normalizer::properties::CanonicalCombiningClassMap` for the API
-/// to look up the Canonical_Combining_Class property by scalar value.
-//
-// NOTE: The Pernosco debugger has special knowledge
-// of this struct. Please do not change the bit layout
-// or the crate-module-qualified name of this struct
-// without coordination.
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_properties))]
-#[allow(clippy::exhaustive_structs)] // newtype
-#[repr(transparent)]
-#[zerovec::make_ule(CanonicalCombiningClassULE)]
-pub struct CanonicalCombiningClass(pub u8);
+
+pub use crate::provider::props::CanonicalCombiningClass;
 
 create_const_array! {
 // These constant names come from PropertyValueAliases.txt
@@ -2328,89 +1056,31 @@ impl CanonicalCombiningClass {
 }
 }
 
-impl_value_getter! {
-    markers: CanonicalCombiningClassNameToValueV1Marker / SINGLETON_CANONICAL_COMBINING_CLASS_NAME_TO_VALUE_V1_MARKER, CanonicalCombiningClassValueToShortNameV1Marker / SINGLETON_CANONICAL_COMBINING_CLASS_VALUE_TO_SHORT_NAME_V1_MARKER, CanonicalCombiningClassValueToLongNameV1Marker / SINGLETON_CANONICAL_COMBINING_CLASS_VALUE_TO_LONG_NAME_V1_MARKER;
-    impl CanonicalCombiningClass {
-        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
-        /// from strings for the `Canonical_Combining_Class` enumerated property.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::CanonicalCombiningClass;
-        ///
-        /// let lookup = CanonicalCombiningClass::name_to_enum_mapper();
-        /// // short name for value
-        /// assert_eq!(lookup.get_strict("AL"), Some(CanonicalCombiningClass::AboveLeft));
-        /// assert_eq!(lookup.get_strict("ATBL"), Some(CanonicalCombiningClass::AttachedBelowLeft));
-        /// assert_eq!(lookup.get_strict("CCC10"), Some(CanonicalCombiningClass::CCC10));
-        /// // long name for value
-        /// assert_eq!(lookup.get_strict("Above_Left"), Some(CanonicalCombiningClass::AboveLeft));
-        /// assert_eq!(lookup.get_strict("Attached_Below_Left"), Some(CanonicalCombiningClass::AttachedBelowLeft));
-        /// // name has incorrect casing and hyphens
-        /// assert_eq!(lookup.get_strict("attached-below-left"), None);
-        /// // loose matching of name
-        /// assert_eq!(lookup.get_loose("attached-below-left"), Some(CanonicalCombiningClass::AttachedBelowLeft));
-        /// // fake property
-        /// assert_eq!(lookup.get_strict("Linear_Z"), None);
-        /// ```
-        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
-        /// Return a [`PropertyEnumToValueNameSparseMapper`], capable of looking up short names
-        /// for values of the `Canonical_Combining_Class` enumerated property.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::CanonicalCombiningClass;
-        ///
-        /// let lookup = CanonicalCombiningClass::enum_to_short_name_mapper();
-        /// assert_eq!(lookup.get(CanonicalCombiningClass::AboveLeft), Some("AL"));
-        /// assert_eq!(lookup.get(CanonicalCombiningClass::AttachedBelowLeft), Some("ATBL"));
-        /// assert_eq!(lookup.get(CanonicalCombiningClass::CCC10), Some("CCC10"));
-        /// ```
-        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameSparseMapper / PropertyEnumToValueNameSparseMapperBorrowed;
-        /// Return a [`PropertyEnumToValueNameSparseMapper`], capable of looking up long names
-        /// for values of the `Canonical_Combining_Class` enumerated property.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::CanonicalCombiningClass;
-        ///
-        /// let lookup = CanonicalCombiningClass::enum_to_long_name_mapper();
-        /// assert_eq!(lookup.get(CanonicalCombiningClass::AboveLeft), Some("Above_Left"));
-        /// assert_eq!(lookup.get(CanonicalCombiningClass::AttachedBelowLeft), Some("Attached_Below_Left"));
-        /// assert_eq!(lookup.get(CanonicalCombiningClass::CCC10), Some("CCC10"));
-        /// ```
-        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameSparseMapper / PropertyEnumToValueNameSparseMapperBorrowed;
-    }
+make_map_property! {
+    property: "Canonical_Combining_Class";
+    dyn_marker: CanonicalCombiningClass;
+    value:       CanonicalCombiningClass;
+    data_marker: crate::provider::CanonicalCombiningClassV1Marker;
+    func:
+    /// Return a [`CodePointMapData`] for the Canonical_Combining_Class Unicode property. See
+    /// [`CanonicalCombiningClass`].
+    ///
+    /// **Note:** See `icu::normalizer::CanonicalCombiningClassMap` for the preferred API
+    /// to look up the Canonical_Combining_Class property by scalar value.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, CanonicalCombiningClass};
+    ///
+    /// assert_eq!(maps::canonical_combining_class().get('a'), CanonicalCombiningClass::NotReordered); // U+0061: LATIN SMALL LETTER A
+    /// assert_eq!(maps::canonical_combining_class().get32(0x0301), CanonicalCombiningClass::Above); // U+0301: COMBINING ACUTE ACCENT
+    /// ```
+    pub const canonical_combining_class => SINGLETON_CANONICAL_COMBINING_CLASS_V1_MARKER;
+    pub fn load_canonical_combining_class();
 }
 
-/// Property Indic_Syllabic_Category.
-/// See UAX #44:
-/// <https://www.unicode.org/reports/tr44/#Indic_Syllabic_Category>.
-///
-/// The numeric value is compatible with `UIndicSyllabicCategory` in ICU4C.
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_properties))]
-#[allow(clippy::exhaustive_structs)] // newtype
-#[repr(transparent)]
-#[zerovec::make_ule(IndicSyllabicCategoryULE)]
-pub struct IndicSyllabicCategory(pub u8);
+pub use crate::provider::props::IndicSyllabicCategory;
 
 create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
@@ -2455,82 +1125,28 @@ impl IndicSyllabicCategory {
 }
 }
 
-impl_value_getter! {
-    markers: IndicSyllabicCategoryNameToValueV1Marker / SINGLETON_INDIC_SYLLABIC_CATEGORY_NAME_TO_VALUE_V1_MARKER, IndicSyllabicCategoryValueToShortNameV1Marker / SINGLETON_INDIC_SYLLABIC_CATEGORY_VALUE_TO_SHORT_NAME_V1_MARKER, IndicSyllabicCategoryValueToLongNameV1Marker / SINGLETON_INDIC_SYLLABIC_CATEGORY_VALUE_TO_LONG_NAME_V1_MARKER;
-    impl IndicSyllabicCategory {
-        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
-        /// from strings for the `Indic_Syllabic_Category` enumerated property.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::IndicSyllabicCategory;
-        ///
-        /// let lookup = IndicSyllabicCategory::name_to_enum_mapper();
-        /// // long/short name for value
-        /// assert_eq!(lookup.get_strict("Brahmi_Joining_Number"), Some(IndicSyllabicCategory::BrahmiJoiningNumber));
-        /// assert_eq!(lookup.get_strict("Vowel_Independent"), Some(IndicSyllabicCategory::VowelIndependent));
-        /// // name has incorrect casing and hyphens
-        /// assert_eq!(lookup.get_strict("brahmi-joining-number"), None);
-        /// // loose matching of name
-        /// assert_eq!(lookup.get_loose("brahmi-joining-number"), Some(IndicSyllabicCategory::BrahmiJoiningNumber));
-        /// // fake property
-        /// assert_eq!(lookup.get_strict("Tone_Number"), None);
-        /// ```
-        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
-        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
-        /// for values of the `Indic_Syllabic_Category` enumerated property.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::IndicSyllabicCategory;
-        ///
-        /// let lookup = IndicSyllabicCategory::enum_to_short_name_mapper();
-        /// assert_eq!(lookup.get(IndicSyllabicCategory::BrahmiJoiningNumber), Some("Brahmi_Joining_Number"));
-        /// assert_eq!(lookup.get(IndicSyllabicCategory::VowelIndependent), Some("Vowel_Independent"));
-        /// ```
-        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
-        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
-        /// for values of the `Indic_Syllabic_Category` enumerated property.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::IndicSyllabicCategory;
-        ///
-        /// let lookup = IndicSyllabicCategory::enum_to_long_name_mapper();
-        /// assert_eq!(lookup.get(IndicSyllabicCategory::BrahmiJoiningNumber), Some("Brahmi_Joining_Number"));
-        /// assert_eq!(lookup.get(IndicSyllabicCategory::VowelIndependent), Some("Vowel_Independent"));
-        /// ```
-        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
-    }
+make_map_property! {
+    property: "Indic_Syllabic_Category";
+    dyn_marker: IndicSyllabicCategory;
+    value:       IndicSyllabicCategory;
+    data_marker: crate::provider::IndicSyllabicCategoryV1Marker;
+    func:
+    /// Return a [`CodePointMapData`] for the Indic_Syllabic_Category Unicode property. See
+    /// [`IndicSyllabicCategory`].
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, IndicSyllabicCategory};
+    ///
+    /// assert_eq!(maps::indic_syllabic_category().get('a'), IndicSyllabicCategory::Other);
+    /// assert_eq!(maps::indic_syllabic_category().get32(0x0900), IndicSyllabicCategory::Bindu); // U+0900: DEVANAGARI SIGN INVERTED CANDRABINDU
+    /// ```
+    pub const indic_syllabic_category => SINGLETON_INDIC_SYLLABIC_CATEGORY_V1_MARKER;
+    pub fn load_indic_syllabic_category();
 }
-/// Enumerated property Joining_Type.
-/// See Section 9.2, Arabic Cursive Joining in The Unicode Standard for the summary of
-/// each property value.
-///
-/// The numeric value is compatible with `UJoiningType` in ICU4C.
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_properties))]
-#[allow(clippy::exhaustive_structs)] // newtype
-#[repr(transparent)]
-#[zerovec::make_ule(JoiningTypeULE)]
-pub struct JoiningType(pub u8);
+
+pub use crate::provider::props::JoiningType;
 
 create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
@@ -2545,80 +1161,1536 @@ impl JoiningType {
 }
 }
 
-impl_value_getter! {
-    markers: JoiningTypeNameToValueV1Marker / SINGLETON_JOINING_TYPE_NAME_TO_VALUE_V1_MARKER, JoiningTypeValueToShortNameV1Marker / SINGLETON_JOINING_TYPE_VALUE_TO_SHORT_NAME_V1_MARKER, JoiningTypeValueToLongNameV1Marker / SINGLETON_JOINING_TYPE_VALUE_TO_LONG_NAME_V1_MARKER;
-    impl JoiningType {
-        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
-        /// from strings for the `Joining_Type` enumerated property.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::JoiningType;
-        ///
-        /// let lookup = JoiningType::name_to_enum_mapper();
-        /// // short name for value
-        /// assert_eq!(lookup.get_strict("T"), Some(JoiningType::Transparent));
-        /// assert_eq!(lookup.get_strict("D"), Some(JoiningType::DualJoining));
-        /// // long name for value
-        /// assert_eq!(lookup.get_strict("Join_Causing"), Some(JoiningType::JoinCausing));
-        /// assert_eq!(lookup.get_strict("Non_Joining"), Some(JoiningType::NonJoining));
-        /// // name has incorrect casing
-        /// assert_eq!(lookup.get_strict("LEFT_JOINING"), None);
-        /// // loose matching of name
-        /// assert_eq!(lookup.get_loose("LEFT_JOINING"), Some(JoiningType::LeftJoining));
-        /// // fake property
-        /// assert_eq!(lookup.get_strict("Inner_Joining"), None);
-        /// ```
-        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
-        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
-        /// for values of the `Joining_Type` enumerated property.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::JoiningType;
-        ///
-        /// let lookup = JoiningType::enum_to_short_name_mapper();
-        /// assert_eq!(lookup.get(JoiningType::JoinCausing), Some("C"));
-        /// assert_eq!(lookup.get(JoiningType::LeftJoining), Some("L"));
-        /// ```
-        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
-        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
-        /// for values of the `Joining_Type` enumerated property.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::JoiningType;
-        ///
-        /// let lookup = JoiningType::enum_to_long_name_mapper();
-        /// assert_eq!(lookup.get(JoiningType::Transparent), Some("Transparent"));
-        /// assert_eq!(lookup.get(JoiningType::NonJoining), Some("Non_Joining"));
-        /// assert_eq!(lookup.get(JoiningType::RightJoining), Some("Right_Joining"));
-        /// ```
-        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
+make_map_property! {
+    property: "Joining_Type";
+    dyn_marker: JoiningType;
+    value:       JoiningType;
+    data_marker: crate::provider::JoiningTypeV1Marker;
+    func:
+    /// Return a [`CodePointMapDataBorrowed`] for the Joining_Type Unicode enumerated
+    /// property. See [`JoiningType`].
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, JoiningType};
+    ///
+    /// assert_eq!(maps::joining_type().get('ؠ'), JoiningType::DualJoining); // U+0620: Arabic Letter Kashmiri Yeh
+    /// assert_eq!(maps::joining_type().get('𐫍'), JoiningType::LeftJoining); // U+10ACD: Manichaean Letter Heth
+    /// ```
+    pub const joining_type => SINGLETON_JOINING_TYPE_V1_MARKER;
+    pub fn load_joining_type();
+}
+
+macro_rules! make_code_point_set_property {
+    (
+        // currently unused
+        property: $p:expr;
+        dyn_marker: $d:ident;
+        data_marker: $data_marker:ty;
+        runtime_value: $value:expr;
+        func:
+        $(#[$doc:meta])+
+        // currently unused
+        $cvis:vis const fn $constname:ident() => $singleton_name:ident;
+        // currently unused
+        $vis:vis fn $funcname:ident();
+    ) => {
+        $(#[$doc])+
+        #[derive(Debug)]
+        #[non_exhaustive]
+        pub struct $d;
+
+        impl crate::private::Sealed for $d {}
+        impl crate::code_point_set::CodePointSetProperty for $d {
+            type DataMarker = $data_marker;
+            #[cfg(feature = "compiled_data")]
+            const SINGLETON: &'static crate::provider::PropertyCodePointSetV1<'static> =
+                &crate::provider::Baked::$singleton_name;
+            const VALUE: crate::runtime::UnicodeProperty = $value;
+        }
+    };
+}
+
+make_code_point_set_property! {
+    property: "ASCII_Hex_Digit";
+    dyn_marker: AsciiHexDigit;
+    data_marker: crate::provider::AsciiHexDigitV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::AsciiHexDigit;
+    func:
+    /// ASCII characters commonly used for the representation of hexadecimal numbers
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let ascii_hex_digit = sets::ascii_hex_digit();
+    ///
+    /// assert!(ascii_hex_digit.contains('3'));
+    /// assert!(!ascii_hex_digit.contains('੩'));  // U+0A69 GURMUKHI DIGIT THREE
+    /// assert!(ascii_hex_digit.contains('A'));
+    /// assert!(!ascii_hex_digit.contains('Ä'));  // U+00C4 LATIN CAPITAL LETTER A WITH DIAERESIS
+    /// ```
+    pub const fn ascii_hex_digit() => SINGLETON_ASCII_HEX_DIGIT_V1_MARKER;
+    pub fn load_ascii_hex_digit();
+}
+
+make_code_point_set_property! {
+    property: "Alnum";
+    dyn_marker: Alnum;
+    data_marker: crate::provider::AlnumV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::Alnum;
+    func:
+    /// Characters with the Alphabetic or Decimal_Number property
+    /// This is defined for POSIX compatibility.
+
+    pub const fn alnum() => SINGLETON_ALNUM_V1_MARKER;
+    pub fn load_alnum();
+}
+
+make_code_point_set_property! {
+    property: "Alphabetic";
+    dyn_marker: Alphabetic;
+    data_marker: crate::provider::AlphabeticV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::Alphabetic;
+    func:
+    /// Alphabetic characters
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let alphabetic = sets::alphabetic();
+    ///
+    /// assert!(!alphabetic.contains('3'));
+    /// assert!(!alphabetic.contains('੩'));  // U+0A69 GURMUKHI DIGIT THREE
+    /// assert!(alphabetic.contains('A'));
+    /// assert!(alphabetic.contains('Ä'));  // U+00C4 LATIN CAPITAL LETTER A WITH DIAERESIS
+    /// ```
+
+    pub const fn alphabetic() => SINGLETON_ALPHABETIC_V1_MARKER;
+    pub fn load_alphabetic();
+}
+
+make_code_point_set_property! {
+    property: "Bidi_Control";
+    dyn_marker: BidiControl;
+    data_marker: crate::provider::BidiControlV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::BidiControl;
+    func:
+    /// Format control characters which have specific functions in the Unicode Bidirectional
+    /// Algorithm
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let bidi_control = sets::bidi_control();
+    ///
+    /// assert!(bidi_control.contains32(0x200F));  // RIGHT-TO-LEFT MARK
+    /// assert!(!bidi_control.contains('ش'));  // U+0634 ARABIC LETTER SHEEN
+    /// ```
+
+    pub const fn bidi_control() => SINGLETON_BIDI_CONTROL_V1_MARKER;
+    pub fn load_bidi_control();
+}
+
+make_code_point_set_property! {
+    property: "Bidi_Mirrored";
+    dyn_marker: BidiMirrored;
+    data_marker: crate::provider::BidiMirroredV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::BidiMirrored;
+    func:
+    /// Characters that are mirrored in bidirectional text
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let bidi_mirrored = sets::bidi_mirrored();
+    ///
+    /// assert!(bidi_mirrored.contains('['));
+    /// assert!(bidi_mirrored.contains(']'));
+    /// assert!(bidi_mirrored.contains('∑'));  // U+2211 N-ARY SUMMATION
+    /// assert!(!bidi_mirrored.contains('ཉ'));  // U+0F49 TIBETAN LETTER NYA
+    /// ```
+
+    pub const fn bidi_mirrored() => SINGLETON_BIDI_MIRRORED_V1_MARKER;
+    pub fn load_bidi_mirrored();
+}
+
+make_code_point_set_property! {
+    property: "Blank";
+    dyn_marker: Blank;
+    data_marker: crate::provider::BlankV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::Blank;
+    func:
+    /// Horizontal whitespace characters
+
+    pub const fn blank() => SINGLETON_BLANK_V1_MARKER;
+    pub fn load_blank();
+}
+
+make_code_point_set_property! {
+    property: "Cased";
+    dyn_marker: Cased;
+    data_marker: crate::provider::CasedV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::Cased;
+    func:
+    /// Uppercase, lowercase, and titlecase characters
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let cased = sets::cased();
+    ///
+    /// assert!(cased.contains('Ꙡ'));  // U+A660 CYRILLIC CAPITAL LETTER REVERSED TSE
+    /// assert!(!cased.contains('ދ'));  // U+078B THAANA LETTER DHAALU
+    /// ```
+
+    pub const fn cased() => SINGLETON_CASED_V1_MARKER;
+    pub fn load_cased();
+}
+
+make_code_point_set_property! {
+    property: "Case_Ignorable";
+    dyn_marker: CaseIgnorable;
+    data_marker: crate::provider::CaseIgnorableV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::CaseIgnorable;
+    func:
+    /// Characters which are ignored for casing purposes
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let case_ignorable = sets::case_ignorable();
+    ///
+    /// assert!(case_ignorable.contains(':'));
+    /// assert!(!case_ignorable.contains('λ'));  // U+03BB GREEK SMALL LETTER LAMBDA
+    /// ```
+
+    pub const fn case_ignorable() => SINGLETON_CASE_IGNORABLE_V1_MARKER;
+    pub fn load_case_ignorable();
+}
+
+make_code_point_set_property! {
+    property: "Full_Composition_Exclusion";
+    dyn_marker: FullCompositionExclusion;
+    data_marker: crate::provider::FullCompositionExclusionV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::FullCompositionExclusion;
+    func:
+    /// Characters that are excluded from composition
+    /// See <https://unicode.org/Public/UNIDATA/CompositionExclusions.txt>
+
+    pub const fn full_composition_exclusion() => SINGLETON_FULL_COMPOSITION_EXCLUSION_V1_MARKER;
+    pub fn load_full_composition_exclusion();
+}
+
+make_code_point_set_property! {
+    property: "Changes_When_Casefolded";
+    dyn_marker: ChangesWhenCasefolded;
+    data_marker: crate::provider::ChangesWhenCasefoldedV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::ChangesWhenCasefolded;
+    func:
+    /// Characters whose normalized forms are not stable under case folding
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let changes_when_casefolded = sets::changes_when_casefolded();
+    ///
+    /// assert!(changes_when_casefolded.contains('ß'));  // U+00DF LATIN SMALL LETTER SHARP S
+    /// assert!(!changes_when_casefolded.contains('ᜉ'));  // U+1709 TAGALOG LETTER PA
+    /// ```
+
+    pub const fn changes_when_casefolded() => SINGLETON_CHANGES_WHEN_CASEFOLDED_V1_MARKER;
+    pub fn load_changes_when_casefolded();
+}
+
+make_code_point_set_property! {
+    property: "Changes_When_Casemapped";
+    dyn_marker: ChangesWhenCasemapped;
+    data_marker: crate::provider::ChangesWhenCasemappedV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::ChangesWhenCasemapped;
+    func:
+    /// Characters which may change when they undergo case mapping
+
+    pub const fn changes_when_casemapped() => SINGLETON_CHANGES_WHEN_CASEMAPPED_V1_MARKER;
+    pub fn load_changes_when_casemapped();
+}
+
+make_code_point_set_property! {
+    property: "Changes_When_NFKC_Casefolded";
+    dyn_marker: ChangesWhenNfkcCasefolded;
+    data_marker: crate::provider::ChangesWhenNfkcCasefoldedV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::ChangesWhenNfkcCasefolded;
+    func:
+    /// Characters which are not identical to their NFKC_Casefold mapping
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let changes_when_nfkc_casefolded = sets::changes_when_nfkc_casefolded();
+    ///
+    /// assert!(changes_when_nfkc_casefolded.contains('🄵'));  // U+1F135 SQUARED LATIN CAPITAL LETTER F
+    /// assert!(!changes_when_nfkc_casefolded.contains('f'));
+    /// ```
+
+    pub const fn changes_when_nfkc_casefolded() => SINGLETON_CHANGES_WHEN_NFKC_CASEFOLDED_V1_MARKER;
+    pub fn load_changes_when_nfkc_casefolded();
+}
+
+make_code_point_set_property! {
+    property: "Changes_When_Lowercased";
+    dyn_marker: ChangesWhenLowercased;
+    data_marker: crate::provider::ChangesWhenLowercasedV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::ChangesWhenLowercased;
+    func:
+    /// Characters whose normalized forms are not stable under a toLowercase mapping
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let changes_when_lowercased = sets::changes_when_lowercased();
+    ///
+    /// assert!(changes_when_lowercased.contains('Ⴔ'));  // U+10B4 GEORGIAN CAPITAL LETTER PHAR
+    /// assert!(!changes_when_lowercased.contains('ფ'));  // U+10E4 GEORGIAN LETTER PHAR
+    /// ```
+
+    pub const fn changes_when_lowercased() => SINGLETON_CHANGES_WHEN_LOWERCASED_V1_MARKER;
+    pub fn load_changes_when_lowercased();
+}
+
+make_code_point_set_property! {
+    property: "Changes_When_Titlecased";
+    dyn_marker: ChangesWhenTitlecased;
+    data_marker: crate::provider::ChangesWhenTitlecasedV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::ChangesWhenTitlecased;
+    func:
+    /// Characters whose normalized forms are not stable under a toTitlecase mapping
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let changes_when_titlecased = sets::changes_when_titlecased();
+    ///
+    /// assert!(changes_when_titlecased.contains('æ'));  // U+00E6 LATIN SMALL LETTER AE
+    /// assert!(!changes_when_titlecased.contains('Æ'));  // U+00E6 LATIN CAPITAL LETTER AE
+    /// ```
+
+    pub const fn changes_when_titlecased() => SINGLETON_CHANGES_WHEN_TITLECASED_V1_MARKER;
+    pub fn load_changes_when_titlecased();
+}
+
+make_code_point_set_property! {
+    property: "Changes_When_Uppercased";
+    dyn_marker: ChangesWhenUppercased;
+    data_marker: crate::provider::ChangesWhenUppercasedV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::ChangesWhenUppercased;
+    func:
+    /// Characters whose normalized forms are not stable under a toUppercase mapping
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let changes_when_uppercased = sets::changes_when_uppercased();
+    ///
+    /// assert!(changes_when_uppercased.contains('ւ'));  // U+0582 ARMENIAN SMALL LETTER YIWN
+    /// assert!(!changes_when_uppercased.contains('Ւ'));  // U+0552 ARMENIAN CAPITAL LETTER YIWN
+    /// ```
+
+    pub const fn changes_when_uppercased() => SINGLETON_CHANGES_WHEN_UPPERCASED_V1_MARKER;
+    pub fn load_changes_when_uppercased();
+}
+
+make_code_point_set_property! {
+    property: "Dash";
+    dyn_marker: Dash;
+    data_marker: crate::provider::DashV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::Dash;
+    func:
+    /// Punctuation characters explicitly called out as dashes in the Unicode Standard, plus
+    /// their compatibility equivalents
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let dash = sets::dash();
+    ///
+    /// assert!(dash.contains('⸺'));  // U+2E3A TWO-EM DASH
+    /// assert!(dash.contains('-'));  // U+002D
+    /// assert!(!dash.contains('='));  // U+003D
+    /// ```
+
+    pub const fn dash() => SINGLETON_DASH_V1_MARKER;
+    pub fn load_dash();
+}
+
+make_code_point_set_property! {
+    property: "Deprecated";
+    dyn_marker: Deprecated;
+    data_marker: crate::provider::DeprecatedV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::Deprecated;
+    func:
+    /// Deprecated characters. No characters will ever be removed from the standard, but the
+    /// usage of deprecated characters is strongly discouraged.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let deprecated = sets::deprecated();
+    ///
+    /// assert!(deprecated.contains('ឣ'));  // U+17A3 KHMER INDEPENDENT VOWEL QAQ
+    /// assert!(!deprecated.contains('A'));
+    /// ```
+
+    pub const fn deprecated() => SINGLETON_DEPRECATED_V1_MARKER;
+    pub fn load_deprecated();
+}
+
+make_code_point_set_property! {
+    property: "Default_Ignorable_Code_Point";
+    dyn_marker: DefaultIgnorableCodePoint;
+    data_marker: crate::provider::DefaultIgnorableCodePointV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::DefaultIgnorableCodePoint;
+    func:
+    /// For programmatic determination of default ignorable code points.  New characters that
+    /// should be ignored in rendering (unless explicitly supported) will be assigned in these
+    /// ranges, permitting programs to correctly handle the default rendering of such
+    /// characters when not otherwise supported.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let default_ignorable_code_point = sets::default_ignorable_code_point();
+    ///
+    /// assert!(default_ignorable_code_point.contains32(0x180B));  // MONGOLIAN FREE VARIATION SELECTOR ONE
+    /// assert!(!default_ignorable_code_point.contains('E'));
+    /// ```
+
+    pub const fn default_ignorable_code_point() => SINGLETON_DEFAULT_IGNORABLE_CODE_POINT_V1_MARKER;
+    pub fn load_default_ignorable_code_point();
+}
+
+make_code_point_set_property! {
+    property: "Diacritic";
+    dyn_marker: Diacritic;
+    data_marker: crate::provider::DiacriticV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::Diacritic;
+    func:
+    /// Characters that linguistically modify the meaning of another character to which they apply
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let diacritic = sets::diacritic();
+    ///
+    /// assert!(diacritic.contains('\u{05B3}'));  // HEBREW POINT HATAF QAMATS
+    /// assert!(!diacritic.contains('א'));  // U+05D0 HEBREW LETTER ALEF
+    /// ```
+
+    pub const fn diacritic() => SINGLETON_DIACRITIC_V1_MARKER;
+    pub fn load_diacritic();
+}
+
+make_code_point_set_property! {
+    property: "Emoji_Modifier_Base";
+    dyn_marker: EmojiModifierBase;
+    data_marker: crate::provider::EmojiModifierBaseV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::EmojiModifierBase;
+    func:
+    /// Characters that can serve as a base for emoji modifiers
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let emoji_modifier_base = sets::emoji_modifier_base();
+    ///
+    /// assert!(emoji_modifier_base.contains('✊'));  // U+270A RAISED FIST
+    /// assert!(!emoji_modifier_base.contains('⛰'));  // U+26F0 MOUNTAIN
+    /// ```
+
+    pub const fn emoji_modifier_base() => SINGLETON_EMOJI_MODIFIER_BASE_V1_MARKER;
+    pub fn load_emoji_modifier_base();
+}
+
+make_code_point_set_property! {
+    property: "Emoji_Component";
+    dyn_marker: EmojiComponent;
+    data_marker: crate::provider::EmojiComponentV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::EmojiComponent;
+    func:
+    /// Characters used in emoji sequences that normally do not appear on emoji keyboards as
+    /// separate choices, such as base characters for emoji keycaps
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let emoji_component = sets::emoji_component();
+    ///
+    /// assert!(emoji_component.contains('🇹'));  // U+1F1F9 REGIONAL INDICATOR SYMBOL LETTER T
+    /// assert!(emoji_component.contains32(0x20E3));  // COMBINING ENCLOSING KEYCAP
+    /// assert!(emoji_component.contains('7'));
+    /// assert!(!emoji_component.contains('T'));
+    /// ```
+
+    pub const fn emoji_component() => SINGLETON_EMOJI_COMPONENT_V1_MARKER;
+    pub fn load_emoji_component();
+}
+
+make_code_point_set_property! {
+    property: "Emoji_Modifier";
+    dyn_marker: EmojiModifier;
+    data_marker: crate::provider::EmojiModifierV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::EmojiModifier;
+    func:
+    /// Characters that are emoji modifiers
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let emoji_modifier = sets::emoji_modifier();
+    ///
+    /// assert!(emoji_modifier.contains32(0x1F3FD));  // EMOJI MODIFIER FITZPATRICK TYPE-4
+    /// assert!(!emoji_modifier.contains32(0x200C));  // ZERO WIDTH NON-JOINER
+    /// ```
+
+    pub const fn emoji_modifier() => SINGLETON_EMOJI_MODIFIER_V1_MARKER;
+    pub fn load_emoji_modifier();
+}
+
+make_code_point_set_property! {
+    property: "Emoji";
+    dyn_marker: Emoji;
+    data_marker: crate::provider::EmojiV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::Emoji;
+    func:
+    /// Characters that are emoji
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let emoji = sets::emoji();
+    ///
+    /// assert!(emoji.contains('🔥'));  // U+1F525 FIRE
+    /// assert!(!emoji.contains('V'));
+    /// ```
+
+    pub const fn emoji() => SINGLETON_EMOJI_V1_MARKER;
+    pub fn load_emoji();
+}
+
+make_code_point_set_property! {
+    property: "Emoji_Presentation";
+    dyn_marker: EmojiPresentation;
+    data_marker: crate::provider::EmojiPresentationV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::EmojiPresentation;
+    func:
+    /// Characters that have emoji presentation by default
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let emoji_presentation = sets::emoji_presentation();
+    ///
+    /// assert!(emoji_presentation.contains('🦬')); // U+1F9AC BISON
+    /// assert!(!emoji_presentation.contains('♻'));  // U+267B BLACK UNIVERSAL RECYCLING SYMBOL
+    /// ```
+
+    pub const fn emoji_presentation() => SINGLETON_EMOJI_PRESENTATION_V1_MARKER;
+    pub fn load_emoji_presentation();
+}
+
+make_code_point_set_property! {
+    property: "Extender";
+    dyn_marker: Extender;
+    data_marker: crate::provider::ExtenderV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::Extender;
+    func:
+    /// Characters whose principal function is to extend the value of a preceding alphabetic
+    /// character or to extend the shape of adjacent characters.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let extender = sets::extender();
+    ///
+    /// assert!(extender.contains('ヾ'));  // U+30FE KATAKANA VOICED ITERATION MARK
+    /// assert!(extender.contains('ー'));  // U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK
+    /// assert!(!extender.contains('・'));  // U+30FB KATAKANA MIDDLE DOT
+    /// ```
+
+    pub const fn extender() => SINGLETON_EXTENDER_V1_MARKER;
+    pub fn load_extender();
+}
+
+make_code_point_set_property! {
+    property: "Extended_Pictographic";
+    dyn_marker: ExtendedPictographic;
+    data_marker: crate::provider::ExtendedPictographicV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::ExtendedPictographic;
+    func:
+    /// Pictographic symbols, as well as reserved ranges in blocks largely associated with
+    /// emoji characters
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let extended_pictographic = sets::extended_pictographic();
+    ///
+    /// assert!(extended_pictographic.contains('🥳')); // U+1F973 FACE WITH PARTY HORN AND PARTY HAT
+    /// assert!(!extended_pictographic.contains('🇪'));  // U+1F1EA REGIONAL INDICATOR SYMBOL LETTER E
+    /// ```
+
+    pub const fn extended_pictographic() => SINGLETON_EXTENDED_PICTOGRAPHIC_V1_MARKER;
+    pub fn load_extended_pictographic();
+}
+
+make_code_point_set_property! {
+    property: "Graph";
+    dyn_marker: Graph;
+    data_marker: crate::provider::GraphV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::Graph;
+    func:
+    /// Visible characters.
+    /// This is defined for POSIX compatibility.
+
+    pub const fn graph() => SINGLETON_GRAPH_V1_MARKER;
+    pub fn load_graph();
+}
+
+make_code_point_set_property! {
+    property: "Grapheme_Base";
+    dyn_marker: GraphemeBase;
+    data_marker: crate::provider::GraphemeBaseV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::GraphemeBase;
+    func:
+    /// Property used together with the definition of Standard Korean Syllable Block to define
+    /// "Grapheme base". See D58 in Chapter 3, Conformance in the Unicode Standard.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let grapheme_base = sets::grapheme_base();
+    ///
+    /// assert!(grapheme_base.contains('ക'));  // U+0D15 MALAYALAM LETTER KA
+    /// assert!(grapheme_base.contains('\u{0D3F}'));  // U+0D3F MALAYALAM VOWEL SIGN I
+    /// assert!(!grapheme_base.contains('\u{0D3E}'));  // U+0D3E MALAYALAM VOWEL SIGN AA
+    /// ```
+
+    pub const fn grapheme_base() => SINGLETON_GRAPHEME_BASE_V1_MARKER;
+    pub fn load_grapheme_base();
+}
+
+make_code_point_set_property! {
+    property: "Grapheme_Extend";
+    dyn_marker: GraphemeExtend;
+    data_marker: crate::provider::GraphemeExtendV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::GraphemeExtend;
+    func:
+    /// Property used to define "Grapheme extender". See D59 in Chapter 3, Conformance in the
+    /// Unicode Standard.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let grapheme_extend = sets::grapheme_extend();
+    ///
+    /// assert!(!grapheme_extend.contains('ക'));  // U+0D15 MALAYALAM LETTER KA
+    /// assert!(!grapheme_extend.contains('\u{0D3F}'));  // U+0D3F MALAYALAM VOWEL SIGN I
+    /// assert!(grapheme_extend.contains('\u{0D3E}'));  // U+0D3E MALAYALAM VOWEL SIGN AA
+    /// ```
+
+    pub const fn grapheme_extend() => SINGLETON_GRAPHEME_EXTEND_V1_MARKER;
+    pub fn load_grapheme_extend();
+}
+
+make_code_point_set_property! {
+    property: "Grapheme_Link";
+    dyn_marker: GraphemeLink;
+    data_marker: crate::provider::GraphemeLinkV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::GraphemeLink;
+    func:
+    /// Deprecated property. Formerly proposed for programmatic determination of grapheme
+    /// cluster boundaries.
+
+    pub const fn grapheme_link() => SINGLETON_GRAPHEME_LINK_V1_MARKER;
+    pub fn load_grapheme_link();
+}
+
+make_code_point_set_property! {
+    property: "Hex_Digit";
+    dyn_marker: HexDigit;
+    data_marker: crate::provider::HexDigitV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::HexDigit;
+    func:
+    /// Characters commonly used for the representation of hexadecimal numbers, plus their
+    /// compatibility equivalents
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let hex_digit = sets::hex_digit();
+    ///
+    /// assert!(hex_digit.contains('0'));
+    /// assert!(!hex_digit.contains('੩'));  // U+0A69 GURMUKHI DIGIT THREE
+    /// assert!(hex_digit.contains('f'));
+    /// assert!(hex_digit.contains('ｆ'));  // U+FF46 FULLWIDTH LATIN SMALL LETTER F
+    /// assert!(hex_digit.contains('Ｆ'));  // U+FF26 FULLWIDTH LATIN CAPITAL LETTER F
+    /// assert!(!hex_digit.contains('Ä'));  // U+00C4 LATIN CAPITAL LETTER A WITH DIAERESIS
+    /// ```
+
+    pub const fn hex_digit() => SINGLETON_HEX_DIGIT_V1_MARKER;
+    pub fn load_hex_digit();
+}
+
+make_code_point_set_property! {
+    property: "Hyphen";
+    dyn_marker: Hyphen;
+    data_marker: crate::provider::HyphenV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::Hyphen;
+    func:
+    /// Deprecated property. Dashes which are used to mark connections between pieces of
+    /// words, plus the Katakana middle dot.
+
+    pub const fn hyphen() => SINGLETON_HYPHEN_V1_MARKER;
+    pub fn load_hyphen();
+}
+
+make_code_point_set_property! {
+    property: "Id_Continue";
+    dyn_marker: IdContinue;
+    data_marker: crate::provider::IdContinueV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::IdContinue;
+    func:
+    /// Characters that can come after the first character in an identifier. If using NFKC to
+    /// fold differences between characters, use [`XidContinue`] instead.  See
+    /// [`Unicode Standard Annex #31`](https://www.unicode.org/reports/tr31/tr31-35.html) for
+    /// more details.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let id_continue = sets::id_continue();
+    ///
+    /// assert!(id_continue.contains('x'));
+    /// assert!(id_continue.contains('1'));
+    /// assert!(id_continue.contains('_'));
+    /// assert!(id_continue.contains('ߝ'));  // U+07DD NKO LETTER FA
+    /// assert!(!id_continue.contains('ⓧ'));  // U+24E7 CIRCLED LATIN SMALL LETTER X
+    /// assert!(id_continue.contains32(0xFC5E));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
+    /// ```
+
+    pub const fn id_continue() => SINGLETON_ID_CONTINUE_V1_MARKER;
+    pub fn load_id_continue();
+}
+
+make_code_point_set_property! {
+    property: "Ideographic";
+    dyn_marker: Ideographic;
+    data_marker: crate::provider::IdeographicV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::Ideographic;
+    func:
+    /// Characters considered to be CJKV (Chinese, Japanese, Korean, and Vietnamese)
+    /// ideographs, or related siniform ideographs
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let ideographic = sets::ideographic();
+    ///
+    /// assert!(ideographic.contains('川'));  // U+5DDD CJK UNIFIED IDEOGRAPH-5DDD
+    /// assert!(!ideographic.contains('밥'));  // U+BC25 HANGUL SYLLABLE BAB
+    /// ```
+
+    pub const fn ideographic() => SINGLETON_IDEOGRAPHIC_V1_MARKER;
+    pub fn load_ideographic();
+}
+
+make_code_point_set_property! {
+    property: "Id_Start";
+    dyn_marker: IdStart;
+    data_marker: crate::provider::IdStartV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::IdStart;
+    func:
+    /// Characters that can begin an identifier. If using NFKC to fold differences between
+    /// characters, use [`XidStart`] instead.  See [`Unicode Standard Annex
+    /// #31`](https://www.unicode.org/reports/tr31/tr31-35.html) for more details.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let id_start = sets::id_start();
+    ///
+    /// assert!(id_start.contains('x'));
+    /// assert!(!id_start.contains('1'));
+    /// assert!(!id_start.contains('_'));
+    /// assert!(id_start.contains('ߝ'));  // U+07DD NKO LETTER FA
+    /// assert!(!id_start.contains('ⓧ'));  // U+24E7 CIRCLED LATIN SMALL LETTER X
+    /// assert!(id_start.contains32(0xFC5E));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
+    /// ```
+
+    pub const fn id_start() => SINGLETON_ID_START_V1_MARKER;
+    pub fn load_id_start();
+}
+
+make_code_point_set_property! {
+    property: "Ids_Binary_Operator";
+    dyn_marker: IdsBinaryOperator;
+    data_marker: crate::provider::IdsBinaryOperatorV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::IdsBinaryOperator;
+    func:
+    /// Characters used in Ideographic Description Sequences
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let ids_binary_operator = sets::ids_binary_operator();
+    ///
+    /// assert!(ids_binary_operator.contains32(0x2FF5));  // IDEOGRAPHIC DESCRIPTION CHARACTER SURROUND FROM ABOVE
+    /// assert!(!ids_binary_operator.contains32(0x3006));  // IDEOGRAPHIC CLOSING MARK
+    /// ```
+
+    pub const fn ids_binary_operator() => SINGLETON_IDS_BINARY_OPERATOR_V1_MARKER;
+    pub fn load_ids_binary_operator();
+}
+
+make_code_point_set_property! {
+    property: "Ids_Trinary_Operator";
+    dyn_marker: IdsTrinaryOperator;
+    data_marker: crate::provider::IdsTrinaryOperatorV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::IdsTrinaryOperator;
+    func:
+    /// Characters used in Ideographic Description Sequences
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let ids_trinary_operator = sets::ids_trinary_operator();
+    ///
+    /// assert!(ids_trinary_operator.contains32(0x2FF2));  // IDEOGRAPHIC DESCRIPTION CHARACTER LEFT TO MIDDLE AND RIGHT
+    /// assert!(ids_trinary_operator.contains32(0x2FF3));  // IDEOGRAPHIC DESCRIPTION CHARACTER ABOVE TO MIDDLE AND BELOW
+    /// assert!(!ids_trinary_operator.contains32(0x2FF4));
+    /// assert!(!ids_trinary_operator.contains32(0x2FF5));  // IDEOGRAPHIC DESCRIPTION CHARACTER SURROUND FROM ABOVE
+    /// assert!(!ids_trinary_operator.contains32(0x3006));  // IDEOGRAPHIC CLOSING MARK
+    /// ```
+
+    pub const fn ids_trinary_operator() => SINGLETON_IDS_TRINARY_OPERATOR_V1_MARKER;
+    pub fn load_ids_trinary_operator();
+}
+
+make_code_point_set_property! {
+    property: "Join_Control";
+    dyn_marker: JoinControl;
+    data_marker: crate::provider::JoinControlV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::JoinControl;
+    func:
+    /// Format control characters which have specific functions for control of cursive joining
+    /// and ligation
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let join_control = sets::join_control();
+    ///
+    /// assert!(join_control.contains32(0x200C));  // ZERO WIDTH NON-JOINER
+    /// assert!(join_control.contains32(0x200D));  // ZERO WIDTH JOINER
+    /// assert!(!join_control.contains32(0x200E));
+    /// ```
+
+    pub const fn join_control() => SINGLETON_JOIN_CONTROL_V1_MARKER;
+    pub fn load_join_control();
+}
+
+make_code_point_set_property! {
+    property: "Logical_Order_Exception";
+    dyn_marker: LogicalOrderException;
+    data_marker: crate::provider::LogicalOrderExceptionV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::LogicalOrderException;
+    func:
+    /// A small number of spacing vowel letters occurring in certain Southeast Asian scripts such as Thai and Lao
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let logical_order_exception = sets::logical_order_exception();
+    ///
+    /// assert!(logical_order_exception.contains('ແ'));  // U+0EC1 LAO VOWEL SIGN EI
+    /// assert!(!logical_order_exception.contains('ະ'));  // U+0EB0 LAO VOWEL SIGN A
+    /// ```
+
+    pub const fn logical_order_exception() => SINGLETON_LOGICAL_ORDER_EXCEPTION_V1_MARKER;
+    pub fn load_logical_order_exception();
+}
+
+make_code_point_set_property! {
+    property: "Lowercase";
+    dyn_marker: Lowercase;
+    data_marker: crate::provider::LowercaseV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::Lowercase;
+    func:
+    /// Lowercase characters
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let lowercase = sets::lowercase();
+    ///
+    /// assert!(lowercase.contains('a'));
+    /// assert!(!lowercase.contains('A'));
+    /// ```
+
+    pub const fn lowercase() => SINGLETON_LOWERCASE_V1_MARKER;
+    pub fn load_lowercase();
+}
+
+make_code_point_set_property! {
+    property: "Math";
+    dyn_marker: Math;
+    data_marker: crate::provider::MathV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::Math;
+    func:
+    /// Characters used in mathematical notation
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let math = sets::math();
+    ///
+    /// assert!(math.contains('='));
+    /// assert!(math.contains('+'));
+    /// assert!(!math.contains('-'));
+    /// assert!(math.contains('−'));  // U+2212 MINUS SIGN
+    /// assert!(!math.contains('/'));
+    /// assert!(math.contains('∕'));  // U+2215 DIVISION SLASH
+    /// ```
+
+    pub const fn math() => SINGLETON_MATH_V1_MARKER;
+    pub fn load_math();
+}
+
+make_code_point_set_property! {
+    property: "Noncharacter_Code_Point";
+    dyn_marker: NoncharacterCodePoint;
+    data_marker: crate::provider::NoncharacterCodePointV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::NoncharacterCodePoint;
+    func:
+    /// Code points permanently reserved for internal use
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let noncharacter_code_point = sets::noncharacter_code_point();
+    ///
+    /// assert!(noncharacter_code_point.contains32(0xFDD0));
+    /// assert!(noncharacter_code_point.contains32(0xFFFF));
+    /// assert!(!noncharacter_code_point.contains32(0x10000));
+    /// ```
+
+    pub const fn noncharacter_code_point() => SINGLETON_NONCHARACTER_CODE_POINT_V1_MARKER;
+    pub fn load_noncharacter_code_point();
+}
+
+make_code_point_set_property! {
+    property: "NFC_Inert";
+    dyn_marker: NfcInert;
+    data_marker: crate::provider::NfcInertV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::NfcInert;
+    func:
+    /// Characters that are inert under NFC, i.e., they do not interact with adjacent characters
+
+    pub const fn nfc_inert() => SINGLETON_NFC_INERT_V1_MARKER;
+    pub fn load_nfc_inert();
+}
+
+make_code_point_set_property! {
+    property: "NFD_Inert";
+    dyn_marker: NfdInert;
+    data_marker: crate::provider::NfdInertV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::NfdInert;
+    func:
+    /// Characters that are inert under NFD, i.e., they do not interact with adjacent characters
+
+    pub const fn nfd_inert() => SINGLETON_NFD_INERT_V1_MARKER;
+    pub fn load_nfd_inert();
+}
+
+make_code_point_set_property! {
+    property: "NFKC_Inert";
+    dyn_marker: NfkcInert;
+    data_marker: crate::provider::NfkcInertV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::NfkcInert;
+    func:
+    /// Characters that are inert under NFKC, i.e., they do not interact with adjacent characters
+
+    pub const fn nfkc_inert() => SINGLETON_NFKC_INERT_V1_MARKER;
+    pub fn load_nfkc_inert();
+}
+
+make_code_point_set_property! {
+    property: "NFKD_Inert";
+    dyn_marker: NfkdInert;
+    data_marker: crate::provider::NfkdInertV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::NfkdInert;
+    func:
+    /// Characters that are inert under NFKD, i.e., they do not interact with adjacent characters
+
+    pub const fn nfkd_inert() => SINGLETON_NFKD_INERT_V1_MARKER;
+    pub fn load_nfkd_inert();
+}
+
+make_code_point_set_property! {
+    property: "Pattern_Syntax";
+    dyn_marker: PatternSyntax;
+    data_marker: crate::provider::PatternSyntaxV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::PatternSyntax;
+    func:
+    /// Characters used as syntax in patterns (such as regular expressions). See [`Unicode
+    /// Standard Annex #31`](https://www.unicode.org/reports/tr31/tr31-35.html) for more
+    /// details.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let pattern_syntax = sets::pattern_syntax();
+    ///
+    /// assert!(pattern_syntax.contains('{'));
+    /// assert!(pattern_syntax.contains('⇒'));  // U+21D2 RIGHTWARDS DOUBLE ARROW
+    /// assert!(!pattern_syntax.contains('0'));
+    /// ```
+
+    pub const fn pattern_syntax() => SINGLETON_PATTERN_SYNTAX_V1_MARKER;
+    pub fn load_pattern_syntax();
+}
+
+make_code_point_set_property! {
+    property: "Pattern_White_Space";
+    dyn_marker: PatternWhiteSpace;
+    data_marker: crate::provider::PatternWhiteSpaceV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::PatternWhiteSpace;
+    func:
+    /// Characters used as whitespace in patterns (such as regular expressions).  See
+    /// [`Unicode Standard Annex #31`](https://www.unicode.org/reports/tr31/tr31-35.html) for
+    /// more details.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let pattern_white_space = sets::pattern_white_space();
+    ///
+    /// assert!(pattern_white_space.contains(' '));
+    /// assert!(pattern_white_space.contains32(0x2029));  // PARAGRAPH SEPARATOR
+    /// assert!(pattern_white_space.contains32(0x000A));  // NEW LINE
+    /// assert!(!pattern_white_space.contains32(0x00A0));  // NO-BREAK SPACE
+    /// ```
+
+    pub const fn pattern_white_space() => SINGLETON_PATTERN_WHITE_SPACE_V1_MARKER;
+    pub fn load_pattern_white_space();
+}
+
+make_code_point_set_property! {
+    property: "Prepended_Concatenation_Mark";
+    dyn_marker: PrependedConcatenationMark;
+    data_marker: crate::provider::PrependedConcatenationMarkV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::PrependedConcatenationMark;
+    func:
+    /// A small class of visible format controls, which precede and then span a sequence of
+    /// other characters, usually digits.
+
+    pub const fn prepended_concatenation_mark() => SINGLETON_PREPENDED_CONCATENATION_MARK_V1_MARKER;
+    pub fn load_prepended_concatenation_mark();
+}
+
+make_code_point_set_property! {
+    property: "Print";
+    dyn_marker: Print;
+    data_marker: crate::provider::PrintV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::Print;
+    func:
+    /// Printable characters (visible characters and whitespace).
+    /// This is defined for POSIX compatibility.
+
+    pub const fn print() => SINGLETON_PRINT_V1_MARKER;
+    pub fn load_print();
+}
+
+make_code_point_set_property! {
+    property: "Quotation_Mark";
+    dyn_marker: QuotationMark;
+    data_marker: crate::provider::QuotationMarkV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::QuotationMark;
+    func:
+    /// Punctuation characters that function as quotation marks.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let quotation_mark = sets::quotation_mark();
+    ///
+    /// assert!(quotation_mark.contains('\''));
+    /// assert!(quotation_mark.contains('„'));  // U+201E DOUBLE LOW-9 QUOTATION MARK
+    /// assert!(!quotation_mark.contains('<'));
+    /// ```
+
+    pub const fn quotation_mark() => SINGLETON_QUOTATION_MARK_V1_MARKER;
+    pub fn load_quotation_mark();
+}
+
+make_code_point_set_property! {
+    property: "Radical";
+    dyn_marker: Radical;
+    data_marker: crate::provider::RadicalV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::Radical;
+    func:
+    /// Characters used in the definition of Ideographic Description Sequences
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let radical = sets::radical();
+    ///
+    /// assert!(radical.contains('⺆'));  // U+2E86 CJK RADICAL BOX
+    /// assert!(!radical.contains('丹'));  // U+F95E CJK COMPATIBILITY IDEOGRAPH-F95E
+    /// ```
+
+    pub const fn radical() => SINGLETON_RADICAL_V1_MARKER;
+    pub fn load_radical();
+}
+
+make_code_point_set_property! {
+    property: "Regional_Indicator";
+    dyn_marker: RegionalIndicator;
+    data_marker: crate::provider::RegionalIndicatorV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::RegionalIndicator;
+    func:
+    /// Regional indicator characters, U+1F1E6..U+1F1FF
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let regional_indicator = sets::regional_indicator();
+    ///
+    /// assert!(regional_indicator.contains('🇹'));  // U+1F1F9 REGIONAL INDICATOR SYMBOL LETTER T
+    /// assert!(!regional_indicator.contains('Ⓣ'));  // U+24C9 CIRCLED LATIN CAPITAL LETTER T
+    /// assert!(!regional_indicator.contains('T'));
+    /// ```
+
+    pub const fn regional_indicator() => SINGLETON_REGIONAL_INDICATOR_V1_MARKER;
+    pub fn load_regional_indicator();
+}
+
+make_code_point_set_property! {
+    property: "Soft_Dotted";
+    dyn_marker: SoftDotted;
+    data_marker: crate::provider::SoftDottedV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::SoftDotted;
+    func:
+    /// Characters with a "soft dot", like i or j. An accent placed on these characters causes
+    /// the dot to disappear.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let soft_dotted = sets::soft_dotted();
+    ///
+    /// assert!(soft_dotted.contains('і'));  //U+0456 CYRILLIC SMALL LETTER BYELORUSSIAN-UKRAINIAN I
+    /// assert!(!soft_dotted.contains('ı'));  // U+0131 LATIN SMALL LETTER DOTLESS I
+    /// ```
+
+    pub const fn soft_dotted() => SINGLETON_SOFT_DOTTED_V1_MARKER;
+    pub fn load_soft_dotted();
+}
+
+make_code_point_set_property! {
+    property: "Segment_Starter";
+    dyn_marker: SegmentStarter;
+    data_marker: crate::provider::SegmentStarterV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::SegmentStarter;
+    func:
+    /// Characters that are starters in terms of Unicode normalization and combining character
+    /// sequences
+
+    pub const fn segment_starter() => SINGLETON_SEGMENT_STARTER_V1_MARKER;
+    pub fn load_segment_starter();
+}
+
+make_code_point_set_property! {
+    property: "Case_Sensitive";
+    dyn_marker: CaseSensitive;
+    data_marker: crate::provider::CaseSensitiveV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::CaseSensitive;
+    func:
+    /// Characters that are either the source of a case mapping or in the target of a case
+    /// mapping
+
+    pub const fn case_sensitive() => SINGLETON_CASE_SENSITIVE_V1_MARKER;
+    pub fn load_case_sensitive();
+}
+
+make_code_point_set_property! {
+    property: "Sentence_Terminal";
+    dyn_marker: SentenceTerminal;
+    data_marker: crate::provider::SentenceTerminalV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::SentenceTerminal;
+    func:
+    /// Punctuation characters that generally mark the end of sentences
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let sentence_terminal = sets::sentence_terminal();
+    ///
+    /// assert!(sentence_terminal.contains('.'));
+    /// assert!(sentence_terminal.contains('?'));
+    /// assert!(sentence_terminal.contains('᪨'));  // U+1AA8 TAI THAM SIGN KAAN
+    /// assert!(!sentence_terminal.contains(','));
+    /// assert!(!sentence_terminal.contains('¿'));  // U+00BF INVERTED QUESTION MARK
+    /// ```
+
+    pub const fn sentence_terminal() => SINGLETON_SENTENCE_TERMINAL_V1_MARKER;
+    pub fn load_sentence_terminal();
+}
+
+make_code_point_set_property! {
+    property: "Terminal_Punctuation";
+    dyn_marker: TerminalPunctuation;
+    data_marker: crate::provider::TerminalPunctuationV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::TerminalPunctuation;
+    func:
+    /// Punctuation characters that generally mark the end of textual units
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let terminal_punctuation = sets::terminal_punctuation();
+    ///
+    /// assert!(terminal_punctuation.contains('.'));
+    /// assert!(terminal_punctuation.contains('?'));
+    /// assert!(terminal_punctuation.contains('᪨'));  // U+1AA8 TAI THAM SIGN KAAN
+    /// assert!(terminal_punctuation.contains(','));
+    /// assert!(!terminal_punctuation.contains('¿'));  // U+00BF INVERTED QUESTION MARK
+    /// ```
+
+    pub const fn terminal_punctuation() => SINGLETON_TERMINAL_PUNCTUATION_V1_MARKER;
+    pub fn load_terminal_punctuation();
+}
+
+make_code_point_set_property! {
+    property: "Unified_Ideograph";
+    dyn_marker: UnifiedIdeograph;
+    data_marker: crate::provider::UnifiedIdeographV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::UnifiedIdeograph;
+    func:
+    /// A property which specifies the exact set of Unified CJK Ideographs in the standard
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let unified_ideograph = sets::unified_ideograph();
+    ///
+    /// assert!(unified_ideograph.contains('川'));  // U+5DDD CJK UNIFIED IDEOGRAPH-5DDD
+    /// assert!(unified_ideograph.contains('木'));  // U+6728 CJK UNIFIED IDEOGRAPH-6728
+    /// assert!(!unified_ideograph.contains('𛅸'));  // U+1B178 NUSHU CHARACTER-1B178
+    /// ```
+
+    pub const fn unified_ideograph() => SINGLETON_UNIFIED_IDEOGRAPH_V1_MARKER;
+    pub fn load_unified_ideograph();
+}
+
+make_code_point_set_property! {
+    property: "Uppercase";
+    dyn_marker: Uppercase;
+    data_marker: crate::provider::UppercaseV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::Uppercase;
+    func:
+    /// Uppercase characters
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let uppercase = sets::uppercase();
+    ///
+    /// assert!(uppercase.contains('U'));
+    /// assert!(!uppercase.contains('u'));
+    /// ```
+
+    pub const fn uppercase() => SINGLETON_UPPERCASE_V1_MARKER;
+    pub fn load_uppercase();
+}
+
+make_code_point_set_property! {
+    property: "Variation_Selector";
+    dyn_marker: VariationSelector;
+    data_marker: crate::provider::VariationSelectorV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::VariationSelector;
+    func:
+    /// Characters that are Variation Selectors.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let variation_selector = sets::variation_selector();
+    ///
+    /// assert!(variation_selector.contains32(0x180D));  // MONGOLIAN FREE VARIATION SELECTOR THREE
+    /// assert!(!variation_selector.contains32(0x303E));  // IDEOGRAPHIC VARIATION INDICATOR
+    /// assert!(variation_selector.contains32(0xFE0F));  // VARIATION SELECTOR-16
+    /// assert!(!variation_selector.contains32(0xFE10));  // PRESENTATION FORM FOR VERTICAL COMMA
+    /// assert!(variation_selector.contains32(0xE01EF));  // VARIATION SELECTOR-256
+    /// ```
+
+    pub const fn variation_selector() => SINGLETON_VARIATION_SELECTOR_V1_MARKER;
+    pub fn load_variation_selector();
+}
+
+make_code_point_set_property! {
+    property: "White_Space";
+    dyn_marker: WhiteSpace;
+    data_marker: crate::provider::WhiteSpaceV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::WhiteSpace;
+    func:
+    /// Spaces, separator characters and other control characters which should be treated by
+    /// programming languages as "white space" for the purpose of parsing elements
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let white_space = sets::white_space();
+    ///
+    /// assert!(white_space.contains(' '));
+    /// assert!(white_space.contains32(0x000A));  // NEW LINE
+    /// assert!(white_space.contains32(0x00A0));  // NO-BREAK SPACE
+    /// assert!(!white_space.contains32(0x200B));  // ZERO WIDTH SPACE
+    /// ```
+
+    pub const fn white_space() => SINGLETON_WHITE_SPACE_V1_MARKER;
+    pub fn load_white_space();
+}
+
+make_code_point_set_property! {
+    property: "Xdigit";
+    dyn_marker: Xdigit;
+    data_marker: crate::provider::XdigitV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::XDigit;
+    func:
+    /// Hexadecimal digits
+    /// This is defined for POSIX compatibility.
+
+    pub const fn xdigit() => SINGLETON_XDIGIT_V1_MARKER;
+    pub fn load_xdigit();
+}
+
+make_code_point_set_property! {
+    property: "XID_Continue";
+    dyn_marker: XidContinue;
+    data_marker: crate::provider::XidContinueV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::XidContinue;
+    func:
+    /// Characters that can come after the first character in an identifier.  See [`Unicode Standard Annex
+    /// #31`](https://www.unicode.org/reports/tr31/tr31-35.html) for more details.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let xid_continue = sets::xid_continue();
+    ///
+    /// assert!(xid_continue.contains('x'));
+    /// assert!(xid_continue.contains('1'));
+    /// assert!(xid_continue.contains('_'));
+    /// assert!(xid_continue.contains('ߝ'));  // U+07DD NKO LETTER FA
+    /// assert!(!xid_continue.contains('ⓧ'));  // U+24E7 CIRCLED LATIN SMALL LETTER X
+    /// assert!(!xid_continue.contains32(0xFC5E));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
+    /// ```
+
+    pub const fn xid_continue() => SINGLETON_XID_CONTINUE_V1_MARKER;
+    pub fn load_xid_continue();
+}
+
+make_code_point_set_property! {
+    property: "XID_Start";
+    dyn_marker: XidStart;
+    data_marker: crate::provider::XidStartV1Marker;
+    runtime_value: crate::runtime::UnicodeProperty::XidStart;
+    func:
+    /// Characters that can begin an identifier. See [`Unicode
+    /// Standard Annex #31`](https://www.unicode.org/reports/tr31/tr31-35.html) for more
+    /// details.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let xid_start = sets::xid_start();
+    ///
+    /// assert!(xid_start.contains('x'));
+    /// assert!(!xid_start.contains('1'));
+    /// assert!(!xid_start.contains('_'));
+    /// assert!(xid_start.contains('ߝ'));  // U+07DD NKO LETTER FA
+    /// assert!(!xid_start.contains('ⓧ'));  // U+24E7 CIRCLED LATIN SMALL LETTER X
+    /// assert!(!xid_start.contains32(0xFC5E));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
+    /// ```
+
+    pub const fn xid_start() => SINGLETON_XID_START_V1_MARKER;
+    pub fn load_xid_start();
+}
+
+macro_rules! make_unicode_set_property {
+    (
+        // currently unused
+        property: $property:expr;
+        // currently unused
+        dyn_marker: $marker_name:ident;
+        data_marker: $data_marker:ty;
+        value: $value:expr;
+        func:
+        $(#[$doc:meta])+
+        $cvis:vis const fn $constname:ident() => $singleton:ident;
+        $vis:vis fn $funcname:ident();
+    ) => {
+        $(#[$doc])+
+        #[derive(Debug)]
+        #[non_exhaustive]
+        pub struct $marker_name;
+
+        impl crate::private::Sealed for $marker_name {}
+        impl crate::unicode_set::UnicodeSetProperty for $marker_name {
+            type DataMarker = $data_marker;
+            #[cfg(feature = "compiled_data")]
+            const SINGLETON: &'static crate::provider::PropertyUnicodeSetV1<'static> =
+                &crate::provider::Baked::$singleton;
+            const VALUE: crate::runtime::UnicodeProperty = $value;
+        }
     }
 }
+
+make_unicode_set_property! {
+    property: "Basic_Emoji";
+    dyn_marker: BasicEmoji;
+    data_marker: crate::provider::BasicEmojiV1Marker;
+    value: crate::runtime::UnicodeProperty::Emoji;
+    func:
+    /// Characters and character sequences intended for general-purpose, independent, direct input.
+    /// See [`Unicode Technical Standard #51`](https://unicode.org/reports/tr51/) for more
+    /// details.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::sets;
+    ///
+    /// let basic_emoji = sets::basic_emoji();
+    ///
+    /// assert!(!basic_emoji.contains32(0x0020));
+    /// assert!(!basic_emoji.contains_char('\n'));
+    /// assert!(basic_emoji.contains_char('🦃')); // U+1F983 TURKEY
+    /// assert!(basic_emoji.contains("\u{1F983}"));
+    /// assert!(basic_emoji.contains("\u{1F6E4}\u{FE0F}")); // railway track
+    /// assert!(!basic_emoji.contains("\u{0033}\u{FE0F}\u{20E3}"));  // Emoji_Keycap_Sequence, keycap 3
+    /// ```
+    pub const fn basic_emoji() => SINGLETON_BASIC_EMOJI_V1_MARKER;
+    pub fn load_basic_emoji();
+}
+
 #[cfg(test)]
 mod test_enumerated_property_completeness {
     use super::*;
     use alloc::collections::BTreeMap;
+    use zerovec::ule::VarULE;
 
     fn check_enum<'a>(
-        lookup: &PropertyValueNameToEnumMapV1<'static>,
+        lookup: &crate::provider::PropertyValueNameToEnumMapV1<'static>,
         consts: impl IntoIterator<Item = &'a (&'static str, u16)>,
     ) {
         let mut data: BTreeMap<_, _> = lookup

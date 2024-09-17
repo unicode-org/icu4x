@@ -4,11 +4,11 @@
 
 use crate::SourceDataProvider;
 use icu::collections::codepointtrie::CodePointTrie;
+use icu::properties::props::Script;
 use icu::properties::provider::{
     ScriptWithExtensionsPropertyV1, ScriptWithExtensionsPropertyV1Marker,
 };
 use icu::properties::script::ScriptWithExt;
-use icu::properties::Script;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::convert::TryFrom;

@@ -11,9 +11,9 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *See the [Rust documentation for `properties`](https://docs.rs/icu/latest/icu/properties/index.html) for more information.
 *
-*See the [Rust documentation for `CodePointSetData`](https://docs.rs/icu/latest/icu/properties/sets/struct.CodePointSetData.html) for more information.
+*See the [Rust documentation for `CodePointSetData`](https://docs.rs/icu/latest/icu/properties/struct.CodePointSetData.html) for more information.
 *
-*See the [Rust documentation for `CodePointSetDataBorrowed`](https://docs.rs/icu/latest/icu/properties/sets/struct.CodePointSetDataBorrowed.html) for more information.
+*See the [Rust documentation for `CodePointSetDataBorrowed`](https://docs.rs/icu/latest/icu/properties/struct.CodePointSetDataBorrowed.html) for more information.
 */
 const CodePointSetData_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_CodePointSetData_destroy_mv1(ptr);

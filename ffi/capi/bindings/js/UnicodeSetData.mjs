@@ -9,9 +9,11 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *See the [Rust documentation for `properties`](https://docs.rs/icu/latest/icu/properties/index.html) for more information.
 *
-*See the [Rust documentation for `UnicodeSetData`](https://docs.rs/icu/latest/icu/properties/sets/struct.UnicodeSetData.html) for more information.
+*See the [Rust documentation for `UnicodeSetData`](https://docs.rs/icu/latest/icu/properties/struct.UnicodeSetData.html) for more information.
 *
-*See the [Rust documentation for `UnicodeSetDataBorrowed`](https://docs.rs/icu/latest/icu/properties/sets/struct.UnicodeSetDataBorrowed.html) for more information.
+*See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/properties/struct.UnicodeSetData.html#method.new) for more information.
+*
+*See the [Rust documentation for `UnicodeSetDataBorrowed`](https://docs.rs/icu/latest/icu/properties/struct.UnicodeSetDataBorrowed.html) for more information.
 */
 const UnicodeSetData_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_UnicodeSetData_destroy_mv1(ptr);

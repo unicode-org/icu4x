@@ -6,9 +6,11 @@ part of 'lib.g.dart';
 ///
 /// See the [Rust documentation for `properties`](https://docs.rs/icu/latest/icu/properties/index.html) for more information.
 ///
-/// See the [Rust documentation for `UnicodeSetData`](https://docs.rs/icu/latest/icu/properties/sets/struct.UnicodeSetData.html) for more information.
+/// See the [Rust documentation for `UnicodeSetData`](https://docs.rs/icu/latest/icu/properties/struct.UnicodeSetData.html) for more information.
 ///
-/// See the [Rust documentation for `UnicodeSetDataBorrowed`](https://docs.rs/icu/latest/icu/properties/sets/struct.UnicodeSetDataBorrowed.html) for more information.
+/// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/properties/struct.UnicodeSetData.html#method.new) for more information.
+///
+/// See the [Rust documentation for `UnicodeSetDataBorrowed`](https://docs.rs/icu/latest/icu/properties/struct.UnicodeSetDataBorrowed.html) for more information.
 final class UnicodeSetData implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -30,7 +32,7 @@ final class UnicodeSetData implements ffi.Finalizable {
 
   /// Checks whether the string is in the set.
   ///
-  /// See the [Rust documentation for `contains`](https://docs.rs/icu/latest/icu/properties/sets/struct.UnicodeSetDataBorrowed.html#method.contains) for more information.
+  /// See the [Rust documentation for `contains`](https://docs.rs/icu/latest/icu/properties/struct.UnicodeSetDataBorrowed.html#method.contains) for more information.
   bool contains(String s) {
     final temp = _FinalizedArena();
     final result = _icu4x_UnicodeSetData_contains_mv1(_ffi, s._utf8AllocIn(temp.arena));
@@ -39,13 +41,13 @@ final class UnicodeSetData implements ffi.Finalizable {
 
   /// Checks whether the code point is in the set.
   ///
-  /// See the [Rust documentation for `contains_char`](https://docs.rs/icu/latest/icu/properties/sets/struct.UnicodeSetDataBorrowed.html#method.contains_char) for more information.
+  /// See the [Rust documentation for `contains_char`](https://docs.rs/icu/latest/icu/properties/struct.UnicodeSetDataBorrowed.html#method.contains_char) for more information.
   bool containsChar(Rune cp) {
     final result = _icu4x_UnicodeSetData_contains_char_mv1(_ffi, cp);
     return result;
   }
 
-  /// See the [Rust documentation for `basic_emoji`](https://docs.rs/icu/latest/icu/properties/sets/fn.basic_emoji.html) for more information.
+  /// See the [Rust documentation for `BasicEmoji`](https://docs.rs/icu/latest/icu/properties/props/struct.BasicEmoji.html) for more information.
   ///
   /// Throws [DataError] on failure.
   factory UnicodeSetData.basicEmoji(DataProvider provider) {

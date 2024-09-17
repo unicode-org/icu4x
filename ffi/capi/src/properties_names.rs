@@ -64,9 +64,12 @@ pub mod ffi {
             .unwrap_or(-1)
         }
 
-        #[diplomat::rust_link(icu::properties::GeneralCategory::name_to_enum_mapper, FnInStruct)]
         #[diplomat::rust_link(
-            icu::properties::GeneralCategory::get_name_to_enum_mapper,
+            icu::properties::props::GeneralCategory::name_to_enum_mapper,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategory::get_name_to_enum_mapper,
             FnInStruct,
             hidden
         )]
@@ -76,17 +79,20 @@ pub mod ffi {
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    icu_properties::GeneralCategory::name_to_enum_mapper [r => Ok(r.static_to_owned())],
-                    icu_properties::GeneralCategory::get_name_to_enum_mapper,
+                    icu_properties::props::GeneralCategory::name_to_enum_mapper [r => Ok(r.static_to_owned())],
+                    icu_properties::props::GeneralCategory::get_name_to_enum_mapper,
                     provider,
                 )?
                 .erase(),
             )))
         }
 
-        #[diplomat::rust_link(icu::properties::HangulSyllableType::name_to_enum_mapper, FnInStruct)]
         #[diplomat::rust_link(
-            icu::properties::HangulSyllableType::get_name_to_enum_mapper,
+            icu::properties::props::HangulSyllableType::name_to_enum_mapper,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::properties::props::HangulSyllableType::get_name_to_enum_mapper,
             FnInStruct,
             hidden
         )]
@@ -96,17 +102,20 @@ pub mod ffi {
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    icu_properties::HangulSyllableType::name_to_enum_mapper [r => Ok(r.static_to_owned())],
-                    icu_properties::HangulSyllableType::get_name_to_enum_mapper,
+                    icu_properties::props::HangulSyllableType::name_to_enum_mapper [r => Ok(r.static_to_owned())],
+                    icu_properties::props::HangulSyllableType::get_name_to_enum_mapper,
                     provider,
                 )?
                 .erase(),
             )))
         }
 
-        #[diplomat::rust_link(icu::properties::EastAsianWidth::name_to_enum_mapper, FnInStruct)]
         #[diplomat::rust_link(
-            icu::properties::EastAsianWidth::get_name_to_enum_mapper,
+            icu::properties::props::EastAsianWidth::name_to_enum_mapper,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::properties::props::EastAsianWidth::get_name_to_enum_mapper,
             FnInStruct,
             hidden
         )]
@@ -116,17 +125,17 @@ pub mod ffi {
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    icu_properties::EastAsianWidth::name_to_enum_mapper [r => Ok(r.static_to_owned())],
-                    icu_properties::EastAsianWidth::get_name_to_enum_mapper,
+                    icu_properties::props::EastAsianWidth::name_to_enum_mapper [r => Ok(r.static_to_owned())],
+                    icu_properties::props::EastAsianWidth::get_name_to_enum_mapper,
                     provider,
                 )?
                 .erase(),
             )))
         }
 
-        #[diplomat::rust_link(icu::properties::BidiClass::name_to_enum_mapper, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::props::BidiClass::name_to_enum_mapper, FnInStruct)]
         #[diplomat::rust_link(
-            icu::properties::BidiClass::get_name_to_enum_mapper,
+            icu::properties::props::BidiClass::get_name_to_enum_mapper,
             FnInStruct,
             hidden
         )]
@@ -136,8 +145,8 @@ pub mod ffi {
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    icu_properties::BidiClass::name_to_enum_mapper [r => Ok(r.static_to_owned())],
-                    icu_properties::BidiClass::get_name_to_enum_mapper,
+                    icu_properties::props::BidiClass::name_to_enum_mapper [r => Ok(r.static_to_owned())],
+                    icu_properties::props::BidiClass::get_name_to_enum_mapper,
                     provider,
                 )?
                 .erase(),
@@ -145,11 +154,11 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(
-            icu::properties::IndicSyllabicCategory::name_to_enum_mapper,
+            icu::properties::props::IndicSyllabicCategory::name_to_enum_mapper,
             FnInStruct
         )]
         #[diplomat::rust_link(
-            icu::properties::IndicSyllabicCategory::get_name_to_enum_mapper,
+            icu::properties::props::IndicSyllabicCategory::get_name_to_enum_mapper,
             FnInStruct,
             hidden
         )]
@@ -159,17 +168,17 @@ pub mod ffi {
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    icu_properties::IndicSyllabicCategory::name_to_enum_mapper [r => Ok(r.static_to_owned())],
-                    icu_properties::IndicSyllabicCategory::get_name_to_enum_mapper,
+                    icu_properties::props::IndicSyllabicCategory::name_to_enum_mapper [r => Ok(r.static_to_owned())],
+                    icu_properties::props::IndicSyllabicCategory::get_name_to_enum_mapper,
                     provider,
                 )?
                 .erase(),
             )))
         }
 
-        #[diplomat::rust_link(icu::properties::LineBreak::name_to_enum_mapper, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::props::LineBreak::name_to_enum_mapper, FnInStruct)]
         #[diplomat::rust_link(
-            icu::properties::LineBreak::get_name_to_enum_mapper,
+            icu::properties::props::LineBreak::get_name_to_enum_mapper,
             FnInStruct,
             hidden
         )]
@@ -179,8 +188,8 @@ pub mod ffi {
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    icu_properties::LineBreak::name_to_enum_mapper [r => Ok(r.static_to_owned())],
-                    icu_properties::LineBreak::get_name_to_enum_mapper,
+                    icu_properties::props::LineBreak::name_to_enum_mapper [r => Ok(r.static_to_owned())],
+                    icu_properties::props::LineBreak::get_name_to_enum_mapper,
                     provider,
                 )?
                 .erase(),
@@ -188,11 +197,11 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(
-            icu::properties::GraphemeClusterBreak::name_to_enum_mapper,
+            icu::properties::props::GraphemeClusterBreak::name_to_enum_mapper,
             FnInStruct
         )]
         #[diplomat::rust_link(
-            icu::properties::GraphemeClusterBreak::get_name_to_enum_mapper,
+            icu::properties::props::GraphemeClusterBreak::get_name_to_enum_mapper,
             FnInStruct,
             hidden
         )]
@@ -202,17 +211,17 @@ pub mod ffi {
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    icu_properties::GraphemeClusterBreak::name_to_enum_mapper [r => Ok(r.static_to_owned())],
-                    icu_properties::GraphemeClusterBreak::get_name_to_enum_mapper,
+                    icu_properties::props::GraphemeClusterBreak::name_to_enum_mapper [r => Ok(r.static_to_owned())],
+                    icu_properties::props::GraphemeClusterBreak::get_name_to_enum_mapper,
                     provider,
                 )?
                 .erase(),
             )))
         }
 
-        #[diplomat::rust_link(icu::properties::WordBreak::name_to_enum_mapper, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::props::WordBreak::name_to_enum_mapper, FnInStruct)]
         #[diplomat::rust_link(
-            icu::properties::WordBreak::get_name_to_enum_mapper,
+            icu::properties::props::WordBreak::get_name_to_enum_mapper,
             FnInStruct,
             hidden
         )]
@@ -222,17 +231,20 @@ pub mod ffi {
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    icu_properties::WordBreak::name_to_enum_mapper [r => Ok(r.static_to_owned())],
-                    icu_properties::WordBreak::get_name_to_enum_mapper,
+                    icu_properties::props::WordBreak::name_to_enum_mapper [r => Ok(r.static_to_owned())],
+                    icu_properties::props::WordBreak::get_name_to_enum_mapper,
                     provider,
                 )?
                 .erase(),
             )))
         }
 
-        #[diplomat::rust_link(icu::properties::SentenceBreak::name_to_enum_mapper, FnInStruct)]
         #[diplomat::rust_link(
-            icu::properties::SentenceBreak::get_name_to_enum_mapper,
+            icu::properties::props::SentenceBreak::name_to_enum_mapper,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::properties::props::SentenceBreak::get_name_to_enum_mapper,
             FnInStruct,
             hidden
         )]
@@ -242,24 +254,28 @@ pub mod ffi {
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    icu_properties::SentenceBreak::name_to_enum_mapper [r => Ok(r.static_to_owned())],
-                    icu_properties::SentenceBreak::get_name_to_enum_mapper,
+                    icu_properties::props::SentenceBreak::name_to_enum_mapper [r => Ok(r.static_to_owned())],
+                    icu_properties::props::SentenceBreak::get_name_to_enum_mapper,
                     provider,
                 )?
                 .erase(),
             )))
         }
 
-        #[diplomat::rust_link(icu::properties::Script::name_to_enum_mapper, FnInStruct)]
-        #[diplomat::rust_link(icu::properties::Script::get_name_to_enum_mapper, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::properties::props::Script::name_to_enum_mapper, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::properties::props::Script::get_name_to_enum_mapper,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "script")]
         pub fn load_script(
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    icu_properties::Script::name_to_enum_mapper [r => Ok(r.static_to_owned())],
-                    icu_properties::Script::get_name_to_enum_mapper,
+                    icu_properties::props::Script::name_to_enum_mapper [r => Ok(r.static_to_owned())],
+                    icu_properties::props::Script::get_name_to_enum_mapper,
                     provider,
                 )?
                 .erase(),
@@ -269,23 +285,28 @@ pub mod ffi {
 
     /// A type capable of looking up General Category mask values from a string name.
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::properties::GeneralCategoryGroup::name_to_enum_mapper, FnInStruct)]
     #[diplomat::rust_link(
-        icu::properties::GeneralCategoryGroup::get_name_to_enum_mapper,
+        icu::properties::props::GeneralCategoryGroup::name_to_enum_mapper,
+        FnInStruct
+    )]
+    #[diplomat::rust_link(
+        icu::properties::props::GeneralCategoryGroup::get_name_to_enum_mapper,
         FnInStruct,
         hidden
     )]
     #[diplomat::rust_link(icu::properties::names::PropertyValueNameToEnumMapper, Struct)]
     pub struct GeneralCategoryNameToMaskMapper(
-        icu_properties::names::PropertyValueNameToEnumMapper<icu_properties::GeneralCategoryGroup>,
+        icu_properties::names::PropertyValueNameToEnumMapper<
+            icu_properties::props::GeneralCategoryGroup,
+        >,
     );
 
     impl GeneralCategoryNameToMaskMapper {
         /// Get the mask value matching the given name, using strict matching
         ///
         /// Returns 0 if the name is unknown for this property
-        // #[diplomat::rust_link(icu::properties::maps::PropertyValueNameToEnumMapperBorrowed::get_strict, FnInStruct)]
-        // #[diplomat::rust_link(icu::properties::maps::PropertyValueNameToEnumMapperBorrowed::get_strict_u16, FnInStruct, hidden)]
+        // #[diplomat::rust_link(icu::properties::PropertyValueNameToEnumMapperBorrowed::get_strict, FnInStruct)]
+        // #[diplomat::rust_link(icu::properties::PropertyValueNameToEnumMapperBorrowed::get_strict_u16, FnInStruct, hidden)]
         pub fn get_strict(&self, name: &DiplomatStr) -> u32 {
             if let Ok(name) = core::str::from_utf8(name) {
                 self.0.as_borrowed().get_strict(name)
@@ -299,8 +320,8 @@ pub mod ffi {
         /// Get the mask value matching the given name, using loose matching
         ///
         /// Returns 0 if the name is unknown for this property
-        // #[diplomat::rust_link(icu::properties::maps::PropertyValueNameToEnumMapperBorrowed::get_loose, FnInStruct)]
-        // #[diplomat::rust_link(icu::properties::maps::PropertyValueNameToEnumMapperBorrowed::get_loose_u16, FnInStruct, hidden)]
+        // #[diplomat::rust_link(icu::properties::PropertyValueNameToEnumMapperBorrowed::get_loose, FnInStruct)]
+        // #[diplomat::rust_link(icu::properties::PropertyValueNameToEnumMapperBorrowed::get_loose_u16, FnInStruct, hidden)]
         pub fn get_loose(&self, name: &DiplomatStr) -> u32 {
             if let Ok(name) = core::str::from_utf8(name) {
                 self.0.as_borrowed().get_loose(name)
@@ -312,11 +333,11 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(
-            icu::properties::GeneralCategoryGroup::name_to_enum_mapper,
+            icu::properties::props::GeneralCategoryGroup::name_to_enum_mapper,
             FnInStruct
         )]
         #[diplomat::rust_link(
-            icu::properties::GeneralCategoryGroup::get_name_to_enum_mapper,
+            icu::properties::props::GeneralCategoryGroup::get_name_to_enum_mapper,
             FnInStruct,
             hidden
         )]
@@ -326,8 +347,8 @@ pub mod ffi {
         ) -> Result<Box<GeneralCategoryNameToMaskMapper>, DataError> {
             Ok(Box::new(GeneralCategoryNameToMaskMapper(
                 call_constructor_unstable!(
-                    icu_properties::GeneralCategoryGroup::name_to_enum_mapper [r => Ok(r.static_to_owned())],
-                    icu_properties::GeneralCategoryGroup::get_name_to_enum_mapper,
+                    icu_properties::props::GeneralCategoryGroup::name_to_enum_mapper [r => Ok(r.static_to_owned())],
+                    icu_properties::props::GeneralCategoryGroup::get_name_to_enum_mapper,
                     provider,
                 )?,
             )))

@@ -45,7 +45,7 @@ fn compatible_scripts(sc1: subtags::Script, sc2: subtags::Script) -> bool {
 pub fn likely_person_name_locale<N>(
     person_name: &N,
     swe: ScriptWithExtensionsBorrowed,
-    scripts: PropertyScriptToIcuScriptMapperBorrowed<icu_properties::Script>,
+    scripts: PropertyScriptToIcuScriptMapperBorrowed<icu_properties::props::Script>,
 ) -> Result<Locale, PersonNamesFormatterError>
 where
     N: PersonName,
@@ -54,7 +54,7 @@ where
     if found_name_script.is_none() {
         found_name_script = find_script(person_name, swe, Given);
     }
-    let name_script = found_name_script.unwrap_or(icu_properties::Script::Unknown);
+    let name_script = found_name_script.unwrap_or(icu_properties::props::Script::Unknown);
 
     let locid_script = scripts
         .get(name_script)
@@ -80,11 +80,11 @@ fn find_script<N>(
     person_name: &N,
     swe: ScriptWithExtensionsBorrowed,
     kind: NameFieldKind,
-) -> Option<icu_properties::Script>
+) -> Option<icu_properties::props::Script>
 where
     N: PersonName,
 {
-    use icu_properties::Script;
+    use icu_properties::props::Script;
 
     person_name
         .available_name_fields()
@@ -177,7 +177,7 @@ mod tests {
     #[test]
     fn test_likely_person_names_locale() {
         let swe = icu_properties::script::script_with_extensions();
-        let scripts = icu_properties::Script::enum_to_icu_script_mapper();
+        let scripts = icu_properties::props::Script::enum_to_icu_script_mapper();
         assert_eq!(
             likely_person_name_locale(&person_name("Miyazaki", "Hayao").unwrap(), swe, scripts),
             Ok(locale!("und_Latn"))

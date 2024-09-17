@@ -52,8 +52,8 @@
 //!                             ]);
 //! ```
 
-use crate::maps::CodePointMapDataBorrowed;
 use crate::props::BidiClass;
+use crate::CodePointMapDataBorrowed;
 use unicode_bidi::data_source::BidiDataSource;
 use unicode_bidi::BidiClass as DataSourceBidiClass;
 

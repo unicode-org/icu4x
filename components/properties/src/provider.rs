@@ -18,8 +18,10 @@
 pub mod names;
 pub use names::*;
 
+pub mod props;
+
+use crate::props::Script;
 use crate::script::ScriptWithExt;
-use crate::Script;
 
 use core::ops::RangeInclusive;
 use icu_collections::codepointinvlist::CodePointInversionList;
@@ -384,6 +386,67 @@ pub enum PropertyCodePointSetV1<'data> {
     // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
 }
 
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
+pub(crate) struct ErasedPropertyCodePointSetV1Marker;
+impl DynamicDataMarker for ErasedPropertyCodePointSetV1Marker {
+    type DataStruct = PropertyCodePointSetV1<'static>;
+}
+
+// See CodePointSetData for documentation of these functions
+impl<'data> PropertyCodePointSetV1<'data> {
+    #[inline]
+    pub(crate) fn contains(&self, ch: char) -> bool {
+        match *self {
+            Self::InversionList(ref l) => l.contains(ch),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn contains32(&self, ch: u32) -> bool {
+        match *self {
+            Self::InversionList(ref l) => l.contains32(ch),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn iter_ranges(&self) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
+        match *self {
+            Self::InversionList(ref l) => l.iter_ranges(),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn iter_ranges_complemented(
+        &self,
+    ) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
+        match *self {
+            Self::InversionList(ref l) => l.iter_ranges_complemented(),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn from_code_point_inversion_list(l: CodePointInversionList<'static>) -> Self {
+        Self::InversionList(l)
+    }
+
+    #[inline]
+    pub(crate) fn as_code_point_inversion_list(
+        &'_ self,
+    ) -> Option<&'_ CodePointInversionList<'data>> {
+        match *self {
+            Self::InversionList(ref l) => Some(l),
+            // any other backing data structure that cannot return a CPInvList in O(1) time should return None
+        }
+    }
+
+    #[inline]
+    pub(crate) fn to_code_point_inversion_list(&self) -> CodePointInversionList<'_> {
+        match *self {
+            Self::InversionList(ref t) => ZeroFrom::zero_from(t),
+        }
+    }
+}
+
 /// A map efficiently storing data about individual characters.
 ///
 /// This data enum is extensible, more backends may be added in the future.
@@ -406,6 +469,13 @@ pub enum PropertyCodePointMapV1<'data, T: TrieValue> {
     // Serde serializes based on variant name and index in the enum
     // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
 }
+
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
+pub(crate) struct ErasedPropertyCodePointMapV1Marker<T>(core::marker::PhantomData<T>);
+impl<T: TrieValue> DynamicDataMarker for ErasedPropertyCodePointMapV1Marker<T> {
+    type DataStruct = PropertyCodePointMapV1<'static, T>;
+}
+
 macro_rules! data_struct_generic {
     ($(marker($marker:ident, $ty:ident, $path:literal),)+) => {
         $(
@@ -415,7 +485,7 @@ macro_rules! data_struct_generic {
             #[cfg_attr(feature = "datagen", databake(path = icu_properties::provider))]
             pub struct $marker;
             impl icu_provider::DynamicDataMarker for $marker {
-                type DataStruct = PropertyCodePointMapV1<'static, crate::$ty>;
+                type DataStruct = PropertyCodePointMapV1<'static, $ty>;
             }
             impl icu_provider::DataMarker for $marker {
                 const INFO: icu_provider::DataMarkerInfo = {
@@ -427,6 +497,9 @@ macro_rules! data_struct_generic {
         )+
     }
 }
+
+use crate::props::*;
+
 data_struct_generic!(
     marker(BidiClassV1Marker, BidiClass, "props/bc@1"),
     marker(
@@ -457,6 +530,71 @@ data_struct_generic!(
     marker(SentenceBreakV1Marker, SentenceBreak, "props/SB@1"),
     marker(WordBreakV1Marker, WordBreak, "props/WB@1"),
 );
+
+// See CodePointMapData for documentation of these functions
+impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
+    #[inline]
+    pub(crate) fn get32(&self, ch: u32) -> T {
+        match *self {
+            Self::CodePointTrie(ref t) => t.get32(ch),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn try_into_converted<P>(self) -> Result<PropertyCodePointMapV1<'data, P>, UleError>
+    where
+        P: TrieValue,
+    {
+        match self {
+            Self::CodePointTrie(t) => t
+                .try_into_converted()
+                .map(PropertyCodePointMapV1::CodePointTrie),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn get_set_for_value(&self, value: T) -> CodePointInversionList<'static> {
+        match *self {
+            Self::CodePointTrie(ref t) => t.get_set_for_value(value),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn iter_ranges(&self) -> impl Iterator<Item = CodePointMapRange<T>> + '_ {
+        match *self {
+            Self::CodePointTrie(ref t) => t.iter_ranges(),
+        }
+    }
+    #[inline]
+    pub(crate) fn iter_ranges_mapped<'a, U: Eq + 'a>(
+        &'a self,
+        map: impl FnMut(T) -> U + Copy + 'a,
+    ) -> impl Iterator<Item = CodePointMapRange<U>> + 'a {
+        match *self {
+            Self::CodePointTrie(ref t) => t.iter_ranges_mapped(map),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn from_code_point_trie(trie: CodePointTrie<'static, T>) -> Self {
+        Self::CodePointTrie(trie)
+    }
+
+    #[inline]
+    pub(crate) fn as_code_point_trie(&self) -> Option<&CodePointTrie<'data, T>> {
+        match *self {
+            Self::CodePointTrie(ref t) => Some(t),
+            // any other backing data structure that cannot return a CPT in O(1) time should return None
+        }
+    }
+
+    #[inline]
+    pub(crate) fn to_code_point_trie(&self) -> CodePointTrie<'_, T> {
+        match *self {
+            Self::CodePointTrie(ref t) => ZeroFrom::zero_from(t),
+        }
+    }
+}
 
 /// A set of characters and strings which share a particular property value.
 ///
@@ -571,124 +709,4 @@ pub struct ScriptWithExtensionsPropertyV1<'data> {
     /// and may also indicate Script value, as described for the `trie` field.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub extensions: VarZeroVec<'data, ZeroSlice<Script>>,
-}
-
-// See CodePointSetData for documentation of these functions
-impl<'data> PropertyCodePointSetV1<'data> {
-    #[inline]
-    pub(crate) fn contains(&self, ch: char) -> bool {
-        match *self {
-            Self::InversionList(ref l) => l.contains(ch),
-        }
-    }
-
-    #[inline]
-    pub(crate) fn contains32(&self, ch: u32) -> bool {
-        match *self {
-            Self::InversionList(ref l) => l.contains32(ch),
-        }
-    }
-
-    #[inline]
-    pub(crate) fn iter_ranges(&self) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
-        match *self {
-            Self::InversionList(ref l) => l.iter_ranges(),
-        }
-    }
-
-    #[inline]
-    pub(crate) fn iter_ranges_complemented(
-        &self,
-    ) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
-        match *self {
-            Self::InversionList(ref l) => l.iter_ranges_complemented(),
-        }
-    }
-
-    #[inline]
-    pub(crate) fn from_code_point_inversion_list(l: CodePointInversionList<'static>) -> Self {
-        Self::InversionList(l)
-    }
-
-    #[inline]
-    pub(crate) fn as_code_point_inversion_list(
-        &'_ self,
-    ) -> Option<&'_ CodePointInversionList<'data>> {
-        match *self {
-            Self::InversionList(ref l) => Some(l),
-            // any other backing data structure that cannot return a CPInvList in O(1) time should return None
-        }
-    }
-
-    #[inline]
-    pub(crate) fn to_code_point_inversion_list(&self) -> CodePointInversionList<'_> {
-        match *self {
-            Self::InversionList(ref t) => ZeroFrom::zero_from(t),
-        }
-    }
-}
-
-// See CodePointMapData for documentation of these functions
-impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
-    #[inline]
-    pub(crate) fn get32(&self, ch: u32) -> T {
-        match *self {
-            Self::CodePointTrie(ref t) => t.get32(ch),
-        }
-    }
-
-    #[inline]
-    pub(crate) fn try_into_converted<P>(self) -> Result<PropertyCodePointMapV1<'data, P>, UleError>
-    where
-        P: TrieValue,
-    {
-        match self {
-            Self::CodePointTrie(t) => t
-                .try_into_converted()
-                .map(PropertyCodePointMapV1::CodePointTrie),
-        }
-    }
-
-    #[inline]
-    pub(crate) fn get_set_for_value(&self, value: T) -> CodePointInversionList<'static> {
-        match *self {
-            Self::CodePointTrie(ref t) => t.get_set_for_value(value),
-        }
-    }
-
-    #[inline]
-    pub(crate) fn iter_ranges(&self) -> impl Iterator<Item = CodePointMapRange<T>> + '_ {
-        match *self {
-            Self::CodePointTrie(ref t) => t.iter_ranges(),
-        }
-    }
-    #[inline]
-    pub(crate) fn iter_ranges_mapped<'a, U: Eq + 'a>(
-        &'a self,
-        map: impl FnMut(T) -> U + Copy + 'a,
-    ) -> impl Iterator<Item = CodePointMapRange<U>> + 'a {
-        match *self {
-            Self::CodePointTrie(ref t) => t.iter_ranges_mapped(map),
-        }
-    }
-
-    #[inline]
-    pub(crate) fn from_code_point_trie(trie: CodePointTrie<'static, T>) -> Self {
-        Self::CodePointTrie(trie)
-    }
-
-    #[inline]
-    pub(crate) fn as_code_point_trie(&self) -> Option<&CodePointTrie<'data, T>> {
-        match *self {
-            Self::CodePointTrie(ref t) => Some(t),
-            // any other backing data structure that cannot return a CPT in O(1) time should return None
-        }
-    }
-
-    #[inline]
-    pub(crate) fn to_code_point_trie(&self) -> CodePointTrie<'_, T> {
-        match *self {
-            Self::CodePointTrie(ref t) => ZeroFrom::zero_from(t),
-        }
-    }
 }
