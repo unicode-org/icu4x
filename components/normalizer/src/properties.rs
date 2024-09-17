@@ -36,6 +36,7 @@ use crate::NON_ROUND_TRIP_MARKER;
 use crate::SPECIAL_NON_STARTER_DECOMPOSITION_MARKER_U16;
 /// want access to the underlying properties e.g. for use in a
 /// glyph-availability-guided custom normalizer.
+#[cfg(feature = "icu_properties")]
 use icu_properties::props::CanonicalCombiningClass;
 use icu_provider::prelude::*;
 
@@ -585,27 +586,54 @@ impl CanonicalCombiningClassMapBorrowed<'static> {
 }
 
 impl<'a> CanonicalCombiningClassMapBorrowed<'a> {
-    /// Look up the canonical combining class for a scalar value
+    /// Look up the canonical combining class for a scalar value.
+    ///
+    /// The return value is a u8 representing the canonical combining class,
+    /// you may enable the `"icu_properties"` feature if you would like to use a typed
+    /// `CanonicalCombiningClass`.
     #[inline(always)]
+    pub fn get_u8(&self, c: char) -> u8 {
+        self.get32_u8(u32::from(c))
+    }
+
+    /// Look up the canonical combining class for a scalar value
+    /// represented as `u32`. If the argument is outside the scalar
+    /// value range, `Not_Reordered` is returned.
+    ///
+    /// The return value is a u8 representing the canonical combining class,
+    /// you may enable the `"icu_properties"` feature if you would like to use a typed
+    /// `CanonicalCombiningClass`.
+    pub fn get32_u8(&self, c: u32) -> u8 {
+        let trie_value = self.decompositions.trie.get32(c);
+        if trie_value_has_ccc(trie_value) {
+            trie_value as u8
+        } else if trie_value_indicates_special_non_starter_decomposition(trie_value) {
+            match c {
+                0x0340 | 0x0341 | 0x0343 | 0x0344 => ccc!(Above, 230),
+                _ => ccc!(NotReordered, 0),
+            }
+        } else {
+            ccc!(NotReordered, 0)
+        }
+    }
+
+    /// Look up the canonical combining class for a scalar value
+    ///
+    /// ✨ *Enabled with the `icu_properties` Cargo feature.*
+    #[inline(always)]
+    #[cfg(feature = "icu_properties")]
     pub fn get(&self, c: char) -> CanonicalCombiningClass {
-        self.get32(u32::from(c))
+        CanonicalCombiningClass(self.get_u8(c))
     }
 
     /// Look up the canonical combining class for a scalar value
     /// represented as `u32`. If the argument is outside the scalar
     /// value range, `CanonicalCombiningClass::NotReordered` is returned.
+    ///
+    /// ✨ *Enabled with the `icu_properties` Cargo feature.*
+    #[cfg(feature = "icu_properties")]
     pub fn get32(&self, c: u32) -> CanonicalCombiningClass {
-        let trie_value = self.decompositions.trie.get32(c);
-        if trie_value_has_ccc(trie_value) {
-            CanonicalCombiningClass(trie_value as u8)
-        } else if trie_value_indicates_special_non_starter_decomposition(trie_value) {
-            match c {
-                0x0340 | 0x0341 | 0x0343 | 0x0344 => CanonicalCombiningClass::Above,
-                _ => CanonicalCombiningClass::NotReordered,
-            }
-        } else {
-            CanonicalCombiningClass::NotReordered
-        }
+        CanonicalCombiningClass(self.get32_u8(c))
     }
 }
 
