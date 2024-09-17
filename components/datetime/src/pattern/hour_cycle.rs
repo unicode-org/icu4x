@@ -3,12 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::{reference, PatternItem};
-use crate::{
-    fields,
-    options::preferences::HourCycle,
-};
+use crate::{fields, options::preferences::HourCycle};
 #[cfg(feature = "datagen")]
-use crate::{provider, skeleton, options::preferences, pattern::runtime};
+use crate::{options::preferences, pattern::runtime, provider, skeleton};
 use icu_provider::prelude::*;
 
 /// Used to represent either H11/H12, or H23/H24. Skeletons only store these
