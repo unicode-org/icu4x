@@ -78,18 +78,6 @@ impl<'data> PluralPattern<'data> {
         }
     }
 
-    pub(crate) fn variant(&self, category: PluralCategory) -> &Pattern<'data> {
-        let variant = match category {
-            PluralCategory::Zero => &self.zero,
-            PluralCategory::One => &self.one,
-            PluralCategory::Two => &self.two,
-            PluralCategory::Few => &self.few,
-            PluralCategory::Many => &self.many,
-            PluralCategory::Other => return &self.other,
-        };
-        variant.as_ref().unwrap_or(&self.other)
-    }
-
     pub fn patterns_iter(&self) -> impl Iterator<Item = &Pattern<'data>> {
         PluralCategory::all().filter_map(move |cat| match cat {
             PluralCategory::Zero => self.zero.as_ref(),

@@ -34,7 +34,7 @@ pub enum SkeletonError {
 #[cfg(feature = "std")]
 impl std::error::Error for SkeletonError {}
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "datagen")]
 impl From<SkeletonError> for crate::DateTimeError {
     fn from(e: SkeletonError) -> Self {
         crate::DateTimeError::Skeleton(e)

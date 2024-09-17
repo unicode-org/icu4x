@@ -11,10 +11,9 @@ use icu_datetime::neo_skeleton::{
     NeoSkeletonLength, NeoTimeComponents,
 };
 use icu_datetime::options::length;
-use icu_datetime::{DateTimeFormatterOptions, TypedDateTimeFormatter};
 use icu_locale_core::{locale, Locale};
 use icu_timezone::{CustomTimeZone, CustomZonedDateTime};
-use writeable::{assert_try_writeable_eq, assert_writeable_eq};
+use writeable::assert_try_writeable_eq;
 
 const EXPECTED_DATETIME: &[&str] = &[
     "Friday, December 22, 2023, 9:22:53 PM",
@@ -139,71 +138,6 @@ fn neo_date_lengths() {
                 Ok(()),
                 "{day_components:?} {length:?} {locale:?}"
             );
-        }
-    }
-}
-
-#[test]
-fn old_datetime_lengths() {
-    let datetime = DateTime::try_new_gregorian_datetime(2023, 12, 22, 21, 22, 53).unwrap();
-    let mut expected_iter = EXPECTED_DATETIME.iter();
-    for date_length in [
-        length::Date::Full,
-        length::Date::Long,
-        length::Date::Medium,
-        length::Date::Short,
-    ] {
-        for time_length in [length::Time::Medium, length::Time::Short] {
-            for locale in [
-                locale!("en").into(),
-                locale!("fr").into(),
-                locale!("zh").into(),
-                locale!("hi").into(),
-            ] {
-                let formatter = TypedDateTimeFormatter::try_new(
-                    &locale,
-                    DateTimeFormatterOptions::Length(length::Bag::from_date_time_style(
-                        date_length,
-                        time_length,
-                    )),
-                )
-                .unwrap();
-                let formatted = formatter.format(&datetime);
-                let expected = expected_iter.next().unwrap();
-                assert_writeable_eq!(
-                    formatted,
-                    *expected,
-                    "{date_length:?} {time_length:?} {locale:?}"
-                );
-            }
-        }
-    }
-}
-
-#[test]
-fn old_date_lengths() {
-    let datetime = DateTime::try_new_gregorian_datetime(2023, 12, 22, 21, 22, 53).unwrap();
-    let mut expected_iter = EXPECTED_DATE.iter();
-    for date_length in [
-        length::Date::Full,
-        length::Date::Long,
-        length::Date::Medium,
-        length::Date::Short,
-    ] {
-        for locale in [
-            locale!("en").into(),
-            locale!("fr").into(),
-            locale!("zh").into(),
-            locale!("hi").into(),
-        ] {
-            let formatter = TypedDateTimeFormatter::try_new(
-                &locale,
-                DateTimeFormatterOptions::Length(length::Bag::from_date_style(date_length)),
-            )
-            .unwrap();
-            let formatted = formatter.format(&datetime);
-            let expected = expected_iter.next().unwrap();
-            assert_writeable_eq!(formatted, *expected, "{date_length:?} {locale:?}");
         }
     }
 }

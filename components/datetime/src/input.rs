@@ -5,7 +5,6 @@
 //! A collection of utilities for representing and working with dates as an input to
 //! formatting operations.
 
-#[cfg(feature = "experimental")]
 use crate::neo_marker::{DateInputMarkers, NeoGetField, TimeMarkers, ZoneMarkers};
 use crate::provider::time_zones::{MetazoneId, TimeZoneBcp47Id};
 use icu_calendar::any_calendar::AnyCalendarKind;
@@ -118,46 +117,7 @@ pub(crate) struct ExtractedInput {
 }
 
 impl ExtractedInput {
-    /// Construct given an instance of a [`DateTimeInput`].
-    pub(crate) fn extract_from<T: DateTimeInput>(input: &T) -> Self {
-        Self {
-            year: input.year(),
-            month: input.month(),
-            day_of_month: input.day_of_month(),
-            iso_weekday: input.iso_weekday(),
-            day_of_year_info: input.day_of_year_info(),
-            any_calendar_kind: input.any_calendar_kind(),
-            hour: input.hour(),
-            minute: input.minute(),
-            second: input.second(),
-            nanosecond: input.nanosecond(),
-            ..Default::default()
-        }
-    }
-    /// Construct given an instance of a [`DateTimeInput`].
-    pub(crate) fn extract_from_date<T: DateInput>(input: &T) -> Self {
-        Self {
-            year: input.year(),
-            month: input.month(),
-            day_of_month: input.day_of_month(),
-            iso_weekday: input.iso_weekday(),
-            day_of_year_info: input.day_of_year_info(),
-            any_calendar_kind: input.any_calendar_kind(),
-            ..Default::default()
-        }
-    }
-    /// Construct given an instance of a [`DateTimeInput`].
-    pub(crate) fn extract_from_time<T: IsoTimeInput>(input: &T) -> Self {
-        Self {
-            hour: input.hour(),
-            minute: input.minute(),
-            second: input.second(),
-            nanosecond: input.nanosecond(),
-            ..Default::default()
-        }
-    }
     /// Construct given neo date input instances.
-    #[cfg(feature = "experimental")]
     pub(crate) fn extract_from_neo_input<D, T, Z, I>(input: &I) -> Self
     where
         D: DateInputMarkers,
