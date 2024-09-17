@@ -34,6 +34,7 @@ pub mod neo;
 /// </div>
 pub struct Baked;
 
+#[cfg(feature = "datagen")]
 include!("../../tests/data/date_skeleton_patterns_v1_marker.rs.data");
 
 #[cfg(feature = "compiled_data")]
@@ -80,6 +81,7 @@ const _: () = {
     impl_metazone_specific_names_short_v1_marker!(Baked);
     impl_time_zone_formats_v1_marker!(Baked);
 
+    #[cfg(feature = "datagen")]
     impl_date_skeleton_patterns_v1_marker!(Baked);
 
     impl_weekday_names_v1_marker!(Baked);
