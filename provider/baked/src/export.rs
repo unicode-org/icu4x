@@ -651,7 +651,7 @@ impl DataExporter for BakedExporter {
                         }
                     }
                 },
-                if deduplication_mode == DeduplicationStrategy::RetainBaseLanguages {
+                if matches!(deduplication_mode, DeduplicationStrategy::RetainBaseLanguages | DeduplicationStrategy::None) {
                     Some(quote! {
                         #maybe_msrv
                         impl icu_provider::DryDataProvider<#marker_bake> for $provider {
