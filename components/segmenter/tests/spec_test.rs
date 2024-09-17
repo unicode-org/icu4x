@@ -2,16 +2,19 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_locale_core::locale;
 use icu_segmenter::GraphemeClusterSegmenter;
 use icu_segmenter::LineSegmenter;
 use icu_segmenter::SentenceSegmenter;
+use icu_segmenter::WordBreakOptions;
 use icu_segmenter::WordSegmenter;
 use std::char;
+use std::io::BufRead;
 
-struct TestContentIterator(core::str::Split<'static, char>);
+struct TestContentIterator<LineIterator>(LineIterator);
 
 struct TestData {
-    original_line: &'static str,
+    original_line: String,
     utf8_vec: Vec<char>,
     utf16_vec: Vec<u16>,
     latin1_vec: Vec<u8>,
@@ -20,18 +23,21 @@ struct TestData {
     break_result_latin1: Option<Vec<usize>>,
 }
 
-impl TestContentIterator {
+impl TestContentIterator<core::str::Split<'static, char>> {
     pub fn new(file: &'static str) -> Self {
         Self(file.split('\n'))
     }
 }
 
-impl Iterator for TestContentIterator {
+impl<LineIterator: std::iter::Iterator> Iterator for TestContentIterator<LineIterator>
+where
+    LineIterator::Item: Into<String>,
+{
     type Item = TestData;
 
     fn next(&mut self) -> Option<Self::Item> {
         loop {
-            let line = self.0.next()?;
+            let line: String = self.0.next()?.into();
             if line.is_empty() {
                 // EOF
                 return None;
@@ -94,7 +100,11 @@ impl Iterator for TestContentIterator {
 }
 
 fn line_break_test(file: &'static str) {
-    let test_iter = TestContentIterator::new(file);
+    let test_iter = TestContentIterator(
+        std::io::BufReader::new(std::fs::File::open(file).unwrap())
+            .lines()
+            .map(|l| l.unwrap()),
+    );
     let segmenter = LineSegmenter::new_dictionary();
     for (i, mut test) in test_iter.enumerate() {
         let s: String = test.utf8_vec.into_iter().collect();
@@ -108,9 +118,12 @@ fn line_break_test(file: &'static str) {
         if result != test.break_result_utf8 {
             let lb = icu::properties::maps::line_break();
             let lb_name = icu::properties::LineBreak::enum_to_long_name_mapper();
+            let gc = icu::properties::maps::general_category();
+            let gc_name = icu::properties::GeneralCategory::enum_to_long_name_mapper();
+
             let mut iter = segmenter.segment_str(&s);
             // TODO(egg): It would be really nice to have Name here.
-            println!("  | A | E | Code pt. | Line_Break     | Literal");
+            println!("  | A | E | Code pt. | Line_Break         | General_Category | Literal");
             for (i, c) in s.char_indices() {
                 let expected_break = test.break_result_utf8.contains(&i);
                 let actual_break = result.contains(&i);
@@ -118,7 +131,7 @@ fn line_break_test(file: &'static str) {
                     iter.next();
                 }
                 println!(
-                    "{}| {} | {} | {:>8} | {:>18} | {}",
+                    "{}| {} | {} | {:>8} | {:>18} | {:>18} | {}",
                     if actual_break != expected_break {
                         "😭"
                     } else {
@@ -130,6 +143,9 @@ fn line_break_test(file: &'static str) {
                     lb_name
                         .get(lb.get(c))
                         .unwrap_or(&format!("{:?}", lb.get(c))),
+                    gc_name
+                        .get(gc.get(c))
+                        .unwrap_or(&format!("{:?}", gc.get(c))),
                     c
                 )
             }
@@ -166,17 +182,26 @@ fn line_break_test(file: &'static str) {
 
 #[test]
 fn run_line_break_test() {
-    line_break_test(include_str!("testdata/LineBreakTest.txt"));
+    line_break_test("./tests/testdata/LineBreakTest.txt");
 }
 
 #[test]
 fn run_line_break_extra_test() {
-    line_break_test(include_str!("testdata/LineBreakExtraTest.txt"));
+    line_break_test("./tests/testdata/LineBreakExtraTest.txt");
+}
+
+#[test]
+fn run_line_break_random_test() {
+    line_break_test("./tests/testdata/LineBreakRandomTest.txt");
 }
 
 fn word_break_test(file: &'static str) {
     let test_iter = TestContentIterator::new(file);
-    let segmenter = WordSegmenter::new_dictionary();
+    // Default word segmenter isn't UAX29 rule. Swedish is UAX29 rule.
+    let mut options = WordBreakOptions::default();
+    options.content_locale = Some(locale!("sv").into());
+    let segmenter =
+        WordSegmenter::try_new_dictionary_with_options(options).expect("Loading should succeed!");
     for (i, test) in test_iter.enumerate() {
         let s: String = test.utf8_vec.into_iter().collect();
         let iter = segmenter.segment_str(&s);

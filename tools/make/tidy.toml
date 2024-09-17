@@ -138,7 +138,7 @@ script = '''
 exit_on_error true
 
 glob_pattern = set "./**/Cargo.toml"
-glob_skip_pattern = array "tutorials/gn/**/*" "ffi/capi/tests/**/*" "tools/**/*" "**/fuzz/*" "**/target/**/*" "tutorials/**/*" "provider/baked/_template_/Cargo.toml"
+glob_skip_pattern = array "tutorials/gn/**/*" "ffi/capi/tests/**/*" "tools/**/*" "**/fuzz/*" "**/target/**/*" "tutorials/**/*"
 
 cargo_list = exec cargo --list
 if not contains ${cargo_list.stdout} "rdme"
@@ -208,7 +208,7 @@ exit_on_error true
 
 glob_pattern = set "./**/Cargo.toml"
 license = canonicalize LICENSE
-skip_path_prefixes = array "tutorials/gn/vendor/" "tutorials/gn/third_party_tools/" "ffi/capi/tests/c/" "docs/" "utils/calendrical_calculations"
+skip_path_prefixes = array "tutorials/gn/vendor/" "tutorials/gn/third_party_tools/" "tutorials/" "utils/calendrical_calculations" "tools/make"
 
 handle = glob_array ${glob_pattern}
 for path in ${handle}
@@ -236,7 +236,7 @@ exit_on_error true
 glob_pattern = set "./**/Cargo.toml"
 license = canonicalize LICENSE
 license_text = readfile ${license}
-skip_path_prefixes = array "tutorials/gn/vendor/" "tutorials/gn/third_party_tools/" "ffi/capi/tests/" "tutorials/" "utils/calendrical_calculations"
+skip_path_prefixes = array "tutorials/gn/vendor/" "tutorials/gn/third_party_tools/" "tutorials/" "utils/calendrical_calculations" "tools/make"
 
 handle = glob_array ${glob_pattern}
 for path in ${handle}
@@ -264,4 +264,4 @@ end
 description = "Run the dependency checker"
 category = "ICU4X Development"
 command = "cargo"
-args = ["run", "-p", "icu_depcheck"]
+args = ["run", "--manifest-path", "tools/make/depcheck/Cargo.toml"]

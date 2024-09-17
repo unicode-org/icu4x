@@ -105,7 +105,7 @@
 //! }
 //!
 //! impl MiniDataMarker for SimpleStruct {
-//!     type Yokeable = SimpleStruct;
+//!     type DataStruct = SimpleStruct;
 //! }
 //!
 //! let provider = MiniStructProvider {
@@ -297,7 +297,7 @@ impl<'a, T> YokeTraitHack<&'a T> {
     ///
     /// This method is required to implement `Clone` on `Yoke`.
     pub fn into_ref(self) -> &'a YokeTraitHack<T> {
-        // YokeTraitHack is repr(transparent) so it's always safe
+        // Safety: YokeTraitHack is repr(transparent) so it's always safe
         // to transmute YTH<&T> to &YTH<T>
         unsafe { mem::transmute::<YokeTraitHack<&T>, &YokeTraitHack<T>>(self) }
     }

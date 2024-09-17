@@ -22,7 +22,7 @@ use core::marker::PhantomData;
 ///     .expect("Failed to initialize ISO Date instance.");
 ///
 /// assert_eq!(date_iso.day_of_week(), IsoWeekday::Wednesday);
-/// assert_eq!(date_iso.year().number, 1992);
+/// assert_eq!(date_iso.year().era_year_or_extended(), 1992);
 /// assert_eq!(date_iso.month().ordinal, 9);
 /// assert_eq!(date_iso.day_of_month().0, 2);
 ///
@@ -32,13 +32,13 @@ use core::marker::PhantomData;
 ///
 /// // Advancing date in-place by 1 year, 2 months, 3 weeks, 4 days.
 /// date_iso.add(DateDuration::new(1, 2, 3, 4));
-/// assert_eq!(date_iso.year().number, 1993);
+/// assert_eq!(date_iso.year().era_year_or_extended(), 1993);
 /// assert_eq!(date_iso.month().ordinal, 11);
 /// assert_eq!(date_iso.day_of_month().0, 27);
 ///
 /// // Reverse date advancement.
 /// date_iso.add(DateDuration::new(-1, -2, -3, -4));
-/// assert_eq!(date_iso.year().number, 1992);
+/// assert_eq!(date_iso.year().era_year_or_extended(), 1992);
 /// assert_eq!(date_iso.month().ordinal, 9);
 /// assert_eq!(date_iso.day_of_month().0, 2);
 ///
@@ -58,7 +58,7 @@ use core::marker::PhantomData;
 ///
 /// // Create new date with date advancement. Reassign to new variable.
 /// let mutated_date_iso = date_iso.added(DateDuration::new(1, 2, 3, 4));
-/// assert_eq!(mutated_date_iso.year().number, 1993);
+/// assert_eq!(mutated_date_iso.year().era_year_or_extended(), 1993);
 /// assert_eq!(mutated_date_iso.month().ordinal, 11);
 /// assert_eq!(mutated_date_iso.day_of_month().0, 27);
 /// ```
@@ -66,7 +66,7 @@ use core::marker::PhantomData;
 /// Currently unstable for ICU4X 1.0
 #[derive(Eq, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type should be stable (and is intended to be constructed manually)
-#[doc(hidden)]
+#[doc(hidden)] // unstable
 pub struct DateDuration<C: Calendar + ?Sized> {
     /// The number of years
     pub years: i32,
@@ -92,11 +92,9 @@ impl<C: Calendar + ?Sized> Copy for DateDuration<C> {}
 
 /// A "duration unit" used to specify the minimum or maximum duration of time to
 /// care about
-///
-/// Currently unstable for ICU4X 1.0
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 #[allow(clippy::exhaustive_enums)] // this type should be stable
-#[doc(hidden)]
+#[doc(hidden)] // unstable
 pub enum DateDurationUnit {
     /// Duration in years
     Years,

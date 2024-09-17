@@ -6,14 +6,21 @@
             "options": {
                 "components": {
                     "hour": "numeric",
-                    "minute": "numeric",
-                    "preferences": { "hourCycle": "h11" }
-                }
+                    "minute": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["hour", "minute"],
+                    "length": "short"
+                },
+                "preferences": { "hourCycle": "h11" }
             }
         },
         "output": {
             "values": {
-                "en": "0:25\u202fAM"
+                "en": {
+                    "formatted": "0:25\u202fAM",
+                    "pattern": "K:mm\u202fa"
+                }
             }
         }
     },
@@ -24,14 +31,21 @@
             "options": {
                 "components": {
                     "hour": "numeric",
-                    "minute": "numeric",
-                    "preferences": { "hourCycle": "h12" }
-                }
+                    "minute": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["hour", "minute"],
+                    "length": "short"
+                },
+                "preferences": { "hourCycle": "h12" }
             }
         },
         "output": {
             "values": {
-                "en": "12:25\u202fAM"
+                "en": {
+                    "formatted": "12:25\u202fAM",
+                    "pattern": "h:mm\u202fa"
+                }
             }
         }
     },
@@ -42,14 +56,21 @@
             "options": {
                 "components": {
                     "hour": "numeric",
-                    "minute": "numeric",
-                    "preferences": { "hourCycle": "h23" }
-                }
+                    "minute": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["hour", "minute"],
+                    "length": "short"
+                },
+                "preferences": { "hourCycle": "h23" }
             }
         },
         "output": {
             "values": {
-                "en": "00:25"
+                "en": {
+                    "formatted": "00:25",
+                    "pattern": "HH:mm"
+                }
             }
         }
     },
@@ -60,14 +81,21 @@
             "options": {
                 "components": {
                     "hour": "numeric",
-                    "minute": "numeric",
-                    "preferences": { "hourCycle": "h24" }
-                }
+                    "minute": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["hour", "minute"],
+                    "length": "short"
+                },
+                "preferences": { "hourCycle": "h24" }
             }
         },
         "output": {
             "values": {
-                "en": "24:25"
+                "en": {
+                    "formatted": "24:25",
+                    "pattern": "kk:mm"
+                }
             }
         }
     },
@@ -79,14 +107,18 @@
             "options": {
                 "components": {
                     "hour": "numeric",
-                    "minute": "numeric",
-                    "preferences": { "hourCycle": "h11" }
-                }
+                    "minute": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["hour", "minute"],
+                    "length": "short"
+                },
+                "preferences": { "hourCycle": "h11" }
             }
         },
         "output": {
             "values": {
-                "ar": "٠:٢٥ ص"
+                "ar-EG": "٠:٢٥ ص"
             }
         }
     },
@@ -97,14 +129,18 @@
             "options": {
                 "components": {
                     "hour": "numeric",
-                    "minute": "numeric",
-                    "preferences": { "hourCycle": "h12" }
-                }
+                    "minute": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["hour", "minute"],
+                    "length": "short"
+                },
+                "preferences": { "hourCycle": "h12" }
             }
         },
         "output": {
             "values": {
-                "ar": "١٢:٢٥ ص"
+                "ar-EG": "١٢:٢٥ ص"
             }
         }
     },
@@ -115,14 +151,18 @@
             "options": {
                 "components": {
                     "hour": "numeric",
-                    "minute": "numeric",
-                    "preferences": { "hourCycle": "h23" }
-                }
+                    "minute": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["hour", "minute"],
+                    "length": "short"
+                },
+                "preferences": { "hourCycle": "h23" }
             }
         },
         "output": {
             "values": {
-                "ar": "٠٠:٢٥"
+                "ar-EG": "٠٠:٢٥"
             }
         }
     },
@@ -133,14 +173,18 @@
             "options": {
                 "components": {
                     "hour": "numeric",
-                    "minute": "numeric",
-                    "preferences": { "hourCycle": "h24" }
-                }
+                    "minute": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["hour", "minute"],
+                    "length": "short"
+                },
+                "preferences": { "hourCycle": "h24" }
             }
         },
         "output": {
             "values": {
-                "ar": "٢٤:٢٥"
+                "ar-EG": "٢٤:٢٥"
             }
         }
     },
@@ -150,9 +194,13 @@
             "value": "2002-12-31T00:05:07.000",
             "options": {
                 "components": {
-                    "hour": "numeric",
-                    "preferences": { "hourCycle": "h11" }
-                }
+                    "hour": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["hour"],
+                    "length": "short"
+                },
+                "preferences": { "hourCycle": "h11" }
             }
         },
         "output": {
@@ -167,9 +215,13 @@
             "value": "2002-12-31T00:05:07.000",
             "options": {
                 "components": {
-                    "hour": "numeric",
-                    "preferences": { "hourCycle": "h12" }
-                }
+                    "hour": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["hour"],
+                    "length": "short"
+                },
+                "preferences": { "hourCycle": "h12" }
             }
         },
         "output": {
@@ -184,9 +236,13 @@
             "value": "2002-12-31T00:05:07.000",
             "options": {
                 "components": {
-                    "hour": "numeric",
-                    "preferences": { "hourCycle": "h23" }
-                }
+                    "hour": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["hour"],
+                    "length": "short"
+                },
+                "preferences": { "hourCycle": "h23" }
             }
         },
         "output": {
@@ -201,9 +257,13 @@
             "value": "2002-12-31T00:05:07.000",
             "options": {
                 "components": {
-                    "hour": "numeric",
-                    "preferences": { "hourCycle": "h24" }
-                }
+                    "hour": "numeric"
+                },
+                "semantic": {
+                    "fieldSet": ["hour"],
+                    "length": "short"
+                },
+                "preferences": { "hourCycle": "h24" }
             }
         },
         "output": {

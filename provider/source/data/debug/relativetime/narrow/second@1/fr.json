@@ -1,0 +1,21 @@
+{
+  "relatives": {
+    "0": "maintenant"
+  },
+  "past": {
+    "strings": {
+      "other": [
+        0,
+        "\u0002- s"
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "other": [
+        0,
+        "\u0002+ s"
+      ]
+    }
+  }
+}

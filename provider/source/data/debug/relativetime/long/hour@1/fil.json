@@ -1,0 +1,21 @@
+{
+  "relatives": {
+    "0": "ngayong oras"
+  },
+  "past": {
+    "strings": {
+      "other": [
+        0,
+        "\u0001 oras ang nakalipas"
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "other": [
+        0,
+        "\u0004sa  oras"
+      ]
+    }
+  }
+}

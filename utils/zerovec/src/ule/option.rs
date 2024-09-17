@@ -28,7 +28,7 @@ use core::mem::{self, MaybeUninit};
 // Invariants:
 // The MaybeUninit is zeroed when None (bool = false),
 // and is valid when Some (bool = true)
-#[repr(packed)]
+#[repr(C, packed)]
 pub struct OptionULE<U>(bool, MaybeUninit<U>);
 
 impl<U: Copy> OptionULE<U> {
@@ -62,21 +62,21 @@ impl<U: Copy + core::fmt::Debug> core::fmt::Debug for OptionULE<U> {
 
 // Safety (based on the safety checklist on the ULE trait):
 //  1. OptionULE does not include any uninitialized or padding bytes.
-//     (achieved by `#[repr(packed)]` on a struct containing only ULE fields,
+//     (achieved by `#[repr(C, packed)]` on a struct containing only ULE fields,
 //     in the context of this impl. The MaybeUninit is valid for all byte sequences, and we only generate
 ///    zeroed or valid-T byte sequences to fill it)
 //  2. OptionULE is aligned to 1 byte.
-//     (achieved by `#[repr(packed)]` on a struct containing only ULE fields, in the context of this impl)
+//     (achieved by `#[repr(C, packed)]` on a struct containing only ULE fields, in the context of this impl)
 //  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
 //  4. The impl of validate_byte_slice() returns an error if there are extra bytes.
 //  5. The other ULE methods use the default impl.
 //  6. OptionULE byte equality is semantic equality by relying on the ULE equality
 //     invariant on the subfields
 unsafe impl<U: ULE> ULE for OptionULE<U> {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
         let size = mem::size_of::<Self>();
         if bytes.len() % size != 0 {
-            return Err(ZeroVecError::length::<Self>(bytes.len()));
+            return Err(UleError::length::<Self>(bytes.len()));
         }
         for chunk in bytes.chunks(size) {
             #[allow(clippy::indexing_slicing)] // `chunk` will have enough bytes to fit Self
@@ -85,11 +85,11 @@ unsafe impl<U: ULE> ULE for OptionULE<U> {
                 // Rust booleans are always size 1, align 1 values with valid bit patterns 0x0 or 0x1
                 0 => {
                     if !chunk[1..].iter().all(|x| *x == 0) {
-                        return Err(ZeroVecError::parse::<Self>());
+                        return Err(UleError::parse::<Self>());
                     }
                 }
                 1 => U::validate_byte_slice(&chunk[1..])?,
-                _ => return Err(ZeroVecError::parse::<Self>()),
+                _ => return Err(UleError::parse::<Self>()),
             }
         }
         Ok(())
@@ -141,7 +141,7 @@ impl<U: Copy + Eq> Eq for OptionULE<U> {}
 /// ```
 // The slice field is empty when None (bool = false),
 // and is a valid T when Some (bool = true)
-#[repr(packed)]
+#[repr(C, packed)]
 pub struct OptionVarULE<U: VarULE + ?Sized>(PhantomData<U>, bool, [u8]);
 
 impl<U: VarULE + ?Sized> OptionVarULE<U> {
@@ -166,8 +166,8 @@ impl<U: VarULE + ?Sized + core::fmt::Debug> core::fmt::Debug for OptionVarULE<U>
 
 // Safety (based on the safety checklist on the VarULE trait):
 //  1. OptionVarULE<T> does not include any uninitialized or padding bytes
-//     (achieved by being repr(packed) on ULE types)
-//  2. OptionVarULE<T> is aligned to 1 byte (achieved by being repr(packed) on ULE types)
+//     (achieved by being repr(C, packed) on ULE types)
+//  2. OptionVarULE<T> is aligned to 1 byte (achieved by being repr(C, packed) on ULE types)
 //  3. The impl of `validate_byte_slice()` returns an error if any byte is not valid.
 //  4. The impl of `validate_byte_slice()` returns an error if the slice cannot be used in its entirety
 //  5. The impl of `from_byte_slice_unchecked()` returns a reference to the same data.
@@ -175,9 +175,9 @@ impl<U: VarULE + ?Sized + core::fmt::Debug> core::fmt::Debug for OptionVarULE<U>
 //  7. OptionVarULE<T> byte equality is semantic equality (achieved by being an aggregate)
 unsafe impl<U: VarULE + ?Sized> VarULE for OptionVarULE<U> {
     #[inline]
-    fn validate_byte_slice(slice: &[u8]) -> Result<(), ZeroVecError> {
+    fn validate_byte_slice(slice: &[u8]) -> Result<(), UleError> {
         if slice.is_empty() {
-            return Err(ZeroVecError::length::<Self>(slice.len()));
+            return Err(UleError::length::<Self>(slice.len()));
         }
         #[allow(clippy::indexing_slicing)] // slice already verified to be nonempty
         match slice[0] {
@@ -185,13 +185,13 @@ unsafe impl<U: VarULE + ?Sized> VarULE for OptionVarULE<U> {
             // Rust booleans are always size 1, align 1 values with valid bit patterns 0x0 or 0x1
             0 => {
                 if slice.len() != 1 {
-                    Err(ZeroVecError::length::<Self>(slice.len()))
+                    Err(UleError::length::<Self>(slice.len()))
                 } else {
                     Ok(())
                 }
             }
             1 => U::validate_byte_slice(&slice[1..]),
-            _ => Err(ZeroVecError::parse::<Self>()),
+            _ => Err(UleError::parse::<Self>()),
         }
     }
 

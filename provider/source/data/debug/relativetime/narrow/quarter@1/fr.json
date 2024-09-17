@@ -1,0 +1,23 @@
+{
+  "relatives": {
+    "-1": "le trimestre dernier",
+    "0": "ce trimestre",
+    "1": "le trimestre prochain"
+  },
+  "past": {
+    "strings": {
+      "other": [
+        0,
+        "\u0002- trim."
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "other": [
+        0,
+        "\u0002+ trim."
+      ]
+    }
+  }
+}

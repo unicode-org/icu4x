@@ -3,8 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::any_calendar::{AnyCalendar, IntoAnyCalendar};
+use crate::error::DateError;
 use crate::types::{self, Time};
-use crate::{AsCalendar, Calendar, CalendarError, Date, Iso};
+use crate::{AsCalendar, Calendar, Date, Iso};
 use alloc::rc::Rc;
 use alloc::sync::Arc;
 
@@ -25,7 +26,7 @@ use alloc::sync::Arc;
 /// let datetime_iso = DateTime::try_new_iso_datetime(1970, 1, 2, 13, 1, 0)
 ///     .expect("Failed to initialize ISO DateTime instance.");
 ///
-/// assert_eq!(datetime_iso.date.year().number, 1970);
+/// assert_eq!(datetime_iso.date.year().era_year_or_extended(), 1970);
 /// assert_eq!(datetime_iso.date.month().ordinal, 1);
 /// assert_eq!(datetime_iso.date.day_of_month().0, 2);
 /// assert_eq!(datetime_iso.time.hour.number(), 13);
@@ -51,13 +52,13 @@ impl<A: AsCalendar> DateTime<A> {
     /// and some calendar representation
     #[inline]
     pub fn try_new_from_codes(
-        era: types::Era,
+        era: Option<types::Era>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
         time: Time,
         calendar: A,
-    ) -> Result<Self, CalendarError> {
+    ) -> Result<Self, DateError> {
         let date = Date::try_new_from_codes(era, year, month_code, day, calendar)?;
         Ok(DateTime { date, time })
     }

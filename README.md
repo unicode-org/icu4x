@@ -30,7 +30,7 @@ An example `ICU4X` powered application in Rust may look like below...
 
 ```toml
 [dependencies]
-icu = "1.3.0"
+icu = "1.5.0"
 ```
 
 `src/main.rs`:
@@ -38,7 +38,7 @@ icu = "1.3.0"
 ```rust
 use icu::calendar::DateTime;
 use icu::datetime::{options::length, DateTimeFormatter};
-use icu::locid::locale;
+use icu::locale::locale;
 
 let options =
     length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium).into();
@@ -86,3 +86,5 @@ Copyright © 2020-2024 Unicode, Inc. Unicode and the Unicode Logo are registered
 The project is released under [LICENSE](./LICENSE), the free and open-source [Unicode License](https://www.unicode.org/license.txt), which is based on the well-known MIT license, with the primary difference being that the Unicode License expressly covers data and data files, as well as code. For further information please see [The Unicode Consortium Intellectual Property, Licensing, and Technical Contribution Policies](https://www.unicode.org/policies/licensing_policy.html).
 
 A CLA is required to contribute to this project - please refer to the [CONTRIBUTING.md](./CONTRIBUTING.md) file (or start a Pull Request) for more information.
+
+The contents of this repository are governed by the Unicode [Terms of Use](https://www.unicode.org/copyright.html).

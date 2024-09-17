@@ -13,7 +13,12 @@
                     "minute": "two-digit",
                     "second": "two-digit",
                     "time_zone_name": "long-generic"
-                }
+                },
+                "semantic": {
+                    "fieldSet": ["year", "month", "day", "weekday", "hour", "minute", "second", "zoneGenericLong"],
+                    "length": "long"
+                },
+                "preferences": { "hourCycle": "h23" }
             }
         },
         "output": {
@@ -36,7 +41,12 @@
                     "minute": "two-digit",
                     "second": "two-digit",
                     "time_zone_name": "short-generic"
-                }
+                },
+                "semantic": {
+                    "fieldSet": ["year", "month", "day", "weekday", "hour", "minute", "second", "zoneGenericShort"],
+                    "length": "long"
+                },
+                "preferences": { "hourCycle": "h23" }
             }
         },
         "output": {
@@ -59,7 +69,12 @@
                     "minute": "two-digit",
                     "second": "two-digit",
                     "time_zone_name": "short-specific"
-                }
+                },
+                "semantic": {
+                    "fieldSet": ["year", "month", "day", "weekday", "hour", "minute", "second", "zoneSpecificShort"],
+                    "length": "long"
+                },
+                "preferences": { "hourCycle": "h23" }
             }
         },
         "output": {
@@ -82,7 +97,12 @@
                     "minute": "two-digit",
                     "second": "two-digit",
                     "time_zone_name": "long-specific"
-                }
+                },
+                "semantic": {
+                    "fieldSet": ["year", "month", "day", "weekday", "hour", "minute", "second", "zoneSpecificLong"],
+                    "length": "long"
+                },
+                "preferences": { "hourCycle": "h23" }
             }
         },
         "output": {
@@ -104,8 +124,13 @@
                     "hour": "two-digit",
                     "minute": "two-digit",
                     "second": "two-digit",
-                    "time_zone_name": "gmt-offset"
-                }
+                    "time_zone_name": "offset"
+                },
+                "semantic": {
+                    "fieldSet": ["year", "month", "day", "weekday", "hour", "minute", "second", "zoneOffset"],
+                    "length": "long"
+                },
+                "preferences": { "hourCycle": "h23" }
             }
         },
         "output": {
@@ -126,7 +151,7 @@
                     "hour": "two-digit",
                     "minute": "two-digit",
                     "second": "two-digit",
-                    "time_zone_name": "gmt-offset"
+                    "time_zone_name": "offset"
                 }
             }
         },

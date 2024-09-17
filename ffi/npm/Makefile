@@ -5,15 +5,19 @@
 .DEFAULT_GOAL := build
 FORCE:
 
-PINNED_CI_NIGHTLY ?= "nightly-2022-12-26"
+PINNED_CI_NIGHTLY ?= "nightly"
 
 # 100 KiB, working around a bug in older rustc
 # https://github.com/unicode-org/icu4x/issues/2753
 WASM_STACK_SIZE := 100000
  
-lib/index.mjs:
+lib/index.mjs: FORCE
 	rm -rf lib
 	cp -r ../capi/bindings/js lib
+
+demo/index.mjs: FORCE
+	rm -rf demo
+	cp -r ../capi/bindings/demo_gen demo
 
 ../../target/wasm32-unknown-unknown/release/icu_capi.wasm: FORCE
 	rustup toolchain install ${PINNED_CI_NIGHTLY}
@@ -30,4 +34,4 @@ lib/index.mjs:
 icu_capi.wasm: ../../target/wasm32-unknown-unknown/release/icu_capi.wasm
 	cp ../../target/wasm32-unknown-unknown/release/icu_capi.wasm icu_capi.wasm
 
-build: lib/index.mjs icu_capi.wasm
+build: lib/index.mjs demo/index.mjs icu_capi.wasm

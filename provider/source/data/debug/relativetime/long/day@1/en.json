@@ -1,0 +1,31 @@
+{
+  "relatives": {
+    "-1": "yesterday",
+    "0": "today",
+    "1": "tomorrow"
+  },
+  "past": {
+    "strings": {
+      "one": [
+        0,
+        "\u0001 day ago"
+      ],
+      "other": [
+        0,
+        "\u0001 days ago"
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "one": [
+        0,
+        "\u0004in  day"
+      ],
+      "other": [
+        0,
+        "\u0004in  days"
+      ]
+    }
+  }
+}

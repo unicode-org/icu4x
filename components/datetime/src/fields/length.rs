@@ -5,7 +5,7 @@
 use core::cmp::{Ord, PartialOrd};
 use core::fmt;
 use displaydoc::Display;
-use zerovec::ule::{AsULE, ZeroVecError, ULE};
+use zerovec::ule::{AsULE, UleError, ULE};
 
 /// An error relating to the length of a field within a date pattern.
 #[derive(Display, Debug, PartialEq, Copy, Clone)]
@@ -26,11 +26,8 @@ impl std::error::Error for LengthError {}
 /// [LDML documentation in UTS 35](https://unicode.org/reports/tr35/tr35-dates.html#Date_Format_Patterns)
 /// for more details.
 #[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::fields),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::fields))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_enums)] // part of data struct
 pub enum FieldLength {
@@ -50,8 +47,6 @@ pub enum FieldLength {
     /// [LDML documentation in UTS 35](https://unicode.org/reports/tr35/tr35-dates.html#Date_Format_Patterns)
     /// for more details.
     Six,
-    /// A fixed size format for numeric-only fields that is at most 127 digits.
-    Fixed(u8),
     /// FieldLength::One (numeric), but overridden with a different numbering system
     NumericOverride(FieldNumericOverrides),
 }
@@ -61,8 +56,8 @@ pub enum FieldLength {
 /// Currently 17 due to decision in <https://unicode-org.atlassian.net/browse/CLDR-17217>,
 /// may become 16 if the `> 16` is updated to a ` >= 16`
 const FIRST_NUMERIC_OVERRIDE: u8 = 17;
-/// First index used for fixed size formats in compact FieldLength representation
-const FIRST_FIXED: u8 = 128;
+/// Last index used for numeric overrides
+const LAST_NUMERIC_OVERRIDE: u8 = 31;
 
 impl FieldLength {
     #[inline]
@@ -76,8 +71,7 @@ impl FieldLength {
             FieldLength::Six => 6,
             FieldLength::NumericOverride(o) => FIRST_NUMERIC_OVERRIDE
                 .saturating_add(*o as u8)
-                .min(FIRST_FIXED - 1),
-            FieldLength::Fixed(p) => FIRST_FIXED.saturating_add(*p), /* truncate to at most 127 digits to avoid overflow */
+                .min(LAST_NUMERIC_OVERRIDE),
         }
     }
 
@@ -90,21 +84,14 @@ impl FieldLength {
             4 => Self::Wide,
             5 => Self::Narrow,
             6 => Self::Six,
-            idx => {
-                if idx < FIRST_NUMERIC_OVERRIDE {
-                    return Err(LengthError::InvalidLength);
-                }
-                if idx < FIRST_FIXED {
-                    Self::NumericOverride((idx - FIRST_NUMERIC_OVERRIDE).try_into()?)
-                } else {
-                    Self::Fixed(idx - FIRST_FIXED)
-                }
+            idx if (FIRST_NUMERIC_OVERRIDE..=LAST_NUMERIC_OVERRIDE).contains(&idx) => {
+                Self::NumericOverride((idx - FIRST_NUMERIC_OVERRIDE).try_into()?)
             }
+            _ => return Err(LengthError::InvalidLength),
         })
     }
 
     #[inline]
-    #[cfg(feature = "datagen")]
     pub(crate) fn to_len(self) -> usize {
         match self {
             FieldLength::One => 1,
@@ -114,7 +101,6 @@ impl FieldLength {
             FieldLength::Narrow => 5,
             FieldLength::Six => 6,
             FieldLength::NumericOverride(o) => FIRST_NUMERIC_OVERRIDE as usize + o as usize,
-            FieldLength::Fixed(p) => p as usize,
         }
     }
 
@@ -148,10 +134,10 @@ impl AsULE for FieldLength {
 
 impl FieldLengthULE {
     #[inline]
-    pub(crate) fn validate_byte(byte: u8) -> Result<(), ZeroVecError> {
+    pub(crate) fn validate_byte(byte: u8) -> Result<(), UleError> {
         FieldLength::from_idx(byte)
             .map(|_| ())
-            .map_err(|_| ZeroVecError::parse::<FieldLength>())
+            .map_err(|_| UleError::parse::<FieldLength>())
     }
 }
 
@@ -165,7 +151,7 @@ impl FieldLengthULE {
 // 5. All other methods must be left with their default impl.
 // 6. Byte equality is semantic equality.
 unsafe impl ULE for FieldLengthULE {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
         for byte in bytes {
             Self::validate_byte(*byte)?;
         }
@@ -176,11 +162,8 @@ unsafe impl ULE for FieldLengthULE {
 /// Various numeric overrides for datetime patterns
 /// as found in CLDR
 #[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::fields),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::fields))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[non_exhaustive]
 pub enum FieldNumericOverrides {

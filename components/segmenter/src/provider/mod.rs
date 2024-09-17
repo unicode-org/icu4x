@@ -35,32 +35,39 @@ use zerovec::ZeroVec;
 pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
+#[allow(unused_imports)]
 const _: () = {
+    use icu_segmenter_data::*;
     pub mod icu {
         pub use crate as segmenter;
         pub use icu_collections as collections;
+        pub use icu_segmenter_data::icu_locale as locale;
     }
-    icu_segmenter_data::make_provider!(Baked);
-    icu_segmenter_data::impl_segmenter_dictionary_w_auto_v1!(Baked);
-    icu_segmenter_data::impl_segmenter_dictionary_wl_ext_v1!(Baked);
-    icu_segmenter_data::impl_segmenter_grapheme_v1!(Baked);
-    icu_segmenter_data::impl_segmenter_line_v1!(Baked);
+    make_provider!(Baked);
+    impl_dictionary_for_word_only_auto_v1_marker!(Baked);
+    impl_dictionary_for_word_line_extended_v1_marker!(Baked);
+    impl_grapheme_cluster_break_data_v2_marker!(Baked);
+    impl_line_break_data_v2_marker!(Baked);
     #[cfg(feature = "lstm")]
-    icu_segmenter_data::impl_segmenter_lstm_wl_auto_v1!(Baked);
-    icu_segmenter_data::impl_segmenter_sentence_v1!(Baked);
-    icu_segmenter_data::impl_segmenter_word_v1!(Baked);
+    impl_lstm_for_word_line_auto_v1_marker!(Baked);
+    impl_sentence_break_data_override_v1_marker!(Baked);
+    impl_sentence_break_data_v2_marker!(Baked);
+    impl_word_break_data_override_v1_marker!(Baked);
+    impl_word_break_data_v2_marker!(Baked);
 };
 
 #[cfg(feature = "datagen")]
-/// The latest minimum set of keys required by this component.
-pub const KEYS: &[DataKey] = &[
-    DictionaryForWordLineExtendedV1Marker::KEY,
-    DictionaryForWordOnlyAutoV1Marker::KEY,
-    GraphemeClusterBreakDataV1Marker::KEY,
-    LineBreakDataV1Marker::KEY,
-    LstmForWordLineAutoV1Marker::KEY,
-    SentenceBreakDataV1Marker::KEY,
-    WordBreakDataV1Marker::KEY,
+/// The latest minimum set of markers required by this component.
+pub const MARKERS: &[DataMarkerInfo] = &[
+    DictionaryForWordLineExtendedV1Marker::INFO,
+    DictionaryForWordOnlyAutoV1Marker::INFO,
+    GraphemeClusterBreakDataV2Marker::INFO,
+    LineBreakDataV2Marker::INFO,
+    LstmForWordLineAutoV1Marker::INFO,
+    SentenceBreakDataOverrideV1Marker::INFO,
+    SentenceBreakDataV2Marker::INFO,
+    WordBreakDataOverrideV1Marker::INFO,
+    WordBreakDataV2Marker::INFO,
 ];
 
 /// Pre-processed Unicode data in the form of tables to be used for rule-based breaking.
@@ -71,19 +78,16 @@ pub const KEYS: &[DataKey] = &[
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(LineBreakDataV1Marker, "segmenter/line@1", singleton),
-    marker(WordBreakDataV1Marker, "segmenter/word@1", singleton),
-    marker(GraphemeClusterBreakDataV1Marker, "segmenter/grapheme@1", singleton),
-    marker(SentenceBreakDataV1Marker, "segmenter/sentence@1", singleton)
+    marker(LineBreakDataV2Marker, "segmenter/line@2", singleton),
+    marker(WordBreakDataV2Marker, "segmenter/word@2", singleton),
+    marker(GraphemeClusterBreakDataV2Marker, "segmenter/grapheme@2", singleton),
+    marker(SentenceBreakDataV2Marker, "segmenter/sentence@2", singleton)
 )]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize,databake::Bake),
-    databake(path = icu_segmenter::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_segmenter::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct RuleBreakDataV1<'data> {
+pub struct RuleBreakDataV2<'data> {
     /// Property table.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub property_table: CodePointTrie<'data, u8>,
@@ -122,15 +126,20 @@ pub struct RuleBreakDataV1<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    DictionaryForWordOnlyAutoV1Marker = "segmenter/dictionary/w_auto@1",
-    DictionaryForWordLineExtendedV1Marker = "segmenter/dictionary/wl_ext@1"
+    marker(
+        DictionaryForWordOnlyAutoV1Marker,
+        "segmenter/dictionary/w_auto@1",
+        attributes_domain = "segmenter"
+    ),
+    marker(
+        DictionaryForWordLineExtendedV1Marker,
+        "segmenter/dictionary/wl_ext@1",
+        attributes_domain = "segmenter"
+    )
 )]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize,databake::Bake),
-    databake(path = icu_segmenter::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_segmenter::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct UCharDictionaryBreakDataV1<'data> {
     /// Dictionary data of char16trie.
@@ -140,16 +149,31 @@ pub struct UCharDictionaryBreakDataV1<'data> {
 
 pub(crate) struct UCharDictionaryBreakDataV1Marker;
 
-impl DataMarker for UCharDictionaryBreakDataV1Marker {
-    type Yokeable = UCharDictionaryBreakDataV1<'static>;
+impl DynamicDataMarker for UCharDictionaryBreakDataV1Marker {
+    type DataStruct = UCharDictionaryBreakDataV1<'static>;
+}
+
+/// codepoint trie data that the difference by specific locale
+#[icu_provider::data_struct(
+    marker(SentenceBreakDataOverrideV1Marker, "segmenter/sentence/override@1",),
+    marker(WordBreakDataOverrideV1Marker, "segmenter/word/override@1")
+)]
+#[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize,databake::Bake),
+    databake(path = icu_segmenter::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct RuleBreakDataOverrideV1<'data> {
+    /// The difference of property table for special locale.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub property_table_override: CodePointTrie<'data, u8>,
 }
 
 #[derive(Clone, Copy, PartialEq, Debug)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(databake::Bake),
-    databake(path = icu_segmenter::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_segmenter::provider))]
 /// Break state
 ///
 /// <div class="stab unstable">
@@ -206,20 +230,20 @@ impl zerovec::ule::AsULE for BreakState {
 
     fn to_unaligned(self) -> Self::ULE {
         match self {
-            BreakState::Break => 128,
+            BreakState::Break => 253,
             BreakState::Keep => 255,
             BreakState::NoMatch => 254,
-            BreakState::Intermediate(i) => i | 64,
+            BreakState::Intermediate(i) => i + 120,
             BreakState::Index(i) => i,
         }
     }
 
     fn from_unaligned(unaligned: Self::ULE) -> Self {
         match unaligned {
-            128 => BreakState::Break,
+            253 => BreakState::Break,
             255 => BreakState::Keep,
             254 => BreakState::NoMatch,
-            i if i & 64 != 0 => BreakState::Intermediate(i & !64),
+            i if (120..253).contains(&i) => BreakState::Intermediate(i - 120),
             i => BreakState::Index(i),
         }
     }

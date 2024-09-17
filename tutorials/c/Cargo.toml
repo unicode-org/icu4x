@@ -4,10 +4,9 @@
 
 [package]
 name = "unused"
-version = "0.0.0"
 
 [lib]
 path = "unused"
 
 [dependencies]
-icu_capi = "1.4"
+icu_capi = "1.5"

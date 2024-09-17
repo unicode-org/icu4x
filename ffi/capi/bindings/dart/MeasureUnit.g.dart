@@ -7,7 +7,7 @@ part of 'lib.g.dart';
 ///
 /// You can create an instance of this object using [`MeasureUnitParser`] by calling the `parse_measure_unit` method.
 ///
-/// See the [Rust documentation for `MeasureUnit`](https://docs.rs/icu/latest/icu/experimental/units/measureunit/struct.MeasureUnit.html) for more information.
+/// See the [Rust documentation for `MeasureUnit`](https://docs.rs/icu/latest/icu/experimental/measure/measureunit/struct.MeasureUnit.html) for more information.
 final class MeasureUnit implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -25,10 +25,10 @@ final class MeasureUnit implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XMeasureUnit_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_MeasureUnit_destroy_mv1));
 }
 
-@meta.ResourceIdentifier('ICU4XMeasureUnit_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XMeasureUnit_destroy')
+@meta.ResourceIdentifier('icu4x_MeasureUnit_destroy_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_MeasureUnit_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XMeasureUnit_destroy(ffi.Pointer<ffi.Void> self);
+external void _icu4x_MeasureUnit_destroy_mv1(ffi.Pointer<ffi.Void> self);

@@ -44,7 +44,7 @@ size_test!(DateTimeFormatter, date_time_formatter_size, 5208);
 /// ```
 /// use icu::calendar::DateTime;
 /// use icu::datetime::{options::length, DateTimeFormatter};
-/// use icu::locid::locale;
+/// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
 ///
 /// let mut options = length::Bag::from_date_time_style(
@@ -72,10 +72,11 @@ size_test!(DateTimeFormatter, date_time_formatter_size, 5208);
 /// to have a date in a runtime-selected calendar:
 ///
 /// ```
-/// use icu::calendar::{AnyCalendar, DateTime, Time};
+/// use icu::calendar::{AnyCalendar, DateTime, Time, types::{Era, MonthCode}};
 /// use icu::datetime::{options::length, DateTimeFormatter};
-/// use icu::locid::locale;
+/// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
+/// use tinystr::tinystr;
 /// # use std::rc::Rc;
 ///
 /// let locale = locale!("en-u-ca-japanese").into(); // English with the Japanese calendar
@@ -88,7 +89,7 @@ size_test!(DateTimeFormatter, date_time_formatter_size, 5208);
 /// let manual_time = Time::try_new(12, 33, 12, 0).expect("failed to construct Time");
 /// // construct from era code, year, month code, day, time, and a calendar
 /// // This is March 28, 15 Heisei
-/// let manual_datetime = DateTime::try_new_from_codes("heisei".parse().unwrap(), 15, "M03".parse().unwrap(), 28,
+/// let manual_datetime = DateTime::try_new_from_codes(Some(Era(tinystr!(16, "heisei"))), 15, MonthCode(tinystr!(4, "M03")), 28,
 ///                                                manual_time, calendar.clone())
 ///                     .expect("Failed to construct DateTime manually");
 ///
@@ -132,7 +133,7 @@ impl DateTimeFormatter {
     /// ```
     /// use icu::calendar::DateTime;
     /// use icu::datetime::{options::length, DateTimeFormatter};
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
     /// let options = length::Bag::from_date_time_style(
@@ -311,7 +312,7 @@ impl DateTimeFormatter {
     /// ```
     /// use icu::calendar::DateTime;
     /// use icu::datetime::{options::components, DateTimeFormatter};
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
     /// let mut options = components::Bag::default();
@@ -456,7 +457,7 @@ impl DateTimeFormatter {
     /// use icu::datetime::{
     ///     options::length, DateFormatter, DateTimeFormatter, TimeFormatter,
     /// };
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
     /// let df = DateFormatter::try_new_with_length(
@@ -548,7 +549,7 @@ where {
     ///     options::{components, length},
     ///     DateTimeFormatter,
     /// };
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     ///
     /// let options = length::Bag::from_date_style(length::Date::Medium).into();
     ///
@@ -574,7 +575,7 @@ where {
 mod tests {
     use icu::calendar::{AnyCalendar, DateTime};
     use icu::datetime::{options::length, DateTimeFormatter};
-    use icu::locid::locale;
+    use icu::locale::locale;
     use icu_provider::DataLocale;
 
     fn test_format(datetime: &DateTime<AnyCalendar>, locale: DataLocale, expected: &str) {
@@ -636,7 +637,7 @@ mod tests {
 fn buffer_constructor() {
     use icu::calendar::DateTime;
     use icu::datetime::{options::length, DateTimeFormatter};
-    use icu::locid::locale;
+    use icu::locale::locale;
     use writeable::assert_writeable_eq;
 
     let provider = icu_provider_blob::BlobDataProvider::try_new_from_static_blob(include_bytes!(

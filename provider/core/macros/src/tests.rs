@@ -28,7 +28,7 @@ fn test_basic() {
 }
 
 #[test]
-fn test_data_marker() {
+fn test_dyn_data_marker() {
     // #[data_struct(FooV1Marker)]
     check(
         quote!(FooV1Marker),
@@ -38,8 +38,8 @@ fn test_data_marker() {
         quote!(
             #[doc = "Marker type for [`FooV1`]"]
             pub struct FooV1Marker;
-            impl icu_provider::DataMarker for FooV1Marker {
-                type Yokeable = FooV1;
+            impl icu_provider::DynamicDataMarker for FooV1Marker {
+                type DataStruct = FooV1;
             }
             #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
             pub struct FooV1;
@@ -48,7 +48,7 @@ fn test_data_marker() {
 }
 
 #[test]
-fn test_keyed_data_marker() {
+fn test_data_marker() {
     // #[data_struct(BarV1Marker = "demo/bar@1")]
     check(
         quote!(BarV1Marker = "demo/bar@1"),
@@ -56,20 +56,18 @@ fn test_keyed_data_marker() {
             pub struct FooV1;
         ),
         quote!(
-            #[doc = "Marker type for [`FooV1`]: \"demo/bar@1\"\n\n- Fallback priority: language (default)\n- Extension keyword: none (default)"]
+            #[doc = "Marker type for [`FooV1`]: \"demo/bar@1\"\n\n- Fallback priority: language (default)"]
             pub struct BarV1Marker;
-            impl icu_provider::DataMarker for BarV1Marker {
-                type Yokeable = FooV1;
+            impl icu_provider::DynamicDataMarker for BarV1Marker {
+                type DataStruct = FooV1;
             }
-            impl icu_provider::KeyedDataMarker for BarV1Marker {
-                const KEY: icu_provider::DataKey = icu_provider::data_key!(
-                    "demo/bar@1",
-                    icu_provider::DataKeyMetadata::construct_internal(
-                        icu_provider::_internal::LocaleFallbackPriority::const_default(),
-                        None,
-                        None,
-                        false,
-                    ));
+            impl icu_provider::DataMarker for BarV1Marker {
+                const INFO: icu_provider::DataMarkerInfo = {
+                    let mut info = icu_provider::DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!("demo/bar@1"));
+                    info.is_singleton = false;
+                    info.fallback_config.priority = icu_provider::fallback::LocaleFallbackPriority::default();
+                    info
+                };
             }
             #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
             pub struct FooV1;
@@ -92,74 +90,37 @@ fn test_multi_named_keyed_data_marker() {
         quote!(
             #[doc = "Marker type for [`FooV1`]"]
             pub struct FooV1Marker;
-            impl icu_provider::DataMarker for FooV1Marker {
-                type Yokeable = FooV1<'static>;
+            impl icu_provider::DynamicDataMarker for FooV1Marker {
+                type DataStruct = FooV1<'static>;
             }
-            #[doc = "Marker type for [`FooV1`]: \"demo/bar@1\"\n\n- Fallback priority: language (default)\n- Extension keyword: none (default)"]
+            #[doc = "Marker type for [`FooV1`]: \"demo/bar@1\"\n\n- Fallback priority: language (default)"]
             pub struct BarV1Marker;
+            impl icu_provider::DynamicDataMarker for BarV1Marker {
+                type DataStruct = FooV1<'static>;
+            }
             impl icu_provider::DataMarker for BarV1Marker {
-                type Yokeable = FooV1<'static>;
+                const INFO: icu_provider::DataMarkerInfo = {
+                    let mut info = icu_provider::DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!("demo/bar@1"));
+                    info.is_singleton = false;
+                    info.fallback_config.priority = icu_provider::fallback::LocaleFallbackPriority::default();
+                    info
+                };
             }
-            impl icu_provider::KeyedDataMarker for BarV1Marker {
-                const KEY: icu_provider::DataKey = icu_provider::data_key!(
-                    "demo/bar@1",
-                    icu_provider::DataKeyMetadata::construct_internal(
-                        icu_provider::_internal::LocaleFallbackPriority::const_default(),
-                        None,
-                        None,
-                        false,
-                    ));
-            }
-            #[doc = "Marker type for [`FooV1`]: \"demo/baz@1\"\n\n- Fallback priority: language (default)\n- Extension keyword: none (default)"]
+            #[doc = "Marker type for [`FooV1`]: \"demo/baz@1\"\n\n- Fallback priority: language (default)"]
             pub struct BazV1Marker;
-            impl icu_provider::DataMarker for BazV1Marker {
-                type Yokeable = FooV1<'static>;
+            impl icu_provider::DynamicDataMarker for BazV1Marker {
+                type DataStruct = FooV1<'static>;
             }
-            impl icu_provider::KeyedDataMarker for BazV1Marker {
-                const KEY: icu_provider::DataKey = icu_provider::data_key!(
-                    "demo/baz@1",
-                    icu_provider::DataKeyMetadata::construct_internal(
-                        icu_provider::_internal::LocaleFallbackPriority::const_default(),
-                        None,
-                        None,
-                        false,
-                    ));
+            impl icu_provider::DataMarker for BazV1Marker {
+                const INFO: icu_provider::DataMarkerInfo =  {
+                    let mut info = icu_provider::DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!("demo/baz@1"));
+                    info.is_singleton = false;
+                    info.fallback_config.priority = icu_provider::fallback::LocaleFallbackPriority::default();
+                    info
+                };
             }
             #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
             pub struct FooV1<'data>;
-        ),
-    );
-}
-
-#[test]
-fn test_databake() {
-    check(
-        quote!(BarV1Marker = "demo/bar@1"),
-        quote!(
-            #[databake(path = test::path)]
-            pub struct FooV1;
-        ),
-        quote!(
-            #[doc = "Marker type for [`FooV1`]: \"demo/bar@1\"\n\n- Fallback priority: language (default)\n- Extension keyword: none (default)"]
-            #[derive(databake::Bake)]
-            #[databake(path = test::path)]
-            pub struct BarV1Marker;
-            impl icu_provider::DataMarker for BarV1Marker {
-                type Yokeable = FooV1;
-            }
-            impl icu_provider::KeyedDataMarker for BarV1Marker {
-                const KEY: icu_provider::DataKey = icu_provider::data_key!(
-                    "demo/bar@1",
-                    icu_provider::DataKeyMetadata::construct_internal(
-                        icu_provider::_internal::LocaleFallbackPriority::const_default(),
-                        None,
-                        None,
-                        false,
-                    ));
-            }
-            #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
-            #[databake(path = test::path)]
-            pub struct FooV1;
         ),
     );
 }
@@ -170,14 +131,7 @@ fn test_attributes() {
     check(
         quote![
             FooV1Marker,
-            marker(
-                BarV1Marker,
-                "demo/bar@1",
-                fallback_by = "region",
-                extension_key = "ca",
-                fallback_supplement = "collation",
-                singleton,
-            ),
+            marker(BarV1Marker, "demo/bar@1", fallback_by = "region", singleton),
         ],
         quote!(
             pub struct FooV1<'data>;
@@ -185,23 +139,21 @@ fn test_attributes() {
         quote!(
             #[doc = "Marker type for [`FooV1`]"]
             pub struct FooV1Marker;
-            impl icu_provider::DataMarker for FooV1Marker {
-                type Yokeable = FooV1<'static>;
+            impl icu_provider::DynamicDataMarker for FooV1Marker {
+                type DataStruct = FooV1<'static>;
             }
-            #[doc = "Marker type for [`FooV1`]: \"demo/bar@1\"\n\n- Fallback priority: region\n- Extension keyword: ca"]
+            #[doc = "Marker type for [`FooV1`]: \"demo/bar@1\"\n\n- Fallback priority: region"]
             pub struct BarV1Marker;
-            impl icu_provider::DataMarker for BarV1Marker {
-                type Yokeable = FooV1<'static>;
+            impl icu_provider::DynamicDataMarker for BarV1Marker {
+                type DataStruct = FooV1<'static>;
             }
-            impl icu_provider::KeyedDataMarker for BarV1Marker {
-                const KEY: icu_provider::DataKey = icu_provider::data_key!(
-                    "demo/bar@1",
-                    icu_provider::DataKeyMetadata::construct_internal(
-                        icu_provider::_internal::LocaleFallbackPriority::Region,
-                        Some(icu_provider::_internal::locid::extensions::unicode::key!("ca")),
-                        Some(icu_provider::_internal::LocaleFallbackSupplement::Collation),
-                        true,
-                    ));
+            impl icu_provider::DataMarker for BarV1Marker {
+                const INFO: icu_provider::DataMarkerInfo = {
+                    let mut info = icu_provider::DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!("demo/bar@1"));
+                    info.is_singleton = true;
+                    info.fallback_config.priority = icu_provider::fallback::LocaleFallbackPriority::Region;
+                    info
+                };
             }
             #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
             pub struct FooV1<'data>;

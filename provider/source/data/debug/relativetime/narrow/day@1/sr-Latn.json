@@ -1,0 +1,25 @@
+{
+  "relatives": {
+    "-2": "prekjuče",
+    "-1": "juče",
+    "0": "danas",
+    "1": "sutra",
+    "2": "prekosutra"
+  },
+  "past": {
+    "strings": {
+      "other": [
+        0,
+        "\u0005pre  d."
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "other": [
+        0,
+        "\u0004za  d."
+      ]
+    }
+  }
+}

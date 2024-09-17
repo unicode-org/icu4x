@@ -4,11 +4,10 @@
 
 [package]
 name = "unused"
-version = "0.0.0"
 
 [lib]
 path = "unused"
 
 [dependencies]
-icu_capi = { version = "1.4", features = ["provider_fs", "experimental_components"] }
-icu_provider = { version = "1.4", features = ["deserialize_json"] }
+icu_capi = { version = "1.5", features = ["provider_fs", "experimental"] }
+icu_provider = { version = "1.5", features = ["deserialize_json"] }

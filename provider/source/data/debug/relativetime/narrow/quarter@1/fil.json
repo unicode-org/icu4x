@@ -1,0 +1,23 @@
+{
+  "relatives": {
+    "-1": "nakaraang quarter",
+    "0": "ngayong quarter",
+    "1": "susunod na quarter"
+  },
+  "past": {
+    "strings": {
+      "other": [
+        0,
+        "\u0001 quarter ang nakalipas"
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "other": [
+        0,
+        "\u0004sa  quarter"
+      ]
+    }
+  }
+}

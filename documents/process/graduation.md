@@ -30,10 +30,11 @@ This document contains a checklist for the requirements to migrate a component f
 - [ ] The APIs should follow ICU4X style
   - [ ] All options bags should be `Copy` (and contain references if they need to). Exceptions can be made by discussion.
 - [ ] The data structs should fully follow ZeroVec style
-  - [ ] Deserialization should not have a "zero-copy violation" in the [make-testdata](https://github.com/unicode-org/icu4x/blob/main/provider/datagen/tests/make-testdata.rs) test
+  - [ ] Deserialization should not have a "zero-copy violation" in the [make-testdata](https://github.com/unicode-org/icu4x/blob/main/provider/source/src/tests/make_testdata.rs) test
   - [ ] Constructors should avoid allocating memory in the common case
   - [ ] Opaque blobs of data should be avoided if possible (instead use VarZeroVec, ZeroMap, etc.)
   - [ ] Data structs should not be panicky to load/deserialize and conform to [data_safety.md](https://github.com/unicode-org/icu4x/blob/main/documents/design/data_safety.md)
+  - [ ] If any data structs use a large or unbounded number of data marker attributes, they are implemented in a way that reduces stack space, file size, and construction time, such as by having only a single variable-length field
 - [ ] The component should be fully integrated with ICU4X tooling
   - [ ] There should be an overview Criterion benchmark
   - [ ] There should be individual Criterion benchmarks for interesting or performance critical code paths

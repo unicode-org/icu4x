@@ -6,13 +6,13 @@ use icu_casemap::greek_to_me::{
     self, GreekDiacritics, GreekPrecomposedLetterData, GreekVowel, PackedGreekPrecomposedLetterData,
 };
 use icu_casemap::CaseMapper;
-use icu_normalizer::DecomposingNormalizer;
+use icu_normalizer::DecomposingNormalizerBorrowed;
 use icu_properties::{maps, GeneralCategoryGroup, Script};
 use std::collections::BTreeMap;
 use std::fmt::Write;
 
 fn main() {
-    let decomposer = DecomposingNormalizer::new_nfd();
+    let decomposer = DecomposingNormalizerBorrowed::new_nfd();
     let script = maps::script();
     let gc = maps::general_category();
     let cm = CaseMapper::new();

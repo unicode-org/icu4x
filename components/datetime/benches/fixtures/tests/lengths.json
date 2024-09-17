@@ -7,6 +7,10 @@
                     "length": {
                         "date": "full",
                         "time": null
+                    },
+                    "semantic": {
+                        "fieldSet": ["year", "month", "day", "weekday"],
+                        "length": "long"
                     }
                 }
             },
@@ -16,6 +20,10 @@
                     "length": {
                         "date": "long",
                         "time": null
+                    },
+                    "semantic": {
+                        "fieldSet": ["year", "month", "day"],
+                        "length": "long"
                     }
                 }
             },
@@ -25,6 +33,10 @@
                     "length": {
                         "date": "medium",
                         "time": null
+                    },
+                    "semantic": {
+                        "fieldSet": ["year", "month", "day"],
+                        "length": "medium"
                     }
                 }
             },
@@ -34,6 +46,10 @@
                     "length": {
                         "date": "short",
                         "time": null
+                    },
+                    "semantic": {
+                        "fieldSet": ["year", "month", "day"],
+                        "length": "short"
                     }
                 }
             },
@@ -43,6 +59,10 @@
                     "length": {
                         "date": null,
                         "time": "medium"
+                    },
+                    "semantic": {
+                        "fieldSet": ["hour", "minute", "second"],
+                        "length": "short"
                     }
                 }
             },
@@ -52,6 +72,10 @@
                     "length": {
                         "date": null,
                         "time": "short"
+                    },
+                    "semantic": {
+                        "fieldSet": ["hour", "minute"],
+                        "length": "short"
                     }
                 }
             },
@@ -61,6 +85,10 @@
                     "length": {
                         "date": "full",
                         "time": "medium"
+                    },
+                    "semantic": {
+                        "fieldSet": ["year", "month", "day", "weekday", "hour", "minute", "second"],
+                        "length": "long"
                     }
                 }
             },
@@ -70,6 +98,10 @@
                     "length": {
                         "date": "long",
                         "time": "short"
+                    },
+                    "semantic": {
+                        "fieldSet": ["year", "month", "day", "hour", "minute"],
+                        "length": "long"
                     }
                 }
             },
@@ -79,6 +111,10 @@
                     "length": {
                         "date": "medium",
                         "time": "medium"
+                    },
+                    "semantic": {
+                        "fieldSet": ["year", "month", "day", "hour", "minute", "second"],
+                        "length": "medium"
                     }
                 }
             },
@@ -88,6 +124,10 @@
                     "length": {
                         "date": "short",
                         "time": "short"
+                    },
+                    "semantic": {
+                        "fieldSet": ["year", "month", "day", "hour", "minute"],
+                        "length": "short"
                     }
                 }
             }

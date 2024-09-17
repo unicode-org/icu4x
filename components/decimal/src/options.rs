@@ -26,13 +26,13 @@ impl From<GroupingStrategy> for FixedDecimalFormatterOptions {
 /// ```
 /// use icu::decimal::options;
 /// use icu::decimal::FixedDecimalFormatter;
-/// use icu::locid::Locale;
+/// use icu::locale::Locale;
 /// use writeable::assert_writeable_eq;
 ///
-/// let locale = Locale::UND;
+/// let locale = Default::default();
 /// let mut options: options::FixedDecimalFormatterOptions = Default::default();
 /// options.grouping_strategy = options::GroupingStrategy::Min2;
-/// let fdf = FixedDecimalFormatter::try_new(&locale.into(), options)
+/// let fdf = FixedDecimalFormatter::try_new(&locale, options)
 ///     .expect("locale should be present");
 ///
 /// let one_thousand = 1000.into();

@@ -1,0 +1,23 @@
+{
+  "relatives": {
+    "-1": "el año pasado",
+    "0": "este año",
+    "1": "el próximo año"
+  },
+  "past": {
+    "strings": {
+      "other": [
+        0,
+        "\u0006hace  a"
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "other": [
+        0,
+        "\u000bdentro de  a"
+      ]
+    }
+  }
+}

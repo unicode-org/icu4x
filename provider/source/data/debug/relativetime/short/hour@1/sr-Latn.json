@@ -1,0 +1,21 @@
+{
+  "relatives": {
+    "0": "ovog sata"
+  },
+  "past": {
+    "strings": {
+      "other": [
+        0,
+        "\u0005pre  č."
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "other": [
+        0,
+        "\u0004za  č."
+      ]
+    }
+  }
+}

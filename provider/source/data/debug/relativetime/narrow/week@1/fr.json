@@ -1,0 +1,23 @@
+{
+  "relatives": {
+    "-1": "la semaine dernière",
+    "0": "cette semaine",
+    "1": "la semaine prochaine"
+  },
+  "past": {
+    "strings": {
+      "other": [
+        0,
+        "\u0002- sem."
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "other": [
+        0,
+        "\u0002+ sem."
+      ]
+    }
+  }
+}

@@ -22,17 +22,26 @@ final class SentenceSegmenter implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XSentenceSegmenter_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_SentenceSegmenter_destroy_mv1));
 
   /// Construct an [`SentenceSegmenter`].
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.new) for more information.
-  ///
-  /// Throws [Error] on failure.
-  factory SentenceSegmenter(DataProvider provider) {
-    final result = _ICU4XSentenceSegmenter_create(provider._ffi);
+  /// Throws [DataError] on failure.
+  static SentenceSegmenter create(DataProvider provider) {
+    final result = _icu4x_SentenceSegmenter_create_mv1(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
+    }
+    return SentenceSegmenter._fromFfi(result.union.ok, []);
+  }
+
+  /// Construct an [`SentenceSegmenter`].
+  ///
+  /// Throws [DataError] on failure.
+  factory SentenceSegmenter(DataProvider provider, Locale locale) {
+    final result = _icu4x_SentenceSegmenter_create_with_content_locale_mv1(provider._ffi, locale._ffi);
+    if (!result.isOk) {
+      throw DataError.values[result.union.err];
     }
     return SentenceSegmenter._fromFfi(result.union.ok, []);
   }
@@ -44,26 +53,30 @@ final class SentenceSegmenter implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.segment_utf16) for more information.
   SentenceBreakIteratorUtf16 segment(String input) {
-    final inputView = input.utf16View;
     final inputArena = _FinalizedArena();
     // This lifetime edge depends on lifetimes: 'a
     core.List<Object> aEdges = [this, inputArena];
-    final result = _ICU4XSentenceSegmenter_segment_utf16(_ffi, inputView.allocIn(inputArena.arena), inputView.length);
+    final result = _icu4x_SentenceSegmenter_segment_utf16_mv1(_ffi, input._utf16AllocIn(inputArena.arena));
     return SentenceBreakIteratorUtf16._fromFfi(result, [], aEdges);
   }
 }
 
-@meta.ResourceIdentifier('ICU4XSentenceSegmenter_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XSentenceSegmenter_destroy')
+@meta.ResourceIdentifier('icu4x_SentenceSegmenter_destroy_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_SentenceSegmenter_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XSentenceSegmenter_destroy(ffi.Pointer<ffi.Void> self);
+external void _icu4x_SentenceSegmenter_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XSentenceSegmenter_create')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XSentenceSegmenter_create')
+@meta.ResourceIdentifier('icu4x_SentenceSegmenter_create_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_SentenceSegmenter_create_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XSentenceSegmenter_create(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_SentenceSegmenter_create_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XSentenceSegmenter_segment_utf16')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XSentenceSegmenter_segment_utf16')
+@meta.ResourceIdentifier('icu4x_SentenceSegmenter_create_with_content_locale_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_SentenceSegmenter_create_with_content_locale_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _ICU4XSentenceSegmenter_segment_utf16(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint16> inputData, int inputLength);
+external _ResultOpaqueInt32 _icu4x_SentenceSegmenter_create_with_content_locale_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
+
+@meta.ResourceIdentifier('icu4x_SentenceSegmenter_segment_utf16_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, _SliceUtf16)>(isLeaf: true, symbol: 'icu4x_SentenceSegmenter_segment_utf16_mv1')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _icu4x_SentenceSegmenter_segment_utf16_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf16 input);

@@ -52,6 +52,17 @@ impl CharULE {
         Self([u0, u1, u2])
     }
 
+    /// Converts this [`CharULE`] to a [`char`]. This is equivalent to calling
+    /// [`AsULE::from_unaligned`]
+    ///
+    /// See the type-level documentation for [`CharULE`] for more information.
+    #[inline]
+    pub fn to_char(self) -> char {
+        let [b0, b1, b2] = self.0;
+        // Safe because the bytes of CharULE are defined to represent a valid Unicode scalar value.
+        unsafe { char::from_u32_unchecked(u32::from_le_bytes([b0, b1, b2, 0])) }
+    }
+
     impl_ule_from_array!(char, CharULE, Self([0; 3]));
 }
 
@@ -66,9 +77,9 @@ impl CharULE {
 //  6. CharULE byte equality is semantic equality
 unsafe impl ULE for CharULE {
     #[inline]
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
         if bytes.len() % 3 != 0 {
-            return Err(ZeroVecError::length::<Self>(bytes.len()));
+            return Err(UleError::length::<Self>(bytes.len()));
         }
         // Validate the bytes
         for chunk in bytes.chunks_exact(3) {
@@ -76,7 +87,7 @@ unsafe impl ULE for CharULE {
             #[allow(clippy::indexing_slicing)]
             // Won't panic because the chunks are always 3 bytes long
             let u = u32::from_le_bytes([chunk[0], chunk[1], chunk[2], 0]);
-            char::try_from(u).map_err(|_| ZeroVecError::parse::<Self>())?;
+            char::try_from(u).map_err(|_| UleError::parse::<Self>())?;
         }
         Ok(())
     }
@@ -92,15 +103,7 @@ impl AsULE for char {
 
     #[inline]
     fn from_unaligned(unaligned: Self::ULE) -> Self {
-        // Safe because the bytes of CharULE are defined to represent a valid Unicode scalar value.
-        unsafe {
-            Self::from_u32_unchecked(u32::from_le_bytes([
-                unaligned.0[0],
-                unaligned.0[1],
-                unaligned.0[2],
-                0,
-            ]))
-        }
+        unaligned.to_char()
     }
 }
 

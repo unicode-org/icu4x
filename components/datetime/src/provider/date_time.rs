@@ -5,8 +5,6 @@
 //! Traits for managing data needed by [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter).
 
 use crate::fields;
-#[cfg(feature = "experimental")]
-use crate::fields::Field;
 use crate::input;
 use crate::options::{length, preferences, DateTimeFormatterOptions};
 use crate::pattern::PatternError;
@@ -20,11 +18,12 @@ use crate::provider::calendar::{
 };
 #[cfg(feature = "experimental")]
 use crate::provider::neo::SimpleSubstitutionPattern;
+use crate::time_zone::TimeZoneDataPayloadsBorrowed;
 #[cfg(feature = "experimental")]
-use crate::{options::components, provider::calendar::DateSkeletonPatternsV1Marker};
+use crate::{fields::Field, options::components, provider::calendar::DateSkeletonPatternsV1Marker};
 use icu_calendar::types::Era;
 use icu_calendar::types::MonthCode;
-use icu_locid::extensions::unicode::Value;
+use icu_locale_core::extensions::unicode::Value;
 use icu_provider::prelude::*;
 
 pub(crate) enum GetSymbolForMonthError {
@@ -119,10 +118,10 @@ where
 {
     Ok(data_provider
         .load(DataRequest {
-            locale,
-            metadata: Default::default(),
+            id: DataIdentifierBorrowed::for_locale(locale),
+            ..Default::default()
         })?
-        .take_payload()?
+        .payload
         .map_project(|data, _| pattern_for_time_length_inner(data, length, &preferences).into()))
 }
 
@@ -229,11 +228,11 @@ where
         let time_patterns_data = self
             .data_provider
             .load(DataRequest {
-                locale: self.locale,
-                metadata: Default::default(),
+                id: DataIdentifierBorrowed::for_locale(self.locale),
+                ..Default::default()
             })
-            .and_then(DataResponse::take_payload)
-            .map_err(PatternForLengthError::Data)?;
+            .map_err(PatternForLengthError::Data)?
+            .payload;
 
         self.date_patterns_data.try_map_project(|data, _| {
             // TODO (#1131) - We may be able to remove the clone here.
@@ -346,30 +345,30 @@ where
     fn skeleton_data_payload(
         &self,
     ) -> Result<DataPayload<DateSkeletonPatternsV1Marker>, DataError> {
-        use icu_locid::extensions::unicode::{key, value};
-        use tinystr::tinystr;
-        let mut locale = self.locale.clone();
-        #[allow(clippy::expect_used)] // experimental
+        #![allow(clippy::expect_used)] // experimental
+        use icu_locale_core::{extensions::unicode::value, subtags::subtag};
         let cal_val = self.cal_val.expect("should be present for components bag");
         // Skeleton data for ethioaa is stored under ethiopic
-        if cal_val == &value!("ethioaa") {
-            locale.set_unicode_ext(key!("ca"), value!("ethiopic"));
-        } else if cal_val == &value!("islamic")
-            || cal_val == &value!("islamicc")
-            || cal_val.as_tinystr_slice().first() == Some(&tinystr!(8, "islamic"))
+        let cal = if cal_val == &value!("ethioaa") {
+            "ethiopic"
+        } else if cal_val == &value!("islamicc")
+            || cal_val.get_subtag(0) == Some(&subtag!("islamic"))
         {
             // All islamic calendars store skeleton data under islamic, not their individual extension keys
-            locale.set_unicode_ext(key!("ca"), value!("islamic"));
+            "islamic"
         } else {
-            locale.set_unicode_ext(key!("ca"), cal_val.clone());
+            cal_val.as_single_subtag().expect("single").as_str()
         };
 
         self.data_provider
             .load(DataRequest {
-                locale: &locale,
-                metadata: Default::default(),
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::from_str_or_panic(cal),
+                    self.locale,
+                ),
+                ..Default::default()
             })
-            .and_then(DataResponse::take_payload)
+            .map(|r| r.payload)
     }
 }
 
@@ -402,10 +401,10 @@ pub(crate) trait DateSymbols<'data> {
     ///
     /// `None` should fall back to the era code directly, if, for example,
     /// a japanext datetime is formatted with a `DateTimeFormat<Japanese>`
-    fn get_symbol_for_era<'a>(
-        &'a self,
+    fn get_symbol_for_era(
+        &self,
         length: fields::FieldLength,
-        era_code: &'a Era,
+        era_code: Era,
     ) -> Result<&str, GetSymbolForEraError>;
 }
 
@@ -516,10 +515,10 @@ impl<'data> DateSymbols<'data> for provider::calendar::DateSymbolsV1<'data> {
         })
     }
 
-    fn get_symbol_for_era<'a>(
-        &'a self,
+    fn get_symbol_for_era(
+        &self,
         length: fields::FieldLength,
-        era_code: &'a Era,
+        era_code: Era,
     ) -> Result<&str, GetSymbolForEraError> {
         let symbols = match length {
             fields::FieldLength::Wide => &self.eras.names,
@@ -566,5 +565,15 @@ impl<'data> TimeSymbols for provider::calendar::TimeSymbolsV1<'data> {
             (_, hour, _) if hour < 12 => &symbols.am,
             _ => &symbols.pm,
         })
+    }
+}
+
+pub(crate) trait ZoneSymbols<'data> {
+    fn get_payloads(&self) -> TimeZoneDataPayloadsBorrowed<'data>;
+}
+
+impl<'data> ZoneSymbols<'data> for () {
+    fn get_payloads(&self) -> TimeZoneDataPayloadsBorrowed<'data> {
+        TimeZoneDataPayloadsBorrowed::empty()
     }
 }

@@ -15,7 +15,7 @@
 
 use icu::calendar::{DateTime, Gregorian};
 use icu::datetime::TypedDateTimeFormatter;
-use icu::locid::locale;
+use icu::locale::locale;
 use icu_provider_blob::BlobDataProvider;
 
 fn main() {
@@ -37,6 +37,6 @@ fn main() {
 
     let result = formatter.format_to_string(&datetime);
 
-    assert_eq!(result, "၂၀၂၂၊ ဒီ ၂၃ ၁၂:၅၄:၂၉");
+    assert_eq!(result, "၂၀၂၂ ဒီ ၂၃ ၁၂:၅၄:၂၉");
     println!("{result}");
 }

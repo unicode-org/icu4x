@@ -3,11 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::buf::BufferMarker;
-use crate::error::{DataError, DataErrorKind};
-use crate::marker::DataMarker;
-use crate::request::DataLocale;
+use crate::DataError;
+use crate::DataLocale;
+use crate::DynamicDataMarker;
 use alloc::boxed::Box;
-use core::convert::TryFrom;
 use core::fmt::Debug;
 use core::marker::PhantomData;
 use core::ops::Deref;
@@ -35,7 +34,7 @@ pub struct DataResponseMetadata {
 /// [`DataPayload`] is built on top of the [`yoke`] framework, which allows for cheap, zero-copy
 /// operations on data via the use of self-references.
 ///
-/// The type of the data stored in [`DataPayload`] is determined by the [`DataMarker`] type parameter.
+/// The type of the data stored in [`DataPayload`] is determined by the [`DynamicDataMarker`] type parameter.
 ///
 /// ## Accessing the data
 ///
@@ -72,7 +71,7 @@ pub struct DataResponseMetadata {
 ///
 /// assert_eq!("Demo", payload.get().message);
 /// ```
-pub struct DataPayload<M: DataMarker>(pub(crate) DataPayloadInner<M>);
+pub struct DataPayload<M: DynamicDataMarker>(pub(crate) DataPayloadInner<M>);
 
 /// A container for data payloads with storage for something else.
 ///
@@ -88,18 +87,17 @@ pub struct DataPayload<M: DataMarker>(pub(crate) DataPayloadInner<M>);
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 /// use icu_provider::DataPayloadOr;
+/// use icu_locale_core::langid;
 ///
-/// let payload: DataPayload<HelloWorldV1Marker> = HelloWorldProvider
+/// let response: DataResponse<HelloWorldV1Marker> = HelloWorldProvider
 ///     .load(DataRequest {
-///         locale: &"de".parse().unwrap(),
-///         metadata: Default::default(),
+///         id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
+///         ..Default::default()
 ///     })
-///     .expect("Loading should succeed")
-///     .take_payload()
-///     .expect("Data should be present");
+///     .expect("Loading should succeed");
 ///
 /// let payload_some =
-///     DataPayloadOr::<HelloWorldV1Marker, ()>::from_payload(payload);
+///     DataPayloadOr::<HelloWorldV1Marker, ()>::from_payload(response.payload);
 /// let payload_none = DataPayloadOr::<HelloWorldV1Marker, ()>::from_other(());
 ///
 /// assert_eq!(
@@ -139,21 +137,20 @@ pub struct DataPayload<M: DataMarker>(pub(crate) DataPayloadInner<M>);
 /// assert_eq!(W * 4, size_of::<DataPayloadOr<SampleStructMarker, [usize; 2]>>());
 /// assert_eq!(W * 5, size_of::<DataPayloadOr<SampleStructMarker, [usize; 3]>>());
 /// ```
-#[doc(hidden)] // TODO(#4467): establish this as an internal API
-pub struct DataPayloadOr<M: DataMarker, O>(pub(crate) DataPayloadOrInner<M, O>);
+pub struct DataPayloadOr<M: DynamicDataMarker, O>(pub(crate) DataPayloadOrInner<M, O>);
 
-pub(crate) enum DataPayloadInner<M: DataMarker> {
-    Yoke(Yoke<M::Yokeable, CartableOptionPointer<CartInner>>),
-    StaticRef(&'static M::Yokeable),
+pub(crate) enum DataPayloadInner<M: DynamicDataMarker> {
+    Yoke(Yoke<M::DataStruct, CartableOptionPointer<CartInner>>),
+    StaticRef(&'static M::DataStruct),
 }
 
-pub(crate) enum DataPayloadOrInner<M: DataMarker, O> {
-    Yoke(Yoke<M::Yokeable, CartableOptionPointer<CartInner>>),
+pub(crate) enum DataPayloadOrInner<M: DynamicDataMarker, O> {
+    Yoke(Yoke<M::DataStruct, CartableOptionPointer<CartInner>>),
     Inner(DataPayloadOrInnerInner<M, O>),
 }
 
-pub(crate) enum DataPayloadOrInnerInner<M: DataMarker, O> {
-    StaticRef(&'static M::Yokeable),
+pub(crate) enum DataPayloadOrInnerInner<M: DynamicDataMarker, O> {
+    StaticRef(&'static M::DataStruct),
     Other(O),
 }
 
@@ -207,8 +204,8 @@ impl Cart {
 
 impl<M> Debug for DataPayload<M>
 where
-    M: DataMarker,
-    for<'a> &'a <M::Yokeable as Yokeable<'a>>::Output: Debug,
+    M: DynamicDataMarker,
+    for<'a> &'a <M::DataStruct as Yokeable<'a>>::Output: Debug,
 {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         self.get().fmt(f)
@@ -217,8 +214,8 @@ where
 
 impl<M, O> Debug for DataPayloadOr<M, O>
 where
-    M: DataMarker,
-    for<'a> &'a <M::Yokeable as Yokeable<'a>>::Output: Debug,
+    M: DynamicDataMarker,
+    for<'a> &'a <M::DataStruct as Yokeable<'a>>::Output: Debug,
     O: Debug,
 {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
@@ -242,8 +239,8 @@ where
 /// ```
 impl<M> Clone for DataPayload<M>
 where
-    M: DataMarker,
-    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
+    M: DynamicDataMarker,
+    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: Clone,
 {
     fn clone(&self) -> Self {
         Self(match &self.0 {
@@ -255,8 +252,8 @@ where
 
 impl<M, O> Clone for DataPayloadOr<M, O>
 where
-    M: DataMarker,
-    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
+    M: DynamicDataMarker,
+    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: Clone,
     O: Clone,
 {
     fn clone(&self) -> Self {
@@ -274,8 +271,8 @@ where
 
 impl<M> PartialEq for DataPayload<M>
 where
-    M: DataMarker,
-    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: PartialEq,
+    M: DynamicDataMarker,
+    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: PartialEq,
 {
     fn eq(&self, other: &Self) -> bool {
         YokeTraitHack(self.get()).into_ref() == YokeTraitHack(other.get()).into_ref()
@@ -284,8 +281,8 @@ where
 
 impl<M, O> PartialEq for DataPayloadOr<M, O>
 where
-    M: DataMarker,
-    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: PartialEq,
+    M: DynamicDataMarker,
+    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: PartialEq,
     O: Eq,
 {
     fn eq(&self, other: &Self) -> bool {
@@ -299,15 +296,15 @@ where
 
 impl<M> Eq for DataPayload<M>
 where
-    M: DataMarker,
-    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Eq,
+    M: DynamicDataMarker,
+    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: Eq,
 {
 }
 
 impl<M, O> Eq for DataPayloadOr<M, O>
 where
-    M: DataMarker,
-    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Eq,
+    M: DynamicDataMarker,
+    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: Eq,
     O: Eq,
 {
 }
@@ -344,7 +341,7 @@ fn test_clone_eq() {
 
 impl<M> DataPayload<M>
 where
-    M: DataMarker,
+    M: DynamicDataMarker,
 {
     /// Convert a fully owned (`'static`) data struct into a DataPayload.
     ///
@@ -367,26 +364,18 @@ where
     /// assert_eq!(payload.get(), &local_struct);
     /// ```
     #[inline]
-    pub fn from_owned(data: M::Yokeable) -> Self {
+    pub fn from_owned(data: M::DataStruct) -> Self {
         Self(DataPayloadInner::Yoke(
             Yoke::new_owned(data).convert_cart_into_option_pointer(),
         ))
     }
 
-    #[doc(hidden)]
+    /// Construct a [`DataPayload`] from a static reference.
+    ///
+    /// This is mainly used by databake.
     #[inline]
-    pub const fn from_static_ref(data: &'static M::Yokeable) -> Self {
+    pub const fn from_static_ref(data: &'static M::DataStruct) -> Self {
         Self(DataPayloadInner::StaticRef(data))
-    }
-
-    /// Convert a DataPayload that was created via [`DataPayload::from_owned()`] back into the
-    /// concrete type used to construct it.
-    pub fn try_unwrap_owned(self) -> Result<M::Yokeable, DataError> {
-        match self.0 {
-            DataPayloadInner::Yoke(yoke) => yoke.try_into_yokeable().ok(),
-            DataPayloadInner::StaticRef(_) => None,
-        }
-        .ok_or(DataErrorKind::InvalidState.with_str_context("try_unwrap_owned"))
     }
 
     /// Mutate the data contained in this DataPayload.
@@ -426,8 +415,8 @@ where
     /// ```
     pub fn with_mut<'a, F>(&'a mut self, f: F)
     where
-        F: 'static + for<'b> FnOnce(&'b mut <M::Yokeable as Yokeable<'a>>::Output),
-        M::Yokeable: zerofrom::ZeroFrom<'static, M::Yokeable>,
+        F: 'static + for<'b> FnOnce(&'b mut <M::DataStruct as Yokeable<'a>>::Output),
+        M::DataStruct: zerofrom::ZeroFrom<'static, M::DataStruct>,
     {
         if let DataPayloadInner::StaticRef(r) = self.0 {
             self.0 = DataPayloadInner::Yoke(
@@ -458,10 +447,22 @@ where
     /// ```
     #[inline]
     #[allow(clippy::needless_lifetimes)]
-    pub fn get<'a>(&'a self) -> &'a <M::Yokeable as Yokeable<'a>>::Output {
+    pub fn get<'a>(&'a self) -> &'a <M::DataStruct as Yokeable<'a>>::Output {
         match &self.0 {
             DataPayloadInner::Yoke(yoke) => yoke.get(),
             DataPayloadInner::StaticRef(r) => Yokeable::transform(*r),
+        }
+    }
+
+    /// Borrows the underlying data statically if possible.
+    ///
+    /// This will succeed if [`DataPayload`] is constructed with [`DataPayload::from_static_ref`], which is used by
+    /// baked providers.
+    #[inline]
+    pub fn get_static(&self) -> Option<&'static <M::DataStruct as Yokeable<'static>>::Output> {
+        match &self.0 {
+            DataPayloadInner::Yoke(_) => None,
+            DataPayloadInner::StaticRef(r) => Some(Yokeable::transform(*r)),
         }
     }
 
@@ -487,12 +488,12 @@ where
     /// use icu_provider::prelude::*;
     /// use std::borrow::Cow;
     ///
-    /// // A custom marker type is required when using `map_project`. The Yokeable should be the
+    /// // A custom marker type is required when using `map_project`. The DataStruct should be the
     /// // target type, and the Cart should correspond to the type being transformed.
     ///
     /// struct HelloWorldV1MessageMarker;
-    /// impl DataMarker for HelloWorldV1MessageMarker {
-    ///     type Yokeable = Cow<'static, str>;
+    /// impl DynamicDataMarker for HelloWorldV1MessageMarker {
+    ///     type DataStruct = Cow<'static, str>;
     /// }
     ///
     /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
@@ -509,12 +510,12 @@ where
     #[allow(clippy::type_complexity)]
     pub fn map_project<M2, F>(self, f: F) -> DataPayload<M2>
     where
-        M2: DataMarker,
+        M2: DynamicDataMarker,
         F: for<'a> FnOnce(
-            <M::Yokeable as Yokeable<'a>>::Output,
+            <M::DataStruct as Yokeable<'a>>::Output,
             PhantomData<&'a ()>,
-        ) -> <M2::Yokeable as Yokeable<'a>>::Output,
-        M::Yokeable: zerofrom::ZeroFrom<'static, M::Yokeable>,
+        ) -> <M2::DataStruct as Yokeable<'a>>::Output,
+        M::DataStruct: zerofrom::ZeroFrom<'static, M::DataStruct>,
     {
         DataPayload(DataPayloadInner::Yoke(
             match self.0 {
@@ -538,8 +539,8 @@ where
     /// # use icu_provider::prelude::*;
     /// # use std::borrow::Cow;
     /// # struct HelloWorldV1MessageMarker;
-    /// # impl DataMarker for HelloWorldV1MessageMarker {
-    /// #     type Yokeable = Cow<'static, str>;
+    /// # impl DynamicDataMarker for HelloWorldV1MessageMarker {
+    /// #     type DataStruct = Cow<'static, str>;
     /// # }
     ///
     /// let p1: DataPayload<HelloWorldV1Marker> =
@@ -558,21 +559,21 @@ where
     #[allow(clippy::type_complexity)]
     pub fn map_project_cloned<'this, M2, F>(&'this self, f: F) -> DataPayload<M2>
     where
-        M2: DataMarker,
+        M2: DynamicDataMarker,
         F: for<'a> FnOnce(
-            &'this <M::Yokeable as Yokeable<'a>>::Output,
+            &'this <M::DataStruct as Yokeable<'a>>::Output,
             PhantomData<&'a ()>,
-        ) -> <M2::Yokeable as Yokeable<'a>>::Output,
+        ) -> <M2::DataStruct as Yokeable<'a>>::Output,
     {
         DataPayload(DataPayloadInner::Yoke(match &self.0 {
             DataPayloadInner::Yoke(yoke) => yoke.map_project_cloned(f),
             DataPayloadInner::StaticRef(r) => {
-                let output: <M2::Yokeable as Yokeable<'static>>::Output =
+                let output: <M2::DataStruct as Yokeable<'static>>::Output =
                     f(Yokeable::transform(*r), PhantomData);
                 // Safety: <M2::Yokeable as Yokeable<'static>>::Output is the same type as M2::Yokeable;
                 // we're going from 'static to 'static, however in a generic context it's not
                 // clear to the compiler that that is the case. We have to use the unsafe make API to do this.
-                let yokeable: M2::Yokeable = unsafe { M2::Yokeable::make(output) };
+                let yokeable: M2::DataStruct = unsafe { M2::DataStruct::make(output) };
                 Yoke::new_owned(yokeable).convert_cart_into_option_pointer()
             }
         }))
@@ -590,8 +591,8 @@ where
     /// # use icu_provider::prelude::*;
     /// # use std::borrow::Cow;
     /// # struct HelloWorldV1MessageMarker;
-    /// # impl DataMarker for HelloWorldV1MessageMarker {
-    /// #     type Yokeable = Cow<'static, str>;
+    /// # impl DynamicDataMarker for HelloWorldV1MessageMarker {
+    /// #     type DataStruct = Cow<'static, str>;
     /// # }
     ///
     /// let p1: DataPayload<HelloWorldV1Marker> =
@@ -617,12 +618,12 @@ where
     #[allow(clippy::type_complexity)]
     pub fn try_map_project<M2, F, E>(self, f: F) -> Result<DataPayload<M2>, E>
     where
-        M2: DataMarker,
+        M2: DynamicDataMarker,
         F: for<'a> FnOnce(
-            <M::Yokeable as Yokeable<'a>>::Output,
+            <M::DataStruct as Yokeable<'a>>::Output,
             PhantomData<&'a ()>,
-        ) -> Result<<M2::Yokeable as Yokeable<'a>>::Output, E>,
-        M::Yokeable: zerofrom::ZeroFrom<'static, M::Yokeable>,
+        ) -> Result<<M2::DataStruct as Yokeable<'a>>::Output, E>,
+        M::DataStruct: zerofrom::ZeroFrom<'static, M::DataStruct>,
     {
         Ok(DataPayload(DataPayloadInner::Yoke(
             match self.0 {
@@ -646,8 +647,8 @@ where
     /// # use icu_provider::prelude::*;
     /// # use std::borrow::Cow;
     /// # struct HelloWorldV1MessageMarker;
-    /// # impl DataMarker for HelloWorldV1MessageMarker {
-    /// #     type Yokeable = Cow<'static, str>;
+    /// # impl DynamicDataMarker for HelloWorldV1MessageMarker {
+    /// #     type DataStruct = Cow<'static, str>;
     /// # }
     ///
     /// let p1: DataPayload<HelloWorldV1Marker> =
@@ -676,30 +677,30 @@ where
     #[allow(clippy::type_complexity)]
     pub fn try_map_project_cloned<'this, M2, F, E>(&'this self, f: F) -> Result<DataPayload<M2>, E>
     where
-        M2: DataMarker,
+        M2: DynamicDataMarker,
         F: for<'a> FnOnce(
-            &'this <M::Yokeable as Yokeable<'a>>::Output,
+            &'this <M::DataStruct as Yokeable<'a>>::Output,
             PhantomData<&'a ()>,
-        ) -> Result<<M2::Yokeable as Yokeable<'a>>::Output, E>,
+        ) -> Result<<M2::DataStruct as Yokeable<'a>>::Output, E>,
     {
         Ok(DataPayload(DataPayloadInner::Yoke(match &self.0 {
             DataPayloadInner::Yoke(yoke) => yoke.try_map_project_cloned(f)?,
             DataPayloadInner::StaticRef(r) => {
-                let output: <M2::Yokeable as Yokeable<'static>>::Output =
+                let output: <M2::DataStruct as Yokeable<'static>>::Output =
                     f(Yokeable::transform(*r), PhantomData)?;
                 // Safety: <M2::Yokeable as Yokeable<'static>>::Output is the same type as M2::Yokeable
-                Yoke::new_owned(unsafe { M2::Yokeable::make(output) })
+                Yoke::new_owned(unsafe { M2::DataStruct::make(output) })
                     .convert_cart_into_option_pointer()
             }
         })))
     }
 
-    /// Convert between two [`DataMarker`] types that are compatible with each other
+    /// Convert between two [`DynamicDataMarker`] types that are compatible with each other
     /// with compile-time type checking.
     ///
-    /// This happens if they both have the same [`DataMarker::Yokeable`] type.
+    /// This happens if they both have the same [`DynamicDataMarker::DataStruct`] type.
     ///
-    /// Can be used to erase the key of a data payload in cases where multiple keys correspond
+    /// Can be used to erase the marker of a data payload in cases where multiple markers correspond
     /// to the same data struct.
     ///
     /// For runtime dynamic casting, use [`DataPayload::dynamic_cast_mut()`].
@@ -711,8 +712,8 @@ where
     /// use icu_provider::prelude::*;
     ///
     /// struct CustomHelloWorldV1Marker;
-    /// impl DataMarker for CustomHelloWorldV1Marker {
-    ///     type Yokeable = HelloWorldV1<'static>;
+    /// impl DynamicDataMarker for CustomHelloWorldV1Marker {
+    ///     type DataStruct = HelloWorldV1<'static>;
     /// }
     ///
     /// let hello_world: DataPayload<HelloWorldV1Marker> = todo!();
@@ -721,12 +722,103 @@ where
     #[inline]
     pub fn cast<M2>(self) -> DataPayload<M2>
     where
-        M2: DataMarker<Yokeable = M::Yokeable>,
+        M2: DynamicDataMarker<DataStruct = M::DataStruct>,
     {
         DataPayload(match self.0 {
             DataPayloadInner::Yoke(yoke) => DataPayloadInner::Yoke(yoke),
             DataPayloadInner::StaticRef(r) => DataPayloadInner::StaticRef(r),
         })
+    }
+
+    /// Convert between two [`DynamicDataMarker`] types that are compatible with each other
+    /// with compile-time type checking.
+    ///
+    /// This happens if they both have the same [`DynamicDataMarker::DataStruct`] type.
+    ///
+    /// Can be used to erase the marker of a data payload in cases where multiple markers correspond
+    /// to the same data struct.
+    #[inline]
+    pub fn cast_ref<M2>(&self) -> &DataPayload<M2>
+    where
+        M2: DynamicDataMarker<DataStruct = M::DataStruct>,
+    {
+        // SAFETY: As seen in the implementation of `cast`, the struct is the same, it's just the generic that changes.
+        unsafe { core::mem::transmute(self) }
+    }
+
+    /// Convert a [`DataPayload`] to one of the same type with runtime type checking.
+    ///
+    /// Primarily useful to convert from a generic to a concrete marker type.
+    ///
+    /// If the `M2` type argument does not match the true marker type, a `DataError` is returned.
+    ///
+    /// For compile-time static casting, use [`DataPayload::cast()`].
+    ///
+    /// # Examples
+    ///
+    /// Short-circuit a data request request based on the marker, returning
+    /// a result from a different data provider:
+    ///
+    /// ```
+    /// use std::any::TypeId;
+    /// use std::borrow::Cow;
+    /// use icu_locale_core::locale;
+    /// use icu_provider::hello_world::*;
+    /// use icu_provider::prelude::*;
+    /// use icu_provider_adapters::empty::EmptyDataProvider;
+    ///
+    /// struct MyForkingProvider<P0, P1> {
+    ///     fallback_provider: P0,
+    ///     hello_world_provider: P1,
+    /// }
+    ///
+    /// impl<M, P0, P1> DataProvider<M> for MyForkingProvider<P0, P1>
+    /// where
+    ///     M: DataMarker,
+    ///     P0: DataProvider<M>,
+    ///     P1: DataProvider<HelloWorldV1Marker>,
+    /// {
+    ///     #[inline]
+    ///     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+    ///         if TypeId::of::<HelloWorldV1Marker>() == TypeId::of::<M>() {
+    ///             let response = DataProvider::<HelloWorldV1Marker>::load(&self.hello_world_provider, req)?;
+    ///             Ok(DataResponse {
+    ///                 metadata: response.metadata,
+    ///                 payload: response.payload.dynamic_cast()?,
+    ///             })
+    ///         } else {
+    ///             self.fallback_provider.load(req)
+    ///         }
+    ///     }
+    /// }
+    ///
+    /// let provider = MyForkingProvider {
+    ///     fallback_provider: EmptyDataProvider::new(),
+    ///     hello_world_provider: HelloWorldProvider,
+    /// };
+    ///
+    /// let formatter =
+    ///     HelloWorldFormatter::try_new_unstable(&provider, &locale!("de").into())
+    ///         .unwrap();
+    ///
+    /// // This succeeds because the data was loaded from HelloWorldProvider
+    /// // rather than the empty fallback provider.
+    /// assert_eq!(formatter.format_to_string(), "Hallo Welt");
+    /// ```
+    pub fn dynamic_cast<M2>(self) -> Result<DataPayload<M2>, DataError>
+    where
+        M2: DynamicDataMarker,
+    {
+        let mut option_self = Some(self);
+        let mut option_out = None::<DataPayload<M2>>;
+        if let Some(x) = (&mut option_out as &mut dyn core::any::Any).downcast_mut() {
+            core::mem::swap(&mut option_self, x);
+            debug_assert!(option_out.is_some());
+            if let Some(out) = option_out {
+                return Ok(out);
+            }
+        }
+        Err(DataError::for_type::<M2>().with_str_context(core::any::type_name::<M>()))
     }
 
     /// Convert a mutable reference of a [`DataPayload`] to another mutable reference
@@ -740,10 +832,10 @@ where
     ///
     /// # Examples
     ///
-    /// Change the results of a particular request based on key:
+    /// Change the results of a particular request based on marker:
     ///
     /// ```
-    /// use icu_locid::locale;
+    /// use icu_locale_core::locale;
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
     ///
@@ -753,21 +845,18 @@ where
     ///
     /// impl<M, P> DataProvider<M> for MyWrapper<P>
     /// where
-    ///     M: KeyedDataMarker,
+    ///     M: DataMarker,
     ///     P: DataProvider<M>,
     /// {
     ///     #[inline]
     ///     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
     ///         let mut res = self.inner.load(req)?;
-    ///         if let Some(ref mut generic_payload) = res.payload {
-    ///             let mut cast_result =
-    ///                 generic_payload.dynamic_cast_mut::<HelloWorldV1Marker>();
-    ///             if let Ok(ref mut concrete_payload) = cast_result {
-    ///                 // Add an emoji to the hello world message
-    ///                 concrete_payload.with_mut(|data| {
-    ///                     data.message.to_mut().insert_str(0, "✨ ");
-    ///                 });
-    ///             }
+    ///         let mut cast_result = res.payload.dynamic_cast_mut::<HelloWorldV1Marker>();
+    ///         if let Ok(ref mut concrete_payload) = cast_result {
+    ///             // Add an emoji to the hello world message
+    ///             concrete_payload.with_mut(|data| {
+    ///                 data.message.to_mut().insert_str(0, "✨ ");
+    ///             });
     ///         }
     ///         Ok(res)
     ///     }
@@ -785,7 +874,7 @@ where
     #[inline]
     pub fn dynamic_cast_mut<M2>(&mut self) -> Result<&mut DataPayload<M2>, DataError>
     where
-        M2: DataMarker,
+        M2: DynamicDataMarker,
     {
         let this: &mut dyn core::any::Any = self;
         if let Some(this) = this.downcast_mut() {
@@ -823,8 +912,8 @@ impl DataPayload<BufferMarker> {
 
 impl<M> Default for DataPayload<M>
 where
-    M: DataMarker,
-    M::Yokeable: Default,
+    M: DynamicDataMarker,
+    M::DataStruct: Default,
 {
     fn default() -> Self {
         Self::from_owned(Default::default())
@@ -833,7 +922,7 @@ where
 
 impl<M, O> DataPayloadOr<M, O>
 where
-    M: DataMarker,
+    M: DynamicDataMarker,
 {
     /// Creates a [`DataPayloadOr`] from a [`DataPayload`].
     #[inline]
@@ -854,10 +943,20 @@ where
         )))
     }
 
+    /// Returns whether this object represents a [`DataPayload`].
+    #[inline]
+    pub fn is_payload(&self) -> bool {
+        match &self.0 {
+            DataPayloadOrInner::Yoke(_) => true,
+            DataPayloadOrInner::Inner(DataPayloadOrInnerInner::StaticRef(_)) => true,
+            DataPayloadOrInner::Inner(DataPayloadOrInnerInner::Other(_)) => false,
+        }
+    }
+
     /// Gets the value from this [`DataPayload`] as `Ok` or the other type as `Err`.
     #[allow(clippy::needless_lifetimes)]
     #[inline]
-    pub fn get<'a>(&'a self) -> Result<&'a <M::Yokeable as Yokeable<'a>>::Output, &'a O> {
+    pub fn get<'a>(&'a self) -> Result<&'a <M::DataStruct as Yokeable<'a>>::Output, &'a O> {
         match &self.0 {
             DataPayloadOrInner::Yoke(yoke) => Ok(yoke.get()),
             DataPayloadOrInner::Inner(DataPayloadOrInnerInner::StaticRef(r)) => {
@@ -881,85 +980,66 @@ where
     }
 }
 
+impl<M> DataPayloadOr<M, ()>
+where
+    M: DynamicDataMarker,
+{
+    /// Convenience function to return the other type with value `()`
+    #[inline]
+    pub fn none() -> Self {
+        Self::from_other(())
+    }
+
+    /// Convenience function to return `Some` or `None` for other type `()`
+    #[allow(clippy::needless_lifetimes)]
+    #[inline]
+    pub fn get_option<'a>(&'a self) -> Option<&'a <M::DataStruct as Yokeable<'a>>::Output> {
+        self.get().ok()
+    }
+}
+
 /// A response object containing an object as payload and metadata about it.
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DataResponse<M>
 where
-    M: DataMarker,
+    M: DynamicDataMarker,
 {
     /// Metadata about the returned object.
     pub metadata: DataResponseMetadata,
 
-    /// The object itself; `None` if it was not loaded.
-    pub payload: Option<DataPayload<M>>,
+    /// The object itself
+    pub payload: DataPayload<M>,
 }
 
 impl<M> DataResponse<M>
 where
-    M: DataMarker,
+    M: DynamicDataMarker,
 {
-    /// Takes ownership of the underlying payload. Error if not present.
-    ///
-    /// To take the metadata, too, use [`Self::take_metadata_and_payload()`].
-    #[inline]
-    pub fn take_payload(self) -> Result<DataPayload<M>, DataError> {
-        Ok(self.take_metadata_and_payload()?.1)
-    }
-
-    /// Takes ownership of the underlying metadata and payload. Error if payload is not present.
-    #[inline]
-    pub fn take_metadata_and_payload(
-        self,
-    ) -> Result<(DataResponseMetadata, DataPayload<M>), DataError> {
-        Ok((
-            self.metadata,
-            self.payload
-                .ok_or_else(|| DataErrorKind::MissingPayload.with_type_context::<M>())?,
-        ))
-    }
-
-    /// Convert between two [`DataMarker`] types that are compatible with each other
+    /// Convert between two [`DynamicDataMarker`] types that are compatible with each other
     /// with compile-time type checking.
     ///
-    /// This happens if they both have the same [`DataMarker::Yokeable`] type.
+    /// This happens if they both have the same [`DynamicDataMarker::DataStruct`] type.
     ///
-    /// Can be used to erase the key of a data payload in cases where multiple keys correspond
+    /// Can be used to erase the marker of a data payload in cases where multiple markers correspond
     /// to the same data struct.
     ///
     /// For runtime dynamic casting, use [`DataPayload::dynamic_cast_mut()`].
     #[inline]
     pub fn cast<M2>(self) -> DataResponse<M2>
     where
-        M2: DataMarker<Yokeable = M::Yokeable>,
+        M2: DynamicDataMarker<DataStruct = M::DataStruct>,
     {
-        match self.payload {
-            Some(payload) => DataResponse {
-                metadata: self.metadata,
-                payload: Some(payload.cast()),
-            },
-            None => DataResponse {
-                metadata: self.metadata,
-                payload: None,
-            },
+        DataResponse {
+            metadata: self.metadata,
+            payload: self.payload.cast(),
         }
-    }
-}
-
-impl<M> TryFrom<DataResponse<M>> for DataPayload<M>
-where
-    M: DataMarker,
-{
-    type Error = DataError;
-
-    fn try_from(response: DataResponse<M>) -> Result<Self, Self::Error> {
-        response.take_payload()
     }
 }
 
 impl<M> Debug for DataResponse<M>
 where
-    M: DataMarker,
-    for<'a> &'a <M::Yokeable as Yokeable<'a>>::Output: Debug,
+    M: DynamicDataMarker,
+    for<'a> &'a <M::DataStruct as Yokeable<'a>>::Output: Debug,
 {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(
@@ -984,8 +1064,8 @@ where
 /// ```
 impl<M> Clone for DataResponse<M>
 where
-    M: DataMarker,
-    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
+    M: DynamicDataMarker,
+    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: Clone,
 {
     fn clone(&self) -> Self {
         Self {
@@ -1001,9 +1081,9 @@ fn test_debug() {
     use alloc::borrow::Cow;
     let resp = DataResponse::<HelloWorldV1Marker> {
         metadata: Default::default(),
-        payload: Some(DataPayload::from_owned(HelloWorldV1 {
+        payload: DataPayload::from_owned(HelloWorldV1 {
             message: Cow::Borrowed("foo"),
-        })),
+        }),
     };
-    assert_eq!("DataResponse { metadata: DataResponseMetadata { locale: None, buffer_format: None }, payload: Some(HelloWorldV1 { message: \"foo\" }) }", format!("{resp:?}"));
+    assert_eq!("DataResponse { metadata: DataResponseMetadata { locale: None, buffer_format: None }, payload: HelloWorldV1 { message: \"foo\" } }", format!("{resp:?}"));
 }

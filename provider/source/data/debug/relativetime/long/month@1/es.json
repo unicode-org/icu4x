@@ -1,0 +1,31 @@
+{
+  "relatives": {
+    "-1": "el mes pasado",
+    "0": "este mes",
+    "1": "el próximo mes"
+  },
+  "past": {
+    "strings": {
+      "one": [
+        0,
+        "\u0006hace  mes"
+      ],
+      "other": [
+        0,
+        "\u0006hace  meses"
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "one": [
+        0,
+        "\u000bdentro de  mes"
+      ],
+      "other": [
+        0,
+        "\u000bdentro de  meses"
+      ]
+    }
+  }
+}

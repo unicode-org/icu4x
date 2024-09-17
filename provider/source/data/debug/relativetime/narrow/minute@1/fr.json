@@ -1,0 +1,21 @@
+{
+  "relatives": {
+    "0": "cette minute-ci"
+  },
+  "past": {
+    "strings": {
+      "other": [
+        0,
+        "\u0002- min"
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "other": [
+        0,
+        "\u0002+ min"
+      ]
+    }
+  }
+}

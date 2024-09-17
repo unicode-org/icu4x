@@ -8,7 +8,7 @@
 use crate::format::datetime::FormattedDateTime;
 use crate::{
     format::datetime,
-    input::{DateInput, DateTimeInput, ExtractedDateTimeInput, IsoTimeInput},
+    input::{DateInput, DateTimeInput, ExtractedInput, IsoTimeInput},
     options::{length, preferences},
     pattern::runtime::PatternPlurals,
     provider::{
@@ -61,10 +61,10 @@ impl TimeFormatter {
             Some(
                 crate::provider::Baked
                     .load(DataRequest {
-                        locale,
-                        metadata: Default::default(),
+                        id: DataIdentifierBorrowed::for_locale(locale),
+                        ..Default::default()
                     })?
-                    .take_payload()?,
+                    .payload,
             )
         } else {
             None
@@ -102,10 +102,10 @@ impl TimeFormatter {
             Some(
                 provider
                     .load(DataRequest {
-                        locale,
-                        metadata: Default::default(),
+                        id: DataIdentifierBorrowed::for_locale(locale),
+                        ..Default::default()
                     })?
-                    .take_payload()?,
+                    .payload,
             )
         } else {
             None
@@ -147,7 +147,7 @@ impl TimeFormatter {
             patterns: &self.patterns,
             date_symbols: None,
             time_symbols: self.symbols.as_ref().map(|s| s.get()),
-            datetime: ExtractedDateTimeInput::extract_from_time(value),
+            datetime: ExtractedInput::extract_from_time(value),
             week_data: None,
             ordinal_rules: None,
             fixed_decimal_format: &self.fixed_decimal_format,
@@ -243,11 +243,11 @@ impl DateFormatter {
                 (*DataProvider::<WeekDataV1Marker>::load(
                     provider,
                     DataRequest {
-                        locale,
-                        metadata: Default::default(),
+                        id: DataIdentifierBorrowed::for_locale(locale),
+                        ..Default::default()
                     },
                 )?
-                .take_payload()?
+                .payload
                 .get())
                 .into(),
             )
@@ -316,7 +316,7 @@ impl DateFormatter {
             patterns: &self.patterns,
             date_symbols: self.symbols.as_ref().map(|s| s.get()),
             time_symbols: None,
-            datetime: ExtractedDateTimeInput::extract_from_date(value),
+            datetime: ExtractedInput::extract_from_date(value),
             week_data: None,
             ordinal_rules: None,
             fixed_decimal_format: &self.fixed_decimal_format,
@@ -387,8 +387,8 @@ impl DateTimeFormatter {
             .map_err(|field| DateTimeError::UnsupportedField(field.symbol))?;
 
         let req = DataRequest {
-            locale,
-            metadata: Default::default(),
+            id: DataIdentifierBorrowed::for_locale(locale),
+            ..Default::default()
         };
 
         let week_data = if required.week_data {
@@ -410,7 +410,7 @@ impl DateTimeFormatter {
         };
 
         let time_symbols_data = if required.time_symbols_data {
-            Some(crate::provider::Baked.load(req)?.take_payload()?)
+            Some(crate::provider::Baked.load(req)?.payload)
         } else {
             None
         };
@@ -450,8 +450,8 @@ impl DateTimeFormatter {
             .map_err(|field| DateTimeError::UnsupportedField(field.symbol))?;
 
         let req = DataRequest {
-            locale,
-            metadata: Default::default(),
+            id: DataIdentifierBorrowed::for_locale(locale),
+            ..Default::default()
         };
 
         let week_data = if required.week_data {
@@ -459,11 +459,11 @@ impl DateTimeFormatter {
                 (*DataProvider::<WeekDataV1Marker>::load(
                     provider,
                     DataRequest {
-                        locale,
-                        metadata: Default::default(),
+                        id: DataIdentifierBorrowed::for_locale(locale),
+                        ..Default::default()
                     },
                 )?
-                .take_payload()?
+                .payload
                 .get())
                 .into(),
             )
@@ -484,7 +484,7 @@ impl DateTimeFormatter {
         };
 
         let time_symbols_data = if required.time_symbols_data {
-            Some(provider.load(req)?.take_payload()?)
+            Some(provider.load(req)?.payload)
         } else {
             None
         };
@@ -539,7 +539,7 @@ impl DateTimeFormatter {
             patterns: &self.patterns,
             date_symbols: self.date_symbols.as_ref().map(|s| s.get()),
             time_symbols: self.time_symbols.as_ref().map(|s| s.get()),
-            datetime: ExtractedDateTimeInput::extract_from(value),
+            datetime: ExtractedInput::extract_from(value),
             week_data: self.week_data.as_ref(),
             ordinal_rules: self.ordinal_rules.as_ref(),
             fixed_decimal_format: &self.fixed_decimal_format,

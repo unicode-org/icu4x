@@ -14,23 +14,21 @@ use zerovec::ZeroVec;
 
 #[derive(Debug, PartialEq, Eq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
-#[cfg_attr(
-    feature = "datagen",
-    derive(databake::Bake),
-    databake(path = icu_datetime::pattern::runtime),
-)]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::pattern::runtime))]
 pub struct GenericPattern<'data> {
     pub items: ZeroVec<'data, GenericPatternItem>,
 }
 
-/// A ZeroSlice containing a 0 and a 1 placeholder
+/// A ZeroSlice containing a 0, 1, and 2 placeholder with no spaces
 #[cfg(feature = "experimental")]
-pub(crate) const ZERO_ONE_SLICE: &zerovec::ZeroSlice<GenericPatternItem> = zerovec::zeroslice!(
+pub(crate) const ZERO_ONE_TWO_SLICE: &zerovec::ZeroSlice<GenericPatternItem> = zerovec::zeroslice!(
     GenericPatternItem;
     GenericPatternItem::to_unaligned_const;
     [
         GenericPatternItem::Placeholder(0),
         GenericPatternItem::Placeholder(1),
+        GenericPatternItem::Placeholder(2),
     ]
 );
 
@@ -110,14 +108,6 @@ impl From<&GenericPattern<'_>> for reference::GenericPattern {
     }
 }
 
-#[cfg(feature = "datagen")]
-impl core::fmt::Display for GenericPattern<'_> {
-    fn fmt(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
-        let reference = reference::GenericPattern::from(self);
-        reference.fmt(formatter)
-    }
-}
-
 impl FromStr for GenericPattern<'_> {
     type Err = PatternError;
 
@@ -145,7 +135,6 @@ mod test {
         let pattern = pattern
             .combined(date, time)
             .expect("Failed to combine date and time.");
-        let pattern = reference::Pattern::from(pattern.items.to_vec());
 
         assert_eq!(pattern.to_string(), "Y/m/d 'at' HH:mm");
     }

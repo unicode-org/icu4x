@@ -12,7 +12,7 @@
 /// use icu::experimental::displaynames::{
 ///     DisplayNamesOptions, RegionDisplayNames, Style,
 /// };
-/// use icu::locid::{locale, subtags::region};
+/// use icu::locale::{locale, subtags::region};
 ///
 /// let locale = locale!("en-001");
 /// let mut options: DisplayNamesOptions = Default::default();
@@ -36,7 +36,7 @@ pub struct DisplayNamesOptions {
 }
 
 /// An enum for formatting style.
-#[allow(missing_docs)] // The variants are self explanotory.
+#[allow(missing_docs)] // The variants are self explanatory.
 #[non_exhaustive]
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
 pub enum Style {

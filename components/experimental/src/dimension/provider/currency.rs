@@ -35,12 +35,9 @@ pub use crate::provider::Baked;
 /// </div>
 #[icu_provider::data_struct(CurrencyEssentialsV1Marker = "currency/essentials@1")]
 #[derive(Clone, PartialEq, Debug)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::dimension::provider::currency),
-)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency))]
 #[yoke(prove_covariance_manually)]
 pub struct CurrencyEssentialsV1<'data> {
     /// A mapping from each currency's ISO code to its associated formatting patterns.
@@ -73,12 +70,9 @@ pub struct CurrencyEssentialsV1<'data> {
 }
 
 #[zerovec::make_ule(PatternSelectionULE)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::dimension::provider::currency),
-)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency))]
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
 #[repr(u8)]
 pub enum PatternSelection {
@@ -90,12 +84,9 @@ pub enum PatternSelection {
     StandardAlphaNextToNumber = 1,
 }
 
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::dimension::provider::currency),
-)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency))]
 #[derive(Copy, Debug, Clone, PartialEq, PartialOrd, Eq, Ord)]
 #[repr(u16)]
 pub enum PlaceholderValue {
@@ -106,12 +97,10 @@ pub enum PlaceholderValue {
     /// The place holder is the iso code.
     ISO,
 }
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_experimental::dimension::provider::currency),
-)]
+
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency))]
 #[derive(Copy, Debug, Clone, Default, PartialEq, PartialOrd, Eq, Ord)]
 pub struct CurrencyPatternConfig {
     /// Indicates which pattern to use for short currency formatting.

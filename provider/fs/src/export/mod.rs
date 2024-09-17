@@ -4,14 +4,14 @@
 
 //! Data exporter that creates a file system structure for use with [`FsDataProvider`](crate::FsDataProvider).
 //!
-//! This module can be used as a target for the `icu_datagen` crate.
+//! This module can be used as a target for the `icu_provider_export` crate.
 //!
 //! See our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/tutorials/data_management.md) for more information about different data providers.
 //!
 //! # Examples
 //!
 //! ```
-//! use icu_datagen::prelude::*;
+//! use icu_provider_export::prelude::*;
 //! use icu_provider::hello_world::*;
 //! use icu_provider_fs::export::*;
 //!
@@ -19,16 +19,14 @@
 //! # let _ = std::fs::remove_dir_all(&demo_path);
 //!
 //! // Set up the exporter
-//! let mut options = ExporterOptions::default();
+//! let mut options = Options::default();
 //! options.root = demo_path.clone();
 //! let serializer = Box::new(serializers::Json::default());
 //! let mut exporter = FilesystemExporter::try_new(serializer, options)
 //!     .expect("Should successfully initialize data output directory");
 //!
-//! // Export something
-//! DatagenDriver::new()
-//!     .with_keys([HelloWorldV1Marker::KEY])
-//!     .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
+//! // Export something. Make sure to use the same fallback data at runtime!
+//! ExportDriver::new([DataLocaleFamily::FULL], DeduplicationStrategy::Maximal.into(), LocaleFallbacker::new().static_to_owned())
 //!     .export(&HelloWorldProvider, exporter)
 //!     .unwrap();
 //! #
@@ -38,14 +36,14 @@
 //! The resulting files can now be used like this:
 //!
 //! ```
-//! use icu_locid::locale;
+//! use icu_locale_core::locale;
 //! use icu_provider::hello_world::*;
 //! use icu_provider::prelude::*;
 //! use icu_provider_fs::FsDataProvider;
 //!
-//! # let demo_path = "tests/data/json";
+//! # let demo_path = "tests/data/json".into();
 //! // Create a filesystem provider reading from the demo directory
-//! let provider = FsDataProvider::try_new(&demo_path)
+//! let provider = FsDataProvider::try_new(demo_path)
 //!     .expect("Should successfully read from filesystem");
 //!
 //! // Use the provider as a `BufferProvider`

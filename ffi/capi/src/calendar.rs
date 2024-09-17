@@ -3,21 +3,21 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[diplomat::bridge]
+#[diplomat::abi_rename = "icu4x_{0}_mv1"]
+#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
     use alloc::sync::Arc;
-
     use core::fmt::Write;
-    use icu_calendar::{AnyCalendar, AnyCalendarKind};
 
-    use crate::errors::ffi::ICU4XError;
-    use crate::locale::ffi::ICU4XLocale;
-    use crate::provider::ffi::ICU4XDataProvider;
+    use crate::errors::ffi::DataError;
+    use crate::locale_core::ffi::Locale;
+    use crate::provider::ffi::DataProvider;
 
-    /// The various calendar types currently supported by [`ICU4XCalendar`]
-    #[diplomat::enum_convert(AnyCalendarKind, needs_wildcard)]
+    /// The various calendar types currently supported by [`Calendar`]
+    #[diplomat::enum_convert(icu_calendar::AnyCalendarKind, needs_wildcard)]
     #[diplomat::rust_link(icu::calendar::AnyCalendarKind, Enum)]
-    pub enum ICU4XAnyCalendarKind {
+    pub enum AnyCalendarKind {
         /// The kind of an Iso calendar
         Iso = 0,
         /// The kind of a Gregorian calendar
@@ -56,14 +56,14 @@ pub mod ffi {
         Roc = 17,
     }
 
-    impl ICU4XAnyCalendarKind {
+    impl AnyCalendarKind {
         /// Read the calendar type off of the -u-ca- extension on a locale.
         ///
         /// Returns nothing if there is no calendar on the locale or if the locale's calendar
         /// is not known or supported.
         #[diplomat::rust_link(icu::calendar::AnyCalendarKind::get_for_locale, FnInEnum)]
-        pub fn get_for_locale(locale: &ICU4XLocale) -> Option<ICU4XAnyCalendarKind> {
-            AnyCalendarKind::get_for_locale(&locale.0).map(Into::into)
+        pub fn get_for_locale(locale: &Locale) -> Option<AnyCalendarKind> {
+            icu_calendar::AnyCalendarKind::get_for_locale(&locale.0).map(Into::into)
         }
 
         /// Obtain the calendar type given a BCP-47 -u-ca- extension string.
@@ -80,58 +80,56 @@ pub mod ffi {
             FnInEnum,
             hidden
         )]
-        pub fn get_for_bcp47(s: &DiplomatStr) -> Option<ICU4XAnyCalendarKind> {
-            AnyCalendarKind::get_for_bcp47_bytes(s).map(Into::into)
+        pub fn get_for_bcp47(s: &DiplomatStr) -> Option<AnyCalendarKind> {
+            icu_calendar::AnyCalendarKind::get_for_bcp47_bytes(s).map(Into::into)
         }
 
         /// Obtain the string suitable for use in the -u-ca- extension in a BCP47 locale.
         #[diplomat::rust_link(icu::calendar::AnyCalendarKind::as_bcp47_string, FnInEnum)]
         #[diplomat::rust_link(icu::calendar::AnyCalendarKind::as_bcp47_value, FnInEnum, hidden)]
-        #[diplomat::attr(supports = accessors, getter)]
-        pub fn bcp47(
-            self,
-            write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> Result<(), ICU4XError> {
-            let kind = AnyCalendarKind::from(self);
-            Ok(write.write_str(kind.as_bcp47_string())?)
+        #[diplomat::attr(auto, getter)]
+        pub fn bcp47(self, write: &mut diplomat_runtime::DiplomatWrite) {
+            let kind = icu_calendar::AnyCalendarKind::from(self);
+            let _infallible = write.write_str(kind.as_bcp47_string());
         }
     }
 
     #[diplomat::opaque]
     #[diplomat::transparent_convert]
     #[diplomat::rust_link(icu::calendar::AnyCalendar, Enum)]
-    pub struct ICU4XCalendar(pub Arc<AnyCalendar>);
+    pub struct Calendar(pub Arc<icu_calendar::AnyCalendar>);
 
-    impl ICU4XCalendar {
-        /// Creates a new [`ICU4XCalendar`] from the specified date and time.
+    impl Calendar {
+        /// Creates a new [`Calendar`] from the specified date and time.
         #[diplomat::rust_link(icu::calendar::AnyCalendar::new_for_locale, FnInEnum)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "for_locale")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "for_locale")]
+        #[diplomat::demo(default_constructor)]
         pub fn create_for_locale(
-            provider: &ICU4XDataProvider,
-            locale: &ICU4XLocale,
-        ) -> Result<Box<ICU4XCalendar>, ICU4XError> {
+            provider: &DataProvider,
+            locale: &Locale,
+        ) -> Result<Box<Calendar>, DataError> {
             let locale = locale.to_datalocale();
 
-            Ok(Box::new(ICU4XCalendar(Arc::new(call_constructor!(
-                AnyCalendar::new_for_locale [r => Ok(r)],
-                AnyCalendar::try_new_for_locale_with_any_provider,
-                AnyCalendar::try_new_for_locale_with_buffer_provider,
+            Ok(Box::new(Calendar(Arc::new(call_constructor!(
+                icu_calendar::AnyCalendar::new_for_locale [r => Ok(r)],
+                icu_calendar::AnyCalendar::try_new_for_locale_with_any_provider,
+                icu_calendar::AnyCalendar::try_new_for_locale_with_buffer_provider,
                 provider,
                 &locale
             )?))))
         }
 
-        /// Creates a new [`ICU4XCalendar`] from the specified date and time.
+        /// Creates a new [`Calendar`] from the specified date and time.
         #[diplomat::rust_link(icu::calendar::AnyCalendar::new, FnInEnum)]
-        #[diplomat::attr(all(supports = constructors, supports = fallible_constructors, supports = named_constructors), named_constructor = "for_kind")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "for_kind")]
         pub fn create_for_kind(
-            provider: &ICU4XDataProvider,
-            kind: ICU4XAnyCalendarKind,
-        ) -> Result<Box<ICU4XCalendar>, ICU4XError> {
-            Ok(Box::new(ICU4XCalendar(Arc::new(call_constructor!(
-                AnyCalendar::new [r => Ok(r)],
-                AnyCalendar::try_new_with_any_provider,
-                AnyCalendar::try_new_with_buffer_provider,
+            provider: &DataProvider,
+            kind: AnyCalendarKind,
+        ) -> Result<Box<Calendar>, DataError> {
+            Ok(Box::new(Calendar(Arc::new(call_constructor!(
+                icu_calendar::AnyCalendar::new [r => Ok(r)],
+                icu_calendar::AnyCalendar::try_new_with_any_provider,
+                icu_calendar::AnyCalendar::try_new_with_buffer_provider,
                 provider,
                 kind.into()
             )?))))
@@ -139,8 +137,8 @@ pub mod ffi {
 
         /// Returns the kind of this calendar
         #[diplomat::rust_link(icu::calendar::AnyCalendar::kind, FnInEnum)]
-        #[diplomat::attr(supports = accessors, getter)]
-        pub fn kind(&self) -> ICU4XAnyCalendarKind {
+        #[diplomat::attr(auto, getter)]
+        pub fn kind(&self) -> AnyCalendarKind {
             self.0.kind().into()
         }
     }

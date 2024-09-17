@@ -21,7 +21,7 @@ fn bench_date<A: AsCalendar>(date: &mut Date<A>) {
     ));
 
     // Retrieving vals
-    let _ = black_box(date.year().number);
+    let _ = black_box(date.year().era_year_or_extended());
     let _ = black_box(date.month().ordinal);
     let _ = black_box(date.day_of_month().0);
 

@@ -1,0 +1,21 @@
+{
+  "relatives": {
+    "0": "今"
+  },
+  "past": {
+    "strings": {
+      "other": [
+        0,
+        "\u0001 秒前"
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "other": [
+        0,
+        "\u0001 秒後"
+      ]
+    }
+  }
+}

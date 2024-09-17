@@ -6,22 +6,19 @@
 mod databake;
 #[cfg(feature = "serde")]
 mod serde;
-
+use crate::common::*;
+use crate::Error;
+#[cfg(feature = "alloc")]
+use crate::Parser;
+use crate::PatternOrUtf8Error;
+#[cfg(feature = "alloc")]
+use alloc::{borrow::ToOwned, str::FromStr, string::String};
 use core::{
     convert::Infallible,
     fmt::{self, Write},
     marker::PhantomData,
 };
-
 use writeable::{adapters::TryWriteableInfallibleAsWriteable, PartsWrite, TryWriteable, Writeable};
-
-use crate::common::*;
-use crate::Error;
-
-#[cfg(feature = "alloc")]
-use crate::{Parser, ParserOptions};
-#[cfg(feature = "alloc")]
-use alloc::{borrow::ToOwned, str::FromStr, string::String};
 
 /// A string pattern with placeholders.
 ///
@@ -135,6 +132,14 @@ impl<Backend, Store> Pattern<Backend, Store> {
     }
 }
 
+impl<Backend, Store: ?Sized> Pattern<Backend, Store> {
+    /// Creates a `&Pattern` from a `&Store` without checking invariants.
+    pub const fn from_ref_store_unchecked(store: &Store) -> &Self {
+        // Safety: Pattern's layout is the same as `Store`'s
+        unsafe { &*(store as *const Store as *const Self) }
+    }
+}
+
 impl<B, Store> Pattern<B, Store>
 where
     B: PatternBackend,
@@ -160,6 +165,33 @@ where
     /// ```
     pub fn try_from_store(store: Store) -> Result<Self, Error> {
         B::validate_store(store.as_ref())?;
+        Ok(Self {
+            _backend: PhantomData,
+            store,
+        })
+    }
+}
+
+impl<'a, B> Pattern<B, &'a B::Store>
+where
+    B: PatternBackend,
+{
+    /// Creates a pattern from its store encoded as UTF-8.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_pattern::Pattern;
+    /// use icu_pattern::SinglePlaceholder;
+    ///
+    /// Pattern::<SinglePlaceholder, _>::try_from_utf8_store(b"\x01 days")
+    ///     .expect("single placeholder pattern");
+    /// ```
+    pub fn try_from_utf8_store(
+        code_units: &'a [u8],
+    ) -> Result<Self, PatternOrUtf8Error<B::StoreFromBytesError>> {
+        let store = B::try_store_from_utf8(code_units).map_err(PatternOrUtf8Error::Utf8)?;
+        B::validate_store(store).map_err(PatternOrUtf8Error::Pattern)?;
         Ok(Self {
             _backend: PhantomData,
             store,
@@ -245,12 +277,7 @@ where
     ///     .expect_err("mismatched braces");
     /// ```
     fn from_str(pattern: &str) -> Result<Self, Self::Err> {
-        let parser = Parser::new(
-            pattern,
-            ParserOptions {
-                allow_raw_letters: true,
-            },
-        );
+        let parser = Parser::new(pattern, Default::default());
         let store = B::try_from_items(parser)?;
         #[cfg(debug_assertions)]
         match B::validate_store(core::borrow::Borrow::borrow(&store)) {

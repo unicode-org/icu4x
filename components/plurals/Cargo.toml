@@ -5,13 +5,13 @@
 [package]
 name = "icu_plurals"
 description = "Unicode Plural Rules categorizer for numeric input"
-license = "Unicode-3.0"
 
 authors.workspace = true
 categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true
+license.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 version.workspace = true
@@ -29,26 +29,26 @@ databake = { workspace = true, features = ["derive"], optional = true}
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 
 icu_plurals_data = { workspace = true, optional = true }
-icu_locid_transform = { workspace = true, optional = true, features = ["compiled_data"] }
 
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
-icu_locid = { path = "../../components/locid" }
+icu_locale_core = { path = "../../components/locale_core" }
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
+postcard = { workspace = true, features = ["alloc"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = { workspace = true }
 
 [features]
 default = ["compiled_data"]
-std = ["fixed_decimal/std", "icu_locid/std", "icu_provider/std"]
-serde = ["dep:serde", "zerovec/serde", "icu_locid/serde", "icu_provider/serde"]
-datagen = ["serde", "zerovec/databake", "dep:databake"]
+std = ["fixed_decimal/std", "icu_locale_core/std", "icu_provider/std"]
+serde = ["dep:serde", "zerovec/serde", "icu_locale_core/serde", "icu_provider/serde"]
+datagen = ["std", "serde", "zerovec/databake", "dep:databake"]
 experimental = []
-bench = ["serde"]
-compiled_data = ["dep:icu_plurals_data", "dep:icu_locid_transform"]
+bench = ["serde", "datagen"]
+compiled_data = ["dep:icu_plurals_data"]
 
 [lib]
 bench = false  # This option is required for Benchmark CI

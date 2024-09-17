@@ -37,21 +37,26 @@ mod test {
         DataPayload<GregorianDateLengthsV1Marker>,
         DataPayload<DateSkeletonPatternsV1Marker>,
     ) {
-        let locale = "en-u-ca-gregory".parse().unwrap();
-        let req = DataRequest {
-            locale: &locale,
-            metadata: Default::default(),
-        };
+        let locale = icu_locale_core::locale!("en").into();
+        let marker_attributes = DataMarkerAttributes::from_str_or_panic("gregory");
+
         let patterns = crate::provider::Baked
-            .load(req)
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_locale(&locale),
+                ..Default::default()
+            })
             .expect("Failed to load payload")
-            .take_payload()
-            .expect("Failed to retrieve payload");
+            .payload;
         let skeletons = crate::provider::Baked
-            .load(req)
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    marker_attributes,
+                    &locale,
+                ),
+                ..Default::default()
+            })
             .expect("Failed to load payload")
-            .take_payload()
-            .expect("Failed to retrieve payload");
+            .payload;
         (patterns, skeletons)
     }
 
@@ -409,7 +414,6 @@ mod test {
         assert_pattern_to_skeleton("LLL", "MMM", "Remove standalone months.");
 
         assert_pattern_to_skeleton("s", "s", "Seconds pass through");
-        assert_pattern_to_skeleton("S", "S", "Seconds pass through");
         assert_pattern_to_skeleton("A", "A", "Seconds pass through");
 
         assert_pattern_to_skeleton("z", "z", "Time zones get passed through");

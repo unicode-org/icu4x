@@ -83,7 +83,7 @@ fn make_ule_enum_impl(
     attrs: ZeroVecAttrs,
 ) -> TokenStream2 {
     // We could support more int reprs in the future if needed
-    if !utils::has_valid_repr(&input.attrs, |r| r == "u8") {
+    if !utils::ReprInfo::compute(&input.attrs).u8 {
         return Error::new(
             input.span(),
             "#[make_ule] can only be applied to #[repr(u8)] enums",
@@ -91,8 +91,15 @@ fn make_ule_enum_impl(
         .to_compile_error();
     }
 
-    // the next discriminant expected
-    let mut next = 0;
+    if enu.variants.is_empty() {
+        return Error::new(input.span(), "#[make_ule] cannot be applied to empty enums")
+            .to_compile_error();
+    }
+
+    // the smallest discriminant seen
+    let mut min = None;
+    // the largest discriminant seen
+    let mut max = None;
     // Discriminants that have not been found in series (we might find them later)
     let mut not_found = HashSet::new();
 
@@ -108,11 +115,31 @@ fn make_ule_enum_impl(
 
         if let Some((_, ref discr)) = variant.discriminant {
             if let Some(n) = get_expr_int(discr) {
-                if n >= next {
-                    for missing in next..n {
-                        not_found.insert(missing);
+                let n = match u8::try_from(n) {
+                    Ok(n) => n,
+                    Err(_) => {
+                        return Error::new(
+                            variant.span(),
+                            "#[make_ule] only supports discriminants from 0 to 255",
+                        )
+                        .to_compile_error();
                     }
-                    next = n + 1;
+                };
+                match min {
+                    Some(x) if x < n => {}
+                    _ => {
+                        min = Some(n);
+                    }
+                }
+                match max {
+                    Some(x) if x >= n => {}
+                    _ => {
+                        let old_max = max.unwrap_or(0u8);
+                        for missing in (old_max + 1)..n {
+                            not_found.insert(missing);
+                        }
+                        max = Some(n);
+                    }
                 }
 
                 not_found.remove(&n);
@@ -122,7 +149,7 @@ fn make_ule_enum_impl(
                 // platform-specific C ABI choices do not matter.
                 // We could potentially add in explicit discriminants on the user's behalf in the future, or support
                 // more complicated sets of explicit discriminant values.
-                if n != i as u64 {}
+                if n as usize != i {}
             } else {
                 return Error::new(
                     discr.span(),
@@ -140,14 +167,14 @@ fn make_ule_enum_impl(
     }
 
     let not_found = not_found.iter().collect::<Vec<_>>();
+    let min = min.unwrap();
+    let max = max.unwrap();
 
-    if !not_found.is_empty() {
+    if not_found.len() > min as usize {
         return Error::new(input.span(), format!("#[make_ule] must be applied to enums with discriminants \
-                                                  filling the range from 0 to a maximum; could not find {not_found:?}"))
+                                                  filling the range from a minimum to a maximum; could not find {not_found:?}"))
             .to_compile_error();
     }
-
-    let max = next as u8;
 
     let maybe_ord_derives = if attrs.skip_ord {
         quote!()
@@ -179,10 +206,10 @@ fn make_ule_enum_impl(
 
         unsafe impl zerovec::ule::ULE for #ule_name {
             #[inline]
-            fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ZeroVecError> {
+            fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ule::UleError> {
                 for byte in bytes {
-                    if *byte >= #max {
-                        return Err(zerovec::ZeroVecError::parse::<Self>())
+                    if *byte < #min || *byte > #max {
+                        return Err(zerovec::ule::UleError::parse::<Self>())
                     }
                 }
                 Ok(())

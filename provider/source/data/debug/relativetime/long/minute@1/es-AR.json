@@ -1,0 +1,29 @@
+{
+  "relatives": {
+    "0": "este minuto"
+  },
+  "past": {
+    "strings": {
+      "one": [
+        0,
+        "\u0006hace  minuto"
+      ],
+      "other": [
+        0,
+        "\u0006hace  minutos"
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "one": [
+        0,
+        "\u000bdentro de  minuto"
+      ],
+      "other": [
+        0,
+        "\u000bdentro de  minutos"
+      ]
+    }
+  }
+}

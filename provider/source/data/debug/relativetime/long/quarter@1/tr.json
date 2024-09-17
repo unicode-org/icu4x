@@ -1,0 +1,23 @@
+{
+  "relatives": {
+    "-1": "geçen çeyrek",
+    "0": "bu çeyrek",
+    "1": "gelecek çeyrek"
+  },
+  "past": {
+    "strings": {
+      "other": [
+        0,
+        "\u0001 çeyrek önce"
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "other": [
+        0,
+        "\u0001 çeyrek sonra"
+      ]
+    }
+  }
+}

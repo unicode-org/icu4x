@@ -1,0 +1,23 @@
+{
+  "relatives": {
+    "-1": "nakaraang linggo",
+    "0": "ngayong linggo",
+    "1": "susunod na linggo"
+  },
+  "past": {
+    "strings": {
+      "other": [
+        0,
+        "\u0001 linggo ang nakalipas"
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "other": [
+        0,
+        "\u0004sa  linggo"
+      ]
+    }
+  }
+}

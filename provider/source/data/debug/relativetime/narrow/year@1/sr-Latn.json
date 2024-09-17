@@ -1,0 +1,23 @@
+{
+  "relatives": {
+    "-1": "prošle g.",
+    "0": "ove g.",
+    "1": "sledeće g."
+  },
+  "past": {
+    "strings": {
+      "other": [
+        0,
+        "\u0005pre  g."
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "other": [
+        0,
+        "\u0004za  g."
+      ]
+    }
+  }
+}

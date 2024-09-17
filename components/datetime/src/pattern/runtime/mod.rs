@@ -9,6 +9,8 @@
 //! all runtime performance optimizations `ICU4X` needs.
 //!
 //! For all spec compliant behaviors see `reference::Pattern` equivalent.
+
+mod display;
 mod generic;
 pub(crate) mod helpers;
 mod pattern;
@@ -16,6 +18,6 @@ mod plural;
 
 pub use generic::GenericPattern;
 #[cfg(feature = "experimental")]
-pub(crate) use generic::ZERO_ONE_SLICE;
+pub(crate) use generic::ZERO_ONE_TWO_SLICE;
 pub use pattern::{Pattern, PatternBorrowed, PatternMetadata, PatternULE};
 pub use plural::{PatternPlurals, PluralPattern};

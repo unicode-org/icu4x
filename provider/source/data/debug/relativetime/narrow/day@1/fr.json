@@ -1,0 +1,25 @@
+{
+  "relatives": {
+    "-2": "avant-hier",
+    "-1": "hier",
+    "0": "aujourd’hui",
+    "1": "demain",
+    "2": "après-demain"
+  },
+  "past": {
+    "strings": {
+      "other": [
+        0,
+        "\u0002- j"
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "other": [
+        0,
+        "\u0002+ j"
+      ]
+    }
+  }
+}

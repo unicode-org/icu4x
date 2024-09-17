@@ -108,7 +108,7 @@ impl<U: NicheBytes<N> + ULE + Eq, const N: usize> Eq for NichedOptionULE<U, N> {
 ///    containing only ULE fields.
 ///    NichedOptionULE either contains NICHE_BIT_PATTERN or valid U byte sequences.
 ///    In both cases the data is initialized.
-/// 2. NichedOptionULE is aligned to 1 byte due to `#[repr(packed)]` on a struct containing only
+/// 2. NichedOptionULE is aligned to 1 byte due to `#[repr(C, packed)]` on a struct containing only
 ///    ULE fields.
 /// 3. validate_byte_slice impl returns an error if invalid bytes are encountered.
 /// 4. validate_byte_slice impl returns an error there are extra bytes.
@@ -116,7 +116,7 @@ impl<U: NicheBytes<N> + ULE + Eq, const N: usize> Eq for NichedOptionULE<U, N> {
 /// 6. NichedOptionULE equality is based on ULE equality of the subfield, assuming that NicheBytes
 ///    has been implemented correctly (this is a correctness but not a safety guarantee).
 unsafe impl<U: NicheBytes<N> + ULE, const N: usize> ULE for NichedOptionULE<U, N> {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), crate::ZeroVecError> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), crate::ule::UleError> {
         let size = size_of::<Self>();
         // The implemention is only correct if NICHE_BIT_PATTERN has same number of bytes as the
         // type.
@@ -124,7 +124,7 @@ unsafe impl<U: NicheBytes<N> + ULE, const N: usize> ULE for NichedOptionULE<U, N
 
         // The bytes should fully transmute to a collection of Self
         if bytes.len() % size != 0 {
-            return Err(crate::ZeroVecError::length::<Self>(bytes.len()));
+            return Err(crate::ule::UleError::length::<Self>(bytes.len()));
         }
         bytes.chunks(size).try_for_each(|chunk| {
             // Associated const cannot be referenced in a pattern
@@ -139,28 +139,17 @@ unsafe impl<U: NicheBytes<N> + ULE, const N: usize> ULE for NichedOptionULE<U, N
 }
 
 /// Optional type which uses [`NichedOptionULE<U,N>`] as ULE type.
-/// The implementors guarantee that `N == core::mem::sizeo_of::<Self>()`
+/// The implementors guarantee that `N == core::mem::size_of::<Self>()`
 /// [`repr(transparent)`] guarantees that the layout is same as [`Option<U>`]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[repr(transparent)]
-#[non_exhaustive]
+#[allow(clippy::exhaustive_structs)] // newtype
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct NichedOption<U, const N: usize>(pub Option<U>);
-
-impl<U, const N: usize> NichedOption<U, N> {
-    pub const fn new(o: Option<U>) -> Self {
-        Self(o)
-    }
-}
 
 impl<U, const N: usize> Default for NichedOption<U, N> {
     fn default() -> Self {
         Self(None)
-    }
-}
-
-impl<U, const N: usize> From<Option<U>> for NichedOption<U, N> {
-    fn from(o: Option<U>) -> Self {
-        Self(o)
     }
 }
 

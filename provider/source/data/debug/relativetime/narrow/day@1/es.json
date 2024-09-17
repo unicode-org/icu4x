@@ -1,0 +1,25 @@
+{
+  "relatives": {
+    "-2": "anteayer",
+    "-1": "ayer",
+    "0": "hoy",
+    "1": "mañana",
+    "2": "pasado mañana"
+  },
+  "past": {
+    "strings": {
+      "other": [
+        0,
+        "\u0006hace  d"
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "other": [
+        0,
+        "\u000bdentro de  d"
+      ]
+    }
+  }
+}

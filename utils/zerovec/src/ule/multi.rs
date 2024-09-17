@@ -4,6 +4,7 @@
 
 use super::*;
 use crate::varzerovec::Index32;
+use crate::vecs::VarZeroVecFormat;
 use crate::VarZeroSlice;
 use core::mem;
 
@@ -17,9 +18,9 @@ use core::mem;
 /// Internally, it is represented by a VarZeroSlice.
 #[derive(PartialEq, Eq, Debug)]
 #[repr(transparent)]
-pub struct MultiFieldsULE(VarZeroSlice<[u8], Index32>);
+pub struct MultiFieldsULE<Format: VarZeroVecFormat = Index32>(VarZeroSlice<[u8], Format>);
 
-impl MultiFieldsULE {
+impl<Format: VarZeroVecFormat> MultiFieldsULE<Format> {
     /// Compute the amount of bytes needed to support elements with lengths `lengths`
     #[inline]
     pub fn compute_encoded_len_for(lengths: &[usize]) -> usize {
@@ -74,10 +75,7 @@ impl MultiFieldsULE {
     ///
     /// - `index` must be in range
     #[inline]
-    pub unsafe fn validate_field<T: VarULE + ?Sized>(
-        &self,
-        index: usize,
-    ) -> Result<(), ZeroVecError> {
+    pub unsafe fn validate_field<T: VarULE + ?Sized>(&self, index: usize) -> Result<(), UleError> {
         T::validate_byte_slice(self.0.get_unchecked(index))
     }
 
@@ -140,7 +138,7 @@ unsafe impl VarULE for MultiFieldsULE {
     ///
     /// This impl exists so that EncodeAsVarULE can work.
     #[inline]
-    fn validate_byte_slice(slice: &[u8]) -> Result<(), ZeroVecError> {
+    fn validate_byte_slice(slice: &[u8]) -> Result<(), UleError> {
         <VarZeroSlice<[u8], Index32>>::validate_byte_slice(slice)
     }
 

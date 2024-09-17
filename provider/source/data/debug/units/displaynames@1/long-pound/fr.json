@@ -1,0 +1,14 @@
+{
+  "patterns": {
+    "strings": {
+      "one": [
+        0,
+        "\u0001 livre"
+      ],
+      "other": [
+        0,
+        "\u0001 livres"
+      ]
+    }
+  }
+}

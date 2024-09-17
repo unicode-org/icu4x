@@ -1,6 +1,6 @@
 # Data management in ICU4X
 
-This tutorial introduces data providers as well as the `icu_datagen` tool.
+This tutorial introduces data providers as well as the `icu4x-datagen` tool.
 
 If you're happy shipping your app with the recommended set of locales included in `ICU4X`, you can stop reading now. If you want to reduce code size, do runtime data loading, or build your own complex data pipelines, this tutorial is for you.
 
@@ -10,12 +10,12 @@ This tutorial assumes you have finished the [introductory tutorial](intro.md) an
 
 # 2. Generating data
 
-Data generation is done using the `icu_datagen` crate, which pulls in data from [Unicode's *Common Locale Data Repository* (*CLDR*)](http://cldr.unicode.org/index/downloads) and from `ICU4C` releases to generate `ICU4X` data. The crate has a command line interface as well as a Rust API, which can be used in Rust scripts. Here we will use the CLI.
+Data generation is done using the `icu4x-datagen` tool, which pulls in data from [Unicode's *Common Locale Data Repository* (*CLDR*)](http://cldr.unicode.org/index/downloads) and from `ICU4C` releases to generate `ICU4X` data.
 
 First we will need to install the binary:
 
 ```console
-$ cargo install icu_datagen
+$ cargo install icu4x-datagen
 ```
 
 Get a coffee, this might take a while ☕.
@@ -23,7 +23,7 @@ Get a coffee, this might take a while ☕.
 Once installed, run:
 
 ```console
-$ icu4x-datagen --keys all --locales ja --format mod --out my_data
+$ icu4x-datagen --markers all --locales ja --format baked --out my_data
 ```
 
 This will generate a `my_data` directory containing the data for all components in the `ja` locale.
@@ -61,12 +61,12 @@ This will replace the data that's bundled in `ICU4X` by your own. It should resu
 Replacing `ICU4X`'s bundled data by your own can be useful if you don't require the full set of locales that would otherwise be bundled, but still requires including data at compile time, which is limiting. For more flexible data management, `ICU4X` provides a trait called `DataProvider` which can be used to provide data to `ICU4X` APIs. It also provides several implementations of `DataProvider`s, which all have their own use cases. Users are also free to design their own providers that best fit into their ecosystem requirements.
 
 ```rust,ignore
-trait DataProvider<M: KeyedDataMarker> {
+trait DataProvider<M: DataMarker> {
     fn load(&self, req: DataRequest) -> Result<DataResponse, DataError>;
 }
 ```
 
-As you can see, the `DataProvider` trait is fairly simple. It's generic in a `KeyedDataMarker`, which (statically) marks the type of data that an implementation returns, and there's a single method that loads the data for a given `DataRequest` (which contains the locale).
+As you can see, the `DataProvider` trait is fairly simple. It's generic in a `DataMarker`, which (statically) marks the type of data that an implementation returns, and there's a single method that loads the data for a given `DataRequest` (which contains the locale).
 
 ## `BufferProvider` and `AnyProvider`
 
@@ -80,32 +80,34 @@ Because of these three data provider types, every `ICU4X` API has four construct
 
 # 5. Using the generated data explicitly
 
-The data we generated in section 2 is actually just Rust code defining `DataProvider` implementations for all keys using hardcoded data (go take a look!).
+The data we generated in section 2 is actually just Rust code defining `DataProvider` implementations for all markers using hardcoded data (go take a look!).
 
-So far we've used it through the default `try_new` constructor by using the environment variable to replace the built-in data. However, we can also directly access the `DataProvider` implementations if we want, for example to combine it with other providers. For this, we first need to add some dependencies (icu_datagen did tell you which ones you need):
+So far we've used it through the default `try_new` constructor by using the environment variable to replace the built-in data. However, we can also directly access the `DataProvider` implementations if we want, for example to combine it with other providers. For this, we first need to add some dependencies (`icu4x-datagen` did tell you which ones you need):
 
 ```console
+$ cargo add icu_locale_core
 $ cargo add icu_provider
-$ cargo add litemap
+$ cargo add icu_provider_baked
+$ cargo add zerotrie
 $ cargo add zerovec
 ```
 
-We can use the generate code with the `include!` macro. The `impl_data_provider!` macro adds the generated implementations to any type.
+We can include the generate code with the `include!` macro. The `impl_data_provider!` macro adds the generated implementations to any type.
 
 ```rust,compile_fail
 extern crate alloc; // required as my-data is written for #[no_std]
-use icu::locid::{locale, Locale};
+use icu::locale::{locale, Locale};
 use icu::calendar::DateTime;
 use icu::datetime::{DateTimeFormatter, options::length};
 
 const LOCALE: Locale = locale!("ja");
 
-struct UnstableDataProvider;
+struct MyDataProvider;
 include!("../my-data/mod.rs");
-impl_data_provider!(UnstableDataProvider);
+impl_data_provider!(MyDataProvider);
 
 fn main() {
-    let baked_provider = UnstableDataProvider;
+    let baked_provider = MyDataProvider;
 
     let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium);
 
@@ -138,7 +140,7 @@ $ cargo add icu_provider_blob
 We can generate data for it using the `--format blob2` flag:
 
 ```console
-$ icu4x-datagen --keys all --locales ja --format blob2 --out my_data_blob.postcard
+$ icu4x-datagen --markers all --locales ja --format blob2 --out my_data_blob.postcard
 ```
 
 This will generate a `my_data_blob.postcard` file containing the serialized data for all components. The file is several megabytes large; we will optimize it later!
@@ -149,12 +151,12 @@ This will generate a `my_data_blob.postcard` file containing the serialized data
 
 Unlike `BakedDataProvider`, `BlobDataProvider` (and `FsDataProvider`) does not perform locale fallbacking. For example, if `en-US` is requested but only `en` data is available, then the data request will fail. To enable fallback, we can wrap the provider in a `LocaleFallbackProvider`.
 
-Note that fallback comes at a cost, as fallbacking code and data has to be included and executed on every request. If you don't need fallback (disclaimer: you probably do), you can use the `BlobDataProvider` directly (for `BakedDataProvider`, see [`FallbackMode::Preresolved`](https://docs.rs/icu_datagen/latest/icu_datagen/enum.FallbackMode.html)).
+Note that fallback comes at a cost, as fallbacking code and data has to be included and executed on every request. If you don't need fallback (disclaimer: you probably do), you can use the `BlobDataProvider` directly (for baked data, see [`Options::skip_internal_fallback`](https://docs.rs/icu_provider_baked/latest/icu_provider_baked/export/struct.Options.html)).
 
 We can then use the provider in our code:
 
 ```rust,no_run
-use icu::locid::{locale, Locale};
+use icu::locale::{locale, Locale, fallback::LocaleFallbacker};
 use icu::calendar::DateTime;
 use icu::datetime::{DateTimeFormatter, options::length};
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
@@ -168,13 +170,15 @@ fn main() {
         BlobDataProvider::try_new_from_blob(blob.into_boxed_slice())
             .expect("blob should be valid");
 
-    let buffer_provider = LocaleFallbackProvider::try_new_with_buffer_provider(buffer_provider)
+    let fallbacker = LocaleFallbacker::try_new_with_buffer_provider(&buffer_provider)
         .expect("Provider should contain fallback rules");
+
+    let buffer_provider = LocaleFallbackProvider::new(buffer_provider, fallbacker);
 
     let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium);
 
     let dtf = DateTimeFormatter::try_new_with_buffer_provider(&buffer_provider, &LOCALE.into(), options.into())
-        .expect("blob should contain required keys and `ja` data");
+        .expect("blob should contain required markers and `ja` data");
 
     let date = DateTime::try_new_iso_datetime(2020, 10, 14, 13, 21, 28)
         .expect("datetime should be valid");
@@ -186,24 +190,24 @@ fn main() {
 }
 ```
 
-As you can see in the second `expect` message, it's not possible to statically tell whether the correct data keys are included. While `BakedDataProvider` would result in a compile error for missing `DataProvider<M>` implementations, `BlobDataProvider` returns runtime errors if keys are missing.
+As you can see in the second `expect` message, it's not possible to statically tell whether the correct data markers are included. While `BakedDataProvider` would result in a compile error for missing `DataProvider<M>` implementations, `BlobDataProvider` returns runtime errors if markers are missing.
 
 # 5. Data slicing
 
-You might have noticed that the blob we generated is a hefty 13MB. This is no surprise, as we used `--keys all`. However, our binary only uses date formatting data in Japanese. There's room for optimization:
+You might have noticed that the blob we generated is a hefty 13MB. This is no surprise, as we used `--markers all`. However, our binary only uses date formatting data in Japanese. There's room for optimization:
 
 ```console
-$ icu4x-datagen --keys-for-bin target/debug/myapp --locales ja --format blob2 --out my_data_blob.postcard --overwrite
+$ icu4x-datagen --markers-for-bin target/debug/myapp --locales ja --format blob2 --out my_data_blob.postcard --overwrite
 ```
 
-The `--keys-for-bin` argument tells `icu4x-datagen` to analyze the binary and only include keys that are used by its code. This significantly reduces the blob's file size, to 54KB, and our program still works. Quite the improvement!
+The `--markers-for-bin` argument tells `icu4x-datagen` to analyze the binary and only include markers that are used by its code. This significantly reduces the blob's file size, to 54KB, and our program still works. Quite the improvement!
 
-But there is more to optimize. You might have noticed this in the output of the `icu4x-datagen` invocation, which lists 24 keys, including clearly irrelevant ones like `datetime/ethopic/datesymbols@1`. Remember how we had to convert our `DateTime<Gregorian>` into a `DateTime<AnyCalendar>` in order to use the `DateTimeFormatter`? Turns out, as `DateTimeFormatter` contains logic for many different calendars, datagen includes data for all of these as well.
+But there is more to optimize. You might have noticed this in the output of the `icu4x-datagen` invocation, which lists 24 markers, including clearly irrelevant ones like `datetime/ethopic/datesymbols@1`. Remember how we had to convert our `DateTime<Gregorian>` into a `DateTime<AnyCalendar>` in order to use the `DateTimeFormatter`? Turns out, as `DateTimeFormatter` contains logic for many different calendars, datagen includes data for all of these as well.
 
 We can instead use `TypedDateTimeFormatter<Gregorian>`, which only supports formatting `DateTime<Gregorian>`s:
 
 ```rust,no_run
-use icu::locid::{locale, Locale};
+use icu::locale::{locale, Locale, fallback::LocaleFallbacker};
 use icu::calendar::{DateTime, Gregorian};
 use icu::datetime::{TypedDateTimeFormatter, options::length};
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
@@ -217,8 +221,10 @@ fn main() {
         BlobDataProvider::try_new_from_blob(blob.into_boxed_slice())
             .expect("blob should be valid");
 
-    let buffer_provider = LocaleFallbackProvider::try_new_with_buffer_provider(buffer_provider)
+    let fallbacker = LocaleFallbacker::try_new_with_buffer_provider(&buffer_provider)
         .expect("Provider should contain fallback rules");
+
+    let buffer_provider = LocaleFallbackProvider::new(buffer_provider, fallbacker);
 
     let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium);
 
@@ -234,13 +240,13 @@ fn main() {
 }
 ```
 
-This has two advantages: it reduces our code size, as `DateTimeFormatter` includes much more functionality than `TypedDateTimeFormatter<Gregorian>`, and it reduces our data size, as `--keys-for-bin` can now determine that we need even fewer keys. The data size improvement could have also been achieved by manually listing the data keys we think we'll need (using the `--keys` flag), but we risk a runtime error if we're wrong.
+This has two advantages: it reduces our code size, as `DateTimeFormatter` includes much more functionality than `TypedDateTimeFormatter<Gregorian>`, and it reduces our data size, as `--markers-for-bin` can now determine that we need even fewer markers. The data size improvement could have also been achieved by manually listing the data markers we think we'll need (using the `--markers` flag), but we risk a runtime error if we're wrong.
 
 This is a common pattern in `ICU4X`, and most of our APIs are designed with data slicing in mind.
 
-Rebuilding the application and rerunning datagen rewards us with a 3KB data blob, which only contains 7 data keys!
+Rebuilding the application and rerunning datagen rewards us with a 3KB data blob, which only contains 7 data markers!
 
-These API-level optimizations also apply to compiled data (there's no need to use `--keys-for-bin`, as the compiler will remove unused keys).
+These API-level optimizations also apply to compiled data (there's no need to use `--markers-for-bin`, as the compiler will remove unused markers).
 
 # 6. Summary
 
@@ -248,4 +254,4 @@ We have learned how to generate data and load it into our programs, optimize dat
 
 For a deeper dive into configuring your data providers in code, see [data_provider.md].
 
-You can learn more about datagen, including the Rust API which we have not used in this tutorial, by reading [the docs](https://docs.rs/icu_datagen/latest/).
+You can learn more about datagen, including the Rust API which we have not used in this tutorial, by reading [the docs](https://docs.rs/icu_provider_export/latest/).

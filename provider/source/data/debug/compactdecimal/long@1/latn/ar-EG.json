@@ -1,0 +1,56 @@
+{
+  "patterns": {
+    "3": {
+      "Few": {
+        "exponent": 3,
+        "index": 0,
+        "literal_text": " آلاف"
+      },
+      "Other": {
+        "exponent": 3,
+        "index": 0,
+        "literal_text": " ألف"
+      }
+    },
+    "4": {
+      "Other": {
+        "exponent": 3,
+        "index": 0,
+        "literal_text": " ألف"
+      }
+    },
+    "6": {
+      "Few": {
+        "exponent": 6,
+        "index": 0,
+        "literal_text": " ملايين"
+      },
+      "Other": {
+        "exponent": 6,
+        "index": 0,
+        "literal_text": " مليون"
+      }
+    },
+    "8": {
+      "Other": {
+        "exponent": 6,
+        "index": 0,
+        "literal_text": " مليون"
+      }
+    },
+    "9": {
+      "Other": {
+        "exponent": 9,
+        "index": 0,
+        "literal_text": " مليار"
+      }
+    },
+    "12": {
+      "Other": {
+        "exponent": 12,
+        "index": 0,
+        "literal_text": " ترليون"
+      }
+    }
+  }
+}

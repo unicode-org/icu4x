@@ -36,11 +36,8 @@ use zerovec::ZeroVec;
     )
 )]
 #[derive(Debug, PartialEq, Clone, Default)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_calendar::provider::islamic),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider::islamic))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct IslamicCacheV1<'data> {
     /// The extended year corresponding to the first data entry for this year
@@ -150,13 +147,10 @@ impl<'data> IslamicCacheV1<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Copy, Clone, Hash, PartialEq, Eq, PartialOrd, Ord, ULE)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_calendar::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[repr(packed)]
+#[repr(C, packed)]
 pub struct PackedIslamicYearInfo(pub u8, pub u8);
 
 impl fmt::Debug for PackedIslamicYearInfo {

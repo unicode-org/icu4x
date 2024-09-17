@@ -1,0 +1,23 @@
+{
+  "relatives": {
+    "-1": "last yr.",
+    "0": "this yr.",
+    "1": "next yr."
+  },
+  "past": {
+    "strings": {
+      "other": [
+        0,
+        "\u0001 yr. ago"
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "other": [
+        0,
+        "\u0004in  yr."
+      ]
+    }
+  }
+}

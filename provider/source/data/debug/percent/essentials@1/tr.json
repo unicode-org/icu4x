@@ -1,0 +1,24 @@
+{
+  "signed_pattern": [
+    {
+      "Placeholder": "Place1"
+    },
+    {
+      "Literal": "%"
+    },
+    {
+      "Placeholder": "Place0"
+    }
+  ],
+  "unsigned_pattern": [
+    {
+      "Literal": "%"
+    },
+    {
+      "Placeholder": "Singleton"
+    }
+  ],
+  "approximately_sign": "~",
+  "minus_sign": "-",
+  "plus_sign": "+"
+}

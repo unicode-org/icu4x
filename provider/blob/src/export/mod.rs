@@ -4,14 +4,14 @@
 
 //! Data exporter that creates a binary blob for use with [`BlobDataProvider`](crate::BlobDataProvider).
 //!
-//! This module can be used as a target for the `icu_datagen` crate.
+//! This module can be used as a target for the `icu_provider_export` crate.
 //!
 //! See our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/tutorials/data_management.md) for more information about different data providers.
 //!
 //! # Examples
 //!
 //! ```
-//! use icu_datagen::prelude::*;
+//! use icu_provider_export::prelude::*;
 //! use icu_provider_blob::export::*;
 //!
 //! let mut blob: Vec<u8> = Vec::new();
@@ -19,10 +19,8 @@
 //! // Set up the exporter
 //! let mut exporter = BlobExporter::new_v2_with_sink(Box::new(&mut blob));
 //!
-//! // Export something
-//! DatagenDriver::new()
-//!     .with_keys([icu_provider::hello_world::HelloWorldV1Marker::KEY])
-//!     .with_locales_and_fallback([LocaleFamily::FULL], Default::default())
+//! // Export something. Make sure to use the same fallback data at runtime!
+//! ExportDriver::new([DataLocaleFamily::FULL], DeduplicationStrategy::Maximal.into(), LocaleFallbacker::new().static_to_owned())
 //!     .export(&icu_provider::hello_world::HelloWorldProvider, exporter)
 //!     .unwrap();
 //!
@@ -33,7 +31,7 @@
 //! The resulting blob can now be used like this:
 //!
 //! ```
-//! use icu_locid::locale;
+//! use icu_locale_core::locale;
 //! use icu_provider::hello_world::*;
 //! use icu_provider::prelude::*;
 //! use icu_provider_blob::BlobDataProvider;
@@ -56,7 +54,5 @@
 //! ```
 
 mod blob_exporter;
-
-mod iter;
 
 pub use blob_exporter::BlobExporter;

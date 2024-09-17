@@ -13,7 +13,6 @@
 //! Read more about data providers: [`icu_provider`]
 
 use crate::TimeZoneBcp47Id;
-use core::str;
 use icu_provider::prelude::*;
 use zerotrie::{ZeroAsciiIgnoreCaseTrie, ZeroTrie};
 use zerovec::{VarZeroVec, ZeroVec};
@@ -33,11 +32,8 @@ use zerovec::{VarZeroVec, ZeroVec};
     "time_zone/iana_to_bcp47@1",
     singleton
 ))]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_timezone::provider::names),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_timezone::provider::names))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct IanaToBcp47MapV1<'data> {
@@ -54,6 +50,14 @@ pub struct IanaToBcp47MapV1<'data> {
     pub bcp47_ids_checksum: u64,
 }
 
+/// [`IanaToBcp47MapV3`]'s trie cannot handle differently-cased prefixes, like `Mexico/BajaSur`` and `MET`.
+/// Therefore, any ID that is not of the shape `{region}/{city}` gets prefixed with this character
+/// inside the trie.
+///
+/// During lookup, if the input is not of the shape `{region}/{city}`, the trie cursor has to be advanced over
+/// this byte.
+pub const NON_REGION_CITY_PREFIX: u8 = b'_';
+
 /// A mapping from normal-case IANA time zone identifiers to BCP-47 time zone identifiers.
 ///
 /// Multiple IANA time zone IDs can map to the same BCP-47 time zone ID.
@@ -65,17 +69,14 @@ pub struct IanaToBcp47MapV1<'data> {
 /// </div>
 #[derive(Debug, Clone, PartialEq)]
 #[icu_provider::data_struct(marker(
-    IanaToBcp47MapV2Marker,
-    "time_zone/iana_to_bcp47@2",
+    IanaToBcp47MapV3Marker,
+    "time_zone/iana_to_bcp47@3",
     singleton
 ))]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_timezone::provider::names),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_timezone::provider::names))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct IanaToBcp47MapV2<'data> {
+pub struct IanaToBcp47MapV3<'data> {
     /// A map from normal-case IANA time zone identifiers to indexes of BCP-47 time zone
     /// identifiers along with a canonical flag. The IANA identifiers are normal-case.
     ///
@@ -112,11 +113,8 @@ pub struct IanaToBcp47MapV2<'data> {
     "time_zone/bcp47_to_iana@1",
     singleton
 ))]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_timezone::provider::names),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_timezone::provider::names))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct Bcp47ToIanaMapV1<'data> {

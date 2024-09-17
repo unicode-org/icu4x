@@ -8,8 +8,9 @@
 use alloc::borrow::Cow;
 use icu_calendar::types::MonthCode;
 use icu_provider::prelude::*;
+use potential_utf::PotentialUtf8;
 use tinystr::{tinystr, TinyStr4};
-use zerovec::{ule::UnvalidatedStr, ZeroMap};
+use zerovec::ZeroMap;
 
 size_test!(DateSymbolsV1, date_symbols_v1_size, 3792);
 
@@ -39,11 +40,8 @@ size_test!(DateSymbolsV1, date_symbols_v1_size, 3792);
     marker(RocDateSymbolsV1Marker, "datetime/roc/datesymbols@1")
 )]
 #[derive(Debug, PartialEq, Clone, Default)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::calendar),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct DateSymbolsV1<'data> {
@@ -63,8 +61,8 @@ pub struct DateSymbolsV1<'data> {
 /// For more information on date time symbols, see [`FieldSymbol`](crate::fields::FieldSymbol).
 pub(crate) struct ErasedDateSymbolsV1Marker;
 
-impl DataMarker for ErasedDateSymbolsV1Marker {
-    type Yokeable = DateSymbolsV1<'static>;
+impl DynamicDataMarker for ErasedDateSymbolsV1Marker {
+    type DataStruct = DateSymbolsV1<'static>;
 }
 
 size_test!(TimeSymbolsV1, time_symbols_v1_size, 768);
@@ -81,11 +79,8 @@ size_test!(TimeSymbolsV1, time_symbols_v1_size, 768);
 /// </div>
 #[icu_provider::data_struct(marker(TimeSymbolsV1Marker, "datetime/timesymbols@1",))]
 #[derive(Debug, PartialEq, Clone, Default)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::calendar),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct TimeSymbolsV1<'data> {
@@ -111,11 +106,8 @@ pub struct TimeSymbolsV1<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::calendar),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct Eras<'data> {
@@ -123,17 +115,17 @@ pub struct Eras<'data> {
     ///
     /// Keys are era codes, and values are display names. See [`Eras`].
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub names: ZeroMap<'data, UnvalidatedStr, str>,
+    pub names: ZeroMap<'data, PotentialUtf8, str>,
     /// Symbol data for era abbreviations.
     ///
     /// Keys are era codes, and values are display names. See [`Eras`].
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub abbr: ZeroMap<'data, UnvalidatedStr, str>,
+    pub abbr: ZeroMap<'data, PotentialUtf8, str>,
     /// Symbol data for era narrow forms.
     ///
     /// Keys are era codes, and values are display names. See [`Eras`].
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub narrow: ZeroMap<'data, UnvalidatedStr, str>,
+    pub narrow: ZeroMap<'data, PotentialUtf8, str>,
 }
 
 // Note: the SymbolsV* struct doc strings metadata are attached to `$name` in the macro invocation to
@@ -152,11 +144,8 @@ macro_rules! symbols {
             use super::*;
 
             #[derive(Debug, PartialEq, Clone, zerofrom::ZeroFrom, yoke::Yokeable)]
-            #[cfg_attr(
-                feature = "datagen",
-                derive(serde::Serialize, databake::Bake),
-                databake(path = icu_datetime::provider::calendar::$name),
-            )]
+            #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+            #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar::$name))]
             #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
             #[yoke(prove_covariance_manually)]
             #[doc = concat!("Locale data for ", stringify!($field_id), " corresponding to the symbols.")]
@@ -171,11 +160,8 @@ macro_rules! symbols {
             // UTS 35 specifies that `format` widths are mandatory,
             // except for `short`.
             #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-            #[cfg_attr(
-                feature = "datagen",
-                derive(serde::Serialize, databake::Bake),
-                databake(path = icu_datetime::provider::calendar::$name),
-            )]
+            #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+            #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar::$name))]
             #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
             #[yoke(prove_covariance_manually)]
             #[doc = concat!("Symbol data for the \"format\" style formatting of ", stringify!($field_id),
@@ -204,11 +190,8 @@ macro_rules! symbols {
 
             // UTS 35 specifies that `stand_alone` widths are optional
             #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-            #[cfg_attr(
-                feature = "datagen",
-                derive(serde::Serialize, databake::Bake),
-                databake(path = icu_datetime::provider::calendar::$name),
-            )]
+            #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+            #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar::$name))]
             #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
             #[yoke(prove_covariance_manually)]
             #[doc = concat!("Symbol data for the \"stand-alone\" style formatting of ", stringify!($field_id),
@@ -235,11 +218,8 @@ macro_rules! symbols {
             }
 
             #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-            #[cfg_attr(
-                feature = "datagen",
-                derive(serde::Serialize, databake::Bake),
-                databake(path = icu_datetime::provider::calendar::$name),
-            )]
+            #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+            #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar::$name))]
             #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
             #[yoke(prove_covariance_manually)]
             #[doc = concat!("The struct containing the symbol data for ", stringify!($field_id),
@@ -296,7 +276,7 @@ symbols!(
                 feature = "serde",
                 serde(
                     borrow,
-                    deserialize_with = "icu_provider::serde::borrow_de_utils::array_of_cow"
+                    deserialize_with = "icu_provider::serde_borrow_de_utils::array_of_cow"
                 )
             )]
             [Cow<'data, str>; 12],
@@ -363,7 +343,7 @@ symbols!(
             feature = "serde",
             serde(
                 borrow,
-                deserialize_with = "icu_provider::serde::borrow_de_utils::array_of_cow"
+                deserialize_with = "icu_provider::serde_borrow_de_utils::array_of_cow"
             )
         )]
         pub [Cow<'data, str>; 7],
@@ -385,7 +365,7 @@ symbols!(
             feature = "serde",
             serde(
                 borrow,
-                deserialize_with = "icu_provider::serde::borrow_de_utils::option_of_cow"
+                deserialize_with = "icu_provider::serde_borrow_de_utils::option_of_cow"
             )
         )]
         /// Day period for noon, in locales that support it.
@@ -394,7 +374,7 @@ symbols!(
             feature = "serde",
             serde(
                 borrow,
-                deserialize_with = "icu_provider::serde::borrow_de_utils::option_of_cow"
+                deserialize_with = "icu_provider::serde_borrow_de_utils::option_of_cow"
             )
         )]
         /// Day period for midnight, in locales that support it.

@@ -16,13 +16,13 @@
 //! Read more about data providers: [`icu_provider`]
 
 use core::ops::Deref;
-use core::str::FromStr;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
 use zerovec::ule::{AsULE, ULE};
 use zerovec::{ZeroMap2d, ZeroSlice, ZeroVec};
 
 pub mod names;
+pub mod windows;
 
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
@@ -36,24 +36,28 @@ pub mod names;
 pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
+#[allow(unused_imports)]
 const _: () = {
+    use icu_timezone_data::*;
     pub mod icu {
         pub use crate as timezone;
     }
-    icu_timezone_data::make_provider!(Baked);
-    icu_timezone_data::impl_time_zone_bcp47_to_iana_v1!(Baked);
-    icu_timezone_data::impl_time_zone_iana_to_bcp47_v1!(Baked);
-    icu_timezone_data::impl_time_zone_iana_to_bcp47_v2!(Baked);
-    icu_timezone_data::impl_time_zone_metazone_period_v1!(Baked);
+    make_provider!(Baked);
+    impl_bcp47_to_iana_map_v1_marker!(Baked);
+    impl_iana_to_bcp47_map_v3_marker!(Baked);
+    impl_metazone_period_v1_marker!(Baked);
+    impl_windows_zones_to_bcp47_map_v1_marker!(Baked);
+    impl_zone_offset_period_v1_marker!(Baked);
 };
 
 #[cfg(feature = "datagen")]
-/// The latest minimum set of keys required by this component.
-pub const KEYS: &[DataKey] = &[
-    MetazonePeriodV1Marker::KEY,
-    names::Bcp47ToIanaMapV1Marker::KEY,
-    names::IanaToBcp47MapV1Marker::KEY,
-    names::IanaToBcp47MapV2Marker::KEY,
+/// The latest minimum set of markers required by this component.
+pub const MARKERS: &[DataMarkerInfo] = &[
+    MetazonePeriodV1Marker::INFO,
+    names::Bcp47ToIanaMapV1Marker::INFO,
+    names::IanaToBcp47MapV3Marker::INFO,
+    windows::WindowsZonesToBcp47MapV1Marker::INFO,
+    ZoneOffsetPeriodV1Marker::INFO,
 ];
 
 /// TimeZone ID in BCP47 format
@@ -65,28 +69,10 @@ pub const KEYS: &[DataKey] = &[
 /// </div>
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE, Hash)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_timezone::provider))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_timezone::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct TimeZoneBcp47Id(pub TinyAsciiStr<8>);
-
-impl FromStr for TimeZoneBcp47Id {
-    type Err = tinystr::TinyStrError;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        TinyAsciiStr::from_str(s).map(Into::into)
-    }
-}
-
-impl From<TinyAsciiStr<8>> for TimeZoneBcp47Id {
-    fn from(s: TinyAsciiStr<8>) -> Self {
-        Self(s)
-    }
-}
-
-impl From<TimeZoneBcp47Id> for TinyAsciiStr<8> {
-    fn from(other: TimeZoneBcp47Id) -> Self {
-        other.0
-    }
-}
 
 impl Deref for TimeZoneBcp47Id {
     type Target = TinyAsciiStr<8>;
@@ -126,28 +112,10 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZoneBcp47Id {
 /// </div>
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE, Hash)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_timezone::provider))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_timezone::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct MetazoneId(pub TinyAsciiStr<4>);
-
-impl From<TinyAsciiStr<4>> for MetazoneId {
-    fn from(s: TinyAsciiStr<4>) -> Self {
-        Self(s)
-    }
-}
-
-impl From<MetazoneId> for TinyAsciiStr<4> {
-    fn from(other: MetazoneId) -> Self {
-        other.0
-    }
-}
-
-impl FromStr for MetazoneId {
-    type Err = tinystr::TinyStrError;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        TinyAsciiStr::from_str(s).map(Into::into)
-    }
-}
 
 impl AsULE for MetazoneId {
     type ULE = Self;
@@ -184,15 +152,50 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for MetazoneId {
     singleton
 ))]
 #[derive(PartialEq, Debug, Clone, Default)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_timezone::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_timezone::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct MetazonePeriodV1<'data>(
-    /// The default mapping between period and metazone id. The second level key is a wall-clock time represented as the number of minutes since the local unix epoch. It represents when the metazone started to be used.
+    /// The default mapping between period and metazone id. The second level key is a wall-clock time represented as
+    /// the number of minutes since the local unix epoch. It represents when the metazone started to be used.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub ZeroMap2d<'data, TimeZoneBcp47Id, i32, Option<MetazoneId>>,
+    pub ZeroMap2d<'data, TimeZoneBcp47Id, IsoMinutesSinceEpoch, Option<MetazoneId>>,
+);
+
+/// Storage type for storing UTC offsets as eights of an hour.
+pub type EighthsOfHourOffset = i8;
+/// Storage type for storing `DateTime<Iso>` as minutes since the UNIX epoch.
+pub type IsoMinutesSinceEpoch = i32;
+
+/// An ICU4X mapping to the time zone offsets at a given period.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[icu_provider::data_struct(marker(
+    ZoneOffsetPeriodV1Marker,
+    "time_zone/offset_period@1",
+    singleton
+))]
+#[derive(PartialEq, Debug, Clone, Default)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_timezone::provider))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[yoke(prove_covariance_manually)]
+pub struct ZoneOffsetPeriodV1<'data>(
+    /// The default mapping between period and offsets. The second level key is a wall-clock time represented as
+    /// the number of minutes since the local unix epoch. It represents when the offsets ended to be used.
+    ///
+    /// The values are the standard offset, and the daylight offset *relative to the standard offset*. As such,
+    /// if the second value is 0, there is no daylight time.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub  ZeroMap2d<
+        'data,
+        TimeZoneBcp47Id,
+        IsoMinutesSinceEpoch,
+        (EighthsOfHourOffset, EighthsOfHourOffset),
+    >,
 );
