@@ -6,7 +6,6 @@ use crate::fields::{self, Field, FieldLength, FieldSymbol, Second, Week, Year};
 use crate::input::ExtractedInput;
 use crate::pattern::runtime::{PatternBorrowed, PatternMetadata};
 use crate::pattern::PatternItem;
-#[cfg(feature = "experimental")]
 use crate::provider::date_time::GetSymbolForDayPeriodError;
 use crate::provider::date_time::{
     DateSymbols, GetSymbolForEraError, GetSymbolForMonthError, GetSymbolForWeekdayError,
@@ -179,7 +178,6 @@ pub enum DateTimeWriteError {
     MissingWeekCalculator,
     /// TODO
     #[displaydoc("Names for {0:?} not loaded")]
-    #[cfg(feature = "experimental")]
     MissingNames(Field),
 
     // Something not found in data
@@ -195,7 +193,6 @@ pub enum DateTimeWriteError {
     MissingWeekdaySymbol(IsoWeekday),
     /// Missing time zone symbol
     #[displaydoc("Not enough time zone information to format anything.")]
-    #[cfg(feature = "experimental")]
     UnsupportedTimeZone,
 
     // Invalid input
@@ -265,7 +262,6 @@ where
                             GetSymbolForEraError::Missing => {
                                 DateTimeWriteError::MissingEraSymbol(era)
                             }
-                            #[cfg(feature = "experimental")]
                             GetSymbolForEraError::MissingNames(f) => {
                                 DateTimeWriteError::MissingNames(f)
                             }
@@ -394,7 +390,6 @@ where
                             GetSymbolForMonthError::Missing => {
                                 DateTimeWriteError::MissingMonthSymbol(month_info.formatting_code)
                             }
-                            #[cfg(feature = "experimental")]
                             GetSymbolForMonthError::MissingNames(f) => {
                                 DateTimeWriteError::MissingNames(f)
                             }
@@ -419,11 +414,9 @@ where
                     w.write_str(symbol)?;
                     Ok(())
                 }
-                #[cfg(feature = "experimental")]
                 Ok(MonthPlaceholderValue::Numeric) => {
                     try_write_number(w, fdf, month_info.ordinal.into(), l)?
                 }
-                #[cfg(feature = "experimental")]
                 Ok(MonthPlaceholderValue::NumericPattern(substitution_pattern)) => {
                     w.write_str(substitution_pattern.get_prefix())?;
                     let r = try_write_number(w, fdf, month_info.ordinal.into(), l)?;
@@ -467,7 +460,6 @@ where
                             GetSymbolForWeekdayError::Missing => {
                                 DateTimeWriteError::MissingWeekdaySymbol(wd)
                             }
-                            #[cfg(feature = "experimental")]
                             GetSymbolForWeekdayError::MissingNames(f) => {
                                 DateTimeWriteError::MissingNames(f)
                             }
@@ -591,7 +583,6 @@ where
                             ),
                         )
                         .map_err(|e| match e {
-                            #[cfg(feature = "experimental")]
                             GetSymbolForDayPeriodError::MissingNames(f) => {
                                 DateTimeWriteError::MissingNames(f)
                             }

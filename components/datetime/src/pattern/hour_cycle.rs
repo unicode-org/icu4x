@@ -2,13 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::{reference, runtime, PatternItem};
+use super::{reference, PatternItem};
 use crate::{
     fields,
-    options::preferences::{self, HourCycle},
+    options::preferences::HourCycle,
 };
 #[cfg(feature = "datagen")]
-use crate::{provider, skeleton};
+use crate::{provider, skeleton, options::preferences, pattern::runtime};
 use icu_provider::prelude::*;
 
 /// Used to represent either H11/H12, or H23/H24. Skeletons only store these
@@ -136,6 +136,7 @@ impl CoarseHourCycle {
 /// The hour cycle can be set by preferences. This function switches between h11 and h12,
 /// and between h23 and h24. This function is naive as it is assumed that this application of
 /// the hour cycle will not change between h1x to h2x.
+#[cfg(feature = "datagen")]
 pub(crate) fn naively_apply_preferences(
     pattern: &mut runtime::Pattern,
     preferences: &Option<preferences::Bag>,

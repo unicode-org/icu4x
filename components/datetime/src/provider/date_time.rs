@@ -5,12 +5,10 @@
 //! Traits for managing data needed by [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter).
 
 use crate::fields;
-#[cfg(feature = "experimental")]
 use crate::fields::Field;
 use crate::input;
 use crate::provider;
 use crate::provider::calendar::months;
-#[cfg(feature = "experimental")]
 use crate::provider::neo::SimpleSubstitutionPattern;
 use crate::time_zone::TimeZoneDataPayloadsBorrowed;
 use icu_calendar::types::Era;
@@ -18,23 +16,19 @@ use icu_calendar::types::MonthCode;
 
 pub(crate) enum GetSymbolForMonthError {
     Missing,
-    #[cfg(feature = "experimental")]
     MissingNames(Field),
 }
 pub(crate) enum GetSymbolForWeekdayError {
     Missing,
-    #[cfg(feature = "experimental")]
     MissingNames(Field),
 }
 
 pub(crate) enum GetSymbolForEraError {
     Missing,
-    #[cfg(feature = "experimental")]
     MissingNames(Field),
 }
 
 pub(crate) enum GetSymbolForDayPeriodError {
-    #[cfg(feature = "experimental")]
     MissingNames(Field),
 }
 
@@ -42,9 +36,7 @@ pub(crate) enum GetSymbolForDayPeriodError {
 pub(crate) enum MonthPlaceholderValue<'a> {
     PlainString(&'a str),
     StringNeedingLeapPrefix(&'a str),
-    #[cfg(feature = "experimental")]
     Numeric,
-    #[cfg(feature = "experimental")]
     NumericPattern(&'a SimpleSubstitutionPattern<'a>),
 }
 

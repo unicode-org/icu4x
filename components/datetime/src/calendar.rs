@@ -18,11 +18,8 @@ use icu_locale_core::{
 };
 use icu_provider::prelude::*;
 
-#[cfg(any(feature = "datagen", feature = "experimental"))]
 use crate::provider::neo::*;
-#[cfg(feature = "experimental")]
 use core::marker::PhantomData;
-#[cfg(any(feature = "datagen", feature = "experimental"))]
 use icu_provider::marker::NeverMarker;
 
 /// The `CldrCalendar` trait is sealed except when the `"experimental"` Cargo
@@ -33,7 +30,6 @@ use icu_provider::marker::NeverMarker;
 /// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. Do not implement this trait in userland.
 /// </div>
-// Exported as `#[cfg(feature = "experimental")]` in lib.rs
 // TODO(#4338): Decide what to do with this when we retire this crate's "experimental" feature.
 pub trait InternalCldrCalendar {}
 
@@ -60,15 +56,12 @@ pub trait CldrCalendar: InternalCldrCalendar {
     /// The data marker for loading length-patterns for this calendar.
     type DateLengthsV1Marker: DataMarker<DataStruct = DateLengthsV1<'static>>;
 
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     /// The data marker for loading year symbols for this calendar.
     type YearNamesV1Marker: DataMarker<DataStruct = YearNamesV1<'static>>;
 
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     /// The data marker for loading month symbols for this calendar.
     type MonthNamesV1Marker: DataMarker<DataStruct = MonthNamesV1<'static>>;
 
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     /// The data marker for loading skeleton patterns for this calendar.
     type SkeletaV1Marker: DataMarker<DataStruct = PackedSkeletonDataV1<'static>>;
 
@@ -95,10 +88,8 @@ fn is_islamic_subcal(value: &Value, subcal: Subtag) -> bool {
 /// such as in a time formatter.
 #[derive(Debug)]
 #[allow(clippy::exhaustive_enums)] // empty enum
-#[cfg(any(feature = "datagen", feature = "experimental"))]
 pub enum NeverCalendar {}
 
-#[cfg(any(feature = "datagen", feature = "experimental"))]
 impl CldrCalendar for NeverCalendar {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("never");
     type DateSymbolsV1Marker = NeverMarker<DateSymbolsV1<'static>>;
@@ -112,11 +103,8 @@ impl CldrCalendar for Buddhist {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("buddhist");
     type DateSymbolsV1Marker = BuddhistDateSymbolsV1Marker;
     type DateLengthsV1Marker = BuddhistDateLengthsV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type YearNamesV1Marker = BuddhistYearNamesV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type MonthNamesV1Marker = BuddhistMonthNamesV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type SkeletaV1Marker = BuddhistDateNeoSkeletonPatternsV1Marker;
 }
 
@@ -124,11 +112,8 @@ impl CldrCalendar for Chinese {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("chinese");
     type DateSymbolsV1Marker = ChineseDateSymbolsV1Marker;
     type DateLengthsV1Marker = ChineseDateLengthsV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type YearNamesV1Marker = ChineseYearNamesV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type MonthNamesV1Marker = ChineseMonthNamesV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type SkeletaV1Marker = ChineseDateNeoSkeletonPatternsV1Marker;
 }
 
@@ -136,11 +121,8 @@ impl CldrCalendar for Coptic {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("coptic");
     type DateSymbolsV1Marker = CopticDateSymbolsV1Marker;
     type DateLengthsV1Marker = CopticDateLengthsV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type YearNamesV1Marker = CopticYearNamesV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type MonthNamesV1Marker = CopticMonthNamesV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type SkeletaV1Marker = CopticDateNeoSkeletonPatternsV1Marker;
 }
 
@@ -148,11 +130,8 @@ impl CldrCalendar for Dangi {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("dangi");
     type DateSymbolsV1Marker = DangiDateSymbolsV1Marker;
     type DateLengthsV1Marker = DangiDateLengthsV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type YearNamesV1Marker = DangiYearNamesV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type MonthNamesV1Marker = DangiMonthNamesV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type SkeletaV1Marker = DangiDateNeoSkeletonPatternsV1Marker;
 }
 
@@ -160,11 +139,8 @@ impl CldrCalendar for Ethiopian {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("ethiopic");
     type DateSymbolsV1Marker = EthiopianDateSymbolsV1Marker;
     type DateLengthsV1Marker = EthiopianDateLengthsV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type YearNamesV1Marker = EthiopianYearNamesV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type MonthNamesV1Marker = EthiopianMonthNamesV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type SkeletaV1Marker = EthiopianDateNeoSkeletonPatternsV1Marker;
     fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
         *value == value!("ethiopic") || *value == value!("ethioaa")
@@ -175,11 +151,8 @@ impl CldrCalendar for Gregorian {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("gregory");
     type DateSymbolsV1Marker = GregorianDateSymbolsV1Marker;
     type DateLengthsV1Marker = GregorianDateLengthsV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type YearNamesV1Marker = GregorianYearNamesV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type MonthNamesV1Marker = GregorianMonthNamesV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type SkeletaV1Marker = GregorianDateNeoSkeletonPatternsV1Marker;
 }
 
@@ -187,11 +160,8 @@ impl CldrCalendar for Hebrew {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("hebrew");
     type DateSymbolsV1Marker = HebrewDateSymbolsV1Marker;
     type DateLengthsV1Marker = HebrewDateLengthsV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type YearNamesV1Marker = HebrewYearNamesV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type MonthNamesV1Marker = HebrewMonthNamesV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type SkeletaV1Marker = HebrewDateNeoSkeletonPatternsV1Marker;
 }
 
@@ -199,11 +169,8 @@ impl CldrCalendar for Indian {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("indian");
     type DateSymbolsV1Marker = IndianDateSymbolsV1Marker;
     type DateLengthsV1Marker = IndianDateLengthsV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type YearNamesV1Marker = IndianYearNamesV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type MonthNamesV1Marker = IndianMonthNamesV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type SkeletaV1Marker = IndianDateNeoSkeletonPatternsV1Marker;
 }
 
@@ -214,11 +181,8 @@ impl CldrCalendar for IslamicCivil {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("islamic");
     type DateSymbolsV1Marker = IslamicDateSymbolsV1Marker;
     type DateLengthsV1Marker = IslamicDateLengthsV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type YearNamesV1Marker = IslamicYearNamesV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type MonthNamesV1Marker = IslamicMonthNamesV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type SkeletaV1Marker = IslamicDateNeoSkeletonPatternsV1Marker;
     fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
         *value == value!("islamicc") || is_islamic_subcal(value, subtag!("civil"))
@@ -229,11 +193,8 @@ impl CldrCalendar for IslamicObservational {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("islamic");
     type DateSymbolsV1Marker = IslamicDateSymbolsV1Marker;
     type DateLengthsV1Marker = IslamicDateLengthsV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type YearNamesV1Marker = IslamicYearNamesV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type MonthNamesV1Marker = IslamicMonthNamesV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type SkeletaV1Marker = IslamicDateNeoSkeletonPatternsV1Marker;
 }
 
@@ -244,11 +205,8 @@ impl CldrCalendar for IslamicTabular {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("islamic");
     type DateSymbolsV1Marker = IslamicDateSymbolsV1Marker;
     type DateLengthsV1Marker = IslamicDateLengthsV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type YearNamesV1Marker = IslamicYearNamesV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type MonthNamesV1Marker = IslamicMonthNamesV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type SkeletaV1Marker = IslamicDateNeoSkeletonPatternsV1Marker;
     fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
         is_islamic_subcal(value, subtag!("tbla"))
@@ -262,11 +220,8 @@ impl CldrCalendar for IslamicUmmAlQura {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("islamic");
     type DateSymbolsV1Marker = IslamicDateSymbolsV1Marker;
     type DateLengthsV1Marker = IslamicDateLengthsV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type YearNamesV1Marker = IslamicYearNamesV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type MonthNamesV1Marker = IslamicMonthNamesV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type SkeletaV1Marker = IslamicDateNeoSkeletonPatternsV1Marker;
     fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
         is_islamic_subcal(value, subtag!("umalqura"))
@@ -277,11 +232,8 @@ impl CldrCalendar for Japanese {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("japanese");
     type DateSymbolsV1Marker = JapaneseDateSymbolsV1Marker;
     type DateLengthsV1Marker = JapaneseDateLengthsV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type YearNamesV1Marker = JapaneseYearNamesV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type MonthNamesV1Marker = JapaneseMonthNamesV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type SkeletaV1Marker = JapaneseDateNeoSkeletonPatternsV1Marker;
 }
 
@@ -289,11 +241,8 @@ impl CldrCalendar for JapaneseExtended {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("japanext");
     type DateSymbolsV1Marker = JapaneseExtendedDateSymbolsV1Marker;
     type DateLengthsV1Marker = JapaneseExtendedDateLengthsV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type YearNamesV1Marker = JapaneseExtendedYearNamesV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type MonthNamesV1Marker = JapaneseExtendedMonthNamesV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type SkeletaV1Marker = JapaneseExtendedDateNeoSkeletonPatternsV1Marker;
 }
 
@@ -301,11 +250,8 @@ impl CldrCalendar for Persian {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("persian");
     type DateSymbolsV1Marker = PersianDateSymbolsV1Marker;
     type DateLengthsV1Marker = PersianDateLengthsV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type YearNamesV1Marker = PersianYearNamesV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type MonthNamesV1Marker = PersianMonthNamesV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type SkeletaV1Marker = PersianDateNeoSkeletonPatternsV1Marker;
 }
 
@@ -313,15 +259,11 @@ impl CldrCalendar for Roc {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("roc");
     type DateSymbolsV1Marker = RocDateSymbolsV1Marker;
     type DateLengthsV1Marker = RocDateLengthsV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type YearNamesV1Marker = RocYearNamesV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type MonthNamesV1Marker = RocMonthNamesV1Marker;
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     type SkeletaV1Marker = RocDateNeoSkeletonPatternsV1Marker;
 }
 
-#[cfg(any(feature = "datagen", feature = "experimental"))]
 impl InternalCldrCalendar for NeverCalendar {}
 impl InternalCldrCalendar for Buddhist {}
 impl InternalCldrCalendar for Chinese {}
@@ -340,7 +282,6 @@ impl InternalCldrCalendar for JapaneseExtended {}
 impl InternalCldrCalendar for Persian {}
 impl InternalCldrCalendar for Roc {}
 
-#[cfg(feature = "experimental")]
 mod private {
     pub trait Sealed {}
 }
@@ -351,7 +292,6 @@ mod private {
 /// [`DynamicDataMarker`]. For example, this trait can be implemented for [`YearNamesV1Marker`].
 ///
 /// This trait serves as a building block for a cross-calendar [`BoundDataProvider`].
-#[cfg(feature = "experimental")]
 pub trait CalMarkers<M>: private::Sealed
 where
     M: DynamicDataMarker,
@@ -394,23 +334,18 @@ where
 
 /// Implementation of [`CalMarkers`] that includes data for all calendars.
 #[derive(Debug)]
-#[cfg(feature = "experimental")]
 #[allow(clippy::exhaustive_enums)] // empty enum
 pub enum FullDataCalMarkers {}
 
-#[cfg(feature = "experimental")]
 impl private::Sealed for FullDataCalMarkers {}
 
 /// Implementation of [`CalMarkers`] that includes data for no calendars.
 #[derive(Debug)]
-#[cfg(feature = "experimental")]
 #[allow(clippy::exhaustive_enums)] // empty enum
 pub enum NoDataCalMarkers {}
 
-#[cfg(feature = "experimental")]
 impl private::Sealed for NoDataCalMarkers {}
 
-#[cfg(feature = "experimental")]
 impl<M> CalMarkers<M> for NoDataCalMarkers
 where
     M: DynamicDataMarker,
@@ -434,14 +369,12 @@ where
     type Roc = NeverMarker<M::DataStruct>;
 }
 
-#[cfg(feature = "experimental")]
 pub(crate) struct AnyCalendarProvider<H, P> {
     provider: P,
     kind: AnyCalendarKind,
     _helper: PhantomData<H>,
 }
 
-#[cfg(feature = "experimental")]
 impl<H, P> AnyCalendarProvider<H, P> {
     pub(crate) fn new(provider: P, kind: AnyCalendarKind) -> Self {
         Self {
@@ -452,7 +385,6 @@ impl<H, P> AnyCalendarProvider<H, P> {
     }
 }
 
-#[cfg(feature = "experimental")]
 impl<M, H, P> BoundDataProvider<M> for AnyCalendarProvider<H, P>
 where
     M: DynamicDataMarker,
@@ -528,7 +460,6 @@ where
     }
 }
 
-#[cfg(feature = "experimental")]
 macro_rules! impl_load_any_calendar {
     ([$(($erased:ident, $marker:ident)),+], [$($kind_cal:ident),+], [$($kind:ident => $cal:ident),+]) => {
         impl_load_any_calendar!(@expand [$(($erased, $marker)),+], [$($kind_cal),+], [$($kind => $cal),+]);
@@ -548,7 +479,6 @@ macro_rules! impl_load_any_calendar {
     };
 }
 
-#[cfg(feature = "experimental")]
 impl_load_any_calendar!([
     (YearNamesV1Marker, YearNamesV1Marker),
     (MonthNamesV1Marker, MonthNamesV1Marker),

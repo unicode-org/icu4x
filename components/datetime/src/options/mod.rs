@@ -27,13 +27,13 @@
 //! At the moment only the [`length::Bag`] works, and we plan to extend that to support
 //! `ECMA402`-like components bag later.
 
-#[cfg(any(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "datagen")]
 pub mod components;
 pub mod length;
 
-#[cfg(any(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "datagen")]
 pub mod preferences;
-#[cfg(not(any(feature = "datagen", feature = "experimental")))]
+#[cfg(not(feature = "datagen"))]
 pub(crate) mod preferences;
 
 /// A bag of options which, together with [`Locale`](icu_locale_core::Locale), defines how
@@ -72,23 +72,25 @@ pub enum DateTimeFormatterOptions {
     /// of the icu meta-crate. Use with caution.
     /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
     /// </div>
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
+    #[cfg(feature = "datagen")]
     Components(components::Bag),
 }
 
+#[cfg(feature = "datagen")]
 impl Default for DateTimeFormatterOptions {
     fn default() -> Self {
         Self::Length(length::Bag::default())
     }
 }
 
+#[cfg(feature = "datagen")]
 impl From<length::Bag> for DateTimeFormatterOptions {
     fn from(input: length::Bag) -> Self {
         Self::Length(input)
     }
 }
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "datagen")]
 impl From<components::Bag> for DateTimeFormatterOptions {
     fn from(input: components::Bag) -> Self {
         Self::Components(input)

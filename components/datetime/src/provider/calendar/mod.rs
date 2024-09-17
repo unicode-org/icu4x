@@ -4,13 +4,13 @@
 
 //! Data structs for calendar-specific symbols and patterns.
 
-#[cfg(any(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "datagen")]
 mod skeletons;
 mod symbols;
 
 use crate::pattern;
 use icu_provider::prelude::*;
-#[cfg(any(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "datagen")]
 pub use skeletons::*;
 pub use symbols::*;
 

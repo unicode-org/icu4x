@@ -281,13 +281,6 @@ size_test!(
 ///
 /// To support all fields including time zones, use [`NeoComponents`].
 ///
-/// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
-/// of the icu meta-crate. Use with caution.
-/// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
-/// </div>
-///
 /// [`NeoComponents`]: crate::neo_skeleton::NeoComponents
 ///
 /// # Examples
@@ -2361,13 +2354,6 @@ where
 }
 
 /// A pattern that has been interpolated and implements [`TryWriteable`].
-///
-/// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
-/// of the icu meta-crate. Use with caution.
-/// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
-/// </div>
 #[derive(Debug)]
 pub struct FormattedDateTimePattern<'a> {
     pattern: DateTimePatternBorrowed<'a>,

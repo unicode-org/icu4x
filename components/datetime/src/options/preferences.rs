@@ -72,7 +72,7 @@ pub struct Bag {
 
 impl Bag {
     /// Construct a [`Bag`] with a given [`HourCycle`]
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
+    #[cfg(feature = "datagen")]
     pub fn from_hour_cycle(h: HourCycle) -> Self {
         Self {
             hour_cycle: Some(h),

@@ -8,11 +8,8 @@
 use crate::neo_serde::*;
 use crate::options;
 use crate::options::length;
-#[cfg(feature = "experimental")]
 use crate::pattern::CoarseHourCycle;
-#[cfg(feature = "experimental")]
 use crate::raw::neo::MaybeLength;
-#[cfg(feature = "experimental")]
 use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
 use icu_provider::DataMarkerAttributes;
 
@@ -756,7 +753,6 @@ impl NeoTimeComponents {
         }
     }
 
-    #[cfg(feature = "experimental")]
     pub(crate) fn with_hour_cycle(self, hour_cycle: CoarseHourCycle) -> Self {
         use CoarseHourCycle::*;
         match (self, hour_cycle) {
@@ -991,7 +987,6 @@ pub struct NeoTimeZoneSkeleton {
     pub style: NeoTimeZoneStyle,
 }
 
-#[cfg(feature = "experimental")]
 impl NeoTimeZoneSkeleton {
     pub(crate) fn resolve(self, length: MaybeLength) -> ResolvedNeoTimeZoneSkeleton {
         crate::tz_registry::skeleton_to_resolved(

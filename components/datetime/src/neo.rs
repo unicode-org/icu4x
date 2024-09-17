@@ -220,14 +220,8 @@ size_test!(TypedNeoFormatter<icu_calendar::Gregorian, crate::neo_marker::NeoYear
 /// a calendar selected at compile time.
 ///
 /// For more details, please read the [crate root docs][crate].
-#[doc = typed_neo_year_month_day_formatter_size!()]
 ///
-/// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
-/// of the icu meta-crate. Use with caution.
-/// <a href="https://github.com/unicode-org/icu4x/issues/3347">#3347</a>
-/// </div>
+#[doc = typed_neo_year_month_day_formatter_size!()]
 #[derive(Debug)]
 pub struct TypedNeoFormatter<C: CldrCalendar, R: DateTimeNamesMarker> {
     selection: DateTimeZonePatternSelectionData,
@@ -664,14 +658,8 @@ size_test!(
 /// a calendar selected at runtime.
 ///
 /// For more details, please read the [crate root docs][crate].
-#[doc = neo_year_month_day_formatter_size!()]
 ///
-/// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
-/// of the icu meta-crate. Use with caution.
-/// <a href="https://github.com/unicode-org/icu4x/issues/3347">#3347</a>
-/// </div>
+#[doc = neo_year_month_day_formatter_size!()]
 #[derive(Debug)]
 pub struct NeoFormatter<R: DateTimeNamesMarker> {
     selection: DateTimeZonePatternSelectionData,
@@ -1442,12 +1430,9 @@ where
     }
 }
 
-/// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
-/// of the icu meta-crate. Use with caution.
-/// <a href="https://github.com/unicode-org/icu4x/issues/3347">#3347</a>
-/// </div>
+/// An intermediate type during a datetime formatting operation.
+///
+/// Not intended to be stored: convert to a string first.
 #[derive(Debug)]
 pub struct FormattedNeoDateTime<'a> {
     pattern: DateTimeZonePatternDataBorrowed<'a>,

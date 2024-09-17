@@ -6,5 +6,4 @@
 //!
 //! This allows additional code sharing and reduced code size.
 
-#[cfg(feature = "experimental")]
 pub(crate) mod neo;

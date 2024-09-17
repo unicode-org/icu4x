@@ -32,7 +32,7 @@ pub enum DateTimeError {
     MissingInputField(Option<&'static str>),
     /// An error originating from skeleton matching.
     #[displaydoc("{0}")]
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "datagen")]
     Skeleton(crate::skeleton::SkeletonError),
     /// An error originating from an unsupported field in a datetime format.
     #[displaydoc("Unsupported field: {0:?}")]

@@ -91,22 +91,17 @@ extern crate alloc;
 
 mod calendar;
 mod error;
-#[cfg(feature = "experimental")]
 mod external_loaders;
 pub mod fields;
 mod format;
 #[macro_use]
 pub(crate) mod helpers;
 pub mod input;
-#[cfg(feature = "experimental")]
 pub mod neo;
-#[cfg(feature = "experimental")]
 pub mod neo_marker;
-#[cfg(feature = "experimental")]
 pub mod neo_pattern;
-#[cfg(all(feature = "serde", any(feature = "datagen", feature = "experimental")))]
+#[cfg(feature = "serde")]
 mod neo_serde;
-#[cfg(any(feature = "datagen", feature = "experimental"))]
 pub mod neo_skeleton;
 pub mod options;
 #[doc(hidden)]
@@ -115,19 +110,16 @@ pub mod provider;
 pub(crate) mod raw;
 #[doc(hidden)]
 #[allow(clippy::exhaustive_structs, clippy::exhaustive_enums)] // private-ish module
-#[cfg(any(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "datagen")]
 pub mod skeleton;
 mod time_zone;
 mod tz_registry;
 
 pub use calendar::CldrCalendar;
-#[cfg(feature = "experimental")]
 pub use calendar::{InternalCldrCalendar, NeverCalendar};
 pub use error::DateTimeError;
 pub use error::MismatchedCalendarError;
-#[cfg(feature = "experimental")]
 pub use format::datetime::DateTimeWriteError;
-#[cfg(feature = "experimental")]
 pub use format::neo::{FormattedDateTimePattern, LoadError, SingleLoadError, TypedDateTimeNames};
 
 pub use neo::NeoFormatter;

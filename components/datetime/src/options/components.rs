@@ -92,7 +92,6 @@ use crate::{
 };
 
 use super::preferences;
-#[cfg(feature = "experimental")]
 use crate::neo_pattern::DateTimePattern;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -173,7 +172,7 @@ impl Bag {
     ///
     /// - `default_hour_cycle` specifies the hour cycle to use for the hour field if not in the Bag.
     ///   `preferences::Bag::hour_cycle` takes precedence over this argument.
-    #[cfg(any(test, feature = "datagen", feature = "experimental"))]
+    #[cfg(any(test, feature = "datagen"))]
     pub(crate) fn to_vec_fields(
         &self,
         default_hour_cycle: preferences::HourCycle,
@@ -641,7 +640,6 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
     }
 }
 
-#[cfg(feature = "experimental")]
 impl From<&DateTimePattern> for Bag {
     fn from(value: &DateTimePattern) -> Self {
         Self::from(value.as_borrowed().0)
