@@ -139,6 +139,7 @@ part 'WordBreakIteratorLatin1.g.dart';
 part 'WordBreakIteratorUtf16.g.dart';
 part 'WordBreakIteratorUtf8.g.dart';
 part 'WordSegmenter.g.dart';
+part 'ZoneOffsetCalculator.g.dart';
 part 'ZonedDateTimeFormatter.g.dart';
 
 /// A [Rune] is a Unicode code point, such as `a`, or `💡`.
@@ -253,6 +254,32 @@ final class _ResultInt32Void extends ffi.Struct {
   }
   factory _ResultInt32Void.err() {
     final struct = ffi.Struct.create<_ResultInt32Void>();
+    struct.isOk = false;
+    return struct;
+  }
+}
+
+final class _ResultInt8VoidUnion extends ffi.Union {
+  @ffi.Int8()
+  external int ok;
+
+}
+
+final class _ResultInt8Void extends ffi.Struct {
+  external _ResultInt8VoidUnion union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  
+  factory _ResultInt8Void.ok(int val) {
+    final struct = ffi.Struct.create<_ResultInt8Void>();
+    struct.isOk = true;
+    struct.union.ok = val;
+    return struct;
+  }
+  factory _ResultInt8Void.err() {
+    final struct = ffi.Struct.create<_ResultInt8Void>();
     struct.isOk = false;
     return struct;
   }
