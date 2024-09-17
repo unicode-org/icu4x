@@ -18,6 +18,7 @@ use std::collections::HashSet;
 
 mod convert;
 mod names;
+mod windows;
 
 #[derive(Debug, Copy, Clone)]
 struct CldrTimeZonesData<'a> {
