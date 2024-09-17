@@ -124,6 +124,7 @@ pub use format::neo::{FormattedDateTimePattern, LoadError, SingleLoadError, Type
 
 pub use neo::NeoFormatter;
 pub use neo::TypedNeoFormatter;
+pub use neo_skeleton::NeoSkeletonLength;
 
 #[doc(no_inline)]
 pub use DateTimeError as Error;

@@ -117,23 +117,6 @@ pub(crate) struct ExtractedInput {
 }
 
 impl ExtractedInput {
-    /// Construct given an instance of a [`DateTimeInput`].
-    #[cfg(test)]
-    pub(crate) fn extract_from<T: DateTimeInput>(input: &T) -> Self {
-        Self {
-            year: input.year(),
-            month: input.month(),
-            day_of_month: input.day_of_month(),
-            iso_weekday: input.iso_weekday(),
-            day_of_year_info: input.day_of_year_info(),
-            any_calendar_kind: input.any_calendar_kind(),
-            hour: input.hour(),
-            minute: input.minute(),
-            second: input.second(),
-            nanosecond: input.nanosecond(),
-            ..Default::default()
-        }
-    }
     /// Construct given neo date input instances.
     pub(crate) fn extract_from_neo_input<D, T, Z, I>(input: &I) -> Self
     where

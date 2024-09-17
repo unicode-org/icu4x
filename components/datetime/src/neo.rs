@@ -1468,4 +1468,11 @@ impl<'a> FormattedNeoDateTime<'a> {
     pub fn pattern(&self) -> DateTimePattern {
         self.pattern.to_pattern()
     }
+
+    /// Gets the formatted result as a string.
+    pub fn to_string_lossy(&self) -> alloc::string::String {
+        match self.try_write_to_string() {
+            Err((_, s)) | Ok(s) => s.into_owned(),
+        }
+    }
 }
