@@ -96,20 +96,23 @@ impl<T> PropertyParser<T> {
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     #[allow(clippy::new_ret_no_self)]
-    pub fn new() -> PropertyParserBorrowed<'static, T> where T: ParseableEnumeratedProperty {
+    pub fn new() -> PropertyParserBorrowed<'static, T>
+    where
+        T: ParseableEnumeratedProperty,
+    {
         PropertyParserBorrowed {
             map: T::SINGLETON,
             markers: PhantomData,
         }
     }
 
-    /// A version of [`Self::new()`] that uses custom data provided by a [`DataProvider`].
-    ///
-    /// Note that this will return an owned version of the data. Functionality is available on
-    /// the borrowed version, accessible through [`Self::as_borrowed`].
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable(
         provider: &(impl DataProvider<T::DataMarker> + ?Sized),
-    ) -> Result<Self, DataError> where T: ParseableEnumeratedProperty {
+    ) -> Result<Self, DataError>
+    where
+        T: ParseableEnumeratedProperty,
+    {
         Ok(Self {
             map: provider.load(Default::default())?.payload.cast(),
             markers: PhantomData,
@@ -355,10 +358,7 @@ impl<T: NamedEnumeratedProperty> PropertyNames<T> {
         }
     }
 
-    /// A version of [`Self::new_short()`] that uses custom data provided by a [`DataProvider`].
-    ///
-    /// Note that this will return an owned version of the data. Functionality is available on
-    /// the borrowed version, accessible through [`Self::as_borrowed`].
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_short)]
     pub fn try_new_short_unstable(
         provider: &(impl DataProvider<T::DataMarkerShort> + ?Sized),
     ) -> Result<Self, DataError> {
@@ -368,10 +368,7 @@ impl<T: NamedEnumeratedProperty> PropertyNames<T> {
         })
     }
 
-    /// A version of [`Self::new_long()`] that uses custom data provided by a [`DataProvider`].
-    ///
-    /// Note that this will return an owned version of the data. Functionality is available on
-    /// the borrowed version, accessible through [`Self::as_borrowed`].
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_long)]
     pub fn try_new_long_unstable(
         provider: &(impl DataProvider<T::DataMarkerLong> + ?Sized),
     ) -> Result<Self, DataError> {
@@ -476,10 +473,7 @@ impl ScriptMapper {
         }
     }
 
-    /// A version of [`Self::new()`] that uses custom data provided by a [`DataProvider`].
-    ///
-    /// Note that this will return an owned version of the data. Functionality is available on
-    /// the borrowed version, accessible through [`Self::as_borrowed`].
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable(
         provider: &(impl DataProvider<ScriptValueToShortNameV1Marker> + ?Sized),
     ) -> Result<Self, DataError> {

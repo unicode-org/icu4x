@@ -52,10 +52,7 @@ impl CodePointSetData {
         CodePointSetDataBorrowed { set: P::SINGLETON }
     }
 
-    /// A version of [`Self::new()`] that uses custom data provided by a [`DataProvider`].
-    ///
-    /// Note that this will return an owned version of the data. Functionality is available on
-    /// the borrowed version, accessible through [`CodePointSetData::as_borrowed`].
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P: BinaryProperty>(
         provider: &(impl DataProvider<P::DataMarker> + ?Sized),
     ) -> Result<CodePointSetData, DataError> {

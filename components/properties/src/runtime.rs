@@ -13,12 +13,12 @@
 
 use crate::props::*;
 use crate::provider::*;
+use crate::CodePointSetData;
 #[cfg(doc)]
 use crate::{
     props::{GeneralCategory, GeneralCategoryGroup, Script},
     script, CodePointMapData, PropertyParser,
 };
-use crate::{CodePointSetData, CodePointSetDataBorrowed};
 use icu_provider::prelude::*;
 
 /// This type can represent any Unicode property.
@@ -355,7 +355,7 @@ impl CodePointSetData {
     /// - `Script` and `General_Category`: handle these directly using property values parsed via
     ///   [`PropertyParser<GeneralCategory>`] and [`PropertyParser<Script>`]
     ///    if necessary.
-    /// - `Script_Extensions`: handle this directly using APIs from [`crate::script`], like [`script::load_script_with_extensions_unstable()`]
+    /// - `Script_Extensions`: handle this directly using APIs from [`crate::script::ScriptWithExtensions`]
     /// - `General_Category` mask values: Handle this alongside `General_Category` using [`GeneralCategoryGroup`],
     ///    using property values parsed via [`PropertyParser<GeneralCategory>`] if necessary
     /// - `Assigned`, `All`, and `ASCII` pseudoproperties: Handle these using their equivalent sets:
@@ -383,7 +383,7 @@ impl CodePointSetData {
     ///
     /// [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
     #[cfg(feature = "compiled_data")]
-    pub fn new_runtime(prop: UnicodeProperty) -> Option<CodePointSetDataBorrowed<'static>> {
+    pub fn new_runtime(prop: UnicodeProperty) -> Option<crate::CodePointSetDataBorrowed<'static>> {
         Some(match prop {
             AsciiHexDigit::VALUE => Self::new::<AsciiHexDigit>(),
             Alphabetic::VALUE => Self::new::<Alphabetic>(),
@@ -441,7 +441,7 @@ impl CodePointSetData {
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        (prop: UnicodeProperty) -> result: Option<Result<CodePointSetData, DataError>>,
+        (prop: UnicodeProperty) -> result: Option<Result<Self, DataError>>,
         functions: [
             new_runtime: skip,
             try_new_runtime_with_buffer_provider,
@@ -455,7 +455,7 @@ impl CodePointSetData {
     pub fn try_new_runtime_unstable<P>(
         provider: &P,
         prop: UnicodeProperty,
-    ) -> Option<Result<CodePointSetData, DataError>>
+    ) -> Option<Result<Self, DataError>>
     where
         P: ?Sized
             + DataProvider<AsciiHexDigitV1Marker>
@@ -510,96 +510,74 @@ impl CodePointSetData {
             + DataProvider<XidStartV1Marker>,
     {
         Some(match prop {
-            AsciiHexDigit::VALUE => CodePointSetData::try_new_unstable::<AsciiHexDigit>(provider),
-            Alphabetic::VALUE => CodePointSetData::try_new_unstable::<Alphabetic>(provider),
-            BidiControl::VALUE => CodePointSetData::try_new_unstable::<BidiControl>(provider),
-            BidiMirrored::VALUE => CodePointSetData::try_new_unstable::<BidiMirrored>(provider),
-            CaseIgnorable::VALUE => CodePointSetData::try_new_unstable::<CaseIgnorable>(provider),
-            Cased::VALUE => CodePointSetData::try_new_unstable::<Cased>(provider),
+            AsciiHexDigit::VALUE => Self::try_new_unstable::<AsciiHexDigit>(provider),
+            Alphabetic::VALUE => Self::try_new_unstable::<Alphabetic>(provider),
+            BidiControl::VALUE => Self::try_new_unstable::<BidiControl>(provider),
+            BidiMirrored::VALUE => Self::try_new_unstable::<BidiMirrored>(provider),
+            CaseIgnorable::VALUE => Self::try_new_unstable::<CaseIgnorable>(provider),
+            Cased::VALUE => Self::try_new_unstable::<Cased>(provider),
             ChangesWhenCasefolded::VALUE => {
-                CodePointSetData::try_new_unstable::<ChangesWhenCasefolded>(provider)
+                Self::try_new_unstable::<ChangesWhenCasefolded>(provider)
             }
             ChangesWhenCasemapped::VALUE => {
-                CodePointSetData::try_new_unstable::<ChangesWhenCasemapped>(provider)
+                Self::try_new_unstable::<ChangesWhenCasemapped>(provider)
             }
             ChangesWhenLowercased::VALUE => {
-                CodePointSetData::try_new_unstable::<ChangesWhenLowercased>(provider)
+                Self::try_new_unstable::<ChangesWhenLowercased>(provider)
             }
             ChangesWhenNfkcCasefolded::VALUE => {
-                CodePointSetData::try_new_unstable::<ChangesWhenNfkcCasefolded>(provider)
+                Self::try_new_unstable::<ChangesWhenNfkcCasefolded>(provider)
             }
             ChangesWhenTitlecased::VALUE => {
-                CodePointSetData::try_new_unstable::<ChangesWhenTitlecased>(provider)
+                Self::try_new_unstable::<ChangesWhenTitlecased>(provider)
             }
             ChangesWhenUppercased::VALUE => {
-                CodePointSetData::try_new_unstable::<ChangesWhenUppercased>(provider)
+                Self::try_new_unstable::<ChangesWhenUppercased>(provider)
             }
-            Dash::VALUE => CodePointSetData::try_new_unstable::<Dash>(provider),
+            Dash::VALUE => Self::try_new_unstable::<Dash>(provider),
             DefaultIgnorableCodePoint::VALUE => {
-                CodePointSetData::try_new_unstable::<DefaultIgnorableCodePoint>(provider)
+                Self::try_new_unstable::<DefaultIgnorableCodePoint>(provider)
             }
-            Deprecated::VALUE => CodePointSetData::try_new_unstable::<Deprecated>(provider),
-            Diacritic::VALUE => CodePointSetData::try_new_unstable::<Diacritic>(provider),
-            Emoji::VALUE => CodePointSetData::try_new_unstable::<Emoji>(provider),
-            EmojiComponent::VALUE => CodePointSetData::try_new_unstable::<EmojiComponent>(provider),
-            EmojiModifier::VALUE => CodePointSetData::try_new_unstable::<EmojiModifier>(provider),
-            EmojiModifierBase::VALUE => {
-                CodePointSetData::try_new_unstable::<EmojiModifierBase>(provider)
-            }
-            EmojiPresentation::VALUE => {
-                CodePointSetData::try_new_unstable::<EmojiPresentation>(provider)
-            }
-            ExtendedPictographic::VALUE => {
-                CodePointSetData::try_new_unstable::<ExtendedPictographic>(provider)
-            }
-            Extender::VALUE => CodePointSetData::try_new_unstable::<Extender>(provider),
-            GraphemeBase::VALUE => CodePointSetData::try_new_unstable::<GraphemeBase>(provider),
-            GraphemeExtend::VALUE => CodePointSetData::try_new_unstable::<GraphemeExtend>(provider),
-            HexDigit::VALUE => CodePointSetData::try_new_unstable::<HexDigit>(provider),
-            IdsBinaryOperator::VALUE => {
-                CodePointSetData::try_new_unstable::<IdsBinaryOperator>(provider)
-            }
-            IdsTrinaryOperator::VALUE => {
-                CodePointSetData::try_new_unstable::<IdsTrinaryOperator>(provider)
-            }
-            IdContinue::VALUE => CodePointSetData::try_new_unstable::<IdContinue>(provider),
-            IdStart::VALUE => CodePointSetData::try_new_unstable::<IdStart>(provider),
-            Ideographic::VALUE => CodePointSetData::try_new_unstable::<Ideographic>(provider),
-            JoinControl::VALUE => CodePointSetData::try_new_unstable::<JoinControl>(provider),
+            Deprecated::VALUE => Self::try_new_unstable::<Deprecated>(provider),
+            Diacritic::VALUE => Self::try_new_unstable::<Diacritic>(provider),
+            Emoji::VALUE => Self::try_new_unstable::<Emoji>(provider),
+            EmojiComponent::VALUE => Self::try_new_unstable::<EmojiComponent>(provider),
+            EmojiModifier::VALUE => Self::try_new_unstable::<EmojiModifier>(provider),
+            EmojiModifierBase::VALUE => Self::try_new_unstable::<EmojiModifierBase>(provider),
+            EmojiPresentation::VALUE => Self::try_new_unstable::<EmojiPresentation>(provider),
+            ExtendedPictographic::VALUE => Self::try_new_unstable::<ExtendedPictographic>(provider),
+            Extender::VALUE => Self::try_new_unstable::<Extender>(provider),
+            GraphemeBase::VALUE => Self::try_new_unstable::<GraphemeBase>(provider),
+            GraphemeExtend::VALUE => Self::try_new_unstable::<GraphemeExtend>(provider),
+            HexDigit::VALUE => Self::try_new_unstable::<HexDigit>(provider),
+            IdsBinaryOperator::VALUE => Self::try_new_unstable::<IdsBinaryOperator>(provider),
+            IdsTrinaryOperator::VALUE => Self::try_new_unstable::<IdsTrinaryOperator>(provider),
+            IdContinue::VALUE => Self::try_new_unstable::<IdContinue>(provider),
+            IdStart::VALUE => Self::try_new_unstable::<IdStart>(provider),
+            Ideographic::VALUE => Self::try_new_unstable::<Ideographic>(provider),
+            JoinControl::VALUE => Self::try_new_unstable::<JoinControl>(provider),
             LogicalOrderException::VALUE => {
-                CodePointSetData::try_new_unstable::<LogicalOrderException>(provider)
+                Self::try_new_unstable::<LogicalOrderException>(provider)
             }
-            Lowercase::VALUE => CodePointSetData::try_new_unstable::<Lowercase>(provider),
-            Math::VALUE => CodePointSetData::try_new_unstable::<Math>(provider),
+            Lowercase::VALUE => Self::try_new_unstable::<Lowercase>(provider),
+            Math::VALUE => Self::try_new_unstable::<Math>(provider),
             NoncharacterCodePoint::VALUE => {
-                CodePointSetData::try_new_unstable::<NoncharacterCodePoint>(provider)
+                Self::try_new_unstable::<NoncharacterCodePoint>(provider)
             }
-            PatternSyntax::VALUE => CodePointSetData::try_new_unstable::<PatternSyntax>(provider),
-            PatternWhiteSpace::VALUE => {
-                CodePointSetData::try_new_unstable::<PatternWhiteSpace>(provider)
-            }
-            QuotationMark::VALUE => CodePointSetData::try_new_unstable::<QuotationMark>(provider),
-            Radical::VALUE => CodePointSetData::try_new_unstable::<Radical>(provider),
-            RegionalIndicator::VALUE => {
-                CodePointSetData::try_new_unstable::<RegionalIndicator>(provider)
-            }
-            SentenceTerminal::VALUE => {
-                CodePointSetData::try_new_unstable::<SentenceTerminal>(provider)
-            }
-            SoftDotted::VALUE => CodePointSetData::try_new_unstable::<SoftDotted>(provider),
-            TerminalPunctuation::VALUE => {
-                CodePointSetData::try_new_unstable::<TerminalPunctuation>(provider)
-            }
-            UnifiedIdeograph::VALUE => {
-                CodePointSetData::try_new_unstable::<UnifiedIdeograph>(provider)
-            }
-            Uppercase::VALUE => CodePointSetData::try_new_unstable::<Uppercase>(provider),
-            VariationSelector::VALUE => {
-                CodePointSetData::try_new_unstable::<VariationSelector>(provider)
-            }
-            WhiteSpace::VALUE => CodePointSetData::try_new_unstable::<WhiteSpace>(provider),
-            XidContinue::VALUE => CodePointSetData::try_new_unstable::<XidContinue>(provider),
-            XidStart::VALUE => CodePointSetData::try_new_unstable::<XidStart>(provider),
+            PatternSyntax::VALUE => Self::try_new_unstable::<PatternSyntax>(provider),
+            PatternWhiteSpace::VALUE => Self::try_new_unstable::<PatternWhiteSpace>(provider),
+            QuotationMark::VALUE => Self::try_new_unstable::<QuotationMark>(provider),
+            Radical::VALUE => Self::try_new_unstable::<Radical>(provider),
+            RegionalIndicator::VALUE => Self::try_new_unstable::<RegionalIndicator>(provider),
+            SentenceTerminal::VALUE => Self::try_new_unstable::<SentenceTerminal>(provider),
+            SoftDotted::VALUE => Self::try_new_unstable::<SoftDotted>(provider),
+            TerminalPunctuation::VALUE => Self::try_new_unstable::<TerminalPunctuation>(provider),
+            UnifiedIdeograph::VALUE => Self::try_new_unstable::<UnifiedIdeograph>(provider),
+            Uppercase::VALUE => Self::try_new_unstable::<Uppercase>(provider),
+            VariationSelector::VALUE => Self::try_new_unstable::<VariationSelector>(provider),
+            WhiteSpace::VALUE => Self::try_new_unstable::<WhiteSpace>(provider),
+            XidContinue::VALUE => Self::try_new_unstable::<XidContinue>(provider),
+            XidStart::VALUE => Self::try_new_unstable::<XidStart>(provider),
             // Not a binary property
             _ => return None,
         })

@@ -45,12 +45,7 @@ impl<T: TrieValue> CodePointMapData<T> {
         CodePointMapDataBorrowed { map: T::SINGLETON }
     }
 
-    /// A version of `new()` that uses custom data provided by a [`DataProvider`].
-    ///
-    /// Note that this will return an owned version of the data. Functionality is available on
-    /// the borrowed version, accessible through [`CodePointMapData::as_borrowed`].
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable(
         provider: &(impl DataProvider<T::DataMarker> + ?Sized),
     ) -> Result<Self, DataError>

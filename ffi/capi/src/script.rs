@@ -34,9 +34,9 @@ pub mod ffi {
         #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn create(provider: &DataProvider) -> Result<Box<ScriptWithExtensions>, DataError> {
             Ok(Box::new(ScriptWithExtensions(call_constructor!(
-                icu_properties::script::script_with_extensions [r => Ok(r.static_to_owned())],
-                icu_properties::script::load_script_with_extensions_with_any_provider,
-                icu_properties::script::load_script_with_extensions_with_buffer_provider,
+                icu_properties::script::ScriptWithExtensions::new [r => Ok(r.static_to_owned())],
+                icu_properties::script::ScriptWithExtensions::try_new_with_any_provider,
+                icu_properties::script::ScriptWithExtensions::try_new_with_buffer_provider,
                 provider
             )?)))
         }

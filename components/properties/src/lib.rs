@@ -79,10 +79,7 @@ pub use code_point_map::{CodePointMapData, CodePointMapDataBorrowed};
 mod unicode_set;
 pub use unicode_set::{UnicodeSetData, UnicodeSetDataBorrowed};
 mod names;
-pub use names::{
-    PropertyNames, PropertyNamesBorrowed, PropertyParser, PropertyParserBorrowed, ScriptMapper,
-    ScriptMapperBorrowed,
-};
+pub use names::{PropertyNames, PropertyNamesBorrowed, PropertyParser, PropertyParserBorrowed};
 
 // NOTE: The Pernosco debugger has special knowledge
 // of the `CanonicalCombiningClass` struct inside the `props`

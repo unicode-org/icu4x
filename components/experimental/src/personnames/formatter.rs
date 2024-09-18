@@ -5,8 +5,7 @@
 use alloc::string::String;
 use alloc::vec::Vec;
 use icu_locale::LocaleFallbacker;
-use icu_properties::ScriptMapper;
-use icu_properties::script::ScriptWithExtensions;
+use icu_properties::script::{ScriptMapper, ScriptWithExtensions};
 
 use super::api::{
     FormattingOrder, NameField, NameFieldKind, PersonName, PersonNamesFormatterError,
@@ -49,7 +48,7 @@ impl PersonNamesFormatter {
             + DataProvider<icu_locale::provider::LikelySubtagsForLanguageV1Marker>
             + DataProvider<icu_locale::provider::ParentsV1Marker>,
     {
-        let swe = icu_properties::script::load_script_with_extensions_unstable(provider)?;
+        let swe = icu_properties::script::ScriptWithExtensions::try_new_unstable(provider)?;
         let scripts = ScriptMapper::try_new_unstable(provider)?;
         let fallbacker = LocaleFallbacker::try_new_unstable(provider)?;
         Ok(PersonNamesFormatter {

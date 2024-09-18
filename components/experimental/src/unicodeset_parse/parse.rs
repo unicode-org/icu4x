@@ -14,7 +14,7 @@ use icu_collections::{
     codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder},
     codepointinvliststringlist::CodePointInversionListAndStringList,
 };
-use icu_properties::script::load_script_with_extensions_unstable;
+use icu_properties::script::ScriptWithExtensions;
 use icu_properties::{
     props::{
         GeneralCategory, GeneralCategoryGroup, GraphemeClusterBreak, Script, SentenceBreak,
@@ -1363,7 +1363,7 @@ where
 
     fn try_load_script_extensions_set(&mut self, name: &str) -> Result<()> {
         // TODO(#3550): This could be cached; does not depend on name.
-        let scx = load_script_with_extensions_unstable(self.property_provider)
+        let scx = ScriptWithExtensions::try_new_unstable(self.property_provider)
             .map_err(|_| PEK::Internal)?;
         let sc_value = self.try_get_script(name)?;
         let set = scx.as_borrowed().get_script_extensions_set(sc_value);
@@ -1381,8 +1381,9 @@ where
     }
 
     fn try_load_grapheme_cluster_break_set(&mut self, name: &str) -> Result<()> {
-        let parser = PropertyParser::<GraphemeClusterBreak>::try_new_unstable(self.property_provider)
-            .map_err(|_| PEK::Internal)?;
+        let parser =
+            PropertyParser::<GraphemeClusterBreak>::try_new_unstable(self.property_provider)
+                .map_err(|_| PEK::Internal)?;
         let gcb_value = parser
             .as_borrowed()
             .get_loose(name)

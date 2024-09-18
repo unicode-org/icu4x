@@ -45,12 +45,12 @@ use icu_normalizer::provider::{
 };
 use icu_properties::bidi_data;
 use icu_properties::bidi_data::BidiAuxiliaryProperties;
-use icu_properties::ScriptMapper;
 use icu_properties::props::{GeneralCategory, Script};
 use icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker;
 use icu_properties::provider::{
     GeneralCategoryV1Marker, ScriptV1Marker, ScriptValueToShortNameV1Marker,
 };
+use icu_properties::script::ScriptMapper;
 use icu_properties::CodePointMapData;
 use icu_provider::prelude::*;
 

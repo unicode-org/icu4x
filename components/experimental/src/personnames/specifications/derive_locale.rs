@@ -4,8 +4,7 @@
 
 use icu_locale_core::subtags::script;
 use icu_locale_core::{subtags, Locale};
-use icu_properties::script::ScriptWithExtensionsBorrowed;
-use icu_properties::ScriptMapperBorrowed;
+use icu_properties::script::{ScriptMapperBorrowed, ScriptWithExtensionsBorrowed};
 
 use crate::personnames::api::NameFieldKind::{Given, Surname};
 use crate::personnames::api::{NameFieldKind, PersonName, PersonNamesFormatterError};
@@ -171,8 +170,8 @@ mod tests {
 
     #[test]
     fn test_likely_person_names_locale() {
-        let swe = icu_properties::script::script_with_extensions();
-        let scripts = icu_properties::ScriptMapper::new();
+        let swe = icu_properties::script::ScriptWithExtensions::new();
+        let scripts = icu_properties::script::ScriptMapper::new();
         assert_eq!(
             likely_person_name_locale(&person_name("Miyazaki", "Hayao").unwrap(), swe, scripts),
             Ok(locale!("und_Latn"))
