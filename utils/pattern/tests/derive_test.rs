@@ -15,7 +15,10 @@ use icu_pattern::{Pattern, SinglePlaceholder};
 #[cfg_attr(feature = "databake", databake(path = crate))]
 #[derive(Debug, PartialEq)]
 struct DeriveTest_SinglePlaceholderPattern_Cow<'data> {
-    #[serde(borrow, deserialize_with = "icu_pattern::deserialize_borrowed_cow")]
+    #[serde(
+        borrow,
+        deserialize_with = "icu_pattern::deserialize_borrowed_cow::<SinglePlaceholder, _>"
+    )]
     data: Cow<'data, Pattern<SinglePlaceholder>>,
 }
 

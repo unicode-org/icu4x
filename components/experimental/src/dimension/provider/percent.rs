@@ -13,6 +13,9 @@ use alloc::borrow::Cow;
 use icu_pattern::{DoublePlaceholderPattern, SinglePlaceholderPattern};
 use icu_provider::prelude::*;
 
+#[cfg(feature = "serde")]
+use icu_pattern::{DoublePlaceholder, SinglePlaceholder};
+
 #[cfg(feature = "compiled_data")]
 /// Baked data
 ///
@@ -36,7 +39,10 @@ pub use crate::provider::Baked;
 pub struct PercentEssentialsV1<'data> {
     #[cfg_attr(
         feature = "serde",
-        serde(borrow, deserialize_with = "icu_pattern::deserialize_borrowed_cow")
+        serde(
+            borrow,
+            deserialize_with = "icu_pattern::deserialize_borrowed_cow::<DoublePlaceholder, _>"
+        )
     )]
     /// Represents the standard pattern for signed percents.
     /// NOTE: place holder 0 is the place of the percent value.
@@ -45,7 +51,10 @@ pub struct PercentEssentialsV1<'data> {
 
     #[cfg_attr(
         feature = "serde",
-        serde(borrow, deserialize_with = "icu_pattern::deserialize_borrowed_cow")
+        serde(
+            borrow,
+            deserialize_with = "icu_pattern::deserialize_borrowed_cow::<SinglePlaceholder, _>"
+        )
     )]
     /// Represents the standard pattern for unsigned percents.
     pub unsigned_pattern: Cow<'data, SinglePlaceholderPattern>,

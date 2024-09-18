@@ -14,6 +14,8 @@ use icu_provider::prelude::*;
 use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::{VarZeroVec, ZeroMap};
 
+#[cfg(feature = "serde")]
+use icu_pattern::DoublePlaceholder;
 use icu_pattern::DoublePlaceholderPattern;
 
 #[cfg(feature = "compiled_data")]
@@ -54,7 +56,7 @@ pub struct CurrencyEssentialsV1<'data> {
         feature = "serde",
         serde(
             borrow,
-            deserialize_with = "icu_pattern::deserialize_option_borrowed_cow"
+            deserialize_with = "icu_pattern::deserialize_option_borrowed_cow::<DoublePlaceholder, _>"
         )
     )]
     pub standard_pattern: Option<Cow<'data, DoublePlaceholderPattern>>,
@@ -67,7 +69,7 @@ pub struct CurrencyEssentialsV1<'data> {
         feature = "serde",
         serde(
             borrow,
-            deserialize_with = "icu_pattern::deserialize_option_borrowed_cow"
+            deserialize_with = "icu_pattern::deserialize_option_borrowed_cow::<DoublePlaceholder, _>"
         )
     )]
     pub standard_alpha_next_to_number_pattern: Option<Cow<'data, DoublePlaceholderPattern>>,

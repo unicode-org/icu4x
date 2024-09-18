@@ -9,7 +9,7 @@ use alloc::vec::Vec;
 use ::serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 #[doc(hidden)]
-pub fn deserialize_option_borrowed_cow<'de, 'data, D: Deserializer<'de>, B>(
+pub fn deserialize_option_borrowed_cow<'de, 'data, B, D: Deserializer<'de>>(
     deserializer: D,
 ) -> Result<Option<Cow<'data, Pattern<B>>>, D::Error>
 where
@@ -170,6 +170,7 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::SinglePlaceholder;
     use crate::SinglePlaceholderPattern;
     use alloc::borrow::Cow;
 
@@ -184,8 +185,10 @@ mod tests {
             r#"[{"Literal":"Hello, "},{"Placeholder":"Singleton"},{"Literal":"!"}]"#
         );
         let pattern_deserialized: Cow<SinglePlaceholderPattern> =
-            deserialize_borrowed_cow(&mut serde_json::Deserializer::from_str(&pattern_json))
-                .unwrap();
+            deserialize_borrowed_cow::<SinglePlaceholder, _>(
+                &mut serde_json::Deserializer::from_str(&pattern_json),
+            )
+            .unwrap();
         assert_eq!(pattern_cow, pattern_deserialized);
         assert!(matches!(pattern_deserialized, Cow::Owned(_)));
     }
@@ -197,9 +200,10 @@ mod tests {
         let pattern_cow: Cow<SinglePlaceholderPattern> = Cow::Owned(pattern_owned);
         let pattern_postcard = postcard::to_stdvec(&pattern_cow).unwrap();
         assert_eq!(pattern_postcard, b"\x09\x08Hello, !");
-        let pattern_deserialized =
-            deserialize_borrowed_cow(&mut postcard::Deserializer::from_bytes(&pattern_postcard))
-                .unwrap();
+        let pattern_deserialized = deserialize_borrowed_cow::<SinglePlaceholder, _>(
+            &mut postcard::Deserializer::from_bytes(&pattern_postcard),
+        )
+        .unwrap();
         assert_eq!(pattern_cow, pattern_deserialized);
         assert!(matches!(pattern_deserialized, Cow::Borrowed(_)));
     }
@@ -211,9 +215,10 @@ mod tests {
         let pattern_cow: Cow<SinglePlaceholderPattern> = Cow::Owned(pattern_owned);
         let pattern_rmp = rmp_serde::to_vec(&pattern_cow).unwrap();
         assert_eq!(pattern_rmp, b"\xA9\x08Hello, !");
-        let pattern_deserialized =
-            deserialize_borrowed_cow(&mut rmp_serde::Deserializer::from_read_ref(&pattern_rmp))
-                .unwrap();
+        let pattern_deserialized = deserialize_borrowed_cow::<SinglePlaceholder, _>(
+            &mut rmp_serde::Deserializer::from_read_ref(&pattern_rmp),
+        )
+        .unwrap();
         assert_eq!(pattern_cow, pattern_deserialized);
         assert!(matches!(pattern_deserialized, Cow::Borrowed(_)));
     }
