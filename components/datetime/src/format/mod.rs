@@ -3,5 +3,4 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 pub mod datetime;
-#[cfg(feature = "experimental")]
 pub mod neo;

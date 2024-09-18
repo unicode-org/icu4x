@@ -135,6 +135,7 @@ mod metazone;
 pub mod provider;
 mod time_zone;
 mod types;
+mod windows_tz;
 mod zone_offset;
 mod zoned_datetime;
 
@@ -150,6 +151,7 @@ pub use metazone::MetazoneCalculator;
 pub use provider::{MetazoneId, TimeZoneBcp47Id};
 pub use time_zone::CustomTimeZone;
 pub use types::{UtcOffset, ZoneVariant};
+pub use windows_tz::{WindowsTimeZoneMapper, WindowsTimeZoneMapperBorrowed};
 pub use zone_offset::ZoneOffsetCalculator;
 pub use zoned_datetime::CustomZonedDateTime;
 

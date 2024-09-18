@@ -48,7 +48,6 @@ impl ResolvedNeoTimeZoneSkeleton {
     pub(crate) fn from_field(field_symbol: TimeZone, field_length: FieldLength) -> Option<Self> {
         crate::tz_registry::field_to_resolved(field_symbol, field_length)
     }
-    #[cfg(feature = "experimental")]
     pub(crate) fn to_field(self) -> crate::fields::Field {
         crate::tz_registry::resolved_to_field(self)
     }

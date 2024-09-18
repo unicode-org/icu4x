@@ -1536,7 +1536,7 @@ fn test_canonical_composition() {
 
 #[test]
 fn test_canonical_composition_owned() {
-    let owned = CanonicalComposition::new();
+    let owned = CanonicalComposition::try_new_unstable(&icu_normalizer::provider::Baked).unwrap();
     let comp = owned.as_borrowed();
 
     assert_eq!(comp.compose('a', 'b'), None); // Just two starters
@@ -1599,7 +1599,7 @@ fn test_canonical_decomposition() {
 
 #[test]
 fn test_canonical_decomposition_owned() {
-    let owned = CanonicalDecomposition::new();
+    let owned = CanonicalDecomposition::try_new_unstable(&icu_normalizer::provider::Baked).unwrap();
     let decomp = owned.as_borrowed();
 
     assert_eq!(
@@ -1654,7 +1654,8 @@ fn test_ccc() {
 
 #[test]
 fn test_ccc_owned() {
-    let owned = CanonicalCombiningClassMap::new();
+    let owned =
+        CanonicalCombiningClassMap::try_new_unstable(&icu_normalizer::provider::Baked).unwrap();
     let map = owned.as_borrowed();
     for u in 0..=0x10FFFF {
         assert_eq!(

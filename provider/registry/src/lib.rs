@@ -225,8 +225,8 @@ macro_rules! registry(
             icu::timezone::provider::MetazonePeriodV1Marker = "time_zone/metazone_period@1",
             icu::timezone::provider::names::Bcp47ToIanaMapV1Marker = "time_zone/bcp47_to_iana@1",
             icu::timezone::provider::names::IanaToBcp47MapV3Marker = "time_zone/iana_to_bcp47@3",
+            icu::timezone::provider::windows::WindowsZonesToBcp47MapV1Marker = "time_zone/windows_zones_to_bcp47@1",
             icu::timezone::provider::ZoneOffsetPeriodV1Marker = "time_zone/offset_period@1",
-            #[experimental]
             icu::datetime::provider::neo::WeekdayNamesV1Marker = "datetime/symbols/weekdays@1",
             icu::datetime::provider::neo::DayPeriodNamesV1Marker = "datetime/symbols/dayperiods@1",
             icu::datetime::provider::neo::GluePatternV1Marker = "datetime/patterns/glue@1",
@@ -270,6 +270,7 @@ macro_rules! registry(
             icu::datetime::provider::neo::PersianDateNeoSkeletonPatternsV1Marker = "datetime/patterns/persian/skeleton@1",
             icu::datetime::provider::neo::RocDateNeoSkeletonPatternsV1Marker = "datetime/patterns/roc/skeleton@1",
             icu::datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker = "datetime/patterns/time_skeleton@1",
+            #[experimental]
             icu::experimental::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker = "compactdecimal/long@1",
             icu::experimental::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker = "compactdecimal/short@1",
             icu::experimental::dimension::provider::currency_compact::ShortCurrencyCompactV1Marker = "currency/compact@1",

@@ -22,6 +22,7 @@ use zerovec::ule::{AsULE, ULE};
 use zerovec::{ZeroMap2d, ZeroSlice, ZeroVec};
 
 pub mod names;
+pub mod windows;
 
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
@@ -45,6 +46,7 @@ const _: () = {
     impl_bcp47_to_iana_map_v1_marker!(Baked);
     impl_iana_to_bcp47_map_v3_marker!(Baked);
     impl_metazone_period_v1_marker!(Baked);
+    impl_windows_zones_to_bcp47_map_v1_marker!(Baked);
     impl_zone_offset_period_v1_marker!(Baked);
 };
 
@@ -54,6 +56,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     MetazonePeriodV1Marker::INFO,
     names::Bcp47ToIanaMapV1Marker::INFO,
     names::IanaToBcp47MapV3Marker::INFO,
+    windows::WindowsZonesToBcp47MapV1Marker::INFO,
     ZoneOffsetPeriodV1Marker::INFO,
 ];
 

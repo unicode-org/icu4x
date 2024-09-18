@@ -13,6 +13,11 @@ pub mod ffi {
     /// Lookup of the Canonical_Combining_Class Unicode property
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::normalizer::properties::CanonicalCombiningClassMap, Struct)]
+    #[diplomat::rust_link(
+        icu::normalizer::properties::CanonicalCombiningClassMapBorrowed,
+        Struct,
+        hidden
+    )]
     pub struct CanonicalCombiningClassMap(
         pub icu_normalizer::properties::CanonicalCombiningClassMap,
     );
@@ -23,12 +28,17 @@ pub mod ffi {
             icu::normalizer::properties::CanonicalCombiningClassMap::new,
             FnInStruct
         )]
+        #[diplomat::rust_link(
+            icu::normalizer::properties::CanonicalCombiningClassMapBorrowed::new,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn create(
             provider: &DataProvider,
         ) -> Result<Box<CanonicalCombiningClassMap>, DataError> {
             Ok(Box::new(CanonicalCombiningClassMap(call_constructor!(
-                icu_normalizer::properties::CanonicalCombiningClassMap::new [r => Ok(r)],
+                icu_normalizer::properties::CanonicalCombiningClassMap::new [r => Ok(r.static_to_owned())],
                 icu_normalizer::properties::CanonicalCombiningClassMap::try_new_with_any_provider,
                 icu_normalizer::properties::CanonicalCombiningClassMap::try_new_with_buffer_provider,
                 provider
@@ -60,15 +70,25 @@ pub mod ffi {
     /// Callers should generally use ComposingNormalizer unless they specifically need raw composition operations
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::normalizer::properties::CanonicalComposition, Struct)]
+    #[diplomat::rust_link(
+        icu::normalizer::properties::CanonicalCompositionBorrowed,
+        Struct,
+        hidden
+    )]
     pub struct CanonicalComposition(pub icu_normalizer::properties::CanonicalComposition);
 
     impl CanonicalComposition {
         /// Construct a new CanonicalComposition instance for NFC
         #[diplomat::rust_link(icu::normalizer::properties::CanonicalComposition::new, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::normalizer::properties::CanonicalCompositionBorrowed::new,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn create(provider: &DataProvider) -> Result<Box<CanonicalComposition>, DataError> {
             Ok(Box::new(CanonicalComposition(call_constructor!(
-                icu_normalizer::properties::CanonicalComposition::new [r => Ok(r)],
+                icu_normalizer::properties::CanonicalComposition::new [r => Ok(r.static_to_owned())],
                 icu_normalizer::properties::CanonicalComposition::try_new_with_any_provider,
                 icu_normalizer::properties::CanonicalComposition::try_new_with_buffer_provider,
                 provider,
@@ -78,7 +98,7 @@ pub mod ffi {
         /// Performs canonical composition (including Hangul) on a pair of characters
         /// or returns NUL if these characters don’t compose. Composition exclusions are taken into account.
         #[diplomat::rust_link(
-            icu::normalizer::properties::CanonicalComposition::compose,
+            icu::normalizer::properties::CanonicalCompositionBorrowed::compose,
             FnInStruct
         )]
         pub fn compose(&self, starter: DiplomatChar, second: DiplomatChar) -> DiplomatChar {
@@ -105,15 +125,25 @@ pub mod ffi {
     /// Callers should generally use DecomposingNormalizer unless they specifically need raw composition operations
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::normalizer::properties::CanonicalDecomposition, Struct)]
+    #[diplomat::rust_link(
+        icu::normalizer::properties::CanonicalDecompositionBorrowed,
+        Struct,
+        hidden
+    )]
     pub struct CanonicalDecomposition(pub icu_normalizer::properties::CanonicalDecomposition);
 
     impl CanonicalDecomposition {
         /// Construct a new CanonicalDecomposition instance for NFC
         #[diplomat::rust_link(icu::normalizer::properties::CanonicalDecomposition::new, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::normalizer::properties::CanonicalDecompositionBorrowed::new,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn create(provider: &DataProvider) -> Result<Box<CanonicalDecomposition>, DataError> {
             Ok(Box::new(CanonicalDecomposition(call_constructor!(
-                icu_normalizer::properties::CanonicalDecomposition::new [r => Ok(r)],
+                icu_normalizer::properties::CanonicalDecomposition::new [r => Ok(r.static_to_owned())],
                 icu_normalizer::properties::CanonicalDecomposition::try_new_with_any_provider,
                 icu_normalizer::properties::CanonicalDecomposition::try_new_with_buffer_provider,
                 provider,
