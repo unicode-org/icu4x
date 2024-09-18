@@ -29,6 +29,7 @@
 
 #[cfg(feature = "datagen")]
 pub mod components;
+#[cfg(feature = "datagen")]
 pub mod length;
 
 #[cfg(feature = "datagen")]
