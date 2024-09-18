@@ -22,7 +22,7 @@ all-features = true
 [dependencies]
 displaydoc = { workspace = true }
 icu_collections = { workspace = true }
-icu_properties = { workspace = true, optional = true, default-features = false }
+icu_properties = { workspace = true, optional = true }
 icu_provider = { workspace = true, features = ["macros"] }
 smallvec = { workspace = true }
 utf16_iter = { workspace = true }
@@ -48,11 +48,11 @@ criterion = { workspace = true }
 
 [features]
 default = ["compiled_data"]
-std = ["icu_collections/std", "icu_properties/std", "icu_provider/std"]
-serde = ["dep:serde", "icu_collections/serde", "zerovec/serde", "icu_properties/serde"]
-datagen = ["serde", "dep:databake", "icu_collections/databake", "zerovec/databake", "icu_properties/datagen"]
+std = ["icu_collections/std", "icu_properties?/std", "icu_provider/std"]
+serde = ["dep:serde", "icu_collections/serde", "zerovec/serde", "icu_properties?/serde"]
+datagen = ["serde", "dep:databake", "icu_collections/databake", "zerovec/databake", "icu_properties?/datagen"]
 experimental = []
-compiled_data = ["dep:icu_normalizer_data", "icu_properties/compiled_data"]
+compiled_data = ["dep:icu_normalizer_data", "icu_properties?/compiled_data"]
 icu_properties = ["dep:icu_properties"]
 
 [[bench]]
