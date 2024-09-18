@@ -57,7 +57,7 @@ pub fn parse_gregorian_from_str(input: &str) -> DateTime<Gregorian> {
 /// ```
 pub fn parse_zoned_gregorian_from_str(input: &str) -> FormattableZonedDateTime<Gregorian> {
     let datetime_iso = ZonedDateTime::try_iso_from_str(input).unwrap();
-    datetime_iso.to_calendar(Gregorian).to_formattable(
+    datetime_iso.to_calendar(Gregorian).into_formattable(
         &icu_timezone::MetazoneCalculator::new(),
         &icu_timezone::ZoneOffsetCalculator::new(),
     )

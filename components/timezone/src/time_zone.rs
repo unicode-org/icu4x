@@ -150,29 +150,34 @@ impl TimeZone {
     /// let mut tz = TimeZone::new("+11".parse().expect("Failed to parse a UTC offset."), TimeZoneBcp47Id(tinystr!(8, "gugum")));
     ///
     /// let ftz = tz.to_formattable_at(
-    ///     &MetazoneCalculator::new(),
-    ///     &ZoneOffsetCalculator::new(),
     ///     &DateTime::try_new_iso_datetime(1971, 10, 31, 2, 0, 0).unwrap(),
     /// );
     ///
     /// assert_eq!(ftz.metazone_id(), Some(MetazoneId(tinystr!(4, "guam"))));
     /// assert_eq!(ftz.zone_variant(), Some(ZoneVariant::daylight()));
     /// ```
-    pub fn to_formattable_at(
-        self,
-        metazone_calculator: &MetazoneCalculator,
-        zone_offset_calculator: &ZoneOffsetCalculator,
+    #[cfg(feature = "compiled_data")]
+    pub fn into_formattable_at(self, local_datetime: &DateTime<Iso>) -> FormattableTimeZone {
+        MetazoneCalculator::new().compute(self, &ZoneOffsetCalculator::new(), local_datetime)
+    }
+}
+
+impl MetazoneCalculator {
+    /// Converts a [`TimeZone`] to a [`FormattableTimeZone`] at the given datetime.
+    pub fn compute(
+        &self,
+        timezone: TimeZone,
+        zoc: &ZoneOffsetCalculator,
         local_datetime: &DateTime<Iso>,
     ) -> FormattableTimeZone {
         FormattableTimeZone {
-            timezone: self,
-            metazone_id: self.bcp47_id.and_then(|id| {
-                metazone_calculator.compute_metazone_from_time_zone(id, local_datetime)
-            }),
-            zone_variant: self.bcp47_id.and_then(|id| {
-                self.offset.and_then(|offset| {
-                    zone_offset_calculator
-                        .compute_offsets_from_time_zone(id, local_datetime)
+            timezone,
+            metazone_id: timezone
+                .bcp47_id
+                .and_then(|id| self.compute_metazone_from_time_zone(id, local_datetime)),
+            zone_variant: timezone.bcp47_id.and_then(|id| {
+                timezone.offset.and_then(|offset| {
+                    zoc.compute_offsets_from_time_zone(id, local_datetime)
                         .and_then(|(std, dst)| {
                             if offset == std {
                                 Some(ZoneVariant::standard())

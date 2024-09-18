@@ -271,10 +271,7 @@
 //! //   2. The IANA time zone ID
 //! //   3. A datetime (for FormattableTimeZone construction)
 //!
-//! // Set up the Metazone calculator, zone offset calculator, time zone ID mapper,
-//! // and the DateTime to use in calculation
-//! let mzc = MetazoneCalculator::new();
-//! let zoc = ZoneOffsetCalculator::new();
+//! // Set up the time zone ID mapper and the DateTime to use in calculation
 //! let mapper = TimeZoneIdMapper::new();
 //! let datetime = DateTime::try_new_iso_datetime(2022, 8, 29, 0, 0, 0)
 //!     .unwrap();
@@ -289,7 +286,7 @@
 //!
 //! // "America/Chicago" - has metazone symbol data for generic_non_location_short
 //! let time_zone = TimeZone::new("-0600".parse().unwrap(), mapper.as_borrowed().iana_to_bcp47("America/Chicago").unwrap())
-//!     .to_formattable_at(&mzc, &zoc, &datetime);
+//!     .into_formattable_at(&datetime);
 //! assert_try_writeable_eq!(
 //!     tzf.format(&time_zone),
 //!     "CT"
@@ -297,7 +294,7 @@
 //!
 //! // "ushnl" - has time zone override symbol data for generic_non_location_short
 //! let mut time_zone = TimeZone::new("-1000".parse().unwrap(), TimeZoneBcp47Id(tinystr!(8, "ushnl")))
-//!     .to_formattable_at(&mzc, &zoc, &datetime);
+//!     .into_formattable_at(&datetime);
 //! assert_try_writeable_eq!(
 //!     tzf.format(&time_zone),
 //!     "HST"
@@ -305,7 +302,7 @@
 //!
 //! // Raw offset - used when metazone is not available
 //! let mut time_zone = TimeZone::new_with_offset("+0530".parse().unwrap())
-//!     .to_formattable_at(&mzc, &zoc, &datetime);
+//!     .into_formattable_at(&datetime);
 //! assert_try_writeable_eq!(
 //!     tzf.format(&time_zone),
 //!     "GMT+05:30"
@@ -1883,9 +1880,7 @@ macro_rules! impl_zone_marker {
         ///
         /// // Time zone for America/Chicago in the summer
         /// let zone = TimeZone::new("-05:00".parse().unwrap(), TimeZoneBcp47Id(tinystr!(8, "uschi")))
-        ///     .to_formattable_at(
-        ///         &Default::default(),
-        ///         &Default::default(),
+        ///     .into_formattable_at(
         ///         &icu_calendar::DateTime::try_new_iso_datetime(2024, 7, 1, 0, 0, 0).unwrap()
         /// );
         ///
@@ -1916,9 +1911,7 @@ macro_rules! impl_zone_marker {
         ///
         /// // Time zone for America/Chicago in the summer
         /// let zone = TimeZone::new("-05:00".parse().unwrap(), TimeZoneBcp47Id(tinystr!(8, "uschi")))
-        ///     .to_formattable_at(
-        ///         &Default::default(),
-        ///         &Default::default(),
+        ///     .into_formattable_at(
         ///         &icu_calendar::DateTime::try_new_iso_datetime(2024, 7, 1, 0, 0, 0).unwrap()
         /// );
         ///
@@ -2071,10 +2064,7 @@ macro_rules! impl_zoneddatetime_marker {
         ///
         /// let mut dtz = ZonedDateTime::try_from_str("2024-05-17T15:47:50+01:00[Europe/London]")
         ///     .unwrap()
-        ///     .to_formattable(
-        ///         &Default::default(),
-        ///         &Default::default()
-        ///     );
+        ///     .into_formattable();
         /// assert_try_writeable_eq!(
         ///     fmt.convert_and_format(&dtz),
         #[doc = concat!("    \"", $sample, "\"")]
@@ -2102,10 +2092,7 @@ macro_rules! impl_zoneddatetime_marker {
         /// let mut dtz = ZonedDateTime::try_from_str("2024-05-17T15:47:50+01:00[Europe/London]")
         ///     .unwrap()
         ///     .to_calendar(Gregorian)
-        ///     .to_formattable(
-        ///         &Default::default(),
-        ///         &Default::default()
-        ///     );;
+        ///     .into_formattable();
         ///
         /// assert_try_writeable_eq!(
         ///     fmt.format(&dtz),
@@ -2288,9 +2275,7 @@ impl_zone_marker!(
     ///
     /// // Time zone for America/Sao_Paulo year-round
     /// let zone = TimeZone::new("-03:00".parse().unwrap(), TimeZoneBcp47Id(tinystr!(8, "brsao")))
-    ///     .to_formattable_at(
-    ///         &Default::default(),
-    ///         &Default::default(),
+    ///     .into_formattable_at(
     ///         &icu_calendar::DateTime::try_new_iso_datetime(2025, 1, 2, 0, 0, 0).unwrap(),
     ///     );
     ///
@@ -2404,9 +2389,7 @@ impl_zone_marker!(
     ///
     /// // Time zone for America/Sao_Paulo year-round
     /// let zone = TimeZone::new("-03:00".parse().unwrap(), TimeZoneBcp47Id(tinystr!(8, "brsao")))
-    ///     .to_formattable_at(
-    ///         &Default::default(),
-    ///         &Default::default(),
+    ///     .into_formattable_at(
     ///         &icu_calendar::DateTime::try_new_iso_datetime(2025, 1, 2, 0, 0, 0).unwrap(),
     ///     );
     ///
