@@ -31,19 +31,20 @@ use icu_provider::prelude::*;
 pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
+#[allow(unused_imports)]
 const _: () = {
+    use icu_decimal_data::*;
     pub mod icu {
         pub use crate as decimal;
-        #[allow(unused_imports)] // baked data may or may not need this
-        pub use icu_locid_transform as locid_transform;
+        pub use icu_decimal_data::icu_locale as locale;
     }
-    icu_decimal_data::make_provider!(Baked);
-    icu_decimal_data::impl_decimal_symbols_v1!(Baked);
+    make_provider!(Baked);
+    impl_decimal_symbols_v1_marker!(Baked);
 };
 
 #[cfg(feature = "datagen")]
-/// The latest minimum set of keys required by this component.
-pub const KEYS: &[DataKey] = &[DecimalSymbolsV1Marker::KEY];
+/// The latest minimum set of markers required by this component.
+pub const MARKERS: &[DataMarkerInfo] = &[DecimalSymbolsV1Marker::INFO];
 
 /// A collection of strings to affix to a decimal number.
 ///
@@ -53,11 +54,8 @@ pub const KEYS: &[DataKey] = &[DecimalSymbolsV1Marker::KEY];
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_decimal::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_decimal::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct AffixesV1<'data> {
     /// String to prepend before the decimal number.
@@ -78,11 +76,8 @@ pub struct AffixesV1<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, Copy, zerofrom::ZeroFrom)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_decimal::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_decimal::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct GroupingSizesV1 {
     /// The size of the first (lowest-magnitude) group.
@@ -107,17 +102,10 @@ pub struct GroupingSizesV1 {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(
-    DecimalSymbolsV1Marker,
-    "decimal/symbols@1",
-    extension_key = "nu"
-))]
+#[icu_provider::data_struct(DecimalSymbolsV1Marker = "decimal/symbols@1")]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_decimal::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_decimal::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct DecimalSymbolsV1<'data> {
     /// Prefix and suffix to apply when a negative sign is needed.

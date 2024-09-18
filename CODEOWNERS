@@ -14,11 +14,13 @@ components/collections/           @echeran
 components/datetime/              @zbraniecki @nordzilla
 components/decimal/               @sffc
 components/experimental/src/compactdecimal/      @eggrobin
+components/experimental/src/dimension/           @younies
 components/experimental/src/displaynames/        @sffc @snktd
 components/experimental/src/relativetime/        @pdogr
+components/experimental/src/units/               @younies
 components/list/                  @robertbastian
-components/locid_transform/       @dminor @zbraniecki
-components/locid/                 @zbraniecki @nciric
+components/locale/                @dminor @zbraniecki
+components/locale_core/           @zbraniecki @nciric
 components/normalizer/            @hsivonen @echeran
 components/plurals/               @zbraniecki @sffc
 components/segmenter/             @aethanyc @makotokato @sffc
@@ -29,7 +31,8 @@ ffi/ecma402/                      @filmil
 ffi/harfbuzz/                     @hsivonen
 provider/blob/                    @sffc @Manishearth
 provider/core/                    @sffc @Manishearth
-provider/datagen/                 @sffc @robertbastian @Manishearth
+provider/source/                  @sffc @robertbastian @Manishearth
+provider/export/                  @sffc @robertbastian
 provider/fs/                      @sffc
 provider/macros/                  @Manishearth @sffc
 tools/benchmark/binsize/          @gnrunge
@@ -39,7 +42,7 @@ tools/make/                       @Manishearth @sffc
 utils/bies/                @sffc
 utils/databake                    @robertbastian @Manishearth
 utils/deduplicating_array         @robertbastian
-utils/fixed_decimal/              @sffc
+utils/fixed_decimal/              @sffc @younies
 utils/litemap/                    @Manishearth @sffc
 utils/pattern/                    @zbraniecki
 utils/tinystr                     @zbraniecki @sffc

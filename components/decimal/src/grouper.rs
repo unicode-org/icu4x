@@ -57,9 +57,8 @@ fn test_grouper() {
     use crate::provider::*;
     use crate::FixedDecimalFormatter;
     use fixed_decimal::FixedDecimal;
-    use icu_locid::LanguageIdentifier;
     use icu_provider::prelude::*;
-    use icu_provider_adapters::any_payload::AnyPayloadProvider;
+    use icu_provider_adapters::fixed::FixedProvider;
     use writeable::assert_writeable_eq;
 
     let western_sizes = GroupingSizesV1 {
@@ -155,7 +154,7 @@ fn test_grouper() {
     for cas in &cases {
         for i in 0..4 {
             let dec = FixedDecimal::from(1).multiplied_pow10((i as i16) + 3);
-            let provider = AnyPayloadProvider::from_owned::<DecimalSymbolsV1Marker>(
+            let provider = FixedProvider::<DecimalSymbolsV1Marker>::from_owned(
                 crate::provider::DecimalSymbolsV1 {
                     grouping_sizes: cas.sizes,
                     ..Default::default()
@@ -167,7 +166,7 @@ fn test_grouper() {
             };
             let fdf = FixedDecimalFormatter::try_new_unstable(
                 &provider.as_downcasting(),
-                &LanguageIdentifier::UND.into(),
+                &Default::default(),
                 options,
             )
             .unwrap();

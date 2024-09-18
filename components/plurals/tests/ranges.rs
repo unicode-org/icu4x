@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_locid::locale;
+use icu_locale_core::locale;
 use icu_plurals::{PluralCategory, PluralOperands, PluralRuleType, PluralRulesWithRanges};
 
 #[test]

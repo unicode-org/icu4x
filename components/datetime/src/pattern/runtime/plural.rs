@@ -12,11 +12,8 @@ use icu_provider::prelude::*;
 
 /// A collection of plural variants of a pattern.
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::pattern::runtime),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::pattern::runtime))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_structs)] // part of data struct
 pub struct PluralPattern<'data> {
@@ -81,18 +78,6 @@ impl<'data> PluralPattern<'data> {
         }
     }
 
-    pub(crate) fn variant(&self, category: PluralCategory) -> &Pattern<'data> {
-        let variant = match category {
-            PluralCategory::Zero => &self.zero,
-            PluralCategory::One => &self.one,
-            PluralCategory::Two => &self.two,
-            PluralCategory::Few => &self.few,
-            PluralCategory::Many => &self.many,
-            PluralCategory::Other => return &self.other,
-        };
-        variant.as_ref().unwrap_or(&self.other)
-    }
-
     pub fn patterns_iter(&self) -> impl Iterator<Item = &Pattern<'data>> {
         PluralCategory::all().filter_map(move |cat| match cat {
             PluralCategory::Zero => self.zero.as_ref(),
@@ -136,11 +121,8 @@ impl<'data> PluralPattern<'data> {
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[allow(clippy::large_enum_variant)]
 #[allow(clippy::exhaustive_enums)] // this type is stable
-#[cfg_attr(
-    feature = "datagen",
-    derive(databake::Bake),
-    databake(path = icu_datetime::pattern::runtime),
-)]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::pattern::runtime))]
 pub enum PatternPlurals<'data> {
     /// A collection of pattern variants for when plurals differ.
     MultipleVariants(PluralPattern<'data>),

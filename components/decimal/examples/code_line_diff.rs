@@ -6,11 +6,11 @@
 // removed from a series of pull requests.
 
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
+icu_benchmark_macros::instrument!();
+use icu_benchmark_macros::println;
 
 use icu_decimal::FixedDecimalFormatter;
-use icu_locid::locale;
-
-icu_benchmark_macros::static_setup!();
+use icu_locale_core::locale;
 
 const LINES_REMOVED_ADDED: [(i64, i64); 5] = [
     (-50, 72),
@@ -20,10 +20,7 @@ const LINES_REMOVED_ADDED: [(i64, i64); 5] = [
     (-5000000, 3000000),
 ];
 
-#[no_mangle]
-fn main(_argc: isize, _argv: *const *const u8) -> isize {
-    icu_benchmark_macros::main_setup!();
-
+fn main() {
     let fdf = FixedDecimalFormatter::try_new(&locale!("bn").into(), Default::default())
         .expect("locale should be present");
 
@@ -32,9 +29,6 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
         let added = fdf.format_to_string(&added.into());
         assert!(!removed.is_empty());
         assert!(!added.is_empty());
-        #[cfg(debug_assertions)]
         println!("Added/Removed: {added}/{removed}",);
     }
-
-    0
 }

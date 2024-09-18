@@ -1,0 +1,23 @@
+{
+  "relatives": {
+    "-1": "prošlog kvartala",
+    "0": "ovog kvartala",
+    "1": "sledećeg kvartala"
+  },
+  "past": {
+    "strings": {
+      "other": [
+        0,
+        "\u0005pre  kv."
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "other": [
+        0,
+        "\u0004za  kv."
+      ]
+    }
+  }
+}

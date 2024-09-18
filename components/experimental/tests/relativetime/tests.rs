@@ -6,7 +6,7 @@ use fixed_decimal::FixedDecimal;
 use icu_experimental::relativetime::{
     options::Numeric, RelativeTimeFormatter, RelativeTimeFormatterOptions,
 };
-use icu_locid::locale;
+use icu_locale_core::locale;
 use writeable::assert_writeable_eq;
 
 macro_rules! generate_test {
@@ -29,7 +29,7 @@ macro_rules! generate_test {
             )+
 
             let relative_time_formatter = RelativeTimeFormatter::$constructor(
-                &locale!("ar").into(),
+                &locale!("ar-EG").into(),
                 $options
             )
             .expect("locale should be present");

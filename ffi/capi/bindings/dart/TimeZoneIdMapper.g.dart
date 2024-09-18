@@ -25,106 +25,98 @@ final class TimeZoneIdMapper implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XTimeZoneIdMapper_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_TimeZoneIdMapper_destroy_mv1));
 
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapper.html#method.new) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory TimeZoneIdMapper(DataProvider provider) {
-    final result = _ICU4XTimeZoneIdMapper_create(provider._ffi);
+    final result = _icu4x_TimeZoneIdMapper_create_mv1(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return TimeZoneIdMapper._fromFfi(result.union.ok, []);
   }
 
   /// See the [Rust documentation for `iana_to_bcp47`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperBorrowed.html#method.iana_to_bcp47) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [TimeZoneInvalidIdError] on failure.
   String ianaToBcp47(String value) {
-    final temp = ffi2.Arena();
-    final valueView = value.utf8View;
-    final writeable = _Writeable();
-    final result = _ICU4XTimeZoneIdMapper_iana_to_bcp47(_ffi, valueView.allocIn(temp), valueView.length, writeable._ffi);
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final write = _Write();
+    final result = _icu4x_TimeZoneIdMapper_iana_to_bcp47_mv1(_ffi, value._utf8AllocIn(temp.arena), write._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw TimeZoneInvalidIdError();
     }
-    return writeable.finalize();
+    return write.finalize();
   }
 
   /// See the [Rust documentation for `normalize_iana`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperBorrowed.html#method.normalize_iana) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [TimeZoneInvalidIdError] on failure.
   String normalizeIana(String value) {
-    final temp = ffi2.Arena();
-    final valueView = value.utf8View;
-    final writeable = _Writeable();
-    final result = _ICU4XTimeZoneIdMapper_normalize_iana(_ffi, valueView.allocIn(temp), valueView.length, writeable._ffi);
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final write = _Write();
+    final result = _icu4x_TimeZoneIdMapper_normalize_iana_mv1(_ffi, value._utf8AllocIn(temp.arena), write._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw TimeZoneInvalidIdError();
     }
-    return writeable.finalize();
+    return write.finalize();
   }
 
   /// See the [Rust documentation for `canonicalize_iana`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperBorrowed.html#method.canonicalize_iana) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [TimeZoneInvalidIdError] on failure.
   String canonicalizeIana(String value) {
-    final temp = ffi2.Arena();
-    final valueView = value.utf8View;
-    final writeable = _Writeable();
-    final result = _ICU4XTimeZoneIdMapper_canonicalize_iana(_ffi, valueView.allocIn(temp), valueView.length, writeable._ffi);
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final write = _Write();
+    final result = _icu4x_TimeZoneIdMapper_canonicalize_iana_mv1(_ffi, value._utf8AllocIn(temp.arena), write._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw TimeZoneInvalidIdError();
     }
-    return writeable.finalize();
+    return write.finalize();
   }
 
   /// See the [Rust documentation for `find_canonical_iana_from_bcp47`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperBorrowed.html#method.find_canonical_iana_from_bcp47) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [TimeZoneInvalidIdError] on failure.
   String findCanonicalIanaFromBcp47(String value) {
-    final temp = ffi2.Arena();
-    final valueView = value.utf8View;
-    final writeable = _Writeable();
-    final result = _ICU4XTimeZoneIdMapper_find_canonical_iana_from_bcp47(_ffi, valueView.allocIn(temp), valueView.length, writeable._ffi);
-    temp.releaseAll();
+    final temp = _FinalizedArena();
+    final write = _Write();
+    final result = _icu4x_TimeZoneIdMapper_find_canonical_iana_from_bcp47_mv1(_ffi, value._utf8AllocIn(temp.arena), write._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw TimeZoneInvalidIdError();
     }
-    return writeable.finalize();
+    return write.finalize();
   }
 }
 
-@meta.ResourceIdentifier('ICU4XTimeZoneIdMapper_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XTimeZoneIdMapper_destroy')
+@meta.ResourceIdentifier('icu4x_TimeZoneIdMapper_destroy_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_TimeZoneIdMapper_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XTimeZoneIdMapper_destroy(ffi.Pointer<ffi.Void> self);
+external void _icu4x_TimeZoneIdMapper_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XTimeZoneIdMapper_create')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XTimeZoneIdMapper_create')
+@meta.ResourceIdentifier('icu4x_TimeZoneIdMapper_create_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneIdMapper_create_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XTimeZoneIdMapper_create(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_TimeZoneIdMapper_create_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XTimeZoneIdMapper_iana_to_bcp47')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XTimeZoneIdMapper_iana_to_bcp47')
+@meta.ResourceIdentifier('icu4x_TimeZoneIdMapper_iana_to_bcp47_mv1')
+@ffi.Native<_ResultVoidTimeZoneInvalidIdErrorFfi Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneIdMapper_iana_to_bcp47_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XTimeZoneIdMapper_iana_to_bcp47(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> valueData, int valueLength, ffi.Pointer<ffi.Opaque> writeable);
+external _ResultVoidTimeZoneInvalidIdErrorFfi _icu4x_TimeZoneIdMapper_iana_to_bcp47_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 value, ffi.Pointer<ffi.Opaque> write);
 
-@meta.ResourceIdentifier('ICU4XTimeZoneIdMapper_normalize_iana')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XTimeZoneIdMapper_normalize_iana')
+@meta.ResourceIdentifier('icu4x_TimeZoneIdMapper_normalize_iana_mv1')
+@ffi.Native<_ResultVoidTimeZoneInvalidIdErrorFfi Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneIdMapper_normalize_iana_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XTimeZoneIdMapper_normalize_iana(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> valueData, int valueLength, ffi.Pointer<ffi.Opaque> writeable);
+external _ResultVoidTimeZoneInvalidIdErrorFfi _icu4x_TimeZoneIdMapper_normalize_iana_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 value, ffi.Pointer<ffi.Opaque> write);
 
-@meta.ResourceIdentifier('ICU4XTimeZoneIdMapper_canonicalize_iana')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XTimeZoneIdMapper_canonicalize_iana')
+@meta.ResourceIdentifier('icu4x_TimeZoneIdMapper_canonicalize_iana_mv1')
+@ffi.Native<_ResultVoidTimeZoneInvalidIdErrorFfi Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneIdMapper_canonicalize_iana_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XTimeZoneIdMapper_canonicalize_iana(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> valueData, int valueLength, ffi.Pointer<ffi.Opaque> writeable);
+external _ResultVoidTimeZoneInvalidIdErrorFfi _icu4x_TimeZoneIdMapper_canonicalize_iana_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 value, ffi.Pointer<ffi.Opaque> write);
 
-@meta.ResourceIdentifier('ICU4XTimeZoneIdMapper_find_canonical_iana_from_bcp47')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XTimeZoneIdMapper_find_canonical_iana_from_bcp47')
+@meta.ResourceIdentifier('icu4x_TimeZoneIdMapper_find_canonical_iana_from_bcp47_mv1')
+@ffi.Native<_ResultVoidTimeZoneInvalidIdErrorFfi Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneIdMapper_find_canonical_iana_from_bcp47_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XTimeZoneIdMapper_find_canonical_iana_from_bcp47(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> valueData, int valueLength, ffi.Pointer<ffi.Opaque> writeable);
+external _ResultVoidTimeZoneInvalidIdErrorFfi _icu4x_TimeZoneIdMapper_find_canonical_iana_from_bcp47_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 value, ffi.Pointer<ffi.Opaque> write);

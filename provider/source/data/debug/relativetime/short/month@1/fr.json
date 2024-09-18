@@ -1,0 +1,23 @@
+{
+  "relatives": {
+    "-1": "le mois dernier",
+    "0": "ce mois-ci",
+    "1": "le mois prochain"
+  },
+  "past": {
+    "strings": {
+      "other": [
+        0,
+        "\bil y a  m."
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "other": [
+        0,
+        "\u0006dans  m."
+      ]
+    }
+  }
+}

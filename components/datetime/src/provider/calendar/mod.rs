@@ -4,13 +4,13 @@
 
 //! Data structs for calendar-specific symbols and patterns.
 
-#[cfg(any(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "datagen")]
 mod skeletons;
 mod symbols;
 
 use crate::pattern;
 use icu_provider::prelude::*;
-#[cfg(any(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "datagen")]
 pub use skeletons::*;
 pub use symbols::*;
 
@@ -40,11 +40,8 @@ size_test!(DateLengthsV1, date_lengths_v1_size, 224);
     marker(RocDateLengthsV1Marker, "datetime/roc/datelengths@1")
 )]
 #[derive(Debug, PartialEq, Clone, Default)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::calendar),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct DateLengthsV1<'data> {
     /// Date pattern data, broken down by pattern length.
@@ -54,12 +51,6 @@ pub struct DateLengthsV1<'data> {
     /// Patterns used to combine date and time length patterns into full date_time patterns.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub length_combinations: patterns::GenericLengthPatternsV1<'data>,
-}
-
-pub(crate) struct ErasedDateLengthsV1Marker;
-
-impl DataMarker for ErasedDateLengthsV1Marker {
-    type Yokeable = DateLengthsV1<'static>;
 }
 
 size_test!(TimeLengthsV1, time_lengths_v1_size, 264);
@@ -74,11 +65,8 @@ size_test!(TimeLengthsV1, time_lengths_v1_size, 264);
 /// </div>
 #[icu_provider::data_struct(marker(TimeLengthsV1Marker, "datetime/timelengths@1",))]
 #[derive(Debug, PartialEq, Clone, Default)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::calendar),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct TimeLengthsV1<'data> {
     /// These patterns are common uses of time formatting, broken down by the length of the
@@ -111,11 +99,8 @@ pub mod patterns {
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
     #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-    #[cfg_attr(
-        feature = "datagen",
-        derive(serde::Serialize, databake::Bake),
-        databake(path = icu_datetime::provider::calendar::patterns),
-    )]
+    #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+    #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar::patterns))]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
     pub struct LengthPatternsV1<'data> {
         /// A full length date/time pattern.
@@ -140,11 +125,8 @@ pub mod patterns {
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
     #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-    #[cfg_attr(
-        feature = "datagen",
-        derive(serde::Serialize, databake::Bake),
-        databake(path = icu_datetime::provider::calendar::patterns),
-    )]
+    #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+    #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar::patterns))]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
     pub struct GenericLengthPatternsV1<'data> {
         /// A full length glue pattern of other formatted elements.
@@ -175,14 +157,6 @@ pub mod patterns {
         }
     }
 
-    /// Helper struct used to allow for projection of `DataPayload<DatePatternsV1>` to
-    /// `DataPayload<PatternPluralsV1>`.
-    pub(crate) struct PatternPluralsFromPatternsV1Marker;
-
-    impl DataMarker for PatternPluralsFromPatternsV1Marker {
-        type Yokeable = PatternPluralsV1<'static>;
-    }
-
     /// A general purpose pattern representation. Used for date-time glue patterns.
     ///
     /// Expresses the formatting positions of other formatted elements (ex: the order
@@ -200,18 +174,4 @@ pub mod patterns {
     pub struct GenericPatternV1<'data>(
         #[cfg_attr(feature = "serde", serde(borrow))] pub GenericPattern<'data>,
     );
-
-    /// Helper struct used to allow for projection of `DataPayload<DatePatternsV1>` to
-    /// `DataPayload<GenericLengthPatternsV1>`.
-    pub(crate) struct GenericPatternV1Marker;
-
-    impl DataMarker for GenericPatternV1Marker {
-        type Yokeable = GenericPatternV1<'static>;
-    }
-
-    impl<'data> From<GenericPattern<'data>> for GenericPatternV1<'data> {
-        fn from(pattern: GenericPattern<'data>) -> Self {
-            Self(pattern)
-        }
-    }
 }

@@ -20,24 +20,24 @@ LLD := lld-16
 LLVM_COMPATIBLE_NIGHTLY = "nightly-2023-08-08"
 
 baked_data/macros.rs:
-	cargo build -p icu_datagen --features icu_datagen
-	target/debug/icu4x-datagen --locales en bn --keys all --fallback preresolved --format mod --out baked_data --overwrite
+	cargo install --path ../../../provider/icu4x-datagen --root target
+	target/bin/icu4x-datagen --locales en bn --markers all --deduplication none --format baked --out baked_data --overwrite
 
 target/debug/libicu_capi.a: FORCE
-	cargo rustc -p icu_capi --crate-type staticlib --no-default-features --features icu_capi/compiled_data,icu_capi/icu_decimal,icu_capi/std
+	cargo rustc -p icu_capi --crate-type staticlib --no-default-features --features icu_capi/compiled_data,icu_capi/decimal,icu_capi/std
 
 target/x86_64-unknown-linux-gnu/debug/libicu_capi.a: FORCE baked_data/macros.rs
 	rustup toolchain install ${LLVM_COMPATIBLE_NIGHTLY}
 	rustup component add rust-src --toolchain ${LLVM_COMPATIBLE_NIGHTLY}
 	RUSTFLAGS="-Clinker-plugin-lto -Clinker=$(CLANG) -Ccodegen-units=1 -Clink-arg=-flto -Cpanic=abort" ICU4X_DATA_DIR=$(shell pwd)/baked_data \
-	cargo +${LLVM_COMPATIBLE_NIGHTLY} rustc -p icu_capi --crate-type staticlib --no-default-features --features icu_capi/compiled_data,icu_capi/icu_decimal,icu_capi/looping_panic_handler,icu_capi/libc_alloc \
+	cargo +${LLVM_COMPATIBLE_NIGHTLY} rustc -p icu_capi --crate-type staticlib --no-default-features --features icu_capi/compiled_data,icu_capi/decimal,icu_capi/looping_panic_handler,icu_capi/libc_alloc \
 	-Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort --target x86_64-unknown-linux-gnu
 
 target/x86_64-unknown-linux-gnu/release/libicu_capi.a: FORCE baked_data/macros.rs
 	rustup toolchain install ${LLVM_COMPATIBLE_NIGHTLY}
 	rustup component add rust-src --toolchain ${LLVM_COMPATIBLE_NIGHTLY}
 	RUSTFLAGS="-Clto -Cembed-bitcode -Clinker-plugin-lto -Clinker=$(CLANG) -Ccodegen-units=1 -Clink-arg=-flto -Cpanic=abort -Copt-level=s" ICU4X_DATA_DIR=$(shell pwd)/baked_data \
-	cargo +${LLVM_COMPATIBLE_NIGHTLY} rustc -p icu_capi --crate-type staticlib --no-default-features --features icu_capi/compiled_data,icu_capi/icu_decimal,icu_capi/looping_panic_handler,icu_capi/libc_alloc \
+	cargo +${LLVM_COMPATIBLE_NIGHTLY} rustc -p icu_capi --crate-type staticlib --no-default-features --features icu_capi/compiled_data,icu_capi/decimal,icu_capi/looping_panic_handler,icu_capi/libc_alloc \
 	-Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort --target x86_64-unknown-linux-gnu --release
 
 # Naive target: no optimizations, full std

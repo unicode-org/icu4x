@@ -11,16 +11,14 @@ use crate::transliterate::provider::{
     RuleBasedTransliterator, Segment, TransliteratorRulesV1Marker,
 };
 use crate::transliterate::transliterator::hardcoded::Case;
-use crate::transliterate::TransliteratorError;
 use alloc::boxed::Box;
 use alloc::string::{String, ToString};
 use alloc::vec::Vec;
 use core::fmt::Debug;
 use core::ops::Range;
-use core::str;
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
-use icu_locid::Locale;
+use icu_locale_core::Locale;
 use icu_normalizer::provider::*;
 use icu_normalizer::{ComposingNormalizer, DecomposingNormalizer};
 use icu_provider::prelude::*;
@@ -50,7 +48,7 @@ pub trait CustomTransliterator: Debug {
 struct ComposingTransliterator(ComposingNormalizer);
 
 impl ComposingTransliterator {
-    fn try_nfc<P>(provider: &P) -> Result<Self, TransliteratorError>
+    fn try_nfc<P>(provider: &P) -> Result<Self, DataError>
     where
         P: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<CanonicalDecompositionTablesV1Marker>
@@ -62,7 +60,7 @@ impl ComposingTransliterator {
         Ok(Self(inner))
     }
 
-    fn try_nfkc<P>(provider: &P) -> Result<Self, TransliteratorError>
+    fn try_nfkc<P>(provider: &P) -> Result<Self, DataError>
     where
         P: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<CompatibilityDecompositionSupplementV1Marker>
@@ -80,7 +78,7 @@ impl ComposingTransliterator {
         // would be cool to use `normalize_to` and pass Insertable, but we need to know the
         // input string, which gets replaced by the normalized string.
 
-        let buf = self.0.normalize(rep.as_str_modifiable());
+        let buf = self.0.as_borrowed().normalize(rep.as_str_modifiable());
         rep.replace_modifiable_with_str(&buf);
     }
 }
@@ -89,7 +87,7 @@ impl ComposingTransliterator {
 struct DecomposingTransliterator(DecomposingNormalizer);
 
 impl DecomposingTransliterator {
-    fn try_nfd<P>(provider: &P) -> Result<Self, TransliteratorError>
+    fn try_nfd<P>(provider: &P) -> Result<Self, DataError>
     where
         P: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<CanonicalDecompositionTablesV1Marker>
@@ -100,7 +98,7 @@ impl DecomposingTransliterator {
         Ok(Self(inner))
     }
 
-    fn try_nfkd<P>(provider: &P) -> Result<Self, TransliteratorError>
+    fn try_nfkd<P>(provider: &P) -> Result<Self, DataError>
     where
         P: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<CompatibilityDecompositionSupplementV1Marker>
@@ -117,7 +115,7 @@ impl DecomposingTransliterator {
         // would be cool to use `normalize_to` and pass Insertable, but we need to know the
         // input string, which gets replaced by the normalized string.
 
-        let buf = self.0.normalize(rep.as_str_modifiable());
+        let buf = self.0.as_borrowed().normalize(rep.as_str_modifiable());
         rep.replace_modifiable_with_str(&buf);
     }
 }
@@ -155,6 +153,70 @@ type Env = LiteMap<String, InternalTransliterator>;
 
 /// A `Transliterator` allows transliteration based on [UTS #35 transform rules](https://unicode.org/reports/tr35/tr35-general.html#Transforms),
 /// including overrides with custom implementations.
+///
+/// # Examples
+///
+/// A transliterator with a custom alias referenced by another:
+///
+/// ```
+/// use icu::experimental::transliterate::{Transliterator, CustomTransliterator, RuleCollection};
+/// use icu::locale::Locale;
+///
+/// // Set up a transliterator with 3 custom rules.
+/// // Note: These rules are for demonstration purposes only! Do not use.
+///
+/// // 1. Main entrypoint: a chain of several transliterators
+/// let mut collection = RuleCollection::default();
+/// collection.register_source(
+///     &"und-t-und-x0-custom".parse().unwrap(),
+///     "::NFD; ::FlattenLowerUmlaut; ::[:Nonspacing Mark:] Remove; ::AsciiUpper; ::NFC;".to_string(),
+///     [],
+///     false,
+///     true,
+/// );
+///
+/// // 2. A custom ruleset that expands lowercase umlauts
+/// collection.register_source(
+///     &"und-t-und-x0-dep1".parse().unwrap(),
+///     r#"
+///       [ä {a \u0308}] → ae;
+///       [ö {o \u0308}] → oe;
+///       [ü {u \u0308}] → ue;
+///     "#.to_string(),
+///     ["Any-FlattenLowerUmlaut"],
+///     false,
+///     true,
+/// );
+///
+/// // 3. A custom transliterator that uppercases all ASCII characters
+/// #[derive(Debug)]
+/// struct AsciiUpperTransliterator;
+/// impl CustomTransliterator for AsciiUpperTransliterator {
+///     fn transliterate(&self, input: &str, range: std::ops::Range<usize>) -> String {
+///         input.to_ascii_uppercase()
+///     }
+/// }
+/// collection.register_aliases(
+///     &"und-t-und-x0-dep2".parse().unwrap(),
+///     ["Any-AsciiUpper"],
+/// );
+///
+/// // Create a transliterator from the main entrypoint:
+/// let provider = collection.as_provider();
+/// let t = Transliterator::try_new_with_override_unstable(
+///     "und-t-und-x0-custom".parse().unwrap(),
+///     |locale| locale.normalizing_eq("und-t-und-x0-dep2").then_some(Ok(Box::new(AsciiUpperTransliterator))),
+///     &provider,
+/// )
+/// .unwrap();
+///
+/// // Test the behavior:
+/// // - The uppercase 'Ü' is stripped of its umlaut
+/// // - The lowercase 'ä' is expanded to "ae"
+/// // - All ASCII characters are uppercased: not 'ß', which is not ASCII
+/// let r = t.transliterate("Übermäßig".to_string());
+/// assert_eq!(r, "UBERMAEßIG");
+/// ```
 #[derive(Debug)]
 pub struct Transliterator {
     transliterator: DataPayload<TransliteratorRulesV1Marker>,
@@ -174,10 +236,7 @@ impl Transliterator {
     ///
     /// assert_eq!(output, "اكاريتانايا");
     /// ```
-    pub fn try_new_unstable<P>(
-        locale: Locale,
-        provider: &P,
-    ) -> Result<Transliterator, TransliteratorError>
+    pub fn try_new_unstable<P>(locale: Locale, provider: &P) -> Result<Transliterator, DataError>
     where
         P: DataProvider<TransliteratorRulesV1Marker>
             + DataProvider<CanonicalDecompositionDataV1Marker>
@@ -189,7 +248,7 @@ impl Transliterator {
     {
         Self::internal_try_new_with_override_unstable(
             locale,
-            None::<&fn(&Locale) -> Option<Box<dyn CustomTransliterator>>>,
+            None::<&fn(&Locale) -> Option<Result<Box<dyn CustomTransliterator>, DataError>>>,
             provider,
             provider,
         )
@@ -207,7 +266,7 @@ impl Transliterator {
     /// Overriding `"de-t-de-d0-ascii"`'s dependency on `"und-t-und-Latn-d0-ascii"`:
     /// ```ignore
     /// use icu::experimental::transliterate::{Transliterator, CustomTransliterator};
-    /// use icu::locid::Locale;
+    /// use icu::locale::Locale;
     /// use core::ops::Range;
     ///
     /// #[derive(Debug)]
@@ -233,7 +292,7 @@ impl Transliterator {
         locale: Locale,
         lookup: F,
         provider: &P,
-    ) -> Result<Transliterator, TransliteratorError>
+    ) -> Result<Transliterator, DataError>
     where
         P: DataProvider<TransliteratorRulesV1Marker>
             + DataProvider<CanonicalDecompositionDataV1Marker>
@@ -242,7 +301,7 @@ impl Transliterator {
             + DataProvider<CompatibilityDecompositionTablesV1Marker>
             + DataProvider<CanonicalCompositionsV1Marker>
             + ?Sized,
-        F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
+        F: Fn(&Locale) -> Option<Result<Box<dyn CustomTransliterator>, DataError>>,
     {
         Self::internal_try_new_with_override_unstable(locale, Some(&lookup), provider, provider)
     }
@@ -252,7 +311,7 @@ impl Transliterator {
         lookup: Option<&F>,
         transliterator_provider: &PT,
         normalizer_provider: &PN,
-    ) -> Result<Transliterator, TransliteratorError>
+    ) -> Result<Transliterator, DataError>
     where
         PT: DataProvider<TransliteratorRulesV1Marker> + ?Sized,
         PN: DataProvider<CanonicalDecompositionDataV1Marker>
@@ -261,16 +320,17 @@ impl Transliterator {
             + DataProvider<CompatibilityDecompositionTablesV1Marker>
             + DataProvider<CanonicalCompositionsV1Marker>
             + ?Sized,
-        F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
+        F: Fn(&Locale) -> Option<Result<Box<dyn CustomTransliterator>, DataError>>,
     {
         let payload = Transliterator::load_rbt(
-            &super::ids::bcp47_to_data_locale(&locale),
+            #[allow(clippy::unwrap_used)] // infallible
+            DataMarkerAttributes::try_from_str(&locale.to_string().to_ascii_lowercase()).unwrap(),
             transliterator_provider,
         )?;
         let rbt = payload.get();
         if !rbt.visibility {
             // transliterator is internal
-            return Err(TransliteratorError::InternalOnly);
+            return Err(DataError::custom("internal only transliterator"));
         }
         let mut env = LiteMap::new();
         // Avoid recursive load
@@ -294,7 +354,7 @@ impl Transliterator {
         lookup: Option<&F>,
         transliterator_provider: &PT,
         normalizer_provider: &PN,
-    ) -> Result<(), TransliteratorError>
+    ) -> Result<(), DataError>
     where
         PT: DataProvider<TransliteratorRulesV1Marker> + ?Sized,
         PN: DataProvider<CanonicalDecompositionDataV1Marker>
@@ -303,23 +363,23 @@ impl Transliterator {
             + DataProvider<CompatibilityDecompositionTablesV1Marker>
             + DataProvider<CanonicalCompositionsV1Marker>
             + ?Sized,
-        F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
+        F: Fn(&Locale) -> Option<Result<Box<dyn CustomTransliterator>, DataError>>,
     {
         for dep in rbt.deps() {
             if !env.contains_key(&*dep) {
                 // 1. Insert a placeholder to avoid infinite recursion.
                 env.insert(dep.to_string(), InternalTransliterator::Null);
                 // 2. Load the transliterator, by checking
-                let internal_t = dep
+                let internal_t =
                     // a) hardcoded specials
-                    .strip_prefix("x-")
-                    .map(|special| Transliterator::load_special(special, normalizer_provider))
+                    dep.strip_prefix("x-").and_then(|special| Transliterator::load_special(special, normalizer_provider))
                     // b) the user-provided override
-                    .or_else(|| Transliterator::load_with_override(&dep, lookup?).transpose())
+                    .or_else(|| Some(lookup?(&dep.parse().ok()?)?.map(InternalTransliterator::Dyn)))
                     // c) the data
                     .unwrap_or_else(|| {
                         let rbt = Transliterator::load_rbt(
-                            &super::ids::unparsed_bcp47_to_data_locale(&dep)?,
+                            #[allow(clippy::unwrap_used)] // infallible
+                            DataMarkerAttributes::try_from_str(&dep.to_ascii_lowercase()).unwrap(),
                             transliterator_provider,
                         )?;
                         Ok(InternalTransliterator::RuleBased(rbt))
@@ -344,7 +404,7 @@ impl Transliterator {
     fn load_special<P>(
         special: &str,
         normalizer_provider: &P,
-    ) -> Result<InternalTransliterator, TransliteratorError>
+    ) -> Option<Result<InternalTransliterator, DataError>>
     where
         P: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<CompatibilityDecompositionSupplementV1Marker>
@@ -355,67 +415,55 @@ impl Transliterator {
     {
         // TODO(#3909, #3910): add more
         match special {
-            "any-nfc" => Ok(InternalTransliterator::Composing(
-                ComposingTransliterator::try_nfc(normalizer_provider)?,
-            )),
-            "any-nfkc" => Ok(InternalTransliterator::Composing(
-                ComposingTransliterator::try_nfkc(normalizer_provider)?,
-            )),
-            "any-nfd" => Ok(InternalTransliterator::Decomposing(
-                DecomposingTransliterator::try_nfd(normalizer_provider)?,
-            )),
-            "any-nfkd" => Ok(InternalTransliterator::Decomposing(
-                DecomposingTransliterator::try_nfkd(normalizer_provider)?,
-            )),
-            "any-null" => Ok(InternalTransliterator::Null),
-            "any-remove" => Ok(InternalTransliterator::Remove),
-            "any-hex/unicode" => Ok(InternalTransliterator::Hex(
+            "any-nfc" => Some(
+                ComposingTransliterator::try_nfc(normalizer_provider)
+                    .map(InternalTransliterator::Composing),
+            ),
+            "any-nfkc" => Some(
+                ComposingTransliterator::try_nfkc(normalizer_provider)
+                    .map(InternalTransliterator::Composing),
+            ),
+            "any-nfd" => Some(
+                DecomposingTransliterator::try_nfd(normalizer_provider)
+                    .map(InternalTransliterator::Decomposing),
+            ),
+            "any-nfkd" => Some(
+                DecomposingTransliterator::try_nfkd(normalizer_provider)
+                    .map(InternalTransliterator::Decomposing),
+            ),
+            "any-null" => Some(Ok(InternalTransliterator::Null)),
+            "any-remove" => Some(Ok(InternalTransliterator::Remove)),
+            "any-hex/unicode" => Some(Ok(InternalTransliterator::Hex(
                 hardcoded::HexTransliterator::new("U+", "", 4, Case::Upper),
-            )),
-            "any-hex/rust" => Ok(InternalTransliterator::Hex(
+            ))),
+            "any-hex/rust" => Some(Ok(InternalTransliterator::Hex(
                 hardcoded::HexTransliterator::new("\\u{", "}", 2, Case::Lower),
-            )),
-            "any-hex/xml" => Ok(InternalTransliterator::Hex(
+            ))),
+            "any-hex/xml" => Some(Ok(InternalTransliterator::Hex(
                 hardcoded::HexTransliterator::new("&#x", ";", 1, Case::Upper),
-            )),
-            "any-hex/perl" => Ok(InternalTransliterator::Hex(
+            ))),
+            "any-hex/perl" => Some(Ok(InternalTransliterator::Hex(
                 hardcoded::HexTransliterator::new("\\x{", "}", 1, Case::Upper),
-            )),
-            "any-hex/plain" => Ok(InternalTransliterator::Hex(
+            ))),
+            "any-hex/plain" => Some(Ok(InternalTransliterator::Hex(
                 hardcoded::HexTransliterator::new("", "", 4, Case::Upper),
-            )),
-            s => Err(DataError::custom("unavailable transliterator")
-                .with_debug_context(s)
-                .into()),
+            ))),
+            _ => None,
         }
     }
 
-    fn load_with_override<F>(
-        id: &str,
-        lookup: &F,
-    ) -> Result<Option<InternalTransliterator>, TransliteratorError>
-    where
-        F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
-    {
-        let locale: Locale = id.parse().map_err(|e| {
-            DataError::custom("invalid data: transliterator dependency is not a valid Locale")
-                .with_debug_context(&e)
-        })?;
-        Ok(lookup(&locale).map(InternalTransliterator::Dyn))
-    }
-
     fn load_rbt<P>(
-        id: &DataLocale,
+        marker_attributes: &DataMarkerAttributes,
         provider: &P,
     ) -> Result<DataPayload<TransliteratorRulesV1Marker>, DataError>
     where
         P: DataProvider<TransliteratorRulesV1Marker> + ?Sized,
     {
         let req = DataRequest {
-            locale: id,
-            metadata: Default::default(),
+            id: DataIdentifierBorrowed::for_marker_attributes(marker_attributes),
+            ..Default::default()
         };
-        let payload = provider.load(req)?.take_payload()?;
+        let payload = provider.load(req)?.payload;
         let rbt = payload.get();
         if rbt.id_group_list.len() != rbt.rule_group_list.len() {
             return Err(DataError::custom(
@@ -1261,10 +1309,11 @@ impl<'a> VarTable<'a> {
 
 #[cfg(test)]
 mod tests {
+    #![allow(unused_imports)]
     use super::*;
 
     use crate as icu_experimental;
-    include!("../../../tests/transliterate/data/baked/mod.rs");
+    include!("../../../tests/transliterate/data/provider.rs");
 
     #[test]
     fn test_empty_matches() {
@@ -1278,7 +1327,7 @@ mod tests {
 
         let t = Transliterator::try_new_unstable(
             "und-t-und-s0-test-d0-test-m0-emtymach".parse().unwrap(),
-            &BakedDataProvider,
+            &TestingProvider,
         )
         .unwrap();
 
@@ -1291,7 +1340,7 @@ mod tests {
     fn test_recursive_suite() {
         let t = Transliterator::try_new_unstable(
             "und-t-und-s0-test-d0-test-m0-rectestr".parse().unwrap(),
-            &BakedDataProvider,
+            &TestingProvider,
         )
         .unwrap();
 
@@ -1304,7 +1353,7 @@ mod tests {
     fn test_cursor_placeholders_filters() {
         let t = Transliterator::try_new_unstable(
             "und-t-und-s0-test-d0-test-m0-cursfilt".parse().unwrap(),
-            &BakedDataProvider,
+            &TestingProvider,
         )
         .unwrap();
 
@@ -1317,7 +1366,7 @@ mod tests {
     fn test_functionality() {
         let t = Transliterator::try_new_unstable(
             "und-t-und-s0-test-d0-test-m0-niels".parse().unwrap(),
-            &BakedDataProvider,
+            &TestingProvider,
         )
         .unwrap();
 
@@ -1328,11 +1377,9 @@ mod tests {
 
     #[test]
     fn test_de_ascii() {
-        let t = Transliterator::try_new_unstable(
-            "de-t-de-d0-ascii".parse().unwrap(),
-            &BakedDataProvider,
-        )
-        .unwrap();
+        let t =
+            Transliterator::try_new_unstable("de-t-de-d0-ascii".parse().unwrap(), &TestingProvider)
+                .unwrap();
         let input =
             "Über ältere Lügner lästern ist sehr a\u{0308}rgerlich. Ja, SEHR ÄRGERLICH! - ꜵ";
         let output =
@@ -1354,8 +1401,12 @@ mod tests {
         let want_locale = "und-t-und-latn-d0-ascii".parse().unwrap();
         let t = Transliterator::try_new_with_override_unstable(
             "de-t-de-d0-ascii".parse().unwrap(),
-            |locale| locale.eq(&want_locale).then_some(Box::new(MaoamTranslit)),
-            &BakedDataProvider,
+            |locale| {
+                locale
+                    .eq(&want_locale)
+                    .then_some(Ok(Box::new(MaoamTranslit)))
+            },
+            &TestingProvider,
         )
         .unwrap();
 
@@ -1368,7 +1419,7 @@ mod tests {
     fn test_nfc_nfd() {
         let t = Transliterator::try_new_unstable(
             "und-t-und-latn-d0-ascii".parse().unwrap(),
-            &BakedDataProvider,
+            &TestingProvider,
         )
         .unwrap();
         let input = "äa\u{0308}";
@@ -1380,7 +1431,7 @@ mod tests {
     fn test_hex_rust() {
         let t = Transliterator::try_new_unstable(
             "und-t-und-s0-test-d0-test-m0-hexrust".parse().unwrap(),
-            &BakedDataProvider,
+            &TestingProvider,
         )
         .unwrap();
         let input = "\0äa\u{10FFFF}❤!";
@@ -1392,7 +1443,7 @@ mod tests {
     fn test_hex_unicode() {
         let t = Transliterator::try_new_unstable(
             "und-t-und-s0-test-d0-test-m0-hexuni".parse().unwrap(),
-            &BakedDataProvider,
+            &TestingProvider,
         )
         .unwrap();
         let input = "\0äa\u{10FFFF}❤!";

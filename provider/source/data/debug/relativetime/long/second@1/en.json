@@ -1,0 +1,29 @@
+{
+  "relatives": {
+    "0": "now"
+  },
+  "past": {
+    "strings": {
+      "one": [
+        0,
+        "\u0001 second ago"
+      ],
+      "other": [
+        0,
+        "\u0001 seconds ago"
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "one": [
+        0,
+        "\u0004in  second"
+      ],
+      "other": [
+        0,
+        "\u0004in  seconds"
+      ]
+    }
+  }
+}

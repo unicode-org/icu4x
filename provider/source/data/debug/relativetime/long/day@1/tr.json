@@ -1,0 +1,25 @@
+{
+  "relatives": {
+    "-2": "evvelsi gün",
+    "-1": "dün",
+    "0": "bugün",
+    "1": "yarın",
+    "2": "öbür gün"
+  },
+  "past": {
+    "strings": {
+      "other": [
+        0,
+        "\u0001 gün önce"
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "other": [
+        0,
+        "\u0001 gün sonra"
+      ]
+    }
+  }
+}

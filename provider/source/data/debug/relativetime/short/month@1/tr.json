@@ -1,0 +1,23 @@
+{
+  "relatives": {
+    "-1": "geçen ay",
+    "0": "bu ay",
+    "1": "gelecek ay"
+  },
+  "past": {
+    "strings": {
+      "other": [
+        0,
+        "\u0001 ay önce"
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "other": [
+        0,
+        "\u0001 ay sonra"
+      ]
+    }
+  }
+}

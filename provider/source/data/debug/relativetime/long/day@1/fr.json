@@ -1,0 +1,33 @@
+{
+  "relatives": {
+    "-2": "avant-hier",
+    "-1": "hier",
+    "0": "aujourd’hui",
+    "1": "demain",
+    "2": "après-demain"
+  },
+  "past": {
+    "strings": {
+      "one": [
+        0,
+        "\bil y a  jour"
+      ],
+      "other": [
+        0,
+        "\bil y a  jours"
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "one": [
+        0,
+        "\u0006dans  jour"
+      ],
+      "other": [
+        0,
+        "\u0006dans  jours"
+      ]
+    }
+  }
+}

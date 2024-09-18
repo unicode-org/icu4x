@@ -13,7 +13,7 @@ use core::fmt::{Debug, Formatter};
 
 use icu_provider::prelude::*;
 #[cfg(feature = "serde")]
-use icu_provider::serde::borrow_de_utils::option_of_cow;
+use icu_provider::serde_borrow_de_utils::option_of_cow;
 use zerovec::VarZeroVec;
 
 use crate::personnames::api::FormattingFormality;
@@ -43,10 +43,8 @@ pub use crate::provider::Baked;
 /// (`initial`, `initialSequence`).
 #[icu_provider::data_struct(PersonNamesFormatV1Marker = "personnames/personnames@1")]
 #[derive(PartialEq, Clone)]
-#[cfg_attr(feature = "datagen",
-derive(serde::Serialize, databake::Bake),
-databake(path = icu_experimental::personnames::provider))
-]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::personnames::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct PersonNamesFormatV1<'data> {
     /// <nameOrderLocales order="surnameFirst">ko vi yue zh</nameOrderLocales>
@@ -166,11 +164,9 @@ pub type PersonNamesFormattingAttributesMask = u32;
 /// <https://www.unicode.org/reports/tr35/tr35-personNames.html#personname-element>
 #[zerovec::make_varule(PersonNamesFormattingDataVarULE)]
 #[zerovec::skip_derive(ZeroMapKV, Ord)]
-#[cfg_attr(feature = "datagen",
-derive(serde::Serialize, databake::Bake),
-databake(path = icu_experimental::personnames::provider),
-zerovec::derive(Serialize))
-]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::personnames::provider))]
+#[cfg_attr(feature = "datagen", zerovec::derive(Serialize))]
 #[cfg_attr(
     feature = "serde",
     derive(serde::Deserialize),

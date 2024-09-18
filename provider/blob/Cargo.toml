@@ -5,13 +5,13 @@
 [package]
 name = "icu_provider_blob"
 description = "ICU4X data provider that reads from blobs in memory"
-license = "Unicode-3.0"
 
 authors.workspace = true
 categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true
+license.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 version.workspace = true
@@ -25,16 +25,16 @@ postcard = { workspace = true, features = ["alloc"] }
 serde = { workspace = true, features = ["alloc"] }
 writeable = {workspace = true }
 zerovec = { workspace = true, features = ["serde", "yoke"] }
-zerotrie = { workspace = true, features = ["serde", "zerovec"] }
+zerotrie = { workspace = true, features = ["serde", "zerovec", "alloc"] }
 
 log = { workspace = true, optional = true }
 
 [dev-dependencies]
-icu_locid = { path = "../../components/locid", default-features = false, features = ["serde"] }
-icu_datetime = { path = "../../components/datetime", default-features = false, features = ["datagen", "experimental"] }
-icu_datetime_data = { path = "../../provider/baked/datetime" }
-icu_locid_transform = { path = "../../components/locid_transform", default-features = false, features = ["compiled_data"] }
-icu_datagen = { path = "../../provider/datagen", default-features = false }
+databake = { path = "../../utils/databake" }
+icu_provider_export = { path = "../../provider/export" }
+icu_locale = { path = "../../components/locale", default-features = false, features = ["compiled_data"] }
+icu_locale_core = { path = "../../components/locale_core", default-features = false, features = ["serde"] }
+icu_provider = { path = "../../provider/core", features = ["macros"] }
 icu_provider_adapters = { path = "../../provider/adapters", default-features = false }
 twox-hash = { workspace = true }
 
@@ -45,13 +45,9 @@ criterion = { workspace = true }
 bench = []
 std = ["icu_provider/std"]
 export = [
-    "icu_provider/datagen",
+    "icu_provider/export",
     "log",
-    "postcard/alloc",
     "std",
-    "zerovec/serde",
-    "zerotrie/alloc",
-    "zerotrie/litemap",
 ]
 
 [lib]

@@ -82,7 +82,6 @@ pub mod maps;
 mod props;
 
 pub mod bidi_data;
-pub mod exemplar_chars;
 pub mod provider;
 pub(crate) mod runtime;
 #[allow(clippy::exhaustive_structs)] // TODO
@@ -102,15 +101,12 @@ pub mod names {
         PropertyEnumToValueNameLinearMapper, PropertyEnumToValueNameLinearMapperBorrowed,
     };
     pub use crate::props::{
-        PropertyEnumToValueNameLinearTiny4Mapper, PropertyEnumToValueNameLinearTiny4MapperBorrowed,
+        PropertyEnumToValueNameSparseMapper, PropertyEnumToValueNameSparseMapperBorrowed,
     };
     pub use crate::props::{
-        PropertyEnumToValueNameSparseMapper, PropertyEnumToValueNameSparseMapperBorrowed,
+        PropertyScriptToIcuScriptMapper, PropertyScriptToIcuScriptMapperBorrowed,
     };
     pub use crate::props::{PropertyValueNameToEnumMapper, PropertyValueNameToEnumMapperBorrowed};
 }
 
-pub use error::PropertiesError;
-
-#[doc(no_inline)]
-pub use PropertiesError as Error;
+pub use error::*;

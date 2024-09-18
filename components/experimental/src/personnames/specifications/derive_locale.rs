@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_locid::subtags::script;
-use icu_locid::{subtags, Locale};
-use icu_properties::names::PropertyEnumToValueNameLinearTiny4MapperBorrowed;
+use icu_locale_core::subtags::script;
+use icu_locale_core::{subtags, Locale};
+use icu_properties::names::PropertyScriptToIcuScriptMapperBorrowed;
 use icu_properties::script::ScriptWithExtensionsBorrowed;
 
 use crate::personnames::api::NameFieldKind::{Given, Surname};
@@ -45,7 +45,7 @@ fn compatible_scripts(sc1: subtags::Script, sc2: subtags::Script) -> bool {
 pub fn likely_person_name_locale<N>(
     person_name: &N,
     swe: ScriptWithExtensionsBorrowed,
-    scripts: PropertyEnumToValueNameLinearTiny4MapperBorrowed<icu_properties::Script>,
+    scripts: PropertyScriptToIcuScriptMapperBorrowed<icu_properties::Script>,
 ) -> Result<Locale, PersonNamesFormatterError>
 where
     N: PersonName,
@@ -64,7 +64,7 @@ where
         .map_err(|_err| PersonNamesFormatterError::InvalidPersonName)?;
     person_name.name_locale().map_or_else(
         || {
-            let mut effective_locale = Locale::UND;
+            let mut effective_locale = Locale::default();
             effective_locale.id.script = Some(locid_script);
             Ok(effective_locale)
         },
@@ -103,8 +103,8 @@ where
 
 #[cfg(test)]
 mod tests {
-    use icu_locid::locale;
-    use icu_locid_transform::LocaleExpander;
+    use icu_locale::LocaleExpander;
+    use icu_locale_core::locale;
     use litemap::LiteMap;
 
     use super::{effective_locale, likely_person_name_locale};
@@ -177,7 +177,7 @@ mod tests {
     #[test]
     fn test_likely_person_names_locale() {
         let swe = icu_properties::script::script_with_extensions();
-        let scripts = icu_properties::Script::enum_to_short_name_mapper();
+        let scripts = icu_properties::Script::enum_to_icu_script_mapper();
         assert_eq!(
             likely_person_name_locale(&person_name("Miyazaki", "Hayao").unwrap(), swe, scripts),
             Ok(locale!("und_Latn"))

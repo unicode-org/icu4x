@@ -5,8 +5,9 @@
 use super::*;
 extern crate alloc;
 
-impl<T: ?Sized + ToOwned> Bake for alloc::borrow::Cow<'_, T>
+impl<T> Bake for alloc::borrow::Cow<'_, T>
 where
+    T: ?Sized + ToOwned,
     for<'a> &'a T: Bake,
 {
     fn bake(&self, ctx: &CrateEnv) -> TokenStream {
@@ -18,12 +19,27 @@ where
     }
 }
 
+impl<T> BakeSize for alloc::borrow::Cow<'_, T>
+where
+    T: ?Sized + ToOwned,
+    for<'a> &'a T: BakeSize,
+{
+    fn borrows_size(&self) -> usize {
+        (&**self).borrows_size()
+    }
+}
+
 #[test]
 fn cow() {
     test_bake!(
         alloc::borrow::Cow<'static, str>,
-        const: alloc::borrow::Cow::Borrowed("hi"),
+        const,
+        alloc::borrow::Cow::Borrowed("hi"),
         alloc
+    );
+    assert_eq!(
+        BakeSize::borrows_size(&alloc::borrow::Cow::Borrowed("hi")),
+        2
     );
     assert_eq!(
         Bake::bake(
@@ -36,6 +52,10 @@ fn cow() {
             &Default::default(),
         )
         .to_string(),
+    );
+    assert_eq!(
+        BakeSize::borrows_size(&alloc::borrow::Cow::<'static, str>::Owned("hi".to_owned())),
+        2
     );
 }
 
@@ -54,7 +74,7 @@ where
 
 #[test]
 fn vec() {
-    test_bake!(Vec<u8>, alloc::vec![1u8, 2u8,], alloc);
+    test_bake!(Vec<u8>, alloc::vec![1u8, 2u8], alloc);
 }
 
 impl<T> Bake for alloc::collections::BTreeSet<T>

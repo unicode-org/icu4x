@@ -8,6 +8,9 @@ on:
   push:
     branches: [ main ]
 
+permissions:
+  contents: read
+
 jobs:
   test:
 
@@ -15,16 +18,18 @@ jobs:
     runs-on:                    ubuntu-latest
 
     steps:
-      - uses:                   actions/checkout@v4
+      - uses:                   actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       ## Coverage steps
 
       - name: Install grcov
-        uses: taiki-e/install-action@grcov
-  
-      - uses:                   actions-rs/toolchain@v1
+        uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
         with:
-          toolchain:            nightly-2022-12-26
+          tool: grcov
+  
+      - uses:                   actions-rs/toolchain@16499b5e05bf2e26879000db0c1d13f7e13fa3af # v1.0.7
+        with:
+          toolchain:            nightly-2024-07-23
           override:             true
 
       - run: cargo test --all-features --no-fail-fast
@@ -35,16 +40,16 @@ jobs:
 
 
       - id:                     coverage
-        uses:                   actions-rs/grcov@v0.1
+        uses:                   actions-rs/grcov@770fa904bcbfc50da498080d1511da7388e6ddc6 # v0.1.6
 
       - name:                   Push grcov results to Coveralls via GitHub Action
-        uses:                   coverallsapp/github-action@v2.2.1
+        uses:                   coverallsapp/github-action@95b1a2355bd0e526ad2fd62da9fd386ad4c98474 # v2.2.1
         with:
           github-token:         ${{ secrets.GITHUB_TOKEN }}
           file:                 ${{ steps.coverage.outputs.report }}
 
       - name:                   Push grcov results to Codecov via GitHub Action
-        uses:                   codecov/codecov-action@v3
+        uses:                   codecov/codecov-action@ab904c41d6ece82784817410c45d8b8c02684457 # v3.1.6
         # TODO(#2701): Update and re-enable this job.
         if: false
         with:

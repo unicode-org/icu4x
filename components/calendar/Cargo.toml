@@ -5,13 +5,13 @@
 [package]
 name = "icu_calendar"
 description = "API for supporting various types of calendars"
-license = "Unicode-3.0"
 
 authors.workspace = true
 categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true
+license.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 version.workspace = true
@@ -23,7 +23,8 @@ all-features = true
 calendrical_calculations = { workspace = true }
 displaydoc = { workspace = true }
 icu_provider = { workspace = true, features = ["macros"] }
-icu_locid = { workspace = true }
+icu_locale_core = { workspace = true }
+ixdtf = { workspace = true, optional = true }
 tinystr = { workspace = true, features = ["alloc", "zerovec"] }
 zerovec = { workspace = true, features = ["derive"] }
 writeable = { workspace = true }
@@ -32,7 +33,6 @@ databake = { workspace = true, features = ["derive"], optional = true }
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 
 icu_calendar_data = { workspace = true, optional = true }
-icu_locid_transform = { workspace = true, optional = true, features = ["compiled_data"] }
 
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }
@@ -47,13 +47,14 @@ criterion = { workspace = true }
 
 
 [features]
-default = ["compiled_data"]
+default = ["compiled_data", "ixdtf"]
+ixdtf = ["dep:ixdtf"]
 logging = ["calendrical_calculations/logging"]
-std = ["icu_provider/std", "icu_locid/std", "calendrical_calculations/std"]
+std = ["icu_provider/std", "icu_locale_core/std", "calendrical_calculations/std"]
 serde = ["dep:serde", "zerovec/serde", "tinystr/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "tinystr/databake"]
 bench = []
-compiled_data = ["dep:icu_calendar_data", "dep:icu_locid_transform"]
+compiled_data = ["dep:icu_calendar_data"]
 
 [package.metadata.cargo-all-features]
 # Bench feature gets tested separately and is only relevant for CI

@@ -42,19 +42,21 @@ mod unfold;
 pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
+#[allow(unused_imports)]
 const _: () = {
+    use icu_casemap_data::*;
     pub mod icu {
         pub use crate as casemap;
         pub use icu_collections as collections;
     }
-    icu_casemap_data::make_provider!(Baked);
-    icu_casemap_data::impl_props_casemap_v1!(Baked);
-    icu_casemap_data::impl_props_casemap_unfold_v1!(Baked);
+    make_provider!(Baked);
+    impl_case_map_v1_marker!(Baked);
+    impl_case_map_unfold_v1_marker!(Baked);
 };
 
 #[cfg(feature = "datagen")]
-/// The latest minimum set of keys required by this component.
-pub const KEYS: &[DataKey] = &[CaseMapUnfoldV1Marker::KEY, CaseMapV1Marker::KEY];
+/// The latest minimum set of markers required by this component.
+pub const MARKERS: &[DataMarkerInfo] = &[CaseMapUnfoldV1Marker::INFO, CaseMapV1Marker::INFO];
 
 pub use self::unfold::{CaseMapUnfoldV1, CaseMapUnfoldV1Marker};
 
@@ -71,11 +73,8 @@ pub use self::unfold::{CaseMapUnfoldV1, CaseMapUnfoldV1Marker};
 /// </div>
 #[icu_provider::data_struct(marker(CaseMapV1Marker, "props/casemap@1", singleton))]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_casemap::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_casemap::provider))]
 #[yoke(prove_covariance_manually)]
 /// CaseMapper provides low-level access to the data necessary to
 /// convert characters and strings to upper, lower, or title case.

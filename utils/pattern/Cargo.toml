@@ -5,12 +5,12 @@
 [package]
 name = "icu_pattern"
 description = "ICU pattern utilities"
-version = "0.1.5"
-license = "Unicode-3.0"
+version = "0.2.0"
 
 authors.workspace = true
 edition.workspace = true
 include.workspace = true
+license.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 
@@ -29,6 +29,7 @@ litemap = { workspace = true, default-features = false, optional = true }
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 yoke = { workspace = true, features = ["derive"], optional = true }
 zerofrom = { workspace = true, features = ["derive"], optional = true }
+zerovec = { workspace = true, default-features = false, optional = true }
 
 [dev-dependencies]
 zerofrom = { workspace = true, features = ["alloc"] }
@@ -45,3 +46,4 @@ litemap = ["dep:litemap"]
 serde = ["alloc", "dep:serde"]
 yoke = ["dep:yoke"]
 zerofrom = ["dep:zerofrom"]
+zerovec = ["dep:zerovec"]

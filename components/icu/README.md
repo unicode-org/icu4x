@@ -28,12 +28,12 @@ provide data explicitly using [`DataProvider`]s.
 Compiled data is exposed through idiomatic Rust constructors like `new` or `try_new`:
 
 ```rust
-use icu::datetime::DateTimeFormatter;
-use icu::locid::locale;
+use icu::datetime::{NeoFormatter, NeoSkeletonLength, neo_marker::NeoAutoDateMarker};
+use icu::locale::locale;
 
-let dtf = DateTimeFormatter::try_new(
+let dtf = NeoFormatter::<NeoAutoDateMarker>::try_new(
     &locale!("es-US").into(),
-    Default::default(),
+    NeoSkeletonLength::Medium.into(),
 )
 .expect("compiled data should include 'es-US'");
 ```
@@ -51,8 +51,9 @@ Powerful data management is possible with [`DataProvider`]s, which are passed to
 special constructors:
 
 ```rust
-use icu::datetime::DateTimeFormatter;
-use icu::locid::locale;
+use icu::datetime::{NeoFormatter, NeoSkeletonLength, neo_marker::NeoAutoDateMarker};
+use icu::locale::locale;
+use icu::locale::fallback::LocaleFallbacker;
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_blob::BlobDataProvider;
 
@@ -61,14 +62,15 @@ let data: Box<[u8]> = todo!();
 let provider = BlobDataProvider::try_new_from_blob(data)
     .expect("data should be valid");
 
-let provider =
-    LocaleFallbackProvider::try_new_with_buffer_provider(provider)
+let fallbacker = LocaleFallbacker::try_new_with_buffer_provider(&provider)
         .expect("provider should include fallback data");
 
-let dtf = DateTimeFormatter::try_new_with_buffer_provider(
+let provider = LocaleFallbackProvider::new(provider, fallbacker);
+
+let dtf = NeoFormatter::<NeoAutoDateMarker>::try_new_with_buffer_provider(
     &provider,
     &locale!("es-US").into(),
-    Default::default(),
+    NeoSkeletonLength::Medium.into(),
 )
 .expect("data should include 'es-US', 'es', or 'und'");
 ```
@@ -120,12 +122,9 @@ are on track to be eventually stabilized into this crate.
 
 [CLDR]: http://cldr.unicode.org/
 [`DataProvider`]: icu_provider::DataProvider
-[`DataPayload`]: icu_provider::DataPayload
 [`FsDataProvider`]: https://docs.rs/icu_provider_fs/latest/icu_provider_fs/struct.FsDataProvider.html
 [`BlobDataProvider`]: https://docs.rs/icu_provider_blob/latest/icu_provider_blob/struct.BlobDataProvider.html
 [`icu_provider_adapters`]: https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/
-[`icu_datagen`]: https://docs.rs/icu_datagen/latest/icu_datagen/
-[`icu4x-datagen`]: https://docs.rs/icu_datagen/latest/icu_datagen/
 [data management tutorial]: https://github.com/unicode-org/icu4x/blob/main/tutorials/data_provider.md#loading-additional-data-at-runtime
 
 <!-- cargo-rdme end -->

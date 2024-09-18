@@ -8,14 +8,14 @@ use core::cmp::Ordering;
 
 use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
-    options::{components, length},
+    neo_skeleton::FractionalSecondDigits,
+    options::{components, length, DateTimeFormatterOptions},
     pattern::{
         hour_cycle,
         runtime::{self, PatternPlurals},
         PatternItem, TimeGranularity,
     },
     provider::calendar::{patterns::GenericLengthPatternsV1, DateSkeletonPatternsV1},
-    DateTimeFormatterOptions,
 };
 
 #[cfg(feature = "datagen")]
@@ -143,6 +143,7 @@ pub fn create_best_pattern_for_fields<'data>(
         pattern_plurals.for_each_mut(|pattern| {
             hour_cycle::naively_apply_preferences(pattern, &components.preferences);
             naively_apply_time_zone_name(pattern, &components.time_zone_name);
+            apply_fractional_seconds(pattern, components.fractional_second);
         });
         return BestSkeleton::AllFieldsMatch(pattern_plurals);
     }
@@ -159,7 +160,7 @@ pub fn create_best_pattern_for_fields<'data>(
                     pattern_plurals.for_each_mut(|pattern| {
                         hour_cycle::naively_apply_preferences(pattern, &components.preferences);
                         naively_apply_time_zone_name(pattern, &components.time_zone_name);
-                        append_fractional_seconds(pattern, &time);
+                        apply_fractional_seconds(pattern, components.fractional_second);
                     });
                 }
                 BestSkeleton::MissingOrExtraFields(pattern_plurals)
@@ -188,7 +189,7 @@ pub fn create_best_pattern_for_fields<'data>(
             pattern_plurals.expect_pattern("Only date patterns can contain plural variants");
         hour_cycle::naively_apply_preferences(&mut pattern, &components.preferences);
         naively_apply_time_zone_name(&mut pattern, &components.time_zone_name);
-        append_fractional_seconds(&mut pattern, &time);
+        apply_fractional_seconds(&mut pattern, components.fractional_second);
         pattern
     });
 
@@ -292,7 +293,8 @@ fn group_fields_by_type(fields: &[Field]) -> FieldsByType {
             | FieldSymbol::Hour(_)
             | FieldSymbol::Minute
             | FieldSymbol::Second(_)
-            | FieldSymbol::TimeZone(_) => time.push(*field),
+            | FieldSymbol::TimeZone(_)
+            | FieldSymbol::DecimalSecond(_) => time.push(*field),
             // Other components
             // TODO(#486)
             // FieldSymbol::Era(_) => other.push(*field),
@@ -311,13 +313,12 @@ fn adjust_pattern_field_lengths(fields: &[Field], pattern: &mut runtime::Pattern
         if let PatternItem::Field(pattern_field) = item {
             if let Some(requested_field) = fields
                 .iter()
-                .find(|field| field.symbol.discriminant_cmp(&pattern_field.symbol).is_eq())
+                .find(|field| field.symbol.skeleton_cmp(&pattern_field.symbol).is_eq())
             {
                 if requested_field.length != pattern_field.length
                     && requested_field.get_length_type() == pattern_field.get_length_type()
                 {
                     let length = requested_field.length;
-                    #[cfg(feature = "experimental")]
                     let length = if requested_field.symbol.is_at_least_abbreviated() {
                         length.numeric_to_abbr()
                     } else {
@@ -341,28 +342,33 @@ fn adjust_pattern_field_lengths(fields: &[Field], pattern: &mut runtime::Pattern
 /// pattern should be adjusted by appending the locale’s decimal separator, followed by the sequence
 /// of ‘S’ characters from the requested skeleton.
 /// (see <https://unicode.org/reports/tr35/tr35-dates.html#Matching_Skeletons>)
-fn append_fractional_seconds(pattern: &mut runtime::Pattern, fields: &[Field]) {
-    if let Some(requested_field) = fields
-        .iter()
-        .find(|field| field.symbol == FieldSymbol::Second(fields::Second::FractionalSecond))
-    {
+fn apply_fractional_seconds(
+    pattern: &mut runtime::Pattern,
+    fractional_seconds: Option<FractionalSecondDigits>,
+) {
+    use FractionalSecondDigits::*;
+    if let Some(fractional_seconds) = fractional_seconds {
         let mut items = pattern.items.to_vec();
-        if let Some(pos) = items.iter().position(|&item| match item {
-            PatternItem::Field(field) => {
-                matches!(field.symbol, FieldSymbol::Second(fields::Second::Second))
-            }
-            _ => false,
-        }) {
-            if let FieldLength::Fixed(p) = requested_field.length {
-                if p > 0 {
-                    items.insert(pos + 1, PatternItem::Field(*requested_field));
-                }
-            }
+        for item in items.iter_mut() {
+            if let PatternItem::Field(
+                ref mut field @ Field {
+                    symbol:
+                        FieldSymbol::Second(fields::Second::Second) | FieldSymbol::DecimalSecond(_),
+                    ..
+                },
+            ) = item
+            {
+                field.symbol = FieldSymbol::from_fractional_second_digits(fractional_seconds);
+            };
         }
         *pattern = runtime::Pattern::from(items);
         pattern
             .metadata
-            .set_time_granularity(TimeGranularity::Nanoseconds);
+            .set_time_granularity(if fractional_seconds == F0 {
+                TimeGranularity::Seconds
+            } else {
+                TimeGranularity::Nanoseconds
+            });
     }
 }
 
@@ -407,7 +413,6 @@ pub fn get_best_available_format_pattern<'data>(
         let mut requested_fields = fields.iter().peekable();
         let mut skeleton_fields = skeleton.0.fields_iter().peekable();
 
-        let mut matched_seconds = false;
         loop {
             let next = (requested_fields.peek(), skeleton_fields.peek());
 
@@ -422,10 +427,7 @@ pub fn get_best_available_format_pattern<'data>(
                         skeleton_field.symbol != FieldSymbol::Month(fields::Month::StandAlone)
                     );
 
-                    match skeleton_field
-                        .symbol
-                        .discriminant_cmp(&requested_field.symbol)
-                    {
+                    match skeleton_field.symbol.skeleton_cmp(&requested_field.symbol) {
                         Ordering::Less => {
                             // Keep searching for a matching skeleton field.
                             skeleton_fields.next();
@@ -433,29 +435,13 @@ pub fn get_best_available_format_pattern<'data>(
                             continue;
                         }
                         Ordering::Greater => {
-                            // https://unicode.org/reports/tr35/tr35-dates.html#Matching_Skeletons
-                            // A requested skeleton that includes both seconds and fractional seconds (e.g. “mmssSSS”) is allowed
-                            // to match a dateFormatItem skeleton that includes seconds but not fractional seconds (e.g. “ms”).
-                            if !(matched_seconds
-                                && requested_field.symbol
-                                    == FieldSymbol::Second(fields::Second::FractionalSecond))
-                            {
-                                // The requested field symbol is missing from the skeleton.
-                                distance += REQUESTED_SYMBOL_MISSING;
-                                missing_fields += 1;
-                                requested_fields.next();
-                                continue;
-                            }
+                            // The requested field symbol is missing from the skeleton.
+                            distance += REQUESTED_SYMBOL_MISSING;
+                            missing_fields += 1;
+                            requested_fields.next();
+                            continue;
                         }
                         _ => (),
-                    }
-
-                    if requested_field.symbol
-                        == FieldSymbol::Second(fields::Second::FractionalSecond)
-                        && skeleton_field.symbol
-                            == FieldSymbol::Second(fields::Second::FractionalSecond)
-                    {
-                        matched_seconds = true;
                     }
 
                     distance += if requested_field == skeleton_field {

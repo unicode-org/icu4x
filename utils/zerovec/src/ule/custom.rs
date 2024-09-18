@@ -47,9 +47,9 @@
 //! #    field3: ZeroVec<'a, u32>   
 //! # }
 //!
-//! // Must be repr(packed) for safety of VarULE!
+//! // Must be repr(C, packed) for safety of VarULE!
 //! // Must also only contain ULE types
-//! #[repr(packed)]
+//! #[repr(C, packed)]
 //! struct FooULE {
 //!     field1: <char as AsULE>::ULE,   
 //!     field2: <u32 as AsULE>::ULE,
@@ -57,9 +57,9 @@
 //! }
 //!
 //! // Safety (based on the safety checklist on the VarULE trait):
-//! //  1. FooULE does not include any uninitialized or padding bytes. (achieved by `#[repr(packed)]` on
+//! //  1. FooULE does not include any uninitialized or padding bytes. (achieved by `#[repr(C, packed)]` on
 //! //     a struct with only ULE fields)
-//! //  2. FooULE is aligned to 1 byte. (achieved by `#[repr(packed)]` on
+//! //  2. FooULE is aligned to 1 byte. (achieved by `#[repr(C, packed)]` on
 //! //     a struct with only ULE fields)
 //! //  3. The impl of `validate_byte_slice()` returns an error if any byte is not valid.
 //! //  4. The impl of `validate_byte_slice()` returns an error if the slice cannot be used in its entirety
@@ -67,11 +67,11 @@
 //! //  6. The other VarULE methods use the default impl.
 //! //  7. FooULE byte equality is semantic equality
 //! unsafe impl VarULE for FooULE {
-//!     fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+//!     fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
 //!         // validate each field
-//!         <char as AsULE>::ULE::validate_byte_slice(&bytes[0..3]).map_err(|_| ZeroVecError::parse::<Self>())?;
-//!         <u32 as AsULE>::ULE::validate_byte_slice(&bytes[3..7]).map_err(|_| ZeroVecError::parse::<Self>())?;
-//!         let _ = ZeroVec::<u32>::parse_byte_slice(&bytes[7..]).map_err(|_| ZeroVecError::parse::<Self>())?;
+//!         <char as AsULE>::ULE::validate_byte_slice(&bytes[0..3]).map_err(|_| UleError::parse::<Self>())?;
+//!         <u32 as AsULE>::ULE::validate_byte_slice(&bytes[3..7]).map_err(|_| UleError::parse::<Self>())?;
+//!         let _ = ZeroVec::<u32>::parse_byte_slice(&bytes[7..]).map_err(|_| UleError::parse::<Self>())?;
 //!         Ok(())
 //!     }
 //!     unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {

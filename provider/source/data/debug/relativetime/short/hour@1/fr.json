@@ -1,0 +1,21 @@
+{
+  "relatives": {
+    "0": "cette heure-ci"
+  },
+  "past": {
+    "strings": {
+      "other": [
+        0,
+        "\bil y a  h"
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "other": [
+        0,
+        "\u0006dans  h"
+      ]
+    }
+  }
+}

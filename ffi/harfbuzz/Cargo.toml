@@ -5,14 +5,14 @@
 [package]
 name = "icu_harfbuzz"
 description = "HarfBuzz glue code for ICU4X"
-version = "0.1.2"
-license = "Unicode-3.0"
+version = "0.2.0"
 
 authors.workspace = true
 categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true
+license.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 
@@ -36,8 +36,6 @@ icu_normalizer = { workspace = true }
 icu_properties = { workspace = true }
 icu_provider = {workspace = true, features = ["macros"] }
 displaydoc = { workspace = true }
-tinystr = { workspace = true }
-
 
 [features]
 default = []

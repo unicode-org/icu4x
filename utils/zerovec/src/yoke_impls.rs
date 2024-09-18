@@ -20,7 +20,7 @@ use yoke::*;
 
 // This impl is similar to the impl on Cow and is safe for the same reasons
 /// This impl requires enabling the optional `yoke` Cargo feature of the `zerovec` crate
-unsafe impl<'a, T: 'static + AsULE + ?Sized> Yokeable<'a> for ZeroVec<'static, T> {
+unsafe impl<'a, T: 'static + AsULE> Yokeable<'a> for ZeroVec<'static, T> {
     type Output = ZeroVec<'a, T>;
     #[inline]
     fn transform(&'a self) -> &'a Self::Output {
@@ -302,14 +302,14 @@ mod test {
 
     #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-    #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerovec::yoke_impls::test))]
+    #[cfg_attr(feature = "databake", derive(databake::Bake))]
+    #[cfg_attr(feature = "databake", databake(path = zerovec::yoke_impls::test))]
     struct DeriveTest_ZeroVec<'data> {
         #[cfg_attr(feature = "serde", serde(borrow))]
         _data: ZeroVec<'data, u16>,
     }
 
     #[test]
-    #[ignore] // https://github.com/rust-lang/rust/issues/98906
     fn bake_ZeroVec() {
         test_bake!(
             DeriveTest_ZeroVec<'static>,
@@ -322,7 +322,8 @@ mod test {
 
     #[derive(yoke::Yokeable)]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-    #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerovec::yoke_impls::test))]
+    #[cfg_attr(feature = "databake", derive(databake::Bake))]
+    #[cfg_attr(feature = "databake", databake(path = zerovec::yoke_impls::test))]
     struct DeriveTest_ZeroSlice<'data> {
         #[cfg_attr(feature = "serde", serde(borrow))]
         _data: &'data ZeroSlice<u16>,
@@ -341,7 +342,8 @@ mod test {
 
     #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-    #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerovec::yoke_impls::test))]
+    #[cfg_attr(feature = "databake", derive(databake::Bake))]
+    #[cfg_attr(feature = "databake", databake(path = zerovec::yoke_impls::test))]
     struct DeriveTest_FlexZeroVec<'data> {
         #[cfg_attr(feature = "serde", serde(borrow))]
         _data: FlexZeroVec<'data>,
@@ -360,7 +362,8 @@ mod test {
 
     #[derive(yoke::Yokeable)]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-    #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerovec::yoke_impls::test))]
+    #[cfg_attr(feature = "databake", derive(databake::Bake))]
+    #[cfg_attr(feature = "databake", databake(path = zerovec::yoke_impls::test))]
     struct DeriveTest_FlexZeroSlice<'data> {
         #[cfg_attr(feature = "serde", serde(borrow))]
         _data: &'data FlexZeroSlice,
@@ -379,7 +382,8 @@ mod test {
 
     #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-    #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerovec::yoke_impls::test))]
+    #[cfg_attr(feature = "databake", derive(databake::Bake))]
+    #[cfg_attr(feature = "databake", databake(path = zerovec::yoke_impls::test))]
     struct DeriveTest_VarZeroVec<'data> {
         #[cfg_attr(feature = "serde", serde(borrow))]
         _data: VarZeroVec<'data, str>,
@@ -398,7 +402,8 @@ mod test {
 
     #[derive(yoke::Yokeable)]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-    #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerovec::yoke_impls::test))]
+    #[cfg_attr(feature = "databake", derive(databake::Bake))]
+    #[cfg_attr(feature = "databake", databake(path = zerovec::yoke_impls::test))]
     struct DeriveTest_VarZeroSlice<'data> {
         #[cfg_attr(feature = "serde", serde(borrow))]
         _data: &'data VarZeroSlice<str>,
@@ -417,7 +422,8 @@ mod test {
 
     #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-    #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerovec::yoke_impls::test))]
+    #[cfg_attr(feature = "databake", derive(databake::Bake))]
+    #[cfg_attr(feature = "databake", databake(path = zerovec::yoke_impls::test))]
     #[yoke(prove_covariance_manually)]
     struct DeriveTest_ZeroMap<'data> {
         #[cfg_attr(feature = "serde", serde(borrow))]
@@ -443,7 +449,8 @@ mod test {
 
     #[derive(yoke::Yokeable)]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-    #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerovec::yoke_impls::test))]
+    #[cfg_attr(feature = "databake", derive(databake::Bake))]
+    #[cfg_attr(feature = "databake", databake(path = zerovec::yoke_impls::test))]
     #[yoke(prove_covariance_manually)]
     struct DeriveTest_ZeroMapBorrowed<'data> {
         #[cfg_attr(feature = "serde", serde(borrow))]
@@ -469,7 +476,8 @@ mod test {
 
     #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-    #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerovec::yoke_impls::test))]
+    #[cfg_attr(feature = "databake", derive(databake::Bake))]
+    #[cfg_attr(feature = "databake", databake(path = zerovec::yoke_impls::test))]
     #[yoke(prove_covariance_manually)]
     struct DeriveTest_ZeroMapWithULE<'data> {
         #[cfg_attr(feature = "serde", serde(borrow))]
@@ -495,7 +503,8 @@ mod test {
 
     #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-    #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerovec::yoke_impls::test))]
+    #[cfg_attr(feature = "databake", derive(databake::Bake))]
+    #[cfg_attr(feature = "databake", databake(path = zerovec::yoke_impls::test))]
     #[yoke(prove_covariance_manually)]
     struct DeriveTest_ZeroMap2d<'data> {
         #[cfg_attr(feature = "serde", serde(borrow))]
@@ -523,7 +532,8 @@ mod test {
 
     #[derive(yoke::Yokeable)]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-    #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerovec::yoke_impls::test))]
+    #[cfg_attr(feature = "databake", derive(databake::Bake))]
+    #[cfg_attr(feature = "databake", databake(path = zerovec::yoke_impls::test))]
     #[yoke(prove_covariance_manually)]
     struct DeriveTest_ZeroMap2dBorrowed<'data> {
         #[cfg_attr(feature = "serde", serde(borrow))]

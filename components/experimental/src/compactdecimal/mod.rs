@@ -19,12 +19,11 @@
 )]
 #![warn(missing_docs)]
 
-mod compactdecimal;
 mod error;
 mod format;
+mod formatter;
+mod options;
 pub mod provider;
 
-pub use compactdecimal::CompactDecimalFormatter;
-pub use error::CompactDecimalError;
-#[doc(no_inline)]
-pub use CompactDecimalError as Error;
+pub use error::ExponentError;
+pub use formatter::CompactDecimalFormatter;

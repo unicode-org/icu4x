@@ -9,9 +9,9 @@ use alloc::format;
 use alloc::string::{String, ToString};
 use alloc::vec::Vec;
 use core::cell::RefCell;
-use icu_locid::Locale;
+use icu_locale_core::Locale;
 use icu_normalizer::provider::*;
-use icu_properties::{provider::*, sets, PropertiesError};
+use icu_properties::{provider::*, sets};
 use icu_provider::prelude::*;
 
 mod parse;
@@ -94,7 +94,7 @@ pub struct RuleCollection {
     id_mapping: BTreeMap<String, Locale>, // alias -> bcp id
     // these two maps need to lock together
     data: RefCell<(
-        BTreeMap<String, (String, bool, bool)>, // locale -> source/reverse/visible
+        BTreeMap<String, (String, bool, bool)>, // marker-attributes -> source/reverse/visible
         BTreeMap<String, Result<DataResponse<TransliteratorRulesV1Marker>, DataError>>, // cache
     )>,
 }
@@ -103,21 +103,30 @@ impl RuleCollection {
     /// Add a new transliteration source to the collection.
     pub fn register_source<'a>(
         &mut self,
-        id: &icu_locid::Locale,
+        id: &icu_locale_core::Locale,
         source: String,
         aliases: impl IntoIterator<Item = &'a str>,
         reverse: bool,
         visible: bool,
     ) {
         self.data.borrow_mut().0.insert(
-            super::ids::bcp47_to_data_locale(id).to_string(),
+            id.to_string().to_ascii_lowercase(),
             (source, reverse, visible),
         );
+        self.register_aliases(id, aliases)
+    }
 
-        for alias in aliases.into_iter() {
-            self.id_mapping
-                .insert(alias.to_ascii_lowercase(), id.clone());
-        }
+    /// Add transliteration ID aliases without registering a source.
+    pub fn register_aliases<'a>(
+        &mut self,
+        id: &icu_locale_core::Locale,
+        aliases: impl IntoIterator<Item = &'a str>,
+    ) {
+        self.id_mapping.extend(
+            aliases
+                .into_iter()
+                .map(|alias| (alias.to_ascii_lowercase(), id.clone())),
+        )
     }
 
     /// Returns a provider that is usable by [`Transliterator::try_new_unstable`](crate::transliterate::Transliterator::try_new_unstable).
@@ -214,28 +223,18 @@ impl RuleCollection {
             + DataProvider<CompatibilityDecompositionTablesV1Marker>
             + DataProvider<CanonicalCompositionsV1Marker>,
     {
-        let unwrap_props_data_error = |e| {
-            let PropertiesError::PropDataLoad(e) = e else {
-                unreachable!()
-            };
-            e
-        };
-
         Ok(RuleCollectionProvider {
             collection: self,
             properties_provider,
             normalizer_provider,
-            xid_start: sets::load_xid_start(properties_provider)
-                .map_err(unwrap_props_data_error)?,
-            xid_continue: sets::load_xid_continue(properties_provider)
-                .map_err(unwrap_props_data_error)?,
-            pat_ws: sets::load_pattern_white_space(properties_provider)
-                .map_err(unwrap_props_data_error)?,
+            xid_start: sets::load_xid_start(properties_provider)?,
+            xid_continue: sets::load_xid_continue(properties_provider)?,
+            pat_ws: sets::load_pattern_white_space(properties_provider)?,
         })
     }
 }
 
-/// A provider that is usable by [`Transliterator::try_new_unstable`](crate::Transliterator::try_new_unstable).
+/// A provider that is usable by [`Transliterator::try_new_unstable`](crate::transliterate::Transliterator::try_new_unstable).
 #[derive(Debug)]
 pub struct RuleCollectionProvider<'a, PP: ?Sized, NP: ?Sized> {
     collection: &'a RuleCollection,
@@ -316,19 +315,18 @@ where
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<TransliteratorRulesV1Marker>, DataError> {
-        let locale = req.locale.to_string();
-
         let mut exclusive_data = self.collection.data.borrow_mut();
 
-        if let Some(response) = exclusive_data.1.get(&locale) {
+        if let Some(response) = exclusive_data.1.get(req.id.marker_attributes.as_str()) {
             return response.clone();
         };
 
-        let result = |value: Option<(String, bool, bool)>| -> Result<DataResponse<TransliteratorRulesV1Marker>, DataError> {
-            let Some((source, reverse, visible)) = value else {
-                return Err(
-                    DataErrorKind::MissingLocale.with_req(TransliteratorRulesV1Marker::KEY, req)
-                );
+        let result = || -> Result<DataResponse<TransliteratorRulesV1Marker>, DataError> {
+            let Some((source, reverse, visible)) =
+                exclusive_data.0.remove(req.id.marker_attributes as &str)
+            else {
+                return Err(DataErrorKind::IdentifierNotFound
+                    .with_req(TransliteratorRulesV1Marker::INFO, req));
             };
 
             let rules = parse::Parser::run(
@@ -340,7 +338,7 @@ where
             )
             .map_err(|e| {
                 e.explain(&source)
-                    .with_req(TransliteratorRulesV1Marker::KEY, req)
+                    .with_req(TransliteratorRulesV1Marker::INFO, req)
             })?;
 
             let pass1 = pass1::Pass1::run(
@@ -353,7 +351,7 @@ where
             )
             .map_err(|e| {
                 e.explain(&source)
-                    .with_req(TransliteratorRulesV1Marker::KEY, req)
+                    .with_req(TransliteratorRulesV1Marker::INFO, req)
             })?;
 
             let mut transliterator = pass2::Pass2::run(
@@ -367,18 +365,20 @@ where
             )
             .map_err(|e| {
                 e.explain(&source)
-                    .with_req(TransliteratorRulesV1Marker::KEY, req)
+                    .with_req(TransliteratorRulesV1Marker::INFO, req)
             })?;
 
             transliterator.visibility = visible;
 
             Ok(DataResponse {
                 metadata: Default::default(),
-                payload: Some(DataPayload::from_owned(transliterator)),
+                payload: DataPayload::from_owned(transliterator),
             })
-        }(exclusive_data.0.remove(&locale));
+        }();
 
-        exclusive_data.1.insert(locale, result.clone());
+        exclusive_data
+            .1
+            .insert(req.id.marker_attributes.to_string(), result.clone());
 
         result
     }
@@ -405,7 +405,7 @@ redirect!(
 );
 
 #[cfg(feature = "datagen")]
-impl<PP, NP> icu_provider::datagen::IterableDataProvider<TransliteratorRulesV1Marker>
+impl<PP, NP> IterableDataProvider<TransliteratorRulesV1Marker>
     for RuleCollectionProvider<'_, PP, NP>
 where
     PP: ?Sized
@@ -472,16 +472,19 @@ where
         + DataProvider<XidStartV1Marker>,
     NP: ?Sized,
 {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn iter_ids(&self) -> Result<std::collections::BTreeSet<DataIdentifierCow>, DataError> {
         let exclusive_data = self.collection.data.borrow();
-        #[allow(clippy::unwrap_used)] // the maps' keys are valid DataLocales
         Ok(exclusive_data
             .0
             .keys()
             .cloned()
             .chain(exclusive_data.1.keys().cloned())
-            .map(|s| s.parse().unwrap())
-            .collect::<Vec<_>>())
+            .filter_map(|s| {
+                Some(DataIdentifierCow::from_marker_attributes_owned(
+                    DataMarkerAttributes::try_from_string(s).ok()?,
+                ))
+            })
+            .collect())
     }
 }
 
@@ -595,7 +598,7 @@ mod tests {
 
     use super::*;
     use crate::transliterate::provider as ds;
-    use icu_locid::locale;
+    use icu_locale_core::locale;
     use std::collections::HashSet;
     use zerovec::VarZeroVec;
 
@@ -644,24 +647,25 @@ mod tests {
             true,
         );
 
-        let forward: DataPayload<TransliteratorRulesV1Marker> = collection
+        let forward: DataResponse<TransliteratorRulesV1Marker> = collection
             .as_provider()
             .load(DataRequest {
-                locale: &super::super::ids::bcp47_to_data_locale(&locale!("fwd")),
-                metadata: Default::default(),
+                id: DataIdentifierBorrowed::for_marker_attributes(
+                    DataMarkerAttributes::from_str_or_panic("fwd"),
+                ),
+                ..Default::default()
             })
-            .unwrap()
-            .take_payload()
             .unwrap();
 
-        let reverse: DataPayload<TransliteratorRulesV1Marker> = collection
+        let reverse: DataResponse<TransliteratorRulesV1Marker> = collection
             .as_provider()
             .load(DataRequest {
-                locale: &super::super::ids::bcp47_to_data_locale(&locale!("rev")),
-                metadata: Default::default(),
+                id: DataIdentifierBorrowed::for_marker_attributes(
+                    DataMarkerAttributes::from_str_or_panic("rev"),
+                ),
+
+                ..Default::default()
             })
-            .unwrap()
-            .take_payload()
             .unwrap();
         {
             let expected_filter = parse_set_cp("[1]");
@@ -754,10 +758,10 @@ mod tests {
                 variable_table: expected_var_table,
                 visibility: true,
             };
-            assert_eq!(*forward.get(), expected_rbt);
+            assert_eq!(*forward.payload.get(), expected_rbt);
 
             assert_eq!(
-                forward.get().deps().collect::<HashSet<_>>(),
+                forward.payload.get().deps().collect::<HashSet<_>>(),
                 HashSet::from_iter([
                     Cow::Borrowed("x-any-nfc"),
                     Cow::Borrowed("x-any-remove"),
@@ -859,10 +863,10 @@ mod tests {
                 variable_table: expected_var_table,
                 visibility: true,
             };
-            assert_eq!(*reverse.get(), expected_rbt);
+            assert_eq!(*reverse.payload.get(), expected_rbt);
 
             assert_eq!(
-                reverse.get().deps().collect::<HashSet<_>>(),
+                reverse.payload.get().deps().collect::<HashSet<_>>(),
                 HashSet::from_iter([
                     Cow::Borrowed("und-t-d0-addrndsp-m0-fifty-s0-anyrev"),
                     Cow::Borrowed("x-any-nfd"),

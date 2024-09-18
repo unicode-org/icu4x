@@ -5,14 +5,14 @@
 [package]
 name = "ixdtf"
 description = "Parser for Internet eXtended DateTime Format"
-version = "0.1.0"
-license = "Unicode-3.0"
+version = "0.2.0"
 
 authors.workspace = true
 categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true
+license.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 
@@ -28,6 +28,7 @@ duration = []
 
 [dependencies]
 displaydoc = { workspace = true }
+utf8_iter.workspace = true
 
 [dev-dependencies]
 serde-json-core = { workspace = true, features = ["std"] }

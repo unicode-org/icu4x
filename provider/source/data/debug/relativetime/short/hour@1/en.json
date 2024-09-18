@@ -1,0 +1,21 @@
+{
+  "relatives": {
+    "0": "this hour"
+  },
+  "past": {
+    "strings": {
+      "other": [
+        0,
+        "\u0001 hr. ago"
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "other": [
+        0,
+        "\u0004in  hr."
+      ]
+    }
+  }
+}

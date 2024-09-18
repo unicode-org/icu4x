@@ -1,0 +1,23 @@
+{
+  "relatives": {
+    "-1": "l’année dernière",
+    "0": "cette année",
+    "1": "l’année prochaine"
+  },
+  "past": {
+    "strings": {
+      "other": [
+        0,
+        "\u0002- a"
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "other": [
+        0,
+        "\u0002+ a"
+      ]
+    }
+  }
+}

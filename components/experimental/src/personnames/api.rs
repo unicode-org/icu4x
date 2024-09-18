@@ -6,7 +6,7 @@ use alloc::string::String;
 use alloc::vec::Vec;
 use core::fmt;
 use displaydoc::Display;
-use icu_locid::Locale;
+use icu_locale_core::Locale;
 use icu_provider::DataError;
 
 /// Trait for providing person name data.
@@ -46,20 +46,12 @@ pub enum PersonNamesFormatterError {
     #[displaydoc("{0}")]
     Data(DataError),
     #[displaydoc("{0}")]
-    Properties(icu_properties::Error),
-    #[displaydoc("{0}")]
     Pattern(icu_pattern::Error),
 }
 
 impl From<DataError> for PersonNamesFormatterError {
     fn from(e: DataError) -> Self {
         PersonNamesFormatterError::Data(e)
-    }
-}
-
-impl From<icu_properties::Error> for PersonNamesFormatterError {
-    fn from(e: icu_properties::Error) -> Self {
-        PersonNamesFormatterError::Properties(e)
     }
 }
 
@@ -351,7 +343,7 @@ impl PersonNamesFormatterOptions {
         usage: FormattingUsage,
         formality: FormattingFormality,
     ) -> Self {
-        let lc = icu_locid_transform::LocaleExpander::new();
+        let lc = icu_locale::LocaleExpander::new();
         let mut final_locale = target_locale.clone();
         lc.maximize(&mut final_locale);
         Self {

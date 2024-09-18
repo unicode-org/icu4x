@@ -56,7 +56,7 @@
 //!
 //! ```
 //! use icu::datetime::options::components;
-//! use icu::datetime::DateTimeFormatterOptions;
+//! use icu::datetime::options::DateTimeFormatterOptions;
 //!
 //! let mut bag = components::Bag::default();
 //! bag.year = Some(components::Year::Numeric);
@@ -74,20 +74,25 @@
 //!
 //! ```
 //! use icu::datetime::options::components;
-//! use icu::datetime::DateTimeFormatterOptions;
+//! use icu::datetime::options::DateTimeFormatterOptions;
 //! let options: DateTimeFormatterOptions = components::Bag::default().into();
 //! ```
 //!
-//! *Note*: The exact result returned from [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter) is a subject to change over
+//! *Note*: The exact formatted result is a subject to change over
 //! time. Formatted result should be treated as opaque and displayed to the user as-is,
 //! and it is strongly recommended to never write tests that expect a particular formatted output.
 
 use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
-    pattern::{runtime::PatternPlurals, PatternItem},
+    neo_skeleton::FractionalSecondDigits,
+    pattern::{
+        runtime::{Pattern, PatternPlurals},
+        PatternItem,
+    },
 };
 
 use super::preferences;
+use crate::neo_pattern::DateTimePattern;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -123,7 +128,7 @@ pub struct Bag {
     /// Include the second such as "3" or "03".
     pub second: Option<Numeric>,
     /// Specify the number of fractional second digits such as 1 (".3") or 3 (".003").
-    pub fractional_second: Option<u8>,
+    pub fractional_second: Option<FractionalSecondDigits>,
 
     /// Include the time zone, such as "GMT+05:00".
     pub time_zone_name: Option<TimeZoneName>,
@@ -167,7 +172,7 @@ impl Bag {
     ///
     /// - `default_hour_cycle` specifies the hour cycle to use for the hour field if not in the Bag.
     ///   `preferences::Bag::hour_cycle` takes precedence over this argument.
-    #[cfg(any(test, feature = "datagen", feature = "experimental"))]
+    #[cfg(any(test, feature = "datagen"))]
     pub(crate) fn to_vec_fields(
         &self,
         default_hour_cycle: preferences::HourCycle,
@@ -347,24 +352,23 @@ impl Bag {
         }
 
         if let Some(second) = self.second {
+            let symbol = match self.fractional_second {
+                None => FieldSymbol::Second(fields::Second::Second),
+                Some(fractional_second) => {
+                    FieldSymbol::from_fractional_second_digits(fractional_second)
+                }
+            };
             // s    8, 12    Numeric: minimum digits
             // ss  08, 12    Numeric: 2 digits, zero pad if needed
             fields.push(Field {
-                symbol: FieldSymbol::Second(fields::Second::Second),
+                symbol,
                 length: match second {
                     Numeric::Numeric => FieldLength::One,
                     Numeric::TwoDigit => FieldLength::TwoDigit,
                 },
             });
+            // S - Fractional seconds. Represented as DecimalSecond.
             // A - Milliseconds in day. Not used in skeletons.
-        }
-
-        if let Some(precision) = self.fractional_second {
-            // S - Fractional seconds.
-            fields.push(Field {
-                symbol: FieldSymbol::Second(fields::Second::FractionalSecond),
-                length: FieldLength::Fixed(precision),
-            });
         }
 
         if self.time_zone_name.is_some() {
@@ -570,29 +574,29 @@ pub enum TimeZoneName {
     ShortSpecific,
 
     // UTS-35 fields: zzzz
-    // Per UTS-35: [long form] specific non-location (falling back to long localized GMT)
+    // Per UTS-35: [long form] specific non-location (falling back to long localized offset)
     /// Long localized form, without the location (e.g., Pacific Standard Time, Nordamerikanische Westküsten-Normalzeit)
     LongSpecific,
 
     // UTS-35 fields: O, OOOO
-    // Per UTS-35: The long localized GMT format. This is equivalent to the "OOOO" specifier
-    // Per UTS-35: Short localized GMT format (e.g., GMT-8)
+    // Per UTS-35: The long localized offset format. This is equivalent to the "OOOO" specifier
+    // Per UTS-35: Short localized offset format (e.g., GMT-8)
     // This enum variant is combining the two types of fields, as the CLDR specifies the preferred
     // hour-format for the locale, and ICU4X uses the preferred one.
     //   e.g.
     //   https://github.com/unicode-org/cldr-json/blob/c23635f13946292e40077fd62aee6a8e122e7689/cldr-json/cldr-dates-full/main/es-MX/timeZoneNames.json#L13
-    /// Localized GMT format, in the locale's preferred hour format. (e.g., GMT-0800),
-    GmtOffset,
+    /// Localized offset format, in the locale's preferred hour format. (e.g., GMT-0800),
+    Offset,
 
     // UTS-35 fields: v
     //   * falling back to generic location (See UTS 35 for more specific rules)
-    //   * falling back to short localized GMT
+    //   * falling back to short localized offset
     /// Short generic non-location format (e.g.: PT, Los Angeles, Zeit).
     ShortGeneric,
 
     // UTS-35 fields: vvvv
     //  * falling back to generic location (See UTS 35 for more specific rules)
-    //  * falling back to long localized GMT
+    //  * falling back to long localized offset
     /// Long generic non-location format (e.g.: Pacific Time, Nordamerikanische Westküstenzeit),
     LongGeneric,
 }
@@ -608,7 +612,7 @@ impl From<TimeZoneName> for Field {
                 symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerZ),
                 length: FieldLength::Wide,
             },
-            TimeZoneName::GmtOffset => Field {
+            TimeZoneName::Offset => Field {
                 symbol: FieldSymbol::TimeZone(fields::TimeZone::UpperO),
                 length: FieldLength::Wide,
             },
@@ -632,7 +636,18 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
             PatternPlurals::SinglePattern(pattern) => pattern,
             PatternPlurals::MultipleVariants(plural_pattern) => &plural_pattern.other,
         };
+        Self::from(pattern)
+    }
+}
 
+impl From<&DateTimePattern> for Bag {
+    fn from(value: &DateTimePattern) -> Self {
+        Self::from(value.as_borrowed().0)
+    }
+}
+
+impl<'data> From<&Pattern<'data>> for Bag {
+    fn from(pattern: &Pattern) -> Self {
         let mut bag: Bag = Default::default();
 
         // Transform the fields into components per:
@@ -650,9 +665,7 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                         | FieldLength::TwoDigit
                         | FieldLength::Abbreviated => Text::Short,
                         FieldLength::Wide => Text::Long,
-                        FieldLength::Narrow | FieldLength::Six | FieldLength::Fixed(_) => {
-                            Text::Narrow
-                        }
+                        FieldLength::Narrow | FieldLength::Six => Text::Narrow,
                     });
                 }
                 FieldSymbol::Year(year) => {
@@ -665,7 +678,8 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                             FieldLength::TwoDigit => Year::TwoDigitWeekOf,
                             _ => Year::NumericWeekOf,
                         },
-                        _ => todo!("TODO(#3762): Add support for U and r"),
+                        // TODO(#3762): Add support for U and r
+                        _ => Year::Numeric,
                     });
                 }
                 FieldSymbol::Month(_) => {
@@ -677,9 +691,7 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                         FieldLength::TwoDigit => Month::TwoDigit,
                         FieldLength::Abbreviated => Month::Short,
                         FieldLength::Wide => Month::Long,
-                        FieldLength::Narrow | FieldLength::Six | FieldLength::Fixed(_) => {
-                            Month::Narrow
-                        }
+                        FieldLength::Narrow | FieldLength::Six => Month::Narrow,
                     });
                 }
                 FieldSymbol::Week(week) => {
@@ -742,9 +754,7 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                             }
                             FieldLength::Abbreviated => Text::Short,
                             FieldLength::Wide => Text::Long,
-                            FieldLength::Narrow | FieldLength::Six | FieldLength::Fixed(_) => {
-                                Text::Narrow
-                            }
+                            FieldLength::Narrow | FieldLength::Six => Text::Narrow,
                         },
                         fields::Weekday::Local => unimplemented!("fields::Weekday::Local"),
                     });
@@ -780,17 +790,28 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                                 _ => Numeric::Numeric,
                             });
                         }
-                        fields::Second::FractionalSecond => {
-                            if let FieldLength::Fixed(p) = field.length {
-                                if p > 0 {
-                                    bag.fractional_second = Some(p);
-                                }
-                            }
-                        }
                         fields::Second::Millisecond => {
                             // fields::Second::Millisecond is not implemented (#1834)
                         }
                     }
+                }
+                FieldSymbol::DecimalSecond(decimal_second) => {
+                    use FractionalSecondDigits::*;
+                    bag.second = Some(match field.length {
+                        FieldLength::TwoDigit => Numeric::TwoDigit,
+                        _ => Numeric::Numeric,
+                    });
+                    bag.fractional_second = Some(match decimal_second {
+                        fields::DecimalSecond::SecondF1 => F1,
+                        fields::DecimalSecond::SecondF2 => F2,
+                        fields::DecimalSecond::SecondF3 => F3,
+                        fields::DecimalSecond::SecondF4 => F4,
+                        fields::DecimalSecond::SecondF5 => F5,
+                        fields::DecimalSecond::SecondF6 => F6,
+                        fields::DecimalSecond::SecondF7 => F7,
+                        fields::DecimalSecond::SecondF8 => F8,
+                        fields::DecimalSecond::SecondF9 => F9,
+                    });
                 }
                 FieldSymbol::TimeZone(time_zone_name) => {
                     bag.time_zone_name = Some(match time_zone_name {
@@ -802,7 +823,7 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                             FieldLength::One => TimeZoneName::ShortGeneric,
                             _ => TimeZoneName::LongGeneric,
                         },
-                        fields::TimeZone::UpperO => TimeZoneName::GmtOffset,
+                        fields::TimeZone::UpperO => TimeZoneName::Offset,
                         fields::TimeZone::UpperZ => unimplemented!("fields::TimeZone::UpperZ"),
                         fields::TimeZone::UpperV => unimplemented!("fields::TimeZone::UpperV"),
                         fields::TimeZone::LowerX => unimplemented!("fields::TimeZone::LowerX"),
@@ -835,7 +856,7 @@ mod test {
             hour: Some(Numeric::Numeric),
             minute: Some(Numeric::Numeric),
             second: Some(Numeric::Numeric),
-            fractional_second: Some(3),
+            fractional_second: Some(FractionalSecondDigits::F3),
 
             ..Default::default()
         };
@@ -848,10 +869,9 @@ mod test {
                 (Symbol::Day(fields::Day::DayOfMonth), Length::One).into(),
                 (Symbol::Hour(fields::Hour::H23), Length::One).into(),
                 (Symbol::Minute, Length::One).into(),
-                (Symbol::Second(fields::Second::Second), Length::One).into(),
                 (
-                    Symbol::Second(fields::Second::FractionalSecond),
-                    Length::Fixed(3)
+                    Symbol::DecimalSecond(fields::DecimalSecond::SecondF3),
+                    Length::One
                 )
                     .into(),
             ]

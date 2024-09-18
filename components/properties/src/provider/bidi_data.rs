@@ -22,8 +22,7 @@
 use displaydoc::Display;
 use icu_collections::codepointtrie::{CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
-use zerovec::ule::{AsULE, CharULE, ULE};
-use zerovec::ZeroVecError;
+use zerovec::ule::{AsULE, CharULE, UleError, ULE};
 
 /// A data provider struct for properties related to Bidi algorithms, including
 /// mirroring and bracket pairing.
@@ -39,11 +38,8 @@ use zerovec::ZeroVecError;
     singleton
 ))]
 #[derive(Debug, Eq, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_properties::provider::bidi_data),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties::provider::bidi_data))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct BidiAuxiliaryPropertiesV1<'data> {
     /// A `CodePointTrie` efficiently storing the data from which property values
@@ -52,23 +48,17 @@ pub struct BidiAuxiliaryPropertiesV1<'data> {
     pub trie: CodePointTrie<'data, MirroredPairedBracketData>,
 }
 
-impl<'data> BidiAuxiliaryPropertiesV1<'data> {
-    #[doc(hidden)]
-    pub fn new(
-        trie: CodePointTrie<'data, MirroredPairedBracketData>,
-    ) -> BidiAuxiliaryPropertiesV1<'data> {
-        BidiAuxiliaryPropertiesV1 { trie }
-    }
-}
-
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::provider::bidi_data))]
-#[doc(hidden)] // needed for datagen but not intended for users
+/// MirroredPairedBracketData
 pub struct MirroredPairedBracketData {
+    /// The mirroring glyph
     pub mirroring_glyph: char,
+    /// Whether the glyph is mirrored
     pub mirrored: bool,
+    /// The paired bracket type
     pub paired_bracket_type: CheckedBidiPairedBracketType,
 }
 
@@ -143,20 +133,19 @@ pub enum CheckedBidiPairedBracketType {
     Close = 2,
 }
 
-/// Bit layout for the 24 bits (0..=23) of the `[u8; 3]` ULE raw type.
-/// LE means first byte is 0..=7, second byte 8..=15, third byte is 16..=23
-///  0..=20  Code point return value for Bidi_Mirroring_Glyph value
-///    extracted with: mask = 0x1FFFFF <=> [bytes[0], bytes[1], bytes[2] & 0x1F]
-///  21..=21 Boolean for Bidi_Mirrored
-///    extracted with: bitshift right by 21 followed by mask = 0x1 <=> (bytes[2] >> 5) & 0x1
-///  22..=23 Enum discriminant value for Bidi_Paired_Bracket_Type
-///    extracted with: bitshift right by 22 followed by mask = 0x3 <=> (bytes[2] >> 6) & 0x3
-///                    <=> (bytes[2] >> 6) b/c we left fill with 0s on bitshift right for unsigned
+/// Bit layout for the 24 bits `(0..=23)` of the `[u8; 3]` ULE raw type.
+/// LE means first byte is `0..=7`, second byte `8..=15`, third byte is `16..=23`
+///  `0..=20`  Code point return value for `Bidi_Mirroring_Glyph` value
+///    extracted with: `mask = 0x1FFFFF` <=> `[bytes[0], bytes[1], bytes[2] & 0x1F]`
+///  `21..=21` Boolean for `Bidi_Mirrored`
+///    extracted with: bitshift right by 21 followed by `mask = 0x1` <=> `(bytes[2] >> 5) & 0x1`
+///  `22..=23` Enum discriminant value for `Bidi_Paired_Bracket_Type`
+///    extracted with: bitshift right by 22 followed by `mask = 0x3` <=> `(bytes[2] >> 6) & 0x3`
+///                    <=> `(bytes[2] >> 6)` b/c we left fill with 0s on bitshift right for unsigned
 ///                         numbers and a byte has 8 bits
-#[doc(hidden)]
 /// needed for datagen but not intended for users
 #[derive(Copy, Clone, Hash, PartialEq, Eq, Debug)]
-#[repr(packed)]
+#[repr(C, packed)]
 pub struct MirroredPairedBracketDataULE([u8; 3]);
 
 // Safety (based on the safety checklist on the ULE trait):
@@ -171,9 +160,9 @@ pub struct MirroredPairedBracketDataULE([u8; 3]);
 //     are used, so no unused bits requires no extra work to zero out unused bits
 unsafe impl ULE for MirroredPairedBracketDataULE {
     #[inline]
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
         if bytes.len() % 3 != 0 {
-            return Err(ZeroVecError::length::<Self>(bytes.len()));
+            return Err(UleError::length::<Self>(bytes.len()));
         }
         // Validate the bytes
         #[allow(clippy::indexing_slicing)] // Won't panic because the chunks are always 3 bytes long
@@ -185,14 +174,14 @@ unsafe impl ULE for MirroredPairedBracketDataULE {
             mirroring_glyph_code_point = (mirroring_glyph_code_point << 8) | (byte1 as u32);
             mirroring_glyph_code_point = (mirroring_glyph_code_point << 8) | (byte0 as u32);
             let _mirroring_glyph =
-                char::from_u32(mirroring_glyph_code_point).ok_or(ZeroVecError::parse::<Self>())?;
+                char::from_u32(mirroring_glyph_code_point).ok_or(UleError::parse::<Self>())?;
 
             // skip validating the Bidi_Mirrored boolean since it is always valid
 
             // assert that Bidi_Paired_Bracket_Type cannot have a 4th value because it only
             // has 3 values: Open, Close, None
             if (byte2 & 0xC0) == 0xC0 {
-                return Err(ZeroVecError::parse::<Self>());
+                return Err(UleError::parse::<Self>());
             }
         }
 

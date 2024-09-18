@@ -28,12 +28,12 @@
 //! Compiled data is exposed through idiomatic Rust constructors like `new` or `try_new`:
 //!
 //! ```
-//! use icu::datetime::DateTimeFormatter;
-//! use icu::locid::locale;
+//! use icu::datetime::{NeoFormatter, NeoSkeletonLength, neo_marker::NeoAutoDateMarker};
+//! use icu::locale::locale;
 //!
-//! let dtf = DateTimeFormatter::try_new(
+//! let dtf = NeoFormatter::<NeoAutoDateMarker>::try_new(
 //!     &locale!("es-US").into(),
-//!     Default::default(),
+//!     NeoSkeletonLength::Medium.into(),
 //! )
 //! .expect("compiled data should include 'es-US'");
 //! ```
@@ -51,8 +51,9 @@
 //! special constructors:
 //!
 //! ```no_run
-//! use icu::datetime::DateTimeFormatter;
-//! use icu::locid::locale;
+//! use icu::datetime::{NeoFormatter, NeoSkeletonLength, neo_marker::NeoAutoDateMarker};
+//! use icu::locale::locale;
+//! use icu::locale::fallback::LocaleFallbacker;
 //! use icu_provider_adapters::fallback::LocaleFallbackProvider;
 //! use icu_provider_blob::BlobDataProvider;
 //!
@@ -61,14 +62,15 @@
 //! let provider = BlobDataProvider::try_new_from_blob(data)
 //!     .expect("data should be valid");
 //!
-//! let provider =
-//!     LocaleFallbackProvider::try_new_with_buffer_provider(provider)
+//! let fallbacker = LocaleFallbacker::try_new_with_buffer_provider(&provider)
 //!         .expect("provider should include fallback data");
 //!
-//! let dtf = DateTimeFormatter::try_new_with_buffer_provider(
+//! let provider = LocaleFallbackProvider::new(provider, fallbacker);
+//!
+//! let dtf = NeoFormatter::<NeoAutoDateMarker>::try_new_with_buffer_provider(
 //!     &provider,
 //!     &locale!("es-US").into(),
-//!     Default::default(),
+//!     NeoSkeletonLength::Medium.into(),
 //! )
 //! .expect("data should include 'es-US', 'es', or 'und'");
 //! ```
@@ -120,14 +122,10 @@
 //!
 //! [CLDR]: http://cldr.unicode.org/
 //! [`DataProvider`]: icu_provider::DataProvider
-//! [`DataPayload`]: icu_provider::DataPayload
 //! [`FsDataProvider`]: https://docs.rs/icu_provider_fs/latest/icu_provider_fs/struct.FsDataProvider.html
 //! [`BlobDataProvider`]: https://docs.rs/icu_provider_blob/latest/icu_provider_blob/struct.BlobDataProvider.html
 //! [`icu_provider_adapters`]: https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/
-//! [`icu_datagen`]: https://docs.rs/icu_datagen/latest/icu_datagen/
-//! [`Locale`]: crate::locid::Locale
-//! [`SymbolsV1`]: crate::decimal::provider::DecimalSymbolsV1
-//! [`icu4x-datagen`]: https://docs.rs/icu_datagen/latest/icu_datagen/
+//! [`Locale`]: crate::locale::Locale
 //! [data management tutorial]: https://github.com/unicode-org/icu4x/blob/main/tutorials/data_provider.md#loading-additional-data-at-runtime
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
@@ -169,10 +167,7 @@ pub use icu_decimal as decimal;
 pub use icu_list as list;
 
 #[doc(inline)]
-pub use icu_locid_transform as locid_transform;
-
-#[doc(inline)]
-pub use icu_locid as locid;
+pub use icu_locale as locale;
 
 #[doc(inline)]
 pub use icu_normalizer as normalizer;
@@ -195,3 +190,8 @@ pub use icu_timezone as timezone;
 #[doc(inline)]
 #[cfg(feature = "experimental")]
 pub use icu_experimental as experimental;
+
+#[cfg(feature = "datagen")]
+mod datagen;
+#[cfg(feature = "datagen")]
+pub use datagen::*;

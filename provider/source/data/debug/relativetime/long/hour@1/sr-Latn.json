@@ -1,0 +1,37 @@
+{
+  "relatives": {
+    "0": "ovog sata"
+  },
+  "past": {
+    "strings": {
+      "one": [
+        0,
+        "\u0005pre  sata"
+      ],
+      "few": [
+        0,
+        "\u0005pre  sata"
+      ],
+      "other": [
+        0,
+        "\u0005pre  sati"
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "one": [
+        0,
+        "\u0004za  sat"
+      ],
+      "few": [
+        0,
+        "\u0004za  sata"
+      ],
+      "other": [
+        0,
+        "\u0004za  sati"
+      ]
+    }
+  }
+}

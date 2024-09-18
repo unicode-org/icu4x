@@ -14,7 +14,8 @@ use zerovec::ZeroVec;
 #[cfg_attr(feature = "yoke", derive(yoke::Yokeable))]
 #[cfg_attr(feature = "zerofrom", derive(zerofrom::ZeroFrom))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-#[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = crate))]
+#[cfg_attr(feature = "databake", derive(databake::Bake))]
+#[cfg_attr(feature = "databake", databake(path = crate))]
 struct DeriveTest_ZeroTrie_ZeroVec<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     _data: ZeroTrie<ZeroVec<'data, u8>>,
@@ -39,14 +40,14 @@ fn bake_ZeroTrie_ZeroVec() {
 #[cfg_attr(feature = "yoke", derive(yoke::Yokeable))]
 #[cfg_attr(feature = "zerofrom", derive(zerofrom::ZeroFrom))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-#[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = crate))]
+#[cfg_attr(feature = "databake", derive(databake::Bake))]
+#[cfg_attr(feature = "databake", databake(path = crate))]
 struct DeriveTest_ZeroTrieSimpleAscii_ZeroVec<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     _data: ZeroTrieSimpleAscii<ZeroVec<'data, u8>>,
 }
 
 #[test]
-#[ignore] // https://github.com/rust-lang/rust/issues/98906
 #[cfg(all(feature = "databake", feature = "alloc"))]
 fn bake_ZeroTrieSimpleAscii_ZeroVec() {
     use databake::*;
@@ -64,7 +65,8 @@ fn bake_ZeroTrieSimpleAscii_ZeroVec() {
 #[cfg_attr(feature = "yoke", derive(yoke::Yokeable))]
 #[cfg_attr(feature = "zerofrom", derive(zerofrom::ZeroFrom))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-#[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = crate))]
+#[cfg_attr(feature = "databake", derive(databake::Bake))]
+#[cfg_attr(feature = "databake", databake(path = crate))]
 struct DeriveTest_ZeroAsciiIgnoreCaseTrie_ZeroVec<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     _data: ZeroAsciiIgnoreCaseTrie<ZeroVec<'data, u8>>,
@@ -88,14 +90,14 @@ fn bake_ZeroAsciiIgnoreCaseTrie_ZeroVec() {
 #[cfg_attr(feature = "yoke", derive(yoke::Yokeable))]
 #[cfg_attr(feature = "zerofrom", derive(zerofrom::ZeroFrom))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-#[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = crate))]
+#[cfg_attr(feature = "databake", derive(databake::Bake))]
+#[cfg_attr(feature = "databake", databake(path = crate))]
 struct DeriveTest_ZeroTriePerfectHash_ZeroVec<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     _data: ZeroTriePerfectHash<ZeroVec<'data, u8>>,
 }
 
 #[test]
-#[ignore] // https://github.com/rust-lang/rust/issues/98906
 #[cfg(all(feature = "databake", feature = "alloc"))]
 fn bake_ZeroTriePerfectHash_ZeroVec() {
     use databake::*;
@@ -113,7 +115,8 @@ fn bake_ZeroTriePerfectHash_ZeroVec() {
 #[cfg_attr(feature = "yoke", derive(yoke::Yokeable))]
 #[cfg_attr(feature = "zerofrom", derive(zerofrom::ZeroFrom))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-#[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = crate))]
+#[cfg_attr(feature = "databake", derive(databake::Bake))]
+#[cfg_attr(feature = "databake", databake(path = crate))]
 struct DeriveTest_ZeroTrieExtendedCapacity_ZeroVec<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     _data: ZeroTrieExtendedCapacity<ZeroVec<'data, u8>>,

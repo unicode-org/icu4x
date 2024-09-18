@@ -4,8 +4,8 @@
 
 use alloc::string::String;
 use alloc::vec::Vec;
-use icu_locid_transform::LocaleFallbacker;
-use icu_properties::names::PropertyEnumToValueNameLinearTiny4Mapper;
+use icu_locale::LocaleFallbacker;
+use icu_properties::names::PropertyScriptToIcuScriptMapper;
 use icu_properties::script::ScriptWithExtensions;
 
 use super::api::{
@@ -17,14 +17,14 @@ use super::provider::{
     PersonNamesFormattingAttributesMask, PersonNamesFormattingData,
 };
 use super::specifications;
-use icu_locid::Locale;
-use icu_provider::{DataLocale, DataPayload, DataProvider, DataRequest};
+use icu_locale_core::Locale;
+use icu_provider::prelude::*;
 use zerofrom::ZeroFrom;
 
 pub struct PersonNamesFormatter {
     pub(crate) default_options: PersonNamesFormatterOptions,
     swe: ScriptWithExtensions,
-    scripts: PropertyEnumToValueNameLinearTiny4Mapper<icu_properties::Script>,
+    scripts: PropertyScriptToIcuScriptMapper<icu_properties::Script>,
     fallbacker: LocaleFallbacker,
 }
 
@@ -46,13 +46,11 @@ impl PersonNamesFormatter {
         P: ?Sized
             + DataProvider<icu_properties::provider::ScriptWithExtensionsPropertyV1Marker>
             + DataProvider<icu_properties::provider::ScriptValueToShortNameV1Marker>
-            + DataProvider<icu_locid_transform::provider::LocaleFallbackLikelySubtagsV1Marker>
-            + DataProvider<icu_locid_transform::provider::LocaleFallbackParentsV1Marker>
-            // TODO: We shouldn't need the collation supplement here
-            + DataProvider<icu_locid_transform::provider::CollationFallbackSupplementV1Marker>,
+            + DataProvider<icu_locale::provider::LikelySubtagsForLanguageV1Marker>
+            + DataProvider<icu_locale::provider::ParentsV1Marker>,
     {
         let swe = icu_properties::script::load_script_with_extensions_unstable(provider)?;
-        let scripts = icu_properties::Script::get_enum_to_short_name_mapper(provider)?;
+        let scripts = icu_properties::Script::get_enum_to_icu_script_mapper(provider)?;
         let fallbacker = LocaleFallbacker::try_new_unstable(provider)?;
         Ok(PersonNamesFormatter {
             default_options: options,
@@ -85,15 +83,13 @@ impl PersonNamesFormatter {
             person_name_locale,
         )?;
 
-        let data_payload: DataPayload<PersonNamesFormatV1Marker> = provider
+        let data: DataResponse<PersonNamesFormatV1Marker> = provider
             .load(DataRequest {
-                locale: &DataLocale::from(effective_locale),
-                metadata: Default::default(),
+                id: DataIdentifierBorrowed::for_locale(&DataLocale::from(effective_locale)),
+                ..Default::default()
             })
-            .map_err(PersonNamesFormatterError::Data)?
-            .take_payload()
             .map_err(PersonNamesFormatterError::Data)?;
-        let formatting_definition: &PersonNamesFormatV1 = data_payload.get();
+        let formatting_definition: &PersonNamesFormatV1 = data.payload.get();
         let option_with_proper_name_order = self.final_person_names_formatter_options(
             effective_locale,
             person_name,

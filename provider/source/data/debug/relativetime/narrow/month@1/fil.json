@@ -1,0 +1,23 @@
+{
+  "relatives": {
+    "-1": "nakaraang buwan",
+    "0": "ngayong buwan",
+    "1": "susunod na buwan"
+  },
+  "past": {
+    "strings": {
+      "other": [
+        0,
+        "\u0001 buwan ang nakalipas"
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "other": [
+        0,
+        "\u0004sa  buwan"
+      ]
+    }
+  }
+}

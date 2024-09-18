@@ -213,7 +213,6 @@
 
 extern crate alloc;
 
-mod error;
 mod flexzerovec;
 #[cfg(feature = "hashmap")]
 pub mod hashmap;
@@ -232,7 +231,6 @@ pub mod ule;
 mod yoke_impls;
 mod zerofrom_impls;
 
-pub use crate::error::ZeroVecError;
 #[cfg(feature = "hashmap")]
 pub use crate::hashmap::ZeroHashMap;
 pub use crate::map::map::ZeroMap;
@@ -242,7 +240,7 @@ pub use crate::zerovec::{ZeroSlice, ZeroVec};
 
 pub(crate) use flexzerovec::chunk_to_usize;
 
-#[doc(hidden)]
+#[doc(hidden)] // macro use
 pub mod __zerovec_internal_reexport {
     pub use zerofrom::ZeroFrom;
 
@@ -295,7 +293,7 @@ pub mod vecs {
     #[doc(no_inline)]
     pub use crate::varzerovec::{VarZeroSlice, VarZeroVec};
 
-    pub use crate::varzerovec::{Index16, Index32, VarZeroVecFormat, VarZeroVecOwned};
+    pub use crate::varzerovec::{Index16, Index32, Index8, VarZeroVecFormat, VarZeroVecOwned};
 
     pub use crate::flexzerovec::{FlexZeroSlice, FlexZeroVec, FlexZeroVecOwned};
 }

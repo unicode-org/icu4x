@@ -21,7 +21,6 @@ pub use chinese_based::{ChineseCacheV1Marker, DangiCacheV1Marker};
 pub use islamic::{IslamicObservationalCacheV1Marker, IslamicUmmAlQuraCacheV1Marker};
 
 use crate::types::IsoWeekday;
-use core::str::FromStr;
 use icu_provider::prelude::*;
 use tinystr::TinyStr16;
 use zerovec::ZeroVec;
@@ -38,36 +37,37 @@ use zerovec::ZeroVec;
 pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
+#[allow(unused_imports)]
 const _: () = {
+    use icu_calendar_data::*;
     pub mod icu {
         pub use crate as calendar;
-        #[allow(unused_imports)] // baked data may or may not need this
-        pub use icu_locid_transform as locid_transform;
+        pub use icu_calendar_data::icu_locale as locale;
     }
-    icu_calendar_data::make_provider!(Baked);
-    icu_calendar_data::impl_calendar_chinesecache_v1!(Baked);
-    icu_calendar_data::impl_calendar_dangicache_v1!(Baked);
-    icu_calendar_data::impl_calendar_islamicobservationalcache_v1!(Baked);
-    icu_calendar_data::impl_calendar_islamicummalquracache_v1!(Baked);
-    icu_calendar_data::impl_calendar_japanese_v1!(Baked);
-    icu_calendar_data::impl_calendar_japanext_v1!(Baked);
-    icu_calendar_data::impl_datetime_week_data_v1!(Baked);
-    icu_calendar_data::impl_datetime_week_data_v2!(Baked);
+    make_provider!(Baked);
+    impl_chinese_cache_v1_marker!(Baked);
+    impl_dangi_cache_v1_marker!(Baked);
+    impl_islamic_observational_cache_v1_marker!(Baked);
+    impl_islamic_umm_al_qura_cache_v1_marker!(Baked);
+    impl_japanese_eras_v1_marker!(Baked);
+    impl_japanese_extended_eras_v1_marker!(Baked);
+    impl_week_data_v1_marker!(Baked);
+    impl_week_data_v2_marker!(Baked);
 };
 
 #[cfg(feature = "datagen")]
-/// The latest minimum set of keys required by this component.
-pub const KEYS: &[DataKey] = &[
-    ChineseCacheV1Marker::KEY,
-    DangiCacheV1Marker::KEY,
-    IslamicObservationalCacheV1Marker::KEY,
-    IslamicUmmAlQuraCacheV1Marker::KEY,
-    JapaneseErasV1Marker::KEY,
-    JapaneseExtendedErasV1Marker::KEY,
-    WeekDataV2Marker::KEY,
+/// The latest minimum set of markers required by this component.
+pub const MARKERS: &[DataMarkerInfo] = &[
+    ChineseCacheV1Marker::INFO,
+    DangiCacheV1Marker::INFO,
+    IslamicObservationalCacheV1Marker::INFO,
+    IslamicUmmAlQuraCacheV1Marker::INFO,
+    JapaneseErasV1Marker::INFO,
+    JapaneseExtendedErasV1Marker::INFO,
+    WeekDataV2Marker::INFO,
     // We include the duplicate data for now, as icu_datetime loads it directly
     // https://github.com/unicode-org/icu4x/pull/4364#discussion_r1419877997
-    WeekDataV1Marker::KEY,
+    WeekDataV1Marker::INFO,
 ];
 
 /// The date at which an era started
@@ -83,11 +83,8 @@ pub const KEYS: &[DataKey] = &[
 #[derive(
     Copy, Clone, PartialEq, PartialOrd, Eq, Ord, Hash, Debug, yoke::Yokeable, zerofrom::ZeroFrom,
 )]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_calendar::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct EraStartDate {
     /// The year the era started in
@@ -111,35 +108,13 @@ pub struct EraStartDate {
     marker(JapaneseExtendedErasV1Marker, "calendar/japanext@1", singleton)
 )]
 #[derive(Debug, PartialEq, Clone, Default)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_calendar::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct JapaneseErasV1<'data> {
     /// A map from era start dates to their era codes
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub dates_to_eras: ZeroVec<'data, (EraStartDate, TinyStr16)>,
-}
-
-impl FromStr for EraStartDate {
-    type Err = ();
-    fn from_str(mut s: &str) -> Result<Self, Self::Err> {
-        let sign = if let Some(suffix) = s.strip_prefix('-') {
-            s = suffix;
-            -1
-        } else {
-            1
-        };
-
-        let mut split = s.split('-');
-        let year = split.next().ok_or(())?.parse::<i32>().map_err(|_| ())? * sign;
-        let month = split.next().ok_or(())?.parse().map_err(|_| ())?;
-        let day = split.next().ok_or(())?.parse().map_err(|_| ())?;
-
-        Ok(EraStartDate { year, month, day })
-    }
 }
 
 /// An ICU4X mapping to a subset of CLDR weekData.
@@ -156,11 +131,8 @@ impl FromStr for EraStartDate {
     fallback_by = "region"
 ))]
 #[derive(Clone, Copy, Debug, PartialEq)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_calendar::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_structs)] // used in data provider
 pub struct WeekDataV1 {
@@ -184,7 +156,8 @@ pub struct WeekDataV1 {
     fallback_by = "region"
 ))]
 #[derive(Clone, Copy, Debug, PartialEq)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_calendar::provider))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_structs)] // used in data provider
 pub struct WeekDataV2 {
@@ -267,6 +240,13 @@ impl databake::Bake for WeekdaySet {
 }
 
 #[cfg(feature = "datagen")]
+impl databake::BakeSize for WeekdaySet {
+    fn borrows_size(&self) -> usize {
+        0
+    }
+}
+
+#[cfg(feature = "datagen")]
 impl serde::Serialize for WeekdaySet {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -300,8 +280,12 @@ impl<'de> serde::Deserialize<'de> for WeekdaySet {
 fn test_weekdayset_bake() {
     databake::test_bake!(
         WeekdaySet,
-        const: crate::provider::WeekdaySet::new(
-            &[crate::types::IsoWeekday::Monday, crate::types::IsoWeekday::Wednesday, crate::types::IsoWeekday::Friday]),
+        const,
+        crate::provider::WeekdaySet::new(&[
+            crate::types::IsoWeekday::Monday,
+            crate::types::IsoWeekday::Wednesday,
+            crate::types::IsoWeekday::Friday
+        ]),
         icu_calendar
     );
 }

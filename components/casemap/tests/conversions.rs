@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_casemap::CaseMapper;
-use icu_locid::langid;
+use icu_locale_core::langid;
 
 #[test]
 fn test_simple_mappings() {
@@ -346,8 +346,8 @@ fn test_dutch() {
 
 #[test]
 fn test_greek_upper() {
-    let nfc = icu_normalizer::ComposingNormalizer::new_nfc();
-    let nfd = icu_normalizer::DecomposingNormalizer::new_nfd();
+    let nfc = icu_normalizer::ComposingNormalizerBorrowed::new_nfc();
+    let nfd = icu_normalizer::DecomposingNormalizerBorrowed::new_nfd();
 
     let cm = CaseMapper::new();
     let modern_greek = &langid!("el");

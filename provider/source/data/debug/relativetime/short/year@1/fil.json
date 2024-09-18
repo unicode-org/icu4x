@@ -1,0 +1,23 @@
+{
+  "relatives": {
+    "-1": "nakaraang taon",
+    "0": "ngayong taon",
+    "1": "susunod na taon"
+  },
+  "past": {
+    "strings": {
+      "other": [
+        0,
+        "\u0001 taon ang nakalipas"
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "other": [
+        0,
+        "\u0004sa  taon"
+      ]
+    }
+  }
+}

@@ -3,19 +3,20 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! [`DateTimeFormatterOptions`] is a bag of options which, together with [`Locale`],
-//! defines how dates will be formatted with a [`TypedDateTimeFormatter`] instance.
+//! defines how dates will be formatted.
 //!
 //! Each variant of the bag is a combination of settings defining how to format
 //! the date, with an optional `Preferences` which represent user preferences and
 //! may alter how the selected pattern is formatted.
 //!
-//! [`Locale`]: icu_locid::Locale
+//! [`Locale`]: icu_locale_core::Locale
 //! [`TypedDateTimeFormatter`]: crate::TypedDateTimeFormatter
 //!
 //! # Examples
 //!
 //! ```
-//! use icu::datetime::{options::length, DateTimeFormatterOptions};
+//! use icu::datetime::options::length;
+//! use icu::datetime::options::DateTimeFormatterOptions;
 //!
 //! let bag = length::Bag::from_date_time_style(
 //!     length::Date::Medium,
@@ -26,17 +27,18 @@
 //! At the moment only the [`length::Bag`] works, and we plan to extend that to support
 //! `ECMA402`-like components bag later.
 
-#[cfg(any(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "datagen")]
 pub mod components;
+#[cfg(feature = "datagen")]
 pub mod length;
 
-#[cfg(any(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "datagen")]
 pub mod preferences;
-#[cfg(not(any(feature = "datagen", feature = "experimental")))]
+#[cfg(not(feature = "datagen"))]
 pub(crate) mod preferences;
 
-/// A bag of options which, together with [`Locale`](icu_locid::Locale), defines how
-/// dates will be formatted with a [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter) instance.
+/// A bag of options which, together with [`Locale`](icu_locale_core::Locale), defines how
+/// dates will be formatted with a formatter instance.
 ///
 /// Each variant of the bag is a combination of settings defining how to format
 /// the date, with an optional `Preferences` which represent user preferences and
@@ -56,6 +58,7 @@ pub(crate) mod preferences;
 /// At the moment only the [`length::Bag`] works, and we plan to extend that to support
 /// `ECMA402` like components bag later.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[cfg(feature = "datagen")]
 #[non_exhaustive]
 pub enum DateTimeFormatterOptions {
     /// Bag of lengths for date and time.
@@ -70,23 +73,25 @@ pub enum DateTimeFormatterOptions {
     /// of the icu meta-crate. Use with caution.
     /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
     /// </div>
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
+    #[cfg(feature = "datagen")]
     Components(components::Bag),
 }
 
+#[cfg(feature = "datagen")]
 impl Default for DateTimeFormatterOptions {
     fn default() -> Self {
         Self::Length(length::Bag::default())
     }
 }
 
+#[cfg(feature = "datagen")]
 impl From<length::Bag> for DateTimeFormatterOptions {
     fn from(input: length::Bag) -> Self {
         Self::Length(input)
     }
 }
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "datagen")]
 impl From<components::Bag> for DateTimeFormatterOptions {
     fn from(input: components::Bag) -> Self {
         Self::Components(input)

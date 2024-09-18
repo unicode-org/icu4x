@@ -203,7 +203,7 @@ pub const DIALYTIKA_TONOS: char = '\u{0344}';
 pub const YPOGEGRAMMENI: char = '\u{0345}';
 
 #[macro_export]
-#[doc(hidden)]
+#[doc(hidden)] // macro
 macro_rules! diacritics {
     // Accents.
     // These are mostly removed when uppercasing, but their presence may require

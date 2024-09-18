@@ -1,0 +1,25 @@
+{
+  "relatives": {
+    "-2": "Araw bago ang kahapon",
+    "-1": "kahapon",
+    "0": "ngayong araw",
+    "1": "bukas",
+    "2": "Samakalawa"
+  },
+  "past": {
+    "strings": {
+      "other": [
+        0,
+        "\u0001 araw ang nakalipas"
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "other": [
+        0,
+        "\u0004sa  araw"
+      ]
+    }
+  }
+}

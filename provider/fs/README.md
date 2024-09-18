@@ -11,14 +11,14 @@ It reads ICU4X data files from the filesystem in a given directory.
 ```rust
 use icu_provider_fs::FsDataProvider;
 
-let provider = FsDataProvider::try_new("/path/to/data/directory")
+let provider = FsDataProvider::try_new("/path/to/data/directory".into())
     .expect_err("Specify a real directory in the line above");
 ```
 
 ## Directory Structure
 
 The ICU4X data directory has a file named `manifest.json` at the root, and a nested structure
-with a data key ([`DataKey`](icu_provider::DataKey)), and locale ([`DataLocale`](icu_provider::DataLocale))
+with a data marker ([`DataMarkerInfo`](icu_provider::DataMarkerInfo)), and locale ([`DataLocale`](icu_provider::DataLocale))
 as the leaf data files. For example, Arabic JSON data for cardinal plural rules lives at `plurals/cardinal@1/ar.json`.
 
 The exact form of the directory structure may change over time. ICU4X uses metadata from
@@ -58,20 +58,20 @@ The directory passed to the [`FsDataProvider`] constructor may contain either of
 
 *Notice:* In order for ICU4X to be able to *deserialize* the returned data, the corresponding
 Cargo feature has to be activated on the [`icu_provider`] crate. See
-[`AsDeserializingBufferProvider::as_deserializing`](icu_provider::serde::AsDeserializingBufferProvider).
+[`AsDeserializingBufferProvider::as_deserializing`](icu_provider::buf::AsDeserializingBufferProvider).
 
 ## Exporting data
 
 To generate the data required for [`FsDataProvider`], run the following:
 
 ```bash
-icu4x-datagen --keys all --locales full --format dir
+icu4x-datagen --markers all --locales full --format fs
 ```
 
 To export `postcard` format, use
 
 ```bash
-icu4x-datagen --keys all --locales full --format dir --syntax postcard
+icu4x-datagen --markers all --locales full --format fs --syntax postcard
 ```
 
 [`ICU4X`]: ../icu/index.html

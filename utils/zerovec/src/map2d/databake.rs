@@ -24,6 +24,23 @@ where
     }
 }
 
+impl<'a, K0, K1, V> BakeSize for ZeroMap2d<'a, K0, K1, V>
+where
+    K0: ZeroMapKV<'a> + ?Sized,
+    K1: ZeroMapKV<'a> + ?Sized,
+    V: ZeroMapKV<'a> + ?Sized,
+    K0::Container: BakeSize,
+    K1::Container: BakeSize,
+    V::Container: BakeSize,
+{
+    fn borrows_size(&self) -> usize {
+        self.keys0.borrows_size()
+            + self.joiner.borrows_size()
+            + self.keys1.borrows_size()
+            + self.values.borrows_size()
+    }
+}
+
 impl<'a, K0, K1, V> Bake for ZeroMap2dBorrowed<'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a> + ?Sized,
@@ -43,11 +60,29 @@ where
     }
 }
 
+impl<'a, K0, K1, V> BakeSize for ZeroMap2dBorrowed<'a, K0, K1, V>
+where
+    K0: ZeroMapKV<'a> + ?Sized,
+    K1: ZeroMapKV<'a> + ?Sized,
+    V: ZeroMapKV<'a> + ?Sized,
+    &'a K0::Slice: BakeSize,
+    &'a K1::Slice: BakeSize,
+    &'a V::Slice: BakeSize,
+{
+    fn borrows_size(&self) -> usize {
+        self.keys0.borrows_size()
+            + self.joiner.borrows_size()
+            + self.keys1.borrows_size()
+            + self.values.borrows_size()
+    }
+}
+
 #[test]
 fn test_baked_map() {
     test_bake!(
         ZeroMap2d<str, str, str>,
-        const: unsafe {
+        const,
+        unsafe {
             #[allow(unused_unsafe)]
             crate::ZeroMap2d::from_parts_unchecked(
                 unsafe {
@@ -80,7 +115,8 @@ fn test_baked_map() {
 fn test_baked_borrowed_map() {
     test_bake!(
         ZeroMap2dBorrowed<str, str, str>,
-        const: unsafe {
+        const,
+        unsafe {
             #[allow(unused_unsafe)]
             crate::maps::ZeroMap2dBorrowed::from_parts_unchecked(
                 unsafe {

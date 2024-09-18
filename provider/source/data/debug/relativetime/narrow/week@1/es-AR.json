@@ -1,0 +1,23 @@
+{
+  "relatives": {
+    "-1": "sem. pas.",
+    "0": "esta sem.",
+    "1": "próx. sem."
+  },
+  "past": {
+    "strings": {
+      "other": [
+        0,
+        "\u0006hace  sem."
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "other": [
+        0,
+        "\u000bdentro de  sem."
+      ]
+    }
+  }
+}

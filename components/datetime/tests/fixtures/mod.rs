@@ -4,7 +4,6 @@
 
 #![cfg(feature = "serde")]
 
-use icu_datetime::DateTimeFormatterOptions;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
@@ -25,29 +24,38 @@ pub struct TestInput {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub enum TestOptions {
-    #[serde(rename = "length")]
-    Length(icu_datetime::options::length::Bag),
-    #[serde(rename = "components")]
-    #[cfg(feature = "experimental")]
-    Components(icu_datetime::options::components::Bag),
-    #[serde(rename = "components")]
-    #[cfg(not(feature = "experimental"))]
-    Components(serde_json::Value),
+pub struct TestOptions {
+    pub length: Option<icu_datetime::options::length::Bag>,
+    pub components: Option<icu_datetime::options::components::Bag>,
+    pub semantic: Option<icu_datetime::neo_skeleton::NeoSkeleton>,
+    pub preferences: Option<icu_datetime::options::preferences::Bag>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TestOutput {
     // Key is locale, and value is expected test output.
-    pub values: HashMap<String, String>,
+    pub values: HashMap<String, TestOutputItem>,
 }
 
-pub fn get_options(input: &TestOptions) -> Option<DateTimeFormatterOptions> {
-    match input {
-        TestOptions::Length(bag) => Some((*bag).into()),
-        #[cfg(feature = "experimental")]
-        TestOptions::Components(bag) => Some((*bag).into()),
-        #[cfg(not(feature = "experimental"))]
-        TestOptions::Components(_) => None,
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum TestOutputItem {
+    ExpectedString(String),
+    ExpectedStringAndPattern { formatted: String, pattern: String },
+}
+
+impl TestOutputItem {
+    pub fn expectation(&self) -> &str {
+        match self {
+            Self::ExpectedString(s) => s,
+            Self::ExpectedStringAndPattern { formatted, .. } => formatted,
+        }
+    }
+
+    pub fn pattern(&self) -> Option<&str> {
+        match self {
+            Self::ExpectedString(_) => None,
+            Self::ExpectedStringAndPattern { pattern, .. } => Some(pattern),
+        }
     }
 }

@@ -17,6 +17,12 @@ impl Bake for FlexZeroVec<'_> {
     }
 }
 
+impl BakeSize for FlexZeroVec<'_> {
+    fn borrows_size(&self) -> usize {
+        self.as_ref().borrows_size()
+    }
+}
+
 impl Bake for &FlexZeroSlice {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("zerovec");
@@ -29,20 +35,26 @@ impl Bake for &FlexZeroSlice {
     }
 }
 
+impl BakeSize for &FlexZeroSlice {
+    fn borrows_size(&self) -> usize {
+        if self.is_empty() {
+            0
+        } else {
+            self.as_bytes().len()
+        }
+    }
+}
+
 #[test]
 fn test_baked_vec() {
+    test_bake!(FlexZeroVec, const, crate::vecs::FlexZeroVec::new(), zerovec);
     test_bake!(
         FlexZeroVec,
-        const: crate::vecs::FlexZeroVec::new(),
-        zerovec
-    );
-    test_bake!(
-        FlexZeroVec,
-        const: unsafe {
-            crate::vecs::FlexZeroSlice::from_byte_slice_unchecked(
-                b"\x02\x01\0\x16\0M\x01\x11"
-            )
-        }.as_flexzerovec(),
+        const,
+        unsafe {
+            crate::vecs::FlexZeroSlice::from_byte_slice_unchecked(b"\x02\x01\0\x16\0M\x01\x11")
+        }
+        .as_flexzerovec(),
         zerovec
     );
 }
@@ -51,15 +63,15 @@ fn test_baked_vec() {
 fn test_baked_slice() {
     test_bake!(
         &FlexZeroSlice,
-        const: crate::vecs::FlexZeroSlice::new_empty(),
+        const,
+        crate::vecs::FlexZeroSlice::new_empty(),
         zerovec
     );
     test_bake!(
         &FlexZeroSlice,
-        const: unsafe {
-            crate::vecs::FlexZeroSlice::from_byte_slice_unchecked(
-                b"\x02\x01\0\x16\0M\x01\x11"
-            )
+        const,
+        unsafe {
+            crate::vecs::FlexZeroSlice::from_byte_slice_unchecked(b"\x02\x01\0\x16\0M\x01\x11")
         },
         zerovec
     );

@@ -1,0 +1,23 @@
+{
+  "relatives": {
+    "-1": "last quarter",
+    "0": "this quarter",
+    "1": "next quarter"
+  },
+  "past": {
+    "strings": {
+      "other": [
+        0,
+        "\u0002- Q"
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "other": [
+        0,
+        "\u0002+ Q"
+      ]
+    }
+  }
+}

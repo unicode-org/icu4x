@@ -11,11 +11,8 @@ use icu_provider::prelude::*;
 use zerovec::{ule::AsULE, ZeroSlice, ZeroVec};
 
 #[derive(Debug, PartialEq, Eq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(databake::Bake),
-    databake(path = icu_datetime::pattern::runtime),
-)]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::pattern::runtime))]
 #[zerovec::make_varule(PatternULE)]
 #[zerovec::derive(Debug)]
 #[zerovec::skip_derive(Ord)]
@@ -48,13 +45,16 @@ impl PatternMetadata {
     }
 
     pub(crate) fn from_items(items: &[PatternItem]) -> Self {
+        Self::from_iter_items(items.iter().copied())
+    }
+
+    pub(crate) fn from_iter_items(iter_items: impl Iterator<Item = PatternItem>) -> Self {
         let time_granularity: TimeGranularity =
-            items.iter().map(Into::into).max().unwrap_or_default();
+            iter_items.map(Into::into).max().unwrap_or_default();
         Self::from_time_granularity(time_granularity)
     }
 
     /// Merges the metadata from a date pattern and a time pattern into one.
-    #[cfg(feature = "experimental")]
     #[inline]
     pub(crate) fn merge_date_and_time_metadata(
         _date: PatternMetadata,
@@ -70,7 +70,7 @@ impl PatternMetadata {
         Self(time_granularity.ordinal())
     }
 
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
+    #[cfg(feature = "datagen")]
     #[inline]
     pub(crate) fn set_time_granularity(&mut self, time_granularity: TimeGranularity) {
         self.0 = time_granularity.ordinal();
@@ -110,7 +110,6 @@ impl PatternULE {
 }
 
 impl<'data> PatternBorrowed<'data> {
-    #[cfg(feature = "experimental")]
     pub(crate) const DEFAULT: PatternBorrowed<'static> = PatternBorrowed {
         items: ZeroSlice::new_empty(),
         metadata: PatternMetadata::DEFAULT,
@@ -129,6 +128,16 @@ impl From<Vec<PatternItem>> for Pattern<'_> {
         Self {
             metadata: PatternMetadata::from_items(&items),
             items: ZeroVec::alloc_from_slice(&items),
+        }
+    }
+}
+
+impl FromIterator<PatternItem> for Pattern<'_> {
+    fn from_iter<T: IntoIterator<Item = PatternItem>>(iter: T) -> Self {
+        let items = iter.into_iter().collect::<ZeroVec<PatternItem>>();
+        Self {
+            metadata: PatternMetadata::from_iter_items(items.iter()),
+            items,
         }
     }
 }
@@ -170,14 +179,6 @@ impl Default for Pattern<'_> {
 }
 
 #[cfg(feature = "datagen")]
-impl core::fmt::Display for Pattern<'_> {
-    fn fmt(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
-        let reference = crate::pattern::reference::Pattern::from(self);
-        reference.fmt(formatter)
-    }
-}
-
-#[cfg(feature = "datagen")]
 impl databake::Bake for PatternMetadata {
     fn bake(&self, ctx: &databake::CrateEnv) -> databake::TokenStream {
         ctx.insert("icu_datetime");
@@ -188,12 +189,20 @@ impl databake::Bake for PatternMetadata {
     }
 }
 
+#[cfg(feature = "datagen")]
+impl databake::BakeSize for PatternMetadata {
+    fn borrows_size(&self) -> usize {
+        0
+    }
+}
+
 #[test]
 #[cfg(feature = "datagen")]
 fn databake() {
     databake::test_bake!(
         PatternMetadata,
-        const: crate::pattern::runtime::PatternMetadata::from_time_granularity(
+        const,
+        crate::pattern::runtime::PatternMetadata::from_time_granularity(
             crate::pattern::TimeGranularity::Hours
         ),
         icu_datetime,

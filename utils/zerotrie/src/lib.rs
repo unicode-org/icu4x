@@ -72,7 +72,12 @@ pub use crate::zerotrie::ZeroTrie;
 pub use crate::zerotrie::ZeroTrieExtendedCapacity;
 pub use crate::zerotrie::ZeroTriePerfectHash;
 pub use crate::zerotrie::ZeroTrieSimpleAscii;
-pub use error::Error as ZeroTrieError;
+pub use error::ZeroTrieBuildError;
+
+#[cfg(feature = "alloc")]
+pub use crate::zerotrie::ZeroTrieStringIterator;
+#[cfg(feature = "alloc")]
+pub use reader::ZeroTrieIterator;
 
 #[doc(hidden)]
 pub mod _internal {

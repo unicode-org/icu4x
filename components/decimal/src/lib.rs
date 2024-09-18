@@ -17,7 +17,7 @@
 //! ```
 //! use fixed_decimal::FixedDecimal;
 //! use icu::decimal::FixedDecimalFormatter;
-//! use icu::locid::locale;
+//! use icu::locale::locale;
 //! use writeable::assert_writeable_eq;
 //!
 //! let fdf = FixedDecimalFormatter::try_new(
@@ -36,11 +36,11 @@
 //! ```
 //! use fixed_decimal::FixedDecimal;
 //! use icu::decimal::FixedDecimalFormatter;
-//! use icu::locid::Locale;
+//! use icu::locale::Locale;
 //! use writeable::assert_writeable_eq;
 //!
 //! let fdf =
-//!     FixedDecimalFormatter::try_new(&Locale::UND.into(), Default::default())
+//!     FixedDecimalFormatter::try_new(&Default::default(), Default::default())
 //!         .expect("locale should be present");
 //!
 //! let fixed_decimal = FixedDecimal::from(200050).multiplied_pow10(-2);
@@ -56,7 +56,7 @@
 //! ```
 //! use fixed_decimal::FixedDecimal;
 //! use icu::decimal::FixedDecimalFormatter;
-//! use icu::locid::locale;
+//! use icu::locale::locale;
 //! use writeable::assert_writeable_eq;
 //!
 //! let fdf = FixedDecimalFormatter::try_new(
@@ -90,17 +90,12 @@
 
 extern crate alloc;
 
-mod error;
 mod format;
 mod grouper;
 pub mod options;
 pub mod provider;
 
-pub use error::DecimalError;
 pub use format::FormattedFixedDecimal;
-
-#[doc(no_inline)]
-pub use DecimalError as Error;
 
 use alloc::string::String;
 use fixed_decimal::FixedDecimal;
@@ -124,11 +119,16 @@ pub struct FixedDecimalFormatter {
     symbols: DataPayload<provider::DecimalSymbolsV1Marker>,
 }
 
+impl AsRef<FixedDecimalFormatter> for FixedDecimalFormatter {
+    fn as_ref(&self) -> &FixedDecimalFormatter {
+        self
+    }
+}
+
 impl FixedDecimalFormatter {
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        options: options::FixedDecimalFormatterOptions,
-        error: DecimalError,
+
+        (locale, options: options::FixedDecimalFormatterOptions) -> error: DataError,
         /// Creates a new [`FixedDecimalFormatter`] from compiled data and an options bag.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -141,13 +141,18 @@ impl FixedDecimalFormatter {
         provider: &D,
         locale: &DataLocale,
         options: options::FixedDecimalFormatterOptions,
-    ) -> Result<Self, DecimalError> {
+    ) -> Result<Self, DataError> {
         let symbols = provider
             .load(DataRequest {
-                locale,
-                metadata: Default::default(),
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::from_str_or_panic(
+                        locale.get_single_unicode_ext("nu").unwrap_or_default(),
+                    ),
+                    locale,
+                ),
+                ..Default::default()
             })?
-            .take_payload()?;
+            .payload;
         Ok(Self { options, symbols })
     }
 

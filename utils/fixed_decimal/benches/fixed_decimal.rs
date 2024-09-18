@@ -170,18 +170,17 @@ fn from_string_benches(c: &mut Criterion) {
 
 #[cfg(feature = "bench")]
 fn rounding_benches(c: &mut Criterion) {
-    use fixed_decimal::FloatPrecision;
-    #[allow(clippy::type_complexity)] // most compact representation in code
-    const ROUNDING_FNS: [(&str, fn(FixedDecimal, i16) -> FixedDecimal); 9] = [
-        ("ceil", FixedDecimal::ceiled),
-        ("floor", FixedDecimal::floored),
-        ("expand", FixedDecimal::expanded),
-        ("trunc", FixedDecimal::trunced),
-        ("half_ceil", FixedDecimal::half_ceiled),
-        ("half_floor", FixedDecimal::half_floored),
-        ("half_expand", FixedDecimal::half_expanded),
-        ("half_trunc", FixedDecimal::half_trunced),
-        ("half_even", FixedDecimal::half_evened),
+    use fixed_decimal::{FloatPrecision, RoundingMode};
+    const ROUNDING_MODES: [(&str, RoundingMode); 9] = [
+        ("ceil", RoundingMode::Ceil),
+        ("floor", RoundingMode::Floor),
+        ("expand", RoundingMode::Expand),
+        ("trunc", RoundingMode::Trunc),
+        ("half_ceil", RoundingMode::HalfCeil),
+        ("half_floor", RoundingMode::HalfFloor),
+        ("half_expand", RoundingMode::HalfExpand),
+        ("half_trunc", RoundingMode::HalfTrunc),
+        ("half_even", RoundingMode::HalfEven),
     ];
 
     let nums: Vec<_> = triangular_floats(1e7)
@@ -189,13 +188,15 @@ fn rounding_benches(c: &mut Criterion) {
         .collect();
     let mut group = c.benchmark_group("rounding");
 
-    for (name, rounding_fn) in ROUNDING_FNS {
+    for (name, rounding_mode) in ROUNDING_MODES {
         group.bench_function(name, |b| {
             b.iter(|| {
                 for offset in -5..=5 {
                     nums.iter()
                         .cloned()
-                        .map(|num| rounding_fn(black_box(num), offset))
+                        .map(|num| {
+                            FixedDecimal::rounded_with_mode(black_box(num), offset, rounding_mode)
+                        })
                         .for_each(|num| {
                             black_box(num);
                         });

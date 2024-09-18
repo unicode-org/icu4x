@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-#![cfg_attr(not(feature = "std"), no_std)]
+#![cfg_attr(not(any(test, feature = "std")), no_std)]
 #![cfg_attr(
     not(test),
     deny(
@@ -57,106 +57,86 @@ extern crate alloc;
 extern crate libc_alloc;
 
 // Common modules
-
-pub mod common;
-pub mod data_struct;
 pub mod errors;
-pub mod locale;
+pub mod locale_core;
 #[cfg(feature = "logging")]
 pub mod logging;
 #[macro_use]
 pub mod provider;
-mod utf;
 
 // Components
 
-#[cfg(feature = "icu_properties")]
+#[cfg(feature = "properties")]
 pub mod bidi;
-#[cfg(any(
-    feature = "icu_datetime",
-    feature = "icu_timezone",
-    feature = "icu_calendar"
-))]
+#[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
 pub mod calendar;
-#[cfg(feature = "icu_casemap")]
+#[cfg(feature = "casemap")]
 pub mod casemap;
-#[cfg(feature = "icu_collator")]
+#[cfg(feature = "collator")]
 pub mod collator;
-#[cfg(feature = "icu_properties")]
+#[cfg(feature = "properties")]
 pub mod collections_sets;
-#[cfg(any(
-    feature = "icu_datetime",
-    feature = "icu_timezone",
-    feature = "icu_calendar"
-))]
+#[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
 pub mod date;
-#[cfg(any(
-    feature = "icu_datetime",
-    feature = "icu_timezone",
-    feature = "icu_calendar"
-))]
+#[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
 pub mod datetime;
-#[cfg(feature = "icu_datetime")]
+#[cfg(feature = "datetime")]
 pub mod datetime_formatter;
-#[cfg(feature = "icu_decimal")]
+#[cfg(feature = "decimal")]
 pub mod decimal;
-#[cfg(feature = "experimental_components")]
+#[cfg(feature = "experimental")]
 pub mod displaynames;
-#[cfg(feature = "icu_locid_transform")]
+#[cfg(feature = "locale")]
+pub mod exemplar_chars;
+#[cfg(feature = "locale")]
 pub mod fallbacker;
-#[cfg(feature = "icu_decimal")]
+#[cfg(feature = "decimal")]
 pub mod fixed_decimal;
-#[cfg(any(feature = "icu_datetime", feature = "icu_timezone"))]
-pub mod iana_bcp47_mapper;
-#[cfg(feature = "icu_list")]
+#[cfg(feature = "list")]
 pub mod list;
-#[cfg(feature = "icu_locid_transform")]
+#[cfg(feature = "locale")]
+pub mod locale;
+#[cfg(feature = "locale")]
 pub mod locale_directionality;
-#[cfg(feature = "icu_locid_transform")]
-pub mod locid_transform;
-#[cfg(feature = "icu_timezone")]
+#[cfg(feature = "timezone")]
 pub mod metazone_calculator;
-#[cfg(feature = "icu_normalizer")]
+#[cfg(feature = "normalizer")]
 pub mod normalizer;
-#[cfg(feature = "icu_normalizer")]
+#[cfg(feature = "normalizer")]
 pub mod normalizer_properties;
-#[cfg(feature = "icu_plurals")]
+#[cfg(feature = "plurals")]
 pub mod pluralrules;
-#[cfg(feature = "icu_properties")]
+#[cfg(feature = "properties")]
 pub mod properties_iter;
-#[cfg(feature = "icu_properties")]
+#[cfg(feature = "properties")]
 pub mod properties_maps;
-#[cfg(feature = "icu_properties")]
+#[cfg(feature = "properties")]
 pub mod properties_names;
-#[cfg(feature = "icu_properties")]
+#[cfg(feature = "properties")]
 pub mod properties_sets;
-#[cfg(feature = "icu_properties")]
+#[cfg(feature = "properties")]
 pub mod properties_unisets;
-#[cfg(feature = "icu_properties")]
+#[cfg(feature = "properties")]
 pub mod script;
-#[cfg(feature = "icu_segmenter")]
+#[cfg(feature = "segmenter")]
 pub mod segmenter_grapheme;
-#[cfg(feature = "icu_segmenter")]
+#[cfg(feature = "segmenter")]
 pub mod segmenter_line;
-#[cfg(feature = "icu_segmenter")]
+#[cfg(feature = "segmenter")]
 pub mod segmenter_sentence;
-#[cfg(feature = "icu_segmenter")]
+#[cfg(feature = "segmenter")]
 pub mod segmenter_word;
-#[cfg(any(
-    feature = "icu_datetime",
-    feature = "icu_timezone",
-    feature = "icu_calendar"
-))]
+#[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
 pub mod time;
-#[cfg(any(feature = "icu_datetime", feature = "icu_timezone"))]
+#[cfg(any(feature = "datetime", feature = "timezone"))]
 pub mod timezone;
-#[cfg(feature = "icu_datetime")]
-pub mod timezone_formatter;
-#[cfg(any(feature = "icu_datetime", feature = "icu_timezone"))]
+#[cfg(any(feature = "datetime", feature = "timezone"))]
 pub mod timezone_mapper;
-#[cfg(feature = "experimental_components")]
+#[cfg(feature = "experimental")]
 pub mod units_converter;
-#[cfg(feature = "icu_calendar")]
+#[cfg(feature = "calendar")]
 pub mod week;
-#[cfg(feature = "icu_datetime")]
+#[cfg(feature = "timezone")]
+pub mod zone_offset_calculator;
+#[cfg(feature = "datetime")]
 pub mod zoned_formatter;

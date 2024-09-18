@@ -18,7 +18,7 @@ fn bench_calendar<C: Clone + Calendar>(
     group.bench_function(name, |b| {
         b.iter(|| {
             let converted = black_box(iso).to_calendar(Ref(&calendar));
-            let year = black_box(converted.year().number);
+            let year = black_box(converted.year().era_year_or_extended());
             let month = black_box(converted.month().ordinal);
             let day = black_box(converted.day_of_month().0);
             black_box((converted, year, month, day))

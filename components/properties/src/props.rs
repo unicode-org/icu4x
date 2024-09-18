@@ -9,8 +9,7 @@
 //! String properties are represented as newtypes if their
 //! values represent code points.
 
-use crate::provider::{names::*, *};
-use crate::PropertiesError;
+use crate::provider::names::*;
 use core::marker::PhantomData;
 use icu_collections::codepointtrie::TrieValue;
 use icu_provider::prelude::*;
@@ -23,8 +22,8 @@ use serde::{Deserialize, Serialize};
 /// to work for all properties at once
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub(crate) struct ErasedNameToEnumMapV1Marker;
-impl DataMarker for ErasedNameToEnumMapV1Marker {
-    type Yokeable = PropertyValueNameToEnumMapV1<'static>;
+impl DynamicDataMarker for ErasedNameToEnumMapV1Marker {
+    type DataStruct = PropertyValueNameToEnumMapV1<'static>;
 }
 
 /// A struct capable of looking up a property value from a string name.
@@ -101,7 +100,7 @@ impl<T: TrieValue> PropertyValueNameToEnumMapper<T> {
 
     pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
     where
-        M: DataMarker<Yokeable = PropertyValueNameToEnumMapV1<'static>>,
+        M: DynamicDataMarker<DataStruct = PropertyValueNameToEnumMapV1<'static>>,
     {
         Self {
             map: data.cast(),
@@ -261,8 +260,8 @@ fn get_loose_u16(payload: &PropertyValueNameToEnumMapV1<'_>, name: &str) -> Opti
 /// to work for all properties at once
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub(crate) struct ErasedEnumToValueNameSparseMapV1Marker;
-impl DataMarker for ErasedEnumToValueNameSparseMapV1Marker {
-    type Yokeable = PropertyEnumToValueNameSparseMapV1<'static>;
+impl DynamicDataMarker for ErasedEnumToValueNameSparseMapV1Marker {
+    type DataStruct = PropertyEnumToValueNameSparseMapV1<'static>;
 }
 
 /// A struct capable of looking up a property name from a value
@@ -323,7 +322,7 @@ impl<T: TrieValue> PropertyEnumToValueNameSparseMapper<T> {
     /// (like [`Script::TBD()`]) instead.
     pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
     where
-        M: DataMarker<Yokeable = PropertyEnumToValueNameSparseMapV1<'static>>,
+        M: DynamicDataMarker<DataStruct = PropertyEnumToValueNameSparseMapV1<'static>>,
     {
         Self {
             map: data.cast(),
@@ -374,8 +373,8 @@ impl<T: TrieValue> PropertyEnumToValueNameSparseMapperBorrowed<'static, T> {
 /// to work for all properties at once
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub(crate) struct ErasedEnumToValueNameLinearMapV1Marker;
-impl DataMarker for ErasedEnumToValueNameLinearMapV1Marker {
-    type Yokeable = PropertyEnumToValueNameLinearMapV1<'static>;
+impl DynamicDataMarker for ErasedEnumToValueNameLinearMapV1Marker {
+    type DataStruct = PropertyEnumToValueNameLinearMapV1<'static>;
 }
 
 /// A struct capable of looking up a property name from a value
@@ -436,7 +435,7 @@ impl<T: TrieValue> PropertyEnumToValueNameLinearMapper<T> {
     /// (like [`Script::TBD()`]) instead.
     pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
     where
-        M: DataMarker<Yokeable = PropertyEnumToValueNameLinearMapV1<'static>>,
+        M: DynamicDataMarker<DataStruct = PropertyEnumToValueNameLinearMapV1<'static>>,
     {
         Self {
             map: data.cast(),
@@ -477,54 +476,53 @@ impl<T: TrieValue> PropertyEnumToValueNameLinearMapperBorrowed<'static, T> {
     }
 }
 
-/// Private marker type for PropertyEnumToValueNameLinearTiny4Mapper
+/// Private marker type for PropertyScriptToIcuScriptMapper
 /// to work for all properties at once
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub(crate) struct ErasedEnumToValueNameLinearTiny4MapV1Marker;
-impl DataMarker for ErasedEnumToValueNameLinearTiny4MapV1Marker {
-    type Yokeable = PropertyEnumToValueNameLinearTiny4MapV1<'static>;
+impl DynamicDataMarker for ErasedEnumToValueNameLinearTiny4MapV1Marker {
+    type DataStruct = PropertyScriptToIcuScriptMapV1<'static>;
 }
 
 /// A struct capable of looking up a property name from a value
 /// Access its data by calling [`Self::as_borrowed()`] and using the methods on
-/// [`PropertyEnumToValueNameLinearTiny4MapperBorrowed`].
+/// [`PropertyScriptToIcuScriptMapperBorrowed`].
 ///
-/// This mapper is used for properties with sequential values and names with four or fewer characters,
-/// like the [`Script`] short names.
-/// It may be obtained using methods like [`Script::get_enum_to_short_name_mapper()`].
+/// This mapper is used for the [`Script`] property.
+/// It may be obtained using methods like [`Script::get_enum_to_icu_script_mapper()`].
 ///
 /// # Example
 ///
 /// ```
 /// use icu::properties::Script;
-/// use tinystr::tinystr;
+/// use icu::locale::subtags::script;
 ///
-/// let lookup = Script::enum_to_short_name_mapper();
-/// assert_eq!(lookup.get(Script::Brahmi), Some(tinystr!(4, "Brah")));
-/// assert_eq!(lookup.get(Script::Hangul), Some(tinystr!(4, "Hang")));
+/// let lookup = Script::enum_to_icu_script_mapper();
+/// assert_eq!(lookup.get(Script::Brahmi), Some(script!("Brah")));
+/// assert_eq!(lookup.get(Script::Hangul), Some(script!("Hang")));
 /// ```
 #[derive(Debug)]
-pub struct PropertyEnumToValueNameLinearTiny4Mapper<T> {
+pub struct PropertyScriptToIcuScriptMapper<T> {
     map: DataPayload<ErasedEnumToValueNameLinearTiny4MapV1Marker>,
     markers: PhantomData<fn(T) -> ()>,
 }
 
 /// A borrowed wrapper around property value name-to-enum data, returned by
-/// [`PropertyEnumToValueNameLinearTiny4Mapper::as_borrowed()`]. More efficient to query.
+/// [`PropertyScriptToIcuScriptMapper::as_borrowed()`]. More efficient to query.
 #[derive(Debug, Copy, Clone)]
-pub struct PropertyEnumToValueNameLinearTiny4MapperBorrowed<'a, T> {
-    map: &'a PropertyEnumToValueNameLinearTiny4MapV1<'a>,
+pub struct PropertyScriptToIcuScriptMapperBorrowed<'a, T> {
+    map: &'a PropertyScriptToIcuScriptMapV1<'a>,
     markers: PhantomData<fn(T) -> ()>,
 }
 
-impl<T: TrieValue> PropertyEnumToValueNameLinearTiny4Mapper<T> {
+impl<T: TrieValue> PropertyScriptToIcuScriptMapper<T> {
     /// Construct a borrowed version of this type that can be queried.
     ///
     /// This avoids a potential small underlying cost per API call (like `get_static()`) by consolidating it
     /// up front.
     #[inline]
-    pub fn as_borrowed(&self) -> PropertyEnumToValueNameLinearTiny4MapperBorrowed<'_, T> {
-        PropertyEnumToValueNameLinearTiny4MapperBorrowed {
+    pub fn as_borrowed(&self) -> PropertyScriptToIcuScriptMapperBorrowed<'_, T> {
+        PropertyScriptToIcuScriptMapperBorrowed {
             map: self.map.get(),
             markers: PhantomData,
         }
@@ -536,7 +534,7 @@ impl<T: TrieValue> PropertyEnumToValueNameLinearTiny4Mapper<T> {
     /// (like [`Script::TBD()`]) instead.
     pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
     where
-        M: DataMarker<Yokeable = PropertyEnumToValueNameLinearTiny4MapV1<'static>>,
+        M: DynamicDataMarker<DataStruct = PropertyScriptToIcuScriptMapV1<'static>>,
     {
         Self {
             map: data.cast(),
@@ -545,33 +543,33 @@ impl<T: TrieValue> PropertyEnumToValueNameLinearTiny4Mapper<T> {
     }
 }
 
-impl<T: TrieValue> PropertyEnumToValueNameLinearTiny4MapperBorrowed<'_, T> {
+impl<T: TrieValue> PropertyScriptToIcuScriptMapperBorrowed<'_, T> {
     /// Get the property name given a value
     ///
     /// # Example
     ///
     /// ```rust
     /// use icu::properties::Script;
-    /// use tinystr::tinystr;
+    /// use icu::locale::subtags::script;
     ///
-    /// let lookup = Script::enum_to_short_name_mapper();
-    /// assert_eq!(lookup.get(Script::Brahmi), Some(tinystr!(4, "Brah")));
-    /// assert_eq!(lookup.get(Script::Hangul), Some(tinystr!(4, "Hang")));
+    /// let lookup = Script::enum_to_icu_script_mapper();
+    /// assert_eq!(lookup.get(Script::Brahmi), Some(script!("Brah")));
+    /// assert_eq!(lookup.get(Script::Hangul), Some(script!("Hang")));
     /// ```
     #[inline]
-    pub fn get(&self, property: T) -> Option<tinystr::TinyStr4> {
+    pub fn get(&self, property: T) -> Option<icu_locale_core::subtags::Script> {
         let prop = usize::try_from(property.to_u32()).ok()?;
-        self.map.map.get(prop).filter(|x| !x.is_empty())
+        self.map.map.get(prop).and_then(|o| o.0)
     }
 }
 
-impl<T: TrieValue> PropertyEnumToValueNameLinearTiny4MapperBorrowed<'static, T> {
-    /// Cheaply converts a [`PropertyEnumToValueNameLinearTiny4MapperBorrowed<'static>`] into a [`PropertyEnumToValueNameLinearTiny4Mapper`].
+impl<T: TrieValue> PropertyScriptToIcuScriptMapperBorrowed<'static, T> {
+    /// Cheaply converts a [`PropertyScriptToIcuScriptMapperBorrowed<'static>`] into a [`PropertyScriptToIcuScriptMapper`].
     ///
-    /// Note: Due to branching and indirection, using [`PropertyEnumToValueNameLinearTiny4Mapper`] might inhibit some
-    /// compile-time optimizations that are possible with [`PropertyEnumToValueNameLinearTiny4MapperBorrowed`].
-    pub const fn static_to_owned(self) -> PropertyEnumToValueNameLinearTiny4Mapper<T> {
-        PropertyEnumToValueNameLinearTiny4Mapper {
+    /// Note: Due to branching and indirection, using [`PropertyScriptToIcuScriptMapper`] might inhibit some
+    /// compile-time optimizations that are possible with [`PropertyScriptToIcuScriptMapperBorrowed`].
+    pub const fn static_to_owned(self) -> PropertyScriptToIcuScriptMapper<T> {
+        PropertyScriptToIcuScriptMapper {
             map: DataPayload::from_static_ref(self.map),
             markers: PhantomData,
         }
@@ -609,8 +607,8 @@ macro_rules! impl_value_getter {
             /// [📚 Help choosing a constructor](icu_provider::constructors)
             $vis_n2e fn $name_n2e(
                 provider: &(impl DataProvider<$marker_n2e> + ?Sized)
-            ) -> Result<PropertyValueNameToEnumMapper<$ty>, PropertiesError> {
-                Ok(provider.load(Default::default()).and_then(DataResponse::take_payload).map(PropertyValueNameToEnumMapper::from_data)?)
+            ) -> Result<PropertyValueNameToEnumMapper<$ty>, DataError> {
+                Ok(PropertyValueNameToEnumMapper::from_data(provider.load(Default::default())?.payload))
             }
 
             $(
@@ -628,8 +626,8 @@ macro_rules! impl_value_getter {
                 /// [📚 Help choosing a constructor](icu_provider::constructors)
                 $vis_e2sn fn $name_e2sn(
                     provider: &(impl DataProvider<$marker_e2sn> + ?Sized)
-                ) -> Result<$mapper_e2sn<$ty>, PropertiesError> {
-                    Ok(provider.load(Default::default()).and_then(DataResponse::take_payload).map($mapper_e2sn::from_data)?)
+                ) -> Result<$mapper_e2sn<$ty>, DataError> {
+                    Ok($mapper_e2sn::from_data(provider.load(Default::default())?.payload))
                 }
 
                 $(#[$attr_e2ln])*
@@ -646,8 +644,8 @@ macro_rules! impl_value_getter {
                 /// [📚 Help choosing a constructor](icu_provider::constructors)
                 $vis_e2ln fn $name_e2ln(
                     provider: &(impl DataProvider<$marker_e2ln> + ?Sized)
-                ) -> Result<$mapper_e2ln<$ty>, PropertiesError> {
-                    Ok(provider.load(Default::default()).and_then(DataResponse::take_payload).map($mapper_e2ln::from_data)?)
+                ) -> Result<$mapper_e2ln<$ty>, DataError> {
+                    Ok($mapper_e2ln::from_data(provider.load(Default::default())?.payload))
                 }
             )?
         }
@@ -754,7 +752,7 @@ impl BidiClass {
 }
 
 impl_value_getter! {
-    markers: BidiClassNameToValueV1Marker / SINGLETON_PROPNAMES_FROM_BC_V1, BidiClassValueToShortNameV1Marker / SINGLETON_PROPNAMES_TO_SHORT_LINEAR_BC_V1, BidiClassValueToLongNameV1Marker / SINGLETON_PROPNAMES_TO_LONG_LINEAR_BC_V1;
+    markers: BidiClassNameToValueV1Marker / SINGLETON_BIDI_CLASS_NAME_TO_VALUE_V1_MARKER, BidiClassValueToShortNameV1Marker / SINGLETON_BIDI_CLASS_VALUE_TO_SHORT_NAME_V1_MARKER, BidiClassValueToLongNameV1Marker / SINGLETON_BIDI_CLASS_VALUE_TO_LONG_NAME_V1_MARKER;
     impl BidiClass {
         /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the `Bidi_Class` enumerated property
@@ -906,7 +904,7 @@ pub enum GeneralCategory {
 }
 
 impl_value_getter! {
-    markers: GeneralCategoryNameToValueV1Marker / SINGLETON_PROPNAMES_FROM_GC_V1, GeneralCategoryValueToShortNameV1Marker / SINGLETON_PROPNAMES_TO_SHORT_LINEAR_GC_V1, GeneralCategoryValueToLongNameV1Marker / SINGLETON_PROPNAMES_TO_LONG_LINEAR_GC_V1;
+    markers: GeneralCategoryNameToValueV1Marker / SINGLETON_GENERAL_CATEGORY_NAME_TO_VALUE_V1_MARKER, GeneralCategoryValueToShortNameV1Marker / SINGLETON_GENERAL_CATEGORY_VALUE_TO_SHORT_NAME_V1_MARKER, GeneralCategoryValueToLongNameV1Marker / SINGLETON_GENERAL_CATEGORY_VALUE_TO_LONG_NAME_V1_MARKER;
     impl GeneralCategory {
         /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the `General_Category` enumerated property.
@@ -1266,7 +1264,7 @@ impl GeneralCategoryGroup {
 }
 
 impl_value_getter! {
-    markers: GeneralCategoryMaskNameToValueV1Marker / SINGLETON_PROPNAMES_FROM_GCM_V1;
+    markers: GeneralCategoryMaskNameToValueV1Marker / SINGLETON_GENERAL_CATEGORY_MASK_NAME_TO_VALUE_V1_MARKER;
     impl GeneralCategoryGroup {
         /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the `General_Category_Mask` mask property.
@@ -1511,7 +1509,7 @@ impl Script {
 }
 
 impl_value_getter! {
-    markers: ScriptNameToValueV1Marker / SINGLETON_PROPNAMES_FROM_SC_V1, ScriptValueToShortNameV1Marker / SINGLETON_PROPNAMES_TO_SHORT_LINEAR4_SC_V1, ScriptValueToLongNameV1Marker / SINGLETON_PROPNAMES_TO_LONG_LINEAR_SC_V1;
+    markers: ScriptNameToValueV1Marker / SINGLETON_SCRIPT_NAME_TO_VALUE_V1_MARKER, ScriptValueToShortNameV1Marker / SINGLETON_SCRIPT_VALUE_TO_SHORT_NAME_V1_MARKER, ScriptValueToLongNameV1Marker / SINGLETON_SCRIPT_VALUE_TO_LONG_NAME_V1_MARKER;
     impl Script {
         /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the `Script` enumerated property.
@@ -1551,14 +1549,14 @@ impl_value_getter! {
         ///
         /// ```
         /// use icu::properties::Script;
-        /// use tinystr::tinystr;
+        /// use icu::locale::subtags::script;
         ///
-        /// let lookup = Script::enum_to_short_name_mapper();
-        /// assert_eq!(lookup.get(Script::Brahmi), Some(tinystr!(4, "Brah")));
-        /// assert_eq!(lookup.get(Script::Hangul), Some(tinystr!(4, "Hang")));
+        /// let lookup = Script::enum_to_icu_script_mapper();
+        /// assert_eq!(lookup.get(Script::Brahmi), Some(script!("Brah")));
+        /// assert_eq!(lookup.get(Script::Hangul), Some(script!("Hang")));
         /// ```
-        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearTiny4Mapper / PropertyEnumToValueNameLinearTiny4MapperBorrowed;
-        /// Return a [`PropertyEnumToValueNameLinearTiny4Mapper`], capable of looking up long names
+        pub fn get_enum_to_icu_script_mapper() / enum_to_icu_script_mapper() -> PropertyScriptToIcuScriptMapper / PropertyScriptToIcuScriptMapperBorrowed;
+        /// Return a [`PropertyScriptToIcuScriptMapper`], capable of looking up long names
         /// for values of the `Script` enumerated property.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -1581,7 +1579,7 @@ impl_value_getter! {
 /// Enumerated property Hangul_Syllable_Type
 ///
 /// The Unicode standard provides both precomposed Hangul syllables and conjoining Jamo to compose
-/// arbitrary Hangul syllables. This property provies that ontology of Hangul code points.
+/// arbitrary Hangul syllables. This property provides that ontology of Hangul code points.
 ///
 /// For more information, see the [Unicode Korean FAQ](https://www.unicode.org/faq/korean.html).
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
@@ -1602,7 +1600,7 @@ impl HangulSyllableType {
     pub const LeadingJamo: HangulSyllableType = HangulSyllableType(1);
     /// (`V`) a conjoining vowel Jamo.
     pub const VowelJamo: HangulSyllableType = HangulSyllableType(2);
-    /// (`T`) a conjoining trailing consonent Jamo.
+    /// (`T`) a conjoining trailing consonant Jamo.
     pub const TrailingJamo: HangulSyllableType = HangulSyllableType(3);
     /// (`LV`) a precomposed syllable with a leading consonant and a vowel.
     pub const LeadingVowelSyllable: HangulSyllableType = HangulSyllableType(4);
@@ -1612,7 +1610,7 @@ impl HangulSyllableType {
 }
 
 impl_value_getter! {
-    markers: HangulSyllableTypeNameToValueV1Marker / SINGLETON_PROPNAMES_FROM_HST_V1, HangulSyllableTypeValueToShortNameV1Marker / SINGLETON_PROPNAMES_TO_SHORT_LINEAR_HST_V1, HangulSyllableTypeValueToLongNameV1Marker / SINGLETON_PROPNAMES_TO_LONG_LINEAR_HST_V1;
+    markers: HangulSyllableTypeNameToValueV1Marker / SINGLETON_HANGUL_SYLLABLE_TYPE_NAME_TO_VALUE_V1_MARKER, HangulSyllableTypeValueToShortNameV1Marker / SINGLETON_HANGUL_SYLLABLE_TYPE_VALUE_TO_SHORT_NAME_V1_MARKER, HangulSyllableTypeValueToLongNameV1Marker / SINGLETON_HANGUL_SYLLABLE_TYPE_VALUE_TO_LONG_NAME_V1_MARKER;
     impl HangulSyllableType {
         /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the `Bidi_Class` enumerated property
@@ -1707,7 +1705,7 @@ impl EastAsianWidth {
 }
 
 impl_value_getter! {
-    markers: EastAsianWidthNameToValueV1Marker / SINGLETON_PROPNAMES_FROM_EA_V1, EastAsianWidthValueToShortNameV1Marker / SINGLETON_PROPNAMES_TO_SHORT_LINEAR_EA_V1, EastAsianWidthValueToLongNameV1Marker / SINGLETON_PROPNAMES_TO_LONG_LINEAR_EA_V1;
+    markers: EastAsianWidthNameToValueV1Marker / SINGLETON_EAST_ASIAN_WIDTH_NAME_TO_VALUE_V1_MARKER, EastAsianWidthValueToShortNameV1Marker / SINGLETON_EAST_ASIAN_WIDTH_VALUE_TO_SHORT_NAME_V1_MARKER, EastAsianWidthValueToLongNameV1Marker / SINGLETON_EAST_ASIAN_WIDTH_VALUE_TO_LONG_NAME_V1_MARKER;
     impl EastAsianWidth {
         /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the `East_Asian_Width` enumerated property.
@@ -1844,7 +1842,7 @@ impl LineBreak {
 }
 
 impl_value_getter! {
-    markers: LineBreakNameToValueV1Marker / SINGLETON_PROPNAMES_FROM_LB_V1, LineBreakValueToShortNameV1Marker / SINGLETON_PROPNAMES_TO_SHORT_LINEAR_LB_V1, LineBreakValueToLongNameV1Marker / SINGLETON_PROPNAMES_TO_LONG_LINEAR_LB_V1;
+    markers: LineBreakNameToValueV1Marker / SINGLETON_LINE_BREAK_NAME_TO_VALUE_V1_MARKER, LineBreakValueToShortNameV1Marker / SINGLETON_LINE_BREAK_VALUE_TO_SHORT_NAME_V1_MARKER, LineBreakValueToLongNameV1Marker / SINGLETON_LINE_BREAK_VALUE_TO_LONG_NAME_V1_MARKER;
     impl LineBreak {
         /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the `Line_Break` enumerated property.
@@ -1954,7 +1952,7 @@ impl GraphemeClusterBreak {
 }
 
 impl_value_getter! {
-    markers: GraphemeClusterBreakNameToValueV1Marker / SINGLETON_PROPNAMES_FROM_GCB_V1, GraphemeClusterBreakValueToShortNameV1Marker / SINGLETON_PROPNAMES_TO_SHORT_LINEAR_GCB_V1, GraphemeClusterBreakValueToLongNameV1Marker / SINGLETON_PROPNAMES_TO_LONG_LINEAR_GCB_V1;
+    markers: GraphemeClusterBreakNameToValueV1Marker / SINGLETON_GRAPHEME_CLUSTER_BREAK_NAME_TO_VALUE_V1_MARKER, GraphemeClusterBreakValueToShortNameV1Marker / SINGLETON_GRAPHEME_CLUSTER_BREAK_VALUE_TO_SHORT_NAME_V1_MARKER, GraphemeClusterBreakValueToLongNameV1Marker / SINGLETON_GRAPHEME_CLUSTER_BREAK_VALUE_TO_LONG_NAME_V1_MARKER;
     impl GraphemeClusterBreak {
         /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the `Grapheme_Cluster_Break` enumerated property.
@@ -2071,7 +2069,7 @@ impl WordBreak {
 }
 
 impl_value_getter! {
-    markers: WordBreakNameToValueV1Marker / SINGLETON_PROPNAMES_FROM_WB_V1, WordBreakValueToShortNameV1Marker / SINGLETON_PROPNAMES_TO_SHORT_LINEAR_WB_V1, WordBreakValueToLongNameV1Marker / SINGLETON_PROPNAMES_TO_LONG_LINEAR_WB_V1;
+    markers: WordBreakNameToValueV1Marker / SINGLETON_WORD_BREAK_NAME_TO_VALUE_V1_MARKER, WordBreakValueToShortNameV1Marker / SINGLETON_WORD_BREAK_VALUE_TO_SHORT_NAME_V1_MARKER, WordBreakValueToLongNameV1Marker / SINGLETON_WORD_BREAK_VALUE_TO_LONG_NAME_V1_MARKER;
     impl WordBreak {
         /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the `Word_Break` enumerated property.
@@ -2178,7 +2176,7 @@ impl SentenceBreak {
 }
 
 impl_value_getter! {
-    markers: SentenceBreakNameToValueV1Marker / SINGLETON_PROPNAMES_FROM_SB_V1, SentenceBreakValueToShortNameV1Marker / SINGLETON_PROPNAMES_TO_SHORT_LINEAR_SB_V1, SentenceBreakValueToLongNameV1Marker / SINGLETON_PROPNAMES_TO_LONG_LINEAR_SB_V1;
+    markers: SentenceBreakNameToValueV1Marker / SINGLETON_SENTENCE_BREAK_NAME_TO_VALUE_V1_MARKER, SentenceBreakValueToShortNameV1Marker / SINGLETON_SENTENCE_BREAK_VALUE_TO_SHORT_NAME_V1_MARKER, SentenceBreakValueToLongNameV1Marker / SINGLETON_SENTENCE_BREAK_VALUE_TO_LONG_NAME_V1_MARKER;
     impl SentenceBreak {
         /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the `Sentence_Break` enumerated property.
@@ -2331,7 +2329,7 @@ impl CanonicalCombiningClass {
 }
 
 impl_value_getter! {
-    markers: CanonicalCombiningClassNameToValueV1Marker / SINGLETON_PROPNAMES_FROM_CCC_V1, CanonicalCombiningClassValueToShortNameV1Marker / SINGLETON_PROPNAMES_TO_SHORT_SPARSE_CCC_V1, CanonicalCombiningClassValueToLongNameV1Marker / SINGLETON_PROPNAMES_TO_LONG_SPARSE_CCC_V1;
+    markers: CanonicalCombiningClassNameToValueV1Marker / SINGLETON_CANONICAL_COMBINING_CLASS_NAME_TO_VALUE_V1_MARKER, CanonicalCombiningClassValueToShortNameV1Marker / SINGLETON_CANONICAL_COMBINING_CLASS_VALUE_TO_SHORT_NAME_V1_MARKER, CanonicalCombiningClassValueToLongNameV1Marker / SINGLETON_CANONICAL_COMBINING_CLASS_VALUE_TO_LONG_NAME_V1_MARKER;
     impl CanonicalCombiningClass {
         /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the `Canonical_Combining_Class` enumerated property.
@@ -2458,7 +2456,7 @@ impl IndicSyllabicCategory {
 }
 
 impl_value_getter! {
-    markers: IndicSyllabicCategoryNameToValueV1Marker / SINGLETON_PROPNAMES_FROM_INSC_V1, IndicSyllabicCategoryValueToShortNameV1Marker / SINGLETON_PROPNAMES_TO_SHORT_LINEAR_INSC_V1, IndicSyllabicCategoryValueToLongNameV1Marker / SINGLETON_PROPNAMES_TO_LONG_LINEAR_INSC_V1;
+    markers: IndicSyllabicCategoryNameToValueV1Marker / SINGLETON_INDIC_SYLLABIC_CATEGORY_NAME_TO_VALUE_V1_MARKER, IndicSyllabicCategoryValueToShortNameV1Marker / SINGLETON_INDIC_SYLLABIC_CATEGORY_VALUE_TO_SHORT_NAME_V1_MARKER, IndicSyllabicCategoryValueToLongNameV1Marker / SINGLETON_INDIC_SYLLABIC_CATEGORY_VALUE_TO_LONG_NAME_V1_MARKER;
     impl IndicSyllabicCategory {
         /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the `Indic_Syllabic_Category` enumerated property.
@@ -2548,7 +2546,7 @@ impl JoiningType {
 }
 
 impl_value_getter! {
-    markers: JoiningTypeNameToValueV1Marker / SINGLETON_PROPNAMES_FROM_JT_V1, JoiningTypeValueToShortNameV1Marker / SINGLETON_PROPNAMES_TO_SHORT_LINEAR_JT_V1, JoiningTypeValueToLongNameV1Marker / SINGLETON_PROPNAMES_TO_LONG_LINEAR_JT_V1;
+    markers: JoiningTypeNameToValueV1Marker / SINGLETON_JOINING_TYPE_NAME_TO_VALUE_V1_MARKER, JoiningTypeValueToShortNameV1Marker / SINGLETON_JOINING_TYPE_VALUE_TO_SHORT_NAME_V1_MARKER, JoiningTypeValueToLongNameV1Marker / SINGLETON_JOINING_TYPE_VALUE_TO_LONG_NAME_V1_MARKER;
     impl JoiningType {
         /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the `Joining_Type` enumerated property.
@@ -2664,7 +2662,7 @@ mod test_enumerated_property_completeness {
     #[test]
     fn test_ea() {
         check_enum(
-            crate::provider::Baked::SINGLETON_PROPNAMES_FROM_EA_V1,
+            crate::provider::Baked::SINGLETON_EAST_ASIAN_WIDTH_NAME_TO_VALUE_V1_MARKER,
             EastAsianWidth::ALL_CONSTS,
         );
     }
@@ -2672,7 +2670,7 @@ mod test_enumerated_property_completeness {
     #[test]
     fn test_ccc() {
         check_enum(
-            crate::provider::Baked::SINGLETON_PROPNAMES_FROM_CCC_V1,
+            crate::provider::Baked::SINGLETON_CANONICAL_COMBINING_CLASS_NAME_TO_VALUE_V1_MARKER,
             CanonicalCombiningClass::ALL_CONSTS,
         );
     }
@@ -2680,7 +2678,7 @@ mod test_enumerated_property_completeness {
     #[test]
     fn test_jt() {
         check_enum(
-            crate::provider::Baked::SINGLETON_PROPNAMES_FROM_JT_V1,
+            crate::provider::Baked::SINGLETON_JOINING_TYPE_NAME_TO_VALUE_V1_MARKER,
             JoiningType::ALL_CONSTS,
         );
     }
@@ -2688,7 +2686,7 @@ mod test_enumerated_property_completeness {
     #[test]
     fn test_insc() {
         check_enum(
-            crate::provider::Baked::SINGLETON_PROPNAMES_FROM_INSC_V1,
+            crate::provider::Baked::SINGLETON_INDIC_SYLLABIC_CATEGORY_NAME_TO_VALUE_V1_MARKER,
             IndicSyllabicCategory::ALL_CONSTS,
         );
     }
@@ -2696,7 +2694,7 @@ mod test_enumerated_property_completeness {
     #[test]
     fn test_sb() {
         check_enum(
-            crate::provider::Baked::SINGLETON_PROPNAMES_FROM_SB_V1,
+            crate::provider::Baked::SINGLETON_SENTENCE_BREAK_NAME_TO_VALUE_V1_MARKER,
             SentenceBreak::ALL_CONSTS,
         );
     }
@@ -2704,7 +2702,7 @@ mod test_enumerated_property_completeness {
     #[test]
     fn test_wb() {
         check_enum(
-            crate::provider::Baked::SINGLETON_PROPNAMES_FROM_WB_V1,
+            crate::provider::Baked::SINGLETON_WORD_BREAK_NAME_TO_VALUE_V1_MARKER,
             WordBreak::ALL_CONSTS,
         );
     }
@@ -2712,7 +2710,7 @@ mod test_enumerated_property_completeness {
     #[test]
     fn test_bc() {
         check_enum(
-            crate::provider::Baked::SINGLETON_PROPNAMES_FROM_BC_V1,
+            crate::provider::Baked::SINGLETON_BIDI_CLASS_NAME_TO_VALUE_V1_MARKER,
             BidiClass::ALL_CONSTS,
         );
     }
@@ -2720,7 +2718,7 @@ mod test_enumerated_property_completeness {
     #[test]
     fn test_hst() {
         check_enum(
-            crate::provider::Baked::SINGLETON_PROPNAMES_FROM_HST_V1,
+            crate::provider::Baked::SINGLETON_HANGUL_SYLLABLE_TYPE_NAME_TO_VALUE_V1_MARKER,
             HangulSyllableType::ALL_CONSTS,
         );
     }

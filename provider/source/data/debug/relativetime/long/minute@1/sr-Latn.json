@@ -1,0 +1,25 @@
+{
+  "relatives": {
+    "0": "ovog minuta"
+  },
+  "past": {
+    "strings": {
+      "other": [
+        0,
+        "\u0005pre  minuta"
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "one": [
+        0,
+        "\u0004za  minut"
+      ],
+      "other": [
+        0,
+        "\u0004za  minuta"
+      ]
+    }
+  }
+}

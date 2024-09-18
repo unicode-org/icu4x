@@ -4,59 +4,59 @@
 
 use core::ops::RangeInclusive;
 use fixed_decimal::FixedDecimal;
+use fixed_decimal::RoundingMode;
 use fixed_decimal::Sign;
 use writeable::Writeable;
 
 #[test]
 pub fn test_ecma402_table() {
     // Source: <https://tc39.es/ecma402/#table-intl-rounding-modes>
-    #[allow(clippy::type_complexity)] // best way to make it render like a table
-    let cases: [(_, fn(&mut FixedDecimal, i16), _, _, _, _, _); 9] = [
-        ("ceil", FixedDecimal::ceil, -1, 1, 1, 1, 2),
-        ("floor", FixedDecimal::floor, -2, 0, 0, 0, 1),
-        ("expand", FixedDecimal::expand, -2, 1, 1, 1, 2),
-        ("trunc", FixedDecimal::trunc, -1, 0, 0, 0, 1),
-        ("half_ceil", FixedDecimal::half_ceil, -1, 0, 1, 1, 2),
-        ("half_floor", FixedDecimal::half_floor, -2, 0, 0, 1, 1),
-        ("half_expand", FixedDecimal::half_expand, -2, 0, 1, 1, 2),
-        ("half_trunc", FixedDecimal::half_trunc, -1, 0, 0, 1, 1),
-        ("half_even", FixedDecimal::half_even, -2, 0, 0, 1, 2),
+    let cases: [(_, _, _, _, _, _, _); 9] = [
+        ("ceil", RoundingMode::Ceil, -1, 1, 1, 1, 2),
+        ("floor", RoundingMode::Floor, -2, 0, 0, 0, 1),
+        ("expand", RoundingMode::Expand, -2, 1, 1, 1, 2),
+        ("trunc", RoundingMode::Trunc, -1, 0, 0, 0, 1),
+        ("half_ceil", RoundingMode::HalfCeil, -1, 0, 1, 1, 2),
+        ("half_floor", RoundingMode::HalfFloor, -2, 0, 0, 1, 1),
+        ("half_expand", RoundingMode::HalfExpand, -2, 0, 1, 1, 2),
+        ("half_trunc", RoundingMode::HalfTrunc, -1, 0, 0, 1, 1),
+        ("half_even", RoundingMode::HalfEven, -2, 0, 0, 1, 2),
     ];
-    for (rounding_mode, f, e1, e2, e3, e4, e5) in cases {
+    for (name, mode, e1, e2, e3, e4, e5) in cases {
         let mut fd1: FixedDecimal = "-1.5".parse().unwrap();
         let mut fd2: FixedDecimal = "0.4".parse().unwrap();
         let mut fd3: FixedDecimal = "0.5".parse().unwrap();
         let mut fd4: FixedDecimal = "0.6".parse().unwrap();
         let mut fd5: FixedDecimal = "1.5".parse().unwrap();
-        f(&mut fd1, 0);
-        f(&mut fd2, 0);
-        f(&mut fd3, 0);
-        f(&mut fd4, 0);
-        f(&mut fd5, 0);
+        fd1.round_with_mode(0, mode);
+        fd2.round_with_mode(0, mode);
+        fd3.round_with_mode(0, mode);
+        fd4.round_with_mode(0, mode);
+        fd5.round_with_mode(0, mode);
         assert_eq!(
             fd1.write_to_string(),
             e1.write_to_string(),
-            "-1.5 failed for {rounding_mode}"
+            "-1.5 failed for {name}"
         );
         assert_eq!(
             fd2.write_to_string(),
             e2.write_to_string(),
-            "0.4 failed for {rounding_mode}"
+            "0.4 failed for {name}"
         );
         assert_eq!(
             fd3.write_to_string(),
             e3.write_to_string(),
-            "0.5 failed for {rounding_mode}"
+            "0.5 failed for {name}"
         );
         assert_eq!(
             fd4.write_to_string(),
             e4.write_to_string(),
-            "0.6 failed for {rounding_mode}"
+            "0.6 failed for {name}"
         );
         assert_eq!(
             fd5.write_to_string(),
             e5.write_to_string(),
-            "1.5 failed for {rounding_mode}"
+            "1.5 failed for {name}"
         );
     }
 }
@@ -64,8 +64,8 @@ pub fn test_ecma402_table() {
 #[test]
 pub fn test_within_ranges() {
     struct TestCase {
-        rounding_mode: &'static str,
-        f: fn(&mut FixedDecimal, i16),
+        rounding_mode_name: &'static str,
+        rounding_mode: RoundingMode,
         range_n2000: RangeInclusive<i32>,
         range_n1000: RangeInclusive<i32>,
         range_0: RangeInclusive<i32>,
@@ -74,8 +74,8 @@ pub fn test_within_ranges() {
     }
     let cases: [TestCase; 9] = [
         TestCase {
-            rounding_mode: "ceil",
-            f: FixedDecimal::ceil,
+            rounding_mode_name: "ceil",
+            rounding_mode: RoundingMode::Ceil,
             range_n2000: -2999..=-2000,
             range_n1000: -1999..=-1000,
             range_0: -999..=0,
@@ -83,8 +83,8 @@ pub fn test_within_ranges() {
             range_2000: 1001..=2000,
         },
         TestCase {
-            rounding_mode: "floor",
-            f: FixedDecimal::floor,
+            rounding_mode_name: "floor",
+            rounding_mode: RoundingMode::Floor,
             range_n2000: -2000..=-1001,
             range_n1000: -1000..=-1,
             range_0: 0..=999,
@@ -92,8 +92,8 @@ pub fn test_within_ranges() {
             range_2000: 2000..=2999,
         },
         TestCase {
-            rounding_mode: "expand",
-            f: FixedDecimal::expand,
+            rounding_mode_name: "expand",
+            rounding_mode: RoundingMode::Expand,
             range_n2000: -2000..=-1001,
             range_n1000: -1000..=-1,
             range_0: 0..=0,
@@ -101,8 +101,8 @@ pub fn test_within_ranges() {
             range_2000: 1001..=2000,
         },
         TestCase {
-            rounding_mode: "trunc",
-            f: FixedDecimal::trunc,
+            rounding_mode_name: "trunc",
+            rounding_mode: RoundingMode::Trunc,
             range_n2000: -2999..=-2000,
             range_n1000: -1999..=-1000,
             range_0: -999..=999,
@@ -110,8 +110,8 @@ pub fn test_within_ranges() {
             range_2000: 2000..=2999,
         },
         TestCase {
-            rounding_mode: "half_ceil",
-            f: FixedDecimal::half_ceil,
+            rounding_mode_name: "half_ceil",
+            rounding_mode: RoundingMode::HalfCeil,
             range_n2000: -2500..=-1501,
             range_n1000: -1500..=-501,
             range_0: -500..=449,
@@ -119,8 +119,8 @@ pub fn test_within_ranges() {
             range_2000: 1500..=2449,
         },
         TestCase {
-            rounding_mode: "half_floor",
-            f: FixedDecimal::half_floor,
+            rounding_mode_name: "half_floor",
+            rounding_mode: RoundingMode::HalfFloor,
             range_n2000: -2449..=-1500,
             range_n1000: -1449..=-500,
             range_0: -449..=500,
@@ -128,8 +128,8 @@ pub fn test_within_ranges() {
             range_2000: 1501..=2500,
         },
         TestCase {
-            rounding_mode: "half_expand",
-            f: FixedDecimal::half_expand,
+            rounding_mode_name: "half_expand",
+            rounding_mode: RoundingMode::HalfExpand,
             range_n2000: -2449..=-1500,
             range_n1000: -1449..=-500,
             range_0: -449..=449,
@@ -137,8 +137,8 @@ pub fn test_within_ranges() {
             range_2000: 1500..=2449,
         },
         TestCase {
-            rounding_mode: "half_trunc",
-            f: FixedDecimal::half_trunc,
+            rounding_mode_name: "half_trunc",
+            rounding_mode: RoundingMode::HalfTrunc,
             range_n2000: -2500..=-1501,
             range_n1000: -1500..=-501,
             range_0: -500..=500,
@@ -146,8 +146,8 @@ pub fn test_within_ranges() {
             range_2000: 1501..=2500,
         },
         TestCase {
-            rounding_mode: "half_even",
-            f: FixedDecimal::half_even,
+            rounding_mode_name: "half_even",
+            rounding_mode: RoundingMode::HalfEven,
             range_n2000: -2500..=-1500,
             range_n1000: -1449..=-501,
             range_0: -500..=500,
@@ -156,8 +156,8 @@ pub fn test_within_ranges() {
         },
     ];
     for TestCase {
+        rounding_mode_name,
         rounding_mode,
-        f,
         range_n2000,
         range_n1000,
         range_0,
@@ -167,33 +167,33 @@ pub fn test_within_ranges() {
     {
         for n in range_n2000 {
             let mut fd = FixedDecimal::from(n);
-            f(&mut fd, 3);
-            assert_eq!(fd.write_to_string(), "-2000", "{rounding_mode}: {n}");
+            fd.round_with_mode(3, rounding_mode);
+            assert_eq!(fd.write_to_string(), "-2000", "{rounding_mode_name}: {n}");
             let mut fd = FixedDecimal::from(n - 1000000).multiplied_pow10(-5);
-            f(&mut fd, -2);
+            fd.round_with_mode(-2, rounding_mode);
             assert_eq!(
                 fd.write_to_string(),
                 "-10.02",
-                "{rounding_mode}: {n} ÷ 10^5 ± 10"
+                "{rounding_mode_name}: {n} ÷ 10^5 ± 10"
             );
         }
         for n in range_n1000 {
             let mut fd = FixedDecimal::from(n);
-            f(&mut fd, 3);
-            assert_eq!(fd.write_to_string(), "-1000", "{rounding_mode}: {n}");
+            fd.round_with_mode(3, rounding_mode);
+            assert_eq!(fd.write_to_string(), "-1000", "{rounding_mode_name}: {n}");
             let mut fd = FixedDecimal::from(n - 1000000).multiplied_pow10(-5);
-            f(&mut fd, -2);
+            fd.round_with_mode(-2, rounding_mode);
             assert_eq!(
                 fd.write_to_string(),
                 "-10.01",
-                "{rounding_mode}: {n} ÷ 10^5 ± 10"
+                "{rounding_mode_name}: {n} ÷ 10^5 ± 10"
             );
         }
         for n in range_0 {
             let mut fd = FixedDecimal::from(n);
-            f(&mut fd, 3);
+            fd.round_with_mode(3, rounding_mode);
             fd.set_sign(Sign::None); // get rid of -0
-            assert_eq!(fd.write_to_string(), "000", "{rounding_mode}: {n}");
+            assert_eq!(fd.write_to_string(), "000", "{rounding_mode_name}: {n}");
             let (mut fd, expected) = if n < 0 {
                 (
                     FixedDecimal::from(n - 1000000).multiplied_pow10(-5),
@@ -205,35 +205,35 @@ pub fn test_within_ranges() {
                     "10.00",
                 )
             };
-            f(&mut fd, -2);
+            fd.round_with_mode(-2, rounding_mode);
             assert_eq!(
                 fd.write_to_string(),
                 expected,
-                "{rounding_mode}: {n} ÷ 10^5 ± 10"
+                "{rounding_mode_name}: {n} ÷ 10^5 ± 10"
             );
         }
         for n in range_1000 {
             let mut fd = FixedDecimal::from(n);
-            f(&mut fd, 3);
-            assert_eq!(fd.write_to_string(), "1000", "{rounding_mode}: {n}");
+            fd.round_with_mode(3, rounding_mode);
+            assert_eq!(fd.write_to_string(), "1000", "{rounding_mode_name}: {n}");
             let mut fd = FixedDecimal::from(n + 1000000).multiplied_pow10(-5);
-            f(&mut fd, -2);
+            fd.round_with_mode(-2, rounding_mode);
             assert_eq!(
                 fd.write_to_string(),
                 "10.01",
-                "{rounding_mode}: {n} ÷ 10^5 ± 10"
+                "{rounding_mode_name}: {n} ÷ 10^5 ± 10"
             );
         }
         for n in range_2000 {
             let mut fd = FixedDecimal::from(n);
-            f(&mut fd, 3);
-            assert_eq!(fd.write_to_string(), "2000", "{rounding_mode}: {n}");
+            fd.round_with_mode(3, rounding_mode);
+            assert_eq!(fd.write_to_string(), "2000", "{rounding_mode_name}: {n}");
             let mut fd = FixedDecimal::from(n + 1000000).multiplied_pow10(-5);
-            f(&mut fd, -2);
+            fd.round_with_mode(-2, rounding_mode);
             assert_eq!(
                 fd.write_to_string(),
                 "10.02",
-                "{rounding_mode}: {n} ÷ 10^5 ± 10"
+                "{rounding_mode_name}: {n} ÷ 10^5 ± 10"
             );
         }
     }
@@ -308,16 +308,16 @@ pub fn extra_rounding_mode_cases() {
         },
     ];
     #[allow(clippy::type_complexity)] // most compact representation in code
-    let rounding_modes: [(&'static str, fn(&mut FixedDecimal, i16)); 9] = [
-        ("ceil", FixedDecimal::ceil),
-        ("floor", FixedDecimal::floor),
-        ("expand", FixedDecimal::expand),
-        ("trunc", FixedDecimal::trunc),
-        ("half_ceil", FixedDecimal::half_ceil),
-        ("half_floor", FixedDecimal::half_floor),
-        ("half_expand", FixedDecimal::half_expand),
-        ("half_trunc", FixedDecimal::half_trunc),
-        ("half_even", FixedDecimal::half_even),
+    let rounding_modes: [(&'static str, RoundingMode); 9] = [
+        ("ceil", RoundingMode::Ceil),
+        ("floor", RoundingMode::Floor),
+        ("expand", RoundingMode::Expand),
+        ("trunc", RoundingMode::Trunc),
+        ("half_ceil", RoundingMode::HalfCeil),
+        ("half_floor", RoundingMode::HalfFloor),
+        ("half_expand", RoundingMode::HalfExpand),
+        ("half_trunc", RoundingMode::HalfTrunc),
+        ("half_even", RoundingMode::HalfEven),
     ];
     for TestCase {
         input,
@@ -325,13 +325,15 @@ pub fn extra_rounding_mode_cases() {
         all_expected,
     } in cases
     {
-        for ((rounding_mode, f), expected) in rounding_modes.iter().zip(all_expected.iter()) {
+        for ((rounding_mode_name, rounding_mode), expected) in
+            rounding_modes.iter().zip(all_expected.iter())
+        {
             let mut fd: FixedDecimal = input.parse().unwrap();
-            f(&mut fd, position);
+            fd.round_with_mode(position, *rounding_mode);
             assert_eq!(
                 &*fd.write_to_string(),
                 *expected,
-                "{input}: {rounding_mode} @ {position}"
+                "{input}: {rounding_mode_name} @ {position}"
             )
         }
     }
@@ -343,44 +345,44 @@ pub fn test_ecma402_table_with_increments() {
 
     #[rustfmt::skip] // Don't split everything on its own line. Makes it look a lot nicer.
     #[allow(clippy::type_complexity)]
-    let cases: [(_, _, [(_, fn(&mut FixedDecimal, i16, RoundingIncrement), _, _, _, _, _); 9]); 3] = [
+    let cases: [(_, _, [(_, _, _, _, _, _, _); 9]); 3] = [
         ("two", RoundingIncrement::MultiplesOf2, [
-            ("ceil", FixedDecimal::ceil_to_increment, "-1.4", "0.4", "0.6", "0.6", "1.6"),
-            ("floor", FixedDecimal::floor_to_increment, "-1.6", "0.4", "0.4", "0.6", "1.4"),
-            ("expand", FixedDecimal::expand_to_increment, "-1.6", "0.4", "0.6", "0.6", "1.6"),
-            ("trunc", FixedDecimal::trunc_to_increment, "-1.4", "0.4", "0.4", "0.6", "1.4"),
-            ("half_ceil", FixedDecimal::half_ceil_to_increment, "-1.4", "0.4", "0.6", "0.6", "1.6"),
-            ("half_floor", FixedDecimal::half_floor_to_increment, "-1.6", "0.4", "0.4", "0.6", "1.4"),
-            ("half_expand", FixedDecimal::half_expand_to_increment, "-1.6", "0.4", "0.6", "0.6", "1.6"),
-            ("half_trunc", FixedDecimal::half_trunc_to_increment, "-1.4", "0.4", "0.4", "0.6", "1.4"),
-            ("half_even", FixedDecimal::half_even_to_increment, "-1.6", "0.4", "0.4", "0.6", "1.6"),
+            ("ceil", RoundingMode::Ceil, "-1.4", "0.4", "0.6", "0.6", "1.6"),
+            ("floor", RoundingMode::Floor, "-1.6", "0.4", "0.4", "0.6", "1.4"),
+            ("expand", RoundingMode::Expand, "-1.6", "0.4", "0.6", "0.6", "1.6"),
+            ("trunc", RoundingMode::Trunc, "-1.4", "0.4", "0.4", "0.6", "1.4"),
+            ("half_ceil", RoundingMode::HalfCeil, "-1.4", "0.4", "0.6", "0.6", "1.6"),
+            ("half_floor", RoundingMode::HalfFloor, "-1.6", "0.4", "0.4", "0.6", "1.4"),
+            ("half_expand", RoundingMode::HalfExpand, "-1.6", "0.4", "0.6", "0.6", "1.6"),
+            ("half_trunc", RoundingMode::HalfTrunc, "-1.4", "0.4", "0.4", "0.6", "1.4"),
+            ("half_even", RoundingMode::HalfEven, "-1.6", "0.4", "0.4", "0.6", "1.6"),
         ]),
         ("five", RoundingIncrement::MultiplesOf5, [
-            ("ceil", FixedDecimal::ceil_to_increment, "-1.5", "0.5", "0.5", "1.0", "1.5"),
-            ("floor", FixedDecimal::floor_to_increment, "-1.5", "0.0", "0.5", "0.5", "1.5"),
-            ("expand", FixedDecimal::expand_to_increment, "-1.5", "0.5", "0.5", "1.0", "1.5"),
-            ("trunc", FixedDecimal::trunc_to_increment, "-1.5", "0.0", "0.5", "0.5", "1.5"),
-            ("half_ceil", FixedDecimal::half_ceil_to_increment, "-1.5", "0.5", "0.5", "0.5", "1.5"),
-            ("half_floor", FixedDecimal::half_floor_to_increment, "-1.5", "0.5", "0.5", "0.5", "1.5"),
-            ("half_expand", FixedDecimal::half_expand_to_increment, "-1.5", "0.5", "0.5", "0.5", "1.5"),
-            ("half_trunc", FixedDecimal::half_trunc_to_increment, "-1.5", "0.5", "0.5", "0.5", "1.5"),
-            ("half_even", FixedDecimal::half_even_to_increment, "-1.5", "0.5", "0.5", "0.5", "1.5"),
+            ("ceil", RoundingMode::Ceil, "-1.5", "0.5", "0.5", "1.0", "1.5"),
+            ("floor", RoundingMode::Floor, "-1.5", "0.0", "0.5", "0.5", "1.5"),
+            ("expand", RoundingMode::Expand, "-1.5", "0.5", "0.5", "1.0", "1.5"),
+            ("trunc", RoundingMode::Trunc, "-1.5", "0.0", "0.5", "0.5", "1.5"),
+            ("half_ceil", RoundingMode::HalfCeil, "-1.5", "0.5", "0.5", "0.5", "1.5"),
+            ("half_floor", RoundingMode::HalfFloor, "-1.5", "0.5", "0.5", "0.5", "1.5"),
+            ("half_expand", RoundingMode::HalfExpand, "-1.5", "0.5", "0.5", "0.5", "1.5"),
+            ("half_trunc", RoundingMode::HalfTrunc, "-1.5", "0.5", "0.5", "0.5", "1.5"),
+            ("half_even", RoundingMode::HalfEven, "-1.5", "0.5", "0.5", "0.5", "1.5"),
         ]),
         ("twenty-five", RoundingIncrement::MultiplesOf25, [
-            ("ceil", FixedDecimal::ceil_to_increment, "-0.0", "2.5", "2.5", "2.5", "2.5"),
-            ("floor", FixedDecimal::floor_to_increment, "-2.5", "0.0", "0.0", "0.0", "0.0"),
-            ("expand", FixedDecimal::expand_to_increment, "-2.5", "2.5", "2.5", "2.5", "2.5"),
-            ("trunc", FixedDecimal::trunc_to_increment, "-0.0", "0.0", "0.0", "0.0", "0.0"),
-            ("half_ceil", FixedDecimal::half_ceil_to_increment, "-2.5", "0.0", "0.0", "0.0", "2.5"),
-            ("half_floor", FixedDecimal::half_floor_to_increment, "-2.5", "0.0", "0.0", "0.0", "2.5"),
-            ("half_expand", FixedDecimal::half_expand_to_increment, "-2.5", "0.0", "0.0", "0.0", "2.5"),
-            ("half_trunc", FixedDecimal::half_trunc_to_increment, "-2.5", "0.0", "0.0", "0.0", "2.5"),
-            ("half_even", FixedDecimal::half_even_to_increment, "-2.5", "0.0", "0.0", "0.0", "2.5"),
+            ("ceil", RoundingMode::Ceil, "-0.0", "2.5", "2.5", "2.5", "2.5"),
+            ("floor", RoundingMode::Floor, "-2.5", "0.0", "0.0", "0.0", "0.0"),
+            ("expand", RoundingMode::Expand, "-2.5", "2.5", "2.5", "2.5", "2.5"),
+            ("trunc", RoundingMode::Trunc, "-0.0", "0.0", "0.0", "0.0", "0.0"),
+            ("half_ceil", RoundingMode::HalfCeil, "-2.5", "0.0", "0.0", "0.0", "2.5"),
+            ("half_floor", RoundingMode::HalfFloor, "-2.5", "0.0", "0.0", "0.0", "2.5"),
+            ("half_expand", RoundingMode::HalfExpand, "-2.5", "0.0", "0.0", "0.0", "2.5"),
+            ("half_trunc", RoundingMode::HalfTrunc, "-2.5", "0.0", "0.0", "0.0", "2.5"),
+            ("half_even", RoundingMode::HalfEven, "-2.5", "0.0", "0.0", "0.0", "2.5"),
         ]),
     ];
 
     for (increment_str, increment, cases) in cases {
-        for (rounding_mode, f, e1, e2, e3, e4, e5) in cases {
+        for (rounding_mode_name, rounding_mode, e1, e2, e3, e4, e5) in cases {
             let mut fd1: FixedDecimal = "-1.5".parse().unwrap();
             let mut fd2: FixedDecimal = "0.4".parse().unwrap();
             let mut fd3: FixedDecimal = "0.5".parse().unwrap();
@@ -389,35 +391,35 @@ pub fn test_ecma402_table_with_increments() {
             // The original ECMA-402 table tests rounding at magnitude 0.
             // However, testing rounding at magnitude -1 gives more
             // interesting test cases for increments.
-            f(&mut fd1, -1, increment);
-            f(&mut fd2, -1, increment);
-            f(&mut fd3, -1, increment);
-            f(&mut fd4, -1, increment);
-            f(&mut fd5, -1, increment);
+            fd1.round_with_mode_and_increment(-1, rounding_mode, increment);
+            fd2.round_with_mode_and_increment(-1, rounding_mode, increment);
+            fd3.round_with_mode_and_increment(-1, rounding_mode, increment);
+            fd4.round_with_mode_and_increment(-1, rounding_mode, increment);
+            fd5.round_with_mode_and_increment(-1, rounding_mode, increment);
             assert_eq!(
                 fd1.write_to_string(),
                 e1,
-                "-1.5 failed for {rounding_mode} with increments of {increment_str}"
+                "-1.5 failed for {rounding_mode_name} with increments of {increment_str}"
             );
             assert_eq!(
                 fd2.write_to_string(),
                 e2,
-                "0.4 failed for {rounding_mode} with increments of {increment_str}"
+                "0.4 failed for {rounding_mode_name} with increments of {increment_str}"
             );
             assert_eq!(
                 fd3.write_to_string(),
                 e3,
-                "0.5 failed for {rounding_mode} with increments of {increment_str}"
+                "0.5 failed for {rounding_mode_name} with increments of {increment_str}"
             );
             assert_eq!(
                 fd4.write_to_string(),
                 e4,
-                "0.6 failed for {rounding_mode} with increments of {increment_str}"
+                "0.6 failed for {rounding_mode_name} with increments of {increment_str}"
             );
             assert_eq!(
                 fd5.write_to_string(),
                 e5,
-                "1.5 failed for {rounding_mode} with increments of {increment_str}"
+                "1.5 failed for {rounding_mode_name} with increments of {increment_str}"
             );
         }
     }

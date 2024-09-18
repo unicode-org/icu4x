@@ -8,12 +8,12 @@ use crate::displaynames::options::*;
 use crate::displaynames::provider::*;
 use alloc::borrow::Cow;
 use alloc::string::String;
-use icu_locid::{
+use icu_locale_core::{
     subtags::Language, subtags::Region, subtags::Script, subtags::Variant, LanguageIdentifier,
     Locale,
 };
 use icu_provider::prelude::*;
-use zerovec::ule::UnvalidatedStr;
+use potential_utf::PotentialUtf8;
 
 /// Lookup of the locale-specific display names by region code.
 ///
@@ -23,7 +23,7 @@ use zerovec::ule::UnvalidatedStr;
 /// use icu::experimental::displaynames::{
 ///     DisplayNamesOptions, RegionDisplayNames,
 /// };
-/// use icu::locid::{locale, subtags::region};
+/// use icu::locale::{locale, subtags::region};
 ///
 /// let locale = locale!("en-001").into();
 /// let options: DisplayNamesOptions = Default::default();
@@ -40,9 +40,7 @@ pub struct RegionDisplayNames {
 
 impl RegionDisplayNames {
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        options: DisplayNamesOptions,
-        error: DataError,
+        (locale, options: DisplayNamesOptions) -> error: DataError,
         /// Creates a new [`RegionDisplayNames`] from locale data and an options bag using compiled data.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -65,10 +63,10 @@ impl RegionDisplayNames {
     ) -> Result<Self, DataError> {
         let region_data = provider
             .load(DataRequest {
-                locale,
-                metadata: Default::default(),
+                id: DataIdentifierBorrowed::for_locale(locale),
+                ..Default::default()
             })?
-            .take_payload()?;
+            .payload;
 
         Ok(Self {
             options,
@@ -98,7 +96,7 @@ impl RegionDisplayNames {
 /// use icu::experimental::displaynames::{
 ///     DisplayNamesOptions, ScriptDisplayNames,
 /// };
-/// use icu::locid::{locale, subtags::script};
+/// use icu::locale::{locale, subtags::script};
 ///
 /// let locale = locale!("en-001").into();
 /// let options: DisplayNamesOptions = Default::default();
@@ -115,9 +113,7 @@ pub struct ScriptDisplayNames {
 
 impl ScriptDisplayNames {
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        options: DisplayNamesOptions,
-        error: DataError,
+        (locale, options: DisplayNamesOptions) -> error: DataError,
         /// Creates a new [`ScriptDisplayNames`] from locale data and an options bag using compiled data.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -140,10 +136,10 @@ impl ScriptDisplayNames {
     ) -> Result<Self, DataError> {
         let script_data = provider
             .load(DataRequest {
-                locale,
-                metadata: Default::default(),
+                id: DataIdentifierBorrowed::for_locale(locale),
+                ..Default::default()
             })?
-            .take_payload()?;
+            .payload;
 
         Ok(Self {
             options,
@@ -173,7 +169,7 @@ impl ScriptDisplayNames {
 /// use icu::experimental::displaynames::{
 ///     DisplayNamesOptions, VariantDisplayNames,
 /// };
-/// use icu::locid::{locale, subtags::variant};
+/// use icu::locale::{locale, subtags::variant};
 ///
 /// let locale = locale!("en-001").into();
 /// let options: DisplayNamesOptions = Default::default();
@@ -191,9 +187,7 @@ pub struct VariantDisplayNames {
 
 impl VariantDisplayNames {
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        options: DisplayNamesOptions,
-        error: DataError,
+        (locale, options: DisplayNamesOptions) -> error: DataError,
         /// Creates a new [`VariantDisplayNames`] from locale data and an options bag using compiled data.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -216,10 +210,10 @@ impl VariantDisplayNames {
     ) -> Result<Self, DataError> {
         let variant_data = provider
             .load(DataRequest {
-                locale,
-                metadata: Default::default(),
+                id: DataIdentifierBorrowed::for_locale(locale),
+                ..Default::default()
             })?
-            .take_payload()?;
+            .payload;
 
         Ok(Self {
             options,
@@ -243,7 +237,7 @@ impl VariantDisplayNames {
 /// use icu::experimental::displaynames::{
 ///     DisplayNamesOptions, LanguageDisplayNames,
 /// };
-/// use icu::locid::{locale, subtags::language};
+/// use icu::locale::{locale, subtags::language};
 ///
 /// let locale = locale!("en-001").into();
 /// let options: DisplayNamesOptions = Default::default();
@@ -260,9 +254,7 @@ pub struct LanguageDisplayNames {
 
 impl LanguageDisplayNames {
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        options: DisplayNamesOptions,
-        error: DataError,
+        (locale, options: DisplayNamesOptions) -> error: DataError,
         /// Creates a new [`LanguageDisplayNames`] from locale data and an options bag using compiled data.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -285,10 +277,10 @@ impl LanguageDisplayNames {
     ) -> Result<Self, DataError> {
         let language_data = provider
             .load(DataRequest {
-                locale,
-                metadata: Default::default(),
+                id: DataIdentifierBorrowed::for_locale(locale),
+                ..Default::default()
             })?
-            .take_payload()?;
+            .payload;
 
         Ok(Self {
             options,
@@ -324,7 +316,7 @@ impl LanguageDisplayNames {
 /// use icu::experimental::displaynames::{
 ///     DisplayNamesOptions, LocaleDisplayNamesFormatter,
 /// };
-/// use icu::locid::locale;
+/// use icu::locale::locale;
 ///
 /// let locale = locale!("en-001").into();
 /// let options: DisplayNamesOptions = Default::default();
@@ -354,9 +346,7 @@ pub struct LocaleDisplayNamesFormatter {
 
 impl LocaleDisplayNamesFormatter {
     icu_provider::gen_any_buffer_data_constructors!(
-        locale: include,
-        options: DisplayNamesOptions,
-        error: DataError,
+        (locale, options: DisplayNamesOptions) -> error: DataError,
         /// Creates a new [`LocaleDisplayNamesFormatter`] from locale data and an options bag using compiled data.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -386,17 +376,17 @@ impl LocaleDisplayNamesFormatter {
             + ?Sized,
     {
         let req = DataRequest {
-            locale,
-            metadata: Default::default(),
+            id: DataIdentifierBorrowed::for_locale(locale),
+            ..Default::default()
         };
 
         Ok(Self {
             options,
-            language_data: provider.load(req)?.take_payload()?,
-            locale_data: provider.load(req)?.take_payload()?,
-            script_data: provider.load(req)?.take_payload()?,
-            region_data: provider.load(req)?.take_payload()?,
-            variant_data: provider.load(req)?.take_payload()?,
+            language_data: provider.load(req)?.payload,
+            locale_data: provider.load(req)?.payload,
+            script_data: provider.load(req)?.payload,
+            region_data: provider.load(req)?.payload,
+            variant_data: provider.load(req)?.payload,
         })
     }
 
@@ -421,7 +411,7 @@ impl LocaleDisplayNamesFormatter {
             if let Some(script) = locale.id.script {
                 let data = self.locale_data.get();
                 let id = LanguageIdentifier::from((locale.id.language, Some(script), None));
-                let cmp = |uvstr: &UnvalidatedStr| id.strict_cmp(uvstr).reverse();
+                let cmp = |uvstr: &PotentialUtf8| id.strict_cmp(uvstr).reverse();
                 if let Some(x) = match self.options.style {
                     Some(Style::Short) => data.short_names.get_by(cmp),
                     Some(Style::Long) => data.long_names.get_by(cmp),
@@ -439,7 +429,7 @@ impl LocaleDisplayNamesFormatter {
                 if let Some(region) = locale.id.region {
                     let data = self.locale_data.get();
                     let id = LanguageIdentifier::from((locale.id.language, None, Some(region)));
-                    let cmp = |uvstr: &UnvalidatedStr| id.strict_cmp(uvstr).reverse();
+                    let cmp = |uvstr: &PotentialUtf8| id.strict_cmp(uvstr).reverse();
                     if let Some(x) = match self.options.style {
                         Some(Style::Short) => data.short_names.get_by(cmp),
                         Some(Style::Long) => data.long_names.get_by(cmp),
@@ -538,7 +528,7 @@ impl LocaleDisplayNamesFormatter {
 
 #[test]
 fn test_language_display() {
-    use icu_locid::locale;
+    use icu_locale_core::locale;
 
     let dialect = LocaleDisplayNamesFormatter::try_new(
         &locale!("en").into(),

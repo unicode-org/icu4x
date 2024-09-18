@@ -3,8 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::any_calendar::{AnyCalendar, IntoAnyCalendar};
+use crate::error::DateError;
 use crate::week::{WeekCalculator, WeekOf};
-use crate::{types, Calendar, CalendarError, DateDuration, DateDurationUnit, Iso};
+use crate::{types, Calendar, DateDuration, DateDurationUnit, Iso};
 use alloc::rc::Rc;
 use alloc::sync::Arc;
 use core::fmt;
@@ -97,7 +98,7 @@ impl<'a, C> Deref for Ref<'a, C> {
 /// let date_iso = Date::try_new_iso_date(1970, 1, 2)
 ///     .expect("Failed to initialize ISO Date instance.");
 ///
-/// assert_eq!(date_iso.year().number, 1970);
+/// assert_eq!(date_iso.year().era_year_or_extended(), 1970);
 /// assert_eq!(date_iso.month().ordinal, 1);
 /// assert_eq!(date_iso.day_of_month().0, 2);
 /// ```
@@ -108,14 +109,16 @@ pub struct Date<A: AsCalendar> {
 
 impl<A: AsCalendar> Date<A> {
     /// Construct a date from from era/month codes and fields, and some calendar representation
+    ///
+    /// The year is `extended_year` if no era is provided
     #[inline]
     pub fn try_new_from_codes(
-        era: types::Era,
+        era: Option<types::Era>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
         calendar: A,
-    ) -> Result<Self, CalendarError> {
+    ) -> Result<Self, DateError> {
         let inner = calendar
             .as_calendar()
             .date_from_codes(era, year, month_code, day)?;
@@ -168,9 +171,7 @@ impl<A: AsCalendar> Date<A> {
     }
 
     /// Add a `duration` to this date, mutating it
-    ///
-    /// Currently unstable for ICU4X 1.0
-    #[doc(hidden)]
+    #[doc(hidden)] // unstable
     #[inline]
     pub fn add(&mut self, duration: DateDuration<A::Calendar>) {
         self.calendar
@@ -179,9 +180,7 @@ impl<A: AsCalendar> Date<A> {
     }
 
     /// Add a `duration` to this date, returning the new one
-    ///
-    /// Currently unstable for ICU4X 1.0
-    #[doc(hidden)]
+    #[doc(hidden)] // unstable
     #[inline]
     pub fn added(mut self, duration: DateDuration<A::Calendar>) -> Self {
         self.add(duration);
@@ -189,9 +188,7 @@ impl<A: AsCalendar> Date<A> {
     }
 
     /// Calculating the duration between `other - self`
-    ///
-    /// Currently unstable for ICU4X 1.0
-    #[doc(hidden)]
+    #[doc(hidden)] // unstable
     #[inline]
     pub fn until<B: AsCalendar<Calendar = A::Calendar>>(
         &self,
@@ -210,7 +207,7 @@ impl<A: AsCalendar> Date<A> {
 
     /// The calendar-specific year represented by `self`
     #[inline]
-    pub fn year(&self) -> types::FormattableYear {
+    pub fn year(&self) -> types::YearInfo {
         self.calendar.as_calendar().year(&self.inner)
     }
 
@@ -222,7 +219,7 @@ impl<A: AsCalendar> Date<A> {
 
     /// The calendar-specific month represented by `self`
     #[inline]
-    pub fn month(&self) -> types::FormattableMonth {
+    pub fn month(&self) -> types::MonthInfo {
         self.calendar.as_calendar().month(&self.inner)
     }
 
@@ -280,13 +277,13 @@ impl<A: AsCalendar> Date<A> {
     ///
     /// assert_eq!(
     ///     date.week_of_year(&week_calculator),
-    ///     Ok(WeekOf {
+    ///     WeekOf {
     ///         week: 35,
     ///         unit: RelativeUnit::Current
-    ///     })
+    ///     }
     /// );
     /// ```
-    pub fn week_of_year(&self, config: &WeekCalculator) -> Result<WeekOf, CalendarError> {
+    pub fn week_of_year(&self, config: &WeekCalculator) -> WeekOf {
         config.week_of_year(self.day_of_year_info(), self.day_of_week())
     }
 
@@ -391,15 +388,27 @@ where
 
 impl<A: AsCalendar> fmt::Debug for Date<A> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
-        write!(
-            f,
-            "Date({}-{}-{}, {} era, for calendar {})",
-            self.year().number,
-            self.month().ordinal,
-            self.day_of_month().0,
-            self.year().era.0,
-            self.calendar.as_calendar().debug_name()
-        )
+        let month = self.month().ordinal;
+        let day = self.day_of_month().0;
+        let calendar = self.calendar.as_calendar().debug_name();
+        match self.year().kind {
+            types::YearKind::Era(e) => {
+                let era = e.formatting_era.0;
+                let era_year = e.era_year;
+                write!(
+                    f,
+                    "Date({era_year}-{month}-{day}, {era} era, for calendar {calendar})"
+                )
+            }
+            types::YearKind::Cyclic(cy) => {
+                let year = cy.year;
+                let related_iso = cy.related_iso;
+                write!(
+                    f,
+                    "Date({year}-{month}-{day}, ISO year {related_iso}, for calendar {calendar})"
+                )
+            }
+        }
     }
 }
 

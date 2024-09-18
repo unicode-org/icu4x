@@ -24,7 +24,7 @@
 //! for scenarios where the application stores information about user preferences they can be also provided via
 //! this bag (and if they are, they will take precedence over unicode extensions from the locale).
 //!
-//! [`Locale`]: icu_locid::Locale
+//! [`Locale`]: icu_locale_core::Locale
 //!
 //! # Examples
 //!
@@ -38,10 +38,10 @@ use crate::fields;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
-use icu_locid::extensions::unicode::key;
-use icu_provider::DataLocale;
-use tinystr::tinystr;
-use tinystr::TinyAsciiStr;
+use icu_locale_core::{
+    extensions::unicode::Value,
+    subtags::{subtag, Subtag},
+};
 
 /// Stores user preferences which may affect the result of date and time formatting.
 ///
@@ -72,30 +72,11 @@ pub struct Bag {
 
 impl Bag {
     /// Construct a [`Bag`] with a given [`HourCycle`]
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "datagen")]
     pub fn from_hour_cycle(h: HourCycle) -> Self {
         Self {
             hour_cycle: Some(h),
         }
-    }
-
-    /// Construct a [`Bag`] from a given [`DataLocale`]
-    pub(crate) fn from_data_locale(data_locale: &DataLocale) -> Self {
-        const H11: TinyAsciiStr<8> = tinystr!(8, "h11");
-        const H12: TinyAsciiStr<8> = tinystr!(8, "h12");
-        const H23: TinyAsciiStr<8> = tinystr!(8, "h23");
-        const H24: TinyAsciiStr<8> = tinystr!(8, "h24");
-        let hour_cycle = match data_locale
-            .get_unicode_ext(&key!("hc"))
-            .and_then(|v| v.as_single_subtag().copied())
-        {
-            Some(H11) => Some(HourCycle::H11),
-            Some(H12) => Some(HourCycle::H12),
-            Some(H23) => Some(HourCycle::H23),
-            Some(H24) => Some(HourCycle::H24),
-            _ => None,
-        };
-        Self { hour_cycle }
     }
 }
 
@@ -169,6 +150,20 @@ impl HourCycle {
             Self::H12 => fields::Hour::H12,
             Self::H23 => fields::Hour::H23,
             Self::H24 => fields::Hour::H24,
+        }
+    }
+
+    pub(crate) fn from_locale_value(value: &Value) -> Option<Self> {
+        const H11: Subtag = subtag!("h11");
+        const H12: Subtag = subtag!("h12");
+        const H23: Subtag = subtag!("h23");
+        const H24: Subtag = subtag!("h24");
+        match value.as_single_subtag() {
+            Some(&H11) => Some(HourCycle::H11),
+            Some(&H12) => Some(HourCycle::H12),
+            Some(&H23) => Some(HourCycle::H23),
+            Some(&H24) => Some(HourCycle::H24),
+            _ => None,
         }
     }
 }

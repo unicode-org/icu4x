@@ -50,31 +50,34 @@ use super::MaxVariable;
 pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
+#[allow(unused_imports)]
 const _: () = {
+    use icu_collator_data::*;
     pub mod icu {
         pub use crate as collator;
+        pub use icu_collator_data::icu_locale as locale;
         pub use icu_collections as collections;
-        #[allow(unused_imports)] // baked data may or may not need this
-        pub use icu_locid_transform as locid_transform;
     }
-    icu_collator_data::make_provider!(Baked);
-    icu_collator_data::impl_collator_data_v1!(Baked);
-    icu_collator_data::impl_collator_dia_v1!(Baked);
-    icu_collator_data::impl_collator_jamo_v1!(Baked);
-    icu_collator_data::impl_collator_meta_v1!(Baked);
-    icu_collator_data::impl_collator_prim_v1!(Baked);
-    icu_collator_data::impl_collator_reord_v1!(Baked);
+    make_provider!(Baked);
+    impl_collation_root_v1_marker!(Baked);
+    impl_collation_tailoring_v1_marker!(Baked);
+    impl_collation_diacritics_v1_marker!(Baked);
+    impl_collation_jamo_v1_marker!(Baked);
+    impl_collation_metadata_v1_marker!(Baked);
+    impl_collation_special_primaries_v1_marker!(Baked);
+    impl_collation_reordering_v1_marker!(Baked);
 };
 
 #[cfg(feature = "datagen")]
-/// The latest minimum set of keys required by this component.
-pub const KEYS: &[DataKey] = &[
-    CollationDataV1Marker::KEY,
-    CollationDiacriticsV1Marker::KEY,
-    CollationJamoV1Marker::KEY,
-    CollationMetadataV1Marker::KEY,
-    CollationReorderingV1Marker::KEY,
-    CollationSpecialPrimariesV1Marker::KEY,
+/// The latest minimum set of markers required by this component.
+pub const MARKERS: &[DataMarkerInfo] = &[
+    CollationRootV1Marker::INFO,
+    CollationTailoringV1Marker::INFO,
+    CollationDiacriticsV1Marker::INFO,
+    CollationJamoV1Marker::INFO,
+    CollationMetadataV1Marker::INFO,
+    CollationReorderingV1Marker::INFO,
+    CollationSpecialPrimariesV1Marker::INFO,
 ];
 
 const SINGLE_U32: &ZeroSlice<u32> =
@@ -113,15 +116,23 @@ fn data_ce_to_primary(data_ce: u64, c: char) -> u32 {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(
-    CollationDataV1Marker,
-    "collator/data@1",
-    extension_key = "co",
-    fallback_by = "collation",
-    fallback_supplement = "collation"
-))]
+#[icu_provider::data_struct(
+    marker(
+        CollationRootV1Marker,
+        "collator/root@1",
+        singleton,
+    ),
+    marker(
+        CollationTailoringV1Marker,
+        "collator/tailoring@1",
+        // TODO(#3867): Use script fallback
+        fallback_by = "language",
+        attributes_domain = "collator",
+    )
+)]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CollationDataV1<'data> {
     /// Mapping from `char` to `CollationElement32` (represented
@@ -232,12 +243,12 @@ impl<'data> CollationDataV1<'data> {
 #[icu_provider::data_struct(marker(
     CollationDiacriticsV1Marker,
     "collator/dia@1",
-    extension_key = "co",
-    fallback_by = "collation",
-    fallback_supplement = "collation",
+    fallback_by = "language",
+    attributes_domain = "collator",
 ))]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CollationDiacriticsV1<'data> {
     /// Secondary weights for characters starting from U+0300 up
@@ -257,7 +268,8 @@ pub struct CollationDiacriticsV1<'data> {
 /// </div>
 #[icu_provider::data_struct(marker(CollationJamoV1Marker, "collator/jamo@1", singleton))]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CollationJamoV1<'data> {
     /// `CollationElement32`s (as `u32`s) for the Hangul Jamo Unicode Block.
@@ -276,12 +288,12 @@ pub struct CollationJamoV1<'data> {
 #[icu_provider::data_struct(marker(
     CollationReorderingV1Marker,
     "collator/reord@1",
-    extension_key = "co",
-    fallback_by = "collation",
-    fallback_supplement = "collation"
+    fallback_by = "language",
+    attributes_domain = "collator",
 ))]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CollationReorderingV1<'data> {
     /// Limit of last reordered range. 0 if no reordering or no split bytes.
@@ -366,12 +378,12 @@ impl<'data> CollationReorderingV1<'data> {
 #[icu_provider::data_struct(marker(
     CollationMetadataV1Marker,
     "collator/meta@1",
-    extension_key = "co",
-    fallback_by = "collation",
-    fallback_supplement = "collation"
+    fallback_by = "language",
+    attributes_domain = "collator",
 ))]
 #[derive(Debug, PartialEq, Clone, Copy)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CollationMetadataV1 {
     /// See the mask constants in the `impl` block for the
@@ -465,7 +477,8 @@ impl CollationMetadataV1 {
     singleton
 ))]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CollationSpecialPrimariesV1<'data> {
     /// The primaries corresponding to `MaxVariable`

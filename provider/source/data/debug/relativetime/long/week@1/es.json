@@ -1,0 +1,31 @@
+{
+  "relatives": {
+    "-1": "la semana pasada",
+    "0": "esta semana",
+    "1": "la próxima semana"
+  },
+  "past": {
+    "strings": {
+      "one": [
+        0,
+        "\u0006hace  semana"
+      ],
+      "other": [
+        0,
+        "\u0006hace  semanas"
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "one": [
+        0,
+        "\u000bdentro de  semana"
+      ],
+      "other": [
+        0,
+        "\u000bdentro de  semanas"
+      ]
+    }
+  }
+}

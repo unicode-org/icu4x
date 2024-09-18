@@ -2,19 +2,19 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::TimeZoneError;
+use crate::error::InvalidOffsetError;
 use core::str::FromStr;
 use tinystr::{tinystr, TinyAsciiStr};
 use zerovec::ule::{AsULE, ULE};
 use zerovec::{ZeroSlice, ZeroVec};
 
-/// The GMT offset in seconds for a timezone
-#[derive(Copy, Clone, Debug)]
-pub struct GmtOffset(i32);
+/// The UTC offset in seconds for a timezone
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+pub struct UtcOffset(i32);
 
-impl Default for GmtOffset {
+impl Default for UtcOffset {
     fn default() -> Self {
-        Self::utc()
+        Self::zero()
     }
 }
 
@@ -22,25 +22,45 @@ fn try_get_time_component([tens, ones]: [u8; 2]) -> Option<i32> {
     Some(((tens as char).to_digit(10)? * 10 + (ones as char).to_digit(10)?) as i32)
 }
 
-impl GmtOffset {
-    /// Attempt to create a [`GmtOffset`] from a seconds input. It returns
-    /// [`TimeZoneError::OffsetOutOfBounds`] when the seconds are out of bounds.
-    pub fn try_from_offset_seconds(seconds: i32) -> Result<Self, TimeZoneError> {
+impl UtcOffset {
+    /// Attempt to create a [`UtcOffset`] from a seconds input. It returns
+    /// [`InvalidOffsetError`] when the seconds are out of bounds.
+    pub fn try_from_offset_seconds(seconds: i32) -> Result<Self, InvalidOffsetError> {
         if seconds.unsigned_abs() > 18 * 60 * 60 {
-            Err(TimeZoneError::OffsetOutOfBounds)
+            Err(InvalidOffsetError)
         } else {
             Ok(Self(seconds))
         }
     }
 
-    /// Creates a [`GmtOffset`] at UTC.
-    pub const fn utc() -> Self {
+    /// Creates a [`UtcOffset`] from eighths of an hour.
+    ///
+    /// This is chosen because eighths of an hour cover all current time zones
+    /// and all values of i8 are within range of this type.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::timezone::UtcOffset;
+    ///
+    /// assert_eq!(
+    ///     UtcOffset::try_from_str("-0600").unwrap(),
+    ///     UtcOffset::from_offset_eighths_of_hour(-6 * 8),
+    /// );
+    /// ```
+    pub const fn from_offset_eighths_of_hour(eighths_of_hour: i8) -> Self {
+        Self(eighths_of_hour as i32 * 450)
+    }
+
+    /// Creates a [`UtcOffset`] of 0.
+    pub const fn zero() -> Self {
         Self(0)
     }
 
-    /// Parse a [`GmtOffset`] from bytes.
+    /// Parse a [`UtcOffset`] from bytes.
     ///
-    /// The offset must range from GMT-12 to GMT+14.
+    /// The offset must range from UTC-12 to UTC+14.
+    ///
     /// The string must be an ISO-8601 time zone designator:
     /// e.g. Z
     /// e.g. +05
@@ -50,55 +70,55 @@ impl GmtOffset {
     /// # Examples
     ///
     /// ```
-    /// use icu::timezone::GmtOffset;
-    /// use icu::timezone::TimeZoneError;
+    /// use icu::timezone::UtcOffset;
     ///
-    /// let offset0: GmtOffset =
-    ///     GmtOffset::try_from_bytes(b"Z").expect("Failed to parse a time zone");
-    /// let offset1: GmtOffset =
-    ///     GmtOffset::try_from_bytes(b"+05").expect("Failed to parse a time zone");
-    /// let offset2: GmtOffset = GmtOffset::try_from_bytes(b"+0500")
-    ///     .expect("Failed to parse a time zone");
-    /// let offset3: GmtOffset = GmtOffset::try_from_bytes(b"-05:00")
-    ///     .expect("Failed to parse a time zone");
-    /// let offset_err0: TimeZoneError =
-    ///     GmtOffset::try_from_bytes(b"0500").expect_err("Invalid input");
-    /// let offset_err1: TimeZoneError =
-    ///     GmtOffset::try_from_bytes(b"+05000").expect_err("Invalid input");
+    /// let offset0: UtcOffset = UtcOffset::try_from_str("Z").unwrap();
+    /// let offset1: UtcOffset = UtcOffset::try_from_str("+05").unwrap();
+    /// let offset2: UtcOffset = UtcOffset::try_from_str("+0500").unwrap();
+    /// let offset3: UtcOffset = UtcOffset::try_from_str("-05:00").unwrap();
+    ///
+    /// let offset_err0 =
+    ///     UtcOffset::try_from_str("0500").expect_err("Invalid input");
+    /// let offset_err1 =
+    ///     UtcOffset::try_from_str("+05000").expect_err("Invalid input");
     ///
     /// assert_eq!(offset0.offset_seconds(), 0);
     /// assert_eq!(offset1.offset_seconds(), 18000);
     /// assert_eq!(offset2.offset_seconds(), 18000);
     /// assert_eq!(offset3.offset_seconds(), -18000);
-    /// assert_eq!(offset_err0, TimeZoneError::InvalidOffset);
-    /// assert_eq!(offset_err1, TimeZoneError::InvalidOffset);
     /// ```
-    pub fn try_from_bytes(mut chars: &[u8]) -> Result<Self, TimeZoneError> {
-        let offset_sign = match chars {
+    #[inline]
+    pub fn try_from_str(s: &str) -> Result<Self, InvalidOffsetError> {
+        Self::try_from_utf8(s.as_bytes())
+    }
+
+    /// See [`Self::try_from_str`]
+    pub fn try_from_utf8(mut code_units: &[u8]) -> Result<Self, InvalidOffsetError> {
+        let offset_sign = match code_units {
             [b'+', rest @ ..] => {
-                chars = rest;
+                code_units = rest;
                 1
             }
             [b'-', rest @ ..] => {
-                chars = rest;
+                code_units = rest;
                 -1
             }
             // Unicode minus ("\u{2212}" == [226, 136, 146])
             [226, 136, 146, rest @ ..] => {
-                chars = rest;
+                code_units = rest;
                 -1
             }
             [b'Z'] => return Ok(Self(0)),
-            _ => return Err(TimeZoneError::InvalidOffset),
+            _ => return Err(InvalidOffsetError),
         };
 
-        let hours = match chars {
+        let hours = match code_units {
             &[h1, h2, ..] => try_get_time_component([h1, h2]),
             _ => None,
         }
-        .ok_or(TimeZoneError::InvalidOffset)?;
+        .ok_or(InvalidOffsetError)?;
 
-        let minutes = match chars {
+        let minutes = match code_units {
             /* ±hh */
             &[_, _] => Some(0),
             /* ±hhmm, ±hh:mm */
@@ -107,12 +127,12 @@ impl GmtOffset {
             }
             _ => None,
         }
-        .ok_or(TimeZoneError::InvalidOffset)?;
+        .ok_or(InvalidOffsetError)?;
 
         Self::try_from_offset_seconds(offset_sign * (hours * 60 + minutes) * 60)
     }
 
-    /// Create a [`GmtOffset`] from a seconds input without checking bounds.
+    /// Create a [`UtcOffset`] from a seconds input without checking bounds.
     ///
     /// # Safety
     ///
@@ -127,54 +147,38 @@ impl GmtOffset {
         self.0
     }
 
-    /// Returns `true` if the [`GmtOffset`] is positive, otherwise `false`.
+    /// Returns the raw offset value in eights of an hour (7.5 minute units).
+    pub fn offset_eighths_of_hour(self) -> i8 {
+        (self.0 / 450) as i8
+    }
+
+    /// Returns `true` if the [`UtcOffset`] is positive, otherwise `false`.
     pub fn is_positive(self) -> bool {
         self.0 >= 0
     }
 
-    /// Returns `true` if the [`GmtOffset`] is zero, otherwise `false`.
+    /// Returns `true` if the [`UtcOffset`] is zero, otherwise `false`.
     pub fn is_zero(self) -> bool {
         self.0 == 0
     }
 
-    /// Returns `true` if the [`GmtOffset`] has non-zero minutes, otherwise `false`.
+    /// Returns `true` if the [`UtcOffset`] has non-zero minutes, otherwise `false`.
     pub fn has_minutes(self) -> bool {
         self.0 % 3600 / 60 > 0
     }
 
-    /// Returns `true` if the [`GmtOffset`] has non-zero seconds, otherwise `false`.
+    /// Returns `true` if the [`UtcOffset`] has non-zero seconds, otherwise `false`.
     pub fn has_seconds(self) -> bool {
         self.0 % 3600 % 60 > 0
     }
 }
 
-impl FromStr for GmtOffset {
-    type Err = TimeZoneError;
+impl FromStr for UtcOffset {
+    type Err = InvalidOffsetError;
 
-    /// Parse a [`GmtOffset`] from a string.
-    ///
-    /// The offset must range from GMT-12 to GMT+14.
-    /// The string must be an ISO 8601 time zone designator:
-    /// e.g. Z
-    /// e.g. +05
-    /// e.g. +0500
-    /// e.g. +05:00
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::timezone::GmtOffset;
-    ///
-    /// let offset0: GmtOffset = "Z".parse().expect("Failed to parse a GMT offset");
-    /// let offset1: GmtOffset =
-    ///     "-09".parse().expect("Failed to parse a GMT offset");
-    /// let offset2: GmtOffset =
-    ///     "-0930".parse().expect("Failed to parse a GMT offset");
-    /// let offset3: GmtOffset =
-    ///     "-09:30".parse().expect("Failed to parse a GMT offset");
-    /// ```
-    fn from_str(input: &str) -> Result<Self, Self::Err> {
-        GmtOffset::try_from_bytes(input.as_bytes())
+    #[inline]
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Self::try_from_str(s)
     }
 }
 
@@ -183,18 +187,11 @@ impl FromStr for GmtOffset {
 /// such as Standard time, Daylight time, Summer time, or Ramadan time.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, ULE)]
 #[repr(transparent)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_timezone))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_timezone))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_structs)] // newtype
 pub struct ZoneVariant(pub TinyAsciiStr<2>);
-
-impl FromStr for ZoneVariant {
-    type Err = <TinyAsciiStr<2> as FromStr>::Err;
-
-    fn from_str(input: &str) -> Result<Self, Self::Err> {
-        input.parse().map(ZoneVariant)
-    }
-}
 
 impl ZoneVariant {
     /// Returns the variant corresponding to `"standard"` in CLDR.
@@ -210,18 +207,6 @@ impl ZoneVariant {
     /// name of this variant may or may not be called "Daylight Time".
     pub const fn daylight() -> Self {
         Self(tinystr!(2, "dt"))
-    }
-}
-
-impl From<TinyAsciiStr<2>> for ZoneVariant {
-    fn from(other: TinyAsciiStr<2>) -> Self {
-        Self(other)
-    }
-}
-
-impl From<ZoneVariant> for TinyAsciiStr<2> {
-    fn from(other: ZoneVariant) -> Self {
-        other.0
     }
 }
 

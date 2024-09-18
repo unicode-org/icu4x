@@ -1,0 +1,23 @@
+{
+  "relatives": {
+    "-1": "prošlog mes.",
+    "0": "ovog mes.",
+    "1": "sledećeg mes."
+  },
+  "past": {
+    "strings": {
+      "other": [
+        0,
+        "\u0005pre  mes."
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "other": [
+        0,
+        "\u0004za  mes."
+      ]
+    }
+  }
+}

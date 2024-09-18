@@ -5,25 +5,19 @@
 // An example program making use of a number of ICU components
 // in a pseudo-real-world application of Textual User Interface.
 
-#![no_main] // https://github.com/unicode-org/icu4x/issues/395
-
-use icu::calendar::{DateTime, Gregorian};
-use icu::datetime::time_zone::TimeZoneFormatterOptions;
-use icu::datetime::{DateTimeFormatterOptions, TypedZonedDateTimeFormatter};
-use icu::locid::locale;
+use icu::calendar::{Date, Gregorian, Time};
+use icu::locale::locale;
 use icu::plurals::{PluralCategory, PluralRules};
 use icu::timezone::CustomTimeZone;
 use icu_collections::codepointinvlist::CodePointInversionListBuilder;
+use icu_datetime::neo::TypedNeoFormatter;
+use icu_datetime::neo_marker::NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker;
+use icu_datetime::neo_skeleton::NeoSkeletonLength;
+use icu_timezone::CustomZonedDateTime;
 use std::env;
-use std::str::FromStr;
+use writeable::adapters::LossyWrap;
 
-fn print<T: AsRef<str>>(_input: T) {
-    #[cfg(debug_assertions)]
-    println!("{}", _input.as_ref());
-}
-
-#[no_mangle]
-fn main(_argc: isize, _argv: *const *const u8) -> isize {
+fn main() {
     let args: Vec<String> = env::args().collect();
 
     let locale = args
@@ -41,37 +35,37 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
         })
         .unwrap_or(5);
 
-    print(format!("\nTextual User Interface Example ({locale})"));
-    print("===================================");
-    print(format!("User: {user_name}"));
+    println!("\nTextual User Interface Example ({locale})");
+    println!("===================================");
+    println!("User: {user_name}");
 
     {
-        let dtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new(
-            &locale,
-            DateTimeFormatterOptions::default(),
-            TimeZoneFormatterOptions::default(),
-        )
-        .expect("Failed to create TypedDateTimeFormatter.");
-        let today_date = DateTime::try_new_gregorian_datetime(2020, 10, 10, 18, 56, 0).unwrap();
-        let today_tz = CustomTimeZone::from_str("Z").unwrap(); // Z refers to the utc timezone
+        let dtf = TypedNeoFormatter::<
+            Gregorian,
+            NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker,
+        >::try_new(&locale, NeoSkeletonLength::Medium.into())
+        .expect("Failed to create zoned datetime formatter.");
+        let date = Date::try_new_gregorian_date(2020, 10, 10).unwrap();
+        let time = Time::try_new(18, 56, 0, 0).unwrap();
+        let zone = CustomTimeZone::utc();
 
-        let formatted_dt = dtf.format(&today_date, &today_tz);
+        let formatted_dt = dtf.format(&CustomZonedDateTime { date, time, zone });
 
-        print(format!("Today is: {formatted_dt}"));
+        println!("Today is: {}", LossyWrap(formatted_dt));
     }
 
     {
         let mut builder = CodePointInversionListBuilder::new();
         // See http://ftp.unicode.org/Public/MAPPINGS/ISO8859/8859-1.TXT
-        builder.add_range(&('\u{0000}'..='\u{00FF}'));
+        builder.add_range('\u{0000}'..='\u{00FF}');
         let latin1_set = builder.build();
 
         let only_latin1 = user_name.chars().all(|ch| latin1_set.contains(ch));
 
         if only_latin1 {
-            print("User name latin1 only: true");
+            println!("User name latin1 only: true");
         } else {
-            print("User name latin1 only: false");
+            println!("User name latin1 only: false");
         }
     }
 
@@ -80,10 +74,8 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
             .expect("Failed to create PluralRules.");
 
         match pr.category_for(email_count) {
-            PluralCategory::One => print("Note: You have one unread email."),
-            _ => print(format!("Note: You have {email_count} unread emails.")),
+            PluralCategory::One => println!("Note: You have one unread email."),
+            _ => println!("Note: You have {email_count} unread emails."),
         }
     }
-
-    0
 }

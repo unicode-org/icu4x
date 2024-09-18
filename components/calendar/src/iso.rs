@@ -16,12 +16,12 @@
 //!     .expect("Failed to initialize ISO DateTime instance.");
 //!
 //! // `Date` checks
-//! assert_eq!(date_iso.year().number, 1970);
+//! assert_eq!(date_iso.year().era_year_or_extended(), 1970);
 //! assert_eq!(date_iso.month().ordinal, 1);
 //! assert_eq!(date_iso.day_of_month().0, 2);
 //!
 //! // `DateTime` type
-//! assert_eq!(datetime_iso.date.year().number, 1970);
+//! assert_eq!(datetime_iso.date.year().era_year_or_extended(), 1970);
 //! assert_eq!(datetime_iso.date.month().ordinal, 1);
 //! assert_eq!(datetime_iso.date.day_of_month().0, 2);
 //! assert_eq!(datetime_iso.time.hour.number(), 13);
@@ -29,9 +29,9 @@
 //! assert_eq!(datetime_iso.time.second.number(), 0);
 //! ```
 
-use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime, Time};
+use crate::error::DateError;
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, RangeError, Time};
 use calendrical_calculations::helpers::{i64_to_saturated_i32, I32CastError};
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
@@ -97,13 +97,15 @@ impl Calendar for Iso {
     /// Construct a date from era/month codes and fields
     fn date_from_codes(
         &self,
-        era: types::Era,
+        era: Option<types::Era>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::DateInner, CalendarError> {
-        if era.0 != tinystr!(16, "default") {
-            return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
+    ) -> Result<Self::DateInner, DateError> {
+        if let Some(era) = era {
+            if era.0 != tinystr!(16, "default") {
+                return Err(DateError::UnknownEra(era));
+            }
         }
 
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(IsoDateInner)
@@ -193,8 +195,7 @@ impl Calendar for Iso {
         date1.0.until(date2.0, _largest_unit, _smallest_unit)
     }
 
-    /// The calendar-specific year represented by `date`
-    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
+    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
         Self::year_as_iso(date.0.year)
     }
 
@@ -203,7 +204,7 @@ impl Calendar for Iso {
     }
 
     /// The calendar-specific month represented by `date`
-    fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
+    fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
         date.0.month()
     }
 
@@ -228,8 +229,8 @@ impl Calendar for Iso {
         "ISO"
     }
 
-    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
-        Some(AnyCalendarKind::Iso)
+    fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
+        Some(crate::any_calendar::IntoAnyCalendar::kind(self))
     }
 }
 
@@ -242,11 +243,11 @@ impl Date<Iso> {
     /// let date_iso = Date::try_new_iso_date(1970, 1, 2)
     ///     .expect("Failed to initialize ISO Date instance.");
     ///
-    /// assert_eq!(date_iso.year().number, 1970);
+    /// assert_eq!(date_iso.year().era_year_or_extended(), 1970);
     /// assert_eq!(date_iso.month().ordinal, 1);
     /// assert_eq!(date_iso.day_of_month().0, 2);
     /// ```
-    pub fn try_new_iso_date(year: i32, month: u8, day: u8) -> Result<Date<Iso>, CalendarError> {
+    pub fn try_new_iso_date(year: i32, month: u8, day: u8) -> Result<Date<Iso>, RangeError> {
         ArithmeticDate::new_from_ordinals(year, month, day)
             .map(IsoDateInner)
             .map(|inner| Date::from_raw(inner, Iso))
@@ -267,7 +268,7 @@ impl DateTime<Iso> {
     /// let datetime_iso = DateTime::try_new_iso_datetime(1970, 1, 2, 13, 1, 0)
     ///     .expect("Failed to initialize ISO DateTime instance.");
     ///
-    /// assert_eq!(datetime_iso.date.year().number, 1970);
+    /// assert_eq!(datetime_iso.date.year().era_year_or_extended(), 1970);
     /// assert_eq!(datetime_iso.date.month().ordinal, 1);
     /// assert_eq!(datetime_iso.date.day_of_month().0, 2);
     /// assert_eq!(datetime_iso.time.hour.number(), 13);
@@ -281,7 +282,7 @@ impl DateTime<Iso> {
         hour: u8,
         minute: u8,
         second: u8,
-    ) -> Result<DateTime<Iso>, CalendarError> {
+    ) -> Result<DateTime<Iso>, DateError> {
         Ok(DateTime {
             date: Date::try_new_iso_date(year, month, day)?,
             time: Time::try_new(hour, minute, second, 0)?,
@@ -444,13 +445,8 @@ impl Iso {
     }
 
     /// Wrap the year in the appropriate era code
-    fn year_as_iso(year: i32) -> types::FormattableYear {
-        types::FormattableYear {
-            era: types::Era(tinystr!(16, "default")),
-            number: year,
-            cyclic: None,
-            related_iso: None,
-        }
+    fn year_as_iso(year: i32) -> types::YearInfo {
+        types::YearInfo::new(year, types::EraYear::new(tinystr!(16, "default"), year))
     }
 }
 
@@ -491,7 +487,8 @@ mod test {
         // Calculates the max possible year representable using i32::MAX as the fixed date
         let max_year = Iso::iso_from_fixed(RataDie::new(i32::MAX as i64))
             .year()
-            .number;
+            .era_year()
+            .unwrap();
 
         // Calculates the minimum possible year representable using i32::MIN as the fixed date
         // *Cannot be tested yet due to hard coded date not being available yet (see line 436)
@@ -627,7 +624,9 @@ mod test {
     #[test]
     fn min_year() {
         assert_eq!(
-            Iso::iso_from_fixed(RataDie::big_negative()).year().number,
+            Iso::iso_from_fixed(RataDie::big_negative())
+                .year()
+                .era_year_or_extended(),
             i32::MIN
         );
     }

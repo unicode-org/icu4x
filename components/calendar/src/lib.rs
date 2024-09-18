@@ -35,7 +35,7 @@
 //!     .expect("Failed to initialize ISO Date instance.");
 //!
 //! assert_eq!(date_iso.day_of_week(), IsoWeekday::Wednesday);
-//! assert_eq!(date_iso.year().number, 1992);
+//! assert_eq!(date_iso.year().era_year_or_extended(), 1992);
 //! assert_eq!(date_iso.month().ordinal, 9);
 //! assert_eq!(date_iso.day_of_month().0, 2);
 //!
@@ -53,19 +53,19 @@
 //! let mut date_iso = Date::try_new_iso_date(1992, 9, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
 //!
-//! assert_eq!(date_iso.year().number, 1992);
+//! assert_eq!(date_iso.year().era_year_or_extended(), 1992);
 //! assert_eq!(date_iso.month().ordinal, 9);
 //! assert_eq!(date_iso.day_of_month().0, 2);
 //!
 //! // Conversion into Indian calendar: 1914-08-02.
 //! let date_indian = date_iso.to_calendar(Indian);
-//! assert_eq!(date_indian.year().number, 1914);
+//! assert_eq!(date_indian.year().era_year_or_extended(), 1914);
 //! assert_eq!(date_indian.month().ordinal, 6);
 //! assert_eq!(date_indian.day_of_month().0, 11);
 //!
 //! // Conversion into Buddhist calendar: 2535-09-02.
 //! let date_buddhist = date_iso.to_calendar(Buddhist);
-//! assert_eq!(date_buddhist.year().number, 2535);
+//! assert_eq!(date_buddhist.year().era_year_or_extended(), 2535);
 //! assert_eq!(date_buddhist.month().ordinal, 9);
 //! assert_eq!(date_buddhist.day_of_month().0, 2);
 //! ```
@@ -83,7 +83,7 @@
 //!     .expect("Failed to initialize ISO DateTime instance.");
 //!
 //! assert_eq!(datetime_iso.date.day_of_week(), IsoWeekday::Wednesday);
-//! assert_eq!(datetime_iso.date.year().number, 1992);
+//! assert_eq!(datetime_iso.date.year().era_year_or_extended(), 1992);
 //! assert_eq!(datetime_iso.date.month().ordinal, 9);
 //! assert_eq!(datetime_iso.date.day_of_month().0, 2);
 //! assert_eq!(datetime_iso.time.hour.number(), 8);
@@ -131,6 +131,8 @@ pub mod hebrew;
 pub mod indian;
 pub mod islamic;
 pub mod iso;
+#[cfg(feature = "ixdtf")]
+mod ixdtf;
 pub mod japanese;
 pub mod julian;
 pub mod persian;
@@ -147,23 +149,22 @@ pub mod week {
     pub use week_of::RelativeUnit;
     pub use week_of::WeekCalculator;
     pub use week_of::WeekOf;
-    #[doc(hidden)]
+    #[doc(hidden)] // for debug-assert in datetime
     pub use week_of::MIN_UNIT_DAYS;
 }
 
+#[cfg(feature = "ixdtf")]
+pub use crate::ixdtf::ParseError;
 #[doc(no_inline)]
 pub use any_calendar::{AnyCalendar, AnyCalendarKind};
 pub use calendar::Calendar;
 pub use date::{AsCalendar, Date, Ref};
 pub use datetime::DateTime;
-#[doc(hidden)]
+#[doc(hidden)] // unstable
 pub use duration::{DateDuration, DateDurationUnit};
-pub use error::CalendarError;
+pub use error::{DateError, RangeError};
 #[doc(no_inline)]
 pub use gregorian::Gregorian;
 #[doc(no_inline)]
 pub use iso::Iso;
 pub use types::Time;
-
-#[doc(no_inline)]
-pub use CalendarError as Error;

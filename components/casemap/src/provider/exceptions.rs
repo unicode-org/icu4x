@@ -34,11 +34,8 @@ const SURROGATES_LEN: u32 = 0xDFFF - SURROGATES_START + 1;
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_casemap::provider::exceptions),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_casemap::provider::exceptions))]
 #[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 pub struct CaseMapExceptions<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]

@@ -8,7 +8,7 @@ pub(crate) fn result_is_err_missing_locale<T>(result: &Result<T, DataError>) -> 
     matches!(
         result,
         Err(DataError {
-            kind: DataErrorKind::MissingLocale,
+            kind: DataErrorKind::IdentifierNotFound,
             ..
         })
     )

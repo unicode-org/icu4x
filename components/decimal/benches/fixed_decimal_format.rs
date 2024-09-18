@@ -11,8 +11,7 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use fixed_decimal::FixedDecimal;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_decimal::FixedDecimalFormatter;
-use icu_locid::Locale;
-use icu_provider_adapters::any_payload::AnyPayloadProvider;
+use icu_provider_adapters::fixed::FixedProvider;
 
 fn triangular_nums(range: f64) -> Vec<isize> {
     // Use Lcg64Xsh32, a small, fast PRNG.
@@ -27,14 +26,14 @@ fn triangular_nums(range: f64) -> Vec<isize> {
 
 fn overview_bench(c: &mut Criterion) {
     let nums = triangular_nums(1e9);
-    let provider = AnyPayloadProvider::new_default::<DecimalSymbolsV1Marker>();
+    let provider = FixedProvider::<DecimalSymbolsV1Marker>::new_default();
     c.bench_function("icu_decimal/overview", |b| {
         b.iter(|| {
             // This benchmark demonstrates the performance of the format function on 1000 numbers
             // ranging from -1e9 to 1e9.
             let fdf = FixedDecimalFormatter::try_new_unstable(
                 &provider,
-                &Locale::UND.into(),
+                &Default::default(),
                 Default::default(),
             )
             .unwrap();

@@ -32,31 +32,33 @@ use zerovec::ZeroVec;
 pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
+#[allow(unused_imports)]
 const _: () = {
+    use icu_normalizer_data::*;
     pub mod icu {
         pub use crate as normalizer;
         pub use icu_collections as collections;
     }
-    icu_normalizer_data::make_provider!(Baked);
-    icu_normalizer_data::impl_normalizer_comp_v1!(Baked);
-    icu_normalizer_data::impl_normalizer_decomp_v1!(Baked);
-    icu_normalizer_data::impl_normalizer_nfd_v1!(Baked);
-    icu_normalizer_data::impl_normalizer_nfdex_v1!(Baked);
-    icu_normalizer_data::impl_normalizer_nfkd_v1!(Baked);
-    icu_normalizer_data::impl_normalizer_nfkdex_v1!(Baked);
-    icu_normalizer_data::impl_normalizer_uts46d_v1!(Baked);
+    make_provider!(Baked);
+    impl_canonical_compositions_v1_marker!(Baked);
+    impl_non_recursive_decomposition_supplement_v1_marker!(Baked);
+    impl_canonical_decomposition_data_v1_marker!(Baked);
+    impl_canonical_decomposition_tables_v1_marker!(Baked);
+    impl_compatibility_decomposition_supplement_v1_marker!(Baked);
+    impl_compatibility_decomposition_tables_v1_marker!(Baked);
+    impl_uts46_decomposition_supplement_v1_marker!(Baked);
 };
 
 #[cfg(feature = "datagen")]
-/// The latest minimum set of keys required by this component.
-pub const KEYS: &[DataKey] = &[
-    CanonicalCompositionsV1Marker::KEY,
-    CanonicalDecompositionDataV1Marker::KEY,
-    CanonicalDecompositionTablesV1Marker::KEY,
-    CompatibilityDecompositionSupplementV1Marker::KEY,
-    CompatibilityDecompositionTablesV1Marker::KEY,
-    NonRecursiveDecompositionSupplementV1Marker::KEY,
-    Uts46DecompositionSupplementV1Marker::KEY,
+/// The latest minimum set of markers required by this component.
+pub const MARKERS: &[DataMarkerInfo] = &[
+    CanonicalCompositionsV1Marker::INFO,
+    CanonicalDecompositionDataV1Marker::INFO,
+    CanonicalDecompositionTablesV1Marker::INFO,
+    CompatibilityDecompositionSupplementV1Marker::INFO,
+    CompatibilityDecompositionTablesV1Marker::INFO,
+    NonRecursiveDecompositionSupplementV1Marker::INFO,
+    Uts46DecompositionSupplementV1Marker::INFO,
 ];
 
 /// Main data for NFD
@@ -72,7 +74,8 @@ pub const KEYS: &[DataKey] = &[
     singleton
 ))]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_normalizer::provider))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_normalizer::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct DecompositionDataV1<'data> {
     /// Trie for NFD decomposition.
@@ -97,7 +100,8 @@ pub struct DecompositionDataV1<'data> {
     marker(Uts46DecompositionSupplementV1Marker, "normalizer/uts46d@1", singleton)
 )]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_normalizer::provider))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_normalizer::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct DecompositionSupplementV1<'data> {
     /// Trie for the decompositions that differ from NFD.
@@ -150,7 +154,8 @@ impl DecompositionSupplementV1<'_> {
     )
 )]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_normalizer::provider))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_normalizer::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct DecompositionTablesV1<'data> {
     /// Decompositions that are fully within the BMP
@@ -171,7 +176,8 @@ pub struct DecompositionTablesV1<'data> {
 /// </div>
 #[icu_provider::data_struct(marker(CanonicalCompositionsV1Marker, "normalizer/comp@1", singleton))]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_normalizer::provider))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_normalizer::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CanonicalCompositionsV1<'data> {
     /// Trie keys are two-`char` strings with the second
@@ -195,7 +201,8 @@ pub struct CanonicalCompositionsV1<'data> {
     singleton
 ))]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_normalizer::provider))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_normalizer::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct NonRecursiveDecompositionSupplementV1<'data> {
     /// Trie for the supplementary non-recursive decompositions

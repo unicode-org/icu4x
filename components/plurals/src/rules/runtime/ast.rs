@@ -6,20 +6,16 @@ use crate::rules::reference;
 use core::{
     convert::{TryFrom, TryInto},
     fmt, num,
-    str::FromStr,
 };
 use icu_provider::prelude::*;
 use zerovec::{
-    ule::{tuple::Tuple2ULE, AsULE, ZeroVecError, ULE},
+    ule::{tuple::Tuple2ULE, AsULE, UleError, ULE},
     {VarZeroVec, ZeroVec},
 };
 
 #[derive(yoke::Yokeable, zerofrom::ZeroFrom, Clone, PartialEq, Debug)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(databake::Bake),
-    databake(path = icu_plurals::rules::runtime::ast),
-)]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_plurals::rules::runtime::ast))]
 #[allow(clippy::exhaustive_structs)] // Reference AST is non-public and this type is stable
 pub struct Rule<'data>(pub VarZeroVec<'data, RelationULE>);
 
@@ -259,12 +255,13 @@ impl From<RangeOrValue> for reference::ast::RangeListItem {
     }
 }
 
-impl FromStr for Rule<'_> {
-    type Err = reference::parser::ParserError;
+#[cfg(feature = "datagen")]
+impl core::str::FromStr for Rule<'_> {
+    type Err = reference::parser::ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let rule = reference::parser::parse(s.as_bytes())?;
-        Rule::try_from(&rule).map_err(|_| reference::parser::ParserError::ValueTooLarge)
+        Rule::try_from(&rule).map_err(|_| reference::parser::ParseError::ValueTooLarge)
     }
 }
 
@@ -297,9 +294,9 @@ pub(crate) struct AndOrPolarityOperandULE(u8);
 //  5 The other ULE methods use the default impl.
 //  6. AndOrPolarityOperandULE byte equality is semantic equality.
 unsafe impl ULE for AndOrPolarityOperandULE {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
         for byte in bytes {
-            Operand::new_from_u8(byte & 0b0011_1111).ok_or_else(ZeroVecError::parse::<Self>)?;
+            Operand::new_from_u8(byte & 0b0011_1111).ok_or_else(UleError::parse::<Self>)?;
         }
         Ok(())
     }
@@ -405,7 +402,12 @@ mod serde {
         where
             E: de::Error,
         {
-            Rule::from_str(rule_string).map_err(|err| {
+            fn from_str(s: &str) -> Result<Rule, reference::parser::ParseError> {
+                let rule = reference::parser::parse(s.as_bytes())?;
+                Rule::try_from(&rule).map_err(|_| reference::parser::ParseError::ValueTooLarge)
+            }
+
+            from_str(rule_string).map_err(|err| {
                 de::Error::invalid_value(
                     de::Unexpected::Other(&format!("{err}")),
                     &"a valid UTS 35 rule string",

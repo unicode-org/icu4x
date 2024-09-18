@@ -1,0 +1,29 @@
+{
+  "relatives": {
+    "0": "maintenant"
+  },
+  "past": {
+    "strings": {
+      "one": [
+        0,
+        "\bil y a  seconde"
+      ],
+      "other": [
+        0,
+        "\bil y a  secondes"
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "one": [
+        0,
+        "\u0006dans  seconde"
+      ],
+      "other": [
+        0,
+        "\u0006dans  secondes"
+      ]
+    }
+  }
+}

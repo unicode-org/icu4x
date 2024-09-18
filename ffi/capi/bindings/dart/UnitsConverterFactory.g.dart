@@ -24,17 +24,17 @@ final class UnitsConverterFactory implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XUnitsConverterFactory_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_UnitsConverterFactory_destroy_mv1));
 
   /// Construct a new [`UnitsConverterFactory`] instance.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.new) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// Throws [DataError] on failure.
   factory UnitsConverterFactory(DataProvider provider) {
-    final result = _ICU4XUnitsConverterFactory_create(provider._ffi);
+    final result = _icu4x_UnitsConverterFactory_create_mv1(provider._ffi);
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return UnitsConverterFactory._fromFfi(result.union.ok, []);
   }
@@ -45,7 +45,7 @@ final class UnitsConverterFactory implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `converter`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.converter) for more information.
   UnitsConverter? converter(MeasureUnit from, MeasureUnit to) {
-    final result = _ICU4XUnitsConverterFactory_converter(_ffi, from._ffi, to._ffi);
+    final result = _icu4x_UnitsConverterFactory_converter_mv1(_ffi, from._ffi, to._ffi);
     return result.address == 0 ? null : UnitsConverter._fromFfi(result, []);
   }
 
@@ -55,27 +55,27 @@ final class UnitsConverterFactory implements ffi.Finalizable {
   MeasureUnitParser parser() {
     // This lifetime edge depends on lifetimes: 'a
     core.List<Object> aEdges = [this];
-    final result = _ICU4XUnitsConverterFactory_parser(_ffi);
+    final result = _icu4x_UnitsConverterFactory_parser_mv1(_ffi);
     return MeasureUnitParser._fromFfi(result, [], aEdges);
   }
 }
 
-@meta.ResourceIdentifier('ICU4XUnitsConverterFactory_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XUnitsConverterFactory_destroy')
+@meta.ResourceIdentifier('icu4x_UnitsConverterFactory_destroy_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_UnitsConverterFactory_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _ICU4XUnitsConverterFactory_destroy(ffi.Pointer<ffi.Void> self);
+external void _icu4x_UnitsConverterFactory_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XUnitsConverterFactory_create')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XUnitsConverterFactory_create')
+@meta.ResourceIdentifier('icu4x_UnitsConverterFactory_create_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_UnitsConverterFactory_create_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XUnitsConverterFactory_create(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_UnitsConverterFactory_create_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XUnitsConverterFactory_converter')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XUnitsConverterFactory_converter')
+@meta.ResourceIdentifier('icu4x_UnitsConverterFactory_converter_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_UnitsConverterFactory_converter_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _ICU4XUnitsConverterFactory_converter(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> from, ffi.Pointer<ffi.Opaque> to);
+external ffi.Pointer<ffi.Opaque> _icu4x_UnitsConverterFactory_converter_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> from, ffi.Pointer<ffi.Opaque> to);
 
-@meta.ResourceIdentifier('ICU4XUnitsConverterFactory_parser')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XUnitsConverterFactory_parser')
+@meta.ResourceIdentifier('icu4x_UnitsConverterFactory_parser_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_UnitsConverterFactory_parser_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _ICU4XUnitsConverterFactory_parser(ffi.Pointer<ffi.Opaque> self);
+external ffi.Pointer<ffi.Opaque> _icu4x_UnitsConverterFactory_parser_mv1(ffi.Pointer<ffi.Opaque> self);

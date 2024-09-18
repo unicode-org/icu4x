@@ -5,13 +5,13 @@
 [package]
 name = "icu_casemap"
 description = "Unicode case mapping and folding algorithms"
-license = "Unicode-3.0"
 
 authors.workspace = true
 categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true
+license.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 version.workspace = true
@@ -22,11 +22,12 @@ all-features = true
 [dependencies]
 displaydoc = { workspace = true }
 icu_collections = { workspace = true }
-icu_locid = { workspace = true }
+icu_locale_core = { workspace = true }
 icu_properties = { workspace = true }
 icu_provider = { workspace = true, features = ["macros"] }
-zerovec = { workspace = true, features = ["yoke"] }
+potential_utf = { workspace = true, features = ["zerovec"] }
 writeable = { workspace = true }
+zerovec = { workspace = true, features = ["yoke"] }
 
 databake = { workspace = true, features = ["derive"], optional = true}
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
@@ -46,7 +47,7 @@ criterion = { workspace = true }
 default = ["compiled_data"]
 std = ["icu_collections/std", "icu_provider/std"]
 bench = []
-serde = ["dep:serde", "zerovec/serde", "icu_collections/serde", "icu_provider/serde", "icu_properties/serde"]
+serde = ["dep:serde", "zerovec/serde", "icu_collections/serde", "icu_provider/serde", "icu_properties/serde", "potential_utf/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_collections/databake"]
 compiled_data = ["dep:icu_casemap_data", "icu_properties/compiled_data"]
 

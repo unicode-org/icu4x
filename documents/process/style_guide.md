@@ -128,7 +128,7 @@ their type.
 
 | Package | Crate | Standalone Import | ICU Meta-package |
 |----|----|----|----|
-| locale | `icu_locid` | `use icu_locid::Locale` | `use icu::Locale` |
+| locale | `icu_locale_core` | `use icu_locale_core::Locale` | `use icu::Locale` |
 | plurals | `icu_plurals` | `use icu_plurals::PluralRules` | `use icu::PluralRules` |
 | datetime | `icu_datetime` | `use icu_datetime::DateTimeFormat` | `use icu::DateTimeFormat` |
 | datetime | `icu_datetime` | `use icu_datetime::skeleton::SkeletonField` | `use icu::datetime::skeleton::SkeletonField` |
@@ -136,7 +136,7 @@ their type.
 While the scheme may feel repetitive when looking at the import lines, it pays off in being unambiguous without aliasing when multiple structs from different components get used together:
 
 ```rust
-use icu_locid::Locale;
+use icu_locale_core::Locale;
 use icu_datetime::{DateTimeFormat, DateTimeLength, skeleton::{Skeleton, SkeletonField}};
 use icu_list::ListFormat;
 
@@ -327,7 +327,7 @@ In ICU4X, we have a convention of making error types implement `Copy`. This is p
 To associate additional metadata with errors, such as file paths, use a logging macro. In binaries, including the `log` dependency directly and gate logs with a `"logging"` feature. In component library code, utilize the macros exported by the `icu_provider` crate, as shown below. For more discussion, see [#2648](https://github.com/unicode-org/icu4x/issues/2648).
 
 ```rust
-icu_provider::_internal::log::warn!("This is a warning");
+icu_provider::log::warn!("This is a warning");
 ```
 
 The logs are forwarded to one of three places:
@@ -395,7 +395,7 @@ fn function_name(param: ParamType) -> ReturnType { … }
 
 may still have parameters "passed by reference" when it can determine that the reference is no longer subsequently used by the calling code (this is a "move" in Rust parlance).
 
-Furthermore, it will often [ellide the copy](https://en.wikipedia.org/wiki/Copy_elision) of the return value if it determines the returned object would otherwise go out of scope. It will allocate the space for the return value on the caller's stack or use the memory in a destination struct, to directly write the "returned" value in its final destination with no copying whatsoever. This is called Return Value Optimization (RVO) and while it is now available in C++ as well, it's a relatively new feature there.
+Furthermore, it will often [elide the copy](https://en.wikipedia.org/wiki/Copy_elision) of the return value if it determines the returned object would otherwise go out of scope. It will allocate the space for the return value on the caller's stack or use the memory in a destination struct, to directly write the "returned" value in its final destination with no copying whatsoever. This is called Return Value Optimization (RVO) and while it is now available in C++ as well, it's a relatively new feature there.
 
 It is still often better (for reasons of borrowing and ownership) to pass structs by non-mutable reference, but returning **newly created** results by value (even potentially large structures) is not expected to cause performance issues.
 
@@ -748,7 +748,7 @@ While it's still an open question in the Rust community as to what the best way 
 ```rust
 // Nesting semantically interesting error information inside the generic error type.
 enum IcuError {
-    Parser(parser::ParserError),
+    Parser(parser::ParseError),
     Runtime(...)
 }
 ```

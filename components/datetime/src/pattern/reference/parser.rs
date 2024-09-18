@@ -7,16 +7,101 @@ use super::{
     super::{GenericPatternItem, PatternItem},
     GenericPattern, Pattern,
 };
-use crate::fields::FieldSymbol;
+use crate::fields::{self, Field, FieldLength, FieldSymbol};
 use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
-use core::convert::{TryFrom, TryInto};
+use core::{
+    convert::{TryFrom, TryInto},
+    mem,
+};
+
+#[derive(Debug, PartialEq)]
+struct SegmentSymbol {
+    symbol: FieldSymbol,
+    length: u8,
+}
+
+impl SegmentSymbol {
+    fn finish(self, result: &mut Vec<PatternItem>) -> Result<(), PatternError> {
+        (self.symbol, self.length)
+            .try_into()
+            .map(|item| result.push(item))
+    }
+}
+
+#[derive(Debug, PartialEq)]
+struct SegmentSecondSymbol {
+    integer_digits: u8,
+    seen_decimal_separator: bool,
+    fraction_digits: u8,
+}
+
+impl SegmentSecondSymbol {
+    fn finish(self, result: &mut Vec<PatternItem>) -> Result<(), PatternError> {
+        let second_symbol = FieldSymbol::Second(fields::Second::Second);
+        let symbol = if self.fraction_digits == 0 {
+            second_symbol
+        } else {
+            let decimal_second = fields::DecimalSecond::from_idx(self.fraction_digits)
+                .map_err(|_| PatternError::FieldLengthInvalid(second_symbol))?;
+            FieldSymbol::DecimalSecond(decimal_second)
+        };
+        let length = FieldLength::from_idx(self.integer_digits)
+            .map_err(|_| PatternError::FieldLengthInvalid(symbol))?;
+        result.push(PatternItem::Field(Field { symbol, length }));
+        if self.seen_decimal_separator && self.fraction_digits == 0 {
+            result.push(PatternItem::Literal('.'));
+        }
+        Ok(())
+    }
+}
+
+#[derive(Debug, PartialEq)]
+struct SegmentLiteral {
+    literal: String,
+    quoted: bool,
+}
+
+impl SegmentLiteral {
+    fn finish(self, result: &mut Vec<PatternItem>) -> Result<(), PatternError> {
+        if !self.literal.is_empty() {
+            result.extend(self.literal.chars().map(PatternItem::from));
+        }
+        Ok(())
+    }
+
+    fn finish_generic(self, result: &mut Vec<GenericPatternItem>) -> Result<(), PatternError> {
+        if !self.literal.is_empty() {
+            result.extend(self.literal.chars().map(GenericPatternItem::from));
+        }
+        Ok(())
+    }
+}
 
 #[derive(Debug, PartialEq)]
 enum Segment {
-    Symbol { symbol: FieldSymbol, length: u8 },
-    Literal { literal: String, quoted: bool },
+    Symbol(SegmentSymbol),
+    SecondSymbol(SegmentSecondSymbol),
+    Literal(SegmentLiteral),
+}
+
+impl Segment {
+    fn finish(self, result: &mut Vec<PatternItem>) -> Result<(), PatternError> {
+        match self {
+            Self::Symbol(v) => v.finish(result),
+            Self::SecondSymbol(v) => v.finish(result),
+            Self::Literal(v) => v.finish(result),
+        }
+    }
+
+    fn finish_generic(self, result: &mut Vec<GenericPatternItem>) -> Result<(), PatternError> {
+        match self {
+            Self::Symbol(_) => unreachable!("no symbols in generic pattern"),
+            Self::SecondSymbol(_) => unreachable!("no symbols in generic pattern"),
+            Self::Literal(v) => v.finish_generic(result),
+        }
+    }
 }
 
 #[derive(Debug)]
@@ -29,10 +114,10 @@ impl<'p> Parser<'p> {
     pub fn new(source: &'p str) -> Self {
         Self {
             source,
-            state: Segment::Literal {
+            state: Segment::Literal(SegmentLiteral {
                 literal: String::new(),
                 quoted: false,
-            },
+            }),
         }
     }
 
@@ -44,39 +129,40 @@ impl<'p> Parser<'p> {
     ) -> Result<bool, PatternError> {
         if ch == '\'' {
             match (&mut self.state, chars.peek() == Some(&'\'')) {
-                (
-                    Segment::Literal {
-                        ref mut literal, ..
-                    },
-                    true,
-                ) => {
-                    literal.push('\'');
+                (Segment::Literal(ref mut literal), true) => {
+                    literal.literal.push('\'');
                     chars.next();
                 }
-                (Segment::Literal { ref mut quoted, .. }, false) => {
-                    *quoted = !*quoted;
+                (Segment::Literal(ref mut literal), false) => {
+                    literal.quoted = !literal.quoted;
                 }
-                (Segment::Symbol { symbol, length }, true) => {
-                    result.push((*symbol, *length).try_into()?);
-                    self.state = Segment::Literal {
-                        literal: String::from(ch),
-                        quoted: false,
-                    };
+                (state, true) => {
+                    mem::replace(
+                        state,
+                        Segment::Literal(SegmentLiteral {
+                            literal: String::from(ch),
+                            quoted: false,
+                        }),
+                    )
+                    .finish(result)?;
                     chars.next();
                 }
-                (Segment::Symbol { symbol, length }, false) => {
-                    result.push((*symbol, *length).try_into()?);
-                    self.state = Segment::Literal {
-                        literal: String::new(),
-                        quoted: true,
-                    };
+                (state, false) => {
+                    mem::replace(
+                        state,
+                        Segment::Literal(SegmentLiteral {
+                            literal: String::new(),
+                            quoted: true,
+                        }),
+                    )
+                    .finish(result)?;
                 }
             }
             Ok(true)
-        } else if let Segment::Literal {
+        } else if let Segment::Literal(SegmentLiteral {
             ref mut literal,
             quoted: true,
-        } = self.state
+        }) = self.state
         {
             literal.push(ch);
             Ok(true)
@@ -92,64 +178,26 @@ impl<'p> Parser<'p> {
     ) -> Result<bool, PatternError> {
         if ch == '\'' {
             match (&mut self.state, chars.peek() == Some(&'\'')) {
-                (
-                    Segment::Literal {
-                        ref mut literal, ..
-                    },
-                    true,
-                ) => {
-                    literal.push('\'');
+                (Segment::Literal(literal), true) => {
+                    literal.literal.push('\'');
                     chars.next();
                 }
-                (Segment::Literal { ref mut quoted, .. }, false) => {
-                    *quoted = !*quoted;
+                (Segment::Literal(literal), false) => {
+                    literal.quoted = !literal.quoted;
                 }
                 _ => unreachable!("Generic pattern has no symbols."),
             }
             Ok(true)
-        } else if let Segment::Literal {
+        } else if let Segment::Literal(SegmentLiteral {
             ref mut literal,
             quoted: true,
-        } = self.state
+        }) = self.state
         {
             literal.push(ch);
             Ok(true)
         } else {
             Ok(false)
         }
-    }
-
-    fn collect_segment(state: Segment, result: &mut Vec<PatternItem>) -> Result<(), PatternError> {
-        match state {
-            Segment::Symbol { symbol, length } => {
-                result.push((symbol, length).try_into()?);
-            }
-            Segment::Literal { quoted, .. } if quoted => {
-                return Err(PatternError::UnclosedLiteral);
-            }
-            Segment::Literal { literal, .. } => {
-                result.extend(literal.chars().map(PatternItem::from));
-            }
-        }
-        Ok(())
-    }
-
-    fn collect_generic_segment(
-        state: Segment,
-        result: &mut Vec<GenericPatternItem>,
-    ) -> Result<(), PatternError> {
-        match state {
-            Segment::Literal { quoted, .. } if quoted => {
-                return Err(PatternError::UnclosedLiteral);
-            }
-            Segment::Literal { literal, .. } => {
-                if !literal.is_empty() {
-                    result.extend(literal.chars().map(GenericPatternItem::from))
-                }
-            }
-            _ => unreachable!("Generic pattern has no symbols."),
-        }
-        Ok(())
     }
 
     pub fn parse(mut self) -> Result<Vec<PatternItem>, PatternError> {
@@ -159,39 +207,78 @@ impl<'p> Parser<'p> {
         while let Some(ch) = chars.next() {
             if !self.handle_quoted_literal(ch, &mut chars, &mut result)? {
                 if let Ok(new_symbol) = FieldSymbol::try_from(ch) {
-                    match self.state {
-                        Segment::Symbol {
+                    match &mut self.state {
+                        Segment::Symbol(SegmentSymbol {
                             ref symbol,
                             ref mut length,
-                        } if new_symbol == *symbol => {
+                        }) if new_symbol == *symbol => {
                             *length += 1;
                         }
-                        segment => {
-                            Self::collect_segment(segment, &mut result)?;
-                            self.state = Segment::Symbol {
-                                symbol: new_symbol,
-                                length: 1,
-                            };
+                        Segment::SecondSymbol(SegmentSecondSymbol {
+                            ref mut integer_digits,
+                            seen_decimal_separator: false,
+                            ..
+                        }) if matches!(new_symbol, FieldSymbol::Second(fields::Second::Second)) => {
+                            *integer_digits += 1;
+                        }
+                        state => {
+                            mem::replace(
+                                state,
+                                if matches!(new_symbol, FieldSymbol::Second(fields::Second::Second))
+                                {
+                                    Segment::SecondSymbol(SegmentSecondSymbol {
+                                        integer_digits: 1,
+                                        seen_decimal_separator: false,
+                                        fraction_digits: 0,
+                                    })
+                                } else {
+                                    Segment::Symbol(SegmentSymbol {
+                                        symbol: new_symbol,
+                                        length: 1,
+                                    })
+                                },
+                            )
+                            .finish(&mut result)?;
                         }
                     }
                 } else {
-                    match self.state {
-                        Segment::Symbol { symbol, length } => {
-                            result.push((symbol, length).try_into()?);
-                            self.state = Segment::Literal {
-                                literal: String::from(ch),
-                                quoted: false,
-                            };
+                    match &mut self.state {
+                        Segment::SecondSymbol(
+                            second_symbol @ SegmentSecondSymbol {
+                                seen_decimal_separator: false,
+                                ..
+                            },
+                        ) if ch == '.' => second_symbol.seen_decimal_separator = true,
+                        Segment::SecondSymbol(second_symbol) if ch == 'S' => {
+                            // Note: this accepts both "ssSSS" and "ss.SSS"
+                            // We say we've seen the separator to switch to fraction mode
+                            second_symbol.seen_decimal_separator = true;
+                            second_symbol.fraction_digits += 1;
                         }
-                        Segment::Literal {
-                            ref mut literal, ..
-                        } => literal.push(ch),
+                        Segment::Literal(literal) => literal.literal.push(ch),
+                        state => {
+                            mem::replace(
+                                state,
+                                Segment::Literal(SegmentLiteral {
+                                    literal: String::from(ch),
+                                    quoted: false,
+                                }),
+                            )
+                            .finish(&mut result)?;
+                        }
                     }
                 }
             }
         }
 
-        Self::collect_segment(self.state, &mut result)?;
+        if matches!(
+            self.state,
+            Segment::Literal(SegmentLiteral { quoted: true, .. })
+        ) {
+            return Err(PatternError::UnclosedLiteral);
+        }
+
+        self.state.finish(&mut result)?;
 
         Ok(result)
     }
@@ -203,7 +290,14 @@ impl<'p> Parser<'p> {
         while let Some(ch) = chars.next() {
             if !self.handle_generic_quoted_literal(ch, &mut chars)? {
                 if ch == '{' {
-                    Self::collect_generic_segment(self.state, &mut result)?;
+                    mem::replace(
+                        &mut self.state,
+                        Segment::Literal(SegmentLiteral {
+                            literal: String::new(),
+                            quoted: false,
+                        }),
+                    )
+                    .finish_generic(&mut result)?;
 
                     let ch = chars.next().ok_or(PatternError::UnclosedPlaceholder)?;
                     let idx = ch
@@ -215,13 +309,9 @@ impl<'p> Parser<'p> {
                     if ch != '}' {
                         return Err(PatternError::UnclosedPlaceholder);
                     }
-                    self.state = Segment::Literal {
-                        literal: String::new(),
-                        quoted: false,
-                    };
-                } else if let Segment::Literal {
+                } else if let Segment::Literal(SegmentLiteral {
                     ref mut literal, ..
-                } = self.state
+                }) = self.state
                 {
                     literal.push(ch);
                 } else {
@@ -230,7 +320,14 @@ impl<'p> Parser<'p> {
             }
         }
 
-        Self::collect_generic_segment(self.state, &mut result)?;
+        if matches!(
+            self.state,
+            Segment::Literal(SegmentLiteral { quoted: true, .. })
+        ) {
+            return Err(PatternError::UnclosedLiteral);
+        }
+
+        self.state.finish_generic(&mut result)?;
 
         Ok(result)
     }
@@ -293,11 +390,9 @@ mod tests {
                     ':'.into(),
                     (FieldSymbol::Minute, FieldLength::TwoDigit).into(),
                     ':'.into(),
-                    (fields::Second::Second.into(), FieldLength::TwoDigit).into(),
-                    '.'.into(),
                     (
-                        fields::Second::FractionalSecond.into(),
-                        FieldLength::Fixed(2),
+                        fields::DecimalSecond::SecondF2.into(),
+                        FieldLength::TwoDigit,
                     )
                         .into(),
                 ],
@@ -503,6 +598,68 @@ mod tests {
                 ],
             ),
             (
+                "s.SS",
+                vec![(fields::DecimalSecond::SecondF2.into(), FieldLength::One).into()],
+            ),
+            (
+                "sSS",
+                vec![(fields::DecimalSecond::SecondF2.into(), FieldLength::One).into()],
+            ),
+            (
+                "s.. z",
+                vec![
+                    (fields::Second::Second.into(), FieldLength::One).into(),
+                    '.'.into(),
+                    '.'.into(),
+                    ' '.into(),
+                    (fields::TimeZone::LowerZ.into(), FieldLength::One).into(),
+                ],
+            ),
+            (
+                "s.SSz",
+                vec![
+                    (fields::DecimalSecond::SecondF2.into(), FieldLength::One).into(),
+                    (fields::TimeZone::LowerZ.into(), FieldLength::One).into(),
+                ],
+            ),
+            (
+                "sSSz",
+                vec![
+                    (fields::DecimalSecond::SecondF2.into(), FieldLength::One).into(),
+                    (fields::TimeZone::LowerZ.into(), FieldLength::One).into(),
+                ],
+            ),
+            (
+                "s.SSss",
+                vec![
+                    (fields::DecimalSecond::SecondF2.into(), FieldLength::One).into(),
+                    (fields::Second::Second.into(), FieldLength::TwoDigit).into(),
+                ],
+            ),
+            (
+                "sSSss",
+                vec![
+                    (fields::DecimalSecond::SecondF2.into(), FieldLength::One).into(),
+                    (fields::Second::Second.into(), FieldLength::TwoDigit).into(),
+                ],
+            ),
+            (
+                "s.z",
+                vec![
+                    (fields::Second::Second.into(), FieldLength::One).into(),
+                    '.'.into(),
+                    (fields::TimeZone::LowerZ.into(), FieldLength::One).into(),
+                ],
+            ),
+            (
+                "s.ss",
+                vec![
+                    (fields::Second::Second.into(), FieldLength::One).into(),
+                    '.'.into(),
+                    (fields::Second::Second.into(), FieldLength::TwoDigit).into(),
+                ],
+            ),
+            (
                 "z",
                 vec![(fields::TimeZone::LowerZ.into(), FieldLength::One).into()],
             ),
@@ -548,7 +705,7 @@ mod tests {
             ),
             (
                 "hh:mm:ss.SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS",
-                PatternError::FieldLengthInvalid(FieldSymbol::Second(fields::Second::FractionalSecond)),
+                PatternError::FieldLengthInvalid(FieldSymbol::Second(fields::Second::Second)),
             ),
         ];
 

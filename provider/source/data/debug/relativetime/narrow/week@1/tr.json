@@ -1,0 +1,23 @@
+{
+  "relatives": {
+    "-1": "geçen hf.",
+    "0": "bu hf.",
+    "1": "gelecek hf."
+  },
+  "past": {
+    "strings": {
+      "other": [
+        0,
+        "\u0001 hf. önce"
+      ]
+    }
+  },
+  "future": {
+    "strings": {
+      "other": [
+        0,
+        "\u0001 hf. sonra"
+      ]
+    }
+  }
+}

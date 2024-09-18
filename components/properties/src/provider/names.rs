@@ -15,12 +15,11 @@
 use alloc::boxed::Box;
 use core::cmp::Ordering;
 
-use core::str;
-
+use icu_locale_core::subtags::Script;
 use icu_provider::prelude::*;
 
-use tinystr::TinyStr4;
-use zerovec::ule::{UnvalidatedStr, VarULE};
+use potential_utf::PotentialUtf8;
+use zerovec::ule::{NichedOption, VarULE};
 use zerovec::{maps::ZeroMapKV, VarZeroSlice, VarZeroVec, ZeroMap, ZeroVec};
 
 /// This is a property name that can be "loose matched" as according to
@@ -71,7 +70,7 @@ use zerovec::{maps::ZeroMapKV, VarZeroSlice, VarZeroVec, ZeroMap, ZeroVec};
 #[derive(Debug, VarULE)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize))]
 #[repr(transparent)]
-pub struct NormalizedPropertyNameStr(UnvalidatedStr);
+pub struct NormalizedPropertyNameStr(PotentialUtf8);
 
 /// This impl requires enabling the optional `serde` Cargo feature of the `icu::properties` crate
 #[cfg(feature = "serde")]
@@ -80,7 +79,7 @@ impl<'de> serde::Deserialize<'de> for Box<NormalizedPropertyNameStr> {
     where
         D: serde::Deserializer<'de>,
     {
-        <Box<UnvalidatedStr>>::deserialize(deserializer).map(NormalizedPropertyNameStr::cast_box)
+        <Box<PotentialUtf8>>::deserialize(deserializer).map(NormalizedPropertyNameStr::cast_box)
     }
 }
 
@@ -94,7 +93,7 @@ where
     where
         D: serde::Deserializer<'de>,
     {
-        <&UnvalidatedStr>::deserialize(deserializer).map(NormalizedPropertyNameStr::cast_ref)
+        <&PotentialUtf8>::deserialize(deserializer).map(NormalizedPropertyNameStr::cast_ref)
     }
 }
 
@@ -158,24 +157,24 @@ impl NormalizedPropertyNameStr {
 
     /// Convert a string reference to a [`NormalizedPropertyNameStr`].
     pub const fn from_str(s: &str) -> &Self {
-        Self::cast_ref(UnvalidatedStr::from_str(s))
+        Self::cast_ref(PotentialUtf8::from_str(s))
     }
 
-    /// Convert a [`UnvalidatedStr`] reference to a [`NormalizedPropertyNameStr`] reference.
-    pub const fn cast_ref(value: &UnvalidatedStr) -> &Self {
+    /// Convert a [`PotentialUtf8`] reference to a [`NormalizedPropertyNameStr`] reference.
+    pub const fn cast_ref(value: &PotentialUtf8) -> &Self {
         // Safety: repr(transparent)
         unsafe { core::mem::transmute(value) }
     }
 
-    /// Convert a [`UnvalidatedStr`] box to a [`NormalizedPropertyNameStr`] box.
-    pub const fn cast_box(value: Box<UnvalidatedStr>) -> Box<Self> {
+    /// Convert a [`PotentialUtf8`] box to a [`NormalizedPropertyNameStr`] box.
+    pub const fn cast_box(value: Box<PotentialUtf8>) -> Box<Self> {
         // Safety: repr(transparent)
         unsafe { core::mem::transmute(value) }
     }
 
     /// Get a [`NormalizedPropertyNameStr`] box from a byte slice.
     pub fn boxed_from_bytes(b: &[u8]) -> Box<Self> {
-        Self::cast_box(UnvalidatedStr::from_boxed_bytes(b.into()))
+        Self::cast_box(PotentialUtf8::from_boxed_bytes(b.into()))
     }
 }
 
@@ -187,16 +186,43 @@ impl NormalizedPropertyNameStr {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Debug, Clone, PartialEq)]
-#[icu_provider::data_struct(marker(
-    GeneralCategoryMaskNameToValueV1Marker,
-    "propnames/from/gcm@1",
-    singleton,
-))]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_properties::provider::names),
+#[icu_provider::data_struct(
+    marker(BidiClassNameToValueV1Marker, "propnames/from/bc@1", singleton),
+    marker(
+        CanonicalCombiningClassNameToValueV1Marker,
+        "propnames/from/ccc@1",
+        singleton
+    ),
+    marker(EastAsianWidthNameToValueV1Marker, "propnames/from/ea@1", singleton),
+    marker(
+        GeneralCategoryMaskNameToValueV1Marker,
+        "propnames/from/gcm@1",
+        singleton
+    ),
+    marker(GeneralCategoryNameToValueV1Marker, "propnames/from/gc@1", singleton),
+    marker(
+        GraphemeClusterBreakNameToValueV1Marker,
+        "propnames/from/GCB@1",
+        singleton
+    ),
+    marker(
+        HangulSyllableTypeNameToValueV1Marker,
+        "propnames/from/hst@1",
+        singleton
+    ),
+    marker(
+        IndicSyllabicCategoryNameToValueV1Marker,
+        "propnames/from/InSC@1",
+        singleton
+    ),
+    marker(JoiningTypeNameToValueV1Marker, "propnames/from/jt@1", singleton),
+    marker(LineBreakNameToValueV1Marker, "propnames/from/lb@1", singleton),
+    marker(ScriptNameToValueV1Marker, "propnames/from/sc@1", singleton),
+    marker(SentenceBreakNameToValueV1Marker, "propnames/from/SB@1", singleton),
+    marker(WordBreakNameToValueV1Marker, "propnames/from/WB@1", singleton)
 )]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties::provider::names))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct PropertyValueNameToEnumMapV1<'data> {
@@ -214,12 +240,20 @@ pub struct PropertyValueNameToEnumMapV1<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Debug, Clone, PartialEq)]
-#[icu_provider::data_struct]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_properties::provider::names),
+#[icu_provider::data_struct(
+    marker(
+        CanonicalCombiningClassValueToLongNameV1Marker,
+        "propnames/to/long/sparse/ccc@1",
+        singleton
+    ),
+    marker(
+        CanonicalCombiningClassValueToShortNameV1Marker,
+        "propnames/to/short/sparse/ccc@1",
+        singleton
+    )
 )]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties::provider::names))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct PropertyEnumToValueNameSparseMapV1<'data> {
@@ -237,12 +271,115 @@ pub struct PropertyEnumToValueNameSparseMapV1<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Debug, Clone, PartialEq)]
-#[icu_provider::data_struct]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_properties::provider::names),
+#[icu_provider::data_struct(
+    marker(
+        BidiClassValueToLongNameV1Marker,
+        "propnames/to/long/linear/bc@1",
+        singleton
+    ),
+    marker(
+        BidiClassValueToShortNameV1Marker,
+        "propnames/to/short/linear/bc@1",
+        singleton
+    ),
+    marker(
+        EastAsianWidthValueToLongNameV1Marker,
+        "propnames/to/long/linear/ea@1",
+        singleton
+    ),
+    marker(
+        EastAsianWidthValueToShortNameV1Marker,
+        "propnames/to/short/linear/ea@1",
+        singleton
+    ),
+    marker(
+        GeneralCategoryValueToLongNameV1Marker,
+        "propnames/to/long/linear/gc@1",
+        singleton
+    ),
+    marker(
+        GeneralCategoryValueToShortNameV1Marker,
+        "propnames/to/short/linear/gc@1",
+        singleton
+    ),
+    marker(
+        GraphemeClusterBreakValueToLongNameV1Marker,
+        "propnames/to/long/linear/GCB@1",
+        singleton
+    ),
+    marker(
+        GraphemeClusterBreakValueToShortNameV1Marker,
+        "propnames/to/short/linear/GCB@1",
+        singleton
+    ),
+    marker(
+        HangulSyllableTypeValueToLongNameV1Marker,
+        "propnames/to/long/linear/hst@1",
+        singleton
+    ),
+    marker(
+        HangulSyllableTypeValueToShortNameV1Marker,
+        "propnames/to/short/linear/hst@1",
+        singleton
+    ),
+    marker(
+        IndicSyllabicCategoryValueToLongNameV1Marker,
+        "propnames/to/long/linear/InSC@1",
+        singleton
+    ),
+    marker(
+        IndicSyllabicCategoryValueToShortNameV1Marker,
+        "propnames/to/short/linear/InSC@1",
+        singleton
+    ),
+    marker(
+        JoiningTypeValueToLongNameV1Marker,
+        "propnames/to/long/linear/jt@1",
+        singleton
+    ),
+    marker(
+        JoiningTypeValueToShortNameV1Marker,
+        "propnames/to/short/linear/jt@1",
+        singleton
+    ),
+    marker(
+        LineBreakValueToLongNameV1Marker,
+        "propnames/to/long/linear/lb@1",
+        singleton
+    ),
+    marker(
+        LineBreakValueToShortNameV1Marker,
+        "propnames/to/short/linear/lb@1",
+        singleton
+    ),
+    marker(
+        ScriptValueToLongNameV1Marker,
+        "propnames/to/long/linear/sc@1",
+        singleton
+    ),
+    marker(
+        SentenceBreakValueToLongNameV1Marker,
+        "propnames/to/long/linear/SB@1",
+        singleton
+    ),
+    marker(
+        SentenceBreakValueToShortNameV1Marker,
+        "propnames/to/short/linear/SB@1",
+        singleton
+    ),
+    marker(
+        WordBreakValueToLongNameV1Marker,
+        "propnames/to/long/linear/WB@1",
+        singleton
+    ),
+    marker(
+        WordBreakValueToShortNameV1Marker,
+        "propnames/to/short/linear/WB@1",
+        singleton
+    )
 )]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties::provider::names))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct PropertyEnumToValueNameLinearMapV1<'data> {
@@ -261,17 +398,18 @@ pub struct PropertyEnumToValueNameLinearMapV1<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Debug, Clone, PartialEq)]
-#[icu_provider::data_struct]
-#[cfg_attr(
-    feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_properties::provider::names),
-)]
+#[icu_provider::data_struct(marker(
+    ScriptValueToShortNameV1Marker,
+    "propnames/to/short/linear4/sc@1",
+    singleton
+))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties::provider::names))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct PropertyEnumToValueNameLinearTiny4MapV1<'data> {
+pub struct PropertyScriptToIcuScriptMapV1<'data> {
     /// A map from the value discriminant (the index) to the names, for mostly
     /// contiguous data. Empty strings count as missing.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub map: ZeroVec<'data, TinyStr4>,
+    pub map: ZeroVec<'data, NichedOption<Script, 4>>,
 }

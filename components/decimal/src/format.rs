@@ -67,7 +67,7 @@ writeable::impl_display_with_writeable!(FormattedFixedDecimal<'_>);
 
 #[cfg(test)]
 mod tests {
-    use icu_locid::locale;
+    use icu_locale_core::locale;
     use writeable::assert_writeable_eq;
 
     use crate::FixedDecimalFormatter;

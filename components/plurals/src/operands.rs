@@ -2,9 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::num::ParseIntError;
-use core::str::FromStr;
-use displaydoc::Display;
 use fixed_decimal::{CompactDecimal, FixedDecimal};
 
 /// A full plural operands representation of a number. See [CLDR Plural Rules](http://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules) for complete operands description.
@@ -101,8 +98,9 @@ pub struct PluralOperands {
     pub(crate) c: usize,
 }
 
-#[derive(Display, Debug, PartialEq, Eq)]
+#[derive(displaydoc::Display, Debug, PartialEq, Eq)]
 #[non_exhaustive]
+#[cfg(feature = "datagen")]
 pub enum OperandsError {
     /// Input to the Operands parsing was empty.
     #[displaydoc("Input to the Operands parsing was empty")]
@@ -112,34 +110,26 @@ pub enum OperandsError {
     Invalid,
 }
 
-#[cfg(feature = "std")]
-impl std::error::Error for OperandsError {}
-
-impl From<ParseIntError> for OperandsError {
-    fn from(_: ParseIntError) -> Self {
+#[cfg(feature = "datagen")]
+impl From<core::num::ParseIntError> for OperandsError {
+    fn from(_: core::num::ParseIntError) -> Self {
         Self::Invalid
     }
 }
 
-#[cfg(feature = "std")]
-impl From<std::io::Error> for OperandsError {
-    fn from(_: std::io::Error) -> Self {
-        Self::Invalid
-    }
-}
-
-fn get_exponent(input: &str) -> Result<(&str, usize), OperandsError> {
-    if let Some((base, exponent)) = input.split_once('e') {
-        Ok((base, exponent.parse()?))
-    } else {
-        Ok((input, 0))
-    }
-}
-
-impl FromStr for PluralOperands {
+#[cfg(feature = "datagen")]
+impl core::str::FromStr for PluralOperands {
     type Err = OperandsError;
 
     fn from_str(input: &str) -> Result<Self, Self::Err> {
+        fn get_exponent(input: &str) -> Result<(&str, usize), OperandsError> {
+            if let Some((base, exponent)) = input.split_once('e') {
+                Ok((base, exponent.parse()?))
+            } else {
+                Ok((input, 0))
+            }
+        }
+
         if input.is_empty() {
             return Err(OperandsError::Empty);
         }
@@ -270,6 +260,30 @@ impl PluralOperands {
             c: usize::from(exp),
         }
     }
+
+    /// Whether these [`PluralOperands`] are exactly the number 0, which might be a special case.
+    pub fn is_exactly_zero(self) -> bool {
+        self == Self {
+            i: 0,
+            v: 0,
+            w: 0,
+            f: 0,
+            t: 0,
+            c: 0,
+        }
+    }
+
+    /// Whether these [`PluralOperands`] are exactly the number 1, which might be a special case.
+    pub fn is_exactly_one(self) -> bool {
+        self == Self {
+            i: 1,
+            v: 0,
+            w: 0,
+            f: 0,
+            t: 0,
+            c: 0,
+        }
+    }
 }
 
 impl From<&FixedDecimal> for PluralOperands {
@@ -289,7 +303,7 @@ impl From<&CompactDecimal> for PluralOperands {
     /// ```
     /// use fixed_decimal::CompactDecimal;
     /// use fixed_decimal::FixedDecimal;
-    /// use icu::locid::locale;
+    /// use icu::locale::locale;
     /// use icu::plurals::rules::RawPluralOperands;
     /// use icu::plurals::PluralCategory;
     /// use icu::plurals::PluralOperands;

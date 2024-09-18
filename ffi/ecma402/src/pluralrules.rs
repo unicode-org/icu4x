@@ -5,11 +5,12 @@
 //! Implements the traits found in [`ecma402_traits::pluralrules`].
 
 use icu::plurals as ipr;
-use icu::plurals::Error;
 
 pub(crate) mod internal {
+    use core::str::FromStr;
     use ecma402_traits::pluralrules::options::Type;
     use ecma402_traits::pluralrules::Options;
+    use fixed_decimal::FixedDecimal;
     use icu::plurals::{PluralCategory, PluralOperands, PluralRuleType};
     use std::cmp::{max, min};
 
@@ -112,7 +113,7 @@ pub(crate) mod internal {
         dbg!("n={}", n);
         let nstr = fixed_format(n, &opts);
         #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        let ret = nstr.parse().unwrap();
+        let ret = PluralOperands::from(&FixedDecimal::from_str(&nstr).unwrap());
         dbg!("ret={:?}\n---\n", &ret);
         ret
     }
@@ -236,7 +237,7 @@ pub struct PluralRules {
 }
 
 impl ecma402_traits::pluralrules::PluralRules for PluralRules {
-    type Error = Error;
+    type Error = icu_provider::DataError;
 
     fn try_new<L>(l: L, opts: ecma402_traits::pluralrules::Options) -> Result<Self, Self::Error>
     where
@@ -264,10 +265,10 @@ mod testing {
     use crate::testing::TestLocale;
     use ecma402_traits::pluralrules;
     use ecma402_traits::pluralrules::PluralRules;
-    use icu::plurals::Error;
+    use icu_provider::DataError;
 
     #[test]
-    fn plurals_per_locale() -> Result<(), Error> {
+    fn plurals_per_locale() -> Result<(), DataError> {
         #[derive(Debug, Clone)]
         struct TestCase {
             locale: TestLocale,

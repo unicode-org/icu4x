@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_locid::{langid, locale};
+use icu_locale_core::{langid, locale};
 use icu_plurals::{provider::CardinalV1Marker, PluralCategory, PluralRuleType, PluralRules};
 use icu_provider::prelude::*;
 
@@ -21,13 +21,11 @@ fn test_static_load_works() {
     DataProvider::<CardinalV1Marker>::load(
         &icu_plurals::provider::Baked,
         DataRequest {
-            locale: &langid!("en").into(),
-            metadata: Default::default(),
+            id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
+            ..Default::default()
         },
     )
-    .expect("Failed to load payload")
-    .take_payload()
-    .expect("Failed to retrieve payload");
+    .expect("Failed to load payload");
 }
 
 #[test]
