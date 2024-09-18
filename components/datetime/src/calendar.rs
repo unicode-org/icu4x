@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::provider::calendar::*;
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::chinese::Chinese;
 use icu_calendar::roc::Roc;
@@ -11,10 +10,6 @@ use icu_calendar::{
     indian::Indian, islamic::IslamicCivil, islamic::IslamicObservational, islamic::IslamicTabular,
     islamic::IslamicUmmAlQura, japanese::Japanese, japanese::JapaneseExtended, persian::Persian,
     Gregorian,
-};
-use icu_locale_core::{
-    extensions::unicode::{value, Value},
-    subtags::{subtag, Subtag},
 };
 use icu_provider::prelude::*;
 
@@ -43,19 +38,6 @@ pub trait InternalCldrCalendar {}
 /// including in SemVer minor releases. Do not implement this trait in userland.
 /// </div>
 pub trait CldrCalendar: InternalCldrCalendar {
-    /// The Unicode BCP 47 identifier for the calendar's skeleton
-    /// If multiple BCP 47 identifiers work, this should be
-    /// the default one when no others are provided
-    ///
-    /// If `is_identifier_allowed_for_calendar()` is set, this only is used for loading skeletons data
-    const DEFAULT_BCP_47_IDENTIFIER: Value;
-
-    /// The data marker for loading symbols for this calendar.
-    type DateSymbolsV1Marker: DataMarker<DataStruct = DateSymbolsV1<'static>>;
-
-    /// The data marker for loading length-patterns for this calendar.
-    type DateLengthsV1Marker: DataMarker<DataStruct = DateLengthsV1<'static>>;
-
     /// The data marker for loading year symbols for this calendar.
     type YearNamesV1Marker: DataMarker<DataStruct = YearNamesV1<'static>>;
 
@@ -64,22 +46,6 @@ pub trait CldrCalendar: InternalCldrCalendar {
 
     /// The data marker for loading skeleton patterns for this calendar.
     type SkeletaV1Marker: DataMarker<DataStruct = PackedSkeletonDataV1<'static>>;
-
-    /// Checks if a given BCP 47 identifier is allowed to be used with this calendar
-    ///
-    /// By default, just checks against DEFAULT_BCP_47_IDENTIFIER
-    fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
-        *value == Self::DEFAULT_BCP_47_IDENTIFIER
-    }
-}
-
-/// Check if the provided value is of the form `islamic-{subcal}`
-fn is_islamic_subcal(value: &Value, subcal: Subtag) -> bool {
-    if let &[first, second] = value.as_subtags_slice() {
-        first == *"islamic" && second == subcal
-    } else {
-        false
-    }
 }
 
 /// A calendar that can never exist.
@@ -91,84 +57,54 @@ fn is_islamic_subcal(value: &Value, subcal: Subtag) -> bool {
 pub enum NeverCalendar {}
 
 impl CldrCalendar for NeverCalendar {
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("never");
-    type DateSymbolsV1Marker = NeverMarker<DateSymbolsV1<'static>>;
-    type DateLengthsV1Marker = NeverMarker<DateLengthsV1<'static>>;
     type YearNamesV1Marker = NeverMarker<YearNamesV1<'static>>;
     type MonthNamesV1Marker = NeverMarker<MonthNamesV1<'static>>;
     type SkeletaV1Marker = NeverMarker<PackedSkeletonDataV1<'static>>;
 }
 
 impl CldrCalendar for Buddhist {
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("buddhist");
-    type DateSymbolsV1Marker = BuddhistDateSymbolsV1Marker;
-    type DateLengthsV1Marker = BuddhistDateLengthsV1Marker;
     type YearNamesV1Marker = BuddhistYearNamesV1Marker;
     type MonthNamesV1Marker = BuddhistMonthNamesV1Marker;
     type SkeletaV1Marker = BuddhistDateNeoSkeletonPatternsV1Marker;
 }
 
 impl CldrCalendar for Chinese {
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("chinese");
-    type DateSymbolsV1Marker = ChineseDateSymbolsV1Marker;
-    type DateLengthsV1Marker = ChineseDateLengthsV1Marker;
     type YearNamesV1Marker = ChineseYearNamesV1Marker;
     type MonthNamesV1Marker = ChineseMonthNamesV1Marker;
     type SkeletaV1Marker = ChineseDateNeoSkeletonPatternsV1Marker;
 }
 
 impl CldrCalendar for Coptic {
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("coptic");
-    type DateSymbolsV1Marker = CopticDateSymbolsV1Marker;
-    type DateLengthsV1Marker = CopticDateLengthsV1Marker;
     type YearNamesV1Marker = CopticYearNamesV1Marker;
     type MonthNamesV1Marker = CopticMonthNamesV1Marker;
     type SkeletaV1Marker = CopticDateNeoSkeletonPatternsV1Marker;
 }
 
 impl CldrCalendar for Dangi {
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("dangi");
-    type DateSymbolsV1Marker = DangiDateSymbolsV1Marker;
-    type DateLengthsV1Marker = DangiDateLengthsV1Marker;
     type YearNamesV1Marker = DangiYearNamesV1Marker;
     type MonthNamesV1Marker = DangiMonthNamesV1Marker;
     type SkeletaV1Marker = DangiDateNeoSkeletonPatternsV1Marker;
 }
 
 impl CldrCalendar for Ethiopian {
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("ethiopic");
-    type DateSymbolsV1Marker = EthiopianDateSymbolsV1Marker;
-    type DateLengthsV1Marker = EthiopianDateLengthsV1Marker;
     type YearNamesV1Marker = EthiopianYearNamesV1Marker;
     type MonthNamesV1Marker = EthiopianMonthNamesV1Marker;
     type SkeletaV1Marker = EthiopianDateNeoSkeletonPatternsV1Marker;
-    fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
-        *value == value!("ethiopic") || *value == value!("ethioaa")
-    }
 }
 
 impl CldrCalendar for Gregorian {
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("gregory");
-    type DateSymbolsV1Marker = GregorianDateSymbolsV1Marker;
-    type DateLengthsV1Marker = GregorianDateLengthsV1Marker;
     type YearNamesV1Marker = GregorianYearNamesV1Marker;
     type MonthNamesV1Marker = GregorianMonthNamesV1Marker;
     type SkeletaV1Marker = GregorianDateNeoSkeletonPatternsV1Marker;
 }
 
 impl CldrCalendar for Hebrew {
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("hebrew");
-    type DateSymbolsV1Marker = HebrewDateSymbolsV1Marker;
-    type DateLengthsV1Marker = HebrewDateLengthsV1Marker;
     type YearNamesV1Marker = HebrewYearNamesV1Marker;
     type MonthNamesV1Marker = HebrewMonthNamesV1Marker;
     type SkeletaV1Marker = HebrewDateNeoSkeletonPatternsV1Marker;
 }
 
 impl CldrCalendar for Indian {
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("indian");
-    type DateSymbolsV1Marker = IndianDateSymbolsV1Marker;
-    type DateLengthsV1Marker = IndianDateLengthsV1Marker;
     type YearNamesV1Marker = IndianYearNamesV1Marker;
     type MonthNamesV1Marker = IndianMonthNamesV1Marker;
     type SkeletaV1Marker = IndianDateNeoSkeletonPatternsV1Marker;
@@ -178,87 +114,48 @@ impl CldrCalendar for IslamicCivil {
     // this value is not actually a valid identifier for this calendar,
     // however since we are overriding is_identifier_allowed_for_calendar we are using
     // this solely for its effects on skeleton data loading
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("islamic");
-    type DateSymbolsV1Marker = IslamicDateSymbolsV1Marker;
-    type DateLengthsV1Marker = IslamicDateLengthsV1Marker;
     type YearNamesV1Marker = IslamicYearNamesV1Marker;
     type MonthNamesV1Marker = IslamicMonthNamesV1Marker;
     type SkeletaV1Marker = IslamicDateNeoSkeletonPatternsV1Marker;
-    fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
-        *value == value!("islamicc") || is_islamic_subcal(value, subtag!("civil"))
-    }
 }
 
 impl CldrCalendar for IslamicObservational {
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("islamic");
-    type DateSymbolsV1Marker = IslamicDateSymbolsV1Marker;
-    type DateLengthsV1Marker = IslamicDateLengthsV1Marker;
     type YearNamesV1Marker = IslamicYearNamesV1Marker;
     type MonthNamesV1Marker = IslamicMonthNamesV1Marker;
     type SkeletaV1Marker = IslamicDateNeoSkeletonPatternsV1Marker;
 }
 
 impl CldrCalendar for IslamicTabular {
-    // this value is not actually a valid identifier for this calendar,
-    // however since we are overriding is_identifier_allowed_for_calendar we are using
-    // this solely for its effects on skeleton data loading
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("islamic");
-    type DateSymbolsV1Marker = IslamicDateSymbolsV1Marker;
-    type DateLengthsV1Marker = IslamicDateLengthsV1Marker;
     type YearNamesV1Marker = IslamicYearNamesV1Marker;
     type MonthNamesV1Marker = IslamicMonthNamesV1Marker;
     type SkeletaV1Marker = IslamicDateNeoSkeletonPatternsV1Marker;
-    fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
-        is_islamic_subcal(value, subtag!("tbla"))
-    }
 }
 
 impl CldrCalendar for IslamicUmmAlQura {
-    // this value is not actually a valid identifier for this calendar,
-    // however since we are overriding is_identifier_allowed_for_calendar we are using
-    // this solely for its effects on skeleton data loading
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("islamic");
-    type DateSymbolsV1Marker = IslamicDateSymbolsV1Marker;
-    type DateLengthsV1Marker = IslamicDateLengthsV1Marker;
     type YearNamesV1Marker = IslamicYearNamesV1Marker;
     type MonthNamesV1Marker = IslamicMonthNamesV1Marker;
     type SkeletaV1Marker = IslamicDateNeoSkeletonPatternsV1Marker;
-    fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
-        is_islamic_subcal(value, subtag!("umalqura"))
-    }
 }
 
 impl CldrCalendar for Japanese {
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("japanese");
-    type DateSymbolsV1Marker = JapaneseDateSymbolsV1Marker;
-    type DateLengthsV1Marker = JapaneseDateLengthsV1Marker;
     type YearNamesV1Marker = JapaneseYearNamesV1Marker;
     type MonthNamesV1Marker = JapaneseMonthNamesV1Marker;
     type SkeletaV1Marker = JapaneseDateNeoSkeletonPatternsV1Marker;
 }
 
 impl CldrCalendar for JapaneseExtended {
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("japanext");
-    type DateSymbolsV1Marker = JapaneseExtendedDateSymbolsV1Marker;
-    type DateLengthsV1Marker = JapaneseExtendedDateLengthsV1Marker;
     type YearNamesV1Marker = JapaneseExtendedYearNamesV1Marker;
     type MonthNamesV1Marker = JapaneseExtendedMonthNamesV1Marker;
     type SkeletaV1Marker = JapaneseExtendedDateNeoSkeletonPatternsV1Marker;
 }
 
 impl CldrCalendar for Persian {
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("persian");
-    type DateSymbolsV1Marker = PersianDateSymbolsV1Marker;
-    type DateLengthsV1Marker = PersianDateLengthsV1Marker;
     type YearNamesV1Marker = PersianYearNamesV1Marker;
     type MonthNamesV1Marker = PersianMonthNamesV1Marker;
     type SkeletaV1Marker = PersianDateNeoSkeletonPatternsV1Marker;
 }
 
 impl CldrCalendar for Roc {
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("roc");
-    type DateSymbolsV1Marker = RocDateSymbolsV1Marker;
-    type DateLengthsV1Marker = RocDateLengthsV1Marker;
     type YearNamesV1Marker = RocYearNamesV1Marker;
     type MonthNamesV1Marker = RocMonthNamesV1Marker;
     type SkeletaV1Marker = RocDateNeoSkeletonPatternsV1Marker;

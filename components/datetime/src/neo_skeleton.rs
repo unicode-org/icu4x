@@ -6,8 +6,8 @@
 
 #[cfg(feature = "serde")]
 use crate::neo_serde::*;
-use crate::options;
-use crate::options::length;
+#[cfg(feature = "datagen")]
+use crate::options::{self, length};
 use crate::pattern::CoarseHourCycle;
 use crate::raw::neo::MaybeLength;
 use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
@@ -38,6 +38,7 @@ impl NeoSkeletonLength {
     pub const VALUES: &'static [Self] = &[Self::Long, Self::Medium, Self::Short];
 
     /// Returns the date style corresponding to this length.
+    #[cfg(feature = "datagen")]
     pub fn to_date_style(self) -> options::length::Date {
         match self {
             Self::Long => options::length::Date::Long,
@@ -47,6 +48,7 @@ impl NeoSkeletonLength {
     }
 
     /// Returns the time style corresponding to this length.
+    #[cfg(feature = "datagen")]
     pub fn to_time_style(self) -> options::length::Time {
         // Note: For now, make "long" and "medium" both map to "medium".
         // This could be improved in light of additional data.
@@ -768,6 +770,7 @@ impl NeoTimeComponents {
 
     /// Converts a [`length::Time`] to its nearest [`NeoTimeComponents`].
     #[doc(hidden)] // the types involved in this mapping may change
+    #[cfg(feature = "datagen")]
     pub fn from_time_length(time_length: length::Time) -> Self {
         match time_length {
             length::Time::Full => todo!(),
@@ -1026,6 +1029,7 @@ impl NeoDateSkeleton {
 
     /// Converts a [`length::Date`] to a [`NeoDayComponents`] and [`NeoSkeletonLength`].
     #[doc(hidden)] // the types involved in this mapping may change
+    #[cfg(feature = "datagen")]
     pub fn day_from_date_length(
         date_length: length::Date,
     ) -> (NeoDayComponents, NeoSkeletonLength) {
@@ -1039,6 +1043,7 @@ impl NeoDateSkeleton {
 
     /// Converts a [`length::Date`] to a [`NeoDateSkeleton`].
     #[doc(hidden)] // the types involved in this mapping may change
+    #[cfg(feature = "datagen")]
     pub fn from_date_length(date_length: length::Date) -> Self {
         let (day_components, length) = Self::day_from_date_length(date_length);
         NeoDateSkeleton {
@@ -1171,6 +1176,7 @@ impl From<NeoDateTimeSkeleton> for NeoSkeleton {
 
 impl NeoDateTimeSkeleton {
     #[doc(hidden)] // mostly internal; maps from old API to new API
+    #[cfg(feature = "datagen")]
     pub fn from_date_time_length(
         date_length: crate::options::length::Date,
         time_length: crate::options::length::Time,
