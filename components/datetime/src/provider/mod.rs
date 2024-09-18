@@ -34,9 +34,6 @@ pub mod neo;
 /// </div>
 pub struct Baked;
 
-#[cfg(feature = "datagen")]
-include!("../../tests/data/date_skeleton_patterns_v1_marker.rs.data");
-
 #[cfg(feature = "compiled_data")]
 #[allow(unused_imports)]
 const _: () = {
@@ -46,43 +43,13 @@ const _: () = {
         pub use icu_datetime_data::icu_locale as locale;
     }
     make_provider!(Baked);
-    impl_buddhist_date_lengths_v1_marker!(Baked);
-    impl_buddhist_date_symbols_v1_marker!(Baked);
-    impl_chinese_date_lengths_v1_marker!(Baked);
-    impl_chinese_date_symbols_v1_marker!(Baked);
-    impl_coptic_date_lengths_v1_marker!(Baked);
-    impl_coptic_date_symbols_v1_marker!(Baked);
-    impl_dangi_date_lengths_v1_marker!(Baked);
-    impl_dangi_date_symbols_v1_marker!(Baked);
-    impl_ethiopian_date_lengths_v1_marker!(Baked);
-    impl_ethiopian_date_symbols_v1_marker!(Baked);
-    impl_gregorian_date_lengths_v1_marker!(Baked);
-    impl_gregorian_date_symbols_v1_marker!(Baked);
-    impl_hebrew_date_lengths_v1_marker!(Baked);
-    impl_hebrew_date_symbols_v1_marker!(Baked);
-    impl_indian_date_lengths_v1_marker!(Baked);
-    impl_indian_date_symbols_v1_marker!(Baked);
-    impl_islamic_date_lengths_v1_marker!(Baked);
-    impl_islamic_date_symbols_v1_marker!(Baked);
-    impl_japanese_date_lengths_v1_marker!(Baked);
-    impl_japanese_date_symbols_v1_marker!(Baked);
-    impl_japanese_extended_date_lengths_v1_marker!(Baked);
-    impl_japanese_extended_date_symbols_v1_marker!(Baked);
-    impl_persian_date_lengths_v1_marker!(Baked);
-    impl_persian_date_symbols_v1_marker!(Baked);
-    impl_roc_date_lengths_v1_marker!(Baked);
-    impl_roc_date_symbols_v1_marker!(Baked);
-    impl_time_lengths_v1_marker!(Baked);
-    impl_time_symbols_v1_marker!(Baked);
+
     impl_exemplar_cities_v1_marker!(Baked);
     impl_metazone_generic_names_long_v1_marker!(Baked);
     impl_metazone_generic_names_short_v1_marker!(Baked);
     impl_metazone_specific_names_long_v1_marker!(Baked);
     impl_metazone_specific_names_short_v1_marker!(Baked);
     impl_time_zone_formats_v1_marker!(Baked);
-
-    #[cfg(feature = "datagen")]
-    impl_date_skeleton_patterns_v1_marker!(Baked);
 
     impl_weekday_names_v1_marker!(Baked);
     impl_day_period_names_v1_marker!(Baked);

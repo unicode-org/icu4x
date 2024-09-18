@@ -164,7 +164,7 @@ impl Bag {
     }
 
     #[allow(clippy::wrong_self_convention)]
-    /// Converts the components::Bag into a Vec<Field>. The fields will be ordered in from most
+    /// Converts the components::Bag into a `Vec<Field>`. The fields will be ordered in from most
     /// significant field to least significant. This is the order the fields are listed in
     /// the UTS 35 table - <https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table>
     ///
@@ -172,8 +172,8 @@ impl Bag {
     ///
     /// - `default_hour_cycle` specifies the hour cycle to use for the hour field if not in the Bag.
     ///   `preferences::Bag::hour_cycle` takes precedence over this argument.
-    #[cfg(any(test, feature = "datagen"))]
-    pub(crate) fn to_vec_fields(
+    #[cfg(feature = "datagen")]
+    pub fn to_vec_fields(
         &self,
         default_hour_cycle: preferences::HourCycle,
     ) -> alloc::vec::Vec<Field> {
