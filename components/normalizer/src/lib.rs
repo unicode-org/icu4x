@@ -71,11 +71,14 @@ extern crate alloc;
 // to ensure we're using the right CCC values
 macro_rules! ccc {
     ($name:ident, $num:expr) => {{
-        #[cfg(all(debug_assertions, feature = "icu_properties"))]
-        if icu_properties::CanonicalCombiningClass::$name.0 != $num {
-            panic!("icu_normalizer has incorrect ccc values")
-        }
-        $num
+        const X: u8 = {
+            #[cfg(feature = "icu_properties")]
+            if icu_properties::CanonicalCombiningClass::$name.0 != $num {
+                panic!("icu_normalizer has incorrect ccc values")
+            }
+            $num
+        };
+        X
     }};
 }
 
@@ -757,7 +760,7 @@ where
                 } else {
                     '\u{309A}'
                 },
-                0xD800 | ccc!(KanaVoicing, 8),
+                0xD800 | ccc!(KanaVoicing, 8) as u32,
             ));
         }
         let trie_value = supplementary.get32(u32::from(c));
