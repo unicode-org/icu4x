@@ -17,7 +17,6 @@ class CodePointSetData;
 namespace capi { struct DataProvider; }
 class DataProvider;
 class DataError;
-class Error;
 }
 
 
@@ -169,7 +168,7 @@ public:
 
   inline static diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> load_xid_start(const icu4x::DataProvider& provider);
 
-  inline static diplomat::result<diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::Error>, diplomat::Utf8Error> load_for_ecma262(const icu4x::DataProvider& provider, std::string_view property_name);
+  inline static diplomat::result<diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError>, diplomat::Utf8Error> load_for_ecma262(const icu4x::DataProvider& provider, std::string_view property_name);
 
   inline const icu4x::capi::CodePointSetData* AsFFI() const;
   inline icu4x::capi::CodePointSetData* AsFFI();

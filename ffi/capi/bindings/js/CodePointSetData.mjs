@@ -2,7 +2,6 @@
 import { CodePointRangeIterator } from "./CodePointRangeIterator.mjs"
 import { DataError } from "./DataError.mjs"
 import { DataProvider } from "./DataProvider.mjs"
-import { Error } from "./Error.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
@@ -1281,8 +1280,8 @@ export class CodePointSetData {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = new Error(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('Error: ' + cause.value, { cause });
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new CodePointSetData(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }

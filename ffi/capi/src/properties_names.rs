@@ -23,11 +23,11 @@ pub mod ffi {
         ///
         /// Returns -1 if the name is unknown for this property
         #[diplomat::rust_link(
-            icu::properties::names::PropertyValueNameToEnumMapperBorrowed::get_strict,
+            icu::properties::PropertyParserBorrowed::get_strict,
             FnInStruct
         )]
         #[diplomat::rust_link(
-            icu::properties::names::PropertyValueNameToEnumMapperBorrowed::get_strict_u16,
+            icu::properties::PropertyParserBorrowed::get_strict_u16,
             FnInStruct,
             hidden
         )]
@@ -45,11 +45,11 @@ pub mod ffi {
         ///
         /// Returns -1 if the name is unknown for this property
         #[diplomat::rust_link(
-            icu::properties::names::PropertyValueNameToEnumMapperBorrowed::get_loose,
+            icu::properties::PropertyParserBorrowed::get_loose,
             FnInStruct
         )]
         #[diplomat::rust_link(
-            icu::properties::names::PropertyValueNameToEnumMapperBorrowed::get_loose_u16,
+            icu::properties::PropertyParserBorrowed::get_loose_u16,
             FnInStruct,
             hidden
         )]
@@ -63,6 +63,7 @@ pub mod ffi {
             .unwrap_or(-1)
         }
 
+        #[diplomat::rust_link(icu_properties::props::GeneralCategory, Enum)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "general_category")]
         pub fn load_general_category(
             provider: &DataProvider,
@@ -77,6 +78,7 @@ pub mod ffi {
             )))
         }
 
+        #[diplomat::rust_link(icu_properties::props::HangulSyllableType, Struct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "hangul_syllable_type")]
         pub fn load_hangul_syllable_type(
             provider: &DataProvider,
@@ -91,6 +93,7 @@ pub mod ffi {
             )))
         }
 
+        #[diplomat::rust_link(icu_properties::props::EastAsianWidth, Struct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "east_asian_width")]
         pub fn load_east_asian_width(
             provider: &DataProvider,
@@ -105,6 +108,7 @@ pub mod ffi {
             )))
         }
 
+        #[diplomat::rust_link(icu_properties::props::BidiClass, Struct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "bidi_class")]
         pub fn load_bidi_class(
             provider: &DataProvider,
@@ -119,6 +123,7 @@ pub mod ffi {
             )))
         }
 
+        #[diplomat::rust_link(icu_properties::props::IndicSyllabicCategory, Struct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "indic_syllabic_category")]
         pub fn load_indic_syllabic_category(
             provider: &DataProvider,
@@ -133,6 +138,7 @@ pub mod ffi {
             )))
         }
 
+        #[diplomat::rust_link(icu_properties::props::LineBreak, Struct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "line_break")]
         pub fn load_line_break(
             provider: &DataProvider,
@@ -147,6 +153,7 @@ pub mod ffi {
             )))
         }
 
+        #[diplomat::rust_link(icu_properties::props::GraphemeClusterBreak, Struct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "grapheme_cluster_break")]
         pub fn load_grapheme_cluster_break(
             provider: &DataProvider,
@@ -161,6 +168,7 @@ pub mod ffi {
             )))
         }
 
+        #[diplomat::rust_link(icu_properties::props::WordBreak, Struct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "word_break")]
         pub fn load_word_break(
             provider: &DataProvider,
@@ -175,6 +183,7 @@ pub mod ffi {
             )))
         }
 
+        #[diplomat::rust_link(icu_properties::props::SentenceBreak, Struct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "sentence_break")]
         pub fn load_sentence_break(
             provider: &DataProvider,
@@ -189,6 +198,7 @@ pub mod ffi {
             )))
         }
 
+        #[diplomat::rust_link(icu_properties::props::Script, Struct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "script")]
         pub fn load_script(
             provider: &DataProvider,
@@ -206,7 +216,8 @@ pub mod ffi {
 
     /// A type capable of looking up General Category mask values from a string name.
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::properties::PropertyValueNameToEnumMapper, Struct)]
+    #[diplomat::rust_link(icu::properties::PropertyParser, Struct)]
+    #[diplomat::rust_link(icu::properties::props::GeneralCategory, Struct)]
     pub struct GeneralCategoryNameToMaskMapper(
         icu_properties::PropertyParser<icu_properties::props::GeneralCategoryGroup>,
     );
@@ -215,8 +226,8 @@ pub mod ffi {
         /// Get the mask value matching the given name, using strict matching
         ///
         /// Returns 0 if the name is unknown for this property
-        // #[diplomat::rust_link(icu::properties::PropertyValueNameToEnumMapperBorrowed::get_strict, FnInStruct)]
-        // #[diplomat::rust_link(icu::properties::PropertyValueNameToEnumMapperBorrowed::get_strict_u16, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyParserBorrowed::get_strict, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::PropertyParserBorrowed::get_strict_u16, FnInStruct, hidden)]
         pub fn get_strict(&self, name: &DiplomatStr) -> u32 {
             if let Ok(name) = core::str::from_utf8(name) {
                 self.0.as_borrowed().get_strict(name)
@@ -230,8 +241,8 @@ pub mod ffi {
         /// Get the mask value matching the given name, using loose matching
         ///
         /// Returns 0 if the name is unknown for this property
-        // #[diplomat::rust_link(icu::properties::PropertyValueNameToEnumMapperBorrowed::get_loose, FnInStruct)]
-        // #[diplomat::rust_link(icu::properties::PropertyValueNameToEnumMapperBorrowed::get_loose_u16, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyParserBorrowed::get_loose, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::PropertyParserBorrowed::get_loose_u16, FnInStruct, hidden)]
         pub fn get_loose(&self, name: &DiplomatStr) -> u32 {
             if let Ok(name) = core::str::from_utf8(name) {
                 self.0.as_borrowed().get_loose(name)
@@ -242,6 +253,7 @@ pub mod ffi {
             .unwrap_or_default()
         }
 
+        #[diplomat::rust_link(icu_properties::props::GeneralCategoryGroup, Struct)]
         #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn load(
             provider: &DataProvider,

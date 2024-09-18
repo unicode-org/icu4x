@@ -6,9 +6,9 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 /** A type capable of looking up General Category mask values from a string name.
 *
-*See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#method.name_to_enum_mapper) for more information.
+*See the [Rust documentation for `PropertyParser`](https://docs.rs/icu/latest/icu/properties/struct.PropertyParser.html) for more information.
 *
-*See the [Rust documentation for `PropertyValueNameToEnumMapper`](https://docs.rs/icu/latest/icu/properties/names/struct.PropertyValueNameToEnumMapper.html) for more information.
+*See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategory.html) for more information.
 */
 export class GeneralCategoryNameToMaskMapper {
     

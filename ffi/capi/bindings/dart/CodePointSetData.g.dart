@@ -794,14 +794,16 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
   ///
-  /// See the [Rust documentation for `new_for_ecma262`](https://docs.rs/icu/latest/icu/properties/struct.CodePointSetData.html#method.new_for_ecma262) for more information.
+  /// See the [Rust documentation for `new_runtime`](https://docs.rs/icu/latest/icu/properties/struct.CodePointSetData.html#method.new_runtime) for more information.
   ///
-  /// Throws [Error] on failure.
+  /// See the [Rust documentation for `UnicodeProperty`](https://docs.rs/icu/latest/icu/properties/struct.UnicodeProperty.html) for more information.
+  ///
+  /// Throws [DataError] on failure.
   factory CodePointSetData.forEcma262(DataProvider provider, String propertyName) {
     final temp = _FinalizedArena();
     final result = _icu4x_CodePointSetData_load_for_ecma262_mv1(provider._ffi, propertyName._utf8AllocIn(temp.arena));
     if (!result.isOk) {
-      throw Error.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DataError.values[result.union.err];
     }
     return CodePointSetData._fromFfi(result.union.ok, []);
   }

@@ -21,7 +21,6 @@ export class Error {
         ["DataCustomError", 266],
         ["DataIoError", 267],
         ["DataUnavailableBufferFormatError", 268],
-        ["PropertyUnexpectedPropertyNameError", 1026],
         ["DateTimePatternError", 2048],
         ["DateTimeMissingInputFieldError", 2049],
         ["DateTimeSkeletonError", 2050],
@@ -83,7 +82,6 @@ export class Error {
         [266]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 266),
         [267]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 267),
         [268]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 268),
-        [1026]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1026),
         [2048]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2048),
         [2049]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2049),
         [2050]: new Error(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2050),
@@ -108,7 +106,6 @@ export class Error {
     static DataCustomError = Error.#objectValues[266];
     static DataIoError = Error.#objectValues[267];
     static DataUnavailableBufferFormatError = Error.#objectValues[268];
-    static PropertyUnexpectedPropertyNameError = Error.#objectValues[1026];
     static DateTimePatternError = Error.#objectValues[2048];
     static DateTimeMissingInputFieldError = Error.#objectValues[2049];
     static DateTimeSkeletonError = Error.#objectValues[2050];

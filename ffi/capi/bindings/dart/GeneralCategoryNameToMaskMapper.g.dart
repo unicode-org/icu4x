@@ -4,9 +4,9 @@ part of 'lib.g.dart';
 
 /// A type capable of looking up General Category mask values from a string name.
 ///
-/// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#method.name_to_enum_mapper) for more information.
+/// See the [Rust documentation for `PropertyParser`](https://docs.rs/icu/latest/icu/properties/struct.PropertyParser.html) for more information.
 ///
-/// See the [Rust documentation for `PropertyValueNameToEnumMapper`](https://docs.rs/icu/latest/icu/properties/names/struct.PropertyValueNameToEnumMapper.html) for more information.
+/// See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategory.html) for more information.
 final class GeneralCategoryNameToMaskMapper implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -29,6 +29,8 @@ final class GeneralCategoryNameToMaskMapper implements ffi.Finalizable {
   /// Get the mask value matching the given name, using strict matching
   ///
   /// Returns 0 if the name is unknown for this property
+  ///
+  /// See the [Rust documentation for `get_strict`](https://docs.rs/icu/latest/icu/properties/struct.PropertyParserBorrowed.html#method.get_strict) for more information.
   int getStrict(String name) {
     final temp = _FinalizedArena();
     final result = _icu4x_GeneralCategoryNameToMaskMapper_get_strict_mv1(_ffi, name._utf8AllocIn(temp.arena));
@@ -38,13 +40,15 @@ final class GeneralCategoryNameToMaskMapper implements ffi.Finalizable {
   /// Get the mask value matching the given name, using loose matching
   ///
   /// Returns 0 if the name is unknown for this property
+  ///
+  /// See the [Rust documentation for `get_loose`](https://docs.rs/icu/latest/icu/properties/struct.PropertyParserBorrowed.html#method.get_loose) for more information.
   int getLoose(String name) {
     final temp = _FinalizedArena();
     final result = _icu4x_GeneralCategoryNameToMaskMapper_get_loose_mv1(_ffi, name._utf8AllocIn(temp.arena));
     return result;
   }
 
-  /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#method.name_to_enum_mapper) for more information.
+  /// See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.GeneralCategoryGroup.html) for more information.
   ///
   /// Throws [DataError] on failure.
   factory GeneralCategoryNameToMaskMapper(DataProvider provider) {

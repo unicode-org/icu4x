@@ -18,16 +18,17 @@ APIs that return a `CodePointMapData` exist for certain enumerated properties.
 ### Property data as `CodePointSetData`s
 
 ```rust
-use icu::properties::{maps, sets, GeneralCategory};
+use icu::properties::{CodePointSetData, CodePointMapData};
+use icu::properties::props::{GeneralCategory, Emoji};
 
 // A binary property as a `CodePointSetData`
 
-assert!(sets::emoji().contains('🎃')); // U+1F383 JACK-O-LANTERN
-assert!(!sets::emoji().contains('木')); // U+6728
+assert!(CodePointSetData::new::<Emoji>().contains('🎃')); // U+1F383 JACK-O-LANTERN
+assert!(!CodePointSetData::new::<Emoji>().contains('木')); // U+6728
 
 // An individual enumerated property value as a `CodePointSetData`
 
-let line_sep_data = maps::general_category()
+let line_sep_data = CodePointMapData::<GeneralCategory>::new()
     .get_set_for_value(GeneralCategory::LineSeparator);
 let line_sep = line_sep_data.as_borrowed();
 
@@ -38,10 +39,11 @@ assert!(!line_sep.contains32(0x2029));
 ### Property data as `CodePointMapData`s
 
 ```rust
-use icu::properties::{maps, Script};
+use icu::properties::CodePointMapData;
+use icu::properties::props::Script;
 
-assert_eq!(maps::script().get('🎃'), Script::Common); // U+1F383 JACK-O-LANTERN
-assert_eq!(maps::script().get('木'), Script::Han); // U+6728
+assert_eq!(CodePointMapData::<Script>::new().get('🎃'), Script::Common); // U+1F383 JACK-O-LANTERN
+assert_eq!(CodePointMapData::<Script>::new().get('木'), Script::Han); // U+6728
 ```
 
 [`ICU4X`]: ../icu/index.html

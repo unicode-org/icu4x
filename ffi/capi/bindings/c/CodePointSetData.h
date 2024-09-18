@@ -10,7 +10,6 @@
 #include "CodePointRangeIterator.d.h"
 #include "DataError.d.h"
 #include "DataProvider.d.h"
-#include "Error.d.h"
 
 #include "CodePointSetData.d.h"
 
@@ -223,7 +222,7 @@ icu4x_CodePointSetData_load_xid_continue_mv1_result icu4x_CodePointSetData_load_
 typedef struct icu4x_CodePointSetData_load_xid_start_mv1_result {union {CodePointSetData* ok; DataError err;}; bool is_ok;} icu4x_CodePointSetData_load_xid_start_mv1_result;
 icu4x_CodePointSetData_load_xid_start_mv1_result icu4x_CodePointSetData_load_xid_start_mv1(const DataProvider* provider);
 
-typedef struct icu4x_CodePointSetData_load_for_ecma262_mv1_result {union {CodePointSetData* ok; Error err;}; bool is_ok;} icu4x_CodePointSetData_load_for_ecma262_mv1_result;
+typedef struct icu4x_CodePointSetData_load_for_ecma262_mv1_result {union {CodePointSetData* ok; DataError err;}; bool is_ok;} icu4x_CodePointSetData_load_for_ecma262_mv1_result;
 icu4x_CodePointSetData_load_for_ecma262_mv1_result icu4x_CodePointSetData_load_for_ecma262_mv1(const DataProvider* provider, DiplomatStringView property_name);
 
 

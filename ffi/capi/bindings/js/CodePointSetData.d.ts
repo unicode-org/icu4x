@@ -2,7 +2,6 @@
 import type { CodePointRangeIterator } from "./CodePointRangeIterator"
 import type { DataError } from "./DataError"
 import type { DataProvider } from "./DataProvider"
-import type { Error } from "./Error"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
