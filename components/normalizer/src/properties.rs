@@ -23,6 +23,7 @@ use crate::provider::NonRecursiveDecompositionSupplementV1;
 use crate::provider::NonRecursiveDecompositionSupplementV1Marker;
 use crate::trie_value_has_ccc;
 use crate::trie_value_indicates_special_non_starter_decomposition;
+use crate::CanonicalCombiningClass;
 use crate::BACKWARD_COMBINING_STARTER_MARKER;
 use crate::FDFA_MARKER;
 use crate::HANGUL_L_BASE;
@@ -34,10 +35,6 @@ use crate::HANGUL_T_COUNT;
 use crate::HANGUL_V_BASE;
 use crate::NON_ROUND_TRIP_MARKER;
 use crate::SPECIAL_NON_STARTER_DECOMPOSITION_MARKER_U16;
-/// want access to the underlying properties e.g. for use in a
-/// glyph-availability-guided custom normalizer.
-#[cfg(feature = "icu_properties")]
-use icu_properties::props::CanonicalCombiningClass;
 use icu_provider::prelude::*;
 
 /// Borrowed version of the raw canonical composition operation.
@@ -609,11 +606,11 @@ impl<'a> CanonicalCombiningClassMapBorrowed<'a> {
             trie_value as u8
         } else if trie_value_indicates_special_non_starter_decomposition(trie_value) {
             match c {
-                0x0340 | 0x0341 | 0x0343 | 0x0344 => ccc!(Above, 230),
-                _ => ccc!(NotReordered, 0),
+                0x0340 | 0x0341 | 0x0343 | 0x0344 => ccc!(Above, 230).0,
+                _ => ccc!(NotReordered, 0).0,
             }
         } else {
-            ccc!(NotReordered, 0)
+            ccc!(NotReordered, 0).0
         }
     }
 

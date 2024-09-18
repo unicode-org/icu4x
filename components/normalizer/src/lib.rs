@@ -71,12 +71,12 @@ extern crate alloc;
 // to ensure we're using the right CCC values
 macro_rules! ccc {
     ($name:ident, $num:expr) => {{
-        const X: u8 = {
+        const X: CanonicalCombiningClass = {
             #[cfg(feature = "icu_properties")]
             if icu_properties::CanonicalCombiningClass::$name.0 != $num {
                 panic!("icu_normalizer has incorrect ccc values")
             }
-            $num
+            CanonicalCombiningClass($num)
         };
         X
     }};
@@ -113,8 +113,14 @@ use utf8_iter::Utf8CharsEx;
 use write16::Write16;
 use zerovec::{zeroslice, ZeroSlice};
 
-const CCC_NOT_REORDERED: u8 = ccc!(NotReordered, 0);
-const CCC_ABOVE: u8 = ccc!(Above, 230);
+/// This type exists as a shim for icu_properties CanonicalCombiningClass when the crate is disabled
+/// It should not be exposed to users.
+#[cfg(not(feature = "icu_properties"))]
+#[derive(Copy, Clone, Eq, PartialEq, PartialOrd, Ord)]
+struct CanonicalCombiningClass(pub(crate) u8);
+
+const CCC_NOT_REORDERED: CanonicalCombiningClass = ccc!(NotReordered, 0);
+const CCC_ABOVE: CanonicalCombiningClass = ccc!(Above, 230);
 
 #[derive(Debug)]
 enum SupplementPayloadHolder {
@@ -199,12 +205,12 @@ fn decomposition_starts_with_non_starter(trie_value: u32) -> bool {
 ///
 /// The trie value must not be one that signifies a special non-starter
 /// decomposition. (Debug-only)
-fn ccc_from_trie_value(trie_value: u32) -> u8 {
+fn ccc_from_trie_value(trie_value: u32) -> CanonicalCombiningClass {
     if trie_value_has_ccc(trie_value) {
-        trie_value as u8
+        CanonicalCombiningClass(trie_value as u8)
     } else {
         debug_assert_ne!(trie_value, SPECIAL_NON_STARTER_DECOMPOSITION_MARKER);
-        0
+        CCC_NOT_REORDERED
     }
 }
 
@@ -475,8 +481,8 @@ impl CharacterAndTrieValue {
 struct CharacterAndClass(u32);
 
 impl CharacterAndClass {
-    pub fn new(c: char, ccc: u8) -> Self {
-        CharacterAndClass(u32::from(c) | (u32::from(ccc) << 24))
+    pub fn new(c: char, ccc: CanonicalCombiningClass) -> Self {
+        CharacterAndClass(u32::from(c) | (u32::from(ccc.0) << 24))
     }
     pub fn new_with_placeholder(c: char) -> Self {
         CharacterAndClass(u32::from(c) | ((0xFF) << 24))
@@ -495,29 +501,19 @@ impl CharacterAndClass {
         unsafe { char::from_u32_unchecked(self.0 & 0xFFFFFF) }
     }
     /// This method must exist for Pernosco to apply its special rendering.
-    /// Also, this must not be dead code!
-    #[cfg(feature = "icu_properties")]
     pub fn ccc(&self) -> CanonicalCombiningClass {
         CanonicalCombiningClass((self.0 >> 24) as u8)
     }
-    #[cfg(feature = "icu_properties")]
-    pub fn ccc_u8(&self) -> u8 {
-        // Make `ccc` not dead code!
-        self.ccc().0
-    }
-    #[cfg(not(feature = "icu_properties"))]
-    pub fn ccc_u8(&self) -> u8 {
-        (self.0 >> 24) as u8
-    }
-    pub fn character_and_ccc_u8(&self) -> (char, u8) {
-        (self.character(), self.ccc_u8())
+
+    pub fn character_and_ccc(&self) -> (char, CanonicalCombiningClass) {
+        (self.character(), self.ccc())
     }
     pub fn set_ccc_from_trie_if_not_already_set(&mut self, trie: &CodePointTrie<u32>) {
         if self.0 >> 24 != 0xFF {
             return;
         }
         let scalar = self.0 & 0xFFFFFF;
-        self.0 = ((ccc_from_trie_value(trie.get32_u32(scalar)) as u32) << 24) | scalar;
+        self.0 = ((ccc_from_trie_value(trie.get32_u32(scalar)).0 as u32) << 24) | scalar;
     }
 }
 
@@ -535,7 +531,7 @@ fn sort_slice_by_ccc(slice: &mut [CharacterAndClass], trie: &CodePointTrie<u32>)
     slice
         .iter_mut()
         .for_each(|cc| cc.set_ccc_from_trie_if_not_already_set(trie));
-    slice.sort_by_key(|cc| cc.ccc_u8());
+    slice.sort_by_key(|cc| cc.ccc());
 }
 
 /// An iterator adaptor that turns an `Iterator` over `char` into
@@ -760,7 +756,7 @@ where
                 } else {
                     '\u{309A}'
                 },
-                0xD800 | ccc!(KanaVoicing, 8) as u32,
+                0xD800 | ccc!(KanaVoicing, 8).0 as u32,
             ));
         }
         let trie_value = supplementary.get32(u32::from(c));
@@ -971,18 +967,21 @@ where
                     }
                     '\u{0F73}' => {
                         // TIBETAN VOWEL SIGN II
-                        self.buffer.push(CharacterAndClass::new('\u{0F71}', 129));
-                        CharacterAndClass::new('\u{0F72}', 130)
+                        self.buffer
+                            .push(CharacterAndClass::new('\u{0F71}', ccc!(CCC129, 129)));
+                        CharacterAndClass::new('\u{0F72}', ccc!(CCC130, 130))
                     }
                     '\u{0F75}' => {
                         // TIBETAN VOWEL SIGN UU
-                        self.buffer.push(CharacterAndClass::new('\u{0F71}', 129));
-                        CharacterAndClass::new('\u{0F74}', 132)
+                        self.buffer
+                            .push(CharacterAndClass::new('\u{0F71}', ccc!(CCC129, 129)));
+                        CharacterAndClass::new('\u{0F74}', ccc!(CCC132, 132))
                     }
                     '\u{0F81}' => {
                         // TIBETAN VOWEL SIGN REVERSED II
-                        self.buffer.push(CharacterAndClass::new('\u{0F71}', 129));
-                        CharacterAndClass::new('\u{0F80}', 130)
+                        self.buffer
+                            .push(CharacterAndClass::new('\u{0F71}', ccc!(CCC129, 129)));
+                        CharacterAndClass::new('\u{0F80}', ccc!(CCC130, 130))
                     }
                     _ => {
                         // GIGO case
@@ -1100,7 +1099,7 @@ where
                     .decomposition
                     .buffer
                     .get(self.decomposition.buffer_pos)
-                    .map(|c| c.character_and_ccc_u8())
+                    .map(|c| c.character_and_ccc())
                 {
                     self.decomposition.buffer_pos += 1;
                     if self.decomposition.buffer_pos == self.decomposition.buffer.len() {
@@ -1178,7 +1177,7 @@ where
                     .decomposition
                     .buffer
                     .get(self.decomposition.buffer_pos)
-                    .map(|c| c.character_and_ccc_u8())
+                    .map(|c| c.character_and_ccc())
                 {
                     (character, ccc)
                 } else {
@@ -1209,7 +1208,7 @@ where
                     .decomposition
                     .buffer
                     .get(i)
-                    .map(|c| c.character_and_ccc_u8())
+                    .map(|c| c.character_and_ccc())
                 {
                     if ccc == CCC_NOT_REORDERED {
                         // Discontiguous match not allowed.
@@ -1341,7 +1340,7 @@ macro_rules! composing_normalize_to {
                             .decomposition
                             .buffer
                             .get($composition.decomposition.buffer_pos)
-                            .map(|c| c.character_and_ccc_u8())
+                            .map(|c| c.character_and_ccc())
                         {
                             (character, ccc)
                         } else {
@@ -1378,7 +1377,7 @@ macro_rules! composing_normalize_to {
                             .decomposition
                             .buffer
                             .get(i)
-                            .map(|c| c.character_and_ccc_u8())
+                            .map(|c| c.character_and_ccc())
                         {
                             if ccc == CCC_NOT_REORDERED {
                                 // Discontiguous match not allowed.
