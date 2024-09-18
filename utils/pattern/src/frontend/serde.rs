@@ -80,10 +80,10 @@ where
     where
         D: serde::Deserializer<'de>,
     {
-        Ok(Self(
-            Pattern::<B>::try_from_str(&<Cow<str>>::deserialize(deserializer)?, Default::default())
-                .map_err(<D::Error as ::serde::de::Error>::custom)?,
-        ))
+        let pattern_str = String::deserialize(deserializer)?;
+        let pattern = Pattern::<B>::try_from_str(&pattern_str, Default::default())
+            .map_err(<D::Error as ::serde::de::Error>::custom)?;
+        Ok(Self(pattern))
     }
 }
 
