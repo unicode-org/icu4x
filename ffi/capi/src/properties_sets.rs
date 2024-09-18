@@ -22,9 +22,9 @@ pub mod ffi {
         SegmentStarter, SentenceTerminal, SoftDotted, TerminalPunctuation, UnifiedIdeograph,
         Uppercase, VariationSelector, WhiteSpace, Xdigit, XidContinue, XidStart,
     };
+    use icu_properties::UnicodeProperty;
 
     use crate::errors::ffi::DataError;
-    use crate::errors::ffi::Error;
     use crate::properties_iter::ffi::CodePointRangeIterator;
     use crate::provider::ffi::DataProvider;
 
@@ -848,13 +848,15 @@ pub mod ffi {
         pub fn load_for_ecma262(
             provider: &DataProvider,
             property_name: &str,
-        ) -> Result<Box<CodePointSetData>, Error> {
+        ) -> Result<Box<CodePointSetData>, DataError> {
+            let prop =
+                UnicodeProperty::parse_ecma262_name(property_name).ok_or(DataError::Custom)?;
             Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new_for_ecma262 [r => r.map(|r| r.static_to_owned()).map_err(|icu_properties::UnexpectedPropertyNameError| icu_properties::UnexpectedPropertyNameOrDataError::UnexpectedPropertyName)],
-                icu_properties::CodePointSetData::try_new_for_ecma262_unstable,
+                icu_properties::CodePointSetData::new_runtime [r => r.map(|d| Ok(d.static_to_owned()))],
+                icu_properties::CodePointSetData::try_new_runtime_unstable,
                 provider,
-                property_name
-            )?)))
+                prop
+            ).ok_or(DataError::Custom)??)))
         }
     }
 }

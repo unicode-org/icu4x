@@ -62,11 +62,10 @@ where
 mod tests {
     use core::fmt::Debug;
     use icu::collections::codepointinvlist::CodePointInversionListBuilder;
-    use icu::properties::{
-        CodePointMapData, CodePointMapProperty, CodePointSetData, CodePointSetProperty,
-    };
+    use icu::properties::props::{BinaryProperty, EnumeratedProperty};
+    use icu::properties::{CodePointMapData, CodePointSetData};
 
-    fn test_set<P: CodePointSetProperty>(name: &str) {
+    fn test_set<P: BinaryProperty>(name: &str) {
         let mut builder = CodePointInversionListBuilder::new();
         let mut builder_complement = CodePointInversionListBuilder::new();
 
@@ -84,7 +83,7 @@ mod tests {
         assert_eq!(set1, set2, "Set {name} failed to complement correctly");
     }
 
-    fn test_map<T: CodePointMapProperty + Debug>(value: T, name: &str) {
+    fn test_map<T: EnumeratedProperty + Debug>(value: T, name: &str) {
         let mut builder = CodePointInversionListBuilder::new();
         let mut builder_complement = CodePointInversionListBuilder::new();
 

@@ -18,16 +18,17 @@
 //! ## Property data as `CodePointSetData`s
 //!
 //! ```
-//! use icu::properties::{maps, sets, GeneralCategory};
+//! use icu::properties::{CodePointSetData, CodePointMapData};
+//! use icu::properties::props::{GeneralCategory, Emoji};
 //!
 //! // A binary property as a `CodePointSetData`
 //!
-//! assert!(sets::emoji().contains('🎃')); // U+1F383 JACK-O-LANTERN
-//! assert!(!sets::emoji().contains('木')); // U+6728
+//! assert!(CodePointSetData::new::<Emoji>().contains('🎃')); // U+1F383 JACK-O-LANTERN
+//! assert!(!CodePointSetData::new::<Emoji>().contains('木')); // U+6728
 //!
 //! // An individual enumerated property value as a `CodePointSetData`
 //!
-//! let line_sep_data = maps::general_category()
+//! let line_sep_data = CodePointMapData::<GeneralCategory>::new()
 //!     .get_set_for_value(GeneralCategory::LineSeparator);
 //! let line_sep = line_sep_data.as_borrowed();
 //!
@@ -38,10 +39,11 @@
 //! ## Property data as `CodePointMapData`s
 //!
 //! ```
-//! use icu::properties::{maps, Script};
+//! use icu::properties::CodePointMapData;
+//! use icu::properties::props::Script;
 //!
-//! assert_eq!(maps::script().get('🎃'), Script::Common); // U+1F383 JACK-O-LANTERN
-//! assert_eq!(maps::script().get('木'), Script::Han); // U+6728
+//! assert_eq!(CodePointMapData::<Script>::new().get('🎃'), Script::Common); // U+1F383 JACK-O-LANTERN
+//! assert_eq!(CodePointMapData::<Script>::new().get('木'), Script::Han); // U+6728
 //! ```
 //!
 //! [`ICU4X`]: ../icu/index.html
@@ -68,16 +70,19 @@
 extern crate alloc;
 
 #[cfg(feature = "bidi")]
-pub mod bidi;
-
-mod error;
+mod bidi;
 
 mod code_point_set;
-pub use code_point_set::*;
+pub use code_point_set::{CodePointSetData, CodePointSetDataBorrowed};
 mod code_point_map;
-pub use code_point_map::*;
+pub use code_point_map::{CodePointMapData, CodePointMapDataBorrowed};
 mod unicode_set;
-pub use unicode_set::*;
+pub use unicode_set::{UnicodeSetData, UnicodeSetDataBorrowed};
+mod names;
+pub use names::{
+    PropertyNames, PropertyNamesBorrowed, PropertyParser, PropertyParserBorrowed, ScriptMapper,
+    ScriptMapperBorrowed,
+};
 
 // NOTE: The Pernosco debugger has special knowledge
 // of the `CanonicalCombiningClass` struct inside the `props`
@@ -87,17 +92,14 @@ pub mod props;
 
 pub mod bidi_data;
 pub mod provider;
-pub(crate) mod runtime;
+mod runtime;
+pub use runtime::UnicodeProperty;
+
 #[allow(clippy::exhaustive_structs)] // TODO
 pub mod script;
 mod trievalue;
 
-/// Module for working with the names of property values
-pub mod names;
-
-pub use error::*;
-
-pub(crate) mod private {
+mod private {
     pub trait Sealed {}
 }
 

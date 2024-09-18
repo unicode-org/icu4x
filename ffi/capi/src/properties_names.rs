@@ -13,11 +13,10 @@ pub mod ffi {
 
     /// A type capable of looking up a property value from a string name.
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::properties::names::PropertyValueNameToEnumMapper, Struct)]
-    #[diplomat::rust_link(icu::properties::names::PropertyValueNameToEnumMapperBorrowed, Struct)]
-    pub struct PropertyValueNameToEnumMapper(
-        icu_properties::names::PropertyValueNameToEnumMapper<u16>,
-    );
+    #[diplomat::rust_link(icu::properties::PropertyParser, Struct)]
+    #[diplomat::rust_link(icu::properties::PropertyParserBorrowed, Struct)]
+    #[diplomat::rust_link(icu::properties::PropertyParser::new, FnInStruct)]
+    pub struct PropertyValueNameToEnumMapper(icu_properties::PropertyParser<u16>);
 
     impl PropertyValueNameToEnumMapper {
         /// Get the property value matching the given name, using strict matching
@@ -64,218 +63,140 @@ pub mod ffi {
             .unwrap_or(-1)
         }
 
-        #[diplomat::rust_link(
-            icu::properties::props::GeneralCategory::name_to_enum_mapper,
-            FnInStruct
-        )]
-        #[diplomat::rust_link(
-            icu::properties::props::GeneralCategory::get_name_to_enum_mapper,
-            FnInStruct,
-            hidden
-        )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "general_category")]
         pub fn load_general_category(
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    icu_properties::props::GeneralCategory::name_to_enum_mapper [r => Ok(r.static_to_owned())],
-                    icu_properties::props::GeneralCategory::get_name_to_enum_mapper,
+                    icu_properties::PropertyParser::<icu_properties::props::GeneralCategory>::new [r => Ok(r.static_to_owned())],
+                    icu_properties::PropertyParser::<icu_properties::props::GeneralCategory>::try_new_unstable,
                     provider,
                 )?
                 .erase(),
             )))
         }
 
-        #[diplomat::rust_link(
-            icu::properties::props::HangulSyllableType::name_to_enum_mapper,
-            FnInStruct
-        )]
-        #[diplomat::rust_link(
-            icu::properties::props::HangulSyllableType::get_name_to_enum_mapper,
-            FnInStruct,
-            hidden
-        )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "hangul_syllable_type")]
         pub fn load_hangul_syllable_type(
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    icu_properties::props::HangulSyllableType::name_to_enum_mapper [r => Ok(r.static_to_owned())],
-                    icu_properties::props::HangulSyllableType::get_name_to_enum_mapper,
+                    icu_properties::PropertyParser::<icu_properties::props::HangulSyllableType>::new [r => Ok(r.static_to_owned())],
+                    icu_properties::PropertyParser::<icu_properties::props::HangulSyllableType>::try_new_unstable,
                     provider,
                 )?
                 .erase(),
             )))
         }
 
-        #[diplomat::rust_link(
-            icu::properties::props::EastAsianWidth::name_to_enum_mapper,
-            FnInStruct
-        )]
-        #[diplomat::rust_link(
-            icu::properties::props::EastAsianWidth::get_name_to_enum_mapper,
-            FnInStruct,
-            hidden
-        )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "east_asian_width")]
         pub fn load_east_asian_width(
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    icu_properties::props::EastAsianWidth::name_to_enum_mapper [r => Ok(r.static_to_owned())],
-                    icu_properties::props::EastAsianWidth::get_name_to_enum_mapper,
+                    icu_properties::PropertyParser::<icu_properties::props::EastAsianWidth>::new [r => Ok(r.static_to_owned())],
+                    icu_properties::PropertyParser::<icu_properties::props::EastAsianWidth>::try_new_unstable,
                     provider,
                 )?
                 .erase(),
             )))
         }
 
-        #[diplomat::rust_link(icu::properties::props::BidiClass::name_to_enum_mapper, FnInStruct)]
-        #[diplomat::rust_link(
-            icu::properties::props::BidiClass::get_name_to_enum_mapper,
-            FnInStruct,
-            hidden
-        )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "bidi_class")]
         pub fn load_bidi_class(
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    icu_properties::props::BidiClass::name_to_enum_mapper [r => Ok(r.static_to_owned())],
-                    icu_properties::props::BidiClass::get_name_to_enum_mapper,
+                    icu_properties::PropertyParser::<icu_properties::props::BidiClass>::new [r => Ok(r.static_to_owned())],
+                    icu_properties::PropertyParser::<icu_properties::props::BidiClass>::try_new_unstable,
                     provider,
                 )?
                 .erase(),
             )))
         }
 
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::name_to_enum_mapper,
-            FnInStruct
-        )]
-        #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::get_name_to_enum_mapper,
-            FnInStruct,
-            hidden
-        )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "indic_syllabic_category")]
         pub fn load_indic_syllabic_category(
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    icu_properties::props::IndicSyllabicCategory::name_to_enum_mapper [r => Ok(r.static_to_owned())],
-                    icu_properties::props::IndicSyllabicCategory::get_name_to_enum_mapper,
+                    icu_properties::PropertyParser::<icu_properties::props::IndicSyllabicCategory>::new [r => Ok(r.static_to_owned())],
+                    icu_properties::PropertyParser::<icu_properties::props::IndicSyllabicCategory>::try_new_unstable,
                     provider,
                 )?
                 .erase(),
             )))
         }
 
-        #[diplomat::rust_link(icu::properties::props::LineBreak::name_to_enum_mapper, FnInStruct)]
-        #[diplomat::rust_link(
-            icu::properties::props::LineBreak::get_name_to_enum_mapper,
-            FnInStruct,
-            hidden
-        )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "line_break")]
         pub fn load_line_break(
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    icu_properties::props::LineBreak::name_to_enum_mapper [r => Ok(r.static_to_owned())],
-                    icu_properties::props::LineBreak::get_name_to_enum_mapper,
+                    icu_properties::PropertyParser::<icu_properties::props::LineBreak>::new [r => Ok(r.static_to_owned())],
+                    icu_properties::PropertyParser::<icu_properties::props::LineBreak>::try_new_unstable,
                     provider,
                 )?
                 .erase(),
             )))
         }
 
-        #[diplomat::rust_link(
-            icu::properties::props::GraphemeClusterBreak::name_to_enum_mapper,
-            FnInStruct
-        )]
-        #[diplomat::rust_link(
-            icu::properties::props::GraphemeClusterBreak::get_name_to_enum_mapper,
-            FnInStruct,
-            hidden
-        )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "grapheme_cluster_break")]
         pub fn load_grapheme_cluster_break(
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    icu_properties::props::GraphemeClusterBreak::name_to_enum_mapper [r => Ok(r.static_to_owned())],
-                    icu_properties::props::GraphemeClusterBreak::get_name_to_enum_mapper,
+                    icu_properties::PropertyParser::<icu_properties::props::GraphemeClusterBreak>::new [r => Ok(r.static_to_owned())],
+                    icu_properties::PropertyParser::<icu_properties::props::GraphemeClusterBreak>::try_new_unstable,
                     provider,
                 )?
                 .erase(),
             )))
         }
 
-        #[diplomat::rust_link(icu::properties::props::WordBreak::name_to_enum_mapper, FnInStruct)]
-        #[diplomat::rust_link(
-            icu::properties::props::WordBreak::get_name_to_enum_mapper,
-            FnInStruct,
-            hidden
-        )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "word_break")]
         pub fn load_word_break(
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    icu_properties::props::WordBreak::name_to_enum_mapper [r => Ok(r.static_to_owned())],
-                    icu_properties::props::WordBreak::get_name_to_enum_mapper,
+                    icu_properties::PropertyParser::<icu_properties::props::WordBreak>::new [r => Ok(r.static_to_owned())],
+                    icu_properties::PropertyParser::<icu_properties::props::WordBreak>::try_new_unstable,
                     provider,
                 )?
                 .erase(),
             )))
         }
 
-        #[diplomat::rust_link(
-            icu::properties::props::SentenceBreak::name_to_enum_mapper,
-            FnInStruct
-        )]
-        #[diplomat::rust_link(
-            icu::properties::props::SentenceBreak::get_name_to_enum_mapper,
-            FnInStruct,
-            hidden
-        )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "sentence_break")]
         pub fn load_sentence_break(
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    icu_properties::props::SentenceBreak::name_to_enum_mapper [r => Ok(r.static_to_owned())],
-                    icu_properties::props::SentenceBreak::get_name_to_enum_mapper,
+                    icu_properties::PropertyParser::<icu_properties::props::SentenceBreak>::new [r => Ok(r.static_to_owned())],
+                    icu_properties::PropertyParser::<icu_properties::props::SentenceBreak>::try_new_unstable,
                     provider,
                 )?
                 .erase(),
             )))
         }
 
-        #[diplomat::rust_link(icu::properties::props::Script::name_to_enum_mapper, FnInStruct)]
-        #[diplomat::rust_link(
-            icu::properties::props::Script::get_name_to_enum_mapper,
-            FnInStruct,
-            hidden
-        )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "script")]
         pub fn load_script(
             provider: &DataProvider,
         ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
             Ok(Box::new(PropertyValueNameToEnumMapper(
                 call_constructor_unstable!(
-                    icu_properties::props::Script::name_to_enum_mapper [r => Ok(r.static_to_owned())],
-                    icu_properties::props::Script::get_name_to_enum_mapper,
+                    icu_properties::PropertyParser::<icu_properties::props::Script>::new [r => Ok(r.static_to_owned())],
+                    icu_properties::PropertyParser::<icu_properties::props::Script>::try_new_unstable,
                     provider,
                 )?
                 .erase(),
@@ -285,20 +206,9 @@ pub mod ffi {
 
     /// A type capable of looking up General Category mask values from a string name.
     #[diplomat::opaque]
-    #[diplomat::rust_link(
-        icu::properties::props::GeneralCategoryGroup::name_to_enum_mapper,
-        FnInStruct
-    )]
-    #[diplomat::rust_link(
-        icu::properties::props::GeneralCategoryGroup::get_name_to_enum_mapper,
-        FnInStruct,
-        hidden
-    )]
-    #[diplomat::rust_link(icu::properties::names::PropertyValueNameToEnumMapper, Struct)]
+    #[diplomat::rust_link(icu::properties::PropertyValueNameToEnumMapper, Struct)]
     pub struct GeneralCategoryNameToMaskMapper(
-        icu_properties::names::PropertyValueNameToEnumMapper<
-            icu_properties::props::GeneralCategoryGroup,
-        >,
+        icu_properties::PropertyParser<icu_properties::props::GeneralCategoryGroup>,
     );
 
     impl GeneralCategoryNameToMaskMapper {
@@ -332,23 +242,14 @@ pub mod ffi {
             .unwrap_or_default()
         }
 
-        #[diplomat::rust_link(
-            icu::properties::props::GeneralCategoryGroup::name_to_enum_mapper,
-            FnInStruct
-        )]
-        #[diplomat::rust_link(
-            icu::properties::props::GeneralCategoryGroup::get_name_to_enum_mapper,
-            FnInStruct,
-            hidden
-        )]
         #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn load(
             provider: &DataProvider,
         ) -> Result<Box<GeneralCategoryNameToMaskMapper>, DataError> {
             Ok(Box::new(GeneralCategoryNameToMaskMapper(
                 call_constructor_unstable!(
-                    icu_properties::props::GeneralCategoryGroup::name_to_enum_mapper [r => Ok(r.static_to_owned())],
-                    icu_properties::props::GeneralCategoryGroup::get_name_to_enum_mapper,
+                    icu_properties::PropertyParser::<icu_properties::props::GeneralCategoryGroup>::new [r => Ok(r.static_to_owned())],
+                    icu_properties::PropertyParser::<icu_properties::props::GeneralCategoryGroup>::try_new_unstable,
                     provider,
                 )?,
             )))

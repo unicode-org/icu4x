@@ -9,6 +9,8 @@
 //! String properties are represented as newtypes if their
 //! values represent code points.
 
+pub use crate::names::{NamedEnumeratedProperty, ParseableEnumeratedProperty};
+
 /// See [`test_enumerated_property_completeness`] for usage.
 /// Example input:
 /// ```ignore
@@ -42,22 +44,21 @@ macro_rules! create_const_array {
     }
 }
 
-macro_rules! make_map_property {
+pub use crate::code_point_map::EnumeratedProperty;
+
+macro_rules! make_enumerated_property {
     (
         // currently unused
         property: $p:expr;
-        // currently unused
-        dyn_marker: $d:ident;
-        value: $value_ty:path;
+        ident: $value_ty:path;
         data_marker: $data_marker:ty;
+        singleton: $singleton:ident;
         func:
         $(#[$doc:meta])*
-        $vis2:vis const $constname:ident => $singleton:ident;
-        $vis:vis fn $name:ident();
     ) => {
         impl crate::private::Sealed for $value_ty {}
 
-        impl crate::code_point_map::CodePointMapProperty for $value_ty {
+        impl crate::code_point_map::EnumeratedProperty for $value_ty {
             type DataMarker = $data_marker;
             #[cfg(feature = "compiled_data")]
             const SINGLETON: &'static crate::provider::PropertyCodePointMapV1<'static, Self> =
@@ -66,6 +67,7 @@ macro_rules! make_map_property {
     };
 }
 
+#[doc(inline)]
 pub use crate::provider::props::BidiClass;
 
 create_const_array! {
@@ -120,11 +122,11 @@ impl BidiClass {
 }
 }
 
-make_map_property! {
+make_enumerated_property! {
     property: "Bidi_Class";
-    dyn_marker: BidiClass;
-    value:       BidiClass;
+    ident: BidiClass;
     data_marker: crate::provider::BidiClassV1Marker;
+    singleton: SINGLETON_BIDI_CLASS_V1_MARKER;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Bidi_Class Unicode enumerated property. See [`BidiClass`].
     ///
@@ -136,10 +138,9 @@ make_map_property! {
     /// assert_eq!(maps::bidi_class().get('y'), BidiClass::LeftToRight);  // U+0079
     /// assert_eq!(maps::bidi_class().get('ع'), BidiClass::ArabicLetter);  // U+0639
     /// ```
-    pub const bidi_class => SINGLETON_BIDI_CLASS_V1_MARKER;
-    pub fn load_bidi_class();
 }
 
+#[doc(inline)]
 pub use crate::provider::props::GeneralCategory;
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Debug, Hash, Default)]
@@ -156,11 +157,11 @@ impl TryFrom<u8> for GeneralCategory {
     }
 }
 
-make_map_property! {
+make_enumerated_property! {
     property: "General_Category";
-    dyn_marker: GeneralCategory;
-    value:       GeneralCategory;
+    ident: GeneralCategory;
     data_marker: crate::provider::GeneralCategoryV1Marker;
+    singleton: SINGLETON_GENERAL_CATEGORY_V1_MARKER;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the General_Category Unicode enumerated property. See [`GeneralCategory`].
     ///
@@ -172,8 +173,6 @@ make_map_property! {
     /// assert_eq!(maps::general_category().get('木'), GeneralCategory::OtherLetter);  // U+6728
     /// assert_eq!(maps::general_category().get('🎃'), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
     /// ```
-    pub const general_category => SINGLETON_GENERAL_CATEGORY_V1_MARKER;
-    pub fn load_general_category();
 }
 
 /// Groupings of multiple General_Category property values.
@@ -195,6 +194,8 @@ make_map_property! {
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
 pub struct GeneralCategoryGroup(pub(crate) u32);
+
+impl crate::private::Sealed for GeneralCategoryGroup {}
 
 use GeneralCategory as GC;
 use GeneralCategoryGroup as GCG;
@@ -315,9 +316,10 @@ impl GeneralCategoryGroup {
     /// Return whether the code point belongs in the provided multi-value category.
     ///
     /// ```
-    /// use icu::properties::{maps, GeneralCategory, GeneralCategoryGroup};
+    /// use icu::properties::CodePointMapData;
+    /// use icu::properties::props::{GeneralCategory, GeneralCategoryGroup};
     ///
-    /// let gc = maps::general_category();
+    /// let gc = CodePointMapData::<GeneralCategory>::new();
     ///
     /// assert_eq!(gc.get('A'), GeneralCategory::UppercaseLetter);
     /// assert!(GeneralCategoryGroup::CasedLetter.contains(gc.get('A')));
@@ -363,7 +365,7 @@ impl GeneralCategoryGroup {
     /// # Example
     ///
     /// ```rust
-    /// use icu::properties::{GeneralCategory, GeneralCategoryGroup};
+    /// use icu::properties::props::{GeneralCategory, GeneralCategoryGroup};
     ///
     /// let letter = GeneralCategoryGroup::Letter;
     /// let not_letter = letter.complement();
@@ -386,7 +388,7 @@ impl GeneralCategoryGroup {
     /// # Example
     ///
     /// ```rust
-    /// use icu::properties::{GeneralCategory, GeneralCategoryGroup};
+    /// use icu::properties::props::{GeneralCategory, GeneralCategoryGroup};
     ///
     /// let all = GeneralCategoryGroup::all();
     ///
@@ -403,7 +405,7 @@ impl GeneralCategoryGroup {
     /// # Example
     ///
     /// ```rust
-    /// use icu::properties::{GeneralCategory, GeneralCategoryGroup};
+    /// use icu::properties::props::{GeneralCategory, GeneralCategoryGroup};
     ///
     /// let empty = GeneralCategoryGroup::empty();
     ///
@@ -420,7 +422,7 @@ impl GeneralCategoryGroup {
     /// # Example
     ///
     /// ```rust
-    /// use icu::properties::{GeneralCategory, GeneralCategoryGroup};
+    /// use icu::properties::props::{GeneralCategory, GeneralCategoryGroup};
     ///
     /// let letter = GeneralCategoryGroup::Letter;
     /// let symbol = GeneralCategoryGroup::Symbol;
@@ -439,7 +441,7 @@ impl GeneralCategoryGroup {
     /// # Example
     ///
     /// ```rust
-    /// use icu::properties::{GeneralCategory, GeneralCategoryGroup};
+    /// use icu::properties::props::{GeneralCategory, GeneralCategoryGroup};
     ///
     /// let letter = GeneralCategoryGroup::Letter;
     /// let lu = GeneralCategoryGroup::UppercaseLetter;
@@ -473,6 +475,7 @@ impl From<GeneralCategoryGroup> for u32 {
     }
 }
 
+#[doc(inline)]
 pub use crate::provider::props::Script;
 
 #[allow(missing_docs)] // These constants don't need individual documentation.
@@ -645,11 +648,11 @@ impl Script {
     pub const ZanabazarSquare: Script = Script(177);
 }
 
-make_map_property! {
+make_enumerated_property! {
     property: "Script";
-    dyn_marker: Script;
-    value:       Script;
+    ident: Script;
     data_marker: crate::provider::ScriptV1Marker;
+    singleton: SINGLETON_SCRIPT_V1_MARKER;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Script Unicode enumerated property. See [`Script`].
     ///
@@ -668,10 +671,9 @@ make_map_property! {
     /// ```
     /// [`load_script_with_extensions_unstable`]: crate::script::load_script_with_extensions_unstable
     /// [`ScriptWithExtensionsBorrowed::has_script`]: crate::script::ScriptWithExtensionsBorrowed::has_script
-    pub const script => SINGLETON_SCRIPT_V1_MARKER;
-    pub fn load_script();
 }
 
+#[doc(inline)]
 pub use crate::provider::props::HangulSyllableType;
 
 create_const_array! {
@@ -692,11 +694,11 @@ impl HangulSyllableType {
 }
 }
 
-make_map_property! {
+make_enumerated_property! {
     property: "Hangul_Syllable_Type";
-    dyn_marker: HangulSyllableType;
-    value:       HangulSyllableType;
+    ident: HangulSyllableType;
     data_marker: crate::provider::HangulSyllableTypeV1Marker;
+    singleton: SINGLETON_HANGUL_SYLLABLE_TYPE_V1_MARKER;
     func:
     /// Returns a [`CodePointMapDataBorrowed`] for the Hangul_Syllable_Type
     /// Unicode enumerated property. See [`HangulSyllableType`].
@@ -710,10 +712,9 @@ make_map_property! {
     /// assert_eq!(maps::hangul_syllable_type().get('가'), HangulSyllableType::LeadingVowelSyllable);  // U+AC00
     /// ```
 
-    pub const hangul_syllable_type => SINGLETON_HANGUL_SYLLABLE_TYPE_V1_MARKER;
-    pub fn load_hangul_syllable_type();
 }
 
+#[doc(inline)]
 pub use crate::provider::props::EastAsianWidth;
 
 create_const_array! {
@@ -729,11 +730,11 @@ impl EastAsianWidth {
 }
 }
 
-make_map_property! {
+make_enumerated_property! {
     property: "East_Asian_Width";
-    dyn_marker: EastAsianWidth;
-    value:       EastAsianWidth;
+    ident: EastAsianWidth;
     data_marker: crate::provider::EastAsianWidthV1Marker;
+    singleton: SINGLETON_EAST_ASIAN_WIDTH_V1_MARKER;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the East_Asian_Width Unicode enumerated
     /// property. See [`EastAsianWidth`].
@@ -746,10 +747,9 @@ make_map_property! {
     /// assert_eq!(maps::east_asian_width().get('ｱ'), EastAsianWidth::Halfwidth); // U+FF71: Halfwidth Katakana Letter A
     /// assert_eq!(maps::east_asian_width().get('ア'), EastAsianWidth::Wide); //U+30A2: Katakana Letter A
     /// ```
-    pub const east_asian_width => SINGLETON_EAST_ASIAN_WIDTH_V1_MARKER;
-    pub fn load_east_asian_width();
 }
 
+#[doc(inline)]
 pub use crate::provider::props::LineBreak;
 
 #[allow(missing_docs)] // These constants don't need individual documentation.
@@ -807,11 +807,11 @@ impl LineBreak {
     pub const Virama: LineBreak = LineBreak(47); // name=VI"
 }
 
-make_map_property! {
+make_enumerated_property! {
     property: "Line_Break";
-    dyn_marker: LineBreak;
-    value:       LineBreak;
+    ident: LineBreak;
     data_marker: crate::provider::LineBreakV1Marker;
+    singleton: SINGLETON_LINE_BREAK_V1_MARKER;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Line_Break Unicode enumerated
     /// property. See [`LineBreak`].
@@ -826,10 +826,9 @@ make_map_property! {
     /// assert_eq!(maps::line_break().get(')'), LineBreak::CloseParenthesis); // U+0029: Right Parenthesis
     /// assert_eq!(maps::line_break().get('ぁ'), LineBreak::ConditionalJapaneseStarter); //U+3041: Hiragana Letter Small A
     /// ```
-    pub const line_break => SINGLETON_LINE_BREAK_V1_MARKER;
-    pub fn load_line_break();
 }
 
+#[doc(inline)]
 pub use crate::provider::props::GraphemeClusterBreak;
 
 #[allow(missing_docs)] // These constants don't need individual documentation.
@@ -859,11 +858,11 @@ impl GraphemeClusterBreak {
     pub const ZWJ: GraphemeClusterBreak = GraphemeClusterBreak(17); // name="ZWJ"
 }
 
-make_map_property! {
+make_enumerated_property! {
     property: "Grapheme_Cluster_Break";
-    dyn_marker: GraphemeClusterBreak;
-    value:       GraphemeClusterBreak;
+    ident: GraphemeClusterBreak;
     data_marker: crate::provider::GraphemeClusterBreakV1Marker;
+    singleton: SINGLETON_GRAPHEME_CLUSTER_BREAK_V1_MARKER;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Grapheme_Cluster_Break Unicode enumerated
     /// property. See [`GraphemeClusterBreak`].
@@ -878,10 +877,9 @@ make_map_property! {
     /// assert_eq!(maps::grapheme_cluster_break().get('🇦'), GraphemeClusterBreak::RegionalIndicator); // U+1F1E6: Regional Indicator Symbol Letter A
     /// assert_eq!(maps::grapheme_cluster_break().get('ำ'), GraphemeClusterBreak::SpacingMark); //U+0E33: Thai Character Sara Am
     /// ```
-    pub const grapheme_cluster_break => SINGLETON_GRAPHEME_CLUSTER_BREAK_V1_MARKER;
-    pub fn load_grapheme_cluster_break();
 }
 
+#[doc(inline)]
 pub use crate::provider::props::WordBreak;
 
 create_const_array! {
@@ -918,11 +916,11 @@ impl WordBreak {
 }
 }
 
-make_map_property! {
+make_enumerated_property! {
     property: "Word_Break";
-    dyn_marker: WordBreak;
-    value:       WordBreak;
+    ident: WordBreak;
     data_marker: crate::provider::WordBreakV1Marker;
+    singleton: SINGLETON_WORD_BREAK_V1_MARKER;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Word_Break Unicode enumerated
     /// property. See [`WordBreak`].
@@ -937,10 +935,9 @@ make_map_property! {
     /// assert_eq!(maps::word_break().get('.'), WordBreak::MidNumLet); // U+002E: Full Stop
     /// assert_eq!(maps::word_break().get('，'), WordBreak::MidNum); // U+FF0C: Fullwidth Comma
     /// ```
-    pub const word_break => SINGLETON_WORD_BREAK_V1_MARKER;
-    pub fn load_word_break();
 }
 
+#[doc(inline)]
 pub use crate::provider::props::SentenceBreak;
 
 create_const_array! {
@@ -965,11 +962,11 @@ impl SentenceBreak {
 }
 }
 
-make_map_property! {
+make_enumerated_property! {
     property: "Sentence_Break";
-    dyn_marker: SentenceBreak;
-    value:       SentenceBreak;
+    ident: SentenceBreak;
     data_marker: crate::provider::SentenceBreakV1Marker;
+    singleton: SINGLETON_SENTENCE_BREAK_V1_MARKER;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Sentence_Break Unicode enumerated
     /// property. See [`SentenceBreak`].
@@ -984,10 +981,9 @@ make_map_property! {
     /// assert_eq!(maps::sentence_break().get('９'), SentenceBreak::Numeric); // U+FF19: Fullwidth Digit Nine
     /// assert_eq!(maps::sentence_break().get(','), SentenceBreak::SContinue); // U+002C: Comma
     /// ```
-    pub const sentence_break => SINGLETON_SENTENCE_BREAK_V1_MARKER;
-    pub fn load_sentence_break();
 }
 
+#[doc(inline)]
 pub use crate::provider::props::CanonicalCombiningClass;
 
 create_const_array! {
@@ -1056,11 +1052,11 @@ impl CanonicalCombiningClass {
 }
 }
 
-make_map_property! {
+make_enumerated_property! {
     property: "Canonical_Combining_Class";
-    dyn_marker: CanonicalCombiningClass;
-    value:       CanonicalCombiningClass;
+    ident: CanonicalCombiningClass;
     data_marker: crate::provider::CanonicalCombiningClassV1Marker;
+    singleton: SINGLETON_CANONICAL_COMBINING_CLASS_V1_MARKER;
     func:
     /// Return a [`CodePointMapData`] for the Canonical_Combining_Class Unicode property. See
     /// [`CanonicalCombiningClass`].
@@ -1076,10 +1072,9 @@ make_map_property! {
     /// assert_eq!(maps::canonical_combining_class().get('a'), CanonicalCombiningClass::NotReordered); // U+0061: LATIN SMALL LETTER A
     /// assert_eq!(maps::canonical_combining_class().get32(0x0301), CanonicalCombiningClass::Above); // U+0301: COMBINING ACUTE ACCENT
     /// ```
-    pub const canonical_combining_class => SINGLETON_CANONICAL_COMBINING_CLASS_V1_MARKER;
-    pub fn load_canonical_combining_class();
 }
 
+#[doc(inline)]
 pub use crate::provider::props::IndicSyllabicCategory;
 
 create_const_array! {
@@ -1125,11 +1120,11 @@ impl IndicSyllabicCategory {
 }
 }
 
-make_map_property! {
+make_enumerated_property! {
     property: "Indic_Syllabic_Category";
-    dyn_marker: IndicSyllabicCategory;
-    value:       IndicSyllabicCategory;
+    ident: IndicSyllabicCategory;
     data_marker: crate::provider::IndicSyllabicCategoryV1Marker;
+    singleton: SINGLETON_INDIC_SYLLABIC_CATEGORY_V1_MARKER;
     func:
     /// Return a [`CodePointMapData`] for the Indic_Syllabic_Category Unicode property. See
     /// [`IndicSyllabicCategory`].
@@ -1142,10 +1137,9 @@ make_map_property! {
     /// assert_eq!(maps::indic_syllabic_category().get('a'), IndicSyllabicCategory::Other);
     /// assert_eq!(maps::indic_syllabic_category().get32(0x0900), IndicSyllabicCategory::Bindu); // U+0900: DEVANAGARI SIGN INVERTED CANDRABINDU
     /// ```
-    pub const indic_syllabic_category => SINGLETON_INDIC_SYLLABIC_CATEGORY_V1_MARKER;
-    pub fn load_indic_syllabic_category();
 }
 
+#[doc(inline)]
 pub use crate::provider::props::JoiningType;
 
 create_const_array! {
@@ -1161,11 +1155,11 @@ impl JoiningType {
 }
 }
 
-make_map_property! {
+make_enumerated_property! {
     property: "Joining_Type";
-    dyn_marker: JoiningType;
-    value:       JoiningType;
+    ident: JoiningType;
     data_marker: crate::provider::JoiningTypeV1Marker;
+    singleton: SINGLETON_JOINING_TYPE_V1_MARKER;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Joining_Type Unicode enumerated
     /// property. See [`JoiningType`].
@@ -1178,23 +1172,20 @@ make_map_property! {
     /// assert_eq!(maps::joining_type().get('ؠ'), JoiningType::DualJoining); // U+0620: Arabic Letter Kashmiri Yeh
     /// assert_eq!(maps::joining_type().get('𐫍'), JoiningType::LeftJoining); // U+10ACD: Manichaean Letter Heth
     /// ```
-    pub const joining_type => SINGLETON_JOINING_TYPE_V1_MARKER;
-    pub fn load_joining_type();
 }
 
-macro_rules! make_code_point_set_property {
+pub use crate::code_point_set::BinaryProperty;
+
+macro_rules! make_binary_property {
     (
         // currently unused
         property: $p:expr;
-        dyn_marker: $d:ident;
+        ident: $d:ident;
         data_marker: $data_marker:ty;
+        singleton: $singleton:ident;
         runtime_value: $value:expr;
         func:
         $(#[$doc:meta])+
-        // currently unused
-        $cvis:vis const fn $constname:ident() => $singleton_name:ident;
-        // currently unused
-        $vis:vis fn $funcname:ident();
     ) => {
         $(#[$doc])+
         #[derive(Debug)]
@@ -1202,20 +1193,21 @@ macro_rules! make_code_point_set_property {
         pub struct $d;
 
         impl crate::private::Sealed for $d {}
-        impl crate::code_point_set::CodePointSetProperty for $d {
+        impl crate::code_point_set::BinaryProperty for $d {
             type DataMarker = $data_marker;
             #[cfg(feature = "compiled_data")]
             const SINGLETON: &'static crate::provider::PropertyCodePointSetV1<'static> =
-                &crate::provider::Baked::$singleton_name;
+                &crate::provider::Baked::$singleton;
             const VALUE: crate::runtime::UnicodeProperty = $value;
         }
     };
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "ASCII_Hex_Digit";
-    dyn_marker: AsciiHexDigit;
+    ident: AsciiHexDigit;
     data_marker: crate::provider::AsciiHexDigitV1Marker;
+    singleton: SINGLETON_ASCII_HEX_DIGIT_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::AsciiHexDigit;
     func:
     /// ASCII characters commonly used for the representation of hexadecimal numbers
@@ -1223,36 +1215,35 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::AsciiHexDigit;
     ///
-    /// let ascii_hex_digit = sets::ascii_hex_digit();
+    /// let ascii_hex_digit = CodePointSetData::new::<AsciiHexDigit>();
     ///
     /// assert!(ascii_hex_digit.contains('3'));
     /// assert!(!ascii_hex_digit.contains('੩'));  // U+0A69 GURMUKHI DIGIT THREE
     /// assert!(ascii_hex_digit.contains('A'));
     /// assert!(!ascii_hex_digit.contains('Ä'));  // U+00C4 LATIN CAPITAL LETTER A WITH DIAERESIS
     /// ```
-    pub const fn ascii_hex_digit() => SINGLETON_ASCII_HEX_DIGIT_V1_MARKER;
-    pub fn load_ascii_hex_digit();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Alnum";
-    dyn_marker: Alnum;
+    ident: Alnum;
     data_marker: crate::provider::AlnumV1Marker;
+    singleton: SINGLETON_ALNUM_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::Alnum;
     func:
     /// Characters with the Alphabetic or Decimal_Number property
     /// This is defined for POSIX compatibility.
 
-    pub const fn alnum() => SINGLETON_ALNUM_V1_MARKER;
-    pub fn load_alnum();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Alphabetic";
-    dyn_marker: Alphabetic;
+    ident: Alphabetic;
     data_marker: crate::provider::AlphabeticV1Marker;
+    singleton: SINGLETON_ALPHABETIC_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::Alphabetic;
     func:
     /// Alphabetic characters
@@ -1260,9 +1251,10 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::Alphabetic;
     ///
-    /// let alphabetic = sets::alphabetic();
+    /// let alphabetic = CodePointSetData::new::<Alphabetic>();
     ///
     /// assert!(!alphabetic.contains('3'));
     /// assert!(!alphabetic.contains('੩'));  // U+0A69 GURMUKHI DIGIT THREE
@@ -1270,14 +1262,13 @@ make_code_point_set_property! {
     /// assert!(alphabetic.contains('Ä'));  // U+00C4 LATIN CAPITAL LETTER A WITH DIAERESIS
     /// ```
 
-    pub const fn alphabetic() => SINGLETON_ALPHABETIC_V1_MARKER;
-    pub fn load_alphabetic();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Bidi_Control";
-    dyn_marker: BidiControl;
+    ident: BidiControl;
     data_marker: crate::provider::BidiControlV1Marker;
+    singleton: SINGLETON_BIDI_CONTROL_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::BidiControl;
     func:
     /// Format control characters which have specific functions in the Unicode Bidirectional
@@ -1286,22 +1277,22 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::BidiControl;
     ///
-    /// let bidi_control = sets::bidi_control();
+    /// let bidi_control = CodePointSetData::new::<BidiControl>();
     ///
     /// assert!(bidi_control.contains32(0x200F));  // RIGHT-TO-LEFT MARK
     /// assert!(!bidi_control.contains('ش'));  // U+0634 ARABIC LETTER SHEEN
     /// ```
 
-    pub const fn bidi_control() => SINGLETON_BIDI_CONTROL_V1_MARKER;
-    pub fn load_bidi_control();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Bidi_Mirrored";
-    dyn_marker: BidiMirrored;
+    ident: BidiMirrored;
     data_marker: crate::provider::BidiMirroredV1Marker;
+    singleton: SINGLETON_BIDI_MIRRORED_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::BidiMirrored;
     func:
     /// Characters that are mirrored in bidirectional text
@@ -1309,9 +1300,10 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::BidiMirrored;
     ///
-    /// let bidi_mirrored = sets::bidi_mirrored();
+    /// let bidi_mirrored = CodePointSetData::new::<BidiMirrored>();
     ///
     /// assert!(bidi_mirrored.contains('['));
     /// assert!(bidi_mirrored.contains(']'));
@@ -1319,26 +1311,24 @@ make_code_point_set_property! {
     /// assert!(!bidi_mirrored.contains('ཉ'));  // U+0F49 TIBETAN LETTER NYA
     /// ```
 
-    pub const fn bidi_mirrored() => SINGLETON_BIDI_MIRRORED_V1_MARKER;
-    pub fn load_bidi_mirrored();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Blank";
-    dyn_marker: Blank;
+    ident: Blank;
     data_marker: crate::provider::BlankV1Marker;
+    singleton: SINGLETON_BLANK_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::Blank;
     func:
     /// Horizontal whitespace characters
 
-    pub const fn blank() => SINGLETON_BLANK_V1_MARKER;
-    pub fn load_blank();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Cased";
-    dyn_marker: Cased;
+    ident: Cased;
     data_marker: crate::provider::CasedV1Marker;
+    singleton: SINGLETON_CASED_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::Cased;
     func:
     /// Uppercase, lowercase, and titlecase characters
@@ -1346,22 +1336,22 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::Cased;
     ///
-    /// let cased = sets::cased();
+    /// let cased = CodePointSetData::new::<Cased>();
     ///
     /// assert!(cased.contains('Ꙡ'));  // U+A660 CYRILLIC CAPITAL LETTER REVERSED TSE
     /// assert!(!cased.contains('ދ'));  // U+078B THAANA LETTER DHAALU
     /// ```
 
-    pub const fn cased() => SINGLETON_CASED_V1_MARKER;
-    pub fn load_cased();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Case_Ignorable";
-    dyn_marker: CaseIgnorable;
+    ident: CaseIgnorable;
     data_marker: crate::provider::CaseIgnorableV1Marker;
+    singleton: SINGLETON_CASE_IGNORABLE_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::CaseIgnorable;
     func:
     /// Characters which are ignored for casing purposes
@@ -1369,35 +1359,34 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::CaseIgnorable;
     ///
-    /// let case_ignorable = sets::case_ignorable();
+    /// let case_ignorable = CodePointSetData::new::<CaseIgnorable>();
     ///
     /// assert!(case_ignorable.contains(':'));
     /// assert!(!case_ignorable.contains('λ'));  // U+03BB GREEK SMALL LETTER LAMBDA
     /// ```
 
-    pub const fn case_ignorable() => SINGLETON_CASE_IGNORABLE_V1_MARKER;
-    pub fn load_case_ignorable();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Full_Composition_Exclusion";
-    dyn_marker: FullCompositionExclusion;
+    ident: FullCompositionExclusion;
     data_marker: crate::provider::FullCompositionExclusionV1Marker;
+    singleton: SINGLETON_FULL_COMPOSITION_EXCLUSION_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::FullCompositionExclusion;
     func:
     /// Characters that are excluded from composition
     /// See <https://unicode.org/Public/UNIDATA/CompositionExclusions.txt>
 
-    pub const fn full_composition_exclusion() => SINGLETON_FULL_COMPOSITION_EXCLUSION_V1_MARKER;
-    pub fn load_full_composition_exclusion();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Changes_When_Casefolded";
-    dyn_marker: ChangesWhenCasefolded;
+    ident: ChangesWhenCasefolded;
     data_marker: crate::provider::ChangesWhenCasefoldedV1Marker;
+    singleton: SINGLETON_CHANGES_WHEN_CASEFOLDED_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::ChangesWhenCasefolded;
     func:
     /// Characters whose normalized forms are not stable under case folding
@@ -1405,34 +1394,33 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::ChangesWhenCasefolded;
     ///
-    /// let changes_when_casefolded = sets::changes_when_casefolded();
+    /// let changes_when_casefolded = CodePointSetData::new::<ChangesWhenCasefolded>();
     ///
     /// assert!(changes_when_casefolded.contains('ß'));  // U+00DF LATIN SMALL LETTER SHARP S
     /// assert!(!changes_when_casefolded.contains('ᜉ'));  // U+1709 TAGALOG LETTER PA
     /// ```
 
-    pub const fn changes_when_casefolded() => SINGLETON_CHANGES_WHEN_CASEFOLDED_V1_MARKER;
-    pub fn load_changes_when_casefolded();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Changes_When_Casemapped";
-    dyn_marker: ChangesWhenCasemapped;
+    ident: ChangesWhenCasemapped;
     data_marker: crate::provider::ChangesWhenCasemappedV1Marker;
+    singleton: SINGLETON_CHANGES_WHEN_CASEMAPPED_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::ChangesWhenCasemapped;
     func:
     /// Characters which may change when they undergo case mapping
 
-    pub const fn changes_when_casemapped() => SINGLETON_CHANGES_WHEN_CASEMAPPED_V1_MARKER;
-    pub fn load_changes_when_casemapped();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Changes_When_NFKC_Casefolded";
-    dyn_marker: ChangesWhenNfkcCasefolded;
+    ident: ChangesWhenNfkcCasefolded;
     data_marker: crate::provider::ChangesWhenNfkcCasefoldedV1Marker;
+    singleton: SINGLETON_CHANGES_WHEN_NFKC_CASEFOLDED_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::ChangesWhenNfkcCasefolded;
     func:
     /// Characters which are not identical to their NFKC_Casefold mapping
@@ -1440,22 +1428,22 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::ChangesWhenNfkcCasefolded;
     ///
-    /// let changes_when_nfkc_casefolded = sets::changes_when_nfkc_casefolded();
+    /// let changes_when_nfkc_casefolded = CodePointSetData::new::<ChangesWhenNfkcCasefolded>();
     ///
     /// assert!(changes_when_nfkc_casefolded.contains('🄵'));  // U+1F135 SQUARED LATIN CAPITAL LETTER F
     /// assert!(!changes_when_nfkc_casefolded.contains('f'));
     /// ```
 
-    pub const fn changes_when_nfkc_casefolded() => SINGLETON_CHANGES_WHEN_NFKC_CASEFOLDED_V1_MARKER;
-    pub fn load_changes_when_nfkc_casefolded();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Changes_When_Lowercased";
-    dyn_marker: ChangesWhenLowercased;
+    ident: ChangesWhenLowercased;
     data_marker: crate::provider::ChangesWhenLowercasedV1Marker;
+    singleton: SINGLETON_CHANGES_WHEN_LOWERCASED_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::ChangesWhenLowercased;
     func:
     /// Characters whose normalized forms are not stable under a toLowercase mapping
@@ -1463,22 +1451,22 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::ChangesWhenLowercased;
     ///
-    /// let changes_when_lowercased = sets::changes_when_lowercased();
+    /// let changes_when_lowercased = CodePointSetData::new::<ChangesWhenLowercased>();
     ///
     /// assert!(changes_when_lowercased.contains('Ⴔ'));  // U+10B4 GEORGIAN CAPITAL LETTER PHAR
     /// assert!(!changes_when_lowercased.contains('ფ'));  // U+10E4 GEORGIAN LETTER PHAR
     /// ```
 
-    pub const fn changes_when_lowercased() => SINGLETON_CHANGES_WHEN_LOWERCASED_V1_MARKER;
-    pub fn load_changes_when_lowercased();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Changes_When_Titlecased";
-    dyn_marker: ChangesWhenTitlecased;
+    ident: ChangesWhenTitlecased;
     data_marker: crate::provider::ChangesWhenTitlecasedV1Marker;
+    singleton: SINGLETON_CHANGES_WHEN_TITLECASED_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::ChangesWhenTitlecased;
     func:
     /// Characters whose normalized forms are not stable under a toTitlecase mapping
@@ -1486,22 +1474,22 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::ChangesWhenTitlecased;
     ///
-    /// let changes_when_titlecased = sets::changes_when_titlecased();
+    /// let changes_when_titlecased = CodePointSetData::new::<ChangesWhenTitlecased>();
     ///
     /// assert!(changes_when_titlecased.contains('æ'));  // U+00E6 LATIN SMALL LETTER AE
     /// assert!(!changes_when_titlecased.contains('Æ'));  // U+00E6 LATIN CAPITAL LETTER AE
     /// ```
 
-    pub const fn changes_when_titlecased() => SINGLETON_CHANGES_WHEN_TITLECASED_V1_MARKER;
-    pub fn load_changes_when_titlecased();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Changes_When_Uppercased";
-    dyn_marker: ChangesWhenUppercased;
+    ident: ChangesWhenUppercased;
     data_marker: crate::provider::ChangesWhenUppercasedV1Marker;
+    singleton: SINGLETON_CHANGES_WHEN_UPPERCASED_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::ChangesWhenUppercased;
     func:
     /// Characters whose normalized forms are not stable under a toUppercase mapping
@@ -1509,22 +1497,22 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::ChangesWhenUppercased;
     ///
-    /// let changes_when_uppercased = sets::changes_when_uppercased();
+    /// let changes_when_uppercased = CodePointSetData::new::<ChangesWhenUppercased>();
     ///
     /// assert!(changes_when_uppercased.contains('ւ'));  // U+0582 ARMENIAN SMALL LETTER YIWN
     /// assert!(!changes_when_uppercased.contains('Ւ'));  // U+0552 ARMENIAN CAPITAL LETTER YIWN
     /// ```
 
-    pub const fn changes_when_uppercased() => SINGLETON_CHANGES_WHEN_UPPERCASED_V1_MARKER;
-    pub fn load_changes_when_uppercased();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Dash";
-    dyn_marker: Dash;
+    ident: Dash;
     data_marker: crate::provider::DashV1Marker;
+    singleton: SINGLETON_DASH_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::Dash;
     func:
     /// Punctuation characters explicitly called out as dashes in the Unicode Standard, plus
@@ -1533,23 +1521,23 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::Dash;
     ///
-    /// let dash = sets::dash();
+    /// let dash = CodePointSetData::new::<Dash>();
     ///
     /// assert!(dash.contains('⸺'));  // U+2E3A TWO-EM DASH
     /// assert!(dash.contains('-'));  // U+002D
     /// assert!(!dash.contains('='));  // U+003D
     /// ```
 
-    pub const fn dash() => SINGLETON_DASH_V1_MARKER;
-    pub fn load_dash();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Deprecated";
-    dyn_marker: Deprecated;
+    ident: Deprecated;
     data_marker: crate::provider::DeprecatedV1Marker;
+    singleton: SINGLETON_DEPRECATED_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::Deprecated;
     func:
     /// Deprecated characters. No characters will ever be removed from the standard, but the
@@ -1558,22 +1546,22 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::Deprecated;
     ///
-    /// let deprecated = sets::deprecated();
+    /// let deprecated = CodePointSetData::new::<Deprecated>();
     ///
     /// assert!(deprecated.contains('ឣ'));  // U+17A3 KHMER INDEPENDENT VOWEL QAQ
     /// assert!(!deprecated.contains('A'));
     /// ```
 
-    pub const fn deprecated() => SINGLETON_DEPRECATED_V1_MARKER;
-    pub fn load_deprecated();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Default_Ignorable_Code_Point";
-    dyn_marker: DefaultIgnorableCodePoint;
+    ident: DefaultIgnorableCodePoint;
     data_marker: crate::provider::DefaultIgnorableCodePointV1Marker;
+    singleton: SINGLETON_DEFAULT_IGNORABLE_CODE_POINT_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::DefaultIgnorableCodePoint;
     func:
     /// For programmatic determination of default ignorable code points.  New characters that
@@ -1584,22 +1572,22 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::DefaultIgnorableCodePoint;
     ///
-    /// let default_ignorable_code_point = sets::default_ignorable_code_point();
+    /// let default_ignorable_code_point = CodePointSetData::new::<DefaultIgnorableCodePoint>();
     ///
     /// assert!(default_ignorable_code_point.contains32(0x180B));  // MONGOLIAN FREE VARIATION SELECTOR ONE
     /// assert!(!default_ignorable_code_point.contains('E'));
     /// ```
 
-    pub const fn default_ignorable_code_point() => SINGLETON_DEFAULT_IGNORABLE_CODE_POINT_V1_MARKER;
-    pub fn load_default_ignorable_code_point();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Diacritic";
-    dyn_marker: Diacritic;
+    ident: Diacritic;
     data_marker: crate::provider::DiacriticV1Marker;
+    singleton: SINGLETON_DIACRITIC_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::Diacritic;
     func:
     /// Characters that linguistically modify the meaning of another character to which they apply
@@ -1607,22 +1595,22 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::Diacritic;
     ///
-    /// let diacritic = sets::diacritic();
+    /// let diacritic = CodePointSetData::new::<Diacritic>();
     ///
     /// assert!(diacritic.contains('\u{05B3}'));  // HEBREW POINT HATAF QAMATS
     /// assert!(!diacritic.contains('א'));  // U+05D0 HEBREW LETTER ALEF
     /// ```
 
-    pub const fn diacritic() => SINGLETON_DIACRITIC_V1_MARKER;
-    pub fn load_diacritic();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Emoji_Modifier_Base";
-    dyn_marker: EmojiModifierBase;
+    ident: EmojiModifierBase;
     data_marker: crate::provider::EmojiModifierBaseV1Marker;
+    singleton: SINGLETON_EMOJI_MODIFIER_BASE_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::EmojiModifierBase;
     func:
     /// Characters that can serve as a base for emoji modifiers
@@ -1630,22 +1618,22 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::EmojiModifierBase;
     ///
-    /// let emoji_modifier_base = sets::emoji_modifier_base();
+    /// let emoji_modifier_base = CodePointSetData::new::<EmojiModifierBase>();
     ///
     /// assert!(emoji_modifier_base.contains('✊'));  // U+270A RAISED FIST
     /// assert!(!emoji_modifier_base.contains('⛰'));  // U+26F0 MOUNTAIN
     /// ```
 
-    pub const fn emoji_modifier_base() => SINGLETON_EMOJI_MODIFIER_BASE_V1_MARKER;
-    pub fn load_emoji_modifier_base();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Emoji_Component";
-    dyn_marker: EmojiComponent;
+    ident: EmojiComponent;
     data_marker: crate::provider::EmojiComponentV1Marker;
+    singleton: SINGLETON_EMOJI_COMPONENT_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::EmojiComponent;
     func:
     /// Characters used in emoji sequences that normally do not appear on emoji keyboards as
@@ -1654,9 +1642,10 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::EmojiComponent;
     ///
-    /// let emoji_component = sets::emoji_component();
+    /// let emoji_component = CodePointSetData::new::<EmojiComponent>();
     ///
     /// assert!(emoji_component.contains('🇹'));  // U+1F1F9 REGIONAL INDICATOR SYMBOL LETTER T
     /// assert!(emoji_component.contains32(0x20E3));  // COMBINING ENCLOSING KEYCAP
@@ -1664,14 +1653,13 @@ make_code_point_set_property! {
     /// assert!(!emoji_component.contains('T'));
     /// ```
 
-    pub const fn emoji_component() => SINGLETON_EMOJI_COMPONENT_V1_MARKER;
-    pub fn load_emoji_component();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Emoji_Modifier";
-    dyn_marker: EmojiModifier;
+    ident: EmojiModifier;
     data_marker: crate::provider::EmojiModifierV1Marker;
+    singleton: SINGLETON_EMOJI_MODIFIER_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::EmojiModifier;
     func:
     /// Characters that are emoji modifiers
@@ -1679,22 +1667,22 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::EmojiModifier;
     ///
-    /// let emoji_modifier = sets::emoji_modifier();
+    /// let emoji_modifier = CodePointSetData::new::<EmojiModifier>();
     ///
     /// assert!(emoji_modifier.contains32(0x1F3FD));  // EMOJI MODIFIER FITZPATRICK TYPE-4
     /// assert!(!emoji_modifier.contains32(0x200C));  // ZERO WIDTH NON-JOINER
     /// ```
 
-    pub const fn emoji_modifier() => SINGLETON_EMOJI_MODIFIER_V1_MARKER;
-    pub fn load_emoji_modifier();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Emoji";
-    dyn_marker: Emoji;
+    ident: Emoji;
     data_marker: crate::provider::EmojiV1Marker;
+    singleton: SINGLETON_EMOJI_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::Emoji;
     func:
     /// Characters that are emoji
@@ -1702,22 +1690,22 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::Emoji;
     ///
-    /// let emoji = sets::emoji();
+    /// let emoji = CodePointSetData::new::<Emoji>();
     ///
     /// assert!(emoji.contains('🔥'));  // U+1F525 FIRE
     /// assert!(!emoji.contains('V'));
     /// ```
 
-    pub const fn emoji() => SINGLETON_EMOJI_V1_MARKER;
-    pub fn load_emoji();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Emoji_Presentation";
-    dyn_marker: EmojiPresentation;
+    ident: EmojiPresentation;
     data_marker: crate::provider::EmojiPresentationV1Marker;
+    singleton: SINGLETON_EMOJI_PRESENTATION_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::EmojiPresentation;
     func:
     /// Characters that have emoji presentation by default
@@ -1725,22 +1713,22 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::EmojiPresentation;
     ///
-    /// let emoji_presentation = sets::emoji_presentation();
+    /// let emoji_presentation = CodePointSetData::new::<EmojiPresentation>();
     ///
     /// assert!(emoji_presentation.contains('🦬')); // U+1F9AC BISON
     /// assert!(!emoji_presentation.contains('♻'));  // U+267B BLACK UNIVERSAL RECYCLING SYMBOL
     /// ```
 
-    pub const fn emoji_presentation() => SINGLETON_EMOJI_PRESENTATION_V1_MARKER;
-    pub fn load_emoji_presentation();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Extender";
-    dyn_marker: Extender;
+    ident: Extender;
     data_marker: crate::provider::ExtenderV1Marker;
+    singleton: SINGLETON_EXTENDER_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::Extender;
     func:
     /// Characters whose principal function is to extend the value of a preceding alphabetic
@@ -1749,23 +1737,23 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::Extender;
     ///
-    /// let extender = sets::extender();
+    /// let extender = CodePointSetData::new::<Extender>();
     ///
     /// assert!(extender.contains('ヾ'));  // U+30FE KATAKANA VOICED ITERATION MARK
     /// assert!(extender.contains('ー'));  // U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK
     /// assert!(!extender.contains('・'));  // U+30FB KATAKANA MIDDLE DOT
     /// ```
 
-    pub const fn extender() => SINGLETON_EXTENDER_V1_MARKER;
-    pub fn load_extender();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Extended_Pictographic";
-    dyn_marker: ExtendedPictographic;
+    ident: ExtendedPictographic;
     data_marker: crate::provider::ExtendedPictographicV1Marker;
+    singleton: SINGLETON_EXTENDED_PICTOGRAPHIC_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::ExtendedPictographic;
     func:
     /// Pictographic symbols, as well as reserved ranges in blocks largely associated with
@@ -1774,35 +1762,34 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::ExtendedPictographic;
     ///
-    /// let extended_pictographic = sets::extended_pictographic();
+    /// let extended_pictographic = CodePointSetData::new::<ExtendedPictographic>();
     ///
     /// assert!(extended_pictographic.contains('🥳')); // U+1F973 FACE WITH PARTY HORN AND PARTY HAT
     /// assert!(!extended_pictographic.contains('🇪'));  // U+1F1EA REGIONAL INDICATOR SYMBOL LETTER E
     /// ```
 
-    pub const fn extended_pictographic() => SINGLETON_EXTENDED_PICTOGRAPHIC_V1_MARKER;
-    pub fn load_extended_pictographic();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Graph";
-    dyn_marker: Graph;
+    ident: Graph;
     data_marker: crate::provider::GraphV1Marker;
+    singleton: SINGLETON_GRAPH_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::Graph;
     func:
     /// Visible characters.
     /// This is defined for POSIX compatibility.
 
-    pub const fn graph() => SINGLETON_GRAPH_V1_MARKER;
-    pub fn load_graph();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Grapheme_Base";
-    dyn_marker: GraphemeBase;
+    ident: GraphemeBase;
     data_marker: crate::provider::GraphemeBaseV1Marker;
+    singleton: SINGLETON_GRAPHEME_BASE_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::GraphemeBase;
     func:
     /// Property used together with the definition of Standard Korean Syllable Block to define
@@ -1811,23 +1798,23 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::GraphemeBase;
     ///
-    /// let grapheme_base = sets::grapheme_base();
+    /// let grapheme_base = CodePointSetData::new::<GraphemeBase>();
     ///
     /// assert!(grapheme_base.contains('ക'));  // U+0D15 MALAYALAM LETTER KA
     /// assert!(grapheme_base.contains('\u{0D3F}'));  // U+0D3F MALAYALAM VOWEL SIGN I
     /// assert!(!grapheme_base.contains('\u{0D3E}'));  // U+0D3E MALAYALAM VOWEL SIGN AA
     /// ```
 
-    pub const fn grapheme_base() => SINGLETON_GRAPHEME_BASE_V1_MARKER;
-    pub fn load_grapheme_base();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Grapheme_Extend";
-    dyn_marker: GraphemeExtend;
+    ident: GraphemeExtend;
     data_marker: crate::provider::GraphemeExtendV1Marker;
+    singleton: SINGLETON_GRAPHEME_EXTEND_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::GraphemeExtend;
     func:
     /// Property used to define "Grapheme extender". See D59 in Chapter 3, Conformance in the
@@ -1836,36 +1823,35 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::GraphemeExtend;
     ///
-    /// let grapheme_extend = sets::grapheme_extend();
+    /// let grapheme_extend = CodePointSetData::new::<GraphemeExtend>();
     ///
     /// assert!(!grapheme_extend.contains('ക'));  // U+0D15 MALAYALAM LETTER KA
     /// assert!(!grapheme_extend.contains('\u{0D3F}'));  // U+0D3F MALAYALAM VOWEL SIGN I
     /// assert!(grapheme_extend.contains('\u{0D3E}'));  // U+0D3E MALAYALAM VOWEL SIGN AA
     /// ```
 
-    pub const fn grapheme_extend() => SINGLETON_GRAPHEME_EXTEND_V1_MARKER;
-    pub fn load_grapheme_extend();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Grapheme_Link";
-    dyn_marker: GraphemeLink;
+    ident: GraphemeLink;
     data_marker: crate::provider::GraphemeLinkV1Marker;
+    singleton: SINGLETON_GRAPHEME_LINK_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::GraphemeLink;
     func:
     /// Deprecated property. Formerly proposed for programmatic determination of grapheme
     /// cluster boundaries.
 
-    pub const fn grapheme_link() => SINGLETON_GRAPHEME_LINK_V1_MARKER;
-    pub fn load_grapheme_link();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Hex_Digit";
-    dyn_marker: HexDigit;
+    ident: HexDigit;
     data_marker: crate::provider::HexDigitV1Marker;
+    singleton: SINGLETON_HEX_DIGIT_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::HexDigit;
     func:
     /// Characters commonly used for the representation of hexadecimal numbers, plus their
@@ -1874,9 +1860,10 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::HexDigit;
     ///
-    /// let hex_digit = sets::hex_digit();
+    /// let hex_digit = CodePointSetData::new::<HexDigit>();
     ///
     /// assert!(hex_digit.contains('0'));
     /// assert!(!hex_digit.contains('੩'));  // U+0A69 GURMUKHI DIGIT THREE
@@ -1886,27 +1873,25 @@ make_code_point_set_property! {
     /// assert!(!hex_digit.contains('Ä'));  // U+00C4 LATIN CAPITAL LETTER A WITH DIAERESIS
     /// ```
 
-    pub const fn hex_digit() => SINGLETON_HEX_DIGIT_V1_MARKER;
-    pub fn load_hex_digit();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Hyphen";
-    dyn_marker: Hyphen;
+    ident: Hyphen;
     data_marker: crate::provider::HyphenV1Marker;
+    singleton: SINGLETON_HYPHEN_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::Hyphen;
     func:
     /// Deprecated property. Dashes which are used to mark connections between pieces of
     /// words, plus the Katakana middle dot.
 
-    pub const fn hyphen() => SINGLETON_HYPHEN_V1_MARKER;
-    pub fn load_hyphen();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Id_Continue";
-    dyn_marker: IdContinue;
+    ident: IdContinue;
     data_marker: crate::provider::IdContinueV1Marker;
+    singleton: SINGLETON_ID_CONTINUE_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::IdContinue;
     func:
     /// Characters that can come after the first character in an identifier. If using NFKC to
@@ -1917,9 +1902,10 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::IdContinue;
     ///
-    /// let id_continue = sets::id_continue();
+    /// let id_continue = CodePointSetData::new::<IdContinue>();
     ///
     /// assert!(id_continue.contains('x'));
     /// assert!(id_continue.contains('1'));
@@ -1929,14 +1915,13 @@ make_code_point_set_property! {
     /// assert!(id_continue.contains32(0xFC5E));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
     /// ```
 
-    pub const fn id_continue() => SINGLETON_ID_CONTINUE_V1_MARKER;
-    pub fn load_id_continue();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Ideographic";
-    dyn_marker: Ideographic;
+    ident: Ideographic;
     data_marker: crate::provider::IdeographicV1Marker;
+    singleton: SINGLETON_IDEOGRAPHIC_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::Ideographic;
     func:
     /// Characters considered to be CJKV (Chinese, Japanese, Korean, and Vietnamese)
@@ -1945,22 +1930,22 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::Ideographic;
     ///
-    /// let ideographic = sets::ideographic();
+    /// let ideographic = CodePointSetData::new::<Ideographic>();
     ///
     /// assert!(ideographic.contains('川'));  // U+5DDD CJK UNIFIED IDEOGRAPH-5DDD
     /// assert!(!ideographic.contains('밥'));  // U+BC25 HANGUL SYLLABLE BAB
     /// ```
 
-    pub const fn ideographic() => SINGLETON_IDEOGRAPHIC_V1_MARKER;
-    pub fn load_ideographic();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Id_Start";
-    dyn_marker: IdStart;
+    ident: IdStart;
     data_marker: crate::provider::IdStartV1Marker;
+    singleton: SINGLETON_ID_START_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::IdStart;
     func:
     /// Characters that can begin an identifier. If using NFKC to fold differences between
@@ -1970,9 +1955,10 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::IdStart;
     ///
-    /// let id_start = sets::id_start();
+    /// let id_start = CodePointSetData::new::<IdStart>();
     ///
     /// assert!(id_start.contains('x'));
     /// assert!(!id_start.contains('1'));
@@ -1982,14 +1968,13 @@ make_code_point_set_property! {
     /// assert!(id_start.contains32(0xFC5E));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
     /// ```
 
-    pub const fn id_start() => SINGLETON_ID_START_V1_MARKER;
-    pub fn load_id_start();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Ids_Binary_Operator";
-    dyn_marker: IdsBinaryOperator;
+    ident: IdsBinaryOperator;
     data_marker: crate::provider::IdsBinaryOperatorV1Marker;
+    singleton: SINGLETON_IDS_BINARY_OPERATOR_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::IdsBinaryOperator;
     func:
     /// Characters used in Ideographic Description Sequences
@@ -1997,22 +1982,22 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::IdsBinaryOperator;
     ///
-    /// let ids_binary_operator = sets::ids_binary_operator();
+    /// let ids_binary_operator = CodePointSetData::new::<IdsBinaryOperator>();
     ///
     /// assert!(ids_binary_operator.contains32(0x2FF5));  // IDEOGRAPHIC DESCRIPTION CHARACTER SURROUND FROM ABOVE
     /// assert!(!ids_binary_operator.contains32(0x3006));  // IDEOGRAPHIC CLOSING MARK
     /// ```
 
-    pub const fn ids_binary_operator() => SINGLETON_IDS_BINARY_OPERATOR_V1_MARKER;
-    pub fn load_ids_binary_operator();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Ids_Trinary_Operator";
-    dyn_marker: IdsTrinaryOperator;
+    ident: IdsTrinaryOperator;
     data_marker: crate::provider::IdsTrinaryOperatorV1Marker;
+    singleton: SINGLETON_IDS_TRINARY_OPERATOR_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::IdsTrinaryOperator;
     func:
     /// Characters used in Ideographic Description Sequences
@@ -2020,9 +2005,10 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::IdsTrinaryOperator;
     ///
-    /// let ids_trinary_operator = sets::ids_trinary_operator();
+    /// let ids_trinary_operator = CodePointSetData::new::<IdsTrinaryOperator>();
     ///
     /// assert!(ids_trinary_operator.contains32(0x2FF2));  // IDEOGRAPHIC DESCRIPTION CHARACTER LEFT TO MIDDLE AND RIGHT
     /// assert!(ids_trinary_operator.contains32(0x2FF3));  // IDEOGRAPHIC DESCRIPTION CHARACTER ABOVE TO MIDDLE AND BELOW
@@ -2031,14 +2017,13 @@ make_code_point_set_property! {
     /// assert!(!ids_trinary_operator.contains32(0x3006));  // IDEOGRAPHIC CLOSING MARK
     /// ```
 
-    pub const fn ids_trinary_operator() => SINGLETON_IDS_TRINARY_OPERATOR_V1_MARKER;
-    pub fn load_ids_trinary_operator();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Join_Control";
-    dyn_marker: JoinControl;
+    ident: JoinControl;
     data_marker: crate::provider::JoinControlV1Marker;
+    singleton: SINGLETON_JOIN_CONTROL_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::JoinControl;
     func:
     /// Format control characters which have specific functions for control of cursive joining
@@ -2047,23 +2032,23 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::JoinControl;
     ///
-    /// let join_control = sets::join_control();
+    /// let join_control = CodePointSetData::new::<JoinControl>();
     ///
     /// assert!(join_control.contains32(0x200C));  // ZERO WIDTH NON-JOINER
     /// assert!(join_control.contains32(0x200D));  // ZERO WIDTH JOINER
     /// assert!(!join_control.contains32(0x200E));
     /// ```
 
-    pub const fn join_control() => SINGLETON_JOIN_CONTROL_V1_MARKER;
-    pub fn load_join_control();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Logical_Order_Exception";
-    dyn_marker: LogicalOrderException;
+    ident: LogicalOrderException;
     data_marker: crate::provider::LogicalOrderExceptionV1Marker;
+    singleton: SINGLETON_LOGICAL_ORDER_EXCEPTION_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::LogicalOrderException;
     func:
     /// A small number of spacing vowel letters occurring in certain Southeast Asian scripts such as Thai and Lao
@@ -2071,22 +2056,22 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::LogicalOrderException;
     ///
-    /// let logical_order_exception = sets::logical_order_exception();
+    /// let logical_order_exception = CodePointSetData::new::<LogicalOrderException>();
     ///
     /// assert!(logical_order_exception.contains('ແ'));  // U+0EC1 LAO VOWEL SIGN EI
     /// assert!(!logical_order_exception.contains('ະ'));  // U+0EB0 LAO VOWEL SIGN A
     /// ```
 
-    pub const fn logical_order_exception() => SINGLETON_LOGICAL_ORDER_EXCEPTION_V1_MARKER;
-    pub fn load_logical_order_exception();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Lowercase";
-    dyn_marker: Lowercase;
+    ident: Lowercase;
     data_marker: crate::provider::LowercaseV1Marker;
+    singleton: SINGLETON_LOWERCASE_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::Lowercase;
     func:
     /// Lowercase characters
@@ -2094,22 +2079,22 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::Lowercase;
     ///
-    /// let lowercase = sets::lowercase();
+    /// let lowercase = CodePointSetData::new::<Lowercase>();
     ///
     /// assert!(lowercase.contains('a'));
     /// assert!(!lowercase.contains('A'));
     /// ```
 
-    pub const fn lowercase() => SINGLETON_LOWERCASE_V1_MARKER;
-    pub fn load_lowercase();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Math";
-    dyn_marker: Math;
+    ident: Math;
     data_marker: crate::provider::MathV1Marker;
+    singleton: SINGLETON_MATH_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::Math;
     func:
     /// Characters used in mathematical notation
@@ -2117,9 +2102,10 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::Math;
     ///
-    /// let math = sets::math();
+    /// let math = CodePointSetData::new::<Math>();
     ///
     /// assert!(math.contains('='));
     /// assert!(math.contains('+'));
@@ -2129,14 +2115,13 @@ make_code_point_set_property! {
     /// assert!(math.contains('∕'));  // U+2215 DIVISION SLASH
     /// ```
 
-    pub const fn math() => SINGLETON_MATH_V1_MARKER;
-    pub fn load_math();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Noncharacter_Code_Point";
-    dyn_marker: NoncharacterCodePoint;
+    ident: NoncharacterCodePoint;
     data_marker: crate::provider::NoncharacterCodePointV1Marker;
+    singleton: SINGLETON_NONCHARACTER_CODE_POINT_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::NoncharacterCodePoint;
     func:
     /// Code points permanently reserved for internal use
@@ -2144,71 +2129,67 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::NoncharacterCodePoint;
     ///
-    /// let noncharacter_code_point = sets::noncharacter_code_point();
+    /// let noncharacter_code_point = CodePointSetData::new::<NoncharacterCodePoint>();
     ///
     /// assert!(noncharacter_code_point.contains32(0xFDD0));
     /// assert!(noncharacter_code_point.contains32(0xFFFF));
     /// assert!(!noncharacter_code_point.contains32(0x10000));
     /// ```
 
-    pub const fn noncharacter_code_point() => SINGLETON_NONCHARACTER_CODE_POINT_V1_MARKER;
-    pub fn load_noncharacter_code_point();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "NFC_Inert";
-    dyn_marker: NfcInert;
+    ident: NfcInert;
     data_marker: crate::provider::NfcInertV1Marker;
+    singleton: SINGLETON_NFC_INERT_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::NfcInert;
     func:
     /// Characters that are inert under NFC, i.e., they do not interact with adjacent characters
 
-    pub const fn nfc_inert() => SINGLETON_NFC_INERT_V1_MARKER;
-    pub fn load_nfc_inert();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "NFD_Inert";
-    dyn_marker: NfdInert;
+    ident: NfdInert;
     data_marker: crate::provider::NfdInertV1Marker;
+    singleton: SINGLETON_NFD_INERT_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::NfdInert;
     func:
     /// Characters that are inert under NFD, i.e., they do not interact with adjacent characters
 
-    pub const fn nfd_inert() => SINGLETON_NFD_INERT_V1_MARKER;
-    pub fn load_nfd_inert();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "NFKC_Inert";
-    dyn_marker: NfkcInert;
+    ident: NfkcInert;
     data_marker: crate::provider::NfkcInertV1Marker;
+    singleton: SINGLETON_NFKC_INERT_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::NfkcInert;
     func:
     /// Characters that are inert under NFKC, i.e., they do not interact with adjacent characters
 
-    pub const fn nfkc_inert() => SINGLETON_NFKC_INERT_V1_MARKER;
-    pub fn load_nfkc_inert();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "NFKD_Inert";
-    dyn_marker: NfkdInert;
+    ident: NfkdInert;
     data_marker: crate::provider::NfkdInertV1Marker;
+    singleton: SINGLETON_NFKD_INERT_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::NfkdInert;
     func:
     /// Characters that are inert under NFKD, i.e., they do not interact with adjacent characters
 
-    pub const fn nfkd_inert() => SINGLETON_NFKD_INERT_V1_MARKER;
-    pub fn load_nfkd_inert();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Pattern_Syntax";
-    dyn_marker: PatternSyntax;
+    ident: PatternSyntax;
     data_marker: crate::provider::PatternSyntaxV1Marker;
+    singleton: SINGLETON_PATTERN_SYNTAX_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::PatternSyntax;
     func:
     /// Characters used as syntax in patterns (such as regular expressions). See [`Unicode
@@ -2218,23 +2199,23 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::PatternSyntax;
     ///
-    /// let pattern_syntax = sets::pattern_syntax();
+    /// let pattern_syntax = CodePointSetData::new::<PatternSyntax>();
     ///
     /// assert!(pattern_syntax.contains('{'));
     /// assert!(pattern_syntax.contains('⇒'));  // U+21D2 RIGHTWARDS DOUBLE ARROW
     /// assert!(!pattern_syntax.contains('0'));
     /// ```
 
-    pub const fn pattern_syntax() => SINGLETON_PATTERN_SYNTAX_V1_MARKER;
-    pub fn load_pattern_syntax();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Pattern_White_Space";
-    dyn_marker: PatternWhiteSpace;
+    ident: PatternWhiteSpace;
     data_marker: crate::provider::PatternWhiteSpaceV1Marker;
+    singleton: SINGLETON_PATTERN_WHITE_SPACE_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::PatternWhiteSpace;
     func:
     /// Characters used as whitespace in patterns (such as regular expressions).  See
@@ -2244,9 +2225,10 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::PatternWhiteSpace;
     ///
-    /// let pattern_white_space = sets::pattern_white_space();
+    /// let pattern_white_space = CodePointSetData::new::<PatternWhiteSpace>();
     ///
     /// assert!(pattern_white_space.contains(' '));
     /// assert!(pattern_white_space.contains32(0x2029));  // PARAGRAPH SEPARATOR
@@ -2254,40 +2236,37 @@ make_code_point_set_property! {
     /// assert!(!pattern_white_space.contains32(0x00A0));  // NO-BREAK SPACE
     /// ```
 
-    pub const fn pattern_white_space() => SINGLETON_PATTERN_WHITE_SPACE_V1_MARKER;
-    pub fn load_pattern_white_space();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Prepended_Concatenation_Mark";
-    dyn_marker: PrependedConcatenationMark;
+    ident: PrependedConcatenationMark;
     data_marker: crate::provider::PrependedConcatenationMarkV1Marker;
+    singleton: SINGLETON_PREPENDED_CONCATENATION_MARK_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::PrependedConcatenationMark;
     func:
     /// A small class of visible format controls, which precede and then span a sequence of
     /// other characters, usually digits.
 
-    pub const fn prepended_concatenation_mark() => SINGLETON_PREPENDED_CONCATENATION_MARK_V1_MARKER;
-    pub fn load_prepended_concatenation_mark();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Print";
-    dyn_marker: Print;
+    ident: Print;
     data_marker: crate::provider::PrintV1Marker;
+    singleton: SINGLETON_PRINT_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::Print;
     func:
     /// Printable characters (visible characters and whitespace).
     /// This is defined for POSIX compatibility.
 
-    pub const fn print() => SINGLETON_PRINT_V1_MARKER;
-    pub fn load_print();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Quotation_Mark";
-    dyn_marker: QuotationMark;
+    ident: QuotationMark;
     data_marker: crate::provider::QuotationMarkV1Marker;
+    singleton: SINGLETON_QUOTATION_MARK_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::QuotationMark;
     func:
     /// Punctuation characters that function as quotation marks.
@@ -2295,23 +2274,23 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::QuotationMark;
     ///
-    /// let quotation_mark = sets::quotation_mark();
+    /// let quotation_mark = CodePointSetData::new::<QuotationMark>();
     ///
     /// assert!(quotation_mark.contains('\''));
     /// assert!(quotation_mark.contains('„'));  // U+201E DOUBLE LOW-9 QUOTATION MARK
     /// assert!(!quotation_mark.contains('<'));
     /// ```
 
-    pub const fn quotation_mark() => SINGLETON_QUOTATION_MARK_V1_MARKER;
-    pub fn load_quotation_mark();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Radical";
-    dyn_marker: Radical;
+    ident: Radical;
     data_marker: crate::provider::RadicalV1Marker;
+    singleton: SINGLETON_RADICAL_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::Radical;
     func:
     /// Characters used in the definition of Ideographic Description Sequences
@@ -2319,22 +2298,22 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::Radical;
     ///
-    /// let radical = sets::radical();
+    /// let radical = CodePointSetData::new::<Radical>();
     ///
     /// assert!(radical.contains('⺆'));  // U+2E86 CJK RADICAL BOX
     /// assert!(!radical.contains('丹'));  // U+F95E CJK COMPATIBILITY IDEOGRAPH-F95E
     /// ```
 
-    pub const fn radical() => SINGLETON_RADICAL_V1_MARKER;
-    pub fn load_radical();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Regional_Indicator";
-    dyn_marker: RegionalIndicator;
+    ident: RegionalIndicator;
     data_marker: crate::provider::RegionalIndicatorV1Marker;
+    singleton: SINGLETON_REGIONAL_INDICATOR_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::RegionalIndicator;
     func:
     /// Regional indicator characters, U+1F1E6..U+1F1FF
@@ -2342,23 +2321,23 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::RegionalIndicator;
     ///
-    /// let regional_indicator = sets::regional_indicator();
+    /// let regional_indicator = CodePointSetData::new::<RegionalIndicator>();
     ///
     /// assert!(regional_indicator.contains('🇹'));  // U+1F1F9 REGIONAL INDICATOR SYMBOL LETTER T
     /// assert!(!regional_indicator.contains('Ⓣ'));  // U+24C9 CIRCLED LATIN CAPITAL LETTER T
     /// assert!(!regional_indicator.contains('T'));
     /// ```
 
-    pub const fn regional_indicator() => SINGLETON_REGIONAL_INDICATOR_V1_MARKER;
-    pub fn load_regional_indicator();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Soft_Dotted";
-    dyn_marker: SoftDotted;
+    ident: SoftDotted;
     data_marker: crate::provider::SoftDottedV1Marker;
+    singleton: SINGLETON_SOFT_DOTTED_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::SoftDotted;
     func:
     /// Characters with a "soft dot", like i or j. An accent placed on these characters causes
@@ -2367,48 +2346,46 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::SoftDotted;
     ///
-    /// let soft_dotted = sets::soft_dotted();
+    /// let soft_dotted = CodePointSetData::new::<SoftDotted>();
     ///
     /// assert!(soft_dotted.contains('і'));  //U+0456 CYRILLIC SMALL LETTER BYELORUSSIAN-UKRAINIAN I
     /// assert!(!soft_dotted.contains('ı'));  // U+0131 LATIN SMALL LETTER DOTLESS I
     /// ```
 
-    pub const fn soft_dotted() => SINGLETON_SOFT_DOTTED_V1_MARKER;
-    pub fn load_soft_dotted();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Segment_Starter";
-    dyn_marker: SegmentStarter;
+    ident: SegmentStarter;
     data_marker: crate::provider::SegmentStarterV1Marker;
+    singleton: SINGLETON_SEGMENT_STARTER_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::SegmentStarter;
     func:
     /// Characters that are starters in terms of Unicode normalization and combining character
     /// sequences
 
-    pub const fn segment_starter() => SINGLETON_SEGMENT_STARTER_V1_MARKER;
-    pub fn load_segment_starter();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Case_Sensitive";
-    dyn_marker: CaseSensitive;
+    ident: CaseSensitive;
     data_marker: crate::provider::CaseSensitiveV1Marker;
+    singleton: SINGLETON_CASE_SENSITIVE_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::CaseSensitive;
     func:
     /// Characters that are either the source of a case mapping or in the target of a case
     /// mapping
 
-    pub const fn case_sensitive() => SINGLETON_CASE_SENSITIVE_V1_MARKER;
-    pub fn load_case_sensitive();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Sentence_Terminal";
-    dyn_marker: SentenceTerminal;
+    ident: SentenceTerminal;
     data_marker: crate::provider::SentenceTerminalV1Marker;
+    singleton: SINGLETON_SENTENCE_TERMINAL_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::SentenceTerminal;
     func:
     /// Punctuation characters that generally mark the end of sentences
@@ -2416,9 +2393,10 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::SentenceTerminal;
     ///
-    /// let sentence_terminal = sets::sentence_terminal();
+    /// let sentence_terminal = CodePointSetData::new::<SentenceTerminal>();
     ///
     /// assert!(sentence_terminal.contains('.'));
     /// assert!(sentence_terminal.contains('?'));
@@ -2427,14 +2405,13 @@ make_code_point_set_property! {
     /// assert!(!sentence_terminal.contains('¿'));  // U+00BF INVERTED QUESTION MARK
     /// ```
 
-    pub const fn sentence_terminal() => SINGLETON_SENTENCE_TERMINAL_V1_MARKER;
-    pub fn load_sentence_terminal();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Terminal_Punctuation";
-    dyn_marker: TerminalPunctuation;
+    ident: TerminalPunctuation;
     data_marker: crate::provider::TerminalPunctuationV1Marker;
+    singleton: SINGLETON_TERMINAL_PUNCTUATION_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::TerminalPunctuation;
     func:
     /// Punctuation characters that generally mark the end of textual units
@@ -2442,9 +2419,10 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::TerminalPunctuation;
     ///
-    /// let terminal_punctuation = sets::terminal_punctuation();
+    /// let terminal_punctuation = CodePointSetData::new::<TerminalPunctuation>();
     ///
     /// assert!(terminal_punctuation.contains('.'));
     /// assert!(terminal_punctuation.contains('?'));
@@ -2453,14 +2431,13 @@ make_code_point_set_property! {
     /// assert!(!terminal_punctuation.contains('¿'));  // U+00BF INVERTED QUESTION MARK
     /// ```
 
-    pub const fn terminal_punctuation() => SINGLETON_TERMINAL_PUNCTUATION_V1_MARKER;
-    pub fn load_terminal_punctuation();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Unified_Ideograph";
-    dyn_marker: UnifiedIdeograph;
+    ident: UnifiedIdeograph;
     data_marker: crate::provider::UnifiedIdeographV1Marker;
+    singleton: SINGLETON_UNIFIED_IDEOGRAPH_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::UnifiedIdeograph;
     func:
     /// A property which specifies the exact set of Unified CJK Ideographs in the standard
@@ -2468,23 +2445,23 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::UnifiedIdeograph;
     ///
-    /// let unified_ideograph = sets::unified_ideograph();
+    /// let unified_ideograph = CodePointSetData::new::<UnifiedIdeograph>();
     ///
     /// assert!(unified_ideograph.contains('川'));  // U+5DDD CJK UNIFIED IDEOGRAPH-5DDD
     /// assert!(unified_ideograph.contains('木'));  // U+6728 CJK UNIFIED IDEOGRAPH-6728
     /// assert!(!unified_ideograph.contains('𛅸'));  // U+1B178 NUSHU CHARACTER-1B178
     /// ```
 
-    pub const fn unified_ideograph() => SINGLETON_UNIFIED_IDEOGRAPH_V1_MARKER;
-    pub fn load_unified_ideograph();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Uppercase";
-    dyn_marker: Uppercase;
+    ident: Uppercase;
     data_marker: crate::provider::UppercaseV1Marker;
+    singleton: SINGLETON_UPPERCASE_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::Uppercase;
     func:
     /// Uppercase characters
@@ -2492,22 +2469,22 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::Uppercase;
     ///
-    /// let uppercase = sets::uppercase();
+    /// let uppercase = CodePointSetData::new::<Uppercase>();
     ///
     /// assert!(uppercase.contains('U'));
     /// assert!(!uppercase.contains('u'));
     /// ```
 
-    pub const fn uppercase() => SINGLETON_UPPERCASE_V1_MARKER;
-    pub fn load_uppercase();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Variation_Selector";
-    dyn_marker: VariationSelector;
+    ident: VariationSelector;
     data_marker: crate::provider::VariationSelectorV1Marker;
+    singleton: SINGLETON_VARIATION_SELECTOR_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::VariationSelector;
     func:
     /// Characters that are Variation Selectors.
@@ -2515,9 +2492,10 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::VariationSelector;
     ///
-    /// let variation_selector = sets::variation_selector();
+    /// let variation_selector = CodePointSetData::new::<VariationSelector>();
     ///
     /// assert!(variation_selector.contains32(0x180D));  // MONGOLIAN FREE VARIATION SELECTOR THREE
     /// assert!(!variation_selector.contains32(0x303E));  // IDEOGRAPHIC VARIATION INDICATOR
@@ -2526,14 +2504,13 @@ make_code_point_set_property! {
     /// assert!(variation_selector.contains32(0xE01EF));  // VARIATION SELECTOR-256
     /// ```
 
-    pub const fn variation_selector() => SINGLETON_VARIATION_SELECTOR_V1_MARKER;
-    pub fn load_variation_selector();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "White_Space";
-    dyn_marker: WhiteSpace;
+    ident: WhiteSpace;
     data_marker: crate::provider::WhiteSpaceV1Marker;
+    singleton: SINGLETON_WHITE_SPACE_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::WhiteSpace;
     func:
     /// Spaces, separator characters and other control characters which should be treated by
@@ -2542,9 +2519,10 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::WhiteSpace;
     ///
-    /// let white_space = sets::white_space();
+    /// let white_space = CodePointSetData::new::<WhiteSpace>();
     ///
     /// assert!(white_space.contains(' '));
     /// assert!(white_space.contains32(0x000A));  // NEW LINE
@@ -2552,27 +2530,25 @@ make_code_point_set_property! {
     /// assert!(!white_space.contains32(0x200B));  // ZERO WIDTH SPACE
     /// ```
 
-    pub const fn white_space() => SINGLETON_WHITE_SPACE_V1_MARKER;
-    pub fn load_white_space();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "Xdigit";
-    dyn_marker: Xdigit;
+    ident: Xdigit;
     data_marker: crate::provider::XdigitV1Marker;
+    singleton: SINGLETON_XDIGIT_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::XDigit;
     func:
     /// Hexadecimal digits
     /// This is defined for POSIX compatibility.
 
-    pub const fn xdigit() => SINGLETON_XDIGIT_V1_MARKER;
-    pub fn load_xdigit();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "XID_Continue";
-    dyn_marker: XidContinue;
+    ident: XidContinue;
     data_marker: crate::provider::XidContinueV1Marker;
+    singleton: SINGLETON_XID_CONTINUE_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::XidContinue;
     func:
     /// Characters that can come after the first character in an identifier.  See [`Unicode Standard Annex
@@ -2581,9 +2557,10 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::XidContinue;
     ///
-    /// let xid_continue = sets::xid_continue();
+    /// let xid_continue = CodePointSetData::new::<XidContinue>();
     ///
     /// assert!(xid_continue.contains('x'));
     /// assert!(xid_continue.contains('1'));
@@ -2593,14 +2570,13 @@ make_code_point_set_property! {
     /// assert!(!xid_continue.contains32(0xFC5E));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
     /// ```
 
-    pub const fn xid_continue() => SINGLETON_XID_CONTINUE_V1_MARKER;
-    pub fn load_xid_continue();
 }
 
-make_code_point_set_property! {
+make_binary_property! {
     property: "XID_Start";
-    dyn_marker: XidStart;
+    ident: XidStart;
     data_marker: crate::provider::XidStartV1Marker;
+    singleton: SINGLETON_XID_START_V1_MARKER;
     runtime_value: crate::runtime::UnicodeProperty::XidStart;
     func:
     /// Characters that can begin an identifier. See [`Unicode
@@ -2610,9 +2586,10 @@ make_code_point_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::CodePointSetData;
+    /// use icu::properties::props::XidStart;
     ///
-    /// let xid_start = sets::xid_start();
+    /// let xid_start = CodePointSetData::new::<XidStart>();
     ///
     /// assert!(xid_start.contains('x'));
     /// assert!(!xid_start.contains('1'));
@@ -2622,22 +2599,20 @@ make_code_point_set_property! {
     /// assert!(!xid_start.contains32(0xFC5E));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
     /// ```
 
-    pub const fn xid_start() => SINGLETON_XID_START_V1_MARKER;
-    pub fn load_xid_start();
 }
+
+pub use crate::unicode_set::UnicodeSetProperty;
 
 macro_rules! make_unicode_set_property {
     (
         // currently unused
         property: $property:expr;
-        // currently unused
-        dyn_marker: $marker_name:ident;
+        ident: $marker_name:ident;
         data_marker: $data_marker:ty;
+        singleton: $singleton:ident;
         value: $value:expr;
         func:
         $(#[$doc:meta])+
-        $cvis:vis const fn $constname:ident() => $singleton:ident;
-        $vis:vis fn $funcname:ident();
     ) => {
         $(#[$doc])+
         #[derive(Debug)]
@@ -2657,8 +2632,9 @@ macro_rules! make_unicode_set_property {
 
 make_unicode_set_property! {
     property: "Basic_Emoji";
-    dyn_marker: BasicEmoji;
+    ident: BasicEmoji;
     data_marker: crate::provider::BasicEmojiV1Marker;
+    singleton: SINGLETON_BASIC_EMOJI_V1_MARKER;
     value: crate::runtime::UnicodeProperty::Emoji;
     func:
     /// Characters and character sequences intended for general-purpose, independent, direct input.
@@ -2668,9 +2644,10 @@ make_unicode_set_property! {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::sets;
+    /// use icu::properties::UnicodeSetData;
+    /// use icu::properties::props::BasicEmoji;
     ///
-    /// let basic_emoji = sets::basic_emoji();
+    /// let basic_emoji = UnicodeSetData::new::<BasicEmoji>();
     ///
     /// assert!(!basic_emoji.contains32(0x0020));
     /// assert!(!basic_emoji.contains_char('\n'));
@@ -2679,8 +2656,6 @@ make_unicode_set_property! {
     /// assert!(basic_emoji.contains("\u{1F6E4}\u{FE0F}")); // railway track
     /// assert!(!basic_emoji.contains("\u{0033}\u{FE0F}\u{20E3}"));  // Emoji_Keycap_Sequence, keycap 3
     /// ```
-    pub const fn basic_emoji() => SINGLETON_BASIC_EMOJI_V1_MARKER;
-    pub fn load_basic_emoji();
 }
 
 #[cfg(test)]

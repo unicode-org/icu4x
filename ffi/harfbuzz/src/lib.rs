@@ -45,7 +45,7 @@ use icu_normalizer::provider::{
 };
 use icu_properties::bidi_data;
 use icu_properties::bidi_data::BidiAuxiliaryProperties;
-use icu_properties::names::PropertyScriptToIcuScriptMapper;
+use icu_properties::ScriptMapper;
 use icu_properties::props::{GeneralCategory, Script};
 use icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker;
 use icu_properties::provider::{
@@ -107,7 +107,7 @@ impl ScriptFunc for AllUnicodeFuncs {
     #[inline]
     fn script(&self, ch: char) -> [u8; 4] {
         let script = CodePointMapData::<Script>::new().get(ch);
-        Script::enum_to_icu_script_mapper()
+        ScriptMapper::new()
             .get(script)
             .unwrap_or(icu_locale_core::subtags::script!("Zzzz"))
             .into_raw()
@@ -302,8 +302,8 @@ impl MirroringFunc for MirroringData {
 /// Can be passed to the `harfbuzz` crate's `AllUnicodeFuncsBuilder`.
 #[derive(Debug)]
 pub struct ScriptData {
-    script: CodePointMapData<Script>,
-    script_name: PropertyScriptToIcuScriptMapper<Script>,
+    script_set: CodePointMapData<Script>,
+    script_mapper: ScriptMapper,
 }
 
 impl ScriptData {
@@ -312,11 +312,11 @@ impl ScriptData {
     where
         D: DataProvider<ScriptValueToShortNameV1Marker> + DataProvider<ScriptV1Marker> + ?Sized,
     {
-        let script = CodePointMapData::<Script>::try_new_unstable(provider)?;
-        let script_name = Script::get_enum_to_icu_script_mapper(provider)?;
+        let script_set = CodePointMapData::<Script>::try_new_unstable(provider)?;
+        let script_mapper = ScriptMapper::try_new_unstable(provider)?;
         Ok(Self {
-            script,
-            script_name,
+            script_set,
+            script_mapper,
         })
     }
 
@@ -338,8 +338,8 @@ impl ScriptData {
 impl ScriptFunc for ScriptData {
     #[inline]
     fn script(&self, ch: char) -> [u8; 4] {
-        let script = self.script.as_borrowed().get(ch);
-        self.script_name
+        let script = self.script_set.as_borrowed().get(ch);
+        self.script_mapper
             .as_borrowed()
             .get(script)
             .unwrap_or(icu_locale_core::subtags::script!("Zzzz"))

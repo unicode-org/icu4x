@@ -91,7 +91,7 @@ fn generate_rule_break_data(
     rules_file: &str,
     trie_type: crate::TrieType,
 ) -> RuleBreakDataV2<'static> {
-    use icu::properties::props::ExtendedPictographic;
+    use icu::properties::{props::ExtendedPictographic, PropertyParser};
 
     let segmenter = provider
         .icuexport()
@@ -139,17 +139,20 @@ fn generate_rule_break_data(
         .expect("The data should be valid!");
     let ccc = data.as_borrowed();
 
-    let data =
-        GraphemeClusterBreak::get_name_to_enum_mapper(provider).expect("The data should be valid!");
+    let data = PropertyParser::<GraphemeClusterBreak>::try_new_unstable(provider)
+        .expect("The data should be valid!");
     let gcb_name_to_enum = data.as_borrowed();
 
-    let data = LineBreak::get_name_to_enum_mapper(provider).expect("The data should be valid!");
+    let data =
+        PropertyParser::<LineBreak>::try_new_unstable(provider).expect("The data should be valid!");
     let lb_name_to_enum = data.as_borrowed();
 
-    let data = SentenceBreak::get_name_to_enum_mapper(provider).expect("The data should be valid!");
+    let data = PropertyParser::<SentenceBreak>::try_new_unstable(provider)
+        .expect("The data should be valid!");
     let sb_name_to_enum = data.as_borrowed();
 
-    let data = WordBreak::get_name_to_enum_mapper(provider).expect("The data should be valid!");
+    let data =
+        PropertyParser::<WordBreak>::try_new_unstable(provider).expect("The data should be valid!");
     let wb_name_to_enum = data.as_borrowed();
 
     fn set_break_state(

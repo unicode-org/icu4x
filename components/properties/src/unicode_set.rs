@@ -36,6 +36,10 @@ impl UnicodeSetData {
     /// Creates a new [`UnicodeSetData`] for a [`UnicodeSetProperty`].
     ///
     /// See the documentation on [`UnicodeSetProperty`] implementations for details.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     #[allow(clippy::new_ret_no_self)]
     pub const fn new<P: UnicodeSetProperty>() -> UnicodeSetDataBorrowed<'static> {

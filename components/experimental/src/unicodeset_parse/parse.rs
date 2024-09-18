@@ -14,7 +14,6 @@ use icu_collections::{
     codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder},
     codepointinvliststringlist::CodePointInversionListAndStringList,
 };
-use icu_properties::provider::*;
 use icu_properties::script::load_script_with_extensions_unstable;
 use icu_properties::{
     props::{
@@ -27,6 +26,7 @@ use icu_properties::{
     props::{PatternWhiteSpace, XidContinue, XidStart},
     CodePointSetData,
 };
+use icu_properties::{provider::*, PropertyParser, UnicodeProperty};
 use icu_provider::prelude::*;
 
 /// The kind of error that occurred.
@@ -1325,8 +1325,9 @@ where
 
     fn try_load_general_category_set(&mut self, name: &str) -> Result<()> {
         // TODO(#3550): This could be cached; does not depend on name.
-        let name_map = GeneralCategoryGroup::get_name_to_enum_mapper(self.property_provider)
-            .map_err(|_| PEK::Internal)?;
+        let name_map =
+            PropertyParser::<GeneralCategoryGroup>::try_new_unstable(self.property_provider)
+                .map_err(|_| PEK::Internal)?;
         let gc_value = name_map
             .as_borrowed()
             .get_loose(name)
@@ -1342,8 +1343,8 @@ where
 
     fn try_get_script(&self, name: &str) -> Result<Script> {
         // TODO(#3550): This could be cached; does not depend on name.
-        let name_map =
-            Script::get_name_to_enum_mapper(self.property_provider).map_err(|_| PEK::Internal)?;
+        let name_map = PropertyParser::<Script>::try_new_unstable(self.property_provider)
+            .map_err(|_| PEK::Internal)?;
         name_map
             .as_borrowed()
             .get_loose(name)
@@ -1371,16 +1372,18 @@ where
     }
 
     fn try_load_ecma262_binary_set(&mut self, name: &str) -> Result<()> {
-        let set = CodePointSetData::try_new_for_ecma262_unstable(self.property_provider, name)
-            .map_err(|_| PEK::UnknownProperty)?;
+        let prop = UnicodeProperty::parse_ecma262_name(name).ok_or(PEK::UnknownProperty)?;
+        let set = CodePointSetData::try_new_runtime_unstable(self.property_provider, prop)
+            .ok_or(PEK::UnknownProperty)?
+            .map_err(|_data_error| PEK::Internal)?;
         self.single_set.add_set(&set.to_code_point_inversion_list());
         Ok(())
     }
 
     fn try_load_grapheme_cluster_break_set(&mut self, name: &str) -> Result<()> {
-        let name_map = GraphemeClusterBreak::get_name_to_enum_mapper(self.property_provider)
+        let parser = PropertyParser::<GraphemeClusterBreak>::try_new_unstable(self.property_provider)
             .map_err(|_| PEK::Internal)?;
-        let gcb_value = name_map
+        let gcb_value = parser
             .as_borrowed()
             .get_loose(name)
             .ok_or(PEK::UnknownProperty)?;
@@ -1394,9 +1397,9 @@ where
     }
 
     fn try_load_sentence_break_set(&mut self, name: &str) -> Result<()> {
-        let name_map = SentenceBreak::get_name_to_enum_mapper(self.property_provider)
+        let parser = PropertyParser::<SentenceBreak>::try_new_unstable(self.property_provider)
             .map_err(|_| PEK::Internal)?;
-        let sb_value = name_map
+        let sb_value = parser
             .as_borrowed()
             .get_loose(name)
             .ok_or(PEK::UnknownProperty)?;
@@ -1410,9 +1413,9 @@ where
     }
 
     fn try_load_word_break_set(&mut self, name: &str) -> Result<()> {
-        let name_map = WordBreak::get_name_to_enum_mapper(self.property_provider)
+        let parser = PropertyParser::<WordBreak>::try_new_unstable(self.property_provider)
             .map_err(|_| PEK::Internal)?;
-        let wb_value = name_map
+        let wb_value = parser
             .as_borrowed()
             .get_loose(name)
             .ok_or(PEK::UnknownProperty)?;

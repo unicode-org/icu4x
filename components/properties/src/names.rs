@@ -7,19 +7,30 @@ use crate::provider::names::*;
 use core::marker::PhantomData;
 use icu_collections::codepointtrie::TrieValue;
 use icu_provider::prelude::*;
+use yoke::Yokeable;
 use zerovec::ule::VarULE;
 
-/// Private marker type for PropertyValueNameToEnumMapper
-/// to work for all properties at once
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
-pub(crate) struct ErasedNameToEnumMapV1Marker;
+pub struct ErasedNameToEnumMapV1Marker;
 impl DynamicDataMarker for ErasedNameToEnumMapV1Marker {
     type DataStruct = PropertyValueNameToEnumMapV1<'static>;
 }
 
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
+pub struct ErasedEnumToValueNameLinearMapV1Marker;
+impl DynamicDataMarker for ErasedEnumToValueNameLinearMapV1Marker {
+    type DataStruct = PropertyEnumToValueNameLinearMapV1<'static>;
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
+pub struct ErasedEnumToValueNameSparseMapV1Marker;
+impl DynamicDataMarker for ErasedEnumToValueNameSparseMapV1Marker {
+    type DataStruct = PropertyEnumToValueNameSparseMapV1<'static>;
+}
+
 /// A struct capable of looking up a property value from a string name.
 /// Access its data by calling [`Self::as_borrowed()`] and using the methods on
-/// [`PropertyValueNameToEnumMapperBorrowed`].
+/// [`PropertyParserBorrowed`].
 ///
 /// The name can be a short name (`Lu`), a long name(`Uppercase_Letter`),
 /// or an alias.
@@ -31,9 +42,10 @@ impl DynamicDataMarker for ErasedNameToEnumMapV1Marker {
 /// # Example
 ///
 /// ```
-/// use icu::properties::GeneralCategory;
+/// use icu::properties::PropertyParser;
+/// use icu::properties::props::GeneralCategory;
 ///
-/// let lookup = GeneralCategory::name_to_enum_mapper();
+/// let lookup = PropertyParser::<GeneralCategory>::new();
 /// // short name for value
 /// assert_eq!(
 ///     lookup.get_strict("Lu"),
@@ -63,61 +75,79 @@ impl DynamicDataMarker for ErasedNameToEnumMapV1Marker {
 /// assert_eq!(lookup.get_strict("Animated_Gif"), None);
 /// ```
 #[derive(Debug)]
-pub struct PropertyValueNameToEnumMapper<T> {
+pub struct PropertyParser<T> {
     map: DataPayload<ErasedNameToEnumMapV1Marker>,
     markers: PhantomData<fn() -> T>,
 }
 
 /// A borrowed wrapper around property value name-to-enum data, returned by
-/// [`PropertyValueNameToEnumMapper::as_borrowed()`]. More efficient to query.
+/// [`PropertyParser::as_borrowed()`]. More efficient to query.
 #[derive(Debug, Copy, Clone)]
-pub struct PropertyValueNameToEnumMapperBorrowed<'a, T> {
+pub struct PropertyParserBorrowed<'a, T> {
     map: &'a PropertyValueNameToEnumMapV1<'a>,
     markers: PhantomData<fn() -> T>,
 }
 
-impl<T: TrieValue> PropertyValueNameToEnumMapper<T> {
+impl<T> PropertyParser<T> {
+    /// Creates a new instance of `PropertyParser<T>` using compiled data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    #[allow(clippy::new_ret_no_self)]
+    pub fn new() -> PropertyParserBorrowed<'static, T> where T: ParseableEnumeratedProperty {
+        PropertyParserBorrowed {
+            map: T::SINGLETON,
+            markers: PhantomData,
+        }
+    }
+
+    /// A version of [`Self::new()`] that uses custom data provided by a [`DataProvider`].
+    ///
+    /// Note that this will return an owned version of the data. Functionality is available on
+    /// the borrowed version, accessible through [`Self::as_borrowed`].
+    pub fn try_new_unstable(
+        provider: &(impl DataProvider<T::DataMarker> + ?Sized),
+    ) -> Result<Self, DataError> where T: ParseableEnumeratedProperty {
+        Ok(Self {
+            map: provider.load(Default::default())?.payload.cast(),
+            markers: PhantomData,
+        })
+    }
+
     /// Construct a borrowed version of this type that can be queried.
     ///
     /// This avoids a potential small underlying cost per API call (like `get_strict()`) by consolidating it
     /// up front.
     #[inline]
-    pub fn as_borrowed(&self) -> PropertyValueNameToEnumMapperBorrowed<'_, T> {
-        PropertyValueNameToEnumMapperBorrowed {
+    pub fn as_borrowed(&self) -> PropertyParserBorrowed<'_, T> {
+        PropertyParserBorrowed {
             map: self.map.get(),
             markers: PhantomData,
         }
     }
 
-    pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
-    where
-        M: DynamicDataMarker<DataStruct = PropertyValueNameToEnumMapV1<'static>>,
-    {
-        Self {
-            map: data.cast(),
-            markers: PhantomData,
-        }
-    }
-
     #[doc(hidden)] // used by FFI code
-    pub fn erase(self) -> PropertyValueNameToEnumMapper<u16> {
-        PropertyValueNameToEnumMapper {
+    pub fn erase(self) -> PropertyParser<u16> {
+        PropertyParser {
             map: self.map.cast(),
             markers: PhantomData,
         }
     }
 }
 
-impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'_, T> {
+impl<T: TrieValue> PropertyParserBorrowed<'_, T> {
     /// Get the property value as a u16, doing a strict search looking for
     /// names that match exactly
     ///
     /// # Example
     ///
     /// ```
-    /// use icu::properties::GeneralCategory;
+    /// use icu::properties::PropertyParser;
+    /// use icu::properties::props::GeneralCategory;
     ///
-    /// let lookup = GeneralCategory::name_to_enum_mapper();
+    /// let lookup = PropertyParser::<GeneralCategory>::new();
     /// assert_eq!(
     ///     lookup.get_strict_u16("Lu"),
     ///     Some(GeneralCategory::UppercaseLetter as u16)
@@ -140,9 +170,10 @@ impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'_, T> {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::GeneralCategory;
+    /// use icu::properties::PropertyParser;
+    /// use icu::properties::props::GeneralCategory;
     ///
-    /// let lookup = GeneralCategory::name_to_enum_mapper();
+    /// let lookup = PropertyParser::<GeneralCategory>::new();
     /// assert_eq!(
     ///     lookup.get_strict("Lu"),
     ///     Some(GeneralCategory::UppercaseLetter)
@@ -166,9 +197,10 @@ impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'_, T> {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::GeneralCategory;
+    /// use icu::properties::PropertyParser;
+    /// use icu::properties::props::GeneralCategory;
     ///
-    /// let lookup = GeneralCategory::name_to_enum_mapper();
+    /// let lookup = PropertyParser::<GeneralCategory>::new();
     /// assert_eq!(
     ///     lookup.get_loose_u16("Lu"),
     ///     Some(GeneralCategory::UppercaseLetter as u16)
@@ -195,9 +227,10 @@ impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'_, T> {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::GeneralCategory;
+    /// use icu::properties::PropertyParser;
+    /// use icu::properties::props::GeneralCategory;
     ///
-    /// let lookup = GeneralCategory::name_to_enum_mapper();
+    /// let lookup = PropertyParser::<GeneralCategory>::new();
     /// assert_eq!(
     ///     lookup.get_loose("Lu"),
     ///     Some(GeneralCategory::UppercaseLetter)
@@ -218,13 +251,13 @@ impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'_, T> {
     }
 }
 
-impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'static, T> {
-    /// Cheaply converts a [`PropertyValueNameToEnumMapperBorrowed<'static>`] into a [`PropertyValueNameToEnumMapper`].
+impl<T: TrieValue> PropertyParserBorrowed<'static, T> {
+    /// Cheaply converts a [`PropertyParserBorrowed<'static>`] into a [`PropertyParser`].
     ///
-    /// Note: Due to branching and indirection, using [`PropertyValueNameToEnumMapper`] might inhibit some
-    /// compile-time optimizations that are possible with [`PropertyValueNameToEnumMapperBorrowed`].
-    pub const fn static_to_owned(self) -> PropertyValueNameToEnumMapper<T> {
-        PropertyValueNameToEnumMapper {
+    /// Note: Due to branching and indirection, using [`PropertyParser`] might inhibit some
+    /// compile-time optimizations that are possible with [`PropertyParserBorrowed`].
+    pub const fn static_to_owned(self) -> PropertyParser<T> {
+        PropertyParser {
             map: DataPayload::from_static_ref(self.map),
             markers: PhantomData,
         }
@@ -247,20 +280,9 @@ fn get_loose_u16(payload: &PropertyValueNameToEnumMapV1<'_>, name: &str) -> Opti
     payload.map.get_copied_by(|p| p.cmp_loose(name))
 }
 
-/// Private marker type for PropertyEnumToValueNameSparseMapper
-/// to work for all properties at once
-#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
-pub(crate) struct ErasedEnumToValueNameSparseMapV1Marker;
-impl DynamicDataMarker for ErasedEnumToValueNameSparseMapV1Marker {
-    type DataStruct = PropertyEnumToValueNameSparseMapV1<'static>;
-}
-
 /// A struct capable of looking up a property name from a value
 /// Access its data by calling [`Self::as_borrowed()`] and using the methods on
-/// [`PropertyEnumToValueNameSparseMapperBorrowed`].
-///
-/// This mapper is used for properties with sparse values, like [`CanonicalCombiningClass`].
-/// It may be obtained using methods like [`CanonicalCombiningClass::get_enum_to_long_name_mapper()`].
+/// [`PropertyNamesBorrowed`].
 ///
 /// The name returned may be a short (`"KV"`) or long (`"Kana_Voicing"`) name, depending
 /// on the constructor used.
@@ -268,69 +290,122 @@ impl DynamicDataMarker for ErasedEnumToValueNameSparseMapV1Marker {
 /// # Example
 ///
 /// ```
-/// use icu::properties::CanonicalCombiningClass;
+/// use icu::properties::PropertyNames;
+/// use icu::properties::props::CanonicalCombiningClass;
 ///
-/// let lookup = CanonicalCombiningClass::enum_to_long_name_mapper();
+/// let names = PropertyNames::<CanonicalCombiningClass>::new_long();
 /// assert_eq!(
-///     lookup.get(CanonicalCombiningClass::KanaVoicing),
+///     names.get(CanonicalCombiningClass::KanaVoicing),
 ///     Some("Kana_Voicing")
 /// );
 /// assert_eq!(
-///     lookup.get(CanonicalCombiningClass::AboveLeft),
+///     names.get(CanonicalCombiningClass::AboveLeft),
 ///     Some("Above_Left")
 /// );
 /// ```
-#[derive(Debug)]
-pub struct PropertyEnumToValueNameSparseMapper<T> {
-    map: DataPayload<ErasedEnumToValueNameSparseMapV1Marker>,
+pub struct PropertyNames<T: NamedEnumeratedProperty> {
+    map: DataPayload<T::ErasedMarker>,
     markers: PhantomData<fn(T) -> ()>,
+}
+
+impl<T: NamedEnumeratedProperty> core::fmt::Debug for PropertyNames<T>
+where
+    DataPayload<T::ErasedMarker>: core::fmt::Debug,
+{
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.debug_struct("PropertyNames")
+            .field("map", &self.map)
+            .field("markers", &self.markers)
+            .finish()
+    }
 }
 
 /// A borrowed wrapper around property value name-to-enum data, returned by
-/// [`PropertyEnumToValueNameSparseMapper::as_borrowed()`]. More efficient to query.
+/// [`PropertyNames::as_borrowed()`]. More efficient to query.
 #[derive(Debug, Copy, Clone)]
-pub struct PropertyEnumToValueNameSparseMapperBorrowed<'a, T> {
-    map: &'a PropertyEnumToValueNameSparseMapV1<'a>,
+pub struct PropertyNamesBorrowed<'a, T: NamedEnumeratedProperty> {
+    map: &'a T::DataType,
     markers: PhantomData<fn(T) -> ()>,
 }
 
-impl<T: TrieValue> PropertyEnumToValueNameSparseMapper<T> {
+impl<T: NamedEnumeratedProperty> PropertyNames<T> {
+    /// Creates a new instance of `PropertyNames<T>` that returns short names.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub fn new_short() -> PropertyNamesBorrowed<'static, T> {
+        PropertyNamesBorrowed {
+            map: T::SINGLETON_SHORT,
+            markers: PhantomData,
+        }
+    }
+
+    /// Creates a new instance of `PropertyNames<T>` that returns long names.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub fn new_long() -> PropertyNamesBorrowed<'static, T> {
+        PropertyNamesBorrowed {
+            map: T::SINGLETON_LONG,
+            markers: PhantomData,
+        }
+    }
+
+    /// A version of [`Self::new_short()`] that uses custom data provided by a [`DataProvider`].
+    ///
+    /// Note that this will return an owned version of the data. Functionality is available on
+    /// the borrowed version, accessible through [`Self::as_borrowed`].
+    pub fn try_new_short_unstable(
+        provider: &(impl DataProvider<T::DataMarkerShort> + ?Sized),
+    ) -> Result<Self, DataError> {
+        Ok(Self {
+            map: provider.load(Default::default())?.payload.cast(),
+            markers: PhantomData,
+        })
+    }
+
+    /// A version of [`Self::new_long()`] that uses custom data provided by a [`DataProvider`].
+    ///
+    /// Note that this will return an owned version of the data. Functionality is available on
+    /// the borrowed version, accessible through [`Self::as_borrowed`].
+    pub fn try_new_long_unstable(
+        provider: &(impl DataProvider<T::DataMarkerLong> + ?Sized),
+    ) -> Result<Self, DataError> {
+        Ok(Self {
+            map: provider.load(Default::default())?.payload.cast(),
+            markers: PhantomData,
+        })
+    }
+
     /// Construct a borrowed version of this type that can be queried.
     ///
     /// This avoids a potential small underlying cost per API call (like `get_static()`) by consolidating it
     /// up front.
     #[inline]
-    pub fn as_borrowed(&self) -> PropertyEnumToValueNameSparseMapperBorrowed<'_, T> {
-        PropertyEnumToValueNameSparseMapperBorrowed {
-            map: self.map.get(),
-            markers: PhantomData,
-        }
-    }
-
-    /// Construct a new one from loaded data
-    ///
-    /// Typically it is preferable to use methods on individual property value types
-    /// (like [`Script::TBD()`]) instead.
-    pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
-    where
-        M: DynamicDataMarker<DataStruct = PropertyEnumToValueNameSparseMapV1<'static>>,
-    {
-        Self {
-            map: data.cast(),
+    pub fn as_borrowed(&self) -> PropertyNamesBorrowed<'_, T> {
+        PropertyNamesBorrowed {
+            map: unsafe {
+                &*(self.map.get() as *const <T::DataType as Yokeable>::Output as *const T::DataType)
+            },
             markers: PhantomData,
         }
     }
 }
 
-impl<T: TrieValue> PropertyEnumToValueNameSparseMapperBorrowed<'_, T> {
+impl<T: NamedEnumeratedProperty> PropertyNamesBorrowed<'_, T> {
     /// Get the property name given a value
     ///
     /// # Example
     ///
     /// ```rust
-    /// use icu::properties::CanonicalCombiningClass;
+    /// use icu::properties::PropertyNames;
+    /// use icu::properties::props::CanonicalCombiningClass;
     ///
-    /// let lookup = CanonicalCombiningClass::enum_to_long_name_mapper();
+    /// let lookup = PropertyNames::<CanonicalCombiningClass>::new_long();
     /// assert_eq!(
     ///     lookup.get(CanonicalCombiningClass::KanaVoicing),
     ///     Some("Kana_Voicing")
@@ -342,311 +417,242 @@ impl<T: TrieValue> PropertyEnumToValueNameSparseMapperBorrowed<'_, T> {
     /// ```
     #[inline]
     pub fn get(&self, property: T) -> Option<&str> {
-        let prop = u16::try_from(property.to_u32()).ok()?;
-        self.map.map.get(&prop)
+        self.map.get(property.to_u32())
     }
 }
 
-impl<T: TrieValue> PropertyEnumToValueNameSparseMapperBorrowed<'static, T> {
-    /// Cheaply converts a [`PropertyEnumToValueNameSparseMapperBorrowed<'static>`] into a [`PropertyEnumToValueNameSparseMapper`].
+impl<T: NamedEnumeratedProperty> PropertyNamesBorrowed<'static, T> {
+    /// Cheaply converts a [`PropertyNamesBorrowed<'static>`] into a [`PropertyNames`].
     ///
-    /// Note: Due to branching and indirection, using [`PropertyEnumToValueNameSparseMapper`] might inhibit some
-    /// compile-time optimizations that are possible with [`PropertyEnumToValueNameSparseMapperBorrowed`].
-    pub const fn static_to_owned(self) -> PropertyEnumToValueNameSparseMapper<T> {
-        PropertyEnumToValueNameSparseMapper {
+    /// Note: Due to branching and indirection, using [`PropertyNames`] might inhibit some
+    /// compile-time optimizations that are possible with [`PropertyNamesBorrowed`].
+    pub const fn static_to_owned(self) -> PropertyNames<T> {
+        PropertyNames {
             map: DataPayload::from_static_ref(self.map),
             markers: PhantomData,
         }
     }
 }
 
-/// Private marker type for PropertyEnumToValueNameLinearMapper
-/// to work for all properties at once
-#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
-pub(crate) struct ErasedEnumToValueNameLinearMapV1Marker;
-impl DynamicDataMarker for ErasedEnumToValueNameLinearMapV1Marker {
-    type DataStruct = PropertyEnumToValueNameLinearMapV1<'static>;
-}
-
-/// A struct capable of looking up a property name from a value
+/// A struct capable of converting `icu::properties::props::Script` to `icu::locale::subtags::Script`.
+///
 /// Access its data by calling [`Self::as_borrowed()`] and using the methods on
-/// [`PropertyEnumToValueNameLinearMapperBorrowed`].
-///
-/// This mapper is used for properties with sequential values, like [`GeneralCategory`].
-/// It may be obtained using methods like [`GeneralCategory::get_enum_to_long_name_mapper()`].
-///
-/// The name returned may be a short (`"Lu"`) or long (`"Uppercase_Letter"`) name, depending
-/// on the constructor used.
+/// [`ScriptMapperBorrowed`].
 ///
 /// # Example
 ///
 /// ```
-/// use icu::properties::GeneralCategory;
-///
-/// let lookup = GeneralCategory::enum_to_long_name_mapper();
-/// assert_eq!(
-///     lookup.get(GeneralCategory::UppercaseLetter),
-///     Some("Uppercase_Letter")
-/// );
-/// assert_eq!(
-///     lookup.get(GeneralCategory::DashPunctuation),
-///     Some("Dash_Punctuation")
-/// );
-/// ```
-#[derive(Debug)]
-pub struct PropertyEnumToValueNameLinearMapper<T> {
-    map: DataPayload<ErasedEnumToValueNameLinearMapV1Marker>,
-    markers: PhantomData<fn(T) -> ()>,
-}
-
-/// A borrowed wrapper around property value name-to-enum data, returned by
-/// [`PropertyEnumToValueNameLinearMapper::as_borrowed()`]. More efficient to query.
-#[derive(Debug, Copy, Clone)]
-pub struct PropertyEnumToValueNameLinearMapperBorrowed<'a, T> {
-    map: &'a PropertyEnumToValueNameLinearMapV1<'a>,
-    markers: PhantomData<fn(T) -> ()>,
-}
-
-impl<T: TrieValue> PropertyEnumToValueNameLinearMapper<T> {
-    /// Construct a borrowed version of this type that can be queried.
-    ///
-    /// This avoids a potential small underlying cost per API call (like `get_static()`) by consolidating it
-    /// up front.
-    #[inline]
-    pub fn as_borrowed(&self) -> PropertyEnumToValueNameLinearMapperBorrowed<'_, T> {
-        PropertyEnumToValueNameLinearMapperBorrowed {
-            map: self.map.get(),
-            markers: PhantomData,
-        }
-    }
-
-    /// Construct a new one from loaded data
-    ///
-    /// Typically it is preferable to use methods on individual property value types
-    /// (like [`Script::TBD()`]) instead.
-    pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
-    where
-        M: DynamicDataMarker<DataStruct = PropertyEnumToValueNameLinearMapV1<'static>>,
-    {
-        Self {
-            map: data.cast(),
-            markers: PhantomData,
-        }
-    }
-}
-
-impl<T: TrieValue> PropertyEnumToValueNameLinearMapperBorrowed<'_, T> {
-    /// Get the property name given a value
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// use icu::properties::GeneralCategory;
-    ///
-    /// let lookup = GeneralCategory::enum_to_short_name_mapper();
-    /// assert_eq!(lookup.get(GeneralCategory::UppercaseLetter), Some("Lu"));
-    /// assert_eq!(lookup.get(GeneralCategory::DashPunctuation), Some("Pd"));
-    /// ```
-    #[inline]
-    pub fn get(&self, property: T) -> Option<&str> {
-        let prop = usize::try_from(property.to_u32()).ok()?;
-        self.map.map.get(prop).filter(|x| !x.is_empty())
-    }
-}
-
-impl<T: TrieValue> PropertyEnumToValueNameLinearMapperBorrowed<'static, T> {
-    /// Cheaply converts a [`PropertyEnumToValueNameLinearMapperBorrowed<'static>`] into a [`PropertyEnumToValueNameLinearMapper`].
-    ///
-    /// Note: Due to branching and indirection, using [`PropertyEnumToValueNameLinearMapper`] might inhibit some
-    /// compile-time optimizations that are possible with [`PropertyEnumToValueNameLinearMapperBorrowed`].
-    pub const fn static_to_owned(self) -> PropertyEnumToValueNameLinearMapper<T> {
-        PropertyEnumToValueNameLinearMapper {
-            map: DataPayload::from_static_ref(self.map),
-            markers: PhantomData,
-        }
-    }
-}
-
-/// Private marker type for PropertyScriptToIcuScriptMapper
-/// to work for all properties at once
-#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
-pub(crate) struct ErasedEnumToValueNameLinearTiny4MapV1Marker;
-impl DynamicDataMarker for ErasedEnumToValueNameLinearTiny4MapV1Marker {
-    type DataStruct = PropertyScriptToIcuScriptMapV1<'static>;
-}
-
-/// A struct capable of looking up a property name from a value
-/// Access its data by calling [`Self::as_borrowed()`] and using the methods on
-/// [`PropertyScriptToIcuScriptMapperBorrowed`].
-///
-/// This mapper is used for the [`Script`] property.
-/// It may be obtained using methods like [`Script::get_enum_to_icu_script_mapper()`].
-///
-/// # Example
-///
-/// ```
-/// use icu::properties::Script;
+/// use icu::properties::ScriptMapper;
+/// use icu::properties::props::Script;
 /// use icu::locale::subtags::script;
 ///
-/// let lookup = Script::enum_to_icu_script_mapper();
+/// let lookup = ScriptMapper::new();
 /// assert_eq!(lookup.get(Script::Brahmi), Some(script!("Brah")));
 /// assert_eq!(lookup.get(Script::Hangul), Some(script!("Hang")));
 /// ```
 #[derive(Debug)]
-pub struct PropertyScriptToIcuScriptMapper<T> {
-    map: DataPayload<ErasedEnumToValueNameLinearTiny4MapV1Marker>,
-    markers: PhantomData<fn(T) -> ()>,
+pub struct ScriptMapper {
+    map: DataPayload<ScriptValueToShortNameV1Marker>,
 }
 
 /// A borrowed wrapper around property value name-to-enum data, returned by
-/// [`PropertyScriptToIcuScriptMapper::as_borrowed()`]. More efficient to query.
+/// [`ScriptMapper::as_borrowed()`]. More efficient to query.
 #[derive(Debug, Copy, Clone)]
-pub struct PropertyScriptToIcuScriptMapperBorrowed<'a, T> {
+pub struct ScriptMapperBorrowed<'a> {
     map: &'a PropertyScriptToIcuScriptMapV1<'a>,
-    markers: PhantomData<fn(T) -> ()>,
 }
 
-impl<T: TrieValue> PropertyScriptToIcuScriptMapper<T> {
+impl ScriptMapper {
+    /// Creates a new instance of `ScriptMapper` using compiled data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    #[allow(clippy::new_ret_no_self)]
+    pub fn new() -> ScriptMapperBorrowed<'static> {
+        ScriptMapperBorrowed {
+            map: crate::provider::Baked::SINGLETON_SCRIPT_VALUE_TO_SHORT_NAME_V1_MARKER,
+        }
+    }
+
+    /// A version of [`Self::new()`] that uses custom data provided by a [`DataProvider`].
+    ///
+    /// Note that this will return an owned version of the data. Functionality is available on
+    /// the borrowed version, accessible through [`Self::as_borrowed`].
+    pub fn try_new_unstable(
+        provider: &(impl DataProvider<ScriptValueToShortNameV1Marker> + ?Sized),
+    ) -> Result<Self, DataError> {
+        Ok(Self {
+            map: provider.load(Default::default())?.payload,
+        })
+    }
+
     /// Construct a borrowed version of this type that can be queried.
     ///
     /// This avoids a potential small underlying cost per API call (like `get_static()`) by consolidating it
     /// up front.
     #[inline]
-    pub fn as_borrowed(&self) -> PropertyScriptToIcuScriptMapperBorrowed<'_, T> {
-        PropertyScriptToIcuScriptMapperBorrowed {
+    pub fn as_borrowed(&self) -> ScriptMapperBorrowed<'_> {
+        ScriptMapperBorrowed {
             map: self.map.get(),
-            markers: PhantomData,
-        }
-    }
-
-    /// Construct a new one from loaded data
-    ///
-    /// Typically it is preferable to use methods on individual property value types
-    /// (like [`Script::TBD()`]) instead.
-    pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
-    where
-        M: DynamicDataMarker<DataStruct = PropertyScriptToIcuScriptMapV1<'static>>,
-    {
-        Self {
-            map: data.cast(),
-            markers: PhantomData,
         }
     }
 }
 
-impl<T: TrieValue> PropertyScriptToIcuScriptMapperBorrowed<'_, T> {
+impl ScriptMapperBorrowed<'_> {
     /// Get the property name given a value
     ///
     /// # Example
     ///
     /// ```rust
-    /// use icu::properties::Script;
+    /// use icu::properties::ScriptMapper;
+    /// use icu::properties::props::Script;
     /// use icu::locale::subtags::script;
     ///
-    /// let lookup = Script::enum_to_icu_script_mapper();
+    /// let lookup = ScriptMapper::new();
     /// assert_eq!(lookup.get(Script::Brahmi), Some(script!("Brah")));
     /// assert_eq!(lookup.get(Script::Hangul), Some(script!("Hang")));
     /// ```
     #[inline]
-    pub fn get(&self, property: T) -> Option<icu_locale_core::subtags::Script> {
+    pub fn get(&self, property: Script) -> Option<icu_locale_core::subtags::Script> {
         let prop = usize::try_from(property.to_u32()).ok()?;
         self.map.map.get(prop).and_then(|o| o.0)
     }
 }
 
-impl<T: TrieValue> PropertyScriptToIcuScriptMapperBorrowed<'static, T> {
-    /// Cheaply converts a [`PropertyScriptToIcuScriptMapperBorrowed<'static>`] into a [`PropertyScriptToIcuScriptMapper`].
+impl ScriptMapperBorrowed<'static> {
+    /// Cheaply converts a [`ScriptMapperBorrowed<'static>`] into a [`ScriptMapper`].
     ///
-    /// Note: Due to branching and indirection, using [`PropertyScriptToIcuScriptMapper`] might inhibit some
-    /// compile-time optimizations that are possible with [`PropertyScriptToIcuScriptMapperBorrowed`].
-    pub const fn static_to_owned(self) -> PropertyScriptToIcuScriptMapper<T> {
-        PropertyScriptToIcuScriptMapper {
+    /// Note: Due to branching and indirection, using [`ScriptMapper`] might inhibit some
+    /// compile-time optimizations that are possible with [`ScriptMapperBorrowed`].
+    pub const fn static_to_owned(self) -> ScriptMapper {
+        ScriptMapper {
             map: DataPayload::from_static_ref(self.map),
-            markers: PhantomData,
         }
     }
+}
+
+/// TODO
+pub trait ParseableEnumeratedProperty: crate::private::Sealed + TrieValue {
+    #[doc(hidden)]
+    type DataMarker: DataMarker<DataStruct = PropertyValueNameToEnumMapV1<'static>>;
+    #[doc(hidden)]
+    #[cfg(feature = "compiled_data")]
+    const SINGLETON: &'static PropertyValueNameToEnumMapV1<'static>;
+}
+
+// Abstract over Linear/Sparse representation
+pub trait PropertyEnumToValueNameLookup {
+    fn get(&self, prop: u32) -> Option<&str>;
+}
+
+impl PropertyEnumToValueNameLookup for PropertyEnumToValueNameLinearMapV1<'_> {
+    fn get(&self, prop: u32) -> Option<&str> {
+        self.map.get(usize::try_from(prop).ok()?)
+    }
+}
+
+impl PropertyEnumToValueNameLookup for PropertyEnumToValueNameSparseMapV1<'_> {
+    fn get(&self, prop: u32) -> Option<&str> {
+        self.map.get(&u16::try_from(prop).ok()?)
+    }
+}
+
+/// TODO
+pub trait NamedEnumeratedProperty: ParseableEnumeratedProperty {
+    #[doc(hidden)]
+    type DataType: 'static + for<'a> Yokeable<'a> + PropertyEnumToValueNameLookup;
+    #[doc(hidden)]
+    type ErasedMarker: DynamicDataMarker<DataStruct = Self::DataType>;
+    #[doc(hidden)]
+    type DataMarkerLong: DataMarker<DataStruct = Self::DataType>;
+    #[doc(hidden)]
+    type DataMarkerShort: DataMarker<DataStruct = Self::DataType>;
+    #[doc(hidden)]
+    #[cfg(feature = "compiled_data")]
+    const SINGLETON_LONG: &'static Self::DataType;
+    #[doc(hidden)]
+    #[cfg(feature = "compiled_data")]
+    const SINGLETON_SHORT: &'static Self::DataType;
 }
 
 macro_rules! impl_value_getter {
     (
-        // the marker type for names lookup (name_to_enum, enum_to_short_name, enum_to_long_name)
-        markers: $marker_n2e:ident / $singleton_n2e:ident $(, $marker_e2sn:ident / $singleton_e2sn:ident, $marker_e2ln:ident / $singleton_e2ln:ident)?;
         impl $ty:ident {
             $(#[$attr_n2e:meta])*
-            $vis_n2e:vis fn $name_n2e:ident() / $cname_n2e:ident();
+            $marker_n2e:ident / $singleton_n2e:ident;
             $(
-
+                Sparse:
                 $(#[$attr_e2sn:meta])*
-                $vis_e2sn:vis fn $name_e2sn:ident() / $cname_e2sn:ident() -> $mapper_e2sn:ident / $mapper_e2snb:ident;
+                $marker_e2sn:ident / $singleton_e2sn:ident;
                 $(#[$attr_e2ln:meta])*
-                $vis_e2ln:vis fn $name_e2ln:ident() / $cname_e2ln:ident() -> $mapper_e2ln:ident / $mapper_e2lnb:ident;
+                $marker_e2ln:ident / $singleton_e2ln:ident;
             )?
         }
     ) => {
-        impl $ty {
-            $(#[$attr_n2e])*
+        // $(#[$attr_n2e])*
+        impl ParseableEnumeratedProperty for $ty {
+            type DataMarker = $marker_n2e;
             #[cfg(feature = "compiled_data")]
-            $vis_n2e const fn $cname_n2e() -> PropertyValueNameToEnumMapperBorrowed<'static, $ty> {
-                PropertyValueNameToEnumMapperBorrowed {
-                    map: crate::provider::Baked::$singleton_n2e,
-                    markers: PhantomData,
-                }
-            }
+            const SINGLETON: &'static PropertyValueNameToEnumMapV1<'static> = crate::provider::Baked::$singleton_n2e;
+        }
 
-            #[doc = concat!("A version of [`", stringify!($ty), "::", stringify!($cname_n2e), "()`] that uses custom data provided by a [`DataProvider`].")]
-            ///
-            /// [📚 Help choosing a constructor](icu_provider::constructors)
-            $vis_n2e fn $name_n2e(
-                provider: &(impl DataProvider<$marker_n2e> + ?Sized)
-            ) -> Result<PropertyValueNameToEnumMapper<$ty>, DataError> {
-                Ok(PropertyValueNameToEnumMapper::from_data(provider.load(Default::default())?.payload))
+        $(
+            // $(#[$attr_e2sn])*
+            // $(#[$attr_e2ln])*
+            impl NamedEnumeratedProperty for $ty {
+                type DataType = PropertyEnumToValueNameSparseMapV1<'static>;
+                type ErasedMarker = ErasedEnumToValueNameSparseMapV1Marker;
+                type DataMarkerLong = crate::provider::$marker_e2ln;
+                type DataMarkerShort = crate::provider::$marker_e2sn;
+                #[cfg(feature = "compiled_data")]
+                const SINGLETON_LONG: &'static Self::DataType = crate::provider::Baked::$singleton_e2ln;
+                #[cfg(feature = "compiled_data")]
+                const SINGLETON_SHORT: &'static Self::DataType = crate::provider::Baked::$singleton_e2sn;
             }
-
+        )?
+    };
+    (
+        impl $ty:ident {
+            $(#[$attr_n2e:meta])*
+            $marker_n2e:ident / $singleton_n2e:ident;
             $(
-                $(#[$attr_e2sn])*
-                #[cfg(feature = "compiled_data")]
-                $vis_e2sn const fn $cname_e2sn() -> $mapper_e2snb<'static, $ty> {
-                    $mapper_e2snb {
-                        map: crate::provider::Baked::$singleton_e2sn,
-                        markers: PhantomData,
-                    }
-                }
-
-                #[doc = concat!("A version of [`", stringify!($ty), "::", stringify!($cname_e2sn), "()`] that uses custom data provided by a [`DataProvider`].")]
-                ///
-                /// [📚 Help choosing a constructor](icu_provider::constructors)
-                $vis_e2sn fn $name_e2sn(
-                    provider: &(impl DataProvider<$marker_e2sn> + ?Sized)
-                ) -> Result<$mapper_e2sn<$ty>, DataError> {
-                    Ok($mapper_e2sn::from_data(provider.load(Default::default())?.payload))
-                }
-
-                $(#[$attr_e2ln])*
-                #[cfg(feature = "compiled_data")]
-                $vis_e2ln const fn $cname_e2ln() -> $mapper_e2lnb<'static, $ty> {
-                    $mapper_e2lnb {
-                        map: crate::provider::Baked::$singleton_e2ln,
-                        markers: PhantomData,
-                    }
-                }
-
-                #[doc = concat!("A version of [`", stringify!($ty), "::", stringify!($cname_e2ln), "()`] that uses custom data provided by a [`DataProvider`].")]
-                ///
-                /// [📚 Help choosing a constructor](icu_provider::constructors)
-                $vis_e2ln fn $name_e2ln(
-                    provider: &(impl DataProvider<$marker_e2ln> + ?Sized)
-                ) -> Result<$mapper_e2ln<$ty>, DataError> {
-                    Ok($mapper_e2ln::from_data(provider.load(Default::default())?.payload))
-                }
+                Linear:
+                $(#[$attr_e2sn:meta])*
+                $marker_e2sn:ident / $singleton_e2sn:ident;
+                $(#[$attr_e2ln:meta])*
+                $marker_e2ln:ident / $singleton_e2ln:ident;
             )?
         }
-    }
+    ) => {
+        // $(#[$attr_n2e])*
+        impl ParseableEnumeratedProperty for $ty {
+            type DataMarker = crate::provider::$marker_n2e;
+            #[cfg(feature = "compiled_data")]
+            const SINGLETON: &'static PropertyValueNameToEnumMapV1<'static> = crate::provider::Baked::$singleton_n2e;
+        }
+
+        $(
+            // $(#[$attr_e2sn])*
+            // $(#[$attr_e2ln])*
+            impl NamedEnumeratedProperty for $ty {
+                type DataType = PropertyEnumToValueNameLinearMapV1<'static>;
+                type ErasedMarker = ErasedEnumToValueNameLinearMapV1Marker;
+                type DataMarkerLong = crate::provider::$marker_e2ln;
+                type DataMarkerShort = crate::provider::$marker_e2sn;
+                #[cfg(feature = "compiled_data")]
+                const SINGLETON_LONG: &'static Self::DataType = crate::provider::Baked::$singleton_e2ln;
+                #[cfg(feature = "compiled_data")]
+                const SINGLETON_SHORT: &'static Self::DataType = crate::provider::Baked::$singleton_e2sn;
+            }
+        )?
+    };
 }
 
 impl_value_getter! {
-    markers: BidiClassNameToValueV1Marker / SINGLETON_BIDI_CLASS_NAME_TO_VALUE_V1_MARKER, BidiClassValueToShortNameV1Marker / SINGLETON_BIDI_CLASS_VALUE_TO_SHORT_NAME_V1_MARKER, BidiClassValueToLongNameV1Marker / SINGLETON_BIDI_CLASS_VALUE_TO_LONG_NAME_V1_MARKER;
     impl BidiClass {
-        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
+        /// Return a [`PropertyParser`], capable of looking up values
         /// from strings for the `Bidi_Class` enumerated property
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -672,7 +678,8 @@ impl_value_getter! {
         /// // fake property
         /// assert_eq!(lookup.get_strict("Upside_Down_Vertical_Backwards_Mirrored"), None);
         /// ```
-        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
+        BidiClassNameToValueV1Marker / SINGLETON_BIDI_CLASS_NAME_TO_VALUE_V1_MARKER;
+        Linear:
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
         /// for values of the `Bidi_Class` enumerated property
         ///
@@ -689,7 +696,7 @@ impl_value_getter! {
         /// assert_eq!(lookup.get(BidiClass::ArabicNumber), Some("AN"));
         /// assert_eq!(lookup.get(BidiClass::NonspacingMark), Some("NSM"));
         /// ```
-        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
+        BidiClassValueToShortNameV1Marker / SINGLETON_BIDI_CLASS_VALUE_TO_SHORT_NAME_V1_MARKER;
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
         /// for values of the `Bidi_Class` enumerated property
         ///
@@ -706,14 +713,13 @@ impl_value_getter! {
         /// assert_eq!(lookup.get(BidiClass::ArabicNumber), Some("Arabic_Number"));
         /// assert_eq!(lookup.get(BidiClass::NonspacingMark), Some("Nonspacing_Mark"));
         /// ```
-        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
+        BidiClassValueToLongNameV1Marker / SINGLETON_BIDI_CLASS_VALUE_TO_LONG_NAME_V1_MARKER;
     }
 }
 
 impl_value_getter! {
-    markers: GeneralCategoryNameToValueV1Marker / SINGLETON_GENERAL_CATEGORY_NAME_TO_VALUE_V1_MARKER, GeneralCategoryValueToShortNameV1Marker / SINGLETON_GENERAL_CATEGORY_VALUE_TO_SHORT_NAME_V1_MARKER, GeneralCategoryValueToLongNameV1Marker / SINGLETON_GENERAL_CATEGORY_VALUE_TO_LONG_NAME_V1_MARKER;
     impl GeneralCategory {
-        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
+        /// Return a [`PropertyParser`], capable of looking up values
         /// from strings for the `General_Category` enumerated property.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -739,7 +745,8 @@ impl_value_getter! {
         /// // fake property
         /// assert_eq!(lookup.get_loose("Animated_Gif"), None);
         /// ```
-        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
+        GeneralCategoryNameToValueV1Marker / SINGLETON_GENERAL_CATEGORY_NAME_TO_VALUE_V1_MARKER;
+        Linear:
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
         /// for values of the `General_Category` enumerated property.
         ///
@@ -757,7 +764,7 @@ impl_value_getter! {
         /// assert_eq!(lookup.get(GeneralCategory::DashPunctuation), Some("Pd"));
         /// assert_eq!(lookup.get(GeneralCategory::FinalPunctuation), Some("Pf"));
         /// ```
-        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
+        GeneralCategoryValueToShortNameV1Marker / SINGLETON_GENERAL_CATEGORY_VALUE_TO_SHORT_NAME_V1_MARKER;
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
         /// for values of the `General_Category` enumerated property.
         ///
@@ -775,14 +782,13 @@ impl_value_getter! {
         /// assert_eq!(lookup.get(GeneralCategory::DashPunctuation), Some("Dash_Punctuation"));
         /// assert_eq!(lookup.get(GeneralCategory::FinalPunctuation), Some("Final_Punctuation"));
         /// ```
-        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
+        GeneralCategoryValueToLongNameV1Marker / SINGLETON_GENERAL_CATEGORY_VALUE_TO_LONG_NAME_V1_MARKER;
     }
 }
 
 impl_value_getter! {
-    markers: GeneralCategoryMaskNameToValueV1Marker / SINGLETON_GENERAL_CATEGORY_MASK_NAME_TO_VALUE_V1_MARKER;
     impl GeneralCategoryGroup {
-        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
+        /// Return a [`PropertyParser`], capable of looking up values
         /// from strings for the `General_Category_Mask` mask property.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -814,14 +820,13 @@ impl_value_getter! {
         /// // fake property
         /// assert_eq!(lookup.get_strict("EverythingLol"), None);
         /// ```
-        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
+        GeneralCategoryMaskNameToValueV1Marker / SINGLETON_GENERAL_CATEGORY_MASK_NAME_TO_VALUE_V1_MARKER;
     }
 }
 
 impl_value_getter! {
-    markers: ScriptNameToValueV1Marker / SINGLETON_SCRIPT_NAME_TO_VALUE_V1_MARKER, ScriptValueToShortNameV1Marker / SINGLETON_SCRIPT_VALUE_TO_SHORT_NAME_V1_MARKER, ScriptValueToLongNameV1Marker / SINGLETON_SCRIPT_VALUE_TO_LONG_NAME_V1_MARKER;
     impl Script {
-        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
+        /// Return a [`PropertyParser`], capable of looking up values
         /// from strings for the `Script` enumerated property.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -847,49 +852,48 @@ impl_value_getter! {
         /// // fake property
         /// assert_eq!(lookup.get_strict("Linear_Z"), None);
         /// ```
-        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
-        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
-        /// for values of the `Script` enumerated property.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::Script;
-        /// use icu::locale::subtags::script;
-        ///
-        /// let lookup = Script::enum_to_icu_script_mapper();
-        /// assert_eq!(lookup.get(Script::Brahmi), Some(script!("Brah")));
-        /// assert_eq!(lookup.get(Script::Hangul), Some(script!("Hang")));
-        /// ```
-        pub fn get_enum_to_icu_script_mapper() / enum_to_icu_script_mapper() -> PropertyScriptToIcuScriptMapper / PropertyScriptToIcuScriptMapperBorrowed;
-        /// Return a [`PropertyScriptToIcuScriptMapper`], capable of looking up long names
-        /// for values of the `Script` enumerated property.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Example
-        ///
-        /// ```
-        /// use icu::properties::Script;
-        ///
-        /// let lookup = Script::enum_to_long_name_mapper();
-        /// assert_eq!(lookup.get(Script::Brahmi), Some("Brahmi"));
-        /// assert_eq!(lookup.get(Script::Hangul), Some("Hangul"));
-        /// ```
-        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
+        ScriptNameToValueV1Marker / SINGLETON_SCRIPT_NAME_TO_VALUE_V1_MARKER;
+        // /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
+        // /// for values of the `Script` enumerated property.
+        // ///
+        // /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        // ///
+        // /// [📚 Help choosing a constructor](icu_provider::constructors)
+        // ///
+        // /// # Example
+        // ///
+        // /// ```
+        // /// use icu::properties::Script;
+        // /// use icu::locale::subtags::script;
+        // ///
+        // /// let lookup = Script::enum_to_icu_script_mapper();
+        // /// assert_eq!(lookup.get(Script::Brahmi), Some(script!("Brah")));
+        // /// assert_eq!(lookup.get(Script::Hangul), Some(script!("Hang")));
+        // /// ```
+        // ScriptMapper -> ScriptValueToShortNameV1Marker / SINGLETON_SCRIPT_VALUE_TO_SHORT_NAME_V1_MARKER;
+        // /// Return a [`ScriptMapper`], capable of looking up long names
+        // /// for values of the `Script` enumerated property.
+        // ///
+        // /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        // ///
+        // /// [📚 Help choosing a constructor](icu_provider::constructors)
+        // ///
+        // /// # Example
+        // ///
+        // /// ```
+        // /// use icu::properties::Script;
+        // ///
+        // /// let lookup = Script::enum_to_long_name_mapper();
+        // /// assert_eq!(lookup.get(Script::Brahmi), Some("Brahmi"));
+        // /// assert_eq!(lookup.get(Script::Hangul), Some("Hangul"));
+        // /// ```
+        // PropertyEnumToValueNameLinearMapper -> ScriptValueToLongNameV1Marker / SINGLETON_SCRIPT_VALUE_TO_LONG_NAME_V1_MARKER;
     }
 }
 
 impl_value_getter! {
-    markers: HangulSyllableTypeNameToValueV1Marker / SINGLETON_HANGUL_SYLLABLE_TYPE_NAME_TO_VALUE_V1_MARKER, HangulSyllableTypeValueToShortNameV1Marker / SINGLETON_HANGUL_SYLLABLE_TYPE_VALUE_TO_SHORT_NAME_V1_MARKER, HangulSyllableTypeValueToLongNameV1Marker / SINGLETON_HANGUL_SYLLABLE_TYPE_VALUE_TO_LONG_NAME_V1_MARKER;
-    impl HangulSyllableType {
-        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
+   impl HangulSyllableType {
+        /// Return a [`PropertyParser`], capable of looking up values
         /// from strings for the `Bidi_Class` enumerated property
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -915,7 +919,8 @@ impl_value_getter! {
         /// // fake property
         /// assert_eq!(lookup.get_strict("LT_Syllable"), None);
         /// ```
-        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
+        HangulSyllableTypeNameToValueV1Marker / SINGLETON_HANGUL_SYLLABLE_TYPE_NAME_TO_VALUE_V1_MARKER;
+        Linear:
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
         /// for values of the `Bidi_Class` enumerated property
         ///
@@ -932,7 +937,7 @@ impl_value_getter! {
         /// assert_eq!(lookup.get(HangulSyllableType::LeadingJamo), Some("L"));
         /// assert_eq!(lookup.get(HangulSyllableType::LeadingVowelSyllable), Some("LV"));
         /// ```
-        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
+        HangulSyllableTypeValueToShortNameV1Marker / SINGLETON_HANGUL_SYLLABLE_TYPE_VALUE_TO_SHORT_NAME_V1_MARKER;
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
         /// for values of the `Bidi_Class` enumerated property
         ///
@@ -949,14 +954,13 @@ impl_value_getter! {
         /// assert_eq!(lookup.get(HangulSyllableType::LeadingJamo), Some("Leading_Jamo"));
         /// assert_eq!(lookup.get(HangulSyllableType::LeadingVowelSyllable), Some("LV_Syllable"));
         /// ```
-        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
+        HangulSyllableTypeValueToLongNameV1Marker / SINGLETON_HANGUL_SYLLABLE_TYPE_VALUE_TO_LONG_NAME_V1_MARKER;
     }
 }
 
 impl_value_getter! {
-    markers: EastAsianWidthNameToValueV1Marker / SINGLETON_EAST_ASIAN_WIDTH_NAME_TO_VALUE_V1_MARKER, EastAsianWidthValueToShortNameV1Marker / SINGLETON_EAST_ASIAN_WIDTH_VALUE_TO_SHORT_NAME_V1_MARKER, EastAsianWidthValueToLongNameV1Marker / SINGLETON_EAST_ASIAN_WIDTH_VALUE_TO_LONG_NAME_V1_MARKER;
     impl EastAsianWidth {
-        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
+        /// Return a [`PropertyParser`], capable of looking up values
         /// from strings for the `East_Asian_Width` enumerated property.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -982,7 +986,8 @@ impl_value_getter! {
         /// // fake property
         /// assert_eq!(lookup.get_strict("TwoPointFiveWidth"), None);
         /// ```
-        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
+        EastAsianWidthNameToValueV1Marker / SINGLETON_EAST_ASIAN_WIDTH_NAME_TO_VALUE_V1_MARKER;
+        Linear:
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
         /// for values of the `East_Asian_Width` enumerated property.
         ///
@@ -999,7 +1004,7 @@ impl_value_getter! {
         /// assert_eq!(lookup.get(EastAsianWidth::Neutral), Some("N"));
         /// assert_eq!(lookup.get(EastAsianWidth::Halfwidth), Some("H"));
         /// ```
-        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
+        EastAsianWidthValueToShortNameV1Marker / SINGLETON_EAST_ASIAN_WIDTH_VALUE_TO_SHORT_NAME_V1_MARKER;
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
         /// for values of the `East_Asian_Width` enumerated property.
         ///
@@ -1016,14 +1021,13 @@ impl_value_getter! {
         /// assert_eq!(lookup.get(EastAsianWidth::Neutral), Some("Neutral"));
         /// assert_eq!(lookup.get(EastAsianWidth::Halfwidth), Some("Halfwidth"));
         /// ```
-        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
+        EastAsianWidthValueToLongNameV1Marker / SINGLETON_EAST_ASIAN_WIDTH_VALUE_TO_LONG_NAME_V1_MARKER;
     }
 }
 
 impl_value_getter! {
-    markers: LineBreakNameToValueV1Marker / SINGLETON_LINE_BREAK_NAME_TO_VALUE_V1_MARKER, LineBreakValueToShortNameV1Marker / SINGLETON_LINE_BREAK_VALUE_TO_SHORT_NAME_V1_MARKER, LineBreakValueToLongNameV1Marker / SINGLETON_LINE_BREAK_VALUE_TO_LONG_NAME_V1_MARKER;
     impl LineBreak {
-        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
+        /// Return a [`PropertyParser`], capable of looking up values
         /// from strings for the `Line_Break` enumerated property.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -1049,7 +1053,8 @@ impl_value_getter! {
         /// // fake property
         /// assert_eq!(lookup.get_strict("Stochastic_Break"), None);
         /// ```
-        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
+        LineBreakNameToValueV1Marker / SINGLETON_LINE_BREAK_NAME_TO_VALUE_V1_MARKER;
+        Linear:
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
         /// for values of the `Line_Break` enumerated property.
         ///
@@ -1066,7 +1071,7 @@ impl_value_getter! {
         /// assert_eq!(lookup.get(LineBreak::MandatoryBreak), Some("BK"));
         /// assert_eq!(lookup.get(LineBreak::Alphabetic), Some("AL"));
         /// ```
-        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
+        LineBreakValueToShortNameV1Marker / SINGLETON_LINE_BREAK_VALUE_TO_SHORT_NAME_V1_MARKER;
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
         /// for values of the `Line_Break` enumerated property.
         ///
@@ -1083,14 +1088,13 @@ impl_value_getter! {
         /// assert_eq!(lookup.get(LineBreak::MandatoryBreak), Some("Mandatory_Break"));
         /// assert_eq!(lookup.get(LineBreak::Alphabetic), Some("Alphabetic"));
         /// ```
-        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
+        LineBreakValueToLongNameV1Marker / SINGLETON_LINE_BREAK_VALUE_TO_LONG_NAME_V1_MARKER;
     }
 }
 
 impl_value_getter! {
-    markers: GraphemeClusterBreakNameToValueV1Marker / SINGLETON_GRAPHEME_CLUSTER_BREAK_NAME_TO_VALUE_V1_MARKER, GraphemeClusterBreakValueToShortNameV1Marker / SINGLETON_GRAPHEME_CLUSTER_BREAK_VALUE_TO_SHORT_NAME_V1_MARKER, GraphemeClusterBreakValueToLongNameV1Marker / SINGLETON_GRAPHEME_CLUSTER_BREAK_VALUE_TO_LONG_NAME_V1_MARKER;
     impl GraphemeClusterBreak {
-        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
+        /// Return a [`PropertyParser`], capable of looking up values
         /// from strings for the `Grapheme_Cluster_Break` enumerated property.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -1116,7 +1120,8 @@ impl_value_getter! {
         /// // fake property
         /// assert_eq!(lookup.get_strict("Regional_Indicator_Two_Point_Oh"), None);
         /// ```
-        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
+        GraphemeClusterBreakNameToValueV1Marker / SINGLETON_GRAPHEME_CLUSTER_BREAK_NAME_TO_VALUE_V1_MARKER;
+        Linear:
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
         /// for values of the `Grapheme_Cluster_Break` enumerated property.
         ///
@@ -1133,7 +1138,7 @@ impl_value_getter! {
         /// assert_eq!(lookup.get(GraphemeClusterBreak::Extend), Some("EX"));
         /// assert_eq!(lookup.get(GraphemeClusterBreak::RegionalIndicator), Some("RI"));
         /// ```
-        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
+        GraphemeClusterBreakValueToShortNameV1Marker / SINGLETON_GRAPHEME_CLUSTER_BREAK_VALUE_TO_SHORT_NAME_V1_MARKER;
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
         /// for values of the `Grapheme_Cluster_Break` enumerated property.
         ///
@@ -1150,14 +1155,13 @@ impl_value_getter! {
         /// assert_eq!(lookup.get(GraphemeClusterBreak::Extend), Some("Extend"));
         /// assert_eq!(lookup.get(GraphemeClusterBreak::RegionalIndicator), Some("Regional_Indicator"));
         /// ```
-        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
+        GraphemeClusterBreakValueToLongNameV1Marker / SINGLETON_GRAPHEME_CLUSTER_BREAK_VALUE_TO_LONG_NAME_V1_MARKER;
     }
 }
 
 impl_value_getter! {
-    markers: WordBreakNameToValueV1Marker / SINGLETON_WORD_BREAK_NAME_TO_VALUE_V1_MARKER, WordBreakValueToShortNameV1Marker / SINGLETON_WORD_BREAK_VALUE_TO_SHORT_NAME_V1_MARKER, WordBreakValueToLongNameV1Marker / SINGLETON_WORD_BREAK_VALUE_TO_LONG_NAME_V1_MARKER;
     impl WordBreak {
-        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
+        /// Return a [`PropertyParser`], capable of looking up values
         /// from strings for the `Word_Break` enumerated property.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -1184,7 +1188,8 @@ impl_value_getter! {
         /// // fake property
         /// assert_eq!(lookup.get_strict("Quadruple_Quote"), None);
         /// ```
-        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
+        WordBreakNameToValueV1Marker / SINGLETON_WORD_BREAK_NAME_TO_VALUE_V1_MARKER;
+        Linear:
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
         /// for values of the `Word_Break` enumerated property.
         ///
@@ -1202,7 +1207,7 @@ impl_value_getter! {
         /// assert_eq!(lookup.get(WordBreak::ALetter), Some("LE"));
         /// assert_eq!(lookup.get(WordBreak::WSegSpace), Some("WSegSpace"));
         /// ```
-        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
+        WordBreakValueToShortNameV1Marker / SINGLETON_WORD_BREAK_VALUE_TO_SHORT_NAME_V1_MARKER;
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
         /// for values of the `Word_Break` enumerated property.
         ///
@@ -1220,14 +1225,13 @@ impl_value_getter! {
         /// assert_eq!(lookup.get(WordBreak::ALetter), Some("ALetter"));
         /// assert_eq!(lookup.get(WordBreak::WSegSpace), Some("WSegSpace"));
         /// ```
-        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
+        WordBreakValueToLongNameV1Marker / SINGLETON_WORD_BREAK_VALUE_TO_LONG_NAME_V1_MARKER;
     }
 }
 
 impl_value_getter! {
-    markers: SentenceBreakNameToValueV1Marker / SINGLETON_SENTENCE_BREAK_NAME_TO_VALUE_V1_MARKER, SentenceBreakValueToShortNameV1Marker / SINGLETON_SENTENCE_BREAK_VALUE_TO_SHORT_NAME_V1_MARKER, SentenceBreakValueToLongNameV1Marker / SINGLETON_SENTENCE_BREAK_VALUE_TO_LONG_NAME_V1_MARKER;
     impl SentenceBreak {
-        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
+        /// Return a [`PropertyParser`], capable of looking up values
         /// from strings for the `Sentence_Break` enumerated property.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -1253,7 +1257,8 @@ impl_value_getter! {
         /// // fake property
         /// assert_eq!(lookup.get_strict("Fixer_Upper"), None);
         /// ```
-        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
+        SentenceBreakNameToValueV1Marker / SINGLETON_SENTENCE_BREAK_NAME_TO_VALUE_V1_MARKER;
+        Linear:
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
         /// for values of the `Sentence_Break` enumerated property.
         ///
@@ -1270,7 +1275,7 @@ impl_value_getter! {
         /// assert_eq!(lookup.get(SentenceBreak::Format), Some("FO"));
         /// assert_eq!(lookup.get(SentenceBreak::Numeric), Some("NU"));
         /// ```
-        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
+        SentenceBreakValueToShortNameV1Marker / SINGLETON_SENTENCE_BREAK_VALUE_TO_SHORT_NAME_V1_MARKER;
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
         /// for values of the `Sentence_Break` enumerated property.
         ///
@@ -1288,14 +1293,13 @@ impl_value_getter! {
         /// assert_eq!(lookup.get(SentenceBreak::Numeric), Some("Numeric"));
         /// assert_eq!(lookup.get(SentenceBreak::SContinue), Some("SContinue"));
         /// ```
-        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
+        SentenceBreakValueToLongNameV1Marker / SINGLETON_SENTENCE_BREAK_VALUE_TO_LONG_NAME_V1_MARKER;
     }
 }
 
 impl_value_getter! {
-    markers: CanonicalCombiningClassNameToValueV1Marker / SINGLETON_CANONICAL_COMBINING_CLASS_NAME_TO_VALUE_V1_MARKER, CanonicalCombiningClassValueToShortNameV1Marker / SINGLETON_CANONICAL_COMBINING_CLASS_VALUE_TO_SHORT_NAME_V1_MARKER, CanonicalCombiningClassValueToLongNameV1Marker / SINGLETON_CANONICAL_COMBINING_CLASS_VALUE_TO_LONG_NAME_V1_MARKER;
     impl CanonicalCombiningClass {
-        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
+        /// Return a [`PropertyParser`], capable of looking up values
         /// from strings for the `Canonical_Combining_Class` enumerated property.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -1322,8 +1326,9 @@ impl_value_getter! {
         /// // fake property
         /// assert_eq!(lookup.get_strict("Linear_Z"), None);
         /// ```
-        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
-        /// Return a [`PropertyEnumToValueNameSparseMapper`], capable of looking up short names
+        CanonicalCombiningClassNameToValueV1Marker / SINGLETON_CANONICAL_COMBINING_CLASS_NAME_TO_VALUE_V1_MARKER;
+        Sparse:
+        /// Return a [`PropertyNames`], capable of looking up short names
         /// for values of the `Canonical_Combining_Class` enumerated property.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -1340,8 +1345,8 @@ impl_value_getter! {
         /// assert_eq!(lookup.get(CanonicalCombiningClass::AttachedBelowLeft), Some("ATBL"));
         /// assert_eq!(lookup.get(CanonicalCombiningClass::CCC10), Some("CCC10"));
         /// ```
-        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameSparseMapper / PropertyEnumToValueNameSparseMapperBorrowed;
-        /// Return a [`PropertyEnumToValueNameSparseMapper`], capable of looking up long names
+        CanonicalCombiningClassValueToShortNameV1Marker / SINGLETON_CANONICAL_COMBINING_CLASS_VALUE_TO_SHORT_NAME_V1_MARKER;
+        /// Return a [`PropertyNames`], capable of looking up long names
         /// for values of the `Canonical_Combining_Class` enumerated property.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -1358,14 +1363,13 @@ impl_value_getter! {
         /// assert_eq!(lookup.get(CanonicalCombiningClass::AttachedBelowLeft), Some("Attached_Below_Left"));
         /// assert_eq!(lookup.get(CanonicalCombiningClass::CCC10), Some("CCC10"));
         /// ```
-        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameSparseMapper / PropertyEnumToValueNameSparseMapperBorrowed;
+        CanonicalCombiningClassValueToLongNameV1Marker / SINGLETON_CANONICAL_COMBINING_CLASS_VALUE_TO_LONG_NAME_V1_MARKER;
     }
 }
 
 impl_value_getter! {
-    markers: IndicSyllabicCategoryNameToValueV1Marker / SINGLETON_INDIC_SYLLABIC_CATEGORY_NAME_TO_VALUE_V1_MARKER, IndicSyllabicCategoryValueToShortNameV1Marker / SINGLETON_INDIC_SYLLABIC_CATEGORY_VALUE_TO_SHORT_NAME_V1_MARKER, IndicSyllabicCategoryValueToLongNameV1Marker / SINGLETON_INDIC_SYLLABIC_CATEGORY_VALUE_TO_LONG_NAME_V1_MARKER;
     impl IndicSyllabicCategory {
-        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
+        /// Return a [`PropertyParser`], capable of looking up values
         /// from strings for the `Indic_Syllabic_Category` enumerated property.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -1388,7 +1392,8 @@ impl_value_getter! {
         /// // fake property
         /// assert_eq!(lookup.get_strict("Tone_Number"), None);
         /// ```
-        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
+        IndicSyllabicCategoryNameToValueV1Marker / SINGLETON_INDIC_SYLLABIC_CATEGORY_NAME_TO_VALUE_V1_MARKER;
+        Linear:
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
         /// for values of the `Indic_Syllabic_Category` enumerated property.
         ///
@@ -1405,7 +1410,7 @@ impl_value_getter! {
         /// assert_eq!(lookup.get(IndicSyllabicCategory::BrahmiJoiningNumber), Some("Brahmi_Joining_Number"));
         /// assert_eq!(lookup.get(IndicSyllabicCategory::VowelIndependent), Some("Vowel_Independent"));
         /// ```
-        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
+        IndicSyllabicCategoryValueToShortNameV1Marker / SINGLETON_INDIC_SYLLABIC_CATEGORY_VALUE_TO_SHORT_NAME_V1_MARKER;
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
         /// for values of the `Indic_Syllabic_Category` enumerated property.
         ///
@@ -1422,14 +1427,13 @@ impl_value_getter! {
         /// assert_eq!(lookup.get(IndicSyllabicCategory::BrahmiJoiningNumber), Some("Brahmi_Joining_Number"));
         /// assert_eq!(lookup.get(IndicSyllabicCategory::VowelIndependent), Some("Vowel_Independent"));
         /// ```
-        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
+        IndicSyllabicCategoryValueToLongNameV1Marker / SINGLETON_INDIC_SYLLABIC_CATEGORY_VALUE_TO_LONG_NAME_V1_MARKER;
     }
 }
 
 impl_value_getter! {
-    markers: JoiningTypeNameToValueV1Marker / SINGLETON_JOINING_TYPE_NAME_TO_VALUE_V1_MARKER, JoiningTypeValueToShortNameV1Marker / SINGLETON_JOINING_TYPE_VALUE_TO_SHORT_NAME_V1_MARKER, JoiningTypeValueToLongNameV1Marker / SINGLETON_JOINING_TYPE_VALUE_TO_LONG_NAME_V1_MARKER;
     impl JoiningType {
-        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
+        /// Return a [`PropertyParser`], capable of looking up values
         /// from strings for the `Joining_Type` enumerated property.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -1455,7 +1459,8 @@ impl_value_getter! {
         /// // fake property
         /// assert_eq!(lookup.get_strict("Inner_Joining"), None);
         /// ```
-        pub fn get_name_to_enum_mapper() / name_to_enum_mapper();
+        JoiningTypeNameToValueV1Marker / SINGLETON_JOINING_TYPE_NAME_TO_VALUE_V1_MARKER;
+        Linear:
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
         /// for values of the `Joining_Type` enumerated property.
         ///
@@ -1472,7 +1477,7 @@ impl_value_getter! {
         /// assert_eq!(lookup.get(JoiningType::JoinCausing), Some("C"));
         /// assert_eq!(lookup.get(JoiningType::LeftJoining), Some("L"));
         /// ```
-        pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
+        JoiningTypeValueToShortNameV1Marker / SINGLETON_JOINING_TYPE_VALUE_TO_SHORT_NAME_V1_MARKER;
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
         /// for values of the `Joining_Type` enumerated property.
         ///
@@ -1490,6 +1495,6 @@ impl_value_getter! {
         /// assert_eq!(lookup.get(JoiningType::NonJoining), Some("Non_Joining"));
         /// assert_eq!(lookup.get(JoiningType::RightJoining), Some("Right_Joining"));
         /// ```
-        pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
+        JoiningTypeValueToLongNameV1Marker / SINGLETON_JOINING_TYPE_VALUE_TO_LONG_NAME_V1_MARKER;
     }
 }

@@ -186,7 +186,8 @@ impl<'a> ScriptExtensionsSet<'a> {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::{script, Script};
+    /// use icu::properties::script;
+    /// use icu::properties::props::Script;
     /// let swe = script::script_with_extensions();
     ///
     /// assert!(swe
@@ -202,7 +203,8 @@ impl<'a> ScriptExtensionsSet<'a> {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::{script, Script};
+    /// use icu::properties::script;
+    /// use icu::properties::props::Script;
     /// let swe = script::script_with_extensions();
     ///
     /// assert_eq!(
@@ -270,7 +272,8 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     /// # Examples
     ///
     /// ```
-    /// use icu::properties::{script, Script};
+    /// use icu::properties::script;
+    /// use icu::properties::props::Script;
     ///
     /// let swe = script::script_with_extensions();
     ///
@@ -363,7 +366,8 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     /// # Examples
     ///
     /// ```
-    /// use icu::properties::{script, Script};
+    /// use icu::properties::script;
+    /// use icu::properties::props::Script;
     ///
     /// let swe = script::script_with_extensions();
     ///
@@ -414,7 +418,8 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     /// # Examples
     ///
     /// ```
-    /// use icu::properties::{script, Script};
+    /// use icu::properties::script;
+    /// use icu::properties::props::Script;
     ///
     /// let swe = script::script_with_extensions();
     ///
@@ -460,7 +465,8 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     /// # Examples
     ///
     /// ```
-    /// use icu::properties::{script, Script};
+    /// use icu::properties::script;
+    /// use icu::properties::props::Script;
     ///
     /// let swe = script::script_with_extensions();
     ///
@@ -509,7 +515,8 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     /// # Examples
     ///
     /// ```
-    /// use icu::properties::{script, Script};
+    /// use icu::properties::script;
+    /// use icu::properties::props::Script;
     ///
     /// let swe = script::script_with_extensions();
     ///
@@ -557,7 +564,8 @@ impl ScriptWithExtensionsBorrowed<'static> {
 /// # Examples
 ///
 /// ```
-/// use icu::properties::{script, Script};
+/// use icu::properties::script;
+/// use icu::properties::props::Script;
 /// let swe = script::script_with_extensions();
 ///
 /// // get the `Script` property value

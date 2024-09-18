@@ -29,14 +29,18 @@ pub struct CodePointMapData<T: TrieValue> {
 }
 
 impl<T: TrieValue> CodePointMapData<T> {
-    /// Creates a new [`CodePointMapData`] for a [`CodePointMapProperty`].
+    /// Creates a new [`CodePointMapData`] for a [`EnumeratedProperty`].
     ///
-    /// See the documentation on [`CodePointMapProperty`] implementations for details.
+    /// See the documentation on [`EnumeratedProperty`] implementations for details.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     #[allow(clippy::new_ret_no_self)]
     pub const fn new() -> CodePointMapDataBorrowed<'static, T>
     where
-        T: CodePointMapProperty,
+        T: EnumeratedProperty,
     {
         CodePointMapDataBorrowed { map: T::SINGLETON }
     }
@@ -51,7 +55,7 @@ impl<T: TrieValue> CodePointMapData<T> {
         provider: &(impl DataProvider<T::DataMarker> + ?Sized),
     ) -> Result<Self, DataError>
     where
-        T: CodePointMapProperty,
+        T: EnumeratedProperty,
     {
         Ok(Self {
             data: provider.load(Default::default())?.payload.cast(),
@@ -81,9 +85,10 @@ impl<T: TrieValue> CodePointMapData<T> {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::{maps, GeneralCategory};
+    /// use icu::properties::CodePointMapData;
+    /// use icu::properties::props::GeneralCategory;
     ///
-    /// let data = maps::general_category().static_to_owned();
+    /// let data = CodePointMapData::<GeneralCategory>::new().static_to_owned();
     ///
     /// let gc = data.try_into_converted::<u8>().unwrap();
     /// let gc = gc.as_borrowed();
@@ -160,9 +165,10 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::{maps, GeneralCategory};
+    /// use icu::properties::CodePointMapData;
+    /// use icu::properties::props::GeneralCategory;
     ///
-    /// let gc = maps::general_category();
+    /// let gc = CodePointMapData::<GeneralCategory>::new();
     ///
     /// assert_eq!(gc.get('木'), GeneralCategory::OtherLetter);  // U+6728
     /// assert_eq!(gc.get('🎃'), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
@@ -176,9 +182,10 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::{maps, GeneralCategory};
+    /// use icu::properties::CodePointMapData;
+    /// use icu::properties::props::GeneralCategory;
     ///
-    /// let gc = maps::general_category();
+    /// let gc = CodePointMapData::<GeneralCategory>::new();
     ///
     /// assert_eq!(gc.get32(0x6728), GeneralCategory::OtherLetter);  // U+6728 (木)
     /// assert_eq!(gc.get32(0x1F383), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
@@ -192,9 +199,10 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::{maps, GeneralCategory};
+    /// use icu::properties::CodePointMapData;
+    /// use icu::properties::props::GeneralCategory;
     ///
-    /// let gc = maps::general_category();
+    /// let gc = CodePointMapData::<GeneralCategory>::new();
     ///
     /// let other_letter_set_data =
     ///     gc.get_set_for_value(GeneralCategory::OtherLetter);
@@ -214,10 +222,10 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// # Examples
     ///
     /// ```
-    /// use icu::properties::maps;
-    /// use icu::properties::GeneralCategory;
+    /// use icu::properties::CodePointMapData;
+    /// use icu::properties::props::GeneralCategory;
     ///
-    /// let gc = maps::general_category();
+    /// let gc = CodePointMapData::<GeneralCategory>::new();
     /// let mut ranges = gc.iter_ranges();
     /// let next = ranges.next().unwrap();
     /// assert_eq!(next.range, 0..=31);
@@ -237,10 +245,10 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     ///
     ///
     /// ```
-    /// use icu::properties::maps;
-    /// use icu::properties::GeneralCategory;
+    /// use icu::properties::CodePointMapData;
+    /// use icu::properties::props::GeneralCategory;
     ///
-    /// let gc = maps::general_category();
+    /// let gc = CodePointMapData::<GeneralCategory>::new();
     /// let mut ranges = gc.iter_ranges_for_value(GeneralCategory::UppercaseLetter);
     /// assert_eq!(ranges.next().unwrap(), 'A' as u32..='Z' as u32);
     /// assert_eq!(ranges.next().unwrap(), 'À' as u32..='Ö' as u32);
@@ -307,13 +315,11 @@ impl<'a> CodePointMapDataBorrowed<'a, GeneralCategory> {
     ///
     /// # Examples
     ///
-    ///
     /// ```
-    /// use core::ops::RangeInclusive;
-    /// use icu::properties::maps::{self, CodePointMapData};
-    /// use icu::properties::GeneralCategoryGroup;
+    /// use icu::properties::CodePointMapData;
+    /// use icu::properties::props::{GeneralCategory, GeneralCategoryGroup};
     ///
-    /// let gc = maps::general_category();
+    /// let gc = CodePointMapData::<GeneralCategory>::new();
     /// let mut ranges = gc.iter_ranges_for_group(GeneralCategoryGroup::Letter);
     /// assert_eq!(ranges.next().unwrap(), 'A' as u32..='Z' as u32);
     /// assert_eq!(ranges.next().unwrap(), 'a' as u32..='z' as u32);
@@ -334,8 +340,8 @@ impl<'a> CodePointMapDataBorrowed<'a, GeneralCategory> {
     }
 }
 
-/// TODO
-pub trait CodePointMapProperty: crate::private::Sealed + TrieValue {
+/// A Unicode character property that assigns a value to each code point.
+pub trait EnumeratedProperty: crate::private::Sealed + TrieValue {
     #[doc(hidden)]
     type DataMarker: DataMarker<DataStruct = PropertyCodePointMapV1<'static, Self>>;
     #[doc(hidden)]

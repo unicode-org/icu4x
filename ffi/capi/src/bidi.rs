@@ -57,12 +57,9 @@ pub mod ffi {
         ) -> Option<Box<BidiInfo<'text>>> {
             let text = core::str::from_utf8(text).ok()?;
 
-            let data = self.0.as_borrowed();
-            let adapter = icu_properties::bidi::BidiClassAdapter::new(data);
-
             Some(Box::new(BidiInfo(
                 unicode_bidi::BidiInfo::new_with_data_source(
-                    &adapter,
+                    &self.0.as_borrowed(),
                     text,
                     default_level.and_then(|l| unicode_bidi::Level::new(l).ok()),
                 ),
@@ -86,11 +83,8 @@ pub mod ffi {
             text: &'text str,
             default_level: Option<u8>,
         ) -> Box<BidiInfo<'text>> {
-            let data = self.0.as_borrowed();
-            let adapter = icu_properties::bidi::BidiClassAdapter::new(data);
-
             Box::new(BidiInfo(unicode_bidi::BidiInfo::new_with_data_source(
-                &adapter,
+                &self.0.as_borrowed(),
                 text,
                 default_level.and_then(|l| unicode_bidi::Level::new(l).ok()),
             )))

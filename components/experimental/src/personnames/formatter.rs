@@ -5,7 +5,7 @@
 use alloc::string::String;
 use alloc::vec::Vec;
 use icu_locale::LocaleFallbacker;
-use icu_properties::names::PropertyScriptToIcuScriptMapper;
+use icu_properties::ScriptMapper;
 use icu_properties::script::ScriptWithExtensions;
 
 use super::api::{
@@ -24,7 +24,7 @@ use zerofrom::ZeroFrom;
 pub struct PersonNamesFormatter {
     pub(crate) default_options: PersonNamesFormatterOptions,
     swe: ScriptWithExtensions,
-    scripts: PropertyScriptToIcuScriptMapper<icu_properties::props::Script>,
+    scripts: ScriptMapper,
     fallbacker: LocaleFallbacker,
 }
 
@@ -50,7 +50,7 @@ impl PersonNamesFormatter {
             + DataProvider<icu_locale::provider::ParentsV1Marker>,
     {
         let swe = icu_properties::script::load_script_with_extensions_unstable(provider)?;
-        let scripts = icu_properties::props::Script::get_enum_to_icu_script_mapper(provider)?;
+        let scripts = ScriptMapper::try_new_unstable(provider)?;
         let fallbacker = LocaleFallbacker::try_new_unstable(provider)?;
         Ok(PersonNamesFormatter {
             default_options: options,
