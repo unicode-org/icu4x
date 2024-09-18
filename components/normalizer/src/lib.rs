@@ -96,6 +96,8 @@ use icu_collections::char16trie::Char16Trie;
 use icu_collections::char16trie::Char16TrieIterator;
 use icu_collections::char16trie::TrieResult;
 use icu_collections::codepointtrie::CodePointTrie;
+#[cfg(feature = "icu_properties")]
+use icu_properties::CanonicalCombiningClass;
 use icu_provider::prelude::*;
 use provider::CanonicalCompositionsV1Marker;
 use provider::CanonicalDecompositionTablesV1Marker;
@@ -482,16 +484,30 @@ impl CharacterAndClass {
     pub fn new_starter(c: char) -> Self {
         CharacterAndClass(u32::from(c))
     }
+    /// This method must exist for Pernosco to apply its special rendering.
+    /// Also, this must not be dead code!
     pub fn character(&self) -> char {
         // Safe, because the low 24 bits came from a `char`
         // originally.
         unsafe { char::from_u32_unchecked(self.0 & 0xFFFFFF) }
     }
-    pub fn ccc(&self) -> u8 {
+    /// This method must exist for Pernosco to apply its special rendering.
+    /// Also, this must not be dead code!
+    #[cfg(feature = "icu_properties")]
+    pub fn ccc(&self) -> CanonicalCombiningClass {
+        CanonicalCombiningClass((self.0 >> 24) as u8)
+    }
+    #[cfg(feature = "icu_properties")]
+    pub fn ccc_u8(&self) -> u8 {
+        // Make `ccc` not dead code!
+        self.ccc().0
+    }
+    #[cfg(not(feature = "icu_properties"))]
+    pub fn ccc_u8(&self) -> u8 {
         (self.0 >> 24) as u8
     }
-    pub fn character_and_ccc(&self) -> (char, u8) {
-        (self.character(), self.ccc())
+    pub fn character_and_ccc_u8(&self) -> (char, u8) {
+        (self.character(), self.ccc_u8())
     }
     pub fn set_ccc_from_trie_if_not_already_set(&mut self, trie: &CodePointTrie<u32>) {
         if self.0 >> 24 != 0xFF {
@@ -516,7 +532,7 @@ fn sort_slice_by_ccc(slice: &mut [CharacterAndClass], trie: &CodePointTrie<u32>)
     slice
         .iter_mut()
         .for_each(|cc| cc.set_ccc_from_trie_if_not_already_set(trie));
-    slice.sort_by_key(|cc| cc.ccc());
+    slice.sort_by_key(|cc| cc.ccc_u8());
 }
 
 /// An iterator adaptor that turns an `Iterator` over `char` into
@@ -1081,7 +1097,7 @@ where
                     .decomposition
                     .buffer
                     .get(self.decomposition.buffer_pos)
-                    .map(|c| c.character_and_ccc())
+                    .map(|c| c.character_and_ccc_u8())
                 {
                     self.decomposition.buffer_pos += 1;
                     if self.decomposition.buffer_pos == self.decomposition.buffer.len() {
@@ -1159,7 +1175,7 @@ where
                     .decomposition
                     .buffer
                     .get(self.decomposition.buffer_pos)
-                    .map(|c| c.character_and_ccc())
+                    .map(|c| c.character_and_ccc_u8())
                 {
                     (character, ccc)
                 } else {
@@ -1190,7 +1206,7 @@ where
                     .decomposition
                     .buffer
                     .get(i)
-                    .map(|c| c.character_and_ccc())
+                    .map(|c| c.character_and_ccc_u8())
                 {
                     if ccc == CCC_NOT_REORDERED {
                         // Discontiguous match not allowed.
@@ -1322,7 +1338,7 @@ macro_rules! composing_normalize_to {
                             .decomposition
                             .buffer
                             .get($composition.decomposition.buffer_pos)
-                            .map(|c| c.character_and_ccc())
+                            .map(|c| c.character_and_ccc_u8())
                         {
                             (character, ccc)
                         } else {
@@ -1359,7 +1375,7 @@ macro_rules! composing_normalize_to {
                             .decomposition
                             .buffer
                             .get(i)
-                            .map(|c| c.character_and_ccc())
+                            .map(|c| c.character_and_ccc_u8())
                         {
                             if ccc == CCC_NOT_REORDERED {
                                 // Discontiguous match not allowed.
