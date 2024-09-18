@@ -58,7 +58,7 @@ final class CodePointSetData implements ffi.Finalizable {
 
   /// which is a mask with the same format as the `U_GC_XX_MASK` mask in ICU4C
   ///
-  /// See the [Rust documentation for `for_general_category_group`](https://docs.rs/icu/latest/icu/properties/props/struct.for_general_category_group.html) for more information.
+  /// See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
   ///
   /// See the [Rust documentation for `get_set_for_value_group`](https://docs.rs/icu/latest/icu/properties/struct.CodePointMapDataBorrowed.html#method.get_set_for_value_group) for more information.
   ///
@@ -796,7 +796,7 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new_runtime`](https://docs.rs/icu/latest/icu/properties/struct.CodePointSetData.html#method.new_runtime) for more information.
   ///
-  /// See the [Rust documentation for `UnicodeProperty`](https://docs.rs/icu/latest/icu/properties/struct.UnicodeProperty.html) for more information.
+  /// See the [Rust documentation for `parse_ecma262_name`](https://docs.rs/icu/latest/icu/properties/struct.UnicodeProperty.html#method.parse_ecma262_name) for more information.
   ///
   /// Throws [DataError] on failure.
   factory CodePointSetData.forEcma262(DataProvider provider, String propertyName) {
