@@ -142,6 +142,7 @@ impl CanonicalComposition {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
+    #[allow(clippy::new_ret_no_self)]
     pub const fn new() -> CanonicalCompositionBorrowed<'static> {
         CanonicalCompositionBorrowed::new()
     }
@@ -484,6 +485,7 @@ impl CanonicalDecomposition {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
+    #[allow(clippy::new_ret_no_self)]
     pub const fn new() -> CanonicalDecompositionBorrowed<'static> {
         CanonicalDecompositionBorrowed::new()
     }
@@ -635,6 +637,7 @@ impl CanonicalCombiningClassMap {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
+    #[allow(clippy::new_ret_no_self)]
     pub const fn new() -> CanonicalCombiningClassMapBorrowed<'static> {
         CanonicalCombiningClassMapBorrowed::new()
     }
