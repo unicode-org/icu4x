@@ -23,7 +23,6 @@ export class Error {
     static DataCustomError : Error;
     static DataIoError : Error;
     static DataUnavailableBufferFormatError : Error;
-    static PropertyUnexpectedPropertyNameError : Error;
     static DateTimePatternError : Error;
     static DateTimeMissingInputFieldError : Error;
     static DateTimeSkeletonError : Error;

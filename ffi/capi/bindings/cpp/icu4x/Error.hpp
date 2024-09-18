@@ -37,7 +37,6 @@ inline icu4x::Error icu4x::Error::FromFFI(icu4x::capi::Error c_enum) {
     case icu4x::capi::Error_DataCustomError:
     case icu4x::capi::Error_DataIoError:
     case icu4x::capi::Error_DataUnavailableBufferFormatError:
-    case icu4x::capi::Error_PropertyUnexpectedPropertyNameError:
     case icu4x::capi::Error_DateTimePatternError:
     case icu4x::capi::Error_DateTimeMissingInputFieldError:
     case icu4x::capi::Error_DateTimeSkeletonError:

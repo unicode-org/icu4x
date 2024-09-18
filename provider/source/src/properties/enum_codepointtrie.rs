@@ -386,7 +386,7 @@ impl DataProvider<GeneralCategoryMaskNameToValueV1Marker> for SourceDataProvider
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<GeneralCategoryMaskNameToValueV1Marker>, DataError> {
-        use icu::properties::GeneralCategoryGroup;
+        use icu::properties::props::GeneralCategoryGroup;
         use zerovec::ule::AsULE;
 
         self.check_req::<GeneralCategoryMaskNameToValueV1Marker>(req)?;
@@ -533,7 +533,6 @@ expand!(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu::properties::{GeneralCategory, Script};
 
     // A test of the UnicodeProperty General_Category is truly a test of the
     // `GeneralCategory` Rust enum, not the `GeneralCategoryGroup` Rust enum,
@@ -541,9 +540,10 @@ mod tests {
     // the ICU CodePointTrie that ICU4X is reading from.
     #[test]
     fn test_general_category() {
+        use icu::properties::{props::GeneralCategory, CodePointMapData};
         let provider = SourceDataProvider::new_testing();
 
-        let trie = icu::properties::maps::load_general_category(&provider).unwrap();
+        let trie = CodePointMapData::<GeneralCategory>::try_new_unstable(&provider).unwrap();
         let trie = trie.as_code_point_trie().unwrap();
 
         assert_eq!(trie.get32('꣓' as u32), GeneralCategory::DecimalNumber);
@@ -552,9 +552,10 @@ mod tests {
 
     #[test]
     fn test_script() {
+        use icu::properties::{props::Script, CodePointMapData};
         let provider = SourceDataProvider::new_testing();
 
-        let trie = icu::properties::maps::load_script(&provider).unwrap();
+        let trie = CodePointMapData::<Script>::try_new_unstable(&provider).unwrap();
         let trie = trie.as_code_point_trie().unwrap();
 
         assert_eq!(trie.get32('꣓' as u32), Script::Saurashtra);

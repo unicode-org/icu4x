@@ -93,7 +93,6 @@ lazy_static::lazy_static! {
 
     pub static ref IGNORED_ASSOCIATED_ITEMS: HashMap<&'static str, &'static [&'static str]> = [
         ("Writeable", &["writeable_length_hint", "write_to_parts", "write_to_string"][..]),
-        ("FromStr", &["Err"][..]),
     ].into_iter().collect();
 
     // Ignore if this is a substring of any path
@@ -277,13 +276,13 @@ lazy_static::lazy_static! {
         // We aren't exposing these collections directly, we instead expose them in a domain specific
         // way like CodePointSetDataBuilder. We may eventually add these as utilities for users.
         "icu::collections",
-        "icu::properties::maps::CodePointMapData::as_code_point_trie",
-        "icu::properties::maps::CodePointMapData::from_code_point_trie",
-        "icu::properties::maps::CodePointMapData::to_code_point_trie",
-        "icu::properties::maps::CodePointMapDataBorrowed::iter_ranges",
-        "icu::properties::sets::UnicodeSetData::as_code_point_inversion_list_string_list",
-        "icu::properties::sets::UnicodeSetData::from_code_point_inversion_list_string_list",
-        "icu::properties::sets::UnicodeSetData::to_code_point_inversion_list_string_list",
+        "icu::properties::CodePointMapData::as_code_point_trie",
+        "icu::properties::CodePointMapData::from_code_point_trie",
+        "icu::properties::CodePointMapData::to_code_point_trie",
+        "icu::properties::CodePointMapDataBorrowed::iter_ranges",
+        "icu::properties::UnicodeSetData::as_code_point_inversion_list_string_list",
+        "icu::properties::UnicodeSetData::from_code_point_inversion_list_string_list",
+        "icu::properties::UnicodeSetData::to_code_point_inversion_list_string_list",
 
         // We do not plan to have FFI for this in 2.0
         "icu_provider_adapters::empty::EmptyDataProvider",
@@ -325,22 +324,20 @@ lazy_static::lazy_static! {
         "icu::normalizer::uts46::Uts46MapperBorrowed::static_to_owned",
         "icu::properties::bidi_data::BidiAuxiliaryProperties::as_borrowed",
         "icu::properties::bidi_data::BidiAuxiliaryPropertiesBorrowed::static_to_owned",
-        "icu::properties::maps::CodePointMapData::as_borrowed",
-        "icu::properties::maps::CodePointMapDataBorrowed::static_to_owned",
-        "icu::properties::names::PropertyEnumToValueNameLinearMapper::as_borrowed",
-        "icu::properties::names::PropertyEnumToValueNameLinearMapperBorrowed::static_to_owned",
-        "icu::properties::names::PropertyEnumToValueNameSparseMapper::as_borrowed",
-        "icu::properties::names::PropertyEnumToValueNameSparseMapperBorrowed::static_to_owned",
-        "icu::properties::names::PropertyScriptToIcuScriptMapper::as_borrowed",
-        "icu::properties::names::PropertyScriptToIcuScriptMapperBorrowed::static_to_owned",
-        "icu::properties::names::PropertyValueNameToEnumMapper::as_borrowed",
-        "icu::properties::names::PropertyValueNameToEnumMapperBorrowed::static_to_owned",
+        "icu::properties::CodePointMapData::as_borrowed",
+        "icu::properties::CodePointMapDataBorrowed::static_to_owned",
+        "icu::properties::CodePointSetData::as_borrowed",
+        "icu::properties::CodePointSetDataBorrowed::static_to_owned",
+        "icu::properties::PropertyNames::as_borrowed",
+        "icu::properties::PropertyNamesBorrowed::static_to_owned",
+        "icu::properties::PropertyParser::as_borrowed",
+        "icu::properties::PropertyParserBorrowed::static_to_owned",
+        "icu::properties::script::ScriptMapper::as_borrowed",
+        "icu::properties::script::ScriptMapperBorrowed::static_to_owned",
         "icu::properties::script::ScriptWithExtensions::as_borrowed",
         "icu::properties::script::ScriptWithExtensionsBorrowed::static_to_owned",
-        "icu::properties::sets::CodePointSetData::as_borrowed",
-        "icu::properties::sets::CodePointSetDataBorrowed::static_to_owned",
-        "icu::properties::sets::UnicodeSetData::as_borrowed",
-        "icu::properties::sets::UnicodeSetDataBorrowed::static_to_owned",
+        "icu::properties::UnicodeSetData::as_borrowed",
+        "icu::properties::UnicodeSetDataBorrowed::static_to_owned",
 
         // Stuff that does not need to be exposed over FFI
         // Especially for stuff that are Rust specific like conversion traits

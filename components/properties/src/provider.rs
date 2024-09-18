@@ -15,11 +15,35 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+pub mod bidi;
 pub mod names;
-pub use names::*;
+pub mod props;
+
+pub use names::{
+    BidiClassNameToValueV1Marker, BidiClassValueToLongNameV1Marker,
+    BidiClassValueToShortNameV1Marker, CanonicalCombiningClassNameToValueV1Marker,
+    CanonicalCombiningClassValueToLongNameV1Marker,
+    CanonicalCombiningClassValueToShortNameV1Marker, EastAsianWidthNameToValueV1Marker,
+    EastAsianWidthValueToLongNameV1Marker, EastAsianWidthValueToShortNameV1Marker,
+    GeneralCategoryMaskNameToValueV1Marker, GeneralCategoryNameToValueV1Marker,
+    GeneralCategoryValueToLongNameV1Marker, GeneralCategoryValueToShortNameV1Marker,
+    GraphemeClusterBreakNameToValueV1Marker, GraphemeClusterBreakValueToLongNameV1Marker,
+    GraphemeClusterBreakValueToShortNameV1Marker, HangulSyllableTypeNameToValueV1Marker,
+    HangulSyllableTypeValueToLongNameV1Marker, HangulSyllableTypeValueToShortNameV1Marker,
+    IndicSyllabicCategoryNameToValueV1Marker, IndicSyllabicCategoryValueToLongNameV1Marker,
+    IndicSyllabicCategoryValueToShortNameV1Marker, JoiningTypeNameToValueV1Marker,
+    JoiningTypeValueToLongNameV1Marker, JoiningTypeValueToShortNameV1Marker,
+    LineBreakNameToValueV1Marker, LineBreakValueToLongNameV1Marker,
+    LineBreakValueToShortNameV1Marker, ScriptNameToValueV1Marker, ScriptValueToLongNameV1Marker,
+    ScriptValueToShortNameV1Marker, SentenceBreakNameToValueV1Marker,
+    SentenceBreakValueToLongNameV1Marker, SentenceBreakValueToShortNameV1Marker,
+    WordBreakNameToValueV1Marker, WordBreakValueToLongNameV1Marker,
+    WordBreakValueToShortNameV1Marker,
+};
+
+pub use bidi::BidiAuxiliaryPropertiesV1Marker;
 
 use crate::script::ScriptWithExt;
-use crate::Script;
 
 use core::ops::RangeInclusive;
 use icu_collections::codepointinvlist::CodePointInversionList;
@@ -175,7 +199,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     AlphabeticV1Marker::INFO,
     AsciiHexDigitV1Marker::INFO,
     BasicEmojiV1Marker::INFO,
-    bidi_data::BidiAuxiliaryPropertiesV1Marker::INFO,
+    bidi::BidiAuxiliaryPropertiesV1Marker::INFO,
     BidiControlV1Marker::INFO,
     BidiMirroredV1Marker::INFO,
     BlankV1Marker::INFO,
@@ -240,59 +264,56 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     XdigitV1Marker::INFO,
     XidContinueV1Marker::INFO,
     XidStartV1Marker::INFO,
-    names::BidiClassNameToValueV1Marker::INFO,
+    BidiClassNameToValueV1Marker::INFO,
     BidiClassV1Marker::INFO,
-    names::BidiClassValueToLongNameV1Marker::INFO,
-    names::BidiClassValueToShortNameV1Marker::INFO,
-    names::CanonicalCombiningClassNameToValueV1Marker::INFO,
+    BidiClassValueToLongNameV1Marker::INFO,
+    BidiClassValueToShortNameV1Marker::INFO,
+    CanonicalCombiningClassNameToValueV1Marker::INFO,
     CanonicalCombiningClassV1Marker::INFO,
-    names::CanonicalCombiningClassValueToLongNameV1Marker::INFO,
-    names::CanonicalCombiningClassValueToShortNameV1Marker::INFO,
-    names::EastAsianWidthNameToValueV1Marker::INFO,
+    CanonicalCombiningClassValueToLongNameV1Marker::INFO,
+    CanonicalCombiningClassValueToShortNameV1Marker::INFO,
+    EastAsianWidthNameToValueV1Marker::INFO,
     EastAsianWidthV1Marker::INFO,
-    names::EastAsianWidthValueToLongNameV1Marker::INFO,
-    names::EastAsianWidthValueToShortNameV1Marker::INFO,
-    names::GeneralCategoryMaskNameToValueV1Marker::INFO,
-    names::GeneralCategoryNameToValueV1Marker::INFO,
+    EastAsianWidthValueToLongNameV1Marker::INFO,
+    EastAsianWidthValueToShortNameV1Marker::INFO,
+    GeneralCategoryMaskNameToValueV1Marker::INFO,
+    GeneralCategoryNameToValueV1Marker::INFO,
     GeneralCategoryV1Marker::INFO,
-    names::GeneralCategoryValueToLongNameV1Marker::INFO,
-    names::GeneralCategoryValueToShortNameV1Marker::INFO,
-    names::GraphemeClusterBreakNameToValueV1Marker::INFO,
+    GeneralCategoryValueToLongNameV1Marker::INFO,
+    GeneralCategoryValueToShortNameV1Marker::INFO,
+    GraphemeClusterBreakNameToValueV1Marker::INFO,
     GraphemeClusterBreakV1Marker::INFO,
-    names::GraphemeClusterBreakValueToLongNameV1Marker::INFO,
-    names::GraphemeClusterBreakValueToShortNameV1Marker::INFO,
-    names::HangulSyllableTypeNameToValueV1Marker::INFO,
+    GraphemeClusterBreakValueToLongNameV1Marker::INFO,
+    GraphemeClusterBreakValueToShortNameV1Marker::INFO,
+    HangulSyllableTypeNameToValueV1Marker::INFO,
     HangulSyllableTypeV1Marker::INFO,
-    names::HangulSyllableTypeValueToLongNameV1Marker::INFO,
-    names::HangulSyllableTypeValueToShortNameV1Marker::INFO,
-    names::IndicSyllabicCategoryNameToValueV1Marker::INFO,
+    HangulSyllableTypeValueToLongNameV1Marker::INFO,
+    HangulSyllableTypeValueToShortNameV1Marker::INFO,
+    IndicSyllabicCategoryNameToValueV1Marker::INFO,
     IndicSyllabicCategoryV1Marker::INFO,
-    names::IndicSyllabicCategoryValueToLongNameV1Marker::INFO,
-    names::IndicSyllabicCategoryValueToShortNameV1Marker::INFO,
-    names::JoiningTypeNameToValueV1Marker::INFO,
+    IndicSyllabicCategoryValueToLongNameV1Marker::INFO,
+    IndicSyllabicCategoryValueToShortNameV1Marker::INFO,
+    JoiningTypeNameToValueV1Marker::INFO,
     JoiningTypeV1Marker::INFO,
-    names::JoiningTypeValueToLongNameV1Marker::INFO,
-    names::JoiningTypeValueToShortNameV1Marker::INFO,
-    names::LineBreakNameToValueV1Marker::INFO,
+    JoiningTypeValueToLongNameV1Marker::INFO,
+    JoiningTypeValueToShortNameV1Marker::INFO,
+    LineBreakNameToValueV1Marker::INFO,
     LineBreakV1Marker::INFO,
-    names::LineBreakValueToLongNameV1Marker::INFO,
-    names::LineBreakValueToShortNameV1Marker::INFO,
-    names::ScriptNameToValueV1Marker::INFO,
+    LineBreakValueToLongNameV1Marker::INFO,
+    LineBreakValueToShortNameV1Marker::INFO,
+    ScriptNameToValueV1Marker::INFO,
     ScriptV1Marker::INFO,
-    names::ScriptValueToLongNameV1Marker::INFO,
-    names::ScriptValueToShortNameV1Marker::INFO,
-    names::SentenceBreakNameToValueV1Marker::INFO,
+    ScriptValueToLongNameV1Marker::INFO,
+    ScriptValueToShortNameV1Marker::INFO,
+    SentenceBreakNameToValueV1Marker::INFO,
     SentenceBreakV1Marker::INFO,
-    names::SentenceBreakValueToLongNameV1Marker::INFO,
-    names::SentenceBreakValueToShortNameV1Marker::INFO,
-    names::WordBreakNameToValueV1Marker::INFO,
+    SentenceBreakValueToLongNameV1Marker::INFO,
+    SentenceBreakValueToShortNameV1Marker::INFO,
+    WordBreakNameToValueV1Marker::INFO,
     WordBreakV1Marker::INFO,
-    names::WordBreakValueToLongNameV1Marker::INFO,
-    names::WordBreakValueToShortNameV1Marker::INFO,
+    WordBreakValueToLongNameV1Marker::INFO,
+    WordBreakValueToShortNameV1Marker::INFO,
 ];
-
-// include the specialized structs for the compact representation of Bidi property data
-pub mod bidi_data;
 
 /// A set of characters which share a particular property value.
 ///
@@ -384,6 +405,67 @@ pub enum PropertyCodePointSetV1<'data> {
     // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
 }
 
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
+pub(crate) struct ErasedPropertyCodePointSetV1Marker;
+impl DynamicDataMarker for ErasedPropertyCodePointSetV1Marker {
+    type DataStruct = PropertyCodePointSetV1<'static>;
+}
+
+// See CodePointSetData for documentation of these functions
+impl<'data> PropertyCodePointSetV1<'data> {
+    #[inline]
+    pub(crate) fn contains(&self, ch: char) -> bool {
+        match *self {
+            Self::InversionList(ref l) => l.contains(ch),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn contains32(&self, ch: u32) -> bool {
+        match *self {
+            Self::InversionList(ref l) => l.contains32(ch),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn iter_ranges(&self) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
+        match *self {
+            Self::InversionList(ref l) => l.iter_ranges(),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn iter_ranges_complemented(
+        &self,
+    ) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
+        match *self {
+            Self::InversionList(ref l) => l.iter_ranges_complemented(),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn from_code_point_inversion_list(l: CodePointInversionList<'static>) -> Self {
+        Self::InversionList(l)
+    }
+
+    #[inline]
+    pub(crate) fn as_code_point_inversion_list(
+        &'_ self,
+    ) -> Option<&'_ CodePointInversionList<'data>> {
+        match *self {
+            Self::InversionList(ref l) => Some(l),
+            // any other backing data structure that cannot return a CPInvList in O(1) time should return None
+        }
+    }
+
+    #[inline]
+    pub(crate) fn to_code_point_inversion_list(&self) -> CodePointInversionList<'_> {
+        match *self {
+            Self::InversionList(ref t) => ZeroFrom::zero_from(t),
+        }
+    }
+}
+
 /// A map efficiently storing data about individual characters.
 ///
 /// This data enum is extensible, more backends may be added in the future.
@@ -406,6 +488,13 @@ pub enum PropertyCodePointMapV1<'data, T: TrieValue> {
     // Serde serializes based on variant name and index in the enum
     // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
 }
+
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
+pub(crate) struct ErasedPropertyCodePointMapV1Marker<T>(core::marker::PhantomData<T>);
+impl<T: TrieValue> DynamicDataMarker for ErasedPropertyCodePointMapV1Marker<T> {
+    type DataStruct = PropertyCodePointMapV1<'static, T>;
+}
+
 macro_rules! data_struct_generic {
     ($(marker($marker:ident, $ty:ident, $path:literal),)+) => {
         $(
@@ -415,7 +504,7 @@ macro_rules! data_struct_generic {
             #[cfg_attr(feature = "datagen", databake(path = icu_properties::provider))]
             pub struct $marker;
             impl icu_provider::DynamicDataMarker for $marker {
-                type DataStruct = PropertyCodePointMapV1<'static, crate::$ty>;
+                type DataStruct = PropertyCodePointMapV1<'static, $ty>;
             }
             impl icu_provider::DataMarker for $marker {
                 const INFO: icu_provider::DataMarkerInfo = {
@@ -427,6 +516,9 @@ macro_rules! data_struct_generic {
         )+
     }
 }
+
+use crate::props::*;
+
 data_struct_generic!(
     marker(BidiClassV1Marker, BidiClass, "props/bc@1"),
     marker(
@@ -457,6 +549,71 @@ data_struct_generic!(
     marker(SentenceBreakV1Marker, SentenceBreak, "props/SB@1"),
     marker(WordBreakV1Marker, WordBreak, "props/WB@1"),
 );
+
+// See CodePointMapData for documentation of these functions
+impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
+    #[inline]
+    pub(crate) fn get32(&self, ch: u32) -> T {
+        match *self {
+            Self::CodePointTrie(ref t) => t.get32(ch),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn try_into_converted<P>(self) -> Result<PropertyCodePointMapV1<'data, P>, UleError>
+    where
+        P: TrieValue,
+    {
+        match self {
+            Self::CodePointTrie(t) => t
+                .try_into_converted()
+                .map(PropertyCodePointMapV1::CodePointTrie),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn get_set_for_value(&self, value: T) -> CodePointInversionList<'static> {
+        match *self {
+            Self::CodePointTrie(ref t) => t.get_set_for_value(value),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn iter_ranges(&self) -> impl Iterator<Item = CodePointMapRange<T>> + '_ {
+        match *self {
+            Self::CodePointTrie(ref t) => t.iter_ranges(),
+        }
+    }
+    #[inline]
+    pub(crate) fn iter_ranges_mapped<'a, U: Eq + 'a>(
+        &'a self,
+        map: impl FnMut(T) -> U + Copy + 'a,
+    ) -> impl Iterator<Item = CodePointMapRange<U>> + 'a {
+        match *self {
+            Self::CodePointTrie(ref t) => t.iter_ranges_mapped(map),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn from_code_point_trie(trie: CodePointTrie<'static, T>) -> Self {
+        Self::CodePointTrie(trie)
+    }
+
+    #[inline]
+    pub(crate) fn as_code_point_trie(&self) -> Option<&CodePointTrie<'data, T>> {
+        match *self {
+            Self::CodePointTrie(ref t) => Some(t),
+            // any other backing data structure that cannot return a CPT in O(1) time should return None
+        }
+    }
+
+    #[inline]
+    pub(crate) fn to_code_point_trie(&self) -> CodePointTrie<'_, T> {
+        match *self {
+            Self::CodePointTrie(ref t) => ZeroFrom::zero_from(t),
+        }
+    }
+}
 
 /// A set of characters and strings which share a particular property value.
 ///
@@ -571,124 +728,4 @@ pub struct ScriptWithExtensionsPropertyV1<'data> {
     /// and may also indicate Script value, as described for the `trie` field.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub extensions: VarZeroVec<'data, ZeroSlice<Script>>,
-}
-
-// See CodePointSetData for documentation of these functions
-impl<'data> PropertyCodePointSetV1<'data> {
-    #[inline]
-    pub(crate) fn contains(&self, ch: char) -> bool {
-        match *self {
-            Self::InversionList(ref l) => l.contains(ch),
-        }
-    }
-
-    #[inline]
-    pub(crate) fn contains32(&self, ch: u32) -> bool {
-        match *self {
-            Self::InversionList(ref l) => l.contains32(ch),
-        }
-    }
-
-    #[inline]
-    pub(crate) fn iter_ranges(&self) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
-        match *self {
-            Self::InversionList(ref l) => l.iter_ranges(),
-        }
-    }
-
-    #[inline]
-    pub(crate) fn iter_ranges_complemented(
-        &self,
-    ) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
-        match *self {
-            Self::InversionList(ref l) => l.iter_ranges_complemented(),
-        }
-    }
-
-    #[inline]
-    pub(crate) fn from_code_point_inversion_list(l: CodePointInversionList<'static>) -> Self {
-        Self::InversionList(l)
-    }
-
-    #[inline]
-    pub(crate) fn as_code_point_inversion_list(
-        &'_ self,
-    ) -> Option<&'_ CodePointInversionList<'data>> {
-        match *self {
-            Self::InversionList(ref l) => Some(l),
-            // any other backing data structure that cannot return a CPInvList in O(1) time should return None
-        }
-    }
-
-    #[inline]
-    pub(crate) fn to_code_point_inversion_list(&self) -> CodePointInversionList<'_> {
-        match *self {
-            Self::InversionList(ref t) => ZeroFrom::zero_from(t),
-        }
-    }
-}
-
-// See CodePointMapData for documentation of these functions
-impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
-    #[inline]
-    pub(crate) fn get32(&self, ch: u32) -> T {
-        match *self {
-            Self::CodePointTrie(ref t) => t.get32(ch),
-        }
-    }
-
-    #[inline]
-    pub(crate) fn try_into_converted<P>(self) -> Result<PropertyCodePointMapV1<'data, P>, UleError>
-    where
-        P: TrieValue,
-    {
-        match self {
-            Self::CodePointTrie(t) => t
-                .try_into_converted()
-                .map(PropertyCodePointMapV1::CodePointTrie),
-        }
-    }
-
-    #[inline]
-    pub(crate) fn get_set_for_value(&self, value: T) -> CodePointInversionList<'static> {
-        match *self {
-            Self::CodePointTrie(ref t) => t.get_set_for_value(value),
-        }
-    }
-
-    #[inline]
-    pub(crate) fn iter_ranges(&self) -> impl Iterator<Item = CodePointMapRange<T>> + '_ {
-        match *self {
-            Self::CodePointTrie(ref t) => t.iter_ranges(),
-        }
-    }
-    #[inline]
-    pub(crate) fn iter_ranges_mapped<'a, U: Eq + 'a>(
-        &'a self,
-        map: impl FnMut(T) -> U + Copy + 'a,
-    ) -> impl Iterator<Item = CodePointMapRange<U>> + 'a {
-        match *self {
-            Self::CodePointTrie(ref t) => t.iter_ranges_mapped(map),
-        }
-    }
-
-    #[inline]
-    pub(crate) fn from_code_point_trie(trie: CodePointTrie<'static, T>) -> Self {
-        Self::CodePointTrie(trie)
-    }
-
-    #[inline]
-    pub(crate) fn as_code_point_trie(&self) -> Option<&CodePointTrie<'data, T>> {
-        match *self {
-            Self::CodePointTrie(ref t) => Some(t),
-            // any other backing data structure that cannot return a CPT in O(1) time should return None
-        }
-    }
-
-    #[inline]
-    pub(crate) fn to_code_point_trie(&self) -> CodePointTrie<'_, T> {
-        match *self {
-            Self::CodePointTrie(ref t) => ZeroFrom::zero_from(t),
-        }
-    }
 }

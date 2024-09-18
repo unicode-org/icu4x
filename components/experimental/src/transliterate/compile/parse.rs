@@ -1284,15 +1284,16 @@ where
 
 #[cfg(test)]
 pub(super) fn parse(source: &str) -> Result<Vec<Rule>> {
+    use icu::properties::CodePointSetData;
     Parser::run(
         source,
-        &sets::xid_start()
+        &CodePointSetData::new::<XidStart>()
             .static_to_owned()
             .to_code_point_inversion_list(),
-        &sets::xid_continue()
+        &CodePointSetData::new::<XidContinue>()
             .static_to_owned()
             .to_code_point_inversion_list(),
-        &sets::pattern_white_space()
+        &CodePointSetData::new::<PatternWhiteSpace>()
             .static_to_owned()
             .to_code_point_inversion_list(),
         &icu_properties::provider::Baked,

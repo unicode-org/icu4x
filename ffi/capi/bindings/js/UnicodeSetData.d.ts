@@ -8,9 +8,11 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *
 *See the [Rust documentation for `properties`](https://docs.rs/icu/latest/icu/properties/index.html) for more information.
 *
-*See the [Rust documentation for `UnicodeSetData`](https://docs.rs/icu/latest/icu/properties/sets/struct.UnicodeSetData.html) for more information.
+*See the [Rust documentation for `UnicodeSetData`](https://docs.rs/icu/latest/icu/properties/struct.UnicodeSetData.html) for more information.
 *
-*See the [Rust documentation for `UnicodeSetDataBorrowed`](https://docs.rs/icu/latest/icu/properties/sets/struct.UnicodeSetDataBorrowed.html) for more information.
+*See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/properties/struct.UnicodeSetData.html#method.new) for more information.
+*
+*See the [Rust documentation for `UnicodeSetDataBorrowed`](https://docs.rs/icu/latest/icu/properties/struct.UnicodeSetDataBorrowed.html) for more information.
 */
 export class UnicodeSetData {
     

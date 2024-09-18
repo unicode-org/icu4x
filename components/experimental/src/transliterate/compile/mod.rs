@@ -11,7 +11,11 @@ use alloc::vec::Vec;
 use core::cell::RefCell;
 use icu_locale_core::Locale;
 use icu_normalizer::provider::*;
-use icu_properties::{provider::*, sets};
+use icu_properties::{
+    props::{PatternWhiteSpace, XidContinue, XidStart},
+    provider::*,
+    CodePointSetData,
+};
 use icu_provider::prelude::*;
 
 mod parse;
@@ -141,9 +145,9 @@ impl RuleCollection {
             collection: self,
             properties_provider: &icu_properties::provider::Baked,
             normalizer_provider: &icu_normalizer::provider::Baked,
-            xid_start: sets::xid_start().static_to_owned(),
-            xid_continue: sets::xid_continue().static_to_owned(),
-            pat_ws: sets::pattern_white_space().static_to_owned(),
+            xid_start: CodePointSetData::new::<XidStart>().static_to_owned(),
+            xid_continue: CodePointSetData::new::<XidContinue>().static_to_owned(),
+            pat_ws: CodePointSetData::new::<PatternWhiteSpace>().static_to_owned(),
         }
     }
 
@@ -227,9 +231,9 @@ impl RuleCollection {
             collection: self,
             properties_provider,
             normalizer_provider,
-            xid_start: sets::load_xid_start(properties_provider)?,
-            xid_continue: sets::load_xid_continue(properties_provider)?,
-            pat_ws: sets::load_pattern_white_space(properties_provider)?,
+            xid_start: CodePointSetData::try_new_unstable::<XidStart>(properties_provider)?,
+            xid_continue: CodePointSetData::try_new_unstable::<XidContinue>(properties_provider)?,
+            pat_ws: CodePointSetData::try_new_unstable::<PatternWhiteSpace>(properties_provider)?,
         })
     }
 }
@@ -240,9 +244,9 @@ pub struct RuleCollectionProvider<'a, PP: ?Sized, NP: ?Sized> {
     collection: &'a RuleCollection,
     properties_provider: &'a PP,
     normalizer_provider: &'a NP,
-    xid_start: sets::CodePointSetData,
-    xid_continue: sets::CodePointSetData,
-    pat_ws: sets::CodePointSetData,
+    xid_start: CodePointSetData,
+    xid_continue: CodePointSetData,
+    pat_ws: CodePointSetData,
 }
 
 impl<PP, NP> DataProvider<TransliteratorRulesV1Marker> for RuleCollectionProvider<'_, PP, NP>

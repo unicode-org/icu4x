@@ -43,16 +43,14 @@ use icu_normalizer::provider::{
     CanonicalCompositionsV1Marker, CanonicalDecompositionDataV1Marker,
     CanonicalDecompositionTablesV1Marker, NonRecursiveDecompositionSupplementV1Marker,
 };
-use icu_properties::bidi_data;
-use icu_properties::bidi_data::BidiAuxiliaryProperties;
-use icu_properties::maps;
-use icu_properties::maps::CodePointMapData;
-use icu_properties::names::PropertyScriptToIcuScriptMapper;
-use icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker;
+use icu_properties::bidi::BidiAuxiliaryProperties;
+use icu_properties::props::{GeneralCategory, Script};
 use icu_properties::provider::{
-    GeneralCategoryV1Marker, ScriptV1Marker, ScriptValueToShortNameV1Marker,
+    BidiAuxiliaryPropertiesV1Marker, GeneralCategoryV1Marker, ScriptV1Marker,
+    ScriptValueToShortNameV1Marker,
 };
-use icu_properties::{GeneralCategory, Script};
+use icu_properties::script::ScriptMapper;
+use icu_properties::CodePointMapData;
 use icu_provider::prelude::*;
 
 use harfbuzz_traits::{
@@ -80,7 +78,7 @@ impl AllUnicodeFuncs {
 impl GeneralCategoryFunc for AllUnicodeFuncs {
     #[inline]
     fn general_category(&self, ch: char) -> harfbuzz_traits::GeneralCategory {
-        convert_gc(maps::general_category().get(ch))
+        convert_gc(CodePointMapData::<GeneralCategory>::new().get(ch))
     }
 }
 
@@ -96,7 +94,7 @@ impl CombiningClassFunc for AllUnicodeFuncs {
 impl MirroringFunc for AllUnicodeFuncs {
     #[inline]
     fn mirroring(&self, ch: char) -> char {
-        bidi_data::bidi_auxiliary_properties()
+        BidiAuxiliaryProperties::new()
             .get32_mirroring_props(ch.into())
             .mirroring_glyph
             .unwrap_or(ch)
@@ -107,8 +105,8 @@ impl MirroringFunc for AllUnicodeFuncs {
 impl ScriptFunc for AllUnicodeFuncs {
     #[inline]
     fn script(&self, ch: char) -> [u8; 4] {
-        let script = maps::script().get(ch);
-        Script::enum_to_icu_script_mapper()
+        let script = CodePointMapData::<Script>::new().get(ch);
+        ScriptMapper::new()
             .get(script)
             .unwrap_or(icu_locale_core::subtags::script!("Zzzz"))
             .into_raw()
@@ -148,7 +146,7 @@ impl GeneralCategoryData {
     where
         D: DataProvider<GeneralCategoryV1Marker> + ?Sized,
     {
-        let gc = maps::load_general_category(provider)?;
+        let gc = CodePointMapData::<GeneralCategory>::try_new_unstable(provider)?;
 
         Ok(Self { gc })
     }
@@ -267,7 +265,7 @@ impl MirroringData {
     where
         D: DataProvider<BidiAuxiliaryPropertiesV1Marker> + ?Sized,
     {
-        let bidi = bidi_data::load_bidi_auxiliary_properties_unstable(provider)?;
+        let bidi = BidiAuxiliaryProperties::try_new_unstable(provider)?;
 
         Ok(Self { bidi })
     }
@@ -304,7 +302,7 @@ impl MirroringFunc for MirroringData {
 #[derive(Debug)]
 pub struct ScriptData {
     script: CodePointMapData<Script>,
-    script_name: PropertyScriptToIcuScriptMapper<Script>,
+    script_mapper: ScriptMapper,
 }
 
 impl ScriptData {
@@ -313,11 +311,11 @@ impl ScriptData {
     where
         D: DataProvider<ScriptValueToShortNameV1Marker> + DataProvider<ScriptV1Marker> + ?Sized,
     {
-        let script = maps::load_script(provider)?;
-        let script_name = Script::get_enum_to_icu_script_mapper(provider)?;
+        let script_set = CodePointMapData::<Script>::try_new_unstable(provider)?;
+        let script_mapper = ScriptMapper::try_new_unstable(provider)?;
         Ok(Self {
-            script,
-            script_name,
+            script: script_set,
+            script_mapper,
         })
     }
 
@@ -340,7 +338,7 @@ impl ScriptFunc for ScriptData {
     #[inline]
     fn script(&self, ch: char) -> [u8; 4] {
         let script = self.script.as_borrowed().get(ch);
-        self.script_name
+        self.script_mapper
             .as_borrowed()
             .get(script)
             .unwrap_or(icu_locale_core::subtags::script!("Zzzz"))

@@ -2,15 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::provider::bidi_data::{
-    CheckedBidiPairedBracketType, MirroredPairedBracketData, MirroredPairedBracketDataTryFromError,
-};
-use crate::script::ScriptWithExt;
-use crate::{
+use crate::props::{
     BidiClass, CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GeneralCategoryGroup,
     GraphemeClusterBreak, HangulSyllableType, IndicSyllabicCategory, JoiningType, LineBreak,
     Script, SentenceBreak, WordBreak,
 };
+use crate::provider::bidi::{
+    CheckedBidiPairedBracketType, MirroredPairedBracketData, MirroredPairedBracketDataTryFromError,
+};
+use crate::script::ScriptWithExt;
 use core::convert::TryInto;
 use core::num::TryFromIntError;
 use zerovec::ule::{AsULE, RawBytesULE};

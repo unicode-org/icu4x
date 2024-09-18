@@ -111,9 +111,6 @@ pub mod ffi {
         DataIoError = 0x1_0B,
         DataUnavailableBufferFormatError = 0x1_0C,
 
-        // property errors
-        PropertyUnexpectedPropertyNameError = 0x4_02,
-
         // datetime format errors
         DateTimePatternError = 0x8_00,
         DateTimeMissingInputFieldError = 0x8_01,
@@ -164,18 +161,6 @@ impl From<icu_provider::DataError> for DataError {
             ))]
             icu_provider::DataErrorKind::Io(..) => Self::Io,
             _ => Self::Unknown,
-        }
-    }
-}
-
-#[cfg(feature = "properties")]
-impl From<icu_properties::UnexpectedPropertyNameOrDataError> for Error {
-    fn from(e: icu_properties::UnexpectedPropertyNameOrDataError) -> Self {
-        match e {
-            icu_properties::UnexpectedPropertyNameOrDataError::Data(e) => e.into(),
-            icu_properties::UnexpectedPropertyNameOrDataError::UnexpectedPropertyName => {
-                Error::PropertyUnexpectedPropertyNameError
-            }
         }
     }
 }

@@ -4,11 +4,11 @@
 
 use crate::SourceDataProvider;
 use icu::collections::codepointtrie::CodePointTrie;
+use icu::properties::props::Script;
 use icu::properties::provider::{
     ScriptWithExtensionsPropertyV1, ScriptWithExtensionsPropertyV1Marker,
 };
 use icu::properties::script::ScriptWithExt;
-use icu::properties::Script;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::convert::TryFrom;
@@ -76,7 +76,8 @@ mod tests {
     fn test_script_val_from_script_extensions() {
         let provider = SourceDataProvider::new_testing();
 
-        let swe = icu::properties::script::load_script_with_extensions_unstable(&provider).unwrap();
+        let swe =
+            icu::properties::script::ScriptWithExtensions::try_new_unstable(&provider).unwrap();
         let swe = swe.as_borrowed();
 
         assert_eq!(swe.get_script_val('𐓐' as u32), Script::Osage); // U+104D0 OSAGE CAPITAL LETTER KHA
@@ -91,7 +92,8 @@ mod tests {
     fn test_scx_array_from_script_extensions() {
         let provider = SourceDataProvider::new_testing();
 
-        let swe = icu::properties::script::load_script_with_extensions_unstable(&provider).unwrap();
+        let swe =
+            icu::properties::script::ScriptWithExtensions::try_new_unstable(&provider).unwrap();
         let swe = swe.as_borrowed();
 
         assert_eq!(
@@ -159,7 +161,8 @@ mod tests {
     fn test_has_script() {
         let provider = SourceDataProvider::new_testing();
 
-        let swe = icu::properties::script::load_script_with_extensions_unstable(&provider).unwrap();
+        let swe =
+            icu::properties::script::ScriptWithExtensions::try_new_unstable(&provider).unwrap();
         let swe = swe.as_borrowed();
 
         assert!(swe.has_script('𐓐' as u32, Script::Osage));
@@ -233,7 +236,8 @@ mod tests {
     fn test_get_script_extensions_set() {
         let provider = SourceDataProvider::new_testing();
 
-        let swe = icu::properties::script::load_script_with_extensions_unstable(&provider).unwrap();
+        let swe =
+            icu::properties::script::ScriptWithExtensions::try_new_unstable(&provider).unwrap();
         let swe = swe.as_borrowed();
 
         let grantha = swe.get_script_extensions_set(Script::Grantha);

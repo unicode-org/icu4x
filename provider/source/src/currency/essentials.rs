@@ -26,8 +26,8 @@ use icu_pattern::Pattern;
 use icu_pattern::PatternItemCow;
 
 use icu::experimental::dimension::provider::ule::MAX_PLACEHOLDER_INDEX;
-use icu::properties::sets::load_for_general_category_group;
-use icu::properties::GeneralCategoryGroup;
+use icu::properties::props::{GeneralCategory, GeneralCategoryGroup};
+use icu::properties::CodePointMapData;
 use icu_provider::DataProvider;
 
 use icu::experimental::dimension::provider::currency::*;
@@ -54,7 +54,9 @@ fn currency_pattern_selection(
     let first_num_index = pattern.find(['0', '#']).unwrap();
     let last_num_index = pattern.rfind(['0', '#']).unwrap();
 
-    let letters_set = load_for_general_category_group(provider, GeneralCategoryGroup::Letter)?;
+    let letters_set = CodePointMapData::<GeneralCategory>::try_new_unstable(provider)?
+        .as_borrowed()
+        .get_set_for_value_group(GeneralCategoryGroup::Letter);
 
     let char_closer_to_number = if currency_sign_index < first_num_index {
         placeholder_value.chars().next_back().unwrap()
