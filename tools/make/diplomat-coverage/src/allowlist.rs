@@ -93,7 +93,6 @@ lazy_static::lazy_static! {
 
     pub static ref IGNORED_ASSOCIATED_ITEMS: HashMap<&'static str, &'static [&'static str]> = [
         ("Writeable", &["writeable_length_hint", "write_to_parts", "write_to_string"][..]),
-        ("FromStr", &["Err"][..]),
     ].into_iter().collect();
 
     // Ignore if this is a substring of any path

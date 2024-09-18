@@ -837,12 +837,13 @@ pub mod ffi {
         ///
         /// [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
         #[diplomat::rust_link(icu::properties::CodePointSetData::new_runtime, FnInStruct)]
-        #[diplomat::rust_link(icu::properties::UnicodeProperty, Struct)]
+        #[diplomat::rust_link(icu::properties::UnicodeProperty::parse_ecma262_name, FnInStruct)]
         #[diplomat::rust_link(
             icu::properties::CodePointSetData::try_new_runtime_unstable,
             FnInStruct,
             hidden
         )]
+        #[diplomat::rust_link(icu::properties::UnicodeProperty, Struct, hidden)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "for_ecma262")]
         pub fn load_for_ecma262(
             provider: &DataProvider,

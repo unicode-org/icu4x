@@ -86,7 +86,7 @@ fn test_basic() {
     assert!(!basic_emoji.contains32(0x0020));
     assert!(!basic_emoji.contains_char('\n'));
     assert!(basic_emoji.contains_char('🦃')); // U+1F983 TURKEY
-                                              // assert!(basic_emoji.contains("\u{1F983}"));
-                                              // assert!(basic_emoji.contains("\u{1F6E4}\u{FE0F}")); // railway track
-                                              // assert!(!basic_emoji.contains("\u{0033}\u{FE0F}\u{20E3}")); // Emoji_Keycap_Sequence, keycap 3
+    assert!(basic_emoji.contains("\u{1F983}"));
+    assert!(basic_emoji.contains("\u{1F6E4}\u{FE0F}")); // railway track
+    assert!(!basic_emoji.contains("\u{0033}\u{FE0F}\u{20E3}")); // Emoji_Keycap_Sequence, keycap 3
 }

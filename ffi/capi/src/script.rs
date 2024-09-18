@@ -30,7 +30,7 @@ pub mod ffi {
     pub struct ScriptExtensionsSet<'a>(pub icu_properties::script::ScriptExtensionsSet<'a>);
 
     impl ScriptWithExtensions {
-        #[diplomat::rust_link(icu::properties::script::script_with_extensions, Fn)]
+        #[diplomat::rust_link(icu::properties::script::ScriptWithExtensions::new, Fn)]
         #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn create(provider: &DataProvider) -> Result<Box<ScriptWithExtensions>, DataError> {
             Ok(Box::new(ScriptWithExtensions(call_constructor!(

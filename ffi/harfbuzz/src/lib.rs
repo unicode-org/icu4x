@@ -301,7 +301,7 @@ impl MirroringFunc for MirroringData {
 /// Can be passed to the `harfbuzz` crate's `AllUnicodeFuncsBuilder`.
 #[derive(Debug)]
 pub struct ScriptData {
-    script_set: CodePointMapData<Script>,
+    script: CodePointMapData<Script>,
     script_mapper: ScriptMapper,
 }
 
@@ -314,7 +314,7 @@ impl ScriptData {
         let script_set = CodePointMapData::<Script>::try_new_unstable(provider)?;
         let script_mapper = ScriptMapper::try_new_unstable(provider)?;
         Ok(Self {
-            script_set,
+            script: script_set,
             script_mapper,
         })
     }
@@ -337,7 +337,7 @@ impl ScriptData {
 impl ScriptFunc for ScriptData {
     #[inline]
     fn script(&self, ch: char) -> [u8; 4] {
-        let script = self.script_set.as_borrowed().get(ch);
+        let script = self.script.as_borrowed().get(ch);
         self.script_mapper
             .as_borrowed()
             .get(script)
