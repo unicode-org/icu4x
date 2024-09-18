@@ -439,7 +439,7 @@ impl<T: NamedEnumeratedProperty> PropertyNamesBorrowed<'static, T> {
 /// # Example
 ///
 /// ```
-/// use icu::properties::ScriptMapper;
+/// use icu::properties::script::ScriptMapper;
 /// use icu::properties::props::Script;
 /// use icu::locale::subtags::script;
 ///
@@ -500,7 +500,7 @@ impl ScriptMapperBorrowed<'_> {
     /// # Example
     ///
     /// ```rust
-    /// use icu::properties::ScriptMapper;
+    /// use icu::properties::script::ScriptMapper;
     /// use icu::properties::props::Script;
     /// use icu::locale::subtags::script;
     ///

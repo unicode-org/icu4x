@@ -189,9 +189,9 @@ impl<'a> ScriptExtensionsSet<'a> {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::script;
+    /// use icu::properties::script::ScriptWithExtensions;
     /// use icu::properties::props::Script;
-    /// let swe = script::script_with_extensions();
+    /// let swe = ScriptWithExtensions::new();
     ///
     /// assert!(swe
     ///     .get_script_extensions_val(0x11303) // GRANTHA SIGN VISARGA
@@ -206,9 +206,9 @@ impl<'a> ScriptExtensionsSet<'a> {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::script;
+    /// use icu::properties::script::ScriptWithExtensions;
     /// use icu::properties::props::Script;
-    /// let swe = script::script_with_extensions();
+    /// let swe = ScriptWithExtensions::new();
     ///
     /// assert_eq!(
     ///     swe.get_script_extensions_val('௫' as u32) // U+0BEB TAMIL DIGIT FIVE
@@ -244,7 +244,7 @@ impl<'a> ScriptExtensionsSet<'a> {
 /// # Examples
 ///
 /// ```
-/// use icu::properties::ScriptWithExtensions;
+/// use icu::properties::script::ScriptWithExtensions;
 /// use icu::properties::props::Script;
 /// let swe = ScriptWithExtensions::new();
 ///
@@ -364,10 +364,10 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     /// # Examples
     ///
     /// ```
-    /// use icu::properties::script;
+    /// use icu::properties::script::ScriptWithExtensions;
     /// use icu::properties::props::Script;
     ///
-    /// let swe = script::script_with_extensions();
+    /// let swe = ScriptWithExtensions::new();
     ///
     /// // U+0640 ARABIC TATWEEL
     /// assert_eq!(swe.get_script_val(0x0640), Script::Common); // main Script value
@@ -458,10 +458,10 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     /// # Examples
     ///
     /// ```
-    /// use icu::properties::script;
+    /// use icu::properties::script::ScriptWithExtensions;
     /// use icu::properties::props::Script;
     ///
-    /// let swe = script::script_with_extensions();
+    /// let swe = ScriptWithExtensions::new();
     ///
     /// assert_eq!(
     ///     swe.get_script_extensions_val('𐓐' as u32) // U+104D0 OSAGE CAPITAL LETTER KHA
@@ -510,10 +510,10 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     /// # Examples
     ///
     /// ```
-    /// use icu::properties::script;
+    /// use icu::properties::script::ScriptWithExtensions;
     /// use icu::properties::props::Script;
     ///
-    /// let swe = script::script_with_extensions();
+    /// let swe = ScriptWithExtensions::new();
     ///
     /// // U+0650 ARABIC KASRA
     /// assert!(!swe.has_script(0x0650, Script::Inherited)); // main Script value
@@ -557,10 +557,10 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     /// # Examples
     ///
     /// ```
-    /// use icu::properties::script;
+    /// use icu::properties::script::ScriptWithExtensions;
     /// use icu::properties::props::Script;
     ///
-    /// let swe = script::script_with_extensions();
+    /// let swe = ScriptWithExtensions::new();
     ///
     /// let syriac_script_extensions_ranges = swe.get_script_extensions_ranges(Script::Syriac);
     ///
@@ -607,10 +607,10 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     /// # Examples
     ///
     /// ```
-    /// use icu::properties::script;
+    /// use icu::properties::script::ScriptWithExtensions;
     /// use icu::properties::props::Script;
     ///
-    /// let swe = script::script_with_extensions();
+    /// let swe = ScriptWithExtensions::new();
     ///
     /// let syriac = swe.get_script_extensions_set(Script::Syriac);
     ///

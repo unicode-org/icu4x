@@ -22,10 +22,7 @@ pub mod ffi {
         /// Get the property value matching the given name, using strict matching
         ///
         /// Returns -1 if the name is unknown for this property
-        #[diplomat::rust_link(
-            icu::properties::PropertyParserBorrowed::get_strict,
-            FnInStruct
-        )]
+        #[diplomat::rust_link(icu::properties::PropertyParserBorrowed::get_strict, FnInStruct)]
         #[diplomat::rust_link(
             icu::properties::PropertyParserBorrowed::get_strict_u16,
             FnInStruct,
@@ -44,10 +41,7 @@ pub mod ffi {
         /// Get the property value matching the given name, using loose matching
         ///
         /// Returns -1 if the name is unknown for this property
-        #[diplomat::rust_link(
-            icu::properties::PropertyParserBorrowed::get_loose,
-            FnInStruct
-        )]
+        #[diplomat::rust_link(icu::properties::PropertyParserBorrowed::get_loose, FnInStruct)]
         #[diplomat::rust_link(
             icu::properties::PropertyParserBorrowed::get_loose_u16,
             FnInStruct,
@@ -227,7 +221,11 @@ pub mod ffi {
         ///
         /// Returns 0 if the name is unknown for this property
         #[diplomat::rust_link(icu::properties::PropertyParserBorrowed::get_strict, FnInStruct)]
-        #[diplomat::rust_link(icu::properties::PropertyParserBorrowed::get_strict_u16, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::properties::PropertyParserBorrowed::get_strict_u16,
+            FnInStruct,
+            hidden
+        )]
         pub fn get_strict(&self, name: &DiplomatStr) -> u32 {
             if let Ok(name) = core::str::from_utf8(name) {
                 self.0.as_borrowed().get_strict(name)
@@ -242,7 +240,11 @@ pub mod ffi {
         ///
         /// Returns 0 if the name is unknown for this property
         #[diplomat::rust_link(icu::properties::PropertyParserBorrowed::get_loose, FnInStruct)]
-        #[diplomat::rust_link(icu::properties::PropertyParserBorrowed::get_loose_u16, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::properties::PropertyParserBorrowed::get_loose_u16,
+            FnInStruct,
+            hidden
+        )]
         pub fn get_loose(&self, name: &DiplomatStr) -> u32 {
             if let Ok(name) = core::str::from_utf8(name) {
                 self.0.as_borrowed().get_loose(name)

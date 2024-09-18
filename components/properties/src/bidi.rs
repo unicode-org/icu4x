@@ -34,7 +34,7 @@ impl BidiAuxiliaryProperties {
     ///
     /// # Examples
     /// ```
-    /// use icu::properties::bidi_data::BidiAuxiliaryProperties;
+    /// use icu::properties::bidi::BidiAuxiliaryProperties;
     ///
     /// let bidi_data = BidiAuxiliaryProperties::new();
     ///
@@ -140,9 +140,9 @@ impl<'a> BidiAuxiliaryPropertiesBorrowed<'a> {
     ///
     /// # Examples
     /// ```
-    /// use icu::properties::bidi_data;
+    /// use icu::properties::bidi::BidiAuxiliaryProperties;
     ///
-    /// let bidi_data = bidi_data::bidi_auxiliary_properties();
+    /// let bidi_data = BidiAuxiliaryProperties::new();
     ///
     /// let open_paren = bidi_data.get32_mirroring_props('(' as u32);
     /// assert_eq!(open_paren.mirroring_glyph, Some(')'));
@@ -175,9 +175,9 @@ impl<'a> BidiAuxiliaryPropertiesBorrowed<'a> {
     ///
     /// # Examples
     /// ```
-    /// use icu::properties::{bidi_data, bidi_data::BidiPairingProperties};
+    /// use icu::properties::bidi::{BidiAuxiliaryProperties, BidiPairingProperties};
     ///
-    /// let bidi_data = bidi_data::bidi_auxiliary_properties();
+    /// let bidi_data = BidiAuxiliaryProperties::new();
     ///
     /// let open_paren = bidi_data.get32_pairing_props('(' as u32);
     /// assert_eq!(open_paren, BidiPairingProperties::Open(')'));
