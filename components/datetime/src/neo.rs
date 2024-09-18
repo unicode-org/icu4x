@@ -229,6 +229,7 @@ where
 }
 
 impl RawNeoOptions {
+    #[cfg(feature = "compiled_data")]
     pub(crate) fn from_field_set<FSet>(field_set: FSet) -> Self
     where
         FSet: DateTimeMarkers,

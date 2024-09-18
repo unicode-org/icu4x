@@ -1585,6 +1585,45 @@ macro_rules! length_option_helper {
     };
 }
 
+/// Generates an impl of [`NeoGetField`]
+macro_rules! impl_get_field {
+    ($type:path, never) => {
+        impl NeoGetField<NeverField> for $type {
+            fn get_field(&self) -> NeverField {
+                NeverField
+            }
+        }
+    };
+    ($type:path, length, yes) => {
+        impl NeoGetField<NeoSkeletonLength> for $type {
+            fn get_field(&self) -> NeoSkeletonLength {
+                self.length
+            }
+        }
+    };
+    ($type:path, alignment, yes) => {
+        impl NeoGetField<Option<Alignment>> for $type {
+            fn get_field(&self) -> Option<Alignment> {
+                self.alignment
+            }
+        }
+    };
+    ($type:path, era_display, yes) => {
+        impl NeoGetField<Option<EraDisplay>> for $type {
+            fn get_field(&self) -> Option<EraDisplay> {
+                self.era_display
+            }
+        }
+    };
+    ($type:path, fractional_second_digits, yes) => {
+        impl NeoGetField<Option<FractionalSecondDigits>> for $type {
+            fn get_field(&self) -> Option<FractionalSecondDigits> {
+                self.fractional_second_digits
+            }
+        }
+    };
+}
+
 macro_rules! impl_date_marker {
     (
         $type:ident,
@@ -1687,30 +1726,14 @@ macro_rules! impl_date_marker {
                 }
             }
         }
-        impl NeoGetField<NeoSkeletonLength> for $type {
-            fn get_field(&self) -> NeoSkeletonLength {
-                self.length
-            }
-        }
+        impl_get_field!($type, never);
+        impl_get_field!($type, length, yes);
         $(
-            impl NeoGetField<Option<Alignment>> for $type {
-                fn get_field(&self) -> Option<yes_to!(Alignment, $option_alignment_yes)> {
-                    self.alignment
-                }
-            }
+            impl_get_field!($type, alignment, $option_alignment_yes);
         )?
         $(
-            impl NeoGetField<Option<EraDisplay>> for $type {
-                fn get_field(&self) -> Option<yes_to!(EraDisplay, $year_yes)> {
-                    self.era_display
-                }
-            }
+            impl_get_field!($type, era_display, $year_yes);
         )?
-        impl NeoGetField<NeverField> for $type {
-            fn get_field(&self) -> NeverField {
-                NeverField
-            }
-        }
         impl private::Sealed for $type {}
         impl DateTimeNamesMarker for $type {
             type YearNames = datetime_marker_helper!(@names/year, $($years_yes)?);
