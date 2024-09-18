@@ -74,15 +74,15 @@ impl From<&cldr_serde::ca::Dates> for DateSkeletonPatternsV1<'_> {
     }
 }
 
+#[cfg(test)]
 mod test {
-    use super::reference::Skeleton;
-    use super::*;
+    use icu::datetime::skeleton::reference::Skeleton;
+    use icu::datetime::skeleton::*;
     use icu_provider::prelude::*;
-
-    use crate::{
+    use icu::datetime::{
         fields::{Day, Field, FieldLength, Month, Weekday},
         options::{components, preferences},
-        pattern::runtime,
+        pattern::{reference, runtime},
         provider::calendar::{
             DateSkeletonPatternsV1, DateSkeletonPatternsV1Marker, GregorianDateLengthsV1Marker,
             SkeletonV1,
@@ -91,22 +91,25 @@ mod test {
     use core::convert::TryFrom;
     use core::str::FromStr;
     use litemap::LiteMap;
+    use icu::locale::locale;
+
+    use crate::SourceDataProvider;
 
     fn get_data_payload() -> (
         DataPayload<GregorianDateLengthsV1Marker>,
         DataPayload<DateSkeletonPatternsV1Marker>,
     ) {
-        let locale = icu_locale_core::locale!("en").into();
+        let locale = locale!("en").into();
         let marker_attributes = DataMarkerAttributes::from_str_or_panic("gregory");
 
-        let patterns = crate::provider::Baked
+        let patterns = SourceDataProvider::new_testing()
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),
                 ..Default::default()
             })
             .expect("Failed to load payload")
             .payload;
-        let skeletons = crate::provider::Baked
+        let skeletons = SourceDataProvider::new_testing()
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     marker_attributes,
@@ -123,17 +126,15 @@ mod test {
     /// testing see components/datetime/tests/fixtures/tests/components-*.json
     #[test]
     fn test_skeleton_matching() {
-        let components = components::Bag {
-            year: Some(components::Year::Numeric),
-            month: Some(components::Month::Long),
-            day: Some(components::Day::NumericDayOfMonth),
+        let mut components = components::Bag::empty();
+        components.year = Some(components::Year::Numeric);
+        components.month = Some(components::Month::Long);
+        components.day = Some(components::Day::NumericDayOfMonth);
 
-            hour: Some(components::Numeric::Numeric),
-            minute: Some(components::Numeric::Numeric),
-            second: Some(components::Numeric::Numeric),
+        components.hour = Some(components::Numeric::Numeric);
+        components.minute = Some(components::Numeric::Numeric);
+        components.second = Some(components::Numeric::Numeric);
 
-            ..Default::default()
-        };
         let requested_fields = components.to_vec_fields(preferences::HourCycle::H23);
         let (_, skeletons) = get_data_payload();
 
@@ -156,11 +157,9 @@ mod test {
 
     #[test]
     fn test_skeleton_matching_missing_fields() {
-        let components = components::Bag {
-            week: Some(components::Week::TwoDigitWeekOfYear),
-            weekday: Some(components::Text::Short),
-            ..Default::default()
-        };
+        let mut components = components::Bag::empty();
+        components.week = Some(components::Week::TwoDigitWeekOfYear);
+        components.weekday = Some(components::Text::Short);
         let requested_fields = components.to_vec_fields(preferences::HourCycle::H23);
         let (_, skeletons) = get_data_payload();
 
@@ -184,14 +183,12 @@ mod test {
     #[test]
     #[should_panic]
     fn test_missing_append_items_support() {
-        let components = components::Bag {
-            year: Some(components::Year::Numeric),
-            month: Some(components::Month::Long),
-            day: Some(components::Day::NumericDayOfMonth),
-            // This will be appended.
-            time_zone_name: Some(components::TimeZoneName::LongSpecific),
-            ..Default::default()
-        };
+        let mut components = components::Bag::empty();
+        components.year = Some(components::Year::Numeric);
+        components.month = Some(components::Month::Long);
+        components.day = Some(components::Day::NumericDayOfMonth);
+        // This will be appended.
+        components.time_zone_name = Some(components::TimeZoneName::LongSpecific);
         let requested_fields = components.to_vec_fields(preferences::HourCycle::H23);
         let (patterns, skeletons) = get_data_payload();
 
@@ -231,11 +228,9 @@ mod test {
 
     #[test]
     fn test_skeleton_no_match() {
-        let components = components::Bag {
-            hour: Some(components::Numeric::Numeric),
-            time_zone_name: Some(components::TimeZoneName::LongSpecific),
-            ..Default::default()
-        };
+        let mut components = components::Bag::empty();
+        components.hour = Some(components::Numeric::Numeric);
+        components.time_zone_name = Some(components::TimeZoneName::LongSpecific);
         let requested_fields = components.to_vec_fields(preferences::HourCycle::H23);
         // Construct a set of skeletons that do not use the hour nor time zone symbols.
         let mut skeletons = LiteMap::new();
@@ -389,10 +384,8 @@ mod test {
 
     #[test]
     fn test_skeleton_matching_weekday_short() {
-        let components = components::Bag {
-            weekday: Some(components::Text::Short),
-            ..Default::default()
-        };
+        let mut components = components::Bag::empty();
+        components.weekday = Some(components::Text::Short);
         let default_hour_cycle = preferences::HourCycle::H23;
         let requested_fields = components.to_vec_fields(default_hour_cycle);
         let (_, skeletons) = get_data_payload();
@@ -414,10 +407,8 @@ mod test {
 
     #[test]
     fn test_skeleton_matching_weekday_long() {
-        let components = components::Bag {
-            weekday: Some(components::Text::Long),
-            ..Default::default()
-        };
+        let mut components = components::Bag::empty();
+        components.weekday = Some(components::Text::Long);
         let default_hour_cycle = preferences::HourCycle::H23;
         let requested_fields = components.to_vec_fields(default_hour_cycle);
         let (_, skeletons) = get_data_payload();
@@ -437,13 +428,12 @@ mod test {
         };
     }
 
-    #[cfg(feature = "datagen")]
     fn assert_pattern_to_skeleton(pattern: &str, skeleton: &str, message: &str) {
         assert_eq!(
             serde_json::to_string(skeleton).expect("Failed to transform skeleton to string."),
             serde_json::to_string(&Skeleton::from(
                 &pattern
-                    .parse::<crate::pattern::reference::Pattern>()
+                    .parse::<reference::Pattern>()
                     .expect("Failed to create pattern from bytes.")
             ))
             .expect("Failed to transform skeleton to string."),
@@ -452,7 +442,6 @@ mod test {
     }
 
     #[test]
-    #[cfg(feature = "datagen")]
     fn test_pattern_to_skeleton() {
         assert_pattern_to_skeleton("H:mm:ss v", "Hmmssv", "Test a complicated time pattern");
         assert_pattern_to_skeleton(
