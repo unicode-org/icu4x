@@ -4,13 +4,13 @@
 
 //! Data structs for calendar-specific symbols and patterns.
 
-#[cfg(any(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "datagen")]
 mod skeletons;
 mod symbols;
 
 use crate::pattern;
 use icu_provider::prelude::*;
-#[cfg(any(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "datagen")]
 pub use skeletons::*;
 pub use symbols::*;
 
@@ -51,12 +51,6 @@ pub struct DateLengthsV1<'data> {
     /// Patterns used to combine date and time length patterns into full date_time patterns.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub length_combinations: patterns::GenericLengthPatternsV1<'data>,
-}
-
-pub(crate) struct ErasedDateLengthsV1Marker;
-
-impl DynamicDataMarker for ErasedDateLengthsV1Marker {
-    type DataStruct = DateLengthsV1<'static>;
 }
 
 size_test!(TimeLengthsV1, time_lengths_v1_size, 264);
@@ -163,14 +157,6 @@ pub mod patterns {
         }
     }
 
-    /// Helper struct used to allow for projection of `DataPayload<DatePatternsV1>` to
-    /// `DataPayload<PatternPluralsV1>`.
-    pub(crate) struct PatternPluralsFromPatternsV1Marker;
-
-    impl DynamicDataMarker for PatternPluralsFromPatternsV1Marker {
-        type DataStruct = PatternPluralsV1<'static>;
-    }
-
     /// A general purpose pattern representation. Used for date-time glue patterns.
     ///
     /// Expresses the formatting positions of other formatted elements (ex: the order
@@ -188,18 +174,4 @@ pub mod patterns {
     pub struct GenericPatternV1<'data>(
         #[cfg_attr(feature = "serde", serde(borrow))] pub GenericPattern<'data>,
     );
-
-    /// Helper struct used to allow for projection of `DataPayload<DatePatternsV1>` to
-    /// `DataPayload<GenericLengthPatternsV1>`.
-    pub(crate) struct GenericPatternV1Marker;
-
-    impl DynamicDataMarker for GenericPatternV1Marker {
-        type DataStruct = GenericPatternV1<'static>;
-    }
-
-    impl<'data> From<GenericPattern<'data>> for GenericPatternV1<'data> {
-        fn from(pattern: GenericPattern<'data>) -> Self {
-            Self(pattern)
-        }
-    }
 }
