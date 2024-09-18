@@ -228,6 +228,27 @@ where
     }
 }
 
+impl RawNeoOptions {
+    pub(crate) fn from_field_set<FSet>(field_set: FSet) -> Self
+    where
+        FSet: DateTimeMarkers,
+        FSet: NeoGetField<FSet::LengthOption>,
+        FSet: NeoGetField<FSet::AlignmentOption>,
+        FSet: NeoGetField<FSet::EraDisplayOption>,
+        FSet: NeoGetField<FSet::FractionalSecondDigitsOption>,
+    {
+        Self {
+            length: NeoGetField::<FSet::LengthOption>::get_field(&field_set).into(),
+            alignment: NeoGetField::<FSet::AlignmentOption>::get_field(&field_set).into(),
+            era_display: NeoGetField::<FSet::EraDisplayOption>::get_field(&field_set).into(),
+            fractional_second_digits: NeoGetField::<FSet::FractionalSecondDigitsOption>::get_field(
+                &field_set,
+            )
+            .into(),
+        }
+    }
+}
+
 size_test!(TypedNeoFormatter<icu_calendar::Gregorian, crate::neo_marker::NeoYearMonthDayMarker>, typed_neo_year_month_day_formatter_size, 504);
 
 /// [`TypedNeoFormatter`] is a formatter capable of formatting dates and/or times from
@@ -241,6 +262,77 @@ pub struct TypedNeoFormatter<C: CldrCalendar, R: DateTimeNamesMarker> {
     selection: DateTimeZonePatternSelectionData,
     names: RawDateTimeNames<R>,
     _calendar: PhantomData<C>,
+}
+
+impl<C: CldrCalendar, FSet: DateTimeMarkers + HasConstComponents> TypedNeoFormatter<C, FSet>
+where
+    FSet::D: TypedDateDataMarkers<C>,
+    FSet::T: TimeMarkers,
+    FSet::Z: ZoneMarkers,
+    FSet: NeoGetField<FSet::LengthOption>,
+    FSet: NeoGetField<FSet::AlignmentOption>,
+    FSet: NeoGetField<FSet::EraDisplayOption>,
+    FSet: NeoGetField<FSet::FractionalSecondDigitsOption>,
+{
+    /// Creates a new [`TypedNeoFormatter`] from compiled data with
+    /// datetime components specified at build time.
+    ///
+    /// Use this constructor for optimal data size and memory use
+    /// if you know the required datetime components at build time.
+    /// If you do not know the datetime components until runtime,
+    /// use a `with_components` constructor.
+    ///
+    /// # Examples
+    ///
+    /// Basic usage:
+    ///
+    /// ```
+    /// use icu::calendar::Date;
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::neo::TypedNeoFormatter;
+    /// use icu::datetime::neo_marker::NeoYearMonthDayMarker;
+    /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+    /// use icu::locale::locale;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let formatter =
+    ///     TypedNeoFormatter::try_new2(
+    ///         &locale!("es-MX").into(),
+    ///         NeoYearMonthDayMarker::with_length(NeoSkeletonLength::Long),
+    ///     )
+    ///     .unwrap();
+    ///
+    /// assert_try_writeable_eq!(
+    ///     formatter.format(&Date::try_new_gregorian_date(2023, 12, 20).unwrap()),
+    ///     "20 de diciembre de 2023"
+    /// );
+    /// ```
+    pub fn try_new2(locale: &DataLocale, options: FSet) -> Result<Self, LoadError>
+    where
+        crate::provider::Baked: Sized
+            // Date formatting markers
+            + DataProvider<<FSet::D as TypedDateDataMarkers<C>>::YearNamesV1Marker>
+            + DataProvider<<FSet::D as TypedDateDataMarkers<C>>::MonthNamesV1Marker>
+            + DataProvider<<FSet::D as TypedDateDataMarkers<C>>::DateSkeletonPatternsV1Marker>
+            + DataProvider<<FSet::D as TypedDateDataMarkers<C>>::WeekdayNamesV1Marker>
+            + DataProvider<<FSet::T as TimeMarkers>::DayPeriodNamesV1Marker>
+            + DataProvider<<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::EssentialsV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::ExemplarCitiesV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::GenericLongV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1Marker>
+            + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1Marker>
+            + DataProvider<FSet::GluePatternV1Marker>,
+    {
+        Self::try_new_internal(
+            &crate::provider::Baked,
+            &ExternalLoaderCompiledData,
+            locale,
+            FSet::COMPONENTS,
+            RawNeoOptions::from_field_set(options),
+        )
+    }
 }
 
 impl<C: CldrCalendar, R: DateTimeMarkers + HasConstComponents> TypedNeoFormatter<C, R>

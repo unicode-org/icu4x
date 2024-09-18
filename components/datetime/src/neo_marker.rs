@@ -1560,6 +1560,19 @@ macro_rules! datetime_marker_helper {
     (@names/zone/$any:ident,) => {
         NeverMarker<()>
     };
+    () => {
+        unreachable!() // prevent bugs
+    };
+}
+
+/// Maps the token `yes` to the given ident
+macro_rules! yes_to {
+    ($any:ident, yes) => {
+        $any
+    };
+    () => {
+        unreachable!() // prevent bugs
+    };
 }
 
 /// Generates the options argument passed into the docs test constructor
@@ -1589,6 +1602,7 @@ macro_rules! impl_date_marker {
         $(input_day_of_week = $day_of_week_yes:ident,)?
         $(input_day_of_year = $day_of_year_yes:ident,)?
         $(input_any_calendar_kind = $any_calendar_kind_yes:ident,)?
+        $(option_alignment = $option_alignment_yes:ident,)?
     ) => {
         #[doc = concat!("**“", $sample, "**” ⇒ ", $description)]
         ///
@@ -1640,8 +1654,63 @@ macro_rules! impl_date_marker {
         /// );
         /// ```
         #[derive(Debug)]
-        #[allow(clippy::exhaustive_enums)] // empty enum
-        pub enum $type {}
+        #[non_exhaustive]
+        pub struct $type {
+            /// The desired length of the formatted string.
+            ///
+            /// See: [`NeoSkeletonLength`]
+            pub length: datetime_marker_helper!(@option/length, $sample_length),
+            $(
+                /// Whether fields should be aligned for a column-like layout.
+                ///
+                /// See: [`Alignment`]
+                pub alignment: datetime_marker_helper!(@option/alignment, $option_alignment_yes),
+            )?
+            $(
+                /// When to display the era field in the formatted string.
+                ///
+                /// See: [`EraDisplay`]
+                pub era_display: datetime_marker_helper!(@option/eradisplay, $year_yes),
+            )?
+        }
+        impl $type {
+            #[doc = concat!("Creates a ", stringify!($type), " skeleton with the given formatting length.")]
+            pub const fn with_length(length: NeoSkeletonLength) -> Self {
+                Self {
+                    length,
+                    $(
+                        alignment: yes_to!(None, $option_alignment_yes),
+                    )?
+                    $(
+                        era_display: yes_to!(None, $year_yes),
+                    )?
+                }
+            }
+        }
+        impl NeoGetField<NeoSkeletonLength> for $type {
+            fn get_field(&self) -> NeoSkeletonLength {
+                self.length
+            }
+        }
+        $(
+            impl NeoGetField<Option<Alignment>> for $type {
+                fn get_field(&self) -> Option<yes_to!(Alignment, $option_alignment_yes)> {
+                    self.alignment
+                }
+            }
+        )?
+        $(
+            impl NeoGetField<Option<EraDisplay>> for $type {
+                fn get_field(&self) -> Option<yes_to!(EraDisplay, $year_yes)> {
+                    self.era_display
+                }
+            }
+        )?
+        impl NeoGetField<NeverField> for $type {
+            fn get_field(&self) -> NeverField {
+                NeverField
+            }
+        }
         impl private::Sealed for $type {}
         impl DateTimeNamesMarker for $type {
             type YearNames = datetime_marker_helper!(@names/year, $($years_yes)?);
@@ -1711,6 +1780,7 @@ macro_rules! impl_day_marker {
         $(input_day_of_week = $day_of_week_yes:ident,)?
         $(input_day_of_year = $day_of_year_yes:ident,)?
         $(input_any_calendar_kind = $any_calendar_kind_yes:ident,)?
+        $(option_alignment = $option_alignment_yes:ident,)?
     ) => {
         impl_date_marker!(
             $type,
@@ -1728,6 +1798,7 @@ macro_rules! impl_day_marker {
             $(input_day_of_week = $day_of_week_yes,)?
             $(input_day_of_year = $day_of_year_yes,)?
             $(input_any_calendar_kind = $any_calendar_kind_yes,)?
+            $(option_alignment = $option_alignment_yes,)?
         );
         impl HasConstDayComponents for $type {
             const COMPONENTS: NeoDayComponents = $components;
@@ -2119,6 +2190,7 @@ impl_day_marker!(
     input_month = yes,
     input_day_of_month = yes,
     input_any_calendar_kind = yes,
+    option_alignment = yes,
 );
 
 // TODO: Rename this to FullYear instead of EraYear
@@ -2135,6 +2207,7 @@ impl_day_marker!(
     input_month = yes,
     input_day_of_month = yes,
     input_any_calendar_kind = yes,
+    option_alignment = yes,
 );
 
 impl_day_marker!(
@@ -2152,6 +2225,7 @@ impl_day_marker!(
     input_day_of_month = yes,
     input_day_of_week = yes,
     input_any_calendar_kind = yes,
+    option_alignment = yes,
 );
 
 impl_time_marker!(
@@ -2227,6 +2301,7 @@ impl_date_marker!(
     input_year = yes,
     input_month = yes,
     input_any_calendar_kind = yes,
+    option_alignment = yes,
 );
 
 impl_zone_marker!(
