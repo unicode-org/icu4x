@@ -174,6 +174,20 @@ pub struct NeoOptions<R: DateTimeMarkers> {
     pub fractional_second_digits: R::FractionalSecondDigitsOption,
 }
 
+impl<R> From<NeoOptions<R>> for RawNeoOptions
+where
+    R: DateTimeMarkers,
+{
+    fn from(options: NeoOptions<R>) -> Self {
+        Self {
+            length: options.length.into(),
+            alignment: options.alignment.into(),
+            era_display: options.era_display.into(),
+            fractional_second_digits: options.fractional_second_digits.into(),
+        }
+    }
+}
+
 impl<R> From<NeoSkeletonLength> for NeoOptions<R>
 where
     R: DateTimeMarkers,
@@ -292,7 +306,7 @@ where
             &ExternalLoaderCompiledData,
             locale,
             R::COMPONENTS,
-            options,
+            options.into(),
         )
     }
 
@@ -337,7 +351,7 @@ where
             &ExternalLoaderUnstable(provider),
             locale,
             R::COMPONENTS,
-            options,
+            options.into(),
         )
     }
 }
@@ -459,7 +473,7 @@ where
             &ExternalLoaderCompiledData,
             locale,
             components.into(),
-            options,
+            options.into(),
         )
     }
 
@@ -505,7 +519,7 @@ where
             &ExternalLoaderUnstable(provider),
             locale,
             components.into(),
-            options,
+            options.into(),
         )
     }
 }
@@ -521,7 +535,7 @@ where
         loader: &L,
         locale: &DataLocale,
         components: NeoComponents,
-        options: NeoOptions<R>,
+        options: RawNeoOptions,
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
@@ -550,11 +564,8 @@ where
             &<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker::bind(provider),
             &R::GluePatternV1Marker::bind(provider),
             locale,
-            options.length.into(),
             components,
-            options.alignment.into(),
-            options.era_display.into(),
-            options.fractional_second_digits.into(),
+            options,
             hour_cycle,
         )
         .map_err(LoadError::Data)?;
@@ -790,7 +801,7 @@ where
             &ExternalLoaderCompiledData,
             locale,
             R::COMPONENTS,
-            options,
+            options.into(),
         )
     }
 
@@ -890,7 +901,7 @@ where
             &ExternalLoaderUnstable(provider),
             locale,
             R::COMPONENTS,
-            options,
+            options.into(),
         )
     }
 }
@@ -1055,7 +1066,7 @@ where
             &ExternalLoaderCompiledData,
             locale,
             components.into(),
-            options,
+            options.into(),
         )
     }
 
@@ -1156,7 +1167,7 @@ where
             &ExternalLoaderUnstable(provider),
             locale,
             components.into(),
-            options,
+            options.into(),
         )
     }
 }
@@ -1172,7 +1183,7 @@ where
         loader: &L,
         locale: &DataLocale,
         components: NeoComponents,
-        options: NeoOptions<R>,
+        options: RawNeoOptions,
     ) -> Result<Self, LoadError>
     where
         P: ?Sized
@@ -1251,11 +1262,8 @@ where
             &<R::T as TimeMarkers>::TimeSkeletonPatternsV1Marker::bind(provider),
             &R::GluePatternV1Marker::bind(provider),
             locale,
-            options.length.into(),
             components,
-            options.alignment.into(),
-            options.era_display.into(),
-            options.fractional_second_digits.into(),
+            options,
             hour_cycle,
         )
         .map_err(LoadError::Data)?;
