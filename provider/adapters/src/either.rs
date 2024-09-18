@@ -122,3 +122,18 @@ impl<M: DataMarker, P0: IterableDataProvider<M>, P1: IterableDataProvider<M>>
         }
     }
 }
+
+#[cfg(feature = "export")]
+impl<P0, P1> ExportableProvider for EitherProvider<P0, P1>
+where
+    P0: ExportableProvider,
+    P1: ExportableProvider,
+{
+    fn supported_markers(&self) -> std::collections::HashSet<DataMarkerInfo> {
+        use EitherProvider::*;
+        match self {
+            A(p) => p.supported_markers(),
+            B(p) => p.supported_markers(),
+        }
+    }
+}

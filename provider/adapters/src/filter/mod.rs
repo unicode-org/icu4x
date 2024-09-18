@@ -165,3 +165,15 @@ where
         })
     }
 }
+
+#[cfg(feature = "export")]
+impl<P0, F> ExportableProvider for FilterDataProvider<P0, F>
+where
+    P0: ExportableProvider,
+    F: Fn(DataIdentifierBorrowed) -> bool,
+{
+    fn supported_markers(&self) -> std::collections::HashSet<DataMarkerInfo> {
+        // The predicate only takes DataIdentifier, not DataMarker, so we are not impacted
+        self.inner.supported_markers()
+    }
+}

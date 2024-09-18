@@ -107,3 +107,10 @@ where
         Ok(Default::default())
     }
 }
+
+#[cfg(feature = "export")]
+impl ExportableProvider for EmptyDataProvider {
+    fn supported_markers(&self) -> std::collections::HashSet<DataMarkerInfo> {
+        Default::default()
+    }
+}
