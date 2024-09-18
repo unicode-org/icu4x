@@ -17,7 +17,6 @@
 
 pub mod bidi;
 pub mod names;
-pub mod props;
 
 pub use names::{
     BidiClassNameToValueV1Marker, BidiClassValueToLongNameV1Marker,
@@ -41,6 +40,7 @@ pub use names::{
     WordBreakValueToShortNameV1Marker,
 };
 
+pub use crate::props::gc::GeneralCategoryULE;
 pub use bidi::BidiAuxiliaryPropertiesV1Marker;
 
 use crate::script::ScriptWithExt;

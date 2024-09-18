@@ -6,7 +6,6 @@
 //! values in an efficient structure.
 
 use crate::props::Script;
-use crate::provider::props::ScriptULE;
 use crate::provider::*;
 
 use core::iter::FromIterator;
@@ -51,7 +50,7 @@ impl ScriptWithExt {
 }
 
 impl AsULE for ScriptWithExt {
-    type ULE = ScriptULE;
+    type ULE = <u16 as AsULE>::ULE;
 
     #[inline]
     fn to_unaligned(self) -> Self::ULE {
