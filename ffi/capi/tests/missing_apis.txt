@@ -14,28 +14,19 @@
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 
-icu::datetime::DateFormatter#Struct
-icu::datetime::DateFormatter::format#FnInStruct
-icu::datetime::DateFormatter::format_to_string#FnInStruct
-icu::datetime::DateFormatter::try_new_with_length#FnInStruct
-icu::datetime::DateTimeFormatter#Struct
-icu::datetime::DateTimeFormatter::format#FnInStruct
-icu::datetime::DateTimeFormatter::format_to_string#FnInStruct
-icu::datetime::DateTimeFormatter::try_new#FnInStruct
-icu::datetime::FormattedDateTime#Struct
-icu::datetime::FormattedDateTime::write_to#FnInStruct
-icu::datetime::TimeFormatter#Struct
-icu::datetime::TimeFormatter::format#FnInStruct
-icu::datetime::TimeFormatter::format_to_string#FnInStruct
-icu::datetime::TimeFormatter::try_new_with_length#FnInStruct
-icu::datetime::TypedDateFormatter#Struct
-icu::datetime::TypedDateFormatter::format#FnInStruct
-icu::datetime::TypedDateFormatter::format_to_string#FnInStruct
-icu::datetime::TypedDateFormatter::try_new_with_length#FnInStruct
-icu::datetime::TypedDateTimeFormatter#Struct
-icu::datetime::TypedDateTimeFormatter::format#FnInStruct
-icu::datetime::TypedDateTimeFormatter::format_to_string#FnInStruct
-icu::datetime::TypedDateTimeFormatter::try_new#FnInStruct
+icu::datetime::NeoFormatter#Struct
+icu::datetime::NeoFormatter::convert_and_format#FnInStruct
+icu::datetime::NeoFormatter::strict_format#FnInStruct
+icu::datetime::NeoFormatter::try_new#FnInStruct
+icu::datetime::NeoFormatter::try_new_with_components#FnInStruct
+icu::datetime::NeoSkeletonLength#Enum
+icu::datetime::NeoSkeletonLength::VALUES#AssociatedConstantInEnum
+icu::datetime::NeoSkeletonLength::to_date_style#FnInEnum
+icu::datetime::NeoSkeletonLength::to_time_style#FnInEnum
+icu::datetime::TypedNeoFormatter#Struct
+icu::datetime::TypedNeoFormatter::format#FnInStruct
+icu::datetime::TypedNeoFormatter::try_new#FnInStruct
+icu::datetime::TypedNeoFormatter::try_new_with_components#FnInStruct
 icu::datetime::options::length::Date#Enum
 icu::datetime::options::length::Time#Enum
 icu::normalizer::ComposingNormalizerBorrowed#Struct

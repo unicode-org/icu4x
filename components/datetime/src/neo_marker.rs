@@ -311,8 +311,6 @@
 //!     tzf.format(&time_zone),
 //!     "GMT+05:30"
 //! );
-//!
-//! # Ok::<(), icu::datetime::DateTimeError>(())
 //! ```
 
 #[cfg(doc)]

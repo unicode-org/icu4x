@@ -13,11 +13,8 @@ use zerovec::{
     VarZeroVec, ZeroMap,
 };
 
-#[cfg(feature = "experimental")]
 use crate::neo_skeleton::NeoSkeletonLength;
-#[cfg(feature = "experimental")]
 use crate::pattern::runtime::PatternBorrowed;
-#[cfg(feature = "experimental")]
 use core::ops::Range;
 
 /// Helpers involving the data marker attributes used for date symbols.
@@ -432,15 +429,12 @@ pub struct SimpleSubstitutionPattern<'data> {
 }
 
 impl SimpleSubstitutionPattern<'_> {
-    #[cfg(feature = "experimental")]
     pub(crate) fn get_prefix(&self) -> &str {
         self.debug_unwrap_range(0..self.subst_index)
     }
-    #[cfg(feature = "experimental")]
     pub(crate) fn get_suffix(&self) -> &str {
         self.debug_unwrap_range(self.subst_index..self.pattern.len())
     }
-    #[cfg(feature = "experimental")]
     fn debug_unwrap_range(&self, range: Range<usize>) -> &str {
         match self.pattern.get(range) {
             Some(s) => s,
@@ -493,24 +487,20 @@ pub struct LinearNamesV1<'data> {
 
 impl<'data> LinearNamesV1<'data> {
     /// Gets the 'am' symbol assuming this struct contains day period data.
-    #[cfg(feature = "experimental")]
     pub(crate) fn am(&self) -> Option<&str> {
         self.symbols.get(0)
     }
     /// Gets the 'pm' symbol assuming this struct contains day period data.
-    #[cfg(feature = "experimental")]
     pub(crate) fn pm(&self) -> Option<&str> {
         self.symbols.get(1)
     }
     /// Gets the 'noon' symbol assuming this struct contains day period data.
-    #[cfg(feature = "experimental")]
     pub(crate) fn noon(&self) -> Option<&str> {
         self.symbols
             .get(2)
             .and_then(|s| if s.is_empty() { None } else { Some(s) })
     }
     /// Gets the 'midnight' symbol assuming this struct contains day period data.
-    #[cfg(feature = "experimental")]
     pub(crate) fn midnight(&self) -> Option<&str> {
         self.symbols.get(3)
     }
@@ -573,7 +563,6 @@ pub struct SkeletonDataIndex {
     pub has_eras: bool,
 }
 
-#[cfg(feature = "experimental")]
 #[derive(Debug, Copy, Clone)]
 pub(crate) struct PatternSelectionOptions {
     pub(crate) length: NeoSkeletonLength,
@@ -582,7 +571,6 @@ pub(crate) struct PatternSelectionOptions {
 
 impl SkeletonDataIndex {
     // TODO: This should handle plurals
-    #[cfg(feature = "experimental")]
     pub(crate) fn index_for(self, options: PatternSelectionOptions) -> u8 {
         let chunk_number = match (options.length, self.has_long, self.has_medium) {
             (NeoSkeletonLength::Long, _, _) => 0,
@@ -669,7 +657,6 @@ pub struct PackedSkeletonDataV1<'data> {
 }
 
 impl<'data> PackedSkeletonDataV1<'data> {
-    #[cfg(feature = "experimental")]
     /// Gets a pattern according to a length and a numeric variant.
     pub(crate) fn get_pattern(&self, options: PatternSelectionOptions) -> PatternBorrowed {
         match self

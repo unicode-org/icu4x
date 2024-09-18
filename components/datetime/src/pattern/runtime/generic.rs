@@ -21,7 +21,6 @@ pub struct GenericPattern<'data> {
 }
 
 /// A ZeroSlice containing a 0, 1, and 2 placeholder with no spaces
-#[cfg(feature = "experimental")]
 pub(crate) const ZERO_ONE_TWO_SLICE: &zerovec::ZeroSlice<GenericPatternItem> = zerovec::zeroslice!(
     GenericPatternItem;
     GenericPatternItem::to_unaligned_const;
