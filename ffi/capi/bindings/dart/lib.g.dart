@@ -45,15 +45,16 @@ part 'DataError.g.dart';
 part 'DataProvider.g.dart';
 part 'Date.g.dart';
 part 'DateFormatter.g.dart';
-part 'DateLength.g.dart';
 part 'DateTime.g.dart';
 part 'DateTimeFormatter.g.dart';
+part 'DateTimeLength.g.dart';
 part 'Decomposed.g.dart';
 part 'DecomposingNormalizer.g.dart';
 part 'DisplayNamesFallback.g.dart';
 part 'DisplayNamesOptions.g.dart';
 part 'DisplayNamesStyle.g.dart';
 part 'Error.g.dart';
+part 'ExemplarCharacters.g.dart';
 part 'FixedDecimal.g.dart';
 part 'FixedDecimalFormatter.g.dart';
 part 'FixedDecimalGroupingStrategy.g.dart';
@@ -73,10 +74,6 @@ part 'GregorianDateTimeFormatter.g.dart';
 part 'GregorianZonedDateTimeFormatter.g.dart';
 part 'IsoDate.g.dart';
 part 'IsoDateTime.g.dart';
-part 'IsoTimeZoneFormat.g.dart';
-part 'IsoTimeZoneMinuteDisplay.g.dart';
-part 'IsoTimeZoneOptions.g.dart';
-part 'IsoTimeZoneSecondDisplay.g.dart';
 part 'IsoWeekday.g.dart';
 part 'LanguageDisplay.g.dart';
 part 'LeadingAdjustment.g.dart';
@@ -122,8 +119,6 @@ part 'SentenceBreakIteratorUtf8.g.dart';
 part 'SentenceSegmenter.g.dart';
 part 'Time.g.dart';
 part 'TimeFormatter.g.dart';
-part 'TimeLength.g.dart';
-part 'TimeZoneFormatter.g.dart';
 part 'TimeZoneIdMapper.g.dart';
 part 'TimeZoneIdMapperWithFastCanonicalization.g.dart';
 part 'TimeZoneInvalidIdError.g.dart';
@@ -144,6 +139,7 @@ part 'WordBreakIteratorLatin1.g.dart';
 part 'WordBreakIteratorUtf16.g.dart';
 part 'WordBreakIteratorUtf8.g.dart';
 part 'WordSegmenter.g.dart';
+part 'ZoneOffsetCalculator.g.dart';
 part 'ZonedDateTimeFormatter.g.dart';
 
 /// A [Rune] is a Unicode code point, such as `a`, or `💡`.
@@ -258,6 +254,32 @@ final class _ResultInt32Void extends ffi.Struct {
   }
   factory _ResultInt32Void.err() {
     final struct = ffi.Struct.create<_ResultInt32Void>();
+    struct.isOk = false;
+    return struct;
+  }
+}
+
+final class _ResultInt8VoidUnion extends ffi.Union {
+  @ffi.Int8()
+  external int ok;
+
+}
+
+final class _ResultInt8Void extends ffi.Struct {
+  external _ResultInt8VoidUnion union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  
+  factory _ResultInt8Void.ok(int val) {
+    final struct = ffi.Struct.create<_ResultInt8Void>();
+    struct.isOk = true;
+    struct.union.ok = val;
+    return struct;
+  }
+  factory _ResultInt8Void.err() {
+    final struct = ffi.Struct.create<_ResultInt8Void>();
     struct.isOk = false;
     return struct;
   }

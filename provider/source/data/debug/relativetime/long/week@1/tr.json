@@ -6,14 +6,18 @@
   },
   "past": {
     "strings": {
-      "specials": [],
-      "other": "\u0001 hafta önce"
+      "other": [
+        0,
+        "\u0001 hafta önce"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [],
-      "other": "\u0001 hafta sonra"
+      "other": [
+        0,
+        "\u0001 hafta sonra"
+      ]
     }
   }
 }

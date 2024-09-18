@@ -88,6 +88,7 @@ extern crate alloc;
 
 mod canonicalizer;
 mod directionality;
+pub mod exemplar_chars;
 mod expander;
 pub mod fallback;
 pub mod provider;

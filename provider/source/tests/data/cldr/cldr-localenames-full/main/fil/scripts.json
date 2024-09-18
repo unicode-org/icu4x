@@ -2,9 +2,6 @@
   "main": {
     "fil": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "fil"
       },
       "localeDisplayNames": {
@@ -37,7 +34,6 @@
           "Hebr": "Hebrew",
           "Hira": "Hiragana",
           "Hrkt": "Japanese syllabaries",
-          "Jamo": "Jamo",
           "Jpan": "Japanese",
           "Kana": "Katakana",
           "Khmr": "Khmer",
@@ -60,7 +56,6 @@
           "Telu": "Telugu",
           "Tfng": "Tifinagh",
           "Thaa": "Thaana",
-          "Thai": "Thai",
           "Tibt": "Tibetan",
           "Vaii": "Vai",
           "Yiii": "Yi",

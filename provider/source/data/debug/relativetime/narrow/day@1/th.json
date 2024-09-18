@@ -8,14 +8,18 @@
   },
   "past": {
     "strings": {
-      "specials": [],
-      "other": "\u0001 วันที่แล้ว"
+      "other": [
+        0,
+        "\u0001 วันที่แล้ว"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [],
-      "other": "\bใน  วัน"
+      "other": [
+        0,
+        "\bใน  วัน"
+      ]
     }
   }
 }

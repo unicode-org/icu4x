@@ -2,9 +2,6 @@
   "main": {
     "ccp": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "ccp"
       },
       "characters": {
@@ -35,7 +32,7 @@
           "£": "[£￡ ₤]",
           "¥": "[¥￥]",
           "₩": "[₩￦]",
-          "₹": "[₹ ₨ {Rp} {Rs}]"
+          "₹": "[₹ {Rp} {Rs}₨]"
         },
         "lenient-scope-number": {
           "-": "[\\-－﹣ ‐‑ ‒ – −⁻₋ ➖]",

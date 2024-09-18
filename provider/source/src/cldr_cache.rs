@@ -13,7 +13,7 @@ use icu::locale::provider::{
 use icu::locale::LocaleExpander;
 use icu_provider::prelude::*;
 use icu_provider::DataError;
-use icu_provider_adapters::any_payload::AnyPayloadProvider;
+use icu_provider_adapters::fixed::FixedProvider;
 use icu_provider_adapters::fork::ForkByMarkerProvider;
 use icu_provider_adapters::make_forking_provider;
 use std::collections::BTreeSet;
@@ -127,13 +127,13 @@ impl CldrCache {
                 let provider = make_forking_provider!(
                     ForkByMarkerProvider::new,
                     [
-                        AnyPayloadProvider::from_owned::<LikelySubtagsForLanguageV1Marker>(
+                        FixedProvider::<LikelySubtagsForLanguageV1Marker>::from_owned(
                             common_data.as_langs(),
                         ),
-                        AnyPayloadProvider::from_owned::<LikelySubtagsForScriptRegionV1Marker>(
+                        FixedProvider::<LikelySubtagsForScriptRegionV1Marker>::from_owned(
                             common_data.as_script_region(),
                         ),
-                        AnyPayloadProvider::from_owned::<LikelySubtagsExtendedV1Marker>(
+                        FixedProvider::<LikelySubtagsExtendedV1Marker>::from_owned(
                             extended_data.as_extended()
                         ),
                     ]

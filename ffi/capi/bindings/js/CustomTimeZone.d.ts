@@ -5,6 +5,7 @@ import type { TimeZoneIdMapper } from "./TimeZoneIdMapper"
 import type { TimeZoneInvalidIdError } from "./TimeZoneInvalidIdError"
 import type { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError"
 import type { TimeZoneUnknownError } from "./TimeZoneUnknownError"
+import type { ZoneOffsetCalculator } from "./ZoneOffsetCalculator"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
@@ -21,25 +22,23 @@ export class CustomTimeZone {
 
     static utc(): CustomTimeZone;
 
-    static gmt(): CustomTimeZone;
+    trySetOffsetSeconds(offsetSeconds: number): void;
 
-    static bst(): CustomTimeZone;
+    setOffsetEighthsOfHour(offsetEighthsOfHour: number): void;
 
-    trySetGmtOffsetSeconds(offsetSeconds: number): void;
+    offsetEighthsOfHour(): number | null;
 
-    setGmtOffsetEighthsOfHour(offsetEighthsOfHour: number): void;
+    clearOffset(): void;
 
-    clearGmtOffset(): void;
+    get offsetSeconds(): number | null;
 
-    get gmtOffsetSeconds(): number | null;
+    get isOffsetPositive(): boolean | null;
 
-    get isGmtOffsetPositive(): boolean | null;
+    get isOffsetZero(): boolean | null;
 
-    get isGmtOffsetZero(): boolean | null;
+    get offsetHasMinutes(): boolean | null;
 
-    get gmtOffsetHasMinutes(): boolean | null;
-
-    get gmtOffsetHasSeconds(): boolean | null;
+    get offsetHasSeconds(): boolean | null;
 
     trySetTimeZoneId(id: string): void;
 
@@ -70,4 +69,6 @@ export class CustomTimeZone {
     get isDaylightTime(): boolean | null;
 
     maybeCalculateMetazone(metazoneCalculator: MetazoneCalculator, localDatetime: IsoDateTime): void;
+
+    maybeCalculateZoneVariant(zoneOffsetCalculator: ZoneOffsetCalculator, localDatetime: IsoDateTime): void;
 }

@@ -7,8 +7,8 @@
     "prefix": "+",
     "suffix": ""
   },
-  "decimal_separator": ".",
-  "grouping_separator": ",",
+  "decimal_separator": ",",
+  "grouping_separator": " ",
   "grouping_sizes": {
     "primary": 3,
     "secondary": 3,

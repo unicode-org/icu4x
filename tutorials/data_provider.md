@@ -198,7 +198,7 @@ use core::any::Any;
 use icu::decimal::FixedDecimalFormatter;
 use icu::decimal::provider::DecimalSymbolsV1Marker;
 use icu_provider::prelude::*;
-use icu_provider_adapters::any_payload::AnyPayloadProvider;
+use icu_provider_adapters::fixed::FixedProvider;
 use icu::locale::locale;
 use icu::locale::subtags::region;
 use std::borrow::Cow;
@@ -227,7 +227,7 @@ where
 }
 
 let provider = CustomDecimalSymbolsProvider(
-    AnyPayloadProvider::new_default::<DecimalSymbolsV1Marker>()
+    FixedProvider::<DecimalSymbolsV1Marker>::new_default()
 );
 
 let formatter = FixedDecimalFormatter::try_new_unstable(

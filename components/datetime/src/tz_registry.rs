@@ -3,9 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::fields::{self, FieldLength};
-#[cfg(feature = "experimental")]
 use crate::fields::{Field, FieldSymbol};
-#[cfg(feature = "experimental")]
 use crate::neo_skeleton::{NeoSkeletonLength, NeoTimeZoneSkeleton, NeoTimeZoneStyle};
 use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
 
@@ -16,8 +14,8 @@ macro_rules! time_zone_style_registry {
             [
                 (specific_short, SpecificNonLocation, Short, SpecificShort, LowerZ, One), // 'z'
                 (specific_long, SpecificNonLocation, Long, SpecificLong, LowerZ, Wide), // 'zzzz'
-                (gmt_short, Offset, Short, GmtShort, UpperO, One), // 'O'
-                (gmt_long, Offset, Long, GmtLong, UpperO, Wide), // 'OOOO'
+                (offset_short, Offset, Short, OffsetShort, UpperO, One), // 'O'
+                (offset_long, Offset, Long, OffsetLong, UpperO, Wide), // 'OOOO'
                 (generic_short, NonLocation, Short, GenericShort, LowerV, One), // 'v'
                 (generic_long, NonLocation, Long, GenericLong, LowerV, Wide), // 'vvvv'
                 (location, Location, Long, Location, UpperV, Wide), // 'VVVV'
@@ -25,13 +23,13 @@ macro_rules! time_zone_style_registry {
             // Styles with function only for None-length
             [
                 (specific, SpecificNonLocation),
-                (gmt, Offset),
+                (offset, Offset),
                 (generic, NonLocation),
             ],
             // Skeleton to resolved (for exhaustive match)
             [
                 (SpecificNonLocation, Medium, SpecificShort),
-                (Offset, Medium, GmtShort),
+                (Offset, Medium, OffsetShort),
                 (NonLocation, Medium, GenericShort),
                 (Location, Short, Location),
                 (Location, Medium, Location),
@@ -48,7 +46,7 @@ macro_rules! time_zone_style_registry {
                 (SpecificShort, LowerZ, Abbreviated), // 'zzz'
                 (Isoxxxx, UpperZ, TwoDigit), // 'ZZ'
                 (Isoxxxx, UpperZ, Abbreviated), // 'ZZZ'
-                (GmtShort, UpperZ, Wide), // 'ZZZZ'
+                (OffsetShort, UpperZ, Wide), // 'ZZZZ'
                 (Isoxxxx, LowerX, Wide), // 'xxxx'
                 (IsoXXXXX, UpperX, Narrow), // 'XXXXX'
             ],
@@ -71,7 +69,6 @@ macro_rules! time_zone_style_registry {
     };
 }
 
-#[cfg(feature = "experimental")]
 macro_rules! make_constructors {
     (
         [$(($fn:ident, $style:ident, $length:ident, $resolved:ident, $field_symbol:ident, $field_length:ident)),+,],
@@ -103,10 +100,8 @@ macro_rules! make_constructors {
     };
 }
 
-#[cfg(feature = "experimental")]
 time_zone_style_registry!(make_constructors);
 
-#[cfg(feature = "experimental")]
 macro_rules! make_resolved_to_field_match {
     (
         [$(($fn:ident, $style:ident, $length:ident, $resolved:ident, $field_symbol:ident, $field_length:ident)),+,],
@@ -134,10 +129,8 @@ macro_rules! make_resolved_to_field_match {
     };
 }
 
-#[cfg(feature = "experimental")]
 time_zone_style_registry!(make_resolved_to_field_match);
 
-#[cfg(feature = "experimental")]
 macro_rules! make_skeleton_to_resolved_match {
     (
         [$(($fn:ident, $style:ident, $length:ident, $resolved:ident, $field_symbol:ident, $field_length:ident)),+,],
@@ -159,7 +152,6 @@ macro_rules! make_skeleton_to_resolved_match {
     };
 }
 
-#[cfg(feature = "experimental")]
 time_zone_style_registry!(make_skeleton_to_resolved_match);
 
 macro_rules! make_field_to_skeleton_match {

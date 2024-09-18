@@ -9,14 +9,13 @@ use core::cmp::Ordering;
 use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
     neo_skeleton::FractionalSecondDigits,
-    options::{components, length},
+    options::{components, length, DateTimeFormatterOptions},
     pattern::{
         hour_cycle,
         runtime::{self, PatternPlurals},
         PatternItem, TimeGranularity,
     },
     provider::calendar::{patterns::GenericLengthPatternsV1, DateSkeletonPatternsV1},
-    DateTimeFormatterOptions,
 };
 
 #[cfg(feature = "datagen")]
@@ -320,7 +319,6 @@ fn adjust_pattern_field_lengths(fields: &[Field], pattern: &mut runtime::Pattern
                     && requested_field.get_length_type() == pattern_field.get_length_type()
                 {
                     let length = requested_field.length;
-                    #[cfg(feature = "experimental")]
                     let length = if requested_field.symbol.is_at_least_abbreviated() {
                         length.numeric_to_abbr()
                     } else {

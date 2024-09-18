@@ -6,14 +6,18 @@
   },
   "past": {
     "strings": {
-      "specials": [],
-      "other": "\u0001 yr. ago"
+      "other": [
+        0,
+        "\u0001 yr. ago"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [],
-      "other": "\u0004in  yr."
+      "other": [
+        0,
+        "\u0004in  yr."
+      ]
     }
   }
 }

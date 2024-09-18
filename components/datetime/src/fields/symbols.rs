@@ -2,9 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#[cfg(any(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "datagen")]
 use crate::fields::FieldLength;
-#[cfg(any(feature = "datagen", feature = "experimental"))]
 use crate::neo_skeleton::FractionalSecondDigits;
 use core::{cmp::Ordering, convert::TryFrom};
 use displaydoc::Display;
@@ -147,7 +146,7 @@ impl FieldSymbol {
     }
 
     /// Returns the index associated with this FieldSymbol.
-    #[cfg(any(feature = "datagen", feature = "experimental"))] // only referenced in experimental code
+    #[cfg(feature = "datagen")]
     fn idx_for_skeleton(&self) -> u8 {
         match self {
             FieldSymbol::Era => 0,
@@ -168,12 +167,11 @@ impl FieldSymbol {
     /// ignoring the enum's data.
     ///
     /// Second and DecimalSecond are considered equal.
-    #[cfg(any(feature = "datagen", feature = "experimental"))] // only referenced in experimental code
+    #[cfg(feature = "datagen")]
     pub(crate) fn skeleton_cmp(&self, other: &Self) -> Ordering {
         self.idx_for_skeleton().cmp(&other.idx_for_skeleton())
     }
 
-    #[cfg(any(feature = "datagen", feature = "experimental"))]
     pub(crate) fn from_fractional_second_digits(
         fractional_second_digits: FractionalSecondDigits,
     ) -> Self {
@@ -196,7 +194,7 @@ impl FieldSymbol {
     /// For example, 'a' represents an abbreviated day period, the same as 'aaa'.
     ///
     /// This function maps field lengths 1 and 2 to field length 3.
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "datagen")]
     pub(crate) fn is_at_least_abbreviated(&self) -> bool {
         matches!(
             self,
@@ -254,7 +252,7 @@ unsafe impl ULE for FieldSymbolULE {
 
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
 #[allow(clippy::exhaustive_enums)] // used in data struct
-#[cfg(any(feature = "datagen", feature = "experimental"))] // only referenced in experimental code
+#[cfg(feature = "datagen")]
 pub(crate) enum TextOrNumeric {
     Text,
     Numeric,
@@ -262,7 +260,7 @@ pub(crate) enum TextOrNumeric {
 
 /// [`FieldSymbols`](FieldSymbol) can be either text or numeric. This categorization is important
 /// when matching skeletons with a components [`Bag`](crate::options::components::Bag).
-#[cfg(any(feature = "datagen", feature = "experimental"))] // only referenced in experimental code
+#[cfg(feature = "datagen")]
 pub(crate) trait LengthType {
     fn get_length_type(&self, length: FieldLength) -> TextOrNumeric;
 }
@@ -391,7 +389,7 @@ macro_rules! field_type {
     ($(#[$enum_attr:meta])* $i:ident; { $( $(#[$variant_attr:meta])* $key:literal => $val:ident = $idx:expr,)* }; $length_type:ident; $ule_name:ident) => (
         field_type!($(#[$enum_attr])* $i; {$( $(#[$variant_attr])* $key => $val = $idx,)*}; $ule_name);
 
-        #[cfg(any(feature = "datagen", feature = "experimental"))] // only referenced in experimental code
+        #[cfg(feature = "datagen")]
         impl LengthType for $i {
             fn get_length_type(&self, _length: FieldLength) -> TextOrNumeric {
                 TextOrNumeric::$length_type
@@ -513,7 +511,7 @@ field_type! (
     YearULE
 );
 
-#[cfg(any(feature = "datagen", feature = "experimental"))] // only referenced in experimental code
+#[cfg(feature = "datagen")]
 impl LengthType for Year {
     fn get_length_type(&self, _length: FieldLength) -> TextOrNumeric {
         // https://unicode.org/reports/tr35/tr35-dates.html#dfst-year
@@ -535,7 +533,7 @@ field_type!(
         'L' => StandAlone = 1,
 }; MonthULE);
 
-#[cfg(any(feature = "datagen", feature = "experimental"))] // only referenced in experimental code
+#[cfg(feature = "datagen")]
 impl LengthType for Month {
     fn get_length_type(&self, length: FieldLength) -> TextOrNumeric {
         match length {
@@ -634,7 +632,7 @@ field_type!(
     WeekdayULE
 );
 
-#[cfg(any(feature = "datagen", feature = "experimental"))] // only referenced in experimental code
+#[cfg(feature = "datagen")]
 impl LengthType for Weekday {
     fn get_length_type(&self, length: FieldLength) -> TextOrNumeric {
         match self {
@@ -651,7 +649,6 @@ impl Weekday {
     /// UTS 35 says that "e" (local weekday) and "E" (format weekday) have the same non-numeric names.
     ///
     /// This function normalizes "e" to "E".
-    #[cfg(feature = "experimental")]
     pub(crate) fn to_format_symbol(self) -> Self {
         match self {
             Weekday::Local => Weekday::Format,
@@ -680,9 +677,9 @@ field_type!(
         /// For example: "Pacific Standard Time"
         'z' => LowerZ = 0,
         /// Field symbol for any of: the ISO8601 basic format with hours, minutes and optional seconds fields, the
-        /// long localized GMT format, or the ISO8601 extended format with hours, minutes and optional seconds fields.
+        /// long localized offset format, or the ISO8601 extended format with hours, minutes and optional seconds fields.
         'Z' => UpperZ = 1,
-        /// Field symbol for the localized GMT format of a time zone.
+        /// Field symbol for the localized offset format of a time zone.
         ///
         /// For example: "GMT-07:00"
         'O' => UpperO = 2,
@@ -701,7 +698,7 @@ field_type!(
     TimeZoneULE
 );
 
-#[cfg(any(feature = "datagen", feature = "experimental"))] // only referenced in experimental code
+#[cfg(feature = "datagen")]
 impl LengthType for TimeZone {
     fn get_length_type(&self, length: FieldLength) -> TextOrNumeric {
         use TextOrNumeric::*;

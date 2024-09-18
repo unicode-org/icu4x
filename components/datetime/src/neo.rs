@@ -9,7 +9,7 @@ use crate::external_loaders::*;
 use crate::format::datetime::try_write_pattern_items;
 use crate::format::datetime::DateTimeWriteError;
 use crate::format::neo::*;
-use crate::input::ExtractedDateTimeInput;
+use crate::input::ExtractedInput;
 use crate::neo_marker::DateInputMarkers;
 use crate::neo_marker::HasConstComponents;
 use crate::neo_marker::{
@@ -220,14 +220,8 @@ size_test!(TypedNeoFormatter<icu_calendar::Gregorian, crate::neo_marker::NeoYear
 /// a calendar selected at compile time.
 ///
 /// For more details, please read the [crate root docs][crate].
-#[doc = typed_neo_year_month_day_formatter_size!()]
 ///
-/// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
-/// of the icu meta-crate. Use with caution.
-/// <a href="https://github.com/unicode-org/icu4x/issues/3347">#3347</a>
-/// </div>
+#[doc = typed_neo_year_month_day_formatter_size!()]
 #[derive(Debug)]
 pub struct TypedNeoFormatter<C: CldrCalendar, R: DateTimeNamesMarker> {
     selection: DateTimeZonePatternSelectionData,
@@ -641,15 +635,14 @@ where
     /// // is not implemented for `icu::icu_calendar::Time`
     /// formatter.format(&Time::try_new(0, 0, 0, 0).unwrap());
     /// ```
-    pub fn format<I>(&self, datetime: &I) -> FormattedNeoDateTime
+    pub fn format<I>(&self, input: &I) -> FormattedNeoDateTime
     where
         I: ?Sized + IsInCalendar<C> + AllInputMarkers<R>,
     {
-        let datetime =
-            ExtractedDateTimeInput::extract_from_neo_input::<R::D, R::T, R::Z, I>(datetime);
+        let input = ExtractedInput::extract_from_neo_input::<R::D, R::T, R::Z, I>(input);
         FormattedNeoDateTime {
-            pattern: self.selection.select(&datetime),
-            datetime,
+            pattern: self.selection.select(&input),
+            input,
             names: self.names.as_borrowed(),
         }
     }
@@ -665,14 +658,8 @@ size_test!(
 /// a calendar selected at runtime.
 ///
 /// For more details, please read the [crate root docs][crate].
-#[doc = neo_year_month_day_formatter_size!()]
 ///
-/// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
-/// of the icu meta-crate. Use with caution.
-/// <a href="https://github.com/unicode-org/icu4x/issues/3347">#3347</a>
-/// </div>
+#[doc = neo_year_month_day_formatter_size!()]
 #[derive(Debug)]
 pub struct NeoFormatter<R: DateTimeNamesMarker> {
     selection: DateTimeZonePatternSelectionData,
@@ -1370,11 +1357,10 @@ where
                     .into(),
             });
         }
-        let datetime =
-            ExtractedDateTimeInput::extract_from_neo_input::<R::D, R::T, R::Z, I>(datetime);
+        let datetime = ExtractedInput::extract_from_neo_input::<R::D, R::T, R::Z, I>(datetime);
         Ok(FormattedNeoDateTime {
             pattern: self.selection.select(&datetime),
-            datetime,
+            input: datetime,
             names: self.names.as_borrowed(),
         })
     }
@@ -1435,27 +1421,22 @@ where
     {
         let datetime = datetime.to_calendar(&self.calendar);
         let datetime =
-            ExtractedDateTimeInput::extract_from_neo_input::<R::D, R::T, R::Z, I::Converted<'a>>(
-                &datetime,
-            );
+            ExtractedInput::extract_from_neo_input::<R::D, R::T, R::Z, I::Converted<'a>>(&datetime);
         FormattedNeoDateTime {
             pattern: self.selection.select(&datetime),
-            datetime,
+            input: datetime,
             names: self.names.as_borrowed(),
         }
     }
 }
 
-/// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
-/// of the icu meta-crate. Use with caution.
-/// <a href="https://github.com/unicode-org/icu4x/issues/3347">#3347</a>
-/// </div>
+/// An intermediate type during a datetime formatting operation.
+///
+/// Not intended to be stored: convert to a string first.
 #[derive(Debug)]
 pub struct FormattedNeoDateTime<'a> {
     pattern: DateTimeZonePatternDataBorrowed<'a>,
-    datetime: ExtractedDateTimeInput,
+    input: ExtractedInput,
     names: RawDateTimeNamesBorrowed<'a>,
 }
 
@@ -1469,7 +1450,7 @@ impl<'a> TryWriteable for FormattedNeoDateTime<'a> {
         try_write_pattern_items(
             self.pattern.metadata(),
             self.pattern.iter_items(),
-            &self.datetime,
+            &self.input,
             Some(&self.names),
             Some(&self.names),
             Some(&self.names),
@@ -1486,5 +1467,12 @@ impl<'a> FormattedNeoDateTime<'a> {
     /// Gets the pattern used in this formatted value.
     pub fn pattern(&self) -> DateTimePattern {
         self.pattern.to_pattern()
+    }
+
+    /// Gets the formatted result as a string.
+    pub fn to_string_lossy(&self) -> alloc::string::String {
+        match self.try_write_to_string() {
+            Err((_, s)) | Ok(s) => s.into_owned(),
+        }
     }
 }

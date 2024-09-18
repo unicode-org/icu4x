@@ -435,6 +435,10 @@
       "Latn",
       "ZA"
     ],
+    "ak": [
+      "Latn",
+      "GH"
+    ],
     "am": [
       "Ethi",
       "ET"
@@ -454,6 +458,10 @@
     "az": [
       "Latn",
       "AZ"
+    ],
+    "bal": [
+      "Arab",
+      "PK"
     ],
     "be": [
       "Cyrl",
@@ -535,6 +543,10 @@
       "Latn",
       "DE"
     ],
+    "ee": [
+      "Latn",
+      "GH"
+    ],
     "el": [
       "Grek",
       "GR"
@@ -591,6 +603,10 @@
       "Latn",
       "IE"
     ],
+    "gaa": [
+      "Latn",
+      "GH"
+    ],
     "gd": [
       "Latn",
       "GB"
@@ -646,6 +662,10 @@
     "ig": [
       "Latn",
       "NG"
+    ],
+    "ii": [
+      "Yiii",
+      "CN"
     ],
     "is": [
       "Latn",
@@ -799,9 +819,17 @@
       "Nkoo",
       "GN"
     ],
+    "nso": [
+      "Latn",
+      "ZA"
+    ],
     "oc": [
       "Latn",
       "FR"
+    ],
+    "om": [
+      "Latn",
+      "ET"
     ],
     "or": [
       "Orya",
@@ -851,6 +879,10 @@
       "Cyrl",
       "RU"
     ],
+    "rw": [
+      "Latn",
+      "RW"
+    ],
     "sa": [
       "Deva",
       "IN"
@@ -895,6 +927,10 @@
       "Cyrl",
       "RS"
     ],
+    "st": [
+      "Latn",
+      "ZA"
+    ],
     "su": [
       "Latn",
       "ID"
@@ -938,6 +974,10 @@
     "tk": [
       "Latn",
       "TM"
+    ],
+    "tn": [
+      "Latn",
+      "ZA"
     ],
     "to": [
       "Latn",

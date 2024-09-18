@@ -2,9 +2,6 @@
   "main": {
     "ar": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "ar"
       },
       "dates": {

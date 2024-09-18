@@ -21,16 +21,6 @@
         "midnight": "поноћ"
       }
     },
-    "stand_alone": {
-      "abbreviated": null,
-      "narrow": {
-        "am": "пре подне",
-        "pm": "по подне",
-        "noon": "подне",
-        "midnight": "поноћ"
-      },
-      "short": null,
-      "wide": null
-    }
+    "stand_alone": null
   }
 }

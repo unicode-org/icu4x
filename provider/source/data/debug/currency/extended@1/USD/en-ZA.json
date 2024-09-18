@@ -1,11 +1,12 @@
 {
   "display_names": {
-    "specials": [
-      [
-        "One",
-        "US dollar"
-      ]
+    "one": [
+      0,
+      "US dollar"
     ],
-    "other": "US dollars"
+    "other": [
+      0,
+      "US dollars"
+    ]
   }
 }

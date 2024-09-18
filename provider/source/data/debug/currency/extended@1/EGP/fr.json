@@ -1,11 +1,12 @@
 {
   "display_names": {
-    "specials": [
-      [
-        "One",
-        "livre égyptienne"
-      ]
+    "one": [
+      0,
+      "livre égyptienne"
     ],
-    "other": "livres égyptiennes"
+    "other": [
+      0,
+      "livres égyptiennes"
+    ]
   }
 }

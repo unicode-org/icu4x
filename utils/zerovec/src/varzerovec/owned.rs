@@ -91,10 +91,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
                 marker: PhantomData,
                 // TODO(#1410): Rethink length errors in VZV.
                 entire_slice: components::get_serializable_bytes_non_empty::<T, A, F>(elements)
-                    .ok_or(
-                        "Attempted to build VarZeroVec out of elements that \
-                                     cumulatively are larger than a u32 in size",
-                    )?,
+                    .ok_or(F::TOO_LARGE_ERROR)?,
             }
         })
     }

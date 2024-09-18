@@ -234,14 +234,6 @@ impl DoublePlaceholderInfo {
 ///     "yesterday",
 /// );
 ///
-/// // Escaped placeholder and a placeholder value 1 (note, "bar" is used):
-/// assert_eq!(
-///     Pattern::<DoublePlaceholder, _>::from_str("'{0}' {1}")
-///         .unwrap()
-///         .interpolate_to_string(("foo", "bar")),
-///     "{0} bar",
-/// );
-///
 /// // Pattern with the placeholders in the opposite order:
 /// assert_eq!(
 ///     Pattern::<DoublePlaceholder, _>::from_str("A {1} B {0} C")

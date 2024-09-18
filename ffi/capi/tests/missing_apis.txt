@@ -14,7 +14,21 @@
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 
-icu::normalizer::ComposingNormalizer::as_borrowed#FnInStruct
+icu::datetime::NeoFormatter#Struct
+icu::datetime::NeoFormatter::convert_and_format#FnInStruct
+icu::datetime::NeoFormatter::strict_format#FnInStruct
+icu::datetime::NeoFormatter::try_new#FnInStruct
+icu::datetime::NeoFormatter::try_new_with_components#FnInStruct
+icu::datetime::NeoSkeletonLength#Enum
+icu::datetime::NeoSkeletonLength::VALUES#AssociatedConstantInEnum
+icu::datetime::NeoSkeletonLength::to_date_style#FnInEnum
+icu::datetime::NeoSkeletonLength::to_time_style#FnInEnum
+icu::datetime::TypedNeoFormatter#Struct
+icu::datetime::TypedNeoFormatter::format#FnInStruct
+icu::datetime::TypedNeoFormatter::try_new#FnInStruct
+icu::datetime::TypedNeoFormatter::try_new_with_components#FnInStruct
+icu::datetime::options::length::Date#Enum
+icu::datetime::options::length::Time#Enum
 icu::normalizer::ComposingNormalizerBorrowed#Struct
 icu::normalizer::ComposingNormalizerBorrowed::is_normalized#FnInStruct
 icu::normalizer::ComposingNormalizerBorrowed::new_nfc#FnInStruct
@@ -24,7 +38,6 @@ icu::normalizer::ComposingNormalizerBorrowed::normalize_to#FnInStruct
 icu::normalizer::ComposingNormalizerBorrowed::normalize_utf16#FnInStruct
 icu::normalizer::ComposingNormalizerBorrowed::normalize_utf16_to#FnInStruct
 icu::normalizer::ComposingNormalizerBorrowed::normalize_utf8_to#FnInStruct
-icu::normalizer::DecomposingNormalizer::as_borrowed#FnInStruct
 icu::normalizer::DecomposingNormalizerBorrowed#Struct
 icu::normalizer::DecomposingNormalizerBorrowed::new_nfd#FnInStruct
 icu::normalizer::DecomposingNormalizerBorrowed::new_nfkd#FnInStruct
@@ -50,6 +63,7 @@ icu::plurals::PluralElements::explicit_one#FnInStruct
 icu::plurals::PluralElements::explicit_zero#FnInStruct
 icu::plurals::PluralElements::few#FnInStruct
 icu::plurals::PluralElements::many#FnInStruct
+icu::plurals::PluralElements::map#FnInStruct
 icu::plurals::PluralElements::new#FnInStruct
 icu::plurals::PluralElements::one#FnInStruct
 icu::plurals::PluralElements::other#FnInStruct
@@ -648,3 +662,10 @@ icu::timezone::CustomZonedDateTime::try_iso_from_str#FnInStruct
 icu::timezone::CustomZonedDateTime::try_iso_from_utf8#FnInStruct
 icu::timezone::ParseError#Enum
 icu::timezone::UnknownTimeZoneError#Struct
+icu::timezone::WindowsTimeZoneMapper#Struct
+icu::timezone::WindowsTimeZoneMapper::as_borrowed#FnInStruct
+icu::timezone::WindowsTimeZoneMapper::new#FnInStruct
+icu::timezone::WindowsTimeZoneMapperBorrowed#Struct
+icu::timezone::WindowsTimeZoneMapperBorrowed::new#FnInStruct
+icu::timezone::WindowsTimeZoneMapperBorrowed::windows_tz_to_bcp47_id#FnInStruct
+icu::timezone::WindowsTimeZoneMapperBorrowed::windows_tz_to_bcp47_id_with_region#FnInStruct

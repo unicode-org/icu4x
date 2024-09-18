@@ -2,9 +2,6 @@
   "main": {
     "ccp": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "ccp"
       },
       "dates": {

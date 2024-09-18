@@ -59,6 +59,25 @@ impl Duration {
             self.nanoseconds,
         ]
     }
+
+    // Section 1.1.4 DurationSign
+    pub(crate) fn get_sign(&self) -> fixed_decimal::Sign {
+        for &unit in self.iter_units().iter() {
+            if unit != 0 {
+                return match self.sign {
+                    DurationSign::Positive => fixed_decimal::Sign::None,
+                    DurationSign::Negative => fixed_decimal::Sign::Negative,
+                };
+            }
+        }
+        fixed_decimal::Sign::None
+    }
+
+    // TODO: Currently, we do not validate durations.
+    // // Section 1.1.5
+    // pub(crate) fn is_valid_duration(&self) -> bool {
+    //     todo!();
+    // }
 }
 
 /// Describes whether a [`Duration`] is positive or negative.
@@ -70,15 +89,6 @@ pub enum DurationSign {
 
     /// A negative duration.
     Negative,
-}
-
-impl From<DurationSign> for fixed_decimal::Sign {
-    fn from(sign: DurationSign) -> Self {
-        match sign {
-            DurationSign::Positive => fixed_decimal::Sign::None,
-            DurationSign::Negative => fixed_decimal::Sign::Negative,
-        }
-    }
 }
 
 impl Duration {

@@ -14,7 +14,7 @@
 //! For more information, see the tutorial [cargo.md](../../cargo.md).
 
 use icu::calendar::{DateTime, Gregorian};
-use icu::datetime::TypedDateTimeFormatter;
+use icu::datetime::{TypedNeoFormatter, neo_marker::NeoAutoDateTimeMarker, neo_skeleton::NeoSkeletonLength};
 use icu::locale::locale;
 use icu_provider_blob::BlobDataProvider;
 
@@ -25,18 +25,18 @@ fn main() {
     let provider = BlobDataProvider::try_new_from_blob(blob.into_boxed_slice())
         .expect("deserialization should succeed");
 
-    let formatter = TypedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(
+    let formatter = TypedNeoFormatter::<Gregorian, NeoAutoDateTimeMarker>::try_new_with_buffer_provider(
         &provider,
         &locale!("my").into(),
-        Default::default(),
+        NeoSkeletonLength::Medium.into(),
     )
     .expect("locale 'my' should be present in compiled data");
 
     let datetime = DateTime::try_new_gregorian_datetime(2022, 12, 23, 12, 54, 29)
         .expect("constant should be valid datetime");
 
-    let result = formatter.format_to_string(&datetime);
+    let result = formatter.format(&datetime).to_string_lossy();
 
-    assert_eq!(result, "၂၀၂၂၊ ဒီ ၂၃ ၁၂:၅၄:၂၉");
+    assert_eq!(result, "၂၀၂၂ ဒီ ၂၃ ၁၂:၅၄:၂၉");
     println!("{result}");
 }

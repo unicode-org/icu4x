@@ -36,6 +36,7 @@ icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 icu_locale_core = { path = "../../components/locale_core" }
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
+postcard = { workspace = true, features = ["alloc"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = { workspace = true }

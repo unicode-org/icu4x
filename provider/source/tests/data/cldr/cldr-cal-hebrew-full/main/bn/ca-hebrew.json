@@ -2,9 +2,6 @@
   "main": {
     "bn": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "bn"
       },
       "dates": {

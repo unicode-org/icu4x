@@ -6,24 +6,26 @@
   },
   "past": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\u0006hace  año"
-        ]
+      "one": [
+        0,
+        "\u0006hace  año"
       ],
-      "other": "\u0006hace  años"
+      "other": [
+        0,
+        "\u0006hace  años"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [
-        [
-          "One",
-          "\u000bdentro de  año"
-        ]
+      "one": [
+        0,
+        "\u000bdentro de  año"
       ],
-      "other": "\u000bdentro de  años"
+      "other": [
+        0,
+        "\u000bdentro de  años"
+      ]
     }
   }
 }

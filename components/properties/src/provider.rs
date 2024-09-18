@@ -48,7 +48,6 @@ const _: () = {
     pub mod icu {
         pub use crate as properties;
         pub use icu_collections as collections;
-        pub use icu_properties_data::icu_locale as locale;
     }
     make_provider!(Baked);
     impl_alnum_v1_marker!(Baked);
@@ -89,11 +88,6 @@ const _: () = {
     impl_emoji_modifier_v1_marker!(Baked);
     impl_emoji_presentation_v1_marker!(Baked);
     impl_emoji_v1_marker!(Baked);
-    impl_exemplar_characters_auxiliary_v1_marker!(Baked);
-    impl_exemplar_characters_index_v1_marker!(Baked);
-    impl_exemplar_characters_main_v1_marker!(Baked);
-    impl_exemplar_characters_numbers_v1_marker!(Baked);
-    impl_exemplar_characters_punctuation_v1_marker!(Baked);
     impl_extended_pictographic_v1_marker!(Baked);
     impl_extender_v1_marker!(Baked);
     impl_full_composition_exclusion_v1_marker!(Baked);
@@ -203,11 +197,6 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     EmojiModifierV1Marker::INFO,
     EmojiPresentationV1Marker::INFO,
     EmojiV1Marker::INFO,
-    ExemplarCharactersAuxiliaryV1Marker::INFO,
-    ExemplarCharactersIndexV1Marker::INFO,
-    ExemplarCharactersMainV1Marker::INFO,
-    ExemplarCharactersNumbersV1Marker::INFO,
-    ExemplarCharactersPunctuationV1Marker::INFO,
     ExtendedPictographicV1Marker::INFO,
     ExtenderV1Marker::INFO,
     FullCompositionExclusionV1Marker::INFO,
@@ -476,17 +465,7 @@ data_struct_generic!(
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(
-    marker(BasicEmojiV1Marker, "props/Basic_Emoji@1", singleton),
-    marker(ExemplarCharactersAuxiliaryV1Marker, "props/exemplarchars/auxiliary@1"),
-    marker(ExemplarCharactersIndexV1Marker, "props/exemplarchars/index@1"),
-    marker(ExemplarCharactersMainV1Marker, "props/exemplarchars/main@1"),
-    marker(ExemplarCharactersNumbersV1Marker, "props/exemplarchars/numbers@1"),
-    marker(
-        ExemplarCharactersPunctuationV1Marker,
-        "props/exemplarchars/punctuation@1"
-    )
-)]
+#[icu_provider::data_struct(marker(BasicEmojiV1Marker, "props/Basic_Emoji@1", singleton))]
 #[derive(Debug, Eq, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::provider))]

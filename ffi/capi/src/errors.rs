@@ -124,6 +124,9 @@ pub mod ffi {
         DateTimeMissingMonthSymbolError = 0x8_06,
         DateTimeFixedDecimalError = 0x8_07,
         DateTimeMismatchedCalendarError = 0x8_08,
+        DateTimeDuplicateFieldError = 0x8_09,
+        DateTimeTooNarrowError = 0x8_0A,
+        DateTimeMissingNamesError = 0x8_0B,
     }
 }
 
@@ -210,32 +213,14 @@ impl From<icu_calendar::ParseError> for CalendarParseError {
 }
 
 #[cfg(feature = "datetime")]
-impl From<icu_datetime::DateTimeError> for Error {
-    fn from(e: icu_datetime::DateTimeError) -> Self {
+impl From<icu_datetime::LoadError> for Error {
+    fn from(e: icu_datetime::LoadError) -> Self {
         match e {
-            icu_datetime::DateTimeError::Pattern(_) => Error::DateTimePatternError,
-            icu_datetime::DateTimeError::Data(err) => err.into(),
-            icu_datetime::DateTimeError::MissingInputField(_) => {
-                Error::DateTimeMissingInputFieldError
-            }
-            // TODO(#1324): Add back skeleton errors
-            // DateTimeFormatterError::Skeleton(_) => Error::DateTimeFormatSkeletonError,
-            icu_datetime::DateTimeError::UnsupportedField(_) => {
-                Error::DateTimeUnsupportedFieldError
-            }
-            icu_datetime::DateTimeError::UnsupportedOptions => {
-                Error::DateTimeUnsupportedOptionsError
-            }
-            icu_datetime::DateTimeError::MissingWeekdaySymbol(_) => {
-                Error::DateTimeMissingWeekdaySymbolError
-            }
-            icu_datetime::DateTimeError::MissingMonthSymbol(_) => {
-                Error::DateTimeMissingMonthSymbolError
-            }
-            icu_datetime::DateTimeError::FixedDecimal => Error::DateTimeFixedDecimalError,
-            icu_datetime::DateTimeError::MismatchedAnyCalendar(_, _) => {
-                Error::DateTimeMismatchedCalendarError
-            }
+            icu_datetime::LoadError::DuplicateField(_) => Error::DateTimeDuplicateFieldError,
+            icu_datetime::LoadError::UnsupportedField(_) => Error::DateTimeUnsupportedFieldError,
+            icu_datetime::LoadError::TypeTooNarrow(_) => Error::DateTimeTooNarrowError,
+            icu_datetime::LoadError::Data(data_error) => data_error.into(),
+            icu_datetime::LoadError::MissingNames(_) => Error::DateTimeMissingNamesError,
             _ => Error::UnknownError,
         }
     }

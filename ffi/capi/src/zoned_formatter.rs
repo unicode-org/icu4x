@@ -7,29 +7,27 @@
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
+    use icu_datetime::{
+        neo::NeoOptions, neo_marker::NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker,
+        neo_skeleton::NeoSkeletonLength,
+    };
 
     use crate::{
-        datetime::ffi::DateTime, datetime::ffi::IsoDateTime, datetime_formatter::ffi::DateLength,
-        datetime_formatter::ffi::TimeLength, errors::ffi::Error, locale_core::ffi::Locale,
+        datetime::ffi::DateTime, datetime::ffi::IsoDateTime,
+        datetime_formatter::ffi::DateTimeLength, errors::ffi::Error, locale_core::ffi::Locale,
         provider::ffi::DataProvider, timezone::ffi::CustomTimeZone,
-        timezone_formatter::ffi::IsoTimeZoneOptions,
     };
 
-    use writeable::Writeable;
-
-    // TODO(https://github.com/rust-diplomat/diplomat/issues/248)
-    #[allow(unused_imports)]
-    use crate::{
-        timezone_formatter::ffi::IsoTimeZoneFormat,
-        timezone_formatter::ffi::IsoTimeZoneMinuteDisplay,
-        timezone_formatter::ffi::IsoTimeZoneSecondDisplay,
-    };
+    use writeable::TryWriteable;
 
     #[diplomat::opaque]
     /// An object capable of formatting a date time with time zone to a string.
-    #[diplomat::rust_link(icu::datetime::TypedZonedDateTimeFormatter, Struct)]
+    #[diplomat::rust_link(icu::datetime, Mod)]
     pub struct GregorianZonedDateTimeFormatter(
-        pub icu_datetime::TypedZonedDateTimeFormatter<icu_calendar::Gregorian>,
+        pub  icu_datetime::neo::TypedNeoFormatter<
+            icu_calendar::Gregorian,
+            NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker,
+        >,
     );
 
     impl GregorianZonedDateTimeFormatter {
@@ -37,77 +35,29 @@ pub mod ffi {
         ///
         /// This function has `date_length` and `time_length` arguments and uses default options
         /// for the time zone.
-        #[diplomat::rust_link(icu::datetime::TypedZonedDateTimeFormatter::try_new, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_lengths")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length")]
         #[diplomat::demo(default_constructor)]
-        pub fn create_with_lengths(
+        pub fn create_with_length(
             provider: &DataProvider,
             locale: &Locale,
-            date_length: Option<DateLength>,
-            time_length: Option<TimeLength>,
+            length: DateTimeLength,
         ) -> Result<Box<GregorianZonedDateTimeFormatter>, Error> {
             let locale = locale.to_datalocale();
+            let options = NeoOptions::from(NeoSkeletonLength::from(length));
 
             Ok(Box::new(GregorianZonedDateTimeFormatter(
                 call_constructor!(
-                    icu_datetime::TypedZonedDateTimeFormatter::<icu_calendar::Gregorian>::try_new,
-                    icu_datetime::TypedZonedDateTimeFormatter::<icu_calendar::Gregorian>::try_new_with_any_provider,
-                    icu_datetime::TypedZonedDateTimeFormatter::<icu_calendar::Gregorian>::try_new_with_buffer_provider,
+                    icu_datetime::neo::TypedNeoFormatter::try_new,
+                    icu_datetime::neo::TypedNeoFormatter::try_new_with_any_provider,
+                    icu_datetime::neo::TypedNeoFormatter::try_new_with_buffer_provider,
                     provider,
                     &locale,
-                    {
-                        let mut bag = icu_datetime::options::length::Bag::empty();
-                        bag.date = date_length.map(Into::into);
-                        bag.time = time_length.map(Into::into);
-                        bag
-                    }
-                    .into(),
-                    Default::default(),
-                )?,
-            )))
-        }
-
-        /// Creates a new [`GregorianZonedDateTimeFormatter`] from locale data.
-        ///
-        /// This function has `date_length` and `time_length` arguments and uses an ISO-8601 style
-        /// fallback for the time zone with the given configurations.
-        #[diplomat::rust_link(icu::datetime::TypedZonedDateTimeFormatter::try_new, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_lengths_and_iso_8601_time_zone_fallback")]
-        pub fn create_with_lengths_and_iso_8601_time_zone_fallback(
-            provider: &DataProvider,
-            locale: &Locale,
-            date_length: Option<DateLength>,
-            time_length: Option<TimeLength>,
-            zone_options: IsoTimeZoneOptions,
-        ) -> Result<Box<GregorianZonedDateTimeFormatter>, Error> {
-            let locale = locale.to_datalocale();
-
-            Ok(Box::new(GregorianZonedDateTimeFormatter(
-                call_constructor!(
-                    icu_datetime::TypedZonedDateTimeFormatter::<icu_calendar::Gregorian>::try_new,
-                    icu_datetime::TypedZonedDateTimeFormatter::<icu_calendar::Gregorian>::try_new_with_any_provider,
-                    icu_datetime::TypedZonedDateTimeFormatter::<icu_calendar::Gregorian>::try_new_with_buffer_provider,
-                    provider,
-                    &locale,
-                    {
-                        let mut bag = icu_datetime::options::length::Bag::empty();
-                        bag.date = date_length.map(Into::into);
-                        bag.time = time_length.map(Into::into);
-                        bag
-                    }
-                    .into(),
-                    zone_options.into(),
+                    options
                 )?,
             )))
         }
 
         /// Formats a [`IsoDateTime`] and [`CustomTimeZone`] to a string.
-        #[diplomat::rust_link(icu::datetime::TypedZonedDateTimeFormatter::format, FnInStruct)]
-        #[diplomat::rust_link(
-            icu::datetime::TypedZonedDateTimeFormatter::format_to_string,
-            FnInStruct,
-            hidden
-        )]
         pub fn format_iso_datetime_with_custom_time_zone(
             &self,
             datetime: &IsoDateTime,
@@ -115,116 +65,78 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
             let greg = icu_calendar::DateTime::new_from_iso(datetime.0, icu_calendar::Gregorian);
-            let _infallible = self.0.format(&greg, &time_zone.0).write_to(write);
+            let zdt = icu_timezone::CustomZonedDateTime {
+                date: greg.date,
+                time: greg.time,
+                zone: time_zone.0,
+            };
+            let _infallible = self.0.format(&zdt).try_write_to(write);
         }
     }
 
     #[diplomat::opaque]
     /// An object capable of formatting a date time with time zone to a string.
-    #[diplomat::rust_link(icu::datetime::ZonedDateTimeFormatter, Struct)]
-    #[diplomat::rust_link(icu::datetime::FormattedZonedDateTime, Struct, hidden)]
-    pub struct ZonedDateTimeFormatter(pub icu_datetime::ZonedDateTimeFormatter);
+    #[diplomat::rust_link(icu::datetime, Mod)]
+    pub struct ZonedDateTimeFormatter(
+        pub  icu_datetime::neo::NeoFormatter<
+            NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker,
+        >,
+    );
 
     impl ZonedDateTimeFormatter {
         /// Creates a new [`ZonedDateTimeFormatter`] from locale data.
         ///
         /// This function has `date_length` and `time_length` arguments and uses default options
         /// for the time zone.
-        #[diplomat::rust_link(icu::datetime::ZonedDateTimeFormatter::try_new, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_lengths")]
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length")]
         #[diplomat::demo(default_constructor)]
-        pub fn create_with_lengths(
+        pub fn create_with_length(
             provider: &DataProvider,
             locale: &Locale,
-            date_length: Option<DateLength>,
-            time_length: Option<TimeLength>,
+            length: DateTimeLength,
         ) -> Result<Box<ZonedDateTimeFormatter>, Error> {
             let locale = locale.to_datalocale();
+            let options = NeoOptions::from(NeoSkeletonLength::from(length));
 
             Ok(Box::new(ZonedDateTimeFormatter(call_constructor!(
-                icu_datetime::ZonedDateTimeFormatter::try_new,
-                icu_datetime::ZonedDateTimeFormatter::try_new_with_any_provider,
-                icu_datetime::ZonedDateTimeFormatter::try_new_with_buffer_provider,
+                icu_datetime::neo::NeoFormatter::try_new,
+                icu_datetime::neo::NeoFormatter::try_new_with_any_provider,
+                icu_datetime::neo::NeoFormatter::try_new_with_buffer_provider,
                 provider,
                 &locale,
-                {
-                    let mut bag = icu_datetime::options::length::Bag::empty();
-                    bag.date = date_length.map(Into::into);
-                    bag.time = time_length.map(Into::into);
-                    bag
-                }
-                .into(),
-                Default::default(),
-            )?)))
-        }
-
-        /// Creates a new [`ZonedDateTimeFormatter`] from locale data.
-        ///
-        /// This function has `date_length` and `time_length` arguments and uses an ISO-8601 style
-        /// fallback for the time zone with the given configurations.
-        #[diplomat::rust_link(icu::datetime::ZonedDateTimeFormatter::try_new, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_lengths_and_iso_8601_time_zone_fallback")]
-        pub fn create_with_lengths_and_iso_8601_time_zone_fallback(
-            provider: &DataProvider,
-            locale: &Locale,
-            date_length: Option<DateLength>,
-            time_length: Option<TimeLength>,
-            zone_options: IsoTimeZoneOptions,
-        ) -> Result<Box<ZonedDateTimeFormatter>, Error> {
-            let locale = locale.to_datalocale();
-
-            Ok(Box::new(ZonedDateTimeFormatter(call_constructor!(
-                icu_datetime::ZonedDateTimeFormatter::try_new,
-                icu_datetime::ZonedDateTimeFormatter::try_new_with_any_provider,
-                icu_datetime::ZonedDateTimeFormatter::try_new_with_buffer_provider,
-                provider,
-                &locale,
-                {
-                    let mut bag = icu_datetime::options::length::Bag::empty();
-                    bag.date = date_length.map(Into::into);
-                    bag.time = time_length.map(Into::into);
-                    bag
-                }
-                .into(),
-                zone_options.into(),
+                options,
             )?)))
         }
 
         /// Formats a [`DateTime`] and [`CustomTimeZone`] to a string.
-        #[diplomat::rust_link(icu::datetime::ZonedDateTimeFormatter::format, FnInStruct)]
-        #[diplomat::rust_link(
-            icu::datetime::ZonedDateTimeFormatter::format_to_string,
-            FnInStruct,
-            hidden
-        )]
-        #[diplomat::rust_link(icu::datetime::FormattedZonedDateTime::write_to, FnInStruct, hidden)]
         pub fn format_datetime_with_custom_time_zone(
             &self,
             datetime: &DateTime,
             time_zone: &CustomTimeZone,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), Error> {
-            let _infallible = self.0.format(&datetime.0, &time_zone.0)?.write_to(write);
+            let zdt = icu_timezone::CustomZonedDateTime {
+                date: datetime.0.date.clone(),
+                time: datetime.0.time,
+                zone: time_zone.0,
+            };
+            let _infallible = self.0.convert_and_format(&zdt).try_write_to(write);
             Ok(())
         }
 
         /// Formats a [`IsoDateTime`] and [`CustomTimeZone`] to a string.
-        #[diplomat::rust_link(icu::datetime::ZonedDateTimeFormatter::format, FnInStruct)]
-        #[diplomat::rust_link(
-            icu::datetime::ZonedDateTimeFormatter::format_to_string,
-            FnInStruct,
-            hidden
-        )]
         pub fn format_iso_datetime_with_custom_time_zone(
             &self,
             datetime: &IsoDateTime,
             time_zone: &CustomTimeZone,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), Error> {
-            let _infallible = self
-                .0
-                .format(&datetime.0.to_any(), &time_zone.0)?
-                .write_to(write);
+            let zdt = icu_timezone::CustomZonedDateTime {
+                date: datetime.0.date,
+                time: datetime.0.time,
+                zone: time_zone.0,
+            };
+            let _infallible = self.0.convert_and_format(&zdt).try_write_to(write);
             Ok(())
         }
     }

@@ -24,9 +24,9 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::from_str, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::from_parts, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::timezone::GmtOffset::try_from_str, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::timezone::GmtOffset::try_from_utf8, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::timezone::GmtOffset::from_str, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::timezone::UtcOffset::try_from_str, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::timezone::UtcOffset::try_from_utf8, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::timezone::UtcOffset::from_str, FnInStruct, hidden)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
@@ -45,108 +45,100 @@ pub mod ffi {
 
         /// Creates a time zone for UTC (Coordinated Universal Time).
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::utc, FnInStruct)]
-        #[diplomat::rust_link(icu::timezone::GmtOffset::utc, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::timezone::UtcOffset::zero, FnInStruct, hidden)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
         pub fn utc() -> Box<CustomTimeZone> {
             Box::new(icu_timezone::CustomTimeZone::utc().into())
         }
 
-        /// Creates a time zone for GMT (London winter time).
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::gmt, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
-        pub fn gmt() -> Box<CustomTimeZone> {
-            Box::new(icu_timezone::CustomTimeZone::gmt().into())
-        }
-
-        /// Creates a time zone for BST (London summer time).
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::bst, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
-        pub fn bst() -> Box<CustomTimeZone> {
-            Box::new(icu_timezone::CustomTimeZone::bst().into())
-        }
-
-        /// Sets the `gmt_offset` field from offset seconds.
+        /// Sets the `offset` field from offset seconds.
         ///
         /// Errors if the offset seconds are out of range.
-        #[diplomat::rust_link(icu::timezone::GmtOffset::try_from_offset_seconds, FnInStruct)]
-        #[diplomat::rust_link(icu::timezone::GmtOffset, Struct, compact)]
+        #[diplomat::rust_link(icu::timezone::UtcOffset::try_from_offset_seconds, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::UtcOffset, Struct, compact)]
         #[diplomat::rust_link(
-            icu::timezone::GmtOffset::from_offset_seconds_unchecked,
+            icu::timezone::UtcOffset::from_offset_seconds_unchecked,
             FnInStruct,
             hidden
         )]
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::new_with_offset, FnInStruct, hidden)]
-        pub fn try_set_gmt_offset_seconds(
+        pub fn try_set_offset_seconds(
             &mut self,
             offset_seconds: i32,
         ) -> Result<(), TimeZoneInvalidOffsetError> {
-            self.0.gmt_offset = Some(icu_timezone::GmtOffset::try_from_offset_seconds(
+            self.0.offset = Some(icu_timezone::UtcOffset::try_from_offset_seconds(
                 offset_seconds,
             )?);
             Ok(())
         }
 
-        /// Sets the `gmt_offset` field from offset eighths of an hour.
-        #[diplomat::rust_link(icu::timezone::GmtOffset::from_offset_eighths_of_hour, FnInStruct)]
-        pub fn set_gmt_offset_eighths_of_hour(&mut self, offset_eighths_of_hour: i8) {
-            self.0.gmt_offset = Some(icu_timezone::GmtOffset::from_offset_eighths_of_hour(
+        /// Sets the `offset` field from offset as eighths of an hour.
+        #[diplomat::rust_link(icu::timezone::UtcOffset::from_offset_eighths_of_hour, FnInStruct)]
+        pub fn set_offset_eighths_of_hour(&mut self, offset_eighths_of_hour: i8) {
+            self.0.offset = Some(icu_timezone::UtcOffset::from_offset_eighths_of_hour(
                 offset_eighths_of_hour,
             ));
         }
 
-        /// Clears the `gmt_offset` field.
-        #[diplomat::rust_link(icu::timezone::GmtOffset::offset_seconds, FnInStruct)]
-        #[diplomat::rust_link(icu::timezone::GmtOffset, Struct, compact)]
-        pub fn clear_gmt_offset(&mut self) {
-            self.0.gmt_offset.take();
-        }
-
-        /// Returns the value of the `gmt_offset` field as offset seconds.
-        ///
-        /// Returns null if the `gmt_offset` field is empty.
-        #[diplomat::rust_link(icu::timezone::GmtOffset::offset_seconds, FnInStruct)]
-        #[diplomat::rust_link(icu::timezone::GmtOffset, Struct, compact)]
-        #[diplomat::attr(auto, getter)]
-        pub fn gmt_offset_seconds(&self) -> Option<i32> {
+        /// Gets the `offset` field from offset as eighths of an hour.
+        #[diplomat::rust_link(icu::timezone::UtcOffset::offset_eighths_of_hour, FnInStruct)]
+        pub fn offset_eighths_of_hour(&self) -> Option<i8> {
             self.0
-                .gmt_offset
-                .map(icu_timezone::GmtOffset::offset_seconds)
+                .offset
+                .map(icu_timezone::UtcOffset::offset_eighths_of_hour)
         }
 
-        /// Returns whether the `gmt_offset` field is positive.
-        ///
-        /// Returns null if the `gmt_offset` field is empty.
-        #[diplomat::rust_link(icu::timezone::GmtOffset::is_positive, FnInStruct)]
-        #[diplomat::attr(auto, getter)]
-        pub fn is_gmt_offset_positive(&self) -> Option<bool> {
-            self.0.gmt_offset.map(icu_timezone::GmtOffset::is_positive)
+        /// Clears the `offset` field.
+        #[diplomat::rust_link(icu::timezone::UtcOffset::offset_seconds, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::UtcOffset, Struct, compact)]
+        pub fn clear_offset(&mut self) {
+            self.0.offset.take();
         }
 
-        /// Returns whether the `gmt_offset` field is zero.
+        /// Returns the value of the `offset` field as offset seconds.
         ///
-        /// Returns null if the `gmt_offset` field is empty (which is not the same as zero).
-        #[diplomat::rust_link(icu::timezone::GmtOffset::is_zero, FnInStruct)]
+        /// Returns null if the `offset` field is empty.
+        #[diplomat::rust_link(icu::timezone::UtcOffset::offset_seconds, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::UtcOffset, Struct, compact)]
         #[diplomat::attr(auto, getter)]
-        pub fn is_gmt_offset_zero(&self) -> Option<bool> {
-            self.0.gmt_offset.map(icu_timezone::GmtOffset::is_zero)
+        pub fn offset_seconds(&self) -> Option<i32> {
+            self.0.offset.map(icu_timezone::UtcOffset::offset_seconds)
         }
 
-        /// Returns whether the `gmt_offset` field has nonzero minutes.
+        /// Returns whether the `offset` field is positive.
         ///
-        /// Returns null if the `gmt_offset` field is empty.
-        #[diplomat::rust_link(icu::timezone::GmtOffset::has_minutes, FnInStruct)]
+        /// Returns null if the `offset` field is empty.
+        #[diplomat::rust_link(icu::timezone::UtcOffset::is_positive, FnInStruct)]
         #[diplomat::attr(auto, getter)]
-        pub fn gmt_offset_has_minutes(&self) -> Option<bool> {
-            self.0.gmt_offset.map(icu_timezone::GmtOffset::has_minutes)
+        pub fn is_offset_positive(&self) -> Option<bool> {
+            self.0.offset.map(icu_timezone::UtcOffset::is_positive)
         }
 
-        /// Returns whether the `gmt_offset` field has nonzero seconds.
+        /// Returns whether the `offset` field is zero.
         ///
-        /// Returns null if the `gmt_offset` field is empty.
-        #[diplomat::rust_link(icu::timezone::GmtOffset::has_seconds, FnInStruct)]
+        /// Returns null if the `offset` field is empty (which is not the same as zero).
+        #[diplomat::rust_link(icu::timezone::UtcOffset::is_zero, FnInStruct)]
         #[diplomat::attr(auto, getter)]
-        pub fn gmt_offset_has_seconds(&self) -> Option<bool> {
-            self.0.gmt_offset.map(icu_timezone::GmtOffset::has_seconds)
+        pub fn is_offset_zero(&self) -> Option<bool> {
+            self.0.offset.map(icu_timezone::UtcOffset::is_zero)
+        }
+
+        /// Returns whether the `offset` field has nonzero minutes.
+        ///
+        /// Returns null if the `offset` field is empty.
+        #[diplomat::rust_link(icu::timezone::UtcOffset::has_minutes, FnInStruct)]
+        #[diplomat::attr(auto, getter)]
+        pub fn offset_has_minutes(&self) -> Option<bool> {
+            self.0.offset.map(icu_timezone::UtcOffset::has_minutes)
+        }
+
+        /// Returns whether the `offset` field has nonzero seconds.
+        ///
+        /// Returns null if the `offset` field is empty.
+        #[diplomat::rust_link(icu::timezone::UtcOffset::has_seconds, FnInStruct)]
+        #[diplomat::attr(auto, getter)]
+        pub fn offset_has_seconds(&self) -> Option<bool> {
+            self.0.offset.map(icu_timezone::UtcOffset::has_seconds)
         }
 
         /// Sets the `time_zone_id` field from a BCP-47 string.
@@ -324,6 +316,26 @@ pub mod ffi {
         ) {
             self.0
                 .maybe_calculate_metazone(&metazone_calculator.0, &local_datetime.0);
+        }
+
+        /// Sets the zone variant based on the time zone and the local timestamp.
+        #[diplomat::rust_link(
+            icu::timezone::CustomTimeZone::maybe_calculate_zone_variant,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::timezone::ZoneOffsetCalculator::compute_offsets_from_time_zone,
+            FnInStruct,
+            compact
+        )]
+        #[cfg(feature = "timezone")]
+        pub fn maybe_calculate_zone_variant(
+            &mut self,
+            zone_offset_calculator: &crate::zone_offset_calculator::ffi::ZoneOffsetCalculator,
+            local_datetime: &crate::datetime::ffi::IsoDateTime,
+        ) {
+            self.0
+                .maybe_calculate_zone_variant(&zone_offset_calculator.0, &local_datetime.0);
         }
     }
 }

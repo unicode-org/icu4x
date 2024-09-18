@@ -5,13 +5,11 @@
 mod fixtures;
 
 use criterion::{criterion_group, criterion_main, Criterion};
-#[cfg(feature = "experimental")]
 use icu_datetime::neo::TypedNeoFormatter;
 
 use icu_calendar::{DateTime, Gregorian};
 use icu_locale_core::Locale;
 use icu_timezone::{CustomTimeZone, CustomZonedDateTime};
-#[cfg(feature = "experimental")]
 use writeable::TryWriteable;
 
 #[path = "../tests/mock.rs"]
@@ -20,7 +18,6 @@ mod mock;
 fn datetime_benches(c: &mut Criterion) {
     let mut group = c.benchmark_group("datetime");
 
-    #[cfg(feature = "experimental")]
     let mut bench_neoneo_datetime_with_fixture = |name, file, has_zones| {
         let fxs = serde_json::from_str::<fixtures::Fixture>(file).unwrap();
         group.bench_function(&format!("semantic/{name}"), |b| {
@@ -71,21 +68,18 @@ fn datetime_benches(c: &mut Criterion) {
         });
     };
 
-    #[cfg(feature = "experimental")]
     bench_neoneo_datetime_with_fixture(
         "lengths",
         include_str!("fixtures/tests/lengths.json"),
         false,
     );
 
-    #[cfg(feature = "experimental")]
     bench_neoneo_datetime_with_fixture(
         "components",
         include_str!("fixtures/tests/components.json"),
         false,
     );
 
-    #[cfg(feature = "experimental")]
     bench_neoneo_datetime_with_fixture(
         "lengths_with_zones",
         include_str!("fixtures/tests/lengths_with_zones.json"),

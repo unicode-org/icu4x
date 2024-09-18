@@ -98,7 +98,7 @@ We can include the generate code with the `include!` macro. The `impl_data_provi
 extern crate alloc; // required as my-data is written for #[no_std]
 use icu::locale::{locale, Locale};
 use icu::calendar::DateTime;
-use icu::datetime::{DateTimeFormatter, options::length};
+use icu::datetime::{NeoFormatter, neo_skeleton::NeoAutoDateTimeMarker, NeoSkeletonLength};
 
 const LOCALE: Locale = locale!("ja");
 
@@ -109,16 +109,14 @@ impl_data_provider!(MyDataProvider);
 fn main() {
     let baked_provider = MyDataProvider;
 
-    let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium);
-
-    let dtf = DateTimeFormatter::try_new_unstable(&baked_provider, &LOCALE.into(), options.into())
+    let dtf = NeoFormatter::<NeoAutoDateTimeMarker>::try_new_unstable(&baked_provider, &LOCALE.into(), NeoSkeletonLength::Medium.into())
         .expect("ja data should be available");
 
     let date = DateTime::try_new_iso_datetime(2020, 10, 14, 13, 21, 28)
         .expect("datetime should be valid");
     let date = date.to_any();
 
-    let formatted_date = dtf.format(&date).expect("formatting should succeed");
+    let formatted_date = dtf.convert_and_format(&date).to_string_lossy();
 
     println!("📅: {}", formatted_date);
 }
@@ -158,7 +156,7 @@ We can then use the provider in our code:
 ```rust,no_run
 use icu::locale::{locale, Locale, fallback::LocaleFallbacker};
 use icu::calendar::DateTime;
-use icu::datetime::{DateTimeFormatter, options::length};
+use icu::datetime::{NeoFormatter, NeoSkeletonLength, neo_marker::NeoAutoDateTimeMarker};
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_blob::BlobDataProvider;
 
@@ -175,16 +173,14 @@ fn main() {
 
     let buffer_provider = LocaleFallbackProvider::new(buffer_provider, fallbacker);
 
-    let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium);
-
-    let dtf = DateTimeFormatter::try_new_with_buffer_provider(&buffer_provider, &LOCALE.into(), options.into())
+    let dtf = NeoFormatter::<NeoAutoDateTimeMarker>::try_new_with_buffer_provider(&buffer_provider, &LOCALE.into(), NeoSkeletonLength::Medium.into())
         .expect("blob should contain required markers and `ja` data");
 
     let date = DateTime::try_new_iso_datetime(2020, 10, 14, 13, 21, 28)
         .expect("datetime should be valid");
     let date = date.to_any();
 
-    let formatted_date = dtf.format(&date).expect("formatting should succeed");
+    let formatted_date = dtf.convert_and_format(&date).to_string_lossy();
 
     println!("📅: {}", formatted_date);
 }
@@ -204,12 +200,12 @@ The `--markers-for-bin` argument tells `icu4x-datagen` to analyze the binary and
 
 But there is more to optimize. You might have noticed this in the output of the `icu4x-datagen` invocation, which lists 24 markers, including clearly irrelevant ones like `datetime/ethopic/datesymbols@1`. Remember how we had to convert our `DateTime<Gregorian>` into a `DateTime<AnyCalendar>` in order to use the `DateTimeFormatter`? Turns out, as `DateTimeFormatter` contains logic for many different calendars, datagen includes data for all of these as well.
 
-We can instead use `TypedDateTimeFormatter<Gregorian>`, which only supports formatting `DateTime<Gregorian>`s:
+We can instead use `TypedNeoFormatter<Gregorian>`, which only supports formatting `DateTime<Gregorian>`s:
 
 ```rust,no_run
 use icu::locale::{locale, Locale, fallback::LocaleFallbacker};
 use icu::calendar::{DateTime, Gregorian};
-use icu::datetime::{TypedDateTimeFormatter, options::length};
+use icu::datetime::{TypedNeoFormatter, neo_marker::NeoAutoDateTimeMarker, NeoSkeletonLength};
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_blob::BlobDataProvider;
 
@@ -226,21 +222,19 @@ fn main() {
 
     let buffer_provider = LocaleFallbackProvider::new(buffer_provider, fallbacker);
 
-    let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium);
-
-    let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(&buffer_provider, &LOCALE.into(), options.into())
+    let dtf = TypedNeoFormatter::<Gregorian, NeoAutoDateTimeMarker>::try_new_with_buffer_provider(&buffer_provider, &LOCALE.into(), NeoSkeletonLength::Medium.into())
         .expect("blob should contain required data");
 
     let date = DateTime::try_new_gregorian_datetime(2020, 10, 14, 13, 21, 28)
         .expect("datetime should be valid");
 
-    let formatted_date = dtf.format(&date);
+    let formatted_date = dtf.format(&date).to_string_lossy();
 
     println!("📅: {}", formatted_date);
 }
 ```
 
-This has two advantages: it reduces our code size, as `DateTimeFormatter` includes much more functionality than `TypedDateTimeFormatter<Gregorian>`, and it reduces our data size, as `--markers-for-bin` can now determine that we need even fewer markers. The data size improvement could have also been achieved by manually listing the data markers we think we'll need (using the `--markers` flag), but we risk a runtime error if we're wrong.
+This has two advantages: it reduces our code size, as `NeoFormatter` includes much more functionality than `TypedNeoFormatter<Gregorian>`, and it reduces our data size, as `--markers-for-bin` can now determine that we need even fewer markers. The data size improvement could have also been achieved by manually listing the data markers we think we'll need (using the `--markers` flag), but we risk a runtime error if we're wrong.
 
 This is a common pattern in `ICU4X`, and most of our APIs are designed with data slicing in mind.
 

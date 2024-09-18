@@ -2,9 +2,6 @@
   "main": {
     "es-AR": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "es",
         "territory": "AR"
       },
@@ -1120,7 +1117,6 @@
                 "UMMM": "U MMM",
                 "UMMMd": "U MMM d",
                 "y": "r",
-                "yMd": "r-MM-dd",
                 "yyyy": "r",
                 "yyyyM": "M-r",
                 "yyyyMd": "d-M-r",

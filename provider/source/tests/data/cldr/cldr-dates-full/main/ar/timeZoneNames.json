@@ -2,9 +2,6 @@
   "main": {
     "ar": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "ar"
       },
       "dates": {
@@ -1803,6 +1800,11 @@
                 "generic": "توقيت كامشاتكا",
                 "standard": "توقيت بيتروبافلوفسك-كامتشاتسكي",
                 "daylight": "توقيت بيتروبافلوفسك-كامتشاتسكي الصيفي"
+              }
+            },
+            "Kazakhstan": {
+              "long": {
+                "standard": "توقيت كازاخستان"
               }
             },
             "Kazakhstan_Eastern": {

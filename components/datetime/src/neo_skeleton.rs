@@ -6,13 +6,10 @@
 
 #[cfg(feature = "serde")]
 use crate::neo_serde::*;
-use crate::options;
-use crate::options::length;
-#[cfg(feature = "experimental")]
+#[cfg(feature = "datagen")]
+use crate::options::{self, length};
 use crate::pattern::CoarseHourCycle;
-#[cfg(feature = "experimental")]
 use crate::raw::neo::MaybeLength;
-#[cfg(feature = "experimental")]
 use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
 use icu_provider::DataMarkerAttributes;
 
@@ -41,6 +38,7 @@ impl NeoSkeletonLength {
     pub const VALUES: &'static [Self] = &[Self::Long, Self::Medium, Self::Short];
 
     /// Returns the date style corresponding to this length.
+    #[cfg(feature = "datagen")]
     pub fn to_date_style(self) -> options::length::Date {
         match self {
             Self::Long => options::length::Date::Long,
@@ -50,6 +48,7 @@ impl NeoSkeletonLength {
     }
 
     /// Returns the time style corresponding to this length.
+    #[cfg(feature = "datagen")]
     pub fn to_time_style(self) -> options::length::Time {
         // Note: For now, make "long" and "medium" both map to "medium".
         // This could be improved in light of additional data.
@@ -756,7 +755,6 @@ impl NeoTimeComponents {
         }
     }
 
-    #[cfg(feature = "experimental")]
     pub(crate) fn with_hour_cycle(self, hour_cycle: CoarseHourCycle) -> Self {
         use CoarseHourCycle::*;
         match (self, hour_cycle) {
@@ -772,6 +770,7 @@ impl NeoTimeComponents {
 
     /// Converts a [`length::Time`] to its nearest [`NeoTimeComponents`].
     #[doc(hidden)] // the types involved in this mapping may change
+    #[cfg(feature = "datagen")]
     pub fn from_time_length(time_length: length::Time) -> Self {
         match time_length {
             length::Time::Full => todo!(),
@@ -971,7 +970,7 @@ pub enum NeoTimeZoneStyle {
     ///
     /// When unavailable, falls back to [`NeoTimeZoneStyle::Offset`].
     SpecificNonLocation,
-    /// The offset from UTC format, e.g., “GMT−8”.
+    /// The offset format, e.g., “GMT−8”.
     Offset,
 }
 
@@ -991,7 +990,6 @@ pub struct NeoTimeZoneSkeleton {
     pub style: NeoTimeZoneStyle,
 }
 
-#[cfg(feature = "experimental")]
 impl NeoTimeZoneSkeleton {
     pub(crate) fn resolve(self, length: MaybeLength) -> ResolvedNeoTimeZoneSkeleton {
         crate::tz_registry::skeleton_to_resolved(
@@ -1031,6 +1029,7 @@ impl NeoDateSkeleton {
 
     /// Converts a [`length::Date`] to a [`NeoDayComponents`] and [`NeoSkeletonLength`].
     #[doc(hidden)] // the types involved in this mapping may change
+    #[cfg(feature = "datagen")]
     pub fn day_from_date_length(
         date_length: length::Date,
     ) -> (NeoDayComponents, NeoSkeletonLength) {
@@ -1044,6 +1043,7 @@ impl NeoDateSkeleton {
 
     /// Converts a [`length::Date`] to a [`NeoDateSkeleton`].
     #[doc(hidden)] // the types involved in this mapping may change
+    #[cfg(feature = "datagen")]
     pub fn from_date_length(date_length: length::Date) -> Self {
         let (day_components, length) = Self::day_from_date_length(date_length);
         NeoDateSkeleton {
@@ -1176,6 +1176,7 @@ impl From<NeoDateTimeSkeleton> for NeoSkeleton {
 
 impl NeoDateTimeSkeleton {
     #[doc(hidden)] // mostly internal; maps from old API to new API
+    #[cfg(feature = "datagen")]
     pub fn from_date_time_length(
         date_length: crate::options::length::Date,
         time_length: crate::options::length::Time,

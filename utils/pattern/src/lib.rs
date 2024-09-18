@@ -85,6 +85,8 @@ pub use parser::Parser;
 pub use parser::ParserError;
 #[cfg(feature = "alloc")]
 pub use parser::ParserOptions;
+#[cfg(feature = "alloc")]
+pub use parser::QuoteMode;
 pub use single::SinglePlaceholder;
 pub use single::SinglePlaceholderKey;
 #[doc(no_inline)]

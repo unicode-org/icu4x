@@ -6,14 +6,18 @@
   },
   "past": {
     "strings": {
-      "specials": [],
-      "other": "\u0001 hf. önce"
+      "other": [
+        0,
+        "\u0001 hf. önce"
+      ]
     }
   },
   "future": {
     "strings": {
-      "specials": [],
-      "other": "\u0001 hf. sonra"
+      "other": [
+        0,
+        "\u0001 hf. sonra"
+      ]
     }
   }
 }

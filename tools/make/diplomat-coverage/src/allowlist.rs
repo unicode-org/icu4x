@@ -22,6 +22,7 @@ lazy_static::lazy_static! {
         "Copy",
         "Debug",
         "Default", // We expose this when we see fit
+        "Deref", // We expose this when we see fit
         "Deserialize",
         "DeserializeOwned",
         "Display",
@@ -117,6 +118,7 @@ lazy_static::lazy_static! {
         // Largely for use by datetimeformat, not generally useful
         "icu::calendar::AnyCalendar::convert_any_date",
         "icu::calendar::AnyCalendar::convert_any_datetime",
+        "icu::calendar::Date::formattable_year",
 
         // Individual calendars: Currently the main entry point is AnyCalendar
         // We have chosen to not do individual calendars (except Iso) over FFI
@@ -177,9 +179,15 @@ lazy_static::lazy_static! {
 
         // Calendar structs mostly for internal use but which might expose
         // useful information to clients.
-        "icu::calendar::types::FormattableMonth",
+        "icu::calendar::types::MonthInfo",
         "icu::calendar::types::FormattableYear",
+        "icu::calendar::types::FormattableYearKind",
         "icu::calendar::types::DayOfYearInfo",
+
+        // Not yet fully exposed over FFI, Temporal doesn't yet want this.
+        "icu::calendar::types::CyclicYear",
+        "icu::calendar::types::YearInfo::cyclic",
+        "icu::calendar::types::YearInfo::related_iso",
 
         // Punted post 1.0: not strongly needed yet and don't want to lock in a solution
         // Potential solutions:
@@ -282,7 +290,7 @@ lazy_static::lazy_static! {
 
         // We should add this once we have a better story for FFI custom data structs
         // and callbacks
-        "icu_provider_adapters::any_payload::AnyPayloadProvider",
+        "icu_provider_adapters::fixed::FixedProvider",
 
         // Not planned for 2.0
         // FilterDataProvider::with_filter needs callbacks.
@@ -297,8 +305,18 @@ lazy_static::lazy_static! {
         // Not planned for 2.0 but would be nice to return 'static refs
         // with Diplomat support.
         // Borrowed <-> owned converters
+        "icu::collator::Collator::as_borrowed",
+        "icu::collator::CollatorBorrowed::static_to_owned",
+        "icu::locale::exemplar_chars::ExemplarCharacters::as_borrowed",
+        "icu::locale::exemplar_chars::ExemplarCharactersBorrowed::static_to_owned",
         "icu::locale::fallback::LocaleFallbacker::as_borrowed",
         "icu::locale::fallback::LocaleFallbackerBorrowed::static_to_owned",
+        "icu::normalizer::ComposingNormalizer::as_borrowed",
+        "icu::normalizer::ComposingNormalizerBorrowed::static_to_owned",
+        "icu::normalizer::DecomposingNormalizer::as_borrowed",
+        "icu::normalizer::DecomposingNormalizerBorrowed::static_to_owned",
+        "icu::normalizer::uts46::Uts46Mapper::as_borrowed",
+        "icu::normalizer::uts46::Uts46MapperBorrowed::static_to_owned",
         "icu::properties::bidi_data::BidiAuxiliaryProperties::as_borrowed",
         "icu::properties::bidi_data::BidiAuxiliaryPropertiesBorrowed::static_to_owned",
         "icu::properties::maps::CodePointMapData::as_borrowed",

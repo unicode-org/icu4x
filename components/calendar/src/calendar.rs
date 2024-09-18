@@ -21,9 +21,11 @@ pub trait Calendar {
     /// The internal type used to represent dates
     type DateInner: PartialEq + Eq + Clone + fmt::Debug;
     /// Construct a date from era/month codes and fields
+    ///
+    /// The year is extended_year if no era is provided
     fn date_from_codes(
         &self,
-        era: types::Era,
+        era: Option<types::Era>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
@@ -73,14 +75,14 @@ pub trait Calendar {
     fn debug_name(&self) -> &'static str;
     // fn since(&self, from: &Date<Self>, to: &Date<Self>) -> Duration<Self>, Error;
 
-    /// The calendar-specific year represented by `date`
-    fn year(&self, date: &Self::DateInner) -> types::FormattableYear;
+    /// Information about the year
+    fn year(&self, date: &Self::DateInner) -> types::YearInfo;
 
     /// Calculate if a date is in a leap year
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool;
 
     /// The calendar-specific month represented by `date`
-    fn month(&self, date: &Self::DateInner) -> types::FormattableMonth;
+    fn month(&self, date: &Self::DateInner) -> types::MonthInfo;
 
     /// The calendar-specific day-of-month represented by `date`
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth;

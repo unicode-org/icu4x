@@ -16,6 +16,7 @@
 #include "TimeZoneInvalidIdError.hpp"
 #include "TimeZoneInvalidOffsetError.hpp"
 #include "TimeZoneUnknownError.hpp"
+#include "ZoneOffsetCalculator.hpp"
 
 
 namespace icu4x {
@@ -29,31 +30,30 @@ namespace capi {
     
     icu4x::capi::CustomTimeZone* icu4x_CustomTimeZone_utc_mv1(void);
     
-    icu4x::capi::CustomTimeZone* icu4x_CustomTimeZone_gmt_mv1(void);
+    typedef struct icu4x_CustomTimeZone_try_set_offset_seconds_mv1_result { bool is_ok;} icu4x_CustomTimeZone_try_set_offset_seconds_mv1_result;
+    icu4x_CustomTimeZone_try_set_offset_seconds_mv1_result icu4x_CustomTimeZone_try_set_offset_seconds_mv1(icu4x::capi::CustomTimeZone* self, int32_t offset_seconds);
     
-    icu4x::capi::CustomTimeZone* icu4x_CustomTimeZone_bst_mv1(void);
+    void icu4x_CustomTimeZone_set_offset_eighths_of_hour_mv1(icu4x::capi::CustomTimeZone* self, int8_t offset_eighths_of_hour);
     
-    typedef struct icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1_result { bool is_ok;} icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1_result;
-    icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1_result icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1(icu4x::capi::CustomTimeZone* self, int32_t offset_seconds);
+    typedef struct icu4x_CustomTimeZone_offset_eighths_of_hour_mv1_result {union {int8_t ok; }; bool is_ok;} icu4x_CustomTimeZone_offset_eighths_of_hour_mv1_result;
+    icu4x_CustomTimeZone_offset_eighths_of_hour_mv1_result icu4x_CustomTimeZone_offset_eighths_of_hour_mv1(const icu4x::capi::CustomTimeZone* self);
     
-    void icu4x_CustomTimeZone_set_gmt_offset_eighths_of_hour_mv1(icu4x::capi::CustomTimeZone* self, int8_t offset_eighths_of_hour);
+    void icu4x_CustomTimeZone_clear_offset_mv1(icu4x::capi::CustomTimeZone* self);
     
-    void icu4x_CustomTimeZone_clear_gmt_offset_mv1(icu4x::capi::CustomTimeZone* self);
+    typedef struct icu4x_CustomTimeZone_offset_seconds_mv1_result {union {int32_t ok; }; bool is_ok;} icu4x_CustomTimeZone_offset_seconds_mv1_result;
+    icu4x_CustomTimeZone_offset_seconds_mv1_result icu4x_CustomTimeZone_offset_seconds_mv1(const icu4x::capi::CustomTimeZone* self);
     
-    typedef struct icu4x_CustomTimeZone_gmt_offset_seconds_mv1_result {union {int32_t ok; }; bool is_ok;} icu4x_CustomTimeZone_gmt_offset_seconds_mv1_result;
-    icu4x_CustomTimeZone_gmt_offset_seconds_mv1_result icu4x_CustomTimeZone_gmt_offset_seconds_mv1(const icu4x::capi::CustomTimeZone* self);
+    typedef struct icu4x_CustomTimeZone_is_offset_positive_mv1_result {union {bool ok; }; bool is_ok;} icu4x_CustomTimeZone_is_offset_positive_mv1_result;
+    icu4x_CustomTimeZone_is_offset_positive_mv1_result icu4x_CustomTimeZone_is_offset_positive_mv1(const icu4x::capi::CustomTimeZone* self);
     
-    typedef struct icu4x_CustomTimeZone_is_gmt_offset_positive_mv1_result {union {bool ok; }; bool is_ok;} icu4x_CustomTimeZone_is_gmt_offset_positive_mv1_result;
-    icu4x_CustomTimeZone_is_gmt_offset_positive_mv1_result icu4x_CustomTimeZone_is_gmt_offset_positive_mv1(const icu4x::capi::CustomTimeZone* self);
+    typedef struct icu4x_CustomTimeZone_is_offset_zero_mv1_result {union {bool ok; }; bool is_ok;} icu4x_CustomTimeZone_is_offset_zero_mv1_result;
+    icu4x_CustomTimeZone_is_offset_zero_mv1_result icu4x_CustomTimeZone_is_offset_zero_mv1(const icu4x::capi::CustomTimeZone* self);
     
-    typedef struct icu4x_CustomTimeZone_is_gmt_offset_zero_mv1_result {union {bool ok; }; bool is_ok;} icu4x_CustomTimeZone_is_gmt_offset_zero_mv1_result;
-    icu4x_CustomTimeZone_is_gmt_offset_zero_mv1_result icu4x_CustomTimeZone_is_gmt_offset_zero_mv1(const icu4x::capi::CustomTimeZone* self);
+    typedef struct icu4x_CustomTimeZone_offset_has_minutes_mv1_result {union {bool ok; }; bool is_ok;} icu4x_CustomTimeZone_offset_has_minutes_mv1_result;
+    icu4x_CustomTimeZone_offset_has_minutes_mv1_result icu4x_CustomTimeZone_offset_has_minutes_mv1(const icu4x::capi::CustomTimeZone* self);
     
-    typedef struct icu4x_CustomTimeZone_gmt_offset_has_minutes_mv1_result {union {bool ok; }; bool is_ok;} icu4x_CustomTimeZone_gmt_offset_has_minutes_mv1_result;
-    icu4x_CustomTimeZone_gmt_offset_has_minutes_mv1_result icu4x_CustomTimeZone_gmt_offset_has_minutes_mv1(const icu4x::capi::CustomTimeZone* self);
-    
-    typedef struct icu4x_CustomTimeZone_gmt_offset_has_seconds_mv1_result {union {bool ok; }; bool is_ok;} icu4x_CustomTimeZone_gmt_offset_has_seconds_mv1_result;
-    icu4x_CustomTimeZone_gmt_offset_has_seconds_mv1_result icu4x_CustomTimeZone_gmt_offset_has_seconds_mv1(const icu4x::capi::CustomTimeZone* self);
+    typedef struct icu4x_CustomTimeZone_offset_has_seconds_mv1_result {union {bool ok; }; bool is_ok;} icu4x_CustomTimeZone_offset_has_seconds_mv1_result;
+    icu4x_CustomTimeZone_offset_has_seconds_mv1_result icu4x_CustomTimeZone_offset_has_seconds_mv1(const icu4x::capi::CustomTimeZone* self);
     
     typedef struct icu4x_CustomTimeZone_try_set_time_zone_id_mv1_result { bool is_ok;} icu4x_CustomTimeZone_try_set_time_zone_id_mv1_result;
     icu4x_CustomTimeZone_try_set_time_zone_id_mv1_result icu4x_CustomTimeZone_try_set_time_zone_id_mv1(icu4x::capi::CustomTimeZone* self, diplomat::capi::DiplomatStringView id);
@@ -94,6 +94,8 @@ namespace capi {
     
     void icu4x_CustomTimeZone_maybe_calculate_metazone_mv1(icu4x::capi::CustomTimeZone* self, const icu4x::capi::MetazoneCalculator* metazone_calculator, const icu4x::capi::IsoDateTime* local_datetime);
     
+    void icu4x_CustomTimeZone_maybe_calculate_zone_variant_mv1(icu4x::capi::CustomTimeZone* self, const icu4x::capi::ZoneOffsetCalculator* zone_offset_calculator, const icu4x::capi::IsoDateTime* local_datetime);
+    
     
     void icu4x_CustomTimeZone_destroy_mv1(CustomTimeZone* self);
     
@@ -116,53 +118,48 @@ inline std::unique_ptr<icu4x::CustomTimeZone> icu4x::CustomTimeZone::utc() {
   return std::unique_ptr<icu4x::CustomTimeZone>(icu4x::CustomTimeZone::FromFFI(result));
 }
 
-inline std::unique_ptr<icu4x::CustomTimeZone> icu4x::CustomTimeZone::gmt() {
-  auto result = icu4x::capi::icu4x_CustomTimeZone_gmt_mv1();
-  return std::unique_ptr<icu4x::CustomTimeZone>(icu4x::CustomTimeZone::FromFFI(result));
-}
-
-inline std::unique_ptr<icu4x::CustomTimeZone> icu4x::CustomTimeZone::bst() {
-  auto result = icu4x::capi::icu4x_CustomTimeZone_bst_mv1();
-  return std::unique_ptr<icu4x::CustomTimeZone>(icu4x::CustomTimeZone::FromFFI(result));
-}
-
-inline diplomat::result<std::monostate, icu4x::TimeZoneInvalidOffsetError> icu4x::CustomTimeZone::try_set_gmt_offset_seconds(int32_t offset_seconds) {
-  auto result = icu4x::capi::icu4x_CustomTimeZone_try_set_gmt_offset_seconds_mv1(this->AsFFI(),
+inline diplomat::result<std::monostate, icu4x::TimeZoneInvalidOffsetError> icu4x::CustomTimeZone::try_set_offset_seconds(int32_t offset_seconds) {
+  auto result = icu4x::capi::icu4x_CustomTimeZone_try_set_offset_seconds_mv1(this->AsFFI(),
     offset_seconds);
   return result.is_ok ? diplomat::result<std::monostate, icu4x::TimeZoneInvalidOffsetError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, icu4x::TimeZoneInvalidOffsetError>(diplomat::Err<icu4x::TimeZoneInvalidOffsetError>(icu4x::TimeZoneInvalidOffsetError {}));
 }
 
-inline void icu4x::CustomTimeZone::set_gmt_offset_eighths_of_hour(int8_t offset_eighths_of_hour) {
-  icu4x::capi::icu4x_CustomTimeZone_set_gmt_offset_eighths_of_hour_mv1(this->AsFFI(),
+inline void icu4x::CustomTimeZone::set_offset_eighths_of_hour(int8_t offset_eighths_of_hour) {
+  icu4x::capi::icu4x_CustomTimeZone_set_offset_eighths_of_hour_mv1(this->AsFFI(),
     offset_eighths_of_hour);
 }
 
-inline void icu4x::CustomTimeZone::clear_gmt_offset() {
-  icu4x::capi::icu4x_CustomTimeZone_clear_gmt_offset_mv1(this->AsFFI());
+inline std::optional<int8_t> icu4x::CustomTimeZone::offset_eighths_of_hour() const {
+  auto result = icu4x::capi::icu4x_CustomTimeZone_offset_eighths_of_hour_mv1(this->AsFFI());
+  return result.is_ok ? std::optional<int8_t>(result.ok) : std::nullopt;
 }
 
-inline std::optional<int32_t> icu4x::CustomTimeZone::gmt_offset_seconds() const {
-  auto result = icu4x::capi::icu4x_CustomTimeZone_gmt_offset_seconds_mv1(this->AsFFI());
+inline void icu4x::CustomTimeZone::clear_offset() {
+  icu4x::capi::icu4x_CustomTimeZone_clear_offset_mv1(this->AsFFI());
+}
+
+inline std::optional<int32_t> icu4x::CustomTimeZone::offset_seconds() const {
+  auto result = icu4x::capi::icu4x_CustomTimeZone_offset_seconds_mv1(this->AsFFI());
   return result.is_ok ? std::optional<int32_t>(result.ok) : std::nullopt;
 }
 
-inline std::optional<bool> icu4x::CustomTimeZone::is_gmt_offset_positive() const {
-  auto result = icu4x::capi::icu4x_CustomTimeZone_is_gmt_offset_positive_mv1(this->AsFFI());
+inline std::optional<bool> icu4x::CustomTimeZone::is_offset_positive() const {
+  auto result = icu4x::capi::icu4x_CustomTimeZone_is_offset_positive_mv1(this->AsFFI());
   return result.is_ok ? std::optional<bool>(result.ok) : std::nullopt;
 }
 
-inline std::optional<bool> icu4x::CustomTimeZone::is_gmt_offset_zero() const {
-  auto result = icu4x::capi::icu4x_CustomTimeZone_is_gmt_offset_zero_mv1(this->AsFFI());
+inline std::optional<bool> icu4x::CustomTimeZone::is_offset_zero() const {
+  auto result = icu4x::capi::icu4x_CustomTimeZone_is_offset_zero_mv1(this->AsFFI());
   return result.is_ok ? std::optional<bool>(result.ok) : std::nullopt;
 }
 
-inline std::optional<bool> icu4x::CustomTimeZone::gmt_offset_has_minutes() const {
-  auto result = icu4x::capi::icu4x_CustomTimeZone_gmt_offset_has_minutes_mv1(this->AsFFI());
+inline std::optional<bool> icu4x::CustomTimeZone::offset_has_minutes() const {
+  auto result = icu4x::capi::icu4x_CustomTimeZone_offset_has_minutes_mv1(this->AsFFI());
   return result.is_ok ? std::optional<bool>(result.ok) : std::nullopt;
 }
 
-inline std::optional<bool> icu4x::CustomTimeZone::gmt_offset_has_seconds() const {
-  auto result = icu4x::capi::icu4x_CustomTimeZone_gmt_offset_has_seconds_mv1(this->AsFFI());
+inline std::optional<bool> icu4x::CustomTimeZone::offset_has_seconds() const {
+  auto result = icu4x::capi::icu4x_CustomTimeZone_offset_has_seconds_mv1(this->AsFFI());
   return result.is_ok ? std::optional<bool>(result.ok) : std::nullopt;
 }
 
@@ -248,6 +245,12 @@ inline std::optional<bool> icu4x::CustomTimeZone::is_daylight_time() const {
 inline void icu4x::CustomTimeZone::maybe_calculate_metazone(const icu4x::MetazoneCalculator& metazone_calculator, const icu4x::IsoDateTime& local_datetime) {
   icu4x::capi::icu4x_CustomTimeZone_maybe_calculate_metazone_mv1(this->AsFFI(),
     metazone_calculator.AsFFI(),
+    local_datetime.AsFFI());
+}
+
+inline void icu4x::CustomTimeZone::maybe_calculate_zone_variant(const icu4x::ZoneOffsetCalculator& zone_offset_calculator, const icu4x::IsoDateTime& local_datetime) {
+  icu4x::capi::icu4x_CustomTimeZone_maybe_calculate_zone_variant_mv1(this->AsFFI(),
+    zone_offset_calculator.AsFFI(),
     local_datetime.AsFFI());
 }
 

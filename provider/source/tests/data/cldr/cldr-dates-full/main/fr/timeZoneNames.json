@@ -2,9 +2,6 @@
   "main": {
     "fr": {
       "identity": {
-        "version": {
-          "_cldrVersion": "45"
-        },
         "language": "fr"
       },
       "dates": {
@@ -1042,6 +1039,11 @@
                 "generic": "heure de Petropavlovsk-Kamchatski",
                 "standard": "heure normale de Petropavlovsk-Kamchatski",
                 "daylight": "heure d’été de Petropavlovsk-Kamchatski"
+              }
+            },
+            "Kazakhstan": {
+              "long": {
+                "standard": "heure du Kazakhstan"
               }
             },
             "Kazakhstan_Eastern": {

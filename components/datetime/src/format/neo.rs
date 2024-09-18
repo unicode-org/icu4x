@@ -8,12 +8,10 @@ use crate::external_loaders::*;
 use crate::fields::{self, Field, FieldLength, FieldSymbol};
 use crate::helpers::size_test;
 use crate::input;
-use crate::input::DateInput;
-use crate::input::ExtractedDateTimeInput;
-use crate::input::IsoTimeInput;
+use crate::input::ExtractedInput;
 use crate::neo_marker::{
-    AllInputMarkers, DateInputMarkers, DateTimeMarkers, IsInCalendar, TimeMarkers,
-    TypedDateDataMarkers, ZoneMarkers,
+    AllInputMarkers, DateInputMarkers, DateTimeMarkers, IsInCalendar, NeoGetField, NeoNeverMarker,
+    NeverField, TimeMarkers, TypedDateDataMarkers, ZoneMarkers,
 };
 use crate::neo_pattern::{DateTimePattern, DateTimePatternBorrowed};
 use crate::neo_skeleton::NeoDateTimeComponents;
@@ -283,13 +281,6 @@ size_test!(
 ///
 /// To support all fields including time zones, use [`NeoComponents`].
 ///
-/// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
-/// of the icu meta-crate. Use with caution.
-/// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
-/// </div>
-///
 /// [`NeoComponents`]: crate::neo_skeleton::NeoComponents
 ///
 /// # Examples
@@ -347,11 +338,9 @@ size_test!(
 ///
 /// // The pattern string contains lots of symbols including "E", "MMM", and "a",
 /// // but we did not load any data!
-/// let dtz = CustomZonedDateTime {
-///     date: Date::try_new_gregorian_date(2023, 11, 20).unwrap(),
-///     time: Time::try_new(11, 35, 3, 0).unwrap(),
-///     zone: CustomTimeZone::gmt()
-/// };
+///
+/// let mut dtz = CustomZonedDateTime::try_from_str("2023-11-20T11:35:03+00:00[Europe/London]").unwrap().to_calendar(Gregorian);
+///
 /// // Missing data is filled in on a best-effort basis, and an error is signaled.
 /// assert_try_writeable_parts_eq!(
 ///     names.with_pattern(&pattern).format(&dtz),
@@ -915,7 +904,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// Includes shared essential patterns for time zone formatting.
     ///
     /// This data should always be loaded when performing time zone formatting.
-    /// By itself, it allows localized GMT formats.
+    /// By itself, it allows localized offset formats.
     ///
     /// # Examples
     ///
@@ -925,8 +914,11 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::datetime::neo_skeleton::NeoTimeZoneSkeleton;
     /// use icu::datetime::neo_pattern::DateTimePattern;
     /// use icu::locale::locale;
-    /// use icu::timezone::CustomTimeZone;
+    /// use icu::timezone::CustomZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let mut zone_london_winter = CustomZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap().zone;
+    /// let mut zone_london_summer = CustomZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]").unwrap().zone;
     ///
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(&locale!("en-GB").into())
@@ -941,11 +933,11 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
     ///
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format(&CustomTimeZone::gmt()),
+    ///     names.with_pattern(&pattern).format(&zone_london_winter),
     ///     "Your time zone is: GMT",
     /// );
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format(&CustomTimeZone::bst()),
+    ///     names.with_pattern(&pattern).format(&zone_london_summer),
     ///     "Your time zone is: GMT+01:00",
     /// );
     ///
@@ -954,7 +946,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
     ///
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format(&CustomTimeZone::gmt()),
+    ///     names.with_pattern(&pattern).format(&zone_london_winter),
     ///     "Your time zone is: gblon",
     /// );
     ///
@@ -963,7 +955,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
     ///
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format(&CustomTimeZone::gmt()),
+    ///     names.with_pattern(&pattern).format(&zone_london_winter),
     ///     "Your time zone is: +0000",
     /// );
     ///
@@ -972,11 +964,11 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
     ///
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format(&CustomTimeZone::gmt()),
+    ///     names.with_pattern(&pattern).format(&zone_london_winter),
     ///     "Your time zone is: Z",
     /// );
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format(&CustomTimeZone::bst()),
+    ///     names.with_pattern(&pattern).format(&zone_london_summer),
     ///     "Your time zone is: +01:00",
     /// );
     /// ```
@@ -1019,8 +1011,10 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::datetime::neo_skeleton::NeoTimeZoneSkeleton;
     /// use icu::datetime::neo_pattern::DateTimePattern;
     /// use icu::locale::locale;
-    /// use icu::timezone::CustomTimeZone;
+    /// use icu::timezone::CustomZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let mut zone_london_winter = CustomZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap().zone;
     ///
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(&locale!("en-GB").into())
@@ -1038,7 +1032,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
     ///
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format(&CustomTimeZone::gmt()),
+    ///     names.with_pattern(&pattern).format(&zone_london_winter),
     ///     "Your time zone is: London",
     /// );
     ///
@@ -1047,7 +1041,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
     ///
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format(&CustomTimeZone::gmt()),
+    ///     names.with_pattern(&pattern).format(&zone_london_winter),
     ///     "Your time zone is: London Time",
     /// );
     /// ```
@@ -1090,8 +1084,11 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::datetime::neo_skeleton::NeoTimeZoneSkeleton;
     /// use icu::datetime::neo_pattern::DateTimePattern;
     /// use icu::locale::locale;
-    /// use icu::timezone::CustomTimeZone;
+    /// use icu::timezone::CustomZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let mut zone_london_winter = CustomZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap().zone;
+    /// let mut zone_london_summer = CustomZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]").unwrap().zone;
     ///
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(&locale!("en-GB").into())
@@ -1109,11 +1106,11 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
     ///
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format(&CustomTimeZone::gmt()),
+    ///     names.with_pattern(&pattern).format(&zone_london_winter),
     ///     "Your time zone is: Greenwich Mean Time",
     /// );
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format(&CustomTimeZone::bst()),
+    ///     names.with_pattern(&pattern).format(&zone_london_summer),
     ///     "Your time zone is: Greenwich Mean Time", // TODO
     /// );
     /// ```
@@ -1156,8 +1153,11 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::datetime::neo_skeleton::NeoTimeZoneSkeleton;
     /// use icu::datetime::neo_pattern::DateTimePattern;
     /// use icu::locale::locale;
-    /// use icu::timezone::CustomTimeZone;
+    /// use icu::timezone::CustomZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let mut zone_london_winter = CustomZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap().zone;
+    /// let mut zone_london_summer = CustomZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]").unwrap().zone;
     ///
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(&locale!("en-GB").into())
@@ -1175,11 +1175,11 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
     ///
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format(&CustomTimeZone::gmt()),
+    ///     names.with_pattern(&pattern).format(&zone_london_winter),
     ///     "Your time zone is: GMT",
     /// );
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format(&CustomTimeZone::bst()),
+    ///     names.with_pattern(&pattern).format(&zone_london_summer),
     ///     "Your time zone is: GMT", // TODO
     /// );
     /// ```
@@ -1222,8 +1222,11 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::datetime::neo_skeleton::NeoTimeZoneSkeleton;
     /// use icu::datetime::neo_pattern::DateTimePattern;
     /// use icu::locale::locale;
-    /// use icu::timezone::CustomTimeZone;
+    /// use icu::timezone::CustomZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let mut zone_london_winter = CustomZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap().zone;
+    /// let mut zone_london_summer = CustomZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]").unwrap().zone;
     ///
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(&locale!("en-GB").into())
@@ -1241,11 +1244,11 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
     ///
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format(&CustomTimeZone::gmt()),
+    ///     names.with_pattern(&pattern).format(&zone_london_winter),
     ///     "Your time zone is: Greenwich Mean Time",
     /// );
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format(&CustomTimeZone::bst()),
+    ///     names.with_pattern(&pattern).format(&zone_london_summer),
     ///     "Your time zone is: British Summer Time",
     /// );
     /// ```
@@ -1288,8 +1291,11 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::datetime::neo_skeleton::NeoTimeZoneSkeleton;
     /// use icu::datetime::neo_pattern::DateTimePattern;
     /// use icu::locale::locale;
-    /// use icu::timezone::CustomTimeZone;
+    /// use icu::timezone::CustomZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let mut zone_london_winter = CustomZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap().zone;
+    /// let mut zone_london_summer = CustomZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]").unwrap().zone;
     ///
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(&locale!("en-GB").into())
@@ -1307,11 +1313,11 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
     ///
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format(&CustomTimeZone::gmt()),
+    ///     names.with_pattern(&pattern).format(&zone_london_winter),
     ///     "Your time zone is: GMT",
     /// );
     /// assert_try_writeable_eq!(
-    ///     names.with_pattern(&pattern).format(&CustomTimeZone::bst()),
+    ///     names.with_pattern(&pattern).format(&zone_london_summer),
     ///     "Your time zone is: BST",
     /// );
     /// ```
@@ -2043,8 +2049,8 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
                                 locale,
                             )?;
                         }
-                        ResolvedNeoTimeZoneSkeleton::GmtShort
-                        | ResolvedNeoTimeZoneSkeleton::GmtLong
+                        ResolvedNeoTimeZoneSkeleton::OffsetShort
+                        | ResolvedNeoTimeZoneSkeleton::OffsetLong
                         | ResolvedNeoTimeZoneSkeleton::Isox
                         | ResolvedNeoTimeZoneSkeleton::Isoxx
                         | ResolvedNeoTimeZoneSkeleton::Isoxxx
@@ -2153,11 +2159,9 @@ where
     where
         I: ?Sized + IsInCalendar<C> + AllInputMarkers<R>,
     {
-        let datetime =
-            ExtractedDateTimeInput::extract_from_neo_input::<R::D, R::T, R::Z, I>(datetime);
         FormattedDateTimePattern {
             pattern: self.inner.pattern,
-            datetime,
+            input: ExtractedInput::extract_from_neo_input::<R::D, R::T, R::Z, I>(datetime),
             names: self.inner.names,
         }
     }
@@ -2202,13 +2206,23 @@ where
     ///     "The date is: November 20, 1700 Anno Domini"
     /// );
     /// ```
-    pub fn format_date<T>(&self, datetime: &'a T) -> FormattedDateTimePattern<'a>
+    pub fn format_date<I>(&self, datetime: &'a I) -> FormattedDateTimePattern<'a>
     where
-        T: DateInput<Calendar = C>,
+        I: ?Sized
+            + IsInCalendar<C>
+            + NeoGetField<<R::D as DateInputMarkers>::YearInput>
+            + NeoGetField<<R::D as DateInputMarkers>::MonthInput>
+            + NeoGetField<<R::D as DateInputMarkers>::DayOfMonthInput>
+            + NeoGetField<<R::D as DateInputMarkers>::DayOfWeekInput>
+            + NeoGetField<<R::D as DateInputMarkers>::DayOfYearInput>
+            + NeoGetField<<R::D as DateInputMarkers>::AnyCalendarKindInput>
+            + NeoGetField<NeverField>,
     {
         FormattedDateTimePattern {
             pattern: self.inner.pattern,
-            datetime: ExtractedDateTimeInput::extract_from_date(datetime),
+            input: ExtractedInput::extract_from_neo_input::<R::D, NeoNeverMarker, NeoNeverMarker, I>(
+                datetime,
+            ),
             names: self.inner.names,
         }
     }
@@ -2259,30 +2273,91 @@ where
     ///     "The time is: 12:00 midnight"
     /// );
     /// ```
-    pub fn format_time<T>(&self, datetime: &'a T) -> FormattedDateTimePattern<'a>
+    pub fn format_time<I>(&self, datetime: &'a I) -> FormattedDateTimePattern<'a>
     where
-        T: IsoTimeInput,
+        I: ?Sized
+            + IsInCalendar<C>
+            + NeoGetField<<R::T as TimeMarkers>::HourInput>
+            + NeoGetField<<R::T as TimeMarkers>::MinuteInput>
+            + NeoGetField<<R::T as TimeMarkers>::SecondInput>
+            + NeoGetField<<R::T as TimeMarkers>::NanoSecondInput>
+            + NeoGetField<NeverField>,
     {
         FormattedDateTimePattern {
             pattern: self.inner.pattern,
-            datetime: ExtractedDateTimeInput::extract_from_time(datetime),
+            input: ExtractedInput::extract_from_neo_input::<NeoNeverMarker, R::T, NeoNeverMarker, I>(
+                datetime,
+            ),
+            names: self.inner.names,
+        }
+    }
+
+    /// Formats a timezone without a date or time.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::TypedDateTimeNames;
+    /// use icu::datetime::neo_skeleton::NeoTimeZoneSkeleton;
+    /// use icu::datetime::neo_pattern::DateTimePattern;
+    /// use icu::locale::locale;
+    /// use icu::timezone::CustomZonedDateTime;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let mut london_winter = CustomZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap().to_calendar(Gregorian);
+    /// let mut london_summer = CustomZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]").unwrap().to_calendar(Gregorian);
+    ///
+    /// let mut names =
+    ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(&locale!("en-GB").into())
+    ///         .unwrap();
+    ///
+    /// names
+    ///     .include_time_zone_essentials()
+    ///     .unwrap();
+    /// names
+    ///     .include_time_zone_specific_short_names()
+    ///     .unwrap();
+    ///
+    /// // Create a pattern with symbol `z`:
+    /// let pattern_str = "'Your time zone is:' z";
+    /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
+    ///
+    /// assert_try_writeable_eq!(
+    ///     names.with_pattern(&pattern).format_timezone(&london_winter),
+    ///     "Your time zone is: GMT",
+    /// );
+    /// assert_try_writeable_eq!(
+    ///     names.with_pattern(&pattern).format_timezone(&london_summer),
+    ///     "Your time zone is: BST",
+    /// );
+    /// ```
+
+    pub fn format_timezone<I>(&self, datetime: &'a I) -> FormattedDateTimePattern<'a>
+    where
+        I: ?Sized
+            + IsInCalendar<C>
+            + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneOffsetInput>
+            + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneIdInput>
+            + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneMetazoneInput>
+            + NeoGetField<<R::Z as ZoneMarkers>::TimeZoneVariantInput>
+            + NeoGetField<NeverField>,
+    {
+        FormattedDateTimePattern {
+            pattern: self.inner.pattern,
+            input: ExtractedInput::extract_from_neo_input::<NeoNeverMarker, NeoNeverMarker, R::Z, I>(
+                datetime,
+            ),
             names: self.inner.names,
         }
     }
 }
 
 /// A pattern that has been interpolated and implements [`TryWriteable`].
-///
-/// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
-/// of the icu meta-crate. Use with caution.
-/// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
-/// </div>
 #[derive(Debug)]
 pub struct FormattedDateTimePattern<'a> {
     pattern: DateTimePatternBorrowed<'a>,
-    datetime: ExtractedDateTimeInput,
+    input: ExtractedInput,
     names: RawDateTimeNamesBorrowed<'a>,
 }
 
@@ -2294,7 +2369,7 @@ impl<'a> TryWriteable for FormattedDateTimePattern<'a> {
     ) -> Result<Result<(), Self::Error>, fmt::Error> {
         try_write_pattern(
             self.pattern.0.as_borrowed(),
-            &self.datetime,
+            &self.input,
             Some(&self.names),
             Some(&self.names),
             Some(&self.names),
@@ -2391,10 +2466,10 @@ impl<'data> DateSymbols<'data> for RawDateTimeNamesBorrowed<'data> {
             .ok_or(GetSymbolForWeekdayError::Missing)
     }
 
-    fn get_symbol_for_era<'a>(
-        &'a self,
+    fn get_symbol_for_era(
+        &self,
         field_length: FieldLength,
-        era_code: &'a Era,
+        era_code: Era,
     ) -> Result<&str, GetSymbolForEraError> {
         let field = fields::Field {
             symbol: FieldSymbol::Era,
@@ -2661,7 +2736,7 @@ mod tests {
                 pattern: "<EEEE>",
                 field_symbol: fields::Weekday::Format,
                 field_length: FieldLength::Wide,
-                expected: "<пʼятницю>",
+                expected: "<пʼятниця>",
             },
             TestCase {
                 pattern: "<EEEEE>",
@@ -2686,7 +2761,7 @@ mod tests {
                 pattern: "<eeee>",
                 field_symbol: fields::Weekday::Format,
                 field_length: FieldLength::Wide,
-                expected: "<пʼятницю>",
+                expected: "<пʼятниця>",
             },
             TestCase {
                 pattern: "<eeeee>",

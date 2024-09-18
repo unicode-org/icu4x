@@ -13,7 +13,6 @@ pub use icu_timezone::provider::{MetazoneId, TimeZoneBcp47Id};
 use icu_timezone::ZoneVariant;
 
 /// Time zone type aliases for cleaner code
-#[cfg(feature = "experimental")]
 pub(crate) mod tz {
     pub(crate) use super::ExemplarCitiesV1;
     pub(crate) use super::ExemplarCitiesV1Marker;
@@ -45,32 +44,31 @@ pub(crate) mod tz {
 #[yoke(prove_covariance_manually)]
 // TODO: Consider renaming to "TimeZoneEssentialsV1"
 pub struct TimeZoneFormatsV1<'data> {
-    /// The hour format for displaying GMT offsets.
+    /// The hour format for displaying offsets.
     #[cfg_attr(feature = "serde", serde(borrow))]
     #[cfg_attr(
         feature = "serde",
         serde(deserialize_with = "icu_provider::serde_borrow_de_utils::tuple_of_cow")
     )]
     pub hour_format: (Cow<'data, str>, Cow<'data, str>),
-    /// The localized GMT-offset format.
+    /// The localized offset format.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub gmt_format: Cow<'data, str>,
-    /// The localized GMT format with no offset.
+    pub offset_format: Cow<'data, str>,
+    /// The localized zero-offset format.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub gmt_zero_format: Cow<'data, str>,
+    pub offset_zero_format: Cow<'data, str>,
     /// The format string for a region.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub region_format: Cow<'data, str>,
     /// The format strings for region format variants
     /// e.g. daylight, standard.
+    // CURRENLY UNUSED
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub region_format_variants: ZeroMap<'data, TinyStr8, str>,
     /// The format string to fall back to if data is unavailable.
+    // CURRENLY UNUSED
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub fallback_format: Cow<'data, str>,
-    /// The fallback of GMT-offset.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub gmt_offset_fallback: Cow<'data, str>,
 }
 
 /// An ICU4X mapping to the CLDR timeZoneNames exemplar cities.
