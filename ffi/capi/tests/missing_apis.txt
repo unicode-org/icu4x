@@ -114,7 +114,6 @@ icu::properties::script::ScriptMapper#Struct
 icu::properties::script::ScriptMapper::new#FnInStruct
 icu::properties::script::ScriptMapperBorrowed#Struct
 icu::properties::script::ScriptMapperBorrowed::get#FnInStruct
-icu::properties::script::ScriptWithExtensions::new#FnInStruct
 icu::segmenter::SentenceBreakOptions#Struct
 icu::segmenter::WordBreakOptions#Struct
 icu::timezone::CustomTimeZone::new_with_bcp47_id#FnInStruct

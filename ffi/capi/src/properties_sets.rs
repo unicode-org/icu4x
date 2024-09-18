@@ -68,7 +68,7 @@ pub mod ffi {
         }
 
         /// which is a mask with the same format as the `U_GC_XX_MASK` mask in ICU4C
-        #[diplomat::rust_link(icu::properties::props::for_general_category_group, Struct)]
+        #[diplomat::rust_link(icu::properties::props::GeneralCategoryGroup, Struct)]
         #[diplomat::rust_link(
             icu::properties::CodePointMapDataBorrowed::get_set_for_value_group,
             FnInStruct
