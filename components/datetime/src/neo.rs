@@ -307,6 +307,7 @@ where
     ///     "20 de diciembre de 2023"
     /// );
     /// ```
+    #[cfg(feature = "compiled_data")]
     pub fn try_new2(locale: &DataLocale, options: FSet) -> Result<Self, LoadError>
     where
         crate::provider::Baked: Sized
