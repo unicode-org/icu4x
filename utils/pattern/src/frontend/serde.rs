@@ -9,27 +9,32 @@ use alloc::vec::Vec;
 use ::serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 #[doc(hidden)]
-pub fn deserialize_option_borrowed_cow<'de, D: Deserializer<'de>, B>(
+pub fn deserialize_option_borrowed_cow<'de, 'data, D: Deserializer<'de>, B>(
     deserializer: D,
-) -> Result<Option<Cow<'de, Pattern<B>>>, D::Error>
+) -> Result<Option<Cow<'data, Pattern<B>>>, D::Error>
 where
+    'de: 'data,
     B: PatternBackend<Store = str>,
-    Pattern<B>: ToOwned,
-    B::PlaceholderKeyCow<'de>: Deserialize<'de>,
+    B::PlaceholderKeyCow<'data>: Deserialize<'de>,
+    &'data B::Store: Deserialize<'de>,
 {
     #[derive(Deserialize)]
-    #[serde(transparent, bound = "'data: 'de")]
+    #[serde(transparent)]
     // Cows fail to borrow in some situations (array, option), but structs of Cows don't.
-    struct CowPatternWrap<'data, B>(
-        #[serde(borrow, deserialize_with = "deserialize_borrowed_cow")] pub Cow<'data, Pattern<B>>,
-    )
+    struct CowPatternWrap<'data1, B: PatternBackend<Store = str>>
     where
-        B: PatternBackend<Store = str>,
-        Pattern<B>: ToOwned,
-        B::PlaceholderKeyCow<'data>: Deserialize<'data>;
+        Box<B::Store>: for<'a> From<&'a B::Store>,
+    {
+        #[serde(
+            borrow,
+            deserialize_with = "deserialize_borrowed_cow::<B, _>",
+            bound = "B::PlaceholderKeyCow<'data1>: Deserialize<'de>, &'data1 B::Store: Deserialize<'de>"
+        )]
+        pub cow: Cow<'data1, Pattern<B>>,
+    }
 
-    Option::<CowPatternWrap<'de, B>>::deserialize(deserializer)
-        .map(|array| array.map(|wrap| wrap.0))
+    Option::<CowPatternWrap<'data, B>>::deserialize(deserializer)
+        .map(|option| option.map(|wrap| wrap.cow))
 }
 
 type HumanReadablePattern<'a, B> =
@@ -83,12 +88,14 @@ where
 }
 
 #[doc(hidden)]
-pub fn deserialize_borrowed_cow<'de, B, D: Deserializer<'de>>(
+pub fn deserialize_borrowed_cow<'de, 'data, B, D: Deserializer<'de>>(
     deserializer: D,
-) -> Result<Cow<'de, Pattern<B>>, D::Error>
+) -> Result<Cow<'data, Pattern<B>>, D::Error>
 where
+    'de: 'data,
     B: PatternBackend<Store = str>,
-    B::PlaceholderKeyCow<'de>: Deserialize<'de>,
+    B::PlaceholderKeyCow<'data>: Deserialize<'de>,
+    &'data B::Store: Deserialize<'de>,
 {
     if deserializer.is_human_readable() {
         Box::<Pattern<B>>::deserialize(deserializer).map(Cow::Owned)
@@ -119,9 +126,10 @@ where
     }
 }
 
-impl<'de, B: PatternBackend> Deserialize<'de> for &'de Pattern<B>
+impl<'de, 'data, B: PatternBackend> Deserialize<'de> for &'data Pattern<B>
 where
-    &'de B::Store: Deserialize<'de>,
+    'de: 'data,
+    &'data B::Store: Deserialize<'de>,
 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
