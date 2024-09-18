@@ -214,7 +214,7 @@ impl BidiAuxiliaryPropertiesBorrowed<'static> {
     }
 }
 
-/// Implements [`unicode_bidi::BidiDataSource`] on [`CodePointMapDataBorrowed<BidiClass>`].
+/// Implements [`unicode_bidi::BidiDataSource`] on [`CodePointMapDataBorrowed<BidiClass>`](crate::CodePointMapDataBorrowed).
 ///
 /// ✨ *Enabled with the `unicode_bidi` Cargo feature.*
 ///

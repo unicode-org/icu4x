@@ -527,7 +527,7 @@ impl ScriptMapperBorrowed<'static> {
     }
 }
 
-/// TODO
+/// A property whose value names can be parsed from strings.
 pub trait ParseableEnumeratedProperty: crate::private::Sealed + TrieValue {
     #[doc(hidden)]
     type DataMarker: DataMarker<DataStruct = PropertyValueNameToEnumMapV1<'static>>;
@@ -553,7 +553,7 @@ impl PropertyEnumToValueNameLookup for PropertyEnumToValueNameSparseMapV1<'_> {
     }
 }
 
-/// TODO
+/// A property whose value names can be represented as strings.
 pub trait NamedEnumeratedProperty: ParseableEnumeratedProperty {
     #[doc(hidden)]
     type DataType: 'static + for<'a> Yokeable<'a> + PropertyEnumToValueNameLookup;

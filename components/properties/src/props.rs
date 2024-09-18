@@ -2,12 +2,19 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! A collection of property definitions shared across contexts
-//! (ex: representing trie values).
+//! This module defines all available properties.
 //!
-//! This module defines enums / newtypes for enumerated properties.
-//! String properties are represented as newtypes if their
-//! values represent code points.
+//! Properties may be empty marker types and implement [`BinaryProperty`], or enumerations[^1]
+//! and implement [`EnumeratedProperty`].
+//!
+//! [`BinaryProperty`]s are queried through a [`CodePointSetData`](crate::CodePointSetData),
+//! while [`EnumeratedProperty`]s are queried through [`CodePointMapData`](crate::CodePointMapData).
+//!
+//! In addition, some [`EnumeratedProperty`]s also implement [`ParseableEnumeratedProperty`] or
+//! [`NamedEnumeratedProperty`]. For these properties, [`PropertyParser`](crate::PropertyParser)s
+//! and [`PropertyNames`](crate::PropertyNames) can be constructed.
+//!
+//! [^1]: either Rust `enum`s, or Rust `struct`s with associated constants (open enums)
 
 pub use crate::names::{NamedEnumeratedProperty, ParseableEnumeratedProperty};
 
