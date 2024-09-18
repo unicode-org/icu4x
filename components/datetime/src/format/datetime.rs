@@ -963,56 +963,6 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "serde")]
-    fn test_basic() {
-        use crate::provider::calendar::{GregorianDateSymbolsV1Marker, TimeSymbolsV1Marker};
-        use icu_calendar::{Calendar, DateTime};
-        use icu_provider::prelude::*;
-
-        let locale = "en".parse().unwrap();
-        let req = DataRequest {
-            id: DataIdentifierBorrowed::for_locale(&locale),
-            ..Default::default()
-        };
-        let date_data =
-            DataProvider::<GregorianDateSymbolsV1Marker>::load(&crate::provider::Baked, req)
-                .unwrap();
-        let time_data =
-            DataProvider::<TimeSymbolsV1Marker>::load(&crate::provider::Baked, req).unwrap();
-        let pattern: runtime::Pattern = "MMM".parse().unwrap();
-        let datetime = DateTime::try_new_gregorian_datetime(2020, 8, 1, 12, 34, 28).unwrap();
-        let fixed_decimal_format =
-            FixedDecimalFormatter::try_new(&locale, Default::default()).unwrap();
-
-        let mut sink = String::new();
-        try_write_pattern(
-            pattern.as_borrowed(),
-            &ExtractedInput {
-                year: Some(datetime.date.year()),
-                month: Some(datetime.date.month()),
-                day_of_month: Some(datetime.date.day_of_month()),
-                iso_weekday: Some(datetime.date.day_of_week()),
-                day_of_year_info: Some(datetime.date.day_of_year_info()),
-                any_calendar_kind: datetime.date.calendar().any_calendar_kind(),
-                hour: Some(datetime.time.hour),
-                minute: Some(datetime.time.minute),
-                second: Some(datetime.time.second),
-                nanosecond: Some(datetime.time.nanosecond),
-                ..Default::default()
-            },
-            Some(date_data.payload.get()),
-            Some(time_data.payload.get()),
-            None::<()>.as_ref(),
-            None,
-            Some(&fixed_decimal_format),
-            &mut writeable::adapters::CoreWriteAsPartsWrite(&mut sink),
-        )
-        .unwrap()
-        .unwrap();
-        println!("{sink}");
-    }
-
-    #[test]
     fn test_format_number() {
         let values = &[2, 20, 201, 2017, 20173];
         let samples = &[
