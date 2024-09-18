@@ -17,7 +17,6 @@
 
 pub mod bidi;
 pub mod names;
-pub mod props;
 
 pub use names::{
     BidiClassNameToValueV1Marker, BidiClassValueToLongNameV1Marker,
