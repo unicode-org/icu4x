@@ -10,6 +10,7 @@ use alloc::vec;
 use alloc::vec::Vec;
 use core::char;
 use core::str::CharIndices;
+use icu_locale_core::subtags::language;
 use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
 
@@ -183,7 +184,7 @@ pub enum LineBreakWordOption {
 
 /// Options to tailor line-breaking behavior.
 #[non_exhaustive]
-#[derive(Copy, Clone, PartialEq, Eq, Debug)]
+#[derive(Clone, PartialEq, Eq, Debug)]
 pub struct LineBreakOptions {
     /// Strictness of line-breaking rules. See [`LineBreakStrictness`].
     pub strictness: LineBreakStrictness,
@@ -191,13 +192,13 @@ pub struct LineBreakOptions {
     /// Line break opportunities between letters. See [`LineBreakWordOption`].
     pub word_option: LineBreakWordOption,
 
-    /// Use `true` as a hint to the line segmenter that the writing
-    /// system is Chinese or Japanese. This allows more break opportunities when
-    /// `LineBreakStrictness` is `Normal` or `Loose`. See
-    /// <https://drafts.csswg.org/css-text-3/#line-break-property> for details.
+    /// Content locale for line segmenter
     ///
+    /// This allows more break opportunities when `LineBreakStrictness` is
+    /// `Normal` or `Loose`. See
+    /// <https://drafts.csswg.org/css-text-3/#line-break-property> for details.
     /// This option has no effect in Latin-1 mode.
-    pub ja_zh: bool,
+    pub content_locale: Option<DataLocale>,
 }
 
 impl Default for LineBreakOptions {
@@ -205,7 +206,7 @@ impl Default for LineBreakOptions {
         Self {
             strictness: LineBreakStrictness::Strict,
             word_option: LineBreakWordOption::Normal,
-            ja_zh: false,
+            content_locale: None,
         }
     }
 }
@@ -303,7 +304,7 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// let mut options = LineBreakOptions::default();
 /// options.strictness = LineBreakStrictness::Strict;
 /// options.word_option = LineBreakWordOption::BreakAll;
-/// options.ja_zh = false;
+/// options.content_locale = None;
 /// let segmenter = LineSegmenter::new_auto_with_options(options);
 ///
 /// let breakpoints: Vec<usize> =
@@ -641,6 +642,11 @@ impl LineSegmenter {
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> LineBreakIteratorUtf8<'l, 's> {
+        let ja_zh = if let Some(content_locale) = &self.options.content_locale {
+            content_locale.language == language!("ja") || content_locale.language == language!("zh")
+        } else {
+            false
+        };
         LineBreakIterator {
             iter: input.char_indices(),
             len: input.len(),
@@ -649,6 +655,7 @@ impl LineSegmenter {
             data: self.payload.get(),
             options: &self.options,
             complex: &self.complex,
+            ja_zh,
         }
     }
     /// Creates a line break iterator for a potentially ill-formed UTF8 string
@@ -660,6 +667,11 @@ impl LineSegmenter {
         &'l self,
         input: &'s [u8],
     ) -> LineBreakIteratorPotentiallyIllFormedUtf8<'l, 's> {
+        let ja_zh = if let Some(content_locale) = &self.options.content_locale {
+            content_locale.language == language!("ja") || content_locale.language == language!("zh")
+        } else {
+            false
+        };
         LineBreakIterator {
             iter: Utf8CharIndices::new(input),
             len: input.len(),
@@ -668,6 +680,7 @@ impl LineSegmenter {
             data: self.payload.get(),
             options: &self.options,
             complex: &self.complex,
+            ja_zh,
         }
     }
     /// Creates a line break iterator for a Latin-1 (8-bit) string.
@@ -682,6 +695,7 @@ impl LineSegmenter {
             data: self.payload.get(),
             options: &self.options,
             complex: &self.complex,
+            ja_zh: false,
         }
     }
 
@@ -689,6 +703,11 @@ impl LineSegmenter {
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_utf16<'l, 's>(&'l self, input: &'s [u16]) -> LineBreakIteratorUtf16<'l, 's> {
+        let ja_zh = if let Some(content_locale) = &self.options.content_locale {
+            content_locale.language == language!("ja") || content_locale.language == language!("zh")
+        } else {
+            false
+        };
         LineBreakIterator {
             iter: Utf16Indices::new(input),
             len: input.len(),
@@ -697,6 +716,7 @@ impl LineSegmenter {
             data: self.payload.get(),
             options: &self.options,
             complex: &self.complex,
+            ja_zh,
         }
     }
 }
@@ -853,6 +873,7 @@ pub struct LineBreakIterator<'l, 's, Y: LineBreakType<'l, 's> + ?Sized> {
     data: &'l RuleBreakDataV2<'l>,
     options: &'l LineBreakOptions,
     complex: &'l ComplexPayloads,
+    ja_zh: bool,
 }
 
 impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y> {
@@ -948,7 +969,7 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                         right_codepoint.into(),
                         left_prop,
                         right_prop,
-                        self.options.ja_zh,
+                        self.ja_zh,
                     ) {
                         if breakable && !after_zwj {
                             return self.get_current_position();
@@ -1151,7 +1172,7 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> LineBreakIterator<'l, 's, Y> {
 
     fn is_break_by_normal(&self, codepoint: Y::CharType) -> bool {
         match codepoint.into() {
-            0x301C | 0x30A0 => self.options.ja_zh,
+            0x301C | 0x30A0 => self.ja_zh,
             _ => false,
         }
     }

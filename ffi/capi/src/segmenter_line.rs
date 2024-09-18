@@ -9,6 +9,7 @@ pub mod ffi {
     use alloc::boxed::Box;
 
     use crate::errors::ffi::DataError;
+    use crate::locale_core::ffi::Locale;
     use crate::provider::ffi::DataProvider;
     use diplomat_runtime::DiplomatOption;
 
@@ -36,10 +37,9 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::segmenter::LineBreakOptions, Struct)]
     #[diplomat::attr(supports = non_exhaustive_structs, rename = "LineBreakOptions")]
-    pub struct LineBreakOptionsV1 {
+    pub struct LineBreakOptionsV2 {
         pub strictness: DiplomatOption<LineBreakStrictness>,
         pub word_option: DiplomatOption<LineBreakWordOption>,
-        pub ja_zh: DiplomatOption<bool>,
     }
 
     #[diplomat::opaque]
@@ -108,17 +108,21 @@ pub mod ffi {
         /// available payload data for Burmese, Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_auto_with_options, FnInStruct)]
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "auto_with_options")]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "auto_with_options_v1")]
-        pub fn create_auto_with_options_v1(
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "auto_with_options_v2")]
+        pub fn create_auto_with_options_v2(
             provider: &DataProvider,
-            options: LineBreakOptionsV1,
+            content_locale: &Locale,
+            options: LineBreakOptionsV2,
         ) -> Result<Box<LineSegmenter>, DataError> {
+            let mut options: icu_segmenter::LineBreakOptions = options.into();
+            options.content_locale = Some(content_locale.to_datalocale());
+
             Ok(Box::new(LineSegmenter(call_constructor!(
                 icu_segmenter::LineSegmenter::new_auto_with_options [r => Ok(r)],
                 icu_segmenter::LineSegmenter::try_new_auto_with_options_with_any_provider,
                 icu_segmenter::LineSegmenter::try_new_auto_with_options_with_buffer_provider,
                 provider,
-                options.into(),
+                options,
             )?)))
         }
 
@@ -126,17 +130,21 @@ pub mod ffi {
         /// Burmese, Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_lstm_with_options, FnInStruct)]
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "lstm_with_options")]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "lstm_with_options_v1")]
-        pub fn create_lstm_with_options_v1(
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "lstm_with_options_v2")]
+        pub fn create_lstm_with_options_v2(
             provider: &DataProvider,
-            options: LineBreakOptionsV1,
+            content_locale: &Locale,
+            options: LineBreakOptionsV2,
         ) -> Result<Box<LineSegmenter>, DataError> {
+            let mut options: icu_segmenter::LineBreakOptions = options.into();
+            options.content_locale = Some(content_locale.to_datalocale());
+
             Ok(Box::new(LineSegmenter(call_constructor!(
                 icu_segmenter::LineSegmenter::new_lstm_with_options [r => Ok(r)],
                 icu_segmenter::LineSegmenter::try_new_lstm_with_options_with_any_provider,
                 icu_segmenter::LineSegmenter::try_new_lstm_with_options_with_buffer_provider,
                 provider,
-                options.into(),
+                options,
             )?)))
         }
 
@@ -147,17 +155,21 @@ pub mod ffi {
             FnInStruct
         )]
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "dictionary_with_options")]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "dictionary_with_options_v1")]
-        pub fn create_dictionary_with_options_v1(
+        #[diplomat::attr(supports = fallible_constructors, named_constructor = "dictionary_with_options_v2")]
+        pub fn create_dictionary_with_options_v2(
             provider: &DataProvider,
-            options: LineBreakOptionsV1,
+            content_locale: &Locale,
+            options: LineBreakOptionsV2,
         ) -> Result<Box<LineSegmenter>, DataError> {
+            let mut options: icu_segmenter::LineBreakOptions = options.into();
+            options.content_locale = Some(content_locale.to_datalocale());
+
             Ok(Box::new(LineSegmenter(call_constructor!(
                 icu_segmenter::LineSegmenter::new_dictionary_with_options [r => Ok(r)],
                 icu_segmenter::LineSegmenter::try_new_dictionary_with_options_with_any_provider,
                 icu_segmenter::LineSegmenter::try_new_dictionary_with_options_with_buffer_provider,
                 provider,
-                options.into(),
+                options,
             )?)))
         }
 
@@ -250,8 +262,8 @@ pub mod ffi {
     }
 }
 
-impl From<ffi::LineBreakOptionsV1> for icu_segmenter::LineBreakOptions {
-    fn from(other: ffi::LineBreakOptionsV1) -> Self {
+impl From<ffi::LineBreakOptionsV2> for icu_segmenter::LineBreakOptions {
+    fn from(other: ffi::LineBreakOptionsV2) -> Self {
         let mut options = icu_segmenter::LineBreakOptions::default();
         options.strictness = other
             .strictness
@@ -261,7 +273,6 @@ impl From<ffi::LineBreakOptionsV1> for icu_segmenter::LineBreakOptions {
             .word_option
             .into_converted_option()
             .unwrap_or(options.word_option);
-        options.ja_zh = other.ja_zh.into_option().unwrap_or(options.ja_zh);
         options
     }
 }

@@ -13,8 +13,5 @@ export class LineBreakOptions {
 
     get wordOption() : LineBreakWordOption | null;
     set wordOption(value: LineBreakWordOption | null); 
-
-    get jaZh() : boolean | null;
-    set jaZh(value: boolean | null); 
-    constructor(strictness: LineBreakStrictness | null, wordOption: LineBreakWordOption | null, jaZh: boolean | null);
+    constructor(strictness: LineBreakStrictness | null, wordOption: LineBreakWordOption | null);
 }
