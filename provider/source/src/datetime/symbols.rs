@@ -304,11 +304,11 @@ symbols_from!(
 
 #[cfg(test)]
 mod tests {
+    use crate::SourceDataProvider;
     use icu::datetime::provider::calendar::*;
     use icu::datetime::provider::neo::*;
     use icu::locale::langid;
     use icu_provider::prelude::*;
-    use crate::SourceDataProvider;
 
     #[test]
     fn test_adapter_months_numeric() {
@@ -466,4 +466,3 @@ mod tests {
         );
     }
 }
-

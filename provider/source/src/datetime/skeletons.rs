@@ -76,9 +76,11 @@ impl From<&cldr_serde::ca::Dates> for DateSkeletonPatternsV1<'_> {
 
 #[cfg(test)]
 mod test {
+    use core::convert::TryFrom;
+    use core::str::FromStr;
+    use either::Either;
     use icu::datetime::skeleton::reference::Skeleton;
     use icu::datetime::skeleton::*;
-    use icu_provider::prelude::*;
     use icu::datetime::{
         fields::{Day, Field, FieldLength, Month, Weekday},
         options::{components, preferences},
@@ -88,10 +90,9 @@ mod test {
             SkeletonV1,
         },
     };
-    use core::convert::TryFrom;
-    use core::str::FromStr;
-    use litemap::LiteMap;
     use icu::locale::locale;
+    use icu_provider::prelude::*;
+    use litemap::LiteMap;
 
     use crate::SourceDataProvider;
 
@@ -100,7 +101,6 @@ mod test {
         DataPayload<DateSkeletonPatternsV1Marker>,
     ) {
         let locale = locale!("en").into();
-        let marker_attributes = DataMarkerAttributes::from_str_or_panic("gregory");
 
         let patterns = SourceDataProvider::new_testing()
             .load(DataRequest {
@@ -109,16 +109,10 @@ mod test {
             })
             .expect("Failed to load payload")
             .payload;
-        let skeletons = SourceDataProvider::new_testing()
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    marker_attributes,
-                    &locale,
-                ),
-                ..Default::default()
-            })
-            .expect("Failed to load payload")
-            .payload;
+        let data = SourceDataProvider::new_testing()
+            .get_datetime_resources(&locale, Either::Right("gregorian"))
+            .unwrap();
+        let skeletons = DataPayload::from_owned(DateSkeletonPatternsV1::from(&data));
         (patterns, skeletons)
     }
 
