@@ -15,12 +15,34 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+pub mod bidi;
 pub mod names;
-pub use names::*;
-
 pub mod props;
 
-use crate::props::Script;
+pub use names::{
+    BidiClassNameToValueV1Marker, BidiClassValueToLongNameV1Marker,
+    BidiClassValueToShortNameV1Marker, CanonicalCombiningClassNameToValueV1Marker,
+    CanonicalCombiningClassValueToLongNameV1Marker,
+    CanonicalCombiningClassValueToShortNameV1Marker, EastAsianWidthNameToValueV1Marker,
+    EastAsianWidthValueToLongNameV1Marker, EastAsianWidthValueToShortNameV1Marker,
+    GeneralCategoryMaskNameToValueV1Marker, GeneralCategoryNameToValueV1Marker,
+    GeneralCategoryValueToLongNameV1Marker, GeneralCategoryValueToShortNameV1Marker,
+    GraphemeClusterBreakNameToValueV1Marker, GraphemeClusterBreakValueToLongNameV1Marker,
+    GraphemeClusterBreakValueToShortNameV1Marker, HangulSyllableTypeNameToValueV1Marker,
+    HangulSyllableTypeValueToLongNameV1Marker, HangulSyllableTypeValueToShortNameV1Marker,
+    IndicSyllabicCategoryNameToValueV1Marker, IndicSyllabicCategoryValueToLongNameV1Marker,
+    IndicSyllabicCategoryValueToShortNameV1Marker, JoiningTypeNameToValueV1Marker,
+    JoiningTypeValueToLongNameV1Marker, JoiningTypeValueToShortNameV1Marker,
+    LineBreakNameToValueV1Marker, LineBreakValueToLongNameV1Marker,
+    LineBreakValueToShortNameV1Marker, ScriptNameToValueV1Marker, ScriptValueToLongNameV1Marker,
+    ScriptValueToShortNameV1Marker, SentenceBreakNameToValueV1Marker,
+    SentenceBreakValueToLongNameV1Marker, SentenceBreakValueToShortNameV1Marker,
+    WordBreakNameToValueV1Marker, WordBreakValueToLongNameV1Marker,
+    WordBreakValueToShortNameV1Marker,
+};
+
+pub use bidi::BidiAuxiliaryPropertiesV1Marker;
+
 use crate::script::ScriptWithExt;
 
 use core::ops::RangeInclusive;
@@ -177,7 +199,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     AlphabeticV1Marker::INFO,
     AsciiHexDigitV1Marker::INFO,
     BasicEmojiV1Marker::INFO,
-    bidi_data::BidiAuxiliaryPropertiesV1Marker::INFO,
+    bidi::BidiAuxiliaryPropertiesV1Marker::INFO,
     BidiControlV1Marker::INFO,
     BidiMirroredV1Marker::INFO,
     BlankV1Marker::INFO,
@@ -242,59 +264,56 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     XdigitV1Marker::INFO,
     XidContinueV1Marker::INFO,
     XidStartV1Marker::INFO,
-    names::BidiClassNameToValueV1Marker::INFO,
+    BidiClassNameToValueV1Marker::INFO,
     BidiClassV1Marker::INFO,
-    names::BidiClassValueToLongNameV1Marker::INFO,
-    names::BidiClassValueToShortNameV1Marker::INFO,
-    names::CanonicalCombiningClassNameToValueV1Marker::INFO,
+    BidiClassValueToLongNameV1Marker::INFO,
+    BidiClassValueToShortNameV1Marker::INFO,
+    CanonicalCombiningClassNameToValueV1Marker::INFO,
     CanonicalCombiningClassV1Marker::INFO,
-    names::CanonicalCombiningClassValueToLongNameV1Marker::INFO,
-    names::CanonicalCombiningClassValueToShortNameV1Marker::INFO,
-    names::EastAsianWidthNameToValueV1Marker::INFO,
+    CanonicalCombiningClassValueToLongNameV1Marker::INFO,
+    CanonicalCombiningClassValueToShortNameV1Marker::INFO,
+    EastAsianWidthNameToValueV1Marker::INFO,
     EastAsianWidthV1Marker::INFO,
-    names::EastAsianWidthValueToLongNameV1Marker::INFO,
-    names::EastAsianWidthValueToShortNameV1Marker::INFO,
-    names::GeneralCategoryMaskNameToValueV1Marker::INFO,
-    names::GeneralCategoryNameToValueV1Marker::INFO,
+    EastAsianWidthValueToLongNameV1Marker::INFO,
+    EastAsianWidthValueToShortNameV1Marker::INFO,
+    GeneralCategoryMaskNameToValueV1Marker::INFO,
+    GeneralCategoryNameToValueV1Marker::INFO,
     GeneralCategoryV1Marker::INFO,
-    names::GeneralCategoryValueToLongNameV1Marker::INFO,
-    names::GeneralCategoryValueToShortNameV1Marker::INFO,
-    names::GraphemeClusterBreakNameToValueV1Marker::INFO,
+    GeneralCategoryValueToLongNameV1Marker::INFO,
+    GeneralCategoryValueToShortNameV1Marker::INFO,
+    GraphemeClusterBreakNameToValueV1Marker::INFO,
     GraphemeClusterBreakV1Marker::INFO,
-    names::GraphemeClusterBreakValueToLongNameV1Marker::INFO,
-    names::GraphemeClusterBreakValueToShortNameV1Marker::INFO,
-    names::HangulSyllableTypeNameToValueV1Marker::INFO,
+    GraphemeClusterBreakValueToLongNameV1Marker::INFO,
+    GraphemeClusterBreakValueToShortNameV1Marker::INFO,
+    HangulSyllableTypeNameToValueV1Marker::INFO,
     HangulSyllableTypeV1Marker::INFO,
-    names::HangulSyllableTypeValueToLongNameV1Marker::INFO,
-    names::HangulSyllableTypeValueToShortNameV1Marker::INFO,
-    names::IndicSyllabicCategoryNameToValueV1Marker::INFO,
+    HangulSyllableTypeValueToLongNameV1Marker::INFO,
+    HangulSyllableTypeValueToShortNameV1Marker::INFO,
+    IndicSyllabicCategoryNameToValueV1Marker::INFO,
     IndicSyllabicCategoryV1Marker::INFO,
-    names::IndicSyllabicCategoryValueToLongNameV1Marker::INFO,
-    names::IndicSyllabicCategoryValueToShortNameV1Marker::INFO,
-    names::JoiningTypeNameToValueV1Marker::INFO,
+    IndicSyllabicCategoryValueToLongNameV1Marker::INFO,
+    IndicSyllabicCategoryValueToShortNameV1Marker::INFO,
+    JoiningTypeNameToValueV1Marker::INFO,
     JoiningTypeV1Marker::INFO,
-    names::JoiningTypeValueToLongNameV1Marker::INFO,
-    names::JoiningTypeValueToShortNameV1Marker::INFO,
-    names::LineBreakNameToValueV1Marker::INFO,
+    JoiningTypeValueToLongNameV1Marker::INFO,
+    JoiningTypeValueToShortNameV1Marker::INFO,
+    LineBreakNameToValueV1Marker::INFO,
     LineBreakV1Marker::INFO,
-    names::LineBreakValueToLongNameV1Marker::INFO,
-    names::LineBreakValueToShortNameV1Marker::INFO,
-    names::ScriptNameToValueV1Marker::INFO,
+    LineBreakValueToLongNameV1Marker::INFO,
+    LineBreakValueToShortNameV1Marker::INFO,
+    ScriptNameToValueV1Marker::INFO,
     ScriptV1Marker::INFO,
-    names::ScriptValueToLongNameV1Marker::INFO,
-    names::ScriptValueToShortNameV1Marker::INFO,
-    names::SentenceBreakNameToValueV1Marker::INFO,
+    ScriptValueToLongNameV1Marker::INFO,
+    ScriptValueToShortNameV1Marker::INFO,
+    SentenceBreakNameToValueV1Marker::INFO,
     SentenceBreakV1Marker::INFO,
-    names::SentenceBreakValueToLongNameV1Marker::INFO,
-    names::SentenceBreakValueToShortNameV1Marker::INFO,
-    names::WordBreakNameToValueV1Marker::INFO,
+    SentenceBreakValueToLongNameV1Marker::INFO,
+    SentenceBreakValueToShortNameV1Marker::INFO,
+    WordBreakNameToValueV1Marker::INFO,
     WordBreakV1Marker::INFO,
-    names::WordBreakValueToLongNameV1Marker::INFO,
-    names::WordBreakValueToShortNameV1Marker::INFO,
+    WordBreakValueToLongNameV1Marker::INFO,
+    WordBreakValueToShortNameV1Marker::INFO,
 ];
-
-// include the specialized structs for the compact representation of Bidi property data
-pub mod bidi_data;
 
 /// A set of characters which share a particular property value.
 ///

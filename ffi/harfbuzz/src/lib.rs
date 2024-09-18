@@ -43,12 +43,11 @@ use icu_normalizer::provider::{
     CanonicalCompositionsV1Marker, CanonicalDecompositionDataV1Marker,
     CanonicalDecompositionTablesV1Marker, NonRecursiveDecompositionSupplementV1Marker,
 };
-use icu_properties::bidi_data;
-use icu_properties::bidi_data::BidiAuxiliaryProperties;
+use icu_properties::bidi::BidiAuxiliaryProperties;
 use icu_properties::props::{GeneralCategory, Script};
-use icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker;
 use icu_properties::provider::{
-    GeneralCategoryV1Marker, ScriptV1Marker, ScriptValueToShortNameV1Marker,
+    BidiAuxiliaryPropertiesV1Marker, GeneralCategoryV1Marker, ScriptV1Marker,
+    ScriptValueToShortNameV1Marker,
 };
 use icu_properties::script::ScriptMapper;
 use icu_properties::CodePointMapData;
@@ -95,7 +94,7 @@ impl CombiningClassFunc for AllUnicodeFuncs {
 impl MirroringFunc for AllUnicodeFuncs {
     #[inline]
     fn mirroring(&self, ch: char) -> char {
-        bidi_data::bidi_auxiliary_properties()
+        BidiAuxiliaryProperties::new()
             .get32_mirroring_props(ch.into())
             .mirroring_glyph
             .unwrap_or(ch)
@@ -266,7 +265,7 @@ impl MirroringData {
     where
         D: DataProvider<BidiAuxiliaryPropertiesV1Marker> + ?Sized,
     {
-        let bidi = bidi_data::load_bidi_auxiliary_properties_unstable(provider)?;
+        let bidi = BidiAuxiliaryProperties::try_new_unstable(provider)?;
 
         Ok(Self { bidi })
     }

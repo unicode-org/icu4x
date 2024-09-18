@@ -2665,7 +2665,7 @@ mod test_enumerated_property_completeness {
     use zerovec::ule::VarULE;
 
     fn check_enum<'a>(
-        lookup: &crate::provider::PropertyValueNameToEnumMapV1<'static>,
+        lookup: &crate::provider::names::PropertyValueNameToEnumMapV1<'static>,
         consts: impl IntoIterator<Item = &'a (&'static str, u16)>,
     ) {
         let mut data: BTreeMap<_, _> = lookup

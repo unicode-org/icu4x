@@ -7,7 +7,7 @@ use crate::props::{
     GraphemeClusterBreak, HangulSyllableType, IndicSyllabicCategory, JoiningType, LineBreak,
     Script, SentenceBreak, WordBreak,
 };
-use crate::provider::bidi_data::{
+use crate::provider::bidi::{
     CheckedBidiPairedBracketType, MirroredPairedBracketData, MirroredPairedBracketDataTryFromError,
 };
 use crate::script::ScriptWithExt;
