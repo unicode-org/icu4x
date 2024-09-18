@@ -60,6 +60,7 @@ macro_rules! make_enumerated_property {
         ident: $value_ty:path;
         data_marker: $data_marker:ty;
         singleton: $singleton:ident;
+        $(ule_ty: $ule_ty:ty;)?
         func:
         $(#[$doc:meta])*
     ) => {
@@ -71,6 +72,19 @@ macro_rules! make_enumerated_property {
             const SINGLETON: &'static crate::provider::PropertyCodePointMapV1<'static, Self> =
                 crate::provider::Baked::$singleton;
         }
+
+        $(
+            impl zerovec::ule::AsULE for $value_ty {
+                type ULE = $ule_ty;
+
+                fn to_unaligned(self) -> Self::ULE {
+                    self.0.to_unaligned()
+                }
+                fn from_unaligned(unaligned: Self::ULE) -> Self {
+                    Self(zerovec::ule::AsULE::from_unaligned(unaligned))
+                }
+            }
+        )?
     };
 }
 
@@ -85,7 +99,6 @@ macro_rules! make_enumerated_property {
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
-#[zerovec::make_ule(BidiClassULE)]
 pub struct BidiClass(#[doc(hidden)] pub u8);
 
 create_const_array! {
@@ -145,6 +158,7 @@ make_enumerated_property! {
     ident: BidiClass;
     data_marker: crate::provider::BidiClassV1Marker;
     singleton: SINGLETON_BIDI_CLASS_V1_MARKER;
+    ule_ty: u8;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Bidi_Class Unicode enumerated property. See [`BidiClass`].
     ///
@@ -592,7 +606,6 @@ impl From<GeneralCategoryGroup> for u32 {
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
-#[zerovec::make_ule(ScriptULE)]
 pub struct Script(pub u16);
 
 #[allow(missing_docs)] // These constants don't need individual documentation.
@@ -770,6 +783,7 @@ make_enumerated_property! {
     ident: Script;
     data_marker: crate::provider::ScriptV1Marker;
     singleton: SINGLETON_SCRIPT_V1_MARKER;
+    ule_ty: <u16 as zerovec::ule::AsULE>::ULE;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Script Unicode enumerated property. See [`Script`].
     ///
@@ -802,7 +816,6 @@ make_enumerated_property! {
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
-#[zerovec::make_ule(HangulSyllableTypeULE)]
 pub struct HangulSyllableType(#[doc(hidden)] pub u8);
 
 create_const_array! {
@@ -828,6 +841,7 @@ make_enumerated_property! {
     ident: HangulSyllableType;
     data_marker: crate::provider::HangulSyllableTypeV1Marker;
     singleton: SINGLETON_HANGUL_SYLLABLE_TYPE_V1_MARKER;
+    ule_ty: u8;
     func:
     /// Returns a [`CodePointMapDataBorrowed`] for the Hangul_Syllable_Type
     /// Unicode enumerated property. See [`HangulSyllableType`].
@@ -855,7 +869,6 @@ make_enumerated_property! {
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
-#[zerovec::make_ule(EastAsianWidthULE)]
 pub struct EastAsianWidth(#[doc(hidden)] pub u8);
 
 create_const_array! {
@@ -876,6 +889,7 @@ make_enumerated_property! {
     ident: EastAsianWidth;
     data_marker: crate::provider::EastAsianWidthV1Marker;
     singleton: SINGLETON_EAST_ASIAN_WIDTH_V1_MARKER;
+    ule_ty: u8;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the East_Asian_Width Unicode enumerated
     /// property. See [`EastAsianWidth`].
@@ -902,7 +916,6 @@ make_enumerated_property! {
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
-#[zerovec::make_ule(LineBreakULE)]
 pub struct LineBreak(pub u8);
 
 #[allow(missing_docs)] // These constants don't need individual documentation.
@@ -965,6 +978,7 @@ make_enumerated_property! {
     ident: LineBreak;
     data_marker: crate::provider::LineBreakV1Marker;
     singleton: SINGLETON_LINE_BREAK_V1_MARKER;
+    ule_ty: u8;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Line_Break Unicode enumerated
     /// property. See [`LineBreak`].
@@ -994,7 +1008,6 @@ make_enumerated_property! {
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 #[repr(transparent)]
-#[zerovec::make_ule(GraphemeClusterBreakULE)]
 pub struct GraphemeClusterBreak(pub u8);
 
 #[allow(missing_docs)] // These constants don't need individual documentation.
@@ -1029,6 +1042,7 @@ make_enumerated_property! {
     ident: GraphemeClusterBreak;
     data_marker: crate::provider::GraphemeClusterBreakV1Marker;
     singleton: SINGLETON_GRAPHEME_CLUSTER_BREAK_V1_MARKER;
+    ule_ty: u8;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Grapheme_Cluster_Break Unicode enumerated
     /// property. See [`GraphemeClusterBreak`].
@@ -1058,7 +1072,6 @@ make_enumerated_property! {
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
-#[zerovec::make_ule(WordBreakULE)]
 pub struct WordBreak(#[doc(hidden)] pub u8);
 
 create_const_array! {
@@ -1100,6 +1113,7 @@ make_enumerated_property! {
     ident: WordBreak;
     data_marker: crate::provider::WordBreakV1Marker;
     singleton: SINGLETON_WORD_BREAK_V1_MARKER;
+    ule_ty: u8;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Word_Break Unicode enumerated
     /// property. See [`WordBreak`].
@@ -1116,7 +1130,6 @@ make_enumerated_property! {
     /// ```
 }
 
-
 /// Enumerated property Sentence_Break.
 /// See "Default Sentence Boundary Specification" in UAX #29 for the summary of
 /// each property value:
@@ -1129,7 +1142,6 @@ make_enumerated_property! {
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
-#[zerovec::make_ule(SentenceBreakULE)]
 pub struct SentenceBreak(#[doc(hidden)] pub u8);
 
 create_const_array! {
@@ -1159,6 +1171,7 @@ make_enumerated_property! {
     ident: SentenceBreak;
     data_marker: crate::provider::SentenceBreakV1Marker;
     singleton: SINGLETON_SENTENCE_BREAK_V1_MARKER;
+    ule_ty: u8;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Sentence_Break Unicode enumerated
     /// property. See [`SentenceBreak`].
@@ -1192,7 +1205,6 @@ make_enumerated_property! {
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
-#[zerovec::make_ule(CanonicalCombiningClassULE)]
 pub struct CanonicalCombiningClass(#[doc(hidden)] pub u8);
 
 create_const_array! {
@@ -1266,6 +1278,7 @@ make_enumerated_property! {
     ident: CanonicalCombiningClass;
     data_marker: crate::provider::CanonicalCombiningClassV1Marker;
     singleton: SINGLETON_CANONICAL_COMBINING_CLASS_V1_MARKER;
+    ule_ty: u8;
     func:
     /// Return a [`CodePointMapData`] for the Canonical_Combining_Class Unicode property. See
     /// [`CanonicalCombiningClass`].
@@ -1294,9 +1307,7 @@ make_enumerated_property! {
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
-#[zerovec::make_ule(IndicSyllabicCategoryULE)]
 pub struct IndicSyllabicCategory(#[doc(hidden)] pub u8);
-
 
 create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
@@ -1346,6 +1357,7 @@ make_enumerated_property! {
     ident: IndicSyllabicCategory;
     data_marker: crate::provider::IndicSyllabicCategoryV1Marker;
     singleton: SINGLETON_INDIC_SYLLABIC_CATEGORY_V1_MARKER;
+    ule_ty: u8;
     func:
     /// Return a [`CodePointMapData`] for the Indic_Syllabic_Category Unicode property. See
     /// [`IndicSyllabicCategory`].
@@ -1371,9 +1383,7 @@ make_enumerated_property! {
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
-#[zerovec::make_ule(JoiningTypeULE)]
 pub struct JoiningType(#[doc(hidden)] pub u8);
-
 
 create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
@@ -1393,6 +1403,7 @@ make_enumerated_property! {
     ident: JoiningType;
     data_marker: crate::provider::JoiningTypeV1Marker;
     singleton: SINGLETON_JOINING_TYPE_V1_MARKER;
+    ule_ty: u8;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Joining_Type Unicode enumerated
     /// property. See [`JoiningType`].
