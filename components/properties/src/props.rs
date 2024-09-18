@@ -172,91 +172,96 @@ make_enumerated_property! {
     /// ```
 }
 
-/// Enumerated property General_Category.
-///
-/// General_Category specifies the most general classification of a code point, usually
-/// determined based on the primary characteristic of the assigned character. For example, is the
-/// character a letter, a mark, a number, punctuation, or a symbol, and if so, of what type?
-///
-/// GeneralCategory only supports specific subcategories (eg `UppercaseLetter`).
-/// It does not support grouped categories (eg `Letter`). For grouped categories, use [`GeneralCategoryGroup`](
-/// crate::props::GeneralCategoryGroup).
-#[derive(Copy, Clone, PartialEq, Eq, Debug, Ord, PartialOrd, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
-#[allow(clippy::exhaustive_enums)] // this type is stable
-#[zerovec::make_ule(GeneralCategoryULE)]
-#[repr(u8)]
-pub enum GeneralCategory {
-    /// (`Cn`) A reserved unassigned code point or a noncharacter
-    Unassigned = 0,
+// This exists to encapsulate GeneralCategoryULE so that it can exist in the provider module rather than props
+pub(crate) mod gc {
+    /// Enumerated property General_Category.
+    ///
+    /// General_Category specifies the most general classification of a code point, usually
+    /// determined based on the primary characteristic of the assigned character. For example, is the
+    /// character a letter, a mark, a number, punctuation, or a symbol, and if so, of what type?
+    ///
+    /// GeneralCategory only supports specific subcategories (eg `UppercaseLetter`).
+    /// It does not support grouped categories (eg `Letter`). For grouped categories, use [`GeneralCategoryGroup`](
+    /// crate::props::GeneralCategoryGroup).
+    #[derive(Copy, Clone, PartialEq, Eq, Debug, Ord, PartialOrd, Hash)]
+    #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+    #[cfg_attr(feature = "datagen", derive(databake::Bake))]
+    #[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
+    #[allow(clippy::exhaustive_enums)] // this type is stable
+    #[zerovec::make_ule(GeneralCategoryULE)]
+    #[repr(u8)]
+    pub enum GeneralCategory {
+        /// (`Cn`) A reserved unassigned code point or a noncharacter
+        Unassigned = 0,
 
-    /// (`Lu`) An uppercase letter
-    UppercaseLetter = 1,
-    /// (`Ll`) A lowercase letter
-    LowercaseLetter = 2,
-    /// (`Lt`) A digraphic letter, with first part uppercase
-    TitlecaseLetter = 3,
-    /// (`Lm`) A modifier letter
-    ModifierLetter = 4,
-    /// (`Lo`) Other letters, including syllables and ideographs
-    OtherLetter = 5,
+        /// (`Lu`) An uppercase letter
+        UppercaseLetter = 1,
+        /// (`Ll`) A lowercase letter
+        LowercaseLetter = 2,
+        /// (`Lt`) A digraphic letter, with first part uppercase
+        TitlecaseLetter = 3,
+        /// (`Lm`) A modifier letter
+        ModifierLetter = 4,
+        /// (`Lo`) Other letters, including syllables and ideographs
+        OtherLetter = 5,
 
-    /// (`Mn`) A nonspacing combining mark (zero advance width)
-    NonspacingMark = 6,
-    /// (`Mc`) A spacing combining mark (positive advance width)
-    SpacingMark = 8,
-    /// (`Me`) An enclosing combining mark
-    EnclosingMark = 7,
+        /// (`Mn`) A nonspacing combining mark (zero advance width)
+        NonspacingMark = 6,
+        /// (`Mc`) A spacing combining mark (positive advance width)
+        SpacingMark = 8,
+        /// (`Me`) An enclosing combining mark
+        EnclosingMark = 7,
 
-    /// (`Nd`) A decimal digit
-    DecimalNumber = 9,
-    /// (`Nl`) A letterlike numeric character
-    LetterNumber = 10,
-    /// (`No`) A numeric character of other type
-    OtherNumber = 11,
+        /// (`Nd`) A decimal digit
+        DecimalNumber = 9,
+        /// (`Nl`) A letterlike numeric character
+        LetterNumber = 10,
+        /// (`No`) A numeric character of other type
+        OtherNumber = 11,
 
-    /// (`Zs`) A space character (of various non-zero widths)
-    SpaceSeparator = 12,
-    /// (`Zl`) U+2028 LINE SEPARATOR only
-    LineSeparator = 13,
-    /// (`Zp`) U+2029 PARAGRAPH SEPARATOR only
-    ParagraphSeparator = 14,
+        /// (`Zs`) A space character (of various non-zero widths)
+        SpaceSeparator = 12,
+        /// (`Zl`) U+2028 LINE SEPARATOR only
+        LineSeparator = 13,
+        /// (`Zp`) U+2029 PARAGRAPH SEPARATOR only
+        ParagraphSeparator = 14,
 
-    /// (`Cc`) A C0 or C1 control code
-    Control = 15,
-    /// (`Cf`) A format control character
-    Format = 16,
-    /// (`Co`) A private-use character
-    PrivateUse = 17,
-    /// (`Cs`) A surrogate code point
-    Surrogate = 18,
+        /// (`Cc`) A C0 or C1 control code
+        Control = 15,
+        /// (`Cf`) A format control character
+        Format = 16,
+        /// (`Co`) A private-use character
+        PrivateUse = 17,
+        /// (`Cs`) A surrogate code point
+        Surrogate = 18,
 
-    /// (`Pd`) A dash or hyphen punctuation mark
-    DashPunctuation = 19,
-    /// (`Ps`) An opening punctuation mark (of a pair)
-    OpenPunctuation = 20,
-    /// (`Pe`) A closing punctuation mark (of a pair)
-    ClosePunctuation = 21,
-    /// (`Pc`) A connecting punctuation mark, like a tie
-    ConnectorPunctuation = 22,
-    /// (`Pi`) An initial quotation mark
-    InitialPunctuation = 28,
-    /// (`Pf`) A final quotation mark
-    FinalPunctuation = 29,
-    /// (`Po`) A punctuation mark of other type
-    OtherPunctuation = 23,
+        /// (`Pd`) A dash or hyphen punctuation mark
+        DashPunctuation = 19,
+        /// (`Ps`) An opening punctuation mark (of a pair)
+        OpenPunctuation = 20,
+        /// (`Pe`) A closing punctuation mark (of a pair)
+        ClosePunctuation = 21,
+        /// (`Pc`) A connecting punctuation mark, like a tie
+        ConnectorPunctuation = 22,
+        /// (`Pi`) An initial quotation mark
+        InitialPunctuation = 28,
+        /// (`Pf`) A final quotation mark
+        FinalPunctuation = 29,
+        /// (`Po`) A punctuation mark of other type
+        OtherPunctuation = 23,
 
-    /// (`Sm`) A symbol of mathematical use
-    MathSymbol = 24,
-    /// (`Sc`) A currency sign
-    CurrencySymbol = 25,
-    /// (`Sk`) A non-letterlike modifier symbol
-    ModifierSymbol = 26,
-    /// (`So`) A symbol of other type
-    OtherSymbol = 27,
+        /// (`Sm`) A symbol of mathematical use
+        MathSymbol = 24,
+        /// (`Sc`) A currency sign
+        CurrencySymbol = 25,
+        /// (`Sk`) A non-letterlike modifier symbol
+        ModifierSymbol = 26,
+        /// (`So`) A symbol of other type
+        OtherSymbol = 27,
+    }
 }
+
+pub use gc::GeneralCategory;
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Debug, Hash, Default)]
 /// Error value for `impl TryFrom<u8> for GeneralCategory`.

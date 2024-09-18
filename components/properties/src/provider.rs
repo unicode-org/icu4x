@@ -40,6 +40,7 @@ pub use names::{
     WordBreakValueToShortNameV1Marker,
 };
 
+pub use crate::props::gc::GeneralCategoryULE;
 pub use bidi::BidiAuxiliaryPropertiesV1Marker;
 
 use crate::script::ScriptWithExt;
