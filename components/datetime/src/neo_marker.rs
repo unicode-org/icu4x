@@ -1878,59 +1878,62 @@ macro_rules! impl_time_marker {
         $(input_second = $second_yes:ident,)?
         $(input_nanosecond = $nanosecond_yes:ident,)?
     ) => {
-        #[doc = concat!("**“", $sample, "**” ⇒ ", $description)]
-        ///
-        /// # Examples
-        ///
-        /// In [`NeoFormatter`](crate::neo::NeoFormatter):
-        ///
-        /// ```
-        /// use icu::calendar::DateTime;
-        /// use icu::datetime::neo::NeoFormatter;
-        #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
-        /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
-        /// use icu::locale::locale;
-        /// use writeable::assert_try_writeable_eq;
-        ///
-        #[doc = concat!("let fmt = NeoFormatter::<", stringify!($type), ">::try_new(")]
-        ///     &locale!("en").into(),
-        #[doc = concat!("    ", length_option_helper!($sample_length), ",")]
-        /// )
-        /// .unwrap();
-        /// let dt = DateTime::try_new_iso_datetime(2024, 5, 17, 15, 47, 50).unwrap();
-        ///
-        /// assert_try_writeable_eq!(
-        ///     fmt.convert_and_format(&dt),
-        #[doc = concat!("    \"", $sample, "\"")]
-        /// );
-        /// ```
-        ///
-        /// In [`TypedNeoFormatter`](crate::neo::TypedNeoFormatter):
-        ///
-        /// ```
-        /// use icu::calendar::Time;
-        /// use icu::calendar::Gregorian;
-        /// use icu::datetime::neo::TypedNeoFormatter;
-        #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
-        /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
-        /// use icu::locale::locale;
-        /// use writeable::assert_try_writeable_eq;
-        ///
-        #[doc = concat!("let fmt = TypedNeoFormatter::<Gregorian, ", stringify!($type), ">::try_new(")]
-        ///     &locale!("en").into(),
-        #[doc = concat!("    ", length_option_helper!($sample_length), ",")]
-        /// )
-        /// .unwrap();
-        /// let dt = Time::try_new(15, 47, 50, 0).unwrap();
-        ///
-        /// assert_try_writeable_eq!(
-        ///     fmt.format(&dt),
-        #[doc = concat!("    \"", $sample, "\"")]
-        /// );
-        /// ```
-        #[derive(Debug)]
-        #[allow(clippy::exhaustive_enums)] // empty enum
-        pub enum $type {}
+        impl_marker_with_options!(
+            #[doc = concat!("**“", $sample, "**” ⇒ ", $description)]
+            ///
+            /// # Examples
+            ///
+            /// In [`NeoFormatter`](crate::neo::NeoFormatter):
+            ///
+            /// ```
+            /// use icu::calendar::DateTime;
+            /// use icu::datetime::neo::NeoFormatter;
+            #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
+            /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+            /// use icu::locale::locale;
+            /// use writeable::assert_try_writeable_eq;
+            ///
+            #[doc = concat!("let fmt = NeoFormatter::<", stringify!($type), ">::try_new(")]
+            ///     &locale!("en").into(),
+            #[doc = concat!("    ", length_option_helper!($sample_length), ",")]
+            /// )
+            /// .unwrap();
+            /// let dt = DateTime::try_new_iso_datetime(2024, 5, 17, 15, 47, 50).unwrap();
+            ///
+            /// assert_try_writeable_eq!(
+            ///     fmt.convert_and_format(&dt),
+            #[doc = concat!("    \"", $sample, "\"")]
+            /// );
+            /// ```
+            ///
+            /// In [`TypedNeoFormatter`](crate::neo::TypedNeoFormatter):
+            ///
+            /// ```
+            /// use icu::calendar::Time;
+            /// use icu::calendar::Gregorian;
+            /// use icu::datetime::neo::TypedNeoFormatter;
+            #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
+            /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+            /// use icu::locale::locale;
+            /// use writeable::assert_try_writeable_eq;
+            ///
+            #[doc = concat!("let fmt = TypedNeoFormatter::<Gregorian, ", stringify!($type), ">::try_new(")]
+            ///     &locale!("en").into(),
+            #[doc = concat!("    ", length_option_helper!($sample_length), ",")]
+            /// )
+            /// .unwrap();
+            /// let dt = Time::try_new(15, 47, 50, 0).unwrap();
+            ///
+            /// assert_try_writeable_eq!(
+            ///     fmt.format(&dt),
+            #[doc = concat!("    \"", $sample, "\"")]
+            /// );
+            /// ```
+            $type,
+            sample_length: $sample_length,
+            alignment: yes,
+            $(fractional_second_digits: $nanosecond_yes,)?
+        );
         impl private::Sealed for $type {}
         impl DateTimeNamesMarker for $type {
             type YearNames = datetime_marker_helper!(@names/year,);
