@@ -2327,6 +2327,19 @@ impl_day_marker!(
 );
 
 impl_day_marker!(
+    NeoMonthDayMarker,
+    NeoDayComponents::MonthDay,
+    description = "month and day",
+    sample_length = Medium,
+    sample = "May 17",
+    months = yes,
+    input_month = yes,
+    input_day_of_month = yes,
+    input_any_calendar_kind = yes,
+    option_alignment = yes,
+);
+
+impl_day_marker!(
     NeoAutoDateMarker,
     NeoDayComponents::Auto,
     description = "locale-dependent date fields",
