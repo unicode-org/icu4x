@@ -358,11 +358,11 @@ impl BakedExporter {
 
         let dry = if let Some(dry_body) = dry_body {
             quote! {
-                ($provider:ty, DRY_IF_RETAIN) => {
+                ($provider:ty, DRY) => {
                     #prefixed_macro_ident!($provider);
                     #dry_body
                 };
-                ($provider:ty, DRY_IF_RETAIN, ITER) => {
+                ($provider:ty, DRY, ITER) => {
                     #prefixed_macro_ident!($provider);
                     #dry_body
                     #iterable_body
@@ -370,9 +370,9 @@ impl BakedExporter {
             }
         } else {
             quote! {
-                ($provider:ty, DRY_IF_RETAIN) => {
+                ($provider:ty, DRY) => {
                 };
-                ($provider:ty, DRY_IF_RETAIN, ITER) => {
+                ($provider:ty, DRY, ITER) => {
                     #prefixed_macro_ident!($provider, ITER);
                 };
             }
