@@ -5,6 +5,8 @@
 //! Helpers for switching between multiple providers.
 
 use alloc::collections::BTreeSet;
+#[cfg(feature = "export")]
+use icu_provider::export::ExportableProvider;
 use icu_provider::prelude::*;
 
 /// A provider that is one of two types determined at runtime.

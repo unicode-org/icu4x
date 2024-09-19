@@ -7,6 +7,8 @@
 //! Use [`EmptyDataProvider`] as a stand-in for a provider that always fails.
 
 use alloc::collections::BTreeSet;
+#[cfg(feature = "export")]
+use icu_provider::export::ExportableProvider;
 use icu_provider::prelude::*;
 
 /// A data provider that always returns an error.
