@@ -73,7 +73,7 @@ macro_rules! ccc {
     ($name:ident, $num:expr) => {{
         const X: CanonicalCombiningClass = {
             #[cfg(feature = "icu_properties")]
-            if icu_properties::CanonicalCombiningClass::$name.0 != $num {
+            if icu_properties::props::CanonicalCombiningClass::$name.0 != $num {
                 panic!("icu_normalizer has incorrect ccc values")
             }
             CanonicalCombiningClass($num)
