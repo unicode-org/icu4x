@@ -485,11 +485,7 @@ fn test_time_zone_format_offset_not_set_debug_assert_panic() {
 
     let time_zone = TimeZone::try_from_str("America/Los_Angeles")
         .unwrap()
-        .into_formattable_at(
-            &icu_timezone::MetazoneCalculator::new(),
-            &icu_timezone::ZoneOffsetCalculator::new(),
-            &DateTime::try_new_iso_datetime(2022, 7, 7, 7, 7, 7).unwrap(),
-        );
+        .into_formattable_at(&DateTime::try_new_iso_datetime(2022, 7, 7, 7, 7, 7).unwrap());
     let tzf = TypedNeoFormatter::<NeverCalendar, NeoTimeZoneOffsetShortMarker>::try_new(
         &locale!("en").into(),
         Default::default(),

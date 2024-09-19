@@ -40,7 +40,6 @@ part 'CollatorOptions.g.dart';
 part 'CollatorResolvedOptions.g.dart';
 part 'CollatorStrength.g.dart';
 part 'ComposingNormalizer.g.dart';
-part 'CustomTimeZone.g.dart';
 part 'DataError.g.dart';
 part 'DataProvider.g.dart';
 part 'Date.g.dart';
@@ -119,6 +118,7 @@ part 'SentenceBreakIteratorUtf8.g.dart';
 part 'SentenceSegmenter.g.dart';
 part 'Time.g.dart';
 part 'TimeFormatter.g.dart';
+part 'TimeZone.g.dart';
 part 'TimeZoneIdMapper.g.dart';
 part 'TimeZoneIdMapperWithFastCanonicalization.g.dart';
 part 'TimeZoneInvalidIdError.g.dart';
@@ -338,6 +338,56 @@ final class _ResultOpaqueInt32 extends ffi.Struct {
   }
 }
 
+final class _ResultOpaqueTimeZoneInvalidIdErrorFfiUnion extends ffi.Union {
+  external ffi.Pointer<ffi.Opaque> ok;
+
+}
+
+final class _ResultOpaqueTimeZoneInvalidIdErrorFfi extends ffi.Struct {
+  external _ResultOpaqueTimeZoneInvalidIdErrorFfiUnion union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  
+  factory _ResultOpaqueTimeZoneInvalidIdErrorFfi.ok(ffi.Pointer<ffi.Opaque> val) {
+    final struct = ffi.Struct.create<_ResultOpaqueTimeZoneInvalidIdErrorFfi>();
+    struct.isOk = true;
+    struct.union.ok = val;
+    return struct;
+  }
+  factory _ResultOpaqueTimeZoneInvalidIdErrorFfi.err() {
+    final struct = ffi.Struct.create<_ResultOpaqueTimeZoneInvalidIdErrorFfi>();
+    struct.isOk = false;
+    return struct;
+  }
+}
+
+final class _ResultOpaqueTimeZoneInvalidOffsetErrorFfiUnion extends ffi.Union {
+  external ffi.Pointer<ffi.Opaque> ok;
+
+}
+
+final class _ResultOpaqueTimeZoneInvalidOffsetErrorFfi extends ffi.Struct {
+  external _ResultOpaqueTimeZoneInvalidOffsetErrorFfiUnion union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  
+  factory _ResultOpaqueTimeZoneInvalidOffsetErrorFfi.ok(ffi.Pointer<ffi.Opaque> val) {
+    final struct = ffi.Struct.create<_ResultOpaqueTimeZoneInvalidOffsetErrorFfi>();
+    struct.isOk = true;
+    struct.union.ok = val;
+    return struct;
+  }
+  factory _ResultOpaqueTimeZoneInvalidOffsetErrorFfi.err() {
+    final struct = ffi.Struct.create<_ResultOpaqueTimeZoneInvalidOffsetErrorFfi>();
+    struct.isOk = false;
+    return struct;
+  }
+}
+
 final class _ResultOpaqueTimeZoneUnknownErrorFfiUnion extends ffi.Union {
   external ffi.Pointer<ffi.Opaque> ok;
 
@@ -455,25 +505,6 @@ final class _ResultVoidTimeZoneInvalidIdErrorFfi extends ffi.Struct {
   }
   factory _ResultVoidTimeZoneInvalidIdErrorFfi.err() {
     final struct = ffi.Struct.create<_ResultVoidTimeZoneInvalidIdErrorFfi>();
-    struct.isOk = false;
-    return struct;
-  }
-}
-
-final class _ResultVoidTimeZoneInvalidOffsetErrorFfi extends ffi.Struct {
-  
-
-  @ffi.Bool()
-  external bool isOk;
-
-  
-  factory _ResultVoidTimeZoneInvalidOffsetErrorFfi.ok() {
-    final struct = ffi.Struct.create<_ResultVoidTimeZoneInvalidOffsetErrorFfi>();
-    struct.isOk = true;
-    return struct;
-  }
-  factory _ResultVoidTimeZoneInvalidOffsetErrorFfi.err() {
-    final struct = ffi.Struct.create<_ResultVoidTimeZoneInvalidOffsetErrorFfi>();
     struct.isOk = false;
     return struct;
   }

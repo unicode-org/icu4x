@@ -8,12 +8,11 @@
 use icu::calendar::{Date, Gregorian, Time};
 use icu::locale::locale;
 use icu::plurals::{PluralCategory, PluralRules};
-use icu::timezone::FormattableTimeZone;
 use icu_collections::codepointinvlist::CodePointInversionListBuilder;
 use icu_datetime::neo::TypedNeoFormatter;
 use icu_datetime::neo_marker::NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker;
 use icu_datetime::neo_skeleton::NeoSkeletonLength;
-use icu_timezone::{FormattableZonedDateTime, ZonedDateTime};
+use icu_timezone::FormattableZonedDateTime;
 use std::env;
 use writeable::adapters::LossyWrap;
 

@@ -170,7 +170,7 @@ export { WordSegmenter } from "./WordSegmenter"
 
 export { Time } from "./Time"
 
-export { CustomTimeZone } from "./CustomTimeZone"
+export { TimeZone } from "./TimeZone"
 
 export { TimeZoneIdMapper } from "./TimeZoneIdMapper"
 

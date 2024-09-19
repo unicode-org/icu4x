@@ -168,7 +168,7 @@ export { WordSegmenter } from "./WordSegmenter.mjs"
 
 export { Time } from "./Time.mjs"
 
-export { CustomTimeZone } from "./CustomTimeZone.mjs"
+export { TimeZone } from "./TimeZone.mjs"
 
 export { TimeZoneIdMapper } from "./TimeZoneIdMapper.mjs"
 

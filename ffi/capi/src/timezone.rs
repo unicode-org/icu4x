@@ -15,45 +15,57 @@ pub mod ffi {
     use crate::errors::ffi::TimeZoneUnknownError;
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::timezone::CustomTimeZone, Struct)]
-    pub struct CustomTimeZone(pub icu_timezone::CustomTimeZone);
+    #[diplomat::rust_link(icu::timezone::TimeZone, Struct)]
+    pub struct TimeZone(pub icu_timezone::TimeZone);
 
-    impl CustomTimeZone {
+    impl TimeZone {
         /// Creates a time zone from an offset string.
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::try_from_str, FnInStruct)]
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::try_from_utf8, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::from_str, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::from_parts, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::timezone::TimeZone::try_from_str, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::TimeZone::try_from_utf8, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::timezone::TimeZone::from_str, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::timezone::TimeZone::from_parts, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::timezone::UtcOffset::try_from_str, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::timezone::UtcOffset::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::timezone::UtcOffset::from_str, FnInStruct, hidden)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
-        pub fn from_string(s: &DiplomatStr) -> Result<Box<CustomTimeZone>, TimeZoneUnknownError> {
-            Ok(Box::new(CustomTimeZone::from(
-                icu_timezone::CustomTimeZone::try_from_utf8(s)?,
+        pub fn from_string(s: &DiplomatStr) -> Result<Box<TimeZone>, TimeZoneUnknownError> {
+            Ok(Box::new(TimeZone::from(
+                icu_timezone::TimeZone::try_from_utf8(s)?,
             )))
         }
 
-        /// Creates a time zone with no information.
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::new_empty, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
-        pub fn empty() -> Box<CustomTimeZone> {
-            Box::new(icu_timezone::CustomTimeZone::new_empty().into())
-        }
-
         /// Creates a time zone for UTC (Coordinated Universal Time).
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::utc, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::TimeZone::utc, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::UtcOffset::zero, FnInStruct, hidden)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
-        pub fn utc() -> Box<CustomTimeZone> {
-            Box::new(icu_timezone::CustomTimeZone::utc().into())
+        pub fn utc() -> Box<TimeZone> {
+            Box::new(icu_timezone::TimeZone::utc().into())
         }
 
-        /// Sets the `offset` field from offset seconds.
+        /// Creates a `TimeZone` from an offset seconds and a BCP-47 string.
+        ///
+        /// Errors if the string is not a valid BCP-47 time zone ID, or if the offset seconds are out of range.
+        #[diplomat::rust_link(icu::timezone::TimeZone::new, StructField)]
+        #[diplomat::rust_link(icu::timezone::UtcOffset, Struct, compact)]
+        #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id, Struct, compact)]
+        #[diplomat::attr(auto, constructor)]
+        pub fn create(offset_seconds: i32, id: &DiplomatStr) -> Option<Box<Self>> {
+            Some(Box::new(Self(icu_timezone::TimeZone::new(
+                icu_timezone::UtcOffset::try_from_offset_seconds(offset_seconds).ok()?,
+                icu_timezone::TimeZoneBcp47Id(
+                    tinystr::TinyAsciiStr::try_from_utf8(id)
+                        .map_err(|_| TimeZoneInvalidIdError)
+                        .ok()?,
+                ),
+            ))))
+        }
+
+        /// Crates a `TimeZone` from offset seconds.
         ///
         /// Errors if the offset seconds are out of range.
+        #[diplomat::rust_link(icu::timezone::TimeZone::new_with_offset, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::UtcOffset::try_from_offset_seconds, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::UtcOffset, Struct, compact)]
         #[diplomat::rust_link(
@@ -61,38 +73,42 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::new_with_offset, FnInStruct, hidden)]
-        pub fn try_set_offset_seconds(
-            &mut self,
+        #[diplomat::attr(auto, named_constructor = "from_offset_seconds")]
+        pub fn create_from_offset_seconds(
             offset_seconds: i32,
-        ) -> Result<(), TimeZoneInvalidOffsetError> {
-            self.0.offset = Some(icu_timezone::UtcOffset::try_from_offset_seconds(
-                offset_seconds,
-            )?);
-            Ok(())
+        ) -> Result<Box<Self>, TimeZoneInvalidOffsetError> {
+            Ok(Box::new(Self(icu_timezone::TimeZone::new_with_offset(
+                icu_timezone::UtcOffset::try_from_offset_seconds(offset_seconds)?,
+            ))))
         }
 
-        /// Sets the `offset` field from offset as eighths of an hour.
-        #[diplomat::rust_link(icu::timezone::UtcOffset::from_offset_eighths_of_hour, FnInStruct)]
-        pub fn set_offset_eighths_of_hour(&mut self, offset_eighths_of_hour: i8) {
-            self.0.offset = Some(icu_timezone::UtcOffset::from_offset_eighths_of_hour(
-                offset_eighths_of_hour,
-            ));
+        /// Creates a `TimeZone` from a BCP-47 string.
+        ///
+        /// Errors if the string is not a valid BCP-47 time zone ID.
+        #[diplomat::rust_link(icu::timezone::TimeZone::new_with_bcp47_id, StructField)]
+        #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id, Struct, compact)]
+        #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id::from_str, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id::deref, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::timezone::TimeZoneBcp47Id::Target,
+            AssociatedTypeInStruct,
+            hidden
+        )]
+        #[diplomat::attr(auto, named_constructor = "from_bcp47_id")]
+        pub fn create_from_bcp47_id(id: &DiplomatStr) -> Result<Box<Self>, TimeZoneInvalidIdError> {
+            Ok(Box::new(Self(icu_timezone::TimeZone::new_with_bcp47_id(
+                icu_timezone::TimeZoneBcp47Id(
+                    tinystr::TinyAsciiStr::try_from_utf8(id).map_err(|_| TimeZoneInvalidIdError)?,
+                ),
+            ))))
         }
 
         /// Gets the `offset` field from offset as eighths of an hour.
         #[diplomat::rust_link(icu::timezone::UtcOffset::offset_eighths_of_hour, FnInStruct)]
         pub fn offset_eighths_of_hour(&self) -> Option<i8> {
             self.0
-                .offset
+                .offset()
                 .map(icu_timezone::UtcOffset::offset_eighths_of_hour)
-        }
-
-        /// Clears the `offset` field.
-        #[diplomat::rust_link(icu::timezone::UtcOffset::offset_seconds, FnInStruct)]
-        #[diplomat::rust_link(icu::timezone::UtcOffset, Struct, compact)]
-        pub fn clear_offset(&mut self) {
-            self.0.offset.take();
         }
 
         /// Returns the value of the `offset` field as offset seconds.
@@ -102,7 +118,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::UtcOffset, Struct, compact)]
         #[diplomat::attr(auto, getter)]
         pub fn offset_seconds(&self) -> Option<i32> {
-            self.0.offset.map(icu_timezone::UtcOffset::offset_seconds)
+            self.0.offset().map(icu_timezone::UtcOffset::offset_seconds)
         }
 
         /// Returns whether the `offset` field is positive.
@@ -111,7 +127,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::UtcOffset::is_positive, FnInStruct)]
         #[diplomat::attr(auto, getter)]
         pub fn is_offset_positive(&self) -> Option<bool> {
-            self.0.offset.map(icu_timezone::UtcOffset::is_positive)
+            self.0.offset().map(icu_timezone::UtcOffset::is_positive)
         }
 
         /// Returns whether the `offset` field is zero.
@@ -120,7 +136,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::UtcOffset::is_zero, FnInStruct)]
         #[diplomat::attr(auto, getter)]
         pub fn is_offset_zero(&self) -> Option<bool> {
-            self.0.offset.map(icu_timezone::UtcOffset::is_zero)
+            self.0.offset().map(icu_timezone::UtcOffset::is_zero)
         }
 
         /// Returns whether the `offset` field has nonzero minutes.
@@ -129,7 +145,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::UtcOffset::has_minutes, FnInStruct)]
         #[diplomat::attr(auto, getter)]
         pub fn offset_has_minutes(&self) -> Option<bool> {
-            self.0.offset.map(icu_timezone::UtcOffset::has_minutes)
+            self.0.offset().map(icu_timezone::UtcOffset::has_minutes)
         }
 
         /// Returns whether the `offset` field has nonzero seconds.
@@ -138,216 +154,30 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::UtcOffset::has_seconds, FnInStruct)]
         #[diplomat::attr(auto, getter)]
         pub fn offset_has_seconds(&self) -> Option<bool> {
-            self.0.offset.map(icu_timezone::UtcOffset::has_seconds)
+            self.0.offset().map(icu_timezone::UtcOffset::has_seconds)
         }
 
-        /// Sets the `time_zone_id` field from a BCP-47 string.
+        /// Writes the value of the `bcp47_id` field as a string.
         ///
-        /// Errors if the string is not a valid BCP-47 time zone ID.
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::time_zone_id, StructField)]
-        #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id, Struct, compact)]
-        #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id::from_str, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id::deref, FnInStruct, hidden)]
-        #[diplomat::rust_link(
-            icu::timezone::TimeZoneBcp47Id::Target,
-            AssociatedTypeInStruct,
-            hidden
-        )]
-        pub fn try_set_time_zone_id(
-            &mut self,
-            id: &DiplomatStr,
-        ) -> Result<(), TimeZoneInvalidIdError> {
-            self.0.time_zone_id = Some(icu_timezone::TimeZoneBcp47Id(
-                tinystr::TinyAsciiStr::try_from_utf8(id).map_err(|_| TimeZoneInvalidIdError)?,
-            ));
-            Ok(())
-        }
-
-        /// Sets the `time_zone_id` field from an IANA string by looking up
-        /// the corresponding BCP-47 string.
-        ///
-        /// Errors if the string is not a valid BCP-47 time zone ID.
-        pub fn try_set_iana_time_zone_id(
-            &mut self,
-            mapper: &crate::timezone_mapper::ffi::TimeZoneIdMapper,
-            id: &DiplomatStr,
-        ) -> Result<(), TimeZoneInvalidIdError> {
-            self.0.time_zone_id = Some(
-                mapper
-                    .0
-                    .as_borrowed()
-                    .iana_bytes_to_bcp47(id)
-                    .ok_or(TimeZoneInvalidIdError)?,
-            );
-            Ok(())
-        }
-
-        /// Clears the `time_zone_id` field.
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::time_zone_id, StructField)]
-        #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id, Struct, compact)]
-        pub fn clear_time_zone_id(&mut self) {
-            self.0.time_zone_id.take();
-        }
-
-        /// Writes the value of the `time_zone_id` field as a string.
-        ///
-        /// Returns null if the `time_zone_id` field is empty.
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::time_zone_id, StructField)]
+        /// Returns null if the `bcp47_id` field is empty.
+        #[diplomat::rust_link(icu::timezone::TimeZone::bcp47_id, StructField)]
         #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id, Struct, compact)]
         #[diplomat::attr(auto, getter)]
-        pub fn time_zone_id(&self, write: &mut diplomat_runtime::DiplomatWrite) -> Option<()> {
-            let _infallible = write.write_str(self.0.time_zone_id?.0.as_str());
+        pub fn bcp47_id(&self, write: &mut diplomat_runtime::DiplomatWrite) -> Option<()> {
+            let _infallible = write.write_str(self.0.bcp47_id()?.0.as_str());
             Some(())
-        }
-
-        /// Sets the `metazone_id` field from a string.
-        ///
-        /// Returns null if the string is not a valid BCP-47 metazone ID.
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::metazone_id, StructField)]
-        #[diplomat::rust_link(icu::timezone::MetazoneId, Struct, compact)]
-        #[diplomat::rust_link(icu::timezone::MetazoneId::from_str, FnInStruct, hidden)]
-        pub fn try_set_metazone_id(
-            &mut self,
-            id: &DiplomatStr,
-        ) -> Result<(), TimeZoneInvalidIdError> {
-            self.0.metazone_id = Some(icu_timezone::MetazoneId(
-                tinystr::TinyAsciiStr::try_from_utf8(id).map_err(|_| TimeZoneInvalidIdError)?,
-            ));
-            Ok(())
-        }
-
-        /// Clears the `metazone_id` field.
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::metazone_id, StructField)]
-        #[diplomat::rust_link(icu::timezone::MetazoneId, Struct, compact)]
-        pub fn clear_metazone_id(&mut self) {
-            self.0.metazone_id.take();
-        }
-
-        /// Writes the value of the `metazone_id` field as a string.
-        ///
-        /// Returns null if the `metazone_id` field is empty.
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::metazone_id, StructField)]
-        #[diplomat::rust_link(icu::timezone::MetazoneId, Struct, compact)]
-        #[diplomat::attr(auto, getter)]
-        pub fn metazone_id(&self, write: &mut diplomat_runtime::DiplomatWrite) -> Option<()> {
-            let _infallible = write.write_str(self.0.metazone_id?.0.as_str());
-            Some(())
-        }
-
-        /// Sets the `zone_variant` field from a string.
-        ///
-        /// Returns null if the string is not a valid zone variant.
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::zone_variant, StructField)]
-        #[diplomat::rust_link(icu::timezone::ZoneVariant, Struct, compact)]
-        #[diplomat::rust_link(icu::timezone::ZoneVariant::from_str, FnInStruct, hidden)]
-        pub fn try_set_zone_variant(&mut self, id: &DiplomatStr) -> Option<()> {
-            self.0.zone_variant = Some(icu_timezone::ZoneVariant(
-                tinystr::TinyAsciiStr::try_from_utf8(id).ok()?,
-            ));
-            Some(())
-        }
-
-        /// Clears the `zone_variant` field.
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::zone_variant, StructField)]
-        #[diplomat::rust_link(icu::timezone::ZoneVariant, Struct, compact)]
-        pub fn clear_zone_variant(&mut self) {
-            self.0.zone_variant.take();
-        }
-
-        /// Writes the value of the `zone_variant` field as a string.
-        ///
-        /// Returns null if the `zone_variant` field is empty.
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::zone_variant, StructField)]
-        #[diplomat::rust_link(icu::timezone::ZoneVariant, Struct, compact)]
-        #[diplomat::attr(auto, getter)]
-        pub fn zone_variant(&self, write: &mut diplomat_runtime::DiplomatWrite) -> Option<()> {
-            let _infallible = write.write_str(self.0.zone_variant?.0.as_str());
-            Some(())
-        }
-
-        /// Sets the `zone_variant` field to "standard" time, which may or may
-        /// not correspond to a display name with "Standard" in its name.
-        #[diplomat::rust_link(icu::timezone::ZoneVariant::standard, FnInStruct)]
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::zone_variant, StructField, compact)]
-        pub fn set_standard_time(&mut self) {
-            self.0.zone_variant = Some(icu_timezone::ZoneVariant::standard())
-        }
-
-        /// Sets the `zone_variant` field to "daylight" time, which may or may
-        /// not correspond to a display name with "Daylight" in its name.
-        #[diplomat::rust_link(icu::timezone::ZoneVariant::daylight, FnInStruct)]
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::zone_variant, StructField, compact)]
-        pub fn set_daylight_time(&mut self) {
-            self.0.zone_variant = Some(icu_timezone::ZoneVariant::daylight())
-        }
-
-        /// Returns whether the `zone_variant` field is standard time.
-        ///
-        /// Returns null if the `zone_variant` field is empty.
-        #[diplomat::rust_link(icu::timezone::ZoneVariant::standard, FnInStruct)]
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::zone_variant, StructField, compact)]
-        #[diplomat::attr(auto, getter)]
-        pub fn is_standard_time(&self) -> Option<bool> {
-            Some(self.0.zone_variant? == icu_timezone::ZoneVariant::standard())
-        }
-
-        /// Returns whether the `zone_variant` field is daylight time.
-        ///
-        /// Returns null if the `zone_variant` field is empty.
-        #[diplomat::rust_link(icu::timezone::ZoneVariant::daylight, FnInStruct)]
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::zone_variant, StructField, compact)]
-        #[diplomat::attr(auto, getter)]
-        pub fn is_daylight_time(&self) -> Option<bool> {
-            Some(self.0.zone_variant? == icu_timezone::ZoneVariant::daylight())
-        }
-
-        /// Sets the metazone based on the time zone and the local timestamp.
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::maybe_calculate_metazone, FnInStruct)]
-        #[diplomat::rust_link(
-            icu::timezone::MetazoneCalculator::compute_metazone_from_time_zone,
-            FnInStruct,
-            compact
-        )]
-        #[cfg(feature = "timezone")]
-        pub fn maybe_calculate_metazone(
-            &mut self,
-            metazone_calculator: &crate::metazone_calculator::ffi::MetazoneCalculator,
-            local_datetime: &crate::datetime::ffi::IsoDateTime,
-        ) {
-            self.0
-                .maybe_calculate_metazone(&metazone_calculator.0, &local_datetime.0);
-        }
-
-        /// Sets the zone variant based on the time zone and the local timestamp.
-        #[diplomat::rust_link(
-            icu::timezone::CustomTimeZone::maybe_calculate_zone_variant,
-            FnInStruct
-        )]
-        #[diplomat::rust_link(
-            icu::timezone::ZoneOffsetCalculator::compute_offsets_from_time_zone,
-            FnInStruct,
-            compact
-        )]
-        #[cfg(feature = "timezone")]
-        pub fn maybe_calculate_zone_variant(
-            &mut self,
-            zone_offset_calculator: &crate::zone_offset_calculator::ffi::ZoneOffsetCalculator,
-            local_datetime: &crate::datetime::ffi::IsoDateTime,
-        ) {
-            self.0
-                .maybe_calculate_zone_variant(&zone_offset_calculator.0, &local_datetime.0);
         }
     }
 }
 
-impl From<icu_timezone::CustomTimeZone> for ffi::CustomTimeZone {
-    fn from(other: icu_timezone::CustomTimeZone) -> Self {
+impl From<icu_timezone::TimeZone> for ffi::TimeZone {
+    fn from(other: icu_timezone::TimeZone) -> Self {
         Self(other)
     }
 }
 
-impl From<ffi::CustomTimeZone> for icu_timezone::CustomTimeZone {
-    fn from(other: ffi::CustomTimeZone) -> Self {
+impl From<ffi::TimeZone> for icu_timezone::TimeZone {
+    fn from(other: ffi::TimeZone) -> Self {
         other.0
     }
 }

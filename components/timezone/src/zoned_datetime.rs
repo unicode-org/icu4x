@@ -4,7 +4,7 @@
 
 use icu_calendar::{AsCalendar, Date, Iso, Time};
 
-use crate::{FormattableTimeZone, TimeZone};
+use crate::{FormattableTimeZone, MetazoneCalculator, TimeZone, ZoneOffsetCalculator};
 
 /// A date and time local to a specified custom time zone.
 #[derive(Debug)]
@@ -106,6 +106,28 @@ impl<A: AsCalendar> FormattableZonedDateTime<A> {
             date: self.date.to_calendar(calendar),
             time: self.time,
             zone: self.zone,
+        }
+    }
+}
+
+impl MetazoneCalculator {
+    /// Converts a [`ZonedDateTime`] to a [`FormattableZonedDateTime`] at the given datetime.
+    pub fn compute_dt<A: AsCalendar>(
+        &self,
+        zoned: ZonedDateTime<A>,
+        zoc: &ZoneOffsetCalculator,
+    ) -> FormattableZonedDateTime<A> {
+        FormattableZonedDateTime {
+            zone: self.compute(
+                zoned.zone,
+                zoc,
+                &icu_calendar::DateTime {
+                    date: zoned.date.to_iso(),
+                    time: zoned.time,
+                },
+            ),
+            date: zoned.date,
+            time: zoned.time,
         }
     }
 }

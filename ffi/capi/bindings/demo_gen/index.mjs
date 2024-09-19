@@ -29,8 +29,8 @@ import * as ComposingNormalizerDemo from "./ComposingNormalizer.mjs";
 export * as ComposingNormalizerDemo from "./ComposingNormalizer.mjs";
 import * as DecomposingNormalizerDemo from "./DecomposingNormalizer.mjs";
 export * as DecomposingNormalizerDemo from "./DecomposingNormalizer.mjs";
-import * as CustomTimeZoneDemo from "./CustomTimeZone.mjs";
-export * as CustomTimeZoneDemo from "./CustomTimeZone.mjs";
+import * as TimeZoneDemo from "./TimeZone.mjs";
+export * as TimeZoneDemo from "./TimeZone.mjs";
 import * as TimeZoneIdMapperDemo from "./TimeZoneIdMapper.mjs";
 export * as TimeZoneIdMapperDemo from "./TimeZoneIdMapper.mjs";
 import * as TimeZoneIdMapperWithFastCanonicalizationDemo from "./TimeZoneIdMapperWithFastCanonicalization.mjs";
@@ -1121,38 +1121,10 @@ export const RenderInfo = {
             ]
         },
         
-        "CustomTimeZone.timeZoneId": {
-            func: CustomTimeZoneDemo.timeZoneId,
+        "TimeZone.bcp47Id": {
+            func: TimeZoneDemo.bcp47Id,
             // For avoiding webpacking minifying issues:
-            funcName: "CustomTimeZone.timeZoneId",
-            parameters: [
-                
-                {
-                    name: "S",
-                    type: "string"
-                }
-                
-            ]
-        },
-        
-        "CustomTimeZone.metazoneId": {
-            func: CustomTimeZoneDemo.metazoneId,
-            // For avoiding webpacking minifying issues:
-            funcName: "CustomTimeZone.metazoneId",
-            parameters: [
-                
-                {
-                    name: "S",
-                    type: "string"
-                }
-                
-            ]
-        },
-        
-        "CustomTimeZone.zoneVariant": {
-            func: CustomTimeZoneDemo.zoneVariant,
-            // For avoiding webpacking minifying issues:
-            funcName: "CustomTimeZone.zoneVariant",
+            funcName: "TimeZone.bcp47Id",
             parameters: [
                 
                 {

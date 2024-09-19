@@ -1,8 +1,10 @@
-import { CustomTimeZone } from "icu4x"
 import { DataProvider } from "icu4x"
 import { GregorianZonedDateTimeFormatter } from "icu4x"
 import { IsoDateTime } from "icu4x"
 import { Locale } from "icu4x"
+import { MetazoneCalculator } from "icu4x"
+import { TimeZone } from "icu4x"
+import { ZoneOffsetCalculator } from "icu4x"
 export function formatIsoDatetimeWithCustomTimeZone() {
     var terminusArgs = arguments;
     return (function (...args) { return args[0].formatIsoDatetimeWithCustomTimeZone(...args.slice(1)) }).apply(
@@ -37,10 +39,30 @@ export function formatIsoDatetimeWithCustomTimeZone() {
                     terminusArgs[8]
                 ]
             ),
-            CustomTimeZone.fromString.apply(
+            TimeZone.fromString.apply(
                 null,
                 [
                     terminusArgs[9]
+                ]
+            ),
+            MetazoneCalculator.create.apply(
+                null,
+                [
+                    DataProvider.compiled.apply(
+                        null,
+                        [
+                        ]
+                    )
+                ]
+            ),
+            ZoneOffsetCalculator.create.apply(
+                null,
+                [
+                    DataProvider.compiled.apply(
+                        null,
+                        [
+                        ]
+                    )
                 ]
             )
         ]

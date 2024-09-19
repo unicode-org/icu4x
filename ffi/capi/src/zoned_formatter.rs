@@ -13,9 +13,14 @@ pub mod ffi {
     };
 
     use crate::{
-        datetime::ffi::DateTime, datetime::ffi::IsoDateTime,
-        datetime_formatter::ffi::DateTimeLength, errors::ffi::Error, locale_core::ffi::Locale,
-        provider::ffi::DataProvider, timezone::ffi::CustomTimeZone,
+        datetime::ffi::{DateTime, IsoDateTime},
+        datetime_formatter::ffi::DateTimeLength,
+        errors::ffi::Error,
+        locale_core::ffi::Locale,
+        metazone_calculator::ffi::MetazoneCalculator,
+        provider::ffi::DataProvider,
+        timezone::ffi::TimeZone,
+        zone_offset_calculator::ffi::ZoneOffsetCalculator,
     };
 
     use writeable::TryWriteable;
@@ -57,20 +62,30 @@ pub mod ffi {
             )))
         }
 
-        /// Formats a [`IsoDateTime`] and [`CustomTimeZone`] to a string.
+        #[cfg(feature = "compiled_data")]
+        /// Formats a [`IsoDateTime`] and [`TimeZone`] to a string.
         pub fn format_iso_datetime_with_custom_time_zone(
             &self,
             datetime: &IsoDateTime,
-            time_zone: &CustomTimeZone,
+            time_zone: &TimeZone,
+            metazone_calculator: &MetazoneCalculator,
+            zone_offset_calculator: &ZoneOffsetCalculator,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
             let greg = icu_calendar::DateTime::new_from_iso(datetime.0, icu_calendar::Gregorian);
-            let zdt = icu_timezone::CustomZonedDateTime {
+            let zdt = icu_timezone::ZonedDateTime {
                 date: greg.date,
                 time: greg.time,
                 zone: time_zone.0,
             };
-            let _infallible = self.0.format(&zdt).try_write_to(write);
+            let _infallible = self
+                .0
+                .format(
+                    &metazone_calculator
+                        .0
+                        .compute_dt(zdt, &zone_offset_calculator.0),
+                )
+                .try_write_to(write);
         }
     }
 
@@ -108,35 +123,53 @@ pub mod ffi {
             )?)))
         }
 
-        /// Formats a [`DateTime`] and [`CustomTimeZone`] to a string.
+        /// Formats a [`DateTime`] and [`TimeZone`] to a string.
         pub fn format_datetime_with_custom_time_zone(
             &self,
             datetime: &DateTime,
-            time_zone: &CustomTimeZone,
+            time_zone: &TimeZone,
+            metazone_calculator: &MetazoneCalculator,
+            zone_offset_calculator: &ZoneOffsetCalculator,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), Error> {
-            let zdt = icu_timezone::CustomZonedDateTime {
+            let zdt = icu_timezone::ZonedDateTime {
                 date: datetime.0.date.clone(),
                 time: datetime.0.time,
                 zone: time_zone.0,
             };
-            let _infallible = self.0.convert_and_format(&zdt).try_write_to(write);
+            let _infallible = self
+                .0
+                .convert_and_format(
+                    &metazone_calculator
+                        .0
+                        .compute_dt(zdt, &zone_offset_calculator.0),
+                )
+                .try_write_to(write);
             Ok(())
         }
 
-        /// Formats a [`IsoDateTime`] and [`CustomTimeZone`] to a string.
+        /// Formats a [`IsoDateTime`] and [`TimeZone`] to a string.
         pub fn format_iso_datetime_with_custom_time_zone(
             &self,
             datetime: &IsoDateTime,
-            time_zone: &CustomTimeZone,
+            time_zone: &TimeZone,
+            metazone_calculator: &MetazoneCalculator,
+            zone_offset_calculator: &ZoneOffsetCalculator,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), Error> {
-            let zdt = icu_timezone::CustomZonedDateTime {
+            let zdt = icu_timezone::ZonedDateTime {
                 date: datetime.0.date,
                 time: datetime.0.time,
                 zone: time_zone.0,
             };
-            let _infallible = self.0.convert_and_format(&zdt).try_write_to(write);
+            let _infallible = self
+                .0
+                .convert_and_format(
+                    &metazone_calculator
+                        .0
+                        .compute_dt(zdt, &zone_offset_calculator.0),
+                )
+                .try_write_to(write);
             Ok(())
         }
     }
