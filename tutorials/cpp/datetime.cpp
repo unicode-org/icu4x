@@ -97,11 +97,10 @@ int main() {
         return 1;
     }
 
-    std::unique_ptr<MetazoneCalculator> mzcalc = MetazoneCalculator::create(*dp.get()).ok().value();
-    std::unique_ptr<ZoneOffsetCalculator> zocalc = ZoneOffsetCalculator::create(*dp.get()).ok().value();
+    std::unique_ptr<TimeZoneCalculator> calc = TimeZoneCalculator::create(*dp.get()).ok().value();
 
     std::unique_ptr<GregorianZonedDateTimeFormatter> gzdtf = GregorianZonedDateTimeFormatter::create_with_length(*dp.get(), *locale.get(), DateTimeLength::Long).ok().value();
-    out = gzdtf->format_iso_datetime_with_custom_time_zone(*date.get(), *time_zone.get(), *mzcalc.get(), *zocalc.get());
+    out = gzdtf->format_iso_datetime_with_custom_time_zone(*date.get(), *time_zone.get(), *calc.get());
     std::cout << "Formatted value is " << out << std::endl;
     if (out != "July 11, 2022, 1:06:42\u202fPM CT") {
         std::cout << "Output does not match expected output" << std::endl;
@@ -109,7 +108,7 @@ int main() {
     }
 
     std::unique_ptr<ZonedDateTimeFormatter> zdtf = ZonedDateTimeFormatter::create_with_length(*dp.get(), *locale.get(), DateTimeLength::Long).ok().value();
-    out = zdtf->format_datetime_with_custom_time_zone(*any_date.get(), *time_zone.get(), *mzcalc.get(), *zocalc.get()).ok().value();
+    out = zdtf->format_datetime_with_custom_time_zone(*any_date.get(), *time_zone.get(), *calc.get()).ok().value();
     std::cout << "Formatted value is " << out << std::endl;
     if (out != "October 5, 2 Reiwa, 1:33:15\u202fPM CT") {
         std::cout << "Output does not match expected output" << std::endl;

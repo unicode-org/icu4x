@@ -100,7 +100,6 @@ part 'LocaleParseError.g.dart';
 part 'Logger.g.dart';
 part 'MeasureUnit.g.dart';
 part 'MeasureUnitParser.g.dart';
-part 'MetazoneCalculator.g.dart';
 part 'PluralCategories.g.dart';
 part 'PluralCategory.g.dart';
 part 'PluralOperands.g.dart';
@@ -119,6 +118,7 @@ part 'SentenceSegmenter.g.dart';
 part 'Time.g.dart';
 part 'TimeFormatter.g.dart';
 part 'TimeZone.g.dart';
+part 'TimeZoneCalculator.g.dart';
 part 'TimeZoneIdMapper.g.dart';
 part 'TimeZoneIdMapperWithFastCanonicalization.g.dart';
 part 'TimeZoneInvalidIdError.g.dart';
@@ -139,7 +139,6 @@ part 'WordBreakIteratorLatin1.g.dart';
 part 'WordBreakIteratorUtf16.g.dart';
 part 'WordBreakIteratorUtf8.g.dart';
 part 'WordSegmenter.g.dart';
-part 'ZoneOffsetCalculator.g.dart';
 part 'ZonedDateTimeFormatter.g.dart';
 
 /// A [Rune] is a Unicode code point, such as `a`, or `💡`.

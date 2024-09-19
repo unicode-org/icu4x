@@ -4,9 +4,8 @@ import { DateTimeLength } from "./DateTimeLength.mjs"
 import { Error } from "./Error.mjs"
 import { IsoDateTime } from "./IsoDateTime.mjs"
 import { Locale } from "./Locale.mjs"
-import { MetazoneCalculator } from "./MetazoneCalculator.mjs"
 import { TimeZone } from "./TimeZone.mjs"
-import { ZoneOffsetCalculator } from "./ZoneOffsetCalculator.mjs"
+import { TimeZoneCalculator } from "./TimeZoneCalculator.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
@@ -64,9 +63,9 @@ export class GregorianZonedDateTimeFormatter {
         }
     }
 
-    formatIsoDatetimeWithCustomTimeZone(datetime, timeZone, metazoneCalculator, zoneOffsetCalculator) {
+    formatIsoDatetimeWithCustomTimeZone(datetime, timeZone, timezoneCalculator) {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        wasm.icu4x_GregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1(this.ffiValue, datetime.ffiValue, timeZone.ffiValue, metazoneCalculator.ffiValue, zoneOffsetCalculator.ffiValue, write.buffer);
+        wasm.icu4x_GregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1(this.ffiValue, datetime.ffiValue, timeZone.ffiValue, timezoneCalculator.ffiValue, write.buffer);
     
         try {
             return write.readString8();

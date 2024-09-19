@@ -325,7 +325,7 @@ size_test!(
 /// use icu::datetime::neo_pattern::DateTimePattern;
 /// use icu::datetime::neo_skeleton::NeoComponents;
 /// use icu::locale::locale;
-/// use icu::timezone::ZonedDateTime;
+/// use icu::timezone::{TimeZoneCalculator, ZonedDateTime};
 /// use writeable::{Part, assert_try_writeable_parts_eq};
 ///
 /// // Create an instance that can format all fields (NeoComponents):
@@ -339,10 +339,10 @@ size_test!(
 /// // The pattern string contains lots of symbols including "E", "MMM", and "a",
 /// // but we did not load any data!
 ///
-/// let mut dtz = ZonedDateTime::try_from_str("2023-11-20T11:35:03+00:00[Europe/London]")
+/// let mut dtz = TimeZoneCalculator::new().resolve(ZonedDateTime::try_from_str("2023-11-20T11:35:03+00:00[Europe/London]")
 ///     .unwrap()
 ///     .to_calendar(Gregorian)
-///     .resolve();
+///     );
 ///
 /// // Missing data is filled in on a best-effort basis, and an error is signaled.
 /// assert_try_writeable_parts_eq!(
@@ -369,7 +369,7 @@ size_test!(
 /// use icu::datetime::neo_pattern::DateTimePattern;
 /// use icu::datetime::neo_skeleton::NeoTimeZoneSkeleton;
 /// use icu::locale::locale;
-/// use icu::timezone::{TimeZone, TimeZoneBcp47Id};
+/// use icu::timezone::{TimeZone, TimeZoneBcp47Id, TimeZoneCalculator};
 /// use writeable::{Part, assert_try_writeable_parts_eq};
 ///
 /// // Create an instance that can format abbreviated month, weekday, and day period names:
@@ -380,17 +380,15 @@ size_test!(
 /// let pattern_str = "'It is:' E MMM d y G 'at' h:mm:ssSSS a zzzz";
 /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
 ///
-/// let zone = TimeZone::new_with_bcp47_id(TimeZoneBcp47Id(tinystr::tinystr!(8, "brsao")))
-///     .resolve_at(
-///         &DateTime::try_new_iso_datetime(2025, 1, 2, 0, 0, 0).unwrap(),   
-///     );
+/// let zone = TimeZone::new_with_bcp47_id(TimeZoneBcp47Id(tinystr::tinystr!(8, "brsao")));
+/// let resolved = TimeZoneCalculator::new().resolve_at(zone, &DateTime::try_new_iso_datetime(2025, 1, 2, 0, 0, 0).unwrap());
 ///
 /// // The pattern string contains lots of symbols including "E", "MMM", and "a",
 /// // but the `TypedDateTimeNames` is configured to format only time zones!
 /// // Further, the time zone we provide doesn't contain any offset info!
 /// // Missing data is filled in on a best-effort basis, and an error is signaled.
 /// assert_try_writeable_parts_eq!(
-///     names.with_pattern(&pattern).format(&zone),
+///     names.with_pattern(&pattern).format(&resolved),
 ///     "It is: {E} {M} {d} {y} {G} at {h}:{m}:{s} {a} {GMT+?}",
 ///     Err(DateTimeWriteError::MissingInputField("iso_weekday")),
 ///     [
@@ -923,10 +921,11 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::datetime::neo_pattern::DateTimePattern;
     /// use icu::locale::locale;
     /// use icu::timezone::ZonedDateTime;
+    /// use icu::timezone::TimeZoneCalculator;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap().resolve().zone();
-    /// let mut zone_london_summer = ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]").unwrap().resolve().zone();
+    /// let mut zone_london_winter = TimeZoneCalculator::new().resolve(ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap()).zone();
+    /// let mut zone_london_summer = TimeZoneCalculator::new().resolve(ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]").unwrap()).zone();
     ///
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(&locale!("en-GB").into())
@@ -1020,9 +1019,10 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::datetime::neo_pattern::DateTimePattern;
     /// use icu::locale::locale;
     /// use icu::timezone::ZonedDateTime;
+    /// use icu::timezone::TimeZoneCalculator;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap().resolve().zone();
+    /// let mut zone_london_winter = TimeZoneCalculator::new().resolve(ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap()).zone();
     ///
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(&locale!("en-GB").into())
@@ -1093,10 +1093,11 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::datetime::neo_pattern::DateTimePattern;
     /// use icu::locale::locale;
     /// use icu::timezone::ZonedDateTime;
+    /// use icu::timezone::TimeZoneCalculator;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap().resolve().zone();
-    /// let mut zone_london_summer = ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]").unwrap().resolve().zone();
+    /// let mut zone_london_winter = TimeZoneCalculator::new().resolve(ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap()).zone();
+    /// let mut zone_london_summer = TimeZoneCalculator::new().resolve(ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]").unwrap()).zone();
     ///
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(&locale!("en-GB").into())
@@ -1162,10 +1163,11 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::datetime::neo_pattern::DateTimePattern;
     /// use icu::locale::locale;
     /// use icu::timezone::ZonedDateTime;
+    /// use icu::timezone::TimeZoneCalculator;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap().resolve().zone();
-    /// let mut zone_london_summer = ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]").unwrap().resolve().zone();
+    /// let mut zone_london_winter = TimeZoneCalculator::new().resolve(ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap()).zone();
+    /// let mut zone_london_summer = TimeZoneCalculator::new().resolve(ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]").unwrap()).zone();
     ///
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(&locale!("en-GB").into())
@@ -1231,10 +1233,11 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::datetime::neo_pattern::DateTimePattern;
     /// use icu::locale::locale;
     /// use icu::timezone::ZonedDateTime;
+    /// use icu::timezone::TimeZoneCalculator;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap().resolve().zone();
-    /// let mut zone_london_summer = ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]").unwrap().resolve().zone();
+    /// let mut zone_london_winter = TimeZoneCalculator::new().resolve(ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap()).zone();
+    /// let mut zone_london_summer = TimeZoneCalculator::new().resolve(ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]").unwrap()).zone();
     ///
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(&locale!("en-GB").into())
@@ -1300,10 +1303,11 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::datetime::neo_pattern::DateTimePattern;
     /// use icu::locale::locale;
     /// use icu::timezone::ZonedDateTime;
+    /// use icu::timezone::TimeZoneCalculator;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap().resolve().zone();
-    /// let mut zone_london_summer = ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]").unwrap().resolve().zone();
+    /// let mut zone_london_winter = TimeZoneCalculator::new().resolve(ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap()).zone();
+    /// let mut zone_london_summer = TimeZoneCalculator::new().resolve(ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]").unwrap()).zone();
     ///
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(&locale!("en-GB").into())
@@ -2311,10 +2315,11 @@ where
     /// use icu::datetime::neo_pattern::DateTimePattern;
     /// use icu::locale::locale;
     /// use icu::timezone::ZonedDateTime;
+    /// use icu::timezone::TimeZoneCalculator;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap().to_calendar(Gregorian).resolve();
-    /// let mut london_summer = ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]").unwrap().to_calendar(Gregorian).resolve();
+    /// let mut london_winter = TimeZoneCalculator::new().resolve(ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap().to_calendar(Gregorian));
+    /// let mut london_summer = TimeZoneCalculator::new().resolve(ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]").unwrap().to_calendar(Gregorian));
     ///
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(&locale!("en-GB").into())

@@ -96,8 +96,6 @@ export { LocaleDirectionality } from "./LocaleDirectionality.mjs"
 
 export { Logger } from "./Logger.mjs"
 
-export { MetazoneCalculator } from "./MetazoneCalculator.mjs"
-
 export { ComposingNormalizer } from "./ComposingNormalizer.mjs"
 
 export { DecomposingNormalizer } from "./DecomposingNormalizer.mjs"
@@ -170,6 +168,8 @@ export { Time } from "./Time.mjs"
 
 export { TimeZone } from "./TimeZone.mjs"
 
+export { TimeZoneCalculator } from "./TimeZoneCalculator.mjs"
+
 export { TimeZoneIdMapper } from "./TimeZoneIdMapper.mjs"
 
 export { TimeZoneIdMapperWithFastCanonicalization } from "./TimeZoneIdMapperWithFastCanonicalization.mjs"
@@ -183,8 +183,6 @@ export { UnitsConverter } from "./UnitsConverter.mjs"
 export { UnitsConverterFactory } from "./UnitsConverterFactory.mjs"
 
 export { WeekCalculator } from "./WeekCalculator.mjs"
-
-export { ZoneOffsetCalculator } from "./ZoneOffsetCalculator.mjs"
 
 export { GregorianZonedDateTimeFormatter } from "./GregorianZonedDateTimeFormatter.mjs"
 

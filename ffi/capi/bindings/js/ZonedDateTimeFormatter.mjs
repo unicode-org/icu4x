@@ -5,9 +5,8 @@ import { DateTimeLength } from "./DateTimeLength.mjs"
 import { Error } from "./Error.mjs"
 import { IsoDateTime } from "./IsoDateTime.mjs"
 import { Locale } from "./Locale.mjs"
-import { MetazoneCalculator } from "./MetazoneCalculator.mjs"
 import { TimeZone } from "./TimeZone.mjs"
-import { ZoneOffsetCalculator } from "./ZoneOffsetCalculator.mjs"
+import { TimeZoneCalculator } from "./TimeZoneCalculator.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
@@ -65,12 +64,12 @@ export class ZonedDateTimeFormatter {
         }
     }
 
-    formatDatetimeWithCustomTimeZone(datetime, timeZone, metazoneCalculator, zoneOffsetCalculator) {
+    formatDatetimeWithCustomTimeZone(datetime, timeZone, timeZoneCalculator) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         
-        const result = wasm.icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1(diplomatReceive.buffer, this.ffiValue, datetime.ffiValue, timeZone.ffiValue, metazoneCalculator.ffiValue, zoneOffsetCalculator.ffiValue, write.buffer);
+        const result = wasm.icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1(diplomatReceive.buffer, this.ffiValue, datetime.ffiValue, timeZone.ffiValue, timeZoneCalculator.ffiValue, write.buffer);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -87,12 +86,12 @@ export class ZonedDateTimeFormatter {
         }
     }
 
-    formatIsoDatetimeWithCustomTimeZone(datetime, timeZone, metazoneCalculator, zoneOffsetCalculator) {
+    formatIsoDatetimeWithCustomTimeZone(datetime, timeZone, timeZoneCalculator) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         
-        const result = wasm.icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1(diplomatReceive.buffer, this.ffiValue, datetime.ffiValue, timeZone.ffiValue, metazoneCalculator.ffiValue, zoneOffsetCalculator.ffiValue, write.buffer);
+        const result = wasm.icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1(diplomatReceive.buffer, this.ffiValue, datetime.ffiValue, timeZone.ffiValue, timeZoneCalculator.ffiValue, write.buffer);
     
         try {
             if (!diplomatReceive.resultFlag) {

@@ -13,9 +13,8 @@
 #include "Error.d.h"
 #include "IsoDateTime.d.h"
 #include "Locale.d.h"
-#include "MetazoneCalculator.d.h"
 #include "TimeZone.d.h"
-#include "ZoneOffsetCalculator.d.h"
+#include "TimeZoneCalculator.d.h"
 
 #include "ZonedDateTimeFormatter.d.h"
 
@@ -28,10 +27,10 @@ typedef struct icu4x_ZonedDateTimeFormatter_create_with_length_mv1_result {union
 icu4x_ZonedDateTimeFormatter_create_with_length_mv1_result icu4x_ZonedDateTimeFormatter_create_with_length_mv1(const DataProvider* provider, const Locale* locale, DateTimeLength length);
 
 typedef struct icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1_result {union { Error err;}; bool is_ok;} icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1_result;
-icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1_result icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1(const ZonedDateTimeFormatter* self, const DateTime* datetime, const TimeZone* time_zone, const MetazoneCalculator* metazone_calculator, const ZoneOffsetCalculator* zone_offset_calculator, DiplomatWrite* write);
+icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1_result icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1(const ZonedDateTimeFormatter* self, const DateTime* datetime, const TimeZone* time_zone, const TimeZoneCalculator* time_zone_calculator, DiplomatWrite* write);
 
 typedef struct icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1_result {union { Error err;}; bool is_ok;} icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1_result;
-icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1_result icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1(const ZonedDateTimeFormatter* self, const IsoDateTime* datetime, const TimeZone* time_zone, const MetazoneCalculator* metazone_calculator, const ZoneOffsetCalculator* zone_offset_calculator, DiplomatWrite* write);
+icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1_result icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1(const ZonedDateTimeFormatter* self, const IsoDateTime* datetime, const TimeZone* time_zone, const TimeZoneCalculator* time_zone_calculator, DiplomatWrite* write);
 
 
 void icu4x_ZonedDateTimeFormatter_destroy_mv1(ZonedDateTimeFormatter* self);

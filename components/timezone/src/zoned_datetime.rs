@@ -4,7 +4,7 @@
 
 use icu_calendar::{AsCalendar, Date, Iso, Time};
 
-use crate::{ResolvedTimeZone, MetazoneCalculator, TimeZone, ZoneOffsetCalculator};
+use crate::{ResolvedTimeZone, TimeZone, TimeZoneCalculator};
 
 /// A date and time local to a specified custom time zone.
 #[derive(Debug)]
@@ -37,12 +37,6 @@ impl<A: AsCalendar> ZonedDateTime<A> {
             time: self.time,
             zone: self.zone,
         }
-    }
-
-    /// Convert the [`ZonedDateTime`] to a [`ResolvedZonedDateTime`].
-    #[cfg(feature = "compiled_data")]
-    pub fn resolve(self) -> ResolvedZonedDateTime<A> {
-        MetazoneCalculator::new().compute_dt(self, &ZoneOffsetCalculator::new())
     }
 }
 
@@ -101,17 +95,12 @@ impl<A: AsCalendar> ResolvedZonedDateTime<A> {
     }
 }
 
-impl MetazoneCalculator {
+impl TimeZoneCalculator {
     /// Converts a [`ZonedDateTime`] to a [`ResolvedZonedDateTime`] at the given datetime.
-    pub fn compute_dt<A: AsCalendar>(
-        &self,
-        zoned: ZonedDateTime<A>,
-        zoc: &ZoneOffsetCalculator,
-    ) -> ResolvedZonedDateTime<A> {
+    pub fn resolve<A: AsCalendar>(&self, zoned: ZonedDateTime<A>) -> ResolvedZonedDateTime<A> {
         ResolvedZonedDateTime {
-            zone: self.compute(
+            zone: self.resolve_at(
                 zoned.zone,
-                zoc,
                 &icu_calendar::DateTime {
                     date: zoned.date.to_iso(),
                     time: zoned.time,

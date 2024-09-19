@@ -83,10 +83,9 @@
 //! use icu::timezone::TimeZone;
 //! use icu::timezone::UtcOffset;
 //! use icu::timezone::MetazoneId;
-//! use icu::timezone::MetazoneCalculator;
 //! use icu::timezone::TimeZoneBcp47Id;
 //! use icu::timezone::TimeZoneIdMapper;
-//! use icu::timezone::ZoneOffsetCalculator;
+//! use icu::timezone::TimeZoneCalculator;
 //! use icu::timezone::ZoneVariant;
 //! use tinystr::tinystr;
 //!
@@ -95,10 +94,10 @@
 //! let time_zone = TimeZone::new("-0600".parse().unwrap(), bcp47_id);
 //!
 //! // Create a `ResolvedTimeZone` at January 1, 2022:
-//! let formattable = time_zone.resolve_at(&DateTime::try_new_iso_datetime(2022, 1, 1, 0, 0, 0).unwrap());
+//! let resolved = TimeZoneCalculator::new().resolve_at(time_zone, &DateTime::try_new_iso_datetime(2022, 1, 1, 0, 0, 0).unwrap());
 //!
-//! assert_eq!(formattable.metazone_id().unwrap(), MetazoneId(tinystr!(4, "amce")));
-//! assert_eq!(formattable.zone_variant().unwrap(), ZoneVariant::standard());
+//! assert_eq!(resolved.metazone_id().unwrap(), MetazoneId(tinystr!(4, "amce")));
+//! assert_eq!(resolved.zone_variant().unwrap(), ZoneVariant::standard());
 //! ```
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
@@ -119,30 +118,28 @@
 
 extern crate alloc;
 
+mod calculator;
 mod error;
 mod ids;
-mod metazone;
 pub mod provider;
 mod time_zone;
 mod types;
 mod windows_tz;
-mod zone_offset;
 mod zoned_datetime;
 
 #[cfg(all(feature = "ixdtf", feature = "compiled_data"))]
 mod ixdtf;
 
+pub use calculator::TimeZoneCalculator;
 pub use error::{InvalidOffsetError, UnknownTimeZoneError};
 pub use ids::{
     TimeZoneIdMapper, TimeZoneIdMapperBorrowed, TimeZoneIdMapperWithFastCanonicalization,
     TimeZoneIdMapperWithFastCanonicalizationBorrowed,
 };
-pub use metazone::MetazoneCalculator;
 pub use provider::{MetazoneId, TimeZoneBcp47Id};
 pub use time_zone::{ResolvedTimeZone, TimeZone};
 pub use types::{UtcOffset, ZoneVariant};
 pub use windows_tz::{WindowsTimeZoneMapper, WindowsTimeZoneMapperBorrowed};
-pub use zone_offset::ZoneOffsetCalculator;
 pub use zoned_datetime::{ResolvedZonedDateTime, ZonedDateTime};
 
 #[cfg(all(feature = "ixdtf", feature = "compiled_data"))]

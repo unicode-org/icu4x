@@ -2,9 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{
-    MetazoneCalculator, MetazoneId, TimeZoneBcp47Id, UtcOffset, ZoneOffsetCalculator, ZoneVariant,
-};
+use crate::{MetazoneId, TimeZoneBcp47Id, TimeZoneCalculator, UtcOffset, ZoneVariant};
 #[cfg(feature = "compiled_data")]
 use crate::{TimeZoneIdMapper, UnknownTimeZoneError};
 use icu_calendar::{DateTime, Iso};
@@ -132,42 +130,13 @@ impl TimeZone {
         }
         Err(UnknownTimeZoneError)
     }
-
-    /// Infer the metazone ID.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::calendar::DateTime;
-    /// use icu::timezone::MetazoneId;
-    /// use icu::timezone::TimeZoneBcp47Id;
-    /// use icu::timezone::TimeZone;
-    /// use icu::timezone::MetazoneCalculator;
-    /// use icu::timezone::ZoneVariant;
-    /// use icu::timezone::ZoneOffsetCalculator;
-    /// use tinystr::tinystr;
-    ///
-    /// let mut tz = TimeZone::new("+11".parse().expect("Failed to parse a UTC offset."), TimeZoneBcp47Id(tinystr!(8, "gugum")));
-    ///
-    /// let ftz = tz.resolve_at(
-    ///     &DateTime::try_new_iso_datetime(1971, 10, 31, 2, 0, 0).unwrap(),
-    /// );
-    ///
-    /// assert_eq!(ftz.metazone_id(), Some(MetazoneId(tinystr!(4, "guam"))));
-    /// assert_eq!(ftz.zone_variant(), Some(ZoneVariant::daylight()));
-    /// ```
-    #[cfg(feature = "compiled_data")]
-    pub fn resolve_at(self, local_datetime: &DateTime<Iso>) -> ResolvedTimeZone {
-        MetazoneCalculator::new().compute(self, &ZoneOffsetCalculator::new(), local_datetime)
-    }
 }
 
-impl MetazoneCalculator {
+impl TimeZoneCalculator {
     /// Converts a [`TimeZone`] to a [`ResolvedTimeZone`] at the given datetime.
-    pub fn compute(
+    pub fn resolve_at(
         &self,
         timezone: TimeZone,
-        zoc: &ZoneOffsetCalculator,
         local_datetime: &DateTime<Iso>,
     ) -> ResolvedTimeZone {
         ResolvedTimeZone {
@@ -177,7 +146,7 @@ impl MetazoneCalculator {
                 .and_then(|id| self.compute_metazone_from_time_zone(id, local_datetime)),
             zone_variant: timezone.bcp47_id.and_then(|id| {
                 timezone.offset.and_then(|offset| {
-                    zoc.compute_offsets_from_time_zone(id, local_datetime)
+                    self.compute_offsets_from_time_zone(id, local_datetime)
                         .and_then(|(std, dst)| {
                             if offset == std {
                                 Some(ZoneVariant::standard())

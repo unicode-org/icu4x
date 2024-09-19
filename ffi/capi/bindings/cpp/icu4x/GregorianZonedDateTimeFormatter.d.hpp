@@ -18,12 +18,10 @@ namespace capi { struct IsoDateTime; }
 class IsoDateTime;
 namespace capi { struct Locale; }
 class Locale;
-namespace capi { struct MetazoneCalculator; }
-class MetazoneCalculator;
 namespace capi { struct TimeZone; }
 class TimeZone;
-namespace capi { struct ZoneOffsetCalculator; }
-class ZoneOffsetCalculator;
+namespace capi { struct TimeZoneCalculator; }
+class TimeZoneCalculator;
 class DateTimeLength;
 class Error;
 }
@@ -41,7 +39,7 @@ public:
 
   inline static diplomat::result<std::unique_ptr<icu4x::GregorianZonedDateTimeFormatter>, icu4x::Error> create_with_length(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeLength length);
 
-  inline std::string format_iso_datetime_with_custom_time_zone(const icu4x::IsoDateTime& datetime, const icu4x::TimeZone& time_zone, const icu4x::MetazoneCalculator& metazone_calculator, const icu4x::ZoneOffsetCalculator& zone_offset_calculator) const;
+  inline std::string format_iso_datetime_with_custom_time_zone(const icu4x::IsoDateTime& datetime, const icu4x::TimeZone& time_zone, const icu4x::TimeZoneCalculator& timezone_calculator) const;
 
   inline const icu4x::capi::GregorianZonedDateTimeFormatter* AsFFI() const;
   inline icu4x::capi::GregorianZonedDateTimeFormatter* AsFFI();

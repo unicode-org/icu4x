@@ -5,7 +5,7 @@
 //! Some useful parsing functions for tests.
 
 use icu_calendar::{DateTime, Gregorian};
-use icu_timezone::{ResolvedZonedDateTime, ZonedDateTime};
+use icu_timezone::{ResolvedZonedDateTime, TimeZoneCalculator, ZonedDateTime};
 
 /// Temporary function for parsing a `DateTime<Gregorian>`
 ///
@@ -57,5 +57,5 @@ pub fn parse_gregorian_from_str(input: &str) -> DateTime<Gregorian> {
 /// ```
 pub fn parse_zoned_gregorian_from_str(input: &str) -> ResolvedZonedDateTime<Gregorian> {
     let datetime_iso = ZonedDateTime::try_iso_from_str(input).unwrap();
-    datetime_iso.to_calendar(Gregorian).resolve()
+    TimeZoneCalculator::new().resolve(datetime_iso.to_calendar(Gregorian))
 }

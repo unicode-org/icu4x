@@ -258,7 +258,7 @@
 //!
 //! ```
 //! use icu::calendar::DateTime;
-//! use icu::timezone::{TimeZone, MetazoneCalculator, TimeZoneIdMapper, TimeZoneBcp47Id, ZoneOffsetCalculator};
+//! use icu::timezone::{TimeZone, TimeZoneCalculator, TimeZoneIdMapper, TimeZoneBcp47Id};
 //! use icu::datetime::neo::TypedNeoFormatter;
 //! use icu::datetime::neo_marker::NeoTimeZoneGenericShortMarker;
 //! use icu::datetime::NeverCalendar;
@@ -271,8 +271,9 @@
 //! //   2. The IANA time zone ID
 //! //   3. A datetime (for ResolvedTimeZone construction)
 //!
-//! // Set up the time zone ID mapper and the DateTime to use in calculation
+//! // Set up the time zone ID mapper, time zone calculator, and the DateTime to use in calculation
 //! let mapper = TimeZoneIdMapper::new();
+//! let calc = TimeZoneCalculator::new();
 //! let datetime = DateTime::try_new_iso_datetime(2022, 8, 29, 0, 0, 0)
 //!     .unwrap();
 //!
@@ -285,24 +286,21 @@
 //! .unwrap();
 //!
 //! // "America/Chicago" - has metazone symbol data for generic_non_location_short
-//! let time_zone = TimeZone::new("-0600".parse().unwrap(), mapper.as_borrowed().iana_to_bcp47("America/Chicago").unwrap())
-//!     .resolve_at(&datetime);
+//! let time_zone = calc.resolve_at(TimeZone::new("-0600".parse().unwrap(), mapper.as_borrowed().iana_to_bcp47("America/Chicago").unwrap()), &datetime);
 //! assert_try_writeable_eq!(
 //!     tzf.format(&time_zone),
 //!     "CT"
 //! );
 //!
 //! // "ushnl" - has time zone override symbol data for generic_non_location_short
-//! let mut time_zone = TimeZone::new("-1000".parse().unwrap(), TimeZoneBcp47Id(tinystr!(8, "ushnl")))
-//!     .resolve_at(&datetime);
+//! let mut time_zone = calc.resolve_at(TimeZone::new("-1000".parse().unwrap(), TimeZoneBcp47Id(tinystr!(8, "ushnl"))), &datetime);
 //! assert_try_writeable_eq!(
 //!     tzf.format(&time_zone),
 //!     "HST"
 //! );
 //!
 //! // Raw offset - used when metazone is not available
-//! let mut time_zone = TimeZone::new_with_offset("+0530".parse().unwrap())
-//!     .resolve_at(&datetime);
+//! let mut time_zone = calc.resolve_at(TimeZone::new_with_offset("+0530".parse().unwrap()), &datetime);
 //! assert_try_writeable_eq!(
 //!     tzf.format(&time_zone),
 //!     "GMT+05:30"
@@ -330,8 +328,7 @@ use icu_calendar::{
 };
 use icu_provider::{marker::NeverMarker, prelude::*};
 use icu_timezone::{
-    ResolvedTimeZone, ResolvedZonedDateTime, MetazoneId, TimeZoneBcp47Id, UtcOffset,
-    ZoneVariant,
+    MetazoneId, ResolvedTimeZone, ResolvedZonedDateTime, TimeZoneBcp47Id, UtcOffset, ZoneVariant,
 };
 
 // TODO: Figure out where to export these traits
@@ -378,9 +375,7 @@ impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> ConvertCalendar for DateTi
     }
 }
 
-impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> ConvertCalendar
-    for ResolvedZonedDateTime<A>
-{
+impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> ConvertCalendar for ResolvedZonedDateTime<A> {
     type Converted<'a> = ResolvedZonedDateTime<Ref<'a, AnyCalendar>>;
     #[inline]
     fn to_calendar<'a>(&self, calendar: &'a AnyCalendar) -> Self::Converted<'a> {
@@ -599,18 +594,14 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<NanoSecond> for DateT
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<YearInfo>
-    for ResolvedZonedDateTime<A>
-{
+impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<YearInfo> for ResolvedZonedDateTime<A> {
     #[inline]
     fn get_field(&self) -> YearInfo {
         self.date().year()
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<MonthInfo>
-    for ResolvedZonedDateTime<A>
-{
+impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<MonthInfo> for ResolvedZonedDateTime<A> {
     #[inline]
     fn get_field(&self) -> MonthInfo {
         self.date().month()
@@ -653,27 +644,21 @@ impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> NeoGetField<AnyCalendarKin
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<IsoHour>
-    for ResolvedZonedDateTime<A>
-{
+impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<IsoHour> for ResolvedZonedDateTime<A> {
     #[inline]
     fn get_field(&self) -> IsoHour {
         self.time().hour
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<IsoMinute>
-    for ResolvedZonedDateTime<A>
-{
+impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<IsoMinute> for ResolvedZonedDateTime<A> {
     #[inline]
     fn get_field(&self) -> IsoMinute {
         self.time().minute
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<IsoSecond>
-    for ResolvedZonedDateTime<A>
-{
+impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<IsoSecond> for ResolvedZonedDateTime<A> {
     #[inline]
     fn get_field(&self) -> IsoSecond {
         self.time().second
@@ -1864,7 +1849,7 @@ macro_rules! impl_zone_marker {
         /// In [`NeoFormatter`](crate::neo::NeoFormatter):
         ///
         /// ```
-        /// use icu::timezone::{TimeZone, TimeZoneBcp47Id};
+        /// use icu::timezone::{TimeZone, TimeZoneBcp47Id, TimeZoneCalculator};
         /// use icu::datetime::neo::NeoFormatter;
         #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
         /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
@@ -1879,8 +1864,8 @@ macro_rules! impl_zone_marker {
         /// .unwrap();
         ///
         /// // Time zone for America/Chicago in the summer
-        /// let zone = TimeZone::new("-05:00".parse().unwrap(), TimeZoneBcp47Id(tinystr!(8, "uschi")))
-        ///     .resolve_at(
+        /// let zone = TimeZoneCalculator::new().resolve_at(
+        ///         TimeZone::new("-05:00".parse().unwrap(), TimeZoneBcp47Id(tinystr!(8, "uschi"))),
         ///         &icu_calendar::DateTime::try_new_iso_datetime(2024, 7, 1, 0, 0, 0).unwrap()
         /// );
         ///
@@ -1894,7 +1879,7 @@ macro_rules! impl_zone_marker {
         ///
         /// ```
         /// use icu::calendar::{Date, Time};
-        /// use icu::timezone::{TimeZone, TimeZoneBcp47Id};
+        /// use icu::timezone::{TimeZone, TimeZoneBcp47Id, TimeZoneCalculator};
         /// use icu::calendar::Gregorian;
         /// use icu::datetime::neo::TypedNeoFormatter;
         #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
@@ -1910,8 +1895,8 @@ macro_rules! impl_zone_marker {
         /// .unwrap();
         ///
         /// // Time zone for America/Chicago in the summer
-        /// let zone = TimeZone::new("-05:00".parse().unwrap(), TimeZoneBcp47Id(tinystr!(8, "uschi")))
-        ///     .resolve_at(
+        /// let zone = TimeZoneCalculator::new().resolve_at(
+        ///         TimeZone::new("-05:00".parse().unwrap(), TimeZoneBcp47Id(tinystr!(8, "uschi"))),
         ///         &icu_calendar::DateTime::try_new_iso_datetime(2024, 7, 1, 0, 0, 0).unwrap()
         /// );
         ///
@@ -2049,7 +2034,7 @@ macro_rules! impl_zoneddatetime_marker {
         ///
         /// ```
         /// use icu::calendar::{Date, Time};
-        /// use icu::timezone::ZonedDateTime;
+        /// use icu::timezone::{TimeZoneCalculator, ZonedDateTime};
         /// use icu::datetime::neo::NeoFormatter;
         #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
         /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
@@ -2062,9 +2047,8 @@ macro_rules! impl_zoneddatetime_marker {
         /// )
         /// .unwrap();
         ///
-        /// let mut dtz = ZonedDateTime::try_from_str("2024-05-17T15:47:50+01:00[Europe/London]")
-        ///     .unwrap()
-        ///     .resolve();
+        /// let mut dtz = TimeZoneCalculator::new().resolve(ZonedDateTime::try_from_str("2024-05-17T15:47:50+01:00[Europe/London]")
+        ///     .unwrap());
         /// assert_try_writeable_eq!(
         ///     fmt.convert_and_format(&dtz),
         #[doc = concat!("    \"", $sample, "\"")]
@@ -2075,7 +2059,7 @@ macro_rules! impl_zoneddatetime_marker {
         ///
         /// ```
         /// use icu::calendar::{Date, Time};
-        /// use icu::timezone::{ZonedDateTime};
+        /// use icu::timezone::{TimeZoneCalculator, ZonedDateTime};
         /// use icu::calendar::Gregorian;
         /// use icu::datetime::neo::TypedNeoFormatter;
         #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
@@ -2089,10 +2073,9 @@ macro_rules! impl_zoneddatetime_marker {
         /// )
         /// .unwrap();
         ///
-        /// let mut dtz = ZonedDateTime::try_from_str("2024-05-17T15:47:50+01:00[Europe/London]")
+        /// let mut dtz = TimeZoneCalculator::new().resolve(ZonedDateTime::try_from_str("2024-05-17T15:47:50+01:00[Europe/London]")
         ///     .unwrap()
-        ///     .to_calendar(Gregorian)
-        ///     .resolve();
+        ///     .to_calendar(Gregorian));
         ///
         /// assert_try_writeable_eq!(
         ///     fmt.format(&dtz),
@@ -2258,7 +2241,7 @@ impl_zone_marker!(
     ///
     /// ```
     /// use icu::calendar::{Date, Time};
-    /// use icu::timezone::{TimeZone, TimeZoneBcp47Id};
+    /// use icu::timezone::{TimeZone, TimeZoneBcp47Id, TimeZoneCalculator};
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo::TypedNeoFormatter;
     /// use icu::datetime::neo_marker::NeoTimeZoneSpecificShortMarker;
@@ -2274,8 +2257,8 @@ impl_zone_marker!(
     /// .unwrap();
     ///
     /// // Time zone for America/Sao_Paulo year-round
-    /// let zone = TimeZone::new("-03:00".parse().unwrap(), TimeZoneBcp47Id(tinystr!(8, "brsao")))
-    ///     .resolve_at(
+    /// let zone = TimeZoneCalculator::new().resolve_at(
+    ///         TimeZone::new("-03:00".parse().unwrap(), TimeZoneBcp47Id(tinystr!(8, "brsao"))),
     ///         &icu_calendar::DateTime::try_new_iso_datetime(2025, 1, 2, 0, 0, 0).unwrap(),
     ///     );
     ///
@@ -2372,7 +2355,7 @@ impl_zone_marker!(
     ///
     /// ```
     /// use icu::calendar::{Date, Time};
-    /// use icu::timezone::{TimeZone, TimeZoneBcp47Id};
+    /// use icu::timezone::{TimeZone, TimeZoneBcp47Id, TimeZoneCalculator};
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo::TypedNeoFormatter;
     /// use icu::datetime::neo_marker::NeoTimeZoneGenericShortMarker;
@@ -2388,8 +2371,8 @@ impl_zone_marker!(
     /// .unwrap();
     ///
     /// // Time zone for America/Sao_Paulo year-round
-    /// let zone = TimeZone::new("-03:00".parse().unwrap(), TimeZoneBcp47Id(tinystr!(8, "brsao")))
-    ///     .resolve_at(
+    /// let zone = TimeZoneCalculator::new().resolve_at(
+    ///         TimeZone::new("-03:00".parse().unwrap(), TimeZoneBcp47Id(tinystr!(8, "brsao"))),
     ///         &icu_calendar::DateTime::try_new_iso_datetime(2025, 1, 2, 0, 0, 0).unwrap(),
     ///     );
     ///

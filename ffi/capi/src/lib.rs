@@ -98,8 +98,6 @@ pub mod list;
 pub mod locale;
 #[cfg(feature = "locale")]
 pub mod locale_directionality;
-#[cfg(feature = "timezone")]
-pub mod metazone_calculator;
 #[cfg(feature = "normalizer")]
 pub mod normalizer;
 #[cfg(feature = "normalizer")]
@@ -130,13 +128,13 @@ pub mod segmenter_word;
 pub mod time;
 #[cfg(any(feature = "datetime", feature = "timezone"))]
 pub mod timezone;
+#[cfg(feature = "timezone")]
+pub mod timezone_calculator;
 #[cfg(any(feature = "datetime", feature = "timezone"))]
 pub mod timezone_mapper;
 #[cfg(feature = "experimental")]
 pub mod units_converter;
 #[cfg(feature = "calendar")]
 pub mod week;
-#[cfg(feature = "timezone")]
-pub mod zone_offset_calculator;
 #[cfg(all(feature = "datetime", feature = "timezone"))]
 pub mod zoned_formatter;

@@ -8,10 +8,10 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *
 *See the [Rust documentation for `MetazoneCalculator`](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneCalculator.html) for more information.
 */
-export class MetazoneCalculator {
+export class TimeZoneCalculator {
     
 
     get ffiValue(): pointer;
 
-    static create(provider: DataProvider): MetazoneCalculator;
+    static create(provider: DataProvider): TimeZoneCalculator;
 }

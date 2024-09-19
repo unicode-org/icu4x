@@ -17,10 +17,9 @@ pub mod ffi {
         datetime_formatter::ffi::DateTimeLength,
         errors::ffi::Error,
         locale_core::ffi::Locale,
-        metazone_calculator::ffi::MetazoneCalculator,
         provider::ffi::DataProvider,
         timezone::ffi::TimeZone,
-        zone_offset_calculator::ffi::ZoneOffsetCalculator,
+        timezone_calculator::ffi::TimeZoneCalculator,
     };
 
     use writeable::TryWriteable;
@@ -68,8 +67,7 @@ pub mod ffi {
             &self,
             datetime: &IsoDateTime,
             time_zone: &TimeZone,
-            metazone_calculator: &MetazoneCalculator,
-            zone_offset_calculator: &ZoneOffsetCalculator,
+            timezone_calculator: &TimeZoneCalculator,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
             let greg = icu_calendar::DateTime::new_from_iso(datetime.0, icu_calendar::Gregorian);
@@ -80,11 +78,7 @@ pub mod ffi {
             };
             let _infallible = self
                 .0
-                .format(
-                    &metazone_calculator
-                        .0
-                        .compute_dt(zdt, &zone_offset_calculator.0),
-                )
+                .format(&timezone_calculator.0.resolve(zdt))
                 .try_write_to(write);
         }
     }
@@ -128,8 +122,7 @@ pub mod ffi {
             &self,
             datetime: &DateTime,
             time_zone: &TimeZone,
-            metazone_calculator: &MetazoneCalculator,
-            zone_offset_calculator: &ZoneOffsetCalculator,
+            time_zone_calculator: &TimeZoneCalculator,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), Error> {
             let zdt = icu_timezone::ZonedDateTime {
@@ -139,11 +132,7 @@ pub mod ffi {
             };
             let _infallible = self
                 .0
-                .convert_and_format(
-                    &metazone_calculator
-                        .0
-                        .compute_dt(zdt, &zone_offset_calculator.0),
-                )
+                .convert_and_format(&time_zone_calculator.0.resolve(zdt))
                 .try_write_to(write);
             Ok(())
         }
@@ -153,8 +142,7 @@ pub mod ffi {
             &self,
             datetime: &IsoDateTime,
             time_zone: &TimeZone,
-            metazone_calculator: &MetazoneCalculator,
-            zone_offset_calculator: &ZoneOffsetCalculator,
+            time_zone_calculator: &TimeZoneCalculator,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), Error> {
             let zdt = icu_timezone::ZonedDateTime {
@@ -164,11 +152,7 @@ pub mod ffi {
             };
             let _infallible = self
                 .0
-                .convert_and_format(
-                    &metazone_calculator
-                        .0
-                        .compute_dt(zdt, &zone_offset_calculator.0),
-                )
+                .convert_and_format(&time_zone_calculator.0.resolve(zdt))
                 .try_write_to(write);
             Ok(())
         }

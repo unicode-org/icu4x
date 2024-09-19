@@ -5,7 +5,7 @@ part of 'lib.g.dart';
 /// An object capable of computing the metazone from a timezone.
 ///
 /// See the [Rust documentation for `MetazoneCalculator`](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneCalculator.html) for more information.
-final class MetazoneCalculator implements ffi.Finalizable {
+final class TimeZoneCalculator implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
   // These are "used" in the sense that they keep dependencies alive
@@ -16,32 +16,32 @@ final class MetazoneCalculator implements ffi.Finalizable {
   // corresponding to data this may borrow from. These should be flat arrays containing
   // references to objects, and this object will hold on to them to keep them alive and
   // maintain borrow validity.
-  MetazoneCalculator._fromFfi(this._ffi, this._selfEdge) {
+  TimeZoneCalculator._fromFfi(this._ffi, this._selfEdge) {
     if (_selfEdge.isEmpty) {
       _finalizer.attach(this, _ffi.cast());
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_MetazoneCalculator_destroy_mv1));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_TimeZoneCalculator_destroy_mv1));
 
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneCalculator.html#method.new) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory MetazoneCalculator(DataProvider provider) {
-    final result = _icu4x_MetazoneCalculator_create_mv1(provider._ffi);
+  factory TimeZoneCalculator(DataProvider provider) {
+    final result = _icu4x_TimeZoneCalculator_create_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
-    return MetazoneCalculator._fromFfi(result.union.ok, []);
+    return TimeZoneCalculator._fromFfi(result.union.ok, []);
   }
 }
 
-@meta.ResourceIdentifier('icu4x_MetazoneCalculator_destroy_mv1')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_MetazoneCalculator_destroy_mv1')
+@meta.ResourceIdentifier('icu4x_TimeZoneCalculator_destroy_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_TimeZoneCalculator_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _icu4x_MetazoneCalculator_destroy_mv1(ffi.Pointer<ffi.Void> self);
+external void _icu4x_TimeZoneCalculator_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('icu4x_MetazoneCalculator_create_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_MetazoneCalculator_create_mv1')
+@meta.ResourceIdentifier('icu4x_TimeZoneCalculator_create_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneCalculator_create_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_MetazoneCalculator_create_mv1(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_TimeZoneCalculator_create_mv1(ffi.Pointer<ffi.Opaque> provider);

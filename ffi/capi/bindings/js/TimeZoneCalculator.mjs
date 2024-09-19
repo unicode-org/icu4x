@@ -5,15 +5,15 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** An object capable of computing UTC offsets from a timezone.
+/** An object capable of computing the metazone from a timezone.
 *
-*See the [Rust documentation for `ZoneOffsetCalculator`](https://docs.rs/icu/latest/icu/timezone/struct.ZoneOffsetCalculator.html) for more information.
+*See the [Rust documentation for `MetazoneCalculator`](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneCalculator.html) for more information.
 */
-const ZoneOffsetCalculator_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.icu4x_ZoneOffsetCalculator_destroy_mv1(ptr);
+const TimeZoneCalculator_box_destroy_registry = new FinalizationRegistry((ptr) => {
+    wasm.icu4x_TimeZoneCalculator_destroy_mv1(ptr);
 });
 
-export class ZoneOffsetCalculator {
+export class TimeZoneCalculator {
     // Internal ptr reference:
     #ptr = null;
 
@@ -23,7 +23,7 @@ export class ZoneOffsetCalculator {
     
     constructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
-            console.error("ZoneOffsetCalculator is an Opaque type. You cannot call its constructor.");
+            console.error("TimeZoneCalculator is an Opaque type. You cannot call its constructor.");
             return;
         }
         
@@ -32,7 +32,7 @@ export class ZoneOffsetCalculator {
         
         // Are we being borrowed? If not, we can register.
         if (this.#selfEdge.length === 0) {
-            ZoneOffsetCalculator_box_destroy_registry.register(this, this.#ptr);
+            TimeZoneCalculator_box_destroy_registry.register(this, this.#ptr);
         }
     }
 
@@ -43,14 +43,14 @@ export class ZoneOffsetCalculator {
     static create(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_ZoneOffsetCalculator_create_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_TimeZoneCalculator_create_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new ZoneOffsetCalculator(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new TimeZoneCalculator(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {

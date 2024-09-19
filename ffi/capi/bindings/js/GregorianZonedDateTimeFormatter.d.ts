@@ -4,9 +4,8 @@ import type { DateTimeLength } from "./DateTimeLength"
 import type { Error } from "./Error"
 import type { IsoDateTime } from "./IsoDateTime"
 import type { Locale } from "./Locale"
-import type { MetazoneCalculator } from "./MetazoneCalculator"
 import type { TimeZone } from "./TimeZone"
-import type { ZoneOffsetCalculator } from "./ZoneOffsetCalculator"
+import type { TimeZoneCalculator } from "./TimeZoneCalculator"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
@@ -21,5 +20,5 @@ export class GregorianZonedDateTimeFormatter {
 
     static createWithLength(provider: DataProvider, locale: Locale, length: DateTimeLength): GregorianZonedDateTimeFormatter;
 
-    formatIsoDatetimeWithCustomTimeZone(datetime: IsoDateTime, timeZone: TimeZone, metazoneCalculator: MetazoneCalculator, zoneOffsetCalculator: ZoneOffsetCalculator): string;
+    formatIsoDatetimeWithCustomTimeZone(datetime: IsoDateTime, timeZone: TimeZone, timezoneCalculator: TimeZoneCalculator): string;
 }
