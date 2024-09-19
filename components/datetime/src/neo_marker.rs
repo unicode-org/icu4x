@@ -1624,6 +1624,77 @@ macro_rules! impl_get_field {
     };
 }
 
+macro_rules! impl_marker_with_options {
+    (
+        $(#[$attr:meta])*
+        $type:ident,
+        $(sample_length: $sample_length:ident,)?
+        $(alignment: $alignment_yes:ident,)?
+        $(era_display: $eradisplay_yes:ident,)?
+        $(fractional_second_digits: $fractionalsecondigits_yes:ident,)?
+    ) => {
+        $(#[$attr])*
+        #[derive(Debug)]
+        #[non_exhaustive]
+        pub struct $type {
+            $(
+                /// The desired length of the formatted string.
+                ///
+                /// See: [`NeoSkeletonLength`]
+                pub length: datetime_marker_helper!(@option/length, $sample_length),
+            )?
+            $(
+                /// Whether fields should be aligned for a column-like layout.
+                ///
+                /// See: [`Alignment`]
+                pub alignment: datetime_marker_helper!(@option/alignment, $alignment_yes),
+            )?
+            $(
+                /// When to display the era field in the formatted string.
+                ///
+                /// See: [`EraDisplay`]
+                pub era_display: datetime_marker_helper!(@option/eradisplay, $eradisplay_yes),
+            )?
+            $(
+                /// How many fractional seconds to display.
+                ///
+                /// See: [`FractionalSecondDigits`]
+                pub fractional_second_digits: datetime_marker_helper!(@option/fractionalsecondigits, $fractionalsecondigits_yes),
+            )?
+        }
+        impl $type {
+            #[doc = concat!("Creates a ", stringify!($type), " skeleton with the given formatting length.")]
+            pub const fn with_length(length: NeoSkeletonLength) -> Self {
+                Self {
+                    length,
+                    $(
+                        alignment: yes_to!(None, $alignment_yes),
+                    )?
+                    $(
+                        era_display: yes_to!(None, $eradisplay_yes),
+                    )?
+                    $(
+                        fractional_second_digits: yes_to!(None, $fractionalsecondigits_yes),
+                    )?
+                }
+            }
+        }
+        impl_get_field!($type, never);
+        $(
+            impl_get_field!($type, length, $alignment_yes);
+        )?
+        $(
+            impl_get_field!($type, alignment, $alignment_yes);
+        )?
+        $(
+            impl_get_field!($type, era_display, $eradisplay_yes);
+        )?
+        $(
+            impl_get_field!($type, fractional_second_digits, $fractionalsecondigits_yes);
+        )?
+    };
+}
+
 macro_rules! impl_date_marker {
     (
         $type:ident,
@@ -1643,97 +1714,61 @@ macro_rules! impl_date_marker {
         $(input_any_calendar_kind = $any_calendar_kind_yes:ident,)?
         $(option_alignment = $option_alignment_yes:ident,)?
     ) => {
-        #[doc = concat!("**“", $sample, "**” ⇒ ", $description)]
-        ///
-        /// # Examples
-        ///
-        /// In [`NeoFormatter`](crate::neo::NeoFormatter):
-        ///
-        /// ```
-        /// use icu::calendar::Date;
-        /// use icu::datetime::neo::NeoFormatter;
-        #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
-        /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
-        /// use icu::locale::locale;
-        /// use writeable::assert_try_writeable_eq;
-        #[doc = concat!("let fmt = NeoFormatter::<", stringify!($type), ">::try_new(")]
-        ///     &locale!("en").into(),
-        #[doc = concat!("    ", length_option_helper!($sample_length), ",")]
-        /// )
-        /// .unwrap();
-        /// let dt = Date::try_new_iso_date(2024, 5, 17).unwrap();
-        ///
-        /// assert_try_writeable_eq!(
-        ///     fmt.convert_and_format(&dt),
-        #[doc = concat!("    \"", $sample, "\"")]
-        /// );
-        /// ```
-        ///
-        /// In [`TypedNeoFormatter`](crate::neo::TypedNeoFormatter):
-        ///
-        /// ```
-        /// use icu::calendar::Date;
-        /// use icu::calendar::Gregorian;
-        /// use icu::datetime::neo::TypedNeoFormatter;
-        #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
-        /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
-        /// use icu::locale::locale;
-        /// use writeable::assert_try_writeable_eq;
-        ///
-        #[doc = concat!("let fmt = TypedNeoFormatter::<Gregorian, ", stringify!($type), ">::try_new(")]
-        ///     &locale!("en").into(),
-        #[doc = concat!("    ", length_option_helper!($sample_length), ",")]
-        /// )
-        /// .unwrap();
-        /// let dt = Date::try_new_gregorian_date(2024, 5, 17).unwrap();
-        ///
-        /// assert_try_writeable_eq!(
-        ///     fmt.format(&dt),
-        #[doc = concat!("    \"", $sample, "\"")]
-        /// );
-        /// ```
-        #[derive(Debug)]
-        #[non_exhaustive]
-        pub struct $type {
-            /// The desired length of the formatted string.
+        impl_marker_with_options!(
+            #[doc = concat!("**“", $sample, "**” ⇒ ", $description)]
             ///
-            /// See: [`NeoSkeletonLength`]
-            pub length: datetime_marker_helper!(@option/length, $sample_length),
-            $(
-                /// Whether fields should be aligned for a column-like layout.
-                ///
-                /// See: [`Alignment`]
-                pub alignment: datetime_marker_helper!(@option/alignment, $option_alignment_yes),
-            )?
-            $(
-                /// When to display the era field in the formatted string.
-                ///
-                /// See: [`EraDisplay`]
-                pub era_display: datetime_marker_helper!(@option/eradisplay, $year_yes),
-            )?
-        }
-        impl $type {
-            #[doc = concat!("Creates a ", stringify!($type), " skeleton with the given formatting length.")]
-            pub const fn with_length(length: NeoSkeletonLength) -> Self {
-                Self {
-                    length,
-                    $(
-                        alignment: yes_to!(None, $option_alignment_yes),
-                    )?
-                    $(
-                        era_display: yes_to!(None, $year_yes),
-                    )?
-                }
-            }
-        }
-        impl_get_field!($type, never);
-        impl_get_field!($type, length, yes);
-        $(
-            impl_get_field!($type, alignment, $option_alignment_yes);
-        )?
-        $(
-            impl_get_field!($type, era_display, $year_yes);
-        )?
+            /// # Examples
+            ///
+            /// In [`NeoFormatter`](crate::neo::NeoFormatter):
+            ///
+            /// ```
+            /// use icu::calendar::Date;
+            /// use icu::datetime::neo::NeoFormatter;
+            #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
+            /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+            /// use icu::locale::locale;
+            /// use writeable::assert_try_writeable_eq;
+            #[doc = concat!("let fmt = NeoFormatter::<", stringify!($type), ">::try_new(")]
+            ///     &locale!("en").into(),
+            #[doc = concat!("    ", length_option_helper!($sample_length), ",")]
+            /// )
+            /// .unwrap();
+            /// let dt = Date::try_new_iso_date(2024, 5, 17).unwrap();
+            ///
+            /// assert_try_writeable_eq!(
+            ///     fmt.convert_and_format(&dt),
+            #[doc = concat!("    \"", $sample, "\"")]
+            /// );
+            /// ```
+            ///
+            /// In [`TypedNeoFormatter`](crate::neo::TypedNeoFormatter):
+            ///
+            /// ```
+            /// use icu::calendar::Date;
+            /// use icu::calendar::Gregorian;
+            /// use icu::datetime::neo::TypedNeoFormatter;
+            #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
+            /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+            /// use icu::locale::locale;
+            /// use writeable::assert_try_writeable_eq;
+            ///
+            #[doc = concat!("let fmt = TypedNeoFormatter::<Gregorian, ", stringify!($type), ">::try_new(")]
+            ///     &locale!("en").into(),
+            #[doc = concat!("    ", length_option_helper!($sample_length), ",")]
+            /// )
+            /// .unwrap();
+            /// let dt = Date::try_new_gregorian_date(2024, 5, 17).unwrap();
+            ///
+            /// assert_try_writeable_eq!(
+            ///     fmt.format(&dt),
+            #[doc = concat!("    \"", $sample, "\"")]
+            /// );
+            /// ```
+            $type,
+            sample_length: $sample_length,
+            $(alignment: $option_alignment_yes)?,
+            $(era_display: $year_yes)?,
+        );
         impl private::Sealed for $type {}
         impl DateTimeNamesMarker for $type {
             type YearNames = datetime_marker_helper!(@names/year, $($years_yes)?);
