@@ -38,7 +38,7 @@ macro_rules! __impl_islamic_umm_al_qura_cache_v1_marker {
             }
         }
     };
-    ($ provider : ty , DRY_IF_RETAIN) => {
+    ($ provider : ty , DRY) => {
         __impl_islamic_umm_al_qura_cache_v1_marker!($provider);
         #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::calendar::provider::IslamicUmmAlQuraCacheV1Marker> for $provider {
@@ -51,7 +51,7 @@ macro_rules! __impl_islamic_umm_al_qura_cache_v1_marker {
             }
         }
     };
-    ($ provider : ty , DRY_IF_RETAIN , ITER) => {
+    ($ provider : ty , DRY , ITER) => {
         __impl_islamic_umm_al_qura_cache_v1_marker!($provider);
         #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::calendar::provider::IslamicUmmAlQuraCacheV1Marker> for $provider {

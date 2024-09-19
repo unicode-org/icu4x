@@ -77,7 +77,7 @@ macro_rules! __impl_aliases_v2_marker {
             }
         }
     };
-    ($ provider : ty , DRY_IF_RETAIN) => {
+    ($ provider : ty , DRY) => {
         __impl_aliases_v2_marker!($provider);
         #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::locale::provider::AliasesV2Marker> for $provider {
@@ -90,7 +90,7 @@ macro_rules! __impl_aliases_v2_marker {
             }
         }
     };
-    ($ provider : ty , DRY_IF_RETAIN , ITER) => {
+    ($ provider : ty , DRY , ITER) => {
         __impl_aliases_v2_marker!($provider);
         #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::locale::provider::AliasesV2Marker> for $provider {

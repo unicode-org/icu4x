@@ -43,7 +43,7 @@ macro_rules! __impl_east_asian_width_name_to_value_v1_marker {
             }
         }
     };
-    ($ provider : ty , DRY_IF_RETAIN) => {
+    ($ provider : ty , DRY) => {
         __impl_east_asian_width_name_to_value_v1_marker!($provider);
         #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::properties::provider::EastAsianWidthNameToValueV1Marker> for $provider {
@@ -56,7 +56,7 @@ macro_rules! __impl_east_asian_width_name_to_value_v1_marker {
             }
         }
     };
-    ($ provider : ty , DRY_IF_RETAIN , ITER) => {
+    ($ provider : ty , DRY , ITER) => {
         __impl_east_asian_width_name_to_value_v1_marker!($provider);
         #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::properties::provider::EastAsianWidthNameToValueV1Marker> for $provider {

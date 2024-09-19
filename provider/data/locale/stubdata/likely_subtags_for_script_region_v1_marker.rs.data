@@ -51,7 +51,7 @@ macro_rules! __impl_likely_subtags_for_script_region_v1_marker {
             }
         }
     };
-    ($ provider : ty , DRY_IF_RETAIN) => {
+    ($ provider : ty , DRY) => {
         __impl_likely_subtags_for_script_region_v1_marker!($provider);
         #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::locale::provider::LikelySubtagsForScriptRegionV1Marker> for $provider {
@@ -64,7 +64,7 @@ macro_rules! __impl_likely_subtags_for_script_region_v1_marker {
             }
         }
     };
-    ($ provider : ty , DRY_IF_RETAIN , ITER) => {
+    ($ provider : ty , DRY , ITER) => {
         __impl_likely_subtags_for_script_region_v1_marker!($provider);
         #[clippy::msrv = "1.71.1"]
         impl icu_provider::DryDataProvider<icu::locale::provider::LikelySubtagsForScriptRegionV1Marker> for $provider {

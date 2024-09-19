@@ -195,8 +195,8 @@ macro_rules! __impl_indian_year_names_v1_marker {
             }
         }
     };
-    ($ provider : ty , DRY_IF_RETAIN) => {};
-    ($ provider : ty , DRY_IF_RETAIN , ITER) => {
+    ($ provider : ty , DRY) => {};
+    ($ provider : ty , DRY , ITER) => {
         __impl_indian_year_names_v1_marker!($provider, ITER);
     };
 }
