@@ -51,13 +51,15 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::UtcOffset, Struct, compact)]
         #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id, Struct, compact)]
         #[diplomat::attr(auto, constructor)]
-        pub fn create(offset_seconds: i32, id: &DiplomatStr) -> Option<Box<Self>> {
-            Some(Box::new(Self(icu_timezone::TimeZone::new(
-                icu_timezone::UtcOffset::try_from_offset_seconds(offset_seconds).ok()?,
+        pub fn create(
+            offset_seconds: i32,
+            id: &DiplomatStr,
+        ) -> Result<Box<Self>, TimeZoneUnknownError> {
+            Ok(Box::new(Self(icu_timezone::TimeZone::new(
+                icu_timezone::UtcOffset::try_from_offset_seconds(offset_seconds)
+                    .map_err(|_| TimeZoneUnknownError)?,
                 icu_timezone::TimeZoneBcp47Id(
-                    tinystr::TinyAsciiStr::try_from_utf8(id)
-                        .map_err(|_| TimeZoneInvalidIdError)
-                        .ok()?,
+                    tinystr::TinyAsciiStr::try_from_utf8(id).map_err(|_| TimeZoneUnknownError)?,
                 ),
             ))))
         }

@@ -24,7 +24,8 @@ namespace capi {
     
     icu4x::capi::TimeZone* icu4x_TimeZone_utc_mv1(void);
     
-    icu4x::capi::TimeZone* icu4x_TimeZone_create_mv1(int32_t offset_seconds, diplomat::capi::DiplomatStringView id);
+    typedef struct icu4x_TimeZone_create_mv1_result {union {icu4x::capi::TimeZone* ok; }; bool is_ok;} icu4x_TimeZone_create_mv1_result;
+    icu4x_TimeZone_create_mv1_result icu4x_TimeZone_create_mv1(int32_t offset_seconds, diplomat::capi::DiplomatStringView id);
     
     typedef struct icu4x_TimeZone_create_from_offset_seconds_mv1_result {union {icu4x::capi::TimeZone* ok; }; bool is_ok;} icu4x_TimeZone_create_from_offset_seconds_mv1_result;
     icu4x_TimeZone_create_from_offset_seconds_mv1_result icu4x_TimeZone_create_from_offset_seconds_mv1(int32_t offset_seconds);
@@ -70,10 +71,10 @@ inline std::unique_ptr<icu4x::TimeZone> icu4x::TimeZone::utc() {
   return std::unique_ptr<icu4x::TimeZone>(icu4x::TimeZone::FromFFI(result));
 }
 
-inline std::unique_ptr<icu4x::TimeZone> icu4x::TimeZone::create(int32_t offset_seconds, std::string_view id) {
+inline diplomat::result<std::unique_ptr<icu4x::TimeZone>, icu4x::TimeZoneUnknownError> icu4x::TimeZone::create(int32_t offset_seconds, std::string_view id) {
   auto result = icu4x::capi::icu4x_TimeZone_create_mv1(offset_seconds,
     {id.data(), id.size()});
-  return std::unique_ptr<icu4x::TimeZone>(icu4x::TimeZone::FromFFI(result));
+  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::TimeZone>, icu4x::TimeZoneUnknownError>(diplomat::Ok<std::unique_ptr<icu4x::TimeZone>>(std::unique_ptr<icu4x::TimeZone>(icu4x::TimeZone::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::TimeZone>, icu4x::TimeZoneUnknownError>(diplomat::Err<icu4x::TimeZoneUnknownError>(icu4x::TimeZoneUnknownError {}));
 }
 
 inline diplomat::result<std::unique_ptr<icu4x::TimeZone>, icu4x::TimeZoneInvalidOffsetError> icu4x::TimeZone::create_from_offset_seconds(int32_t offset_seconds) {

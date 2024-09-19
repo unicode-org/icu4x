@@ -40,7 +40,7 @@
 //! 1. The metazone ID
 //! 2. The zone variant, representing concepts such as Standard, Summer, Daylight, and Ramadan time
 //!
-//! A [`FormattableTimeZone`] is constructed using [`TimeZone::to_formattable_at`].
+//! A [`FormattableTimeZone`] is constructed using [`TimeZone::into_formattable_at`].
 //!
 //! ## Metazone
 //!

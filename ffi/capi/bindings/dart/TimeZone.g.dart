@@ -51,10 +51,15 @@ final class TimeZone implements ffi.Finalizable {
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZone.html#structfield.new) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.UtcOffset.html), [2](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneBcp47Id.html)
+  ///
+  /// Throws [TimeZoneUnknownError] on failure.
   factory TimeZone(int offsetSeconds, String id) {
     final temp = _FinalizedArena();
     final result = _icu4x_TimeZone_create_mv1(offsetSeconds, id._utf8AllocIn(temp.arena));
-    return result.address == 0 ? null : TimeZone._fromFfi(result, []);
+    if (!result.isOk) {
+      throw TimeZoneUnknownError();
+    }
+    return TimeZone._fromFfi(result.union.ok, []);
   }
 
   /// Crates a `TimeZone` from offset seconds.
@@ -205,9 +210,9 @@ external _ResultOpaqueTimeZoneUnknownErrorFfi _icu4x_TimeZone_from_string_mv1(_S
 external ffi.Pointer<ffi.Opaque> _icu4x_TimeZone_utc_mv1();
 
 @meta.ResourceIdentifier('icu4x_TimeZone_create_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Int32, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_TimeZone_create_mv1')
+@ffi.Native<_ResultOpaqueTimeZoneUnknownErrorFfi Function(ffi.Int32, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_TimeZone_create_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_TimeZone_create_mv1(int offsetSeconds, _SliceUtf8 id);
+external _ResultOpaqueTimeZoneUnknownErrorFfi _icu4x_TimeZone_create_mv1(int offsetSeconds, _SliceUtf8 id);
 
 @meta.ResourceIdentifier('icu4x_TimeZone_create_from_offset_seconds_mv1')
 @ffi.Native<_ResultOpaqueTimeZoneInvalidOffsetErrorFfi Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_TimeZone_create_from_offset_seconds_mv1')

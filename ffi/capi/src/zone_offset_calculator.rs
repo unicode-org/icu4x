@@ -12,10 +12,6 @@ pub mod ffi {
     use crate::provider::ffi::DataProvider;
 
     /// An object capable of computing UTC offsets from a timezone.
-    ///
-    /// This can be used via `maybe_calculate_zone_variant()` on [`CustomTimeZone`].
-    ///
-    /// [`CustomTimeZone`]: crate::timezone::ffi::CustomTimeZone
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::timezone::ZoneOffsetCalculator, Struct)]
     pub struct ZoneOffsetCalculator(pub icu_timezone::ZoneOffsetCalculator);

@@ -20,7 +20,8 @@ icu4x_TimeZone_from_string_mv1_result icu4x_TimeZone_from_string_mv1(DiplomatStr
 
 TimeZone* icu4x_TimeZone_utc_mv1(void);
 
-TimeZone* icu4x_TimeZone_create_mv1(int32_t offset_seconds, DiplomatStringView id);
+typedef struct icu4x_TimeZone_create_mv1_result {union {TimeZone* ok; }; bool is_ok;} icu4x_TimeZone_create_mv1_result;
+icu4x_TimeZone_create_mv1_result icu4x_TimeZone_create_mv1(int32_t offset_seconds, DiplomatStringView id);
 
 typedef struct icu4x_TimeZone_create_from_offset_seconds_mv1_result {union {TimeZone* ok; }; bool is_ok;} icu4x_TimeZone_create_from_offset_seconds_mv1_result;
 icu4x_TimeZone_create_from_offset_seconds_mv1_result icu4x_TimeZone_create_from_offset_seconds_mv1(int32_t offset_seconds);

@@ -12,10 +12,6 @@ pub mod ffi {
     use crate::provider::ffi::DataProvider;
 
     /// An object capable of computing the metazone from a timezone.
-    ///
-    /// This can be used via `maybe_calculate_metazone()` on [`CustomTimeZone`].
-    ///
-    /// [`CustomTimeZone`]: crate::timezone::ffi::CustomTimeZone
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::timezone::MetazoneCalculator, Struct)]
     pub struct MetazoneCalculator(pub icu_timezone::MetazoneCalculator);

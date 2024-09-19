@@ -16,7 +16,7 @@ export class TimeZone {
 
     static utc(): TimeZone;
 
-    static create(offsetSeconds: number, id: string): TimeZone | null;
+    static create(offsetSeconds: number, id: string): TimeZone;
 
     static createFromOffsetSeconds(offsetSeconds: number): TimeZone;
 

@@ -78,14 +78,22 @@ export class TimeZone {
         
         const idSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, id));
         
-        const result = wasm.icu4x_TimeZone_create_mv1(offsetSeconds, ...idSlice.splat());
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
+        const result = wasm.icu4x_TimeZone_create_mv1(diplomatReceive.buffer, offsetSeconds, ...idSlice.splat());
     
         try {
-            return result === 0 ? null : new TimeZone(diplomatRuntime.internalConstructor, result, []);
+            if (!diplomatReceive.resultFlag) {
+                const cause = new TimeZoneUnknownError(diplomatRuntime.internalConstructor);
+                throw new globalThis.Error('TimeZoneUnknownError', { cause });
+            }
+            return new TimeZone(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
             functionCleanupArena.free();
+        
+            diplomatReceive.free();
         }
     }
 

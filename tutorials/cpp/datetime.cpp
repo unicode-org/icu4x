@@ -85,7 +85,7 @@ int main() {
         return 1;
     }
 
-    std::unique_ptr<TimeZone> time_zone = TimeZone::create(-18000, "uschi");
+    std::unique_ptr<TimeZone> time_zone = TimeZone::create(-18000, "uschi").ok().value();
     int32_t offset = time_zone->offset_seconds().value();
     if (offset != -18000) {
         std::cout << "UTC offset doesn't parse" << std::endl;

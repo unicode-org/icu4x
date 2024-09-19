@@ -32,7 +32,7 @@ public:
 
   inline static std::unique_ptr<icu4x::TimeZone> utc();
 
-  inline static std::unique_ptr<icu4x::TimeZone> create(int32_t offset_seconds, std::string_view id);
+  inline static diplomat::result<std::unique_ptr<icu4x::TimeZone>, icu4x::TimeZoneUnknownError> create(int32_t offset_seconds, std::string_view id);
 
   inline static diplomat::result<std::unique_ptr<icu4x::TimeZone>, icu4x::TimeZoneInvalidOffsetError> create_from_offset_seconds(int32_t offset_seconds);
 

@@ -4,14 +4,12 @@
 
 Types for resolving and manipulating time zones.
 
-## Fields
+## `TimeZone`
 
-In ICU4X, a [formattable time zone](CustomTimeZone) consists of four different fields:
+In ICU4X, a [`TimeZone`] consists of two optional fields:
 
 1. The offset from UTC
-2. The time zone ID
-3. The metazone ID
-4. The zone variant, representing concepts such as Standard, Summer, Daylight, and Ramadan time
+2. The BCP-47 ID
 
 ### UTC Offset
 
@@ -21,7 +19,7 @@ Coordinated Universal Time (UTC).
 In localized strings, it is often rendered as "UTC-6", meaning 6 hours less than UTC (some locales
 use the term "GMT" instead of "UTC").
 
-### Time Zone
+### ID
 
 The time zone ID corresponds to a time zone from the time zone database. The time zone ID
 usually corresponds to the largest city in the time zone.
@@ -33,6 +31,16 @@ There are two mostly-interchangeable standards for time zone IDs:
 
 ICU4X uses BCP-47 time zone IDs for all of its APIs. To get a BCP-47 time zone from an
 IANA time zone, use [`TimeZoneIdMapper`].
+
+## `FormattableTimeZone`
+
+A [`FormattableTimeZone`] represents a [`TimeZone`] interpreted at a specific local time, and
+extended with two more formatting-only fields:
+
+1. The metazone ID
+2. The zone variant, representing concepts such as Standard, Summer, Daylight, and Ramadan time
+
+A [`FormattableTimeZone`] is constructed using [`TimeZone::into_formattable_at`].
 
 ### Metazone
 
@@ -58,57 +66,39 @@ and module name, where "timezone" is used with no separators. See
 
 ### Zone Variant
 
-Many metazones use different names and offsets in the summer than in the winter. In ICU4X,
+Many zones use different names and offsets in the summer than in the winter. In ICU4X,
 this is called the _zone variant_.
 
 CLDR has two zone variants, named `"standard"` and `"daylight"`. However, the mapping of these
 variants to specific observed offsets varies from time zone to time zone, and they may not
 consistently represent winter versus summer time.
 
-Note: It is optional (not required) to set the zone variant when constructing a
-[`CustomTimeZone`]. Therefore, the list of possible variants does not include a generic variant
-to represent the lack of a preference.
-
-## Calculations
-
-In date/time processing, normally only a subset of information is available, and the other
-fields must be computed from it.
-
-The following calculations are currently supported or will be supported:
-
-1. Time Zone + Local DateTime → Metazone ([`MetazoneCalculator`])
-2. Time Zone + Local DateTime + Offset → Zone Variant ([`ZoneOffsetCalculator`])
-
 ## Examples
 
-Create a time zone for which the offset and time zone ID are already known, and calculate
-the metazone based on a certain local datetime:
+Create a time zone for which the offset and time zone ID are already known, and create a
+formattable time zone for a certain local datetime:
 
 ```rust
 use icu::calendar::DateTime;
-use icu::timezone::CustomTimeZone;
+use icu::timezone::TimeZone;
 use icu::timezone::UtcOffset;
+use icu::timezone::MetazoneId;
 use icu::timezone::MetazoneCalculator;
 use icu::timezone::TimeZoneBcp47Id;
 use icu::timezone::TimeZoneIdMapper;
-use tinystr::{tinystr, TinyAsciiStr};
+use icu::timezone::ZoneOffsetCalculator;
+use icu::timezone::ZoneVariant;
+use tinystr::tinystr;
 
 // Create a time zone for America/Chicago at UTC-6:
-let mut time_zone = CustomTimeZone::new_empty();
-time_zone.offset = "-0600".parse().ok();
-let mapper = TimeZoneIdMapper::new();
-time_zone.time_zone_id =
-    mapper.as_borrowed().iana_to_bcp47("America/Chicago");
+let bcp47_id = TimeZoneIdMapper::new().as_borrowed().iana_to_bcp47("America/Chicago").unwrap();
+let time_zone = TimeZone::new("-0600".parse().unwrap(), bcp47_id);
 
-// Alternatively, set it directly from the BCP-47 ID
-assert_eq!(time_zone.time_zone_id, Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))));
+// Create a `FormattableTimeZone` at January 1, 2022:
+let formattable = time_zone.to_formattable_at(&MetazoneCalculator::new(), &ZoneOffsetCalculator::new(), &DateTime::try_new_iso_datetime(2022, 1, 1, 0, 0, 0).unwrap());
 
-// Compute the metazone at January 1, 2022:
-let mzc = MetazoneCalculator::new();
-let datetime = DateTime::try_new_iso_datetime(2022, 1, 1, 0, 0, 0).unwrap();
-time_zone.maybe_calculate_metazone(&mzc, &datetime);
-
-assert_eq!("amce", time_zone.metazone_id.unwrap().0.as_str());
+assert_eq!(formattable.metazone_id().unwrap(), MetazoneId(tinystr!(4, "amce")));
+assert_eq!(formattable.zone_variant().unwrap(), ZoneVariant::standard());
 ```
 
 <!-- cargo-rdme end -->

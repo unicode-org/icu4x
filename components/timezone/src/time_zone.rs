@@ -205,7 +205,7 @@ impl core::str::FromStr for TimeZone {
 
 /// [`TimeZone`] annotated with additional formatting information.
 ///
-/// This is obtained from [`TimeZone::to_formattable_at`].
+/// This is obtained from [`TimeZone::into_formattable_at`].
 #[derive(Debug, Copy, Clone)]
 pub struct FormattableTimeZone {
     timezone: TimeZone,
