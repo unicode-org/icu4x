@@ -4,10 +4,6 @@ part of 'lib.g.dart';
 
 /// An object capable of computing UTC offsets from a timezone.
 ///
-/// This can be used via `maybe_calculate_zone_variant()` on [`CustomTimeZone`].
-///
-/// [`CustomTimeZone`]: crate::timezone::ffi::CustomTimeZone
-///
 /// See the [Rust documentation for `ZoneOffsetCalculator`](https://docs.rs/icu/latest/icu/timezone/struct.ZoneOffsetCalculator.html) for more information.
 final class ZoneOffsetCalculator implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;

@@ -7,10 +7,6 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 /** An object capable of computing UTC offsets from a timezone.
 *
-*This can be used via `maybe_calculate_zone_variant()` on [`CustomTimeZone`].
-*
-*[`CustomTimeZone`]: crate::timezone::ffi::CustomTimeZone
-*
 *See the [Rust documentation for `ZoneOffsetCalculator`](https://docs.rs/icu/latest/icu/timezone/struct.ZoneOffsetCalculator.html) for more information.
 */
 const ZoneOffsetCalculator_box_destroy_registry = new FinalizationRegistry((ptr) => {

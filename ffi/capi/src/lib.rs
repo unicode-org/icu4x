@@ -138,5 +138,5 @@ pub mod units_converter;
 pub mod week;
 #[cfg(feature = "timezone")]
 pub mod zone_offset_calculator;
-#[cfg(feature = "datetime")]
+#[cfg(all(feature = "datetime", feature = "timezone"))]
 pub mod zoned_formatter;

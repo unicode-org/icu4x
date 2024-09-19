@@ -149,7 +149,7 @@ impl TimeZone {
     ///
     /// let mut tz = TimeZone::new("+11".parse().expect("Failed to parse a UTC offset."), TimeZoneBcp47Id(tinystr!(8, "gugum")));
     ///
-    /// let ftz = tz.to_formattable_at(
+    /// let ftz = tz.into_formattable_at(
     ///     &DateTime::try_new_iso_datetime(1971, 10, 31, 2, 0, 0).unwrap(),
     /// );
     ///
