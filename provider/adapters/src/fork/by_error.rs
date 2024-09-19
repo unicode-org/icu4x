@@ -358,10 +358,6 @@ where
     F: ForkByErrorPredicate + Sync,
 {
     fn supported_markers(&self) -> std::collections::HashSet<DataMarkerInfo> {
-        let mut markers = std::collections::HashSet::new();
-        for provider in self.providers.iter() {
-            markers.extend(provider.supported_markers());
-        }
-        markers
+        self.providers.iter().flat_map(|p| p.supported_markers()).collect()
     }
 }
