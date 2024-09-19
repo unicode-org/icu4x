@@ -95,7 +95,7 @@ let bcp47_id = TimeZoneIdMapper::new().as_borrowed().iana_to_bcp47("America/Chic
 let time_zone = TimeZone::new("-0600".parse().unwrap(), bcp47_id);
 
 // Create a `FormattableTimeZone` at January 1, 2022:
-let formattable = time_zone.to_formattable_at(&MetazoneCalculator::new(), &ZoneOffsetCalculator::new(), &DateTime::try_new_iso_datetime(2022, 1, 1, 0, 0, 0).unwrap());
+let formattable = time_zone.into_formattable_at(&DateTime::try_new_iso_datetime(2022, 1, 1, 0, 0, 0).unwrap());
 
 assert_eq!(formattable.metazone_id().unwrap(), MetazoneId(tinystr!(4, "amce")));
 assert_eq!(formattable.zone_variant().unwrap(), ZoneVariant::standard());
