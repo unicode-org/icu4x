@@ -93,7 +93,7 @@ datagen = [
 ]
 logging = ["icu_calendar/logging"]
 experimental = ["dep:litemap"]
-bench = ["serde"]
+bench = ["serde", "datagen"]
 compiled_data = ["dep:icu_datetime_data", "icu_calendar/compiled_data", "icu_decimal/compiled_data", "icu_plurals/compiled_data", "icu_timezone/compiled_data"]
 
 [lib]
