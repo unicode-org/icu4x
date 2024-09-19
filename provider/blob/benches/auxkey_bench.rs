@@ -267,7 +267,7 @@ where
             )
             .unwrap();
     }
-    exporter.flush(M::INFO).unwrap();
+    exporter.flush(M::INFO, Default::default()).unwrap();
 }
 
 fn make_blob_v1() -> Vec<u8> {

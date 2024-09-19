@@ -29,6 +29,15 @@ macro_rules! __impl_iana_to_bcp47_map_v3_marker {
             }
         }
     };
+    ($ provider : ty , ITER) => {
+        __impl_iana_to_bcp47_map_v3_marker!($provider);
+        #[clippy::msrv = "1.71.1"]
+        impl icu_provider::IterableDataProvider<icu::timezone::provider::names::IanaToBcp47MapV3Marker> for $provider {
+            fn iter_ids(&self) -> Result<std::collections::BtreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
+                Ok([Default::default()].into_iter().collect())
+            }
+        }
+    };
     ($ provider : ty , DRY) => {
         __impl_iana_to_bcp47_map_v3_marker!($provider);
         #[clippy::msrv = "1.71.1"]
@@ -39,15 +48,6 @@ macro_rules! __impl_iana_to_bcp47_map_v3_marker {
                 } else {
                     Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::timezone::provider::names::IanaToBcp47MapV3Marker as icu_provider::DataMarker>::INFO, req))
                 }
-            }
-        }
-    };
-    ($ provider : ty , ITER) => {
-        __impl_iana_to_bcp47_map_v3_marker!($provider);
-        #[clippy::msrv = "1.71.1"]
-        impl icu_provider::IterableDataProvider<icu::timezone::provider::names::IanaToBcp47MapV3Marker> for $provider {
-            fn iter_ids(&self) -> Result<std::collections::BtreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
-                Ok([Default::default()].into_iter().collect())
             }
         }
     };

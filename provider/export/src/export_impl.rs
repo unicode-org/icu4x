@@ -88,6 +88,13 @@ impl ExportDriver {
             }
         );
 
+        let mut flush_metadata = FlushMetadata::default();
+        flush_metadata.supports_dry_provider = matches!(
+            deduplication_strategy,
+            DeduplicationStrategy::RetainBaseLanguages | DeduplicationStrategy::None
+        );
+        let flush_metadata = flush_metadata;
+
         let load_with_fallback = |marker, id: DataIdentifierBorrowed<'_>| {
             log::trace!("Generating marker/locale: {marker:?}/{}", id.locale);
             let mut metadata = DataRequestMetadata::default();
@@ -154,7 +161,7 @@ impl ExportDriver {
 
                 let transform_duration = instant1.elapsed();
 
-                sink.flush_singleton(marker, &payload)
+                sink.flush_singleton(marker, &payload, flush_metadata)
                     .map_err(|e| e.with_req(marker, Default::default()))?;
 
                 let final_duration = instant1.elapsed();
@@ -236,7 +243,8 @@ impl ExportDriver {
 
             let transform_duration = instant1.elapsed();
 
-            sink.flush(marker).map_err(|e| e.with_marker(marker))?;
+            sink.flush(marker, flush_metadata)
+                .map_err(|e| e.with_marker(marker))?;
 
             let final_duration = instant1.elapsed();
             let flush_duration = final_duration - transform_duration;

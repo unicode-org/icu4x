@@ -144,7 +144,7 @@ impl DataExporter for FilesystemExporter {
         Ok(())
     }
 
-    fn flush(&self, marker: DataMarkerInfo) -> Result<(), DataError> {
+    fn flush(&self, marker: DataMarkerInfo, _metadata: FlushMetadata) -> Result<(), DataError> {
         let mut path_buf = self.root.join(marker.path.as_str());
 
         if !marker.is_singleton && !path_buf.exists() {
