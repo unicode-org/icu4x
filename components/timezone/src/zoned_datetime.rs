@@ -42,16 +42,7 @@ impl<A: AsCalendar> ZonedDateTime<A> {
     /// Convert the [`ZonedDateTime`] to a [`FormattableZonedDateTime`].
     #[cfg(feature = "compiled_data")]
     pub fn into_formattable(self) -> FormattableZonedDateTime<A> {
-        use crate::{MetazoneCalculator, ZoneOffsetCalculator};
-        FormattableZonedDateTime {
-            zone: MetazoneCalculator::new().compute(
-                self.zone,
-                &ZoneOffsetCalculator::new(),
-                &icu_calendar::DateTime::new(self.date.to_iso(), self.time),
-            ),
-            date: self.date,
-            time: self.time,
-        }
+        MetazoneCalculator::new().compute_dt(self, &ZoneOffsetCalculator::new())
     }
 }
 
