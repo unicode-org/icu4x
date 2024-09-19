@@ -173,7 +173,6 @@ impl TimeZoneCalculator {
         time_zone_id: TimeZoneBcp47Id,
         local_datetime: &DateTime<Iso>,
     ) -> Option<(UtcOffset, Option<UtcOffset>)> {
-        use zerovec::ule::AsULE;
         match self.offset_period.get().0.get0(&time_zone_id) {
             Some(cursor) => {
                 let mut offsets = None;
