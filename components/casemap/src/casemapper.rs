@@ -182,7 +182,7 @@ impl CaseMapper {
         langid: &LanguageIdentifier,
         options: TitlecaseOptions,
         char_is_lead: impl Fn(&CaseMapV1, char) -> bool,
-    ) -> StringAndWriteable<FullCaseWriteable<'a, true>> {
+    ) -> StringAndWriteable<'a, FullCaseWriteable<'a, true>> {
         let data = self.data.get();
         let (head, rest) = match options.leading_adjustment {
             LeadingAdjustment::Auto | LeadingAdjustment::ToCased => {

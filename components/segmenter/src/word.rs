@@ -73,7 +73,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> WordBreakIterator<'l, 's, Y> {
     /// Returns an iterator over pairs of boundary position and word type.
     pub fn iter_with_word_type<'i: 'l + 's>(
         &'i mut self,
-    ) -> impl Iterator<Item = (usize, WordType)> + '_ {
+    ) -> impl Iterator<Item = (usize, WordType)> + 'i {
         core::iter::from_fn(move || self.next().map(|i| (i, self.word_type())))
     }
 

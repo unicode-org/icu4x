@@ -46,11 +46,10 @@ where
     }
 }
 
-/// TODO: Once const mut references are allowed, we can make this more infallible by
-/// calculating the required length, heap-allocating the required capacity, and pointing
-/// ConstAsciiTrieBuilderStore to the heap buffer.
-/// ```compile_fail
-/// // error[E0658]: mutable references are not allowed in constant functions
+/// TODO(MSRV 1.83): Make this more infallible by calculating the required length,
+/// heap-allocating the required capacity, and pointing ConstAsciiTrieBuilderStore
+/// to the heap buffer.
+/// ```ignore
 /// const fn write_to_mut_buffer(buf: &mut [u8]) { buf[0] = 0; }
 /// ```
 const _: () = ();
