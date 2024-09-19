@@ -220,16 +220,13 @@ impl<E: DataExporter> DataExporter for StubExporter<E> {
         &self,
         marker: DataMarkerInfo,
         payload: &DataPayload<ExportMarker>,
+        metadata: FlushMetadata,
     ) -> Result<(), DataError> {
-        self.0.flush_singleton(marker, payload)
+        self.0.flush_singleton(marker, payload, metadata)
     }
 
-    fn flush(
-        &self,
-        marker: DataMarkerInfo,
-        deduplication: DeduplicationStrategy,
-    ) -> Result<(), DataError> {
-        self.0.flush(marker, deduplication)
+    fn flush(&self, marker: DataMarkerInfo, metadata: FlushMetadata) -> Result<(), DataError> {
+        self.0.flush(marker, metadata)
     }
 
     fn close(&mut self) -> Result<(), DataError> {
@@ -277,11 +274,7 @@ impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
         Ok(())
     }
 
-    fn flush(
-        &self,
-        _marker: DataMarkerInfo,
-        _deduplication: DeduplicationStrategy,
-    ) -> Result<(), DataError> {
+    fn flush(&self, _marker: DataMarkerInfo, _metadata: FlushMetadata) -> Result<(), DataError> {
         Ok(())
     }
 

@@ -33,19 +33,16 @@ pub trait DataExporter: Sync {
         &self,
         marker: DataMarkerInfo,
         payload: &DataPayload<ExportMarker>,
+        metadata: FlushMetadata,
     ) -> Result<(), DataError> {
         self.put_payload(marker, Default::default(), payload)?;
-        self.flush(marker, DeduplicationStrategy::Maximal)
+        self.flush(marker, metadata)
     }
 
     /// Function called after a non-singleton marker has been fully enumerated.
     ///
     /// Takes non-mut self as it can be called concurrently.
-    fn flush(
-        &self,
-        _marker: DataMarkerInfo,
-        _deduplication: DeduplicationStrategy,
-    ) -> Result<(), DataError> {
+    fn flush(&self, _marker: DataMarkerInfo, _metadata: FlushMetadata) -> Result<(), DataError> {
         Ok(())
     }
 
@@ -55,6 +52,15 @@ pub trait DataExporter: Sync {
     fn close(&mut self) -> Result<(), DataError> {
         Ok(())
     }
+}
+
+/// Metadata for [`DataExporter::flush`]
+#[non_exhaustive]
+#[derive(Debug, Copy, Clone, Default)]
+pub struct FlushMetadata {
+    /// Whether the data was generated in such a way that a [`DryDataProvider`] implementation
+    /// makes sense.
+    pub supports_dry_provider: bool,
 }
 
 impl DataExporter for Box<dyn DataExporter> {
@@ -71,16 +77,13 @@ impl DataExporter for Box<dyn DataExporter> {
         &self,
         marker: DataMarkerInfo,
         payload: &DataPayload<ExportMarker>,
+        metadata: FlushMetadata,
     ) -> Result<(), DataError> {
-        (**self).flush_singleton(marker, payload)
+        (**self).flush_singleton(marker, payload, metadata)
     }
 
-    fn flush(
-        &self,
-        marker: DataMarkerInfo,
-        deduplication: DeduplicationStrategy,
-    ) -> Result<(), DataError> {
-        (**self).flush(marker, deduplication)
+    fn flush(&self, marker: DataMarkerInfo, metadata: FlushMetadata) -> Result<(), DataError> {
+        (**self).flush(marker, metadata)
     }
 
     fn close(&mut self) -> Result<(), DataError> {
@@ -179,54 +182,18 @@ impl DataExporter for MultiExporter {
         &self,
         marker: DataMarkerInfo,
         payload: &DataPayload<ExportMarker>,
+        metadata: FlushMetadata,
     ) -> Result<(), DataError> {
         self.0
             .iter()
-            .try_for_each(|e| e.flush_singleton(marker, payload))
+            .try_for_each(|e| e.flush_singleton(marker, payload, metadata))
     }
 
-    fn flush(
-        &self,
-        marker: DataMarkerInfo,
-        deduplication: DeduplicationStrategy,
-    ) -> Result<(), DataError> {
-        self.0
-            .iter()
-            .try_for_each(|e| e.flush(marker, deduplication))
+    fn flush(&self, marker: DataMarkerInfo, metadata: FlushMetadata) -> Result<(), DataError> {
+        self.0.iter().try_for_each(|e| e.flush(marker, metadata))
     }
 
     fn close(&mut self) -> Result<(), DataError> {
         self.0.iter_mut().try_for_each(|e| e.close())
     }
-}
-
-/// Choices for determining the deduplication of locales for exported data payloads.
-///
-/// Deduplication affects the lookup table from locales to data payloads. If a child locale
-/// points to the same payload as its parent locale, then the child locale can be removed from
-/// the lookup table. Therefore, all deduplication strategies guarantee that data requests for
-/// selected locales will succeed so long as fallback is enabled at runtime (either internally
-/// or externally). They also do not impact which _payloads_ are included: only the lookup table.
-///
-/// Comparison of the deduplication strategies:
-///
-/// | Name | Data file size | Supported locale queries? | Needs runtime fallback? |
-/// |---|---|---|---|
-/// | [`Maximal`] | Smallest | No | Yes |
-/// | [`RetainBaseLanguages`] | Small | Yes | Yes |
-/// | [`None`] | Medium/Small | Yes | No |
-///
-/// [`Maximal`]: DeduplicationStrategy::Maximal
-/// [`RetainBaseLanguages`]: DeduplicationStrategy::RetainBaseLanguages
-/// [`None`]: DeduplicationStrategy::None
-#[non_exhaustive]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum DeduplicationStrategy {
-    /// Removes from the lookup table any locale whose parent maps to the same data.
-    Maximal,
-    /// Removes from the lookup table any locale whose parent maps to the same data, except if
-    /// the parent is `und`.
-    RetainBaseLanguages,
-    /// Keeps all selected locales in the lookup table.
-    None,
 }

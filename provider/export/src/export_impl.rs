@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{DataLocaleFamilyAnnotations, ExportDriver};
+use crate::{DataLocaleFamilyAnnotations, DeduplicationStrategy, ExportDriver};
 use icu_locale::fallback::LocaleFallbackIterator;
 use icu_locale::LocaleFallbacker;
 use icu_provider::export::*;
@@ -70,7 +70,6 @@ impl ExportDriver {
                 DeduplicationStrategy::RetainBaseLanguages =>
                     "deduplication retaining base languages",
                 DeduplicationStrategy::None => "no deduplication",
-                _ => "unknown deduplication",
             },
             if include_full {
                 vec!["<all>".to_string()]
@@ -88,6 +87,13 @@ impl ExportDriver {
                 sorted_locale_strs
             }
         );
+
+        let mut flush_metadata = FlushMetadata::default();
+        flush_metadata.supports_dry_provider = matches!(
+            deduplication_strategy,
+            DeduplicationStrategy::RetainBaseLanguages | DeduplicationStrategy::None
+        );
+        let flush_metadata = flush_metadata;
 
         let load_with_fallback = |marker, id: DataIdentifierBorrowed<'_>| {
             log::trace!("Generating marker/locale: {marker:?}/{}", id.locale);
@@ -155,7 +161,7 @@ impl ExportDriver {
 
                 let transform_duration = instant1.elapsed();
 
-                sink.flush_singleton(marker, &payload)
+                sink.flush_singleton(marker, &payload, flush_metadata)
                     .map_err(|e| e.with_req(marker, Default::default()))?;
 
                 let final_duration = instant1.elapsed();
@@ -206,7 +212,7 @@ impl ExportDriver {
                         .collect::<Result<HashMap<_, _>, _>>()?;
                     deduplicate_payloads::<false>(marker, &payloads, &fallbacker, sink)?
                 }
-                _ => locales_to_export
+                DeduplicationStrategy::None => locales_to_export
                     .into_par_iter()
                     .filter_map(|id| {
                         let instant2 = Instant::now();
@@ -237,7 +243,7 @@ impl ExportDriver {
 
             let transform_duration = instant1.elapsed();
 
-            sink.flush(marker, deduplication_strategy)
+            sink.flush(marker, flush_metadata)
                 .map_err(|e| e.with_marker(marker))?;
 
             let final_duration = instant1.elapsed();

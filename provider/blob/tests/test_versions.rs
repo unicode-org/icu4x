@@ -35,7 +35,7 @@ where
             .unwrap();
     }
     exporter
-        .flush(HelloWorldV1Marker::INFO, DeduplicationStrategy::None)
+        .flush(HelloWorldV1Marker::INFO, Default::default())
         .unwrap();
     exporter.close().unwrap();
 }

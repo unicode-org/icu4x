@@ -431,6 +431,7 @@ impl DataExporter for BakedExporter {
         &self,
         marker: DataMarkerInfo,
         payload: &DataPayload<ExportMarker>,
+        _metadata: FlushMetadata,
     ) -> Result<(), DataError> {
         let maybe_msrv = maybe_msrv();
 
@@ -505,11 +506,7 @@ impl DataExporter for BakedExporter {
         })
     }
 
-    fn flush(
-        &self,
-        marker: DataMarkerInfo,
-        deduplication_mode: DeduplicationStrategy,
-    ) -> Result<(), DataError> {
+    fn flush(&self, marker: DataMarkerInfo, metadata: FlushMetadata) -> Result<(), DataError> {
         let maybe_msrv = maybe_msrv();
 
         let marker_bake = bake_marker(marker);
@@ -651,7 +648,7 @@ impl DataExporter for BakedExporter {
                         }
                     }
                 },
-                if matches!(deduplication_mode, DeduplicationStrategy::RetainBaseLanguages | DeduplicationStrategy::None) {
+                if metadata.supports_dry_provider {
                     Some(quote! {
                         #maybe_msrv
                         impl icu_provider::DryDataProvider<#marker_bake> for $provider {

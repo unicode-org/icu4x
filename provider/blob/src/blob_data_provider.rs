@@ -182,7 +182,7 @@ mod test {
                 };
 
                 exporter
-                    .flush(HelloWorldV1Marker::INFO, DeduplicationStrategy::None)
+                    .flush(HelloWorldV1Marker::INFO, Default::default())
                     .unwrap();
 
                 exporter.close().unwrap();
@@ -216,7 +216,7 @@ mod test {
                 };
 
                 exporter
-                    .flush(HelloSingletonV1Marker::INFO, DeduplicationStrategy::None)
+                    .flush(HelloSingletonV1Marker::INFO, Default::default())
                     .unwrap();
 
                 exporter.close().unwrap();
