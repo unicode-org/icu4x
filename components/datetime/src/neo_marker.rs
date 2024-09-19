@@ -1428,12 +1428,6 @@ macro_rules! datetime_marker_helper {
     (@option/alignment, yes) => {
         Option<Alignment>
     };
-    (@option/alignment, yes,) => {
-        Option<Alignment>
-    };
-    (@option/alignment, yes, yes) => {
-        Option<Alignment>
-    };
     (@option/fractionalsecondigits, yes) => {
         Option<FractionalSecondDigits>
     };
@@ -1695,23 +1689,45 @@ macro_rules! impl_marker_with_options {
     };
 }
 
+/// Implements a field set of time fields.
+///
+/// Several arguments to this macro are required, and the rest are optional.
+/// The optional arguments should be written as `key = yes,` if that parameter
+/// should be included.
+///
+/// Documentation for each option is shown inline below.
 macro_rules! impl_date_marker {
     (
+        // The name of the type being created.
         $type:ident,
+        // An expression for the field set.
         $components:expr,
+        // A plain language description of the field set for documentation.
         description = $description:literal,
+        // Length of the sample string below.
         sample_length = $sample_length:ident,
+        // A sample string. A docs test will be generated!
         sample = $sample:literal,
+        // Whether years can occur.
         $(years = $years_yes:ident,)?
+        // Whether months can occur.
         $(months = $months_yes:ident,)?
-        $(dates = $dates_yes:ident,)?
+        // Whether weekdays can occur.
         $(weekdays = $weekdays_yes:ident,)?
+        // Whether the input should contain years.
         $(input_year = $year_yes:ident,)?
+        // Whether the input should contain months.
         $(input_month = $month_yes:ident,)?
+        // Whether the input should contain the day of the month.
         $(input_day_of_month = $day_of_month_yes:ident,)?
+        // Whether the input should contain the day of the week.
         $(input_day_of_week = $day_of_week_yes:ident,)?
+        // Whether the input should contain the day of the year.
         $(input_day_of_year = $day_of_year_yes:ident,)?
+        // Whether the input should declare its calendar kind.
         $(input_any_calendar_kind = $any_calendar_kind_yes:ident,)?
+        // Whether the alignment option should be available.
+        // According to UTS 35, it should be available with years, months, and days.
         $(option_alignment = $option_alignment_yes:ident,)?
     ) => {
         impl_marker_with_options!(
@@ -1794,13 +1810,13 @@ macro_rules! impl_date_marker {
             type AnyCalendarKindInput = datetime_marker_helper!(@input/any_calendar_kind, $($any_calendar_kind_yes)?);
         }
         impl<C: CldrCalendar> TypedDateDataMarkers<C> for $type {
-            type DateSkeletonPatternsV1Marker = datetime_marker_helper!(@dates/typed, $($dates_yes)?);
+            type DateSkeletonPatternsV1Marker = datetime_marker_helper!(@dates/typed, yes);
             type YearNamesV1Marker = datetime_marker_helper!(@years/typed, $($years_yes)?);
             type MonthNamesV1Marker = datetime_marker_helper!(@months/typed, $($months_yes)?);
             type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays, $($weekdays_yes)?);
         }
         impl DateDataMarkers for $type {
-            type Skel = datetime_marker_helper!(@calmarkers, $($dates_yes)?);
+            type Skel = datetime_marker_helper!(@calmarkers, yes);
             type Year = datetime_marker_helper!(@calmarkers, $($years_yes)?);
             type Month = datetime_marker_helper!(@calmarkers, $($months_yes)?);
             type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays, $($weekdays_yes)?);
@@ -1810,7 +1826,7 @@ macro_rules! impl_date_marker {
             type T = NeoNeverMarker;
             type Z = NeoNeverMarker;
             type LengthOption = datetime_marker_helper!(@option/length, $sample_length);
-            type AlignmentOption = datetime_marker_helper!(@option/alignment, $($months_yes,)? $($dates_yes)?);
+            type AlignmentOption = datetime_marker_helper!(@option/alignment, $($months_yes)?);
             type EraDisplayOption = datetime_marker_helper!(@option/eradisplay, $($year_yes)?);
             type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits,);
             type GluePatternV1Marker = datetime_marker_helper!(@glue,);
@@ -1821,6 +1837,13 @@ macro_rules! impl_date_marker {
     };
 }
 
+/// Implements a field set of date fields.
+///
+/// Several arguments to this macro are required, and the rest are optional.
+/// The optional arguments should be written as `key = yes,` if that parameter
+/// should be included.
+///
+/// See [`impl_date_marker`].
 macro_rules! impl_day_marker {
     (
         $type:ident,
@@ -1864,18 +1887,34 @@ macro_rules! impl_day_marker {
     };
 }
 
+/// Implements a field set of time fields.
+///
+/// Several arguments to this macro are required, and the rest are optional.
+/// The optional arguments should be written as `key = yes,` if that parameter
+/// should be included.
+///
+/// Documentation for each option is shown inline below.
 macro_rules! impl_time_marker {
     (
+        // The name of the type being created.
         $type:ident,
+        // An expression for the field set.
         $components:expr,
+        // A plain language description of the field set for documentation.
         description = $description:literal,
+        // Length of the sample string below.
         sample_length = $sample_length:ident,
+        // A sample string. A docs test will be generated!
         sample = $sample:literal,
+        // Whether day periods can occur.
         $(dayperiods = $dayperiods_yes:ident,)?
-        $(times = $times_yes:ident,)?
+        // Whether the input should include hours.
         $(input_hour = $hour_yes:ident,)?
+        // Whether the input should contain minutes.
         $(input_minute = $minute_yes:ident,)?
+        // Whether the input should contain seconds.
         $(input_second = $second_yes:ident,)?
+        // Whether the input should contain fractional seconds.
         $(input_nanosecond = $nanosecond_yes:ident,)?
     ) => {
         impl_marker_with_options!(
@@ -1952,7 +1991,7 @@ macro_rules! impl_time_marker {
         }
         impl TimeMarkers for $type {
             type DayPeriodNamesV1Marker = datetime_marker_helper!(@dayperiods, $($dayperiods_yes)?);
-            type TimeSkeletonPatternsV1Marker = datetime_marker_helper!(@times, $($times_yes)?);
+            type TimeSkeletonPatternsV1Marker = datetime_marker_helper!(@times, yes);
             type HourInput = datetime_marker_helper!(@input/hour, $($hour_yes)?);
             type MinuteInput = datetime_marker_helper!(@input/minute, $($minute_yes)?);
             type SecondInput = datetime_marker_helper!(@input/second, $($second_yes)?);
@@ -1974,19 +2013,38 @@ macro_rules! impl_time_marker {
     };
 }
 
+/// Implements a field set of time zone fields.
+///
+/// Several arguments to this macro are required, and the rest are optional.
+/// The optional arguments should be written as `key = yes,` if that parameter
+/// should be included.
+///
+/// Documentation for each option is shown inline below.
 macro_rules! impl_zone_marker {
     (
         $(#[$attr:meta])*
+        // The name of the type being created.
         $type:ident,
+        // An expression for the field set.
         $components:expr,
+        // A plain language description of the field set for documentation.
         description = $description:literal,
+        // Length of the sample string below.
+        // Omit if this field set does not accept a length.
         $(sample_length = $sample_length:ident,)?
+        // A sample string. A docs test will be generated!
         sample = $sample:literal,
+        // Whether zone-essentials should be loaded.
         $(zone_essentials = $zone_essentials_yes:ident,)?
+        // Whether exemplar cities can occur.
         $(zone_exemplar_cities = $zone_exemplar_cities_yes:ident,)?
+        // Whether generic long formats can occur.
         $(zone_generic_long = $zone_generic_long_yes:ident,)?
+        // Whether generic short formats can occur.
         $(zone_generic_short = $zone_generic_short_yes:ident,)?
+        // Whether specific long formats can occur.
         $(zone_specific_long = $zone_specific_long_yes:ident,)?
+        // Whether specific short formats can occur.
         $(zone_specific_short = $zone_specific_short_yes:ident,)?
     ) => {
         #[doc = concat!("**“", $sample, "**” ⇒ ", $description)]
@@ -2245,7 +2303,6 @@ impl_day_marker!(
     sample = "5/17/24",
     years = yes,
     months = yes,
-    dates = yes,
     weekdays = yes,
     input_year = yes,
     input_month = yes,
@@ -2263,7 +2320,6 @@ impl_day_marker!(
     sample = "May 17, 2024",
     years = yes,
     months = yes,
-    dates = yes,
     input_year = yes,
     input_month = yes,
     input_day_of_month = yes,
@@ -2279,7 +2335,6 @@ impl_day_marker!(
     sample = "May 17, 2024",
     years = yes,
     months = yes,
-    dates = yes,
     weekdays = yes,
     input_year = yes,
     input_month = yes,
@@ -2296,7 +2351,6 @@ impl_time_marker!(
     sample_length = Medium,
     sample = "3:47 PM",
     dayperiods = yes,
-    times = yes,
     input_hour = yes,
     input_minute = yes,
 );
@@ -2308,7 +2362,6 @@ impl_time_marker!(
     sample_length = Medium,
     sample = "3:47:50 PM",
     dayperiods = yes,
-    times = yes,
     input_hour = yes,
     input_minute = yes,
     input_second = yes,
@@ -2322,7 +2375,6 @@ impl_time_marker!(
     sample_length = Medium,
     sample = "3:47:50 PM",
     dayperiods = yes,
-    times = yes,
     input_hour = yes,
     input_minute = yes,
     input_second = yes,
@@ -2358,7 +2410,6 @@ impl_date_marker!(
     sample = "May 2024",
     years = yes,
     months = yes,
-    dates = yes,
     input_year = yes,
     input_month = yes,
     input_any_calendar_kind = yes,
