@@ -494,13 +494,14 @@ fn test_time_zone_format_configs() {
 #[test]
 fn test_time_zone_format_offset_not_set_debug_assert_panic() {
     use icu_datetime::{
-        neo_marker::NeoTimeZoneOffsetShortMarker, DateTimeWriteError, NeverCalendar,
+        neo_marker::NeoTimeZoneOffsetMarker, neo_skeleton::NeoSkeletonLength, DateTimeWriteError,
+        NeverCalendar,
     };
 
     let time_zone = CustomTimeZone::try_from_str("America/Los_Angeles").unwrap();
-    let tzf = TypedNeoFormatter::<NeverCalendar, NeoTimeZoneOffsetShortMarker>::try_new(
+    let tzf = TypedNeoFormatter::<NeverCalendar, NeoTimeZoneOffsetMarker>::try_new(
         &locale!("en").into(),
-        Default::default(),
+        NeoSkeletonLength::Medium.into(),
     )
     .unwrap();
     assert_try_writeable_eq!(

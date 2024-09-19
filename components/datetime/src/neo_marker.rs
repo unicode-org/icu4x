@@ -254,13 +254,14 @@
 //! ## Time Zone Formatting
 //!
 //! Here, we configure a [`NeoFormatter`] to format with generic non-location short,
-//! which falls back to the offset when unavailable (see [`NeoTimeZoneGenericShortMarker`]).
+//! which falls back to the offset when unavailable (see [`NeoTimeZoneGenericMarker`]).
 //!
 //! ```
 //! use icu::calendar::DateTime;
 //! use icu::timezone::{CustomTimeZone, MetazoneCalculator, TimeZoneIdMapper, TimeZoneBcp47Id};
 //! use icu::datetime::neo::TypedNeoFormatter;
-//! use icu::datetime::neo_marker::NeoTimeZoneGenericShortMarker;
+//! use icu::datetime::neo_marker::NeoTimeZoneGenericMarker;
+//! use icu::datetime::neo_skeleton::NeoSkeletonLength;
 //! use icu::datetime::NeverCalendar;
 //! use icu::locale::locale;
 //! use tinystr::tinystr;
@@ -280,10 +281,9 @@
 //!     .unwrap();
 //!
 //! // Set up the formatter
-//! let mut tzf = TypedNeoFormatter::<NeverCalendar, NeoTimeZoneGenericShortMarker>::try_new(
+//! let mut tzf = TypedNeoFormatter::<NeverCalendar, NeoTimeZoneGenericMarker>::try_new(
 //!     &locale!("en").into(),
-//!     // Length does not matter here: it is specified in the type parameter
-//!     Default::default(),
+//!     NeoSkeletonLength::Short.into(),
 //! )
 //! .unwrap();
 //!
@@ -2030,8 +2030,7 @@ macro_rules! impl_zone_marker {
         // A plain language description of the field set for documentation.
         description = $description:literal,
         // Length of the sample string below.
-        // Omit if this field set does not accept a length.
-        $(sample_length = $sample_length:ident,)?
+        sample_length = $sample_length:ident,
         // A sample string. A docs test will be generated!
         sample = $sample:literal,
         // Whether zone-essentials should be loaded.
@@ -2064,7 +2063,7 @@ macro_rules! impl_zone_marker {
         ///
         #[doc = concat!("let fmt = NeoFormatter::<", stringify!($type), ">::try_new(")]
         ///     &locale!("en").into(),
-        #[doc = concat!("    ", length_option_helper!($($sample_length)?), ",")]
+        #[doc = concat!("    ", length_option_helper!($sample_length), ",")]
         /// )
         /// .unwrap();
         ///
@@ -2097,7 +2096,7 @@ macro_rules! impl_zone_marker {
         ///
         #[doc = concat!("let fmt = TypedNeoFormatter::<Gregorian, ", stringify!($type), ">::try_new(")]
         ///     &locale!("en").into(),
-        #[doc = concat!("    ", length_option_helper!($($sample_length)?), ",")]
+        #[doc = concat!("    ", length_option_helper!($sample_length), ",")]
         /// )
         /// .unwrap();
         ///
@@ -2150,7 +2149,7 @@ macro_rules! impl_zone_marker {
             type D = NeoNeverMarker;
             type T = NeoNeverMarker;
             type Z = Self;
-            type LengthOption = datetime_marker_helper!(@option/length, $($sample_length)?);
+            type LengthOption = datetime_marker_helper!(@option/length, yes);
             type AlignmentOption = datetime_marker_helper!(@option/alignment,);
             type EraDisplayOption = datetime_marker_helper!(@option/eradisplay,);
             type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits,);
@@ -2417,16 +2416,6 @@ impl_date_marker!(
 );
 
 impl_zone_marker!(
-    NeoTimeZoneSpecificMarker,
-    NeoTimeZoneSkeleton::specific(),
-    description = "specific time zone with inherited length, or raw offset if unavailable",
-    sample_length = Medium,
-    sample = "CDT",
-    zone_essentials = yes,
-    zone_specific_short = yes,
-);
-
-impl_zone_marker!(
     /// When a display name is unavailable, falls back to the offset format:
     ///
     /// ```
@@ -2434,15 +2423,15 @@ impl_zone_marker!(
     /// use icu::timezone::{CustomTimeZone, CustomZonedDateTime};
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo::TypedNeoFormatter;
-    /// use icu::datetime::neo_marker::NeoTimeZoneSpecificShortMarker;
+    /// use icu::datetime::neo_marker::NeoTimeZoneSpecificMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
     /// use tinystr::tinystr;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = TypedNeoFormatter::<Gregorian, NeoTimeZoneSpecificShortMarker>::try_new(
+    /// let fmt = TypedNeoFormatter::<Gregorian, NeoTimeZoneSpecificMarker>::try_new(
     ///     &locale!("en").into(),
-    ///     Default::default(),
+    ///     NeoSkeletonLength::Short.into(),
     /// )
     /// .unwrap();
     ///
@@ -2459,57 +2448,50 @@ impl_zone_marker!(
     ///     "GMT-03:00"
     /// );
     /// ```
+    NeoTimeZoneSpecificMarker,
+    NeoTimeZoneSkeleton::specific(),
+    description = "specific time zone, or raw offset if unavailable",
+    sample_length = Long,
+    sample = "Central Daylight Time",
+    zone_essentials = yes,
+    zone_specific_long = yes,
+    zone_specific_short = yes,
+);
+
+impl_zone_marker!(
+    /// This marker only loads data for the short length; don't use with standalone long length:
+    ///
+    /// ```
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::neo::TypedNeoFormatter;
+    /// use icu::datetime::neo_marker::NeoTimeZoneSpecificShortMarker;
+    /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+    /// use icu::datetime::LoadError;
+    /// use icu::locale::locale;
+    ///
+    /// let result = TypedNeoFormatter::<Gregorian, NeoTimeZoneSpecificShortMarker>::try_new(
+    ///     &locale!("en").into(),
+    ///     NeoSkeletonLength::Long.into(),
+    /// );
+    ///
+    /// assert!(matches!(result, Err(LoadError::TypeTooNarrow(_))));
+    /// ```
     NeoTimeZoneSpecificShortMarker,
-    NeoTimeZoneSkeleton::specific_short(),
-    description = "specific time zone with a shorter length, or raw offset if unavailable",
+    NeoTimeZoneSkeleton::specific(),
+    description = "specific time zone (only short), or raw offset if unavailable",
+    sample_length = Short,
     sample = "CDT",
     zone_essentials = yes,
     zone_specific_short = yes,
 );
 
 impl_zone_marker!(
-    NeoTimeZoneSpecificLongMarker,
-    NeoTimeZoneSkeleton::specific_long(),
-    description = "specific time zone with a longer length, or raw offset if unavailable",
-    sample = "Central Daylight Time",
-    zone_essentials = yes,
-    zone_specific_long = yes,
-);
-
-impl_zone_marker!(
     NeoTimeZoneOffsetMarker,
     NeoTimeZoneSkeleton::offset(),
-    description = "UTC offset with inherited length",
+    description = "UTC offset time zone",
     sample_length = Medium,
     sample = "GMT-05:00", // TODO: Implement short localized offset
     zone_essentials = yes,
-);
-
-impl_zone_marker!(
-    NeoTimeZoneOffsetShortMarker,
-    NeoTimeZoneSkeleton::offset_short(),
-    description = "UTC offset with a shorter length",
-    sample = "GMT-05:00", // TODO: Implement short localized offset
-    zone_essentials = yes,
-);
-
-impl_zone_marker!(
-    NeoTimeZoneOffsetLongMarker,
-    NeoTimeZoneSkeleton::offset_long(),
-    description = "UTC offset with a longer length",
-    sample = "GMT-05:00",
-    zone_essentials = yes,
-);
-
-impl_zone_marker!(
-    NeoTimeZoneGenericMarker,
-    NeoTimeZoneSkeleton::generic(),
-    description = "generic time zone with inherited length, or location if unavailable",
-    sample_length = Medium,
-    sample = "CT",
-    zone_essentials = yes,
-    zone_exemplar_cities = yes,
-    zone_generic_short = yes,
 );
 
 impl_zone_marker!(
@@ -2520,15 +2502,15 @@ impl_zone_marker!(
     /// use icu::timezone::{CustomTimeZone, CustomZonedDateTime};
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::neo::TypedNeoFormatter;
-    /// use icu::datetime::neo_marker::NeoTimeZoneGenericShortMarker;
+    /// use icu::datetime::neo_marker::NeoTimeZoneGenericMarker;
     /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
     /// use icu::locale::locale;
     /// use tinystr::tinystr;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let fmt = TypedNeoFormatter::<Gregorian, NeoTimeZoneGenericShortMarker>::try_new(
+    /// let fmt = TypedNeoFormatter::<Gregorian, NeoTimeZoneGenericMarker>::try_new(
     ///     &locale!("en").into(),
-    ///     Default::default(),
+    ///     NeoSkeletonLength::Short.into(),
     /// )
     /// .unwrap();
     ///
@@ -2545,9 +2527,39 @@ impl_zone_marker!(
     ///     "Sao Paulo Time"
     /// );
     /// ```
+    NeoTimeZoneGenericMarker,
+    NeoTimeZoneSkeleton::generic(),
+    description = "generic time zone, or location if unavailable",
+    sample_length = Long,
+    sample = "Central Time",
+    zone_essentials = yes,
+    zone_exemplar_cities = yes,
+    zone_generic_long = yes,
+    zone_generic_short = yes,
+);
+
+impl_zone_marker!(
+    /// This marker only loads data for the short length; don't use with standalone long length:
+    ///
+    /// ```
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::neo::TypedNeoFormatter;
+    /// use icu::datetime::neo_marker::NeoTimeZoneGenericShortMarker;
+    /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+    /// use icu::datetime::LoadError;
+    /// use icu::locale::locale;
+    ///
+    /// let result = TypedNeoFormatter::<Gregorian, NeoTimeZoneGenericShortMarker>::try_new(
+    ///     &locale!("en").into(),
+    ///     NeoSkeletonLength::Long.into(),
+    /// );
+    ///
+    /// assert!(matches!(result, Err(LoadError::TypeTooNarrow(_))));
+    /// ```
     NeoTimeZoneGenericShortMarker,
-    NeoTimeZoneSkeleton::generic_short(),
-    description = "generic time zone with a shorter length, or location if unavailable",
+    NeoTimeZoneSkeleton::generic(),
+    description = "generic time zone (only short), or location if unavailable",
+    sample_length = Short,
     sample = "CT",
     zone_essentials = yes,
     zone_exemplar_cities = yes,
@@ -2555,19 +2567,10 @@ impl_zone_marker!(
 );
 
 impl_zone_marker!(
-    NeoTimeZoneGenericLongMarker,
-    NeoTimeZoneSkeleton::generic_long(),
-    description = "generic time zone with a longer length, or location if unavailable",
-    sample = "Central Time",
-    zone_essentials = yes,
-    zone_exemplar_cities = yes,
-    zone_generic_long = yes,
-);
-
-impl_zone_marker!(
     NeoTimeZoneLocationMarker,
     NeoTimeZoneSkeleton::location(),
     description = "location time zone",
+    sample_length = Long,
     sample = "Chicago Time",
     zone_essentials = yes,
     zone_exemplar_cities = yes,
@@ -2581,7 +2584,7 @@ impl_zoneddatetime_marker!(
     sample = "May 17, 2024, 3:47:50 PM GMT",
     date = NeoAutoDateMarker,
     time = NeoAutoTimeMarker,
-    zone = NeoTimeZoneGenericShortMarker,
+    zone = NeoTimeZoneGenericMarker,
 );
 
 /// Trait for components that can be formatted at runtime.
