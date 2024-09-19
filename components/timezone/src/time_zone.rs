@@ -149,7 +149,7 @@ impl TimeZone {
     ///
     /// let mut tz = TimeZone::new("+11".parse().expect("Failed to parse a UTC offset."), TimeZoneBcp47Id(tinystr!(8, "gugum")));
     ///
-    /// let ftz = tz.into_formattable_at(
+    /// let ftz = tz.resolve_at(
     ///     &DateTime::try_new_iso_datetime(1971, 10, 31, 2, 0, 0).unwrap(),
     /// );
     ///
@@ -157,20 +157,20 @@ impl TimeZone {
     /// assert_eq!(ftz.zone_variant(), Some(ZoneVariant::daylight()));
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn into_formattable_at(self, local_datetime: &DateTime<Iso>) -> FormattableTimeZone {
+    pub fn resolve_at(self, local_datetime: &DateTime<Iso>) -> ResolvedTimeZone {
         MetazoneCalculator::new().compute(self, &ZoneOffsetCalculator::new(), local_datetime)
     }
 }
 
 impl MetazoneCalculator {
-    /// Converts a [`TimeZone`] to a [`FormattableTimeZone`] at the given datetime.
+    /// Converts a [`TimeZone`] to a [`ResolvedTimeZone`] at the given datetime.
     pub fn compute(
         &self,
         timezone: TimeZone,
         zoc: &ZoneOffsetCalculator,
         local_datetime: &DateTime<Iso>,
-    ) -> FormattableTimeZone {
-        FormattableTimeZone {
+    ) -> ResolvedTimeZone {
+        ResolvedTimeZone {
             timezone,
             metazone_id: timezone
                 .bcp47_id
@@ -205,16 +205,16 @@ impl core::str::FromStr for TimeZone {
 
 /// [`TimeZone`] annotated with additional formatting information.
 ///
-/// This is obtained from [`TimeZone::into_formattable_at`].
+/// This is obtained from [`TimeZone::resolve_at`].
 #[derive(Debug, Copy, Clone)]
-pub struct FormattableTimeZone {
+pub struct ResolvedTimeZone {
     timezone: TimeZone,
     metazone_id: Option<MetazoneId>,
     zone_variant: Option<ZoneVariant>,
 }
 
-impl FormattableTimeZone {
-    /// Creates a new [`FormattableTimeZone`] for the UTC time zone.
+impl ResolvedTimeZone {
+    /// Creates a new [`ResolvedTimeZone`] for the UTC time zone.
     pub fn utc() -> Self {
         Self {
             timezone: TimeZone::utc(),

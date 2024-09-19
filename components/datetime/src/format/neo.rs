@@ -342,7 +342,7 @@ size_test!(
 /// let mut dtz = ZonedDateTime::try_from_str("2023-11-20T11:35:03+00:00[Europe/London]")
 ///     .unwrap()
 ///     .to_calendar(Gregorian)
-///     .into_formattable();
+///     .resolve();
 ///
 /// // Missing data is filled in on a best-effort basis, and an error is signaled.
 /// assert_try_writeable_parts_eq!(
@@ -381,7 +381,7 @@ size_test!(
 /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
 ///
 /// let zone = TimeZone::new_with_bcp47_id(TimeZoneBcp47Id(tinystr::tinystr!(8, "brsao")))
-///     .into_formattable_at(
+///     .resolve_at(
 ///         &DateTime::try_new_iso_datetime(2025, 1, 2, 0, 0, 0).unwrap(),   
 ///     );
 ///
@@ -925,8 +925,8 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::timezone::ZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap().into_formattable().zone();
-    /// let mut zone_london_summer = ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]").unwrap().into_formattable().zone();
+    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap().resolve().zone();
+    /// let mut zone_london_summer = ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]").unwrap().resolve().zone();
     ///
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(&locale!("en-GB").into())
@@ -1022,7 +1022,7 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::timezone::ZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap().into_formattable().zone();
+    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap().resolve().zone();
     ///
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(&locale!("en-GB").into())
@@ -1095,8 +1095,8 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::timezone::ZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap().into_formattable().zone();
-    /// let mut zone_london_summer = ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]").unwrap().into_formattable().zone();
+    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap().resolve().zone();
+    /// let mut zone_london_summer = ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]").unwrap().resolve().zone();
     ///
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(&locale!("en-GB").into())
@@ -1164,8 +1164,8 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::timezone::ZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap().into_formattable().zone();
-    /// let mut zone_london_summer = ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]").unwrap().into_formattable().zone();
+    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap().resolve().zone();
+    /// let mut zone_london_summer = ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]").unwrap().resolve().zone();
     ///
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(&locale!("en-GB").into())
@@ -1233,8 +1233,8 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::timezone::ZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap().into_formattable().zone();
-    /// let mut zone_london_summer = ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]").unwrap().into_formattable().zone();
+    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap().resolve().zone();
+    /// let mut zone_london_summer = ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]").unwrap().resolve().zone();
     ///
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(&locale!("en-GB").into())
@@ -1302,8 +1302,8 @@ impl<C: CldrCalendar, R: DateTimeNamesMarker> TypedDateTimeNames<C, R> {
     /// use icu::timezone::ZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap().into_formattable().zone();
-    /// let mut zone_london_summer = ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]").unwrap().into_formattable().zone();
+    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap().resolve().zone();
+    /// let mut zone_london_summer = ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]").unwrap().resolve().zone();
     ///
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(&locale!("en-GB").into())
@@ -2313,8 +2313,8 @@ where
     /// use icu::timezone::ZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap().to_calendar(Gregorian).into_formattable();
-    /// let mut london_summer = ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]").unwrap().to_calendar(Gregorian).into_formattable();
+    /// let mut london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]").unwrap().to_calendar(Gregorian).resolve();
+    /// let mut london_summer = ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]").unwrap().to_calendar(Gregorian).resolve();
     ///
     /// let mut names =
     ///     TypedDateTimeNames::<Gregorian, NeoTimeZoneSkeleton>::try_new(&locale!("en-GB").into())

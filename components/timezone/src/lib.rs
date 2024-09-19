@@ -32,15 +32,15 @@
 //! ICU4X uses BCP-47 time zone IDs for all of its APIs. To get a BCP-47 time zone from an
 //! IANA time zone, use [`TimeZoneIdMapper`].
 //!
-//! # `FormattableTimeZone`
+//! # `ResolvedTimeZone`
 //!
-//! A [`FormattableTimeZone`] represents a [`TimeZone`] interpreted at a specific local time, and
+//! A [`ResolvedTimeZone`] represents a [`TimeZone`] interpreted at a specific local time, and
 //! extended with two more formatting-only fields:
 //!
 //! 1. The metazone ID
 //! 2. The zone variant, representing concepts such as Standard, Summer, Daylight, and Ramadan time
 //!
-//! A [`FormattableTimeZone`] is constructed using [`TimeZone::into_formattable_at`].
+//! A [`ResolvedTimeZone`] is constructed using [`TimeZone::resolve_at`].
 //!
 //! ## Metazone
 //!
@@ -94,8 +94,8 @@
 //! let bcp47_id = TimeZoneIdMapper::new().as_borrowed().iana_to_bcp47("America/Chicago").unwrap();
 //! let time_zone = TimeZone::new("-0600".parse().unwrap(), bcp47_id);
 //!
-//! // Create a `FormattableTimeZone` at January 1, 2022:
-//! let formattable = time_zone.into_formattable_at(&DateTime::try_new_iso_datetime(2022, 1, 1, 0, 0, 0).unwrap());
+//! // Create a `ResolvedTimeZone` at January 1, 2022:
+//! let formattable = time_zone.resolve_at(&DateTime::try_new_iso_datetime(2022, 1, 1, 0, 0, 0).unwrap());
 //!
 //! assert_eq!(formattable.metazone_id().unwrap(), MetazoneId(tinystr!(4, "amce")));
 //! assert_eq!(formattable.zone_variant().unwrap(), ZoneVariant::standard());
@@ -139,11 +139,11 @@ pub use ids::{
 };
 pub use metazone::MetazoneCalculator;
 pub use provider::{MetazoneId, TimeZoneBcp47Id};
-pub use time_zone::{FormattableTimeZone, TimeZone};
+pub use time_zone::{ResolvedTimeZone, TimeZone};
 pub use types::{UtcOffset, ZoneVariant};
 pub use windows_tz::{WindowsTimeZoneMapper, WindowsTimeZoneMapperBorrowed};
 pub use zone_offset::ZoneOffsetCalculator;
-pub use zoned_datetime::{FormattableZonedDateTime, ZonedDateTime};
+pub use zoned_datetime::{ResolvedZonedDateTime, ZonedDateTime};
 
 #[cfg(all(feature = "ixdtf", feature = "compiled_data"))]
 pub use crate::ixdtf::ParseError;

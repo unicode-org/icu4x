@@ -5,7 +5,7 @@
 //! Some useful parsing functions for tests.
 
 use icu_calendar::{DateTime, Gregorian};
-use icu_timezone::{FormattableZonedDateTime, ZonedDateTime};
+use icu_timezone::{ResolvedZonedDateTime, ZonedDateTime};
 
 /// Temporary function for parsing a `DateTime<Gregorian>`
 ///
@@ -37,7 +37,7 @@ pub fn parse_gregorian_from_str(input: &str) -> DateTime<Gregorian> {
     datetime_iso.to_calendar(Gregorian)
 }
 
-/// Parse a [`FormattableZonedDateTime`] from a string.
+/// Parse a [`ResolvedZonedDateTime`] from a string.
 ///
 /// This utility is for easily creating dates, not a complete robust solution. The
 /// string must take a specific form of the ISO 8601 format:
@@ -55,7 +55,7 @@ pub fn parse_gregorian_from_str(input: &str) -> DateTime<Gregorian> {
 ///     mock::parse_zoned_gregorian_from_str("2020-10-14T13:21:00+05:30")
 ///         .expect("Failed to parse a zoned datetime.");
 /// ```
-pub fn parse_zoned_gregorian_from_str(input: &str) -> FormattableZonedDateTime<Gregorian> {
+pub fn parse_zoned_gregorian_from_str(input: &str) -> ResolvedZonedDateTime<Gregorian> {
     let datetime_iso = ZonedDateTime::try_iso_from_str(input).unwrap();
-    datetime_iso.to_calendar(Gregorian).into_formattable()
+    datetime_iso.to_calendar(Gregorian).resolve()
 }

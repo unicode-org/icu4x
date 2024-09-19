@@ -269,7 +269,7 @@
 //! // Set up the time zone. Note: the inputs here are
 //! //   1. The offset
 //! //   2. The IANA time zone ID
-//! //   3. A datetime (for FormattableTimeZone construction)
+//! //   3. A datetime (for ResolvedTimeZone construction)
 //!
 //! // Set up the time zone ID mapper and the DateTime to use in calculation
 //! let mapper = TimeZoneIdMapper::new();
@@ -286,7 +286,7 @@
 //!
 //! // "America/Chicago" - has metazone symbol data for generic_non_location_short
 //! let time_zone = TimeZone::new("-0600".parse().unwrap(), mapper.as_borrowed().iana_to_bcp47("America/Chicago").unwrap())
-//!     .into_formattable_at(&datetime);
+//!     .resolve_at(&datetime);
 //! assert_try_writeable_eq!(
 //!     tzf.format(&time_zone),
 //!     "CT"
@@ -294,7 +294,7 @@
 //!
 //! // "ushnl" - has time zone override symbol data for generic_non_location_short
 //! let mut time_zone = TimeZone::new("-1000".parse().unwrap(), TimeZoneBcp47Id(tinystr!(8, "ushnl")))
-//!     .into_formattable_at(&datetime);
+//!     .resolve_at(&datetime);
 //! assert_try_writeable_eq!(
 //!     tzf.format(&time_zone),
 //!     "HST"
@@ -302,7 +302,7 @@
 //!
 //! // Raw offset - used when metazone is not available
 //! let mut time_zone = TimeZone::new_with_offset("+0530".parse().unwrap())
-//!     .into_formattable_at(&datetime);
+//!     .resolve_at(&datetime);
 //! assert_try_writeable_eq!(
 //!     tzf.format(&time_zone),
 //!     "GMT+05:30"
@@ -330,7 +330,7 @@ use icu_calendar::{
 };
 use icu_provider::{marker::NeverMarker, prelude::*};
 use icu_timezone::{
-    FormattableTimeZone, FormattableZonedDateTime, MetazoneId, TimeZoneBcp47Id, UtcOffset,
+    ResolvedTimeZone, ResolvedZonedDateTime, MetazoneId, TimeZoneBcp47Id, UtcOffset,
     ZoneVariant,
 };
 
@@ -379,17 +379,17 @@ impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> ConvertCalendar for DateTi
 }
 
 impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> ConvertCalendar
-    for FormattableZonedDateTime<A>
+    for ResolvedZonedDateTime<A>
 {
-    type Converted<'a> = FormattableZonedDateTime<Ref<'a, AnyCalendar>>;
+    type Converted<'a> = ResolvedZonedDateTime<Ref<'a, AnyCalendar>>;
     #[inline]
     fn to_calendar<'a>(&self, calendar: &'a AnyCalendar) -> Self::Converted<'a> {
         self.to_calendar(Ref(calendar))
     }
 }
 
-impl ConvertCalendar for FormattableTimeZone {
-    type Converted<'a> = FormattableTimeZone;
+impl ConvertCalendar for ResolvedTimeZone {
+    type Converted<'a> = ResolvedTimeZone;
     #[inline]
     fn to_calendar<'a>(&self, _: &'a AnyCalendar) -> Self::Converted<'a> {
         *self
@@ -424,7 +424,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> IsAnyCalendarKind for DateTime<A>
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> IsAnyCalendarKind for FormattableZonedDateTime<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> IsAnyCalendarKind for ResolvedZonedDateTime<A> {
     fn is_any_calendar_kind(&self, _: AnyCalendarKind) -> bool {
         true
     }
@@ -439,9 +439,9 @@ impl<C> IsInCalendar<C> for Time {}
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> IsInCalendar<C> for DateTime<A> {}
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> IsInCalendar<C> for FormattableZonedDateTime<A> {}
+impl<C: Calendar, A: AsCalendar<Calendar = C>> IsInCalendar<C> for ResolvedZonedDateTime<A> {}
 
-impl<C> IsInCalendar<C> for FormattableTimeZone {}
+impl<C> IsInCalendar<C> for ResolvedTimeZone {}
 
 /// A type that can return a certain field `T`.
 pub trait NeoGetField<T> {
@@ -600,7 +600,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<NanoSecond> for DateT
 }
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<YearInfo>
-    for FormattableZonedDateTime<A>
+    for ResolvedZonedDateTime<A>
 {
     #[inline]
     fn get_field(&self) -> YearInfo {
@@ -609,7 +609,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<YearInfo>
 }
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<MonthInfo>
-    for FormattableZonedDateTime<A>
+    for ResolvedZonedDateTime<A>
 {
     #[inline]
     fn get_field(&self) -> MonthInfo {
@@ -618,7 +618,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<MonthInfo>
 }
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<DayOfMonth>
-    for FormattableZonedDateTime<A>
+    for ResolvedZonedDateTime<A>
 {
     #[inline]
     fn get_field(&self) -> DayOfMonth {
@@ -627,7 +627,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<DayOfMonth>
 }
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<IsoWeekday>
-    for FormattableZonedDateTime<A>
+    for ResolvedZonedDateTime<A>
 {
     #[inline]
     fn get_field(&self) -> IsoWeekday {
@@ -636,7 +636,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<IsoWeekday>
 }
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<DayOfYearInfo>
-    for FormattableZonedDateTime<A>
+    for ResolvedZonedDateTime<A>
 {
     #[inline]
     fn get_field(&self) -> DayOfYearInfo {
@@ -645,7 +645,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<DayOfYearInfo>
 }
 
 impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> NeoGetField<AnyCalendarKind>
-    for FormattableZonedDateTime<A>
+    for ResolvedZonedDateTime<A>
 {
     #[inline]
     fn get_field(&self) -> AnyCalendarKind {
@@ -654,7 +654,7 @@ impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> NeoGetField<AnyCalendarKin
 }
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<IsoHour>
-    for FormattableZonedDateTime<A>
+    for ResolvedZonedDateTime<A>
 {
     #[inline]
     fn get_field(&self) -> IsoHour {
@@ -663,7 +663,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<IsoHour>
 }
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<IsoMinute>
-    for FormattableZonedDateTime<A>
+    for ResolvedZonedDateTime<A>
 {
     #[inline]
     fn get_field(&self) -> IsoMinute {
@@ -672,7 +672,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<IsoMinute>
 }
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<IsoSecond>
-    for FormattableZonedDateTime<A>
+    for ResolvedZonedDateTime<A>
 {
     #[inline]
     fn get_field(&self) -> IsoSecond {
@@ -681,7 +681,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<IsoSecond>
 }
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<NanoSecond>
-    for FormattableZonedDateTime<A>
+    for ResolvedZonedDateTime<A>
 {
     #[inline]
     fn get_field(&self) -> NanoSecond {
@@ -690,7 +690,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<NanoSecond>
 }
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<Option<UtcOffset>>
-    for FormattableZonedDateTime<A>
+    for ResolvedZonedDateTime<A>
 {
     #[inline]
     fn get_field(&self) -> Option<UtcOffset> {
@@ -699,7 +699,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<Option<UtcOffset>>
 }
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<Option<TimeZoneBcp47Id>>
-    for FormattableZonedDateTime<A>
+    for ResolvedZonedDateTime<A>
 {
     #[inline]
     fn get_field(&self) -> Option<TimeZoneBcp47Id> {
@@ -708,7 +708,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<Option<TimeZoneBcp47I
 }
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<Option<MetazoneId>>
-    for FormattableZonedDateTime<A>
+    for ResolvedZonedDateTime<A>
 {
     #[inline]
     fn get_field(&self) -> Option<MetazoneId> {
@@ -717,7 +717,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<Option<MetazoneId>>
 }
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<Option<ZoneVariant>>
-    for FormattableZonedDateTime<A>
+    for ResolvedZonedDateTime<A>
 {
     #[inline]
     fn get_field(&self) -> Option<ZoneVariant> {
@@ -725,28 +725,28 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<Option<ZoneVariant>>
     }
 }
 
-impl NeoGetField<Option<UtcOffset>> for FormattableTimeZone {
+impl NeoGetField<Option<UtcOffset>> for ResolvedTimeZone {
     #[inline]
     fn get_field(&self) -> Option<UtcOffset> {
         self.offset()
     }
 }
 
-impl NeoGetField<Option<TimeZoneBcp47Id>> for FormattableTimeZone {
+impl NeoGetField<Option<TimeZoneBcp47Id>> for ResolvedTimeZone {
     #[inline]
     fn get_field(&self) -> Option<TimeZoneBcp47Id> {
         self.bcp47_id()
     }
 }
 
-impl NeoGetField<Option<MetazoneId>> for FormattableTimeZone {
+impl NeoGetField<Option<MetazoneId>> for ResolvedTimeZone {
     #[inline]
     fn get_field(&self) -> Option<MetazoneId> {
         self.metazone_id()
     }
 }
 
-impl NeoGetField<Option<ZoneVariant>> for FormattableTimeZone {
+impl NeoGetField<Option<ZoneVariant>> for ResolvedTimeZone {
     #[inline]
     fn get_field(&self) -> Option<ZoneVariant> {
         self.zone_variant()
@@ -780,7 +780,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<NeverField> for DateT
 }
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<NeverField>
-    for FormattableZonedDateTime<A>
+    for ResolvedZonedDateTime<A>
 {
     #[inline]
     fn get_field(&self) -> NeverField {
@@ -788,7 +788,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> NeoGetField<NeverField>
     }
 }
 
-impl NeoGetField<NeverField> for FormattableTimeZone {
+impl NeoGetField<NeverField> for ResolvedTimeZone {
     #[inline]
     fn get_field(&self) -> NeverField {
         NeverField
@@ -1880,7 +1880,7 @@ macro_rules! impl_zone_marker {
         ///
         /// // Time zone for America/Chicago in the summer
         /// let zone = TimeZone::new("-05:00".parse().unwrap(), TimeZoneBcp47Id(tinystr!(8, "uschi")))
-        ///     .into_formattable_at(
+        ///     .resolve_at(
         ///         &icu_calendar::DateTime::try_new_iso_datetime(2024, 7, 1, 0, 0, 0).unwrap()
         /// );
         ///
@@ -1911,7 +1911,7 @@ macro_rules! impl_zone_marker {
         ///
         /// // Time zone for America/Chicago in the summer
         /// let zone = TimeZone::new("-05:00".parse().unwrap(), TimeZoneBcp47Id(tinystr!(8, "uschi")))
-        ///     .into_formattable_at(
+        ///     .resolve_at(
         ///         &icu_calendar::DateTime::try_new_iso_datetime(2024, 7, 1, 0, 0, 0).unwrap()
         /// );
         ///
@@ -2064,7 +2064,7 @@ macro_rules! impl_zoneddatetime_marker {
         ///
         /// let mut dtz = ZonedDateTime::try_from_str("2024-05-17T15:47:50+01:00[Europe/London]")
         ///     .unwrap()
-        ///     .into_formattable();
+        ///     .resolve();
         /// assert_try_writeable_eq!(
         ///     fmt.convert_and_format(&dtz),
         #[doc = concat!("    \"", $sample, "\"")]
@@ -2092,7 +2092,7 @@ macro_rules! impl_zoneddatetime_marker {
         /// let mut dtz = ZonedDateTime::try_from_str("2024-05-17T15:47:50+01:00[Europe/London]")
         ///     .unwrap()
         ///     .to_calendar(Gregorian)
-        ///     .into_formattable();
+        ///     .resolve();
         ///
         /// assert_try_writeable_eq!(
         ///     fmt.format(&dtz),
@@ -2275,7 +2275,7 @@ impl_zone_marker!(
     ///
     /// // Time zone for America/Sao_Paulo year-round
     /// let zone = TimeZone::new("-03:00".parse().unwrap(), TimeZoneBcp47Id(tinystr!(8, "brsao")))
-    ///     .into_formattable_at(
+    ///     .resolve_at(
     ///         &icu_calendar::DateTime::try_new_iso_datetime(2025, 1, 2, 0, 0, 0).unwrap(),
     ///     );
     ///
@@ -2389,7 +2389,7 @@ impl_zone_marker!(
     ///
     /// // Time zone for America/Sao_Paulo year-round
     /// let zone = TimeZone::new("-03:00".parse().unwrap(), TimeZoneBcp47Id(tinystr!(8, "brsao")))
-    ///     .into_formattable_at(
+    ///     .resolve_at(
     ///         &icu_calendar::DateTime::try_new_iso_datetime(2025, 1, 2, 0, 0, 0).unwrap(),
     ///     );
     ///

@@ -4,7 +4,7 @@
 
 use icu_calendar::{AsCalendar, Date, Iso, Time};
 
-use crate::{FormattableTimeZone, MetazoneCalculator, TimeZone, ZoneOffsetCalculator};
+use crate::{ResolvedTimeZone, MetazoneCalculator, TimeZone, ZoneOffsetCalculator};
 
 /// A date and time local to a specified custom time zone.
 #[derive(Debug)]
@@ -39,9 +39,9 @@ impl<A: AsCalendar> ZonedDateTime<A> {
         }
     }
 
-    /// Convert the [`ZonedDateTime`] to a [`FormattableZonedDateTime`].
+    /// Convert the [`ZonedDateTime`] to a [`ResolvedZonedDateTime`].
     #[cfg(feature = "compiled_data")]
-    pub fn into_formattable(self) -> FormattableZonedDateTime<A> {
+    pub fn resolve(self) -> ResolvedZonedDateTime<A> {
         MetazoneCalculator::new().compute_dt(self, &ZoneOffsetCalculator::new())
     }
 }
@@ -49,19 +49,19 @@ impl<A: AsCalendar> ZonedDateTime<A> {
 /// A date and time local to a specified custom time zone.
 #[derive(Debug)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
-pub struct FormattableZonedDateTime<A: AsCalendar> {
+pub struct ResolvedZonedDateTime<A: AsCalendar> {
     date: Date<A>,
     time: Time,
-    zone: FormattableTimeZone,
+    zone: ResolvedTimeZone,
 }
 
-impl<A: AsCalendar> FormattableZonedDateTime<A> {
-    /// Creates a new [`FormattableZonedDateTime`] in the UTC time zone.
+impl<A: AsCalendar> ResolvedZonedDateTime<A> {
+    /// Creates a new [`ResolvedZonedDateTime`] in the UTC time zone.
     pub fn new_in_utc(date: Date<A>, time: Time) -> Self {
         Self {
             date,
             time,
-            zone: FormattableTimeZone::utc(),
+            zone: ResolvedTimeZone::utc(),
         }
     }
 
@@ -76,24 +76,24 @@ impl<A: AsCalendar> FormattableZonedDateTime<A> {
     }
 
     /// The time zone
-    pub fn zone(&self) -> FormattableTimeZone {
+    pub fn zone(&self) -> ResolvedTimeZone {
         self.zone
     }
 
-    /// Convert the FormattableZonedDateTime to an ISO FormattableZonedDateTime
+    /// Convert the ResolvedZonedDateTime to an ISO ResolvedZonedDateTime
     #[inline]
-    pub fn to_iso(&self) -> FormattableZonedDateTime<Iso> {
-        FormattableZonedDateTime {
+    pub fn to_iso(&self) -> ResolvedZonedDateTime<Iso> {
+        ResolvedZonedDateTime {
             date: self.date.to_iso(),
             time: self.time,
             zone: self.zone,
         }
     }
 
-    /// Convert the FormattableZonedDateTime to a FormattableZonedDateTime in a different calendar
+    /// Convert the ResolvedZonedDateTime to a ResolvedZonedDateTime in a different calendar
     #[inline]
-    pub fn to_calendar<A2: AsCalendar>(&self, calendar: A2) -> FormattableZonedDateTime<A2> {
-        FormattableZonedDateTime {
+    pub fn to_calendar<A2: AsCalendar>(&self, calendar: A2) -> ResolvedZonedDateTime<A2> {
+        ResolvedZonedDateTime {
             date: self.date.to_calendar(calendar),
             time: self.time,
             zone: self.zone,
@@ -102,13 +102,13 @@ impl<A: AsCalendar> FormattableZonedDateTime<A> {
 }
 
 impl MetazoneCalculator {
-    /// Converts a [`ZonedDateTime`] to a [`FormattableZonedDateTime`] at the given datetime.
+    /// Converts a [`ZonedDateTime`] to a [`ResolvedZonedDateTime`] at the given datetime.
     pub fn compute_dt<A: AsCalendar>(
         &self,
         zoned: ZonedDateTime<A>,
         zoc: &ZoneOffsetCalculator,
-    ) -> FormattableZonedDateTime<A> {
-        FormattableZonedDateTime {
+    ) -> ResolvedZonedDateTime<A> {
+        ResolvedZonedDateTime {
             zone: self.compute(
                 zoned.zone,
                 zoc,

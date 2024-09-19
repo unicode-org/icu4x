@@ -12,7 +12,7 @@ use icu_collections::codepointinvlist::CodePointInversionListBuilder;
 use icu_datetime::neo::TypedNeoFormatter;
 use icu_datetime::neo_marker::NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker;
 use icu_datetime::neo_skeleton::NeoSkeletonLength;
-use icu_timezone::FormattableZonedDateTime;
+use icu_timezone::ResolvedZonedDateTime;
 use std::env;
 use writeable::adapters::LossyWrap;
 
@@ -47,7 +47,7 @@ fn main() {
         let date = Date::try_new_gregorian_date(2020, 10, 10).unwrap();
         let time = Time::try_new(18, 56, 0, 0).unwrap();
 
-        let formatted_dt = dtf.format(&FormattableZonedDateTime::new_in_utc(date, time));
+        let formatted_dt = dtf.format(&ResolvedZonedDateTime::new_in_utc(date, time));
 
         println!("Today is: {}", LossyWrap(formatted_dt));
     }

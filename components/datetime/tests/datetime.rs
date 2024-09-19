@@ -37,7 +37,7 @@ use icu_locale_core::{
     locale, LanguageIdentifier, Locale,
 };
 use icu_provider::prelude::*;
-use icu_timezone::{FormattableZonedDateTime, TimeZone};
+use icu_timezone::{ResolvedZonedDateTime, TimeZone};
 use patterns::{
     dayperiods::{DayPeriodExpectation, DayPeriodTests},
     time_zones::{TimeZoneExpectation, TimeZoneFormatterConfig, TimeZoneTests},
@@ -278,12 +278,12 @@ fn assert_fixture_element<A>(
     );
 
     let any_input =
-        FormattableZonedDateTime::new_in_utc(input_value.date.to_any(), input_value.time);
+        ResolvedZonedDateTime::new_in_utc(input_value.date.to_any(), input_value.time);
     let iso_any_input =
-        FormattableZonedDateTime::new_in_utc(input_iso.date.to_any(), input_iso.time);
+        ResolvedZonedDateTime::new_in_utc(input_iso.date.to_any(), input_iso.time);
 
     let input_value =
-        FormattableZonedDateTime::new_in_utc(input_value.date.clone(), input_value.time);
+        ResolvedZonedDateTime::new_in_utc(input_value.date.clone(), input_value.time);
 
     let mut options = NeoOptions::from(skeleton.length);
     options.alignment = skeleton.alignment;
@@ -485,7 +485,7 @@ fn test_time_zone_format_offset_not_set_debug_assert_panic() {
 
     let time_zone = TimeZone::try_from_str("America/Los_Angeles")
         .unwrap()
-        .into_formattable_at(&DateTime::try_new_iso_datetime(2022, 7, 7, 7, 7, 7).unwrap());
+        .resolve_at(&DateTime::try_new_iso_datetime(2022, 7, 7, 7, 7, 7).unwrap());
     let tzf = TypedNeoFormatter::<NeverCalendar, NeoTimeZoneOffsetShortMarker>::try_new(
         &locale!("en").into(),
         Default::default(),

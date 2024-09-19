@@ -9,7 +9,7 @@ use icu_datetime::neo::TypedNeoFormatter;
 
 use icu_calendar::{DateTime, Gregorian};
 use icu_locale_core::Locale;
-use icu_timezone::FormattableZonedDateTime;
+use icu_timezone::ResolvedZonedDateTime;
 use writeable::TryWriteable;
 
 #[path = "../tests/mock.rs"]
@@ -23,7 +23,7 @@ fn datetime_benches(c: &mut Criterion) {
         group.bench_function(&format!("semantic/{name}"), |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
-                    let datetimes: Vec<FormattableZonedDateTime<Gregorian>> = fx
+                    let datetimes: Vec<ResolvedZonedDateTime<Gregorian>> = fx
                         .values
                         .iter()
                         .map(move |value| {
@@ -31,7 +31,7 @@ fn datetime_benches(c: &mut Criterion) {
                                 mock::parse_zoned_gregorian_from_str(value)
                             } else {
                                 let DateTime { date, time } = mock::parse_gregorian_from_str(value);
-                                FormattableZonedDateTime::new_in_utc(date, time)
+                                ResolvedZonedDateTime::new_in_utc(date, time)
                             }
                         })
                         .collect();
