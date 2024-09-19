@@ -5,19 +5,35 @@
     "1": "next week"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0002- w"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "-"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " w"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0002+ w"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "+"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " w"
+        }
       ]
-    }
+    ]
   }
 }

@@ -3,27 +3,57 @@
     "0": "this hour"
   },
   "past": {
-    "strings": {
-      "one": [
-        0,
-        "\u0001 hour ago"
-      ],
-      "other": [
-        0,
-        "\u0001 hours ago"
+    "one": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " hour ago"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " hours ago"
+        }
+      ]
+    ]
   },
   "future": {
-    "strings": {
-      "one": [
-        0,
-        "\u0004in  hour"
-      ],
-      "other": [
-        0,
-        "\u0004in  hours"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " hour"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " hours"
+        }
+      ]
+    ]
   }
 }

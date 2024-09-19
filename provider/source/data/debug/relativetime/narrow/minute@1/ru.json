@@ -3,19 +3,35 @@
     "0": "в эту минуту"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0002- мин"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "-"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " мин"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0002+ мин"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "+"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " мин"
+        }
       ]
-    }
+    ]
   }
 }

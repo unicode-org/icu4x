@@ -3,27 +3,57 @@
     "0": "now"
   },
   "past": {
-    "strings": {
-      "one": [
-        0,
-        "\u0001 second ago"
-      ],
-      "other": [
-        0,
-        "\u0001 seconds ago"
+    "one": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " second ago"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " seconds ago"
+        }
+      ]
+    ]
   },
   "future": {
-    "strings": {
-      "one": [
-        0,
-        "\u0004in  second"
-      ],
-      "other": [
-        0,
-        "\u0004in  seconds"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " second"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " seconds"
+        }
+      ]
+    ]
   }
 }

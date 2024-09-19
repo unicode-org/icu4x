@@ -5,19 +5,35 @@
     "1": "el próximo mes"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0006hace  m"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "hace "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " m"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u000bdentro de  m"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "dentro de "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " m"
+        }
       ]
-    }
+    ]
   }
 }

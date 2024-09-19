@@ -1,18 +1,37 @@
 {
   "patterns": {
-    "strings": {
-      "one": [
-        0,
-        "\u0001 funta"
-      ],
-      "few": [
-        0,
-        "\u0001 funte"
-      ],
-      "other": [
-        0,
-        "\u0001 funti"
+    "one": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " funta"
+        }
       ]
-    }
+    ],
+    "few": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " funte"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " funti"
+        }
+      ]
+    ]
   }
 }

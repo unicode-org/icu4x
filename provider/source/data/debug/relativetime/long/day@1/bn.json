@@ -7,19 +7,29 @@
     "2": "আগামী পরশু"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 দিন আগে"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " দিন আগে"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 দিনের মধ্যে"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " দিনের মধ্যে"
+        }
       ]
-    }
+    ]
   }
 }

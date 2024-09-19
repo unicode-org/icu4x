@@ -5,19 +5,32 @@
     "1": "на следующей нед."
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 нед. назад"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " нед. назад"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\fчерез  нед."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " нед."
+        }
       ]
-    }
+    ]
   }
 }

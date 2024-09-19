@@ -3,19 +3,35 @@
     "0": "maintenant"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0002- s"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "-"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " s"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0002+ s"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "+"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " s"
+        }
       ]
-    }
+    ]
   }
 }

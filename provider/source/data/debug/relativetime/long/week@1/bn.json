@@ -5,19 +5,29 @@
     "1": "পরের সপ্তাহ"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 সপ্তাহ আগে"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " সপ্তাহ আগে"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 সপ্তাহে"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " সপ্তাহে"
+        }
       ]
-    }
+    ]
   }
 }

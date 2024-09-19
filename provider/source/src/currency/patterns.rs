@@ -73,12 +73,7 @@ impl DataProvider<CurrencyPatternsDataV1Marker> for SourceDataProvider {
                 .with_many_value(patterns.pattern_many.as_deref())
                 .with_explicit_one_value(patterns.pattern_explicit_one.as_deref())
                 .with_explicit_zero_value(patterns.pattern_explicit_zero.as_deref())
-                .try_into()
-                .map_err(|_| {
-                    DataError::custom("Invalid patterns")
-                        .with_debug_context(patterns)
-                        .with_debug_context(&req.id)
-                })?,
+                .into(),
             }),
         })
     }

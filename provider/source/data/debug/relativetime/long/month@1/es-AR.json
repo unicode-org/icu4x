@@ -5,27 +5,63 @@
     "1": "el próximo mes"
   },
   "past": {
-    "strings": {
-      "one": [
-        0,
-        "\u0006hace  mes"
-      ],
-      "other": [
-        0,
-        "\u0006hace  meses"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "hace "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " mes"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "hace "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " meses"
+        }
+      ]
+    ]
   },
   "future": {
-    "strings": {
-      "one": [
-        0,
-        "\u000bdentro de  mes"
-      ],
-      "other": [
-        0,
-        "\u000bdentro de  meses"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "dentro de "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " mes"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "dentro de "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " meses"
+        }
+      ]
+    ]
   }
 }

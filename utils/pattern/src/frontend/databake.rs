@@ -8,17 +8,16 @@ use crate::DoublePlaceholder;
 use crate::SinglePlaceholder;
 
 use super::*;
-use ::databake::BakeSize;
-use ::databake::{quote, Bake, CrateEnv, TokenStream};
+use ::databake::{quote, Bake, BakeSize, CrateEnv, TokenStream};
 
-impl<B, Store> Bake for Pattern<B, Store>
+impl<'a, B> Bake for &'a Pattern<B>
 where
-    B: 'static,
-    Store: Bake,
+    B: PatternBackend,
+    for<'b> &'b B::Store: Bake,
 {
     fn bake(&self, ctx: &CrateEnv) -> TokenStream {
         ctx.insert("icu_pattern");
-        let store = self.store.bake(ctx);
+        let store = (&self.store).bake(ctx);
         let b = if TypeId::of::<B>() == TypeId::of::<SinglePlaceholder>() {
             quote!(icu_pattern::SinglePlaceholder)
         } else if TypeId::of::<B>() == TypeId::of::<DoublePlaceholder>() {
@@ -27,29 +26,29 @@ where
             unreachable!("all impls of sealed trait PatternBackend should be covered")
         };
         quote! {
-            icu_pattern::Pattern::<#b, _>::from_store_unchecked(#store)
+            icu_pattern::Pattern::<#b>::from_ref_store_unchecked(#store)
         }
     }
 }
 
-impl<B, Store> BakeSize for Pattern<B, Store>
+impl<'a, B> BakeSize for &'a Pattern<B>
 where
-    B: 'static,
-    Store: BakeSize,
+    B: PatternBackend,
+    for<'b> &'b B::Store: BakeSize,
 {
     fn borrows_size(&self) -> usize {
-        self.store.borrows_size()
+        let s: &B::Store = &self.store;
+        s.borrows_size()
     }
 }
 
 #[test]
 fn test_baked() {
     use ::databake::test_bake;
-    use alloc::borrow::Cow;
     test_bake!(
-        Pattern<SinglePlaceholder, Cow<str>>,
+        &Pattern<SinglePlaceholder>,
         const,
-        crate::Pattern::<crate::SinglePlaceholder, _>::from_store_unchecked(alloc::borrow::Cow::Borrowed("")),
+        crate::Pattern::<crate::SinglePlaceholder>::from_ref_store_unchecked(""),
         icu_pattern
     );
 }

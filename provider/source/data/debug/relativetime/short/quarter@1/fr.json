@@ -5,19 +5,35 @@
     "1": "le trimestre prochain"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\bil y a  trim."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "il y a "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " trim."
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0006dans  trim."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "dans "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " trim."
+        }
       ]
-    }
+    ]
   }
 }

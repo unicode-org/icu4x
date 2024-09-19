@@ -5,35 +5,82 @@
     "1": "на следующей неделе"
   },
   "past": {
-    "strings": {
-      "one": [
-        0,
-        "\u0001 неделю назад"
-      ],
-      "many": [
-        0,
-        "\u0001 недель назад"
-      ],
-      "other": [
-        0,
-        "\u0001 недели назад"
+    "one": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " неделю назад"
+        }
       ]
-    }
+    ],
+    "many": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " недель назад"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " недели назад"
+        }
+      ]
+    ]
   },
   "future": {
-    "strings": {
-      "one": [
-        0,
-        "\fчерез  неделю"
-      ],
-      "many": [
-        0,
-        "\fчерез  недель"
-      ],
-      "other": [
-        0,
-        "\fчерез  недели"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " неделю"
+        }
       ]
-    }
+    ],
+    "many": [
+      0,
+      [
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " недель"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " недели"
+        }
+      ]
+    ]
   }
 }

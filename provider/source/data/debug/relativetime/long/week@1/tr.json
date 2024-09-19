@@ -5,19 +5,29 @@
     "1": "gelecek hafta"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 hafta önce"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " hafta önce"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 hafta sonra"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " hafta sonra"
+        }
       ]
-    }
+    ]
   }
 }

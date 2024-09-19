@@ -5,19 +5,35 @@
     "1": "l’année prochaine"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\bil y a  a"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "il y a "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " a"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0006dans  a"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "dans "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " a"
+        }
       ]
-    }
+    ]
   }
 }

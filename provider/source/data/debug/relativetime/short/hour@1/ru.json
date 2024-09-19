@@ -3,19 +3,32 @@
     "0": "в этот час"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 ч назад"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ч назад"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\fчерез  ч"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "через "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ч"
+        }
       ]
-    }
+    ]
   }
 }

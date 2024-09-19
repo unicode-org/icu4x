@@ -3,19 +3,32 @@
     "0": "sa minutong ito"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 min. ang nakalipas"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " min. ang nakalipas"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0004sa  min."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "sa "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " min."
+        }
       ]
-    }
+    ]
   }
 }

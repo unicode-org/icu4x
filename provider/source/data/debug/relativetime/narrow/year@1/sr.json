@@ -5,19 +5,35 @@
     "1": "следеће г."
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\bпре  г."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " г."
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0006за  г."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " г."
+        }
       ]
-    }
+    ]
   }
 }

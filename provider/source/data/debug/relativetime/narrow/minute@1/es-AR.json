@@ -3,19 +3,35 @@
     "0": "este minuto"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0006hace  min"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "hace "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " min"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u000bdentro de  min"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "dentro de "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " min"
+        }
       ]
-    }
+    ]
   }
 }

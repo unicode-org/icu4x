@@ -3,19 +3,32 @@
     "0": "นาทีนี้"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 นาทีที่ผ่านมา"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " นาทีที่ผ่านมา"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0011ในอีก  นาที"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "ในอีก "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " นาที"
+        }
       ]
-    }
+    ]
   }
 }

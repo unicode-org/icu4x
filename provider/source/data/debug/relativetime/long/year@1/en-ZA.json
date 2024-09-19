@@ -5,27 +5,57 @@
     "1": "next year"
   },
   "past": {
-    "strings": {
-      "one": [
-        0,
-        "\u0001 year ago"
-      ],
-      "other": [
-        0,
-        "\u0001 years ago"
+    "one": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " year ago"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " years ago"
+        }
+      ]
+    ]
   },
   "future": {
-    "strings": {
-      "one": [
-        0,
-        "\u0004in  year"
-      ],
-      "other": [
-        0,
-        "\u0004in  years"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " year"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " years"
+        }
+      ]
+    ]
   }
 }

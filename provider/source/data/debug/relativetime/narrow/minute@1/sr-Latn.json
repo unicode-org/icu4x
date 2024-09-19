@@ -3,19 +3,35 @@
     "0": "ovog minuta"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0005pre  min."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " min."
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0004za  min."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " min."
+        }
       ]
-    }
+    ]
   }
 }

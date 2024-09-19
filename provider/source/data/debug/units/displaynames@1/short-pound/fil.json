@@ -1,14 +1,26 @@
 {
   "patterns": {
-    "strings": {
-      "one": [
-        0,
-        "\u0001 lb"
-      ],
-      "other": [
-        0,
-        "\u0001 lbs"
+    "one": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " lb"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " lbs"
+        }
+      ]
+    ]
   }
 }

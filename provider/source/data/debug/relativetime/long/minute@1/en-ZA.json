@@ -3,27 +3,57 @@
     "0": "this minute"
   },
   "past": {
-    "strings": {
-      "one": [
-        0,
-        "\u0001 minute ago"
-      ],
-      "other": [
-        0,
-        "\u0001 minutes ago"
+    "one": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " minute ago"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " minutes ago"
+        }
+      ]
+    ]
   },
   "future": {
-    "strings": {
-      "one": [
-        0,
-        "\u0004in  minute"
-      ],
-      "other": [
-        0,
-        "\u0004in  minutes"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " minute"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " minutes"
+        }
+      ]
+    ]
   }
 }

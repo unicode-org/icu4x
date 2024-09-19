@@ -62,10 +62,7 @@ impl DataProvider<UnitsDisplayNameV1Marker> for SourceDataProvider {
                 .with_many_value(unit_patterns.many.as_deref())
                 .with_explicit_one_value(unit_patterns.explicit_one.as_deref())
                 .with_explicit_zero_value(unit_patterns.explicit_zero.as_deref())
-                .try_into()
-                .map_err(|_| {
-                    DataError::custom("Invalid pattern").with_debug_context(&unit_patterns)
-                })?,
+                .into(),
             }),
         })
     }
