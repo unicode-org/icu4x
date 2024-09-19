@@ -28,7 +28,7 @@ use icu_datetime::CldrCalendar;
 use icu_datetime::{
     neo::{NeoFormatter, NeoOptions, TypedNeoFormatter},
     neo_pattern::DateTimePattern,
-    neo_skeleton::{NeoDateTimeComponents, NeoSkeleton, NeoSkeletonLength, NeoTimeZoneSkeleton},
+    neo_skeleton::{NeoDateTimeComponents, NeoSkeleton, NeoTimeZoneSkeleton},
     options::preferences::{self, HourCycle},
     TypedDateTimeNames,
 };
@@ -462,12 +462,12 @@ fn test_time_zone_format_configs() {
                     // TODO: ISO-8601 not yet supported via Semantic Skeleton
                     continue;
                 }
-                let skeleton = config_input.to_semantic_skeleton();
+                let (skeleton, length) = config_input.to_semantic_skeleton();
                 for (&fallback_format, expect) in fallback_formats.iter().zip(expected.iter()) {
                     let tzf = TypedNeoFormatter::<Gregorian, _>::try_new_with_components(
                         &data_locale,
                         skeleton,
-                        NeoSkeletonLength::Long.into(),
+                        length.into(),
                     )
                     .unwrap();
                     assert_try_writeable_eq!(

@@ -85,7 +85,6 @@ macro_rules! make_constructors {
             impl NeoTimeZoneSkeleton {
                 pub(crate) const fn $fn1() -> Self {
                     Self {
-                        length: None,
                         style: NeoTimeZoneStyle::$style1,
                     }
                 }

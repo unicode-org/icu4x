@@ -1782,8 +1782,8 @@ macro_rules! impl_date_marker {
             /// ```
             $type,
             sample_length: $sample_length,
-            $(alignment: $option_alignment_yes)?,
-            $(era_display: $year_yes)?,
+            $(alignment: $option_alignment_yes,)?
+            $(era_display: $year_yes,)?
         );
         impl private::Sealed for $type {}
         impl DateTimeNamesMarker for $type {
@@ -2472,7 +2472,43 @@ impl_zone_marker!(
 );
 
 impl_zone_marker!(
-    /// This marker only loads data for the short length; don't use with standalone long length:
+    /// This marker only loads data for the short length. Useful when combined with other fields:
+    ///
+    /// ```
+    /// use icu::calendar::{Date, Time};
+    /// use icu::timezone::{CustomTimeZone, CustomZonedDateTime};
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::neo::NeoFormatter;
+    /// use icu::datetime::neo_marker::NeoMonthDayMarker;
+    /// use icu::datetime::neo_marker::NeoHourMinuteMarker;
+    /// use icu::datetime::neo_marker::NeoTimeZoneSpecificShortMarker;
+    /// use icu::datetime::neo_marker::DateTimeCombo;
+    /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+    /// use icu::locale::locale;
+    /// use tinystr::tinystr;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// type MyDateTimeZoneSet = DateTimeCombo<
+    ///     NeoMonthDayMarker,
+    ///     NeoHourMinuteMarker,
+    ///     NeoTimeZoneSpecificShortMarker,
+    /// >;
+    ///
+    /// let fmt = NeoFormatter::<MyDateTimeZoneSet>::try_new(
+    ///     &locale!("en-US").into(),
+    ///     NeoSkeletonLength::Long.into(),
+    /// )
+    /// .unwrap();
+    ///
+    /// let dtz = CustomZonedDateTime::try_from_str("2024-09-17T15:47:50-05:00[America/Chicago]").unwrap();
+    ///
+    /// assert_try_writeable_eq!(
+    ///     fmt.convert_and_format(&dtz),
+    ///     "September 17, 3:47 PM CDT"
+    /// );
+    /// ```
+    ///
+    /// Don't use long length if it is the only field:
     ///
     /// ```
     /// use icu::calendar::Gregorian;
@@ -2552,7 +2588,43 @@ impl_zone_marker!(
 );
 
 impl_zone_marker!(
-    /// This marker only loads data for the short length; don't use with standalone long length:
+    /// This marker only loads data for the short length. Useful when combined with other fields:
+    ///
+    /// ```
+    /// use icu::calendar::{Date, Time};
+    /// use icu::timezone::{CustomTimeZone, CustomZonedDateTime};
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::neo::NeoFormatter;
+    /// use icu::datetime::neo_marker::NeoMonthDayMarker;
+    /// use icu::datetime::neo_marker::NeoHourMinuteMarker;
+    /// use icu::datetime::neo_marker::NeoTimeZoneGenericShortMarker;
+    /// use icu::datetime::neo_marker::DateTimeCombo;
+    /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+    /// use icu::locale::locale;
+    /// use tinystr::tinystr;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// type MyDateTimeZoneSet = DateTimeCombo<
+    ///     NeoMonthDayMarker,
+    ///     NeoHourMinuteMarker,
+    ///     NeoTimeZoneGenericShortMarker,
+    /// >;
+    ///
+    /// let fmt = NeoFormatter::<MyDateTimeZoneSet>::try_new(
+    ///     &locale!("en-US").into(),
+    ///     NeoSkeletonLength::Long.into(),
+    /// )
+    /// .unwrap();
+    ///
+    /// let dtz = CustomZonedDateTime::try_from_str("2024-09-17T15:47:50-05:00[America/Chicago]").unwrap();
+    ///
+    /// assert_try_writeable_eq!(
+    ///     fmt.convert_and_format(&dtz),
+    ///     "September 17, 3:47 PM CT"
+    /// );
+    /// ```
+    ///
+    /// Don't use long length if it is the only field:
     ///
     /// ```
     /// use icu::calendar::Gregorian;
