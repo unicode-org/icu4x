@@ -5,27 +5,57 @@
     "1": "tomorrow"
   },
   "past": {
-    "strings": {
-      "one": [
-        0,
-        "\u0001 day ago"
-      ],
-      "other": [
-        0,
-        "\u0001 days ago"
+    "one": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " day ago"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " days ago"
+        }
+      ]
+    ]
   },
   "future": {
-    "strings": {
-      "one": [
-        0,
-        "\u0004in  day"
-      ],
-      "other": [
-        0,
-        "\u0004in  days"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " day"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "in "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " days"
+        }
+      ]
+    ]
   }
 }

@@ -13,6 +13,9 @@ use alloc::borrow::Cow;
 use icu_pattern::{DoublePlaceholderPattern, SinglePlaceholderPattern};
 use icu_provider::prelude::*;
 
+#[cfg(feature = "serde")]
+use icu_pattern::{DoublePlaceholder, SinglePlaceholder};
+
 #[cfg(feature = "compiled_data")]
 /// Baked data
 ///
@@ -34,15 +37,27 @@ pub use crate::provider::Baked;
 /// <https://www.unicode.org/reports/tr35/tr35-numbers.html#approximate-number-formatting>
 /// <https://www.unicode.org/reports/tr35/tr35-numbers.html#explicit-plus-signs>
 pub struct PercentEssentialsV1<'data> {
-    #[cfg_attr(feature = "serde", serde(borrow))]
+    #[cfg_attr(
+        feature = "serde",
+        serde(
+            borrow,
+            deserialize_with = "icu_pattern::deserialize_borrowed_cow::<DoublePlaceholder, _>"
+        )
+    )]
     /// Represents the standard pattern for signed percents.
     /// NOTE: place holder 0 is the place of the percent value.
     ///       place holder 1 is the place of the plus, minus, or approximate signs.
-    pub signed_pattern: DoublePlaceholderPattern<Cow<'data, str>>,
+    pub signed_pattern: Cow<'data, DoublePlaceholderPattern>,
 
-    #[cfg_attr(feature = "serde", serde(borrow))]
+    #[cfg_attr(
+        feature = "serde",
+        serde(
+            borrow,
+            deserialize_with = "icu_pattern::deserialize_borrowed_cow::<SinglePlaceholder, _>"
+        )
+    )]
     /// Represents the standard pattern for unsigned percents.
-    pub unsigned_pattern: SinglePlaceholderPattern<Cow<'data, str>>,
+    pub unsigned_pattern: Cow<'data, SinglePlaceholderPattern>,
 
     #[cfg_attr(feature = "serde", serde(borrow))]
     /// The localize approximate sign.

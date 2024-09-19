@@ -1,14 +1,26 @@
 {
   "patterns": {
-    "strings": {
-      "few": [
-        0,
-        "\u0001 стопе"
-      ],
-      "other": [
-        0,
-        "\u0001 стопа"
+    "few": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " стопе"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " стопа"
+        }
+      ]
+    ]
   }
 }

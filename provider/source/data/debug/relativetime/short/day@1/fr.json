@@ -7,19 +7,35 @@
     "2": "après-demain"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\bil y a  j"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "il y a "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " j"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0006dans  j"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "dans "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " j"
+        }
       ]
-    }
+    ]
   }
 }

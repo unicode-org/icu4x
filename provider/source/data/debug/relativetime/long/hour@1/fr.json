@@ -3,27 +3,63 @@
     "0": "cette heure-ci"
   },
   "past": {
-    "strings": {
-      "one": [
-        0,
-        "\bil y a  heure"
-      ],
-      "other": [
-        0,
-        "\bil y a  heures"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "il y a "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " heure"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "il y a "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " heures"
+        }
+      ]
+    ]
   },
   "future": {
-    "strings": {
-      "one": [
-        0,
-        "\u0006dans  heure"
-      ],
-      "other": [
-        0,
-        "\u0006dans  heures"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "dans "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " heure"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "dans "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " heures"
+        }
+      ]
+    ]
   }
 }

@@ -23,7 +23,7 @@ use icu_collections::char16trie::TrieResult;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_normalizer::provider::DecompositionDataV1;
 use icu_normalizer::provider::DecompositionTablesV1;
-use icu_properties::CanonicalCombiningClass;
+use icu_properties::props::CanonicalCombiningClass;
 use smallvec::SmallVec;
 use zerovec::ule::AsULE;
 use zerovec::ule::RawBytesULE;

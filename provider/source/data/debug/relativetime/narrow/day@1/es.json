@@ -7,19 +7,35 @@
     "2": "pasado mañana"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0006hace  d"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "hace "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " d"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u000bdentro de  d"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "dentro de "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " d"
+        }
       ]
-    }
+    ]
   }
 }

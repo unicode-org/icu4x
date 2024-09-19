@@ -3,19 +3,35 @@
     "0": "maintenant"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\bil y a  s"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "il y a "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " s"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0006dans  s"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "dans "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " s"
+        }
       ]
-    }
+    ]
   }
 }

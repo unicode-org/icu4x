@@ -133,9 +133,11 @@ expand!(
 
 #[test]
 fn test_basic() {
+    use icu::properties::{props::WhiteSpace, CodePointSetData};
+
     let provider = SourceDataProvider::new_testing();
 
-    let whitespace = icu::properties::sets::load_white_space(&provider).unwrap();
+    let whitespace = CodePointSetData::try_new_unstable::<WhiteSpace>(&provider).unwrap();
     let whitespace = whitespace.as_code_point_inversion_list().unwrap();
 
     assert!(whitespace.contains(' '));

@@ -3,19 +3,29 @@
     "0": "1 時間以内"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 時間前"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " 時間前"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 時間後"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " 時間後"
+        }
       ]
-    }
+    ]
   }
 }

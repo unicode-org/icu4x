@@ -32,13 +32,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "deduplicating_array"
-version = "0.1.6"
-dependencies = [
- "serde",
-]
-
-[[package]]
 name = "displaydoc"
 version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -125,6 +118,7 @@ dependencies = [
  "icu_locale_core",
  "icu_properties",
  "icu_provider",
+ "potential_utf",
  "serde",
  "writeable",
  "zerovec",
@@ -188,6 +182,7 @@ dependencies = [
  "icu_provider",
  "icu_timezone",
  "litemap",
+ "potential_utf",
  "serde",
  "smallvec",
  "tinystr",
@@ -228,10 +223,12 @@ name = "icu_experimental"
 version = "0.1.0"
 dependencies = [
  "displaydoc",
+ "either",
  "fixed_decimal",
  "icu_collections",
  "icu_decimal",
  "icu_experimental_data",
+ "icu_list",
  "icu_locale",
  "icu_locale_core",
  "icu_normalizer",
@@ -243,6 +240,7 @@ dependencies = [
  "num-bigint",
  "num-rational",
  "num-traits",
+ "potential_utf",
  "serde",
  "smallvec",
  "tinystr",
@@ -264,7 +262,6 @@ dependencies = [
 name = "icu_list"
 version = "1.5.0"
 dependencies = [
- "deduplicating_array",
  "displaydoc",
  "icu_list_data",
  "icu_provider",
@@ -286,9 +283,11 @@ name = "icu_locale"
 version = "1.5.0"
 dependencies = [
  "displaydoc",
+ "icu_collections",
  "icu_locale_core",
  "icu_locale_data",
  "icu_provider",
+ "potential_utf",
  "serde",
  "tinystr",
  "zerovec",
@@ -375,10 +374,11 @@ version = "1.5.0"
 dependencies = [
  "displaydoc",
  "icu_collections",
+ "icu_locale_core",
  "icu_properties_data",
  "icu_provider",
+ "potential_utf",
  "serde",
- "tinystr",
  "zerovec",
 ]
 
@@ -386,7 +386,6 @@ dependencies = [
 name = "icu_properties_data"
 version = "1.5.0"
 dependencies = [
- "icu_locale",
  "icu_provider_baked",
 ]
 
@@ -447,6 +446,7 @@ dependencies = [
  "icu_locale_core",
  "icu_provider",
  "icu_segmenter_data",
+ "potential_utf",
  "serde",
  "utf8_iter",
  "zerovec",
@@ -468,6 +468,7 @@ dependencies = [
  "icu_calendar",
  "icu_provider",
  "icu_timezone_data",
+ "ixdtf",
  "serde",
  "tinystr",
  "zerotrie",
@@ -550,6 +551,14 @@ dependencies = [
  "cobs",
  "embedded-io",
  "serde",
+]
+
+[[package]]
+name = "potential_utf"
+version = "0.0.0"
+dependencies = [
+ "serde",
+ "zerovec",
 ]
 
 [[package]]
@@ -764,6 +773,10 @@ version = "0.1.8"
 [[patch.unused]]
 name = "databake-derive"
 version = "0.1.8"
+
+[[patch.unused]]
+name = "deduplicating_array"
+version = "0.1.6"
 
 [[patch.unused]]
 name = "icu4x-datagen"

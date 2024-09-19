@@ -28,8 +28,6 @@ enum Error {
 
   dataUnavailableBufferFormatError,
 
-  propertyUnexpectedPropertyNameError,
-
   dateTimePatternError,
 
   dateTimeMissingInputFieldError,
@@ -76,8 +74,6 @@ enum Error {
         return 267;
       case dataUnavailableBufferFormatError:
         return 268;
-      case propertyUnexpectedPropertyNameError:
-        return 1026;
       case dateTimePatternError:
         return 2048;
       case dateTimeMissingInputFieldError:

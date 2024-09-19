@@ -39,7 +39,7 @@ use zerovec::ule::{AsULE, CharULE, UleError, ULE};
 ))]
 #[derive(Debug, Eq, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_properties::provider::bidi_data))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties::provider::bidi))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct BidiAuxiliaryPropertiesV1<'data> {
     /// A `CodePointTrie` efficiently storing the data from which property values
@@ -51,7 +51,7 @@ pub struct BidiAuxiliaryPropertiesV1<'data> {
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_properties::provider::bidi_data))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties::provider::bidi))]
 /// MirroredPairedBracketData
 pub struct MirroredPairedBracketData {
     /// The mirroring glyph
@@ -119,7 +119,7 @@ impl TryFrom<u32> for MirroredPairedBracketData {
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_properties::provider::bidi_data))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties::provider::bidi))]
 #[repr(u8)]
 #[zerovec::make_ule(CheckedBidiPairedBracketTypeULE)]
 // This enum is closed in order to help with ULE validation for MirroredPairedBracketData.

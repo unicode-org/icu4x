@@ -7,27 +7,63 @@
     "2": "pasado mañana"
   },
   "past": {
-    "strings": {
-      "one": [
-        0,
-        "\u0006hace  día"
-      ],
-      "other": [
-        0,
-        "\u0006hace  días"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "hace "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " día"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "hace "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " días"
+        }
+      ]
+    ]
   },
   "future": {
-    "strings": {
-      "one": [
-        0,
-        "\u000bdentro de  día"
-      ],
-      "other": [
-        0,
-        "\u000bdentro de  días"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "dentro de "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " día"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "dentro de "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " días"
+        }
+      ]
+    ]
   }
 }

@@ -5,14 +5,16 @@
 #[cfg(feature = "databake")]
 mod databake;
 #[cfg(feature = "serde")]
-mod serde;
+pub(crate) mod serde;
 use crate::common::*;
+#[cfg(feature = "alloc")]
 use crate::Error;
 #[cfg(feature = "alloc")]
 use crate::Parser;
-use crate::PatternOrUtf8Error;
 #[cfg(feature = "alloc")]
-use alloc::{borrow::ToOwned, str::FromStr, string::String};
+use crate::ParserOptions;
+#[cfg(feature = "alloc")]
+use alloc::{borrow::ToOwned, boxed::Box, str::FromStr, string::String};
 use core::{
     convert::Infallible,
     fmt::{self, Write},
@@ -30,18 +32,9 @@ use writeable::{adapters::TryWriteableInfallibleAsWriteable, PartsWrite, TryWrit
 ///
 /// The following backends are available:
 ///
-/// - [`SinglePlaceholder`] for patterns with one placeholder: `"{0} days ago"`
-///
-/// # Store
-///
-/// The data structure has a flexible backing data store. The only requirement for most
-/// functionality is that it implement `AsRef<str>` (backend-dependent).
-///
-/// Example stores:
-///
-/// - `&str` for a fully borrowed pattern
-/// - `String` for a fully owned pattern
-/// - `Cow<str>` for an owned-or-borrowed pattern
+/// - [`SinglePlaceholder`] for patterns with up to one placeholder: `"{0} days ago"`
+/// - [`DoublePlaceholder`] for patterns with up to two placeholders: `"{0} days, {1} hours ago"`
+/// - [`MultiNamedPlaceholder`] for patterns with named placeholders: `"{name} sent you a message"`
 ///
 /// # Format to Parts
 ///
@@ -62,7 +55,7 @@ use writeable::{adapters::TryWriteableInfallibleAsWriteable, PartsWrite, TryWrit
 /// use writeable::assert_writeable_parts_eq;
 ///
 /// let pattern =
-///     Pattern::<SinglePlaceholder, _>::from_str("Hello, {0}!").unwrap();
+///     Pattern::<SinglePlaceholder>::try_from_str("Hello, {0}!", Default::default()).unwrap();
 ///
 /// assert_writeable_parts_eq!(
 ///     pattern.interpolate(["Alice"]),
@@ -76,134 +69,103 @@ use writeable::{adapters::TryWriteableInfallibleAsWriteable, PartsWrite, TryWrit
 /// ```
 ///
 /// [`SinglePlaceholder`]: crate::SinglePlaceholder
-#[derive(Debug, Clone, PartialEq)]
+/// [`DoublePlaceholder`]: crate::DoublePlaceholder
+/// [`MultiNamedPlaceholder`]: crate::MultiNamedPlaceholder
 #[cfg_attr(feature = "yoke", derive(yoke::Yokeable))]
-#[cfg_attr(
-    feature = "zerofrom",
-    derive(zerofrom::ZeroFrom),
-    zerofrom(may_borrow(Store))
-)]
-pub struct Pattern<Backend, Store: ?Sized> {
-    _backend: PhantomData<Backend>,
-    store: Store,
+#[repr(transparent)]
+pub struct Pattern<B: PatternBackend> {
+    _backend: PhantomData<B>,
+    /// The encoded storage
+    pub store: B::Store,
 }
 
-impl<Backend, Store> Pattern<Backend, Store> {
-    pub fn take_store(self) -> Store {
-        self.store
-    }
-
-    /// Creates a pattern from a serialized backing store without checking invariants.
-    /// Most users should prefer [`Pattern::try_from_store()`].
-    ///
-    /// The store is expected to come from a valid `Pattern` with this `Backend`,
-    /// such as by calling [`Pattern::take_store()`]. If the store is not valid,
-    /// unexpected behavior may occur.
-    ///
-    /// To parse a pattern string, use [`FromStr::from_str`].
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use core::str::FromStr;
-    /// use icu_pattern::Pattern;
-    /// use icu_pattern::SinglePlaceholder;
-    /// use writeable::assert_writeable_eq;
-    ///
-    /// // Create a pattern from a valid string:
-    /// let allocated_pattern =
-    ///     Pattern::<SinglePlaceholder, String>::from_str("{0} days")
-    ///         .expect("valid pattern");
-    ///
-    /// // Transform the store and create a new Pattern. This is valid because
-    /// // we call `.take_store()` and `.from_store_unchecked()` on patterns
-    /// // with the same backend (`SinglePlaceholder`).
-    /// let store = allocated_pattern.take_store();
-    /// let borrowed_pattern: Pattern<SinglePlaceholder, &str> =
-    ///     Pattern::from_store_unchecked(&store);
-    ///
-    /// assert_writeable_eq!(borrowed_pattern.interpolate([5]), "5 days");
-    /// ```
-    pub const fn from_store_unchecked(store: Store) -> Self {
-        Self {
-            _backend: PhantomData,
-            store,
-        }
+impl<B: PatternBackend> PartialEq for Pattern<B> {
+    fn eq(&self, other: &Self) -> bool {
+        self.store == other.store
     }
 }
 
-impl<Backend, Store: ?Sized> Pattern<Backend, Store> {
-    /// Creates a `&Pattern` from a `&Store` without checking invariants.
-    pub const fn from_ref_store_unchecked(store: &Store) -> &Self {
-        // Safety: Pattern's layout is the same as `Store`'s
-        unsafe { &*(store as *const Store as *const Self) }
+impl<B: PatternBackend> core::fmt::Debug for Pattern<B> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("Pattern")
+            .field("_backend", &self._backend)
+            .field("store", &&self.store)
+            .finish()
     }
 }
 
-impl<B, Store> Pattern<B, Store>
-where
-    B: PatternBackend,
-    Store: AsRef<B::Store>,
-{
-    /// Creates a pattern from a serialized backing store.
-    ///
-    /// To parse a pattern string, use [`FromStr::from_str`].
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_pattern::Pattern;
-    /// use icu_pattern::SinglePlaceholder;
-    ///
-    /// // Create a pattern from a valid store:
-    /// Pattern::<SinglePlaceholder, _>::try_from_store("\x01 days")
-    ///     .expect("valid pattern");
-    ///
-    /// // Error on an invalid pattern:
-    /// Pattern::<SinglePlaceholder, _>::try_from_store("\x09 days")
-    ///     .expect_err("9 is out of bounds");
-    /// ```
-    pub fn try_from_store(store: Store) -> Result<Self, Error> {
-        B::validate_store(store.as_ref())?;
-        Ok(Self {
-            _backend: PhantomData,
-            store,
-        })
-    }
-}
-
-impl<'a, B> Pattern<B, &'a B::Store>
-where
-    B: PatternBackend,
-{
-    /// Creates a pattern from its store encoded as UTF-8.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_pattern::Pattern;
-    /// use icu_pattern::SinglePlaceholder;
-    ///
-    /// Pattern::<SinglePlaceholder, _>::try_from_utf8_store(b"\x01 days")
-    ///     .expect("single placeholder pattern");
-    /// ```
-    pub fn try_from_utf8_store(
-        code_units: &'a [u8],
-    ) -> Result<Self, PatternOrUtf8Error<B::StoreFromBytesError>> {
-        let store = B::try_store_from_utf8(code_units).map_err(PatternOrUtf8Error::Utf8)?;
-        B::validate_store(store).map_err(PatternOrUtf8Error::Pattern)?;
-        Ok(Self {
-            _backend: PhantomData,
-            store,
-        })
+impl<B: PatternBackend> Default for &'static Pattern<B> {
+    fn default() -> Self {
+        Pattern::from_ref_store_unchecked(B::empty())
     }
 }
 
 #[cfg(feature = "alloc")]
-impl<B> Pattern<B, <B::Store as ToOwned>::Owned>
+impl<B: PatternBackend> Default for Box<Pattern<B>>
+where
+    Box<B::Store>: From<&'static B::Store>,
+{
+    fn default() -> Self {
+        Pattern::from_boxed_store_unchecked(Box::from(B::empty()))
+    }
+}
+
+#[test]
+fn test_defaults() {
+    assert_eq!(
+        Box::<Pattern::<crate::SinglePlaceholder>>::default(),
+        Pattern::try_from_items(core::iter::empty()).unwrap()
+    );
+    assert_eq!(
+        Box::<Pattern::<crate::DoublePlaceholder>>::default(),
+        Pattern::try_from_items(core::iter::empty()).unwrap()
+    );
+    assert_eq!(
+        Box::<Pattern::<crate::MultiNamedPlaceholder>>::default(),
+        Pattern::try_from_items(core::iter::empty()).unwrap()
+    );
+}
+
+#[cfg(feature = "alloc")]
+impl<B: PatternBackend> ToOwned for Pattern<B>
+where
+    Box<B::Store>: for<'a> From<&'a B::Store>,
+{
+    type Owned = Box<Pattern<B>>;
+
+    fn to_owned(&self) -> Self::Owned {
+        Self::from_boxed_store_unchecked(Box::from(&self.store))
+    }
+}
+
+#[cfg(feature = "alloc")]
+impl<B: PatternBackend> Clone for Box<Pattern<B>>
+where
+    Box<B::Store>: for<'a> From<&'a B::Store>,
+{
+    fn clone(&self) -> Self {
+        Pattern::from_boxed_store_unchecked(Box::from(&self.store))
+    }
+}
+
+impl<B: PatternBackend> Pattern<B> {
+    #[cfg(feature = "alloc")]
+    pub(crate) const fn from_boxed_store_unchecked(store: Box<B::Store>) -> Box<Self> {
+        // Safety: Pattern's layout is the same as B::Store's
+        unsafe { core::mem::transmute(store) }
+    }
+
+    #[doc(hidden)] // databake
+    pub const fn from_ref_store_unchecked(store: &B::Store) -> &Self {
+        // Safety: Pattern's layout is the same as B::Store's
+        unsafe { &*(store as *const B::Store as *const Self) }
+    }
+}
+
+#[cfg(feature = "alloc")]
+impl<B> Pattern<B>
 where
     B: PatternBackend,
-    B::Store: ToOwned,
 {
     /// Creates a pattern from an iterator of pattern items.
     ///
@@ -218,7 +180,7 @@ where
     /// use icu_pattern::SinglePlaceholderKey;
     /// use std::borrow::Cow;
     ///
-    /// Pattern::<SinglePlaceholder, _>::try_from_items(
+    /// Pattern::<SinglePlaceholder>::try_from_items(
     ///     [
     ///         PatternItemCow::Placeholder(SinglePlaceholderKey::Singleton),
     ///         PatternItemCow::Literal(Cow::Borrowed(" days")),
@@ -227,7 +189,7 @@ where
     /// )
     /// .expect("valid pattern items");
     /// ```
-    pub fn try_from_items<'a, I>(items: I) -> Result<Self, Error>
+    pub fn try_from_items<'a, I>(items: I) -> Result<Box<Self>, Error>
     where
         I: Iterator<Item = PatternItemCow<'a, B::PlaceholderKeyCow<'a>>>,
     {
@@ -239,45 +201,37 @@ where
                 debug_assert!(false, "{:?}", e);
             }
         };
-        Ok(Self {
-            _backend: PhantomData,
-            store,
-        })
+        Ok(Self::from_boxed_store_unchecked(store))
     }
 }
 
 #[cfg(feature = "alloc")]
-impl<'a, B> FromStr for Pattern<B, <B::Store as ToOwned>::Owned>
+impl<'a, B> Pattern<B>
 where
     B: PatternBackend,
     B::PlaceholderKeyCow<'a>: FromStr,
-    B::Store: ToOwned,
     <B::PlaceholderKeyCow<'a> as FromStr>::Err: fmt::Debug,
 {
-    type Err = Error;
     /// Creates a pattern by parsing a syntax string.
-    ///
-    /// To construct from a serialized pattern string, use [`Self::try_from_store()`].
     ///
     /// ✨ *Enabled with the `alloc` Cargo feature.*
     ///
     /// # Examples
     ///
     /// ```
-    /// use core::str::FromStr;
     /// use icu_pattern::Pattern;
     /// use icu_pattern::SinglePlaceholder;
     ///
     /// // Create a pattern from a valid string:
-    /// Pattern::<SinglePlaceholder, _>::from_str("{0} days")
+    /// Pattern::<SinglePlaceholder>::try_from_str("{0} days", Default::default())
     ///     .expect("valid pattern");
     ///
     /// // Error on an invalid pattern:
-    /// Pattern::<SinglePlaceholder, _>::from_str("{0 days")
+    /// Pattern::<SinglePlaceholder>::try_from_str("{0 days", Default::default())
     ///     .expect_err("mismatched braces");
     /// ```
-    fn from_str(pattern: &str) -> Result<Self, Self::Err> {
-        let parser = Parser::new(pattern, Default::default());
+    pub fn try_from_str(pattern: &str, options: ParserOptions) -> Result<Box<Self>, Error> {
+        let parser = Parser::new(pattern, options);
         let store = B::try_from_items(parser)?;
         #[cfg(debug_assertions)]
         match B::validate_store(core::borrow::Borrow::borrow(&store)) {
@@ -286,21 +240,17 @@ where
                 debug_assert!(false, "{:?} for pattern {:?}", e, pattern);
             }
         };
-        Ok(Self {
-            _backend: PhantomData,
-            store,
-        })
+        Ok(Self::from_boxed_store_unchecked(store))
     }
 }
 
-impl<B, Store> Pattern<B, Store>
+impl<B> Pattern<B>
 where
     B: PatternBackend,
-    Store: AsRef<B::Store> + ?Sized,
 {
     /// Returns an iterator over the [`PatternItem`]s in this pattern.
     pub fn iter(&self) -> impl Iterator<Item = PatternItem<B::PlaceholderKey<'_>>> + '_ {
-        B::iter_items(self.store.as_ref())
+        B::iter_items(&self.store)
     }
 
     /// Returns a [`TryWriteable`] that interpolates items from the given replacement provider
@@ -313,7 +263,7 @@ where
         P: PlaceholderValueProvider<B::PlaceholderKey<'a>, Error = B::Error<'a>> + 'a,
     {
         WriteablePattern::<B, P> {
-            store: self.store.as_ref(),
+            store: &self.store,
             value_provider,
         }
     }
@@ -338,10 +288,9 @@ where
     }
 }
 
-impl<B, Store> Pattern<B, Store>
+impl<B> Pattern<B>
 where
     for<'b> B: PatternBackend<Error<'b> = Infallible>,
-    Store: AsRef<B::Store> + ?Sized,
 {
     /// Returns a [`Writeable`] that interpolates items from the given replacement provider
     /// into this pattern string.
@@ -350,7 +299,7 @@ where
         P: PlaceholderValueProvider<B::PlaceholderKey<'a>, Error = B::Error<'a>> + 'a,
     {
         TryWriteableInfallibleAsWriteable(WriteablePattern::<B, P> {
-            store: self.store.as_ref(),
+            store: &self.store,
             value_provider,
         })
     }
@@ -440,6 +389,7 @@ where
 #[test]
 fn test_try_from_str_inference() {
     use crate::SinglePlaceholder;
-    let _: Pattern<SinglePlaceholder, String> = Pattern::from_str("{0} days").unwrap();
-    let _ = Pattern::<SinglePlaceholder, String>::from_str("{0} days").unwrap();
+    let _: Box<Pattern<SinglePlaceholder>> =
+        Pattern::try_from_str("{0} days", Default::default()).unwrap();
+    let _ = Pattern::<SinglePlaceholder>::try_from_str("{0} days", Default::default()).unwrap();
 }

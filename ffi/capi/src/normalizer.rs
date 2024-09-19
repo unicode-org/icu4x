@@ -12,11 +12,17 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::normalizer::ComposingNormalizer, Struct)]
+    #[diplomat::rust_link(icu::normalizer::ComposingNormalizerBorrowed, Struct, hidden)]
     pub struct ComposingNormalizer(pub icu_normalizer::ComposingNormalizer);
 
     impl ComposingNormalizer {
         /// Construct a new ComposingNormalizer instance for NFC
         #[diplomat::rust_link(icu::normalizer::ComposingNormalizer::new_nfc, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::normalizer::ComposingNormalizerBorrowed::new_nfc,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "nfc")]
         #[diplomat::demo(default_constructor)]
         pub fn create_nfc(provider: &DataProvider) -> Result<Box<ComposingNormalizer>, DataError> {
@@ -30,6 +36,11 @@ pub mod ffi {
 
         /// Construct a new ComposingNormalizer instance for NFKC
         #[diplomat::rust_link(icu::normalizer::ComposingNormalizer::new_nfkc, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::normalizer::ComposingNormalizerBorrowed::new_nfkc,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "nfkc")]
         pub fn create_nfkc(provider: &DataProvider) -> Result<Box<ComposingNormalizer>, DataError> {
             Ok(Box::new(ComposingNormalizer(call_constructor!(
@@ -54,12 +65,12 @@ pub mod ffi {
             hidden
         )]
         #[diplomat::rust_link(
-            icu::normalizer::ComposingNormalizer::normalize_to,
+            icu::normalizer::ComposingNormalizerBorrowed::normalize_to,
             FnInStruct,
             hidden
         )]
         #[diplomat::rust_link(
-            icu::normalizer::ComposingNormalizer::normalize_utf8_to,
+            icu::normalizer::ComposingNormalizerBorrowed::normalize_utf8_to,
             FnInStruct,
             hidden
         )]
@@ -76,7 +87,7 @@ pub mod ffi {
             FnInStruct
         )]
         #[diplomat::rust_link(
-            icu::normalizer::ComposingNormalizer::is_normalized,
+            icu::normalizer::ComposingNormalizerBorrowed::is_normalized,
             FnInStruct,
             hidden
         )]
@@ -130,11 +141,17 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::normalizer::DecomposingNormalizer, Struct)]
+    #[diplomat::rust_link(icu::normalizer::DecomposingNormalizerBorrowed, Struct, hidden)]
     pub struct DecomposingNormalizer(pub icu_normalizer::DecomposingNormalizer);
 
     impl DecomposingNormalizer {
-        /// Construct a new DecomposingNormalizer instance for NFC
+        /// Construct a new DecomposingNormalizer instance for NFD
         #[diplomat::rust_link(icu::normalizer::DecomposingNormalizer::new_nfd, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::normalizer::DecomposingNormalizerBorrowed::new_nfd,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "nfd")]
         #[diplomat::demo(default_constructor)]
         pub fn create_nfd(
@@ -148,8 +165,13 @@ pub mod ffi {
             )?)))
         }
 
-        /// Construct a new DecomposingNormalizer instance for NFKC
+        /// Construct a new DecomposingNormalizer instance for NFKD
         #[diplomat::rust_link(icu::normalizer::DecomposingNormalizer::new_nfkd, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::normalizer::DecomposingNormalizerBorrowed::new_nfkd,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "nfkd")]
         pub fn create_nfkd(
             provider: &DataProvider,

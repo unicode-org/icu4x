@@ -5,7 +5,7 @@
 //! This module contains provider implementations backed by TOML files
 //! exported from ICU.
 
-mod bidi_data;
+mod bidi;
 mod bin_cp_set;
 mod bin_uniset;
 mod enum_codepointtrie;

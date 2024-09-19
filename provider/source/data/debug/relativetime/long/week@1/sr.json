@@ -5,35 +5,91 @@
     "1": "следеће недеље"
   },
   "past": {
-    "strings": {
-      "one": [
-        0,
-        "\bпре  недеље"
-      ],
-      "few": [
-        0,
-        "\bпре  недеље"
-      ],
-      "other": [
-        0,
-        "\bпре  недеља"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " недеље"
+        }
       ]
-    }
+    ],
+    "few": [
+      0,
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " недеље"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " недеља"
+        }
+      ]
+    ]
   },
   "future": {
-    "strings": {
-      "one": [
-        0,
-        "\u0006за  недељу"
-      ],
-      "few": [
-        0,
-        "\u0006за  недеље"
-      ],
-      "other": [
-        0,
-        "\u0006за  недеља"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " недељу"
+        }
       ]
-    }
+    ],
+    "few": [
+      0,
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " недеље"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " недеља"
+        }
+      ]
+    ]
   }
 }

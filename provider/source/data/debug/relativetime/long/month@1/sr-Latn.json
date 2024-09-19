@@ -5,35 +5,91 @@
     "1": "sledećeg meseca"
   },
   "past": {
-    "strings": {
-      "one": [
-        0,
-        "\u0005pre  meseca"
-      ],
-      "few": [
-        0,
-        "\u0005pre  meseca"
-      ],
-      "other": [
-        0,
-        "\u0005pre  meseci"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " meseca"
+        }
       ]
-    }
+    ],
+    "few": [
+      0,
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " meseca"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " meseci"
+        }
+      ]
+    ]
   },
   "future": {
-    "strings": {
-      "one": [
-        0,
-        "\u0004za  mesec"
-      ],
-      "few": [
-        0,
-        "\u0004za  meseca"
-      ],
-      "other": [
-        0,
-        "\u0004za  meseci"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " mesec"
+        }
       ]
-    }
+    ],
+    "few": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " meseca"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " meseci"
+        }
+      ]
+    ]
   }
 }

@@ -17,15 +17,11 @@
 //! use writeable::assert_writeable_eq;
 //!
 //! // Parse a pattern string:
-//! let pattern = "Hello, {0}!"
-//!     .parse::<SinglePlaceholderPattern<_>>()
+//! let pattern = SinglePlaceholderPattern::try_from_str("Hello, {0}!", Default::default())
 //!     .unwrap();
 //!
 //! // Interpolate into the pattern string:
 //! assert_writeable_eq!(pattern.interpolate(["World"]), "Hello, World!");
-//!
-//! // Introspect the serialized form of the pattern string:
-//! assert_eq!(pattern.take_store(), "\x08Hello, !");
 //! ```
 //!
 //! [`ICU4X`]: ../icu/index.html
@@ -72,7 +68,8 @@ pub use common::PATTERN_PLACEHOLDER_PART;
 pub use double::DoublePlaceholder;
 pub use double::DoublePlaceholderKey;
 pub use error::PatternError;
-pub use error::PatternOrUtf8Error;
+#[cfg(feature = "serde")]
+pub use frontend::serde::*;
 pub use frontend::Pattern;
 pub use multi_named::MissingNamedPlaceholderError;
 pub use multi_named::MultiNamedPlaceholder;
@@ -104,12 +101,12 @@ mod private {
 /// use writeable::assert_writeable_eq;
 ///
 /// // Create a pattern from the string syntax:
-/// let pattern = SinglePlaceholderPattern::from_str("Hello, {0}!").unwrap();
+/// let pattern = SinglePlaceholderPattern::try_from_str("Hello, {0}!", Default::default()).unwrap();
 ///
 /// // Interpolate some values into the pattern:
 /// assert_writeable_eq!(pattern.interpolate(["Alice"]), "Hello, Alice!");
 /// ```
-pub type SinglePlaceholderPattern<Store> = Pattern<SinglePlaceholder, Store>;
+pub type SinglePlaceholderPattern = Pattern<SinglePlaceholder>;
 
 /// # Examples
 ///
@@ -120,7 +117,7 @@ pub type SinglePlaceholderPattern<Store> = Pattern<SinglePlaceholder, Store>;
 ///
 /// // Create a pattern from the string syntax:
 /// let pattern =
-///     DoublePlaceholderPattern::from_str("Hello, {0} and {1}!").unwrap();
+///     DoublePlaceholderPattern::try_from_str("Hello, {0} and {1}!", Default::default()).unwrap();
 ///
 /// // Interpolate some values into the pattern:
 /// assert_writeable_eq!(
@@ -128,7 +125,7 @@ pub type SinglePlaceholderPattern<Store> = Pattern<SinglePlaceholder, Store>;
 ///     "Hello, Alice and Bob!"
 /// );
 /// ```
-pub type DoublePlaceholderPattern<Store> = Pattern<DoublePlaceholder, Store>;
+pub type DoublePlaceholderPattern = Pattern<DoublePlaceholder>;
 
 /// # Examples
 ///
@@ -139,8 +136,8 @@ pub type DoublePlaceholderPattern<Store> = Pattern<DoublePlaceholder, Store>;
 /// use writeable::assert_try_writeable_eq;
 ///
 /// // Create a pattern from the string syntax:
-/// let pattern = MultiNamedPlaceholderPattern::from_str(
-///     "Hello, {person0} and {person1}!",
+/// let pattern = MultiNamedPlaceholderPattern::try_from_str(
+///     "Hello, {person0} and {person1}!", Default::default()
 /// )
 /// .unwrap();
 ///
@@ -154,15 +151,13 @@ pub type DoublePlaceholderPattern<Store> = Pattern<DoublePlaceholder, Store>;
 ///     "Hello, Alice and Bob!"
 /// );
 /// ```
-pub type MultiNamedPlaceholderPattern<Store> = Pattern<MultiNamedPlaceholder, Store>;
+pub type MultiNamedPlaceholderPattern = Pattern<MultiNamedPlaceholder>;
 
 #[test]
 #[cfg(feature = "alloc")]
 fn test_single_placeholder_pattern_impls() {
-    use core::str::FromStr;
-
-    let a = SinglePlaceholderPattern::from_str("{0}").unwrap();
-    let b = SinglePlaceholderPattern::from_str("{0}").unwrap();
+    let a = SinglePlaceholderPattern::try_from_str("{0}", Default::default()).unwrap();
+    let b = SinglePlaceholderPattern::try_from_str("{0}", Default::default()).unwrap();
     assert_eq!(a, b);
     let c = b.clone();
     assert_eq!(a, c);

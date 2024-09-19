@@ -3,23 +3,49 @@
     "0": "овог минута"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\bпре  минута"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " минута"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "one": [
-        0,
-        "\u0006за  минут"
-      ],
-      "other": [
-        0,
-        "\u0006за  минута"
+    "one": [
+      0,
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " минут"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " минута"
+        }
+      ]
+    ]
   }
 }

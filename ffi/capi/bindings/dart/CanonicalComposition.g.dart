@@ -42,7 +42,7 @@ final class CanonicalComposition implements ffi.Finalizable {
   /// Performs canonical composition (including Hangul) on a pair of characters
   /// or returns NUL if these characters don’t compose. Composition exclusions are taken into account.
   ///
-  /// See the [Rust documentation for `compose`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalComposition.html#method.compose) for more information.
+  /// See the [Rust documentation for `compose`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCompositionBorrowed.html#method.compose) for more information.
   Rune compose(Rune starter, Rune second) {
     final result = _icu4x_CanonicalComposition_compose_mv1(_ffi, starter, second);
     return result;

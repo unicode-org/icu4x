@@ -17,15 +17,11 @@ use icu_pattern::SinglePlaceholderPattern;
 use writeable::assert_writeable_eq;
 
 // Parse a pattern string:
-let pattern = "Hello, {0}!"
-    .parse::<SinglePlaceholderPattern<_>>()
+let pattern = SinglePlaceholderPattern::try_from_str("Hello, {0}!", Default::default())
     .unwrap();
 
 // Interpolate into the pattern string:
 assert_writeable_eq!(pattern.interpolate(["World"]), "Hello, World!");
-
-// Introspect the serialized form of the pattern string:
-assert_eq!(pattern.take_store(), "\x08Hello, !");
 ```
 
 [`ICU4X`]: ../icu/index.html

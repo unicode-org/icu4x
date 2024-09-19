@@ -24,7 +24,7 @@ final class ScriptWithExtensions implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_ScriptWithExtensions_destroy_mv1));
 
-  /// See the [Rust documentation for `script_with_extensions`](https://docs.rs/icu/latest/icu/properties/script/fn.script_with_extensions.html) for more information.
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensions.html#method.new) for more information.
   ///
   /// Throws [DataError] on failure.
   factory ScriptWithExtensions(DataProvider provider) {

@@ -56,7 +56,7 @@
 //!
 //! ```
 //! use icu::datetime::options::components;
-//! use icu::datetime::DateTimeFormatterOptions;
+//! use icu::datetime::options::DateTimeFormatterOptions;
 //!
 //! let mut bag = components::Bag::default();
 //! bag.year = Some(components::Year::Numeric);
@@ -74,11 +74,11 @@
 //!
 //! ```
 //! use icu::datetime::options::components;
-//! use icu::datetime::DateTimeFormatterOptions;
+//! use icu::datetime::options::DateTimeFormatterOptions;
 //! let options: DateTimeFormatterOptions = components::Bag::default().into();
 //! ```
 //!
-//! *Note*: The exact result returned from [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter) is a subject to change over
+//! *Note*: The exact formatted result is a subject to change over
 //! time. Formatted result should be treated as opaque and displayed to the user as-is,
 //! and it is strongly recommended to never write tests that expect a particular formatted output.
 
@@ -92,7 +92,6 @@ use crate::{
 };
 
 use super::preferences;
-#[cfg(feature = "experimental")]
 use crate::neo_pattern::DateTimePattern;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -165,7 +164,7 @@ impl Bag {
     }
 
     #[allow(clippy::wrong_self_convention)]
-    /// Converts the components::Bag into a Vec<Field>. The fields will be ordered in from most
+    /// Converts the components::Bag into a `Vec<Field>`. The fields will be ordered in from most
     /// significant field to least significant. This is the order the fields are listed in
     /// the UTS 35 table - <https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table>
     ///
@@ -173,8 +172,8 @@ impl Bag {
     ///
     /// - `default_hour_cycle` specifies the hour cycle to use for the hour field if not in the Bag.
     ///   `preferences::Bag::hour_cycle` takes precedence over this argument.
-    #[cfg(any(test, feature = "datagen", feature = "experimental"))]
-    pub(crate) fn to_vec_fields(
+    #[cfg(feature = "datagen")]
+    pub fn to_vec_fields(
         &self,
         default_hour_cycle: preferences::HourCycle,
     ) -> alloc::vec::Vec<Field> {
@@ -641,7 +640,6 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
     }
 }
 
-#[cfg(feature = "experimental")]
 impl From<&DateTimePattern> for Bag {
     fn from(value: &DateTimePattern) -> Self {
         Self::from(value.as_borrowed().0)

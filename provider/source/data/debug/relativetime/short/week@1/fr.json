@@ -5,19 +5,35 @@
     "1": "la semaine prochaine"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\bil y a  sem."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "il y a "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sem."
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0006dans  sem."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "dans "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sem."
+        }
       ]
-    }
+    ]
   }
 }

@@ -804,6 +804,7 @@ fn test_nfd_utf16_to_errors() {
 }
 
 use atoi::FromRadix16;
+use icu_properties::props::CanonicalCombiningClass;
 
 /// Parse five semicolon-terminated strings consisting of space-separated hexadecimal scalar values
 fn parse_hex(mut hexes: &[u8]) -> [StackString; 5] {
@@ -1535,7 +1536,7 @@ fn test_canonical_composition() {
 
 #[test]
 fn test_canonical_composition_owned() {
-    let owned = CanonicalComposition::new();
+    let owned = CanonicalComposition::try_new_unstable(&icu_normalizer::provider::Baked).unwrap();
     let comp = owned.as_borrowed();
 
     assert_eq!(comp.compose('a', 'b'), None); // Just two starters
@@ -1598,7 +1599,7 @@ fn test_canonical_decomposition() {
 
 #[test]
 fn test_canonical_decomposition_owned() {
-    let owned = CanonicalDecomposition::new();
+    let owned = CanonicalDecomposition::try_new_unstable(&icu_normalizer::provider::Baked).unwrap();
     let decomp = owned.as_borrowed();
 
     assert_eq!(
@@ -1646,19 +1647,20 @@ fn test_ccc() {
     for u in 0..=0x10FFFF {
         assert_eq!(
             map.get32(u),
-            icu_properties::maps::canonical_combining_class().get32(u)
+            icu_properties::CodePointMapData::<CanonicalCombiningClass>::new().get32(u)
         );
     }
 }
 
 #[test]
 fn test_ccc_owned() {
-    let owned = CanonicalCombiningClassMap::new();
+    let owned =
+        CanonicalCombiningClassMap::try_new_unstable(&icu_normalizer::provider::Baked).unwrap();
     let map = owned.as_borrowed();
     for u in 0..=0x10FFFF {
         assert_eq!(
             map.get32(u),
-            icu_properties::maps::canonical_combining_class().get32(u)
+            icu_properties::CodePointMapData::<CanonicalCombiningClass>::new().get32(u)
         );
     }
 }

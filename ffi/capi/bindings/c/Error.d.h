@@ -22,7 +22,6 @@ typedef enum Error {
   Error_DataCustomError = 266,
   Error_DataIoError = 267,
   Error_DataUnavailableBufferFormatError = 268,
-  Error_PropertyUnexpectedPropertyNameError = 1026,
   Error_DateTimePatternError = 2048,
   Error_DateTimeMissingInputFieldError = 2049,
   Error_DateTimeSkeletonError = 2050,

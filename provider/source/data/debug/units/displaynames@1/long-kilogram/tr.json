@@ -1,10 +1,15 @@
 {
   "patterns": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 kilogram"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " kilogram"
+        }
       ]
-    }
+    ]
   }
 }

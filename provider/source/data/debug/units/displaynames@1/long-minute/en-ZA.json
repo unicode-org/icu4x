@@ -1,14 +1,26 @@
 {
   "patterns": {
-    "strings": {
-      "one": [
-        0,
-        "\u0001 minute"
-      ],
-      "other": [
-        0,
-        "\u0001 minutes"
+    "one": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " minute"
+        }
       ]
-    }
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " minutes"
+        }
+      ]
+    ]
   }
 }

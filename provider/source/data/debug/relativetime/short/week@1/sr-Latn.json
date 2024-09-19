@@ -5,19 +5,35 @@
     "1": "sledeće ned."
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0005pre  ned."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "pre "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ned."
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0004za  ned."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "za "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ned."
+        }
       ]
-    }
+    ]
   }
 }

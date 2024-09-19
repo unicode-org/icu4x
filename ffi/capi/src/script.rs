@@ -30,13 +30,13 @@ pub mod ffi {
     pub struct ScriptExtensionsSet<'a>(pub icu_properties::script::ScriptExtensionsSet<'a>);
 
     impl ScriptWithExtensions {
-        #[diplomat::rust_link(icu::properties::script::script_with_extensions, Fn)]
+        #[diplomat::rust_link(icu::properties::script::ScriptWithExtensions::new, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn create(provider: &DataProvider) -> Result<Box<ScriptWithExtensions>, DataError> {
             Ok(Box::new(ScriptWithExtensions(call_constructor!(
-                icu_properties::script::script_with_extensions [r => Ok(r.static_to_owned())],
-                icu_properties::script::load_script_with_extensions_with_any_provider,
-                icu_properties::script::load_script_with_extensions_with_buffer_provider,
+                icu_properties::script::ScriptWithExtensions::new [r => Ok(r.static_to_owned())],
+                icu_properties::script::ScriptWithExtensions::try_new_with_any_provider,
+                icu_properties::script::ScriptWithExtensions::try_new_with_buffer_provider,
                 provider
             )?)))
         }
@@ -58,7 +58,7 @@ pub mod ffi {
         pub fn has_script(&self, code_point: u32, script: u16) -> bool {
             self.0
                 .as_borrowed()
-                .has_script(code_point, icu_properties::Script(script))
+                .has_script(code_point, icu_properties::props::Script(script))
         }
 
         /// Borrow this object for a slightly faster variant with more operations
@@ -83,7 +83,7 @@ pub mod ffi {
             Box::new(CodePointRangeIterator(Box::new(
                 self.0
                     .as_borrowed()
-                    .get_script_extensions_ranges(icu_properties::Script(script)),
+                    .get_script_extensions_ranges(icu_properties::props::Script(script)),
             )))
         }
     }
@@ -114,7 +114,7 @@ pub mod ffi {
         )]
         pub fn has_script(&self, code_point: u32, script: u16) -> bool {
             self.0
-                .has_script(code_point, icu_properties::Script(script))
+                .has_script(code_point, icu_properties::props::Script(script))
         }
 
         /// Build the CodePointSetData corresponding to a codepoints matching a particular script
@@ -126,9 +126,9 @@ pub mod ffi {
         pub fn get_script_extensions_set(&self, script: u16) -> Box<CodePointSetData> {
             let list = self
                 .0
-                .get_script_extensions_set(icu_properties::Script(script))
+                .get_script_extensions_set(icu_properties::props::Script(script))
                 .into_owned();
-            let set = icu_properties::sets::CodePointSetData::from_code_point_inversion_list(list);
+            let set = icu_properties::CodePointSetData::from_code_point_inversion_list(list);
             Box::new(CodePointSetData(set))
         }
     }
@@ -136,7 +136,7 @@ pub mod ffi {
         /// Check if the Script_Extensions property of the given code point covers the given script
         #[diplomat::rust_link(icu::properties::script::ScriptExtensionsSet::contains, FnInStruct)]
         pub fn contains(&self, script: u16) -> bool {
-            self.0.contains(&icu_properties::Script(script))
+            self.0.contains(&icu_properties::props::Script(script))
         }
 
         /// Get the number of scripts contained in here

@@ -3,19 +3,29 @@
     "0": "şimdi"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 sn. önce"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sn. önce"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 sn. sonra"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " sn. sonra"
+        }
       ]
-    }
+    ]
   }
 }

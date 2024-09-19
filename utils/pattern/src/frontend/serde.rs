@@ -5,70 +5,164 @@
 use super::*;
 use alloc::borrow::Cow;
 use alloc::vec::Vec;
-use core::fmt::Display;
 
 use ::serde::{Deserialize, Deserializer, Serialize, Serializer};
+
+#[doc(hidden)]
+pub fn deserialize_option_borrowed_cow<'de, 'data, B, D: Deserializer<'de>>(
+    deserializer: D,
+) -> Result<Option<Cow<'data, Pattern<B>>>, D::Error>
+where
+    'de: 'data,
+    B: PatternBackend<Store = str>,
+    B::PlaceholderKeyCow<'data>: Deserialize<'de>,
+    &'data B::Store: Deserialize<'de>,
+{
+    #[derive(Deserialize)]
+    #[serde(transparent)]
+    // Cows fail to borrow in some situations (array, option), but structs of Cows don't.
+    struct CowPatternWrap<'data1, B: PatternBackend<Store = str>>
+    where
+        Box<B::Store>: for<'a> From<&'a B::Store>,
+    {
+        #[serde(
+            borrow,
+            deserialize_with = "deserialize_borrowed_cow::<B, _>",
+            bound = "B::PlaceholderKeyCow<'data1>: Deserialize<'de>, &'data1 B::Store: Deserialize<'de>"
+        )]
+        pub cow: Cow<'data1, Pattern<B>>,
+    }
+
+    Option::<CowPatternWrap<'data, B>>::deserialize(deserializer)
+        .map(|option| option.map(|wrap| wrap.cow))
+}
 
 type HumanReadablePattern<'a, B> =
     Vec<PatternItemCow<'a, <B as PatternBackend>::PlaceholderKeyCow<'a>>>;
 
-impl<'de, 'data, B, Store, E> Deserialize<'de> for Pattern<B, Store>
+#[derive(Debug, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // newtype
+pub struct PatternString<B: PatternBackend>(pub Box<Pattern<B>>);
+
+impl<B: PatternBackend> Clone for PatternString<B>
+where
+    Box<B::Store>: for<'a> From<&'a B::Store>,
+{
+    fn clone(&self) -> Self {
+        Self(self.0.clone())
+    }
+}
+
+impl<B: PatternBackend> core::ops::Deref for PatternString<B> {
+    type Target = Pattern<B>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl<B: PatternBackend> Default for PatternString<B>
+where
+    Box<B::Store>: for<'a> From<&'a B::Store>,
+{
+    fn default() -> Self {
+        Self(Box::<Pattern<B>>::default())
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de, B: PatternBackend> serde::Deserialize<'de> for PatternString<B>
+where
+    B::PlaceholderKeyCow<'de>: core::str::FromStr,
+    <B::PlaceholderKeyCow<'de> as core::str::FromStr>::Err: core::fmt::Debug,
+{
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let pattern_str = String::deserialize(deserializer)?;
+        let pattern = Pattern::<B>::try_from_str(&pattern_str, Default::default())
+            .map_err(<D::Error as ::serde::de::Error>::custom)?;
+        Ok(Self(pattern))
+    }
+}
+
+#[doc(hidden)]
+pub fn deserialize_borrowed_cow<'de, 'data, B, D: Deserializer<'de>>(
+    deserializer: D,
+) -> Result<Cow<'data, Pattern<B>>, D::Error>
 where
     'de: 'data,
-    B: PatternBackend<StoreFromBytesError = E>,
-    B::Store: ToOwned + 'de,
-    &'de B::Store: Deserialize<'de>,
+    B: PatternBackend<Store = str>,
     B::PlaceholderKeyCow<'data>: Deserialize<'de>,
-    Store: TryFrom<Cow<'data, B::Store>> + AsRef<B::Store>,
-    Store::Error: Display,
+    &'data B::Store: Deserialize<'de>,
+{
+    if deserializer.is_human_readable() {
+        Box::<Pattern<B>>::deserialize(deserializer).map(Cow::Owned)
+    } else {
+        <&Pattern<B>>::deserialize(deserializer).map(Cow::Borrowed)
+    }
+}
+
+impl<'de, 'data, B> Deserialize<'de> for Box<Pattern<B>>
+where
+    'de: 'data,
+    B: PatternBackend<Store = str>,
+    B::PlaceholderKeyCow<'data>: Deserialize<'de>,
 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
     {
         if deserializer.is_human_readable() {
-            let pattern_items = <HumanReadablePattern<B>>::deserialize(deserializer)?;
-            let pattern_owned: Pattern<B, <B::Store as ToOwned>::Owned> =
-                Pattern::try_from_items(pattern_items.into_iter())
-                    .map_err(<D::Error as ::serde::de::Error>::custom)?;
-            let pattern: Pattern<B, Store> = Pattern::from_store_unchecked(
-                Cow::<B::Store>::Owned(pattern_owned.take_store())
-                    .try_into()
-                    .map_err(<D::Error as ::serde::de::Error>::custom)?,
-            );
-            Ok(pattern)
+            Pattern::<B>::try_from_items(
+                <HumanReadablePattern<B>>::deserialize(deserializer)?.into_iter(),
+            )
+        } else {
+            let store = Box::<B::Store>::deserialize(deserializer)?;
+            B::validate_store(&store).map(|()| Pattern::<B>::from_boxed_store_unchecked(store))
+        }
+        .map_err(<D::Error as ::serde::de::Error>::custom)
+    }
+}
+
+impl<'de, 'data, B: PatternBackend> Deserialize<'de> for &'data Pattern<B>
+where
+    'de: 'data,
+    &'data B::Store: Deserialize<'de>,
+{
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        if deserializer.is_human_readable() {
+            Err(<D::Error as ::serde::de::Error>::custom(
+                "human readable format cannot be borrowed",
+            ))
         } else {
             let store = <&B::Store>::deserialize(deserializer)?;
-            let pattern = Self::try_from_store(
-                Cow::Borrowed(store)
-                    .try_into()
-                    .map_err(<D::Error as ::serde::de::Error>::custom)?,
-            )
-            .map_err(<D::Error as ::serde::de::Error>::custom)?;
-            Ok(pattern)
+            B::validate_store(store).map_err(<D::Error as ::serde::de::Error>::custom)?;
+            Ok(Pattern::from_ref_store_unchecked(store))
         }
     }
 }
 
-impl<B, Store> Serialize for Pattern<B, Store>
+impl<B: PatternBackend> Serialize for Pattern<B>
 where
-    B: PatternBackend,
     B::Store: Serialize,
     for<'a> B::PlaceholderKeyCow<'a>: Serialize + From<B::PlaceholderKey<'a>>,
-    Store: AsRef<B::Store>,
 {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
     {
         if serializer.is_human_readable() {
-            let pattern_items: HumanReadablePattern<B> = B::iter_items(self.store.as_ref())
+            B::iter_items(&self.store)
                 .map(|x| x.into())
-                .collect();
-            pattern_items.serialize(serializer)
+                .collect::<HumanReadablePattern<B>>()
+                .serialize(serializer)
         } else {
-            let bytes = self.store.as_ref();
-            bytes.serialize(serializer)
+            self.store.serialize(serializer)
         }
     }
 }
@@ -76,104 +170,56 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::SinglePlaceholder;
     use crate::SinglePlaceholderPattern;
+    use alloc::borrow::Cow;
 
     #[test]
     fn test_json() {
-        let pattern_owned = SinglePlaceholderPattern::from_str("Hello, {0}!").unwrap();
-        let pattern_cow: SinglePlaceholderPattern<Cow<str>> =
-            SinglePlaceholderPattern::from_store_unchecked(Cow::Owned(pattern_owned.take_store()));
+        let pattern_owned =
+            SinglePlaceholderPattern::try_from_str("Hello, {0}!", Default::default()).unwrap();
+        let pattern_cow: Cow<SinglePlaceholderPattern> = Cow::Owned(pattern_owned);
         let pattern_json = serde_json::to_string(&pattern_cow).unwrap();
         assert_eq!(
             pattern_json,
             r#"[{"Literal":"Hello, "},{"Placeholder":"Singleton"},{"Literal":"!"}]"#
         );
-        let pattern_deserialized: SinglePlaceholderPattern<Cow<str>> =
-            serde_json::from_str(&pattern_json).unwrap();
+        let pattern_deserialized: Cow<SinglePlaceholderPattern> =
+            deserialize_borrowed_cow::<SinglePlaceholder, _>(
+                &mut serde_json::Deserializer::from_str(&pattern_json),
+            )
+            .unwrap();
         assert_eq!(pattern_cow, pattern_deserialized);
-        assert!(matches!(pattern_deserialized.take_store(), Cow::Owned(_)));
+        assert!(matches!(pattern_deserialized, Cow::Owned(_)));
     }
 
     #[test]
     fn test_postcard() {
-        let pattern_owned = SinglePlaceholderPattern::from_str("Hello, {0}!").unwrap();
-        let pattern_cow: SinglePlaceholderPattern<Cow<str>> =
-            SinglePlaceholderPattern::from_store_unchecked(Cow::Owned(pattern_owned.take_store()));
+        let pattern_owned =
+            SinglePlaceholderPattern::try_from_str("Hello, {0}!", Default::default()).unwrap();
+        let pattern_cow: Cow<SinglePlaceholderPattern> = Cow::Owned(pattern_owned);
         let pattern_postcard = postcard::to_stdvec(&pattern_cow).unwrap();
         assert_eq!(pattern_postcard, b"\x09\x08Hello, !");
-        let pattern_deserialized: SinglePlaceholderPattern<Cow<str>> =
-            postcard::from_bytes(&pattern_postcard).unwrap();
+        let pattern_deserialized = deserialize_borrowed_cow::<SinglePlaceholder, _>(
+            &mut postcard::Deserializer::from_bytes(&pattern_postcard),
+        )
+        .unwrap();
         assert_eq!(pattern_cow, pattern_deserialized);
-        assert!(matches!(
-            pattern_deserialized.take_store(),
-            Cow::Borrowed(_)
-        ));
+        assert!(matches!(pattern_deserialized, Cow::Borrowed(_)));
     }
 
     #[test]
     fn test_rmp() {
-        let pattern_owned = SinglePlaceholderPattern::from_str("Hello, {0}!").unwrap();
-        let pattern_cow: SinglePlaceholderPattern<Cow<str>> =
-            SinglePlaceholderPattern::from_store_unchecked(Cow::Owned(pattern_owned.take_store()));
+        let pattern_owned =
+            SinglePlaceholderPattern::try_from_str("Hello, {0}!", Default::default()).unwrap();
+        let pattern_cow: Cow<SinglePlaceholderPattern> = Cow::Owned(pattern_owned);
         let pattern_rmp = rmp_serde::to_vec(&pattern_cow).unwrap();
         assert_eq!(pattern_rmp, b"\xA9\x08Hello, !");
-        let pattern_deserialized: SinglePlaceholderPattern<Cow<str>> =
-            rmp_serde::from_slice(&pattern_rmp).unwrap();
+        let pattern_deserialized = deserialize_borrowed_cow::<SinglePlaceholder, _>(
+            &mut rmp_serde::Deserializer::from_read_ref(&pattern_rmp),
+        )
+        .unwrap();
         assert_eq!(pattern_cow, pattern_deserialized);
-        assert!(matches!(
-            pattern_deserialized.take_store(),
-            Cow::Borrowed(_)
-        ));
-    }
-
-    macro_rules! check_store {
-        ($store:expr, $ty:ty) => {
-            check_store!(@borrow, $store, $ty);
-            let json = serde_json::to_string::<SinglePlaceholderPattern<$ty>>(
-                &SinglePlaceholderPattern::from_store_unchecked($store.clone()),
-            )
-            .unwrap();
-            let de_json = serde_json::from_str::<SinglePlaceholderPattern<$ty>>(&json).unwrap();
-            assert_eq!(de_json.take_store(), $store);
-        };
-        (@borrow, $store:expr, $ty:ty) => {
-            let postcard = postcard::to_stdvec::<SinglePlaceholderPattern<$ty>>(
-                &SinglePlaceholderPattern::from_store_unchecked($store.clone()),
-            )
-            .unwrap();
-            let de_postcard = postcard::from_bytes::<SinglePlaceholderPattern<$ty>>(&postcard).unwrap();
-            assert_eq!(de_postcard.take_store(), $store);
-        };
-    }
-
-    #[test]
-    fn test_serde_stores() {
-        let store = SinglePlaceholderPattern::from_str("Hello, {0}!")
-            .unwrap()
-            .take_store();
-
-        check_store!(Cow::Borrowed(store.as_str()), Cow<str>);
-        check_store!(Cow::<str>::Owned(store.clone()), Cow<str>);
-        check_store!(store.clone(), String);
-
-        /// A type implementing TryFrom<Cow<str>> that returns an error if the Cow is Owned
-        #[derive(Debug, Clone, PartialEq, displaydoc::Display)]
-        struct MyStr<'a>(&'a str);
-        impl<'a> TryFrom<Cow<'a, str>> for MyStr<'a> {
-            type Error = &'static str;
-            fn try_from(input: Cow<'a, str>) -> Result<MyStr<'a>, Self::Error> {
-                match input {
-                    Cow::Borrowed(s) => Ok(MyStr(s)),
-                    Cow::Owned(_) => Err("cannot borrow from a Cow with needed lifetime"),
-                }
-            }
-        }
-        impl AsRef<str> for MyStr<'_> {
-            fn as_ref(&self) -> &str {
-                self.0
-            }
-        }
-
-        check_store!(@borrow, MyStr(store.as_str()), MyStr);
+        assert!(matches!(pattern_deserialized, Cow::Borrowed(_)));
     }
 }

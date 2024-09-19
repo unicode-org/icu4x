@@ -15,7 +15,7 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 
 /// A pattern for formatting a datetime in a calendar.
 ///
-/// Most clients should use [`DateTimeFormatter`] instead of directly
+/// Most clients should use [`NeoFormatter`](crate::neo::NeoFormatter) instead of directly
 /// formatting with patterns.
 ///
 /// There are two ways to make one of these:

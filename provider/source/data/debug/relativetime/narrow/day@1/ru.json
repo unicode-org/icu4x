@@ -7,19 +7,35 @@
     "2": "послезавтра"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0002- дн."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "-"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " дн."
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0002+ дн."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "+"
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " дн."
+        }
       ]
-    }
+    ]
   }
 }

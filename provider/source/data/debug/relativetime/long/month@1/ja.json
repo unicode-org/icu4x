@@ -5,19 +5,29 @@
     "1": "来月"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 か月前"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " か月前"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 か月後"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " か月後"
+        }
       ]
-    }
+    ]
   }
 }

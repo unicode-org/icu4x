@@ -1,10 +1,18 @@
 {
   "patterns": {
-    "strings": {
-      "other": [
-        0,
-        "\u0002\u0005 "
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Place0"
+        },
+        {
+          "Literal": " "
+        },
+        {
+          "Placeholder": "Place1"
+        }
       ]
-    }
+    ]
   }
 }

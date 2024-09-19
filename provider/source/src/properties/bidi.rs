@@ -5,7 +5,7 @@
 use std::collections::HashSet;
 
 use crate::SourceDataProvider;
-use icu::properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker;
+use icu::properties::provider::bidi::BidiAuxiliaryPropertiesV1Marker;
 use icu_provider::prelude::*;
 
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
@@ -37,7 +37,7 @@ impl DataProvider<BidiAuxiliaryPropertiesV1Marker> for SourceDataProvider {
         use icu::collections::codepointinvlist::CodePointInversionListBuilder;
         use icu::collections::codepointtrie::CodePointTrie;
         use icu::collections::codepointtrie::TrieType;
-        use icu::properties::provider::bidi_data::{
+        use icu::properties::provider::bidi::{
             BidiAuxiliaryPropertiesV1, MirroredPairedBracketData,
         };
         use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
@@ -119,14 +119,14 @@ impl crate::IterableDataProviderCached<BidiAuxiliaryPropertiesV1Marker> for Sour
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu::properties::bidi_data::BidiPairingProperties;
+    use icu::properties::bidi::BidiPairingProperties;
 
     #[test]
     fn test_bidi_data_provider() {
         let provider = SourceDataProvider::new_testing();
 
         let bidi_data =
-            icu::properties::bidi_data::load_bidi_auxiliary_properties_unstable(&provider).unwrap();
+            icu::properties::bidi::BidiAuxiliaryProperties::try_new_unstable(&provider).unwrap();
         let bidi_data = bidi_data.as_borrowed();
 
         let close_paren = bidi_data.get32_mirroring_props(')' as u32);

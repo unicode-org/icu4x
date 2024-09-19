@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_locale_core::locale;
+use icu_properties::PropertyNames;
 use icu_segmenter::GraphemeClusterSegmenter;
 use icu_segmenter::LineSegmenter;
 use icu_segmenter::SentenceSegmenter;
@@ -116,10 +117,14 @@ fn line_break_test(file: &'static str) {
             test.break_result_utf8.insert(0, 0);
         }
         if result != test.break_result_utf8 {
-            let lb = icu::properties::maps::line_break();
-            let lb_name = icu::properties::LineBreak::enum_to_long_name_mapper();
-            let gc = icu::properties::maps::general_category();
-            let gc_name = icu::properties::GeneralCategory::enum_to_long_name_mapper();
+            use icu::properties::{
+                props::{GeneralCategory, LineBreak},
+                CodePointMapData,
+            };
+            let lb = CodePointMapData::<LineBreak>::new();
+            let lb_name = PropertyNames::<LineBreak>::new_long();
+            let gc = CodePointMapData::<GeneralCategory>::new();
+            let gc_name = PropertyNames::<GeneralCategory>::new_long();
 
             let mut iter = segmenter.segment_str(&s);
             // TODO(egg): It would be really nice to have Name here.
@@ -207,8 +212,9 @@ fn word_break_test(file: &'static str) {
         let iter = segmenter.segment_str(&s);
         let result: Vec<usize> = iter.collect();
         if result != test.break_result_utf8 {
-            let wb = icu::properties::maps::word_break();
-            let wb_name = icu::properties::WordBreak::enum_to_long_name_mapper();
+            use icu::properties::{props::WordBreak, CodePointMapData};
+            let wb = CodePointMapData::<WordBreak>::new();
+            let wb_name = PropertyNames::<WordBreak>::new_long();
             let mut iter = segmenter.segment_str(&s);
             // TODO(egg): It would be really nice to have Name here.
             println!("  | A | E | Code pt. |   Word_Break   | State | Literal");
@@ -280,8 +286,9 @@ fn grapheme_break_test(file: &'static str) {
         let iter = segmenter.segment_str(&s);
         let result: Vec<usize> = iter.collect();
         if result != test.break_result_utf8 {
-            let gcb = icu::properties::maps::grapheme_cluster_break();
-            let gcb_name = icu::properties::GraphemeClusterBreak::enum_to_long_name_mapper();
+            use icu::properties::{props::GraphemeClusterBreak, CodePointMapData};
+            let gcb = CodePointMapData::<GraphemeClusterBreak>::new();
+            let gcb_name = PropertyNames::<GraphemeClusterBreak>::new_long();
             let mut iter = segmenter.segment_str(&s);
             // TODO(egg): It would be really nice to have Name here.
             println!("  | A | E | Code pt. |            GCB | State | Literal");
@@ -353,8 +360,9 @@ fn sentence_break_test(file: &'static str) {
         let iter = segmenter.segment_str(&s);
         let result: Vec<usize> = iter.collect();
         if result != test.break_result_utf8 {
-            let sb = icu::properties::maps::sentence_break();
-            let sb_name = icu::properties::SentenceBreak::enum_to_long_name_mapper();
+            use icu::properties::{props::SentenceBreak, CodePointMapData};
+            let sb = CodePointMapData::<SentenceBreak>::new();
+            let sb_name = PropertyNames::<SentenceBreak>::new_long();
             let mut iter = segmenter.segment_str(&s);
             // TODO(egg): It would be really nice to have Name here.
             println!("  | A | E | Code pt. | Sentence_Break | State | Literal");

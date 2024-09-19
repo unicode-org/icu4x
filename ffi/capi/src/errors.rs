@@ -111,9 +111,6 @@ pub mod ffi {
         DataIoError = 0x1_0B,
         DataUnavailableBufferFormatError = 0x1_0C,
 
-        // property errors
-        PropertyUnexpectedPropertyNameError = 0x4_02,
-
         // datetime format errors
         DateTimePatternError = 0x8_00,
         DateTimeMissingInputFieldError = 0x8_01,
@@ -168,18 +165,6 @@ impl From<icu_provider::DataError> for DataError {
     }
 }
 
-#[cfg(feature = "properties")]
-impl From<icu_properties::UnexpectedPropertyNameOrDataError> for Error {
-    fn from(e: icu_properties::UnexpectedPropertyNameOrDataError) -> Self {
-        match e {
-            icu_properties::UnexpectedPropertyNameOrDataError::Data(e) => e.into(),
-            icu_properties::UnexpectedPropertyNameOrDataError::UnexpectedPropertyName => {
-                Error::PropertyUnexpectedPropertyNameError
-            }
-        }
-    }
-}
-
 #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
 impl From<icu_calendar::RangeError> for CalendarError {
     fn from(_: icu_calendar::RangeError) -> Self {
@@ -208,38 +193,6 @@ impl From<icu_calendar::ParseError> for CalendarParseError {
             icu_calendar::ParseError::Range(_) => Self::OutOfRange,
             icu_calendar::ParseError::UnknownCalendar => Self::UnknownCalendar,
             _ => Self::Unknown,
-        }
-    }
-}
-
-#[cfg(feature = "datetime")]
-impl From<icu_datetime::DateTimeError> for Error {
-    fn from(e: icu_datetime::DateTimeError) -> Self {
-        match e {
-            icu_datetime::DateTimeError::Pattern(_) => Error::DateTimePatternError,
-            icu_datetime::DateTimeError::Data(err) => err.into(),
-            icu_datetime::DateTimeError::MissingInputField(_) => {
-                Error::DateTimeMissingInputFieldError
-            }
-            // TODO(#1324): Add back skeleton errors
-            // DateTimeFormatterError::Skeleton(_) => Error::DateTimeFormatSkeletonError,
-            icu_datetime::DateTimeError::UnsupportedField(_) => {
-                Error::DateTimeUnsupportedFieldError
-            }
-            icu_datetime::DateTimeError::UnsupportedOptions => {
-                Error::DateTimeUnsupportedOptionsError
-            }
-            icu_datetime::DateTimeError::MissingWeekdaySymbol(_) => {
-                Error::DateTimeMissingWeekdaySymbolError
-            }
-            icu_datetime::DateTimeError::MissingMonthSymbol(_) => {
-                Error::DateTimeMissingMonthSymbolError
-            }
-            icu_datetime::DateTimeError::FixedDecimal => Error::DateTimeFixedDecimalError,
-            icu_datetime::DateTimeError::MismatchedAnyCalendar(_, _) => {
-                Error::DateTimeMismatchedCalendarError
-            }
-            _ => Error::UnknownError,
         }
     }
 }

@@ -140,7 +140,7 @@ icu_list = { workspace = true, optional = true }
 icu_locale = { workspace = true, optional = true }
 icu_normalizer = { workspace = true, optional = true }
 icu_plurals = { workspace = true, optional = true }
-icu_properties = { workspace = true, features = ["bidi"], optional = true }
+icu_properties = { workspace = true, features = ["unicode_bidi"], optional = true }
 icu_segmenter = { workspace = true, features = ["auto"], optional = true }
 icu_timezone = { workspace = true, optional = true }
 icu_experimental = { workspace = true, optional = true }

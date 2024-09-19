@@ -3,19 +3,32 @@
     "0": "ngayong oras"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\u0001 oras ang nakalipas"
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " oras ang nakalipas"
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0004sa  oras"
+    "other": [
+      0,
+      [
+        {
+          "Literal": "sa "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " oras"
+        }
       ]
-    }
+    ]
   }
 }

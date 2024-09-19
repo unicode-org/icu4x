@@ -9,14 +9,10 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use alloc::borrow::Cow;
-use core::marker::PhantomData;
 #[cfg(feature = "datagen")]
-use core::{fmt::Debug, str::FromStr};
-use icu_pattern::{Pattern, PatternBackend, SinglePlaceholder};
-#[cfg(feature = "datagen")]
-use icu_plurals::PluralElements;
-use icu_plurals::{PluralCategory, PluralOperands, PluralRules};
+use core::fmt::Debug;
+use icu_pattern::SinglePlaceholderPattern;
+use icu_plurals::provider::PluralElementsPackedCow;
 use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 
@@ -71,127 +67,10 @@ pub struct RelativeTimePatternDataV1<'data> {
     pub relatives: ZeroMap<'data, i8, str>,
     /// How to display times in the past.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub past: PluralPatterns<'data, SinglePlaceholder>,
+    pub past: PluralElementsPackedCow<'data, SinglePlaceholderPattern>,
     /// How to display times in the future.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub future: PluralPatterns<'data, SinglePlaceholder>,
-}
-
-#[derive(Debug)]
-#[zerovec::make_varule(PluralCategoryStrULE)]
-#[zerovec::skip_derive(Ord)]
-#[zerovec::derive(Debug)]
-#[cfg_attr(
-    feature = "serde",
-    derive(serde::Deserialize),
-    zerovec::derive(Deserialize)
-)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize),
-    zerovec::derive(Serialize)
-)]
-/// A tuple of [`PluralCategory`] and [`str`].
-pub struct PluralCategoryStr<'data>(pub PluralCategory, pub Cow<'data, str>);
-
-/// Display specification for relative times, split over potential plural patterns.
-#[derive(Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_experimental::relativetime::provider))]
-#[yoke(prove_covariance_manually)]
-pub struct PluralPatterns<'data, B> {
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    #[doc(hidden)] // databake only
-    pub strings: icu_plurals::provider::PluralElementsPackedCow<'data, str>,
-    #[cfg_attr(feature = "serde", serde(skip))]
-    #[doc(hidden)] // databake only
-    pub _phantom: PhantomData<B>,
-}
-
-impl<'data, B> Clone for PluralPatterns<'data, B> {
-    fn clone(&self) -> Self {
-        Self {
-            strings: self.strings.clone(),
-            _phantom: PhantomData,
-        }
-    }
-}
-
-impl<'data, B: PatternBackend<Store = str>> PluralPatterns<'data, B> {
-    /// Returns the pattern for the given [`PluralCategory`].
-    pub fn get(&'data self, op: PluralOperands, rules: &PluralRules) -> &'data Pattern<B, str> {
-        Pattern::from_ref_store_unchecked(self.strings.get(op, rules))
-    }
-}
-
-#[cfg(feature = "datagen")]
-impl<'data, B: PatternBackend<Store = str>> TryFrom<PluralElements<&'data str>>
-    for PluralPatterns<'static, B>
-where
-    B::PlaceholderKeyCow<'data>: FromStr,
-    <B::PlaceholderKeyCow<'data> as FromStr>::Err: Debug,
-{
-    type Error = icu_pattern::PatternError;
-
-    fn try_from(elements: PluralElements<&'data str>) -> Result<Self, Self::Error> {
-        let make_pattern = |s: &&str| Pattern::<B, String>::from_str(s).map(|p| p.take_store());
-
-        Ok(Self {
-            strings: PluralElements::new(make_pattern(elements.other())?.as_str())
-                .with_zero_value(
-                    Some(elements.zero())
-                        .filter(|&e| e != elements.other())
-                        .map(make_pattern)
-                        .transpose()?
-                        .as_deref(),
-                )
-                .with_one_value(
-                    Some(elements.one())
-                        .filter(|&e| e != elements.other())
-                        .map(make_pattern)
-                        .transpose()?
-                        .as_deref(),
-                )
-                .with_two_value(
-                    Some(elements.two())
-                        .filter(|&e| e != elements.other())
-                        .map(make_pattern)
-                        .transpose()?
-                        .as_deref(),
-                )
-                .with_few_value(
-                    Some(elements.few())
-                        .filter(|&e| e != elements.other())
-                        .map(make_pattern)
-                        .transpose()?
-                        .as_deref(),
-                )
-                .with_many_value(
-                    Some(elements.many())
-                        .filter(|&e| e != elements.other())
-                        .map(make_pattern)
-                        .transpose()?
-                        .as_deref(),
-                )
-                .with_explicit_zero_value(
-                    elements
-                        .explicit_zero()
-                        .map(make_pattern)
-                        .transpose()?
-                        .as_deref(),
-                )
-                .with_explicit_one_value(
-                    elements
-                        .explicit_one()
-                        .map(make_pattern)
-                        .transpose()?
-                        .as_deref(),
-                )
-                .into(),
-            _phantom: PhantomData,
-        })
-    }
+    pub future: PluralElementsPackedCow<'data, SinglePlaceholderPattern>,
 }
 
 pub(crate) struct ErasedRelativeTimeFormatV1Marker;

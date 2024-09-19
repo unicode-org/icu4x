@@ -5,8 +5,7 @@
 use alloc::string::String;
 use alloc::vec::Vec;
 use icu_locale::LocaleFallbacker;
-use icu_properties::names::PropertyScriptToIcuScriptMapper;
-use icu_properties::script::ScriptWithExtensions;
+use icu_properties::script::{ScriptMapper, ScriptWithExtensions};
 
 use super::api::{
     FormattingOrder, NameField, NameFieldKind, PersonName, PersonNamesFormatterError,
@@ -24,7 +23,7 @@ use zerofrom::ZeroFrom;
 pub struct PersonNamesFormatter {
     pub(crate) default_options: PersonNamesFormatterOptions,
     swe: ScriptWithExtensions,
-    scripts: PropertyScriptToIcuScriptMapper<icu_properties::Script>,
+    scripts: ScriptMapper,
     fallbacker: LocaleFallbacker,
 }
 
@@ -49,8 +48,8 @@ impl PersonNamesFormatter {
             + DataProvider<icu_locale::provider::LikelySubtagsForLanguageV1Marker>
             + DataProvider<icu_locale::provider::ParentsV1Marker>,
     {
-        let swe = icu_properties::script::load_script_with_extensions_unstable(provider)?;
-        let scripts = icu_properties::Script::get_enum_to_icu_script_mapper(provider)?;
+        let swe = icu_properties::script::ScriptWithExtensions::try_new_unstable(provider)?;
+        let scripts = ScriptMapper::try_new_unstable(provider)?;
         let fallbacker = LocaleFallbacker::try_new_unstable(provider)?;
         Ok(PersonNamesFormatter {
             default_options: options,

@@ -5,19 +5,35 @@
     "1": "следећег квартала"
   },
   "past": {
-    "strings": {
-      "other": [
-        0,
-        "\bпре  кв."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "пре "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " кв."
+        }
       ]
-    }
+    ]
   },
   "future": {
-    "strings": {
-      "other": [
-        0,
-        "\u0006за  кв."
+    "other": [
+      0,
+      [
+        {
+          "Literal": "за "
+        },
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " кв."
+        }
       ]
-    }
+    ]
   }
 }
