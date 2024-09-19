@@ -268,9 +268,9 @@ impl SourceDataProvider {
     pub fn with_tzdb_for_tag(self, tag: &str) -> Self {
         Self {
             tzdb_paths: Some(Arc::new(TzdbCache {
-                root: AbstractFs::new_from_url(dbg!(format!(
+                root: AbstractFs::new_from_url(format!(
                     "https://github.com/eggert/tz/archive/refs/tags/{tag}.zip",
-                ))),
+                )),
                 cache: Default::default(),
             })),
             ..self
