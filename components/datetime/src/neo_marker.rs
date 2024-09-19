@@ -1365,50 +1365,62 @@ macro_rules! datetime_marker_helper {
     (@years/typed, yes) => {
         C::YearNamesV1Marker
     };
-    (@years/typed, no) => {
+    (@years/typed,) => {
         NeverMarker<YearNamesV1<'static>>
     };
     (@months/typed, yes) => {
         C::MonthNamesV1Marker
     };
-    (@months/typed, no) => {
+    (@months/typed,) => {
         NeverMarker<MonthNamesV1<'static>>
     };
     (@dates/typed, yes) => {
         C::SkeletaV1Marker
     };
-    (@dates/typed, no) => {
+    (@dates/typed,) => {
         NeverMarker<PackedSkeletonDataV1<'static>>
     };
     (@calmarkers, yes) => {
         FullDataCalMarkers
     };
-    (@calmarkers, no) => {
+    (@calmarkers,) => {
         NoDataCalMarkers
     };
     (@weekdays, yes) => {
         WeekdayNamesV1Marker
     };
-    (@weekdays, no) => {
+    (@weekdays,) => {
         NeverMarker<LinearNamesV1<'static>>
     };
     (@dayperiods, yes) => {
         DayPeriodNamesV1Marker
     };
-    (@dayperiods, no) => {
+    (@dayperiods,) => {
         NeverMarker<LinearNamesV1<'static>>
     };
     (@times, yes) => {
         TimeNeoSkeletonPatternsV1Marker
     };
-    (@times, no) => {
+    (@times,) => {
         NeverMarker<PackedSkeletonDataV1<'static>>
     };
     (@glue, yes) => {
         GluePatternV1Marker
     };
-    (@glue, no) => {
+    (@glue,) => {
         NeverMarker<GluePatternV1<'static>>
+    };
+    (@option/length, yes) => {
+        NeoSkeletonLength
+    };
+    (@option/length, Long) => {
+        NeoSkeletonLength
+    };
+    (@option/length, Medium) => {
+        NeoSkeletonLength
+    };
+    (@option/length, Short) => {
+        NeoSkeletonLength
     };
     (@option/eradisplay, yes) => {
         Option<EraDisplay>
@@ -1416,20 +1428,11 @@ macro_rules! datetime_marker_helper {
     (@option/alignment, yes) => {
         Option<Alignment>
     };
-    (@option/alignment, no, no) => {
-        NeverField
-    };
-    (@option/alignment, $any0:ident, $any1:ident) => {
-        Option<Alignment>
-    };
     (@option/fractionalsecondigits, yes) => {
         Option<FractionalSecondDigits>
     };
-    (@option/$any:ident, no) => {
+    (@option/$any:ident,) => {
         NeverField
-    };
-    (@option/length, $any:ident) => {
-        NeoSkeletonLength
     };
     (@input/year, yes) => {
         YearInfo
@@ -1473,7 +1476,7 @@ macro_rules! datetime_marker_helper {
     (@input/timezone/variant, yes) => {
         Option<ZoneVariant>
     };
-    (@input/$any:ident, no) => {
+    (@input/$any:ident,) => {
         NeverField
     };
     (@data/zone/essentials, yes) => {
@@ -1494,22 +1497,22 @@ macro_rules! datetime_marker_helper {
     (@data/zone/specific_short, yes) => {
         tz::MzSpecificShortV1Marker
     };
-    (@data/zone/essentials, no) => {
+    (@data/zone/essentials,) => {
         NeverMarker<tz::EssentialsV1<'static>>
     };
-    (@data/zone/exemplar_cities, no) => {
+    (@data/zone/exemplar_cities,) => {
         NeverMarker<tz::ExemplarCitiesV1<'static>>
     };
-    (@data/zone/generic_long, no) => {
+    (@data/zone/generic_long,) => {
         NeverMarker<tz::MzGenericLongV1<'static>>
     };
-    (@data/zone/generic_short, no) => {
+    (@data/zone/generic_short,) => {
         NeverMarker<tz::MzGenericShortV1<'static>>
     };
-    (@data/zone/specific_long, no) => {
+    (@data/zone/specific_long,) => {
         NeverMarker<tz::MzSpecificLongV1<'static>>
     };
-    (@data/zone/specific_short, no) => {
+    (@data/zone/specific_short,) => {
         NeverMarker<tz::MzSpecificShortV1<'static>>
     };
     (@names/year, yes) => {
@@ -1542,17 +1545,33 @@ macro_rules! datetime_marker_helper {
     (@names/zone/specific_short, yes) => {
         tz::MzSpecificShortV1Marker
     };
-    (@names/$any:ident, no) => {
+    (@names/$any:ident,) => {
         NeverMarker<()>
     };
-    (@names/zone/$any:ident, no) => {
+    (@names/$any:ident,) => {
         NeverMarker<()>
+    };
+    (@names/zone/$any:ident,) => {
+        NeverMarker<()>
+    };
+    () => {
+        unreachable!() // prevent bugs
+    };
+}
+
+/// Maps the token `yes` to the given ident
+macro_rules! yes_to {
+    ($any:ident, yes) => {
+        $any
+    };
+    () => {
+        unreachable!() // prevent bugs
     };
 }
 
 /// Generates the options argument passed into the docs test constructor
 macro_rules! length_option_helper {
-    (no) => {
+    () => {
         stringify!(Default::default())
     };
     ($length:ident) => {
@@ -1560,121 +1579,257 @@ macro_rules! length_option_helper {
     };
 }
 
+/// Generates an impl of [`NeoGetField`]
+macro_rules! impl_get_field {
+    ($type:path, never) => {
+        impl NeoGetField<NeverField> for $type {
+            fn get_field(&self) -> NeverField {
+                NeverField
+            }
+        }
+    };
+    ($type:path, length, yes) => {
+        impl NeoGetField<NeoSkeletonLength> for $type {
+            fn get_field(&self) -> NeoSkeletonLength {
+                self.length
+            }
+        }
+    };
+    ($type:path, alignment, yes) => {
+        impl NeoGetField<Option<Alignment>> for $type {
+            fn get_field(&self) -> Option<Alignment> {
+                self.alignment
+            }
+        }
+    };
+    ($type:path, era_display, yes) => {
+        impl NeoGetField<Option<EraDisplay>> for $type {
+            fn get_field(&self) -> Option<EraDisplay> {
+                self.era_display
+            }
+        }
+    };
+    ($type:path, fractional_second_digits, yes) => {
+        impl NeoGetField<Option<FractionalSecondDigits>> for $type {
+            fn get_field(&self) -> Option<FractionalSecondDigits> {
+                self.fractional_second_digits
+            }
+        }
+    };
+}
+
+macro_rules! impl_marker_with_options {
+    (
+        $(#[$attr:meta])*
+        $type:ident,
+        $(sample_length: $sample_length:ident,)?
+        $(alignment: $alignment_yes:ident,)?
+        $(era_display: $eradisplay_yes:ident,)?
+        $(fractional_second_digits: $fractionalsecondigits_yes:ident,)?
+    ) => {
+        $(#[$attr])*
+        #[derive(Debug)]
+        #[non_exhaustive]
+        pub struct $type {
+            $(
+                /// The desired length of the formatted string.
+                ///
+                /// See: [`NeoSkeletonLength`]
+                pub length: datetime_marker_helper!(@option/length, $sample_length),
+            )?
+            $(
+                /// Whether fields should be aligned for a column-like layout.
+                ///
+                /// See: [`Alignment`]
+                pub alignment: datetime_marker_helper!(@option/alignment, $alignment_yes),
+            )?
+            $(
+                /// When to display the era field in the formatted string.
+                ///
+                /// See: [`EraDisplay`]
+                pub era_display: datetime_marker_helper!(@option/eradisplay, $eradisplay_yes),
+            )?
+            $(
+                /// How many fractional seconds to display.
+                ///
+                /// See: [`FractionalSecondDigits`]
+                pub fractional_second_digits: datetime_marker_helper!(@option/fractionalsecondigits, $fractionalsecondigits_yes),
+            )?
+        }
+        impl $type {
+            #[doc = concat!("Creates a ", stringify!($type), " skeleton with the given formatting length.")]
+            pub const fn with_length(length: NeoSkeletonLength) -> Self {
+                Self {
+                    length,
+                    $(
+                        alignment: yes_to!(None, $alignment_yes),
+                    )?
+                    $(
+                        era_display: yes_to!(None, $eradisplay_yes),
+                    )?
+                    $(
+                        fractional_second_digits: yes_to!(None, $fractionalsecondigits_yes),
+                    )?
+                }
+            }
+        }
+        impl_get_field!($type, never);
+        $(
+            impl_get_field!($type, length, $alignment_yes);
+        )?
+        $(
+            impl_get_field!($type, alignment, $alignment_yes);
+        )?
+        $(
+            impl_get_field!($type, era_display, $eradisplay_yes);
+        )?
+        $(
+            impl_get_field!($type, fractional_second_digits, $fractionalsecondigits_yes);
+        )?
+    };
+}
+
+/// Implements a field set of time fields.
+///
+/// Several arguments to this macro are required, and the rest are optional.
+/// The optional arguments should be written as `key = yes,` if that parameter
+/// should be included.
+///
+/// Documentation for each option is shown inline below.
 macro_rules! impl_date_marker {
     (
+        // The name of the type being created.
         $type:ident,
+        // An expression for the field set.
         $components:expr,
+        // A plain language description of the field set for documentation.
         description = $description:literal,
+        // Length of the sample string below.
         sample_length = $sample_length:ident,
+        // A sample string. A docs test will be generated!
         sample = $sample:literal,
-        years = $years_yesno:ident,
-        months = $months_yesno:ident,
-        dates = $dates_yesno:ident,
-        weekdays = $weekdays_yesno:ident,
-        input_year = $year_yesno:ident,
-        input_month = $month_yesno:ident,
-        input_day_of_month = $day_of_month_yesno:ident,
-        input_day_of_week = $day_of_week_yesno:ident,
-        input_day_of_year = $day_of_year_yesno:ident,
-        input_any_calendar_kind = $any_calendar_kind_yesno:ident,
+        // Whether years can occur.
+        $(years = $years_yes:ident,)?
+        // Whether months can occur.
+        $(months = $months_yes:ident,)?
+        // Whether weekdays can occur.
+        $(weekdays = $weekdays_yes:ident,)?
+        // Whether the input should contain years.
+        $(input_year = $year_yes:ident,)?
+        // Whether the input should contain months.
+        $(input_month = $month_yes:ident,)?
+        // Whether the input should contain the day of the month.
+        $(input_day_of_month = $day_of_month_yes:ident,)?
+        // Whether the input should contain the day of the week.
+        $(input_day_of_week = $day_of_week_yes:ident,)?
+        // Whether the input should contain the day of the year.
+        $(input_day_of_year = $day_of_year_yes:ident,)?
+        // Whether the input should declare its calendar kind.
+        $(input_any_calendar_kind = $any_calendar_kind_yes:ident,)?
+        // Whether the alignment option should be available.
+        // According to UTS 35, it should be available with years, months, and days.
+        $(option_alignment = $option_alignment_yes:ident,)?
     ) => {
-        #[doc = concat!("**“", $sample, "**” ⇒ ", $description)]
-        ///
-        /// # Examples
-        ///
-        /// In [`NeoFormatter`](crate::neo::NeoFormatter):
-        ///
-        /// ```
-        /// use icu::calendar::Date;
-        /// use icu::datetime::neo::NeoFormatter;
-        #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
-        /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
-        /// use icu::locale::locale;
-        /// use writeable::assert_try_writeable_eq;
-        #[doc = concat!("let fmt = NeoFormatter::<", stringify!($type), ">::try_new(")]
-        ///     &locale!("en").into(),
-        #[doc = concat!("    ", length_option_helper!($sample_length), ",")]
-        /// )
-        /// .unwrap();
-        /// let dt = Date::try_new_iso_date(2024, 5, 17).unwrap();
-        ///
-        /// assert_try_writeable_eq!(
-        ///     fmt.convert_and_format(&dt),
-        #[doc = concat!("    \"", $sample, "\"")]
-        /// );
-        /// ```
-        ///
-        /// In [`TypedNeoFormatter`](crate::neo::TypedNeoFormatter):
-        ///
-        /// ```
-        /// use icu::calendar::Date;
-        /// use icu::calendar::Gregorian;
-        /// use icu::datetime::neo::TypedNeoFormatter;
-        #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
-        /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
-        /// use icu::locale::locale;
-        /// use writeable::assert_try_writeable_eq;
-        ///
-        #[doc = concat!("let fmt = TypedNeoFormatter::<Gregorian, ", stringify!($type), ">::try_new(")]
-        ///     &locale!("en").into(),
-        #[doc = concat!("    ", length_option_helper!($sample_length), ",")]
-        /// )
-        /// .unwrap();
-        /// let dt = Date::try_new_gregorian_date(2024, 5, 17).unwrap();
-        ///
-        /// assert_try_writeable_eq!(
-        ///     fmt.format(&dt),
-        #[doc = concat!("    \"", $sample, "\"")]
-        /// );
-        /// ```
-        #[derive(Debug)]
-        #[allow(clippy::exhaustive_enums)] // empty enum
-        pub enum $type {}
+        impl_marker_with_options!(
+            #[doc = concat!("**“", $sample, "**” ⇒ ", $description)]
+            ///
+            /// # Examples
+            ///
+            /// In [`NeoFormatter`](crate::neo::NeoFormatter):
+            ///
+            /// ```
+            /// use icu::calendar::Date;
+            /// use icu::datetime::neo::NeoFormatter;
+            #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
+            /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+            /// use icu::locale::locale;
+            /// use writeable::assert_try_writeable_eq;
+            #[doc = concat!("let fmt = NeoFormatter::<", stringify!($type), ">::try_new(")]
+            ///     &locale!("en").into(),
+            #[doc = concat!("    ", length_option_helper!($sample_length), ",")]
+            /// )
+            /// .unwrap();
+            /// let dt = Date::try_new_iso_date(2024, 5, 17).unwrap();
+            ///
+            /// assert_try_writeable_eq!(
+            ///     fmt.convert_and_format(&dt),
+            #[doc = concat!("    \"", $sample, "\"")]
+            /// );
+            /// ```
+            ///
+            /// In [`TypedNeoFormatter`](crate::neo::TypedNeoFormatter):
+            ///
+            /// ```
+            /// use icu::calendar::Date;
+            /// use icu::calendar::Gregorian;
+            /// use icu::datetime::neo::TypedNeoFormatter;
+            #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
+            /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+            /// use icu::locale::locale;
+            /// use writeable::assert_try_writeable_eq;
+            ///
+            #[doc = concat!("let fmt = TypedNeoFormatter::<Gregorian, ", stringify!($type), ">::try_new(")]
+            ///     &locale!("en").into(),
+            #[doc = concat!("    ", length_option_helper!($sample_length), ",")]
+            /// )
+            /// .unwrap();
+            /// let dt = Date::try_new_gregorian_date(2024, 5, 17).unwrap();
+            ///
+            /// assert_try_writeable_eq!(
+            ///     fmt.format(&dt),
+            #[doc = concat!("    \"", $sample, "\"")]
+            /// );
+            /// ```
+            $type,
+            sample_length: $sample_length,
+            $(alignment: $option_alignment_yes)?,
+            $(era_display: $year_yes)?,
+        );
         impl private::Sealed for $type {}
         impl DateTimeNamesMarker for $type {
-            type YearNames = datetime_marker_helper!(@names/year, $years_yesno);
-            type MonthNames = datetime_marker_helper!(@names/month, $months_yesno);
-            type WeekdayNames = datetime_marker_helper!(@names/weekday, $weekdays_yesno);
-            type DayPeriodNames = datetime_marker_helper!(@names/dayperiod, no);
-            type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials, no);
-            type ZoneExemplarCities = datetime_marker_helper!(@names/zone/exemplar_cities, no);
-            type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long, no);
-            type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short, no);
-            type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long, no);
-            type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short, no);
+            type YearNames = datetime_marker_helper!(@names/year, $($years_yes)?);
+            type MonthNames = datetime_marker_helper!(@names/month, $($months_yes)?);
+            type WeekdayNames = datetime_marker_helper!(@names/weekday, $($weekdays_yes)?);
+            type DayPeriodNames = datetime_marker_helper!(@names/dayperiod,);
+            type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials,);
+            type ZoneExemplarCities = datetime_marker_helper!(@names/zone/exemplar_cities,);
+            type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long,);
+            type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short,);
+            type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
+            type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short,);
         }
         impl HasConstDateComponents for $type {
             const COMPONENTS: NeoDateComponents = $components;
         }
         impl DateInputMarkers for $type {
-            type YearInput = datetime_marker_helper!(@input/year, $year_yesno);
-            type MonthInput = datetime_marker_helper!(@input/month, $month_yesno);
-            type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month, $day_of_month_yesno);
-            type DayOfWeekInput = datetime_marker_helper!(@input/day_of_week, $day_of_week_yesno);
-            type DayOfYearInput = datetime_marker_helper!(@input/day_of_year, $day_of_year_yesno);
-            type AnyCalendarKindInput = datetime_marker_helper!(@input/any_calendar_kind, $any_calendar_kind_yesno);
+            type YearInput = datetime_marker_helper!(@input/year, $($year_yes)?);
+            type MonthInput = datetime_marker_helper!(@input/month, $($month_yes)?);
+            type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month, $($day_of_month_yes)?);
+            type DayOfWeekInput = datetime_marker_helper!(@input/day_of_week, $($day_of_week_yes)?);
+            type DayOfYearInput = datetime_marker_helper!(@input/day_of_year, $($day_of_year_yes)?);
+            type AnyCalendarKindInput = datetime_marker_helper!(@input/any_calendar_kind, $($any_calendar_kind_yes)?);
         }
         impl<C: CldrCalendar> TypedDateDataMarkers<C> for $type {
-            type DateSkeletonPatternsV1Marker = datetime_marker_helper!(@dates/typed, $dates_yesno);
-            type YearNamesV1Marker = datetime_marker_helper!(@years/typed, $years_yesno);
-            type MonthNamesV1Marker = datetime_marker_helper!(@months/typed, $months_yesno);
-            type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays, $weekdays_yesno);
+            type DateSkeletonPatternsV1Marker = datetime_marker_helper!(@dates/typed, yes);
+            type YearNamesV1Marker = datetime_marker_helper!(@years/typed, $($years_yes)?);
+            type MonthNamesV1Marker = datetime_marker_helper!(@months/typed, $($months_yes)?);
+            type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays, $($weekdays_yes)?);
         }
         impl DateDataMarkers for $type {
-            type Skel = datetime_marker_helper!(@calmarkers, $dates_yesno);
-            type Year = datetime_marker_helper!(@calmarkers, $years_yesno);
-            type Month = datetime_marker_helper!(@calmarkers, $months_yesno);
-            type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays, $weekdays_yesno);
+            type Skel = datetime_marker_helper!(@calmarkers, yes);
+            type Year = datetime_marker_helper!(@calmarkers, $($years_yes)?);
+            type Month = datetime_marker_helper!(@calmarkers, $($months_yes)?);
+            type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays, $($weekdays_yes)?);
         }
         impl DateTimeMarkers for $type {
             type D = Self;
             type T = NeoNeverMarker;
             type Z = NeoNeverMarker;
-            type LengthOption = datetime_marker_helper!(@option/length, yes);
-            type AlignmentOption = datetime_marker_helper!(@option/alignment, $months_yesno, $dates_yesno);
-            type EraDisplayOption = datetime_marker_helper!(@option/eradisplay, $year_yesno);
-            type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits, no);
-            type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
+            type LengthOption = datetime_marker_helper!(@option/length, $sample_length);
+            type AlignmentOption = datetime_marker_helper!(@option/alignment, $($months_yes)?);
+            type EraDisplayOption = datetime_marker_helper!(@option/eradisplay, $($year_yes)?);
+            type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits,);
+            type GluePatternV1Marker = datetime_marker_helper!(@glue,);
         }
         impl HasConstComponents for $type {
             const COMPONENTS: NeoComponents = NeoComponents::Date($components);
@@ -1682,6 +1837,13 @@ macro_rules! impl_date_marker {
     };
 }
 
+/// Implements a field set of date fields.
+///
+/// Several arguments to this macro are required, and the rest are optional.
+/// The optional arguments should be written as `key = yes,` if that parameter
+/// should be included.
+///
+/// See [`impl_date_marker`].
 macro_rules! impl_day_marker {
     (
         $type:ident,
@@ -1689,16 +1851,17 @@ macro_rules! impl_day_marker {
         description = $description:literal,
         sample_length = $sample_length:ident,
         sample = $sample:literal,
-        years = $years_yesno:ident,
-        months = $months_yesno:ident,
-        dates = $dates_yesno:ident,
-        weekdays = $weekdays_yesno:ident,
-        input_year = $year_yesno:ident,
-        input_month = $month_yesno:ident,
-        input_day_of_month = $day_of_month_yesno:ident,
-        input_day_of_week = $day_of_week_yesno:ident,
-        input_day_of_year = $day_of_year_yesno:ident,
-        input_any_calendar_kind = $any_calendar_kind_yesno:ident,
+        $(years = $years_yes:ident,)?
+        $(months = $months_yes:ident,)?
+        $(dates = $dates_yes:ident,)?
+        $(weekdays = $weekdays_yes:ident,)?
+        $(input_year = $year_yes:ident,)?
+        $(input_month = $month_yes:ident,)?
+        $(input_day_of_month = $day_of_month_yes:ident,)?
+        $(input_day_of_week = $day_of_week_yes:ident,)?
+        $(input_day_of_year = $day_of_year_yes:ident,)?
+        $(input_any_calendar_kind = $any_calendar_kind_yes:ident,)?
+        $(option_alignment = $option_alignment_yes:ident,)?
     ) => {
         impl_date_marker!(
             $type,
@@ -1706,16 +1869,17 @@ macro_rules! impl_day_marker {
             description = $description,
             sample_length = $sample_length,
             sample = $sample,
-            years = $years_yesno,
-            months = $months_yesno,
-            dates = $dates_yesno,
-            weekdays = $weekdays_yesno,
-            input_year = $year_yesno,
-            input_month = $month_yesno,
-            input_day_of_month = $day_of_month_yesno,
-            input_day_of_week = $day_of_week_yesno,
-            input_day_of_year = $day_of_year_yesno,
-            input_any_calendar_kind = $any_calendar_kind_yesno,
+            $(years = $years_yes,)?
+            $(months = $months_yes,)?
+            $(dates = $dates_yes,)?
+            $(weekdays = $weekdays_yes,)?
+            $(input_year = $year_yes,)?
+            $(input_month = $month_yes,)?
+            $(input_day_of_month = $day_of_month_yes,)?
+            $(input_day_of_week = $day_of_week_yes,)?
+            $(input_day_of_year = $day_of_year_yes,)?
+            $(input_any_calendar_kind = $any_calendar_kind_yes,)?
+            $(option_alignment = $option_alignment_yes,)?
         );
         impl HasConstDayComponents for $type {
             const COMPONENTS: NeoDayComponents = $components;
@@ -1723,106 +1887,125 @@ macro_rules! impl_day_marker {
     };
 }
 
+/// Implements a field set of time fields.
+///
+/// Several arguments to this macro are required, and the rest are optional.
+/// The optional arguments should be written as `key = yes,` if that parameter
+/// should be included.
+///
+/// Documentation for each option is shown inline below.
 macro_rules! impl_time_marker {
     (
+        // The name of the type being created.
         $type:ident,
+        // An expression for the field set.
         $components:expr,
+        // A plain language description of the field set for documentation.
         description = $description:literal,
+        // Length of the sample string below.
         sample_length = $sample_length:ident,
+        // A sample string. A docs test will be generated!
         sample = $sample:literal,
-        dayperiods = $dayperiods_yesno:ident,
-        times = $times_yesno:ident,
-        input_hour = $hour_yesno:ident,
-        input_minute = $minute_yesno:ident,
-        input_second = $second_yesno:ident,
-        input_nanosecond = $nanosecond_yesno:ident,
+        // Whether day periods can occur.
+        $(dayperiods = $dayperiods_yes:ident,)?
+        // Whether the input should include hours.
+        $(input_hour = $hour_yes:ident,)?
+        // Whether the input should contain minutes.
+        $(input_minute = $minute_yes:ident,)?
+        // Whether the input should contain seconds.
+        $(input_second = $second_yes:ident,)?
+        // Whether the input should contain fractional seconds.
+        $(input_nanosecond = $nanosecond_yes:ident,)?
     ) => {
-        #[doc = concat!("**“", $sample, "**” ⇒ ", $description)]
-        ///
-        /// # Examples
-        ///
-        /// In [`NeoFormatter`](crate::neo::NeoFormatter):
-        ///
-        /// ```
-        /// use icu::calendar::DateTime;
-        /// use icu::datetime::neo::NeoFormatter;
-        #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
-        /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
-        /// use icu::locale::locale;
-        /// use writeable::assert_try_writeable_eq;
-        ///
-        #[doc = concat!("let fmt = NeoFormatter::<", stringify!($type), ">::try_new(")]
-        ///     &locale!("en").into(),
-        #[doc = concat!("    ", length_option_helper!($sample_length), ",")]
-        /// )
-        /// .unwrap();
-        /// let dt = DateTime::try_new_iso_datetime(2024, 5, 17, 15, 47, 50).unwrap();
-        ///
-        /// assert_try_writeable_eq!(
-        ///     fmt.convert_and_format(&dt),
-        #[doc = concat!("    \"", $sample, "\"")]
-        /// );
-        /// ```
-        ///
-        /// In [`TypedNeoFormatter`](crate::neo::TypedNeoFormatter):
-        ///
-        /// ```
-        /// use icu::calendar::Time;
-        /// use icu::calendar::Gregorian;
-        /// use icu::datetime::neo::TypedNeoFormatter;
-        #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
-        /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
-        /// use icu::locale::locale;
-        /// use writeable::assert_try_writeable_eq;
-        ///
-        #[doc = concat!("let fmt = TypedNeoFormatter::<Gregorian, ", stringify!($type), ">::try_new(")]
-        ///     &locale!("en").into(),
-        #[doc = concat!("    ", length_option_helper!($sample_length), ",")]
-        /// )
-        /// .unwrap();
-        /// let dt = Time::try_new(15, 47, 50, 0).unwrap();
-        ///
-        /// assert_try_writeable_eq!(
-        ///     fmt.format(&dt),
-        #[doc = concat!("    \"", $sample, "\"")]
-        /// );
-        /// ```
-        #[derive(Debug)]
-        #[allow(clippy::exhaustive_enums)] // empty enum
-        pub enum $type {}
+        impl_marker_with_options!(
+            #[doc = concat!("**“", $sample, "**” ⇒ ", $description)]
+            ///
+            /// # Examples
+            ///
+            /// In [`NeoFormatter`](crate::neo::NeoFormatter):
+            ///
+            /// ```
+            /// use icu::calendar::DateTime;
+            /// use icu::datetime::neo::NeoFormatter;
+            #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
+            /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+            /// use icu::locale::locale;
+            /// use writeable::assert_try_writeable_eq;
+            ///
+            #[doc = concat!("let fmt = NeoFormatter::<", stringify!($type), ">::try_new(")]
+            ///     &locale!("en").into(),
+            #[doc = concat!("    ", length_option_helper!($sample_length), ",")]
+            /// )
+            /// .unwrap();
+            /// let dt = DateTime::try_new_iso_datetime(2024, 5, 17, 15, 47, 50).unwrap();
+            ///
+            /// assert_try_writeable_eq!(
+            ///     fmt.convert_and_format(&dt),
+            #[doc = concat!("    \"", $sample, "\"")]
+            /// );
+            /// ```
+            ///
+            /// In [`TypedNeoFormatter`](crate::neo::TypedNeoFormatter):
+            ///
+            /// ```
+            /// use icu::calendar::Time;
+            /// use icu::calendar::Gregorian;
+            /// use icu::datetime::neo::TypedNeoFormatter;
+            #[doc = concat!("use icu::datetime::neo_marker::", stringify!($type), ";")]
+            /// use icu::datetime::neo_skeleton::NeoSkeletonLength;
+            /// use icu::locale::locale;
+            /// use writeable::assert_try_writeable_eq;
+            ///
+            #[doc = concat!("let fmt = TypedNeoFormatter::<Gregorian, ", stringify!($type), ">::try_new(")]
+            ///     &locale!("en").into(),
+            #[doc = concat!("    ", length_option_helper!($sample_length), ",")]
+            /// )
+            /// .unwrap();
+            /// let dt = Time::try_new(15, 47, 50, 0).unwrap();
+            ///
+            /// assert_try_writeable_eq!(
+            ///     fmt.format(&dt),
+            #[doc = concat!("    \"", $sample, "\"")]
+            /// );
+            /// ```
+            $type,
+            sample_length: $sample_length,
+            alignment: yes,
+            $(fractional_second_digits: $nanosecond_yes,)?
+        );
         impl private::Sealed for $type {}
         impl DateTimeNamesMarker for $type {
-            type YearNames = datetime_marker_helper!(@names/year, no);
-            type MonthNames = datetime_marker_helper!(@names/month, no);
-            type WeekdayNames = datetime_marker_helper!(@names/weekday, no);
-            type DayPeriodNames = datetime_marker_helper!(@names/dayperiod, $dayperiods_yesno);
-            type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials, no);
-            type ZoneExemplarCities = datetime_marker_helper!(@names/zone/exemplar_cities, no);
-            type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long, no);
-            type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short, no);
-            type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long, no);
-            type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short, no);
+            type YearNames = datetime_marker_helper!(@names/year,);
+            type MonthNames = datetime_marker_helper!(@names/month,);
+            type WeekdayNames = datetime_marker_helper!(@names/weekday,);
+            type DayPeriodNames = datetime_marker_helper!(@names/dayperiod, $($dayperiods_yes)?);
+            type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials,);
+            type ZoneExemplarCities = datetime_marker_helper!(@names/zone/exemplar_cities,);
+            type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long,);
+            type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short,);
+            type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
+            type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short,);
         }
         impl HasConstTimeComponents for $type {
             const COMPONENTS: NeoTimeComponents = $components;
         }
         impl TimeMarkers for $type {
-            type DayPeriodNamesV1Marker = datetime_marker_helper!(@dayperiods, $dayperiods_yesno);
-            type TimeSkeletonPatternsV1Marker = datetime_marker_helper!(@times, $times_yesno);
-            type HourInput = datetime_marker_helper!(@input/hour, $hour_yesno);
-            type MinuteInput = datetime_marker_helper!(@input/minute, $minute_yesno);
-            type SecondInput = datetime_marker_helper!(@input/second, $second_yesno);
-            type NanoSecondInput = datetime_marker_helper!(@input/nanosecond, $nanosecond_yesno);
+            type DayPeriodNamesV1Marker = datetime_marker_helper!(@dayperiods, $($dayperiods_yes)?);
+            type TimeSkeletonPatternsV1Marker = datetime_marker_helper!(@times, yes);
+            type HourInput = datetime_marker_helper!(@input/hour, $($hour_yes)?);
+            type MinuteInput = datetime_marker_helper!(@input/minute, $($minute_yes)?);
+            type SecondInput = datetime_marker_helper!(@input/second, $($second_yes)?);
+            type NanoSecondInput = datetime_marker_helper!(@input/nanosecond, $($nanosecond_yes)?);
         }
         impl DateTimeMarkers for $type {
             type D = NeoNeverMarker;
             type T = Self;
             type Z = NeoNeverMarker;
-            type LengthOption = datetime_marker_helper!(@option/length, yes);
+            type LengthOption = datetime_marker_helper!(@option/length, $sample_length);
             type AlignmentOption = datetime_marker_helper!(@option/alignment, yes);
-            type EraDisplayOption = datetime_marker_helper!(@option/eradisplay, no);
-            type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits, $nanosecond_yesno);
-            type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
+            type EraDisplayOption = datetime_marker_helper!(@option/eradisplay,);
+            type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits, $($nanosecond_yes)?);
+            type GluePatternV1Marker = datetime_marker_helper!(@glue,);
         }
         impl HasConstComponents for $type {
             const COMPONENTS: NeoComponents = NeoComponents::Time($components);
@@ -1830,20 +2013,39 @@ macro_rules! impl_time_marker {
     };
 }
 
+/// Implements a field set of time zone fields.
+///
+/// Several arguments to this macro are required, and the rest are optional.
+/// The optional arguments should be written as `key = yes,` if that parameter
+/// should be included.
+///
+/// Documentation for each option is shown inline below.
 macro_rules! impl_zone_marker {
     (
         $(#[$attr:meta])*
+        // The name of the type being created.
         $type:ident,
+        // An expression for the field set.
         $components:expr,
+        // A plain language description of the field set for documentation.
         description = $description:literal,
-        sample_length = $sample_length:ident,
+        // Length of the sample string below.
+        // Omit if this field set does not accept a length.
+        $(sample_length = $sample_length:ident,)?
+        // A sample string. A docs test will be generated!
         sample = $sample:literal,
-        zone_essentials = $zone_essentials_yesno:ident,
-        zone_exemplar_cities = $zone_exemplar_cities_yesno:ident,
-        zone_generic_long = $zone_generic_long_yesno:ident,
-        zone_generic_short = $zone_generic_short_yesno:ident,
-        zone_specific_long = $zone_specific_long_yesno:ident,
-        zone_specific_short = $zone_specific_short_yesno:ident,
+        // Whether zone-essentials should be loaded.
+        $(zone_essentials = $zone_essentials_yes:ident,)?
+        // Whether exemplar cities can occur.
+        $(zone_exemplar_cities = $zone_exemplar_cities_yes:ident,)?
+        // Whether generic long formats can occur.
+        $(zone_generic_long = $zone_generic_long_yes:ident,)?
+        // Whether generic short formats can occur.
+        $(zone_generic_short = $zone_generic_short_yes:ident,)?
+        // Whether specific long formats can occur.
+        $(zone_specific_long = $zone_specific_long_yes:ident,)?
+        // Whether specific short formats can occur.
+        $(zone_specific_short = $zone_specific_short_yes:ident,)?
     ) => {
         #[doc = concat!("**“", $sample, "**” ⇒ ", $description)]
         ///
@@ -1862,7 +2064,7 @@ macro_rules! impl_zone_marker {
         ///
         #[doc = concat!("let fmt = NeoFormatter::<", stringify!($type), ">::try_new(")]
         ///     &locale!("en").into(),
-        #[doc = concat!("    ", length_option_helper!($sample_length), ",")]
+        #[doc = concat!("    ", length_option_helper!($($sample_length)?), ",")]
         /// )
         /// .unwrap();
         ///
@@ -1895,7 +2097,7 @@ macro_rules! impl_zone_marker {
         ///
         #[doc = concat!("let fmt = TypedNeoFormatter::<Gregorian, ", stringify!($type), ">::try_new(")]
         ///     &locale!("en").into(),
-        #[doc = concat!("    ", length_option_helper!($sample_length), ",")]
+        #[doc = concat!("    ", length_option_helper!($($sample_length)?), ",")]
         /// )
         /// .unwrap();
         ///
@@ -1918,16 +2120,16 @@ macro_rules! impl_zone_marker {
         pub enum $type {}
         impl private::Sealed for $type {}
         impl DateTimeNamesMarker for $type {
-            type YearNames = datetime_marker_helper!(@names/year, no);
-            type MonthNames = datetime_marker_helper!(@names/month, no);
-            type WeekdayNames = datetime_marker_helper!(@names/weekday, no);
-            type DayPeriodNames = datetime_marker_helper!(@names/dayperiod, no);
-            type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials, $zone_essentials_yesno);
-            type ZoneExemplarCities = datetime_marker_helper!(@names/zone/exemplar_cities, $zone_exemplar_cities_yesno);
-            type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long, $zone_generic_long_yesno);
-            type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short, $zone_generic_short_yesno);
-            type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long, $zone_specific_long_yesno);
-            type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short, $zone_specific_short_yesno);
+            type YearNames = datetime_marker_helper!(@names/year,);
+            type MonthNames = datetime_marker_helper!(@names/month,);
+            type WeekdayNames = datetime_marker_helper!(@names/weekday,);
+            type DayPeriodNames = datetime_marker_helper!(@names/dayperiod,);
+            type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials, $($zone_essentials_yes)?);
+            type ZoneExemplarCities = datetime_marker_helper!(@names/zone/exemplar_cities, $($zone_exemplar_cities_yes)?);
+            type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long, $($zone_generic_long_yes)?);
+            type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short, $($zone_generic_short_yes)?);
+            type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long, $($zone_specific_long_yes)?);
+            type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short, $($zone_specific_short_yes)?);
         }
         impl HasConstZoneComponent for $type {
             const COMPONENT: NeoTimeZoneSkeleton = $components;
@@ -1937,22 +2139,22 @@ macro_rules! impl_zone_marker {
             type TimeZoneIdInput = datetime_marker_helper!(@input/timezone/id, yes);
             type TimeZoneMetazoneInput = datetime_marker_helper!(@input/timezone/metazone, yes);
             type TimeZoneVariantInput = datetime_marker_helper!(@input/timezone/variant, yes);
-            type EssentialsV1Marker = datetime_marker_helper!(@data/zone/essentials, $zone_essentials_yesno);
-            type ExemplarCitiesV1Marker = datetime_marker_helper!(@data/zone/exemplar_cities, $zone_exemplar_cities_yesno);
-            type GenericLongV1Marker = datetime_marker_helper!(@data/zone/generic_long, $zone_generic_long_yesno);
-            type GenericShortV1Marker = datetime_marker_helper!(@data/zone/generic_short, $zone_generic_short_yesno);
-            type SpecificLongV1Marker = datetime_marker_helper!(@data/zone/specific_long, $zone_specific_long_yesno);
-            type SpecificShortV1Marker = datetime_marker_helper!(@data/zone/specific_short, $zone_specific_short_yesno);
+            type EssentialsV1Marker = datetime_marker_helper!(@data/zone/essentials, $($zone_essentials_yes)?);
+            type ExemplarCitiesV1Marker = datetime_marker_helper!(@data/zone/exemplar_cities, $($zone_exemplar_cities_yes)?);
+            type GenericLongV1Marker = datetime_marker_helper!(@data/zone/generic_long, $($zone_generic_long_yes)?);
+            type GenericShortV1Marker = datetime_marker_helper!(@data/zone/generic_short, $($zone_generic_short_yes)?);
+            type SpecificLongV1Marker = datetime_marker_helper!(@data/zone/specific_long, $($zone_specific_long_yes)?);
+            type SpecificShortV1Marker = datetime_marker_helper!(@data/zone/specific_short, $($zone_specific_short_yes)?);
         }
         impl DateTimeMarkers for $type {
             type D = NeoNeverMarker;
             type T = NeoNeverMarker;
             type Z = Self;
-            type LengthOption = datetime_marker_helper!(@option/length, $sample_length);
-            type AlignmentOption = datetime_marker_helper!(@option/alignment, no);
-            type EraDisplayOption = datetime_marker_helper!(@option/eradisplay, no);
-            type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits, no);
-            type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
+            type LengthOption = datetime_marker_helper!(@option/length, $($sample_length)?);
+            type AlignmentOption = datetime_marker_helper!(@option/alignment,);
+            type EraDisplayOption = datetime_marker_helper!(@option/eradisplay,);
+            type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits,);
+            type GluePatternV1Marker = datetime_marker_helper!(@glue,);
         }
         impl HasConstComponents for $type {
             const COMPONENTS: NeoComponents = NeoComponents::Zone($components);
@@ -2101,14 +2303,12 @@ impl_day_marker!(
     sample = "5/17/24",
     years = yes,
     months = yes,
-    dates = yes,
     weekdays = yes,
     input_year = yes,
     input_month = yes,
     input_day_of_month = yes,
-    input_day_of_week = no,
-    input_day_of_year = no,
     input_any_calendar_kind = yes,
+    option_alignment = yes,
 );
 
 // TODO: Rename this to FullYear instead of EraYear
@@ -2120,14 +2320,11 @@ impl_day_marker!(
     sample = "May 17, 2024",
     years = yes,
     months = yes,
-    dates = yes,
-    weekdays = no,
     input_year = yes,
     input_month = yes,
     input_day_of_month = yes,
-    input_day_of_week = no,
-    input_day_of_year = no,
     input_any_calendar_kind = yes,
+    option_alignment = yes,
 );
 
 impl_day_marker!(
@@ -2138,14 +2335,13 @@ impl_day_marker!(
     sample = "May 17, 2024",
     years = yes,
     months = yes,
-    dates = yes,
     weekdays = yes,
     input_year = yes,
     input_month = yes,
     input_day_of_month = yes,
     input_day_of_week = yes,
-    input_day_of_year = no,
     input_any_calendar_kind = yes,
+    option_alignment = yes,
 );
 
 impl_time_marker!(
@@ -2155,11 +2351,8 @@ impl_time_marker!(
     sample_length = Medium,
     sample = "3:47 PM",
     dayperiods = yes,
-    times = yes,
     input_hour = yes,
     input_minute = yes,
-    input_second = no,
-    input_nanosecond = no,
 );
 
 impl_time_marker!(
@@ -2169,7 +2362,6 @@ impl_time_marker!(
     sample_length = Medium,
     sample = "3:47:50 PM",
     dayperiods = yes,
-    times = yes,
     input_hour = yes,
     input_minute = yes,
     input_second = yes,
@@ -2183,7 +2375,6 @@ impl_time_marker!(
     sample_length = Medium,
     sample = "3:47:50 PM",
     dayperiods = yes,
-    times = yes,
     input_hour = yes,
     input_minute = yes,
     input_second = yes,
@@ -2219,14 +2410,10 @@ impl_date_marker!(
     sample = "May 2024",
     years = yes,
     months = yes,
-    dates = yes,
-    weekdays = no,
     input_year = yes,
     input_month = yes,
-    input_day_of_month = no,
-    input_day_of_week = no,
-    input_day_of_year = no,
     input_any_calendar_kind = yes,
+    option_alignment = yes,
 );
 
 impl_zone_marker!(
@@ -2236,10 +2423,6 @@ impl_zone_marker!(
     sample_length = Medium,
     sample = "CDT",
     zone_essentials = yes,
-    zone_exemplar_cities = no,
-    zone_generic_long = no,
-    zone_generic_short = no,
-    zone_specific_long = no,
     zone_specific_short = yes,
 );
 
@@ -2279,13 +2462,8 @@ impl_zone_marker!(
     NeoTimeZoneSpecificShortMarker,
     NeoTimeZoneSkeleton::specific_short(),
     description = "specific time zone with a shorter length, or raw offset if unavailable",
-    sample_length = no,
     sample = "CDT",
     zone_essentials = yes,
-    zone_exemplar_cities = no,
-    zone_generic_long = no,
-    zone_generic_short = no,
-    zone_specific_long = no,
     zone_specific_short = yes,
 );
 
@@ -2293,14 +2471,9 @@ impl_zone_marker!(
     NeoTimeZoneSpecificLongMarker,
     NeoTimeZoneSkeleton::specific_long(),
     description = "specific time zone with a longer length, or raw offset if unavailable",
-    sample_length = no,
     sample = "Central Daylight Time",
     zone_essentials = yes,
-    zone_exemplar_cities = no,
-    zone_generic_long = no,
-    zone_generic_short = no,
     zone_specific_long = yes,
-    zone_specific_short = no,
 );
 
 impl_zone_marker!(
@@ -2310,39 +2483,22 @@ impl_zone_marker!(
     sample_length = Medium,
     sample = "GMT-05:00", // TODO: Implement short localized offset
     zone_essentials = yes,
-    zone_exemplar_cities = no,
-    zone_generic_long = no,
-    zone_generic_short = no,
-    zone_specific_long = no,
-    zone_specific_short = no,
 );
 
 impl_zone_marker!(
     NeoTimeZoneOffsetShortMarker,
     NeoTimeZoneSkeleton::offset_short(),
     description = "UTC offset with a shorter length",
-    sample_length = no,
     sample = "GMT-05:00", // TODO: Implement short localized offset
     zone_essentials = yes,
-    zone_exemplar_cities = no,
-    zone_generic_long = no,
-    zone_generic_short = no,
-    zone_specific_long = no,
-    zone_specific_short = no,
 );
 
 impl_zone_marker!(
     NeoTimeZoneOffsetLongMarker,
     NeoTimeZoneSkeleton::offset_long(),
     description = "UTC offset with a longer length",
-    sample_length = no,
     sample = "GMT-05:00",
     zone_essentials = yes,
-    zone_exemplar_cities = no,
-    zone_generic_long = no,
-    zone_generic_short = no,
-    zone_specific_long = no,
-    zone_specific_short = no,
 );
 
 impl_zone_marker!(
@@ -2353,10 +2509,7 @@ impl_zone_marker!(
     sample = "CT",
     zone_essentials = yes,
     zone_exemplar_cities = yes,
-    zone_generic_long = no,
     zone_generic_short = yes,
-    zone_specific_long = no,
-    zone_specific_short = no,
 );
 
 impl_zone_marker!(
@@ -2395,42 +2548,29 @@ impl_zone_marker!(
     NeoTimeZoneGenericShortMarker,
     NeoTimeZoneSkeleton::generic_short(),
     description = "generic time zone with a shorter length, or location if unavailable",
-    sample_length = no,
     sample = "CT",
     zone_essentials = yes,
     zone_exemplar_cities = yes,
-    zone_generic_long = no,
     zone_generic_short = yes,
-    zone_specific_long = no,
-    zone_specific_short = no,
 );
 
 impl_zone_marker!(
     NeoTimeZoneGenericLongMarker,
     NeoTimeZoneSkeleton::generic_long(),
     description = "generic time zone with a longer length, or location if unavailable",
-    sample_length = no,
     sample = "Central Time",
     zone_essentials = yes,
     zone_exemplar_cities = yes,
     zone_generic_long = yes,
-    zone_generic_short = no,
-    zone_specific_long = no,
-    zone_specific_short = no,
 );
 
 impl_zone_marker!(
     NeoTimeZoneLocationMarker,
     NeoTimeZoneSkeleton::location(),
     description = "location time zone",
-    sample_length = no,
     sample = "Chicago Time",
     zone_essentials = yes,
     zone_exemplar_cities = yes,
-    zone_generic_long = no,
-    zone_generic_short = no,
-    zone_specific_long = no,
-    zone_specific_short = no,
 );
 
 // TODO: Type aliases like this are excessive; make a curated set
@@ -2455,13 +2595,13 @@ impl DateTimeNamesMarker for NeoDateComponents {
     type YearNames = datetime_marker_helper!(@names/year, yes);
     type MonthNames = datetime_marker_helper!(@names/month, yes);
     type WeekdayNames = datetime_marker_helper!(@names/weekday, yes);
-    type DayPeriodNames = datetime_marker_helper!(@names/dayperiod, no);
-    type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials, no);
-    type ZoneExemplarCities = datetime_marker_helper!(@names/zone/exemplar_cities, no);
-    type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long, no);
-    type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short, no);
-    type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long, no);
-    type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short, no);
+    type DayPeriodNames = datetime_marker_helper!(@names/dayperiod,);
+    type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials,);
+    type ZoneExemplarCities = datetime_marker_helper!(@names/zone/exemplar_cities,);
+    type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long,);
+    type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short,);
+    type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
+    type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short,);
 }
 
 impl DateInputMarkers for NeoDateComponents {
@@ -2494,8 +2634,8 @@ impl DateTimeMarkers for NeoDateComponents {
     type LengthOption = datetime_marker_helper!(@option/length, yes);
     type AlignmentOption = datetime_marker_helper!(@option/alignment, yes);
     type EraDisplayOption = datetime_marker_helper!(@option/eradisplay, yes);
-    type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits, no);
-    type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
+    type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits,);
+    type GluePatternV1Marker = datetime_marker_helper!(@glue,);
 }
 
 impl private::Sealed for NeoTimeComponents {}
@@ -2503,16 +2643,16 @@ impl private::Sealed for NeoTimeComponents {}
 impl IsRuntimeComponents for NeoTimeComponents {}
 
 impl DateTimeNamesMarker for NeoTimeComponents {
-    type YearNames = datetime_marker_helper!(@names/year, no);
-    type MonthNames = datetime_marker_helper!(@names/month, no);
-    type WeekdayNames = datetime_marker_helper!(@names/weekday, no);
+    type YearNames = datetime_marker_helper!(@names/year,);
+    type MonthNames = datetime_marker_helper!(@names/month,);
+    type WeekdayNames = datetime_marker_helper!(@names/weekday,);
     type DayPeriodNames = datetime_marker_helper!(@names/dayperiod, yes);
-    type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials, no);
-    type ZoneExemplarCities = datetime_marker_helper!(@names/zone/exemplar_cities, no);
-    type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long, no);
-    type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short, no);
-    type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long, no);
-    type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short, no);
+    type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials,);
+    type ZoneExemplarCities = datetime_marker_helper!(@names/zone/exemplar_cities,);
+    type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long,);
+    type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short,);
+    type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
+    type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short,);
 }
 
 impl TimeMarkers for NeoTimeComponents {
@@ -2530,9 +2670,9 @@ impl DateTimeMarkers for NeoTimeComponents {
     type Z = NeoNeverMarker;
     type LengthOption = datetime_marker_helper!(@option/length, yes);
     type AlignmentOption = datetime_marker_helper!(@option/alignment, yes);
-    type EraDisplayOption = datetime_marker_helper!(@option/eradisplay, no);
+    type EraDisplayOption = datetime_marker_helper!(@option/eradisplay,);
     type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits, yes);
-    type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
+    type GluePatternV1Marker = datetime_marker_helper!(@glue,);
 }
 
 impl private::Sealed for NeoTimeZoneSkeleton {}
@@ -2540,10 +2680,10 @@ impl private::Sealed for NeoTimeZoneSkeleton {}
 impl IsRuntimeComponents for NeoTimeZoneSkeleton {}
 
 impl DateTimeNamesMarker for NeoTimeZoneSkeleton {
-    type YearNames = datetime_marker_helper!(@names/year, no);
-    type MonthNames = datetime_marker_helper!(@names/month, no);
-    type WeekdayNames = datetime_marker_helper!(@names/weekday, no);
-    type DayPeriodNames = datetime_marker_helper!(@names/dayperiod, no);
+    type YearNames = datetime_marker_helper!(@names/year,);
+    type MonthNames = datetime_marker_helper!(@names/month,);
+    type WeekdayNames = datetime_marker_helper!(@names/weekday,);
+    type DayPeriodNames = datetime_marker_helper!(@names/dayperiod,);
     type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials, yes);
     type ZoneExemplarCities = datetime_marker_helper!(@names/zone/exemplar_cities, yes);
     type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long, yes);
@@ -2570,10 +2710,10 @@ impl DateTimeMarkers for NeoTimeZoneSkeleton {
     type T = NeoNeverMarker;
     type Z = Self;
     type LengthOption = datetime_marker_helper!(@option/length, yes);
-    type AlignmentOption = datetime_marker_helper!(@option/alignment, no);
-    type EraDisplayOption = datetime_marker_helper!(@option/eradisplay, no);
-    type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits, no);
-    type GluePatternV1Marker = datetime_marker_helper!(@glue, no);
+    type AlignmentOption = datetime_marker_helper!(@option/alignment,);
+    type EraDisplayOption = datetime_marker_helper!(@option/eradisplay,);
+    type FractionalSecondDigitsOption = datetime_marker_helper!(@option/fractionalsecondigits,);
+    type GluePatternV1Marker = datetime_marker_helper!(@glue,);
 }
 
 impl private::Sealed for NeoDateTimeComponents {}
@@ -2585,12 +2725,12 @@ impl DateTimeNamesMarker for NeoDateTimeComponents {
     type MonthNames = datetime_marker_helper!(@names/month, yes);
     type WeekdayNames = datetime_marker_helper!(@names/weekday, yes);
     type DayPeriodNames = datetime_marker_helper!(@names/dayperiod, yes);
-    type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials, no);
-    type ZoneExemplarCities = datetime_marker_helper!(@names/zone/exemplar_cities, no);
-    type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long, no);
-    type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short, no);
-    type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long, no);
-    type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short, no);
+    type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials,);
+    type ZoneExemplarCities = datetime_marker_helper!(@names/zone/exemplar_cities,);
+    type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long,);
+    type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short,);
+    type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
+    type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short,);
 }
 
 impl DateTimeMarkers for NeoDateTimeComponents {

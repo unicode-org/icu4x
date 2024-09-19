@@ -21,6 +21,13 @@ use marker_attrs::GlueType;
 use zerovec::ule::AsULE;
 use zerovec::ZeroSlice;
 
+pub(crate) struct RawNeoOptions {
+    pub(crate) length: Option<NeoSkeletonLength>,
+    pub(crate) alignment: Option<Alignment>,
+    pub(crate) era_display: Option<EraDisplay>,
+    pub(crate) fractional_second_digits: Option<FractionalSecondDigits>,
+}
+
 /// Wrapper around `Option<NeoSkeletonLength>` that debug-asserts
 /// the presence of a value.
 #[derive(Debug, Copy, Clone)]
@@ -528,13 +535,16 @@ impl DateTimeZonePatternSelectionData {
         time_provider: &(impl BoundDataProvider<SkeletaV1Marker> + ?Sized),
         glue_provider: &(impl BoundDataProvider<GluePatternV1Marker> + ?Sized),
         locale: &DataLocale,
-        length: Option<NeoSkeletonLength>,
         components: NeoComponents,
-        alignment: Option<Alignment>,
-        era_display: Option<EraDisplay>,
-        fractional_second_digits: Option<FractionalSecondDigits>,
+        options: RawNeoOptions,
         hour_cycle: Option<HourCycle>,
     ) -> Result<Self, DataError> {
+        let RawNeoOptions {
+            length,
+            alignment,
+            era_display,
+            fractional_second_digits,
+        } = options;
         let length = MaybeLength(length);
         match components {
             NeoComponents::Date(components) => {
