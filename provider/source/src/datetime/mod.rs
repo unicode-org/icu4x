@@ -51,7 +51,7 @@ fn supported_cals() -> &'static HashMap<icu::locale::extensions::unicode::Value,
 }
 
 impl SourceDataProvider {
-    fn get_datetime_resources(
+    pub(crate) fn get_datetime_resources(
         &self,
         locale: &DataLocale,
         calendar: Either<&Value, &str>,
