@@ -71,7 +71,7 @@ pub mod ffi {
         )]
         #[diplomat::attr(auto, indexer)]
         pub fn get(&self, ch: DiplomatChar) -> u8 {
-            self.0.as_borrowed().get32_u8(ch).0
+            self.0.as_borrowed().get32_u8(ch)
         }
     }
 
