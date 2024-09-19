@@ -1414,7 +1414,7 @@ where
     /// // is not implemented for `icu::icu_calendar::Time`
     /// formatter.convert_and_format(&Time::try_new(0, 0, 0, 0).unwrap());
     /// ```
-    pub fn convert_and_format<'a, I>(&'a self, datetime: &I) -> FormattedNeoDateTime
+    pub fn convert_and_format<'a, I>(&'a self, datetime: &I) -> FormattedNeoDateTime<'a>
     where
         I: ?Sized + ConvertCalendar,
         I::Converted<'a>: Sized + AllInputMarkers<R>,

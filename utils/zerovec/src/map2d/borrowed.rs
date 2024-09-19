@@ -274,7 +274,7 @@ where
     V: ?Sized,
 {
     /// Produce an ordered iterator over keys0
-    pub fn iter0<'l>(&'l self) -> impl Iterator<Item = ZeroMap2dCursor<'a, 'a, K0, K1, V>> + '_ {
+    pub fn iter0<'l>(&'l self) -> impl Iterator<Item = ZeroMap2dCursor<'a, 'a, K0, K1, V>> + 'l {
         (0..self.keys0.zvl_len()).map(move |idx| ZeroMap2dCursor::from_borrowed(self, idx))
     }
 }

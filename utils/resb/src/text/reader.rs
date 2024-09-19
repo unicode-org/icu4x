@@ -28,7 +28,7 @@ use self::parse_state::ParseState;
 macro_rules! type_id {
     ($(#[$meta:meta])* $name:ident, $tag:literal) => {
         $(#[$meta])*
-        fn $name<'a, E>(input: ParseState<'a>) -> IResult<ParseState, ParseState, E>
+        fn $name<'a, E>(input: ParseState<'a>) -> IResult<ParseState<'a>, ParseState<'a>, E>
         where
             E: ParseError<ParseState<'a>> + ContextError<ParseState<'a>>
         {
@@ -40,7 +40,7 @@ macro_rules! type_id {
 
     ($(#[$meta:meta])* $name:ident, $( $tag:literal ),+) => {
         $(#[$meta])*
-        fn $name<'a, E>(input: ParseState<'a>) -> IResult<ParseState, ParseState, E>
+        fn $name<'a, E>(input: ParseState<'a>) -> IResult<ParseState<'a>, ParseState<'a>, E>
         where
             E: ParseError<ParseState<'a>> + ContextError<ParseState<'a>>
         {
@@ -107,7 +107,7 @@ type_id!(
 );
 
 /// Reads any type ID which may appear as a leaf in the resource tree.
-fn type_id_no_root<'a, E>(input: ParseState<'a>) -> IResult<ParseState, ParseState, E>
+fn type_id_no_root<'a, E>(input: ParseState<'a>) -> IResult<ParseState<'a>, ParseState<'a>, E>
 where
     E: ParseError<ParseState<'a>> + ContextError<ParseState<'a>>,
 {
@@ -132,7 +132,7 @@ where
 /// It is presently unclear which characters appear in keys in practice, so in
 /// the interest of a simplified parse, only characters which have been
 /// encountered in real files are supported.
-fn invariant_chars<'a, E>(input: ParseState<'a>) -> IResult<ParseState, ParseState, E>
+fn invariant_chars<'a, E>(input: ParseState<'a>) -> IResult<ParseState<'a>, ParseState<'a>, E>
 where
     E: ParseError<ParseState<'a>> + ContextError<ParseState<'a>>,
 {
@@ -143,7 +143,7 @@ where
 }
 
 /// Reads a single-line comment up to but not including the final newline.
-fn eol_comment<'a, E>(input: ParseState<'a>) -> IResult<ParseState, ParseState, E>
+fn eol_comment<'a, E>(input: ParseState<'a>) -> IResult<ParseState<'a>, ParseState<'a>, E>
 where
     E: ParseError<ParseState<'a>> + ContextError<ParseState<'a>>,
 {
@@ -153,7 +153,7 @@ where
 /// Reads a multi-line comment.
 ///
 /// Does not support nested comments.
-fn delimited_comment<'a, E>(input: ParseState<'a>) -> IResult<ParseState, ParseState, E>
+fn delimited_comment<'a, E>(input: ParseState<'a>) -> IResult<ParseState<'a>, ParseState<'a>, E>
 where
     E: ParseError<ParseState<'a>> + ContextError<ParseState<'a>>,
 {
@@ -164,7 +164,7 @@ where
 }
 
 /// Reads one single-line or multi-line comment.
-fn comment<'a, E>(input: ParseState<'a>) -> IResult<ParseState, ParseState, E>
+fn comment<'a, E>(input: ParseState<'a>) -> IResult<ParseState<'a>, ParseState<'a>, E>
 where
     E: ParseError<ParseState<'a>> + ContextError<ParseState<'a>>,
 {
@@ -186,7 +186,7 @@ where
 /// for these has also been omitted for the time being.
 ///
 /// See [`Reader`] for more details on the specification.
-fn string<'a, E>(input: ParseState<'a>) -> IResult<ParseState, &str, E>
+fn string<'a, E>(input: ParseState<'a>) -> IResult<ParseState<'a>, &'a str, E>
 where
     E: ParseError<ParseState<'a>> + ContextError<ParseState<'a>>,
 {
@@ -203,7 +203,7 @@ where
 }
 
 /// Reads a signed or unsigned 32-bit integer.
-fn integer<'a, E>(input: ParseState<'a>) -> IResult<ParseState, u32, E>
+fn integer<'a, E>(input: ParseState<'a>) -> IResult<ParseState<'a>, u32, E>
 where
     E: ParseError<ParseState<'a>> + ContextError<ParseState<'a>>,
 {
@@ -211,7 +211,7 @@ where
 }
 
 /// Reads and discards any number of comments and any amount of whitespace.
-fn discardable<'a, E>(input: ParseState<'a>) -> IResult<ParseState, (), E>
+fn discardable<'a, E>(input: ParseState<'a>) -> IResult<ParseState<'a>, (), E>
 where
     E: ParseError<ParseState<'a>> + ContextError<ParseState<'a>>,
 {
@@ -220,7 +220,7 @@ where
 
 /// Reads a single token as specified by the provided parser, surrounded by any
 /// number of comments and any amount of whitespace.
-fn token<'a, F, O, E>(mut parser: F) -> impl FnMut(ParseState<'a>) -> IResult<ParseState, O, E>
+fn token<'a, F, O, E>(mut parser: F) -> impl FnMut(ParseState<'a>) -> IResult<ParseState<'a>, O, E>
 where
     F: Parser<ParseState<'a>, O, E>,
     E: ParseError<ParseState<'a>> + ContextError<ParseState<'a>>,
@@ -237,7 +237,7 @@ where
 /// Generates appropriate matchers for simple string tokens.
 macro_rules! simple_token {
     ($name:ident, $str:expr) => {
-        fn $name<'a, E>(input: ParseState<'a>) -> IResult<ParseState, ParseState, E>
+        fn $name<'a, E>(input: ParseState<'a>) -> IResult<ParseState<'a>, ParseState<'a>, E>
         where
             E: ParseError<ParseState<'a>> + ContextError<ParseState<'a>>,
         {
@@ -251,7 +251,7 @@ simple_token!(right_brace, "}");
 simple_token!(comma, ",");
 
 /// Reads a table key.
-fn key<'a, E>(state: ParseState<'a>) -> IResult<ParseState, Key, E>
+fn key<'a, E>(state: ParseState<'a>) -> IResult<ParseState<'a>, Key<'a>, E>
 where
     E: ParseError<ParseState<'a>> + ContextError<ParseState<'a>>,
 {
@@ -277,7 +277,7 @@ where
 }
 
 /// Reads a single table entry, consisting of a key and an associated resource.
-fn table_entry<'a, E>(input: ParseState<'a>) -> IResult<ParseState, (Key, Resource), E>
+fn table_entry<'a, E>(input: ParseState<'a>) -> IResult<ParseState<'a>, (Key<'a>, Resource<'a>), E>
 where
     E: ParseError<ParseState<'a>> + ContextError<ParseState<'a>>,
 {
@@ -308,7 +308,7 @@ macro_rules! resource_opt_tag {
 
 /// Reads the body of a table resource, consisting of any number of key-resource
 /// pair entries.
-fn table_body<'a, E>(state: ParseState<'a>) -> IResult<ParseState, Table, E>
+fn table_body<'a, E>(state: ParseState<'a>) -> IResult<ParseState<'a>, Table<'a>, E>
 where
     E: ParseError<ParseState<'a>> + ContextError<ParseState<'a>>,
 {
@@ -327,7 +327,7 @@ where
 ///
 /// Though it is not required in the resource bundle text, the final in-memory
 /// representation sorts these pairs lexically by key.
-fn table_resource<'a, E>(input: ParseState<'a>) -> IResult<ParseState, Resource, E>
+fn table_resource<'a, E>(input: ParseState<'a>) -> IResult<ParseState<'a>, Resource<'a>, E>
 where
     E: ParseError<ParseState<'a>> + ContextError<ParseState<'a>>,
 {
@@ -338,7 +338,9 @@ where
 }
 
 /// Reads the root table resource, noting whether locale fallback is disabled.
-fn root_table_resource<'a, E>(input: ParseState<'a>) -> IResult<ParseState, (bool, Resource), E>
+fn root_table_resource<'a, E>(
+    input: ParseState<'a>,
+) -> IResult<ParseState<'a>, (bool, Resource<'a>), E>
 where
     E: ParseError<ParseState<'a>> + ContextError<ParseState<'a>>,
 {
@@ -357,7 +359,7 @@ where
 
 /// Reads an array resource consisting of any number of hetereogeneously-typed
 /// resources, optionally separated by commas.
-fn array_resource<'a, E>(input: ParseState<'a>) -> IResult<ParseState, Resource, E>
+fn array_resource<'a, E>(input: ParseState<'a>) -> IResult<ParseState<'a>, Resource<'a>, E>
 where
     E: ParseError<ParseState<'a>> + ContextError<ParseState<'a>>,
 {
@@ -379,7 +381,7 @@ where
 /// These integers have no inherent signedness; consumers specify whether a
 /// signed or unsigned integer is desired. Because of this, note that 28-bit
 /// integers require special handling in-memory. See [`Int28`] for more details.
-fn int_resource<'a, E>(input: ParseState<'a>) -> IResult<ParseState, Resource, E>
+fn int_resource<'a, E>(input: ParseState<'a>) -> IResult<ParseState<'a>, Resource<'a>, E>
 where
     E: ParseError<ParseState<'a>> + ContextError<ParseState<'a>>,
 {
@@ -393,7 +395,7 @@ where
 
 /// Reads an integer vector resource, consisting of any number of 32-bit
 /// integers separated by commas. A trailing comma is optional.
-fn int_vector_resource<'a, E>(input: ParseState<'a>) -> IResult<ParseState, Resource, E>
+fn int_vector_resource<'a, E>(input: ParseState<'a>) -> IResult<ParseState<'a>, Resource<'a>, E>
 where
     E: ParseError<ParseState<'a>> + ContextError<ParseState<'a>>,
 {
@@ -424,7 +426,7 @@ fn binary_byte(input: &str) -> IResult<&str, u8> {
 /// digits representing byte values.
 ///
 /// See [`binary_byte`].
-fn binary_resource<'a, E>(input: ParseState<'a>) -> IResult<ParseState, Resource, E>
+fn binary_resource<'a, E>(input: ParseState<'a>) -> IResult<ParseState<'a>, Resource<'a>, E>
 where
     E: ParseError<ParseState<'a>> + ContextError<ParseState<'a>>,
 {
@@ -450,7 +452,7 @@ where
 /// braces.
 ///
 /// See [`string`] for more details on the representation of strings.
-fn string_resource<'a, E>(input: ParseState<'a>) -> IResult<ParseState, Resource, E>
+fn string_resource<'a, E>(input: ParseState<'a>) -> IResult<ParseState<'a>, Resource<'a>, E>
 where
     E: ParseError<ParseState<'a>> + ContextError<ParseState<'a>>,
 {
@@ -464,7 +466,7 @@ where
 }
 
 /// Reads a single resource.
-fn resource<'a, E>(input: ParseState<'a>) -> IResult<ParseState, Resource, E>
+fn resource<'a, E>(input: ParseState<'a>) -> IResult<ParseState<'a>, Resource<'a>, E>
 where
     E: ParseError<ParseState<'a>> + ContextError<ParseState<'a>>,
 {
@@ -482,7 +484,7 @@ where
 }
 
 /// Reads a complete resource bundle.
-fn bundle<'a, E>(input: ParseState<'a>) -> IResult<ParseState, ResourceBundle, E>
+fn bundle<'a, E>(input: ParseState<'a>) -> IResult<ParseState<'a>, ResourceBundle<'a>, E>
 where
     E: ParseError<ParseState<'a>> + ContextError<ParseState<'a>>,
 {
