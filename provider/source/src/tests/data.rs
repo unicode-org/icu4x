@@ -659,6 +659,7 @@ impl SourceDataProvider {
                         ("uprops/small/Term.toml", include_bytes!("../../tests/data/icuexport/uprops/small/Term.toml").as_slice()),
                         ("uprops/small/UIdeo.toml", include_bytes!("../../tests/data/icuexport/uprops/small/UIdeo.toml").as_slice()),
                         ("uprops/small/Upper.toml", include_bytes!("../../tests/data/icuexport/uprops/small/Upper.toml").as_slice()),
+                        ("uprops/small/vo.toml", include_bytes!("../../tests/data/icuexport/uprops/small/vo.toml").as_slice()),
                         ("uprops/small/VS.toml", include_bytes!("../../tests/data/icuexport/uprops/small/VS.toml").as_slice()),
                         ("uprops/small/WB.toml", include_bytes!("../../tests/data/icuexport/uprops/small/WB.toml").as_slice()),
                         ("uprops/small/WSpace.toml", include_bytes!("../../tests/data/icuexport/uprops/small/WSpace.toml").as_slice()),

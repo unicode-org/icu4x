@@ -92,6 +92,12 @@ icu_provider::data_marker!(
     is_singleton = true
 );
 icu_provider::data_marker!(
+    /// `PropertyNameParseVerticalOrientationV1`
+    PropertyNameParseVerticalOrientationV1,
+    PropertyValueNameToEnumMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
     /// `PropertyNameParseWordBreakV1`
     PropertyNameParseWordBreakV1,
     PropertyValueNameToEnumMap<'static>,
@@ -208,6 +214,18 @@ icu_provider::data_marker!(
 icu_provider::data_marker!(
     /// `PropertyNameShortSentenceBreakV1`
     PropertyNameShortSentenceBreakV1,
+    PropertyEnumToValueNameLinearMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyNameLongVerticalOrientationV1`
+    PropertyNameLongVerticalOrientationV1,
+    PropertyEnumToValueNameLinearMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyNameShortVerticalOrientationV1`
+    PropertyNameShortVerticalOrientationV1,
     PropertyEnumToValueNameLinearMap<'static>,
     is_singleton = true
 );

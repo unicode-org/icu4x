@@ -1600,6 +1600,64 @@ make_enumerated_property! {
     /// ```
 }
 
+/// Property Vertical_Orientation
+/// See UTR #50:
+/// <https://www.unicode.org/reports/tr50/#vo>
+///
+/// The numeric value is compatible with `UVerticalOrientation` in ICU4C.
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
+#[allow(clippy::exhaustive_structs)] // newtype
+#[repr(transparent)]
+pub struct VerticalOrientation(pub(crate) u8);
+
+impl VerticalOrientation {
+    /// Returns an ICU4C `UVerticalOrientation` value.
+    pub const fn to_icu4c_value(self) -> u8 {
+        self.0
+    }
+    /// Constructor from an ICU4C `UVerticalOrientation` value.
+    pub const fn from_icu4c_value(value: u8) -> Self {
+        Self(value)
+    }
+}
+
+create_const_array! {
+#[allow(missing_docs)] // These constants don't need individual documentation.
+#[allow(non_upper_case_globals)]
+impl VerticalOrientation {
+    pub const Rotated: VerticalOrientation = VerticalOrientation(0); // name="R"
+    pub const TransformedRotated: VerticalOrientation = VerticalOrientation(1); // name="Tr"
+    pub const TransformedUpright: VerticalOrientation = VerticalOrientation(2); // name="Tu"
+    pub const Upright: VerticalOrientation = VerticalOrientation(3); // name="U"
+}
+}
+
+make_enumerated_property! {
+    name: "Vertical_Orientation";
+    short_name: "vo";
+    ident: VerticalOrientation;
+    data_marker: crate::provider::PropertyEnumVerticalOrientationV1;
+    singleton: SINGLETON_PROPERTY_ENUM_VERTICAL_ORIENTATION_V1;
+    ule_ty: u8;
+    func:
+    /// Return a [`CodePointMapDataBorrowed`] for the Vertical_Orientation Unicode enumerated
+    /// property. See [`VerticalOrientation`].
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, VerticalOrientation};
+    ///
+    /// assert_eq!(maps::vertical_orientation().get('a'), VerticalOrientation::Rotated);
+    /// assert_eq!(maps::vertical_orientation().get('§'), VerticalOrientation::Upright);
+    /// assert_eq!(maps::vertical_orientation().get32(0x2329), VerticalOrientation::TransformedRotated);
+    /// assert_eq!(maps::vertical_orientation().get32(0x3001), VerticalOrientation::TransformedUpright);
+    /// ```
+}
+
 pub use crate::code_point_set::BinaryProperty;
 
 macro_rules! make_binary_property {
@@ -3219,6 +3277,14 @@ mod test_enumerated_property_completeness {
         check_enum(
             crate::provider::Baked::SINGLETON_PROPERTY_NAME_PARSE_HANGUL_SYLLABLE_TYPE_V1,
             HangulSyllableType::ALL_VALUES,
+        );
+    }
+
+    #[test]
+    fn test_vo() {
+        check_enum(
+            crate::provider::Baked::SINGLETON_PROPERTY_NAME_PARSE_VERTICAL_ORIENTATION_V1,
+            VerticalOrientation::ALL_VALUES,
         );
     }
 }

@@ -317,6 +317,31 @@ pub mod ffi {
                 .erase(),
             )))
         }
+        /// Create a name-to-enum mapper for the `Vertical_Orientation` property, using compiled data.
+        #[diplomat::rust_link(icu_properties::props::VerticalOrientation, Struct)]
+        #[diplomat::attr(auto, named_constructor = "vertical_orientation")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_vertical_orientation() -> Box<PropertyValueNameToEnumMapper> {
+            Box::new(PropertyValueNameToEnumMapper(
+                icu_properties::PropertyParser::<icu_properties::props::VerticalOrientation>::new()
+                    .static_to_owned()
+                    .erase(),
+            ))
+        }
+        /// Create a name-to-enum mapper for the `Vertical_Orientation` property, using a particular data source.
+        #[diplomat::rust_link(icu_properties::props::VerticalOrientation, Struct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "vertical_orientation")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_vertical_orientation_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
+            Ok(Box::new(PropertyValueNameToEnumMapper(
+                icu_properties::PropertyParser::<icu_properties::props::VerticalOrientation>::try_new_unstable(
+                    &provider.get_unstable()?,
+                )?
+                .erase(),
+            )))
+        }
     }
 
     /// A type capable of looking up General Category Group values from a string name.
