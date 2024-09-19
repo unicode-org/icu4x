@@ -182,8 +182,8 @@ macro_rules! test_bake {
         // For some reason `TokenStream` behaves differently in this line
         let expected_bake = $crate::quote!($expr).to_string().replace("::<", ":: <").replace(">::", "> ::");
         // Trailing commas are a mess as well
-        let bake = bake.replace(" ,)", ")").replace(" ,]", "]").replace(" , }", " }");
-        let expected_bake = expected_bake.replace(" ,)", ")").replace(" ,]", "]").replace(" , }", " }");
+        let bake = bake.replace(" ,)", ")").replace(" ,]", "]").replace(" , }", " }").replace(" , >", " >");
+        let expected_bake = expected_bake.replace(" ,)", ")").replace(" ,]", "]").replace(" , }", " }").replace(" , >", " >");
         $(
             let expected_bake = expected_bake.replace("crate", stringify!($krate));
         )?
