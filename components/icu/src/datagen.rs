@@ -89,13 +89,22 @@ pub fn markers_for_bin(path: &Path) -> Result<HashSet<DataMarkerInfo>, DataError
 
 #[test]
 fn test_markers_for_bin() {
+    let hashset = markers_for_bin_inner(include_bytes!("../tests/data/tutorial_buffer.wasm")).unwrap();
+    let mut sorted = hashset.into_iter().collect::<Vec<_>>();
+    sorted.sort();
     assert_eq!(
-        markers_for_bin_inner(include_bytes!("../tests/data/tutorial_buffer.wasm")),
-        Ok(HashSet::from_iter([
-            // TODO: This should include datetime markers. Why not?
+        sorted,
+        &[
+            crate::datetime::provider::neo::GluePatternV1Marker::INFO,
+            crate::datetime::provider::neo::GregorianDateNeoSkeletonPatternsV1Marker::INFO,
+            crate::datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker::INFO,
+            crate::datetime::provider::neo::DayPeriodNamesV1Marker::INFO,
+            crate::datetime::provider::neo::GregorianMonthNamesV1Marker::INFO,
+            crate::datetime::provider::neo::GregorianYearNamesV1Marker::INFO,
+            crate::datetime::provider::neo::WeekdayNamesV1Marker::INFO,
             crate::calendar::provider::WeekDataV1Marker::INFO,
+            crate::calendar::provider::WeekDataV2Marker::INFO,
             crate::decimal::provider::DecimalSymbolsV1Marker::INFO,
-            crate::plurals::provider::OrdinalV1Marker::INFO,
-        ]))
+        ]
     );
 }
