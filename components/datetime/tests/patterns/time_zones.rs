@@ -67,32 +67,32 @@ pub enum TimeZoneFormatterConfig {
 }
 
 impl TimeZoneFormatterConfig {
-    pub fn to_semantic_skeleton(self) -> NeoTimeZoneSkeleton {
+    pub fn to_semantic_skeleton(self) -> (NeoTimeZoneSkeleton, NeoSkeletonLength) {
         let mut skeleton = NeoTimeZoneSkeleton::default();
-        match self {
+        let length = match self {
             TimeZoneFormatterConfig::GenericNonLocationLong => {
-                skeleton.length = Some(NeoSkeletonLength::Long);
                 skeleton.style = NeoTimeZoneStyle::NonLocation;
+                NeoSkeletonLength::Long
             }
             TimeZoneFormatterConfig::GenericNonLocationShort => {
-                skeleton.length = Some(NeoSkeletonLength::Short);
                 skeleton.style = NeoTimeZoneStyle::NonLocation;
+                NeoSkeletonLength::Short
             }
             TimeZoneFormatterConfig::GenericLocation => {
-                skeleton.length = Some(NeoSkeletonLength::Long);
                 skeleton.style = NeoTimeZoneStyle::Location;
+                NeoSkeletonLength::Long
             }
             TimeZoneFormatterConfig::SpecificNonLocationLong => {
-                skeleton.length = Some(NeoSkeletonLength::Long);
                 skeleton.style = NeoTimeZoneStyle::SpecificNonLocation;
+                NeoSkeletonLength::Long
             }
             TimeZoneFormatterConfig::SpecificNonLocationShort => {
-                skeleton.length = Some(NeoSkeletonLength::Short);
                 skeleton.style = NeoTimeZoneStyle::SpecificNonLocation;
+                NeoSkeletonLength::Short
             }
             TimeZoneFormatterConfig::LocalizedOffset => {
-                skeleton.length = Some(NeoSkeletonLength::Long);
                 skeleton.style = NeoTimeZoneStyle::Offset;
+                NeoSkeletonLength::Long
             }
             TimeZoneFormatterConfig::Iso8601(
                 IsoFormat::UtcBasic,
@@ -177,7 +177,7 @@ impl TimeZoneFormatterConfig {
             TimeZoneFormatterConfig::Iso8601(_, _, _) => {
                 todo!()
             }
-        }
-        skeleton
+        };
+        (skeleton, length)
     }
 }
