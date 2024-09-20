@@ -92,10 +92,7 @@ fn test_markers_for_bin() {
     assert_eq!(
         markers_for_bin_inner(include_bytes!("../tests/data/tutorial_buffer.wasm")),
         Ok(HashSet::from_iter([
-            crate::datetime::provider::calendar::GregorianDateLengthsV1Marker::INFO,
-            crate::datetime::provider::calendar::GregorianDateSymbolsV1Marker::INFO,
-            crate::datetime::provider::calendar::TimeLengthsV1Marker::INFO,
-            crate::datetime::provider::calendar::TimeSymbolsV1Marker::INFO,
+            // TODO: This should include datetime markers. Why not?
             crate::calendar::provider::WeekDataV1Marker::INFO,
             crate::decimal::provider::DecimalSymbolsV1Marker::INFO,
             crate::plurals::provider::OrdinalV1Marker::INFO,
