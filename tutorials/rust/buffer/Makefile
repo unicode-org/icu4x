@@ -3,20 +3,14 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 export CARGO_TARGET_DIR ?= target
-export MODE ?= release
 
-CLANG := clang-16
 PINNED_CI_NIGHTLY = "nightly-2024-07-23"
 
 all: buffer_data.postcard bin/tutorial_buffer.wasm
 
 ../bin/icu4x-datagen:
 	echo "Target dir: $(CARGO_TARGET_DIR)"
-ifeq ($(MODE), "release")
 	cargo install --path ../../../provider/icu4x-datagen --root ..
-else
-	cargo install --path ../../../provider/icu4x-datagen --debug --root ..
-endif
 
 bin/tutorial_buffer:
 	echo "Target dir: $(CARGO_TARGET_DIR)"
