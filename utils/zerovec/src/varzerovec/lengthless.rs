@@ -13,6 +13,7 @@ use core::mem;
 ///
 /// Without knowing the length this is of course unsafe to use directly.
 #[repr(transparent)]
+#[derive(PartialEq, Eq)]
 pub(crate) struct VarZeroLengthlessSlice<T: ?Sized, F = Index16> {
     marker: PhantomData<(F, T)>,
     /// The original slice this was constructed from
@@ -23,12 +24,6 @@ pub(crate) struct VarZeroLengthlessSlice<T: ?Sized, F = Index16> {
 }
 
 impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroLengthlessSlice<T, F> {
-    /// Construct a new empty VarZeroLengthlessSlice
-    pub(crate) const fn new_empty() -> &'static Self {
-        // The empty VZV is special-cased to the empty slice
-        unsafe { mem::transmute(&[] as &[u8]) }
-    }
-
     /// Obtain a [`VarZeroVecComponents`] borrowing from the internal buffer
     ///
     /// Safety: `len` must be the length associated with this value
@@ -40,7 +35,19 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroLengthlessSlice<T, F> {
         }
     }
 
-    /// Uses a `&[u8]` buffer as a `VarZeroSlice<T>` without any verification.
+    /// Parse a VarZeroLengthlessSlice from a slice of the appropriate format
+    ///
+    /// Slices of the right format can be obtained via [`VarZeroSlice::as_bytes()`]
+    pub fn parse_byte_slice<'a>(len: u32, slice: &'a [u8]) -> Result<&'a Self, UleError> {
+        let _ = VarZeroVecComponents::<T, F>::parse_byte_slice_with_length(len, slice)
+            .map_err(|_| UleError::parse::<Self>())?;
+        unsafe {
+            // Safety: We just verified that it is of the correct format.
+            Ok(Self::from_bytes_unchecked(slice))
+        }
+    }
+
+    /// Uses a `&[u8]` buffer as a `VarZeroLengthlessSlice<T>` without any verification.
     ///
     /// # Safety
     ///
@@ -49,6 +56,19 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroLengthlessSlice<T, F> {
     ///
     /// The length associated with this value will be the length associated with the original slice.
     pub(crate) const unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
+        // self is really just a wrapper around a byte slice
+        mem::transmute(bytes)
+    }
+
+    /// Uses a `&mut [u8]` buffer as a `VarZeroLengthlessSlice<T>` without any verification.
+    ///
+    /// # Safety
+    ///
+    /// `bytes` need to be an output from [`VarZeroLengthlessSlice::as_bytes()`], or alternatively
+    /// be valid to be passed to `from_bytes_unchecked_with_length`
+    ///
+    /// The length associated with this value will be the length associated with the original slice.
+    pub(crate) unsafe fn from_bytes_unchecked_mut(bytes: &mut [u8]) -> &mut Self {
         // self is really just a wrapper around a byte slice
         mem::transmute(bytes)
     }
@@ -99,5 +119,14 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroLengthlessSlice<T, F> {
     #[inline]
     pub(crate) const fn as_bytes(&self) -> &[u8] {
         &self.entire_slice
+    }
+
+    pub(crate) unsafe fn get_bytes_at_mut(&mut self, len: u32, idx: usize) -> &mut [u8] {
+        let components = self.as_components(len);
+        let range = components.get_things_range(idx);
+        let offset = components.get_indices_size();
+
+        #[allow(clippy::indexing_slicing)] // get_range() is known to return in-bounds ranges,
+        &mut self.entire_slice[offset..][range]
     }
 }

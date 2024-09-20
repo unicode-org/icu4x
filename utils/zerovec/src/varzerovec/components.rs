@@ -154,8 +154,6 @@ pub struct VarZeroVecComponents<'a, T: ?Sized, F> {
     indices: &'a [u8],
     /// The contiguous list of `T::VarULE`s
     things: &'a [u8],
-    /// The original slice this was constructed from
-    entire_slice: &'a [u8],
     marker: PhantomData<(&'a T, F)>,
 }
 
@@ -182,7 +180,6 @@ impl<'a, T: VarULE + ?Sized, F> VarZeroVecComponents<'a, T, F> {
             len: 0,
             indices: &[],
             things: &[],
-            entire_slice: &[],
             marker: PhantomData,
         }
     }
@@ -204,7 +201,6 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
                 len: 0,
                 indices: &[],
                 things: &[],
-                entire_slice: slice,
                 marker: PhantomData,
             });
         }
@@ -244,7 +240,6 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
                 len: 0,
                 indices: &[],
                 things: &[],
-                entire_slice: slice,
                 marker: PhantomData,
             });
         }
@@ -259,7 +254,6 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
             len,
             indices: indices_bytes,
             things,
-            entire_slice: slice,
             marker: PhantomData,
         };
 
@@ -283,7 +277,6 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
                 len: 0,
                 indices: &[],
                 things: &[],
-                entire_slice: slice,
                 marker: PhantomData,
             };
         }
@@ -314,7 +307,6 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
                 len: 0,
                 indices: &[],
                 things: &[],
-                entire_slice: slice,
                 marker: PhantomData,
             };
         }
@@ -327,7 +319,6 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
             len,
             indices: indices_bytes,
             things,
-            entire_slice: slice,
             marker: PhantomData,
         }
     }
@@ -369,7 +360,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
     /// Safety:
     /// - `idx` must be in bounds (`idx < self.len()`)
     #[inline]
-    unsafe fn get_things_range(self, idx: usize) -> Range<usize> {
+    pub(crate) unsafe fn get_things_range(self, idx: usize) -> Range<usize> {
         let start = F::rawbytes_to_usize(*self.indices_slice().get_unchecked(idx));
         let end = if idx + 1 == self.len() {
             self.things.len()
@@ -380,17 +371,9 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
         start..end
     }
 
-    /// Get the range in `entire_slice` for the element at `idx`. Does not bounds check.
-    ///
-    /// Safety:
-    /// - `idx` must be in bounds (`idx < self.len()`)
-    #[inline]
-    pub(crate) unsafe fn get_range(self, idx: usize) -> Range<usize> {
-        let range = self.get_things_range(idx);
-        let offset = (self.things as *const [u8] as *const u8)
-            .offset_from(self.entire_slice as *const [u8] as *const u8)
-            as usize;
-        range.start + offset..range.end + offset
+    /// Get the size, in bytes, of the indices array
+    pub(crate) unsafe fn get_indices_size(self) -> usize {
+        self.indices.len()
     }
 
     /// Check the internal invariants of VarZeroVecComponents:
@@ -583,26 +566,27 @@ where
     Some(output)
 }
 
-/// Writes the bytes for a VarZeroSlice into an output buffer.
+/// Writes the bytes for a VarZeroLengthlessSlice into an output buffer.
+/// Usable for a VarZeroSlice if you first write the length bytes.
 ///
 /// Every byte in the buffer will be initialized after calling this function.
 ///
 /// # Panics
 ///
 /// Panics if the buffer is not exactly the correct length.
-pub fn write_serializable_bytes<T, A, F>(elements: &[A], output: &mut [u8])
+pub fn write_serializable_bytes_without_length<T, A, F>(elements: &[A], output: &mut [u8])
 where
     T: VarULE + ?Sized,
     A: EncodeAsVarULE<T>,
     F: VarZeroVecFormat,
 {
     assert!(elements.len() <= MAX_LENGTH);
-    let num_elements_bytes = elements.len().to_le_bytes();
-    #[allow(clippy::indexing_slicing)] // Function contract allows panicky behavior
-    output[0..LENGTH_WIDTH].copy_from_slice(&num_elements_bytes[0..LENGTH_WIDTH]);
+    if elements.is_empty() {
+        return;
+    }
 
     // idx_offset = offset from the start of the buffer for the next index
-    let mut idx_offset: usize = LENGTH_WIDTH + METADATA_WIDTH;
+    let mut idx_offset: usize = METADATA_WIDTH;
     // first_dat_offset = offset from the start of the buffer of the first data block
     let first_dat_offset: usize = idx_offset + elements.len() * F::INDEX_WIDTH;
     // dat_offset = offset from the start of the buffer of the next data block
@@ -630,23 +614,46 @@ where
         dat_offset = dat_limit;
     }
 
-    debug_assert_eq!(
-        idx_offset,
-        LENGTH_WIDTH + METADATA_WIDTH + F::INDEX_WIDTH * elements.len()
-    );
+    debug_assert_eq!(idx_offset, METADATA_WIDTH + F::INDEX_WIDTH * elements.len());
     assert_eq!(dat_offset, output.len());
 }
 
-pub fn compute_serializable_len<T, A, F>(elements: &[A]) -> Option<u32>
+/// Writes the bytes for a VarZeroSlice into an output buffer.
+///
+/// Every byte in the buffer will be initialized after calling this function.
+///
+/// # Panics
+///
+/// Panics if the buffer is not exactly the correct length.
+pub fn write_serializable_bytes<T, A, F>(elements: &[A], output: &mut [u8])
 where
     T: VarULE + ?Sized,
     A: EncodeAsVarULE<T>,
     F: VarZeroVecFormat,
 {
+    if elements.is_empty() {
+        return;
+    }
+    assert!(elements.len() <= MAX_LENGTH);
+    let num_elements_bytes = elements.len().to_le_bytes();
+    #[allow(clippy::indexing_slicing)] // Function contract allows panicky behavior
+    output[0..LENGTH_WIDTH].copy_from_slice(&num_elements_bytes[0..LENGTH_WIDTH]);
+
+    write_serializable_bytes_without_length::<T, A, F>(elements, &mut output[LENGTH_WIDTH..]);
+}
+
+pub fn compute_serializable_len_without_length<T, A, F>(elements: &[A]) -> Option<u32>
+where
+    T: VarULE + ?Sized,
+    A: EncodeAsVarULE<T>,
+    F: VarZeroVecFormat,
+{
+    if elements.is_empty() {
+        return Some(0);
+    }
     let idx_len: u32 = u32::try_from(elements.len())
         .ok()?
         .checked_mul(F::INDEX_WIDTH as u32)?
-        .checked_add(LENGTH_WIDTH as u32)?
         .checked_add(METADATA_WIDTH as u32)?;
     let data_len: u32 = elements
         .iter()
@@ -659,4 +666,13 @@ where
         }
     }
     ret
+}
+
+pub fn compute_serializable_len<T, A, F>(elements: &[A]) -> Option<u32>
+where
+    T: VarULE + ?Sized,
+    A: EncodeAsVarULE<T>,
+    F: VarZeroVecFormat,
+{
+    compute_serializable_len_without_length::<T, A, F>(elements).map(|x| x + LENGTH_WIDTH as u32)
 }
