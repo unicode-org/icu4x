@@ -37,7 +37,7 @@ use icu_locale_core::{
     locale, LanguageIdentifier, Locale,
 };
 use icu_provider::prelude::*;
-use icu_timezone::{CustomTimeZone, CustomZonedDateTime};
+use icu_timezone::{ResolvedZonedDateTime, TimeZone};
 use patterns::{
     dayperiods::{DayPeriodExpectation, DayPeriodTests},
     time_zones::{TimeZoneExpectation, TimeZoneFormatterConfig, TimeZoneTests},
@@ -277,27 +277,10 @@ fn assert_fixture_element<A>(
         input_value.date.calendar().debug_name()
     );
 
-    let input_value = CustomZonedDateTime {
-        date: input_value.date.clone(),
-        time: input_value.time,
-        zone: CustomTimeZone::utc(),
-    };
-    let input_iso = CustomZonedDateTime {
-        date: input_iso.date,
-        time: input_iso.time,
-        zone: CustomTimeZone::utc(),
-    };
+    let any_input = ResolvedZonedDateTime::new_in_utc(input_value.date.to_any(), input_value.time);
+    let iso_any_input = ResolvedZonedDateTime::new_in_utc(input_iso.date.to_any(), input_iso.time);
 
-    let any_input = CustomZonedDateTime {
-        date: input_value.date.to_any(),
-        time: input_value.time,
-        zone: CustomTimeZone::utc(),
-    };
-    let iso_any_input = CustomZonedDateTime {
-        date: input_iso.date.to_any(),
-        time: input_iso.time,
-        zone: CustomTimeZone::utc(),
-    };
+    let input_value = ResolvedZonedDateTime::new_in_utc(input_value.date.clone(), input_value.time);
 
     let mut options = NeoOptions::from(skeleton.length);
     options.alignment = skeleton.alignment;
@@ -471,7 +454,7 @@ fn test_time_zone_format_configs() {
                     )
                     .unwrap();
                     assert_try_writeable_eq!(
-                        tzf.format(&zoned_datetime.zone),
+                        tzf.format(&zoned_datetime.zone()),
                         *expect,
                         Ok(()),
                         "\n\
@@ -496,8 +479,12 @@ fn test_time_zone_format_offset_not_set_debug_assert_panic() {
     use icu_datetime::{
         neo_marker::NeoTimeZoneOffsetShortMarker, DateTimeWriteError, NeverCalendar,
     };
+    use icu_timezone::TimeZoneCalculator;
 
-    let time_zone = CustomTimeZone::try_from_str("America/Los_Angeles").unwrap();
+    let time_zone = TimeZoneCalculator::new().resolve_at(
+        TimeZone::try_from_str("America/Los_Angeles").unwrap(),
+        &DateTime::try_new_iso_datetime(2022, 7, 7, 7, 7, 7).unwrap(),
+    );
     let tzf = TypedNeoFormatter::<NeverCalendar, NeoTimeZoneOffsetShortMarker>::try_new(
         &locale!("en").into(),
         Default::default(),

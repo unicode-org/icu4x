@@ -1,9 +1,10 @@
 import { Calendar } from "icu4x"
-import { CustomTimeZone } from "icu4x"
 import { DataProvider } from "icu4x"
 import { DateTime } from "icu4x"
 import { IsoDateTime } from "icu4x"
 import { Locale } from "icu4x"
+import { TimeZone } from "icu4x"
+import { TimeZoneCalculator } from "icu4x"
 import { ZonedDateTimeFormatter } from "icu4x"
 export function formatDatetimeWithCustomTimeZone() {
     var terminusArgs = arguments;
@@ -55,10 +56,20 @@ export function formatDatetimeWithCustomTimeZone() {
                     )
                 ]
             ),
-            CustomTimeZone.fromString.apply(
+            TimeZone.fromString.apply(
                 null,
                 [
                     terminusArgs[10]
+                ]
+            ),
+            TimeZoneCalculator.create.apply(
+                null,
+                [
+                    DataProvider.compiled.apply(
+                        null,
+                        [
+                        ]
+                    )
                 ]
             )
         ]
@@ -98,10 +109,20 @@ export function formatIsoDatetimeWithCustomTimeZone() {
                     terminusArgs[8]
                 ]
             ),
-            CustomTimeZone.fromString.apply(
+            TimeZone.fromString.apply(
                 null,
                 [
                     terminusArgs[9]
+                ]
+            ),
+            TimeZoneCalculator.create.apply(
+                null,
+                [
+                    DataProvider.compiled.apply(
+                        null,
+                        [
+                        ]
+                    )
                 ]
             )
         ]

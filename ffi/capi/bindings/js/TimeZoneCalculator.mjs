@@ -7,17 +7,13 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 /** An object capable of computing the metazone from a timezone.
 *
-*This can be used via `maybe_calculate_metazone()` on [`CustomTimeZone`].
-*
-*[`CustomTimeZone`]: crate::timezone::ffi::CustomTimeZone
-*
 *See the [Rust documentation for `MetazoneCalculator`](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneCalculator.html) for more information.
 */
-const MetazoneCalculator_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.icu4x_MetazoneCalculator_destroy_mv1(ptr);
+const TimeZoneCalculator_box_destroy_registry = new FinalizationRegistry((ptr) => {
+    wasm.icu4x_TimeZoneCalculator_destroy_mv1(ptr);
 });
 
-export class MetazoneCalculator {
+export class TimeZoneCalculator {
     // Internal ptr reference:
     #ptr = null;
 
@@ -27,7 +23,7 @@ export class MetazoneCalculator {
     
     constructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
-            console.error("MetazoneCalculator is an Opaque type. You cannot call its constructor.");
+            console.error("TimeZoneCalculator is an Opaque type. You cannot call its constructor.");
             return;
         }
         
@@ -36,7 +32,7 @@ export class MetazoneCalculator {
         
         // Are we being borrowed? If not, we can register.
         if (this.#selfEdge.length === 0) {
-            MetazoneCalculator_box_destroy_registry.register(this, this.#ptr);
+            TimeZoneCalculator_box_destroy_registry.register(this, this.#ptr);
         }
     }
 
@@ -47,14 +43,14 @@ export class MetazoneCalculator {
     static create(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_MetazoneCalculator_create_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_TimeZoneCalculator_create_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new MetazoneCalculator(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new TimeZoneCalculator(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
