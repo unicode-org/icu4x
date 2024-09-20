@@ -72,9 +72,9 @@ final class LineSegmenter implements ffi.Finalizable {
   /// See the [Rust documentation for `new_auto_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_auto_with_options) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory LineSegmenter.autoWithOptions(DataProvider provider, LineBreakOptions options) {
+  factory LineSegmenter.autoWithOptions(DataProvider provider, Locale contentLocale, LineBreakOptions options) {
     final temp = _FinalizedArena();
-    final result = _icu4x_LineSegmenter_create_auto_with_options_v1_mv1(provider._ffi, options._toFfi(temp.arena));
+    final result = _icu4x_LineSegmenter_create_auto_with_options_v2_mv1(provider._ffi, contentLocale._ffi, options._toFfi(temp.arena));
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -87,9 +87,9 @@ final class LineSegmenter implements ffi.Finalizable {
   /// See the [Rust documentation for `new_lstm_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_lstm_with_options) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory LineSegmenter.lstmWithOptions(DataProvider provider, LineBreakOptions options) {
+  factory LineSegmenter.lstmWithOptions(DataProvider provider, Locale contentLocale, LineBreakOptions options) {
     final temp = _FinalizedArena();
-    final result = _icu4x_LineSegmenter_create_lstm_with_options_v1_mv1(provider._ffi, options._toFfi(temp.arena));
+    final result = _icu4x_LineSegmenter_create_lstm_with_options_v2_mv1(provider._ffi, contentLocale._ffi, options._toFfi(temp.arena));
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -102,9 +102,9 @@ final class LineSegmenter implements ffi.Finalizable {
   /// See the [Rust documentation for `new_dictionary_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary_with_options) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory LineSegmenter.dictionaryWithOptions(DataProvider provider, LineBreakOptions options) {
+  factory LineSegmenter.dictionaryWithOptions(DataProvider provider, Locale contentLocale, LineBreakOptions options) {
     final temp = _FinalizedArena();
-    final result = _icu4x_LineSegmenter_create_dictionary_with_options_v1_mv1(provider._ffi, options._toFfi(temp.arena));
+    final result = _icu4x_LineSegmenter_create_dictionary_with_options_v2_mv1(provider._ffi, contentLocale._ffi, options._toFfi(temp.arena));
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -146,20 +146,20 @@ external _ResultOpaqueInt32 _icu4x_LineSegmenter_create_lstm_mv1(ffi.Pointer<ffi
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_LineSegmenter_create_dictionary_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('icu4x_LineSegmenter_create_auto_with_options_v1_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _LineBreakOptionsFfi)>(isLeaf: true, symbol: 'icu4x_LineSegmenter_create_auto_with_options_v1_mv1')
+@meta.ResourceIdentifier('icu4x_LineSegmenter_create_auto_with_options_v2_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _LineBreakOptionsFfi)>(isLeaf: true, symbol: 'icu4x_LineSegmenter_create_auto_with_options_v2_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_LineSegmenter_create_auto_with_options_v1_mv1(ffi.Pointer<ffi.Opaque> provider, _LineBreakOptionsFfi options);
+external _ResultOpaqueInt32 _icu4x_LineSegmenter_create_auto_with_options_v2_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> contentLocale, _LineBreakOptionsFfi options);
 
-@meta.ResourceIdentifier('icu4x_LineSegmenter_create_lstm_with_options_v1_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _LineBreakOptionsFfi)>(isLeaf: true, symbol: 'icu4x_LineSegmenter_create_lstm_with_options_v1_mv1')
+@meta.ResourceIdentifier('icu4x_LineSegmenter_create_lstm_with_options_v2_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _LineBreakOptionsFfi)>(isLeaf: true, symbol: 'icu4x_LineSegmenter_create_lstm_with_options_v2_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_LineSegmenter_create_lstm_with_options_v1_mv1(ffi.Pointer<ffi.Opaque> provider, _LineBreakOptionsFfi options);
+external _ResultOpaqueInt32 _icu4x_LineSegmenter_create_lstm_with_options_v2_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> contentLocale, _LineBreakOptionsFfi options);
 
-@meta.ResourceIdentifier('icu4x_LineSegmenter_create_dictionary_with_options_v1_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _LineBreakOptionsFfi)>(isLeaf: true, symbol: 'icu4x_LineSegmenter_create_dictionary_with_options_v1_mv1')
+@meta.ResourceIdentifier('icu4x_LineSegmenter_create_dictionary_with_options_v2_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _LineBreakOptionsFfi)>(isLeaf: true, symbol: 'icu4x_LineSegmenter_create_dictionary_with_options_v2_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_LineSegmenter_create_dictionary_with_options_v1_mv1(ffi.Pointer<ffi.Opaque> provider, _LineBreakOptionsFfi options);
+external _ResultOpaqueInt32 _icu4x_LineSegmenter_create_dictionary_with_options_v2_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> contentLocale, _LineBreakOptionsFfi options);
 
 @meta.ResourceIdentifier('icu4x_LineSegmenter_segment_utf16_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, _SliceUtf16)>(isLeaf: true, symbol: 'icu4x_LineSegmenter_segment_utf16_mv1')

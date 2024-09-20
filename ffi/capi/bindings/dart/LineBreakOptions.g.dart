@@ -5,16 +5,14 @@ part of 'lib.g.dart';
 final class _LineBreakOptionsFfi extends ffi.Struct {
   external _ResultInt32Void strictness;
   external _ResultInt32Void wordOption;
-  external _ResultBoolVoid jaZh;
 }
 
 /// See the [Rust documentation for `LineBreakOptions`](https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakOptions.html) for more information.
 final class LineBreakOptions {
   LineBreakStrictness? strictness;
   LineBreakWordOption? wordOption;
-  bool? jaZh;
 
-  LineBreakOptions({required this.strictness, required this.wordOption, required this.jaZh});
+  LineBreakOptions({required this.strictness, required this.wordOption});
 
   // This struct contains borrowed fields, so this takes in a list of
   // "edges" corresponding to where each lifetime's data may have been borrowed from
@@ -24,8 +22,7 @@ final class LineBreakOptions {
   // ignore: unused_element
   LineBreakOptions._fromFfi(_LineBreakOptionsFfi ffi) :
     strictness = ffi.strictness.isOk ? LineBreakStrictness.values[ffi.strictness.union.ok] : null,
-    wordOption = ffi.wordOption.isOk ? LineBreakWordOption.values[ffi.wordOption.union.ok] : null,
-    jaZh = ffi.jaZh.isOk ? ffi.jaZh.union.ok : null;
+    wordOption = ffi.wordOption.isOk ? LineBreakWordOption.values[ffi.wordOption.union.ok] : null;
 
   // ignore: unused_element
   _LineBreakOptionsFfi _toFfi(ffi.Allocator temp) {
@@ -34,8 +31,6 @@ final class LineBreakOptions {
     struct.strictness = strictness != null ? _ResultInt32Void.ok(strictness.index) : _ResultInt32Void.err();
     LineBreakWordOption? wordOption = this.wordOption;
     struct.wordOption = wordOption != null ? _ResultInt32Void.ok(wordOption.index) : _ResultInt32Void.err();
-    bool? jaZh = this.jaZh;
-    struct.jaZh = jaZh != null ? _ResultBoolVoid.ok(jaZh) : _ResultBoolVoid.err();
     return struct;
   }
 
@@ -43,13 +38,11 @@ final class LineBreakOptions {
   bool operator ==(Object other) =>
       other is LineBreakOptions &&
       other.strictness == strictness &&
-      other.wordOption == wordOption &&
-      other.jaZh == jaZh;
+      other.wordOption == wordOption;
 
   @override
   int get hashCode => Object.hashAll([
         strictness,
         wordOption,
-        jaZh,
       ]);
 }
