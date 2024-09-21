@@ -89,7 +89,8 @@ pub fn markers_for_bin(path: &Path) -> Result<HashSet<DataMarkerInfo>, DataError
 
 #[test]
 fn test_markers_for_bin() {
-    let hashset = markers_for_bin_inner(include_bytes!("../tests/data/tutorial_buffer.wasm")).unwrap();
+    let hashset =
+        markers_for_bin_inner(include_bytes!("../tests/data/tutorial_buffer.wasm")).unwrap();
     let mut sorted = hashset.into_iter().collect::<Vec<_>>();
     sorted.sort();
     assert_eq!(
