@@ -1,7 +1,9 @@
 #!/bin/bash
 
+set -e
+
 pushd $(dirname "$0")/../../../../tutorials/rust/buffer
-cargo +nightly build --target wasm32-unknown-unknown --release -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort
+make bin/tutorial_buffer.wasm
 popd
-cp $(dirname "$0")/../../../../tutorials/rust/buffer/target/wasm32-unknown-unknown/release/tutorial_buffer.wasm $(dirname "$0")
-    
+cp $(dirname "$0")/../../../../tutorials/rust/buffer/bin/tutorial_buffer.wasm $(dirname "$0")
+wasm2wat tutorial_buffer.wasm -o tutorial_buffer.wat
