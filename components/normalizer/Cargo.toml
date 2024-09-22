@@ -50,7 +50,9 @@ criterion = { workspace = true }
 default = ["compiled_data"]
 std = ["icu_collections/std", "icu_properties?/std", "icu_provider/std"]
 serde = ["dep:serde", "icu_collections/serde", "zerovec/serde", "icu_properties?/serde"]
-datagen = ["serde", "dep:databake", "icu_collections/databake", "zerovec/databake", "icu_properties?/datagen"]
+# n.b. "icu_properties" + "icu_properties?/datagen" is equivalent to "icu_properties/datagen", however
+# we specify this explicitly since "optional_dep/feature" is a footgun that leads to us often accidentally enabling features
+datagen = ["serde", "dep:databake", "icu_properties", "icu_collections/databake", "zerovec/databake", "icu_properties?/datagen"]
 experimental = []
 compiled_data = ["dep:icu_normalizer_data", "icu_properties?/compiled_data"]
 icu_properties = ["dep:icu_properties"]
