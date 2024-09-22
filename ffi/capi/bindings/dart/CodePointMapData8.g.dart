@@ -204,87 +204,87 @@ final class CodePointMapData8 implements ffi.Finalizable {
   }
 }
 
-@meta.ResourceIdentifier('icu4x_CodePointMapData8_destroy_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_CodePointMapData8_destroy_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CodePointMapData8_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('icu4x_CodePointMapData8_get_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointMapData8_get_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_CodePointMapData8_get_mv1(ffi.Pointer<ffi.Opaque> self, Rune cp);
 
-@meta.ResourceIdentifier('icu4x_CodePointMapData8_general_category_to_mask_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Uint32 Function(ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_CodePointMapData8_general_category_to_mask_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_CodePointMapData8_general_category_to_mask_mv1(int gc);
 
-@meta.ResourceIdentifier('icu4x_CodePointMapData8_iter_ranges_for_value_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_CodePointMapData8_iter_ranges_for_value_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_CodePointMapData8_iter_ranges_for_value_mv1(ffi.Pointer<ffi.Opaque> self, int value);
 
-@meta.ResourceIdentifier('icu4x_CodePointMapData8_iter_ranges_for_value_complemented_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_CodePointMapData8_iter_ranges_for_value_complemented_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_CodePointMapData8_iter_ranges_for_value_complemented_mv1(ffi.Pointer<ffi.Opaque> self, int value);
 
-@meta.ResourceIdentifier('icu4x_CodePointMapData8_iter_ranges_for_mask_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointMapData8_iter_ranges_for_mask_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_CodePointMapData8_iter_ranges_for_mask_mv1(ffi.Pointer<ffi.Opaque> self, int mask);
 
-@meta.ResourceIdentifier('icu4x_CodePointMapData8_get_set_for_value_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_CodePointMapData8_get_set_for_value_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_CodePointMapData8_get_set_for_value_mv1(ffi.Pointer<ffi.Opaque> self, int value);
 
-@meta.ResourceIdentifier('icu4x_CodePointMapData8_load_general_category_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointMapData8_load_general_category_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointMapData8_load_general_category_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('icu4x_CodePointMapData8_load_bidi_class_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointMapData8_load_bidi_class_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointMapData8_load_bidi_class_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('icu4x_CodePointMapData8_load_east_asian_width_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointMapData8_load_east_asian_width_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointMapData8_load_east_asian_width_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('icu4x_CodePointMapData8_load_hangul_syllable_type_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointMapData8_load_hangul_syllable_type_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointMapData8_load_hangul_syllable_type_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('icu4x_CodePointMapData8_load_indic_syllabic_category_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointMapData8_load_indic_syllabic_category_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointMapData8_load_indic_syllabic_category_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('icu4x_CodePointMapData8_load_line_break_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointMapData8_load_line_break_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointMapData8_load_line_break_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('icu4x_CodePointMapData8_try_grapheme_cluster_break_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointMapData8_try_grapheme_cluster_break_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointMapData8_try_grapheme_cluster_break_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('icu4x_CodePointMapData8_load_word_break_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointMapData8_load_word_break_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointMapData8_load_word_break_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('icu4x_CodePointMapData8_load_sentence_break_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointMapData8_load_sentence_break_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointMapData8_load_sentence_break_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('icu4x_CodePointMapData8_load_joining_type_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointMapData8_load_joining_type_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointMapData8_load_joining_type_mv1(ffi.Pointer<ffi.Opaque> provider);
