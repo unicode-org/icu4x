@@ -83,32 +83,32 @@ final class ComposingNormalizer implements ffi.Finalizable {
   }
 }
 
-@meta.ResourceIdentifier('icu4x_ComposingNormalizer_destroy_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_ComposingNormalizer_destroy_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_ComposingNormalizer_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('icu4x_ComposingNormalizer_create_nfc_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ComposingNormalizer_create_nfc_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ComposingNormalizer_create_nfc_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('icu4x_ComposingNormalizer_create_nfkc_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ComposingNormalizer_create_nfkc_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ComposingNormalizer_create_nfkc_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('icu4x_ComposingNormalizer_normalize_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ComposingNormalizer_normalize_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_ComposingNormalizer_normalize_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 s, ffi.Pointer<ffi.Opaque> write);
 
-@meta.ResourceIdentifier('icu4x_ComposingNormalizer_is_normalized_utf16_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, _SliceUtf16)>(isLeaf: true, symbol: 'icu4x_ComposingNormalizer_is_normalized_utf16_mv1')
 // ignore: non_constant_identifier_names
 external bool _icu4x_ComposingNormalizer_is_normalized_utf16_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf16 s);
 
-@meta.ResourceIdentifier('icu4x_ComposingNormalizer_is_normalized_utf16_up_to_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>, _SliceUtf16)>(isLeaf: true, symbol: 'icu4x_ComposingNormalizer_is_normalized_utf16_up_to_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_ComposingNormalizer_is_normalized_utf16_up_to_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf16 s);

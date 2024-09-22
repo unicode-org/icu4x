@@ -371,147 +371,147 @@ final class CustomTimeZone implements ffi.Finalizable {
   }
 }
 
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_destroy_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_destroy_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CustomTimeZone_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_from_string_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueTimeZoneUnknownErrorFfi Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_from_string_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueTimeZoneUnknownErrorFfi _icu4x_CustomTimeZone_from_string_mv1(_SliceUtf8 s);
 
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_empty_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_empty_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_CustomTimeZone_empty_mv1();
 
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_utc_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_utc_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_CustomTimeZone_utc_mv1();
 
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_try_set_offset_seconds_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultVoidTimeZoneInvalidOffsetErrorFfi Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_try_set_offset_seconds_mv1')
 // ignore: non_constant_identifier_names
 external _ResultVoidTimeZoneInvalidOffsetErrorFfi _icu4x_CustomTimeZone_try_set_offset_seconds_mv1(ffi.Pointer<ffi.Opaque> self, int offsetSeconds);
 
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_set_offset_eighths_of_hour_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int8)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_set_offset_eighths_of_hour_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CustomTimeZone_set_offset_eighths_of_hour_mv1(ffi.Pointer<ffi.Opaque> self, int offsetEighthsOfHour);
 
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_offset_eighths_of_hour_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultInt8Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_offset_eighths_of_hour_mv1')
 // ignore: non_constant_identifier_names
 external _ResultInt8Void _icu4x_CustomTimeZone_offset_eighths_of_hour_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_clear_offset_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_clear_offset_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CustomTimeZone_clear_offset_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_offset_seconds_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultInt32Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_offset_seconds_mv1')
 // ignore: non_constant_identifier_names
 external _ResultInt32Void _icu4x_CustomTimeZone_offset_seconds_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_is_offset_positive_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultBoolVoid Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_is_offset_positive_mv1')
 // ignore: non_constant_identifier_names
 external _ResultBoolVoid _icu4x_CustomTimeZone_is_offset_positive_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_is_offset_zero_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultBoolVoid Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_is_offset_zero_mv1')
 // ignore: non_constant_identifier_names
 external _ResultBoolVoid _icu4x_CustomTimeZone_is_offset_zero_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_offset_has_minutes_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultBoolVoid Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_offset_has_minutes_mv1')
 // ignore: non_constant_identifier_names
 external _ResultBoolVoid _icu4x_CustomTimeZone_offset_has_minutes_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_offset_has_seconds_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultBoolVoid Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_offset_has_seconds_mv1')
 // ignore: non_constant_identifier_names
 external _ResultBoolVoid _icu4x_CustomTimeZone_offset_has_seconds_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_try_set_time_zone_id_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultVoidTimeZoneInvalidIdErrorFfi Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_try_set_time_zone_id_mv1')
 // ignore: non_constant_identifier_names
 external _ResultVoidTimeZoneInvalidIdErrorFfi _icu4x_CustomTimeZone_try_set_time_zone_id_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 id);
 
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_try_set_iana_time_zone_id_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultVoidTimeZoneInvalidIdErrorFfi Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_try_set_iana_time_zone_id_mv1')
 // ignore: non_constant_identifier_names
 external _ResultVoidTimeZoneInvalidIdErrorFfi _icu4x_CustomTimeZone_try_set_iana_time_zone_id_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> mapper, _SliceUtf8 id);
 
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_clear_time_zone_id_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_clear_time_zone_id_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CustomTimeZone_clear_time_zone_id_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_time_zone_id_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultVoidVoid Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_time_zone_id_mv1')
 // ignore: non_constant_identifier_names
 external _ResultVoidVoid _icu4x_CustomTimeZone_time_zone_id_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);
 
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_try_set_metazone_id_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultVoidTimeZoneInvalidIdErrorFfi Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_try_set_metazone_id_mv1')
 // ignore: non_constant_identifier_names
 external _ResultVoidTimeZoneInvalidIdErrorFfi _icu4x_CustomTimeZone_try_set_metazone_id_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 id);
 
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_clear_metazone_id_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_clear_metazone_id_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CustomTimeZone_clear_metazone_id_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_metazone_id_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultVoidVoid Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_metazone_id_mv1')
 // ignore: non_constant_identifier_names
 external _ResultVoidVoid _icu4x_CustomTimeZone_metazone_id_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);
 
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_try_set_zone_variant_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultVoidVoid Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_try_set_zone_variant_mv1')
 // ignore: non_constant_identifier_names
 external _ResultVoidVoid _icu4x_CustomTimeZone_try_set_zone_variant_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 id);
 
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_clear_zone_variant_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_clear_zone_variant_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CustomTimeZone_clear_zone_variant_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_zone_variant_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultVoidVoid Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_zone_variant_mv1')
 // ignore: non_constant_identifier_names
 external _ResultVoidVoid _icu4x_CustomTimeZone_zone_variant_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);
 
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_set_standard_time_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_set_standard_time_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CustomTimeZone_set_standard_time_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_set_daylight_time_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_set_daylight_time_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CustomTimeZone_set_daylight_time_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_is_standard_time_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultBoolVoid Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_is_standard_time_mv1')
 // ignore: non_constant_identifier_names
 external _ResultBoolVoid _icu4x_CustomTimeZone_is_standard_time_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_is_daylight_time_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultBoolVoid Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_is_daylight_time_mv1')
 // ignore: non_constant_identifier_names
 external _ResultBoolVoid _icu4x_CustomTimeZone_is_daylight_time_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_maybe_calculate_metazone_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_maybe_calculate_metazone_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CustomTimeZone_maybe_calculate_metazone_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> metazoneCalculator, ffi.Pointer<ffi.Opaque> localDatetime);
 
-@meta.ResourceIdentifier('icu4x_CustomTimeZone_maybe_calculate_zone_variant_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CustomTimeZone_maybe_calculate_zone_variant_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CustomTimeZone_maybe_calculate_zone_variant_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> zoneOffsetCalculator, ffi.Pointer<ffi.Opaque> localDatetime);

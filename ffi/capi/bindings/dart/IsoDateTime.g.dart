@@ -242,132 +242,132 @@ final class IsoDateTime implements ffi.Finalizable {
   }
 }
 
-@meta.ResourceIdentifier('icu4x_IsoDateTime_destroy_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_IsoDateTime_destroy_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_IsoDateTime_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('icu4x_IsoDateTime_create_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Int32, ffi.Uint8, ffi.Uint8, ffi.Uint8, ffi.Uint8, ffi.Uint8, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_IsoDateTime_create_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_IsoDateTime_create_mv1(int year, int month, int day, int hour, int minute, int second, int nanosecond);
 
-@meta.ResourceIdentifier('icu4x_IsoDateTime_from_date_and_time_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDateTime_from_date_and_time_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_IsoDateTime_from_date_and_time_mv1(ffi.Pointer<ffi.Opaque> date, ffi.Pointer<ffi.Opaque> time);
 
-@meta.ResourceIdentifier('icu4x_IsoDateTime_from_string_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_IsoDateTime_from_string_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_IsoDateTime_from_string_mv1(_SliceUtf8 v);
 
-@meta.ResourceIdentifier('icu4x_IsoDateTime_local_unix_epoch_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_IsoDateTime_local_unix_epoch_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_IsoDateTime_local_unix_epoch_mv1();
 
-@meta.ResourceIdentifier('icu4x_IsoDateTime_from_minutes_since_local_unix_epoch_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_IsoDateTime_from_minutes_since_local_unix_epoch_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_IsoDateTime_from_minutes_since_local_unix_epoch_mv1(int minutes);
 
-@meta.ResourceIdentifier('icu4x_IsoDateTime_date_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDateTime_date_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_IsoDateTime_date_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('icu4x_IsoDateTime_time_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDateTime_time_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_IsoDateTime_time_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('icu4x_IsoDateTime_to_any_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDateTime_to_any_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_IsoDateTime_to_any_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('icu4x_IsoDateTime_minutes_since_local_unix_epoch_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDateTime_minutes_since_local_unix_epoch_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_IsoDateTime_minutes_since_local_unix_epoch_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('icu4x_IsoDateTime_to_calendar_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDateTime_to_calendar_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_IsoDateTime_to_calendar_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> calendar);
 
-@meta.ResourceIdentifier('icu4x_IsoDateTime_hour_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDateTime_hour_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_IsoDateTime_hour_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('icu4x_IsoDateTime_minute_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDateTime_minute_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_IsoDateTime_minute_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('icu4x_IsoDateTime_second_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDateTime_second_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_IsoDateTime_second_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('icu4x_IsoDateTime_nanosecond_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDateTime_nanosecond_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_IsoDateTime_nanosecond_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('icu4x_IsoDateTime_day_of_year_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDateTime_day_of_year_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_IsoDateTime_day_of_year_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('icu4x_IsoDateTime_day_of_month_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDateTime_day_of_month_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_IsoDateTime_day_of_month_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('icu4x_IsoDateTime_day_of_week_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDateTime_day_of_week_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_IsoDateTime_day_of_week_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('icu4x_IsoDateTime_week_of_month_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_IsoDateTime_week_of_month_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_IsoDateTime_week_of_month_mv1(ffi.Pointer<ffi.Opaque> self, int firstWeekday);
 
-@meta.ResourceIdentifier('icu4x_IsoDateTime_week_of_year_mv1')
+@meta.RecordUse()
 @ffi.Native<_WeekOfFfi Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDateTime_week_of_year_mv1')
 // ignore: non_constant_identifier_names
 external _WeekOfFfi _icu4x_IsoDateTime_week_of_year_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> calculator);
 
-@meta.ResourceIdentifier('icu4x_IsoDateTime_month_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDateTime_month_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_IsoDateTime_month_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('icu4x_IsoDateTime_year_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDateTime_year_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_IsoDateTime_year_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('icu4x_IsoDateTime_is_in_leap_year_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDateTime_is_in_leap_year_mv1')
 // ignore: non_constant_identifier_names
 external bool _icu4x_IsoDateTime_is_in_leap_year_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('icu4x_IsoDateTime_months_in_year_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDateTime_months_in_year_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_IsoDateTime_months_in_year_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('icu4x_IsoDateTime_days_in_month_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDateTime_days_in_month_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_IsoDateTime_days_in_month_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('icu4x_IsoDateTime_days_in_year_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDateTime_days_in_year_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_IsoDateTime_days_in_year_mv1(ffi.Pointer<ffi.Opaque> self);
