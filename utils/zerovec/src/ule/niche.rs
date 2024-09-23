@@ -85,6 +85,18 @@ impl<U: NicheBytes<N> + ULE, const N: usize> NichedOptionULE<U, N> {
             }
         }
     }
+
+    /// Borrows as an `Option<&U>`.
+    pub fn as_ref(&self) -> Option<&U> {
+        // Safety: The union stores NICHE_BIT_PATTERN when None otherwise a valid U
+        unsafe {
+            if self.niche == <U as NicheBytes<N>>::NICHE_BIT_PATTERN {
+                None
+            } else {
+                Some(&self.valid)
+            }
+        }
+    }
 }
 
 impl<U: NicheBytes<N> + ULE, const N: usize> Copy for NichedOptionULE<U, N> {}

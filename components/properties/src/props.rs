@@ -11,8 +11,9 @@
 //! while [`EnumeratedProperty`]s are queried through [`CodePointMapData`](crate::CodePointMapData).
 //!
 //! In addition, some [`EnumeratedProperty`]s also implement [`ParseableEnumeratedProperty`] or
-//! [`NamedEnumeratedProperty`]. For these properties, [`PropertyParser`](crate::PropertyParser)s
-//! and [`PropertyNames`](crate::PropertyNames) can be constructed.
+//! [`NamedEnumeratedProperty`]. For these properties, [`PropertyParser`](crate::PropertyParser),
+//! [`PropertyNamesLong`](crate::PropertyNamesLong), and [`PropertyNamesShort`](crate::PropertyNamesShort)
+//! can be constructed.
 //!
 //! [^1]: either Rust `enum`s, or Rust `struct`s with associated constants (open enums)
 
