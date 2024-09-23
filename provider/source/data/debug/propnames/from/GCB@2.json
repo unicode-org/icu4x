@@ -1,0 +1,32 @@
+{
+  "map": {
+    "cn": 1,
+    "control": 1,
+    "cr": 2,
+    "eb": 13,
+    "ebase": 13,
+    "ebasegaz": 14,
+    "ebg": 14,
+    "em": 15,
+    "emodifier": 15,
+    "ex": 3,
+    "extend": 3,
+    "gaz": 16,
+    "glueafterzwj": 16,
+    "l": 4,
+    "lf": 5,
+    "lv": 6,
+    "lvt": 7,
+    "other": 0,
+    "pp": 11,
+    "prepend": 11,
+    "regionalindicator": 12,
+    "ri": 12,
+    "sm": 10,
+    "spacingmark": 10,
+    "t": 8,
+    "v": 9,
+    "xx": 0,
+    "zwj": 17
+  }
+}

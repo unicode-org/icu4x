@@ -1,0 +1,75 @@
+// @generated
+/// Implement `DataProvider<WordBreakNameToValueV2Marker>` on the given struct using the data
+/// hardcoded in this file. This allows the struct to be used with
+/// `icu`'s `_unstable` constructors.
+///
+/// Using this implementation will embed the following data in the binary's data segment:
+/// * 294B[^1] for the singleton data struct
+///
+/// [^1]: these numbers can be smaller in practice due to linker deduplication
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impl_word_break_name_to_value_v2_marker {
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.71.1"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.71.1"]
+        impl $provider {
+            #[doc(hidden)]
+            pub const SINGLETON_WORD_BREAK_NAME_TO_VALUE_V2_MARKER: &'static <icu::properties::provider::WordBreakNameToValueV2Marker as icu_provider::DynamicDataMarker>::DataStruct = &icu::properties::provider::names::PropertyValueNameToEnumMapV1 { map: zerotrie::ZeroTrieSimpleAscii { store: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xD1acdefghklmnorswxz\x07\t\x1AIPcs|\x82\x9F\xB3\xB8\xCD\xDC\xE6\xE8letter\x81r\x88\xC2oq\x0Bublequote\x90\0\x90\0\xC3bmx\x11\x1C\x90\x01\xC2ag\tse\x90\x01gaz\x90\x02\x90\x02\x90\x03odifier\x90\x03\x87tend\x89numlet\x87o\x82rmat\x82\xC2al\x03z\x90\x04ueafterzwj\x90\x04\xC2el\x0Bbrewletter\x8E\x8Ea\x83takana\x83\xC2ef\x01\x81\x8A\xC4biln\x01\x13\x14\x8Bd\xC2ln\x06etter\x84um\x85let\x8B\x84\x85\xC3elu\x06\x07wline\x8C\x8C\x86meric\x86ther\x80\xC2ei\x10gionalindicator\x8D\x8D\xC2iq\nnglequote\x8F\x8Fsegspace\x90\x06x\x80wj\x90\x05") } } };
+        }
+        #[clippy::msrv = "1.71.1"]
+        impl icu_provider::DataProvider<icu::properties::provider::WordBreakNameToValueV2Marker> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::properties::provider::WordBreakNameToValueV2Marker>, icu_provider::DataError> {
+                if req.id.locale.is_default() {
+                    Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(Self::SINGLETON_WORD_BREAK_NAME_TO_VALUE_V2_MARKER), metadata: Default::default() })
+                } else {
+                    Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::properties::provider::WordBreakNameToValueV2Marker as icu_provider::DataMarker>::INFO, req))
+                }
+            }
+        }
+    };
+    ($ provider : ty , ITER) => {
+        __impl_word_break_name_to_value_v2_marker!($provider);
+        #[clippy::msrv = "1.71.1"]
+        impl icu_provider::IterableDataProvider<icu::properties::provider::WordBreakNameToValueV2Marker> for $provider {
+            fn iter_ids(&self) -> Result<std::collections::BtreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
+                Ok([Default::default()].into_iter().collect())
+            }
+        }
+    };
+    ($ provider : ty , DRY) => {
+        __impl_word_break_name_to_value_v2_marker!($provider);
+        #[clippy::msrv = "1.71.1"]
+        impl icu_provider::DryDataProvider<icu::properties::provider::WordBreakNameToValueV2Marker> for $provider {
+            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
+                if req.id.locale.is_default() {
+                    Ok(Default::default())
+                } else {
+                    Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::properties::provider::WordBreakNameToValueV2Marker as icu_provider::DataMarker>::INFO, req))
+                }
+            }
+        }
+    };
+    ($ provider : ty , DRY , ITER) => {
+        __impl_word_break_name_to_value_v2_marker!($provider);
+        #[clippy::msrv = "1.71.1"]
+        impl icu_provider::DryDataProvider<icu::properties::provider::WordBreakNameToValueV2Marker> for $provider {
+            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
+                if req.id.locale.is_default() {
+                    Ok(Default::default())
+                } else {
+                    Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::properties::provider::WordBreakNameToValueV2Marker as icu_provider::DataMarker>::INFO, req))
+                }
+            }
+        }
+        #[clippy::msrv = "1.71.1"]
+        impl icu_provider::IterableDataProvider<icu::properties::provider::WordBreakNameToValueV2Marker> for $provider {
+            fn iter_ids(&self) -> Result<std::collections::BtreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
+                Ok([Default::default()].into_iter().collect())
+            }
+        }
+    };
+}
+#[doc(inline)]
+pub use __impl_word_break_name_to_value_v2_marker as impl_word_break_name_to_value_v2_marker;

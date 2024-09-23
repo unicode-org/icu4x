@@ -1,0 +1,16 @@
+{
+  "map": {
+    "c": 1,
+    "d": 2,
+    "dualjoining": 2,
+    "joincausing": 1,
+    "l": 3,
+    "leftjoining": 3,
+    "nonjoining": 0,
+    "r": 4,
+    "rightjoining": 4,
+    "t": 5,
+    "transparent": 5,
+    "u": 0
+  }
+}
