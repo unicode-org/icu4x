@@ -26,6 +26,7 @@ use crate::provider::CollationRootV1Marker;
 use crate::provider::CollationSpecialPrimariesV1;
 use crate::provider::CollationSpecialPrimariesV1Marker;
 use crate::provider::CollationTailoringV1Marker;
+use crate::CollatorPreferences;
 use crate::{AlternateHandling, CollatorOptions, MaxVariable, ResolvedCollatorOptions, Strength};
 use core::cmp::Ordering;
 use core::convert::TryFrom;
@@ -34,6 +35,7 @@ use icu_normalizer::provider::CanonicalDecompositionTablesV1Marker;
 use icu_normalizer::provider::DecompositionDataV1;
 use icu_normalizer::provider::DecompositionTablesV1;
 use icu_normalizer::Decomposition;
+use icu_preferences::extensions::unicode::keywords::CollationType;
 use icu_provider::prelude::*;
 use smallvec::SmallVec;
 use utf16_iter::Utf16CharsEx;
@@ -74,7 +76,7 @@ impl LocaleSpecificDataHolder {
     /// The constructor code reused between owned and borrowed cases.
     fn try_new_unstable_internal<D>(
         provider: &D,
-        locale: &DataLocale,
+        preferences: CollatorPreferences,
         options: CollatorOptions,
     ) -> Result<Self, DataError>
     where
@@ -84,15 +86,12 @@ impl LocaleSpecificDataHolder {
             + DataProvider<CollationReorderingV1Marker>
             + ?Sized,
     {
-        let id = DataIdentifierBorrowed::for_marker_attributes_and_locale(
-            DataMarkerAttributes::from_str_or_panic(
-                locale.get_single_unicode_ext("co").unwrap_or_default(),
-            ),
-            locale,
-        );
+        let preferences = preferences.resolve();
+
+        let id = DataIdentifierCow::from(&preferences);
 
         let req = DataRequest {
-            id,
+            id: id.as_borrowed(),
             metadata: {
                 let mut metadata = DataRequestMetadata::default();
                 metadata.silent = true;
@@ -100,8 +99,13 @@ impl LocaleSpecificDataHolder {
             },
         };
 
+        let mut fallback_preferences = preferences.clone();
+        fallback_preferences.collation_type = CollationType::Standard;
+
+        let fallback_id = DataIdentifierCow::from(&fallback_preferences);
+
         let fallback_req = DataRequest {
-            id: DataIdentifierBorrowed::for_locale(locale),
+            id: fallback_id.as_borrowed(),
             ..Default::default()
         };
 
@@ -228,14 +232,14 @@ impl Collator {
     /// Creates `CollatorBorrowed` for the given locale and options from compiled data.
     #[cfg(feature = "compiled_data")]
     pub fn try_new(
-        locale: &DataLocale,
+        preferences: CollatorPreferences,
         options: CollatorOptions,
     ) -> Result<CollatorBorrowed<'static>, DataError> {
-        CollatorBorrowed::try_new(locale, options)
+        CollatorBorrowed::try_new(preferences, options)
     }
 
     icu_provider::gen_any_buffer_data_constructors!(
-        (locale, options: CollatorOptions) -> error: DataError,
+        (preferences: CollatorPreferences, options: CollatorOptions) -> error: DataError,
         functions: [
             try_new: skip,
             try_new_with_any_provider,
@@ -248,7 +252,7 @@ impl Collator {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D>(
         provider: &D,
-        locale: &DataLocale,
+        preferences: CollatorPreferences,
         options: CollatorOptions,
     ) -> Result<Self, DataError>
     where
@@ -270,7 +274,7 @@ impl Collator {
             provider.load(Default::default())?.payload,
             provider.load(Default::default())?.payload,
             || provider.load(Default::default()).map(|r| r.payload),
-            locale,
+            preferences,
             options,
         )
     }
@@ -286,7 +290,7 @@ impl Collator {
             DataPayload<CollationSpecialPrimariesV1Marker>,
             DataError,
         >,
-        locale: &DataLocale,
+        preferences: CollatorPreferences,
         options: CollatorOptions,
     ) -> Result<Self, DataError>
     where
@@ -298,7 +302,7 @@ impl Collator {
             + ?Sized,
     {
         let locale_dependent =
-            LocaleSpecificDataHolder::try_new_unstable_internal(provider, locale, options)?;
+            LocaleSpecificDataHolder::try_new_unstable_internal(provider, preferences, options)?;
 
         // TODO: redesign Korean search collation handling
         if jamo.get().ce32s.len() != JAMO_COUNT {
@@ -355,9 +359,13 @@ pub struct CollatorBorrowed<'a> {
 impl CollatorBorrowed<'static> {
     /// Creates a collator for the given locale and options from compiled data.
     #[cfg(feature = "compiled_data")]
-    pub fn try_new(locale: &DataLocale, options: CollatorOptions) -> Result<Self, DataError> {
+    pub fn try_new(
+        preferences: CollatorPreferences,
+        options: CollatorOptions,
+    ) -> Result<Self, DataError> {
         // These are assigned to locals in order to keep the code after these assignments
         // copypaste-compatible with `Collator::try_new_unstable_internal`.
+
         let provider = &crate::provider::Baked;
         let decompositions =
             icu_normalizer::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V1_MARKER;
@@ -367,7 +375,7 @@ impl CollatorBorrowed<'static> {
         let jamo = crate::provider::Baked::SINGLETON_COLLATION_JAMO_V1_MARKER;
 
         let locale_dependent =
-            LocaleSpecificDataHolder::try_new_unstable_internal(provider, locale, options)?;
+            LocaleSpecificDataHolder::try_new_unstable_internal(provider, preferences, options)?;
 
         // TODO: redesign Korean search collation handling
         if jamo.ce32s.len() != JAMO_COUNT {

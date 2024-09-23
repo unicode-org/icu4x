@@ -118,16 +118,13 @@ pub mod ffi {
             locale: &Locale,
             options: CollatorOptionsV1,
         ) -> Result<Box<Collator>, DataError> {
-            let locale = locale.to_datalocale();
-            let options = icu_collator::CollatorOptions::from(options);
-
             Ok(Box::new(Collator(call_constructor!(
                 icu_collator::Collator::try_new [r => Ok(r?.static_to_owned())],
                 icu_collator::Collator::try_new_with_any_provider,
                 icu_collator::Collator::try_new_with_buffer_provider,
                 provider,
-                &locale,
-                options,
+                icu_collator::CollatorPreferences::from(&locale.0.id),
+                icu_collator::CollatorOptions::from(options),
             )?)))
         }
 

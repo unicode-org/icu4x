@@ -293,3 +293,64 @@ pub use options::MaxVariable;
 pub use options::Numeric;
 pub use options::ResolvedCollatorOptions;
 pub use options::Strength;
+
+icu_preferences::preferences!(
+    CollatorPreferences,
+    ResolvedCollatorPreferences,
+    {
+        collation_type => icu_preferences::extensions::unicode::keywords::CollationType
+    }
+);
+
+impl From<&icu_provider::prelude::icu_locale_core::LanguageIdentifier> for CollatorPreferences {
+    fn from(_value: &icu_provider::prelude::icu_locale_core::LanguageIdentifier) -> Self {
+        Self {
+            lid: _value.clone(),
+            collation_type: None,
+        }
+    }
+}
+
+impl CollatorPreferences {
+    /// TODO
+    pub fn resolve(self) -> ResolvedCollatorPreferences {
+        ResolvedCollatorPreferences {
+            lid: self.lid,
+            collation_type: self.collation_type.unwrap_or(icu_preferences::extensions::unicode::keywords::CollationType::Standard),
+        }
+    }
+}
+
+use icu_preferences::extensions::unicode::keywords::CollationType;
+use icu_provider::DataIdentifierCow;
+use icu_provider::DataMarkerAttributes;
+
+impl<'a> From<&'a ResolvedCollatorPreferences> for DataIdentifierCow<'a> {
+    fn from(value: &'a ResolvedCollatorPreferences) -> Self {
+        Self::from_borrowed_and_owned(
+            match value.collation_type {
+                CollationType::Dict => DataMarkerAttributes::from_str_or_panic("dict"),
+                CollationType::Big5han => DataMarkerAttributes::from_str_or_panic("big5han"),
+                CollationType::Compat => DataMarkerAttributes::from_str_or_panic("compat"),
+                CollationType::Direct => DataMarkerAttributes::from_str_or_panic("direct"),
+                CollationType::Ducet => DataMarkerAttributes::from_str_or_panic("ducet"),
+                CollationType::Emoji => DataMarkerAttributes::from_str_or_panic("emoji"),
+                CollationType::Eor => DataMarkerAttributes::from_str_or_panic("eor"),
+                CollationType::Gb2312 => DataMarkerAttributes::from_str_or_panic("gb2312"),
+                CollationType::Phonebk => DataMarkerAttributes::from_str_or_panic("phonebk"),
+                CollationType::Phonetic => DataMarkerAttributes::from_str_or_panic("phonetic"),
+                CollationType::Pinyin => DataMarkerAttributes::from_str_or_panic("pinyin"),
+                CollationType::Reformed => DataMarkerAttributes::from_str_or_panic("reformed"),
+                CollationType::Search => DataMarkerAttributes::from_str_or_panic("search"),
+                CollationType::Searchjl => DataMarkerAttributes::from_str_or_panic("searchjl"),
+                CollationType::Standard => DataMarkerAttributes::from_str_or_panic("standard"),
+                CollationType::Stroke => DataMarkerAttributes::from_str_or_panic("stroke"),
+                CollationType::Trad => DataMarkerAttributes::from_str_or_panic("trad"),
+                CollationType::Unihan => DataMarkerAttributes::from_str_or_panic("unihan"),
+                CollationType::Zhuyin => DataMarkerAttributes::from_str_or_panic("zhuyin"),
+                _ => DataMarkerAttributes::empty(),
+            },
+            (&value.lid).into(),
+        )
+    }
+}
