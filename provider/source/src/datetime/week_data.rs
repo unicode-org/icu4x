@@ -8,131 +8,9 @@ use crate::cldr_serde::{
 };
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
-use icu::calendar::provider::{
-    WeekDataV1, WeekDataV1Marker, WeekDataV2, WeekDataV2Marker, WeekdaySet,
-};
+use icu::calendar::provider::{WeekDataV2, WeekDataV2Marker, WeekdaySet};
 use icu_provider::prelude::*;
 use std::collections::HashSet;
-
-impl IterableDataProviderCached<WeekDataV1Marker> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        let week_data: &cldr_serde::week_data::Resource = self
-            .cldr()?
-            .core()
-            .read_and_parse("supplemental/weekData.json")?;
-        let week_data = &week_data.supplemental.week_data;
-        Ok(week_data
-            .min_days
-            .keys()
-            .chain(week_data.first_day.keys())
-            .filter_map(|t| match t {
-                &DEFAULT_TERRITORY => Some(None),
-                Territory::Region(r) => Some(Some(*r)),
-                _ => None,
-            })
-            .map(|region| {
-                let mut locale = DataLocale::default();
-                locale.region = region;
-                DataIdentifierCow::from_locale(locale)
-            })
-            .collect())
-    }
-}
-
-impl DataProvider<WeekDataV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<WeekDataV1Marker>, DataError> {
-        self.check_req::<WeekDataV1Marker>(req)?;
-        let territory = req
-            .id
-            .locale
-            .region
-            .map(|v| -> Result<Territory, DataError> { Ok(Territory::Region(v)) })
-            .transpose()?
-            .unwrap_or_else(|| DEFAULT_TERRITORY.clone());
-
-        let week_data: &cldr_serde::week_data::Resource = self
-            .cldr()?
-            .core()
-            .read_and_parse("supplemental/weekData.json")?;
-        let week_data = &week_data.supplemental.week_data;
-
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: DataPayload::from_owned(WeekDataV1 {
-                first_weekday: week_data
-                    .first_day
-                    .get(&territory)
-                    .or_else(|| week_data.first_day.get(&DEFAULT_TERRITORY))
-                    .ok_or(DataError::custom(
-                        "Missing default entry for firstDay in weekData.json",
-                    ))?
-                    .into(),
-                min_week_days: week_data
-                    .min_days
-                    .get(&territory)
-                    .or_else(|| week_data.min_days.get(&DEFAULT_TERRITORY))
-                    .ok_or(DataError::custom(
-                        "Missing default entry for minDays in weekData.json",
-                    ))?
-                    .0,
-            }),
-        })
-    }
-}
-
-#[test]
-fn basic_cldr_week_data() {
-    use icu::calendar::types::IsoWeekday;
-    use icu::locale::langid;
-
-    let provider = SourceDataProvider::new_testing();
-
-    let default_week_data: DataResponse<WeekDataV1Marker> =
-        provider.load(Default::default()).unwrap();
-    assert_eq!(1, default_week_data.payload.get().min_week_days);
-    assert_eq!(
-        IsoWeekday::Monday,
-        default_week_data.payload.get().first_weekday
-    );
-
-    let fr_week_data: DataResponse<WeekDataV1Marker> = provider
-        .load(DataRequest {
-            id: DataIdentifierCow::from_locale(langid!("und-FR").into()).as_borrowed(),
-            ..Default::default()
-        })
-        .unwrap();
-    assert_eq!(4, fr_week_data.payload.get().min_week_days);
-    assert_eq!(IsoWeekday::Monday, fr_week_data.payload.get().first_weekday);
-
-    let iq_week_data: DataResponse<WeekDataV1Marker> = provider
-        .load(DataRequest {
-            id: DataIdentifierCow::from_locale(langid!("und-IQ").into()).as_borrowed(),
-            ..Default::default()
-        })
-        .unwrap();
-    // Only first_weekday is defined for IQ, min_week_days uses the default.
-    assert_eq!(
-        default_week_data.payload.get().min_week_days,
-        iq_week_data.payload.get().min_week_days
-    );
-    assert_eq!(
-        IsoWeekday::Saturday,
-        iq_week_data.payload.get().first_weekday
-    );
-
-    let gg_week_data: DataResponse<WeekDataV1Marker> = provider
-        .load(DataRequest {
-            id: DataIdentifierCow::from_locale(langid!("und-GG").into()).as_borrowed(),
-            ..Default::default()
-        })
-        .unwrap();
-    assert_eq!(4, gg_week_data.payload.get().min_week_days);
-    // Only min_week_days is defined for GG, first_weekday uses the default.
-    assert_eq!(
-        default_week_data.payload.get().first_weekday,
-        gg_week_data.payload.get().first_weekday
-    );
-}
 
 impl DataProvider<WeekDataV2Marker> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<WeekDataV2Marker>, DataError> {
@@ -200,7 +78,26 @@ impl DataProvider<WeekDataV2Marker> for SourceDataProvider {
 
 impl IterableDataProviderCached<WeekDataV2Marker> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        IterableDataProviderCached::<WeekDataV1Marker>::iter_ids_cached(self)
+        let week_data: &cldr_serde::week_data::Resource = self
+            .cldr()?
+            .core()
+            .read_and_parse("supplemental/weekData.json")?;
+        let week_data = &week_data.supplemental.week_data;
+        Ok(week_data
+            .min_days
+            .keys()
+            .chain(week_data.first_day.keys())
+            .filter_map(|t| match t {
+                &DEFAULT_TERRITORY => Some(None),
+                Territory::Region(r) => Some(Some(*r)),
+                _ => None,
+            })
+            .map(|region| {
+                let mut locale = DataLocale::default();
+                locale.region = region;
+                DataIdentifierCow::from_locale(locale)
+            })
+            .collect())
     }
 }
 
