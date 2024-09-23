@@ -91,7 +91,10 @@ size_test!(PackedSkeletonDataV2, packed_skeleton_data_size, 32);
 /// | Lc            | S + 4             | 12-14           | Lb          |
 /// | Mc            | S + 5             | 15-17           | Mb          |
 /// | Sc            | S + 6             | 18-20           | Sb          |
-/// 
+///
+/// As a result, if there are no variants, bits 2 and higher will be all zero,
+/// making the header byte suitable for varint packing.
+///
 /// [`EraDisplay::Auto`]: crate::neo_skeleton::EraDisplay::Auto
 #[doc = packed_skeleton_data_size!()]
 #[derive(Debug, PartialEq, Clone)]
