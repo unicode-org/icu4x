@@ -1,0 +1,75 @@
+// @generated
+/// Implement `DataProvider<LineBreakNameToValueV2Marker>` on the given struct using the data
+/// hardcoded in this file. This allows the struct to be used with
+/// `icu`'s `_unstable` constructors.
+///
+/// Using this implementation will embed the following data in the binary's data segment:
+/// * 721B[^1] for the singleton data struct
+///
+/// [^1]: these numbers can be smaller in practice due to linker deduplication
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impl_line_break_name_to_value_v2_marker {
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.71.1"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.71.1"]
+        impl $provider {
+            #[doc(hidden)]
+            pub const SINGLETON_LINE_BREAK_NAME_TO_VALUE_V2_MARKER: &'static <icu::properties::provider::LineBreakNameToValueV2Marker as icu_provider::DynamicDataMarker>::DataStruct = &icu::properties::provider::names::PropertyValueNameToEnumMapV1 { map: zerotrie::ZeroTrieSimpleAscii { store: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xE1uabceghijlmnopqrsuvwxz\0\0\0\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x02\x02\x02\x02\x02\x02\x02=m\xF5\x18\x1D?t\x80\x8E\x9C\xC5\xD7\xFA\x06\x1D=DYik\xC6iklmps\x01\x1B%-/\x81\x90\x1Bsara\x90\x1B\xC2ps\x08rebase\x90\x1Ctart\x90\x1D\x82phabetic\x82biguous\x81\x90\x1C\x90\x1D\xC52abkr\x01\x02\x03\x04\x83\x84\x85\x86eak\xC3abs\x05\x11fter\x84\xC2eo\x05fore\x85th\x83ymbols\x90\x0B\xC8abjlmopr\r\x0E\x10./uwrriagereturn\x8A\x87\x90\x15\x88osep\xC2au\x0Brenthesis\x90\x14nctuation\x88\x89\xC2mn\x1A\xC2bp\niningmark\x89lexcontext\x90\x08\xC2dt\x18itionaljapanesestarter\x90\x15ingentbreak\x87\x90\x14\x8A\xC3bmx\x07\x12\x90\x18ase\x90\x18\x90\x19odifier\x90\x19\x8Bclamation\x8Bl\x8Cue\x8C\xC523ely\x02\x04\x10\x12\x90\x0F\x90\x10brewletter\x90\x16\x90\x16\x8Dphen\x8D\xC3dns\x0B-\x8Eeographic\x8E\x8F\xC2fs\x0Bixnumeric\x90\0ep\xC2ae\x06rable\x8Frable\x8F\x90\0\xC3ltv\x02\x04\x90\x11\x90\x12\x90\x13\xC2fi\x02\x90\x01nefeed\x90\x01andatorybreak\x86\xC5elosu\x08\n\x14\x16xtline\x90\r\x90\rnstarter\x90\x02\x90\x02\x90\x03meric\x90\x03p\x90\x04enpunctuation\x90\x04\xC2or\x10\x90\x05stfixnumeric\x90\x05\x90\x06efixnumeric\x90\x06u\x90\x07otation\x90\x07\xC2ei\x11gionalindicator\x90\x17\x90\x17\xC5agpuy\x02\x04\x0B\x14\x90\x08\x90\t\x90\nace\x90\nrrogate\x90\t\x90\x0Bnknown\x80\xC2fi\x02\x90\x1E\x90\x1Frama\x90\x1Ffinal\x90\x1E\xC2jo\x02\x90\x0Erdjoiner\x90\x0Ex\x80w\x90\x0C\xC2js\x02\x90\x1Apace\x90\x0C") } } };
+        }
+        #[clippy::msrv = "1.71.1"]
+        impl icu_provider::DataProvider<icu::properties::provider::LineBreakNameToValueV2Marker> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::properties::provider::LineBreakNameToValueV2Marker>, icu_provider::DataError> {
+                if req.id.locale.is_default() {
+                    Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(Self::SINGLETON_LINE_BREAK_NAME_TO_VALUE_V2_MARKER), metadata: Default::default() })
+                } else {
+                    Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::properties::provider::LineBreakNameToValueV2Marker as icu_provider::DataMarker>::INFO, req))
+                }
+            }
+        }
+    };
+    ($ provider : ty , ITER) => {
+        __impl_line_break_name_to_value_v2_marker!($provider);
+        #[clippy::msrv = "1.71.1"]
+        impl icu_provider::IterableDataProvider<icu::properties::provider::LineBreakNameToValueV2Marker> for $provider {
+            fn iter_ids(&self) -> Result<std::collections::BtreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
+                Ok([Default::default()].into_iter().collect())
+            }
+        }
+    };
+    ($ provider : ty , DRY) => {
+        __impl_line_break_name_to_value_v2_marker!($provider);
+        #[clippy::msrv = "1.71.1"]
+        impl icu_provider::DryDataProvider<icu::properties::provider::LineBreakNameToValueV2Marker> for $provider {
+            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
+                if req.id.locale.is_default() {
+                    Ok(Default::default())
+                } else {
+                    Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::properties::provider::LineBreakNameToValueV2Marker as icu_provider::DataMarker>::INFO, req))
+                }
+            }
+        }
+    };
+    ($ provider : ty , DRY , ITER) => {
+        __impl_line_break_name_to_value_v2_marker!($provider);
+        #[clippy::msrv = "1.71.1"]
+        impl icu_provider::DryDataProvider<icu::properties::provider::LineBreakNameToValueV2Marker> for $provider {
+            fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
+                if req.id.locale.is_default() {
+                    Ok(Default::default())
+                } else {
+                    Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::properties::provider::LineBreakNameToValueV2Marker as icu_provider::DataMarker>::INFO, req))
+                }
+            }
+        }
+        #[clippy::msrv = "1.71.1"]
+        impl icu_provider::IterableDataProvider<icu::properties::provider::LineBreakNameToValueV2Marker> for $provider {
+            fn iter_ids(&self) -> Result<std::collections::BtreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
+                Ok([Default::default()].into_iter().collect())
+            }
+        }
+    };
+}
+#[doc(inline)]
+pub use __impl_line_break_name_to_value_v2_marker as impl_line_break_name_to_value_v2_marker;

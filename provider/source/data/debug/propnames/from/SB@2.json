@@ -1,0 +1,31 @@
+{
+  "map": {
+    "at": 1,
+    "aterm": 1,
+    "cl": 2,
+    "close": 2,
+    "cr": 11,
+    "ex": 12,
+    "extend": 12,
+    "fo": 3,
+    "format": 3,
+    "le": 6,
+    "lf": 13,
+    "lo": 4,
+    "lower": 4,
+    "nu": 5,
+    "numeric": 5,
+    "oletter": 6,
+    "other": 0,
+    "sc": 14,
+    "scontinue": 14,
+    "se": 7,
+    "sep": 7,
+    "sp": 8,
+    "st": 9,
+    "sterm": 9,
+    "up": 10,
+    "upper": 10,
+    "xx": 0
+  }
+}
