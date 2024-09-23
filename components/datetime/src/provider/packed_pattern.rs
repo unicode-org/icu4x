@@ -90,7 +90,7 @@ size_test!(PackedSkeletonDataV2, packed_skeleton_data_size, 32);
 /// | Sb            | S + 3             | 9-11            | Sa          |
 /// | Lc            | S + 4             | 12-14           | Lb          |
 /// | Mc            | S + 5             | 15-17           | Mb          |
-/// | Sc            | S + 6             | 18-20           | Mc          |
+/// | Sc            | S + 6             | 18-20           | Sb          |
 /// 
 /// [`EraDisplay::Auto`]: crate::neo_skeleton::EraDisplay::Auto
 #[doc = packed_skeleton_data_size!()]
