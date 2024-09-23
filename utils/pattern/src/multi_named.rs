@@ -93,7 +93,11 @@ where
     W: Writeable,
 {
     type Error = MissingNamedPlaceholderError<'k>;
-    type W<'a> = Result<&'a W, Self::Error> where W: 'a, Self: 'a;
+    type W<'a>
+        = Result<&'a W, Self::Error>
+    where
+        W: 'a,
+        Self: 'a;
     const LITERAL_PART: writeable::Part = crate::PATTERN_LITERAL_PART;
     #[inline]
     fn value_for<'a>(
@@ -116,7 +120,11 @@ where
     S: litemap::store::Store<K, W>,
 {
     type Error = MissingNamedPlaceholderError<'k>;
-    type W<'a> = Result<&'a W, Self::Error> where W: 'a, Self: 'a;
+    type W<'a>
+        = Result<&'a W, Self::Error>
+    where
+        W: 'a,
+        Self: 'a;
     const LITERAL_PART: writeable::Part = crate::PATTERN_LITERAL_PART;
     #[inline]
     fn value_for<'a>(
