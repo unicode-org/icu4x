@@ -25,73 +25,15 @@ pub struct WeekCalculator {
     pub weekend: Option<WeekdaySet>,
 }
 
-impl From<WeekDataV1> for WeekCalculator {
-    fn from(other: WeekDataV1) -> Self {
-        Self {
-            first_weekday: other.first_weekday,
-            min_week_days: other.min_week_days,
-            weekend: None,
-        }
-    }
-}
-
-impl From<&WeekDataV1> for WeekCalculator {
-    fn from(other: &WeekDataV1) -> Self {
-        Self {
-            first_weekday: other.first_weekday,
-            min_week_days: other.min_week_days,
-            weekend: None,
-        }
-    }
-}
-
 impl WeekCalculator {
-    /// Creates a new [`WeekCalculator`] from compiled data.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "compiled_data")]
-    pub fn try_new(locale: &DataLocale) -> Result<Self, DataError> {
-        Self::try_new_unstable(&crate::provider::Baked, locale)
-    }
-
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_unstable)]
-    pub fn try_new_with_any_provider(
-        provider: &(impl AnyProvider + ?Sized),
-        locale: &DataLocale,
-    ) -> Result<Self, DataError> {
-        Self::try_new_unstable(&provider.as_downcasting(), locale).or_else(|e| {
-            DataProvider::<WeekDataV1Marker>::load(
-                &provider.as_downcasting(),
-                DataRequest {
-                    id: DataIdentifierBorrowed::for_locale(locale),
-                    ..Default::default()
-                },
-            )
-            .map(|response| response.payload.get().into())
-            .map_err(|_| e)
-        })
-    }
-
-    #[cfg(feature = "serde")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::try_new_unstable)]
-    pub fn try_new_with_buffer_provider(
-        provider: &(impl BufferProvider + ?Sized),
-        locale: &DataLocale,
-    ) -> Result<Self, DataError> {
-        Self::try_new_unstable(&provider.as_deserializing(), locale).or_else(|e| {
-            DataProvider::<WeekDataV1Marker>::load(
-                &provider.as_deserializing(),
-                DataRequest {
-                    id: DataIdentifierBorrowed::for_locale(locale),
-                    ..Default::default()
-                },
-            )
-            .map(|response| response.payload.get().into())
-            .map_err(|_| e)
-        })
-    }
+    icu_provider::gen_any_buffer_data_constructors!(
+        (locale) -> error: DataError,
+        /// Creates a new [`WeekCalculator`] from compiled data.
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
+    );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<P>(provider: &P, locale: &DataLocale) -> Result<Self, DataError>

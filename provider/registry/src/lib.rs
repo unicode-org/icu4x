@@ -27,7 +27,6 @@ macro_rules! registry(
             icu::calendar::provider::IslamicObservationalCacheV1Marker = "calendar/islamicobservationalcache@1",
             icu::calendar::provider::IslamicUmmAlQuraCacheV1Marker = "calendar/islamicummalquracache@1",
             icu::calendar::provider::JapaneseExtendedErasV1Marker = "calendar/japanext@1",
-            icu::calendar::provider::WeekDataV1Marker = "datetime/week_data@1",
             icu::calendar::provider::WeekDataV2Marker = "datetime/week_data@2",
             icu::casemap::provider::CaseMapV1Marker = "props/casemap@1",
             icu::casemap::provider::CaseMapUnfoldV1Marker = "props/casemap_unfold@1",
