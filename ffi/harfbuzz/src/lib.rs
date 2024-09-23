@@ -86,7 +86,7 @@ impl GeneralCategoryFunc for AllUnicodeFuncs {
 impl CombiningClassFunc for AllUnicodeFuncs {
     #[inline]
     fn combining_class(&self, ch: char) -> u8 {
-        CanonicalCombiningClassMapBorrowed::new().get(ch).0
+        CanonicalCombiningClassMapBorrowed::new().get_u8(ch)
     }
 }
 
@@ -247,7 +247,7 @@ impl CombiningClassData {
 impl CombiningClassFunc for CombiningClassData {
     #[inline]
     fn combining_class(&self, ch: char) -> u8 {
-        self.ccc.as_borrowed().get(ch).0
+        self.ccc.as_borrowed().get_u8(ch)
     }
 }
 
