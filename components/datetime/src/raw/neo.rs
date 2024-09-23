@@ -496,7 +496,16 @@ impl<'a> TimePatternDataBorrowed<'a> {
 }
 
 impl ZonePatternSelectionData {
-    pub(crate) fn new_with_skeleton(length: MaybeLength, components: NeoTimeZoneSkeleton) -> Self {
+    pub(crate) fn new_with_skeleton(
+        length: MaybeLength,
+        components: NeoTimeZoneSkeleton,
+        is_only_field: bool,
+    ) -> Self {
+        let length = if is_only_field {
+            length.get::<Self>()
+        } else {
+            NeoSkeletonLength::Short
+        };
         let time_zone = components.resolve(length);
         let pattern_item = PatternItem::Field(time_zone.to_field());
         Self::SinglePatternItem(time_zone, pattern_item.to_unaligned())
@@ -571,7 +580,8 @@ impl DateTimeZonePatternSelectionData {
                 Ok(Self::Time(selection))
             }
             NeoComponents::Zone(components) => {
-                let selection = ZonePatternSelectionData::new_with_skeleton(length, components);
+                let selection =
+                    ZonePatternSelectionData::new_with_skeleton(length, components, true);
                 Ok(Self::Zone(selection))
             }
             NeoComponents::DateTime(day_components, time_components) => {
@@ -639,7 +649,8 @@ impl DateTimeZonePatternSelectionData {
                     alignment,
                     era_display,
                 )?;
-                let zone = ZonePatternSelectionData::new_with_skeleton(length, zone_components);
+                let zone =
+                    ZonePatternSelectionData::new_with_skeleton(length, zone_components, false);
                 let glue = Self::load_glue(glue_provider, locale, length, GlueType::DateZone)?;
                 Ok(Self::DateZoneGlue { date, zone, glue })
             }
@@ -653,7 +664,8 @@ impl DateTimeZonePatternSelectionData {
                     fractional_second_digits,
                     hour_cycle,
                 )?;
-                let zone = ZonePatternSelectionData::new_with_skeleton(length, zone_components);
+                let zone =
+                    ZonePatternSelectionData::new_with_skeleton(length, zone_components, false);
                 let glue = Self::load_glue(glue_provider, locale, length, GlueType::TimeZone)?;
                 Ok(Self::TimeZoneGlue { time, zone, glue })
             }
@@ -675,7 +687,8 @@ impl DateTimeZonePatternSelectionData {
                     fractional_second_digits,
                     hour_cycle,
                 )?;
-                let zone = ZonePatternSelectionData::new_with_skeleton(length, zone_components);
+                let zone =
+                    ZonePatternSelectionData::new_with_skeleton(length, zone_components, false);
                 let glue = Self::load_glue(glue_provider, locale, length, GlueType::DateTimeZone)?;
                 Ok(Self::DateTimeZoneGlue {
                     date,

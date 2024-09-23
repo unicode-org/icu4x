@@ -9,7 +9,6 @@ use crate::neo_serde::*;
 #[cfg(feature = "datagen")]
 use crate::options::{self, length};
 use crate::pattern::CoarseHourCycle;
-use crate::raw::neo::MaybeLength;
 use crate::time_zone::ResolvedNeoTimeZoneSkeleton;
 use icu_provider::DataMarkerAttributes;
 
@@ -978,12 +977,6 @@ pub enum NeoTimeZoneStyle {
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Default)]
 #[non_exhaustive]
 pub struct NeoTimeZoneSkeleton {
-    /// The length of the time zone format, _i.e._, with
-    /// `style`=[`NeoTimeZoneStyle::NonLocation`], whether to format as “Pacific
-    /// Time” ([`NeoSkeletonLength::Long`]) or “PT” ([`NeoSkeletonLength::Short`]).
-    /// If this is [`None`], the length is deduced from the [`NeoSkeletonLength`] of the
-    /// enclosing [`NeoSkeleton`] when formatting.
-    pub length: Option<NeoSkeletonLength>,
     /// The style, _i.e._, with `length`=[`NeoSkeletonLength::Short`], whether to format as
     /// “GMT−8” ([`NeoTimeZoneStyle::Offset`]) or “PT”
     /// ([`NeoTimeZoneStyle::NonLocation`]).
@@ -991,11 +984,8 @@ pub struct NeoTimeZoneSkeleton {
 }
 
 impl NeoTimeZoneSkeleton {
-    pub(crate) fn resolve(self, length: MaybeLength) -> ResolvedNeoTimeZoneSkeleton {
-        crate::tz_registry::skeleton_to_resolved(
-            self.style,
-            self.length.unwrap_or_else(|| length.get::<Self>()),
-        )
+    pub(crate) fn resolve(self, length: NeoSkeletonLength) -> ResolvedNeoTimeZoneSkeleton {
+        crate::tz_registry::skeleton_to_resolved(self.style, length)
     }
 }
 

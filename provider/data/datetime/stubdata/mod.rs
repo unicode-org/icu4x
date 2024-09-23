@@ -1,26 +1,4 @@
 // @generated
-include!("buddhist_date_lengths_v1_marker.rs.data");
-include!("buddhist_date_symbols_v1_marker.rs.data");
-include!("chinese_date_lengths_v1_marker.rs.data");
-include!("chinese_date_symbols_v1_marker.rs.data");
-include!("coptic_date_lengths_v1_marker.rs.data");
-include!("coptic_date_symbols_v1_marker.rs.data");
-include!("dangi_date_lengths_v1_marker.rs.data");
-include!("dangi_date_symbols_v1_marker.rs.data");
-include!("ethiopian_date_lengths_v1_marker.rs.data");
-include!("ethiopian_date_symbols_v1_marker.rs.data");
-include!("gregorian_date_lengths_v1_marker.rs.data");
-include!("gregorian_date_symbols_v1_marker.rs.data");
-include!("hebrew_date_lengths_v1_marker.rs.data");
-include!("hebrew_date_symbols_v1_marker.rs.data");
-include!("indian_date_lengths_v1_marker.rs.data");
-include!("indian_date_symbols_v1_marker.rs.data");
-include!("islamic_date_lengths_v1_marker.rs.data");
-include!("islamic_date_symbols_v1_marker.rs.data");
-include!("japanese_date_lengths_v1_marker.rs.data");
-include!("japanese_date_symbols_v1_marker.rs.data");
-include!("japanese_extended_date_lengths_v1_marker.rs.data");
-include!("japanese_extended_date_symbols_v1_marker.rs.data");
 include!("buddhist_date_neo_skeleton_patterns_v1_marker.rs.data");
 include!("chinese_date_neo_skeleton_patterns_v1_marker.rs.data");
 include!("coptic_date_neo_skeleton_patterns_v1_marker.rs.data");
@@ -36,10 +14,6 @@ include!("japanese_extended_date_neo_skeleton_patterns_v1_marker.rs.data");
 include!("persian_date_neo_skeleton_patterns_v1_marker.rs.data");
 include!("roc_date_neo_skeleton_patterns_v1_marker.rs.data");
 include!("time_neo_skeleton_patterns_v1_marker.rs.data");
-include!("persian_date_lengths_v1_marker.rs.data");
-include!("persian_date_symbols_v1_marker.rs.data");
-include!("roc_date_lengths_v1_marker.rs.data");
-include!("roc_date_symbols_v1_marker.rs.data");
 include!("buddhist_month_names_v1_marker.rs.data");
 include!("buddhist_year_names_v1_marker.rs.data");
 include!("chinese_month_names_v1_marker.rs.data");
@@ -68,8 +42,6 @@ include!("persian_year_names_v1_marker.rs.data");
 include!("roc_month_names_v1_marker.rs.data");
 include!("roc_year_names_v1_marker.rs.data");
 include!("weekday_names_v1_marker.rs.data");
-include!("time_lengths_v1_marker.rs.data");
-include!("time_symbols_v1_marker.rs.data");
 include!("exemplar_cities_v1_marker.rs.data");
 include!("time_zone_formats_v1_marker.rs.data");
 include!("metazone_generic_names_long_v1_marker.rs.data");
@@ -105,28 +77,6 @@ pub use __make_provider as make_provider;
 macro_rules! impl_data_provider {
     ($ provider : ty) => {
         make_provider!($provider);
-        impl_buddhist_date_lengths_v1_marker!($provider);
-        impl_buddhist_date_symbols_v1_marker!($provider);
-        impl_chinese_date_lengths_v1_marker!($provider);
-        impl_chinese_date_symbols_v1_marker!($provider);
-        impl_coptic_date_lengths_v1_marker!($provider);
-        impl_coptic_date_symbols_v1_marker!($provider);
-        impl_dangi_date_lengths_v1_marker!($provider);
-        impl_dangi_date_symbols_v1_marker!($provider);
-        impl_ethiopian_date_lengths_v1_marker!($provider);
-        impl_ethiopian_date_symbols_v1_marker!($provider);
-        impl_gregorian_date_lengths_v1_marker!($provider);
-        impl_gregorian_date_symbols_v1_marker!($provider);
-        impl_hebrew_date_lengths_v1_marker!($provider);
-        impl_hebrew_date_symbols_v1_marker!($provider);
-        impl_indian_date_lengths_v1_marker!($provider);
-        impl_indian_date_symbols_v1_marker!($provider);
-        impl_islamic_date_lengths_v1_marker!($provider);
-        impl_islamic_date_symbols_v1_marker!($provider);
-        impl_japanese_date_lengths_v1_marker!($provider);
-        impl_japanese_date_symbols_v1_marker!($provider);
-        impl_japanese_extended_date_lengths_v1_marker!($provider);
-        impl_japanese_extended_date_symbols_v1_marker!($provider);
         impl_buddhist_date_neo_skeleton_patterns_v1_marker!($provider);
         impl_chinese_date_neo_skeleton_patterns_v1_marker!($provider);
         impl_coptic_date_neo_skeleton_patterns_v1_marker!($provider);
@@ -142,10 +92,6 @@ macro_rules! impl_data_provider {
         impl_persian_date_neo_skeleton_patterns_v1_marker!($provider);
         impl_roc_date_neo_skeleton_patterns_v1_marker!($provider);
         impl_time_neo_skeleton_patterns_v1_marker!($provider);
-        impl_persian_date_lengths_v1_marker!($provider);
-        impl_persian_date_symbols_v1_marker!($provider);
-        impl_roc_date_lengths_v1_marker!($provider);
-        impl_roc_date_symbols_v1_marker!($provider);
         impl_buddhist_month_names_v1_marker!($provider);
         impl_buddhist_year_names_v1_marker!($provider);
         impl_chinese_month_names_v1_marker!($provider);
@@ -174,8 +120,6 @@ macro_rules! impl_data_provider {
         impl_roc_month_names_v1_marker!($provider);
         impl_roc_year_names_v1_marker!($provider);
         impl_weekday_names_v1_marker!($provider);
-        impl_time_lengths_v1_marker!($provider);
-        impl_time_symbols_v1_marker!($provider);
         impl_exemplar_cities_v1_marker!($provider);
         impl_time_zone_formats_v1_marker!($provider);
         impl_metazone_generic_names_long_v1_marker!($provider);
@@ -191,28 +135,6 @@ macro_rules! impl_any_provider {
         impl icu_provider::any::AnyProvider for $provider {
             fn load_any(&self, marker: icu_provider::DataMarkerInfo, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
                 match marker.path.hashed() {
-                    h if h == <icu::datetime::provider::calendar::BuddhistDateLengthsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::calendar::BuddhistDateLengthsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::datetime::provider::calendar::BuddhistDateSymbolsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::calendar::BuddhistDateSymbolsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::datetime::provider::calendar::ChineseDateLengthsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::calendar::ChineseDateLengthsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::datetime::provider::calendar::ChineseDateSymbolsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::calendar::ChineseDateSymbolsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::datetime::provider::calendar::CopticDateLengthsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::calendar::CopticDateLengthsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::datetime::provider::calendar::CopticDateSymbolsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::calendar::CopticDateSymbolsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::datetime::provider::calendar::DangiDateLengthsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::calendar::DangiDateLengthsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::datetime::provider::calendar::DangiDateSymbolsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::calendar::DangiDateSymbolsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::datetime::provider::calendar::EthiopianDateLengthsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::calendar::EthiopianDateLengthsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::datetime::provider::calendar::EthiopianDateSymbolsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::calendar::EthiopianDateSymbolsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::datetime::provider::calendar::GregorianDateLengthsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::calendar::GregorianDateLengthsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::datetime::provider::calendar::GregorianDateSymbolsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::calendar::GregorianDateSymbolsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::datetime::provider::calendar::HebrewDateLengthsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::calendar::HebrewDateLengthsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::datetime::provider::calendar::HebrewDateSymbolsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::calendar::HebrewDateSymbolsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::datetime::provider::calendar::IndianDateLengthsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::calendar::IndianDateLengthsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::datetime::provider::calendar::IndianDateSymbolsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::calendar::IndianDateSymbolsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::datetime::provider::calendar::IslamicDateLengthsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::calendar::IslamicDateLengthsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::datetime::provider::calendar::IslamicDateSymbolsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::calendar::IslamicDateSymbolsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::datetime::provider::calendar::JapaneseDateLengthsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::calendar::JapaneseDateLengthsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::datetime::provider::calendar::JapaneseDateSymbolsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::calendar::JapaneseDateSymbolsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::datetime::provider::calendar::JapaneseExtendedDateLengthsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::calendar::JapaneseExtendedDateLengthsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::datetime::provider::calendar::JapaneseExtendedDateSymbolsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::calendar::JapaneseExtendedDateSymbolsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::BuddhistDateNeoSkeletonPatternsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::BuddhistDateNeoSkeletonPatternsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::ChineseDateNeoSkeletonPatternsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::ChineseDateNeoSkeletonPatternsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::CopticDateNeoSkeletonPatternsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::CopticDateNeoSkeletonPatternsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
@@ -228,10 +150,6 @@ macro_rules! impl_any_provider {
                     h if h == <icu::datetime::provider::neo::PersianDateNeoSkeletonPatternsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::PersianDateNeoSkeletonPatternsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::RocDateNeoSkeletonPatternsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::RocDateNeoSkeletonPatternsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::TimeNeoSkeletonPatternsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::datetime::provider::calendar::PersianDateLengthsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::calendar::PersianDateLengthsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::datetime::provider::calendar::PersianDateSymbolsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::calendar::PersianDateSymbolsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::datetime::provider::calendar::RocDateLengthsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::calendar::RocDateLengthsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::datetime::provider::calendar::RocDateSymbolsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::calendar::RocDateSymbolsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::BuddhistMonthNamesV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::BuddhistMonthNamesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::BuddhistYearNamesV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::BuddhistYearNamesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::ChineseMonthNamesV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::ChineseMonthNamesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
@@ -260,8 +178,6 @@ macro_rules! impl_any_provider {
                     h if h == <icu::datetime::provider::neo::RocMonthNamesV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::RocMonthNamesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::RocYearNamesV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::RocYearNamesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::WeekdayNamesV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::WeekdayNamesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::datetime::provider::calendar::TimeLengthsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::calendar::TimeLengthsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::datetime::provider::calendar::TimeSymbolsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::calendar::TimeSymbolsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::time_zones::ExemplarCitiesV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::time_zones::ExemplarCitiesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::time_zones::TimeZoneFormatsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::time_zones::MetazoneGenericNamesLongV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::datetime::provider::time_zones::MetazoneGenericNamesLongV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),

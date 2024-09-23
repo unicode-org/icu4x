@@ -99,11 +99,7 @@ impl FieldSetField {
         WeekOfYear,
         WeekOfMonth,
         ZoneGeneric,
-        ZoneGenericShort,
-        ZoneGenericLong,
         ZoneSpecific,
-        ZoneSpecificShort,
-        ZoneSpecificLong,
         ZoneLocation,
         ZoneOffset,
     ];
@@ -174,11 +170,7 @@ impl FieldSetSerde {
 
     // Zone Components
     const ZONE_GENERIC: Self = Self::from_fields(&[ZoneGeneric]);
-    const ZONE_GENERIC_SHORT: Self = Self::from_fields(&[ZoneGenericShort]);
-    const ZONE_GENERIC_LONG: Self = Self::from_fields(&[ZoneGenericLong]);
     const ZONE_SPECIFIC: Self = Self::from_fields(&[ZoneSpecific]);
-    const ZONE_SPECIFIC_SHORT: Self = Self::from_fields(&[ZoneSpecificShort]);
-    const ZONE_SPECIFIC_LONG: Self = Self::from_fields(&[ZoneSpecificLong]);
     const ZONE_LOCATION: Self = Self::from_fields(&[ZoneLocation]);
     const ZONE_OFFSET: Self = Self::from_fields(&[ZoneOffset]);
 
@@ -357,35 +349,15 @@ impl From<NeoTimeZoneSkeleton> for FieldSetSerde {
     fn from(value: NeoTimeZoneSkeleton) -> Self {
         match value {
             NeoTimeZoneSkeleton {
-                length: None,
                 style: NeoTimeZoneStyle::Location,
             } => Self::ZONE_LOCATION,
             NeoTimeZoneSkeleton {
-                length: None,
                 style: NeoTimeZoneStyle::NonLocation,
             } => Self::ZONE_GENERIC,
             NeoTimeZoneSkeleton {
-                length: Some(NeoSkeletonLength::Short),
-                style: NeoTimeZoneStyle::NonLocation,
-            } => Self::ZONE_GENERIC_SHORT,
-            NeoTimeZoneSkeleton {
-                length: Some(NeoSkeletonLength::Long),
-                style: NeoTimeZoneStyle::NonLocation,
-            } => Self::ZONE_GENERIC_LONG,
-            NeoTimeZoneSkeleton {
-                length: None,
                 style: NeoTimeZoneStyle::SpecificNonLocation,
             } => Self::ZONE_SPECIFIC,
             NeoTimeZoneSkeleton {
-                length: Some(NeoSkeletonLength::Short),
-                style: NeoTimeZoneStyle::SpecificNonLocation,
-            } => Self::ZONE_SPECIFIC_SHORT,
-            NeoTimeZoneSkeleton {
-                length: Some(NeoSkeletonLength::Long),
-                style: NeoTimeZoneStyle::SpecificNonLocation,
-            } => Self::ZONE_SPECIFIC_LONG,
-            NeoTimeZoneSkeleton {
-                length: None,
                 style: NeoTimeZoneStyle::Offset,
             } => Self::ZONE_OFFSET,
             _ => todo!(),
@@ -398,35 +370,15 @@ impl TryFrom<FieldSetSerde> for NeoTimeZoneSkeleton {
     fn try_from(value: FieldSetSerde) -> Result<Self, Self::Error> {
         match value {
             FieldSetSerde::ZONE_LOCATION => Ok(Self {
-                length: None,
                 style: NeoTimeZoneStyle::Location,
             }),
             FieldSetSerde::ZONE_GENERIC => Ok(Self {
-                length: None,
-                style: NeoTimeZoneStyle::NonLocation,
-            }),
-            FieldSetSerde::ZONE_GENERIC_SHORT => Ok(Self {
-                length: Some(NeoSkeletonLength::Short),
-                style: NeoTimeZoneStyle::NonLocation,
-            }),
-            FieldSetSerde::ZONE_GENERIC_LONG => Ok(Self {
-                length: Some(NeoSkeletonLength::Long),
                 style: NeoTimeZoneStyle::NonLocation,
             }),
             FieldSetSerde::ZONE_SPECIFIC => Ok(Self {
-                length: None,
-                style: NeoTimeZoneStyle::SpecificNonLocation,
-            }),
-            FieldSetSerde::ZONE_SPECIFIC_SHORT => Ok(Self {
-                length: Some(NeoSkeletonLength::Short),
-                style: NeoTimeZoneStyle::SpecificNonLocation,
-            }),
-            FieldSetSerde::ZONE_SPECIFIC_LONG => Ok(Self {
-                length: Some(NeoSkeletonLength::Long),
                 style: NeoTimeZoneStyle::SpecificNonLocation,
             }),
             FieldSetSerde::ZONE_OFFSET => Ok(Self {
-                length: None,
                 style: NeoTimeZoneStyle::Offset,
             }),
             _ => Err(Error::InvalidFields),

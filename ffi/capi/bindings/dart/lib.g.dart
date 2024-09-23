@@ -177,12 +177,12 @@ final class _RustAlloc implements ffi.Allocator {
   }
 }
 
-@meta.ResourceIdentifier('diplomat_alloc')
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Void> Function(ffi.Size, ffi.Size)>(symbol: 'diplomat_alloc', isLeaf: true)
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Void> _diplomat_alloc(int len, int align);
 
-@meta.ResourceIdentifier('diplomat_free')
+@meta.RecordUse()
 @ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Void>, ffi.Size, ffi.Size)>(symbol: 'diplomat_free', isLeaf: true)
 // ignore: non_constant_identifier_names
 external int _diplomat_free(ffi.Pointer<ffi.Void> ptr, int len, int align);
@@ -808,22 +808,22 @@ final class _Write {
   }
 }
 
-@meta.ResourceIdentifier('diplomat_buffer_write_create')
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Size)>(symbol: 'diplomat_buffer_write_create', isLeaf: true)
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _diplomat_buffer_write_create(int len);
 
-@meta.ResourceIdentifier('diplomat_buffer_write_len')
+@meta.RecordUse()
 @ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(symbol: 'diplomat_buffer_write_len', isLeaf: true)
 // ignore: non_constant_identifier_names
 external int _diplomat_buffer_write_len(ffi.Pointer<ffi.Opaque> ptr);
 
-@meta.ResourceIdentifier('diplomat_buffer_write_get_bytes')
+@meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Uint8> Function(ffi.Pointer<ffi.Opaque>)>(symbol: 'diplomat_buffer_write_get_bytes', isLeaf: true)
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Uint8> _diplomat_buffer_write_get_bytes(ffi.Pointer<ffi.Opaque> ptr);
 
-@meta.ResourceIdentifier('diplomat_buffer_write_destroy')
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(symbol: 'diplomat_buffer_write_destroy', isLeaf: true)
 // ignore: non_constant_identifier_names
 external void _diplomat_buffer_write_destroy(ffi.Pointer<ffi.Opaque> ptr);

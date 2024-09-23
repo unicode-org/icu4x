@@ -61,22 +61,22 @@ final class FixedDecimalFormatter implements ffi.Finalizable {
   }
 }
 
-@meta.ResourceIdentifier('icu4x_FixedDecimalFormatter_destroy_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_FixedDecimalFormatter_destroy_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_FixedDecimalFormatter_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void groupingStrategy);
 
-@meta.ResourceIdentifier('icu4x_FixedDecimalFormatter_create_with_manual_data_mv1')
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(_SliceUtf8, _SliceUtf8, _SliceUtf8, _SliceUtf8, _SliceUtf8, _SliceUtf8, ffi.Uint8, ffi.Uint8, ffi.Uint8, _SliceRune, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_FixedDecimalFormatter_create_with_manual_data_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_FixedDecimalFormatter_create_with_manual_data_mv1(_SliceUtf8 plusSignPrefix, _SliceUtf8 plusSignSuffix, _SliceUtf8 minusSignPrefix, _SliceUtf8 minusSignSuffix, _SliceUtf8 decimalSeparator, _SliceUtf8 groupingSeparator, int primaryGroupSize, int secondaryGroupSize, int minGroupSize, _SliceRune digits, _ResultInt32Void groupingStrategy);
 
-@meta.ResourceIdentifier('icu4x_FixedDecimalFormatter_format_mv1')
+@meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_FixedDecimalFormatter_format_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_FixedDecimalFormatter_format_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> write);
