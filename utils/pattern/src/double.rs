@@ -72,7 +72,11 @@ where
     W1: Writeable,
 {
     type Error = Infallible;
-    type W<'a> = WriteableAsTryWriteableInfallible<Either<&'a W0, &'a W1>> where W0: 'a, W1: 'a;
+    type W<'a>
+        = WriteableAsTryWriteableInfallible<Either<&'a W0, &'a W1>>
+    where
+        W0: 'a,
+        W1: 'a;
     const LITERAL_PART: writeable::Part = crate::PATTERN_LITERAL_PART;
     #[inline]
     fn value_for(&self, key: DoublePlaceholderKey) -> (Self::W<'_>, writeable::Part) {
@@ -92,7 +96,10 @@ where
     W: Writeable,
 {
     type Error = Infallible;
-    type W<'a> = WriteableAsTryWriteableInfallible<&'a W> where W: 'a;
+    type W<'a>
+        = WriteableAsTryWriteableInfallible<&'a W>
+    where
+        W: 'a;
     const LITERAL_PART: writeable::Part = crate::PATTERN_LITERAL_PART;
     #[inline]
     fn value_for(&self, key: DoublePlaceholderKey) -> (Self::W<'_>, writeable::Part) {

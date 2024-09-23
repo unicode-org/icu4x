@@ -153,7 +153,11 @@ where
     T: PlaceholderValueProvider<K> + ?Sized,
 {
     type Error = T::Error;
-    type W<'a> = T::W<'a> where T: 'a, 'b: 'a;
+    type W<'a>
+        = T::W<'a>
+    where
+        T: 'a,
+        'b: 'a;
     const LITERAL_PART: Part = T::LITERAL_PART;
     fn value_for(&self, key: K) -> (Self::W<'_>, Part) {
         (*self).value_for(key)
