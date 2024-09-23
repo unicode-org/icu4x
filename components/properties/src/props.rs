@@ -2912,7 +2912,6 @@ make_unicode_set_property! {
 mod test_enumerated_property_completeness {
     use super::*;
     use alloc::collections::BTreeMap;
-    use zerovec::ule::VarULE;
 
     fn check_enum<'a>(
         lookup: &crate::provider::names::PropertyValueNameToEnumMapV1<'static>,
@@ -2920,12 +2919,12 @@ mod test_enumerated_property_completeness {
     ) {
         let mut data: BTreeMap<_, _> = lookup
             .map
-            .iter_copied_values()
+            .iter()
             .map(|(name, value)| {
                 (
                     value,
                     (
-                        String::from_utf8(name.as_byte_slice().to_vec()).unwrap(),
+                        name,
                         "Data",
                     ),
                 )
@@ -2934,7 +2933,7 @@ mod test_enumerated_property_completeness {
 
         let consts = consts
             .into_iter()
-            .map(|(name, value)| (*value, (name.to_string(), "Consts")));
+            .map(|(name, value)| (*value as usize, (name.to_string(), "Consts")));
 
         let mut diff = Vec::new();
         for t @ (value, _) in consts {
@@ -2959,7 +2958,7 @@ mod test_enumerated_property_completeness {
     #[test]
     fn test_ea() {
         check_enum(
-            crate::provider::Baked::SINGLETON_EAST_ASIAN_WIDTH_NAME_TO_VALUE_V1_MARKER,
+            crate::provider::Baked::SINGLETON_EAST_ASIAN_WIDTH_NAME_TO_VALUE_V2_MARKER,
             EastAsianWidth::ALL_CONSTS,
         );
     }
@@ -2967,7 +2966,7 @@ mod test_enumerated_property_completeness {
     #[test]
     fn test_ccc() {
         check_enum(
-            crate::provider::Baked::SINGLETON_CANONICAL_COMBINING_CLASS_NAME_TO_VALUE_V1_MARKER,
+            crate::provider::Baked::SINGLETON_CANONICAL_COMBINING_CLASS_NAME_TO_VALUE_V2_MARKER,
             CanonicalCombiningClass::ALL_CONSTS,
         );
     }
@@ -2975,7 +2974,7 @@ mod test_enumerated_property_completeness {
     #[test]
     fn test_jt() {
         check_enum(
-            crate::provider::Baked::SINGLETON_JOINING_TYPE_NAME_TO_VALUE_V1_MARKER,
+            crate::provider::Baked::SINGLETON_JOINING_TYPE_NAME_TO_VALUE_V2_MARKER,
             JoiningType::ALL_CONSTS,
         );
     }
@@ -2983,7 +2982,7 @@ mod test_enumerated_property_completeness {
     #[test]
     fn test_insc() {
         check_enum(
-            crate::provider::Baked::SINGLETON_INDIC_SYLLABIC_CATEGORY_NAME_TO_VALUE_V1_MARKER,
+            crate::provider::Baked::SINGLETON_INDIC_SYLLABIC_CATEGORY_NAME_TO_VALUE_V2_MARKER,
             IndicSyllabicCategory::ALL_CONSTS,
         );
     }
@@ -2991,7 +2990,7 @@ mod test_enumerated_property_completeness {
     #[test]
     fn test_sb() {
         check_enum(
-            crate::provider::Baked::SINGLETON_SENTENCE_BREAK_NAME_TO_VALUE_V1_MARKER,
+            crate::provider::Baked::SINGLETON_SENTENCE_BREAK_NAME_TO_VALUE_V2_MARKER,
             SentenceBreak::ALL_CONSTS,
         );
     }
@@ -2999,7 +2998,7 @@ mod test_enumerated_property_completeness {
     #[test]
     fn test_wb() {
         check_enum(
-            crate::provider::Baked::SINGLETON_WORD_BREAK_NAME_TO_VALUE_V1_MARKER,
+            crate::provider::Baked::SINGLETON_WORD_BREAK_NAME_TO_VALUE_V2_MARKER,
             WordBreak::ALL_CONSTS,
         );
     }
@@ -3007,7 +3006,7 @@ mod test_enumerated_property_completeness {
     #[test]
     fn test_bc() {
         check_enum(
-            crate::provider::Baked::SINGLETON_BIDI_CLASS_NAME_TO_VALUE_V1_MARKER,
+            crate::provider::Baked::SINGLETON_BIDI_CLASS_NAME_TO_VALUE_V2_MARKER,
             BidiClass::ALL_CONSTS,
         );
     }
@@ -3015,7 +3014,7 @@ mod test_enumerated_property_completeness {
     #[test]
     fn test_hst() {
         check_enum(
-            crate::provider::Baked::SINGLETON_HANGUL_SYLLABLE_TYPE_NAME_TO_VALUE_V1_MARKER,
+            crate::provider::Baked::SINGLETON_HANGUL_SYLLABLE_TYPE_NAME_TO_VALUE_V2_MARKER,
             HangulSyllableType::ALL_CONSTS,
         );
     }
