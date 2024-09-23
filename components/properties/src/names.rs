@@ -8,7 +8,6 @@ use core::marker::PhantomData;
 use icu_collections::codepointtrie::TrieValue;
 use icu_provider::prelude::*;
 use yoke::Yokeable;
-use zerovec::ule::VarULE;
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub struct ErasedMarker<DataStruct: for<'a> Yokeable<'a>>(PhantomData<DataStruct>);
@@ -23,9 +22,8 @@ impl<DataStruct: for<'a> Yokeable<'a>> DynamicDataMarker for ErasedMarker<DataSt
 /// The name can be a short name (`Lu`), a long name(`Uppercase_Letter`),
 /// or an alias.
 ///
-/// Property names can be looked up using "strict" matching (looking for a name
-/// that matches exactly), or "loose matching", where the name is allowed to deviate
-/// in terms of ASCII casing, whitespace, underscores, and hyphens.
+/// Property names are parsed using "loose matching", where the name is allowed
+/// to deviate in terms of ASCII casing, whitespace, underscores, and hyphens.
 ///
 /// # Example
 ///
@@ -36,31 +34,29 @@ impl<DataStruct: for<'a> Yokeable<'a>> DynamicDataMarker for ErasedMarker<DataSt
 /// let lookup = PropertyParser::<GeneralCategory>::new();
 /// // short name for value
 /// assert_eq!(
-///     lookup.get_strict("Lu"),
+///     lookup.get("Lu"),
 ///     Some(GeneralCategory::UppercaseLetter)
 /// );
 /// assert_eq!(
-///     lookup.get_strict("Pd"),
+///     lookup.get("Pd"),
 ///     Some(GeneralCategory::DashPunctuation)
 /// );
 /// // long name for value
 /// assert_eq!(
-///     lookup.get_strict("Uppercase_Letter"),
+///     lookup.get("Uppercase_Letter"),
 ///     Some(GeneralCategory::UppercaseLetter)
 /// );
 /// assert_eq!(
-///     lookup.get_strict("Dash_Punctuation"),
+///     lookup.get("Dash_Punctuation"),
 ///     Some(GeneralCategory::DashPunctuation)
 /// );
-/// // name has incorrect casing
-/// assert_eq!(lookup.get_strict("dashpunctuation"), None);
 /// // loose matching of name
 /// assert_eq!(
-///     lookup.get_loose("dash-punctuation"),
+///     lookup.get("dash-punctuation"),
 ///     Some(GeneralCategory::DashPunctuation)
 /// );
 /// // fake property
-/// assert_eq!(lookup.get_strict("Animated_Gif"), None);
+/// assert_eq!(lookup.get("Animated_Gif"), None);
 /// ```
 #[derive(Debug)]
 pub struct PropertyParser<T> {
@@ -109,7 +105,7 @@ impl<T> PropertyParser<T> {
 
     /// Construct a borrowed version of this type that can be queried.
     ///
-    /// This avoids a potential small underlying cost per API call (like `get_strict()`) by consolidating it
+    /// This avoids a potential small underlying cost per API call (like `get()`) by consolidating it
     /// up front.
     #[inline]
     pub fn as_borrowed(&self) -> PropertyParserBorrowed<'_, T> {
@@ -129,58 +125,6 @@ impl<T> PropertyParser<T> {
 }
 
 impl<T: TrieValue> PropertyParserBorrowed<'_, T> {
-    /// Get the property value as a u16, doing a strict search looking for
-    /// names that match exactly
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use icu::properties::PropertyParser;
-    /// use icu::properties::props::GeneralCategory;
-    ///
-    /// let lookup = PropertyParser::<GeneralCategory>::new();
-    /// assert_eq!(
-    ///     lookup.get_strict_u16("Lu"),
-    ///     Some(GeneralCategory::UppercaseLetter as u16)
-    /// );
-    /// assert_eq!(
-    ///     lookup.get_strict_u16("Uppercase_Letter"),
-    ///     Some(GeneralCategory::UppercaseLetter as u16)
-    /// );
-    /// // does not do loose matching
-    /// assert_eq!(lookup.get_strict_u16("UppercaseLetter"), None);
-    /// ```
-    #[inline]
-    pub fn get_strict_u16(&self, name: &str) -> Option<u16> {
-        get_strict_u16(self.map, name)
-    }
-
-    /// Get the property value as a `T`, doing a strict search looking for
-    /// names that match exactly
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use icu::properties::PropertyParser;
-    /// use icu::properties::props::GeneralCategory;
-    ///
-    /// let lookup = PropertyParser::<GeneralCategory>::new();
-    /// assert_eq!(
-    ///     lookup.get_strict("Lu"),
-    ///     Some(GeneralCategory::UppercaseLetter)
-    /// );
-    /// assert_eq!(
-    ///     lookup.get_strict("Uppercase_Letter"),
-    ///     Some(GeneralCategory::UppercaseLetter)
-    /// );
-    /// // does not do loose matching
-    /// assert_eq!(lookup.get_strict("UppercaseLetter"), None);
-    /// ```
-    #[inline]
-    pub fn get_strict(&self, name: &str) -> Option<T> {
-        T::try_from_u32(self.get_strict_u16(name)? as u32).ok()
-    }
-
     /// Get the property value as a u16, doing a loose search looking for
     /// names that match case-insensitively, ignoring ASCII hyphens, underscores, and
     /// whitespaces.
@@ -193,22 +137,22 @@ impl<T: TrieValue> PropertyParserBorrowed<'_, T> {
     ///
     /// let lookup = PropertyParser::<GeneralCategory>::new();
     /// assert_eq!(
-    ///     lookup.get_loose_u16("Lu"),
+    ///     lookup.get_u16("Lu"),
     ///     Some(GeneralCategory::UppercaseLetter as u16)
     /// );
     /// assert_eq!(
-    ///     lookup.get_loose_u16("Uppercase_Letter"),
+    ///     lookup.get_u16("Uppercase_Letter"),
     ///     Some(GeneralCategory::UppercaseLetter as u16)
     /// );
     /// // does do loose matching
     /// assert_eq!(
-    ///     lookup.get_loose_u16("UppercaseLetter"),
+    ///     lookup.get_u16("UppercaseLetter"),
     ///     Some(GeneralCategory::UppercaseLetter as u16)
     /// );
     /// ```
     #[inline]
-    pub fn get_loose_u16(&self, name: &str) -> Option<u16> {
-        get_loose_u16(self.map, name)
+    pub fn get_u16(&self, name: &str) -> Option<u16> {
+        get_u16(self.map, name)
     }
 
     /// Get the property value as a `T`, doing a loose search looking for
@@ -223,22 +167,22 @@ impl<T: TrieValue> PropertyParserBorrowed<'_, T> {
     ///
     /// let lookup = PropertyParser::<GeneralCategory>::new();
     /// assert_eq!(
-    ///     lookup.get_loose("Lu"),
+    ///     lookup.get("Lu"),
     ///     Some(GeneralCategory::UppercaseLetter)
     /// );
     /// assert_eq!(
-    ///     lookup.get_loose("Uppercase_Letter"),
+    ///     lookup.get("Uppercase_Letter"),
     ///     Some(GeneralCategory::UppercaseLetter)
     /// );
     /// // does do loose matching
     /// assert_eq!(
-    ///     lookup.get_loose("UppercaseLetter"),
+    ///     lookup.get("UppercaseLetter"),
     ///     Some(GeneralCategory::UppercaseLetter)
     /// );
     /// ```
     #[inline]
-    pub fn get_loose(&self, name: &str) -> Option<T> {
-        T::try_from_u32(self.get_loose_u16(name)? as u32).ok()
+    pub fn get(&self, name: &str) -> Option<T> {
+        T::try_from_u32(self.get_u16(name)? as u32).ok()
     }
 }
 
@@ -256,19 +200,17 @@ impl<T: TrieValue> PropertyParserBorrowed<'static, T> {
 }
 
 /// Avoid monomorphizing multiple copies of this function
-fn get_strict_u16(payload: &PropertyValueNameToEnumMapV1<'_>, name: &str) -> Option<u16> {
-    // NormalizedPropertyName has no invariants so this should be free, but
-    // avoid introducing a panic regardless
-    let name = NormalizedPropertyNameStr::parse_byte_slice(name.as_bytes()).ok()?;
-    payload.map.get_copied(name)
-}
+fn get_u16(payload: &PropertyValueNameToEnumMapV1<'_>, name: &str) -> Option<u16> {
+    let mut cursor = payload.map.cursor();
 
-/// Avoid monomorphizing multiple copies of this function
-fn get_loose_u16(payload: &PropertyValueNameToEnumMapV1<'_>, name: &str) -> Option<u16> {
-    // NormalizedPropertyName has no invariants so this should be free, but
-    // avoid introducing a panic regardless
-    let name = NormalizedPropertyNameStr::parse_byte_slice(name.as_bytes()).ok()?;
-    payload.map.get_copied_by(|p| p.cmp_loose(name))
+    for &ascii in name.as_bytes() {
+        let Some(normalized) = normalize_char(ascii) else {
+            continue;
+        };
+        cursor.step(normalized);
+    }
+
+    cursor.take_value().and_then(|i| i.try_into().ok())
 }
 
 /// A struct capable of looking up a property name from a value
@@ -697,7 +639,7 @@ macro_rules! impl_value_getter {
 
 impl_value_getter! {
     impl BidiClass {
-        BidiClassNameToValueV1Marker / SINGLETON_BIDI_CLASS_NAME_TO_VALUE_V1_MARKER;
+        BidiClassNameToValueV2Marker / SINGLETON_BIDI_CLASS_NAME_TO_VALUE_V2_MARKER;
         PropertyEnumToValueNameLinearMapV1 / BidiClassValueToShortNameV1Marker / SINGLETON_BIDI_CLASS_VALUE_TO_SHORT_NAME_V1_MARKER;
         PropertyEnumToValueNameLinearMapV1 / BidiClassValueToLongNameV1Marker / SINGLETON_BIDI_CLASS_VALUE_TO_LONG_NAME_V1_MARKER;
     }
@@ -705,7 +647,7 @@ impl_value_getter! {
 
 impl_value_getter! {
     impl GeneralCategory {
-        GeneralCategoryNameToValueV1Marker / SINGLETON_GENERAL_CATEGORY_NAME_TO_VALUE_V1_MARKER;
+        GeneralCategoryNameToValueV2Marker / SINGLETON_GENERAL_CATEGORY_NAME_TO_VALUE_V2_MARKER;
         PropertyEnumToValueNameLinearMapV1 / GeneralCategoryValueToShortNameV1Marker / SINGLETON_GENERAL_CATEGORY_VALUE_TO_SHORT_NAME_V1_MARKER;
         PropertyEnumToValueNameLinearMapV1 / GeneralCategoryValueToLongNameV1Marker / SINGLETON_GENERAL_CATEGORY_VALUE_TO_LONG_NAME_V1_MARKER;
     }
@@ -713,13 +655,13 @@ impl_value_getter! {
 
 impl_value_getter! {
     impl GeneralCategoryGroup {
-        GeneralCategoryMaskNameToValueV1Marker / SINGLETON_GENERAL_CATEGORY_MASK_NAME_TO_VALUE_V1_MARKER;
+        GeneralCategoryMaskNameToValueV2Marker / SINGLETON_GENERAL_CATEGORY_MASK_NAME_TO_VALUE_V2_MARKER;
     }
 }
 
 impl_value_getter! {
     impl Script {
-        ScriptNameToValueV1Marker / SINGLETON_SCRIPT_NAME_TO_VALUE_V1_MARKER;
+        ScriptNameToValueV2Marker / SINGLETON_SCRIPT_NAME_TO_VALUE_V2_MARKER;
         PropertyScriptToIcuScriptMapV1 / ScriptValueToShortNameV1Marker / SINGLETON_SCRIPT_VALUE_TO_SHORT_NAME_V1_MARKER;
         PropertyEnumToValueNameLinearMapV1 / ScriptValueToLongNameV1Marker / SINGLETON_SCRIPT_VALUE_TO_LONG_NAME_V1_MARKER;
     }
@@ -727,7 +669,7 @@ impl_value_getter! {
 
 impl_value_getter! {
    impl HangulSyllableType {
-        HangulSyllableTypeNameToValueV1Marker / SINGLETON_HANGUL_SYLLABLE_TYPE_NAME_TO_VALUE_V1_MARKER;
+        HangulSyllableTypeNameToValueV2Marker / SINGLETON_HANGUL_SYLLABLE_TYPE_NAME_TO_VALUE_V2_MARKER;
         PropertyEnumToValueNameLinearMapV1 / HangulSyllableTypeValueToShortNameV1Marker / SINGLETON_HANGUL_SYLLABLE_TYPE_VALUE_TO_SHORT_NAME_V1_MARKER;
         PropertyEnumToValueNameLinearMapV1 / HangulSyllableTypeValueToLongNameV1Marker / SINGLETON_HANGUL_SYLLABLE_TYPE_VALUE_TO_LONG_NAME_V1_MARKER;
     }
@@ -735,7 +677,7 @@ impl_value_getter! {
 
 impl_value_getter! {
     impl EastAsianWidth {
-        EastAsianWidthNameToValueV1Marker / SINGLETON_EAST_ASIAN_WIDTH_NAME_TO_VALUE_V1_MARKER;
+        EastAsianWidthNameToValueV2Marker / SINGLETON_EAST_ASIAN_WIDTH_NAME_TO_VALUE_V2_MARKER;
         PropertyEnumToValueNameLinearMapV1 / EastAsianWidthValueToShortNameV1Marker / SINGLETON_EAST_ASIAN_WIDTH_VALUE_TO_SHORT_NAME_V1_MARKER;
         PropertyEnumToValueNameLinearMapV1 / EastAsianWidthValueToLongNameV1Marker / SINGLETON_EAST_ASIAN_WIDTH_VALUE_TO_LONG_NAME_V1_MARKER;
     }
@@ -743,7 +685,7 @@ impl_value_getter! {
 
 impl_value_getter! {
     impl LineBreak {
-        LineBreakNameToValueV1Marker / SINGLETON_LINE_BREAK_NAME_TO_VALUE_V1_MARKER;
+        LineBreakNameToValueV2Marker / SINGLETON_LINE_BREAK_NAME_TO_VALUE_V2_MARKER;
         PropertyEnumToValueNameLinearMapV1 / LineBreakValueToShortNameV1Marker / SINGLETON_LINE_BREAK_VALUE_TO_SHORT_NAME_V1_MARKER;
         PropertyEnumToValueNameLinearMapV1 / LineBreakValueToLongNameV1Marker / SINGLETON_LINE_BREAK_VALUE_TO_LONG_NAME_V1_MARKER;
     }
@@ -751,7 +693,7 @@ impl_value_getter! {
 
 impl_value_getter! {
     impl GraphemeClusterBreak {
-        GraphemeClusterBreakNameToValueV1Marker / SINGLETON_GRAPHEME_CLUSTER_BREAK_NAME_TO_VALUE_V1_MARKER;
+        GraphemeClusterBreakNameToValueV2Marker / SINGLETON_GRAPHEME_CLUSTER_BREAK_NAME_TO_VALUE_V2_MARKER;
         PropertyEnumToValueNameLinearMapV1 / GraphemeClusterBreakValueToShortNameV1Marker / SINGLETON_GRAPHEME_CLUSTER_BREAK_VALUE_TO_SHORT_NAME_V1_MARKER;
         PropertyEnumToValueNameLinearMapV1 / GraphemeClusterBreakValueToLongNameV1Marker / SINGLETON_GRAPHEME_CLUSTER_BREAK_VALUE_TO_LONG_NAME_V1_MARKER;
     }
@@ -759,7 +701,7 @@ impl_value_getter! {
 
 impl_value_getter! {
     impl WordBreak {
-        WordBreakNameToValueV1Marker / SINGLETON_WORD_BREAK_NAME_TO_VALUE_V1_MARKER;
+        WordBreakNameToValueV2Marker / SINGLETON_WORD_BREAK_NAME_TO_VALUE_V2_MARKER;
         PropertyEnumToValueNameLinearMapV1 / WordBreakValueToShortNameV1Marker / SINGLETON_WORD_BREAK_VALUE_TO_SHORT_NAME_V1_MARKER;
         PropertyEnumToValueNameLinearMapV1 / WordBreakValueToLongNameV1Marker / SINGLETON_WORD_BREAK_VALUE_TO_LONG_NAME_V1_MARKER;
     }
@@ -767,7 +709,7 @@ impl_value_getter! {
 
 impl_value_getter! {
     impl SentenceBreak {
-        SentenceBreakNameToValueV1Marker / SINGLETON_SENTENCE_BREAK_NAME_TO_VALUE_V1_MARKER;
+        SentenceBreakNameToValueV2Marker / SINGLETON_SENTENCE_BREAK_NAME_TO_VALUE_V2_MARKER;
         PropertyEnumToValueNameLinearMapV1 / SentenceBreakValueToShortNameV1Marker / SINGLETON_SENTENCE_BREAK_VALUE_TO_SHORT_NAME_V1_MARKER;
         PropertyEnumToValueNameLinearMapV1 / SentenceBreakValueToLongNameV1Marker / SINGLETON_SENTENCE_BREAK_VALUE_TO_LONG_NAME_V1_MARKER;
     }
@@ -775,7 +717,7 @@ impl_value_getter! {
 
 impl_value_getter! {
     impl CanonicalCombiningClass {
-        CanonicalCombiningClassNameToValueV1Marker / SINGLETON_CANONICAL_COMBINING_CLASS_NAME_TO_VALUE_V1_MARKER;
+        CanonicalCombiningClassNameToValueV2Marker / SINGLETON_CANONICAL_COMBINING_CLASS_NAME_TO_VALUE_V2_MARKER;
         PropertyEnumToValueNameSparseMapV1 / CanonicalCombiningClassValueToShortNameV1Marker / SINGLETON_CANONICAL_COMBINING_CLASS_VALUE_TO_SHORT_NAME_V1_MARKER;
         PropertyEnumToValueNameSparseMapV1 / CanonicalCombiningClassValueToLongNameV1Marker / SINGLETON_CANONICAL_COMBINING_CLASS_VALUE_TO_LONG_NAME_V1_MARKER;
     }
@@ -783,7 +725,7 @@ impl_value_getter! {
 
 impl_value_getter! {
     impl IndicSyllabicCategory {
-        IndicSyllabicCategoryNameToValueV1Marker / SINGLETON_INDIC_SYLLABIC_CATEGORY_NAME_TO_VALUE_V1_MARKER;
+        IndicSyllabicCategoryNameToValueV2Marker / SINGLETON_INDIC_SYLLABIC_CATEGORY_NAME_TO_VALUE_V2_MARKER;
         PropertyEnumToValueNameLinearMapV1 / IndicSyllabicCategoryValueToShortNameV1Marker / SINGLETON_INDIC_SYLLABIC_CATEGORY_VALUE_TO_SHORT_NAME_V1_MARKER;
         PropertyEnumToValueNameLinearMapV1 / IndicSyllabicCategoryValueToLongNameV1Marker / SINGLETON_INDIC_SYLLABIC_CATEGORY_VALUE_TO_LONG_NAME_V1_MARKER;
     }
@@ -791,7 +733,7 @@ impl_value_getter! {
 
 impl_value_getter! {
     impl JoiningType {
-        JoiningTypeNameToValueV1Marker / SINGLETON_JOINING_TYPE_NAME_TO_VALUE_V1_MARKER;
+        JoiningTypeNameToValueV2Marker / SINGLETON_JOINING_TYPE_NAME_TO_VALUE_V2_MARKER;
         PropertyEnumToValueNameLinearMapV1 / JoiningTypeValueToShortNameV1Marker / SINGLETON_JOINING_TYPE_VALUE_TO_SHORT_NAME_V1_MARKER;
         PropertyEnumToValueNameLinearMapV1 / JoiningTypeValueToLongNameV1Marker / SINGLETON_JOINING_TYPE_VALUE_TO_LONG_NAME_V1_MARKER;
     }

@@ -19,37 +19,18 @@ pub mod ffi {
     pub struct PropertyValueNameToEnumMapper(icu_properties::PropertyParser<u16>);
 
     impl PropertyValueNameToEnumMapper {
-        /// Get the property value matching the given name, using strict matching
-        ///
-        /// Returns -1 if the name is unknown for this property
-        #[diplomat::rust_link(icu::properties::PropertyParserBorrowed::get_strict, FnInStruct)]
-        #[diplomat::rust_link(
-            icu::properties::PropertyParserBorrowed::get_strict_u16,
-            FnInStruct,
-            hidden
-        )]
-        pub fn get_strict(&self, name: &DiplomatStr) -> i16 {
-            if let Ok(name) = core::str::from_utf8(name) {
-                self.0.as_borrowed().get_strict(name)
-            } else {
-                None
-            }
-            .map(|u_16| u_16 as i16)
-            .unwrap_or(-1)
-        }
-
         /// Get the property value matching the given name, using loose matching
         ///
         /// Returns -1 if the name is unknown for this property
-        #[diplomat::rust_link(icu::properties::PropertyParserBorrowed::get_loose, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::PropertyParserBorrowed::get, FnInStruct)]
         #[diplomat::rust_link(
-            icu::properties::PropertyParserBorrowed::get_loose_u16,
+            icu::properties::PropertyParserBorrowed::get_u16,
             FnInStruct,
             hidden
         )]
-        pub fn get_loose(&self, name: &DiplomatStr) -> i16 {
+        pub fn get(&self, name: &DiplomatStr) -> i16 {
             if let Ok(name) = core::str::from_utf8(name) {
-                self.0.as_borrowed().get_loose(name)
+                self.0.as_borrowed().get(name)
             } else {
                 None
             }
@@ -217,37 +198,18 @@ pub mod ffi {
     );
 
     impl GeneralCategoryNameToMaskMapper {
-        /// Get the mask value matching the given name, using strict matching
-        ///
-        /// Returns 0 if the name is unknown for this property
-        #[diplomat::rust_link(icu::properties::PropertyParserBorrowed::get_strict, FnInStruct)]
-        #[diplomat::rust_link(
-            icu::properties::PropertyParserBorrowed::get_strict_u16,
-            FnInStruct,
-            hidden
-        )]
-        pub fn get_strict(&self, name: &DiplomatStr) -> u32 {
-            if let Ok(name) = core::str::from_utf8(name) {
-                self.0.as_borrowed().get_strict(name)
-            } else {
-                None
-            }
-            .map(Into::into)
-            .unwrap_or_default()
-        }
-
         /// Get the mask value matching the given name, using loose matching
         ///
         /// Returns 0 if the name is unknown for this property
-        #[diplomat::rust_link(icu::properties::PropertyParserBorrowed::get_loose, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::PropertyParserBorrowed::get, FnInStruct)]
         #[diplomat::rust_link(
-            icu::properties::PropertyParserBorrowed::get_loose_u16,
+            icu::properties::PropertyParserBorrowed::get_u16,
             FnInStruct,
             hidden
         )]
-        pub fn get_loose(&self, name: &DiplomatStr) -> u32 {
+        pub fn get(&self, name: &DiplomatStr) -> u32 {
             if let Ok(name) = core::str::from_utf8(name) {
-                self.0.as_borrowed().get_loose(name)
+                self.0.as_borrowed().get(name)
             } else {
                 None
             }
