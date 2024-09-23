@@ -21,7 +21,7 @@ use dtf::*;
 fn dtf_default() {
     let loc = locale!("en-US");
 
-    let dtf = DateTimeFormat::new(loc.into(), Default::default());
+    let dtf = DateTimeFormat::new((&loc).into(), Default::default());
 
     assert_eq!(
         dtf.resolved_preferences().hour_cycle,
@@ -35,7 +35,7 @@ fn dtf_default() {
 #[test]
 fn dtf_uext() {
     let loc: Locale = "en-US-u-hc-h11".parse().unwrap();
-    let dtf = DateTimeFormat::new(loc.into(), Default::default());
+    let dtf = DateTimeFormat::new((&loc).into(), Default::default());
 
     assert_eq!(
         dtf.resolved_preferences().hour_cycle,
@@ -54,7 +54,7 @@ fn dtf_prefs() {
         hour_cycle: Some(keywords::HourCycle::H24),
         ..Default::default()
     };
-    let mut prefs = DateTimeFormatPreferences::from(loc);
+    let mut prefs = DateTimeFormatPreferences::from(&loc);
     prefs.extend(bag);
 
     let dtf = DateTimeFormat::new(prefs, Default::default());
@@ -78,7 +78,7 @@ fn dtf_prefs_with_ca() {
         hour_cycle: Some(keywords::HourCycle::H24),
         ..Default::default()
     };
-    let mut prefs = DateTimeFormatPreferences::from(loc);
+    let mut prefs = DateTimeFormatPreferences::from(&loc);
     prefs.extend(bag);
 
     let dtf = DateTimeFormat::new(prefs, Default::default());
@@ -96,9 +96,15 @@ fn dtf_prefs_with_ca() {
 #[test]
 fn dtf_prefs_default_region() {
     let loc: Locale = "en-u-hc-h12".parse().unwrap();
-    let dtf = DateTimeFormat::new(loc.into(), Default::default());
-    assert_eq!(dtf.resolved_preferences().lid.language, language!("en"));
-    assert_eq!(dtf.resolved_preferences().lid.region, Some(region!("US")));
+    let dtf = DateTimeFormat::new((&loc).into(), Default::default());
+    assert_eq!(
+        dtf.resolved_preferences().data_locale.language,
+        language!("en")
+    );
+    assert_eq!(
+        dtf.resolved_preferences().data_locale.region,
+        Some(region!("US"))
+    );
     assert_eq!(
         dtf.resolved_preferences().hour_cycle,
         keywords::HourCycle::H12
@@ -121,19 +127,25 @@ fn dtf_options_manual() {
     let loc: Locale = "en".parse().unwrap();
 
     let options = DateTimeFormatOptions {
-        date_length: Some(DateLength::Medium),
+        date_length: Some(length::Date::Medium),
         ..Default::default()
     };
     let dtf = DateTimeFormat::new(loc.into(), options);
-    assert_eq!(dtf.resolved_options().date_length, DateLength::Medium);
+    assert_eq!(dtf.resolved_options().date_length, length::Date::Medium);
 }
 
 #[test]
 fn dtf_prefs_unknown_ue_keu() {
     let loc: Locale = "en-u-bb-h99".parse().unwrap();
-    let dtf = DateTimeFormat::new(loc.into(), Default::default());
-    assert_eq!(dtf.resolved_preferences().lid.language, language!("en"));
-    assert_eq!(dtf.resolved_preferences().lid.region, Some(region!("US")));
+    let dtf = DateTimeFormat::new((&loc).into(), Default::default());
+    assert_eq!(
+        dtf.resolved_preferences().data_locale.language,
+        language!("en")
+    );
+    assert_eq!(
+        dtf.resolved_preferences().data_locale.region,
+        Some(region!("US"))
+    );
     assert_eq!(
         dtf.resolved_preferences().hour_cycle,
         keywords::HourCycle::H12
@@ -143,9 +155,15 @@ fn dtf_prefs_unknown_ue_keu() {
 #[test]
 fn dtf_prefs_unknown_ue_value() {
     let loc: Locale = "en-u-hc-h99".parse().unwrap();
-    let dtf = DateTimeFormat::new(loc.into(), Default::default());
-    assert_eq!(dtf.resolved_preferences().lid.language, language!("en"));
-    assert_eq!(dtf.resolved_preferences().lid.region, Some(region!("US")));
+    let dtf = DateTimeFormat::new((&loc).into(), Default::default());
+    assert_eq!(
+        dtf.resolved_preferences().data_locale.language,
+        language!("en")
+    );
+    assert_eq!(
+        dtf.resolved_preferences().data_locale.region,
+        Some(region!("US"))
+    );
     assert_eq!(
         dtf.resolved_preferences().hour_cycle,
         keywords::HourCycle::H12
@@ -155,9 +173,15 @@ fn dtf_prefs_unknown_ue_value() {
 #[test]
 fn dtf_prefs_non_ue_preference() {
     let loc: Locale = "en-US".parse().unwrap();
-    let dtf = DateTimeFormat::new(loc.into(), Default::default());
-    assert_eq!(dtf.resolved_preferences().lid.language, language!("en"));
-    assert_eq!(dtf.resolved_preferences().lid.region, Some(region!("US")));
+    let dtf = DateTimeFormat::new((&loc).into(), Default::default());
+    assert_eq!(
+        dtf.resolved_preferences().data_locale.language,
+        language!("en")
+    );
+    assert_eq!(
+        dtf.resolved_preferences().data_locale.region,
+        Some(region!("US"))
+    );
     assert_eq!(
         dtf.resolved_preferences().date_pattern,
         DatePattern(tinystr!(8, "m/d/Y"))
@@ -167,7 +191,7 @@ fn dtf_prefs_non_ue_preference() {
 #[test]
 fn dtf_prefs_unknown_ue_value_skipped() {
     let loc: Locale = "en-u-hc-h99".parse().unwrap();
-    let prefs: DateTimeFormatPreferences = loc.into();
+    let prefs: DateTimeFormatPreferences = (&loc).into();
 
     assert_eq!(prefs.hour_cycle, None);
 }
@@ -176,7 +200,7 @@ fn dtf_prefs_unknown_ue_value_skipped() {
 fn dtf_prefs_into_locale() {
     let loc: Locale = "en-u-hc-h23-ca-buddhist".parse().unwrap();
     let prefs: DateTimeFormatPreferences = loc.into();
-    let loc2 = prefs.into_locale();
+    let loc2: Locale = prefs.into();
 
     assert_eq!(loc2.to_string(), "en-u-ca-buddhist-hc-h23");
 }
@@ -186,31 +210,31 @@ fn dtf_prefs_ca_islamic() {
     use icu_locale_core::preferences::extensions::unicode::keywords;
 
     let loc: Locale = "en-u-ca-islamic".parse().unwrap();
-    let prefs: DateTimeFormatPreferences = loc.into();
+    let prefs: DateTimeFormatPreferences = (&loc).into();
     assert_eq!(
         prefs.calendar,
         Some(keywords::CalendarAlgorithm::Islamic(None))
     );
-    let loc2 = prefs.into_locale();
+    let loc2: Locale = prefs.into();
     assert_eq!(loc2.to_string(), "en-u-ca-islamic");
 
     let loc: Locale = "en-u-ca-islamic-civil".parse().unwrap();
-    let prefs: DateTimeFormatPreferences = loc.into();
+    let prefs: DateTimeFormatPreferences = (&loc).into();
     assert_eq!(
         prefs.calendar,
         Some(keywords::CalendarAlgorithm::Islamic(Some(
             keywords::IslamicCalendarAlgorithm::Civil
         )))
     );
-    let loc2 = prefs.into_locale();
+    let loc2: Locale = prefs.into();
     assert_eq!(loc2.to_string(), "en-u-ca-islamic-civil");
 
     let loc: Locale = "en-u-ca-islamic-foo".parse().unwrap();
-    let prefs: DateTimeFormatPreferences = loc.into();
+    let prefs: DateTimeFormatPreferences = (&loc).into();
     assert_eq!(
         prefs.calendar,
         Some(keywords::CalendarAlgorithm::Islamic(None))
     );
-    let loc2 = prefs.into_locale();
+    let loc2: Locale = prefs.into();
     assert_eq!(loc2.to_string(), "en-u-ca-islamic");
 }

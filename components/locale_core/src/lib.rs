@@ -67,12 +67,14 @@ extern crate alloc;
 #[macro_use]
 mod helpers;
 
+mod data_locale;
 mod langid;
 mod locale;
 mod macros;
 mod parser;
 mod shortvec;
 
+pub use data_locale::DataLocale;
 pub use langid::LanguageIdentifier;
 pub use locale::Locale;
 pub use parser::errors::ParseError;

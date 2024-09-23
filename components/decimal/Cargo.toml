@@ -23,6 +23,7 @@ all-features = true
 displaydoc = { workspace = true }
 fixed_decimal = { workspace = true }
 icu_provider = { workspace = true, features = ["macros"] }
+icu_locale_core = { workspace = true }
 writeable = { workspace = true }
 
 databake = { workspace = true, features = ["derive"], optional = true}
@@ -31,7 +32,7 @@ serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 icu_decimal_data = { workspace = true, optional = true }
 
 [dev-dependencies]
-icu = { path = "../../components/icu", default-features = false }
+# icu = { path = "../../components/icu", default-features = false }
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 icu_locale_core = { path = "../../components/locale_core" }
 icu_provider_adapters = { path = "../../provider/adapters" }

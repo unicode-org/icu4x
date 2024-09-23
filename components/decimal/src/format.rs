@@ -70,12 +70,16 @@ mod tests {
     use icu_locale_core::locale;
     use writeable::assert_writeable_eq;
 
-    use crate::FixedDecimalFormatter;
+    use crate::{FixedDecimalFormatter, FixedDecimalFormatterPreferences};
 
     #[test]
     pub fn test_es_mx() {
-        let locale = locale!("es-MX").into();
-        let fmt = FixedDecimalFormatter::try_new(&locale, Default::default()).unwrap();
+        let locale = locale!("es-MX");
+        let fmt = FixedDecimalFormatter::try_new(
+            FixedDecimalFormatterPreferences::from(&locale).resolve(),
+            Default::default(),
+        )
+        .unwrap();
         let fd = "12345.67".parse().unwrap();
         assert_writeable_eq!(fmt.format(&fd), "12,345.67");
     }

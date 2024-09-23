@@ -99,6 +99,7 @@ pub use format::FormattedFixedDecimal;
 
 use alloc::string::String;
 use fixed_decimal::FixedDecimal;
+use icu_locale_core::preferences::extensions::unicode::keywords::NumberingSystem;
 use icu_provider::prelude::*;
 use writeable::Writeable;
 
@@ -128,7 +129,7 @@ impl AsRef<FixedDecimalFormatter> for FixedDecimalFormatter {
 impl FixedDecimalFormatter {
     icu_provider::gen_any_buffer_data_constructors!(
 
-        (locale, options: options::FixedDecimalFormatterOptions) -> error: DataError,
+        (prefs: ResolvedFixedDecimalFormatterPreferences, options: options::FixedDecimalFormatterOptions) -> error: DataError,
         /// Creates a new [`FixedDecimalFormatter`] from compiled data and an options bag.
         ///
         /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -139,17 +140,12 @@ impl FixedDecimalFormatter {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D: DataProvider<provider::DecimalSymbolsV1Marker> + ?Sized>(
         provider: &D,
-        locale: &DataLocale,
+        prefs: ResolvedFixedDecimalFormatterPreferences,
         options: options::FixedDecimalFormatterOptions,
     ) -> Result<Self, DataError> {
         let symbols = provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::from_str_or_panic(
-                        locale.get_single_unicode_ext("nu").unwrap_or_default(),
-                    ),
-                    locale,
-                ),
+                id: prefs.as_data_id(),
                 ..Default::default()
             })?
             .payload;
@@ -168,5 +164,35 @@ impl FixedDecimalFormatter {
     /// Formats a [`FixedDecimal`], returning a [`String`].
     pub fn format_to_string(&self, value: &FixedDecimal) -> String {
         self.format(value).write_to_string().into_owned()
+    }
+}
+
+icu_locale_core::preferences::preferences!(
+    /// TODO
+    FixedDecimalFormatterPreferences,
+    ResolvedFixedDecimalFormatterPreferences,
+    {
+        /// TODO
+        numbering_system: NumberingSystem
+    }
+);
+
+impl FixedDecimalFormatterPreferences<'_> {
+    /// TODO
+    pub fn resolve(self) -> ResolvedFixedDecimalFormatterPreferences {
+        #[allow(clippy::unwrap_used)] // temporary
+        ResolvedFixedDecimalFormatterPreferences {
+            data_locale: DataLocale::from(self.lid),
+            numbering_system: self.numbering_system.unwrap(),
+        }
+    }
+}
+
+impl ResolvedFixedDecimalFormatterPreferences {
+    fn as_data_id(&self) -> DataIdentifierBorrowed {
+        DataIdentifierBorrowed::for_marker_attributes_and_locale(
+            DataMarkerAttributes::from_str_or_panic(self.numbering_system.0.as_str()),
+            &self.data_locale,
+        )
     }
 }

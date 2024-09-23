@@ -12,7 +12,7 @@ use dtf::*;
 fn get_os_dtf_preferences(lid: &LanguageIdentifier) -> Option<dtf::DateTimeFormatPreferences> {
     // This optionally may different
     Some(dtf::DateTimeFormatPreferences {
-        lid: Some(lid.clone()),
+        lid,
         hour_cycle: Some(keywords::HourCycle::H23),
         date_pattern: Some(DatePattern(tinystr::tinystr!(8, "d.m.Y"))),
         ..Default::default()
@@ -56,10 +56,10 @@ fn dtf_locale_override_os_prefs() {
 
     let os_prefs = get_os_dtf_preferences(&loc.id);
     let prefs = if let Some(mut os_prefs) = os_prefs {
-        os_prefs.extend(loc.into());
+        os_prefs.extend((&loc).into());
         os_prefs
     } else {
-        loc.into()
+        (&loc).into()
     };
 
     let dtf = DateTimeFormat::new(prefs, Default::default());
@@ -78,7 +78,7 @@ fn dtf_os_prefs_override_locale() {
     let loc = locale!("en-US-u-hc-h11");
 
     let os_prefs = get_os_dtf_preferences(&loc.id);
-    let mut prefs = DateTimeFormatPreferences::from(loc);
+    let mut prefs = DateTimeFormatPreferences::from(&loc);
     if let Some(os_prefs) = os_prefs {
         prefs.extend(os_prefs);
     }
@@ -100,10 +100,10 @@ fn dtf_call_override_locale_override_os_prefs() {
 
     let os_prefs = get_os_dtf_preferences(&loc.id);
     let mut prefs = if let Some(mut os_prefs) = os_prefs {
-        os_prefs.extend(loc.into());
+        os_prefs.extend((&loc).into());
         os_prefs
     } else {
-        loc.into()
+        (&loc).into()
     };
 
     let bag = DateTimeFormatPreferences {
@@ -137,7 +137,7 @@ fn dtf_options_override_os_options() {
         dev_options
     };
 
-    let dtf = DateTimeFormat::new(loc.into(), options);
+    let dtf = DateTimeFormat::new((&loc).into(), options);
 
     // This is taken from dev options
     assert_eq!(dtf.resolved_options().date_length, DateLength::Medium);
@@ -152,10 +152,10 @@ fn dtf_prefs_non_ue_preference() {
 
     let os_prefs = get_os_dtf_preferences(&loc.id);
     let prefs = if let Some(mut os_prefs) = os_prefs {
-        os_prefs.extend(loc.into());
+        os_prefs.extend((&loc).into());
         os_prefs
     } else {
-        loc.into()
+        (&loc).into()
     };
 
     let dtf = DateTimeFormat::new(prefs, Default::default());

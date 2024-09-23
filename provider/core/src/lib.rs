@@ -134,7 +134,8 @@ pub use error::{DataError, DataErrorKind};
 pub use icu_provider_macros::data_struct;
 
 mod request;
-pub use request::{DataLocale, DataMarkerAttributes, DataRequest, DataRequestMetadata, *};
+pub use icu_locale_core::DataLocale;
+pub use request::{DataMarkerAttributes, DataRequest, DataRequestMetadata, *};
 
 mod response;
 #[doc(hidden)] // TODO(#4467): establish this as an internal API

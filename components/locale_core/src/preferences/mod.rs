@@ -94,16 +94,27 @@ macro_rules! __preferences {
             ),*
         }
      ) => (
-        #[derive(Default, Debug, Clone)]
+        #[derive(Debug, Clone)]
         $(#[$doc])*
         #[non_exhaustive]
-        pub struct $name {
+        pub struct $name<'a> {
             #[doc = concat!("The locale that these `", stringify!($name), "` use.")]
-            pub lid: Option<$crate::LanguageIdentifier>,
+            pub lid: &'a $crate::LanguageIdentifier,
             $(
                 $(#[$key_doc])*
                 pub $key: Option<$pref>,
             )*
+        }
+
+        impl Default for $name<'_> {
+            fn default() -> Self {
+                Self {
+                    lid: {static D: $crate::LanguageIdentifier = $crate::LanguageIdentifier::default(); &D },
+                    $(
+                        $key: None,
+                    )*
+                }
+            }
         }
 
         #[non_exhaustive]
@@ -111,7 +122,7 @@ macro_rules! __preferences {
         #[doc = concat!("The resolved version of `", stringify!($name), "`.")]
         pub struct $resolved_name {
             #[doc = concat!("The locale that these `", stringify!($name), "` use.")]
-            pub lid: $crate::LanguageIdentifier,
+            pub data_locale: icu_provider::DataLocale,
 
             $(
                 $(#[$key_doc])*
@@ -119,11 +130,9 @@ macro_rules! __preferences {
             )*
         }
 
-        impl From<$crate::Locale> for $name {
-            fn from(loc: $crate::Locale) -> Self {
+        impl<'a> From<&'a $crate::Locale> for $name<'a> {
+            fn from(loc: &'a $crate::Locale) -> Self {
                 use $crate::preferences::PreferenceKey;
-
-                let lid = Some(loc.id);
 
                 $(
                     let mut $key = None;
@@ -142,7 +151,7 @@ macro_rules! __preferences {
                 }
 
                 Self {
-                    lid,
+                    lid: &loc.id,
                     $(
                         $key,
                     )*
@@ -150,11 +159,10 @@ macro_rules! __preferences {
             }
         }
 
-        impl $name {
+        impl $name<'_> {
             /// Constructs a `Locale` corresponding to these preferences.
             pub fn into_locale(self) -> $crate::Locale {
                 use $crate::preferences::PreferenceKey;
-                let id = self.lid.unwrap_or_default();
                 let mut extensions = $crate::extensions::Extensions::new();
                 $(
                     if let Some(value) = &self.$key {
@@ -165,7 +173,7 @@ macro_rules! __preferences {
                     }
                 )*
                 $crate::Locale {
-                    id,
+                    id: self.lid.clone().into(),
                     extensions
                 }
             }
@@ -233,7 +241,7 @@ mod tests {
 
         let loc: Locale = "und-u-ab-default-cd-foo".parse().unwrap();
 
-        let prefs = DummyPreferences::from(loc);
+        let prefs = DummyPreferences::from(&loc);
         assert_eq!(prefs.dummy_keyword, Some(DummyKeyword::Default));
     }
 }
