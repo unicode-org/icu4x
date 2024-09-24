@@ -29,7 +29,7 @@ pub struct LengthPluralElements<T> {
     pub short: PluralElements<T>,
 }
 
-/// A builder for a [`PackedSkeletonDataV2`].
+/// A builder for a [`PatternsPackedV1`].
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PackedSkeletonDataBuilder<'a> {
     /// Patterns always available.
@@ -40,7 +40,7 @@ pub struct PackedSkeletonDataBuilder<'a> {
     pub variant1: Option<LengthPluralElements<Pattern<'a>>>,
 }
 
-size_test!(PackedSkeletonDataV2, packed_skeleton_data_size, 32);
+size_test!(PatternsPackedV1, packed_skeleton_data_size, 32);
 
 /// Main data struct for packed datetime patterns.
 ///
@@ -111,7 +111,7 @@ size_test!(PackedSkeletonDataV2, packed_skeleton_data_size, 32);
 /// [`EraDisplay::Auto`]: crate::neo_skeleton::EraDisplay::Auto
 #[doc = packed_skeleton_data_size!()]
 #[derive(Debug, PartialEq, Eq, Clone)]
-pub struct PackedSkeletonDataV2<'data> {
+pub struct PatternsPackedV1<'data> {
     /// An encoding of which standard/variant cell corresponds to which entry
     /// in the patterns table. See class docs.
     pub header: u32,
@@ -121,7 +121,7 @@ pub struct PackedSkeletonDataV2<'data> {
 
 impl PackedSkeletonDataBuilder<'_> {
     /// Builds a packed pattern representation from the builder.
-    pub fn build(mut self) -> PackedSkeletonDataV2<'static> {
+    pub fn build(mut self) -> PatternsPackedV1<'static> {
         self.simplify();
 
         // Initialize the elements vector with the standard patterns.
@@ -206,7 +206,7 @@ impl PackedSkeletonDataBuilder<'_> {
                     .map(|pattern| (pattern.metadata.to_four_bit_metadata(), &*pattern.items))
             })
             .collect::<Vec<_>>();
-        PackedSkeletonDataV2 {
+        PatternsPackedV1 {
             #[allow(clippy::unwrap_used)] // the header fits in 21 bits
             header: u32::try_from(header).unwrap(),
             elements: VarZeroVec::from(&elements),
@@ -229,7 +229,7 @@ pub(crate) enum PackedSkeletonVariant {
     Variant1,
 }
 
-impl PackedSkeletonDataV2<'_> {
+impl PatternsPackedV1<'_> {
     pub(crate) fn get(
         &self,
         length: NeoSkeletonLength,
