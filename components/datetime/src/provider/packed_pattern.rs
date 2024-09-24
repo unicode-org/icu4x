@@ -18,16 +18,21 @@ use zerovec::{VarZeroVec, ZeroSlice};
 
 use crate::pattern::runtime::Pattern;
 
+/// A field of [`PackedSkeletonDataBuilder`].
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct LengthPluralElements<T> {
+    /// The "long" length pattern plural elements.
     pub long: PluralElements<T>,
+    /// The "medium" length pattern plural elements.
     pub medium: PluralElements<T>,
+    /// The "short" length pattern plural elements.
     pub short: PluralElements<T>,
 }
 
 /// A builder for a [`PackedSkeletonDataV2`].
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PackedSkeletonDataBuilder<'a> {
+    /// Patterns always available.
     pub standard: LengthPluralElements<Pattern<'a>>,
     /// Patterns for variant 0. If `None`, falls back to standard.
     pub variant0: Option<LengthPluralElements<Pattern<'a>>>,
