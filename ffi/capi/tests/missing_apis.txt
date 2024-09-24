@@ -40,6 +40,7 @@ icu::normalizer::uts46::Uts46MapperBorrowed::map_normalize#FnInStruct
 icu::normalizer::uts46::Uts46MapperBorrowed::new#FnInStruct
 icu::normalizer::uts46::Uts46MapperBorrowed::normalize_validate#FnInStruct
 icu::plurals::PluralElements#Struct
+icu::plurals::PluralElements::as_ref#FnInStruct
 icu::plurals::PluralElements::explicit_one#FnInStruct
 icu::plurals::PluralElements::explicit_zero#FnInStruct
 icu::plurals::PluralElements::few#FnInStruct
