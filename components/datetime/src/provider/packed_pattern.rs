@@ -18,7 +18,7 @@ use zerovec::{VarZeroVec, ZeroSlice};
 
 use crate::pattern::runtime::Pattern;
 
-/// A field of [`PackedSkeletonDataBuilder`].
+/// A field of [`PackedPatternsBuilder`].
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct LengthPluralElements<T> {
     /// The "long" length pattern plural elements.
@@ -29,9 +29,9 @@ pub struct LengthPluralElements<T> {
     pub short: PluralElements<T>,
 }
 
-/// A builder for a [`PatternsPackedV1`].
+/// A builder for a [`PackedPatternsV1`].
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct PackedSkeletonDataBuilder<'a> {
+pub struct PackedPatternsBuilder<'a> {
     /// Patterns always available.
     pub standard: LengthPluralElements<Pattern<'a>>,
     /// Patterns for variant 0. If `None`, falls back to standard.
@@ -40,7 +40,7 @@ pub struct PackedSkeletonDataBuilder<'a> {
     pub variant1: Option<LengthPluralElements<Pattern<'a>>>,
 }
 
-size_test!(PatternsPackedV1, packed_skeleton_data_size, 32);
+size_test!(PackedPatternsV1, packed_skeleton_data_size, 32);
 
 /// Main data struct for packed datetime patterns.
 ///
@@ -111,7 +111,7 @@ size_test!(PatternsPackedV1, packed_skeleton_data_size, 32);
 /// [`EraDisplay::Auto`]: crate::neo_skeleton::EraDisplay::Auto
 #[doc = packed_skeleton_data_size!()]
 #[derive(Debug, PartialEq, Eq, Clone)]
-pub struct PatternsPackedV1<'data> {
+pub struct PackedPatternsV1<'data> {
     /// An encoding of which standard/variant cell corresponds to which entry
     /// in the patterns table. See class docs.
     pub header: u32,
@@ -119,9 +119,9 @@ pub struct PatternsPackedV1<'data> {
     pub elements: VarZeroVec<'data, PluralElementsPackedULE<ZeroSlice<PatternItem>>>,
 }
 
-impl PackedSkeletonDataBuilder<'_> {
+impl PackedPatternsBuilder<'_> {
     /// Builds a packed pattern representation from the builder.
-    pub fn build(mut self) -> PatternsPackedV1<'static> {
+    pub fn build(mut self) -> PackedPatternsV1<'static> {
         self.simplify();
 
         // Initialize the elements vector with the standard patterns.
@@ -206,7 +206,7 @@ impl PackedSkeletonDataBuilder<'_> {
                     .map(|pattern| (pattern.metadata.to_four_bit_metadata(), &*pattern.items))
             })
             .collect::<Vec<_>>();
-        PatternsPackedV1 {
+        PackedPatternsV1 {
             #[allow(clippy::unwrap_used)] // the header fits in 21 bits
             header: u32::try_from(header).unwrap(),
             elements: VarZeroVec::from(&elements),
@@ -229,7 +229,7 @@ pub(crate) enum PackedSkeletonVariant {
     Variant1,
 }
 
-impl PatternsPackedV1<'_> {
+impl PackedPatternsV1<'_> {
     pub(crate) fn get(
         &self,
         length: NeoSkeletonLength,
@@ -312,10 +312,10 @@ impl PatternsPackedV1<'_> {
     }
 
     /// Converts this packed data to a builder that can be mutated.
-    pub fn to_builder(&self) -> PackedSkeletonDataBuilder {
+    pub fn to_builder(&self) -> PackedPatternsBuilder {
         use NeoSkeletonLength::*;
         use PackedSkeletonVariant::*;
-        let mut builder = PackedSkeletonDataBuilder {
+        let mut builder = PackedPatternsBuilder {
             standard: LengthPluralElements {
                 long: self.get_as_plural_elements(Long, Standard),
                 medium: self.get_as_plural_elements(Medium, Standard),
@@ -393,7 +393,7 @@ pub mod tests {
 
         {
             // Q = 1
-            let builder = PackedSkeletonDataBuilder {
+            let builder = PackedPatternsBuilder {
                 standard: lms0.clone(),
                 variant0: Some(lms1.clone()),
                 variant1: Some(lms2.clone()),
@@ -409,7 +409,7 @@ pub mod tests {
         }
         {
             // Q = 0
-            let builder = PackedSkeletonDataBuilder {
+            let builder = PackedPatternsBuilder {
                 standard: lms0.clone(),
                 variant0: Some(lms0.clone()),
                 variant1: Some(lms2.clone()),
@@ -425,7 +425,7 @@ pub mod tests {
         }
         {
             // No variants
-            let builder = PackedSkeletonDataBuilder {
+            let builder = PackedPatternsBuilder {
                 standard: lms0.clone(),
                 variant0: None,
                 variant1: None,
@@ -438,7 +438,7 @@ pub mod tests {
         }
         {
             // Some duplicate patterns and inheritance
-            let builder = PackedSkeletonDataBuilder {
+            let builder = PackedPatternsBuilder {
                 standard: lms0a.clone(),
                 variant0: Some(lms0.clone()),
                 variant1: Some(lms1.clone()),
@@ -451,7 +451,7 @@ pub mod tests {
         }
         {
             // Q = 1 with 8 patterns (min for Q = 1)
-            let builder = PackedSkeletonDataBuilder {
+            let builder = PackedPatternsBuilder {
                 standard: lms0a.clone(),
                 variant0: Some(lms1.clone()),
                 variant1: Some(lms2.clone()),
@@ -464,7 +464,7 @@ pub mod tests {
         }
         {
             // Q = 0 with 7 patterns (max for Q = 0)
-            let builder = PackedSkeletonDataBuilder {
+            let builder = PackedPatternsBuilder {
                 standard: lms1a.clone(),
                 variant0: Some(lms0a.clone()),
                 variant1: Some(lms2.clone()),
