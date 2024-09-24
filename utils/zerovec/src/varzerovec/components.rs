@@ -638,6 +638,7 @@ where
     #[allow(clippy::indexing_slicing)] // Function contract allows panicky behavior
     output[0..LENGTH_WIDTH].copy_from_slice(&num_elements_bytes[0..LENGTH_WIDTH]);
 
+    #[allow(clippy::indexing_slicing)] // Function contract allows panicky behavior
     write_serializable_bytes_without_length::<T, A, F>(elements, &mut output[LENGTH_WIDTH..]);
 }
 
