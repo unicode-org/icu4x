@@ -233,8 +233,7 @@ impl PackedPatternsBuilder<'_> {
             })
             .collect::<Vec<_>>();
         PackedPatternsV1 {
-            #[allow(clippy::unwrap_used)] // the header fits in 21 bits
-            header: u32::try_from(header).unwrap(),
+            header,
             elements: VarZeroVec::from(&elements),
         }
     }
