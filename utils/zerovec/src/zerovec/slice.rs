@@ -522,6 +522,19 @@ where
     }
 }
 
+impl<T> core::hash::Hash for ZeroSlice<T>
+where
+    T: AsULE,
+{
+    /// Hashes a ZeroVec as if hashing the underlying bytes.
+    ///
+    /// This is acceptable according to the ULE byte equality invariant.
+    #[inline]
+    fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
+        self.as_bytes().hash(state);
+    }
+}
+
 impl<T> fmt::Debug for ZeroSlice<T>
 where
     T: AsULE + fmt::Debug,
