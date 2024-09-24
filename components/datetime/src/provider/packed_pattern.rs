@@ -360,7 +360,14 @@ pub mod tests {
 
     #[test]
     fn test_basic() {
-        let patterns = PATTERN_STRS.iter().map(|s| s.parse::<reference::Pattern>().unwrap().to_runtime_pattern()).collect::<Vec<_>>();
+        let patterns = PATTERN_STRS
+            .iter()
+            .map(|s| {
+                s.parse::<reference::Pattern>()
+                    .unwrap()
+                    .to_runtime_pattern()
+            })
+            .collect::<Vec<_>>();
         let mut it = patterns.iter().cloned();
         let lms0 = LengthPluralElements {
             long: PluralElements::new(it.next().unwrap()),
