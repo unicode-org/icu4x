@@ -106,7 +106,8 @@ size_test!(PackedPatternsV1, packed_skeleton_data_size, 32);
 /// | Sc            | S + 6             | 18-20           | Sa          |
 ///
 /// As a result, if there are no variants, bits 2 and higher will be all zero,
-/// making the header int suitable for varint packing.
+/// making the header int suitable for varint packing, such as that used by
+/// postcard and other size-optimized serialization formats.
 ///
 /// [`EraDisplay::Auto`]: crate::neo_skeleton::EraDisplay::Auto
 #[doc = packed_skeleton_data_size!()]
