@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::{options::CompactDecimalFormatterOptions, provider::CompactDecimalPatternDataV1};
 use crate::compactdecimal::{
     format::FormattedCompactDecimal,
+    options::CompactDecimalFormatterOptions,
     provider::{
-        Count, LongCompactDecimalFormatDataV1Marker, PatternULE,
+        CompactDecimalPatternDataV1, Count, LongCompactDecimalFormatDataV1Marker, PatternULE,
         ShortCompactDecimalFormatDataV1Marker,
     },
     ExponentError,
