@@ -178,7 +178,7 @@ impl PackedPatternsBuilder<'_> {
             &self.standard.medium,
             &self.standard.short,
         ];
-        let mut chunks = [0u32; 6];
+        let mut chunks = [0u32; 6]; // per-cell chunk values
         for ((pattern, fallback), chunk) in variant_patterns
             .iter()
             .zip(fallbacks.iter())
@@ -197,8 +197,13 @@ impl PackedPatternsBuilder<'_> {
             }
         }
 
-        // Check to see if we need to switch to Q=1 mode
-        #[allow(clippy::unwrap_used)] // the array is nonempty
+        // Check to see if we need to switch to Q=1 mode. We need to do this
+        // if any of the calculated chunk values is too big (larger than 7).
+        //
+        // Calculate the max chunk using Iterator::max, which won't fail
+        // because the array is length 6 (nonempty), but we need to unwrap:
+        // <https://github.com/rust-lang/rust/issues/78504>
+        #[allow(clippy::unwrap_used)]
         if *chunks.iter().max().unwrap() > constants::CHUNK_MASK {
             // one pattern per table cell
             header |= constants::Q_BIT;
