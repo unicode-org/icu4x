@@ -876,11 +876,11 @@ where
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 /// A bag of values for different plural cases.
 pub struct PluralElements<T>(PluralElementsInner<T>);
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 pub(crate) struct PluralElementsInner<T> {
