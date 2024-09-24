@@ -26,7 +26,7 @@ use icu_properties::{
     props::{PatternWhiteSpace, XidContinue, XidStart},
     CodePointSetData,
 };
-use icu_properties::{provider::*, PropertyParser, UnicodeProperty};
+use icu_properties::{provider::*, PropertyParser};
 use icu_provider::prelude::*;
 
 /// The kind of error that occurred.
@@ -1372,10 +1372,10 @@ where
     }
 
     fn try_load_ecma262_binary_set(&mut self, name: &str) -> Result<()> {
-        let prop = UnicodeProperty::parse_ecma262_name(name).ok_or(PEK::UnknownProperty)?;
-        let set = CodePointSetData::try_new_runtime_unstable(self.property_provider, prop)
-            .ok_or(PEK::UnknownProperty)?
-            .map_err(|_data_error| PEK::Internal)?;
+        let set =
+            CodePointSetData::try_new_for_ecma262_unstable(self.property_provider, name.as_bytes())
+                .ok_or(PEK::UnknownProperty)?
+                .map_err(|_data_error| PEK::Internal)?;
         self.single_set.add_set(&set.to_code_point_inversion_list());
         Ok(())
     }

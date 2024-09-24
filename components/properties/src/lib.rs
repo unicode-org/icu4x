@@ -81,7 +81,6 @@ pub use names::{
     PropertyParser, PropertyParserBorrowed,
 };
 mod runtime;
-pub use runtime::UnicodeProperty;
 
 pub mod bidi;
 // NOTE: The Pernosco debugger has special knowledge

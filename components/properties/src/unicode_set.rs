@@ -2,24 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! The functions in this module return a [`CodePointSetData`] containing
-//! the set of characters with a particular Unicode property.
-//!
-//! The descriptions of most properties are taken from [`TR44`], the documentation for the
-//! Unicode Character Database.  Some properties are instead defined in [`TR18`], the
-//! documentation for Unicode regular expressions. In particular, Annex C of this document
-//! defines properties for POSIX compatibility.
-//!
-//! [`CodePointSetData`]: crate::sets::CodePointSetData
-//! [`TR44`]: https://www.unicode.org/reports/tr44
-//! [`TR18`]: https://www.unicode.org/reports/tr18
-
 use crate::provider::*;
-use crate::*;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
-use runtime::UnicodeProperty;
 
 /// A wrapper around `UnicodeSet` data (characters and strings)
 #[derive(Debug)]
@@ -164,6 +150,4 @@ pub trait UnicodeSetProperty: crate::private::Sealed {
     #[doc(hidden)]
     #[cfg(feature = "compiled_data")]
     const SINGLETON: &'static PropertyUnicodeSetV1<'static>;
-    #[doc(hidden)]
-    const VALUE: UnicodeProperty;
 }
