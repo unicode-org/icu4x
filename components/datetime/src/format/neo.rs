@@ -158,7 +158,7 @@ where
         match provider.load_bound(req) {
             Ok(response) => {
                 self.inner = OptionalNames::SingleLength {
-                    payload: response.payload.cast(),
+                    payload: response.payload,
                     variables: arg_variables,
                 };
                 Ok(Ok(()))

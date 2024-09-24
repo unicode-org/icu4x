@@ -81,11 +81,12 @@ pub mod provider;
 pub mod rules;
 
 use core::cmp::{Ord, PartialOrd};
+use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 pub use operands::PluralOperands;
 use provider::CardinalV1Marker;
-use provider::ErasedPluralRulesV1Marker;
 use provider::OrdinalV1Marker;
+use provider::PluralRulesV1;
 use rules::runtime::test_rule;
 
 #[cfg(feature = "experimental")]
@@ -280,7 +281,7 @@ impl PluralCategory {
 /// [`Plural Type`]: PluralRuleType
 /// [`Plural Category`]: PluralCategory
 #[derive(Debug)]
-pub struct PluralRules(DataPayload<ErasedPluralRulesV1Marker>);
+pub struct PluralRules(DataPayload<ErasedMarker<PluralRulesV1<'static>>>);
 
 impl AsRef<PluralRules> for PluralRules {
     fn as_ref(&self) -> &PluralRules {

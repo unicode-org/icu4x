@@ -23,7 +23,6 @@ use alloc::vec::Vec;
 use core::fmt;
 use core::marker::PhantomData;
 use icu_provider::prelude::*;
-use icu_provider::DynamicDataMarker;
 use yoke::Yokeable;
 use zerofrom::ZeroFrom;
 use zerovec::ule::vartuple::VarTuple;
@@ -105,12 +104,6 @@ pub struct PluralRulesV1<'data> {
     /// Rule that matches [`PluralCategory::Many`](super::PluralCategory::Many), or `None` if not present.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub many: Option<Rule<'data>>,
-}
-
-pub(crate) struct ErasedPluralRulesV1Marker;
-
-impl DynamicDataMarker for ErasedPluralRulesV1Marker {
-    type DataStruct = PluralRulesV1<'static>;
 }
 
 #[cfg(any(feature = "datagen", feature = "experimental"))]

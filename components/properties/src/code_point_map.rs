@@ -16,6 +16,7 @@ use crate::provider::*;
 use crate::{code_point_set::CodePointSetData, props::GeneralCategoryGroup};
 use core::ops::RangeInclusive;
 use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
+use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 use zerovec::ule::UleError;
 
@@ -25,7 +26,7 @@ use zerovec::ule::UleError;
 /// [`CodePointMapDataBorrowed`].
 #[derive(Debug, Clone)]
 pub struct CodePointMapData<T: TrieValue> {
-    data: DataPayload<ErasedPropertyCodePointMapV1Marker<T>>,
+    data: DataPayload<ErasedMarker<PropertyCodePointMapV1<'static, T>>>,
 }
 
 impl<T: TrieValue> CodePointMapData<T> {
@@ -96,10 +97,8 @@ impl<T: TrieValue> CodePointMapData<T> {
         P: TrieValue,
     {
         self.data
-            .try_map_project::<ErasedPropertyCodePointMapV1Marker<P>, _, _>(move |data, _| {
-                data.try_into_converted()
-            })
-            .map(CodePointMapData::from_data)
+            .try_map_project(|data, _| data.try_into_converted())
+            .map(CodePointMapData::from_data::<ErasedMarker<PropertyCodePointMapV1<'static, P>>>)
     }
 
     /// Construct a new one from loaded data
@@ -115,9 +114,9 @@ impl<T: TrieValue> CodePointMapData<T> {
     /// Construct a new one an owned [`CodePointTrie`]
     pub fn from_code_point_trie(trie: CodePointTrie<'static, T>) -> Self {
         let set = PropertyCodePointMapV1::from_code_point_trie(trie);
-        CodePointMapData::from_data(
-            DataPayload::<ErasedPropertyCodePointMapV1Marker<T>>::from_owned(set),
-        )
+        CodePointMapData::from_data(DataPayload::<
+            ErasedMarker<PropertyCodePointMapV1<'static, T>>,
+        >::from_owned(set))
     }
 
     /// Convert this type to a [`CodePointTrie`] as a borrowed value.

@@ -6,15 +6,10 @@ use crate::props::*;
 use crate::provider::names::*;
 use core::marker::PhantomData;
 use icu_collections::codepointtrie::TrieValue;
+use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 use yoke::Yokeable;
 use zerovec::ule::VarULE;
-
-#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
-pub struct ErasedMarker<DataStruct: for<'a> Yokeable<'a>>(PhantomData<DataStruct>);
-impl<DataStruct: for<'a> Yokeable<'a>> DynamicDataMarker for ErasedMarker<DataStruct> {
-    type DataStruct = DataStruct;
-}
 
 /// A struct capable of looking up a property value from a string name.
 /// Access its data by calling [`Self::as_borrowed()`] and using the methods on

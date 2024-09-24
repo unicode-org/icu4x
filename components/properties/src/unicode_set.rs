@@ -17,19 +17,14 @@
 use crate::provider::*;
 use crate::*;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
+use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 use runtime::UnicodeProperty;
 
 /// A wrapper around `UnicodeSet` data (characters and strings)
 #[derive(Debug)]
 pub struct UnicodeSetData {
-    data: DataPayload<ErasedUnicodeSetlikeMarker>,
-}
-
-#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
-pub(crate) struct ErasedUnicodeSetlikeMarker;
-impl DynamicDataMarker for ErasedUnicodeSetlikeMarker {
-    type DataStruct = PropertyUnicodeSetV1<'static>;
+    data: DataPayload<ErasedMarker<PropertyUnicodeSetV1<'static>>>,
 }
 
 impl UnicodeSetData {
@@ -84,7 +79,9 @@ impl UnicodeSetData {
         set: CodePointInversionListAndStringList<'static>,
     ) -> Self {
         let set = PropertyUnicodeSetV1::from_code_point_inversion_list_string_list(set);
-        UnicodeSetData::from_data(DataPayload::<ErasedUnicodeSetlikeMarker>::from_owned(set))
+        UnicodeSetData::from_data(
+            DataPayload::<ErasedMarker<PropertyUnicodeSetV1<'static>>>::from_owned(set),
+        )
     }
 
     /// Convert this type to a [`CodePointInversionListAndStringList`] as a borrowed value.
