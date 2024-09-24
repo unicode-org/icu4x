@@ -405,12 +405,6 @@ pub enum PropertyCodePointSetV1<'data> {
     // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
 }
 
-#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
-pub(crate) struct ErasedPropertyCodePointSetV1Marker;
-impl DynamicDataMarker for ErasedPropertyCodePointSetV1Marker {
-    type DataStruct = PropertyCodePointSetV1<'static>;
-}
-
 // See CodePointSetData for documentation of these functions
 impl<'data> PropertyCodePointSetV1<'data> {
     #[inline]
@@ -487,12 +481,6 @@ pub enum PropertyCodePointMapV1<'data, T: TrieValue> {
     // new variants should go BELOW existing ones
     // Serde serializes based on variant name and index in the enum
     // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
-}
-
-#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
-pub(crate) struct ErasedPropertyCodePointMapV1Marker<T>(core::marker::PhantomData<T>);
-impl<T: TrieValue> DynamicDataMarker for ErasedPropertyCodePointMapV1Marker<T> {
-    type DataStruct = PropertyCodePointMapV1<'static, T>;
 }
 
 macro_rules! data_struct_generic {

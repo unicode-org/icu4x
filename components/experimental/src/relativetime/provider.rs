@@ -72,9 +72,3 @@ pub struct RelativeTimePatternDataV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub future: PluralElementsPackedCow<'data, SinglePlaceholderPattern>,
 }
-
-pub(crate) struct ErasedRelativeTimeFormatV1Marker;
-
-impl DynamicDataMarker for ErasedRelativeTimeFormatV1Marker {
-    type DataStruct = RelativeTimePatternDataV1<'static>;
-}

@@ -18,6 +18,7 @@ use crate::provider::*;
 use crate::runtime::UnicodeProperty;
 use core::ops::RangeInclusive;
 use icu_collections::codepointinvlist::CodePointInversionList;
+use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 
 /// A set of Unicode code points. Access its data via the borrowed version,
@@ -37,7 +38,7 @@ use icu_provider::prelude::*;
 /// ```
 #[derive(Debug)]
 pub struct CodePointSetData {
-    data: DataPayload<ErasedPropertyCodePointSetV1Marker>,
+    data: DataPayload<ErasedMarker<PropertyCodePointSetV1<'static>>>,
 }
 
 impl CodePointSetData {
@@ -85,7 +86,7 @@ impl CodePointSetData {
     pub fn from_code_point_inversion_list(set: CodePointInversionList<'static>) -> Self {
         let set = PropertyCodePointSetV1::from_code_point_inversion_list(set);
         CodePointSetData::from_data(
-            DataPayload::<ErasedPropertyCodePointSetV1Marker>::from_owned(set),
+            DataPayload::<ErasedMarker<PropertyCodePointSetV1<'static>>>::from_owned(set),
         )
     }
 

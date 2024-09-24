@@ -202,8 +202,7 @@ impl DatePatternSelectionData {
                 ),
                 ..Default::default()
             })?
-            .payload
-            .cast();
+            .payload;
         Ok(Self::SkeletonDate {
             skeleton: NeoDateSkeleton {
                 length: length.get::<Self>(),
@@ -324,8 +323,7 @@ impl OverlapPatternSelectionData {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(marker_attrs, locale),
                 ..Default::default()
             })?
-            .payload
-            .cast();
+            .payload;
         Ok(Self::SkeletonDateTime {
             date_skeleton,
             time_skeleton,
@@ -407,7 +405,7 @@ impl TimePatternSelectionData {
                 ),
                 ..Default::default()
             }) {
-                Ok(response) => Some(response.payload.cast()),
+                Ok(response) => Some(response.payload),
                 Err(DataError {
                     kind: DataErrorKind::IdentifierNotFound,
                     ..
@@ -417,16 +415,17 @@ impl TimePatternSelectionData {
         }
         let payload = match maybe_payload {
             Some(payload) => payload,
-            None => provider
-                .load_bound(DataRequest {
-                    id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                        components.id_str(),
-                        locale,
-                    ),
-                    ..Default::default()
-                })?
-                .payload
-                .cast(),
+            None => {
+                provider
+                    .load_bound(DataRequest {
+                        id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                            components.id_str(),
+                            locale,
+                        ),
+                        ..Default::default()
+                    })?
+                    .payload
+            }
         };
         Ok(Self::SkeletonTime {
             skeleton: NeoTimeSkeleton {

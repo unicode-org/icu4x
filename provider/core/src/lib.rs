@@ -150,7 +150,7 @@ pub mod marker {
 
     pub use super::marker_full::{
         data_marker_path, impl_data_provider_never_marker, DataMarkerPath, DataMarkerPathHash,
-        NeverMarker,
+        ErasedMarker, NeverMarker,
     };
 }
 
