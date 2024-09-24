@@ -4,7 +4,6 @@
 
 //! Data structures for packing of datetime patterns.
 
-use alloc::vec::Vec;
 use crate::{
     helpers::size_test,
     pattern::{
@@ -13,10 +12,11 @@ use crate::{
     },
     NeoSkeletonLength,
 };
+use alloc::vec::Vec;
 use icu_plurals::{provider::PluralElementsPackedULE, PluralElements};
 use zerovec::{VarZeroVec, ZeroSlice};
 
-use crate::pattern::runtime::{Pattern};
+use crate::pattern::runtime::Pattern;
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct LengthPluralElements<T> {
@@ -157,7 +157,11 @@ impl PackedSkeletonDataBuilder<'_> {
             &self.standard.short,
         ];
         let mut chunks = [0; 6];
-        for ((pattern, fallback), chunk) in variant_patterns.iter().zip(fallbacks.iter()).zip(chunks.iter_mut()) {
+        for ((pattern, fallback), chunk) in variant_patterns
+            .iter()
+            .zip(fallbacks.iter())
+            .zip(chunks.iter_mut())
+        {
             if let Some(pattern) = pattern {
                 if pattern != fallback {
                     *chunk = match elements.iter().position(|p| p == pattern) {
@@ -177,7 +181,12 @@ impl PackedSkeletonDataBuilder<'_> {
             // one pattern per table cell
             header |= 0x4;
             elements.truncate(s_offset);
-            elements.extend(variant_patterns.into_iter().zip(fallbacks.iter()).map(|(pattern, fallback)| pattern.unwrap_or(fallback)));
+            elements.extend(
+                variant_patterns
+                    .into_iter()
+                    .zip(fallbacks.iter())
+                    .map(|(pattern, fallback)| pattern.unwrap_or(fallback)),
+            );
         } else {
             // per-cell offsets
             let mut shift = 3;
@@ -188,7 +197,14 @@ impl PackedSkeletonDataBuilder<'_> {
         }
 
         // Now we can build the data representation
-        let elements = elements.iter().map(|plural_elements| plural_elements.as_ref().map(|pattern| (pattern.metadata.to_four_bit_metadata(), &*pattern.items))).collect::<Vec<_>>();
+        let elements = elements
+            .iter()
+            .map(|plural_elements| {
+                plural_elements
+                    .as_ref()
+                    .map(|pattern| (pattern.metadata.to_four_bit_metadata(), &*pattern.items))
+            })
+            .collect::<Vec<_>>();
         PackedSkeletonDataV2 {
             #[allow(clippy::unwrap_used)] // the header fits in 21 bits
             header: u32::try_from(header).unwrap(),
