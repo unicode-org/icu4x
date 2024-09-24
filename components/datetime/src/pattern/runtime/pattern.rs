@@ -11,7 +11,7 @@ use icu_plurals::provider::FourBitMetadata;
 use icu_provider::prelude::*;
 use zerovec::{ule::AsULE, ZeroSlice, ZeroVec};
 
-#[derive(Debug, PartialEq, Eq, Clone, Hash, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, PartialEq, Eq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::pattern::runtime))]
 #[zerovec::make_varule(PatternULE)]
@@ -32,7 +32,7 @@ pub struct PatternBorrowed<'data> {
     pub metadata: PatternMetadata,
 }
 
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[zerovec::make_ule(PatternMetadataULE)]
 #[zerovec::skip_derive(Ord)]
 pub struct PatternMetadata(u8);

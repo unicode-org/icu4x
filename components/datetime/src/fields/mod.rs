@@ -37,7 +37,7 @@ impl std::error::Error for Error {}
 /// A field within a date pattern string, also referred to as a date field. A date field is the
 /// repetition of a specific pattern character one or more times within the pattern string.
 /// The pattern character is known as the field symbol, which indicates the particular meaning for the field.
-#[derive(Debug, Eq, PartialEq, Hash, Clone, Copy, Ord, PartialOrd)]
+#[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::fields))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
