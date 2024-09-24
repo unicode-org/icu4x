@@ -78,12 +78,12 @@ size_test!(PackedPatternsV1, packed_skeleton_data_size, 32);
 ///
 /// The LMS value determines which pattern index is used for the first column:
 ///
-/// | LMS Value | Long Index | Medium Index | Short Index |
-/// |-----------|------------|--------------|-------------|
-/// | 0         | 0          | 0            | 0           |
-/// | 1         | 0          | 1            | 1           |
-/// | 2         | 0          | 0            | 1           |
-/// | 3         | 0          | 1            | 2           |
+/// | LMS Value   | Long Index | Medium Index | Short Index |
+/// |-------------|------------|--------------|-------------|
+/// | 0 (L=M=S)   | 0          | 0            | 0           |
+/// | 1 (L, M=S)  | 0          | 1            | 1           |
+/// | 2 (L=M, S)  | 0          | 0            | 1           |
+/// | 3 (L, M, S) | 0          | 1            | 2           |
 ///
 /// If bit 2 is 1 (Q=1), it means there is one pattern per table cell,
 /// with the index offset by the short index `S` from the table above.
@@ -120,6 +120,25 @@ pub struct PackedPatternsV1<'data> {
     pub elements: VarZeroVec<'data, PluralElementsPackedULE<ZeroSlice<PatternItem>>>,
 }
 
+mod constants {
+    /// Value when standard long, medium, and short are all the same
+    pub(super) const LMS: u32 = 0;
+    /// Value when standard medium is the same as short but not long
+    pub(super) const L_MS: u32 = 1;
+    /// Value when standard medium is the same as long but not short
+    pub(super) const LM_S: u32 = 2;
+    /// Bit that indicates that standard medium differs from standard long
+    pub(super) const M_DIFFERS: u32 = 0x1;
+    /// Bit that indicates that standard short differs from standard medium
+    pub(super) const S_DIFFERS: u32 = 0x2;
+    /// Bitmask over all LMS values
+    pub(super) const LMS_MASK: u32 = 0x3;
+    /// Bit that indicates whether there are per-cell chunks
+    pub(super) const Q_BIT: u32 = 0x4;
+    /// A mask applied to individual chunks (the largest possible chunk)
+    pub(super) const CHUNK_MASK: u32 = 0x7;
+}
+
 impl PackedPatternsBuilder<'_> {
     /// Builds a packed pattern representation from the builder.
     pub fn build(mut self) -> PackedPatternsV1<'static> {
@@ -132,12 +151,12 @@ impl PackedPatternsBuilder<'_> {
         let mut s_offset = 0;
         if self.standard.medium != self.standard.long {
             elements.push(&self.standard.medium);
-            header |= 0x1;
+            header |= constants::M_DIFFERS;
             s_offset += 1;
         }
         if self.standard.short != self.standard.medium {
             elements.push(&self.standard.short);
-            header |= 0x2;
+            header |= constants::S_DIFFERS;
             s_offset += 1;
         }
 
@@ -158,7 +177,7 @@ impl PackedPatternsBuilder<'_> {
             &self.standard.medium,
             &self.standard.short,
         ];
-        let mut chunks = [0; 6];
+        let mut chunks = [0u32; 6];
         for ((pattern, fallback), chunk) in variant_patterns
             .iter()
             .zip(fallbacks.iter())
@@ -167,10 +186,10 @@ impl PackedPatternsBuilder<'_> {
             if let Some(pattern) = pattern {
                 if pattern != fallback {
                     *chunk = match elements.iter().position(|p| p == pattern) {
-                        Some(i) => i + 1,
+                        Some(i) => i as u32 + 1,
                         None => {
                             elements.push(pattern);
-                            elements.len()
+                            elements.len() as u32
                         }
                     }
                 }
@@ -179,9 +198,9 @@ impl PackedPatternsBuilder<'_> {
 
         // Check to see if we need to switch to Q=1 mode
         #[allow(clippy::unwrap_used)] // the array is nonempty
-        if chunks.iter().max().unwrap() >= &0x8 {
+        if *chunks.iter().max().unwrap() > constants::CHUNK_MASK {
             // one pattern per table cell
-            header |= 0x4;
+            header |= constants::Q_BIT;
             elements.truncate(s_offset + 1);
             elements.extend(
                 variant_patterns
@@ -238,24 +257,24 @@ impl PackedPatternsV1<'_> {
     ) -> PatternBorrowed {
         use NeoSkeletonLength::*;
         use PackedSkeletonVariant::*;
-        let lms = self.header & 0x3;
+        let lms = self.header & constants::LMS_MASK;
         let pattern_index = if matches!(variant, Standard) {
             // Standard pattern (first column)
             match (length, lms) {
                 (Long, _) => 0,
-                (Medium, 0 | 2) => 0,
+                (Medium, constants::LMS | constants::LM_S) => 0,
                 (Medium, _) => 1,
-                (Short, 0) => 0,
-                (Short, 1 | 2) => 1,
+                (Short, constants::LMS) => 0,
+                (Short, constants::L_MS | constants::LM_S) => 1,
                 (Short, _) => 2,
             }
         } else {
             let s_offset = match lms {
-                0 => 0,
-                1 | 2 => 1,
+                constants::LMS => 0,
+                constants::L_MS | constants::LM_S => 1,
                 _ => 2,
             };
-            let q = self.header & 0x4;
+            let q = self.header & constants::Q_BIT;
             if q == 0 {
                 // per-cell offsets
                 let chunk_in_low_bits = match (length, variant) {
@@ -270,7 +289,7 @@ impl PackedPatternsV1<'_> {
                         return PatternBorrowed::DEFAULT;
                     }
                 };
-                let chunk = chunk_in_low_bits & 0x7;
+                let chunk = chunk_in_low_bits & constants::CHUNK_MASK;
                 if chunk == 0 {
                     // Fall back to standard with the same length
                     return self.get(length, Standard);
