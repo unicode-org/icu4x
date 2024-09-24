@@ -526,6 +526,11 @@ where
         }
         .unwrap_or(parts.default)
     }
+
+    /// Returns the value for the default ("other") plural variant.
+    pub fn get_default(&self) -> (FourBitMetadata, &V) {
+        self.as_parts().default
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
