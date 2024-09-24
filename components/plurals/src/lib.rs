@@ -970,6 +970,20 @@ impl<T> PluralElements<T> {
             explicit_one: self.0.explicit_one.map(f),
         })
     }
+
+    /// Converts from `&PluralElements<T>` to `PluralElements<&T>`.
+    pub fn as_ref(&self) -> PluralElements<&T> {
+        PluralElements(PluralElementsInner {
+            other: &self.0.other,
+            zero: self.0.zero.as_ref(),
+            one: self.0.one.as_ref(),
+            two: self.0.two.as_ref(),
+            few: self.0.few.as_ref(),
+            many: self.0.many.as_ref(),
+            explicit_zero: self.0.explicit_zero.as_ref(),
+            explicit_one: self.0.explicit_one.as_ref(),
+        })
+    }
 }
 
 impl<T: PartialEq> PluralElements<T> {
