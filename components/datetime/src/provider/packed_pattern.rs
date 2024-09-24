@@ -20,6 +20,8 @@ use crate::pattern::runtime::Pattern;
 
 /// A field of [`PackedPatternsBuilder`].
 #[derive(Debug, Clone, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))] // human-readable only
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))] // human-readable only
 pub struct LengthPluralElements<T> {
     /// The "long" length pattern plural elements.
     pub long: PluralElements<T>,
@@ -31,12 +33,19 @@ pub struct LengthPluralElements<T> {
 
 /// A builder for a [`PackedPatternsV1`].
 #[derive(Debug, Clone, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))] // human-readable only
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))] // human-readable only
 pub struct PackedPatternsBuilder<'a> {
     /// Patterns always available.
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub standard: LengthPluralElements<Pattern<'a>>,
     /// Patterns for variant 0. If `None`, falls back to standard.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
     pub variant0: Option<LengthPluralElements<Pattern<'a>>>,
     /// Patterns for variant 1. If `None`, falls back to standard.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
     pub variant1: Option<LengthPluralElements<Pattern<'a>>>,
 }
 
@@ -362,6 +371,61 @@ impl PackedPatternsV1<'_> {
     }
 }
 
+#[cfg(feature = "serde")]
+mod _serde {
+    use super::*;
+    use zerovec::VarZeroSlice;
+
+    #[cfg(feature = "serde")]
+    #[derive(serde::Deserialize)]
+    #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+    struct PackedPatternsMachine<'data> {
+        pub header: u32,
+        #[serde(borrow)]
+        pub elements: &'data VarZeroSlice<PluralElementsPackedULE<ZeroSlice<PatternItem>>>,
+    }
+
+    impl<'de, 'data> serde::Deserialize<'de> for PackedPatternsV1<'data>
+    where
+        'de: 'data,
+    {
+        fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where
+            D: serde::Deserializer<'de>,
+        {
+            if deserializer.is_human_readable() {
+                let builder = <PackedPatternsBuilder>::deserialize(deserializer)?;
+                Ok(builder.build())
+            } else {
+                let machine = <PackedPatternsMachine>::deserialize(deserializer)?;
+                Ok(Self {
+                    header: machine.header,
+                    elements: machine.elements.as_varzerovec(),
+                })
+            }
+        }
+    }
+
+    #[cfg(feature = "datagen")]
+    impl serde::Serialize for PackedPatternsV1<'_> {
+        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: serde::Serializer,
+        {
+            if serializer.is_human_readable() {
+                let builder = self.to_builder();
+                builder.serialize(serializer)
+            } else {
+                let machine = PackedPatternsMachine {
+                    header: self.header,
+                    elements: &*self.elements,
+                };
+                machine.serialize(serializer)
+            }
+        }
+    }
+}
+
 #[cfg(test)]
 pub mod tests {
     use super::*;
@@ -379,16 +443,20 @@ pub mod tests {
         "y MMMM",
     ];
 
-    #[test]
-    fn test_basic() {
-        let patterns = PATTERN_STRS
+    fn get_patterns() -> Vec<Pattern<'static>> {
+        PATTERN_STRS
             .iter()
             .map(|s| {
                 s.parse::<reference::Pattern>()
                     .unwrap()
                     .to_runtime_pattern()
             })
-            .collect::<Vec<_>>();
+            .collect()
+    }
+
+    #[test]
+    fn test_basic() {
+        let patterns = get_patterns();
         let mut it = patterns.iter().cloned();
         let lms0 = LengthPluralElements {
             long: PluralElements::new(it.next().unwrap()),
@@ -500,5 +568,46 @@ pub mod tests {
             let recovered_builder = packed.to_builder();
             assert_eq!(builder, recovered_builder);
         }
+    }
+
+    #[cfg(feature = "datagen")]
+    #[test]
+    fn test_serde() {
+        let patterns = get_patterns();
+        let lms0a = LengthPluralElements {
+            long: PluralElements::new(patterns[0].clone()),
+            medium: PluralElements::new(patterns[0].clone()),
+            short: PluralElements::new(patterns[1].clone()),
+        };
+        let lms1 = LengthPluralElements {
+            long: PluralElements::new(patterns[3].clone()),
+            medium: PluralElements::new(patterns[4].clone()),
+            short: PluralElements::new(patterns[5].clone()),
+        };
+
+        let builder = PackedPatternsBuilder {
+            standard: lms0a,
+            variant0: Some(lms1),
+            variant1: None,
+        };
+        let packed = builder.clone().build();
+
+        let bincode_bytes = bincode::serialize(&packed).unwrap();
+        assert_eq!(
+            bincode_bytes.as_slice(),
+            &[
+                26, 11, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 16, 0, 26, 0, 30, 0, 46,
+                0, 0, 128, 32, 1, 0, 0, 47, 128, 64, 1, 0, 0, 47, 128, 16, 1, 2, 128, 114, 2, 0, 0,
+                58, 128, 128, 2, 0, 128, 80, 1, 0, 128, 80, 1, 0, 0, 32, 128, 32, 3, 0, 0, 32, 128,
+                64, 1, 0, 128, 64, 2, 0, 0, 46, 128, 32, 2, 0, 0, 46, 128, 16, 2
+            ][..]
+        );
+        let bincode_recovered = bincode::deserialize::<PackedPatternsV1>(&bincode_bytes).unwrap();
+        assert_eq!(builder, bincode_recovered.to_builder());
+
+        let json_str = serde_json::to_string(&packed).unwrap();
+        assert_eq!(json_str, "{\"standard\":{\"long\":{\"other\":\"M/d/y\"},\"medium\":{\"other\":\"M/d/y\"},\"short\":{\"other\":\"HH:mm\"}},\"variant0\":{\"long\":{\"other\":\"E\"},\"medium\":{\"other\":\"E MMM d\"},\"short\":{\"other\":\"dd.MM.yy\"}}}");
+        let json_recovered = serde_json::from_str::<PackedPatternsV1>(&json_str).unwrap();
+        assert_eq!(builder, json_recovered.to_builder());
     }
 }
