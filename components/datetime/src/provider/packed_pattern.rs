@@ -4,8 +4,7 @@
 
 //! Data structures for packing of datetime patterns.
 
-use std::collections::HashSet;
-
+use alloc::vec::Vec;
 use crate::{
     helpers::size_test,
     pattern::{
@@ -14,26 +13,26 @@ use crate::{
     },
     NeoSkeletonLength,
 };
-use icu_plurals::{provider::PluralElementsPackedULE, PluralElements, PluralOperands};
+use icu_plurals::{provider::PluralElementsPackedULE, PluralElements};
 use zerovec::{VarZeroVec, ZeroSlice};
 
-use crate::pattern::runtime::{Pattern, PatternULE};
+use crate::pattern::runtime::{Pattern};
 
 #[derive(Debug, PartialEq, Eq)]
-pub struct LengthPluralElements<'a> {
-    pub long: PluralElements<Pattern<'a>>,
-    pub medium: PluralElements<Pattern<'a>>,
-    pub short: PluralElements<Pattern<'a>>,
+pub struct LengthPluralElements<T> {
+    pub long: PluralElements<T>,
+    pub medium: PluralElements<T>,
+    pub short: PluralElements<T>,
 }
 
 /// A builder for a [`PackedSkeletonDataV2`].
 #[derive(Debug, PartialEq, Eq)]
 pub struct PackedSkeletonDataBuilder<'a> {
-    pub standard: LengthPluralElements<'a>,
+    pub standard: LengthPluralElements<Pattern<'a>>,
     /// Patterns for variant 0. If `None`, falls back to standard.
-    pub variant0: Option<LengthPluralElements<'a>>,
+    pub variant0: Option<LengthPluralElements<Pattern<'a>>>,
     /// Patterns for variant 1. If `None`, falls back to standard.
-    pub variant1: Option<LengthPluralElements<'a>>,
+    pub variant1: Option<LengthPluralElements<Pattern<'a>>>,
 }
 
 size_test!(PackedSkeletonDataV2, packed_skeleton_data_size, 32);
@@ -119,12 +118,6 @@ pub struct PackedSkeletonDataV2<'data> {
     pub patterns: VarZeroVec<'data, PluralElementsPackedULE<ZeroSlice<PatternItem>>>,
 }
 
-impl<'a> LengthPluralElements<'a> {
-    fn iter_patterns(&self) -> impl Iterator<Item = &'_ PluralElements<Pattern<'a>>> + '_ {
-        [&self.long, &self.medium, &self.short].into_iter()
-    }
-}
-
 impl PackedSkeletonDataBuilder<'_> {
     /// Builds a packed pattern representation from the builder.
     pub fn build(mut self) -> PackedSkeletonDataV2<'static> {
@@ -132,63 +125,75 @@ impl PackedSkeletonDataBuilder<'_> {
 
         // Initialize the elements vector with the standard patterns.
         let mut elements = Vec::new();
-        elements.push(self.standard.long);
-        let mut lms = 0;
+        elements.push(&self.standard.long);
+        let mut header = 0;
         let mut s_offset = 0;
         if self.standard.medium != self.standard.long {
-            elements.push(self.standard.medium);
-            lms |= 0x1;
+            elements.push(&self.standard.medium);
+            header |= 0x1;
             s_offset += 1;
         }
         if self.standard.short != self.standard.medium {
-            elements.push(self.standard.short);
-            lms |= 0x2;
+            elements.push(&self.standard.short);
+            header |= 0x2;
             s_offset += 1;
         }
 
-        // Collect all patterns that could occur.
-        let mut all_elements_set = HashSet::new();
-        all_elements_set.extend(elements.iter());
-        if let Some(variant0) = self.variant0.as_ref() {
-            all_elements_set.extend(variant0.iter_patterns());
-        }
-        if let Some(variant1) = self.variant1.as_ref() {
-            all_elements_set.extend(variant1.iter_patterns());
+        // Fill in the variant patterns
+        let variant_patterns = [
+            self.variant0.as_ref().map(|v| &v.long),
+            self.variant0.as_ref().map(|v| &v.medium),
+            self.variant0.as_ref().map(|v| &v.short),
+            self.variant1.as_ref().map(|v| &v.long),
+            self.variant1.as_ref().map(|v| &v.medium),
+            self.variant1.as_ref().map(|v| &v.short),
+        ];
+        let fallbacks = [
+            &self.standard.long,
+            &self.standard.medium,
+            &self.standard.short,
+            &self.standard.long,
+            &self.standard.medium,
+            &self.standard.short,
+        ];
+        let mut chunks = [0; 6];
+        for ((pattern, fallback), chunk) in variant_patterns.iter().zip(fallbacks.iter()).zip(chunks.iter_mut()) {
+            if let Some(pattern) = pattern {
+                if pattern != fallback {
+                    *chunk = match elements.iter().position(|p| p == pattern) {
+                        Some(i) => i + 1,
+                        None => {
+                            elements.push(pattern);
+                            elements.len()
+                        }
+                    }
+                }
+            }
         }
 
-        todo!()
+        // Check to see if we need to switch to Q=1 mode
+        #[allow(clippy::unwrap_used)] // the array is nonempty
+        if chunks.iter().max().unwrap() >= &0x8 {
+            // one pattern per table cell
+            header |= 0x4;
+            elements.truncate(s_offset);
+            elements.extend(variant_patterns.into_iter().zip(fallbacks.iter()).map(|(pattern, fallback)| pattern.unwrap_or(fallback)));
+        } else {
+            // per-cell offsets
+            let mut shift = 3;
+            for chunk in chunks.iter() {
+                header |= chunk << shift;
+                shift += 3;
+            }
+        }
 
-        // let mut chunks = [0; 6];
-        // let [variant0_long, variant0_medium, variant0_short, variant1_long, variant1_medium, variant1_short] =
-        //     &mut chunks;
-        // if let Some(variant0) = self.variant0 {
-        //     if variant0.long != self.standard.long {
-        //         elements.push(variant0.long);
-        //         *variant0_long = elements.len();
-        //     }
-        //     if variant0.medium != self.standard.medium {
-        //         elements.push(variant0.medium);
-        //         *variant0_medium = elements.len();
-        //     }
-        //     if variant0.short != self.standard.short {
-        //         elements.push(variant0.short);
-        //         *variant0_short = elements.len();
-        //     }
-        // }
-        // if let Some(variant1) = self.variant1 {
-        //     if variant1.long != self.standard.long {
-        //         elements.push(variant1.long);
-        //         *variant1_long = elements.len();
-        //     }
-        //     if variant1.medium != self.standard.medium {
-        //         elements.push(variant1.medium);
-        //         *variant1_medium = elements.len();
-        //     }
-        //     if variant1.short != self.standard.short {
-        //         elements.push(variant1.short);
-        //         *variant1_short = elements.len();
-        //     }
-        // }
+        // Now we can build the data representation
+        let elements = elements.iter().map(|plural_elements| plural_elements.as_ref().map(|pattern| (pattern.metadata.to_four_bit_metadata(), &*pattern.items))).collect::<Vec<_>>();
+        PackedSkeletonDataV2 {
+            #[allow(clippy::unwrap_used)] // the header fits in 21 bits
+            header: u32::try_from(header).unwrap(),
+            patterns: VarZeroVec::from(&elements),
+        }
     }
 
     fn simplify(&mut self) {
