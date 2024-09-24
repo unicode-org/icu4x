@@ -111,15 +111,11 @@ size_test!(PackedSkeletonDataV2, packed_skeleton_data_size, 32);
 /// [`EraDisplay::Auto`]: crate::neo_skeleton::EraDisplay::Auto
 #[doc = packed_skeleton_data_size!()]
 #[derive(Debug, PartialEq, Eq, Clone)]
-// #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-// #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]
-// #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct PackedSkeletonDataV2<'data> {
     /// An encoding of which standard/variant cell corresponds to which entry
     /// in the patterns table. See class docs.
     pub header: u32,
     /// The list of patterns.
-    // #[cfg_attr(feature = "serde", serde(borrow))]
     pub elements: VarZeroVec<'data, PluralElementsPackedULE<ZeroSlice<PatternItem>>>,
 }
 
@@ -384,10 +380,15 @@ pub mod tests {
             medium: PluralElements::new(it.next().unwrap()),
             short: PluralElements::new(it.next().unwrap()),
         };
-        let lms3 = LengthPluralElements {
+        let lms0a = LengthPluralElements {
             long: PluralElements::new(patterns[0].clone()),
             medium: PluralElements::new(patterns[0].clone()),
             short: PluralElements::new(patterns[1].clone()),
+        };
+        let lms1a = LengthPluralElements {
+            long: PluralElements::new(patterns[3].clone()),
+            medium: PluralElements::new(patterns[4].clone()),
+            short: PluralElements::new(patterns[4].clone()),
         };
 
         {
@@ -438,13 +439,39 @@ pub mod tests {
         {
             // Some duplicate patterns and inheritance
             let builder = PackedSkeletonDataBuilder {
-                standard: lms3.clone(),
+                standard: lms0a.clone(),
                 variant0: Some(lms0.clone()),
                 variant1: Some(lms1.clone()),
             };
             let packed = builder.clone().build();
             assert_eq!(packed.header, 0x1AC682);
             assert_eq!(packed.elements.len(), 6);
+            let recovered_builder = packed.to_builder();
+            assert_eq!(builder, recovered_builder);
+        }
+        {
+            // Q = 1 with 8 patterns (min for Q = 1)
+            let builder = PackedSkeletonDataBuilder {
+                standard: lms0a.clone(),
+                variant0: Some(lms1.clone()),
+                variant1: Some(lms2.clone()),
+            };
+            let packed = builder.clone().build();
+            assert_eq!(packed.header, 6);
+            assert_eq!(packed.elements.len(), 8);
+            let recovered_builder = packed.to_builder();
+            assert_eq!(builder, recovered_builder);
+        }
+        {
+            // Q = 0 with 7 patterns (max for Q = 0)
+            let builder = PackedSkeletonDataBuilder {
+                standard: lms1a.clone(),
+                variant0: Some(lms0a.clone()),
+                variant1: Some(lms2.clone()),
+            };
+            let packed = builder.clone().build();
+            assert_eq!(packed.header, 0x1F58D9);
+            assert_eq!(packed.elements.len(), 7);
             let recovered_builder = packed.to_builder();
             assert_eq!(builder, recovered_builder);
         }
