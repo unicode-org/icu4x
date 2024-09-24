@@ -310,9 +310,8 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
                 marker: PhantomData,
             };
         }
-        let indices_bytes = slice.get_unchecked(
-            METADATA_WIDTH..METADATA_WIDTH + F::INDEX_WIDTH * (len as usize),
-        );
+        let indices_bytes =
+            slice.get_unchecked(METADATA_WIDTH..METADATA_WIDTH + F::INDEX_WIDTH * (len as usize));
         let things = slice.get_unchecked(METADATA_WIDTH + F::INDEX_WIDTH * (len as usize)..);
 
         VarZeroVecComponents {
