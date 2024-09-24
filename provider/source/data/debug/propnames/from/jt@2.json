@@ -1,16 +1,16 @@
 {
   "map": {
-    "c": 1,
-    "d": 2,
-    "dualjoining": 2,
-    "joincausing": 1,
-    "l": 3,
-    "leftjoining": 3,
-    "nonjoining": 0,
-    "r": 4,
-    "rightjoining": 4,
-    "t": 5,
-    "transparent": 5,
-    "u": 0
+    "C": 1,
+    "D": 2,
+    "Dual_Joining": 2,
+    "Join_Causing": 1,
+    "L": 3,
+    "Left_Joining": 3,
+    "Non_Joining": 0,
+    "R": 4,
+    "Right_Joining": 4,
+    "T": 5,
+    "Transparent": 5,
+    "U": 0
   }
 }

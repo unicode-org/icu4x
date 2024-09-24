@@ -1330,7 +1330,7 @@ where
                 .map_err(|_| PEK::Internal)?;
         let gc_value = name_map
             .as_borrowed()
-            .get(name)
+            .get_loose(name)
             .ok_or(PEK::UnknownProperty)?;
         // TODO(#3550): This could be cached; does not depend on name.
         let set = CodePointMapData::<GeneralCategory>::try_new_unstable(self.property_provider)
@@ -1347,7 +1347,7 @@ where
             .map_err(|_| PEK::Internal)?;
         name_map
             .as_borrowed()
-            .get(name)
+            .get_loose(name)
             .ok_or(PEK::UnknownProperty.into())
     }
 
@@ -1384,7 +1384,10 @@ where
         let parser =
             PropertyParser::<GraphemeClusterBreak>::try_new_unstable(self.property_provider)
                 .map_err(|_| PEK::Internal)?;
-        let gcb_value = parser.as_borrowed().get(name).ok_or(PEK::UnknownProperty)?;
+        let gcb_value = parser
+            .as_borrowed()
+            .get_loose(name)
+            .ok_or(PEK::UnknownProperty)?;
         // TODO(#3550): This could be cached; does not depend on name.
         let property_map =
             CodePointMapData::<GraphemeClusterBreak>::try_new_unstable(self.property_provider)
@@ -1397,7 +1400,10 @@ where
     fn try_load_sentence_break_set(&mut self, name: &str) -> Result<()> {
         let parser = PropertyParser::<SentenceBreak>::try_new_unstable(self.property_provider)
             .map_err(|_| PEK::Internal)?;
-        let sb_value = parser.as_borrowed().get(name).ok_or(PEK::UnknownProperty)?;
+        let sb_value = parser
+            .as_borrowed()
+            .get_loose(name)
+            .ok_or(PEK::UnknownProperty)?;
         // TODO(#3550): This could be cached; does not depend on name.
         let property_map =
             CodePointMapData::<SentenceBreak>::try_new_unstable(self.property_provider)
@@ -1410,7 +1416,10 @@ where
     fn try_load_word_break_set(&mut self, name: &str) -> Result<()> {
         let parser = PropertyParser::<WordBreak>::try_new_unstable(self.property_provider)
             .map_err(|_| PEK::Internal)?;
-        let wb_value = parser.as_borrowed().get(name).ok_or(PEK::UnknownProperty)?;
+        let wb_value = parser
+            .as_borrowed()
+            .get_loose(name)
+            .ok_or(PEK::UnknownProperty)?;
         // TODO(#3550): This could be cached; does not depend on name.
         let property_map = CodePointMapData::<WordBreak>::try_new_unstable(self.property_provider)
             .map_err(|_| PEK::Internal)?;

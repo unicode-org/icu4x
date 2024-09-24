@@ -12,33 +12,13 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use zerotrie::ZeroTrieSimpleAscii;
-
 use icu_locale_core::subtags::Script;
 use icu_provider::prelude::*;
 
+use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::ule::NichedOption;
 use zerovec::{VarZeroVec, ZeroMap, ZeroVec};
-/// Normalize a character based on the "loose matching" described in PropertyValueAliases.txt,
-/// returning `None` for skippable characters
-///
-/// ICU has [code for this][1] (and [during property lookup][2]) which we emulate.
-/// In particular, ICU only does normalization within ASCII, which makes sense since character names
-/// seem to be only ASCII.
-///
-/// [1]: https://github.com/unicode-org/icu/blob/288c4c7555915ce7b1fb675d94ddd495058fc039/icu4c/source/common/propname.cpp#L35
-/// [2]: https://github.com/unicode-org/icu/blob/288c4c7555915ce7b1fb675d94ddd495058fc039/icu4c/source/common/propname.cpp#L226-L230
-pub fn normalize_char(ch: u8) -> Option<u8> {
-    match ch {
-        // all ascii whitespace
-        ch if ch.is_ascii_whitespace() => None,
-        // underscores, hyphens, and the vertical tab character
-        // not covered by is_ascii_whitespace()
-        b'_' | b'-' | 0x0B => None,
-        // ignore case by lowercasing
-        ch => Some(ch.to_ascii_lowercase()),
-    }
-}
+
 /// A set of characters and strings which share a particular property value.
 ///
 /// <div class="stab unstable">

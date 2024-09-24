@@ -2920,15 +2920,7 @@ mod test_enumerated_property_completeness {
         let mut data: BTreeMap<_, _> = lookup
             .map
             .iter()
-            .map(|(name, value)| {
-                (
-                    value,
-                    (
-                        name,
-                        "Data",
-                    ),
-                )
-            })
+            .map(|(name, value)| (value, (name, "Data")))
             .collect();
 
         let consts = consts

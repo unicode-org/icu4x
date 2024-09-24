@@ -56,34 +56,12 @@ where
     let mut map = BTreeMap::new();
     for value in values {
         let discr = transform_u32(value.discr)? as usize;
-        map.insert(
-            value
-                .long
-                .as_bytes()
-                .iter()
-                .filter_map(|&ch| normalize_char(ch))
-                .collect::<Vec<_>>(),
-            discr,
-        );
+        map.insert(value.long.as_bytes(), discr);
         if let Some(ref short) = value.short {
-            map.insert(
-                short
-                    .as_bytes()
-                    .iter()
-                    .filter_map(|&ch| normalize_char(ch))
-                    .collect::<Vec<_>>(),
-                discr,
-            );
+            map.insert(short.as_bytes(), discr);
         }
         for alias in &value.aliases {
-            map.insert(
-                alias
-                    .as_bytes()
-                    .iter()
-                    .filter_map(|&ch| normalize_char(ch))
-                    .collect::<Vec<_>>(),
-                discr,
-            );
+            map.insert(alias.as_bytes(), discr);
         }
     }
     Ok(PropertyValueNameToEnumMapV1 {

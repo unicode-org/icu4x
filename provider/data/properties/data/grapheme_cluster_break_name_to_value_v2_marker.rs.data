@@ -4,7 +4,7 @@
 /// `icu`'s `_unstable` constructors.
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
-/// * 184B[^1] for the singleton data struct
+/// * 194B[^1] for the singleton data struct
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
 #[doc(hidden)]
@@ -16,7 +16,7 @@ macro_rules! __impl_grapheme_cluster_break_name_to_value_v2_marker {
         #[clippy::msrv = "1.71.1"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_GRAPHEME_CLUSTER_BREAK_NAME_TO_VALUE_V2_MARKER: &'static <icu::properties::provider::GraphemeClusterBreakNameToValueV2Marker as icu_provider::DynamicDataMarker>::DataStruct = &icu::properties::provider::names::PropertyValueNameToEnumMapV1 { map: zerotrie::ZeroTrieSimpleAscii { store: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xCCcegloprstvxz\x0E0CLQ\\q\x80\x81\x82\x84\xC3nor\x01\x07\x81ntrol\x81\x82\xC3bmx\r\x16\x8D\xC2ag\x07se\x8Dgaz\x8E\x8E\x8Fodifier\x8F\x83tend\x83\xC2al\x03z\x90\0ueafterzwj\x90\0\x84\xC2fv\x01\x85\x86t\x87ther\x80\xC2pr\x01\x8Bepend\x8B\xC2ei\x10gionalindicator\x8C\x8C\xC2mp\x01\x8Aacingmark\x8A\x88\x89x\x80wj\x90\x01") } } };
+            pub const SINGLETON_GRAPHEME_CLUSTER_BREAK_NAME_TO_VALUE_V2_MARKER: &'static <icu::properties::provider::GraphemeClusterBreakNameToValueV2Marker as icu_provider::DynamicDataMarker>::DataStruct = &icu::properties::provider::names::PropertyValueNameToEnumMapV1 { map: zerotrie::ZeroTrieSimpleAscii { store: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xCCCEGLOPRSTVXZ\x0E7LUZe{\x8A\x8B\x8C\x8E\xC3NRo\x01\x02\x81\x82ntrol\x81\xC5BMX_x\x03\x04\x05\x1A\x8DG\x8E\x8F\x83\xC2BM\tase\x8D_GAZ\x8Eodifier\x8Ftend\x83\xC2Al\x03Z\x90\0ue_After_Zwj\x90\0\x84\xC2FV\x01\x85\x86T\x87ther\x80\xC2Pr\x01\x8Bepend\x8B\xC2Ie\x01\x8Cgional_Indicator\x8C\xC2Mp\x01\x8AacingMark\x8A\x88\x89X\x80WJ\x90\x01") } } };
         }
         #[clippy::msrv = "1.71.1"]
         impl icu_provider::DataProvider<icu::properties::provider::GraphemeClusterBreakNameToValueV2Marker> for $provider {

@@ -254,7 +254,7 @@ fn generate_rule_break_data(
                     // Katakana will use UAX#29 rules instead of dictionary.
 
                     let prop = wb_name_to_enum
-                        .get(&p.name)
+                        .get_loose(&p.name)
                         .expect("property name should be valid!");
                     for c in 0..(CODEPOINT_TABLE_LEN as u32) {
                         if wb.get32(c) == prop {
@@ -294,7 +294,7 @@ fn generate_rule_break_data(
                     if p.name == "InCBConsonant" || p.name == "InCBLinker" || p.name == "InCBExtend"
                     {
                         let gcb_extend = gcb_name_to_enum
-                            .get("Extend")
+                            .get_loose("Extend")
                             .expect("property name should be valid!");
 
                         for i in 0..(CODEPOINT_TABLE_LEN as u32) {
@@ -336,7 +336,7 @@ fn generate_rule_break_data(
                     }
 
                     let prop = gcb_name_to_enum
-                        .get(&p.name)
+                        .get_loose(&p.name)
                         .expect("property name should be valid!");
                     for c in 0..(CODEPOINT_TABLE_LEN as u32) {
                         if gb.get32(c) == prop {
@@ -348,7 +348,7 @@ fn generate_rule_break_data(
 
                 "sentence" => {
                     let prop = sb_name_to_enum
-                        .get(&p.name)
+                        .get_loose(&p.name)
                         .expect("property name should be valid!");
                     for c in 0..(CODEPOINT_TABLE_LEN as u32) {
                         if sb.get32(c) == prop {
@@ -447,7 +447,7 @@ fn generate_rule_break_data(
                     }
 
                     let prop = lb_name_to_enum
-                        .get(&p.name)
+                        .get_loose(&p.name)
                         .expect("property name should be valid!");
                     for c in 0..(CODEPOINT_TABLE_LEN as u32) {
                         if lb.get32(c) == prop {
@@ -458,7 +458,7 @@ fn generate_rule_break_data(
                     if p.name == "AL" {
                         // LB1: SG has no special rules.
                         let prop = lb_name_to_enum
-                            .get("SG")
+                            .get_loose("SG")
                             .expect("property name should be valid!");
                         for c in 0..(CODEPOINT_TABLE_LEN as u32) {
                             if lb.get32(c) == prop {

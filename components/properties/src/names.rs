@@ -8,6 +8,7 @@ use core::marker::PhantomData;
 use icu_collections::codepointtrie::TrieValue;
 use icu_provider::prelude::*;
 use yoke::Yokeable;
+use zerotrie::cursor::ZeroTrieSimpleAsciiCursor;
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub struct ErasedMarker<DataStruct: for<'a> Yokeable<'a>>(PhantomData<DataStruct>);
@@ -22,8 +23,9 @@ impl<DataStruct: for<'a> Yokeable<'a>> DynamicDataMarker for ErasedMarker<DataSt
 /// The name can be a short name (`Lu`), a long name(`Uppercase_Letter`),
 /// or an alias.
 ///
-/// Property names are parsed using "loose matching", where the name is allowed
-/// to deviate in terms of ASCII casing, whitespace, underscores, and hyphens.
+/// Property names can be looked up using "strict" matching (looking for a name
+/// that matches exactly), or "loose matching", where the name is allowed to deviate
+/// in terms of ASCII casing, whitespace, underscores, and hyphens.
 ///
 /// # Example
 ///
@@ -34,29 +36,31 @@ impl<DataStruct: for<'a> Yokeable<'a>> DynamicDataMarker for ErasedMarker<DataSt
 /// let lookup = PropertyParser::<GeneralCategory>::new();
 /// // short name for value
 /// assert_eq!(
-///     lookup.get("Lu"),
+///     lookup.get_strict("Lu"),
 ///     Some(GeneralCategory::UppercaseLetter)
 /// );
 /// assert_eq!(
-///     lookup.get("Pd"),
+///     lookup.get_strict("Pd"),
 ///     Some(GeneralCategory::DashPunctuation)
 /// );
 /// // long name for value
 /// assert_eq!(
-///     lookup.get("Uppercase_Letter"),
+///     lookup.get_strict("Uppercase_Letter"),
 ///     Some(GeneralCategory::UppercaseLetter)
 /// );
 /// assert_eq!(
-///     lookup.get("Dash_Punctuation"),
+///     lookup.get_strict("Dash_Punctuation"),
 ///     Some(GeneralCategory::DashPunctuation)
 /// );
+/// // name has incorrect casing
+/// assert_eq!(lookup.get_strict("dashpunctuation"), None);
 /// // loose matching of name
 /// assert_eq!(
-///     lookup.get("dash-punctuation"),
+///     lookup.get_loose("dash-punctuation"),
 ///     Some(GeneralCategory::DashPunctuation)
 /// );
 /// // fake property
-/// assert_eq!(lookup.get("Animated_Gif"), None);
+/// assert_eq!(lookup.get_strict("Animated_Gif"), None);
 /// ```
 #[derive(Debug)]
 pub struct PropertyParser<T> {
@@ -105,7 +109,7 @@ impl<T> PropertyParser<T> {
 
     /// Construct a borrowed version of this type that can be queried.
     ///
-    /// This avoids a potential small underlying cost per API call (like `get()`) by consolidating it
+    /// This avoids a potential small underlying cost per API call (like `get_strict()`) by consolidating it
     /// up front.
     #[inline]
     pub fn as_borrowed(&self) -> PropertyParserBorrowed<'_, T> {
@@ -125,6 +129,58 @@ impl<T> PropertyParser<T> {
 }
 
 impl<T: TrieValue> PropertyParserBorrowed<'_, T> {
+    /// Get the property value as a u16, doing a strict search looking for
+    /// names that match exactly
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::PropertyParser;
+    /// use icu::properties::props::GeneralCategory;
+    ///
+    /// let lookup = PropertyParser::<GeneralCategory>::new();
+    /// assert_eq!(
+    ///     lookup.get_strict_u16("Lu"),
+    ///     Some(GeneralCategory::UppercaseLetter as u16)
+    /// );
+    /// assert_eq!(
+    ///     lookup.get_strict_u16("Uppercase_Letter"),
+    ///     Some(GeneralCategory::UppercaseLetter as u16)
+    /// );
+    /// // does not do loose matching
+    /// assert_eq!(lookup.get_strict_u16("UppercaseLetter"), None);
+    /// ```
+    #[inline]
+    pub fn get_strict_u16(&self, name: &str) -> Option<u16> {
+        get_strict_u16(self.map, name)
+    }
+
+    /// Get the property value as a `T`, doing a strict search looking for
+    /// names that match exactly
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::PropertyParser;
+    /// use icu::properties::props::GeneralCategory;
+    ///
+    /// let lookup = PropertyParser::<GeneralCategory>::new();
+    /// assert_eq!(
+    ///     lookup.get_strict("Lu"),
+    ///     Some(GeneralCategory::UppercaseLetter)
+    /// );
+    /// assert_eq!(
+    ///     lookup.get_strict("Uppercase_Letter"),
+    ///     Some(GeneralCategory::UppercaseLetter)
+    /// );
+    /// // does not do loose matching
+    /// assert_eq!(lookup.get_strict("UppercaseLetter"), None);
+    /// ```
+    #[inline]
+    pub fn get_strict(&self, name: &str) -> Option<T> {
+        T::try_from_u32(self.get_strict_u16(name)? as u32).ok()
+    }
+
     /// Get the property value as a u16, doing a loose search looking for
     /// names that match case-insensitively, ignoring ASCII hyphens, underscores, and
     /// whitespaces.
@@ -137,22 +193,22 @@ impl<T: TrieValue> PropertyParserBorrowed<'_, T> {
     ///
     /// let lookup = PropertyParser::<GeneralCategory>::new();
     /// assert_eq!(
-    ///     lookup.get_u16("Lu"),
+    ///     lookup.get_loose_u16("Lu"),
     ///     Some(GeneralCategory::UppercaseLetter as u16)
     /// );
     /// assert_eq!(
-    ///     lookup.get_u16("Uppercase_Letter"),
+    ///     lookup.get_loose_u16("Uppercase_Letter"),
     ///     Some(GeneralCategory::UppercaseLetter as u16)
     /// );
     /// // does do loose matching
     /// assert_eq!(
-    ///     lookup.get_u16("UppercaseLetter"),
+    ///     lookup.get_loose_u16("UppercaseLetter"),
     ///     Some(GeneralCategory::UppercaseLetter as u16)
     /// );
     /// ```
     #[inline]
-    pub fn get_u16(&self, name: &str) -> Option<u16> {
-        get_u16(self.map, name)
+    pub fn get_loose_u16(&self, name: &str) -> Option<u16> {
+        get_loose_u16(self.map, name)
     }
 
     /// Get the property value as a `T`, doing a loose search looking for
@@ -163,26 +219,28 @@ impl<T: TrieValue> PropertyParserBorrowed<'_, T> {
     ///
     /// ```
     /// use icu::properties::PropertyParser;
-    /// use icu::properties::props::GeneralCategory;
+    /// use icu::properties::props::{GeneralCategory, GraphemeClusterBreak};
     ///
     /// let lookup = PropertyParser::<GeneralCategory>::new();
     /// assert_eq!(
-    ///     lookup.get("Lu"),
+    ///     lookup.get_loose("Lu"),
     ///     Some(GeneralCategory::UppercaseLetter)
     /// );
     /// assert_eq!(
-    ///     lookup.get("Uppercase_Letter"),
+    ///     lookup.get_loose("Uppercase_Letter"),
     ///     Some(GeneralCategory::UppercaseLetter)
     /// );
     /// // does do loose matching
     /// assert_eq!(
-    ///     lookup.get("UppercaseLetter"),
+    ///     lookup.get_loose("UppercaseLetter"),
     ///     Some(GeneralCategory::UppercaseLetter)
     /// );
+    /// assert_eq!(PropertyParser::<GraphemeClusterBreak>::new().get_loose("Extend"),
+    /// Some(GraphemeClusterBreak::Extend));
     /// ```
     #[inline]
-    pub fn get(&self, name: &str) -> Option<T> {
-        T::try_from_u32(self.get_u16(name)? as u32).ok()
+    pub fn get_loose(&self, name: &str) -> Option<T> {
+        T::try_from_u32(self.get_loose_u16(name)? as u32).ok()
     }
 }
 
@@ -200,17 +258,56 @@ impl<T: TrieValue> PropertyParserBorrowed<'static, T> {
 }
 
 /// Avoid monomorphizing multiple copies of this function
-fn get_u16(payload: &PropertyValueNameToEnumMapV1<'_>, name: &str) -> Option<u16> {
-    let mut cursor = payload.map.cursor();
+fn get_strict_u16(payload: &PropertyValueNameToEnumMapV1<'_>, name: &str) -> Option<u16> {
+    payload.map.get(name).and_then(|i| i.try_into().ok())
+}
 
-    for &ascii in name.as_bytes() {
-        let Some(normalized) = normalize_char(ascii) else {
-            continue;
+/// Avoid monomorphizing multiple copies of this function
+fn get_loose_u16(payload: &PropertyValueNameToEnumMapV1<'_>, name: &str) -> Option<u16> {
+    fn recurse(mut cursor: ZeroTrieSimpleAsciiCursor, name: &[u8]) -> Option<usize> {
+        if cursor.is_empty() {
+            return None;
+        }
+
+        // Skip whitespace, underscore, hyphen in trie.
+        for skip in [b'\t', b'\n', b'\x0C', b'\r', b' ', 0x0B, b'_', b'-'] {
+            let mut skip_cursor = cursor.clone();
+            skip_cursor.step(skip);
+            if let Some(r) = recurse(skip_cursor, name) {
+                return Some(r);
+            }
+        }
+
+        // Skip whitespace, underscore, hyphen in input
+        #[allow(clippy::indexing_slicing)] // valid index
+        let name = &name[name
+            .iter()
+            .position(|&ascii| {
+                !matches!(
+                    ascii,
+                    b'\t' | b'\n' | b'\x0C' | b'\r' | b' ' | 0x0B | b'_' | b'-'
+                )
+            })
+            .unwrap_or(name.len())..];
+
+        let Some((&ascii, rest)) = name.split_first() else {
+            return cursor.take_value();
         };
-        cursor.step(normalized);
+
+        let mut other_case_cursor = cursor.clone();
+        cursor.step(ascii);
+        other_case_cursor.step(if ascii.is_ascii_lowercase() {
+            ascii.to_ascii_uppercase()
+        } else {
+            ascii.to_ascii_lowercase()
+        });
+        // This uses the call stack as the DFS stack. The recursion will terminate as
+        // rest's length is strictly shrinking. The call stack's depth is limited by
+        // name.len().
+        recurse(cursor, rest).or_else(|| recurse(other_case_cursor, rest))
     }
 
-    cursor.take_value().and_then(|i| i.try_into().ok())
+    recurse(payload.map.cursor(), name.as_bytes()).and_then(|i| i.try_into().ok())
 }
 
 /// A struct capable of looking up a property name from a value
