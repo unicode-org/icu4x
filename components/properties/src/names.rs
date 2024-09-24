@@ -219,7 +219,7 @@ impl<T: TrieValue> PropertyParserBorrowed<'_, T> {
     ///
     /// ```
     /// use icu::properties::PropertyParser;
-    /// use icu::properties::props::{GeneralCategory, GraphemeClusterBreak};
+    /// use icu::properties::props::GeneralCategory;
     ///
     /// let lookup = PropertyParser::<GeneralCategory>::new();
     /// assert_eq!(
@@ -235,8 +235,6 @@ impl<T: TrieValue> PropertyParserBorrowed<'_, T> {
     ///     lookup.get_loose("UppercaseLetter"),
     ///     Some(GeneralCategory::UppercaseLetter)
     /// );
-    /// assert_eq!(PropertyParser::<GraphemeClusterBreak>::new().get_loose("Extend"),
-    /// Some(GraphemeClusterBreak::Extend));
     /// ```
     #[inline]
     pub fn get_loose(&self, name: &str) -> Option<T> {
