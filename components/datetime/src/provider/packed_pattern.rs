@@ -238,7 +238,7 @@ impl PackedSkeletonDataV2<'_> {
         &self,
         length: NeoSkeletonLength,
         variant: PackedSkeletonVariant,
-    ) -> Option<PatternBorrowed> {
+    ) -> PatternBorrowed {
         use NeoSkeletonLength::*;
         use PackedSkeletonVariant::*;
         let lms = self.header & 0x3;
@@ -270,7 +270,7 @@ impl PackedSkeletonDataV2<'_> {
                     (Short, Variant1) => self.header >> 18,
                     (_, Standard) => {
                         debug_assert!(false, "unreachable");
-                        return None;
+                        return PatternBorrowed::DEFAULT;
                     }
                 };
                 let chunk = chunk_in_low_bits & 0x7;
@@ -290,7 +290,7 @@ impl PackedSkeletonDataV2<'_> {
                     (Short, Variant1) => 6,
                     (_, Standard) => {
                         debug_assert!(false, "unreachable");
-                        return None;
+                        return PatternBorrowed::DEFAULT;
                     }
                 };
                 s_offset + additional_offset
@@ -298,13 +298,13 @@ impl PackedSkeletonDataV2<'_> {
         };
         let Some(plural_elements) = self.elements.get(pattern_index as usize) else {
             debug_assert!(false, "unreachable");
-            return None;
+            return PatternBorrowed::DEFAULT;
         };
         let (metadata, items) = plural_elements.get_default();
-        Some(PatternBorrowed {
+        PatternBorrowed {
             metadata: PatternMetadata::from_u8(metadata.get()),
             items,
-        })
+        }
     }
 
     fn get_as_plural_elements(
@@ -312,7 +312,7 @@ impl PackedSkeletonDataV2<'_> {
         length: NeoSkeletonLength,
         variant: PackedSkeletonVariant,
     ) -> PluralElements<Pattern> {
-        PluralElements::new(self.get(length, variant).unwrap().as_pattern())
+        PluralElements::new(self.get(length, variant).as_pattern())
     }
 
     /// Converts this packed data to a builder that can be mutated.
