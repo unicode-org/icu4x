@@ -1,5 +1,5 @@
 #!/bin/sh
-cargo run -p icu4x-datagen --features experimental_components -- \
+cargo run -p icu4x-datagen --features experimental -- \
 --markers TransliteratorRulesV1Marker \
 --locales full \
 --deduplication none \
