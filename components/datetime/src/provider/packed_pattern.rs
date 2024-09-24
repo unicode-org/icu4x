@@ -38,6 +38,7 @@ pub struct LengthPluralElements<T> {
 pub struct PackedPatternsBuilder<'a> {
     /// Patterns always available.
     #[cfg_attr(feature = "serde", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(flatten))]
     pub standard: LengthPluralElements<Pattern<'a>>,
     /// Patterns for variant 0. If `None`, falls back to standard.
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -606,7 +607,7 @@ pub mod tests {
         assert_eq!(builder, bincode_recovered.to_builder());
 
         let json_str = serde_json::to_string(&packed).unwrap();
-        assert_eq!(json_str, "{\"standard\":{\"long\":{\"other\":\"M/d/y\"},\"medium\":{\"other\":\"M/d/y\"},\"short\":{\"other\":\"HH:mm\"}},\"variant0\":{\"long\":{\"other\":\"E\"},\"medium\":{\"other\":\"E MMM d\"},\"short\":{\"other\":\"dd.MM.yy\"}}}");
+        assert_eq!(json_str, "{\"long\":{\"other\":\"M/d/y\"},\"medium\":{\"other\":\"M/d/y\"},\"short\":{\"other\":\"HH:mm\"},\"variant0\":{\"long\":{\"other\":\"E\"},\"medium\":{\"other\":\"E MMM d\"},\"short\":{\"other\":\"dd.MM.yy\"}}}");
         let json_recovered = serde_json::from_str::<PackedPatternsV1>(&json_str).unwrap();
         assert_eq!(builder, json_recovered.to_builder());
     }
