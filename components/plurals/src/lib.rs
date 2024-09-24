@@ -878,12 +878,18 @@ where
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize), serde(transparent))]
 /// A bag of values for different plural cases.
+///
+/// # Serialization
+///
+/// Although this type implements Serde traits, ICU4X developers and clients
+/// seeking a more efficient bitpacked representation should consider
+/// [`crate::provider::PluralElementsPackedCow`].
 pub struct PluralElements<T>(PluralElementsInner<T>);
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 pub(crate) struct PluralElementsInner<T> {
     #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
     zero: Option<T>,
