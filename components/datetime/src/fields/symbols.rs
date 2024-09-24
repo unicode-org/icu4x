@@ -33,7 +33,7 @@ impl std::error::Error for SymbolError {}
 /// `Year`, `Month`, `Hour`.  Within the [`Hour`] field type, examples of field symbols are: [`Hour::H12`],
 /// [`Hour::H24`]. Each field symbol is represented within the date formatting pattern string
 /// by a distinct character from the set of `A..Z` and `a..z`.
-#[derive(Debug, Eq, PartialEq, Clone, Copy)]
+#[derive(Debug, Eq, PartialEq, Hash, Clone, Copy)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::fields))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -397,7 +397,7 @@ macro_rules! field_type {
         }
     );
     ($(#[$enum_attr:meta])* $i:ident; { $( $(#[$variant_attr:meta])* $key:literal => $val:ident = $idx:expr,)* }; $ule_name:ident) => (
-        #[derive(Debug, Eq, PartialEq, Ord, PartialOrd, Clone, Copy, yoke::Yokeable, zerofrom::ZeroFrom)]
+        #[derive(Debug, Eq, PartialEq, Hash, Ord, PartialOrd, Clone, Copy, yoke::Yokeable, zerofrom::ZeroFrom)]
         // FIXME: This should be replaced with a custom derive.
         // See: https://github.com/unicode-org/icu4x/issues/1044
         #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -729,7 +729,7 @@ impl LengthType for TimeZone {
 
 /// A second field with fractional digits.
 #[derive(
-    Debug, Eq, PartialEq, Ord, PartialOrd, Clone, Copy, yoke::Yokeable, zerofrom::ZeroFrom,
+    Debug, Eq, PartialEq, Hash, Ord, PartialOrd, Clone, Copy, yoke::Yokeable, zerofrom::ZeroFrom,
 )]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::fields))]

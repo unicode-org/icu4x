@@ -10,7 +10,7 @@ use crate::pattern::PatternError;
 use core::convert::TryFrom;
 pub use generic::GenericPatternItem;
 
-#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::pattern::item))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
