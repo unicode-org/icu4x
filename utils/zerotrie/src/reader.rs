@@ -367,6 +367,7 @@ pub(crate) fn get_parameterized<T: ZeroTrieWithOptions + ?Sized>(
             if matches!(T::OPTIONS.phf_mode, PhfMode::BinaryOnly) || x < 16 {
                 // binary search
                 (search, trie) = trie.debug_split_at(x);
+                // TODO(#5584): Consider making all of these have the same order of elements
                 let bsearch_result =
                     if matches!(T::OPTIONS.case_sensitivity, CaseSensitivity::IgnoreCase) {
                         if matches!(T::OPTIONS.lookup_strictness, LookupStrictness::Normal) {
