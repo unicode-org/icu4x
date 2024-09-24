@@ -18,7 +18,7 @@ use zerovec::{VarZeroVec, ZeroSlice};
 
 use crate::pattern::runtime::Pattern;
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct LengthPluralElements<T> {
     pub long: PluralElements<T>,
     pub medium: PluralElements<T>,
@@ -26,7 +26,7 @@ pub struct LengthPluralElements<T> {
 }
 
 /// A builder for a [`PackedSkeletonDataV2`].
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PackedSkeletonDataBuilder<'a> {
     pub standard: LengthPluralElements<Pattern<'a>>,
     /// Patterns for variant 0. If `None`, falls back to standard.
@@ -106,16 +106,16 @@ size_test!(PackedSkeletonDataV2, packed_skeleton_data_size, 32);
 /// [`EraDisplay::Auto`]: crate::neo_skeleton::EraDisplay::Auto
 #[doc = packed_skeleton_data_size!()]
 #[derive(Debug, PartialEq, Eq, Clone)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+// #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+// #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]
+// #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct PackedSkeletonDataV2<'data> {
     /// An encoding of which standard/variant cell corresponds to which entry
     /// in the patterns table. See class docs.
     pub header: u32,
     /// The list of patterns.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub patterns: VarZeroVec<'data, PluralElementsPackedULE<ZeroSlice<PatternItem>>>,
+    // #[cfg_attr(feature = "serde", serde(borrow))]
+    pub elements: VarZeroVec<'data, PluralElementsPackedULE<ZeroSlice<PatternItem>>>,
 }
 
 impl PackedSkeletonDataBuilder<'_> {
@@ -180,7 +180,7 @@ impl PackedSkeletonDataBuilder<'_> {
         if chunks.iter().max().unwrap() >= &0x8 {
             // one pattern per table cell
             header |= 0x4;
-            elements.truncate(s_offset);
+            elements.truncate(s_offset + 1);
             elements.extend(
                 variant_patterns
                     .into_iter()
@@ -208,7 +208,7 @@ impl PackedSkeletonDataBuilder<'_> {
         PackedSkeletonDataV2 {
             #[allow(clippy::unwrap_used)] // the header fits in 21 bits
             header: u32::try_from(header).unwrap(),
-            patterns: VarZeroVec::from(&elements),
+            elements: VarZeroVec::from(&elements),
         }
     }
 
@@ -246,10 +246,6 @@ impl PackedSkeletonDataV2<'_> {
                 (Short, 0) => 0,
                 (Short, 1 | 2) => 1,
                 (Short, _) => 2,
-                _ => {
-                    debug_assert!(false, "unreachable");
-                    return None;
-                }
             }
         } else {
             let s_offset = match lms {
@@ -277,7 +273,7 @@ impl PackedSkeletonDataV2<'_> {
                     // Fall back to standard with the same length
                     return self.get(length, Standard);
                 }
-                s_offset + chunk - 1
+                chunk - 1
             } else {
                 // one pattern per table cell
                 let additional_offset = match (length, variant) {
@@ -295,8 +291,11 @@ impl PackedSkeletonDataV2<'_> {
                 s_offset + additional_offset
             }
         };
-        let packed_plurals = self.patterns.get(pattern_index as usize)?;
-        let (metadata, items) = packed_plurals.get_default();
+        let Some(plural_elements) = self.elements.get(pattern_index as usize) else {
+            debug_assert!(false, "unreachable");
+            return None;
+        };
+        let (metadata, items) = plural_elements.get_default();
         Some(PatternBorrowed {
             metadata: PatternMetadata::from_u8(metadata.get()),
             items,
@@ -334,5 +333,108 @@ impl PackedSkeletonDataV2<'_> {
         };
         builder.simplify();
         builder
+    }
+}
+
+#[cfg(test)]
+pub mod tests {
+    use super::*;
+    use crate::pattern::reference;
+
+    const PATTERN_STRS: &[&str] = &[
+        "M/d/y",
+        "HH:mm",
+        "MMM d y G",
+        "E",
+        "E MMM d",
+        "dd.MM.yy",
+        "h a",
+        "hh:mm:ss B",
+        "y MMMM",
+    ];
+
+    #[test]
+    fn test_basic() {
+        let patterns = PATTERN_STRS.iter().map(|s| s.parse::<reference::Pattern>().unwrap().to_runtime_pattern()).collect::<Vec<_>>();
+        let mut it = patterns.iter().cloned();
+        let lms0 = LengthPluralElements {
+            long: PluralElements::new(it.next().unwrap()),
+            medium: PluralElements::new(it.next().unwrap()),
+            short: PluralElements::new(it.next().unwrap()),
+        };
+        let lms1 = LengthPluralElements {
+            long: PluralElements::new(it.next().unwrap()),
+            medium: PluralElements::new(it.next().unwrap()),
+            short: PluralElements::new(it.next().unwrap()),
+        };
+        let lms2 = LengthPluralElements {
+            long: PluralElements::new(it.next().unwrap()),
+            medium: PluralElements::new(it.next().unwrap()),
+            short: PluralElements::new(it.next().unwrap()),
+        };
+        let lms3 = LengthPluralElements {
+            long: PluralElements::new(patterns[0].clone()),
+            medium: PluralElements::new(patterns[0].clone()),
+            short: PluralElements::new(patterns[1].clone()),
+        };
+
+        {
+            // Q = 1
+            let builder = PackedSkeletonDataBuilder {
+                standard: lms0.clone(),
+                variant0: Some(lms1.clone()),
+                variant1: Some(lms2.clone()),
+            };
+            let packed = builder.clone().build();
+            assert_eq!(packed.header, 7);
+            assert_eq!(packed.elements.len(), 9);
+            for (pattern_elements, expected) in packed.elements.iter().zip(patterns.iter()) {
+                assert_eq!(pattern_elements.get_default().1, &expected.items);
+            }
+            let recovered_builder = packed.to_builder();
+            assert_eq!(builder, recovered_builder);
+        }
+        {
+            // Q = 0
+            let builder = PackedSkeletonDataBuilder {
+                standard: lms0.clone(),
+                variant0: Some(lms0.clone()),
+                variant1: Some(lms2.clone()),
+            };
+            let packed = builder.clone().build();
+            assert_eq!(packed.header, 0x1AC003);
+            assert_eq!(packed.elements.len(), 6);
+            let recovered_builder = packed.to_builder();
+            assert_ne!(builder, recovered_builder);
+            let mut builder = builder;
+            builder.simplify();
+            assert_eq!(builder, recovered_builder);
+        }
+        {
+            // No variants
+            let builder = PackedSkeletonDataBuilder {
+                standard: lms0.clone(),
+                variant0: None,
+                variant1: None,
+            };
+            let packed = builder.clone().build();
+            assert_eq!(packed.header, 3);
+            assert_eq!(packed.elements.len(), 3);
+            let recovered_builder = packed.to_builder();
+            assert_eq!(builder, recovered_builder);
+        }
+        {
+            // Some duplicate patterns and inheritance
+            let builder = PackedSkeletonDataBuilder {
+                standard: lms3.clone(),
+                variant0: Some(lms0.clone()),
+                variant1: Some(lms1.clone()),
+            };
+            let packed = builder.clone().build();
+            assert_eq!(packed.header, 0x1AC682);
+            assert_eq!(packed.elements.len(), 6);
+            let recovered_builder = packed.to_builder();
+            assert_eq!(builder, recovered_builder);
+        }
     }
 }
