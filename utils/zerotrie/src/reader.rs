@@ -321,7 +321,8 @@ pub(crate) fn get_parameterized<T: ZeroTrieWithOptions + ?Sized>(
         };
         if let Some((c, temp)) = ascii.split_first() {
             if matches!(byte_type, NodeType::Ascii) {
-                let is_match = if matches!(T::OPTIONS.case_sensitivity, CaseSensitivity::IgnoreCase) && matches!(T::OPTIONS.lookup_strictness, LookupStrictness::Normal)
+                let is_match = if matches!(T::OPTIONS.case_sensitivity, CaseSensitivity::IgnoreCase)
+                    && matches!(T::OPTIONS.lookup_strictness, LookupStrictness::Normal)
                 {
                     b.to_ascii_lowercase() == c.to_ascii_lowercase()
                 } else {

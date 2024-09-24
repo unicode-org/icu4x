@@ -667,10 +667,10 @@ impl_zerotrie_subtype!(
 
 impl<Store> ZeroAsciiIgnoreCaseTrie<Store>
 where
-Store: AsRef<[u8]> + ?Sized,
+    Store: AsRef<[u8]> + ?Sized,
 {
     /// Queries the trie for a string, requiring that it matches case.
-    /// 
+    ///
     /// # Examples
     ///
     /// ```
@@ -693,8 +693,14 @@ Store: AsRef<[u8]> + ?Sized,
     ///
     /// # Ok::<_, zerotrie::ZeroTrieBuildError>(())
     /// ```
-    pub fn get_strict<K>(&self, key: K) -> Option<usize> where K: AsRef<[u8]> {
-        reader::get_parameterized::<crate::options::ZeroAsciiIgnoreCaseStrictTrie>(self.store.as_ref(), key.as_ref())
+    pub fn get_strict<K>(&self, key: K) -> Option<usize>
+    where
+        K: AsRef<[u8]>,
+    {
+        reader::get_parameterized::<crate::options::ZeroAsciiIgnoreCaseStrictTrie>(
+            self.store.as_ref(),
+            key.as_ref(),
+        )
     }
 }
 
