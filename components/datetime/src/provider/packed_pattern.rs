@@ -115,7 +115,8 @@ pub struct PackedPatternsV1<'data> {
     /// An encoding of which standard/variant cell corresponds to which entry
     /// in the patterns table. See class docs.
     pub header: u32,
-    /// The list of patterns.
+    /// The list of patterns. Length should be between 1 and 9,
+    /// depending on the header.
     pub elements: VarZeroVec<'data, PluralElementsPackedULE<ZeroSlice<PatternItem>>>,
 }
 
