@@ -239,19 +239,6 @@ where
     }
 }
 
-impl<T> core::hash::Hash for ZeroVec<'_, T>
-where
-    T: AsULE,
-{
-    /// Hashes a ZeroVec as if hashing the underlying bytes.
-    ///
-    /// This is acceptable according to the ULE byte equality invariant.
-    #[inline]
-    fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
-        self.as_bytes().hash(state);
-    }
-}
-
 impl<'a, T: AsULE> Default for ZeroVec<'a, T> {
     #[inline]
     fn default() -> Self {
