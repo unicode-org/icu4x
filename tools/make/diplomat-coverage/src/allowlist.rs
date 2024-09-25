@@ -46,6 +46,7 @@ lazy_static::lazy_static! {
         "Sync",
         "ToOwned",
         "ToString", // We expose this when we see fit
+        "TrieValue",
         "TryFrom", // We expose this when we see fit
         "TryInto", // We expose this when we see fit
         "Unpin",
