@@ -15,7 +15,6 @@ use core::mem;
 use core::ops::Range;
 
 // Also used by owned.rs
-pub(super) const METADATA_WIDTH: usize = 0;
 pub(super) const MAX_INDEX: usize = u32::MAX as usize;
 
 /// This trait allows switching between different possible internal
@@ -276,10 +275,10 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
             });
         }
         let indices_bytes = slice
-            .get(METADATA_WIDTH..METADATA_WIDTH + F::Index::SIZE * (len as usize))
+            .get(..F::Index::SIZE * (len as usize))
             .ok_or(VarZeroVecFormatError::Metadata)?;
         let things = slice
-            .get(F::Index::SIZE * (len as usize) + METADATA_WIDTH..)
+            .get(F::Index::SIZE * (len as usize)..)
             .ok_or(VarZeroVecFormatError::Metadata)?;
 
         let borrowed = VarZeroVecComponents {
@@ -344,9 +343,8 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
                 marker: PhantomData,
             };
         }
-        let indices_bytes =
-            slice.get_unchecked(METADATA_WIDTH..METADATA_WIDTH + F::Index::SIZE * (len as usize));
-        let things = slice.get_unchecked(METADATA_WIDTH + F::Index::SIZE * (len as usize)..);
+        let indices_bytes = slice.get_unchecked(..F::Index::SIZE * (len as usize));
+        let things = slice.get_unchecked(F::Index::SIZE * (len as usize)..);
 
         VarZeroVecComponents {
             len,
@@ -622,7 +620,7 @@ where
     }
 
     // idx_offset = offset from the start of the buffer for the next index
-    let mut idx_offset: usize = METADATA_WIDTH;
+    let mut idx_offset: usize = 0;
     // first_dat_offset = offset from the start of the buffer of the first data block
     let first_dat_offset: usize = idx_offset + elements.len() * F::Index::SIZE;
     // dat_offset = offset from the start of the buffer of the next data block
@@ -651,7 +649,7 @@ where
         dat_offset = dat_limit;
     }
 
-    debug_assert_eq!(idx_offset, METADATA_WIDTH + F::Index::SIZE * elements.len());
+    debug_assert_eq!(idx_offset, F::Index::SIZE * elements.len());
     assert_eq!(dat_offset, output.len());
 }
 
@@ -692,8 +690,7 @@ where
     }
     let idx_len: u32 = u32::try_from(elements.len())
         .ok()?
-        .checked_mul(F::Index::SIZE as u32)?
-        .checked_add(METADATA_WIDTH as u32)?;
+        .checked_mul(F::Index::SIZE as u32)?;
     let data_len: u32 = elements
         .iter()
         .map(|v| u32::try_from(v.encode_var_ule_len()).ok())
