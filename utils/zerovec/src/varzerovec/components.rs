@@ -72,7 +72,7 @@ pub unsafe trait IntegerULE: ULE {
     fn iule_from_byte_slice_unchecked_mut(bytes: &mut [u8]) -> &mut [Self];
 }
 
-/// This is a [`VarZeroVecFormat`] that stores u8s in the index array.
+/// This is a [`VarZeroVecFormat`] that stores u8s in the index array, and a u8 for a length.
 /// Will have a smaller data size, but it's *extremely* likely for larger arrays
 /// to be unrepresentable (and error on construction). Should probably be used
 /// for known-small arrays, where all but the last field are known-small.
@@ -80,7 +80,7 @@ pub unsafe trait IntegerULE: ULE {
 #[allow(clippy::exhaustive_structs)] // marker
 pub struct Index8;
 
-/// This is a [`VarZeroVecFormat`] that stores u16s in the index array.
+/// This is a [`VarZeroVecFormat`] that stores u16s in the index array, and a u16 for a length.
 /// Will have a smaller data size, but it's more likely for larger arrays
 /// to be unrepresentable (and error on construction)
 ///
@@ -89,7 +89,7 @@ pub struct Index8;
 #[allow(clippy::exhaustive_structs)] // marker
 pub struct Index16;
 
-/// This is a [`VarZeroVecFormat`] that stores u32s in the index array.
+/// This is a [`VarZeroVecFormat`] that stores u32s in the index array, and a u32 for a length.
 /// Will have a larger data size, but will support large arrays without
 /// problems.
 #[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
