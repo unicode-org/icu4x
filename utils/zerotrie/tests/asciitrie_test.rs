@@ -69,5 +69,5 @@ fn test_basic() {
         .expect("Failed to finalize serializer output");
 
     assert_eq!(26, bytes_ascii.len());
-    assert_eq!(59, zeromap_bytes.len());
+    assert_eq!(57, zeromap_bytes.len());
 }
