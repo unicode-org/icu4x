@@ -831,18 +831,10 @@ pub mod ffi {
         /// Loads data for a property specified as a string as long as it is one of the
         /// [ECMA-262 binary properties][ecma] (not including Any, ASCII, and Assigned pseudoproperties).
         ///
-        /// Returns `Error::PropertyUnexpectedPropertyNameError` in case the string does not
-        /// match any property in the list
+        /// Returns `DataError::Custom` in case the string does not match any property in the list.
         ///
         /// [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
-        #[diplomat::rust_link(icu::properties::CodePointSetData::new_runtime, FnInStruct)]
-        #[diplomat::rust_link(icu::properties::UnicodeProperty::parse_ecma262_name, FnInStruct)]
-        #[diplomat::rust_link(
-            icu::properties::CodePointSetData::try_new_runtime_unstable,
-            FnInStruct,
-            hidden
-        )]
-        #[diplomat::rust_link(icu::properties::UnicodeProperty, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::CodePointSetData::new_for_ecma262, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "for_ecma262")]
         pub fn load_for_ecma262(
             provider: &DataProvider,
