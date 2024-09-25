@@ -15,9 +15,7 @@ use core::mem;
 use core::ops::Range;
 
 // Also used by owned.rs
-pub(super) const LENGTH_WIDTH: usize = 4;
 pub(super) const METADATA_WIDTH: usize = 0;
-pub(super) const MAX_LENGTH: usize = u32::MAX as usize;
 pub(super) const MAX_INDEX: usize = u32::MAX as usize;
 
 /// This trait allows switching between different possible internal
@@ -31,8 +29,15 @@ pub(super) const MAX_INDEX: usize = u32::MAX as usize;
 /// and all of its associated items are hidden from the docs.
 pub trait VarZeroVecFormat: 'static + Sized {
     /// The type to use for the indexing array
+    ///
+    /// Safety: must be a ULE for which all byte sequences are allowed
     #[doc(hidden)]
     type Index: IntegerULE;
+    /// The type to use for the length segment
+    ///
+    /// Safety: must be a ULE for which all byte sequences are allowed
+    #[doc(hidden)]
+    type Len: IntegerULE;
 }
 
 /// This trait represents various ULE types that can be used to represent an integer
@@ -93,14 +98,17 @@ pub struct Index32;
 
 impl VarZeroVecFormat for Index8 {
     type Index = u8;
+    type Len = u8;
 }
 
 impl VarZeroVecFormat for Index16 {
     type Index = RawBytesULE<2>;
+    type Len = RawBytesULE<2>;
 }
 
 impl VarZeroVecFormat for Index32 {
     type Index = RawBytesULE<4>;
+    type Len = RawBytesULE<4>;
 }
 
 unsafe impl IntegerULE for u8 {
@@ -228,21 +236,22 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
             });
         }
         let len_bytes = slice
-            .get(0..LENGTH_WIDTH)
+            .get(0..F::Len::SIZE)
             .ok_or(VarZeroVecFormatError::Metadata)?;
-        let len_ule = RawBytesULE::<LENGTH_WIDTH>::parse_byte_slice(len_bytes)
-            .map_err(|_| VarZeroVecFormatError::Metadata)?;
+        let len_ule =
+            F::Len::parse_byte_slice(len_bytes).map_err(|_| VarZeroVecFormatError::Metadata)?;
 
         let len = len_ule
             .first()
             .ok_or(VarZeroVecFormatError::Metadata)?
-            .as_unsigned_int();
+            .iule_to_usize();
 
         let rest = slice
-            .get(LENGTH_WIDTH..)
+            .get(F::Len::SIZE..)
             .ok_or(VarZeroVecFormatError::Metadata)?;
+        let len_u32 = u32::try_from(len).map_err(|_| VarZeroVecFormatError::Metadata);
         // We pass down the rest of the invariants
-        Self::parse_byte_slice_with_length(len, rest)
+        Self::parse_byte_slice_with_length(len_u32?, rest)
     }
 
     /// Construct a new VarZeroVecComponents, checking invariants about the overall buffer size:
@@ -303,16 +312,18 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
                 marker: PhantomData,
             };
         }
-        let len_bytes = slice.get_unchecked(0..LENGTH_WIDTH);
-        let len_ule = RawBytesULE::<LENGTH_WIDTH>::from_byte_slice_unchecked(len_bytes);
+        let len_bytes = slice.get_unchecked(0..F::Len::SIZE);
+        // Safety: F::Len allows all byte sequences
+        let len_ule = F::Len::from_byte_slice_unchecked(len_bytes);
 
-        let len = len_ule.get_unchecked(0).as_unsigned_int();
+        let len = len_ule.get_unchecked(0).iule_to_usize();
+        let len_u32 = len as u32;
 
         // Safety: This method requires the bytes to have passed through `parse_byte_slice()`
         // whereas we're calling something that asks for `parse_byte_slice_with_length()`.
         // The two methods perform similar validation, with parse_byte_slice() validating an additional
         // 4-byte `length` header.
-        Self::from_bytes_unchecked_with_length(len, slice.get_unchecked(LENGTH_WIDTH..))
+        Self::from_bytes_unchecked_with_length(len_u32, slice.get_unchecked(F::Len::SIZE..))
     }
 
     /// Construct a [`VarZeroVecComponents`] from a byte slice that has previously
@@ -582,7 +593,10 @@ where
 {
     debug_assert!(!elements.is_empty());
     let len = compute_serializable_len::<T, A, F>(elements)?;
-    debug_assert!(len >= LENGTH_WIDTH as u32);
+    debug_assert!(
+        len >= F::Len::SIZE as u32,
+        "Must have at least F::Len::SIZE bytes to hold the length of the vector"
+    );
     let mut output: Vec<u8> = alloc::vec![0; len as usize];
     write_serializable_bytes::<T, A, F>(elements, &mut output);
     Some(output)
@@ -602,7 +616,7 @@ where
     A: EncodeAsVarULE<T>,
     F: VarZeroVecFormat,
 {
-    assert!(elements.len() <= MAX_LENGTH);
+    assert!(elements.len() <= F::Len::MAX_VALUE as usize);
     if elements.is_empty() {
         return;
     }
@@ -657,13 +671,14 @@ where
     if elements.is_empty() {
         return;
     }
-    assert!(elements.len() <= MAX_LENGTH);
-    let num_elements_bytes = elements.len().to_le_bytes();
+    assert!(elements.len() <= F::Len::MAX_VALUE as usize);
+    #[allow(clippy::expect_used)] // This function is explicitly panicky
+    let num_elements_ule = F::Len::iule_from_usize(elements.len()).expect(F::Len::TOO_LARGE_ERROR);
     #[allow(clippy::indexing_slicing)] // Function contract allows panicky behavior
-    output[0..LENGTH_WIDTH].copy_from_slice(&num_elements_bytes[0..LENGTH_WIDTH]);
+    output[0..F::Len::SIZE].copy_from_slice(ULE::as_byte_slice(&[num_elements_ule]));
 
     #[allow(clippy::indexing_slicing)] // Function contract allows panicky behavior
-    write_serializable_bytes_without_length::<T, A, F>(elements, &mut output[LENGTH_WIDTH..]);
+    write_serializable_bytes_without_length::<T, A, F>(elements, &mut output[F::Len::SIZE..]);
 }
 
 pub fn compute_serializable_len_without_length<T, A, F>(elements: &[A]) -> Option<u32>
@@ -698,5 +713,5 @@ where
     A: EncodeAsVarULE<T>,
     F: VarZeroVecFormat,
 {
-    compute_serializable_len_without_length::<T, A, F>(elements).map(|x| x + LENGTH_WIDTH as u32)
+    compute_serializable_len_without_length::<T, A, F>(elements).map(|x| x + F::Len::SIZE as u32)
 }
