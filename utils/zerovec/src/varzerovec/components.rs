@@ -14,9 +14,6 @@ use core::marker::PhantomData;
 use core::mem;
 use core::ops::Range;
 
-// Also used by owned.rs
-pub(super) const MAX_INDEX: usize = u32::MAX as usize;
-
 /// This trait allows switching between different possible internal
 /// representations of VarZeroVec.
 ///
@@ -634,7 +631,7 @@ where
         let idx_slice = &mut output[idx_offset..idx_limit];
         // VZV expects data offsets to be stored relative to the first data block
         let idx = dat_offset - first_dat_offset;
-        assert!(idx <= MAX_INDEX);
+        assert!(idx <= F::Index::MAX_VALUE as usize);
         #[allow(clippy::expect_used)] // this function is explicitly panicky
         let bytes_to_write = F::Index::iule_from_usize(idx).expect(F::Index::TOO_LARGE_ERROR);
         idx_slice.copy_from_slice(ULE::as_byte_slice(&[bytes_to_write]));

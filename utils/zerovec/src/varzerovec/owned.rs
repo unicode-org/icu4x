@@ -20,7 +20,6 @@ use core::ops::Range;
 use core::{fmt, ptr, slice};
 
 use super::components::IntegerULE;
-use super::components::MAX_INDEX;
 
 /// A fully-owned [`VarZeroVec`]. This type has no lifetime but has the same
 /// internal buffer representation of [`VarZeroVec`], making it cheaply convertible to
@@ -378,7 +377,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
             return false;
         }
         let data_len = self.entire_slice.len() - F::Len::SIZE - len * F::Index::SIZE;
-        if data_len > MAX_INDEX {
+        if data_len > F::Index::MAX_VALUE as usize {
             // The data segment is too long.
             return false;
         }
@@ -427,7 +426,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
             return;
         }
 
-        assert!(value_len < MAX_INDEX);
+        assert!(value_len < F::Index::MAX_VALUE as usize);
         unsafe {
             let place = self.shift(index, value_len, ShiftType::Insert);
             element.encode_var_ule_write(place);
@@ -459,7 +458,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
 
         let value_len = element.encode_var_ule_len();
 
-        assert!(value_len < MAX_INDEX);
+        assert!(value_len < F::Index::MAX_VALUE as usize);
         unsafe {
             let place = self.shift(index, value_len, ShiftType::Replace);
             element.encode_var_ule_write(place);
