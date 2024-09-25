@@ -22,7 +22,6 @@ pub mod ffi {
         SegmentStarter, SentenceTerminal, SoftDotted, TerminalPunctuation, UnifiedIdeograph,
         Uppercase, VariationSelector, WhiteSpace, Xdigit, XidContinue, XidStart,
     };
-    use icu_properties::UnicodeProperty;
 
     use crate::errors::ffi::DataError;
     use crate::properties_iter::ffi::CodePointRangeIterator;
@@ -832,30 +831,20 @@ pub mod ffi {
         /// Loads data for a property specified as a string as long as it is one of the
         /// [ECMA-262 binary properties][ecma] (not including Any, ASCII, and Assigned pseudoproperties).
         ///
-        /// Returns `Error::PropertyUnexpectedPropertyNameError` in case the string does not
-        /// match any property in the list
+        /// Returns `DataError::Custom` in case the string does not match any property in the list.
         ///
         /// [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
-        #[diplomat::rust_link(icu::properties::CodePointSetData::new_runtime, FnInStruct)]
-        #[diplomat::rust_link(icu::properties::UnicodeProperty::parse_ecma262_name, FnInStruct)]
-        #[diplomat::rust_link(
-            icu::properties::CodePointSetData::try_new_runtime_unstable,
-            FnInStruct,
-            hidden
-        )]
-        #[diplomat::rust_link(icu::properties::UnicodeProperty, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::CodePointSetData::new_for_ecma262, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor = "for_ecma262")]
         pub fn load_for_ecma262(
             provider: &DataProvider,
-            property_name: &str,
+            property_name: &DiplomatStr,
         ) -> Result<Box<CodePointSetData>, DataError> {
-            let prop =
-                UnicodeProperty::parse_ecma262_name(property_name).ok_or(DataError::Custom)?;
             Ok(Box::new(CodePointSetData(call_constructor_unstable!(
-                icu_properties::CodePointSetData::new_runtime [r => r.map(|d| Ok(d.static_to_owned()))],
-                icu_properties::CodePointSetData::try_new_runtime_unstable,
+                icu_properties::CodePointSetData::new_for_ecma262 [r => r.map(|d| Ok(d.static_to_owned()))],
+                icu_properties::CodePointSetData::try_new_for_ecma262_unstable,
                 provider,
-                prop
+                property_name
             ).ok_or(DataError::Custom)??)))
         }
     }

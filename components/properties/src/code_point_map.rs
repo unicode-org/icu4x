@@ -2,15 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! The functions in this module return a [`CodePointMapData`] representing, for
-//! each code point in the entire range of code points, the property values
-//! for a particular Unicode property.
-//!
-//! The descriptions of most properties are taken from [`TR44`], the documentation for the
-//! Unicode Character Database.
-//!
-//! [`TR44`]: https://www.unicode.org/reports/tr44
-
 use crate::props::GeneralCategory;
 use crate::provider::*;
 use crate::{code_point_set::CodePointSetData, props::GeneralCategoryGroup};
@@ -335,10 +326,19 @@ impl<'a> CodePointMapDataBorrowed<'a, GeneralCategory> {
 }
 
 /// A Unicode character property that assigns a value to each code point.
+///
+/// The descriptions of most properties are taken from [`TR44`], the documentation for the
+/// Unicode Character Database.
+///
+/// [`TR44`]: https://www.unicode.org/reports/tr44
 pub trait EnumeratedProperty: crate::private::Sealed + TrieValue {
     #[doc(hidden)]
     type DataMarker: DataMarker<DataStruct = PropertyCodePointMapV1<'static, Self>>;
     #[doc(hidden)]
     #[cfg(feature = "compiled_data")]
     const SINGLETON: &'static PropertyCodePointMapV1<'static, Self>;
+    /// The name of this property
+    const NAME: &'static [u8];
+    /// The abbreviated name of this property, if it exists, otherwise the name
+    const SHORT_NAME: &'static [u8];
 }

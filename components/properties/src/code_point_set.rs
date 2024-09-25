@@ -2,20 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! The functions in this module return a [`CodePointSetData`] containing
-//! the set of characters with a particular Unicode property.
-//!
-//! The descriptions of most properties are taken from [`TR44`], the documentation for the
-//! Unicode Character Database.  Some properties are instead defined in [`TR18`], the
-//! documentation for Unicode regular expressions. In particular, Annex C of this document
-//! defines properties for POSIX compatibility.
-//!
-//! [`CodePointSetData`]: crate::sets::CodePointSetData
-//! [`TR44`]: https://www.unicode.org/reports/tr44
-//! [`TR18`]: https://www.unicode.org/reports/tr18
-
 use crate::provider::*;
-use crate::runtime::UnicodeProperty;
 use core::ops::RangeInclusive;
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_provider::marker::ErasedMarker;
@@ -222,15 +209,24 @@ impl<'a> CodePointSetDataBorrowed<'a> {
 
 /// A binary Unicode character property.
 ///
-/// See [`CodePointSetData`] for usage information.
+/// The descriptions of most properties are taken from [`TR44`], the documentation for the
+/// Unicode Character Database.  Some properties are instead defined in [`TR18`], the
+/// documentation for Unicode regular expressions. In particular, Annex C of this document
+/// defines properties for POSIX compatibility.
+///
+/// [`CodePointSetData`]: crate::sets::CodePointSetData
+/// [`TR44`]: https://www.unicode.org/reports/tr44
+/// [`TR18`]: https://www.unicode.org/reports/tr18
 pub trait BinaryProperty: crate::private::Sealed {
     #[doc(hidden)]
     type DataMarker: DataMarker<DataStruct = PropertyCodePointSetV1<'static>>;
     #[doc(hidden)]
     #[cfg(feature = "compiled_data")]
     const SINGLETON: &'static PropertyCodePointSetV1<'static>;
-    #[doc(hidden)]
-    const VALUE: UnicodeProperty;
+    /// The name of this property
+    const NAME: &'static [u8];
+    /// The abbreviated name of this property, if it exists, otherwise the name
+    const SHORT_NAME: &'static [u8];
 }
 
 #[cfg(test)]
