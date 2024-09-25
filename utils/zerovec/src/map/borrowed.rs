@@ -23,8 +23,8 @@ use super::vecs::ZeroVecLike;
 /// use zerovec::maps::ZeroMapBorrowed;
 ///
 /// // Example byte buffer representing the map { 1: "one" }
-/// let BINCODE_BYTES: &[u8; 29] = &[
-///     4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+/// let BINCODE_BYTES: &[u8; 27] = &[
+///     4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 1, 0,
 ///     0, 0, 111, 110, 101,
 /// ];
 ///
