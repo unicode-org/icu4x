@@ -155,7 +155,7 @@ pub(crate) struct ZeroAsciiIgnoreCaseStrictTrie;
 impl ZeroTrieWithOptions for ZeroAsciiIgnoreCaseStrictTrie {
     const OPTIONS: ZeroTrieBuilderOptions = ZeroTrieBuilderOptions {
         lookup_strictness: LookupStrictness::Strict,
-        ..ZeroAsciiIgnoreCaseTrie::OPTIONS
+        ..crate::ZeroAsciiIgnoreCaseTrie::OPTIONS
     };
 }
 
