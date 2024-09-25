@@ -15,7 +15,6 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-pub mod bidi;
 pub mod names;
 
 pub use names::{
@@ -40,18 +39,15 @@ pub use names::{
     WordBreakValueToShortNameV1Marker,
 };
 
+use crate::bidi::BidiMirroringGlyph;
 pub use crate::props::gc::GeneralCategoryULE;
-pub use bidi::BidiAuxiliaryPropertiesV1Marker;
-
 use crate::script::ScriptWithExt;
-
 use core::ops::RangeInclusive;
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
 use zerofrom::ZeroFrom;
-
 use zerovec::{ule::UleError, VarZeroVec, ZeroSlice};
 
 #[cfg(feature = "compiled_data")]
@@ -78,13 +74,13 @@ const _: () = {
     impl_alphabetic_v1_marker!(Baked);
     impl_ascii_hex_digit_v1_marker!(Baked);
     impl_basic_emoji_v1_marker!(Baked);
-    impl_bidi_auxiliary_properties_v1_marker!(Baked);
     impl_bidi_class_name_to_value_v1_marker!(Baked);
     impl_bidi_class_v1_marker!(Baked);
     impl_bidi_class_value_to_long_name_v1_marker!(Baked);
     impl_bidi_class_value_to_short_name_v1_marker!(Baked);
     impl_bidi_control_v1_marker!(Baked);
     impl_bidi_mirrored_v1_marker!(Baked);
+    impl_bidi_mirroring_glyph_v1_marker!(Baked);
     impl_blank_v1_marker!(Baked);
     impl_canonical_combining_class_name_to_value_v1_marker!(Baked);
     impl_canonical_combining_class_v1_marker!(Baked);
@@ -199,9 +195,9 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     AlphabeticV1Marker::INFO,
     AsciiHexDigitV1Marker::INFO,
     BasicEmojiV1Marker::INFO,
-    bidi::BidiAuxiliaryPropertiesV1Marker::INFO,
     BidiControlV1Marker::INFO,
     BidiMirroredV1Marker::INFO,
+    BidiMirroringGlyphV1Marker::INFO,
     BlankV1Marker::INFO,
     CasedV1Marker::INFO,
     CaseIgnorableV1Marker::INFO,
@@ -536,6 +532,11 @@ data_struct_generic!(
     marker(ScriptV1Marker, Script, "props/sc@1"),
     marker(SentenceBreakV1Marker, SentenceBreak, "props/SB@1"),
     marker(WordBreakV1Marker, WordBreak, "props/WB@1"),
+    marker(
+        BidiMirroringGlyphV1Marker,
+        BidiMirroringGlyph,
+        "props/Bidi_G@1"
+    ),
 );
 
 // See CodePointMapData for documentation of these functions

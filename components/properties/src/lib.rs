@@ -83,7 +83,6 @@ pub use names::{
 mod runtime;
 pub use runtime::UnicodeProperty;
 
-pub mod bidi;
 // NOTE: The Pernosco debugger has special knowledge
 // of the `CanonicalCombiningClass` struct inside the `props`
 // module. Please do not change the crate-module-qualified
@@ -92,6 +91,7 @@ pub mod props;
 pub mod provider;
 pub mod script;
 
+mod bidi;
 mod trievalue;
 
 mod private {

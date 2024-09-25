@@ -19,6 +19,8 @@
 
 pub use crate::names::{NamedEnumeratedProperty, ParseableEnumeratedProperty};
 
+pub use crate::bidi::{BidiMirroringGlyph, BidiPairedBracketType};
+
 /// See [`test_enumerated_property_completeness`] for usage.
 /// Example input:
 /// ```ignore

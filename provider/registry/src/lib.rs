@@ -71,7 +71,7 @@ macro_rules! registry(
             icu::properties::provider::AlphabeticV1Marker = "props/Alpha@1",
             icu::properties::provider::AsciiHexDigitV1Marker = "props/AHex@1",
             icu::properties::provider::BasicEmojiV1Marker = "props/Basic_Emoji@1",
-            icu::properties::provider::BidiAuxiliaryPropertiesV1Marker = "props/bidiauxiliaryprops@1",
+            icu::properties::provider::BidiMirroringGlyphV1Marker = "props/Bidi_G@1",
             icu::properties::provider::BidiClassV1Marker = "props/bc@1",
             icu::properties::provider::BidiControlV1Marker = "props/Bidi_C@1",
             icu::properties::provider::BidiMirroredV1Marker = "props/Bidi_M@1",
