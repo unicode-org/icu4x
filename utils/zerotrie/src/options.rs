@@ -154,11 +154,8 @@ pub(crate) struct ZeroAsciiIgnoreCaseStrictTrie;
 
 impl ZeroTrieWithOptions for ZeroAsciiIgnoreCaseStrictTrie {
     const OPTIONS: ZeroTrieBuilderOptions = ZeroTrieBuilderOptions {
-        phf_mode: PhfMode::BinaryOnly,
-        ascii_mode: AsciiMode::AsciiOnly,
-        capacity_mode: CapacityMode::Normal,
-        case_sensitivity: CaseSensitivity::IgnoreCase,
         lookup_strictness: LookupStrictness::Strict,
+        ..ZeroAsciiIgnoreCaseTrie::OPTIONS
     };
 }
 
