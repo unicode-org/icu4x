@@ -52,7 +52,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroLengthlessSlice<T, F> {
     /// # Safety
     ///
     /// `bytes` need to be an output from [`VarZeroLengthlessSlice::as_bytes()`], or alternatively
-    /// be valid to be passed to `from_bytes_unchecked_with_length`
+    /// successfully pass through `parse_byte_slice` (with `len`)
     ///
     /// The length associated with this value will be the length associated with the original slice.
     pub(crate) const unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
@@ -79,23 +79,6 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroLengthlessSlice<T, F> {
     ///
     /// `index` must be in range, and `len` must be the length associated with this
     /// instance of VarZeroLengthlessSlice.
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// # use zerovec::VarZeroVec;
-    ///
-    /// let strings = vec!["foo", "bar", "baz", "quux"];
-    /// let vec = VarZeroVec::<str>::from(&strings);
-    ///
-    /// let mut iter_results: Vec<&str> = vec.iter().collect();
-    /// unsafe {
-    ///     assert_eq!(vec.get_unchecked(0), "foo");
-    ///     assert_eq!(vec.get_unchecked(1), "bar");
-    ///     assert_eq!(vec.get_unchecked(2), "baz");
-    ///     assert_eq!(vec.get_unchecked(3), "quux");
-    /// }
-    /// ```
     pub(crate) unsafe fn get_unchecked(&self, len: u32, idx: usize) -> &T {
         self.as_components(len).get_unchecked(idx)
     }
@@ -105,29 +88,28 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroLengthlessSlice<T, F> {
     /// The bytes can be passed back to [`Self::parse_byte_slice()`].
     ///
     /// To take the bytes as a vector, see [`VarZeroVec::into_bytes()`].
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// # use zerovec::VarZeroVec;
-    ///
-    /// let strings = vec!["foo", "bar", "baz"];
-    /// let vzv = VarZeroVec::<str>::from(&strings);
-    ///
-    /// assert_eq!(vzv, VarZeroVec::parse_byte_slice(vzv.as_bytes()).unwrap());
-    /// ```
     #[inline]
     pub(crate) const fn as_bytes(&self) -> &[u8] {
         &self.entire_slice
     }
 
+    /// Get the bytes behind this as a mutable slice
+    ///
+    /// # Safety
+    ///
+    ///  - `len` is the length associated with this VarZeroLengthlessSlice
+    ///  - The resultant slice is only mutated in a way such that it remains a valid `T`
+    ///
+    /// # Panics
+    ///
+    ///  Panics when idx is not in bounds for this slice
     pub(crate) unsafe fn get_bytes_at_mut(&mut self, len: u32, idx: usize) -> &mut [u8] {
         let components = self.as_components(len);
         let range = components.get_things_range(idx);
         let offset = components.get_indices_size();
 
-         // get_indices_size() returns the start of the things slice, and get_things_range()
-         // returns a range in-bounds of the things slice
+        // get_indices_size() returns the start of the things slice, and get_things_range()
+        // returns a range in-bounds of the things slice
         #[allow(clippy::indexing_slicing)]
         &mut self.entire_slice[offset..][range]
     }
