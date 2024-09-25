@@ -1,4 +1,4 @@
-include!("baked/macros.rs");
+include!("baked/mod.rs");
 
 pub struct TestingProvider;
 
@@ -17,5 +17,5 @@ const _: () = {
     impl_compatibility_decomposition_supplement_v1_marker!(TestingProvider);
     impl_compatibility_decomposition_tables_v1_marker!(TestingProvider);
     impl_uts46_decomposition_supplement_v1_marker!(TestingProvider);
-    impl_transliterator_rules_v1!(TestingProvider);
+    impl_transliterator_rules_v1_marker!(TestingProvider);
 };

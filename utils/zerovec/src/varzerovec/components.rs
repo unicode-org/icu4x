@@ -154,8 +154,6 @@ pub struct VarZeroVecComponents<'a, T: ?Sized, F> {
     indices: &'a [u8],
     /// The contiguous list of `T::VarULE`s
     things: &'a [u8],
-    /// The original slice this was constructed from
-    entire_slice: &'a [u8],
     marker: PhantomData<(&'a T, F)>,
 }
 
@@ -182,7 +180,6 @@ impl<'a, T: VarULE + ?Sized, F> VarZeroVecComponents<'a, T, F> {
             len: 0,
             indices: &[],
             things: &[],
-            entire_slice: &[],
             marker: PhantomData,
         }
     }
@@ -193,7 +190,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
     /// - There must be either zero or at least four bytes (if four, this is the "length" parsed as a usize)
     /// - There must be at least `4*length + 4` bytes total, to form the array `indices` of indices
     /// - `indices[i]..indices[i+1]` must index into a valid section of
-    ///   `things`, such that it parses to a `T::VarULE`
+    ///   `things` (the data after `indices`), such that it parses to a `T::VarULE`
     /// - `indices[len - 1]..things.len()` must index into a valid section of
     ///   `things`, such that it parses to a `T::VarULE`
     #[inline]
@@ -204,7 +201,6 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
                 len: 0,
                 indices: &[],
                 things: &[],
-                entire_slice: slice,
                 marker: PhantomData,
             });
         }
@@ -218,21 +214,46 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
             .first()
             .ok_or(VarZeroVecFormatError::Metadata)?
             .as_unsigned_int();
+
+        let rest = slice
+            .get(LENGTH_WIDTH..)
+            .ok_or(VarZeroVecFormatError::Metadata)?;
+        // We pass down the rest of the invariants
+        Self::parse_byte_slice_with_length(len, rest)
+    }
+
+    /// Construct a new VarZeroVecComponents, checking invariants about the overall buffer size:
+    ///
+    /// - There must be at least `4*len` bytes total, to form the array `indices` of indices.
+    /// - `indices[i]..indices[i+1]` must index into a valid section of
+    ///   `things` (the data after `indices`), such that it parses to a `T::VarULE`
+    /// - `indices[len - 1]..things.len()` must index into a valid section of
+    ///   `things`, such that it parses to a `T::VarULE`
+    #[inline]
+    pub fn parse_byte_slice_with_length(
+        len: u32,
+        slice: &'a [u8],
+    ) -> Result<Self, VarZeroVecFormatError> {
+        // The empty VZV is special-cased to the empty slice
+        if len == 0 {
+            return Ok(VarZeroVecComponents {
+                len: 0,
+                indices: &[],
+                things: &[],
+                marker: PhantomData,
+            });
+        }
         let indices_bytes = slice
-            .get(
-                LENGTH_WIDTH + METADATA_WIDTH
-                    ..LENGTH_WIDTH + METADATA_WIDTH + F::INDEX_WIDTH * (len as usize),
-            )
+            .get(METADATA_WIDTH..METADATA_WIDTH + F::INDEX_WIDTH * (len as usize))
             .ok_or(VarZeroVecFormatError::Metadata)?;
         let things = slice
-            .get(F::INDEX_WIDTH * (len as usize) + LENGTH_WIDTH + METADATA_WIDTH..)
+            .get(F::INDEX_WIDTH * (len as usize) + METADATA_WIDTH..)
             .ok_or(VarZeroVecFormatError::Metadata)?;
 
         let borrowed = VarZeroVecComponents {
             len,
             indices: indices_bytes,
             things,
-            entire_slice: slice,
             marker: PhantomData,
         };
 
@@ -256,7 +277,6 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
                 len: 0,
                 indices: &[],
                 things: &[],
-                entire_slice: slice,
                 marker: PhantomData,
             };
         }
@@ -264,18 +284,40 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
         let len_ule = RawBytesULE::<LENGTH_WIDTH>::from_byte_slice_unchecked(len_bytes);
 
         let len = len_ule.get_unchecked(0).as_unsigned_int();
-        let indices_bytes = slice.get_unchecked(
-            LENGTH_WIDTH + METADATA_WIDTH
-                ..LENGTH_WIDTH + METADATA_WIDTH + F::INDEX_WIDTH * (len as usize),
-        );
-        let things =
-            slice.get_unchecked(LENGTH_WIDTH + METADATA_WIDTH + F::INDEX_WIDTH * (len as usize)..);
+
+        // Safety: This method requires the bytes to have passed through `parse_byte_slice()`
+        // whereas we're calling something that asks for `parse_byte_slice_with_length()`.
+        // The two methods perform similar validation, with parse_byte_slice() validating an additional
+        // 4-byte `length` header.
+        Self::from_bytes_unchecked_with_length(len, slice.get_unchecked(LENGTH_WIDTH..))
+    }
+
+    /// Construct a [`VarZeroVecComponents`] from a byte slice that has previously
+    /// successfully returned a [`VarZeroVecComponents`] when passed to
+    /// [`VarZeroVecComponents::parse_byte_slice()`]. Will return the same
+    /// object as one would get from calling [`VarZeroVecComponents::parse_byte_slice()`].
+    ///
+    /// # Safety
+    /// The len,bytes must have previously successfully run through
+    /// [`VarZeroVecComponents::parse_byte_slice_with_length()`]
+    pub unsafe fn from_bytes_unchecked_with_length(len: u32, slice: &'a [u8]) -> Self {
+        // The empty VZV is special-cased to the empty slice
+        if len == 0 {
+            return VarZeroVecComponents {
+                len: 0,
+                indices: &[],
+                things: &[],
+                marker: PhantomData,
+            };
+        }
+        let indices_bytes =
+            slice.get_unchecked(METADATA_WIDTH..METADATA_WIDTH + F::INDEX_WIDTH * (len as usize));
+        let things = slice.get_unchecked(METADATA_WIDTH + F::INDEX_WIDTH * (len as usize)..);
 
         VarZeroVecComponents {
             len,
             indices: indices_bytes,
             things,
-            entire_slice: slice,
             marker: PhantomData,
         }
     }
@@ -317,7 +359,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
     /// Safety:
     /// - `idx` must be in bounds (`idx < self.len()`)
     #[inline]
-    unsafe fn get_things_range(self, idx: usize) -> Range<usize> {
+    pub(crate) unsafe fn get_things_range(self, idx: usize) -> Range<usize> {
         let start = F::rawbytes_to_usize(*self.indices_slice().get_unchecked(idx));
         let end = if idx + 1 == self.len() {
             self.things.len()
@@ -328,17 +370,9 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
         start..end
     }
 
-    /// Get the range in `entire_slice` for the element at `idx`. Does not bounds check.
-    ///
-    /// Safety:
-    /// - `idx` must be in bounds (`idx < self.len()`)
-    #[inline]
-    pub(crate) unsafe fn get_range(self, idx: usize) -> Range<usize> {
-        let range = self.get_things_range(idx);
-        let offset = (self.things as *const [u8] as *const u8)
-            .offset_from(self.entire_slice as *const [u8] as *const u8)
-            as usize;
-        range.start + offset..range.end + offset
+    /// Get the size, in bytes, of the indices array
+    pub(crate) unsafe fn get_indices_size(self) -> usize {
+        self.indices.len()
     }
 
     /// Check the internal invariants of VarZeroVecComponents:
@@ -531,26 +565,27 @@ where
     Some(output)
 }
 
-/// Writes the bytes for a VarZeroSlice into an output buffer.
+/// Writes the bytes for a VarZeroLengthlessSlice into an output buffer.
+/// Usable for a VarZeroSlice if you first write the length bytes.
 ///
 /// Every byte in the buffer will be initialized after calling this function.
 ///
 /// # Panics
 ///
 /// Panics if the buffer is not exactly the correct length.
-pub fn write_serializable_bytes<T, A, F>(elements: &[A], output: &mut [u8])
+pub fn write_serializable_bytes_without_length<T, A, F>(elements: &[A], output: &mut [u8])
 where
     T: VarULE + ?Sized,
     A: EncodeAsVarULE<T>,
     F: VarZeroVecFormat,
 {
     assert!(elements.len() <= MAX_LENGTH);
-    let num_elements_bytes = elements.len().to_le_bytes();
-    #[allow(clippy::indexing_slicing)] // Function contract allows panicky behavior
-    output[0..LENGTH_WIDTH].copy_from_slice(&num_elements_bytes[0..LENGTH_WIDTH]);
+    if elements.is_empty() {
+        return;
+    }
 
     // idx_offset = offset from the start of the buffer for the next index
-    let mut idx_offset: usize = LENGTH_WIDTH + METADATA_WIDTH;
+    let mut idx_offset: usize = METADATA_WIDTH;
     // first_dat_offset = offset from the start of the buffer of the first data block
     let first_dat_offset: usize = idx_offset + elements.len() * F::INDEX_WIDTH;
     // dat_offset = offset from the start of the buffer of the next data block
@@ -578,23 +613,47 @@ where
         dat_offset = dat_limit;
     }
 
-    debug_assert_eq!(
-        idx_offset,
-        LENGTH_WIDTH + METADATA_WIDTH + F::INDEX_WIDTH * elements.len()
-    );
+    debug_assert_eq!(idx_offset, METADATA_WIDTH + F::INDEX_WIDTH * elements.len());
     assert_eq!(dat_offset, output.len());
 }
 
-pub fn compute_serializable_len<T, A, F>(elements: &[A]) -> Option<u32>
+/// Writes the bytes for a VarZeroSlice into an output buffer.
+///
+/// Every byte in the buffer will be initialized after calling this function.
+///
+/// # Panics
+///
+/// Panics if the buffer is not exactly the correct length.
+pub fn write_serializable_bytes<T, A, F>(elements: &[A], output: &mut [u8])
 where
     T: VarULE + ?Sized,
     A: EncodeAsVarULE<T>,
     F: VarZeroVecFormat,
 {
+    if elements.is_empty() {
+        return;
+    }
+    assert!(elements.len() <= MAX_LENGTH);
+    let num_elements_bytes = elements.len().to_le_bytes();
+    #[allow(clippy::indexing_slicing)] // Function contract allows panicky behavior
+    output[0..LENGTH_WIDTH].copy_from_slice(&num_elements_bytes[0..LENGTH_WIDTH]);
+
+    #[allow(clippy::indexing_slicing)] // Function contract allows panicky behavior
+    write_serializable_bytes_without_length::<T, A, F>(elements, &mut output[LENGTH_WIDTH..]);
+}
+
+pub fn compute_serializable_len_without_length<T, A, F>(elements: &[A]) -> Option<u32>
+where
+    T: VarULE + ?Sized,
+    A: EncodeAsVarULE<T>,
+    F: VarZeroVecFormat,
+{
+    if elements.is_empty() {
+        return Some(0);
+    }
     let idx_len: u32 = u32::try_from(elements.len())
         .ok()?
         .checked_mul(F::INDEX_WIDTH as u32)?
-        .checked_add(LENGTH_WIDTH as u32)?
         .checked_add(METADATA_WIDTH as u32)?;
     let data_len: u32 = elements
         .iter()
@@ -607,4 +666,13 @@ where
         }
     }
     ret
+}
+
+pub fn compute_serializable_len<T, A, F>(elements: &[A]) -> Option<u32>
+where
+    T: VarULE + ?Sized,
+    A: EncodeAsVarULE<T>,
+    F: VarZeroVecFormat,
+{
+    compute_serializable_len_without_length::<T, A, F>(elements).map(|x| x + LENGTH_WIDTH as u32)
 }
