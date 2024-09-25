@@ -85,23 +85,20 @@ impl DataProvider<BidiMirroringGlyphV1Marker> for SourceDataProvider {
             r
         });
 
-        // CPT builder cannot handle 24-bit type, so need to go through u32.
-        let trie_bmg = CodePointTrieBuilder {
-            data: CodePointTrieBuilderData::ValuesByCodePoint(
-                &trie_vals.map(TrieValue::to_u32).collect::<Vec<_>>(),
-            ),
-            default_value: BidiMirroringGlyph::default().to_u32(),
-            error_value: BidiMirroringGlyph::default().to_u32(),
-            trie_type: TrieType::Small,
-        }
-        .build()
-        .try_alloc_map_value(TrieValue::try_from_u32)
-        .map_err(|_| DataError::custom("Cannot parse BidiMirroringGlyph from u32"))?;
-
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(
-                icu::properties::provider::PropertyCodePointMapV1::CodePointTrie(trie_bmg),
+                icu::properties::provider::PropertyCodePointMapV1::CodePointTrie(
+                    CodePointTrieBuilder {
+                        data: CodePointTrieBuilderData::ValuesByCodePoint(
+                            &trie_vals.collect::<Vec<_>>(),
+                        ),
+                        default_value: BidiMirroringGlyph::default(),
+                        error_value: BidiMirroringGlyph::default(),
+                        trie_type: TrieType::Small,
+                    }
+                    .build(),
+                ),
             ),
         })
     }

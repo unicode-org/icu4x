@@ -77,15 +77,15 @@ extern "C" {
 #[allow(unused)]
 pub(crate) fn run_native<T>(cpt_builder: &CodePointTrieBuilder<T>) -> CodePointTrie<'static, T>
 where
-    T: TrieValue + Into<u32>,
+    T: TrieValue,
 {
     let mut error = 0;
     let builder = unsafe {
         // safety: we're passing a valid error pointer
         // leak-safety: we clean up `builder` except in panicky codepaths
         umutablecptrie_open(
-            cpt_builder.default_value.into(),
-            cpt_builder.error_value.into(),
+            cpt_builder.default_value.to_u32(),
+            cpt_builder.error_value.to_u32(),
             &mut error,
         )
     };
@@ -97,13 +97,16 @@ where
     let CodePointTrieBuilderData::ValuesByCodePoint(values) = cpt_builder.data;
 
     for (cp, value) in values.iter().enumerate() {
-        unsafe {
-            // safety: builder is a valid UMutableCPTrie
-            // safety: we're passing a valid error pointer
-            umutablecptrie_set(builder, cp as u32, (*value).into(), &mut error);
-        }
-        if error != 0 {
-            panic!("cpt builder returned error code {}", error);
+        let value = value.to_u32();
+        if value != cpt_builder.default_value.to_u32() {
+            unsafe {
+                // safety: builder is a valid UMutableCPTrie
+                // safety: we're passing a valid error pointer
+                umutablecptrie_set(builder, cp as u32, value, &mut error);
+            }
+            if error != 0 {
+                panic!("cpt builder returned error code {}", error);
+            }
         }
     }
 
@@ -165,7 +168,7 @@ where
                 .iter()
                 .map(|x| TrieValue::try_from_u32((*x).into()))
                 .collect(),
-            4 => slice::from_raw_parts(trie.data.ptr32, data_length)
+            3 | 4 => slice::from_raw_parts(trie.data.ptr32, data_length)
                 .iter()
                 .map(|x| TrieValue::try_from_u32(*x))
                 .collect(),
