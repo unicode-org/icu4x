@@ -161,7 +161,8 @@ impl<'a> BidiAuxiliaryPropertiesBorrowed<'a> {
     /// assert_eq!(three.mirrored, false);
     /// ```
     pub fn get32_mirroring_props(&self, code_point: u32) -> BidiMirroringProperties {
-        let bidi_aux_props = self.data.trie.get32(code_point);
+        let BidiAuxiliaryPropertiesV1::CodePointTrie(trie) = self.data;
+        let bidi_aux_props = trie.get32(code_point);
         let mirroring_glyph_opt =
             Self::convert_mirroring_glyph_data(bidi_aux_props.mirroring_glyph);
         BidiMirroringProperties {
@@ -191,7 +192,8 @@ impl<'a> BidiAuxiliaryPropertiesBorrowed<'a> {
     /// assert_eq!(three, BidiPairingProperties::None);
     /// ```
     pub fn get32_pairing_props(&self, code_point: u32) -> BidiPairingProperties {
-        let bidi_aux_props = self.data.trie.get32(code_point);
+        let BidiAuxiliaryPropertiesV1::CodePointTrie(trie) = self.data;
+        let bidi_aux_props = trie.get32(code_point);
         let mirroring_glyph = bidi_aux_props.mirroring_glyph;
         let paired_bracket_type = bidi_aux_props.paired_bracket_type;
         match paired_bracket_type {

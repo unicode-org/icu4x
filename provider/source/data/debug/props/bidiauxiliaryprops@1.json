@@ -1,5 +1,5 @@
 {
-  "trie": {
+  "CodePointTrie": {
     "header": {
       "high_start": 120832,
       "shifted12_high_start": 30,

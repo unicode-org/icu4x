@@ -91,7 +91,7 @@ impl DataProvider<BidiAuxiliaryPropertiesV1Marker> for SourceDataProvider {
             .try_alloc_map_value(MirroredPairedBracketData::try_from)
             .map_err(|_| DataError::custom("Cannot parse MirroredPairedBracketData from u32"))?;
 
-        let data_struct = BidiAuxiliaryPropertiesV1 { trie: trie_mpbd };
+        let data_struct = BidiAuxiliaryPropertiesV1::CodePointTrie(trie_mpbd);
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(data_struct),
