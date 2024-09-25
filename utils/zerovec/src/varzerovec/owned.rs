@@ -128,11 +128,13 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
     unsafe fn element_position_unchecked(&self, idx: usize) -> usize {
         let len = self.len();
         let out = if idx == len {
-            self.entire_slice.len() - F::Len::SIZE - (F::Index::SIZE * len)
+            self.entire_slice.len() - F::Len::SIZE - (F::Index::SIZE * (len - 1))
+        } else if let Some(idx) = self.index_data(idx) {
+            idx.iule_to_usize()
         } else {
-            self.index_data(idx).iule_to_usize()
+            0
         };
-        debug_assert!(out + F::Len::SIZE + len * F::Index::SIZE <= self.entire_slice.len());
+        debug_assert!(out + F::Len::SIZE + (len - 1) * F::Index::SIZE <= self.entire_slice.len());
         out
     }
 
@@ -160,47 +162,57 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
         assert_eq!(len_bytes[F::Len::SIZE..].iter().sum::<u8>(), 0);
     }
 
-    fn index_range(index: usize) -> Range<usize> {
-        let pos = F::Len::SIZE + F::Index::SIZE * index;
-        pos..pos + F::Index::SIZE
+    /// Get the range in the full data for a given index. Returns None for index 0
+    /// since there is no stored index for it.
+    fn index_range(index: usize) -> Option<Range<usize>> {
+        let index_minus_one = index.checked_sub(1)?;
+        let pos = F::Len::SIZE + F::Index::SIZE * index_minus_one;
+        Some(pos..pos + F::Index::SIZE)
     }
 
-    /// Return the raw bytes representing the given `index`.
+    /// Return the raw bytes representing the given `index`. Returns None when given index 0
     ///
     /// ## Safety
     /// The index must be valid, and self.as_encoded_bytes() must be well-formed
-    unsafe fn index_data(&self, index: usize) -> &F::Index {
-        &F::Index::from_byte_slice_unchecked(&self.entire_slice[Self::index_range(index)])[0]
+    unsafe fn index_data(&self, index: usize) -> Option<&F::Index> {
+        let index_range = Self::index_range(index)?;
+        Some(&F::Index::from_byte_slice_unchecked(&self.entire_slice[index_range])[0])
     }
 
-    /// Return the mutable slice representing the given `index`.
+    /// Return the mutable slice representing the given `index`. Returns None when given index 0
     ///
     /// ## Safety
     /// The index must be valid. self.as_encoded_bytes() must have allocated space
     /// for this index, but need not have its length appropriately set.
-    unsafe fn index_data_mut(&mut self, index: usize) -> &mut F::Index {
+    unsafe fn index_data_mut(&mut self, index: usize) -> Option<&mut F::Index> {
         let ptr = self.entire_slice.as_mut_ptr();
-        let range = Self::index_range(index);
+        let range = Self::index_range(index)?;
 
         // Doing this instead of just `get_unchecked_mut()` because it's unclear
         // if `get_unchecked_mut()` can be called out of bounds on a slice even
         // if we know the buffer is larger.
         let data = slice::from_raw_parts_mut(ptr.add(range.start), F::Index::SIZE);
 
-        &mut F::Index::iule_from_byte_slice_unchecked_mut(data)[0]
+        Some(&mut F::Index::iule_from_byte_slice_unchecked_mut(data)[0])
     }
 
     /// Shift the indices starting with and after `starting_index` by the provided `amount`.
+    ///
+    /// ## Panics
+    /// Should never be called with a starting index of 0, since that index cannot be shifted.
     ///
     /// ## Safety
     /// Adding `amount` to each index after `starting_index` must not result in the slice from becoming malformed.
     /// The length of the slice must be correctly set.
     unsafe fn shift_indices(&mut self, starting_index: usize, amount: i32) {
+        let normalized_idx = starting_index
+            .checked_sub(1)
+            .expect("shift_indices called with a 0 starting index");
         let len = self.len();
         let indices = F::Index::iule_from_byte_slice_unchecked_mut(
-            &mut self.entire_slice[F::Len::SIZE..F::Len::SIZE + F::Index::SIZE * len],
+            &mut self.entire_slice[F::Len::SIZE..F::Len::SIZE + F::Index::SIZE * (len - 1)],
         );
-        for idx in &mut indices[starting_index..] {
+        for idx in &mut indices[normalized_idx..] {
             let mut new_idx = idx.iule_to_usize();
             if amount > 0 {
                 new_idx = new_idx.checked_add(amount.try_into().unwrap()).unwrap();
@@ -279,13 +291,19 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
             self.entire_slice.resize(new_slice_len, 0);
         }
 
+        let index_minus_one = index
+            .checked_sub(1)
+            .expect("Temporary: disabled inserting at the beginning of the slice");
+
         // Now that we've ensured there's enough space, we can shift the data around.
         {
             // Note: There are no references introduced between pointer creation and pointer use, and all
             //       raw pointers are derived from a single &mut. This preserves pointer provenance.
             let slice_range = self.entire_slice.as_mut_ptr_range();
             let old_slice_end = slice_range.start.add(slice_len);
-            let data_start = slice_range.start.add(F::Len::SIZE + len * F::Index::SIZE);
+            let data_start = slice_range
+                .start
+                .add(F::Len::SIZE + (len - 1) * F::Index::SIZE);
             let prev_element_p =
                 data_start.add(prev_element.start)..data_start.add(prev_element.end);
 
@@ -294,7 +312,9 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
             // When removing:  where the index being removed is.
             // When replacing: unused.
             let index_range = {
-                let index_start = slice_range.start.add(F::Len::SIZE + F::Index::SIZE * index);
+                let index_start = slice_range
+                    .start
+                    .add(F::Len::SIZE + F::Index::SIZE * index_minus_one);
                 index_start..index_start.add(F::Index::SIZE)
             };
 
@@ -320,8 +340,10 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
                 ShiftType::Insert => {
                     // Move data before the element forward by 4 to make space for a new index.
                     shift_bytes(index_range.start..prev_element_p.start, index_range.end);
-
-                    *self.index_data_mut(index) = F::Index::iule_from_usize(prev_element.start)
+                    let index_data = self
+                        .index_data_mut(index)
+                        .expect("Temporary: disabled inserting at the beginning of the slice");
+                    *index_data = F::Index::iule_from_usize(prev_element.start)
                         .expect(F::Index::TOO_LARGE_ERROR);
                     self.set_len(len + 1);
                     index + 1
@@ -344,8 +366,9 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
         debug_assert!(self.verify_integrity());
 
         // Return a mut slice to the new element data.
-        let element_pos =
-            F::Len::SIZE + self.len() * F::Index::SIZE + self.element_position_unchecked(index);
+        let element_pos = F::Len::SIZE
+            + (self.len() - 1) * F::Index::SIZE
+            + self.element_position_unchecked(index);
         &mut self.entire_slice[element_pos..element_pos + new_size]
     }
 
@@ -355,14 +378,14 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
     /// Note: an index is valid if it doesn't point to data past the end of the slice and is
     /// less than or equal to all future indices. The length of the index segment is not part of each index.
     fn verify_integrity(&self) -> bool {
-        if self.is_empty() && !self.entire_slice.is_empty() {
-            return false;
-        }
-        let slice_len = self.entire_slice.len();
-        match slice_len {
-            0 => return true,
-            1..=3 => return false,
-            _ => (),
+        if self.is_empty() {
+            if self.entire_slice.is_empty() {
+                return true;
+            } else {
+                panic!(
+                    "VarZeroVecOwned integrity: Found empty VarZeroVecOwned with a nonempty slice"
+                );
+            }
         }
         let len = unsafe {
             <F::Len as ULE>::from_byte_slice_unchecked(&self.entire_slice[..F::Len::SIZE])[0]
@@ -370,34 +393,30 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
         };
         if len == 0 {
             // An empty vec must have an empty slice: there is only a single valid byte representation.
-            return false;
+            panic!("VarZeroVecOwned integrity: Found empty VarZeroVecOwned with a nonempty slice");
         }
-        if slice_len < F::Len::SIZE + len * F::Index::SIZE {
-            // Not enough room for the indices.
-            return false;
+        if self.entire_slice.len() < F::Len::SIZE + (len - 1) * F::Index::SIZE {
+            panic!("VarZeroVecOwned integrity: Not enough room for the indices");
         }
-        let data_len = self.entire_slice.len() - F::Len::SIZE - len * F::Index::SIZE;
+        let data_len = self.entire_slice.len() - F::Len::SIZE - (len - 1) * F::Index::SIZE;
         if data_len > F::Index::MAX_VALUE as usize {
-            // The data segment is too long.
-            return false;
+            panic!("VarZeroVecOwned integrity: Data segment is too long");
         }
 
         // Test index validity.
         let indices = unsafe {
             F::Index::from_byte_slice_unchecked(
-                &self.entire_slice[F::Len::SIZE..F::Len::SIZE + len * F::Index::SIZE],
+                &self.entire_slice[F::Len::SIZE..F::Len::SIZE + (len - 1) * F::Index::SIZE],
             )
         };
         for idx in indices {
             if idx.iule_to_usize() > data_len {
-                // Indices must not point past the data segment.
-                return false;
+                panic!("VarZeroVecOwned integrity: Indices must not point past the data segment");
             }
         }
         for window in indices.windows(2) {
             if window[0].iule_to_usize() > window[1].iule_to_usize() {
-                // Indices must be in non-decreasing order.
-                return false;
+                panic!("VarZeroVecOwned integrity: Indices must be in non-decreasing order");
             }
         }
         true
@@ -418,7 +437,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
         let value_len = element.encode_var_ule_len();
 
         if len == 0 {
-            let header_len = F::Len::SIZE + F::Index::SIZE;
+            let header_len = F::Len::SIZE; // Index array is size 0 for len = 1
             let cap = header_len + value_len;
             self.entire_slice.resize(cap, 0);
             self.entire_slice[0] = 1; // set length
