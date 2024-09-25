@@ -262,7 +262,7 @@ fn get_strict_u16(payload: &PropertyValueNameToEnumMapV1<'_>, name: &str) -> Opt
 
 /// Avoid monomorphizing multiple copies of this function
 fn get_loose_u16(payload: &PropertyValueNameToEnumMapV1<'_>, name: &str) -> Option<u16> {
-    fn recurse(mut cursor: ZeroTrieSimpleAsciiCursor, name: &[u8]) -> Option<usize> {
+    fn recurse(mut cursor: ZeroTrieSimpleAsciiCursor, mut rest: &[u8]) -> Option<usize> {
         if cursor.is_empty() {
             return None;
         }
@@ -271,25 +271,24 @@ fn get_loose_u16(payload: &PropertyValueNameToEnumMapV1<'_>, name: &str) -> Opti
         for skip in [b'\t', b'\n', b'\x0C', b'\r', b' ', 0x0B, b'_', b'-'] {
             let mut skip_cursor = cursor.clone();
             skip_cursor.step(skip);
-            if let Some(r) = recurse(skip_cursor, name) {
+            if let Some(r) = recurse(skip_cursor, rest) {
                 return Some(r);
             }
         }
 
-        // Skip whitespace, underscore, hyphen in input
-        #[allow(clippy::indexing_slicing)] // valid index
-        let name = &name[name
-            .iter()
-            .position(|&ascii| {
-                !matches!(
-                    ascii,
-                    b'\t' | b'\n' | b'\x0C' | b'\r' | b' ' | 0x0B | b'_' | b'-'
-                )
-            })
-            .unwrap_or(name.len())..];
+        let ascii = loop {
+            let Some((&a, r)) = rest.split_first() else {
+                return cursor.take_value();
+            };
+            rest = r;
 
-        let Some((&ascii, rest)) = name.split_first() else {
-            return cursor.take_value();
+            // Skip whitespace, underscore, hyphen in input
+            if !matches!(
+                a,
+                b'\t' | b'\n' | b'\x0C' | b'\r' | b' ' | 0x0B | b'_' | b'-'
+            ) {
+                break a;
+            }
         };
 
         let mut other_case_cursor = cursor.clone();
