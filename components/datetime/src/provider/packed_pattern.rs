@@ -419,7 +419,7 @@ mod _serde {
             } else {
                 let machine = PackedPatternsMachine {
                     header: self.header,
-                    elements: &*self.elements,
+                    elements: &self.elements,
                 };
                 machine.serialize(serializer)
             }
