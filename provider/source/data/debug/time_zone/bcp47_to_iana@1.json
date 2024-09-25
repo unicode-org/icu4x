@@ -1,5 +1,5 @@
 {
-  "bcp47_ids_checksum": 13140615178425157499,
+  "bcp47_ids_checksum": 10269485665040661494,
   "canonical_iana_ids": [
     "Europe/Andorra",
     "Asia/Dubai",
@@ -242,7 +242,6 @@
     "Europe/Skopje",
     "Africa/Bamako",
     "Asia/Yangon",
-    "Asia/Choibalsan",
     "Asia/Hovd",
     "Asia/Ulaanbaatar",
     "Asia/Macau",
