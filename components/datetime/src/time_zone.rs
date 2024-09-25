@@ -61,14 +61,13 @@ pub(crate) struct TimeZoneDataPayloadsBorrowed<'a> {
     /// The exemplar cities for time zones.
     pub(crate) exemplar_cities: Option<&'a provider::time_zones::ExemplarCitiesV1<'a>>,
     /// The generic long metazone names, e.g. Pacific Time
-    pub(crate) mz_generic_long: Option<&'a provider::time_zones::MetazoneGenericNamesLongV1<'a>>,
+    pub(crate) mz_generic_long: Option<&'a provider::time_zones::MetazoneGenericNamesV1<'a>>,
     /// The generic short metazone names, e.g. PT
-    pub(crate) mz_generic_short: Option<&'a provider::time_zones::MetazoneGenericNamesShortV1<'a>>,
+    pub(crate) mz_generic_short: Option<&'a provider::time_zones::MetazoneGenericNamesV1<'a>>,
     /// The specific long metazone names, e.g. Pacific Daylight Time
-    pub(crate) mz_specific_long: Option<&'a provider::time_zones::MetazoneSpecificNamesLongV1<'a>>,
+    pub(crate) mz_specific_long: Option<&'a provider::time_zones::MetazoneSpecificNamesV1<'a>>,
     /// The specific short metazone names, e.g. Pacific Daylight Time
-    pub(crate) mz_specific_short:
-        Option<&'a provider::time_zones::MetazoneSpecificNamesShortV1<'a>>,
+    pub(crate) mz_specific_short: Option<&'a provider::time_zones::MetazoneSpecificNamesV1<'a>>,
 }
 
 impl<'a> TimeZoneDataPayloadsBorrowed<'a> {

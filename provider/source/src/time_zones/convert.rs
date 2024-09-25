@@ -389,7 +389,7 @@ impl DataProvider<ZoneOffsetPeriodV1Marker> for SourceDataProvider {
 }
 
 macro_rules! long_short_impls {
-    ($generic:ty, $specific:ty, $generic_struct:ident, $specific_struct:ident, $field:ident,) => {
+    ($generic:ty, $specific:ty, $field:ident,) => {
         impl DataProvider<$generic> for SourceDataProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$generic>, DataError> {
                 self.check_req::<$generic>(req)?;
@@ -409,7 +409,7 @@ macro_rules! long_short_impls {
                 Ok(DataResponse {
                     metadata: Default::default(),
                     payload: DataPayload::from_owned(
-                        $generic_struct {
+                        MetazoneGenericNamesV1 {
                             defaults: match &time_zone_names_resource.metazone {
                                 None => Default::default(),
                                 Some(metazones) => metazones
@@ -492,7 +492,7 @@ macro_rules! long_short_impls {
                 Ok(DataResponse {
                     metadata: Default::default(),
                     payload: DataPayload::from_owned(
-                        $specific_struct {
+                        MetazoneSpecificNamesV1 {
                             defaults: match &time_zone_names_resource.metazone {
                                 None => Default::default(),
                                 Some(metazones) => metazones
@@ -570,16 +570,12 @@ macro_rules! long_short_impls {
 long_short_impls!(
     MetazoneGenericNamesLongV1Marker,
     MetazoneSpecificNamesLongV1Marker,
-    MetazoneGenericNamesLongV1,
-    MetazoneSpecificNamesLongV1,
     long,
 );
 
 long_short_impls!(
     MetazoneGenericNamesShortV1Marker,
     MetazoneSpecificNamesShortV1Marker,
-    MetazoneGenericNamesShortV1,
-    MetazoneSpecificNamesShortV1,
     short,
 );
 
