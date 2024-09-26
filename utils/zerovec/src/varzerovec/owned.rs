@@ -192,7 +192,6 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
         // if `get_unchecked_mut()` can be called out of bounds on a slice even
         // if we know the buffer is larger.
         let data = slice::from_raw_parts_mut(ptr.add(range.start), F::Index::SIZE);
-
         Some(&mut F::Index::iule_from_byte_slice_unchecked_mut(data)[0])
     }
 
@@ -244,6 +243,9 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
 
     /// Invalidate and resize the data at an index, optionally inserting or removing the index.
     /// Also updates affected indices and the length.
+    ///
+    /// `new_size` is the encoded byte size of the element that is going to be inserted
+    ///
     /// Returns a slice to the new element data - it doesn't contain uninitialized data but its value is indeterminate.
     ///
     /// ## Safety
@@ -291,19 +293,15 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
             self.entire_slice.resize(new_slice_len, 0);
         }
 
-        let index_minus_one = index
-            .checked_sub(1)
-            .expect("Temporary: disabled inserting at the beginning of the slice");
-
         // Now that we've ensured there's enough space, we can shift the data around.
         {
             // Note: There are no references introduced between pointer creation and pointer use, and all
             //       raw pointers are derived from a single &mut. This preserves pointer provenance.
             let slice_range = self.entire_slice.as_mut_ptr_range();
+            // The start of the indices buffer
+            let indices_start = slice_range.start.add(F::Len::SIZE);
             let old_slice_end = slice_range.start.add(slice_len);
-            let data_start = slice_range
-                .start
-                .add(F::Len::SIZE + (len - 1) * F::Index::SIZE);
+            let data_start = indices_start.add((len - 1) * F::Index::SIZE);
             let prev_element_p =
                 data_start.add(prev_element.start)..data_start.add(prev_element.end);
 
@@ -311,11 +309,12 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
             // When inserting: where the new index goes.
             // When removing:  where the index being removed is.
             // When replacing: unused.
-            let index_range = {
-                let index_start = slice_range
-                    .start
-                    .add(F::Len::SIZE + F::Index::SIZE * index_minus_one);
-                index_start..index_start.add(F::Index::SIZE)
+            // Will be None when the affected index is index 0, which is special
+            let index_range = if let Some(index_minus_one) = index.checked_sub(1) {
+                let index_start = indices_start.add(F::Index::SIZE * index_minus_one);
+                Some(index_start..index_start.add(F::Index::SIZE))
+            } else {
+                None
             };
 
             unsafe fn shift_bytes(block: Range<*const u8>, to: *mut u8) {
@@ -324,8 +323,16 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
             }
 
             if shift_type == ShiftType::Remove {
-                // Move the data before the element back by 4 to remove the index.
-                shift_bytes(index_range.end..prev_element_p.start, index_range.start);
+                if let Some(ref index_range) = index_range {
+                    shift_bytes(index_range.end..prev_element_p.start, index_range.start);
+                } else {
+                    // We are removing the first index, so we skip the second index and copy it over. The second index
+                    // is now zero and unnecessary.
+                    shift_bytes(
+                        indices_start.add(F::Index::SIZE)..prev_element_p.start,
+                        indices_start,
+                    )
+                }
             }
 
             // Shift data after the element to its new position.
@@ -338,19 +345,40 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
 
             let first_affected_index = match shift_type {
                 ShiftType::Insert => {
-                    // Move data before the element forward by 4 to make space for a new index.
-                    shift_bytes(index_range.start..prev_element_p.start, index_range.end);
-                    let index_data = self
-                        .index_data_mut(index)
-                        .expect("Temporary: disabled inserting at the beginning of the slice");
-                    *index_data = F::Index::iule_from_usize(prev_element.start)
-                        .expect(F::Index::TOO_LARGE_ERROR);
+                    if let Some(index_range) = index_range {
+                        // Move data before the element forward by 4 to make space for a new index.
+                        shift_bytes(index_range.start..prev_element_p.start, index_range.end);
+                        let index_data = self
+                            .index_data_mut(index)
+                            .expect("If index_range is some, index is > 0 and should not panic in index_data_mut");
+                        *index_data = F::Index::iule_from_usize(prev_element.start)
+                            .expect(F::Index::TOO_LARGE_ERROR);
+                    } else {
+                        // We are adding a new index 0. There's nothing in the indices array for index 0, but the element
+                        // that is currently at index 0 will become index 1 and need a value
+                        // We first shift bytes to make space
+                        shift_bytes(
+                            indices_start..prev_element_p.start,
+                            indices_start.add(F::Index::SIZE),
+                        );
+                        // And then we write a temporary zero to the zeroeth index, which will get shifted later
+                        let index_data = self
+                            .index_data_mut(1)
+                            .expect("Should be able to write to index 1");
+                        *index_data = F::Index::iule_from_usize(0).expect("0 is always valid!");
+                    }
+
                     self.set_len(len + 1);
                     index + 1
                 }
                 ShiftType::Remove => {
                     self.set_len(len - 1);
-                    index
+                    if index == 0 {
+                        // We don't need to shift index 0 since index 0 is not stored in the indices buffer
+                        index + 1
+                    } else {
+                        index
+                    }
                 }
                 ShiftType::Replace => index + 1,
             };
@@ -358,7 +386,6 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
 
             // Set the new slice length. This must be done after shifting data around to avoid uninitialized data.
             self.entire_slice.set_len(new_slice_len);
-
             // Shift the affected indices.
             self.shift_indices(first_affected_index, (shift - index_shift) as i32);
         };
