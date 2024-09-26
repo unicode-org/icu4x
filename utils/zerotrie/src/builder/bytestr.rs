@@ -2,7 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::comparison;
 use core::borrow::Borrow;
+use core::fmt;
 
 #[cfg(feature = "serde")]
 use alloc::boxed::Box;
@@ -78,13 +80,15 @@ impl ByteStr {
     }
 
     /// Const function to evaluate `self < other`.
-    pub(crate) const fn is_less_then(&self, other: &Self) -> bool {
+    pub(crate) const fn is_less_than(&self, other: &Self) -> bool {
         let mut i = 0;
         while i < self.len() && i < other.len() {
-            if self.0[i] < other.0[i] {
+            let a = comparison::shift(self.0[i]);
+            let b = comparison::shift(other.0[i]);
+            if a < b {
                 return true;
             }
-            if self.0[i] > other.0[i] {
+            if a > b {
                 return false;
             }
             i += 1;
@@ -117,5 +121,15 @@ impl Borrow<[u8]> for ByteStr {
 impl Borrow<[u8]> for alloc::boxed::Box<ByteStr> {
     fn borrow(&self) -> &[u8] {
         self.as_bytes()
+    }
+}
+
+impl fmt::Debug for ByteStr {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
+        if let Ok(s) = core::str::from_utf8(self.as_bytes()) {
+            write!(f, "{s}")
+        } else {
+            write!(f, "{:?}", self.as_bytes())
+        }
     }
 }

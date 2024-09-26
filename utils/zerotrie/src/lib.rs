@@ -56,6 +56,7 @@ extern crate alloc;
 
 mod builder;
 mod byte_phf;
+mod comparison;
 pub mod cursor;
 mod error;
 #[macro_use]

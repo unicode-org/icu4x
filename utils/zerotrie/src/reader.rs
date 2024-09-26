@@ -204,6 +204,7 @@
 //! ```
 
 use crate::byte_phf::PerfectByteHashMap;
+use crate::comparison;
 use crate::cursor::AsciiProbeResult;
 use crate::helpers::*;
 use crate::options::*;
@@ -367,14 +368,7 @@ pub(crate) fn get_parameterized<T: ZeroTrieWithOptions + ?Sized>(
             if matches!(T::OPTIONS.phf_mode, PhfMode::BinaryOnly) || x < 16 {
                 // binary search
                 (search, trie) = trie.debug_split_at(x);
-                let bsearch_result =
-                    if matches!(T::OPTIONS.case_sensitivity, CaseSensitivity::IgnoreCase) {
-                        search.binary_search_by_key(&c.to_ascii_lowercase(), |x| {
-                            x.to_ascii_lowercase()
-                        })
-                    } else {
-                        search.binary_search(c)
-                    };
+                let bsearch_result = search.binary_search(c);
                 i = bsearch_result.ok()?;
             } else {
                 // phf
@@ -486,9 +480,9 @@ pub(crate) fn step_parameterized<T: ZeroTrieWithOptions + ?Sized>(
     // Always use binary search
     (search, *trie) = trie.debug_split_at(x);
     let bsearch_result = if matches!(T::OPTIONS.case_sensitivity, CaseSensitivity::IgnoreCase) {
-        search.binary_search_by_key(&c.to_ascii_lowercase(), |x| x.to_ascii_lowercase())
+        search.binary_search_by(|p| comparison::cmpi(*p, c))
     } else {
-        search.binary_search(&c)
+        search.binary_search_by(|p| comparison::cmp(*p, c))
     };
     match bsearch_result {
         Ok(i) => {
