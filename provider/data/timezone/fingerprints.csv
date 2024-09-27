@@ -1,4 +1,4 @@
-time_zone/bcp47_to_iana@1, <singleton>, 7645B, 7625B, 2b99d853ddf5b2ae
+time_zone/bcp47_to_iana@1, <singleton>, 7643B, 7623B, d999c8ca67868c35
 time_zone/iana_to_bcp47@3, <singleton>, 9579B, 9538B, 1bf6347ae2f6619d
 time_zone/metazone_period@1, <singleton>, 11097B, 11009B, dcfa50fb39ebd549
 time_zone/offset_period@1, <singleton>, 13374B, 13286B, 397b18d3f2345411
