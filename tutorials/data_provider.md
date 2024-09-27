@@ -314,7 +314,7 @@ ExportDriver::new(
 .with_markers([CardinalV1Marker::INFO, CustomMarker::INFO])
 .export(
     &ForkByMarkerProvider::new(icu4x_source_provider, custom_source_provider),
-    BlobExporter::new_v2_with_sink(Box::new(&mut buffer)),
+    BlobExporter::new_with_sink(Box::new(&mut buffer)),
 )
 .unwrap();
 
