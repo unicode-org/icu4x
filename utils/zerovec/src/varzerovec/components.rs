@@ -563,16 +563,13 @@ where
         predicate: impl FnMut(&T) -> Ordering,
         range: Range<usize>,
     ) -> Option<Result<usize, usize>> {
-        if range.start > self.len() {
-            return None;
-        }
         if range.end > self.len() {
             return None;
         }
         if range.end < range.start {
             return None;
         }
-        // Safety: We bounds checked above
+        // Safety: We bounds checked above: end is in-bounds or len, and start is <= end
         let range_absolute =
             unsafe { self.binary_search_in_range_unchecked(predicate, range.clone()) };
         // The values returned are relative to the range start
