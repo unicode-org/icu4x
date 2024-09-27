@@ -518,6 +518,8 @@ pub use zerovec_derive::make_ule;
 pub use zerovec_derive::make_varule;
 
 #[cfg(test)]
+// Expected sizes are based on a 64-bit architecture
+#[cfg(target_pointer_width = "64")]
 mod tests {
     use super::*;
     use core::mem::size_of;
