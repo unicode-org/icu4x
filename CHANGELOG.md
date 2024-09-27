@@ -47,6 +47,7 @@
         - Change the `VarZeroVecFormat` values shipped by default to use the same index and length width. This breaks data layout for all `VarZeroVec`s. (https://github.com/unicode-org/icu4x/pull/5594)
         - Change the `VarZeroVec` format to not store a superfluous 0 index at the beginning of the index array. This breaks data layout for all `VarZeroVec`s (https://github.com/unicode-org/icu4x/pull/5601)
         - Optimize `MultiFieldsULE` to not store a length anymore. This breaks data layout for any `#[make_varule]`-using struct with multiple variable-sized fields. (https://github.com/unicode-org/icu4x/pull/5593)
+      - Remove `FlexZeroVec` (https://github.com/unicode-org/icu4x/pull/5604)
     - `writeable`
 
 

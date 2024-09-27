@@ -57,11 +57,11 @@ fn get_basic_bench(c: &mut Criterion) {
 
     #[cfg(feature = "bench")]
     g.bench_function("ZeroMap/usize", |b| {
-        let zm: ZeroMap<[u8], usize> = data.iter().copied().collect();
+        let zm: ZeroMap<[u8], u32> = data.iter().map(|(a, b)| (*a, *b as u32)).collect();
         b.iter(|| {
             for (key, expected) in black_box(data) {
                 let actual = black_box(&zm).get_copied(key);
-                assert_eq!(Some(*expected), actual);
+                assert_eq!(Some(*expected as u32), actual);
             }
         });
     });
@@ -84,22 +84,6 @@ fn get_basic_bench(c: &mut Criterion) {
             for (key, expected) in black_box(data) {
                 let actual = black_box(&hm).get(key);
                 assert_eq!(Some(expected), actual);
-            }
-        });
-    });
-
-    #[cfg(feature = "bench")]
-    g.bench_function("ZeroHashMap/usize", |b| {
-        let zhm: ZeroHashMap<[u8], usize> = data
-            .iter()
-            .copied()
-            .collect();
-        b.iter(|| {
-            for (key, expected) in black_box(data) {
-                let actual = black_box(&zhm).get(key);
-                // No get_copied on ZHM so we need to do it manually
-                let actual = actual.map(|x| <zerovec::vecs::FlexZeroSlice as zerovec::maps::ZeroVecLike<usize>>::zvl_get_as_t(x, |y| *y));
-                assert_eq!(Some(*expected), actual);
             }
         });
     });
@@ -171,11 +155,11 @@ fn get_subtags_bench_helper<M: criterion::measurement::Measurement>(
 
     #[cfg(feature = "bench")]
     g.bench_function("ZeroMap/usize", |b| {
-        let zm: ZeroMap<[u8], usize> = litemap.iter().map(|(a, b)| (*a, b)).collect();
+        let zm: ZeroMap<[u8], u32> = litemap.iter().map(|(a, b)| (*a, *b as u32)).collect();
         b.iter(|| {
             for (i, key) in black_box(strings).iter().enumerate() {
                 let actual = black_box(&zm).get_copied(key.as_bytes());
-                assert_eq!(Some(i), actual);
+                assert_eq!(Some(i as u32), actual);
             }
         });
     });
@@ -193,27 +177,11 @@ fn get_subtags_bench_helper<M: criterion::measurement::Measurement>(
 
     #[cfg(feature = "bench")]
     g.bench_function("HashMap", |b| {
-        let hm: HashMap<&[u8], usize> = litemap.iter().map(|(a, b)| (*a, *b)).collect();
+        let hm: HashMap<&[u8], u32> = litemap.iter().map(|(a, b)| (*a, *b as u32)).collect();
         b.iter(|| {
             for (i, key) in black_box(strings).iter().enumerate() {
                 let actual = black_box(&hm).get(key.as_bytes());
-                assert_eq!(Some(&i), actual);
-            }
-        });
-    });
-
-    #[cfg(feature = "bench")]
-    g.bench_function("ZeroHashMap/usize", |b| {
-        let zhm: ZeroHashMap<[u8], usize> = litemap
-            .iter()
-            .map(|(a, b)| (*a, b))
-            .collect();
-        b.iter(|| {
-            for (i, key) in black_box(strings).iter().enumerate() {
-                let actual = black_box(&zhm).get(key.as_bytes());
-                // No get_copied on ZHM so we need to do it manually
-                let actual = actual.map(|x| <zerovec::vecs::FlexZeroSlice as zerovec::maps::ZeroVecLike<usize>>::zvl_get_as_t(x, |y| *y));
-                assert_eq!(Some(i), actual);
+                assert_eq!(Some(i as u32), actual.copied());
             }
         });
     });

@@ -4,7 +4,7 @@
 
 use crate::ule::*;
 use crate::varzerovec::owned::VarZeroVecOwned;
-use crate::vecs::{FlexZeroSlice, FlexZeroVec, FlexZeroVecOwned, VarZeroVecFormat};
+use crate::vecs::VarZeroVecFormat;
 use crate::{VarZeroSlice, VarZeroVec};
 use crate::{ZeroSlice, ZeroVec};
 use alloc::boxed::Box;
@@ -524,151 +524,6 @@ where
     }
 }
 
-impl<'a> ZeroVecLike<usize> for FlexZeroVec<'a> {
-    type GetType = [u8];
-    type SliceVariant = FlexZeroSlice;
-
-    fn zvl_new_borrowed() -> &'static Self::SliceVariant {
-        FlexZeroSlice::new_empty()
-    }
-    fn zvl_binary_search(&self, k: &usize) -> Result<usize, usize> {
-        FlexZeroSlice::binary_search(self, *k)
-    }
-    fn zvl_binary_search_in_range(
-        &self,
-        k: &usize,
-        range: Range<usize>,
-    ) -> Option<Result<usize, usize>> {
-        FlexZeroSlice::binary_search_in_range(self, *k, range)
-    }
-    fn zvl_binary_search_by(
-        &self,
-        mut predicate: impl FnMut(&usize) -> Ordering,
-    ) -> Result<usize, usize> {
-        FlexZeroSlice::binary_search_by(self, |probe| predicate(&probe))
-    }
-    fn zvl_binary_search_in_range_by(
-        &self,
-        mut predicate: impl FnMut(&usize) -> Ordering,
-        range: Range<usize>,
-    ) -> Option<Result<usize, usize>> {
-        FlexZeroSlice::binary_search_in_range_by(self, |probe| predicate(&probe), range)
-    }
-    fn zvl_get(&self, index: usize) -> Option<&[u8]> {
-        self.get_chunk(index)
-    }
-    fn zvl_len(&self) -> usize {
-        FlexZeroSlice::len(self)
-    }
-
-    fn zvl_as_borrowed(&self) -> &FlexZeroSlice {
-        self
-    }
-
-    #[inline]
-    fn zvl_get_as_t<R>(g: &[u8], f: impl FnOnce(&usize) -> R) -> R {
-        f(&crate::chunk_to_usize(g, g.len()))
-    }
-}
-
-impl ZeroVecLike<usize> for FlexZeroSlice {
-    type GetType = [u8];
-    type SliceVariant = FlexZeroSlice;
-
-    fn zvl_new_borrowed() -> &'static Self::SliceVariant {
-        FlexZeroSlice::new_empty()
-    }
-    fn zvl_binary_search(&self, k: &usize) -> Result<usize, usize> {
-        FlexZeroSlice::binary_search(self, *k)
-    }
-    fn zvl_binary_search_in_range(
-        &self,
-        k: &usize,
-        range: Range<usize>,
-    ) -> Option<Result<usize, usize>> {
-        FlexZeroSlice::binary_search_in_range(self, *k, range)
-    }
-    fn zvl_binary_search_by(
-        &self,
-        mut predicate: impl FnMut(&usize) -> Ordering,
-    ) -> Result<usize, usize> {
-        FlexZeroSlice::binary_search_by(self, |probe| predicate(&probe))
-    }
-    fn zvl_binary_search_in_range_by(
-        &self,
-        mut predicate: impl FnMut(&usize) -> Ordering,
-        range: Range<usize>,
-    ) -> Option<Result<usize, usize>> {
-        FlexZeroSlice::binary_search_in_range_by(self, |probe| predicate(&probe), range)
-    }
-    fn zvl_get(&self, index: usize) -> Option<&[u8]> {
-        self.get_chunk(index)
-    }
-    fn zvl_len(&self) -> usize {
-        FlexZeroSlice::len(self)
-    }
-
-    fn zvl_as_borrowed(&self) -> &FlexZeroSlice {
-        self
-    }
-
-    #[inline]
-    fn zvl_get_as_t<R>(g: &Self::GetType, f: impl FnOnce(&usize) -> R) -> R {
-        f(&crate::chunk_to_usize(g, g.len()))
-    }
-}
-
-impl<'a> MutableZeroVecLike<'a, usize> for FlexZeroVec<'a> {
-    type OwnedType = usize;
-    fn zvl_insert(&mut self, index: usize, value: &usize) {
-        self.to_mut().insert(index, *value)
-    }
-    fn zvl_remove(&mut self, index: usize) -> usize {
-        self.to_mut().remove(index)
-    }
-    fn zvl_replace(&mut self, index: usize, value: &usize) -> usize {
-        // TODO(#2028): Make this a single operation instead of two operations.
-        let mutable = self.to_mut();
-        let old_value = mutable.remove(index);
-        mutable.insert(index, *value);
-        old_value
-    }
-    fn zvl_push(&mut self, value: &usize) {
-        self.to_mut().push(*value)
-    }
-    fn zvl_with_capacity(_cap: usize) -> Self {
-        // There is no `FlexZeroVec::with_capacity()` because it is variable-width
-        FlexZeroVec::Owned(FlexZeroVecOwned::new_empty())
-    }
-    fn zvl_clear(&mut self) {
-        self.to_mut().clear()
-    }
-    fn zvl_reserve(&mut self, _addl: usize) {
-        // There is no `FlexZeroVec::reserve()` because it is variable-width
-    }
-
-    fn owned_as_t(o: &Self::OwnedType) -> &usize {
-        o
-    }
-
-    fn zvl_from_borrowed(b: &'a FlexZeroSlice) -> Self {
-        b.as_flexzerovec()
-    }
-    fn zvl_as_borrowed_inner(&self) -> Option<&'a FlexZeroSlice> {
-        if let FlexZeroVec::Borrowed(b) = *self {
-            Some(b)
-        } else {
-            None
-        }
-    }
-
-    #[allow(clippy::unwrap_used)] // documented panic
-    fn zvl_permute(&mut self, permutation: &mut [usize]) {
-        assert_eq!(permutation.len(), self.zvl_len());
-        *self = permutation.iter().map(|&i| self.get(i).unwrap()).collect();
-    }
-}
-
 #[cfg(test)]
 mod test {
     use super::*;
@@ -712,13 +567,5 @@ mod test {
         let mut permutation = vec![3, 2, 1, 0, 6, 5, 4];
         vzv.zvl_permute(&mut permutation);
         assert_eq!(&vzv, &["44", "33", "22", "11", "77", "66", "55"]);
-
-        let mut fzv: FlexZeroVec = [11, 22, 33, 44, 55, 66, 77].into_iter().collect();
-        let mut permutation = vec![3, 2, 1, 0, 6, 5, 4];
-        fzv.zvl_permute(&mut permutation);
-        assert_eq!(
-            fzv.iter().collect::<Vec<_>>(),
-            [44, 33, 22, 11, 77, 66, 55].into_iter().collect::<Vec<_>>()
-        );
     }
 }
