@@ -9,6 +9,10 @@
 [patch.crates-io]
 # KEEP IN SYNC WITH TOP-LEVEL Cargo.toml
 
+# ICU4X core
+icu_provider = { path = "../provider/core" }
+icu_locale_core = { path = "../components/locale_core" }
+
 # Components
 icu = { path = "../components/icu" }
 icu_calendar = { path = "../components/calendar" }
@@ -20,7 +24,6 @@ icu_datetime = { path = "../components/datetime" }
 icu_decimal = { path = "../components/decimal" }
 icu_experimental = { path = "../components/experimental" }
 icu_list = { path = "../components/list" }
-icu_locale_core = { path = "../components/locale_core" }
 icu_locale = { path = "../components/locale" }
 icu_normalizer = { path = "../components/normalizer" }
 icu_plurals = { path = "../components/plurals" }
@@ -37,7 +40,6 @@ icu_harfbuzz = { path = "../ffi/harfbuzz" }
 # Provider
 icu_provider_export = { path = "../provider/export" }
 icu_provider_source = { path = "../provider/source" }
-icu_provider = { path = "../provider/core" }
 icu_provider_macros = { path = "../provider/core/macros" }
 icu_provider_adapters = { path = "../provider/adapters" }
 icu_provider_baked = { path = "../provider/baked" }

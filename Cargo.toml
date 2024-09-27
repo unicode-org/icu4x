@@ -7,6 +7,10 @@ resolver = "2"
 members = [
     # KEEP IN SYNC WITH workspace.dependencies and tutorials/.cargo/config.toml
 
+    # ICU4X core
+    "components/locale_core",
+    "provider/core",
+
     # Components
     "components/calendar",
     "components/casemap",
@@ -19,7 +23,6 @@ members = [
     "components/icu",
     "components/list",
     "components/locale",
-    "components/locale_core",
     "components/normalizer",
     "components/plurals",
     "components/properties",
@@ -37,7 +40,6 @@ members = [
     "provider/baked",
     "provider/source",
     "provider/blob",
-    "provider/core",
     "provider/core/macros",
     "provider/export",
     "provider/fs",
@@ -127,6 +129,11 @@ include = [
 [workspace.dependencies]
 # KEEP IN SYNC WITH workspace.members and tutorials/.cargo/config.toml
 
+# ICU4X core
+# These use non-tilde deps, see https://github.com/unicode-org/icu4x/issues/4343
+icu_locale_core = { version = "1.5.0", path = "components/locale_core", default-features = false }
+icu_provider = { version = "1.5.0", path = "provider/core", default-features = false }
+
 # Components
 icu = { version = "~1.5.0", path = "components/icu", default-features = false }
 icu_calendar = { version = "~1.5.0", path = "components/calendar", default-features = false }
@@ -138,7 +145,6 @@ icu_datetime = { version = "~1.5.0", path = "components/datetime", default-featu
 icu_decimal = { version = "~1.5.0", path = "components/decimal", default-features = false }
 icu_experimental = { version = "~0.1.0", path = "components/experimental", default-features = false }
 icu_list = { version = "~1.5.0", path = "components/list", default-features = false }
-icu_locale_core = { version = "~1.5.0", path = "components/locale_core", default-features = false }
 icu_locale = { version = "~1.5.0", path = "components/locale", default-features = false }
 icu_normalizer = { version = "~1.5.0", path = "components/normalizer", default-features = false }
 icu_plurals = { version = "~1.5.0", path = "components/plurals", default-features = false }
@@ -155,7 +161,6 @@ icu_harfbuzz = { version = "~0.2.0", path = "ffi/harfbuzz", default-features = f
 # Provider
 icu_provider_export = { version = "~1.5.0", path = "provider/export", default-features = false }
 icu_provider_source = { version = "~1.5.0", path = "provider/source", default-features = false }
-icu_provider = { version = "~1.5.0", path = "provider/core", default-features = false }
 icu_provider_macros = { version = "~1.5.0", path = "provider/core/macros", default-features = false }
 icu_provider_adapters = { version = "~1.5.0", path = "provider/adapters", default-features = false }
 icu_provider_baked = { version = "~1.5.0", path = "provider/baked", default-features = false }
