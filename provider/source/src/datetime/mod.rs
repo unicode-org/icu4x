@@ -242,6 +242,9 @@ macro_rules! impl_data_provider {
     };
 }
 
+// TODO(#5613): Even though these markers are no longer exported, we need them in order to export
+// semantic skeleton data markers. This should be refactored to skip the intermediate data struct.
+
 impl_data_provider!(
     BuddhistDateLengthsV1Marker,
     |dates, _| DateLengthsV1::from(dates),
