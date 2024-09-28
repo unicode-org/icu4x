@@ -14,11 +14,11 @@ use crate::time_zone::TimeZoneDataPayloadsBorrowed;
 use icu_calendar::types::Era;
 use icu_calendar::types::MonthCode;
 
-pub(crate) enum GetSymbolForMonthError {
+pub(crate) enum GetNameForMonthError {
     Missing,
     MissingNames(Field),
 }
-pub(crate) enum GetSymbolForWeekdayError {
+pub(crate) enum GetNameForWeekdayError {
     Missing,
     MissingNames(Field),
 }
@@ -28,7 +28,7 @@ pub(crate) enum GetSymbolForEraError {
     MissingNames(Field),
 }
 
-pub(crate) enum GetSymbolForDayPeriodError {
+pub(crate) enum GetNameForDayPeriodError {
     MissingNames(Field),
 }
 
@@ -41,25 +41,25 @@ pub(crate) enum MonthPlaceholderValue<'a> {
 }
 
 pub(crate) trait DateSymbols<'data> {
-    fn get_symbol_for_month(
+    fn get_name_for_month(
         &self,
         month: fields::Month,
         length: fields::FieldLength,
         code: MonthCode,
-    ) -> Result<MonthPlaceholderValue, GetSymbolForMonthError>;
+    ) -> Result<MonthPlaceholderValue, GetNameForMonthError>;
 
-    fn get_symbol_for_weekday(
+    fn get_name_for_weekday(
         &self,
         weekday: fields::Weekday,
         length: fields::FieldLength,
         day: input::IsoWeekday,
-    ) -> Result<&str, GetSymbolForWeekdayError>;
+    ) -> Result<&str, GetNameForWeekdayError>;
 
     /// Gets the era symbol, or `None` if data is loaded but symbol isn't found.
     ///
     /// `None` should fall back to the era code directly, if, for example,
     /// a japanext datetime is formatted with a `DateTimeFormat<Japanese>`
-    fn get_symbol_for_era(
+    fn get_name_for_era(
         &self,
         length: fields::FieldLength,
         era_code: Era,
@@ -101,12 +101,12 @@ impl<'data> provider::calendar::DateSymbolsV1<'data> {
 }
 
 impl<'data> DateSymbols<'data> for provider::calendar::DateSymbolsV1<'data> {
-    fn get_symbol_for_weekday(
+    fn get_name_for_weekday(
         &self,
         weekday: fields::Weekday,
         length: fields::FieldLength,
         day: input::IsoWeekday,
-    ) -> Result<&str, GetSymbolForWeekdayError> {
+    ) -> Result<&str, GetNameForWeekdayError> {
         let widths = match weekday {
             fields::Weekday::Format => &self.weekdays.format,
             fields::Weekday::StandAlone => {
@@ -125,12 +125,12 @@ impl<'data> DateSymbols<'data> for provider::calendar::DateSymbolsV1<'data> {
                             .0
                             .get(idx)
                             .map(|x| &**x)
-                            .ok_or(GetSymbolForWeekdayError::Missing);
+                            .ok_or(GetNameForWeekdayError::Missing);
                     } else {
-                        return self.get_symbol_for_weekday(fields::Weekday::Format, length, day);
+                        return self.get_name_for_weekday(fields::Weekday::Format, length, day);
                     }
                 } else {
-                    return self.get_symbol_for_weekday(fields::Weekday::Format, length, day);
+                    return self.get_name_for_weekday(fields::Weekday::Format, length, day);
                 }
             }
             fields::Weekday::Local => unimplemented!(),
@@ -146,15 +146,15 @@ impl<'data> DateSymbols<'data> for provider::calendar::DateSymbolsV1<'data> {
             .0
             .get(idx)
             .map(|x| &**x)
-            .ok_or(GetSymbolForWeekdayError::Missing)
+            .ok_or(GetNameForWeekdayError::Missing)
     }
 
-    fn get_symbol_for_month(
+    fn get_name_for_month(
         &self,
         month: fields::Month,
         length: fields::FieldLength,
         code: MonthCode,
-    ) -> Result<MonthPlaceholderValue, GetSymbolForMonthError> {
+    ) -> Result<MonthPlaceholderValue, GetNameForMonthError> {
         let symbols_map = self.get_symbols_map_for_month(month, length).unwrap();
         let mut symbol_option = symbols_map.get(code);
         let mut fallback = false;
@@ -165,7 +165,7 @@ impl<'data> DateSymbols<'data> for provider::calendar::DateSymbolsV1<'data> {
                 fallback = true;
             }
         }
-        let symbol = symbol_option.ok_or(GetSymbolForMonthError::Missing)?;
+        let symbol = symbol_option.ok_or(GetNameForMonthError::Missing)?;
         Ok(if fallback {
             MonthPlaceholderValue::StringNeedingLeapPrefix(symbol)
         } else {
@@ -173,7 +173,7 @@ impl<'data> DateSymbols<'data> for provider::calendar::DateSymbolsV1<'data> {
         })
     }
 
-    fn get_symbol_for_era(
+    fn get_name_for_era(
         &self,
         length: fields::FieldLength,
         era_code: Era,
@@ -193,23 +193,23 @@ pub(crate) trait TimeSymbols {
     /// Gets the day period symbol.
     ///
     /// Internally, 'noon' and 'midnight' should fall back to 'am' and 'pm'.
-    fn get_symbol_for_day_period(
+    fn get_name_for_day_period(
         &self,
         day_period: fields::DayPeriod,
         length: fields::FieldLength,
         hour: input::IsoHour,
         is_top_of_hour: bool,
-    ) -> Result<&str, GetSymbolForDayPeriodError>;
+    ) -> Result<&str, GetNameForDayPeriodError>;
 }
 
 impl<'data> TimeSymbols for provider::calendar::TimeSymbolsV1<'data> {
-    fn get_symbol_for_day_period(
+    fn get_name_for_day_period(
         &self,
         day_period: fields::DayPeriod,
         length: fields::FieldLength,
         hour: input::IsoHour,
         is_top_of_hour: bool,
-    ) -> Result<&str, GetSymbolForDayPeriodError> {
+    ) -> Result<&str, GetNameForDayPeriodError> {
         use fields::{DayPeriod::NoonMidnight, FieldLength};
         let widths = &self.day_periods.format;
         let symbols = match length {

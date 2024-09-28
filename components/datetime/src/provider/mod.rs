@@ -20,8 +20,6 @@ pub(crate) mod date_time;
 pub mod packed_pattern;
 pub mod time_zones;
 
-/// Module for new DateSymbols design
-/// <https://github.com/unicode-org/icu4x/issues/3865>
 pub mod neo;
 
 #[cfg(feature = "compiled_data")]

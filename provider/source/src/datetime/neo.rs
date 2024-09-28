@@ -136,8 +136,7 @@ impl SourceDataProvider {
         Self: IterableDataProviderCached<M>,
     {
         self.load_neo_key(req, &calendar, |id, data| {
-            let Some((context, length)) =
-                marker_attrs::symbol_marker_attr_info(id.marker_attributes)
+            let Some((context, length)) = marker_attrs::name_marker_attr_info(id.marker_attributes)
             else {
                 panic!(
                     "Found unexpected marker attributes {}",
@@ -212,7 +211,7 @@ fn weekday_convert(
     ];
 
     Ok(LinearNamesV1 {
-        symbols: (&days).into(),
+        names: (&days).into(),
     })
 }
 
@@ -239,7 +238,7 @@ fn dayperiods_convert(
     }
 
     Ok(LinearNamesV1 {
-        symbols: (&periods).into(),
+        names: (&periods).into(),
     })
 }
 

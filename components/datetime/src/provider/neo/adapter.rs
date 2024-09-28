@@ -217,7 +217,7 @@ impl<'a> From<&weekdays::SymbolsV1<'a>> for LinearNamesV1<'a> {
         // Input is a cow array of length 7. Need to make it a VarZeroVec.
         let vec: alloc::vec::Vec<&str> = other.0.iter().map(|x| &**x).collect();
         LinearNamesV1 {
-            symbols: (&vec).into(),
+            names: (&vec).into(),
         }
     }
 }
@@ -232,7 +232,7 @@ impl<'a> From<&day_periods::SymbolsV1<'a>> for LinearNamesV1<'a> {
             (None, None) => vec![&other.am, &other.pm],
         };
         LinearNamesV1 {
-            symbols: (&vec).into(),
+            names: (&vec).into(),
         }
     }
 }

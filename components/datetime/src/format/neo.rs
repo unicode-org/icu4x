@@ -17,8 +17,8 @@ use crate::neo_pattern::{DateTimePattern, DateTimePatternBorrowed};
 use crate::neo_skeleton::NeoDateTimeComponents;
 use crate::pattern::PatternItem;
 use crate::provider::date_time::{
-    DateSymbols, GetSymbolForDayPeriodError, GetSymbolForEraError, GetSymbolForMonthError,
-    GetSymbolForWeekdayError, MonthPlaceholderValue, TimeSymbols, ZoneSymbols,
+    DateSymbols, GetNameForDayPeriodError, GetNameForMonthError, GetNameForWeekdayError,
+    GetSymbolForEraError, MonthPlaceholderValue, TimeSymbols, ZoneSymbols,
 };
 use crate::provider::neo::*;
 use crate::provider::time_zones::tz;
@@ -266,8 +266,9 @@ size_test!(
     464
 );
 
-/// A low-level type that formats datetime patterns with localized symbols.
+/// A low-level type that formats datetime patterns with localized names.
 /// The calendar should be chosen at compile time.
+///
 #[doc = typed_date_time_names_size!()]
 ///
 /// Type parameters:
@@ -486,10 +487,10 @@ impl DateTimeNamesMarker for ZonedDateTimeMarker {
 impl From<RawDateTimeNames<DateMarker>> for RawDateTimeNames<DateTimeMarker> {
     fn from(other: RawDateTimeNames<DateMarker>) -> Self {
         Self {
-            year_symbols: other.year_symbols,
-            month_symbols: other.month_symbols,
-            weekday_symbols: other.weekday_symbols,
-            dayperiod_symbols: DateTimeNamesData2::none(),
+            year_names: other.year_names,
+            month_names: other.month_names,
+            weekday_names: other.weekday_names,
+            dayperiod_names: DateTimeNamesData2::none(),
             zone_essentials: (),
             exemplar_cities: (),
             mz_generic_long: (),
@@ -506,10 +507,10 @@ impl From<RawDateTimeNames<DateMarker>> for RawDateTimeNames<DateTimeMarker> {
 impl From<RawDateTimeNames<TimeMarker>> for RawDateTimeNames<DateTimeMarker> {
     fn from(other: RawDateTimeNames<TimeMarker>) -> Self {
         Self {
-            year_symbols: DateTimeNamesData2::none(),
-            month_symbols: DateTimeNamesData2::none(),
-            weekday_symbols: DateTimeNamesData2::none(),
-            dayperiod_symbols: other.dayperiod_symbols,
+            year_names: DateTimeNamesData2::none(),
+            month_names: DateTimeNamesData2::none(),
+            weekday_names: DateTimeNamesData2::none(),
+            dayperiod_names: other.dayperiod_names,
             zone_essentials: (),
             exemplar_cities: (),
             mz_generic_long: (),
@@ -524,16 +525,16 @@ impl From<RawDateTimeNames<TimeMarker>> for RawDateTimeNames<DateTimeMarker> {
 }
 
 pub(crate) struct RawDateTimeNames<R: DateTimeNamesMarker> {
-    year_symbols:
+    year_names:
         <R::YearNames as DateTimeNamesHolderTrait<YearNamesV1Marker>>::Container<FieldLength>,
-    month_symbols: <R::MonthNames as DateTimeNamesHolderTrait<MonthNamesV1Marker>>::Container<(
+    month_names: <R::MonthNames as DateTimeNamesHolderTrait<MonthNamesV1Marker>>::Container<(
         fields::Month,
         FieldLength,
     )>,
-    weekday_symbols: <R::WeekdayNames as DateTimeNamesHolderTrait<WeekdayNamesV1Marker>>::Container<
+    weekday_names: <R::WeekdayNames as DateTimeNamesHolderTrait<WeekdayNamesV1Marker>>::Container<
         (fields::Weekday, FieldLength),
     >,
-    dayperiod_symbols:
+    dayperiod_names:
         <R::DayPeriodNames as DateTimeNamesHolderTrait<DayPeriodNamesV1Marker>>::Container<
             FieldLength,
         >,
@@ -563,10 +564,10 @@ pub(crate) struct RawDateTimeNames<R: DateTimeNamesMarker> {
 impl<R: DateTimeNamesMarker> fmt::Debug for RawDateTimeNames<R> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("RawDateTimeNames")
-            .field("year_symbols", &self.year_symbols)
-            .field("month_symbols", &self.month_symbols)
-            .field("weekday_symbols", &self.weekday_symbols)
-            .field("dayperiod_symbols", &self.dayperiod_symbols)
+            .field("year_names", &self.year_names)
+            .field("month_names", &self.month_names)
+            .field("weekday_names", &self.weekday_names)
+            .field("dayperiod_names", &self.dayperiod_names)
             .field("zone_essentials", &self.zone_essentials)
             .field("exemplar_cities", &self.exemplar_cities)
             .field("mz_generic_long", &self.mz_generic_long)
@@ -1583,10 +1584,10 @@ impl FieldForDataLoading {
 impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
     pub(crate) fn new_without_fixed_decimal_formatter() -> Self {
         Self {
-            year_symbols: <R::YearNames as DateTimeNamesHolderTrait<YearNamesV1Marker>>::Container::<_>::new_empty(),
-            month_symbols: <R::MonthNames as DateTimeNamesHolderTrait<MonthNamesV1Marker>>::Container::<_>::new_empty(),
-            weekday_symbols: <R::WeekdayNames as DateTimeNamesHolderTrait<WeekdayNamesV1Marker>>::Container::<_>::new_empty(),
-            dayperiod_symbols: <R::DayPeriodNames as DateTimeNamesHolderTrait<DayPeriodNamesV1Marker>>::Container::<_>::new_empty(),
+            year_names: <R::YearNames as DateTimeNamesHolderTrait<YearNamesV1Marker>>::Container::<_>::new_empty(),
+            month_names: <R::MonthNames as DateTimeNamesHolderTrait<MonthNamesV1Marker>>::Container::<_>::new_empty(),
+            weekday_names: <R::WeekdayNames as DateTimeNamesHolderTrait<WeekdayNamesV1Marker>>::Container::<_>::new_empty(),
+            dayperiod_names: <R::DayPeriodNames as DateTimeNamesHolderTrait<DayPeriodNamesV1Marker>>::Container::<_>::new_empty(),
             zone_essentials: <R::ZoneEssentials as DateTimeNamesHolderTrait<tz::EssentialsV1Marker>>::Container::<_>::new_empty(),
             exemplar_cities: <R::ZoneExemplarCities as DateTimeNamesHolderTrait<tz::ExemplarCitiesV1Marker>>::Container::<_>::new_empty(),
             mz_generic_long: <R::ZoneGenericLong as DateTimeNamesHolderTrait<tz::MzGenericLongV1Marker>>::Container::<_>::new_empty(),
@@ -1601,10 +1602,10 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
 
     pub(crate) fn as_borrowed(&self) -> RawDateTimeNamesBorrowed {
         RawDateTimeNamesBorrowed {
-            year_names: self.year_symbols.get().inner,
-            month_names: self.month_symbols.get().inner,
-            weekday_names: self.weekday_symbols.get().inner,
-            dayperiod_names: self.dayperiod_symbols.get().inner,
+            year_names: self.year_names.get().inner,
+            month_names: self.month_names.get().inner,
+            weekday_names: self.weekday_names.get().inner,
+            dayperiod_names: self.dayperiod_names.get().inner,
             zone_essentials: self.zone_essentials.get().inner,
             exemplar_cities: self.exemplar_cities.get().inner,
             mz_generic_long: self.mz_generic_long.get().inner,
@@ -1634,7 +1635,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         let variables = field_length;
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                marker_attrs::symbol_attr_for(
+                marker_attrs::name_attr_for(
                     marker_attrs::Context::Format,
                     match field_length {
                         FieldLength::Abbreviated => marker_attrs::Length::Abbr,
@@ -1647,7 +1648,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             ),
             ..Default::default()
         };
-        self.year_symbols
+        self.year_names
             .load_put(provider, req, variables)
             .map_err(|e| MaybePayloadError2::into_single_load_error(e, field))?
             .map_err(SingleLoadError::Data)?;
@@ -1671,7 +1672,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         let variables = (field_symbol, field_length);
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                marker_attrs::symbol_attr_for(
+                marker_attrs::name_attr_for(
                     match field_symbol {
                         fields::Month::Format => marker_attrs::Context::Format,
                         fields::Month::StandAlone => marker_attrs::Context::Standalone,
@@ -1687,7 +1688,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             ),
             ..Default::default()
         };
-        self.month_symbols
+        self.month_names
             .load_put(provider, req, variables)
             .map_err(|e| MaybePayloadError2::into_single_load_error(e, field))?
             .map_err(SingleLoadError::Data)?;
@@ -1713,7 +1714,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         let variables = field_length;
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                marker_attrs::symbol_attr_for(
+                marker_attrs::name_attr_for(
                     marker_attrs::Context::Format,
                     match field_length {
                         FieldLength::Abbreviated => marker_attrs::Length::Abbr,
@@ -1726,7 +1727,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             ),
             ..Default::default()
         };
-        self.dayperiod_symbols
+        self.dayperiod_names
             .load_put(provider, req, variables)
             .map_err(|e| MaybePayloadError2::into_single_load_error(e, field))?
             .map_err(SingleLoadError::Data)?;
@@ -1757,7 +1758,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
         let variables = (field_symbol, field_length);
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                marker_attrs::symbol_attr_for(
+                marker_attrs::name_attr_for(
                     match field_symbol {
                         // UTS 35 says that "e" and "E" have the same non-numeric names
                         fields::Weekday::Format | fields::Weekday::Local => {
@@ -1777,7 +1778,7 @@ impl<R: DateTimeNamesMarker> RawDateTimeNames<R> {
             ),
             ..Default::default()
         };
-        self.weekday_symbols
+        self.weekday_names
             .load_put(provider, req, variables)
             .map_err(|e| MaybePayloadError2::into_single_load_error(e, field))?
             .map_err(SingleLoadError::Data)?;
@@ -2383,28 +2384,28 @@ impl<'a> TryWriteable for FormattedDateTimePattern<'a> {
 }
 
 impl<'data> DateSymbols<'data> for RawDateTimeNamesBorrowed<'data> {
-    fn get_symbol_for_month(
+    fn get_name_for_month(
         &self,
         field_symbol: fields::Month,
         field_length: FieldLength,
         code: MonthCode,
-    ) -> Result<MonthPlaceholderValue, GetSymbolForMonthError> {
+    ) -> Result<MonthPlaceholderValue, GetNameForMonthError> {
         let field = fields::Field {
             symbol: FieldSymbol::Month(field_symbol),
             length: field_length,
         };
-        let month_symbols = self
+        let month_names = self
             .month_names
             .get_with_variables((field_symbol, field_length))
-            .ok_or(GetSymbolForMonthError::MissingNames(field))?;
+            .ok_or(GetNameForMonthError::MissingNames(field))?;
         let Some((month_number, is_leap)) = code.parsed() else {
-            return Err(GetSymbolForMonthError::Missing);
+            return Err(GetNameForMonthError::Missing);
         };
         let Some(month_index) = month_number.checked_sub(1) else {
-            return Err(GetSymbolForMonthError::Missing);
+            return Err(GetNameForMonthError::Missing);
         };
         let month_index = usize::from(month_index);
-        let symbol = match month_symbols {
+        let name = match month_names {
             MonthNamesV1::Linear(linear) => {
                 if is_leap {
                     None
@@ -2430,19 +2431,18 @@ impl<'data> DateSymbols<'data> for RawDateTimeNamesBorrowed<'data> {
                 }
             }
         };
-        // Note: Always return `false` for the second argument since neo MonthSymbols
+        // Note: Always return `false` for the second argument since neo MonthNames
         // knows how to handle leap months and we don't need the fallback logic
-        symbol
-            .map(MonthPlaceholderValue::PlainString)
-            .ok_or(GetSymbolForMonthError::Missing)
+        name.map(MonthPlaceholderValue::PlainString)
+            .ok_or(GetNameForMonthError::Missing)
     }
 
-    fn get_symbol_for_weekday(
+    fn get_name_for_weekday(
         &self,
         field_symbol: fields::Weekday,
         field_length: FieldLength,
         day: input::IsoWeekday,
-    ) -> Result<&str, GetSymbolForWeekdayError> {
+    ) -> Result<&str, GetNameForWeekdayError> {
         let field = fields::Field {
             symbol: FieldSymbol::Weekday(field_symbol),
             length: field_length,
@@ -2456,17 +2456,17 @@ impl<'data> DateSymbols<'data> for RawDateTimeNamesBorrowed<'data> {
         } else {
             field_length
         };
-        let weekday_symbols = self
+        let weekday_names = self
             .weekday_names
             .get_with_variables((field_symbol, field_length))
-            .ok_or(GetSymbolForWeekdayError::MissingNames(field))?;
-        weekday_symbols
-            .symbols
+            .ok_or(GetNameForWeekdayError::MissingNames(field))?;
+        weekday_names
+            .names
             .get((day as usize) % 7)
-            .ok_or(GetSymbolForWeekdayError::Missing)
+            .ok_or(GetNameForWeekdayError::Missing)
     }
 
-    fn get_symbol_for_era(
+    fn get_name_for_era(
         &self,
         field_length: FieldLength,
         era_code: Era,
@@ -2477,27 +2477,27 @@ impl<'data> DateSymbols<'data> for RawDateTimeNamesBorrowed<'data> {
         };
         // UTS 35 says that "G..GGG" are all Abbreviated
         let field_length = field_length.numeric_to_abbr();
-        let year_symbols = self
+        let year_names = self
             .year_names
             .get_with_variables(field_length)
             .ok_or(GetSymbolForEraError::MissingNames(field))?;
-        let YearNamesV1::Eras(era_symbols) = year_symbols else {
+        let YearNamesV1::Eras(era_names) = year_names else {
             return Err(GetSymbolForEraError::MissingNames(field));
         };
-        era_symbols
+        era_names
             .get(era_code.0.as_str().into())
             .ok_or(GetSymbolForEraError::Missing)
     }
 }
 
 impl<'data> TimeSymbols for RawDateTimeNamesBorrowed<'data> {
-    fn get_symbol_for_day_period(
+    fn get_name_for_day_period(
         &self,
         field_symbol: fields::DayPeriod,
         field_length: FieldLength,
         hour: input::IsoHour,
         is_top_of_hour: bool,
-    ) -> Result<&str, GetSymbolForDayPeriodError> {
+    ) -> Result<&str, GetNameForDayPeriodError> {
         use fields::DayPeriod::NoonMidnight;
         let field = fields::Field {
             symbol: FieldSymbol::DayPeriod(field_symbol),
@@ -2505,19 +2505,17 @@ impl<'data> TimeSymbols for RawDateTimeNamesBorrowed<'data> {
         };
         // UTS 35 says that "a..aaa" are all Abbreviated
         let field_length = field_length.numeric_to_abbr();
-        let dayperiod_symbols = self
+        let dayperiod_names = self
             .dayperiod_names
             .get_with_variables(field_length)
-            .ok_or(GetSymbolForDayPeriodError::MissingNames(field))?;
+            .ok_or(GetNameForDayPeriodError::MissingNames(field))?;
         let option_value: Option<&str> = match (field_symbol, u8::from(hour), is_top_of_hour) {
-            (NoonMidnight, 00, true) => dayperiod_symbols
-                .midnight()
-                .or_else(|| dayperiod_symbols.am()),
-            (NoonMidnight, 12, true) => dayperiod_symbols.noon().or_else(|| dayperiod_symbols.pm()),
-            (_, hour, _) if hour < 12 => dayperiod_symbols.am(),
-            _ => dayperiod_symbols.pm(),
+            (NoonMidnight, 00, true) => dayperiod_names.midnight().or_else(|| dayperiod_names.am()),
+            (NoonMidnight, 12, true) => dayperiod_names.noon().or_else(|| dayperiod_names.pm()),
+            (_, hour, _) if hour < 12 => dayperiod_names.am(),
+            _ => dayperiod_names.pm(),
         };
-        option_value.ok_or(GetSymbolForDayPeriodError::MissingNames(field))
+        option_value.ok_or(GetNameForDayPeriodError::MissingNames(field))
     }
 }
 
