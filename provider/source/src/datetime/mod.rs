@@ -371,32 +371,26 @@ mod test {
 
     #[test]
     fn test_basic_patterns() {
-        let provider = SourceDataProvider::new_testing();
+        let data = SourceDataProvider::new_testing()
+            .get_datetime_resources(&langid!("cs").into(), Either::Left(&value!("gregory")))
+            .unwrap();
 
-        let cs_dates: DataResponse<GregorianDateLengthsV1Marker> = provider
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("cs").into()),
-                ..Default::default()
-            })
-            .expect("Failed to load payload");
+        let cs_dates = DateLengthsV1::from(&data);
 
-        assert_eq!("d. M. y", cs_dates.payload.get().date.medium.to_string());
+        assert_eq!("d. M. y", cs_dates.date.medium.to_string());
     }
 
     #[test]
     fn test_with_numbering_system() {
-        let provider = SourceDataProvider::new_testing();
+        let data = SourceDataProvider::new_testing()
+            .get_datetime_resources(&langid!("haw").into(), Either::Left(&value!("gregory")))
+            .unwrap();
 
-        let cs_dates: DataResponse<GregorianDateLengthsV1Marker> = provider
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("haw").into()),
-                ..Default::default()
-            })
-            .expect("Failed to load payload");
+        let haw_dates = DateLengthsV1::from(&data);
 
-        assert_eq!("d MMM y", cs_dates.payload.get().date.medium.to_string());
+        assert_eq!("d MMM y", haw_dates.date.medium.to_string());
         // TODO(#308): Support numbering system variations. We currently throw them away.
-        assert_eq!("d/M/yy", cs_dates.payload.get().date.short.to_string());
+        assert_eq!("d/M/yy", haw_dates.date.short.to_string());
     }
 
     #[test]
@@ -442,20 +436,16 @@ mod test {
     fn test_basic_symbols() {
         use icu::calendar::types::MonthCode;
         use tinystr::tinystr;
-        let provider = SourceDataProvider::new_testing();
 
-        let cs_dates: DataResponse<GregorianDateSymbolsV1Marker> = provider
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("cs").into()),
-                ..Default::default()
-            })
+        let data = SourceDataProvider::new_testing()
+            .get_datetime_resources(&langid!("cs").into(), Either::Left(&value!("gregory")))
             .unwrap();
+
+        let cs_dates = symbols::convert_dates(&data, "gregory");
 
         assert_eq!(
             "srpna",
             cs_dates
-                .payload
-                .get()
                 .months
                 .format
                 .wide
@@ -463,38 +453,22 @@ mod test {
                 .unwrap()
         );
 
-        assert_eq!(
-            "po",
-            cs_dates
-                .payload
-                .get()
-                .weekdays
-                .format
-                .short
-                .as_ref()
-                .unwrap()
-                .0[1]
-        );
+        assert_eq!("po", cs_dates.weekdays.format.short.as_ref().unwrap().0[1]);
     }
 
     #[test]
     fn unalias_contexts() {
-        let provider = SourceDataProvider::new_testing();
-
-        let cs_dates: DataResponse<GregorianDateSymbolsV1Marker> = provider
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("cs").into()),
-                ..Default::default()
-            })
+        let data = SourceDataProvider::new_testing()
+            .get_datetime_resources(&langid!("cs").into(), Either::Left(&value!("gregory")))
             .unwrap();
 
+        let cs_dates = symbols::convert_dates(&data, "gregory");
+
         // Czech months are not unaliased because `wide` differs.
-        assert!(cs_dates.payload.get().months.stand_alone.is_some());
+        assert!(cs_dates.months.stand_alone.is_some());
 
         // Czech months are not unaliased because `wide` differs.
         assert!(cs_dates
-            .payload
-            .get()
             .months
             .stand_alone
             .as_ref()
@@ -502,8 +476,6 @@ mod test {
             .abbreviated
             .is_none());
         assert!(cs_dates
-            .payload
-            .get()
             .months
             .stand_alone
             .as_ref()
@@ -511,25 +483,15 @@ mod test {
             .short
             .is_none());
         assert!(cs_dates
-            .payload
-            .get()
             .months
             .stand_alone
             .as_ref()
             .unwrap()
             .narrow
             .is_none());
-        assert!(cs_dates
-            .payload
-            .get()
-            .months
-            .stand_alone
-            .as_ref()
-            .unwrap()
-            .wide
-            .is_some());
+        assert!(cs_dates.months.stand_alone.as_ref().unwrap().wide.is_some());
 
         // Czech weekdays are unaliased because they completely overlap.
-        assert!(cs_dates.payload.get().weekdays.stand_alone.is_none());
+        assert!(cs_dates.weekdays.stand_alone.is_none());
     }
 }

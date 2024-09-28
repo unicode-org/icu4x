@@ -85,30 +85,20 @@ mod test {
         fields::{Day, Field, FieldLength, Month, Weekday},
         options::{components, preferences},
         pattern::{reference, runtime},
-        provider::calendar::{DateSkeletonPatternsV1, GregorianDateLengthsV1Marker, SkeletonV1},
+        provider::calendar::{DateLengthsV1, DateSkeletonPatternsV1, SkeletonV1},
     };
     use icu::locale::locale;
-    use icu_provider::prelude::*;
     use litemap::LiteMap;
 
     use crate::SourceDataProvider;
 
-    fn get_data_payload() -> (
-        DataPayload<GregorianDateLengthsV1Marker>,
-        DateSkeletonPatternsV1<'static>,
-    ) {
+    fn get_data_payload() -> (DateLengthsV1<'static>, DateSkeletonPatternsV1<'static>) {
         let locale = locale!("en").into();
 
-        let patterns = SourceDataProvider::new_testing()
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&locale),
-                ..Default::default()
-            })
-            .expect("Failed to load payload")
-            .payload;
         let data = SourceDataProvider::new_testing()
             .get_datetime_resources(&locale, Either::Right("gregorian"))
             .unwrap();
+        let patterns = DateLengthsV1::from(&data);
         let skeletons = DateSkeletonPatternsV1::from(&data);
         (patterns, skeletons)
     }
@@ -185,7 +175,7 @@ mod test {
 
         match create_best_pattern_for_fields(
             &skeletons,
-            &patterns.get().length_combinations,
+            &patterns.length_combinations,
             &requested_fields,
             &Default::default(),
             false,
