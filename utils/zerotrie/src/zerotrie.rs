@@ -483,17 +483,16 @@ macro_rules! impl_zerotrie_subtype {
         #[cfg(feature = "litemap")]
         impl<'a, K, S> TryFrom<&'a LiteMap<K, usize, S>> for $name<Vec<u8>>
         where
-            K: Borrow<[u8]>,
+            K: Borrow<ByteStr>,
             S: litemap::store::StoreIterable<'a, K, usize>,
         {
             type Error = crate::error::ZeroTrieBuildError;
             fn try_from(map: &'a LiteMap<K, usize, S>) -> Result<Self, Self::Error> {
-                let tuples: Vec<(&[u8], usize)> = map
+                let byte_str_slice: Vec<(&ByteStr, usize)> = map
                     .iter()
                     .map(|(k, v)| (k.borrow(), *v))
                     .collect();
-                let byte_str_slice = ByteStr::from_byte_slice_with_value(&tuples);
-                Self::try_from_tuple_slice(byte_str_slice)
+                Self::try_from_tuple_slice(&byte_str_slice)
             }
         }
         #[cfg(feature = "litemap")]
@@ -799,11 +798,10 @@ where
     fn from_iter<T: IntoIterator<Item = (K, usize)>>(iter: T) -> Self {
         // We need two Vecs because the first one anchors the `K`s that the second one borrows.
         let items = Vec::from_iter(iter);
-        let mut items: Vec<(&[u8], usize)> = items.iter().map(|(k, v)| (k.as_ref(), *v)).collect();
+        let mut items: Vec<(&ByteStr, usize)> = items.iter().map(|(k, v)| (ByteStr::from_bytes(k.as_ref()), *v)).collect();
         items.sort();
-        let byte_str_slice = ByteStr::from_byte_slice_with_value(&items);
         #[allow(clippy::unwrap_used)] // FromIterator is panicky
-        Self::try_from_tuple_slice(byte_str_slice).unwrap()
+        Self::try_from_tuple_slice(&items).unwrap()
     }
 }
 

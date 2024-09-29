@@ -21,6 +21,13 @@ pub(crate) fn cmpi(a: u8, b: u8) -> Ordering {
     shift(a.to_ascii_lowercase()).cmp(&shift(b.to_ascii_lowercase()))
 }
 
+#[inline]
+pub(crate) fn cmp_slices(a: &[u8], b: &[u8]) -> Ordering {
+    let a_iter = a.iter().copied().map(shift);
+    let b_iter = b.iter().copied().map(shift);
+    Iterator::cmp(a_iter, b_iter)
+}
+
 #[test]
 fn test_basic_cmp() {
     let mut all_bytes = (0u8..=255u8).collect::<Vec<_>>();

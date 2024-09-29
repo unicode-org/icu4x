@@ -359,6 +359,7 @@ where
 
 #[cfg(test)]
 mod testdata {
+    use crate::ByteStr;
     include!("../tests/data/data.rs");
 }
 

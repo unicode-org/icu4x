@@ -74,6 +74,7 @@ pub use crate::zerotrie::ZeroTrieExtendedCapacity;
 pub use crate::zerotrie::ZeroTriePerfectHash;
 pub use crate::zerotrie::ZeroTrieSimpleAscii;
 pub use error::ZeroTrieBuildError;
+pub use builder::ByteStr;
 
 #[cfg(feature = "alloc")]
 pub use crate::zerotrie::ZeroTrieStringIterator;

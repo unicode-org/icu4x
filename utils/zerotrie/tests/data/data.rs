@@ -19,13 +19,12 @@ const fn single_byte_branch_equal(x: u8) -> u8 {
 use single_byte_branch_equal as single_byte_short_match;
 
 #[allow(dead_code)]
-pub fn strings_to_litemap<'a>(strings: &[&'a str]) -> LiteMap<&'a [u8], usize> {
+pub fn strings_to_litemap<'a>(strings: &[&'a str]) -> LiteMap<&'a ByteStr, usize> {
     strings
         .iter()
         .copied()
-        .map(|x| x.as_bytes())
         .enumerate()
-        .map(|(i, s)| (s, i))
+        .map(|(i, s)| (ByteStr::from_str(s), i))
         .collect()
 }
 
